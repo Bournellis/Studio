@@ -152,6 +152,10 @@ func test_app_shell_action_contract_centralizes_online_gates_without_boot_ui() -
 	assert_eq(arena_start_action, "arena_start:arena_veu_curta")
 	assert_true(AppShellActionContractScript.is_arena_start(arena_start_action))
 	assert_eq(AppShellActionContractScript.action_value(arena_start_action), "arena_veu_curta")
+	var arena_start_difficulty_action := AppShellActionContractScript.arena_start_action("arena_veu_curta", "s1_d02_iniciado")
+	assert_eq(arena_start_difficulty_action, "arena_start:arena_veu_curta:s1_d02_iniciado")
+	assert_eq(AppShellActionContractScript.action_value(arena_start_difficulty_action), "arena_veu_curta")
+	assert_eq(AppShellActionContractScript.action_value_at(arena_start_difficulty_action, 2), "s1_d02_iniciado")
 	var arena_route := AppShellActionRouterScript.route_action(arena_start_action, {"save_type": "normal"})
 	assert_eq(arena_route.get("category"), AppShellActionRouterScript.CATEGORY_ARENA)
 	assert_eq(arena_route.get("mutation_endpoint"), "arena/pve/start")
@@ -434,23 +438,70 @@ func test_arena_selection_renders_remote_arenas_as_data_driven_actions() -> void
 					"id": "arena_tutorial_cinzas",
 					"display_name": "Tutorial: Cinzas Do Refugio",
 					"duel_count": 1,
-					"difficulty_tier": 0,
+					"default_difficulty_id": "s1_d00_intro",
 					"unlocked": true,
+					"difficulties": [
+						{
+							"difficulty_id": "s1_d00_intro",
+							"difficulty_tier": 0,
+							"max_steps": 1,
+							"recommended_level_min": 1,
+							"recommended_level_max": 3,
+							"recommended_power_min": 80,
+							"recommended_power_max": 180,
+							"unlocked": true,
+						},
+					],
 				},
 				{
 					"id": "arena_cinzas_curta",
 					"display_name": "Arena Curta Das Cinzas",
 					"max_steps": 3,
-					"difficulty_rank": 1,
+					"default_difficulty_id": "s1_d00_intro",
 					"unlocked": true,
+					"difficulties": [
+						{
+							"difficulty_id": "s1_d00_intro",
+							"difficulty_tier": 0,
+							"max_steps": 3,
+							"recommended_level_min": 3,
+							"recommended_level_max": 4,
+							"recommended_power_min": 160,
+							"recommended_power_max": 260,
+							"unlocked": true,
+						},
+						{
+							"difficulty_id": "s1_d01_aprendiz",
+							"difficulty_tier": 1,
+							"max_steps": 3,
+							"recommended_level_min": 5,
+							"recommended_level_max": 6,
+							"recommended_power_min": 280,
+							"recommended_power_max": 470,
+							"unlocked": true,
+						},
+					],
 				},
 				{
 					"id": "arena_veu_curta",
 					"display_name": "Arena Do Veu",
 					"max_steps": 4,
-					"difficulty_rank": 2,
+					"default_difficulty_id": "s1_d02_iniciado",
 					"unlocked": false,
 					"locked_reason": "Conclua dificuldade 1.",
+					"difficulties": [
+						{
+							"difficulty_id": "s1_d02_iniciado",
+							"difficulty_tier": 2,
+							"max_steps": 4,
+							"recommended_level_min": 8,
+							"recommended_level_max": 10,
+							"recommended_power_min": 650,
+							"recommended_power_max": 1300,
+							"unlocked": false,
+							"locked_reason": "Conclua dificuldade 1.",
+						},
+					],
 				},
 			],
 			"active_attempt": null,
@@ -460,16 +511,18 @@ func test_arena_selection_renders_remote_arenas_as_data_driven_actions() -> void
 	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
 	await get_tree().process_frame
 
-	var tutorial_action := AppShellActionContractScript.arena_start_action("arena_tutorial_cinzas")
-	var early_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta")
-	var locked_action := AppShellActionContractScript.arena_start_action("arena_veu_curta")
+	var tutorial_action := AppShellActionContractScript.arena_start_action("arena_tutorial_cinzas", "s1_d00_intro")
+	var early_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta", "s1_d00_intro")
+	var early_apprentice_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta", "s1_d01_aprendiz")
+	var locked_action := AppShellActionContractScript.arena_start_action("arena_veu_curta", "s1_d02_iniciado")
 	assert_true(boot._action_buttons.has(tutorial_action))
 	assert_true(boot._action_buttons.has(early_action))
+	assert_true(boot._action_buttons.has(early_apprentice_action))
 	assert_true(boot._action_buttons.has(locked_action))
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL))
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_EARLY))
-	assert_not_null(_find_button_by_text(boot._content_body, "Tutorial: Cinzas Do Refugio - 1 duelo | D0"))
-	assert_not_null(_find_button_by_text(boot._content_body, "Arena Curta Das Cinzas - 3 duelos | D1"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Tutorial: Cinzas Do Refugio - 1 duelo | s1_d00_intro | Lv 1-3"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Arena Curta Das Cinzas - 3 duelos | s1_d01_aprendiz | Lv 5-6"))
 	var locked_button := boot._action_buttons[locked_action] as Button
 	assert_not_null(locked_button)
 	assert_true(locked_button.disabled)

@@ -1,0 +1,15 @@
+{
+  "schema_version": "calibration_recommendations_v1",
+  "target_power_model": "arena_tuning_power_v1",
+  "season_level_cap": 40,
+  "tier_count": 27,
+  "status": "REVIEW",
+  "review_milestones": [],
+  "high_repeat_rewards": [],
+  "recommendations": [
+    "Season 1 milestone targets are inside current lab ranges for the free 100% profile.",
+    "Repeat reward factors are capped for initial Arena PVE tuning.",
+    "Use Battle Lab tier clear-rate output before changing formulas, weapons or spells.",
+    "Treat arena_tuning_power_v1 as a lab metric; do not mutate players.power."
+  ]
+}

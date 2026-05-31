@@ -40,6 +40,7 @@ const CONTENT_SOURCES: SourceSpec[] = [
   "pve_arenas.json",
   "pve_enemies.json",
   "rewards.json",
+  "season_1_progression_targets.json",
   "spells.json",
   "weapons.json",
 ].map((fileName) => ({

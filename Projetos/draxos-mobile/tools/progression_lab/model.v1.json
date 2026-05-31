@@ -35,7 +35,7 @@
       "average_duels_per_attempt": 2.1,
       "clear_rate": 0.45,
       "repeat_reward_factor": 0.25,
-      "first_clear_completion": 0.5,
+      "first_clear_completion": 6,
       "checkins_per_hour": 0.8,
       "premium_pass": false,
       "second_construction_queue": false,
@@ -55,7 +55,7 @@
       "average_duels_per_attempt": 2.6,
       "clear_rate": 0.6,
       "repeat_reward_factor": 0.35,
-      "first_clear_completion": 1,
+      "first_clear_completion": 10,
       "checkins_per_hour": 1,
       "premium_pass": false,
       "second_construction_queue": false,
@@ -75,7 +75,7 @@
       "average_duels_per_attempt": 2.7,
       "clear_rate": 0.62,
       "repeat_reward_factor": 0.35,
-      "first_clear_completion": 1,
+      "first_clear_completion": 10,
       "checkins_per_hour": 1,
       "premium_pass": true,
       "second_construction_queue": true,
@@ -95,7 +95,7 @@
       "average_duels_per_attempt": 2.9,
       "clear_rate": 0.68,
       "repeat_reward_factor": 0.32,
-      "first_clear_completion": 1.4,
+      "first_clear_completion": 14,
       "checkins_per_hour": 1.1,
       "premium_pass": true,
       "second_construction_queue": true,
@@ -115,7 +115,7 @@
       "average_duels_per_attempt": 3.2,
       "clear_rate": 0.75,
       "repeat_reward_factor": 0.25,
-      "first_clear_completion": 2,
+      "first_clear_completion": 18,
       "checkins_per_hour": 1.5,
       "premium_pass": true,
       "second_construction_queue": true,
@@ -136,7 +136,7 @@
       "diamante": 0
     },
     "arena_duel": {
-      "xp": 8,
+      "xp": 14,
       "almas": 0.6,
       "energia": 0.4,
       "sangue": 0.1,
@@ -145,7 +145,7 @@
       "diamante": 0
     },
     "arena_completion": {
-      "xp": 70,
+      "xp": 220,
       "almas": 5,
       "energia": 3,
       "sangue": 1,
@@ -154,7 +154,7 @@
       "diamante": 0
     },
     "arena_first_clear": {
-      "xp": 35,
+      "xp": 350,
       "almas": 2,
       "energia": 1,
       "sangue": 0.5,
@@ -163,7 +163,7 @@
       "diamante": 0
     },
     "routine_reward_hour_full": {
-      "xp": 120,
+      "xp": 420,
       "almas": 9,
       "energia": 8,
       "sangue": 2.8,
@@ -172,7 +172,7 @@
       "diamante": 0
     },
     "free_pass_hour_full": {
-      "xp": 35,
+      "xp": 130,
       "almas": 3.5,
       "energia": 3.5,
       "sangue": 1.2,

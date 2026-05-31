@@ -747,7 +747,10 @@ func _execute_action(action_id: String) -> void:
 	elif AppShellActionContractScript.is_disable_spell_behavior(action):
 		await _disable_spell_behavior(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_arena_start(action):
-		await _start_arena_by_id(AppShellActionContractScript.action_value(action))
+		await _start_arena_by_id(
+			AppShellActionContractScript.action_value(action),
+			AppShellActionContractScript.action_value_at(action, 2)
+		)
 	elif AppShellActionContractScript.is_arena_choose_buff(action):
 		await _choose_arena_buff(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_battle_replay(action):
@@ -982,8 +985,8 @@ func _start_arena_tutorial() -> void:
 func _start_arena_early() -> void:
 	await _arena_lifecycle_flow.start_early(self)
 
-func _start_arena_by_id(arena_id: String) -> void:
-	await _arena_lifecycle_flow.start_arena(self, arena_id)
+func _start_arena_by_id(arena_id: String, difficulty_id: String = "") -> void:
+	await _arena_lifecycle_flow.start_arena(self, arena_id, difficulty_id)
 
 func _lock_arena_loadout() -> void:
 	_arena_lifecycle_flow.lock_loadout(self)

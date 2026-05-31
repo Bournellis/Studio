@@ -138,12 +138,19 @@ Deno.test("battle lab can generate a minimal summary", () => {
   assert(result.checks.length > 0, "summary should include checks");
   assertEquals(
     result.arena_sequences.length,
-    5,
-    "Arena PVE sequence outputs should exist",
+    27,
+    "Arena PVE tier outputs should cover the Season 1 matrix",
   );
   assert(
     result.arena_sequences.every((row) => row.hp_reset_per_duel),
     "Arena PVE lab should model HP reset per duel",
+  );
+  assert(
+    result.arena_sequences.every((row) =>
+      row.difficulty_id.startsWith("s1_") &&
+      row.enemy_sequence.split("|").length === row.duel_count
+    ),
+    "Arena PVE tiers should include difficulty IDs and enemy sequences",
   );
   assertArenaClearRate(result, 1, 80);
   assertArenaClearRate(result, 3, 35);

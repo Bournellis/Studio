@@ -59,12 +59,12 @@ func open_arena(host: Node) -> void:
 	host.call("_set_busy", false, "Arena PVE carregada.")
 
 func start_tutorial(host: Node) -> void:
-	await _start_attempt(host, TUTORIAL_ARENA_ID, TUTORIAL_DIFFICULTY_TIER)
+	await _start_attempt(host, TUTORIAL_ARENA_ID, "s1_d00_intro", TUTORIAL_DIFFICULTY_TIER)
 
 func start_early(host: Node) -> void:
-	await _start_attempt(host, EARLY_ARENA_ID, EARLY_DIFFICULTY_TIER)
+	await _start_attempt(host, EARLY_ARENA_ID, "s1_d00_intro", EARLY_DIFFICULTY_TIER)
 
-func start_arena(host: Node, arena_id: String) -> void:
+func start_arena(host: Node, arena_id: String, difficulty_id: String = "") -> void:
 	var normalized_id := arena_id.strip_edges()
 	if normalized_id == "":
 		_set_error_text(host, "Arena invalida.")
@@ -76,12 +76,21 @@ func start_arena(host: Node, arena_id: String) -> void:
 	if not _arena_is_unlocked(arena):
 		_set_error_text(host, "Arena bloqueada: %s" % _arena_locked_reason(arena))
 		return
-	var difficulty_tier := int(arena.get("difficulty_tier", arena.get("difficulty_rank", 0)))
+	var difficulty := SessionStore.arena_difficulty_by_id(normalized_id, difficulty_id)
+	if difficulty.is_empty():
+		_set_error_text(host, "Dificuldade de Arena nao encontrada.")
+		return
+	if not _arena_is_unlocked(difficulty):
+		_set_error_text(host, "Dificuldade bloqueada: %s" % _arena_locked_reason(difficulty))
+		return
+	var normalized_difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+	var difficulty_tier := int(difficulty.get("difficulty_tier", difficulty.get("difficulty_rank", arena.get("difficulty_tier", 0))))
 	await _start_attempt(
 		host,
 		normalized_id,
+		normalized_difficulty_id,
 		difficulty_tier,
-		AppShellActionContractScript.arena_start_action(normalized_id)
+		AppShellActionContractScript.arena_start_action(normalized_id, normalized_difficulty_id)
 	)
 
 func lock_loadout(host: Node) -> void:
@@ -225,7 +234,7 @@ func play_arena_replay(host: Node, battle_log: Dictionary, rewards: Dictionary) 
 	host.call("_set_busy", false, "Duelo da Arena concluido.")
 	host.call("_sync_buttons")
 
-func _start_attempt(host: Node, arena_id: String, difficulty_tier: int, action_id: String = "") -> void:
+func _start_attempt(host: Node, arena_id: String, difficulty_id: String, difficulty_tier: int, action_id: String = "") -> void:
 	if not bool(host.call("_require_account", "Entre antes de iniciar a Arena PVE.")):
 		return
 	host.call("_set_busy", true, "Iniciando Arena PVE...")
@@ -236,17 +245,18 @@ func _start_attempt(host: Node, arena_id: String, difficulty_tier: int, action_i
 		"arena/pve/start",
 		"arena:%s" % SessionStore.active_save_type,
 		start_action_id,
-		{"arena_id": arena_id, "difficulty_tier": difficulty_tier}
+		{"arena_id": arena_id, "difficulty_id": difficulty_id, "difficulty_tier": difficulty_tier}
 	)
 	var result: Dictionary = await SupabaseClient.start_arena_attempt(
 		str(mutation.get("request_id", "")),
 		arena_id,
+		difficulty_id,
 		difficulty_tier,
 		SessionStore.access_token,
 		str(mutation.get("request_hash", ""))
 	)
 	if not bool(result.get("ok", false)) and _dev_fixtures_enabled():
-		result = _fixture_attempt_result(_fixture_start_attempt(arena_id, difficulty_tier))
+		result = _fixture_attempt_result(_fixture_start_attempt(arena_id, difficulty_id, difficulty_tier))
 	await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_LOADOUT, "Arena iniciada.")
 
 func _complete_arena_mutation(host: Node, mutation: Dictionary, result: Dictionary, route_after_success: String, success_text: String) -> bool:
@@ -292,11 +302,12 @@ func _base_arena_state() -> Dictionary:
 		"summary": {},
 	}
 
-func _fixture_start_attempt(arena_id: String, difficulty_tier: int) -> Dictionary:
+func _fixture_start_attempt(arena_id: String, difficulty_id: String, difficulty_tier: int) -> Dictionary:
 	var duels_total := 1 if arena_id == TUTORIAL_ARENA_ID else 3
 	return {
 		"attempt_id": "dev-%s-%d" % [arena_id, difficulty_tier],
 		"arena_id": arena_id,
+		"difficulty_id": difficulty_id,
 		"difficulty_tier": difficulty_tier,
 		"current_step_index": 0,
 		"duel_index": 0,

@@ -1,7 +1,7 @@
 const MIGRATION_PATH =
-  "supabase/migrations/202605310002_arena_consistency_pass.sql";
+  "supabase/migrations/202605310003_s1_arena_calibration_runtime.sql";
 const SERVER_MIRROR_PATH =
-  "server/schema/migrations/202605310002_arena_consistency_pass.sql";
+  "server/schema/migrations/202605310003_s1_arena_calibration_runtime.sql";
 const SERVER_ARENA_FUNCTION = "server/functions/arena/index.ts";
 const SUPABASE_ARENA_FUNCTION = "supabase/functions/arena/index.ts";
 
@@ -43,10 +43,64 @@ Deno.test("arena duel RPC consumes live player potions idempotently", async () =
       "quantity = current_quantity - consumable_quantity",
       "insert into public.item_transactions",
       "'arena_pve_v1'",
+      "completed_tier_key := attempt_row.arena_id || ':' || attempt_row.difficulty_id",
+      "insert into public.arena_first_clears",
+      "array['completed_tiers', completed_tier_key]",
+      "array['completed_arenas', attempt_row.arena_id]",
       "public.complete_idempotency",
     ]
   ) {
     assertIncludes(duelRpc, required, `duel RPC should include ${required}`);
+  }
+});
+
+Deno.test("arena runtime records first clears by arena difficulty tier", async () => {
+  const migration = await readProjectText(MIGRATION_PATH);
+
+  for (
+    const required of [
+      "create table if not exists public.arena_first_clears",
+      "primary key (game_save_id, arena_id, difficulty_id)",
+      "alter table public.arena_first_clears enable row level security",
+      "completed_tier_key := attempt_row.arena_id || ':' || attempt_row.difficulty_id",
+      "insert into public.arena_first_clears",
+      "array['completed_tiers', completed_tier_key]",
+      "array['completed_arenas', attempt_row.arena_id]",
+      "'first_clear_inserted', first_clear_inserted",
+    ]
+  ) {
+    assertIncludes(migration, required, `runtime migration should include ${required}`);
+  }
+});
+
+Deno.test("arena runtime uses generated Season 1 catalog and tier difficulty ids", async () => {
+  const edgeFunction = await readProjectText(SERVER_ARENA_FUNCTION);
+
+  for (
+    const required of [
+      "../_shared/pve_arena_catalog.ts",
+      "arenaDefinitions()",
+      "arenaTierById",
+      "arenaRewardProfile",
+      "pveEnemyDefinition",
+      "arenaTierUnlockState",
+      "difficulty_id: tier.difficulty_id",
+      "reward_profile_id",
+      "duel_power_target",
+    ]
+  ) {
+    assertIncludes(edgeFunction, required, `arena edge function should include ${required}`);
+  }
+
+  for (
+    const obsolete of [
+      "const ARENA_DEFINITIONS",
+      "const BUFF_POOL",
+      "const PVE_ENEMY_SOURCE_BOTS",
+      "const ARENA_REWARD_PROFILES",
+    ]
+  ) {
+    assertNotIncludes(edgeFunction, obsolete, `arena edge function should not keep ${obsolete}`);
   }
 });
 

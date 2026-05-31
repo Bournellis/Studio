@@ -225,8 +225,12 @@ static func enable_spell_behavior_action(spell_id: String) -> String:
 static func disable_spell_behavior_action(spell_id: String) -> String:
 	return "%s%s" % [PREFIX_DISABLE_SPELL_BEHAVIOR, spell_id.strip_edges()]
 
-static func arena_start_action(arena_id: String) -> String:
-	return "%s%s" % [PREFIX_ARENA_START, arena_id.strip_edges()]
+static func arena_start_action(arena_id: String, difficulty_id: String = "") -> String:
+	var normalized_arena := arena_id.strip_edges()
+	var normalized_difficulty := difficulty_id.strip_edges()
+	if normalized_difficulty == "":
+		return "%s%s" % [PREFIX_ARENA_START, normalized_arena]
+	return "%s%s:%s" % [PREFIX_ARENA_START, normalized_arena, normalized_difficulty]
 
 static func battle_replay_action(battle_id: String) -> String:
 	return "%s%s" % [PREFIX_BATTLE_REPLAY, battle_id.strip_edges()]

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "collection": "season_1_progression_targets",
+  "season_id": "season_001",
+  "status": "CALIBRAVEL_ALPHA",
+  "level_cap": 40,
+  "xp_formula": {
+    "id": "foundation_cubic_v1",
+    "description": "Cumulative XP required for level L: 3 * (L^3 - 6 * L^2 + 17 * L - 12). Level 1 starts at 0 XP.",
+    "expression": "3 * (level^3 - 6 * level^2 + 17 * level - 12)"
+  },
+  "target_power_model": "arena_tuning_power_v1",
+  "rules": {
+    "does_not_change_players_power": true,
+    "does_not_change_calculate_power": true,
+    "arena_tuning_power_is_lab_metric_only": true
+  },
+  "milestones": [
+    {"id": "tutorial_clear", "label": "Tutorial clear", "target_level_min": 2, "target_level_max": 2, "expected_elapsed_minutes": 2, "notes": "Tutorial rewards are intentionally generous to leave level 1 immediately."},
+    {"id": "first_three_duel_clear", "label": "Primeira arena de 3 duelos", "target_level_min": 3, "target_level_max": 4, "expected_elapsed_minutes": 8, "notes": "Includes early tutorial extras and first clear bonus."},
+    {"id": "first_30_minutes", "label": "30 minutos", "target_level_min": 5, "target_level_max": 6, "expected_elapsed_minutes": 30, "notes": "Fast first-session loop with repeated short arena attempts and base upgrades."},
+    {"id": "first_2_hours", "label": "2 horas", "target_level_min": 7, "target_level_max": 10, "expected_elapsed_minutes": 120, "notes": "Opening spell cadence and first pressure checks."},
+    {"id": "first_5_hours", "label": "5 horas", "target_level_min": 10, "target_level_max": 14, "expected_elapsed_minutes": 300, "notes": "Doutrina should become relevant without forcing long arenas."},
+    {"id": "first_10_hours", "label": "10 horas", "target_level_min": 16, "target_level_max": 22, "expected_elapsed_minutes": 600, "notes": "Familiar and base-building cadence begin to matter."},
+    {"id": "first_20_hours", "label": "20 horas", "target_level_min": 26, "target_level_max": 34, "expected_elapsed_minutes": 1200, "notes": "Late Season 1 aspirational tier access without requiring cap."},
+    {"id": "season_1_cap", "label": "Cap Season 1", "target_level_min": 40, "target_level_max": 40, "expected_elapsed_minutes": 2400, "notes": "Cap 40 is aspirational for full Season 1, not a first-week requirement."}
+  ],
+  "arena_flow_targets": {
+    "initial_extra_rewards_from_tutorial": true,
+    "tutorial_clear_rate_floor_percent": 80,
+    "three_duel_clear_rate_floor_percent": 35,
+    "four_duel_clear_rate_floor_percent": 20,
+    "five_six_duel_clear_rate_floor_percent": 12,
+    "repeat_reward_factor_default": 0.3,
+    "no_combat_cooldown": true
+  }
+}

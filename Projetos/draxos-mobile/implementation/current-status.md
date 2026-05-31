@@ -4,17 +4,18 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Season 1 Arena Tuning Definitions`
-- Active stage status: `LOCAL_DATA_CONTRACT_IMPLEMENTED`
+- Active stage: `Season 1 Arena Calibration`
+- Active stage status: `LOCAL_PACKAGE_READY`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published remote package: `Remote Lab Runner`
-- Latest implemented package: `Season 1 Arena Tuning Definitions` on branch
-  `codex/draxos-mobile/season1-arena-tuning-definitions`.
-- Active follow-up: wire Season 1 arena difficulty definitions into backend/labs
-  and run a full Arena PVE tuning pass before changing live numeric balance.
+- Latest implemented package: `Track 20 - Season 1 Arena Calibration` on branch
+  `codex/draxos-mobile/s1-arena-calibration-integration`.
+- Active follow-up: run human playtest from the calibrated local Internal Alpha
+  package across tutorial, 3-duel, difficulty selection, rewards and repeat flow
+  before fine tuning; remote publication still requires explicit approval.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -48,13 +49,13 @@ hotfix: Web Battle Lab and Progression Lab call Supabase Edge `lab-runner` with
 the same email/password Internal Alpha account gate used by the game, without
 exposing service role to the client or mutating economy/ranking/progress.
 
-Season 1 Arena Tuning Definitions is the current local follow-up on top of the
-published Remote Lab Runner package. It adds `pve_arena_difficulties` as a
-ruleset source for S1 arena tiers: `arena_id`, `difficulty_id`,
-recommended level/power, enemy sequence, final enemy power, reward profile and
-clear-rate target. `pve_arenas` now points to that catalog while preserving the
-published Track 19 runtime defaults until a backend/lab consumption package
-explicitly adopts the tiers.
+Track 20 - Season 1 Arena Calibration is the current local follow-up on top of
+the published Remote Lab Runner package. It promotes `pve_arena_difficulties`
+from data contract to operational source for labs, generated Edge catalog,
+backend runtime and client difficulty selection. The package keeps global combat,
+XP formula, `players.power`, weapons, spells, passives, familiars, potions and
+assets untouched; Arena tuning power remains lab/runtime metadata for PVE enemy
+scaling only.
 
 Current product reading: this is a strong prototype base for refinement. The
 current product direction is Arena PVE initial, documented in
@@ -254,6 +255,80 @@ Published Track 19 Internal Alpha artifacts:
 
 Next after Track 19: playtest the Arena PVE tutorial and 3-duel arena, confirm
 the potion and summary behavior manually, then choose the focused tuning pass.
+
+## Track 20 - Season 1 Arena Calibration
+
+Track 20 is implemented locally on
+`codex/draxos-mobile/s1-arena-calibration-integration` as the first playable
+Season 1 Arena calibration package.
+
+Implemented in Track 20:
+
+- `pve_arena_difficulties.json` is now the source of truth for 27 Season 1
+  tiers across 1/3/4/5/6 duel arenas, with `arena_id`, `difficulty_id`,
+  recommended level/power, enemy sequence, final enemy power, reward profile
+  and clear-rate target.
+- `season_1_progression_targets.json` records the 40-level Season 1 XP curve,
+  milestone windows and the rule that `arena_tuning_power_v1` does not change
+  `players.power` or global `calculatePower`.
+- `tools/generate_pve_arena_catalog.ts` generates mirrored runtime catalog
+  helpers for `server/functions` and `supabase/functions`.
+- Battle Lab now simulates full Arena PVE tier sequences from data, with HP
+  reset per duel, accumulated temporary buffs and PASS/REVIEW/CRITICAL clear
+  rate status by tier.
+- Progression Lab now models Season 1 milestones, arena attempts, repeat
+  factors, base-building pressure and potion pressure.
+- Backend `arena/pve/state` and `arena/pve/start` are data-driven by
+  `arena_id + difficulty_id`; completion rewards and repeat detection use
+  `arena_id:difficulty_id` first-clear metadata.
+- Client Arena selection renders server-provided difficulties as
+  `arena_start:<arena_id>:<difficulty_id>` actions while preserving the dev
+  fallback when remote Arena state is missing.
+
+Calibration evidence:
+
+- Battle Lab archived baseline:
+  `docs/battle-lab/runs/2026-05-31_s1_arena_baseline_v01`.
+- Progression Lab archived baseline:
+  `docs/progression-lab/runs/2026-05-31_s1_arena_baseline_v01`.
+- Tier summary: all 27 Arena S1 tiers are `PASS`; no `CRITICAL` tiers remain in
+  `battle_lab_arena_tier_summary.json`.
+- Progression milestones at 2h, 5h, 10h and 20h are inside target bands in
+  `season_1_level_curve.csv`; remaining Progression Lab `REVIEW` items are
+  non-blocking resource/model pressure notes for fine tuning.
+
+Local validation and packaging completed:
+
+- `git diff --check`: passed.
+- Deno function check passed for `server/functions` and `supabase/functions`.
+- Deno data/schema tests passed for Arena difficulties, generated catalog,
+  foundation ruleset and Arena consistency.
+- Deno Battle Lab and Progression Lab tests passed.
+- Godot `tools/validate.gd`: passed (`138/138`, `2368` asserts).
+- GUT client: passed (`138/138`, `2368` asserts).
+- `tools/smoke_responsive_layout.gd`: passed.
+- `tools/validate_foundation.ps1 -Profile Quick`: passed.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passed using
+  the ignored local Internal Alpha env file; Android export mode:
+  `debug_fallback`.
+- `tools/publish_internal_alpha.ps1 -Mode Plan`: passed.
+- `tools/publish_internal_alpha.ps1 -Mode Package`: passed and produced the
+  local package at `build/internal-alpha/publish`.
+
+Track 20 local package artifacts:
+
+- Android APK: `31762404` bytes,
+  SHA256 `6c84aea08f9731d6449c9aca8186695020161a4fd688f0f0a59c24a952b1286d`.
+- PC Windows ZIP: `40221978` bytes,
+  SHA256 `aab5adad9064f869b01ffe92c8d7244a0ec36be7253839d09ef1765364050992`.
+- Web Index: `5442` bytes,
+  SHA256 `63bfb9aa4f79882413ff0b462f6420630cfedcdca825ba41b44ff51d65f6caff`.
+- Remote upload/deploy was not executed for Track 20; remote mutation still
+  requires explicit approval and `-ConfirmRemoteMutation`.
+
+Next after Track 20: run a human playtest focused on tutorial, multiple
+difficulties of the 3-duel arena, locked loadout, buff choice, potion
+consumption, summary ack and repeat rewards before tuning numbers finer.
 
 ## Lab Web Export Guard Hotfix
 

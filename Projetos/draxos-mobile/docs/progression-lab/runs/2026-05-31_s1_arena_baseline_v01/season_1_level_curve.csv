@@ -1,0 +1,9 @@
+milestone_id,label,expected_elapsed_minutes,target_level_min,target_level_max,xp_for_min_level,xp_for_max_level,nearest_lab_milestone,free_100_observed_level,free_100_observed_xp,status
+tutorial_clear,Tutorial clear,2,2,2,18,18,,,,PASS
+first_three_duel_clear,Primeira arena de 3 duelos,8,3,4,36,72,,,,PASS
+first_30_minutes,30 minutos,30,5,6,144,270,,,,PASS
+first_2_hours,2 horas,120,7,10,468,1674,2h,10,1971,PASS
+first_5_hours,5 horas,300,10,14,1674,5382,5h,13,4927,PASS
+first_10_hours,10 horas,600,16,22,8460,24318,10h,17,11993,PASS
+first_20_hours,20 horas,1200,26,34,41850,98802,20h,26,43659,PASS
+season_1_cap,Cap Season 1,2400,40,40,165204,165204,,,,PASS

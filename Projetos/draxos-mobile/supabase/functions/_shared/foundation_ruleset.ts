@@ -5,7 +5,7 @@ export const FOUNDATION_RULESET = {
   "ruleset_version": 1,
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
   "primary_product_mode": "PVE_ARENA_INITIAL",
-  "content_hash": "bad44d18be6ee170e698fc933929ed58bf4fb6932261e1b19bd9f8156e11638e",
+  "content_hash": "1cb11637f9346e226ca1db7333486b3718a2c38b07e49b1de00ffa32d134e074",
   "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "runtime": {
     "mode": "FIRST_SLICE_SIM",
@@ -24,8 +24,8 @@ export const FOUNDATION_RULESET = {
     {
       "path": "data/definitions/arena_rewards.json",
       "kind": "definition_json",
-      "sha256": "3e0e101e74865c290f157e5c106e9b57dd1e2ff44c49856eef82757d595425c3",
-      "canonical_bytes": 3804
+      "sha256": "30d61b1e6368370cabc3896698c6d1017eba2f9380634f9192b203b026659631",
+      "canonical_bytes": 21847
     },
     {
       "path": "data/definitions/base_structures.json",
@@ -78,8 +78,8 @@ export const FOUNDATION_RULESET = {
     {
       "path": "data/definitions/pve_arena_difficulties.json",
       "kind": "definition_json",
-      "sha256": "214c5444c7ed8b59845919b9e76140b198a5202e30558180c4428ea7ef4113b2",
-      "canonical_bytes": 26850
+      "sha256": "65a95492ba44cc1196d4a197adde9aa050db74f1c6a47a72dcfa03f24643603b",
+      "canonical_bytes": 26895
     },
     {
       "path": "data/definitions/pve_arenas.json",
@@ -98,6 +98,12 @@ export const FOUNDATION_RULESET = {
       "kind": "definition_json",
       "sha256": "310acb38bea00a24cf886c30f44d26ab5cd13c078a024a7c59756f91794380a0",
       "canonical_bytes": 2144
+    },
+    {
+      "path": "data/definitions/season_1_progression_targets.json",
+      "kind": "definition_json",
+      "sha256": "ae2445c315ef9fd1844e5eb6c0eed9d97a71e59e1b8fcea24f617224a4df7c67",
+      "canonical_bytes": 2379
     },
     {
       "path": "data/definitions/spells.json",
@@ -126,8 +132,8 @@ export const FOUNDATION_RULESET = {
     {
       "path": "tools/progression_lab/model.v1.json",
       "kind": "tool_model",
-      "sha256": "640ad3df11f3b82f91e881e9b38047a730f5c1cc45a277477fd180016ce71cea",
-      "canonical_bytes": 5380
+      "sha256": "9a2ebc9a5dfd1636f6c6ee13863bc87c8188a263135b718b40b15eadc001664a",
+      "canonical_bytes": 5384
     },
     {
       "path": "server/functions/_shared/battle_combatants.ts",
@@ -155,10 +161,10 @@ export const FOUNDATION_RULESET = {
     }
   ],
   "counts": {
-    "definitions": 16,
+    "definitions": 17,
     "tool_models": 3,
     "battle_simulators": 4,
-    "total_sources": 23
+    "total_sources": 24
   }
 } as const;
 

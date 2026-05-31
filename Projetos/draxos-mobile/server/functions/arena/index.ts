@@ -14,6 +14,19 @@ import {
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
 import { simulateFirstSliceBattle } from "../_shared/battle_simulator.ts";
 import {
+  arenaBuffDefinitions,
+  arenaDefinitions,
+  arenaRewardProfile,
+  arenaTierById,
+  arenaTierUnlockState,
+  type ArenaPlayerSnapshot,
+  pveEnemyDefinition,
+  type ArenaProgressSnapshot,
+  type PveArenaDefinition,
+  type PveArenaDifficultyTier,
+  type PveArenaRewardProfile,
+} from "../_shared/pve_arena_catalog.ts";
+import {
   type FoundationGameSaveRow,
   loadFoundationGameSave,
   mutationRequestHash,
@@ -21,7 +34,6 @@ import {
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 type Route = "list" | "start" | "duel/request" | "buff/choose" | "claim" | "abandon";
-type ArenaUnlock = "always" | "progression";
 type BuffStat =
   | "max_hp"
   | "ritual_power"
@@ -169,17 +181,6 @@ interface ArenaStepRow {
   completed_at: string | null;
 }
 
-interface ArenaDefinition {
-  id: string;
-  displayName: string;
-  difficultyId: string;
-  difficultyRank: number;
-  maxSteps: number;
-  enemySequence: string[];
-  unlock: ArenaUnlock;
-  requiredCompletedDifficulty: number;
-}
-
 interface BuffOption {
   id: string;
   label: string;
@@ -188,193 +189,7 @@ interface BuffOption {
   stat_modifiers: { stat: BuffStat; operation: "add_percent"; value: number }[];
 }
 
-interface ArenaRewardProfile {
-  resources: Record<string, number>;
-  firstClearMultiplier: number;
-  repeatMultiplier: number;
-  recordBonus: Record<string, number>;
-}
-
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-const ARENA_DEFINITIONS: ArenaDefinition[] = [
-  {
-    id: "arena_tutorial_cinzas",
-    displayName: "Tutorial: Cinzas Do Refugio",
-    difficultyId: "intro",
-    difficultyRank: 0,
-    maxSteps: 1,
-    enemySequence: ["pve_aprendiz_cinzas"],
-    unlock: "always",
-    requiredCompletedDifficulty: 0,
-  },
-  {
-    id: "arena_cinzas_curta",
-    displayName: "Arena Curta Das Cinzas",
-    difficultyId: "normal",
-    difficultyRank: 1,
-    maxSteps: 3,
-    enemySequence: [
-      "pve_aprendiz_cinzas",
-      "pve_guardiao_barreira",
-      "pve_sussurrador_veu",
-    ],
-    unlock: "progression",
-    requiredCompletedDifficulty: 0,
-  },
-  {
-    id: "arena_veu_curta",
-    displayName: "Arena Do Veu",
-    difficultyId: "hard",
-    difficultyRank: 2,
-    maxSteps: 4,
-    enemySequence: [
-      "pve_sussurrador_veu",
-      "pve_pressao_veneno",
-      "pve_guardiao_barreira",
-      "pve_misturador_elemental",
-    ],
-    unlock: "progression",
-    requiredCompletedDifficulty: 1,
-  },
-  {
-    id: "arena_ossos_media",
-    displayName: "Arena Da Tempestade",
-    difficultyId: "expert",
-    difficultyRank: 3,
-    maxSteps: 5,
-    enemySequence: [
-      "pve_guardiao_barreira",
-      "pve_pressao_veneno",
-      "pve_condutor_familiar",
-      "pve_misturador_elemental",
-      "pve_invocador_ossario",
-    ],
-    unlock: "progression",
-    requiredCompletedDifficulty: 2,
-  },
-  {
-    id: "arena_abismo_longa",
-    displayName: "Arena Longa Do Abismo",
-    difficultyId: "expert",
-    difficultyRank: 4,
-    maxSteps: 6,
-    enemySequence: [
-      "pve_misturador_elemental",
-      "pve_condutor_familiar",
-      "pve_invocador_ossario",
-      "pve_defensor_abissal",
-      "pve_pressao_veneno",
-      "pve_finalizador_abissal",
-    ],
-    unlock: "progression",
-    requiredCompletedDifficulty: 3,
-  },
-];
-
-const BUFF_POOL: BuffOption[] = [
-  {
-    id: "arena_buff_vitalidade_menor",
-    label: "Vitalidade Menor",
-    stat: "max_hp",
-    amount_percent: 4,
-    stat_modifiers: [{ stat: "max_hp", operation: "add_percent", value: 4 }],
-  },
-  {
-    id: "arena_buff_potencia_menor",
-    label: "Potencia Ritual Menor",
-    stat: "ritual_power",
-    amount_percent: 4,
-    stat_modifiers: [{ stat: "ritual_power", operation: "add_percent", value: 4 }],
-  },
-  {
-    id: "arena_buff_guarda_menor",
-    label: "Guarda Menor",
-    stat: "guard",
-    amount_percent: 4,
-    stat_modifiers: [{ stat: "guard", operation: "add_percent", value: 4 }],
-  },
-  {
-    id: "arena_buff_mana_menor",
-    label: "Mana Menor",
-    stat: "max_mana",
-    amount_percent: 4,
-    stat_modifiers: [{ stat: "max_mana", operation: "add_percent", value: 4 }],
-  },
-  {
-    id: "arena_buff_regen_mana_menor",
-    label: "Regen De Mana Menor",
-    stat: "mana_regen",
-    amount_percent: 5,
-    stat_modifiers: [{ stat: "mana_regen", operation: "add_percent", value: 5 }],
-  },
-  {
-    id: "arena_buff_celeridade_menor",
-    label: "Celeridade Ritual Menor",
-    stat: "ritual_haste",
-    amount_percent: 3,
-    stat_modifiers: [{ stat: "ritual_haste", operation: "add_percent", value: 3 }],
-  },
-  {
-    id: "arena_buff_vontade_menor",
-    label: "Vontade Menor",
-    stat: "will",
-    amount_percent: 4,
-    stat_modifiers: [{ stat: "will", operation: "add_percent", value: 4 }],
-  },
-  {
-    id: "arena_buff_controle_menor",
-    label: "Controle Ritual Menor",
-    stat: "ritual_control",
-    amount_percent: 4,
-    stat_modifiers: [{ stat: "ritual_control", operation: "add_percent", value: 4 }],
-  },
-];
-
-const PVE_ENEMY_SOURCE_BOTS: Record<string, string> = {
-  pve_aprendiz_cinzas: "bot_starter_instrument_01",
-  pve_guardiao_barreira: "bot_effect_trainer_01",
-  pve_sussurrador_veu: "bot_mental_controller_01",
-  pve_misturador_elemental: "bot_elemental_mixer_01",
-  pve_pressao_veneno: "bot_effect_trainer_01",
-  pve_condutor_familiar: "bot_familiar_handler_01",
-  pve_invocador_ossario: "bot_summoner_01",
-  pve_defensor_abissal: "bot_familiar_handler_01",
-  pve_finalizador_abissal: "bot_summoner_01",
-};
-
-const ARENA_REWARD_PROFILES: Record<number, ArenaRewardProfile> = {
-  1: {
-    resources: { xp: 35, almas: 2, energia: 2, ossos: 20 },
-    firstClearMultiplier: 1.5,
-    repeatMultiplier: 0.25,
-    recordBonus: { xp: 10 },
-  },
-  3: {
-    resources: { xp: 90, almas: 6, energia: 4, sangue: 1, ossos: 60 },
-    firstClearMultiplier: 1.6,
-    repeatMultiplier: 0.35,
-    recordBonus: { xp: 20, almas: 1 },
-  },
-  4: {
-    resources: { xp: 120, almas: 8, energia: 5, sangue: 2, ossos: 90 },
-    firstClearMultiplier: 1.6,
-    repeatMultiplier: 0.35,
-    recordBonus: { xp: 25, almas: 1 },
-  },
-  5: {
-    resources: { xp: 170, almas: 11, energia: 7, sangue: 3, cristais: 1, ossos: 130 },
-    firstClearMultiplier: 1.7,
-    repeatMultiplier: 0.3,
-    recordBonus: { xp: 35, almas: 2 },
-  },
-  6: {
-    resources: { xp: 230, almas: 15, energia: 10, sangue: 4, cristais: 2, ossos: 180 },
-    firstClearMultiplier: 1.8,
-    repeatMultiplier: 0.25,
-    recordBonus: { xp: 50, almas: 3 },
-  },
-};
 
 Deno.serve(async (request: Request) => {
   if (request.method === "OPTIONS") {
@@ -512,7 +327,9 @@ async function handleList(
     schema_version: "arena_list_response_v1",
     save_type: auth.saveType,
     progress: progress.value ?? defaultProgress(state.value),
-    arenas: ARENA_DEFINITIONS.map((definition) => arenaSummary(definition, progress.value)),
+    arenas: arenaDefinitions().map((definition) =>
+      arenaSummary(definition, progress.value, state.value.player)
+    ),
     attempts: attempts.value,
     ranking: { mutated: false, reason: "ARENA_PVE_DOES_NOT_RANK" },
   });
@@ -554,8 +371,8 @@ async function handleStart(
     );
   }
 
-  const definition = definitionForStart(body, progress.value);
-  if (definition === null) {
+  const tier = tierForStart(body, progress.value, state.value.player);
+  if (tier === null) {
     return errorResponse(
       "ARENA_NOT_UNLOCKED",
       "Arena PVE definition is not available for this save.",
@@ -564,6 +381,7 @@ async function handleStart(
   }
 
   const seed = `arena:${state.value.player.id}:${requestId}`;
+  const enemySequence = [...tier.enemy_sequence];
   const loadoutSnapshot = {
     schema_version: "arena_loadout_snapshot_v1",
     locked_at: new Date().toISOString(),
@@ -572,10 +390,11 @@ async function handleStart(
   const requestHash = await mutationRequestHash("arena/start", body, {
     request_id: requestId,
     save_type: auth.saveType,
-    arena_id: definition.id,
-    difficulty_id: definition.difficultyId,
-    max_steps: definition.maxSteps,
-    enemy_sequence: definition.enemySequence,
+    arena_id: tier.arena_id,
+    difficulty_id: tier.difficulty_id,
+    difficulty_rank: tier.difficulty_rank,
+    max_steps: enemySequence.length,
+    enemy_sequence: enemySequence,
     seed,
   });
   const rpc = await restRequest<unknown>(config, "rpc/arena_start_v1", {
@@ -586,11 +405,11 @@ async function handleStart(
       p_request_hash: requestHash,
       p_request_payload: {
         request_id: requestId,
-        arena_id: definition.id,
-        difficulty_id: definition.difficultyId,
-        difficulty_rank: definition.difficultyRank,
-        max_steps: definition.maxSteps,
-        enemy_sequence: definition.enemySequence,
+        arena_id: tier.arena_id,
+        difficulty_id: tier.difficulty_id,
+        difficulty_rank: tier.difficulty_rank,
+        max_steps: enemySequence.length,
+        enemy_sequence: enemySequence,
         seed,
         loadout_snapshot: loadoutSnapshot,
       },
@@ -656,9 +475,15 @@ async function handleDuelRequest(
     );
   }
 
-  const enemySequence = arrayOfStrings(attempt.value.enemy_sequence);
+  const activeTier = arenaTierById(attempt.value.arena_id, attempt.value.difficulty_id);
+  const enemySequence = activeTier === null
+    ? arrayOfStrings(attempt.value.enemy_sequence)
+    : [...activeTier.enemy_sequence];
   const enemyId = enemySequence[nextStep - 1] ?? enemySequence.at(-1) ??
     "pve_aprendiz_cinzas";
+  const duelPowerTarget = activeTier?.duel_power_targets[nextStep - 1] ??
+    activeTier?.duel_power_targets.at(-1) ??
+    null;
   const opponentBotId = sourceBotIdForEnemy(enemyId);
   const bot = await loadBot(config, opponentBotId);
   if (bot.error !== null) {
@@ -701,6 +526,8 @@ async function handleDuelRequest(
       max_steps: attempt.value.max_steps,
       enemy_id: enemyId,
       opponent_bot_id: bot.value.id,
+      tier_id: activeTier?.id ?? null,
+      duel_power_target: duelPowerTarget,
       hp_reset_per_duel: true,
       ranking_mutated: false,
     },
@@ -713,6 +540,8 @@ async function handleDuelRequest(
       attempt_id: attempt.value.id,
       step_index: nextStep,
       enemy_id: enemyId,
+      tier_id: activeTier?.id ?? null,
+      duel_power_target: duelPowerTarget,
       active_buffs: attempt.value.active_buffs,
       hp_reset_per_duel: true,
       ranking_mutated: false,
@@ -731,6 +560,8 @@ async function handleDuelRequest(
     step_index: nextStep,
     enemy_id: enemyId,
     opponent_bot_id: bot.value.id,
+    tier_id: activeTier?.id ?? null,
+    duel_power_target: duelPowerTarget,
     seed,
   });
   const rpc = await restRequest<unknown>(config, "rpc/arena_record_duel_v1", {
@@ -1183,56 +1014,165 @@ async function loadBot(
   return { value: bot, error: null };
 }
 
-function definitionForStart(
+function tierForStart(
   body: Record<string, unknown>,
   progress: ArenaProgressRow | null,
-): ArenaDefinition | null {
+  player: PlayerRow,
+): PveArenaDifficultyTier | null {
   const requestedArenaId = stringField(body, "arena_id");
-  const fallbackId = progress?.tutorial_completed === true
+  const fallbackArenaId = progress?.tutorial_completed === true
     ? "arena_cinzas_curta"
     : "arena_tutorial_cinzas";
-  const definition =
-    ARENA_DEFINITIONS.find((candidate) => candidate.id === (requestedArenaId || fallbackId)) ??
+  const arena =
+    arenaDefinitions().find((candidate) => candidate.id === (requestedArenaId || fallbackArenaId)) ??
       null;
-  if (definition === null) {
+  if (arena === null) {
     return null;
   }
-  return arenaUnlocked(definition, progress) ? definition : null;
+  const requestedDifficultyId = stringField(body, "difficulty_id");
+  const legacyDifficultyTier = integerField(body, "difficulty_tier", -1);
+  const difficultyId = requestedDifficultyId ||
+    difficultyIdForLegacyTier(arena, legacyDifficultyTier) ||
+    arena.difficulty_catalog.default_difficulty_id;
+  const tier = arenaTierById(arena.id, difficultyId);
+  if (tier === null) {
+    return null;
+  }
+  const unlock = arenaTierUnlockState(
+    progressSnapshot(progress),
+    playerSnapshot(player),
+    tier.arena_id,
+    tier.difficulty_id,
+  )[0];
+  return unlock?.unlocked === true ? tier : null;
 }
 
 function arenaSummary(
-  definition: ArenaDefinition,
+  definition: PveArenaDefinition,
   progress: ArenaProgressRow | null,
+  player: PlayerRow,
 ): Record<string, unknown> {
+  const tiers = definition.difficulty_catalog.season_1_difficulty_ids
+    .map((difficultyId) => arenaTierById(definition.id, difficultyId))
+    .filter((tier): tier is PveArenaDifficultyTier => tier !== null);
+  const unlocks = arenaTierUnlockState(
+    progressSnapshot(progress),
+    playerSnapshot(player),
+    definition.id,
+  );
+  const defaultTier = arenaTierById(
+    definition.id,
+    definition.difficulty_catalog.default_difficulty_id,
+  ) ?? tiers[0] ?? null;
+  const difficulties = tiers.map((tier) => {
+    const unlock = unlocks.find((item) => item.difficulty_id === tier.difficulty_id) ?? {
+      unlocked: false,
+      reason: "Bloqueada",
+    };
+    const reward = arenaRewardProfile(tier.reward_profile_id);
+    return {
+      id: tier.id,
+      arena_id: tier.arena_id,
+      difficulty_id: tier.difficulty_id,
+      display_name: tier.display_name,
+      difficulty_rank: tier.difficulty_rank,
+      difficulty_tier: tier.difficulty_rank,
+      recommended_level_min: tier.recommended_level_min,
+      recommended_level_max: tier.recommended_level_max,
+      recommended_power_min: tier.recommended_power_min,
+      recommended_power_max: tier.recommended_power_max,
+      recommended_level: `${tier.recommended_level_min}-${tier.recommended_level_max}`,
+      recommended_power: `${tier.recommended_power_min}-${tier.recommended_power_max}`,
+      final_enemy_power: tier.final_enemy_power,
+      duel_power_targets: tier.duel_power_targets,
+      enemy_count: tier.enemy_sequence.length,
+      max_steps: tier.enemy_sequence.length,
+      reward_profile_id: tier.reward_profile_id,
+      reward_preview: reward === null ? {} : recordOfNumbers(reward.resources),
+      clear_rate_target: {
+        min_percent: tier.clear_rate_target_min_percent,
+        max_percent: tier.clear_rate_target_max_percent,
+      },
+      unlocked: unlock.unlocked,
+      locked_reason: unlock.unlocked ? "" : unlock.reason,
+    };
+  });
+  const unlockedDifficulties = difficulties.filter((item) => item.unlocked === true);
+  const firstDifficulty = difficulties[0] ?? null;
+  const visibleTier = defaultTier ?? tiers[0] ?? null;
   return {
     id: definition.id,
-    display_name: definition.displayName,
-    difficulty_id: definition.difficultyId,
-    difficulty_rank: definition.difficultyRank,
-    max_steps: definition.maxSteps,
-    enemy_count: definition.enemySequence.length,
-    unlocked: arenaUnlocked(definition, progress),
+    display_name: definition.display_name,
+    description: definition.description,
+    duel_count: definition.duel_count,
+    default_difficulty_id: definition.difficulty_catalog.default_difficulty_id,
+    difficulty_catalog: definition.difficulty_catalog,
+    difficulty_id: visibleTier?.difficulty_id ?? "",
+    difficulty_rank: visibleTier?.difficulty_rank ?? definition.difficulty_tier,
+    difficulty_tier: visibleTier?.difficulty_rank ?? definition.difficulty_tier,
+    max_steps: visibleTier?.enemy_sequence.length ?? definition.duel_count,
+    enemy_count: visibleTier?.enemy_sequence.length ?? definition.duel_count,
+    recommended_level_min: visibleTier?.recommended_level_min ?? 1,
+    recommended_level_max: visibleTier?.recommended_level_max ?? 1,
+    recommended_power_min: visibleTier?.recommended_power_min ?? 0,
+    recommended_power_max: visibleTier?.recommended_power_max ?? 0,
+    reward_profile_id: visibleTier?.reward_profile_id ?? definition.reward_profile_id,
+    clear_rate_target: visibleTier === null
+      ? {}
+      : {
+        min_percent: visibleTier.clear_rate_target_min_percent,
+        max_percent: visibleTier.clear_rate_target_max_percent,
+      },
+    unlocked: unlockedDifficulties.length > 0,
+    locked_reason: unlockedDifficulties.length > 0 ? "" : stringValue(firstDifficulty?.locked_reason, "Bloqueada"),
+    difficulties,
     unlock_rule: definition.unlock,
-    required_completed_difficulty: definition.requiredCompletedDifficulty,
     hp_reset_per_duel: true,
     loadout_locked: true,
     ranking_mutated: false,
   };
 }
 
-function arenaUnlocked(
-  definition: ArenaDefinition,
-  progress: ArenaProgressRow | null,
-): boolean {
-  if (definition.unlock === "always") {
-    return true;
+function difficultyIdForLegacyTier(
+  arena: PveArenaDefinition,
+  legacyDifficultyTier: number,
+): string {
+  if (legacyDifficultyTier < 0) {
+    return "";
   }
-  return progress?.tutorial_completed === true &&
-    (progress?.best_completed_difficulty ?? 0) >= definition.requiredCompletedDifficulty;
+  const tier = arena.difficulty_catalog.season_1_difficulty_ids
+    .map((difficultyId) => arenaTierById(arena.id, difficultyId))
+    .filter((candidate): candidate is PveArenaDifficultyTier => candidate !== null)
+    .find((candidate) => candidate.difficulty_rank === legacyDifficultyTier);
+  return tier?.difficulty_id ?? "";
 }
 
 function sourceBotIdForEnemy(enemyId: string): string {
-  return PVE_ENEMY_SOURCE_BOTS[enemyId] ?? enemyId;
+  return pveEnemyDefinition(enemyId)?.source_bot_build_id ?? enemyId;
+}
+
+function progressSnapshot(progress: ArenaProgressRow | null): ArenaProgressSnapshot {
+  if (progress === null) {
+    return {
+      tutorial_completed: false,
+      best_completed_difficulty: 0,
+      best_completed_length: 0,
+      metadata: {},
+    };
+  }
+  return {
+    tutorial_completed: progress.tutorial_completed,
+    best_completed_difficulty: progress.best_completed_difficulty,
+    best_completed_length: progress.best_completed_length,
+    metadata: isObject(progress.metadata) ? progress.metadata : {},
+  };
+}
+
+function playerSnapshot(player: PlayerRow): ArenaPlayerSnapshot {
+  return {
+    level: numberValue(player.level, 1),
+    power: numberValue(player.power, 0),
+  };
 }
 
 function defaultProgress(state: PlayerState): ArenaProgressRow {
@@ -1353,8 +1293,45 @@ function buffOptionsForStep(
   attempt: ArenaAttemptRow,
   stepIndex: number,
 ): BuffOption[] {
-  const offset = (attempt.difficulty_rank + stepIndex - 1) % BUFF_POOL.length;
-  return [0, 1, 2].map((index) => BUFF_POOL[(offset + index) % BUFF_POOL.length]);
+  const pool = catalogBuffPool();
+  const offset = (attempt.difficulty_rank + stepIndex - 1) % pool.length;
+  return [0, 1, 2].map((index) => pool[(offset + index) % pool.length]);
+}
+
+function catalogBuffPool(): BuffOption[] {
+  return arenaBuffDefinitions().map((buff) => {
+    const statModifiers = buff.stat_modifiers.map((modifier) => ({
+      stat: buffStatValue(modifier.stat),
+      operation: "add_percent" as const,
+      value: numberValue(modifier.value, 0),
+    }));
+    const firstModifier = statModifiers[0] ?? {
+      stat: "ritual_power" as const,
+      operation: "add_percent" as const,
+      value: 0,
+    };
+    return {
+      id: buff.id,
+      label: buff.display_name,
+      stat: firstModifier.stat,
+      amount_percent: firstModifier.value,
+      stat_modifiers: statModifiers,
+    };
+  });
+}
+
+function buffStatValue(value: unknown): BuffStat {
+  const allowed: BuffStat[] = [
+    "max_hp",
+    "ritual_power",
+    "guard",
+    "max_mana",
+    "mana_regen",
+    "ritual_haste",
+    "will",
+    "ritual_control",
+  ];
+  return allowed.includes(value as BuffStat) ? value as BuffStat : "ritual_power";
 }
 
 function arenaRewardPayload(
@@ -1386,12 +1363,15 @@ function arenaCompletionReward(
   attempt: ArenaAttemptRow,
   progress: ArenaProgressRow | null,
 ): Record<string, number> {
-  const profile = ARENA_REWARD_PROFILES[attempt.max_steps] ?? ARENA_REWARD_PROFILES[3];
+  const profile = rewardProfileForAttempt(attempt);
+  if (profile === null) {
+    return {};
+  }
   const repeat = arenaRewardIsRepeat(attempt, progress);
-  const multiplier = repeat ? profile.repeatMultiplier : profile.firstClearMultiplier;
-  const delta = scaleResourceMap(profile.resources, multiplier);
+  const multiplier = repeat ? profile.repeat_multiplier : profile.first_clear_multiplier;
+  const delta = scaleResourceMap(recordOfNumbers(profile.resources), multiplier);
   if (!repeat && attempt.difficulty_rank > (progress?.best_completed_difficulty ?? 0)) {
-    return mergeResourceMaps(delta, profile.recordBonus);
+    return mergeResourceMaps(delta, recordOfNumbers(profile.record_bonus));
   }
   return delta;
 }
@@ -1400,11 +1380,35 @@ function arenaRewardIsRepeat(
   attempt: ArenaAttemptRow,
   progress: ArenaProgressRow | null,
 ): boolean {
+  if (hasCompletedTier(progress, attempt.arena_id, attempt.difficulty_id)) {
+    return true;
+  }
   if (attempt.difficulty_rank <= 0) {
     return progress?.tutorial_completed === true;
   }
   return (progress?.best_completed_difficulty ?? 0) >= attempt.difficulty_rank &&
     (progress?.best_completed_length ?? 0) >= attempt.max_steps;
+}
+
+function rewardProfileForAttempt(attempt: ArenaAttemptRow): PveArenaRewardProfile | null {
+  const tier = arenaTierById(attempt.arena_id, attempt.difficulty_id);
+  if (tier === null) {
+    return null;
+  }
+  return arenaRewardProfile(tier.reward_profile_id);
+}
+
+function hasCompletedTier(
+  progress: ArenaProgressRow | null,
+  arenaId: string,
+  difficultyId: string,
+): boolean {
+  if (progress === null || !isObject(progress.metadata)) {
+    return false;
+  }
+  const completedTiers = progress.metadata.completed_tiers;
+  const tierKey = `${arenaId}:${difficultyId}`;
+  return isObject(completedTiers) && completedTiers[tierKey] === true;
 }
 
 function scaleResourceMap(

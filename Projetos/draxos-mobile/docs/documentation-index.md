@@ -34,6 +34,8 @@
 | `docs/product-vision.md` | `VIVO` | Local long-term product canon until promoted to shared canon. |
 | `docs/pve-arena-initial-direction.md` | `VIVO` | Current early-game direction: Arena PVE first, PVP later, no combat cooldown, locked loadout, temporary stat buffs and duel-list scaling. |
 | `docs/pve-arena-v1.md` | `VIVO` | Implemented local Track 18 Arena PVE contract for arenas, enemies, temporary buffs, rewards, endpoints, schema and lab modeling. |
+| `data/definitions/pve_arena_difficulties.json` | `CONTRATO` | Track 20 Season 1 Arena tier matrix: arena/difficulty ids, recommended level/power, enemy sequence, reward profile and clear-rate target. |
+| `data/definitions/season_1_progression_targets.json` | `CONTRATO` | Track 20 Season 1 XP/milestone target contract; declares `arena_tuning_power_v1` as PVE tuning metadata only. |
 | `docs/foundation-app-v0-audit.md` | `HISTORICO` | Closed audit compass: real foundation, current mock, live-product gaps and post-login loop focus preserved as context. |
 | `docs/foundation-expansion-readiness.md` | `RUNBOOK` | Active expansion-readiness gate: lanes, ownership, contract-first requirements, account/save, ruleset and admin checks. |
 | `docs/foundation-loop-audit.md` | `VIVO` | Executed audit of the historical post-login app-shell loop ergonomics; records Foundation Loop UX Pass 01 as an accepted Internal Alpha UX baseline before Arena PVE became the product loop. |
@@ -67,8 +69,10 @@
 | `docs/architecture.md` | `CONTRATO` | Technical architecture and backend boundaries. |
 | `server/schema/` | `CONTRATO` | Server schema mirror. |
 | `server/functions/` | `CONTRATO` | Edge Function source mirror. |
+| `server/functions/_shared/pve_arena_catalog.ts` | `CONTRATO` | Generated Arena PVE runtime catalog mirror; regenerate from data, do not edit by hand. |
 | `supabase/migrations/` | `CONTRATO` | Supabase migration mirror. |
 | `supabase/functions/` | `CONTRATO` | Supabase function mirror. |
+| `supabase/functions/_shared/pve_arena_catalog.ts` | `CONTRATO` | Generated Supabase Edge catalog mirror; must match the server mirror. |
 | `modes/boot/surfaces/README.md` | `CONTRATO` | Client presenter/surface boundary. |
 
 ## Runbooks
@@ -107,6 +111,7 @@
 | `implementation/tracks/track-16-behavior-crafting/` | `HISTORICO` | Source track for behavior/crafting; use `docs/behavior-potion-crafting-v1.md` for current state. |
 | `implementation/tracks/track-17-foundation-expansion-readiness/` | `VIVO` | Delivered foundation package for future parallel expansion, Foundation Closeout, Foundation Final Polish and production readiness. |
 | `implementation/tracks/track-18-pve-arena-initial/` | `VIVO` | Active implementation package for Arena PVE initial: contracts, backend, client shell, labs and validation. |
+| `implementation/tracks/track-20-season-1-arena-calibration/` | `VIVO` | Current local calibration package: S1 Arena tier catalog, labs, backend/client runtime promotion and local Internal Alpha package. |
 
 ## Design Archive
 
@@ -121,7 +126,7 @@
 - A live doc must not tell agents to start from Track 04, Track 08, Track 10, Track 14, Track 15 or Track 16 as the current stage.
 - A live doc must treat `implementation/current-status.md` as the active stage/status source after the user chooses the next package.
 - A live doc must treat `docs/pve-arena-initial-direction.md` as the current product direction after Foundation Final Polish: Arena PVE initial first, PVP later.
-- A live doc may treat `docs/pve-arena-v1.md` as the current implemented/published contract package for Arena PVE, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough. Track 19 Arena Consistency Pass is the latest product baseline, with Remote Lab Runner as the latest published Internal Alpha package before tuning.
+- A live doc may treat `docs/pve-arena-v1.md` as the current implemented/published contract package for Arena PVE, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough. Track 20 Season 1 Arena Calibration is the current local tuning/runtime package; Remote Lab Runner remains the latest published remote Internal Alpha package until an explicit remote publication is approved.
 - A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation beyond what the Arena PVE initial package explicitly needs.
 - Foundation Audit must preserve the post-login loop as app shell, but the first playable product loop is now Refugio -> Arena PVE -> locked loadout -> duel list -> buffs/behavior between duels -> rewards -> upgrades.
 - Foundation Expansion Readiness/Foundation Closeout/Foundation Final Polish is now the delivered pre-expansion gate before Arena PVE implementation/tuning; base builder, PVP, expanded social or a real minigame are later packages unless explicitly selected.

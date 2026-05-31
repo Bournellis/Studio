@@ -52,9 +52,9 @@ func render_summary(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
 	var attempt := SessionStore.active_arena_attempt()
 	var summary := _as_dictionary(arena.get("summary", attempt.get("summary", {})))
-	_call_host(host, "_add_body_text", ["Resumo da tentativa. Recompensas, progresso e limites seguem o estado retornado pela Arena PVE."])
+	_call_host(host, "_add_body_text", ["Resumo da tentativa. A recompensa de conclusao ja foi aplicada no ultimo duelo quando houve clear; aqui o servidor apenas confirma o estado."])
 	_call_host(host, "_add_output_label", [_summary_text(attempt, summary)])
-	_call_host(host, "_add_action_button", ["Receber recompensa", AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY])
+	_call_host(host, "_add_action_button", ["Confirmar resumo", AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_replay(host: Node, overlay: Control, compact_layout: bool, battle_log: Dictionary, rewards: Dictionary) -> void:
@@ -71,19 +71,27 @@ func _render_available_arenas(host: Node, arenas: Array) -> void:
 		var arena_id := str(arena.get("id", "")).strip_edges()
 		if arena_id == "":
 			continue
-		var label := _arena_button_label(arena)
-		var action_id := AppShellActionContractScript.arena_start_action(arena_id)
-		var unlocked := _arena_is_unlocked(arena)
-		var locked_reason := _arena_locked_reason(arena)
-		if not unlocked:
-			label = "%s - %s" % [label, locked_reason]
-		lines.append("%s: %s duelos | %s | %s" % [
-			str(arena.get("display_name", arena.get("id", "Arena"))),
-			str(arena.get("duel_count", 1)),
-			"dificuldade %s" % str(arena.get("difficulty_tier", 0)),
-			"disponivel" if unlocked else "bloqueada: %s" % locked_reason,
-		])
-		_call_host(host, "_add_action_button", [label, action_id, "", not unlocked, locked_reason])
+		var difficulties := _as_array(arena.get("difficulties", []))
+		if difficulties.is_empty():
+			difficulties = [arena]
+		for difficulty_variant: Variant in difficulties:
+			var difficulty := _as_dictionary(difficulty_variant)
+			var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+			var label := _arena_button_label(arena, difficulty)
+			var action_id := AppShellActionContractScript.arena_start_action(arena_id, difficulty_id)
+			var unlocked := _arena_is_unlocked(difficulty) and _arena_is_unlocked(arena)
+			var locked_reason := _arena_locked_reason(difficulty if not _arena_is_unlocked(difficulty) else arena)
+			if not unlocked:
+				label = "%s - %s" % [label, locked_reason]
+			lines.append("%s: %s duelos | %s | level %s | power %s | %s" % [
+				str(arena.get("display_name", arena.get("id", "Arena"))),
+				str(difficulty.get("max_steps", arena.get("duel_count", 1))),
+				str(difficulty.get("difficulty_id", difficulty.get("id", "default"))),
+				_level_range_text(difficulty),
+				_power_range_text(difficulty),
+				"disponivel" if unlocked else "bloqueada: %s" % locked_reason,
+			])
+			_call_host(host, "_add_action_button", [label, action_id, "", not unlocked, locked_reason])
 	_call_host(host, "_add_output_label", ["\n".join(lines)])
 
 func _render_dev_fallback_arenas(host: Node) -> void:
@@ -131,13 +139,33 @@ func _summary_text(attempt: Dictionary, summary: Dictionary) -> String:
 func _has_remote_arena_state(arena: Dictionary) -> bool:
 	return not bool(arena.get("dev_fixture", false)) and not _as_array(arena.get("arenas", [])).is_empty()
 
-func _arena_button_label(arena: Dictionary) -> String:
-	return "%s - %s duelo%s | D%s" % [
+func _arena_button_label(arena: Dictionary, difficulty: Dictionary = {}) -> String:
+	var tier := difficulty if not difficulty.is_empty() else arena
+	return "%s - %s duelo%s | %s | Lv %s" % [
 		str(arena.get("display_name", arena.get("id", "Arena"))),
-		str(arena.get("duel_count", 1)),
-		"" if int(arena.get("duel_count", 1)) == 1 else "s",
-		str(arena.get("difficulty_tier", 0)),
+		str(tier.get("max_steps", arena.get("duel_count", 1))),
+		"" if int(tier.get("max_steps", arena.get("duel_count", 1))) == 1 else "s",
+		str(tier.get("difficulty_id", "default")),
+		_level_range_text(tier),
 	]
+
+func _level_range_text(difficulty: Dictionary) -> String:
+	var min_level := int(difficulty.get("recommended_level_min", 0))
+	var max_level := int(difficulty.get("recommended_level_max", 0))
+	if min_level <= 0 and max_level <= 0:
+		return "?"
+	if min_level == max_level:
+		return str(min_level)
+	return "%d-%d" % [min_level, max_level]
+
+func _power_range_text(difficulty: Dictionary) -> String:
+	var min_power := int(difficulty.get("recommended_power_min", 0))
+	var max_power := int(difficulty.get("recommended_power_max", 0))
+	if min_power <= 0 and max_power <= 0:
+		return "?"
+	if min_power == max_power:
+		return str(min_power)
+	return "%d-%d" % [min_power, max_power]
 
 func _arena_is_unlocked(arena: Dictionary) -> bool:
 	if arena.has("unlocked"):

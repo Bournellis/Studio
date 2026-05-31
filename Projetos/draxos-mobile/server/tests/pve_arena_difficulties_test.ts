@@ -5,21 +5,40 @@ interface JsonObject {
 Deno.test("pve arena difficulties are internally consistent", async () => {
   const arenasPayload = await readJson("data/definitions/pve_arenas.json");
   const enemiesPayload = await readJson("data/definitions/pve_enemies.json");
+  const rewardsPayload = await readJson("data/definitions/arena_rewards.json");
+  const seasonTargetsPayload = await readJson(
+    "data/definitions/season_1_progression_targets.json",
+  );
   const difficultiesPayload = await readJson(
     "data/definitions/pve_arena_difficulties.json",
   );
 
   assertEq(stringField(arenasPayload, "collection"), "pve_arenas");
   assertEq(stringField(enemiesPayload, "collection"), "pve_enemies");
+  assertEq(stringField(rewardsPayload, "collection"), "arena_rewards");
+  assertEq(
+    stringField(seasonTargetsPayload, "collection"),
+    "season_1_progression_targets",
+  );
   assertEq(
     stringField(difficultiesPayload, "collection"),
     "pve_arena_difficulties",
   );
   assertEq(stringField(difficultiesPayload, "season_id"), "season_001");
   assertEq(stringField(difficultiesPayload, "status"), "CALIBRAVEL_ALPHA");
+  assertEq(
+    stringField(difficultiesPayload, "target_power_model"),
+    "arena_tuning_power_v1",
+  );
+  assertEq(numberField(seasonTargetsPayload, "level_cap"), 40);
+  assertEq(
+    stringField(seasonTargetsPayload, "target_power_model"),
+    "arena_tuning_power_v1",
+  );
 
   const arenas = objectItems(arenasPayload);
   const enemies = objectItems(enemiesPayload);
+  const rewards = objectItems(rewardsPayload);
   const ladder = arrayField(difficultiesPayload, "difficulty_ladder")
     .map((item) => assertObject(item));
   const sequences = arrayField(difficultiesPayload, "enemy_sequences")
@@ -31,7 +50,10 @@ Deno.test("pve arena difficulties are internally consistent", async () => {
   const arenaById = new Map(
     arenas.map((arena) => [stringField(arena, "id"), arena]),
   );
-  const enemyIds = new Set(enemies.map((enemy) => stringField(enemy, "id")));
+  const enemyById = new Map(
+    enemies.map((enemy) => [stringField(enemy, "id"), enemy]),
+  );
+  const rewardIds = new Set(rewards.map((reward) => stringField(reward, "id")));
   const ladderIds = new Set(ladder.map((item) => stringField(item, "id")));
   const sequenceById = new Map(
     sequences.map((sequence) => [
@@ -66,6 +88,12 @@ Deno.test("pve arena difficulties are internally consistent", async () => {
     assert(!tierKeySet.has(tierKey), `duplicate arena difficulty ${tierKey}`);
     tierKeySet.add(tierKey);
 
+    const rewardProfileId = stringField(item, "reward_profile_id");
+    assert(
+      rewardIds.has(rewardProfileId),
+      `${tierKey} references missing reward_profile_id ${rewardProfileId}`,
+    );
+
     const sequenceId = stringField(item, "enemy_sequence_id");
     const expectedSequence = sequenceById.get(sequenceId);
     assert(
@@ -80,7 +108,25 @@ Deno.test("pve arena difficulties are internally consistent", async () => {
       `enemy sequence should match ${sequenceId}`,
     );
     for (const enemyId of enemySequence) {
-      assert(enemyIds.has(enemyId), `unknown PVE enemy ${enemyId}`);
+      const enemy = enemyById.get(enemyId);
+      assert(enemy !== undefined, `unknown PVE enemy ${enemyId}`);
+      const legalUnlocks = objectField(enemy, "legal_unlocks");
+      if (booleanField(legalUnlocks, "requires_doutrina")) {
+        assert(
+          numberField(item, "recommended_level_max") >= 10,
+          `${tierKey} uses ${enemyId} before the Doutrina unlock window`,
+        );
+      }
+      if (booleanField(legalUnlocks, "requires_familiar")) {
+        assert(
+          numberField(item, "recommended_level_max") >= 15,
+          `${tierKey} uses ${enemyId} before the Familiar unlock window`,
+        );
+      }
+      assert(
+        stringField(enemy, "source_bot_build_id").length > 0,
+        `${enemyId} should map to a source bot build for the simulator`,
+      );
     }
 
     const duelCount = numberField(arena, "duel_count");
@@ -140,6 +186,13 @@ Deno.test("pve arena difficulties are internally consistent", async () => {
       );
     }
   }
+
+  const milestones = arrayField(seasonTargetsPayload, "milestones")
+    .map((item) => assertObject(item));
+  assert(
+    milestones.length >= 8,
+    "Season 1 progression targets should include the approved milestone set",
+  );
 });
 
 async function readJson(relativePath: string): Promise<JsonObject> {
@@ -196,6 +249,12 @@ function stringField(payload: JsonObject, key: string): string {
 function numberField(payload: JsonObject, key: string): number {
   const value = payload[key];
   assert(typeof value === "number", `field ${key} should be a number`);
+  return value;
+}
+
+function booleanField(payload: JsonObject, key: string): boolean {
+  const value = payload[key];
+  assert(typeof value === "boolean", `field ${key} should be a boolean`);
   return value;
 }
 

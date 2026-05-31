@@ -300,7 +300,7 @@ func fetch_arena_state(access_token: String) -> Dictionary:
 		{}
 	)
 
-func start_arena_attempt(request_id: String, arena_id: String, difficulty_tier: int, access_token: String, request_hash: String = "") -> Dictionary:
+func start_arena_attempt(request_id: String, arena_id: String, difficulty_id: String, difficulty_tier: int, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("arena/pve/start"),
 		HTTPClient.METHOD_POST,
@@ -308,6 +308,7 @@ func start_arena_attempt(request_id: String, arena_id: String, difficulty_tier: 
 		_with_request_hash("arena/pve/start", {
 			"request_id": request_id,
 			"arena_id": arena_id.strip_edges(),
+			"difficulty_id": difficulty_id.strip_edges(),
 			"difficulty_tier": maxi(0, difficulty_tier),
 		}, request_hash)
 	)

@@ -335,12 +335,56 @@ func _normalize_arena_list(arenas: Array) -> Array:
 		var arena := _as_dictionary(arena_variant).duplicate(true)
 		arena["duel_count"] = int(arena.get("duel_count", arena.get("max_steps", 1)))
 		arena["difficulty_tier"] = int(arena.get("difficulty_tier", arena.get("difficulty_rank", 0)))
+		arena["difficulties"] = _normalize_arena_difficulties(arena, _as_array(arena.get("difficulties", [])))
+		var selected_difficulty := _default_arena_difficulty(arena)
+		if not selected_difficulty.is_empty():
+			arena["difficulty_id"] = str(selected_difficulty.get("difficulty_id", arena.get("difficulty_id", ""))).strip_edges()
+			arena["difficulty_tier"] = int(selected_difficulty.get("difficulty_tier", selected_difficulty.get("difficulty_rank", arena.get("difficulty_tier", 0))))
+			arena["max_steps"] = int(selected_difficulty.get("max_steps", arena.get("max_steps", arena.get("duel_count", 1))))
+			arena["duel_count"] = int(arena.get("duel_count", arena.get("max_steps", selected_difficulty.get("max_steps", 1))))
+			if not arena.has("reward_preview"):
+				arena["reward_preview"] = _as_dictionary(selected_difficulty.get("reward_preview", {}))
+			if not arena.has("clear_rate_target"):
+				arena["clear_rate_target"] = _as_dictionary(selected_difficulty.get("clear_rate_target", {}))
 		if not arena.has("unlocked"):
 			arena["unlocked"] = bool(arena.get("enabled", true))
 		if not bool(arena.get("unlocked", true)) and str(arena.get("locked_reason", "")).strip_edges() == "":
 			arena["locked_reason"] = _arena_locked_reason(arena)
 		output.append(arena)
 	return output
+
+func _normalize_arena_difficulties(arena: Dictionary, difficulties: Array) -> Array:
+	var output: Array = []
+	if difficulties.is_empty():
+		var fallback := arena.duplicate(true)
+		fallback["difficulty_id"] = str(fallback.get("difficulty_id", fallback.get("default_difficulty_id", ""))).strip_edges()
+		fallback["difficulty_tier"] = int(fallback.get("difficulty_tier", fallback.get("difficulty_rank", 0)))
+		fallback["max_steps"] = int(fallback.get("max_steps", fallback.get("duel_count", 1)))
+		fallback["unlocked"] = bool(fallback.get("unlocked", fallback.get("enabled", true)))
+		output.append(fallback)
+		return output
+	for difficulty_variant: Variant in difficulties:
+		var difficulty := _as_dictionary(difficulty_variant).duplicate(true)
+		difficulty["difficulty_id"] = str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+		difficulty["difficulty_tier"] = int(difficulty.get("difficulty_tier", difficulty.get("difficulty_rank", 0)))
+		difficulty["max_steps"] = int(difficulty.get("max_steps", difficulty.get("enemy_count", arena.get("duel_count", 1))))
+		if not difficulty.has("unlocked"):
+			difficulty["unlocked"] = bool(arena.get("unlocked", arena.get("enabled", true)))
+		if not bool(difficulty.get("unlocked", true)) and str(difficulty.get("locked_reason", "")).strip_edges() == "":
+			difficulty["locked_reason"] = _arena_locked_reason(difficulty)
+		output.append(difficulty)
+	return output
+
+func _default_arena_difficulty(arena: Dictionary) -> Dictionary:
+	var difficulties := _as_array(arena.get("difficulties", []))
+	if difficulties.is_empty():
+		return {}
+	var default_id := str(arena.get("default_difficulty_id", "")).strip_edges()
+	for difficulty_variant: Variant in difficulties:
+		var difficulty := _as_dictionary(difficulty_variant)
+		if default_id != "" and str(difficulty.get("difficulty_id", "")).strip_edges() == default_id:
+			return difficulty.duplicate(true)
+	return _as_dictionary(difficulties[0]).duplicate(true)
 
 func _normalize_arena_attempts(attempts: Array) -> Array:
 	var output: Array = []
@@ -822,6 +866,25 @@ func arena_by_id(arena_id: String) -> Dictionary:
 		var arena := _as_dictionary(arena_variant)
 		if str(arena.get("id", "")).strip_edges() == normalized_id:
 			return arena.duplicate(true)
+	return {}
+
+func arena_difficulty_by_id(arena_id: String, difficulty_id: String = "") -> Dictionary:
+	var arena := arena_by_id(arena_id)
+	if arena.is_empty():
+		return {}
+	var normalized_difficulty := difficulty_id.strip_edges()
+	var default_id := str(arena.get("default_difficulty_id", arena.get("difficulty_id", ""))).strip_edges()
+	for difficulty_variant: Variant in _as_array(arena.get("difficulties", [])):
+		var difficulty := _as_dictionary(difficulty_variant)
+		var candidate_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+		if candidate_id == "":
+			continue
+		if normalized_difficulty == "" and candidate_id == default_id:
+			return difficulty.duplicate(true)
+		if normalized_difficulty != "" and candidate_id == normalized_difficulty:
+			return difficulty.duplicate(true)
+	if normalized_difficulty == "":
+		return arena.duplicate(true)
 	return {}
 
 func active_arena_attempt() -> Dictionary:
