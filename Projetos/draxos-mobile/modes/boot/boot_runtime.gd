@@ -13,6 +13,7 @@ const SurfaceUiHelpersScript := preload("res://modes/boot/surfaces/surface_ui_he
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellActionRouterScript := preload("res://modes/boot/ui/app_shell_action_router.gd")
+const MinigameShellRegistryScript := preload("res://modes/boot/ui/minigame_shell_registry.gd")
 const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const OperationStateScript := preload("res://modes/boot/ui/operation_state.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
@@ -107,6 +108,7 @@ var _social_auto_sync_last_text := ""
 var _social_auto_sync_last_error := ""
 var _battle_lab_overlay: Control
 var _progression_lab_overlay: Control
+var _active_minigame_id := ""
 var _selected_base_structure_id := "nucleo_energia"
 var _last_social_friend_username := ""
 var _last_social_guild_name := ""
@@ -399,6 +401,11 @@ func _progression_lab_available() -> bool:
 		return false
 	return ResourceLoader.exists(PROGRESSION_LAB_SCREEN_PATH)
 
+func _rpgsuave_minigame_available() -> bool:
+	if not _internal_dev_tools_enabled():
+		return false
+	return MinigameShellRegistryScript.is_available(MinigameShellRegistryScript.MODE_RPGSUAVE)
+
 func _internal_dev_tools_enabled() -> bool:
 	return OS.has_feature("editor") or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
 
@@ -501,9 +508,23 @@ func _render_shop_screen() -> void:
 	ShopSurfacePresenterScript.render(self)
 
 func _render_minigame_shell_screen() -> void:
-	_content_title.text = "Minigame"
+	var mode_id := MinigameShellRegistryScript.normalize_mode_id(_active_minigame_id)
+	_content_title.text = MinigameShellRegistryScript.display_name(mode_id)
 	_status_label.text = _session_status_text()
-	_detail_label.text = "Indisponivel nesta build."
+	_detail_label.text = "Dev-only: progresso local do modo. Recompensas reais so entram pelo Reward Bridge."
+	if MinigameShellRegistryScript.is_available(mode_id):
+		var script: Script = load(MinigameShellRegistryScript.screen_path(mode_id))
+		if script != null and script.can_instantiate():
+			var screen: Control = script.new()
+			screen.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			screen.size_flags_vertical = Control.SIZE_EXPAND_FILL
+			if _rpgsuave_integrated_alpha_enabled(mode_id) and screen.has_method("configure_integrated_alpha"):
+				screen.call("configure_integrated_alpha", SupabaseClient, SessionStore, SessionStore.access_token)
+			if screen.has_signal("close_requested"):
+				screen.connect("close_requested", Callable(self, "_return_to_refuge"))
+			_add_content_control(screen)
+			return
+	_error_label.text = "Minigame dev indisponivel nesta build."
 	_add_body_text("Area reservada para desenvolvimento interno. Recompensas desativadas.")
 	_add_action_button("Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE)
 
@@ -908,8 +929,16 @@ func _show_battle_history() -> void:
 func _show_battle_replay(battle_id: String) -> void:
 	await _battle_lifecycle_flow.show_battle_replay(self, battle_id)
 
-func _open_minigame_shell(_minigame_id: String = "") -> void:
+func _open_minigame_shell(minigame_id: String = "") -> void:
+	_active_minigame_id = MinigameShellRegistryScript.normalize_mode_id(minigame_id)
 	_show_screen(ROUTE_MINIGAME_SHELL)
+
+func _rpgsuave_integrated_alpha_enabled(mode_id: String) -> bool:
+	if mode_id != MinigameShellRegistryScript.MODE_RPGSUAVE:
+		return false
+	if not bool(ProjectSettings.get_setting("draxos_mobile/minigames/rpgsuave/integrated_alpha", false)):
+		return false
+	return SessionStore.has_valid_access_token() and SessionStore.has_account_state() and not SessionStore.is_progression_lab_local_only()
 
 func _show_base() -> void:
 	await _surface_action_flow.show_base(self)

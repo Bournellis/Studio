@@ -51,6 +51,8 @@ battle_lab/deno_prefix_args=PackedStringArray("-y", "deno", "run", "--allow-read
 progression_lab/enabled=true
 progression_lab/deno_command="npx"
 progression_lab/deno_prefix_args=PackedStringArray("-y", "deno", "run", "--allow-read", "--allow-write", "--allow-env", "--allow-net")
+minigames/rpgsuave/enabled=true
+minigames/rpgsuave/integrated_alpha=false
 
 [editor_plugins]
 

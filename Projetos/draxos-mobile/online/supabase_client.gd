@@ -301,6 +301,46 @@ func upgrade_base_structure(request_id: String, structure_id: String, access_tok
 		}, request_hash)
 	)
 
+func get_minigame_registry(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("minigames/registry"),
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func get_minigame_state(mode_id: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		"%s?mode_id=%s" % [function_url("minigames/state"), mode_id.strip_edges()],
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func start_minigame_session(request_id: String, mode_id: String, slice_id: String, access_token: String, request_hash: String = "") -> Dictionary:
+	return await _send_json(
+		function_url("minigames/session/start"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("minigames/session/start", {
+			"request_id": request_id,
+			"mode_id": mode_id.strip_edges(),
+			"slice_id": slice_id.strip_edges(),
+		}, request_hash)
+	)
+
+func complete_minigame_session(request_id: String, session_id: String, mode_id: String, result_payload: Dictionary, access_token: String, request_hash: String = "") -> Dictionary:
+	var body := result_payload.duplicate(true)
+	body["request_id"] = request_id
+	body["session_id"] = session_id.strip_edges()
+	body["mode_id"] = mode_id.strip_edges()
+	return await _send_json(
+		function_url("minigames/session/complete"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("minigames/session/complete", body, request_hash)
+	)
+
 func fetch_crafting_state(access_token: String) -> Dictionary:
 	return await _send_json(
 		function_url("crafting/state"),

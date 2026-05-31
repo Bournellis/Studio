@@ -1,6 +1,6 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-05-30`
+- Last updated: `2026-05-31`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
@@ -11,9 +11,8 @@
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published package: `Foundation Final Polish`
-- Latest implemented package: `Foundation Final Polish` on branch
-  `codex/draxos-mobile/foundation-final-polish`, over Foundation Closeout and
-  Lab Track 16 Alignment.
+- Latest implemented package: `Rpgsuave Bosque + Minigame Platform v0` on branch
+  `codex/draxos-mobile/rpgsuave-integrated-alpha`, over Foundation Final Polish.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -164,6 +163,31 @@ potions, behavior or catalog content.
 Recommended next decision: choose one explicit package for base builder tuning,
 autobattler tuning, social expansion or minigame shell/contract. Lab evidence is
 now aligned with Track 16, but it still must not promote tuning by itself.
+
+## Rpgsuave Bosque + Minigame Platform V0
+
+Rpgsuave Bosque is implemented as a dev-only minigame entry for sensation
+testing plus an integrated-alpha backend path for future reward validation.
+
+- Labs Dev exposes `open_minigame_shell:rpgsuave`.
+- `RpgsuaveForestScreen` runs inside the existing app chrome and defaults to
+  `dev_local`.
+- Gameplay covers topdown movement, stopped collection, cancel-on-move,
+  pocket weight, chest deposit, local crafting and local upgrades.
+- Network mode is gated by
+  `draxos_mobile/minigames/rpgsuave/integrated_alpha=false` by default.
+- Edge Function `minigames` exposes registry, state, session start and session
+  complete.
+- Migration `202605310001_minigame_platform_v0.sql` creates mode registry,
+  ruleset registry, sessions, progress, reward claims and RPCs
+  `minigame_session_start_v1`/`minigame_session_complete_v1`.
+- Reward Bridge v0 accepts only limited results, rejects/clamps tampering,
+  blocks `progression_lab` rewards and writes `resource_transactions`.
+- Docs: `docs/minigames/rpgsuave.md` and
+  `docs/contracts/minigame-platform-v0.md`.
+
+This package is not published remotely and does not change public CTA, Play
+Store, Cloudflare or external release state.
 
 ## Foundation Expansion Readiness
 

@@ -16,11 +16,11 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: user playtest of the Track 02 complete-run build.
 
-## Implementacao - Foundation Final Polish
+## Implementacao - Foundation Final Polish + Rpgsuave Local
 
-- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and Foundation Closeout is delivered over Foundation Expansion Readiness: account/save authority, immutable ruleset publication registry, persisted replay hashes, API v1 header, idempotency v1, internal auditable admin RPCs, client retry registry, ActionRouter/OperationState in the real shell path, minigame placeholder only and transactional RPC promotion including build behavior/potion and social friend/chat. Foundation Final Polish adds shell/facade budgets, read-only presenter slices, stronger source guards and a local RLS/admin smoke in the Full gate, and is now published to Internal Alpha at `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`. Battle Lab and Progression Lab now cover Track 16 potions, behavior, crafting, `po_osso` and preparation state as lab-only evidence before tuning. The confirmed Foundation post-login loop remains the accepted baseline: Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again.
-  - Priority/status: `P2_IMPLEMENTACAO - FOUNDATION_FINAL_POLISH_DELIVERED`
-  - Canonical local branch for new agents: `codex/draxos-mobile/foundation-final-polish` at the final validated and published HEAD until merge/push is explicitly decided.
+- `draxos-mobile/`: mobile-first Draxos async PVP autobattler with Refugio/Base, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Foundation Final Polish remains the published Internal Alpha baseline at `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`. The local branch `codex/draxos-mobile/rpgsuave-integrated-alpha` adds Rpgsuave Bosque dev-only in Labs Dev, a playable topdown collection/crafting skeleton, Edge Function `minigames`, schema `mode_*`, and Reward Bridge v0 with idempotent server-authoritative rewards. No remote publication has been performed for this local package.
+  - Priority/status: `P2_IMPLEMENTACAO - FOUNDATION_FINAL_POLISH_DELIVERED + RPGSUAVE_MINIGAME_PLATFORM_V0_LOCAL`
+  - Canonical published branch for new release work remains `codex/draxos-mobile/foundation-final-polish`; local integration branch: `codex/draxos-mobile/rpgsuave-integrated-alpha` until merge/push/publication is explicitly decided.
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
@@ -35,6 +35,8 @@ This directory contains active, conceptual and paused projects for the studio.
   - Behavior/Potion Crafting v1: `draxos-mobile/docs/behavior-potion-crafting-v1.md`
   - Progression Clarity v1: `draxos-mobile/docs/progression-clarity-v1.md`
   - First Session Clarity v1: `draxos-mobile/docs/first-session-clarity-v1.md`
+  - Rpgsuave minigame: `draxos-mobile/docs/minigames/rpgsuave.md`
+  - Minigame Platform v0: `draxos-mobile/docs/contracts/minigame-platform-v0.md`
   - Operational status: `draxos-mobile/implementation/current-status.md`
   - Product vision: `draxos-mobile/docs/product-vision.md`
   - Product brief: `draxos-mobile/docs/product-brief.md`
@@ -53,7 +55,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: choose base builder tuning, autobattler tuning, social expansion or minigame shell/contract by explicit decision.
+  - Current next step: validate Rpgsuave integrated alpha locally and explicitly decide merge/publication or another feel pass.
 
 ## Arquivo De Design
 

@@ -562,13 +562,15 @@ static func _menu_title(menu_id: String) -> String:
 	return "Menu"
 
 static func _refuge_has_dev_tools(host: Node) -> bool:
-	return bool(host.call("_battle_lab_available")) or bool(host.call("_progression_lab_available"))
+	return bool(host.call("_battle_lab_available")) or bool(host.call("_progression_lab_available")) or bool(host.call("_rpgsuave_minigame_available"))
 
 static func _add_dev_tool_actions(host: Node, popup: PopupPanel, body: VBoxContainer, primary: bool = false) -> void:
 	if bool(host.call("_battle_lab_available")):
 		body.add_child(_popup_action_button(host, popup, "Battle Lab", AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB, "", primary))
 	if bool(host.call("_progression_lab_available")):
 		body.add_child(_popup_action_button(host, popup, "Progression Lab", AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB, "", primary))
+	if bool(host.call("_rpgsuave_minigame_available")):
+		body.add_child(_popup_action_button(host, popup, "Rpgsuave Bosque", AppShellActionContractScript.open_minigame_shell_action("rpgsuave"), "", primary))
 
 static func _add_texture_layer(parent: Control, texture_path: String, alpha: float) -> void:
 	if parent == null or not ResourceLoader.exists(texture_path):
@@ -905,6 +907,8 @@ static func _entry_dev_panel(host: Node, compact: bool) -> PanelContainer:
 		grid.add_child(_entry_action_button(host, "Battle Lab", AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB, compact))
 	if progression_lab:
 		grid.add_child(_entry_action_button(host, "Progression Lab", AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB, compact))
+	if bool(host.call("_rpgsuave_minigame_available")):
+		grid.add_child(_entry_action_button(host, "Rpgsuave", AppShellActionContractScript.open_minigame_shell_action("rpgsuave"), compact))
 	return panel
 
 static func _entry_reset_panel(host: Node, compact: bool) -> PanelContainer:

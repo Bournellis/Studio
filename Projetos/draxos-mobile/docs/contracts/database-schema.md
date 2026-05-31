@@ -1,7 +1,7 @@
 # Database Schema Contract
 
-- Ultima atualizacao: `2026-05-30`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1.
+- Ultima atualizacao: `2026-05-31`
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis, Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset, dominios criticos promovidos para RPCs transacionais v1 e Minigame Platform v0 para `rpgsuave`.
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -22,6 +22,7 @@ Migrations atuais:
 - `202605300002_transactional_domain_enforcement.sql`: promove Base para efeitos reais em RPCs v1 (`complete_due_base_jobs_v1`, `collect_base_v1`, `start_base_upgrade_v1`), com lock do save, reserva idempotente, ledger/saldo/job na mesma transacao e grants somente para `service_role`.
 - `202605300003_remaining_transactional_domain_enforcement.sql`: promove battle rewards, monetization rewards/alpha purchase, build equip, crafting craft/crush-bones e guild create/join para RPCs v1 com lock de `game_saves`, `request_hash`, idempotencia pending/completed, ledger e grants somente para `service_role`.
 - `202605300004_foundation_closeout.sql`: corrige `ruleset_registry` para publicacao imutavel por `publication_id`, persiste hashes de ruleset em saves/historicos, cria admin interno auditavel e promove as mutacoes restantes de build behavior/potion e social friend/chat para RPCs v1 `service_role`-only.
+- `202605310001_minigame_platform_v0.sql`: cria `mode_registry`, `mode_ruleset_registry`, `mode_sessions`, `mode_progress`, `mode_reward_claims`, seed de `rpgsuave_forest_ruleset_v0` e RPCs `minigame_session_start_v1`/`minigame_session_complete_v1` com idempotencia e Reward Bridge v0.
 
 ## Regras De Escopo De Servico
 
@@ -93,6 +94,28 @@ Contrato detalhado: `admin-ops.md`.
 `resource_reconciliation_report_v1`, `admin_adjust_resource_balance_v1` e
 `admin_flag_account_v1` sao internas, auditaveis e sem grant para
 `anon`/`authenticated`.
+
+## Minigame Platform V0
+
+Contrato detalhado: `minigame-platform-v0.md`.
+
+Tabelas:
+
+- `mode_registry`: identidade do modo, canal e ruleset ativo.
+- `mode_ruleset_registry`: rulesets versionados por modo/slice.
+- `mode_sessions`: sessoes iniciadas/completadas por `game_save_id`.
+- `mode_progress`: progresso isolado por save e modo.
+- `mode_reward_claims`: reward bridge, periodo, delta e auditoria por sessao.
+
+RPCs:
+
+- `minigame_session_start_v1`;
+- `minigame_session_complete_v1`.
+
+Ambas sao `service_role`-only, usam `request_hash`, `scope_id`
+`minigame:rpgsuave:<save_type>` e bloqueiam escrita direta do cliente em
+recursos compartilhados. Complete grava `resource_transactions` e rejeita
+`progression_lab` para recompensa real.
 
 ## MVP Tecnico
 

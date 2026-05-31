@@ -1,7 +1,7 @@
 # DraxosMobile - Documentation Index
 
 - Status: `VIVO`
-- Last updated: `2026-05-30`
+- Last updated: `2026-05-31`
 - Purpose: classify project documents so agents know what to trust, what to update and what to treat as history.
 
 ## Categories
@@ -43,6 +43,7 @@
 | `docs/behavior-potion-crafting-v1.md` | `VIVO` | Current technical reference for Track 16 systems now present in the alpha baseline: whole-number Ossos, Po de Osso, first potion, crafting, potion slot and simple behavior controls. |
 | `docs/progression-clarity-v1.md` | `VIVO` | Published Progression Clarity v1 package: client-only readability for level, power, rewards, next unlocks and next objective. |
 | `docs/first-session-clarity-v1.md` | `VIVO` | Published First Session Clarity v1 package: client-only first-session guidance for Refugio, Preparation and battle summary. |
+| `docs/minigames/rpgsuave.md` | `VIVO` | Current Rpgsuave Bosque design/implementation contract for dev-local gameplay and integrated alpha bridge. |
 | `docs/battle-preparation-v1.md` | `HISTORICO` | Previous client-first preparation readability package over existing behavior endpoints. |
 | `docs/product-brief.md` | `VIVO` | Short product/slice summary. |
 | `docs/game-design-document.md` | `VIVO` | Implementation reference and mock/substance context; not the current expansion target. |
@@ -60,6 +61,7 @@
 | `docs/contracts/account-save.md` | `CONTRATO` | `account_profiles` + `game_saves` account/save authority and `players.save_type` compatibility boundary. |
 | `docs/contracts/ruleset-registry.md` | `CONTRATO` | Ruleset generated-as-authoring-source plus database publication registry contract. |
 | `docs/contracts/minigame-integration.md` | `CONTRATO` | Contract-first gate for future minigames. |
+| `docs/contracts/minigame-platform-v0.md` | `CONTRATO` | Server-authoritative registry/session/progress/reward bridge contract for minigames v0. |
 | `docs/contracts/admin-ops.md` | `CONTRATO` | Minimum auditable admin/support/ops contract. |
 | `docs/contracts/lab-heuristics.md` | `CONTRATO` | Boundary for Battle Lab and Progression Lab local heuristics, generated evidence and blocked tuning decisions. |
 | `docs/architecture.md` | `CONTRATO` | Technical architecture and backend boundaries. |

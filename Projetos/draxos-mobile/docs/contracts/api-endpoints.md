@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-05-30`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*` e `content/*` implementados local/remoto; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes reservados.
+- Ultima atualizacao: `2026-05-31`
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*` e `minigames/*` implementados local/remoto; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -14,7 +14,7 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 - Internal Alpha: cliente cria sessao Supabase Auth por email/senha; depois chama `/account/bootstrap` com JWT registrado, username e convite para criar o primeiro save.
 - Guest dev: cliente ainda pode criar sessao Supabase Auth anonima e chamar `/account/guest`, mas esse fluxo e ferramenta de desenvolvimento/fallback e nao o caminho real da build interna.
 - Correlation: cliente envia `request_id` em mutacoes para idempotencia. Mutacoes economicas novas tambem devem enviar `request_hash`, calculado pelo cliente/adapter sobre a intencao canonica, para bloquear reuse malicioso do mesmo `request_id` com outro payload.
-- Runtime local atual: `supabase/functions/healthcheck`, `account`, `battle`, `base`, `build`, `crafting`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab`, `release` e `content`, espelhados em `server/functions/`.
+- Runtime local atual: `supabase/functions/healthcheck`, `account`, `battle`, `base`, `build`, `crafting`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab`, `release`, `content` e `minigames`, espelhados em `server/functions/`.
 - Anti-lock-in: os endpoints logicos deste documento pertencem ao jogo, nao ao Supabase. O cliente Godot e o hub alpha devem depender de `account`, `battle`, `base`, `build`, `crafting`, `social`, `competition`, `monetization`, `telemetry`, `progression-lab`, `release` e `content`, permitindo futura migracao para Backend Proprio + Postgres sem redesenhar o cliente/site.
 - Resposta de erro padrao:
 
@@ -91,6 +91,8 @@ como slot contratado, mas a rota ainda precisa migrar o efeito de dominio.
 | `POST /build/potion-behavior` | `build_potion_behavior_v1` | ativo em `202605300004_foundation_closeout.sql`; comportamento de pocao + idempotencia entram no mesmo RPC |
 | `POST /social/friends/add` | `social_friend_add_v1` | ativo em `202605300004_foundation_closeout.sql`; amizade bidirecional + idempotencia entram no mesmo RPC |
 | `POST /social/chat/send` | `social_chat_send_v1` | ativo em `202605300004_foundation_closeout.sql`; mensagem/rate-limit + idempotencia entram no mesmo RPC |
+| `POST /minigames/session/start` | `minigame_session_start_v1` | ativo em `202605310001_minigame_platform_v0.sql`; abre sessao save-scoped para `rpgsuave/forest` |
+| `POST /minigames/session/complete` | `minigame_session_complete_v1` | ativo em `202605310001_minigame_platform_v0.sql`; valida resultado, limita recompensa, grava claim/ledger e idempotencia |
 
 Nenhuma rota nova deve expandir economia sem passar para o padrao v1.
 
@@ -156,6 +158,10 @@ novo.
 | GET | `/monetization/state` | `save-scoped` | Sim | Nao | Loja/Battle Pass do save ativo. |
 | POST | `/monetization/rewards/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Claim economico do save ativo com ledger. |
 | POST | `/monetization/alpha-purchase` | `save-scoped` | Sim | `request_id/request_hash` por save | Compra/redeem alpha do save ativo com ledger. |
+| GET | `/minigames/registry` | `save-scoped` | Sim | Nao | Lista registry/rulesets de minigames disponiveis; v0 inclui `rpgsuave`. |
+| GET | `/minigames/state?mode_id=rpgsuave` | `save-scoped` | Sim | Nao | Retorna progresso, sessoes, claims e recursos visiveis do modo no save ativo. |
+| POST | `/minigames/session/start` | `save-scoped` | Sim | `request_id/request_hash` por `minigame:<mode_id>:<save_type>` | Inicia sessao `rpgsuave/forest`; nao aplica recompensa. |
+| POST | `/minigames/session/complete` | `save-scoped` | Sim | `request_id/request_hash` por `minigame:<mode_id>:<save_type>` | Aplica Reward Bridge v0; bloqueia `progression_lab`, rejeita adulteracao e grava ledger. |
 | POST | `/telemetry/client-event` | `telemetry` | Sim, opcional | Nao | Grava diagnostico client; `player_id` pode ser nulo antes de conta/save. |
 | POST | `/progression-lab/apply` | `save-scoped` | Sim, exige `progression_lab` | `request_id` por save Lab | Interno/gated; aplica healthy save apenas no Lab e nunca escreve no Normal. |
 
@@ -164,7 +170,7 @@ novo.
 `resource_reconciliation_report_v1`, `admin_adjust_resource_balance_v1` e
 `admin_flag_account_v1`. Nenhum deles e endpoint publico ou chamada de cliente.
 
-`minigame` fica reservado por `docs/contracts/minigame-integration.md`; nenhum minigame jogavel deve criar endpoint antes do contrato de entrada, custo, recompensa, telemetry e admin.
+`minigame` agora possui a plataforma v0 para `rpgsuave`; novos modos ainda devem passar por `docs/contracts/minigame-integration.md` antes de criar endpoints, migrations ou rewards.
 
 ## Endpoints De Conteudo
 

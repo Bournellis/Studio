@@ -2,7 +2,7 @@
 
 - Status: `CONTRATO`
 - Contract id: `MINIGAME_INTEGRATION_CONTRACT_V1`
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Escopo: integrar minigames futuros sem quebrar conta, save, economia, social, base, batalha, telemetry, release ou admin.
 
 ## Principio
@@ -68,6 +68,27 @@ O minigame deve declarar:
 - como a UI se comporta em Android portrait, PC e Web.
 
 Se tocar Entry, Refugio ou Battle, o pacote tambem deve respeitar `docs/foundation-responsive-layout-contract.md`.
+
+## Registro Implementado - Rpgsuave Bosque
+
+`rpgsuave` e o primeiro uso concreto deste contrato.
+
+| Campo | Valor |
+|---|---|
+| `minigame_id`/`mode_id` | `rpgsuave` |
+| `display_name` | `Rpgsuave Bosque` |
+| `slice_id` | `forest` |
+| `status` | `dev_only` no cliente; ponte `internal_alpha` pronta no backend |
+| `surface` | Labs Dev |
+| `action` | `open_minigame_shell:rpgsuave` |
+| `service_scope` | `save-scoped` |
+| `ruleset_id` | `rpgsuave_forest_ruleset_v0` |
+| `ruleset_version` | `1` |
+| `data_strategy` | `minigame-local-progress` ate complete; `shared-save-progress` somente pela RPC |
+| `feature_flag` | `draxos_mobile/minigames/rpgsuave/enabled`; rede via `integrated_alpha=false` por default |
+
+Contrato detalhado: `docs/minigames/rpgsuave.md` e
+`docs/contracts/minigame-platform-v0.md`.
 
 ## Contrato De Servico
 

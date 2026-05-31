@@ -1,13 +1,13 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`FOUNDATION_FINAL_POLISH_DELIVERED`, com Foundation Closeout, labs alinhados ao Track 16, shell/source guards finais, smoke RLS/admin no Full gate sobre Track 13 release safety e Track 14 agent ops, e Internal Alpha republicado na release root `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`FOUNDATION_FINAL_POLISH_DELIVERED`; branch local `codex/draxos-mobile/rpgsuave-integrated-alpha` adiciona Rpgsuave Bosque dev-only e Minigame Platform v0 sem publicacao remota)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - FOUNDATION_FINAL_POLISH_DELIVERED**
+- Status: **P2_IMPLEMENTACAO - FOUNDATION_FINAL_POLISH_DELIVERED + RPGSUAVE_MINIGAME_PLATFORM_V0_LOCAL**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-30 ate Foundation Final Polish (`internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, preview `https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`). Foundation Closeout foi entregue sobre Foundation Expansion Readiness: `account_profiles/game_saves` viraram autoridade, `ruleset_registry` ganhou `publication_id` imutavel, hashes de ruleset sao persistidos em saves/historicos, API v1 usa `x-draxos-api-version: 1`, admin minimo interno e auditavel existe como RPC `service_role`-only, mutacoes restantes de build behavior/potion e social friend/chat foram promovidas para RPCs v1, client envia `request_hash` e registra pending mutations, ActionRouter/OperationState governam o shell real e o minigame shell existe apenas como placeholder disabled/dev-only. Battle Lab e Progression Lab foram alinhados ao Track 16 para cobrir pocoes, comportamento, crafting, `po_osso` e preparation state como evidencia lab-only antes de tuning. Foundation Final Polish registra `codex/draxos-mobile/foundation-final-polish` como base local canonica para novos agentes, mantem budgets de shell/facade, migra presenters tocados para slices read-only e adiciona smoke RLS/admin local ao Full gate.
+- Baseline atual: Track 00-15 integradas e Foundation Final Polish publicado seguem como baseline remoto. A branch local `codex/draxos-mobile/rpgsuave-integrated-alpha` adiciona o primeiro minigame real dev-only: `Rpgsuave Bosque` em Labs Dev com movimento/coleta/bolso/bau/crafting local, mais Edge Function `minigames`, schema `mode_registry/mode_ruleset_registry/mode_sessions/mode_progress/mode_reward_claims` e Reward Bridge v0 server-authoritative para recompensa pequena/auditavel. Nao houve deploy remoto nem mudanca de release root.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`; override do release manifest exige `SUPABASE_ACCESS_TOKEN`. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, tuning numerico, novas armas, novas spells, economia, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
-- Proximo passo: escolher explicitamente o pacote de base builder tuning, autobattler tuning, social expansion ou minigame shell/contract usando os labs alinhados como evidencia, nao como autoridade automatica de balanceamento.
+- Proximo passo: validar alpha integrado local do Rpgsuave Bosque com Supabase local e decidir explicitamente merge/publicacao ou nova rodada de sensacao de jogo.
 
 ## rpg-isometrico
 
