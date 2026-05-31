@@ -5,7 +5,7 @@
 - Slice id: `forest`
 - Ruleset: `rpgsuave_forest_ruleset_v0`, version `1`
 - Entry action: `open_minigame_shell:rpgsuave`
-- Surface: Labs Dev, dentro do app chrome
+- Surface: Labs Dev, fullscreen gameplay sem app chrome
 - Public CTA: nao
 - Release root: `internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969`
 - Ultima atualizacao: `2026-05-31`
@@ -38,6 +38,36 @@ manifest/artefatos/minigame verdes e SHA remoto completo de APK/ZIP conferido.
 O proximo gate e playtest humano; nao abrir CTA publico no Refugio antes dessa
 leitura.
 
+## Visual Upgrade V1
+
+O pacote Visual Upgrade v1 transforma o Bosque de prototipo em painel para
+minigame fullscreen mobile portrait:
+
+- `minigame_shell` e tratado como rota de gameplay fullscreen;
+- `RpgsuaveForestScreen` monta mundo, HUD, joystick e mochila dentro do canvas
+  do jogo;
+- camera logica fica centralizada no personagem e clampada ao mundo virtual
+  `960x1400`;
+- o mundo continua full-bleed em desktop/web, com HUD preso a margens seguras;
+- input player-facing e apenas joystick virtual fixo no canto inferior
+  esquerdo;
+- teclado, setas, WASD, click-to-move e toque no mapa nao movem o personagem;
+- `set_debug_joystick_vector(Vector2)` existe apenas para smoke/teste headless;
+- botoes `Mochila`, `Depositar`, `Completar` e `Voltar` ficam dentro da tela do
+  minigame;
+- `Depositar` so fica ativo dentro do raio do bau;
+- dados extras e detalhes dev ficam escondidos em
+  `Mochila > Sessao > Detalhes tecnicos`;
+- assets do slice sao procedurais em Godot (`_draw()`), sem PNG/JPG/SVG novos.
+
+Componentes client:
+
+- `RpgsuaveForestScreen`: orquestra modelo, sessao, HUD, joystick e sheet;
+- `RpgsuaveForestWorldView`: terreno, camera, zonas, recursos, personagem e
+  feedback procedural;
+- `RpgsuaveVirtualJoystick`: input touch/mouse do joystick;
+- `RpgsuaveInventorySheet`: bolso, bau, craft, sessao e detalhes tecnicos.
+
 ## Slice Travado
 
 O primeiro slice e `Bosque`, nao open world completo.
@@ -66,11 +96,16 @@ Fora do escopo v0:
 
 Controles:
 
-- teclado: WASD ou setas;
-- mouse/toque: clicar/tocar no mapa ou recurso para caminhar.
+- joystick virtual fixo no canto inferior esquerdo;
+- input de teste: `set_debug_joystick_vector(Vector2)`;
+- sem teclado, setas, WASD, click-to-move ou toque no mapa como movimento
+  player-facing.
 
 Parametros:
 
+- mundo virtual: `960x1400`;
+- personagem inicial: `(220, 330)`;
+- bau/base: `(220, 250)`;
 - velocidade base: `160 px/s`;
 - capacidade base: `20.0`;
 - penalidade de movimento inicia em `60%` da capacidade;
@@ -158,3 +193,4 @@ Recompensa real sempre passa por RPC `service_role`, idempotencia
 - Edge Function: `server/functions/minigames/index.ts`
 - Migration: `server/schema/migrations/202605310001_minigame_platform_v0.sql`
 - Smokes/tests: `tools/smoke_rpgsuave_forest.gd`, `tests/client/test_rpgsuave_minigame_dev.gd`, `server/tests/minigame_*`
+- Visual smokes: `tools/smoke_rpgsuave_visual_layout.gd`

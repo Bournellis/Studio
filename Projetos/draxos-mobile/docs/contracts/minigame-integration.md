@@ -54,6 +54,8 @@ Foundation Closeout reserva um shell client-side disabled/dev-only:
 - action id: `open_minigame_shell:<minigame_id>`;
 - action category: `minigame`;
 - scope: `minigame:<id>:<save_type>`;
+- default shell surface: fullscreen gameplay, with the minigame responsible for
+  its own back/exit control inside the HUD;
 - reward handoff: bloqueado ate contrato e endpoint server-authoritative;
 - sem ranking, economy, migration, promessa publica ou gameplay real.
 
@@ -79,7 +81,7 @@ Se tocar Entry, Refugio ou Battle, o pacote tambem deve respeitar `docs/foundati
 | `display_name` | `Rpgsuave Bosque` |
 | `slice_id` | `forest` |
 | `status` | `internal_alpha` em Labs Dev; sem CTA publico |
-| `surface` | Labs Dev |
+| `surface` | Labs Dev fullscreen gameplay; sem app chrome |
 | `action` | `open_minigame_shell:rpgsuave` |
 | `service_scope` | `save-scoped` |
 | `ruleset_id` | `rpgsuave_forest_ruleset_v0` |
@@ -89,6 +91,19 @@ Se tocar Entry, Refugio ou Battle, o pacote tambem deve respeitar `docs/foundati
 
 Contrato detalhado: `docs/minigames/rpgsuave.md` e
 `docs/contracts/minigame-platform-v0.md`.
+
+Notas de UI Visual Upgrade v1:
+
+- rota `minigame_shell` deve retornar `is_fullscreen_gameplay=true` e
+  `shows_app_chrome=false`;
+- entrada continua restrita a Labs Dev;
+- o minigame deve expor `Voltar` dentro do HUD para retorno seguro ao Refugio;
+- mobile portrait e o formato principal;
+- input player-facing do Bosque e joystick-only;
+- detalhes tecnicos/dev nao aparecem na tela inicial do minigame e ficam
+  recolhidos em uma tela funcional de sessao;
+- assets novos do Bosque devem ser Godot-procedural ate existir decisao
+  explicita de pipeline artistico.
 
 ## Contrato De Servico
 

@@ -79,6 +79,7 @@ var _social_guild_input: LineEdit
 var _social_chat_input: LineEdit
 var _battle_visual: Control
 var _battle_fullscreen_overlay: Control
+var _minigame_fullscreen_overlay: Control
 var _confirm_dialog: ConfirmationDialog
 var _create_account_dialog: ConfirmationDialog
 var _refuge_menu_popup: PopupPanel
@@ -272,6 +273,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_immersive_error_label = null
 	_battle_visual = null
 	_clear_battle_fullscreen_overlay()
+	_clear_minigame_fullscreen_overlay()
 	_battle_replay_presenter.clear()
 	_error_label.text = ""
 	if _route_shows_first_screen(screen_id):
@@ -463,6 +465,13 @@ func _clear_battle_fullscreen_overlay() -> void:
 		_battle_fullscreen_overlay.queue_free()
 	_battle_fullscreen_overlay = null
 
+func _clear_minigame_fullscreen_overlay() -> void:
+	if _minigame_fullscreen_overlay == null:
+		return
+	if is_instance_valid(_minigame_fullscreen_overlay):
+		_minigame_fullscreen_overlay.queue_free()
+	_minigame_fullscreen_overlay = null
+
 func _create_battle_fullscreen_overlay() -> Control:
 	var overlay := Control.new()
 	overlay.name = "BattleFullscreenOverlay"
@@ -471,6 +480,16 @@ func _create_battle_fullscreen_overlay() -> Control:
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(overlay)
 	_battle_fullscreen_overlay = overlay
+	return overlay
+
+func _create_minigame_fullscreen_overlay() -> Control:
+	var overlay := Control.new()
+	overlay.name = "MinigameFullscreenOverlay"
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.position = Vector2.ZERO
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(overlay)
+	_minigame_fullscreen_overlay = overlay
 	return overlay
 
 func _render_entry_screen() -> void:
@@ -512,6 +531,12 @@ func _render_minigame_shell_screen() -> void:
 	_content_title.text = MinigameShellRegistryScript.display_name(mode_id)
 	_status_label.text = _session_status_text()
 	_detail_label.text = "Dev-only: progresso local do modo. Recompensas reais so entram pelo Reward Bridge."
+	if _route_shows_app_chrome(_current_screen):
+		_render_minigame_content_body(mode_id)
+		return
+	_render_minigame_fullscreen(mode_id)
+
+func _render_minigame_content_body(mode_id: String) -> void:
 	if MinigameShellRegistryScript.is_available(mode_id):
 		var script: Script = load(MinigameShellRegistryScript.screen_path(mode_id))
 		if script != null and script.can_instantiate():
@@ -527,6 +552,37 @@ func _render_minigame_shell_screen() -> void:
 	_error_label.text = "Minigame dev indisponivel nesta build."
 	_add_body_text("Area reservada para desenvolvimento interno. Recompensas desativadas.")
 	_add_action_button("Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE)
+
+func _render_minigame_fullscreen(mode_id: String) -> void:
+	var overlay := _create_minigame_fullscreen_overlay()
+	if MinigameShellRegistryScript.is_available(mode_id):
+		var script: Script = load(MinigameShellRegistryScript.screen_path(mode_id))
+		if script != null and script.can_instantiate():
+			var screen: Control = script.new()
+			screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			screen.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			screen.size_flags_vertical = Control.SIZE_EXPAND_FILL
+			if _rpgsuave_integrated_alpha_enabled(mode_id) and screen.has_method("configure_integrated_alpha"):
+				screen.call("configure_integrated_alpha", SupabaseClient, SessionStore, SessionStore.access_token)
+			if screen.has_signal("close_requested"):
+				screen.connect("close_requested", Callable(self, "_return_to_refuge"))
+			overlay.add_child(screen)
+			return
+	var fallback := VBoxContainer.new()
+	fallback.name = "MinigameUnavailableFallback"
+	fallback.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	fallback.alignment = BoxContainer.ALIGNMENT_CENTER
+	fallback.add_theme_constant_override("separation", 12)
+	overlay.add_child(fallback)
+	var label := Label.new()
+	label.text = "Minigame dev indisponivel nesta build."
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	fallback.add_child(label)
+	var back := Button.new()
+	back.text = "Voltar ao Refugio"
+	back.pressed.connect(_return_to_refuge)
+	fallback.add_child(back)
 
 func _add_section_label(text: String) -> Label:
 	_reset_action_group()

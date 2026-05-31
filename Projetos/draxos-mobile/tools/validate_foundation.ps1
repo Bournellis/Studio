@@ -197,6 +197,8 @@ function Assert-StructuralReadiness {
         "tools\smoke_foundation_hardening.gd",
         "tools\smoke_responsive_layout.gd",
         "tools\smoke_exports.gd",
+        "tools\smoke_rpgsuave_forest.gd",
+        "tools\smoke_rpgsuave_visual_layout.gd",
         "server\functions\release\index.ts",
         "supabase\functions\release\index.ts",
         "server\tests\release_manifest_smoke.ts",
@@ -509,6 +511,8 @@ if ($RunClient) {
         "smoke_runtime_config.gd",
         "smoke_foundation_hardening.gd",
         "smoke_responsive_layout.gd",
+        "smoke_rpgsuave_forest.gd",
+        "smoke_rpgsuave_visual_layout.gd",
         "smoke_exports.gd"
     )) {
         Invoke-Step -Name $smoke -Stage "Client" -Command "$GodotExe --headless --path . -s res://tools/$smoke" -ScriptBlock {

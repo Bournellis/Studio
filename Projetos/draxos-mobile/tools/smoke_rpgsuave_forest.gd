@@ -30,6 +30,17 @@ func _run_smoke() -> int:
 	root.add_child(screen)
 	await process_frame
 	_expect(screen.name == "RpgsuaveForestScreen", "Screen instantiates.")
+	_expect(screen.find_child("RpgsuaveForestWorldView", true, false) != null, "Fullscreen world view exists.")
+	_expect(screen.find_child("RpgsuaveVirtualJoystick", true, false) != null, "Virtual joystick exists.")
+	_expect(screen.find_child("RpgsuaveHudTop", true, false) != null, "In-game HUD exists.")
+	_expect(screen.find_child("RpgsuaveInventoryButton", true, false) != null, "Inventory button exists.")
+	_expect(screen.find_child("RpgsuaveForestBoard", true, false) == null, "Legacy fixed board was removed.")
+	var player_before: Vector2 = screen.get_player_position()
+	screen.set_debug_joystick_vector(Vector2.RIGHT)
+	for _frame in 12:
+		await process_frame
+	screen.set_debug_joystick_vector(Vector2.ZERO)
+	_expect(screen.get_player_position().x > player_before.x, "Debug joystick vector moves the player.")
 	screen.queue_free()
 	await process_frame
 

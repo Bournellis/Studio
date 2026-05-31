@@ -4,61 +4,85 @@ extends Control
 signal close_requested
 
 const ModelScript := preload("res://dev/minigames/rpgsuave/rpgsuave_forest_model.gd")
+const WorldViewScript := preload("res://dev/minigames/rpgsuave/rpgsuave_forest_world_view.gd")
+const JoystickScript := preload("res://dev/minigames/rpgsuave/rpgsuave_virtual_joystick.gd")
+const InventorySheetScript := preload("res://dev/minigames/rpgsuave/rpgsuave_inventory_sheet.gd")
 
-const BOARD_SIZE := Vector2(680, 420)
-const PLAYER_SIZE := Vector2(24, 24)
-const RESOURCE_SIZE := Vector2(36, 36)
-const RESOURCE_COLORS := {
-	"madeira": Color(0.42, 0.25, 0.12),
-	"galho": Color(0.50, 0.33, 0.16),
-	"folha": Color(0.25, 0.52, 0.28),
-	"folha_seca": Color(0.58, 0.45, 0.23),
-	"pedra": Color(0.45, 0.48, 0.50),
-	"pedra_pequena": Color(0.60, 0.62, 0.63),
-	"cogumelo": Color(0.63, 0.20, 0.28),
-	"fungo": Color(0.40, 0.22, 0.52),
-	"inseto": Color(0.18, 0.16, 0.13),
-	"resina": Color(0.84, 0.55, 0.18),
-	"cinzas_preview": Color(0.64, 0.64, 0.60),
-	"ossos_preview": Color(0.78, 0.72, 0.58),
-	"po_osso_preview": Color(0.86, 0.84, 0.72),
-}
+const WORLD_SIZE := Vector2(960, 1400)
+const CHEST_POSITION := Vector2(220, 250)
+const CHEST_RADIUS := 88.0
+const PLAYER_INITIAL_POSITION := Vector2(220, 330)
+const PLAYER_WORLD_MARGIN := 28.0
+const RESOURCE_FIXTURES := [
+	{"item_id": "galho", "position": Vector2(330, 420)},
+	{"item_id": "folha", "position": Vector2(410, 510)},
+	{"item_id": "madeira", "position": Vector2(600, 440)},
+	{"item_id": "pedra_pequena", "position": Vector2(260, 750)},
+	{"item_id": "pedra", "position": Vector2(430, 900)},
+	{"item_id": "cogumelo", "position": Vector2(690, 640)},
+	{"item_id": "fungo", "position": Vector2(760, 820)},
+	{"item_id": "inseto", "position": Vector2(530, 620)},
+	{"item_id": "resina", "position": Vector2(620, 720)},
+	{"item_id": "folha_seca", "position": Vector2(440, 1080)},
+	{"item_id": "cinzas_preview", "position": Vector2(600, 1220)},
+	{"item_id": "ossos_preview", "position": Vector2(710, 1260)},
+	{"item_id": "po_osso_preview", "position": Vector2(790, 1160)},
+]
 
 var model = ModelScript.new()
 var integration_mode := "dev_local"
 var supabase_client: Node = null
 var session_store: Node = null
 var access_token := ""
-var _board: Control
-var _player_marker: ColorRect
-var _hint_label: Label
+
+var _world = null
+var _joystick = null
+var _sheet = null
+var _hud_top: PanelContainer
+var _weight_label: Label
 var _status_label: Label
-var _pocket_label: Label
-var _chest_label: Label
-var _upgrade_label: Label
-var _progress: ProgressBar
-var _result_label: Label
-var _finish_button: Button
-var _craft_buttons: Dictionary = {}
+var _mode_label: Label
+var _feedback_label: Label
+var _inventory_button: Button
+var _deposit_button: Button
+var _complete_button: Button
+var _back_button: Button
+var _player_pos := PLAYER_INITIAL_POSITION
+var _debug_joystick_vector := Vector2.ZERO
 var _resource_nodes: Array[Dictionary] = []
-var _player_pos := Vector2(120, 210)
-var _target_pos := Vector2.INF
 var _session_seconds := 0.0
 var _server_session_id := ""
 var _network_busy := false
+var _walk_phase := 0.0
+var _last_result_text := ""
+var _last_pending_request_id := ""
 
 func _ready() -> void:
 	name = "RpgsuaveForestScreen"
-	_build_ui()
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	_spawn_resources()
-	_update_player_marker()
+	_build_ui()
 	_update_labels()
 	set_process(true)
 	if integration_mode == "integrated_alpha":
 		call_deferred("_start_integrated_session")
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_layout_overlay()
+
 func get_model() -> Variant:
 	return model
+
+func get_player_position() -> Vector2:
+	return _player_pos
+
+func get_inventory_sheet() -> Variant:
+	return _sheet
+
+func set_debug_joystick_vector(vector: Vector2) -> void:
+	_debug_joystick_vector = vector.limit_length(1.0)
 
 func configure_integrated_alpha(client: Node, store: Node, token: String) -> void:
 	supabase_client = client
@@ -72,210 +96,151 @@ func _process(delta: float) -> void:
 	var movement := _movement_vector()
 	var moved := movement.length() > 0.05
 	if moved:
+		_walk_phase += delta * 12.0
 		_move_player(movement.normalized() * model.current_speed() * delta)
 		model.advance_collection(0.0, true)
 	else:
 		_advance_nearby_collection(delta)
-	_update_player_marker()
 	_update_labels()
 
 func _build_ui() -> void:
-	size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	size_flags_vertical = Control.SIZE_EXPAND_FILL
-	var root := VBoxContainer.new()
-	root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	root.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	root.add_theme_constant_override("separation", 8)
-	add_child(root)
+	_world = WorldViewScript.new()
+	_world.configure(WORLD_SIZE, CHEST_POSITION)
+	_world.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(_world)
 
-	var title := Label.new()
-	title.text = "Rpgsuave Bosque"
-	title.add_theme_font_size_override("font_size", 20)
-	root.add_child(title)
+	_hud_top = PanelContainer.new()
+	_hud_top.name = "RpgsuaveHudTop"
+	_hud_top.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.052, 0.045, 0.82), Color(0.74, 0.64, 0.42, 0.36)))
+	add_child(_hud_top)
 
-	_hint_label = Label.new()
-	_hint_label.text = "Dev-only: ande, pare perto de recursos, espere a coleta, volte ao bau e craft upgrades locais."
-	_hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	root.add_child(_hint_label)
+	var hud_margin := MarginContainer.new()
+	hud_margin.add_theme_constant_override("margin_left", 10)
+	hud_margin.add_theme_constant_override("margin_right", 10)
+	hud_margin.add_theme_constant_override("margin_top", 8)
+	hud_margin.add_theme_constant_override("margin_bottom", 8)
+	_hud_top.add_child(hud_margin)
 
-	var split := HBoxContainer.new()
-	split.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	split.add_theme_constant_override("separation", 10)
-	root.add_child(split)
+	var hud_column := VBoxContainer.new()
+	hud_column.add_theme_constant_override("separation", 2)
+	hud_margin.add_child(hud_column)
 
-	var board_panel := PanelContainer.new()
-	board_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	board_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	split.add_child(board_panel)
+	var hud_row := HBoxContainer.new()
+	hud_row.add_theme_constant_override("separation", 8)
+	hud_column.add_child(hud_row)
 
-	_board = Control.new()
-	_board.name = "RpgsuaveForestBoard"
-	_board.custom_minimum_size = BOARD_SIZE
-	_board.clip_contents = true
-	_board.gui_input.connect(_on_board_input)
-	board_panel.add_child(_board)
+	_weight_label = _hud_label("")
+	_weight_label.name = "RpgsuavePocketWeight"
+	_weight_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hud_row.add_child(_weight_label)
 
-	var bg := ColorRect.new()
-	bg.color = Color(0.10, 0.16, 0.11)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_board.add_child(bg)
+	_mode_label = _hud_label("")
+	_mode_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	hud_row.add_child(_mode_label)
 
-	_add_zone(Vector2(24, 24), Vector2(160, 120), Color(0.18, 0.12, 0.08), "Bau")
-	_add_zone(Vector2(420, 250), Vector2(210, 130), Color(0.13, 0.13, 0.13), "Cemiterio preview")
+	_status_label = _hud_label("")
+	_status_label.name = "RpgsuaveCollectState"
+	hud_column.add_child(_status_label)
 
-	_player_marker = ColorRect.new()
-	_player_marker.name = "RpgsuavePlayer"
-	_player_marker.color = Color(0.78, 0.13, 0.13)
-	_player_marker.custom_minimum_size = PLAYER_SIZE
-	_board.add_child(_player_marker)
+	_feedback_label = _hud_label("")
+	_feedback_label.name = "RpgsuaveFeedback"
+	_feedback_label.add_theme_color_override("font_color", Color(0.96, 0.86, 0.58))
+	hud_column.add_child(_feedback_label)
 
-	var side := VBoxContainer.new()
-	side.custom_minimum_size.x = 260
-	side.size_flags_horizontal = Control.SIZE_FILL
-	side.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	side.add_theme_constant_override("separation", 8)
-	split.add_child(side)
+	_joystick = JoystickScript.new()
+	_joystick.name = "RpgsuaveVirtualJoystick"
+	add_child(_joystick)
 
-	_status_label = _side_label(side, "")
-	_progress = ProgressBar.new()
-	_progress.min_value = 0.0
-	_progress.max_value = 1.0
-	side.add_child(_progress)
-	_pocket_label = _side_label(side, "")
-	_chest_label = _side_label(side, "")
-	_upgrade_label = _side_label(side, "")
+	var actions := HBoxContainer.new()
+	actions.name = "RpgsuaveActionButtons"
+	actions.add_theme_constant_override("separation", 6)
+	actions.size_flags_horizontal = Control.SIZE_SHRINK_END
+	add_child(actions)
 
-	var deposit := Button.new()
-	deposit.text = "Depositar no Bau"
-	deposit.pressed.connect(func() -> void:
-		model.deposit_all()
-		_update_labels()
+	_inventory_button = _action_button("Mochila")
+	_inventory_button.name = "RpgsuaveInventoryButton"
+	_inventory_button.pressed.connect(func() -> void:
+		_sheet.open_sheet("pocket")
 	)
-	side.add_child(deposit)
+	actions.add_child(_inventory_button)
 
-	for recipe_id: String in ModelScript.RECIPES.keys():
-		var button := Button.new()
-		button.text = str(ModelScript.RECIPES[recipe_id].get("display_name", recipe_id))
-		button.pressed.connect(func(id := recipe_id) -> void:
-			model.craft(id)
-			_update_labels()
-		)
-		side.add_child(button)
-		_craft_buttons[recipe_id] = button
+	_deposit_button = _action_button("Depositar")
+	_deposit_button.name = "RpgsuaveDepositButton"
+	_deposit_button.pressed.connect(_deposit_near_chest)
+	actions.add_child(_deposit_button)
 
-	_finish_button = Button.new()
-	_finish_button.text = "Gerar resultado local"
-	_finish_button.pressed.connect(_show_result)
-	side.add_child(_finish_button)
+	_complete_button = _action_button("Completar")
+	_complete_button.name = "RpgsuaveCompleteButton"
+	_complete_button.pressed.connect(_show_result)
+	actions.add_child(_complete_button)
 
-	var close := Button.new()
-	close.text = "Voltar"
-	close.pressed.connect(func() -> void:
+	_back_button = _action_button("Voltar")
+	_back_button.name = "RpgsuaveBackButton"
+	_back_button.pressed.connect(func() -> void:
 		close_requested.emit()
 	)
-	side.add_child(close)
+	actions.add_child(_back_button)
 
-	_result_label = _side_label(side, "")
+	_sheet = InventorySheetScript.new()
+	_sheet.bind_model(model)
+	_sheet.deposit_requested.connect(_deposit_near_chest)
+	_sheet.craft_requested.connect(_craft_recipe)
+	_sheet.complete_requested.connect(_show_result)
+	add_child(_sheet)
 
-func _side_label(parent: Control, text: String) -> Label:
+	_layout_overlay()
+
+func _layout_overlay() -> void:
+	if _hud_top == null:
+		return
+	var safe_margin := 12.0
+	var top_width := minf(size.x - safe_margin * 2.0, 460.0)
+	_hud_top.position = Vector2(safe_margin, safe_margin)
+	_hud_top.size = Vector2(top_width, 92.0)
+	if _joystick != null:
+		_joystick.size = JoystickScript.BASE_SIZE
+		_joystick.position = Vector2(18.0, maxf(18.0, size.y - JoystickScript.BASE_SIZE.y - 24.0))
+	var actions := get_node_or_null("RpgsuaveActionButtons") as HBoxContainer
+	if actions != null:
+		actions.size = Vector2(minf(380.0, size.x - 28.0), 48.0)
+		actions.position = Vector2(maxf(14.0, size.x - actions.size.x - 14.0), maxf(16.0, size.y - 72.0))
+
+func _hud_label(text: String) -> Label:
 	var label := Label.new()
 	label.text = text
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	parent.add_child(label)
+	label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	label.clip_text = true
+	label.add_theme_font_size_override("font_size", 12)
+	label.add_theme_color_override("font_color", Color(0.94, 0.91, 0.80))
 	return label
 
-func _add_zone(position: Vector2, zone_size: Vector2, color: Color, label_text: String) -> void:
-	var zone := ColorRect.new()
-	zone.color = color
-	zone.position = position
-	zone.size = zone_size
-	zone.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_board.add_child(zone)
-	var label := Label.new()
-	label.text = label_text
-	label.position = position + Vector2(8, 8)
-	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_board.add_child(label)
+func _action_button(text: String) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.custom_minimum_size = Vector2(76, 48)
+	button.tooltip_text = text
+	return button
 
 func _spawn_resources() -> void:
-	var fixtures := [
-		{"item_id": "galho", "position": Vector2(230, 72)},
-		{"item_id": "folha", "position": Vector2(275, 116)},
-		{"item_id": "madeira", "position": Vector2(335, 82)},
-		{"item_id": "pedra_pequena", "position": Vector2(225, 250)},
-		{"item_id": "pedra", "position": Vector2(302, 302)},
-		{"item_id": "cogumelo", "position": Vector2(430, 108)},
-		{"item_id": "fungo", "position": Vector2(510, 150)},
-		{"item_id": "inseto", "position": Vector2(565, 82)},
-		{"item_id": "resina", "position": Vector2(378, 208)},
-		{"item_id": "folha_seca", "position": Vector2(470, 285)},
-		{"item_id": "cinzas_preview", "position": Vector2(510, 315)},
-		{"item_id": "ossos_preview", "position": Vector2(580, 312)},
-		{"item_id": "po_osso_preview", "position": Vector2(610, 262)},
-	]
-	for fixture: Dictionary in fixtures:
-		var item_id := str(fixture.get("item_id", ""))
-		var node := Button.new()
-		node.text = item_id.left(2)
-		node.tooltip_text = model.item_display_name(item_id)
-		node.position = fixture.get("position", Vector2.ZERO)
-		node.size = RESOURCE_SIZE
-		node.custom_minimum_size = RESOURCE_SIZE
-		node.add_theme_color_override("font_color", Color.WHITE)
-		var color := RESOURCE_COLORS.get(item_id, Color(0.4, 0.4, 0.4)) as Color
-		node.add_theme_stylebox_override("normal", _resource_style(color, false))
-		node.add_theme_stylebox_override("hover", _resource_style(color, true))
-		node.add_theme_stylebox_override("pressed", _resource_style(color, true))
-		node.pressed.connect(func(pos := Vector2(fixture.get("position", Vector2.ZERO))) -> void:
-			_target_pos = pos
-		)
-		_board.add_child(node)
-		_resource_nodes.append({"item_id": item_id, "position": fixture.get("position", Vector2.ZERO), "button": node, "collected": false})
-
-func _resource_style(color: Color, hover: bool) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = color.lightened(0.14 if hover else 0.0)
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.border_color = Color(0.90, 0.82, 0.62, 0.75)
-	style.corner_radius_top_left = 6
-	style.corner_radius_top_right = 6
-	style.corner_radius_bottom_left = 6
-	style.corner_radius_bottom_right = 6
-	return style
+	_resource_nodes.clear()
+	for fixture: Dictionary in RESOURCE_FIXTURES:
+		_resource_nodes.append({
+			"item_id": str(fixture.get("item_id", "")),
+			"position": Vector2(fixture.get("position", Vector2.ZERO)),
+			"collected": false,
+		})
 
 func _movement_vector() -> Vector2:
-	var movement := Vector2.ZERO
-	if Input.is_action_pressed("ui_left") or Input.is_key_pressed(KEY_A):
-		movement.x -= 1.0
-	if Input.is_action_pressed("ui_right") or Input.is_key_pressed(KEY_D):
-		movement.x += 1.0
-	if Input.is_action_pressed("ui_up") or Input.is_key_pressed(KEY_W):
-		movement.y -= 1.0
-	if Input.is_action_pressed("ui_down") or Input.is_key_pressed(KEY_S):
-		movement.y += 1.0
-	if movement.length() > 0.05:
-		_target_pos = Vector2.INF
-		return movement
-	if _target_pos != Vector2.INF:
-		var delta := _target_pos - _player_pos
-		if delta.length() <= 5.0:
-			_target_pos = Vector2.INF
-			return Vector2.ZERO
-		return delta.normalized()
-	return Vector2.ZERO
+	if _debug_joystick_vector.length() > 0.01:
+		return _debug_joystick_vector
+	if _joystick == null:
+		return Vector2.ZERO
+	return _joystick.input_vector()
 
 func _move_player(delta: Vector2) -> void:
-	var board_size := _board.size
-	if board_size.x <= 0.0 or board_size.y <= 0.0:
-		board_size = BOARD_SIZE
 	_player_pos += delta
-	_player_pos.x = clampf(_player_pos.x, PLAYER_SIZE.x * 0.5, board_size.x - PLAYER_SIZE.x * 0.5)
-	_player_pos.y = clampf(_player_pos.y, PLAYER_SIZE.y * 0.5, board_size.y - PLAYER_SIZE.y * 0.5)
+	_player_pos.x = clampf(_player_pos.x, PLAYER_WORLD_MARGIN, WORLD_SIZE.x - PLAYER_WORLD_MARGIN)
+	_player_pos.y = clampf(_player_pos.y, PLAYER_WORLD_MARGIN, WORLD_SIZE.y - PLAYER_WORLD_MARGIN)
 
 func _advance_nearby_collection(delta: float) -> void:
 	var nearest := _nearest_resource()
@@ -294,9 +259,6 @@ func _advance_nearby_collection(delta: float) -> void:
 	var result: Dictionary = model.advance_collection(delta, false, distance)
 	if bool(result.get("completed", false)):
 		nearest["collected"] = true
-		var button := nearest.get("button") as Button
-		if button != null:
-			button.visible = false
 
 func _nearest_resource() -> Dictionary:
 	var best: Dictionary = {}
@@ -310,48 +272,60 @@ func _nearest_resource() -> Dictionary:
 			best_distance = distance
 	return best
 
-func _update_player_marker() -> void:
-	if _player_marker == null:
+func _near_chest() -> bool:
+	return _player_pos.distance_to(CHEST_POSITION) <= CHEST_RADIUS
+
+func _deposit_near_chest() -> void:
+	if not _near_chest():
+		model.last_message = "Aproxime-se do bau para depositar."
+		_update_labels()
 		return
-	_player_marker.position = _player_pos - PLAYER_SIZE * 0.5
-	_player_marker.size = PLAYER_SIZE
+	model.deposit_all()
+	_update_labels()
+
+func _craft_recipe(recipe_id: String) -> void:
+	model.craft(recipe_id)
+	_update_labels()
 
 func _update_labels() -> void:
-	if _status_label == null:
+	if _world == null:
 		return
-	if _hint_label != null:
-		_hint_label.text = "Integrated Alpha: sessao server-authoritative; resultado local fica pendente se a rede cair." if integration_mode == "integrated_alpha" else "Dev-only: ande, pare perto de recursos, espere a coleta, volte ao bau e craft upgrades locais."
-	if _finish_button != null:
-		_finish_button.text = "Completar sessao" if integration_mode == "integrated_alpha" else "Gerar resultado local"
-		_finish_button.disabled = _network_busy
-	_status_label.text = model.last_message
-	_progress.value = model.collection_progress()
-	_pocket_label.text = "Bolso: %.1f / %.1f\n%s" % [model.pocket_weight(), model.capacity(), _inventory_lines(model.pocket)]
-	_chest_label.text = "Bau local:\n%s" % _inventory_lines(model.chest)
-	_upgrade_label.text = "Upgrades locais:\n%s" % _upgrade_lines()
-	for recipe_id: String in _craft_buttons.keys():
-		var button := _craft_buttons[recipe_id] as Button
-		if button != null:
-			button.disabled = not model.can_craft(recipe_id)
-
-func _inventory_lines(source: Dictionary) -> String:
-	if source.is_empty():
-		return "-"
-	var lines := PackedStringArray()
-	var keys := PackedStringArray()
-	for key: String in source.keys():
-		keys.append(key)
-	keys.sort()
-	for key: String in keys:
-		lines.append("%s x%d" % [model.item_display_name(key), int(source.get(key, 0))])
-	return "\n".join(lines)
-
-func _upgrade_lines() -> String:
-	var active := PackedStringArray()
-	for key: String in model.upgrades.keys():
-		if bool(model.upgrades.get(key, false)):
-			active.append(key)
-	return "-" if active.is_empty() else "\n".join(active)
+	var nearest := _nearest_resource()
+	var nearest_id := str(nearest.get("item_id", ""))
+	var pocket_full := model.pocket_weight() >= model.capacity() - 0.001
+	_world.set_state(_player_pos, _resource_nodes, nearest_id, model.collection_progress(), pocket_full, _walk_phase)
+	if _weight_label != null:
+		_weight_label.text = "Bolso %.1f / %.1f" % [model.pocket_weight(), model.capacity()]
+	if _mode_label != null:
+		var online := "online" if integration_mode == "integrated_alpha" and _server_session_id != "" else integration_mode
+		_mode_label.text = online
+	if _status_label != null:
+		if not model.active_collection.is_empty():
+			_status_label.text = "Coletando %s" % model.item_display_name(str(model.active_collection.get("item_id", "")))
+		elif nearest_id != "":
+			_status_label.text = "Pare para coletar %s" % model.item_display_name(nearest_id)
+		elif _near_chest():
+			_status_label.text = "Bau proximo"
+		else:
+			_status_label.text = "Explore o bosque"
+	if _feedback_label != null:
+		_feedback_label.text = model.last_message
+	if _deposit_button != null:
+		_deposit_button.disabled = not _near_chest()
+		_deposit_button.tooltip_text = "Depositar bolso no bau." if _near_chest() else "Aproxime-se do bau."
+	if _complete_button != null:
+		_complete_button.text = "Completar" if integration_mode == "integrated_alpha" else "Preview"
+		_complete_button.disabled = _network_busy
+	if _sheet != null:
+		_sheet.render(
+			integration_mode,
+			_server_session_id,
+			_network_busy,
+			_last_pending_request_id,
+			_last_result_text,
+			model.result_payload(_session_seconds)
+		)
+		_sheet.set_deposit_available(_near_chest())
 
 func _show_result() -> void:
 	if integration_mode == "integrated_alpha":
@@ -361,10 +335,12 @@ func _show_result() -> void:
 
 func _show_local_result() -> void:
 	var payload: Dictionary = model.result_payload(_session_seconds)
-	_result_label.text = "Resultado preview local:\nscore=%s\nitems=%s" % [
+	_last_result_text = "Resultado preview local: score=%s, items=%s" % [
 		str(payload.get("activity_score", 0)),
 		JSON.stringify(payload.get("deposited_items", {})),
 	]
+	model.last_message = "Resultado local gerado."
+	_update_labels()
 
 func _start_integrated_session() -> void:
 	if _network_busy or integration_mode != "integrated_alpha" or _server_session_id != "":
@@ -382,6 +358,7 @@ func _start_integrated_session() -> void:
 			"slice_id": ModelScript.SLICE_ID,
 		}
 	)
+	_last_pending_request_id = str(request.get("request_id", ""))
 	var result: Dictionary = await supabase_client.start_minigame_session(
 		str(request.get("request_id", "")),
 		ModelScript.MODE_ID,
@@ -393,9 +370,12 @@ func _start_integrated_session() -> void:
 	var body := _response_body(result)
 	if bool(result.get("ok", false)) and session_store.apply_minigame_result(result):
 		_server_session_id = str(_as_dictionary(body.get("session", {})).get("id", ""))
-		_result_label.text = "Sessao integrada iniciada."
+		_last_pending_request_id = ""
+		_last_result_text = "Sessao integrada iniciada."
+		model.last_message = "Sessao online pronta."
 	else:
-		_result_label.text = "Rede indisponivel: jogando local, start ficou pendente."
+		_last_result_text = "Rede indisponivel: jogando local, start ficou pendente."
+		model.last_message = "Modo local preservado."
 		if not _is_network_error(result):
 			session_store.fail_pending_mutation(str(request.get("request_id", "")), _as_dictionary(result.get("body", {})))
 	_update_labels()
@@ -416,6 +396,7 @@ func _complete_integrated_session() -> void:
 		"open_minigame_shell:rpgsuave",
 		payload
 	)
+	_last_pending_request_id = str(request.get("request_id", ""))
 	_network_busy = true
 	_update_labels()
 	var result: Dictionary = await supabase_client.complete_minigame_session(
@@ -430,9 +411,12 @@ func _complete_integrated_session() -> void:
 	if bool(result.get("ok", false)) and session_store.apply_minigame_result(result):
 		var body := _response_body(result)
 		var reward := _as_dictionary(body.get("reward", {}))
-		_result_label.text = "Recompensa aplicada:\n%s" % JSON.stringify(reward.get("resource_delta", {}))
+		_last_pending_request_id = ""
+		_last_result_text = "Recompensa aplicada: %s" % JSON.stringify(reward.get("resource_delta", {}))
+		model.last_message = "Recompensa integrada aplicada."
 	else:
-		_result_label.text = "Resultado local preservado. Mutacao pendente para retry:\n%s" % str(request.get("request_id", ""))
+		_last_result_text = "Resultado local preservado. Mutacao pendente: %s" % str(request.get("request_id", ""))
+		model.last_message = "Resultado pendente para retry."
 		if not _is_network_error(result):
 			session_store.fail_pending_mutation(str(request.get("request_id", "")), _as_dictionary(result.get("body", {})))
 	_update_labels()
@@ -449,8 +433,16 @@ func _is_network_error(result: Dictionary) -> bool:
 func _as_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}
 
-func _on_board_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		var mouse := event as InputEventMouseButton
-		if mouse.pressed and mouse.button_index == MOUSE_BUTTON_LEFT:
-			_target_pos = mouse.position
+func _panel_style(bg: Color, border: Color) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = bg
+	style.border_color = border
+	style.border_width_left = 1
+	style.border_width_top = 1
+	style.border_width_right = 1
+	style.border_width_bottom = 1
+	style.corner_radius_top_left = 8
+	style.corner_radius_top_right = 8
+	style.corner_radius_bottom_left = 8
+	style.corner_radius_bottom_right = 8
+	return style
