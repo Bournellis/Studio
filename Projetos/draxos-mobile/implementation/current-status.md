@@ -4,17 +4,18 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Track 19 - Arena Consistency Pass`
-- Active stage status: `ARENA_CONSISTENCY_PASS_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Lab Web Export Guard Hotfix`
+- Active stage status: `LAB_WEB_EXPORT_GUARD_PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Track 19 - Arena Consistency Pass`
-- Latest implemented package: `Track 19 - Arena Consistency Pass` on branch
-  `codex/draxos-mobile/arena-consistency-pass`.
+- Latest published remote package: `Lab Web Export Guard Hotfix`
+- Latest implemented package: `Lab Web Export Guard Hotfix` on branch
+  `codex/draxos-mobile/lab-web-export-guard`.
 - Active follow-up: human playtest of the Arena PVE tutorial/3-duel flow from
-  the Track 19 published package, then decide tuning scope.
+  the hotfix published package, confirm Labs Dev Web guard behavior, then
+  decide tuning scope.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -39,6 +40,10 @@ Track 19 now aligns the same package for consistency before tuning: potions are
 consumed from live stock per Arena duel, claim is read as summary/ack only, the
 public buff endpoint is `/arena/pve/buff/select`, the client lists remote Arena
 data, and the labs report Arena PVE sequence sanity targets.
+Lab Web Export Guard is the current remote hotfix over Track 19: Battle Lab Dev
+and Progression Lab Dev now detect Web export before calling `OS.execute`,
+disable local-process actions in the browser and keep PC/editor Lab generation
+available.
 
 Current product reading: this is a strong prototype base for refinement. The
 current product direction is Arena PVE initial, documented in
@@ -238,6 +243,70 @@ Published Track 19 Internal Alpha artifacts:
 
 Next after Track 19: playtest the Arena PVE tutorial and 3-duel arena, confirm
 the potion and summary behavior manually, then choose the focused tuning pass.
+
+## Lab Web Export Guard Hotfix
+
+Lab Web Export Guard is implemented and published remotely on
+`codex/draxos-mobile/lab-web-export-guard` as a client hotfix over Track 19.
+
+Implemented in the hotfix:
+
+- Battle Lab Dev and Progression Lab Dev detect Web export before calling
+  `OS.execute`.
+- Buttons that require local `npx/deno` are disabled in the browser and expose
+  a clear message to use PC/editor for local generation.
+- PC/editor Lab generation remains unchanged.
+- Tests simulate process-unavailable mode so the Web guard stays protected.
+
+Validation and publication completed:
+
+- `git diff --check`
+- GUT client: `138/138`, `2364` asserts.
+- `tools/smoke_dev_lab_ui.gd`: passed.
+- `tools/validate.gd`: passed.
+- `tools/smoke_responsive_layout.gd`: passed.
+- `tools/smoke_exports.gd`: passed.
+- `tools/validate_foundation.ps1 -Profile Client`: passed.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passed using
+  the ignored local Internal Alpha env file; Android export mode:
+  `debug_fallback`.
+- `tools/publish_internal_alpha.ps1 -Mode Plan`: passed.
+- `tools/publish_internal_alpha.ps1 -Mode Package`: passed.
+- `tools/publish_internal_alpha.ps1 -Mode Upload -PublicDownloads
+  -ConfirmRemoteMutation`: passed for release root
+  `internal-alpha/v0-lab-web-export-guard-20260531-9a415c3`.
+- `tools/build_cloudflare_pages_package.ps1`: passed with Web assets rooted at
+  the versioned Supabase Storage path.
+- `npx -y wrangler pages deploy`: passed, preview
+  `https://fc60138d.draxos-mobile-internal-alpha.pages.dev`.
+- `tools/publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads
+  -ConfirmRemoteMutation`: passed, manifest now points to the hotfix preview.
+- `server/tests/release_manifest_smoke.ts`: passed remotely.
+- `server/tests/release_artifacts_remote_smoke.ts`: passed remotely for
+  manifest, Portal, Web, APK and PC ZIP.
+- `server/tests/internal_alpha_remote_smoke.ts` with
+  `DRAXOS_REMOTE_RELEASE_SMOKE=1`: passed remotely.
+
+Published hotfix Internal Alpha artifacts:
+
+- Portal:
+  `https://fc60138d.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://fc60138d.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-lab-web-export-guard-20260531-9a415c3/downloads/draxos-mobile-alpha.apk`
+  (`31741724` bytes,
+  `b23b88839f57fee70fd161d412ef78d6ea2a23300e01f0a731f36db6ab0749de`).
+- PC Windows ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-lab-web-export-guard-20260531-9a415c3/downloads/draxos-mobile-alpha.zip`
+  (`40202687` bytes,
+  `1c937191561f0f1a39df0c4234eb183faf4be553afa057f9a6fd8613fbaf2e23`).
+- Manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
+
+Next after hotfix: playtest the Arena PVE tutorial and 3-duel arena, confirm
+that Battle Lab Dev no longer tries to start `npx/deno` in Web export, then
+choose the focused tuning pass.
 
 ## Foundation Audit
 
@@ -789,13 +858,13 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Track 19 Arena Consistency Pass is now the latest Internal Alpha publication:
-`codex/draxos-mobile/arena-consistency-pass`, release root
-`internal-alpha/v0-arena-consistency-pass-20260531-0865e43`, preview
-`https://168dc669.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+Lab Web Export Guard is now the latest Internal Alpha publication:
+`codex/draxos-mobile/lab-web-export-guard`, release root
+`internal-alpha/v0-lab-web-export-guard-20260531-9a415c3`, preview
+`https://fc60138d.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
 The next product step is human playtest and tuning notes for the Arena PVE
 tutorial/3-duel loop, including potion consumption, remote arena selection,
-buff selection and summary/claim behavior. Do not open PVP,
+buff selection, summary/claim behavior and the Web Lab guard. Do not open PVP,
 victory prediction, opponent counter-picks, custom thresholds, enemy-specific
 behavior, spell priorities, direct chat, helps, contributions, moderation,
 tuning numbers, new weapons, new spells, economy, new potions, crafting

@@ -27,9 +27,9 @@ If a historical track conflicts with these docs, the live docs win. If local pro
 
 ## Current Stage
 
-Active stage: `ARENA_CONSISTENCY_PASS_PUBLISHED_INTERNAL_ALPHA`.
+Active stage: `LAB_WEB_EXPORT_GUARD_PUBLISHED_INTERNAL_ALPHA`.
 
-The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout and Lab Track 16 Alignment are delivered. Foundation Final Polish is the previous published hardening baseline: it syncs live docs, keeps shell facade budgets guarded, strengthens presenter/session slices and adds the local RLS/admin smoke to the Full gate. Track 19 Arena Consistency Pass is the latest remote Internal Alpha publication from `codex/draxos-mobile/arena-consistency-pass`, release root `internal-alpha/v0-arena-consistency-pass-20260531-0865e43`, preview `https://168dc669.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout and Lab Track 16 Alignment are delivered. Foundation Final Polish is the previous published hardening baseline: it syncs live docs, keeps shell facade budgets guarded, strengthens presenter/session slices and adds the local RLS/admin smoke to the Full gate. Track 19 Arena Consistency Pass is the latest product baseline, and Lab Web Export Guard is the latest remote Internal Alpha publication from `codex/draxos-mobile/lab-web-export-guard`, release root `internal-alpha/v0-lab-web-export-guard-20260531-9a415c3`, preview `https://fc60138d.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
 
 Historical app-shell loop baseline from Foundation Loop UX Pass 01, preserved for context but not the current product reading:
 

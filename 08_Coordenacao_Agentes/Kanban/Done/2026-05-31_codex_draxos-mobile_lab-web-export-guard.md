@@ -4,7 +4,7 @@
 - Agente: Codex
 - Branch: `codex/draxos-mobile/lab-web-export-guard`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--arena-consistency-pass`
-- Status: `ENTREGUE_LOCAL`
+- Status: `ENTREGUE_PUBLICADO`
 
 ## Objetivo
 
@@ -56,5 +56,15 @@ Validacoes concluidas:
 - `tools/smoke_exports.gd`
 - `tools/validate_foundation.ps1 -Profile Client`
 
-Publicacao remota ainda nao executada neste hotfix; precisa de aprovacao
-explicita para `Upload`/`DeployManifest` com `-ConfirmRemoteMutation`.
+Publicacao remota executada apos aprovacao explicita do usuario.
+
+- Release root: `internal-alpha/v0-lab-web-export-guard-20260531-9a415c3`
+- Portal: `https://fc60138d.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web: `https://fc60138d.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-lab-web-export-guard-20260531-9a415c3/downloads/draxos-mobile-alpha.apk`
+- PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-lab-web-export-guard-20260531-9a415c3/downloads/draxos-mobile-alpha.zip`
+- Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
+
+Validacoes remotas read-only concluidas: `release_manifest_smoke.ts`,
+`release_artifacts_remote_smoke.ts` e `internal_alpha_remote_smoke.ts` com
+`DRAXOS_REMOTE_RELEASE_SMOKE=1`.
