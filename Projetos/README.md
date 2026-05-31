@@ -18,8 +18,8 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Arena PVE Inicial
 
-- `draxos-mobile/`: mobile-first Draxos PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and Foundation Closeout is delivered over Foundation Expansion Readiness: account/save authority, immutable ruleset publication registry, persisted replay hashes, API v1 header, idempotency v1, internal auditable admin RPCs, client retry registry, ActionRouter/OperationState in the real shell path, minigame placeholder only and transactional RPC promotion including build behavior/potion and social friend/chat. Foundation Final Polish is the latest Internal Alpha publication at `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`. Track 18 PVE Arena Initial is implemented locally on `codex/draxos-mobile/pve-arena-integration` and packaged locally at `build/internal-alpha/publish`: tutorial of 1 duel, arenas de 3/4/5/6 duelos, locked loadout, temporary stat buffs, HP reset per duel, no combat cooldown, separate PVE attempts/progress/rewards and Arena-aware Battle/Progression Lab outputs.
-  - Priority/status: `P2_IMPLEMENTACAO - PVE_ARENA_INITIAL_LOCAL_PACKAGE_READY`
+- `draxos-mobile/`: mobile-first Draxos PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and Foundation Closeout is delivered over Foundation Expansion Readiness: account/save authority, immutable ruleset publication registry, persisted replay hashes, API v1 header, idempotency v1, internal auditable admin RPCs, client retry registry, ActionRouter/OperationState in the real shell path, minigame placeholder only and transactional RPC promotion including build behavior/potion and social friend/chat. Track 18 PVE Arena Initial is the latest Internal Alpha publication at `internal-alpha/v0-pve-arena-entry-20260531-6cbc853` with preview `https://c185369d.draxos-mobile-internal-alpha.pages.dev/web/index.html`: tutorial of 1 duel, arenas de 3/4/5/6 duelos, locked loadout, temporary stat buffs, HP reset per duel, no combat cooldown, separate PVE attempts/progress/rewards and Arena-aware Battle/Progression Lab outputs.
+  - Priority/status: `P2_IMPLEMENTACAO - PVE_ARENA_INITIAL_PUBLISHED_INTERNAL_ALPHA`
   - Canonical local branch for Arena PVE follow-up: `codex/draxos-mobile/pve-arena-integration`; use `codex/draxos-mobile/foundation-final-polish` only when explicitly returning to the latest published foundation baseline.
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
@@ -54,7 +54,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: run clean full gate/package locally, then human playtest the Arena PVE tutorial/3-duel loop before any remote publication decision.
+  - Current next step: human playtest the published Arena PVE tutorial/3-duel loop and record tuning/UX blockers.
 
 ## Arquivo De Design
 

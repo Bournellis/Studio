@@ -5,14 +5,14 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Track 18 - PVE Arena Initial`
-- Active stage status: `PVE_ARENA_INITIAL_LOCAL_PACKAGE_READY`
+- Active stage status: `PVE_ARENA_INITIAL_PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published package: `Foundation Final Polish`
+- Latest published package: `Track 18 - PVE Arena Initial`
 - Latest implemented package: `Track 18 - PVE Arena Initial` on branch
-  `codex/draxos-mobile/pve-arena-integration`, over Foundation Final Polish.
+  `codex/draxos-mobile/pve-arena-integration`.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -30,12 +30,12 @@ The implemented base includes Android/PC/Web alpha surfaces, email/password
 account flow, `normal` and `progression_lab` saves, server-authoritative battle,
 Base/Social/Competition/Shop loops, Progression Lab/Battle Lab, portrait
 Refugio, fullscreen portrait battle, skip, summary and current-battle logs.
-Track 18 now adds a local Arena PVE-first implementation branch with
+Track 18 now adds the published Arena PVE-first implementation branch with
 server-authoritative attempts, steps, temporary buffs, completion rewards,
 client shell routes and arena-specific lab outputs.
 
 Current product reading: this is a strong prototype base for refinement. The
-next product direction is Arena PVE initial, documented in
+current product direction is Arena PVE initial, documented in
 `docs/pve-arena-initial-direction.md`. Names, spells, weapons, economy values,
 Battle Pass, battle flavor, visual identity and premium content are
 mock/substance used to keep the app from feeling empty, not final design
@@ -45,7 +45,7 @@ Foundation shell loop:
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-Product loop now selected for the next package:
+Product loop now selected for the current package:
 
 `Refugio -> Arena PVE -> lock loadout -> duel list -> temporary stat buffs and behavior prep between duels -> rewards -> upgrades`
 
@@ -72,10 +72,8 @@ The major foundation baseline is:
 ## Track 18 - PVE Arena Initial
 
 On `2026-05-31`, the product direction changed from PVP-first to Arena
-PVE-first. Track 18 is implemented locally on
-`codex/draxos-mobile/pve-arena-integration`; Foundation Final Polish remains
-the latest published Internal Alpha package until remote publication is
-explicitly approved.
+PVE-first. Track 18 is implemented and published from
+`codex/draxos-mobile/pve-arena-integration` to Internal Alpha.
 
 - tutorial starts with 1 guided duel;
 - first real arenas start with 3 duels;
@@ -91,7 +89,7 @@ explicitly approved.
 - PVP moves to a later competitive package, with bots only as fallback or
   simulation while playerbase grows.
 
-Implemented locally in Track 18:
+Implemented and published in Track 18:
 
 - `docs/pve-arena-v1.md` and contract docs define Arena PVE as a domain
   separate from PVP/ranking.
@@ -108,7 +106,7 @@ Implemented locally in Track 18:
   emits `arena_progression_checks.csv` and models attempts/duels/clear rate
   instead of treating PVP battles as the early loop.
 
-Validation completed locally before commit:
+Validation and publication completed for Track 18:
 
 - `git diff --check`
 - `npx -y deno task --cwd server/functions check`
@@ -126,21 +124,39 @@ Validation completed locally before commit:
 - `tools/publish_internal_alpha.ps1 -Mode Plan`: passed.
 - `tools/publish_internal_alpha.ps1 -Mode Package`: passed and produced the
   local package at `build/internal-alpha/publish`.
+- `tools/publish_internal_alpha.ps1 -Mode Upload -PublicDownloads
+  -ConfirmRemoteMutation`: passed for release root
+  `internal-alpha/v0-pve-arena-entry-20260531-6cbc853`.
+- `tools/build_cloudflare_pages_package.ps1`: passed with Web assets rooted at
+  the versioned Supabase Storage path.
+- `npx -y wrangler pages deploy`: passed, preview
+  `https://c185369d.draxos-mobile-internal-alpha.pages.dev`.
+- `tools/publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads
+  -ConfirmRemoteMutation`: passed, manifest now points to the Track 18 preview.
+- `server/tests/release_manifest_smoke.ts`: passed remotely.
+- `server/tests/release_artifacts_remote_smoke.ts`: passed remotely for
+  manifest, Portal, Web, APK and PC ZIP.
+- `server/tests/internal_alpha_remote_smoke.ts` with
+  `DRAXOS_REMOTE_RELEASE_SMOKE=1`: passed remotely.
 
-Local package artifacts:
+Published Internal Alpha artifacts:
 
-- Android APK: `build/internal-alpha/publish/downloads/draxos-mobile-alpha.apk`
+- Portal:
+  `https://c185369d.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://c185369d.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-pve-arena-entry-20260531-6cbc853/downloads/draxos-mobile-alpha.apk`
   (`31737628` bytes).
 - PC Windows ZIP:
-  `build/internal-alpha/publish/downloads/draxos-mobile-alpha.zip`
-  (`40196326` bytes).
-- Web build: `build/internal-alpha/publish/web/index.html`,
-  `index.pck` and `index.wasm`.
-- Portal shell: `build/internal-alpha/publish/portal/index.html`.
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-pve-arena-entry-20260531-6cbc853/downloads/draxos-mobile-alpha.zip`
+  (`40196236` bytes).
+- Manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
-Remaining before publication: run human playtest of the Arena PVE tutorial and
-3-duel arena from the local package. Remote upload/deploy still requires
-explicit approval and `-ConfirmRemoteMutation`.
+Remaining after publication: run human playtest of the Arena PVE tutorial,
+3-duel arena, preparation/loadout lock, buff choice, defeat/conclusion summary
+and return-to-Refugio loop in Web/APK/PC.
 
 ## Foundation Audit
 
@@ -419,11 +435,11 @@ Lab Track 16 Alignment validation on this branch:
   confirmed the corrected `foundation_ruleset_v0` content hash mirrored in the
   Closeout migration seed.
 
-Recommended next package: the final Full gate is green and the latest
-Foundation Final Polish build is published to Internal Alpha; proceed with the
-Arena PVE initial package only after closing the open arena length, enemy list,
-reward and lab-modeling decisions. Do not start unrelated base builder, PVP,
-social or minigame work implicitly from the Foundation Final Polish branch.
+Historical handoff: Foundation Final Polish unlocked the Arena PVE initial
+package. That recommendation is now superseded by Track 18 being published;
+use the Track 18 section and Next Step above for current work. Do not start
+unrelated base builder, PVP, social or minigame work implicitly from the
+Foundation Final Polish branch.
 
 ## Progression Clarity v1
 
@@ -689,15 +705,12 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Foundation Final Polish is the current local canonical base and latest Internal
-Alpha publication: `codex/draxos-mobile/foundation-final-polish` at validated
-local HEAD, release root
-`internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, preview
-`https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
-The next product package is now Arena PVE initial: close the arena length cap,
-enemy ladder, reward model and lab-modeling decisions, then implement the
-tutorial of 1 duel and first arenas of 3 duels without combat cooldown. Do not
-open PVP,
+Track 18 PVE Arena Initial is now the latest Internal Alpha publication:
+`codex/draxos-mobile/pve-arena-integration`, release root
+`internal-alpha/v0-pve-arena-entry-20260531-6cbc853`, preview
+`https://c185369d.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+The next product step is human playtest and tuning notes for the Arena PVE
+tutorial/3-duel loop. Do not open PVP,
 victory prediction, opponent counter-picks, custom thresholds, enemy-specific
 behavior, spell priorities, direct chat, helps, contributions, moderation,
 tuning numbers, new weapons, new spells, economy, new potions, crafting

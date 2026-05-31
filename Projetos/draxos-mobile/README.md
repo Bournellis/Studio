@@ -2,7 +2,7 @@
 
 DraxosMobile is the Godot/Supabase project for Android, PC executable and PC browser. It is now a PVE Arena-first async autobattler with Refugio/Base management, later PVP, social systems and server-authoritative progression.
 
-**Status:** `P2_IMPLEMENTACAO - PVE_ARENA_INITIAL_DIRECTION_APPROVED`
+**Status:** `P2_IMPLEMENTACAO - PVE_ARENA_INITIAL_PUBLISHED_INTERNAL_ALPHA`
 **Baseline:** Track 00-15 integrated; Track 13 release safety and Track 14 agent ops baseline preserved; Track 16 is the latest technical package and has not been promoted as the current product focus. Foundation Closeout, Lab Track 16 Alignment and Foundation Final Polish are the pre-tuning foundation baseline.
 
 ## Current Focus
@@ -13,9 +13,9 @@ The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foun
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1 and Foundation Final Polish are published on the Internal Alpha channel. First Session Clarity v1 was manually approved on `2026-05-30`; Refugio, Preparacao and battle summary now explain level, power, battle XP, next milestones and the next first-session action using existing snapshots.
+Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Final Polish and Track 18 PVE Arena Initial are published on the Internal Alpha channel. First Session Clarity v1 was manually approved on `2026-05-30`; Refugio, Preparacao and battle summary now explain level, power, battle XP, next milestones and the next first-session action using existing snapshots.
 
-First Session Clarity v1 keeps the same foundation and adds client-only guidance so the first session reads as Refugio -> collect -> evolve -> prepare -> battle -> reward -> return to base. Foundation Closeout and Final Polish now make account/save, ruleset publication, idempotent retry, admin auditability, shell budgets and local RLS/admin validation the gate before tuning. The latest Internal Alpha publication is Foundation Final Polish on release root `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`. The next package is Arena PVE initial: tutorial of 1 duel, first arenas of 3 duels, locked loadout, temporary stat buffs, HP reset per duel and no combat cooldown.
+First Session Clarity v1 keeps the same foundation and adds client-only guidance so the first session reads as Refugio -> collect -> evolve -> prepare -> battle -> reward -> return to base. Foundation Closeout and Final Polish now make account/save, ruleset publication, idempotent retry, admin auditability, shell budgets and local RLS/admin validation the gate before tuning. The latest Internal Alpha publication is Track 18 PVE Arena Initial on release root `internal-alpha/v0-pve-arena-entry-20260531-6cbc853`: tutorial of 1 duel, first arenas of 3 duels, locked loadout, temporary stat buffs, HP reset per duel and no combat cooldown.
 
 Behavior And Potion Crafting v1 is implemented as technical baseline: Ossos inteiros, Po de Osso, Pocao de Vida, crafting inicial, one potion slot and simple spell/potion use preferences are documented in `docs/behavior-potion-crafting-v1.md`. Treat this as existing foundation, not as permission to expand tuning, economy, new potions or advanced behavior without a new package decision.
 
@@ -43,9 +43,9 @@ Do not start from old Track 04/08/10/15/16 notes. They are history or technical 
 Before any new feature, numeric tuning, assets-final pass, battle presentation pass or social expansion:
 
 1. Read `docs/foundation-loop-audit.md`.
-2. Treat Foundation Loop UX Pass 01, Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Closeout, Lab Track 16 Alignment and Foundation Final Polish as the accepted baseline, then follow `docs/pve-arena-initial-direction.md` for the approved next package before expanding PVP, social, visuals, battle presentation, base builder or content systems.
+2. Treat Foundation Loop UX Pass 01, Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Closeout, Lab Track 16 Alignment, Foundation Final Polish and Track 18 PVE Arena Initial as the accepted baseline, then follow `docs/pve-arena-initial-direction.md` before expanding PVP, social, visuals, battle presentation, base builder or content systems.
 3. Keep release publishing in `Mode Plan` or `Mode Package` unless the user explicitly approves remote mutation.
-4. Run `validate_foundation.ps1 -Profile Full -RequireClean` with local Supabase/Edge active before tuning work starts, and run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before any remote publication.
+4. Run `validate_foundation.ps1 -Profile Full -RequireClean` with local Supabase/Edge active before tuning work starts, and run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before future remote publications.
 
 ## Safe Validation
 
@@ -99,8 +99,8 @@ git status --short
 - Version code: `1`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
-- Latest verified preview: `https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest release root: `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`
-- Latest APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-final-polish-20260530-8c658f6/downloads/draxos-mobile-alpha.apk`
-- Latest PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-final-polish-20260530-8c658f6/downloads/draxos-mobile-alpha.zip`
+- Latest verified preview: `https://c185369d.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Latest release root: `internal-alpha/v0-pve-arena-entry-20260531-6cbc853`
+- Latest APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-pve-arena-entry-20260531-6cbc853/downloads/draxos-mobile-alpha.apk`
+- Latest PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-pve-arena-entry-20260531-6cbc853/downloads/draxos-mobile-alpha.zip`
 - Known release risk: Android APK used `debug_fallback` because no release keystore was configured in the local env.
