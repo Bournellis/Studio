@@ -70,3 +70,10 @@ Registrar o estado final com arquivos alterados, comandos executados, bloqueios 
 - Antes de habilitar `draxos_mobile/minigames/rpgsuave/integrated_alpha=true`, rodar migrations em stack local, servir a Edge Function `minigames` localmente e executar as provas live equivalentes para o novo fluxo de minigames.
 - Fazer playtest humano de 2 minutos no shell para calibrar velocidade, peso, tempos de coleta e legibilidade do bau/crafting.
 - Reward Bridge v0 esta pequeno, limitado e auditavel, mas ainda deve passar por smoke live com uma conta normal e uma save `normal`; `progression_lab` foi bloqueado para recompensa real.
+
+## Publicacao retomada
+
+- Pedido do usuario: executar todos os proximos passos ate exigir playtest humano e publicar a nova versao.
+- Validacao adicionada: prova live local da Minigame Platform/Reward Bridge contra Supabase local, agora chamada pelo `validate_foundation.ps1 -Profile Full`.
+- Estado antes da publicacao: pacote Rpgsuave segue em branch de integracao; publicacao remota deve usar os scripts protegidos de Track 13 com `-ConfirmRemoteMutation`, sem copiar secrets para o repositorio.
+- Ponto de handoff esperado: Full gate limpo, release exportado/empacotado/publicado ou bloqueio explicito de credenciais/servico registrado.
