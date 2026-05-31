@@ -66,6 +66,12 @@ Track 18 integrado localmente em `codex/draxos-mobile/pve-arena-integration`.
 
 ## Resultado
 
+- Atualizacao package local: `check_foundation_expansion_readiness.ps1`,
+  `validate_foundation.ps1 -Profile Full -RequireClean`,
+  `export_internal_alpha.ps1 -AllowAndroidDebugFallback` e
+  `publish_internal_alpha.ps1 -Mode Package` passaram. O pacote local ficou em
+  `Projetos/draxos-mobile/build/internal-alpha/publish`; publicacao remota
+  segue bloqueada ate aprovacao explicita e `-ConfirmRemoteMutation`.
 - Contratos/dados/backend das branches `arena-contracts` e `arena-backend` integrados.
 - Shell Godot da Arena PVE, estado de sessão, endpoints cliente e labs integrados direto na branch de integração.
 - Battle Lab agora gera `battle_lab_arena_sequences.csv`.

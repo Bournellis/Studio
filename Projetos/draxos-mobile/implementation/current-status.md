@@ -5,7 +5,7 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Track 18 - PVE Arena Initial`
-- Active stage status: `PVE_ARENA_INITIAL_LOCAL_GATE_GREEN`
+- Active stage status: `PVE_ARENA_INITIAL_LOCAL_PACKAGE_READY`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
@@ -74,8 +74,8 @@ The major foundation baseline is:
 On `2026-05-31`, the product direction changed from PVP-first to Arena
 PVE-first. Track 18 is implemented locally on
 `codex/draxos-mobile/pve-arena-integration`; Foundation Final Polish remains
-the latest published Internal Alpha package until release packaging/publication
-is explicitly approved.
+the latest published Internal Alpha package until remote publication is
+explicitly approved.
 
 - tutorial starts with 1 guided duel;
 - first real arenas start with 3 duels;
@@ -118,10 +118,29 @@ Validation completed locally before commit:
 - `npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts`
 - Godot `tools/validate.gd` after a one-time headless editor import: 134/134
   tests, 2310 assertions.
+- `tools/validate_foundation.ps1 -Profile Full -RequireClean`: passed after
+  Track 18 integration.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passed using
+  the ignored local Internal Alpha env file; Android export mode:
+  `debug_fallback`.
+- `tools/publish_internal_alpha.ps1 -Mode Plan`: passed.
+- `tools/publish_internal_alpha.ps1 -Mode Package`: passed and produced the
+  local package at `build/internal-alpha/publish`.
 
-Remaining before publication: run the clean full foundation gate after commits,
-package Internal Alpha locally, then run human playtest. Remote upload/deploy
-still requires explicit approval and `-ConfirmRemoteMutation`.
+Local package artifacts:
+
+- Android APK: `build/internal-alpha/publish/downloads/draxos-mobile-alpha.apk`
+  (`31737628` bytes).
+- PC Windows ZIP:
+  `build/internal-alpha/publish/downloads/draxos-mobile-alpha.zip`
+  (`40196326` bytes).
+- Web build: `build/internal-alpha/publish/web/index.html`,
+  `index.pck` and `index.wasm`.
+- Portal shell: `build/internal-alpha/publish/portal/index.html`.
+
+Remaining before publication: run human playtest of the Arena PVE tutorial and
+3-duel arena from the local package. Remote upload/deploy still requires
+explicit approval and `-ConfirmRemoteMutation`.
 
 ## Foundation Audit
 
