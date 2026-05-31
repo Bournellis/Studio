@@ -65,7 +65,13 @@ func check_update_manifest(host: Node, manual: bool = false) -> void:
 
 func enter_guest(host: Node) -> void:
 	host.call("_set_busy", true, "Criando sessao guest...")
+	var selected_save_type := SessionStore.active_save_type
 	var auth_result: Dictionary = {"ok": true}
+	if SessionStore.has_valid_access_token() and SessionStore.is_registered_session():
+		SessionStore.clear_session()
+		host.call("_clear_battle_history")
+		SessionStore.set_active_save_type(selected_save_type)
+		SupabaseClient.configure_save_type(SessionStore.active_save_type)
 	if not SessionStore.has_valid_access_token() or SessionStore.is_progression_lab_local_only():
 		auth_result = await SupabaseClient.sign_in_anonymously()
 		if not bool(auth_result.get("ok", false)):

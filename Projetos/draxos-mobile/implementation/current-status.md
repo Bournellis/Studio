@@ -10,10 +10,13 @@
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published package: `Foundation Final Polish`
-- Latest implemented package: `Debug Clean Web Config` on branch
-  `codex/draxos-mobile/debug-clean-web-config`, over the published Foundation
-  Final Polish baseline.
+- Latest published Cloudflare package: `Foundation Final Polish`
+- Latest implemented package: `Web Auth Foundation Context Hotfix` on branch
+  `codex/draxos-mobile/web-auth-foundation-context`, over Debug Clean Web
+  Config and the published Foundation Final Polish baseline.
+- Latest uploaded hotfix package: Supabase Storage release root
+  `internal-alpha/v0-web-auth-foundation-context-20260530`; Cloudflare Pages
+  deploy is pending Wrangler reauthentication.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -376,6 +379,44 @@ explicit package for base builder tuning, autobattler tuning, social expansion
 or minigame shell/contract. Do not start feature/tuning work implicitly from the
 Foundation Final Polish branch.
 
+## Web Auth Foundation Context Hotfix
+
+Web Auth Foundation Context Hotfix is a post-publication auth/foundation repair
+over Debug Clean Web Config. It does not add gameplay, tuning, schema design,
+economy changes or new UX.
+
+- Reported failures on the published Web app: guest entry could return
+  `Essa rota e apenas para guest dev`, and email/password entry could return
+  `FOUNDATION_CONTEXT_NOT_FOUND: Account/save foundation context was not created
+  yet`.
+- Root cause for `FOUNDATION_CONTEXT_NOT_FOUND`: the Internal Alpha remote
+  database was still missing the Foundation Expansion/Closeout migrations
+  `202605300001` through `202605300004`. `supabase db push --linked` applied the
+  missing migrations, and `supabase migration list --linked` confirmed local and
+  remote are aligned through `202605300004_foundation_closeout.sql`.
+- Root cause for the guest error: the client guest path reused a cached
+  registered email session token in Web storage, so the backend correctly
+  rejected the request because `account/guest` is anonymous-only. The client
+  now clears registered-session state and signs in anonymously before calling
+  the guest bootstrap.
+- Remote account smoke after the migration repair passed for anonymous auth,
+  account state, email auth, release manifest, progression lab bootstrap and a
+  battle request against `https://armxgipvnbbshzqawklw.supabase.co`.
+- Client validation passed with `validate_foundation.ps1 -Profile Client`,
+  including GUT `tests/client` (`134/134`, `2274` asserts),
+  `tools/validate.gd`, runtime config, foundation hardening, responsive layout,
+  export smoke and `git diff --check`.
+- The hotfix was exported and uploaded to Supabase Storage at release root
+  `internal-alpha/v0-web-auth-foundation-context-20260530`; remote HEAD checks
+  passed for Web `index.html`, `index.pck` (`4293280` bytes), `index.wasm`,
+  APK and PC ZIP.
+- Cloudflare Pages deploy for the new Web shell is blocked in the current local
+  environment by Wrangler authentication error `10000`. Until Wrangler is
+  reauthenticated and the Pages package is deployed, the live Cloudflare Web
+  shell still serves the previous client; email/password is repaired by the
+  remote migration fix, while the cached-email-to-guest client fix requires the
+  new Web shell or a cleared browser site session.
+
 ## Progression Clarity v1
 
 Progression Clarity v1 is implemented and published as a client-only readability
@@ -640,12 +681,18 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Foundation Final Polish remains the latest Internal Alpha client publication:
-release root `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`,
-preview `https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
-The post-publication Debug Clean Web Config branch fixes remote Edge CORS for
-that published Web app and is the latest local implementation branch until it is
-merged or superseded. The next product decision should explicitly choose one
+Foundation Final Polish remains the latest Internal Alpha Cloudflare client
+publication: release root
+`internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, preview
+`https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+Debug Clean Web Config fixed remote Edge CORS for that Web app, and Web Auth
+Foundation Context Hotfix repaired the remote database foundation context and
+the client guest path on branch
+`codex/draxos-mobile/web-auth-foundation-context`. The hotfix package is
+uploaded to Supabase Storage at
+`internal-alpha/v0-web-auth-foundation-context-20260530`, but the Cloudflare
+Pages deploy is blocked until Wrangler is reauthenticated locally. After that
+deploy is completed, the next product decision should explicitly choose one
 package: base builder tuning, autobattler tuning, social expansion or minigame
 shell/contract. Do not open victory prediction, opponent counter-picks, custom
 thresholds, enemy-specific behavior, spell priorities, direct chat, helps,

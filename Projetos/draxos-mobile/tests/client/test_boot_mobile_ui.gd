@@ -704,6 +704,13 @@ func test_auth_success_paths_return_directly_to_refuge() -> void:
 	assert_true(source.contains("func email_sign_up_with_credentials"))
 	assert_true(source.count("host.call(\"_show_refuge_root") >= 5)
 
+func test_guest_entry_forces_anonymous_session_when_email_session_is_cached() -> void:
+	var source := FileAccess.get_file_as_string("res://modes/boot/flows/account_session_flow.gd")
+	var enter_guest_source := source.substr(source.find("func enter_guest"), source.find("func enter_refuge") - source.find("func enter_guest"))
+	assert_true(enter_guest_source.contains("SessionStore.is_registered_session()"))
+	assert_true(enter_guest_source.contains("SessionStore.clear_session()"))
+	assert_true(enter_guest_source.contains("SupabaseClient.sign_in_anonymously()"))
+
 func test_boot_flows_do_not_create_visual_controls() -> void:
 	for script_path: String in _flow_script_paths():
 		var source := FileAccess.get_file_as_string(script_path)
