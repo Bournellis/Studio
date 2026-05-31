@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`FOUNDATION_FINAL_POLISH_DELIVERED`; Track 13/Track 14 seguem baselines; `codex/draxos-mobile/rpgsuave-integrated-alpha` publicou Rpgsuave Bosque + Minigame Platform v0 no Internal Alpha)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`FOUNDATION_FINAL_POLISH_DELIVERED`; Track 13/Track 14 seguem baselines; `codex/draxos-mobile/rpgsuave-visual-upgrade-v1` publicou Rpgsuave Bosque Visual Upgrade v1 no Internal Alpha)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - FOUNDATION_FINAL_POLISH_DELIVERED + RPGSUAVE_INTEGRATED_ALPHA_PUBLISHED**
+- Status: **P2_IMPLEMENTACAO - FOUNDATION_FINAL_POLISH_DELIVERED + RPGSUAVE_VISUAL_UPGRADE_V1_PUBLISHED**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas e Foundation Final Polish seguem como base de fundacao; Track 13 e Track 14 continuam como baselines de release safety e operacao de agentes. A branch `codex/draxos-mobile/rpgsuave-integrated-alpha` publicou o primeiro minigame real em Labs Dev: `Rpgsuave Bosque` com movimento/coleta/bolso/bau/crafting local, Edge Function `minigames`, schema `mode_registry/mode_ruleset_registry/mode_sessions/mode_progress/mode_reward_claims` e Reward Bridge v0 server-authoritative para recompensa pequena/auditavel. Release root atual: `internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969`; preview Web/Portal: `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev`.
+- Baseline atual: Track 00-15 integradas e Foundation Final Polish seguem como base de fundacao; Track 13 e Track 14 continuam como baselines de release safety e operacao de agentes. Rpgsuave Bosque + Minigame Platform v0 publicou o primeiro minigame real em Labs Dev com Edge Function `minigames`, schema `mode_*` e Reward Bridge v0 server-authoritative. A branch `codex/draxos-mobile/rpgsuave-visual-upgrade-v1` publicou o upgrade visual do Bosque com fullscreen mobile portrait, camera no personagem, joystick-only, HUD in-game, Mochila funcional e assets procedurais Godot. Release root atual: `internal-alpha/v0-rpgsuave-visual-upgrade-v1-20260531-809c4dc`; preview Web/Portal: `https://b5b7a32a.draxos-mobile-internal-alpha.pages.dev`.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`; override do release manifest exige `SUPABASE_ACCESS_TOKEN`. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, tuning numerico, novas armas, novas spells, economia, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
-- Proximo passo: playtest humano do Rpgsuave Bosque publicado; observar sensacao de movimento/coleta, legibilidade do bau/crafting, clareza de progresso local vs recompensa real e estabilidade do fluxo Labs Dev.
+- Proximo passo: playtest humano do Rpgsuave Bosque Visual Upgrade v1 em mobile portrait; observar joystick, camera, leitura de recursos, HUD, Mochila, deposito, craft, progresso local vs recompensa real e estabilidade do fluxo Labs Dev.
 
 ## rpg-isometrico
 

@@ -7,7 +7,7 @@
 - Entry action: `open_minigame_shell:rpgsuave`
 - Surface: Labs Dev, fullscreen gameplay sem app chrome
 - Public CTA: nao
-- Release root: `internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969`
+- Release root: `internal-alpha/v0-rpgsuave-visual-upgrade-v1-20260531-809c4dc`
 - Ultima atualizacao: `2026-05-31`
 
 ## Objetivo
@@ -19,24 +19,25 @@ upgrades simples. Na publicacao internal alpha, a sessao normal tambem exercita
 a ponte server-authoritative de recompensa limitada; falha de rede preserva o
 resultado local como pending mutation.
 
-## Publicacao Internal Alpha
+## Publicacao Internal Alpha - Visual Upgrade v1
 
 Publicado em `2026-05-31` para playtest humano interno:
 
 - Portal:
-  `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+  `https://b5b7a32a.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Web:
-  `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+  `https://b5b7a32a.draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Android APK:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.apk`
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-visual-upgrade-v1-20260531-809c4dc/downloads/draxos-mobile-alpha.apk`
 - PC ZIP:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.zip`
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-visual-upgrade-v1-20260531-809c4dc/downloads/draxos-mobile-alpha.zip`
 
-Validacao concluida: Full gate local limpo, migration remota aplicada, Edge
-Function `minigames` e manifest `release` publicados, smokes remotos de
-manifest/artefatos/minigame verdes e SHA remoto completo de APK/ZIP conferido.
-O proximo gate e playtest humano; nao abrir CTA publico no Refugio antes dessa
-leitura.
+Validacao concluida: Full gate local limpo, export Android/PC/Web,
+upload Storage, pacote Cloudflare Pages, deploy manifest remoto, smoke remoto de
+manifest, smoke remoto de artefatos com SHA completo de APK/ZIP e
+`internal_alpha_remote_smoke` com auth email, batalha e minigame verdes. O
+proximo gate e playtest humano em mobile portrait; nao abrir CTA publico no
+Refugio antes dessa leitura.
 
 ## Visual Upgrade V1
 

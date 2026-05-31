@@ -10,10 +10,11 @@
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published package: `Rpgsuave Bosque Integrated Alpha` from branch
-  `codex/draxos-mobile/rpgsuave-integrated-alpha`
-- Latest implemented package: `Rpgsuave Bosque + Minigame Platform v0` on branch
-  `codex/draxos-mobile/rpgsuave-integrated-alpha`, over Foundation Final Polish.
+- Latest published package: `Rpgsuave Bosque Visual Upgrade v1` from branch
+  `codex/draxos-mobile/rpgsuave-visual-upgrade-v1`
+- Latest implemented package: `Rpgsuave Bosque Visual Upgrade v1` on branch
+  `codex/draxos-mobile/rpgsuave-visual-upgrade-v1`, over Rpgsuave Integrated
+  Alpha.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -169,12 +170,16 @@ now aligned with Track 16, but it still must not promote tuning by itself.
 
 Rpgsuave Bosque is implemented as a Labs Dev minigame entry for sensation
 testing plus an integrated-alpha backend path for limited reward validation.
+Visual Upgrade v1 is now the published Internal Alpha package for this mode.
 
 - Labs Dev exposes `open_minigame_shell:rpgsuave`.
-- `RpgsuaveForestScreen` runs inside the existing app chrome and uses
+- `RpgsuaveForestScreen` runs as fullscreen gameplay without app chrome and uses
   `integrated_alpha` when a valid Internal Alpha session is available.
 - Gameplay covers topdown movement, stopped collection, cancel-on-move,
   pocket weight, chest deposit, local crafting and local upgrades.
+- Visual Upgrade v1 adds mobile portrait fullscreen, camera locked to the
+  player, joystick-only movement, in-game HUD, functional Mochila sheet and
+  Godot-procedural terrain/resources/character art.
 - Network mode is enabled for this internal package through
   `draxos_mobile/minigames/rpgsuave/integrated_alpha=true`; failed network
   requests keep the local result/pending mutation instead of losing play.
@@ -188,29 +193,30 @@ testing plus an integrated-alpha backend path for limited reward validation.
 - Remote Supabase migration and Edge Function `minigames` were deployed and
   passed an Internal Alpha remote smoke with email auth, battle request,
   minigame start/complete idempotency and progression-lab reward blocking.
-- Published to Internal Alpha on `2026-05-31` with release root
-  `internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969`.
+- Published Visual Upgrade v1 to Internal Alpha on `2026-05-31` with release
+  root `internal-alpha/v0-rpgsuave-visual-upgrade-v1-20260531-809c4dc`.
 - Public playtest links:
   - Portal:
-    `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+    `https://b5b7a32a.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
   - Web:
-    `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+    `https://b5b7a32a.draxos-mobile-internal-alpha.pages.dev/web/index.html`
   - Android APK:
-    `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.apk`
+    `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-visual-upgrade-v1-20260531-809c4dc/downloads/draxos-mobile-alpha.apk`
   - PC ZIP:
-    `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.zip`
+    `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-visual-upgrade-v1-20260531-809c4dc/downloads/draxos-mobile-alpha.zip`
 - Publication validation on `2026-05-31`: `validate_foundation.ps1 -Profile Full
   -RequireClean`, export/package/upload, Cloudflare Pages deploy, manifest
   deploy, `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts`,
   full remote artifact SHA smoke and `internal_alpha_remote_smoke.ts` with
-  email auth + minigame + release all passed.
+  email auth + battle + minigame + release all passed.
 - Docs: `docs/minigames/rpgsuave.md` and
   `docs/contracts/minigame-platform-v0.md`.
 
 This package remains Labs Dev-only in the client shell and does not add a public
 Refugio CTA, Play Store surface or public product promise. The next gate is
-human playtest of the published Internal Alpha to judge movement, collection,
-weight, chest/crafting readability and limited reward clarity.
+human playtest of the published Internal Alpha in mobile portrait to judge
+joystick feel, camera framing, resource readability, pocket/chest/crafting
+clarity and limited reward clarity.
 
 ## Foundation Expansion Readiness
 
