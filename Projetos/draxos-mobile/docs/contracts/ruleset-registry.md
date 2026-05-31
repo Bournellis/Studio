@@ -27,6 +27,7 @@ O banco nao e ferramenta de autoria de balanceamento. Ele registra o que foi pub
 | `supabase/functions/_shared/foundation_ruleset.ts` | Mirror Supabase do artefato server. |
 | `server/tests/foundation_ruleset_test.ts` | Prova hashes, mirrors e ausencia de secrets. |
 | `data/definitions/pve_arenas.json` | Fonte autorada das arenas PVE v1. |
+| `data/definitions/pve_arena_difficulties.json` | Fonte autorada dos tiers de dificuldade S1 por arena PVE. |
 | `data/definitions/pve_enemies.json` | Fonte autorada dos inimigos PVE v1. |
 | `data/definitions/arena_buffs.json` | Fonte autorada dos buffs temporarios de Arena PVE v1. |
 | `data/definitions/arena_rewards.json` | Fonte autorada dos perfis de recompensa de Arena PVE v1. |
@@ -68,7 +69,7 @@ Registro inicial:
   "publication_id": "uuid",
   "ruleset_id": "foundation_ruleset_v0",
   "ruleset_version": 1,
-  "content_hash": "5b7121a37a78e966c06098cc70283dabc5dbbcc1d3f9a21d279b855d09aee1e7",
+  "content_hash": "bad44d18be6ee170e698fc933929ed58bf4fb6932261e1b19bd9f8156e11638e",
   "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "schema_version": "foundation_ruleset_manifest_v1",
   "channel": "internal_alpha",
@@ -94,6 +95,7 @@ O pacote de fundacao inclui fontes para:
 - potions;
 - crafting recipes;
 - pve arenas;
+- pve arena difficulties;
 - pve enemies;
 - arena temporary buffs;
 - arena rewards;
@@ -142,4 +144,7 @@ Para publicar um ruleset:
 
 Publicacao remota continua sujeita a aprovacao explicita e `-ConfirmRemoteMutation`.
 
-Nota Arena PVE v1: incluir os novos arquivos de definitions altera `content_hash`. Enquanto esta branch nao aplicar migration/publicacao remota, o manifest gerado e candidato de repo para a proxima publicacao; qualquer promocao remota deve criar ou atualizar registro de `ruleset_registry` por migration/processo de release explicito, nunca sobrescrever historico silenciosamente.
+Nota Arena PVE v1: incluir `pve_arena_difficulties.json` altera `content_hash`.
+A migration de closeout espelhada nesta branch atualiza a publicacao ativa local
+para o manifest gerado; qualquer promocao remota continua exigindo processo de
+release explicito.

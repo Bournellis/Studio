@@ -37,7 +37,8 @@ Novos arquivos autorados em `data/definitions/`:
 
 | Arquivo | Collection | Papel |
 |---|---|---|
-| `pve_arenas.json` | `pve_arenas` | Lista de arenas, tamanho, unlock, sequencia de inimigos, reward profile e regras de tentativa |
+| `pve_arenas.json` | `pve_arenas` | Lista de arenas, tamanho, unlock, regras de tentativa e ponte para dificuldades S1 |
+| `pve_arena_difficulties.json` | `pve_arena_difficulties` | Tiers de dificuldade Season 1 por arena, com level/power recomendado, sequencia de inimigos, reward profile e clear-rate alvo |
 | `pve_enemies.json` | `pve_enemies` | Inimigos PVE por arquetipo, poder alvo, papel didatico e build/base de simulacao |
 | `arena_buffs.json` | `arena_buffs` | Buffs temporarios de stat oferecidos entre duelos |
 | `arena_rewards.json` | `arena_rewards` | Perfis de recompensa e limites iniciais da Arena PVE |
@@ -61,6 +62,29 @@ Regra de unlock:
 - segunda arena curta abre apos primeira clear da arena curta;
 - arena de 4 duelos abre apos clear de dificuldade 2;
 - arena de 6 duelos abre apos clear de dificuldade 3 e continua sendo o cap inicial.
+
+## Dificuldades S1
+
+O tuning de Season 1 fica separado em `pve_arena_difficulties.json`. A arena define comprimento e regras; o tier define a dificuldade numerica daquele comprimento.
+
+Campos centrais por tier:
+
+- `arena_id`;
+- `difficulty_id`;
+- `difficulty_rank`;
+- `recommended_level_min/max`;
+- `recommended_power_min/max`;
+- `enemy_sequence_id` e `enemy_sequence`;
+- `final_enemy_power`;
+- `duel_power_targets`;
+- `reward_profile_id`;
+- `clear_rate_target_min/max_percent`.
+
+Regra operacional atual:
+
+- `pve_arenas.json` preserva os defaults publicados de Track 19 para compatibilidade do alpha.
+- `pve_arena_difficulties.json` e a fonte de tuning aprovada para a proxima rodada de backend/labs.
+- O consumo runtime dos tiers deve acontecer em pacote proprio, mantendo idempotencia, ruleset metadata e separacao PVE/PVP.
 
 ## Tentativa De Arena
 

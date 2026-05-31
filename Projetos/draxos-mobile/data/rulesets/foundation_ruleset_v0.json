@@ -4,7 +4,7 @@
   "ruleset_version": 1,
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
   "primary_product_mode": "PVE_ARENA_INITIAL",
-  "content_hash": "dc2781f58e4d8229d712393342115dc9d0a555aaceb06a4241af2c77271508c9",
+  "content_hash": "bad44d18be6ee170e698fc933929ed58bf4fb6932261e1b19bd9f8156e11638e",
   "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "runtime": {
     "mode": "FIRST_SLICE_SIM",
@@ -75,10 +75,16 @@
       "canonical_bytes": 1619
     },
     {
+      "path": "data/definitions/pve_arena_difficulties.json",
+      "kind": "definition_json",
+      "sha256": "214c5444c7ed8b59845919b9e76140b198a5202e30558180c4428ea7ef4113b2",
+      "canonical_bytes": 26850
+    },
+    {
       "path": "data/definitions/pve_arenas.json",
       "kind": "definition_json",
-      "sha256": "6b604bd3704004a27200dc85513860c80f0c70781916637bb01c0fec1db4272e",
-      "canonical_bytes": 4554
+      "sha256": "6bccbb35e7f7d4c9377eaf6e0b768125fd74fbe26bf468f94f53e4484005610d",
+      "canonical_bytes": 5692
     },
     {
       "path": "data/definitions/pve_enemies.json",
@@ -148,9 +154,9 @@
     }
   ],
   "counts": {
-    "definitions": 15,
+    "definitions": 16,
     "tool_models": 3,
     "battle_simulators": 4,
-    "total_sources": 22
+    "total_sources": 23
   }
 }

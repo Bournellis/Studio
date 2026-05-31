@@ -20,7 +20,7 @@ Arena PVE v1 continua usando `battle_log_v1` por duelo. A sequencia da arena, of
     "publication_id": "uuid",
     "ruleset_id": "foundation_ruleset_v0",
     "ruleset_version": 1,
-    "content_hash": "5b7121a37a78e966c06098cc70283dabc5dbbcc1d3f9a21d279b855d09aee1e7",
+    "content_hash": "bad44d18be6ee170e698fc933929ed58bf4fb6932261e1b19bd9f8156e11638e",
     "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
     "schema_version": "foundation_ruleset_manifest_v1"
   },

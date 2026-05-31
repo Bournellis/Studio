@@ -37,6 +37,7 @@ const CONTENT_SOURCES: SourceSpec[] = [
   "pets.json",
   "potions.json",
   "power_bands.json",
+  "pve_arena_difficulties.json",
   "pve_arenas.json",
   "pve_enemies.json",
   "rewards.json",
@@ -97,7 +98,10 @@ Deno.test("foundation ruleset publishes deterministic metadata and hashes", asyn
   assertEq(stringField(serverRuleset, "ruleset_id"), RULESET_ID);
   assertEq(numberField(serverRuleset, "ruleset_version"), 1);
   assertEq(stringField(serverRuleset, "lifecycle"), "FOUNDATION_AUDIT_ACTIVE");
-  assertEq(stringField(serverRuleset, "primary_product_mode"), "PVE_ARENA_INITIAL");
+  assertEq(
+    stringField(serverRuleset, "primary_product_mode"),
+    "PVE_ARENA_INITIAL",
+  );
   assertHash(stringField(serverRuleset, "content_hash"), "content_hash");
   assertHash(stringField(serverRuleset, "simulator_hash"), "simulator_hash");
 

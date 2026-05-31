@@ -22,7 +22,7 @@ A etapa atual e `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, sobre `FOUNDATION_FINAL_
 
 O foco imediato de fundacao foi fechado: Foundation Closeout entregou account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish sincroniza docs, shell budgets, presenter guards e smoke local RLS/admin.
 
-A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo deve comecar por Arena PVE, nao por PVP-first. O pacote contratual/data-driven inicial vive em `docs/pve-arena-v1.md` e promove os arquivos `data/definitions/pve_arenas.json`, `pve_enemies.json`, `arena_buffs.json` e `arena_rewards.json` como fonte autorada para a proxima implementacao. O loop interno pos-login aceito continua como fundacao de app:
+A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo deve comecar por Arena PVE, nao por PVP-first. O pacote contratual/data-driven inicial vive em `docs/pve-arena-v1.md` e promove os arquivos `data/definitions/pve_arenas.json`, `pve_arena_difficulties.json`, `pve_enemies.json`, `arena_buffs.json` e `arena_rewards.json` como fonte autorada para a proxima implementacao. O loop interno pos-login aceito continua como fundacao de app:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 

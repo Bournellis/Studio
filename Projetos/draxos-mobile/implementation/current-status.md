@@ -4,18 +4,17 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Remote Lab Runner`
-- Active stage status: `REMOTE_LAB_RUNNER_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Season 1 Arena Tuning Definitions`
+- Active stage status: `LOCAL_DATA_CONTRACT_IMPLEMENTED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published remote package: `Remote Lab Runner`
-- Latest implemented package: `Remote Lab Runner` on branch
-  `codex/draxos-mobile/remote-lab-runner`.
-- Active follow-up: human playtest Arena PVE plus Web Battle Lab/Progression
-  Lab remote generation using the same Supabase email/password Internal Alpha
-  account gate as the game.
+- Latest implemented package: `Season 1 Arena Tuning Definitions` on branch
+  `codex/draxos-mobile/season1-arena-tuning-definitions`.
+- Active follow-up: wire Season 1 arena difficulty definitions into backend/labs
+  and run a full Arena PVE tuning pass before changing live numeric balance.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -48,6 +47,14 @@ Remote Lab Runner is the current published Internal Alpha package over that
 hotfix: Web Battle Lab and Progression Lab call Supabase Edge `lab-runner` with
 the same email/password Internal Alpha account gate used by the game, without
 exposing service role to the client or mutating economy/ranking/progress.
+
+Season 1 Arena Tuning Definitions is the current local follow-up on top of the
+published Remote Lab Runner package. It adds `pve_arena_difficulties` as a
+ruleset source for S1 arena tiers: `arena_id`, `difficulty_id`,
+recommended level/power, enemy sequence, final enemy power, reward profile and
+clear-rate target. `pve_arenas` now points to that catalog while preserving the
+published Track 19 runtime defaults until a backend/lab consumption package
+explicitly adopts the tiers.
 
 Current product reading: this is a strong prototype base for refinement. The
 current product direction is Arena PVE initial, documented in

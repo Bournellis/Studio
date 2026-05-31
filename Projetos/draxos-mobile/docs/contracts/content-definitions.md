@@ -1,7 +1,7 @@
 # Content Definitions Contract
 
 - Ultima atualizacao: `2026-05-31`
-- Status: contrato inicial implementado com rework de personagem; Track 16 adicionou pocoes e receitas de crafting; Foundation Expansion Readiness adicionou `foundation_ruleset_v0` como manifest gerado de autoria/publicacao; Arena PVE v1 adiciona definitions ruleset-only para arenas, inimigos, buffs e rewards.
+- Status: contrato inicial implementado com rework de personagem; Track 16 adicionou pocoes e receitas de crafting; Foundation Expansion Readiness adicionou `foundation_ruleset_v0` como manifest gerado de autoria/publicacao; Arena PVE v1 adiciona definitions ruleset-only para arenas, dificuldades S1, inimigos, buffs e rewards.
 
 Conteudo autorado vive em `../../data/definitions/`. Resources Godot gerados vivem em `../../data/generated/` e nao devem ser editados manualmente.
 
@@ -59,7 +59,8 @@ Os arquivos abaixo entram no `foundation_ruleset_v0` e nos contratos de backend/
 
 | Arquivo | Collection | Conteudo |
 |---|---|---|
-| `pve_arenas.json` | `pve_arenas` | Arenas, tamanho da lista, unlocks, sequencia de inimigos, reward profile e regras de tentativa |
+| `pve_arenas.json` | `pve_arenas` | Arenas, tamanho da lista, unlocks, regras de tentativa e ponte para o catalogo de dificuldades |
+| `pve_arena_difficulties.json` | `pve_arena_difficulties` | Tiers Season 1 por arena/dificuldade: level recomendado, power, sequencia de inimigos, reward profile e clear-rate alvo |
 | `pve_enemies.json` | `pve_enemies` | Inimigos PVE por arquetipo, papel didatico, poder alvo e build base |
 | `arena_buffs.json` | `arena_buffs` | Buffs temporarios de stat oferecidos entre duelos |
 | `arena_rewards.json` | `arena_rewards` | Perfis de recompensa da Arena PVE, repeticao reduzida e limites |
@@ -84,6 +85,12 @@ Inclui:
 - references para definitions Arena PVE v1;
 - `schema_version = foundation_ruleset_manifest_v1`;
 - `ruleset_version = 1`.
+
+Nota de tuning S1:
+
+- `pve_arenas.json` preserva os defaults publicados de Track 19 para compatibilidade.
+- `pve_arena_difficulties.json` e o contrato novo de tuning: `arena_id + difficulty_id + enemy_sequence + final_enemy_power + reward_profile_id + clear_rate_target`.
+- Backend/client publicados ainda podem continuar usando defaults hardcoded ate o pacote seguinte consumir esses tiers em runtime.
 
 Valide com:
 

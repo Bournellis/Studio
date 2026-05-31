@@ -36,6 +36,7 @@ const CONTENT_SOURCES: SourceSpec[] = [
   "pets.json",
   "potions.json",
   "power_bands.json",
+  "pve_arena_difficulties.json",
   "pve_arenas.json",
   "pve_enemies.json",
   "rewards.json",

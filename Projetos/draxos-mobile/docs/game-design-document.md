@@ -442,7 +442,8 @@ Escala de arena:
 
 Dados autorados v1:
 
-- `data/definitions/pve_arenas.json` define arena, tamanho, unlock, inimigos, reward profile e regras de tentativa.
+- `data/definitions/pve_arenas.json` define arena, tamanho, unlock, regras de tentativa e ponte para dificuldades S1.
+- `data/definitions/pve_arena_difficulties.json` define tiers de Season 1 por arena/dificuldade, incluindo sequencia de inimigos, power final, reward profile planejado e clear-rate alvo.
 - `data/definitions/pve_enemies.json` define inimigos PVE por arquetipo, poder alvo, papel didatico e build base.
 - `data/definitions/arena_buffs.json` define buffs temporarios apenas de stat.
 - `data/definitions/arena_rewards.json` define recompensas calibraveis por tutorial, conclusao, dificuldade, recorde, repeticao e limites.

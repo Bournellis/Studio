@@ -12,6 +12,11 @@
       "mode": "PVE_ARENA_V1",
       "duel_count": 1,
       "difficulty_tier": 0,
+      "difficulty_catalog": {
+        "source_collection": "pve_arena_difficulties",
+        "default_difficulty_id": "s1_d00_intro",
+        "season_1_difficulty_ids": ["s1_d00_intro"]
+      },
       "initial_release": true,
       "unlock": {"type": "always"},
       "enemy_sequence": ["pve_aprendiz_cinzas"],
@@ -42,6 +47,21 @@
       "mode": "PVE_ARENA_V1",
       "duel_count": 3,
       "difficulty_tier": 1,
+      "difficulty_catalog": {
+        "source_collection": "pve_arena_difficulties",
+        "default_difficulty_id": "s1_d00_intro",
+        "season_1_difficulty_ids": [
+          "s1_d00_intro",
+          "s1_d01_aprendiz",
+          "s1_d02_iniciado",
+          "s1_d03_adepto",
+          "s1_d04_familiar",
+          "s1_d05_arcano",
+          "s1_d06_evocador",
+          "s1_d07_mestre",
+          "s1_d08_abissal"
+        ]
+      },
       "initial_release": true,
       "unlock": {"type": "arena_first_clear", "arena_id": "arena_tutorial_cinzas"},
       "enemy_sequence": [
@@ -76,6 +96,19 @@
       "mode": "PVE_ARENA_V1",
       "duel_count": 4,
       "difficulty_tier": 2,
+      "difficulty_catalog": {
+        "source_collection": "pve_arena_difficulties",
+        "default_difficulty_id": "s1_d02_iniciado",
+        "season_1_difficulty_ids": [
+          "s1_d02_iniciado",
+          "s1_d03_adepto",
+          "s1_d04_familiar",
+          "s1_d05_arcano",
+          "s1_d06_evocador",
+          "s1_d07_mestre",
+          "s1_d08_abissal"
+        ]
+      },
       "initial_release": true,
       "unlock": {"type": "arena_first_clear", "arena_id": "arena_cinzas_curta"},
       "enemy_sequence": [
@@ -111,6 +144,17 @@
       "mode": "PVE_ARENA_V1",
       "duel_count": 5,
       "difficulty_tier": 3,
+      "difficulty_catalog": {
+        "source_collection": "pve_arena_difficulties",
+        "default_difficulty_id": "s1_d04_familiar",
+        "season_1_difficulty_ids": [
+          "s1_d04_familiar",
+          "s1_d05_arcano",
+          "s1_d06_evocador",
+          "s1_d07_mestre",
+          "s1_d08_abissal"
+        ]
+      },
       "initial_release": false,
       "unlock": {"type": "arena_first_clear", "arena_id": "arena_veu_curta"},
       "enemy_sequence": [
@@ -147,6 +191,17 @@
       "mode": "PVE_ARENA_V1",
       "duel_count": 6,
       "difficulty_tier": 4,
+      "difficulty_catalog": {
+        "source_collection": "pve_arena_difficulties",
+        "default_difficulty_id": "s1_d05_arcano",
+        "season_1_difficulty_ids": [
+          "s1_d05_arcano",
+          "s1_d06_evocador",
+          "s1_d07_mestre",
+          "s1_d08_abissal",
+          "s1_d09_capstone"
+        ]
+      },
       "initial_release": false,
       "unlock": {"type": "arena_first_clear", "arena_id": "arena_ossos_media"},
       "enemy_sequence": [
