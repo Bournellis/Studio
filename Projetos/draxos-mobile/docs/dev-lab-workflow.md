@@ -8,6 +8,11 @@ Registro operacional dos problemas corrigidos nos labs do Godot em 2026-05-26.
   gate interno e cobertos por smoke. Isso nao transforma Battle Lab/Progression
   Lab em feature publica nem libera rewards/ranking/economia de laboratorio.
 - As telas dev-only chamam Deno por `OS.execute`; no Windows, `npx` deve ser resolvido para `npx.cmd` e executado via `cmd.exe /C`.
+- No Web export, `OS.execute` nao existe para `npx/deno`; Battle Lab e
+  Progression Lab devem usar `POST /lab-runner/battle` e
+  `POST /lab-runner/progression`, protegidos pela mesma conta alpha Supabase por
+  email/senha e save `normal` registrado. Esse runner nao grava arquivos, nao
+  arquiva run oficial e nao muta economia/ranking/progresso.
 - Nunca acumular argumentos dinamicos (`generate.ts`, `--request`, `--response`, `--profile`, `--milestone`) dentro de `ProjectSettings`; a tela deve montar esses argumentos a cada chamada.
 - `tools/smoke_dev_labs.gd` valida o caminho real do processo dentro do Godot: Battle Lab bridge e Progression Lab generate.
 
@@ -21,6 +26,9 @@ Registro operacional dos problemas corrigidos nos labs do Godot em 2026-05-26.
 - Builds custom do Battle Lab podem montar `potionSlot` com `pocao_vida` e
   `spellBehaviors` simples para provar Track 16 no replay. Isso continua
   lab-only e nao publica tuning.
+- Web remote bridge retorna run/replay em memoria. `Arquivar Run Oficial`
+  permanece desativado no navegador porque evidencia versionada exige escrita no
+  workspace local.
 - `tools/smoke_dev_lab_ui.gd` cobre o comportamento visual: Builds visivel, replay custom abrindo a aba Replay, History registrando a entrada custom e label de porcentagem na velocidade do replay.
 
 ## Progression Lab
@@ -34,6 +42,9 @@ Registro operacional dos problemas corrigidos nos labs do Godot em 2026-05-26.
 - O cache local-only e o apply server-backed devem preservar `consumables`,
   `potion_slots`, inventario e `spell_behaviors` do healthy save para que a
   Preparacao exercite Track 16.
+- No Web export, `Gerar Relatorio` usa o runner remoto para preencher a tela em
+  memoria; `Aplicar no Save Lab` continua sendo o endpoint separado
+  `progression-lab/apply` e nunca escreve no save `normal`.
 
 ## UI
 

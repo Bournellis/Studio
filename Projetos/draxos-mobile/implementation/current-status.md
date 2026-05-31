@@ -4,18 +4,18 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Lab Web Export Guard Hotfix`
-- Active stage status: `LAB_WEB_EXPORT_GUARD_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Remote Lab Runner`
+- Active stage status: `REMOTE_LAB_RUNNER_LOCAL_VALIDATED`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published remote package: `Lab Web Export Guard Hotfix`
-- Latest implemented package: `Lab Web Export Guard Hotfix` on branch
-  `codex/draxos-mobile/lab-web-export-guard`.
-- Active follow-up: human playtest of the Arena PVE tutorial/3-duel flow from
-  the hotfix published package, confirm Labs Dev Web guard behavior, then
-  decide tuning scope.
+- Latest implemented package: `Remote Lab Runner` on branch
+  `codex/draxos-mobile/remote-lab-runner`.
+- Active follow-up: publish/deploy the `lab-runner` Edge Function and updated
+  Web/Android/PC package, then human playtest Arena PVE plus Web Battle
+  Lab/Progression Lab remote generation.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -44,6 +44,10 @@ Lab Web Export Guard is the current remote hotfix over Track 19: Battle Lab Dev
 and Progression Lab Dev now detect Web export before calling `OS.execute`,
 disable local-process actions in the browser and keep PC/editor Lab generation
 available.
+Remote Lab Runner is the current local follow-up over that hotfix: Web Battle
+Lab and Progression Lab can call Supabase Edge `lab-runner` with the same
+email/password Internal Alpha account gate used by the game, without exposing
+service role to the client or mutating economy/ranking/progress.
 
 Current product reading: this is a strong prototype base for refinement. The
 current product direction is Arena PVE initial, documented in
@@ -307,6 +311,47 @@ Published hotfix Internal Alpha artifacts:
 Next after hotfix: playtest the Arena PVE tutorial and 3-duel arena, confirm
 that Battle Lab Dev no longer tries to start `npx/deno` in Web export, then
 choose the focused tuning pass.
+
+## Remote Lab Runner
+
+Remote Lab Runner is implemented locally on
+`codex/draxos-mobile/remote-lab-runner` as the follow-up to Lab Web Export
+Guard. It is not yet the latest published Internal Alpha package until the Edge
+Function and client package are deployed.
+
+Implemented in this package:
+
+- New mirrored Edge Function `lab-runner` exposes `POST /lab-runner/battle` and
+  `POST /lab-runner/progression`.
+- Access uses the same Internal Alpha Supabase account gate as the game: JWT
+  from a non-anonymous email/password account with a registered `normal` save. No
+  separate Lab allowlist exists.
+- Service role is used only inside the Edge Function to verify alpha access.
+  The client/export never receives service role or secrets.
+- Battle Lab Web can generate remote scratch runs and custom replay samples in
+  memory when local `npx/deno` is unavailable.
+- Progression Lab Web can generate the report data in memory when local
+  `npx/deno` is unavailable.
+- Remote runner does not write `docs/**`, `.battle_lab_scratch/**` or
+  `.progression_lab_scratch/**`, does not archive official runs and does not
+  mutate reward, XP, resources, ranking, potion stock, saves or ledger.
+
+Local validation completed:
+
+- `npx -y deno check server/functions/lab-runner/index.ts`
+- `npx -y deno check supabase/functions/lab-runner/index.ts`
+- `npx -y deno check server/functions/lab-runner/index.ts server/tests/lab_runner_contract_test.ts`
+- `npx -y deno check supabase/functions/lab-runner/index.ts`
+- `npx -y deno test --allow-read server/tests/lab_runner_contract_test.ts`
+- `npx -y deno task --cwd server/functions check`
+- `npx -y deno task --cwd supabase/functions check`
+- `npx -y deno test --allow-read server/tests/lab_heuristics_contract_test.ts server/tests/lab_runner_contract_test.ts`
+- `tools/check_agent_ops_foundation.ps1`: PASS.
+- `tools/validate_foundation.ps1 -Profile Quick`: PASS.
+- Godot `tools/validate.gd`: PASS (`138/138`, `2364` asserts).
+
+Pending before human Web test: deploy the `lab-runner` Edge Function, publish a
+new Internal Alpha package and run the remote release smokes.
 
 ## Foundation Audit
 

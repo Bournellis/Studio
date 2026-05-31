@@ -235,6 +235,24 @@ func apply_progression_lab_save(request_id: String, profile_id: String, mileston
 		}, request_hash)
 	)
 
+func run_remote_battle_lab(request_payload: Dictionary, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("lab-runner/battle"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request": request_payload,
+		}
+	)
+
+func run_remote_progression_lab(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("lab-runner/progression"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{}
+	)
+
 func request_battle(request_id: String, access_token: String, mode: String = ProjectInfo.DEFAULT_BATTLE_MODE, opponent_bot_id: String = "", request_hash: String = "") -> Dictionary:
 	var body := {
 		"request_id": request_id,

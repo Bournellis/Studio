@@ -61,15 +61,19 @@ Scratch Track 16 recomendado antes de tuning:
 npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --scratch-run 2026-05-30_track16_lab_alignment_v01 --compare-with 2026-05-25_source_identity_balance_v02
 ```
 
-2. No Godot editor, abrir `Refugio -> Battle Lab Dev` quando quiser testar
-   builds visualmente.
-3. Gerar scratch runs para ensaios locais ou runs oficiais para tuning
+2. No Godot editor ou PC build, abrir `Refugio -> Battle Lab Dev` quando quiser
+   testar builds visualmente com o runner local.
+3. No Web export, a mesma tela usa o runner remoto
+   `POST /lab-runner/battle` quando houver sessao Supabase de conta alpha por
+   email/senha. Esse caminho retorna scratch/custom replay em memoria, nao grava
+   run oficial e nao exige `npx/deno` no navegador.
+4. Gerar scratch runs para ensaios locais ou runs oficiais para tuning
    versionado.
-4. Ler primeiro os checks, outliers e matriz de poder proximo.
-5. Assistir amostras de replay ou gerar replay custom por build.
-6. Escolher uma hipotese pequena de tuning.
-7. Alterar numeros de combate em uma tarefa separada.
-8. Rodar o Battle Lab de novo e comparar relatorios.
+5. Ler primeiro os checks, outliers e matriz de poder proximo.
+6. Assistir amostras de replay ou gerar replay custom por build.
+7. Escolher uma hipotese pequena de tuning.
+8. Alterar numeros de combate em uma tarefa separada.
+9. Rodar o Battle Lab de novo e comparar relatorios.
 
 ## Artefatos
 
@@ -103,13 +107,19 @@ npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --scratc
 
 ## Contrato
 
-- A ferramenta e offline.
-- A ferramenta nao chama Supabase.
+- O fluxo local/editor e offline e chama Deno por processo local.
+- O Web export nao tem processo local; nele a ferramenta chama
+  `POST /lab-runner/battle`.
+- O runner remoto exige a mesma conta alpha Supabase por email/senha usada para
+  entrar no jogo, com save `normal` registrado. Nao existe allowlist separada
+  para Labs.
 - A ferramenta nao cria jogador.
 - A ferramenta nao aplica recompensa.
 - A ferramenta nao altera ranking, recursos ou progresso.
+- A ferramenta remota nao grava `generated/`, `.battle_lab_scratch/` nem run
+  oficial; esses artefatos continuam locais/editor.
 - Quando o Progression Lab ja foi gerado, a ferramenta importa apenas os JSONs
-  locais de saves/bots saudaveis para simular combate; continua offline.
+  locais de saves/bots saudaveis para simular combate no fluxo local.
 - A ferramenta nao muda numeros de combate; isso pertence a uma etapa posterior
   de tuning.
 - A proxima etapa de tuning deve partir de runs de Arena PVE, incluindo listas
@@ -139,6 +149,12 @@ Use para ver o combate enquanto ajusta numeros e arte:
 O Godot chama Deno por `draxos_mobile/battle_lab/deno_command` e
 `draxos_mobile/battle_lab/deno_prefix_args`. O padrao local e `npx -y deno run
 --allow-read --allow-write`.
+
+No Web export, os botoes de run/replay que podem operar sem arquivo local usam
+`SupabaseClient.run_remote_battle_lab`. `Arquivar Run Oficial` fica desativado
+no navegador porque arquivamento e evidencia versionada ainda exigem escrita no
+workspace local. Se a sessao nao for email/senha alpha ou o save `normal` nao
+existir, a tela deve pedir login/conta alpha em vez de tentar executar Deno.
 
 ## Como Usar Os Dados
 

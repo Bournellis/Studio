@@ -25,6 +25,7 @@ var _status_label: Label
 var _summary_label: Label
 var _checklist_label: Label
 var _fallback_session_store = null
+var _remote_progression_data: Dictionary = {}
 
 static func is_available() -> bool:
 	if not bool(ProjectSettings.get_setting("draxos_mobile/progression_lab/enabled", false)):
@@ -89,7 +90,7 @@ func _ready() -> void:
 	if local_process_supported():
 		_set_status("Progression Lab Dev pronto. Selecione um perfil e milestone.")
 	else:
-		_set_status(_local_process_unavailable_message("Progression Lab"))
+		_set_status(_remote_process_message("Progression Lab"))
 	_refresh_checklist()
 
 func _build_ui() -> void:
@@ -158,7 +159,7 @@ func _build_ui() -> void:
 	var report_button := _button("Gerar Relatorio", func() -> void:
 		_generate_report()
 	)
-	_configure_process_button(report_button)
+	_configure_process_button(report_button, true)
 	buttons.add_child(report_button)
 	buttons.add_child(_button("Preparar Save Local", func() -> void:
 		_prepare_local_save()
@@ -191,7 +192,7 @@ func _build_ui() -> void:
 
 func _generate_report() -> void:
 	if not local_process_supported():
-		_set_status(_local_process_unavailable_message("Progression Lab"))
+		await _generate_remote_report()
 		return
 	_set_status("Gerando outputs do Progression Lab...")
 	var script_path := ProjectSettings.globalize_path("res://tools/progression_lab/generate.ts")
@@ -208,6 +209,40 @@ func _generate_report() -> void:
 		_set_status(_process_failure_message("Progression Lab", command, args, output))
 		return
 	_set_status("Relatorio gerado em docs/progression-lab/generated/progression_report.html")
+	_refresh_checklist()
+
+func _generate_remote_report() -> void:
+	var session_store = _session_store()
+	if session_store == null or not session_store.has_valid_access_token():
+		_set_status("Entre com conta alpha de e-mail antes de rodar o Progression Lab remoto.")
+		return
+	var supabase_client = _supabase_client()
+	if supabase_client == null:
+		_set_status("SupabaseClient indisponivel: nao foi possivel chamar o Progression Lab remoto.")
+		return
+	_set_status("Chamando Progression Lab remoto...")
+	var result: Dictionary = await supabase_client.run_remote_progression_lab(session_store.access_token)
+	if not bool(result.get("ok", false)):
+		var error_payload := _as_dictionary(result.get("error", {}))
+		_set_status("Progression Lab remoto falhou: %s - %s" % [
+			str(error_payload.get("code", "REQUEST_FAILED")),
+			str(error_payload.get("message", "Falha na requisicao.")),
+		])
+		return
+	var body := _as_dictionary(result.get("body", {}))
+	_remote_progression_data = _as_dictionary(body.get("data", {}))
+	var summary := _as_dictionary(body.get("summary", {}))
+	_set_status("Progression Lab remoto OK: %s | saves %s | reviews %s" % [
+		str(body.get("status", "PASS")),
+		str(summary.get("saves", "?")),
+		str(summary.get("review_items", "?")),
+	])
+	_summary_label.text = "Relatorio remoto %s\nSaves %s | Bots %s | Reviews %s" % [
+		str(body.get("model_id", "")),
+		str(summary.get("saves", "?")),
+		str(summary.get("bot_pool", "?")),
+		str(summary.get("review_items", "?")),
+	]
 	_refresh_checklist()
 
 func _prepare_local_save() -> void:
@@ -515,6 +550,10 @@ func _refresh_checklist() -> void:
 	_checklist_label.text = "\n".join(lines)
 
 func _selected_healthy_save() -> Dictionary:
+	for remote_item: Variant in _as_array(_remote_progression_data.get("saves", [])):
+		var remote_save := _as_dictionary(remote_item)
+		if str(remote_save.get("profile_id", "")) == _selected_profile() and str(remote_save.get("milestone_id", "")) == _selected_milestone():
+			return remote_save
 	var doc := _read_json(ProjectSettings.globalize_path(HEALTHY_SAVES_PATH))
 	for item: Variant in _as_array(doc.get("saves", [])):
 		var save := _as_dictionary(item)
@@ -637,14 +676,20 @@ func _process_failure_message(tool_name: String, command: String, args: PackedSt
 func _local_process_unavailable_message(tool_name: String) -> String:
 	return "%s precisa de Deno local e nao roda no Web export. Use o build PC/editor para gerar relatorios; no navegador, carregue os saves/outputs ja gerados." % tool_name
 
+func _remote_process_message(tool_name: String) -> String:
+	return "%s usara o runner remoto no Web export. Entre com uma conta alpha de e-mail liberada no Supabase antes de gerar relatorios." % tool_name
+
 func _output_text(output: Array) -> String:
 	var lines := PackedStringArray()
 	for item: Variant in output:
 		lines.append(str(item))
 	return "\n".join(lines)
 
-func _configure_process_button(button: Button) -> void:
+func _configure_process_button(button: Button, remote_supported: bool = true) -> void:
 	if local_process_supported():
+		return
+	if remote_supported:
+		button.tooltip_text = _remote_process_message("Progression Lab")
 		return
 	button.disabled = true
 	button.tooltip_text = _local_process_unavailable_message("Progression Lab")

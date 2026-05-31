@@ -101,7 +101,13 @@ Para validar a selecao sem tocar no Supabase:
 npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all
 ```
 
-4. Abrir o Godot editor e usar `Refugio -> Progression Lab Dev`.
+4. Abrir o Godot editor, PC build ou Web export e usar
+   `Refugio -> Progression Lab Dev`.
+   - Editor/PC podem gerar relatorio pelo Deno local.
+   - Web export chama `POST /lab-runner/progression` quando houver sessao
+     Supabase de conta alpha por email/senha com save `normal` registrado. Esse
+     caminho retorna dados em memoria, nao grava arquivos e nao substitui uma
+     run oficial local.
 5. Carregar ou aplicar o save e jogar manualmente. Sem `SUPABASE_SERVICE_ROLE_KEY`, `Preparar Save Local` cria um cache local-only a partir do healthy save selecionado para validar UI/fluxo em modo somente leitura. Esse cache nao tem token valido: base pode ser inspecionada como snapshot, mas batalha, coleta, upgrade e outras acoes server-authoritative exigem uma sessao real. Com uma sessao real no save `progression_lab`, `Aplicar no Save Lab` usa o endpoint server-authoritative e nao precisa expor service role ao cliente.
 6. Registrar feedback de ritmo, recompensa, gargalo, poder e loja.
 7. Rodar Battle Lab com as builds saudaveis.
@@ -131,6 +137,13 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 ## Contrato
 
 - Ferramenta local/dev-only.
+- No Web export, `Gerar Relatorio` usa o runner remoto
+  `POST /lab-runner/progression` porque navegador nao executa `npx/deno`.
+- O runner remoto exige a mesma conta alpha Supabase por email/senha usada para
+  entrar no jogo, com save `normal` registrado. Nao existe allowlist separada
+  para Labs.
+- O runner remoto nao escreve arquivos, nao aplica healthy save e nao altera
+  recursos, ranking, economia, XP, progresso ou ledger.
 - Nao substitui Supabase como autoridade do jogo.
 - Aplicacao server-backed usa `POST /progression-lab/apply` e nunca escreve no save `normal`.
 - Cache local-only e read-only e nunca deve simular autenticacao online.

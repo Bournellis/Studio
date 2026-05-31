@@ -205,7 +205,7 @@ Deno.test("progression lab seeder remains local-only and explicit", async () => 
   assertContains(seeder, "SUPABASE_SERVICE_ROLE_KEY");
 });
 
-Deno.test("server runtime does not import dev lab generators", async () => {
+Deno.test("gameplay runtime does not import dev lab generators", async () => {
   for (
     const root of [
       "server/functions",
@@ -213,6 +213,9 @@ Deno.test("server runtime does not import dev lab generators", async () => {
     ]
   ) {
     for await (const file of walkTextFiles(root)) {
+      if (file.includes("/functions/lab-runner/")) {
+        continue;
+      }
       const source = await readText(file);
       assertNotMatches(
         source,

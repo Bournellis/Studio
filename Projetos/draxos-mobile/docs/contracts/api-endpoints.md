@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-05-31`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*` e `arena/pve/*` implementados local/remoto; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes reservados; Arena PVE v1 esta publicada em Internal Alpha e Track 19 Arena Consistency Pass esta em andamento.
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*` e `arena/pve/*` implementados local/remoto; `lab-runner/*` implementado como adaptador interno de Web Labs em validacao local; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes reservados; Arena PVE v1 esta publicada em Internal Alpha e Track 19 Arena Consistency Pass esta publicado.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -127,6 +127,8 @@ novo.
 | GET | `/release/config` | `release` | Nao | Nao | Runtime config publico read-only com flags T06; nao le secrets, gameplay state nem tuning. |
 | GET | `/release/download` | `release` | Nao | Nao | Gera URL assinada temporaria para APK/PC quando downloads privados estiverem ativos. |
 | GET | `/content/grimoire` | `release` | Nao | Nao | Catalogo privado do Grimorio para o hub alpha; exige JWT email/senha com save `normal`. |
+| POST | `/lab-runner/battle` | `release` | Nao | Nao | Interno alpha para Web Battle Lab; exige JWT email/senha com save `normal`, nao escreve arquivos e nao muta economia/ranking. |
+| POST | `/lab-runner/progression` | `release` | Nao | Nao | Interno alpha para Web Progression Lab; exige JWT email/senha com save `normal`, retorna dados in-memory e nao aplica healthy save. |
 | POST | `/account/bootstrap` | `save-scoped` | Sim | `request_id` por save | Cria/recupera o save `normal` ou `progression_lab` de conta registrada; o gate de convite e account-aware. |
 | POST | `/account/guest` | `save-scoped` | Sim | `request_id` por save | Fallback dev/local anonimo; cria/recupera o save selecionado. |
 | GET | `/account/state` | `save-scoped` | Sim | Nao | Retorna snapshot do save ativo. |
@@ -172,9 +174,102 @@ novo.
 
 `minigame` fica reservado por `docs/contracts/minigame-integration.md`; nenhum minigame jogavel deve criar endpoint antes do contrato de entrada, custo, recompensa, telemetry e admin.
 
+## Endpoints Internos De Lab Runner
+
+Status: **implementado localmente para Web Labs; publicacao remota exige deploy
+da Edge Function `lab-runner` e novo Web export**.
+
+Scope: `release`.
+
+Auth comum: exige JWT Supabase de conta email/senha da Internal Alpha, nao
+anonima, com save `normal` registrado. Essa e a mesma allowlist operacional do
+Supabase usada para entrar no jogo; nao ha lista separada para Labs.
+
+Save header: nao usa `x-draxos-save-type`. O endpoint apenas verifica que a
+conta tem acesso alpha normal antes de gerar dados de diagnostico.
+
+Idempotencia: nao se aplica; endpoints nao mutam banco, arquivos, recursos,
+ranking, XP, progresso, potion stock ou ledger.
+
+### `POST /lab-runner/battle`
+
+Executa Battle Lab em memoria para o Web export, usando o simulador tecnico e o
+modelo lab versionado. Substitui o processo local `npx/deno` quando o browser
+nao pode iniciar executaveis.
+
+Request:
+
+```json
+{
+  "request": {
+    "mode": "run",
+    "run_id": "scratch_2026-05-31T14-46-59"
+  }
+}
+```
+
+Response minima:
+
+```json
+{
+  "schema_version": "battle_lab_response_v1",
+  "ok": true,
+  "runner": "remote",
+  "mutates_files": false,
+  "status": "PASS",
+  "summary": {},
+  "checks": [],
+  "outliers": [],
+  "arena_sequences": [],
+  "replays": []
+}
+```
+
+Regras:
+
+- `mode: replay` retorna replay custom de sessao.
+- `mode: run` retorna resumo, checks, outliers, sequencias de Arena PVE e
+  amostras de replay em memoria.
+- Nao grava `docs/battle-lab/generated`, `.battle_lab_scratch` nem
+  `docs/battle-lab/runs`.
+- `Arquivar Run Oficial` continua fluxo local/editor.
+
+### `POST /lab-runner/progression`
+
+Executa Progression Lab em memoria para o Web export e retorna o dataset
+calculado para a tela.
+
+Request:
+
+```json
+{}
+```
+
+Response minima:
+
+```json
+{
+  "schema_version": "progression_lab_remote_response_v1",
+  "ok": true,
+  "runner": "remote",
+  "mutates_files": false,
+  "status": "REVIEW",
+  "summary": {},
+  "data": {}
+}
+```
+
+Regras:
+
+- Nao grava `docs/progression-lab/generated` nem
+  `.progression_lab_scratch`.
+- Nao substitui `POST /progression-lab/apply`.
+- Aplicacao de healthy save continua restrita ao endpoint separado
+  `progression-lab/apply`, ao save `progression_lab`.
+
 ## Endpoints De Arena PVE v1
 
-Status: **implementado/publicado em Track 18; Track 19 Arena Consistency Pass em andamento**.
+Status: **implementado/publicado em Track 18; Track 19 Arena Consistency Pass publicado**.
 
 Contrato de produto: `../pve-arena-v1.md`.
 

@@ -63,7 +63,7 @@
 | `docs/contracts/ruleset-registry.md` | `CONTRATO` | Ruleset generated-as-authoring-source plus database publication registry contract. |
 | `docs/contracts/minigame-integration.md` | `CONTRATO` | Contract-first gate for future minigames. |
 | `docs/contracts/admin-ops.md` | `CONTRATO` | Minimum auditable admin/support/ops contract. |
-| `docs/contracts/lab-heuristics.md` | `CONTRATO` | Boundary for Battle Lab and Progression Lab local heuristics, generated evidence and blocked tuning decisions. |
+| `docs/contracts/lab-heuristics.md` | `CONTRATO` | Boundary for Battle Lab and Progression Lab local heuristics, Web remote runner, generated evidence and blocked tuning decisions. |
 | `docs/architecture.md` | `CONTRATO` | Technical architecture and backend boundaries. |
 | `server/schema/` | `CONTRATO` | Server schema mirror. |
 | `server/functions/` | `CONTRATO` | Edge Function source mirror. |
@@ -121,7 +121,7 @@
 - A live doc must not tell agents to start from Track 04, Track 08, Track 10, Track 14, Track 15 or Track 16 as the current stage.
 - A live doc must treat `implementation/current-status.md` as the active stage/status source after the user chooses the next package.
 - A live doc must treat `docs/pve-arena-initial-direction.md` as the current product direction after Foundation Final Polish: Arena PVE initial first, PVP later.
-- A live doc may treat `docs/pve-arena-v1.md` as the current implemented/published contract package for Arena PVE, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough. Track 19 Arena Consistency Pass is the latest product baseline, with Lab Web Export Guard as the latest remote Internal Alpha hotfix publication before tuning.
+- A live doc may treat `docs/pve-arena-v1.md` as the current implemented/published contract package for Arena PVE, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough. Track 19 Arena Consistency Pass is the latest product baseline, with Lab Web Export Guard as the latest published Internal Alpha hotfix and Remote Lab Runner as the current local implementation follow-up before tuning.
 - A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation beyond what the Arena PVE initial package explicitly needs.
 - Foundation Audit must preserve the post-login loop as app shell, but the first playable product loop is now Refugio -> Arena PVE -> locked loadout -> duel list -> buffs/behavior between duels -> rewards -> upgrades.
 - Foundation Expansion Readiness/Foundation Closeout/Foundation Final Polish is now the delivered pre-expansion gate before Arena PVE implementation/tuning; base builder, PVP, expanded social or a real minigame are later packages unless explicitly selected.
