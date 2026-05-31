@@ -32,3 +32,7 @@ Make DraxosMobile start as a PVE Arena-first async autobattler: tutorial of 1 du
 - PVE Arena never mutates ranking.
 - Labs can report arena clear rate, step failure and early progression pressure.
 - Full local validation gate is green or any blocker is documented with exact command output and next action.
+
+## Validation Reference
+
+Use `validation-matrix.md` as the Track 18 acceptance and manual playtest source.
