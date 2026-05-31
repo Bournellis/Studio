@@ -2,6 +2,10 @@ const MIGRATION_PATH =
   "supabase/migrations/202605310003_s1_arena_calibration_runtime.sql";
 const SERVER_MIRROR_PATH =
   "server/schema/migrations/202605310003_s1_arena_calibration_runtime.sql";
+const INITIAL_ARENA_MIGRATION_PATH =
+  "supabase/migrations/202605310001_arena_pve_initial.sql";
+const INITIAL_ARENA_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202605310001_arena_pve_initial.sql";
 const SERVER_ARENA_FUNCTION = "server/functions/arena/index.ts";
 const SUPABASE_ARENA_FUNCTION = "supabase/functions/arena/index.ts";
 
@@ -13,6 +17,32 @@ Deno.test("arena consistency migration is mirrored in server schema", async () =
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("arena initial migration keeps deploy-safe ruleset publication context", async () => {
+  const supabaseMigration = await readProjectText(INITIAL_ARENA_MIGRATION_PATH);
+  const serverMirror = await readProjectText(INITIAL_ARENA_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema initial arena migration should mirror supabase migration exactly",
+  );
+  assertIncludes(
+    supabaseMigration,
+    "ruleset_id text not null default 'foundation_ruleset_v0'",
+    "arena attempts should keep legacy ruleset_id as a textual snapshot",
+  );
+  assertNotIncludes(
+    supabaseMigration,
+    "ruleset_id text not null default 'foundation_ruleset_v0' references public.ruleset_registry(ruleset_id)",
+    "arena attempts should not reference the retired ruleset_id registry identity",
+  );
+  assertIncludes(
+    supabaseMigration,
+    "ruleset_publication_id uuid references public.ruleset_registry(publication_id)",
+    "arena attempts should reference the immutable ruleset publication identity",
   );
 });
 

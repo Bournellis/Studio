@@ -37,7 +37,7 @@ create table if not exists public.arena_attempts (
 	reward_payload jsonb not null default '{}'::jsonb,
 	start_request_id uuid not null,
 	request_hash text not null,
-	ruleset_id text not null default 'foundation_ruleset_v0' references public.ruleset_registry(ruleset_id),
+	ruleset_id text not null default 'foundation_ruleset_v0',
 	ruleset_version integer not null default 1,
 	ruleset_publication_id uuid references public.ruleset_registry(publication_id),
 	ruleset_content_hash text,
