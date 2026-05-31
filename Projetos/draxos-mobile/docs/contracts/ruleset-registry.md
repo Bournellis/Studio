@@ -2,7 +2,7 @@
 
 - Status: `CONTRATO`
 - Contract id: `RULESET_REGISTRY_CONTRACT_V1`
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Migration base: `202605300001_foundation_expansion_readiness.sql`
 - Closeout migration: `202605300004_foundation_closeout.sql`
 - Current ruleset: `foundation_ruleset_v0`
@@ -26,6 +26,10 @@ O banco nao e ferramenta de autoria de balanceamento. Ele registra o que foi pub
 | `server/functions/_shared/foundation_ruleset.ts` | Artefato server para Edge Functions e testes. |
 | `supabase/functions/_shared/foundation_ruleset.ts` | Mirror Supabase do artefato server. |
 | `server/tests/foundation_ruleset_test.ts` | Prova hashes, mirrors e ausencia de secrets. |
+| `data/definitions/pve_arenas.json` | Fonte autorada das arenas PVE v1. |
+| `data/definitions/pve_enemies.json` | Fonte autorada dos inimigos PVE v1. |
+| `data/definitions/arena_buffs.json` | Fonte autorada dos buffs temporarios de Arena PVE v1. |
+| `data/definitions/arena_rewards.json` | Fonte autorada dos perfis de recompensa de Arena PVE v1. |
 
 ## Registry
 
@@ -89,6 +93,10 @@ O pacote de fundacao inclui fontes para:
 - pets/familiars;
 - potions;
 - crafting recipes;
+- pve arenas;
+- pve enemies;
+- arena temporary buffs;
+- arena rewards;
 - bots;
 - power bands;
 - Battle Lab;
@@ -133,3 +141,5 @@ Para publicar um ruleset:
 6. validar server/supabase mirrors.
 
 Publicacao remota continua sujeita a aprovacao explicita e `-ConfirmRemoteMutation`.
+
+Nota Arena PVE v1: incluir os novos arquivos de definitions altera `content_hash`. Enquanto esta branch nao aplicar migration/publicacao remota, o manifest gerado e candidato de repo para a proxima publicacao; qualquer promocao remota deve criar ou atualizar registro de `ruleset_registry` por migration/processo de release explicito, nunca sobrescrever historico silenciosamente.

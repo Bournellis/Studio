@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-05-30`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*` e `content/*` implementados local/remoto; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes reservados.
+- Ultima atualizacao: `2026-05-31`
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*` e `content/*` implementados local/remoto; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes reservados; Arena PVE v1 adiciona endpoints contratados `arena/pve/*`.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -135,6 +135,12 @@ novo.
 | GET | `/battle/latest` | `save-scoped` | Sim | Nao | Retorna ultima batalha do save ativo sem reaplicar efeitos. |
 | GET | `/battle/history` | `save-scoped` | Sim | Nao | Retorna historico recente do save ativo como sumarios read-only, sem eventos completos. |
 | GET | `/battle/replay?battle_id=...` | `save-scoped` | Sim | Nao | Retorna o `battle_log_v1` salvo de uma batalha do save ativo, sem rerodar simulador nem reaplicar recompensa. |
+| GET | `/arena/pve/state` | `save-scoped` | Sim | Nao | Contratado para Arena PVE v1: arenas, unlocks, recordes e tentativa ativa do save. |
+| POST | `/arena/pve/start` | `save-scoped` | Sim | `request_id/request_hash` por save | Contratado para criar tentativa, travar loadout e gerar primeiro inimigo. |
+| POST | `/arena/pve/duel/request` | `save-scoped` | Sim | `request_id/request_hash` por save | Contratado para resolver o proximo duelo da tentativa via simulador server-authoritative. |
+| POST | `/arena/pve/buff/select` | `save-scoped` | Sim | `request_id/request_hash` por save | Contratado para escolher 1 buff ofertado apos vitoria. |
+| POST | `/arena/pve/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Contratado para aplicar recompensa de conclusao/recorde/primeira clear. |
+| POST | `/arena/pve/abandon` | `save-scoped` | Sim | `request_id/request_hash` por save | Contratado para encerrar tentativa sem recompensa de conclusao. |
 | GET | `/base/state` | `save-scoped` | Sim | Nao | Estado server-authoritative da Base do save ativo. |
 | POST | `/base/collect` | `save-scoped` | Sim | `request_id/request_hash` por save | Coleta recursos do save ativo via RPC transacional com ledger. |
 | POST | `/base/upgrade` | `save-scoped` | Sim | `request_id/request_hash` por save | Inicia upgrade da Base do save ativo via RPC transacional com ledger. |
@@ -165,6 +171,143 @@ novo.
 `admin_flag_account_v1`. Nenhum deles e endpoint publico ou chamada de cliente.
 
 `minigame` fica reservado por `docs/contracts/minigame-integration.md`; nenhum minigame jogavel deve criar endpoint antes do contrato de entrada, custo, recompensa, telemetry e admin.
+
+## Endpoints De Arena PVE v1
+
+Status: **contratado em docs/data; nao implementado nesta branch**.
+
+Contrato de produto: `../pve-arena-v1.md`.
+
+Regras comuns:
+
+- Scope: `save-scoped`.
+- Save authority: resolver e travar `game_saves.id`; `players.save_type` fica apenas como compatibilidade alpha.
+- Idempotencia: mutacoes exigem `request_id` e `request_hash`.
+- Ruleset: toda tentativa, duelo e recompensa persistem `ruleset_publication_id`, `ruleset_id`, `ruleset_version`, `ruleset_content_hash`, `ruleset_simulator_hash` e `ruleset_schema_version`.
+- Ranking: Arena PVE v1 nao insere nem atualiza `ranking`.
+- Cooldown: nenhum endpoint de Arena PVE pode impor cooldown de combate.
+- Loadout: `arena/pve/start` grava snapshot/hash de loadout; endpoints seguintes nao aceitam troca de loadout.
+- Comportamento: ajustes simples entre duelos devem reutilizar `build/spell-behavior` e `build/potion-behavior` ate haver contrato proprio.
+
+### `GET /arena/pve/state`
+
+Leitura do estado de Arena PVE do save ativo.
+
+Response contratada:
+
+```json
+{
+  "ok": true,
+  "schema_version": "pve_arena_state_v1",
+  "arenas": [],
+  "active_attempt": null,
+  "records": [],
+  "reward_limits": {
+    "daily_key": "2026-05-31",
+    "weekly_key": "2026-W22"
+  }
+}
+```
+
+### `POST /arena/pve/start`
+
+Cria ou recupera tentativa ativa de arena.
+
+Request:
+
+```json
+{
+  "request_id": "uuid",
+  "request_hash": "sha256:...",
+  "arena_id": "arena_cinzas_curta",
+  "difficulty_tier": 1
+}
+```
+
+Response minima:
+
+```json
+{
+  "ok": true,
+  "schema_version": "pve_arena_attempt_v1",
+  "attempt": {
+    "attempt_id": "uuid",
+    "arena_id": "arena_cinzas_curta",
+    "difficulty_tier": 1,
+    "duel_index": 1,
+    "duel_count": 3,
+    "state": "active",
+    "locked_loadout_hash": "sha256:...",
+    "next_enemy_id": "pve_aprendiz_cinzas"
+  }
+}
+```
+
+Erros minimos: `INVALID_ARENA`, `ARENA_LOCKED`, `ACTIVE_ARENA_ATTEMPT_EXISTS`, `INVALID_REQUEST_ID`, `IDEMPOTENCY_HASH_MISMATCH`, `ARENA_START_FAILED`.
+
+### `POST /arena/pve/duel/request`
+
+Resolve o proximo duelo da tentativa. O servidor seleciona o inimigo da sequencia, aplica buffs acumulados, reseta HP para 100% no inicio do duelo e grava battle log `battle_log_v1` com metadata de arena.
+
+Request:
+
+```json
+{
+  "request_id": "uuid",
+  "request_hash": "sha256:...",
+  "attempt_id": "uuid"
+}
+```
+
+Erros minimos: `ARENA_ATTEMPT_NOT_FOUND`, `ARENA_ATTEMPT_NOT_ACTIVE`, `ARENA_DUEL_ALREADY_RESOLVED`, `ARENA_DUEL_FAILED`, `IDEMPOTENCY_HASH_MISMATCH`.
+
+### `POST /arena/pve/buff/select`
+
+Escolhe 1 buff de uma oferta gerada pelo servidor depois de uma vitoria que ainda tem proximo duelo.
+
+Request:
+
+```json
+{
+  "request_id": "uuid",
+  "request_hash": "sha256:...",
+  "attempt_id": "uuid",
+  "offer_id": "uuid",
+  "buff_id": "arena_buff_potencia_menor"
+}
+```
+
+Erros minimos: `ARENA_ATTEMPT_NOT_FOUND`, `BUFF_OFFER_NOT_FOUND`, `BUFF_NOT_OFFERED`, `BUFF_ALREADY_SELECTED`, `ARENA_BUFF_SELECT_FAILED`.
+
+### `POST /arena/pve/claim`
+
+Aplica recompensa de conclusao, primeira clear, recorde e limites de repeticao. Claim deve gravar ledger `arena_pve_v1` e resposta idempotente.
+
+Request:
+
+```json
+{
+  "request_id": "uuid",
+  "request_hash": "sha256:...",
+  "attempt_id": "uuid"
+}
+```
+
+Erros minimos: `ARENA_ATTEMPT_NOT_COMPLETE`, `ARENA_REWARD_ALREADY_CLAIMED`, `ARENA_REWARD_LIMITED`, `ARENA_REWARD_FAILED`.
+
+### `POST /arena/pve/abandon`
+
+Encerra tentativa ativa sem recompensa de conclusao. Duels ja gravados continuam legiveis via battle history/replay.
+
+Request:
+
+```json
+{
+  "request_id": "uuid",
+  "request_hash": "sha256:...",
+  "attempt_id": "uuid"
+}
+```
 
 ## Endpoints De Conteudo
 

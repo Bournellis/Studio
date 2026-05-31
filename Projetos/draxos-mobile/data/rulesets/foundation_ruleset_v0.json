@@ -3,7 +3,7 @@
   "ruleset_id": "foundation_ruleset_v0",
   "ruleset_version": 1,
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
-  "content_hash": "5f7e7fe5d1a1e8570e531bc3ce977188a74470df6d75da66b2b4c54219a68b97",
+  "content_hash": "427c95ce7aecc48e44a0255cf2b4920eea845d43d4b864d28f6c5fe526387b31",
   "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "runtime": {
     "mode": "FIRST_SLICE_SIM",
@@ -12,6 +12,18 @@
     "server_authoritative": true
   },
   "sources": [
+    {
+      "path": "data/definitions/arena_buffs.json",
+      "kind": "definition_json",
+      "sha256": "8f7fc6946749df4894c6d7d9c9e4db85d4af667bcbccf576904fe743b7a2ed59",
+      "canonical_bytes": 3379
+    },
+    {
+      "path": "data/definitions/arena_rewards.json",
+      "kind": "definition_json",
+      "sha256": "3cfec72a6c53dcc849626b568f11a0e0d242f81a8c25e07ece64a878d70cc5e3",
+      "canonical_bytes": 3800
+    },
     {
       "path": "data/definitions/base_structures.json",
       "kind": "definition_json",
@@ -59,6 +71,18 @@
       "kind": "definition_json",
       "sha256": "e65aa003f9a875ae5ff604b57510ebf5f1d0bf6fea9b7e2357cb33a281c4df2b",
       "canonical_bytes": 1619
+    },
+    {
+      "path": "data/definitions/pve_arenas.json",
+      "kind": "definition_json",
+      "sha256": "23e5697372eac10cb2dd5b77621e3e515ef549f821aff4066870545e6e39e282",
+      "canonical_bytes": 4485
+    },
+    {
+      "path": "data/definitions/pve_enemies.json",
+      "kind": "definition_json",
+      "sha256": "7d4f41abfd5c3b700e98a5d0770c208695145eb7ccfc6013dbe9eafa1d3fb7e5",
+      "canonical_bytes": 6197
     },
     {
       "path": "data/definitions/rewards.json",
@@ -122,9 +146,9 @@
     }
   ],
   "counts": {
-    "definitions": 11,
+    "definitions": 15,
     "tool_models": 3,
     "battle_simulators": 4,
-    "total_sources": 18
+    "total_sources": 22
   }
 }
