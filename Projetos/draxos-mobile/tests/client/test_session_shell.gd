@@ -546,6 +546,50 @@ func test_session_store_persists_pending_idempotent_mutation_for_retry() -> void
 	store.free()
 	restored.free()
 
+func test_session_store_prunes_pending_mutations_when_switching_saves() -> void:
+	var store = SessionStoreScript.new()
+	var normal := store.prepare_pending_mutation(
+		"base/collect",
+		"base:normal",
+		"collect_base",
+		{}
+	)
+	assert_eq(
+		str(store.pending_mutation(str(normal.get("request_id", ""))).get("status", "")),
+		SessionStoreScript.MUTATION_STATUS_PENDING
+	)
+
+	assert_true(store.set_active_save_type(SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB))
+	assert_true(store.pending_mutation(str(normal.get("request_id", ""))).is_empty())
+	var diagnostics := store.diagnostics_snapshot()
+	var counts := Dictionary(diagnostics.get("pending_mutations", {}))
+	assert_eq(int(counts.get("normal", -1)), 0)
+	assert_eq(int(counts.get("progression_lab", -1)), 0)
+	store.free()
+
+func test_session_store_does_not_reopen_completed_idempotent_mutation() -> void:
+	var store = SessionStoreScript.new()
+	var first := store.prepare_pending_mutation(
+		"base/collect",
+		"base:normal",
+		"collect_base",
+		{}
+	)
+	assert_true(store.complete_pending_mutation(str(first.get("request_id", "")), {"ok": true}))
+
+	var next := store.prepare_pending_mutation(
+		"base/collect",
+		"base:normal",
+		"collect_base",
+		{"request_id": str(first.get("request_id", ""))}
+	)
+	assert_ne(str(next.get("request_id", "")), str(first.get("request_id", "")))
+	assert_eq(
+		str(store.pending_mutation(str(first.get("request_id", ""))).get("status", "")),
+		SessionStoreScript.MUTATION_STATUS_COMPLETED
+	)
+	store.free()
+
 func test_session_store_persists_local_telemetry_session_id() -> void:
 	var store = SessionStoreScript.new()
 	var first_id := store.ensure_session_id()
