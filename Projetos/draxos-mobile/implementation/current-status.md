@@ -15,8 +15,8 @@
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Latest implemented package: `Foundation Hardening V2` on
   `codex/draxos-mobile/foundation-hardening-v2`.
-- Active follow-up: human review/playtest of the published V2 hardening build,
-  then dedicated mode threads can branch from updated `master`.
+- Active follow-up: human functional playtest of the published V2 hardening
+  build, then dedicated mode threads can branch from updated `master`.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -26,8 +26,8 @@
 
 ## Foundation Hardening V2 - 2026-06-01
 
-This package is published remotely as the current Internal Alpha multi-mode
-expansion enforcement baseline.
+This package is published remotely and operationally closed out as the current
+Internal Alpha multi-mode expansion enforcement baseline.
 
 - release root:
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`;
@@ -55,7 +55,8 @@ Scope:
 - Data/schema enforcement rejects invalid future mode definition drift.
 - Android release signing remains required for broader Android distribution; the
   hotfix2 correction APK uses `debug_fallback` because the release keystore was
-  unavailable in this worktree.
+  unavailable in this worktree. This is accepted for the current functional
+  playtest scope.
 - Supabase migrations `202606010003_foundation_hardening_v2.sql` and
   `202606010004_resource_reconciliation_stability.sql` were applied remotely.
 - Edge Function `modes`, Storage artifacts, Cloudflare Pages and the release
@@ -87,10 +88,10 @@ Validation and publication completed:
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`: passed.
 
 Publication status: published as the current Internal Alpha expansion
-enforcement baseline.
+enforcement baseline; hardening complete for functional playtest.
 
-Next human check: review/playtest the published V2 build, then run
-mode-specific work in dedicated worktrees from updated `master`.
+Next human check: playtest the published V2 build. After that, mode-specific
+work can run in dedicated worktrees from updated `master`.
 
 ## Hardening Platform V1 - 2026-06-01
 

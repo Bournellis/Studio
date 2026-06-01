@@ -1,19 +1,20 @@
 # DraxosMobile - Foundation Hardening V2 Readiness Report
 
 - Status: `PUBLISHED_INTERNAL_ALPHA`
+- Closeout: `COMPLETE_FOR_FUNCTIONAL_PLAYTEST`
 - Date: `2026-06-01`
 - Integration branch: `codex/draxos-mobile/foundation-hardening-v2`
-- Integration worktree: `D:\Estudio-worktrees\draxos-mobile--codex--foundation-hardening-v2`
+- Integration worktree: closed after merge/publication
 - Release root: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`
 - Cloudflare preview: `https://ca946749.draxos-mobile-internal-alpha.pages.dev`
 - Current published baseline: `Foundation Hardening V2`
 
 ## Summary
 
-Foundation Hardening V2 is implemented, validated and published as the current
-Internal Alpha enforcement package for multi-mode expansion. It does not add
-gameplay, tuning, economy, new playable content, PVP, social expansion or visual
-redesign.
+Foundation Hardening V2 is implemented, validated, published and closed out as
+the current Internal Alpha enforcement package for multi-mode expansion. It does
+not add gameplay, tuning, economy, new playable content, PVP, social expansion
+or visual redesign.
 
 Remote publication was resumed after configuring a local Android release
 keystore. Supabase migrations, the `modes` Edge Function, Storage artifacts,
@@ -29,6 +30,12 @@ Remote smoke validates release manifest, anonymous auth, `account/guest` and
 `account/state`; a clean-profile Chrome DevTools run clicked `Guest` in the Web
 build and reached `Refugio` with Auth, account, base and telemetry calls
 returning `200`/`204`.
+
+Operational closeout completed after the post-publication review: clean V2 and
+hotfix worktrees were removed, historical clean branches were preserved without
+active worktrees, and only two old dirty Arena worktrees remain as explicit
+handoff-needed states. Android release signing is intentionally deferred because
+the immediate focus is functional playtest, not broader Android distribution.
 
 ## Implemented Enforcement
 
@@ -193,7 +200,11 @@ Key publication commands completed after the partial handoff was resumed:
 
 ## Master Baseline Decision
 
-`master` can be promoted to Foundation Hardening V2 after the final integration
-branch commit lands and the tree is clean. New DraxosMobile work should branch
-from updated `master`, use a dedicated worktree and follow
+`master` is the official Foundation Hardening V2 baseline for DraxosMobile.
+The hardening package is complete for functional playtest. New DraxosMobile
+work should branch from updated `master`, use a dedicated worktree and follow
 `docs/multi-agent-workflow.md`.
+
+Before broader Android distribution, Play Console testing or update-path
+validation, regenerate and publish the Android artifact with the release
+keystore instead of the hotfix2 `debug_fallback` APK.
