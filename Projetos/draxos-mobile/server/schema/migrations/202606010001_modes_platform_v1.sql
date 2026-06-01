@@ -34,16 +34,40 @@ create table if not exists public.admin_roles (
 alter table public.mode_limit_policies enable row level security;
 alter table public.admin_roles enable row level security;
 
-update public.mode_registry
-set mode_id = 'openworld',
-	display_name = 'Openworld',
-	status = 'internal_alpha',
-	release_channel = 'internal_alpha',
-	default_slice_id = 'forest',
-	active_ruleset_id = 'openworld_forest_ruleset_v0',
-	metadata = replace(metadata::text, 'rpgsuave', 'openworld')::jsonb,
-	updated_at = now()
-where mode_id = 'rpgsuave';
+insert into public.mode_registry (
+	mode_id,
+	display_name,
+	status,
+	release_channel,
+	default_slice_id,
+	active_ruleset_id,
+	active_ruleset_version,
+	metadata,
+	created_at,
+	updated_at
+)
+select
+	'openworld',
+	'Openworld',
+	'internal_alpha',
+	'internal_alpha',
+	'forest',
+	'openworld_forest_ruleset_v0',
+	active_ruleset_version,
+	replace(metadata::text, 'rpgsuave', 'openworld')::jsonb,
+	created_at,
+	now()
+from public.mode_registry
+where mode_id = 'rpgsuave'
+on conflict (mode_id) do update set
+	display_name = excluded.display_name,
+	status = excluded.status,
+	release_channel = excluded.release_channel,
+	default_slice_id = excluded.default_slice_id,
+	active_ruleset_id = excluded.active_ruleset_id,
+	active_ruleset_version = excluded.active_ruleset_version,
+	metadata = excluded.metadata,
+	updated_at = now();
 
 update public.mode_ruleset_registry
 set ruleset_id = 'openworld_forest_ruleset_v0',
@@ -54,6 +78,16 @@ set ruleset_id = 'openworld_forest_ruleset_v0',
 	result_limits = replace(result_limits::text, 'rpgsuave', 'openworld')::jsonb,
 	ruleset_payload = replace(ruleset_payload::text, 'rpgsuave', 'openworld')::jsonb,
 	updated_at = now()
+where (mode_id = 'rpgsuave' or ruleset_id = 'rpgsuave_forest_ruleset_v0')
+	and not exists (
+		select 1
+		from public.mode_ruleset_registry existing_ruleset
+		where existing_ruleset.ruleset_id = 'openworld_forest_ruleset_v0'
+			and existing_ruleset.ruleset_version = public.mode_ruleset_registry.ruleset_version
+			and existing_ruleset.release_channel = 'internal_alpha'
+	);
+
+delete from public.mode_ruleset_registry
 where mode_id = 'rpgsuave' or ruleset_id = 'rpgsuave_forest_ruleset_v0';
 
 update public.mode_progress
@@ -62,6 +96,15 @@ set mode_id = 'openworld',
 	progress_payload = replace(progress_payload::text, 'rpgsuave', 'openworld')::jsonb,
 	totals_payload = replace(totals_payload::text, 'rpgsuave', 'openworld')::jsonb,
 	updated_at = now()
+where (mode_id = 'rpgsuave' or local_schema_version = 'rpgsuave_forest_local_v0')
+	and not exists (
+		select 1
+		from public.mode_progress existing_progress
+		where existing_progress.game_save_id = public.mode_progress.game_save_id
+			and existing_progress.mode_id = 'openworld'
+	);
+
+delete from public.mode_progress
 where mode_id = 'rpgsuave' or local_schema_version = 'rpgsuave_forest_local_v0';
 
 update public.mode_sessions
@@ -74,6 +117,9 @@ where mode_id = 'rpgsuave' or ruleset_id = 'rpgsuave_forest_ruleset_v0';
 update public.mode_reward_claims
 set mode_id = 'openworld',
 	reward_payload = replace(reward_payload::text, 'rpgsuave', 'openworld')::jsonb
+where mode_id = 'rpgsuave';
+
+delete from public.mode_registry
 where mode_id = 'rpgsuave';
 
 do $mode_v1_prelude$
