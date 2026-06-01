@@ -73,6 +73,8 @@ Todos exigem JWT e `x-draxos-api-version: 1`. Endpoints save-scoped exigem `x-dr
 
 ## Reward Bridge
 
+Contrato detalhado: `docs/contracts/reward-bridge-v1.md`.
+
 Recompensa real so pode ser aplicada pelo servidor:
 
 - RPC/service role;
@@ -93,6 +95,13 @@ Ops pode:
 - expirar/invalidar sessao;
 - reconciliar estado;
 - aplicar compensacao limitada por `admin_adjust_resource_balance_v1`.
+
+Mutacoes admin de modo/sessao devem chamar RPC auditada, nao `PATCH` direto da
+Edge Function:
+
+- `admin_set_mode_status_v1`;
+- `admin_expire_mode_session_v1`;
+- `admin_invalidate_mode_session_v1`.
 
 ## Analytics
 

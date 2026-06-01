@@ -95,6 +95,16 @@ Campos implementados:
 `admin_adjust_resource_balance_v1` usa essa tabela junto com
 `resource_transactions`, garantindo ledger e auditoria na mesma operacao.
 
+Mode Platform V1 hardening adiciona RPCs internas auditadas para que
+`/modes/admin/*` nao faca `PATCH` direto em tabelas operacionais:
+
+- `admin_set_mode_status_v1`;
+- `admin_expire_mode_session_v1`;
+- `admin_invalidate_mode_session_v1`.
+
+Todas exigem `request_id`, `request_hash`, `reason`, usam `admin_audit_log` com
+before/after e sao `service_role`-only.
+
 ## Guardrails De Segredo
 
 Proibido colocar em cliente, export, portal, manifest ou docs operacionais publicas:
@@ -120,6 +130,9 @@ As RPCs existentes sao internas e nao devem ser chamadas pelo cliente:
 | `resource_reconciliation_report_v1` | read-only | compara saldo atual e ledger por `game_save_id` |
 | `admin_adjust_resource_balance_v1` | mutacao | exige `request_id`, reason, before/after, ledger e `admin_audit_log` |
 | `admin_flag_account_v1` | mutacao | exige `request_id`, status, reason e `admin_audit_log` |
+| `admin_set_mode_status_v1` | mutacao | exige `request_id`, `request_hash`, reason, before/after e `admin_audit_log` |
+| `admin_expire_mode_session_v1` | mutacao | exige `request_id`, `request_hash`, reason, before/after e `admin_audit_log` |
+| `admin_invalidate_mode_session_v1` | mutacao | exige `request_id`, `request_hash`, reason, before/after e `admin_audit_log` |
 
 ## Endpoints Admin-Futuros
 
