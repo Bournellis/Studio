@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`MINIGAME_PLATFORM_V1_MODES_PUBLISHED_INTERNAL_ALPHA`, publicado em `internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c`, preservando Track 21 Arena Loop Unlock/Friction, Track 20 Season 1 Arena Calibration, Remote Lab Runner, Track 13 release safety e Track 14 agent ops)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`SCROLL_DRAG_RELEASE_FIX_PUBLISHED_INTERNAL_ALPHA`, publicado em `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`, sobre Minigame Platform V1 Modes e preservando Track 21 Arena Loop Unlock/Friction, Track 20 Season 1 Arena Calibration, Remote Lab Runner, Track 13 release safety e Track 14 agent ops)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - MINIGAME_PLATFORM_V1_MODES_PUBLISHED_INTERNAL_ALPHA**
+- Status: **P2_IMPLEMENTACAO - SCROLL_DRAG_RELEASE_FIX_PUBLISHED_INTERNAL_ALPHA**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Minigame Platform V1 esta publicado remotamente (`internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c`, preview `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev`) e promove registry unico com `basebuilder`, `autobattler`, `towerdefense`, `cardgame` e `openworld`; API ativa `/modes`; Hub de Modos no Refugio; `rpgsuave` renomeado para `openworld`; Openworld Bosque fullscreen; Ops/analytics internos; `/minigames` removido do contrato remoto ativo. Track 21 Arena Loop Unlock And Friction Pass e Track 20 Season 1 Arena Calibration seguem preservados como base do modo Autobattler. Track 13 release safety, Track 14 agent ops e Remote Lab Runner seguem preservados.
+- Baseline atual: Scroll Drag Release Fix esta publicado remotamente (`internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`, preview `https://c4394be5.draxos-mobile-internal-alpha.pages.dev`) sobre Minigame Platform V1 e corrige drag stale em telas com scroll sem mudar backend/schema/economia. Minigame Platform V1 segue como baseline de produto publicado, com registry unico com `basebuilder`, `autobattler`, `towerdefense`, `cardgame` e `openworld`; API ativa `/modes`; Hub de Modos no Refugio; `rpgsuave` renomeado para `openworld`; Openworld Bosque fullscreen; Ops/analytics internos; `/minigames` removido do contrato remoto ativo. Track 21 Arena Loop Unlock And Friction Pass e Track 20 Season 1 Arena Calibration seguem preservados como base do modo Autobattler. Track 13 release safety, Track 14 agent ops e Remote Lab Runner seguem preservados.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation` e Supabase/Cloudflare CLI autenticada. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, PVP, tuning numerico amplo, novas armas, novas spells, economia ampla, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
-- Proximo passo: playtest humano do Hub de Modos: entrar em Basebuilder, Autobattler e Openworld Bosque; confirmar Towerdefense/Cardgame staged/disabled; validar Labs Dev Ops sem dados sensiveis para usuario comum.
+- Proximo passo: playtest humano do hotfix de scroll em Web/PC e do Hub de Modos: entrar em Basebuilder, Autobattler e Openworld Bosque; confirmar Towerdefense/Cardgame staged/disabled; validar Labs Dev Ops sem dados sensiveis para usuario comum.
 
 ## rpg-isometrico
 

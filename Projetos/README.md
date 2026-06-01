@@ -18,9 +18,9 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Arena PVE Inicial
 
-- `draxos-mobile/`: mobile-first Draxos platform with official modes now published in Internal Alpha: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` and `Openworld`. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Minigame Platform V1 is the latest remote publication: registry unico dos cinco modos, API `/modes`, Hub de Modos no Refugio, `rpgsuave` renamed to `openworld`, Openworld Bosque fullscreen, staged disabled Towerdefense/Cardgame, internal Ops/analytics and legacy `/minigames` removed from the active remote contract. Release root: `internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c`; preview: `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev`. Track 21 Arena Loop Unlock/Friction and Track 20 Season 1 Arena Calibration remain preserved as the active Autobattler foundation; Track 13 release safety, Track 14 agent ops and Remote Lab Runner remain preserved baselines.
-  - Priority/status: `P2_IMPLEMENTACAO - MINIGAME_PLATFORM_V1_MODES_PUBLISHED_INTERNAL_ALPHA`
-  - Canonical local branch for the latest remote publication: `codex/draxos-mobile/modes-integrated-alpha`.
+- `draxos-mobile/`: mobile-first Draxos platform with official modes now published in Internal Alpha: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` and `Openworld`. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Scroll Drag Release Fix is the latest remote publication over Minigame Platform V1, correcting stale mouse drag in scroll screens without backend/schema/economy changes. Minigame Platform V1 remains the product baseline: registry unico dos cinco modos, API `/modes`, Hub de Modos no Refugio, `rpgsuave` renamed to `openworld`, Openworld Bosque fullscreen, staged disabled Towerdefense/Cardgame, internal Ops/analytics and legacy `/minigames` removed from the active remote contract. Release root: `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`; preview: `https://c4394be5.draxos-mobile-internal-alpha.pages.dev`. Track 21 Arena Loop Unlock/Friction and Track 20 Season 1 Arena Calibration remain preserved as the active Autobattler foundation; Track 13 release safety, Track 14 agent ops and Remote Lab Runner remain preserved baselines.
+  - Priority/status: `P2_IMPLEMENTACAO - SCROLL_DRAG_RELEASE_FIX_PUBLISHED_INTERNAL_ALPHA`
+  - Canonical local branch for the latest remote publication: `codex/draxos-mobile/scroll-drag-release-fix`.
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
@@ -54,7 +54,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: human playtest of the Mode Hub: Basebuilder, Autobattler, Openworld Bosque fullscreen, Towerdefense/Cardgame staged cards and Labs Dev Ops visibility.
+  - Current next step: human playtest of the scroll hotfix in Web/PC and the Mode Hub: Basebuilder, Autobattler, Openworld Bosque fullscreen, Towerdefense/Cardgame staged cards and Labs Dev Ops visibility.
 
 ## Arquivo De Design
 
