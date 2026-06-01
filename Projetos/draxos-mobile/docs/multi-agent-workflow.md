@@ -3,7 +3,8 @@
 - Status: `VIVO`
 - Last updated: `2026-06-01`
 - Scope: coordination workflow for hardening lanes, mode work and handoffs.
-- Current latest Arena loop package: `Track 21 - Arena Loop Unlock And Friction Pass`.
+- Current platform baseline: `Hardening Platform V1`.
+- Current Arena loop context: `Track 21 - Arena Loop Unlock And Friction Pass`.
 
 ## Purpose
 
@@ -46,10 +47,11 @@ For release or validation work, also read:
 
 ## Track Reading Rules
 
-Track 21 is the current Arena loop package for agents to use as latest context.
-Later link/status hotfixes may be recorded in `implementation/current-status.md`
-or portfolio docs, but they do not reopen Track 18/19/20 contracts unless the
-current task explicitly says so.
+Hardening Platform V1 is the current baseline for multi-agent and multi-mode
+work. Track 21 is the current Arena loop package for agents to use as
+Autobattler/Arena context. Later link/status hotfixes may be recorded in
+`implementation/current-status.md` or portfolio docs, but they do not reopen
+Track 18/19/20 contracts unless the current task explicitly says so.
 
 Track 18 remains the implemented Arena PVE domain contract. Track 16 remains a
 technical baseline for behavior, potion and crafting systems already in alpha.
@@ -118,7 +120,7 @@ intended files, docs read, validation plan and the next handoff point.
 | Mode | Current state | Owner lane | Guardrail |
 |---|---|---|---|
 | `basebuilder` | Active Refugio/Base loop. | `client-shell` + `session-data`. | Base changes must use account/save, ledger and idempotent server mutations. |
-| `autobattler` | Active Arena PVE loop. | `backend-schema` + `client-shell` + `validation-release`. | Track 21 is latest Arena loop context; PVP remains later. |
+| `autobattler` | Active Arena PVE loop. | `backend-schema` + `client-shell` + `validation-release`. | Track 21 is preserved Arena loop context; PVP remains later. |
 | `openworld` | Internal alpha slice. | `mode-scaffolds` + `platform-v1`. | Keep Openworld Bosque separate from Arena and do not promote broader RPG scope. |
 | `towerdefense` | Staged/disabled. | `mode-scaffolds`. | Visible registry only; no playable feature or reward promise. |
 | `cardgame` | Staged/disabled. | `mode-scaffolds`. | No mechanical inheritance from `draxos-roguelike-cardgame`. |
@@ -173,6 +175,6 @@ git status --short
 ```
 
 Expected nuance: historical docs may still mention older tracks. Live entry
-docs should not tell new agents that Track 16, Track 18, Track 19 or Remote Lab
-Runner is the latest Arena loop package when Track 21 is the intended current
-package for this hardening wave.
+docs should not tell new agents that Track 16, Track 18, Track 19, Track 21 or
+Remote Lab Runner is the latest platform baseline when Hardening Platform V1 is
+the intended current package. Track 21 remains valid as Arena loop context.

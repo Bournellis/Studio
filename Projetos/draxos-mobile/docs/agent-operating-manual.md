@@ -28,9 +28,9 @@ If a historical track conflicts with these docs, the live docs win. If local pro
 
 ## Current Stage
 
-Active stage: `TRACK_21_ARENA_LOOP_UNLOCK_FRICTION_PUBLISHED_INTERNAL_ALPHA`.
+Active stage: `HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA`.
 
-The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout and Lab Track 16 Alignment are delivered. Foundation Final Polish is the previous published hardening baseline: it syncs live docs, keeps shell facade budgets guarded, strengthens presenter/session slices and adds the local RLS/admin smoke to the `FullLocal` gate. Track 21 Arena Loop Unlock And Friction Pass is the latest remote Internal Alpha publication from `codex/draxos-mobile/track21-arena-loop-unlock-friction`, release root `internal-alpha/v0-track21-arena-loop-20260531-df9f12d`, preview `https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`.
+The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout and Lab Track 16 Alignment are delivered. Hardening Platform V1 is the latest remote Internal Alpha publication from `codex/draxos-mobile/hardening-platform-v1`, release root `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, preview `https://68452eed.draxos-mobile-internal-alpha.pages.dev`. It is the baseline for multi-agent, multi-mode work after it is merged to `master`.
 
 Historical app-shell loop baseline from Foundation Loop UX Pass 01, preserved for context but not the current product reading:
 
@@ -40,7 +40,7 @@ The selected first product loop is:
 
 `Refugio -> Arena PVE selection -> start attempt with loadout locked -> duel list -> temporary stat buffs and behavior prep between duels -> rewards -> continue in Arena -> upgrades`
 
-Track 18 delivers server-authoritative Arena attempts/steps/progress, arena Edge Functions, separate PVE content/reward definitions, a Refugio Arena shell and lab outputs for Arena sequences/attempts. Track 19 tightens that contract: potion stock is live and consumed per duel, public Arena buff selection is `/arena/pve/buff/select`, `/arena/buff/choose` is internal/compatibility only, Arena reward/progress mutation happens on the final `/arena/pve/duel/request`, and `/arena/pve/claim` is summary/ack with `mutates_economy: false`. Track 20 promotes the Season 1 arena tier matrix to labs, generated Edge catalog, backend runtime and client selection by `arena_id + difficulty_id`. Track 21 fixes tutorial unlock by recalculating `players.level` when Arena completion XP is applied, starts attempts directly in the active duel route, and returns from summary to refreshed Arena selection. Remote Lab Runner remains part of the published alpha and keeps Battle Lab and Progression Lab usable in Web export by calling Edge `lab-runner` with the same Supabase email/password Internal Alpha account gate and registered `normal` save used by the game; it never exposes service role to the client/export and does not mutate economy, ranking, save progress or files. The next step is human playtest of tutorial -> 3-duel unlock, difficulty selection, buff choice, potion use, defeat/conclusion summary, continue-in-Arena flow and remote Web Lab generation. Future remote mutation still requires explicit approval and `-ConfirmRemoteMutation`.
+Track 18 delivers server-authoritative Arena attempts/steps/progress, arena Edge Functions, separate PVE content/reward definitions, a Refugio Arena shell and lab outputs for Arena sequences/attempts. Track 19 tightens that contract: potion stock is live and consumed per duel, public Arena buff selection is `/arena/pve/buff/select`, `/arena/buff/choose` is internal/compatibility only, Arena reward/progress mutation happens on the final `/arena/pve/duel/request`, and `/arena/pve/claim` is summary/ack with `mutates_economy: false`. Track 20 promotes the Season 1 arena tier matrix to labs, generated Edge catalog, backend runtime and client selection by `arena_id + difficulty_id`. Track 21 fixes tutorial unlock by recalculating `players.level` when Arena completion XP is applied, starts attempts directly in the active duel route, and returns from summary to refreshed Arena selection. Hardening Platform V1 then adds the multi-agent lane protocol, official mode descriptors, bounded shell/session/backend modules, audited mode admin RPCs, Reward Bridge V1 and expanded validation/release gates. Remote Lab Runner remains part of the published alpha and keeps Battle Lab and Progression Lab usable in Web export by calling Edge `lab-runner` with the same Supabase email/password Internal Alpha account gate and registered `normal` save used by the game; it never exposes service role to the client/export and does not mutate economy, ranking, save progress or files. The next step is human review/playtest of Hardening Platform V1, then mode-specific work from updated `master`. Future remote mutation still requires explicit approval and `-ConfirmRemoteMutation`.
 
 Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1 and First Session Clarity v1 have since been published. Do not open feature expansion outside the Arena PVE initial package.
 
@@ -61,7 +61,7 @@ Foundation Final Polish adds:
 - read-only `SessionStore` domain slices for presenters touched by the split;
 - source guards against presenters calling Supabase, telemetry, direct mutations or direct request-id creation;
 - `foundation_admin_rls_live_smoke.ts` proving local RLS/admin behavior with `anon/authenticated` blocked and `service_role` allowed;
-- canonical local base branch `codex/draxos-mobile/foundation-final-polish` for new agents until a merge/push decision exists.
+- canonical post-hardening base branch: updated `master` after Hardening Platform V1 is merged.
 
 ## Current Baseline
 

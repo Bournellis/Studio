@@ -18,9 +18,9 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Arena PVE Inicial
 
-- `draxos-mobile/`: mobile-first Draxos PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and Foundation Closeout is delivered over Foundation Expansion Readiness: account/save authority, immutable ruleset publication registry, persisted replay hashes, API v1 header, idempotency v1, internal auditable admin RPCs, client retry registry, ActionRouter/OperationState in the real shell path, minigame placeholder only and transactional RPC promotion including build behavior/potion and social friend/chat. Arena PVE Sequence Fix is the latest remote backend hotfix: Edge Function `arena` deployed over client package `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`, fixing the real-player sequence tutorial -> first Arena real -> next difficulty. Smoke remoto real confirmed tutorial clear, all 3 duels of `arena_cinzas_curta:s1_d00_intro` won and `s1_d01_aprendiz` unlocked. Web Battle Lab/Progression Lab remain served by Edge Function `lab-runner` behind the same Supabase email/password alpha account gate.
-  - Priority/status: `P2_IMPLEMENTACAO - ARENA_PVE_SEQUENCE_FIX_PUBLISHED_BACKEND_HOTFIX`
-  - Canonical local branch for Arena PVE follow-up and latest remote publication: `codex/draxos-mobile/scroll-drag-release-fix`.
+- `draxos-mobile/`: mobile-first Draxos PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Hardening Platform V1 is the latest remote Internal Alpha baseline: release root `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, preview `https://68452eed.draxos-mobile-internal-alpha.pages.dev`, remote migration/admin audit hardening, Edge Function `modes`, Storage, Cloudflare Pages and manifest published. Track 13 release safety and Track 14 agent ops remain preserved baselines. Track 21 Arena Loop Unlock/Friction remains the Autobattler/Arena PVE context; Web Battle Lab/Progression Lab remain served by Edge Function `lab-runner` behind the same Supabase email/password alpha account gate.
+  - Priority/status: `P2_IMPLEMENTACAO - HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA`
+  - Canonical local base for new work after integration: updated `master`; branch mode work from a dedicated worktree using `docs/multi-agent-workflow.md`.
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
@@ -47,6 +47,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Active foundation package: `draxos-mobile/implementation/tracks/track-17-foundation-expansion-readiness/`
   - Agent foundation: `draxos-mobile/implementation/tracks/track-14-agent-ops-foundation/`
   - Release safety baseline: `draxos-mobile/implementation/tracks/track-13-validation-release-safety/`
+  - Hardening Platform V1 readiness: `draxos-mobile/docs/hardening-platform-v1-readiness-report.md`
   - Manual walkthrough gate: `draxos-mobile/docs/track-13-manual-walkthrough-gate.md`
   - Internal Alpha handoff: `draxos-mobile/docs/internal-alpha-v0-handoff.md`
   - Release ops: `draxos-mobile/docs/release-ops-checklist.md`
@@ -54,7 +55,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: human playtest tutorial -> first real Arena complete -> next difficulty unlocked, plus spot checks for scroll Web/PC and Hub de Modos.
+  - Current next step: human review/playtest of the published Hardening Platform V1 build, then dedicated mode threads from updated `master`.
 
 ## Arquivo De Design
 

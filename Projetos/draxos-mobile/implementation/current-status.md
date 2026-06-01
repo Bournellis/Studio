@@ -4,20 +4,19 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Arena PVE Sequence Fix`
-- Active stage status: `PUBLISHED_INTERNAL_ALPHA_BACKEND_HOTFIX`
+- Active stage: `Hardening Platform V1`
+- Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Scroll Drag Release Fix` over Minigame
-  Platform V1, with `Arena PVE Sequence Fix` deployed as a backend hotfix to
-  Edge Function `arena`.
-- Latest implemented package: `Arena PVE Sequence Fix`
-  merged into branch `codex/draxos-mobile/scroll-drag-release-fix`; commit
-  `f69d56c` plus publication status commit.
-- Active follow-up: human playtest the Arena flow from tutorial clear into the
-  first real Arena and the next difficulty unlock.
+- Latest published remote package: `Hardening Platform V1`, release root
+  `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, Cloudflare
+  preview `https://68452eed.draxos-mobile-internal-alpha.pages.dev`.
+- Latest implemented package: `Hardening Platform V1` on
+  `codex/draxos-mobile/hardening-platform-v1`.
+- Active follow-up: human review/playtest of the published hardening build,
+  then dedicated mode threads can branch from updated `master`.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -25,10 +24,68 @@
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
+## Hardening Platform V1 - 2026-06-01
+
+This package is published remotely as the current Internal Alpha multi-mode
+baseline.
+
+- release root:
+  `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`;
+- branch: `codex/draxos-mobile/hardening-platform-v1`;
+- baseline merge: `scroll-drag-release-fix` integrated into `master` before
+  hardening work;
+- Cloudflare preview:
+  `https://68452eed.draxos-mobile-internal-alpha.pages.dev`;
+- stable Portal:
+  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- stable Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-hardening-platform-v1-20260601-19eb80d/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-hardening-platform-v1-20260601-19eb80d/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
+
+Scope:
+
+- Multi-agent workflow and hardening templates are documented.
+- Five official modes are descriptor-driven:
+  `basebuilder`, `autobattler`, `openworld`, `towerdefense`, `cardgame`.
+- Boot runtime and Hub presenters are split into bounded modules with validation
+  budgets.
+- Session store state is split into account/save, arena, modes, telemetry and
+  pending mutation slices.
+- `/modes` backend is modularized and mirrored between `server/functions` and
+  `supabase/functions`.
+- Mode admin mutations use audited RPCs and `admin_audit_log`.
+- Reward Bridge V1 is documented and protected by default-deny policies.
+- Validation profiles now cover docs, client, server, mode platform, local
+  database, release dry-run, remote read-only and full local gates.
+
+Validation and publication completed:
+
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile FullLocal`: passed.
+- Remote migration applied:
+  `202606010002_modes_admin_audit_hardening.sql`.
+- Edge Function `modes` deployed to project `armxgipvnbbshzqawklw`.
+- Export Android/PC/Web passed; Android uses `debug_fallback` because release
+  keystore was not configured.
+- Storage upload, Cloudflare Pages deploy and manifest deploy passed.
+- `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` via
+  `RemoteReadOnly`, and `internal_alpha_remote_smoke.ts` with
+  `DRAXOS_REMOTE_RELEASE_SMOKE=1` passed.
+- Cloudflare preview Portal/Web returned `200`.
+
+Publication status: published as the current Internal Alpha platform baseline.
+
+Next human check: review/playtest the published hardening build and then run
+mode-specific work in dedicated worktrees from updated `master`.
+
 ## Scroll Drag Release Fix - 2026-06-01
 
-This hotfix is published remotely as the latest Internal Alpha package over
-Minigame Platform V1.
+This hotfix remains preserved as the previous client package over Minigame
+Platform V1 and was integrated into `master` before Hardening Platform V1.
 
 - release root:
   `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`;
@@ -182,25 +239,26 @@ Lab Web Export Guard is preserved as the browser safety baseline over Track 19:
 Battle Lab Dev and Progression Lab Dev detect Web export before calling
 `OS.execute`, disable local-process actions in the browser and keep PC/editor
 Lab generation available.
-Remote Lab Runner is preserved inside the current published Track 20 Internal
-Alpha package: Web Battle Lab and Progression Lab call Supabase Edge
+Remote Lab Runner is preserved in the current alpha lineage: Web Battle Lab and
+Progression Lab call Supabase Edge
 `lab-runner` with the same email/password Internal Alpha account gate used by
 the game, without exposing service role to the client or mutating
 economy/ranking/progress.
 
-Track 20 - Season 1 Arena Calibration is the current published remote package.
+Track 20 - Season 1 Arena Calibration is the preserved Arena calibration
+package.
 It promotes `pve_arena_difficulties` from data contract to operational source
 for labs, generated Edge catalog, backend runtime and client difficulty
 selection. The package keeps global combat, XP formula, `players.power`,
 weapons, spells, passives, familiars, potions and assets untouched; Arena tuning
 power remains lab/runtime metadata for PVE enemy scaling only.
 
-Track 21 - Arena Loop Unlock And Friction Pass is the latest implemented local
+Track 21 - Arena Loop Unlock And Friction Pass is the preserved Arena loop
 package. It fixes the tutorial unlock blocker by updating `players.level` with
 Arena completion XP in `arena_record_duel_v1`, keeps the idempotent reward path
 single-apply, routes Arena start directly into the active duel screen, and keeps
 post-summary continuation inside Arena selection after a read-only claim ack.
-Track 21 is now also the latest published remote Internal Alpha: migration
+Track 21 was also published remotely before Hardening Platform V1: migration
 `202605310004_arena_loop_unlock_friction.sql` was applied to Supabase, release
 manifest was redeployed and Cloudflare Pages preview is
 `https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`.
@@ -1356,14 +1414,14 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Track 21 Arena Loop Unlock And Friction Pass is now the latest Internal Alpha
-publication: release root
-`internal-alpha/v0-track21-arena-loop-20260531-df9f12d`, preview
-`https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`. The next product
-step is human playtest and tuning notes for the Arena PVE tutorial -> 3-duel
-unlock loop, including potion consumption, remote arena selection, buff
-selection, summary/claim behavior and Web Battle Lab/Progression Lab remote
-generation through the same Supabase email/password Internal Alpha gate. Do not
+Hardening Platform V1 is now the latest Internal Alpha publication: release root
+`internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, preview
+`https://68452eed.draxos-mobile-internal-alpha.pages.dev`. The next product
+step is human review/playtest of the hardening build and then tuning notes for
+the Arena PVE tutorial -> 3-duel unlock loop, including potion consumption,
+remote arena selection, buff selection, summary/claim behavior and Web Battle
+Lab/Progression Lab remote generation through the same Supabase email/password
+Internal Alpha gate. Do not
 open PVP, victory prediction, opponent counter-picks, custom thresholds,
 enemy-specific behavior, spell priorities, direct chat, helps, contributions,
 moderation, tuning numbers, new weapons, new spells, economy, new potions,

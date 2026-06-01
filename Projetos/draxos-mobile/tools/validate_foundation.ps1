@@ -274,13 +274,13 @@ function Assert-BootBudget {
 
 function Assert-BaselineDriftAbsent {
     $requiredMarkers = @(
-        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Arena PVE Sequence Fix", "TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE", "Track 18 - PVE Arena Initial", "Track 13 - Foundation Validation And Release Safety") },
-        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("TRACK_21_ARENA_LOOP_UNLOCK_FRICTION_PUBLISHED_INTERNAL_ALPHA", "Track 13", "Track 14", "Track 18") },
+        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Hardening Platform V1", "TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE", "Track 18 - PVE Arena Initial", "Track 13 - Foundation Validation And Release Safety") },
+        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA", "Track 13", "Track 14", "Track 18") },
         @{ Base = $ProjectPath; Path = "docs\documentation-index.md"; Needles = @("track-18-pve-arena-initial", "track-21-arena-loop-unlock-friction", "Arena PVE") },
         @{ Base = $ProjectPath; Path = "docs\pve-arena-initial-direction.md"; Needles = @("PVE_ARENA_INITIAL_DIRECTION_APPROVED", "Arena PVE", "PVP continua no plano") },
         @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("DraxosMobile", "P2_IMPLEMENTACAO", "Track 13 release safety", "Track 14 agent ops") },
-        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("DraxosMobile", "ARENA_PVE_SEQUENCE_FIX_PUBLISHED_BACKEND_HOTFIX", "Track 13 release safety", "Track 14 agent ops") },
-        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("draxos-mobile/", "Track 13 release safety", "Track 14 agent ops", "Arena PVE Sequence Fix") }
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("DraxosMobile", "HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA", "Track 13 release safety", "Track 14 agent ops") },
+        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("draxos-mobile/", "Track 13 release safety", "Track 14 agent ops", "Hardening Platform V1") }
     )
     foreach ($entry in $requiredMarkers) {
         foreach ($needle in $entry.Needles) {

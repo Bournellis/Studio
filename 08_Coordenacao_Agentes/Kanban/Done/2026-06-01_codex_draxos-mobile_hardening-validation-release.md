@@ -60,4 +60,16 @@ Expandir a fundacao de validacao/release do DraxosMobile para cobrir perfis oper
 
 ## Proximo Handoff
 
-Handoff para o integrador apos commits locais e relatorio das validacoes; publicacao remota continua bloqueada para o integrador apos merge.
+Handoff concluido para o integrador. Hardening Platform V1 foi publicado pelo
+integrador apos merge das lanes: release root
+`internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, preview
+`https://68452eed.draxos-mobile-internal-alpha.pages.dev`.
+
+## Resultado Final
+
+- `validate_foundation.ps1 -Profile FullLocal`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -AllowCloudflareAccess`: PASS.
+- `release_manifest_smoke.ts`: PASS.
+- `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_RELEASE_SMOKE=1`: PASS.
+- Export/package/upload Storage/Cloudflare/manifest remoto: PASS.
+- Android APK publicado em modo `debug_fallback` por falta de keystore release.

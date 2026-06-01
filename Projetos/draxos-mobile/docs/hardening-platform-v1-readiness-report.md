@@ -1,117 +1,131 @@
 # DraxosMobile - Hardening Platform V1 Readiness Report
 
-- Status: `DRAFT_DOCS_ONLY`
+- Status: `PUBLISHED_INTERNAL_ALPHA`
 - Date: `2026-06-01`
-- Lane: `coord-docs`
-- Branch: `codex/draxos-mobile/hardening-coord-docs`
-- Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--hardening-coord-docs`
-- Runtime touched: `no`
-- Remote publication: `no`
+- Integration branch: `codex/draxos-mobile/hardening-platform-v1`
+- Integration worktree: `D:\Estudio-worktrees\draxos-mobile--codex--hardening-platform-v1`
+- Release root: `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`
+- Cloudflare preview: `https://68452eed.draxos-mobile-internal-alpha.pages.dev`
+- Stable Portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Remote manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 ## Summary
 
-This draft records the coordination/readiness view for a full DraxosMobile
-hardening wave around Tracks 1, 2, 16 and 18, with Track 21 kept as the latest
-Arena loop package for new agents.
+Hardening Platform V1 is published as the new DraxosMobile multi-mode baseline.
+It integrates the scroll drag release fix into `master`, establishes the
+multi-agent worktree/lane protocol, modularizes shell/session/backend surfaces,
+formalizes the official mode descriptors, adds audited mode admin operations,
+protects the reward bridge and expands validation/release gates.
 
-The report does not claim runtime readiness. It defines handoff expectations,
-owner lanes, mode boundaries and blockers so implementation lanes can proceed
-without reopening historical tracks or mixing remote publication into local
-hardening.
+This package is intentionally a platform hardening release. It does not add new
+gameplay, tuning, weapons, spells, economy expansion, PVP, social expansion or
+playable Towerdefense/Cardgame content.
 
-## Current Package Reading
+## Publication
 
-| Package | Status for this hardening wave | Use |
+Published artifacts:
+
+| Artifact | URL |
+|---|---|
+| Android APK | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-hardening-platform-v1-20260601-19eb80d/downloads/draxos-mobile-alpha.apk` |
+| PC ZIP | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-hardening-platform-v1-20260601-19eb80d/downloads/draxos-mobile-alpha.zip` |
+| Portal stable | `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html` |
+| Web stable | `https://draxos-mobile-internal-alpha.pages.dev/web/index.html` |
+| Portal/Web preview | `https://68452eed.draxos-mobile-internal-alpha.pages.dev` |
+
+Remote operations completed:
+
+- Applied remote migration `202606010002_modes_admin_audit_hardening.sql`.
+- Deployed Edge Function `modes`.
+- Exported Android, Windows and Web artifacts.
+- Packaged and uploaded Storage artifacts to the versioned release root.
+- Built Cloudflare Pages package with remote `index.pck` and `index.wasm`
+  size verification.
+- Deployed Cloudflare Pages preview `68452eed`.
+- Deployed manifest override through Edge Function `release`.
+
+Android note: this package uses `android_export_mode: debug_fallback` because a
+release keystore was not configured in the available environment.
+
+## Validation Evidence
+
+Local gates passed:
+
+- `git diff --check`
+- `deno task check` in `server/functions`
+- `deno task check` in `supabase/functions`
+- Focused Deno mode/admin/reward tests
+- Godot headless import
+- `tools/smoke_mode_hub.gd`
+- `tools/validate_foundation.ps1 -Profile DocsOnly`
+- `tools/validate_foundation.ps1 -Profile ServerQuick`
+- `tools/validate_foundation.ps1 -Profile ModePlatform`
+- `tools/validate_foundation.ps1 -Profile ClientQuick`
+- `tools/validate_foundation.ps1 -Profile ReleaseDryRun`
+- `tools/validate_foundation.ps1 -Profile DatabaseLocal`
+- `tools/validate_foundation.ps1 -Profile FullLocal`
+
+Publication and remote read-only gates passed:
+
+- `tools/export_internal_alpha.ps1` with Android debug fallback
+- `tools/publish_internal_alpha.ps1 -Mode Package`
+- `tools/publish_internal_alpha.ps1 -Mode Upload -ConfirmRemoteMutation`
+- `tools/build_cloudflare_pages_package.ps1`
+- `wrangler pages deploy`
+- `tools/publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation`
+- `server/tests/release_manifest_smoke.ts`
+- `server/tests/internal_alpha_remote_smoke.ts` with
+  `DRAXOS_REMOTE_RELEASE_SMOKE=1`
+- `tools/validate_foundation.ps1 -Profile RemoteReadOnly -AllowCloudflareAccess`
+- Direct preview check: Portal `200`, Web `200`
+
+Generated local reports are under `build/validation/` and
+`build/internal-alpha/` in the integration worktree.
+
+## Readiness By Lane
+
+| Lane | Result |
+|---|---|
+| `coord-docs` | Complete. Multi-agent workflow, templates, mode docs and readiness report are in place. |
+| `mode-scaffolds` | Complete. Five official mode descriptors and data definition scaffolds are aligned across docs/client/schema tests. |
+| `client-shell` | Complete. Mode Hub and shell launch path are descriptor-driven, with hot file budgets enforced. |
+| `session-data` | Complete. Session store responsibilities are split into account/save, arena, modes, telemetry and pending mutation slices. |
+| `backend-schema` | Complete. `/modes` is modularized, admin mutations use audited RPCs and migrations/RLS/grants are validated locally and remotely applied. |
+| `validation-release` | Complete. Validation profiles, budget checks, drift checks, release dry-run and remote read-only smokes are operational. |
+| `integrator` | Complete. Integration branch was validated, published and is ready to become the `master` baseline. |
+
+## Mode Readiness
+
+| Mode | Current state | Next allowed work |
 |---|---|---|
-| Track 1 - Alpha Playtest Hardening | Historical evidence. | Alpha telemetry, offline/error recovery and playtest checklist patterns. |
-| Track 2 - Progression Lab | Historical/lab evidence. | Progression Lab, Battle Lab, local-only session guard and playtest evidence flow. |
-| Track 16 - Behavior And Potion Crafting | Technical baseline in current alpha. | Potion slot, Po de Osso, crafting, simple spell/potion behavior and lab coverage. |
-| Track 18 - PVE Arena Initial | Implemented Arena PVE domain contract. | Arena attempts, steps, progress, buffs, rewards, client shell and labs. |
-| Track 21 - Arena Loop Unlock And Friction Pass | Latest Arena loop package for new agents. | Tutorial unlock fix, XP -> level recalculation, direct Arena start and continue-in-Arena summary flow. |
+| `basebuilder` | Active foundation surface using existing core Base/Refugio ownership. | Mode-specific UI/docs work through a dedicated lane; no economy expansion without contract update. |
+| `autobattler` | Active product core through Arena PVE. Track 18-21 remain the preserved Arena context. | Human playtest of tutorial -> first real Arena -> next difficulty, then targeted tuning package. |
+| `openworld` | Internal alpha generic-session mode with limited reward bridge. | Isolated mode iteration only; no broad campaign/content expansion by default. |
+| `towerdefense` | Staged/disabled scaffold. | Documentation, descriptor and disabled-card behavior only until a playable package is approved. |
+| `cardgame` | Staged/disabled scaffold. It explicitly does not inherit mechanics from the Steam roguelike cardgame. | Documentation, descriptor and disabled-card behavior only until a separate package is approved. |
 
-## Lane Readiness Matrix
+## Definition Of Ready For Multi-Mode Work
 
-| Lane | Readiness | Evidence to preserve | Next owner action |
-|---|---|---|---|
-| `coord-docs` | Ready for handoff after docs validation. | `docs/multi-agent-workflow.md`, DraxosMobile templates, this report and Handoff note. | Keep docs in sync after other lanes finish. |
-| `backend-schema` | Planned. | Track 18 API/schema contracts, Track 21 migration/RPC behavior, Track 13 release guardrails. | Confirm no new schema/API work starts without contract update and Deno checks. |
-| `session-data` | Planned. | `account_profiles/game_saves`, idempotency v1, replay/history and live-stock potion consumption. | Audit save ownership and idempotency against Arena and modes without using `players.save_type` as new authority. |
-| `client-shell` | Planned. | Track 21 direct Arena route, summary continue flow, responsive contract and GUT/client gates. | Harden Entry/Refugio/Arena shell only inside responsive/budget contracts. |
-| `mode-scaffolds` | Planned. | Mode Platform V1 registry, active/staged mode states and `/modes` contract. | Keep Basebuilder/Autobattler active, Openworld internal, Towerdefense/Cardgame disabled. |
-| `platform-v1` | Planned. | `docs/contracts/minigame-platform-v1.md`, reward bridge, admin/ops and analytics contract. | Review cross-mode boundaries before any mode starts mutating rewards or sessions. |
-| `validation-release` | Planned. | Track 13 safe modes, Track 18/21 validation matrices and remote read-only smoke policy. | Define local gates first; no upload/deploy/manifest mutation without approval. |
+DraxosMobile is ready for heavy parallel work when new threads follow these
+rules:
 
-## Mode Readiness Matrix
+- branch from updated `master` after Hardening Platform V1 is merged;
+- create a dedicated worktree under `D:\Estudio-worktrees`;
+- register a Doing/Handoff card with lane, mode, write scope and validation;
+- use `docs/multi-agent-workflow.md` as the lane authority;
+- keep shared shell/session/backend/schema files under the platform/integrator
+  lane unless explicitly coordinated;
+- do not start gameplay/content expansion in staged modes without a selected
+  package;
+- preserve `account_profiles/game_saves`, ruleset registry, idempotency,
+  audited admin RPCs and reward bridge boundaries;
+- run at least the lane-specific validation profile before handoff.
 
-| Mode | Current readiness | Hardening focus | Blocked without decision |
-|---|---|---|---|
-| `basebuilder` | Active foundation surface. | Save/account authority, resource ledger, clear return loop from Arena rewards. | New economy, new buildings, broad tuning. |
-| `autobattler` | Active product core through Arena PVE. | Track 21 tutorial -> 3-duel unlock, buffs, potion stock, summary/claim semantics. | PVP, victory prediction, counter-picks, enemy-specific behavior, custom thresholds. |
-| `openworld` | Internal alpha mode. | Mode entry isolation and naming consistency. | Expanded openworld content, campaign, rewards beyond approved bridge. |
-| `towerdefense` | Staged/disabled. | Disabled affordance and registry clarity. | Any playable tower defense slice or reward. |
-| `cardgame` | Staged/disabled. | Disabled affordance and registry clarity. | Any mechanical link to `draxos-roguelike-cardgame`. |
+## Remaining Human Checks
 
-## Required Evidence Per Implementation Lane
-
-Backend/schema:
-
-- contract diff before code;
-- mirrored server/supabase function or migration evidence;
-- Deno check/test output;
-- idempotency and rollback notes;
-- explicit statement if remote mutation was not run.
-
-Session/data:
-
-- account/save authority touched or preserved;
-- request id/hash behavior;
-- replay/history and reward mutation ownership;
-- migration/ruleset impact, if any.
-
-Client shell:
-
-- route/surface touched;
-- responsive contract impact;
-- GUT/client or smoke evidence;
-- screenshots only when visual/layout changed.
-
-Mode scaffolds/platform:
-
-- mode registry impact;
-- active/staged/disabled state by mode;
-- reward bridge/admin/analytics impact;
-- `/modes` compatibility and no `/minigames` revival unless explicitly required.
-
-Validation/release:
-
-- local gate chosen and result;
-- release Plan/Package result if executed;
-- remote read-only smoke result if authorized;
-- clear note that Upload/DeployManifest/FullPublish were not run unless approved.
-
-## Blockers And Risks
-
-- Human playtest of the Track 21 tutorial -> 3-duel unlock loop remains the
-  current product check before tuning.
-- Android APK still uses `debug_fallback` in published alpha artifacts unless a
-  release keystore package is selected.
-- Broader tuning, new potions, new weapons, new spells, PVP, direct chat,
-  moderation, advanced replay controls and economy expansion remain blocked
-  until explicit package decisions.
-- Portfolio/status docs may record later link/status hotfixes around the
-  published alpha. New agent entrypoints for this hardening wave should still
-  treat Track 21 as the latest Arena loop package unless Fabio selects a newer
-  implementation branch.
-- No full runtime, Deno, Godot, Supabase or release validation was executed by
-  this coord/docs lane. Its validation is documentation-only.
-
-## Draft Recommendation
-
-Proceed with parallel hardening lanes only after each lane registers a Doing
-note from the DraxosMobile template and declares a narrow write scope. Use Track
-21 as the current Arena loop package, Track 18 as the Arena contract, Track 16
-as technical behavior/potion context and Tracks 1/2 as historical alpha/lab
-evidence.
-
-Do not publish remotely from a hardening lane unless Fabio explicitly changes
-the task into a release/publication task.
+- Human review/playtest of the published Hardening Platform V1 build.
+- Human playtest of the Autobattler Arena PVE flow:
+  tutorial -> first real Arena complete -> next difficulty unlocked.
+- Android release keystore decision if future alpha packages should stop using
+  `debug_fallback`.

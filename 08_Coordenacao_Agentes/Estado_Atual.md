@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`ARENA_PVE_SEQUENCE_FIX_PUBLISHED_BACKEND_HOTFIX`, Edge Function `arena` publicada sobre `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`, preservando Minigame Platform V1, Track 21 Arena Loop Unlock/Friction, Track 20 Season 1 Arena Calibration, Remote Lab Runner, Track 13 release safety e Track 14 agent ops)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA`, release root `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, preview `https://68452eed.draxos-mobile-internal-alpha.pages.dev`, preservando Track 21 Arena Loop Unlock/Friction como contexto do Autobattler, Track 20 Season 1 Arena Calibration, Remote Lab Runner, Track 13 release safety e Track 14 agent ops)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - ARENA_PVE_SEQUENCE_FIX_PUBLISHED_BACKEND_HOTFIX**
+- Status: **P2_IMPLEMENTACAO - HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas, com Track 13 release safety e Track 14 agent ops preservados. Arena PVE Sequence Fix esta publicado como hotfix backend na Edge Function `arena` do remoto `armxgipvnbbshzqawklw`, sobre o pacote client `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`; smoke real confirmou tutorial vencido, primeira Arena real de 3 duelos vencida e `s1_d01_aprendiz` desbloqueada. Scroll Drag Release Fix continua como pacote client publicado. Minigame Platform V1, Track 21 Arena Loop Unlock/Friction, Track 20 Season 1 Arena Calibration e Remote Lab Runner seguem como baseline do modo Autobattler/Openworld Hub.
+- Baseline atual: Hardening Platform V1 publicado como Internal Alpha no release root `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, preview `https://68452eed.draxos-mobile-internal-alpha.pages.dev`; migration `202606010002_modes_admin_audit_hardening.sql`, Edge Function `modes`, Storage, Cloudflare Pages e manifest remoto publicados; smokes read-only passaram. Track 13 release safety e Track 14 agent ops seguem preservados. Track 21 Arena Loop Unlock/Friction, Track 20 Season 1 Arena Calibration e Remote Lab Runner seguem como contexto do modo Autobattler/Openworld Hub.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation` e Supabase/Cloudflare CLI autenticada. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, PVP, tuning numerico amplo, novas armas, novas spells, economia ampla, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
-- Proximo passo: playtest humano da sequencia Arena PVE publicada: tutorial -> primeira Arena real completa -> proxima dificuldade desbloqueada; tuning fino so depois desse loop estar confirmado em mao.
+- Proximo passo: revisao/playtest humano do pacote Hardening Platform V1 publicado; depois abrir threads dedicadas por modo a partir de `master` atualizado, mantendo tuning fino da Arena apenas apos confirmacao manual do loop tutorial -> primeira Arena real completa -> proxima dificuldade desbloqueada.
 
 ## rpg-isometrico
 
