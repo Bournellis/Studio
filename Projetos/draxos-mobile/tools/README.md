@@ -3,10 +3,10 @@
 Ferramentas de desenvolvimento e validacao.
 
 - `validate.gd` - validacao headless do projeto Godot, gerando conteudo, checando contrato client e rodando GUT.
-- `validate_foundation.ps1` - runner unico Track 13 com perfis `Quick`, `Client`, `Release` e `Full`; gera relatorios em `build/validation/`.
+- `validate_foundation.ps1` - runner unico Track 13/14/17/18 com perfis `DocsOnly`, `ClientQuick`, `ServerQuick`, `ModePlatform`, `DatabaseLocal`, `FullLocal`, `ReleaseDryRun`, `RemoteReadOnly` e `FullPublish`; gera relatorios em `build/validation/`. Os perfis antigos `Quick`, `Client`, `Release` e `Full` continuam como aliases.
 - `check_foundation_expansion_readiness.ps1` - checker read-only da Foundation Expansion Readiness: contratos, migrations espelhadas, ruleset, shell contracts e testes obrigatorios.
 - `check_release_safety.ps1` - guarda de regressao para publish seguro, parse PowerShell e manifest defaults espelhados.
-- `check_track13_readiness.ps1` - readiness final da Track 13: docs/status, mirrors, Kanban e budget de `boot.gd`.
+- `check_track13_readiness.ps1` - readiness final da Track 13: docs/status, mirrors, Kanban e budgets duros de shell/presenter (`boot.gd`, `boot_runtime.gd`, `hub_surface_presenter.gd`, `hub_surface_full_presenter.gd`).
 - `check_agent_ops_foundation.ps1` - readiness da Track 14: entrada de agentes, indice documental, portfolio/Kanban, terminologia viva e ausencia de entrypoints obsoletos.
 - `smoke_exports.gd` - smoke leve dos presets Android Alpha, PC Windows Alpha e PC Browser Alpha.
 - `export_internal_alpha.ps1` - exporta Android APK, PC Windows ZIP e Web usando `.env.internal-alpha.local`, sem commitar config real do cliente.
@@ -29,10 +29,13 @@ Ferramentas de desenvolvimento e validacao.
 Validacao local:
 
 ```powershell
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Client -GodotExe "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe"
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Release
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Full
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile DocsOnly
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ClientQuick -GodotExe "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe"
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ServerQuick
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ModePlatform
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile FullLocal
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
@@ -45,6 +48,8 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_dev_lab_ui.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_exports.gd
 ```
+
+Observacao de hardening: `DocsOnly` e os perfis compostos falham se `boot_runtime.gd` passar de 1200 linhas ou `hub_surface_full_presenter.gd` passar de 900 linhas. Esse estouro e bloqueio de split, nao estado final aceito.
 
 Checkpoint visual Track 15:
 

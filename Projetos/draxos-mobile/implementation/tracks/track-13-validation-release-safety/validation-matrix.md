@@ -2,21 +2,44 @@
 
 ## Perfis
 
+`tools/validate_foundation.ps1` agora separa os gates por intencao operacional. Os perfis antigos (`Quick`, `Client`, `Release`, `Full`) continuam aceitos como aliases de compatibilidade.
+
 | Profile | Conteudo | Remoto | Uso |
 |---|---|---|---|
-| `Quick` | `git diff --check`, parse PowerShell, mirrors server/supabase, Deno release check leve, readiness estrutural | Nao | Pre-commit rapido |
-| `Client` | `Quick` + `tools/validate.gd`, GUT client, `smoke_runtime_config.gd`, `smoke_foundation_hardening.gd`, `smoke_exports.gd` | Nao | Validacao client/foundation |
-| `Release` | `Quick` + manifest typecheck, release plan local, secrets/client scan, release safety, Track 13 readiness | Nao por default | Validacao release-safe |
-| `Full` | `Client` + `Release` | Nao por default | Gate local completo |
-| Remote read-only | `release_artifacts_remote_smoke.ts` | Sim, somente leitura | Apenas com `-IncludeRemoteReadOnly` e env publico |
+| `DocsOnly` | `git diff --check`, parse PowerShell, readiness estrutural, budgets reais de shell/presenter, drift baseline, termos legados e secret-scan local | Nao | Pre-commit de docs/tools e sanity rapido |
+| `ClientQuick` | `DocsOnly` + Godot `validate.gd`, GUT client e smokes client sem rede | Nao | Validacao client/foundation sem modo platform dedicado |
+| `ServerQuick` | `DocsOnly` + mirrors server/supabase, registry/ruleset mirrors, Deno typecheck, tests fundacionais, PVE Arena contracts e tasks de functions | Nao | Backend/contracts/Track 17/18 sem banco local vivo |
+| `ModePlatform` | `DocsOnly` + contracts do Mode Platform e smokes Godot de Mode Hub/Openworld/Ops | Nao | Track de modos e registry V1 |
+| `DatabaseLocal` | `DocsOnly` + RPC transacional local, Edge local, mode platform live proof e admin/RLS local | Nao remoto; exige stack local | Provas locais de database/RLS/RPC |
+| `ReleaseDryRun` | `DocsOnly` + manifest typecheck, `publish_internal_alpha.ps1 -Mode Plan`, secret-scan pos-plano, release safety, Track 13 readiness e Track 14 agent ops | Nao | Dry-run seguro de release |
+| `RemoteReadOnly` | `ReleaseDryRun` + `release_artifacts_remote_smoke.ts` com publishable key | Sim, somente leitura | Smoke remoto sem mutacao |
+| `FullLocal` | `DocsOnly` + `ServerQuick` + `ClientQuick` + `ModePlatform` + `DatabaseLocal` + `ReleaseDryRun` | Nao remoto | Gate local completo, com stack local esperada |
+| `FullPublish` | `FullLocal` + handoff para `publish_internal_alpha.ps1 -Mode FullPublish` | Sim, mutante | Apenas em tarefa de publicacao aprovada com `-ConfirmRemoteMutation` |
+
+Aliases de compatibilidade:
+
+| Alias antigo | Equivalente novo |
+|---|---|
+| `Quick` | `ServerQuick` + compatibilidade com o antigo preflight server-heavy |
+| `Client` | `ClientQuick`, preservando o preflight server-heavy antigo |
+| `Release` | `ReleaseDryRun`, preservando o preflight server-heavy antigo |
+| `Full` | `FullLocal` |
 
 ## Comandos
 
 ```powershell
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Quick
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Client -GodotExe "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe"
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Release
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile DocsOnly
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ClientQuick -GodotExe "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe"
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ServerQuick
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ModePlatform
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile FullLocal -RequireClean:$false
+```
+
+Database local:
+
+```powershell
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile DatabaseLocal
 ```
 
 Remote read-only:
@@ -24,7 +47,13 @@ Remote read-only:
 ```powershell
 $env:SUPABASE_URL='https://<project-ref>.supabase.co'
 $env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Release -IncludeRemoteReadOnly
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly
+```
+
+Full publish permanece bloqueado fora de tarefa aprovada:
+
+```powershell
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile FullPublish -ConfirmRemoteMutation
 ```
 
 ## Relatorios
@@ -32,14 +61,19 @@ $env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
 - JSON: `build/validation/foundation-validation-latest.json`
 - Markdown: `build/validation/foundation-validation-latest.md`
 
-Cada step registra `PASS`, `FAIL` ou `SKIP`, duracao, comando, profile/stage e motivo.
+O relatorio registra `requested_profile`, `effective_profile`, stages habilitados, flags locais/remotas, resumo PASS/FAIL/SKIP e uma secao `Failed Or Blocked Steps` quando houver falhas.
+
+Budgets de shell/presenter sao gates duros: `boot.gd <= 1200`, `boot_runtime.gd <= 1200`, `hub_surface_presenter.gd <= 900` e `hub_surface_full_presenter.gd <= 900`. Estouro em `boot_runtime.gd` ou `hub_surface_full_presenter.gd` deve ser tratado como bloqueio de hardening, nao como baseline aceito.
 
 ## Falhas Com Mensagem Clara
 
 - Godot exe ausente.
 - Deno/Supabase CLI indisponivel.
-- Artefatos locais ausentes em `Mode Package` ou modo remoto.
-- Env remoto ausente com `-IncludeRemoteReadOnly`.
+- Drift nos marcadores vivos de baseline/status.
+- Divergencia em mirrors server/supabase, ruleset ou catalogo Arena PVE.
+- Budgets reais de shell/presenter estourados, especialmente runtime/presenter quente acima do limite.
+- Termos legados em docs vivos de entrada/produto.
+- Secret-like values em cliente, portal, manifest, artefatos locais ou env publico.
+- Env remoto ausente no `RemoteReadOnly`.
 - Cloudflare Access precisa de preview liberado ou flag/documento apropriado.
-- Chave Supabase com aparencia de admin/secret.
-- Tentativa de `Upload`, `DeployManifest` ou `FullPublish` sem `-ConfirmRemoteMutation`.
+- Tentativa de `FullPublish` sem `-ConfirmRemoteMutation`.
