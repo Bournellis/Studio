@@ -1,7 +1,21 @@
 param(
     [string]$ProjectDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path,
-    [ValidateSet("Quick", "Client", "Release", "Full")]
-    [string]$Profile = "Quick",
+    [ValidateSet(
+        "DocsOnly",
+        "ClientQuick",
+        "ServerQuick",
+        "ModePlatform",
+        "DatabaseLocal",
+        "FullLocal",
+        "ReleaseDryRun",
+        "RemoteReadOnly",
+        "FullPublish",
+        "Quick",
+        "Client",
+        "Release",
+        "Full"
+    )]
+    [string]$Profile = "DocsOnly",
     [string]$GodotExe = "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe",
     [switch]$RequireClean,
     [switch]$IncludeRemoteReadOnly,
@@ -10,6 +24,7 @@ param(
     [switch]$IncludeLocalAdminRls,
     [switch]$AllowCloudflareAccess,
     [switch]$RemoteFullHash,
+    [switch]$ConfirmRemoteMutation,
     [string]$JsonReportPath = "",
     [string]$MarkdownReportPath = ""
 )
@@ -28,6 +43,14 @@ if ($MarkdownReportPath.Trim().Length -eq 0) {
 
 $Results = New-Object System.Collections.Generic.List[object]
 $HadFailure = $false
+$RequestedProfile = $Profile
+$LegacyProfileMap = @{
+    Quick = "ServerQuick"
+    Client = "ClientQuick"
+    Release = "ReleaseDryRun"
+    Full = "FullLocal"
+}
+$EffectiveProfile = if ($LegacyProfileMap.ContainsKey($Profile)) { $LegacyProfileMap[$Profile] } else { $Profile }
 
 function Add-StepResult {
     param(
@@ -174,20 +197,140 @@ function Assert-DirectoriesMirror {
     }
 }
 
+function Assert-FilesMirror {
+    param([string]$LeftPath, [string]$RightPath, [string]$Label)
+    Assert-FileExists -Path $LeftPath -Label "$Label left"
+    Assert-FileExists -Path $RightPath -Label "$Label right"
+    $leftHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $LeftPath).Hash
+    $rightHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $RightPath).Hash
+    if ($leftHash -ne $rightHash) {
+        throw "$Label files differ."
+    }
+}
+
+function Assert-RelativeFileContains {
+    param([string]$BasePath, [string]$RelativePath, [string]$Needle)
+    $path = Join-Path $BasePath $RelativePath
+    Assert-FileExists -Path $path -Label $RelativePath
+    $text = Get-Content -LiteralPath $path -Raw
+    if (-not $text.Contains($Needle)) {
+        throw "$RelativePath does not contain required text: $Needle"
+    }
+}
+
+function Assert-RelativeFileDoesNotContain {
+    param([string]$BasePath, [string]$RelativePath, [string]$Needle)
+    $path = Join-Path $BasePath $RelativePath
+    Assert-FileExists -Path $path -Label $RelativePath
+    $text = Get-Content -LiteralPath $path -Raw
+    if ($text.Contains($Needle)) {
+        throw "$RelativePath contains forbidden legacy text: $Needle"
+    }
+}
+
+function Assert-LineBudget {
+    param([string]$RelativePath, [int]$MaxLines, [string]$Label)
+    $path = Join-Path $ProjectPath $RelativePath
+    Assert-FileExists -Path $path -Label $RelativePath
+    $lineCount = (Get-Content -LiteralPath $path | Measure-Object -Line).Lines
+    if ($lineCount -gt $MaxLines) {
+        throw "$Label has $lineCount lines; budget is $MaxLines."
+    }
+}
+
 function Assert-BootBudget {
-    $bootPath = Join-Path $ProjectPath "modes\boot\boot.gd"
-    Assert-FileExists -Path $bootPath -Label "boot.gd"
-    $lineCount = (Get-Content -LiteralPath $bootPath | Measure-Object -Line).Lines
-    if ($lineCount -gt 1200) {
-        throw "boot.gd has $lineCount lines; Foundation Final Polish budget is 1200."
+    $failures = New-Object System.Collections.Generic.List[string]
+    foreach ($budget in @(
+        @{ Path = "modes\boot\boot.gd"; Max = 1200; Label = "boot.gd scene-facing facade" },
+        @{ Path = "modes\boot\boot_runtime.gd"; Max = 1200; Label = "boot_runtime.gd strict shell runtime" },
+        @{ Path = "modes\boot\surfaces\hub_surface_presenter.gd"; Max = 900; Label = "hub_surface_presenter.gd facade" },
+        @{ Path = "modes\boot\surfaces\hub_surface_full_presenter.gd"; Max = 900; Label = "hub_surface_full_presenter.gd strict hub presenter" }
+    )) {
+        try {
+            Assert-LineBudget -RelativePath $budget.Path -MaxLines $budget.Max -Label $budget.Label
+        } catch {
+            $failures.Add($_.Exception.Message) | Out-Null
+        }
+    }
+    if ($failures.Count -gt 0) {
+        throw ($failures -join " | ")
+    }
+}
+
+function Assert-BaselineDriftAbsent {
+    $requiredMarkers = @(
+        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Arena PVE Sequence Fix", "TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE", "Track 18 - PVE Arena Initial", "Track 13 - Foundation Validation And Release Safety") },
+        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("TRACK_21_ARENA_LOOP_UNLOCK_FRICTION_PUBLISHED_INTERNAL_ALPHA", "Track 13", "Track 14", "Track 18") },
+        @{ Base = $ProjectPath; Path = "docs\documentation-index.md"; Needles = @("track-18-pve-arena-initial", "track-21-arena-loop-unlock-friction", "Arena PVE") },
+        @{ Base = $ProjectPath; Path = "docs\pve-arena-initial-direction.md"; Needles = @("PVE_ARENA_INITIAL_DIRECTION_APPROVED", "Arena PVE", "PVP continua no plano") },
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("DraxosMobile", "P2_IMPLEMENTACAO", "Track 13 release safety", "Track 14 agent ops") },
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("DraxosMobile", "ARENA_PVE_SEQUENCE_FIX_PUBLISHED_BACKEND_HOTFIX", "Track 13 release safety", "Track 14 agent ops") },
+        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("draxos-mobile/", "Track 13 release safety", "Track 14 agent ops", "Arena PVE Sequence Fix") }
+    )
+    foreach ($entry in $requiredMarkers) {
+        foreach ($needle in $entry.Needles) {
+            Assert-RelativeFileContains -BasePath $entry.Base -RelativePath $entry.Path -Needle $needle
+        }
     }
 
-    $hubPath = Join-Path $ProjectPath "modes\boot\surfaces\hub_surface_presenter.gd"
-    Assert-FileExists -Path $hubPath -Label "hub_surface_presenter.gd"
-    $hubLineCount = (Get-Content -LiteralPath $hubPath | Measure-Object -Line).Lines
-    if ($hubLineCount -gt 900) {
-        throw "hub_surface_presenter.gd has $hubLineCount lines; Foundation Final Polish facade budget is 900."
+    $liveFiles = @(
+        "AGENTS.md",
+        "README.md",
+        "implementation\current-status.md",
+        "docs\agent-operating-manual.md",
+        "docs\documentation-index.md",
+        "docs\product-brief.md",
+        "docs\pve-arena-initial-direction.md"
+    )
+    $forbiddenPhrases = @(
+        "Fast Lane Atual - Track 04",
+        "Fast Lane Atual - Track 08",
+        "Fast Lane Atual - Track 10",
+        "Track 03 Internal Alpha v0 completa",
+        "Track 04 pos-handoff planejada"
+    )
+    foreach ($relative in $liveFiles) {
+        foreach ($phrase in $forbiddenPhrases) {
+            Assert-RelativeFileDoesNotContain -BasePath $ProjectPath -RelativePath $relative -Needle $phrase
+        }
     }
+}
+
+function Assert-LegacyTermsAbsent {
+    $targets = @(
+        "AGENTS.md",
+        "README.md",
+        "implementation\current-status.md",
+        "docs\agent-operating-manual.md",
+        "docs\product-brief.md",
+        "docs\pve-arena-initial-direction.md"
+    )
+    $forbiddenTerms = @(
+        "Varinha Magica",
+        "1 slot de passiva",
+        "1 slot de pet",
+        "RPGSuave",
+        "Rpgsuave-centered"
+    )
+    foreach ($relative in $targets) {
+        foreach ($term in $forbiddenTerms) {
+            Assert-RelativeFileDoesNotContain -BasePath $ProjectPath -RelativePath $relative -Needle $term
+        }
+    }
+
+    foreach ($term in @("Instrumento Ritual", "Doutrina", "Familiar")) {
+        Assert-RelativeFileContains -BasePath $ProjectPath -RelativePath "docs\product-brief.md" -Needle $term
+        Assert-RelativeFileContains -BasePath $ProjectPath -RelativePath "docs\game-design-document.md" -Needle $term
+    }
+}
+
+function Assert-RegistryMirrors {
+    Assert-FileExists -Path (Join-Path $ProjectPath "data\rulesets\foundation_ruleset_v0.json") -Label "foundation ruleset JSON"
+    Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\functions\_shared\foundation_ruleset.ts") -RightPath (Join-Path $ProjectPath "supabase\functions\_shared\foundation_ruleset.ts") -Label "foundation ruleset shared module"
+    Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\functions\_shared\pve_arena_catalog.ts") -RightPath (Join-Path $ProjectPath "supabase\functions\_shared\pve_arena_catalog.ts") -Label "PVE arena catalog shared module"
+    Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\functions\_shared\pve_arena_combatants.ts") -RightPath (Join-Path $ProjectPath "supabase\functions\_shared\pve_arena_combatants.ts") -Label "PVE arena combatants shared module"
+    Assert-RelativeFileContains -BasePath $ProjectPath -RelativePath "server\functions\_shared\foundation_ruleset.ts" -Needle "FOUNDATION_RULESET"
+    Assert-RelativeFileContains -BasePath $ProjectPath -RelativePath "server\functions\_shared\pve_arena_catalog.ts" -Needle "PVE_ARENA_CATALOG"
 }
 
 function Assert-StructuralReadiness {
@@ -201,12 +344,23 @@ function Assert-StructuralReadiness {
         "tools\smoke_openworld_forest.gd",
         "tools\smoke_modes_visual_layout.gd",
         "tools\smoke_modes_ops_panel.gd",
+        "data\rulesets\foundation_ruleset_v0.json",
+        "server\functions\_shared\foundation_ruleset.ts",
+        "supabase\functions\_shared\foundation_ruleset.ts",
+        "server\functions\_shared\pve_arena_catalog.ts",
+        "supabase\functions\_shared\pve_arena_catalog.ts",
+        "server\functions\_shared\pve_arena_combatants.ts",
+        "supabase\functions\_shared\pve_arena_combatants.ts",
         "server\functions\release\index.ts",
         "supabase\functions\release\index.ts",
         "server\tests\release_manifest_smoke.ts",
         "server\tests\release_artifacts_remote_smoke.ts",
         "server\tests\internal_alpha_remote_smoke.ts",
         "server\tests\foundation_admin_rls_live_smoke.ts",
+        "server\tests\foundation_ruleset_test.ts",
+        "server\tests\pve_arena_catalog_test.ts",
+        "server\tests\pve_arena_difficulties_test.ts",
+        "server\tests\arena_consistency_pass_schema_test.ts",
         "docs\agent-operating-manual.md",
         "docs\documentation-index.md",
         "docs\release-ops-checklist.md",
@@ -282,11 +436,59 @@ function Assert-ClientSecretsAbsent {
             Assert-ClientSafeValue -Value $value -Label "environment variable $name"
         }
     }
+
+    Push-Location -LiteralPath $RepoPath
+    try {
+        $trackedFiles = & git ls-files
+        if ($LASTEXITCODE -ne 0) {
+            throw "git ls-files exited with code $LASTEXITCODE."
+        }
+    } finally {
+        Pop-Location
+    }
+    $forbiddenTrackedNames = @(
+        ".env.internal-alpha.local",
+        ".env.local",
+        ".env.production",
+        ".env.remote",
+        ".p12",
+        ".pfx",
+        ".keystore"
+    )
+    foreach ($file in $trackedFiles) {
+        foreach ($forbidden in $forbiddenTrackedNames) {
+            if ($file.EndsWith($forbidden, [System.StringComparison]::OrdinalIgnoreCase)) {
+                throw "secret-bearing local file appears tracked: $file"
+            }
+        }
+    }
 }
 
-$RunLocalSupabaseRpc = $IncludeLocalSupabaseRpc.IsPresent -or $Profile -eq "Full"
-$RunLocalEdgeRpc = $IncludeLocalEdgeRpc.IsPresent -or $Profile -eq "Full"
-$RunLocalAdminRls = $IncludeLocalAdminRls.IsPresent -or $Profile -eq "Full"
+$LegacyIncludesServerQuick = $RequestedProfile -in @("Quick", "Client", "Release", "Full")
+$RunDocs = $true
+$RunServer = $EffectiveProfile -in @("ServerQuick", "FullLocal", "FullPublish") -or $LegacyIncludesServerQuick
+$RunClient = $EffectiveProfile -in @("ClientQuick", "FullLocal", "FullPublish") -or $RequestedProfile -in @("Client", "Full")
+$RunModePlatform = $EffectiveProfile -in @("ModePlatform", "FullLocal", "FullPublish") -or $RequestedProfile -eq "Full"
+$RunDatabaseLocal = $EffectiveProfile -in @("DatabaseLocal", "FullLocal", "FullPublish") -or $RequestedProfile -eq "Full"
+$RunRelease = $EffectiveProfile -in @("ReleaseDryRun", "RemoteReadOnly", "FullLocal", "FullPublish") -or $RequestedProfile -in @("Release", "Full")
+$RunRemoteReadOnly = $IncludeRemoteReadOnly.IsPresent -or $EffectiveProfile -in @("RemoteReadOnly", "FullPublish")
+$RunFullPublish = $EffectiveProfile -eq "FullPublish"
+$RunLocalSupabaseRpc = $IncludeLocalSupabaseRpc.IsPresent -or $RunDatabaseLocal
+$RunLocalEdgeRpc = $IncludeLocalEdgeRpc.IsPresent -or $RunDatabaseLocal
+$RunLocalAdminRls = $IncludeLocalAdminRls.IsPresent -or $RunDatabaseLocal
+
+function Get-EnabledStages {
+    $stages = New-Object System.Collections.Generic.List[string]
+    if ($RunDocs) { $stages.Add("DocsOnly") | Out-Null }
+    if ($RunServer) { $stages.Add("ServerQuick") | Out-Null }
+    if ($RunClient) { $stages.Add("ClientQuick") | Out-Null }
+    if ($RunModePlatform) { $stages.Add("ModePlatform") | Out-Null }
+    if ($RunDatabaseLocal) { $stages.Add("DatabaseLocal") | Out-Null }
+    if ($RunRelease) { $stages.Add("ReleaseDryRun") | Out-Null }
+    if ($RunRemoteReadOnly) { $stages.Add("RemoteReadOnly") | Out-Null }
+    if ($RunFullPublish) { $stages.Add("FullPublish") | Out-Null }
+    return @($stages.ToArray())
+}
 
 function Write-Reports {
     New-Item -ItemType Directory -Force -Path (Split-Path -Parent $JsonReportPath) | Out-Null
@@ -301,12 +503,16 @@ function Write-Reports {
         generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         project_dir = $ProjectPath
         repo_dir = $RepoPath
-        profile = $Profile
+        requested_profile = $RequestedProfile
+        effective_profile = $EffectiveProfile
+        profile = $EffectiveProfile
+        enabled_stages = @(Get-EnabledStages)
         require_clean = $RequireClean.IsPresent
-        include_remote_read_only = $IncludeRemoteReadOnly.IsPresent
+        include_remote_read_only = $RunRemoteReadOnly
         include_local_supabase_rpc = $RunLocalSupabaseRpc
         include_local_edge_rpc = $RunLocalEdgeRpc
         include_local_admin_rls = $RunLocalAdminRls
+        confirm_remote_mutation = $ConfirmRemoteMutation.IsPresent
         summary = $summary
         results = @($Results.ToArray())
     }
@@ -315,10 +521,25 @@ function Write-Reports {
     $lines = New-Object System.Collections.Generic.List[string]
     $lines.Add("# DraxosMobile Foundation Validation") | Out-Null
     $lines.Add("") | Out-Null
+    $lines.Add("## Summary") | Out-Null
+    $lines.Add("") | Out-Null
     $lines.Add(("- Generated at: ``{0}``" -f $report.generated_at)) | Out-Null
-    $lines.Add(("- Profile: ``{0}``" -f $Profile)) | Out-Null
+    $lines.Add(("- Requested profile: ``{0}``" -f $RequestedProfile)) | Out-Null
+    $lines.Add(("- Effective profile: ``{0}``" -f $EffectiveProfile)) | Out-Null
+    $lines.Add(("- Enabled stages: ``{0}``" -f (@(Get-EnabledStages) -join ", "))) | Out-Null
     $lines.Add(("- Project: ``{0}``" -f $ProjectPath)) | Out-Null
     $lines.Add(("- Summary: PASS ``{0}``, FAIL ``{1}``, SKIP ``{2}``" -f $summary.pass, $summary.fail, $summary.skip)) | Out-Null
+    $lines.Add("") | Out-Null
+    $failedResults = @($Results | Where-Object { $_.status -eq "FAIL" })
+    if ($failedResults.Count -gt 0) {
+        $lines.Add("## Failed Or Blocked Steps") | Out-Null
+        $lines.Add("") | Out-Null
+        foreach ($failed in $failedResults) {
+            $lines.Add(("- ``{0}`` / ``{1}``: {2}" -f $failed.stage, $failed.name, ($failed.reason -replace "`r?`n", " "))) | Out-Null
+        }
+        $lines.Add("") | Out-Null
+    }
+    $lines.Add("## Results") | Out-Null
     $lines.Add("") | Out-Null
     $lines.Add("| Stage | Check | Status | Duration ms | Command | Reason |") | Out-Null
     $lines.Add("|---|---|---:|---:|---|---|") | Out-Null
@@ -330,21 +551,20 @@ function Write-Reports {
     $lines | Set-Content -LiteralPath $MarkdownReportPath -Encoding UTF8
 }
 
-$RunClient = $Profile -eq "Client" -or $Profile -eq "Full"
-$RunRelease = $Profile -eq "Release" -or $Profile -eq "Full"
-
 Write-Host "DraxosMobile foundation validation"
 Write-Host "Project: $ProjectPath"
-Write-Host "Profile: $Profile"
+Write-Host "Requested profile: $RequestedProfile"
+Write-Host "Effective profile: $EffectiveProfile"
+Write-Host "Enabled stages: $(@(Get-EnabledStages) -join ', ')"
 
-Invoke-Step -Name "git diff --check" -Stage "Quick" -Command "git diff --check" -ScriptBlock {
+Invoke-Step -Name "git diff --check" -Stage "DocsOnly" -Command "git diff --check" -ScriptBlock {
     Invoke-External -Command "git diff --check" -WorkingDirectory $RepoPath -ScriptBlock {
         & git diff --check
     }
 }
 
 if ($RequireClean) {
-    Invoke-Step -Name "git status clean" -Stage "Quick" -Command "git status --short" -ScriptBlock {
+    Invoke-Step -Name "git status clean" -Stage "DocsOnly" -Command "git status --short" -ScriptBlock {
         Push-Location -LiteralPath $RepoPath
         try {
             $status = & git status --short
@@ -359,10 +579,10 @@ if ($RequireClean) {
         }
     }
 } else {
-    Skip-Step -Name "git status clean" -Stage "Quick" -Command "git status --short" -Reason "-RequireClean was not set."
+    Skip-Step -Name "git status clean" -Stage "DocsOnly" -Command "git status --short" -Reason "-RequireClean was not set."
 }
 
-Invoke-Step -Name "PowerShell parse" -Stage "Quick" -Command "[Parser]::ParseFile release/foundation scripts" -ScriptBlock {
+Invoke-Step -Name "PowerShell parse" -Stage "DocsOnly" -Command "[Parser]::ParseFile release/foundation scripts" -ScriptBlock {
     $scripts = @(
         "tools\export_internal_alpha.ps1",
         "tools\publish_internal_alpha.ps1",
@@ -382,18 +602,35 @@ Invoke-Step -Name "PowerShell parse" -Stage "Quick" -Command "[Parser]::ParseFil
     Assert-PowerShellParses -RelativePaths $scripts
 }
 
-Invoke-Step -Name "server/supabase mirrors" -Stage "Quick" -Command "Compare server/supabase mirrors" -ScriptBlock {
+Invoke-Step -Name "structural readiness" -Stage "DocsOnly" -Command "required files + real shell/presenter budgets" -ScriptBlock {
+    Assert-StructuralReadiness
+}
+
+Invoke-Step -Name "baseline drift guard" -Stage "DocsOnly" -Command "live docs/status baseline markers" -ScriptBlock {
+    Assert-BaselineDriftAbsent
+}
+
+Invoke-Step -Name "legacy product terms guard" -Stage "DocsOnly" -Command "live product-facing terminology" -ScriptBlock {
+    Assert-LegacyTermsAbsent
+}
+
+Invoke-Step -Name "secrets/client safety scan" -Stage "DocsOnly" -Command "scan client env, manifest, portal, reports and tracked local-secret filenames" -ScriptBlock {
+    Assert-ClientSecretsAbsent
+}
+
+if ($RunServer) {
+Invoke-Step -Name "server/supabase mirrors" -Stage "ServerQuick" -Command "Compare server/supabase mirrors" -ScriptBlock {
     Assert-DirectoriesMirror -LeftPath (Join-Path $ProjectPath "server\functions") -RightPath (Join-Path $ProjectPath "supabase\functions") -Label "server/functions and supabase/functions"
     Assert-DirectoriesMirror -LeftPath (Join-Path $ProjectPath "server\schema\migrations") -RightPath (Join-Path $ProjectPath "supabase\migrations") -Label "server/schema/migrations and supabase/migrations"
 }
 
-Invoke-Step -Name "Deno release typecheck light" -Stage "Quick" -Command "npx -y deno check release function/tests" -ScriptBlock {
+Invoke-Step -Name "Deno release typecheck light" -Stage "ServerQuick" -Command "npx -y deno check release function/tests" -ScriptBlock {
     Invoke-External -Command "npx -y deno check release function/tests" -WorkingDirectory $ProjectPath -ScriptBlock {
         & npx -y deno check server/functions/release/index.ts supabase/functions/release/index.ts server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/internal_alpha_remote_smoke.ts
     }
 }
 
-Invoke-Step -Name "Deno transactional domain typecheck light" -Stage "Quick" -Command "npx -y deno check transactional domain functions" -ScriptBlock {
+Invoke-Step -Name "Deno transactional domain typecheck light" -Stage "ServerQuick" -Command "npx -y deno check transactional domain functions" -ScriptBlock {
     Invoke-External -Command "npx -y deno check transactional domain functions" -WorkingDirectory $ProjectPath -ScriptBlock {
         & npx -y deno check `
             server/functions/battle/index.ts `
@@ -404,7 +641,7 @@ Invoke-Step -Name "Deno transactional domain typecheck light" -Stage "Quick" -Co
     }
 }
 
-Invoke-Step -Name "Deno foundation contract tests" -Stage "Quick" -Command "npx -y deno test --allow-read foundation contracts" -ScriptBlock {
+Invoke-Step -Name "Deno foundation contract tests" -Stage "ServerQuick" -Command "npx -y deno test --allow-read foundation contracts" -ScriptBlock {
     Invoke-External -Command "npx -y deno test foundation contracts" -WorkingDirectory $ProjectPath -ScriptBlock {
         & npx -y deno test --allow-read `
             server/tests/foundation_contracts_test.ts `
@@ -432,23 +669,46 @@ Invoke-Step -Name "Deno foundation contract tests" -Stage "Quick" -Command "npx 
     }
 }
 
-Invoke-Step -Name "structural readiness" -Stage "Quick" -Command "required files + shell facade budgets" -ScriptBlock {
-    Assert-StructuralReadiness
+Invoke-Step -Name "registry mirrors" -Stage "ServerQuick" -Command "ruleset and generated catalog mirror checks" -ScriptBlock {
+    Assert-RegistryMirrors
+}
+
+Invoke-Step -Name "Deno PVE Arena contract tests" -Stage "ServerQuick" -Command "npx -y deno test --allow-read PVE Arena contracts" -ScriptBlock {
+    Invoke-External -Command "npx -y deno test PVE Arena contracts" -WorkingDirectory $ProjectPath -ScriptBlock {
+        & npx -y deno test --allow-read `
+            server/tests/pve_arena_catalog_test.ts `
+            server/tests/pve_arena_difficulties_test.ts `
+            server/tests/arena_consistency_pass_schema_test.ts `
+            server/tests/arena_loop_unlock_friction_test.ts `
+            server/tests/arena_pve_sequence_tuning_test.ts
+    }
+}
+
+Invoke-Step -Name "Deno function tasks" -Stage "ServerQuick" -Command "npx -y deno task --cwd server/functions check; npx -y deno task --cwd supabase/functions check" -ScriptBlock {
+    Invoke-External -Command "npx -y deno task --cwd server/functions check" -WorkingDirectory $ProjectPath -ScriptBlock {
+        & npx -y deno task --cwd server/functions check
+    }
+    Invoke-External -Command "npx -y deno task --cwd supabase/functions check" -WorkingDirectory $ProjectPath -ScriptBlock {
+        & npx -y deno task --cwd supabase/functions check
+    }
 }
 
 $foundationExpansion = Join-Path $ProjectPath "tools\check_foundation_expansion_readiness.ps1"
 if (Test-Path -LiteralPath $foundationExpansion -PathType Leaf) {
-    Invoke-Step -Name "foundation expansion readiness" -Stage "Quick" -Command ".\tools\check_foundation_expansion_readiness.ps1 -ProjectDir ." -ScriptBlock {
+    Invoke-Step -Name "foundation expansion readiness" -Stage "ServerQuick" -Command ".\tools\check_foundation_expansion_readiness.ps1 -ProjectDir ." -ScriptBlock {
         Invoke-External -Command "check_foundation_expansion_readiness.ps1" -WorkingDirectory $ProjectPath -ScriptBlock {
             & powershell -NoProfile -ExecutionPolicy Bypass -File ".\tools\check_foundation_expansion_readiness.ps1" -ProjectDir "."
         }
     }
 } else {
-    Skip-Step -Name "foundation expansion readiness" -Stage "Quick" -Command ".\tools\check_foundation_expansion_readiness.ps1" -Reason "Foundation expansion readiness script not created yet."
+    Skip-Step -Name "foundation expansion readiness" -Stage "ServerQuick" -Command ".\tools\check_foundation_expansion_readiness.ps1" -Reason "Foundation expansion readiness script not created yet."
+}
+} else {
+    Skip-Step -Name "server quick matrix" -Stage "ServerQuick" -Command "mirrors, Deno checks, foundation and Arena contracts" -Reason "Profile $EffectiveProfile does not include ServerQuick."
 }
 
 if ($RunLocalSupabaseRpc) {
-    Invoke-Step -Name "local Supabase transactional RPC live proof" -Stage "Quick" -Command "npx -y deno check/run server/tests/transactional_rpc_live_test.ts" -ScriptBlock {
+    Invoke-Step -Name "local Supabase transactional RPC live proof" -Stage "DatabaseLocal" -Command "npx -y deno check/run server/tests/transactional_rpc_live_test.ts" -ScriptBlock {
         Invoke-External -Command "transactional_rpc_live_test.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
             & npx -y deno check server/tests/transactional_rpc_live_test.ts
             if ($LASTEXITCODE -ne 0) {
@@ -458,11 +718,11 @@ if ($RunLocalSupabaseRpc) {
         }
     }
 } else {
-    Skip-Step -Name "local Supabase transactional RPC live proof" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts" -Reason "-IncludeLocalSupabaseRpc was not set and Profile is not Full."
+    Skip-Step -Name "local Supabase transactional RPC live proof" -Stage "DatabaseLocal" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts" -Reason "Profile $EffectiveProfile does not include DatabaseLocal and -IncludeLocalSupabaseRpc was not set."
 }
 
 if ($RunLocalEdgeRpc) {
-    Invoke-Step -Name "local Edge transactional RPC adapter smoke" -Stage "Quick" -Command "npx -y deno check/run server/tests/transactional_edge_rpc_smoke.ts" -ScriptBlock {
+    Invoke-Step -Name "local Edge transactional RPC adapter smoke" -Stage "DatabaseLocal" -Command "npx -y deno check/run server/tests/transactional_edge_rpc_smoke.ts" -ScriptBlock {
         Invoke-External -Command "transactional_edge_rpc_smoke.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
             & npx -y deno check server/tests/transactional_edge_rpc_smoke.ts
             if ($LASTEXITCODE -ne 0) {
@@ -472,11 +732,11 @@ if ($RunLocalEdgeRpc) {
         }
     }
 } else {
-    Skip-Step -Name "local Edge transactional RPC adapter smoke" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts" -Reason "-IncludeLocalEdgeRpc was not set and Profile is not Full."
+    Skip-Step -Name "local Edge transactional RPC adapter smoke" -Stage "DatabaseLocal" -Command "npx -y deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts" -Reason "Profile $EffectiveProfile does not include DatabaseLocal and -IncludeLocalEdgeRpc was not set."
 }
 
 if ($RunLocalEdgeRpc) {
-    Invoke-Step -Name "local mode platform live proof" -Stage "Quick" -Command "npx -y deno check/run server/tests/modes_platform_live_test.ts" -ScriptBlock {
+    Invoke-Step -Name "local mode platform live proof" -Stage "DatabaseLocal" -Command "npx -y deno check/run server/tests/modes_platform_live_test.ts" -ScriptBlock {
         Invoke-External -Command "modes_platform_live_test.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
             & npx -y deno check server/tests/modes_platform_live_test.ts
             if ($LASTEXITCODE -ne 0) {
@@ -486,11 +746,11 @@ if ($RunLocalEdgeRpc) {
         }
     }
 } else {
-    Skip-Step -Name "local mode platform live proof" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/modes_platform_live_test.ts" -Reason "-IncludeLocalEdgeRpc was not set and Profile is not Full."
+    Skip-Step -Name "local mode platform live proof" -Stage "DatabaseLocal" -Command "npx -y deno run --allow-net --allow-env server/tests/modes_platform_live_test.ts" -Reason "Profile $EffectiveProfile does not include DatabaseLocal and -IncludeLocalEdgeRpc was not set."
 }
 
 if ($RunLocalAdminRls) {
-    Invoke-Step -Name "local admin RLS live smoke" -Stage "Quick" -Command "npx -y deno check/run server/tests/foundation_admin_rls_live_smoke.ts" -ScriptBlock {
+    Invoke-Step -Name "local admin RLS live smoke" -Stage "DatabaseLocal" -Command "npx -y deno check/run server/tests/foundation_admin_rls_live_smoke.ts" -ScriptBlock {
         Invoke-External -Command "foundation_admin_rls_live_smoke.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
             & npx -y deno check server/tests/foundation_admin_rls_live_smoke.ts
             if ($LASTEXITCODE -ne 0) {
@@ -500,19 +760,52 @@ if ($RunLocalAdminRls) {
         }
     }
 } else {
-    Skip-Step -Name "local admin RLS live smoke" -Stage "Quick" -Command "npx -y deno run --allow-net --allow-env server/tests/foundation_admin_rls_live_smoke.ts" -Reason "-IncludeLocalAdminRls was not set and Profile is not Full."
+    Skip-Step -Name "local admin RLS live smoke" -Stage "DatabaseLocal" -Command "npx -y deno run --allow-net --allow-env server/tests/foundation_admin_rls_live_smoke.ts" -Reason "Profile $EffectiveProfile does not include DatabaseLocal and -IncludeLocalAdminRls was not set."
+}
+
+if ($RunModePlatform) {
+    Invoke-Step -Name "mode platform contracts" -Stage "ModePlatform" -Command "npx -y deno test --allow-read mode platform contracts" -ScriptBlock {
+        Invoke-External -Command "npx -y deno test mode platform contracts" -WorkingDirectory $ProjectPath -ScriptBlock {
+            & npx -y deno test --allow-read `
+                server/tests/modes_domain_test.ts `
+                server/tests/modes_platform_schema_test.ts `
+                server/tests/modes_registry_contract_test.ts `
+                server/tests/modes_rate_limit_test.ts `
+                server/tests/modes_disable_rollback_test.ts `
+                server/tests/modes_admin_ops_test.ts `
+                server/tests/modes_analytics_test.ts `
+                server/tests/openworld_reward_bridge_test.ts
+        }
+    }
+    Invoke-Step -Name "Godot executable present for modes" -Stage "ModePlatform" -Command "Test-Path $GodotExe" -ScriptBlock {
+        Assert-FileExists -Path $GodotExe -Label "Godot executable"
+    }
+    foreach ($smoke in @(
+        "smoke_mode_hub.gd",
+        "smoke_openworld_forest.gd",
+        "smoke_modes_visual_layout.gd",
+        "smoke_modes_ops_panel.gd"
+    )) {
+        Invoke-Step -Name $smoke -Stage "ModePlatform" -Command "$GodotExe --headless --path . -s res://tools/$smoke" -ScriptBlock {
+            Invoke-External -Command $smoke -WorkingDirectory $ProjectPath -ScriptBlock {
+                & $GodotExe --headless --path . -s "res://tools/$smoke"
+            }
+        }
+    }
+} else {
+    Skip-Step -Name "mode platform matrix" -Stage "ModePlatform" -Command "mode contracts and Godot mode smokes" -Reason "Profile $EffectiveProfile does not include ModePlatform."
 }
 
 if ($RunClient) {
-    Invoke-Step -Name "Godot executable present" -Stage "Client" -Command "Test-Path $GodotExe" -ScriptBlock {
+    Invoke-Step -Name "Godot executable present" -Stage "ClientQuick" -Command "Test-Path $GodotExe" -ScriptBlock {
         Assert-FileExists -Path $GodotExe -Label "Godot executable"
     }
-    Invoke-Step -Name "tools/validate.gd" -Stage "Client" -Command "$GodotExe --headless --path . -s res://tools/validate.gd" -ScriptBlock {
+    Invoke-Step -Name "tools/validate.gd" -Stage "ClientQuick" -Command "$GodotExe --headless --path . -s res://tools/validate.gd" -ScriptBlock {
         Invoke-External -Command "Godot validate.gd" -WorkingDirectory $ProjectPath -ScriptBlock {
             & $GodotExe --headless --path . -s res://tools/validate.gd
         }
     }
-    Invoke-Step -Name "GUT client" -Stage "Client" -Command "$GodotExe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit" -ScriptBlock {
+    Invoke-Step -Name "GUT client" -Stage "ClientQuick" -Command "$GodotExe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit" -ScriptBlock {
         Invoke-External -Command "GUT client" -WorkingDirectory $ProjectPath -ScriptBlock {
             & $GodotExe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
         }
@@ -521,29 +814,25 @@ if ($RunClient) {
         "smoke_runtime_config.gd",
         "smoke_foundation_hardening.gd",
         "smoke_responsive_layout.gd",
-        "smoke_mode_hub.gd",
-        "smoke_openworld_forest.gd",
-        "smoke_modes_visual_layout.gd",
-        "smoke_modes_ops_panel.gd",
         "smoke_exports.gd"
     )) {
-        Invoke-Step -Name $smoke -Stage "Client" -Command "$GodotExe --headless --path . -s res://tools/$smoke" -ScriptBlock {
+        Invoke-Step -Name $smoke -Stage "ClientQuick" -Command "$GodotExe --headless --path . -s res://tools/$smoke" -ScriptBlock {
             Invoke-External -Command $smoke -WorkingDirectory $ProjectPath -ScriptBlock {
                 & $GodotExe --headless --path . -s "res://tools/$smoke"
             }
         }
     }
 } else {
-    Skip-Step -Name "client Godot matrix" -Stage "Client" -Command "Godot validate/GUT/smokes" -Reason "Profile $Profile does not include Client."
+    Skip-Step -Name "client Godot matrix" -Stage "ClientQuick" -Command "Godot validate/GUT/smokes" -Reason "Profile $EffectiveProfile does not include ClientQuick."
 }
 
 if ($RunRelease) {
-    Invoke-Step -Name "release manifest typecheck" -Stage "Release" -Command "npx -y deno check release smoke tests" -ScriptBlock {
+    Invoke-Step -Name "release manifest typecheck" -Stage "ReleaseDryRun" -Command "npx -y deno check release smoke tests" -ScriptBlock {
         Invoke-External -Command "npx -y deno check release smoke tests" -WorkingDirectory $ProjectPath -ScriptBlock {
             & npx -y deno check server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/internal_alpha_remote_smoke.ts
         }
     }
-    Invoke-Step -Name "release plan local" -Stage "Release" -Command ".\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan" -ScriptBlock {
+    Invoke-Step -Name "release plan dry-run" -Stage "ReleaseDryRun" -Command ".\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan" -ScriptBlock {
         $publishScript = Join-Path $ProjectPath "tools\publish_internal_alpha.ps1"
         $publishText = Get-Content -LiteralPath $publishScript -Raw
         if (-not $publishText.Contains("ConfirmRemoteMutation") -or -not $publishText.Contains("Mode")) {
@@ -553,44 +842,44 @@ if ($RunRelease) {
             & powershell -NoProfile -ExecutionPolicy Bypass -File ".\tools\publish_internal_alpha.ps1" -ProjectDir "." -Mode "Plan"
         }
     }
-    Invoke-Step -Name "secrets/client safety scan" -Stage "Release" -Command "scan client env, manifest, portal and reports" -ScriptBlock {
+    Invoke-Step -Name "secrets/client safety scan after release plan" -Stage "ReleaseDryRun" -Command "scan client env, manifest, portal and reports" -ScriptBlock {
         Assert-ClientSecretsAbsent
     }
     $releaseSafety = Join-Path $ProjectPath "tools\check_release_safety.ps1"
     if (Test-Path -LiteralPath $releaseSafety -PathType Leaf) {
-        Invoke-Step -Name "release safety check" -Stage "Release" -Command ".\tools\check_release_safety.ps1 -ProjectDir ." -ScriptBlock {
+        Invoke-Step -Name "release safety check" -Stage "ReleaseDryRun" -Command ".\tools\check_release_safety.ps1 -ProjectDir ." -ScriptBlock {
             Invoke-External -Command "check_release_safety.ps1" -WorkingDirectory $ProjectPath -ScriptBlock {
                 & powershell -NoProfile -ExecutionPolicy Bypass -File ".\tools\check_release_safety.ps1" -ProjectDir "."
             }
         }
     } else {
-        Skip-Step -Name "release safety check" -Stage "Release" -Command ".\tools\check_release_safety.ps1" -Reason "Track 13 safety script not created yet."
+        Skip-Step -Name "release safety check" -Stage "ReleaseDryRun" -Command ".\tools\check_release_safety.ps1" -Reason "Track 13 safety script not created yet."
     }
     $track13Readiness = Join-Path $ProjectPath "tools\check_track13_readiness.ps1"
     if (Test-Path -LiteralPath $track13Readiness -PathType Leaf) {
-        Invoke-Step -Name "Track 13 readiness" -Stage "Release" -Command ".\tools\check_track13_readiness.ps1 -ProjectDir ." -ScriptBlock {
+        Invoke-Step -Name "Track 13 readiness" -Stage "ReleaseDryRun" -Command ".\tools\check_track13_readiness.ps1 -ProjectDir ." -ScriptBlock {
             Invoke-External -Command "check_track13_readiness.ps1" -WorkingDirectory $ProjectPath -ScriptBlock {
                 & powershell -NoProfile -ExecutionPolicy Bypass -File ".\tools\check_track13_readiness.ps1" -ProjectDir "."
             }
         }
     } else {
-        Skip-Step -Name "Track 13 readiness" -Stage "Release" -Command ".\tools\check_track13_readiness.ps1" -Reason "Track 13 readiness script not created yet."
+        Skip-Step -Name "Track 13 readiness" -Stage "ReleaseDryRun" -Command ".\tools\check_track13_readiness.ps1" -Reason "Track 13 readiness script not created yet."
     }
     $agentOpsFoundation = Join-Path $ProjectPath "tools\check_agent_ops_foundation.ps1"
     if (Test-Path -LiteralPath $agentOpsFoundation -PathType Leaf) {
-        Invoke-Step -Name "agent operations foundation" -Stage "Release" -Command ".\tools\check_agent_ops_foundation.ps1 -ProjectDir ." -ScriptBlock {
+        Invoke-Step -Name "agent operations foundation" -Stage "ReleaseDryRun" -Command ".\tools\check_agent_ops_foundation.ps1 -ProjectDir ." -ScriptBlock {
             Invoke-External -Command "check_agent_ops_foundation.ps1" -WorkingDirectory $ProjectPath -ScriptBlock {
                 & powershell -NoProfile -ExecutionPolicy Bypass -File ".\tools\check_agent_ops_foundation.ps1" -ProjectDir "."
             }
         }
     } else {
-        Skip-Step -Name "agent operations foundation" -Stage "Release" -Command ".\tools\check_agent_ops_foundation.ps1" -Reason "Track 14 agent ops script not created yet."
+        Skip-Step -Name "agent operations foundation" -Stage "ReleaseDryRun" -Command ".\tools\check_agent_ops_foundation.ps1" -Reason "Track 14 agent ops script not created yet."
     }
 } else {
-    Skip-Step -Name "release validation matrix" -Stage "Release" -Command "manifest/release/secrets/readiness" -Reason "Profile $Profile does not include Release."
+    Skip-Step -Name "release validation matrix" -Stage "ReleaseDryRun" -Command "manifest/release/secrets/readiness" -Reason "Profile $EffectiveProfile does not include ReleaseDryRun."
 }
 
-if ($IncludeRemoteReadOnly) {
+if ($RunRemoteReadOnly) {
     Invoke-Step -Name "remote read-only artifacts smoke" -Stage "RemoteReadOnly" -Command "npx -y deno run --allow-net --allow-env --allow-read server/tests/release_artifacts_remote_smoke.ts" -ScriptBlock {
         $remoteUrl = ([Environment]::GetEnvironmentVariable("DRAXOS_MOBILE_SUPABASE_URL", "Process"))
         if (-not $remoteUrl) {
@@ -632,7 +921,20 @@ if ($IncludeRemoteReadOnly) {
         }
     }
 } else {
-    Skip-Step -Name "remote read-only artifacts smoke" -Stage "RemoteReadOnly" -Command "release_artifacts_remote_smoke.ts" -Reason "-IncludeRemoteReadOnly was not set."
+    Skip-Step -Name "remote read-only artifacts smoke" -Stage "RemoteReadOnly" -Command "release_artifacts_remote_smoke.ts" -Reason "Profile $EffectiveProfile does not include RemoteReadOnly and -IncludeRemoteReadOnly was not set."
+}
+
+if ($RunFullPublish) {
+    Invoke-Step -Name "full publish handoff gate" -Stage "FullPublish" -Command ".\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ConfirmRemoteMutation" -ScriptBlock {
+        if (-not $ConfirmRemoteMutation) {
+            throw "Profile FullPublish mutates remote release state. Re-run only in an approved publication task with -ConfirmRemoteMutation."
+        }
+        Invoke-External -Command "publish_internal_alpha.ps1 -Mode FullPublish" -WorkingDirectory $ProjectPath -ScriptBlock {
+            & powershell -NoProfile -ExecutionPolicy Bypass -File ".\tools\publish_internal_alpha.ps1" -ProjectDir "." -Mode "FullPublish" -ConfirmRemoteMutation
+        }
+    }
+} else {
+    Skip-Step -Name "full publish handoff gate" -Stage "FullPublish" -Command "publish_internal_alpha.ps1 -Mode FullPublish" -Reason "Profile $EffectiveProfile does not include FullPublish."
 }
 
 Write-Reports

@@ -73,28 +73,23 @@ function Test-DirectoriesMirror([string]$LeftPath, [string]$RightPath, [string]$
 }
 
 function Test-BootBudget {
-  $bootPath = Join-Path $ProjectPath 'modes\boot\boot.gd'
-  if (-not (Test-Path -LiteralPath $bootPath -PathType Leaf)) {
-    Add-Failure 'boot.gd missing'
-    return
-  }
-  $lineCount = (Get-Content -LiteralPath $bootPath | Measure-Object -Line).Lines
-  if ($lineCount -le 1200) {
-    Add-Ok "boot.gd is under Foundation shell budget: $lineCount/1200"
-  } else {
-    Add-Failure "boot.gd line budget exceeded: $lineCount/1200"
-  }
-
-  $hubPath = Join-Path $ProjectPath 'modes\boot\surfaces\hub_surface_presenter.gd'
-  if (-not (Test-Path -LiteralPath $hubPath -PathType Leaf)) {
-    Add-Failure 'hub_surface_presenter.gd missing'
-    return
-  }
-  $hubLineCount = (Get-Content -LiteralPath $hubPath | Measure-Object -Line).Lines
-  if ($hubLineCount -le 900) {
-    Add-Ok "hub_surface_presenter.gd is under facade budget: $hubLineCount/900"
-  } else {
-    Add-Failure "hub_surface_presenter.gd facade budget exceeded: $hubLineCount/900"
+  foreach ($budget in @(
+      @{ Path = 'modes\boot\boot.gd'; Max = 1200; Label = 'boot.gd scene-facing facade' },
+      @{ Path = 'modes\boot\boot_runtime.gd'; Max = 1200; Label = 'boot_runtime.gd strict shell runtime' },
+      @{ Path = 'modes\boot\surfaces\hub_surface_presenter.gd'; Max = 900; Label = 'hub_surface_presenter.gd facade' },
+      @{ Path = 'modes\boot\surfaces\hub_surface_full_presenter.gd'; Max = 900; Label = 'hub_surface_full_presenter.gd strict hub presenter' }
+    )) {
+    $path = Join-Path $ProjectPath $budget.Path
+    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+      Add-Failure "$($budget.Path) missing"
+      continue
+    }
+    $lineCount = (Get-Content -LiteralPath $path | Measure-Object -Line).Lines
+    if ($lineCount -le $budget.Max) {
+      Add-Ok "$($budget.Label) is under budget: $lineCount/$($budget.Max)"
+    } else {
+      Add-Failure "$($budget.Label) line budget exceeded: $lineCount/$($budget.Max)"
+    }
   }
 }
 
@@ -110,7 +105,8 @@ function Test-DoingCards {
     '*agent-ops-foundation*',
     '*foundation-expansion-readiness*',
     '*foundation-closeout*',
-    '*foundation-final-polish*'
+    '*foundation-final-polish*',
+    '*hardening-validation-release*'
   )
   $obsolete = @($draxosCards | Where-Object {
       $cardName = $_.Name
@@ -168,7 +164,8 @@ Test-FileContains $ProjectPath 'docs\track-13-manual-walkthrough-gate.md' 'Andro
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'Track 13'
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Estado_Atual.md' 'Track 13'
 Test-FileContains $RepoPath 'Projetos\README.md' 'Track 13'
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'Track 13'
+Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'DraxosMobile'
+Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'P2_IMPLEMENTACAO'
 
 Test-BootBudget
 

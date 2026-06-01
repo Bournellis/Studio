@@ -69,7 +69,8 @@ function Test-DoingCards {
     '*agent-ops-foundation*',
     '*foundation-expansion-readiness*',
     '*foundation-closeout*',
-    '*foundation-final-polish*'
+    '*foundation-final-polish*',
+    '*hardening-validation-release*'
   )
   $obsolete = @($draxosCards | Where-Object {
       $cardName = $_.Name
@@ -141,7 +142,8 @@ foreach ($legacy in @('Varinha Magica', '1 slot de passiva', '1 slot de pet')) {
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'Track 14'
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Estado_Atual.md' 'Track 14'
 Test-FileContains $RepoPath 'Projetos\README.md' 'Track 14'
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'Track 14'
+Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'DraxosMobile'
+Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'P2_IMPLEMENTACAO'
 Test-FileContains $RepoPath 'AGENTS.md' 'Track 14'
 Test-FileContains $RepoPath 'AGENTS.md' 'TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE'
 Test-FileContains $RepoPath 'AGENTS.md' 'docs/agent-operating-manual.md'
