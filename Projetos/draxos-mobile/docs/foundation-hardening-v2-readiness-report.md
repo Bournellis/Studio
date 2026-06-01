@@ -1,32 +1,29 @@
 # DraxosMobile - Foundation Hardening V2 Readiness Report
 
-- Status: `PARTIAL_REMOTE_STORAGE_BACKEND_READY_CLOUDFLARE_BLOCKED`
+- Status: `PUBLISHED_INTERNAL_ALPHA`
 - Date: `2026-06-01`
 - Integration branch: `codex/draxos-mobile/foundation-hardening-v2`
 - Integration worktree: `D:\Estudio-worktrees\draxos-mobile--codex--foundation-hardening-v2`
-- Planned release root: `internal-alpha/v0-foundation-hardening-v2-20260601-<sha>`
-- Latest published baseline remains: `Hardening Platform V1`
-- Latest published release root remains: `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`
+- Release root: `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`
+- Cloudflare preview: `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`
+- Current published baseline: `Foundation Hardening V2`
 
 ## Summary
 
-Foundation Hardening V2 is implemented and locally validated as an enforcement
-package for multi-mode expansion. It does not add gameplay, tuning, economy,
-new playable content, PVP, social expansion or visual redesign.
+Foundation Hardening V2 is implemented, validated and published as the current
+Internal Alpha enforcement package for multi-mode expansion. It does not add
+gameplay, tuning, economy, new playable content, PVP, social expansion or visual
+redesign.
 
 Remote publication was resumed after configuring a local Android release
-keystore. The V2 backend/schema and Storage artifacts are now staged remotely,
-but the final Internal Alpha was intentionally stopped before manifest promotion
-because Cloudflare Pages deployment is blocked by the local Wrangler
-authentication/account configuration.
-
-The current remote alpha remains Hardening Platform V1 until Cloudflare Pages is
-deployed and the release manifest is promoted to the V2 release root.
+keystore. Supabase migrations, the `modes` Edge Function, Storage artifacts,
+Cloudflare Pages, release manifest promotion and expanded remote read-only
+smokes all completed for the V2 release root.
 
 ## Implemented Enforcement
 
-- Canon/live-doc drift enforcement for Hardening Platform V1 as the published
-  baseline and V2 as an unpublished local-ready branch.
+- Canon/live-doc drift enforcement for Foundation Hardening V2 as the published
+  baseline and Hardening Platform V1 as the previous platform baseline.
 - Strict mode definition schema and deterministic future-mode scaffold path.
 - Decision packs for `openworld`, `towerdefense` and `cardgame`.
 - `/modes` backend modularity and mutating endpoint idempotency hardening.
@@ -88,10 +85,10 @@ Key gates passed:
 - Track 13 readiness
 - agent operations foundation
 
-## Partial Remote Publication - 2026-06-01
+## Publication - 2026-06-01
 
-Remote mutation was executed only for the safe staged pieces needed before
-Cloudflare/manifest promotion:
+Remote mutation was executed after `FullLocal`, `ReleaseDryRun` and the Android
+release keystore gate passed:
 
 - Android release keystore created locally outside Git under
   `D:\Estudio-secrets\draxos-mobile\android\`.
@@ -102,7 +99,7 @@ Cloudflare/manifest promotion:
 - `ReleaseDryRun` passed after keystore configuration.
 - Android/PC/Web exports passed; Android export mode is `release`, not
   `debug_fallback`.
-- Release root staged:
+- Release root:
   `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`.
 - Supabase project linked locally to `armxgipvnbbshzqawklw`.
 - Remote migrations applied:
@@ -112,8 +109,14 @@ Cloudflare/manifest promotion:
 - `publish_internal_alpha.ps1 -Mode Upload -ConfirmRemoteMutation` completed.
 - Cloudflare Pages package generated and validated against remote Storage asset
   sizes.
+- Cloudflare Pages deployed:
+  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation`
+  completed and deployed the `release` Edge Function.
+- `RemoteReadOnly` passed against the published V2 manifest, Portal/Web shell
+  and public artifacts.
 
-Staged artifact URLs:
+Published artifact URLs:
 
 - Android APK:
   `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/downloads/draxos-mobile-alpha.apk`
@@ -121,6 +124,12 @@ Staged artifact URLs:
   `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/downloads/draxos-mobile-alpha.zip`
 - Web asset root:
   `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/web`
+- Portal:
+  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 Remote HEAD checks passed for:
 
@@ -131,53 +140,43 @@ Remote HEAD checks passed for:
 
 ## Publication Blockers
 
-FullPublish was not completed and the release manifest was not promoted.
-
-Resolved blockers:
+No publication blockers remain for V2. Resolved blockers:
 
 - Android release keystore is configured locally.
 - Supabase URL and project ref are configured locally.
 - Android/PC/Web artifacts exist.
-- Supabase migrations, `modes` function and Storage upload are staged remotely.
-
-Remaining blocker:
-
-- Wrangler cannot deploy Cloudflare Pages with the current local authentication.
-  `wrangler pages deploy` fails with Cloudflare API authentication error
-  `10000` even when `CLOUDFLARE_ACCOUNT_ID` is supplied.
-
-Until Cloudflare Pages deployment succeeds, do not run `DeployManifest` or
-`FullPublish`, because the stable Web shell would still point at the previous
-published package.
+- Supabase migrations, `modes` function and Storage upload are published remotely.
+- Wrangler authentication/account access was refreshed and Cloudflare Pages
+  deployment passed.
+- Release manifest promotion passed.
+- Expanded remote read-only validation passed.
 
 ## Remote Status
 
-No new complete Internal Alpha was published for V2.
+Foundation Hardening V2 is the current remote Internal Alpha:
 
-Current remote alpha remains Hardening Platform V1:
-
-- Release root: `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`
-- Cloudflare preview: `https://68452eed.draxos-mobile-internal-alpha.pages.dev`
-- Stable Portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
-- Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Release root: `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`
+- Cloudflare preview:
+  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`
+- Portal:
+  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Remote manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
-## Ready To Resume FullPublish
+Hardening Platform V1 remains preserved as the previous mode-platform baseline.
 
-Before resuming publication:
+## Publication Commands Executed
 
-1. Fix local Cloudflare Wrangler authentication/account access.
-2. Deploy:
-   `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`.
-3. Promote the manifest:
-   `tools/publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-20260601-aa07388 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`.
-4. Run expanded `RemoteReadOnly` and remote release smokes.
-5. Record the Cloudflare preview URL and final hashes.
+Key publication commands completed after the partial handoff was resumed:
+
+1. `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`
+2. `tools/publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-20260601-aa07388 -StaticSiteBaseUrl https://3c8b602a.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
+3. `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`
 
 ## Master Baseline Decision
 
-`master` should not be updated to claim V2 as the official published baseline
-until the Android release keystore gate, artifacts, remote publish and remote
-read-only smokes complete. Until then, Hardening Platform V1 remains the
-published baseline and V2 remains an integration branch ready for publication
-handoff.
+`master` can be promoted to Foundation Hardening V2 after the final integration
+branch commit lands and the tree is clean. New DraxosMobile work should branch
+from updated `master`, use a dedicated worktree and follow
+`docs/multi-agent-workflow.md`.

@@ -7,8 +7,8 @@
 - Placeholder: `data/definitions/modes/cardgame/placeholder.json`
 - Pending design id: `DMOB-D070`
 
-This pack records the staging decision for DraxosMobile Cardgame after
-Hardening Platform V1. It does not approve playable work.
+This pack records the staging decision for DraxosMobile Cardgame under the
+Foundation Hardening V2 baseline. It does not approve playable work.
 
 ## Decision Summary
 

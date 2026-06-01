@@ -3,7 +3,7 @@
 - Status: `VIVO`
 - Last updated: `2026-06-01`
 - Scope: coordination workflow for hardening lanes, mode work and handoffs.
-- Current platform baseline: `Hardening Platform V1`.
+- Current platform baseline: `Foundation Hardening V2`.
 - Current Arena loop context: `Track 21 - Arena Loop Unlock And Friction Pass`.
 
 ## Purpose
@@ -47,9 +47,10 @@ For release or validation work, also read:
 
 ## Track Reading Rules
 
-Hardening Platform V1 is the current baseline for multi-agent and multi-mode
-work. Track 21 is the current Arena loop package for agents to use as
-Autobattler/Arena context. Later link/status hotfixes may be recorded in
+Foundation Hardening V2 is the current baseline for multi-agent and multi-mode
+work. Hardening Platform V1 remains the previous platform baseline. Track 21 is
+the current Arena loop package for agents to use as Autobattler/Arena context.
+Later link/status hotfixes may be recorded in
 `implementation/current-status.md` or portfolio docs, but they do not reopen
 Track 18/19/20 contracts unless the current task explicitly says so.
 
@@ -176,5 +177,6 @@ git status --short
 
 Expected nuance: historical docs may still mention older tracks. Live entry
 docs should not tell new agents that Track 16, Track 18, Track 19, Track 21 or
-Remote Lab Runner is the latest platform baseline when Hardening Platform V1 is
-the intended current package. Track 21 remains valid as Arena loop context.
+Remote Lab Runner, Track 21 or Hardening Platform V1 is the latest platform
+baseline when Foundation Hardening V2 is the intended current package. Track 21
+remains valid as Arena loop context.

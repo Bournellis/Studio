@@ -537,17 +537,17 @@ function Assert-CorsAllowedOrigins {
 }
 
 function Assert-LiveDocsReleaseRootFreshness {
-    $latestRoot = "internal-alpha/v0-hardening-platform-v1-20260601-19eb80d"
-    $latestPreview = "https://68452eed.draxos-mobile-internal-alpha.pages.dev"
+    $latestRoot = "internal-alpha/v0-foundation-hardening-v2-20260601-aa07388"
+    $latestPreview = "https://3c8b602a.draxos-mobile-internal-alpha.pages.dev"
     foreach ($entry in @(
-        @{ Base = $ProjectPath; Path = "AGENTS.md"; Needles = @("Hardening Platform V1", $latestRoot, $latestPreview) },
+        @{ Base = $ProjectPath; Path = "AGENTS.md"; Needles = @("Foundation Hardening V2", $latestRoot, $latestPreview) },
         @{ Base = $ProjectPath; Path = "README.md"; Needles = @(('Latest release root: `' + $latestRoot + '`'), ('Latest verified preview: `' + $latestPreview + '`')) },
-        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @('Latest published remote package: `Hardening Platform V1`', $latestRoot, $latestPreview) },
-        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("Hardening Platform V1 is the latest remote Internal Alpha publication", $latestRoot, $latestPreview) },
-        @{ Base = $ProjectPath; Path = "docs\hardening-platform-v1-readiness-report.md"; Needles = @('Status: `PUBLISHED_INTERNAL_ALPHA`', $latestRoot, $latestPreview) },
-        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA", $latestRoot, $latestPreview) },
-        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA", $latestRoot, $latestPreview) },
-        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("Hardening Platform V1 is the latest remote Internal Alpha baseline", $latestRoot, $latestPreview) }
+        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @('Latest published remote package: `Foundation Hardening V2`', $latestRoot, $latestPreview) },
+        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("Foundation Hardening V2 is the latest remote Internal Alpha publication", $latestRoot, $latestPreview) },
+        @{ Base = $ProjectPath; Path = "docs\foundation-hardening-v2-readiness-report.md"; Needles = @('Status: `PUBLISHED_INTERNAL_ALPHA`', $latestRoot, $latestPreview) },
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA", $latestRoot, $latestPreview) },
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA", $latestRoot, $latestPreview) },
+        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("Foundation Hardening V2 is the latest remote Internal Alpha baseline", $latestRoot, $latestPreview) }
     )) {
         foreach ($needle in $entry.Needles) {
             Assert-RelativeFileContains -BasePath $entry.Base -RelativePath $entry.Path -Needle $needle
@@ -556,10 +556,10 @@ function Assert-LiveDocsReleaseRootFreshness {
 
     $readme = Get-Content -LiteralPath (Join-Path $ProjectPath "README.md") -Raw
     foreach ($staleLinePattern in @(
-        'Latest verified preview:\s*`https://(?!68452eed\.)[^`]+`',
-        'Latest release root:\s*`internal-alpha/(?!v0-hardening-platform-v1-20260601-19eb80d)[^`]+`',
-        'Latest APK:\s*`https://[^`]+/internal-alpha/(?!v0-hardening-platform-v1-20260601-19eb80d/)[^`]+`',
-        'Latest PC ZIP:\s*`https://[^`]+/internal-alpha/(?!v0-hardening-platform-v1-20260601-19eb80d/)[^`]+`'
+        'Latest verified preview:\s*`https://(?!3c8b602a\.)[^`]+`',
+        'Latest release root:\s*`internal-alpha/(?!v0-foundation-hardening-v2-20260601-aa07388)[^`]+`',
+        'Latest APK:\s*`https://[^`]+/internal-alpha/(?!v0-foundation-hardening-v2-20260601-aa07388/)[^`]+`',
+        'Latest PC ZIP:\s*`https://[^`]+/internal-alpha/(?!v0-foundation-hardening-v2-20260601-aa07388/)[^`]+`'
     )) {
         if ([regex]::IsMatch($readme, $staleLinePattern)) {
             throw "README.md has a stale latest release line matching: $staleLinePattern"
@@ -569,13 +569,13 @@ function Assert-LiveDocsReleaseRootFreshness {
 
 function Assert-BaselineDriftAbsent {
     $requiredMarkers = @(
-        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Hardening Platform V1", "TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE", "Track 18 - PVE Arena Initial", "Track 13 - Foundation Validation And Release Safety") },
-        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA", "Track 13", "Track 14", "Track 18") },
+        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Foundation Hardening V2", "TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE", "Track 18 - PVE Arena Initial", "Track 13 - Foundation Validation And Release Safety") },
+        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA", "Track 13", "Track 14", "Track 18") },
         @{ Base = $ProjectPath; Path = "docs\documentation-index.md"; Needles = @("track-18-pve-arena-initial", "track-21-arena-loop-unlock-friction", "Arena PVE") },
         @{ Base = $ProjectPath; Path = "docs\pve-arena-initial-direction.md"; Needles = @("PVE_ARENA_INITIAL_DIRECTION_APPROVED", "Arena PVE", "PVP continua no plano") },
         @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("DraxosMobile", "P2_IMPLEMENTACAO", "Track 13 release safety", "Track 14 agent ops") },
-        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("DraxosMobile", "HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA", "Track 13 release safety", "Track 14 agent ops") },
-        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("draxos-mobile/", "Track 13 release safety", "Track 14 agent ops", "Hardening Platform V1") }
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("DraxosMobile", "FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA", "Track 13 release safety", "Track 14 agent ops") },
+        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("draxos-mobile/", "Track 13 release safety", "Track 14 agent ops", "Foundation Hardening V2") }
     )
     foreach ($entry in $requiredMarkers) {
         foreach ($needle in $entry.Needles) {

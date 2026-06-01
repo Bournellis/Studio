@@ -488,14 +488,14 @@ function Test-ClientSecretsAbsent {
 }
 
 function Test-LiveDocReleaseRootFreshness {
-  $latestRoot = 'internal-alpha/v0-hardening-platform-v1-20260601-19eb80d'
-  $latestPreview = 'https://68452eed.draxos-mobile-internal-alpha.pages.dev'
+  $latestRoot = 'internal-alpha/v0-foundation-hardening-v2-20260601-aa07388'
+  $latestPreview = 'https://3c8b602a.draxos-mobile-internal-alpha.pages.dev'
   foreach ($check in @(
-    @{ Path = 'AGENTS.md'; Needles = @('Hardening Platform V1', $latestRoot, $latestPreview) },
+    @{ Path = 'AGENTS.md'; Needles = @('Foundation Hardening V2', $latestRoot, $latestPreview) },
     @{ Path = 'README.md'; Needles = @(('Latest release root: `' + $latestRoot + '`'), ('Latest verified preview: `' + $latestPreview + '`')) },
-    @{ Path = 'implementation\current-status.md'; Needles = @('Latest published remote package: `Hardening Platform V1`', $latestRoot, $latestPreview) },
-    @{ Path = 'docs\agent-operating-manual.md'; Needles = @('Hardening Platform V1 is the latest remote Internal Alpha publication', $latestRoot, $latestPreview) },
-    @{ Path = 'docs\hardening-platform-v1-readiness-report.md'; Needles = @('Status: `PUBLISHED_INTERNAL_ALPHA`', $latestRoot, $latestPreview) }
+    @{ Path = 'implementation\current-status.md'; Needles = @('Latest published remote package: `Foundation Hardening V2`', $latestRoot, $latestPreview) },
+    @{ Path = 'docs\agent-operating-manual.md'; Needles = @('Foundation Hardening V2 is the latest remote Internal Alpha publication', $latestRoot, $latestPreview) },
+    @{ Path = 'docs\foundation-hardening-v2-readiness-report.md'; Needles = @('Status: `PUBLISHED_INTERNAL_ALPHA`', $latestRoot, $latestPreview) }
   )) {
     foreach ($needle in $check.Needles) {
       Test-FileContains $check.Path $needle

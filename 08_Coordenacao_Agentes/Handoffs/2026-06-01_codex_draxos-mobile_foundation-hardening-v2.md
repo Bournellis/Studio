@@ -17,8 +17,9 @@ Executar Foundation Hardening V2 como pacote de enforcement puro para preparar D
 
 ## Latest Context
 
-- current platform baseline: `Hardening Platform V1`
-- current release root: `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`
+- current platform baseline: `Foundation Hardening V2`
+- current release root: `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`
+- current Cloudflare preview: `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`
 - latest Arena loop package: `Track 21 - Arena Loop Unlock And Friction Pass`
 - Arena contract source: `docs/pve-arena-v1.md`
 - behavior/potion/crafting source: `docs/behavior-potion-crafting-v1.md`
@@ -88,21 +89,21 @@ Executar Foundation Hardening V2 como pacote de enforcement puro para preparar D
 
 ## Resultado Final
 
-- Status: `PARTIAL_REMOTE_STORAGE_BACKEND_READY_CLOUDFLARE_BLOCKED`.
+- Status: `PUBLISHED_INTERNAL_ALPHA`.
 - V2 foi implementado como pacote de enforcement puro, sem gameplay/conteudo novo.
 - Android release keystore foi configurada localmente fora do Git.
 - `FullLocal` passou em `2026-06-01` com a keystore release configurada.
 - `ReleaseDryRun` passou em `2026-06-01` com a keystore release configurada.
 - Export Android/PC/Web passou; Android saiu em modo `release`, sem `debug_fallback`.
-- Release root preparado: `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`.
+- Release root publicado: `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`.
 - Mutacoes remotas executadas:
   - migrations `202606010003_foundation_hardening_v2.sql` e `202606010004_resource_reconciliation_stability.sql` aplicadas;
   - Edge Function `modes` publicada;
   - artefatos V2 enviados ao Supabase Storage via `Mode Upload`.
-- Cloudflare Pages package foi gerado e validado contra `index.pck`/`index.wasm` remotos.
-- `FullPublish` completo nao foi executado.
-- Release manifest nao foi promovido para V2.
-- `master` nao deve ser promovido para baseline V2 ate Cloudflare Pages, DeployManifest e smokes remotos passarem.
+- Cloudflare Pages package foi gerado, validado contra `index.pck`/`index.wasm` remotos e publicado em `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`.
+- Release manifest foi promovido para V2 via `DeployManifest`.
+- `RemoteReadOnly` passou contra o manifest, Portal/Web e artefatos V2.
+- `master` pode ser promovido para baseline V2 apos commit final e validacao da arvore principal.
 
 ## Bloqueio De Publicacao
 
@@ -117,12 +118,12 @@ Bloqueios resolvidos nesta retomada:
   - `build/web/index.html`.
 - Supabase URL/projeto configurados em `.env.internal-alpha.local`.
 - Worktree linkada ao Supabase project `armxgipvnbbshzqawklw`.
+- Wrangler/Cloudflare autenticado novamente.
+- Cloudflare Pages publicado.
+- Manifest remoto promovido.
+- Remote read-only smokes passaram.
 
-Bloqueio restante:
-
-- `wrangler pages deploy` falha com `Authentication error [code: 10000]`.
-- Tentar com `CLOUDFLARE_ACCOUNT_ID=2da949186d393e5c790d01948f4b67be` removeu o problema de descoberta de conta, mas a autenticacao atual ainda foi recusada.
-- Sem Cloudflare Pages publicado, nao promover o manifest remoto para V2.
+Bloqueio restante: nenhum para a publicacao V2.
 
 ## Validacoes Executadas
 
@@ -141,6 +142,10 @@ Bloqueio restante:
 - `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-20260601-aa07388 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
 - `tools/build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/web`
 - Public HEAD checks para Android APK, PC ZIP, Web `index.pck` e Web `index.wasm`.
+- `npx -y wrangler whoami`
+- `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`
+- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-20260601-aa07388 -StaticSiteBaseUrl https://3c8b602a.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`
 
 ## Relatorio
 
@@ -150,11 +155,10 @@ Bloqueio restante:
 
 ## Proximo Handoff Seguro
 
-1. Corrigir Wrangler/Cloudflare localmente sem commitar secrets.
-2. Publicar Cloudflare Pages:
-   `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`.
-3. Executar `DeployManifest` para o release root V2 com `-ConfirmRemoteMutation`.
-4. Rodar `RemoteReadOnly` e smokes remotos.
-5. So entao atualizar `master` e docs vivos para V2 publicado.
+1. Commitar o fechamento de docs/checks que promovem V2 a baseline atual.
+2. Rodar `DocsOnly` e, se necessario, `FullLocal` apos os docs vivos.
+3. Promover o branch integrador para `master` se a arvore principal estiver limpa.
+4. Abrir as proximas threads de modo somente a partir do `master` atualizado.
 
-Handoff final deve registrar commits, validações, publicação ou blocker de keystore, release root, worktrees limpas/pendentes e próximos checks humanos.
+Handoff final deve registrar commits, validacoes, publicacao, release root,
+worktrees limpas/pendentes e proximos checks humanos.

@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA`, release root `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, preview `https://68452eed.draxos-mobile-internal-alpha.pages.dev`, preservando Track 21 Arena Loop Unlock/Friction como contexto do Autobattler, Track 20 Season 1 Arena Calibration, Remote Lab Runner, Track 13 release safety e Track 14 agent ops)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`, release root `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, preview `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`, preservando Hardening Platform V1 como baseline anterior, Track 21 Arena Loop Unlock/Friction como contexto do Autobattler, Track 20 Season 1 Arena Calibration, Remote Lab Runner, Track 13 release safety e Track 14 agent ops)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA**
+- Status: **P2_IMPLEMENTACAO - FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Hardening Platform V1 publicado como Internal Alpha no release root `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, preview `https://68452eed.draxos-mobile-internal-alpha.pages.dev`; migration `202606010002_modes_admin_audit_hardening.sql`, Edge Function `modes`, Storage, Cloudflare Pages e manifest remoto publicados; smokes read-only passaram. Track 13 release safety e Track 14 agent ops seguem preservados. Track 21 Arena Loop Unlock/Friction e Track 20 Season 1 Arena Calibration seguem como contexto preservado do Autobattler/Arena PVE; Remote Lab Runner segue como contexto preservado de Labs no Web export.
+- Baseline atual: Foundation Hardening V2 publicado como Internal Alpha no release root `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, preview `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`; migrations `202606010003_foundation_hardening_v2.sql` e `202606010004_resource_reconciliation_stability.sql`, Edge Function `modes`, Storage, Cloudflare Pages, manifest remoto e smokes read-only publicados/validados. Android APK usa release signing, sem debug fallback. Hardening Platform V1 segue preservado como baseline anterior. Track 13 release safety e Track 14 agent ops seguem preservados. Track 21 Arena Loop Unlock/Friction e Track 20 Season 1 Arena Calibration seguem como contexto preservado do Autobattler/Arena PVE; Remote Lab Runner segue como contexto preservado de Labs no Web export.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation` e Supabase/Cloudflare CLI autenticada. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, PVP, tuning numerico amplo, novas armas, novas spells, economia ampla, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
-- Proximo passo: revisao/playtest humano do pacote Hardening Platform V1 publicado; depois abrir threads dedicadas por modo a partir de `master` atualizado, mantendo tuning fino da Arena apenas apos confirmacao manual do loop tutorial -> primeira Arena real completa -> proxima dificuldade desbloqueada.
+- Proximo passo: revisao/playtest humano do pacote Foundation Hardening V2 publicado; depois abrir threads dedicadas por modo a partir de `master` atualizado, mantendo tuning fino da Arena apenas apos confirmacao manual do loop tutorial -> primeira Arena real completa -> proxima dificuldade desbloqueada.
 
 ## rpg-isometrico
 

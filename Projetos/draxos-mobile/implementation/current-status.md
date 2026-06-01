@@ -4,18 +4,18 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Hardening Platform V1`
+- Active stage: `Foundation Hardening V2`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Hardening Platform V1`, release root
-  `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, Cloudflare
-  preview `https://68452eed.draxos-mobile-internal-alpha.pages.dev`.
-- Latest implemented package: `Hardening Platform V1` on
-  `codex/draxos-mobile/hardening-platform-v1`.
-- Active follow-up: human review/playtest of the published hardening build,
+- Latest published remote package: `Foundation Hardening V2`, release root
+  `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, Cloudflare
+  preview `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`.
+- Latest implemented package: `Foundation Hardening V2` on
+  `codex/draxos-mobile/foundation-hardening-v2`.
+- Active follow-up: human review/playtest of the published V2 hardening build,
   then dedicated mode threads can branch from updated `master`.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
@@ -24,10 +24,64 @@
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
-## Hardening Platform V1 - 2026-06-01
+## Foundation Hardening V2 - 2026-06-01
 
 This package is published remotely as the current Internal Alpha multi-mode
-baseline.
+expansion enforcement baseline.
+
+- release root:
+  `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`;
+- branch: `codex/draxos-mobile/foundation-hardening-v2`;
+- Cloudflare preview:
+  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`;
+- Portal:
+  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Web:
+  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
+
+Scope:
+
+- No gameplay, content, tuning, economy, PVP, social expansion or visual
+  redesign was added.
+- V2 enforces strict expansion gates for future multi-mode work.
+- Mode decision packs now exist for Openworld, Towerdefense and Cardgame.
+- Backend Proprio boundary inventory and read-only Ops CLI are documented.
+- Data/schema enforcement rejects invalid future mode definition drift.
+- Android release signing is now required for the V2 publish path.
+- Supabase migrations `202606010003_foundation_hardening_v2.sql` and
+  `202606010004_resource_reconciliation_stability.sql` were applied remotely.
+- Edge Function `modes`, Storage artifacts, Cloudflare Pages and the release
+  manifest were published for the V2 release root.
+
+Validation and publication completed:
+
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile FullLocal`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`: passed.
+- Android release keystore gate passed; Android export mode is `release`, not
+  `debug_fallback`.
+- Android/PC/Web exports passed.
+- Remote migrations were applied and Edge Function `modes` was deployed.
+- Storage upload passed for APK, PC ZIP and Web assets.
+- Cloudflare Pages deploy passed.
+- `DeployManifest` passed and deployed the `release` Edge Function.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`: passed.
+
+Publication status: published as the current Internal Alpha expansion
+enforcement baseline.
+
+Next human check: review/playtest the published V2 build, then run
+mode-specific work in dedicated worktrees from updated `master`.
+
+## Hardening Platform V1 - 2026-06-01
+
+This package is preserved as the previous published Internal Alpha multi-mode
+platform baseline.
 
 - release root:
   `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`;
@@ -1414,14 +1468,15 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Hardening Platform V1 is now the latest Internal Alpha publication: release root
-`internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, preview
-`https://68452eed.draxos-mobile-internal-alpha.pages.dev`. The next product
-step is human review/playtest of the hardening build and then tuning notes for
-the Arena PVE tutorial -> 3-duel unlock loop, including potion consumption,
-remote arena selection, buff selection, summary/claim behavior and Web Battle
-Lab/Progression Lab remote generation through the same Supabase email/password
-Internal Alpha gate. Do not
+Foundation Hardening V2 is now the latest Internal Alpha publication: release
+root `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, preview
+`https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`. The next product
+step is human review/playtest of the V2 hardening build and then dedicated mode
+threads from updated `master`; Arena tuning notes can follow only after manual
+confirmation of the tutorial -> first real Arena -> next difficulty loop,
+including potion consumption, remote arena selection, buff selection,
+summary/claim behavior and Web Battle Lab/Progression Lab remote generation
+through the same Supabase email/password Internal Alpha gate. Do not
 open PVP, victory prediction, opponent counter-picks, custom thresholds,
 enemy-specific behavior, spell priorities, direct chat, helps, contributions,
 moderation, tuning numbers, new weapons, new spells, economy, new potions,

@@ -8,12 +8,12 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 
 - Project: `DraxosMobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active operational stage: `Hardening Platform V1`
+- Active operational stage: `Foundation Hardening V2`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`; compatibility marker: Track 13 validation/release safety.
 - Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation; compatibility marker: `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting`, technical context and not the current product focus. Current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`.
-- Immediate product gate: Hardening Platform V1 is the latest remote Internal Alpha publication and the multi-mode baseline. Track 21 remains the preserved Autobattler/Arena PVE context: Arena PVE first, PVP later, no combat cooldown, locked loadout on start, temporary stat buffs, HP reset per duel, live-stock potion consumption in Arena, summary-only claim, public buff select endpoint, data-driven Arena list, Season 1 tier matrix, tutorial XP -> level recalculation, direct start into active Arena and continue-in-Arena summary flow.
+- Immediate product gate: Foundation Hardening V2 is the latest remote Internal Alpha publication and the multi-mode expansion enforcement baseline. Track 21 remains the preserved Autobattler/Arena PVE context: Arena PVE first, PVP later, no combat cooldown, locked loadout on start, temporary stat buffs, HP reset per duel, live-stock potion consumption in Arena, summary-only claim, public buff select endpoint, data-driven Arena list, Season 1 tier matrix, tutorial XP -> level recalculation, direct start into active Arena and continue-in-Arena summary flow.
 
 DraxosMobile is now a PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. The real product direction is base builder + Arena PVE + later PVP/social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
 
@@ -114,10 +114,10 @@ For user-approved product packages that require human testing on Android, Window
 - `docs/design-pending.md` is the only live register of unresolved design decisions.
 - `docs/documentation-index.md` classifies live docs, contracts, runbooks, history and design archive.
 - `docs/multi-agent-workflow.md` governs parallel hardening lanes, mode scope and handoff expectations.
-- `docs/hardening-platform-v1-readiness-report.md` is the published readiness report for the current multi-mode hardening baseline.
+- `docs/foundation-hardening-v2-readiness-report.md` is the published readiness report for the current multi-mode expansion enforcement baseline.
 - `implementation/current-status.md` must remain short and decision-oriented; detailed history belongs in `implementation/tracks/`.
 - Supabase mirrors under `server/` and `supabase/` must stay aligned.
 
 ## Current Handoff
 
-Hardening Platform V1 is the latest remote Internal Alpha publication on `codex/draxos-mobile/hardening-platform-v1`. New DraxosMobile agents should branch from updated `master` after this package is merged, use a dedicated worktree and follow `docs/multi-agent-workflow.md`. Latest remote preview: `https://68452eed.draxos-mobile-internal-alpha.pages.dev`; release root: `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`. Track 21 remains the preserved Arena PVE/Autobattler context. Do not change gameplay tuning, Supabase APIs, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.
+Foundation Hardening V2 is the latest remote Internal Alpha publication on `codex/draxos-mobile/foundation-hardening-v2`. New DraxosMobile agents should branch from updated `master` after this package is merged, use a dedicated worktree and follow `docs/multi-agent-workflow.md`. Latest remote preview: `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`; release root: `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`. Track 21 remains the preserved Arena PVE/Autobattler context. Do not change gameplay tuning, Supabase APIs, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.
