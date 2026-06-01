@@ -1,7 +1,7 @@
 # DraxosMobile - Alpha Playtest Checklist
 
-- Ultima atualizacao: `2026-05-31`
-- Alvo Track 21: Internal Alpha com Arena PVE inicial, tutorial unlock corrigido, retorno `Continuar na Arena` e Supabase local/remoto aprovado para teste.
+- Ultima atualizacao: `2026-06-01`
+- Alvo Hardening Platform V1: Internal Alpha publicado em `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`, com Track 21 preservado apenas como contexto da Arena PVE/Autobattler para tutorial unlock corrigido, retorno `Continuar na Arena` e Supabase local/remoto aprovado para teste.
 
 ## Pre-Flight
 
@@ -71,5 +71,5 @@ Sensacao geral:
 ## Notas De Escopo
 
 - Nao calibrar XP, Energia, poder, combate, guilda ou Diamante diretamente a partir de um unico relato.
-- Nao adicionar novos modos durante o playtest Track 01.
+- Nao adicionar novos modos durante este playtest do baseline Hardening Platform V1.
 - Itens `POS_SLICE` e expansoes de plataforma devem abrir sessao de design antes de qualquer codigo.

@@ -125,10 +125,10 @@
 | `implementation/tracks/track-14-agent-ops-foundation/` | `HISTORICO` | Agent operating foundation and documentation index baseline. |
 | `implementation/tracks/track-15-mobile-ux-overhaul/` | `HISTORICO` | Prior Android portrait UX package; not the active stage. |
 | `implementation/tracks/track-16-behavior-crafting/` | `HISTORICO` | Source track for behavior/crafting; use `docs/behavior-potion-crafting-v1.md` for current state. |
-| `implementation/tracks/track-17-foundation-expansion-readiness/` | `VIVO` | Delivered foundation package for future parallel expansion, Foundation Closeout, Foundation Final Polish and production readiness. |
-| `implementation/tracks/track-18-pve-arena-initial/` | `VIVO` | Active implementation package for Arena PVE initial: contracts, backend, client shell, labs and validation. |
-| `implementation/tracks/track-20-season-1-arena-calibration/` | `VIVO` | Current local calibration package: S1 Arena tier catalog, labs, backend/client runtime promotion and local Internal Alpha package. |
-| `implementation/tracks/track-21-arena-loop-unlock-friction/` | `VIVO` | Current hotfix package for tutorial unlock, level recalculation and reduced Arena flow friction. |
+| `implementation/tracks/track-17-foundation-expansion-readiness/` | `HISTORICO` | Delivered foundation package for future parallel expansion, Foundation Closeout, Foundation Final Polish and production readiness; current platform baseline is Hardening Platform V1. |
+| `implementation/tracks/track-18-pve-arena-initial/` | `HISTORICO` | Preserved Arena PVE implementation package; live Arena contract lives in `docs/pve-arena-v1.md`. |
+| `implementation/tracks/track-20-season-1-arena-calibration/` | `HISTORICO` | Preserved Season 1 Arena calibration package; current data contracts live in `data/definitions/pve_arena_difficulties.json` and `data/definitions/season_1_progression_targets.json`. |
+| `implementation/tracks/track-21-arena-loop-unlock-friction/` | `HISTORICO` | Preserved Arena loop unlock/friction context for Autobattler; not the current platform baseline. |
 
 ## Design Archive
 
@@ -143,11 +143,11 @@
 - A live doc must not tell agents to start from Track 04, Track 08, Track 10, Track 14, Track 15 or Track 16 as the current stage.
 - A live doc must treat `implementation/current-status.md` as the active stage/status source after the user chooses the next package.
 - A live doc must treat `docs/pve-arena-initial-direction.md` as the current product direction after Foundation Final Polish: Arena PVE initial first, PVP later.
-- A live doc may treat `docs/pve-arena-v1.md` as the current implemented/published contract package for Arena PVE, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough. Track 21 is the preserved Arena PVE/Autobattler context over Track 20 Season 1 Arena Calibration.
+- A live doc may treat `docs/pve-arena-v1.md` as the current implemented/published contract package for Arena PVE, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough. Track 21 is preserved Arena PVE/Autobattler context over Track 20 Season 1 Arena Calibration; it must not be described as the current platform baseline.
 - Parallel hardening and new mode docs must use Hardening Platform V1 as the current baseline, Track 21 as Arena loop context, Track 18 as Arena contract, Track 16 as technical behavior/potion/crafting context and Tracks 1/2 as historical alpha/lab evidence.
 - A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation beyond what the Arena PVE initial package explicitly needs.
 - Foundation Audit must preserve the post-login loop as app shell, but the first playable product loop is now Refugio -> Arena PVE -> locked loadout -> duel list -> buffs/behavior between duels -> rewards -> upgrades.
-- Foundation Expansion Readiness/Foundation Closeout/Foundation Final Polish is now the delivered pre-expansion gate before Arena PVE implementation/tuning; base builder, PVP, expanded social or a real minigame are later packages unless explicitly selected.
+- Foundation Expansion Readiness/Foundation Closeout/Foundation Final Polish is now delivered pre-expansion history preserved under the Hardening Platform V1 baseline; base builder, PVP, expanded social or a real minigame are later packages unless explicitly selected.
 - New backend/data/content features must use `account_profiles` + `game_saves`, `foundation_ruleset_v0`/registry, idempotency v1 and explicit contracts.
 - Foundation Loop UX Pass 01 was manually accepted on Android/Windows/Web on `2026-05-29` and is a historical app-shell UX baseline. The current product loop is Arena PVE first: Refugio -> Arena PVE selection -> start attempt with loadout locked -> duel list -> buffs/behavior between duels -> rewards -> continue in Arena -> upgrades.
 - Visual/layout changes must respect `docs/foundation-responsive-layout-contract.md` and pass `tools/smoke_responsive_layout.gd` before publication.

@@ -2,7 +2,7 @@
 
 - Status: `RUNBOOK`
 - Lane: `QA/OPS CONTRACTS`
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-06-01`
 - Aplica-se a: pacotes futuros que expandam minigames, social, admin, backend,
   schema, rulesets, telemetria, migracoes ou operacao live.
 
@@ -12,10 +12,15 @@ Este documento transforma a Foundation Audit em um gate de expansao. Ele nao
 autoriza feature nova; ele define como uma feature futura deve provar que nao
 quebra a fundacao antes de entrar em codigo.
 
-O baseline atual continua sendo `First Session Clarity v1` aprovado manualmente.
-A ordem operacional permanece: contrato primeiro, implementacao depois. Se uma
-proposta precisa de endpoint, migration, ruleset, teste, admin ou operacao
-remota, ela deve preencher este runbook antes de abrir PR de feature.
+O baseline atual e `Hardening Platform V1` publicado como Internal Alpha:
+release root `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`,
+preview `https://68452eed.draxos-mobile-internal-alpha.pages.dev`. Track 21
+Arena Loop Unlock/Friction permanece apenas como contexto Arena/Autobattler
+preservado para tutorial, unlock, loadout travado, buffs, claim summary e fluxo
+de retorno da Arena; nao e o baseline de plataforma. A ordem operacional
+permanece: contrato primeiro, implementacao depois. Se uma proposta precisa de
+endpoint, migration, ruleset, teste, admin ou operacao remota, ela deve
+preencher este runbook antes de abrir PR de feature.
 
 Comando de verificacao estrutural desta lane:
 

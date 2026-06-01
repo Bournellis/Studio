@@ -2,7 +2,7 @@
 
 - Ultima atualizacao: `2026-06-01`
 - Status: registro vivo de pendencias de design
-- Escopo: DraxosMobile, Arena PVE inicial aprovada, Foundation Final Polish entregue, tuning futuro e evolucoes futuras
+- Escopo: DraxosMobile, Hardening Platform V1 publicado, Arena PVE inicial preservada como contexto Autobattler, tuning futuro e evolucoes futuras
 
 Este documento e o unico lugar para registrar pendencias de design do projeto ativo. Ele nao resolve design; ele nomeia o que ainda precisa ser decidido, classifica o bloqueio e aponta para o documento que deve receber a resposta quando a decisao existir.
 
@@ -31,15 +31,15 @@ Categorias:
 - `OPERACIONAL`: nao altera game design, mas bloqueia validacao, ambiente, seguranca ou execucao tecnica confiavel.
 - `POS_SLICE`: fora da Track 00 completa.
 
-## Etapa Atual - Arena PVE Inicial Aprovada
+## Etapa Atual - Hardening Platform V1 Publicado
 
-A etapa atual e `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, sobre `FOUNDATION_FINAL_POLISH_DELIVERED`. O projeto deve ser lido como uma base fundacional pronta para o primeiro pacote de produto/tuning: Arena PVE inicial.
+A etapa atual e `HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA`. O projeto deve ser lido como uma base multi-modo publicada para revisao/playtest humano antes de abrir novos pacotes de modo ou tuning. A direcao viva de produto continua Arena PVE first, registrada em `docs/pve-arena-initial-direction.md`.
 
 Foco imediato:
 
-`Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
+`Revisar/playtestar Hardening Platform V1 -> confirmar tutorial Arena -> primeira Arena real completa -> proxima dificuldade desbloqueada -> registrar tuning/UX antes de novo pacote`
 
-Foundation Loop UX Pass 01 foi aceito como baseline do loop. Foundation Closeout, Labs atualizados e Foundation Final Polish fecharam a base tecnica/documental. A decisao seguinte ja foi tomada: o jogo comeca por Arena PVE, nao por PVP-first, e PVP entra depois como modo competitivo/fallback.
+Foundation Loop UX Pass 01 foi aceito como baseline historico do app-shell, nao como loop de produto atual. Foundation Closeout, Labs atualizados e Foundation Final Polish fecharam a base tecnica/documental anterior. Hardening Platform V1 agora e o baseline operacional publicado. Track 21 Arena Loop Unlock/Friction permanece somente como contexto Arena/Autobattler para unlock, loadout travado, buffs temporarios, HP resetado por duelo, claim summary e fluxo de retorno da Arena; PVP entra depois como modo competitivo/fallback.
 
 Revisao manual do build publicado identificou regressao de responsividade: Labs Dev sumiram do menu inicial interno e Refugio/Batalha puderam sair dos limites em Web/Android. A partir de agora, mudancas visuais em Entry, Refugio ou Batalha precisam respeitar `docs/foundation-responsive-layout-contract.md` e passar em `tools/smoke_responsive_layout.gd` antes de nova publicacao.
 
