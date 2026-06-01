@@ -3,7 +3,7 @@
 DraxosMobile is the Godot/Supabase project for Android, PC executable and PC browser. It is now a PVE Arena-first async autobattler with Refugio/Base management, later PVP, social systems and server-authoritative progression.
 
 **Status:** `P2_IMPLEMENTACAO - FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`
-**Baseline:** Foundation Hardening V2 is the latest remote Internal Alpha multi-mode expansion enforcement baseline: release root `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, preview `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`. Track 13 release safety and Track 14 agent ops remain preserved baselines. Track 16 is technical behavior/potion/crafting context. Track 18 Arena PVE Initial, Track 20 Season 1 Arena Calibration, Track 21 Arena Loop Unlock/Friction and Remote Lab Runner remain preserved Arena/Autobattler/Lab context, not the current platform baseline.
+**Baseline:** Foundation Hardening V2 is the latest remote Internal Alpha multi-mode expansion enforcement baseline: release root `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`, preview `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`. Track 13 release safety and Track 14 agent ops remain preserved baselines. Track 16 is technical behavior/potion/crafting context. Track 18 Arena PVE Initial, Track 20 Season 1 Arena Calibration, Track 21 Arena Loop Unlock/Friction and Remote Lab Runner remain preserved Arena/Autobattler/Lab context, not the current platform baseline.
 
 ## Current Focus
 
@@ -104,8 +104,8 @@ git status --short
 - Version code: `1`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
-- Latest verified preview: `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`
-- Latest release root: `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`
-- Latest APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/downloads/draxos-mobile-alpha.apk`
-- Latest PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/downloads/draxos-mobile-alpha.zip`
+- Latest verified preview: `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`
+- Latest release root: `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`
+- Latest APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795/downloads/draxos-mobile-alpha.apk`
+- Latest PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795/downloads/draxos-mobile-alpha.zip`
 - Known release risk: none currently known for the release pipeline; Android APK uses release signing.

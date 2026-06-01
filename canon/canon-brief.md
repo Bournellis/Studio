@@ -61,7 +61,7 @@ Treat DraxosMobile as:
 - backed by Supabase Auth, Postgres, Edge Functions, and eventually Realtime
 - scoped for Track 00 as MVP technical foundation first, then first slice systems
 
-Local long-term product authority lives in `Projetos/draxos-mobile/docs/product-vision.md`. Use that document for DraxosMobile pillars, anti-pillars, monetization limits, platform boundaries, live ops direction and future-not-promised items until specific parts are promoted into shared canon. The current operational baseline is Foundation Hardening V2, published as Internal Alpha at `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388` with preview `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`; Hardening Platform V1 remains the previous mode-platform baseline, and Track 21 remains preserved Arena PVE/Autobattler context, not the platform baseline.
+Local long-term product authority lives in `Projetos/draxos-mobile/docs/product-vision.md`. Use that document for DraxosMobile pillars, anti-pillars, monetization limits, platform boundaries, live ops direction and future-not-promised items until specific parts are promoted into shared canon. The current operational baseline is Foundation Hardening V2, published as Internal Alpha at `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795` with preview `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`; Hardening Platform V1 remains the previous mode-platform baseline, and Track 21 remains preserved Arena PVE/Autobattler context, not the platform baseline.
 
 Do not import rules from Draxos Roguelike Cardgame, RPG Turnos, or RPG Isometrico unless DraxosMobile local docs explicitly adopt them in `Projetos/draxos-mobile/docs/reuse-map.md` and the affected local contract.
 
@@ -90,7 +90,7 @@ Treat existing RPG Turnos mechanical IDs as stable placeholders unless a dedicat
 - portfolio source of truth lives in `D:\Estudio\08_Coordenacao_Agentes\Prioridades_Estudio.md`
 - Draxos Roguelike Cardgame operational status lives in `D:\Estudio\Projetos\draxos-roguelike-cardgame\implementation\current-status.md`
 - DraxosMobile operational status lives in `D:\Estudio\Projetos\draxos-mobile\implementation\current-status.md`
-- DraxosMobile current platform baseline is `FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`: release root `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, preview `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`.
+- DraxosMobile current platform baseline is `FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`: release root `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`, preview `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`.
 - DraxosMobile new work should branch from updated `master` after the Foundation Hardening V2 integration and follow `D:\Estudio\Projetos\draxos-mobile\docs\multi-agent-workflow.md`; Hardening Platform V1 is preserved as the previous mode-platform baseline. Track 21, Track 20 and Remote Lab Runner are preserved Arena/Autobattler/Lab contexts, while Track 13 release safety and Track 14 agent ops remain compatibility baselines.
 - historical validation and cutover records live under `D:\Estudio\Projetos\rpg-isometrico\implementation\phase-g1` through `phase-g4` and `D:\Estudio\migration\`
 

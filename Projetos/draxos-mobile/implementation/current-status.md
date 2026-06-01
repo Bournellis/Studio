@@ -11,8 +11,8 @@
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published remote package: `Foundation Hardening V2`, release root
-  `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, Cloudflare
-  preview `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`.
+  `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`, Cloudflare
+  preview `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`.
 - Latest implemented package: `Foundation Hardening V2` on
   `codex/draxos-mobile/foundation-hardening-v2`.
 - Active follow-up: human review/playtest of the published V2 hardening build,
@@ -30,18 +30,18 @@ This package is published remotely as the current Internal Alpha multi-mode
 expansion enforcement baseline.
 
 - release root:
-  `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`;
+  `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`;
 - branch: `codex/draxos-mobile/foundation-hardening-v2`;
 - Cloudflare preview:
-  `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`;
+  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`;
 - Portal:
-  `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
 - Web:
-  `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
 - Android APK:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/downloads/draxos-mobile-alpha.apk`;
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795/downloads/draxos-mobile-alpha.apk`;
 - PC ZIP:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/downloads/draxos-mobile-alpha.zip`;
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795/downloads/draxos-mobile-alpha.zip`;
 - remote manifest:
   `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
 
@@ -69,10 +69,12 @@ Validation and publication completed:
 - Remote migrations were applied and Edge Function `modes` was deployed.
 - Storage upload passed for APK, PC ZIP and Web assets.
 - Post-publication login hotfix: after manual Web entry reported
-  `http_error: request failed`, the V2 package was reexported and republished
-  on the same release root with the registered Supabase publishable key, CORS
-  updated for the current Cloudflare preview, and the remote manifest promoted
-  to `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`.
+  `http_error: request failed` / Supabase unavailable, the V2 package was
+  reexported with the registered Supabase publishable key and then republished
+  under cache-bust release root
+  `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`; CORS was
+  updated for the current Cloudflare preview and the remote manifest now points
+  to `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`.
 - Hotfix validation passed: `server/functions` Deno check, `supabase/functions`
   Deno check, `DocsOnly`, `RemoteReadOnly`, and remote smoke with anonymous auth
   plus `account/guest`/`account/state`.
@@ -1477,8 +1479,8 @@ economy, content tuning or final art.
 ## Next Step
 
 Foundation Hardening V2 is now the latest Internal Alpha publication: release
-root `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, preview
-`https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`. The next product
+root `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`, preview
+`https://4315dd54.draxos-mobile-internal-alpha.pages.dev`. The next product
 step is human review/playtest of the V2 hardening build and then dedicated mode
 threads from updated `master`; Arena tuning notes can follow only after manual
 confirmation of the tutorial -> first real Arena -> next difficulty loop,

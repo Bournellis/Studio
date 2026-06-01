@@ -7,7 +7,7 @@ const RUN_RELEASE_MANIFEST =
   Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
 const RUN_MODE = Deno.env.get("DRAXOS_REMOTE_MODE_SMOKE") === "1";
 const CORS_ORIGIN = Deno.env.get("DRAXOS_REMOTE_CORS_ORIGIN") ??
-  "https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev";
+  "https://4315dd54.draxos-mobile-internal-alpha.pages.dev";
 
 const MODE_MODE_ID = "openworld";
 const MODE_SLICE_ID = "forest";
