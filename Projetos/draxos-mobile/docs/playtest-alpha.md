@@ -1,7 +1,7 @@
 # DraxosMobile - Alpha Playtest Checklist
 
 - Ultima atualizacao: `2026-05-31`
-- Alvo Track 19: Internal Alpha com Arena PVE inicial e Supabase local/remoto aprovado para teste.
+- Alvo Track 21: Internal Alpha com Arena PVE inicial, tutorial unlock corrigido, retorno `Continuar na Arena` e Supabase local/remoto aprovado para teste.
 
 ## Pre-Flight
 
@@ -18,15 +18,16 @@
 3. Conferir se o Refugio mostra conta, recursos e `session_id` local.
 4. Usar `Sincronizar sessao` e confirmar que o estado volta sem duplicar progresso.
 5. Abrir Arena PVE e conferir se a lista vem do servidor, com arenas liberadas e bloqueadas.
-6. Iniciar o tutorial de 1 duelo, confirmar loadout travado e resolver o duelo.
+6. Iniciar o tutorial de 1 duelo, confirmar contexto de loadout travado e resolver o duelo.
 7. Assistir o replay por alguns eventos e testar `Pular replay`.
 8. Confirmar o resumo da tentativa, lembrando que a recompensa ja foi aplicada no ultimo duelo.
-9. Iniciar a arena curta de 3 duelos, escolher buff entre duelos e testar preparacao/comportamento antes do proximo inimigo.
-10. Conferir consumo de Pocao de Vida quando equipada e com estoque disponivel.
-11. Voltar para o Refugio, abrir Base, coletar Base e tentar upgrade inicial.
-12. Abrir Social, Loja e Competicao apenas como modos secundarios/dev, sem tratar PVP como loop inicial.
-13. Testar indisponibilidade de rede/Supabase e confirmar erro claro sem travar UI.
-14. Usar `Resetar sessao local` apenas para recuperar o ambiente de teste.
+9. Confirmar que o resumo usa `Continuar na Arena`, volta para a selecao de Arena e desbloqueia `arena_cinzas_curta:s1_d00_intro`.
+10. Iniciar a arena curta de 3 duelos, escolher buff entre duelos e testar preparacao/comportamento antes do proximo inimigo.
+11. Conferir consumo de Pocao de Vida quando equipada e com estoque disponivel.
+12. Voltar para o Refugio, abrir Base, coletar Base e tentar upgrade inicial.
+13. Abrir Social, Loja e Competicao apenas como modos secundarios/dev, sem tratar PVP como loop inicial.
+14. Testar indisponibilidade de rede/Supabase e confirmar erro claro sem travar UI.
+15. Usar `Resetar sessao local` apenas para recuperar o ambiente de teste.
 
 ## Template De Feedback
 

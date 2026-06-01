@@ -24,14 +24,15 @@ Read in this order for almost every task:
 1. `docs/agent-operating-manual.md`
 2. `implementation/current-status.md`
 3. `docs/documentation-index.md`
-4. `docs/foundation-app-v0-audit.md`
-5. `docs/foundation-expansion-readiness.md`
-6. `docs/foundation-loop-audit.md`
-7. `docs/foundation-responsive-layout-contract.md` when touching Entry, Refugio, Battle or visual/layout code
-8. `docs/first-session-clarity-v1.md` when touching first-session guidance, Refugio loop copy, Preparation guidance or battle summary next-step copy
-9. `docs/behavior-potion-crafting-v1.md` when touching Ossos, crafting, potions, consumables or behavior
-10. `docs/pve-arena-initial-direction.md` when touching product direction, battles, rewards, tuning, onboarding or PVP
-11. The files you intend to touch
+4. `docs/multi-agent-workflow.md` when coordinating parallel hardening lanes or mode work
+5. `docs/foundation-app-v0-audit.md`
+6. `docs/foundation-expansion-readiness.md`
+7. `docs/foundation-loop-audit.md`
+8. `docs/foundation-responsive-layout-contract.md` when touching Entry, Refugio, Battle or visual/layout code
+9. `docs/first-session-clarity-v1.md` when touching first-session guidance, Refugio loop copy, Preparation guidance or battle summary next-step copy
+10. `docs/behavior-potion-crafting-v1.md` when touching Ossos, crafting, potions, consumables or behavior
+11. `docs/pve-arena-initial-direction.md` when touching product direction, battles, rewards, tuning, onboarding or PVP
+12. The files you intend to touch
 
 For product or design work, also read:
 
@@ -56,6 +57,7 @@ For release, validation or publication work, also read:
 - Do not edit another agent's worktree without explicit user direction.
 - Before touching shared files (`AGENTS.md`, `../../canon/`, `../../08_Coordenacao_Agentes/`, `../README.md`), run `git status --short`, `git worktree list` and read the coordination snapshot.
 - Register active work in `../../08_Coordenacao_Agentes/Kanban/Doing/` or a handoff note with branch, worktree, objective, intended files, docs read, validation plan and next handoff point.
+- For hardening lanes and mode work, use `docs/multi-agent-workflow.md` plus `../../08_Coordenacao_Agentes/Templates/DraxosMobile_Hardening_Doing_TEMPLATE.md` or `../../08_Coordenacao_Agentes/Templates/DraxosMobile_Hardening_Handoff_TEMPLATE.md`.
 
 ## Safe Commands
 
@@ -110,6 +112,8 @@ For user-approved product packages that require human testing on Android, Window
 - `docs/game-design-document.md` is the authoritative implementation GDD.
 - `docs/design-pending.md` is the only live register of unresolved design decisions.
 - `docs/documentation-index.md` classifies live docs, contracts, runbooks, history and design archive.
+- `docs/multi-agent-workflow.md` governs parallel hardening lanes, mode scope and handoff expectations.
+- `docs/hardening-platform-v1-readiness-report.md` is the current coord/docs draft for the hardening wave.
 - `implementation/current-status.md` must remain short and decision-oriented; detailed history belongs in `implementation/tracks/`.
 - Supabase mirrors under `server/` and `supabase/` must stay aligned.
 
