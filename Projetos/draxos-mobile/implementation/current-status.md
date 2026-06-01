@@ -11,8 +11,8 @@
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published remote package: `Foundation Hardening V2`, release root
-  `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`, Cloudflare
-  preview `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`.
+  `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
+  preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Latest implemented package: `Foundation Hardening V2` on
   `codex/draxos-mobile/foundation-hardening-v2`.
 - Active follow-up: human review/playtest of the published V2 hardening build,
@@ -30,18 +30,18 @@ This package is published remotely as the current Internal Alpha multi-mode
 expansion enforcement baseline.
 
 - release root:
-  `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`;
+  `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`;
 - branch: `codex/draxos-mobile/foundation-hardening-v2`;
 - Cloudflare preview:
-  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`;
+  `https://ca946749.draxos-mobile-internal-alpha.pages.dev`;
 - Portal:
-  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+  `https://ca946749.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
 - Web:
-  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+  `https://ca946749.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
 - Android APK:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795/downloads/draxos-mobile-alpha.apk`;
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4/downloads/draxos-mobile-alpha.apk`;
 - PC ZIP:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795/downloads/draxos-mobile-alpha.zip`;
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4/downloads/draxos-mobile-alpha.zip`;
 - remote manifest:
   `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
 
@@ -53,7 +53,9 @@ Scope:
 - Mode decision packs now exist for Openworld, Towerdefense and Cardgame.
 - Backend Proprio boundary inventory and read-only Ops CLI are documented.
 - Data/schema enforcement rejects invalid future mode definition drift.
-- Android release signing is now required for the V2 publish path.
+- Android release signing remains required for broader Android distribution; the
+  hotfix2 correction APK uses `debug_fallback` because the release keystore was
+  unavailable in this worktree.
 - Supabase migrations `202606010003_foundation_hardening_v2.sql` and
   `202606010004_resource_reconciliation_stability.sql` were applied remotely.
 - Edge Function `modes`, Storage artifacts, Cloudflare Pages and the release
@@ -63,18 +65,20 @@ Validation and publication completed:
 
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile FullLocal`: passed.
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`: passed.
-- Android release keystore gate passed; Android export mode is `release`, not
-  `debug_fallback`.
+- Android release keystore gate passed during the original V2 publish path. The
+  later hotfix2 correction was exported with Android `debug_fallback` because
+  the release keystore was unavailable in this worktree.
 - Android/PC/Web exports passed.
 - Remote migrations were applied and Edge Function `modes` was deployed.
 - Storage upload passed for APK, PC ZIP and Web assets.
 - Post-publication login hotfix: after manual Web entry reported
   `http_error: request failed` / Supabase unavailable, the V2 package was
-  reexported with the registered Supabase publishable key and then republished
-  under cache-bust release root
-  `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`; CORS was
+  reexported with the registered Supabase publishable key, Portal/Web links were
+  hardened against stale placeholders, Supabase Auth error normalization was
+  corrected, and the package was republished under cache-bust release root
+  `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`; CORS was
   updated for the current Cloudflare preview and the remote manifest now points
-  to `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`.
+  to `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Hotfix validation passed: `server/functions` Deno check, `supabase/functions`
   Deno check, `DocsOnly`, `RemoteReadOnly`, and remote smoke with anonymous auth
   plus `account/guest`/`account/state`.
@@ -1479,8 +1483,8 @@ economy, content tuning or final art.
 ## Next Step
 
 Foundation Hardening V2 is now the latest Internal Alpha publication: release
-root `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`, preview
-`https://4315dd54.draxos-mobile-internal-alpha.pages.dev`. The next product
+root `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, preview
+`https://ca946749.draxos-mobile-internal-alpha.pages.dev`. The next product
 step is human review/playtest of the V2 hardening build and then dedicated mode
 threads from updated `master`; Arena tuning notes can follow only after manual
 confirmation of the tutorial -> first real Arena -> next difficulty loop,

@@ -18,8 +18,8 @@ Executar Foundation Hardening V2 como pacote de enforcement puro para preparar D
 ## Latest Context
 
 - current platform baseline: `Foundation Hardening V2`
-- current release root: `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`
-- current Cloudflare preview: `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`
+- current release root: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`
+- current Cloudflare preview: `https://ca946749.draxos-mobile-internal-alpha.pages.dev`
 - latest Arena loop package: `Track 21 - Arena Loop Unlock And Friction Pass`
 - Arena contract source: `docs/pve-arena-v1.md`
 - behavior/potion/crafting source: `docs/behavior-potion-crafting-v1.md`
@@ -94,13 +94,15 @@ Executar Foundation Hardening V2 como pacote de enforcement puro para preparar D
 - Android release keystore foi configurada localmente fora do Git.
 - `FullLocal` passou em `2026-06-01` com a keystore release configurada.
 - `ReleaseDryRun` passou em `2026-06-01` com a keystore release configurada.
-- Export Android/PC/Web passou; Android saiu em modo `release`, sem `debug_fallback`.
-- Release root publicado: `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`.
+- Export Android/PC/Web passou. A publicacao V2 original usou keystore release;
+  a republicacao hotfix2 usa Android `debug_fallback` porque a keystore release
+  nao estava disponivel no worktree de correcao.
+- Release root publicado: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`.
 - Mutacoes remotas executadas:
   - migrations `202606010003_foundation_hardening_v2.sql` e `202606010004_resource_reconciliation_stability.sql` aplicadas;
   - Edge Function `modes` publicada;
   - artefatos V2 enviados ao Supabase Storage via `Mode Upload`.
-- Cloudflare Pages package foi gerado, validado contra `index.pck`/`index.wasm` remotos e publicado em `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`.
+- Cloudflare Pages package foi gerado, validado contra `index.pck`/`index.wasm` remotos e publicado em `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Release manifest foi promovido para V2 via `DeployManifest`.
 - `RemoteReadOnly` passou contra o manifest, Portal/Web e artefatos V2.
 - `master` pode ser promovido para baseline V2 apos commit final e validacao da arvore principal.
@@ -123,7 +125,9 @@ Bloqueios resolvidos nesta retomada:
 - Manifest remoto promovido.
 - Remote read-only smokes passaram.
 
-Bloqueio restante: nenhum para a publicacao V2.
+Bloqueio restante: nenhum para Portal/Web/Auth V2. Antes de distribuir Android
+mais amplamente, reaplicar a keystore release no worktree de publicacao e
+reexportar o APK.
 
 ## Validacoes Executadas
 
@@ -134,17 +138,18 @@ Bloqueio restante: nenhum para a publicacao V2.
 - `tools/check_android_release_keystore.ps1 -ProjectDir . -Mode ReleaseCandidate -RequireReleaseKeystore`
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`
 - `tools/export_internal_alpha.ps1 -ProjectDir . -GodotExe D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe`
-- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Plan -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads`
-- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads`
+- Hotfix2 reexportado com `tools/export_internal_alpha.ps1 -ProjectDir . -AllowAndroidDebugFallback`
+- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Plan -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads`
+- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads`
 - `npx -y supabase@2.98.0 db push --linked --dry-run`
 - `npx -y supabase@2.98.0 db push --linked --yes`
 - `npx -y supabase@2.98.0 functions deploy modes --project-ref armxgipvnbbshzqawklw`
-- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
-- `tools/build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795/web`
+- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
+- `tools/build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4/web`
 - Public HEAD checks para Android APK, PC ZIP, Web `index.pck` e Web `index.wasm`.
 - `npx -y wrangler whoami`
 - `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`
-- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795 -StaticSiteBaseUrl https://4315dd54.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
+- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4 -StaticSiteBaseUrl https://ca946749.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`
 
 ## Relatorio

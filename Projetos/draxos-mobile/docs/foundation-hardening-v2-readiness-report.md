@@ -4,8 +4,8 @@
 - Date: `2026-06-01`
 - Integration branch: `codex/draxos-mobile/foundation-hardening-v2`
 - Integration worktree: `D:\Estudio-worktrees\draxos-mobile--codex--foundation-hardening-v2`
-- Release root: `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`
-- Cloudflare preview: `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`
+- Release root: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`
+- Cloudflare preview: `https://ca946749.draxos-mobile-internal-alpha.pages.dev`
 - Current published baseline: `Foundation Hardening V2`
 
 ## Summary
@@ -20,12 +20,15 @@ keystore. Supabase migrations, the `modes` Edge Function, Storage artifacts,
 Cloudflare Pages, release manifest promotion and expanded remote read-only
 smokes all completed for the V2 release root.
 
-After the first manual Web entry attempt reported `http_error: request failed`,
-the same V2 release root was reexported and republished with the registered
-Supabase publishable key and the current Cloudflare preview CORS origin. The
-manifest now points to `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`,
-and remote smoke validates release manifest, anonymous auth, `account/guest` and
-`account/state`.
+After manual Web entry attempts reported `http_error: request failed`, the V2
+build was reexported and republished under cache-bust hotfix2 with the
+registered Supabase publishable key, hardened Portal/Web links, normalized
+Supabase Auth error handling and the current Cloudflare preview CORS origin. The
+manifest now points to `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
+Remote smoke validates release manifest, anonymous auth, `account/guest` and
+`account/state`; a clean-profile Chrome DevTools run clicked `Guest` in the Web
+build and reached `Refugio` with Auth, account, base and telemetry calls
+returning `200`/`204`.
 
 ## Implemented Enforcement
 
@@ -95,7 +98,11 @@ Key gates passed:
 ## Publication - 2026-06-01
 
 Remote mutation was executed after `FullLocal`, `ReleaseDryRun` and the Android
-release keystore gate passed:
+release keystore gate passed for the original V2 publication. The later hotfix2
+republication that corrected Portal/Web entry and auth error handling ran from a
+correction worktree where the release keystore env file was unavailable, so the
+current Android APK is an internal `debug_fallback` artifact while Portal/Web/PC
+and the manifest use the hotfix2 release root:
 
 - Android release keystore created locally outside Git under
   `D:\Estudio-secrets\draxos-mobile\android\`.
@@ -104,10 +111,10 @@ release keystore gate passed:
   `check_android_release_keystore.ps1 -Mode ReleaseCandidate -RequireReleaseKeystore`.
 - `FullLocal` passed after keystore configuration.
 - `ReleaseDryRun` passed after keystore configuration.
-- Android/PC/Web exports passed; Android export mode is `release`, not
-  `debug_fallback`.
+- Android/PC/Web exports passed for hotfix2; Android export mode is
+  `debug_fallback` for this correction package.
 - Release root:
-  `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`.
+  `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`.
 - Supabase project linked locally to `armxgipvnbbshzqawklw`.
 - Remote migrations applied:
   - `202606010003_foundation_hardening_v2.sql`;
@@ -117,7 +124,7 @@ release keystore gate passed:
 - Cloudflare Pages package generated and validated against remote Storage asset
   sizes.
 - Cloudflare Pages deployed:
-  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`.
+  `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - `publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation`
   completed and deployed the `release` Edge Function.
 - `RemoteReadOnly` passed against the published V2 manifest, Portal/Web shell
@@ -126,15 +133,15 @@ release keystore gate passed:
 Published artifact URLs:
 
 - Android APK:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795/downloads/draxos-mobile-alpha.apk`
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4/downloads/draxos-mobile-alpha.apk`
 - PC ZIP:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795/downloads/draxos-mobile-alpha.zip`
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4/downloads/draxos-mobile-alpha.zip`
 - Web asset root:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795/web`
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4/web`
 - Portal:
-  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+  `https://ca946749.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Web:
-  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+  `https://ca946749.draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Remote manifest:
   `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
@@ -147,9 +154,12 @@ Remote HEAD checks passed for:
 
 ## Publication Blockers
 
-No publication blockers remain for V2. Resolved blockers:
+No Web/Portal/Auth publication blockers remain for V2 hotfix2. Android release
+signing must be reapplied before broader Android distribution. Resolved
+blockers:
 
-- Android release keystore is configured locally.
+- Android release keystore was configured for the original V2 publish path, but
+  was not available in this hotfix correction worktree.
 - Supabase URL and project ref are configured locally.
 - Android/PC/Web artifacts exist.
 - Supabase migrations, `modes` function and Storage upload are published remotely.
@@ -162,13 +172,13 @@ No publication blockers remain for V2. Resolved blockers:
 
 Foundation Hardening V2 is the current remote Internal Alpha:
 
-- Release root: `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`
+- Release root: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`
 - Cloudflare preview:
-  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`
+  `https://ca946749.draxos-mobile-internal-alpha.pages.dev`
 - Portal:
-  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+  `https://ca946749.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Web:
-  `https://4315dd54.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+  `https://ca946749.draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Remote manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 Hardening Platform V1 remains preserved as the previous mode-platform baseline.
@@ -178,7 +188,7 @@ Hardening Platform V1 remains preserved as the previous mode-platform baseline.
 Key publication commands completed after the partial handoff was resumed:
 
 1. `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`
-2. `tools/publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795 -StaticSiteBaseUrl https://4315dd54.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
+2. `tools/publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4 -StaticSiteBaseUrl https://ca946749.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
 3. `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`
 
 ## Master Baseline Decision

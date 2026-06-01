@@ -13,8 +13,8 @@ autoriza feature nova; ele define como uma feature futura deve provar que nao
 quebra a fundacao antes de entrar em codigo.
 
 O baseline atual e `Foundation Hardening V2` publicado como Internal Alpha:
-release root `internal-alpha/v0-foundation-hardening-v2-hotfix1-20260601-f8ff795`,
-preview `https://4315dd54.draxos-mobile-internal-alpha.pages.dev`.
+release root `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`,
+preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 Hardening Platform V1 permanece como baseline anterior da plataforma de modos.
 Track 21 Arena Loop Unlock/Friction permanece apenas como contexto
 Arena/Autobattler preservado para tutorial, unlock, loadout travado, buffs,

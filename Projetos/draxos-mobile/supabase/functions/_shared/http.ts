@@ -1,4 +1,5 @@
 export const allowedCorsOrigins = [
+  "https://ca946749.draxos-mobile-internal-alpha.pages.dev",
   "https://68116729.draxos-mobile-internal-alpha.pages.dev",
   "https://4315dd54.draxos-mobile-internal-alpha.pages.dev",
   "https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev",
