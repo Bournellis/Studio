@@ -60,9 +60,9 @@ Track 13 itself remains non-publishing by default. After Track 13, user-approved
 | Artifact smoke remoto | `server/tests/release_artifacts_remote_smoke.ts` | Valida manifest, downloads APK/ZIP via `HEAD` ou `GET` parcial, Portal e Web HTML existentes | Sim, somente leitura, exige URL e publishable key |
 | Export presets | `export_presets.cfg`, `tools/smoke_exports.gd` | Android Alpha, PC Windows Alpha e PC Browser Alpha | Sim |
 | Export script | `tools/export_internal_alpha.ps1` | Gera APK, PC ZIP, Web e metadata local | Syntax check seguro. Execucao gera builds, usar so em release real |
-| Foundation runner | `tools/validate_foundation.ps1` | Runner unico `Quick`/`Client`/`Release`/`Full` com relatorio local | Sim |
+| Foundation runner | `tools/validate_foundation.ps1` | Runner unico `DocsOnly`/`ClientQuick`/`ServerQuick`/`ModePlatform`/`DatabaseLocal`/`FullLocal`/`ReleaseDryRun`/`RemoteReadOnly`/`FullPublish` com relatorio local; aliases antigos preservados | Sim |
 | Release safety check | `tools/check_release_safety.ps1` | Garante publish default seguro e mutacao protegida por confirmacao | Sim |
-| Track 13 readiness | `tools/check_track13_readiness.ps1` | Garante docs/status/mirrors/budget/Kanban alinhados | Sim |
+| Track 13 readiness | `tools/check_track13_readiness.ps1` | Garante docs/status/mirrors/Kanban e budgets duros de shell/presenter alinhados | Sim |
 | Agent ops readiness | `tools/check_agent_ops_foundation.ps1` | Garante entrada de agentes, indice documental, portfolio/Kanban e terminologia viva | Sim |
 | Foundation expansion readiness | `tools/check_foundation_expansion_readiness.ps1` | Garante account/save, ruleset, admin/minigame contracts, migrations espelhadas e testes fundacionais | Sim |
 | Foundation admin/RLS live smoke | `server/tests/foundation_admin_rls_live_smoke.ts` | Prova RLS de account/save/ruleset/admin audit e RPCs admin `service_role`-only em Supabase/Edge local | Sim, somente local |
@@ -81,12 +81,12 @@ Antes de qualquer publicacao futura:
 - `tools/smoke_exports.gd` verde.
 - `tools/validate.gd` e GUT completos verdes quando houver mudanca de runtime/client.
 - Deno check/lint de `server/functions` e `supabase/functions` verdes quando houver mudanca de server/manifest.
-- `tools\validate_foundation.ps1 -Profile Full` verde.
+- `tools\validate_foundation.ps1 -Profile FullLocal` verde quando a stack local estiver disponivel e os budgets de shell/presenter nao estiverem bloqueando; para release sem banco local, `ReleaseDryRun` + checks especificos do pacote.
 - `tools\check_release_safety.ps1` verde.
 - `tools\check_track13_readiness.ps1` verde.
 - `tools\check_agent_ops_foundation.ps1` verde quando alterar a fundacao operacional de agentes.
 - `tools\check_foundation_expansion_readiness.ps1` verde quando alterar account/save, ruleset, admin, minigame, migrations ou readiness.
-- `server/tests/foundation_admin_rls_live_smoke.ts` verde no Full gate local quando alterar admin, RLS, account/save ou grants.
+- `server/tests/foundation_admin_rls_live_smoke.ts` verde no `DatabaseLocal`/`FullLocal` quando alterar admin, RLS, account/save ou grants.
 - `publish_internal_alpha.ps1 -Mode Plan` revisado.
 - `release_manifest_smoke.ts` verde contra o alvo de release.
 - `release_artifacts_remote_smoke.ts` verde somente depois que artefatos ja existirem no remoto.
@@ -146,7 +146,7 @@ Use esta sequencia em worktree de Track 13 sem publicar nada:
 
 ```powershell
 cd <WORKTREE>\Projetos\draxos-mobile
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean:$false
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile FullLocal -RequireClean:$false
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <WORKTREE>\Projetos\draxos-mobile -s res://tools/smoke_exports.gd
 npx -y deno check server/tests/release_manifest_smoke.ts
 npx -y deno check server/tests/release_artifacts_remote_smoke.ts
@@ -184,7 +184,7 @@ Remote read-only smoke, somente com URL remota e publishable key local:
 $env:SUPABASE_URL='https://<project-ref>.supabase.co'
 $env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
 $env:DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS='1'
-npx -y deno run --allow-net --allow-env server/tests/release_artifacts_remote_smoke.ts
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly
 ```
 
 Hash completo opcional para APK/ZIP:

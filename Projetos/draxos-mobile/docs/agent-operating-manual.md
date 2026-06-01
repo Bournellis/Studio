@@ -30,7 +30,7 @@ If a historical track conflicts with these docs, the live docs win. If local pro
 
 Active stage: `TRACK_21_ARENA_LOOP_UNLOCK_FRICTION_PUBLISHED_INTERNAL_ALPHA`.
 
-The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout and Lab Track 16 Alignment are delivered. Foundation Final Polish is the previous published hardening baseline: it syncs live docs, keeps shell facade budgets guarded, strengthens presenter/session slices and adds the local RLS/admin smoke to the Full gate. Track 21 Arena Loop Unlock And Friction Pass is the latest remote Internal Alpha publication from `codex/draxos-mobile/track21-arena-loop-unlock-friction`, release root `internal-alpha/v0-track21-arena-loop-20260531-df9f12d`, preview `https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`.
+The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout and Lab Track 16 Alignment are delivered. Foundation Final Polish is the previous published hardening baseline: it syncs live docs, keeps shell facade budgets guarded, strengthens presenter/session slices and adds the local RLS/admin smoke to the `FullLocal` gate. Track 21 Arena Loop Unlock And Friction Pass is the latest remote Internal Alpha publication from `codex/draxos-mobile/track21-arena-loop-unlock-friction`, release root `internal-alpha/v0-track21-arena-loop-20260531-df9f12d`, preview `https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`.
 
 Historical app-shell loop baseline from Foundation Loop UX Pass 01, preserved for context but not the current product reading:
 
@@ -57,7 +57,7 @@ Foundation Expansion Readiness adds:
 
 Foundation Final Polish adds:
 
-- `boot.gd` and `hub_surface_presenter.gd` facade budgets guarded by validation;
+- `boot.gd`, `boot_runtime.gd`, `hub_surface_presenter.gd` and `hub_surface_full_presenter.gd` budgets guarded by validation; oversized runtime/presenter files are blockers, not accepted hardening state;
 - read-only `SessionStore` domain slices for presenters touched by the split;
 - source guards against presenters calling Supabase, telemetry, direct mutations or direct request-id creation;
 - `foundation_admin_rls_live_smoke.ts` proving local RLS/admin behavior with `anon/authenticated` blocked and `service_role` allowed;
@@ -133,19 +133,21 @@ Use the smallest profile that proves the change, then broaden when touching shar
 
 | Change | Minimum validation |
 |---|---|
-| Docs only | `git diff --check`; `validate_foundation.ps1 -Profile Quick` when docs affect status/operation |
-| PowerShell tools | `validate_foundation.ps1 -Profile Release` |
-| Godot client | Godot `validate.gd`, GUT client, then `validate_foundation.ps1 -Profile Client` |
+| Docs only | `git diff --check`; `validate_foundation.ps1 -Profile DocsOnly` when docs affect status/operation |
+| PowerShell tools | `validate_foundation.ps1 -Profile ReleaseDryRun` |
+| Godot client | Godot `validate.gd`, GUT client, then `validate_foundation.ps1 -Profile ClientQuick` |
 | Entry/Refugio/Battle layout | `tools/smoke_responsive_layout.gd` plus relevant GUT/client validation |
 | Backend/functions | `npx -y deno task --cwd server/functions check` and `npx -y deno task --cwd supabase/functions check` |
-| Release safety | `validate_foundation.ps1 -Profile Release` plus `tools/check_release_safety.ps1` |
-| Foundation or cross-cutting work | `validate_foundation.ps1 -Profile Full` plus explicit Godot/GUT/Deno commands |
-| Foundation expansion readiness | `tools/check_foundation_expansion_readiness.ps1`, Deno ruleset/schema tests, GUT shell contracts, then `validate_foundation.ps1 -Profile Quick` or broader |
+| Mode platform | `validate_foundation.ps1 -Profile ModePlatform` |
+| Database/RLS local | `validate_foundation.ps1 -Profile DatabaseLocal` when local Supabase/Edge stack is running |
+| Release safety | `validate_foundation.ps1 -Profile ReleaseDryRun` plus `tools/check_release_safety.ps1` |
+| Foundation or cross-cutting work | `validate_foundation.ps1 -Profile FullLocal` plus explicit Godot/GUT/Deno commands when needed |
+| Foundation expansion readiness | `tools/check_foundation_expansion_readiness.ps1`, Deno ruleset/schema tests, GUT shell contracts, then `validate_foundation.ps1 -Profile ServerQuick` or broader |
 
 Default full gate:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile FullLocal -RequireClean
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
