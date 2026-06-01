@@ -4,8 +4,8 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Minigame Platform V1 - Official Modes + Scroll Drag Hotfix`
-- Active stage status: `PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Arena PVE Sequence Fix`
+- Active stage status: `IMPLEMENTED_LOCAL`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
@@ -15,9 +15,11 @@
 - Latest implemented package: `Scroll Drag Release Fix`
   on branch `codex/draxos-mobile/scroll-drag-release-fix`, published as
   `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`.
-- Active follow-up: human playtest of scroll screens with mouse drag/release,
-  plus the Mode Hub, Basebuilder entry, Autobattler entry, Openworld Bosque
-  fullscreen loop, staged disabled cards and Labs Dev Ops visibility.
+- Latest local fix: `Arena PVE Sequence Fix`
+  on branch `codex/draxos-mobile/arena-pve-sequence-fix`; not yet published.
+- Active follow-up: publish the Arena PVE sequence fix, then human playtest the
+  Arena flow from tutorial clear into the first real Arena and the next
+  difficulty unlock.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -75,6 +77,41 @@ Validation and publication completed:
 Next human check: open scroll-heavy panels in Web/PC, drag with the mouse,
 release outside the panel, move the mouse without holding the button and confirm
 the screen no longer keeps scrolling as if grabbed.
+
+## Arena PVE Sequence Fix - 2026-06-01
+
+This local fix addresses a real remote reproduction where a fresh player could
+clear the tutorial, open `Arena Curta Das Cinzas - Intro`, win duel 1, then lose
+duel 2 and remain blocked from further Arena progression.
+
+Scope:
+
+- Added shared PVE Arena combatant tuning for server and Supabase functions.
+- The first real Arena runway now uses readable pre-familiar opponents derived
+  from enemy legal unlocks and the Arena target sequence.
+- Enemy display names still come from the PVE enemy catalog, while source bot
+  builds provide the archetype.
+- First real rank-zero Arena clears are no longer reduced as tutorial repeats;
+  tutorial repeats remain protected by the tutorial completion marker.
+- Added regression coverage for the real sequence: post-tutorial player clears
+  the first real three-duel Arena and its first-clear XP reaches the next
+  difficulty unlock.
+
+Validation completed locally:
+
+- Real remote reproduction before patch confirmed the blocker:
+  `arena_cinzas_curta:s1_d00_intro` reached duel 2, lost to the opponent, and
+  `arena_veu_curta:s1_d02_iniciado` stayed locked with
+  `Conclua Arena Curta Das Cinzas`.
+- `npx -y deno fmt` on changed server/supabase Arena files and tests: passed.
+- `npx -y deno lint` on new/changed Arena tuning tests/modules: passed.
+- `npx -y deno test --allow-read server/tests/arena_pve_sequence_tuning_test.ts server/tests/arena_loop_unlock_friction_test.ts server/tests/arena_consistency_pass_schema_test.ts server/tests/battle_combatants_test.ts`:
+  passed (`20` tests).
+- `npx -y deno task --cwd server/functions check`: passed.
+- `npx -y deno task --cwd supabase/functions check`: passed.
+- `git diff --check`: passed.
+
+Publication status: pending explicit release/deploy step.
 
 ## Minigame Platform V1 - Official Modes
 
