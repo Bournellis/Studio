@@ -5,7 +5,7 @@
 - Projeto: `Projetos/draxos-mobile`
 - Branch: `codex/draxos-mobile/openworld-node2d-qol`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--openworld-node2d-qol`
-- Status: implementado e validado localmente
+- Status: publicado em Internal Alpha e validado remotamente
 
 ## Objetivo
 
@@ -14,7 +14,10 @@ Migrar o Bosque Openworld para uma fundacao runtime 2D com wrapper `Control` com
 ## Escopo Fechado
 
 - Permitido: QoL, runtime local, input, colisao, bordas, layering, testes, smokes e documentacao local do Openworld.
-- Bloqueado: inimigos, combate, mapa novo, recompensas novas, economia nova, backend novo, endpoint novo, migration nova, mudanca no Reward Bridge e publicacao de Internal Alpha.
+- Bloqueado no escopo de implementacao original: inimigos, combate, mapa novo,
+  recompensas novas, economia nova, backend novo, endpoint novo, migration nova
+  e mudanca no Reward Bridge. Publicacao de Internal Alpha foi autorizada
+  separadamente pelo usuario em 2026-06-01.
 
 ## Base Docs Lidos
 
@@ -61,9 +64,42 @@ Migrar o Bosque Openworld para uma fundacao runtime 2D com wrapper `Control` com
 - `tools/smoke_modes_visual_layout.gd`: passou.
 - Mode definitions nao foram alterados; validacao especifica de descriptors nao
   foi necessaria.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`: passou.
+- Android/PC/Web export: passou; Android `debug_fallback` aceito para playtest
+  funcional.
+- `publish_internal_alpha.ps1 -Mode Plan/Package/Upload -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-20260601-5707167 -PublicDownloads`: passou.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <versioned-web-root>`:
+  passou.
+- Cloudflare Pages deploy: passou.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-20260601-5707167 -StaticSiteBaseUrl https://2cca25db.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`: passou.
+- Supabase Edge Functions redeploy com CORS default para
+  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev`: passou.
+- CORS GET check do preview atual contra `healthcheck`: passou.
+- `DRAXOS_REMOTE_CORS_ORIGIN=https://2cca25db.draxos-mobile-internal-alpha.pages.dev`
+  `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`:
+  passou.
+
+## Publicacao
+
+- release root:
+  `internal-alpha/v0-openworld-node2d-qol-20260601-5707167`;
+- Cloudflare preview:
+  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev`;
+- Portal:
+  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Web:
+  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-20260601-5707167/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-20260601-5707167/downloads/draxos-mobile-alpha.zip`;
+- manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
 
 ## Handoff Point
 
-Handoff pronto para playtest humano local. Runtime Node2D integrado, testes e
-smokes atualizados, validacao executada e docs locais refletem que o pacote e
-QoL/fundacao sem expansao de conteudo.
+Runtime Node2D integrado, testes e smokes atualizados, publicacao remota
+executada, snapshots atualizados e docs locais refletem que o pacote e
+QoL/fundacao sem expansao de conteudo. Proximo passo: playtest humano do
+preview publicado, especialmente movimento, colisao, bordas, y-depth e
+interferencia de HUD/input.

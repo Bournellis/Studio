@@ -18,8 +18,8 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Arena PVE Inicial
 
-- `draxos-mobile/`: mobile-first Draxos PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Foundation Hardening V2 is the latest remote Internal Alpha baseline and is closed for functional playtest: release root `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`, Android APK republished with `debug_fallback` accepted for playtest while release signing is deferred to broader Android distribution, remote V2 migrations, Edge Function `modes`, Storage, Cloudflare Pages, manifest and RemoteReadOnly validation published. Hardening Platform V1 remains the previous mode-platform baseline. Track 13 release safety and Track 14 agent ops remain preserved baselines. Track 21 Arena Loop Unlock/Friction remains the Autobattler/Arena PVE context; Web Battle Lab/Progression Lab remain served by Edge Function `lab-runner` behind the same Supabase email/password alpha account gate.
-  - Priority/status: `P2_IMPLEMENTACAO - FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`
+- `draxos-mobile/`: mobile-first Draxos PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Openworld Node2D QoL is the latest remote Internal Alpha package and is ready for functional playtest: release root `internal-alpha/v0-openworld-node2d-qol-20260601-5707167`, preview `https://2cca25db.draxos-mobile-internal-alpha.pages.dev`, with WASD/setas, free mouse/touch joystick, chest/tree/rock collision, border walls and y-depth/layers. Android APK uses `debug_fallback`, accepted for playtest while release signing is deferred to broader Android distribution. Foundation Hardening V2 is the latest remote Internal Alpha baseline for hardening/live-doc gates and remains the previous hardening/multi-mode gate baseline for this package: release root `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`; Hardening Platform V1 remains the previous mode-platform baseline. Track 13 release safety and Track 14 agent ops remain preserved baselines. Track 21 Arena Loop Unlock/Friction remains the Autobattler/Arena PVE context; Web Battle Lab/Progression Lab remain served by Edge Function `lab-runner` behind the same Supabase email/password alpha account gate.
+  - Priority/status: `P2_IMPLEMENTACAO - OPENWORLD_NODE2D_QOL_PUBLISHED_INTERNAL_ALPHA`
   - Canonical local base for new work after integration: updated `master`; branch mode work from a dedicated worktree using `docs/multi-agent-workflow.md`.
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
@@ -56,7 +56,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: human functional playtest of the published Foundation Hardening V2 build, then dedicated mode threads from updated `master`.
+  - Current next step: human functional playtest of the published Openworld Node2D QoL build, then decide Bosque polish or dedicated mode threads from updated `master`.
 
 ## Arquivo De Design
 

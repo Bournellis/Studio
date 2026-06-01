@@ -4,22 +4,25 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Foundation Hardening V2`
+- Active stage: `Openworld Node2D QoL Foundation`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Foundation Hardening V2`, release root
+- Latest published remote package: `Openworld Node2D QoL Foundation`, release
+  root `internal-alpha/v0-openworld-node2d-qol-20260601-5707167`, Cloudflare
+  preview `https://2cca25db.draxos-mobile-internal-alpha.pages.dev`.
+- Latest implemented package: `Openworld Node2D QoL Foundation` on
+  `codex/draxos-mobile/openworld-node2d-qol`.
+- Previous hardening baseline: `Foundation Hardening V2`, release root
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
-- Latest implemented package: `Foundation Hardening V2` on
-  `codex/draxos-mobile/foundation-hardening-v2`.
-- Latest local mode package: `Openworld Node2D QoL Foundation` on
-  `codex/draxos-mobile/openworld-node2d-qol` (not published).
-- Active follow-up: human functional playtest of the published V2 hardening
-  build, plus local playtest of the Openworld Node2D QoL branch before any
-  publication request.
+- Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is Openworld Node2D QoL.
+- Active follow-up: human functional playtest of the published Openworld Node2D
+  QoL package, especially Web/PC WASD, free mouse/touch joystick, obstacle
+  collision, border walls, y-depth ordering, HUD/input interference, and
+  collection/deposit flow.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -29,12 +32,26 @@
 
 ## Openworld Node2D QoL Foundation - 2026-06-01
 
-This local mode package prepares the existing Openworld Bosque slice for better
-playtest feel without expanding gameplay.
+This published mode package prepares the existing Openworld Bosque slice for
+better playtest feel without expanding gameplay.
 
 - branch: `codex/draxos-mobile/openworld-node2d-qol`;
 - worktree:
   `D:\Estudio-worktrees\draxos-mobile--codex--openworld-node2d-qol`;
+- release root:
+  `internal-alpha/v0-openworld-node2d-qol-20260601-5707167`;
+- Cloudflare preview:
+  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev`;
+- Portal:
+  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Web:
+  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-20260601-5707167/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-20260601-5707167/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`;
 - scope: `OpenworldForestScreen` remains the `Control` shell screen, while the
   Bosque runtime now uses an internal `SubViewport`/`Node2D` world;
 - controls: WASD/setas on PC/Web, free mouse/touch joystick in empty viewport
@@ -46,8 +63,10 @@ playtest feel without expanding gameplay.
 
 Boundaries preserved:
 
-- no new enemies, combat, map, rewards, economy, backend, migration, endpoint,
-  Reward Bridge change or Internal Alpha publication;
+- no new enemies, combat, map, rewards, economy, backend, migration, endpoint
+  or Reward Bridge change;
+- publication only repoints the standard Internal Alpha release manifest to this
+  package and its versioned artifacts;
 - `OpenworldForestModel` remains the authority for collection, pocket, chest,
   craft and result payload.
 
@@ -56,15 +75,37 @@ Validation completed:
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`: passed;
 - `tools/smoke_openworld_forest.gd`: passed;
 - `tools/smoke_modes_visual_layout.gd`: passed.
+- Android/PC/Web export passed; Android uses `debug_fallback` because release
+  keystore was unavailable in this worktree.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`: passed.
+- `publish_internal_alpha.ps1 -Mode Plan -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-20260601-5707167 -PublicDownloads`: passed.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-20260601-5707167 -PublicDownloads`: passed.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-20260601-5707167 -PublicDownloads -ConfirmRemoteMutation`: passed.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <versioned-web-root>`:
+  passed.
+- Cloudflare Pages deploy passed, preview
+  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-20260601-5707167 -StaticSiteBaseUrl https://2cca25db.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`: passed.
+- Supabase Edge Functions were redeployed after adding
+  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev` as the default
+  CORS origin for the current preview while preserving the V2 preview in the
+  allowlist.
+- CORS GET check passed for the current preview against `healthcheck`.
+- `DRAXOS_REMOTE_CORS_ORIGIN=https://2cca25db.draxos-mobile-internal-alpha.pages.dev`
+  `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`:
+  passed.
 
-Next human check: playtest the local Openworld branch for movement feel,
-collision fairness, y-depth readability and HUD/input interference before
-deciding whether to polish further or package a separate Internal Alpha.
+Publication status: published as the current Internal Alpha package for
+Openworld QoL playtest.
+
+Next human check: playtest the published Openworld package for movement feel,
+collision fairness, y-depth readability, HUD/input interference and
+collection/deposit friction.
 
 ## Foundation Hardening V2 - 2026-06-01
 
-This package is published remotely and operationally closed out as the current
-Internal Alpha multi-mode expansion enforcement baseline.
+This package is preserved as the previous remotely published Internal Alpha
+multi-mode expansion enforcement baseline.
 
 - release root:
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`;
@@ -1520,16 +1561,18 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Foundation Hardening V2 is now the latest Internal Alpha publication: release
-root `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, preview
-`https://ca946749.draxos-mobile-internal-alpha.pages.dev`. The next product
-step is human review/playtest of the V2 hardening build and then dedicated mode
-threads from updated `master`; Arena tuning notes can follow only after manual
-confirmation of the tutorial -> first real Arena -> next difficulty loop,
-including potion consumption, remote arena selection, buff selection,
-summary/claim behavior and Web Battle Lab/Progression Lab remote generation
-through the same Supabase email/password Internal Alpha gate. Do not
-open PVP, victory prediction, opponent counter-picks, custom thresholds,
+Openworld Node2D QoL Foundation is now the latest Internal Alpha publication:
+release root `internal-alpha/v0-openworld-node2d-qol-20260601-5707167`, preview
+`https://2cca25db.draxos-mobile-internal-alpha.pages.dev`. The next product
+step is human review/playtest of the published Openworld Bosque feel: WASD,
+free mouse/touch joystick, obstacle collision, border walls, y-depth/layers,
+HUD/input interference, collection and chest deposit. Foundation Hardening V2
+remains the previous hardening/multi-mode gate baseline. Arena tuning notes can
+follow only after manual confirmation of the tutorial -> first real Arena ->
+next difficulty loop, including potion consumption, remote arena selection,
+buff selection, summary/claim behavior and Web Battle Lab/Progression Lab
+remote generation through the same Supabase email/password Internal Alpha gate.
+Do not open PVP, victory prediction, opponent counter-picks, custom thresholds,
 enemy-specific behavior, spell priorities, direct chat, helps, contributions,
 moderation, tuning numbers, new weapons, new spells, economy, new potions,
 crafting expansion or broader replay controls beyond the Arena PVE package
