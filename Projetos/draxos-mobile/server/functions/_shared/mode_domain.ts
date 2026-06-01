@@ -11,6 +11,7 @@ export const OPENWORLD_RELEASE_CHANNEL = "internal_alpha";
 
 export const MODE_ENDPOINT_SESSION_START = "modes/session/start";
 export const MODE_ENDPOINT_SESSION_COMPLETE = "modes/session/complete";
+export const MODE_ENDPOINT_SESSION_ABANDON = "modes/session/abandon";
 
 export interface ModeRegistryRow {
   mode_id: string;

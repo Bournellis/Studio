@@ -6,10 +6,16 @@ const ADMIN_MIGRATION_PATH =
   "supabase/migrations/202606010002_modes_admin_audit_hardening.sql";
 const ADMIN_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606010002_modes_admin_audit_hardening.sql";
+const HARDENING_V2_MIGRATION_PATH =
+  "supabase/migrations/202606010003_foundation_hardening_v2.sql";
+const HARDENING_V2_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606010003_foundation_hardening_v2.sql";
 const EDGE_PATH = "server/functions/modes/index.ts";
 const SUPABASE_EDGE_PATH = "supabase/functions/modes/index.ts";
 const HANDLER_PATH = "server/functions/modes/mode_handler.ts";
 const SUPABASE_HANDLER_PATH = "supabase/functions/modes/mode_handler.ts";
+const SUPPORT_PATH = "server/functions/modes/mode_support.ts";
+const SUPABASE_SUPPORT_PATH = "supabase/functions/modes/mode_support.ts";
 
 Deno.test("mode platform migration is mirrored in server schema", async () => {
   const supabaseMigration = await readProjectText(MIGRATION_PATH);
@@ -30,6 +36,17 @@ Deno.test("mode admin audit hardening migration is mirrored in server schema", a
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema admin hardening migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("foundation hardening v2 migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(HARDENING_V2_MIGRATION_PATH);
+  const serverMirror = await readProjectText(HARDENING_V2_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema hardening v2 migration should mirror supabase migration exactly",
   );
 });
 
@@ -94,16 +111,20 @@ Deno.test("mode platform declares registry, sessions, progress and reward claims
 Deno.test("mode reward bridge is service-role, idempotent and ledgers resources", async () => {
   const migration = await migrationText();
 
-  for (
-    const functionName of ["mode_session_start_v1", "mode_session_complete_v1"]
-  ) {
+  const hardeningV2Migration = normalizeSql(await readProjectText(HARDENING_V2_MIGRATION_PATH));
+
+  for (const [functionName, source] of [
+    ["mode_session_start_v1", migration],
+    ["mode_session_complete_v1", migration],
+    ["mode_session_abandon_v1", hardeningV2Migration],
+  ] as const) {
     assertIncludes(
-      migration,
+      source,
       `create or replace function public.${functionName}`,
       `migration should declare ${functionName}`,
     );
     assertRegex(
-      migration,
+      source,
       new RegExp(
         `revoke all on function public\\.${functionName}\\([^;]+\\) from public, anon, authenticated;`,
         "s",
@@ -111,7 +132,7 @@ Deno.test("mode reward bridge is service-role, idempotent and ledgers resources"
       `${functionName} should be revoked from public roles`,
     );
     assertRegex(
-      migration,
+      source,
       new RegExp(
         `grant execute on function public\\.${functionName}\\([^;]+\\) to service_role;`,
         "s",
@@ -120,13 +141,18 @@ Deno.test("mode reward bridge is service-role, idempotent and ledgers resources"
     );
   }
 
-  for (const endpoint of ["modes/session/start", "modes/session/complete"]) {
-    assertIncludes(
-      migration,
-      endpoint,
-      `${endpoint} should reserve idempotency`,
-    );
-  }
+  assertIncludes(migration, "modes/session/start", "start should reserve idempotency");
+  assertIncludes(migration, "modes/session/complete", "complete should reserve idempotency");
+  assertIncludes(
+    hardeningV2Migration,
+    "modes/session/abandon",
+    "abandon should reserve idempotency",
+  );
+  assertIncludes(
+    hardeningV2Migration,
+    "public.reserve_idempotency",
+    "abandon should reject reused request_id with a different hash through reserve_idempotency",
+  );
   assertIncludes(
     migration,
     "insert into public.resource_transactions",
@@ -149,6 +175,8 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
   const supabaseEdge = await readProjectText(SUPABASE_EDGE_PATH);
   const handler = await readProjectText(HANDLER_PATH);
   const supabaseHandler = await readProjectText(SUPABASE_HANDLER_PATH);
+  const support = await readProjectText(SUPPORT_PATH);
+  const supabaseSupport = await readProjectText(SUPABASE_SUPPORT_PATH);
 
   assertEq(
     normalizeNewlines(edge),
@@ -160,6 +188,11 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
     normalizeNewlines(supabaseHandler),
     "server and supabase mode handlers should match exactly",
   );
+  assertEq(
+    normalizeNewlines(support),
+    normalizeNewlines(supabaseSupport),
+    "server and supabase mode support modules should match exactly",
+  );
   assertIncludes(
     edge,
     "mode_handler.ts",
@@ -170,21 +203,25 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
     "export class ModeHandler",
     "mode handler should be internally modularized",
   );
+  assertIncludes(
+    handler.toLowerCase(),
+    "from \"./mode_support.ts\"",
+    "mode handler should delegate shared support concerns to mode_support",
+  );
   for (
     const route of [
-      "/registry",
-      "/state",
-      "/session/start",
-      "/session/complete",
-      "/session/abandon",
-      "/analytics/summary",
-      "/admin/disable",
-      "/admin/enable",
-      "/admin/session/expire",
-      "/admin/session/invalidate",
-      "/admin/reconcile",
-      "/admin/compensate",
-      "saveTypeFromRequest",
+      "registry",
+      "state",
+      "session_start",
+      "session_complete",
+      "session_abandon",
+      "analytics_summary",
+      "admin_disable",
+      "admin_enable",
+      "admin_session_expire",
+      "admin_session_invalidate",
+      "admin_reconcile",
+      "admin_compensate",
       "validateApiVersion",
       "request_hash",
     ]
@@ -195,6 +232,77 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
       `mode handler should include ${route}`,
     );
   }
+  for (
+    const supportSymbol of [
+      "export function resolveRoute",
+      "export async function loadModeState",
+      "export function decodeAuthContext",
+      "export async function restRequest",
+      "export function mapModeDatabaseError",
+    ]
+  ) {
+    assertIncludes(
+      support.toLowerCase(),
+      supportSymbol,
+      `mode support should expose ${supportSymbol}`,
+    );
+  }
+  assertLessOrEq(
+    lineCount(handler),
+    700,
+    "mode_handler.ts should stay below the V2 route/facade budget",
+  );
+  assertLessOrEq(
+    lineCount(support),
+    700,
+    "mode_support.ts should stay below the V2 support budget",
+  );
+});
+
+Deno.test("mode session abandon is RPC-backed and hash guarded", async () => {
+  const migration = normalizeSql(await readProjectText(HARDENING_V2_MIGRATION_PATH));
+  const handler = normalizeCode(await readProjectText(HANDLER_PATH));
+  const abandonSection = codeSection(
+    handler,
+    "async function handleSessionAbandon",
+    "async function handleAnalyticsSummary",
+  );
+
+  assertIncludes(
+    migration,
+    "create or replace function public.mode_session_abandon_v1",
+    "hardening v2 should declare mode_session_abandon_v1",
+  );
+  assertIncludes(
+    migration,
+    "public.reserve_idempotency",
+    "abandon RPC should reserve idempotency",
+  );
+  assertIncludes(
+    migration,
+    "public.complete_idempotency",
+    "abandon RPC should complete idempotency",
+  );
+  assertIncludes(
+    migration,
+    "p_request_hash text",
+    "abandon RPC should require p_request_hash",
+  );
+  assertIncludes(
+    handler,
+    "mode_endpoint_session_abandon",
+    "handler should compute canonical abandon request hash",
+  );
+  assertIncludes(
+    abandonSection,
+    "rpc/mode_session_abandon_v1",
+    "abandon handler should call the service-role RPC",
+  );
+  assertNotIncludes(
+    abandonSection,
+    'method: "patch"',
+    "abandon handler should not PATCH mode_sessions directly",
+  );
 });
 
 Deno.test("mode admin RPCs are audited, service-role only and hash guarded", async () => {
@@ -329,4 +437,14 @@ function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(message);
   }
+}
+
+function assertLessOrEq(actual: number, expected: number, message: string): void {
+  if (actual > expected) {
+    throw new Error(`${message}. Actual=${actual} Expected<=${expected}`);
+  }
+}
+
+function lineCount(value: string): number {
+  return normalizeNewlines(value).split("\n").length;
 }
