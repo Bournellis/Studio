@@ -34,7 +34,7 @@ Toda mutacao exige:
 
 ## Schema
 
-Migration: `202605310001_minigame_platform_v0.sql`.
+Migration: `202606010000_minigame_platform_v0.sql`.
 
 Tabelas:
 
@@ -112,7 +112,7 @@ Resposta de sucesso de complete:
 O contrato v0 foi publicado no Internal Alpha a partir da branch
 `codex/draxos-mobile/rpgsuave-integrated-alpha`.
 
-- Migration remota aplicada: `202605310001_minigame_platform_v0.sql`.
+- Migration remota aplicada: `202606010000_minigame_platform_v0.sql`.
 - Edge Function remota publicada: `minigames`.
 - Release root:
   `internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969`.
