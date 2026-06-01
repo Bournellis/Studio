@@ -1,22 +1,23 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-05-31`
+- Ultima atualizacao: `2026-06-01`
 - Status: `VIVO`
 
 ---
 
 ## Leitura Atual
 
-DraxosMobile e um jogo mobile-first de progressao persistente construido sobre quatro pilares reais:
+DraxosMobile e um jogo mobile-first de progressao persistente construido sobre cinco modos oficiais:
 
-- Base builder.
-- Arena PVE inicial de duelos assincronos.
-- PVP assincrono posterior.
-- Social basico depois que a rotina PVE/PVP estiver clara.
+- `Basebuilder`: Refugio/Base atuais.
+- `Autobattler`: Arena PVE atual e futuro PVP async dentro do mesmo modo.
+- `Openworld`: primeiro slice `Openworld Bosque`.
+- `Towerdefense`: staged/disabled ate contrato proprio.
+- `Cardgame`: staged/disabled, sem relacao mecanica com `draxos-roguelike-cardgame`.
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa atual e `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, sobre `FOUNDATION_FINAL_POLISH_DELIVERED`.
+A etapa atual combina `PVE_ARENA_INITIAL_DIRECTION_APPROVED` com `MINIGAME_PLATFORM_V1_MODES`: a Arena PVE continua sendo o primeiro core de produto, agora formalmente dentro do modo `Autobattler`, e a plataforma de modos governa entrada, registry, admin, analytics e rewards.
 
 ## Foco Imediato
 

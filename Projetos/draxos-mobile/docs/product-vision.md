@@ -1,6 +1,6 @@
 # DraxosMobile - Product Vision
 
-- Ultima atualizacao: `2026-05-31`
+- Ultima atualizacao: `2026-06-01`
 - Status: `LOCAL_PRODUCT_VISION - fonte viva do produto DraxosMobile`
 - Escopo: direcao de longo prazo, limites de produto, plataforma, economia, social, live ops, backend e monetizacao.
 
@@ -18,6 +18,8 @@ O jogador nao e o heroi. O jogador e um Draxos em ascensao.
 
 Etapa atual: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, sobre `FOUNDATION_FINAL_POLISH_DELIVERED`.
 
+Atualizacao V1 de plataforma: DraxosMobile agora organiza sua visao jogavel em cinco modos oficiais governados por um registry unico: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` e `Openworld`. A Arena PVE atual pertence ao `Autobattler`; Refugio/Base atuais pertencem ao `Basebuilder`; o antigo prototipo Rpgsuave foi renomeado de verdade para `Openworld`, com `Openworld Bosque` como primeiro slice `openworld/forest`.
+
 O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish fecha essa base como gate local antes de tuning.
 
 A decisao de produto seguinte foi escolhida: o early game deve ser uma Arena PVE inicial, sem cooldown de combate, com tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado antes da arena, vida resetada a 100% em cada duelo, buffs temporarios leves de stat entre lutas e comportamento ajustavel antes do proximo inimigo. A direcao viva esta em `docs/pve-arena-initial-direction.md`.
@@ -32,22 +34,23 @@ Nesta etapa, nomes, spells, armas, numeros de economia, Battle Pass, visual fina
 
 Ordem de foco:
 
-1. Arena PVE inicial e tuning integrado de leveling/upgrades/recompensas/poder.
-2. Base builder e preparacao como suporte da Arena PVE.
-3. PVP assincrono posterior, com bots como fallback transparente.
-4. Social e competicao quando a rotina PVE/PVP estiver clara.
-5. Armas, spells, economia, balanceamento fino e conteudo detalhado.
+1. Plataforma V1 de modos: registry, Hub de Modos, `/modes`, admin/ops, analytics e disable/rollback.
+2. Arena PVE inicial dentro do `Autobattler` e tuning integrado de leveling/upgrades/recompensas/poder.
+3. `Basebuilder` como suporte persistente da rotina.
+4. `Openworld Bosque` como Internal Alpha jogavel para validar sensacao de exploracao.
+5. PVP assincrono posterior, social, competicao, Towerdefense e Cardgame quando seus contratos proprios existirem.
 
 ## Pilares
 
 1. **Progressao persistente e legivel**: o jogador sempre entende o que ficou mais forte: personagem, instrumentos, spells, doutrinas, familiares, base, Arena PVE, ranking ou economia.
-2. **Arena PVE como core inicial**: o early game funciona sem playerbase, com listas curtas de inimigos, dificuldade escalavel, loadout travado, buffs temporarios de stat e duelos claros.
-3. **Batalha assincrona server-authoritative**: o servidor resolve combate, recompensa, ranking e economia; o cliente Godot anima replay, explica eventos e facilita decisao.
-4. **Base como centro de rotina**: o Refugio concentra recursos, upgrades, filas, coletas, atalhos e proximo objetivo.
-5. **PVP como expansao competitiva**: PVP entra depois que Arena PVE, build e poder estiverem compreensiveis; bots sao fallback/simulacao, nao fundacao escondida.
-6. **Social leve, persistente e util**: amigos, guilda, chat, ajudas e ranking aumentam retencao sem exigir partida realtime.
-7. **Economia testavel e auditavel**: fontes e gastos importantes devem ser rastreaveis; premium deve ser calibrado por dados e Progression Lab.
-8. **Multiplataforma pragmatica**: Android e o canal primario; PC executavel e PC browser existem para teste, acessibilidade e operacao do alpha.
+2. **Modos oficiais em registry unico**: Basebuilder, Autobattler, Towerdefense, Cardgame e Openworld sao pilares de produto, nao atalhos de Labs.
+3. **Arena PVE como core inicial do Autobattler**: o early game funciona sem playerbase, com listas curtas de inimigos, dificuldade escalavel, loadout travado, buffs temporarios de stat e duelos claros.
+4. **Batalha assincrona server-authoritative**: o servidor resolve combate, recompensa, ranking e economia; o cliente Godot anima replay, explica eventos e facilita decisao.
+5. **Basebuilder como centro de rotina**: o Refugio concentra recursos, upgrades, filas, coletas, atalhos e proximo objetivo.
+6. **PVP como expansao competitiva**: PVP entra depois que Arena PVE, build e poder estiverem compreensiveis; bots sao fallback/simulacao, nao fundacao escondida.
+7. **Social leve, persistente e util**: amigos, guilda, chat, ajudas e ranking aumentam retencao sem exigir partida realtime.
+8. **Economia testavel e auditavel**: fontes e gastos importantes devem ser rastreaveis; premium deve ser calibrado por dados e Progression Lab.
+9. **Multiplataforma pragmatica**: Android e o canal primario; PC executavel e PC browser existem para teste, acessibilidade e operacao do alpha.
 
 ## Anti-Pilares
 

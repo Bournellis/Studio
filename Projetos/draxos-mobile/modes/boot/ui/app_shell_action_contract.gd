@@ -54,7 +54,7 @@ const ACTION_SHOW_SHOP := "show_shop"
 const ACTION_BUY_PREMIUM_ALPHA := "buy_premium_alpha"
 const ACTION_GRANT_DIAMOND_ALPHA := "grant_diamond_alpha"
 const ACTION_CLAIM_DAILY_REWARD := "claim_daily_reward"
-const ACTION_OPEN_MINIGAME_SHELL := "open_minigame_shell"
+const ACTION_OPEN_MODE_SHELL := "open_mode_shell"
 
 const PREFIX_SELECT_BASE_STRUCTURE := "select_base_structure:"
 const PREFIX_UPGRADE_BASE_STRUCTURE := "upgrade_base_structure:"
@@ -72,7 +72,7 @@ const PREFIX_DISABLE_SPELL_BEHAVIOR := "disable_spell_behavior:"
 const PREFIX_ARENA_START := "arena_start:"
 const PREFIX_ARENA_CHOOSE_BUFF := "arena_choose_buff:"
 const PREFIX_BATTLE_REPLAY := RouteContract.ACTION_BATTLE_REPLAY_PREFIX
-const PREFIX_OPEN_MINIGAME_SHELL := "open_minigame_shell:"
+const PREFIX_OPEN_MODE_SHELL := "open_mode_shell:"
 
 const PRODUCT_ALPHA_ENERGY_PACK := "alpha_energy_pack_small"
 const PRODUCT_ALPHA_BATTLE_PASS_PREMIUM := "alpha_battle_pass_premium"
@@ -115,6 +115,8 @@ static func update_gate_blocks_action(action_id: String, update_gate: Dictionary
 	if replay_running and is_allowed_during_replay(action_id):
 		return false
 	if bool(_UPDATE_GATE_ALLOWED_ACTIONS.get(action_id.strip_edges(), false)):
+		return false
+	if is_open_mode_shell(action_id):
 		return false
 	if is_select_base_structure(action_id):
 		return false
@@ -182,9 +184,9 @@ static func is_battle_replay(action_id: String) -> bool:
 static func is_arena_choose_buff(action_id: String) -> bool:
 	return action_id.strip_edges().begins_with(PREFIX_ARENA_CHOOSE_BUFF)
 
-static func is_open_minigame_shell(action_id: String) -> bool:
+static func is_open_mode_shell(action_id: String) -> bool:
 	var candidate := action_id.strip_edges()
-	return candidate == ACTION_OPEN_MINIGAME_SHELL or candidate.begins_with(PREFIX_OPEN_MINIGAME_SHELL)
+	return candidate == ACTION_OPEN_MODE_SHELL or candidate.begins_with(PREFIX_OPEN_MODE_SHELL)
 
 static func select_base_structure_action(structure_id: String) -> String:
 	return "%s%s" % [PREFIX_SELECT_BASE_STRUCTURE, structure_id.strip_edges()]
@@ -238,8 +240,8 @@ static func battle_replay_action(battle_id: String) -> String:
 static func arena_choose_buff_action(buff_id: String) -> String:
 	return "%s%s" % [PREFIX_ARENA_CHOOSE_BUFF, buff_id.strip_edges()]
 
-static func open_minigame_shell_action(minigame_id: String) -> String:
-	return "%s%s" % [PREFIX_OPEN_MINIGAME_SHELL, minigame_id.strip_edges()]
+static func open_mode_shell_action(mode_id: String) -> String:
+	return "%s%s" % [PREFIX_OPEN_MODE_SHELL, mode_id.strip_edges()]
 
 static func action_value(action_id: String) -> String:
 	var candidate := action_id.strip_edges()

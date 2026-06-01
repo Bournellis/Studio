@@ -1,6 +1,6 @@
 # DraxosMobile - Design Pending
 
-- Ultima atualizacao: `2026-05-31`
+- Ultima atualizacao: `2026-06-01`
 - Status: registro vivo de pendencias de design
 - Escopo: DraxosMobile, Arena PVE inicial aprovada, Foundation Final Polish entregue, tuning futuro e evolucoes futuras
 
@@ -71,6 +71,10 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 | DMOB-D065 | Inimigos PVE | PRIMEIRO_SLICE | Resolvido: primeira lista data-driven cobre tutorial, arenas de 3 duelos e primeiras dificuldades com arquetipos starter, defesa, controle, elemental, DoT, familiar, summon e finalizador. | Sem lista inicial, Battle Lab, power target e leitura de progressao ficariam sem fixtures de produto. | `pve-arena-v1.md` | RESOLVIDO | 2026-05-31 |
 | DMOB-D066 | Recompensas Arena PVE | CALIBRAVEL_ALPHA | Formula inicial contratada em `arena_rewards.json`: primeira clear, conclusao, recorde, repeticao reduzida, bonus diario/semanal e caps. Valores numericos continuam calibraveis. | Sem validacao dos labs e rodada humana, ainda ha risco de grind infinito ou progressao lenta demais. | `pve-arena-v1.md` | CALIBRAR | - |
 | DMOB-D067 | Labs Arena PVE | CALIBRAVEL_ALPHA | Contrato v1 exige que Progression Lab e Battle Lab representem listas de duelos, buffs temporarios, vida resetada, loadout travado e comportamento ajustavel. Implementacao dos labs ainda pendente. | Sem modelagem dos labs, tuning integrado de leveling/upgrades/recompensas/poder fica opinativo demais. | `docs/progression-lab/README.md` | CALIBRAR | - |
+| DMOB-D068 | Modos oficiais | OPERACIONAL | Resolvido: os modos oficiais V1 sao Basebuilder, Autobattler, Towerdefense, Cardgame e Openworld; `rpgsuave` foi renomeado para `openworld`. | Sem registry unico, cada modo poderia criar entrada, reward e telemetria propria sem governanca. | `docs/minigames/mode-catalog.md` | RESOLVIDO | 2026-06-01 |
+| DMOB-D069 | Towerdefense | POS_SLICE | Qual contrato de gameplay, build, recompensas e UX do modo Towerdefense? | Sem contrato, o card deve continuar staged/disabled e sem promessa de data. | `docs/minigames/mode-catalog.md` | ABERTO | - |
+| DMOB-D070 | Cardgame | POS_SLICE | Qual contrato proprio do Cardgame mobile sem herdar mecanicas do projeto Steam? | Sem contrato, o card deve continuar staged/disabled e sem prometer gameplay. | `docs/minigames/mode-catalog.md` | ABERTO | - |
+| DMOB-D071 | Openworld continuo | POS_SLICE | Como o Openworld evolui de Bosque para mundo continuo, incluindo mapa, risco, combate e fronteira com Basebuilder? | Sem decisao, Bosque continua primeiro slice de sensacao e Reward Bridge limitado. | `docs/minigames/openworld.md` | ABERTO | - |
 | DMOB-D001 | Escopo | PRIMEIRO_SLICE | O primeiro slice completo usa cap de level 10, 40 ou outro recorte dentro da Season 1? | Resolvido: Season 1 usa cap 40 por padrao, todos os levels sao permanentes e o simulador permite calibrar cap inicial 40/50/60. | `../implementation/tracks/track-00-first-slice-foundation/scope.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D002 | Progressao | PRIMEIRO_SLICE | Quais sao os gatilhos exatos de unlock de slots de spell, Doutrina e Familiar? | Resolvido: 0 slots no inicio; spell slots nos levels 3, 7 e 25; Doutrina no level 10; Familiar no level 15. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D003 | Base Manager | PRIMEIRO_SLICE | Quais stats a Estrutura de Stats altera, quanto por level e com qual custo/recurso? | Resolvido: pacote unico permanente por level com Vida +0.8%, Ataque/dano base +0.5%, Defesa +0.4%, Mana/regen +0.3%, custando Energia + tempo como as demais estruturas. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |

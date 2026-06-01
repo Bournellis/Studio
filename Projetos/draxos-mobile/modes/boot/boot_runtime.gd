@@ -1,4 +1,4 @@
-﻿extends Control
+extends Control
 const ProjectInfoScript := preload("res://core/project_info.gd")
 const SessionStoreScript := preload("res://online/session_store.gd")
 const ShellSurfacePresenterScript := preload("res://modes/boot/surfaces/shell_surface_presenter.gd")
@@ -14,6 +14,7 @@ const SurfaceUiHelpersScript := preload("res://modes/boot/surfaces/surface_ui_he
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellActionRouterScript := preload("res://modes/boot/ui/app_shell_action_router.gd")
+const ModeShellRegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
 const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const OperationStateScript := preload("res://modes/boot/ui/operation_state.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
@@ -38,7 +39,9 @@ const ROUTE_ARENA_ACTIVE := AppShellRouteContractScript.ROUTE_ARENA_ACTIVE
 const ROUTE_ARENA_REPLAY := AppShellRouteContractScript.ROUTE_ARENA_REPLAY
 const ROUTE_ARENA_BUFF_CHOICE := AppShellRouteContractScript.ROUTE_ARENA_BUFF_CHOICE
 const ROUTE_ARENA_SUMMARY := AppShellRouteContractScript.ROUTE_ARENA_SUMMARY
-const ROUTE_MINIGAME_SHELL := AppShellRouteContractScript.ROUTE_MINIGAME_SHELL
+const ROUTE_MODE_HUB := AppShellRouteContractScript.ROUTE_MODE_HUB
+const ROUTE_MODE_SHELL := AppShellRouteContractScript.ROUTE_MODE_SHELL
+const ROUTE_MODES_OPS := AppShellRouteContractScript.ROUTE_MODES_OPS
 const ROUTE_BATTLE_LAB := "battle_lab"
 const ROUTE_PROGRESSION_LAB := "progression_lab"
 const SCREEN_HUB := ROUTE_ENTRY
@@ -71,6 +74,7 @@ var _content_body: VBoxContainer
 var _timeline_label: Label
 var _update_output_label: Label
 var _base_state_container: VBoxContainer
+var _modes_ops_state_container: VBoxContainer
 var _social_state_container: VBoxContainer
 var _competition_state_container: VBoxContainer
 var _shop_state_container: VBoxContainer
@@ -86,6 +90,7 @@ var _social_guild_input: LineEdit
 var _social_chat_input: LineEdit
 var _battle_visual: Control
 var _battle_fullscreen_overlay: Control
+var _mode_fullscreen_overlay: Control
 var _confirm_dialog: ConfirmationDialog
 var _create_account_dialog: ConfirmationDialog
 var _refuge_menu_popup: PopupPanel
@@ -116,6 +121,7 @@ var _social_auto_sync_last_text := ""
 var _social_auto_sync_last_error := ""
 var _battle_lab_overlay: Control
 var _progression_lab_overlay: Control
+var _active_mode_id := ""
 @warning_ignore("unused_private_class_variable")
 var _selected_base_structure_id := "nucleo_energia"
 @warning_ignore("unused_private_class_variable")
@@ -270,6 +276,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_timeline_label = null
 	_update_output_label = null
 	_base_state_container = null
+	_modes_ops_state_container = null
 	_social_state_container = null
 	_competition_state_container = null
 	_shop_state_container = null
@@ -287,6 +294,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_immersive_error_label = null
 	_battle_visual = null
 	_clear_battle_fullscreen_overlay()
+	_clear_mode_fullscreen_overlay()
 	_battle_replay_presenter.clear()
 	_error_label.text = ""
 	if _route_shows_first_screen(screen_id):
@@ -325,6 +333,10 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 			_render_arena_buff_choice_screen()
 		ROUTE_ARENA_SUMMARY:
 			_render_arena_summary_screen()
+		ROUTE_MODE_HUB:
+			_render_mode_hub_screen()
+		ROUTE_MODES_OPS:
+			_render_modes_ops_screen()
 		SCREEN_BASE:
 			_render_base_screen()
 		SCREEN_SOCIAL:
@@ -333,8 +345,8 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 			_render_competition_screen()
 		SCREEN_SHOP:
 			_render_shop_screen()
-		ROUTE_MINIGAME_SHELL:
-			_render_minigame_shell_screen()
+		ROUTE_MODE_SHELL:
+			_render_mode_shell_screen()
 		_:
 			_render_entry_screen()
 	_sync_status_from_session()
@@ -428,6 +440,11 @@ func _progression_lab_available() -> bool:
 		return false
 	return ResourceLoader.exists(PROGRESSION_LAB_SCREEN_PATH)
 
+func _openworld_mode_available() -> bool:
+	if not _internal_dev_tools_enabled():
+		return false
+	return ModeShellRegistryScript.is_available(ModeShellRegistryScript.MODE_OPENWORLD)
+
 func _internal_dev_tools_enabled() -> bool:
 	return OS.has_feature("editor") or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
 
@@ -485,6 +502,13 @@ func _clear_battle_fullscreen_overlay() -> void:
 		_battle_fullscreen_overlay.queue_free()
 	_battle_fullscreen_overlay = null
 
+func _clear_mode_fullscreen_overlay() -> void:
+	if _mode_fullscreen_overlay == null:
+		return
+	if is_instance_valid(_mode_fullscreen_overlay):
+		_mode_fullscreen_overlay.queue_free()
+	_mode_fullscreen_overlay = null
+
 func _create_battle_fullscreen_overlay() -> Control:
 	var overlay := Control.new()
 	overlay.name = "BattleFullscreenOverlay"
@@ -493,6 +517,16 @@ func _create_battle_fullscreen_overlay() -> Control:
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(overlay)
 	_battle_fullscreen_overlay = overlay
+	return overlay
+
+func _create_mode_fullscreen_overlay() -> Control:
+	var overlay := Control.new()
+	overlay.name = "ModeFullscreenOverlay"
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.position = Vector2.ZERO
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(overlay)
+	_mode_fullscreen_overlay = overlay
 	return overlay
 
 func _render_entry_screen() -> void:
@@ -547,12 +581,169 @@ func _render_competition_screen() -> void:
 func _render_shop_screen() -> void:
 	ShopSurfacePresenterScript.render(self)
 
-func _render_minigame_shell_screen() -> void:
-	_content_title.text = "Minigame"
+func _render_mode_hub_screen() -> void:
+	_add_section_label("Modes")
+	_add_body_text("Hub interno dos cinco modos oficiais do DraxosMobile. Modos staged aparecem para orientar visao, sem iniciar gameplay.")
+	_ensure_action_grid().columns = _surface_columns(2)
+	for entry: Dictionary in ModeShellRegistryScript.hub_entries():
+		var mode_id := str(entry.get("mode_id", ""))
+		var title := str(entry.get("display_name", mode_id.capitalize()))
+		var status := str(entry.get("status", "unknown"))
+		match mode_id:
+			ModeShellRegistryScript.MODE_BASEBUILDER:
+				_add_action_button("%s\nActive" % title, AppShellActionContractScript.ACTION_SHOW_BASE)
+			ModeShellRegistryScript.MODE_AUTOBATTLER:
+				_add_action_button("%s\nActive" % title, AppShellActionContractScript.ACTION_OPEN_ARENA)
+			ModeShellRegistryScript.MODE_OPENWORLD:
+				_add_action_button("%s Bosque\nInternal Alpha" % title, AppShellActionContractScript.open_mode_shell_action(mode_id))
+			_:
+				_add_action_button("%s\nStaged" % title, "mode_disabled:%s" % mode_id, "", true, "Modo staged/disabled ate contrato proprio.")
+	_emit_client_event("mode_hub_shown", {
+		"mode_count": ModeShellRegistryScript.registered_ids().size(),
+		"entry_surface": "refuge",
+	})
+
+func _render_modes_ops_screen() -> void:
+	_add_section_label("Labs Dev Ops")
+	_add_body_text("Painel interno para investigar registry, analytics e disable/enable de modos. Dados sensiveis aparecem apenas para usuarios com role em admin_roles.")
+	_modes_ops_state_container = VBoxContainer.new()
+	_modes_ops_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_modes_ops_state_container.add_theme_constant_override("separation", 8)
+	_add_content_control(_modes_ops_state_container)
+	_add_modes_ops_button("Atualizar Ops", Callable(self, "_load_modes_ops_panel"))
+	_add_modes_ops_button("Desabilitar Openworld", Callable(self, "_admin_disable_openworld"))
+	_add_modes_ops_button("Habilitar Openworld", Callable(self, "_admin_enable_openworld"))
+	call_deferred("_load_modes_ops_panel")
+
+func _add_modes_ops_button(text: String, target: Callable) -> void:
+	var button := Button.new()
+	button.text = text
+	button.custom_minimum_size = _button_min_size()
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_prepare_touch_button(button)
+	_apply_action_button_style(button, "modes_ops", "refuge")
+	button.pressed.connect(target)
+	_add_content_control(button)
+
+func _load_modes_ops_panel() -> void:
+	if _modes_ops_state_container == null or not is_instance_valid(_modes_ops_state_container):
+		return
+	for child: Node in _modes_ops_state_container.get_children():
+		child.queue_free()
+	if not SessionStore.has_valid_access_token():
+		_modes_ops_state_container.add_child(_modes_ops_label("Entre com uma conta alpha para consultar Ops."))
+		return
+	var admin_result: Dictionary = await SupabaseClient.get_mode_admin_me(SessionStore.access_token)
+	if not bool(admin_result.get("ok", false)):
+		_modes_ops_state_container.add_child(_modes_ops_label("Sem role admin ativa. O painel nao exibira dados sensiveis nem acoes."))
+		return
+	var body := _as_dictionary(admin_result.get("body", admin_result))
+	if _as_dictionary(body.get("admin", {})).is_empty():
+		_modes_ops_state_container.add_child(_modes_ops_label("Sem role admin ativa."))
+		return
+	_modes_ops_state_container.add_child(_modes_ops_label("Admin ativo: %s" % str(_as_dictionary(body.get("admin", {})).get("role", "mode_ops"))))
+	var registry: Dictionary = await SupabaseClient.get_mode_registry(SessionStore.access_token)
+	if bool(registry.get("ok", false)):
+		var registry_body := _as_dictionary(registry.get("body", registry))
+		_modes_ops_state_container.add_child(_modes_ops_label("Registry: %d modos" % _as_array(registry_body.get("modes", [])).size()))
+	var analytics: Dictionary = await SupabaseClient.get_mode_analytics_summary("openworld", SessionStore.access_token)
+	if bool(analytics.get("ok", false)):
+		var analytics_body := _as_dictionary(analytics.get("body", analytics))
+		var funnel := _as_dictionary(analytics_body.get("funnel", {}))
+		_modes_ops_state_container.add_child(_modes_ops_label("Openworld: %s sessoes, %s completadas, %s claims" % [
+			str(funnel.get("sessions", 0)),
+			str(funnel.get("completed", 0)),
+			str(funnel.get("reward_claims", 0)),
+		]))
+
+func _admin_disable_openworld() -> void:
+	await _admin_toggle_openworld(false)
+
+func _admin_enable_openworld() -> void:
+	await _admin_toggle_openworld(true)
+
+func _admin_toggle_openworld(enable: bool) -> void:
+	if not SessionStore.has_valid_access_token():
+		_show_notice("Ops exige conta autenticada.")
+		return
+	var request_id := SessionStoreScript.create_request_id()
+	var result: Dictionary
+	if enable:
+		result = await SupabaseClient.admin_enable_mode(request_id, "openworld", "internal_alpha", "V1 ops manual enable from Labs Dev Ops.", SessionStore.access_token)
+	else:
+		result = await SupabaseClient.admin_disable_mode(request_id, "openworld", "V1 ops manual disable from Labs Dev Ops.", SessionStore.access_token)
+	if not bool(result.get("ok", false)):
+		var error_payload := _extract_error(result)
+		_error_label.text = _friendly_error_message(str(error_payload.get("code", "MODE_OPS_FAILED")), str(error_payload.get("message", "")))
+	else:
+		_show_notice("Ops aplicado em Openworld.")
+	await _load_modes_ops_panel()
+
+func _modes_ops_label(text: String) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_color_override("font_color", UiTokens.color("text_secondary"))
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return label
+
+func _render_mode_shell_screen() -> void:
+	var mode_id := ModeShellRegistryScript.normalize_mode_id(_active_mode_id)
+	_content_title.text = ModeShellRegistryScript.display_name(mode_id)
 	_status_label.text = _session_status_text()
-	_detail_label.text = "Indisponivel nesta build."
+	_detail_label.text = "Dev-only: progresso local do modo. Recompensas reais so entram pelo Reward Bridge."
+	if _route_shows_app_chrome(_current_screen):
+		_render_mode_content_body(mode_id)
+		return
+	_render_mode_fullscreen(mode_id)
+
+func _render_mode_content_body(mode_id: String) -> void:
+	if ModeShellRegistryScript.is_available(mode_id):
+		var script: Script = load(ModeShellRegistryScript.screen_path(mode_id))
+		if script != null and script.can_instantiate():
+			var screen: Control = script.new()
+			screen.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			screen.size_flags_vertical = Control.SIZE_EXPAND_FILL
+			if _openworld_integrated_alpha_enabled(mode_id) and screen.has_method("configure_integrated_alpha"):
+				screen.call("configure_integrated_alpha", SupabaseClient, SessionStore, SessionStore.access_token)
+			if screen.has_signal("close_requested"):
+				screen.connect("close_requested", Callable(self, "_return_to_refuge"))
+			_add_content_control(screen)
+			return
+	_error_label.text = "Mode dev indisponivel nesta build."
 	_add_body_text("Area reservada para desenvolvimento interno. Recompensas desativadas.")
 	_add_action_button("Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE)
+
+func _render_mode_fullscreen(mode_id: String) -> void:
+	var overlay := _create_mode_fullscreen_overlay()
+	if ModeShellRegistryScript.is_available(mode_id):
+		var script: Script = load(ModeShellRegistryScript.screen_path(mode_id))
+		if script != null and script.can_instantiate():
+			var screen: Control = script.new()
+			screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			screen.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			screen.size_flags_vertical = Control.SIZE_EXPAND_FILL
+			if _openworld_integrated_alpha_enabled(mode_id) and screen.has_method("configure_integrated_alpha"):
+				screen.call("configure_integrated_alpha", SupabaseClient, SessionStore, SessionStore.access_token)
+			if screen.has_signal("close_requested"):
+				screen.connect("close_requested", Callable(self, "_return_to_refuge"))
+			overlay.add_child(screen)
+			return
+	var fallback := VBoxContainer.new()
+	fallback.name = "ModeUnavailableFallback"
+	fallback.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	fallback.alignment = BoxContainer.ALIGNMENT_CENTER
+	fallback.add_theme_constant_override("separation", 12)
+	overlay.add_child(fallback)
+	var label := Label.new()
+	label.text = "Mode dev indisponivel nesta build."
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	fallback.add_child(label)
+	var back := Button.new()
+	back.text = "Voltar ao Refugio"
+	back.pressed.connect(_return_to_refuge)
+	fallback.add_child(back)
 
 func _add_section_label(text: String) -> Label:
 	_reset_action_group()
@@ -762,8 +953,8 @@ func _execute_action(action_id: String) -> void:
 		await _choose_arena_buff(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_battle_replay(action):
 		await _show_battle_replay(AppShellActionContractScript.action_value(action))
-	elif AppShellActionContractScript.is_open_minigame_shell(action):
-		_open_minigame_shell(AppShellActionContractScript.action_value(action))
+	elif AppShellActionContractScript.is_open_mode_shell(action):
+		_open_mode_shell(AppShellActionContractScript.action_value(action))
 	else:
 		match action:
 			AppShellActionContractScript.ACTION_ENTER_GUEST:
@@ -1007,8 +1198,16 @@ func _choose_arena_buff(buff_id: String) -> void:
 func _claim_arena_summary() -> void:
 	await _arena_lifecycle_flow.claim_summary(self)
 
-func _open_minigame_shell(_minigame_id: String = "") -> void:
-	_show_screen(ROUTE_MINIGAME_SHELL)
+func _open_mode_shell(mode_id: String = "") -> void:
+	_active_mode_id = ModeShellRegistryScript.normalize_mode_id(mode_id)
+	_show_screen(ROUTE_MODE_SHELL)
+
+func _openworld_integrated_alpha_enabled(mode_id: String) -> bool:
+	if mode_id != ModeShellRegistryScript.MODE_OPENWORLD:
+		return false
+	if not bool(ProjectSettings.get_setting("draxos_mobile/modes/openworld/integrated_alpha", false)):
+		return false
+	return SessionStore.has_valid_access_token() and SessionStore.has_account_state() and not SessionStore.is_progression_lab_local_only()
 
 func _show_base() -> void:
 	await _surface_action_flow.show_base(self)

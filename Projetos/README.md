@@ -18,9 +18,9 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao - Arena PVE Inicial
 
-- `draxos-mobile/`: mobile-first Draxos platform with official modes now published in Internal Alpha: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` and `Openworld`. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Scroll Drag Release Fix is the latest remote publication over Minigame Platform V1, correcting stale mouse drag in scroll screens without backend/schema/economy changes. Minigame Platform V1 remains the product baseline: registry unico dos cinco modos, API `/modes`, Hub de Modos no Refugio, `rpgsuave` renamed to `openworld`, Openworld Bosque fullscreen, staged disabled Towerdefense/Cardgame, internal Ops/analytics and legacy `/minigames` removed from the active remote contract. Release root: `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`; preview: `https://c4394be5.draxos-mobile-internal-alpha.pages.dev`. Track 21 Arena Loop Unlock/Friction and Track 20 Season 1 Arena Calibration remain preserved as the active Autobattler foundation; Track 13 release safety, Track 14 agent ops and Remote Lab Runner remain preserved baselines.
-  - Priority/status: `P2_IMPLEMENTACAO - SCROLL_DRAG_RELEASE_FIX_PUBLISHED_INTERNAL_ALPHA`
-  - Canonical local branch for the latest remote publication: `codex/draxos-mobile/scroll-drag-release-fix`.
+- `draxos-mobile/`: mobile-first Draxos PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. Track 13 release safety and Track 14 agent ops remain preserved baselines. First Session Clarity v1 is approved, and Foundation Closeout is delivered over Foundation Expansion Readiness: account/save authority, immutable ruleset publication registry, persisted replay hashes, API v1 header, idempotency v1, internal auditable admin RPCs, client retry registry, ActionRouter/OperationState in the real shell path, minigame placeholder only and transactional RPC promotion including build behavior/potion and social friend/chat. Arena PVE Sequence Fix is the latest remote backend hotfix: Edge Function `arena` deployed over client package `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`, fixing the real-player sequence tutorial -> first Arena real -> next difficulty. Smoke remoto real confirmed tutorial clear, all 3 duels of `arena_cinzas_curta:s1_d00_intro` won and `s1_d01_aprendiz` unlocked. Web Battle Lab/Progression Lab remain served by Edge Function `lab-runner` behind the same Supabase email/password alpha account gate.
+  - Priority/status: `P2_IMPLEMENTACAO - ARENA_PVE_SEQUENCE_FIX_PUBLISHED_BACKEND_HOTFIX`
+  - Canonical local branch for Arena PVE follow-up and latest remote publication: `codex/draxos-mobile/scroll-drag-release-fix`.
   - Local agent guide: `draxos-mobile/AGENTS.md`
   - Agent manual: `draxos-mobile/docs/agent-operating-manual.md`
   - Documentation index: `draxos-mobile/docs/documentation-index.md`
@@ -54,7 +54,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: human playtest of the scroll hotfix in Web/PC and the Mode Hub: Basebuilder, Autobattler, Openworld Bosque fullscreen, Towerdefense/Cardgame staged cards and Labs Dev Ops visibility.
+  - Current next step: human playtest tutorial -> first real Arena complete -> next difficulty unlocked, plus spot checks for scroll Web/PC and Hub de Modos.
 
 ## Arquivo De Design
 

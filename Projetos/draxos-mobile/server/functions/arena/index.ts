@@ -5,26 +5,26 @@ import {
   type BattleConsumableRow,
   type BattlePotionSlotRow,
   type BattleSpellBehaviorRow,
-  botCombatantFromRow,
   type CombatantBuild,
   playerCombatantFromState,
   potionSlotForBattle,
   spellBehaviorMap,
 } from "../_shared/battle_combatants.ts";
+import { arenaOpponentCombatantFromBot } from "../_shared/pve_arena_combatants.ts";
 import { emptyResponse, jsonResponse } from "../_shared/http.ts";
 import { simulateFirstSliceBattle } from "../_shared/battle_simulator.ts";
 import {
   arenaBuffDefinitions,
   arenaDefinitions,
+  type ArenaPlayerSnapshot,
+  type ArenaProgressSnapshot,
   arenaRewardProfile,
   arenaTierById,
   arenaTierUnlockState,
-  type ArenaPlayerSnapshot,
-  pveEnemyDefinition,
-  type ArenaProgressSnapshot,
   type PveArenaDefinition,
   type PveArenaDifficultyTier,
   type PveArenaRewardProfile,
+  pveEnemyDefinition,
 } from "../_shared/pve_arena_catalog.ts";
 import {
   type FoundationGameSaveRow,
@@ -510,7 +510,12 @@ async function handleDuelRequest(
     battleId,
     seed,
     player: playerCombatant,
-    opponent: botCombatantFromRow(bot.value),
+    opponent: arenaOpponentCombatantFromBot(
+      bot.value,
+      enemyId,
+      activeTier,
+      duelPowerTarget,
+    ),
   });
   const buffOptions = simulation.battleLog.result.winner === "player" &&
       nextStep < attempt.value.max_steps
@@ -1024,7 +1029,9 @@ function tierForStart(
     ? "arena_cinzas_curta"
     : "arena_tutorial_cinzas";
   const arena =
-    arenaDefinitions().find((candidate) => candidate.id === (requestedArenaId || fallbackArenaId)) ??
+    arenaDefinitions().find((candidate) =>
+      candidate.id === (requestedArenaId || fallbackArenaId)
+    ) ??
       null;
   if (arena === null) {
     return null;
@@ -1117,14 +1124,14 @@ function arenaSummary(
     recommended_power_min: visibleTier?.recommended_power_min ?? 0,
     recommended_power_max: visibleTier?.recommended_power_max ?? 0,
     reward_profile_id: visibleTier?.reward_profile_id ?? definition.reward_profile_id,
-    clear_rate_target: visibleTier === null
-      ? {}
-      : {
-        min_percent: visibleTier.clear_rate_target_min_percent,
-        max_percent: visibleTier.clear_rate_target_max_percent,
-      },
+    clear_rate_target: visibleTier === null ? {} : {
+      min_percent: visibleTier.clear_rate_target_min_percent,
+      max_percent: visibleTier.clear_rate_target_max_percent,
+    },
     unlocked: unlockedDifficulties.length > 0,
-    locked_reason: unlockedDifficulties.length > 0 ? "" : stringValue(firstDifficulty?.locked_reason, "Bloqueada"),
+    locked_reason: unlockedDifficulties.length > 0
+      ? ""
+      : stringValue(firstDifficulty?.locked_reason, "Bloqueada"),
     difficulties,
     unlock_rule: definition.unlock,
     hp_reset_per_duel: true,
@@ -1242,13 +1249,11 @@ function withCurrentBehavior(
   return {
     ...locked,
     spellBehaviors: spellBehaviorMap(state.spellBehaviors),
-    potionSlot: lockedPotion === undefined || livePotionQuantity <= 0
-      ? undefined
-      : {
-        ...lockedPotion,
-        quantity: livePotionQuantity,
-        behavior: currentPotionSlot?.behavior ?? lockedPotion.behavior,
-      },
+    potionSlot: lockedPotion === undefined || livePotionQuantity <= 0 ? undefined : {
+      ...lockedPotion,
+      quantity: livePotionQuantity,
+      behavior: currentPotionSlot?.behavior ?? lockedPotion.behavior,
+    },
   };
 }
 
@@ -1383,7 +1388,7 @@ function arenaRewardIsRepeat(
   if (hasCompletedTier(progress, attempt.arena_id, attempt.difficulty_id)) {
     return true;
   }
-  if (attempt.difficulty_rank <= 0) {
+  if (attempt.arena_id === "arena_tutorial_cinzas") {
     return progress?.tutorial_completed === true;
   }
   return (progress?.best_completed_difficulty ?? 0) >= attempt.difficulty_rank &&

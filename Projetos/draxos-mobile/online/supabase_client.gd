@@ -386,6 +386,87 @@ func upgrade_base_structure(request_id: String, structure_id: String, access_tok
 		}, request_hash)
 	)
 
+func get_mode_registry(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("modes/registry"),
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func get_mode_state(mode_id: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		"%s?mode_id=%s" % [function_url("modes/state"), mode_id.strip_edges()],
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func start_mode_session(request_id: String, mode_id: String, slice_id: String, access_token: String, request_hash: String = "") -> Dictionary:
+	return await _send_json(
+		function_url("modes/session/start"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("modes/session/start", {
+			"request_id": request_id,
+			"mode_id": mode_id.strip_edges(),
+			"slice_id": slice_id.strip_edges(),
+		}, request_hash)
+	)
+
+func complete_mode_session(request_id: String, session_id: String, mode_id: String, result_payload: Dictionary, access_token: String, request_hash: String = "") -> Dictionary:
+	var body := result_payload.duplicate(true)
+	body["request_id"] = request_id
+	body["session_id"] = session_id.strip_edges()
+	body["mode_id"] = mode_id.strip_edges()
+	return await _send_json(
+		function_url("modes/session/complete"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("modes/session/complete", body, request_hash)
+	)
+
+func get_mode_admin_me(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("modes/admin/me"),
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func get_mode_analytics_summary(mode_id: String, access_token: String) -> Dictionary:
+	return await _send_json(
+		"%s?mode_id=%s" % [function_url("modes/analytics/summary"), mode_id.strip_edges()],
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func admin_disable_mode(request_id: String, mode_id: String, reason: String, access_token: String, request_hash: String = "") -> Dictionary:
+	return await _send_json(
+		function_url("modes/admin/disable"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("modes/admin/disable", {
+			"request_id": request_id,
+			"mode_id": mode_id.strip_edges(),
+			"reason": reason.strip_edges(),
+		}, request_hash)
+	)
+
+func admin_enable_mode(request_id: String, mode_id: String, target_status: String, reason: String, access_token: String, request_hash: String = "") -> Dictionary:
+	return await _send_json(
+		function_url("modes/admin/enable"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("modes/admin/enable", {
+			"request_id": request_id,
+			"mode_id": mode_id.strip_edges(),
+			"target_status": target_status.strip_edges(),
+			"reason": reason.strip_edges(),
+		}, request_hash)
+	)
+
 func fetch_crafting_state(access_token: String) -> Dictionary:
 	return await _send_json(
 		function_url("crafting/state"),

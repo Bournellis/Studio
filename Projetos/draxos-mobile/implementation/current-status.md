@@ -1,26 +1,165 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-05-31`
+- Last updated: `2026-06-01`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Track 21 - Arena Loop Unlock And Friction Pass`
-- Active stage status: `PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Arena PVE Sequence Fix`
+- Active stage status: `PUBLISHED_INTERNAL_ALPHA_BACKEND_HOTFIX`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Track 21 - Arena Loop Unlock And Friction Pass`
-- Latest implemented package: `Track 21 - Arena Loop Unlock And Friction Pass`
-  on branch `codex/draxos-mobile/track21-arena-loop-unlock-friction`.
-- Active follow-up: replay the new-save Arena tutorial -> 3-duel unlock loop
-  from the published Track 21 Internal Alpha before fine tuning.
+- Latest published remote package: `Scroll Drag Release Fix` over Minigame
+  Platform V1, with `Arena PVE Sequence Fix` deployed as a backend hotfix to
+  Edge Function `arena`.
+- Latest implemented package: `Arena PVE Sequence Fix`
+  merged into branch `codex/draxos-mobile/scroll-drag-release-fix`; commit
+  `f69d56c` plus publication status commit.
+- Active follow-up: human playtest the Arena flow from tutorial clear into the
+  first real Arena and the next difficulty unlock.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## Scroll Drag Release Fix - 2026-06-01
+
+This hotfix is published remotely as the latest Internal Alpha package over
+Minigame Platform V1.
+
+- release root:
+  `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`;
+- branch: `codex/draxos-mobile/scroll-drag-release-fix`;
+- fix commit: `c7735c5`;
+- Portal:
+  `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Web:
+  `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
+
+Scope:
+
+- `DraxosTouchScrollContainer` now clears drag state on global mouse/touch
+  release, including release outside the scroll container.
+- Mouse motion without the left button pressed clears stale drag state, fixing
+  the case where scroll could feel stuck to the cursor.
+- Touch drag now tracks the active touch index, preventing unrelated touches
+  from keeping a stale scroll interaction alive.
+- No backend, schema, economy, mode registry or reward contract changed.
+
+Validation and publication completed:
+
+- `git diff --check`: passed.
+- Godot headless import: passed in the fresh hotfix worktree.
+- GUT client: passed (`153/153`, `2428` asserts).
+- `tools/smoke_responsive_layout.gd`: passed.
+- `tools/validate.gd`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile Client`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile Release -RequireClean`:
+  passed before export/upload.
+- Export/package/upload/deploy manifest completed for release root
+  `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`.
+- Cloudflare Pages deployed preview
+  `https://c4394be5.draxos-mobile-internal-alpha.pages.dev`.
+- Remote `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` and
+  `internal_alpha_remote_smoke.ts` passed.
+
+Next human check: open scroll-heavy panels in Web/PC, drag with the mouse,
+release outside the panel, move the mouse without holding the button and confirm
+the screen no longer keeps scrolling as if grabbed.
+
+## Arena PVE Sequence Fix - 2026-06-01
+
+This backend hotfix is deployed remotely to Edge Function `arena`. It addresses
+a real remote reproduction where a fresh player could clear the tutorial, open
+`Arena Curta Das Cinzas - Intro`, win duel 1, then lose duel 2 and remain
+blocked from further Arena progression.
+
+- branch: `codex/draxos-mobile/scroll-drag-release-fix`;
+- fix commit: `f69d56c`;
+- remote target: Supabase project `armxgipvnbbshzqawklw`, Edge Function
+  `arena`;
+- client artifact package remains
+  `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5` because no
+  client/export artifact changed.
+
+Scope:
+
+- Added shared PVE Arena combatant tuning for server and Supabase functions.
+- The first real Arena runway now uses readable pre-familiar opponents derived
+  from enemy legal unlocks and the Arena target sequence.
+- Enemy display names still come from the PVE enemy catalog, while source bot
+  builds provide the archetype.
+- First real rank-zero Arena clears are no longer reduced as tutorial repeats;
+  tutorial repeats remain protected by the tutorial completion marker.
+- Added regression coverage for the real sequence: post-tutorial player clears
+  the first real three-duel Arena and its first-clear XP reaches the next
+  difficulty unlock.
+
+Validation completed locally:
+
+- Real remote reproduction before patch confirmed the blocker:
+  `arena_cinzas_curta:s1_d00_intro` reached duel 2, lost to the opponent, and
+  `arena_veu_curta:s1_d02_iniciado` stayed locked with
+  `Conclua Arena Curta Das Cinzas`.
+- `npx -y deno fmt` on changed server/supabase Arena files and tests: passed.
+- `npx -y deno lint` on new/changed Arena tuning tests/modules: passed.
+- `npx -y deno test --allow-read server/tests/arena_pve_sequence_tuning_test.ts server/tests/arena_loop_unlock_friction_test.ts server/tests/arena_consistency_pass_schema_test.ts server/tests/battle_combatants_test.ts`:
+  passed (`20` tests).
+- `npx -y deno task --cwd server/functions check`: passed.
+- `npx -y deno task --cwd supabase/functions check`: passed.
+- `git diff --check`: passed.
+- `npx -y supabase functions deploy arena --project-ref armxgipvnbbshzqawklw`:
+  passed.
+- Remote real-player smoke after deployment passed:
+  tutorial winner `player`; `arena_cinzas_curta:s1_d00_intro` duels 1-3 winners
+  `player`; `arena_cinzas_curta:s1_d01_aprendiz` unlocked.
+
+Publication status: published as Internal Alpha backend hotfix.
+
+## Minigame Platform V1 - Official Modes
+
+V1 promotes the previous single-prototype minigame layer into a mode platform:
+
+- official modes: `basebuilder`, `autobattler`, `towerdefense`, `cardgame`, `openworld`;
+- player-facing names: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame`, `Openworld`;
+- Openworld Bosque replaces the old Rpgsuave identity in client code, docs,
+  tests, ruleset payloads and `/modes` contracts;
+- Mode Hub is visible from the Refugio Internal Alpha surface;
+- Basebuilder opens current Refugio/Base, Autobattler opens current Arena PVE,
+  Openworld opens fullscreen Bosque, Towerdefense/Cardgame stay staged/disabled;
+- backend V1 adds registry rows, `/modes`, `mode_limit_policies`,
+  `admin_roles`, session abandon, admin/ops routes and analytics summary;
+- published release root:
+  `internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c`;
+- Portal:
+  `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Web:
+  `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
+
+Validation and publication completed for Minigame Platform V1:
+
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean`
+  passed with Godot validation, GUT client, responsive/mobile smokes, local
+  Supabase schema checks, local `/modes` live proof and Deno server tests.
+- Remote migration applied `202606010000_minigame_platform_v0.sql` and
+  `202606010001_modes_platform_v1.sql`.
+- Edge Function `modes` deployed; legacy `minigames` function removed from the
+  active remote contract.
+- `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` and
+  `internal_alpha_remote_smoke.ts` passed remotely with `/modes` enabled.
+- Manual remote check confirmed `/functions/v1/minigames/registry` returns
+  `404`.
 
 ## Baseline
 
@@ -779,9 +918,9 @@ Delivered in the current branch:
 - `SupabaseClient` sends API version and `request_hash`, while `SessionStore`
   persists pending idempotent mutations so retries reuse the same
   `request_id/request_hash`.
-- `ROUTE_MINIGAME_SHELL` and `open_minigame_shell:<id>` exist only as a
-  disabled/dev placeholder: no reward, ranking, economy, migration or public
-  feature promise.
+- V1 replaces the previous minigame placeholder with active mode contracts:
+  `ROUTE_MODE_HUB`, `ROUTE_MODE_SHELL` and `open_mode_shell:<mode_id>`.
+  `/modes` is the active API surface; `/minigames` is historical only.
 - `tools/check_foundation_expansion_readiness.ps1` is the read-only structural
   gate and is called from `validate_foundation.ps1`. Full profile now requires
   local Supabase RPC, Edge RPC and admin/RLS smokes instead of silently skipping
@@ -1114,9 +1253,9 @@ without adding a new schema/API package beyond Track 16.
 
 | Artifact       |      Bytes | SHA256                                                             |
 | -------------- | ---------: | ------------------------------------------------------------------ |
-| Android APK    | `31649813` | `118cce77d40ebc2cefd73728e738244c6b3615c63d3efdcd2c88ade7eb05cc8a` |
-| PC Windows ZIP | `40118021` | `0955e062e3831e9c952e4d40369682b92a4d03922c1904de44d3b0fc04636e0a` |
-| Web index      |     `5442` | `ddd5061f0fc7b17907474fa577e90767d501f0a5b2b56d8ff6d0e2a71db2b858` |
+| Android APK    | `31820934` | `ac154edf699afa74f3c82f44e3fd57969b3943420f4bb3fb94fb142620fdda60` |
+| PC Windows ZIP | `40277711` | `14aa516367d4cfded3c1cad574f0cbdcb1d722cc7ee83b054f79e8736ae2f3b5` |
+| Web index      |     `5442` | `dc79081a3d2cb360b6ad0a1b5ca7b1fa9efb58a78777b972bfdd89aa43271c90` |
 
 Links:
 
@@ -1127,11 +1266,19 @@ Links:
   `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Latest verified preview:
-  `https://0fee1018.draxos-mobile-internal-alpha.pages.dev`
+  `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev`
 - Web asset root:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529/web`
-- Web hotfix pack:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix4/web/index.pck`
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c/web`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c/downloads/draxos-mobile-alpha.apk`
+- PC Windows ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c/downloads/draxos-mobile-alpha.zip`
+
+Minigame Platform V1 was published to the Internal Alpha artifact/site channel
+on `2026-06-01`. The remote manifest points to the Cloudflare Pages preview
+above, APK/PC downloads are public unlisted Storage URLs, and the active API
+contract is now `/modes`. Historical publication notes below are retained for
+traceability.
 
 Battle Preparation Complete v1 was published to the Internal Alpha artifact/site
 channel on `2026-05-29`. Android APK, PC ZIP and Web assets were uploaded to

@@ -4,6 +4,7 @@ extends RefCounted
 const HubAccountSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_account_surface_presenter.gd")
 const BaseSurfacePresenterScript := preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
+const ModeShellRegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
 const TouchScrollContainerScript := preload("res://modes/boot/ui/touch_scroll_container.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
 const ProgressionClarityPresenterScript := preload("res://modes/boot/surfaces/progression_clarity_presenter.gd")
@@ -58,6 +59,7 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "preparation", "PP", "Preparacao", "accent_astral", Vector2(0.50, 0.32), "Revisar pocao e habilidades antes da Arena.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.37), "Coleta, energia e estruturas.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.37), "Amigos, guilda e chat.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "modes", "MD", "Modos", "accent_bone", Vector2(0.22, 0.56), "Hub de modos oficiais.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "shop", "LJ", "Loja", "accent_bone", Vector2(0.78, 0.56), "Recompensas e compras.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "collect", "CL", "Coletar", "status_success", Vector2(0.28, 0.77), "Coletar producao do Refugio.", true)
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "energy", "EN", "Energia", "accent_astral", Vector2(0.72, 0.77), "Comprar Energia.", true)
@@ -479,6 +481,9 @@ static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxConta
 		"refuge":
 			body.add_child(_popup_hint("Coleta, energia, estruturas e upgrades do Refugio.", compact))
 			BaseSurfacePresenterScript.render_refuge_embedded(host, body)
+		"modes":
+			body.add_child(_popup_hint("Cinco modos oficiais do DraxosMobile. Ativos abrem jogo; staged mostram o contrato sem prometer data.", compact))
+			_add_mode_hub_cards(host, popup, body, compact)
 		"social":
 			body.add_child(_popup_hint("Amigos, guilda e chat em um painel leve.", compact))
 			body.add_child(_popup_action_button(host, popup, "Abrir Social", AppShellActionContractScript.ACTION_SHOW_SOCIAL, "", true))
@@ -549,6 +554,8 @@ static func _menu_title(menu_id: String) -> String:
 			return "Preparacao"
 		"refuge":
 			return "Refugio"
+		"modes":
+			return "Modes"
 		"social":
 			return "Social"
 		"competition":
@@ -566,7 +573,101 @@ static func _menu_title(menu_id: String) -> String:
 	return "Menu"
 
 static func _refuge_has_dev_tools(host: Node) -> bool:
-	return bool(host.call("_battle_lab_available")) or bool(host.call("_progression_lab_available"))
+	return bool(host.call("_battle_lab_available")) or bool(host.call("_progression_lab_available")) or bool(host.call("_openworld_mode_available"))
+
+static func _add_mode_hub_cards(host: Node, popup: PopupPanel, body: VBoxContainer, compact: bool) -> void:
+	for entry: Dictionary in ModeShellRegistryScript.hub_entries():
+		body.add_child(_mode_card(host, popup, entry, compact))
+
+static func _mode_card(host: Node, popup: PopupPanel, entry: Dictionary, compact: bool) -> Control:
+	var panel := PanelContainer.new()
+	panel.name = "ModeCard_%s" % str(entry.get("mode_id", "unknown"))
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	panel.add_theme_stylebox_override("panel", _mode_card_style(entry))
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 5 if compact else 7)
+	panel.add_child(box)
+
+	var header := HBoxContainer.new()
+	header.add_theme_constant_override("separation", 8)
+	box.add_child(header)
+	var title := _scene_label(str(entry.get("display_name", "Mode")), "text_primary", 15 if compact else 17)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(title)
+	var status := _scene_label(_mode_status_label(str(entry.get("status", ""))), _mode_status_color(str(entry.get("status", ""))), 10 if compact else 11)
+	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	header.add_child(status)
+
+	var mode_id := str(entry.get("mode_id", ""))
+	box.add_child(_body_label(_mode_card_detail(mode_id), compact))
+	var launch := _mode_launch_button(host, popup, mode_id, compact)
+	box.add_child(launch)
+	return panel
+
+static func _mode_launch_button(host: Node, popup: PopupPanel, mode_id: String, compact: bool) -> Button:
+	match mode_id:
+		ModeShellRegistryScript.MODE_BASEBUILDER:
+			return _popup_action_button(host, popup, "Abrir Basebuilder", AppShellActionContractScript.ACTION_SHOW_BASE, "", true)
+		ModeShellRegistryScript.MODE_AUTOBATTLER:
+			return _popup_action_button(host, popup, "Abrir Autobattler", AppShellActionContractScript.ACTION_OPEN_ARENA, "", true)
+		ModeShellRegistryScript.MODE_OPENWORLD:
+			return _popup_action_button(host, popup, "Abrir Openworld Bosque", AppShellActionContractScript.open_mode_shell_action(mode_id), "", true)
+		_:
+			var button := _drawer_button(host, "Staged", false, "mode_disabled:%s" % mode_id, "refuge")
+			button.disabled = true
+			button.set_meta("force_disabled", true)
+			button.tooltip_text = "Modo visivel no Hub, mas bloqueado ate contrato proprio."
+			return button
+
+static func _mode_card_detail(mode_id: String) -> String:
+	match mode_id:
+		ModeShellRegistryScript.MODE_BASEBUILDER:
+			return "Refugio/Base atuais: coleta, estruturas, recursos e crafting de base."
+		ModeShellRegistryScript.MODE_AUTOBATTLER:
+			return "Arena PVE atual: build de Instrumento, Doutrina, Familiar, spells e potions."
+		ModeShellRegistryScript.MODE_OPENWORLD:
+			return "Openworld Bosque em Internal Alpha: joystick, coleta, bau, craft e reward bridge limitado."
+		ModeShellRegistryScript.MODE_TOWERDEFENSE:
+			return "Futuro heroi/mago em torre central, spells, pets e upgrades contra hordas."
+		ModeShellRegistryScript.MODE_CARDGAME:
+			return "Cardgame futuro do DraxosMobile; compartilha lore, nao mecanica do projeto Steam."
+	return "Modo registrado."
+
+static func _mode_status_label(status: String) -> String:
+	match status:
+		"active":
+			return "Active"
+		"internal_alpha":
+			return "Alpha"
+		"planned_disabled":
+			return "Staged"
+		_:
+			return status.capitalize()
+
+static func _mode_status_color(status: String) -> String:
+	match status:
+		"active":
+			return "status_success"
+		"internal_alpha":
+			return "accent_astral"
+		"planned_disabled":
+			return "text_secondary"
+		_:
+			return "text_secondary"
+
+static func _mode_card_style(entry: Dictionary) -> StyleBoxFlat:
+	var status := str(entry.get("status", ""))
+	var color_token := _mode_status_color(status)
+	var style := StyleBoxFlat.new()
+	style.bg_color = UiTokens.color("bg_panel").lerp(UiTokens.color(color_token), 0.06)
+	style.border_color = UiTokens.color(color_token)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(8)
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 10
+	style.content_margin_bottom = 10
+	return style
 
 static func _add_dev_tool_actions(host: Node, popup: PopupPanel, body: VBoxContainer, primary: bool = false) -> void:
 	if bool(host.call("_battle_lab_available")):
@@ -576,6 +677,9 @@ static func _add_dev_tool_actions(host: Node, popup: PopupPanel, body: VBoxConta
 	if bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false)):
 		body.add_child(_popup_action_button(host, popup, "Batalha legada", AppShellActionContractScript.ACTION_REQUEST_BATTLE))
 		body.add_child(_popup_action_button(host, popup, "Competicao dev", AppShellActionContractScript.ACTION_SHOW_MATCHMAKING))
+		body.add_child(_popup_route_button(host, popup, "Modes Ops", "modes_ops"))
+	if bool(host.call("_openworld_mode_available")):
+		body.add_child(_popup_action_button(host, popup, "Openworld Bosque", AppShellActionContractScript.open_mode_shell_action("openworld"), "", primary))
 
 static func _add_texture_layer(parent: Control, texture_path: String, alpha: float) -> void:
 	if parent == null or not ResourceLoader.exists(texture_path):
@@ -912,6 +1016,8 @@ static func _entry_dev_panel(host: Node, compact: bool) -> PanelContainer:
 		grid.add_child(_entry_action_button(host, "Battle Lab", AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB, compact))
 	if progression_lab:
 		grid.add_child(_entry_action_button(host, "Progression Lab", AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB, compact))
+	if bool(host.call("_openworld_mode_available")):
+		grid.add_child(_entry_action_button(host, "Openworld", AppShellActionContractScript.open_mode_shell_action("openworld"), compact))
 	return panel
 
 static func _entry_reset_panel(host: Node, compact: bool) -> PanelContainer:

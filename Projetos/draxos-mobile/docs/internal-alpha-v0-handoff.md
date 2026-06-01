@@ -1,29 +1,92 @@
 ﻿# DraxosMobile - Internal Alpha v0 Handoff
 
-- Data: `2026-05-27`
-- Status: `T03-P18_COMPLETE - INTERNAL_ALPHA_V0_HANDOFF_READY`
+- Data: `2026-06-01`
+- Status: `SCROLL_DRAG_RELEASE_FIX_PUBLISHED - AWAITING_HUMAN_PLAYTEST`
 - Canal: `internal_alpha`
 - Versao: `0.0.1-alpha.0`
 - Version code: `1`
 - Backend remoto: `https://armxgipvnbbshzqawklw.supabase.co`
-- Portal: `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
-- Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Portal atual: `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web atual: `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 ## Pacote Para Teste
 
 | Item | URL |
 |---|---|
-| Portal | `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html` |
-| Web | `https://draxos-mobile-internal-alpha.pages.dev/web/index.html` |
-| Android APK | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk` |
-| PC ZIP | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip` |
+| Portal | `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/portal/index.html` |
+| Web | `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/web/index.html` |
+| Android APK | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5/downloads/draxos-mobile-alpha.apk` |
+| PC ZIP | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5/downloads/draxos-mobile-alpha.zip` |
 
 | Artefato | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `27965106` | `ad6d2579ce003769cfce2536b788c1330abb283d0ae90cc785d1d016ae514ca6` |
-| PC Windows ZIP | `36466312` | `ad5fb8351bb001604479d95737fc702bb9b0ff6779afb9e3e31692b7bc189031` |
-| Web index | `5442` | `75fdd260b889582cb723256e87ca9867ae35b7cdd3411cbb2ca21ace5585366a` |
+| Android APK | `31820934` | `3b1de0cb6235a32f06d2d0b761ce7ad3c85c97e4cd9a92d82521813e7a66a36b` |
+| PC Windows ZIP | `40278220` | `4eec22e997f957af17bbc468a6bd990f2896631a4fe906a563bb6d212f552b17` |
+| Web index | `5442` | `8555ff49c39210a0b44fa713854815ffecb882112649b6ee564ad80b8bbbfde2` |
+
+## Atualizacao Scroll Drag Release Fix - 2026-06-01
+
+- Release root atual:
+  `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`.
+- Branch: `codex/draxos-mobile/scroll-drag-release-fix`.
+- Commit de fix: `c7735c5`.
+- Escopo: corrige o estado de drag do `DraxosTouchScrollContainer`, que podia
+  ficar preso quando o usuario arrastava uma tela com scroll e soltava o mouse
+  fora da area ou quando o estado de botao chegava stale.
+- Sem mudanca de backend, schema, economia, registry de modos ou reward bridge.
+- Validacao local: GUT client `153/153`, `2428` asserts; `tools/validate.gd`;
+  `tools/smoke_responsive_layout.gd`; `validate_foundation.ps1 -Profile Client`;
+  `validate_foundation.ps1 -Profile Release -RequireClean`.
+- Publicacao: export Android/PC/Web, package/upload Storage, Cloudflare Pages,
+  manifest remoto e smokes remotos concluidos.
+- Smokes remotos: `release_manifest_smoke.ts`,
+  `release_artifacts_remote_smoke.ts` e `internal_alpha_remote_smoke.ts`
+  passaram.
+- Proximo teste humano: em Web/PC, arrastar paineis com scroll, soltar fora da
+  area, mover o mouse sem botao pressionado e confirmar que a tela nao continua
+  agarrada.
+
+## Atualizacao Minigame Platform V1 - 2026-06-01
+
+- Release root atual:
+  `internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c`.
+- API ativa: `/modes`; Edge Function `minigames` removida do contrato remoto
+  ativo.
+- Modos oficiais: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame`,
+  `Openworld`.
+- Hub de Modos: Basebuilder e Autobattler ativos; Openworld Bosque em
+  Internal Alpha fullscreen; Towerdefense/Cardgame visiveis como staged/disabled.
+- Validacao: Full gate local, migrations remotas, Edge Function `modes`,
+  manifest, artefatos, `/modes` remoto e contrato antigo `/minigames` 404
+  confirmados.
+- Proximo teste humano: abrir Hub de Modos no Refugio, entrar em Basebuilder,
+  Autobattler e Openworld Bosque, confirmar cards disabled e verificar Labs Dev
+  Ops sem dados sensiveis para usuario comum.
+
+## Atualizacao Rpgsuave Integrated Alpha - 2026-05-31
+
+- Release root atual:
+  `internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969`.
+- Portal:
+  `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.apk`
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.zip`
+
+| Artefato | Bytes | SHA256 |
+|---|---:|---|
+| Android APK | `31725206` | `041dc7ff351214b77b0835991639b67c239152e0643237c4ef8ca7bc7b7933ee` |
+| PC Windows ZIP | `40188217` | `669013b975e9611e9b2e526fae1f2030afd42c2f027705e142a0fc81e41eabe9` |
+| Web index | `5442` | `fba1727cfa5bbf0c46c859c5581773378a2ca55004774b1c3ee08623c117fe2c` |
+
+Escopo publicado: Rpgsuave Bosque em Labs Dev, Minigame Platform v0,
+Reward Bridge v0, manifest remoto atualizado e Portal/Web no Cloudflare Pages
+preview acima. Validacao: Full gate local, smokes remotos de manifest,
+artefatos, minigame integrado e hash completo de APK/ZIP verdes.
 
 ## Atualizacao Pos-Handoff Track 10 - 2026-05-28
 

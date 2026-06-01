@@ -3,10 +3,21 @@ const PUBLISHABLE_KEY = requiredEnv("SUPABASE_PUBLISHABLE_KEY");
 const RUN_ANON_AUTH = Deno.env.get("DRAXOS_REMOTE_ANON_AUTH_SMOKE") === "1";
 const RUN_ACCOUNT_STATE = Deno.env.get("DRAXOS_REMOTE_ACCOUNT_SMOKE") === "1";
 const RUN_EMAIL_AUTH = Deno.env.get("DRAXOS_REMOTE_EMAIL_AUTH_SMOKE") === "1";
-const RUN_RELEASE_MANIFEST = Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
+const RUN_RELEASE_MANIFEST =
+  Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
+const RUN_MODE = Deno.env.get("DRAXOS_REMOTE_MODE_SMOKE") === "1";
+
+const MODE_MODE_ID = "openworld";
+const MODE_SLICE_ID = "forest";
+const MODE_RULESET_ID = "openworld_forest_ruleset_v0";
+const MODE_RULESET_VERSION = 1;
 
 assertRemoteUrl(SUPABASE_URL);
 assertClientKey(PUBLISHABLE_KEY);
+assert(
+  !RUN_MODE || RUN_EMAIL_AUTH,
+  "DRAXOS_REMOTE_MODE_SMOKE requires DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1",
+);
 
 interface JsonObject {
   [key: string]: unknown;
@@ -108,6 +119,7 @@ let emailUser = "";
 let emailPlayerId = "";
 let labPlayerId = "";
 let emailBattleId = "";
+let modeSessionId = "";
 if (RUN_EMAIL_AUTH) {
   const runId = crypto.randomUUID().replaceAll("-", "").slice(0, 12);
   const email = `draxosremotealpha${runId}@gmail.com`;
@@ -201,12 +213,21 @@ if (RUN_EMAIL_AUTH) {
   );
   const registeredBattleLog = objectField(registeredBattle, "battle_log");
   emailBattleId = stringField(registeredBattleLog, "battle_id");
-  assert(emailBattleId !== "", "registered email account should be able to request battle");
+  assert(
+    emailBattleId !== "",
+    "registered email account should be able to request battle",
+  );
   assertEq(
     stringField(registeredBattleLog, "schema_version"),
     "battle_log_v1",
     "registered email battle should return a battle log",
   );
+
+  if (RUN_MODE) {
+    modeSessionId = await proveRemoteModeFlow(
+      stringField(signin, "access_token"),
+    );
+  }
 }
 
 console.log("[internal-alpha-remote-smoke] OK", {
@@ -215,6 +236,7 @@ console.log("[internal-alpha-remote-smoke] OK", {
   anon_auth: RUN_ANON_AUTH || RUN_ACCOUNT_STATE ? "checked" : "skipped",
   account_state: RUN_ACCOUNT_STATE ? "checked" : "skipped",
   email_auth: RUN_EMAIL_AUTH ? "checked" : "skipped",
+  mode: RUN_MODE ? "checked" : "skipped",
   release_manifest: releaseManifestChecked ? "checked" : "skipped",
   auth_user: authUser,
   player_id: playerId,
@@ -222,6 +244,7 @@ console.log("[internal-alpha-remote-smoke] OK", {
   email_player_id: emailPlayerId,
   lab_player_id: labPlayerId,
   email_battle_id: emailBattleId,
+  mode_session_id: modeSessionId,
 });
 
 function baseHeaders(): Record<string, string> {
@@ -262,6 +285,159 @@ async function assertCorsPreflight(url: string, method: string): Promise<void> {
     "x-draxos-api-version",
     `CORS preflight should allow x-draxos-api-version for ${url}`,
   );
+}
+
+function modeHeaders(
+  accessToken: string,
+  saveType: "normal" | "progression_lab" = "normal",
+): Record<string, string> {
+  return {
+    ...baseHeaders(),
+    authorization: `Bearer ${accessToken}`,
+    "x-draxos-api-version": "1",
+    "x-draxos-save-type": saveType,
+  };
+}
+
+async function proveRemoteModeFlow(accessToken: string): Promise<string> {
+  const headers = modeHeaders(accessToken);
+  const registry = await getJson(
+    `${SUPABASE_URL}/functions/v1/modes/registry`,
+    headers,
+  );
+  assertEq(
+    stringField(findObjectByField(arrayField(registry, "modes"), "mode_id", MODE_MODE_ID), "mode_id"),
+    MODE_MODE_ID,
+    "remote mode registry should expose openworld",
+  );
+  assertEq(
+    stringField(
+      findObjectByField(arrayField(registry, "rulesets"), "ruleset_id", MODE_RULESET_ID),
+      "ruleset_id",
+    ),
+    MODE_RULESET_ID,
+    "remote mode registry should expose the forest ruleset",
+  );
+
+  const state = await getJson(
+    `${SUPABASE_URL}/functions/v1/modes/state?mode_id=${MODE_MODE_ID}`,
+    headers,
+  );
+  assertEq(
+    stringField(findObjectByField(arrayField(state, "modes"), "mode_id", MODE_MODE_ID), "mode_id"),
+    MODE_MODE_ID,
+    "remote mode state should be scoped to openworld",
+  );
+
+  const startBody = {
+    request_id: crypto.randomUUID(),
+    mode_id: MODE_MODE_ID,
+    slice_id: MODE_SLICE_ID,
+  };
+  const started = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/start`,
+    startBody,
+    headers,
+  );
+  const repeatedStart = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/start`,
+    startBody,
+    headers,
+  );
+  const sessionId = stringField(objectField(started, "session"), "id");
+  assert(
+    sessionId !== "",
+    "remote mode session/start should return session.id",
+  );
+  assertEq(
+    sessionId,
+    stringField(objectField(repeatedStart, "session"), "id"),
+    "remote mode session/start should be idempotent",
+  );
+
+  const completeBody = {
+    request_id: crypto.randomUUID(),
+    result: {
+      session_id: sessionId,
+      ruleset_id: MODE_RULESET_ID,
+      ruleset_version: MODE_RULESET_VERSION,
+      session_seconds: 120,
+      activity_score: 500,
+      deposited_items: {
+        madeira: 20,
+        folha: 7,
+        ossos_preview: 6,
+        po_osso_preview: 3,
+      },
+    },
+  };
+  const completed = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/complete`,
+    completeBody,
+    headers,
+  );
+  const repeatedComplete = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/complete`,
+    completeBody,
+    headers,
+  );
+  assertEq(
+    stableStringify(completed),
+    stableStringify(repeatedComplete),
+    "remote mode session/complete should be idempotent",
+  );
+  const resourceDelta = objectField(
+    objectField(completed, "reward"),
+    "resource_delta",
+  );
+  assertEq(
+    numberField(resourceDelta, "energia"),
+    12,
+    "remote mode energy reward should be capped",
+  );
+  assertEq(
+    numberField(resourceDelta, "ossos"),
+    2,
+    "remote mode bones reward should be capped",
+  );
+  assertEq(
+    numberField(resourceDelta, "xp"),
+    8,
+    "remote mode XP reward should be capped",
+  );
+
+  const labStarted = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/start`,
+    {
+      request_id: crypto.randomUUID(),
+      mode_id: MODE_MODE_ID,
+      slice_id: MODE_SLICE_ID,
+    },
+    modeHeaders(accessToken, "progression_lab"),
+  );
+  const labBlocked = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/complete`,
+    {
+      request_id: crypto.randomUUID(),
+      result: {
+        session_id: stringField(objectField(labStarted, "session"), "id"),
+        ruleset_id: MODE_RULESET_ID,
+        ruleset_version: MODE_RULESET_VERSION,
+        session_seconds: 60,
+        activity_score: 120,
+        deposited_items: { madeira: 2, ossos_preview: 3 },
+      },
+    },
+    modeHeaders(accessToken, "progression_lab"),
+    false,
+  );
+  assertEq(
+    stringField(objectField(labBlocked, "error"), "code"),
+    "MODE_REWARD_BLOCKED_FOR_LAB",
+    "remote progression_lab mode completion should not award real resources",
+  );
+
+  return sessionId;
 }
 
 async function getJson(
@@ -343,9 +519,30 @@ function objectField(payload: JsonObject, key: string): JsonObject {
   return value;
 }
 
+function arrayField(payload: JsonObject, key: string): unknown[] {
+  const value = payload[key];
+  assert(Array.isArray(value), `${key} should be an array`);
+  return value;
+}
+
+function findObjectByField(items: unknown[], key: string, expected: string): JsonObject {
+  for (const item of items) {
+    if (isObject(item) && item[key] === expected) {
+      return item;
+    }
+  }
+  throw new Error(`Missing object with ${key}=${expected}`);
+}
+
 function stringField(payload: JsonObject, key: string): string {
   const value = payload[key];
   return typeof value === "string" ? value : "";
+}
+
+function numberField(payload: JsonObject, key: string): number {
+  const value = payload[key];
+  assert(typeof value === "number", `${key} should be a number`);
+  return value;
 }
 
 function parseJson(text: string): unknown {
@@ -369,7 +566,9 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${
+        JSON.stringify(actual)
+      }`,
     );
   }
 }
@@ -382,4 +581,18 @@ function assertIncludes(
   if (!haystack.includes(needle)) {
     throw new Error(`${message}. Missing: ${needle}. Got: ${haystack}`);
   }
+}
+
+function stableStringify(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => stableStringify(item)).join(",")}]`;
+  }
+  if (isObject(value)) {
+    return `{${
+      Object.keys(value).sort().map((key) =>
+        `${JSON.stringify(key)}:${stableStringify(value[key])}`
+      ).join(",")
+    }}`;
+  }
+  return JSON.stringify(value);
 }

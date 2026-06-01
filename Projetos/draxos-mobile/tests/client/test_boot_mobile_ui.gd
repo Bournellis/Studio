@@ -754,6 +754,44 @@ func test_touch_scroll_container_uses_drag_threshold_and_wide_scrollbar() -> voi
 	assert_true(scroll.is_touch_dragging_for_test())
 	assert_true(scroll.get_v_scroll_bar().custom_minimum_size.x >= MobileUiContractScript.TOUCH_SCROLLBAR_WIDTH)
 
+func test_touch_scroll_container_releases_mouse_drag_from_global_release() -> void:
+	var scroll: DraxosTouchScrollContainer = TouchScrollContainerScript.new()
+	add_child_autofree(scroll)
+	await get_tree().process_frame
+
+	var mouse_press := InputEventMouseButton.new()
+	mouse_press.button_index = MOUSE_BUTTON_LEFT
+	mouse_press.pressed = true
+	mouse_press.position = Vector2(24, 24)
+	scroll._gui_input(mouse_press)
+	assert_true(scroll.is_touch_pressing_for_test())
+
+	var mouse_release := InputEventMouseButton.new()
+	mouse_release.button_index = MOUSE_BUTTON_LEFT
+	mouse_release.pressed = false
+	mouse_release.position = Vector2(900, 900)
+	scroll._input(mouse_release)
+	assert_false(scroll.is_touch_pressing_for_test())
+	assert_false(scroll.is_touch_dragging_for_test())
+
+func test_touch_scroll_container_clears_stale_mouse_drag_on_motion_without_button() -> void:
+	var scroll: DraxosTouchScrollContainer = TouchScrollContainerScript.new()
+	add_child_autofree(scroll)
+	await get_tree().process_frame
+
+	var mouse_press := InputEventMouseButton.new()
+	mouse_press.button_index = MOUSE_BUTTON_LEFT
+	mouse_press.pressed = true
+	mouse_press.position = Vector2(24, 24)
+	scroll._gui_input(mouse_press)
+	assert_true(scroll.is_touch_pressing_for_test())
+
+	var stale_motion := InputEventMouseMotion.new()
+	stale_motion.position = Vector2(24, 90)
+	scroll._gui_input(stale_motion)
+	assert_false(scroll.is_touch_pressing_for_test())
+	assert_false(scroll.is_touch_dragging_for_test())
+
 func test_boot_account_panel_renders_profile_settings_without_login_form() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)

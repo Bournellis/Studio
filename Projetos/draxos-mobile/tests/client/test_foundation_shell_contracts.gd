@@ -115,7 +115,7 @@ func test_action_router_classifies_dynamic_contract_actions() -> void:
 	assert_true(AppShellActionRouterScript.can_route(replay_route.get("action_id")))
 	assert_false(AppShellActionRouterScript.can_route("unknown_action"))
 
-func test_action_router_exposes_mutation_scope_and_minigame_placeholder() -> void:
+func test_action_router_exposes_mutation_scope_and_mode_placeholder() -> void:
 	var battle_route := AppShellActionRouterScript.route_action(
 		AppShellActionContractScript.ACTION_REQUEST_BATTLE,
 		{"save_type": "progression_lab"}
@@ -124,10 +124,11 @@ func test_action_router_exposes_mutation_scope_and_minigame_placeholder() -> voi
 	assert_eq(battle_route.get("mutation_endpoint"), "battle/request")
 	assert_true(bool(battle_route.get("requires_idempotent_retry", false)))
 
-	var minigame_route := AppShellActionRouterScript.route_action(
-		AppShellActionContractScript.open_minigame_shell_action("ritual_stub"),
+	var mode_route := AppShellActionRouterScript.route_action(
+		AppShellActionContractScript.open_mode_shell_action("openworld"),
 		{"save_type": "normal"}
 	)
-	assert_eq(minigame_route.get("category"), AppShellActionRouterScript.CATEGORY_MINIGAME)
-	assert_eq(minigame_route.get("scope_id"), "minigame:ritual_stub:normal")
-	assert_eq(minigame_route.get("mutation_endpoint"), "")
+	assert_eq(mode_route.get("category"), AppShellActionRouterScript.CATEGORY_MODE)
+	assert_eq(mode_route.get("scope_id"), "mode:openworld:normal")
+	assert_eq(mode_route.get("mutation_endpoint"), "")
+	assert_false(bool(mode_route.get("blocked_by_update", true)))

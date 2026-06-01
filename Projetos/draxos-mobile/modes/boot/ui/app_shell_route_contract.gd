@@ -20,7 +20,9 @@ const ROUTE_ARENA_ACTIVE := "arena_active"
 const ROUTE_ARENA_REPLAY := "arena_replay"
 const ROUTE_ARENA_BUFF_CHOICE := "arena_buff_choice"
 const ROUTE_ARENA_SUMMARY := "arena_summary"
-const ROUTE_MINIGAME_SHELL := "minigame_shell"
+const ROUTE_MODE_HUB := "mode_hub"
+const ROUTE_MODE_SHELL := "mode_shell"
+const ROUTE_MODES_OPS := "modes_ops"
 
 const ACTION_REQUEST_BATTLE := "request_battle"
 const ACTION_SHOW_BATTLE_HISTORY := "show_battle_history"
@@ -46,6 +48,9 @@ const _ALIASES := {
 	"battle": ROUTE_BATTLE_ENTRY,
 	"arena": ROUTE_ARENA_SELECTION,
 	"arena_pve": ROUTE_ARENA_SELECTION,
+	"modes": ROUTE_MODE_HUB,
+	"mode_hub": ROUTE_MODE_HUB,
+	"modes_ops": ROUTE_MODES_OPS,
 	"monetization": ROUTE_SHOP,
 }
 
@@ -68,7 +73,9 @@ const _TITLES := {
 	ROUTE_ARENA_REPLAY: "Duelo",
 	ROUTE_ARENA_BUFF_CHOICE: "Buff",
 	ROUTE_ARENA_SUMMARY: "Resumo",
-	ROUTE_MINIGAME_SHELL: "Minigame",
+	ROUTE_MODE_HUB: "Modes",
+	ROUTE_MODE_SHELL: "Mode",
+	ROUTE_MODES_OPS: "Modes Ops",
 }
 
 const _BATTLE_MODE_ROUTES := {
@@ -92,6 +99,7 @@ const _FULLSCREEN_GAMEPLAY_ROUTES := {
 	ROUTE_BATTLE_SUMMARY: true,
 	ROUTE_BATTLE_LOGS: true,
 	ROUTE_ARENA_REPLAY: true,
+	ROUTE_MODE_SHELL: true,
 }
 
 const _IMMERSIVE_ROUTES := {

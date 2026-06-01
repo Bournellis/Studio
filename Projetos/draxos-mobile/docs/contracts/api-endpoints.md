@@ -109,6 +109,8 @@ entrar em codigo, smoke, migration ou documentacao publica de payload.
   escrita de gameplay.
 - `telemetry`: endpoint de diagnostico/UX; pode associar evento ao save ativo
   quando existir, mas nunca concede recurso, ranking, recompensa ou progresso.
+- `mode`: endpoint de leitura/ops por modo, como registry e analytics
+  agregados. Exige JWT em V1 e nao concede progresso por si so.
 - `admin-internal`: superficie interna de administracao, suporte e diagnostico,
   sempre `service_role`-only e auditavel. Nao ha painel publico nesta etapa.
 
@@ -166,13 +168,20 @@ novo.
 | POST | `/monetization/alpha-purchase` | `save-scoped` | Sim | `request_id/request_hash` por save | Compra/redeem alpha do save ativo com ledger. |
 | POST | `/telemetry/client-event` | `telemetry` | Sim, opcional | Nao | Grava diagnostico client; `player_id` pode ser nulo antes de conta/save. |
 | POST | `/progression-lab/apply` | `save-scoped` | Sim, exige `progression_lab` | `request_id` por save Lab | Interno/gated; aplica healthy save apenas no Lab e nunca escreve no Normal. |
+| GET | `/modes/registry` | `mode` | Sim | Nao | Registry dos cinco modos oficiais. |
+| GET | `/modes/state?mode_id=<id>` | `save-scoped` | Sim | Nao | Estado de um modo no save ativo. |
+| POST | `/modes/session/start` | `save-scoped` | Sim | `request_id/request_hash` por modo/save | Inicia sessao generica para modos que usam Mode sessions. |
+| POST | `/modes/session/complete` | `save-scoped` | Sim | `request_id/request_hash` por modo/save | Completa sessao e aplica Reward Bridge server-authoritative. |
+| POST | `/modes/session/abandon` | `save-scoped` | Sim | `request_id/request_hash` por modo/save | Abandona sessao iniciada. |
+| GET | `/modes/analytics/summary` | `mode` | Sim | Nao | Sumario interno por modo. |
+| POST | `/modes/admin/*` | `admin-internal` | Sim + `admin_roles` | `request_id/request_hash` nas mutacoes | Ops de disable/enable, sessao, reconcile e compensacao auditada. |
 
 `admin-internal` existe apenas como RPC `service_role`-only no banco:
 `admin_lookup_account_v1`, `admin_battle_diagnostics_v1`,
 `resource_reconciliation_report_v1`, `admin_adjust_resource_balance_v1` e
 `admin_flag_account_v1`. Nenhum deles e endpoint publico ou chamada de cliente.
 
-`minigame` fica reservado por `docs/contracts/minigame-integration.md`; nenhum minigame jogavel deve criar endpoint antes do contrato de entrada, custo, recompensa, telemetry e admin.
+`/modes` e o contrato ativo da Minigame Platform V1. `/minigames` nao e contrato ativo nesta publicacao.
 
 ## Endpoints Internos De Lab Runner
 

@@ -1,6 +1,6 @@
 # DraxosMobile - Game Design Document (Referencia De Implementacao)
 
-- Ultima atualizacao: `2026-05-31`
+- Ultima atualizacao: `2026-06-01`
 - Fonte historica completa: `../../_conceitos/mobile-universe/gdd.md`
 
 > Este documento e uma referencia condensada da implementacao existente. Depois da Foundation Final Polish, ele deve ser lido como contrato/contexto de substancia e mock implementado, nao como prioridade de expansao nem como design final.
@@ -23,6 +23,8 @@ O foco imediato nao e campanha PVE tradicional, PVP-first, visual final ou expan
 O loop de fundacao continua valido como app shell:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
+
+Atualizacao de leitura V1: esse loop agora vive dentro de um Hub de Modos. `Basebuilder` possui Refugio/Base; `Autobattler` possui Arena PVE, build de Instrumento/Doutrina/Familiar/spells/potions e futuro PVP async; `Openworld` possui o slice `Openworld Bosque`; `Towerdefense` e `Cardgame` sao modos oficiais staged/disabled ate receberem contratos proprios.
 
 Quando secoes antigas usam termos como "final", "primeiro slice", "alpha" ou "autoritativo", leia como "estado implementado ou referencia tecnica atual". Qualquer promocao desses detalhes para design final precisa de decisao futura explicita.
 
