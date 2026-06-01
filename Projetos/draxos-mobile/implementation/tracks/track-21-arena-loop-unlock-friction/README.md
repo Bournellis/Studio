@@ -3,7 +3,7 @@
 - Date: `2026-05-31`
 - Branch: `codex/draxos-mobile/track21-arena-loop-unlock-friction`
 - Base: `codex/draxos-mobile/s1-arena-calibration-integration`
-- Status: `PACKAGED_INTERNAL_ALPHA_LOCAL`
+- Status: `PUBLISHED_INTERNAL_ALPHA`
 
 ## Purpose
 
@@ -56,13 +56,26 @@ It also removes two avoidable clicks from the normal Arena flow:
 - `export_internal_alpha.ps1`: PASS with Android `debug_fallback`.
 - `publish_internal_alpha.ps1 -Mode Plan`: PASS.
 - `publish_internal_alpha.ps1 -Mode Package`: PASS.
+- `supabase db push --linked --yes`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -ConfirmRemoteMutation`: PASS.
+- `build_cloudflare_pages_package.ps1`: PASS.
+- `npx -y wrangler pages deploy`: PASS.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation`:
+  PASS.
+- Remote release smokes: PASS.
 
-## Local Package
+## Published Package
 
-- Release root: `internal-alpha/v0-track21-arena-loop-20260531-local`
+- Release root: `internal-alpha/v0-track21-arena-loop-20260531-df9f12d`
 - Publish dir: `build/internal-alpha/publish`
-- Remote deploy was not executed in this package. Remote mutation still requires
-  explicit approval and `-ConfirmRemoteMutation`.
+- Portal:
+  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Preview:
+  `https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`
+- Manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 ## Playtest Focus
 

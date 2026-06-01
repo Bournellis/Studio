@@ -5,17 +5,16 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Track 21 - Arena Loop Unlock And Friction Pass`
-- Active stage status: `PACKAGED_INTERNAL_ALPHA_LOCAL`
+- Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Track 20 - Season 1 Arena Calibration`
+- Latest published remote package: `Track 21 - Arena Loop Unlock And Friction Pass`
 - Latest implemented package: `Track 21 - Arena Loop Unlock And Friction Pass`
   on branch `codex/draxos-mobile/track21-arena-loop-unlock-friction`.
-- Active follow-up: deploy the Track 21 hotfix remotely when explicitly
-  approved, then replay the new-save Arena tutorial -> 3-duel unlock loop before
-  fine tuning.
+- Active follow-up: replay the new-save Arena tutorial -> 3-duel unlock loop
+  from the published Track 21 Internal Alpha before fine tuning.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -62,8 +61,10 @@ package. It fixes the tutorial unlock blocker by updating `players.level` with
 Arena completion XP in `arena_record_duel_v1`, keeps the idempotent reward path
 single-apply, routes Arena start directly into the active duel screen, and keeps
 post-summary continuation inside Arena selection after a read-only claim ack.
-Remote Track 20 remains the latest published preview until the Track 21
-migration/client package is deployed with explicit remote approval.
+Track 21 is now also the latest published remote Internal Alpha: migration
+`202605310004_arena_loop_unlock_friction.sql` was applied to Supabase, release
+manifest was redeployed and Cloudflare Pages preview is
+`https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`.
 
 Current product reading: this is a strong prototype base for refinement. The
 current product direction is Arena PVE initial, documented in
@@ -376,7 +377,7 @@ tuning numbers finer.
 
 ## Track 21 - Arena Loop Unlock And Friction Pass
 
-Track 21 is implemented and packaged locally on `2026-05-31` as a hotfix over
+Track 21 is implemented and published remotely on `2026-05-31` as a hotfix over
 Track 20 after the first playtest found that tutorial completion did not unlock
 the next Arena tier.
 
@@ -397,7 +398,7 @@ Implemented in Track 21:
 - Arena selection highlights the next recommended unlocked tier before the full
   server-driven list.
 
-Validation and local publication completed:
+Validation and publication completed:
 
 - `git diff --check`: passed.
 - Focused Deno tests for Arena loop unlock, catalog, difficulties and schema:
@@ -411,17 +412,43 @@ Validation and local publication completed:
 - `export_internal_alpha.ps1`: passed with Android `debug_fallback`.
 - `publish_internal_alpha.ps1 -Mode Plan`: passed.
 - `publish_internal_alpha.ps1 -Mode Package`: passed.
+- `supabase db push --linked --yes`: passed, applying
+  `202605310004_arena_loop_unlock_friction.sql`.
+- `publish_internal_alpha.ps1 -Mode Upload -ConfirmRemoteMutation`: passed.
+- `build_cloudflare_pages_package.ps1`: passed with Web assets rooted at the
+  versioned Supabase Storage path.
+- `npx -y wrangler pages deploy`: passed, preview
+  `https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation`:
+  passed; the manifest points at the stable protected Cloudflare Pages domain.
+- `server/tests/release_manifest_smoke.ts`: passed remotely.
+- `server/tests/release_artifacts_remote_smoke.ts`: passed remotely; Portal and
+  Web are correctly protected by Cloudflare Access.
+- `server/tests/internal_alpha_remote_smoke.ts`: passed remotely.
 
-Local Track 21 Internal Alpha artifacts:
+Published Track 21 Internal Alpha artifacts:
 
-- Release root: `internal-alpha/v0-track21-arena-loop-20260531-local`.
-- Publish dir: `build/internal-alpha/publish`.
-- Remote deploy: not executed. Remote mutation still requires explicit approval
-  and `-ConfirmRemoteMutation`.
+- Portal:
+  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Preview:
+  `https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-track21-arena-loop-20260531-df9f12d/downloads/draxos-mobile-alpha.apk`
+  (`31762404` bytes),
+  SHA256 `515bb254c3b2e3825f6951a828e424c361fadb7ef696688bbff16b0c63044a05`.
+- PC Windows ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-track21-arena-loop-20260531-df9f12d/downloads/draxos-mobile-alpha.zip`
+  (`40223926` bytes),
+  SHA256 `4c78b6e51b18183d5e3bfcea938663715876043e711790a982e160aa0c321f86`.
+- Web Index: `5442` bytes,
+  SHA256 `9ac3699ee5514844b7886a7f2cad9f3307335f82fb82409bc5469c8420aa27f2`.
+- Manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
-Next after Track 21: deploy the hotfix to the remote Internal Alpha when
-approved, then test a new save through tutorial clear, Arena return, first
-3-duel unlock and starting the next Arena without the redundant loadout
+Next after Track 21: test a new save through tutorial clear, Arena return,
+first 3-duel unlock and starting the next Arena without the redundant loadout
 confirmation.
 
 ## Lab Web Export Guard Hotfix
