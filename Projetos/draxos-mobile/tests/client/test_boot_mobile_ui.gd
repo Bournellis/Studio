@@ -986,9 +986,25 @@ func test_boot_decomposition_keeps_shell_budget_and_boundaries() -> void:
 	var hub_source := FileAccess.get_file_as_string("res://modes/boot/surfaces/hub_surface_presenter.gd")
 	var hub_line_count := hub_source.split("\n").size()
 	assert_true(hub_line_count <= 900, "hub_surface_presenter.gd must stay a thin facade; got %d lines" % hub_line_count)
-	var runtime_source := FileAccess.get_file_as_string("res://modes/boot/boot_runtime.gd")
-	var runtime_line_count := runtime_source.split("\n").size()
-	assert_true(runtime_line_count <= 1750, "boot_runtime.gd must keep shrinking under the client-shell hardening budget; got %d lines" % runtime_line_count)
+	assert_false(FileAccess.file_exists("res://modes/boot/boot_runtime_facade.gd"))
+	var runtime_hot_budgets := {
+		"res://modes/boot/boot_runtime.gd": 900,
+		"res://modes/boot/boot_runtime_state.gd": 700,
+		"res://modes/boot/boot_runtime_surface_api.gd": 700,
+		"res://modes/boot/boot_runtime_status_controller.gd": 700,
+		"res://modes/boot/boot_runtime_labs_controller.gd": 700,
+		"res://modes/boot/boot_runtime_flow_facade.gd": 700,
+		"res://modes/boot/boot_runtime_navigation_controller.gd": 700,
+		"res://modes/boot/boot_runtime_action_dispatcher.gd": 700,
+	}
+	var runtime_hot_source := ""
+	for script_path: String in runtime_hot_budgets.keys():
+		assert_true(FileAccess.file_exists(script_path), "%s must exist as a budgeted runtime module" % script_path)
+		var runtime_source := FileAccess.get_file_as_string(script_path)
+		var runtime_line_count := runtime_source.split("\n").size()
+		var budget := int(runtime_hot_budgets[script_path])
+		assert_true(runtime_line_count < budget, "%s must stay under %d lines; got %d" % [script_path, budget, runtime_line_count])
+		runtime_hot_source += "\n" + runtime_source
 	var hub_full_source := FileAccess.get_file_as_string("res://modes/boot/surfaces/hub_surface_full_presenter.gd")
 	var hub_full_line_count := hub_full_source.split("\n").size()
 	assert_true(hub_full_line_count <= 1700, "hub_surface_full_presenter.gd must keep Mode Hub extracted; got %d lines" % hub_full_line_count)
@@ -997,10 +1013,10 @@ func test_boot_decomposition_keeps_shell_budget_and_boundaries() -> void:
 	assert_true(boot_source.contains("surface_action_flow.gd"))
 	assert_true(boot_source.contains("battle_lifecycle_flow.gd"))
 	assert_true(boot_source.contains("surface_ui_helpers.gd"))
-	assert_true(runtime_source.contains("mode_hub_surface_presenter.gd"))
-	assert_true(runtime_source.contains("mode_shell_launcher.gd"))
-	assert_false(runtime_source.contains("func _render_mode_content_body"))
-	assert_false(runtime_source.contains("func _render_mode_fullscreen"))
+	assert_true(runtime_hot_source.contains("mode_hub_surface_presenter.gd"))
+	assert_true(runtime_hot_source.contains("mode_shell_launcher.gd"))
+	assert_false(runtime_hot_source.contains("func _render_mode_content_body"))
+	assert_false(runtime_hot_source.contains("func _render_mode_fullscreen"))
 	assert_false(boot_source.contains("SupabaseClient.fetch_base_state"))
 	assert_false(boot_source.contains("SupabaseClient.collect_base"))
 	assert_false(boot_source.contains("SupabaseClient.fetch_social_state"))
@@ -1008,7 +1024,8 @@ func test_boot_decomposition_keeps_shell_budget_and_boundaries() -> void:
 
 func test_mode_shell_launcher_owns_mode_screen_instantiation() -> void:
 	assert_not_null(ModeShellLauncherScript)
-	var runtime_source := FileAccess.get_file_as_string("res://modes/boot/boot_runtime.gd")
+	var runtime_source := FileAccess.get_file_as_string("res://modes/boot/boot_runtime_labs_controller.gd")
+	runtime_source += "\n" + FileAccess.get_file_as_string("res://modes/boot/boot_runtime_flow_facade.gd")
 	var launcher_source := FileAccess.get_file_as_string("res://modes/boot/ui/mode_shell_launcher.gd")
 	assert_true(runtime_source.contains("_mode_shell_launcher.render(self)"))
 	assert_true(runtime_source.contains("_mode_shell_launcher.open(self, mode_id)"))
