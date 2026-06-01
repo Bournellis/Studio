@@ -241,8 +241,10 @@ function Test-ModeHandlerStrictness {
   Test-DirectoriesMirror 'server\functions\modes' 'supabase\functions\modes' 'server/supabase modes functions'
   Test-LineBudget 'server\functions\modes\index.ts' 80 'server modes edge entrypoint'
   Test-LineBudget 'server\functions\modes\mode_handler.ts' 1100 'server modes handler'
+  Test-LineBudget 'server\functions\modes\mode_support.ts' 700 'server modes support'
   Test-LineBudget 'supabase\functions\modes\index.ts' 80 'supabase modes edge entrypoint'
   Test-LineBudget 'supabase\functions\modes\mode_handler.ts' 1100 'supabase modes handler'
+  Test-LineBudget 'supabase\functions\modes\mode_support.ts' 700 'supabase modes support'
 
   $entry = Get-Content -LiteralPath (Join-Path $ProjectPath 'server\functions\modes\index.ts') -Raw
   if ($entry.Contains('mode_handler.ts') -and $entry.Contains('Deno.serve(modeHandler)')) {
@@ -253,16 +255,22 @@ function Test-ModeHandlerStrictness {
 
   foreach ($relative in @('server\functions\modes\mode_handler.ts', 'supabase\functions\modes\mode_handler.ts')) {
     $path = Join-Path $ProjectPath $relative
+    $supportPath = Join-Path (Split-Path -Parent $path) 'mode_support.ts'
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
       Add-Failure "mode handler missing: $relative"
       continue
     }
+    if (-not (Test-Path -LiteralPath $supportPath -PathType Leaf)) {
+      Add-Failure "mode support missing beside: $relative"
+      continue
+    }
     $text = Get-Content -LiteralPath $path -Raw
+    $moduleText = "$text`n$(Get-Content -LiteralPath $supportPath -Raw)"
     foreach ($needle in @('export class ModeHandler', 'handleAdminRoute', 'mutationRequestHash', 'saveTypeFromRequest')) {
-      if ($text.Contains($needle)) {
-        Add-Ok "$relative contains modularity marker $needle"
+      if ($moduleText.Contains($needle)) {
+        Add-Ok "$relative module set contains modularity marker $needle"
       } else {
-        Add-Failure "$relative missing modularity marker $needle"
+        Add-Failure "$relative module set missing modularity marker $needle"
       }
     }
     foreach ($pattern in @('method:\s*"PATCH"', 'method:\s*"PUT"', 'method:\s*"DELETE"')) {

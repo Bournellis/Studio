@@ -5,7 +5,7 @@ Deno.test("mode admin ops are gated by admin_roles and audited compensation", as
   const hardening = await projectText(
     "supabase/migrations/202606010002_modes_admin_audit_hardening.sql",
   );
-  const edge = await projectText("server/functions/modes/mode_handler.ts");
+  const edge = await modeEdgeText();
   assertIncludes(
     migration,
     "create table if not exists public.admin_roles",
@@ -53,6 +53,13 @@ async function projectText(relativePath: string): Promise<string> {
   const cwd = Deno.cwd().replaceAll("\\", "/");
   const path = cwd.endsWith("/draxos-mobile") ? relativePath : `${PROJECT_PREFIX}/${relativePath}`;
   return await Deno.readTextFile(path);
+}
+
+async function modeEdgeText(): Promise<string> {
+  return [
+    await projectText("server/functions/modes/mode_handler.ts"),
+    await projectText("server/functions/modes/mode_support.ts"),
+  ].join("\n");
 }
 
 function assertIncludes(haystack: string, needle: string, message: string): void {

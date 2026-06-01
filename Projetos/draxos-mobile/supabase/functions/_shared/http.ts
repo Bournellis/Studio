@@ -1,9 +1,32 @@
+export const allowedCorsOrigins = [
+  "https://draxos-mobile-internal-alpha.pages.dev",
+  "https://68452eed.draxos-mobile-internal-alpha.pages.dev",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:8788",
+  "http://127.0.0.1:8788",
+];
+
+const defaultCorsOrigin = allowedCorsOrigins[0];
+
 export const corsHeaders = {
-  "access-control-allow-origin": "*",
+  "access-control-allow-origin": defaultCorsOrigin,
   "access-control-allow-headers":
     "authorization, x-client-info, apikey, content-type, x-draxos-save-type, x-draxos-api-version",
   "access-control-allow-methods": "GET, POST, OPTIONS",
+  "vary": "origin",
 };
+
+export function corsHeadersForRequest(request: Request): Record<string, string> {
+  const origin = request.headers.get("origin");
+  if (origin !== null && allowedCorsOrigins.includes(origin)) {
+    return {
+      ...corsHeaders,
+      "access-control-allow-origin": origin,
+    };
+  }
+  return corsHeaders;
+}
 
 export const jsonHeaders = {
   ...corsHeaders,

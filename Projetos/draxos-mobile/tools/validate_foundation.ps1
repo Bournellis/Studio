@@ -385,20 +385,26 @@ function Assert-ModeDescriptorSchemaStrict {
 function Assert-ModeHandlerModularity {
     $entry = Join-Path $ProjectPath "server\functions\modes\index.ts"
     $handler = Join-Path $ProjectPath "server\functions\modes\mode_handler.ts"
+    $support = Join-Path $ProjectPath "server\functions\modes\mode_support.ts"
     $supabaseEntry = Join-Path $ProjectPath "supabase\functions\modes\index.ts"
     $supabaseHandler = Join-Path $ProjectPath "supabase\functions\modes\mode_handler.ts"
+    $supabaseSupport = Join-Path $ProjectPath "supabase\functions\modes\mode_support.ts"
     Assert-FilesMirror -LeftPath $entry -RightPath $supabaseEntry -Label "modes edge entrypoint"
     Assert-FilesMirror -LeftPath $handler -RightPath $supabaseHandler -Label "modes handler"
+    Assert-FilesMirror -LeftPath $support -RightPath $supabaseSupport -Label "modes support"
     Assert-LineBudget -RelativePath "server\functions\modes\index.ts" -MaxLines 80 -Label "server modes edge entrypoint"
     Assert-LineBudget -RelativePath "server\functions\modes\mode_handler.ts" -MaxLines 1100 -Label "server modes handler"
+    Assert-LineBudget -RelativePath "server\functions\modes\mode_support.ts" -MaxLines 700 -Label "server modes support"
     $entryText = Get-Content -LiteralPath $entry -Raw
     $handlerText = Get-Content -LiteralPath $handler -Raw
+    $supportText = Get-Content -LiteralPath $support -Raw
+    $modeText = "$handlerText`n$supportText"
     if (-not $entryText.Contains('import { modeHandler } from "./mode_handler.ts";') -or -not $entryText.Contains("Deno.serve(modeHandler)")) {
         throw "server/functions/modes/index.ts must only delegate to mode_handler.ts."
     }
     foreach ($needle in @("export class ModeHandler", "modeHandler(request: Request)", "handleAdminRoute", "mutationRequestHash", "saveTypeFromRequest")) {
-        if (-not $handlerText.Contains($needle)) {
-            throw "server/functions/modes/mode_handler.ts is missing modularity marker: $needle"
+        if (-not $modeText.Contains($needle)) {
+            throw "server/functions/modes mode modules are missing modularity marker: $needle"
         }
     }
 }
