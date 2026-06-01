@@ -1,29 +1,46 @@
 ﻿# DraxosMobile - Internal Alpha v0 Handoff
 
-- Data: `2026-05-31`
-- Status: `RPGSUAVE_INTEGRATED_ALPHA_PUBLISHED - AWAITING_HUMAN_PLAYTEST`
+- Data: `2026-06-01`
+- Status: `MINIGAME_PLATFORM_V1_MODES_PUBLISHED - AWAITING_HUMAN_PLAYTEST`
 - Canal: `internal_alpha`
 - Versao: `0.0.1-alpha.0`
 - Version code: `1`
 - Backend remoto: `https://armxgipvnbbshzqawklw.supabase.co`
-- Portal atual: `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
-- Web atual: `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Portal atual: `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web atual: `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 ## Pacote Para Teste
 
 | Item | URL |
 |---|---|
-| Portal | `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/portal/index.html` |
-| Web | `https://d1e73b74.draxos-mobile-internal-alpha.pages.dev/web/index.html` |
-| Android APK | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.apk` |
-| PC ZIP | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-rpgsuave-integrated-alpha-20260531-0aa3969/downloads/draxos-mobile-alpha.zip` |
+| Portal | `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/portal/index.html` |
+| Web | `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/web/index.html` |
+| Android APK | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c/downloads/draxos-mobile-alpha.apk` |
+| PC ZIP | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c/downloads/draxos-mobile-alpha.zip` |
 
 | Artefato | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `31725206` | `041dc7ff351214b77b0835991639b67c239152e0643237c4ef8ca7bc7b7933ee` |
-| PC Windows ZIP | `40188217` | `669013b975e9611e9b2e526fae1f2030afd42c2f027705e142a0fc81e41eabe9` |
-| Web index | `5442` | `fba1727cfa5bbf0c46c859c5581773378a2ca55004774b1c3ee08623c117fe2c` |
+| Android APK | `31820934` | `ac154edf699afa74f3c82f44e3fd57969b3943420f4bb3fb94fb142620fdda60` |
+| PC Windows ZIP | `40277711` | `14aa516367d4cfded3c1cad574f0cbdcb1d722cc7ee83b054f79e8736ae2f3b5` |
+| Web index | `5442` | `dc79081a3d2cb360b6ad0a1b5ca7b1fa9efb58a78777b972bfdd89aa43271c90` |
+
+## Atualizacao Minigame Platform V1 - 2026-06-01
+
+- Release root atual:
+  `internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c`.
+- API ativa: `/modes`; Edge Function `minigames` removida do contrato remoto
+  ativo.
+- Modos oficiais: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame`,
+  `Openworld`.
+- Hub de Modos: Basebuilder e Autobattler ativos; Openworld Bosque em
+  Internal Alpha fullscreen; Towerdefense/Cardgame visiveis como staged/disabled.
+- Validacao: Full gate local, migrations remotas, Edge Function `modes`,
+  manifest, artefatos, `/modes` remoto e contrato antigo `/minigames` 404
+  confirmados.
+- Proximo teste humano: abrir Hub de Modos no Refugio, entrar em Basebuilder,
+  Autobattler e Openworld Bosque, confirmar cards disabled e verificar Labs Dev
+  Ops sem dados sensiveis para usuario comum.
 
 ## Atualizacao Rpgsuave Integrated Alpha - 2026-05-31
 

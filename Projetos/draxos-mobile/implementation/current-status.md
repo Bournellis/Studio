@@ -5,16 +5,18 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Minigame Platform V1 - Official Modes`
-- Active stage status: `IMPLEMENTATION_ACTIVE`
+- Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Track 21 - Arena Loop Unlock And Friction Pass`
+- Latest published remote package: `Minigame Platform V1 - Official Modes`
 - Latest implemented package: `Minigame Platform V1 - Official Modes`
-  on branch `codex/draxos-mobile/modes-integrated-alpha` (in validation).
-- Active follow-up: validate Mode Hub, `/modes`, Openworld rename,
-  admin/ops/analytics and publish the next Internal Alpha package.
+  on branch `codex/draxos-mobile/modes-integrated-alpha`, published as
+  `internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c`.
+- Active follow-up: human playtest of the Mode Hub, Basebuilder entry,
+  Autobattler entry, Openworld Bosque fullscreen loop, staged disabled cards
+  and Labs Dev Ops visibility.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -35,7 +37,28 @@ V1 promotes the previous single-prototype minigame layer into a mode platform:
   Openworld opens fullscreen Bosque, Towerdefense/Cardgame stay staged/disabled;
 - backend V1 adds registry rows, `/modes`, `mode_limit_policies`,
   `admin_roles`, session abandon, admin/ops routes and analytics summary;
-- release target: `internal-alpha/v0-minigame-platform-v1-modes-20260601-<sha>`.
+- published release root:
+  `internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c`;
+- Portal:
+  `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Web:
+  `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
+
+Validation and publication completed for Minigame Platform V1:
+
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile Full -RequireClean`
+  passed with Godot validation, GUT client, responsive/mobile smokes, local
+  Supabase schema checks, local `/modes` live proof and Deno server tests.
+- Remote migration applied `202606010000_minigame_platform_v0.sql` and
+  `202606010001_modes_platform_v1.sql`.
+- Edge Function `modes` deployed; legacy `minigames` function removed from the
+  active remote contract.
+- `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` and
+  `internal_alpha_remote_smoke.ts` passed remotely with `/modes` enabled.
+- Manual remote check confirmed `/functions/v1/minigames/registry` returns
+  `404`.
 
 ## Baseline
 
@@ -1059,9 +1082,9 @@ without adding a new schema/API package beyond Track 16.
 
 | Artifact       |      Bytes | SHA256                                                             |
 | -------------- | ---------: | ------------------------------------------------------------------ |
-| Android APK    | `31649813` | `118cce77d40ebc2cefd73728e738244c6b3615c63d3efdcd2c88ade7eb05cc8a` |
-| PC Windows ZIP | `40118021` | `0955e062e3831e9c952e4d40369682b92a4d03922c1904de44d3b0fc04636e0a` |
-| Web index      |     `5442` | `ddd5061f0fc7b17907474fa577e90767d501f0a5b2b56d8ff6d0e2a71db2b858` |
+| Android APK    | `31820934` | `ac154edf699afa74f3c82f44e3fd57969b3943420f4bb3fb94fb142620fdda60` |
+| PC Windows ZIP | `40277711` | `14aa516367d4cfded3c1cad574f0cbdcb1d722cc7ee83b054f79e8736ae2f3b5` |
+| Web index      |     `5442` | `dc79081a3d2cb360b6ad0a1b5ca7b1fa9efb58a78777b972bfdd89aa43271c90` |
 
 Links:
 
@@ -1072,11 +1095,19 @@ Links:
   `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Latest verified preview:
-  `https://0fee1018.draxos-mobile-internal-alpha.pages.dev`
+  `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev`
 - Web asset root:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529/web`
-- Web hotfix pack:
-  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-battle-preparation-complete-v1-20260529-hotfix4/web/index.pck`
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c/web`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c/downloads/draxos-mobile-alpha.apk`
+- PC Windows ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c/downloads/draxos-mobile-alpha.zip`
+
+Minigame Platform V1 was published to the Internal Alpha artifact/site channel
+on `2026-06-01`. The remote manifest points to the Cloudflare Pages preview
+above, APK/PC downloads are public unlisted Storage URLs, and the active API
+contract is now `/modes`. Historical publication notes below are retained for
+traceability.
 
 Battle Preparation Complete v1 was published to the Internal Alpha artifact/site
 channel on `2026-05-29`. Android APK, PC ZIP and Web assets were uploaded to
