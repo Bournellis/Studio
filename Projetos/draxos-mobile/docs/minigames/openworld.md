@@ -21,11 +21,17 @@ Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitua
 ## Escopo Atual
 
 - mobile portrait fullscreen;
-- camera travada no personagem;
-- joystick virtual como unico input player-facing;
+- wrapper `Control` compativel com `ModeShellLauncher`, com runtime interno
+  `SubViewportContainer`/`SubViewport` e mundo `Node2D`;
+- camera `Camera2D` seguindo o personagem;
+- controles PC/Web por WASD ou setas;
+- joystick livre por toque/mouse em area vazia do viewport;
 - HUD dentro do jogo;
 - mochila funcional com `Bolso`, `Bau`, `Craft` e `Sessao`;
 - detalhes tecnicos escondidos em `Sessao > Detalhes tecnicos`;
+- colisao local em bau, arvores grandes, rochas grandes e paredes de borda;
+- recursos pequenos como `Area2D` coletaveis e sem bloqueio de movimento;
+- ordenacao visual por profundidade no mundo 2D, com HUD sempre acima;
 - assets procedurais em Godot, sem raster externo novo;
 - backend opcional em `integrated_alpha` por `/modes/session/start` e `/modes/session/complete`;
 - Reward Bridge limitado, server-authoritative, idempotente e com ledger.
@@ -38,6 +44,8 @@ Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitua
 - ranking, guilda, battle pass ou premium economy do Openworld;
 - promessa publica de release.
 - expansao do placeholder futuro sem pacote explicito.
+- inimigos, combate, mapa novo, recompensa nova, economia nova ou endpoint novo
+  neste pacote de QoL.
 
 ## Descriptor Scaffold
 
@@ -56,10 +64,33 @@ Reward Bridge novo ou fronteira nova com Basebuilder precisa de pacote proprio.
 ## Componentes
 
 - `OpenworldForestModel`: regras locais, inventario, coleta, bau, crafting e payload.
-- `OpenworldForestScreen`: sessao, HUD, joystick, sheet e integracao opcional.
-- `OpenworldForestWorldView`: terreno, camera, zonas, recursos, personagem e feedback procedural.
-- `OpenworldVirtualJoystick`: input touch/mouse do joystick.
+- `OpenworldForestScreen`: wrapper `Control`, sessao, HUD, sheet, joystick livre,
+  input map, `SubViewport` e integracao opcional.
+- `OpenworldForestWorld2D`: mundo `Node2D`, camera, player, objetos, bordas,
+  recursos e estado visual.
+- `OpenworldPlayerController`: `CharacterBody2D`, movimento por vetor combinado e
+  colisao do jogador.
+- `OpenworldWorldCatalog`: catalogo local do Bosque para bau, obstaculos grandes
+  e recursos, sem contrato compartilhado ainda.
+- `OpenworldWorldObject`: instancia visual procedural, `StaticBody2D` quando
+  bloqueante e `Area2D` quando coletavel/interativo.
+- `OpenworldForestWorldView`: legado Control preservado como referencia removivel,
+  sem uso runtime no fluxo novo.
+- `OpenworldVirtualJoystick`: input touch/mouse livre, analogico e resetavel.
 - `OpenworldInventorySheet`: bolso, bau, craft, sessao e detalhes tecnicos.
+
+## Controles E Mundo
+
+- Movimento final combina teclado, joystick livre e vetor de debug dos smokes,
+  limitado a magnitude `1.0`.
+- A velocidade continua vindo de `OpenworldForestModel.current_speed()`, mantendo
+  a penalidade de peso existente.
+- Toque/click no HUD, botoes ou sheet nao ativa joystick.
+- O bau tem colisao fisica central menor que a area de deposito.
+- Arvores e rochas grandes bloqueiam o jogador; recursos pequenos continuam
+  atravessaveis e coletam quando o jogador para dentro do raio.
+- Bordas invisiveis impedem saida acidental do mapa `960x1400`, com borda visual
+  discreta no fundo.
 
 ## Backend
 
@@ -92,5 +123,6 @@ O servidor valida limites, bloqueia reward real em `progression_lab`, aplica del
 - `tests/client/test_openworld_mode_dev.gd`
 - `tools/smoke_openworld_forest.gd`
 - `tools/smoke_modes_visual_layout.gd`
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`
 - `server/tests/openworld_reward_bridge_test.ts`
 - `server/tests/modes_platform_schema_test.ts`

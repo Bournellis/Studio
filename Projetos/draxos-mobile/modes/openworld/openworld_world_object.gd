@@ -1,0 +1,247 @@
+class_name OpenworldWorldObject
+extends Node2D
+
+const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
+const CatalogScript := preload("res://modes/openworld/openworld_world_catalog.gd")
+
+var object_id := ""
+var kind := ""
+var item_id := ""
+var display_name := ""
+var collision_radius := 0.0
+var interaction_radius := 0.0
+var blocks_player := false
+var collectible := false
+var sort_offset := 0.0
+var visual_size := Vector2(40, 40)
+var collected := false
+var nearest := false
+var collection_progress := 0.0
+
+var _static_body: StaticBody2D
+var _area: Area2D
+
+func configure(object_data: Dictionary) -> void:
+	object_id = str(object_data.get("id", "object"))
+	kind = str(object_data.get("kind", ""))
+	item_id = str(object_data.get("item_id", ""))
+	display_name = str(object_data.get("display_name", object_id))
+	position = Vector2(object_data.get("position", Vector2.ZERO))
+	visual_size = Vector2(object_data.get("visual_size", Vector2(40, 40)))
+	collision_radius = float(object_data.get("collision_radius", 0.0))
+	interaction_radius = float(object_data.get("interaction_radius", 0.0))
+	blocks_player = bool(object_data.get("blocks_player", false))
+	collectible = bool(object_data.get("collectible", false))
+	sort_offset = float(object_data.get("sort_offset", 0.0))
+	name = "OpenworldObject_%s" % object_id
+	_update_depth()
+	if blocks_player:
+		_add_static_body()
+	if collectible or interaction_radius > 0.0:
+		_add_area()
+	queue_redraw()
+
+func set_resource_state(next_collected: bool, next_nearest: bool, next_progress: float) -> void:
+	collected = next_collected
+	nearest = next_nearest
+	collection_progress = clampf(next_progress, 0.0, 1.0)
+	visible = not collected
+	if _area != null:
+		_area.monitoring = not collected
+		_area.monitorable = not collected
+	queue_redraw()
+
+func _add_static_body() -> void:
+	_static_body = StaticBody2D.new()
+	_static_body.name = "OpenworldBlocker_%s" % object_id
+	_static_body.collision_layer = 1
+	_static_body.collision_mask = 1
+	add_child(_static_body)
+	var shape := CollisionShape2D.new()
+	shape.name = "OpenworldBlockerShape_%s" % object_id
+	var circle := CircleShape2D.new()
+	circle.radius = maxf(1.0, collision_radius)
+	shape.shape = circle
+	_static_body.add_child(shape)
+
+func _add_area() -> void:
+	_area = Area2D.new()
+	_area.name = "OpenworldArea_%s" % object_id
+	_area.collision_layer = 2
+	_area.collision_mask = 0
+	_area.monitoring = true
+	_area.monitorable = true
+	add_child(_area)
+	var shape := CollisionShape2D.new()
+	shape.name = "OpenworldAreaShape_%s" % object_id
+	var circle := CircleShape2D.new()
+	circle.radius = maxf(1.0, interaction_radius)
+	shape.shape = circle
+	_area.add_child(shape)
+
+func _update_depth() -> void:
+	z_index = int(global_position.y + sort_offset)
+
+func _draw() -> void:
+	if collectible:
+		if collected:
+			return
+		if nearest:
+			draw_circle(Vector2.ZERO, ModelScript.COLLECTION_RADIUS, Color(0.82, 0.72, 0.45, 0.13))
+			draw_arc(Vector2.ZERO, ModelScript.COLLECTION_RADIUS, -PI * 0.5, TAU * collection_progress - PI * 0.5, 48, Color(0.90, 0.76, 0.38, 0.78), 4.0, true)
+		_draw_resource_icon(item_id, nearest)
+		return
+	match kind:
+		CatalogScript.KIND_CHEST:
+			_draw_chest()
+		CatalogScript.KIND_TREE:
+			_draw_large_tree()
+		CatalogScript.KIND_ROCK:
+			_draw_large_rock()
+		_:
+			draw_circle(Vector2.ZERO, 18.0, Color(0.52, 0.48, 0.36))
+
+func _draw_chest() -> void:
+	draw_circle(Vector2(0, 8), interaction_radius + 10.0, Color(0.05, 0.03, 0.02, 0.28))
+	draw_circle(Vector2.ZERO, interaction_radius + 4.0, Color(0.18, 0.11, 0.07, 0.48))
+	draw_arc(Vector2.ZERO, interaction_radius + 4.0, 0.0, TAU, 72, Color(0.80, 0.70, 0.48, 0.20), 3.0, true)
+	var chest_rect := Rect2(Vector2(-34, -22), Vector2(68, 44))
+	draw_rect(chest_rect.grow(6.0), Color(0.02, 0.01, 0.0, 0.28), true)
+	draw_rect(chest_rect, Color(0.34, 0.20, 0.10), true)
+	draw_rect(chest_rect, Color(0.85, 0.70, 0.42, 0.64), false, 3.0)
+	draw_line(chest_rect.position + Vector2(0, 20), chest_rect.position + Vector2(chest_rect.size.x, 20), Color(0.12, 0.06, 0.03), 3.0)
+	draw_circle(Vector2(0, 4), 5.0, Color(0.90, 0.70, 0.30))
+
+func _draw_large_tree() -> void:
+	draw_circle(Vector2(0, 22), 36.0, Color(0.0, 0.0, 0.0, 0.28))
+	draw_line(Vector2(0, 24), Vector2(0, -42), Color(0.14, 0.08, 0.04, 0.88), 13.0)
+	draw_line(Vector2(-12, -4), Vector2(-30, -42), Color(0.14, 0.08, 0.04, 0.58), 6.0)
+	draw_line(Vector2(10, -12), Vector2(34, -49), Color(0.14, 0.08, 0.04, 0.58), 6.0)
+	var leaf := Color(0.08, 0.18, 0.10, 0.92)
+	draw_circle(Vector2(-26, -50), 35.0, leaf)
+	draw_circle(Vector2(24, -56), 41.0, leaf.darkened(0.05))
+	draw_circle(Vector2(2, -87), 36.0, leaf.lightened(0.04))
+	draw_circle(Vector2(-3, -42), 33.0, leaf.darkened(0.02))
+
+func _draw_large_rock() -> void:
+	draw_circle(Vector2(0, 17), visual_size.x * 0.44, Color(0.0, 0.0, 0.0, 0.28))
+	var half := visual_size * 0.5
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-half.x, 10),
+		Vector2(-half.x * 0.58, -half.y * 0.75),
+		Vector2(half.x * 0.16, -half.y),
+		Vector2(half.x * 0.84, -half.y * 0.45),
+		Vector2(half.x, 10),
+		Vector2(half.x * 0.26, half.y),
+		Vector2(-half.x * 0.62, half.y * 0.72),
+	]), Color(0.46, 0.48, 0.45))
+	draw_polyline(PackedVector2Array([
+		Vector2(-half.x * 0.5, -6),
+		Vector2(-8, -18),
+		Vector2(half.x * 0.35, -10),
+	]), Color(0.82, 0.82, 0.76, 0.30), 2.0)
+	draw_arc(Vector2.ZERO, collision_radius, 0.0, TAU, 40, Color(0.0, 0.0, 0.0, 0.10), 1.0, true)
+
+func _draw_resource_icon(resource_item_id: String, highlighted: bool) -> void:
+	draw_circle(Vector2(0, 8), 17.0, Color(0.0, 0.0, 0.0, 0.30))
+	match resource_item_id:
+		"galho":
+			_draw_branch(highlighted)
+		"folha", "folha_seca":
+			_draw_leaf(highlighted, resource_item_id == "folha_seca")
+		"madeira":
+			_draw_log(highlighted)
+		"pedra", "pedra_pequena":
+			_draw_stone(highlighted, resource_item_id == "pedra_pequena")
+		"cogumelo", "fungo":
+			_draw_mushroom(highlighted, resource_item_id == "fungo")
+		"inseto":
+			_draw_insect(highlighted)
+		"resina":
+			_draw_resin(highlighted)
+		"cinzas_preview":
+			_draw_ash(highlighted)
+		"ossos_preview", "po_osso_preview":
+			_draw_bone(highlighted, resource_item_id == "po_osso_preview")
+		_:
+			draw_circle(Vector2.ZERO, 14.0, Color(0.55, 0.55, 0.50))
+	if highlighted:
+		draw_arc(Vector2.ZERO, 24.0, 0.0, TAU, 40, Color(0.95, 0.83, 0.55, 0.80), 2.0, true)
+
+func _draw_branch(highlighted: bool) -> void:
+	var color := Color(0.50, 0.32, 0.16).lightened(0.12 if highlighted else 0.0)
+	draw_line(Vector2(-18, 11), Vector2(17, -9), color, 6.0)
+	draw_line(Vector2(-2, 0), Vector2(11, 12), color, 4.0)
+
+func _draw_leaf(highlighted: bool, dry: bool) -> void:
+	var color := Color(0.56, 0.42, 0.19) if dry else Color(0.24, 0.55, 0.25)
+	color = color.lightened(0.10 if highlighted else 0.0)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(0, -20),
+		Vector2(18, 0),
+		Vector2(0, 20),
+		Vector2(-16, 0),
+	]), color)
+	draw_line(Vector2(0, -16), Vector2(0, 16), Color(0.88, 0.82, 0.54, 0.52), 2.0)
+
+func _draw_log(highlighted: bool) -> void:
+	var color := Color(0.42, 0.24, 0.11).lightened(0.10 if highlighted else 0.0)
+	var rect := Rect2(Vector2(-23, -12), Vector2(46, 24))
+	draw_rect(rect, color, true)
+	draw_rect(rect, Color(0.22, 0.11, 0.04), false, 3.0)
+	draw_circle(Vector2(-20, 0), 12.0, Color(0.62, 0.42, 0.22))
+	draw_arc(Vector2(-20, 0), 7.0, 0.0, TAU, 24, Color(0.30, 0.15, 0.06), 2.0, true)
+
+func _draw_stone(highlighted: bool, small: bool) -> void:
+	var radius := 13.0 if small else 18.0
+	var color := Color(0.54, 0.56, 0.54).lightened(0.08 if highlighted else 0.0)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(-radius, 5),
+		Vector2(-7, -radius),
+		Vector2(12, -radius * 0.75),
+		Vector2(radius, 7),
+		Vector2(3, radius),
+	]), color)
+	draw_line(Vector2(-4, -7), Vector2(9, 2), Color(0.80, 0.82, 0.78, 0.35), 2.0)
+
+func _draw_mushroom(highlighted: bool, purple: bool) -> void:
+	var cap := Color(0.40, 0.23, 0.52) if purple else Color(0.62, 0.18, 0.22)
+	cap = cap.lightened(0.09 if highlighted else 0.0)
+	draw_rect(Rect2(Vector2(-5, -1), Vector2(10, 18)), Color(0.77, 0.69, 0.53), true)
+	draw_circle(Vector2(0, -7), 18.0, cap)
+	draw_rect(Rect2(Vector2(-18, -7), Vector2(36, 12)), cap, true)
+
+func _draw_insect(highlighted: bool) -> void:
+	var color := Color(0.15, 0.11, 0.08).lightened(0.12 if highlighted else 0.0)
+	draw_circle(Vector2.ZERO, 10.0, color)
+	draw_circle(Vector2(0, -12), 7.0, color)
+	for side in [-1.0, 1.0]:
+		draw_line(Vector2(side * 4.0, -2), Vector2(side * 18.0, -10), color, 2.0)
+		draw_line(Vector2(side * 5.0, 4), Vector2(side * 19.0, 10), color, 2.0)
+
+func _draw_resin(highlighted: bool) -> void:
+	var color := Color(0.90, 0.56, 0.14).lightened(0.08 if highlighted else 0.0)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(0, -21),
+		Vector2(16, 0),
+		Vector2(7, 19),
+		Vector2(-12, 15),
+		Vector2(-16, -3),
+	]), color)
+	draw_circle(Vector2(3, -3), 5.0, Color(1.0, 0.86, 0.38, 0.42))
+
+func _draw_ash(highlighted: bool) -> void:
+	var color := Color(0.58, 0.58, 0.54).lightened(0.08 if highlighted else 0.0)
+	draw_circle(Vector2(-8, 5), 12.0, color)
+	draw_circle(Vector2(8, 4), 10.0, color.darkened(0.10))
+	draw_circle(Vector2(0, -5), 9.0, Color(0.75, 0.73, 0.66, 0.75))
+
+func _draw_bone(highlighted: bool, powder: bool) -> void:
+	var color := Color(0.82, 0.78, 0.62).lightened(0.08 if highlighted else 0.0)
+	if powder:
+		for index in range(5):
+			draw_circle(Vector2(float(index - 2) * 6.0, sin(float(index)) * 6.0), 5.0, color)
+		return
+	draw_line(Vector2(-17, 10), Vector2(17, -10), color, 8.0)
+	draw_circle(Vector2(-18, 10), 7.0, color)
+	draw_circle(Vector2(18, -10), 7.0, color)

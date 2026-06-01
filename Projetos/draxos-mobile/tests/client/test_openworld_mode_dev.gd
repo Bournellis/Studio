@@ -65,7 +65,12 @@ func test_visual_screen_instantiates_fullscreen_with_joystick_hud_and_sheet() ->
 	add_child_autofree(screen)
 	await get_tree().process_frame
 	assert_eq(screen.name, "OpenworldForestScreen")
-	assert_not_null(screen.find_child("OpenworldForestWorldView", true, false))
+	assert_true(screen is Control)
+	assert_true(screen.find_child("OpenworldForestWorldView", true, false) is SubViewportContainer)
+	assert_true(screen.find_child("OpenworldForestSubViewport", true, false) is SubViewport)
+	assert_true(screen.find_child("OpenworldForestWorld2D", true, false) is Node2D)
+	assert_true(screen.find_child("OpenworldPlayer", true, false) is CharacterBody2D)
+	assert_true(screen.find_child("OpenworldBoundaryWalls", true, false) is StaticBody2D)
 	assert_not_null(screen.find_child("OpenworldVirtualJoystick", true, false))
 	assert_not_null(screen.find_child("OpenworldHudTop", true, false))
 	assert_not_null(screen.find_child("OpenworldInventoryButton", true, false))
@@ -82,6 +87,135 @@ func test_visual_screen_debug_joystick_moves_player_for_smoke_tests() -> void:
 	screen.set_debug_joystick_vector(Vector2.ZERO)
 	assert_gt(screen.get_player_position().x, before.x)
 
+func test_openworld_input_map_registers_wasd_and_arrow_actions() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	for action_name: String in [
+		"openworld_move_left",
+		"openworld_move_right",
+		"openworld_move_up",
+		"openworld_move_down",
+	]:
+		assert_true(InputMap.has_action(action_name), "%s should exist" % action_name)
+
+func test_openworld_wasd_moves_player_without_touching_ui() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var before := screen.get_player_position()
+	Input.action_press("openworld_move_right")
+	await wait_seconds(0.16)
+	Input.action_release("openworld_move_right")
+	await get_tree().process_frame
+	assert_gt(screen.get_player_position().x, before.x)
+
+func test_openworld_diagonal_input_is_limited_to_unit_speed() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	screen.set_player_position_for_tests(Vector2(360, 360))
+	var origin := screen.get_player_position()
+	screen.set_debug_joystick_vector(Vector2.RIGHT)
+	await wait_seconds(0.20)
+	screen.set_debug_joystick_vector(Vector2.ZERO)
+	var right_distance := screen.get_player_position().distance_to(origin)
+	screen.set_player_position_for_tests(Vector2(360, 360))
+	await get_tree().process_frame
+	screen.set_debug_joystick_vector(Vector2(1, 1))
+	await wait_seconds(0.20)
+	screen.set_debug_joystick_vector(Vector2.ZERO)
+	var diagonal_distance := screen.get_player_position().distance_to(Vector2(360, 360))
+	assert_lte(diagonal_distance, right_distance + 4.0)
+
+func test_openworld_player_collides_with_chest_tree_and_rock() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	await _expect_obstacle_blocks(screen, "chest_home", Vector2.RIGHT)
+	await _expect_obstacle_blocks(screen, "tree_large_mid", Vector2.RIGHT)
+	await _expect_obstacle_blocks(screen, "rock_large_path", Vector2.RIGHT)
+
+func test_openworld_world_borders_keep_player_inside_forest_bounds() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	screen.set_player_position_for_tests(Vector2(24, 330))
+	screen.set_debug_joystick_vector(Vector2.LEFT)
+	await wait_seconds(0.30)
+	screen.set_debug_joystick_vector(Vector2.ZERO)
+	assert_gte(screen.get_player_position().x, 19.0)
+	screen.set_player_position_for_tests(Vector2(936, 330))
+	screen.set_debug_joystick_vector(Vector2.RIGHT)
+	await wait_seconds(0.30)
+	screen.set_debug_joystick_vector(Vector2.ZERO)
+	assert_lte(screen.get_player_position().x, 941.0)
+
+func test_openworld_resources_are_pass_through_and_still_collectible() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var world = screen.call("get_openworld_world_2d")
+	var resource_position: Vector2 = world.call("resource_position", "galho")
+	screen.set_player_position_for_tests(resource_position + Vector2(-90, 0))
+	screen.set_debug_joystick_vector(Vector2.RIGHT)
+	await wait_seconds(0.80)
+	screen.set_debug_joystick_vector(Vector2.ZERO)
+	assert_gt(screen.get_player_position().x, resource_position.x + 18.0)
+	screen.set_player_position_for_tests(resource_position)
+	await wait_seconds(1.45)
+	assert_true(Dictionary(screen.get_model().pocket).has("galho"))
+
+func test_openworld_moving_during_collection_cancels_collection() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	screen.set_player_position_for_tests(Vector2(410, 510))
+	await wait_seconds(0.20)
+	assert_false(Dictionary(screen.get_model().active_collection).is_empty())
+	screen.set_debug_joystick_vector(Vector2.RIGHT)
+	await wait_seconds(0.12)
+	screen.set_debug_joystick_vector(Vector2.ZERO)
+	assert_true(Dictionary(screen.get_model().active_collection).is_empty())
+
+func test_openworld_chest_blocks_body_but_deposit_area_is_larger() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var world = screen.call("get_openworld_world_2d")
+	var chest_interaction_radius: float = world.call("chest_interaction_radius")
+	var chest_collision_radius: float = world.call("chest_collision_radius")
+	assert_gt(chest_interaction_radius, chest_collision_radius)
+	screen.get_model().add_to_pocket("galho", 2)
+	screen.set_player_position_for_tests(Vector2(220, 250) + Vector2(chest_collision_radius + 24.0, 0))
+	await get_tree().process_frame
+	screen.call("_deposit_near_chest")
+	await get_tree().process_frame
+	assert_true(Dictionary(screen.get_model().pocket).is_empty())
+	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
+
+func test_openworld_free_joystick_activates_anywhere_drags_and_resets() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	screen.begin_free_joystick_for_tests(Vector2(210, 420))
+	screen.drag_free_joystick_for_tests(Vector2(275, 420))
+	assert_gt(screen.get_joystick_vector_for_tests().x, 0.5)
+	assert_lte(screen.get_joystick_vector_for_tests().length(), 1.0)
+	screen.end_free_joystick_for_tests()
+	assert_eq(screen.get_joystick_vector_for_tests(), Vector2.ZERO)
+
+func test_openworld_pointer_over_hud_does_not_activate_free_joystick() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = Vector2(24, 24)
+	screen.call("_on_world_gui_input", press)
+	assert_eq(screen.get_joystick_vector_for_tests(), Vector2.ZERO)
+
 func test_technical_details_start_hidden_in_inventory_sheet() -> void:
 	var screen = ScreenScript.new()
 	add_child_autofree(screen)
@@ -92,3 +226,16 @@ func test_technical_details_start_hidden_in_inventory_sheet() -> void:
 	await get_tree().process_frame
 	assert_not_null(screen.find_child("OpenworldInventorySheet", true, false))
 	assert_null(screen.find_child("OpenworldTechnicalDetails", true, false))
+
+func _expect_obstacle_blocks(screen, object_id: String, movement_direction: Vector2) -> void:
+	var world = screen.call("get_openworld_world_2d")
+	var obstacle_position: Vector2 = world.call("obstacle_position", object_id)
+	var obstacle_radius: float = world.call("obstacle_collision_radius", object_id)
+	var start := obstacle_position - movement_direction.normalized() * (obstacle_radius + 44.0)
+	screen.set_player_position_for_tests(start)
+	await get_tree().process_frame
+	screen.set_debug_joystick_vector(movement_direction)
+	await wait_seconds(0.48)
+	screen.set_debug_joystick_vector(Vector2.ZERO)
+	var final_distance: float = screen.get_player_position().distance_to(obstacle_position)
+	assert_gte(final_distance, obstacle_radius + 18.0, "%s should block player body" % object_id)

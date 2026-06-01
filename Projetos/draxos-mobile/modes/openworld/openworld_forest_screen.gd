@@ -4,7 +4,7 @@ extends Control
 signal close_requested
 
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
-const WorldViewScript := preload("res://modes/openworld/openworld_forest_world_view.gd")
+const World2DScript := preload("res://modes/openworld/openworld_forest_world_2d.gd")
 const JoystickScript := preload("res://modes/openworld/openworld_virtual_joystick.gd")
 const InventorySheetScript := preload("res://modes/openworld/openworld_inventory_sheet.gd")
 
@@ -36,9 +36,12 @@ var session_store: Node = null
 var access_token := ""
 
 var _world = null
+var _world_viewport_container: SubViewportContainer
+var _world_viewport: SubViewport
 var _joystick = null
 var _sheet = null
 var _hud_top: PanelContainer
+var _actions: HBoxContainer
 var _weight_label: Label
 var _status_label: Label
 var _mode_label: Label
@@ -56,11 +59,14 @@ var _network_busy := false
 var _walk_phase := 0.0
 var _last_result_text := ""
 var _last_pending_request_id := ""
+var _free_pointer_active := false
+var _free_pointer_index := -999
 
 func _ready() -> void:
 	name = "OpenworldForestScreen"
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	_ensure_input_actions()
 	_spawn_resources()
 	_build_ui()
 	_update_labels()
@@ -76,13 +82,37 @@ func get_model() -> Variant:
 	return model
 
 func get_player_position() -> Vector2:
+	if _world != null and _world.has_method("get_player_position"):
+		_player_pos = _world.get_player_position()
 	return _player_pos
 
 func get_inventory_sheet() -> Variant:
 	return _sheet
 
+func get_openworld_world_2d() -> Variant:
+	return _world
+
+func get_joystick_vector_for_tests() -> Vector2:
+	if _joystick == null:
+		return Vector2.ZERO
+	return _joystick.input_vector()
+
 func set_debug_joystick_vector(vector: Vector2) -> void:
 	_debug_joystick_vector = vector.limit_length(1.0)
+
+func set_player_position_for_tests(position: Vector2) -> void:
+	_player_pos = position
+	if _world != null and _world.has_method("set_player_position"):
+		_world.set_player_position(position)
+
+func begin_free_joystick_for_tests(screen_position: Vector2) -> void:
+	_begin_free_joystick(screen_position, -2)
+
+func drag_free_joystick_for_tests(screen_position: Vector2) -> void:
+	_drag_free_joystick(screen_position, -2)
+
+func end_free_joystick_for_tests() -> void:
+	_end_free_joystick(-2)
 
 func configure_integrated_alpha(client: Node, store: Node, token: String) -> void:
 	supabase_client = client
@@ -93,21 +123,21 @@ func configure_integrated_alpha(client: Node, store: Node, token: String) -> voi
 
 func _process(delta: float) -> void:
 	_session_seconds += delta
+	if _world != null and _world.has_method("get_player_position"):
+		_player_pos = _world.get_player_position()
 	var movement := _movement_vector()
 	var moved := movement.length() > 0.05
+	if _world != null and _world.has_method("set_movement_vector"):
+		_world.set_movement_vector(movement, model.current_speed())
 	if moved:
 		_walk_phase += delta * 12.0
-		_move_player(movement.normalized() * model.current_speed() * delta)
 		model.advance_collection(0.0, true)
 	else:
 		_advance_nearby_collection(delta)
 	_update_labels()
 
 func _build_ui() -> void:
-	_world = WorldViewScript.new()
-	_world.configure(WORLD_SIZE, CHEST_POSITION)
-	_world.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(_world)
+	_build_world_viewport()
 
 	_hud_top = PanelContainer.new()
 	_hud_top.name = "OpenworldHudTop"
@@ -149,37 +179,38 @@ func _build_ui() -> void:
 
 	_joystick = JoystickScript.new()
 	_joystick.name = "OpenworldVirtualJoystick"
+	_joystick.visible = false
 	add_child(_joystick)
 
-	var actions := HBoxContainer.new()
-	actions.name = "OpenworldActionButtons"
-	actions.add_theme_constant_override("separation", 6)
-	actions.size_flags_horizontal = Control.SIZE_SHRINK_END
-	add_child(actions)
+	_actions = HBoxContainer.new()
+	_actions.name = "OpenworldActionButtons"
+	_actions.add_theme_constant_override("separation", 6)
+	_actions.size_flags_horizontal = Control.SIZE_SHRINK_END
+	add_child(_actions)
 
 	_inventory_button = _action_button("Mochila")
 	_inventory_button.name = "OpenworldInventoryButton"
 	_inventory_button.pressed.connect(func() -> void:
 		_sheet.open_sheet("pocket")
 	)
-	actions.add_child(_inventory_button)
+	_actions.add_child(_inventory_button)
 
 	_deposit_button = _action_button("Depositar")
 	_deposit_button.name = "OpenworldDepositButton"
 	_deposit_button.pressed.connect(_deposit_near_chest)
-	actions.add_child(_deposit_button)
+	_actions.add_child(_deposit_button)
 
 	_complete_button = _action_button("Completar")
 	_complete_button.name = "OpenworldCompleteButton"
 	_complete_button.pressed.connect(_show_result)
-	actions.add_child(_complete_button)
+	_actions.add_child(_complete_button)
 
 	_back_button = _action_button("Voltar")
 	_back_button.name = "OpenworldBackButton"
 	_back_button.pressed.connect(func() -> void:
 		close_requested.emit()
 	)
-	actions.add_child(_back_button)
+	_actions.add_child(_back_button)
 
 	_sheet = InventorySheetScript.new()
 	_sheet.bind_model(model)
@@ -190,20 +221,52 @@ func _build_ui() -> void:
 
 	_layout_overlay()
 
+func _build_world_viewport() -> void:
+	_world_viewport_container = SubViewportContainer.new()
+	_world_viewport_container.name = "OpenworldForestWorldView"
+	_world_viewport_container.stretch = true
+	_world_viewport_container.mouse_filter = Control.MOUSE_FILTER_STOP
+	_world_viewport_container.gui_input.connect(_on_world_gui_input)
+	_world_viewport_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(_world_viewport_container)
+
+	_world_viewport = SubViewport.new()
+	_world_viewport.name = "OpenworldForestSubViewport"
+	var initial_size := _screen_size()
+	_world_viewport.size = Vector2i(maxi(1, int(initial_size.x)), maxi(1, int(initial_size.y)))
+	_world_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	_world_viewport_container.add_child(_world_viewport)
+
+	_world = World2DScript.new()
+	_world.configure(WORLD_SIZE, CHEST_POSITION, RESOURCE_FIXTURES, PLAYER_INITIAL_POSITION)
+	_world_viewport.add_child(_world)
+	_player_pos = _world.get_player_position()
+
 func _layout_overlay() -> void:
 	if _hud_top == null:
 		return
+	var screen_size := _screen_size()
+	if _world_viewport_container != null:
+		_world_viewport_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if _world != null and _world.has_method("set_viewport_size"):
+		_world.set_viewport_size(screen_size)
 	var safe_margin := 12.0
-	var top_width := minf(size.x - safe_margin * 2.0, 460.0)
+	var top_width := minf(screen_size.x - safe_margin * 2.0, 460.0)
 	_hud_top.position = Vector2(safe_margin, safe_margin)
 	_hud_top.size = Vector2(top_width, 92.0)
 	if _joystick != null:
 		_joystick.size = JoystickScript.BASE_SIZE
-		_joystick.position = Vector2(18.0, maxf(18.0, size.y - JoystickScript.BASE_SIZE.y - 24.0))
-	var actions := get_node_or_null("OpenworldActionButtons") as HBoxContainer
-	if actions != null:
-		actions.size = Vector2(minf(380.0, size.x - 28.0), 48.0)
-		actions.position = Vector2(maxf(14.0, size.x - actions.size.x - 14.0), maxf(16.0, size.y - 72.0))
+		if not _joystick.is_active():
+			_joystick.position = Vector2(18.0, maxf(18.0, screen_size.y - JoystickScript.BASE_SIZE.y - 24.0))
+	if _actions != null:
+		_actions.size = Vector2(minf(380.0, screen_size.x - 28.0), 48.0)
+		_actions.position = Vector2(maxf(14.0, screen_size.x - _actions.size.x - 14.0), maxf(16.0, screen_size.y - 72.0))
+
+func _screen_size() -> Vector2:
+	var next_size := size
+	if next_size.x <= 0.0 or next_size.y <= 0.0:
+		next_size = get_viewport_rect().size
+	return Vector2(maxf(1.0, next_size.x), maxf(1.0, next_size.y))
 
 func _hud_label(text: String) -> Label:
 	var label := Label.new()
@@ -231,11 +294,107 @@ func _spawn_resources() -> void:
 		})
 
 func _movement_vector() -> Vector2:
-	if _debug_joystick_vector.length() > 0.01:
-		return _debug_joystick_vector
+	var movement := _keyboard_vector() + _debug_joystick_vector
+	if _joystick != null:
+		movement += _joystick.input_vector()
+	return movement.limit_length(1.0)
+
+func _keyboard_vector() -> Vector2:
+	return Vector2(
+		Input.get_action_strength("openworld_move_right") - Input.get_action_strength("openworld_move_left"),
+		Input.get_action_strength("openworld_move_down") - Input.get_action_strength("openworld_move_up")
+	).limit_length(1.0)
+
+func _ensure_input_actions() -> void:
+	_ensure_key_action("openworld_move_left", [KEY_A, KEY_LEFT])
+	_ensure_key_action("openworld_move_right", [KEY_D, KEY_RIGHT])
+	_ensure_key_action("openworld_move_up", [KEY_W, KEY_UP])
+	_ensure_key_action("openworld_move_down", [KEY_S, KEY_DOWN])
+
+func _ensure_key_action(action_name: String, keycodes: Array) -> void:
+	if not InputMap.has_action(action_name):
+		InputMap.add_action(action_name, 0.5)
+	for keycode: int in keycodes:
+		if _input_action_has_key(action_name, keycode):
+			continue
+		var event := InputEventKey.new()
+		event.physical_keycode = keycode
+		InputMap.action_add_event(action_name, event)
+
+func _input_action_has_key(action_name: String, keycode: int) -> bool:
+	for event: InputEvent in InputMap.action_get_events(action_name):
+		if event is InputEventKey and (event as InputEventKey).physical_keycode == keycode:
+			return true
+	return false
+
+func _on_world_gui_input(event: InputEvent) -> void:
 	if _joystick == null:
-		return Vector2.ZERO
-	return _joystick.input_vector()
+		return
+	if event is InputEventScreenTouch:
+		var touch := event as InputEventScreenTouch
+		var screen_position := _world_event_screen_position(touch.position)
+		if touch.pressed:
+			if _free_pointer_active or _pointer_over_overlay(screen_position):
+				return
+			_begin_free_joystick(screen_position, touch.index)
+			accept_event()
+		elif _free_pointer_active and _free_pointer_index == touch.index:
+			_end_free_joystick(touch.index)
+			accept_event()
+	elif event is InputEventScreenDrag:
+		var drag := event as InputEventScreenDrag
+		if _free_pointer_active and _free_pointer_index == drag.index:
+			_drag_free_joystick(_world_event_screen_position(drag.position), drag.index)
+			accept_event()
+	elif event is InputEventMouseButton:
+		var mouse := event as InputEventMouseButton
+		if mouse.button_index != MOUSE_BUTTON_LEFT:
+			return
+		var screen_position := _world_event_screen_position(mouse.position)
+		if mouse.pressed:
+			if _free_pointer_active or _pointer_over_overlay(screen_position):
+				return
+			_begin_free_joystick(screen_position, -2)
+			accept_event()
+		elif _free_pointer_active and _free_pointer_index == -2:
+			_end_free_joystick(-2)
+			accept_event()
+	elif event is InputEventMouseMotion and _free_pointer_active and _free_pointer_index == -2:
+		_drag_free_joystick(_world_event_screen_position((event as InputEventMouseMotion).position), -2)
+		accept_event()
+
+func _world_event_screen_position(local_position: Vector2) -> Vector2:
+	if _world_viewport_container == null:
+		return local_position
+	return _world_viewport_container.position + local_position
+
+func _begin_free_joystick(screen_position: Vector2, pointer_index: int) -> void:
+	_free_pointer_active = true
+	_free_pointer_index = pointer_index
+	_joystick.begin_free(screen_position, pointer_index)
+
+func _drag_free_joystick(screen_position: Vector2, pointer_index: int) -> void:
+	if not _free_pointer_active or _free_pointer_index != pointer_index:
+		return
+	_joystick.drag_free(screen_position, pointer_index)
+
+func _end_free_joystick(pointer_index: int) -> void:
+	if not _free_pointer_active or _free_pointer_index != pointer_index:
+		return
+	_joystick.end_free(pointer_index)
+	_free_pointer_active = false
+	_free_pointer_index = -999
+
+func _pointer_over_overlay(screen_position: Vector2) -> bool:
+	var global_position := get_global_rect().position + screen_position
+	for node: Control in [_hud_top, _actions, _sheet, _joystick]:
+		if node == null:
+			continue
+		if not node.visible:
+			continue
+		if node.get_global_rect().has_point(global_position):
+			return true
+	return false
 
 func _move_player(delta: Vector2) -> void:
 	_player_pos += delta
@@ -273,6 +432,8 @@ func _nearest_resource() -> Dictionary:
 	return best
 
 func _near_chest() -> bool:
+	if _world != null and _world.has_method("is_near_chest"):
+		return _world.is_near_chest()
 	return _player_pos.distance_to(CHEST_POSITION) <= CHEST_RADIUS
 
 func _deposit_near_chest() -> void:
@@ -290,10 +451,12 @@ func _craft_recipe(recipe_id: String) -> void:
 func _update_labels() -> void:
 	if _world == null:
 		return
+	if _world.has_method("get_player_position"):
+		_player_pos = _world.get_player_position()
 	var nearest := _nearest_resource()
 	var nearest_id := str(nearest.get("item_id", ""))
 	var pocket_full := model.pocket_weight() >= model.capacity() - 0.001
-	_world.set_state(_player_pos, _resource_nodes, nearest_id, model.collection_progress(), pocket_full, _walk_phase)
+	_world.set_state(_resource_nodes, nearest_id, model.collection_progress(), pocket_full, _walk_phase)
 	if _weight_label != null:
 		_weight_label.text = "Bolso %.1f / %.1f" % [model.pocket_weight(), model.capacity()]
 	if _mode_label != null:

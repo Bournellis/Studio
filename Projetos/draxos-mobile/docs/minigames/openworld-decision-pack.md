@@ -18,6 +18,12 @@ uses generic Mode sessions and has a limited existing Reward Bridge.
 
 No Openworld expansion is approved by this pack.
 
+Runtime/QoL exception approved on 2026-06-01: the Bosque runtime may migrate
+from a drawn `Control` world to a `Control` wrapper plus internal `Node2D`
+foundation for movement feel, free joystick, PC/Web input, collision, map
+borders and visual depth. This exception is local client QoL/foundation work;
+it does not approve new content, economy, backend or Reward Bridge changes.
+
 ## Locked For Now
 
 - The mode identity is `openworld`, not `rpgsuave`.
@@ -27,15 +33,26 @@ No Openworld expansion is approved by this pack.
 - Future Openworld slices must start from descriptor/schema changes and a live
   design contract before runtime work.
 
+## Runtime QoL Allowed
+
+- `OpenworldForestScreen` remains the official `Control` screen.
+- Internal `SubViewport`/`Node2D` world is allowed for the existing `forest`
+  slice.
+- WASD/setas, free joystick, local blockers, border walls, resource pass-through
+  and depth ordering are allowed as foundation QoL.
+- `OpenworldForestModel` remains the local rules authority for collection,
+  pocket, chest, craft and result payload.
+
 ## Not Approved
 
-- No runtime gameplay change.
 - No backend mutation.
 - No new map.
 - No enemies or combat.
 - No broader RPG campaign scope.
 - No new reward source or economy tuning.
 - No Basebuilder ownership changes.
+- No new public release/publication from this QoL package without separate
+  approval.
 
 ## Decision Questions Before Expansion
 

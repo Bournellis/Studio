@@ -41,15 +41,24 @@ func _check_openworld_screen(viewport_size: Vector2i) -> void:
 		"OpenworldForestScreen",
 		"OpenworldForestWorldView",
 		"OpenworldHudTop",
-		"OpenworldVirtualJoystick",
 		"OpenworldInventoryButton",
 		"OpenworldDepositButton",
 		"OpenworldCompleteButton",
 		"OpenworldBackButton",
 	]:
 		_expect_node_fits(screen, node_name, context)
+	_expect(_find_node_by_name(screen, "OpenworldForestWorld2D") is Node2D, "%s has Node2D world." % context)
+	_expect(_find_node_by_name(screen, "OpenworldPlayer") is CharacterBody2D, "%s has CharacterBody2D player." % context)
+	_expect(_find_node_by_name(screen, "OpenworldBoundaryWalls") is StaticBody2D, "%s has boundary walls." % context)
 	_expect(_find_node_by_name(screen, "OpenworldForestBoard") == null, "%s does not use legacy fixed board." % context)
 	_expect(_find_node_by_name(screen, "OpenworldTechnicalDetails") == null, "%s hides technical details initially." % context)
+
+	screen.call("begin_free_joystick_for_tests", Vector2(viewport_size) * 0.5)
+	screen.call("drag_free_joystick_for_tests", Vector2(viewport_size) * 0.5 + Vector2(64, 0))
+	await process_frame
+	_expect_node_fits(screen, "OpenworldVirtualJoystick", "%s free joystick" % context)
+	_expect(Vector2(screen.call("get_joystick_vector_for_tests")).x > 0.5, "%s free joystick works away from fixed corner." % context)
+	screen.call("end_free_joystick_for_tests")
 
 	var inventory := _find_node_by_name(screen, "OpenworldInventoryButton") as Button
 	if inventory != null:

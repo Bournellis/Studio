@@ -15,14 +15,51 @@
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Latest implemented package: `Foundation Hardening V2` on
   `codex/draxos-mobile/foundation-hardening-v2`.
+- Latest local mode package: `Openworld Node2D QoL Foundation` on
+  `codex/draxos-mobile/openworld-node2d-qol` (not published).
 - Active follow-up: human functional playtest of the published V2 hardening
-  build, then dedicated mode threads can branch from updated `master`.
+  build, plus local playtest of the Openworld Node2D QoL branch before any
+  publication request.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## Openworld Node2D QoL Foundation - 2026-06-01
+
+This local mode package prepares the existing Openworld Bosque slice for better
+playtest feel without expanding gameplay.
+
+- branch: `codex/draxos-mobile/openworld-node2d-qol`;
+- worktree:
+  `D:\Estudio-worktrees\draxos-mobile--codex--openworld-node2d-qol`;
+- scope: `OpenworldForestScreen` remains the `Control` shell screen, while the
+  Bosque runtime now uses an internal `SubViewport`/`Node2D` world;
+- controls: WASD/setas on PC/Web, free mouse/touch joystick in empty viewport
+  area, and preserved debug vector for smokes;
+- collision: `CharacterBody2D` player, border walls, blocking chest/tree/rock
+  objects, pass-through resource areas and larger chest deposit interaction;
+- visuals: procedural world preserved, with object/player depth ordering and HUD
+  overlay above the world.
+
+Boundaries preserved:
+
+- no new enemies, combat, map, rewards, economy, backend, migration, endpoint,
+  Reward Bridge change or Internal Alpha publication;
+- `OpenworldForestModel` remains the authority for collection, pocket, chest,
+  craft and result payload.
+
+Validation completed:
+
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`: passed;
+- `tools/smoke_openworld_forest.gd`: passed;
+- `tools/smoke_modes_visual_layout.gd`: passed.
+
+Next human check: playtest the local Openworld branch for movement feel,
+collision fairness, y-depth readability and HUD/input interference before
+deciding whether to polish further or package a separate Internal Alpha.
 
 ## Foundation Hardening V2 - 2026-06-01
 
