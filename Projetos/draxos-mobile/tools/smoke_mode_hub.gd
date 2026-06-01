@@ -77,8 +77,8 @@ func _check_mode_hub_route() -> void:
 	_expect(actions.has(AppShellActionContractScript.ACTION_SHOW_BASE), "Mode hub route wires Basebuilder.")
 	_expect(actions.has(AppShellActionContractScript.ACTION_OPEN_ARENA), "Mode hub route wires Autobattler.")
 	_expect(actions.has(AppShellActionContractScript.open_mode_shell_action("openworld")), "Mode hub route wires Openworld.")
-	_expect(actions.has("mode_disabled:towerdefense"), "Mode hub route marks Towerdefense disabled.")
-	_expect(actions.has("mode_disabled:cardgame"), "Mode hub route marks Cardgame disabled.")
+	_expect(actions.has(AppShellActionContractScript.mode_disabled_action("towerdefense")), "Mode hub route marks Towerdefense disabled.")
+	_expect(actions.has(AppShellActionContractScript.mode_disabled_action("cardgame")), "Mode hub route marks Cardgame disabled.")
 	boot.queue_free()
 	await process_frame
 

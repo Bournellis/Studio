@@ -73,6 +73,7 @@ const PREFIX_ARENA_START := "arena_start:"
 const PREFIX_ARENA_CHOOSE_BUFF := "arena_choose_buff:"
 const PREFIX_BATTLE_REPLAY := RouteContract.ACTION_BATTLE_REPLAY_PREFIX
 const PREFIX_OPEN_MODE_SHELL := "open_mode_shell:"
+const PREFIX_MODE_DISABLED := "mode_disabled:"
 
 const PRODUCT_ALPHA_ENERGY_PACK := "alpha_energy_pack_small"
 const PRODUCT_ALPHA_BATTLE_PASS_PREMIUM := "alpha_battle_pass_premium"
@@ -188,6 +189,9 @@ static func is_open_mode_shell(action_id: String) -> bool:
 	var candidate := action_id.strip_edges()
 	return candidate == ACTION_OPEN_MODE_SHELL or candidate.begins_with(PREFIX_OPEN_MODE_SHELL)
 
+static func is_mode_disabled(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_MODE_DISABLED)
+
 static func select_base_structure_action(structure_id: String) -> String:
 	return "%s%s" % [PREFIX_SELECT_BASE_STRUCTURE, structure_id.strip_edges()]
 
@@ -242,6 +246,9 @@ static func arena_choose_buff_action(buff_id: String) -> String:
 
 static func open_mode_shell_action(mode_id: String) -> String:
 	return "%s%s" % [PREFIX_OPEN_MODE_SHELL, mode_id.strip_edges()]
+
+static func mode_disabled_action(mode_id: String) -> String:
+	return "%s%s" % [PREFIX_MODE_DISABLED, mode_id.strip_edges()]
 
 static func action_value(action_id: String) -> String:
 	var candidate := action_id.strip_edges()
