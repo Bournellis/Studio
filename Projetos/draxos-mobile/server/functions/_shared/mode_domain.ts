@@ -1,14 +1,18 @@
-export const MINIGAME_PLATFORM_SCHEMA_VERSION = "minigame_platform_v0";
-export const RPGSUAVE_MODE_ID = "rpgsuave";
-export const RPGSUAVE_SLICE_ID = "forest";
-export const RPGSUAVE_RULESET_ID = "rpgsuave_forest_ruleset_v0";
-export const RPGSUAVE_RULESET_VERSION = 1;
-export const RPGSUAVE_RELEASE_CHANNEL = "internal_alpha";
+export const MODE_PLATFORM_SCHEMA_VERSION = "mode_platform_v1";
+export const BASEBUILDER_MODE_ID = "basebuilder";
+export const AUTOBATTLER_MODE_ID = "autobattler";
+export const TOWERDEFENSE_MODE_ID = "towerdefense";
+export const CARDGAME_MODE_ID = "cardgame";
+export const OPENWORLD_MODE_ID = "openworld";
+export const OPENWORLD_SLICE_ID = "forest";
+export const OPENWORLD_RULESET_ID = "openworld_forest_ruleset_v0";
+export const OPENWORLD_RULESET_VERSION = 1;
+export const OPENWORLD_RELEASE_CHANNEL = "internal_alpha";
 
-export const MINIGAME_ENDPOINT_SESSION_START = "minigames/session/start";
-export const MINIGAME_ENDPOINT_SESSION_COMPLETE = "minigames/session/complete";
+export const MODE_ENDPOINT_SESSION_START = "modes/session/start";
+export const MODE_ENDPOINT_SESSION_COMPLETE = "modes/session/complete";
 
-export interface MinigameRegistryRow {
+export interface ModeRegistryRow {
   mode_id: string;
   display_name: string;
   status: string;
@@ -20,7 +24,7 @@ export interface MinigameRegistryRow {
   updated_at?: string;
 }
 
-export interface MinigameRulesetRow {
+export interface ModeRulesetRow {
   ruleset_id: string;
   ruleset_version: number | string;
   mode_id: string;
@@ -33,7 +37,7 @@ export interface MinigameRulesetRow {
   updated_at?: string;
 }
 
-export interface MinigameProgressRow {
+export interface ModeProgressRow {
   game_save_id: string;
   mode_id: string;
   local_schema_version: string;
@@ -43,7 +47,7 @@ export interface MinigameProgressRow {
   updated_at?: string;
 }
 
-export interface MinigameSessionRow {
+export interface ModeSessionRow {
   id: string;
   game_save_id: string;
   mode_id: string;
@@ -59,9 +63,13 @@ export interface MinigameSessionRow {
   reward_payload: unknown;
   started_at?: string;
   completed_at?: string | null;
+  expires_at?: string | null;
+  abandoned_at?: string | null;
+  invalidated_at?: string | null;
+  invalidated_reason?: string | null;
 }
 
-export interface MinigameRewardClaimRow {
+export interface ModeRewardClaimRow {
   id: string;
   game_save_id: string;
   player_id: string;
@@ -74,7 +82,7 @@ export interface MinigameRewardClaimRow {
   created_at?: string;
 }
 
-export interface MinigameResourcesRow {
+export interface ModeResourcesRow {
   almas: number | string;
   energia: number | string;
   sangue: number | string;
@@ -84,17 +92,17 @@ export interface MinigameResourcesRow {
   diamante: number | string;
 }
 
-export interface MinigameStateProjection {
-  registry: MinigameRegistryRow[];
-  rulesets: MinigameRulesetRow[];
-  progress: MinigameProgressRow | null;
-  sessions: MinigameSessionRow[];
-  claims: MinigameRewardClaimRow[];
-  resources: MinigameResourcesRow | null;
+export interface ModeStateProjection {
+  registry: ModeRegistryRow[];
+  rulesets: ModeRulesetRow[];
+  progress: ModeProgressRow | null;
+  sessions: ModeSessionRow[];
+  claims: ModeRewardClaimRow[];
+  resources: ModeResourcesRow | null;
   serverTime: Date;
 }
 
-export interface RpgsuaveCompletionResult {
+export interface OpenworldCompletionResult {
   session_id: string;
   session_seconds: number;
   deposited_items: Record<string, number>;
@@ -103,7 +111,7 @@ export interface RpgsuaveCompletionResult {
   ruleset_version: number;
 }
 
-const RPGSUAVE_LOCAL_ITEM_IDS = new Set([
+const OPENWORLD_LOCAL_ITEM_IDS = new Set([
   "madeira",
   "galho",
   "folha",
@@ -119,12 +127,12 @@ const RPGSUAVE_LOCAL_ITEM_IDS = new Set([
   "po_osso_preview",
 ]);
 
-export function minigameStatePayload(
-  state: MinigameStateProjection,
+export function modeStatePayload(
+  state: ModeStateProjection,
 ): Record<string, unknown> {
   return {
     ok: true,
-    schema_version: MINIGAME_PLATFORM_SCHEMA_VERSION,
+    schema_version: MODE_PLATFORM_SCHEMA_VERSION,
     modes: state.registry.map((row) => ({
       mode_id: row.mode_id,
       display_name: row.display_name,
@@ -154,14 +162,14 @@ export function minigameStatePayload(
   };
 }
 
-export function minigameRegistryPayload(
-  registry: MinigameRegistryRow[],
-  rulesets: MinigameRulesetRow[],
+export function modeRegistryPayload(
+  registry: ModeRegistryRow[],
+  rulesets: ModeRulesetRow[],
   serverTime: Date,
 ): Record<string, unknown> {
   return {
     ok: true,
-    schema_version: MINIGAME_PLATFORM_SCHEMA_VERSION,
+    schema_version: MODE_PLATFORM_SCHEMA_VERSION,
     modes: registry.map((row) => ({
       mode_id: row.mode_id,
       display_name: row.display_name,
@@ -189,7 +197,7 @@ export function minigameRegistryPayload(
 
 export function completionResultFromBody(
   body: Record<string, unknown>,
-): RpgsuaveCompletionResult | null {
+): OpenworldCompletionResult | null {
   const source = isObject(body.result) ? body.result : body;
   const sessionId = stringValue(source.session_id, "");
   const rulesetId = stringValue(source.ruleset_id, "");
@@ -199,8 +207,8 @@ export function completionResultFromBody(
   const depositedItems = normalizeDepositedItems(source.deposited_items);
   if (
     sessionId === "" ||
-    rulesetId !== RPGSUAVE_RULESET_ID ||
-    rulesetVersion !== RPGSUAVE_RULESET_VERSION ||
+    rulesetId !== OPENWORLD_RULESET_ID ||
+    rulesetVersion !== OPENWORLD_RULESET_VERSION ||
     sessionSeconds < 0 ||
     activityScore < 0 ||
     depositedItems === null
@@ -221,7 +229,7 @@ export function normalizeDepositedItems(value: unknown): Record<string, number> 
   if (!isObject(value)) return {};
   const result: Record<string, number> = {};
   for (const [key, rawQuantity] of Object.entries(value)) {
-    if (!RPGSUAVE_LOCAL_ITEM_IDS.has(key)) return null;
+    if (!OPENWORLD_LOCAL_ITEM_IDS.has(key)) return null;
     const quantity = numberValue(rawQuantity, Number.NaN);
     if (!Number.isFinite(quantity) || quantity < 0 || quantity > 999) return null;
     if (quantity > 0) {
@@ -232,12 +240,12 @@ export function normalizeDepositedItems(value: unknown): Record<string, number> 
 }
 
 export function canonicalCompletionPayload(
-  result: RpgsuaveCompletionResult,
+  result: OpenworldCompletionResult,
 ): Record<string, unknown> {
   return {
     session_id: result.session_id,
-    mode_id: RPGSUAVE_MODE_ID,
-    slice_id: RPGSUAVE_SLICE_ID,
+    mode_id: OPENWORLD_MODE_ID,
+    slice_id: OPENWORLD_SLICE_ID,
     ruleset_id: result.ruleset_id,
     ruleset_version: result.ruleset_version,
     session_seconds: Math.floor(result.session_seconds),
@@ -246,11 +254,11 @@ export function canonicalCompletionPayload(
   };
 }
 
-function progressPayload(row: MinigameProgressRow | null): Record<string, unknown> {
+function progressPayload(row: ModeProgressRow | null): Record<string, unknown> {
   if (row === null) {
     return {
-      mode_id: RPGSUAVE_MODE_ID,
-      local_schema_version: "rpgsuave_forest_local_v0",
+      mode_id: OPENWORLD_MODE_ID,
+      local_schema_version: "openworld_forest_local_v0",
       progress_payload: {},
       totals_payload: {},
       last_session_id: null,
@@ -267,7 +275,7 @@ function progressPayload(row: MinigameProgressRow | null): Record<string, unknow
   };
 }
 
-function sessionPayload(row: MinigameSessionRow): Record<string, unknown> {
+function sessionPayload(row: ModeSessionRow): Record<string, unknown> {
   return {
     id: row.id,
     mode_id: row.mode_id,
@@ -282,10 +290,14 @@ function sessionPayload(row: MinigameSessionRow): Record<string, unknown> {
     reward_payload: objectValue(row.reward_payload),
     started_at: row.started_at ?? null,
     completed_at: row.completed_at ?? null,
+    expires_at: row.expires_at ?? null,
+    abandoned_at: row.abandoned_at ?? null,
+    invalidated_at: row.invalidated_at ?? null,
+    invalidated_reason: row.invalidated_reason ?? "",
   };
 }
 
-function rewardClaimPayload(row: MinigameRewardClaimRow): Record<string, unknown> {
+function rewardClaimPayload(row: ModeRewardClaimRow): Record<string, unknown> {
   return {
     id: row.id,
     mode_id: row.mode_id,
@@ -298,7 +310,7 @@ function rewardClaimPayload(row: MinigameRewardClaimRow): Record<string, unknown
   };
 }
 
-function resourcePayload(row: MinigameResourcesRow | null): Record<string, number> {
+function resourcePayload(row: ModeResourcesRow | null): Record<string, number> {
   return {
     almas: numberValue(row?.almas, 0),
     energia: numberValue(row?.energia, 0),

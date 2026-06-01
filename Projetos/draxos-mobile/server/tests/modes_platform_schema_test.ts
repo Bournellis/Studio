@@ -1,10 +1,10 @@
 const PROJECT_PREFIX = "Projetos/draxos-mobile";
-const MIGRATION_PATH = "supabase/migrations/202605310001_minigame_platform_v0.sql";
-const SERVER_MIRROR_PATH = "server/schema/migrations/202605310001_minigame_platform_v0.sql";
-const EDGE_PATH = "server/functions/minigames/index.ts";
-const SUPABASE_EDGE_PATH = "supabase/functions/minigames/index.ts";
+const MIGRATION_PATH = "supabase/migrations/202606010001_modes_platform_v1.sql";
+const SERVER_MIRROR_PATH = "server/schema/migrations/202606010001_modes_platform_v1.sql";
+const EDGE_PATH = "server/functions/modes/index.ts";
+const SUPABASE_EDGE_PATH = "supabase/functions/modes/index.ts";
 
-Deno.test("minigame platform migration is mirrored in server schema", async () => {
+Deno.test("mode platform migration is mirrored in server schema", async () => {
   const supabaseMigration = await readProjectText(MIGRATION_PATH);
   const serverMirror = await readProjectText(SERVER_MIRROR_PATH);
 
@@ -15,7 +15,7 @@ Deno.test("minigame platform migration is mirrored in server schema", async () =
   );
 });
 
-Deno.test("minigame platform declares registry, sessions, progress and reward claims", async () => {
+Deno.test("mode platform declares registry, sessions, progress and reward claims", async () => {
   const migration = await migrationText();
 
   for (
@@ -39,23 +39,44 @@ Deno.test("minigame platform declares registry, sessions, progress and reward cl
     );
   }
 
-  assertIncludes(migration, "'rpgsuave'", "registry should seed rpgsuave");
+  assertIncludes(migration, "'openworld'", "registry should seed openworld");
+  for (
+    const modeId of [
+      "'basebuilder'",
+      "'autobattler'",
+      "'towerdefense'",
+      "'cardgame'",
+      "'openworld'",
+    ]
+  ) {
+    assertIncludes(migration, modeId, `registry should seed ${modeId}`);
+  }
   assertIncludes(
     migration,
-    "'rpgsuave_forest_ruleset_v0'",
+    "'openworld_forest_ruleset_v0'",
     "ruleset registry should seed the forest ruleset",
   );
   assertIncludes(
     migration,
-    "open_minigame_shell:rpgsuave",
-    "registry metadata should point to the dev shell action",
+    "open_mode_shell:openworld",
+    "registry metadata should point to the mode shell action",
+  );
+  assertIncludes(
+    migration,
+    "create table if not exists public.mode_limit_policies",
+    "migration should declare mode limit policies",
+  );
+  assertIncludes(
+    migration,
+    "create table if not exists public.admin_roles",
+    "migration should declare admin roles for mode ops",
   );
 });
 
-Deno.test("minigame reward bridge is service-role, idempotent and ledgers resources", async () => {
+Deno.test("mode reward bridge is service-role, idempotent and ledgers resources", async () => {
   const migration = await migrationText();
 
-  for (const functionName of ["minigame_session_start_v1", "minigame_session_complete_v1"]) {
+  for (const functionName of ["mode_session_start_v1", "mode_session_complete_v1"]) {
     assertIncludes(
       migration,
       `create or replace function public.${functionName}`,
@@ -79,7 +100,7 @@ Deno.test("minigame reward bridge is service-role, idempotent and ledgers resour
     );
   }
 
-  for (const endpoint of ["minigames/session/start", "minigames/session/complete"]) {
+  for (const endpoint of ["modes/session/start", "modes/session/complete"]) {
     assertIncludes(migration, endpoint, `${endpoint} should reserve idempotency`);
   }
   assertIncludes(
@@ -89,24 +110,24 @@ Deno.test("minigame reward bridge is service-role, idempotent and ledgers resour
   );
   assertIncludes(
     migration,
-    "minigame_reward_blocked_for_lab",
+    "mode_reward_blocked_for_lab",
     "progression lab saves should not receive Base/Account rewards",
   );
   assertIncludes(
     migration,
-    "minigame_result_rejected",
+    "mode_result_rejected",
     "tampered or implausible results should be rejected",
   );
 });
 
-Deno.test("minigame edge function mirror exposes all v0 routes", async () => {
+Deno.test("mode edge function mirror exposes all v1 routes", async () => {
   const edge = await readProjectText(EDGE_PATH);
   const supabaseEdge = await readProjectText(SUPABASE_EDGE_PATH);
 
   assertEq(
     normalizeNewlines(edge),
     normalizeNewlines(supabaseEdge),
-    "server and supabase minigame functions should match exactly",
+    "server and supabase mode functions should match exactly",
   );
   for (
     const route of [
@@ -114,6 +135,14 @@ Deno.test("minigame edge function mirror exposes all v0 routes", async () => {
       "/state",
       "/session/start",
       "/session/complete",
+      "/session/abandon",
+      "/analytics/summary",
+      "/admin/disable",
+      "/admin/enable",
+      "/admin/session/expire",
+      "/admin/session/invalidate",
+      "/admin/reconcile",
+      "/admin/compensate",
       "saveTypeFromRequest",
       "validateApiVersion",
       "request_hash",

@@ -5,6 +5,8 @@ const SERVICE_SCOPES = new Set([
   "account-scoped",
   "release",
   "telemetry",
+  "mode",
+  "admin-internal",
   "admin-future",
   "none",
 ]);

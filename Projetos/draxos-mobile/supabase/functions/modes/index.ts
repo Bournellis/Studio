@@ -3,22 +3,26 @@ import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   canonicalCompletionPayload,
   completionResultFromBody,
-  MINIGAME_ENDPOINT_SESSION_COMPLETE,
-  MINIGAME_ENDPOINT_SESSION_START,
-  type MinigameProgressRow,
-  minigameRegistryPayload,
-  type MinigameRegistryRow,
-  type MinigameResourcesRow,
-  type MinigameRewardClaimRow,
-  type MinigameRulesetRow,
-  type MinigameSessionRow,
-  minigameStatePayload,
-  RPGSUAVE_MODE_ID,
-  RPGSUAVE_RELEASE_CHANNEL,
-  RPGSUAVE_RULESET_ID,
-  RPGSUAVE_RULESET_VERSION,
-  RPGSUAVE_SLICE_ID,
-} from "../_shared/minigame_domain.ts";
+  AUTOBATTLER_MODE_ID,
+  BASEBUILDER_MODE_ID,
+  CARDGAME_MODE_ID,
+  MODE_ENDPOINT_SESSION_COMPLETE,
+  MODE_ENDPOINT_SESSION_START,
+  type ModeProgressRow,
+  modeRegistryPayload,
+  type ModeRegistryRow,
+  type ModeResourcesRow,
+  type ModeRewardClaimRow,
+  type ModeRulesetRow,
+  type ModeSessionRow,
+  modeStatePayload,
+  OPENWORLD_MODE_ID,
+  OPENWORLD_RELEASE_CHANNEL,
+  OPENWORLD_RULESET_ID,
+  OPENWORLD_RULESET_VERSION,
+  OPENWORLD_SLICE_ID,
+  TOWERDEFENSE_MODE_ID,
+} from "../_shared/mode_domain.ts";
 import {
   type FoundationGameSaveRow,
   foundationRpcPayload,
@@ -33,7 +37,20 @@ import {
   saveTypeQuery,
 } from "../_shared/save_context.ts";
 
-type Route = "registry" | "state" | "session_start" | "session_complete";
+type Route =
+  | "registry"
+  | "state"
+  | "session_start"
+  | "session_complete"
+  | "session_abandon"
+  | "analytics_summary"
+  | "admin_me"
+  | "admin_disable"
+  | "admin_enable"
+  | "admin_session_expire"
+  | "admin_session_invalidate"
+  | "admin_reconcile"
+  | "admin_compensate";
 
 interface EdgeConfig {
   supabaseUrl: string;
@@ -61,15 +78,21 @@ interface PlayerRow {
   save_type: SaveType;
 }
 
-interface MinigameState {
+interface ModeState {
   player: PlayerRow;
   gameSave: FoundationGameSaveRow;
-  registry: MinigameRegistryRow[];
-  rulesets: MinigameRulesetRow[];
-  progress: MinigameProgressRow | null;
-  sessions: MinigameSessionRow[];
-  claims: MinigameRewardClaimRow[];
-  resources: MinigameResourcesRow | null;
+  registry: ModeRegistryRow[];
+  rulesets: ModeRulesetRow[];
+  progress: ModeProgressRow | null;
+  sessions: ModeSessionRow[];
+  claims: ModeRewardClaimRow[];
+  resources: ModeResourcesRow | null;
+}
+
+interface AdminRoleRow {
+  auth_user_id: string;
+  role: string;
+  active: boolean;
 }
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -87,16 +110,19 @@ Deno.serve(async (request: Request) => {
   try {
     const route = resolveRoute(new URL(request.url).pathname);
     if (route === null) {
-      return errorResponse("NOT_FOUND", "Unknown minigames endpoint.", 404);
+      return errorResponse("NOT_FOUND", "Unknown modes endpoint.", 404);
     }
-    if ((route === "registry" || route === "state") && request.method !== "GET") {
-      return errorResponse("METHOD_NOT_ALLOWED", "Use GET for minigame reads.", 405);
+    if ((route === "registry" || route === "state" || route === "analytics_summary" || route === "admin_me") && request.method !== "GET") {
+      return errorResponse("METHOD_NOT_ALLOWED", "Use GET for mode reads.", 405);
     }
     if (
-      (route === "session_start" || route === "session_complete") &&
+      route !== "registry" &&
+      route !== "state" &&
+      route !== "analytics_summary" &&
+      route !== "admin_me" &&
       request.method !== "POST"
     ) {
-      return errorResponse("METHOD_NOT_ALLOWED", "Use POST for minigame sessions.", 405);
+      return errorResponse("METHOD_NOT_ALLOWED", "Use POST for mode sessions.", 405);
     }
 
     const auth = decodeAuthContext(request);
@@ -117,10 +143,19 @@ Deno.serve(async (request: Request) => {
     if (route === "session_start") {
       return await handleSessionStart(request, auth.value, config.value);
     }
-    return await handleSessionComplete(request, auth.value, config.value);
+    if (route === "session_complete") {
+      return await handleSessionComplete(request, auth.value, config.value);
+    }
+    if (route === "session_abandon") {
+      return await handleSessionAbandon(request, auth.value, config.value);
+    }
+    if (route === "analytics_summary") {
+      return await handleAnalyticsSummary(request, auth.value, config.value);
+    }
+    return await handleAdminRoute(route, request, auth.value, config.value);
   } catch (error) {
     console.error(error);
-    return errorResponse("INTERNAL_ERROR", "Unexpected minigames service error.", 500);
+    return errorResponse("INTERNAL_ERROR", "Unexpected modes service error.", 500);
   }
 });
 
@@ -133,7 +168,7 @@ async function handleRegistry(config: EdgeConfig): Promise<Response> {
   if (rulesets.error !== null) {
     return errorResponse(rulesets.error.code, rulesets.error.message, rulesets.error.status);
   }
-  return jsonResponse(minigameRegistryPayload(registry.value, rulesets.value, new Date()));
+  return jsonResponse(modeRegistryPayload(registry.value, rulesets.value, new Date()));
 }
 
 async function handleState(
@@ -141,15 +176,15 @@ async function handleState(
   auth: AuthContext,
   config: EdgeConfig,
 ): Promise<Response> {
-  const modeId = new URL(request.url).searchParams.get("mode_id")?.trim() ?? RPGSUAVE_MODE_ID;
-  if (modeId !== RPGSUAVE_MODE_ID) {
-    return errorResponse("INVALID_MODE", "mode_id is not part of Minigame Platform v0.", 400);
+  const modeId = new URL(request.url).searchParams.get("mode_id")?.trim() ?? OPENWORLD_MODE_ID;
+  if (modeId === "") {
+    return errorResponse("INVALID_MODE", "mode_id is not part of Mode Platform V1.", 400);
   }
-  const state = await loadMinigameState(auth, config, modeId);
+  const state = await loadModeState(auth, config, modeId);
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  return jsonResponse(minigameStatePayload({ ...state.value, serverTime: new Date() }));
+  return jsonResponse(modeStatePayload({ ...state.value, serverTime: new Date() }));
 }
 
 async function handleSessionStart(
@@ -163,27 +198,33 @@ async function handleSessionStart(
   }
   const requestId = stringField(body, "request_id");
   const modeId = stringField(body, "mode_id");
-  const sliceId = stringField(body, "slice_id") || RPGSUAVE_SLICE_ID;
+  const sliceId = stringField(body, "slice_id") || OPENWORLD_SLICE_ID;
   if (!UUID_PATTERN.test(requestId)) {
     return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
   }
-  if (modeId !== RPGSUAVE_MODE_ID || sliceId !== RPGSUAVE_SLICE_ID) {
-    return errorResponse("INVALID_MODE", "Only rpgsuave/forest is available in v0.", 400);
+  if (modeId === TOWERDEFENSE_MODE_ID || modeId === CARDGAME_MODE_ID) {
+    return errorResponse("MODE_DISABLED", "Mode is staged/disabled and cannot start sessions yet.", 409);
+  }
+  if (modeId === BASEBUILDER_MODE_ID || modeId === AUTOBATTLER_MODE_ID) {
+    return errorResponse("MODE_SESSION_UNSUPPORTED", "This mode uses its own core endpoints in V1.", 400);
+  }
+  if (modeId !== OPENWORLD_MODE_ID || sliceId !== OPENWORLD_SLICE_ID) {
+    return errorResponse("INVALID_MODE", "Only openworld/forest uses Mode sessions in V1.", 400);
   }
 
-  const state = await loadMinigameState(auth, config, modeId);
+  const state = await loadModeState(auth, config, modeId);
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  const requestHash = await mutationRequestHash(MINIGAME_ENDPOINT_SESSION_START, body, {
+  const requestHash = await mutationRequestHash(MODE_ENDPOINT_SESSION_START, body, {
     request_id: requestId,
     save_type: auth.saveType,
     mode_id: modeId,
     slice_id: sliceId,
-    ruleset_id: RPGSUAVE_RULESET_ID,
-    ruleset_version: RPGSUAVE_RULESET_VERSION,
+    ruleset_id: OPENWORLD_RULESET_ID,
+    ruleset_version: OPENWORLD_RULESET_VERSION,
   });
-  const rpc = await restRequest<unknown>(config, "rpc/minigame_session_start_v1", {
+  const rpc = await restRequest<unknown>(config, "rpc/mode_session_start_v1", {
     method: "POST",
     body: JSON.stringify({
       p_game_save_id: state.value.gameSave.id,
@@ -193,14 +234,14 @@ async function handleSessionStart(
         request_id: requestId,
         mode_id: modeId,
         slice_id: sliceId,
-        ruleset_id: RPGSUAVE_RULESET_ID,
-        ruleset_version: RPGSUAVE_RULESET_VERSION,
-        release_channel: RPGSUAVE_RELEASE_CHANNEL,
+        ruleset_id: OPENWORLD_RULESET_ID,
+        ruleset_version: OPENWORLD_RULESET_VERSION,
+        release_channel: OPENWORLD_RELEASE_CHANNEL,
       },
     }),
   });
   if (rpc.error !== null) {
-    const mapped = mapMinigameDatabaseError(rpc.error, "MINIGAME_SESSION_START_FAILED");
+    const mapped = mapModeDatabaseError(rpc.error, "MODE_SESSION_START_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
   return jsonResponse(foundationRpcPayload(rpc.value));
@@ -221,20 +262,20 @@ async function handleSessionComplete(
   }
   const result = completionResultFromBody(body);
   if (result === null || !UUID_PATTERN.test(result.session_id)) {
-    return errorResponse("INVALID_RESULT", "Rpgsuave completion result is invalid.", 400);
+    return errorResponse("INVALID_RESULT", "Openworld completion result is invalid.", 400);
   }
 
-  const state = await loadMinigameState(auth, config, RPGSUAVE_MODE_ID);
+  const state = await loadModeState(auth, config, OPENWORLD_MODE_ID);
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
   const canonicalResult = canonicalCompletionPayload(result);
-  const requestHash = await mutationRequestHash(MINIGAME_ENDPOINT_SESSION_COMPLETE, body, {
+  const requestHash = await mutationRequestHash(MODE_ENDPOINT_SESSION_COMPLETE, body, {
     request_id: requestId,
     save_type: auth.saveType,
     ...canonicalResult,
   });
-  const rpc = await restRequest<unknown>(config, "rpc/minigame_session_complete_v1", {
+  const rpc = await restRequest<unknown>(config, "rpc/mode_session_complete_v1", {
     method: "POST",
     body: JSON.stringify({
       p_game_save_id: state.value.gameSave.id,
@@ -247,17 +288,239 @@ async function handleSessionComplete(
     }),
   });
   if (rpc.error !== null) {
-    const mapped = mapMinigameDatabaseError(rpc.error, "MINIGAME_SESSION_COMPLETE_FAILED");
+    const mapped = mapModeDatabaseError(rpc.error, "MODE_SESSION_COMPLETE_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
   return jsonResponse(foundationRpcPayload(rpc.value));
 }
 
-async function loadMinigameState(
+async function handleSessionAbandon(
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  const body = await readJsonObject(request);
+  if (body === null) {
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
+  }
+  const requestId = stringField(body, "request_id");
+  const sessionId = stringField(body, "session_id");
+  const modeId = stringField(body, "mode_id") || OPENWORLD_MODE_ID;
+  if (!UUID_PATTERN.test(requestId) || !UUID_PATTERN.test(sessionId)) {
+    return errorResponse("INVALID_REQUEST_ID", "request_id and session_id must be UUIDs.", 400);
+  }
+  if (modeId !== OPENWORLD_MODE_ID) {
+    return errorResponse("INVALID_MODE", "Only openworld sessions can be abandoned in V1.", 400);
+  }
+  const state = await loadModeState(auth, config, modeId);
+  if (state.error !== null) {
+    return errorResponse(state.error.code, state.error.message, state.error.status);
+  }
+  const patch = await restRequest<ModeSessionRow[]>(config, `mode_sessions?id=eq.${
+    encodeURIComponent(sessionId)
+  }&game_save_id=eq.${encodeURIComponent(state.value.gameSave.id)}&mode_id=eq.${
+    encodeURIComponent(modeId)
+  }&status=eq.started&select=id,game_save_id,mode_id,slice_id,ruleset_id,ruleset_version,status,server_seed,session_seconds,activity_score,deposited_items,result_payload,reward_payload,started_at,completed_at,expires_at,abandoned_at,invalidated_at,invalidated_reason`, {
+    method: "PATCH",
+    headers: { "prefer": "return=representation" },
+    body: JSON.stringify({
+      status: "abandoned",
+      abandoned_at: new Date().toISOString(),
+      result_payload: { request_id: requestId, abandon_reason: stringField(body, "reason") },
+    }),
+  });
+  if (patch.error !== null) {
+    return errorResponse("MODE_SESSION_ABANDON_FAILED", "Unable to abandon mode session.", 500);
+  }
+  const session = patch.value[0] ?? null;
+  if (session === null) {
+    return errorResponse("MODE_SESSION_NOT_FOUND", "Started mode session was not found.", 404);
+  }
+  return jsonResponse({
+    ok: true,
+    schema_version: "mode_platform_v1",
+    request_id: requestId,
+    mode: { mode_id: modeId, slice_id: OPENWORLD_SLICE_ID },
+    session: sessionPayloadPublic(session),
+    server_time: new Date().toISOString(),
+  });
+}
+
+async function handleAnalyticsSummary(
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  const modeId = new URL(request.url).searchParams.get("mode_id")?.trim() || OPENWORLD_MODE_ID;
+  const state = await loadModeState(auth, config, modeId);
+  if (state.error !== null) {
+    return errorResponse(state.error.code, state.error.message, state.error.status);
+  }
+  const counts: Record<string, number> = {};
+  let durationTotal = 0;
+  let durationCount = 0;
+  for (const session of state.value.sessions) {
+    const status = String(session.status || "unknown");
+    counts[status] = (counts[status] ?? 0) + 1;
+    const seconds = Number(session.session_seconds ?? 0);
+    if (Number.isFinite(seconds) && seconds > 0) {
+      durationTotal += seconds;
+      durationCount += 1;
+    }
+  }
+  return jsonResponse({
+    ok: true,
+    schema_version: "mode_analytics_v1",
+    mode_id: modeId,
+    funnel: {
+      sessions: state.value.sessions.length,
+      started: counts.started ?? 0,
+      completed: counts.completed ?? 0,
+      abandoned: counts.abandoned ?? 0,
+      expired: counts.expired ?? 0,
+      invalidated: counts.invalidated ?? 0,
+      reward_claims: state.value.claims.length,
+      average_session_seconds: durationCount > 0 ? Math.round(durationTotal / durationCount) : 0,
+    },
+    resources: state.value.claims.map((claim) => claim.resource_delta),
+    server_time: new Date().toISOString(),
+  });
+}
+
+async function handleAdminRoute(
+  route: Route,
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  const admin = await loadAdminRole(config, auth.userId);
+  if (route === "admin_me") {
+    return jsonResponse({
+      ok: true,
+      schema_version: "mode_admin_v1",
+      admin: admin.value,
+      server_time: new Date().toISOString(),
+    }, admin.error === null ? 200 : 403);
+  }
+  if (admin.error !== null) {
+    return errorResponse(admin.error.code, admin.error.message, admin.error.status);
+  }
+  const body = await readJsonObject(request);
+  if (body === null) {
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
+  }
+  const requestId = stringField(body, "request_id");
+  const reason = stringField(body, "reason");
+  if (!UUID_PATTERN.test(requestId) || reason === "") {
+    return errorResponse("INVALID_ADMIN_MUTATION", "request_id UUID and reason are required.", 400);
+  }
+  switch (route) {
+    case "admin_disable":
+      return await handleAdminModeStatus(config, body, requestId, "paused");
+    case "admin_enable":
+      return await handleAdminModeStatus(config, body, requestId, stringField(body, "target_status") || "internal_alpha");
+    case "admin_session_expire":
+      return await handleAdminSessionStatus(config, body, requestId, "expired", "expires_at");
+    case "admin_session_invalidate":
+      return await handleAdminSessionStatus(config, body, requestId, "invalidated", "invalidated_at");
+    case "admin_reconcile":
+      return await handleAdminReconcile(config, body, requestId);
+    case "admin_compensate":
+      return await handleAdminCompensate(config, auth.userId, body, requestId, reason);
+    default:
+      return errorResponse("NOT_FOUND", "Unknown admin route.", 404);
+  }
+}
+
+async function handleAdminModeStatus(
+  config: EdgeConfig,
+  body: Record<string, unknown>,
+  requestId: string,
+  status: string,
+): Promise<Response> {
+  const modeId = stringField(body, "mode_id");
+  if (modeId === "") return errorResponse("INVALID_MODE", "mode_id is required.", 400);
+  const result = await restRequest<ModeRegistryRow[]>(config, `mode_registry?mode_id=eq.${
+    encodeURIComponent(modeId)
+  }&select=mode_id,display_name,status,release_channel,default_slice_id,active_ruleset_id,active_ruleset_version,metadata,updated_at`, {
+    method: "PATCH",
+    headers: { "prefer": "return=representation" },
+    body: JSON.stringify({ status, updated_at: new Date().toISOString() }),
+  });
+  if (result.error !== null) return errorResponse("MODE_ADMIN_STATUS_FAILED", result.error.message, 500);
+  return jsonResponse({ ok: true, schema_version: "mode_admin_v1", request_id: requestId, mode: result.value[0] ?? null, server_time: new Date().toISOString() });
+}
+
+async function handleAdminSessionStatus(
+  config: EdgeConfig,
+  body: Record<string, unknown>,
+  requestId: string,
+  status: string,
+  timestampColumn: "expires_at" | "invalidated_at",
+): Promise<Response> {
+  const sessionId = stringField(body, "session_id");
+  if (!UUID_PATTERN.test(sessionId)) return errorResponse("INVALID_SESSION", "session_id must be a UUID.", 400);
+  const patch: Record<string, unknown> = { status };
+  patch[timestampColumn] = new Date().toISOString();
+  if (status === "invalidated") patch.invalidated_reason = stringField(body, "reason");
+  const result = await restRequest<ModeSessionRow[]>(config, `mode_sessions?id=eq.${
+    encodeURIComponent(sessionId)
+  }&select=id,game_save_id,mode_id,slice_id,ruleset_id,ruleset_version,status,server_seed,session_seconds,activity_score,deposited_items,result_payload,reward_payload,started_at,completed_at,expires_at,abandoned_at,invalidated_at,invalidated_reason`, {
+    method: "PATCH",
+    headers: { "prefer": "return=representation" },
+    body: JSON.stringify(patch),
+  });
+  if (result.error !== null) return errorResponse("MODE_ADMIN_SESSION_FAILED", result.error.message, 500);
+  return jsonResponse({ ok: true, schema_version: "mode_admin_v1", request_id: requestId, session: result.value[0] ?? null, server_time: new Date().toISOString() });
+}
+
+async function handleAdminReconcile(
+  config: EdgeConfig,
+  body: Record<string, unknown>,
+  requestId: string,
+): Promise<Response> {
+  const modeId = stringField(body, "mode_id") || OPENWORLD_MODE_ID;
+  const sessions = await loadSessions(config, stringField(body, "game_save_id"), modeId);
+  const claims = await loadClaims(config, stringField(body, "game_save_id"), modeId);
+  return jsonResponse({
+    ok: true,
+    schema_version: "mode_admin_v1",
+    request_id: requestId,
+    mode_id: modeId,
+    sessions: sessions.error === null ? sessions.value : [],
+    claims: claims.error === null ? claims.value : [],
+    server_time: new Date().toISOString(),
+  });
+}
+
+async function handleAdminCompensate(
+  config: EdgeConfig,
+  actorAuthUserId: string,
+  body: Record<string, unknown>,
+  requestId: string,
+  reason: string,
+): Promise<Response> {
+  const gameSaveId = stringField(body, "game_save_id");
+  if (!UUID_PATTERN.test(gameSaveId)) return errorResponse("INVALID_GAME_SAVE_ID", "game_save_id must be a UUID.", 400);
+  const rpc = await restRequest<unknown>(config, "rpc/admin_adjust_resource_balance_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: gameSaveId,
+      p_delta: isObject(body.delta) ? body.delta : {},
+      p_reason: reason,
+      p_request_id: requestId,
+      p_actor_auth_user_id: actorAuthUserId,
+    }),
+  });
+  if (rpc.error !== null) return errorResponse("MODE_ADMIN_COMPENSATE_FAILED", rpc.error.message, 500);
+  return jsonResponse(foundationRpcPayload(rpc.value));
+}
+
+async function loadModeState(
   auth: AuthContext,
   config: EdgeConfig,
   modeId: string,
-): Promise<{ value: MinigameState; error: null } | { value: null; error: RestError }> {
+): Promise<{ value: ModeState; error: null } | { value: null; error: RestError }> {
   const player = await loadPlayer(auth, config);
   if (player.error !== null) return { value: null, error: player.error };
   const gameSave = await loadFoundationGameSave(
@@ -270,6 +533,16 @@ async function loadMinigameState(
   if (gameSave.error !== null) return { value: null, error: gameSave.error };
   const registry = await loadRegistry(config, modeId);
   if (registry.error !== null) return { value: null, error: registry.error };
+  if (registry.value.length <= 0) {
+    return {
+      value: null,
+      error: {
+        code: "INVALID_MODE",
+        message: "Mode is not registered in Mode Platform V1.",
+        status: 404,
+      },
+    };
+  }
   const rulesets = await loadRulesets(config, modeId);
   if (rulesets.error !== null) return { value: null, error: rulesets.error };
   const progress = await loadProgress(config, gameSave.value.id, modeId);
@@ -324,9 +597,9 @@ async function loadPlayer(
 async function loadRegistry(
   config: EdgeConfig,
   modeId: string,
-): Promise<{ value: MinigameRegistryRow[]; error: null } | { value: null; error: RestError }> {
+): Promise<{ value: ModeRegistryRow[]; error: null } | { value: null; error: RestError }> {
   const filter = modeId === "" ? "" : `mode_id=eq.${encodeURIComponent(modeId)}&`;
-  const result = await restRequest<MinigameRegistryRow[]>(
+  const result = await restRequest<ModeRegistryRow[]>(
     config,
     `mode_registry?${filter}select=mode_id,display_name,status,release_channel,default_slice_id,active_ruleset_id,active_ruleset_version,metadata,updated_at&order=mode_id.asc`,
     { method: "GET" },
@@ -338,9 +611,9 @@ async function loadRegistry(
 async function loadRulesets(
   config: EdgeConfig,
   modeId: string,
-): Promise<{ value: MinigameRulesetRow[]; error: null } | { value: null; error: RestError }> {
+): Promise<{ value: ModeRulesetRow[]; error: null } | { value: null; error: RestError }> {
   const filter = modeId === "" ? "" : `mode_id=eq.${encodeURIComponent(modeId)}&`;
-  const result = await restRequest<MinigameRulesetRow[]>(
+  const result = await restRequest<ModeRulesetRow[]>(
     config,
     `mode_ruleset_registry?${filter}select=ruleset_id,ruleset_version,mode_id,slice_id,status,release_channel,reward_limits,result_limits,ruleset_payload,updated_at&order=ruleset_id.asc`,
     { method: "GET" },
@@ -353,8 +626,8 @@ async function loadProgress(
   config: EdgeConfig,
   gameSaveId: string,
   modeId: string,
-): Promise<{ value: MinigameProgressRow | null; error: null } | { value: null; error: RestError }> {
-  const result = await restRequest<MinigameProgressRow[]>(
+): Promise<{ value: ModeProgressRow | null; error: null } | { value: null; error: RestError }> {
+  const result = await restRequest<ModeProgressRow[]>(
     config,
     `mode_progress?game_save_id=eq.${encodeURIComponent(gameSaveId)}&mode_id=eq.${
       encodeURIComponent(modeId)
@@ -369,12 +642,12 @@ async function loadSessions(
   config: EdgeConfig,
   gameSaveId: string,
   modeId: string,
-): Promise<{ value: MinigameSessionRow[]; error: null } | { value: null; error: RestError }> {
-  const result = await restRequest<MinigameSessionRow[]>(
+): Promise<{ value: ModeSessionRow[]; error: null } | { value: null; error: RestError }> {
+  const result = await restRequest<ModeSessionRow[]>(
     config,
     `mode_sessions?game_save_id=eq.${encodeURIComponent(gameSaveId)}&mode_id=eq.${
       encodeURIComponent(modeId)
-    }&select=id,game_save_id,mode_id,slice_id,ruleset_id,ruleset_version,status,server_seed,session_seconds,activity_score,deposited_items,result_payload,reward_payload,started_at,completed_at&order=started_at.desc&limit=10`,
+    }&select=id,game_save_id,mode_id,slice_id,ruleset_id,ruleset_version,status,server_seed,session_seconds,activity_score,deposited_items,result_payload,reward_payload,started_at,completed_at,expires_at,abandoned_at,invalidated_at,invalidated_reason&order=started_at.desc&limit=20`,
     { method: "GET" },
   );
   if (result.error !== null) return { value: null, error: stateReadError() };
@@ -385,8 +658,8 @@ async function loadClaims(
   config: EdgeConfig,
   gameSaveId: string,
   modeId: string,
-): Promise<{ value: MinigameRewardClaimRow[]; error: null } | { value: null; error: RestError }> {
-  const result = await restRequest<MinigameRewardClaimRow[]>(
+): Promise<{ value: ModeRewardClaimRow[]; error: null } | { value: null; error: RestError }> {
+  const result = await restRequest<ModeRewardClaimRow[]>(
     config,
     `mode_reward_claims?game_save_id=eq.${encodeURIComponent(gameSaveId)}&mode_id=eq.${
       encodeURIComponent(modeId)
@@ -401,9 +674,9 @@ async function loadResources(
   config: EdgeConfig,
   playerId: string,
 ): Promise<
-  { value: MinigameResourcesRow | null; error: null } | { value: null; error: RestError }
+  { value: ModeResourcesRow | null; error: null } | { value: null; error: RestError }
 > {
-  const result = await restRequest<MinigameResourcesRow[]>(
+  const result = await restRequest<ModeResourcesRow[]>(
     config,
     `resources?player_id=eq.${
       encodeURIComponent(playerId)
@@ -419,7 +692,38 @@ function resolveRoute(pathname: string): Route | null {
   if (pathname.endsWith("/state")) return "state";
   if (pathname.endsWith("/session/start")) return "session_start";
   if (pathname.endsWith("/session/complete")) return "session_complete";
+  if (pathname.endsWith("/session/abandon")) return "session_abandon";
+  if (pathname.endsWith("/analytics/summary")) return "analytics_summary";
+  if (pathname.endsWith("/admin/me")) return "admin_me";
+  if (pathname.endsWith("/admin/disable")) return "admin_disable";
+  if (pathname.endsWith("/admin/enable")) return "admin_enable";
+  if (pathname.endsWith("/admin/session/expire")) return "admin_session_expire";
+  if (pathname.endsWith("/admin/session/invalidate")) return "admin_session_invalidate";
+  if (pathname.endsWith("/admin/reconcile")) return "admin_reconcile";
+  if (pathname.endsWith("/admin/compensate")) return "admin_compensate";
   return null;
+}
+
+async function loadAdminRole(
+  config: EdgeConfig,
+  authUserId: string,
+): Promise<{ value: AdminRoleRow | null; error: null } | { value: null; error: RestError }> {
+  const result = await restRequest<AdminRoleRow[]>(
+    config,
+    `admin_roles?auth_user_id=eq.${encodeURIComponent(authUserId)}&active=eq.true&select=auth_user_id,role,active&limit=1`,
+    { method: "GET" },
+  );
+  if (result.error !== null || (result.value[0] ?? null) === null) {
+    return {
+      value: null,
+      error: {
+        code: "ADMIN_FORBIDDEN",
+        message: "Mode admin role is required.",
+        status: 403,
+      },
+    };
+  }
+  return { value: result.value[0], error: null };
 }
 
 function decodeAuthContext(request: Request): { value: AuthContext; error: null } | {
@@ -454,7 +758,7 @@ function decodeAuthContext(request: Request): { value: AuthContext; error: null 
       value: null,
       error: {
         code: "INVALID_SAVE_TYPE",
-        message: "x-draxos-save-type is required for minigame endpoints.",
+        message: "x-draxos-save-type is required for mode endpoints.",
         status: 400,
       },
     };
@@ -493,7 +797,7 @@ function loadConfig(): { value: EdgeConfig; error: null } | { value: null; error
       value: null,
       error: {
         code: "SERVER_MISCONFIGURED",
-        message: "Minigames function is missing Supabase runtime configuration.",
+        message: "Modes function is missing Supabase runtime configuration.",
         status: 500,
       },
     };
@@ -539,37 +843,40 @@ async function restRequest<T>(
   return { value: data as T, error: null };
 }
 
-function mapMinigameDatabaseError(error: RestError, fallbackCode: string): RestError {
+function mapModeDatabaseError(error: RestError, fallbackCode: string): RestError {
   const message = error.message.toUpperCase();
   const codes = [
     "INVALID_MODE",
     "INVALID_RULESET",
     "INVALID_SESSION",
     "INVALID_RESULT",
-    "MINIGAME_SESSION_NOT_FOUND",
-    "MINIGAME_SESSION_ALREADY_COMPLETED",
-    "MINIGAME_RESULT_REJECTED",
-    "MINIGAME_REWARD_BLOCKED_FOR_LAB",
-    "MINIGAME_REWARD_APPLY_FAILED",
+    "MODE_SESSION_NOT_FOUND",
+    "MODE_SESSION_ALREADY_COMPLETED",
+    "MODE_RESULT_REJECTED",
+    "MODE_REWARD_BLOCKED_FOR_LAB",
+    "MODE_REWARD_APPLY_FAILED",
+    "MODE_DISABLED",
+    "MODE_SESSION_UNSUPPORTED",
     "IDEMPOTENCY_HASH_MISMATCH",
   ];
   for (const code of codes) {
     if (message.includes(code)) {
       return {
         code,
-        message: minigameErrorMessage(code),
-        status: minigameStatus(code, error.status),
+        message: modeErrorMessage(code),
+        status: modeStatus(code, error.status),
       };
     }
   }
   return mapFoundationDatabaseError(error, fallbackCode);
 }
 
-function minigameStatus(code: string, fallback: number): number {
-  if (code === "MINIGAME_SESSION_NOT_FOUND") return 404;
+function modeStatus(code: string, fallback: number): number {
+  if (code === "MODE_SESSION_NOT_FOUND") return 404;
+  if (code === "MODE_DISABLED") return 409;
   if (
-    code === "MINIGAME_SESSION_ALREADY_COMPLETED" ||
-    code === "MINIGAME_REWARD_BLOCKED_FOR_LAB" ||
+    code === "MODE_SESSION_ALREADY_COMPLETED" ||
+    code === "MODE_REWARD_BLOCKED_FOR_LAB" ||
     code === "IDEMPOTENCY_HASH_MISMATCH"
   ) return 409;
   if (
@@ -577,38 +884,65 @@ function minigameStatus(code: string, fallback: number): number {
     code === "INVALID_RULESET" ||
     code === "INVALID_SESSION" ||
     code === "INVALID_RESULT" ||
-    code === "MINIGAME_RESULT_REJECTED"
+    code === "MODE_RESULT_REJECTED" ||
+    code === "MODE_SESSION_UNSUPPORTED"
   ) return 400;
   return fallback >= 400 ? fallback : 500;
 }
 
-function minigameErrorMessage(code: string): string {
+function modeErrorMessage(code: string): string {
   switch (code) {
     case "IDEMPOTENCY_HASH_MISMATCH":
       return "request_id was already used with a different request_hash.";
     case "INVALID_MODE":
-      return "Only rpgsuave/forest is available in Minigame Platform v0.";
+      return "Only openworld/forest is available in Mode Platform v0.";
     case "INVALID_RULESET":
-      return "Rpgsuave ruleset does not match the active server ruleset.";
+      return "Openworld ruleset does not match the active server ruleset.";
     case "INVALID_SESSION":
-      return "Minigame session is invalid for this save.";
-    case "MINIGAME_SESSION_NOT_FOUND":
-      return "Minigame session was not found.";
-    case "MINIGAME_SESSION_ALREADY_COMPLETED":
-      return "Minigame session was already completed.";
-    case "MINIGAME_RESULT_REJECTED":
-      return "Minigame result failed server validation.";
-    case "MINIGAME_REWARD_BLOCKED_FOR_LAB":
+      return "Mode session is invalid for this save.";
+    case "MODE_SESSION_NOT_FOUND":
+      return "Mode session was not found.";
+    case "MODE_SESSION_ALREADY_COMPLETED":
+      return "Mode session was already completed.";
+    case "MODE_RESULT_REJECTED":
+      return "Mode result failed server validation.";
+    case "MODE_REWARD_BLOCKED_FOR_LAB":
       return "Progression Lab saves cannot receive account/base rewards.";
-    case "MINIGAME_REWARD_APPLY_FAILED":
-      return "Unable to apply minigame reward.";
+    case "MODE_REWARD_APPLY_FAILED":
+      return "Unable to apply mode reward.";
+    case "MODE_DISABLED":
+      return "Mode is disabled or staged.";
+    case "MODE_SESSION_UNSUPPORTED":
+      return "Mode does not use generic sessions in V1.";
     default:
-      return "Minigame mutation could not be completed.";
+      return "Mode mutation could not be completed.";
   }
 }
 
+function sessionPayloadPublic(row: ModeSessionRow): Record<string, unknown> {
+  return {
+    id: row.id,
+    mode_id: row.mode_id,
+    slice_id: row.slice_id,
+    ruleset_id: row.ruleset_id,
+    ruleset_version: Number(row.ruleset_version || 1),
+    status: row.status,
+    session_seconds: row.session_seconds ?? null,
+    activity_score: row.activity_score ?? null,
+    deposited_items: isObject(row.deposited_items) ? row.deposited_items : {},
+    result_payload: isObject(row.result_payload) ? row.result_payload : {},
+    reward_payload: isObject(row.reward_payload) ? row.reward_payload : {},
+    started_at: row.started_at ?? null,
+    completed_at: row.completed_at ?? null,
+    expires_at: row.expires_at ?? null,
+    abandoned_at: row.abandoned_at ?? null,
+    invalidated_at: row.invalidated_at ?? null,
+    invalidated_reason: row.invalidated_reason ?? "",
+  };
+}
+
 function stateReadError(): RestError {
-  return { code: "STATE_READ_FAILED", message: "Unable to load minigame state.", status: 500 };
+  return { code: "STATE_READ_FAILED", message: "Unable to load mode state.", status: 500 };
 }
 
 function errorResponse(code: string, message: string, status: number): Response {

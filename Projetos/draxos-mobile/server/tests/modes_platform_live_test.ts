@@ -20,10 +20,10 @@ interface TestAccount {
   saveType: SaveType;
 }
 
-const MINIGAME_MODE_ID = "rpgsuave";
-const MINIGAME_SLICE_ID = "forest";
-const MINIGAME_RULESET_ID = "rpgsuave_forest_ruleset_v0";
-const MINIGAME_RULESET_VERSION = 1;
+const MODE_MODE_ID = "openworld";
+const MODE_SLICE_ID = "forest";
+const MODE_RULESET_ID = "openworld_forest_ruleset_v0";
+const MODE_RULESET_VERSION = 1;
 
 const sql = postgres(DATABASE_URL, {
   max: 1,
@@ -36,19 +36,20 @@ try {
   await assertLocalEdgeIsReachable();
   await assertLocalDatabaseIsCurrent();
 
-  const account = await createTestAccount("minigame-live-normal", "normal");
+  const account = await createTestAccount("mode-live-normal", "normal");
   await proveSaveTypeHeaderIsRequired(account);
   await proveRegistryAndState(account);
+  await proveDisabledModesDoNotStart(account);
   await proveSessionRewardAndIdempotency(account);
   await proveTamperedResultIsRejected(account);
 
   const labAccount = await createTestAccount(
-    "minigame-live-progression-lab",
+    "mode-live-progression-lab",
     "progression_lab",
   );
   await proveProgressionLabCannotClaimReward(labAccount);
 
-  console.log("[minigame-platform-live-test] OK", {
+  console.log("[mode-platform-live-test] OK", {
     supabase_url: SUPABASE_URL,
     normal_player: account.playerId,
     progression_lab_player: labAccount.playerId,
@@ -62,7 +63,7 @@ function assertLocalOnly(): void {
     /^http:\/\/(127\.0\.0\.1|localhost|0\.0\.0\.0)(:\d+)?$/.test(
       SUPABASE_URL,
     ),
-    "minigame_platform_live_test refuses remote Supabase URLs. Use local Supabase/Edge.",
+    "modes_platform_live_test refuses remote Supabase URLs. Use local Supabase/Edge.",
   );
 }
 
@@ -94,19 +95,19 @@ async function assertLocalDatabaseIsCurrent(): Promise<void> {
     join pg_namespace as n on n.oid = p.pronamespace
     where n.nspname = 'public'
       and p.proname in (
-        'minigame_session_start_v1',
-        'minigame_session_complete_v1'
+        'mode_session_start_v1',
+        'mode_session_complete_v1'
       )
   `;
   const grants = new Map(functionRows.map((row) => [row.proname, row]));
   for (
     const rpc of [
-      "minigame_session_start_v1",
-      "minigame_session_complete_v1",
+      "mode_session_start_v1",
+      "mode_session_complete_v1",
     ]
   ) {
     const grant = grants.get(rpc);
-    assert(grant !== undefined, `missing minigame RPC ${rpc}`);
+    assert(grant !== undefined, `missing mode RPC ${rpc}`);
     assert(grant?.anon_execute === false, `${rpc} must not be anon executable`);
     assert(
       grant?.authenticated_execute === false,
@@ -147,10 +148,10 @@ async function assertLocalDatabaseIsCurrent(): Promise<void> {
   const registryRows = await sql<{ mode_id: string }[]>`
     select mode_id
     from public.mode_registry
-    where mode_id = ${MINIGAME_MODE_ID}
+    where mode_id = ${MODE_MODE_ID}
       and status = 'internal_alpha'
   `;
-  assertEq(registryRows.length, 1, "rpgsuave mode registry seed should exist");
+  assertEq(registryRows.length, 1, "openworld mode registry seed should exist");
 }
 
 async function createTestAccount(
@@ -194,47 +195,67 @@ async function proveSaveTypeHeaderIsRequired(
   const headers = { ...account.headers };
   delete headers["x-draxos-save-type"];
   const response = await getJson(
-    `${SUPABASE_URL}/functions/v1/minigames/registry`,
+    `${SUPABASE_URL}/functions/v1/modes/registry`,
     headers,
     false,
   );
   assertEq(
     stringField(objectField(response, "error"), "code"),
     "INVALID_SAVE_TYPE",
-    "minigames should require x-draxos-save-type explicitly",
+    "modes should require x-draxos-save-type explicitly",
   );
 }
 
 async function proveRegistryAndState(account: TestAccount): Promise<void> {
   const registry = await getJson(
-    `${SUPABASE_URL}/functions/v1/minigames/registry`,
+    `${SUPABASE_URL}/functions/v1/modes/registry`,
     account.headers,
   );
   assertEq(
-    stringField(arrayField(registry, "modes")[0] as JsonObject, "mode_id"),
-    MINIGAME_MODE_ID,
-    "registry should expose rpgsuave",
+    stringField(findObjectByField(arrayField(registry, "modes"), "mode_id", MODE_MODE_ID), "mode_id"),
+    MODE_MODE_ID,
+    "registry should expose openworld",
   );
   assertEq(
-    stringField(arrayField(registry, "rulesets")[0] as JsonObject, "ruleset_id"),
-    MINIGAME_RULESET_ID,
-    "registry should expose rpgsuave forest ruleset",
+    stringField(findObjectByField(arrayField(registry, "rulesets"), "ruleset_id", MODE_RULESET_ID), "ruleset_id"),
+    MODE_RULESET_ID,
+    "registry should expose openworld forest ruleset",
   );
 
   const state = await getJson(
-    `${SUPABASE_URL}/functions/v1/minigames/state?mode_id=${MINIGAME_MODE_ID}`,
+    `${SUPABASE_URL}/functions/v1/modes/state?mode_id=${MODE_MODE_ID}`,
     account.headers,
   );
   assertEq(
-    stringField(arrayField(state, "modes")[0] as JsonObject, "mode_id"),
-    MINIGAME_MODE_ID,
-    "state should be scoped to rpgsuave",
+    stringField(findObjectByField(arrayField(state, "modes"), "mode_id", MODE_MODE_ID), "mode_id"),
+    MODE_MODE_ID,
+    "state should be scoped to openworld",
   );
   assertEq(
     arrayField(state, "sessions").length,
     0,
-    "new test account should have no minigame sessions yet",
+    "new test account should have no mode sessions yet",
   );
+}
+
+async function proveDisabledModesDoNotStart(account: TestAccount): Promise<void> {
+  for (const modeId of ["towerdefense", "cardgame"]) {
+    const response = await postJson(
+      `${SUPABASE_URL}/functions/v1/modes/session/start`,
+      {
+        request_id: crypto.randomUUID(),
+        mode_id: modeId,
+        slice_id: "tbd",
+      },
+      account.headers,
+      false,
+    );
+    assertEq(
+      stringField(objectField(response, "error"), "code"),
+      "MODE_DISABLED",
+      `${modeId} should be staged/disabled`,
+    );
+  }
 }
 
 async function proveSessionRewardAndIdempotency(
@@ -243,16 +264,16 @@ async function proveSessionRewardAndIdempotency(
   const startRequestId = crypto.randomUUID();
   const startBody = {
     request_id: startRequestId,
-    mode_id: MINIGAME_MODE_ID,
-    slice_id: MINIGAME_SLICE_ID,
+    mode_id: MODE_MODE_ID,
+    slice_id: MODE_SLICE_ID,
   };
   const firstStart = await postJson(
-    `${SUPABASE_URL}/functions/v1/minigames/session/start`,
+    `${SUPABASE_URL}/functions/v1/modes/session/start`,
     startBody,
     account.headers,
   );
   const repeatedStart = await postJson(
-    `${SUPABASE_URL}/functions/v1/minigames/session/start`,
+    `${SUPABASE_URL}/functions/v1/modes/session/start`,
     startBody,
     account.headers,
   );
@@ -264,9 +285,9 @@ async function proveSessionRewardAndIdempotency(
     "session/start should be idempotent",
   );
   await assertCompletedIdempotency(
-    "minigames/session/start",
+    "modes/session/start",
     startRequestId,
-    "minigame:rpgsuave:normal",
+    "mode:openworld:normal",
   );
 
   const completeRequestId = crypto.randomUUID();
@@ -281,7 +302,7 @@ async function proveSessionRewardAndIdempotency(
     },
   });
   const firstComplete = await postJson(
-    `${SUPABASE_URL}/functions/v1/minigames/session/complete`,
+    `${SUPABASE_URL}/functions/v1/modes/session/complete`,
     completeBody,
     account.headers,
   );
@@ -292,7 +313,7 @@ async function proveSessionRewardAndIdempotency(
   assertEq(numberField(resourceDelta, "xp"), 8, "reward XP should be capped per session");
 
   const repeatedComplete = await postJson(
-    `${SUPABASE_URL}/functions/v1/minigames/session/complete`,
+    `${SUPABASE_URL}/functions/v1/modes/session/complete`,
     completeBody,
     account.headers,
   );
@@ -302,9 +323,9 @@ async function proveSessionRewardAndIdempotency(
     "session/complete should return stored idempotent response",
   );
   await assertCompletedIdempotency(
-    "minigames/session/complete",
+    "modes/session/complete",
     completeRequestId,
-    "minigame:rpgsuave:normal",
+    "mode:openworld:normal",
   );
   assertEq(
     await countRows(
@@ -322,7 +343,7 @@ async function proveSessionRewardAndIdempotency(
   );
 
   const mismatch = await postJson(
-    `${SUPABASE_URL}/functions/v1/minigames/session/complete`,
+    `${SUPABASE_URL}/functions/v1/modes/session/complete`,
     { ...completeBody, request_hash: "sha256:changed" },
     account.headers,
     false,
@@ -334,7 +355,7 @@ async function proveSessionRewardAndIdempotency(
   );
 
   const state = await getJson(
-    `${SUPABASE_URL}/functions/v1/minigames/state?mode_id=${MINIGAME_MODE_ID}`,
+    `${SUPABASE_URL}/functions/v1/modes/state?mode_id=${MODE_MODE_ID}`,
     account.headers,
   );
   assertEq(arrayField(state, "sessions").length, 1, "state should expose completed session");
@@ -347,7 +368,7 @@ async function proveTamperedResultIsRejected(
   const sessionId = await startSession(account);
   const requestId = crypto.randomUUID();
   const response = await postJson(
-    `${SUPABASE_URL}/functions/v1/minigames/session/complete`,
+    `${SUPABASE_URL}/functions/v1/modes/session/complete`,
     completionBody(requestId, sessionId, {
       session_seconds: 60,
       activity_score: 5000,
@@ -358,7 +379,7 @@ async function proveTamperedResultIsRejected(
   );
   assertEq(
     stringField(objectField(response, "error"), "code"),
-    "MINIGAME_RESULT_REJECTED",
+    "MODE_RESULT_REJECTED",
     "server should reject over-limit activity_score",
   );
 }
@@ -369,7 +390,7 @@ async function proveProgressionLabCannotClaimReward(
   const sessionId = await startSession(account);
   const requestId = crypto.randomUUID();
   const response = await postJson(
-    `${SUPABASE_URL}/functions/v1/minigames/session/complete`,
+    `${SUPABASE_URL}/functions/v1/modes/session/complete`,
     completionBody(requestId, sessionId, {
       session_seconds: 60,
       activity_score: 120,
@@ -380,8 +401,8 @@ async function proveProgressionLabCannotClaimReward(
   );
   assertEq(
     stringField(objectField(response, "error"), "code"),
-    "MINIGAME_REWARD_BLOCKED_FOR_LAB",
-    "progression_lab save must not receive real minigame rewards",
+    "MODE_REWARD_BLOCKED_FOR_LAB",
+    "progression_lab save must not receive real mode rewards",
   );
   assertEq(
     await countRows(
@@ -394,11 +415,11 @@ async function proveProgressionLabCannotClaimReward(
 
 async function startSession(account: TestAccount): Promise<string> {
   const start = await postJson(
-    `${SUPABASE_URL}/functions/v1/minigames/session/start`,
+    `${SUPABASE_URL}/functions/v1/modes/session/start`,
     {
       request_id: crypto.randomUUID(),
-      mode_id: MINIGAME_MODE_ID,
-      slice_id: MINIGAME_SLICE_ID,
+      mode_id: MODE_MODE_ID,
+      slice_id: MODE_SLICE_ID,
     },
     account.headers,
   );
@@ -418,8 +439,8 @@ function completionBody(
     request_id: requestId,
     result: {
       session_id: sessionId,
-      ruleset_id: MINIGAME_RULESET_ID,
-      ruleset_version: MINIGAME_RULESET_VERSION,
+      ruleset_id: MODE_RULESET_ID,
+      ruleset_version: MODE_RULESET_VERSION,
       session_seconds: result.session_seconds,
       activity_score: result.activity_score,
       deposited_items: result.deposited_items,
@@ -514,6 +535,15 @@ function arrayField(value: JsonObject, key: string): unknown[] {
   const field = value[key];
   assert(Array.isArray(field), `${key} should be an array`);
   return field;
+}
+
+function findObjectByField(items: unknown[], key: string, expected: string): JsonObject {
+  for (const item of items) {
+    if (isObject(item) && item[key] === expected) {
+      return item;
+    }
+  }
+  throw new Error(`Missing object with ${key}=${expected}`);
 }
 
 function stringField(value: JsonObject, key: string): string {
