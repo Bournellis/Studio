@@ -179,7 +179,10 @@ novo.
 `admin-internal` existe apenas como RPC `service_role`-only no banco:
 `admin_lookup_account_v1`, `admin_battle_diagnostics_v1`,
 `resource_reconciliation_report_v1`, `admin_adjust_resource_balance_v1` e
-`admin_flag_account_v1`. Nenhum deles e endpoint publico ou chamada de cliente.
+`admin_flag_account_v1`. Mode admin tambem usa RPCs `service_role`-only:
+`admin_set_mode_status_v1`, `admin_expire_mode_session_v1` e
+`admin_invalidate_mode_session_v1`. Nenhum deles e endpoint publico ou chamada
+de cliente.
 
 `/modes` e o contrato ativo da Minigame Platform V1. `/minigames` nao e contrato ativo nesta publicacao.
 

@@ -1,11 +1,18 @@
 const PROJECT_PREFIX = "Projetos/draxos-mobile";
 
 Deno.test("mode analytics contract exposes summary and telemetry dimensions", async () => {
-  const edge = await projectText("server/functions/modes/index.ts");
+  const edge = await projectText("server/functions/modes/mode_handler.ts");
   const contract = await projectText("docs/contracts/minigame-platform-v1.md");
   assertIncludes(edge, "/analytics/summary", "edge should expose analytics summary");
   assertIncludes(edge, "mode_analytics_v1", "edge should return analytics schema");
-  for (const event of ["mode_hub_shown", "mode_card_selected", "mode_session_completed", "mode_reward_applied"]) {
+  for (
+    const event of [
+      "mode_hub_shown",
+      "mode_card_selected",
+      "mode_session_completed",
+      "mode_reward_applied",
+    ]
+  ) {
     assertIncludes(contract, event, `contract should declare ${event}`);
   }
 });

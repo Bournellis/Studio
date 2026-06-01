@@ -1,8 +1,15 @@
 const PROJECT_PREFIX = "Projetos/draxos-mobile";
 const MIGRATION_PATH = "supabase/migrations/202606010001_modes_platform_v1.sql";
-const SERVER_MIRROR_PATH = "server/schema/migrations/202606010001_modes_platform_v1.sql";
+const SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606010001_modes_platform_v1.sql";
+const ADMIN_MIGRATION_PATH =
+  "supabase/migrations/202606010002_modes_admin_audit_hardening.sql";
+const ADMIN_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606010002_modes_admin_audit_hardening.sql";
 const EDGE_PATH = "server/functions/modes/index.ts";
 const SUPABASE_EDGE_PATH = "supabase/functions/modes/index.ts";
+const HANDLER_PATH = "server/functions/modes/mode_handler.ts";
+const SUPABASE_HANDLER_PATH = "supabase/functions/modes/mode_handler.ts";
 
 Deno.test("mode platform migration is mirrored in server schema", async () => {
   const supabaseMigration = await readProjectText(MIGRATION_PATH);
@@ -12,6 +19,17 @@ Deno.test("mode platform migration is mirrored in server schema", async () => {
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("mode admin audit hardening migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(ADMIN_MIGRATION_PATH);
+  const serverMirror = await readProjectText(ADMIN_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema admin hardening migration should mirror supabase migration exactly",
   );
 });
 
@@ -76,7 +94,9 @@ Deno.test("mode platform declares registry, sessions, progress and reward claims
 Deno.test("mode reward bridge is service-role, idempotent and ledgers resources", async () => {
   const migration = await migrationText();
 
-  for (const functionName of ["mode_session_start_v1", "mode_session_complete_v1"]) {
+  for (
+    const functionName of ["mode_session_start_v1", "mode_session_complete_v1"]
+  ) {
     assertIncludes(
       migration,
       `create or replace function public.${functionName}`,
@@ -101,7 +121,11 @@ Deno.test("mode reward bridge is service-role, idempotent and ledgers resources"
   }
 
   for (const endpoint of ["modes/session/start", "modes/session/complete"]) {
-    assertIncludes(migration, endpoint, `${endpoint} should reserve idempotency`);
+    assertIncludes(
+      migration,
+      endpoint,
+      `${endpoint} should reserve idempotency`,
+    );
   }
   assertIncludes(
     migration,
@@ -123,11 +147,28 @@ Deno.test("mode reward bridge is service-role, idempotent and ledgers resources"
 Deno.test("mode edge function mirror exposes all v1 routes", async () => {
   const edge = await readProjectText(EDGE_PATH);
   const supabaseEdge = await readProjectText(SUPABASE_EDGE_PATH);
+  const handler = await readProjectText(HANDLER_PATH);
+  const supabaseHandler = await readProjectText(SUPABASE_HANDLER_PATH);
 
   assertEq(
     normalizeNewlines(edge),
     normalizeNewlines(supabaseEdge),
-    "server and supabase mode functions should match exactly",
+    "server and supabase mode entrypoints should match exactly",
+  );
+  assertEq(
+    normalizeNewlines(handler),
+    normalizeNewlines(supabaseHandler),
+    "server and supabase mode handlers should match exactly",
+  );
+  assertIncludes(
+    edge,
+    "mode_handler.ts",
+    "edge entrypoint should delegate to ModeHandler",
+  );
+  assertIncludes(
+    handler.toLowerCase(),
+    "export class ModeHandler",
+    "mode handler should be internally modularized",
   );
   for (
     const route of [
@@ -148,8 +189,77 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
       "request_hash",
     ]
   ) {
-    assertIncludes(edge.toLowerCase(), route, `edge function should include ${route}`);
+    assertIncludes(
+      handler.toLowerCase(),
+      route,
+      `mode handler should include ${route}`,
+    );
   }
+});
+
+Deno.test("mode admin RPCs are audited, service-role only and hash guarded", async () => {
+  const migration = normalizeSql(await readProjectText(ADMIN_MIGRATION_PATH));
+  const handler = normalizeCode(await readProjectText(HANDLER_PATH));
+  const adminFunctions = [
+    "admin_set_mode_status_v1",
+    "admin_expire_mode_session_v1",
+    "admin_invalidate_mode_session_v1",
+  ];
+
+  for (const functionName of adminFunctions) {
+    assertIncludes(
+      migration,
+      `create or replace function public.${functionName}`,
+      `migration should declare ${functionName}`,
+    );
+    assertIncludes(
+      migration,
+      `where action = '${functionName}'`,
+      `${functionName} should dedupe by admin audit action/request_id`,
+    );
+    assertIncludes(
+      migration,
+      "metadata->>'request_hash'",
+      `${functionName} should compare request hashes on retries`,
+    );
+    assertIncludes(
+      migration,
+      "'idempotency_hash_mismatch'",
+      `${functionName} should reject reused request_id with a different hash`,
+    );
+    assertRegex(
+      migration,
+      new RegExp(
+        `revoke all on function public\\.${functionName}\\([^;]+\\) from public, anon, authenticated;`,
+        "s",
+      ),
+      `${functionName} should be revoked from public roles`,
+    );
+    assertRegex(
+      migration,
+      new RegExp(
+        `grant execute on function public\\.${functionName}\\([^;]+\\) to service_role;`,
+        "s",
+      ),
+      `${functionName} should be granted to service_role only`,
+    );
+    assertIncludes(
+      handler,
+      `rpc/${functionName}`,
+      `/modes/admin/* should call audited RPC ${functionName}`,
+    );
+  }
+
+  const adminMutationSection = codeSection(
+    handler,
+    "async function handleAdminModeStatus",
+    "async function handleAdminReconcile",
+  );
+  assertNotIncludes(
+    adminMutationSection,
+    'method: "patch"',
+    "admin mode/session handlers should not PATCH mode tables directly",
+  );
 });
 
 async function migrationText(): Promise<string> {
@@ -172,14 +282,41 @@ function normalizeSql(value: string): string {
   return normalizeNewlines(value).toLowerCase();
 }
 
+function normalizeCode(value: string): string {
+  return normalizeNewlines(value).toLowerCase();
+}
+
 function normalizeNewlines(value: string): string {
   return value.replaceAll("\r\n", "\n");
 }
 
-function assertIncludes(haystack: string, needle: string, message: string): void {
+function assertIncludes(
+  haystack: string,
+  needle: string,
+  message: string,
+): void {
   if (!haystack.includes(needle.toLowerCase())) {
     throw new Error(`${message}. Missing: ${needle}`);
   }
+}
+
+function assertNotIncludes(
+  haystack: string,
+  needle: string,
+  message: string,
+): void {
+  if (haystack.includes(needle.toLowerCase())) {
+    throw new Error(`${message}. Unexpected: ${needle}`);
+  }
+}
+
+function codeSection(haystack: string, start: string, end: string): string {
+  const startIndex = haystack.indexOf(start.toLowerCase());
+  const endIndex = haystack.indexOf(end.toLowerCase());
+  if (startIndex < 0 || endIndex <= startIndex) {
+    throw new Error(`missing code section ${start} -> ${end}`);
+  }
+  return haystack.slice(startIndex, endIndex);
 }
 
 function assertRegex(haystack: string, pattern: RegExp, message: string): void {

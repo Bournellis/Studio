@@ -30,6 +30,9 @@ const ADMIN_RPCS = [
   "admin_lookup_account_v1",
   "admin_battle_diagnostics_v1",
   "admin_flag_account_v1",
+  "admin_set_mode_status_v1",
+  "admin_expire_mode_session_v1",
+  "admin_invalidate_mode_session_v1",
 ];
 
 const sql = postgres(DATABASE_URL, {
@@ -137,9 +140,7 @@ async function assertLocalDatabaseIsCurrent(): Promise<void> {
     assert(policies.has(expected), `missing RLS policy ${expected}`);
   }
   assert(
-    !Array.from(policies).some((policy) =>
-      policy.startsWith("admin_audit_log:")
-    ),
+    !Array.from(policies).some((policy) => policy.startsWith("admin_audit_log:")),
     "admin_audit_log should have no client-readable RLS policy",
   );
 
@@ -254,9 +255,7 @@ async function proveOwnReadIsolation(
     "authenticated client should read its own account_profile",
   );
   assert(
-    !profiles.some((row) =>
-      stringField(row, "id") === secondary.accountProfileId
-    ),
+    !profiles.some((row) => stringField(row, "id") === secondary.accountProfileId),
     "authenticated client must not read another account_profile",
   );
 
@@ -308,15 +307,11 @@ async function proveRulesetRegistryRls(account: TestAccount): Promise<void> {
       account.headers,
     );
     assert(
-      rulesets.some((row) =>
-        stringField(row, "ruleset_id") === "foundation_ruleset_v0"
-      ),
+      rulesets.some((row) => stringField(row, "ruleset_id") === "foundation_ruleset_v0"),
       "authenticated client should read active ruleset publications",
     );
     assert(
-      !rulesets.some((row) =>
-        stringField(row, "ruleset_id") === draftRulesetId
-      ),
+      !rulesets.some((row) => stringField(row, "ruleset_id") === draftRulesetId),
       "authenticated client must not read draft ruleset publications",
     );
   } finally {
@@ -371,6 +366,34 @@ async function proveAdminRpcDeniedToClient(account: TestAccount): Promise<void> 
         p_status: "active",
         p_reason: "auth denial probe",
         p_request_id: crypto.randomUUID(),
+      },
+    ],
+    [
+      "admin_set_mode_status_v1",
+      {
+        p_mode_id: "openworld",
+        p_status: "internal_alpha",
+        p_reason: "auth denial probe",
+        p_request_id: crypto.randomUUID(),
+        p_request_hash: "sha256:auth-denial-probe",
+      },
+    ],
+    [
+      "admin_expire_mode_session_v1",
+      {
+        p_session_id: crypto.randomUUID(),
+        p_reason: "auth denial probe",
+        p_request_id: crypto.randomUUID(),
+        p_request_hash: "sha256:auth-denial-probe",
+      },
+    ],
+    [
+      "admin_invalidate_mode_session_v1",
+      {
+        p_session_id: crypto.randomUUID(),
+        p_reason: "auth denial probe",
+        p_request_id: crypto.randomUUID(),
+        p_request_hash: "sha256:auth-denial-probe",
       },
     ],
   ];
@@ -636,9 +659,11 @@ function stableStringify(value: unknown): string {
     return `[${value.map(stableStringify).join(",")}]`;
   }
   const record = value as JsonObject;
-  return `{${Object.keys(record).sort().map((key) =>
-    `${JSON.stringify(key)}:${stableStringify(record[key])}`
-  ).join(",")}}`;
+  return `{${
+    Object.keys(record).sort().map((key) =>
+      `${JSON.stringify(key)}:${stableStringify(record[key])}`
+    ).join(",")
+  }}`;
 }
 
 function assert(condition: unknown, message: string): asserts condition {

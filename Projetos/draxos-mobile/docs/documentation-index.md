@@ -76,6 +76,7 @@
 | `docs/contracts/minigame-integration.md` | `CONTRATO` | Contract-first gate for official modes and future playable integrations. |
 | `docs/contracts/mode-integration.md` | `CONTRATO` | Compatibility pointer for Foundation Expansion Readiness gates; canonical content lives in minigame-integration. |
 | `docs/contracts/minigame-platform-v1.md` | `CONTRATO` | V1 `/modes` registry/session/progress/admin/analytics/reward bridge contract. |
+| `docs/contracts/reward-bridge-v1.md` | `CONTRATO` | Server-authoritative mode reward bridge and audited admin boundary for reward-adjacent operations. |
 | `docs/contracts/minigame-platform-v0.md` | `HISTORICO` | Previous `/minigames` Rpgsuave-centered contract; not active in V1. |
 | `docs/contracts/admin-ops.md` | `CONTRATO` | Minimum auditable admin/support/ops contract. |
 | `docs/contracts/lab-heuristics.md` | `CONTRATO` | Boundary for Battle Lab and Progression Lab local heuristics, Web remote runner, generated evidence and blocked tuning decisions. |
