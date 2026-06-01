@@ -88,24 +88,41 @@ Executar Foundation Hardening V2 como pacote de enforcement puro para preparar D
 
 ## Resultado Final
 
-- Status: `LOCAL_READY_REMOTE_BLOCKED`.
+- Status: `PARTIAL_REMOTE_STORAGE_BACKEND_READY_CLOUDFLARE_BLOCKED`.
 - V2 foi implementado como pacote de enforcement puro, sem gameplay/conteudo novo.
-- `FullLocal` passou em `2026-06-01` com PASS `43`, FAIL `0`, SKIP `3`.
-- `ReleaseDryRun` passou em modo seguro `Plan`.
-- `FullPublish` nao foi executado.
-- Nenhuma mutacao remota foi executada para V2.
-- `master` nao deve ser promovido para baseline V2 ate publicacao real.
+- Android release keystore foi configurada localmente fora do Git.
+- `FullLocal` passou em `2026-06-01` com a keystore release configurada.
+- `ReleaseDryRun` passou em `2026-06-01` com a keystore release configurada.
+- Export Android/PC/Web passou; Android saiu em modo `release`, sem `debug_fallback`.
+- Release root preparado: `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`.
+- Mutacoes remotas executadas:
+  - migrations `202606010003_foundation_hardening_v2.sql` e `202606010004_resource_reconciliation_stability.sql` aplicadas;
+  - Edge Function `modes` publicada;
+  - artefatos V2 enviados ao Supabase Storage via `Mode Upload`.
+- Cloudflare Pages package foi gerado e validado contra `index.pck`/`index.wasm` remotos.
+- `FullPublish` completo nao foi executado.
+- Release manifest nao foi promovido para V2.
+- `master` nao deve ser promovido para baseline V2 ate Cloudflare Pages, DeployManifest e smokes remotos passarem.
 
 ## Bloqueio De Publicacao
 
-- Android release keystore ausente.
-- Gate estrito falhou conforme esperado:
+Bloqueios resolvidos nesta retomada:
+
+- Android release keystore configurada localmente.
+- Gate estrito passou:
   `tools/check_android_release_keystore.ps1 -Mode ReleaseCandidate -RequireReleaseKeystore`.
-- Artefatos locais de publish ausentes:
-  - `build/android/draxos-mobile-alpha.apk`
-  - `build/pc/draxos-mobile-alpha.zip`
-  - `build/web/index.html`
-- `SUPABASE_URL` ou `DRAXOS_MOBILE_SUPABASE_URL` ausente para Package/FullPublish.
+- Artefatos locais gerados:
+  - `build/android/draxos-mobile-alpha.apk`;
+  - `build/pc/draxos-mobile-alpha.zip`;
+  - `build/web/index.html`.
+- Supabase URL/projeto configurados em `.env.internal-alpha.local`.
+- Worktree linkada ao Supabase project `armxgipvnbbshzqawklw`.
+
+Bloqueio restante:
+
+- `wrangler pages deploy` falha com `Authentication error [code: 10000]`.
+- Tentar com `CLOUDFLARE_ACCOUNT_ID=2da949186d393e5c790d01948f4b67be` removeu o problema de descoberta de conta, mas a autenticacao atual ainda foi recusada.
+- Sem Cloudflare Pages publicado, nao promover o manifest remoto para V2.
 
 ## Validacoes Executadas
 
@@ -113,7 +130,17 @@ Executar Foundation Hardening V2 como pacote de enforcement puro para preparar D
 - `npx -y deno check server/tests/foundation_admin_rls_live_smoke.ts`
 - `npx -y deno run --allow-net --allow-env server/tests/foundation_admin_rls_live_smoke.ts`
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile FullLocal`
-- `tools/check_android_release_keystore.ps1 -ProjectDir . -Mode ReleaseCandidate -RequireReleaseKeystore` falhou por keystore ausente, conforme gate V2.
+- `tools/check_android_release_keystore.ps1 -ProjectDir . -Mode ReleaseCandidate -RequireReleaseKeystore`
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`
+- `tools/export_internal_alpha.ps1 -ProjectDir . -GodotExe D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe`
+- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Plan -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-20260601-aa07388 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads`
+- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-20260601-aa07388 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads`
+- `npx -y supabase@2.98.0 db push --linked --dry-run`
+- `npx -y supabase@2.98.0 db push --linked --yes`
+- `npx -y supabase@2.98.0 functions deploy modes --project-ref armxgipvnbbshzqawklw`
+- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-20260601-aa07388 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
+- `tools/build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/web`
+- Public HEAD checks para Android APK, PC ZIP, Web `index.pck` e Web `index.wasm`.
 
 ## Relatorio
 
@@ -123,12 +150,11 @@ Executar Foundation Hardening V2 como pacote de enforcement puro para preparar D
 
 ## Proximo Handoff Seguro
 
-1. Configurar Android release keystore localmente.
-2. Configurar ambiente remoto de publish sem commitar secrets.
-3. Reexecutar `FullLocal` e `ReleaseDryRun`.
-4. Exportar Android release assinado, PC e Web.
-5. Executar `FullPublish -ConfirmRemoteMutation`.
-6. Rodar `RemoteReadOnly`.
-7. So entao atualizar `master` e docs vivos para V2 publicado.
+1. Corrigir Wrangler/Cloudflare localmente sem commitar secrets.
+2. Publicar Cloudflare Pages:
+   `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`.
+3. Executar `DeployManifest` para o release root V2 com `-ConfirmRemoteMutation`.
+4. Rodar `RemoteReadOnly` e smokes remotos.
+5. So entao atualizar `master` e docs vivos para V2 publicado.
 
 Handoff final deve registrar commits, validações, publicação ou blocker de keystore, release root, worktrees limpas/pendentes e próximos checks humanos.
