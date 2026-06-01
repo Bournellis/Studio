@@ -1,0 +1,23 @@
+{
+  "schema_version": "mode_placeholder_v1",
+  "mode_id": "basebuilder",
+  "placeholder_id": "basebuilder_future_slice_placeholder_v1",
+  "playable": false,
+  "launchable": false,
+  "reward_enabled": false,
+  "runtime": "none",
+  "entry_action": "",
+  "purpose": "Reserve future Basebuilder slices beyond the current Refugio/Base shell without changing the active base loop.",
+  "blocked_until": [
+    "explicit basebuilder package decision",
+    "live design contract update",
+    "ruleset and registry update",
+    "validation plan"
+  ],
+  "non_goals": [
+    "new structures",
+    "new resource tuning",
+    "new rewards",
+    "new backend mutations"
+  ]
+}

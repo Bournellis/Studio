@@ -48,7 +48,13 @@
 | `docs/progression-clarity-v1.md` | `VIVO` | Published Progression Clarity v1 package: client-only readability for level, power, rewards, next unlocks and next objective. |
 | `docs/first-session-clarity-v1.md` | `VIVO` | Published First Session Clarity v1 package: client-only first-session guidance for Refugio, Preparation and battle summary. |
 | `docs/minigames/mode-catalog.md` | `VIVO` | Official V1 catalog for Basebuilder, Autobattler, Towerdefense, Cardgame and Openworld. |
+| `docs/minigames/basebuilder.md` | `VIVO` | Basebuilder mode doc and descriptor pointer for current Refugio/Base ownership. |
+| `docs/minigames/autobattler.md` | `VIVO` | Autobattler mode doc and descriptor pointer for current Arena PVE ownership. |
 | `docs/minigames/openworld.md` | `VIVO` | Current Openworld Bosque design/implementation contract for fullscreen gameplay and integrated alpha bridge. |
+| `docs/minigames/towerdefense.md` | `VIVO` | Non-playable staged Towerdefense mode scaffold. |
+| `docs/minigames/cardgame.md` | `VIVO` | Non-playable staged Cardgame mode scaffold. |
+| `docs/minigames/mode-template.md` | `RUNBOOK` | Template for future mode docs and descriptor scaffolds. |
+| `data/definitions/modes/` | `CONTRATO` | Declarative mode descriptors and non-playable placeholders for the five official modes. |
 | `docs/battle-preparation-v1.md` | `HISTORICO` | Previous client-first preparation readability package over existing behavior endpoints. |
 | `docs/product-brief.md` | `VIVO` | Short product/slice summary. |
 | `docs/game-design-document.md` | `VIVO` | Implementation reference and mock/substance context; not the current expansion target. |

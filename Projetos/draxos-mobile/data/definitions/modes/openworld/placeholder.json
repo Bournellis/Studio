@@ -1,0 +1,23 @@
+{
+  "schema_version": "mode_placeholder_v1",
+  "mode_id": "openworld",
+  "placeholder_id": "openworld_future_world_placeholder_v1",
+  "playable": false,
+  "launchable": false,
+  "reward_enabled": false,
+  "runtime": "none",
+  "entry_action": "",
+  "purpose": "Reserve future Openworld slices beyond Bosque without expanding world, combat, rewards or backend behavior.",
+  "blocked_until": [
+    "explicit openworld expansion decision",
+    "live design contract update",
+    "reward bridge review",
+    "validation plan"
+  ],
+  "non_goals": [
+    "new map",
+    "new enemies",
+    "new resource rewards",
+    "new backend mutations"
+  ]
+}

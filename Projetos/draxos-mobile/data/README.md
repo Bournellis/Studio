@@ -26,3 +26,8 @@ Arena PVE v1 adiciona definitions ruleset-only:
 Essas collections entram no ruleset e nos contratos backend/labs. Elas nao entram no catalogo Godot atual ate o client/package escolher consumi-las.
 
 `pve_arenas.json` define o comprimento, regras e unlocks das arenas. `pve_arena_difficulties.json` define os tiers de Season 1 por arena/dificuldade, incluindo sequencia de inimigos, power final, reward profile planejado e clear-rate alvo.
+
+Mode descriptors vivem em `definitions/modes/<mode_id>/`. Eles sao scaffolds
+declarativos para registry/docs e nao entram no catalogo Godot nem mudam o
+ruleset publicado nesta lane. Cada placeholder deve permanecer nao jogavel,
+sem launch e sem reward ate uma decisao de pacote propria.

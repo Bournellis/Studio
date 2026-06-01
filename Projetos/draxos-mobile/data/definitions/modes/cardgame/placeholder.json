@@ -1,0 +1,23 @@
+{
+  "schema_version": "mode_placeholder_v1",
+  "mode_id": "cardgame",
+  "placeholder_id": "cardgame_tbd_placeholder_v1",
+  "playable": false,
+  "launchable": false,
+  "reward_enabled": false,
+  "runtime": "none",
+  "entry_action": "",
+  "purpose": "Reserve the future DraxosMobile Cardgame mode identity without importing mechanics from other projects.",
+  "blocked_until": [
+    "explicit cardgame package decision",
+    "live design contract",
+    "ruleset and registry update",
+    "validation plan"
+  ],
+  "non_goals": [
+    "roguelike cardgame mechanics",
+    "new card combat",
+    "new deck rewards",
+    "new backend mutations"
+  ]
+}

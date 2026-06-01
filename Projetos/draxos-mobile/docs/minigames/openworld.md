@@ -5,6 +5,8 @@
 - Slice id: `forest`
 - Ruleset: `openworld_forest_ruleset_v0`, version `1`
 - Local schema: `openworld_forest_local_v0`
+- Descriptor: `data/definitions/modes/openworld/metadata.json`
+- Placeholder: `data/definitions/modes/openworld/placeholder.json`
 - Entry action: `open_mode_shell:openworld`
 - Route: `mode_shell`
 - Client module: `modes/openworld/`
@@ -34,6 +36,15 @@ Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitua
 - escrita direta do cliente em Conta/Base;
 - ranking, guilda, battle pass ou premium economy do Openworld;
 - promessa publica de release.
+- expansao do placeholder futuro sem pacote explicito.
+
+## Descriptor Scaffold
+
+O descriptor declarativo de `Openworld` registra apenas o slice atual
+`forest`, o ruleset existente e o Reward Bridge limitado ja publicado. O
+placeholder em `data/definitions/modes/openworld/placeholder.json` e
+explicitamente nao jogavel e reserva futuros slices sem abrir mapa, combate,
+recompensa ou backend novo.
 
 ## Componentes
 

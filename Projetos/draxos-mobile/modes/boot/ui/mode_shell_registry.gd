@@ -15,6 +15,10 @@ const SLICE_TBD := "tbd"
 const OPENWORLD_SCREEN_PATH := "res://modes/openworld/openworld_forest_screen.gd"
 const OPENWORLD_ENABLED_SETTING := "draxos_mobile/modes/openworld/enabled"
 
+const DESCRIPTOR_ROOT := "res://data/definitions/modes"
+const DESCRIPTOR_FILE := "metadata.json"
+const PLACEHOLDER_FILE := "placeholder.json"
+
 const _ENTRIES := {
 	MODE_BASEBUILDER: {
 		"mode_id": MODE_BASEBUILDER,
@@ -26,6 +30,8 @@ const _ENTRIES := {
 		"fullscreen": false,
 		"public_cta": true,
 		"enabled_setting": "",
+		"descriptor_path": "res://data/definitions/modes/basebuilder/metadata.json",
+		"placeholder_path": "res://data/definitions/modes/basebuilder/placeholder.json",
 	},
 	MODE_AUTOBATTLER: {
 		"mode_id": MODE_AUTOBATTLER,
@@ -37,6 +43,8 @@ const _ENTRIES := {
 		"fullscreen": false,
 		"public_cta": true,
 		"enabled_setting": "",
+		"descriptor_path": "res://data/definitions/modes/autobattler/metadata.json",
+		"placeholder_path": "res://data/definitions/modes/autobattler/placeholder.json",
 	},
 	MODE_OPENWORLD: {
 		"mode_id": MODE_OPENWORLD,
@@ -49,6 +57,8 @@ const _ENTRIES := {
 		"fullscreen": true,
 		"public_cta": true,
 		"enabled_setting": OPENWORLD_ENABLED_SETTING,
+		"descriptor_path": "res://data/definitions/modes/openworld/metadata.json",
+		"placeholder_path": "res://data/definitions/modes/openworld/placeholder.json",
 	},
 	MODE_TOWERDEFENSE: {
 		"mode_id": MODE_TOWERDEFENSE,
@@ -60,6 +70,8 @@ const _ENTRIES := {
 		"fullscreen": true,
 		"public_cta": false,
 		"enabled_setting": "",
+		"descriptor_path": "res://data/definitions/modes/towerdefense/metadata.json",
+		"placeholder_path": "res://data/definitions/modes/towerdefense/placeholder.json",
 	},
 	MODE_CARDGAME: {
 		"mode_id": MODE_CARDGAME,
@@ -71,6 +83,8 @@ const _ENTRIES := {
 		"fullscreen": false,
 		"public_cta": false,
 		"enabled_setting": "",
+		"descriptor_path": "res://data/definitions/modes/cardgame/metadata.json",
+		"placeholder_path": "res://data/definitions/modes/cardgame/placeholder.json",
 	},
 }
 
@@ -89,6 +103,22 @@ static func route_id(mode_id: String) -> String:
 
 static func status(mode_id: String) -> String:
 	return str(entry(mode_id).get("status", "unknown"))
+
+static func descriptor_path(mode_id: String) -> String:
+	return str(entry(mode_id).get("descriptor_path", ""))
+
+static func placeholder_path(mode_id: String) -> String:
+	return str(entry(mode_id).get("placeholder_path", ""))
+
+static func descriptor(mode_id: String) -> Dictionary:
+	return _load_json_dictionary(descriptor_path(mode_id))
+
+static func placeholder(mode_id: String) -> Dictionary:
+	return _load_json_dictionary(placeholder_path(mode_id))
+
+static func has_nonplayable_placeholder(mode_id: String) -> bool:
+	var data := placeholder(mode_id)
+	return not data.is_empty() and not bool(data.get("playable", true))
 
 static func is_enabled_for_hub(mode_id: String) -> bool:
 	var data := entry(mode_id)
@@ -149,4 +179,13 @@ static func hub_entries() -> Array[Dictionary]:
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
 		return value
+	return {}
+
+static func _load_json_dictionary(path: String) -> Dictionary:
+	var normalized := path.strip_edges()
+	if normalized == "" or not FileAccess.file_exists(normalized):
+		return {}
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(normalized))
+	if parsed is Dictionary:
+		return Dictionary(parsed)
 	return {}

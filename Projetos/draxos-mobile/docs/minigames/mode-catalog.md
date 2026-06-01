@@ -5,6 +5,8 @@
 - API surface: `/modes`
 - Client route/action: `mode_shell`, `open_mode_shell:<mode_id>`
 - Registry source: `mode_registry`
+- Descriptor source: `data/definitions/modes/<mode_id>/metadata.json`
+- Placeholder source: `data/definitions/modes/<mode_id>/placeholder.json`
 
 Este catalogo substitui o registro centrado em `rpgsuave/forest`. A plataforma continua sendo chamada de Minigame Platform por historico de arquitetura, mas o produto agora trata os pilares jogaveis como **modos oficiais** em pe de igualdade.
 
@@ -18,6 +20,19 @@ Este catalogo substitui o registro centrado em `rpgsuave/forest`. A plataforma c
 | `towerdefense` | `Towerdefense` | `tbd` | `planned_disabled` | Hub disabled/staged | Build propria futura: torre central, spells, pets e upgrades | Sem recompensa ate contrato proprio |
 | `cardgame` | `Cardgame` | `tbd` | `planned_disabled` | Hub disabled/staged | Build propria futura; sem relacao mecanica com o projeto Steam | Sem recompensa ate contrato proprio |
 
+## Descriptors Declarativos
+
+Cada modo oficial tem uma pasta em `data/definitions/modes/<mode_id>/` com:
+
+- `metadata.json`: identidade, status, route/action, ruleset pointer,
+  ownership, docs e freeze.
+- `placeholder.json`: reserva nao jogavel para futuros slices. Este arquivo deve
+  manter `playable=false`, `launchable=false` e `reward_enabled=false`.
+
+O registry client (`modes/boot/ui/mode_shell_registry.gd`) expoe os caminhos dos
+descriptors para validacao local. Os descriptors desta lane nao adicionam
+gameplay, tuning, rewards, backend, schema ou publicacao.
+
 ## Gate De Entrada No Hub
 
 Para V1 Internal Alpha:
@@ -30,6 +45,7 @@ Para V1 Internal Alpha:
 
 Um modo so pode virar CTA publico quando passar por:
 
+- descriptor e doc vivos;
 - design contract vivo;
 - row completa em `mode_registry`;
 - ruleset versionado;
