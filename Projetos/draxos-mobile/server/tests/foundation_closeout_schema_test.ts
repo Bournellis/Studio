@@ -1,6 +1,12 @@
 const PROJECT_PREFIX = "Projetos/draxos-mobile";
-const MIGRATION_PATH = "supabase/migrations/202605300004_foundation_closeout.sql";
-const SERVER_MIRROR_PATH = "server/schema/migrations/202605300004_foundation_closeout.sql";
+const MIGRATION_PATH =
+  "supabase/migrations/202605300004_foundation_closeout.sql";
+const SERVER_MIRROR_PATH =
+  "server/schema/migrations/202605300004_foundation_closeout.sql";
+const RECONCILIATION_STABILITY_MIGRATION_PATH =
+  "supabase/migrations/202606010004_resource_reconciliation_stability.sql";
+const RECONCILIATION_STABILITY_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606010004_resource_reconciliation_stability.sql";
 const RULESET_PATH = "data/rulesets/foundation_ruleset_v0.json";
 
 Deno.test("foundation closeout migration is mirrored in server schema", async () => {
@@ -11,6 +17,58 @@ Deno.test("foundation closeout migration is mirrored in server schema", async ()
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("resource reconciliation stability migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(
+    RECONCILIATION_STABILITY_MIGRATION_PATH,
+  );
+  const serverMirror = await readProjectText(
+    RECONCILIATION_STABILITY_SERVER_MIRROR_PATH,
+  );
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema reconciliation stability migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("resource reconciliation stability avoids dynamic JSON loops", async () => {
+  const migration = normalizeSql(
+    await readProjectText(RECONCILIATION_STABILITY_MIGRATION_PATH),
+  );
+
+  assertIncludes(
+    migration,
+    "create or replace function public.resource_reconciliation_report_v1",
+    "stability migration should redeclare the reconciliation RPC",
+  );
+  assertIncludes(
+    migration,
+    "ledger_almas numeric := 0",
+    "stability migration should use explicit numeric ledger fields",
+  );
+  assertIncludes(
+    migration,
+    "current_diamante numeric := 0",
+    "stability migration should use explicit numeric current fields",
+  );
+  assertNotRegex(
+    migration,
+    /foreach\s+resource_key/,
+    "reconciliation stability should not use the historical dynamic JSON loop",
+  );
+  assertRegex(
+    migration,
+    /revoke all on function public\.resource_reconciliation_report_v1\(uuid\) from public, anon, authenticated;/,
+    "reconciliation RPC should remain hidden from player roles",
+  );
+  assertRegex(
+    migration,
+    /grant execute on function public\.resource_reconciliation_report_v1\(uuid\) to service_role;/,
+    "reconciliation RPC should remain service-role only",
   );
 });
 
@@ -298,7 +356,9 @@ function assertNotRegex(
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${
+        JSON.stringify(actual)
+      }`,
     );
   }
 }

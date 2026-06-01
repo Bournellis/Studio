@@ -25,6 +25,7 @@
 | `docs/documentation-index.md` | `VIVO` | This classification map. |
 | `docs/multi-agent-workflow.md` | `VIVO` | Parallel lane/mode workflow, worktree rules, templates and handoff protocol for DraxosMobile hardening work. |
 | `docs/hardening-platform-v1-readiness-report.md` | `VIVO` | Published readiness report for Hardening Platform V1, the current multi-mode baseline. |
+| `docs/foundation-hardening-v2-readiness-report.md` | `VIVO` | Local-ready V2 enforcement report; records the Android release keystore blocker and keeps V1 as the published baseline until FullPublish passes. |
 | `docs/backend-own-boundary.md` | `CONTRATO` | Backend Proprio boundary inventory for future Supabase-to-owned-backend planning without runtime refactor. |
 | `../../08_Coordenacao_Agentes/Prioridades_Estudio.md` | `VIVO` | Portfolio source of truth. |
 | `../../08_Coordenacao_Agentes/Estado_Atual.md` | `VIVO` | Compact studio snapshot. |

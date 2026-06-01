@@ -60,7 +60,8 @@ Foundation Final Polish adds:
 - `boot.gd`, `boot_runtime.gd`, `hub_surface_presenter.gd` and `hub_surface_full_presenter.gd` budgets guarded by validation; oversized runtime/presenter files are blockers, not accepted hardening state;
 - read-only `SessionStore` domain slices for presenters touched by the split;
 - source guards against presenters calling Supabase, telemetry, direct mutations or direct request-id creation;
-- `foundation_admin_rls_live_smoke.ts` proving local RLS/admin behavior with `anon/authenticated` blocked and `service_role` allowed;
+- `foundation_admin_rls_live_smoke.ts` proving local RLS/admin behavior with
+  `anon/authenticated` blocked by grants and `service_role` allowed;
 - canonical post-hardening base branch: updated `master` after Hardening Platform V1 is merged.
 
 ## Current Baseline

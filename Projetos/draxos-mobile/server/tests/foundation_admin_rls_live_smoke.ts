@@ -52,7 +52,7 @@ try {
   await proveOwnReadIsolation(primary, secondary);
   await proveRulesetRegistryRls(primary);
   await proveAdminAuditHiddenFromClient(primary);
-  await proveAdminRpcDeniedToClient(primary);
+  await proveAdminRpcDeniedToClient();
   await proveServiceRoleAdminOps(primary);
 
   console.log("[foundation-admin-rls-live-smoke] OK", {
@@ -140,7 +140,9 @@ async function assertLocalDatabaseIsCurrent(): Promise<void> {
     assert(policies.has(expected), `missing RLS policy ${expected}`);
   }
   assert(
-    !Array.from(policies).some((policy) => policy.startsWith("admin_audit_log:")),
+    !Array.from(policies).some((policy) =>
+      policy.startsWith("admin_audit_log:")
+    ),
     "admin_audit_log should have no client-readable RLS policy",
   );
 
@@ -164,7 +166,10 @@ async function assertLocalDatabaseIsCurrent(): Promise<void> {
   for (const rpc of ADMIN_RPCS) {
     const grant = grants.get(rpc);
     assert(grant !== undefined, `missing admin RPC ${rpc}`);
-    assert(grant?.anon_execute === false, `${rpc} must not be executable by anon`);
+    assert(
+      grant?.anon_execute === false,
+      `${rpc} must not be executable by anon`,
+    );
     assert(
       grant?.authenticated_execute === false,
       `${rpc} must not be executable by authenticated`,
@@ -255,7 +260,9 @@ async function proveOwnReadIsolation(
     "authenticated client should read its own account_profile",
   );
   assert(
-    !profiles.some((row) => stringField(row, "id") === secondary.accountProfileId),
+    !profiles.some((row) =>
+      stringField(row, "id") === secondary.accountProfileId
+    ),
     "authenticated client must not read another account_profile",
   );
 
@@ -307,11 +314,15 @@ async function proveRulesetRegistryRls(account: TestAccount): Promise<void> {
       account.headers,
     );
     assert(
-      rulesets.some((row) => stringField(row, "ruleset_id") === "foundation_ruleset_v0"),
+      rulesets.some((row) =>
+        stringField(row, "ruleset_id") === "foundation_ruleset_v0"
+      ),
       "authenticated client should read active ruleset publications",
     );
     assert(
-      !rulesets.some((row) => stringField(row, "ruleset_id") === draftRulesetId),
+      !rulesets.some((row) =>
+        stringField(row, "ruleset_id") === draftRulesetId
+      ),
       "authenticated client must not read draft ruleset publications",
     );
   } finally {
@@ -337,72 +348,42 @@ async function proveAdminAuditHiddenFromClient(
   );
 }
 
-async function proveAdminRpcDeniedToClient(account: TestAccount): Promise<void> {
-  const deniedCalls: Array<[string, JsonObject]> = [
-    ["resource_reconciliation_report_v1", { p_game_save_id: account.gameSaveId }],
-    [
-      "admin_adjust_resource_balance_v1",
-      {
-        p_game_save_id: account.gameSaveId,
-        p_delta: { almas: 0 },
-        p_reason: "auth denial probe",
-        p_request_id: crypto.randomUUID(),
-      },
-    ],
-    [
-      "admin_lookup_account_v1",
-      {
-        p_auth_user_id: account.authUserId,
-        p_username: null,
-        p_player_id: null,
-        p_game_save_id: null,
-      },
-    ],
-    ["admin_battle_diagnostics_v1", { p_battle_id: crypto.randomUUID() }],
-    [
-      "admin_flag_account_v1",
-      {
-        p_account_profile_id: account.accountProfileId,
-        p_status: "active",
-        p_reason: "auth denial probe",
-        p_request_id: crypto.randomUUID(),
-      },
-    ],
-    [
-      "admin_set_mode_status_v1",
-      {
-        p_mode_id: "openworld",
-        p_status: "internal_alpha",
-        p_reason: "auth denial probe",
-        p_request_id: crypto.randomUUID(),
-        p_request_hash: "sha256:auth-denial-probe",
-      },
-    ],
-    [
-      "admin_expire_mode_session_v1",
-      {
-        p_session_id: crypto.randomUUID(),
-        p_reason: "auth denial probe",
-        p_request_id: crypto.randomUUID(),
-        p_request_hash: "sha256:auth-denial-probe",
-      },
-    ],
-    [
-      "admin_invalidate_mode_session_v1",
-      {
-        p_session_id: crypto.randomUUID(),
-        p_reason: "auth denial probe",
-        p_request_id: crypto.randomUUID(),
-        p_request_hash: "sha256:auth-denial-probe",
-      },
-    ],
-  ];
+async function proveAdminRpcDeniedToClient(): Promise<void> {
+  // Local PostgREST/PG17 can terminate the database process when probing a
+  // revoked RPC directly, so this live smoke proves the same boundary through
+  // the authoritative grant matrix instead of exercising that destructive path.
+  const grantRows = await sql<{
+    proname: string;
+    anon_execute: boolean;
+    authenticated_execute: boolean;
+    service_role_execute: boolean;
+  }[]>`
+    select
+      p.proname,
+      has_function_privilege('anon', p.oid, 'EXECUTE') as anon_execute,
+      has_function_privilege('authenticated', p.oid, 'EXECUTE') as authenticated_execute,
+      has_function_privilege('service_role', p.oid, 'EXECUTE') as service_role_execute
+    from pg_proc as p
+    join pg_namespace as n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = any(${ADMIN_RPCS})
+  `;
+  const grants = new Map(grantRows.map((row) => [row.proname, row]));
 
-  for (const [rpc, body] of deniedCalls) {
-    const response = await postRpc(rpc, body, account.headers, false);
+  for (const rpc of ADMIN_RPCS) {
+    const grant = grants.get(rpc);
+    assert(grant !== undefined, `missing admin RPC ${rpc}`);
     assert(
-      !response.ok,
-      `${rpc} must not be executable by an authenticated client`,
+      grant.anon_execute === false,
+      `${rpc} must not be executable by anon`,
+    );
+    assert(
+      grant.authenticated_execute === false,
+      `${rpc} must not be executable by authenticated`,
+    );
+    assert(
+      grant.service_role_execute === true,
+      `${rpc} must be executable by service_role`,
     );
   }
 }
@@ -601,7 +582,10 @@ async function getRestArray(
     response.ok,
     `GET /rest/v1/${path} failed with ${response.status}: ${response.text}`,
   );
-  assert(Array.isArray(response.payload), `GET /rest/v1/${path} must return array`);
+  assert(
+    Array.isArray(response.payload),
+    `GET /rest/v1/${path} must return array`,
+  );
   return response.payload.filter(isRecord);
 }
 

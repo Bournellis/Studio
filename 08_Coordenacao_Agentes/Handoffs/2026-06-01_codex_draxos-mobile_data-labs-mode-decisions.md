@@ -1,4 +1,4 @@
-# DraxosMobile Hardening Doing: data-labs-mode-decisions
+# DraxosMobile Hardening Handoff: data-labs-mode-decisions
 
 ## Metadata
 

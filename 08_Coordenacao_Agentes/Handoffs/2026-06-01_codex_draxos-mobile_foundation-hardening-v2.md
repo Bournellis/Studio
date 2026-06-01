@@ -1,4 +1,4 @@
-# DraxosMobile Hardening Doing: integrator - Foundation Hardening V2
+# DraxosMobile Hardening Handoff: integrator - Foundation Hardening V2
 
 ## Metadata
 
@@ -85,5 +85,50 @@ Executar Foundation Hardening V2 como pacote de enforcement puro para preparar D
 - `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`
 
 ## Handoff Point
+
+## Resultado Final
+
+- Status: `LOCAL_READY_REMOTE_BLOCKED`.
+- V2 foi implementado como pacote de enforcement puro, sem gameplay/conteudo novo.
+- `FullLocal` passou em `2026-06-01` com PASS `43`, FAIL `0`, SKIP `3`.
+- `ReleaseDryRun` passou em modo seguro `Plan`.
+- `FullPublish` nao foi executado.
+- Nenhuma mutacao remota foi executada para V2.
+- `master` nao deve ser promovido para baseline V2 ate publicacao real.
+
+## Bloqueio De Publicacao
+
+- Android release keystore ausente.
+- Gate estrito falhou conforme esperado:
+  `tools/check_android_release_keystore.ps1 -Mode ReleaseCandidate -RequireReleaseKeystore`.
+- Artefatos locais de publish ausentes:
+  - `build/android/draxos-mobile-alpha.apk`
+  - `build/pc/draxos-mobile-alpha.zip`
+  - `build/web/index.html`
+- `SUPABASE_URL` ou `DRAXOS_MOBILE_SUPABASE_URL` ausente para Package/FullPublish.
+
+## Validacoes Executadas
+
+- `npx -y deno test --allow-read server/tests/foundation_closeout_schema_test.ts`
+- `npx -y deno check server/tests/foundation_admin_rls_live_smoke.ts`
+- `npx -y deno run --allow-net --allow-env server/tests/foundation_admin_rls_live_smoke.ts`
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile FullLocal`
+- `tools/check_android_release_keystore.ps1 -ProjectDir . -Mode ReleaseCandidate -RequireReleaseKeystore` falhou por keystore ausente, conforme gate V2.
+
+## Relatorio
+
+- `Projetos/draxos-mobile/docs/foundation-hardening-v2-readiness-report.md`
+- `Projetos/draxos-mobile/build/validation/foundation-validation-latest.md`
+- `Projetos/draxos-mobile/build/internal-alpha/release-plan.md`
+
+## Proximo Handoff Seguro
+
+1. Configurar Android release keystore localmente.
+2. Configurar ambiente remoto de publish sem commitar secrets.
+3. Reexecutar `FullLocal` e `ReleaseDryRun`.
+4. Exportar Android release assinado, PC e Web.
+5. Executar `FullPublish -ConfirmRemoteMutation`.
+6. Rodar `RemoteReadOnly`.
+7. So entao atualizar `master` e docs vivos para V2 publicado.
 
 Handoff final deve registrar commits, validações, publicação ou blocker de keystore, release root, worktrees limpas/pendentes e próximos checks humanos.

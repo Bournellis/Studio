@@ -236,10 +236,10 @@ rejeicao de resultado adulterado e bloqueio de recompensa real no save
 
 O smoke `foundation_admin_rls_live_smoke.ts` valida o hardening final de
 Foundation em stack local real: RLS de `account_profiles`, `game_saves`,
-`ruleset_registry` e `admin_audit_log`; bloqueio das RPCs admin para
-`anon/authenticated`; execucao via `service_role` de lookup, reconciliacao,
-diagnostico, ajuste auditavel/idempotente e flag de conta. Ele recusa URLs
-remotas e exige Supabase local + Edge Runtime ativos.
+`ruleset_registry` e `admin_audit_log`; matriz de grants provando bloqueio das
+RPCs admin para `anon/authenticated`; execucao via `service_role` de lookup,
+reconciliacao, diagnostico, ajuste auditavel/idempotente e flag de conta. Ele
+recusa URLs remotas e exige Supabase local + Edge Runtime ativos.
 
 O smoke `release_artifacts_remote_smoke.ts` valida somente leitura contra o
 remoto publicado: manifest, hashes Android/PC no payload, alcance do APK/ZIP via
