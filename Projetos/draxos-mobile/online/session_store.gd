@@ -3,6 +3,11 @@ extends Node
 signal session_changed
 
 const RuntimeConfigScript = preload("res://online/runtime_config.gd")
+const AccountSaveSliceScript = preload("res://online/session/account_save_slice.gd")
+const ArenaSliceScript = preload("res://online/session/arena_slice.gd")
+const ModeSliceScript = preload("res://online/session/mode_slice.gd")
+const PendingMutationQueueScript = preload("res://online/session/pending_mutation_queue.gd")
+const TelemetrySliceScript = preload("res://online/session/telemetry_slice.gd")
 
 const CACHE_VERSION := 1
 const CACHE_PATH := "user://session_cache.json"
@@ -275,211 +280,40 @@ func apply_arena_result(payload: Dictionary) -> bool:
 	return true
 
 func _arena_state_from_body(body: Dictionary) -> Dictionary:
-	var explicit_state := _as_dictionary(body.get("arena_state", {}))
-	if not explicit_state.is_empty():
-		return _normalize_arena_state(explicit_state)
-	if str(body.get("schema_version", "")) == "pve_arena_state_v1":
-		return _normalize_arena_state(body)
-	if str(body.get("schema_version", "")) == "arena_list_response_v1":
-		var list_state := _empty_arena_state()
-		list_state["arenas"] = _normalize_arena_list(_as_array(body.get("arenas", [])))
-		list_state["progress"] = _as_dictionary(body.get("progress", {})).duplicate(true)
-		list_state["records"] = [_as_dictionary(body.get("progress", {})).duplicate(true)]
-		list_state["attempts"] = _normalize_arena_attempts(_as_array(body.get("attempts", [])))
-		for attempt_variant: Variant in _as_array(list_state.get("attempts", [])):
-			var attempt := _as_dictionary(attempt_variant)
-			if str(attempt.get("status", "")) == "active":
-				list_state["active_attempt"] = attempt.duplicate(true)
-				break
-		return list_state
-	if str(body.get("schema_version", "")) == "pve_arena_attempt_v1" or body.get("attempt", null) is Dictionary:
-		var state := arena_state.duplicate(true)
-		if state.is_empty():
-			state = _empty_arena_state()
-		var step := _as_dictionary(body.get("step", {}))
-		state["active_attempt"] = _normalize_arena_attempt(_as_dictionary(body.get("attempt", {})), step)
-		if body.get("progress", null) is Dictionary:
-			state["progress"] = _as_dictionary(body.get("progress", {})).duplicate(true)
-			state["records"] = [_as_dictionary(body.get("progress", {})).duplicate(true)]
-		if body.get("battle_log", null) is Dictionary or body.get("rewards", null) is Dictionary or body.get("buff_offer", null) is Dictionary or not step.is_empty():
-			var battle_log := _as_dictionary(body.get("battle_log", step.get("battle_log", {})))
-			var reward_payload := _as_dictionary(body.get("rewards", step.get("reward_payload", body.get("reward_payload", {}))))
-			state["last_duel"] = {
-				"battle_log": battle_log.duplicate(true),
-				"rewards": reward_payload.duplicate(true),
-				"buff_offer": _arena_buff_offer_from_step(step).duplicate(true),
-			}
-		var summary := _arena_summary_from_body(body, _as_dictionary(state.get("active_attempt", {})))
-		if not summary.is_empty():
-			state["summary"] = summary
-		return state
-	return {}
+	return ArenaSliceScript.state_from_body(body, arena_state)
 
 func _normalize_arena_state(state: Dictionary) -> Dictionary:
-	var normalized := state.duplicate(true)
-	normalized["arenas"] = _normalize_arena_list(_as_array(normalized.get("arenas", [])))
-	var active_attempt := _as_dictionary(normalized.get("active_attempt", {}))
-	if not active_attempt.is_empty():
-		normalized["active_attempt"] = _normalize_arena_attempt(active_attempt, {})
-	return normalized
+	return ArenaSliceScript.normalize_state(state)
 
 func _empty_arena_state() -> Dictionary:
-	return {
-		"ok": true,
-		"schema_version": "pve_arena_state_v1",
-		"arenas": [],
-		"active_attempt": null,
-		"records": [],
-		"reward_limits": {},
-		"summary": {},
-	}
+	return ArenaSliceScript.empty_state()
 
 func _normalize_arena_list(arenas: Array) -> Array:
-	var output: Array = []
-	for arena_variant: Variant in arenas:
-		var arena := _as_dictionary(arena_variant).duplicate(true)
-		arena["duel_count"] = int(arena.get("duel_count", arena.get("max_steps", 1)))
-		arena["difficulty_tier"] = int(arena.get("difficulty_tier", arena.get("difficulty_rank", 0)))
-		arena["difficulties"] = _normalize_arena_difficulties(arena, _as_array(arena.get("difficulties", [])))
-		var selected_difficulty := _default_arena_difficulty(arena)
-		if not selected_difficulty.is_empty():
-			arena["difficulty_id"] = str(selected_difficulty.get("difficulty_id", arena.get("difficulty_id", ""))).strip_edges()
-			arena["difficulty_tier"] = int(selected_difficulty.get("difficulty_tier", selected_difficulty.get("difficulty_rank", arena.get("difficulty_tier", 0))))
-			arena["max_steps"] = int(selected_difficulty.get("max_steps", arena.get("max_steps", arena.get("duel_count", 1))))
-			arena["duel_count"] = int(arena.get("duel_count", arena.get("max_steps", selected_difficulty.get("max_steps", 1))))
-			if not arena.has("reward_preview"):
-				arena["reward_preview"] = _as_dictionary(selected_difficulty.get("reward_preview", {}))
-			if not arena.has("clear_rate_target"):
-				arena["clear_rate_target"] = _as_dictionary(selected_difficulty.get("clear_rate_target", {}))
-		if not arena.has("unlocked"):
-			arena["unlocked"] = bool(arena.get("enabled", true))
-		if not bool(arena.get("unlocked", true)) and str(arena.get("locked_reason", "")).strip_edges() == "":
-			arena["locked_reason"] = _arena_locked_reason(arena)
-		output.append(arena)
-	return output
+	return ArenaSliceScript.normalize_arena_list(arenas)
 
 func _normalize_arena_difficulties(arena: Dictionary, difficulties: Array) -> Array:
-	var output: Array = []
-	if difficulties.is_empty():
-		var fallback := arena.duplicate(true)
-		fallback["difficulty_id"] = str(fallback.get("difficulty_id", fallback.get("default_difficulty_id", ""))).strip_edges()
-		fallback["difficulty_tier"] = int(fallback.get("difficulty_tier", fallback.get("difficulty_rank", 0)))
-		fallback["max_steps"] = int(fallback.get("max_steps", fallback.get("duel_count", 1)))
-		fallback["unlocked"] = bool(fallback.get("unlocked", fallback.get("enabled", true)))
-		output.append(fallback)
-		return output
-	for difficulty_variant: Variant in difficulties:
-		var difficulty := _as_dictionary(difficulty_variant).duplicate(true)
-		difficulty["difficulty_id"] = str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
-		difficulty["difficulty_tier"] = int(difficulty.get("difficulty_tier", difficulty.get("difficulty_rank", 0)))
-		difficulty["max_steps"] = int(difficulty.get("max_steps", difficulty.get("enemy_count", arena.get("duel_count", 1))))
-		if not difficulty.has("unlocked"):
-			difficulty["unlocked"] = bool(arena.get("unlocked", arena.get("enabled", true)))
-		if not bool(difficulty.get("unlocked", true)) and str(difficulty.get("locked_reason", "")).strip_edges() == "":
-			difficulty["locked_reason"] = _arena_locked_reason(difficulty)
-		output.append(difficulty)
-	return output
+	return ArenaSliceScript.normalize_arena_difficulties(arena, difficulties)
 
 func _default_arena_difficulty(arena: Dictionary) -> Dictionary:
-	var difficulties := _as_array(arena.get("difficulties", []))
-	if difficulties.is_empty():
-		return {}
-	var default_id := str(arena.get("default_difficulty_id", "")).strip_edges()
-	for difficulty_variant: Variant in difficulties:
-		var difficulty := _as_dictionary(difficulty_variant)
-		if default_id != "" and str(difficulty.get("difficulty_id", "")).strip_edges() == default_id:
-			return difficulty.duplicate(true)
-	return _as_dictionary(difficulties[0]).duplicate(true)
+	return ArenaSliceScript.default_arena_difficulty(arena)
 
 func _normalize_arena_attempts(attempts: Array) -> Array:
-	var output: Array = []
-	for attempt_variant: Variant in attempts:
-		output.append(_normalize_arena_attempt(_as_dictionary(attempt_variant), {}))
-	return output
+	return ArenaSliceScript.normalize_arena_attempts(attempts)
 
 func _normalize_arena_attempt(attempt: Dictionary, step: Dictionary = {}) -> Dictionary:
-	if attempt.is_empty():
-		return {}
-	var normalized := attempt.duplicate(true)
-	var attempt_id := str(normalized.get("attempt_id", normalized.get("id", ""))).strip_edges()
-	normalized["attempt_id"] = attempt_id
-	normalized["duel_count"] = int(normalized.get("duel_count", normalized.get("max_steps", 1)))
-	normalized["duel_index"] = int(normalized.get("duel_index", normalized.get("current_step_index", 0)))
-	normalized["difficulty_tier"] = int(normalized.get("difficulty_tier", normalized.get("difficulty_rank", 0)))
-	normalized["temporary_buffs"] = _as_array(normalized.get("temporary_buffs", normalized.get("active_buffs", [])))
-	normalized["duels_won"] = int(normalized.get("duels_won", normalized.get("current_step_index", 0)))
-	if not normalized.has("locked_loadout_hash"):
-		normalized["locked_loadout_hash"] = "server:%s" % attempt_id
-	if not normalized.has("loadout_summary"):
-		normalized["loadout_summary"] = {"label": "Loadout travado no servidor para esta tentativa."}
-	if not step.is_empty():
-		var buff_offer := _arena_buff_offer_from_step(step)
-		if not buff_offer.is_empty():
-			normalized["buff_offer"] = buff_offer
-			normalized["state"] = "awaiting_buff"
-		elif str(normalized.get("state", "")).strip_edges() == "":
-			normalized["state"] = str(normalized.get("status", "active"))
-	elif str(normalized.get("state", "")).strip_edges() == "":
-		normalized["state"] = str(normalized.get("status", "active"))
-	normalized["next_enemy_id"] = _next_arena_enemy_id(normalized)
-	normalized["next_enemy"] = {
-		"id": str(normalized.get("next_enemy_id", "")),
-		"display_name": str(normalized.get("next_enemy_id", "Proximo inimigo")),
-	}
-	return normalized
+	return ArenaSliceScript.normalize_arena_attempt(attempt, step)
 
 func _arena_buff_offer_from_step(step: Dictionary) -> Dictionary:
-	var choices := _as_array(step.get("buff_options", []))
-	if choices.is_empty():
-		return {}
-	return {
-		"offer_id": "step-%s" % str(step.get("step_index", "0")),
-		"step_index": int(step.get("step_index", 0)),
-		"after_duel_index": int(step.get("step_index", 0)),
-		"choices": choices,
-	}
+	return ArenaSliceScript.buff_offer_from_step(step)
 
 func _arena_summary_from_body(body: Dictionary, attempt: Dictionary) -> Dictionary:
-	var explicit_summary := _as_dictionary(body.get("summary", {}))
-	if not explicit_summary.is_empty():
-		return explicit_summary.duplicate(true)
-	var status := str(attempt.get("status", attempt.get("state", "")))
-	if status not in ["completed", "failed", "abandoned", "claimed"]:
-		return {}
-	var reward_payload := _as_dictionary(body.get("reward_payload", attempt.get("reward_payload", {})))
-	return {
-		"status": status,
-		"duels_won": int(attempt.get("duels_won", attempt.get("current_step_index", 0))),
-		"duels_total": int(attempt.get("duel_count", attempt.get("max_steps", 1))),
-		"repeat_factor": "aplicado pelo servidor" if bool(reward_payload.get("repeat_reduction_applied", false)) else "first clear/record",
-		"reward_label": str(reward_payload.get("reason", "recompensa da Arena PVE")),
-	}
+	return ArenaSliceScript.summary_from_body(body, attempt)
 
 func _next_arena_enemy_id(attempt: Dictionary) -> String:
-	var sequence := _as_array(attempt.get("enemy_sequence", []))
-	if sequence.is_empty():
-		return ""
-	var index := clampi(int(attempt.get("current_step_index", attempt.get("duel_index", 0))), 0, sequence.size() - 1)
-	return str(sequence[index])
+	return ArenaSliceScript.next_enemy_id(attempt)
 
 func _arena_locked_reason(arena: Dictionary) -> String:
-	for key: String in ["unlock_reason", "blocked_message", "blocked_reason"]:
-		var reason := str(arena.get(key, "")).strip_edges()
-		if reason != "":
-			return reason
-	var required_difficulty := int(arena.get("required_completed_difficulty", -1))
-	if required_difficulty == 0:
-		return "Conclua tutorial."
-	if required_difficulty > 0:
-		return "Conclua dificuldade %d." % required_difficulty
-	var unlock_rule := str(arena.get("unlock_rule", "")).strip_edges()
-	if unlock_rule != "":
-		return "Conclua arenas anteriores."
-	var unlock := _as_dictionary(arena.get("unlock", {}))
-	var required_arena := str(unlock.get("arena_id", "")).strip_edges()
-	if required_arena != "":
-		return "Conclua a arena anterior."
-	return "Bloqueada."
+	return ArenaSliceScript.locked_reason(arena)
 
 func apply_server_state(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
@@ -767,23 +601,7 @@ func apply_mode_result(payload: Dictionary) -> bool:
 		session_changed.emit()
 		return false
 
-	var incoming_state := {}
-	if body.has("modes") or body.has("progress") or body.has("sessions"):
-		incoming_state = body.duplicate(true)
-	elif body.get("state", null) is Dictionary:
-		incoming_state = _as_dictionary(body.get("state", {})).duplicate(true)
-	else:
-		incoming_state = mode_state.duplicate(true)
-		if body.get("mode", null) is Dictionary:
-			incoming_state["mode"] = _as_dictionary(body.get("mode", {})).duplicate(true)
-		if body.get("session", null) is Dictionary:
-			incoming_state["last_session"] = _as_dictionary(body.get("session", {})).duplicate(true)
-		if body.get("reward", null) is Dictionary:
-			incoming_state["last_reward"] = _as_dictionary(body.get("reward", {})).duplicate(true)
-		if body.get("limits", null) is Dictionary:
-			incoming_state["limits"] = _as_dictionary(body.get("limits", {})).duplicate(true)
-		if body.get("server_time", null) != null:
-			incoming_state["server_time"] = body.get("server_time")
+	var incoming_state := ModeSliceScript.state_from_body(body, mode_state)
 	if incoming_state.is_empty():
 		last_error = {
 			"code": "MODE_STATE_INCOMPLETE",
@@ -803,7 +621,7 @@ func apply_mode_result(payload: Dictionary) -> bool:
 			player["save_type"] = active_save_type
 		_remember_surface_snapshot(SURFACE_ACCOUNT)
 
-	var request_id := str(body.get("request_id", "")).strip_edges()
+	var request_id := ModeSliceScript.request_id_from_body(body)
 	if request_id != "":
 		complete_pending_mutation(request_id, body)
 	mode_state = incoming_state.duplicate(true)
@@ -827,7 +645,7 @@ func has_valid_access_token(now: int = int(Time.get_unix_time_from_system())) ->
 	return access_token != "" and expires_at > now + TOKEN_EXPIRY_GRACE_SECONDS
 
 func has_account_state() -> bool:
-	return not player.is_empty() and not resources.is_empty() and not build.is_empty() and _surface_matches_active_save(SURFACE_ACCOUNT)
+	return AccountSaveSliceScript.has_account_state(player, resources, build, surface_save_types, active_save_type)
 
 func has_battle_log() -> bool:
 	return not last_battle_log.is_empty() and _surface_matches_active_save(SURFACE_BATTLE)
@@ -866,7 +684,7 @@ func has_mode_state() -> bool:
 	return not mode_state.is_empty() and _surface_matches_active_save(SURFACE_MODE)
 
 func is_progression_lab_local_only() -> bool:
-	return bool(progression_lab.get("local_only", false))
+	return AccountSaveSliceScript.is_progression_lab_local_only(progression_lab)
 
 func is_progression_lab_active() -> bool:
 	return active_save_type == SAVE_TYPE_PROGRESSION_LAB
@@ -881,22 +699,10 @@ func runtime_config_is_fallback() -> bool:
 	return RuntimeConfigScript.is_fallback(runtime_config)
 
 func account_slice() -> Dictionary:
-	return {
-		"auth_user_id": auth_user_id,
-		"auth_method": auth_method,
-		"auth_email": auth_email,
-		"account_username": account_username,
-		"player": player.duplicate(true),
-	}
+	return AccountSaveSliceScript.account_slice(auth_user_id, auth_method, auth_email, account_username, player)
 
 func save_slice() -> Dictionary:
-	return {
-		"active_save_type": active_save_type,
-		"label": active_save_label(),
-		"badge": active_save_badge(),
-		"surface_save_types": surface_save_types.duplicate(true),
-		"progression_lab": progression_lab.duplicate(true),
-	}
+	return AccountSaveSliceScript.save_slice(active_save_type, surface_save_types, progression_lab)
 
 func player_snapshot() -> Dictionary:
 	return player.duplicate(true)
@@ -925,36 +731,13 @@ func has_remote_arena_state() -> bool:
 	return has_arena_state() and not bool(arena_state.get("dev_fixture", false))
 
 func arena_by_id(arena_id: String) -> Dictionary:
-	var normalized_id := arena_id.strip_edges()
-	if normalized_id == "":
-		return {}
-	for arena_variant: Variant in _as_array(arena_state.get("arenas", [])):
-		var arena := _as_dictionary(arena_variant)
-		if str(arena.get("id", "")).strip_edges() == normalized_id:
-			return arena.duplicate(true)
-	return {}
+	return ArenaSliceScript.arena_by_id(arena_state, arena_id)
 
 func arena_difficulty_by_id(arena_id: String, difficulty_id: String = "") -> Dictionary:
-	var arena := arena_by_id(arena_id)
-	if arena.is_empty():
-		return {}
-	var normalized_difficulty := difficulty_id.strip_edges()
-	var default_id := str(arena.get("default_difficulty_id", arena.get("difficulty_id", ""))).strip_edges()
-	for difficulty_variant: Variant in _as_array(arena.get("difficulties", [])):
-		var difficulty := _as_dictionary(difficulty_variant)
-		var candidate_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
-		if candidate_id == "":
-			continue
-		if normalized_difficulty == "" and candidate_id == default_id:
-			return difficulty.duplicate(true)
-		if normalized_difficulty != "" and candidate_id == normalized_difficulty:
-			return difficulty.duplicate(true)
-	if normalized_difficulty == "":
-		return arena.duplicate(true)
-	return {}
+	return ArenaSliceScript.arena_difficulty_by_id(arena_state, arena_id, difficulty_id)
 
 func active_arena_attempt() -> Dictionary:
-	return _as_dictionary(arena_state.get("active_attempt", {})).duplicate(true)
+	return ArenaSliceScript.active_attempt(arena_state)
 
 func social_snapshot() -> Dictionary:
 	return social_state.duplicate(true)
@@ -975,18 +758,15 @@ func mode_snapshot() -> Dictionary:
 	return mode_state.duplicate(true)
 
 func diagnostics_snapshot() -> Dictionary:
-	var runtime := RuntimeConfigScript.normalize(runtime_config)
-	return {
+	return TelemetrySliceScript.diagnostics_snapshot({
 		"cache_version": CACHE_VERSION,
 		"session_id": ensure_session_id(),
-		"auth": {
-			"has_access_token": access_token != "",
-			"has_refresh_token": refresh_token != "",
-			"expires_at": expires_at,
-			"has_auth_user_id": auth_user_id != "",
-			"auth_method": auth_method,
-			"registered": is_registered_session(),
-		},
+		"has_access_token": access_token != "",
+		"has_refresh_token": refresh_token != "",
+		"expires_at": expires_at,
+		"has_auth_user_id": auth_user_id != "",
+		"auth_method": auth_method,
+		"registered": is_registered_session(),
 		"save": {
 			"active_save_type": active_save_type,
 			"label": active_save_label(),
@@ -999,29 +779,17 @@ func diagnostics_snapshot() -> Dictionary:
 			"has_metadata": not progression_lab.is_empty(),
 			"label": progression_lab_label(),
 		},
-		"runtime_config": {
-			"fallback": RuntimeConfigScript.is_fallback(runtime),
-			"config_source": str(runtime.get("config_source", "")),
-			"config_version": str(runtime.get("config_version", "")),
-			"channel": str(runtime.get("channel", "")),
-			"features": _as_dictionary(runtime.get("features", {})).duplicate(true),
-		},
+		"runtime_config": runtime_config,
+		"pending_mutations": PendingMutationQueueScript.counts_by_save(pending_mutations),
 		"offline": offline,
-		"last_error": {
-			"code": str(last_error.get("code", "")),
-			"status": int(last_error.get("status", 0)),
-		},
-	}
+		"last_error": last_error,
+	})
 
 func active_save_label() -> String:
-	if active_save_type == SAVE_TYPE_PROGRESSION_LAB:
-		return "Progression Lab"
-	return "Normal"
+	return AccountSaveSliceScript.active_save_label(active_save_type)
 
 func active_save_badge() -> String:
-	if active_save_type == SAVE_TYPE_PROGRESSION_LAB:
-		return "lab"
-	return "normal"
+	return AccountSaveSliceScript.active_save_badge(active_save_type)
 
 func set_active_save_type(save_type: String) -> bool:
 	var normalized := normalize_save_type(save_type)
@@ -1029,6 +797,7 @@ func set_active_save_type(save_type: String) -> bool:
 		return false
 	active_save_type = normalized
 	_clear_account_snapshots()
+	pending_mutations = PendingMutationQueueScript.prune_pending_outside_save(pending_mutations, active_save_type)
 	last_error = {}
 	offline = false
 	save_cache()
@@ -1036,19 +805,10 @@ func set_active_save_type(save_type: String) -> bool:
 	return true
 
 static func normalize_save_type(save_type: String) -> String:
-	var normalized := save_type.strip_edges().to_lower()
-	if normalized == SAVE_TYPE_PROGRESSION_LAB:
-		return SAVE_TYPE_PROGRESSION_LAB
-	return SAVE_TYPE_NORMAL
+	return AccountSaveSliceScript.normalize_save_type(save_type)
 
 func progression_lab_label() -> String:
-	if progression_lab.is_empty():
-		return ""
-	var profile_id := str(progression_lab.get("profile_id", ""))
-	var milestone_id := str(progression_lab.get("milestone_id", ""))
-	if profile_id != "" and milestone_id != "":
-		return "%s/%s" % [profile_id, milestone_id]
-	return str(progression_lab.get("save_id", "Progression Lab"))
+	return AccountSaveSliceScript.progression_lab_label(progression_lab)
 
 func ensure_guest_request_id() -> String:
 	if guest_request_id == "":
@@ -1110,68 +870,13 @@ func snapshot() -> Dictionary:
 	}
 
 static func create_request_id() -> String:
-	var rng := RandomNumberGenerator.new()
-	rng.randomize()
-	var bytes: Array[int] = []
-	for index in 16:
-		bytes.append(rng.randi_range(0, 255))
-	bytes[6] = (bytes[6] & 0x0f) | 0x40
-	bytes[8] = (bytes[8] & 0x3f) | 0x80
-
-	var parts := PackedStringArray()
-	for index in bytes.size():
-		parts.append("%02x" % bytes[index])
-
-	return "%s%s%s%s-%s%s-%s%s-%s%s-%s%s%s%s%s%s" % [
-		parts[0], parts[1], parts[2], parts[3],
-		parts[4], parts[5],
-		parts[6], parts[7],
-		parts[8], parts[9],
-		parts[10], parts[11], parts[12], parts[13], parts[14], parts[15],
-	]
+	return TelemetrySliceScript.create_request_id()
 
 func prepare_pending_mutation(endpoint: String, scope_id: String, action_id: String, payload: Dictionary = {}) -> Dictionary:
-	var normalized_endpoint := endpoint.strip_edges()
-	var normalized_scope := scope_id.strip_edges()
-	var normalized_action := action_id.strip_edges()
-	var base_payload := payload.duplicate(true)
-	base_payload.erase("request_hash")
-	var request_id := str(base_payload.get("request_id", "")).strip_edges()
-	if request_id == "":
-		request_id = _matching_pending_request_id(normalized_endpoint, normalized_scope, normalized_action, base_payload)
-	if request_id == "":
-		request_id = create_request_id()
-	base_payload["request_id"] = request_id
-	var request_hash := request_hash_for_mutation(normalized_endpoint, base_payload)
-	var attempts := 1
-	if pending_mutations.has(request_id):
-		attempts = int(_as_dictionary(pending_mutations.get(request_id, {})).get("attempts", 0)) + 1
-	var canonical_payload := canonical_json(base_payload)
-	var record := {
-		"request_id": request_id,
-		"request_hash": request_hash,
-		"endpoint": normalized_endpoint,
-		"scope_id": normalized_scope,
-		"action_id": normalized_action,
-		"payload": base_payload.duplicate(true),
-		"payload_canonical": canonical_payload,
-		"status": MUTATION_STATUS_PENDING,
-		"attempts": attempts,
-		"timestamp": Time.get_unix_time_from_system(),
-	}
-	pending_mutations[request_id] = record
-	var body := base_payload.duplicate(true)
-	body["request_hash"] = request_hash
+	var prepared := PendingMutationQueueScript.prepare(pending_mutations, endpoint, scope_id, action_id, payload)
+	pending_mutations = _as_dictionary(prepared.get("queue", pending_mutations))
 	session_changed.emit()
-	return {
-		"request_id": request_id,
-		"request_hash": request_hash,
-		"endpoint": normalized_endpoint,
-		"scope_id": normalized_scope,
-		"action_id": normalized_action,
-		"payload": body,
-		"attempts": attempts,
-	}
+	return _as_dictionary(prepared.get("mutation", {}))
 
 func complete_pending_mutation(request_id: String, response_payload: Dictionary = {}) -> bool:
 	return _mark_pending_mutation(request_id, MUTATION_STATUS_COMPLETED, response_payload)
@@ -1180,62 +885,23 @@ func fail_pending_mutation(request_id: String, error_payload: Dictionary = {}) -
 	return _mark_pending_mutation(request_id, MUTATION_STATUS_FAILED, error_payload)
 
 func clear_pending_mutation(request_id: String) -> bool:
-	var normalized := request_id.strip_edges()
-	var had_record := pending_mutations.has(normalized)
-	pending_mutations.erase(normalized)
-	if had_record:
+	var result := PendingMutationQueueScript.clear(pending_mutations, request_id)
+	pending_mutations = _as_dictionary(result.get("queue", pending_mutations))
+	if bool(result.get("changed", false)):
 		session_changed.emit()
-	return had_record
+	return bool(result.get("changed", false))
 
 func pending_mutation(request_id: String) -> Dictionary:
-	return _as_dictionary(pending_mutations.get(request_id.strip_edges(), {})).duplicate(true)
+	return PendingMutationQueueScript.get_record(pending_mutations, request_id)
 
 static func request_hash_for_mutation(endpoint: String, payload: Dictionary) -> String:
-	var canonical_payload := payload.duplicate(true)
-	canonical_payload.erase("request_hash")
-	return sha256_text("sha256", canonical_json({
-		"endpoint": endpoint.strip_edges(),
-		"payload": canonical_payload,
-	}))
+	return PendingMutationQueueScript.request_hash_for_mutation(endpoint, payload)
 
 static func sha256_text(prefix: String, value: String) -> String:
-	var hashing := HashingContext.new()
-	var start_error := hashing.start(HashingContext.HASH_SHA256)
-	if start_error != OK:
-		return ""
-	hashing.update(value.to_utf8_buffer())
-	var digest := hashing.finish().hex_encode()
-	if prefix.strip_edges() == "":
-		return digest
-	return "%s:%s" % [prefix.strip_edges(), digest]
+	return PendingMutationQueueScript.sha256_text(prefix, value)
 
 static func canonical_json(value: Variant) -> String:
-	match typeof(value):
-		TYPE_NIL:
-			return "null"
-		TYPE_BOOL:
-			return "true" if bool(value) else "false"
-		TYPE_INT, TYPE_FLOAT:
-			return JSON.stringify(value)
-		TYPE_STRING, TYPE_STRING_NAME, TYPE_NODE_PATH:
-			return JSON.stringify(str(value))
-		TYPE_ARRAY, TYPE_PACKED_STRING_ARRAY, TYPE_PACKED_INT32_ARRAY, TYPE_PACKED_INT64_ARRAY, TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_FLOAT64_ARRAY:
-			var parts := PackedStringArray()
-			for item: Variant in value:
-				parts.append(canonical_json(item))
-			return "[%s]" % ",".join(parts)
-		TYPE_DICTIONARY:
-			var dictionary := Dictionary(value)
-			var keys := PackedStringArray()
-			for key: Variant in dictionary.keys():
-				keys.append(str(key))
-			keys.sort()
-			var parts := PackedStringArray()
-			for key: String in keys:
-				parts.append("%s:%s" % [JSON.stringify(key), canonical_json(dictionary[key])])
-			return "{%s}" % ",".join(parts)
-		_:
-			return JSON.stringify(value)
+	return PendingMutationQueueScript.canonical_json(value)
 
 func _apply_cache(cache: Dictionary) -> void:
 	var auth := _as_dictionary(cache.get("auth", {}))
@@ -1306,58 +972,15 @@ func _clear_account_snapshots() -> void:
 	last_battle_result_seen = false
 	surface_save_types = {}
 
-func _matching_pending_request_id(endpoint: String, scope_id: String, action_id: String, payload: Dictionary) -> String:
-	var canonical_payload := canonical_json(payload)
-	for key: Variant in pending_mutations.keys():
-		var record := _as_dictionary(pending_mutations.get(key, {}))
-		if str(record.get("status", "")) != MUTATION_STATUS_PENDING:
-			continue
-		if str(record.get("endpoint", "")) != endpoint:
-			continue
-		if str(record.get("scope_id", "")) != scope_id:
-			continue
-		if str(record.get("action_id", "")) != action_id:
-			continue
-		var record_payload := _as_dictionary(record.get("payload", {})).duplicate(true)
-		record_payload.erase("request_id")
-		record_payload.erase("request_hash")
-		if canonical_json(record_payload) == canonical_payload:
-			return str(record.get("request_id", key)).strip_edges()
-	return ""
-
 func _mark_pending_mutation(request_id: String, status: String, payload: Dictionary = {}) -> bool:
-	var normalized := request_id.strip_edges()
-	if not pending_mutations.has(normalized):
-		return false
-	var record := _as_dictionary(pending_mutations.get(normalized, {})).duplicate(true)
-	record["status"] = status
-	record["completed_at"] = Time.get_unix_time_from_system()
-	if not payload.is_empty():
-		record["response_payload"] = payload.duplicate(true)
-	pending_mutations[normalized] = record
-	session_changed.emit()
-	return true
+	var result := PendingMutationQueueScript.mark(pending_mutations, request_id, status, payload)
+	pending_mutations = _as_dictionary(result.get("queue", pending_mutations))
+	if bool(result.get("changed", false)):
+		session_changed.emit()
+	return bool(result.get("changed", false))
 
 func _normalized_pending_mutations(source: Dictionary) -> Dictionary:
-	var normalized := {}
-	for key: Variant in source.keys():
-		var request_id := str(key).strip_edges()
-		if request_id == "":
-			continue
-		var record := _as_dictionary(source.get(key, {})).duplicate(true)
-		record["request_id"] = str(record.get("request_id", request_id)).strip_edges()
-		record["request_hash"] = str(record.get("request_hash", "")).strip_edges()
-		record["endpoint"] = str(record.get("endpoint", "")).strip_edges()
-		record["scope_id"] = str(record.get("scope_id", "")).strip_edges()
-		record["action_id"] = str(record.get("action_id", "")).strip_edges()
-		record["status"] = str(record.get("status", MUTATION_STATUS_PENDING)).strip_edges()
-		if record["status"] == "":
-			record["status"] = MUTATION_STATUS_PENDING
-		record["attempts"] = maxi(1, int(record.get("attempts", 1)))
-		record["payload"] = _as_dictionary(record.get("payload", {})).duplicate(true)
-		record["payload_canonical"] = str(record.get("payload_canonical", canonical_json(record["payload"])))
-		normalized[request_id] = record
-	return normalized
+	return PendingMutationQueueScript.normalize(source)
 
 func _clear_gameplay_snapshots() -> void:
 	base_state = {}
@@ -1397,40 +1020,19 @@ func ensure_alpha_account_request_id() -> String:
 	return alpha_account_request_id
 
 static func base_account_username(username: String) -> String:
-	var normalized := username.strip_edges()
-	if normalized.ends_with("_lab"):
-		return normalized.trim_suffix("_lab")
-	return normalized
+	return AccountSaveSliceScript.base_account_username(username)
 
 func _unwrap_body(payload: Dictionary) -> Dictionary:
-	if payload.has("body") and payload["body"] is Dictionary:
-		return _as_dictionary(payload["body"])
-	return payload
+	return AccountSaveSliceScript.unwrap_body(payload)
 
 func _payload_save_type(payload: Dictionary, fallback_save_type: String) -> String:
-	var meta := _as_dictionary(payload.get(CLIENT_META_KEY, {}))
-	if meta.has(CLIENT_SAVE_TYPE_KEY):
-		return normalize_save_type(str(meta.get(CLIENT_SAVE_TYPE_KEY, fallback_save_type)))
-	var body := _unwrap_body(payload)
-	if body.has("save_type"):
-		return normalize_save_type(str(body.get("save_type", fallback_save_type)))
-	var body_player := _as_dictionary(body.get("player", {}))
-	if body_player.has("save_type"):
-		return normalize_save_type(str(body_player.get("save_type", fallback_save_type)))
-	return normalize_save_type(fallback_save_type)
+	return AccountSaveSliceScript.payload_save_type(payload, fallback_save_type)
 
 func _accept_save_scoped_payload(surface: String, payload: Dictionary, fallback_save_type: String) -> bool:
-	var payload_save_type := _payload_save_type(payload, fallback_save_type)
-	if payload_save_type == active_save_type:
+	var result := AccountSaveSliceScript.accept_save_scoped_payload(surface, payload, fallback_save_type, active_save_type)
+	if bool(result.get("ok", false)):
 		return true
-	last_error = {
-		"code": "STALE_SAVE_RESPONSE",
-		"message": "Resposta de %s pertence ao save %s, mas o save ativo e %s." % [
-			surface,
-			payload_save_type,
-			active_save_type,
-		],
-	}
+	last_error = _as_dictionary(result.get("error", {}))
 	session_changed.emit()
 	return false
 
@@ -1438,7 +1040,7 @@ func _remember_surface_snapshot(surface: String, save_type: String = active_save
 	surface_save_types[surface] = normalize_save_type(save_type)
 
 func _surface_matches_active_save(surface: String) -> bool:
-	return normalize_save_type(str(surface_save_types.get(surface, active_save_type))) == active_save_type
+	return AccountSaveSliceScript.surface_matches_active_save(surface_save_types, surface, active_save_type)
 
 func _backfill_surface_save_types() -> void:
 	if has_account_state() and not surface_save_types.has(SURFACE_ACCOUNT):
@@ -1477,17 +1079,10 @@ func _diagnostics_surfaces() -> Dictionary:
 	}
 
 func _diagnostics_surface(surface: String, has_snapshot: bool) -> Dictionary:
-	return {
-		"has_snapshot": has_snapshot,
-		"save_type": normalize_save_type(str(surface_save_types.get(surface, active_save_type))),
-		"matches_active_save": _surface_matches_active_save(surface),
-	}
+	return AccountSaveSliceScript.diagnostics_surface(surface, has_snapshot, surface_save_types, active_save_type)
 
 func _normalized_surface_save_types(value: Dictionary) -> Dictionary:
-	var normalized := {}
-	for key: String in value.keys():
-		normalized[key] = normalize_save_type(str(value.get(key, SAVE_TYPE_NORMAL)))
-	return normalized
+	return AccountSaveSliceScript.normalized_surface_save_types(value)
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

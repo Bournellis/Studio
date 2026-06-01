@@ -2,6 +2,7 @@ extends Node
 
 const BackendConfigScript = preload("res://online/backend_config.gd")
 const RuntimeConfigScript = preload("res://online/runtime_config.gd")
+const PendingMutationQueueScript = preload("res://online/session/pending_mutation_queue.gd")
 
 const DEFAULT_SUPABASE_URL := BackendConfigScript.DEFAULT_LOCAL_SUPABASE_URL
 const DEFAULT_PUBLISHABLE_KEY := BackendConfigScript.DEFAULT_LOCAL_PUBLISHABLE_KEY
@@ -703,18 +704,7 @@ func _with_request_hash(endpoint: String, body: Dictionary, request_hash: String
 	return result
 
 static func request_hash_for_mutation(endpoint: String, payload: Dictionary) -> String:
-	var canonical_payload := payload.duplicate(true)
-	canonical_payload.erase("request_hash")
-	var canonical := _stable_json({
-		"endpoint": endpoint.strip_edges(),
-		"payload": canonical_payload,
-	})
-	var hashing := HashingContext.new()
-	var start_error := hashing.start(HashingContext.HASH_SHA256)
-	if start_error != OK:
-		return ""
-	hashing.update(canonical.to_utf8_buffer())
-	return "sha256:%s" % hashing.finish().hex_encode()
+	return PendingMutationQueueScript.request_hash_for_mutation(endpoint, payload)
 
 func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArray, body: Dictionary) -> Dictionary:
 	if not backend_config_errors.is_empty():
@@ -858,32 +848,7 @@ static func _client_context_from_headers(headers: PackedStringArray) -> Dictiona
 	return context
 
 static func _stable_json(value: Variant) -> String:
-	match typeof(value):
-		TYPE_NIL:
-			return "null"
-		TYPE_BOOL:
-			return "true" if bool(value) else "false"
-		TYPE_INT, TYPE_FLOAT:
-			return JSON.stringify(value)
-		TYPE_STRING, TYPE_STRING_NAME, TYPE_NODE_PATH:
-			return JSON.stringify(str(value))
-		TYPE_ARRAY, TYPE_PACKED_STRING_ARRAY, TYPE_PACKED_INT32_ARRAY, TYPE_PACKED_INT64_ARRAY, TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_FLOAT64_ARRAY:
-			var parts := PackedStringArray()
-			for item: Variant in value:
-				parts.append(_stable_json(item))
-			return "[%s]" % ",".join(parts)
-		TYPE_DICTIONARY:
-			var dictionary := Dictionary(value)
-			var keys := PackedStringArray()
-			for key: Variant in dictionary.keys():
-				keys.append(str(key))
-			keys.sort()
-			var parts := PackedStringArray()
-			for key: String in keys:
-				parts.append("%s:%s" % [JSON.stringify(key), _stable_json(dictionary[key])])
-			return "{%s}" % ",".join(parts)
-		_:
-			return JSON.stringify(value)
+	return PendingMutationQueueScript.canonical_json(value)
 
 static func _normalize_save_type(save_type: String) -> String:
 	if save_type.strip_edges().to_lower() == SAVE_TYPE_PROGRESSION_LAB:
