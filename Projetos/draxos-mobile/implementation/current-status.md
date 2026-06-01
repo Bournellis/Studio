@@ -1,26 +1,41 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-05-31`
+- Last updated: `2026-06-01`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Track 21 - Arena Loop Unlock And Friction Pass`
-- Active stage status: `PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Minigame Platform V1 - Official Modes`
+- Active stage status: `IMPLEMENTATION_ACTIVE`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published remote package: `Track 21 - Arena Loop Unlock And Friction Pass`
-- Latest implemented package: `Track 21 - Arena Loop Unlock And Friction Pass`
-  on branch `codex/draxos-mobile/track21-arena-loop-unlock-friction`.
-- Active follow-up: replay the new-save Arena tutorial -> 3-duel unlock loop
-  from the published Track 21 Internal Alpha before fine tuning.
+- Latest implemented package: `Minigame Platform V1 - Official Modes`
+  on branch `codex/draxos-mobile/modes-integrated-alpha` (in validation).
+- Active follow-up: validate Mode Hub, `/modes`, Openworld rename,
+  admin/ops/analytics and publish the next Internal Alpha package.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## Minigame Platform V1 - Official Modes
+
+V1 promotes the previous single-prototype minigame layer into a mode platform:
+
+- official modes: `basebuilder`, `autobattler`, `towerdefense`, `cardgame`, `openworld`;
+- player-facing names: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame`, `Openworld`;
+- Openworld Bosque replaces the old Rpgsuave identity in client code, docs,
+  tests, ruleset payloads and `/modes` contracts;
+- Mode Hub is visible from the Refugio Internal Alpha surface;
+- Basebuilder opens current Refugio/Base, Autobattler opens current Arena PVE,
+  Openworld opens fullscreen Bosque, Towerdefense/Cardgame stay staged/disabled;
+- backend V1 adds registry rows, `/modes`, `mode_limit_policies`,
+  `admin_roles`, session abandon, admin/ops routes and analytics summary;
+- release target: `internal-alpha/v0-minigame-platform-v1-modes-20260601-<sha>`.
 
 ## Baseline
 
@@ -779,9 +794,9 @@ Delivered in the current branch:
 - `SupabaseClient` sends API version and `request_hash`, while `SessionStore`
   persists pending idempotent mutations so retries reuse the same
   `request_id/request_hash`.
-- `ROUTE_MINIGAME_SHELL` and `open_minigame_shell:<id>` exist only as a
-  disabled/dev placeholder: no reward, ranking, economy, migration or public
-  feature promise.
+- V1 replaces the previous minigame placeholder with active mode contracts:
+  `ROUTE_MODE_HUB`, `ROUTE_MODE_SHELL` and `open_mode_shell:<mode_id>`.
+  `/modes` is the active API surface; `/minigames` is historical only.
 - `tools/check_foundation_expansion_readiness.ps1` is the read-only structural
   gate and is called from `validate_foundation.ps1`. Full profile now requires
   local Supabase RPC, Edge RPC and admin/RLS smokes instead of silently skipping

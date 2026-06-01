@@ -1,0 +1,53 @@
+# DraxosMobile Mode Catalog V1
+
+- Status: `VIVO`
+- Contract: `MINIGAME_PLATFORM_V1`
+- API surface: `/modes`
+- Client route/action: `mode_shell`, `open_mode_shell:<mode_id>`
+- Registry source: `mode_registry`
+
+Este catalogo substitui o registro centrado em `rpgsuave/forest`. A plataforma continua sendo chamada de Minigame Platform por historico de arquitetura, mas o produto agora trata os pilares jogaveis como **modos oficiais** em pe de igualdade.
+
+## Modos Oficiais
+
+| mode_id | Player-facing | Default slice | Status V1 | Surface | Build ownership | Economia |
+| --- | --- | --- | --- | --- | --- | --- |
+| `basebuilder` | `Basebuilder` | `refugio` | `active` | Refugio/Base atuais | Base, estruturas, coleta, crafting de base e upgrades | Usa endpoints core de Base; pode receber/consumir recursos compartilhados |
+| `autobattler` | `Autobattler` | `pve_arena` | `active` | Arena PVE atual | Instrumento, Doutrina, Familiar, spells e potions | Usa endpoints `arena/pve/*`, battle rewards e ledger existentes |
+| `openworld` | `Openworld` | `forest` | `internal_alpha` | Fullscreen `mode_shell` | Progresso local do Bosque + Reward Bridge limitado | Pode emitir recompensas pequenas via RPC, idempotencia e ledger |
+| `towerdefense` | `Towerdefense` | `tbd` | `planned_disabled` | Hub disabled/staged | Build propria futura: torre central, spells, pets e upgrades | Sem recompensa ate contrato proprio |
+| `cardgame` | `Cardgame` | `tbd` | `planned_disabled` | Hub disabled/staged | Build propria futura; sem relacao mecanica com o projeto Steam | Sem recompensa ate contrato proprio |
+
+## Gate De Entrada No Hub
+
+Para V1 Internal Alpha:
+
+- `Basebuilder`: clicavel; abre Refugio/Base.
+- `Autobattler`: clicavel; abre Arena PVE.
+- `Openworld`: clicavel em Internal Alpha; abre `Openworld Bosque`.
+- `Towerdefense`: visivel disabled/staged.
+- `Cardgame`: visivel disabled/staged.
+
+Um modo so pode virar CTA publico quando passar por:
+
+- design contract vivo;
+- row completa em `mode_registry`;
+- ruleset versionado;
+- `mode_limit_policies`;
+- disable/rollback testado;
+- admin/ops funcional;
+- telemetria `mode_analytics_v1`;
+- Reward Bridge com ledger, quando emitir recursos;
+- bloqueio de reward real no `progression_lab`;
+- smoke mobile portrait;
+- GUT client, backend tests e Full validation;
+- aprovacao humana registrada em handoff/status.
+
+## Decisoes Travadas
+
+- `rpgsuave` foi renomeado de verdade para `openworld`.
+- O primeiro slice do Openworld e `openworld/forest`, player-facing `Openworld Bosque`.
+- `/minigames` nao e contrato ativo em V1.
+- `open_minigame_shell` e `minigame_shell` nao sao contrato ativo em V1.
+- Cardgame do DraxosMobile compartilha lore com outros projetos, mas nao herda mecanicas do `draxos-roguelike-cardgame`.
+- Towerdefense futuro usa fantasia de heroi/mago em torre central estatica contra hordas.

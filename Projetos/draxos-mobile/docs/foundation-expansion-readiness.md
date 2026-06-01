@@ -60,6 +60,10 @@ pode editar docs; nao deve criar feature jogavel ou endpoint mutante.
 
 ## Minigame Antes De Feature
 
+Alias V1: **Mode Antes De Feature**. O produto agora usa "modo" como nome
+player-facing e tecnico de entrada, mas esta lane ainda conserva o termo
+Minigame Platform por historico de arquitetura.
+
 Todo minigame futuro deve passar pelo contrato
 `docs/contracts/minigame-integration.md` antes de:
 
