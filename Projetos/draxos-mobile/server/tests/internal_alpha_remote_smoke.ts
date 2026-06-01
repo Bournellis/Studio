@@ -3,10 +3,21 @@ const PUBLISHABLE_KEY = requiredEnv("SUPABASE_PUBLISHABLE_KEY");
 const RUN_ANON_AUTH = Deno.env.get("DRAXOS_REMOTE_ANON_AUTH_SMOKE") === "1";
 const RUN_ACCOUNT_STATE = Deno.env.get("DRAXOS_REMOTE_ACCOUNT_SMOKE") === "1";
 const RUN_EMAIL_AUTH = Deno.env.get("DRAXOS_REMOTE_EMAIL_AUTH_SMOKE") === "1";
-const RUN_RELEASE_MANIFEST = Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
+const RUN_RELEASE_MANIFEST =
+  Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
+const RUN_MINIGAME = Deno.env.get("DRAXOS_REMOTE_MINIGAME_SMOKE") === "1";
+
+const MINIGAME_MODE_ID = "rpgsuave";
+const MINIGAME_SLICE_ID = "forest";
+const MINIGAME_RULESET_ID = "rpgsuave_forest_ruleset_v0";
+const MINIGAME_RULESET_VERSION = 1;
 
 assertRemoteUrl(SUPABASE_URL);
 assertClientKey(PUBLISHABLE_KEY);
+assert(
+  !RUN_MINIGAME || RUN_EMAIL_AUTH,
+  "DRAXOS_REMOTE_MINIGAME_SMOKE requires DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1",
+);
 
 interface JsonObject {
   [key: string]: unknown;
@@ -94,6 +105,7 @@ let emailUser = "";
 let emailPlayerId = "";
 let labPlayerId = "";
 let emailBattleId = "";
+let minigameSessionId = "";
 if (RUN_EMAIL_AUTH) {
   const runId = crypto.randomUUID().replaceAll("-", "").slice(0, 12);
   const email = `draxosremotealpha${runId}@gmail.com`;
@@ -187,12 +199,21 @@ if (RUN_EMAIL_AUTH) {
   );
   const registeredBattleLog = objectField(registeredBattle, "battle_log");
   emailBattleId = stringField(registeredBattleLog, "battle_id");
-  assert(emailBattleId !== "", "registered email account should be able to request battle");
+  assert(
+    emailBattleId !== "",
+    "registered email account should be able to request battle",
+  );
   assertEq(
     stringField(registeredBattleLog, "schema_version"),
     "battle_log_v1",
     "registered email battle should return a battle log",
   );
+
+  if (RUN_MINIGAME) {
+    minigameSessionId = await proveRemoteMinigameFlow(
+      stringField(signin, "access_token"),
+    );
+  }
 }
 
 console.log("[internal-alpha-remote-smoke] OK", {
@@ -201,6 +222,7 @@ console.log("[internal-alpha-remote-smoke] OK", {
   anon_auth: RUN_ANON_AUTH || RUN_ACCOUNT_STATE ? "checked" : "skipped",
   account_state: RUN_ACCOUNT_STATE ? "checked" : "skipped",
   email_auth: RUN_EMAIL_AUTH ? "checked" : "skipped",
+  minigame: RUN_MINIGAME ? "checked" : "skipped",
   release_manifest: releaseManifestChecked ? "checked" : "skipped",
   auth_user: authUser,
   player_id: playerId,
@@ -208,6 +230,7 @@ console.log("[internal-alpha-remote-smoke] OK", {
   email_player_id: emailPlayerId,
   lab_player_id: labPlayerId,
   email_battle_id: emailBattleId,
+  minigame_session_id: minigameSessionId,
 });
 
 function baseHeaders(): Record<string, string> {
@@ -215,6 +238,159 @@ function baseHeaders(): Record<string, string> {
     apikey: PUBLISHABLE_KEY,
     "content-type": "application/json",
   };
+}
+
+function minigameHeaders(
+  accessToken: string,
+  saveType: "normal" | "progression_lab" = "normal",
+): Record<string, string> {
+  return {
+    ...baseHeaders(),
+    authorization: `Bearer ${accessToken}`,
+    "x-draxos-api-version": "1",
+    "x-draxos-save-type": saveType,
+  };
+}
+
+async function proveRemoteMinigameFlow(accessToken: string): Promise<string> {
+  const headers = minigameHeaders(accessToken);
+  const registry = await getJson(
+    `${SUPABASE_URL}/functions/v1/minigames/registry`,
+    headers,
+  );
+  assertEq(
+    stringField(arrayField(registry, "modes")[0] as JsonObject, "mode_id"),
+    MINIGAME_MODE_ID,
+    "remote minigame registry should expose rpgsuave",
+  );
+  assertEq(
+    stringField(
+      arrayField(registry, "rulesets")[0] as JsonObject,
+      "ruleset_id",
+    ),
+    MINIGAME_RULESET_ID,
+    "remote minigame registry should expose the forest ruleset",
+  );
+
+  const state = await getJson(
+    `${SUPABASE_URL}/functions/v1/minigames/state?mode_id=${MINIGAME_MODE_ID}`,
+    headers,
+  );
+  assertEq(
+    stringField(arrayField(state, "modes")[0] as JsonObject, "mode_id"),
+    MINIGAME_MODE_ID,
+    "remote minigame state should be scoped to rpgsuave",
+  );
+
+  const startBody = {
+    request_id: crypto.randomUUID(),
+    mode_id: MINIGAME_MODE_ID,
+    slice_id: MINIGAME_SLICE_ID,
+  };
+  const started = await postJson(
+    `${SUPABASE_URL}/functions/v1/minigames/session/start`,
+    startBody,
+    headers,
+  );
+  const repeatedStart = await postJson(
+    `${SUPABASE_URL}/functions/v1/minigames/session/start`,
+    startBody,
+    headers,
+  );
+  const sessionId = stringField(objectField(started, "session"), "id");
+  assert(
+    sessionId !== "",
+    "remote minigame session/start should return session.id",
+  );
+  assertEq(
+    sessionId,
+    stringField(objectField(repeatedStart, "session"), "id"),
+    "remote minigame session/start should be idempotent",
+  );
+
+  const completeBody = {
+    request_id: crypto.randomUUID(),
+    result: {
+      session_id: sessionId,
+      ruleset_id: MINIGAME_RULESET_ID,
+      ruleset_version: MINIGAME_RULESET_VERSION,
+      session_seconds: 120,
+      activity_score: 500,
+      deposited_items: {
+        madeira: 20,
+        folha: 7,
+        ossos_preview: 6,
+        po_osso_preview: 3,
+      },
+    },
+  };
+  const completed = await postJson(
+    `${SUPABASE_URL}/functions/v1/minigames/session/complete`,
+    completeBody,
+    headers,
+  );
+  const repeatedComplete = await postJson(
+    `${SUPABASE_URL}/functions/v1/minigames/session/complete`,
+    completeBody,
+    headers,
+  );
+  assertEq(
+    stableStringify(completed),
+    stableStringify(repeatedComplete),
+    "remote minigame session/complete should be idempotent",
+  );
+  const resourceDelta = objectField(
+    objectField(completed, "reward"),
+    "resource_delta",
+  );
+  assertEq(
+    numberField(resourceDelta, "energia"),
+    12,
+    "remote minigame energy reward should be capped",
+  );
+  assertEq(
+    numberField(resourceDelta, "ossos"),
+    2,
+    "remote minigame bones reward should be capped",
+  );
+  assertEq(
+    numberField(resourceDelta, "xp"),
+    8,
+    "remote minigame XP reward should be capped",
+  );
+
+  const labStarted = await postJson(
+    `${SUPABASE_URL}/functions/v1/minigames/session/start`,
+    {
+      request_id: crypto.randomUUID(),
+      mode_id: MINIGAME_MODE_ID,
+      slice_id: MINIGAME_SLICE_ID,
+    },
+    minigameHeaders(accessToken, "progression_lab"),
+  );
+  const labBlocked = await postJson(
+    `${SUPABASE_URL}/functions/v1/minigames/session/complete`,
+    {
+      request_id: crypto.randomUUID(),
+      result: {
+        session_id: stringField(objectField(labStarted, "session"), "id"),
+        ruleset_id: MINIGAME_RULESET_ID,
+        ruleset_version: MINIGAME_RULESET_VERSION,
+        session_seconds: 60,
+        activity_score: 120,
+        deposited_items: { madeira: 2, ossos_preview: 3 },
+      },
+    },
+    minigameHeaders(accessToken, "progression_lab"),
+    false,
+  );
+  assertEq(
+    stringField(objectField(labBlocked, "error"), "code"),
+    "MINIGAME_REWARD_BLOCKED_FOR_LAB",
+    "remote progression_lab minigame completion should not award real resources",
+  );
+
+  return sessionId;
 }
 
 async function getJson(
@@ -296,9 +472,21 @@ function objectField(payload: JsonObject, key: string): JsonObject {
   return value;
 }
 
+function arrayField(payload: JsonObject, key: string): unknown[] {
+  const value = payload[key];
+  assert(Array.isArray(value), `${key} should be an array`);
+  return value;
+}
+
 function stringField(payload: JsonObject, key: string): string {
   const value = payload[key];
   return typeof value === "string" ? value : "";
+}
+
+function numberField(payload: JsonObject, key: string): number {
+  const value = payload[key];
+  assert(typeof value === "number", `${key} should be a number`);
+  return value;
 }
 
 function parseJson(text: string): unknown {
@@ -322,7 +510,23 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${
+        JSON.stringify(actual)
+      }`,
     );
   }
+}
+
+function stableStringify(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => stableStringify(item)).join(",")}]`;
+  }
+  if (isObject(value)) {
+    return `{${
+      Object.keys(value).sort().map((key) =>
+        `${JSON.stringify(key)}:${stableStringify(value[key])}`
+      ).join(",")
+    }}`;
+  }
+  return JSON.stringify(value);
 }

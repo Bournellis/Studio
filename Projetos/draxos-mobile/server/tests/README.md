@@ -121,6 +121,7 @@ npx -y deno run --allow-net --allow-env server/tests/build_equip_smoke.ts
 npx -y deno run --allow-net --allow-env server/tests/runtime_config_smoke.ts
 deno run --allow-net --allow-env server/tests/transactional_rpc_live_test.ts
 deno run --allow-net --allow-env server/tests/transactional_edge_rpc_smoke.ts
+deno run --allow-net --allow-env server/tests/minigame_platform_live_test.ts
 deno run --allow-net --allow-env server/tests/foundation_admin_rls_live_smoke.ts
 ```
 
@@ -213,6 +214,13 @@ chama `base`, `battle`, `build`, `crafting`, `monetization` e `social` via
 `build/potion-behavior`, `social/friends/add`, `social/chat/send`, verifica
 `UNSUPPORTED_API_VERSION` e confirma no Postgres local que cada mutation criou
 `idempotency_keys` `completed` com `request_hash` calculado pelo adapter.
+
+O smoke `minigame_platform_live_test.ts` valida o caminho HTTP local da Edge
+Function `minigames` e o Reward Bridge v0: registry/state com JWT e
+`x-draxos-save-type`, session start idempotente, complete idempotente,
+ledger/reward claim uma unica vez, rejeicao de `request_hash` divergente,
+rejeicao de resultado adulterado e bloqueio de recompensa real no save
+`progression_lab`.
 
 O smoke `foundation_admin_rls_live_smoke.ts` valida o hardening final de
 Foundation em stack local real: RLS de `account_profiles`, `game_saves`,

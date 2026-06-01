@@ -2,7 +2,7 @@
 
 - Status: `CONTRATO`
 - Contract id: `MINIGAME_INTEGRATION_CONTRACT_V1`
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Escopo: integrar minigames futuros sem quebrar conta, save, economia, social, base, batalha, telemetry, release ou admin.
 
 ## Principio
@@ -54,6 +54,8 @@ Foundation Closeout reserva um shell client-side disabled/dev-only:
 - action id: `open_minigame_shell:<minigame_id>`;
 - action category: `minigame`;
 - scope: `minigame:<id>:<save_type>`;
+- default shell surface: fullscreen gameplay, with the minigame responsible for
+  its own back/exit control inside the HUD;
 - reward handoff: bloqueado ate contrato e endpoint server-authoritative;
 - sem ranking, economy, migration, promessa publica ou gameplay real.
 
@@ -68,6 +70,40 @@ O minigame deve declarar:
 - como a UI se comporta em Android portrait, PC e Web.
 
 Se tocar Entry, Refugio ou Battle, o pacote tambem deve respeitar `docs/foundation-responsive-layout-contract.md`.
+
+## Registro Implementado - Rpgsuave Bosque
+
+`rpgsuave` e o primeiro uso concreto deste contrato.
+
+| Campo | Valor |
+|---|---|
+| `minigame_id`/`mode_id` | `rpgsuave` |
+| `display_name` | `Rpgsuave Bosque` |
+| `slice_id` | `forest` |
+| `status` | `internal_alpha` em Labs Dev; sem CTA publico |
+| `surface` | Labs Dev fullscreen gameplay; sem app chrome |
+| `action` | `open_minigame_shell:rpgsuave` |
+| `service_scope` | `save-scoped` |
+| `ruleset_id` | `rpgsuave_forest_ruleset_v0` |
+| `ruleset_version` | `1` |
+| `data_strategy` | `minigame-local-progress` ate complete; `shared-save-progress` somente pela RPC |
+| `feature_flag` | `draxos_mobile/minigames/rpgsuave/enabled`; rede via `integrated_alpha=true` nesta publicacao interna |
+
+Contrato detalhado: `docs/minigames/rpgsuave.md` e
+`docs/contracts/minigame-platform-v0.md`.
+
+Notas de UI Visual Upgrade v1:
+
+- rota `minigame_shell` deve retornar `is_fullscreen_gameplay=true` e
+  `shows_app_chrome=false`;
+- entrada continua restrita a Labs Dev;
+- o minigame deve expor `Voltar` dentro do HUD para retorno seguro ao Refugio;
+- mobile portrait e o formato principal;
+- input player-facing do Bosque e joystick-only;
+- detalhes tecnicos/dev nao aparecem na tela inicial do minigame e ficam
+  recolhidos em uma tela funcional de sessao;
+- assets novos do Bosque devem ser Godot-procedural ate existir decisao
+  explicita de pipeline artistico.
 
 ## Contrato De Servico
 

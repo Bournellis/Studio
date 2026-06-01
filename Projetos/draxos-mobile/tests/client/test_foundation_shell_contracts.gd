@@ -125,9 +125,10 @@ func test_action_router_exposes_mutation_scope_and_minigame_placeholder() -> voi
 	assert_true(bool(battle_route.get("requires_idempotent_retry", false)))
 
 	var minigame_route := AppShellActionRouterScript.route_action(
-		AppShellActionContractScript.open_minigame_shell_action("ritual_stub"),
+		AppShellActionContractScript.open_minigame_shell_action("rpgsuave"),
 		{"save_type": "normal"}
 	)
 	assert_eq(minigame_route.get("category"), AppShellActionRouterScript.CATEGORY_MINIGAME)
-	assert_eq(minigame_route.get("scope_id"), "minigame:ritual_stub:normal")
+	assert_eq(minigame_route.get("scope_id"), "minigame:rpgsuave:normal")
 	assert_eq(minigame_route.get("mutation_endpoint"), "")
+	assert_false(bool(minigame_route.get("blocked_by_update", true)))

@@ -116,6 +116,8 @@ static func update_gate_blocks_action(action_id: String, update_gate: Dictionary
 		return false
 	if bool(_UPDATE_GATE_ALLOWED_ACTIONS.get(action_id.strip_edges(), false)):
 		return false
+	if is_open_minigame_shell(action_id):
+		return false
 	if is_select_base_structure(action_id):
 		return false
 	return true

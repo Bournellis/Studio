@@ -413,6 +413,9 @@ verify_jwt = true
 [functions.progression-lab]
 verify_jwt = true
 
+[functions.minigames]
+verify_jwt = true
+
 [functions.release]
 verify_jwt = false
 
