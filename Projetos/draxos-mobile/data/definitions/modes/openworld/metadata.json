@@ -1,0 +1,40 @@
+{
+  "schema_version": "mode_descriptor_v1",
+  "mode_id": "openworld",
+  "display_name": "Openworld",
+  "summary": "Current Openworld Bosque Internal Alpha slice: fullscreen local collection, pocket, chest, craft and limited Reward Bridge.",
+  "default_slice_id": "forest",
+  "status": "internal_alpha",
+  "release_channel": "internal_alpha",
+  "public_cta": true,
+  "fullscreen": true,
+  "entry": {
+    "route_id": "mode_shell",
+    "action_id": "open_mode_shell:openworld",
+    "surface": "fullscreen",
+    "client_screen_path": "res://modes/openworld/openworld_forest_screen.gd",
+    "enabled_setting": "draxos_mobile/modes/openworld/enabled"
+  },
+  "ruleset": {
+    "ruleset_id": "openworld_forest_ruleset_v0",
+    "ruleset_version": 1,
+    "status": "active",
+    "session_model": "mode_session_bridge"
+  },
+  "ownership": {
+    "build_owner": "openworld",
+    "data_strategy": "shared-save-progress",
+    "economy_authority": "mode_session_complete_v1_existing",
+    "reward_bridge": "openworld_forest_limited_existing"
+  },
+  "docs": {
+    "mode_doc": "docs/minigames/openworld.md",
+    "catalog": "docs/minigames/mode-catalog.md",
+    "contract": "docs/contracts/minigame-integration.md"
+  },
+  "scaffold": {
+    "placeholder_path": "data/definitions/modes/openworld/placeholder.json",
+    "playable_from_placeholder": false,
+    "freeze": "no_new_gameplay_tuning_or_rewards"
+  }
+}

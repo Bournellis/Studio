@@ -1,0 +1,40 @@
+{
+  "schema_version": "mode_descriptor_v1",
+  "mode_id": "basebuilder",
+  "display_name": "Basebuilder",
+  "summary": "Current Refugio/Base loop: structures, collection, resources and base upgrades through existing core endpoints.",
+  "default_slice_id": "refugio",
+  "status": "active",
+  "release_channel": "internal_alpha",
+  "public_cta": true,
+  "fullscreen": false,
+  "entry": {
+    "route_id": "refuge",
+    "action_id": "show_base",
+    "surface": "refuge",
+    "client_screen_path": "",
+    "enabled_setting": ""
+  },
+  "ruleset": {
+    "ruleset_id": "basebuilder_refugio_ruleset_v1",
+    "ruleset_version": 1,
+    "status": "active",
+    "session_model": "core_base_endpoints"
+  },
+  "ownership": {
+    "build_owner": "basebuilder",
+    "data_strategy": "core-mode-progress",
+    "economy_authority": "base_endpoints_existing",
+    "reward_bridge": "none"
+  },
+  "docs": {
+    "mode_doc": "docs/minigames/basebuilder.md",
+    "catalog": "docs/minigames/mode-catalog.md",
+    "contract": "docs/contracts/minigame-integration.md"
+  },
+  "scaffold": {
+    "placeholder_path": "data/definitions/modes/basebuilder/placeholder.json",
+    "playable_from_placeholder": false,
+    "freeze": "no_new_gameplay_tuning_or_rewards"
+  }
+}

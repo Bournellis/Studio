@@ -27,6 +27,20 @@ Este contrato governa como qualquer modo jogavel entra no DraxosMobile sem quebr
 | `towerdefense` | `Towerdefense` | `tbd` | planned_disabled | Hub disabled |
 | `cardgame` | `Cardgame` | `tbd` | planned_disabled | Hub disabled |
 
+## Descriptor Scaffold
+
+Cada modo oficial deve ter:
+
+- `data/definitions/modes/<mode_id>/metadata.json`;
+- `data/definitions/modes/<mode_id>/placeholder.json`;
+- doc viva em `docs/minigames/<mode_id>.md`.
+
+O descriptor registra identidade, status, entrada, ruleset pointer e ownership.
+O placeholder reserva futuro trabalho e deve permanecer nao jogavel
+(`playable=false`, `launchable=false`, `reward_enabled=false`) ate uma decisao
+de pacote propria. Descriptors nao substituem `mode_registry` remoto nem abrem
+reward bridge por si so.
+
 ## Client Shell
 
 Contrato ativo:

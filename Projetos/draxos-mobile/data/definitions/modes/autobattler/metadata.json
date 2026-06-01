@@ -1,0 +1,40 @@
+{
+  "schema_version": "mode_descriptor_v1",
+  "mode_id": "autobattler",
+  "display_name": "Autobattler",
+  "summary": "Current Arena PVE loop: locked loadout, server-authoritative duels, temporary buffs and existing Arena rewards.",
+  "default_slice_id": "pve_arena",
+  "status": "active",
+  "release_channel": "internal_alpha",
+  "public_cta": true,
+  "fullscreen": false,
+  "entry": {
+    "route_id": "arena_selection",
+    "action_id": "open_arena",
+    "surface": "arena_pve",
+    "client_screen_path": "",
+    "enabled_setting": ""
+  },
+  "ruleset": {
+    "ruleset_id": "autobattler_pve_arena_ruleset_v1",
+    "ruleset_version": 1,
+    "status": "active",
+    "session_model": "arena_pve_endpoints"
+  },
+  "ownership": {
+    "build_owner": "autobattler",
+    "data_strategy": "core-mode-progress",
+    "economy_authority": "arena_pve_endpoints_existing",
+    "reward_bridge": "arena_pve_reward_existing"
+  },
+  "docs": {
+    "mode_doc": "docs/minigames/autobattler.md",
+    "catalog": "docs/minigames/mode-catalog.md",
+    "contract": "docs/contracts/minigame-integration.md"
+  },
+  "scaffold": {
+    "placeholder_path": "data/definitions/modes/autobattler/placeholder.json",
+    "playable_from_placeholder": false,
+    "freeze": "no_new_gameplay_tuning_or_rewards"
+  }
+}

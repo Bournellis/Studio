@@ -1,0 +1,23 @@
+{
+  "schema_version": "mode_placeholder_v1",
+  "mode_id": "towerdefense",
+  "placeholder_id": "towerdefense_tbd_placeholder_v1",
+  "playable": false,
+  "launchable": false,
+  "reward_enabled": false,
+  "runtime": "none",
+  "entry_action": "",
+  "purpose": "Reserve the future Towerdefense mode identity while keeping the Hub staged/disabled.",
+  "blocked_until": [
+    "explicit towerdefense package decision",
+    "live design contract",
+    "ruleset and registry update",
+    "validation plan"
+  ],
+  "non_goals": [
+    "new tower gameplay",
+    "new enemy waves",
+    "new tower upgrades",
+    "new rewards"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": "mode_descriptor_v1",
+  "mode_id": "towerdefense",
+  "display_name": "Towerdefense",
+  "summary": "Future staged mode concept: static central mage or tower against hordes. Disabled until a live package approves it.",
+  "default_slice_id": "tbd",
+  "status": "planned_disabled",
+  "release_channel": "staged",
+  "public_cta": false,
+  "fullscreen": true,
+  "entry": {
+    "route_id": "",
+    "action_id": "mode_disabled:towerdefense",
+    "surface": "mode_hub_disabled",
+    "client_screen_path": "",
+    "enabled_setting": ""
+  },
+  "ruleset": {
+    "ruleset_id": "towerdefense_tbd_ruleset_v1",
+    "ruleset_version": 1,
+    "status": "draft",
+    "session_model": "none"
+  },
+  "ownership": {
+    "build_owner": "towerdefense",
+    "data_strategy": "mode-local-progress",
+    "economy_authority": "none",
+    "reward_bridge": "none"
+  },
+  "docs": {
+    "mode_doc": "docs/minigames/towerdefense.md",
+    "catalog": "docs/minigames/mode-catalog.md",
+    "contract": "docs/contracts/minigame-integration.md"
+  },
+  "scaffold": {
+    "placeholder_path": "data/definitions/modes/towerdefense/placeholder.json",
+    "playable_from_placeholder": false,
+    "freeze": "no_new_gameplay_tuning_or_rewards"
+  }
+}

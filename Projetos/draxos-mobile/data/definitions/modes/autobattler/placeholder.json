@@ -1,0 +1,23 @@
+{
+  "schema_version": "mode_placeholder_v1",
+  "mode_id": "autobattler",
+  "placeholder_id": "autobattler_future_slice_placeholder_v1",
+  "playable": false,
+  "launchable": false,
+  "reward_enabled": false,
+  "runtime": "none",
+  "entry_action": "",
+  "purpose": "Reserve future Autobattler slices beyond the current Arena PVE shell without adding tuning or battle behavior.",
+  "blocked_until": [
+    "explicit autobattler package decision",
+    "Arena PVE human playtest evidence",
+    "live design contract update",
+    "validation plan"
+  ],
+  "non_goals": [
+    "new enemies",
+    "new spells",
+    "new potion behavior",
+    "new rewards"
+  ]
+}
