@@ -316,6 +316,34 @@ func test_supabase_client_diagnostics_do_not_expose_publishable_key() -> void:
 	assert_true(bool(Dictionary(diagnostics.get("auth", {})).get("publishable_key_configured", false)))
 	client.free()
 
+func test_supabase_client_normalizes_supabase_auth_errors() -> void:
+	var client = SupabaseClientScript.new()
+
+	var invalid_credentials := client._server_error({
+		"error_code": "invalid_credentials",
+		"msg": "Invalid login credentials",
+	}, 400)
+	var invalid_error := Dictionary(invalid_credentials.get("error", {}))
+	assert_eq(str(invalid_error.get("code", "")), "INVALID_LOGIN_CREDENTIALS")
+	assert_eq(str(invalid_error.get("message", "")), "Invalid login credentials")
+	assert_eq(int(invalid_credentials.get("status", 0)), 400)
+
+	var oauth_credentials := client._server_error({
+		"error": "invalid_grant",
+		"error_description": "Invalid login credentials",
+	}, 400)
+	var oauth_error := Dictionary(oauth_credentials.get("error", {}))
+	assert_eq(str(oauth_error.get("code", "")), "INVALID_LOGIN_CREDENTIALS")
+
+	var existing_email := client._server_error({
+		"error_code": "user_already_exists",
+		"msg": "User already registered",
+	}, 422)
+	var email_error := Dictionary(existing_email.get("error", {}))
+	assert_eq(str(email_error.get("code", "")), "EMAIL_ALREADY_EXISTS")
+
+	client.free()
+
 func test_backend_config_supports_internal_alpha_without_service_role() -> void:
 	var config := BackendConfigScript.config_from_values(
 		BackendConfigScript.ENVIRONMENT_INTERNAL_ALPHA,

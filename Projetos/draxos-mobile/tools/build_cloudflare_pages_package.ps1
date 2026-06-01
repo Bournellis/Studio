@@ -139,6 +139,18 @@ Get-ChildItem -LiteralPath $webSource -File |
 $portalIndexPath = Join-Path $OutputDir "portal/index.html"
 $portalHtml = Get-Content -Raw -LiteralPath $portalIndexPath
 $portalHtml = $portalHtml.Replace("STATIC_HOST_PLACEHOLDER", "/web/index.html")
+$portalHtml = $portalHtml.Replace("WEB_GAME_URL_PENDING_T03_P17", "/web/index.html")
+$portalHtml = $portalHtml.Replace("STATIC_HOST_PENDING_T03_P17", "/web/index.html")
+$portalHtml = [regex]::Replace(
+    $portalHtml,
+    "https://([a-f0-9]+\.)?draxos-mobile-internal-alpha\.pages\.dev/web/index\.html",
+    "/web/index.html"
+)
+if ($portalHtml.Contains("WEB_GAME_URL_PENDING_T03_P17") -or
+    $portalHtml.Contains("STATIC_HOST_PENDING_T03_P17") -or
+    $portalHtml.Contains("STATIC_HOST_PLACEHOLDER")) {
+    throw "Portal HTML still contains an unresolved Web game URL placeholder."
+}
 [System.IO.File]::WriteAllText($portalIndexPath, $portalHtml, [System.Text.UTF8Encoding]::new($false))
 
 $assetBase = $StaticAssetBaseUrl.TrimEnd("/")

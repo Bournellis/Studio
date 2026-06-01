@@ -70,6 +70,7 @@ await assertDownloadReachable(
 );
 await assertDownloadReachable(pcUrl, "PC ZIP", MIN_DOWNLOAD_BYTES, pcSha256);
 await assertPageContains(portalUrl, "Portal", "DraxosMobile");
+await assertPortalWebLink(portalUrl, webUrl);
 await assertPageContains(webUrl, "Web build", "GODOT_CONFIG");
 
 console.log("[release-artifacts-remote-smoke] OK", {
@@ -191,6 +192,30 @@ async function assertPageContains(
   assert(
     text.includes(expectedText),
     `${label} does not contain ${expectedText}`,
+  );
+}
+
+async function assertPortalWebLink(portalUrl: string, webUrl: string): Promise<void> {
+  const response = await fetch(portalUrl, { method: "GET" });
+  const text = await response.text();
+  assert(response.ok, `Portal GET failed with status ${response.status}: ${portalUrl}`);
+  if (ALLOW_CLOUDFLARE_ACCESS && isCloudflareAccessPage(text)) {
+    return;
+  }
+  for (
+    const placeholder of [
+      "WEB_GAME_URL_PENDING_T03_P17",
+      "STATIC_HOST_PENDING_T03_P17",
+      "STATIC_HOST_PLACEHOLDER",
+    ]
+  ) {
+    assert(!text.includes(placeholder), `Portal still contains ${placeholder}`);
+  }
+  const normalizedWebUrl = webUrl.replace(/\/index\.html$/, "");
+  assert(
+    text.includes(webUrl) || text.includes(normalizedWebUrl) ||
+      text.includes("/web/index.html") || text.includes("/web"),
+    `Portal should link to the Web build URL: ${webUrl}`,
   );
 }
 

@@ -20,6 +20,8 @@ const FRIENDLY_MESSAGES := {
 	"AUTH_REQUIRES_EMAIL": "Esta acao exige conta por email/senha. Use Criar conta ou Entrar com email.",
 	"AUTH_NOT_ANONYMOUS": "Esta rota e apenas para guest dev. Use o fluxo de email/senha para a conta.",
 	"INVALID_LOGIN_CREDENTIALS": "Email ou senha invalidos. Confira os dados e tente novamente.",
+	"EMAIL_NOT_CONFIRMED": "Email ainda nao confirmado. Use uma conta alpha liberada ou confirme o email antes de entrar.",
+	"EMAIL_ALREADY_EXISTS": "Este email ja possui conta. Use Entrar com email para recuperar o save.",
 	"INVALID_USERNAME": "Username invalido. Use 3 a 24 caracteres: letras minusculas, numeros ou underscore.",
 	"USERNAME_TAKEN": "Este username ja esta em uso. Escolha outro para a conta.",
 	"ACCOUNT_ALREADY_CREATED": "Esta conta ja possui save criado. Sincronize a sessao para carregar o estado.",

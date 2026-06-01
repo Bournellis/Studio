@@ -792,9 +792,43 @@ func _session_from_auth_payload(payload: Dictionary, require_anonymous: bool, re
 
 func _server_error(payload: Dictionary, response_code: int) -> Dictionary:
 	var error_payload := _as_dictionary(payload.get("error", {}))
-	var code := str(error_payload.get("code", "HTTP_ERROR"))
-	var message := str(error_payload.get("message", "Request failed."))
+	var raw_error: Variant = payload.get("error", "")
+	var raw_code := str(payload.get("error_code", "")).strip_edges()
+	var raw_message := str(payload.get("msg", "")).strip_edges()
+	if raw_message == "":
+		raw_message = str(payload.get("error_description", "")).strip_edges()
+	var code := str(error_payload.get("code", "")).strip_edges()
+	var message := str(error_payload.get("message", "")).strip_edges()
+	if code == "" and raw_code != "":
+		code = raw_code
+	if code == "" and raw_error is String:
+		code = str(raw_error).strip_edges()
+	var payload_code: Variant = payload.get("code", "")
+	if code == "" and not (payload_code is int):
+		code = str(payload_code).strip_edges()
+	if message == "" and raw_message != "":
+		message = raw_message
+	if message == "" and raw_error is String and raw_message == "":
+		message = str(raw_error).strip_edges()
+	code = _normalize_server_error_code(code, response_code)
+	if message == "":
+		message = "Request failed."
 	return _error(code, message, response_code)
+
+static func _normalize_server_error_code(code: String, _response_code: int) -> String:
+	var normalized := code.strip_edges()
+	var lowered := normalized.to_lower()
+	if lowered in ["invalid_credentials", "invalid_grant"]:
+		return "INVALID_LOGIN_CREDENTIALS"
+	if lowered in ["email_not_confirmed", "email_not_confirmed_signup"]:
+		return "EMAIL_NOT_CONFIRMED"
+	if lowered in ["email_exists", "user_already_exists", "user_already_registered"]:
+		return "EMAIL_ALREADY_EXISTS"
+	if lowered in ["bad_json", "validation_failed", "invalid_request"]:
+		return "HTTP_ERROR"
+	if normalized == "" or normalized.is_valid_int():
+		return "HTTP_ERROR"
+	return normalized.to_upper()
 
 func _error(code: String, message: String, status: int = 0) -> Dictionary:
 	return {
