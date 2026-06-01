@@ -4,25 +4,77 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Minigame Platform V1 - Official Modes`
+- Active stage: `Minigame Platform V1 - Official Modes + Scroll Drag Hotfix`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Minigame Platform V1 - Official Modes`
-- Latest implemented package: `Minigame Platform V1 - Official Modes`
-  on branch `codex/draxos-mobile/modes-integrated-alpha`, published as
-  `internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c`.
-- Active follow-up: human playtest of the Mode Hub, Basebuilder entry,
-  Autobattler entry, Openworld Bosque fullscreen loop, staged disabled cards
-  and Labs Dev Ops visibility.
+- Latest published remote package: `Scroll Drag Release Fix` over Minigame
+  Platform V1.
+- Latest implemented package: `Scroll Drag Release Fix`
+  on branch `codex/draxos-mobile/scroll-drag-release-fix`, published as
+  `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`.
+- Active follow-up: human playtest of scroll screens with mouse drag/release,
+  plus the Mode Hub, Basebuilder entry, Autobattler entry, Openworld Bosque
+  fullscreen loop, staged disabled cards and Labs Dev Ops visibility.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## Scroll Drag Release Fix - 2026-06-01
+
+This hotfix is published remotely as the latest Internal Alpha package over
+Minigame Platform V1.
+
+- release root:
+  `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`;
+- branch: `codex/draxos-mobile/scroll-drag-release-fix`;
+- fix commit: `c7735c5`;
+- Portal:
+  `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Web:
+  `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
+
+Scope:
+
+- `DraxosTouchScrollContainer` now clears drag state on global mouse/touch
+  release, including release outside the scroll container.
+- Mouse motion without the left button pressed clears stale drag state, fixing
+  the case where scroll could feel stuck to the cursor.
+- Touch drag now tracks the active touch index, preventing unrelated touches
+  from keeping a stale scroll interaction alive.
+- No backend, schema, economy, mode registry or reward contract changed.
+
+Validation and publication completed:
+
+- `git diff --check`: passed.
+- Godot headless import: passed in the fresh hotfix worktree.
+- GUT client: passed (`153/153`, `2428` asserts).
+- `tools/smoke_responsive_layout.gd`: passed.
+- `tools/validate.gd`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile Client`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile Release -RequireClean`:
+  passed before export/upload.
+- Export/package/upload/deploy manifest completed for release root
+  `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`.
+- Cloudflare Pages deployed preview
+  `https://c4394be5.draxos-mobile-internal-alpha.pages.dev`.
+- Remote `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` and
+  `internal_alpha_remote_smoke.ts` passed.
+
+Next human check: open scroll-heavy panels in Web/PC, drag with the mouse,
+release outside the panel, move the mouse without holding the button and confirm
+the screen no longer keeps scrolling as if grabbed.
 
 ## Minigame Platform V1 - Official Modes
 

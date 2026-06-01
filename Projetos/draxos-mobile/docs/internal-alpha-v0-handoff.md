@@ -1,29 +1,51 @@
 ﻿# DraxosMobile - Internal Alpha v0 Handoff
 
 - Data: `2026-06-01`
-- Status: `MINIGAME_PLATFORM_V1_MODES_PUBLISHED - AWAITING_HUMAN_PLAYTEST`
+- Status: `SCROLL_DRAG_RELEASE_FIX_PUBLISHED - AWAITING_HUMAN_PLAYTEST`
 - Canal: `internal_alpha`
 - Versao: `0.0.1-alpha.0`
 - Version code: `1`
 - Backend remoto: `https://armxgipvnbbshzqawklw.supabase.co`
-- Portal atual: `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
-- Web atual: `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Portal atual: `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web atual: `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 
 ## Pacote Para Teste
 
 | Item | URL |
 |---|---|
-| Portal | `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/portal/index.html` |
-| Web | `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev/web/index.html` |
-| Android APK | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c/downloads/draxos-mobile-alpha.apk` |
-| PC ZIP | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c/downloads/draxos-mobile-alpha.zip` |
+| Portal | `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/portal/index.html` |
+| Web | `https://c4394be5.draxos-mobile-internal-alpha.pages.dev/web/index.html` |
+| Android APK | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5/downloads/draxos-mobile-alpha.apk` |
+| PC ZIP | `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5/downloads/draxos-mobile-alpha.zip` |
 
 | Artefato | Bytes | SHA256 |
 |---|---:|---|
-| Android APK | `31820934` | `ac154edf699afa74f3c82f44e3fd57969b3943420f4bb3fb94fb142620fdda60` |
-| PC Windows ZIP | `40277711` | `14aa516367d4cfded3c1cad574f0cbdcb1d722cc7ee83b054f79e8736ae2f3b5` |
-| Web index | `5442` | `dc79081a3d2cb360b6ad0a1b5ca7b1fa9efb58a78777b972bfdd89aa43271c90` |
+| Android APK | `31820934` | `3b1de0cb6235a32f06d2d0b761ce7ad3c85c97e4cd9a92d82521813e7a66a36b` |
+| PC Windows ZIP | `40278220` | `4eec22e997f957af17bbc468a6bd990f2896631a4fe906a563bb6d212f552b17` |
+| Web index | `5442` | `8555ff49c39210a0b44fa713854815ffecb882112649b6ee564ad80b8bbbfde2` |
+
+## Atualizacao Scroll Drag Release Fix - 2026-06-01
+
+- Release root atual:
+  `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`.
+- Branch: `codex/draxos-mobile/scroll-drag-release-fix`.
+- Commit de fix: `c7735c5`.
+- Escopo: corrige o estado de drag do `DraxosTouchScrollContainer`, que podia
+  ficar preso quando o usuario arrastava uma tela com scroll e soltava o mouse
+  fora da area ou quando o estado de botao chegava stale.
+- Sem mudanca de backend, schema, economia, registry de modos ou reward bridge.
+- Validacao local: GUT client `153/153`, `2428` asserts; `tools/validate.gd`;
+  `tools/smoke_responsive_layout.gd`; `validate_foundation.ps1 -Profile Client`;
+  `validate_foundation.ps1 -Profile Release -RequireClean`.
+- Publicacao: export Android/PC/Web, package/upload Storage, Cloudflare Pages,
+  manifest remoto e smokes remotos concluidos.
+- Smokes remotos: `release_manifest_smoke.ts`,
+  `release_artifacts_remote_smoke.ts` e `internal_alpha_remote_smoke.ts`
+  passaram.
+- Proximo teste humano: em Web/PC, arrastar paineis com scroll, soltar fora da
+  area, mover o mouse sem botao pressionado e confirmar que a tela nao continua
+  agarrada.
 
 ## Atualizacao Minigame Platform V1 - 2026-06-01
 
