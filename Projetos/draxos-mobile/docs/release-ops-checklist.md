@@ -1,7 +1,7 @@
 # DraxosMobile - Release Ops Checklist
 
-- Data: `2026-05-30`
-- Track: `Track 13 - Foundation Validation And Release Safety` + `Track 17 - Foundation Expansion Readiness` + `Foundation Final Polish`
+- Data: `2026-06-01`
+- Track: `Track 13 - Foundation Validation And Release Safety` + `Track 17 - Foundation Expansion Readiness` + `Foundation Final Polish` + `Foundation Hardening V2 release-ops-keystore`
 - Status: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED` / `FOUNDATION_FINAL_POLISH_DELIVERED`
 - Escopo: readiness operacional de release para Android, PC e Web, com safety por default e sem publicar build nova.
 
@@ -11,6 +11,7 @@
 - Nao gerar build final como parte da validacao Track 13.
 - Nao tocar em secrets, service role, senha de banco, senha de keystore ou `.env.internal-alpha.local`.
 - Usar apenas publishable/client key em smokes remotos.
+- Ops CLI remota deve usar `tools/ops_readonly.ts` com publishable key e JWT de usuario; service role remoto e proibido.
 - Qualquer check remoto automatico deve ser somente leitura: `GET`, `HEAD` ou auth/smoke explicitamente solicitado.
 - `supabase db push`, `supabase functions deploy`, `supabase secrets set`, Wrangler deploy e upload Cloudflare sao comandos de publicacao, nao validacao segura.
 - `publish_internal_alpha.ps1` so pode mutar remoto em `Mode Upload`, `Mode DeployManifest` ou `Mode FullPublish` com `-ConfirmRemoteMutation`.
@@ -62,6 +63,9 @@ Track 13 itself remains non-publishing by default. After Track 13, user-approved
 | Export script | `tools/export_internal_alpha.ps1` | Gera APK, PC ZIP, Web e metadata local | Syntax check seguro. Execucao gera builds, usar so em release real |
 | Foundation runner | `tools/validate_foundation.ps1` | Runner unico `DocsOnly`/`ClientQuick`/`ServerQuick`/`ModePlatform`/`DatabaseLocal`/`FullLocal`/`ReleaseDryRun`/`RemoteReadOnly`/`FullPublish` com relatorio local; aliases antigos preservados | Sim |
 | Release safety check | `tools/check_release_safety.ps1` | Garante publish default seguro e mutacao protegida por confirmacao | Sim |
+| Android release keystore gate | `tools/check_android_release_keystore.ps1` | Verifica tuple local de keystore release, ausencia de senha concreta tracked e fallback conhecido | Sim |
+| Ops read-only CLI | `tools/ops_readonly.ts`, `docs/ops/read-only-cli.md` | Sumarios manifest/modes/status/audit/reward/session por `GET`, sem service role remoto | Sim |
+| Backend Proprio boundary | `docs/backend-own-boundary.md` | Inventario de fronteira para futura saida Supabase -> Backend Proprio, sem refactor runtime | Sim |
 | Track 13 readiness | `tools/check_track13_readiness.ps1` | Garante docs/status/mirrors/Kanban e budgets duros de shell/presenter alinhados | Sim |
 | Agent ops readiness | `tools/check_agent_ops_foundation.ps1` | Garante entrada de agentes, indice documental, portfolio/Kanban e terminologia viva | Sim |
 | Foundation expansion readiness | `tools/check_foundation_expansion_readiness.ps1` | Garante account/save, ruleset, admin/minigame contracts, migrations espelhadas e testes fundacionais | Sim |
@@ -83,6 +87,7 @@ Antes de qualquer publicacao futura:
 - Deno check/lint de `server/functions` e `supabase/functions` verdes quando houver mudanca de server/manifest.
 - `tools\validate_foundation.ps1 -Profile FullLocal` verde quando a stack local estiver disponivel e os budgets de shell/presenter nao estiverem bloqueando; para release sem banco local, `ReleaseDryRun` + checks especificos do pacote.
 - `tools\check_release_safety.ps1` verde.
+- `tools\check_android_release_keystore.ps1 -Mode InternalAlpha` verde para builds internos; `-Mode ReleaseCandidate` verde antes de ampliar distribuicao Android para alem de teste interno.
 - `tools\check_track13_readiness.ps1` verde.
 - `tools\check_agent_ops_foundation.ps1` verde quando alterar a fundacao operacional de agentes.
 - `tools\check_foundation_expansion_readiness.ps1` verde quando alterar account/save, ruleset, admin, minigame, migrations ou readiness.
@@ -108,6 +113,22 @@ Release-ready Android exige:
 - `rendering/textures/vram_compression/import_etc2_astc=true`.
 - APK gerado por `tools/export_internal_alpha.ps1` com backend `internal_alpha_v0` e `update_manifest_url` remoto.
 - Keystore release dedicada configurada para distribuicao alem do teste interno. `debug_fallback` precisa aparecer como risco conhecido se usado.
+- Gate local:
+
+```powershell
+.\tools\check_android_release_keystore.ps1 -ProjectDir . -Mode InternalAlpha
+.\tools\check_android_release_keystore.ps1 -ProjectDir . -Mode ReleaseCandidate
+```
+
+- Config local ignorada deve declarar a tuple completa, nunca parcial:
+
+```powershell
+DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_PATH=D:\caminho\para\draxos-mobile-internal-alpha.keystore
+DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_USER=draxosmobilealpha
+DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_PASSWORD=<senha-local>
+```
+
+- Senha real de keystore nao pode aparecer em Git, docs, manifest, portal, APK, ZIP, Web build, `release-plan.json` ou relatorios.
 - SHA256 do APK registrado no relatorio local e no manifest planejado.
 - Link de download existente em Supabase Storage unlisted.
 - Smoke somente leitura `release_artifacts_remote_smoke.ts` valida alcance do APK e tamanho minimo via `HEAD` ou `GET` parcial.
@@ -151,6 +172,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 npx -y deno check server/tests/release_manifest_smoke.ts
 npx -y deno check server/tests/release_artifacts_remote_smoke.ts
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_release_safety.ps1 -ProjectDir .
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_android_release_keystore.ps1 -ProjectDir . -Mode InternalAlpha
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_track13_readiness.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
@@ -185,6 +207,13 @@ $env:SUPABASE_URL='https://<project-ref>.supabase.co'
 $env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
 $env:DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS='1'
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly
+```
+
+Ops read-only, sem mutation e sem service role remoto:
+
+```powershell
+$env:DRAXOS_OPS_ACCESS_TOKEN='<supabase-user-jwt>'
+npx -y deno run --allow-net --allow-env tools/ops_readonly.ts --target manifest,modes,status,audit,rewards,sessions --mode-id openworld --format json
 ```
 
 Hash completo opcional para APK/ZIP:
@@ -232,6 +261,7 @@ Esta sequencia fica fora da validacao automatica segura e deve ser usada apenas 
 | Validacao | Credencial | Mutacao Remota | Observacao |
 |---|---|---:|---|
 | `release_artifacts_remote_smoke.ts` | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | Nao | Somente `GET`/`HEAD`, com `GET` parcial para endpoints que recusam `HEAD`; recusa URL local e service role |
+| `tools/ops_readonly.ts` | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`; user JWT para targets protegidos | Nao | Somente `GET`; recusa service role, `sb_secret_` e JWT service-role-like |
 | `release_manifest_smoke.ts` remoto | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | Nao | Pode rodar contra local ou remoto conforme env |
 | `internal_alpha_remote_smoke.ts` healthcheck/release | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | Nao | Sem flags de auth, so healthcheck; com `DRAXOS_REMOTE_RELEASE_SMOKE=1`, tambem manifest |
 | `internal_alpha_remote_smoke.ts` email/account | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, convite alpha | Sim, cria usuario/save de teste | Usar so quando explicitamente autorizado |

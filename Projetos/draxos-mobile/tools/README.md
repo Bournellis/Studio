@@ -6,6 +6,7 @@ Ferramentas de desenvolvimento e validacao.
 - `validate_foundation.ps1` - runner unico Track 13/14/17/18 com perfis `DocsOnly`, `ClientQuick`, `ServerQuick`, `ModePlatform`, `DatabaseLocal`, `FullLocal`, `ReleaseDryRun`, `RemoteReadOnly` e `FullPublish`; gera relatorios em `build/validation/`. Os perfis antigos `Quick`, `Client`, `Release` e `Full` continuam como aliases.
 - `check_foundation_expansion_readiness.ps1` - checker read-only da Foundation Expansion Readiness: contratos, migrations espelhadas, ruleset, shell contracts e testes obrigatorios.
 - `check_release_safety.ps1` - guarda de regressao para publish seguro, parse PowerShell e manifest defaults espelhados.
+- `check_android_release_keystore.ps1` - gate local de Android release keystore: tuple completa, arquivo local existente quando configurado, ausencia de senha concreta tracked e modo `ReleaseCandidate` sem `debug_fallback`.
 - `check_track13_readiness.ps1` - readiness final da Track 13: docs/status, mirrors, Kanban e budgets duros de shell/presenter (`boot.gd`, `boot_runtime.gd`, `hub_surface_presenter.gd`, `hub_surface_full_presenter.gd`).
 - `check_agent_ops_foundation.ps1` - readiness da Track 14: entrada de agentes, indice documental, portfolio/Kanban, terminologia viva e ausencia de entrypoints obsoletos.
 - `smoke_exports.gd` - smoke leve dos presets Android Alpha, PC Windows Alpha e PC Browser Alpha.
@@ -15,6 +16,7 @@ Ferramentas de desenvolvimento e validacao.
 - `mode_definitions/scaffold_mode.ts` - gera dry-run de scaffold futuro `planned_disabled` para descriptors/docs; `--write` so deve ser usado apos decisao de pacote.
 - `build_cloudflare_pages_package.ps1` - gera o pacote hibrido para Cloudflare Pages, mantendo HTML no Cloudflare e assets grandes do Web export no Supabase Storage.
 - `generate_grimoire_catalog.ts` - gera o modulo compartilhado `grimoire_catalog.ts` para `GET /content/grimoire` a partir de `data/definitions/*.json` e a copia estatica do portal em `portal/internal-alpha/assets/grimoire-catalog.json`.
+- `ops_readonly.ts` - CLI ops read-only para manifest/modes/status/audit/reward/session summaries usando publishable key + JWT de usuario, sem service role remoto.
 - `smoke_dev_labs.gd` - smoke do caminho real `OS.execute` para Battle Lab e Progression Lab.
 - `smoke_dev_lab_ui.gd` - smoke visual/comportamental das telas dev-only; salva screenshots quando rodado sem `--headless`.
 - `capture_track15_mobile_ux.gd` - captura screenshots locais da Track 15 em `build/track15_mobile_ux_checkpoint/` quando rodado sem `--headless`.
@@ -41,6 +43,7 @@ Validacao local:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_mode_definitions.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_android_release_keystore.ps1 -ProjectDir . -Mode InternalAlpha
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_runtime_config.gd
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_foundation_surfaces.gd
@@ -75,6 +78,12 @@ DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_USER=draxosmobilealpha
 DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_PASSWORD=<senha-local>
 ```
 
+Antes de ampliar distribuicao Android para alem do teste interno:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_android_release_keystore.ps1 -ProjectDir . -Mode ReleaseCandidate
+```
+
 Release plan seguro Internal Alpha v0:
 
 ```powershell
@@ -103,6 +112,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pag
 ```
 
 Checklist operacional antes de qualquer publicacao nova: `docs/release-ops-checklist.md`.
+
+Ops read-only:
+
+```powershell
+npx -y deno run --allow-net --allow-env tools/ops_readonly.ts --target manifest,modes,status,audit,rewards,sessions --mode-id openworld --format pretty
+```
 
 Publique `build/internal-alpha/cloudflare-pages/` ou `build/internal-alpha/draxos-mobile-cloudflare-pages.zip` no Cloudflare Pages. Depois rode:
 
