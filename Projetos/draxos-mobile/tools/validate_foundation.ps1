@@ -272,6 +272,295 @@ function Assert-BootBudget {
     }
 }
 
+function Assert-JsonObjectKeys {
+    param([object]$Object, [string[]]$ExpectedKeys, [string]$Label)
+    $actual = @($Object.PSObject.Properties.Name | Sort-Object)
+    $expected = @($ExpectedKeys | Sort-Object)
+    $missing = @($expected | Where-Object { $actual -notcontains $_ })
+    $extra = @($actual | Where-Object { $expected -notcontains $_ })
+    if ($missing.Count -gt 0 -or $extra.Count -gt 0) {
+        throw "$Label has invalid keys. Missing: $($missing -join ', '); extra: $($extra -join ', ')."
+    }
+}
+
+function Assert-JsonStringValue {
+    param([object]$Object, [string]$Key, [string]$Expected, [string]$Label)
+    $actual = [string]$Object.$Key
+    if ($actual -ne $Expected) {
+        throw "$Label $Key must be '$Expected'; found '$actual'."
+    }
+}
+
+function Assert-JsonBooleanValue {
+    param([object]$Object, [string]$Key, [bool]$Expected, [string]$Label)
+    $actual = [bool]$Object.$Key
+    if ($actual -ne $Expected) {
+        throw "$Label $Key must be $Expected; found $actual."
+    }
+}
+
+function Assert-ModeDescriptorSchemaStrict {
+    $modeRoot = Join-Path $ProjectPath "data\definitions\modes"
+    Assert-DirectoryExists -Path $modeRoot -Label "mode descriptor root"
+    $officialModes = @("basebuilder", "autobattler", "openworld", "towerdefense", "cardgame")
+    $expectedMetadataKeys = @(
+        "schema_version",
+        "mode_id",
+        "display_name",
+        "summary",
+        "default_slice_id",
+        "status",
+        "release_channel",
+        "public_cta",
+        "fullscreen",
+        "entry",
+        "ruleset",
+        "ownership",
+        "docs",
+        "scaffold"
+    )
+    $expectedEntryKeys = @("route_id", "action_id", "surface", "client_screen_path", "enabled_setting")
+    $expectedRulesetKeys = @("ruleset_id", "ruleset_version", "status", "session_model")
+    $expectedOwnershipKeys = @("build_owner", "data_strategy", "economy_authority", "reward_bridge")
+    $expectedDocsKeys = @("mode_doc", "catalog", "contract")
+    $expectedScaffoldKeys = @("placeholder_path", "playable_from_placeholder", "freeze")
+    $expectedPlaceholderKeys = @(
+        "schema_version",
+        "mode_id",
+        "placeholder_id",
+        "playable",
+        "launchable",
+        "reward_enabled",
+        "runtime",
+        "entry_action",
+        "purpose",
+        "blocked_until",
+        "non_goals"
+    )
+
+    foreach ($modeId in $officialModes) {
+        $metadataRelative = "data\definitions\modes\$modeId\metadata.json"
+        $placeholderRelative = "data\definitions\modes\$modeId\placeholder.json"
+        $metadataPath = Join-Path $ProjectPath $metadataRelative
+        $placeholderPath = Join-Path $ProjectPath $placeholderRelative
+        Assert-FileExists -Path $metadataPath -Label $metadataRelative
+        Assert-FileExists -Path $placeholderPath -Label $placeholderRelative
+
+        $metadata = Get-Content -LiteralPath $metadataPath -Raw | ConvertFrom-Json
+        $placeholder = Get-Content -LiteralPath $placeholderPath -Raw | ConvertFrom-Json
+
+        Assert-JsonObjectKeys -Object $metadata -ExpectedKeys $expectedMetadataKeys -Label $metadataRelative
+        Assert-JsonObjectKeys -Object $metadata.entry -ExpectedKeys $expectedEntryKeys -Label "$metadataRelative entry"
+        Assert-JsonObjectKeys -Object $metadata.ruleset -ExpectedKeys $expectedRulesetKeys -Label "$metadataRelative ruleset"
+        Assert-JsonObjectKeys -Object $metadata.ownership -ExpectedKeys $expectedOwnershipKeys -Label "$metadataRelative ownership"
+        Assert-JsonObjectKeys -Object $metadata.docs -ExpectedKeys $expectedDocsKeys -Label "$metadataRelative docs"
+        Assert-JsonObjectKeys -Object $metadata.scaffold -ExpectedKeys $expectedScaffoldKeys -Label "$metadataRelative scaffold"
+        Assert-JsonObjectKeys -Object $placeholder -ExpectedKeys $expectedPlaceholderKeys -Label $placeholderRelative
+
+        Assert-JsonStringValue -Object $metadata -Key "schema_version" -Expected "mode_descriptor_v1" -Label $metadataRelative
+        Assert-JsonStringValue -Object $metadata -Key "mode_id" -Expected $modeId -Label $metadataRelative
+        Assert-JsonStringValue -Object $placeholder -Key "schema_version" -Expected "mode_placeholder_v1" -Label $placeholderRelative
+        Assert-JsonStringValue -Object $placeholder -Key "mode_id" -Expected $modeId -Label $placeholderRelative
+        Assert-JsonStringValue -Object $placeholder -Key "runtime" -Expected "none" -Label $placeholderRelative
+        Assert-JsonStringValue -Object $placeholder -Key "entry_action" -Expected "" -Label $placeholderRelative
+        Assert-JsonBooleanValue -Object $placeholder -Key "playable" -Expected $false -Label $placeholderRelative
+        Assert-JsonBooleanValue -Object $placeholder -Key "launchable" -Expected $false -Label $placeholderRelative
+        Assert-JsonBooleanValue -Object $placeholder -Key "reward_enabled" -Expected $false -Label $placeholderRelative
+        Assert-JsonBooleanValue -Object $metadata.scaffold -Key "playable_from_placeholder" -Expected $false -Label "$metadataRelative scaffold"
+
+        $declaredPlaceholder = [string]$metadata.scaffold.placeholder_path
+        if ($declaredPlaceholder -ne $placeholderRelative.Replace("\", "/")) {
+            throw "$metadataRelative scaffold placeholder_path must point to $($placeholderRelative.Replace('\', '/')); found $declaredPlaceholder."
+        }
+        foreach ($docKey in $expectedDocsKeys) {
+            $docPath = Join-Path $ProjectPath ([string]$metadata.docs.$docKey)
+            Assert-FileExists -Path $docPath -Label "$metadataRelative docs.$docKey"
+        }
+        if (@($placeholder.blocked_until).Count -lt 3 -or @($placeholder.non_goals).Count -lt 3) {
+            throw "$placeholderRelative must keep explicit blocked_until and non_goals lists."
+        }
+    }
+}
+
+function Assert-ModeHandlerModularity {
+    $entry = Join-Path $ProjectPath "server\functions\modes\index.ts"
+    $handler = Join-Path $ProjectPath "server\functions\modes\mode_handler.ts"
+    $supabaseEntry = Join-Path $ProjectPath "supabase\functions\modes\index.ts"
+    $supabaseHandler = Join-Path $ProjectPath "supabase\functions\modes\mode_handler.ts"
+    Assert-FilesMirror -LeftPath $entry -RightPath $supabaseEntry -Label "modes edge entrypoint"
+    Assert-FilesMirror -LeftPath $handler -RightPath $supabaseHandler -Label "modes handler"
+    Assert-LineBudget -RelativePath "server\functions\modes\index.ts" -MaxLines 80 -Label "server modes edge entrypoint"
+    Assert-LineBudget -RelativePath "server\functions\modes\mode_handler.ts" -MaxLines 1100 -Label "server modes handler"
+    $entryText = Get-Content -LiteralPath $entry -Raw
+    $handlerText = Get-Content -LiteralPath $handler -Raw
+    if (-not $entryText.Contains('import { modeHandler } from "./mode_handler.ts";') -or -not $entryText.Contains("Deno.serve(modeHandler)")) {
+        throw "server/functions/modes/index.ts must only delegate to mode_handler.ts."
+    }
+    foreach ($needle in @("export class ModeHandler", "modeHandler(request: Request)", "handleAdminRoute", "mutationRequestHash", "saveTypeFromRequest")) {
+        if (-not $handlerText.Contains($needle)) {
+            throw "server/functions/modes/mode_handler.ts is missing modularity marker: $needle"
+        }
+    }
+}
+
+function Assert-HotFileBudgets {
+    $failures = New-Object System.Collections.Generic.List[string]
+    foreach ($budget in @(
+        @{ Path = "server\functions\modes\index.ts"; Max = 80; Label = "server modes entrypoint" },
+        @{ Path = "server\functions\modes\mode_handler.ts"; Max = 1100; Label = "server modes handler" },
+        @{ Path = "server\functions\arena\index.ts"; Max = 1800; Label = "server arena endpoint" },
+        @{ Path = "server\functions\battle\index.ts"; Max = 1350; Label = "server battle endpoint" },
+        @{ Path = "modes\boot\flows\surface_action_flow.gd"; Max = 850; Label = "client surface action flow" },
+        @{ Path = "modes\boot\flows\arena_lifecycle_flow.gd"; Max = 550; Label = "client arena lifecycle flow" },
+        @{ Path = "modes\boot\flows\account_session_flow.gd"; Max = 500; Label = "client account session flow" },
+        @{ Path = "modes\boot\surfaces\base_surface_presenter.gd"; Max = 850; Label = "client base surface presenter" },
+        @{ Path = "modes\boot\surfaces\battle_replay_presenter.gd"; Max = 750; Label = "client battle replay presenter" },
+        @{ Path = "online\session_store.gd"; Max = 1000; Label = "session store facade" },
+        @{ Path = "online\session\arena_slice.gd"; Max = 260; Label = "session arena slice" },
+        @{ Path = "online\session\pending_mutation_queue.gd"; Max = 250; Label = "session pending mutation queue" },
+        @{ Path = "online\session\account_save_slice.gd"; Max = 150; Label = "session account/save slice" },
+        @{ Path = "online\session\mode_slice.gd"; Max = 80; Label = "session mode slice" },
+        @{ Path = "online\session\telemetry_slice.gd"; Max = 80; Label = "session telemetry slice" }
+    )) {
+        try {
+            Assert-LineBudget -RelativePath $budget.Path -MaxLines $budget.Max -Label $budget.Label
+        } catch {
+            $failures.Add($_.Exception.Message) | Out-Null
+        }
+    }
+    if ($failures.Count -gt 0) {
+        throw ($failures -join " | ")
+    }
+}
+
+function Assert-DirectModeMutationsAbsent {
+    $failures = New-Object System.Collections.Generic.List[string]
+    foreach ($relative in @(
+        "server\functions\modes\mode_handler.ts",
+        "supabase\functions\modes\mode_handler.ts"
+    )) {
+        $path = Join-Path $ProjectPath $relative
+        Assert-FileExists -Path $path -Label $relative
+        $text = Get-Content -LiteralPath $path -Raw
+        foreach ($pattern in @(
+            'method:\s*"PATCH"',
+            'method:\s*"PUT"',
+            'method:\s*"DELETE"',
+            'mode_(registry|progress|sessions|reward_claims|limit_policies)[^"`r`n]+method:\s*"POST"'
+        )) {
+            if ([regex]::IsMatch($text, $pattern, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase -bor [System.Text.RegularExpressions.RegexOptions]::Singleline)) {
+                $failures.Add("$relative contains forbidden direct mode mutation pattern: $pattern") | Out-Null
+            }
+        }
+    }
+    if ($failures.Count -gt 0) {
+        throw ($failures -join " | ")
+    }
+}
+
+function Assert-DependencyLockSanity {
+    Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\functions\deno.json") -RightPath (Join-Path $ProjectPath "supabase\functions\deno.json") -Label "Deno function config"
+    $denoConfig = Get-Content -LiteralPath (Join-Path $ProjectPath "server\functions\deno.json") -Raw | ConvertFrom-Json
+    if ($denoConfig.compilerOptions.strict -ne $true) {
+        throw "server/functions/deno.json must keep compilerOptions.strict=true."
+    }
+    $checkTask = [string]$denoConfig.tasks.check
+    foreach ($entrypoint in @("arena/index.ts", "lab-runner/index.ts", "modes/index.ts")) {
+        if (-not $checkTask.Contains($entrypoint)) {
+            throw "Deno check task must include $entrypoint."
+        }
+    }
+
+    Push-Location -LiteralPath $RepoPath
+    try {
+        $trackedFiles = & git ls-files
+        if ($LASTEXITCODE -ne 0) {
+            throw "git ls-files exited with code $LASTEXITCODE."
+        }
+    } finally {
+        Pop-Location
+    }
+    $projectTracked = @($trackedFiles | Where-Object { $_.StartsWith("Projetos/draxos-mobile/") })
+    $nodePackageFiles = @($projectTracked | Where-Object { $_ -match '(^|/)package\.json$' })
+    $nodeLockFiles = @($projectTracked | Where-Object { $_ -match '(^|/)(package-lock\.json|pnpm-lock\.yaml|yarn\.lock)$' })
+    if ($nodePackageFiles.Count -gt 0 -and $nodeLockFiles.Count -eq 0) {
+        throw "package.json is tracked without a package lock: $($nodePackageFiles -join ', ')"
+    }
+    if (@($projectTracked | Where-Object { $_ -match '(^|/)node_modules/' }).Count -gt 0) {
+        throw "node_modules must not be tracked."
+    }
+
+    $remoteImportPattern = 'from\s+["''](https?:|npm:|jsr:)|import\s+["''](https?:|npm:|jsr:)'
+    $tsRoots = @("server\functions", "supabase\functions", "server\tests", "tools")
+    $remoteImports = New-Object System.Collections.Generic.List[string]
+    foreach ($rootRelative in $tsRoots) {
+        $root = Join-Path $ProjectPath $rootRelative
+        if (-not (Test-Path -LiteralPath $root -PathType Container)) {
+            continue
+        }
+        foreach ($file in Get-ChildItem -LiteralPath $root -Recurse -File -Include *.ts) {
+            $text = Get-Content -LiteralPath $file.FullName -Raw
+            if ([regex]::IsMatch($text, $remoteImportPattern)) {
+                $remoteImports.Add($file.FullName.Substring($ProjectPath.Length + 1)) | Out-Null
+            }
+        }
+    }
+    if ($remoteImports.Count -gt 0 -and -not (Test-Path -LiteralPath (Join-Path $ProjectPath "deno.lock") -PathType Leaf)) {
+        throw "remote Deno imports require deno.lock. Files: $($remoteImports -join ', ')"
+    }
+}
+
+function Assert-CorsAllowedOrigins {
+    $serverHttp = Join-Path $ProjectPath "server\functions\_shared\http.ts"
+    $supabaseHttp = Join-Path $ProjectPath "supabase\functions\_shared\http.ts"
+    Assert-FilesMirror -LeftPath $serverHttp -RightPath $supabaseHttp -Label "shared CORS helper"
+    $text = Get-Content -LiteralPath $serverHttp -Raw
+    foreach ($header in @("authorization", "apikey", "content-type", "x-draxos-save-type", "x-draxos-api-version")) {
+        if (-not $text.ToLowerInvariant().Contains($header)) {
+            throw "CORS helper must allow header $header."
+        }
+    }
+    if ([regex]::IsMatch($text, '"access-control-allow-origin"\s*:\s*"\*"')) {
+        throw "CORS helper uses wildcard origin; V2 requires an explicit allowed-origin policy."
+    }
+    foreach ($originMarker in @("draxos-mobile-internal-alpha.pages.dev", "localhost", "127.0.0.1")) {
+        if (-not $text.Contains($originMarker)) {
+            throw "CORS helper must declare allowed origin marker: $originMarker"
+        }
+    }
+}
+
+function Assert-LiveDocsReleaseRootFreshness {
+    $latestRoot = "internal-alpha/v0-hardening-platform-v1-20260601-19eb80d"
+    $latestPreview = "https://68452eed.draxos-mobile-internal-alpha.pages.dev"
+    foreach ($entry in @(
+        @{ Base = $ProjectPath; Path = "AGENTS.md"; Needles = @("Hardening Platform V1", $latestRoot, $latestPreview) },
+        @{ Base = $ProjectPath; Path = "README.md"; Needles = @(('Latest release root: `' + $latestRoot + '`'), ('Latest verified preview: `' + $latestPreview + '`')) },
+        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @('Latest published remote package: `Hardening Platform V1`', $latestRoot, $latestPreview) },
+        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("Hardening Platform V1 is the latest remote Internal Alpha publication", $latestRoot, $latestPreview) },
+        @{ Base = $ProjectPath; Path = "docs\hardening-platform-v1-readiness-report.md"; Needles = @('Status: `PUBLISHED_INTERNAL_ALPHA`', $latestRoot, $latestPreview) },
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA", $latestRoot, $latestPreview) },
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA", $latestRoot, $latestPreview) },
+        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("Hardening Platform V1 is the latest remote Internal Alpha baseline", $latestRoot, $latestPreview) }
+    )) {
+        foreach ($needle in $entry.Needles) {
+            Assert-RelativeFileContains -BasePath $entry.Base -RelativePath $entry.Path -Needle $needle
+        }
+    }
+
+    $readme = Get-Content -LiteralPath (Join-Path $ProjectPath "README.md") -Raw
+    foreach ($staleLinePattern in @(
+        'Latest verified preview:\s*`https://(?!68452eed\.)[^`]+`',
+        'Latest release root:\s*`internal-alpha/(?!v0-hardening-platform-v1-20260601-19eb80d)[^`]+`',
+        'Latest APK:\s*`https://[^`]+/internal-alpha/(?!v0-hardening-platform-v1-20260601-19eb80d/)[^`]+`',
+        'Latest PC ZIP:\s*`https://[^`]+/internal-alpha/(?!v0-hardening-platform-v1-20260601-19eb80d/)[^`]+`'
+    )) {
+        if ([regex]::IsMatch($readme, $staleLinePattern)) {
+            throw "README.md has a stale latest release line matching: $staleLinePattern"
+        }
+    }
+}
+
 function Assert-BaselineDriftAbsent {
     $requiredMarkers = @(
         @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Hardening Platform V1", "TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE", "Track 18 - PVE Arena Initial", "Track 13 - Foundation Validation And Release Safety") },
@@ -621,8 +910,24 @@ Invoke-Step -Name "structural readiness" -Stage "DocsOnly" -Command "required fi
     Assert-StructuralReadiness
 }
 
+Invoke-Step -Name "V2 descriptor schema strictness hook" -Stage "DocsOnly" -Command "strict mode descriptor JSON schema checks" -ScriptBlock {
+    Assert-ModeDescriptorSchemaStrict
+}
+
+Invoke-Step -Name "V2 hot file budgets" -Stage "DocsOnly" -Command "server/client/session hot file line budgets" -ScriptBlock {
+    Assert-HotFileBudgets
+}
+
+Invoke-Step -Name "V2 dependency lock sanity" -Stage "DocsOnly" -Command "Deno config mirror, no unpinned package manager drift" -ScriptBlock {
+    Assert-DependencyLockSanity
+}
+
 Invoke-Step -Name "baseline drift guard" -Stage "DocsOnly" -Command "live docs/status baseline markers" -ScriptBlock {
     Assert-BaselineDriftAbsent
+}
+
+Invoke-Step -Name "V2 live-doc release root guard" -Stage "DocsOnly" -Command "live docs must point at current Hardening Platform release root" -ScriptBlock {
+    Assert-LiveDocsReleaseRootFreshness
 }
 
 Invoke-Step -Name "legacy product terms guard" -Stage "DocsOnly" -Command "live product-facing terminology" -ScriptBlock {
@@ -637,6 +942,12 @@ if ($RunServer) {
 Invoke-Step -Name "server/supabase mirrors" -Stage "ServerQuick" -Command "Compare server/supabase mirrors" -ScriptBlock {
     Assert-DirectoriesMirror -LeftPath (Join-Path $ProjectPath "server\functions") -RightPath (Join-Path $ProjectPath "supabase\functions") -Label "server/functions and supabase/functions"
     Assert-DirectoriesMirror -LeftPath (Join-Path $ProjectPath "server\schema\migrations") -RightPath (Join-Path $ProjectPath "supabase\migrations") -Label "server/schema/migrations and supabase/migrations"
+}
+
+Invoke-Step -Name "V2 mode handler/security strictness" -Stage "ServerQuick" -Command "mode handler modularity, no direct mode mutations, CORS allowed origins" -ScriptBlock {
+    Assert-ModeHandlerModularity
+    Assert-DirectModeMutationsAbsent
+    Assert-CorsAllowedOrigins
 }
 
 Invoke-Step -Name "Deno release typecheck light" -Stage "ServerQuick" -Command "npx -y deno check release function/tests" -ScriptBlock {
@@ -916,6 +1227,7 @@ if ($RunRemoteReadOnly) {
         $oldKey = $env:SUPABASE_PUBLISHABLE_KEY
         $oldAccess = $env:DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS
         $oldFullHash = $env:DRAXOS_RELEASE_FULL_HASH
+        $oldRemoteRelease = $env:DRAXOS_REMOTE_RELEASE_SMOKE
         try {
             $env:SUPABASE_URL = $remoteUrl.Trim()
             $env:SUPABASE_PUBLISHABLE_KEY = $remoteKey.Trim()
@@ -925,14 +1237,22 @@ if ($RunRemoteReadOnly) {
             if ($RemoteFullHash) {
                 $env:DRAXOS_RELEASE_FULL_HASH = "1"
             }
+            $env:DRAXOS_REMOTE_RELEASE_SMOKE = "1"
+            Invoke-External -Command "release_manifest_smoke.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
+                & npx -y deno run --allow-net --allow-env server/tests/release_manifest_smoke.ts
+            }
             Invoke-External -Command "release_artifacts_remote_smoke.ts" -WorkingDirectory $ProjectPath -ScriptBlock {
                 & npx -y deno run --allow-net --allow-env --allow-read server/tests/release_artifacts_remote_smoke.ts
+            }
+            Invoke-External -Command "internal_alpha_remote_smoke.ts read-only release/CORS" -WorkingDirectory $ProjectPath -ScriptBlock {
+                & npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts
             }
         } finally {
             $env:SUPABASE_URL = $oldUrl
             $env:SUPABASE_PUBLISHABLE_KEY = $oldKey
             $env:DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS = $oldAccess
             $env:DRAXOS_RELEASE_FULL_HASH = $oldFullHash
+            $env:DRAXOS_REMOTE_RELEASE_SMOKE = $oldRemoteRelease
         }
     }
 } else {

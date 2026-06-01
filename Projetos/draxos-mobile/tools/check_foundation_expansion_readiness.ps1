@@ -5,6 +5,7 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $ProjectPath = (Resolve-Path -LiteralPath $ProjectDir).Path
+$RepoPath = (Resolve-Path -LiteralPath (Join-Path $ProjectPath '..\..')).Path
 $Failures = New-Object System.Collections.Generic.List[string]
 
 function Add-Failure([string]$Message) {
@@ -45,6 +46,139 @@ function Test-FileContains([string]$RelativePath, [string]$Needle) {
     Add-Ok "$RelativePath contains $Needle"
   } else {
     Add-Failure "$RelativePath does not contain $Needle"
+  }
+}
+
+function Test-FileNotContains([string]$RelativePath, [string]$Needle, [string]$Reason) {
+  $path = Join-Path $ProjectPath $RelativePath
+  if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+    Add-Failure "file missing for forbidden content check: $RelativePath"
+    return
+  }
+  $text = Get-Content -LiteralPath $path -Raw
+  if ($text.Contains($Needle)) {
+    Add-Failure "$RelativePath contains forbidden text ($Reason): $Needle"
+  } else {
+    Add-Ok "$RelativePath excludes forbidden text: $Reason"
+  }
+}
+
+function Test-LineBudget([string]$RelativePath, [int]$MaxLines, [string]$Label) {
+  $path = Join-Path $ProjectPath $RelativePath
+  if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+    Add-Failure "line-budget file missing: $RelativePath"
+    return
+  }
+  $lineCount = (Get-Content -LiteralPath $path | Measure-Object -Line).Lines
+  if ($lineCount -le $MaxLines) {
+    Add-Ok "$Label line budget: $lineCount <= $MaxLines"
+  } else {
+    Add-Failure "$Label has $lineCount lines; budget is $MaxLines"
+  }
+}
+
+function Test-JsonObjectKeys([object]$Object, [string[]]$ExpectedKeys, [string]$Label) {
+  $actual = @($Object.PSObject.Properties.Name | Sort-Object)
+  $expected = @($ExpectedKeys | Sort-Object)
+  $missing = @($expected | Where-Object { $actual -notcontains $_ })
+  $extra = @($actual | Where-Object { $expected -notcontains $_ })
+  if ($missing.Count -eq 0 -and $extra.Count -eq 0) {
+    Add-Ok "$Label has strict keys"
+  } else {
+    Add-Failure "$Label has invalid keys. Missing: $($missing -join ', '); extra: $($extra -join ', ')"
+  }
+}
+
+function Test-ModeDescriptorSchemaStrict {
+  $officialModes = @('basebuilder', 'autobattler', 'openworld', 'towerdefense', 'cardgame')
+  $metadataKeys = @(
+    'schema_version',
+    'mode_id',
+    'display_name',
+    'summary',
+    'default_slice_id',
+    'status',
+    'release_channel',
+    'public_cta',
+    'fullscreen',
+    'entry',
+    'ruleset',
+    'ownership',
+    'docs',
+    'scaffold'
+  )
+  $entryKeys = @('route_id', 'action_id', 'surface', 'client_screen_path', 'enabled_setting')
+  $rulesetKeys = @('ruleset_id', 'ruleset_version', 'status', 'session_model')
+  $ownershipKeys = @('build_owner', 'data_strategy', 'economy_authority', 'reward_bridge')
+  $docsKeys = @('mode_doc', 'catalog', 'contract')
+  $scaffoldKeys = @('placeholder_path', 'playable_from_placeholder', 'freeze')
+  $placeholderKeys = @(
+    'schema_version',
+    'mode_id',
+    'placeholder_id',
+    'playable',
+    'launchable',
+    'reward_enabled',
+    'runtime',
+    'entry_action',
+    'purpose',
+    'blocked_until',
+    'non_goals'
+  )
+
+  foreach ($modeId in $officialModes) {
+    $metadataRelative = "data\definitions\modes\$modeId\metadata.json"
+    $placeholderRelative = "data\definitions\modes\$modeId\placeholder.json"
+    $metadataPath = Join-Path $ProjectPath $metadataRelative
+    $placeholderPath = Join-Path $ProjectPath $placeholderRelative
+    if (-not (Test-Path -LiteralPath $metadataPath -PathType Leaf) -or -not (Test-Path -LiteralPath $placeholderPath -PathType Leaf)) {
+      Add-Failure "mode descriptor files missing for $modeId"
+      continue
+    }
+
+    try {
+      $metadata = Get-Content -LiteralPath $metadataPath -Raw | ConvertFrom-Json
+      $placeholder = Get-Content -LiteralPath $placeholderPath -Raw | ConvertFrom-Json
+    } catch {
+      Add-Failure "mode descriptor JSON parse failed for ${modeId}: $($_.Exception.Message)"
+      continue
+    }
+
+    Test-JsonObjectKeys $metadata $metadataKeys $metadataRelative
+    Test-JsonObjectKeys $metadata.entry $entryKeys "$metadataRelative entry"
+    Test-JsonObjectKeys $metadata.ruleset $rulesetKeys "$metadataRelative ruleset"
+    Test-JsonObjectKeys $metadata.ownership $ownershipKeys "$metadataRelative ownership"
+    Test-JsonObjectKeys $metadata.docs $docsKeys "$metadataRelative docs"
+    Test-JsonObjectKeys $metadata.scaffold $scaffoldKeys "$metadataRelative scaffold"
+    Test-JsonObjectKeys $placeholder $placeholderKeys $placeholderRelative
+
+    if ([string]$metadata.schema_version -ne 'mode_descriptor_v1') {
+      Add-Failure "$metadataRelative schema_version must be mode_descriptor_v1"
+    }
+    if ([string]$metadata.mode_id -ne $modeId -or [string]$placeholder.mode_id -ne $modeId) {
+      Add-Failure "$modeId descriptor/placeholder mode_id mismatch"
+    }
+    if ([string]$placeholder.schema_version -ne 'mode_placeholder_v1') {
+      Add-Failure "$placeholderRelative schema_version must be mode_placeholder_v1"
+    }
+    if ([bool]$placeholder.playable -or [bool]$placeholder.launchable -or [bool]$placeholder.reward_enabled) {
+      Add-Failure "$placeholderRelative must keep playable/launchable/reward_enabled false"
+    }
+    if ([string]$placeholder.runtime -ne 'none' -or [string]$placeholder.entry_action -ne '') {
+      Add-Failure "$placeholderRelative must keep runtime none and entry_action empty"
+    }
+    $expectedPlaceholder = $placeholderRelative.Replace('\', '/')
+    if ([string]$metadata.scaffold.placeholder_path -ne $expectedPlaceholder) {
+      Add-Failure "$metadataRelative scaffold placeholder_path must be $expectedPlaceholder"
+    }
+    foreach ($docKey in $docsKeys) {
+      $docPath = Join-Path $ProjectPath ([string]$metadata.docs.$docKey)
+      if (Test-Path -LiteralPath $docPath -PathType Leaf) {
+        Add-Ok "$metadataRelative docs.$docKey exists"
+      } else {
+        Add-Failure "$metadataRelative docs.$docKey missing: $($metadata.docs.$docKey)"
+      }
+    }
   }
 }
 
@@ -99,6 +233,264 @@ function Test-PowerShellParses([string[]]$RelativePaths) {
       Add-Failure "$relative has parse errors: $details"
     } else {
       Add-Ok "$relative parses"
+    }
+  }
+}
+
+function Test-ModeHandlerStrictness {
+  Test-DirectoriesMirror 'server\functions\modes' 'supabase\functions\modes' 'server/supabase modes functions'
+  Test-LineBudget 'server\functions\modes\index.ts' 80 'server modes edge entrypoint'
+  Test-LineBudget 'server\functions\modes\mode_handler.ts' 1100 'server modes handler'
+  Test-LineBudget 'supabase\functions\modes\index.ts' 80 'supabase modes edge entrypoint'
+  Test-LineBudget 'supabase\functions\modes\mode_handler.ts' 1100 'supabase modes handler'
+
+  $entry = Get-Content -LiteralPath (Join-Path $ProjectPath 'server\functions\modes\index.ts') -Raw
+  if ($entry.Contains('mode_handler.ts') -and $entry.Contains('Deno.serve(modeHandler)')) {
+    Add-Ok 'modes edge entrypoint delegates to mode_handler'
+  } else {
+    Add-Failure 'modes edge entrypoint must delegate to mode_handler'
+  }
+
+  foreach ($relative in @('server\functions\modes\mode_handler.ts', 'supabase\functions\modes\mode_handler.ts')) {
+    $path = Join-Path $ProjectPath $relative
+    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+      Add-Failure "mode handler missing: $relative"
+      continue
+    }
+    $text = Get-Content -LiteralPath $path -Raw
+    foreach ($needle in @('export class ModeHandler', 'handleAdminRoute', 'mutationRequestHash', 'saveTypeFromRequest')) {
+      if ($text.Contains($needle)) {
+        Add-Ok "$relative contains modularity marker $needle"
+      } else {
+        Add-Failure "$relative missing modularity marker $needle"
+      }
+    }
+    foreach ($pattern in @('method:\s*"PATCH"', 'method:\s*"PUT"', 'method:\s*"DELETE"')) {
+      if ([regex]::IsMatch($text, $pattern, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)) {
+        Add-Failure "$relative contains forbidden direct mode mutation pattern: $pattern"
+      } else {
+        Add-Ok "$relative excludes direct mode mutation pattern: $pattern"
+      }
+    }
+  }
+}
+
+function Test-HotFileBudgets {
+  foreach ($budget in @(
+    @{ Path = 'server\functions\arena\index.ts'; Max = 1800; Label = 'server arena endpoint' },
+    @{ Path = 'server\functions\battle\index.ts'; Max = 1350; Label = 'server battle endpoint' },
+    @{ Path = 'modes\boot\flows\surface_action_flow.gd'; Max = 850; Label = 'client surface action flow' },
+    @{ Path = 'modes\boot\flows\arena_lifecycle_flow.gd'; Max = 550; Label = 'client arena lifecycle flow' },
+    @{ Path = 'modes\boot\flows\account_session_flow.gd'; Max = 500; Label = 'client account session flow' },
+    @{ Path = 'modes\boot\surfaces\base_surface_presenter.gd'; Max = 850; Label = 'client base surface presenter' },
+    @{ Path = 'modes\boot\surfaces\battle_replay_presenter.gd'; Max = 750; Label = 'client battle replay presenter' },
+    @{ Path = 'online\session_store.gd'; Max = 1000; Label = 'session store facade' },
+    @{ Path = 'online\session\arena_slice.gd'; Max = 260; Label = 'session arena slice' },
+    @{ Path = 'online\session\pending_mutation_queue.gd'; Max = 250; Label = 'session pending mutation queue' },
+    @{ Path = 'online\session\account_save_slice.gd'; Max = 150; Label = 'session account/save slice' },
+    @{ Path = 'online\session\mode_slice.gd'; Max = 80; Label = 'session mode slice' },
+    @{ Path = 'online\session\telemetry_slice.gd'; Max = 80; Label = 'session telemetry slice' }
+  )) {
+    Test-LineBudget $budget.Path $budget.Max $budget.Label
+  }
+}
+
+function Test-DependencyLockSanity {
+  Test-DirectoriesMirror 'server\functions' 'supabase\functions' 'server/functions and supabase/functions'
+  $serverDenoPath = Join-Path $ProjectPath 'server\functions\deno.json'
+  $supabaseDenoPath = Join-Path $ProjectPath 'supabase\functions\deno.json'
+  if ((Test-Path -LiteralPath $serverDenoPath -PathType Leaf) -and (Test-Path -LiteralPath $supabaseDenoPath -PathType Leaf)) {
+    $serverHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $serverDenoPath).Hash
+    $supabaseHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $supabaseDenoPath).Hash
+    if ($serverHash -eq $supabaseHash) {
+      Add-Ok 'Deno config mirrors are aligned'
+    } else {
+      Add-Failure 'server/functions/deno.json and supabase/functions/deno.json differ'
+    }
+    $deno = Get-Content -LiteralPath $serverDenoPath -Raw | ConvertFrom-Json
+    if ($deno.compilerOptions.strict -eq $true) {
+      Add-Ok 'Deno strict compiler option enabled'
+    } else {
+      Add-Failure 'Deno strict compiler option must stay enabled'
+    }
+    foreach ($entrypoint in @('arena/index.ts', 'lab-runner/index.ts', 'modes/index.ts')) {
+      if ([string]$deno.tasks.check -like "*$entrypoint*") {
+        Add-Ok "Deno check task includes $entrypoint"
+      } else {
+        Add-Failure "Deno check task missing $entrypoint"
+      }
+    }
+  } else {
+    Add-Failure 'Deno config missing under server/functions or supabase/functions'
+  }
+
+  Push-Location -LiteralPath $RepoPath
+  try {
+    $tracked = & git ls-files
+  } finally {
+    Pop-Location
+  }
+  $projectTracked = @($tracked | Where-Object { $_.StartsWith('Projetos/draxos-mobile/') })
+  $packageFiles = @($projectTracked | Where-Object { $_ -match '(^|/)package\.json$' })
+  $lockFiles = @($projectTracked | Where-Object { $_ -match '(^|/)(package-lock\.json|pnpm-lock\.yaml|yarn\.lock)$' })
+  if ($packageFiles.Count -gt 0 -and $lockFiles.Count -eq 0) {
+    Add-Failure "package.json tracked without Node lockfile: $($packageFiles -join ', ')"
+  } else {
+    Add-Ok 'Node package/lock sanity is clean'
+  }
+  if (@($projectTracked | Where-Object { $_ -match '(^|/)node_modules/' }).Count -gt 0) {
+    Add-Failure 'node_modules must not be tracked'
+  } else {
+    Add-Ok 'node_modules is not tracked'
+  }
+
+  $remoteImportPattern = 'from\s+["''](https?:|npm:|jsr:)|import\s+["''](https?:|npm:|jsr:)'
+  $remoteImports = New-Object System.Collections.Generic.List[string]
+  foreach ($rootRelative in @('server\functions', 'supabase\functions', 'server\tests', 'tools')) {
+    $root = Join-Path $ProjectPath $rootRelative
+    if (-not (Test-Path -LiteralPath $root -PathType Container)) {
+      continue
+    }
+    foreach ($file in Get-ChildItem -LiteralPath $root -Recurse -File -Include *.ts) {
+      $text = Get-Content -LiteralPath $file.FullName -Raw
+      if ([regex]::IsMatch($text, $remoteImportPattern)) {
+        $remoteImports.Add($file.FullName.Substring($ProjectPath.Length + 1)) | Out-Null
+      }
+    }
+  }
+  if ($remoteImports.Count -gt 0 -and -not (Test-Path -LiteralPath (Join-Path $ProjectPath 'deno.lock') -PathType Leaf)) {
+    Add-Failure "remote Deno imports require deno.lock. Files: $($remoteImports -join ', ')"
+  } else {
+    Add-Ok 'Deno remote import lock sanity is clean'
+  }
+}
+
+function Test-CorsAllowedOrigins {
+  $serverHttp = Join-Path $ProjectPath 'server\functions\_shared\http.ts'
+  $supabaseHttp = Join-Path $ProjectPath 'supabase\functions\_shared\http.ts'
+  if ((Test-Path -LiteralPath $serverHttp -PathType Leaf) -and (Test-Path -LiteralPath $supabaseHttp -PathType Leaf)) {
+    $serverHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $serverHttp).Hash
+    $supabaseHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $supabaseHttp).Hash
+    if ($serverHash -eq $supabaseHash) {
+      Add-Ok 'CORS helper mirror is aligned'
+    } else {
+      Add-Failure 'server/supabase CORS helpers differ'
+    }
+    $text = Get-Content -LiteralPath $serverHttp -Raw
+    foreach ($header in @('authorization', 'apikey', 'content-type', 'x-draxos-save-type', 'x-draxos-api-version')) {
+      if ($text.ToLowerInvariant().Contains($header)) {
+        Add-Ok "CORS allows header $header"
+      } else {
+        Add-Failure "CORS must allow header $header"
+      }
+    }
+    if ([regex]::IsMatch($text, '"access-control-allow-origin"\s*:\s*"\*"')) {
+      Add-Failure 'CORS uses wildcard origin; V2 requires explicit allowed origins'
+    } else {
+      Add-Ok 'CORS does not use wildcard origin'
+    }
+    foreach ($origin in @('draxos-mobile-internal-alpha.pages.dev', 'localhost', '127.0.0.1')) {
+      if ($text.Contains($origin)) {
+        Add-Ok "CORS declares allowed origin marker $origin"
+      } else {
+        Add-Failure "CORS missing allowed origin marker $origin"
+      }
+    }
+  } else {
+    Add-Failure 'CORS helper missing under server/functions/_shared or supabase/functions/_shared'
+  }
+}
+
+function Test-ClientSecretsAbsent {
+  $filesToScan = New-Object System.Collections.Generic.List[string]
+  foreach ($relative in @(
+    'export_presets.cfg',
+    'portal\index.html',
+    'portal\manifest.json',
+    'build\internal-alpha\publication-report.json',
+    'build\internal-alpha\release-plan.json',
+    'build\internal-alpha\release-plan.md'
+  )) {
+    $path = Join-Path $ProjectPath $relative
+    if (Test-Path -LiteralPath $path -PathType Leaf) {
+      $filesToScan.Add($path) | Out-Null
+    }
+  }
+  foreach ($rootRelative in @('build\internal-alpha\publish', 'build\internal-alpha\cloudflare-pages')) {
+    $root = Join-Path $ProjectPath $rootRelative
+    if (Test-Path -LiteralPath $root -PathType Container) {
+      Get-ChildItem -LiteralPath $root -Recurse -File -Include *.json, *.html, *.js, *.txt |
+        ForEach-Object { $filesToScan.Add($_.FullName) | Out-Null }
+    }
+  }
+
+  $patterns = @(
+    'service_role',
+    'sb_secret_',
+    'sb_service_',
+    'SUPABASE_SERVICE_ROLE_KEY',
+    'DATABASE_PASSWORD',
+    'DB_PASSWORD',
+    'KEYSTORE_PASSWORD',
+    'DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_PASSWORD'
+  )
+  foreach ($file in $filesToScan) {
+    $text = Get-Content -LiteralPath $file -Raw
+    foreach ($pattern in $patterns) {
+      if ($text.IndexOf($pattern, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) {
+        Add-Failure "secret-like token '$pattern' found in client/release artifact: $file"
+      }
+    }
+  }
+
+  foreach ($name in @(
+    'DRAXOS_MOBILE_SUPABASE_PUBLISHABLE_KEY',
+    'SUPABASE_PUBLISHABLE_KEY',
+    'DRAXOS_MOBILE_UPDATE_MANIFEST_URL',
+    'DRAXOS_MOBILE_RUNTIME_CONFIG_JSON'
+  )) {
+    $value = [Environment]::GetEnvironmentVariable($name, 'Process')
+    if ($value) {
+      $normalized = $value.Trim().ToLowerInvariant()
+      if ($normalized.Contains('service_role') -or
+          $normalized.StartsWith('sb_secret_') -or
+          $normalized.StartsWith('sb_service_') -or
+          $normalized.Contains('database_password') -or
+          $normalized.Contains('db_password') -or
+          $normalized.Contains('keystore_password')) {
+        Add-Failure "environment variable $name contains a secret-like value"
+      }
+    }
+  }
+
+  Push-Location -LiteralPath $RepoPath
+  try {
+    $tracked = & git ls-files
+  } finally {
+    Pop-Location
+  }
+  foreach ($file in $tracked) {
+    foreach ($forbidden in @('.env.internal-alpha.local', '.env.local', '.env.production', '.env.remote', '.p12', '.pfx', '.keystore')) {
+      if ($file.EndsWith($forbidden, [System.StringComparison]::OrdinalIgnoreCase)) {
+        Add-Failure "secret-bearing local file appears tracked: $file"
+      }
+    }
+  }
+  Add-Ok 'client/release secret scan completed'
+}
+
+function Test-LiveDocReleaseRootFreshness {
+  $latestRoot = 'internal-alpha/v0-hardening-platform-v1-20260601-19eb80d'
+  $latestPreview = 'https://68452eed.draxos-mobile-internal-alpha.pages.dev'
+  foreach ($check in @(
+    @{ Path = 'AGENTS.md'; Needles = @('Hardening Platform V1', $latestRoot, $latestPreview) },
+    @{ Path = 'README.md'; Needles = @(('Latest release root: `' + $latestRoot + '`'), ('Latest verified preview: `' + $latestPreview + '`')) },
+    @{ Path = 'implementation\current-status.md'; Needles = @('Latest published remote package: `Hardening Platform V1`', $latestRoot, $latestPreview) },
+    @{ Path = 'docs\agent-operating-manual.md'; Needles = @('Hardening Platform V1 is the latest remote Internal Alpha publication', $latestRoot, $latestPreview) },
+    @{ Path = 'docs\hardening-platform-v1-readiness-report.md'; Needles = @('Status: `PUBLISHED_INTERNAL_ALPHA`', $latestRoot, $latestPreview) }
+  )) {
+    foreach ($needle in $check.Needles) {
+      Test-FileContains $check.Path $needle
     }
   }
 }
@@ -195,6 +587,13 @@ foreach ($relative in @(
 
 Test-DirectoriesMirror 'server\schema\migrations' 'supabase\migrations' 'server/schema/migrations and supabase/migrations'
 Test-DirectoriesMirror 'server\functions' 'supabase\functions' 'server/functions and supabase/functions'
+Test-LiveDocReleaseRootFreshness
+Test-ModeDescriptorSchemaStrict
+Test-ModeHandlerStrictness
+Test-HotFileBudgets
+Test-DependencyLockSanity
+Test-CorsAllowedOrigins
+Test-ClientSecretsAbsent
 
 Test-FileContains 'docs\foundation-expansion-readiness.md' 'QA/OPS CONTRACTS'
 Test-FileContains 'docs\foundation-expansion-readiness.md' 'Matriz De Lanes'

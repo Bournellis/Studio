@@ -2,8 +2,8 @@
 
 DraxosMobile is the Godot/Supabase project for Android, PC executable and PC browser. It is now a PVE Arena-first async autobattler with Refugio/Base management, later PVP, social systems and server-authoritative progression.
 
-**Status:** `P2_IMPLEMENTACAO - TRACK_21_ARENA_LOOP_UNLOCK_FRICTION_PUBLISHED_INTERNAL_ALPHA`
-**Baseline:** Track 00-15 integrated; Track 13 release safety and Track 14 agent ops baseline preserved; Track 16 is the latest technical package and has not been promoted as the current product focus. Foundation Closeout, Lab Track 16 Alignment, Foundation Final Polish, Track 18 Arena PVE Initial, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are the current pre-tuning foundation/Arena baseline.
+**Status:** `P2_IMPLEMENTACAO - HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA`
+**Baseline:** Hardening Platform V1 is the latest remote Internal Alpha baseline. Track 00-15 integrated; Track 13 release safety and Track 14 agent ops baseline preserved; Track 16 is the latest technical package and has not been promoted as the current product focus. Foundation Closeout, Lab Track 16 Alignment, Foundation Final Polish, Track 18 Arena PVE Initial, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction remain the preserved pre-tuning foundation/Arena baseline.
 
 ## Current Focus
 
@@ -13,7 +13,7 @@ The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foun
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Final Polish, Track 18 PVE Arena Initial, Track 19 Arena Consistency Pass, Track 20 Season 1 Arena Calibration, Lab Web Export Guard, Remote Lab Runner and Track 21 Arena Loop Unlock/Friction are published on the Internal Alpha channel. First Session Clarity v1 was manually approved on `2026-05-30`; Refugio, Preparacao and battle summary now explain level, power, battle XP, next milestones and the next first-session action using existing snapshots.
+Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Final Polish, Track 18 PVE Arena Initial, Track 19 Arena Consistency Pass, Track 20 Season 1 Arena Calibration, Lab Web Export Guard, Remote Lab Runner, Track 21 Arena Loop Unlock/Friction and Hardening Platform V1 are published on the Internal Alpha channel. First Session Clarity v1 was manually approved on `2026-05-30`; Refugio, Preparacao and battle summary now explain level, power, battle XP, next milestones and the next first-session action using existing snapshots.
 
 First Session Clarity v1 keeps the same historical foundation and adds client-only guidance so the old shell loop reads clearly when referenced. Foundation Closeout and Final Polish now make account/save, ruleset publication, idempotent retry, admin auditability, shell budgets and local RLS/admin validation the gate before tuning. Track 21 Arena Loop Unlock/Friction is the latest Arena loop package for new agents: tutorial of 1 duel, first arenas of 3 duels, locked loadout context, temporary stat buffs, HP reset per duel, no combat cooldown, live-stock potion consumption in Arena, summary-only claim, public buff select endpoint, data-driven Arena selection, XP -> level recalculation on completion and direct continue-in-Arena flow. Remote Lab Runner remains preserved in the alpha baseline, keeping Battle Lab Dev and Progression Lab Dev usable in Web export through Edge `lab-runner` with the same Supabase email/password Internal Alpha account gate.
 
@@ -102,8 +102,8 @@ git status --short
 - Version code: `1`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
-- Latest verified preview: `https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`
-- Latest release root: `internal-alpha/v0-track21-arena-loop-20260531-df9f12d`
-- Latest APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-track21-arena-loop-20260531-df9f12d/downloads/draxos-mobile-alpha.apk`
-- Latest PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-track21-arena-loop-20260531-df9f12d/downloads/draxos-mobile-alpha.zip`
+- Latest verified preview: `https://68452eed.draxos-mobile-internal-alpha.pages.dev`
+- Latest release root: `internal-alpha/v0-hardening-platform-v1-20260601-19eb80d`
+- Latest APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-hardening-platform-v1-20260601-19eb80d/downloads/draxos-mobile-alpha.apk`
+- Latest PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-hardening-platform-v1-20260601-19eb80d/downloads/draxos-mobile-alpha.zip`
 - Known release risk: Android APK used `debug_fallback` because no release keystore was configured in the local env.
