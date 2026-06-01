@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`S1_ARENA_CALIBRATION_PUBLISHED_INTERNAL_ALPHA`, Track 20 publicado em `internal-alpha/v0-s1-arena-calibration-20260531-c40c2a6`, preservando Track 19 Arena Consistency Pass, Remote Lab Runner, Track 13 release safety e Track 14 agent ops)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`TRACK_21_ARENA_LOOP_UNLOCK_FRICTION_PACKAGED_LOCAL`, Track 21 local sobre Track 20 publicado em `internal-alpha/v0-s1-arena-calibration-20260531-c40c2a6`, preservando Track 19 Arena Consistency Pass, Remote Lab Runner, Track 13 release safety e Track 14 agent ops)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -28,10 +28,10 @@
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas, com Track 13 release safety e Track 14 agent ops preservados. Track 20 Season 1 Arena Calibration e a publicacao remota atual (`internal-alpha/v0-s1-arena-calibration-20260531-c40c2a6`, preview `https://c20c0ff3.draxos-mobile-internal-alpha.pages.dev/web/index.html`) e promove a matriz S1 para Battle Lab, Progression Lab, catalogo gerado, backend e cliente: `arena_id + difficulty_id`, 27 tiers de Arena, rewards por `arena_id:difficulty_id`, first-clear/repeat por tier, level/power recomendado e selecao de dificuldade server-driven. Remote Lab Runner segue preservado para Web Labs e PVP passa a modo posterior/competitivo, com bots apenas como fallback/simulacao.
+- Baseline atual: Track 00-15 integradas, com Track 13 release safety e Track 14 agent ops preservados. Track 21 Arena Loop Unlock And Friction Pass esta empacotada localmente (`internal-alpha/v0-track21-arena-loop-20260531-local`) e corrige XP->level em recompensa de Arena, unlock pos-tutorial e friccao de start/summary. Track 20 Season 1 Arena Calibration segue como publicacao remota atual (`internal-alpha/v0-s1-arena-calibration-20260531-c40c2a6`, preview `https://c20c0ff3.draxos-mobile-internal-alpha.pages.dev/web/index.html`) e promove a matriz S1 para Battle Lab, Progression Lab, catalogo gerado, backend e cliente: `arena_id + difficulty_id`, 27 tiers de Arena, rewards por `arena_id:difficulty_id`, first-clear/repeat por tier, level/power recomendado e selecao de dificuldade server-driven. Remote Lab Runner segue preservado para Web Labs e PVP passa a modo posterior/competitivo, com bots apenas como fallback/simulacao.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation` e Supabase/Cloudflare CLI autenticada. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, PVP, tuning numerico amplo, novas armas, novas spells, economia ampla, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
-- Proximo passo: fazer playtest humano da publicacao Track 20 da Arena PVE tutorial/3 duelos/multidificuldade, consumo de pocao, rewards repeat e Web Labs; tuning fino so depois do playtest.
+- Proximo passo: fazer deploy remoto aprovado da Track 21 e testar novo save: tutorial -> voltar Arena -> desbloquear 3 duelos -> iniciar sem confirmacao redundante; tuning fino so depois do loop destravar.
 
 ## rpg-isometrico
 

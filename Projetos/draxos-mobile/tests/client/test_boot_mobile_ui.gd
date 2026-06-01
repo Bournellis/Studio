@@ -545,6 +545,86 @@ func test_arena_selection_keeps_fixed_buttons_only_for_dev_fallback() -> void:
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_EARLY))
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.arena_start_action("arena_tutorial_cinzas")))
 
+func test_arena_selection_recommends_next_uncompleted_arena_after_tutorial() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	assert_true(SessionStore.apply_arena_result({
+		"ok": true,
+		"_client": {"save_type": SessionStore.SAVE_TYPE_NORMAL},
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"progress": {
+				"tutorial_completed": true,
+				"metadata": {
+					"completed_tiers": {"arena_tutorial_cinzas:s1_d00_intro": true},
+					"completed_arenas": {"arena_tutorial_cinzas": true},
+				},
+			},
+			"arenas": [
+				{
+					"id": "arena_tutorial_cinzas",
+					"display_name": "Tutorial: Cinzas Do Refugio",
+					"duel_count": 1,
+					"default_difficulty_id": "s1_d00_intro",
+					"unlocked": true,
+					"difficulties": [
+						{"difficulty_id": "s1_d00_intro", "max_steps": 1, "recommended_level_min": 1, "recommended_level_max": 3, "unlocked": true},
+					],
+				},
+				{
+					"id": "arena_cinzas_curta",
+					"display_name": "Arena Curta Das Cinzas",
+					"duel_count": 3,
+					"default_difficulty_id": "s1_d00_intro",
+					"unlocked": true,
+					"difficulties": [
+						{"difficulty_id": "s1_d00_intro", "max_steps": 3, "recommended_level_min": 3, "recommended_level_max": 4, "recommended_power_min": 160, "recommended_power_max": 260, "unlocked": true},
+					],
+				},
+			],
+		},
+	}))
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	await get_tree().process_frame
+
+	var next_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta", "s1_d00_intro")
+	assert_true(boot._action_buttons.has(next_action))
+	assert_not_null(_find_button_by_text(boot._content_body, "Continuar: Arena Curta Das Cinzas | s1_d00_intro"))
+	assert_true(_label_tree_contains(boot._content_body, "Proximo desafio: 3 duelos"))
+
+func test_arena_summary_continues_to_arena_instead_of_reward_claim_copy() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"arenas": [],
+		"active_attempt": {
+			"attempt_id": "attempt-summary",
+			"arena_id": "arena_tutorial_cinzas",
+			"difficulty_id": "s1_d00_intro",
+			"status": "completed",
+			"duel_count": 1,
+			"duels_won": 1,
+			"locked_loadout_hash": "sha256:test",
+		},
+		"summary": {
+			"status": "completed",
+			"duels_won": 1,
+			"duels_total": 1,
+			"reward_label": "COMPLETION_REWARD_APPLIED_ON_DUEL_CLEAR",
+		},
+	}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SUMMARY)
+	await get_tree().process_frame
+
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY))
+	assert_not_null(_find_button_by_text(boot._content_body, "Continuar na Arena"))
+	assert_null(_find_button_by_text(boot._content_body, "Confirmar resumo"))
+	assert_true(_label_tree_contains(boot._content_body, "ja foi aplicada no ultimo duelo"))
+
 func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -> void:
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
 	var boot = BootScreenScript.new()

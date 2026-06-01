@@ -4,18 +4,18 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Season 1 Arena Calibration`
-- Active stage status: `PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Track 21 - Arena Loop Unlock And Friction Pass`
+- Active stage status: `PACKAGED_INTERNAL_ALPHA_LOCAL`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published remote package: `Track 20 - Season 1 Arena Calibration`
-- Latest implemented package: `Track 20 - Season 1 Arena Calibration` on branch
-  `codex/draxos-mobile/s1-arena-calibration-integration`.
-- Active follow-up: run human playtest from the published Track 20 Internal
-  Alpha across tutorial, 3-duel, difficulty selection, rewards, repeat flow and
-  Web Labs before fine tuning.
+- Latest implemented package: `Track 21 - Arena Loop Unlock And Friction Pass`
+  on branch `codex/draxos-mobile/track21-arena-loop-unlock-friction`.
+- Active follow-up: deploy the Track 21 hotfix remotely when explicitly
+  approved, then replay the new-save Arena tutorial -> 3-duel unlock loop before
+  fine tuning.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -57,6 +57,14 @@ selection. The package keeps global combat, XP formula, `players.power`,
 weapons, spells, passives, familiars, potions and assets untouched; Arena tuning
 power remains lab/runtime metadata for PVE enemy scaling only.
 
+Track 21 - Arena Loop Unlock And Friction Pass is the latest implemented local
+package. It fixes the tutorial unlock blocker by updating `players.level` with
+Arena completion XP in `arena_record_duel_v1`, keeps the idempotent reward path
+single-apply, routes Arena start directly into the active duel screen, and keeps
+post-summary continuation inside Arena selection after a read-only claim ack.
+Remote Track 20 remains the latest published preview until the Track 21
+migration/client package is deployed with explicit remote approval.
+
 Current product reading: this is a strong prototype base for refinement. The
 current product direction is Arena PVE initial, documented in
 `docs/pve-arena-initial-direction.md`. Names, spells, weapons, economy values,
@@ -71,7 +79,7 @@ Historical foundation shell loop from Foundation Loop UX Pass 01
 
 Product loop now selected for the current package:
 
-`Refugio -> Arena PVE -> lock loadout -> duel list -> temporary stat buffs and behavior prep between duels -> rewards -> upgrades`
+`Refugio -> Arena PVE selection -> start attempt (loadout locks) -> duel list -> temporary stat buffs and behavior prep between duels -> rewards -> continue in Arena -> upgrades`
 
 The major foundation baseline is:
 
@@ -365,6 +373,56 @@ Next after Track 20: run a human playtest focused on tutorial, multiple
 difficulties of the 3-duel arena, locked loadout, buff choice, potion
 consumption, summary ack, repeat rewards and Web Battle/Progression Labs before
 tuning numbers finer.
+
+## Track 21 - Arena Loop Unlock And Friction Pass
+
+Track 21 is implemented and packaged locally on `2026-05-31` as a hotfix over
+Track 20 after the first playtest found that tutorial completion did not unlock
+the next Arena tier.
+
+Implemented in Track 21:
+
+- Added mirrored migration `202605310004_arena_loop_unlock_friction.sql` with
+  `foundation_level_for_xp_v1` and an updated `arena_record_duel_v1`.
+- Arena completion rewards now update `players.xp` and `players.level` in the
+  same transaction, preserving idempotency for repeated
+  `request_id/request_hash`.
+- The tutorial first-clear XP now reaches level 3 and
+  `arena_cinzas_curta:s1_d00_intro` unlocks in the next `arena/pve/state`.
+- Arena start now routes directly to `ROUTE_ARENA_ACTIVE`; the loadout lock is
+  informational instead of a required confirmation step.
+- Completed-attempt summary now says `Continuar na Arena`, calls claim only as
+  a compatibility ack/read-only summary, refreshes remote Arena state and
+  returns to Arena selection.
+- Arena selection highlights the next recommended unlocked tier before the full
+  server-driven list.
+
+Validation and local publication completed:
+
+- `git diff --check`: passed.
+- Focused Deno tests for Arena loop unlock, catalog, difficulties and schema:
+  passed.
+- `npx -y deno task --cwd server/functions check`: passed.
+- `npx -y deno task --cwd supabase/functions check`: passed.
+- Godot `validate.gd`: passed, 140 tests / 2376 asserts.
+- `smoke_responsive_layout.gd`: passed.
+- `smoke_exports.gd`: passed.
+- `validate_foundation.ps1 -Profile Quick`: passed.
+- `export_internal_alpha.ps1`: passed with Android `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan`: passed.
+- `publish_internal_alpha.ps1 -Mode Package`: passed.
+
+Local Track 21 Internal Alpha artifacts:
+
+- Release root: `internal-alpha/v0-track21-arena-loop-20260531-local`.
+- Publish dir: `build/internal-alpha/publish`.
+- Remote deploy: not executed. Remote mutation still requires explicit approval
+  and `-ConfirmRemoteMutation`.
+
+Next after Track 21: deploy the hotfix to the remote Internal Alpha when
+approved, then test a new save through tutorial clear, Arena return, first
+3-duel unlock and starting the next Arena without the redundant loadout
+confirmation.
 
 ## Lab Web Export Guard Hotfix
 

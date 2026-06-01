@@ -112,6 +112,7 @@
 | `implementation/tracks/track-17-foundation-expansion-readiness/` | `VIVO` | Delivered foundation package for future parallel expansion, Foundation Closeout, Foundation Final Polish and production readiness. |
 | `implementation/tracks/track-18-pve-arena-initial/` | `VIVO` | Active implementation package for Arena PVE initial: contracts, backend, client shell, labs and validation. |
 | `implementation/tracks/track-20-season-1-arena-calibration/` | `VIVO` | Current local calibration package: S1 Arena tier catalog, labs, backend/client runtime promotion and local Internal Alpha package. |
+| `implementation/tracks/track-21-arena-loop-unlock-friction/` | `VIVO` | Current hotfix package for tutorial unlock, level recalculation and reduced Arena flow friction. |
 
 ## Design Archive
 
@@ -126,12 +127,12 @@
 - A live doc must not tell agents to start from Track 04, Track 08, Track 10, Track 14, Track 15 or Track 16 as the current stage.
 - A live doc must treat `implementation/current-status.md` as the active stage/status source after the user chooses the next package.
 - A live doc must treat `docs/pve-arena-initial-direction.md` as the current product direction after Foundation Final Polish: Arena PVE initial first, PVP later.
-- A live doc may treat `docs/pve-arena-v1.md` as the current implemented/published contract package for Arena PVE, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough. Track 20 Season 1 Arena Calibration is the current published tuning/runtime package and latest remote Internal Alpha publication.
+- A live doc may treat `docs/pve-arena-v1.md` as the current implemented/published contract package for Arena PVE, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough. Track 20 Season 1 Arena Calibration is the current published tuning/runtime package and latest remote Internal Alpha publication; Track 21 is the current local hotfix package until remotely deployed.
 - A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation beyond what the Arena PVE initial package explicitly needs.
 - Foundation Audit must preserve the post-login loop as app shell, but the first playable product loop is now Refugio -> Arena PVE -> locked loadout -> duel list -> buffs/behavior between duels -> rewards -> upgrades.
 - Foundation Expansion Readiness/Foundation Closeout/Foundation Final Polish is now the delivered pre-expansion gate before Arena PVE implementation/tuning; base builder, PVP, expanded social or a real minigame are later packages unless explicitly selected.
 - New backend/data/content features must use `account_profiles` + `game_saves`, `foundation_ruleset_v0`/registry, idempotency v1 and explicit contracts.
-- Foundation Loop UX Pass 01 was manually accepted on Android/Windows/Web on `2026-05-29` and is a historical app-shell UX baseline. The current product loop is Arena PVE first: Refugio -> Arena PVE -> locked loadout -> duel list -> buffs/behavior between duels -> rewards -> upgrades.
+- Foundation Loop UX Pass 01 was manually accepted on Android/Windows/Web on `2026-05-29` and is a historical app-shell UX baseline. The current product loop is Arena PVE first: Refugio -> Arena PVE selection -> start attempt with loadout locked -> duel list -> buffs/behavior between duels -> rewards -> continue in Arena -> upgrades.
 - Visual/layout changes must respect `docs/foundation-responsive-layout-contract.md` and pass `tools/smoke_responsive_layout.gd` before publication.
 - Historical docs can keep old language when they are clearly historical.
 - Product-facing language should use Instrumento Ritual, Doutrina and Familiar.

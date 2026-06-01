@@ -163,7 +163,7 @@ func choose_buff(host: Node, buff_id: String) -> void:
 	await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, "Buff aplicado.")
 
 func claim_summary(host: Node) -> void:
-	if not bool(host.call("_require_account", "Entre antes de receber recompensa da Arena.")):
+	if not bool(host.call("_require_account", "Entre antes de continuar a Arena.")):
 		return
 	var attempt := SessionStore.active_arena_attempt()
 	var attempt_id := _attempt_id(attempt)
@@ -171,7 +171,7 @@ func claim_summary(host: Node) -> void:
 		_set_error_text(host, "Nenhuma tentativa de Arena para concluir.")
 		return
 
-	host.call("_set_busy", true, "Recebendo recompensa...")
+	host.call("_set_busy", true, "Confirmando resumo...")
 	var mutation := SessionStore.prepare_pending_mutation(
 		"arena/pve/claim",
 		"arena:%s" % SessionStore.active_save_type,
@@ -186,9 +186,9 @@ func claim_summary(host: Node) -> void:
 	)
 	if not bool(result.get("ok", false)) and _dev_fixtures_enabled():
 		result = _fixture_result(_fixture_claim_summary(attempt))
-	if not await _complete_arena_mutation(host, mutation, result, "", "Recompensa recebida."):
+	if not await _complete_arena_mutation(host, mutation, result, "", "Resumo confirmado."):
 		return
-	host.call("_show_refuge_root", "Arena PVE concluida. Use recursos para evoluir base e build.")
+	await _refresh_arena_selection(host, "Arena atualizada. Proximo desafio pronto.")
 
 func play_arena_replay(host: Node, battle_log: Dictionary, rewards: Dictionary) -> void:
 	if str(battle_log.get("schema_version", "")) != "battle_log_v1":
@@ -257,7 +257,22 @@ func _start_attempt(host: Node, arena_id: String, difficulty_id: String, difficu
 	)
 	if not bool(result.get("ok", false)) and _dev_fixtures_enabled():
 		result = _fixture_attempt_result(_fixture_start_attempt(arena_id, difficulty_id, difficulty_tier))
-	await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_LOADOUT, "Arena iniciada.")
+	await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, "Arena iniciada. Loadout travado.")
+
+func _refresh_arena_selection(host: Node, success_text: String) -> void:
+	host.call("_set_busy", true, "Atualizando Arena PVE...")
+	var state_result: Dictionary = await SupabaseClient.fetch_arena_state(SessionStore.access_token)
+	if not bool(state_result.get("ok", false)) and _dev_fixtures_enabled():
+		state_result = _fixture_result(_base_arena_state())
+	if not bool(state_result.get("ok", false)):
+		host.call("_fail_with_error", state_result)
+		return
+	if not SessionStore.apply_arena_result(state_result):
+		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		return
+	SessionStore.save_cache()
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+	host.call("_set_busy", false, success_text)
 
 func _complete_arena_mutation(host: Node, mutation: Dictionary, result: Dictionary, route_after_success: String, success_text: String) -> bool:
 	if not bool(result.get("ok", false)):

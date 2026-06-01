@@ -5,9 +5,11 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 
 func render_selection(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
-	_call_host(host, "_add_body_text", ["Arena PVE inicial: escolha uma lista curta de duelos, trave o loadout e avance por buffs temporarios."])
+	_call_host(host, "_add_body_text", ["Arena PVE inicial: escolha uma lista curta de duelos. O loadout trava ao iniciar, e buffs temporarios aparecem entre vitorias."])
 	if _has_remote_arena_state(arena):
-		_render_available_arenas(host, _as_array(arena.get("arenas", [])))
+		var arenas := _as_array(arena.get("arenas", []))
+		_render_recommended_arena(host, arenas)
+		_render_available_arenas(host, arenas)
 	else:
 		_render_dev_fallback_arenas(host)
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
@@ -52,9 +54,9 @@ func render_summary(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
 	var attempt := SessionStore.active_arena_attempt()
 	var summary := _as_dictionary(arena.get("summary", attempt.get("summary", {})))
-	_call_host(host, "_add_body_text", ["Resumo da tentativa. A recompensa de conclusao ja foi aplicada no ultimo duelo quando houve clear; aqui o servidor apenas confirma o estado."])
+	_call_host(host, "_add_body_text", ["Resumo da tentativa. A recompensa de conclusao ja foi aplicada no ultimo duelo quando houve clear."])
 	_call_host(host, "_add_output_label", [_summary_text(attempt, summary)])
-	_call_host(host, "_add_action_button", ["Confirmar resumo", AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY])
+	_call_host(host, "_add_action_button", ["Continuar na Arena", AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_replay(host: Node, overlay: Control, compact_layout: bool, battle_log: Dictionary, rewards: Dictionary) -> void:
@@ -66,6 +68,7 @@ func _render_available_arenas(host: Node, arenas: Array) -> void:
 		_render_dev_fallback_arenas(host)
 		return
 	var lines := PackedStringArray()
+	lines.append("Todas as arenas")
 	for arena_variant: Variant in arenas:
 		var arena := _as_dictionary(arena_variant)
 		var arena_id := str(arena.get("id", "")).strip_edges()
@@ -93,6 +96,54 @@ func _render_available_arenas(host: Node, arenas: Array) -> void:
 			])
 			_call_host(host, "_add_action_button", [label, action_id, "", not unlocked, locked_reason])
 	_call_host(host, "_add_output_label", ["\n".join(lines)])
+
+func _render_recommended_arena(host: Node, arenas: Array) -> void:
+	var recommendation := _recommended_arena_option(arenas)
+	if recommendation.is_empty():
+		return
+	var arena := _as_dictionary(recommendation.get("arena", {}))
+	var difficulty := _as_dictionary(recommendation.get("difficulty", {}))
+	var arena_id := str(arena.get("id", "")).strip_edges()
+	var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+	if arena_id == "":
+		return
+	var label := "Continuar: %s | %s" % [
+		str(arena.get("display_name", arena_id)),
+		_difficulty_label(difficulty),
+	]
+	var action_id := AppShellActionContractScript.arena_start_action(arena_id, difficulty_id)
+	_call_host(host, "_add_output_label", ["Proximo desafio: %s duelo%s | Lv %s | Power %s" % [
+		str(difficulty.get("max_steps", arena.get("duel_count", 1))),
+		"" if int(difficulty.get("max_steps", arena.get("duel_count", 1))) == 1 else "s",
+		_level_range_text(difficulty),
+		_power_range_text(difficulty),
+	]])
+	_call_host(host, "_add_action_button", [label, action_id])
+
+func _recommended_arena_option(arenas: Array) -> Dictionary:
+	var progress := _as_dictionary(SessionStore.arena_snapshot().get("progress", {}))
+	var first_unlocked := {}
+	for arena_variant: Variant in arenas:
+		var arena := _as_dictionary(arena_variant)
+		if not _arena_is_unlocked(arena):
+			continue
+		var arena_id := str(arena.get("id", "")).strip_edges()
+		if arena_id == "":
+			continue
+		var difficulties := _as_array(arena.get("difficulties", []))
+		if difficulties.is_empty():
+			difficulties = [arena]
+		for difficulty_variant: Variant in difficulties:
+			var difficulty := _as_dictionary(difficulty_variant)
+			if not _arena_is_unlocked(difficulty):
+				continue
+			var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+			var option := {"arena": arena, "difficulty": difficulty}
+			if first_unlocked.is_empty():
+				first_unlocked = option
+			if not _tier_completed(arena_id, difficulty_id, progress):
+				return option
+	return first_unlocked
 
 func _render_dev_fallback_arenas(host: Node) -> void:
 	_call_host(host, "_add_output_label", ["Estado remoto da Arena indisponivel. Fallback dev local: tutorial e arena curta."])
@@ -148,6 +199,24 @@ func _arena_button_label(arena: Dictionary, difficulty: Dictionary = {}) -> Stri
 		str(tier.get("difficulty_id", "default")),
 		_level_range_text(tier),
 	]
+
+func _difficulty_label(difficulty: Dictionary) -> String:
+	var display_name := str(difficulty.get("display_name", "")).strip_edges()
+	if display_name != "":
+		return display_name
+	return str(difficulty.get("difficulty_id", difficulty.get("id", "default"))).strip_edges()
+
+func _tier_completed(arena_id: String, difficulty_id: String, progress: Dictionary) -> bool:
+	if arena_id == "arena_tutorial_cinzas" and bool(progress.get("tutorial_completed", false)):
+		return true
+	var metadata := _as_dictionary(progress.get("metadata", {}))
+	var completed_tiers := _as_dictionary(metadata.get("completed_tiers", {}))
+	if difficulty_id != "" and bool(completed_tiers.get("%s:%s" % [arena_id, difficulty_id], false)):
+		return true
+	if difficulty_id != "":
+		return false
+	var completed_arenas := _as_dictionary(metadata.get("completed_arenas", {}))
+	return bool(completed_arenas.get(arena_id, false))
 
 func _level_range_text(difficulty: Dictionary) -> String:
 	var min_level := int(difficulty.get("recommended_level_min", 0))
