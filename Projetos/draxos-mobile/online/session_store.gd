@@ -7,6 +7,7 @@ const AccountSaveSliceScript = preload("res://online/session/account_save_slice.
 const ArenaSliceScript = preload("res://online/session/arena_slice.gd")
 const ModeSliceScript = preload("res://online/session/mode_slice.gd")
 const PendingMutationQueueScript = preload("res://online/session/pending_mutation_queue.gd")
+const SessionCacheSliceScript = preload("res://online/session/session_cache_slice.gd")
 const TelemetrySliceScript = preload("res://online/session/telemetry_slice.gd")
 
 const CACHE_VERSION := 1
@@ -832,42 +833,40 @@ func account_display_name() -> String:
 	return player_display_name()
 
 func snapshot() -> Dictionary:
-	return {
+	return SessionCacheSliceScript.snapshot({
 		"cache_version": CACHE_VERSION,
-		"auth": {
-			"access_token": access_token,
-			"refresh_token": refresh_token,
-			"expires_at": expires_at,
-			"user_id": auth_user_id,
-			"auth_method": auth_method,
-			"email": auth_email,
-		},
+		"access_token": access_token,
+		"refresh_token": refresh_token,
+		"expires_at": expires_at,
+		"auth_user_id": auth_user_id,
+		"auth_method": auth_method,
+		"auth_email": auth_email,
 		"session_id": ensure_session_id(),
 		"guest_request_id": guest_request_id,
 		"alpha_account_request_id": alpha_account_request_id,
 		"account_username": account_username,
 		"active_save_type": active_save_type,
-		"player": player.duplicate(true),
-		"resources": resources.duplicate(true),
-		"build": build.duplicate(true),
-		"base_state": base_state.duplicate(true),
-		"social_state": social_state.duplicate(true),
-		"competition_state": competition_state.duplicate(true),
-		"monetization_state": monetization_state.duplicate(true),
-		"crafting_state": crafting_state.duplicate(true),
-		"combat_build_state": combat_build_state.duplicate(true),
-		"mode_state": mode_state.duplicate(true),
-		"progression_lab": progression_lab.duplicate(true),
-		"arena_state": arena_state.duplicate(true),
-		"surface_save_types": surface_save_types.duplicate(true),
-		"pending_mutations": pending_mutations.duplicate(true),
+		"player": player,
+		"resources": resources,
+		"build": build,
+		"base_state": base_state,
+		"social_state": social_state,
+		"competition_state": competition_state,
+		"monetization_state": monetization_state,
+		"crafting_state": crafting_state,
+		"combat_build_state": combat_build_state,
+		"mode_state": mode_state,
+		"progression_lab": progression_lab,
+		"arena_state": arena_state,
+		"surface_save_types": surface_save_types,
+		"pending_mutations": pending_mutations,
 		"last_battle_id": last_battle_id,
-		"last_battle_log": last_battle_log.duplicate(true),
-		"last_battle_rewards": last_battle_rewards.duplicate(true),
+		"last_battle_log": last_battle_log,
+		"last_battle_rewards": last_battle_rewards,
 		"last_battle_result_seen": last_battle_result_seen,
 		"offline": offline,
-		"last_error": last_error.duplicate(true),
-	}
+		"last_error": last_error,
+	})
 
 static func create_request_id() -> String:
 	return TelemetrySliceScript.create_request_id()
@@ -904,7 +903,7 @@ static func canonical_json(value: Variant) -> String:
 	return PendingMutationQueueScript.canonical_json(value)
 
 func _apply_cache(cache: Dictionary) -> void:
-	var auth := _as_dictionary(cache.get("auth", {}))
+	var auth := SessionCacheSliceScript.cache_auth(cache)
 	access_token = str(auth.get("access_token", ""))
 	refresh_token = str(auth.get("refresh_token", ""))
 	expires_at = int(auth.get("expires_at", 0))
@@ -913,31 +912,31 @@ func _apply_cache(cache: Dictionary) -> void:
 	if auth_method == "":
 		auth_method = "guest"
 	auth_email = str(auth.get("email", ""))
-	session_id = str(cache.get("session_id", ""))
-	guest_request_id = str(cache.get("guest_request_id", ""))
-	alpha_account_request_id = str(cache.get("alpha_account_request_id", ""))
-	account_username = str(cache.get("account_username", ""))
-	active_save_type = normalize_save_type(str(cache.get("active_save_type", SAVE_TYPE_NORMAL)))
-	player = _as_dictionary(cache.get("player", {})).duplicate(true)
-	resources = _as_dictionary(cache.get("resources", {})).duplicate(true)
-	build = _as_dictionary(cache.get("build", {})).duplicate(true)
-	base_state = _as_dictionary(cache.get("base_state", {})).duplicate(true)
-	social_state = _as_dictionary(cache.get("social_state", {})).duplicate(true)
-	competition_state = _as_dictionary(cache.get("competition_state", {})).duplicate(true)
-	monetization_state = _as_dictionary(cache.get("monetization_state", {})).duplicate(true)
-	crafting_state = _as_dictionary(cache.get("crafting_state", {})).duplicate(true)
-	combat_build_state = _as_dictionary(cache.get("combat_build_state", {})).duplicate(true)
-	mode_state = _as_dictionary(cache.get("mode_state", {})).duplicate(true)
-	progression_lab = _as_dictionary(cache.get("progression_lab", {})).duplicate(true)
-	arena_state = _as_dictionary(cache.get("arena_state", {})).duplicate(true)
-	surface_save_types = _normalized_surface_save_types(_as_dictionary(cache.get("surface_save_types", {})))
-	pending_mutations = _normalized_pending_mutations(_as_dictionary(cache.get("pending_mutations", {})))
+	session_id = SessionCacheSliceScript.cache_string(cache, "session_id")
+	guest_request_id = SessionCacheSliceScript.cache_string(cache, "guest_request_id")
+	alpha_account_request_id = SessionCacheSliceScript.cache_string(cache, "alpha_account_request_id")
+	account_username = SessionCacheSliceScript.cache_string(cache, "account_username")
+	active_save_type = normalize_save_type(SessionCacheSliceScript.cache_string(cache, "active_save_type", SAVE_TYPE_NORMAL))
+	player = SessionCacheSliceScript.cache_dict(cache, "player")
+	resources = SessionCacheSliceScript.cache_dict(cache, "resources")
+	build = SessionCacheSliceScript.cache_dict(cache, "build")
+	base_state = SessionCacheSliceScript.cache_dict(cache, "base_state")
+	social_state = SessionCacheSliceScript.cache_dict(cache, "social_state")
+	competition_state = SessionCacheSliceScript.cache_dict(cache, "competition_state")
+	monetization_state = SessionCacheSliceScript.cache_dict(cache, "monetization_state")
+	crafting_state = SessionCacheSliceScript.cache_dict(cache, "crafting_state")
+	combat_build_state = SessionCacheSliceScript.cache_dict(cache, "combat_build_state")
+	mode_state = SessionCacheSliceScript.cache_dict(cache, "mode_state")
+	progression_lab = SessionCacheSliceScript.cache_dict(cache, "progression_lab")
+	arena_state = SessionCacheSliceScript.cache_dict(cache, "arena_state")
+	surface_save_types = _normalized_surface_save_types(SessionCacheSliceScript.cache_dict(cache, "surface_save_types"))
+	pending_mutations = _normalized_pending_mutations(SessionCacheSliceScript.cache_dict(cache, "pending_mutations"))
 	last_battle_id = cache.get("last_battle_id", null)
-	last_battle_log = _as_dictionary(cache.get("last_battle_log", {})).duplicate(true)
-	last_battle_rewards = _as_dictionary(cache.get("last_battle_rewards", {})).duplicate(true)
-	last_battle_result_seen = bool(cache.get("last_battle_result_seen", false))
-	offline = bool(cache.get("offline", false))
-	last_error = _as_dictionary(cache.get("last_error", {})).duplicate(true)
+	last_battle_log = SessionCacheSliceScript.cache_dict(cache, "last_battle_log")
+	last_battle_rewards = SessionCacheSliceScript.cache_dict(cache, "last_battle_rewards")
+	last_battle_result_seen = SessionCacheSliceScript.cache_bool(cache, "last_battle_result_seen")
+	offline = SessionCacheSliceScript.cache_bool(cache, "offline")
+	last_error = SessionCacheSliceScript.cache_dict(cache, "last_error")
 	if not progression_lab.is_empty() and not bool(progression_lab.get("local_only", false)):
 		active_save_type = SAVE_TYPE_PROGRESSION_LAB
 	if bool(progression_lab.get("local_only", false)):
