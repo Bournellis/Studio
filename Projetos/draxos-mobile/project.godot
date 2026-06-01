@@ -39,7 +39,7 @@ window/size/min_height=640
 
 backend/environment="local"
 supabase/url="http://127.0.0.1:54321"
-supabase/publishable_key="sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
+supabase/publishable_key="sb_publishable_TLjdd9X4MlzD740dtVCXNg_YTl9IMAi"
 update/manifest_url=""
 internal_alpha/supabase_url=""
 internal_alpha/publishable_key=""

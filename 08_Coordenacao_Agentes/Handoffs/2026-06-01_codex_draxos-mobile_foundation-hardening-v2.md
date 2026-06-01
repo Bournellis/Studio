@@ -19,7 +19,7 @@ Executar Foundation Hardening V2 como pacote de enforcement puro para preparar D
 
 - current platform baseline: `Foundation Hardening V2`
 - current release root: `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`
-- current Cloudflare preview: `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`
+- current Cloudflare preview: `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`
 - latest Arena loop package: `Track 21 - Arena Loop Unlock And Friction Pass`
 - Arena contract source: `docs/pve-arena-v1.md`
 - behavior/potion/crafting source: `docs/behavior-potion-crafting-v1.md`
@@ -100,7 +100,7 @@ Executar Foundation Hardening V2 como pacote de enforcement puro para preparar D
   - migrations `202606010003_foundation_hardening_v2.sql` e `202606010004_resource_reconciliation_stability.sql` aplicadas;
   - Edge Function `modes` publicada;
   - artefatos V2 enviados ao Supabase Storage via `Mode Upload`.
-- Cloudflare Pages package foi gerado, validado contra `index.pck`/`index.wasm` remotos e publicado em `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`.
+- Cloudflare Pages package foi gerado, validado contra `index.pck`/`index.wasm` remotos e publicado em `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`.
 - Release manifest foi promovido para V2 via `DeployManifest`.
 - `RemoteReadOnly` passou contra o manifest, Portal/Web e artefatos V2.
 - `master` pode ser promovido para baseline V2 apos commit final e validacao da arvore principal.
@@ -144,7 +144,7 @@ Bloqueio restante: nenhum para a publicacao V2.
 - Public HEAD checks para Android APK, PC ZIP, Web `index.pck` e Web `index.wasm`.
 - `npx -y wrangler whoami`
 - `npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`
-- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-20260601-aa07388 -StaticSiteBaseUrl https://3c8b602a.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
+- `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot internal-alpha/v0-foundation-hardening-v2-20260601-aa07388 -StaticSiteBaseUrl https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`
 
 ## Relatorio

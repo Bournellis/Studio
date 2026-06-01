@@ -397,7 +397,7 @@ function Test-CorsAllowedOrigins {
     } else {
       Add-Ok 'CORS does not use wildcard origin'
     }
-    foreach ($origin in @('draxos-mobile-internal-alpha.pages.dev', 'localhost', '127.0.0.1')) {
+    foreach ($origin in @('2cba1ff3.draxos-mobile-internal-alpha.pages.dev', 'draxos-mobile-internal-alpha.pages.dev', 'localhost', '127.0.0.1')) {
       if ($text.Contains($origin)) {
         Add-Ok "CORS declares allowed origin marker $origin"
       } else {
@@ -489,7 +489,7 @@ function Test-ClientSecretsAbsent {
 
 function Test-LiveDocReleaseRootFreshness {
   $latestRoot = 'internal-alpha/v0-foundation-hardening-v2-20260601-aa07388'
-  $latestPreview = 'https://3c8b602a.draxos-mobile-internal-alpha.pages.dev'
+  $latestPreview = 'https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev'
   foreach ($check in @(
     @{ Path = 'AGENTS.md'; Needles = @('Foundation Hardening V2', $latestRoot, $latestPreview) },
     @{ Path = 'README.md'; Needles = @(('Latest release root: `' + $latestRoot + '`'), ('Latest verified preview: `' + $latestPreview + '`')) },

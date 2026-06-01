@@ -1,6 +1,6 @@
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "http://127.0.0.1:54321";
 const PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ??
-  "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
+  "sb_publishable_TLjdd9X4MlzD740dtVCXNg_YTl9IMAi";
 const INVITE_CODE = Deno.env.get("DRAXOS_REMOTE_INVITE_CODE") ?? "ALPHA-TEST";
 
 interface JsonObject {

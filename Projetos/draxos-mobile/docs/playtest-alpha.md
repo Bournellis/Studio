@@ -1,7 +1,7 @@
 # DraxosMobile - Alpha Playtest Checklist
 
 - Ultima atualizacao: `2026-06-01`
-- Alvo Foundation Hardening V2: Internal Alpha publicado em `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, preview `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`, com Track 21 preservado apenas como contexto da Arena PVE/Autobattler para tutorial unlock corrigido, retorno `Continuar na Arena` e Supabase local/remoto aprovado para teste.
+- Alvo Foundation Hardening V2: Internal Alpha publicado em `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, preview `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`, com Track 21 preservado apenas como contexto da Arena PVE/Autobattler para tutorial unlock corrigido, retorno `Continuar na Arena` e Supabase local/remoto aprovado para teste.
 
 ## Pre-Flight
 

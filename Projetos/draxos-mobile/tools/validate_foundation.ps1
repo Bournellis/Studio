@@ -529,7 +529,7 @@ function Assert-CorsAllowedOrigins {
     if ([regex]::IsMatch($text, '"access-control-allow-origin"\s*:\s*"\*"')) {
         throw "CORS helper uses wildcard origin; V2 requires an explicit allowed-origin policy."
     }
-    foreach ($originMarker in @("draxos-mobile-internal-alpha.pages.dev", "localhost", "127.0.0.1")) {
+    foreach ($originMarker in @("2cba1ff3.draxos-mobile-internal-alpha.pages.dev", "draxos-mobile-internal-alpha.pages.dev", "localhost", "127.0.0.1")) {
         if (-not $text.Contains($originMarker)) {
             throw "CORS helper must declare allowed origin marker: $originMarker"
         }
@@ -538,7 +538,7 @@ function Assert-CorsAllowedOrigins {
 
 function Assert-LiveDocsReleaseRootFreshness {
     $latestRoot = "internal-alpha/v0-foundation-hardening-v2-20260601-aa07388"
-    $latestPreview = "https://3c8b602a.draxos-mobile-internal-alpha.pages.dev"
+    $latestPreview = "https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev"
     foreach ($entry in @(
         @{ Base = $ProjectPath; Path = "AGENTS.md"; Needles = @("Foundation Hardening V2", $latestRoot, $latestPreview) },
         @{ Base = $ProjectPath; Path = "README.md"; Needles = @(('Latest release root: `' + $latestRoot + '`'), ('Latest verified preview: `' + $latestPreview + '`')) },
@@ -556,7 +556,7 @@ function Assert-LiveDocsReleaseRootFreshness {
 
     $readme = Get-Content -LiteralPath (Join-Path $ProjectPath "README.md") -Raw
     foreach ($staleLinePattern in @(
-        'Latest verified preview:\s*`https://(?!3c8b602a\.)[^`]+`',
+        'Latest verified preview:\s*`https://(?!2cba1ff3\.)[^`]+`',
         'Latest release root:\s*`internal-alpha/(?!v0-foundation-hardening-v2-20260601-aa07388)[^`]+`',
         'Latest APK:\s*`https://[^`]+/internal-alpha/(?!v0-foundation-hardening-v2-20260601-aa07388/)[^`]+`',
         'Latest PC ZIP:\s*`https://[^`]+/internal-alpha/(?!v0-foundation-hardening-v2-20260601-aa07388/)[^`]+`'

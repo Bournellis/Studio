@@ -12,7 +12,7 @@
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published remote package: `Foundation Hardening V2`, release root
   `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, Cloudflare
-  preview `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`.
+  preview `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`.
 - Latest implemented package: `Foundation Hardening V2` on
   `codex/draxos-mobile/foundation-hardening-v2`.
 - Active follow-up: human review/playtest of the published V2 hardening build,
@@ -33,11 +33,11 @@ expansion enforcement baseline.
   `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`;
 - branch: `codex/draxos-mobile/foundation-hardening-v2`;
 - Cloudflare preview:
-  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`;
+  `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`;
 - Portal:
-  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+  `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
 - Web:
-  `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+  `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
 - Android APK:
   `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-20260601-aa07388/downloads/draxos-mobile-alpha.apk`;
 - PC ZIP:
@@ -68,6 +68,14 @@ Validation and publication completed:
 - Android/PC/Web exports passed.
 - Remote migrations were applied and Edge Function `modes` was deployed.
 - Storage upload passed for APK, PC ZIP and Web assets.
+- Post-publication login hotfix: after manual Web entry reported
+  `http_error: request failed`, the V2 package was reexported and republished
+  on the same release root with the registered Supabase publishable key, CORS
+  updated for the current Cloudflare preview, and the remote manifest promoted
+  to `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`.
+- Hotfix validation passed: `server/functions` Deno check, `supabase/functions`
+  Deno check, `DocsOnly`, `RemoteReadOnly`, and remote smoke with anonymous auth
+  plus `account/guest`/`account/state`.
 - Cloudflare Pages deploy passed.
 - `DeployManifest` passed and deployed the `release` Edge Function.
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`: passed.
@@ -1470,7 +1478,7 @@ economy, content tuning or final art.
 
 Foundation Hardening V2 is now the latest Internal Alpha publication: release
 root `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`, preview
-`https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`. The next product
+`https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`. The next product
 step is human review/playtest of the V2 hardening build and then dedicated mode
 threads from updated `master`; Arena tuning notes can follow only after manual
 confirmation of the tutorial -> first real Arena -> next difficulty loop,

@@ -6,6 +6,8 @@ const RUN_EMAIL_AUTH = Deno.env.get("DRAXOS_REMOTE_EMAIL_AUTH_SMOKE") === "1";
 const RUN_RELEASE_MANIFEST =
   Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
 const RUN_MODE = Deno.env.get("DRAXOS_REMOTE_MODE_SMOKE") === "1";
+const CORS_ORIGIN = Deno.env.get("DRAXOS_REMOTE_CORS_ORIGIN") ??
+  "https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev";
 
 const MODE_MODE_ID = "openworld";
 const MODE_SLICE_ID = "forest";
@@ -268,7 +270,7 @@ async function assertCorsPreflight(url: string, method: string): Promise<void> {
     method: "OPTIONS",
     headers: {
       apikey: PUBLISHABLE_KEY,
-      origin: "https://draxos-mobile-internal-alpha.pages.dev",
+      origin: CORS_ORIGIN,
       "access-control-request-method": method,
       "access-control-request-headers":
         "authorization,apikey,content-type,x-draxos-api-version,x-draxos-save-type",
@@ -280,6 +282,19 @@ async function assertCorsPreflight(url: string, method: string): Promise<void> {
   );
   const allowHeaders = response.headers.get("access-control-allow-headers") ??
     "";
+  const allowOrigin = response.headers.get("access-control-allow-origin");
+  if (url.includes("/auth/v1/")) {
+    assert(
+      allowOrigin === CORS_ORIGIN || allowOrigin === "*",
+      `Auth CORS preflight should allow ${CORS_ORIGIN} or * for ${url}; got ${allowOrigin}`,
+    );
+  } else {
+    assertEq(
+      allowOrigin,
+      CORS_ORIGIN,
+      `CORS preflight should echo ${CORS_ORIGIN} for ${url}`,
+    );
+  }
   assertIncludes(
     allowHeaders.toLowerCase(),
     "x-draxos-api-version",

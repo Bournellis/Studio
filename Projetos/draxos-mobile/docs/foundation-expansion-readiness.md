@@ -14,7 +14,7 @@ quebra a fundacao antes de entrar em codigo.
 
 O baseline atual e `Foundation Hardening V2` publicado como Internal Alpha:
 release root `internal-alpha/v0-foundation-hardening-v2-20260601-aa07388`,
-preview `https://3c8b602a.draxos-mobile-internal-alpha.pages.dev`.
+preview `https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev`.
 Hardening Platform V1 permanece como baseline anterior da plataforma de modos.
 Track 21 Arena Loop Unlock/Friction permanece apenas como contexto
 Arena/Autobattler preservado para tutorial, unlock, loadout travado, buffs,

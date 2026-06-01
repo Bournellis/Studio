@@ -106,7 +106,7 @@ interface SeededSave {
 
 const DEFAULT_SUPABASE_URL = "http://127.0.0.1:54321";
 const DEFAULT_PUBLISHABLE_KEY =
-  "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH";
+  "sb_publishable_TLjdd9X4MlzD740dtVCXNg_YTl9IMAi";
 const HEALTHY_SAVES_PATH = "docs/progression-lab/generated/healthy_saves.json";
 const SCRATCH_DIR = ".progression_lab_scratch";
 const BATTLE_PASS_ID = "bp_s1_01";

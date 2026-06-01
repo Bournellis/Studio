@@ -7,7 +7,7 @@ const ENVIRONMENT_CUSTOM := "custom"
 const DEFAULT_BACKEND_ENVIRONMENT := ENVIRONMENT_LOCAL
 
 const DEFAULT_LOCAL_SUPABASE_URL := "http://127.0.0.1:54321"
-const DEFAULT_LOCAL_PUBLISHABLE_KEY := "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH"
+const DEFAULT_LOCAL_PUBLISHABLE_KEY := "sb_publishable_TLjdd9X4MlzD740dtVCXNg_YTl9IMAi"
 
 const SETTING_BACKEND_ENVIRONMENT := "draxos_mobile/backend/environment"
 const SETTING_SUPABASE_URL := "draxos_mobile/supabase/url"
