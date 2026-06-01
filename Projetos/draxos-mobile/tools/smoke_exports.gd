@@ -24,7 +24,7 @@ const EXPECTED_EXCLUDES := [
 const REQUIRED_INTERNAL_ALPHA_RESOURCES := [
 	"res://dev/battle_lab/battle_lab_screen.gd",
 	"res://dev/progression_lab/progression_lab_screen.gd",
-	"res://dev/minigames/rpgsuave/rpgsuave_forest_screen.gd",
+	"res://modes/openworld/openworld_forest_screen.gd",
 ]
 
 var _failures: Array[String] = []

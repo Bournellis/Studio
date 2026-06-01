@@ -12,7 +12,7 @@ const CATEGORY_PREPARATION := "preparation"
 const CATEGORY_SOCIAL := "social"
 const CATEGORY_COMPETITION := "competition"
 const CATEGORY_SHOP := "shop"
-const CATEGORY_MINIGAME := "minigame"
+const CATEGORY_MODE := "mode"
 
 static func normalize_action(action_id: String) -> String:
 	return action_id.strip_edges()
@@ -65,8 +65,8 @@ static func category_for_action(action_id: String) -> String:
 		return CATEGORY_PREPARATION
 	if _is_shop_action(action):
 		return CATEGORY_SHOP
-	if AppShellActionContractScript.is_open_minigame_shell(action):
-		return CATEGORY_MINIGAME
+	if AppShellActionContractScript.is_open_mode_shell(action):
+		return CATEGORY_MODE
 	if _is_arena_action(action):
 		return CATEGORY_ARENA
 	if _is_battle_action(action):
@@ -84,11 +84,11 @@ static func scope_for_action(action_id: String, context: Dictionary = {}) -> Str
 	var save_type := str(context.get("save_type", "normal")).strip_edges()
 	if save_type == "":
 		save_type = "normal"
-	if AppShellActionContractScript.is_open_minigame_shell(action):
-		var minigame_id := AppShellActionContractScript.action_value(action)
-		if minigame_id == "":
-			minigame_id = "placeholder"
-		return "minigame:%s:%s" % [minigame_id, save_type]
+	if AppShellActionContractScript.is_open_mode_shell(action):
+		var mode_id := AppShellActionContractScript.action_value(action)
+		if mode_id == "":
+			mode_id = "placeholder"
+		return "mode:%s:%s" % [mode_id, save_type]
 	var category := category_for_action(action)
 	match category:
 		CATEGORY_ARENA:

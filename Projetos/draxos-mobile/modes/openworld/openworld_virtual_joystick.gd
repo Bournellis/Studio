@@ -1,4 +1,4 @@
-class_name RpgsuaveVirtualJoystick
+class_name OpenworldVirtualJoystick
 extends Control
 
 signal vector_changed(vector: Vector2)
@@ -13,7 +13,7 @@ var _vector := Vector2.ZERO
 var _knob_offset := Vector2.ZERO
 
 func _ready() -> void:
-	name = "RpgsuaveVirtualJoystick"
+	name = "OpenworldVirtualJoystick"
 	custom_minimum_size = BASE_SIZE
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	tooltip_text = "Joystick"

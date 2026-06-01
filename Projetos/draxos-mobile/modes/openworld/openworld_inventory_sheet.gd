@@ -1,4 +1,4 @@
-class_name RpgsuaveInventorySheet
+class_name OpenworldInventorySheet
 extends PanelContainer
 
 signal close_requested
@@ -6,7 +6,7 @@ signal deposit_requested
 signal craft_requested(recipe_id: String)
 signal complete_requested
 
-const ModelScript := preload("res://dev/minigames/rpgsuave/rpgsuave_forest_model.gd")
+const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 
 var model: Variant = null
 var integration_mode := "dev_local"
@@ -26,7 +26,7 @@ var _complete_button: Button
 var _technical_button: Button
 
 func _ready() -> void:
-	name = "RpgsuaveInventorySheet"
+	name = "OpenworldInventorySheet"
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	add_theme_stylebox_override("panel", _panel_style(Color(0.0, 0.0, 0.0, 0.48), Color.TRANSPARENT))
@@ -93,7 +93,7 @@ func _build() -> void:
 	holder.add_child(spacer)
 
 	var sheet := PanelContainer.new()
-	sheet.name = "RpgsuaveInventoryPanel"
+	sheet.name = "OpenworldInventoryPanel"
 	sheet.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	sheet.custom_minimum_size = Vector2(0, 430)
 	sheet.add_theme_stylebox_override("panel", _panel_style(Color(0.075, 0.078, 0.066, 0.97), Color(0.56, 0.48, 0.34, 0.72)))
@@ -122,14 +122,14 @@ func _build() -> void:
 	header.add_child(_title_label)
 
 	var close := Button.new()
-	close.name = "RpgsuaveInventoryCloseButton"
+	close.name = "OpenworldInventoryCloseButton"
 	close.text = "Fechar"
 	close.custom_minimum_size = Vector2(82, 44)
 	close.pressed.connect(close_sheet)
 	header.add_child(close)
 
 	var tabs := HBoxContainer.new()
-	tabs.name = "RpgsuaveInventoryTabs"
+	tabs.name = "OpenworldInventoryTabs"
 	tabs.add_theme_constant_override("separation", 6)
 	column.add_child(tabs)
 	for tab_id in ["pocket", "chest", "craft", "session"]:
@@ -142,7 +142,7 @@ func _build() -> void:
 		_tab_buttons[tab_id] = button
 
 	_body = VBoxContainer.new()
-	_body.name = "RpgsuaveInventoryBody"
+	_body.name = "OpenworldInventoryBody"
 	_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_body.add_theme_constant_override("separation", 8)
 	column.add_child(_body)
@@ -165,7 +165,7 @@ func _render_inventory(title: String, source: Dictionary, subtitle: String) -> v
 	_body.add_child(_label(_inventory_lines(source), 14, Color(0.94, 0.92, 0.84)))
 	if _current_tab == "pocket":
 		_deposit_button = Button.new()
-		_deposit_button.name = "RpgsuaveSheetDepositButton"
+		_deposit_button.name = "OpenworldSheetDepositButton"
 		_deposit_button.text = "Depositar no bau"
 		_deposit_button.custom_minimum_size = Vector2(0, 48)
 		_deposit_button.pressed.connect(func() -> void:
@@ -179,7 +179,7 @@ func _render_craft() -> void:
 	for recipe_id: String in ModelScript.RECIPES.keys():
 		var recipe := ModelScript.RECIPES[recipe_id] as Dictionary
 		var button := Button.new()
-		button.name = "RpgsuaveCraft_%s" % recipe_id
+		button.name = "OpenworldCraft_%s" % recipe_id
 		button.text = "%s  |  %s" % [str(recipe.get("display_name", recipe_id)), _cost_text(recipe.get("cost", {}))]
 		button.custom_minimum_size = Vector2(0, 48)
 		button.disabled = not model.can_craft(recipe_id)
@@ -194,7 +194,7 @@ func _render_session() -> void:
 	var state := "online" if integration_mode == "integrated_alpha" and server_session_id != "" else integration_mode
 	_body.add_child(_label("Estado: %s" % state, 13, Color(0.82, 0.80, 0.70)))
 	_complete_button = Button.new()
-	_complete_button.name = "RpgsuaveSheetCompleteButton"
+	_complete_button.name = "OpenworldSheetCompleteButton"
 	_complete_button.text = "Completar sessao" if integration_mode == "integrated_alpha" else "Gerar resultado local"
 	_complete_button.custom_minimum_size = Vector2(0, 48)
 	_complete_button.disabled = network_busy
@@ -205,7 +205,7 @@ func _render_session() -> void:
 	if result_text != "":
 		_body.add_child(_label(result_text, 13, Color(0.94, 0.90, 0.74)))
 	_technical_button = Button.new()
-	_technical_button.name = "RpgsuaveTechnicalDetailsButton"
+	_technical_button.name = "OpenworldTechnicalDetailsButton"
 	_technical_button.text = "Ocultar detalhes tecnicos" if _technical_visible else "Detalhes tecnicos"
 	_technical_button.custom_minimum_size = Vector2(0, 44)
 	_technical_button.pressed.connect(func() -> void:
@@ -224,7 +224,7 @@ func _render_session() -> void:
 			JSON.stringify(payload_preview),
 		]
 		var label := _label(text, 12, Color(0.78, 0.77, 0.70))
-		label.name = "RpgsuaveTechnicalDetails"
+		label.name = "OpenworldTechnicalDetails"
 		_body.add_child(label)
 
 func _clear_body() -> void:

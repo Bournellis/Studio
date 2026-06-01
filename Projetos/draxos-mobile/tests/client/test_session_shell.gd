@@ -295,8 +295,8 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	assert_eq(client.function_url("arena/pve/duel/request"), "http://127.0.0.1:54321/functions/v1/arena/pve/duel/request")
 	assert_eq(client.function_url("arena/pve/buff/select"), "http://127.0.0.1:54321/functions/v1/arena/pve/buff/select")
 	assert_eq(client.function_url("base/state"), "http://127.0.0.1:54321/functions/v1/base/state")
-	assert_eq(client.function_url("minigames/registry"), "http://127.0.0.1:54321/functions/v1/minigames/registry")
-	assert_eq(client.function_url("minigames/session/start"), "http://127.0.0.1:54321/functions/v1/minigames/session/start")
+	assert_eq(client.function_url("modes/registry"), "http://127.0.0.1:54321/functions/v1/modes/registry")
+	assert_eq(client.function_url("modes/session/start"), "http://127.0.0.1:54321/functions/v1/modes/session/start")
 	assert_eq(client.function_url("social/state"), "http://127.0.0.1:54321/functions/v1/social/state")
 	assert_eq(client.function_url("competition/ranking/current"), "http://127.0.0.1:54321/functions/v1/competition/ranking/current")
 	assert_eq(client.function_url("monetization/state"), "http://127.0.0.1:54321/functions/v1/monetization/state")
@@ -463,20 +463,20 @@ func test_mutation_hash_is_stable_and_uses_sorted_payload_keys() -> void:
 	assert_true(left_hash.begins_with("sha256:"))
 	assert_eq(left_hash, right_hash)
 
-func test_minigame_hash_and_session_store_bridge() -> void:
+func test_mode_hash_and_session_store_bridge() -> void:
 	var store = SessionStoreScript.new()
 	store.active_save_type = SessionStoreScript.SAVE_TYPE_NORMAL
 	store.resources = {"energia": 5, "ossos": 1}
 	store.player = {"id": "player-test", "save_type": "normal", "xp": 3}
 	var pending := store.prepare_pending_mutation(
-		"minigames/session/complete",
-		"minigame:rpgsuave:normal",
-		"open_minigame_shell:rpgsuave",
+		"modes/session/complete",
+		"mode:openworld:normal",
+		"open_mode_shell:openworld",
 		{
 			"session_id": "00000000-0000-4000-8000-000000000101",
-			"mode_id": "rpgsuave",
+			"mode_id": "openworld",
 			"slice_id": "forest",
-			"ruleset_id": "rpgsuave_forest_ruleset_v0",
+			"ruleset_id": "openworld_forest_ruleset_v0",
 			"ruleset_version": 1,
 			"session_seconds": 30,
 			"activity_score": 42,
@@ -484,19 +484,19 @@ func test_minigame_hash_and_session_store_bridge() -> void:
 		}
 	)
 	assert_true(str(pending.get("request_hash", "")).begins_with("sha256:"))
-	assert_true(store.apply_minigame_result({
+	assert_true(store.apply_mode_result({
 		"_client": {"save_type": "normal"},
 		"body": {
 			"ok": true,
-			"schema_version": "minigame_platform_v0",
+			"schema_version": "mode_platform_v0",
 			"request_id": str(pending.get("request_id", "")),
-			"mode": {"mode_id": "rpgsuave", "slice_id": "forest"},
+			"mode": {"mode_id": "openworld", "slice_id": "forest"},
 			"session": {"id": "00000000-0000-4000-8000-000000000101", "status": "completed"},
 			"reward": {"resource_delta": {"energia": 2, "ossos": 1, "xp": 1}},
 			"resources": {"energia": 7, "ossos": 2, "xp": 4},
 		},
 	}))
-	assert_true(store.has_minigame_state())
+	assert_true(store.has_mode_state())
 	assert_eq(int(store.resources.get("energia", 0)), 7)
 	assert_eq(int(store.resources.get("ossos", 0)), 2)
 	assert_eq(int(store.player.get("xp", 0)), 4)
@@ -507,7 +507,7 @@ func test_minigame_hash_and_session_store_bridge() -> void:
 	var snapshot := store.snapshot()
 	var restored = SessionStoreScript.new()
 	restored._apply_cache(snapshot)
-	assert_true(restored.has_minigame_state())
+	assert_true(restored.has_mode_state())
 	store.free()
 	restored.free()
 

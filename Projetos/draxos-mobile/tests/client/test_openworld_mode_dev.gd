@@ -1,18 +1,18 @@
 extends GutTest
 
-const ModelScript := preload("res://dev/minigames/rpgsuave/rpgsuave_forest_model.gd")
-const ScreenScript := preload("res://dev/minigames/rpgsuave/rpgsuave_forest_screen.gd")
-const RegistryScript := preload("res://modes/boot/ui/minigame_shell_registry.gd")
+const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
+const ScreenScript := preload("res://modes/openworld/openworld_forest_screen.gd")
+const RegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
 const RouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 
-func test_rpgsuave_registry_points_to_dev_screen() -> void:
-	assert_true(RegistryScript.is_registered("rpgsuave"))
-	assert_eq(RegistryScript.normalize_mode_id("rpgsuave_bosque"), "rpgsuave")
-	assert_eq(RegistryScript.screen_path("rpgsuave"), "res://dev/minigames/rpgsuave/rpgsuave_forest_screen.gd")
+func test_openworld_registry_points_to_official_screen() -> void:
+	assert_true(RegistryScript.is_registered("openworld"))
+	assert_eq(RegistryScript.normalize_mode_id("openworld_bosque"), "openworld")
+	assert_eq(RegistryScript.screen_path("openworld"), "res://modes/openworld/openworld_forest_screen.gd")
 
-func test_minigame_shell_is_fullscreen_without_app_chrome() -> void:
-	assert_true(RouteContractScript.is_fullscreen_gameplay("minigame_shell"))
-	assert_false(RouteContractScript.shows_app_chrome("minigame_shell"))
+func test_mode_shell_is_fullscreen_without_app_chrome() -> void:
+	assert_true(RouteContractScript.is_fullscreen_gameplay("mode_shell"))
+	assert_false(RouteContractScript.shows_app_chrome("mode_shell"))
 
 func test_collection_cancels_when_player_moves() -> void:
 	var model = ModelScript.new()
@@ -55,8 +55,8 @@ func test_result_payload_is_preview_local_only() -> void:
 	var model = ModelScript.new()
 	model.chest = {"galho": 3, "cinzas_preview": 2}
 	var payload := model.result_payload(12.5)
-	assert_eq(payload.get("mode_id"), "rpgsuave")
-	assert_eq(payload.get("ruleset_id"), "rpgsuave_forest_ruleset_v0")
+	assert_eq(payload.get("mode_id"), "openworld")
+	assert_eq(payload.get("ruleset_id"), "openworld_forest_ruleset_v0")
 	assert_true(int(payload.get("activity_score", 0)) > 0)
 	assert_true(Dictionary(payload.get("deposited_items", {})).has("cinzas_preview"))
 
@@ -64,13 +64,13 @@ func test_visual_screen_instantiates_fullscreen_with_joystick_hud_and_sheet() ->
 	var screen = ScreenScript.new()
 	add_child_autofree(screen)
 	await get_tree().process_frame
-	assert_eq(screen.name, "RpgsuaveForestScreen")
-	assert_not_null(screen.find_child("RpgsuaveForestWorldView", true, false))
-	assert_not_null(screen.find_child("RpgsuaveVirtualJoystick", true, false))
-	assert_not_null(screen.find_child("RpgsuaveHudTop", true, false))
-	assert_not_null(screen.find_child("RpgsuaveInventoryButton", true, false))
-	assert_not_null(screen.find_child("RpgsuaveBackButton", true, false))
-	assert_null(screen.find_child("RpgsuaveForestBoard", true, false))
+	assert_eq(screen.name, "OpenworldForestScreen")
+	assert_not_null(screen.find_child("OpenworldForestWorldView", true, false))
+	assert_not_null(screen.find_child("OpenworldVirtualJoystick", true, false))
+	assert_not_null(screen.find_child("OpenworldHudTop", true, false))
+	assert_not_null(screen.find_child("OpenworldInventoryButton", true, false))
+	assert_not_null(screen.find_child("OpenworldBackButton", true, false))
+	assert_null(screen.find_child("OpenworldForestBoard", true, false))
 
 func test_visual_screen_debug_joystick_moves_player_for_smoke_tests() -> void:
 	var screen = ScreenScript.new()
@@ -86,9 +86,9 @@ func test_technical_details_start_hidden_in_inventory_sheet() -> void:
 	var screen = ScreenScript.new()
 	add_child_autofree(screen)
 	await get_tree().process_frame
-	var inventory := screen.find_child("RpgsuaveInventoryButton", true, false) as Button
+	var inventory := screen.find_child("OpenworldInventoryButton", true, false) as Button
 	assert_not_null(inventory)
 	inventory.pressed.emit()
 	await get_tree().process_frame
-	assert_not_null(screen.find_child("RpgsuaveInventorySheet", true, false))
-	assert_null(screen.find_child("RpgsuaveTechnicalDetails", true, false))
+	assert_not_null(screen.find_child("OpenworldInventorySheet", true, false))
+	assert_null(screen.find_child("OpenworldTechnicalDetails", true, false))

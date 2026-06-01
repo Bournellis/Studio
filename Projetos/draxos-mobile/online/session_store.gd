@@ -24,7 +24,7 @@ const SURFACE_BATTLE := "battle"
 const SURFACE_ARENA := "arena"
 const SURFACE_CRAFTING := "crafting"
 const SURFACE_BUILD := "build"
-const SURFACE_MINIGAME := "minigame"
+const SURFACE_MODE := "mode"
 
 var access_token := ""
 var refresh_token := ""
@@ -46,7 +46,7 @@ var competition_state: Dictionary = {}
 var monetization_state: Dictionary = {}
 var crafting_state: Dictionary = {}
 var combat_build_state: Dictionary = {}
-var minigame_state: Dictionary = {}
+var mode_state: Dictionary = {}
 var progression_lab: Dictionary = {}
 var arena_state: Dictionary = {}
 var last_battle_id: Variant = null
@@ -130,7 +130,7 @@ func clear_session() -> void:
 	monetization_state = {}
 	crafting_state = {}
 	combat_build_state = {}
-	minigame_state = {}
+	mode_state = {}
 	progression_lab = {}
 	arena_state = {}
 	last_battle_id = null
@@ -753,14 +753,14 @@ func apply_build_result(payload: Dictionary) -> bool:
 	session_changed.emit()
 	return true
 
-func apply_minigame_result(payload: Dictionary) -> bool:
+func apply_mode_result(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
-	if not _accept_save_scoped_payload(SURFACE_MINIGAME, payload, active_save_type):
+	if not _accept_save_scoped_payload(SURFACE_MODE, payload, active_save_type):
 		return false
 	if not bool(body.get("ok", false)):
 		last_error = _as_dictionary(body.get("error", {
-			"code": "MINIGAME_NOT_OK",
-			"message": "Servidor recusou o minigame.",
+			"code": "MODE_NOT_OK",
+			"message": "Servidor recusou o mode.",
 		}))
 		session_changed.emit()
 		return false
@@ -771,7 +771,7 @@ func apply_minigame_result(payload: Dictionary) -> bool:
 	elif body.get("state", null) is Dictionary:
 		incoming_state = _as_dictionary(body.get("state", {})).duplicate(true)
 	else:
-		incoming_state = minigame_state.duplicate(true)
+		incoming_state = mode_state.duplicate(true)
 		if body.get("mode", null) is Dictionary:
 			incoming_state["mode"] = _as_dictionary(body.get("mode", {})).duplicate(true)
 		if body.get("session", null) is Dictionary:
@@ -784,8 +784,8 @@ func apply_minigame_result(payload: Dictionary) -> bool:
 			incoming_state["server_time"] = body.get("server_time")
 	if incoming_state.is_empty():
 		last_error = {
-			"code": "MINIGAME_STATE_INCOMPLETE",
-			"message": "Estado de minigame incompleto.",
+			"code": "MODE_STATE_INCOMPLETE",
+			"message": "Estado de mode incompleto.",
 		}
 		session_changed.emit()
 		return false
@@ -804,8 +804,8 @@ func apply_minigame_result(payload: Dictionary) -> bool:
 	var request_id := str(body.get("request_id", "")).strip_edges()
 	if request_id != "":
 		complete_pending_mutation(request_id, body)
-	minigame_state = incoming_state.duplicate(true)
-	_remember_surface_snapshot(SURFACE_MINIGAME)
+	mode_state = incoming_state.duplicate(true)
+	_remember_surface_snapshot(SURFACE_MODE)
 	last_error = {}
 	offline = false
 	session_changed.emit()
@@ -860,8 +860,8 @@ func has_crafting_state() -> bool:
 func has_build_state() -> bool:
 	return not combat_build_state.is_empty() and _surface_matches_active_save(SURFACE_BUILD)
 
-func has_minigame_state() -> bool:
-	return not minigame_state.is_empty() and _surface_matches_active_save(SURFACE_MINIGAME)
+func has_mode_state() -> bool:
+	return not mode_state.is_empty() and _surface_matches_active_save(SURFACE_MODE)
 
 func is_progression_lab_local_only() -> bool:
 	return bool(progression_lab.get("local_only", false))
@@ -969,8 +969,8 @@ func crafting_snapshot() -> Dictionary:
 func combat_build_snapshot() -> Dictionary:
 	return combat_build_state.duplicate(true)
 
-func minigame_snapshot() -> Dictionary:
-	return minigame_state.duplicate(true)
+func mode_snapshot() -> Dictionary:
+	return mode_state.duplicate(true)
 
 func diagnostics_snapshot() -> Dictionary:
 	var runtime := RuntimeConfigScript.normalize(runtime_config)
@@ -1094,7 +1094,7 @@ func snapshot() -> Dictionary:
 		"monetization_state": monetization_state.duplicate(true),
 		"crafting_state": crafting_state.duplicate(true),
 		"combat_build_state": combat_build_state.duplicate(true),
-		"minigame_state": minigame_state.duplicate(true),
+		"mode_state": mode_state.duplicate(true),
 		"progression_lab": progression_lab.duplicate(true),
 		"arena_state": arena_state.duplicate(true),
 		"surface_save_types": surface_save_types.duplicate(true),
@@ -1259,7 +1259,7 @@ func _apply_cache(cache: Dictionary) -> void:
 	monetization_state = _as_dictionary(cache.get("monetization_state", {})).duplicate(true)
 	crafting_state = _as_dictionary(cache.get("crafting_state", {})).duplicate(true)
 	combat_build_state = _as_dictionary(cache.get("combat_build_state", {})).duplicate(true)
-	minigame_state = _as_dictionary(cache.get("minigame_state", {})).duplicate(true)
+	mode_state = _as_dictionary(cache.get("mode_state", {})).duplicate(true)
 	progression_lab = _as_dictionary(cache.get("progression_lab", {})).duplicate(true)
 	arena_state = _as_dictionary(cache.get("arena_state", {})).duplicate(true)
 	surface_save_types = _normalized_surface_save_types(_as_dictionary(cache.get("surface_save_types", {})))
@@ -1295,7 +1295,7 @@ func _clear_account_snapshots() -> void:
 	crafting_state = {}
 	combat_build_state = {}
 	arena_state = {}
-	minigame_state = {}
+	mode_state = {}
 	if active_save_type == SAVE_TYPE_NORMAL:
 		progression_lab = {}
 	last_battle_id = null
@@ -1365,7 +1365,7 @@ func _clear_gameplay_snapshots() -> void:
 	crafting_state = {}
 	combat_build_state = {}
 	arena_state = {}
-	minigame_state = {}
+	mode_state = {}
 	last_battle_id = null
 	last_battle_log = {}
 	last_battle_rewards = {}
@@ -1378,7 +1378,7 @@ func _clear_gameplay_snapshots() -> void:
 	surface_save_types.erase(SURFACE_BUILD)
 	surface_save_types.erase(SURFACE_BATTLE)
 	surface_save_types.erase(SURFACE_ARENA)
-	surface_save_types.erase(SURFACE_MINIGAME)
+	surface_save_types.erase(SURFACE_MODE)
 
 func _patch_resources(resource_patch: Dictionary) -> void:
 	for key_variant: Variant in resource_patch.keys():
@@ -1457,8 +1457,8 @@ func _backfill_surface_save_types() -> void:
 		_remember_surface_snapshot(SURFACE_BATTLE)
 	if not arena_state.is_empty() and not surface_save_types.has(SURFACE_ARENA):
 		_remember_surface_snapshot(SURFACE_ARENA)
-	if not minigame_state.is_empty() and not surface_save_types.has(SURFACE_MINIGAME):
-		_remember_surface_snapshot(SURFACE_MINIGAME)
+	if not mode_state.is_empty() and not surface_save_types.has(SURFACE_MODE):
+		_remember_surface_snapshot(SURFACE_MODE)
 
 func _diagnostics_surfaces() -> Dictionary:
 	return {
@@ -1471,7 +1471,7 @@ func _diagnostics_surfaces() -> Dictionary:
 		SURFACE_BUILD: _diagnostics_surface(SURFACE_BUILD, has_build_state()),
 		SURFACE_BATTLE: _diagnostics_surface(SURFACE_BATTLE, has_battle_log()),
 		SURFACE_ARENA: _diagnostics_surface(SURFACE_ARENA, has_arena_state()),
-		SURFACE_MINIGAME: _diagnostics_surface(SURFACE_MINIGAME, has_minigame_state()),
+		SURFACE_MODE: _diagnostics_surface(SURFACE_MODE, has_mode_state()),
 	}
 
 func _diagnostics_surface(surface: String, has_snapshot: bool) -> Dictionary:

@@ -1,7 +1,7 @@
-class_name RpgsuaveForestWorldView
+class_name OpenworldForestWorldView
 extends Control
 
-const ModelScript := preload("res://dev/minigames/rpgsuave/rpgsuave_forest_model.gd")
+const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 
 var world_size := Vector2(960, 1400)
 var chest_position := Vector2(220, 250)
@@ -13,7 +13,7 @@ var pocket_full := false
 var walk_phase := 0.0
 
 func _ready() -> void:
-	name = "RpgsuaveForestWorldView"
+	name = "OpenworldForestWorldView"
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	clip_contents = true
 	queue_redraw()

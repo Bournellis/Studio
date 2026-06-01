@@ -1,6 +1,6 @@
 extends SceneTree
 
-const ScreenScript := preload("res://dev/minigames/rpgsuave/rpgsuave_forest_screen.gd")
+const ScreenScript := preload("res://modes/openworld/openworld_forest_screen.gd")
 const RouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 
 var _failures: PackedStringArray = PackedStringArray()
@@ -13,18 +13,18 @@ func _run() -> void:
 	quit(exit_code)
 
 func _run_smoke() -> int:
-	_expect(RouteContractScript.is_fullscreen_gameplay("minigame_shell"), "minigame_shell is registered as fullscreen gameplay.")
-	_expect(not RouteContractScript.shows_app_chrome("minigame_shell"), "minigame_shell hides app chrome.")
+	_expect(RouteContractScript.is_fullscreen_gameplay("mode_shell"), "mode_shell is registered as fullscreen gameplay.")
+	_expect(not RouteContractScript.shows_app_chrome("mode_shell"), "mode_shell hides app chrome.")
 	for viewport_size: Vector2i in [Vector2i(360, 800), Vector2i(390, 844), Vector2i(432, 936), Vector2i(1280, 720)]:
-		await _check_rpgsuave_screen(viewport_size)
+		await _check_openworld_screen(viewport_size)
 	if not _failures.is_empty():
 		for failure: String in _failures:
-			printerr("[smoke-rpgsuave-visual-layout] %s" % failure)
+			printerr("[smoke-openworld-visual-layout] %s" % failure)
 		return 1
-	print("[smoke-rpgsuave-visual-layout] OK fullscreen contract, joystick, HUD and hidden technical details")
+	print("[smoke-openworld-visual-layout] OK fullscreen contract, joystick, HUD and hidden technical details")
 	return 0
 
-func _check_rpgsuave_screen(viewport_size: Vector2i) -> void:
+func _check_openworld_screen(viewport_size: Vector2i) -> void:
 	root.size = viewport_size
 	await process_frame
 	var screen: Control = ScreenScript.new()
@@ -36,27 +36,27 @@ func _check_rpgsuave_screen(viewport_size: Vector2i) -> void:
 	screen.call("_layout_overlay")
 	await process_frame
 
-	var context := "Rpgsuave %s" % str(viewport_size)
+	var context := "Openworld %s" % str(viewport_size)
 	for node_name: String in [
-		"RpgsuaveForestScreen",
-		"RpgsuaveForestWorldView",
-		"RpgsuaveHudTop",
-		"RpgsuaveVirtualJoystick",
-		"RpgsuaveInventoryButton",
-		"RpgsuaveDepositButton",
-		"RpgsuaveCompleteButton",
-		"RpgsuaveBackButton",
+		"OpenworldForestScreen",
+		"OpenworldForestWorldView",
+		"OpenworldHudTop",
+		"OpenworldVirtualJoystick",
+		"OpenworldInventoryButton",
+		"OpenworldDepositButton",
+		"OpenworldCompleteButton",
+		"OpenworldBackButton",
 	]:
 		_expect_node_fits(screen, node_name, context)
-	_expect(_find_node_by_name(screen, "RpgsuaveForestBoard") == null, "%s does not use legacy fixed board." % context)
-	_expect(_find_node_by_name(screen, "RpgsuaveTechnicalDetails") == null, "%s hides technical details initially." % context)
+	_expect(_find_node_by_name(screen, "OpenworldForestBoard") == null, "%s does not use legacy fixed board." % context)
+	_expect(_find_node_by_name(screen, "OpenworldTechnicalDetails") == null, "%s hides technical details initially." % context)
 
-	var inventory := _find_node_by_name(screen, "RpgsuaveInventoryButton") as Button
+	var inventory := _find_node_by_name(screen, "OpenworldInventoryButton") as Button
 	if inventory != null:
 		inventory.pressed.emit()
 		await process_frame
-		_expect(_find_node_by_name(screen, "RpgsuaveInventorySheet") != null, "%s opens inventory sheet." % context)
-		_expect(_find_node_by_name(screen, "RpgsuaveTechnicalDetails") == null, "%s keeps technical details collapsed in sheet." % context)
+		_expect(_find_node_by_name(screen, "OpenworldInventorySheet") != null, "%s opens inventory sheet." % context)
+		_expect(_find_node_by_name(screen, "OpenworldTechnicalDetails") == null, "%s keeps technical details collapsed in sheet." % context)
 
 	screen.queue_free()
 	await process_frame

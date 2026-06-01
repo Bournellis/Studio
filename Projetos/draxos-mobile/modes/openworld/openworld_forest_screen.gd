@@ -1,12 +1,12 @@
-class_name RpgsuaveForestScreen
+class_name OpenworldForestScreen
 extends Control
 
 signal close_requested
 
-const ModelScript := preload("res://dev/minigames/rpgsuave/rpgsuave_forest_model.gd")
-const WorldViewScript := preload("res://dev/minigames/rpgsuave/rpgsuave_forest_world_view.gd")
-const JoystickScript := preload("res://dev/minigames/rpgsuave/rpgsuave_virtual_joystick.gd")
-const InventorySheetScript := preload("res://dev/minigames/rpgsuave/rpgsuave_inventory_sheet.gd")
+const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
+const WorldViewScript := preload("res://modes/openworld/openworld_forest_world_view.gd")
+const JoystickScript := preload("res://modes/openworld/openworld_virtual_joystick.gd")
+const InventorySheetScript := preload("res://modes/openworld/openworld_inventory_sheet.gd")
 
 const WORLD_SIZE := Vector2(960, 1400)
 const CHEST_POSITION := Vector2(220, 250)
@@ -58,7 +58,7 @@ var _last_result_text := ""
 var _last_pending_request_id := ""
 
 func _ready() -> void:
-	name = "RpgsuaveForestScreen"
+	name = "OpenworldForestScreen"
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	_spawn_resources()
@@ -110,7 +110,7 @@ func _build_ui() -> void:
 	add_child(_world)
 
 	_hud_top = PanelContainer.new()
-	_hud_top.name = "RpgsuaveHudTop"
+	_hud_top.name = "OpenworldHudTop"
 	_hud_top.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.052, 0.045, 0.82), Color(0.74, 0.64, 0.42, 0.36)))
 	add_child(_hud_top)
 
@@ -130,7 +130,7 @@ func _build_ui() -> void:
 	hud_column.add_child(hud_row)
 
 	_weight_label = _hud_label("")
-	_weight_label.name = "RpgsuavePocketWeight"
+	_weight_label.name = "OpenworldPocketWeight"
 	_weight_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hud_row.add_child(_weight_label)
 
@@ -139,43 +139,43 @@ func _build_ui() -> void:
 	hud_row.add_child(_mode_label)
 
 	_status_label = _hud_label("")
-	_status_label.name = "RpgsuaveCollectState"
+	_status_label.name = "OpenworldCollectState"
 	hud_column.add_child(_status_label)
 
 	_feedback_label = _hud_label("")
-	_feedback_label.name = "RpgsuaveFeedback"
+	_feedback_label.name = "OpenworldFeedback"
 	_feedback_label.add_theme_color_override("font_color", Color(0.96, 0.86, 0.58))
 	hud_column.add_child(_feedback_label)
 
 	_joystick = JoystickScript.new()
-	_joystick.name = "RpgsuaveVirtualJoystick"
+	_joystick.name = "OpenworldVirtualJoystick"
 	add_child(_joystick)
 
 	var actions := HBoxContainer.new()
-	actions.name = "RpgsuaveActionButtons"
+	actions.name = "OpenworldActionButtons"
 	actions.add_theme_constant_override("separation", 6)
 	actions.size_flags_horizontal = Control.SIZE_SHRINK_END
 	add_child(actions)
 
 	_inventory_button = _action_button("Mochila")
-	_inventory_button.name = "RpgsuaveInventoryButton"
+	_inventory_button.name = "OpenworldInventoryButton"
 	_inventory_button.pressed.connect(func() -> void:
 		_sheet.open_sheet("pocket")
 	)
 	actions.add_child(_inventory_button)
 
 	_deposit_button = _action_button("Depositar")
-	_deposit_button.name = "RpgsuaveDepositButton"
+	_deposit_button.name = "OpenworldDepositButton"
 	_deposit_button.pressed.connect(_deposit_near_chest)
 	actions.add_child(_deposit_button)
 
 	_complete_button = _action_button("Completar")
-	_complete_button.name = "RpgsuaveCompleteButton"
+	_complete_button.name = "OpenworldCompleteButton"
 	_complete_button.pressed.connect(_show_result)
 	actions.add_child(_complete_button)
 
 	_back_button = _action_button("Voltar")
-	_back_button.name = "RpgsuaveBackButton"
+	_back_button.name = "OpenworldBackButton"
 	_back_button.pressed.connect(func() -> void:
 		close_requested.emit()
 	)
@@ -200,7 +200,7 @@ func _layout_overlay() -> void:
 	if _joystick != null:
 		_joystick.size = JoystickScript.BASE_SIZE
 		_joystick.position = Vector2(18.0, maxf(18.0, size.y - JoystickScript.BASE_SIZE.y - 24.0))
-	var actions := get_node_or_null("RpgsuaveActionButtons") as HBoxContainer
+	var actions := get_node_or_null("OpenworldActionButtons") as HBoxContainer
 	if actions != null:
 		actions.size = Vector2(minf(380.0, size.x - 28.0), 48.0)
 		actions.position = Vector2(maxf(14.0, size.x - actions.size.x - 14.0), maxf(16.0, size.y - 72.0))
@@ -350,16 +350,16 @@ func _start_integrated_session() -> void:
 	_network_busy = true
 	_update_labels()
 	var request: Dictionary = session_store.prepare_pending_mutation(
-		"minigames/session/start",
-		"minigame:rpgsuave:%s" % str(session_store.get("active_save_type")),
-		"open_minigame_shell:rpgsuave",
+		"modes/session/start",
+		"mode:openworld:%s" % str(session_store.get("active_save_type")),
+		"open_mode_shell:openworld",
 		{
 			"mode_id": ModelScript.MODE_ID,
 			"slice_id": ModelScript.SLICE_ID,
 		}
 	)
 	_last_pending_request_id = str(request.get("request_id", ""))
-	var result: Dictionary = await supabase_client.start_minigame_session(
+	var result: Dictionary = await supabase_client.start_mode_session(
 		str(request.get("request_id", "")),
 		ModelScript.MODE_ID,
 		ModelScript.SLICE_ID,
@@ -368,7 +368,7 @@ func _start_integrated_session() -> void:
 	)
 	_network_busy = false
 	var body := _response_body(result)
-	if bool(result.get("ok", false)) and session_store.apply_minigame_result(result):
+	if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
 		_server_session_id = str(_as_dictionary(body.get("session", {})).get("id", ""))
 		_last_pending_request_id = ""
 		_last_result_text = "Sessao integrada iniciada."
@@ -391,15 +391,15 @@ func _complete_integrated_session() -> void:
 	var payload: Dictionary = model.result_payload(maxf(_session_seconds, 5.0))
 	payload["session_id"] = _server_session_id
 	var request: Dictionary = session_store.prepare_pending_mutation(
-		"minigames/session/complete",
-		"minigame:rpgsuave:%s" % str(session_store.get("active_save_type")),
-		"open_minigame_shell:rpgsuave",
+		"modes/session/complete",
+		"mode:openworld:%s" % str(session_store.get("active_save_type")),
+		"open_mode_shell:openworld",
 		payload
 	)
 	_last_pending_request_id = str(request.get("request_id", ""))
 	_network_busy = true
 	_update_labels()
-	var result: Dictionary = await supabase_client.complete_minigame_session(
+	var result: Dictionary = await supabase_client.complete_mode_session(
 		str(request.get("request_id", "")),
 		_server_session_id,
 		ModelScript.MODE_ID,
@@ -408,7 +408,7 @@ func _complete_integrated_session() -> void:
 		str(request.get("request_hash", ""))
 	)
 	_network_busy = false
-	if bool(result.get("ok", false)) and session_store.apply_minigame_result(result):
+	if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
 		var body := _response_body(result)
 		var reward := _as_dictionary(body.get("reward", {}))
 		_last_pending_request_id = ""

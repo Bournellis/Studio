@@ -1,11 +1,11 @@
-class_name RpgsuaveForestModel
+class_name OpenworldForestModel
 extends RefCounted
 
-const MODE_ID := "rpgsuave"
+const MODE_ID := "openworld"
 const SLICE_ID := "forest"
-const RULESET_ID := "rpgsuave_forest_ruleset_v0"
+const RULESET_ID := "openworld_forest_ruleset_v0"
 const RULESET_VERSION := 1
-const SCHEMA_VERSION := "rpgsuave_forest_local_v0"
+const SCHEMA_VERSION := "openworld_forest_local_v0"
 
 const BASE_SPEED := 160.0
 const BASE_CAPACITY := 20.0

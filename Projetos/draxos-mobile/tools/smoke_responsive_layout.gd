@@ -47,7 +47,7 @@ func _check_entry_dev_tools(viewport_size: Vector2i) -> void:
 	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)
 	ProjectSettings.set_setting("draxos_mobile/battle_lab/enabled", true)
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
-	ProjectSettings.set_setting("draxos_mobile/minigames/rpgsuave/enabled", true)
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
 	var boot: Control = _new_boot()
 	await process_frame
 	await process_frame
@@ -56,10 +56,10 @@ func _check_entry_dev_tools(viewport_size: Vector2i) -> void:
 	_expect(_find_button_by_text(boot, "Ferramentas internas") != null, "Entry exposes internal tools toggle at %s." % str(viewport_size))
 	_expect(_find_button_by_text(boot, "Battle Lab") != null, "Entry exposes Battle Lab at %s." % str(viewport_size))
 	_expect(_find_button_by_text(boot, "Progression Lab") != null, "Entry exposes Progression Lab at %s." % str(viewport_size))
-	_expect(_find_button_by_text(boot, "Rpgsuave") != null, "Entry exposes Rpgsuave at %s." % str(viewport_size))
+	_expect(_find_button_by_text(boot, "Openworld") != null, "Entry exposes Openworld at %s." % str(viewport_size))
 	_expect(Dictionary(boot.get("_action_buttons")).has("open_battle_lab"), "Entry registers Battle Lab action.")
 	_expect(Dictionary(boot.get("_action_buttons")).has("open_progression_lab"), "Entry registers Progression Lab action.")
-	_expect(Dictionary(boot.get("_action_buttons")).has("open_minigame_shell:rpgsuave"), "Entry registers Rpgsuave action.")
+	_expect(Dictionary(boot.get("_action_buttons")).has("open_mode_shell:openworld"), "Entry registers Openworld action.")
 	boot.queue_free()
 	await process_frame
 

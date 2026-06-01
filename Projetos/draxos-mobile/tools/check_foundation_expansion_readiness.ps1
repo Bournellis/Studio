@@ -110,7 +110,7 @@ $requiredFiles = @(
   'docs\foundation-expansion-readiness.md',
   'docs\contracts\account-save.md',
   'docs\contracts\ruleset-registry.md',
-  'docs\contracts\minigame-integration.md',
+  'docs\contracts\mode-integration.md',
   'docs\contracts\admin-ops.md',
   'docs\contracts\lab-heuristics.md',
   'docs\contracts\api-endpoints.md',
@@ -198,7 +198,7 @@ Test-DirectoriesMirror 'server\functions' 'supabase\functions' 'server/functions
 
 Test-FileContains 'docs\foundation-expansion-readiness.md' 'QA/OPS CONTRACTS'
 Test-FileContains 'docs\foundation-expansion-readiness.md' 'Matriz De Lanes'
-Test-FileContains 'docs\foundation-expansion-readiness.md' 'Minigame Antes De Feature'
+Test-FileContains 'docs\foundation-expansion-readiness.md' 'Mode Antes De Feature'
 Test-FileContains 'docs\foundation-expansion-readiness.md' 'Admin Minimo Auditavel'
 Test-FileContains 'docs\foundation-expansion-readiness.md' 'Migration / Ruleset / Tests'
 Test-FileContains 'docs\foundation-expansion-readiness.md' 'foundation_ruleset_v0'
@@ -214,12 +214,12 @@ Test-FileContains 'docs\contracts\ruleset-registry.md' 'foundation_ruleset_v0'
 Test-FileContains 'docs\contracts\ruleset-registry.md' 'content_hash'
 Test-FileContains 'docs\contracts\ruleset-registry.md' 'simulator_hash'
 
-Test-FileContains 'docs\contracts\minigame-integration.md' 'MINIGAME_INTEGRATION_CONTRACT_V1'
-Test-FileContains 'docs\contracts\minigame-integration.md' 'Contract-first'
-Test-FileContains 'docs\contracts\minigame-integration.md' 'Migration'
-Test-FileContains 'docs\contracts\minigame-integration.md' 'Ruleset'
-Test-FileContains 'docs\contracts\minigame-integration.md' 'Checklist De Integracao'
-Test-FileContains 'docs\contracts\minigame-integration.md' 'admin-ops.md'
+Test-FileContains 'docs\contracts\mode-integration.md' 'MODE_INTEGRATION_CONTRACT_V1'
+Test-FileContains 'docs\contracts\mode-integration.md' 'Contract-first'
+Test-FileContains 'docs\contracts\mode-integration.md' 'Migration'
+Test-FileContains 'docs\contracts\mode-integration.md' 'Ruleset'
+Test-FileContains 'docs\contracts\mode-integration.md' 'Checklist De Integracao'
+Test-FileContains 'docs\contracts\mode-integration.md' 'admin-ops.md'
 
 Test-FileContains 'docs\contracts\admin-ops.md' 'ADMIN_OPS_CONTRACT_V1'
 Test-FileContains 'docs\contracts\admin-ops.md' 'admin-internal'

@@ -1,8 +1,8 @@
 extends SceneTree
 
-const ModelScript := preload("res://dev/minigames/rpgsuave/rpgsuave_forest_model.gd")
-const ScreenScript := preload("res://dev/minigames/rpgsuave/rpgsuave_forest_screen.gd")
-const RegistryScript := preload("res://modes/boot/ui/minigame_shell_registry.gd")
+const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
+const ScreenScript := preload("res://modes/openworld/openworld_forest_screen.gd")
+const RegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
 
 var _failures: Array[String] = []
 
@@ -14,7 +14,7 @@ func _run() -> void:
 	quit(exit_code)
 
 func _run_smoke() -> int:
-	_expect(RegistryScript.is_available("rpgsuave"), "Rpgsuave registry is available.")
+	_expect(RegistryScript.is_available("openworld"), "Openworld registry is available.")
 	var model = ModelScript.new()
 	_expect(model.start_collection("galho").get("ok") == true, "Can start galho collection.")
 	_expect(model.advance_collection(0.1, true).get("cancelled") == true, "Moving cancels collection.")
@@ -29,12 +29,12 @@ func _run_smoke() -> int:
 	var screen = ScreenScript.new()
 	root.add_child(screen)
 	await process_frame
-	_expect(screen.name == "RpgsuaveForestScreen", "Screen instantiates.")
-	_expect(screen.find_child("RpgsuaveForestWorldView", true, false) != null, "Fullscreen world view exists.")
-	_expect(screen.find_child("RpgsuaveVirtualJoystick", true, false) != null, "Virtual joystick exists.")
-	_expect(screen.find_child("RpgsuaveHudTop", true, false) != null, "In-game HUD exists.")
-	_expect(screen.find_child("RpgsuaveInventoryButton", true, false) != null, "Inventory button exists.")
-	_expect(screen.find_child("RpgsuaveForestBoard", true, false) == null, "Legacy fixed board was removed.")
+	_expect(screen.name == "OpenworldForestScreen", "Screen instantiates.")
+	_expect(screen.find_child("OpenworldForestWorldView", true, false) != null, "Fullscreen world view exists.")
+	_expect(screen.find_child("OpenworldVirtualJoystick", true, false) != null, "Virtual joystick exists.")
+	_expect(screen.find_child("OpenworldHudTop", true, false) != null, "In-game HUD exists.")
+	_expect(screen.find_child("OpenworldInventoryButton", true, false) != null, "Inventory button exists.")
+	_expect(screen.find_child("OpenworldForestBoard", true, false) == null, "Legacy fixed board was removed.")
 	var player_before: Vector2 = screen.get_player_position()
 	screen.set_debug_joystick_vector(Vector2.RIGHT)
 	for _frame in 12:
@@ -45,10 +45,10 @@ func _run_smoke() -> int:
 	await process_frame
 
 	if _failures.is_empty():
-		print("[smoke-rpgsuave-forest] OK local collection, pocket, deposit and craft")
+		print("[smoke-openworld-forest] OK local collection, pocket, deposit and craft")
 		return 0
 	for failure in _failures:
-		printerr("[smoke-rpgsuave-forest] %s" % failure)
+		printerr("[smoke-openworld-forest] %s" % failure)
 	return 1
 
 func _expect(condition: bool, message: String) -> void:
