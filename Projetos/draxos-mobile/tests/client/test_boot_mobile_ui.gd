@@ -991,7 +991,7 @@ func test_boot_decomposition_keeps_shell_budget_and_boundaries() -> void:
 	assert_true(runtime_line_count <= 1750, "boot_runtime.gd must keep shrinking under the client-shell hardening budget; got %d lines" % runtime_line_count)
 	var hub_full_source := FileAccess.get_file_as_string("res://modes/boot/surfaces/hub_surface_full_presenter.gd")
 	var hub_full_line_count := hub_full_source.split("\n").size()
-	assert_true(hub_full_line_count <= 1700, "hub_surface_full_presenter.gd must keep Mode Hub extracted; got %d lines" % hub_full_line_count)
+	assert_true(hub_full_line_count <= 900, "hub_surface_full_presenter.gd must stay below the hub hardening budget; got %d lines" % hub_full_line_count)
 	assert_true(boot_source.contains("app_shell_action_contract.gd"))
 	assert_true(boot_source.contains("account_session_flow.gd"))
 	assert_true(boot_source.contains("surface_action_flow.gd"))
@@ -1935,9 +1935,14 @@ func _action_consumer_script_paths() -> PackedStringArray:
 		"res://modes/boot/surfaces/battle_replay_presenter.gd",
 		"res://modes/boot/surfaces/competition_surface_presenter.gd",
 		"res://modes/boot/surfaces/hub_account_surface_presenter.gd",
+		"res://modes/boot/surfaces/hub_surface_common_presenter.gd",
+		"res://modes/boot/surfaces/hub_surface_entry_presenter.gd",
 		"res://modes/boot/surfaces/mode_hub_surface_presenter.gd",
 		"res://modes/boot/surfaces/hub_surface_full_presenter.gd",
+		"res://modes/boot/surfaces/hub_surface_preparation_presenter.gd",
 		"res://modes/boot/surfaces/hub_surface_presenter.gd",
+		"res://modes/boot/surfaces/hub_surface_refuge_popup_presenter.gd",
+		"res://modes/boot/surfaces/hub_surface_refuge_scene_presenter.gd",
 		"res://modes/boot/surfaces/shop_surface_presenter.gd",
 		"res://modes/boot/surfaces/social_surface_presenter.gd",
 		"res://modes/boot/surfaces/surface_ui_helpers.gd",
