@@ -5,21 +5,19 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Arena PVE Sequence Fix`
-- Active stage status: `IMPLEMENTED_LOCAL`
+- Active stage status: `PUBLISHED_INTERNAL_ALPHA_BACKEND_HOTFIX`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published remote package: `Scroll Drag Release Fix` over Minigame
-  Platform V1.
-- Latest implemented package: `Scroll Drag Release Fix`
-  on branch `codex/draxos-mobile/scroll-drag-release-fix`, published as
-  `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5`.
-- Latest local fix: `Arena PVE Sequence Fix`
-  on branch `codex/draxos-mobile/arena-pve-sequence-fix`; not yet published.
-- Active follow-up: publish the Arena PVE sequence fix, then human playtest the
-  Arena flow from tutorial clear into the first real Arena and the next
-  difficulty unlock.
+  Platform V1, with `Arena PVE Sequence Fix` deployed as a backend hotfix to
+  Edge Function `arena`.
+- Latest implemented package: `Arena PVE Sequence Fix`
+  merged into branch `codex/draxos-mobile/scroll-drag-release-fix`; commit
+  `f69d56c` plus publication status commit.
+- Active follow-up: human playtest the Arena flow from tutorial clear into the
+  first real Arena and the next difficulty unlock.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -80,9 +78,18 @@ the screen no longer keeps scrolling as if grabbed.
 
 ## Arena PVE Sequence Fix - 2026-06-01
 
-This local fix addresses a real remote reproduction where a fresh player could
-clear the tutorial, open `Arena Curta Das Cinzas - Intro`, win duel 1, then lose
-duel 2 and remain blocked from further Arena progression.
+This backend hotfix is deployed remotely to Edge Function `arena`. It addresses
+a real remote reproduction where a fresh player could clear the tutorial, open
+`Arena Curta Das Cinzas - Intro`, win duel 1, then lose duel 2 and remain
+blocked from further Arena progression.
+
+- branch: `codex/draxos-mobile/scroll-drag-release-fix`;
+- fix commit: `f69d56c`;
+- remote target: Supabase project `armxgipvnbbshzqawklw`, Edge Function
+  `arena`;
+- client artifact package remains
+  `internal-alpha/v0-scroll-drag-release-fix-20260601-c7735c5` because no
+  client/export artifact changed.
 
 Scope:
 
@@ -110,8 +117,13 @@ Validation completed locally:
 - `npx -y deno task --cwd server/functions check`: passed.
 - `npx -y deno task --cwd supabase/functions check`: passed.
 - `git diff --check`: passed.
+- `npx -y supabase functions deploy arena --project-ref armxgipvnbbshzqawklw`:
+  passed.
+- Remote real-player smoke after deployment passed:
+  tutorial winner `player`; `arena_cinzas_curta:s1_d00_intro` duels 1-3 winners
+  `player`; `arena_cinzas_curta:s1_d01_aprendiz` unlocked.
 
-Publication status: pending explicit release/deploy step.
+Publication status: published as Internal Alpha backend hotfix.
 
 ## Minigame Platform V1 - Official Modes
 
