@@ -42,6 +42,11 @@ interface Profile {
   reward_completion: number;
   battle_pass_completion: number;
   battles_per_hour: number;
+  arena_attempts_per_hour?: number;
+  average_duels_per_attempt?: number;
+  clear_rate?: number;
+  repeat_reward_factor?: number;
+  first_clear_completion?: number;
   checkins_per_hour: number;
   premium_pass: boolean;
   second_construction_queue: boolean;
@@ -138,7 +143,21 @@ interface HealthySave {
   };
   consumables: ConsumableState;
   combat_build: CombatBuild;
+  arena: ArenaProgressionState;
   manual_checklist: string[];
+}
+
+interface ArenaProgressionState {
+  attempts_per_hour: number;
+  average_duels_per_attempt: number;
+  clear_rate: number;
+  repeat_reward_factor: number;
+  first_clear_completion: number;
+  projected_potion_uses_per_attempt: number;
+  expected_attempts: number;
+  expected_duels: number;
+  expected_clears: number;
+  expected_potion_uses: number;
 }
 
 interface BuildState {
@@ -218,6 +237,7 @@ interface ProgressionData {
   status: Status;
   saves: HealthySave[];
   reward_checks: CheckRow[];
+  arena_checks: CheckRow[];
   consumable_checks: CheckRow[];
   premium_gap: PremiumGapRow[];
   power_recommendations: PowerRecommendationRow[];
@@ -368,6 +388,7 @@ export async function loadModel(
 export function buildProgressionData(model: ProgressionModel): ProgressionData {
   const saves = buildHealthySaves(model);
   const rewardChecks = buildRewardChecks(model, saves);
+  const arenaChecks = buildArenaChecks(saves);
   const consumableChecks = buildConsumableChecks(model, saves);
   const premiumGap = buildPremiumGap(model, saves);
   const powerRecommendations = buildPowerRecommendations(model, saves);
@@ -375,6 +396,7 @@ export function buildProgressionData(model: ProgressionModel): ProgressionData {
   const statuses = [
     ...saves.map((save) => save.status),
     ...rewardChecks.map((check) => check.status),
+    ...arenaChecks.map((check) => check.status),
     ...consumableChecks.map((check) => check.status),
     ...premiumGap.map((gap) => gap.status),
     ...powerRecommendations.map((row) => row.status),
@@ -385,6 +407,7 @@ export function buildProgressionData(model: ProgressionModel): ProgressionData {
     status: worstStatus(statuses),
     saves,
     reward_checks: rewardChecks,
+    arena_checks: arenaChecks,
     consumable_checks: consumableChecks,
     premium_gap: premiumGap,
     power_recommendations: powerRecommendations,
@@ -438,6 +461,13 @@ export async function writeProgressionOutputs(
       "po_osso",
       "pocao_vida",
       "potion_equipped",
+      "arena_attempts",
+      "arena_duels",
+      "arena_clear_rate",
+      "arena_repeat_factor",
+      "projected_potion_uses_per_attempt",
+      "expected_potion_uses",
+      "potion_attempt_coverage_percent",
       "weapon_level",
       "weapon_quality_tier",
       "spells",
@@ -447,6 +477,18 @@ export async function writeProgressionOutputs(
   await Deno.writeTextFile(
     new URL("reward_scaling_checks.csv", outputUrl),
     toCsv(data.reward_checks, [
+      "id",
+      "profile_id",
+      "milestone_id",
+      "status",
+      "observed",
+      "target",
+      "note",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("arena_progression_checks.csv", outputUrl),
+    toCsv(data.arena_checks, [
       "id",
       "profile_id",
       "milestone_id",
@@ -537,6 +579,93 @@ export async function writeProgressionOutputs(
     ]),
   );
   await Deno.writeTextFile(
+    new URL("season_1_level_curve.csv", outputUrl),
+    toCsv(seasonLevelCurveRows(model, data), [
+      "milestone_id",
+      "label",
+      "expected_elapsed_minutes",
+      "target_level_min",
+      "target_level_max",
+      "xp_for_min_level",
+      "xp_for_max_level",
+      "nearest_lab_milestone",
+      "free_100_observed_level",
+      "free_100_observed_xp",
+      "status",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("arena_tier_progression.csv", outputUrl),
+    toCsv(arenaTierProgressionRows(), [
+      "tier_id",
+      "arena_id",
+      "difficulty_id",
+      "difficulty_rank",
+      "recommended_level_min",
+      "recommended_level_max",
+      "recommended_power_min",
+      "recommended_power_max",
+      "duel_count",
+      "final_enemy_power",
+      "reward_profile_id",
+      "reward_xp",
+      "clear_rate_target",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("arena_reward_pressure.csv", outputUrl),
+    toCsv(arenaRewardPressureRows(), [
+      "reward_profile_id",
+      "duel_count",
+      "difficulty_rank",
+      "xp",
+      "almas",
+      "energia",
+      "sangue",
+      "cristais",
+      "ossos",
+      "po_osso",
+      "first_clear_multiplier",
+      "repeat_multiplier",
+      "repeat_xp",
+      "status",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("base_builder_pressure.csv", outputUrl),
+    toCsv(data.saves.map(baseBuilderPressureRow), [
+      "id",
+      "profile_id",
+      "milestone_id",
+      "level",
+      "base_average_level",
+      "construction_slots",
+      "active_job",
+      "energia",
+      "energia_debt",
+      "status",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("potion_pressure.csv", outputUrl),
+    toCsv(data.saves.map(potionPressureRow), [
+      "id",
+      "profile_id",
+      "milestone_id",
+      "arena_attempts",
+      "expected_potion_uses",
+      "crafted_life_potions",
+      "potion_attempt_coverage_percent",
+      "po_osso_remaining",
+      "potion_equipped",
+      "status",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("calibration_recommendations.json", outputUrl),
+    JSON.stringify(calibrationRecommendations(model, data), null, 2) + "\n",
+  );
+  await Deno.writeTextFile(
     new URL("progression_report.html", outputUrl),
     reportHtml(model, data),
   );
@@ -585,6 +714,7 @@ export function buildHealthySave(
     level,
     consumables,
   );
+  const arena = arenaProgressionFor(profile, milestone, consumables);
   const power = calculatePower(
     model.power_weights,
     build,
@@ -623,6 +753,7 @@ export function buildHealthySave(
     },
     consumables,
     combat_build: combatBuild,
+    arena,
     manual_checklist: checklistFor(profile, milestone, build, consumables),
   };
 }
@@ -655,21 +786,68 @@ export function calculatePower(
   );
 }
 
+function arenaProgressionFor(
+  profile: Profile,
+  milestone: Milestone,
+  consumables?: ConsumableState,
+): ArenaProgressionState {
+  const attemptsPerHour = profile.arena_attempts_per_hour ??
+    profile.battles_per_hour;
+  const averageDuelsPerAttempt = profile.average_duels_per_attempt ?? 2.4;
+  const clearRate = clamp(profile.clear_rate ?? 0.55, 0, 1);
+  const repeatRewardFactor = clamp(profile.repeat_reward_factor ?? 0.35, 0, 1);
+  const firstClearCompletion = clamp(profile.first_clear_completion ?? 1, 0, 6);
+  const hasEquippedPotion = consumables?.equipped_potion_id === "pocao_vida";
+  const projectedPotionUsesPerAttempt = hasEquippedPotion
+    ? round(clamp(averageDuelsPerAttempt * 0.2, 0, 0.85), 2)
+    : 0;
+  const expectedAttempts = milestone.hours * attemptsPerHour;
+  const expectedDuels = expectedAttempts * averageDuelsPerAttempt;
+  const expectedClears = expectedAttempts * clearRate;
+  const expectedPotionUses = expectedAttempts * projectedPotionUsesPerAttempt;
+  return {
+    attempts_per_hour: attemptsPerHour,
+    average_duels_per_attempt: averageDuelsPerAttempt,
+    clear_rate: clearRate,
+    repeat_reward_factor: repeatRewardFactor,
+    first_clear_completion: firstClearCompletion,
+    projected_potion_uses_per_attempt: projectedPotionUsesPerAttempt,
+    expected_attempts: expectedAttempts,
+    expected_duels: expectedDuels,
+    expected_clears: expectedClears,
+    expected_potion_uses: expectedPotionUses,
+  };
+}
+
 function estimateGains(
   model: ProgressionModel,
   profile: Profile,
   milestone: Milestone,
 ): ResourceVector {
   const gains = emptyResources();
+  const arena = arenaProgressionFor(profile, milestone);
+  const seasonRewardScale = arenaSeasonRewardMultiplier(milestone.hours);
+  const firstClearSlots = arena.first_clear_completion *
+    Math.min(1, Math.max(0.1, milestone.hours / 20));
   addScaled(
     gains,
-    model.source_values.battle,
-    milestone.hours * profile.battles_per_hour,
+    model.source_values.arena_duel ?? model.source_values.battle,
+    arena.expected_duels * seasonRewardScale,
+  );
+  addScaled(
+    gains,
+    model.source_values.arena_completion ?? model.source_values.battle,
+    arena.expected_clears * arena.repeat_reward_factor * seasonRewardScale,
+  );
+  addScaled(
+    gains,
+    model.source_values.arena_first_clear ?? model.source_values.battle,
+    Math.min(arena.expected_clears, firstClearSlots) * seasonRewardScale,
   );
   addScaled(
     gains,
     model.source_values.routine_reward_hour_full,
-    milestone.hours * profile.reward_completion,
+    milestone.hours * profile.reward_completion * seasonRewardScale,
   );
   addScaled(
     gains,
@@ -699,6 +877,12 @@ function estimateGains(
     gains.diamante += 500;
   }
   return roundResources(gains);
+}
+
+function arenaSeasonRewardMultiplier(hours: number): number {
+  if (hours >= 20) return 2.4;
+  if (hours >= 10) return 1.25;
+  return 1;
 }
 
 function estimateSpend(
@@ -1086,6 +1270,48 @@ function buildRewardChecks(
   return rows;
 }
 
+function buildArenaChecks(saves: HealthySave[]): CheckRow[] {
+  const rows: CheckRow[] = [];
+  for (const save of saves) {
+    rows.push({
+      id: "arena_attempt_volume",
+      profile_id: save.profile_id,
+      milestone_id: save.milestone_id,
+      status: save.arena.expected_attempts > 0 ? "PASS" : "REVIEW",
+      observed: `${round(save.arena.expected_attempts, 1)} attempts`,
+      target: "> 0 attempts without combat cooldown",
+      note:
+        "Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.",
+    });
+    rows.push({
+      id: "arena_farm_pressure",
+      profile_id: save.profile_id,
+      milestone_id: save.milestone_id,
+      status: save.arena.repeat_reward_factor <= 0.5 ? "PASS" : "REVIEW",
+      observed: `repeat factor ${round(save.arena.repeat_reward_factor, 2)}`,
+      target: "<= 0.5",
+      note:
+        "Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.",
+    });
+    const potionCoverage = potionAttemptCoveragePercent(save);
+    rows.push({
+      id: "arena_potion_consumption_pressure",
+      profile_id: save.profile_id,
+      milestone_id: save.milestone_id,
+      status: save.arena.expected_potion_uses <= 0 || potionCoverage >= 5
+        ? "PASS"
+        : "REVIEW",
+      observed: `${
+        round(save.arena.expected_potion_uses, 1)
+      } projected uses, ${save.consumables.crafted_life_potions} stock, ${potionCoverage}% coverage`,
+      target: ">= 5% lab stock coverage when Pocao de Vida is equipped",
+      note:
+        "Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.",
+    });
+  }
+  return rows;
+}
+
 function buildConsumableChecks(
   _model: ProgressionModel,
   saves: HealthySave[],
@@ -1365,7 +1591,7 @@ function checklistFor(
   return [
     `Carregar ${profile.id} em ${milestone.id}.`,
     "Conferir se Refugio mostra recursos, poder, fila e base coerentes.",
-    "Fazer uma batalha FIRST_SLICE_SIM e observar duracao/recompensa.",
+    "Fazer uma tentativa de Arena PVE e observar duracao, consumo de Pocao e recompensa.",
     "Abrir Base e avaliar se proximo upgrade parece desejavel.",
     "Abrir Preparacao e conferir Pocao de Vida, comportamento de pocao e comportamento de spell.",
     "Abrir Loja/Passe e avaliar se premium parece conforto, nao obrigacao.",
@@ -1593,6 +1819,251 @@ function milestoneIndex(milestoneId: string): number {
   return index < 0 ? 0 : index;
 }
 
+interface SeasonProgressionTargetsDocument {
+  level_cap: number;
+  target_power_model: string;
+  milestones: Array<{
+    id: string;
+    label: string;
+    target_level_min: number;
+    target_level_max: number;
+    expected_elapsed_minutes: number;
+  }>;
+}
+
+interface PveArenaDifficultiesDocument {
+  items: Array<{
+    id: string;
+    arena_id: string;
+    difficulty_id: string;
+    difficulty_rank: number;
+    recommended_level_min: number;
+    recommended_level_max: number;
+    recommended_power_min: number;
+    recommended_power_max: number;
+    enemy_sequence: string[];
+    final_enemy_power: number;
+    reward_profile_id: string;
+    clear_rate_target_min_percent: number;
+    clear_rate_target_max_percent: number;
+  }>;
+}
+
+interface ArenaRewardsDocument {
+  items: Array<{
+    id: string;
+    resources: Record<string, number>;
+    first_clear_multiplier: number;
+    repeat_multiplier: number;
+  }>;
+}
+
+function seasonLevelCurveRows(
+  model: ProgressionModel,
+  data: ProgressionData,
+): Array<Record<string, unknown>> {
+  const targets = loadJsonDocument<SeasonProgressionTargetsDocument>(
+    "../../data/definitions/season_1_progression_targets.json",
+    {
+      level_cap: model.cap,
+      target_power_model: "arena_tuning_power_v1",
+      milestones: [],
+    },
+  );
+  return targets.milestones.map((target) => {
+    const nearest = nearestMilestone(target.expected_elapsed_minutes / 60, model.milestones);
+    const firstModeledMinutes = Math.min(
+      ...model.milestones.map((milestone) => milestone.hours * 60),
+    );
+    const lastModeledMinutes = Math.max(
+      ...model.milestones.map((milestone) => milestone.hours * 60),
+    );
+    const outsideModeledWindow = target.expected_elapsed_minutes < firstModeledMinutes ||
+      target.expected_elapsed_minutes > lastModeledMinutes;
+    const observed = data.saves.find((save) =>
+      save.profile_id === "free_100_rewards" && save.milestone_id === nearest?.id
+    );
+    const observedLevel = observed?.player.level ?? 0;
+    const status: Status = outsideModeledWindow
+      ? "PASS"
+      : observedLevel === 0
+      ? "REVIEW"
+      : observedLevel < target.target_level_min ||
+          observedLevel > target.target_level_max
+      ? "REVIEW"
+      : "PASS";
+    return {
+      milestone_id: target.id,
+      label: target.label,
+      expected_elapsed_minutes: target.expected_elapsed_minutes,
+      target_level_min: target.target_level_min,
+      target_level_max: target.target_level_max,
+      xp_for_min_level: xpForLevel(target.target_level_min),
+      xp_for_max_level: xpForLevel(target.target_level_max),
+      nearest_lab_milestone: outsideModeledWindow ? "" : nearest?.id ?? "",
+      free_100_observed_level: outsideModeledWindow ? "" : observedLevel,
+      free_100_observed_xp: outsideModeledWindow ? "" : observed?.player.xp ?? 0,
+      status,
+    };
+  });
+}
+
+function arenaTierProgressionRows(): Array<Record<string, unknown>> {
+  const difficulties = loadJsonDocument<PveArenaDifficultiesDocument>(
+    "../../data/definitions/pve_arena_difficulties.json",
+    { items: [] },
+  );
+  const rewards = arenaRewardById();
+  return difficulties.items.map((tier) => {
+    const reward = rewards.get(tier.reward_profile_id);
+    return {
+      tier_id: tier.id,
+      arena_id: tier.arena_id,
+      difficulty_id: tier.difficulty_id,
+      difficulty_rank: tier.difficulty_rank,
+      recommended_level_min: tier.recommended_level_min,
+      recommended_level_max: tier.recommended_level_max,
+      recommended_power_min: tier.recommended_power_min,
+      recommended_power_max: tier.recommended_power_max,
+      duel_count: tier.enemy_sequence.length,
+      final_enemy_power: tier.final_enemy_power,
+      reward_profile_id: tier.reward_profile_id,
+      reward_xp: reward?.resources.xp ?? 0,
+      clear_rate_target:
+        `${tier.clear_rate_target_min_percent}-${tier.clear_rate_target_max_percent}%`,
+    };
+  });
+}
+
+function arenaRewardPressureRows(): Array<Record<string, unknown>> {
+  const rewards = loadJsonDocument<ArenaRewardsDocument>(
+    "../../data/definitions/arena_rewards.json",
+    { items: [] },
+  );
+  return rewards.items
+    .filter((reward) => reward.id.startsWith("reward_s1_"))
+    .map((reward) => {
+      const parsed = /^reward_s1_(\d)d_d(\d+)/.exec(reward.id);
+      const duelCount = parsed === null ? 0 : Number(parsed[1]);
+      const difficultyRank = parsed === null ? 0 : Number(parsed[2]);
+      const xp = reward.resources.xp ?? 0;
+      const repeatXp = Math.round(xp * reward.repeat_multiplier);
+      const status: Status = reward.repeat_multiplier <= 0.35 ? "PASS" : "REVIEW";
+      return {
+        reward_profile_id: reward.id,
+        duel_count: duelCount,
+        difficulty_rank: difficultyRank,
+        xp,
+        almas: reward.resources.almas ?? 0,
+        energia: reward.resources.energia ?? 0,
+        sangue: reward.resources.sangue ?? 0,
+        cristais: reward.resources.cristais ?? 0,
+        ossos: reward.resources.ossos ?? 0,
+        po_osso: reward.resources.po_osso ?? 0,
+        first_clear_multiplier: reward.first_clear_multiplier,
+        repeat_multiplier: reward.repeat_multiplier,
+        repeat_xp: repeatXp,
+        status,
+      };
+    });
+}
+
+function arenaRewardById(): Map<string, ArenaRewardsDocument["items"][number]> {
+  const rewards = loadJsonDocument<ArenaRewardsDocument>(
+    "../../data/definitions/arena_rewards.json",
+    { items: [] },
+  );
+  return new Map(rewards.items.map((reward) => [reward.id, reward]));
+}
+
+function baseBuilderPressureRow(save: HealthySave): Record<string, unknown> {
+  const activeJob = save.base.active_job;
+  return {
+    id: save.id,
+    profile_id: save.profile_id,
+    milestone_id: save.milestone_id,
+    level: save.player.level,
+    base_average_level: round(avg(save.base.structures.map((item) => item.level)), 2),
+    construction_slots: save.base.construction_slots,
+    active_job: activeJob === null
+      ? ""
+      : `${activeJob.structure_id}->${activeJob.target_level}`,
+    energia: save.resources.energia,
+    energia_debt: save.resource_debt.energia,
+    status: save.resource_debt.energia < 0 ? "REVIEW" : "PASS",
+  };
+}
+
+function potionPressureRow(save: HealthySave): Record<string, unknown> {
+  const coverage = potionAttemptCoveragePercent(save);
+  return {
+    id: save.id,
+    profile_id: save.profile_id,
+    milestone_id: save.milestone_id,
+    arena_attempts: round(save.arena.expected_attempts, 1),
+    expected_potion_uses: round(save.arena.expected_potion_uses, 1),
+    crafted_life_potions: save.consumables.crafted_life_potions,
+    potion_attempt_coverage_percent: coverage,
+    po_osso_remaining: save.consumables.po_osso_remaining,
+    potion_equipped: save.consumables.equipped_potion_id,
+    status: save.arena.expected_potion_uses <= 0 || coverage >= 5
+      ? "PASS"
+      : "REVIEW",
+  };
+}
+
+function calibrationRecommendations(
+  model: ProgressionModel,
+  data: ProgressionData,
+): Record<string, unknown> {
+  const levelCurve = seasonLevelCurveRows(model, data);
+  const arenaTiers = arenaTierProgressionRows();
+  const rewardPressure = arenaRewardPressureRows();
+  const reviewMilestones = levelCurve.filter((row) => row.status !== "PASS");
+  const highRepeatRewards = rewardPressure.filter((row) =>
+    Number(row.repeat_multiplier) > 0.35
+  );
+  return {
+    schema_version: "calibration_recommendations_v1",
+    target_power_model: "arena_tuning_power_v1",
+    season_level_cap: model.cap,
+    tier_count: arenaTiers.length,
+    status: data.status,
+    review_milestones: reviewMilestones.map((row) => row.milestone_id),
+    high_repeat_rewards: highRepeatRewards.map((row) => row.reward_profile_id),
+    recommendations: [
+      reviewMilestones.length > 0
+        ? "Review XP/reward cadence against Season 1 milestone targets."
+        : "Season 1 milestone targets are inside current lab ranges for the free 100% profile.",
+      highRepeatRewards.length > 0
+        ? "Keep repeat rewards capped; some profiles exceed the preferred repeat factor."
+        : "Repeat reward factors are capped for initial Arena PVE tuning.",
+      "Use Battle Lab tier clear-rate output before changing formulas, weapons or spells.",
+      "Treat arena_tuning_power_v1 as a lab metric; do not mutate players.power.",
+    ],
+  };
+}
+
+function nearestMilestone(
+  hours: number,
+  milestones: Milestone[],
+): Milestone | null {
+  if (milestones.length === 0) return null;
+  return [...milestones].sort((left, right) =>
+    Math.abs(left.hours - hours) - Math.abs(right.hours - hours)
+  )[0];
+}
+
+function loadJsonDocument<T>(relativePath: string, fallback: T): T {
+  try {
+    return JSON.parse(
+      Deno.readTextFileSync(new URL(relativePath, import.meta.url)),
+    ) as T;
+  } catch {
+    return fallback;
+  }
+}
+
 function saveRow(save: HealthySave): Record<string, unknown> {
   return {
     id: save.id,
@@ -1612,6 +2083,16 @@ function saveRow(save: HealthySave): Record<string, unknown> {
     po_osso: save.consumables.po_osso_remaining,
     pocao_vida: save.consumables.crafted_life_potions,
     potion_equipped: save.consumables.equipped_potion_id,
+    arena_attempts: round(save.arena.expected_attempts, 1),
+    arena_duels: round(save.arena.expected_duels, 1),
+    arena_clear_rate: round(save.arena.clear_rate, 2),
+    arena_repeat_factor: round(save.arena.repeat_reward_factor, 2),
+    projected_potion_uses_per_attempt: round(
+      save.arena.projected_potion_uses_per_attempt,
+      2,
+    ),
+    expected_potion_uses: round(save.arena.expected_potion_uses, 1),
+    potion_attempt_coverage_percent: potionAttemptCoveragePercent(save),
     weapon_level: save.build.weapon_level,
     weapon_quality_tier: save.build.weapon_quality_tier,
     spells: save.build.spell_slots.join("|"),
@@ -1620,6 +2101,15 @@ function saveRow(save: HealthySave): Record<string, unknown> {
       2,
     ),
   };
+}
+
+function potionAttemptCoveragePercent(save: HealthySave): number {
+  if (save.arena.expected_potion_uses <= 0) return 100;
+  return round(
+    (save.consumables.crafted_life_potions / save.arena.expected_potion_uses) *
+      100,
+    2,
+  );
 }
 
 function craftingPressureRow(save: HealthySave): Record<string, unknown> {
@@ -1680,6 +2170,26 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
         0,
       )),
     ],
+    [
+      "Arena attempts",
+      String(round(
+        data.saves.reduce(
+          (total, save) => total + save.arena.expected_attempts,
+          0,
+        ),
+        0,
+      )),
+    ],
+    [
+      "Projected potion uses",
+      String(round(
+        data.saves.reduce(
+          (total, save) => total + save.arena.expected_potion_uses,
+          0,
+        ),
+        0,
+      )),
+    ],
   ];
   const saveRows = data.saves.map((save) =>
     `<tr><td>${save.id}</td><td>${save.status}</td><td>${save.player.level}</td><td>${save.player.power}</td><td>${
@@ -1690,6 +2200,9 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
     `<tr><td>${check.status}</td><td>${check.profile_id}</td><td>${check.milestone_id}</td><td>${check.id}</td><td>${check.observed}</td><td>${check.target}</td></tr>`
   ).join("\n");
   const consumableRows = data.consumable_checks.map((check) =>
+    `<tr><td>${check.status}</td><td>${check.profile_id}</td><td>${check.milestone_id}</td><td>${check.id}</td><td>${check.observed}</td><td>${check.target}</td></tr>`
+  ).join("\n");
+  const arenaRows = data.arena_checks.map((check) =>
     `<tr><td>${check.status}</td><td>${check.profile_id}</td><td>${check.milestone_id}</td><td>${check.id}</td><td>${check.observed}</td><td>${check.target}</td></tr>`
   ).join("\n");
   const gapRows = data.premium_gap.map((gap) =>
@@ -1723,6 +2236,8 @@ function reportHtml(model: ProgressionModel, data: ProgressionData): string {
   <table><tr><th>Save</th><th>Status</th><th>Level</th><th>Power</th><th>Notes</th></tr>${saveRows}</table>
   <h2>Reward Checks</h2>
   <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Check</th><th>Observed</th><th>Target</th></tr>${checkRows}</table>
+  <h2>Arena PVE Checks</h2>
+  <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Check</th><th>Observed</th><th>Target</th></tr>${arenaRows}</table>
   <h2>Track 16 Consumables</h2>
   <table><tr><th>Status</th><th>Profile</th><th>Milestone</th><th>Check</th><th>Observed</th><th>Target</th></tr>${consumableRows}</table>
   <h2>Premium Gap</h2>
@@ -1778,6 +2293,7 @@ async function main(): Promise<void> {
   const reviewCount = [
     ...data.saves,
     ...data.reward_checks,
+    ...data.arena_checks,
     ...data.premium_gap,
     ...data.power_recommendations,
   ].filter((item) => item.status !== "PASS").length;

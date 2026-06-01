@@ -1,6 +1,6 @@
 # DraxosMobile - Product Vision
 
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Status: `LOCAL_PRODUCT_VISION - fonte viva do produto DraxosMobile`
 - Escopo: direcao de longo prazo, limites de produto, plataforma, economia, social, live ops, backend e monetizacao.
 
@@ -8,7 +8,7 @@
 
 ## Tese Do Produto
 
-DraxosMobile e um jogo mobile-first de progressao persistente onde o jogador construi um Draxos de poder crescente, administra um refugio, participa de batalhas assincronas e se conecta a outros jogadores por sistemas sociais leves.
+DraxosMobile e um jogo mobile-first de progressao persistente onde o jogador construi um Draxos de poder crescente, administra um Refugio, vence Arenas PVE de duelos assincronos e, depois de entender build/poder/progresso, entra em PVP assincrono e sistemas sociais leves.
 
 O produto deve funcionar como um jogo de longo prazo: facil de abrir todos os dias, claro para evoluir em sessoes curtas, rico o bastante para gerar objetivos semanais e robusto o bastante para crescer em seasons sem reescrever a fundacao.
 
@@ -16,11 +16,15 @@ O jogador nao e o heroi. O jogador e um Draxos em ascensao.
 
 ## Situacao Atual
 
-Etapa atual: `FOUNDATION_FINAL_POLISH_DELIVERED`.
+Etapa atual: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, sobre `FOUNDATION_FINAL_POLISH_DELIVERED`.
 
 O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish fecha essa base como gate local antes de tuning.
 
-A prioridade agora nao e adicionar conteudo, balancear combate ou consolidar tema final. A proxima etapa deve ser escolhida explicitamente entre base builder tuning, autobattler tuning, social expandido ou contrato/shell de minigame, condicionada ao Full gate final verde. O loop interno pos-login aceito continua:
+A decisao de produto seguinte foi escolhida: o early game deve ser uma Arena PVE inicial, sem cooldown de combate, com tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado antes da arena, vida resetada a 100% em cada duelo, buffs temporarios leves de stat entre lutas e comportamento ajustavel antes do proximo inimigo. A direcao viva esta em `docs/pve-arena-initial-direction.md`.
+
+PVP deixa de ser o core inicial. Ele permanece planejado como modo posterior/competitivo, com bots apenas como fallback ou simulacao controlada enquanto nao houver playerbase suficiente.
+
+O loop interno pos-login aceito continua como fundacao de app:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
@@ -28,26 +32,30 @@ Nesta etapa, nomes, spells, armas, numeros de economia, Battle Pass, visual fina
 
 Ordem de foco:
 
-1. Loop interno pos-login.
-2. Social.
-3. Visual geral.
-4. Apresentacao da batalha.
-5. Armas, spells, economia, balanceamento e conteudo detalhado.
+1. Arena PVE inicial e tuning integrado de leveling/upgrades/recompensas/poder.
+2. Base builder e preparacao como suporte da Arena PVE.
+3. PVP assincrono posterior, com bots como fallback transparente.
+4. Social e competicao quando a rotina PVE/PVP estiver clara.
+5. Armas, spells, economia, balanceamento fino e conteudo detalhado.
 
 ## Pilares
 
-1. **Progressao persistente e legivel**: o jogador sempre entende o que ficou mais forte: personagem, instrumentos, spells, doutrinas, familiares, base, ranking ou economia.
-2. **Batalha assincrona server-authoritative**: o servidor resolve combate, recompensa, ranking e economia; o cliente Godot anima replay, explica eventos e facilita decisao.
-3. **Base como centro de rotina**: o Refugio concentra recursos, upgrades, filas, coletas, atalhos e proximo objetivo.
-4. **Social leve, persistente e util**: amigos, guilda, chat, ajudas e ranking aumentam retencao sem exigir partida realtime.
-5. **Economia testavel e auditavel**: fontes e gastos importantes devem ser rastreaveis; premium deve ser calibrado por dados e Progression Lab.
-6. **Multiplataforma pragmatica**: Android e o canal primario; PC executavel e PC browser existem para teste, acessibilidade e operacao do alpha.
+1. **Progressao persistente e legivel**: o jogador sempre entende o que ficou mais forte: personagem, instrumentos, spells, doutrinas, familiares, base, Arena PVE, ranking ou economia.
+2. **Arena PVE como core inicial**: o early game funciona sem playerbase, com listas curtas de inimigos, dificuldade escalavel, loadout travado, buffs temporarios de stat e duelos claros.
+3. **Batalha assincrona server-authoritative**: o servidor resolve combate, recompensa, ranking e economia; o cliente Godot anima replay, explica eventos e facilita decisao.
+4. **Base como centro de rotina**: o Refugio concentra recursos, upgrades, filas, coletas, atalhos e proximo objetivo.
+5. **PVP como expansao competitiva**: PVP entra depois que Arena PVE, build e poder estiverem compreensiveis; bots sao fallback/simulacao, nao fundacao escondida.
+6. **Social leve, persistente e util**: amigos, guilda, chat, ajudas e ranking aumentam retencao sem exigir partida realtime.
+7. **Economia testavel e auditavel**: fontes e gastos importantes devem ser rastreaveis; premium deve ser calibrado por dados e Progression Lab.
+8. **Multiplataforma pragmatica**: Android e o canal primario; PC executavel e PC browser existem para teste, acessibilidade e operacao do alpha.
 
 ## Anti-Pilares
 
 - Nao fazer mobile browser no primeiro ciclo.
 - Nao fazer iOS sem decisao explicita.
 - Nao depender de realtime competitivo para o core loop.
+- Nao depender de playerbase PVP para o early game funcionar.
+- Nao usar cooldown de combate como controle principal da Arena PVE inicial.
 - Nao mover combate, recompensa, recurso ou ranking para autoridade do cliente.
 - Nao copiar mecanicas de RPG Isometrico, RPG Turnos ou Draxos Roguelike Cardgame sem adocao local documentada.
 - Nao prometer Open World, Hero Defense, PVE expandido ou Cardgame Roguelike mobile como parte do alpha atual.
@@ -59,7 +67,8 @@ Ordem de foco:
 Publico alvo inicial:
 
 - jogadores que gostam de progresso persistente, rotina diaria e metas de medio prazo;
-- jogadores que aceitam PVP assincrono, ranking e guilda sem precisar de controle em tempo real;
+- jogadores que gostam de listas de duelos PVE, dificuldade escalavel e preparacao de build;
+- jogadores que aceitam PVP assincrono, ranking e guilda como expansao competitiva sem precisar de controle em tempo real;
 - jogadores que gostam de fantasia sombria/arcana com leitura mobile clara;
 - testers internos capazes de dar feedback sobre ergonomia, clareza e ritmo de progressao.
 
@@ -81,13 +90,16 @@ Todo fluxo essencial deve ser validado em Android antes de ser considerado pront
 
 1. Entrar na conta.
 2. Ver estado da base/refugio.
-3. Coletar recursos.
-4. Evoluir base.
-5. Batalhar.
-6. Receber recompensas.
-7. Verificar a base novamente e sair com um proximo objetivo claro.
+3. Entrar na Arena PVE inicial.
+4. Travar loadout.
+5. Vencer uma lista curta de duelos.
+6. Escolher buffs temporarios leves de stat entre lutas.
+7. Ajustar comportamento antes do proximo inimigo.
+8. Receber recompensas.
+9. Evoluir base/build.
+10. Voltar para uma arena mais dificil ou maior.
 
-O loop deve funcionar em sessoes curtas. A Foundation Audit deve medir se as telas, icones, botoes, retornos e feedbacks tornam esse caminho obvio antes de qualquer expansao de conteudo.
+O loop deve funcionar em sessoes curtas. A Arena PVE inicial deve permitir jogar sem cooldown de combate; a economia deve controlar recompensa por primeira vitoria, recorde, conclusao, dificuldade, bonus diario/semanal e repeticao reduzida.
 
 ## Economia E Progressao
 
@@ -103,20 +115,21 @@ Direcao longa, nao foco imediato:
 Regras de maturidade:
 
 - Toda mutacao economica importante deve passar por Edge Function, ledger e idempotencia.
+- Arena PVE deve ser a primeira fonte calibrada de XP, recursos, poder esperado e progresso de base.
 - Premium gap deve ser medido por Progression Lab e rodada humana, cobrindo perfis free, freemium, light spender e max test.
 - O free precisa continuar jogavel e socialmente valido.
 - O max premium pode acelerar e revelar atrito, mas nao deve destruir matchmaking, ranking ou objetivo de medio prazo.
 
 ## Social E Competicao
 
-Social deve comecar simples e confiavel, mas a proxima discussao social vem depois da auditoria do loop interno:
+Social deve comecar simples e confiavel, mas a proxima expansao social vem depois da Arena PVE inicial ter rotina e tuning compreensiveis:
 
 - identidade por conta;
 - amigos por username;
 - guilda;
 - chat de guilda por polling;
-- ranking visivel com top e posicao propria;
-- bots fora de leaderboard publica por padrao;
+- ranking visivel com top e posicao propria quando PVP/competicao voltar ao foco;
+- bots fora de leaderboard publica por padrao, salvo se forem marcados claramente como inimigos/simulacoes PVE;
 - save `progression_lab` fora de ranking.
 
 Evolucoes sociais devem nascer de feedback real. Ajudas, contribuicoes, moderacao, convites e administracao de guilda so avancam quando a rotina basica provar valor.
@@ -192,7 +205,7 @@ Os itens abaixo existem como substancia/mock e nao sao foco da Foundation Audit:
 - mobile browser;
 - Open World;
 - Hero Defense;
-- PVE expandido;
+- campanha PVE tradicional com mapa/cutscenes/assets pesados;
 - Cardgame Roguelike mobile;
 - pagamentos reais;
 - social realtime;
@@ -203,10 +216,10 @@ Esses itens podem virar projeto ou fase futura, mas nao devem ser tratados como 
 
 ## Gates De Proxima Decisao
 
-1. Foundation Audit documental completa.
-2. Auditoria do loop interno pos-login.
-3. Decisao de hardening do loop.
-4. Discussao social.
-5. Discussao visual geral.
-6. Discussao de apresentacao da batalha.
-7. Somente depois, discussao de armas, spells, economia, premium gap, poder e bots.
+1. Foundation Final Polish entregue e validada.
+2. Direcao Arena PVE inicial documentada em `docs/pve-arena-initial-direction.md`.
+3. Fechar limite maximo inicial de lutas por arena.
+4. Fechar primeira lista de inimigos/arquetipos e dificuldades.
+5. Rodar Progression Lab e Battle Lab orientados a Arena PVE.
+6. Implementar pacote pequeno de Arena PVE/tutorial sem cooldown.
+7. Reintroduzir PVP como modo posterior/competitivo depois que o core PVE estiver claro.

@@ -54,11 +54,10 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 	var title_label := popup_data["title_label"] as Label
 	var body := popup_data["body"] as VBoxContainer
 
-	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "battle", "BT", "Batalha", "accent_blood", Vector2(0.50, 0.19), "Pedir batalha e ver resultado.")
-	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "preparation", "PP", "Preparacao", "accent_astral", Vector2(0.50, 0.32), "Revisar pocao e habilidades antes da batalha.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "arena", "AR", "Arena PVE", "accent_blood", Vector2(0.50, 0.19), "Escolher Arena PVE e travar loadout.")
+	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "preparation", "PP", "Preparacao", "accent_astral", Vector2(0.50, 0.32), "Revisar pocao e habilidades antes da Arena.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "refuge", "RF", "Refugio", "accent_astral", Vector2(0.22, 0.37), "Coleta, energia e estruturas.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "social", "SO", "Social", "status_success", Vector2(0.78, 0.37), "Amigos, guilda e chat.")
-	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "competition", "CP", "Competicao", "status_warning", Vector2(0.22, 0.56), "Fila de oponentes e ranking.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "shop", "LJ", "Loja", "accent_bone", Vector2(0.78, 0.56), "Recompensas e compras.")
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "collect", "CL", "Coletar", "status_success", Vector2(0.28, 0.77), "Coletar producao do Refugio.", true)
 	_add_refuge_icon_button(host, safe_frame, popup, title_label, body, compact, "energy", "EN", "Energia", "accent_astral", Vector2(0.72, 0.77), "Comprar Energia.", true)
@@ -193,8 +192,8 @@ static func _add_refuge_context_cta(host: Node, board: Control, compact: bool) -
 	var cta := _refuge_context_cta_data(host)
 	var button := Button.new()
 	button.name = "RefugeContextCta"
-	button.text = str(cta.get("text", "Batalhar"))
-	button.tooltip_text = str(cta.get("detail", "Pedir a proxima batalha."))
+	button.text = str(cta.get("text", "Arena PVE"))
+	button.tooltip_text = str(cta.get("detail", "Entrar na Arena PVE."))
 	button.anchor_left = 0.13 if compact else 0.24
 	button.anchor_right = 0.87 if compact else 0.76
 	button.anchor_top = 0.905
@@ -235,7 +234,7 @@ static func _add_refuge_loop_panel(host: Node, board: Control, compact: bool) ->
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.add_theme_constant_override("h_separation", 6 if compact else 8)
 	panel.add_child(grid)
-	grid.add_child(_loop_status_label("Proximo\n%s" % str(state.get("next_text", "Batalhar")), "text_primary", compact, "RefugeLoopNextLabel"))
+	grid.add_child(_loop_status_label("Proximo\n%s" % str(state.get("next_text", "Arena PVE")), "text_primary", compact, "RefugeLoopNextLabel"))
 	grid.add_child(_loop_status_label("Coleta\n%s" % str(state.get("collect_text", "Nada agora")), str(state.get("collect_color", "text_secondary")), compact, "RefugeLoopCollectLabel"))
 	grid.add_child(_loop_status_label("Evolucao\n%s" % str(state.get("upgrade_text", "Sem upgrade")), str(state.get("upgrade_color", "text_secondary")), compact, "RefugeLoopUpgradeLabel"))
 
@@ -463,13 +462,16 @@ static func _node_is_inside(node: Node, root: Node) -> bool:
 
 static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxContainer, menu_id: String, compact: bool) -> void:
 	match menu_id:
+		"arena":
+			body.add_child(_popup_hint("Tutorial de 1 duelo e primeiras arenas de 3 duelos com buffs temporarios.", compact))
+			body.add_child(_popup_action_button(host, popup, "Abrir Arena PVE", AppShellActionContractScript.ACTION_OPEN_ARENA, "", true))
 		"battle":
-			body.add_child(_popup_hint("Pedir batalha, rever resultado ou abrir historico.", compact))
-			body.add_child(_popup_action_button(host, popup, "Pedir batalha", AppShellActionContractScript.ACTION_REQUEST_BATTLE, "", true))
+			body.add_child(_popup_hint("Batalha legada para validacao interna. O caminho principal do jogo e Arena PVE.", compact))
+			body.add_child(_popup_action_button(host, popup, "Pedir batalha legada", AppShellActionContractScript.ACTION_REQUEST_BATTLE, "", true))
 			body.add_child(_popup_action_button(host, popup, "Historico", AppShellActionContractScript.ACTION_SHOW_BATTLE_HISTORY))
 			body.add_child(_popup_action_button(host, popup, "Ver resultado", AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE))
 		"preparation":
-			body.add_child(_popup_hint("Revise o que Draxos leva para a proxima batalha.", compact))
+			body.add_child(_popup_hint("Revise o que Draxos leva para a proxima Arena.", compact))
 			if SessionStore.combat_build_snapshot().is_empty():
 				body.add_child(_popup_action_button(host, popup, "Atualizar preparacao", AppShellActionContractScript.ACTION_SHOW_PREPARATION, "", true))
 			else:
@@ -481,7 +483,7 @@ static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxConta
 			body.add_child(_popup_hint("Amigos, guilda e chat em um painel leve.", compact))
 			body.add_child(_popup_action_button(host, popup, "Abrir Social", AppShellActionContractScript.ACTION_SHOW_SOCIAL, "", true))
 		"competition":
-			body.add_child(_popup_hint("Fila de oponentes, arena e ranking.", compact))
+			body.add_child(_popup_hint("Competicao PVP fica fora do core inicial e deve ser usada apenas para validacao interna.", compact))
 			body.add_child(_popup_action_button(host, popup, "Matchmaking", AppShellActionContractScript.ACTION_SHOW_MATCHMAKING, "", true))
 			body.add_child(_popup_action_button(host, popup, "Ranking", AppShellActionContractScript.ACTION_SHOW_RANKING))
 		"shop":
@@ -539,8 +541,10 @@ static func _popup_hint(text: String, compact: bool) -> Label:
 
 static func _menu_title(menu_id: String) -> String:
 	match menu_id:
+		"arena":
+			return "Arena PVE"
 		"battle":
-			return "Batalha"
+			return "Batalha Legada"
 		"preparation":
 			return "Preparacao"
 		"refuge":
@@ -548,7 +552,7 @@ static func _menu_title(menu_id: String) -> String:
 		"social":
 			return "Social"
 		"competition":
-			return "Competicao"
+			return "Competicao Dev"
 		"shop":
 			return "Loja"
 		"profile":
@@ -569,6 +573,9 @@ static func _add_dev_tool_actions(host: Node, popup: PopupPanel, body: VBoxConta
 		body.add_child(_popup_action_button(host, popup, "Battle Lab", AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB, "", primary))
 	if bool(host.call("_progression_lab_available")):
 		body.add_child(_popup_action_button(host, popup, "Progression Lab", AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB, "", primary))
+	if bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false)):
+		body.add_child(_popup_action_button(host, popup, "Batalha legada", AppShellActionContractScript.ACTION_REQUEST_BATTLE))
+		body.add_child(_popup_action_button(host, popup, "Competicao dev", AppShellActionContractScript.ACTION_SHOW_MATCHMAKING))
 
 static func _add_texture_layer(parent: Control, texture_path: String, alpha: float) -> void:
 	if parent == null or not ResourceLoader.exists(texture_path):
@@ -719,15 +726,15 @@ static func _refuge_context_cta_data(_host: Node) -> Dictionary:
 			if structure_id != "":
 				return {
 					"text": "Evoluir",
-					"detail": "Usar recursos para evoluir a base antes da proxima batalha.",
+					"detail": "Usar recursos para evoluir a base antes da proxima Arena.",
 					"action_id": AppShellActionContractScript.upgrade_base_structure_action(structure_id),
 					"confirm": "Iniciar evolucao no Refugio?",
 					"color_token": "accent_astral",
 				}
 	return {
-		"text": "Batalhar",
-		"detail": "Testar sua preparacao em uma batalha assincrona.",
-		"action_id": AppShellActionContractScript.ACTION_REQUEST_BATTLE,
+		"text": "Arena PVE",
+		"detail": "Entrar na arena inicial, travar loadout e resolver duelos.",
+		"action_id": AppShellActionContractScript.ACTION_OPEN_ARENA,
 		"color_token": "accent_blood",
 	}
 
@@ -748,7 +755,7 @@ static func _refuge_loop_state(host: Node) -> Dictionary:
 		else:
 			upgrade_text = "Sem upgrade"
 	return {
-		"next_text": str(cta.get("text", "Batalhar")),
+		"next_text": str(cta.get("text", "Arena PVE")),
 		"collect_text": collect_text,
 		"collect_color": collect_color,
 		"upgrade_text": upgrade_text,
@@ -773,11 +780,11 @@ static func _first_session_hint_text(host: Node) -> String:
 		if bool(routine.get("has_collect_ready", false)):
 			return "Primeira sessao: comece coletando recursos do Refugio."
 		if bool(routine.get("next_upgrade_ready", false)):
-			return "Primeira sessao: evolua uma estrutura antes da proxima luta."
+			return "Primeira sessao: evolua uma estrutura antes da proxima Arena."
 		if SessionStore.combat_build_snapshot().is_empty():
 			return "Primeira sessao: abra Preparacao e confirme sua preparacao."
 		if not SessionStore.has_battle_log():
-			return "Primeira sessao: base pronta; peca a primeira batalha."
+			return "Primeira sessao: base pronta; abra a Arena PVE."
 	if host != null and host.has_method("_battle_lab_available") and bool(host.call("_battle_lab_available")) and not SessionStore.has_valid_access_token():
 		return "Primeira sessao: entre, escolha o save e siga o proximo passo."
 	return "Primeira sessao: siga o proximo passo e mantenha a base evoluindo."
@@ -785,7 +792,7 @@ static func _first_session_hint_text(host: Node) -> String:
 static func _preparation_first_session_hint(combat_build: Dictionary, spell_slots: Array) -> String:
 	var level := int(SessionStore.player_snapshot().get("level", combat_build.get("level", 0)))
 	if level <= 2:
-		return "Primeira sessao: o Instrumento Ritual inicial ja basta para pedir a primeira batalha."
+		return "Primeira sessao: o Instrumento Ritual inicial ja basta para entrar na Arena PVE."
 	var equipped_spells := 0
 	for slot_variant: Variant in spell_slots:
 		var slot := _as_dictionary(slot_variant)
@@ -793,8 +800,8 @@ static func _preparation_first_session_hint(combat_build: Dictionary, spell_slot
 		if spell_id != "" and spell_id != "<null>" and spell_id.to_lower() != "null":
 			equipped_spells += 1
 	if equipped_spells <= 0:
-		return "Primeira sessao: sem habilidades equipadas, confirme o Instrumento Ritual e batalhe."
-	return "Primeira sessao: confira instrumento, habilidades e pocao antes de batalhar."
+		return "Primeira sessao: sem habilidades equipadas, confirme o Instrumento Ritual e abra a Arena."
+	return "Primeira sessao: confira instrumento, habilidades e pocao antes da Arena."
 
 static func _host_viewport_size(host: Node) -> Vector2:
 	var first_root := _first_screen_root(host)
@@ -941,10 +948,9 @@ static func _refuge_hotspot_panel(host: Node, compact: bool) -> PanelContainer:
 	var grid := _button_grid(compact, 1 if compact else 2)
 	grid.name = "RefugePathGrid"
 	box.add_child(grid)
-	_add_route_hotspot(host, grid, compact, "Batalha", "battle_entry", "Pedir batalha e ver replay.", "accent_blood")
-	_add_action_hotspot(host, grid, compact, "Preparacao", AppShellActionContractScript.ACTION_SHOW_PREPARATION, "Pocao e habilidades antes da batalha.", "accent_astral")
+	_add_action_hotspot(host, grid, compact, "Arena PVE", AppShellActionContractScript.ACTION_OPEN_ARENA, "Escolher Arena e travar loadout.", "accent_blood")
+	_add_action_hotspot(host, grid, compact, "Preparacao", AppShellActionContractScript.ACTION_SHOW_PREPARATION, "Pocao e habilidades antes da Arena.", "accent_astral")
 	_add_action_hotspot(host, grid, compact, "Social", AppShellActionContractScript.ACTION_SHOW_SOCIAL, "Amigos, guilda e chat.", "status_success")
-	_add_action_hotspot(host, grid, compact, "Competicao", AppShellActionContractScript.ACTION_SHOW_MATCHMAKING, "Fila de oponentes e ranking.", "status_warning")
 	_add_action_hotspot(host, grid, compact, "Loja", AppShellActionContractScript.ACTION_SHOW_SHOP, "Resgates, recompensas e compras.", "accent_bone")
 	_add_route_hotspot(host, grid, compact, "Perfil", "account", "Conta, updates e detalhes do save.", "border_active")
 	if not SessionStore.combat_build_snapshot().is_empty():
@@ -962,8 +968,8 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 	var potion_slots := _as_array(combat_build.get("potion_slots", []))
 	var spell_slots := _preparation_spell_slots(combat_build)
 
-	box.add_child(_section_label("Pronto para batalha", compact))
-	box.add_child(_body_label("Escolha o que Draxos leva para a proxima luta.", compact))
+	box.add_child(_section_label("Pronto para Arena", compact))
+	box.add_child(_body_label("Escolha o que Draxos leva para a proxima Arena.", compact))
 	box.add_child(_body_label(_preparation_first_session_hint(combat_build, spell_slots), compact))
 	var feedback_message := str(host.get_meta("preparation_feedback_message", "")).strip_edges()
 	if feedback_message != "":
@@ -995,7 +1001,7 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 			box.add_child(_body_label(line, compact))
 	var cta_grid := _button_grid(compact, 1)
 	box.add_child(cta_grid)
-	cta_grid.add_child(_entry_action_button(host, "Pedir batalha", AppShellActionContractScript.ACTION_REQUEST_BATTLE, compact, "", true))
+	cta_grid.add_child(_entry_action_button(host, "Abrir Arena PVE", AppShellActionContractScript.ACTION_OPEN_ARENA, compact, "", true))
 
 	box.add_child(_section_label("Instrumento Ritual", compact))
 	if instrument_id != "":
@@ -1034,7 +1040,7 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 			], compact))
 			var remove_spell_actions := _button_grid(compact, 2)
 			box.add_child(remove_spell_actions)
-			remove_spell_actions.add_child(_entry_action_button(host, "Usar na batalha", AppShellActionContractScript.enable_spell_behavior_action(spell_id), compact))
+			remove_spell_actions.add_child(_entry_action_button(host, "Usar na Arena", AppShellActionContractScript.enable_spell_behavior_action(spell_id), compact))
 			remove_spell_actions.add_child(_entry_action_button(host, "Pausar", AppShellActionContractScript.disable_spell_behavior_action(spell_id), compact))
 			remove_spell_actions.add_child(_entry_action_button(host, "Remover", AppShellActionContractScript.remove_spell_position_action(position), compact))
 	_render_spell_options(host, box, compact, _as_array(options.get("spells", [])), spell_slots)
@@ -1337,7 +1343,7 @@ static func _spell_timing_text(behavior: Dictionary) -> String:
 	if behavior.is_empty():
 		return "Usa quando estiver pronta"
 	if not bool(behavior.get("enabled", true)):
-		return "Pausada para batalha"
+		return "Pausada para Arena"
 	var condition_text := _condition_text(behavior)
 	if condition_text == "":
 		return "Usa quando estiver pronta"

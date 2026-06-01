@@ -2,9 +2,9 @@
 
 - Status: `CONTRATO`
 - Contract id: `LAB_HEURISTICS_CONTRACT_V1`
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Escopo: Progression Lab, Battle Lab, modelos offline, healthy saves, custom
-  replays e relatorios gerados.
+  replays, relatorios gerados e runner remoto interno do Web export.
 
 ## Decisao
 
@@ -28,15 +28,43 @@ ruleset regenerado e validacao cruzada.
 | Artefato | Authority | Pode Mudar Runtime? | Observacao |
 |---|---|---:|---|
 | `tools/battle_lab/model.v1.json` | `lab-only` | Nao | Define matriz offline de build, archetypes, thresholds de relatorio, bands e checks. |
-| `tools/battle_lab/generate.ts` | `lab-only + simulator consumer` | Nao | Chama o simulador atual para relatorios, cobre Track 16 potion/behavior, mas deve continuar offline/adapter-free e nao publica tuning sozinho. |
+| `tools/battle_lab/generate.ts` | `lab-only + simulator consumer` | Nao | Chama o simulador atual para relatorios, cobre Track 16 potion/behavior e continua sendo a fonte local/editor. Pode ser reutilizado pelo `lab-runner` apenas como adaptador remoto in-memory, sem publicar tuning sozinho. |
 | `dev/battle_lab/battle_lab_screen.gd` | `client dev shell` | Nao | UI de custom replay/scratch; deve espelhar pesos exibidos pelo Battle Lab, nao inventar formula nova. Pode montar Pocao de Vida e desativacao simples de spell para replay custom lab-only. |
 | `docs/battle-lab/generated/` | `generated evidence` | Nao | Evidencia historica/diagnostica; nao substitui ruleset. |
 | `docs/battle-lab/runs/` | `archived evidence` | Nao | Runs oficiais sao snapshots; hashes podem ficar stale. |
 | `tools/progression_lab/model.v1.json` | `lab-only` | Nao | Define perfis, milestones, source values, custos, pesos macro, bot offsets e cobertura Track 16 de consumables/crafting para leitura offline. |
-| `tools/progression_lab/generate.ts` | `lab-only + generated save producer` | Nao | Gera healthy saves, consumable readiness e bot pool para teste manual; deve continuar offline/adapter-free e nao altera save normal. |
+| `tools/progression_lab/generate.ts` | `lab-only + generated save producer` | Nao | Gera healthy saves, consumable readiness e bot pool para teste manual. Pode ser reutilizado pelo `lab-runner` apenas como adaptador remoto in-memory; nao altera save normal. |
 | `dev/progression_lab/progression_lab_screen.gd` | `client dev shell` | Nao | Aplica ou carrega somente `progression_lab`; cache local-only nao tem token valido. |
 | `docs/progression-lab/generated/` | `generated evidence` | Nao | Healthy saves e relatorios para review manual. |
 | `POST /progression-lab/apply` | `server-authoritative lab adapter` | Sim, apenas save Lab | Escreve somente no save `progression_lab` e valida profile/milestone/save gerado. |
+| `POST /lab-runner/battle` | `internal-alpha remote lab adapter` | Nao | Runner remoto para Web export quando processo local nao existe; exige JWT de conta alpha Supabase por email/senha com save `normal` registrado, retorna run/replay in-memory, nao escreve run oficial e nao muta economia/ranking. |
+| `POST /lab-runner/progression` | `internal-alpha remote lab adapter` | Nao | Runner remoto para Web export quando processo local nao existe; exige o mesmo acesso alpha por email/senha do Supabase, retorna dados in-memory e nao aplica healthy save. |
+
+## Runner Remoto Web
+
+O Web export nao pode executar `npx/deno` no navegador. Para manter os Labs
+testaveis no link publicado, `lab-runner` expõe dois endpoints internos:
+
+- `POST /lab-runner/battle`;
+- `POST /lab-runner/progression`.
+
+Esse runner usa a mesma entrada alpha do Supabase usada pelo jogo: JWT de conta
+email/senha, nao anonima, com save `normal` registrado na Internal Alpha. Nao
+existe allowlist paralela para Labs; quem nao passou pelo mesmo gate de email e
+conta alpha do Supabase recebe erro antes de qualquer geracao.
+
+Regras do runner remoto:
+
+- usa `SUPABASE_SERVICE_ROLE_KEY` somente dentro da Edge Function para verificar
+  acesso alpha;
+- nunca envia service role, secrets ou dados de outro jogador ao cliente;
+- nao grava arquivos em `docs/**`, `.battle_lab_scratch/**` ou
+  `.progression_lab_scratch/**`;
+- nao aplica reward, XP, ranking, recursos, progresso, potion stock, save ou
+  ledger;
+- run oficial/archive continua sendo fluxo local/editor;
+- replay custom e scratch remoto sao resultados de sessao, nao evidencia
+  arquivada.
 
 ## Battle Lab Heuristics
 
@@ -132,8 +160,9 @@ Mudancas em Labs devem provar:
 5. healthy saves do Progression Lab incluem Track 16 consumables/behavior sem
    tocar save `normal`;
 6. `progression_lab` continua isolado do save `normal`;
-7. geradores dev continuam offline/adapter-free;
-8. runtime server nao importa geradores nem telas dev dos Labs;
+7. geradores dev continuam locais/editor; no Web export, somente o
+   `lab-runner` pode reutiliza-los como adaptador remoto in-memory;
+8. runtime de gameplay nao importa geradores nem telas dev dos Labs;
 9. `validate_foundation.ps1 -Profile Quick` continua verde.
 
 Comandos minimos quando este contrato mudar:

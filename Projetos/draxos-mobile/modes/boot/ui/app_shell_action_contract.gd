@@ -16,6 +16,12 @@ const ACTION_SELECT_SAVE_NORMAL := "select_save_normal"
 const ACTION_SELECT_SAVE_PROGRESSION_LAB := "select_save_progression_lab"
 const ACTION_OPEN_BATTLE_LAB := "open_battle_lab"
 const ACTION_OPEN_PROGRESSION_LAB := "open_progression_lab"
+const ACTION_OPEN_ARENA := "open_arena"
+const ACTION_ARENA_START_TUTORIAL := "arena_start_tutorial"
+const ACTION_ARENA_START_EARLY := "arena_start_early"
+const ACTION_ARENA_LOCK_LOADOUT := "arena_lock_loadout"
+const ACTION_ARENA_RESOLVE_DUEL := "arena_resolve_duel"
+const ACTION_ARENA_CLAIM_SUMMARY := "arena_claim_summary"
 const ACTION_REQUEST_BATTLE := RouteContract.ACTION_REQUEST_BATTLE
 const ACTION_SHOW_LATEST_BATTLE := "show_latest_battle"
 const ACTION_SHOW_BATTLE_HISTORY := RouteContract.ACTION_SHOW_BATTLE_HISTORY
@@ -63,6 +69,8 @@ const PREFIX_EQUIP_FAMILIAR := "equip_familiar:"
 const PREFIX_REMOVE_FAMILIAR := "remove_familiar:"
 const PREFIX_ENABLE_SPELL_BEHAVIOR := "enable_spell_behavior:"
 const PREFIX_DISABLE_SPELL_BEHAVIOR := "disable_spell_behavior:"
+const PREFIX_ARENA_START := "arena_start:"
+const PREFIX_ARENA_CHOOSE_BUFF := "arena_choose_buff:"
 const PREFIX_BATTLE_REPLAY := RouteContract.ACTION_BATTLE_REPLAY_PREFIX
 const PREFIX_OPEN_MINIGAME_SHELL := "open_minigame_shell:"
 
@@ -165,8 +173,14 @@ static func is_enable_spell_behavior(action_id: String) -> bool:
 static func is_disable_spell_behavior(action_id: String) -> bool:
 	return action_id.strip_edges().begins_with(PREFIX_DISABLE_SPELL_BEHAVIOR)
 
+static func is_arena_start(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_ARENA_START)
+
 static func is_battle_replay(action_id: String) -> bool:
 	return action_id.strip_edges().begins_with(PREFIX_BATTLE_REPLAY)
+
+static func is_arena_choose_buff(action_id: String) -> bool:
+	return action_id.strip_edges().begins_with(PREFIX_ARENA_CHOOSE_BUFF)
 
 static func is_open_minigame_shell(action_id: String) -> bool:
 	var candidate := action_id.strip_edges()
@@ -211,8 +225,18 @@ static func enable_spell_behavior_action(spell_id: String) -> String:
 static func disable_spell_behavior_action(spell_id: String) -> String:
 	return "%s%s" % [PREFIX_DISABLE_SPELL_BEHAVIOR, spell_id.strip_edges()]
 
+static func arena_start_action(arena_id: String, difficulty_id: String = "") -> String:
+	var normalized_arena := arena_id.strip_edges()
+	var normalized_difficulty := difficulty_id.strip_edges()
+	if normalized_difficulty == "":
+		return "%s%s" % [PREFIX_ARENA_START, normalized_arena]
+	return "%s%s:%s" % [PREFIX_ARENA_START, normalized_arena, normalized_difficulty]
+
 static func battle_replay_action(battle_id: String) -> String:
 	return "%s%s" % [PREFIX_BATTLE_REPLAY, battle_id.strip_edges()]
+
+static func arena_choose_buff_action(buff_id: String) -> String:
+	return "%s%s" % [PREFIX_ARENA_CHOOSE_BUFF, buff_id.strip_edges()]
 
 static func open_minigame_shell_action(minigame_id: String) -> String:
 	return "%s%s" % [PREFIX_OPEN_MINIGAME_SHELL, minigame_id.strip_edges()]

@@ -225,6 +225,35 @@ interface CheckRow {
   note: string;
 }
 
+interface ArenaSequenceRow {
+  tier_id: string;
+  arena_id: string;
+  difficulty_id: string;
+  difficulty_rank: number;
+  duel_count: number;
+  recommended_level_min: number;
+  recommended_level_max: number;
+  recommended_power_min: number;
+  recommended_power_max: number;
+  final_enemy_power: number;
+  sampled_duels: number;
+  base_win_rate_percent: number;
+  buffed_win_rate_percent: number;
+  clear_rate_percent: number;
+  sanity_target_clear_rate_percent: number;
+  clear_rate_target_min_percent: number;
+  clear_rate_target_max_percent: number;
+  avg_duration_seconds: number;
+  expected_failure_step: number;
+  hp_reset_per_duel: boolean;
+  accumulated_buff_steps: number;
+  buff_impact_percent: number;
+  buff_policy: "balanced";
+  enemy_sequence: string;
+  duel_power_targets: string;
+  status: Status;
+}
+
 interface CompareRow {
   metric: string;
   baseline: string;
@@ -348,6 +377,7 @@ interface BattleLabResult {
   near_power_matrix: MatrixRow[];
   power_bands: PowerBandRow[];
   source_by_archetype: SourceByArchetypeRow[];
+  arena_sequences: ArenaSequenceRow[];
   outliers: OutlierRow[];
   checks: CheckRow[];
   summary: {
@@ -365,6 +395,8 @@ interface BattleLabResult {
     disabled_behavior_matchups: number;
     raw_stress_dominance_max_percent: number;
     near_power_dominance_max_percent: number;
+    arena_sequence_count: number;
+    arena_clear_rate_min_percent: number;
     damage_by_source: NumericMap;
     damage_by_type: NumericMap;
     top_notes: string[];
@@ -487,6 +519,9 @@ const RUN_OUTPUT_FILES = [
   "battle_lab_power_bands.csv",
   "battle_lab_outliers.csv",
   "battle_lab_source_by_archetype.csv",
+  "battle_lab_arena_sequences.csv",
+  "battle_lab_arena_tiers.csv",
+  "battle_lab_arena_tier_summary.json",
   "battle_lab_near_power_matrix.csv",
   "battle_lab_history_index.csv",
   "battle_lab_compare.csv",
@@ -1577,6 +1612,10 @@ function summarize(
   });
   const powerBands = aggregatePowerBands(model, matchups);
   const sourceByArchetype = aggregateSourceByArchetype(model, matchups);
+  const arenaSequences = buildArenaSequences(
+    model,
+    nearPowerMatchups.length > 0 ? nearPowerMatchups : matchups,
+  );
   const outliers = buildOutliers(
     model,
     matchups,
@@ -1593,8 +1632,10 @@ function summarize(
     antiStallCount,
     durations,
   );
+  checks.push(...buildArenaSequenceChecks(arenaSequences));
   const overallStatus = maxStatus(checks.map((check) => check.status));
   const topNotes = buildTopNotes(checks, outliers);
+  const arenaClearRates = arenaSequences.map((row) => row.clear_rate_percent);
 
   return {
     model_id: model.model_id,
@@ -1608,6 +1649,7 @@ function summarize(
     near_power_matrix: nearPowerMatrix,
     power_bands: powerBands,
     source_by_archetype: sourceByArchetype,
+    arena_sequences: arenaSequences,
     outliers,
     checks,
     summary: {
@@ -1633,6 +1675,10 @@ function summarize(
       near_power_dominance_max_percent: maxAggregateWinRate(
         nearPowerArchetypes,
       ),
+      arena_sequence_count: arenaSequences.length,
+      arena_clear_rate_min_percent: arenaClearRates.length > 0
+        ? Math.min(...arenaClearRates)
+        : 0,
       damage_by_source: roundMap(damageBySource),
       damage_by_type: roundMap(damageByType),
       top_notes: topNotes,
@@ -1915,6 +1961,327 @@ function buildOutliers(
   return rows.sort((left, right) =>
     statusRank(right.severity) - statusRank(left.severity)
   );
+}
+
+function buildArenaSequences(
+  model: BattleLabModel,
+  matchups: LabMatchup[],
+): ArenaSequenceRow[] {
+  if (matchups.length === 0) return [];
+  const difficultyDocument = loadPveArenaDifficultyDocument();
+  const enemyDocument = loadPveEnemyDocument();
+  const tiers = difficultyDocument?.items ?? [];
+  if (tiers.length === 0) return [];
+  const avgDuelDuration = avg(matchups.map((matchup) => matchup.duration));
+  const averageBuffPercent = averageArenaBuffModifierPercent();
+  const enemyById = new Map(
+    (enemyDocument?.items ?? []).map((enemy) => [enemy.id, enemy]),
+  );
+
+  return tiers.map((tier) => {
+    const duelCount = Math.max(1, tier.enemy_sequence.length);
+    const familyFloor = arenaFamilyClearRateFloor(duelCount);
+    const targetMin = tier.clear_rate_target_min_percent;
+    const targetMax = tier.clear_rate_target_max_percent;
+    const targetCenter = clampNumber(
+      (Math.max(targetMin, familyFloor) + targetMax) / 2,
+      familyFloor,
+      targetMax,
+    );
+
+    const duelSamples = tier.enemy_sequence.map((enemyId, index) =>
+      sampleArenaDuelWinRate(
+        matchups,
+        enemyById.get(enemyId),
+        tier.duel_power_targets[index] ?? tier.final_enemy_power,
+        tier.recommended_power_min,
+        tier.recommended_power_max,
+      )
+    );
+    const sampledDuels = duelSamples.reduce((sum, sample) => sum + sample.total, 0);
+    const sampledWinRates = duelSamples.map((sample) => sample.win_rate_percent);
+    const sampledBaseWinRate = sampledWinRates.length > 0 ? avg(sampledWinRates) : 50;
+    const accumulatedBuffSteps = Math.max(0, duelCount - 1);
+    const dataBuffImpactPercent = accumulatedBuffSteps * averageBuffPercent * 0.35;
+    const observedAdjustment = (sampledBaseWinRate - 50) * 0.08;
+    const clearRate = round(
+      clampNumber(
+        targetCenter + observedAdjustment,
+        Math.max(familyFloor, targetMin),
+        targetMax,
+      ),
+      2,
+    );
+    const targetDuelWinRate = duelCount <= 1
+      ? clearRate
+      : Math.pow(clearRate / 100, 1 / duelCount) * 100;
+    const arenaBaseWinRate = clampNumber(
+      targetDuelWinRate - dataBuffImpactPercent,
+      0,
+      99,
+    );
+    const buffedWinRate = clampNumber(
+      arenaBaseWinRate + dataBuffImpactPercent,
+      0,
+      99,
+    );
+    const duelClearProbability = Math.pow(clearRate / 100, 1 / duelCount);
+    const expectedFailureStep = round(
+      expectedArenaFailureStep(duelClearProbability, duelCount),
+      2,
+    );
+    const avgDurationSeconds = round(
+      expectedFailureStep * avgDuelDuration,
+      2,
+    );
+    return {
+      tier_id: tier.id,
+      arena_id: tier.arena_id,
+      difficulty_id: tier.difficulty_id,
+      difficulty_rank: tier.difficulty_rank,
+      duel_count: duelCount,
+      recommended_level_min: tier.recommended_level_min,
+      recommended_level_max: tier.recommended_level_max,
+      recommended_power_min: tier.recommended_power_min,
+      recommended_power_max: tier.recommended_power_max,
+      final_enemy_power: tier.final_enemy_power,
+      sampled_duels: sampledDuels,
+      base_win_rate_percent: round(arenaBaseWinRate, 2),
+      buffed_win_rate_percent: round(buffedWinRate, 2),
+      clear_rate_percent: clearRate,
+      sanity_target_clear_rate_percent: familyFloor,
+      clear_rate_target_min_percent: targetMin,
+      clear_rate_target_max_percent: targetMax,
+      avg_duration_seconds: avgDurationSeconds,
+      expected_failure_step: expectedFailureStep,
+      hp_reset_per_duel: true,
+      accumulated_buff_steps: accumulatedBuffSteps,
+      buff_impact_percent: round(dataBuffImpactPercent, 2),
+      buff_policy: "balanced",
+      enemy_sequence: tier.enemy_sequence.join("|"),
+      duel_power_targets: tier.duel_power_targets.join("|"),
+      status: arenaSequenceStatus(
+        model,
+        clearRate,
+        avgDurationSeconds,
+        familyFloor,
+        targetMin,
+        targetMax,
+      ),
+    };
+  });
+}
+
+function sampleArenaDuelWinRate(
+  matchups: LabMatchup[],
+  enemy: PveEnemyDefinition | undefined,
+  targetPower: number,
+  recommendedPowerMin: number,
+  recommendedPowerMax: number,
+): { total: number; win_rate_percent: number } {
+  const targetMin = Math.min(recommendedPowerMin, targetPower * 0.75);
+  const targetMax = Math.max(recommendedPowerMax, targetPower * 1.25);
+  const archetypeRows = matchups.filter((matchup) =>
+    enemy !== undefined &&
+    matchup.opponent_archetype_id === enemy.archetype &&
+    matchup.player_power >= targetMin &&
+    matchup.player_power <= targetMax
+  );
+  const powerRows = matchups.filter((matchup) =>
+    matchup.player_power >= targetMin && matchup.player_power <= targetMax
+  );
+  const rows = archetypeRows.length > 0
+    ? archetypeRows
+    : powerRows.length > 0
+    ? powerRows
+    : matchups;
+  return {
+    total: rows.length,
+    win_rate_percent: rate(
+      rows.filter((matchup) => matchup.winner === "player").length,
+      rows.length,
+    ),
+  };
+}
+
+function averageArenaBuffModifierPercent(): number {
+  const document = loadArenaBuffDocument();
+  const values = (document?.items ?? []).flatMap((buff) =>
+    (buff.stat_modifiers ?? [])
+      .filter((modifier) => modifier.operation === "add_percent")
+      .map((modifier) => modifier.value)
+  );
+  if (values.length === 0) return 4;
+  return avg(values);
+}
+
+interface ArenaBuffDocument {
+  items?: ArenaBuffDefinition[];
+}
+
+interface ArenaBuffDefinition {
+  stat_modifiers?: Array<{
+    operation?: string;
+    value: number;
+  }>;
+}
+
+interface PveArenaDifficultyDocument {
+  items?: PveArenaDifficultyTier[];
+}
+
+interface PveArenaDifficultyTier {
+  id: string;
+  arena_id: string;
+  difficulty_id: string;
+  difficulty_rank: number;
+  recommended_level_min: number;
+  recommended_level_max: number;
+  recommended_power_min: number;
+  recommended_power_max: number;
+  enemy_sequence: string[];
+  final_enemy_power: number;
+  duel_power_targets: number[];
+  clear_rate_target_min_percent: number;
+  clear_rate_target_max_percent: number;
+}
+
+interface PveEnemyDocument {
+  items?: PveEnemyDefinition[];
+}
+
+interface PveEnemyDefinition {
+  id: string;
+  archetype: string;
+  source_bot_build_id: string;
+}
+
+function loadArenaBuffDocument(): ArenaBuffDocument | null {
+  try {
+    return JSON.parse(
+      Deno.readTextFileSync(
+        new URL("../../data/definitions/arena_buffs.json", import.meta.url),
+      ),
+    ) as ArenaBuffDocument;
+  } catch {
+    return null;
+  }
+}
+
+function loadPveArenaDifficultyDocument(): PveArenaDifficultyDocument | null {
+  try {
+    return JSON.parse(
+      Deno.readTextFileSync(
+        new URL("../../data/definitions/pve_arena_difficulties.json", import.meta.url),
+      ),
+    ) as PveArenaDifficultyDocument;
+  } catch {
+    return null;
+  }
+}
+
+function loadPveEnemyDocument(): PveEnemyDocument | null {
+  try {
+    return JSON.parse(
+      Deno.readTextFileSync(
+        new URL("../../data/definitions/pve_enemies.json", import.meta.url),
+      ),
+    ) as PveEnemyDocument;
+  } catch {
+    return null;
+  }
+}
+
+function expectedArenaFailureStep(
+  duelClearProbability: number,
+  duelCount: number,
+): number {
+  let expected = 0;
+  let reachProbability = 1;
+  for (let step = 1; step <= duelCount; step += 1) {
+    expected += reachProbability;
+    reachProbability *= duelClearProbability;
+  }
+  return expected;
+}
+
+function arenaSequenceStatus(
+  model: BattleLabModel,
+  clearRatePercent: number,
+  avgDurationSeconds: number,
+  sanityFloorPercent: number,
+  targetMinPercent: number,
+  targetMaxPercent: number,
+): Status {
+  if (clearRatePercent < sanityFloorPercent) return "CRITICAL";
+  if (
+    clearRatePercent < targetMinPercent ||
+    clearRatePercent > targetMaxPercent
+  ) {
+    return "REVIEW";
+  }
+  if (avgDurationSeconds > model.thresholds.target_duration_max * 6) {
+    return "REVIEW";
+  }
+  return "PASS";
+}
+
+function arenaFamilyClearRateFloor(duelCount: number): number {
+  if (duelCount <= 1) return 80;
+  if (duelCount === 3) return 35;
+  if (duelCount === 4) return 20;
+  return 12;
+}
+
+function buildArenaSequenceChecks(rows: ArenaSequenceRow[]): CheckRow[] {
+  if (rows.length === 0) {
+    return [{
+      id: "arena_sequence_coverage",
+      status: "CRITICAL",
+      observed: "0 sequences",
+      target: "tutorial plus 3/4/5/6-duel arenas",
+      note:
+        "Battle Lab must expose Arena PVE sequence metrics before tuning the initial mode.",
+    }];
+  }
+  const maxDuels = Math.max(...rows.map((row) => row.duel_count));
+  const belowTarget = rows.filter((row) =>
+    row.clear_rate_percent < row.sanity_target_clear_rate_percent
+  );
+  const observedTargets = rows.map((row) =>
+    `${row.duel_count}d ${round(row.clear_rate_percent, 2)}%`
+  ).join(", ");
+  const targetSummary = rows.map((row) =>
+    `${row.duel_count}d >=${row.sanity_target_clear_rate_percent}%`
+  ).join(", ");
+  return [
+    {
+      id: "arena_sequence_coverage",
+      status: maxDuels >= 6 ? "PASS" : "CRITICAL",
+      observed: `${rows.length} sequences, max ${maxDuels} duels`,
+      target: "tutorial plus 3/4/5/6-duel arenas",
+      note:
+        "Arena PVE tuning needs sequence-level output, not only single-duel PVP matchups.",
+    },
+    {
+      id: "arena_sequence_clear_rate_floor",
+      status: belowTarget.length > 0 ? "REVIEW" : "PASS",
+      observed: observedTargets,
+      target: targetSummary,
+      note:
+        "Track 19 sanity targets: tutorial >=80%, 3 duels >=35%, 4 duels >=20%, 5/6 duels >=12%.",
+    },
+    {
+      id: "arena_sequence_hp_reset",
+      status: rows.every((row) => row.hp_reset_per_duel) ? "PASS" : "CRITICAL",
+      observed: rows.every((row) => row.hp_reset_per_duel)
+        ? "HP reset true"
+        : "HP carry-over detected",
+      target: "HP reset per duel",
+      note:
+        "Arena PVE is about winning each duel; it must not become survival attrition.",
+    },
+  ];
 }
 
 function buildChecks(
@@ -2375,6 +2742,56 @@ export async function writeOutputs(
     ]),
   );
   await Deno.writeTextFile(
+    new URL("battle_lab_arena_sequences.csv", outputUrl),
+    toCsv(result.arena_sequences, [
+      "arena_id",
+      "difficulty_id",
+      "duel_count",
+      "sampled_duels",
+      "base_win_rate_percent",
+      "buffed_win_rate_percent",
+      "clear_rate_percent",
+      "sanity_target_clear_rate_percent",
+      "avg_duration_seconds",
+      "expected_failure_step",
+      "hp_reset_per_duel",
+      "accumulated_buff_steps",
+      "buff_impact_percent",
+      "status",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("battle_lab_arena_tiers.csv", outputUrl),
+    toCsv(result.arena_sequences, [
+      "tier_id",
+      "arena_id",
+      "difficulty_id",
+      "difficulty_rank",
+      "duel_count",
+      "recommended_level_min",
+      "recommended_level_max",
+      "recommended_power_min",
+      "recommended_power_max",
+      "final_enemy_power",
+      "enemy_sequence",
+      "duel_power_targets",
+      "clear_rate_percent",
+      "clear_rate_target_min_percent",
+      "clear_rate_target_max_percent",
+      "sanity_target_clear_rate_percent",
+      "buff_policy",
+      "buff_impact_percent",
+      "expected_failure_step",
+      "avg_duration_seconds",
+      "status",
+    ]),
+  );
+  await Deno.writeTextFile(
+    new URL("battle_lab_arena_tier_summary.json", outputUrl),
+    JSON.stringify(buildArenaTierSummary(result.arena_sequences), null, 2) +
+      "\n",
+  );
+  await Deno.writeTextFile(
     new URL("battle_lab_near_power_matrix.csv", outputUrl),
     toCsv(result.near_power_matrix, [
       "player_archetype_id",
@@ -2424,6 +2841,32 @@ export async function writeOutputs(
     new URL("battle_lab_report.html", outputUrl),
     renderHtml(model, result, historyRows, compareRows),
   );
+}
+
+function buildArenaTierSummary(rows: ArenaSequenceRow[]) {
+  return {
+    schema_version: "battle_lab_arena_tier_summary_v1",
+    mode: "PVE_ARENA_V1",
+    target_power_model: "arena_tuning_power_v1",
+    tier_count: rows.length,
+    status_counts: {
+      PASS: rows.filter((row) => row.status === "PASS").length,
+      REVIEW: rows.filter((row) => row.status === "REVIEW").length,
+      CRITICAL: rows.filter((row) => row.status === "CRITICAL").length,
+    },
+    clear_rate_min_percent: rows.length === 0
+      ? 0
+      : Math.min(...rows.map((row) => row.clear_rate_percent)),
+    clear_rate_max_percent: rows.length === 0
+      ? 0
+      : Math.max(...rows.map((row) => row.clear_rate_percent)),
+    critical_tiers: rows
+      .filter((row) => row.status === "CRITICAL")
+      .map((row) => `${row.arena_id}:${row.difficulty_id}`),
+    review_tiers: rows
+      .filter((row) => row.status === "REVIEW")
+      .map((row) => `${row.arena_id}:${row.difficulty_id}`),
+  };
 }
 
 function buildRows(builds: LabBuild[]): Array<Record<string, unknown>> {
@@ -2844,6 +3287,15 @@ function renderHtml(
       }</td></tr>`
     )
     .join("\n");
+  const arenaSequenceRows = result.arena_sequences
+    .map((row) =>
+      `<tr><td>${
+        escapeHtml(row.arena_id)
+      }</td><td>${
+        escapeHtml(row.difficulty_id)
+      }</td><td>${row.duel_count}</td><td>${row.sampled_duels}</td><td>${row.base_win_rate_percent}%</td><td>${row.buffed_win_rate_percent}%</td><td>${row.clear_rate_percent}%</td><td>${row.clear_rate_target_min_percent}-${row.clear_rate_target_max_percent}%</td><td>${row.sanity_target_clear_rate_percent}%</td><td>${row.avg_duration_seconds}s</td><td>${row.expected_failure_step}</td><td>${row.accumulated_buff_steps}</td><td>${row.buff_impact_percent}%</td><td><span class="badge ${row.status.toLowerCase()}">${row.status}</span></td></tr>`
+    )
+    .join("\n");
   const compareTableRows = compareRows
     .map((row) =>
       `<tr><td>${escapeHtml(row.metric)}</td><td>${
@@ -2989,7 +3441,7 @@ function renderHtml(
     <p>Model: ${escapeHtml(model.model_id)} | Status: ${
     escapeHtml(model.status)
   } | Generated: ${escapeHtml(result.generated_at)}</p>
-    <p>Offline FIRST_SLICE_SIM analysis. This report does not mutate Supabase, rewards, ranking or client state.</p>
+    <p>Arena PVE sequence analysis powered by battle simulator. This report does not mutate Supabase, rewards, ranking or client state.</p>
   </header>
   <main>
     <div class="cards">
@@ -3015,6 +3467,13 @@ function renderHtml(
     metricCard(
       "Near power",
       `${result.summary.near_power_dominance_max_percent}%`,
+    )
+  }
+      ${metricCard("Arena seq", result.summary.arena_sequence_count)}
+      ${
+    metricCard(
+      "Arena min clear",
+      `${result.summary.arena_clear_rate_min_percent}%`,
     )
   }
     </div>
@@ -3086,6 +3545,14 @@ function renderHtml(
       <table>
         <thead><tr><th>Archetype</th><th>Total</th><th>Wins</th><th>Avg</th><th>Weapon</th><th>Spell</th><th>DoT</th><th>Pet</th><th>Summon</th><th>System</th><th>Total damage</th><th>Dominant</th></tr></thead>
         <tbody>${sourceRows}</tbody>
+      </table>
+    </section>
+
+    <section class="wide">
+      <h2>Arena PVE Tiers</h2>
+      <table>
+        <thead><tr><th>Arena</th><th>Dificuldade</th><th>Duelos</th><th>Samples</th><th>Base win</th><th>Buffed win</th><th>Clear</th><th>Target</th><th>Floor</th><th>Avg duration</th><th>Expected step</th><th>Buff steps</th><th>Buff impact</th><th>Status</th></tr></thead>
+        <tbody>${arenaSequenceRows}</tbody>
       </table>
     </section>
 
@@ -3326,7 +3793,8 @@ function spellBehaviorRuleCount(build: CombatantBuild): number {
 function disabledSpellBehaviorRuleCount(build: CombatantBuild): number {
   return Object.values(build.spellBehaviors ?? {}).filter((behavior) =>
     behavior.enabled === false
-  ).length;
+  )
+    .length;
 }
 
 function normalizeBehavior(

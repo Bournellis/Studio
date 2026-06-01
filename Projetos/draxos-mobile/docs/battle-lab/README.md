@@ -5,8 +5,8 @@ nos numeros no escuro.
 
 ## Objetivo
 
-- Rodar batalhas offline em massa com o mesmo simulador `FIRST_SLICE_SIM` usado
-  pelo servidor.
+- Rodar sequencias offline de Arena PVE usando o mesmo simulador tecnico
+  `FIRST_SLICE_SIM` usado pelo servidor para resolver/replayar duelos.
 - Testar builds fixas e randomicas deterministicas em diferentes checkpoints de
   level e poder.
 - Encontrar batalhas curtas demais, longas demais, anti-stall frequente, stomps
@@ -14,6 +14,25 @@ nos numeros no escuro.
 - Apresentar os dados em HTML, CSV e JSON para orientar tuning posterior.
 - Cobrir Track 16 como evidencia lab-only: `pocao_vida`, slot de pocao,
   comportamento default de pocao e comportamento simples de spell.
+
+## Direcao Arena PVE Inicial
+
+A proxima rodada promovivel de Battle Lab deve simular sequencias de Arena PVE,
+nao apenas duelos isolados de PVP/matchmaking. O modelo precisa cobrir:
+
+- tutorial de 1 duelo;
+- arenas de 3 duelos como primeiro baseline;
+- arenas maiores desbloqueadas depois;
+- inimigos PVE por arquetipo, dificuldade, power alvo e posicao na lista;
+- HP resetado a 100% antes de cada duelo;
+- loadout travado no inicio da arena;
+- buffs temporarios de stat acumulando entre duelos;
+- comportamento simples ajustavel antes do proximo inimigo;
+- ausencia de cooldown de combate.
+
+O objetivo e medir se o jogador consegue vencer cada duelo da lista com um
+loadout compreensivel, nao testar sobrevivencia entre lutas. Runs antigas seguem
+validas como evidencia tecnica do simulador, mas nao fecham tuning da Arena PVE.
 
 ## Workflow
 
@@ -42,15 +61,19 @@ Scratch Track 16 recomendado antes de tuning:
 npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --scratch-run 2026-05-30_track16_lab_alignment_v01 --compare-with 2026-05-25_source_identity_balance_v02
 ```
 
-2. No Godot editor, abrir `Refugio -> Battle Lab Dev` quando quiser testar
-   builds visualmente.
-3. Gerar scratch runs para ensaios locais ou runs oficiais para tuning
+2. No Godot editor ou PC build, abrir `Refugio -> Battle Lab Dev` quando quiser
+   testar builds visualmente com o runner local.
+3. No Web export, a mesma tela usa o runner remoto
+   `POST /lab-runner/battle` quando houver sessao Supabase de conta alpha por
+   email/senha. Esse caminho retorna scratch/custom replay em memoria, nao grava
+   run oficial e nao exige `npx/deno` no navegador.
+4. Gerar scratch runs para ensaios locais ou runs oficiais para tuning
    versionado.
-4. Ler primeiro os checks, outliers e matriz de poder proximo.
-5. Assistir amostras de replay ou gerar replay custom por build.
-6. Escolher uma hipotese pequena de tuning.
-7. Alterar numeros de combate em uma tarefa separada.
-8. Rodar o Battle Lab de novo e comparar relatorios.
+5. Ler primeiro os checks, outliers e matriz de poder proximo.
+6. Assistir amostras de replay ou gerar replay custom por build.
+7. Escolher uma hipotese pequena de tuning.
+8. Alterar numeros de combate em uma tarefa separada.
+9. Rodar o Battle Lab de novo e comparar relatorios.
 
 ## Artefatos
 
@@ -84,15 +107,23 @@ npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --scratc
 
 ## Contrato
 
-- A ferramenta e offline.
-- A ferramenta nao chama Supabase.
+- O fluxo local/editor e offline e chama Deno por processo local.
+- O Web export nao tem processo local; nele a ferramenta chama
+  `POST /lab-runner/battle`.
+- O runner remoto exige a mesma conta alpha Supabase por email/senha usada para
+  entrar no jogo, com save `normal` registrado. Nao existe allowlist separada
+  para Labs.
 - A ferramenta nao cria jogador.
 - A ferramenta nao aplica recompensa.
 - A ferramenta nao altera ranking, recursos ou progresso.
+- A ferramenta remota nao grava `generated/`, `.battle_lab_scratch/` nem run
+  oficial; esses artefatos continuam locais/editor.
 - Quando o Progression Lab ja foi gerado, a ferramenta importa apenas os JSONs
-  locais de saves/bots saudaveis para simular combate; continua offline.
+  locais de saves/bots saudaveis para simular combate no fluxo local.
 - A ferramenta nao muda numeros de combate; isso pertence a uma etapa posterior
   de tuning.
+- A proxima etapa de tuning deve partir de runs de Arena PVE, incluindo listas
+  de duelos, buffs temporarios e HP resetado por duelo.
 - Cenarios Track 16 sao cobertura de laboratorio. Eles nao liberam novos
   thresholds, novas pocoes, prioridades de spell ou comportamento por inimigo.
 - A tela Godot e dev/internal-alpha gated: pode existir em builds de revisao quando
@@ -118,6 +149,12 @@ Use para ver o combate enquanto ajusta numeros e arte:
 O Godot chama Deno por `draxos_mobile/battle_lab/deno_command` e
 `draxos_mobile/battle_lab/deno_prefix_args`. O padrao local e `npx -y deno run
 --allow-read --allow-write`.
+
+No Web export, os botoes de run/replay que podem operar sem arquivo local usam
+`SupabaseClient.run_remote_battle_lab`. `Arquivar Run Oficial` fica desativado
+no navegador porque arquivamento e evidencia versionada ainda exigem escrita no
+workspace local. Se a sessao nao for email/senha alpha ou o save `normal` nao
+existir, a tela deve pedir login/conta alpha em vez de tentar executar Deno.
 
 ## Como Usar Os Dados
 
@@ -175,7 +212,8 @@ Leitura:
 
 - O `REVIEW` atual nao deve virar nerf automatico. Ele prova que a pocao mudou a
   leitura de sustain/anti-stall e que o tuning do autobattler deve partir deste
-  generated, nao da run pre-pocao.
+  generated, nao da run pre-pocao. Apos a decisao de `2026-05-31`, tambem deve
+  ser estendido para sequencias de Arena PVE antes de promover tuning.
 - `2026-05-25_initial_balance_v01` permanece arquivada como primeira passada
   numerica pos-rework.
 - Deltas numericos contra runs anteriores devem ser lidos como alerta de

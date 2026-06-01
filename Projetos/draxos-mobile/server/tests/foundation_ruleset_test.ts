@@ -27,6 +27,8 @@ interface JsonObject {
 const PROJECT_PREFIX = "Projetos/draxos-mobile";
 const RULESET_ID = "foundation_ruleset_v0";
 const CONTENT_SOURCES: SourceSpec[] = [
+  "arena_buffs.json",
+  "arena_rewards.json",
   "base_structures.json",
   "battle_fixtures.json",
   "bot_builds.json",
@@ -35,7 +37,11 @@ const CONTENT_SOURCES: SourceSpec[] = [
   "pets.json",
   "potions.json",
   "power_bands.json",
+  "pve_arena_difficulties.json",
+  "pve_arenas.json",
+  "pve_enemies.json",
   "rewards.json",
+  "season_1_progression_targets.json",
   "spells.json",
   "weapons.json",
 ].map((fileName) => ({
@@ -93,11 +99,16 @@ Deno.test("foundation ruleset publishes deterministic metadata and hashes", asyn
   assertEq(stringField(serverRuleset, "ruleset_id"), RULESET_ID);
   assertEq(numberField(serverRuleset, "ruleset_version"), 1);
   assertEq(stringField(serverRuleset, "lifecycle"), "FOUNDATION_AUDIT_ACTIVE");
+  assertEq(
+    stringField(serverRuleset, "primary_product_mode"),
+    "PVE_ARENA_INITIAL",
+  );
   assertHash(stringField(serverRuleset, "content_hash"), "content_hash");
   assertHash(stringField(serverRuleset, "simulator_hash"), "simulator_hash");
 
   const runtime = objectField(serverRuleset, "runtime");
   assertEq(stringField(runtime, "mode"), "FIRST_SLICE_SIM");
+  assertEq(stringField(runtime, "primary_product_mode"), "PVE_ARENA_INITIAL");
   assertEq(stringField(runtime, "battle_log_schema"), "battle_log_v1");
   assertEq(stringField(runtime, "catalog_schema"), "grimoire_catalog_v1");
   assertEq(booleanField(runtime, "server_authoritative"), true);

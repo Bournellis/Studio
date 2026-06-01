@@ -21,9 +21,26 @@ O sistema deve responder:
 - quais bots devem existir para pareamento inicial;
 - se `ossos -> po_osso -> craft_pocao_vida` sustenta estoque saudavel de
   `pocao_vida` por milestone;
+- se a Arena PVE gera pressao aceitavel de pocoes por tentativa, considerando
+  estoque vivo consumido por duelo;
 - se o save saudavel exercita slot de pocao e comportamento simples na
   Preparacao;
 - como a sensacao manual no Godot compara com os dados.
+
+## Direcao Arena PVE Inicial
+
+A proxima rodada de Progression Lab deve modelar Arena PVE antes de PVP. O laboratorio precisa representar:
+
+- tutorial de 1 duelo;
+- primeiras arenas de 3 duelos;
+- arenas maiores desbloqueadas por progresso/dificuldade;
+- loadout travado antes da arena;
+- vida resetada a 100% antes de cada duelo;
+- escolha de 1 entre 3 buffs temporarios leves de stat entre duelos;
+- comportamento ajustavel antes do proximo inimigo;
+- recompensas sem cooldown de combate, controladas por primeira conclusao, dificuldade, recorde, repeticao reduzida, limites diarios/semanais e caps.
+
+O Progression Lab deve responder se leveling, upgrades, recursos, poder e base evoluem em ritmo saudavel quando o jogador repete arenas curtas, tenta dificuldade maior ou desbloqueia arenas mais longas. PVP e bot pool posterior continuam uteis, mas nao sao mais a base do early game.
 
 ## Perfis
 
@@ -51,6 +68,8 @@ npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts
 - `generated/potion_affordability.csv`
 - `generated/crafting_pressure.csv`
 - `generated/preparation_readiness.csv`
+- `generated/milestone_profiles.csv` para `arena_attempts`, `arena_duels`,
+  `expected_potion_uses` e `potion_attempt_coverage_percent`
 - `generated/premium_gap.csv`
 - `generated/power_recommendations.csv`
 - `generated/bot_pool.csv`
@@ -82,7 +101,13 @@ Para validar a selecao sem tocar no Supabase:
 npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all
 ```
 
-4. Abrir o Godot editor e usar `Refugio -> Progression Lab Dev`.
+4. Abrir o Godot editor, PC build ou Web export e usar
+   `Refugio -> Progression Lab Dev`.
+   - Editor/PC podem gerar relatorio pelo Deno local.
+   - Web export chama `POST /lab-runner/progression` quando houver sessao
+     Supabase de conta alpha por email/senha com save `normal` registrado. Esse
+     caminho retorna dados em memoria, nao grava arquivos e nao substitui uma
+     run oficial local.
 5. Carregar ou aplicar o save e jogar manualmente. Sem `SUPABASE_SERVICE_ROLE_KEY`, `Preparar Save Local` cria um cache local-only a partir do healthy save selecionado para validar UI/fluxo em modo somente leitura. Esse cache nao tem token valido: base pode ser inspecionada como snapshot, mas batalha, coleta, upgrade e outras acoes server-authoritative exigem uma sessao real. Com uma sessao real no save `progression_lab`, `Aplicar no Save Lab` usa o endpoint server-authoritative e nao precisa expor service role ao cliente.
 6. Registrar feedback de ritmo, recompensa, gargalo, poder e loja.
 7. Rodar Battle Lab com as builds saudaveis.
@@ -112,13 +137,20 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 ## Contrato
 
 - Ferramenta local/dev-only.
+- No Web export, `Gerar Relatorio` usa o runner remoto
+  `POST /lab-runner/progression` porque navegador nao executa `npx/deno`.
+- O runner remoto exige a mesma conta alpha Supabase por email/senha usada para
+  entrar no jogo, com save `normal` registrado. Nao existe allowlist separada
+  para Labs.
+- O runner remoto nao escreve arquivos, nao aplica healthy save e nao altera
+  recursos, ranking, economia, XP, progresso ou ledger.
 - Nao substitui Supabase como autoridade do jogo.
 - Aplicacao server-backed usa `POST /progression-lab/apply` e nunca escreve no save `normal`.
 - Cache local-only e read-only e nunca deve simular autenticacao online.
 - Nao cria pagamento real.
 - Nao muda numeros automaticamente.
 - Nao promove pesos de poder sem Battle Lab + Progression Lab concordarem.
-- Nao vira tuning runtime sem pacote explicito de base builder ou autobattler.
+- Nao vira tuning runtime sem pacote explicito. O pacote vivo atual e Arena PVE inicial.
 - Premium deve vender tempo e conforto, nao poder exclusivo acima do cap.
 - Track 16 consumables sao cobertura de laboratorio: `po_osso`,
   `craft_pocao_vida`, `pocao_vida`, slot de pocao e comportamentos default. Isso
@@ -153,7 +185,9 @@ Runbook humano Track 05:
 - Reward scaling: reviews nos levels `15h`/`20h` de alguns perfis free/freemium.
 
 O status `REVIEW` e intencional: a ferramenta ja nao bloqueia por erro numerico
-critico, mas ainda precisa validacao manual no Godot/Supabase local.
+critico, mas ainda precisa validacao manual no Godot/Supabase local. Depois da
+decisao de `2026-05-31`, esta rodada tambem passa a ser historica para PVP-first;
+a proxima evidencia promovivel precisa incluir Arena PVE.
 
 ## Rodada Humana Track 05
 
@@ -169,7 +203,8 @@ Casos obrigatorios de foco:
 - `freemium_basic_20h`
 
 A rodada deve decidir premium gap, janela `20h`, impacto de `pocao_vida` no
-anti-stall, pressao de `ossos/po_osso`, bots ponte, recursos e pesos de poder.
+anti-stall, pressao de `ossos/po_osso`, inimigos PVE, bots ponte, recursos,
+recompensas de arena e pesos de poder.
 Qualquer ajuste de economia, poder, bots, loja, recompensas, custos de crafting
 ou combate deve virar tarefa separada com comparacao before/after.
 

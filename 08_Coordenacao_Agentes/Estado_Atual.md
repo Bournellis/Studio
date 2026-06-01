@@ -1,13 +1,13 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`FOUNDATION_FINAL_POLISH_DELIVERED`, com Foundation Closeout, labs alinhados ao Track 16, shell/source guards finais, smoke RLS/admin no Full gate sobre Track 13 release safety e Track 14 agent ops, Internal Alpha republicado na release root `internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, Edge CORS remoto sincronizado no pacote Debug Clean Web Config e Web Auth Foundation Context Hotfix com DB remoto alinhado e pacote Storage aguardando reauth do Wrangler para Pages)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`TRACK_21_ARENA_LOOP_UNLOCK_FRICTION_PUBLISHED_INTERNAL_ALPHA`, Track 21 publicado em `internal-alpha/v0-track21-arena-loop-20260531-df9f12d`, preservando Track 20 Season 1 Arena Calibration, Track 19 Arena Consistency Pass, Remote Lab Runner, Track 13 release safety e Track 14 agent ops)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -23,15 +23,15 @@
 
 ## DraxosMobile
 
-- Status: **P2_IMPLEMENTACAO - FOUNDATION_FINAL_POLISH_DELIVERED**
+- Status: **P2_IMPLEMENTACAO - TRACK_21_ARENA_LOOP_UNLOCK_FRICTION_PUBLISHED_INTERNAL_ALPHA**
 - Fase: `Implementacao`
 - Local: `Projetos/draxos-mobile/`
 - Arquivo de conceito: `Projetos/_conceitos/mobile-universe/` (preservado como referencia de design)
 - Nao confundir com: Draxos Roguelike Cardgame (projeto Steam separado)
-- Baseline atual: Track 00-15 integradas. O projeto tem uma base implementada para refinamento: primeiro slice server-authoritative, Refugio/Base, batalha, recompensa, social/competicao/loja em substancia de prototipo, Supabase remoto, manifest/version gate e builds Internal Alpha site/Web/APK/Windows republicadas em 2026-05-30 ate Foundation Final Polish (`internal-alpha/v0-foundation-final-polish-20260530-8c658f6`, preview `https://721dc985.draxos-mobile-internal-alpha.pages.dev/web/index.html`). Foundation Closeout foi entregue sobre Foundation Expansion Readiness: `account_profiles/game_saves` viraram autoridade, `ruleset_registry` ganhou `publication_id` imutavel, hashes de ruleset sao persistidos em saves/historicos, API v1 usa `x-draxos-api-version: 1`, admin minimo interno e auditavel existe como RPC `service_role`-only, mutacoes restantes de build behavior/potion e social friend/chat foram promovidas para RPCs v1, client envia `request_hash` e registra pending mutations, ActionRouter/OperationState governam o shell real e o minigame shell existe apenas como placeholder disabled/dev-only. Battle Lab e Progression Lab foram alinhados ao Track 16 para cobrir pocoes, comportamento, crafting, `po_osso` e preparation state como evidencia lab-only antes de tuning. Foundation Final Polish registra `codex/draxos-mobile/foundation-final-polish` como base local canonica para novos agentes, mantem budgets de shell/facade, migra presenters tocados para slices read-only e adiciona smoke RLS/admin local ao Full gate. Debug Clean Web Config sincronizou o CORS remoto das Edge Functions publicadas para o header `x-draxos-api-version`, corrigindo o bloqueio de login Web visto como "Supabase local indisponivel". Web Auth Foundation Context Hotfix alinhou o banco remoto com as migrations `202605300001`-`202605300004`, corrigindo `FOUNDATION_CONTEXT_NOT_FOUND`; o client fix para guest com sessao email cacheada esta implementado e validado, com pacote em Storage `internal-alpha/v0-web-auth-foundation-context-20260530`, mas o deploy Cloudflare Pages aguarda reauth do Wrangler local.
+- Baseline atual: Track 00-15 integradas, com Track 13 release safety e Track 14 agent ops preservados. Track 21 Arena Loop Unlock And Friction Pass esta publicado remotamente (`internal-alpha/v0-track21-arena-loop-20260531-df9f12d`, preview `https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`) e corrige XP->level em recompensa de Arena, unlock pos-tutorial e friccao de start/summary. Track 20 Season 1 Arena Calibration segue como baseline de tuning e promove a matriz S1 para Battle Lab, Progression Lab, catalogo gerado, backend e cliente: `arena_id + difficulty_id`, 27 tiers de Arena, rewards por `arena_id:difficulty_id`, first-clear/repeat por tier, level/power recomendado e selecao de dificuldade server-driven. Remote Lab Runner segue preservado para Web Labs e PVP passa a modo posterior/competitivo, com bots apenas como fallback/simulacao.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
-- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation`; override do release manifest exige `SUPABASE_ACCESS_TOKEN`. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, tuning numerico, novas armas, novas spells, economia, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
-- Proximo passo: reautenticar Wrangler e completar o deploy Cloudflare do Web Auth Foundation Context Hotfix; depois escolher explicitamente o pacote de base builder tuning, autobattler tuning, social expansion ou minigame shell/contract usando os labs alinhados como evidencia, nao como autoridade automatica de balanceamento.
+- Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation` e Supabase/Cloudflare CLI autenticada. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, PVP, tuning numerico amplo, novas armas, novas spells, economia ampla, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
+- Proximo passo: testar novo save na publicacao Track 21: tutorial -> voltar Arena -> desbloquear 3 duelos -> iniciar sem confirmacao redundante; tuning fino so depois do loop destravar.
 
 ## rpg-isometrico
 

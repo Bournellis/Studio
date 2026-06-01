@@ -2,7 +2,7 @@
 
 - Status: `VIVO`
 - Owner: project agents
-- Last updated: `2026-05-30`
+- Last updated: `2026-05-31`
 - Applies to: `Projetos/draxos-mobile/`
 
 This manual explains how agents should operate DraxosMobile without reopening old work, drifting from Foundation Audit or mutating remote infrastructure by accident.
@@ -19,22 +19,29 @@ Read live docs in this order:
 6. `docs/foundation-loop-audit.md` - executed audit of post-login loop ergonomics.
 7. `docs/foundation-responsive-layout-contract.md` - required when touching Entry, Refugio, Battle or visual/layout code.
 8. `docs/product-vision.md` - local long-term product canon.
-9. `docs/game-design-document.md` - implementation reference and mock/substance context.
-10. `docs/design-pending.md` - only live register of unresolved design decisions.
+9. `docs/pve-arena-initial-direction.md` - approved early-game direction.
+10. `docs/game-design-document.md` - implementation reference and mock/substance context.
+11. `docs/design-pending.md` - only live register of unresolved design decisions.
 
 If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
 
 ## Current Stage
 
-Active stage: `FOUNDATION_FINAL_POLISH_DELIVERED`.
+Active stage: `TRACK_21_ARENA_LOOP_UNLOCK_FRICTION_PUBLISHED_INTERNAL_ALPHA`.
 
-The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout and Lab Track 16 Alignment are delivered. Foundation Final Polish is the local canonical hardening branch: it syncs live docs, keeps shell facade budgets guarded, strengthens presenter/session slices and adds the local RLS/admin smoke to the Full gate before expanding base builder, autobattler, social or minigames.
+The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout and Lab Track 16 Alignment are delivered. Foundation Final Polish is the previous published hardening baseline: it syncs live docs, keeps shell facade budgets guarded, strengthens presenter/session slices and adds the local RLS/admin smoke to the Full gate. Track 21 Arena Loop Unlock And Friction Pass is the latest remote Internal Alpha publication from `codex/draxos-mobile/track21-arena-loop-unlock-friction`, release root `internal-alpha/v0-track21-arena-loop-20260531-df9f12d`, preview `https://2adcfa6b.draxos-mobile-internal-alpha.pages.dev`.
 
-The accepted loop baseline remains:
+Historical app-shell loop baseline from Foundation Loop UX Pass 01, preserved for context but not the current product reading:
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1 and First Session Clarity v1 have since been published. Do not open feature expansion until the Foundation Final Polish Full gate is green.
+The selected first product loop is:
+
+`Refugio -> Arena PVE selection -> start attempt with loadout locked -> duel list -> temporary stat buffs and behavior prep between duels -> rewards -> continue in Arena -> upgrades`
+
+Track 18 delivers server-authoritative Arena attempts/steps/progress, arena Edge Functions, separate PVE content/reward definitions, a Refugio Arena shell and lab outputs for Arena sequences/attempts. Track 19 tightens that contract: potion stock is live and consumed per duel, public Arena buff selection is `/arena/pve/buff/select`, `/arena/buff/choose` is internal/compatibility only, Arena reward/progress mutation happens on the final `/arena/pve/duel/request`, and `/arena/pve/claim` is summary/ack with `mutates_economy: false`. Track 20 promotes the Season 1 arena tier matrix to labs, generated Edge catalog, backend runtime and client selection by `arena_id + difficulty_id`. Track 21 fixes tutorial unlock by recalculating `players.level` when Arena completion XP is applied, starts attempts directly in the active duel route, and returns from summary to refreshed Arena selection. Remote Lab Runner remains part of the published alpha and keeps Battle Lab and Progression Lab usable in Web export by calling Edge `lab-runner` with the same Supabase email/password Internal Alpha account gate and registered `normal` save used by the game; it never exposes service role to the client/export and does not mutate economy, ranking, save progress or files. The next step is human playtest of tutorial -> 3-duel unlock, difficulty selection, buff choice, potion use, defeat/conclusion summary, continue-in-Arena flow and remote Web Lab generation. Future remote mutation still requires explicit approval and `-ConfirmRemoteMutation`.
+
+Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1 and First Session Clarity v1 have since been published. Do not open feature expansion outside the Arena PVE initial package.
 
 Track 16 remains the latest technical package, but it is not the current product focus. Its current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`. Current spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance, not priority areas.
 
@@ -104,7 +111,7 @@ For Foundation Audit, the expected DraxosMobile Doing card must state the branch
 |---|---|
 | Small code fix | `AGENTS.md`, `implementation/current-status.md`, touched files |
 | Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md`, `docs/foundation-loop-audit.md` |
-| Product/design | `docs/product-vision.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
+| Product/design | `docs/product-vision.md`, `docs/pve-arena-initial-direction.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
 | Backend/contracts | `docs/architecture.md`, `docs/contracts/`, `server/schema/`, `server/functions/`, `supabase/` mirrors |
 | Foundation expansion/final polish | `docs/foundation-expansion-readiness.md`, `docs/contracts/account-save.md`, `docs/contracts/ruleset-registry.md`, `docs/contracts/admin-ops.md`, `docs/contracts/minigame-integration.md` |
 | Crafting/potions/behavior | `docs/behavior-potion-crafting-v1.md`, `docs/contracts/api-endpoints.md`, `docs/contracts/database-schema.md`, `docs/contracts/content-definitions.md`, `docs/contracts/battle-event-log.md` |
@@ -154,13 +161,12 @@ Never run remote mutation modes as a drive-by validation step.
 
 ## Prohibited Or Escalated Work
 
-Do not start these without explicit user direction and a fresh track/package:
+Do not start these outside the approved Arena PVE initial package without explicit user direction and a fresh track/package:
 
-- feature gameplay or content expansion before Foundation Final Polish Full gate is green and the user chooses the next package;
-- social expansion before Foundation Final Polish Full gate is green and the user chooses the next package;
-- visual-general or battle-presentation work before the loop and social order is explicitly chosen;
-- numeric tuning without human playthrough and Progression Lab evidence;
-- weapons, spells, Battle Pass or economy pass while they are still mock/substance;
+- feature gameplay or content expansion unrelated to Arena PVE initial;
+- PVP-first, social expansion, visual-general or battle-presentation work before the Arena PVE package proves the early loop;
+- numeric tuning without Arena PVE Battle Lab/Progression Lab evidence and human playthrough;
+- weapons, spells, Battle Pass or economy pass while they are still mock/substance, except where Arena PVE rewards/power require a narrow documented value;
 - new potions, consumable expansion, custom thresholds, spell priorities, enemy-specific behavior or behavior tuning outside an explicit package;
 - bypassing `account_profiles/game_saves` for new account/save work;
 - iOS or mobile browser support;

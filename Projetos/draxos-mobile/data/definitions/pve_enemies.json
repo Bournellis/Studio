@@ -1,0 +1,240 @@
+{
+  "schema_version": 1,
+  "collection": "pve_enemies",
+  "items": [
+    {
+      "id": "pve_aprendiz_cinzas",
+      "display_name": "Aprendiz de Cinzas",
+      "description": "Inimigo tutorial de instrumento ritual simples, usado para ensinar o primeiro duelo.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["PVE_ARENA_V1", "enemy", "tutorial", "starter_instrument"],
+      "mode": "PVE_ARENA_V1",
+      "archetype": "starter_instrument",
+      "teaching_goal": "basic_duel_readability",
+      "target_level": 2,
+      "target_power": 90,
+      "power_band_id": "band_001",
+      "source_bot_build_id": "bot_starter_instrument_01",
+      "legal_unlocks": {
+        "spell_slots": 0,
+        "requires_doutrina": false,
+        "requires_familiar": false
+      },
+      "presentation": {
+        "portrait_asset_id": "portrait_training_bot",
+        "subtitle": "Duelista iniciante"
+      },
+      "reward_tags": ["tutorial"],
+      "ranked": false
+    },
+    {
+      "id": "pve_guardiao_barreira",
+      "display_name": "Guardiao de Barreira",
+      "description": "Defensor inicial que testa Guarda, barreira e duracao maior sem comportamento customizado.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["PVE_ARENA_V1", "enemy", "defensive_occultist", "guard"],
+      "mode": "PVE_ARENA_V1",
+      "archetype": "defensive_occultist",
+      "teaching_goal": "defense_and_barrier_pressure",
+      "target_level": 6,
+      "target_power": 190,
+      "power_band_id": "band_002",
+      "source_bot_build_id": "bot_effect_trainer_01",
+      "legal_unlocks": {
+        "spell_slots": 1,
+        "requires_doutrina": false,
+        "requires_familiar": false
+      },
+      "presentation": {
+        "portrait_asset_id": "portrait_training_bot",
+        "subtitle": "Defensor ritual"
+      },
+      "reward_tags": ["defense_check"],
+      "ranked": false
+    },
+    {
+      "id": "pve_sussurrador_veu",
+      "display_name": "Sussurrador do Veu",
+      "description": "Controlador mental inicial para ensinar pressao de Vontade e leitura de controle.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["PVE_ARENA_V1", "enemy", "mental_controller"],
+      "mode": "PVE_ARENA_V1",
+      "archetype": "mental_controller",
+      "teaching_goal": "mental_control_intro",
+      "target_level": 5,
+      "target_power": 260,
+      "power_band_id": "band_002",
+      "source_bot_build_id": "bot_mental_controller_01",
+      "legal_unlocks": {
+        "spell_slots": 1,
+        "requires_doutrina": false,
+        "requires_familiar": false
+      },
+      "presentation": {
+        "portrait_asset_id": "portrait_training_bot",
+        "subtitle": "Controle mental"
+      },
+      "reward_tags": ["control_check"],
+      "ranked": false
+    },
+    {
+      "id": "pve_misturador_elemental",
+      "display_name": "Misturador Elemental",
+      "description": "Inimigo de duas fontes elementais para testar resistencia, mana e resposta a burst moderado.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["PVE_ARENA_V1", "enemy", "elemental_mixer"],
+      "mode": "PVE_ARENA_V1",
+      "archetype": "elemental_mixer",
+      "teaching_goal": "two_spell_pressure",
+      "target_level": 14,
+      "target_power": 720,
+      "power_band_id": "band_003",
+      "source_bot_build_id": "bot_elemental_mixer_01",
+      "legal_unlocks": {
+        "spell_slots": 2,
+        "requires_doutrina": true,
+        "requires_familiar": false
+      },
+      "presentation": {
+        "portrait_asset_id": "portrait_training_bot",
+        "subtitle": "Elementalista"
+      },
+      "reward_tags": ["elemental_check"],
+      "ranked": false
+    },
+    {
+      "id": "pve_pressao_veneno",
+      "display_name": "Pressao de Veneno",
+      "description": "Inimigo de pressao por dano ao longo do tempo para validar Pocao e comportamento defensivo simples.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["PVE_ARENA_V1", "enemy", "dot_pressure"],
+      "mode": "PVE_ARENA_V1",
+      "archetype": "dot_pressure",
+      "teaching_goal": "damage_over_time_response",
+      "target_level": 8,
+      "target_power": 360,
+      "power_band_id": "band_002",
+      "source_bot_build_id": "bot_effect_trainer_01",
+      "legal_unlocks": {
+        "spell_slots": 2,
+        "requires_doutrina": false,
+        "requires_familiar": false
+      },
+      "presentation": {
+        "portrait_asset_id": "portrait_training_bot",
+        "subtitle": "Pressao continua"
+      },
+      "reward_tags": ["dot_check"],
+      "ranked": false
+    },
+    {
+      "id": "pve_condutor_familiar",
+      "display_name": "Condutor de Familiar",
+      "description": "Inimigo que introduz Familiar como fonte adicional de pressao depois do jogador entender arena curta.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["PVE_ARENA_V1", "enemy", "familiar_handler"],
+      "mode": "PVE_ARENA_V1",
+      "archetype": "familiar_handler",
+      "teaching_goal": "familiar_pressure_intro",
+      "target_level": 22,
+      "target_power": 1320,
+      "power_band_id": "band_004",
+      "source_bot_build_id": "bot_familiar_handler_01",
+      "legal_unlocks": {
+        "spell_slots": 2,
+        "requires_doutrina": true,
+        "requires_familiar": true
+      },
+      "presentation": {
+        "portrait_asset_id": "portrait_training_bot",
+        "subtitle": "Familiar ativo"
+      },
+      "reward_tags": ["familiar_check"],
+      "ranked": false
+    },
+    {
+      "id": "pve_invocador_ossario",
+      "display_name": "Invocador Ossario",
+      "description": "Inimigo avancado com summons para validar replay e pressao de alvos extras em arena media.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["PVE_ARENA_V1", "enemy", "summoner"],
+      "mode": "PVE_ARENA_V1",
+      "archetype": "summoner",
+      "teaching_goal": "summon_pressure",
+      "target_level": 35,
+      "target_power": 2450,
+      "power_band_id": "band_005",
+      "source_bot_build_id": "bot_summoner_01",
+      "legal_unlocks": {
+        "spell_slots": 3,
+        "requires_doutrina": true,
+        "requires_familiar": true
+      },
+      "presentation": {
+        "portrait_asset_id": "portrait_training_bot",
+        "subtitle": "Invocador"
+      },
+      "reward_tags": ["summon_check"],
+      "ranked": false
+    },
+    {
+      "id": "pve_defensor_abissal",
+      "display_name": "Defensor Abissal",
+      "description": "Check defensivo de arena longa, reutilizando build legal existente ate haver inimigos finalizados.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["PVE_ARENA_V1", "enemy", "defensive_occultist", "initial_cap"],
+      "mode": "PVE_ARENA_V1",
+      "archetype": "defensive_occultist",
+      "teaching_goal": "long_arena_defense_check",
+      "target_level": 28,
+      "target_power": 1650,
+      "power_band_id": "band_004",
+      "source_bot_build_id": "bot_familiar_handler_01",
+      "legal_unlocks": {
+        "spell_slots": 2,
+        "requires_doutrina": true,
+        "requires_familiar": true
+      },
+      "presentation": {
+        "portrait_asset_id": "portrait_training_bot",
+        "subtitle": "Defesa abissal"
+      },
+      "reward_tags": ["long_arena_check"],
+      "ranked": false
+    },
+    {
+      "id": "pve_finalizador_abissal",
+      "display_name": "Finalizador Abissal",
+      "description": "Finalizador do cap inicial de 6 duelos, focado em burst e pressao de summons sem nova regra customizada.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["PVE_ARENA_V1", "enemy", "funeral_burst", "initial_cap"],
+      "mode": "PVE_ARENA_V1",
+      "archetype": "funeral_burst",
+      "teaching_goal": "initial_cap_finale",
+      "target_level": 38,
+      "target_power": 2700,
+      "power_band_id": "band_005",
+      "source_bot_build_id": "bot_summoner_01",
+      "legal_unlocks": {
+        "spell_slots": 3,
+        "requires_doutrina": true,
+        "requires_familiar": true
+      },
+      "presentation": {
+        "portrait_asset_id": "portrait_training_bot",
+        "subtitle": "Finalizador"
+      },
+      "reward_tags": ["capstone"],
+      "ranked": false
+    }
+  ]
+}

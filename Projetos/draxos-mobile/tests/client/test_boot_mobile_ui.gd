@@ -3,6 +3,7 @@ extends GutTest
 const BootScreenScript = preload("res://modes/boot/boot.gd")
 const AppShellRouteContractScript = preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const AppShellActionContractScript = preload("res://modes/boot/ui/app_shell_action_contract.gd")
+const AppShellActionRouterScript = preload("res://modes/boot/ui/app_shell_action_router.gd")
 const AppShellErrorContractScript = preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
@@ -154,6 +155,18 @@ func test_app_shell_action_contract_centralizes_online_gates_without_boot_ui() -
 	assert_true(AppShellActionContractScript.is_allowed_during_replay(AppShellActionContractScript.ACTION_SKIP_REPLAY))
 	assert_false(AppShellActionContractScript.is_allowed_during_replay(AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE))
 	assert_eq(AppShellActionContractScript.action_value(AppShellActionContractScript.upgrade_base_structure_action("altar_das_almas")), "altar_das_almas")
+	var arena_start_action := AppShellActionContractScript.arena_start_action("arena_veu_curta")
+	assert_eq(arena_start_action, "arena_start:arena_veu_curta")
+	assert_true(AppShellActionContractScript.is_arena_start(arena_start_action))
+	assert_eq(AppShellActionContractScript.action_value(arena_start_action), "arena_veu_curta")
+	var arena_start_difficulty_action := AppShellActionContractScript.arena_start_action("arena_veu_curta", "s1_d02_iniciado")
+	assert_eq(arena_start_difficulty_action, "arena_start:arena_veu_curta:s1_d02_iniciado")
+	assert_eq(AppShellActionContractScript.action_value(arena_start_difficulty_action), "arena_veu_curta")
+	assert_eq(AppShellActionContractScript.action_value_at(arena_start_difficulty_action, 2), "s1_d02_iniciado")
+	var arena_route := AppShellActionRouterScript.route_action(arena_start_action, {"save_type": "normal"})
+	assert_eq(arena_route.get("category"), AppShellActionRouterScript.CATEGORY_ARENA)
+	assert_eq(arena_route.get("mutation_endpoint"), "arena/pve/start")
+	assert_true(bool(arena_route.get("requires_idempotent_retry", false)))
 	assert_eq(AppShellActionContractScript.action_payload("show_shop", "shop", "normal", true, false), {
 		"action_id": "show_shop",
 		"screen": "shop",
@@ -276,19 +289,21 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_true(_label_tree_contains(boot._first_screen_root, "ALTAR"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Coletar"))
 
-	for hotspot_text: String in ["Batalha", "Refugio", "Social", "Competicao", "Loja", "Perfil"]:
+	for hotspot_text: String in ["Arena PVE", "Refugio", "Social", "Loja", "Perfil"]:
 		var hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_%s" % hotspot_text) as Button
 		assert_not_null(hotspot, "Refugio should expose icon '%s'." % hotspot_text)
 		assert_true(hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Batalha"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Competicao"))
 
-	var battle_hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Batalha") as Button
-	battle_hotspot.pressed.emit()
+	var arena_hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Arena PVE") as Button
+	arena_hotspot.pressed.emit()
 	await get_tree().process_frame
 	var menu_popup := boot._refuge_menu_popup as PopupPanel
 	assert_not_null(menu_popup)
 	assert_true(menu_popup.visible)
-	assert_true(_label_tree_contains(menu_popup, "Batalha"))
-	assert_not_null(_find_button_by_text(menu_popup, "Pedir batalha"))
+	assert_true(_label_tree_contains(menu_popup, "Arena PVE"))
+	assert_not_null(_find_button_by_text(menu_popup, "Abrir Arena PVE"))
 	boot._go_back()
 	assert_false(menu_popup.visible)
 
@@ -413,8 +428,209 @@ func test_refuge_context_cta_priority_uses_loaded_state() -> void:
 
 	SessionStore.base_state = {}
 	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
-	assert_eq(str(cta.get("action_id", "")), "request_battle")
-	assert_eq(str(cta.get("text", "")), "Batalhar")
+	assert_eq(str(cta.get("action_id", "")), "open_arena")
+	assert_eq(str(cta.get("text", "")), "Arena PVE")
+
+func test_arena_selection_renders_remote_arenas_as_data_driven_actions() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	assert_true(SessionStore.apply_arena_result({
+		"ok": true,
+		"_client": {"save_type": SessionStore.SAVE_TYPE_NORMAL},
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"arenas": [
+				{
+					"id": "arena_tutorial_cinzas",
+					"display_name": "Tutorial: Cinzas Do Refugio",
+					"duel_count": 1,
+					"default_difficulty_id": "s1_d00_intro",
+					"unlocked": true,
+					"difficulties": [
+						{
+							"difficulty_id": "s1_d00_intro",
+							"difficulty_tier": 0,
+							"max_steps": 1,
+							"recommended_level_min": 1,
+							"recommended_level_max": 3,
+							"recommended_power_min": 80,
+							"recommended_power_max": 180,
+							"unlocked": true,
+						},
+					],
+				},
+				{
+					"id": "arena_cinzas_curta",
+					"display_name": "Arena Curta Das Cinzas",
+					"max_steps": 3,
+					"default_difficulty_id": "s1_d00_intro",
+					"unlocked": true,
+					"difficulties": [
+						{
+							"difficulty_id": "s1_d00_intro",
+							"difficulty_tier": 0,
+							"max_steps": 3,
+							"recommended_level_min": 3,
+							"recommended_level_max": 4,
+							"recommended_power_min": 160,
+							"recommended_power_max": 260,
+							"unlocked": true,
+						},
+						{
+							"difficulty_id": "s1_d01_aprendiz",
+							"difficulty_tier": 1,
+							"max_steps": 3,
+							"recommended_level_min": 5,
+							"recommended_level_max": 6,
+							"recommended_power_min": 280,
+							"recommended_power_max": 470,
+							"unlocked": true,
+						},
+					],
+				},
+				{
+					"id": "arena_veu_curta",
+					"display_name": "Arena Do Veu",
+					"max_steps": 4,
+					"default_difficulty_id": "s1_d02_iniciado",
+					"unlocked": false,
+					"locked_reason": "Conclua dificuldade 1.",
+					"difficulties": [
+						{
+							"difficulty_id": "s1_d02_iniciado",
+							"difficulty_tier": 2,
+							"max_steps": 4,
+							"recommended_level_min": 8,
+							"recommended_level_max": 10,
+							"recommended_power_min": 650,
+							"recommended_power_max": 1300,
+							"unlocked": false,
+							"locked_reason": "Conclua dificuldade 1.",
+						},
+					],
+				},
+			],
+			"active_attempt": null,
+		},
+	}))
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	await get_tree().process_frame
+
+	var tutorial_action := AppShellActionContractScript.arena_start_action("arena_tutorial_cinzas", "s1_d00_intro")
+	var early_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta", "s1_d00_intro")
+	var early_apprentice_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta", "s1_d01_aprendiz")
+	var locked_action := AppShellActionContractScript.arena_start_action("arena_veu_curta", "s1_d02_iniciado")
+	assert_true(boot._action_buttons.has(tutorial_action))
+	assert_true(boot._action_buttons.has(early_action))
+	assert_true(boot._action_buttons.has(early_apprentice_action))
+	assert_true(boot._action_buttons.has(locked_action))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_EARLY))
+	assert_not_null(_find_button_by_text(boot._content_body, "Tutorial: Cinzas Do Refugio - 1 duelo | s1_d00_intro | Lv 1-3"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Arena Curta Das Cinzas - 3 duelos | s1_d01_aprendiz | Lv 5-6"))
+	var locked_button := boot._action_buttons[locked_action] as Button
+	assert_not_null(locked_button)
+	assert_true(locked_button.disabled)
+	assert_string_contains(locked_button.text, "Conclua dificuldade 1.")
+	assert_eq(locked_button.tooltip_text, "Conclua dificuldade 1.")
+	assert_true(_label_tree_contains(boot._content_body, "bloqueada: Conclua dificuldade 1."))
+	boot._sync_buttons()
+	assert_true(locked_button.disabled)
+
+func test_arena_selection_keeps_fixed_buttons_only_for_dev_fallback() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.arena_state = {}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	await get_tree().process_frame
+
+	assert_true(_label_tree_contains(boot._content_body, "Fallback dev local"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_EARLY))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.arena_start_action("arena_tutorial_cinzas")))
+
+func test_arena_selection_recommends_next_uncompleted_arena_after_tutorial() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	assert_true(SessionStore.apply_arena_result({
+		"ok": true,
+		"_client": {"save_type": SessionStore.SAVE_TYPE_NORMAL},
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"progress": {
+				"tutorial_completed": true,
+				"metadata": {
+					"completed_tiers": {"arena_tutorial_cinzas:s1_d00_intro": true},
+					"completed_arenas": {"arena_tutorial_cinzas": true},
+				},
+			},
+			"arenas": [
+				{
+					"id": "arena_tutorial_cinzas",
+					"display_name": "Tutorial: Cinzas Do Refugio",
+					"duel_count": 1,
+					"default_difficulty_id": "s1_d00_intro",
+					"unlocked": true,
+					"difficulties": [
+						{"difficulty_id": "s1_d00_intro", "max_steps": 1, "recommended_level_min": 1, "recommended_level_max": 3, "unlocked": true},
+					],
+				},
+				{
+					"id": "arena_cinzas_curta",
+					"display_name": "Arena Curta Das Cinzas",
+					"duel_count": 3,
+					"default_difficulty_id": "s1_d00_intro",
+					"unlocked": true,
+					"difficulties": [
+						{"difficulty_id": "s1_d00_intro", "max_steps": 3, "recommended_level_min": 3, "recommended_level_max": 4, "recommended_power_min": 160, "recommended_power_max": 260, "unlocked": true},
+					],
+				},
+			],
+		},
+	}))
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	await get_tree().process_frame
+
+	var next_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta", "s1_d00_intro")
+	assert_true(boot._action_buttons.has(next_action))
+	assert_not_null(_find_button_by_text(boot._content_body, "Continuar: Arena Curta Das Cinzas | s1_d00_intro"))
+	assert_true(_label_tree_contains(boot._content_body, "Proximo desafio: 3 duelos"))
+
+func test_arena_summary_continues_to_arena_instead_of_reward_claim_copy() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"arenas": [],
+		"active_attempt": {
+			"attempt_id": "attempt-summary",
+			"arena_id": "arena_tutorial_cinzas",
+			"difficulty_id": "s1_d00_intro",
+			"status": "completed",
+			"duel_count": 1,
+			"duels_won": 1,
+			"locked_loadout_hash": "sha256:test",
+		},
+		"summary": {
+			"status": "completed",
+			"duels_won": 1,
+			"duels_total": 1,
+			"reward_label": "COMPLETION_REWARD_APPLIED_ON_DUEL_CLEAR",
+		},
+	}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SUMMARY)
+	await get_tree().process_frame
+
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY))
+	assert_not_null(_find_button_by_text(boot._content_body, "Continuar na Arena"))
+	assert_null(_find_button_by_text(boot._content_body, "Confirmar resumo"))
+	assert_true(_label_tree_contains(boot._content_body, "ja foi aplicada no ultimo duelo"))
 
 func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -> void:
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
@@ -843,8 +1059,8 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	await get_tree().process_frame
 	var popup := boot.get("_refuge_menu_popup") as PopupPanel
 	assert_not_null(popup)
-	assert_true(_label_tree_contains(popup, "Pronto para batalha"))
-	assert_true(_label_tree_contains(popup, "Primeira sessao: confira instrumento, habilidades e pocao antes de batalhar."))
+	assert_true(_label_tree_contains(popup, "Pronto para Arena"))
+	assert_true(_label_tree_contains(popup, "Primeira sessao: confira instrumento, habilidades e pocao antes da Arena."))
 	assert_true(_label_tree_contains(popup, "Poder 243"))
 	assert_true(_label_tree_contains(popup, "Resumo: Varinha de Cinzas | 1 habilidade | Doutrina do Pavor | Corvo de Pressagio"))
 	assert_true(_label_tree_contains(popup, "Proximos marcos"))
@@ -861,12 +1077,12 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(_label_tree_contains(popup, "Pacto Familiar: Disponivel"))
 	assert_true(_label_tree_contains(popup, "Gato Tumular: Disponivel"))
 	assert_true(_label_tree_contains(popup, "Lobo Tumular: Desbloqueia no nivel 15."))
-	assert_not_null(_find_button_by_text(popup, "Pedir batalha"))
+	assert_not_null(_find_button_by_text(popup, "Abrir Arena PVE"))
 	assert_not_null(_find_button_by_text(popup, "Equipar Pocao de Vida"))
 	assert_not_null(_find_button_by_text(popup, "Remover pocao"))
 	assert_not_null(_find_button_by_text(popup, "Usar com vida baixa"))
 	assert_not_null(_find_button_by_text(popup, "Pausar pocao"))
-	assert_not_null(_find_button_by_text(popup, "Usar na batalha"))
+	assert_not_null(_find_button_by_text(popup, "Usar na Arena"))
 	assert_not_null(_find_button_by_text(popup, "Pausar"))
 	var visible_text := _visible_text_tree(popup).to_lower()
 	for forbidden: String in ["behavior", "build", "slot", "endpoint", "server-authoritative", "schema", "snapshot"]:
@@ -1031,7 +1247,7 @@ func test_refuge_preparation_renders_paused_potion_and_spell_publicly() -> void:
 	var popup := boot.get("_refuge_menu_popup") as PopupPanel
 	assert_not_null(popup)
 	assert_true(_label_tree_contains(popup, "Pocao pausada"))
-	assert_true(_label_tree_contains(popup, "Habilidade 1: Incisao Ritual | Pausada para batalha"))
+	assert_true(_label_tree_contains(popup, "Habilidade 1: Incisao Ritual | Pausada para Arena"))
 	assert_true(_label_tree_contains(popup, "Corvo de Pressagio L2"))
 	assert_true(_label_tree_contains(popup, "Pacto Familiar L3"))
 
@@ -1666,6 +1882,8 @@ func _centralized_action_literals() -> PackedStringArray:
 		AppShellActionContractScript.PREFIX_UPGRADE_BASE_STRUCTURE,
 		AppShellActionContractScript.PREFIX_SHOP_PURCHASE,
 		AppShellActionContractScript.PREFIX_CLAIM_REWARD,
+		AppShellActionContractScript.PREFIX_ARENA_START,
+		AppShellActionContractScript.PREFIX_ARENA_CHOOSE_BUFF,
 		AppShellActionContractScript.PREFIX_BATTLE_REPLAY,
 	])
 

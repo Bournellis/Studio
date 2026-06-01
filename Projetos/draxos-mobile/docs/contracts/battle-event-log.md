@@ -1,6 +1,6 @@
 # Battle Event Log Contract
 
-- Ultima atualizacao: `2026-05-30`
+- Ultima atualizacao: `2026-05-31`
 - Versao atual: `battle_log_v1`
 
 O log de batalha e a unica fonte que o cliente usa para animar uma batalha. O cliente nao recalcula dano, vida, vitoria, recompensa ou ranking.
@@ -8,6 +8,8 @@ O log de batalha e a unica fonte que o cliente usa para animar uma batalha. O cl
 Status MVP: `battle/request` server-authoritative implementado em T00-P07 com bot `mvp_training_bot`, seed deterministica e eventos `battle_log_v1`.
 
 Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeScript deterministico, bots de variacao, Instrumentos Rituais, mana, spells diretas, DoTs, status, resistencias, barreiras, Familiares, Doutrinas, summons, cooldowns, anti-stall e recompensas `FIRST_SLICE_SIM`. Track 16 adiciona `consumable_use` e cura por pocao.
+
+Arena PVE v1 continua usando `battle_log_v1` por duelo. A sequencia da arena, ofertas de buff, claim de recompensa e progresso vivem no estado de arena; o log de batalha anima apenas o duelo resolvido pelo servidor.
 
 ## Envelope
 
@@ -18,7 +20,7 @@ Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeS
     "publication_id": "uuid",
     "ruleset_id": "foundation_ruleset_v0",
     "ruleset_version": 1,
-    "content_hash": "5b7121a37a78e966c06098cc70283dabc5dbbcc1d3f9a21d279b855d09aee1e7",
+    "content_hash": "bad44d18be6ee170e698fc933929ed58bf4fb6932261e1b19bd9f8156e11638e",
     "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
     "schema_version": "foundation_ruleset_manifest_v1"
   },
@@ -37,6 +39,38 @@ Status primeiro slice: `FIRST_SLICE_SIM` completo em T00-P10 com simulador TypeS
   "events": []
 }
 ```
+
+## Metadata De Arena PVE v1
+
+Duelo de Arena PVE deve incluir metadata adicional no envelope salvo. O cliente pode usar esta metadata para contexto visual, mas nao recalcula resultado, buff, recompensa ou progresso.
+
+```json
+{
+  "mode": "PVE_ARENA_V1",
+  "arena": {
+    "attempt_id": "uuid",
+    "arena_id": "arena_cinzas_curta",
+    "difficulty_tier": 1,
+    "duel_index": 2,
+    "duel_count": 3,
+    "enemy_id": "pve_guardiao_barreira",
+    "temporary_buffs": [
+      { "buff_id": "arena_buff_potencia_menor", "stacks": 1 }
+    ],
+    "locked_loadout_hash": "sha256:...",
+    "hp_reset": true
+  }
+}
+```
+
+Regras:
+
+- `hp_reset` deve ser `true` no v1.
+- `duel_index` usa base 1.
+- `temporary_buffs` descreve buffs acumulados antes do duelo atual.
+- `locked_loadout_hash` precisa ser igual ao snapshot de tentativa.
+- Buff offer e buff select nao sao eventos do replay; pertencem a `pve_arena_buff_offers` e endpoints `arena/pve/*`.
+- Replays antigos sem `arena` continuam validos.
 
 ## Metadata De Ruleset
 

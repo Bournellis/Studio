@@ -3,15 +3,29 @@
   "ruleset_id": "foundation_ruleset_v0",
   "ruleset_version": 1,
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
-  "content_hash": "5f7e7fe5d1a1e8570e531bc3ce977188a74470df6d75da66b2b4c54219a68b97",
+  "primary_product_mode": "PVE_ARENA_INITIAL",
+  "content_hash": "1cb11637f9346e226ca1db7333486b3718a2c38b07e49b1de00ffa32d134e074",
   "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
   "runtime": {
     "mode": "FIRST_SLICE_SIM",
+    "primary_product_mode": "PVE_ARENA_INITIAL",
     "battle_log_schema": "battle_log_v1",
     "catalog_schema": "grimoire_catalog_v1",
     "server_authoritative": true
   },
   "sources": [
+    {
+      "path": "data/definitions/arena_buffs.json",
+      "kind": "definition_json",
+      "sha256": "8f7fc6946749df4894c6d7d9c9e4db85d4af667bcbccf576904fe743b7a2ed59",
+      "canonical_bytes": 3379
+    },
+    {
+      "path": "data/definitions/arena_rewards.json",
+      "kind": "definition_json",
+      "sha256": "30d61b1e6368370cabc3896698c6d1017eba2f9380634f9192b203b026659631",
+      "canonical_bytes": 21847
+    },
     {
       "path": "data/definitions/base_structures.json",
       "kind": "definition_json",
@@ -61,10 +75,34 @@
       "canonical_bytes": 1619
     },
     {
+      "path": "data/definitions/pve_arena_difficulties.json",
+      "kind": "definition_json",
+      "sha256": "65a95492ba44cc1196d4a197adde9aa050db74f1c6a47a72dcfa03f24643603b",
+      "canonical_bytes": 26895
+    },
+    {
+      "path": "data/definitions/pve_arenas.json",
+      "kind": "definition_json",
+      "sha256": "6bccbb35e7f7d4c9377eaf6e0b768125fd74fbe26bf468f94f53e4484005610d",
+      "canonical_bytes": 5692
+    },
+    {
+      "path": "data/definitions/pve_enemies.json",
+      "kind": "definition_json",
+      "sha256": "f26f60fc435556cd562842b85bfda91636f8f08b5b282558d2e417198b5e91e6",
+      "canonical_bytes": 6197
+    },
+    {
       "path": "data/definitions/rewards.json",
       "kind": "definition_json",
       "sha256": "310acb38bea00a24cf886c30f44d26ab5cd13c078a024a7c59756f91794380a0",
       "canonical_bytes": 2144
+    },
+    {
+      "path": "data/definitions/season_1_progression_targets.json",
+      "kind": "definition_json",
+      "sha256": "ae2445c315ef9fd1844e5eb6c0eed9d97a71e59e1b8fcea24f617224a4df7c67",
+      "canonical_bytes": 2379
     },
     {
       "path": "data/definitions/spells.json",
@@ -81,8 +119,8 @@
     {
       "path": "tools/battle_lab/model.v1.json",
       "kind": "tool_model",
-      "sha256": "3755eb0b1059391b760e60f3707cf545ff11e82a3e6cdeaf76256ff60f7ccd86",
-      "canonical_bytes": 6245
+      "sha256": "c51ae399980e6b1499d2cdaec4f245b4663e13b6f504e89b8cca5865876b57ac",
+      "canonical_bytes": 6387
     },
     {
       "path": "tools/economy_simulator/economy_model.v1.json",
@@ -93,8 +131,8 @@
     {
       "path": "tools/progression_lab/model.v1.json",
       "kind": "tool_model",
-      "sha256": "9e7e7311d7b746affac86fc58b28182842dc58d3c253723f5e54296adbf75259",
-      "canonical_bytes": 4400
+      "sha256": "9a2ebc9a5dfd1636f6c6ee13863bc87c8188a263135b718b40b15eadc001664a",
+      "canonical_bytes": 5384
     },
     {
       "path": "server/functions/_shared/battle_combatants.ts",
@@ -122,9 +160,9 @@
     }
   ],
   "counts": {
-    "definitions": 11,
+    "definitions": 17,
     "tool_models": 3,
     "battle_simulators": 4,
-    "total_sources": 18
+    "total_sources": 24
   }
 }

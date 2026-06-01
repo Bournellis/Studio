@@ -128,6 +128,7 @@ func test_visual_direction_v1_tokens_bind_surfaces_and_actions() -> void:
 	assert_eq(UiTokens.action_accent_token("shop_purchase:alpha_redeem_small", "shop"), "accent_shop")
 	assert_eq(UiTokens.action_accent_token("upgrade_base_structure:nucleo_energia", "base_management"), "accent_refuge")
 	assert_eq(UiTokens.action_button_style_id("request_battle"), "cta")
+	assert_eq(UiTokens.action_button_style_id("open_arena"), "cta")
 	assert_eq(UiTokens.action_button_style_id("show_social"), "secondary")
 	var social_button_style := UiTokens.button_style("secondary", "hover", "accent_social")
 	assert_eq(social_button_style.border_color, UiTokens.color("accent_social"))

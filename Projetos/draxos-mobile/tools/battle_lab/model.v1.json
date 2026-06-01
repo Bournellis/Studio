@@ -3,11 +3,12 @@
   "model_id": "draxos_mobile_battle_lab_v4_source_identity",
   "status": "SOURCE_IDENTITY_ALPHA",
   "notes": [
-    "Offline battle balance lab for FIRST_SLICE_SIM.",
+    "Arena PVE sequence analysis powered by battle simulator.",
     "Character rework v2 uses ritual instruments, doutrines, familiars and the Arcano/Fisico/Sangue/Raio source taxonomy.",
     "This model must not change combat numbers; it only generates builds, matchups and reports.",
     "Source identity v2 reduces instrument dominance, brings spells/familiars forward in the replay, and fails builds whose fantasy does not appear in source mix.",
-    "Track 16 alignment adds lab-only potion and behavior coverage for Pocao de Vida, default potion behavior and simple spell behavior without promoting tuning."
+    "Track 16 alignment adds lab-only potion and behavior coverage for Pocao de Vida, default potion behavior and simple spell behavior without promoting tuning.",
+    "Track 19 consistency pass reports Arena PVE attempt sanity targets: tutorial >=80%, 3 duels >=35%, 4 duels >=20%, 5/6 duels >=12%."
   ],
   "output_dir": "docs/battle-lab/generated",
   "seed": "battle_lab_character_rework_20260525",

@@ -136,6 +136,27 @@ Deno.test("battle lab can generate a minimal summary", () => {
   assert(result.summary.total_builds > 0, "summary should include builds");
   assert(result.summary.total_battles > 0, "summary should include battles");
   assert(result.checks.length > 0, "summary should include checks");
+  assertEquals(
+    result.arena_sequences.length,
+    27,
+    "Arena PVE tier outputs should cover the Season 1 matrix",
+  );
+  assert(
+    result.arena_sequences.every((row) => row.hp_reset_per_duel),
+    "Arena PVE lab should model HP reset per duel",
+  );
+  assert(
+    result.arena_sequences.every((row) =>
+      row.difficulty_id.startsWith("s1_") &&
+      row.enemy_sequence.split("|").length === row.duel_count
+    ),
+    "Arena PVE tiers should include difficulty IDs and enemy sequences",
+  );
+  assertArenaClearRate(result, 1, 80);
+  assertArenaClearRate(result, 3, 35);
+  assertArenaClearRate(result, 4, 20);
+  assertArenaClearRate(result, 5, 12);
+  assertArenaClearRate(result, 6, 12);
   assert(
     ["PASS", "REVIEW", "CRITICAL"].includes(result.overall_status),
     "status should be valid",
@@ -597,4 +618,19 @@ function assertEquals(
       }`,
     );
   }
+}
+
+function assertArenaClearRate(
+  result: ReturnType<typeof runBattleLab>,
+  duelCount: number,
+  targetPercent: number,
+): void {
+  const row = result.arena_sequences.find((item) =>
+    item.duel_count === duelCount
+  );
+  assert(row !== undefined, `missing ${duelCount}-duel arena sequence`);
+  assert(
+    row.clear_rate_percent >= targetPercent,
+    `${duelCount}-duel arena clear rate should be >= ${targetPercent}%`,
+  );
 }

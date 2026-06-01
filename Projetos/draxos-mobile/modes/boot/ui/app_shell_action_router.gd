@@ -6,6 +6,7 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 const CATEGORY_UNKNOWN := "unknown"
 const CATEGORY_SESSION := "session"
 const CATEGORY_BATTLE := "battle"
+const CATEGORY_ARENA := "arena"
 const CATEGORY_BASE := "base"
 const CATEGORY_PREPARATION := "preparation"
 const CATEGORY_SOCIAL := "social"
@@ -66,6 +67,8 @@ static func category_for_action(action_id: String) -> String:
 		return CATEGORY_SHOP
 	if AppShellActionContractScript.is_open_minigame_shell(action):
 		return CATEGORY_MINIGAME
+	if _is_arena_action(action):
+		return CATEGORY_ARENA
 	if _is_battle_action(action):
 		return CATEGORY_BATTLE
 	if _is_session_action(action):
@@ -88,6 +91,8 @@ static func scope_for_action(action_id: String, context: Dictionary = {}) -> Str
 		return "minigame:%s:%s" % [minigame_id, save_type]
 	var category := category_for_action(action)
 	match category:
+		CATEGORY_ARENA:
+			return "arena:%s" % save_type
 		CATEGORY_BATTLE:
 			return "battle:%s" % save_type
 		CATEGORY_BASE:
@@ -109,6 +114,16 @@ static func mutation_endpoint_for_action(action_id: String) -> String:
 	var action := normalize_action(action_id)
 	if action == AppShellActionContractScript.ACTION_REQUEST_BATTLE:
 		return "battle/request"
+	if action == AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL \
+			or action == AppShellActionContractScript.ACTION_ARENA_START_EARLY \
+			or AppShellActionContractScript.is_arena_start(action):
+		return "arena/pve/start"
+	if action == AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL:
+		return "arena/pve/duel/request"
+	if AppShellActionContractScript.is_arena_choose_buff(action):
+		return "arena/pve/buff/select"
+	if action == AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY:
+		return "arena/pve/claim"
 	if action == AppShellActionContractScript.ACTION_COLLECT_BASE:
 		return "base/collect"
 	if action == AppShellActionContractScript.ACTION_UPGRADE_NUCLEO or AppShellActionContractScript.is_upgrade_base_structure(action):
@@ -184,6 +199,17 @@ static func _is_battle_action(action_id: String) -> bool:
 		AppShellActionContractScript.ACTION_SHOW_CURRENT_BATTLE_LOGS,
 		AppShellActionContractScript.ACTION_RETURN_BATTLE_SUMMARY,
 	] or AppShellActionContractScript.is_battle_replay(action_id)
+
+static func _is_arena_action(action_id: String) -> bool:
+	return action_id in [
+		AppShellActionContractScript.ACTION_OPEN_ARENA,
+		AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL,
+		AppShellActionContractScript.ACTION_ARENA_START_EARLY,
+		AppShellActionContractScript.ACTION_ARENA_LOCK_LOADOUT,
+		AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL,
+		AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY,
+	] or AppShellActionContractScript.is_arena_start(action_id) \
+		or AppShellActionContractScript.is_arena_choose_buff(action_id)
 
 static func _is_session_action(action_id: String) -> bool:
 	return action_id in [

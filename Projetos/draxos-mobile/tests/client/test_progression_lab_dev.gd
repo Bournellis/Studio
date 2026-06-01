@@ -129,6 +129,21 @@ func test_progression_lab_deno_invocation_sanitizes_project_settings() -> void:
 	ProjectSettings.set_setting(command_path, original_command)
 	ProjectSettings.set_setting(args_path, original_args)
 
+func test_progression_lab_web_export_guard_uses_remote_report_gate() -> void:
+	var setting := "draxos_mobile/dev_labs/force_process_unavailable"
+	var original_value: Variant = ProjectSettings.get_setting(setting, false)
+	ProjectSettings.set_setting(setting, true)
+
+	var screen = ProgressionLabScreenScript.new()
+	add_child_autofree(screen)
+	assert_false(ProgressionLabScreenScript.local_process_supported())
+	assert_true(screen._status_label.text.contains("runner remoto"))
+
+	await screen._generate_report()
+	assert_true(screen._status_label.text.contains("conta alpha"))
+
+	ProjectSettings.set_setting(setting, original_value)
+
 func _runner_args(invocation: Dictionary, expected_windows_runner: Array[String]) -> PackedStringArray:
 	var command := str(invocation.get("command", ""))
 	var args := PackedStringArray(invocation.get("args", PackedStringArray()))

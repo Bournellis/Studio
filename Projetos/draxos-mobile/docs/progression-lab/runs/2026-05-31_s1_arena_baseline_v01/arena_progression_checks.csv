@@ -1,0 +1,76 @@
+id,profile_id,milestone_id,status,observed,target,note
+arena_attempt_volume,free_50_rewards,2h,PASS,6.4 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_50_rewards,2h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,free_50_rewards,2h,PASS,"0 projected uses, 1 stock, 100% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,free_50_rewards,5h,PASS,16 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_50_rewards,5h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,free_50_rewards,5h,PASS,"6.7 projected uses, 2 stock, 29.76% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,free_50_rewards,10h,PASS,32 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_50_rewards,10h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,free_50_rewards,10h,PASS,"13.4 projected uses, 3 stock, 22.32% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,free_50_rewards,15h,PASS,48 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_50_rewards,15h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,free_50_rewards,15h,PASS,"20.2 projected uses, 4 stock, 19.84% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,free_50_rewards,20h,PASS,64 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_50_rewards,20h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,free_50_rewards,20h,PASS,"26.9 projected uses, 5 stock, 18.6% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,free_100_rewards,2h,PASS,8 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_100_rewards,2h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,free_100_rewards,2h,PASS,"0 projected uses, 1 stock, 100% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,free_100_rewards,5h,PASS,20 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_100_rewards,5h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,free_100_rewards,5h,PASS,"10.4 projected uses, 2 stock, 19.23% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,free_100_rewards,10h,PASS,40 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_100_rewards,10h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,free_100_rewards,10h,PASS,"20.8 projected uses, 3 stock, 14.42% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,free_100_rewards,15h,PASS,60 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_100_rewards,15h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,free_100_rewards,15h,PASS,"31.2 projected uses, 4 stock, 12.82% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,free_100_rewards,20h,PASS,80 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,free_100_rewards,20h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,free_100_rewards,20h,PASS,"41.6 projected uses, 5 stock, 12.02% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,freemium_basic,2h,PASS,8 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,freemium_basic,2h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,freemium_basic,2h,PASS,"0 projected uses, 1 stock, 100% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,freemium_basic,5h,PASS,20 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,freemium_basic,5h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,freemium_basic,5h,PASS,"10.8 projected uses, 2 stock, 18.52% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,freemium_basic,10h,PASS,40 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,freemium_basic,10h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,freemium_basic,10h,PASS,"21.6 projected uses, 3 stock, 13.89% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,freemium_basic,15h,PASS,60 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,freemium_basic,15h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,freemium_basic,15h,PASS,"32.4 projected uses, 4 stock, 12.35% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,freemium_basic,20h,PASS,80 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,freemium_basic,20h,PASS,repeat factor 0.35,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,freemium_basic,20h,PASS,"43.2 projected uses, 5 stock, 11.57% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,spender_light,2h,PASS,8.8 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,spender_light,2h,PASS,repeat factor 0.32,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,spender_light,2h,PASS,"0 projected uses, 1 stock, 100% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,spender_light,5h,PASS,22 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,spender_light,5h,PASS,repeat factor 0.32,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,spender_light,5h,PASS,"12.8 projected uses, 2 stock, 15.67% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,spender_light,10h,PASS,44 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,spender_light,10h,PASS,repeat factor 0.32,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,spender_light,10h,PASS,"25.5 projected uses, 3 stock, 11.76% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,spender_light,15h,PASS,66 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,spender_light,15h,PASS,repeat factor 0.32,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,spender_light,15h,PASS,"38.3 projected uses, 4 stock, 10.45% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,spender_light,20h,PASS,88 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,spender_light,20h,PASS,repeat factor 0.32,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,spender_light,20h,PASS,"51 projected uses, 5 stock, 9.8% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,max_spender,2h,PASS,11.2 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,max_spender,2h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,max_spender,2h,PASS,"0 projected uses, 1 stock, 100% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,max_spender,5h,PASS,28 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,max_spender,5h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,max_spender,5h,PASS,"17.9 projected uses, 2 stock, 11.16% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,max_spender,10h,PASS,56 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,max_spender,10h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,max_spender,10h,PASS,"35.8 projected uses, 3 stock, 8.37% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,max_spender,15h,PASS,84 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,max_spender,15h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,max_spender,15h,PASS,"53.8 projected uses, 4 stock, 7.44% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.
+arena_attempt_volume,max_spender,20h,PASS,112 attempts,> 0 attempts without combat cooldown,Progression Lab should model Arena PVE attempts per hour instead of PVP battles per hour.
+arena_farm_pressure,max_spender,20h,PASS,repeat factor 0.25,<= 0.5,Repeat rewards should be reduced/capped because Arena PVE has no combat cooldown.
+arena_potion_consumption_pressure,max_spender,20h,PASS,"71.7 projected uses, 5 stock, 6.98% coverage",>= 5% lab stock coverage when Pocao de Vida is equipped,Progression Lab should project Pocao de Vida pressure per Arena PVE attempt before tuning consumables.

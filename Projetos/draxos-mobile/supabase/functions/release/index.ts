@@ -7,33 +7,34 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   latest_version_code: 1,
   minimum_supported_version: "0.0.1-alpha.0",
   minimum_supported_version_code: 1,
-  released_at: "2026-05-28T04:50:33Z",
+  released_at: "2026-05-31T19:04:37Z",
   requires_save_reset: false,
-  portal_url: "https://draxos-mobile-internal-alpha.pages.dev/portal/index.html",
+  portal_url: "https://9ae1e953.draxos-mobile-internal-alpha.pages.dev/portal/index.html",
   notes: [
     "Primeira release candidate interna.",
     "APK Android e PC ZIP compartilham o mesmo backend remoto.",
-    "Portal/Web rodam no Cloudflare Pages; downloads usam conta alpha e URLs assinadas temporarias.",
+    "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage.",
+    "Battle Lab e Progression Lab no Web usam lab-runner remoto com a mesma conta alpha Supabase do jogo.",
     "Progression Lab usa save separado e nao pontua ranking.",
   ],
   artifacts: {
     android: {
       label: "Android APK",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      sha256: "ad6d2579ce003769cfce2536b788c1330abb283d0ae90cc785d1d016ae514ca6",
-      auth_required: "true",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-remote-lab-runner-20260531-e659d7e5/downloads/draxos-mobile-alpha.apk",
+      sha256: "b013182633fbd5ef568344d3f551490d993dc9eb0edb77a89e46d0e4f028faf4",
+      auth_required: "false",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      sha256: "ad5fb8351bb001604479d95737fc702bb9b0ff6779afb9e3e31692b7bc189031",
-      auth_required: "true",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-remote-lab-runner-20260531-e659d7e5/downloads/draxos-mobile-alpha.zip",
+      sha256: "292f92916d30420dc8bb1cf49ac2e5d3375bd43548fb25ad8cb7e47b676c1495",
+      auth_required: "false",
     },
     web: {
       label: "Web",
-      url: "https://draxos-mobile-internal-alpha.pages.dev/web/index.html",
+      url: "https://9ae1e953.draxos-mobile-internal-alpha.pages.dev/web/index.html",
     },
   },
   known_issues: [
@@ -211,7 +212,7 @@ function buildManifest(): ReleaseManifest {
     throw new Error("RELEASE_MANIFEST_JSON must be a JSON object.");
   }
 
-  return {
+  const overrideManifest = {
     schema_version: stringOverride(
       parsed,
       "schema_version",
@@ -263,6 +264,9 @@ function buildManifest(): ReleaseManifest {
       DEFAULT_MANIFEST.known_issues,
     ),
   };
+  return manifestIsNewer(DEFAULT_MANIFEST, overrideManifest)
+    ? DEFAULT_MANIFEST
+    : overrideManifest;
 }
 
 function buildRuntimeConfig(): RuntimeConfig {
@@ -598,6 +602,12 @@ function parseJson(text: string): unknown {
   } catch {
     return null;
   }
+}
+
+function manifestIsNewer(left: ReleaseManifest, right: ReleaseManifest): boolean {
+  const leftTime = Date.parse(left.released_at);
+  const rightTime = Date.parse(right.released_at);
+  return Number.isFinite(leftTime) && (!Number.isFinite(rightTime) || leftTime >= rightTime);
 }
 
 function errorResponse(code: string, message: string, status: number): Response {

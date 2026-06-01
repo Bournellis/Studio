@@ -235,6 +235,24 @@ func apply_progression_lab_save(request_id: String, profile_id: String, mileston
 		}, request_hash)
 	)
 
+func run_remote_battle_lab(request_payload: Dictionary, access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("lab-runner/battle"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{
+			"request": request_payload,
+		}
+	)
+
+func run_remote_progression_lab(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("lab-runner/progression"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		{}
+	)
+
 func request_battle(request_id: String, access_token: String, mode: String = ProjectInfo.DEFAULT_BATTLE_MODE, opponent_bot_id: String = "", request_hash: String = "") -> Dictionary:
 	var body := {
 		"request_id": request_id,
@@ -272,6 +290,73 @@ func fetch_battle_replay(battle_id: String, access_token: String) -> Dictionary:
 		HTTPClient.METHOD_GET,
 		_auth_headers(access_token),
 		{}
+	)
+
+func fetch_arena_state(access_token: String) -> Dictionary:
+	return await _send_json(
+		function_url("arena/pve/state"),
+		HTTPClient.METHOD_GET,
+		_auth_headers(access_token),
+		{}
+	)
+
+func start_arena_attempt(request_id: String, arena_id: String, difficulty_id: String, difficulty_tier: int, access_token: String, request_hash: String = "") -> Dictionary:
+	return await _send_json(
+		function_url("arena/pve/start"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("arena/pve/start", {
+			"request_id": request_id,
+			"arena_id": arena_id.strip_edges(),
+			"difficulty_id": difficulty_id.strip_edges(),
+			"difficulty_tier": maxi(0, difficulty_tier),
+		}, request_hash)
+	)
+
+func resolve_arena_duel(request_id: String, attempt_id: String, access_token: String, request_hash: String = "") -> Dictionary:
+	return await _send_json(
+		function_url("arena/pve/duel/request"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("arena/pve/duel/request", {
+			"request_id": request_id,
+			"attempt_id": attempt_id.strip_edges(),
+		}, request_hash)
+	)
+
+func choose_arena_buff(request_id: String, attempt_id: String, step_index: int, buff_id: String, access_token: String, request_hash: String = "") -> Dictionary:
+	return await _send_json(
+		function_url("arena/pve/buff/select"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("arena/pve/buff/select", {
+			"request_id": request_id,
+			"attempt_id": attempt_id.strip_edges(),
+			"step_index": maxi(1, step_index),
+			"buff_id": buff_id.strip_edges(),
+		}, request_hash)
+	)
+
+func claim_arena_summary(request_id: String, attempt_id: String, access_token: String, request_hash: String = "") -> Dictionary:
+	return await _send_json(
+		function_url("arena/pve/claim"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("arena/pve/claim", {
+			"request_id": request_id,
+			"attempt_id": attempt_id.strip_edges(),
+		}, request_hash)
+	)
+
+func abandon_arena_attempt(request_id: String, attempt_id: String, access_token: String, request_hash: String = "") -> Dictionary:
+	return await _send_json(
+		function_url("arena/pve/abandon"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("arena/pve/abandon", {
+			"request_id": request_id,
+			"attempt_id": attempt_id.strip_edges(),
+		}, request_hash)
 	)
 
 func fetch_base_state(access_token: String) -> Dictionary:

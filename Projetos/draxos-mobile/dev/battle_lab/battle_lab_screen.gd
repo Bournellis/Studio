@@ -9,6 +9,7 @@ const REQUEST_SCHEMA := "battle_lab_request_v1"
 const RESPONSE_SCHEMA := "battle_lab_response_v1"
 const REQUEST_PATH := "user://battle_lab_request.json"
 const RESPONSE_PATH := "user://battle_lab_response.json"
+const FORCE_PROCESS_UNAVAILABLE_SETTING := "draxos_mobile/dev_labs/force_process_unavailable"
 
 const WEAPONS := [
 	{"id": "varinha_cinzas", "label": "Varinha de Cinzas"},
@@ -117,6 +118,11 @@ static func is_available() -> bool:
 	if not bool(ProjectSettings.get_setting("draxos_mobile/battle_lab/enabled", false)):
 		return false
 	return OS.has_feature("editor") or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
+
+static func local_process_supported() -> bool:
+	if bool(ProjectSettings.get_setting(FORCE_PROCESS_UNAVAILABLE_SETTING, false)):
+		return false
+	return OS.get_name() != "Web" and not OS.has_feature("web")
 
 static func deno_invocation(settings_prefix: String, fallback_prefix: PackedStringArray) -> Dictionary:
 	var command_text := str(ProjectSettings.get_setting("%s/deno_command" % settings_prefix, "npx")).strip_edges()
@@ -293,7 +299,10 @@ static func default_build(id_prefix: String, level: int = 25) -> Dictionary:
 func _ready() -> void:
 	set_process(true)
 	_build_ui()
-	_set_status("Battle Lab dev pronto. Use scratch para ensaios locais ou replay custom para ver uma build especifica.")
+	if local_process_supported():
+		_set_status("Battle Lab dev pronto. Use scratch para ensaios locais ou replay custom para ver uma build especifica.")
+	else:
+		_set_status(_remote_process_message("Battle Lab"))
 
 func _process(delta: float) -> void:
 	if not _replay_playing:
@@ -378,6 +387,7 @@ func _build_run_tab() -> Control:
 	scratch_button.pressed.connect(func() -> void:
 		_generate_run(false)
 	)
+	_configure_process_button(scratch_button, true)
 	box.add_child(scratch_button)
 
 	var generated_button := Button.new()
@@ -385,6 +395,7 @@ func _build_run_tab() -> Control:
 	generated_button.pressed.connect(func() -> void:
 		_generate_generated()
 	)
+	_configure_process_button(generated_button, true)
 	box.add_child(generated_button)
 
 	var official_button := Button.new()
@@ -392,6 +403,7 @@ func _build_run_tab() -> Control:
 	official_button.pressed.connect(func() -> void:
 		_generate_run(true)
 	)
+	_configure_process_button(official_button, false)
 	box.add_child(official_button)
 
 	_summary_label = _output_label("Nenhuma run carregada nesta sessao.")
@@ -415,6 +427,7 @@ func _build_builds_tab() -> Control:
 	replay_button.pressed.connect(func() -> void:
 		_generate_custom_replay()
 	)
+	_configure_process_button(replay_button, true)
 	box.add_child(replay_button)
 	return box.get_parent()
 
@@ -675,7 +688,7 @@ func _generate_generated() -> void:
 		"mode": "run",
 		"compare_with_run_id": _compare_edit.text.strip_edges(),
 	}
-	_send_bridge_request(request)
+	await _send_bridge_request(request)
 
 func _generate_run(official: bool) -> void:
 	var run_id := _run_id_edit.text.strip_edges()
@@ -691,7 +704,7 @@ func _generate_run(official: bool) -> void:
 		request["archive_run_id"] = run_id
 	else:
 		request["scratch_run_id"] = run_id
-	_send_bridge_request(request)
+	await _send_bridge_request(request)
 
 func _generate_custom_replay() -> void:
 	var player := _build_from_editor(_player_editor)
@@ -709,9 +722,11 @@ func _generate_custom_replay() -> void:
 		"player_build": player,
 		"opponent_build": opponent,
 	}
-	_send_bridge_request(request)
+	await _send_bridge_request(request)
 
 func _send_bridge_request(request: Dictionary) -> Dictionary:
+	if not local_process_supported():
+		return await _send_remote_bridge_request(request)
 	_set_status("Chamando Battle Lab Deno...")
 	var request_path := ProjectSettings.globalize_path(REQUEST_PATH)
 	var response_path := ProjectSettings.globalize_path(RESPONSE_PATH)
@@ -745,11 +760,46 @@ func _send_bridge_request(request: Dictionary) -> Dictionary:
 	_refresh_from_response(response)
 	return response
 
+func _send_remote_bridge_request(request: Dictionary) -> Dictionary:
+	var session_store = _session_store()
+	if session_store == null or not session_store.has_valid_access_token():
+		var message := "Entre com conta alpha de e-mail antes de rodar o Battle Lab remoto."
+		_set_status(message)
+		return {"ok": false, "error": {"code": "REMOTE_LAB_SESSION_REQUIRED", "message": message}}
+	var supabase_client = _supabase_client()
+	if supabase_client == null:
+		var message := "SupabaseClient indisponivel: nao foi possivel chamar o Battle Lab remoto."
+		_set_status(message)
+		return {"ok": false, "error": {"code": "REMOTE_LAB_CLIENT_MISSING", "message": message}}
+
+	_set_status("Chamando Battle Lab remoto...")
+	var result: Dictionary = await supabase_client.run_remote_battle_lab(request, session_store.access_token)
+	if not bool(result.get("ok", false)):
+		var error_payload := _as_dictionary(result.get("error", {}))
+		_set_status("Battle Lab remoto falhou: %s - %s" % [
+			str(error_payload.get("code", "REQUEST_FAILED")),
+			str(error_payload.get("message", "Falha na requisicao.")),
+		])
+		return {"ok": false, "error": error_payload}
+
+	var response := _as_dictionary(result.get("body", {}))
+	_last_response = response
+	if not bool(response.get("ok", false)):
+		var error := _as_dictionary(response.get("error", {}))
+		_set_status("Battle Lab remoto erro: %s" % str(error.get("message", "erro desconhecido")))
+		return response
+	_set_status("Battle Lab remoto OK: %s" % str(response.get("status", "PASS")))
+	_refresh_from_response(response)
+	return response
+
 func _refresh_from_response(response: Dictionary) -> void:
 	if response.get("mode", "") == "run":
 		_render_run_response(response)
-		var output_dir := str(response.get("output_dir", ""))
-		_load_replays_from_output(output_dir)
+		if response.get("runner", "") == "remote":
+			_load_replays_from_response(response)
+		else:
+			var output_dir := str(response.get("output_dir", ""))
+			_load_replays_from_output(output_dir)
 	elif response.get("mode", "") == "replay":
 		_render_replay_response(response)
 
@@ -853,6 +903,13 @@ func _load_replays_from_output(output_dir: String) -> void:
 	_last_replays = _as_array(replays_doc.get("replays", []))
 	if not _last_replays.is_empty():
 		_load_replay(_preferred_replay(_last_replays))
+
+func _load_replays_from_response(response: Dictionary) -> void:
+	_last_replays = _as_array(response.get("replays", [])).duplicate(true)
+	if _last_replays.is_empty():
+		_battle_visual.show_empty_state("Run remota nao retornou amostras de replay.")
+		return
+	_load_replay(_preferred_replay(_last_replays))
 
 func _load_first_sample_replay() -> void:
 	if _last_replays.is_empty():
@@ -1035,11 +1092,32 @@ func _process_failure_message(tool_name: String, command: String, args: PackedSt
 		" ".join(args),
 	]
 
+func _local_process_unavailable_message(tool_name: String) -> String:
+	return "%s precisa de Deno local e nao roda no Web export. Use o build PC/editor para gerar runs; no navegador, use os relatorios e replays ja gerados." % tool_name
+
+func _remote_process_message(tool_name: String) -> String:
+	return "%s usara o runner remoto no Web export. Entre com uma conta alpha de e-mail liberada no Supabase antes de gerar runs." % tool_name
+
 func _output_text(output: Array) -> String:
 	var lines := PackedStringArray()
 	for item: Variant in output:
 		lines.append(str(item))
 	return "\n".join(lines)
+
+func _configure_process_button(button: Button, remote_supported: bool = true) -> void:
+	if local_process_supported():
+		return
+	if remote_supported:
+		button.tooltip_text = _remote_process_message("Battle Lab")
+		return
+	button.disabled = true
+	button.tooltip_text = "Arquivamento oficial continua local para nao escrever runs pelo Web export."
+
+func _session_store():
+	return get_node_or_null("/root/SessionStore")
+
+func _supabase_client():
+	return get_node_or_null("/root/SupabaseClient")
 
 func _scroll_vbox() -> VBoxContainer:
 	var scroll := ScrollContainer.new()

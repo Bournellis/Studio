@@ -2,6 +2,7 @@ import {
   buildProgressionData,
   calculatePower,
   levelFromXp,
+  writeProgressionOutputs,
   xpForLevel,
 } from "./generate.ts";
 import modelJson from "./model.v1.json" with { type: "json" };
@@ -65,11 +66,62 @@ Deno.test("progression lab generated saves include Track 16 consumables and beha
   if (Object.keys(save.combat_build.spellBehaviors ?? {}).length === 0) {
     throw new Error("expected spell behavior defaults in combat build");
   }
+  if (save.arena.projected_potion_uses_per_attempt <= 0) {
+    throw new Error(
+      "expected projected potion consumption per Arena PVE attempt",
+    );
+  }
+  if (save.arena.expected_potion_uses <= 0) {
+    throw new Error("expected projected potion uses across Arena PVE attempts");
+  }
   if (
     !data.consumable_checks.some((check) =>
       check.id === "life_potion_stock" && check.profile_id === save.profile_id
     )
   ) {
     throw new Error("expected consumable checks");
+  }
+  if (
+    !data.arena_checks.some((check) =>
+      check.id === "arena_potion_consumption_pressure" &&
+      check.profile_id === save.profile_id
+    )
+  ) {
+    throw new Error("expected Arena PVE potion pressure checks");
+  }
+});
+
+Deno.test("progression lab writes Season 1 arena calibration outputs", async () => {
+  const data = buildProgressionData(model);
+  const tempDir = await Deno.makeTempDir();
+  const testModel = {
+    ...model,
+    output_dir: "out",
+  };
+  await writeProgressionOutputs(
+    testModel,
+    data,
+    new URL(`file:///${tempDir.replaceAll("\\", "/")}/`),
+  );
+
+  for (
+    const fileName of [
+      "season_1_level_curve.csv",
+      "arena_tier_progression.csv",
+      "arena_reward_pressure.csv",
+      "base_builder_pressure.csv",
+      "potion_pressure.csv",
+      "calibration_recommendations.json",
+    ]
+  ) {
+    const text = await Deno.readTextFile(`${tempDir}/out/${fileName}`);
+    if (text.length <= 0) {
+      throw new Error(`${fileName} should be generated`);
+    }
+  }
+
+  const tierCsv = await Deno.readTextFile(`${tempDir}/out/arena_tier_progression.csv`);
+  if (!tierCsv.includes("arena_cinzas_curta") || !tierCsv.includes("s1_d00_intro")) {
+    throw new Error("arena tier progression should use Season 1 arena definitions");
   }
 });

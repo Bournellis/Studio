@@ -40,6 +40,8 @@ func _run_validation() -> int:
 	_check_resource("res://core/asset_ids.gd")
 	_check_resource("res://online/session_store.gd")
 	_check_resource("res://online/supabase_client.gd")
+	_check_resource("res://modes/boot/flows/arena_lifecycle_flow.gd")
+	_check_resource("res://modes/boot/surfaces/arena_surface_presenter.gd")
 	_check_resource("res://online/runtime_config.gd")
 	_check_resource("res://ui/battle_log_presenter.gd")
 	_check_resource("res://ui/battle_actor_marker.gd")

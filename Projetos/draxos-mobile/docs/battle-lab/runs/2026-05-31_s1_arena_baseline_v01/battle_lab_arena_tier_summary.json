@@ -1,0 +1,15 @@
+{
+  "schema_version": "battle_lab_arena_tier_summary_v1",
+  "mode": "PVE_ARENA_V1",
+  "target_power_model": "arena_tuning_power_v1",
+  "tier_count": 27,
+  "status_counts": {
+    "PASS": 27,
+    "REVIEW": 0,
+    "CRITICAL": 0
+  },
+  "clear_rate_min_percent": 12.58,
+  "clear_rate_max_percent": 97,
+  "critical_tiers": [],
+  "review_tiers": []
+}
