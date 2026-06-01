@@ -3,6 +3,7 @@ const ProjectInfoScript := preload("res://core/project_info.gd")
 const SessionStoreScript := preload("res://online/session_store.gd")
 const ShellSurfacePresenterScript := preload("res://modes/boot/surfaces/shell_surface_presenter.gd")
 const HubSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
+const ModeHubSurfacePresenterScript := preload("res://modes/boot/surfaces/mode_hub_surface_presenter.gd")
 const HubAccountSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_account_surface_presenter.gd")
 const BattleReplayPresenterScript := preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
 const ArenaSurfacePresenterScript := preload("res://modes/boot/surfaces/arena_surface_presenter.gd")
@@ -15,6 +16,7 @@ const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_rout
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellActionRouterScript := preload("res://modes/boot/ui/app_shell_action_router.gd")
 const ModeShellRegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
+const ModeShellLauncherScript := preload("res://modes/boot/ui/mode_shell_launcher.gd")
 const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const OperationStateScript := preload("res://modes/boot/ui/operation_state.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
@@ -138,6 +140,7 @@ var _arena_lifecycle_flow = ArenaLifecycleFlowScript.new()
 var _operation_state = OperationStateScript.new()
 var _battle_replay_presenter = BattleReplayPresenterScript.new()
 var _arena_surface_presenter = ArenaSurfacePresenterScript.new()
+var _mode_shell_launcher = ModeShellLauncherScript.new()
 @warning_ignore("unused_private_class_variable")
 var _battle_history_entries: Array[Dictionary] = []
 @warning_ignore("unused_private_class_variable")
@@ -582,22 +585,7 @@ func _render_shop_screen() -> void:
 	ShopSurfacePresenterScript.render(self)
 
 func _render_mode_hub_screen() -> void:
-	_add_section_label("Modes")
-	_add_body_text("Hub interno dos cinco modos oficiais do DraxosMobile. Modos staged aparecem para orientar visao, sem iniciar gameplay.")
-	_ensure_action_grid().columns = _surface_columns(2)
-	for entry: Dictionary in ModeShellRegistryScript.hub_entries():
-		var mode_id := str(entry.get("mode_id", ""))
-		var title := str(entry.get("display_name", mode_id.capitalize()))
-		var status := str(entry.get("status", "unknown"))
-		match mode_id:
-			ModeShellRegistryScript.MODE_BASEBUILDER:
-				_add_action_button("%s\nActive" % title, AppShellActionContractScript.ACTION_SHOW_BASE)
-			ModeShellRegistryScript.MODE_AUTOBATTLER:
-				_add_action_button("%s\nActive" % title, AppShellActionContractScript.ACTION_OPEN_ARENA)
-			ModeShellRegistryScript.MODE_OPENWORLD:
-				_add_action_button("%s Bosque\nInternal Alpha" % title, AppShellActionContractScript.open_mode_shell_action(mode_id))
-			_:
-				_add_action_button("%s\nStaged" % title, "mode_disabled:%s" % mode_id, "", true, "Modo staged/disabled ate contrato proprio.")
+	ModeHubSurfacePresenterScript.render(self)
 	_emit_client_event("mode_hub_shown", {
 		"mode_count": ModeShellRegistryScript.registered_ids().size(),
 		"entry_surface": "refuge",
@@ -688,62 +676,7 @@ func _modes_ops_label(text: String) -> Label:
 	return label
 
 func _render_mode_shell_screen() -> void:
-	var mode_id := ModeShellRegistryScript.normalize_mode_id(_active_mode_id)
-	_content_title.text = ModeShellRegistryScript.display_name(mode_id)
-	_status_label.text = _session_status_text()
-	_detail_label.text = "Dev-only: progresso local do modo. Recompensas reais so entram pelo Reward Bridge."
-	if _route_shows_app_chrome(_current_screen):
-		_render_mode_content_body(mode_id)
-		return
-	_render_mode_fullscreen(mode_id)
-
-func _render_mode_content_body(mode_id: String) -> void:
-	if ModeShellRegistryScript.is_available(mode_id):
-		var script: Script = load(ModeShellRegistryScript.screen_path(mode_id))
-		if script != null and script.can_instantiate():
-			var screen: Control = script.new()
-			screen.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			screen.size_flags_vertical = Control.SIZE_EXPAND_FILL
-			if _openworld_integrated_alpha_enabled(mode_id) and screen.has_method("configure_integrated_alpha"):
-				screen.call("configure_integrated_alpha", SupabaseClient, SessionStore, SessionStore.access_token)
-			if screen.has_signal("close_requested"):
-				screen.connect("close_requested", Callable(self, "_return_to_refuge"))
-			_add_content_control(screen)
-			return
-	_error_label.text = "Mode dev indisponivel nesta build."
-	_add_body_text("Area reservada para desenvolvimento interno. Recompensas desativadas.")
-	_add_action_button("Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE)
-
-func _render_mode_fullscreen(mode_id: String) -> void:
-	var overlay := _create_mode_fullscreen_overlay()
-	if ModeShellRegistryScript.is_available(mode_id):
-		var script: Script = load(ModeShellRegistryScript.screen_path(mode_id))
-		if script != null and script.can_instantiate():
-			var screen: Control = script.new()
-			screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-			screen.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			screen.size_flags_vertical = Control.SIZE_EXPAND_FILL
-			if _openworld_integrated_alpha_enabled(mode_id) and screen.has_method("configure_integrated_alpha"):
-				screen.call("configure_integrated_alpha", SupabaseClient, SessionStore, SessionStore.access_token)
-			if screen.has_signal("close_requested"):
-				screen.connect("close_requested", Callable(self, "_return_to_refuge"))
-			overlay.add_child(screen)
-			return
-	var fallback := VBoxContainer.new()
-	fallback.name = "ModeUnavailableFallback"
-	fallback.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	fallback.alignment = BoxContainer.ALIGNMENT_CENTER
-	fallback.add_theme_constant_override("separation", 12)
-	overlay.add_child(fallback)
-	var label := Label.new()
-	label.text = "Mode dev indisponivel nesta build."
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
-	fallback.add_child(label)
-	var back := Button.new()
-	back.text = "Voltar ao Refugio"
-	back.pressed.connect(_return_to_refuge)
-	fallback.add_child(back)
+	_mode_shell_launcher.render(self)
 
 func _add_section_label(text: String) -> Label:
 	_reset_action_group()
@@ -1199,8 +1132,7 @@ func _claim_arena_summary() -> void:
 	await _arena_lifecycle_flow.claim_summary(self)
 
 func _open_mode_shell(mode_id: String = "") -> void:
-	_active_mode_id = ModeShellRegistryScript.normalize_mode_id(mode_id)
-	_show_screen(ROUTE_MODE_SHELL)
+	_mode_shell_launcher.open(self, mode_id)
 
 func _openworld_integrated_alpha_enabled(mode_id: String) -> bool:
 	if mode_id != ModeShellRegistryScript.MODE_OPENWORLD:

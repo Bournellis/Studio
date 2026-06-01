@@ -8,7 +8,9 @@ const AppShellErrorContractScript = preload("res://modes/boot/ui/app_shell_error
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
 const HubSurfacePresenterScript = preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
+const ModeHubSurfacePresenterScript = preload("res://modes/boot/surfaces/mode_hub_surface_presenter.gd")
 const ProgressionClarityPresenterScript = preload("res://modes/boot/surfaces/progression_clarity_presenter.gd")
+const ModeShellLauncherScript = preload("res://modes/boot/ui/mode_shell_launcher.gd")
 const MobileUiContractScript = preload("res://modes/boot/ui/mobile_ui_contract.gd")
 const TouchScrollContainerScript = preload("res://modes/boot/ui/touch_scroll_container.gd")
 
@@ -907,6 +909,57 @@ func test_battle_request_pending_state_uses_static_splash_only() -> void:
 	assert_not_null(boot._battle_visual)
 	assert_true(boot._action_buttons.has("request_battle"))
 
+func test_mode_hub_route_preserves_active_and_staged_actions() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("mode_hub")
+	await get_tree().process_frame
+
+	assert_eq(boot._current_screen, "mode_hub")
+	assert_true(_label_tree_contains(boot._content_body, "Hub interno dos cinco modos oficiais"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_SHOW_BASE))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_OPEN_ARENA))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.open_mode_shell_action("openworld")))
+	var tower_action := AppShellActionContractScript.mode_disabled_action("towerdefense")
+	var card_action := AppShellActionContractScript.mode_disabled_action("cardgame")
+	assert_true(boot._action_buttons.has(tower_action))
+	assert_true(boot._action_buttons.has(card_action))
+	var tower_button := boot._action_buttons[tower_action] as Button
+	var card_button := boot._action_buttons[card_action] as Button
+	assert_not_null(tower_button)
+	assert_not_null(card_button)
+	assert_true(tower_button.disabled)
+	assert_true(card_button.disabled)
+	assert_true(bool(tower_button.get_meta("force_disabled", false)))
+	assert_string_contains(tower_button.tooltip_text, "staged/disabled")
+
+func test_refuge_mode_popup_preserves_mode_cards_and_disabled_launches() -> void:
+	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("refuge")
+	await get_tree().process_frame
+	assert_true(HubSurfacePresenterScript.open_refuge_menu_popup(boot, "modes"))
+	await get_tree().process_frame
+
+	var popup: PopupPanel = boot._refuge_menu_popup
+	assert_not_null(popup)
+	assert_not_null(_find_node_by_name(popup, "ModeCard_basebuilder"))
+	assert_not_null(_find_node_by_name(popup, "ModeCard_autobattler"))
+	assert_not_null(_find_node_by_name(popup, "ModeCard_openworld"))
+	assert_not_null(_find_node_by_name(popup, "ModeCard_towerdefense"))
+	assert_not_null(_find_node_by_name(popup, "ModeCard_cardgame"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_SHOW_BASE))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_OPEN_ARENA))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.open_mode_shell_action("openworld")))
+	var staged := _find_button_by_text(popup, "Staged")
+	assert_not_null(staged)
+	assert_true(staged.disabled)
+	assert_true(bool(staged.get_meta("force_disabled", false)))
+
 func test_boot_surface_presenters_keep_render_only_contract() -> void:
 	assert_false(FileAccess.file_exists("res://modes/boot/surfaces/battle_surface_presenter.gd"))
 	var boot_source := FileAccess.get_file_as_string("res://modes/boot/boot.gd")
@@ -933,15 +986,34 @@ func test_boot_decomposition_keeps_shell_budget_and_boundaries() -> void:
 	var hub_source := FileAccess.get_file_as_string("res://modes/boot/surfaces/hub_surface_presenter.gd")
 	var hub_line_count := hub_source.split("\n").size()
 	assert_true(hub_line_count <= 900, "hub_surface_presenter.gd must stay a thin facade; got %d lines" % hub_line_count)
+	var runtime_source := FileAccess.get_file_as_string("res://modes/boot/boot_runtime.gd")
+	var runtime_line_count := runtime_source.split("\n").size()
+	assert_true(runtime_line_count <= 1750, "boot_runtime.gd must keep shrinking under the client-shell hardening budget; got %d lines" % runtime_line_count)
+	var hub_full_source := FileAccess.get_file_as_string("res://modes/boot/surfaces/hub_surface_full_presenter.gd")
+	var hub_full_line_count := hub_full_source.split("\n").size()
+	assert_true(hub_full_line_count <= 1700, "hub_surface_full_presenter.gd must keep Mode Hub extracted; got %d lines" % hub_full_line_count)
 	assert_true(boot_source.contains("app_shell_action_contract.gd"))
 	assert_true(boot_source.contains("account_session_flow.gd"))
 	assert_true(boot_source.contains("surface_action_flow.gd"))
 	assert_true(boot_source.contains("battle_lifecycle_flow.gd"))
 	assert_true(boot_source.contains("surface_ui_helpers.gd"))
+	assert_true(runtime_source.contains("mode_hub_surface_presenter.gd"))
+	assert_true(runtime_source.contains("mode_shell_launcher.gd"))
+	assert_false(runtime_source.contains("func _render_mode_content_body"))
+	assert_false(runtime_source.contains("func _render_mode_fullscreen"))
 	assert_false(boot_source.contains("SupabaseClient.fetch_base_state"))
 	assert_false(boot_source.contains("SupabaseClient.collect_base"))
 	assert_false(boot_source.contains("SupabaseClient.fetch_social_state"))
 	assert_false(boot_source.contains("SupabaseClient.request_battle"))
+
+func test_mode_shell_launcher_owns_mode_screen_instantiation() -> void:
+	assert_not_null(ModeShellLauncherScript)
+	var runtime_source := FileAccess.get_file_as_string("res://modes/boot/boot_runtime.gd")
+	var launcher_source := FileAccess.get_file_as_string("res://modes/boot/ui/mode_shell_launcher.gd")
+	assert_true(runtime_source.contains("_mode_shell_launcher.render(self)"))
+	assert_true(runtime_source.contains("_mode_shell_launcher.open(self, mode_id)"))
+	assert_true(launcher_source.contains("ModeShellRegistryScript.screen_path"))
+	assert_true(launcher_source.contains("ModeUnavailableFallback"))
 
 func test_boot_action_ids_are_centralized_in_contract() -> void:
 	for script_path: String in _action_consumer_script_paths():
@@ -1863,11 +1935,13 @@ func _action_consumer_script_paths() -> PackedStringArray:
 		"res://modes/boot/surfaces/battle_replay_presenter.gd",
 		"res://modes/boot/surfaces/competition_surface_presenter.gd",
 		"res://modes/boot/surfaces/hub_account_surface_presenter.gd",
+		"res://modes/boot/surfaces/mode_hub_surface_presenter.gd",
 		"res://modes/boot/surfaces/hub_surface_full_presenter.gd",
 		"res://modes/boot/surfaces/hub_surface_presenter.gd",
 		"res://modes/boot/surfaces/shop_surface_presenter.gd",
 		"res://modes/boot/surfaces/social_surface_presenter.gd",
 		"res://modes/boot/surfaces/surface_ui_helpers.gd",
+		"res://modes/boot/ui/mode_shell_launcher.gd",
 	])
 
 func _flow_script_paths() -> PackedStringArray:
@@ -1923,6 +1997,8 @@ func _centralized_action_literals() -> PackedStringArray:
 		AppShellActionContractScript.PREFIX_ARENA_START,
 		AppShellActionContractScript.PREFIX_ARENA_CHOOSE_BUFF,
 		AppShellActionContractScript.PREFIX_BATTLE_REPLAY,
+		AppShellActionContractScript.PREFIX_OPEN_MODE_SHELL,
+		AppShellActionContractScript.PREFIX_MODE_DISABLED,
 	])
 
 func _forbidden_flow_ui_fragments() -> PackedStringArray:

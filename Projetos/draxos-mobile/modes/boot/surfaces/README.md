@@ -5,6 +5,7 @@ Render-only presenters for the Internal Alpha Boot hub.
 - `shell_surface_presenter.gd` owns app chrome rendering: background, header, nav, content stack, scroll body and confirmation dialog.
 - `hub_surface_presenter.gd` composes the Hub surface by delegating account/session sections.
 - `hub_account_surface_presenter.gd` owns login, quick test, active save, session status, update gate and screen links.
+- `mode_hub_surface_presenter.gd` owns Mode Hub cards and staged/disabled launch controls for the official modes.
 - `battle_replay_presenter.gd` owns Battle tab visual replay rendering and timeline updates while the simulator/reward flow stays in `boot.gd`.
 - `base_surface_presenter.gd`, `social_surface_presenter.gd`, `competition_surface_presenter.gd` and `shop_surface_presenter.gd` own render-only tab state, panels and controls.
 - `surface_ui_helpers.gd` is the shared presenter-facing helper facade for labels, panels, responsive layout, resource/cost formatting and small visual compositions that should not live in the app shell.
@@ -18,5 +19,6 @@ Track 12 boundary:
 - `modes/boot/flows/account_session_flow.gd` owns guest/email auth, session refresh, local reset, save selection/creation and update manifest checks.
 - `modes/boot/flows/surface_action_flow.gd` owns online Base, Social, Competition and Shop orchestration through Supabase/client services while keeping server authority intact.
 - `modes/boot/flows/battle_lifecycle_flow.gd` owns battle requests, history/latest fetches, replay entry/skip and summary/log routing without simulating combat on the client.
+- `modes/boot/ui/mode_shell_launcher.gd` owns Mode Shell screen instantiation and fullscreen fallback while preserving `open_mode_shell:<mode_id>` routes/actions.
 
 Presenters may create controls, read already-loaded `SessionStore` snapshots, wire UI controls to host helpers and assign host UI references. They must stay render-only: no actions, network calls, Auth, Supabase configuration, SessionStore mutations, manifest fetching, telemetry or BackendConfig access.
