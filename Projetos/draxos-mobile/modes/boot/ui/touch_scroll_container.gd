@@ -11,8 +11,11 @@ var _pressing := false
 var _dragging := false
 var _last_position := Vector2.ZERO
 var _accumulated_drag := Vector2.ZERO
+var _tracking_mouse := false
+var _active_touch_index := -1
 
 func _ready() -> void:
+	set_process_input(true)
 	_apply_configured_scroll_policy()
 	call_deferred("_configure_scrollbars")
 
@@ -26,8 +29,8 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		var touch_event := event as InputEventScreenTouch
 		if touch_event.pressed:
-			_begin_drag_tracking(touch_event.position)
-		else:
+			_begin_drag_tracking(touch_event.position, false, touch_event.index)
+		elif touch_event.index == _active_touch_index:
 			_end_drag_tracking()
 		return
 	if event is InputEventMouseButton:
@@ -35,31 +38,54 @@ func _gui_input(event: InputEvent) -> void:
 		if mouse_button.button_index != MOUSE_BUTTON_LEFT:
 			return
 		if mouse_button.pressed:
-			_begin_drag_tracking(mouse_button.position)
-		else:
+			_begin_drag_tracking(mouse_button.position, true)
+		elif _tracking_mouse:
 			_end_drag_tracking()
 		return
 	if event is InputEventScreenDrag:
-		_apply_drag_delta((event as InputEventScreenDrag).relative)
+		var drag := event as InputEventScreenDrag
+		if drag.index == _active_touch_index:
+			_apply_drag_delta(drag.relative)
 		return
 	if event is InputEventMouseMotion and _pressing:
+		if _tracking_mouse and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			_end_drag_tracking()
+			return
 		var motion := event as InputEventMouseMotion
 		_apply_drag_delta(motion.position - _last_position)
 		_last_position = motion.position
 
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_button := event as InputEventMouseButton
+		if _tracking_mouse and mouse_button.button_index == MOUSE_BUTTON_LEFT and not mouse_button.pressed:
+			_end_drag_tracking()
+			return
+	if event is InputEventScreenTouch:
+		var touch_event := event as InputEventScreenTouch
+		if _pressing and touch_event.index == _active_touch_index and not touch_event.pressed:
+			_end_drag_tracking()
+
 func is_touch_dragging_for_test() -> bool:
 	return _dragging
 
-func _begin_drag_tracking(input_position: Vector2) -> void:
+func is_touch_pressing_for_test() -> bool:
+	return _pressing
+
+func _begin_drag_tracking(input_position: Vector2, from_mouse := false, touch_index := -1) -> void:
 	_pressing = true
 	_dragging = false
 	_last_position = input_position
 	_accumulated_drag = Vector2.ZERO
+	_tracking_mouse = from_mouse
+	_active_touch_index = -1 if from_mouse else touch_index
 
 func _end_drag_tracking() -> void:
 	_pressing = false
 	_dragging = false
 	_accumulated_drag = Vector2.ZERO
+	_tracking_mouse = false
+	_active_touch_index = -1
 
 func _apply_drag_delta(delta: Vector2) -> void:
 	if not _pressing:
