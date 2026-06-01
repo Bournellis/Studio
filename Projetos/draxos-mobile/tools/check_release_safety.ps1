@@ -201,7 +201,8 @@ foreach ($relative in @(
   'tools\publish_internal_alpha.ps1',
   'tools\export_internal_alpha.ps1',
   'tools\build_cloudflare_pages_package.ps1',
-  'tools\validate_foundation.ps1'
+  'tools\validate_foundation.ps1',
+  'tools\check_android_release_keystore.ps1'
 )) {
   Test-FileRequired $relative
 }
@@ -211,7 +212,8 @@ Test-PowerShellParses @(
   'tools\export_internal_alpha.ps1',
   'tools\build_cloudflare_pages_package.ps1',
   'tools\validate_foundation.ps1',
-  'tools\check_release_safety.ps1'
+  'tools\check_release_safety.ps1',
+  'tools\check_android_release_keystore.ps1'
 )
 
 Test-FileContains 'tools\publish_internal_alpha.ps1' '[ValidateSet("Plan", "Package", "Upload", "DeployManifest", "FullPublish")]'
@@ -219,6 +221,8 @@ Test-FileContains 'tools\publish_internal_alpha.ps1' '[string]$Mode = "Plan"'
 Test-FileContains 'tools\publish_internal_alpha.ps1' 'ConfirmRemoteMutation'
 Test-FileContains 'tools\publish_internal_alpha.ps1' 'Legacy publish flags were supplied without -Mode'
 Test-FileContains 'tools\publish_internal_alpha.ps1' 'No local package, upload, secret update, deploy or remote verification was executed'
+Test-FileContains 'tools\export_internal_alpha.ps1' 'android_release_keystore_configured'
+Test-FileContains 'tools\export_internal_alpha.ps1' 'Android release keystore config must provide path, user/alias and password together.'
 Test-MutatingCommandsGuarded
 
 $planOutput = Invoke-CapturedProcess `
@@ -246,6 +250,13 @@ if ($blockedOutput.Contains('ConfirmRemoteMutation')) {
 }
 
 Test-FilesEqual 'server\functions\release\index.ts' 'supabase\functions\release\index.ts' 'release function defaults'
+
+Invoke-CapturedProcess `
+  -Command 'check_android_release_keystore.ps1 InternalAlpha' `
+  -ExpectedExitCode 0 `
+  -ScriptBlock {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File '.\tools\check_android_release_keystore.ps1' -ProjectDir '.' -Mode InternalAlpha
+  } | Out-Null
 
 if ($Failures.Count -gt 0) {
   Write-Host ""

@@ -125,6 +125,13 @@ deno run --allow-net --allow-env server/tests/modes_platform_live_test.ts
 deno run --allow-net --allow-env server/tests/foundation_admin_rls_live_smoke.ts
 ```
 
+Ops read-only CLI:
+
+```powershell
+npx -y deno check tools/ops_readonly.ts server/tests/ops_readonly_cli_test.ts
+npx -y deno test --allow-read server/tests/ops_readonly_cli_test.ts
+```
+
 O smoke cria uma sessao anonima, cria conta guest, solicita batalha `MVP_ONLY`,
 repete o mesmo `request_id`, consulta `battle/latest` e confirma que XP/Ossos
 nao duplicam.

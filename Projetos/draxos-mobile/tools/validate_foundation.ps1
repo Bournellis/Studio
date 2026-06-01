@@ -606,6 +606,7 @@ Invoke-Step -Name "PowerShell parse" -Stage "DocsOnly" -Command "[Parser]::Parse
     )
     foreach ($optional in @(
         "tools\check_release_safety.ps1",
+        "tools\check_android_release_keystore.ps1",
         "tools\check_track13_readiness.ps1",
         "tools\check_agent_ops_foundation.ps1",
         "tools\check_foundation_expansion_readiness.ps1"
@@ -844,7 +845,7 @@ if ($RunClient) {
 if ($RunRelease) {
     Invoke-Step -Name "release manifest typecheck" -Stage "ReleaseDryRun" -Command "npx -y deno check release smoke tests" -ScriptBlock {
         Invoke-External -Command "npx -y deno check release smoke tests" -WorkingDirectory $ProjectPath -ScriptBlock {
-            & npx -y deno check server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/internal_alpha_remote_smoke.ts
+            & npx -y deno check server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/internal_alpha_remote_smoke.ts tools/ops_readonly.ts server/tests/ops_readonly_cli_test.ts
         }
     }
     Invoke-Step -Name "release plan dry-run" -Stage "ReleaseDryRun" -Command ".\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan" -ScriptBlock {
@@ -869,6 +870,16 @@ if ($RunRelease) {
         }
     } else {
         Skip-Step -Name "release safety check" -Stage "ReleaseDryRun" -Command ".\tools\check_release_safety.ps1" -Reason "Track 13 safety script not created yet."
+    }
+    $androidKeystore = Join-Path $ProjectPath "tools\check_android_release_keystore.ps1"
+    if (Test-Path -LiteralPath $androidKeystore -PathType Leaf) {
+        Invoke-Step -Name "Android release keystore gate" -Stage "ReleaseDryRun" -Command ".\tools\check_android_release_keystore.ps1 -ProjectDir . -Mode InternalAlpha" -ScriptBlock {
+            Invoke-External -Command "check_android_release_keystore.ps1" -WorkingDirectory $ProjectPath -ScriptBlock {
+                & powershell -NoProfile -ExecutionPolicy Bypass -File ".\tools\check_android_release_keystore.ps1" -ProjectDir "." -Mode "InternalAlpha"
+            }
+        }
+    } else {
+        Skip-Step -Name "Android release keystore gate" -Stage "ReleaseDryRun" -Command ".\tools\check_android_release_keystore.ps1" -Reason "Android keystore gate script not created yet."
     }
     $track13Readiness = Join-Path $ProjectPath "tools\check_track13_readiness.ps1"
     if (Test-Path -LiteralPath $track13Readiness -PathType Leaf) {

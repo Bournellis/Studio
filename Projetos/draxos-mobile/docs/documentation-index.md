@@ -25,6 +25,7 @@
 | `docs/documentation-index.md` | `VIVO` | This classification map. |
 | `docs/multi-agent-workflow.md` | `VIVO` | Parallel lane/mode workflow, worktree rules, templates and handoff protocol for DraxosMobile hardening work. |
 | `docs/hardening-platform-v1-readiness-report.md` | `VIVO` | Published readiness report for Hardening Platform V1, the current multi-mode baseline. |
+| `docs/backend-own-boundary.md` | `CONTRATO` | Backend Proprio boundary inventory for future Supabase-to-owned-backend planning without runtime refactor. |
 | `../../08_Coordenacao_Agentes/Prioridades_Estudio.md` | `VIVO` | Portfolio source of truth. |
 | `../../08_Coordenacao_Agentes/Estado_Atual.md` | `VIVO` | Compact studio snapshot. |
 | `../README.md` | `VIVO` | Project registry. |
@@ -95,6 +96,7 @@
 |---|---|---|
 | `tools/README.md` | `RUNBOOK` | Tool commands and local validation entrypoint. |
 | `docs/release-ops-checklist.md` | `RUNBOOK` | Safe release and publication procedure. |
+| `docs/ops/read-only-cli.md` | `RUNBOOK` | Ops CLI runbook for manifest/modes/status/audit/reward/session summaries without remote service role. |
 | `docs/track-13-manual-walkthrough-gate.md` | `RUNBOOK` | Required Android/Windows/Web manual gate. |
 | `docs/internal-alpha-v0.md` | `RUNBOOK` | Internal Alpha v0 runbook. |
 | `docs/internal-alpha-v0-handoff.md` | `RUNBOOK` | Internal Alpha v0 handoff. |
