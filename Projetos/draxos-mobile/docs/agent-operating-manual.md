@@ -2,7 +2,7 @@
 
 - Status: `VIVO`
 - Owner: project agents
-- Last updated: `2026-05-31`
+- Last updated: `2026-06-01`
 - Applies to: `Projetos/draxos-mobile/`
 
 This manual explains how agents should operate DraxosMobile without reopening old work, drifting from Foundation Audit or mutating remote infrastructure by accident.
@@ -22,6 +22,7 @@ Read live docs in this order:
 9. `docs/pve-arena-initial-direction.md` - approved early-game direction.
 10. `docs/game-design-document.md` - implementation reference and mock/substance context.
 11. `docs/design-pending.md` - only live register of unresolved design decisions.
+12. `docs/multi-agent-workflow.md` - required when coordinating parallel hardening lanes or mode work.
 
 If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
 
@@ -103,6 +104,11 @@ Register work in `../../08_Coordenacao_Agentes/Kanban/Doing/` or a handoff note.
 - validation plan;
 - next handoff point.
 
+For parallel hardening lanes or mode work, use `docs/multi-agent-workflow.md`
+and the DraxosMobile templates in `../../08_Coordenacao_Agentes/Templates/`.
+Those templates force lane, mode, write scope, latest Track 21 context and
+remote-mutation status into the handoff.
+
 For Foundation Audit, the expected DraxosMobile Doing card must state the branch, worktree and current loop/UX objective. Historical DraxosMobile cards belong in `Kanban/Done/`.
 
 ## Read Order By Task
@@ -111,6 +117,7 @@ For Foundation Audit, the expected DraxosMobile Doing card must state the branch
 |---|---|
 | Small code fix | `AGENTS.md`, `implementation/current-status.md`, touched files |
 | Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md`, `docs/foundation-loop-audit.md` |
+| Multi-agent hardening | `AGENTS.md`, this manual, `docs/multi-agent-workflow.md`, `docs/documentation-index.md`, `docs/hardening-platform-v1-readiness-report.md` |
 | Product/design | `docs/product-vision.md`, `docs/pve-arena-initial-direction.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
 | Backend/contracts | `docs/architecture.md`, `docs/contracts/`, `server/schema/`, `server/functions/`, `supabase/` mirrors |
 | Foundation expansion/final polish | `docs/foundation-expansion-readiness.md`, `docs/contracts/account-save.md`, `docs/contracts/ruleset-registry.md`, `docs/contracts/admin-ops.md`, `docs/contracts/minigame-integration.md` |

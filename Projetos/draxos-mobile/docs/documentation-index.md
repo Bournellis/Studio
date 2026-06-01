@@ -23,6 +23,8 @@
 | `implementation/current-status.md` | `VIVO` | Decision snapshot: baseline, active stage, risks, next step and validation. |
 | `docs/agent-operating-manual.md` | `VIVO` | Detailed agent runbook. |
 | `docs/documentation-index.md` | `VIVO` | This classification map. |
+| `docs/multi-agent-workflow.md` | `VIVO` | Parallel lane/mode workflow, worktree rules, templates and handoff protocol for DraxosMobile hardening work. |
+| `docs/hardening-platform-v1-readiness-report.md` | `RUNBOOK` | Draft coord/docs readiness report for the hardening wave over Tracks 1, 2, 16 and 18 with Track 21 as latest Arena loop context. |
 | `../../08_Coordenacao_Agentes/Prioridades_Estudio.md` | `VIVO` | Portfolio source of truth. |
 | `../../08_Coordenacao_Agentes/Estado_Atual.md` | `VIVO` | Compact studio snapshot. |
 | `../README.md` | `VIVO` | Project registry. |
@@ -92,6 +94,8 @@
 | `docs/playtest-internal-alpha-v0.md` | `RUNBOOK` | Internal alpha checklist. |
 | `docs/playtest-alpha.md` | `RUNBOOK` | General alpha playtest checklist. |
 | `portal/internal-alpha/README.md` | `RUNBOOK` | Internal alpha portal operations. |
+| `../../08_Coordenacao_Agentes/Templates/DraxosMobile_Hardening_Doing_TEMPLATE.md` | `RUNBOOK` | Doing template for DraxosMobile hardening lanes and mode scopes. |
+| `../../08_Coordenacao_Agentes/Templates/DraxosMobile_Hardening_Handoff_TEMPLATE.md` | `RUNBOOK` | Handoff template for DraxosMobile hardening lanes and mode scopes. |
 
 ## Track History
 
@@ -133,6 +137,7 @@
 - A live doc must treat `implementation/current-status.md` as the active stage/status source after the user chooses the next package.
 - A live doc must treat `docs/pve-arena-initial-direction.md` as the current product direction after Foundation Final Polish: Arena PVE initial first, PVP later.
 - A live doc may treat `docs/pve-arena-v1.md` as the current implemented/published contract package for Arena PVE, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough. Track 21 is the current published hotfix package over Track 20 Season 1 Arena Calibration.
+- Parallel hardening docs must use Track 21 as latest Arena loop context, Track 18 as Arena contract, Track 16 as technical behavior/potion/crafting context and Tracks 1/2 as historical alpha/lab evidence.
 - A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation beyond what the Arena PVE initial package explicitly needs.
 - Foundation Audit must preserve the post-login loop as app shell, but the first playable product loop is now Refugio -> Arena PVE -> locked loadout -> duel list -> buffs/behavior between duels -> rewards -> upgrades.
 - Foundation Expansion Readiness/Foundation Closeout/Foundation Final Polish is now the delivered pre-expansion gate before Arena PVE implementation/tuning; base builder, PVP, expanded social or a real minigame are later packages unless explicitly selected.
