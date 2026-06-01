@@ -42,6 +42,18 @@ A proxima rodada de Progression Lab deve modelar Arena PVE antes de PVP. O labor
 
 O Progression Lab deve responder se leveling, upgrades, recursos, poder e base evoluem em ritmo saudavel quando o jogador repete arenas curtas, tenta dificuldade maior ou desbloqueia arenas mais longas. PVP e bot pool posterior continuam uteis, mas nao sao mais a base do early game.
 
+## Reconciliacao Diagnostica Arena PVE
+
+Este Lab e evidencia diagnostica, nao autoridade de tuning. `DMOB-D067` continua
+`CALIBRAR` ate uma rodada representar Arena PVE com tutorial de 1 duelo,
+primeiras arenas de 3 duelos, HP resetado, buffs temporarios, loadout travado,
+consumo realista de pocao e recompensas por conclusao/recorde/repeticao.
+
+Outputs do Progression Lab podem propor hipoteses de ritmo, gargalo e premium
+gap, mas nao alteram runtime, rewards, economia, power, bots, ruleset ou save
+normal sem pacote explicito e comparacao before/after. No Web export, o runner
+remoto retorna dados em memoria para revisao interna e nao aplica healthy save.
+
 ## Perfis
 
 | Perfil | Descricao |

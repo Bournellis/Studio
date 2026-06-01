@@ -602,7 +602,8 @@ Invoke-Step -Name "PowerShell parse" -Stage "DocsOnly" -Command "[Parser]::Parse
         "tools\export_internal_alpha.ps1",
         "tools\publish_internal_alpha.ps1",
         "tools\build_cloudflare_pages_package.ps1",
-        "tools\validate_foundation.ps1"
+        "tools\validate_foundation.ps1",
+        "tools\validate_mode_definitions.ps1"
     )
     foreach ($optional in @(
         "tools\check_release_safety.ps1",
@@ -673,6 +674,7 @@ Invoke-Step -Name "Deno foundation contract tests" -Stage "ServerQuick" -Command
             server/tests/economy_domain_test.ts `
             server/tests/foundation_ruleset_test.ts `
             server/tests/integer_bones_contract_test.ts `
+            server/tests/mode_definitions_schema_test.ts `
             server/tests/modes_domain_test.ts `
             server/tests/modes_platform_schema_test.ts `
             server/tests/modes_registry_contract_test.ts `
@@ -783,6 +785,7 @@ if ($RunModePlatform) {
         Invoke-External -Command "npx -y deno test mode platform contracts" -WorkingDirectory $ProjectPath -ScriptBlock {
             & npx -y deno test --allow-read `
                 server/tests/modes_domain_test.ts `
+                server/tests/mode_definitions_schema_test.ts `
                 server/tests/modes_platform_schema_test.ts `
                 server/tests/modes_registry_contract_test.ts `
                 server/tests/modes_rate_limit_test.ts `

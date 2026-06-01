@@ -41,6 +41,16 @@ O placeholder reserva futuro trabalho e deve permanecer nao jogavel
 de pacote propria. Descriptors nao substituem `mode_registry` remoto nem abrem
 reward bridge por si so.
 
+Enforcement:
+
+- `tools/mode_definitions/schema.ts` e
+  `server/tests/mode_definitions_schema_test.ts` definem o schema estrito.
+- `tools/validate_mode_definitions.ps1` roda o pacote local de validacao.
+- `tools/mode_definitions/scaffold_mode.ts` gera scaffolds futuros
+  `planned_disabled` em dry-run por padrao.
+- Pastas novas em `data/definitions/modes/` sao bloqueadas ate decision pack,
+  contrato vivo e aprovacao humana.
+
 ## Client Shell
 
 Contrato ativo:

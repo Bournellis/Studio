@@ -30,6 +30,7 @@ npx -y deno test --allow-read server/tests/progression_domain_test.ts
 npx -y deno test --allow-read server/tests/economy_domain_test.ts
 npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
 npx -y deno test --allow-read server/tests/integer_bones_contract_test.ts
+npx -y deno test --allow-read server/tests/mode_definitions_schema_test.ts
 ```
 
 O teste `foundation_contracts_test.ts` le `docs/contracts/api-endpoints.md` e o
@@ -99,6 +100,10 @@ hashes deterministicos e mirrors server/supabase alinhados.
 O teste `integer_bones_contract_test.ts` valida que o catalogo Grimoire
 server/site publica Ossos em escala inteira e que a coleta da base preserva
 acumulo parcial ate existir pelo menos 1 Osso visivel para coletar.
+
+O teste `mode_definitions_schema_test.ts` valida o schema estrito de
+`data/definitions/modes/*`, bloqueia campos extras, pastas de modo sem decisao,
+placeholders jogaveis/reward-enabled e decision packs sem freeze operacional.
 
 Com Supabase local rodando:
 

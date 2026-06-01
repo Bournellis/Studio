@@ -8,6 +8,15 @@ Use this template when a future mode or slice needs a contract scaffold. Keep th
 first version non-playable unless the user explicitly selected an implementation
 package.
 
+Preferred generator:
+
+```powershell
+npx -y deno run --allow-read --allow-write tools/mode_definitions/scaffold_mode.ts --mode-id <mode_id> --display-name "<Mode Name>" --summary "<summary>"
+```
+
+The generator prints dry-run output by default. `--write` should only be used
+after a package decision approves creating the staged files.
+
 ## Header
 
 ```text

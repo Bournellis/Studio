@@ -7,6 +7,7 @@
 - Local schema: `openworld_forest_local_v0`
 - Descriptor: `data/definitions/modes/openworld/metadata.json`
 - Placeholder: `data/definitions/modes/openworld/placeholder.json`
+- Decision pack: `docs/minigames/openworld-decision-pack.md`
 - Entry action: `open_mode_shell:openworld`
 - Route: `mode_shell`
 - Client module: `modes/openworld/`
@@ -45,6 +46,12 @@ O descriptor declarativo de `Openworld` registra apenas o slice atual
 placeholder em `data/definitions/modes/openworld/placeholder.json` e
 explicitamente nao jogavel e reserva futuros slices sem abrir mapa, combate,
 recompensa ou backend novo.
+
+## Decision Pack V1
+
+`docs/minigames/openworld-decision-pack.md` registra que Bosque continua o unico
+slice aprovado. Expansao de mapa, combate, risco, progressao propria ampla,
+Reward Bridge novo ou fronteira nova com Basebuilder precisa de pacote proprio.
 
 ## Componentes
 
