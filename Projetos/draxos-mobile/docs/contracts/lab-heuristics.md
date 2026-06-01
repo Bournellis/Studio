@@ -66,6 +66,23 @@ Regras do runner remoto:
 - replay custom e scratch remoto sao resultados de sessao, nao evidencia
   arquivada.
 
+## Arena PVE Diagnostic Reconciliation - 2026-06-01
+
+Battle Lab e Progression Lab agora ficam reconciliados como diagnostico da Arena
+PVE inicial, nao como autorizacao de tuning.
+
+- `DMOB-D067` continua `CALIBRAR`: a proxima evidencia promovivel precisa
+  modelar sequencias de Arena PVE, nao apenas duelos isolados ou PVP/bots.
+- Battle Lab deve medir listas de duelos, HP resetado, buffs temporarios,
+  loadout travado e comportamento simples antes de sugerir hipoteses.
+- Progression Lab deve medir ritmo de XP, recursos, power, base e consumo de
+  pocao em tentativas de Arena PVE.
+- Web Remote Lab Runner retorna diagnostico em memoria para revisao interna; ele
+  nao grava evidencia oficial, nao aplica save saudavel e nao muta economia.
+- Nenhum output de Lab altera runtime, Edge Function, ruleset, rewards, power,
+  bots ou economia sem pacote explicito, comparacao before/after e aprovacao
+  humana.
+
 ## Battle Lab Heuristics
 
 Modelo atual: `draxos_mobile_battle_lab_v4_source_identity`.

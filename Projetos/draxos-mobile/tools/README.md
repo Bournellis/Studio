@@ -11,6 +11,8 @@ Ferramentas de desenvolvimento e validacao.
 - `smoke_exports.gd` - smoke leve dos presets Android Alpha, PC Windows Alpha e PC Browser Alpha.
 - `export_internal_alpha.ps1` - exporta Android APK, PC Windows ZIP e Web usando `.env.internal-alpha.local`, sem commitar config real do cliente.
 - `publish_internal_alpha.ps1` - gera plano/package local por default e so publica/remota com `Mode` explicito + `-ConfirmRemoteMutation`.
+- `validate_mode_definitions.ps1` - valida schema estrito dos descriptors em `data/definitions/modes/*`, templates e registry paths sem tocar runtime.
+- `mode_definitions/scaffold_mode.ts` - gera dry-run de scaffold futuro `planned_disabled` para descriptors/docs; `--write` so deve ser usado apos decisao de pacote.
 - `build_cloudflare_pages_package.ps1` - gera o pacote hibrido para Cloudflare Pages, mantendo HTML no Cloudflare e assets grandes do Web export no Supabase Storage.
 - `generate_grimoire_catalog.ts` - gera o modulo compartilhado `grimoire_catalog.ts` para `GET /content/grimoire` a partir de `data/definitions/*.json` e a copia estatica do portal em `portal/internal-alpha/assets/grimoire-catalog.json`.
 - `smoke_dev_labs.gd` - smoke do caminho real `OS.execute` para Battle Lab e Progression Lab.
@@ -36,6 +38,7 @@ Validacao local:
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile FullLocal
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_mode_definitions.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd

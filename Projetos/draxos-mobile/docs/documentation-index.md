@@ -53,8 +53,11 @@
 | `docs/minigames/basebuilder.md` | `VIVO` | Basebuilder mode doc and descriptor pointer for current Refugio/Base ownership. |
 | `docs/minigames/autobattler.md` | `VIVO` | Autobattler mode doc and descriptor pointer for current Arena PVE ownership. |
 | `docs/minigames/openworld.md` | `VIVO` | Current Openworld Bosque design/implementation contract for fullscreen gameplay and integrated alpha bridge. |
+| `docs/minigames/openworld-decision-pack.md` | `VIVO` | Decision pack preserving Openworld Bosque as the only approved slice and blocking expansion without a package decision. |
 | `docs/minigames/towerdefense.md` | `VIVO` | Non-playable staged Towerdefense mode scaffold. |
+| `docs/minigames/towerdefense-decision-pack.md` | `VIVO` | Decision pack for future Towerdefense questions; keeps the mode staged/disabled. |
 | `docs/minigames/cardgame.md` | `VIVO` | Non-playable staged Cardgame mode scaffold. |
+| `docs/minigames/cardgame-decision-pack.md` | `VIVO` | Decision pack for future DraxosMobile Cardgame questions; blocks inheritance from the Steam roguelike cardgame. |
 | `docs/minigames/mode-template.md` | `RUNBOOK` | Template for future mode docs and descriptor scaffolds. |
 | `data/definitions/modes/` | `CONTRATO` | Declarative mode descriptors and non-playable placeholders for the five official modes. |
 | `docs/battle-preparation-v1.md` | `HISTORICO` | Previous client-first preparation readability package over existing behavior endpoints. |

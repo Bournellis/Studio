@@ -2,10 +2,51 @@ import { calculatePower } from "../../tools/battle_lab/generate.ts";
 
 const PROJECT_ROOT = new URL("../../", import.meta.url);
 
+interface LabModelIdentity {
+  model_id: string;
+  status: string;
+}
+
+interface BattleLabModel extends LabModelIdentity {
+  track16_scenarios: Array<Record<string, unknown>>;
+}
+
+interface ProgressionLabModel extends LabModelIdentity {
+  profiles: Array<{ id: string }>;
+  milestones: Array<{ id: string }>;
+  track16_consumables: {
+    life_potion_item_id: string;
+    life_potion_recipe_id: string;
+  };
+}
+
+interface RulesetPayload {
+  sources: Array<{ path: string; kind: string }>;
+  counts: { tool_models: number };
+  runtime: { server_authoritative: boolean };
+}
+
+interface GeneratedHealthySaves {
+  saves: Array<{
+    id: string;
+    consumables?: {
+      crafted_life_potions?: number;
+      potion_slots?: unknown[];
+    };
+    combat_build?: {
+      potionSlot?: {
+        itemId?: string;
+      };
+    };
+  }>;
+}
+
 Deno.test("lab heuristics contract records current lab model authority", async () => {
   const contract = await readText("docs/contracts/lab-heuristics.md");
-  const battleModel = await readJson("tools/battle_lab/model.v1.json");
-  const progressionModel = await readJson(
+  const battleModel = await readJson<LabModelIdentity>(
+    "tools/battle_lab/model.v1.json",
+  );
+  const progressionModel = await readJson<LabModelIdentity>(
     "tools/progression_lab/model.v1.json",
   );
 
@@ -21,6 +62,9 @@ Deno.test("lab heuristics contract records current lab model authority", async (
   assertContains(contract, "Track 16");
   assertContains(contract, "potion");
   assertContains(contract, "crafting");
+  assertContains(contract, "Arena PVE Diagnostic Reconciliation");
+  assertContains(contract, "DMOB-D067");
+  assertContains(contract, "nao como autorizacao de tuning");
 });
 
 Deno.test("battle lab screen power display follows battle lab runner weights", async () => {
@@ -65,13 +109,11 @@ Deno.test("progression lab screen profile and milestone selectors match model id
     "dev/progression_lab/progression_lab_screen.gd",
   );
   const clientTest = await readText("tests/client/test_progression_lab_dev.gd");
-  const model = await readJson("tools/progression_lab/model.v1.json");
-  const profileIds = model.profiles.map((profile: { id: string }) =>
-    profile.id
+  const model = await readJson<ProgressionLabModel>(
+    "tools/progression_lab/model.v1.json",
   );
-  const milestoneIds = model.milestones.map((milestone: { id: string }) =>
-    milestone.id
-  );
+  const profileIds = model.profiles.map((profile) => profile.id);
+  const milestoneIds = model.milestones.map((milestone) => milestone.id);
 
   assertEquals(
     extractConstStringArray(screen, "PROFILE_IDS"),
@@ -90,8 +132,10 @@ Deno.test("progression lab screen profile and milestone selectors match model id
 });
 
 Deno.test("foundation ruleset hashes the lab models that own offline heuristics", async () => {
-  const ruleset = await readJson("data/rulesets/foundation_ruleset_v0.json");
-  const sources = ruleset.sources as Array<{ path: string; kind: string }>;
+  const ruleset = await readJson<RulesetPayload>(
+    "data/rulesets/foundation_ruleset_v0.json",
+  );
+  const sources = ruleset.sources;
   const sourcePaths = new Set(sources.map((source) => source.path));
 
   assert(
@@ -145,13 +189,13 @@ Deno.test("dev lab generators remain offline and adapter-free", async () => {
 });
 
 Deno.test("lab models declare Track 16 consumable and behavior coverage", async () => {
-  const battleModel = await readJson("tools/battle_lab/model.v1.json");
-  const progressionModel = await readJson(
+  const battleModel = await readJson<BattleLabModel>(
+    "tools/battle_lab/model.v1.json",
+  );
+  const progressionModel = await readJson<ProgressionLabModel>(
     "tools/progression_lab/model.v1.json",
   );
-  const scenarios = battleModel.track16_scenarios as Array<
-    Record<string, unknown>
-  >;
+  const scenarios = battleModel.track16_scenarios;
 
   assert(
     scenarios.some((scenario) => scenario.potion !== undefined),
@@ -174,16 +218,16 @@ Deno.test("lab models declare Track 16 consumable and behavior coverage", async 
 });
 
 Deno.test("Progression Lab generated saves expose Track 16 preparation state", async () => {
-  const generated = await readJson(
+  const generated = await readJson<GeneratedHealthySaves>(
     "docs/progression-lab/generated/healthy_saves.json",
   );
-  const save = generated.saves.find((item: { id: string }) =>
+  const save = generated.saves.find((item) =>
     item.id === "free_100_rewards_10h"
   );
 
   assert(save !== undefined, "generated 10h save should exist");
   assert(
-    save.consumables?.crafted_life_potions > 0,
+    (save.consumables?.crafted_life_potions ?? 0) > 0,
     "generated 10h save should include life potions",
   );
   assert(
@@ -230,8 +274,8 @@ async function readText(relativePath: string): Promise<string> {
   return await Deno.readTextFile(new URL(relativePath, PROJECT_ROOT));
 }
 
-async function readJson(relativePath: string): Promise<any> {
-  return JSON.parse(await readText(relativePath));
+async function readJson<T>(relativePath: string): Promise<T> {
+  return JSON.parse(await readText(relativePath)) as T;
 }
 
 function extractConstStringArray(source: string, constName: string): string[] {

@@ -5,6 +5,7 @@
 - Slice id: `tbd`
 - Descriptor: `data/definitions/modes/towerdefense/metadata.json`
 - Placeholder: `data/definitions/modes/towerdefense/placeholder.json`
+- Decision pack: `docs/minigames/towerdefense-decision-pack.md`
 - Entry action: `mode_disabled:towerdefense`
 - Route: none
 
@@ -31,3 +32,9 @@ file is not approval to implement that gameplay.
 
 Towerdefense needs a live design contract, registry/ruleset update, telemetry
 plan, disable/rollback plan and validation package before becoming launchable.
+
+## Decision Pack V1
+
+`docs/minigames/towerdefense-decision-pack.md` is the current decision pack.
+It keeps the mode staged/disabled and names the questions that must be answered
+before tower, hordes, spells, pets, upgrades or rewards can be implemented.

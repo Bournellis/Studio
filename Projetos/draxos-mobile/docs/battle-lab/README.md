@@ -34,6 +34,19 @@ O objetivo e medir se o jogador consegue vencer cada duelo da lista com um
 loadout compreensivel, nao testar sobrevivencia entre lutas. Runs antigas seguem
 validas como evidencia tecnica do simulador, mas nao fecham tuning da Arena PVE.
 
+## Reconciliacao Diagnostica Arena PVE
+
+Este Lab e evidencia diagnostica, nao autoridade de tuning. `DMOB-D067` continua
+`CALIBRAR` ate uma rodada representar sequencias de Arena PVE com tutorial de 1
+duelo, primeiras arenas de 3 duelos, HP resetado, buffs temporarios, loadout
+travado, inimigos por posicao da lista e comportamento simples entre duelos.
+
+Outputs do Battle Lab podem apontar hipoteses de duracao, stomp, anti-stall ou
+dominancia por arquetipo, mas nao alteram runtime, simulator, rewards, power,
+bots, economy, ruleset ou Edge Functions sem pacote explicito e comparacao
+before/after. No Web export, o runner remoto retorna scratch/custom replay em
+memoria para revisao interna e nao grava run oficial.
+
 ## Workflow
 
 1. Rodar o gerador:

@@ -33,6 +33,20 @@ O registry client (`modes/boot/ui/mode_shell_registry.gd`) expoe os caminhos dos
 descriptors para validacao local. Os descriptors desta lane nao adicionam
 gameplay, tuning, rewards, backend, schema ou publicacao.
 
+Enforcement estrito:
+
+- `tools/mode_definitions/schema.ts` define o schema aceito.
+- `tools/mode_definitions/scaffold_mode.ts` gera scaffolds futuros em modo
+  dry-run por padrao.
+- `server/tests/mode_definitions_schema_test.ts` bloqueia campos extras,
+  diretorios nao aprovados, placeholders jogaveis e decision packs sem freeze.
+- `tools/validate_mode_definitions.ps1` roda o pacote local de validacao dos
+  descriptors.
+
+Um novo modo ou slice nao entra no catalogo apenas por criar JSON. Primeiro
+precisa de decision pack, contrato vivo, update de registry/ruleset e aprovacao
+humana.
+
 ## Gate De Entrada No Hub
 
 Para V1 Internal Alpha:
@@ -67,3 +81,12 @@ Um modo so pode virar CTA publico quando passar por:
 - `open_minigame_shell` e `minigame_shell` nao sao contrato ativo em V1.
 - Cardgame do DraxosMobile compartilha lore com outros projetos, mas nao herda mecanicas do `draxos-roguelike-cardgame`.
 - Towerdefense futuro usa fantasia de heroi/mago em torre central estatica contra hordas.
+
+## Decision Packs
+
+- `docs/minigames/openworld-decision-pack.md`: Openworld fica limitado ao Bosque
+  atual; expansao de mapa, combate, risco ou rewards exige pacote proprio.
+- `docs/minigames/towerdefense-decision-pack.md`: Towerdefense fica
+  staged/disabled ate contrato de torre/hordas/rewards.
+- `docs/minigames/cardgame-decision-pack.md`: Cardgame fica staged/disabled e
+  sem heranca mecanica do projeto Steam.
