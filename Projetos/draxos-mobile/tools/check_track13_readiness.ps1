@@ -75,9 +75,21 @@ function Test-DirectoriesMirror([string]$LeftPath, [string]$RightPath, [string]$
 function Test-BootBudget {
   foreach ($budget in @(
       @{ Path = 'modes\boot\boot.gd'; Max = 1200; Label = 'boot.gd scene-facing facade' },
-      @{ Path = 'modes\boot\boot_runtime.gd'; Max = 1200; Label = 'boot_runtime.gd strict shell runtime' },
+      @{ Path = 'modes\boot\boot_runtime.gd'; Max = 900; Label = 'boot_runtime.gd strict shell runtime' },
+      @{ Path = 'modes\boot\boot_runtime_state.gd'; Max = 700; Label = 'boot runtime state module' },
+      @{ Path = 'modes\boot\boot_runtime_surface_api.gd'; Max = 700; Label = 'boot runtime surface API module' },
+      @{ Path = 'modes\boot\boot_runtime_status_controller.gd'; Max = 700; Label = 'boot runtime status controller' },
+      @{ Path = 'modes\boot\boot_runtime_labs_controller.gd'; Max = 700; Label = 'boot runtime labs controller' },
+      @{ Path = 'modes\boot\boot_runtime_flow_facade.gd'; Max = 700; Label = 'boot runtime flow facade' },
+      @{ Path = 'modes\boot\boot_runtime_navigation_controller.gd'; Max = 700; Label = 'boot runtime navigation controller' },
+      @{ Path = 'modes\boot\boot_runtime_action_dispatcher.gd'; Max = 700; Label = 'boot runtime action dispatcher' },
       @{ Path = 'modes\boot\surfaces\hub_surface_presenter.gd'; Max = 900; Label = 'hub_surface_presenter.gd facade' },
-      @{ Path = 'modes\boot\surfaces\hub_surface_full_presenter.gd'; Max = 900; Label = 'hub_surface_full_presenter.gd strict hub presenter' }
+      @{ Path = 'modes\boot\surfaces\hub_surface_full_presenter.gd'; Max = 900; Label = 'hub_surface_full_presenter.gd strict hub presenter' },
+      @{ Path = 'modes\boot\surfaces\hub_surface_common_presenter.gd'; Max = 700; Label = 'hub surface common presenter' },
+      @{ Path = 'modes\boot\surfaces\hub_surface_entry_presenter.gd'; Max = 700; Label = 'hub surface entry presenter' },
+      @{ Path = 'modes\boot\surfaces\hub_surface_preparation_presenter.gd'; Max = 700; Label = 'hub surface preparation presenter' },
+      @{ Path = 'modes\boot\surfaces\hub_surface_refuge_popup_presenter.gd'; Max = 700; Label = 'hub surface refuge popup presenter' },
+      @{ Path = 'modes\boot\surfaces\hub_surface_refuge_scene_presenter.gd'; Max = 700; Label = 'hub surface refuge scene presenter' }
     )) {
     $path = Join-Path $ProjectPath $budget.Path
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
@@ -90,6 +102,9 @@ function Test-BootBudget {
     } else {
       Add-Failure "$($budget.Label) line budget exceeded: $lineCount/$($budget.Max)"
     }
+  }
+  if (Test-Path -LiteralPath (Join-Path $ProjectPath 'modes\boot\boot_runtime_facade.gd') -PathType Leaf) {
+    Add-Failure 'boot_runtime_facade.gd must not exist; split responsibilities into bounded modules instead.'
   }
 }
 
