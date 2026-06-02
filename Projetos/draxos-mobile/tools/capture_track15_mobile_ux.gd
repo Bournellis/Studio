@@ -123,10 +123,32 @@ class CaptureHost:
 	func _progression_lab_available() -> bool:
 		return true
 
+	func _openworld_mode_available() -> bool:
+		return true
+
 	func _prepare_touch_button(button: Button) -> void:
 		button.custom_minimum_size.x = maxf(button.custom_minimum_size.x, 56)
 		button.custom_minimum_size.y = maxf(button.custom_minimum_size.y, 56)
 		button.add_theme_font_size_override("font_size", 17)
+
+	func _apply_action_button_style(button: Button, action_id: String, screen_id: String = "") -> void:
+		var primary := action_id == "open_arena" or action_id == "return_refuge" or action_id == "arena_resolve_duel"
+		var accent := "accent_blood" if action_id == "open_arena" else "accent_astral"
+		if screen_id == "shop":
+			accent = "accent_bone"
+		var style := StyleBoxFlat.new()
+		style.bg_color = _color("bg_panel").lerp(_color(accent), 0.18 if primary else 0.08)
+		style.border_color = _color(accent if primary else "border_default")
+		style.set_border_width_all(2 if primary else 1)
+		style.set_corner_radius_all(6)
+		style.content_margin_left = 10
+		style.content_margin_right = 10
+		style.content_margin_top = 8
+		style.content_margin_bottom = 8
+		button.add_theme_color_override("font_color", _color("text_primary"))
+		button.add_theme_stylebox_override("normal", style)
+		button.add_theme_stylebox_override("hover", style)
+		button.add_theme_stylebox_override("pressed", style)
 
 	func _trigger_action(_action_id: String, _confirm_message: String = "") -> void:
 		pass
@@ -194,10 +216,11 @@ class CaptureHost:
 		control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		_content_body.add_child(control)
 
-	func _add_action_button(text: String, action_id: String, confirm_message: String = "") -> Button:
+	func _add_action_button(text: String, action_id: String, confirm_message: String = "", disabled: bool = false, tooltip: String = "") -> Button:
 		var button := Button.new()
 		button.text = text
-		button.tooltip_text = text
+		button.tooltip_text = tooltip if tooltip != "" else text
+		button.disabled = disabled
 		button.custom_minimum_size = _button_min_size()
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		_prepare_touch_button(button)
@@ -247,6 +270,8 @@ var _hub_surface_presenter_script: GDScript
 var _base_surface_presenter_script: GDScript
 var _shop_surface_presenter_script: GDScript
 var _battle_replay_presenter_script: GDScript
+var _preparation_presenter_script: GDScript
+var _arena_surface_presenter_script: GDScript
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -268,8 +293,13 @@ func _run_capture() -> int:
 
 	await _capture_entry()
 	await _capture_refuge()
+	await _capture_preparation()
+	await _capture_arena_selection()
+	await _capture_arena_active()
+	await _capture_arena_buff_choice()
 	await _capture_battle()
 	await _capture_summary()
+	await _capture_arena_summary()
 	await _capture_base()
 	await _capture_shop()
 
@@ -292,6 +322,32 @@ func _capture_refuge() -> void:
 	_hub_surface_presenter_script.render_refuge(host)
 	await _capture("02_refugio.png")
 
+func _capture_preparation() -> void:
+	var host := _new_host("preparation", true, "Preparacao")
+	host._content_body.add_child(_preparation_presenter_script.preparation_panel(host, true))
+	await _capture("07_preparacao.png")
+
+func _capture_arena_selection() -> void:
+	_apply_sample_arena_selection_state()
+	var host := _new_host("arena_selection", true, "Arena PVE")
+	var presenter = _arena_surface_presenter_script.new()
+	presenter.render_selection(host)
+	await _capture("08_arena_selection.png")
+
+func _capture_arena_active() -> void:
+	_apply_sample_arena_active_state()
+	var host := _new_host("arena_active", true, "Tentativa")
+	var presenter = _arena_surface_presenter_script.new()
+	presenter.render_active(host)
+	await _capture("09_arena_active.png")
+
+func _capture_arena_buff_choice() -> void:
+	_apply_sample_arena_buff_state()
+	var host := _new_host("arena_buff_choice", true, "Buff")
+	var presenter = _arena_surface_presenter_script.new()
+	presenter.render_buff_choice(host)
+	await _capture("10_arena_buff.png")
+
 func _capture_battle() -> void:
 	var host := _new_host("battle_running", false)
 	var presenter = _battle_replay_presenter_script.new()
@@ -303,6 +359,13 @@ func _capture_summary() -> void:
 	var presenter = _battle_replay_presenter_script.new()
 	presenter.render_fullscreen_summary(host, host, true, _sample_battle_log(), _sample_rewards(), _session_resources(), false)
 	await _capture("04_summary.png")
+
+func _capture_arena_summary() -> void:
+	_apply_sample_arena_summary_state()
+	var host := _new_host("arena_summary", true, "Resultado Arena")
+	var presenter = _arena_surface_presenter_script.new()
+	presenter.render_summary(host)
+	await _capture("11_arena_summary.png")
 
 func _capture_base() -> void:
 	var host := _new_host("base", true, "Base")
@@ -319,6 +382,8 @@ func _load_presenters() -> bool:
 	_base_surface_presenter_script = load("res://modes/boot/surfaces/base_surface_presenter.gd") as GDScript
 	_shop_surface_presenter_script = load("res://modes/boot/surfaces/shop_surface_presenter.gd") as GDScript
 	_battle_replay_presenter_script = load("res://modes/boot/surfaces/battle_replay_presenter.gd") as GDScript
+	_preparation_presenter_script = load("res://modes/boot/surfaces/hub_surface_preparation_presenter.gd") as GDScript
+	_arena_surface_presenter_script = load("res://modes/boot/surfaces/arena_surface_presenter.gd") as GDScript
 	if _hub_surface_presenter_script == null:
 		_failures.append("Could not load hub surface presenter.")
 	if _base_surface_presenter_script == null:
@@ -327,6 +392,10 @@ func _load_presenters() -> bool:
 		_failures.append("Could not load shop surface presenter.")
 	if _battle_replay_presenter_script == null:
 		_failures.append("Could not load battle replay presenter.")
+	if _preparation_presenter_script == null:
+		_failures.append("Could not load preparation presenter.")
+	if _arena_surface_presenter_script == null:
+		_failures.append("Could not load arena surface presenter.")
 	return _failures.is_empty()
 
 func _new_host(route_id: String, use_content_shell: bool, title_text: String = "") -> CaptureHost:
@@ -418,6 +487,174 @@ func _seed_session_store() -> void:
 			"save_type": "normal",
 		},
 	})
+	_session_store.call("apply_build_result", _sample_build_result())
+
+func _sample_build_result() -> Dictionary:
+	return {
+		"ok": true,
+		"save_type": "normal",
+		"build": {
+			"weapon_type": "varinha_cinzas",
+			"weapon_level": 4,
+			"passive_id": "doutrina_pavor",
+			"passive_level": 2,
+			"pet_id": "corvo_pressagio",
+			"pet_level": 3,
+		},
+		"combat_build": {
+			"level": 12,
+			"power": 1480,
+			"weapon_type": "varinha_cinzas",
+			"weapon_level": 4,
+			"passive_id": "doutrina_pavor",
+			"passive_level": 2,
+			"pet_id": "corvo_pressagio",
+			"pet_level": 3,
+			"inventory": [{"item_id": "pocao_vida", "quantity": 3}],
+			"potion_slots": [{
+				"slot_index": 1,
+				"potion_id": "pocao_vida",
+				"behavior": {"enabled": true, "hp": {"mode": "below", "percent": 40}},
+			}],
+			"spell_slots": [
+				{"slot_index": 1, "unlock_level": 1, "unlocked": true, "spell_id": "sussurro_medo", "behavior": {"enabled": true}},
+				{"slot_index": 2, "unlock_level": 1, "unlocked": true, "spell_id": "incisao_ritual", "behavior": {"enabled": true}},
+				{"slot_index": 3, "unlock_level": 25, "unlocked": false, "spell_id": null, "behavior": {}},
+			],
+			"equipment_options": {
+				"weapons": [
+					{"id": "varinha_cinzas", "display_name": "Varinha de Cinzas", "unlocked": true, "equipped": true},
+					{"id": "athame_hematico", "display_name": "Athame Hematico", "unlocked": true, "equipped": false},
+				],
+				"spells": [
+					{"id": "sussurro_medo", "display_name": "Sussurro do Medo", "unlocked": true, "equipped": true},
+					{"id": "incisao_ritual", "display_name": "Incisao Ritual", "unlocked": true, "equipped": true},
+				],
+				"doutrines": [
+					{"id": "doutrina_pavor", "display_name": "Doutrina do Pavor", "unlocked": true, "equipped": true},
+					{"id": "pacto_familiar", "display_name": "Pacto Familiar", "unlocked": true, "equipped": false},
+				],
+				"familiars": [
+					{"id": "corvo_pressagio", "display_name": "Corvo de Pressagio", "unlocked": true, "equipped": true},
+					{"id": "gato_tumular", "display_name": "Gato Tumular", "unlocked": true, "equipped": false},
+				],
+			},
+		},
+	}
+
+func _apply_sample_arena_selection_state() -> void:
+	_session_store.call("apply_arena_result", {
+		"ok": true,
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"progress": {
+				"tutorial_completed": true,
+				"metadata": {
+					"completed_tiers": {"arena_tutorial_cinzas:s1_d00_intro": true},
+					"completed_arenas": {"arena_tutorial_cinzas": true},
+				},
+			},
+			"arenas": [
+				{
+					"id": "arena_tutorial_cinzas",
+					"display_name": "Tutorial: Cinzas do Refugio",
+					"duel_count": 1,
+					"unlocked": true,
+					"difficulties": [
+						{"difficulty_id": "s1_d00_intro", "max_steps": 1, "recommended_level_min": 1, "recommended_level_max": 3, "recommended_power_min": 80, "recommended_power_max": 180, "unlocked": true},
+					],
+				},
+				{
+					"id": "arena_cinzas_curta",
+					"display_name": "Arena Curta das Cinzas",
+					"duel_count": 3,
+					"unlocked": true,
+					"difficulties": [
+						{"difficulty_id": "s1_d00_intro", "max_steps": 3, "recommended_level_min": 3, "recommended_level_max": 4, "recommended_power_min": 160, "recommended_power_max": 260, "unlocked": true},
+						{"difficulty_id": "s1_d01_aprendiz", "max_steps": 3, "recommended_level_min": 5, "recommended_level_max": 6, "recommended_power_min": 280, "recommended_power_max": 470, "unlocked": true},
+					],
+				},
+				{
+					"id": "arena_veu_curta",
+					"display_name": "Arena do Veu",
+					"duel_count": 4,
+					"unlocked": false,
+					"locked_reason": "Conclua a Arena Curta.",
+					"difficulties": [
+						{"difficulty_id": "s1_d02_iniciado", "max_steps": 4, "recommended_level_min": 8, "recommended_level_max": 10, "recommended_power_min": 650, "recommended_power_max": 1300, "unlocked": false, "locked_reason": "Conclua a Arena Curta."},
+					],
+				},
+			],
+		},
+	})
+
+func _apply_sample_arena_active_state() -> void:
+	_session_store.call("apply_arena_result", {
+		"ok": true,
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"active_attempt": _sample_active_attempt(false),
+		},
+	})
+
+func _apply_sample_arena_buff_state() -> void:
+	_session_store.call("apply_arena_result", {
+		"ok": true,
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"active_attempt": _sample_active_attempt(true),
+		},
+	})
+
+func _apply_sample_arena_summary_state() -> void:
+	_session_store.call("apply_arena_result", {
+		"ok": true,
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"active_attempt": {
+				"attempt_id": "visual-arena",
+				"arena_id": "arena_cinzas_curta",
+				"status": "completed",
+				"duel_count": 3,
+				"duels_won": 3,
+				"locked_loadout_hash": "sha256:visual",
+			},
+			"summary": {
+				"status": "completed",
+				"duels_won": 3,
+				"duels_total": 3,
+				"reward_label": "XP, Ossos e Almas aplicados",
+			},
+		},
+	})
+
+func _sample_active_attempt(with_buff_offer: bool) -> Dictionary:
+	var attempt := {
+		"attempt_id": "visual-arena",
+		"arena_id": "arena_cinzas_curta",
+		"status": "active",
+		"duel_index": 1,
+		"duel_count": 3,
+		"duels_won": 1,
+		"locked_loadout_hash": "sha256:visual",
+		"loadout_summary": {"label": "Varinha de Cinzas, 2 habilidades, Pocao de Vida"},
+		"next_enemy": {"display_name": "Guardiao da Barreira"},
+		"temporary_buffs": [{"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor"}],
+	}
+	if with_buff_offer:
+		attempt["status"] = "awaiting_buff"
+		attempt["buff_offer"] = {
+			"choices": [
+				{"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor", "description": "+4% HP maximo"},
+				{"id": "arena_buff_potencia_menor", "display_name": "Potencia Ritual Menor", "description": "+4% Potencia Ritual"},
+				{"id": "arena_buff_guarda_menor", "display_name": "Guarda Menor", "description": "+4% Guarda"},
+			],
+		}
+	return attempt
 
 func _session_resources() -> Dictionary:
 	var value: Variant = _session_store.get("resources") if _session_store != null else {}

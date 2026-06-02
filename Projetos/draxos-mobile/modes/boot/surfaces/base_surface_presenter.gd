@@ -514,18 +514,18 @@ static func _base_structure_color(structure_id: String) -> Color:
 static func _base_structure_symbol(structure_id: String) -> String:
 	match structure_id:
 		"altar_das_almas":
-			return "[ALM]"
+			return "Almas"
 		"nucleo_energia":
-			return "[ENE]"
+			return "Energia"
 		"pocos_sangue":
-			return "[SAN]"
+			return "Sangue"
 		"minas_cristal":
-			return "[CRI]"
+			return "Cristais"
 		"estrutura_stats":
-			return "[STA]"
+			return "Poder"
 		"ossario":
-			return "[OSS]"
-	return "[???]"
+			return "Ossos"
+	return "Refugio"
 
 static func _base_structure_short_label(structure_id: String) -> String:
 	match structure_id:

@@ -130,7 +130,8 @@ func render_fullscreen_summary(
 	frame.add_child(stack)
 
 	var summary := summary_data(battle_log, rewards, current_resources)
-	stack.add_child(_fullscreen_center_label("Resultado da batalha", 18 if compact_layout else 24, "text_secondary"))
+	var arena_log := _is_arena_battle_log(battle_log)
+	stack.add_child(_fullscreen_center_label("Resultado da Arena" if arena_log else "Resultado da batalha", 18 if compact_layout else 24, "text_secondary"))
 	var result_label := _fullscreen_center_label(str(summary.get("winner_label", "Resultado")), 34 if compact_layout else 44, "text_primary")
 	result_label.name = "BattleSummaryResult"
 	stack.add_child(result_label)
@@ -149,12 +150,12 @@ func render_fullscreen_summary(
 	stack.add_child(details)
 	var reward_text := str(summary.get("reward_text", ""))
 	if reward_text != "":
-		details.add_child(_summary_detail_panel("Recompensa", reward_text, compact_layout))
+		details.add_child(_summary_detail_panel("Recompensa aplicada" if arena_log else "Recompensa", reward_text, compact_layout))
 	var resources_text := str(summary.get("resources_text", ""))
 	if resources_text != "":
 		details.add_child(_summary_detail_panel("Recursos", resources_text, compact_layout))
 	var ranking_text := str(summary.get("ranking_text", ""))
-	if ranking_text != "":
+	if ranking_text != "" and not arena_log:
 		details.add_child(_summary_detail_panel("Ranking", ranking_text, compact_layout))
 	var progress_text := str(summary.get("progress_text", ""))
 	if progress_text != "":
@@ -162,7 +163,11 @@ func render_fullscreen_summary(
 	var next_step_text := str(summary.get("next_step_text", ""))
 	if next_step_text != "":
 		details.add_child(_summary_detail_panel("Proximo passo", next_step_text, compact_layout))
-	stack.add_child(_fullscreen_center_label("Recompensa registrada. Volte para verificar a base e escolher o proximo passo.", 13 if compact_layout else 15, "text_secondary"))
+	stack.add_child(_fullscreen_center_label(
+		"Recompensa aplicada. Continue na Arena ou volte ao Refugio para evoluir." if arena_log else "Recompensa registrada. Volte para verificar a base e escolher o proximo passo.",
+		13 if compact_layout else 15,
+		"text_secondary"
+	))
 
 	var actions := GridContainer.new()
 	actions.columns = 1
@@ -341,7 +346,7 @@ static func summary_data(battle_log: Dictionary, rewards: Dictionary, current_re
 		"resources_text": _resources_text(current_resources),
 		"ranking_text": ranking_text,
 		"progress_text": ProgressionClarityPresenterScript.battle_summary_text(rewards, SessionStore.combat_build_snapshot()),
-		"next_step_text": _summary_next_step_text(rewards),
+		"next_step_text": _summary_next_step_text(rewards, battle_log),
 	}
 
 static func current_battle_logs_text(battle_log: Dictionary) -> String:
@@ -454,6 +459,9 @@ static func _participant_label(battle_log: Dictionary, participant_key: String, 
 static func _outcome_text(battle_log: Dictionary, result: Dictionary, winner: String, duration: float) -> String:
 	var opponent_label := _participant_label(battle_log, "opponent", "Oponente")
 	var reason := _reason_text(str(result.get("reason", "")), winner)
+	var arena_context := _arena_duel_text(battle_log)
+	if arena_context != "":
+		return "%s contra %s - %s em %.1fs." % [arena_context, opponent_label, reason, duration]
 	return "Contra %s - %s em %.1fs." % [opponent_label, reason, duration]
 
 static func _reason_text(reason: String, winner: String) -> String:
@@ -493,11 +501,29 @@ static func _ranking_text(result: Dictionary) -> String:
 		parts.append("%s pontos totais" % arena_points)
 	return ", ".join(parts)
 
-static func _summary_next_step_text(rewards: Dictionary) -> String:
+static func _summary_next_step_text(rewards: Dictionary, battle_log: Dictionary = {}) -> String:
 	var reward_text := _reward_text(rewards)
+	if _is_arena_battle_log(battle_log):
+		if reward_text != "":
+			return "Use %s no Refugio quando sair da Arena; o proximo desafio continua sem cooldown." % reward_text
+		return "Continue a tentativa ou volte ao Refugio para revisar loadout e base."
 	if reward_text != "":
 		return "Use %s no Refugio: colete, evolua a base quando houver Energia e peca outra batalha." % reward_text
 	return "Volte ao Refugio para conferir coleta, evolucao e preparacao antes da proxima batalha."
+
+static func _is_arena_battle_log(battle_log: Dictionary) -> bool:
+	var metadata := _as_dictionary(battle_log.get("metadata", {}))
+	return str(metadata.get("mode", battle_log.get("mode", ""))) == "PVE_ARENA_V1"
+
+static func _arena_duel_text(battle_log: Dictionary) -> String:
+	var metadata := _as_dictionary(battle_log.get("metadata", {}))
+	if str(metadata.get("mode", "")) != "PVE_ARENA_V1":
+		return ""
+	var duel_index := int(metadata.get("duel_index", 0))
+	var duel_count := int(metadata.get("duel_count", 0))
+	if duel_index <= 0 or duel_count <= 0:
+		return "Duelo da Arena"
+	return "Duelo %d/%d da Arena" % [duel_index, duel_count]
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

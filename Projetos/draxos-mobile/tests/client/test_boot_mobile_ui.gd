@@ -550,14 +550,17 @@ func test_arena_selection_renders_remote_arenas_as_data_driven_actions() -> void
 	assert_true(boot._action_buttons.has(locked_action))
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL))
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_EARLY))
-	assert_not_null(_find_button_by_text(boot._content_body, "Tutorial: Cinzas Do Refugio - 1 duelo | s1_d00_intro | Lv 1-3"))
-	assert_not_null(_find_button_by_text(boot._content_body, "Arena Curta Das Cinzas - 3 duelos | s1_d01_aprendiz | Lv 5-6"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Tutorial | 1 duelo | Intro"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Cinzas | 3 duelos | Aprendiz"))
 	var locked_button := boot._action_buttons[locked_action] as Button
 	assert_not_null(locked_button)
 	assert_true(locked_button.disabled)
-	assert_string_contains(locked_button.text, "Conclua dificuldade 1.")
+	assert_string_contains(locked_button.text, "bloqueada")
+	assert_false(locked_button.text.contains("Conclua dificuldade 1."))
 	assert_eq(locked_button.tooltip_text, "Conclua dificuldade 1.")
 	assert_true(_label_tree_contains(boot._content_body, "bloqueada: Conclua dificuldade 1."))
+	assert_false(_visible_text_tree(boot._content_body).contains("s1_d00_intro"))
+	assert_false(_visible_text_tree(boot._content_body).contains("s1_d01_aprendiz"))
 	boot._sync_buttons()
 	assert_true(locked_button.disabled)
 
@@ -620,8 +623,41 @@ func test_arena_selection_recommends_next_uncompleted_arena_after_tutorial() -> 
 
 	var next_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta", "s1_d00_intro")
 	assert_true(boot._action_buttons.has(next_action))
-	assert_not_null(_find_button_by_text(boot._content_body, "Continuar: Arena Curta Das Cinzas | s1_d00_intro"))
-	assert_true(_label_tree_contains(boot._content_body, "Proximo desafio: 3 duelos"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Comecar"))
+	assert_true(_label_tree_contains(boot._content_body, "Proximo desafio"))
+	assert_true(_label_tree_contains(boot._content_body, "Arena Curta Das Cinzas"))
+	assert_false(_visible_text_tree(boot._content_body).contains("s1_d00_intro"))
+
+func test_arena_active_exposes_behavior_adjustment_without_unlocking_loadout() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"arenas": [],
+		"active_attempt": {
+			"attempt_id": "attempt-active",
+			"arena_id": "arena_cinzas_curta",
+			"status": "active",
+			"duel_index": 0,
+			"duel_count": 3,
+			"duels_won": 0,
+			"locked_loadout_hash": "sha256:test",
+			"loadout_summary": {"label": "Varinha de Cinzas, 1 habilidade, Pocao de Vida"},
+			"next_enemy": {"display_name": "Aprendiz das Cinzas"},
+			"temporary_buffs": [],
+		},
+	}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_ACTIVE)
+	await get_tree().process_frame
+
+	assert_not_null(_find_button_by_text(boot._content_body, "Resolver duelo"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Ajustar comportamento"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_SHOW_PREPARATION))
+	assert_true(_label_tree_contains(boot._content_body, "Duelo: 1/3"))
+	assert_true(_label_tree_contains(boot._content_body, "Loadout: Varinha de Cinzas, 1 habilidade, Pocao de Vida"))
+	assert_true(_label_tree_contains(boot._content_body, "Comportamento: ajustavel entre duelos"))
 
 func test_arena_summary_continues_to_arena_instead_of_reward_claim_copy() -> void:
 	var boot = BootScreenScript.new()
@@ -652,7 +688,7 @@ func test_arena_summary_continues_to_arena_instead_of_reward_claim_copy() -> voi
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY))
 	assert_not_null(_find_button_by_text(boot._content_body, "Continuar na Arena"))
 	assert_null(_find_button_by_text(boot._content_body, "Confirmar resumo"))
-	assert_true(_label_tree_contains(boot._content_body, "ja foi aplicada no ultimo duelo"))
+	assert_true(_label_tree_contains(boot._content_body, "recompensa ja foi aplicada pelo ultimo duelo"))
 
 func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -> void:
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
@@ -1209,7 +1245,12 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(_label_tree_contains(popup, "Pronto para Arena"))
 	assert_true(_label_tree_contains(popup, "Primeira sessao: confira instrumento, habilidades e pocao antes da Arena."))
 	assert_true(_label_tree_contains(popup, "Poder 243"))
-	assert_true(_label_tree_contains(popup, "Resumo: Varinha de Cinzas | 1 habilidade | Doutrina do Pavor | Corvo de Pressagio"))
+	assert_true(_label_tree_contains(popup, "Loadout atual:"))
+	assert_true(_label_tree_contains(popup, "Instrumento: Varinha de Cinzas"))
+	assert_true(_label_tree_contains(popup, "Habilidades: 1 habilidade"))
+	assert_true(_label_tree_contains(popup, "Doutrina: Doutrina do Pavor"))
+	assert_true(_label_tree_contains(popup, "Familiar: Corvo de Pressagio"))
+	assert_true(_label_tree_contains(popup, "Pocao: Pocao de Vida equipada"))
 	assert_true(_label_tree_contains(popup, "Proximos marcos"))
 	assert_true(_label_tree_contains(popup, "Nivel 10: doutrina de combate."))
 	assert_true(_label_tree_contains(popup, "Em uso: Varinha de Cinzas L4"))
