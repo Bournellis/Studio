@@ -4,24 +4,26 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Integrated App/Arena/Bosque Publication + Official URL Manifest Alignment`
+- Active stage: `Integrated Runtime Fix Publication`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: integrated `App Responsiveness Architecture
-  Pass`, `Arena Loop Simplification/Feedback` and `Openworld Bosque Hardening
-  V1`, release root
-  `internal-alpha/v0-integrated-app-arena-bosque-20260602-99304ed`,
+- Latest published remote package: `Integrated Runtime Fix`, release root
+  `internal-alpha/v0-integrated-runtime-fix-20260602-ab5834c`,
   official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`,
   direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`,
   latest deployment evidence
-  `https://8f2829c0.draxos-mobile-internal-alpha.pages.dev`. The release
-  manifest was republished on 2026-06-02 with `portal_url` pointing at the
-  official root URL.
-- Latest implemented package: same as latest published remote package; master is
-  integrated and publication completed.
+  `https://888320f4.draxos-mobile-internal-alpha.pages.dev`. This package fixes
+  the integrated App/Arena/Bosque runtime: Bosque event revision serialization,
+  server-confirmed Bosque mutations, common mode event envelopes, Arena replay
+  metadata and live Bosque policy compatibility.
+- Latest implemented package: same as latest published remote package; the
+  dedicated runtime fix branch is integrated and publication completed.
+- Previous integrated App/Arena/Bosque package: release root
+  `internal-alpha/v0-integrated-app-arena-bosque-20260602-99304ed`,
+  deployment evidence `https://8f2829c0.draxos-mobile-internal-alpha.pages.dev`.
 - Previous Web shell package: `Web Launch Resilience`, release root
   `internal-alpha/v0-web-launch-resilience-20260602-49dc5ea`,
   deployment evidence `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev`.
@@ -35,17 +37,85 @@
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Validation baseline marker: the latest published remote package is now the
-  integrated app/arena/bosque package; `Foundation Hardening V2` remains the
-  previous hardening/live-doc guard marker.
-- Compatibility validation marker: Latest published remote package: `Foundation Hardening V2` remains as legacy guard text for Track 13/V2 docs validation; actual latest published remote package is the integrated app/arena/bosque release above.
-- Active follow-up: human playtest the integrated package across login, cache
-  refresh, first Arena loop, next difficulty unlock and online Bosque session.
+  integrated runtime fix package; `Foundation Hardening V2` remains the previous
+  hardening/live-doc guard marker.
+- Compatibility validation marker: Latest published remote package: `Foundation Hardening V2`
+  remains as legacy guard text for Track 13/V2 docs validation; actual latest
+  published remote package is the integrated runtime fix release above.
+- Active follow-up: human playtest the integrated runtime fix package across
+  login, cache refresh, first Arena loop, Arena replay/reward states and online
+  Bosque start/event/deposit/complete behavior.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## Integrated Runtime Fix Publication - 2026-06-02
+
+This release corrects and republishes the integrated App/Arena/Bosque package as
+one Internal Alpha on the official URL.
+
+- branch: `codex/draxos-mobile/integrated-runtime-fix`;
+- release root:
+  `internal-alpha/v0-integrated-runtime-fix-20260602-ab5834c`;
+- Cloudflare production:
+  `https://draxos-mobile-internal-alpha.pages.dev`;
+- Cloudflare deployment evidence:
+  `https://888320f4.draxos-mobile-internal-alpha.pages.dev`;
+- Official Portal / manifest `portal_url`:
+  `https://draxos-mobile-internal-alpha.pages.dev/`;
+- Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-integrated-runtime-fix-20260602-ab5834c/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-integrated-runtime-fix-20260602-ab5834c/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`;
+- preview Web launch smoke screenshot:
+  `build/diagnostics/web-launch-remote-20260602-223337/web-launch-remote.png`.
+
+Runtime fixes delivered:
+
+- Bosque online serializes authoritative session events and waits for each ACK
+  before sending the next revision-gated event.
+- Bosque collection, deposit and craft no longer mutate reward-bearing local
+  state before server confirmation.
+- `/modes/session/event` returns the common mode envelope.
+- Arena PVE battle logs include `metadata.mode = "PVE_ARENA_V1"`,
+  `duel_index` and `duel_count` so the client can activate replay/reward UI.
+- Remote `mode_limit_policies` compatibility now supports the live `active`
+  policy filter used by Bosque start.
+- Web launch smoke treats Cloudflare Access login as an expected protected
+  production state instead of failing on login-page console noise.
+
+Publication and validation completed:
+
+- `supabase db push --linked --yes`: passed; applied
+  `202606020002_openworld_bosque_policy_active_compat.sql`.
+- `supabase functions deploy --project-ref armxgipvnbbshzqawklw`: passed for
+  `modes`, `arena` and `release`.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passed; Android
+  mode is `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Upload -ConfirmRemoteMutation`: passed.
+- `build_cloudflare_pages_package.ps1`: passed.
+- `wrangler pages deploy build\internal-alpha\cloudflare-pages --project-name
+  draxos-mobile-internal-alpha --branch main`: passed; preview
+  `https://888320f4.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation`:
+  passed; manifest `released_at` is `2026-06-02T22:31:37Z`.
+- `release_manifest_smoke.ts`: passed.
+- `release_artifacts_remote_smoke.ts`: passed; stable Portal/Web are protected
+  by Cloudflare Access as expected.
+- `internal_alpha_remote_smoke.ts` with release, anon auth, account, email auth,
+  mode and Arena enabled: passed; Bosque and Arena remote sessions were created.
+- `smoke_web_launch_remote.ps1` against the stable URL: passed as
+  `outcome=cloudflare_access_expected`.
+- `smoke_web_launch_remote.ps1` against the preview URL: passed as
+  `outcome=game_loaded`, `loaded_after_ms=5838`, with release root and asset
+  root matching.
 
 ## Integrated App Responsiveness, Arena Loop And Openworld Bosque Publication - 2026-06-02
 

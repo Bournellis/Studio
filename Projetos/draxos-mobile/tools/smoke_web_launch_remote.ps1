@@ -372,6 +372,7 @@ client.close();
 const unresolvedKeyAssetFailures = keyAssetFailures.concat(keyAssetLoadingFailures.filter((event) => {
 	return !(outcome === 'game_loaded' && event.errorText === 'net::ERR_ABORTED' && successfulKeyAssets.has(event.url));
 }));
+const unresolvedRuntimeErrors = outcome === 'cloudflare_access_expected' ? [] : runtimeErrors;
 
 const summary = {
 	schema_version: 'draxos_mobile_web_launch_smoke_v1',
@@ -397,7 +398,7 @@ console.log(JSON.stringify(summary, null, 2));
 
 const failed = failureReason ||
 	unresolvedKeyAssetFailures.length > 0 ||
-	runtimeErrors.length > 0 ||
+	unresolvedRuntimeErrors.length > 0 ||
 	(outcome !== 'game_loaded' && outcome !== 'cloudflare_access_expected');
 
 if (failed) {
