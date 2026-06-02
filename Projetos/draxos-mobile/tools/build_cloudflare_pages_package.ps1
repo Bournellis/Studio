@@ -65,6 +65,64 @@ function Get-RemoteContentLength {
     throw "Remote asset did not return Content-Length: $Url"
 }
 
+function Get-ShortSha256Text {
+    param([string]$Text)
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes($Text)
+        $hash = $sha.ComputeHash($bytes)
+        return (($hash | ForEach-Object { $_.ToString("x2") }) -join "").Substring(0, 12)
+    } finally {
+        $sha.Dispose()
+    }
+}
+
+function Get-ReleaseRootFromAssetBase {
+    param([string]$AssetBase)
+    $normalized = $AssetBase.Trim().TrimEnd("/")
+    $pathText = $normalized
+    $uri = $null
+    if ([System.Uri]::TryCreate($normalized, [System.UriKind]::Absolute, [ref]$uri)) {
+        $pathText = $uri.AbsolutePath
+    }
+
+    $segments = @($pathText.Trim("/") -split "/" | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    for ($i = $segments.Count - 1; $i -ge 0; $i--) {
+        if ($segments[$i] -eq "internal-alpha") {
+            $end = $segments.Count - 1
+            if ($segments[$end] -eq "web") {
+                $end--
+            }
+            if ($end -ge $i) {
+                return (@($segments[$i..$end]) -join "/")
+            }
+        }
+    }
+
+    if ([string]::IsNullOrWhiteSpace($normalized)) {
+        return "unknown"
+    }
+    return "unknown-" + (Get-ShortSha256Text -Text $normalized)
+}
+
+function Get-CacheBustValue {
+    param([string]$ReleaseRoot)
+    $value = if ([string]::IsNullOrWhiteSpace($ReleaseRoot)) { "unknown" } else { $ReleaseRoot }
+    return [System.Uri]::EscapeDataString($value)
+}
+
+function ConvertTo-JavascriptStringLiteral {
+    param([string]$Value)
+    return ($Value | ConvertTo-Json -Compress)
+}
+
+function Assert-WebHtmlContains {
+    param([string]$Html, [string]$Needle, [string]$Label)
+    if (-not $Html.Contains($Needle)) {
+        throw "Web shell launch resilience injection missing: $Label"
+    }
+}
+
 function Assert-WebShellMatchesRemoteAssets {
     param([string]$Html, [string]$AssetBase, [string]$PackUrl = "")
     if ($AssetBase -notmatch "^https?://") {
@@ -155,16 +213,109 @@ if ($portalHtml.Contains("WEB_GAME_URL_PENDING_T03_P17") -or
 
 $assetBase = $StaticAssetBaseUrl.TrimEnd("/")
 $mainPack = $MainPackUrl.Trim()
+$releaseRoot = Get-ReleaseRootFromAssetBase -AssetBase $assetBase
+$cacheBust = Get-CacheBustValue -ReleaseRoot $releaseRoot
 $webIndexPath = Join-Path $OutputDir "web/index.html"
 $webHtml = Get-Content -Raw -LiteralPath $webIndexSource
-$webHtml = $webHtml.Replace('href="index.icon.png"', 'href="/web/index.icon.png"')
-$webHtml = $webHtml.Replace('href="index.apple-touch-icon.png"', 'href="/web/index.apple-touch-icon.png"')
-$webHtml = $webHtml.Replace('src="index.png"', 'src="/web/index.png"')
-$webHtml = $webHtml.Replace('<script src="index.js"></script>', '<script src="/web/index.js"></script>')
+$webHtml = $webHtml.Replace('href="index.icon.png"', ('href="/web/index.icon.png?v=' + $cacheBust + '"'))
+$webHtml = $webHtml.Replace('href="index.apple-touch-icon.png"', ('href="/web/index.apple-touch-icon.png?v=' + $cacheBust + '"'))
+$webHtml = $webHtml.Replace('src="index.png"', ('src="/web/index.png?v=' + $cacheBust + '"'))
+$webHtml = $webHtml.Replace('<script src="index.js"></script>', ('<script src="/web/index.js?v=' + $cacheBust + '"></script>'))
 $webHtml = $webHtml.Replace('"executable":"index"', ('"executable":"' + $assetBase + '/index"'))
 if (-not [string]::IsNullOrWhiteSpace($mainPack)) {
     $webHtml = $webHtml.Replace('"experimentalVK":true', ('"mainPack":"' + $mainPack + '","experimentalVK":true'))
 }
+$releaseRootLiteral = ConvertTo-JavascriptStringLiteral -Value $releaseRoot
+$assetBaseLiteral = ConvertTo-JavascriptStringLiteral -Value $assetBase
+$diagnosticsScript = @"
+const DRAXOS_RELEASE_ROOT = $releaseRootLiteral;
+const DRAXOS_WEB_ASSET_ROOT = $assetBaseLiteral;
+window.DRAXOS_WEB_RELEASE = Object.freeze({
+	releaseRoot: DRAXOS_RELEASE_ROOT,
+	assetRoot: DRAXOS_WEB_ASSET_ROOT,
+});
+"@
+$webHtml = $webHtml.Replace("const GODOT_THREADS_ENABLED = false;", ($diagnosticsScript + "`nconst GODOT_THREADS_ENABLED = false;"))
+$launchResilienceScript = @'
+	const releaseStateKey = 'draxos.web.releaseRoot';
+	const watchdogDelayMs = 20000;
+	let launchWatchdog = 0;
+
+	function clearLaunchWatchdog() {
+		if (launchWatchdog !== 0) {
+			window.clearTimeout(launchWatchdog);
+			launchWatchdog = 0;
+		}
+	}
+
+	function cleanupOldWebRuntimeCaches() {
+		let previousRelease = '';
+		try {
+			previousRelease = window.localStorage.getItem(releaseStateKey) || '';
+			window.localStorage.setItem(releaseStateKey, DRAXOS_RELEASE_ROOT);
+		} catch (err) {
+			console.warn('[DraxosMobile Web] Release cache marker unavailable:', err);
+			return;
+		}
+		if (previousRelease === '' || previousRelease === DRAXOS_RELEASE_ROOT) {
+			return;
+		}
+		console.info('[DraxosMobile Web] Release root changed; cleaning old Web runtime caches.', {
+			previousRelease,
+			currentRelease: DRAXOS_RELEASE_ROOT,
+		});
+		if ('caches' in window) {
+			window.caches.keys().then((keys) => Promise.all(keys
+				.filter((key) => /draxos|godot|internal-alpha|web/i.test(key))
+				.map((key) => window.caches.delete(key))
+			)).catch((err) => {
+				console.warn('[DraxosMobile Web] Cache cleanup failed:', err);
+			});
+		}
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.getRegistrations().then((registrations) => Promise.all(registrations
+				.filter((registration) => registration.scope.indexOf(window.location.origin) === 0)
+				.map((registration) => registration.unregister())
+			)).catch((err) => {
+				console.warn('[DraxosMobile Web] Service worker cleanup failed:', err);
+			});
+		}
+	}
+
+	function startLaunchWatchdog() {
+		clearLaunchWatchdog();
+		launchWatchdog = window.setTimeout(() => {
+			if (!initializing) {
+				return;
+			}
+			const message = [
+				'DraxosMobile ainda esta carregando.',
+				'Se esta tela ficar parada, faca hard refresh, abra o preview hash da publicacao ou limpe os dados deste site.',
+				'Release: ' + DRAXOS_RELEASE_ROOT,
+				'Assets: ' + DRAXOS_WEB_ASSET_ROOT,
+			].join('\n');
+			console.warn('[DraxosMobile Web] Launch watchdog still sees the Godot splash.', window.DRAXOS_WEB_RELEASE);
+			setStatusNotice(message);
+			setStatusMode('notice');
+		}, watchdogDelayMs);
+	}
+
+	cleanupOldWebRuntimeCaches();
+'@
+$webHtml = $webHtml.Replace("	let statusMode = '';", "	let statusMode = '';`n$launchResilienceScript")
+$webHtml = $webHtml.Replace("		if (mode === 'hidden') {", "		if (mode === 'hidden') {`n			clearLaunchWatchdog();")
+$webHtml = $webHtml.Replace("	function displayFailureNotice(err) {", "	function displayFailureNotice(err) {`n		clearLaunchWatchdog();")
+$webHtml = $webHtml.Replace("		console.error(err);", "		console.error('[DraxosMobile Web] Godot start failed:', err);")
+$webHtml = $webHtml.Replace("			setStatusNotice('An unknown error occurred.');", "			setStatusNotice('DraxosMobile nao conseguiu iniciar no navegador. Abra o console para detalhes e tente atualizar a pagina.');")
+$webHtml = $webHtml.Replace("		setStatusMode('progress');", "		setStatusMode('progress');`n		startLaunchWatchdog();")
+$webHtml = $webHtml.Replace("		}).then(() => {", "		}).then(() => {`n			console.info('[DraxosMobile Web] Godot start resolved.', window.DRAXOS_WEB_RELEASE);")
+Assert-WebHtmlContains -Html $webHtml -Needle "/web/index.js?v=$cacheBust" -Label "index.js cache bust"
+Assert-WebHtmlContains -Html $webHtml -Needle "/web/index.png?v=$cacheBust" -Label "splash cache bust"
+Assert-WebHtmlContains -Html $webHtml -Needle "const DRAXOS_RELEASE_ROOT" -Label "release root diagnostic"
+Assert-WebHtmlContains -Html $webHtml -Needle "const DRAXOS_WEB_ASSET_ROOT" -Label "asset root diagnostic"
+Assert-WebHtmlContains -Html $webHtml -Needle "draxos.web.releaseRoot" -Label "release cache marker"
+Assert-WebHtmlContains -Html $webHtml -Needle "startLaunchWatchdog();" -Label "launch watchdog call"
+Assert-WebHtmlContains -Html $webHtml -Needle "Godot start failed" -Label "readable start failure log"
 Assert-WebShellMatchesRemoteAssets -Html $webHtml -AssetBase $assetBase -PackUrl $mainPack
 [System.IO.File]::WriteAllText($webIndexPath, $webHtml, [System.Text.UTF8Encoding]::new($false))
 

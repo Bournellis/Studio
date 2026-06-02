@@ -201,6 +201,7 @@ foreach ($relative in @(
   'tools\publish_internal_alpha.ps1',
   'tools\export_internal_alpha.ps1',
   'tools\build_cloudflare_pages_package.ps1',
+  'tools\smoke_web_launch_remote.ps1',
   'tools\validate_foundation.ps1',
   'tools\check_android_release_keystore.ps1'
 )) {
@@ -211,6 +212,7 @@ Test-PowerShellParses @(
   'tools\publish_internal_alpha.ps1',
   'tools\export_internal_alpha.ps1',
   'tools\build_cloudflare_pages_package.ps1',
+  'tools\smoke_web_launch_remote.ps1',
   'tools\validate_foundation.ps1',
   'tools\check_release_safety.ps1',
   'tools\check_android_release_keystore.ps1'

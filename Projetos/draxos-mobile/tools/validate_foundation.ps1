@@ -897,6 +897,7 @@ Invoke-Step -Name "PowerShell parse" -Stage "DocsOnly" -Command "[Parser]::Parse
         "tools\export_internal_alpha.ps1",
         "tools\publish_internal_alpha.ps1",
         "tools\build_cloudflare_pages_package.ps1",
+        "tools\smoke_web_launch_remote.ps1",
         "tools\validate_foundation.ps1",
         "tools\validate_mode_definitions.ps1"
     )
