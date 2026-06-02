@@ -14,6 +14,10 @@ const BOSQUE_HARDENING_MIGRATION_PATH =
   "supabase/migrations/202606020001_openworld_bosque_hardening_v1.sql";
 const BOSQUE_HARDENING_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606020001_openworld_bosque_hardening_v1.sql";
+const BOSQUE_POLICY_ACTIVE_COMPAT_PATH =
+  "supabase/migrations/202606020002_openworld_bosque_policy_active_compat.sql";
+const BOSQUE_POLICY_ACTIVE_COMPAT_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606020002_openworld_bosque_policy_active_compat.sql";
 const EDGE_PATH = "server/functions/modes/index.ts";
 const SUPABASE_EDGE_PATH = "supabase/functions/modes/index.ts";
 const HANDLER_PATH = "server/functions/modes/mode_handler.ts";
@@ -64,6 +68,17 @@ Deno.test("openworld bosque hardening migration is mirrored in server schema", a
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema bosque hardening migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("openworld bosque policy active compat migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(BOSQUE_POLICY_ACTIVE_COMPAT_PATH);
+  const serverMirror = await readProjectText(BOSQUE_POLICY_ACTIVE_COMPAT_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema bosque policy active compat migration should mirror supabase migration exactly",
   );
 });
 
@@ -289,6 +304,7 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
       "add column if not exists last_event_at",
       "create table if not exists public.mode_session_events",
       "create or replace function public.mode_session_event_v1",
+      "add column if not exists active boolean not null default true",
       "openworld_forest_ruleset_v1",
       "openworld_forest_initial_snapshot_v1",
       "openworld_forest_apply_event_v1",
@@ -319,6 +335,9 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   );
   assertIncludes(support, "session_event", "support should resolve the event route");
   assertIncludes(support, "mode_session_revision_stale", "support should map stale revisions");
+  assertIncludes(support, "mode_session_already_active", "support should map active-session conflicts");
+  assertIncludes(support, "mode_session_start_cooldown", "support should map start cooldown conflicts");
+  assertIncludes(support, "openworld_node_already_collected", "support should map duplicate node collection");
 });
 
 Deno.test("openworld client queues authoritative events before local mutation", async () => {

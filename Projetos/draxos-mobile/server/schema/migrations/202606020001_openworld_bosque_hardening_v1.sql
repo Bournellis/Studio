@@ -103,6 +103,7 @@ where ruleset_id = 'openworld_forest_ruleset_v0'
 
 alter table public.mode_limit_policies
 	add column if not exists ruleset_version integer not null default 1 check (ruleset_version > 0),
+	add column if not exists active boolean not null default true,
 	add column if not exists reward_daily_caps jsonb not null default '{}'::jsonb,
 	add column if not exists result_limits jsonb not null default '{}'::jsonb;
 

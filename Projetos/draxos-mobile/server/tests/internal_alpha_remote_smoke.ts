@@ -6,6 +6,7 @@ const RUN_EMAIL_AUTH = Deno.env.get("DRAXOS_REMOTE_EMAIL_AUTH_SMOKE") === "1";
 const RUN_RELEASE_MANIFEST =
   Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
 const RUN_MODE = Deno.env.get("DRAXOS_REMOTE_MODE_SMOKE") === "1";
+const RUN_ARENA = Deno.env.get("DRAXOS_REMOTE_ARENA_SMOKE") === "1";
 const CORS_ORIGIN = Deno.env.get("DRAXOS_REMOTE_CORS_ORIGIN") ??
   "https://ca946749.draxos-mobile-internal-alpha.pages.dev";
 
@@ -19,6 +20,10 @@ assertClientKey(PUBLISHABLE_KEY);
 assert(
   !RUN_MODE || RUN_EMAIL_AUTH,
   "DRAXOS_REMOTE_MODE_SMOKE requires DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1",
+);
+assert(
+  !RUN_ARENA || RUN_EMAIL_AUTH,
+  "DRAXOS_REMOTE_ARENA_SMOKE requires DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1",
 );
 
 interface JsonObject {
@@ -122,6 +127,7 @@ let emailPlayerId = "";
 let labPlayerId = "";
 let emailBattleId = "";
 let modeSessionId = "";
+let arenaAttemptId = "";
 if (RUN_EMAIL_AUTH) {
   const runId = crypto.randomUUID().replaceAll("-", "").slice(0, 12);
   const email = `draxosremotealpha${runId}@gmail.com`;
@@ -230,6 +236,11 @@ if (RUN_EMAIL_AUTH) {
       stringField(signin, "access_token"),
     );
   }
+  if (RUN_ARENA) {
+    arenaAttemptId = await proveRemoteArenaFlow(
+      stringField(signin, "access_token"),
+    );
+  }
 }
 
 console.log("[internal-alpha-remote-smoke] OK", {
@@ -239,6 +250,7 @@ console.log("[internal-alpha-remote-smoke] OK", {
   account_state: RUN_ACCOUNT_STATE ? "checked" : "skipped",
   email_auth: RUN_EMAIL_AUTH ? "checked" : "skipped",
   mode: RUN_MODE ? "checked" : "skipped",
+  arena: RUN_ARENA ? "checked" : "skipped",
   release_manifest: releaseManifestChecked ? "checked" : "skipped",
   auth_user: authUser,
   player_id: playerId,
@@ -247,6 +259,7 @@ console.log("[internal-alpha-remote-smoke] OK", {
   lab_player_id: labPlayerId,
   email_battle_id: emailBattleId,
   mode_session_id: modeSessionId,
+  arena_attempt_id: arenaAttemptId,
 });
 
 function baseHeaders(): Record<string, string> {
@@ -373,8 +386,17 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
 
   for (
     const node of [
+      { node_id: "node_galho_01", item_id: "galho" },
+      { node_id: "node_folha_01", item_id: "folha" },
       { node_id: "node_madeira_01", item_id: "madeira" },
+      { node_id: "node_pedra_pequena_01", item_id: "pedra_pequena" },
       { node_id: "node_pedra_01", item_id: "pedra" },
+      { node_id: "node_cogumelo_01", item_id: "cogumelo" },
+      { node_id: "node_fungo_01", item_id: "fungo" },
+      { node_id: "node_inseto_01", item_id: "inseto" },
+      { node_id: "node_resina_01", item_id: "resina" },
+      { node_id: "node_folha_seca_01", item_id: "folha_seca" },
+      { node_id: "node_cinzas_preview_01", item_id: "cinzas_preview" },
       { node_id: "node_ossos_preview_01", item_id: "ossos_preview" },
       { node_id: "node_po_osso_preview_01", item_id: "po_osso_preview" },
     ]
@@ -413,8 +435,8 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
     headers,
   );
   assertEq(
-    stableStringify(completed),
-    stableStringify(repeatedComplete),
+    stableResponseString(completed),
+    stableResponseString(repeatedComplete),
     "remote mode session/complete should be idempotent",
   );
   const resourceDelta = objectField(
@@ -467,6 +489,74 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
   );
 
   return sessionId;
+}
+
+async function proveRemoteArenaFlow(accessToken: string): Promise<string> {
+  const headers = modeHeaders(accessToken);
+  const state = await getJson(
+    `${SUPABASE_URL}/functions/v1/arena/pve/state`,
+    headers,
+  );
+  assertEq(
+    stringField(state, "api_version"),
+    "app_responsiveness_v1",
+    "remote arena state should use the responsiveness envelope",
+  );
+  assert(
+    arrayField(state, "arenas").length > 0,
+    "remote arena state should expose at least one arena",
+  );
+
+  const start = await postJson(
+    `${SUPABASE_URL}/functions/v1/arena/pve/start`,
+    {
+      request_id: crypto.randomUUID(),
+      arena_id: "arena_tutorial_cinzas",
+      difficulty_id: "s1_d00_intro",
+      difficulty_tier: 0,
+    },
+    headers,
+  );
+  const attemptValue = isObject(start.active_attempt) ? start.active_attempt : start.attempt;
+  assert(isObject(attemptValue), "remote arena start should return active_attempt or attempt");
+  const attempt = attemptValue;
+  const attemptId = stringField(attempt, "id");
+  assert(attemptId !== "", "remote arena start should return active_attempt.id");
+
+  const duel = await postJson(
+    `${SUPABASE_URL}/functions/v1/arena/pve/duel/request`,
+    {
+      request_id: crypto.randomUUID(),
+      attempt_id: attemptId,
+    },
+    headers,
+  );
+  const step = objectField(duel, "step");
+  const battleLog = objectField(step, "battle_log");
+  const metadata = objectField(battleLog, "metadata");
+  const arena = objectField(battleLog, "arena");
+  assertEq(
+    stringField(metadata, "mode"),
+    "PVE_ARENA_V1",
+    "remote arena battle log metadata should mark PVE_ARENA_V1",
+  );
+  assertEq(
+    numberField(metadata, "duel_index"),
+    1,
+    "remote arena battle log metadata should expose duel_index",
+  );
+  assertEq(
+    numberField(metadata, "duel_count"),
+    1,
+    "remote tutorial arena should expose duel_count 1",
+  );
+  assertEq(
+    stringField(arena, "mode"),
+    "PVE_ARENA_V1",
+    "remote arena battle log arena block should mark PVE_ARENA_V1",
+  );
+
+  return attemptId;
 }
 
 async function recordModeEvent(
@@ -647,4 +737,25 @@ function stableStringify(value: unknown): string {
     }}`;
   }
   return JSON.stringify(value);
+}
+
+function stableResponseString(value: unknown): string {
+  return stableStringify(stripVolatileEnvelopeFields(value));
+}
+
+function stripVolatileEnvelopeFields(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map((item) => stripVolatileEnvelopeFields(item));
+  }
+  if (!isObject(value)) {
+    return value;
+  }
+  const result: Record<string, unknown> = {};
+  for (const key of Object.keys(value).sort()) {
+    if (key === "cache" || key === "server_timing") {
+      continue;
+    }
+    result[key] = stripVolatileEnvelopeFields(value[key]);
+  }
+  return result;
 }
