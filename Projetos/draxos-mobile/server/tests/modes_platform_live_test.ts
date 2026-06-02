@@ -41,7 +41,9 @@ try {
   await proveRegistryAndState(account);
   await proveDisabledModesDoNotStart(account);
   await proveSessionRewardAndIdempotency(account);
-  await proveTamperedResultIsRejected(account);
+
+  const tamperAccount = await createTestAccount("mode-live-tamper", "normal");
+  await proveTamperedResultIsRejected(tamperAccount);
 
   const labAccount = await createTestAccount(
     "mode-live-progression-lab",
@@ -151,9 +153,12 @@ async function assertLocalDatabaseIsCurrent(): Promise<void> {
     select mode_id
     from public.mode_registry
     where mode_id = ${MODE_MODE_ID}
-      and status = 'internal_alpha'
+      and status = 'active'
+      and release_channel = 'internal_alpha'
+      and active_ruleset_id = ${MODE_RULESET_ID}
+      and active_ruleset_version = ${MODE_RULESET_VERSION}
   `;
-  assertEq(registryRows.length, 1, "openworld mode registry seed should exist");
+  assertEq(registryRows.length, 1, "openworld mode registry seed should match the active internal alpha contract");
 }
 
 async function createTestAccount(
@@ -297,6 +302,7 @@ async function proveSessionRewardAndIdempotency(
     const node of [
       { node_id: "node_madeira_01", item_id: "madeira" },
       { node_id: "node_pedra_01", item_id: "pedra" },
+      { node_id: "node_pedra_pequena_01", item_id: "pedra_pequena" },
       { node_id: "node_ossos_preview_01", item_id: "ossos_preview" },
       { node_id: "node_po_osso_preview_01", item_id: "po_osso_preview" },
     ]
@@ -587,14 +593,15 @@ function isObject(value: unknown): value is JsonObject {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function stableStringify(value: unknown): string {
+function stableStringify(value: unknown, parentKey = ""): string {
   if (Array.isArray(value)) {
-    return `[${value.map((item) => stableStringify(item)).join(",")}]`;
+    return `[${value.map((item) => stableStringify(item, parentKey)).join(",")}]`;
   }
   if (isObject(value)) {
+    const keys = Object.keys(value).filter((key) => !(parentKey === "cache" && key === "generated_at"));
     return `{${
-      Object.keys(value).sort().map((key) =>
-        `${JSON.stringify(key)}:${stableStringify(value[key])}`
+      keys.sort().map((key) =>
+        `${JSON.stringify(key)}:${stableStringify(value[key], key)}`
       ).join(",")
     }}`;
   }

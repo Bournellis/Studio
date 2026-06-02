@@ -45,10 +45,15 @@ func _fail_mutation(mutation: Dictionary, result: Dictionary) -> void:
 
 func _begin_cached_refresh(host: Node, surface: String, endpoint: String, message: String, render_method: String = "") -> Dictionary:
 	var rendered_from_cache := SessionStore.has_surface_snapshot(surface)
-	if rendered_from_cache and render_method != "":
+	if render_method != "":
 		host.call(render_method)
-		host.call("_show_notice", "Dados em cache visiveis. Atualizando com o servidor...")
-	return host.call("_begin_surface_refresh", surface, endpoint, message, rendered_from_cache)
+	var refresh_token: Dictionary = host.call("_begin_surface_refresh", surface, endpoint, message, rendered_from_cache)
+	if render_method != "":
+		if rendered_from_cache:
+			host.call("_show_notice", "Dados em cache visiveis. Atualizando com o servidor...")
+		else:
+			host.call("_show_notice", "Superficie local visivel. Sincronizando com o servidor...")
+	return refresh_token
 
 func _finish_cached_refresh(host: Node, surface: String, token: Dictionary, result: Dictionary, message: String, render_method: String = "") -> bool:
 	if not bool(host.call("_finish_surface_refresh", surface, token, result, message)):

@@ -14,6 +14,11 @@ func render_selection(host: Node) -> void:
 		_render_dev_fallback_arenas(host)
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
+func render_loading_selection(host: Node) -> void:
+	_call_host(host, "_add_body_text", ["Escolha uma lista de duelos. O loadout trava ao iniciar; buffs e comportamento ficam entre vitorias."])
+	_call_host(host, "_add_output_label", ["Sincronizando Arena PVE\nBuscando arenas, desbloqueios e tentativa ativa no servidor.\nNenhuma tentativa local sera iniciada antes da resposta remota."])
+	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
+
 func render_loadout(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
 	_call_host(host, "_add_body_text", ["Loadout travado para esta tentativa. Instrumento, habilidades, doutrina, familiar e pocao nao trocam ate a tentativa acabar."])

@@ -10,9 +10,32 @@ const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_re
 const HubSurfacePresenterScript = preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
 const ModeHubSurfacePresenterScript = preload("res://modes/boot/surfaces/mode_hub_surface_presenter.gd")
 const ProgressionClarityPresenterScript = preload("res://modes/boot/surfaces/progression_clarity_presenter.gd")
+const SurfaceActionFlowScript = preload("res://modes/boot/flows/surface_action_flow.gd")
 const ModeShellLauncherScript = preload("res://modes/boot/ui/mode_shell_launcher.gd")
 const MobileUiContractScript = preload("res://modes/boot/ui/mobile_ui_contract.gd")
 const TouchScrollContainerScript = preload("res://modes/boot/ui/touch_scroll_container.gd")
+
+class SurfaceRefreshHost:
+	extends Node
+
+	var begin_calls: Array[Dictionary] = []
+	var notices: PackedStringArray = PackedStringArray()
+	var render_calls := 0
+
+	func _render_base_state() -> void:
+		render_calls += 1
+
+	func _begin_surface_refresh(surface: String, endpoint: String, message: String, rendered_from_cache: bool = false) -> Dictionary:
+		begin_calls.append({
+			"surface": surface,
+			"endpoint": endpoint,
+			"message": message,
+			"rendered_from_cache": rendered_from_cache,
+		})
+		return {"session_version": 1}
+
+	func _show_notice(message: String) -> void:
+		notices.append(message)
 
 func before_each() -> void:
 	ProjectSettings.set_setting("draxos_mobile/testing/disable_telemetry", true)
@@ -577,6 +600,24 @@ func test_arena_selection_keeps_fixed_buttons_only_for_dev_fallback() -> void:
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_EARLY))
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.arena_start_action("arena_tutorial_cinzas")))
 
+func test_arena_first_access_loading_state_suppresses_dev_fallback_actions() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.arena_state = {}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL))
+
+	boot._arena_lifecycle_flow.render_loading_selection(boot)
+	await get_tree().process_frame
+
+	assert_true(_label_tree_contains(boot._content_body, "Sincronizando Arena PVE"))
+	assert_true(_label_tree_contains(boot._content_body, "Nenhuma tentativa local sera iniciada antes da resposta remota."))
+	assert_false(_visible_text_tree(boot._content_body).contains("Fallback dev local"))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_EARLY))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_RETURN_REFUGE))
+
 func test_arena_selection_recommends_next_uncompleted_arena_after_tutorial() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
@@ -948,6 +989,20 @@ func test_boot_surface_presenters_render_shells_without_network() -> void:
 	assert_true(boot._action_buttons.has("claim_reward:daily_collect_base"))
 	assert_not_null(boot._shop_state_container)
 	await get_tree().process_frame
+
+func test_cached_surface_refresh_renders_local_shell_without_cache_flag() -> void:
+	var flow = SurfaceActionFlowScript.new()
+	var host = SurfaceRefreshHost.new()
+	add_child_autofree(host)
+
+	var token: Dictionary = flow._begin_cached_refresh(host, SessionStore.SURFACE_BASE, "base/state", "Buscando Refugio...", "_render_base_state")
+
+	assert_eq(int(host.render_calls), 1)
+	assert_eq(host.begin_calls.size(), 1)
+	assert_eq(str(token.get("session_version", "")), "1")
+	assert_false(bool(host.begin_calls[0].get("rendered_from_cache", true)))
+	assert_eq(host.notices.size(), 1)
+	assert_eq(str(host.notices[0]), "Superficie local visivel. Sincronizando com o servidor...")
 
 func test_battle_request_pending_state_uses_static_splash_only() -> void:
 	var boot = BootScreenScript.new()

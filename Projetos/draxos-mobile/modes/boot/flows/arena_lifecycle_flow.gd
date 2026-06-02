@@ -14,6 +14,9 @@ const EARLY_DIFFICULTY_TIER := 1
 func render_selection(host: Node) -> void:
 	host.get("_arena_surface_presenter").render_selection(host)
 
+func render_loading_selection(host: Node) -> void:
+	_render_selection_loading_shell(host)
+
 func render_loadout(host: Node) -> void:
 	host.get("_arena_surface_presenter").render_loadout(host)
 
@@ -48,6 +51,8 @@ func open_arena(host: Node) -> void:
 	if rendered_from_cache:
 		render_selection(host)
 		host.call("_show_notice", "Arena em cache visivel. Atualizando com o servidor...")
+	else:
+		_render_selection_loading_shell(host)
 	var refresh_token: Dictionary = host.call(
 		"_begin_surface_refresh",
 		SessionStore.SURFACE_ARENA,
@@ -55,6 +60,8 @@ func open_arena(host: Node) -> void:
 		"Carregando Arena PVE...",
 		rendered_from_cache
 	)
+	if not rendered_from_cache:
+		host.call("_show_notice", "Arena local visivel. Sincronizando com o servidor...")
 	var state_result: Dictionary = await SupabaseClient.fetch_arena_state(SessionStore.access_token)
 	if not bool(state_result.get("ok", false)) and _dev_fixtures_enabled():
 		state_result = _fixture_result(_base_arena_state())
@@ -77,6 +84,13 @@ func open_arena(host: Node) -> void:
 	SessionStore.save_cache()
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
 	host.call("_finish_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, state_result, "Arena PVE carregada.")
+
+func _render_selection_loading_shell(host: Node) -> void:
+	host.call("_clear_content_body")
+	host.call("_reset_action_group")
+	var action_buttons: Dictionary = host.get("_action_buttons")
+	action_buttons.clear()
+	host.get("_arena_surface_presenter").render_loading_selection(host)
 
 func start_tutorial(host: Node) -> void:
 	await _start_attempt(host, TUTORIAL_ARENA_ID, "s1_d00_intro", TUTORIAL_DIFFICULTY_TIER)
