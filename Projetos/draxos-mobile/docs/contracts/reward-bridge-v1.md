@@ -25,20 +25,22 @@ Every reward-applying mode completion must carry:
 | `ruleset_id` | Active ruleset expected by the server. |
 | `ruleset_version` | Active ruleset version expected by the server. |
 | `session_id` | Existing server-created session. |
-| `result` | Mode-specific completion evidence, never final deltas. |
+| `expected_revision` | Snapshot/revision gate when the mode is event-sourced or resumable. |
+| `result` | Mode-specific completion evidence, never final deltas. Historical only for modes not yet using snapshot authority. |
 
 ## Current Openworld Payload
 
 `openworld/forest` completion accepts:
 
 - `session_id`
-- `session_seconds`
-- `activity_score`
-- `deposited_items`
-- `ruleset_id = openworld_forest_ruleset_v0`
+- `expected_revision`
+- `ruleset_id = openworld_forest_ruleset_v1`
 - `ruleset_version = 1`
 
-The Edge adapter canonicalizes this payload before hashing. Deposited items must be allow-listed local Openworld item ids and non-negative whole quantities.
+The Edge adapter canonicalizes this payload before hashing. The RPC loads
+`mode_sessions.snapshot_payload`, rejects stale revisions and derives
+`session_seconds`, `activity_score` and `deposited_items` from the server
+snapshot. Client-submitted `deposited_items` is ignored for reward authority.
 
 ## Idempotency
 
@@ -121,3 +123,5 @@ Minimum test coverage:
 - no direct admin `PATCH` in `/modes/admin/*`;
 - RLS smoke denying admin RPCs to player roles;
 - mode completion duplicate request coverage.
+- Openworld complete fraud coverage proving client `deposited_items` cannot
+  change reward outcome.

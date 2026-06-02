@@ -10,6 +10,10 @@ const HARDENING_V2_MIGRATION_PATH =
   "supabase/migrations/202606010003_foundation_hardening_v2.sql";
 const HARDENING_V2_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606010003_foundation_hardening_v2.sql";
+const BOSQUE_HARDENING_MIGRATION_PATH =
+  "supabase/migrations/202606020001_openworld_bosque_hardening_v1.sql";
+const BOSQUE_HARDENING_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606020001_openworld_bosque_hardening_v1.sql";
 const EDGE_PATH = "server/functions/modes/index.ts";
 const SUPABASE_EDGE_PATH = "supabase/functions/modes/index.ts";
 const HANDLER_PATH = "server/functions/modes/mode_handler.ts";
@@ -47,6 +51,17 @@ Deno.test("foundation hardening v2 migration is mirrored in server schema", asyn
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema hardening v2 migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("openworld bosque hardening migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(BOSQUE_HARDENING_MIGRATION_PATH);
+  const serverMirror = await readProjectText(BOSQUE_HARDENING_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema bosque hardening migration should mirror supabase migration exactly",
   );
 });
 
@@ -213,6 +228,7 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
       "registry",
       "state",
       "session_start",
+      "session_event",
       "session_complete",
       "session_abandon",
       "analytics_summary",
@@ -257,6 +273,35 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
     700,
     "mode_support.ts should stay below the V2 support budget",
   );
+});
+
+Deno.test("openworld bosque hardening declares snapshot, event and server-authoritative reward contracts", async () => {
+  const migration = normalizeSql(await readProjectText(BOSQUE_HARDENING_MIGRATION_PATH));
+  const handler = normalizeCode(await readProjectText(HANDLER_PATH));
+  const support = normalizeCode(await readProjectText(SUPPORT_PATH));
+
+  for (
+    const fragment of [
+      "add column if not exists snapshot_payload",
+      "add column if not exists snapshot_revision",
+      "add column if not exists last_event_at",
+      "create table if not exists public.mode_session_events",
+      "create or replace function public.mode_session_event_v1",
+      "openworld_forest_ruleset_v1",
+      "openworld_forest_initial_snapshot_v1",
+      "openworld_forest_apply_event_v1",
+      "mode_session_revision_stale",
+      "openworld_node_already_collected",
+      "deposited_items_payload := coalesce(session_row.snapshot_payload",
+      "'authority', 'server_snapshot'",
+    ]
+  ) {
+    assertIncludes(migration, fragment, `bosque hardening should include ${fragment}`);
+  }
+  assertIncludes(handler, "mode_endpoint_session_event", "handler should hash event mutations");
+  assertIncludes(handler, "rpc/mode_session_event_v1", "handler should call the event RPC");
+  assertIncludes(support, "session_event", "support should resolve the event route");
+  assertIncludes(support, "mode_session_revision_stale", "support should map stale revisions");
 });
 
 Deno.test("mode session abandon is RPC-backed and hash guarded", async () => {

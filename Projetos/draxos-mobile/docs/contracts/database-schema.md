@@ -1,6 +1,6 @@
 # Database Schema Contract
 
-- Ultima atualizacao: `2026-05-31`
+- Ultima atualizacao: `2026-06-02`
 - Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1. Arena PVE v1 acrescenta schema contratado para tentativa, duelos, buffs, progresso e rewards sem migration nesta branch.
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
@@ -22,6 +22,7 @@ Migrations atuais:
 - `202605300002_transactional_domain_enforcement.sql`: promove Base para efeitos reais em RPCs v1 (`complete_due_base_jobs_v1`, `collect_base_v1`, `start_base_upgrade_v1`), com lock do save, reserva idempotente, ledger/saldo/job na mesma transacao e grants somente para `service_role`.
 - `202605300003_remaining_transactional_domain_enforcement.sql`: promove battle rewards, monetization rewards/alpha purchase, build equip, crafting craft/crush-bones e guild create/join para RPCs v1 com lock de `game_saves`, `request_hash`, idempotencia pending/completed, ledger e grants somente para `service_role`.
 - `202605300004_foundation_closeout.sql`: corrige `ruleset_registry` para publicacao imutavel por `publication_id`, persiste hashes de ruleset em saves/historicos, cria admin interno auditavel e promove as mutacoes restantes de build behavior/potion e social friend/chat para RPCs v1 `service_role`-only.
+- `202606020001_openworld_bosque_hardening_v1.sql`: promove `openworld/forest` para `active` no canal `internal_alpha`, adiciona snapshot/revision/event audit em Mode sessions, registra `openworld_forest_ruleset_v1`, aplica limites de sessao e torna o Reward Bridge do Bosque autoritativo pelo snapshot do servidor.
 
 ## Regras De Escopo De Servico
 
@@ -248,6 +249,70 @@ Regras:
 - grava deltas economicos em `resource_transactions`;
 - primeira clear, recorde, repeticao e caps devem ser calculados no servidor;
 - nao toca `ranking`.
+
+## Openworld Bosque v1 Schema Contratado
+
+Status: migration local preparada em mirror `server/schema/migrations/` e
+`supabase/migrations/`; nao aplicada remotamente nesta entrega.
+
+Definition: `data/definitions/openworld/forest_ruleset_v1.json`.
+
+### `mode_sessions`
+
+Campos adicionais para modos retomaveis:
+
+- `snapshot_payload`: snapshot server-authoritative do modo;
+- `snapshot_revision`: revisao monotonicamente crescente;
+- `last_event_at`: ultimo evento aceito pelo servidor.
+
+Regras:
+
+- `openworld/forest` usa `openworld_forest_snapshot_v1`;
+- sessao ativa expira em 2 horas;
+- no maximo uma sessao `started` por save/mode/slice;
+- completion exige `expected_revision` igual a `snapshot_revision`;
+- recompensa real deriva apenas de `snapshot_payload`.
+
+### `mode_session_events`
+
+Auditoria de eventos aceitos/rejeitados pelo Bosque.
+
+Campos minimos:
+
+- `id`
+- `session_id`
+- `game_save_id`
+- `mode_id`
+- `slice_id`
+- `request_id`
+- `request_hash`
+- `event_type`
+- `expected_revision`
+- `revision_after`
+- `event_payload`
+- `snapshot_payload`
+- `created_at`
+
+Regras:
+
+- unico por `session_id + request_id`;
+- leitura/escrita direta do cliente proibida por RLS;
+- acesso operacional via RPC `service_role`;
+- stale write rejeita antes de mutar snapshot;
+- no coletado nao pode ser consumido duas vezes;
+- coleta em andamento nao e persistida.
+
+### RPCs
+
+- `mode_session_start_v1`: cria snapshot revision `0`, aplica
+  `mode_limit_policies` com 1 sessao ativa, cooldown de 10s, limite diario de
+  100 starts e expiracao de 2h.
+- `mode_session_event_v1`: valida evento, `expected_revision`, ruleset e
+  sessao ativa, aplica snapshot e avanca revisao.
+- `mode_session_complete_v1`: usa somente snapshot do servidor para calcular
+  `deposited_items`, `activity_score`, caps e reward ledger.
+- `mode_session_abandon_v1`: idempotente, registra estado final e remove a
+  sessao de retomada.
 
 ## MVP Tecnico
 

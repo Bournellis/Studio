@@ -1,7 +1,7 @@
 # DraxosMobile - Documentation Index
 
 - Status: `VIVO`
-- Last updated: `2026-06-01`
+- Last updated: `2026-06-02`
 - Purpose: classify project documents so agents know what to trust, what to update and what to treat as history.
 
 ## Categories
@@ -56,6 +56,7 @@
 | `docs/minigames/autobattler.md` | `VIVO` | Autobattler mode doc and descriptor pointer for current Arena PVE ownership. |
 | `docs/minigames/openworld.md` | `VIVO` | Current Openworld Bosque design/implementation contract for fullscreen gameplay and integrated alpha bridge. |
 | `docs/minigames/openworld-decision-pack.md` | `VIVO` | Decision pack preserving Openworld Bosque as the only approved slice and blocking expansion without a package decision. |
+| `data/definitions/openworld/forest_ruleset_v1.json` | `CONTRATO` | Active Internal Alpha ruleset definition for Openworld Bosque snapshot/events/resources/recipes. |
 | `docs/minigames/towerdefense.md` | `VIVO` | Non-playable staged Towerdefense mode scaffold. |
 | `docs/minigames/towerdefense-decision-pack.md` | `VIVO` | Decision pack for future Towerdefense questions; keeps the mode staged/disabled. |
 | `docs/minigames/cardgame.md` | `VIVO` | Non-playable staged Cardgame mode scaffold. |

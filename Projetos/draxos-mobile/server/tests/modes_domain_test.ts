@@ -6,21 +6,21 @@ import {
   OPENWORLD_RULESET_ID,
   OPENWORLD_RULESET_VERSION,
   OPENWORLD_SLICE_ID,
+  sessionEventFromBody,
 } from "../functions/_shared/mode_domain.ts";
 
-Deno.test("openworld completion payload accepts only the v0 ruleset and local items", () => {
+Deno.test("openworld completion payload accepts only the v1 ruleset and expected revision", () => {
   const result = completionResultFromBody({
     session_id: "00000000-0000-4000-8000-000000000101",
-    session_seconds: 40,
-    deposited_items: { galho: 2, ossos_preview: 3 },
-    activity_score: 24,
+    expected_revision: 4,
+    deposited_items: { galho: 2, dragon_gold: 99 },
     ruleset_id: OPENWORLD_RULESET_ID,
     ruleset_version: OPENWORLD_RULESET_VERSION,
   });
 
   assert(result !== null, "valid openworld result should parse");
   assertEq(result.ruleset_id, OPENWORLD_RULESET_ID, "ruleset should be canonical");
-  assertEq(result.deposited_items.galho, 2, "deposited items should be normalized");
+  assertEq(result.expected_revision, 4, "complete should preserve the snapshot revision gate");
 });
 
 Deno.test("openworld deposited items reject unknown resources and excessive quantities", () => {
@@ -30,12 +30,12 @@ Deno.test("openworld deposited items reject unknown resources and excessive quan
   assertEq(normalizeDepositedItems({ galho: -1 }), null, "negative quantity should fail");
 });
 
-Deno.test("openworld canonical completion payload is sorted and stable", () => {
+Deno.test("openworld canonical completion payload excludes client-side rewards", () => {
   const result = completionResultFromBody({
     session_id: "00000000-0000-4000-8000-000000000101",
-    session_seconds: 40.9,
-    deposited_items: { pedra: 1, galho: 2 },
-    activity_score: 24.9,
+    expected_revision: 7,
+    deposited_items: { pedra: 1, galho: 2, dragon_gold: 900 },
+    activity_score: 999,
     ruleset_id: OPENWORLD_RULESET_ID,
     ruleset_version: OPENWORLD_RULESET_VERSION,
   });
@@ -44,12 +44,32 @@ Deno.test("openworld canonical completion payload is sorted and stable", () => {
   const canonical = canonicalCompletionPayload(result);
   assertEq(canonical.mode_id, OPENWORLD_MODE_ID, "canonical payload should include mode");
   assertEq(canonical.slice_id, OPENWORLD_SLICE_ID, "canonical payload should include slice");
-  assertEq(canonical.session_seconds, 40, "seconds should be integerized");
-  assertEq(canonical.activity_score, 24, "score should be integerized");
+  assertEq(canonical.expected_revision, 7, "canonical payload should include revision");
+  assertEq("deposited_items" in canonical, false, "client deposited_items should not affect rewards");
+  assertEq("activity_score" in canonical, false, "client activity_score should not affect rewards");
+});
+
+Deno.test("openworld session event payload validates event type and revision", () => {
+  const event = sessionEventFromBody({
+    session_id: "00000000-0000-4000-8000-000000000101",
+    mode_id: OPENWORLD_MODE_ID,
+    slice_id: OPENWORLD_SLICE_ID,
+    event_type: "collect_complete",
+    expected_revision: 3,
+    event_payload: { node_id: "node_galho_01", item_id: "galho" },
+  });
+  assert(event !== null, "valid event should parse");
+  assertEq(event.event_type, "collect_complete", "event type should be preserved");
+  assertEq(event.expected_revision, 3, "event should preserve the revision gate");
   assertEq(
-    JSON.stringify(canonical.deposited_items),
-    '{"galho":2,"pedra":1}',
-    "deposited items should be sorted for request_hash stability",
+    sessionEventFromBody({
+      session_id: "00000000-0000-4000-8000-000000000101",
+      event_type: "spawn_dragon",
+      expected_revision: 3,
+      event_payload: {},
+    }),
+    null,
+    "unknown events should be rejected",
   );
 });
 

@@ -9,9 +9,9 @@ import {
 Deno.test("openworld reward bridge canonicalizes only Openworld Forest results", () => {
   const result = completionResultFromBody({
     session_id: "00000000-0000-4000-8000-000000000101",
-    session_seconds: 37.7,
-    activity_score: 44.2,
-    deposited_items: { folha: 3, ossos_preview: 1 },
+    expected_revision: 2,
+    activity_score: 999,
+    deposited_items: { folha: 3, dragon_gold: 900 },
     ruleset_id: OPENWORLD_RULESET_ID,
     ruleset_version: OPENWORLD_RULESET_VERSION,
   });
@@ -19,23 +19,18 @@ Deno.test("openworld reward bridge canonicalizes only Openworld Forest results",
   const canonical = canonicalCompletionPayload(result);
   assertEq(canonical.mode_id, OPENWORLD_MODE_ID, "canonical mode should be openworld");
   assertEq(canonical.ruleset_id, OPENWORLD_RULESET_ID, "canonical ruleset should match");
-  assertEq(
-    JSON.stringify(canonical.deposited_items),
-    '{"folha":3,"ossos_preview":1}',
-    "items should be sorted",
-  );
+  assertEq(canonical.expected_revision, 2, "canonical payload should include expected_revision");
+  assertEq("deposited_items" in canonical, false, "client-declared items should not enter completion authority");
 });
 
-Deno.test("openworld reward bridge rejects unapproved local items", () => {
+Deno.test("openworld reward bridge requires the snapshot revision gate", () => {
   const result = completionResultFromBody({
     session_id: "00000000-0000-4000-8000-000000000101",
-    session_seconds: 37,
-    activity_score: 44,
-    deposited_items: { folha: 3, unknown_item: 1 },
+    deposited_items: { folha: 3 },
     ruleset_id: OPENWORLD_RULESET_ID,
     ruleset_version: OPENWORLD_RULESET_VERSION,
   });
-  assertEq(result, null, "unknown local items should not enter the reward bridge");
+  assertEq(result, null, "completion without expected_revision should be rejected");
 });
 
 Deno.test("reward bridge contract documents idempotency and admin boundaries", async () => {

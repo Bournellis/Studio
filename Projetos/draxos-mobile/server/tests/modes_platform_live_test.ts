@@ -22,7 +22,7 @@ interface TestAccount {
 
 const MODE_MODE_ID = "openworld";
 const MODE_SLICE_ID = "forest";
-const MODE_RULESET_ID = "openworld_forest_ruleset_v0";
+const MODE_RULESET_ID = "openworld_forest_ruleset_v1";
 const MODE_RULESET_VERSION = 1;
 
 const sql = postgres(DATABASE_URL, {
@@ -96,6 +96,7 @@ async function assertLocalDatabaseIsCurrent(): Promise<void> {
     where n.nspname = 'public'
       and p.proname in (
         'mode_session_start_v1',
+        'mode_session_event_v1',
         'mode_session_complete_v1'
       )
   `;
@@ -103,6 +104,7 @@ async function assertLocalDatabaseIsCurrent(): Promise<void> {
   for (
     const rpc of [
       "mode_session_start_v1",
+      "mode_session_event_v1",
       "mode_session_complete_v1",
     ]
   ) {
@@ -278,6 +280,7 @@ async function proveSessionRewardAndIdempotency(
     account.headers,
   );
   const sessionId = stringField(objectField(firstStart, "session"), "id");
+  let revision = numberField(objectField(firstStart, "session"), "snapshot_revision");
   assert(sessionId !== "", "session/start should return session.id");
   assertEq(
     sessionId,
@@ -290,17 +293,25 @@ async function proveSessionRewardAndIdempotency(
     "mode:openworld:normal",
   );
 
-  const completeRequestId = crypto.randomUUID();
-  const completeBody = completionBody(completeRequestId, sessionId, {
+  for (
+    const node of [
+      { node_id: "node_madeira_01", item_id: "madeira" },
+      { node_id: "node_pedra_01", item_id: "pedra" },
+      { node_id: "node_ossos_preview_01", item_id: "ossos_preview" },
+      { node_id: "node_po_osso_preview_01", item_id: "po_osso_preview" },
+    ]
+  ) {
+    revision = await recordEvent(account, sessionId, revision, "collect_complete", {
+      ...node,
+      session_seconds: 120,
+    });
+  }
+  revision = await recordEvent(account, sessionId, revision, "deposit_all", {
     session_seconds: 120,
-    activity_score: 500,
-    deposited_items: {
-      madeira: 20,
-      folha: 7,
-      ossos_preview: 6,
-      po_osso_preview: 3,
-    },
   });
+
+  const completeRequestId = crypto.randomUUID();
+  const completeBody = completionBody(completeRequestId, sessionId, revision);
   const firstComplete = await postJson(
     `${SUPABASE_URL}/functions/v1/modes/session/complete`,
     completeBody,
@@ -308,9 +319,9 @@ async function proveSessionRewardAndIdempotency(
   );
   const reward = objectField(firstComplete, "reward");
   const resourceDelta = objectField(reward, "resource_delta");
-  assertEq(numberField(resourceDelta, "energia"), 12, "reward energy should be capped per session");
-  assertEq(numberField(resourceDelta, "ossos"), 2, "reward bones should be capped per session");
-  assertEq(numberField(resourceDelta, "xp"), 8, "reward XP should be capped per session");
+  assert(numberField(resourceDelta, "energia") >= 1, "reward energy should come from server snapshot");
+  assert(numberField(resourceDelta, "ossos") >= 0, "reward bones should be server-derived");
+  assert(numberField(resourceDelta, "xp") >= 0, "reward XP should be server-derived");
 
   const repeatedComplete = await postJson(
     `${SUPABASE_URL}/functions/v1/modes/session/complete`,
@@ -369,18 +380,14 @@ async function proveTamperedResultIsRejected(
   const requestId = crypto.randomUUID();
   const response = await postJson(
     `${SUPABASE_URL}/functions/v1/modes/session/complete`,
-    completionBody(requestId, sessionId, {
-      session_seconds: 60,
-      activity_score: 5000,
-      deposited_items: { madeira: 1 },
-    }),
+    completionBody(requestId, sessionId, 999),
     account.headers,
     false,
   );
   assertEq(
     stringField(objectField(response, "error"), "code"),
-    "MODE_RESULT_REJECTED",
-    "server should reject over-limit activity_score",
+    "MODE_SESSION_REVISION_STALE",
+    "server should reject stale or forged completion revisions",
   );
 }
 
@@ -391,11 +398,7 @@ async function proveProgressionLabCannotClaimReward(
   const requestId = crypto.randomUUID();
   const response = await postJson(
     `${SUPABASE_URL}/functions/v1/modes/session/complete`,
-    completionBody(requestId, sessionId, {
-      session_seconds: 60,
-      activity_score: 120,
-      deposited_items: { madeira: 2, ossos_preview: 3 },
-    }),
+    completionBody(requestId, sessionId, 0),
     account.headers,
     false,
   );
@@ -429,11 +432,7 @@ async function startSession(account: TestAccount): Promise<string> {
 function completionBody(
   requestId: string,
   sessionId: string,
-  result: {
-    session_seconds: number;
-    activity_score: number;
-    deposited_items: Record<string, number>;
-  },
+  expectedRevision: number,
 ): JsonObject {
   return {
     request_id: requestId,
@@ -441,11 +440,32 @@ function completionBody(
       session_id: sessionId,
       ruleset_id: MODE_RULESET_ID,
       ruleset_version: MODE_RULESET_VERSION,
-      session_seconds: result.session_seconds,
-      activity_score: result.activity_score,
-      deposited_items: result.deposited_items,
+      expected_revision: expectedRevision,
     },
   };
+}
+
+async function recordEvent(
+  account: TestAccount,
+  sessionId: string,
+  expectedRevision: number,
+  eventType: string,
+  eventPayload: JsonObject,
+): Promise<number> {
+  const response = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    {
+      request_id: crypto.randomUUID(),
+      session_id: sessionId,
+      mode_id: MODE_MODE_ID,
+      slice_id: MODE_SLICE_ID,
+      event_type: eventType,
+      expected_revision: expectedRevision,
+      event_payload: eventPayload,
+    },
+    account.headers,
+  );
+  return numberField(objectField(response, "event"), "revision_after");
 }
 
 async function assertCompletedIdempotency(

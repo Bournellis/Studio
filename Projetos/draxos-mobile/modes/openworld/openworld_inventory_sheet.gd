@@ -176,8 +176,9 @@ func _render_inventory(title: String, source: Dictionary, subtitle: String) -> v
 func _render_craft() -> void:
 	_body.add_child(_label("Craft local", 16, Color(0.90, 0.82, 0.62)))
 	_body.add_child(_label("Upgrades do modo. Nao altera Base/Conta.", 13, Color(0.75, 0.72, 0.64)))
-	for recipe_id: String in ModelScript.RECIPES.keys():
-		var recipe := ModelScript.RECIPES[recipe_id] as Dictionary
+	var recipes := ModelScript.recipes()
+	for recipe_id: String in recipes.keys():
+		var recipe := recipes[recipe_id] as Dictionary
 		var button := Button.new()
 		button.name = "OpenworldCraft_%s" % recipe_id
 		button.text = "%s  |  %s" % [str(recipe.get("display_name", recipe_id)), _cost_text(recipe.get("cost", {}))]
@@ -190,12 +191,12 @@ func _render_craft() -> void:
 	_body.add_child(_label("Ativos: %s" % _upgrade_lines(), 13, Color(0.86, 0.81, 0.68)))
 
 func _render_session() -> void:
-	_body.add_child(_label("Sessao", 16, Color(0.90, 0.82, 0.62)))
-	var state := "online" if integration_mode == "integrated_alpha" and server_session_id != "" else integration_mode
+	_body.add_child(_label("Bosque", 16, Color(0.90, 0.82, 0.62)))
+	var state := "Retomada pronta" if integration_mode == "integrated_alpha" and server_session_id != "" else "Preview sem recompensa"
 	_body.add_child(_label("Estado: %s" % state, 13, Color(0.82, 0.80, 0.70)))
 	_complete_button = Button.new()
 	_complete_button.name = "OpenworldSheetCompleteButton"
-	_complete_button.text = "Completar sessao" if integration_mode == "integrated_alpha" else "Gerar resultado local"
+	_complete_button.text = "Completar" if integration_mode == "integrated_alpha" else "Preview"
 	_complete_button.custom_minimum_size = Vector2(0, 48)
 	_complete_button.disabled = network_busy
 	_complete_button.pressed.connect(func() -> void:
@@ -206,7 +207,7 @@ func _render_session() -> void:
 		_body.add_child(_label(result_text, 13, Color(0.94, 0.90, 0.74)))
 	_technical_button = Button.new()
 	_technical_button.name = "OpenworldTechnicalDetailsButton"
-	_technical_button.text = "Ocultar detalhes tecnicos" if _technical_visible else "Detalhes tecnicos"
+	_technical_button.text = "Ocultar detalhes da operacao" if _technical_visible else "Detalhes da operacao"
 	_technical_button.custom_minimum_size = Vector2(0, 44)
 	_technical_button.pressed.connect(func() -> void:
 		_technical_visible = not _technical_visible

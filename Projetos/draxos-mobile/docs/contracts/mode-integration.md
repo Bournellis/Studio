@@ -28,6 +28,10 @@ Modo que emite progresso ou recompensa real precisa de ruleset versionado,
 ledger/RPC server-authoritative e bloqueio explicito contra reward real no
 `progression_lab`.
 
+Modo retomavel ou event-sourced precisa declarar snapshot remoto, revision gate,
+eventos aceitos, expiração, comportamento offline/preview e fonte de autoridade
+da recompensa antes de virar `active`.
+
 ## Checklist De Integracao
 
 - registry row completo;

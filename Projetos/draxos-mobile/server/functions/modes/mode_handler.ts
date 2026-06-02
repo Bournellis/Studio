@@ -8,6 +8,7 @@ import {
   completionResultFromBody,
   MODE_ENDPOINT_SESSION_ABANDON,
   MODE_ENDPOINT_SESSION_COMPLETE,
+  MODE_ENDPOINT_SESSION_EVENT,
   MODE_ENDPOINT_SESSION_START,
   modeRegistryPayload,
   modeStatePayload,
@@ -16,6 +17,7 @@ import {
   OPENWORLD_RULESET_ID,
   OPENWORLD_RULESET_VERSION,
   OPENWORLD_SLICE_ID,
+  sessionEventFromBody,
   TOWERDEFENSE_MODE_ID,
 } from "../_shared/mode_domain.ts";
 import {
@@ -93,6 +95,9 @@ export class ModeHandler {
       }
       if (route === "session_start") {
         return await handleSessionStart(request, auth.value, config.value);
+      }
+      if (route === "session_event") {
+        return await handleSessionEvent(request, auth.value, config.value);
       }
       if (route === "session_complete") {
         return await handleSessionComplete(request, auth.value, config.value);
@@ -208,6 +213,55 @@ async function handleSessionStart(
   });
   if (rpc.error !== null) {
     const mapped = mapModeDatabaseError(rpc.error, "MODE_SESSION_START_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
+  }
+  return jsonResponse(foundationRpcPayload(rpc.value));
+}
+
+async function handleSessionEvent(
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  const body = await readJsonObject(request);
+  if (body === null) {
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
+  }
+  const requestId = stringField(body, "request_id");
+  if (!UUID_PATTERN.test(requestId)) {
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
+  }
+  const event = sessionEventFromBody(body);
+  if (event === null || !UUID_PATTERN.test(event.session_id)) {
+    return errorResponse("INVALID_MODE_EVENT", "Openworld session event is invalid.", 400);
+  }
+
+  const state = await loadModeState(auth, config, OPENWORLD_MODE_ID);
+  if (state.error !== null) {
+    return errorResponse(state.error.code, state.error.message, state.error.status);
+  }
+  const canonicalEvent = {
+    request_id: requestId,
+    save_type: auth.saveType,
+    session_id: event.session_id,
+    mode_id: event.mode_id,
+    slice_id: event.slice_id,
+    event_type: event.event_type,
+    expected_revision: event.expected_revision,
+    event_payload: event.event_payload,
+  };
+  const requestHash = await mutationRequestHash(MODE_ENDPOINT_SESSION_EVENT, body, canonicalEvent);
+  const rpc = await restRequest<unknown>(config, "rpc/mode_session_event_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: canonicalEvent,
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapModeDatabaseError(rpc.error, "MODE_SESSION_EVENT_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
   return jsonResponse(foundationRpcPayload(rpc.value));

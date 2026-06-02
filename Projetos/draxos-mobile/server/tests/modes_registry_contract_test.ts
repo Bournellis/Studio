@@ -28,7 +28,7 @@ const EXPECTED_MODES = [
     modeId: "openworld",
     displayName: "Openworld",
     sliceId: "forest",
-    status: "internal_alpha",
+    status: "active",
   },
 ] as const;
 

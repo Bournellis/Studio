@@ -1,0 +1,113 @@
+{
+  "schema_version": "openworld_forest_ruleset_v1",
+  "mode_id": "openworld",
+  "slice_id": "forest",
+  "status": "active",
+  "release_channel": "internal_alpha",
+  "ruleset_id": "openworld_forest_ruleset_v1",
+  "ruleset_version": 1,
+  "historical_rulesets": [
+    {
+      "ruleset_id": "openworld_forest_ruleset_v0",
+      "status": "historical",
+      "summary": "Prototype/local reward bridge ruleset kept for audit only."
+    }
+  ],
+  "session": {
+    "max_active_sessions": 1,
+    "start_cooldown_seconds": 10,
+    "daily_start_limit": 100,
+    "expiry_seconds": 7200,
+    "autosave_heartbeat_seconds": 15,
+    "completion_min_seconds": 5,
+    "completion_max_seconds": 1800
+  },
+  "world": {
+    "size": {"x": 960, "y": 1400},
+    "player_initial_position": {"x": 220, "y": 330},
+    "player_margin": 28,
+    "chest_position": {"x": 220, "y": 250},
+    "chest_radius": 88,
+    "collection_radius": 40,
+    "collection_cancel_radius": 52
+  },
+  "movement": {
+    "base_speed": 160,
+    "base_capacity": 20,
+    "capacity_upgrade_bonus": 5,
+    "load_penalty_start_ratio": 0.6,
+    "min_loaded_speed": 80,
+    "upgraded_min_loaded_speed": 95,
+    "ritual_hands_gather_multiplier": 0.9
+  },
+  "items": [
+    {"item_id": "madeira", "display_name": "Madeira", "weight": 2, "gather_time": 2.5, "reward_resource_id": "wood"},
+    {"item_id": "galho", "display_name": "Galho", "weight": 0.8, "gather_time": 1.2, "reward_resource_id": "wood"},
+    {"item_id": "folha", "display_name": "Folha", "weight": 0.2, "gather_time": 0.8, "reward_resource_id": "herb"},
+    {"item_id": "folha_seca", "display_name": "Folha seca", "weight": 0.2, "gather_time": 0.8, "reward_resource_id": "herb"},
+    {"item_id": "pedra", "display_name": "Pedra", "weight": 2.5, "gather_time": 3, "reward_resource_id": "stone"},
+    {"item_id": "pedra_pequena", "display_name": "Pedra pequena", "weight": 1, "gather_time": 1.5, "reward_resource_id": "stone"},
+    {"item_id": "cogumelo", "display_name": "Cogumelo", "weight": 0.4, "gather_time": 1.5, "reward_resource_id": "herb"},
+    {"item_id": "fungo", "display_name": "Fungo", "weight": 0.4, "gather_time": 1.8, "reward_resource_id": "herb"},
+    {"item_id": "inseto", "display_name": "Inseto", "weight": 0.2, "gather_time": 1.5, "reward_resource_id": "essence"},
+    {"item_id": "resina", "display_name": "Resina", "weight": 0.5, "gather_time": 2.2, "reward_resource_id": "essence"},
+    {"item_id": "cinzas_preview", "display_name": "Cinzas preview", "weight": 0.3, "gather_time": 2.5, "reward_resource_id": "ashes"},
+    {"item_id": "ossos_preview", "display_name": "Ossos preview", "weight": 1.2, "gather_time": 2.5, "reward_resource_id": "bone"},
+    {"item_id": "po_osso_preview", "display_name": "Po de Osso preview", "weight": 0.5, "gather_time": 2.5, "reward_resource_id": "bone_dust"}
+  ],
+  "recipes": [
+    {
+      "recipe_id": "bolsa_simples_1",
+      "display_name": "Bolsa simples I",
+      "cost": {"galho": 4, "folha": 3, "resina": 1},
+      "upgrade_id": "bolsa_simples_1"
+    },
+    {
+      "recipe_id": "maos_rituais_1",
+      "display_name": "Maos rituais I",
+      "cost": {"madeira": 2, "pedra_pequena": 2, "fungo": 1},
+      "upgrade_id": "maos_rituais_1"
+    },
+    {
+      "recipe_id": "trilha_aberta_1",
+      "display_name": "Trilha aberta I",
+      "cost": {"pedra": 2, "galho": 3, "inseto": 2},
+      "upgrade_id": "trilha_aberta_1"
+    },
+    {
+      "recipe_id": "fogueira_estavel_1",
+      "display_name": "Fogueira estavel I",
+      "cost": {"galho": 2, "folha_seca": 2, "pedra_pequena": 1},
+      "upgrade_id": "fogueira_estavel_1",
+      "output": {"cinzas_preview": 2}
+    }
+  ],
+  "resource_nodes": [
+    {"node_id": "node_galho_01", "item_id": "galho", "position": {"x": 330, "y": 420}, "quantity": 1},
+    {"node_id": "node_folha_01", "item_id": "folha", "position": {"x": 410, "y": 510}, "quantity": 1},
+    {"node_id": "node_madeira_01", "item_id": "madeira", "position": {"x": 600, "y": 440}, "quantity": 1},
+    {"node_id": "node_pedra_pequena_01", "item_id": "pedra_pequena", "position": {"x": 260, "y": 750}, "quantity": 1},
+    {"node_id": "node_pedra_01", "item_id": "pedra", "position": {"x": 430, "y": 900}, "quantity": 1},
+    {"node_id": "node_cogumelo_01", "item_id": "cogumelo", "position": {"x": 690, "y": 640}, "quantity": 1},
+    {"node_id": "node_fungo_01", "item_id": "fungo", "position": {"x": 760, "y": 820}, "quantity": 1},
+    {"node_id": "node_inseto_01", "item_id": "inseto", "position": {"x": 530, "y": 620}, "quantity": 1},
+    {"node_id": "node_resina_01", "item_id": "resina", "position": {"x": 620, "y": 720}, "quantity": 1},
+    {"node_id": "node_folha_seca_01", "item_id": "folha_seca", "position": {"x": 440, "y": 1080}, "quantity": 1},
+    {"node_id": "node_cinzas_preview_01", "item_id": "cinzas_preview", "position": {"x": 600, "y": 1220}, "quantity": 1},
+    {"node_id": "node_ossos_preview_01", "item_id": "ossos_preview", "position": {"x": 710, "y": 1260}, "quantity": 1},
+    {"node_id": "node_po_osso_preview_01", "item_id": "po_osso_preview", "position": {"x": 790, "y": 1160}, "quantity": 1}
+  ],
+  "obstacles": [
+    {"id": "tree_large_northwest", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 130, "y": 430}, "visual_size": {"x": 105, "y": 130}, "collision_shape": "circle", "collision_size": {"x": 84, "y": 84}, "collision_radius": 42, "collision_offset": {"x": 0, "y": 18}, "sort_offset": 28},
+    {"id": "tree_large_mid", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 540, "y": 595}, "visual_size": {"x": 120, "y": 142}, "collision_shape": "circle", "collision_size": {"x": 92, "y": 92}, "collision_radius": 46, "collision_offset": {"x": 0, "y": 20}, "sort_offset": 30},
+    {"id": "tree_large_south", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 352, "y": 1135}, "visual_size": {"x": 115, "y": 138}, "collision_shape": "circle", "collision_size": {"x": 90, "y": 90}, "collision_radius": 45, "collision_offset": {"x": 0, "y": 20}, "sort_offset": 30},
+    {"id": "tree_large_east", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 812, "y": 710}, "visual_size": {"x": 118, "y": 136}, "collision_shape": "circle", "collision_size": {"x": 90, "y": 90}, "collision_radius": 45, "collision_offset": {"x": 0, "y": 20}, "sort_offset": 30},
+    {"id": "rock_large_path", "kind": "rock_large", "display_name": "Rocha grande", "position": {"x": 505, "y": 820}, "visual_size": {"x": 82, "y": 58}, "collision_shape": "rectangle", "collision_size": {"x": 82, "y": 52}, "collision_radius": 41, "collision_offset": {"x": 0, "y": 8}, "sort_offset": 18},
+    {"id": "rock_large_cemetery", "kind": "rock_large", "display_name": "Rocha grande", "position": {"x": 655, "y": 1110}, "visual_size": {"x": 92, "y": 62}, "collision_shape": "rectangle", "collision_size": {"x": 90, "y": 56}, "collision_radius": 45, "collision_offset": {"x": 0, "y": 8}, "sort_offset": 18}
+  ],
+  "reward": {
+    "caps_policy": "preserve_mode_limit_policies_current_caps",
+    "server_authoritative": true,
+    "offline_preview_reward": false
+  }
+}

@@ -23,6 +23,7 @@ export type Route =
   | "registry"
   | "state"
   | "session_start"
+  | "session_event"
   | "session_complete"
   | "session_abandon"
   | "analytics_summary"
@@ -84,6 +85,7 @@ export function resolveRoute(pathname: string): Route | null {
   if (pathname.endsWith("/registry")) return "registry";
   if (pathname.endsWith("/state")) return "state";
   if (pathname.endsWith("/session/start")) return "session_start";
+  if (pathname.endsWith("/session/event")) return "session_event";
   if (pathname.endsWith("/session/complete")) return "session_complete";
   if (pathname.endsWith("/session/abandon")) return "session_abandon";
   if (pathname.endsWith("/analytics/summary")) return "analytics_summary";
@@ -228,7 +230,7 @@ export async function loadSessions(
     config,
     `mode_sessions?game_save_id=eq.${encodeURIComponent(gameSaveId)}&mode_id=eq.${
       encodeURIComponent(modeId)
-    }&select=id,game_save_id,mode_id,slice_id,ruleset_id,ruleset_version,status,server_seed,session_seconds,activity_score,deposited_items,result_payload,reward_payload,started_at,completed_at,expires_at,abandoned_at,invalidated_at,invalidated_reason&order=started_at.desc&limit=20`,
+    }&select=id,game_save_id,mode_id,slice_id,ruleset_id,ruleset_version,status,server_seed,session_seconds,activity_score,deposited_items,result_payload,reward_payload,snapshot_payload,snapshot_revision,last_event_at,started_at,completed_at,expires_at,abandoned_at,invalidated_at,invalidated_reason&order=started_at.desc&limit=20`,
     { method: "GET" },
   );
   if (result.error !== null) return { value: null, error: stateReadError() };
@@ -451,6 +453,11 @@ function modeStatus(code: string, fallback: number): number {
     code === "MODE_SESSION_ALREADY_COMPLETED" ||
     code === "MODE_REWARD_BLOCKED_FOR_LAB" ||
     code === "MODE_SESSION_NOT_ACTIVE" ||
+    code === "MODE_SESSION_ALREADY_ACTIVE" ||
+    code === "MODE_SESSION_START_COOLDOWN" ||
+    code === "MODE_SESSION_DAILY_LIMIT" ||
+    code === "MODE_SESSION_REVISION_STALE" ||
+    code === "OPENWORLD_NODE_ALREADY_COLLECTED" ||
     code === "IDEMPOTENCY_HASH_MISMATCH"
   ) return 409;
   if (
@@ -460,6 +467,7 @@ function modeStatus(code: string, fallback: number): number {
     code === "INVALID_MODE_STATUS" ||
     code === "INVALID_RESULT" ||
     code === "MODE_RESULT_REJECTED" ||
+    code === "INVALID_MODE_EVENT" ||
     code === "MODE_SESSION_UNSUPPORTED"
   ) return 400;
   return fallback >= 400 ? fallback : 500;
@@ -481,6 +489,18 @@ function modeErrorMessage(code: string): string {
       return "Mode session was already completed.";
     case "MODE_RESULT_REJECTED":
       return "Mode result failed server validation.";
+    case "INVALID_MODE_EVENT":
+      return "Mode event failed server validation.";
+    case "MODE_SESSION_ALREADY_ACTIVE":
+      return "Mode already has an active session for this save.";
+    case "MODE_SESSION_START_COOLDOWN":
+      return "Mode session start cooldown is still active.";
+    case "MODE_SESSION_DAILY_LIMIT":
+      return "Mode daily session start limit was reached.";
+    case "MODE_SESSION_REVISION_STALE":
+      return "Mode session revision is stale and must be refreshed.";
+    case "OPENWORLD_NODE_ALREADY_COLLECTED":
+      return "Openworld resource node was already collected in this session.";
     case "MODE_REWARD_BLOCKED_FOR_LAB":
       return "Progression Lab saves cannot receive account/base rewards.";
     case "MODE_REWARD_APPLY_FAILED":

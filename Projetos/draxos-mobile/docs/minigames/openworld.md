@@ -1,10 +1,11 @@
 # Openworld Bosque
 
-- Status: `INTERNAL_ALPHA`
+- Status: `ACTIVE_INTERNAL_ALPHA`
 - Mode id: `openworld`
 - Slice id: `forest`
-- Ruleset: `openworld_forest_ruleset_v0`, version `1`
-- Local schema: `openworld_forest_local_v0`
+- Ruleset: `openworld_forest_ruleset_v1`, version `1`
+- Snapshot schema: `openworld_forest_snapshot_v1`
+- Shared definition: `data/definitions/openworld/forest_ruleset_v1.json`
 - Descriptor: `data/definitions/modes/openworld/metadata.json`
 - Placeholder: `data/definitions/modes/openworld/placeholder.json`
 - Decision pack: `docs/minigames/openworld-decision-pack.md`
@@ -13,6 +14,8 @@
 - Client module: `modes/openworld/`
 
 `Openworld Bosque` e o primeiro slice do modo `Openworld`. Ele nasceu do prototipo `Rpgsuave Bosque`, mas V1 renomeia o modo de verdade: novos payloads, rotas, settings, docs e testes usam `openworld`.
+
+Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Nao significa release publico, troca de manifest ou publicacao remota.
 
 ## Visao
 
@@ -28,12 +31,14 @@ Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitua
 - joystick livre por toque/mouse em area vazia do viewport;
 - HUD dentro do jogo;
 - mochila funcional com `Bolso`, `Bau`, `Craft` e `Sessao`;
-- detalhes tecnicos escondidos em `Sessao > Detalhes tecnicos`;
+- detalhes operacionais escondidos em `Sessao > Detalhes da operacao`;
 - colisao local em bau, arvores grandes, rochas grandes e paredes de borda;
 - recursos pequenos como `Area2D` coletaveis e sem bloqueio de movimento;
 - ordenacao visual por profundidade no mundo 2D, com HUD sempre acima;
 - assets procedurais em Godot, sem raster externo novo;
-- backend opcional em `integrated_alpha` por `/modes/session/start` e `/modes/session/complete`;
+- backend opcional em `integrated_alpha` por `/modes/state`, `/modes/session/start`, `/modes/session/event`, `/modes/session/complete` e `/modes/session/abandon`;
+- snapshot remoto retomavel por ate 2 horas;
+- heartbeat de movimento/tempo a cada 15 segundos e eventos imediatos para acoes relevantes;
 - Reward Bridge limitado, server-authoritative, idempotente e com ledger.
 
 ## Nao Escopo
@@ -44,16 +49,18 @@ Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitua
 - ranking, guilda, battle pass ou premium economy do Openworld;
 - promessa publica de release.
 - expansao do placeholder futuro sem pacote explicito.
-- inimigos, combate, mapa novo, recompensa nova, economia nova ou endpoint novo
-  neste pacote de QoL.
+- inimigos, combate, mapa novo, recompensa nova, economia nova ou mundo continuo
+  neste hardening.
 
 ## Descriptor Scaffold
 
 O descriptor declarativo de `Openworld` registra apenas o slice atual
-`forest`, o ruleset existente e o Reward Bridge limitado ja publicado. O
+`forest`, o ruleset v1 e o Reward Bridge limitado. O
 placeholder em `data/definitions/modes/openworld/placeholder.json` e
 explicitamente nao jogavel e reserva futuros slices sem abrir mapa, combate,
 recompensa ou backend novo.
+
+`openworld_forest_ruleset_v0` permanece documentado como historico de prototipo local. O ruleset ativo do Bosque oficial tecnico e `openworld_forest_ruleset_v1`.
 
 ## Decision Pack V1
 
@@ -63,17 +70,17 @@ Reward Bridge novo ou fronteira nova com Basebuilder precisa de pacote proprio.
 
 ## Componentes
 
-- `OpenworldForestModel`: regras locais, inventario, coleta, bau, crafting e payload.
+- `OpenworldForestRuleset`: loader da definition versionada `forest_ruleset_v1.json`.
+- `OpenworldForestModel`: regras locais/preview, inventario, coleta, bau, crafting, snapshot e payload.
 - `OpenworldForestScreen`: wrapper `Control`, sessao, HUD, sheet, joystick livre,
   foco/input global, fallback Web para WASD/setas, `SubViewport` e integracao
-  opcional.
+  opcional com snapshot/revision.
 - `OpenworldForestWorld2D`: mundo `Node2D`, camera, player, objetos, bordas,
   blockers fisicos dedicados, recursos e estado visual.
 - `OpenworldPlayerController`: `CharacterBody2D`, movimento por vetor combinado e
   colisao do jogador.
 - `OpenworldWorldCatalog`: catalogo local do Bosque para bau, obstaculos grandes
-  e recursos, incluindo forma/offset/tamanho de colisao sem contrato
-  compartilhado ainda.
+  e recursos derivados da definition versionada.
 - `OpenworldWorldObject`: instancia visual procedural y-sorted e `Area2D` quando
   coletavel/interativo; colisao bloqueante fica no corpo fisico dedicado do
   mundo para nao depender do node visual.
@@ -101,29 +108,62 @@ Reward Bridge novo ou fronteira nova com Basebuilder precisa de pacote proprio.
 
 ## Backend
 
+- State/resume: `GET /modes/state?mode_id=openworld`
 - Start: `POST /modes/session/start`
+- Event: `POST /modes/session/event`
 - Complete: `POST /modes/session/complete`
 - Abandon: `POST /modes/session/abandon`
-- State: `GET /modes/state?mode_id=openworld`
-- Ruleset ativo: `openworld_forest_ruleset_v0`
+- Ruleset ativo: `openworld_forest_ruleset_v1`
+
+`GET /modes/state?mode_id=openworld` retorna `active_session` quando existe sessao `started` nao expirada, incluindo `snapshot_payload`, `snapshot_revision`, `expires_at` e `last_event_at`.
+
+Eventos aceitos:
+
+- `move_heartbeat`
+- `collect_start`
+- `collect_cancel`
+- `collect_complete`
+- `deposit_all`
+- `craft`
+- `complete_requested`
+- `abandon_requested`
+
+Payload de evento:
+
+```json
+{
+  "request_id": "<uuid>",
+  "session_id": "<uuid>",
+  "mode_id": "openworld",
+  "slice_id": "forest",
+  "event_type": "collect_complete",
+  "expected_revision": 3,
+  "event_payload": {
+    "node_id": "node_galho_01",
+    "item_id": "galho",
+    "position": {"x": 330, "y": 420},
+    "session_seconds": 42
+  }
+}
+```
 
 Payload de complete:
 
 ```json
 {
   "request_id": "<uuid>",
-  "result": {
-    "session_id": "<uuid>",
-    "session_seconds": 120,
-    "deposited_items": {"madeira": 4, "ossos_preview": 1},
-    "activity_score": 80,
-    "ruleset_id": "openworld_forest_ruleset_v0",
-    "ruleset_version": 1
-  }
+  "session_id": "<uuid>",
+  "mode_id": "openworld",
+  "slice_id": "forest",
+  "ruleset_id": "openworld_forest_ruleset_v1",
+  "ruleset_version": 1,
+  "expected_revision": 9
 }
 ```
 
-O servidor valida limites, bloqueia reward real em `progression_lab`, aplica deltas por RPC/ledger e retorna resposta idempotente.
+O servidor valida limites, rejeita stale write, bloqueia reward real em `progression_lab`, calcula recompensa exclusivamente de `snapshot_payload`, aplica deltas por RPC/ledger e retorna resposta idempotente. `deposited_items` enviado pelo cliente nao e autoridade de recompensa.
+
+Fallback offline/sem auth entra em preview sem recompensa. A tela pode continuar jogavel localmente, mas `Completar` fica bloqueado enquanto a sessao integrada estiver sem sync.
 
 ## Validacao
 
@@ -132,4 +172,5 @@ O servidor valida limites, bloqueia reward real em `progression_lab`, aplica del
 - `tools/smoke_modes_visual_layout.gd`
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`
 - `server/tests/openworld_reward_bridge_test.ts`
+- `server/tests/openworld_ruleset_definition_test.ts`
 - `server/tests/modes_platform_schema_test.ts`
