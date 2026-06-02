@@ -8,13 +8,15 @@ Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--web-launch-resilience`
 Base: `f7e0035`
 Implementacao: `49dc5ea`
 Status: publicado como Internal Alpha
+Validacao humana: confirmada em 2026-06-02
 
 ## Resumo
 
 Foi publicada uma correcao estrutural para o Web nao parecer preso em
 "carregando para sempre". O contrato foi mantido: o manifest continua apontando
 para o dominio fixo protegido por Cloudflare Access, e o preview hash liberado
-serve como evidencia tecnica de que o Godot Web abre.
+serve como evidencia tecnica de que o Godot Web abre. O usuario confirmou em
+2026-06-02 que o Web esta funcionando.
 
 ## Release
 
@@ -82,7 +84,6 @@ serve como evidencia tecnica de que o Godot Web abre.
 
 ## Proximo Passo Humano
 
-Abrir `https://draxos-mobile-internal-alpha.pages.dev/web/index.html` em uma
-sessao Cloudflare Access autenticada e validar lancamento Web em navegador com
-cache frio e cache quente. Usar o preview hash apenas como evidencia tecnica
-liberada, nao como URL oficial do manifest.
+Concluido em 2026-06-02: o usuario confirmou que o Web esta funcionando. O
+pacote pode ficar em `master`; usar o preview hash apenas como evidencia
+tecnica liberada, nao como URL oficial do manifest.

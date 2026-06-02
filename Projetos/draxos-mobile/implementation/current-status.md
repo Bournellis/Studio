@@ -27,10 +27,10 @@
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is the Web Launch Resilience release.
-- Active follow-up: human Web playtest through the Access-authenticated fixed
-  production URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
-  use `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev/web/index.html`
-  only as technical launch evidence.
+- Active follow-up: Web Launch Resilience is closed after human confirmation on
+  `2026-06-02` that the Web build is functioning. Next DraxosMobile decision is
+  choosing another dedicated visual cleanup package or resuming Openworld
+  functional playtest from updated `master`.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -124,10 +124,10 @@ Validation and publication:
 
 Next human check:
 
-- Open the fixed production Web URL with a Cloudflare Access-authenticated
-  browser session and verify cold/warm-cache launch behavior. Use the preview
-  hash only as technical deployment evidence, then decide the next visual
-  cleanup package or resume Openworld functional playtest.
+- Completed on `2026-06-02`: the user confirmed the Web build is functioning.
+  This package can be merged to `master` and closed. Future validation can use
+  the preview hash only as technical deployment evidence while the fixed
+  production URL remains the official Access-protected Web URL.
 
 ## Refugio Visual Cleanup - 2026-06-02
 

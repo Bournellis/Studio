@@ -68,6 +68,7 @@ Implementar uma correcao estrutural para o Web nao parecer "carregando para semp
 - Screenshot pos-load: `D:\Estudio-worktrees\draxos-mobile--codex--web-launch-resilience\Projetos\draxos-mobile\build\diagnostics\web-launch-remote-20260602-042353\web-launch-remote.png`.
 - `index.pck` (`4611048`) e `index.wasm` (`37695054`) bateram com `Content-Length` remoto.
 - GET anonimo no production fixo retorna Cloudflare Access, esperado pelo contrato atual.
+- Validacao humana: usuario confirmou em 2026-06-02 que o Web esta funcionando.
 
 ## Validacao Executada
 
@@ -88,4 +89,4 @@ Implementar uma correcao estrutural para o Web nao parecer "carregando para semp
 
 ## Handoff
 
-Proximo check humano: abrir `https://draxos-mobile-internal-alpha.pages.dev/web/index.html` com sessao Cloudflare Access autenticada e testar cold/warm cache. O preview hash fica apenas como evidencia tecnica liberada. Nenhuma funcao de jogo, backend, schema, migration, economia, tuning ou conteudo foi alterada.
+Check humano concluido em 2026-06-02: usuario confirmou que o Web esta funcionando. O preview hash fica apenas como evidencia tecnica liberada. Nenhuma funcao de jogo, backend, schema, migration, economia, tuning ou conteudo foi alterada.
