@@ -65,15 +65,18 @@ Reward Bridge novo ou fronteira nova com Basebuilder precisa de pacote proprio.
 
 - `OpenworldForestModel`: regras locais, inventario, coleta, bau, crafting e payload.
 - `OpenworldForestScreen`: wrapper `Control`, sessao, HUD, sheet, joystick livre,
-  input map, `SubViewport` e integracao opcional.
+  foco/input global, fallback Web para WASD/setas, `SubViewport` e integracao
+  opcional.
 - `OpenworldForestWorld2D`: mundo `Node2D`, camera, player, objetos, bordas,
-  recursos e estado visual.
+  blockers fisicos dedicados, recursos e estado visual.
 - `OpenworldPlayerController`: `CharacterBody2D`, movimento por vetor combinado e
   colisao do jogador.
 - `OpenworldWorldCatalog`: catalogo local do Bosque para bau, obstaculos grandes
-  e recursos, sem contrato compartilhado ainda.
-- `OpenworldWorldObject`: instancia visual procedural, `StaticBody2D` quando
-  bloqueante e `Area2D` quando coletavel/interativo.
+  e recursos, incluindo forma/offset/tamanho de colisao sem contrato
+  compartilhado ainda.
+- `OpenworldWorldObject`: instancia visual procedural y-sorted e `Area2D` quando
+  coletavel/interativo; colisao bloqueante fica no corpo fisico dedicado do
+  mundo para nao depender do node visual.
 - `OpenworldForestWorldView`: legado Control preservado como referencia removivel,
   sem uso runtime no fluxo novo.
 - `OpenworldVirtualJoystick`: input touch/mouse livre, analogico e resetavel.
@@ -83,8 +86,12 @@ Reward Bridge novo ou fronteira nova com Basebuilder precisa de pacote proprio.
 
 - Movimento final combina teclado, joystick livre e vetor de debug dos smokes,
   limitado a magnitude `1.0`.
+- WASD/setas usam `InputMap` e fallback manual por `keycode`/`physical_keycode`
+  para Web/PC quando o canvas nao entrega action strength de forma confiavel.
 - A velocidade continua vindo de `OpenworldForestModel.current_speed()`, mantendo
   a penalidade de peso existente.
+- Joystick fica invisivel quando inativo; toque/click/drag em area livre cria o
+  joystick no ponto usado, arrasto atualiza vetor e release zera/oculta.
 - Toque/click no HUD, botoes ou sheet nao ativa joystick.
 - O bau tem colisao fisica central menor que a area de deposito.
 - Arvores e rochas grandes bloqueiam o jogador; recursos pequenos continuam

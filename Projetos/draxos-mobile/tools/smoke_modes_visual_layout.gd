@@ -52,13 +52,22 @@ func _check_openworld_screen(viewport_size: Vector2i) -> void:
 	_expect(_find_node_by_name(screen, "OpenworldBoundaryWalls") is StaticBody2D, "%s has boundary walls." % context)
 	_expect(_find_node_by_name(screen, "OpenworldForestBoard") == null, "%s does not use legacy fixed board." % context)
 	_expect(_find_node_by_name(screen, "OpenworldTechnicalDetails") == null, "%s hides technical details initially." % context)
+	var joystick := _find_node_by_name(screen, "OpenworldVirtualJoystick") as Control
+	_expect(joystick != null and not joystick.visible, "%s joystick starts hidden instead of fixed corner." % context)
 
-	screen.call("begin_free_joystick_for_tests", Vector2(viewport_size) * 0.5)
-	screen.call("drag_free_joystick_for_tests", Vector2(viewport_size) * 0.5 + Vector2(64, 0))
+	var joystick_center := Vector2(viewport_size) * 0.5
+	_send_mouse_button(screen, joystick_center, true)
+	_send_mouse_motion(screen, joystick_center + Vector2(64, 0))
 	await process_frame
 	_expect_node_fits(screen, "OpenworldVirtualJoystick", "%s free joystick" % context)
+	if joystick != null:
+		_expect(joystick.visible, "%s free joystick becomes visible on pointer press." % context)
+		_expect((joystick.position + joystick.size * 0.5).distance_to(joystick_center) <= 2.0, "%s free joystick is centered on press point." % context)
 	_expect(Vector2(screen.call("get_joystick_vector_for_tests")).x > 0.5, "%s free joystick works away from fixed corner." % context)
-	screen.call("end_free_joystick_for_tests")
+	_send_mouse_button(screen, joystick_center + Vector2(64, 0), false)
+	await process_frame
+	if joystick != null:
+		_expect(not joystick.visible, "%s free joystick hides on release." % context)
 
 	var inventory := _find_node_by_name(screen, "OpenworldInventoryButton") as Button
 	if inventory != null:
@@ -106,3 +115,15 @@ func _find_node_by_name(root_node: Node, node_name: String) -> Node:
 		if found != null:
 			return found
 	return null
+
+func _send_mouse_button(screen: Control, position: Vector2, pressed: bool) -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = pressed
+	event.position = position
+	screen.call("_input", event)
+
+func _send_mouse_motion(screen: Control, position: Vector2) -> void:
+	var event := InputEventMouseMotion.new()
+	event.position = position
+	screen.call("_input", event)

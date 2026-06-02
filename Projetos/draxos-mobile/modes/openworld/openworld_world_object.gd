@@ -8,6 +8,9 @@ var object_id := ""
 var kind := ""
 var item_id := ""
 var display_name := ""
+var collision_shape := "circle"
+var collision_size := Vector2.ZERO
+var collision_offset := Vector2.ZERO
 var collision_radius := 0.0
 var interaction_radius := 0.0
 var blocks_player := false
@@ -28,6 +31,9 @@ func configure(object_data: Dictionary) -> void:
 	display_name = str(object_data.get("display_name", object_id))
 	position = Vector2(object_data.get("position", Vector2.ZERO))
 	visual_size = Vector2(object_data.get("visual_size", Vector2(40, 40)))
+	collision_shape = str(object_data.get("collision_shape", "circle"))
+	collision_size = Vector2(object_data.get("collision_size", Vector2.ZERO))
+	collision_offset = Vector2(object_data.get("collision_offset", Vector2.ZERO))
 	collision_radius = float(object_data.get("collision_radius", 0.0))
 	interaction_radius = float(object_data.get("interaction_radius", 0.0))
 	blocks_player = bool(object_data.get("blocks_player", false))
@@ -35,11 +41,12 @@ func configure(object_data: Dictionary) -> void:
 	sort_offset = float(object_data.get("sort_offset", 0.0))
 	name = "OpenworldObject_%s" % object_id
 	_update_depth()
-	if blocks_player:
-		_add_static_body()
 	if collectible or interaction_radius > 0.0:
 		_add_area()
 	queue_redraw()
+
+func collision_center_global() -> Vector2:
+	return global_position + collision_offset
 
 func set_resource_state(next_collected: bool, next_nearest: bool, next_progress: float) -> void:
 	collected = next_collected

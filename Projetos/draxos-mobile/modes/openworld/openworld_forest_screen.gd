@@ -13,6 +13,12 @@ const CHEST_POSITION := Vector2(220, 250)
 const CHEST_RADIUS := 88.0
 const PLAYER_INITIAL_POSITION := Vector2(220, 330)
 const PLAYER_WORLD_MARGIN := 28.0
+const KEYBOARD_ACTION_KEYS := {
+	"openworld_move_left": [KEY_A, KEY_LEFT],
+	"openworld_move_right": [KEY_D, KEY_RIGHT],
+	"openworld_move_up": [KEY_W, KEY_UP],
+	"openworld_move_down": [KEY_S, KEY_DOWN],
+}
 const RESOURCE_FIXTURES := [
 	{"item_id": "galho", "position": Vector2(330, 420)},
 	{"item_id": "folha", "position": Vector2(410, 510)},
@@ -61,22 +67,37 @@ var _last_result_text := ""
 var _last_pending_request_id := ""
 var _free_pointer_active := false
 var _free_pointer_index := -999
+var _keyboard_action_down := {}
 
 func _ready() -> void:
 	name = "OpenworldForestScreen"
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	focus_mode = Control.FOCUS_ALL
+	set_process_input(true)
 	_ensure_input_actions()
+	_reset_keyboard_state()
 	_spawn_resources()
 	_build_ui()
 	_update_labels()
 	set_process(true)
+	call_deferred("_grab_openworld_focus")
 	if integration_mode == "integrated_alpha":
 		call_deferred("_start_integrated_session")
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
 		_layout_overlay()
+	elif what == NOTIFICATION_VISIBILITY_CHANGED and not is_visible_in_tree():
+		_reset_runtime_input()
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if _handle_keyboard_event(event as InputEventKey):
+			get_viewport().set_input_as_handled()
+		return
+	if _handle_pointer_event(event, true):
+		get_viewport().set_input_as_handled()
 
 func get_model() -> Variant:
 	return model
@@ -96,6 +117,9 @@ func get_joystick_vector_for_tests() -> Vector2:
 	if _joystick == null:
 		return Vector2.ZERO
 	return _joystick.input_vector()
+
+func is_free_joystick_active_for_tests() -> bool:
+	return _free_pointer_active
 
 func set_debug_joystick_vector(vector: Vector2) -> void:
 	_debug_joystick_vector = vector.limit_length(1.0)
@@ -257,7 +281,7 @@ func _layout_overlay() -> void:
 	if _joystick != null:
 		_joystick.size = JoystickScript.BASE_SIZE
 		if not _joystick.is_active():
-			_joystick.position = Vector2(18.0, maxf(18.0, screen_size.y - JoystickScript.BASE_SIZE.y - 24.0))
+			_joystick.visible = false
 	if _actions != null:
 		_actions.size = Vector2(minf(380.0, screen_size.x - 28.0), 48.0)
 		_actions.position = Vector2(maxf(14.0, screen_size.x - _actions.size.x - 14.0), maxf(16.0, screen_size.y - 72.0))
@@ -301,66 +325,40 @@ func _movement_vector() -> Vector2:
 
 func _keyboard_vector() -> Vector2:
 	return Vector2(
-		Input.get_action_strength("openworld_move_right") - Input.get_action_strength("openworld_move_left"),
-		Input.get_action_strength("openworld_move_down") - Input.get_action_strength("openworld_move_up")
+		_action_strength("openworld_move_right") - _action_strength("openworld_move_left"),
+		_action_strength("openworld_move_down") - _action_strength("openworld_move_up")
 	).limit_length(1.0)
 
 func _ensure_input_actions() -> void:
-	_ensure_key_action("openworld_move_left", [KEY_A, KEY_LEFT])
-	_ensure_key_action("openworld_move_right", [KEY_D, KEY_RIGHT])
-	_ensure_key_action("openworld_move_up", [KEY_W, KEY_UP])
-	_ensure_key_action("openworld_move_down", [KEY_S, KEY_DOWN])
+	for action_name: String in KEYBOARD_ACTION_KEYS.keys():
+		_ensure_key_action(action_name, KEYBOARD_ACTION_KEYS[action_name])
 
 func _ensure_key_action(action_name: String, keycodes: Array) -> void:
 	if not InputMap.has_action(action_name):
 		InputMap.add_action(action_name, 0.5)
 	for keycode: int in keycodes:
-		if _input_action_has_key(action_name, keycode):
-			continue
-		var event := InputEventKey.new()
-		event.physical_keycode = keycode
-		InputMap.action_add_event(action_name, event)
+		if not _input_action_has_key(action_name, keycode, true):
+			var physical_event := InputEventKey.new()
+			physical_event.physical_keycode = keycode
+			InputMap.action_add_event(action_name, physical_event)
+		if not _input_action_has_key(action_name, keycode, false):
+			var key_event := InputEventKey.new()
+			key_event.keycode = keycode
+			InputMap.action_add_event(action_name, key_event)
 
-func _input_action_has_key(action_name: String, keycode: int) -> bool:
+func _input_action_has_key(action_name: String, keycode: int, physical: bool) -> bool:
 	for event: InputEvent in InputMap.action_get_events(action_name):
-		if event is InputEventKey and (event as InputEventKey).physical_keycode == keycode:
+		if not event is InputEventKey:
+			continue
+		var key_event := event as InputEventKey
+		if physical and key_event.physical_keycode == keycode:
+			return true
+		if not physical and key_event.keycode == keycode:
 			return true
 	return false
 
 func _on_world_gui_input(event: InputEvent) -> void:
-	if _joystick == null:
-		return
-	if event is InputEventScreenTouch:
-		var touch := event as InputEventScreenTouch
-		var screen_position := _world_event_screen_position(touch.position)
-		if touch.pressed:
-			if _free_pointer_active or _pointer_over_overlay(screen_position):
-				return
-			_begin_free_joystick(screen_position, touch.index)
-			accept_event()
-		elif _free_pointer_active and _free_pointer_index == touch.index:
-			_end_free_joystick(touch.index)
-			accept_event()
-	elif event is InputEventScreenDrag:
-		var drag := event as InputEventScreenDrag
-		if _free_pointer_active and _free_pointer_index == drag.index:
-			_drag_free_joystick(_world_event_screen_position(drag.position), drag.index)
-			accept_event()
-	elif event is InputEventMouseButton:
-		var mouse := event as InputEventMouseButton
-		if mouse.button_index != MOUSE_BUTTON_LEFT:
-			return
-		var screen_position := _world_event_screen_position(mouse.position)
-		if mouse.pressed:
-			if _free_pointer_active or _pointer_over_overlay(screen_position):
-				return
-			_begin_free_joystick(screen_position, -2)
-			accept_event()
-		elif _free_pointer_active and _free_pointer_index == -2:
-			_end_free_joystick(-2)
-			accept_event()
-	elif event is InputEventMouseMotion and _free_pointer_active and _free_pointer_index == -2:
-		_drag_free_joystick(_world_event_screen_position((event as InputEventMouseMotion).position), -2)
+	if _handle_pointer_event(event, false):
 		accept_event()
 
 func _world_event_screen_position(local_position: Vector2) -> Vector2:
@@ -368,10 +366,55 @@ func _world_event_screen_position(local_position: Vector2) -> Vector2:
 		return local_position
 	return _world_viewport_container.position + local_position
 
+func _event_screen_position(event_position: Vector2, already_screen_position: bool) -> Vector2:
+	if already_screen_position:
+		return event_position
+	return _world_event_screen_position(event_position)
+
+func _handle_pointer_event(event: InputEvent, already_screen_position: bool) -> bool:
+	if _joystick == null:
+		return false
+	if event is InputEventScreenTouch:
+		var touch := event as InputEventScreenTouch
+		var touch_position := _event_screen_position(touch.position, already_screen_position)
+		if touch.pressed:
+			if _free_pointer_active or _pointer_over_overlay(touch_position):
+				return false
+			_begin_free_joystick(touch_position, touch.index)
+			return true
+		if _free_pointer_active and _free_pointer_index == touch.index:
+			_end_free_joystick(touch.index)
+			return true
+	elif event is InputEventScreenDrag:
+		var drag := event as InputEventScreenDrag
+		if _free_pointer_active and _free_pointer_index == drag.index:
+			_drag_free_joystick(_event_screen_position(drag.position, already_screen_position), drag.index)
+			return true
+	elif event is InputEventMouseButton:
+		var mouse := event as InputEventMouseButton
+		if mouse.button_index != MOUSE_BUTTON_LEFT:
+			return false
+		var mouse_position := _event_screen_position(mouse.position, already_screen_position)
+		if mouse.pressed:
+			if _free_pointer_active or _pointer_over_overlay(mouse_position):
+				return false
+			_begin_free_joystick(mouse_position, -2)
+			return true
+		if _free_pointer_active and _free_pointer_index == -2:
+			_end_free_joystick(-2)
+			return true
+	elif event is InputEventMouseMotion and _free_pointer_active and _free_pointer_index == -2:
+		_drag_free_joystick(_event_screen_position((event as InputEventMouseMotion).position, already_screen_position), -2)
+		return true
+	return false
+
 func _begin_free_joystick(screen_position: Vector2, pointer_index: int) -> void:
+	if _joystick == null:
+		return
+	_grab_openworld_focus()
 	_free_pointer_active = true
 	_free_pointer_index = pointer_index
-	_joystick.begin_free(screen_position, pointer_index)
+	_joystick.begin_free(_clamp_joystick_screen_position(screen_position), pointer_index)
 
 func _drag_free_joystick(screen_position: Vector2, pointer_index: int) -> void:
 	if not _free_pointer_active or _free_pointer_index != pointer_index:
@@ -384,6 +427,54 @@ func _end_free_joystick(pointer_index: int) -> void:
 	_joystick.end_free(pointer_index)
 	_free_pointer_active = false
 	_free_pointer_index = -999
+
+func _clamp_joystick_screen_position(screen_position: Vector2) -> Vector2:
+	var half_size := JoystickScript.BASE_SIZE * 0.5
+	var screen_size := _screen_size()
+	return Vector2(
+		clampf(screen_position.x, half_size.x, maxf(half_size.x, screen_size.x - half_size.x)),
+		clampf(screen_position.y, half_size.y, maxf(half_size.y, screen_size.y - half_size.y))
+	)
+
+func _grab_openworld_focus() -> void:
+	if is_inside_tree():
+		grab_focus()
+
+func _reset_runtime_input() -> void:
+	_reset_keyboard_state()
+	if _joystick != null:
+		_joystick.end_free(-999)
+	_free_pointer_active = false
+	_free_pointer_index = -999
+
+func _reset_keyboard_state() -> void:
+	_keyboard_action_down.clear()
+	for action_name: String in KEYBOARD_ACTION_KEYS.keys():
+		_keyboard_action_down[action_name] = false
+
+func _action_strength(action_name: String) -> float:
+	var input_strength := Input.get_action_strength(action_name)
+	var manual_strength := 1.0 if bool(_keyboard_action_down.get(action_name, false)) else 0.0
+	return maxf(input_strength, manual_strength)
+
+func _handle_keyboard_event(event: InputEventKey) -> bool:
+	if event.echo:
+		return false
+	var action_name := _keyboard_action_for_event(event)
+	if action_name == "":
+		return false
+	_keyboard_action_down[action_name] = event.pressed
+	return true
+
+func _keyboard_action_for_event(event: InputEventKey) -> String:
+	for action_name: String in KEYBOARD_ACTION_KEYS.keys():
+		for keycode: int in KEYBOARD_ACTION_KEYS[action_name]:
+			if _key_event_has_key(event, keycode):
+				return action_name
+	return ""
+
+func _key_event_has_key(event: InputEventKey, keycode: int) -> bool:
+	return event.keycode == keycode or event.physical_keycode == keycode or event.key_label == keycode
 
 func _pointer_over_overlay(screen_position: Vector2) -> bool:
 	var global_position := get_global_rect().position + screen_position

@@ -45,6 +45,8 @@ it does not approve new content, economy, backend or Reward Bridge changes.
 
 ## Not Approved
 
+- No runtime gameplay change beyond the explicit `forest` QoL controls/collision
+  exception above.
 - No backend mutation.
 - No new map.
 - No enemies or combat.

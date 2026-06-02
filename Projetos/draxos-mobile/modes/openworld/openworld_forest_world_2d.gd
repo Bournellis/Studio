@@ -14,6 +14,7 @@ var player: OpenworldPlayerController
 
 var _camera: Camera2D
 var _depth_layer: Node2D
+var _object_blocker_body: StaticBody2D
 var _boundary_body: StaticBody2D
 var _viewport_size := Vector2(390, 844)
 var _resource_fixtures: Array = []
@@ -83,6 +84,20 @@ func obstacle_collision_radius(object_id: String) -> float:
 	var object := _objects_by_id.get(object_id) as OpenworldWorldObject
 	return object.collision_radius if object != null else 0.0
 
+func obstacle_collision_center(object_id: String) -> Vector2:
+	var object := _objects_by_id.get(object_id) as OpenworldWorldObject
+	if object == null:
+		return Vector2.ZERO
+	return object.collision_center_global()
+
+func obstacle_collision_shape(object_id: String) -> String:
+	var object := _objects_by_id.get(object_id) as OpenworldWorldObject
+	return object.collision_shape if object != null else ""
+
+func obstacle_collision_size(object_id: String) -> Vector2:
+	var object := _objects_by_id.get(object_id) as OpenworldWorldObject
+	return object.collision_size if object != null else Vector2.ZERO
+
 func resource_position(item_id: String) -> Vector2:
 	var object := _resource_objects.get(item_id) as OpenworldWorldObject
 	return object.global_position if object != null else Vector2.ZERO
@@ -128,6 +143,12 @@ func _build_world() -> void:
 	_depth_layer.y_sort_enabled = true
 	add_child(_depth_layer)
 
+	_object_blocker_body = StaticBody2D.new()
+	_object_blocker_body.name = "OpenworldObjectBlockers"
+	_object_blocker_body.collision_layer = 1
+	_object_blocker_body.collision_mask = 1
+	add_child(_object_blocker_body)
+
 	var catalog: Array[Dictionary] = CatalogScript.build_catalog(chest_position, _resource_fixtures)
 	for object_data: Dictionary in catalog:
 		var object := ObjectScript.new()
@@ -136,6 +157,8 @@ func _build_world() -> void:
 		_objects_by_id[object.object_id] = object
 		if object.collectible:
 			_resource_objects[object.item_id] = object
+		elif bool(object_data.get("blocks_player", false)):
+			_add_object_blocker(object_data)
 
 	player = PlayerScript.new()
 	player.position = player_initial_position
@@ -166,6 +189,26 @@ func _add_wall(label: String, wall_position: Vector2, wall_size: Vector2) -> voi
 	rectangle.size = wall_size
 	shape.shape = rectangle
 	_boundary_body.add_child(shape)
+
+func _add_object_blocker(object_data: Dictionary) -> void:
+	if _object_blocker_body == null:
+		return
+	var shape := CollisionShape2D.new()
+	shape.name = "OpenworldObjectBlocker_%s" % str(object_data.get("id", "object"))
+	shape.position = Vector2(object_data.get("position", Vector2.ZERO)) + Vector2(object_data.get("collision_offset", Vector2.ZERO))
+	var shape_type := str(object_data.get("collision_shape", "circle"))
+	if shape_type == "rectangle":
+		var rectangle := RectangleShape2D.new()
+		rectangle.size = Vector2(object_data.get("collision_size", Vector2(40, 40)))
+		if rectangle.size == Vector2.ZERO:
+			var radius := float(object_data.get("collision_radius", 20.0))
+			rectangle.size = Vector2(radius * 2.0, radius * 2.0)
+		shape.shape = rectangle
+	else:
+		var circle := CircleShape2D.new()
+		circle.radius = maxf(1.0, float(object_data.get("collision_radius", 20.0)))
+		shape.shape = circle
+	_object_blocker_body.add_child(shape)
 
 func _update_camera() -> void:
 	if _camera == null:

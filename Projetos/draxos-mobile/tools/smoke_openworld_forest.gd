@@ -5,6 +5,7 @@ const ScreenScript := preload("res://modes/openworld/openworld_forest_screen.gd"
 const RegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
 
 var _failures: Array[String] = []
+const PLAYER_RADIUS := 20.0
 
 func _initialize() -> void:
 	call_deferred("_run")
@@ -47,15 +48,16 @@ func _run_smoke() -> int:
 	_expect(InputMap.has_action("openworld_move_right"), "Openworld right input action exists.")
 	_expect(InputMap.has_action("openworld_move_up"), "Openworld up input action exists.")
 	_expect(InputMap.has_action("openworld_move_down"), "Openworld down input action exists.")
+	var keyboard_before: Vector2 = screen.get_player_position()
+	_send_key_event(screen, KEY_D, true)
+	await _wait_physics_frames(12)
+	_send_key_event(screen, KEY_D, false)
+	_expect(screen.get_player_position().x > keyboard_before.x, "Real D key event moves the player.")
 
 	var world = screen.call("get_openworld_world_2d")
-	var chest_position: Vector2 = world.call("obstacle_position", "chest_home")
-	var chest_collision_radius: float = world.call("chest_collision_radius")
-	screen.call("set_player_position_for_tests", chest_position + Vector2(-chest_collision_radius - 44.0, 0))
-	screen.set_debug_joystick_vector(Vector2.RIGHT)
-	await _wait_physics_frames(48)
-	screen.set_debug_joystick_vector(Vector2.ZERO)
-	_expect(screen.get_player_position().distance_to(chest_position) >= chest_collision_radius + 18.0, "Chest blocks the player body.")
+	await _expect_obstacle_blocks(screen, "chest_home", Vector2.RIGHT)
+	await _expect_obstacle_blocks(screen, "tree_large_mid", Vector2.RIGHT)
+	await _expect_obstacle_blocks(screen, "rock_large_path", Vector2.RIGHT)
 
 	screen.call("set_player_position_for_tests", Vector2(24, 330))
 	screen.set_debug_joystick_vector(Vector2.LEFT)
@@ -70,11 +72,14 @@ func _run_smoke() -> int:
 	screen.set_debug_joystick_vector(Vector2.ZERO)
 	_expect(screen.get_player_position().x > galho_position.x + 18.0, "Resource areas do not block movement.")
 
-	screen.call("begin_free_joystick_for_tests", Vector2(210, 420))
-	screen.call("drag_free_joystick_for_tests", Vector2(270, 420))
+	var joystick := screen.find_child("OpenworldVirtualJoystick", true, false) as Control
+	_expect(joystick != null and not joystick.visible, "Free joystick starts hidden.")
+	_send_mouse_button(screen, Vector2(210, 420), true)
+	_send_mouse_motion(screen, Vector2(270, 420))
 	_expect(Vector2(screen.call("get_joystick_vector_for_tests")).x > 0.5, "Free joystick drag produces movement vector.")
-	screen.call("end_free_joystick_for_tests")
+	_send_mouse_button(screen, Vector2(270, 420), false)
 	_expect(Vector2(screen.call("get_joystick_vector_for_tests")) == Vector2.ZERO, "Free joystick resets on release.")
+	_expect(joystick != null and not joystick.visible, "Free joystick hides on release.")
 	screen.queue_free()
 	await process_frame
 
@@ -92,3 +97,43 @@ func _expect(condition: bool, message: String) -> void:
 func _wait_physics_frames(frames: int) -> void:
 	for _frame in frames:
 		await physics_frame
+
+func _expect_obstacle_blocks(screen, object_id: String, movement_direction: Vector2) -> void:
+	var world = screen.call("get_openworld_world_2d")
+	var direction := movement_direction.normalized()
+	var obstacle_center: Vector2 = world.call("obstacle_collision_center", object_id)
+	var obstacle_shape := str(world.call("obstacle_collision_shape", object_id))
+	var obstacle_size: Vector2 = world.call("obstacle_collision_size", object_id)
+	var obstacle_radius: float = float(world.call("obstacle_collision_radius", object_id))
+	var support_distance := _obstacle_support_distance(obstacle_shape, obstacle_size, obstacle_radius, direction)
+	screen.call("set_player_position_for_tests", obstacle_center - direction * (support_distance + PLAYER_RADIUS + 70.0))
+	await process_frame
+	screen.set_debug_joystick_vector(direction)
+	await _wait_physics_frames(48)
+	screen.set_debug_joystick_vector(Vector2.ZERO)
+	var final_projection: float = (screen.get_player_position() - obstacle_center).dot(direction)
+	_expect(final_projection <= -(support_distance + PLAYER_RADIUS - 2.0), "%s blocks the player body." % object_id)
+
+func _obstacle_support_distance(shape: String, size: Vector2, radius: float, direction: Vector2) -> float:
+	if shape == "rectangle":
+		return absf(direction.x) * size.x * 0.5 + absf(direction.y) * size.y * 0.5
+	return radius
+
+func _send_key_event(screen, keycode: int, pressed: bool) -> void:
+	var event := InputEventKey.new()
+	event.keycode = keycode
+	event.physical_keycode = keycode
+	event.pressed = pressed
+	screen.call("_input", event)
+
+func _send_mouse_button(screen, position: Vector2, pressed: bool) -> void:
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = pressed
+	event.position = position
+	screen.call("_input", event)
+
+func _send_mouse_motion(screen, position: Vector2) -> void:
+	var event := InputEventMouseMotion.new()
+	event.position = position
+	screen.call("_input", event)
