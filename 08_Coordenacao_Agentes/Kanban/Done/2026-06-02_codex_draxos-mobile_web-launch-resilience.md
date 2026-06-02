@@ -6,7 +6,7 @@ Projeto: DraxosMobile
 Branch: codex/draxos-mobile/web-launch-resilience
 Worktree: D:\Estudio-worktrees\draxos-mobile--codex--web-launch-resilience
 Base: f7e0035
-Status: Done parcial - implementacao tecnica validando; publicacao pendente
+Status: Done - publicado e validado
 
 ## Objetivo
 
@@ -58,6 +58,34 @@ Implementar uma correcao estrutural para o Web nao parecer "carregando para semp
 7. Rodar `tools/smoke_web_launch_remote.ps1` no preview hash com `-ExpectedReleaseRoot`.
 8. Rodar `validate_foundation.ps1 -Profile RemoteReadOnly -AllowCloudflareAccess`.
 
-## Handoff Esperado
+## Resultado
 
-Commit 1 com resiliencia Web e smoke remoto. Commit 2 com publicacao/status/handoff. Registrar evidencia de preview hash, release root, screenshot pos-load e status esperado do dominio fixo protegido por Access.
+- Commit tecnico: `49dc5ea` (`Harden Web launch diagnostics`).
+- Release root publicado: `internal-alpha/v0-web-launch-resilience-20260602-49dc5ea`.
+- Production URL oficial preservada no manifest: `https://draxos-mobile-internal-alpha.pages.dev`.
+- Preview hash usado como evidencia tecnica: `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev`.
+- Web launch smoke no preview: `game_loaded`, splash saiu em `6715` ms.
+- Screenshot pos-load: `D:\Estudio-worktrees\draxos-mobile--codex--web-launch-resilience\Projetos\draxos-mobile\build\diagnostics\web-launch-remote-20260602-042353\web-launch-remote.png`.
+- `index.pck` (`4611048`) e `index.wasm` (`37695054`) bateram com `Content-Length` remoto.
+- GET anonimo no production fixo retorna Cloudflare Access, esperado pelo contrato atual.
+
+## Validacao Executada
+
+- `git diff --check`: passou.
+- `tools/smoke_responsive_layout.gd`: passou.
+- GUT client: passou, `174/174`, `3182` asserts.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`: passou.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`: passou.
+- Export Android/PC/Web: passou; Android em `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan`: passou.
+- `publish_internal_alpha.ps1 -Mode Package`: passou.
+- `publish_internal_alpha.ps1 -Mode Upload -ConfirmRemoteMutation`: passou apos `supabase link --project-ref armxgipvnbbshzqawklw` no worktree.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <versioned-web-root>`: passou.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: passou, deployment `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -ConfirmRemoteMutation`: passou.
+- `tools/smoke_web_launch_remote.ps1` no preview hash com `-ExpectedReleaseRoot`: passou.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly -AllowCloudflareAccess`: passou.
+
+## Handoff
+
+Proximo check humano: abrir `https://draxos-mobile-internal-alpha.pages.dev/web/index.html` com sessao Cloudflare Access autenticada e testar cold/warm cache. O preview hash fica apenas como evidencia tecnica liberada. Nenhuma funcao de jogo, backend, schema, migration, economia, tuning ou conteudo foi alterada.

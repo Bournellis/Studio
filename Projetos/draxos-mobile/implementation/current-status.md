@@ -4,37 +4,130 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Refugio Visual Cleanup`
+- Active stage: `Web Launch Resilience`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Refugio Visual Cleanup`, release root
-  `internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0`,
+- Latest published remote package: `Web Launch Resilience`, release root
+  `internal-alpha/v0-web-launch-resilience-20260602-49dc5ea`,
   Cloudflare production URL
   `https://draxos-mobile-internal-alpha.pages.dev`, latest deployment evidence
-  `https://f183cd39.draxos-mobile-internal-alpha.pages.dev`.
-- Latest implemented package: `Refugio Visual Cleanup` on
-  `codex/draxos-mobile/refugio-visual-cleanup`.
+  `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev`.
+- Latest implemented package: `Web Launch Resilience` on
+  `codex/draxos-mobile/web-launch-resilience`.
+- Previous visual package: `Refugio Visual Cleanup`, release root
+  `internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0`,
+  deployment evidence `https://f183cd39.draxos-mobile-internal-alpha.pages.dev`.
 - Previous functional package: `Openworld QoL Regression Fix`, release root
   `internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129`,
   deployment evidence `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`.
 - Previous hardening baseline: `Foundation Hardening V2`, release root
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
-- Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is the Refugio visual cleanup.
-- Active follow-up: human visual review/playtest of the published Refugio Visual
-  Cleanup through
-  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, especially
-  Refugio icon labels without siglas, compact HUD, missing altar/loop/progression
-  panels, CTA-only bottom area and preserved action feedback.
+- Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is the Web Launch Resilience release.
+- Active follow-up: human Web playtest through the Access-authenticated fixed
+  production URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+  use `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+  only as technical launch evidence.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## Web Launch Resilience - 2026-06-02
+
+This release supersedes Refugio Visual Cleanup as the latest published Internal
+Alpha without changing gameplay, backend, schema, migrations, endpoints,
+economy, tuning, content or Reward Bridge behavior. It keeps the fixed
+Cloudflare Access-protected production domain as the official manifest URL and
+uses the preview hash only as technical launch evidence.
+
+- branch: `codex/draxos-mobile/web-launch-resilience`;
+- worktree:
+  `D:\Estudio-worktrees\draxos-mobile--codex--web-launch-resilience`;
+- implementation commit: `49dc5ea`;
+- release root:
+  `internal-alpha/v0-web-launch-resilience-20260602-49dc5ea`;
+- Cloudflare production:
+  `https://draxos-mobile-internal-alpha.pages.dev`;
+- Cloudflare deployment evidence:
+  `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev`;
+- Portal:
+  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-web-launch-resilience-20260602-49dc5ea/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-web-launch-resilience-20260602-49dc5ea/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`;
+- Web launch smoke screenshot:
+  `D:\Estudio-worktrees\draxos-mobile--codex--web-launch-resilience\Projetos\draxos-mobile\build\diagnostics\web-launch-remote-20260602-042353\web-launch-remote.png`.
+
+Scope delivered:
+
+- `tools/build_cloudflare_pages_package.ps1` now emits a Web shell with
+  `DRAXOS_RELEASE_ROOT`, `DRAXOS_WEB_ASSET_ROOT` and
+  `window.DRAXOS_WEB_RELEASE`.
+- Local Web assets use release-root cache-bust query strings:
+  `/web/index.js`, splash and icons.
+- A non-invasive 20s watchdog shows a readable troubleshooting message when
+  the Godot splash remains visible, without interrupting `engine.startGame`.
+- `engine.startGame` rejection now shows a readable on-page error while keeping
+  the detailed failure in the console.
+- Release-root changes trigger selective cache/service-worker cleanup for old
+  Draxos/Godot/Internal Alpha caches without clearing Supabase sessions or game
+  localStorage data.
+- `tools/smoke_web_launch_remote.ps1` adds a Chrome/Edge CDP smoke that waits
+  for `#status` to disappear, captures screenshot/logs under
+  `build/diagnostics/`, checks the expected release root and fails on stuck
+  splash, critical Web asset failures or relevant runtime/network errors.
+
+Validation and publication:
+
+- `git diff --check`: passed.
+- First responsive smoke in the fresh worktree found missing Godot global-class
+  cache; `Godot --headless --editor --quit --path .` rebuilt `.godot` with known
+  GUT import warnings, then the smoke passed.
+- `tools/smoke_responsive_layout.gd`: passed.
+- GUT client: passed, `174/174`, `3182` asserts.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`: passed.
+- Android/PC/Web export passed; Android uses `debug_fallback` because release
+  keystore was unavailable in this worktree.
+- `publish_internal_alpha.ps1 -Mode Plan -ReleaseRoot internal-alpha/v0-web-launch-resilience-20260602-49dc5ea -PublicDownloads`: passed.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-web-launch-resilience-20260602-49dc5ea -PublicDownloads`: passed.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-web-launch-resilience-20260602-49dc5ea -PublicDownloads -ConfirmRemoteMutation`: passed after linking the new worktree to Supabase project `armxgipvnbbshzqawklw`.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <versioned-web-root>`:
+  passed.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`:
+  passed, deployment evidence
+  `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev`, production URL
+  `https://draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-web-launch-resilience-20260602-49dc5ea -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`:
+  passed, preserving the official stable Web URL in the manifest.
+- `tools/smoke_web_launch_remote.ps1 -WebUrl https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev/web/index.html -ExpectedReleaseRoot internal-alpha/v0-web-launch-resilience-20260602-49dc5ea`:
+  passed; outcome `game_loaded`, splash cleared in `6715` ms.
+- Preview Web HTML contains the expected release root and cache-busted
+  `/web/index.js?v=internal-alpha%2Fv0-web-launch-resilience-20260602-49dc5ea`.
+- Anonymous GET to the production fixed URL returns Cloudflare Access, expected
+  for the protected domain.
+- Remote `Content-Length` matched local bytes for `index.pck` (`4611048`) and
+  `index.wasm` (`37695054`).
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly -AllowCloudflareAccess`:
+  passed.
+
+Next human check:
+
+- Open the fixed production Web URL with a Cloudflare Access-authenticated
+  browser session and verify cold/warm-cache launch behavior. Use the preview
+  hash only as technical deployment evidence, then decide the next visual
+  cleanup package or resume Openworld functional playtest.
 
 ## Refugio Visual Cleanup - 2026-06-02
 
