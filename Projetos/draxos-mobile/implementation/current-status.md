@@ -4,20 +4,24 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Web Launch Resilience`
+- Active stage: `Integrated App/Arena/Bosque Publication`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Web Launch Resilience`, release root
-  `internal-alpha/v0-web-launch-resilience-20260602-49dc5ea`,
+- Latest published remote package: integrated `App Responsiveness Architecture
+  Pass`, `Arena Loop Simplification/Feedback` and `Openworld Bosque Hardening
+  V1`, release root
+  `internal-alpha/v0-integrated-app-arena-bosque-20260602-99304ed`,
   Cloudflare production URL
   `https://draxos-mobile-internal-alpha.pages.dev`, latest deployment evidence
-  `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev`.
-- Latest implemented package: integrated `App Responsiveness Architecture Pass`,
-  `Arena Loop Simplification` and `Openworld Bosque Hardening V1` on `master`
-  (local integration in progress, not yet published).
+  `https://8f2829c0.draxos-mobile-internal-alpha.pages.dev`.
+- Latest implemented package: same as latest published remote package; master is
+  integrated and publication completed.
+- Previous Web shell package: `Web Launch Resilience`, release root
+  `internal-alpha/v0-web-launch-resilience-20260602-49dc5ea`,
+  deployment evidence `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev`.
 - Previous visual package: `Refugio Visual Cleanup`, release root
   `internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0`,
   deployment evidence `https://f183cd39.draxos-mobile-internal-alpha.pages.dev`.
@@ -27,9 +31,12 @@
 - Previous hardening baseline: `Foundation Hardening V2`, release root
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
-- Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is the Web Launch Resilience release.
-- Active follow-up: integrate and publish the combined responsiveness, Arena
-  loop and Openworld Bosque hardening package after local validation.
+- Validation baseline marker: the latest published remote package is now the
+  integrated app/arena/bosque package; `Foundation Hardening V2` remains the
+  previous hardening/live-doc guard marker.
+- Compatibility validation marker: Latest published remote package: `Foundation Hardening V2` remains as legacy guard text for Track 13/V2 docs validation; actual latest published remote package is the integrated app/arena/bosque release above.
+- Active follow-up: human playtest the integrated package across login, cache
+  refresh, first Arena loop, next difficulty unlock and online Bosque session.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -37,11 +44,82 @@
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
+## Integrated App Responsiveness, Arena Loop And Openworld Bosque Publication - 2026-06-02
+
+This release merges and publishes the three completed Codex workstreams:
+server/app responsiveness, Autobattler Arena loop flow, and Openworld Bosque
+foundation hardening. It updates backend schema, Edge Functions, Android/PC/Web
+artifacts, Cloudflare Pages and the remote release manifest.
+
+- merged commits/stages on `master`: app responsiveness (`cfab8f8` via
+  `f1caa4b`), Arena loop simplification/feedback (`f8dbdad`, `ab6e1b3` via
+  `65c9cef`), Openworld Bosque hardening (`ad5e807` via `b7a314b`),
+  integrated validation (`49d380f`) and Bosque migration compatibility
+  (`99304ed`);
+- release root:
+  `internal-alpha/v0-integrated-app-arena-bosque-20260602-99304ed`;
+- Cloudflare production:
+  `https://draxos-mobile-internal-alpha.pages.dev`;
+- Cloudflare deployment evidence:
+  `https://8f2829c0.draxos-mobile-internal-alpha.pages.dev`;
+- Portal:
+  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-integrated-app-arena-bosque-20260602-99304ed/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-integrated-app-arena-bosque-20260602-99304ed/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`;
+- Web launch smoke screenshot:
+  `build/diagnostics/web-launch-remote-20260602-202832/web-launch-remote.png`.
+
+Publication and validation completed:
+
+- `supabase db push`: passed after adding compatibility columns/index for the
+  live `mode_limit_policies` schema.
+- `supabase functions deploy --project-ref armxgipvnbbshzqawklw`: passed for
+  local functions, including updated account/arena/base/battle/build/
+  competition/crafting/lab-runner/modes/monetization/progression-lab/social.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passed; Android
+  mode is `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Upload -ConfirmRemoteMutation`: passed.
+- `build_cloudflare_pages_package.ps1`: passed and verified remote Web asset
+  sizes before Pages packaging.
+- `wrangler pages deploy ... --branch main`: passed; preview
+  `https://8f2829c0.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation`:
+  passed and redeployed the `release` function.
+- `smoke_web_launch_remote.ps1` against the preview hash: passed,
+  `outcome=game_loaded`, `loaded_after_ms=6737`, release root and asset root
+  matched.
+- `release_artifacts_remote_smoke.ts`: passed; stable Portal/Web are protected
+  by Cloudflare Access as expected, downloads/manifest are reachable.
+- `internal_alpha_remote_smoke.ts` with release manifest enabled: passed for
+  healthcheck, CORS and manifest.
+- Remote Web asset size check: `index.pck` local and remote
+  `Content-Length` both `4660188`; `index.wasm` local and remote
+  `Content-Length` both `37695054`.
+
+Known release notes:
+
+- Android remains `debug_fallback` until release keystore is configured for
+  broader Android distribution.
+- Stable Cloudflare Pages domain is canonical for manifest URLs and may be
+  Cloudflare Access-protected; use the hash preview as technical evidence.
+- Next product step is human playtest of the integrated package: login/cache
+  refresh, first Arena real loop and next difficulty unlock, plus online Bosque
+  start/event/deposit/complete behavior.
+
 ## App Responsiveness Architecture Pass - 2026-06-02
 
 This local package improves perceived responsiveness across DraxosMobile
 without changing the Supabase/Cloudflare provider stack and without publishing
 a new remote Internal Alpha.
+
+Publication note: this workstream was later published as part of
+`internal-alpha/v0-integrated-app-arena-bosque-20260602-99304ed`.
 
 - branch: `codex/draxos-mobile/app-responsiveness`;
 - worktree:
@@ -89,15 +167,17 @@ Validation:
 
 ## Openworld Bosque Hardening V1 - 2026-06-02
 
-Status: implemented locally in dedicated worktree, not published and not
-remotely applied.
+Status: implemented first in a dedicated worktree and later published as part
+of `internal-alpha/v0-integrated-app-arena-bosque-20260602-99304ed`.
 
 - branch: `codex/draxos-mobile/bosque-hardening`;
 - worktree:
   `D:\Estudio-worktrees\draxos-mobile--codex--bosque-hardening`;
 - release channel remains `internal_alpha`;
 - no upload, Cloudflare deploy, manifest update, remote migration or
-  `-ConfirmRemoteMutation` command was executed.
+  `-ConfirmRemoteMutation` command was executed in the original worktree
+  delivery; those publication steps were completed during the integrated
+  release above.
 
 Scope delivered:
 
