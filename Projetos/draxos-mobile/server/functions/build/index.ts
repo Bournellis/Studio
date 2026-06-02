@@ -1,4 +1,4 @@
-import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   type FoundationGameSaveRow,
@@ -83,6 +83,10 @@ const ITEM_ID_PATTERN = /^[a-z0-9_]+$/;
 const POTION_IDS = new Set(["pocao_vida"]);
 
 Deno.serve(async (request: Request) => {
+  return withCorsResponse(request, await handleCorsRequest(request));
+});
+
+async function handleCorsRequest(request: Request): Promise<Response> {
   if (request.method === "OPTIONS") {
     return emptyResponse();
   }
@@ -139,7 +143,8 @@ Deno.serve(async (request: Request) => {
     console.error(error);
     return errorResponse("INTERNAL_ERROR", "Unexpected build service error.", 500);
   }
-});
+
+}
 
 async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
   const state = await loadBuildState(auth, config);

@@ -11,7 +11,7 @@ import {
   spellBehaviorMap,
 } from "../_shared/battle_combatants.ts";
 import { arenaOpponentCombatantFromBot } from "../_shared/pve_arena_combatants.ts";
-import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { simulateFirstSliceBattle } from "../_shared/battle_simulator.ts";
 import {
   arenaBuffDefinitions,
@@ -192,6 +192,10 @@ interface BuffOption {
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 Deno.serve(async (request: Request) => {
+  return withCorsResponse(request, await handleCorsRequest(request));
+});
+
+async function handleCorsRequest(request: Request): Promise<Response> {
   if (request.method === "OPTIONS") {
     return emptyResponse();
   }
@@ -284,7 +288,8 @@ Deno.serve(async (request: Request) => {
       500,
     );
   }
-});
+
+}
 
 async function handleList(
   auth: AuthContext,

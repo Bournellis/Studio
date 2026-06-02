@@ -1,4 +1,4 @@
-import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   type FoundationGameSaveRow,
@@ -72,6 +72,10 @@ interface CraftingState extends CraftingProjectionState {
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 Deno.serve(async (request: Request) => {
+  return withCorsResponse(request, await handleCorsRequest(request));
+});
+
+async function handleCorsRequest(request: Request): Promise<Response> {
   if (request.method === "OPTIONS") {
     return emptyResponse();
   }
@@ -116,7 +120,8 @@ Deno.serve(async (request: Request) => {
     console.error(error);
     return errorResponse("INTERNAL_ERROR", "Unexpected crafting service error.", 500);
   }
-});
+
+}
 
 async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
   const state = await loadCraftingState(auth, config);

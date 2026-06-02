@@ -1,4 +1,4 @@
-import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   SAVE_TYPE_NORMAL,
@@ -106,6 +106,10 @@ const GUILD_STRUCTURES = [
 ];
 
 Deno.serve(async (request: Request) => {
+  return withCorsResponse(request, await handleCorsRequest(request));
+});
+
+async function handleCorsRequest(request: Request): Promise<Response> {
   if (request.method === "OPTIONS") {
     return emptyResponse();
   }
@@ -145,7 +149,8 @@ Deno.serve(async (request: Request) => {
     console.error(error);
     return errorResponse("INTERNAL_ERROR", "Unexpected social service error.", 500);
   }
-});
+
+}
 
 async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
   const context = await loadSocialContext(auth, config);

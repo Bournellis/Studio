@@ -1,4 +1,4 @@
-import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   SAVE_TYPE_PROGRESSION_LAB,
@@ -64,6 +64,10 @@ const DEFAULT_POTION_BEHAVIOR = {
 };
 
 Deno.serve(async (request: Request) => {
+  return withCorsResponse(request, await handleCorsRequest(request));
+});
+
+async function handleCorsRequest(request: Request): Promise<Response> {
   if (request.method === "OPTIONS") {
     return emptyResponse();
   }
@@ -126,7 +130,8 @@ Deno.serve(async (request: Request) => {
       500,
     );
   }
-});
+
+}
 
 async function handleApply(
   request: Request,

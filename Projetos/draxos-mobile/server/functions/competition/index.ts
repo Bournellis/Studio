@@ -1,4 +1,4 @@
-import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import {
   isProgressionLabSave,
   type SaveType,
@@ -80,6 +80,10 @@ const RANKING_QUERY_LIMIT = 500;
 const ARENA_SCORING_MODEL = "alpha_v0_power_adjusted";
 
 Deno.serve(async (request: Request) => {
+  return withCorsResponse(request, await handleCorsRequest(request));
+});
+
+async function handleCorsRequest(request: Request): Promise<Response> {
   if (request.method === "OPTIONS") {
     return emptyResponse();
   }
@@ -108,7 +112,8 @@ Deno.serve(async (request: Request) => {
     console.error(error);
     return errorResponse("INTERNAL_ERROR", "Unexpected competition service error.", 500);
   }
-});
+
+}
 
 async function handleMatchmakingPreview(auth: AuthContext, config: EdgeConfig): Promise<Response> {
   const player = await loadPlayer(auth, config);

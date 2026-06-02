@@ -1,4 +1,4 @@
-import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   normalizeSaveType,
@@ -87,6 +87,10 @@ const DEFAULT_POTION_BEHAVIOR = {
 };
 
 Deno.serve(async (request: Request) => {
+  return withCorsResponse(request, await handleCorsRequest(request));
+});
+
+async function handleCorsRequest(request: Request): Promise<Response> {
   if (request.method === "OPTIONS") {
     return emptyResponse();
   }
@@ -143,7 +147,8 @@ Deno.serve(async (request: Request) => {
     console.error(error);
     return errorResponse("INTERNAL_ERROR", "Unexpected account service error.", 500);
   }
-});
+
+}
 
 async function handleGuest(
   request: Request,

@@ -1,6 +1,10 @@
-import { jsonResponse } from "../_shared/http.ts";
+import { jsonResponse, withCorsResponse } from "../_shared/http.ts";
 
-Deno.serve((request: Request) => {
+Deno.serve(async (request: Request) => {
+  return withCorsResponse(request, await handleCorsRequest(request));
+});
+
+async function handleCorsRequest(request: Request): Promise<Response> {
   if (request.method !== "GET") {
     return jsonResponse({
       ok: false,
@@ -18,4 +22,5 @@ Deno.serve((request: Request) => {
     track: "Track 00 - First Slice Foundation",
     schema_version: "mvp_foundation_v1",
   });
-});
+
+}

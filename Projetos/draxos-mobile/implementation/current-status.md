@@ -87,13 +87,29 @@ Validation completed:
   `https://2cca25db.draxos-mobile-internal-alpha.pages.dev`.
 - `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-20260601-5707167 -StaticSiteBaseUrl https://2cca25db.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`: passed.
 - Supabase Edge Functions were redeployed after adding
-  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev` as the default
-  CORS origin for the current preview while preserving the V2 preview in the
+  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev` to the CORS
   allowlist.
-- CORS GET check passed for the current preview against `healthcheck`.
+- Supabase Edge Functions CORS hotfix redeployed after browser feedback:
+  functions now echo the allowed request origin dynamically instead of always
+  returning the first allowlisted preview origin.
+- CORS GET checks passed against `healthcheck` for the current preview
+  `https://2cca25db.draxos-mobile-internal-alpha.pages.dev`, the stable Pages
+  origin `https://draxos-mobile-internal-alpha.pages.dev`, and the previous V2
+  preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
+- CORS preflight check passed for the stable Pages origin against
+  `/functions/v1/modes/state`.
 - `DRAXOS_REMOTE_CORS_ORIGIN=https://2cca25db.draxos-mobile-internal-alpha.pages.dev`
   `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`:
   passed.
+- `DRAXOS_REMOTE_CORS_ORIGIN=https://draxos-mobile-internal-alpha.pages.dev`
+  `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly`:
+  passed after the CORS hotfix.
+- `SUPABASE_URL=https://armxgipvnbbshzqawklw.supabase.co`
+  `SUPABASE_PUBLISHABLE_KEY=<project publishable key>`
+  `DRAXOS_REMOTE_CORS_ORIGIN=https://draxos-mobile-internal-alpha.pages.dev`
+  `DRAXOS_REMOTE_RELEASE_SMOKE=1`
+  `deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts`:
+  passed read-only; auth/account/mode mutation flags were skipped.
 
 Publication status: published as the current Internal Alpha package for
 Openworld QoL playtest.

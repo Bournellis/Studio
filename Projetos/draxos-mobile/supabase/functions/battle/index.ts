@@ -1,4 +1,4 @@
-import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   battleLogFromRow,
@@ -160,6 +160,10 @@ const BATTLE_SELECT =
   "id,schema_version,ruleset_publication_id,ruleset_id,ruleset_version,ruleset_content_hash,ruleset_simulator_hash,ruleset_schema_version,seed,defender_id,defender_is_bot,result,event_log,reward_payload,created_at";
 
 Deno.serve(async (request: Request) => {
+  return withCorsResponse(request, await handleCorsRequest(request));
+});
+
+async function handleCorsRequest(request: Request): Promise<Response> {
   if (request.method === "OPTIONS") {
     return emptyResponse();
   }
@@ -246,7 +250,8 @@ Deno.serve(async (request: Request) => {
       500,
     );
   }
-});
+
+}
 
 async function handleRequest(
   request: Request,

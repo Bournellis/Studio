@@ -1,4 +1,4 @@
-import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 
 interface EdgeConfig {
@@ -31,6 +31,10 @@ const EVENT_TYPE_PATTERN = /^[a-z0-9_.:/-]{3,80}$/;
 const SCHEMA_VERSION = "telemetry_client_v1";
 
 Deno.serve(async (request: Request) => {
+  return withCorsResponse(request, await handleCorsRequest(request));
+});
+
+async function handleCorsRequest(request: Request): Promise<Response> {
   if (request.method === "OPTIONS") {
     return emptyResponse();
   }
@@ -58,7 +62,8 @@ Deno.serve(async (request: Request) => {
     console.error(error);
     return errorResponse("INTERNAL_ERROR", "Unexpected telemetry service error.", 500);
   }
-});
+
+}
 
 async function handleClientEvent(
   request: Request,

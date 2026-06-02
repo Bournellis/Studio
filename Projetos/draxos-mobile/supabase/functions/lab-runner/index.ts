@@ -1,4 +1,4 @@
-import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { validateApiVersion } from "../_shared/api_version.ts";
 import battleModelDocument from "../../../tools/battle_lab/model.v1.json" with {
   type: "json",
@@ -107,7 +107,9 @@ export async function handleLabRunnerRequest(request: Request): Promise<Response
 }
 
 if (import.meta.main) {
-  Deno.serve(handleLabRunnerRequest);
+  Deno.serve(async (request: Request) => {
+    return withCorsResponse(request, await handleLabRunnerRequest(request));
+  });
 }
 
 async function runBattleLabRemote(body: JsonObject): Promise<JsonObject> {
