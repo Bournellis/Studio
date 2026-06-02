@@ -101,6 +101,30 @@ where ruleset_id = 'openworld_forest_ruleset_v0'
 	and ruleset_version = 1
 	and release_channel = 'internal_alpha';
 
+alter table public.mode_limit_policies
+	add column if not exists ruleset_version integer not null default 1 check (ruleset_version > 0),
+	add column if not exists reward_daily_caps jsonb not null default '{}'::jsonb,
+	add column if not exists result_limits jsonb not null default '{}'::jsonb;
+
+do $mode_limit_policies_compat$
+begin
+	if exists (
+		select 1
+		from information_schema.columns
+		where table_schema = 'public'
+			and table_name = 'mode_limit_policies'
+			and column_name = 'reward_cap_payload'
+	) then
+		update public.mode_limit_policies
+		set reward_daily_caps = reward_cap_payload
+		where reward_daily_caps = '{}'::jsonb
+			and reward_cap_payload <> '{}'::jsonb;
+	end if;
+end $mode_limit_policies_compat$;
+
+create unique index if not exists mode_limit_policies_ruleset_version_uidx
+	on public.mode_limit_policies (mode_id, slice_id, ruleset_id, ruleset_version);
+
 insert into public.mode_limit_policies (
 	mode_id,
 	slice_id,

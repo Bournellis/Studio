@@ -18,6 +18,10 @@ Deno.test("mode platform V1 declares default session limits", async () => {
   for (
     const fragment of [
       "'openworld_forest_ruleset_v1'",
+      "add column if not exists ruleset_version",
+      "add column if not exists reward_daily_caps",
+      "add column if not exists result_limits",
+      "mode_limit_policies_ruleset_version_uidx",
       "policy_row public.mode_limit_policies%rowtype",
       "policy_row.max_active_sessions",
       "policy_row.start_cooldown_seconds",
