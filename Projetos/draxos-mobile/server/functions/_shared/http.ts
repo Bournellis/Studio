@@ -1,5 +1,6 @@
 export const allowedCorsOrigins = [
   "https://2cca25db.draxos-mobile-internal-alpha.pages.dev",
+  "https://95f403c5.draxos-mobile-internal-alpha.pages.dev",
   "https://ca946749.draxos-mobile-internal-alpha.pages.dev",
   "https://68116729.draxos-mobile-internal-alpha.pages.dev",
   "https://4315dd54.draxos-mobile-internal-alpha.pages.dev",
@@ -13,6 +14,7 @@ export const allowedCorsOrigins = [
 ];
 
 const defaultCorsOrigin = allowedCorsOrigins[0];
+const internalAlphaPreviewOriginPattern = /^https:\/\/[a-f0-9]+\.draxos-mobile-internal-alpha\.pages\.dev$/;
 
 export const corsHeaders = {
   "access-control-allow-origin": defaultCorsOrigin,
@@ -24,7 +26,7 @@ export const corsHeaders = {
 
 export function corsHeadersForRequest(request: Request): Record<string, string> {
   const origin = request.headers.get("origin");
-  if (origin !== null && allowedCorsOrigins.includes(origin)) {
+  if (origin !== null && (allowedCorsOrigins.includes(origin) || internalAlphaPreviewOriginPattern.test(origin))) {
     return {
       ...corsHeaders,
       "access-control-allow-origin": origin,

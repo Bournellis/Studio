@@ -36,6 +36,8 @@ Web/Supabase confirmado pelo teste humano.
 
 - `b97fdc6` - `Document web CORS hotfix runbook`
 - `baabcb8` - `Fix Openworld controls collisions and validation`
+- `ba6f129` - `Record Openworld regression fix handoff`
+- final publication/status commit pending in this handoff update.
 
 ## Validacao Local
 
@@ -47,9 +49,40 @@ Web/Supabase confirmado pelo teste humano.
 - `validate_foundation.ps1 -Profile ClientQuick`: PASS
 - `validate_foundation.ps1 -Profile ModePlatform`: PASS
 - `validate_foundation.ps1 -Profile ReleaseDryRun`: PASS after Doing cleanup
+- `validate_foundation.ps1 -Profile ServerQuick`: PASS after CORS helper and
+  `modes` entrypoint alignment
+- `validate_foundation.ps1 -Profile RemoteReadOnly`: PASS against
+  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`
+
+## Publicacao
+
+- release root:
+  `internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129`
+- Cloudflare preview:
+  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`
+- Portal:
+  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+- Web:
+  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129/downloads/draxos-mobile-alpha.apk`
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129/downloads/draxos-mobile-alpha.zip`
+- Remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
+- Nota operacional: `publish_internal_alpha.ps1 -Mode Upload` travou no
+  `storage rm` opcional de um arquivo Web depois de subir a maior parte do
+  pacote. O root era novo, entao os tres objetos Web faltantes foram enviados
+  por `supabase storage cp` direto e todos os 25 arquivos passaram HEAD publico
+  por tamanho.
+- CORS: Edge Functions redeployadas com preview atual e regra restrita para
+  hash previews do projeto Pages; `RemoteReadOnly` passou para o preview novo.
+- Web headless: Chrome carregou `/web/index.html`, encontrou canvas 1280x720 e
+  nao registrou `pageerror` ou logs suspeitos de CORS/Supabase.
 
 ## Proximo Handoff
 
-Publicar novo pacote Internal Alpha, atualizar `implementation/current-status.md`
-com release root/preview/validacoes e validar Web preview manualmente contra:
-WASD, mouse drag livre, bau, arvores, rochas, bordas e coleta.
+Pacote publicado. Proximo passo e playtest humano do Bosque publicado contra:
+WASD, mouse drag livre, bau, arvores, rochas, bordas, coleta/deposito e
+layering, porque a automacao headless carregou o app shell mas nao concluiu
+login/guest route ate o Openworld.

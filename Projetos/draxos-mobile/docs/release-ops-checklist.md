@@ -188,6 +188,9 @@ Solucao aplicada:
   `withCorsResponse(request, response)`.
 - `withCorsResponse` sobrescreve os headers CORS finais com o origin
   allowlisted da propria request.
+- A allowlist deve aceitar previews do projeto Cloudflare Pages por uma regra
+  restrita a `https://<hash>.draxos-mobile-internal-alpha.pages.dev`, alem dos
+  origins fixos conhecidos. Nao use wildcard geral de CORS.
 - `OPTIONS` deve continuar respondendo com os headers calculados para o origin
   recebido.
 

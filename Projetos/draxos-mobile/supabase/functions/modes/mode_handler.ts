@@ -1,4 +1,4 @@
-import { emptyResponse, jsonResponse } from "../_shared/http.ts";
+import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { validateApiVersion } from "../_shared/api_version.ts";
 import {
   AUTOBATTLER_MODE_ID,
@@ -114,7 +114,7 @@ export class ModeHandler {
 const internalModeHandler = new ModeHandler();
 
 export function modeHandler(request: Request): Promise<Response> {
-  return internalModeHandler.handle(request);
+  return internalModeHandler.handle(request).then((response) => withCorsResponse(request, response));
 }
 
 async function handleRegistry(config: EdgeConfig): Promise<Response> {

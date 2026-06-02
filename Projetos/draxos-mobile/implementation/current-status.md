@@ -4,24 +4,25 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Openworld Node2D QoL Foundation`
+- Active stage: `Openworld QoL Regression Fix`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Openworld Node2D QoL Foundation`, release
-  root `internal-alpha/v0-openworld-node2d-qol-20260601-5707167`, Cloudflare
-  preview `https://2cca25db.draxos-mobile-internal-alpha.pages.dev`.
-- Latest implemented package: `Openworld Node2D QoL Foundation` on
+- Latest published remote package: `Openworld QoL Regression Fix`, release root
+  `internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129`,
+  Cloudflare preview
+  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`.
+- Latest implemented package: `Openworld QoL Regression Fix` on
   `codex/draxos-mobile/openworld-node2d-qol`.
 - Previous hardening baseline: `Foundation Hardening V2`, release root
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
-- Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is Openworld Node2D QoL.
-- Active follow-up: human functional playtest of the published Openworld Node2D
-  QoL package, especially Web/PC WASD, free mouse/touch joystick, obstacle
-  collision, border walls, y-depth ordering, HUD/input interference, and
+- Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is the Openworld QoL regression fix.
+- Active follow-up: human functional playtest of the published Openworld QoL
+  regression fix, especially Web/PC WASD, free mouse/touch joystick, obstacle
+  collision, border walls, y-depth ordering, HUD/input interference and
   collection/deposit flow.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
@@ -30,10 +31,89 @@
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
+## Openworld QoL Regression Fix - 2026-06-01
+
+This hotfix supersedes the first Openworld Node2D QoL publication after human
+Web feedback confirmed that border walls worked, but WASD, free joystick and
+large-object collision were not good enough in the published experience.
+
+- branch: `codex/draxos-mobile/openworld-node2d-qol`;
+- worktree:
+  `D:\Estudio-worktrees\draxos-mobile--codex--openworld-node2d-qol`;
+- release root:
+  `internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129`;
+- Cloudflare preview:
+  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`;
+- Portal:
+  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Web:
+  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
+
+Fixes delivered:
+
+- Web/PC keyboard input now uses a focusable Openworld shell, global `_input`
+  routing and manual `keycode`/`physical_keycode` fallback for WASD/setas.
+- Free joystick is hidden at rest, starts at arbitrary pointer/touch location
+  in empty world space and resets on release.
+- HUD, buttons and inventory sheet are excluded from free joystick activation.
+- Chest, trees and rocks use dedicated physical blockers under
+  `OpenworldObjectBlockers`, separate from visual y-sorted nodes.
+- CORS now echoes the allowed request origin through `withCorsResponse` and
+  accepts current/future hash previews only for the
+  `draxos-mobile-internal-alpha.pages.dev` project, not a wildcard origin.
+- `modes` entrypoint again delegates directly to `mode_handler.ts`; CORS
+  wrapping moved inside the exported handler to satisfy strictness checks.
+
+Publication and validation:
+
+- Android/PC/Web export passed; Android uses `debug_fallback` because release
+  keystore was unavailable in this worktree.
+- `publish_internal_alpha.ps1 -Mode Plan -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129 -PublicDownloads`: passed.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129 -PublicDownloads`: passed.
+- `publish_internal_alpha.ps1 -Mode Upload` initially stalled on the optional
+  storage cleanup command after uploading most files; missing Web objects were
+  uploaded with direct `supabase storage cp` to the new release root, and all
+  25 package files passed public `HEAD` byte-size validation.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <versioned-web-root>`:
+  passed.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`:
+  passed, preview `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129 -StaticSiteBaseUrl https://95f403c5.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`:
+  passed.
+- Supabase Edge Functions were redeployed after the CORS helper update; `modes`
+  was redeployed again after the entrypoint strictness alignment.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ServerQuick`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`: passed;
+  Openworld GUT remains `22/22` with real key/mouse event coverage.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ModePlatform`: passed;
+  includes `smoke_openworld_forest.gd` and `smoke_modes_visual_layout.gd`.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly` with
+  `DRAXOS_REMOTE_CORS_ORIGIN=https://95f403c5.draxos-mobile-internal-alpha.pages.dev`:
+  passed.
+- Headless Chrome opened
+  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev/web/index.html`,
+  found a `1280x720` canvas with `GODOT_CONFIG`, no page errors and no
+  suspicious CORS/Supabase console logs.
+
+Remaining human check:
+
+- Browser automation reached the published app shell but did not complete a
+  human login/guest route into Openworld. The next check is hands-on Web/PC
+  playtest of WASD, mouse drag joystick, chest/tree/rock collision, borders,
+  collection and deposit flow.
+
 ## Openworld Node2D QoL Foundation - 2026-06-01
 
-This published mode package prepares the existing Openworld Bosque slice for
-better playtest feel without expanding gameplay.
+This initial publication is superseded by the Openworld QoL Regression Fix
+above. It prepared the existing Openworld Bosque slice for better playtest feel
+without expanding gameplay, but human Web feedback found regressions in WASD,
+free joystick and obstacle collision.
 
 - branch: `codex/draxos-mobile/openworld-node2d-qol`;
 - worktree:
@@ -111,8 +191,8 @@ Validation completed:
   `deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts`:
   passed read-only; auth/account/mode mutation flags were skipped.
 
-Publication status: published as the current Internal Alpha package for
-Openworld QoL playtest.
+Publication status: superseded by
+`internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129`.
 
 Next human check: playtest the published Openworld package for movement feel,
 collision fairness, y-depth readability, HUD/input interference and
