@@ -161,6 +161,68 @@ Release-ready Web exige:
 - `https://draxos-mobile-internal-alpha.pages.dev/web/index.html` abre Web build.
 - Smoke somente leitura `release_artifacts_remote_smoke.ts` valida Portal com `DraxosMobile` e Web com `GODOT_CONFIG`.
 
+## Web CORS Troubleshooting
+
+Sintoma confirmado em browser:
+
+- O cliente mostra "Servidor Supabase indisponivel ou bloqueado pelo navegador".
+- Network/console aponta bloqueio CORS em chamadas para
+  `https://<project-ref>.supabase.co/functions/v1/...`.
+- O mesmo endpoint pode responder `200` em `curl`, porque o erro esta na
+  negociacao do header `Origin`, nao necessariamente no servidor ou na funcao.
+
+Causa raiz do hotfix de `2026-06-01`:
+
+- As Edge Functions ja calculavam CORS por request com
+  `corsHeadersForRequest(request)`.
+- Parte das respostas ainda retornava o bloco estatico `corsHeaders`, cujo
+  `Access-Control-Allow-Origin` ficava preso no primeiro origin allowlisted.
+- Quando o Web build era aberto por outro preview Cloudflare Pages, dominio
+  estavel protegido ou preview anterior, o browser rejeitava a resposta por
+  mismatch de origin e o cliente exibia a mensagem generica de Supabase
+  indisponivel/bloqueado.
+
+Solucao aplicada:
+
+- Todas as respostas finais das Edge Functions devem passar por
+  `withCorsResponse(request, response)`.
+- `withCorsResponse` sobrescreve os headers CORS finais com o origin
+  allowlisted da propria request.
+- `OPTIONS` deve continuar respondendo com os headers calculados para o origin
+  recebido.
+
+Validacao recomendada apos qualquer novo preview Pages ou alteracao em Edge
+Functions:
+
+```powershell
+$origin = "https://<cloudflare-preview-ou-dominio-estavel>"
+$function = "https://<project-ref>.supabase.co/functions/v1/healthcheck"
+curl.exe -i -H "Origin: $origin" $function
+curl.exe -i -X OPTIONS `
+  -H "Origin: $origin" `
+  -H "Access-Control-Request-Method: POST" `
+  -H "Access-Control-Request-Headers: authorization,apikey,content-type,x-draxos-api-version,x-draxos-request-id,x-draxos-request-hash" `
+  "https://<project-ref>.supabase.co/functions/v1/modes/state"
+```
+
+Aceitacao:
+
+- `Access-Control-Allow-Origin` deve ser exatamente o `$origin` enviado.
+- `Access-Control-Allow-Headers` deve incluir os headers usados pelo cliente.
+- `validate_foundation.ps1 -Profile RemoteReadOnly` deve passar com
+  `DRAXOS_REMOTE_CORS_ORIGIN` apontando para o preview/dominio testado.
+- `internal_alpha_remote_smoke.ts` deve passar em modo read-only quando o alvo
+  remoto e a publishable key estiverem configurados.
+
+Como diferenciar CORS de Supabase realmente indisponivel:
+
+- CORS: endpoint responde fora do browser, mas o browser bloqueia por
+  `Access-Control-Allow-Origin` ausente/incorreto ou preflight rejeitado.
+- Supabase/Edge indisponivel: `curl` tambem falha, retorna `5xx`, timeout,
+  DNS/TLS error ou funcao nao encontrada.
+- Auth/save indisponivel: CORS passa, mas o body retorna erro de auth, save,
+  invite, permissao ou conta alpha.
+
 ## Sequencia De Validacao Segura Track 13
 
 Use esta sequencia em worktree de Track 13 sem publicar nada:
