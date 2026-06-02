@@ -4,34 +4,138 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Openworld QoL Regression Fix`
+- Active stage: `Refugio Visual Cleanup`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Openworld QoL Regression Fix`, release root
-  `internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129`,
+- Latest published remote package: `Refugio Visual Cleanup`, release root
+  `internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0`,
   Cloudflare production URL
   `https://draxos-mobile-internal-alpha.pages.dev`, latest deployment evidence
-  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`.
-- Latest implemented package: `Openworld QoL Regression Fix` on
-  `codex/draxos-mobile/openworld-node2d-qol`.
+  `https://f183cd39.draxos-mobile-internal-alpha.pages.dev`.
+- Latest implemented package: `Refugio Visual Cleanup` on
+  `codex/draxos-mobile/refugio-visual-cleanup`.
+- Previous functional package: `Openworld QoL Regression Fix`, release root
+  `internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129`,
+  deployment evidence `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`.
 - Previous hardening baseline: `Foundation Hardening V2`, release root
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
-- Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is the Openworld QoL regression fix.
-- Active follow-up: human functional playtest of the published Openworld QoL
-  regression fix through
+- Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is the Refugio visual cleanup.
+- Active follow-up: human visual review/playtest of the published Refugio Visual
+  Cleanup through
   `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, especially
-  Web/PC WASD, free mouse/touch joystick, obstacle collision, border walls,
-  y-depth ordering, HUD/input interference and collection/deposit flow.
+  Refugio icon labels without siglas, compact HUD, missing altar/loop/progression
+  panels, CTA-only bottom area and preserved action feedback.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## Refugio Visual Cleanup - 2026-06-02
+
+This client-only visual package supersedes the Openworld QoL regression fix as
+the latest published Internal Alpha without changing gameplay, backend,
+schema, migrations, endpoints, economy, tuning, content or Reward Bridge
+behavior.
+
+- branch: `codex/draxos-mobile/refugio-visual-cleanup`;
+- worktree:
+  `D:\Estudio-worktrees\draxos-mobile--codex--refugio-visual-cleanup`;
+- release root:
+  `internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0`;
+- Cloudflare production:
+  `https://draxos-mobile-internal-alpha.pages.dev`;
+- Cloudflare deployment evidence:
+  `https://f183cd39.draxos-mobile-internal-alpha.pages.dev`;
+- Portal:
+  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
+
+Scope delivered:
+
+- Refugio menu icon visible labels no longer show the sigla prefixes `AR`,
+  `PP`, `RF`, `SO`, `MD`, `LJ`, `CL`, `EN`; button/node identities and actions
+  remain intact.
+- Top HUD removes the visible `Refugio` title, uses a shorter bar and starts the
+  compact resource line with `Level <n>`.
+- Center `ALTAR` / `Refugio do Mago` presentation and surrounding glow/panel
+  boxes are no longer rendered.
+- Persistent `RefugeLoopPanel` and `RefugeProgressionPanel` are no longer
+  rendered; only the main CTA remains visible in the bottom area.
+- Hidden feedback/status panel remains available for action results and errors.
+
+Validation and publication:
+
+- `git diff --check`: passed.
+- Godot `--headless --import`: passed, with known GUT asset warnings.
+- `tools/smoke_responsive_layout.gd`: passed.
+- GUT client: passed, `174/174`, `3182` asserts.
+- `tools/smoke_mobile_presentation.gd`: passed.
+- `tools/smoke_foundation_loop.gd`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`: passed.
+- Android/PC/Web export passed; Android uses `debug_fallback` because release
+  keystore was unavailable in this worktree.
+- `publish_internal_alpha.ps1 -Mode Plan -ReleaseRoot internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0 -PublicDownloads`: passed.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0 -PublicDownloads`: passed.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0 -PublicDownloads -ConfirmRemoteMutation`: passed after linking the new worktree to Supabase project `armxgipvnbbshzqawklw`.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <versioned-web-root>`:
+  passed.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`:
+  passed, deployment evidence
+  `https://f183cd39.draxos-mobile-internal-alpha.pages.dev`, production URL
+  `https://draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`:
+  passed.
+- Preview Web HTML at
+  `https://f183cd39.draxos-mobile-internal-alpha.pages.dev/web/index.html`
+  returned `200` and points to the new versioned Web root; unauthenticated GET
+  to the production domain returns Cloudflare Access, as expected for the stable
+  gate.
+- Remote `Content-Length` matched local bytes for `index.pck` (`4611176`) and
+  `index.wasm` (`37695054`).
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly -AllowCloudflareAccess`: passed.
+
+Visual evidence:
+
+- Before screenshot:
+  `D:\Estudio\Projetos\draxos-mobile\build\track15_mobile_ux_checkpoint\02_refugio.png`.
+- After screenshot:
+  `D:\Estudio-worktrees\draxos-mobile--codex--refugio-visual-cleanup\Projetos\draxos-mobile\build\track15_mobile_ux_checkpoint\02_refugio.png`.
+
+Additional cleanup suggestions captured for a later package:
+
+- `Modos`: translate or soften `Modes`, `Active`, `Staged`,
+  `Internal Alpha`, `Power` and `Lv`.
+- Base cards: replace bracket codes like `[ALM]`, `[ENE]`, `[SAN]` with cleaner
+  labels or icons.
+- Arena selection: hide technical difficulty IDs such as `s1_d...` behind
+  friendlier labels.
+- Account/update: move build/channel/manifest details into an advanced/debug
+  section.
+- Social: reduce visible `username`, `badge` and `Save Lab` technical language
+  in the normal player flow.
+- Shop: soften `Battle Pass`, `Premium` and test/alpha wording.
+- Battle summary: consider merging reward/resources/progress cards on mobile if
+  the screen feels too stacked.
+
+Next human check:
+
+- Review the published Refugio screen on Web/PC and Android package, confirm the
+  CTA-only bottom area still supports the expected action feedback, then decide
+  the next visual cleanup package or resume Openworld functional playtest.
 
 ## Openworld QoL Regression Fix - 2026-06-01
 
