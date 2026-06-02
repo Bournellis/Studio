@@ -293,13 +293,27 @@ func recover_session_state(host: Node) -> bool:
 		host.call("_sync_status_from_session")
 		return false
 
-	host.call("_set_busy", true, "Recuperando estado do servidor...")
+	var rendered_from_cache := SessionStore.has_surface_snapshot(SessionStore.SURFACE_ACCOUNT)
+	if rendered_from_cache:
+		host.call("_sync_status_from_session")
+		host.call("_show_notice", "Conta em cache visivel. Atualizando com o servidor...")
+	var refresh_token: Dictionary = host.call(
+		"_begin_surface_refresh",
+		SessionStore.SURFACE_ACCOUNT,
+		"account/state",
+		"Recuperando estado do servidor...",
+		rendered_from_cache
+	)
 	var state_result: Dictionary = await SupabaseClient.fetch_account_state(SessionStore.access_token)
 	if not bool(state_result.get("ok", false)):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_ACCOUNT, refresh_token, state_result)
+		if rendered_from_cache:
+			host.call("_show_notice", "Conta exibindo cache local; servidor nao respondeu agora.")
+			return true
 		host.call("_fail_with_error", state_result)
 		return false
 
-	return apply_recovered_state(host, state_result, "Sessao sincronizada com o servidor.")
+	return apply_recovered_state(host, state_result, "Sessao sincronizada com o servidor.", refresh_token)
 
 func recover_or_create_active_save(host: Node, invite_code: String = "", username: String = "") -> bool:
 	if SessionStore.is_progression_lab_local_only():
@@ -309,13 +323,27 @@ func recover_or_create_active_save(host: Node, invite_code: String = "", usernam
 		host.call("_sync_status_from_session")
 		return false
 
-	host.call("_set_busy", true, "Carregando save %s..." % SessionStore.active_save_label())
+	var rendered_from_cache := SessionStore.has_surface_snapshot(SessionStore.SURFACE_ACCOUNT)
+	if rendered_from_cache:
+		host.call("_sync_status_from_session")
+		host.call("_show_notice", "Save em cache visivel. Atualizando com o servidor...")
+	var refresh_token: Dictionary = host.call(
+		"_begin_surface_refresh",
+		SessionStore.SURFACE_ACCOUNT,
+		"account/state",
+		"Carregando save %s..." % SessionStore.active_save_label(),
+		rendered_from_cache
+	)
 	var state_result: Dictionary = await SupabaseClient.fetch_account_state(SessionStore.access_token)
 	if bool(state_result.get("ok", false)):
-		return apply_recovered_state(host, state_result, "Save %s sincronizado." % SessionStore.active_save_label())
+		return apply_recovered_state(host, state_result, "Save %s sincronizado." % SessionStore.active_save_label(), refresh_token)
 
 	var state_error := AppShellErrorContractScript.extract_error(state_result)
 	if str(state_error.get("code", "")) != "PLAYER_NOT_FOUND":
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_ACCOUNT, refresh_token, state_result)
+		if rendered_from_cache:
+			host.call("_show_notice", "Save exibindo cache local; servidor nao respondeu agora.")
+			return true
 		host.call("_fail_with_error", state_result)
 		return false
 
@@ -360,12 +388,13 @@ func recover_or_create_active_save(host: Node, invite_code: String = "", usernam
 		if str(account_error.get("code", "")) == "ACCOUNT_ALREADY_CREATED":
 			state_result = await SupabaseClient.fetch_account_state(SessionStore.access_token)
 			if bool(state_result.get("ok", false)):
-				return apply_recovered_state(host, state_result, "Save %s sincronizado." % SessionStore.active_save_label())
+				return apply_recovered_state(host, state_result, "Save %s sincronizado." % SessionStore.active_save_label(), refresh_token)
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_ACCOUNT, refresh_token, account_result)
 		host.call("_fail_with_error", account_result)
 		return false
 
 	_complete_mutation(mutation, account_result)
-	return apply_recovered_state(host, account_result, "Save %s pronto." % SessionStore.active_save_label())
+	return apply_recovered_state(host, account_result, "Save %s pronto." % SessionStore.active_save_label(), refresh_token)
 
 func auth_form_values(host: Node, require_username: bool) -> Dictionary:
 	var email := _input_text(host, "_auth_email_input").to_lower()
@@ -468,15 +497,21 @@ func is_valid_alpha_username(username: String) -> bool:
 			return false
 	return true
 
-func apply_recovered_state(host: Node, state_result: Dictionary, message: String) -> bool:
+func apply_recovered_state(host: Node, state_result: Dictionary, message: String, refresh_token: Dictionary = {}) -> bool:
 	if not SessionStore.apply_server_state(state_result):
+		if not refresh_token.is_empty():
+			host.call("_fail_surface_refresh", SessionStore.SURFACE_ACCOUNT, refresh_token, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {
 			"ok": false,
 			"error": SessionStore.last_error,
 		})
 		return false
 	SessionStore.save_cache()
-	host.call("_set_busy", false, message)
+	if refresh_token.is_empty():
+		host.call("_set_busy", false, message)
+	else:
+		host.call("_finish_surface_refresh", SessionStore.SURFACE_ACCOUNT, refresh_token, state_result, message)
+		host.call("_set_busy", false, message)
 	host.call("_sync_status_from_session")
 	return true
 

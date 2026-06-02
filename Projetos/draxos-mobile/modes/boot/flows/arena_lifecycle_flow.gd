@@ -44,19 +44,39 @@ func open_arena(host: Node) -> void:
 		return
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
-	host.call("_set_busy", true, "Carregando Arena PVE...")
+	var rendered_from_cache := SessionStore.has_surface_snapshot(SessionStore.SURFACE_ARENA)
+	if rendered_from_cache:
+		render_selection(host)
+		host.call("_show_notice", "Arena em cache visivel. Atualizando com o servidor...")
+	var refresh_token: Dictionary = host.call(
+		"_begin_surface_refresh",
+		SessionStore.SURFACE_ARENA,
+		"arena/pve/state",
+		"Carregando Arena PVE...",
+		rendered_from_cache
+	)
 	var state_result: Dictionary = await SupabaseClient.fetch_arena_state(SessionStore.access_token)
 	if not bool(state_result.get("ok", false)) and _dev_fixtures_enabled():
 		state_result = _fixture_result(_base_arena_state())
 	if not bool(state_result.get("ok", false)):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, state_result)
+		if rendered_from_cache:
+			render_selection(host)
+			host.call("_show_notice", "Arena exibindo cache local; servidor nao respondeu agora.")
+			return
 		host.call("_fail_with_error", state_result)
 		return
 	if not SessionStore.apply_arena_result(state_result):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, {"error": SessionStore.last_error})
+		if rendered_from_cache:
+			render_selection(host)
+			host.call("_show_notice", "Arena exibindo cache local; resposta do servidor veio incompleta.")
+			return
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 	SessionStore.save_cache()
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
-	host.call("_set_busy", false, "Arena PVE carregada.")
+	host.call("_finish_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, state_result, "Arena PVE carregada.")
 
 func start_tutorial(host: Node) -> void:
 	await _start_attempt(host, TUTORIAL_ARENA_ID, "s1_d00_intro", TUTORIAL_DIFFICULTY_TIER)
@@ -112,7 +132,8 @@ func resolve_duel(host: Node) -> void:
 		return
 	var duel_index := int(attempt.get("current_step_index", attempt.get("duel_index", 0))) + 1
 
-	host.call("_set_busy", true, "Resolvendo duelo...")
+	host.call("_set_busy", true, "Resolvendo duelo no servidor...")
+	host.call("_show_notice", "Aguardando resultado autoritativo do servidor para iniciar o replay.")
 	var mutation := SessionStore.prepare_pending_mutation(
 		"arena/pve/duel/request",
 		"arena:%s" % SessionStore.active_save_type,
@@ -260,19 +281,36 @@ func _start_attempt(host: Node, arena_id: String, difficulty_id: String, difficu
 	await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, "Arena iniciada. Loadout travado.")
 
 func _refresh_arena_selection(host: Node, success_text: String) -> void:
-	host.call("_set_busy", true, "Atualizando Arena PVE...")
+	var rendered_from_cache := SessionStore.has_surface_snapshot(SessionStore.SURFACE_ARENA)
+	var refresh_token: Dictionary = host.call(
+		"_begin_surface_refresh",
+		SessionStore.SURFACE_ARENA,
+		"arena/pve/state",
+		"Atualizando Arena PVE...",
+		rendered_from_cache
+	)
 	var state_result: Dictionary = await SupabaseClient.fetch_arena_state(SessionStore.access_token)
 	if not bool(state_result.get("ok", false)) and _dev_fixtures_enabled():
 		state_result = _fixture_result(_base_arena_state())
 	if not bool(state_result.get("ok", false)):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, state_result)
+		if rendered_from_cache:
+			host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+			host.call("_show_notice", "Arena exibindo cache local; servidor nao respondeu agora.")
+			return
 		host.call("_fail_with_error", state_result)
 		return
 	if not SessionStore.apply_arena_result(state_result):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, {"error": SessionStore.last_error})
+		if rendered_from_cache:
+			host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+			host.call("_show_notice", "Arena exibindo cache local; resposta do servidor veio incompleta.")
+			return
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 	SessionStore.save_cache()
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
-	host.call("_set_busy", false, success_text)
+	host.call("_finish_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, state_result, success_text)
 
 func _complete_arena_mutation(host: Node, mutation: Dictionary, result: Dictionary, route_after_success: String, success_text: String) -> bool:
 	if not bool(result.get("ok", false)):

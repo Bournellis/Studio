@@ -22,7 +22,15 @@ import {
   rewardDefinition,
   type RewardSource,
 } from "../_shared/economy_domain.ts";
+import {
+  baseStatePayload,
+  DEFAULT_CONSTRUCTION_SLOTS,
+  DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID,
+  type BaseConstructionJobRow,
+  type BaseStructureRow,
+} from "../_shared/base_domain.ts";
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "state" | "reward_claim" | "alpha_purchase";
 
@@ -134,11 +142,16 @@ async function handleCorsRequest(request: Request): Promise<Response> {
 }
 
 async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
+  const startedAtMs = performance.now();
   const state = await loadMonetizationState(auth, config);
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  return jsonResponse(monetizationStatePayload(state.value, new Date()));
+  return jsonResponse(stateEnvelope(monetizationStatePayload(state.value, new Date()), {
+    surface: "monetization",
+    saveType: auth.saveType,
+    startedAtMs,
+  }));
 }
 
 async function handleRewardClaim(
@@ -223,7 +236,10 @@ async function handleRewardClaim(
       payload: claimProjection.rewardPayload,
     },
   };
-  return jsonResponse(responsePayload);
+  return jsonResponse(stateEnvelope(responsePayload, {
+    surface: "monetization",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleAlphaPurchase(
@@ -300,7 +316,11 @@ async function handleAlphaPurchase(
     already_owned: rpcPayload.already_owned === true,
     purchase: rpcPayload.purchase ?? purchaseProjection.purchasePayload,
   };
-  return jsonResponse(responsePayload);
+  Object.assign(responsePayload, await baseDeltaPayload(config, refreshed.value));
+  return jsonResponse(stateEnvelope(responsePayload, {
+    surface: "monetization",
+    saveType: auth.saveType,
+  }));
 }
 
 async function loadMonetizationState(
@@ -337,6 +357,56 @@ async function loadMonetizationState(
       claims: claims.value,
       purchases: purchases.value,
     },
+    error: null,
+  };
+}
+
+async function baseDeltaPayload(
+  config: EdgeConfig,
+  state: MonetizationState,
+): Promise<Record<string, unknown>> {
+  const playerId = encodeURIComponent(state.player.id);
+  const [slots, structuresResult, jobsResult] = await Promise.all([
+    loadConstructionSlots(config, state.player.id),
+    restRequest<BaseStructureRow[]>(
+      config,
+      `base_structures?player_id=eq.${playerId}&select=player_id,structure_id,level,last_collected_at,updated_at&order=structure_id.asc`,
+      { method: "GET" },
+    ),
+    restRequest<BaseConstructionJobRow[]>(
+      config,
+      `construction_jobs?player_id=eq.${playerId}&select=*&order=created_at.desc`,
+      { method: "GET" },
+    ),
+  ]);
+  if (slots.error !== null || structuresResult.error !== null || jobsResult.error !== null) {
+    return {};
+  }
+  return baseStatePayload({
+    player: state.player,
+    resources: state.resources,
+    structures: structuresResult.value,
+    jobs: jobsResult.value,
+    constructionSlots: slots.value,
+  });
+}
+
+async function loadConstructionSlots(
+  config: EdgeConfig,
+  playerId: string,
+): Promise<{ value: number; error: null } | { value: null; error: RestError }> {
+  const result = await restRequest<{ id: string }[]>(
+    config,
+    `alpha_purchases?player_id=eq.${encodeURIComponent(playerId)}&product_id=eq.${
+      encodeURIComponent(DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID)
+    }&select=id&limit=1`,
+    { method: "GET" },
+  );
+  if (result.error !== null) {
+    return { value: null, error: stateReadError() };
+  }
+  return {
+    value: result.value.length > 0 ? 2 : DEFAULT_CONSTRUCTION_SLOTS,
     error: null,
   };
 }

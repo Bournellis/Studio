@@ -14,6 +14,7 @@ import progressionModelDocument from "../../../tools/progression_lab/model.v1.js
 import {
   buildProgressionData,
 } from "../../../tools/progression_lab/generate.ts";
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "battle" | "progression";
 type JsonObject = Record<string, unknown>;
@@ -96,10 +97,14 @@ export async function handleLabRunnerRequest(request: Request): Promise<Response
     }
 
     if (route === "battle") {
-      return jsonResponse(await runBattleLabRemote(body));
+      return jsonResponse(stateEnvelope(await runBattleLabRemote(body), {
+        surface: "battle_lab",
+      }));
     }
 
-    return jsonResponse(runProgressionLabRemote());
+    return jsonResponse(stateEnvelope(runProgressionLabRemote(), {
+      surface: "progression_lab",
+    }));
   } catch (error) {
     console.error(error);
     return errorResponse("INTERNAL_ERROR", "Unexpected Lab Runner service error.", 500);

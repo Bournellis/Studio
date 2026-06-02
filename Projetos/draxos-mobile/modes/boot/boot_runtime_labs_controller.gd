@@ -169,14 +169,25 @@ func _load_modes_ops_panel() -> void:
 	if not SessionStore.has_valid_access_token():
 		_modes_ops_state_container.add_child(_modes_ops_label("Entre com uma conta alpha para consultar Ops."))
 		return
+	_modes_ops_state_container.add_child(_modes_ops_label("Atualizando Ops com o servidor..."))
+	var refresh_token: Dictionary = _begin_surface_refresh(SessionStore.SURFACE_MODE, "modes/admin/me", "Atualizando Modes Ops...", SessionStore.has_surface_snapshot(SessionStore.SURFACE_MODE))
 	var admin_result: Dictionary = await SupabaseClient.get_mode_admin_me(SessionStore.access_token)
 	if not bool(admin_result.get("ok", false)):
+		_fail_surface_refresh(SessionStore.SURFACE_MODE, refresh_token, admin_result)
+		if _modes_ops_state_container != null and is_instance_valid(_modes_ops_state_container):
+			for child: Node in _modes_ops_state_container.get_children():
+				child.queue_free()
 		_modes_ops_state_container.add_child(_modes_ops_label("Sem role admin ativa. O painel nao exibira dados sensiveis nem acoes."))
 		return
 	var body := _as_dictionary(admin_result.get("body", admin_result))
 	if _as_dictionary(body.get("admin", {})).is_empty():
+		_finish_surface_refresh(SessionStore.SURFACE_MODE, refresh_token, admin_result, "Modes Ops carregado sem role admin.")
+		for child: Node in _modes_ops_state_container.get_children():
+			child.queue_free()
 		_modes_ops_state_container.add_child(_modes_ops_label("Sem role admin ativa."))
 		return
+	for child: Node in _modes_ops_state_container.get_children():
+		child.queue_free()
 	_modes_ops_state_container.add_child(_modes_ops_label("Admin ativo: %s" % str(_as_dictionary(body.get("admin", {})).get("role", "mode_ops"))))
 	var registry: Dictionary = await SupabaseClient.get_mode_registry(SessionStore.access_token)
 	if bool(registry.get("ok", false)):
@@ -191,6 +202,7 @@ func _load_modes_ops_panel() -> void:
 			str(funnel.get("completed", 0)),
 			str(funnel.get("reward_claims", 0)),
 		]))
+	_finish_surface_refresh(SessionStore.SURFACE_MODE, refresh_token, analytics if bool(analytics.get("ok", false)) else registry, "Modes Ops atualizado.")
 
 func _admin_disable_openworld() -> void:
 	await _admin_toggle_openworld(false)

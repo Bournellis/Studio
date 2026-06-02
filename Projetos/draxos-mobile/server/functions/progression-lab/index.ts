@@ -8,6 +8,7 @@ import {
 import healthySavesDocument from "../_shared/progression_lab_saves.json" with {
   type: "json",
 };
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "apply";
 
@@ -208,7 +209,10 @@ async function handleApply(
     }
   }
 
-  return jsonResponse(withResourceDefaults(rpc.value));
+  return jsonResponse(stateEnvelope(withResourceDefaults(rpc.value), {
+    surface: "progression_lab",
+    saveType: auth.saveType,
+  }));
 }
 
 async function resetConsumableAndBehaviorState(
@@ -623,11 +627,11 @@ function playerIdFromPayload(payload: unknown): string {
   return stringValue((player as Record<string, unknown>).id, "");
 }
 
-function withResourceDefaults(payload: unknown): unknown {
+function withResourceDefaults(payload: unknown): Record<string, unknown> {
   if (
     payload === null || typeof payload !== "object" || Array.isArray(payload)
   ) {
-    return payload;
+    return {};
   }
 
   const root = payload as Record<string, unknown>;
@@ -642,7 +646,7 @@ function withResourceDefaults(payload: unknown): unknown {
     }
   }
 
-  return payload;
+  return root;
 }
 
 function stringValue(value: unknown, fallback: string): string {

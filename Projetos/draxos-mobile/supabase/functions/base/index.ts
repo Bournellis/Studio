@@ -12,6 +12,7 @@ import {
   definitionFor,
   DOUBLE_CONSTRUCTION_QUEUE_PRODUCT_ID,
 } from "../_shared/base_domain.ts";
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "state" | "collect" | "upgrade";
 
@@ -131,6 +132,7 @@ async function handleState(
   auth: AuthContext,
   config: EdgeConfig,
 ): Promise<Response> {
+  const startedAtMs = performance.now();
   const state = await loadBaseState(auth, config);
   if (state.error !== null) {
     return errorResponse(
@@ -151,7 +153,11 @@ async function handleState(
       refreshed.error.status,
     );
   }
-  return jsonResponse(baseStatePayload(refreshed.value));
+  return jsonResponse(stateEnvelope(baseStatePayload(refreshed.value), {
+    surface: "base",
+    saveType: auth.saveType,
+    startedAtMs,
+  }));
 }
 
 async function handleCollect(
@@ -218,7 +224,10 @@ async function handleCollect(
     collected: rpcPayload.collected,
     mutation: rpcPayload.mutation,
   };
-  return jsonResponse(responsePayload);
+  return jsonResponse(stateEnvelope(responsePayload, {
+    surface: "base",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleUpgrade(
@@ -296,7 +305,10 @@ async function handleUpgrade(
     job: rpcPayload.job,
     mutation: rpcPayload.mutation,
   };
-  return jsonResponse(responsePayload);
+  return jsonResponse(stateEnvelope(responsePayload, {
+    surface: "base",
+    saveType: auth.saveType,
+  }));
 }
 
 async function loadBaseState(

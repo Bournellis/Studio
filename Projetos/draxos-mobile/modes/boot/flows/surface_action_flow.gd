@@ -43,6 +43,31 @@ func _complete_mutation(mutation: Dictionary, result: Dictionary) -> void:
 func _fail_mutation(mutation: Dictionary, result: Dictionary) -> void:
 	SessionStore.fail_pending_mutation(_request_id(mutation), result)
 
+func _begin_cached_refresh(host: Node, surface: String, endpoint: String, message: String, render_method: String = "") -> Dictionary:
+	var rendered_from_cache := SessionStore.has_surface_snapshot(surface)
+	if rendered_from_cache and render_method != "":
+		host.call(render_method)
+		host.call("_show_notice", "Dados em cache visiveis. Atualizando com o servidor...")
+	return host.call("_begin_surface_refresh", surface, endpoint, message, rendered_from_cache)
+
+func _finish_cached_refresh(host: Node, surface: String, token: Dictionary, result: Dictionary, message: String, render_method: String = "") -> bool:
+	if not bool(host.call("_finish_surface_refresh", surface, token, result, message)):
+		return false
+	SessionStore.save_cache()
+	if render_method != "":
+		host.call(render_method)
+	return true
+
+func _fail_cached_refresh_or_error(host: Node, surface: String, token: Dictionary, result: Dictionary, fallback_message: String, render_method: String = "") -> bool:
+	host.call("_fail_surface_refresh", surface, token, result)
+	if SessionStore.has_surface_snapshot(surface):
+		if render_method != "":
+			host.call(render_method)
+		host.call("_show_notice", fallback_message)
+		return true
+	host.call("_fail_with_error", result)
+	return false
+
 func show_base(host: Node) -> void:
 	var target_screen := str(host.call("_base_surface_target_screen"))
 	if SessionStore.is_progression_lab_local_only():
@@ -54,19 +79,17 @@ func show_base(host: Node) -> void:
 		return
 
 	host.call("_show_surface_screen", target_screen)
-	host.call("_set_busy", true, "Buscando Refugio...")
+	var refresh_token: Dictionary = _begin_cached_refresh(host, SessionStore.SURFACE_BASE, "base/state", "Buscando Refugio...", "_render_base_state")
 	var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
 	if not bool(base_result.get("ok", false)):
-		host.call("_fail_with_error", base_result)
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_BASE, refresh_token, base_result, "Refugio exibindo cache local; servidor nao respondeu agora.", "_render_base_state")
 		return
 
 	if not SessionStore.apply_base_result(base_result):
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_BASE, refresh_token, {"error": SessionStore.last_error}, "Refugio exibindo cache local; resposta do servidor veio incompleta.", "_render_base_state")
 		return
 
-	SessionStore.save_cache()
-	host.call("_set_busy", false, "Refugio recuperado.")
-	host.call("_render_base_state")
+	_finish_cached_refresh(host, SessionStore.SURFACE_BASE, refresh_token, base_result, "Refugio recuperado.", "_render_base_state")
 
 func sync_refuge_state_if_needed(host: Node) -> void:
 	if str(host.get("_current_screen")) != AppShellRouteContractScript.ROUTE_REFUGE:
@@ -136,10 +159,6 @@ func buy_energy_pack_alpha(host: Node) -> void:
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
-	var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
-	if bool(base_result.get("ok", false)):
-		SessionStore.apply_base_result(base_result)
-
 	_complete_mutation(mutation, monetization_result)
 	SessionStore.save_cache()
 	host.call("_set_busy", false, "Energia comprada. O Refugio foi atualizado com o novo saldo.")
@@ -184,18 +203,16 @@ func show_crafting(host: Node) -> void:
 		return
 
 	host.call("_show_surface_screen", str(host.call("_base_surface_target_screen")))
-	host.call("_set_busy", true, "Buscando crafting...")
+	var refresh_token: Dictionary = _begin_cached_refresh(host, SessionStore.SURFACE_CRAFTING, "crafting/state", "Buscando crafting...", "_render_base_state")
 	var crafting_result: Dictionary = await SupabaseClient.fetch_crafting_state(SessionStore.access_token)
 	if not bool(crafting_result.get("ok", false)):
-		host.call("_fail_with_error", crafting_result)
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_CRAFTING, refresh_token, crafting_result, "Crafting exibindo cache local; servidor nao respondeu agora.", "_render_base_state")
 		return
 	if not SessionStore.apply_crafting_result(crafting_result):
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_CRAFTING, refresh_token, {"error": SessionStore.last_error}, "Crafting exibindo cache local; resposta do servidor veio incompleta.", "_render_base_state")
 		return
 
-	SessionStore.save_cache()
-	host.call("_set_busy", false, "Crafting recuperado.")
-	host.call("_render_base_state")
+	_finish_cached_refresh(host, SessionStore.SURFACE_CRAFTING, refresh_token, crafting_result, "Crafting recuperado.", "_render_base_state")
 
 func crush_bones(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de triturar Ossos.")):
@@ -263,17 +280,27 @@ func show_preparation(host: Node) -> void:
 
 	host.set_meta("preparation_feedback_message", "")
 	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_REFUGE)
-	host.call("_set_busy", true, "Preparando suas escolhas de batalha...")
+	var refresh_token: Dictionary = _begin_cached_refresh(host, SessionStore.SURFACE_BUILD, "build/state", "Preparando suas escolhas de batalha...", "_render_base_state")
 	var build_result: Dictionary = await SupabaseClient.fetch_build_state(SessionStore.access_token)
 	if not bool(build_result.get("ok", false)):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_BUILD, refresh_token, build_result)
+		if SessionStore.has_build_state():
+			host.call("_show_notice", "Preparacao exibindo cache local; servidor nao respondeu agora.")
+			_render_refuge_preparation(host)
+			return
 		_fail_preparation_action(host, build_result, "Nao foi possivel carregar a preparacao.")
 		return
 	if not SessionStore.apply_build_result(build_result):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_BUILD, refresh_token, {"error": SessionStore.last_error})
+		if SessionStore.has_build_state():
+			host.call("_show_notice", "Preparacao exibindo cache local; resposta do servidor veio incompleta.")
+			_render_refuge_preparation(host)
+			return
 		_fail_preparation_action(host, {"error": SessionStore.last_error}, "Nao foi possivel carregar a preparacao.")
 		return
 
+	host.call("_finish_surface_refresh", SessionStore.SURFACE_BUILD, refresh_token, build_result, "Preparacao de batalha pronta.")
 	SessionStore.save_cache()
-	host.call("_set_busy", false, "Preparacao de batalha pronta.")
 	_render_refuge_preparation(host)
 
 func equip_health_potion(host: Node) -> void:
@@ -351,18 +378,16 @@ func show_social(host: Node) -> void:
 		return
 
 	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_SOCIAL)
-	host.call("_set_busy", true, "Buscando Social...")
+	var refresh_token: Dictionary = _begin_cached_refresh(host, SessionStore.SURFACE_SOCIAL, "social/state", "Buscando Social...", "_render_social_state")
 	var social_result: Dictionary = await SupabaseClient.fetch_social_state(SessionStore.access_token)
 	if not bool(social_result.get("ok", false)):
-		host.call("_fail_with_error", social_result)
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_SOCIAL, refresh_token, social_result, "Social exibindo cache local; servidor nao respondeu agora.", "_render_social_state")
 		return
 	if not SessionStore.apply_social_result(social_result):
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_SOCIAL, refresh_token, {"error": SessionStore.last_error}, "Social exibindo cache local; resposta do servidor veio incompleta.", "_render_social_state")
 		return
 
-	SessionStore.save_cache()
-	host.call("_set_busy", false, "Social recuperado.")
-	host.call("_render_social_state")
+	_finish_cached_refresh(host, SessionStore.SURFACE_SOCIAL, refresh_token, social_result, "Social recuperado.", "_render_social_state")
 	_mark_social_sync_success(host)
 
 func add_friend(host: Node) -> void:
@@ -506,17 +531,22 @@ func send_guild_chat(host: Node) -> void:
 	_mark_social_sync_success(host)
 
 func auto_sync_social(host: Node) -> void:
+	var refresh_token := SessionStore.begin_surface_refresh(SessionStore.SURFACE_SOCIAL, "social_auto_sync", "social/state", SessionStore.has_surface_snapshot(SessionStore.SURFACE_SOCIAL))
 	var social_result: Dictionary = await SupabaseClient.fetch_social_state(SessionStore.access_token)
 	host.set("_social_auto_sync_in_flight", false)
 	if str(host.get("_current_screen")) != AppShellRouteContractScript.ROUTE_SOCIAL:
+		SessionStore.complete_surface_refresh(SessionStore.SURFACE_SOCIAL, social_result, refresh_token)
 		host.call("_sync_social_auto_sync_for_route")
 		return
 	if not bool(social_result.get("ok", false)):
+		SessionStore.fail_surface_refresh(SessionStore.SURFACE_SOCIAL, social_result, refresh_token)
 		host.call("_handle_social_auto_sync_error", social_result)
 		return
 	if not SessionStore.apply_social_result(social_result):
+		SessionStore.fail_surface_refresh(SessionStore.SURFACE_SOCIAL, {"error": SessionStore.last_error}, refresh_token)
 		host.call("_handle_social_auto_sync_error", {"error": SessionStore.last_error})
 		return
+	SessionStore.complete_surface_refresh(SessionStore.SURFACE_SOCIAL, social_result, refresh_token)
 	SessionStore.save_cache()
 	host.call("_render_social_state")
 	_mark_social_sync_success(host)
@@ -531,54 +561,48 @@ func show_matchmaking(host: Node) -> void:
 		return
 
 	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_COMPETITION)
-	host.call("_set_busy", true, "Buscando matchmaking...")
+	var refresh_token: Dictionary = _begin_cached_refresh(host, SessionStore.SURFACE_COMPETITION, "competition/matchmaking/preview", "Buscando matchmaking...", "_render_competition_state")
 	var competition_result: Dictionary = await SupabaseClient.fetch_matchmaking_preview(SessionStore.access_token)
 	if not bool(competition_result.get("ok", false)):
-		host.call("_fail_with_error", competition_result)
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_COMPETITION, refresh_token, competition_result, "Competicao exibindo cache local; servidor nao respondeu agora.", "_render_competition_state")
 		return
 	if not SessionStore.apply_competition_result(competition_result):
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_COMPETITION, refresh_token, {"error": SessionStore.last_error}, "Competicao exibindo cache local; resposta do servidor veio incompleta.", "_render_competition_state")
 		return
 
-	SessionStore.save_cache()
-	host.call("_set_busy", false, "Matchmaking recuperado.")
-	host.call("_render_competition_state")
+	_finish_cached_refresh(host, SessionStore.SURFACE_COMPETITION, refresh_token, competition_result, "Matchmaking recuperado.", "_render_competition_state")
 
 func show_ranking(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir ranking.")):
 		return
 
 	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_COMPETITION)
-	host.call("_set_busy", true, "Buscando ranking...")
+	var refresh_token: Dictionary = _begin_cached_refresh(host, SessionStore.SURFACE_COMPETITION, "competition/ranking/current", "Buscando ranking...", "_render_competition_state")
 	var competition_result: Dictionary = await SupabaseClient.fetch_ranking_current(SessionStore.access_token)
 	if not bool(competition_result.get("ok", false)):
-		host.call("_fail_with_error", competition_result)
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_COMPETITION, refresh_token, competition_result, "Competicao exibindo cache local; servidor nao respondeu agora.", "_render_competition_state")
 		return
 	if not SessionStore.apply_competition_result(competition_result):
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_COMPETITION, refresh_token, {"error": SessionStore.last_error}, "Competicao exibindo cache local; resposta do servidor veio incompleta.", "_render_competition_state")
 		return
 
-	SessionStore.save_cache()
-	host.call("_set_busy", false, "Ranking recuperado.")
-	host.call("_render_competition_state")
+	_finish_cached_refresh(host, SessionStore.SURFACE_COMPETITION, refresh_token, competition_result, "Ranking recuperado.", "_render_competition_state")
 
 func show_shop(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de abrir Loja.")):
 		return
 
 	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_SHOP)
-	host.call("_set_busy", true, "Buscando loja...")
+	var refresh_token: Dictionary = _begin_cached_refresh(host, SessionStore.SURFACE_MONETIZATION, "monetization/state", "Buscando loja...", "_render_monetization_state")
 	var monetization_result: Dictionary = await SupabaseClient.fetch_monetization_state(SessionStore.access_token)
 	if not bool(monetization_result.get("ok", false)):
-		host.call("_fail_with_error", monetization_result)
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_MONETIZATION, refresh_token, monetization_result, "Loja exibindo cache local; servidor nao respondeu agora.", "_render_monetization_state")
 		return
 	if not SessionStore.apply_monetization_result(monetization_result):
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
+		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_MONETIZATION, refresh_token, {"error": SessionStore.last_error}, "Loja exibindo cache local; resposta do servidor veio incompleta.", "_render_monetization_state")
 		return
 
-	SessionStore.save_cache()
-	host.call("_set_busy", false, "Loja recuperada.")
-	host.call("_render_monetization_state")
+	_finish_cached_refresh(host, SessionStore.SURFACE_MONETIZATION, refresh_token, monetization_result, "Loja recuperada.", "_render_monetization_state")
 
 func buy_shop_product(host: Node, product_id: String) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de comprar na Loja.")):
@@ -603,11 +627,6 @@ func buy_shop_product(host: Node, product_id: String) -> void:
 		_fail_mutation(mutation, {"error": SessionStore.last_error})
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
-
-	if product_id == AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK or product_id == PRODUCT_ALPHA_DOUBLE_CONSTRUCTION_QUEUE:
-		var base_result: Dictionary = await SupabaseClient.fetch_base_state(SessionStore.access_token)
-		if bool(base_result.get("ok", false)):
-			SessionStore.apply_base_result(base_result)
 
 	_complete_mutation(mutation, monetization_result)
 	SessionStore.save_cache()

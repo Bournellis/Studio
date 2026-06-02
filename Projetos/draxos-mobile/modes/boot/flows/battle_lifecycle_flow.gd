@@ -66,7 +66,8 @@ func request_battle(host: Node) -> void:
 
 	host.set("_battle_request_splash_active", true)
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_BATTLE_ENTRY, false)
-	host.call("_set_busy", true, "Solicitando batalha...")
+	host.call("_set_busy", true, "Solicitando batalha ao servidor...")
+	host.call("_show_notice", "Aguardando simulacao autoritativa. O replay so abre quando o servidor devolver o battle_log.")
 	var mutation := SessionStore.prepare_pending_mutation(
 		"battle/request",
 		"battle:%s" % SessionStore.active_save_type,
@@ -103,24 +104,44 @@ func show_latest_battle(host: Node) -> void:
 		return
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_BATTLE_ENTRY, false)
-	host.call("_set_busy", true, "Buscando ultimo resultado...")
+	var rendered_from_cache := SessionStore.has_surface_snapshot(SessionStore.SURFACE_BATTLE)
+	if rendered_from_cache:
+		render_entry(host)
+		host.call("_show_notice", "Ultima batalha em cache visivel. Atualizando com o servidor...")
+	var refresh_token: Dictionary = host.call(
+		"_begin_surface_refresh",
+		SessionStore.SURFACE_BATTLE,
+		"battle/latest",
+		"Buscando ultimo resultado...",
+		rendered_from_cache
+	)
 	var latest_result: Dictionary = await SupabaseClient.fetch_latest_battle(SessionStore.access_token)
 	if not bool(latest_result.get("ok", false)):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, latest_result)
+		if rendered_from_cache:
+			render_entry(host)
+			host.call("_show_notice", "Ultima batalha exibindo cache local; servidor nao respondeu agora.")
+			return
 		host.call("_fail_with_error", latest_result)
 		return
 
 	var body := _as_dictionary(latest_result.get("body", {}))
 	if body.get("battle_log", null) == null:
-		host.call("_set_busy", false, "Nenhuma batalha registrada.")
+		host.call("_finish_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, latest_result, "Nenhuma batalha registrada.")
 		host.get("_battle_replay_presenter").show_empty_state("Solicite uma batalha para gerar a primeira luta.")
 		return
 
 	if not SessionStore.apply_battle_result(latest_result):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, {"error": SessionStore.last_error})
+		if rendered_from_cache:
+			render_entry(host)
+			host.call("_show_notice", "Ultima batalha exibindo cache local; resposta do servidor veio incompleta.")
+			return
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
 	SessionStore.save_cache()
-	host.call("_set_busy", false, "Ultimo resultado recuperado.")
+	host.call("_finish_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, latest_result, "Ultimo resultado recuperado.")
 	await play_battle_log(host, SessionStore.last_battle_log, SessionStore.last_battle_rewards)
 
 func skip_current_replay(host: Node) -> void:
@@ -160,9 +181,24 @@ func show_battle_history(host: Node) -> void:
 		return
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_BATTLE_ENTRY, false)
-	host.call("_set_busy", true, "Buscando historico de batalhas...")
+	var history_cached := not battle_history_for_active_save(host).is_empty()
+	if history_cached:
+		render_entry(host)
+		host.call("_show_notice", "Historico em cache visivel. Atualizando com o servidor...")
+	var refresh_token: Dictionary = host.call(
+		"_begin_surface_refresh",
+		SessionStore.SURFACE_BATTLE,
+		"battle/history",
+		"Buscando historico de batalhas...",
+		history_cached
+	)
 	var history_result: Dictionary = await SupabaseClient.fetch_battle_history(SessionStore.access_token)
 	if not bool(history_result.get("ok", false)):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, history_result)
+		if history_cached:
+			render_entry(host)
+			host.call("_show_notice", "Historico exibindo cache local; servidor nao respondeu agora.")
+			return
 		host.call("_fail_with_error", history_result)
 		return
 
@@ -171,7 +207,7 @@ func show_battle_history(host: Node) -> void:
 	host.set("_battle_history_entries", history_entries)
 	host.set("_battle_history_save_type", SessionStore.active_save_type)
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_BATTLE_ENTRY, false)
-	host.call("_set_busy", false, "Historico atualizado: %d batalhas recentes." % history_entries.size())
+	host.call("_finish_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, history_result, "Historico atualizado: %d batalhas recentes." % history_entries.size())
 
 func show_battle_replay(host: Node, battle_id: String) -> void:
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de reproduzir historico.")):
@@ -183,21 +219,41 @@ func show_battle_replay(host: Node, battle_id: String) -> void:
 		return
 
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_BATTLE_ENTRY, false)
-	host.call("_set_busy", true, "Carregando batalha salva...")
+	var rendered_from_cache := SessionStore.has_surface_snapshot(SessionStore.SURFACE_BATTLE)
+	if rendered_from_cache:
+		render_entry(host)
+		host.call("_show_notice", "Batalha atual em cache visivel enquanto o historico carrega.")
+	var refresh_token: Dictionary = host.call(
+		"_begin_surface_refresh",
+		SessionStore.SURFACE_BATTLE,
+		"battle/history/replay",
+		"Carregando batalha salva...",
+		rendered_from_cache
+	)
 	var replay_result: Dictionary = await SupabaseClient.fetch_battle_replay(
 		requested_battle_id,
 		SessionStore.access_token
 	)
 	if not bool(replay_result.get("ok", false)):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, replay_result)
+		if rendered_from_cache:
+			render_entry(host)
+			host.call("_show_notice", "Batalha atual mantida em cache; historico nao respondeu agora.")
+			return
 		host.call("_fail_with_error", replay_result)
 		return
 
 	if not SessionStore.apply_battle_result(replay_result):
+		host.call("_fail_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, {"error": SessionStore.last_error})
+		if rendered_from_cache:
+			render_entry(host)
+			host.call("_show_notice", "Batalha atual mantida em cache; resposta do historico veio incompleta.")
+			return
 		host.call("_fail_with_error", {"error": SessionStore.last_error})
 		return
 
 	SessionStore.save_cache()
-	host.call("_set_busy", false, "Batalha salva recuperada.")
+	host.call("_finish_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, replay_result, "Batalha salva recuperada.")
 	await play_battle_log(host, SessionStore.last_battle_log, SessionStore.last_battle_rewards)
 
 func play_battle_log(host: Node, battle_log: Dictionary, rewards: Dictionary) -> void:

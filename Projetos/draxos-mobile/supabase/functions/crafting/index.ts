@@ -19,6 +19,7 @@ import {
   type EconomyResourceRow,
 } from "../_shared/economy_domain.ts";
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "state" | "crush_bones" | "craft";
 
@@ -124,11 +125,16 @@ async function handleCorsRequest(request: Request): Promise<Response> {
 }
 
 async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
+  const startedAtMs = performance.now();
   const state = await loadCraftingState(auth, config);
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  return jsonResponse(craftingStatePayload(state.value));
+  return jsonResponse(stateEnvelope(craftingStatePayload(state.value), {
+    surface: "crafting",
+    saveType: auth.saveType,
+    startedAtMs,
+  }));
 }
 
 async function handleCrushBones(
@@ -182,7 +188,10 @@ async function handleCrushBones(
     ...craftingStatePayload(refreshed.value),
     conversion: rpcPayload.conversion ?? crushBonesConversion(amount),
   };
-  return jsonResponse(responsePayload);
+  return jsonResponse(stateEnvelope(responsePayload, {
+    surface: "crafting",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleCraft(
@@ -255,7 +264,10 @@ async function handleCraft(
       cost: projection.costPayload,
     },
   };
-  return jsonResponse(responsePayload);
+  return jsonResponse(stateEnvelope(responsePayload, {
+    surface: "crafting",
+    saveType: auth.saveType,
+  }));
 }
 
 async function loadCraftingState(

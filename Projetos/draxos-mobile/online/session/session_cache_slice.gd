@@ -29,6 +29,8 @@ static func snapshot(state: Dictionary) -> Dictionary:
 		"progression_lab": _dict(state.get("progression_lab", {})).duplicate(true),
 		"arena_state": _dict(state.get("arena_state", {})).duplicate(true),
 		"surface_save_types": _dict(state.get("surface_save_types", {})).duplicate(true),
+		"surface_refresh_meta": _dict(state.get("surface_refresh_meta", {})).duplicate(true),
+		"request_latency_log": _array(state.get("request_latency_log", [])).duplicate(true),
 		"pending_mutations": _dict(state.get("pending_mutations", {})).duplicate(true),
 		"last_battle_id": state.get("last_battle_id", null),
 		"last_battle_log": _dict(state.get("last_battle_log", {})).duplicate(true),
@@ -53,7 +55,15 @@ static func cache_int(cache: Dictionary, key: String, fallback: int = 0) -> int:
 static func cache_bool(cache: Dictionary, key: String, fallback: bool = false) -> bool:
 	return bool(cache.get(key, fallback))
 
+static func cache_array(cache: Dictionary, key: String) -> Array:
+	return _array(cache.get(key, [])).duplicate(true)
+
 static func _dict(value: Variant) -> Dictionary:
 	if value is Dictionary:
 		return Dictionary(value)
 	return {}
+
+static func _array(value: Variant) -> Array:
+	if value is Array:
+		return Array(value)
+	return []

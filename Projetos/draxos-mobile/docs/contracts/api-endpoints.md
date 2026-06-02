@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-05-31`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*` e `lab-runner/*` implementados local/remoto; Foundation Expansion Readiness adiciona contrato de API v1 por header, account/save context, ruleset metadata, request hash/idempotencia transacional e admin/minigame scopes reservados; Arena PVE v1, Track 19 Arena Consistency Pass e Remote Lab Runner estao publicados em Internal Alpha.
+- Ultima atualizacao: `2026-06-02`
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; App Responsiveness Architecture Pass adiciona envelope comum de cache/tempo, telemetry de latencia, Arena PVE state leve e mutations com deltas de superficie afetada.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -30,13 +30,13 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 
 ## Envelope V1
 
-Todos os envelopes novos ou ampliados devem declarar `schema_version` quando o payload tiver contrato proprio. Payloads de estado devem incluir contexto explicito quando disponivel:
+Todos os envelopes novos ou ampliados devem declarar `schema_version` quando o payload tiver contrato proprio. Payloads de estado e mutations que retornam estado de superficie devem incluir contexto explicito quando disponivel, alem de metadata de cache/tempo para o cliente renderizar cache imediato e medir refresh:
 
 ```json
 {
   "schema_version": "account_state_v1",
   "ok": true,
-  "api_version": 1,
+  "api_version": "app_responsiveness_v1",
   "account": {
     "account_profile_id": "uuid",
     "auth_user_id": "uuid"
@@ -47,11 +47,25 @@ Todos os envelopes novos ou ampliados devem declarar `schema_version` quando o p
     "legacy_player_id": "uuid",
     "ruleset_id": "foundation_ruleset_v0",
     "ruleset_version": 1
+  },
+  "cache": {
+    "surface": "account",
+    "generated_at": "2026-06-02T12:00:00.000Z"
+  },
+  "server_timing": {
+    "duration_ms": 42
   }
 }
 ```
 
-Estado esperado para expansao: `account/state`, `base/state`, `build/state`, `social/state`, `battle/latest`, `battle/history` e `battle/replay` devem retornar account/save context assim que suas lanes forem migradas para o novo modelo. Enquanto estiverem em compatibilidade, `player` e `x-draxos-save-type` continuam validos.
+Estado esperado para expansao: `account/state`, `base/state`, `build/state`, `crafting/state`, `social/state`, `competition/*`, `monetization/state`, `battle/latest`, `battle/history`, `battle/replay`, `arena/pve/state`, `modes/*` e `lab-runner/*` retornam envelope comum local. Enquanto estiverem em compatibilidade, `player`, `save_type` e `x-draxos-save-type` continuam validos.
+
+Regras de responsividade:
+
+- O cliente pode renderizar snapshot local antes da rede, mas deve sinalizar `source=cache`.
+- `cache.generated_at` e `server_timing.duration_ms` sao informativos; nao autorizam resultado otimista.
+- Resultado de batalha, duelo de Arena, ranking, recompensa e economia continuam server-authoritative.
+- Respostas antigas de refresh nao devem sobrescrever estado mais novo no cliente; a shell usa lifecycle token por superficie.
 
 ## Idempotencia V1
 
@@ -139,7 +153,7 @@ novo.
 | GET | `/battle/latest` | `save-scoped` | Sim | Nao | Retorna ultima batalha do save ativo sem reaplicar efeitos. |
 | GET | `/battle/history` | `save-scoped` | Sim | Nao | Retorna historico recente do save ativo como sumarios read-only, sem eventos completos. |
 | GET | `/battle/replay?battle_id=...` | `save-scoped` | Sim | Nao | Retorna o `battle_log_v1` salvo de uma batalha do save ativo, sem rerodar simulador nem reaplicar recompensa. |
-| GET | `/arena/pve/state` | `save-scoped` | Sim | Nao | Implementado/publicado para Arena PVE v1: arenas, unlocks, recordes e tentativa ativa do save. |
+| GET | `/arena/pve/state` | `save-scoped` | Sim | Nao | Projecao leve da Arena PVE: arenas, unlocks, recordes, tentativas recentes e `active_attempt`; nao carrega loadout completo, inventario, potion slots ou spell behaviors. |
 | POST | `/arena/pve/start` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado para criar tentativa, travar loadout e gerar primeiro inimigo. |
 | POST | `/arena/pve/duel/request` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado para resolver o proximo duelo da tentativa via simulador server-authoritative; no ultimo duelo aplica recompensa/progresso. |
 | POST | `/arena/pve/buff/select` | `save-scoped` | Sim | `request_id/request_hash` por save | Endpoint publico oficial implementado/publicado para escolher 1 buff ofertado apos vitoria. |
@@ -165,8 +179,8 @@ novo.
 | GET | `/competition/ranking/current` | `save-scoped` | Sim | Nao | Ranking do save `normal`; Lab retorna exclusao explicita. |
 | GET | `/monetization/state` | `save-scoped` | Sim | Nao | Loja/Battle Pass do save ativo. |
 | POST | `/monetization/rewards/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Claim economico do save ativo com ledger. |
-| POST | `/monetization/alpha-purchase` | `save-scoped` | Sim | `request_id/request_hash` por save | Compra/redeem alpha do save ativo com ledger. |
-| POST | `/telemetry/client-event` | `telemetry` | Sim, opcional | Nao | Grava diagnostico client; `player_id` pode ser nulo antes de conta/save. |
+| POST | `/monetization/alpha-purchase` | `save-scoped` | Sim | `request_id/request_hash` por save | Compra/redeem alpha do save ativo com ledger; resposta retorna `monetization`, `resources/player` quando afetados e delta `base` quando produto impacta Refugio/fila. |
+| POST | `/telemetry/client-event` | `telemetry` | Sim, opcional | Nao | Grava diagnostico client; novos eventos permitidos incluem `request_latency`, `surface_refresh`, `surface_cache_rendered` e `action_latency`; `player_id` pode ser nulo antes de conta/save. |
 | POST | `/progression-lab/apply` | `save-scoped` | Sim, exige `progression_lab` | `request_id` por save Lab | Interno/gated; aplica healthy save apenas no Lab e nunca escreve no Normal. |
 | GET | `/modes/registry` | `mode` | Sim | Nao | Registry dos cinco modos oficiais. |
 | GET | `/modes/state?mode_id=<id>` | `save-scoped` | Sim | Nao | Estado de um modo no save ativo. |

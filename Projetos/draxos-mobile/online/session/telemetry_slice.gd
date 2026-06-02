@@ -48,6 +48,7 @@ static func diagnostics_snapshot(input: Dictionary) -> Dictionary:
 			"features": _as_dictionary(runtime.get("features", {})).duplicate(true),
 		},
 		"pending_mutations": _as_dictionary(input.get("pending_mutations", {})).duplicate(true),
+		"request_latency_log": _array(input.get("request_latency_log", [])).duplicate(true),
 		"offline": bool(input.get("offline", false)),
 		"last_error": {
 			"code": str(last_error.get("code", "")),
@@ -59,3 +60,8 @@ static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
 		return Dictionary(value)
 	return {}
+
+static func _array(value: Variant) -> Array:
+	if value is Array:
+		return Array(value)
+	return []
