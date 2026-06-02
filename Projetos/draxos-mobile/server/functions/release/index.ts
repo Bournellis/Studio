@@ -7,9 +7,9 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   latest_version_code: 1,
   minimum_supported_version: "0.0.1-alpha.0",
   minimum_supported_version_code: 1,
-  released_at: "2026-05-31T19:04:37Z",
+  released_at: "2026-06-02T02:28:28Z",
   requires_save_reset: false,
-  portal_url: "https://9ae1e953.draxos-mobile-internal-alpha.pages.dev/portal/index.html",
+  portal_url: "https://draxos-mobile-internal-alpha.pages.dev/portal/index.html",
   notes: [
     "Primeira release candidate interna.",
     "APK Android e PC ZIP compartilham o mesmo backend remoto.",
@@ -21,27 +21,27 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
     android: {
       label: "Android APK",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-remote-lab-runner-20260531-e659d7e5/downloads/draxos-mobile-alpha.apk",
-      sha256: "b013182633fbd5ef568344d3f551490d993dc9eb0edb77a89e46d0e4f028faf4",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129/downloads/draxos-mobile-alpha.apk",
+      sha256: "d1111924b62f11334b92d457c8c49188f40062bd4db4f6ec4281d80fa27153d1",
       auth_required: "false",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-remote-lab-runner-20260531-e659d7e5/downloads/draxos-mobile-alpha.zip",
-      sha256: "292f92916d30420dc8bb1cf49ac2e5d3375bd43548fb25ad8cb7e47b676c1495",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129/downloads/draxos-mobile-alpha.zip",
+      sha256: "1b4471f60159ff20cbd0b418eb32db791350f4426b128c0a5a0f77c4ddc7313b",
       auth_required: "false",
     },
     web: {
       label: "Web",
-      url: "https://9ae1e953.draxos-mobile-internal-alpha.pages.dev/web/index.html",
+      url: "https://draxos-mobile-internal-alpha.pages.dev/web/index.html",
     },
   },
   known_issues: [
     "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
     "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
     "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar /portal/index.html e /web/index.html apos cada deploy.",
-    "Dominio estavel do Cloudflare Pages pode exigir Cloudflare Access; validacao publica anonima deve usar preview liberado ou sessao autenticada.",
+    "Dominio production fixo do Cloudflare Pages e o link oficial de playtest; se Cloudflare Access estiver ativo, validar conteudo com sessao autenticada.",
   ],
 };
 

@@ -4,7 +4,7 @@ param(
     [string]$BucketName = "draxos-internal-alpha",
     [string]$PrivateDownloadBucketName = "draxos-internal-alpha-private",
     [string]$ReleaseRoot = "internal-alpha/v0",
-    [string]$StaticSiteBaseUrl = "",
+    [string]$StaticSiteBaseUrl = "https://draxos-mobile-internal-alpha.pages.dev",
     [ValidateSet("Plan", "Package", "Upload", "DeployManifest", "FullPublish")]
     [string]$Mode = "Plan",
     [switch]$ConfirmRemoteMutation,
@@ -454,8 +454,10 @@ $plan = [ordered]@{
     storage_base_url = $storageBaseUrl
     static_site_base_url = $normalizedStaticSiteBaseUrl
     cloudflare_access = [ordered]@{
+        production_domain = "https://draxos-mobile-internal-alpha.pages.dev"
+        production_domain_is_canonical = $true
         stable_domain_may_be_access_protected = $true
-        validation_note = "Use preview liberado ou sessao autenticada para validar Portal/Web quando o dominio estavel exigir Access."
+        validation_note = "O manifest deve apontar para o dominio production fixo. Use o hash de deployment apenas como evidencia tecnica; se Cloudflare Access estiver ativo, valide conteudo com sessao autenticada ou confirme o deployment Production na listagem do Cloudflare Pages."
     }
     app = [ordered]@{
         channel = "internal_alpha"

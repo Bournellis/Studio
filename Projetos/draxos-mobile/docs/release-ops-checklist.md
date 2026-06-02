@@ -48,6 +48,11 @@ Track 13 itself remains non-publishing by default. After Track 13, user-approved
 - Remote mutation still requires current-task approval plus `-ConfirmRemoteMutation`; never infer approval for schema, Edge Function, migration or secret changes from a client-only publication request.
 - Use a fresh versioned release root for every Web-visible package and generate Cloudflare Pages from the same worktree/session that exported and packaged the release.
 - Run `build_cloudflare_pages_package.ps1` after Storage upload with `-StaticAssetBaseUrl` pointing at the versioned Web asset root so the script can block stale `GODOT_CONFIG.fileSizes` mismatches.
+- The canonical playtest host is the production Pages domain:
+  `https://draxos-mobile-internal-alpha.pages.dev`. Do not publish the remote
+  manifest with a hash deployment URL as `portal_url` or `artifacts.web.url`.
+  Hash URLs such as `https://95f403c5...pages.dev` are evidence/debug links,
+  not the user-facing playtest contract.
 - Before reporting publication success, verify the deployed `/web/index.html` references the versioned asset root and that the shell `index.pck` size matches the remote `Content-Length`.
 
 ## Inventario Atual
@@ -159,6 +164,23 @@ Release-ready Web exige:
 - `web/index.html` publicado tem `GODOT_CONFIG.fileSizes.index.pck` igual ao `Content-Length` remoto do `index.pck` versionado.
 - `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html` abre Portal.
 - `https://draxos-mobile-internal-alpha.pages.dev/web/index.html` abre Web build.
+- Deploy Cloudflare Pages deve ir para a branch production `main`. O comando
+  recomendado e:
+
+```powershell
+npx -y wrangler@latest pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main
+```
+
+- O comando acima ainda retorna um deployment hash. Registrar esse hash em
+  `implementation/current-status.md` como evidencia tecnica, mas manter
+  `StaticSiteBaseUrl` e o manifest remoto apontando para
+  `https://draxos-mobile-internal-alpha.pages.dev`.
+- Se Cloudflare Access estiver ativo, uma validacao anonima do dominio
+  production pode retornar a tela de Access. Isso nao prova conteudo Godot.
+  Para validar conteudo, use sessao autenticada no browser ou confirme via
+  `wrangler pages deployment list --project-name draxos-mobile-internal-alpha`
+  que o ultimo deployment `Production` da branch `main` corresponde ao source
+  publicado, e valide o hash URL apenas como espelho tecnico desse deployment.
 - Smoke somente leitura `release_artifacts_remote_smoke.ts` valida Portal com `DraxosMobile` e Web com `GODOT_CONFIG`.
 
 ## Web CORS Troubleshooting
@@ -190,7 +212,9 @@ Solucao aplicada:
   allowlisted da propria request.
 - A allowlist deve aceitar previews do projeto Cloudflare Pages por uma regra
   restrita a `https://<hash>.draxos-mobile-internal-alpha.pages.dev`, alem dos
-  origins fixos conhecidos. Nao use wildcard geral de CORS.
+  origins fixos conhecidos, incluindo
+  `https://draxos-mobile-internal-alpha.pages.dev`. Nao use wildcard geral de
+  CORS.
 - `OPTIONS` deve continuar respondendo com os headers calculados para o origin
   recebido.
 
@@ -198,7 +222,7 @@ Validacao recomendada apos qualquer novo preview Pages ou alteracao em Edge
 Functions:
 
 ```powershell
-$origin = "https://<cloudflare-preview-ou-dominio-estavel>"
+$origin = "https://draxos-mobile-internal-alpha.pages.dev"
 $function = "https://<project-ref>.supabase.co/functions/v1/healthcheck"
 curl.exe -i -H "Origin: $origin" $function
 curl.exe -i -X OPTIONS `
@@ -213,7 +237,9 @@ Aceitacao:
 - `Access-Control-Allow-Origin` deve ser exatamente o `$origin` enviado.
 - `Access-Control-Allow-Headers` deve incluir os headers usados pelo cliente.
 - `validate_foundation.ps1 -Profile RemoteReadOnly` deve passar com
-  `DRAXOS_REMOTE_CORS_ORIGIN` apontando para o preview/dominio testado.
+  `DRAXOS_REMOTE_CORS_ORIGIN=https://draxos-mobile-internal-alpha.pages.dev`.
+  Previews hash podem ser validados em paralelo, mas nao substituem o dominio
+  production fixo.
 - `internal_alpha_remote_smoke.ts` deve passar em modo read-only quando o alvo
   remoto e a publishable key estiverem configurados.
 
@@ -311,13 +337,13 @@ Esta sequencia fica fora da validacao automatica segura e deve ser usada apenas 
 1. Rodar validacao full/release local.
 2. Exportar Android, PC e Web com `tools/export_internal_alpha.ps1`.
 3. Revisar hashes em `build/internal-alpha/release-artifacts.json`.
-4. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Plan -StaticSiteBaseUrl <url>` e revisar o plano.
-5. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Package -StaticSiteBaseUrl <url>` para preparar pacote local.
-6. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ConfirmRemoteMutation -StaticSiteBaseUrl <url>` para Storage.
+4. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Plan -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` e revisar o plano.
+5. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Package -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para preparar pacote local.
+6. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ConfirmRemoteMutation -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para Storage.
 7. Gerar pacote Cloudflare no mesmo worktree com `tools/build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <asset-root-versionado>/web`; este passo deve acontecer depois do upload porque o script compara o shell local com os assets remotos.
-8. Publicar pacote no Cloudflare Pages por fluxo aprovado.
-9. Validar o preview Cloudflare antes do dominio estavel: `/web` deve conter o asset root versionado e `GODOT_CONFIG.fileSizes.index.pck` deve bater com o `Content-Length` de `<asset-root-versionado>/web/index.pck`.
-10. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ConfirmRemoteMutation -StaticSiteBaseUrl <url>` para manifest/deploy.
+8. Publicar pacote no Cloudflare Pages production com `npx -y wrangler@latest pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`.
+9. Validar o hash retornado pelo Cloudflare como evidencia tecnica e validar o dominio production fixo como alvo oficial. `/web` deve conter o asset root versionado e `GODOT_CONFIG.fileSizes.index.pck` deve bater com o `Content-Length` de `<asset-root-versionado>/web/index.pck`. Se production estiver sob Access, usar sessao autenticada ou registrar que a validacao anonima encontrou Access esperado.
+10. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ConfirmRemoteMutation -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para manifest/deploy.
 11. Rodar smokes remotos, incluindo `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` e `internal_alpha_remote_smoke.ts` com flags necessarias.
 12. Registrar relatorio de export/publicacao e atualizar handoff.
 
@@ -338,6 +364,7 @@ Esta sequencia fica fora da validacao automatica segura e deve ser usada apenas 
 ## Red Flags
 
 - Manifest remoto aponta para hash diferente do artefato local aprovado.
+- Manifest remoto aponta para `https://<hash>.draxos-mobile-internal-alpha.pages.dev` em vez do production fixo `https://draxos-mobile-internal-alpha.pages.dev`.
 - `minimum_supported_version_code` maior que o app atual sem build nova validada.
 - Portal/Web final hospedado diretamente no Supabase Storage.
 - Cloudflare Pages foi redeployado a partir de `build/` local antigo ou de worktree diferente da exportacao aprovada.

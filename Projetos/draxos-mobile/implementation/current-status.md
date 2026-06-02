@@ -1,6 +1,6 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-06-01`
+- Last updated: `2026-06-02`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
@@ -12,7 +12,8 @@
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Latest published remote package: `Openworld QoL Regression Fix`, release root
   `internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129`,
-  Cloudflare preview
+  Cloudflare production URL
+  `https://draxos-mobile-internal-alpha.pages.dev`, latest deployment evidence
   `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`.
 - Latest implemented package: `Openworld QoL Regression Fix` on
   `codex/draxos-mobile/openworld-node2d-qol`.
@@ -21,9 +22,10 @@
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is the Openworld QoL regression fix.
 - Active follow-up: human functional playtest of the published Openworld QoL
-  regression fix, especially Web/PC WASD, free mouse/touch joystick, obstacle
-  collision, border walls, y-depth ordering, HUD/input interference and
-  collection/deposit flow.
+  regression fix through
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, especially
+  Web/PC WASD, free mouse/touch joystick, obstacle collision, border walls,
+  y-depth ordering, HUD/input interference and collection/deposit flow.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -42,18 +44,44 @@ large-object collision were not good enough in the published experience.
   `D:\Estudio-worktrees\draxos-mobile--codex--openworld-node2d-qol`;
 - release root:
   `internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129`;
-- Cloudflare preview:
+- Cloudflare production:
+  `https://draxos-mobile-internal-alpha.pages.dev`;
+- Cloudflare deployment evidence:
   `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`;
 - Portal:
-  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
 - Web:
-  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
 - Android APK:
   `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129/downloads/draxos-mobile-alpha.apk`;
 - PC ZIP:
   `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129/downloads/draxos-mobile-alpha.zip`;
 - remote manifest:
   `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
+
+## Internal Alpha Production Domain Pin - 2026-06-02
+
+The Internal Alpha playtest URL is now the fixed Cloudflare Pages production
+domain, not the per-deployment hash URL.
+
+- official Portal:
+  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- official Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- latest deployment evidence:
+  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`;
+- Cloudflare Pages deployment list reports deployment
+  `95f403c5-fde4-4522-b366-783e361dd2bb` as `Production`, branch `main`,
+  source `ba6f129`;
+- remote manifest was redeployed with
+  `StaticSiteBaseUrl=https://draxos-mobile-internal-alpha.pages.dev`, keeping
+  the Openworld QoL hotfix APK/ZIP hashes and release root unchanged;
+- production CORS origin GET/OPTIONS checks pass for
+  `https://draxos-mobile-internal-alpha.pages.dev`;
+- unauthenticated GET to production can return Cloudflare Access instead of the
+  Godot shell. That is an access gate, not a release URL rotation; validate
+  content through an authenticated Access session or use the hash URL only as
+  technical deployment evidence.
 
 Fixes delivered:
 
@@ -83,9 +111,14 @@ Publication and validation:
 - `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <versioned-web-root>`:
   passed.
 - `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`:
-  passed, preview `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`.
+  passed, deployment evidence
+  `https://95f403c5.draxos-mobile-internal-alpha.pages.dev`, production URL
+  `https://draxos-mobile-internal-alpha.pages.dev`.
 - `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129 -StaticSiteBaseUrl https://95f403c5.draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`:
-  passed.
+  initially passed with hash URLs.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129 -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`:
+  passed on `2026-06-02`, repointing the remote manifest to production fixed
+  Portal/Web URLs without changing APK/ZIP/Web assets.
 - Supabase Edge Functions were redeployed after the CORS helper update; `modes`
   was redeployed again after the entrypoint strictness alignment.
 - `tools/validate_foundation.ps1 -ProjectDir . -Profile ServerQuick`: passed.

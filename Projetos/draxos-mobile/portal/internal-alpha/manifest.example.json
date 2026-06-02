@@ -33,7 +33,7 @@
   "known_issues": [
     "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
     "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
-    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar /portal/index.html e /web/index.html apos cada deploy.",
-    "Dominio estavel do Cloudflare Pages pode exigir Cloudflare Access; validacao publica anonima deve usar preview liberado ou sessao autenticada."
+    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar /portal/index.html e /web/index.html no dominio production fixo apos cada deploy.",
+    "Dominio production fixo do Cloudflare Pages e o link oficial de playtest; se Cloudflare Access estiver ativo, validar conteudo com sessao autenticada."
   ]
 }
