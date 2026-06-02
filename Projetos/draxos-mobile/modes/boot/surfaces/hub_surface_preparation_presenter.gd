@@ -32,7 +32,7 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 	var spell_slots := _preparation_spell_slots(combat_build)
 
 	box.add_child(_section_label("Pronto para Arena", compact))
-	box.add_child(_body_label("Escolha o que Draxos leva para a proxima Arena.", compact))
+	box.add_child(_body_label("Este e o loadout que sera travado ao iniciar uma tentativa.", compact))
 	box.add_child(_body_label(_preparation_first_session_hint(combat_build, spell_slots), compact))
 	var feedback_message := str(host.get_meta("preparation_feedback_message", "")).strip_edges()
 	if feedback_message != "":
@@ -50,12 +50,17 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 	var doctrine_id := _first_non_empty_string(combat_build, ["passive_id", "doctrine_id", "doutrina_id"])
 	if doctrine_id == "":
 		doctrine_id = _first_non_empty_string(account_build, ["passive_id", "doctrine_id", "doutrina_id"])
+	var stock := _inventory_quantity(inventory, AppShellActionContractScript.ITEM_HEALTH_POTION)
+	var potion_slot := _first_dictionary(potion_slots)
+	var potion_id := str(potion_slot.get("potion_id", ""))
+	var potion_behavior := _as_dictionary(potion_slot.get("behavior", {}))
 
-	box.add_child(_body_label("Resumo: %s | %s | %s | %s" % [
+	box.add_child(_body_label("Loadout atual:\nInstrumento: %s\nHabilidades: %s\nDoutrina: %s\nFamiliar: %s\nPocao: %s" % [
 		_preparation_item_label(instrument_id),
 		_preparation_spell_summary(spell_slots),
 		_preparation_item_label(doctrine_id) if doctrine_id != "" else "Sem Doutrina",
 		_preparation_item_label(familiar_id) if familiar_id != "" else "Sem Familiar",
+		_potion_status_text(potion_id),
 	], compact))
 	var progression_lines := ProgressionClarityPresenterScript.preparation_progress_lines(combat_build, 3)
 	if not progression_lines.is_empty():
@@ -66,6 +71,7 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 	box.add_child(cta_grid)
 	cta_grid.add_child(_entry_action_button(host, "Abrir Arena PVE", AppShellActionContractScript.ACTION_OPEN_ARENA, compact, "", true))
 
+	box.add_child(_section_label("Ajustes completos", compact))
 	box.add_child(_section_label("Instrumento Ritual", compact))
 	if instrument_id != "":
 		box.add_child(_body_label("Em uso: %s%s" % [
@@ -140,10 +146,6 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 		AppShellActionContractScript.remove_familiar_action()
 	)
 
-	var stock := _inventory_quantity(inventory, AppShellActionContractScript.ITEM_HEALTH_POTION)
-	var potion_slot := _first_dictionary(potion_slots)
-	var potion_id := str(potion_slot.get("potion_id", ""))
-	var potion_behavior := _as_dictionary(potion_slot.get("behavior", {}))
 	box.add_child(_section_label("Pocao", compact))
 	box.add_child(_body_label(_potion_status_text(potion_id), compact))
 	box.add_child(_body_label("Estoque: %d" % stock, compact))

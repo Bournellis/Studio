@@ -31,14 +31,14 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 
 	RefugePopupPresenterScript.create_refuge_menu_popup(host, root, compact)
 
-	_add_refuge_icon_button(host, safe_frame, compact, "arena", "Arena PVE", "accent_blood", Vector2(0.50, 0.19), "Escolher Arena PVE e travar loadout.")
-	_add_refuge_icon_button(host, safe_frame, compact, "preparation", "Preparacao", "accent_astral", Vector2(0.50, 0.32), "Revisar pocao e habilidades antes da Arena.")
-	_add_refuge_icon_button(host, safe_frame, compact, "refuge", "Refugio", "accent_astral", Vector2(0.22, 0.37), "Coleta, energia e estruturas.")
-	_add_refuge_icon_button(host, safe_frame, compact, "social", "Social", "status_success", Vector2(0.78, 0.37), "Amigos, guilda e chat.")
-	_add_refuge_icon_button(host, safe_frame, compact, "modes", "Modos", "accent_bone", Vector2(0.22, 0.56), "Hub de modos oficiais.")
-	_add_refuge_icon_button(host, safe_frame, compact, "shop", "Loja", "accent_bone", Vector2(0.78, 0.56), "Recompensas e compras.")
-	_add_refuge_icon_button(host, safe_frame, compact, "collect", "Coletar", "status_success", Vector2(0.28, 0.77), "Coletar producao do Refugio.", true)
-	_add_refuge_icon_button(host, safe_frame, compact, "energy", "Energia", "accent_astral", Vector2(0.72, 0.77), "Comprar Energia.", true)
+	_add_refuge_icon_button(host, safe_frame, compact, "arena", "Arena PVE", "accent_blood", Vector2(0.50, 0.24), "Escolher Arena PVE e travar loadout.")
+	_add_refuge_icon_button(host, safe_frame, compact, "preparation", "Preparacao", "accent_astral", Vector2(0.31, 0.43), "Revisar pocao e habilidades antes da Arena.")
+	_add_refuge_icon_button(host, safe_frame, compact, "refuge", "Refugio", "accent_astral", Vector2(0.69, 0.43), "Coleta, energia e estruturas.")
+	_add_refuge_icon_button(host, safe_frame, compact, "social", "Social", "status_success", Vector2(0.20, 0.62), "Amigos, guilda e chat.", true)
+	_add_refuge_icon_button(host, safe_frame, compact, "modes", "Modos", "accent_bone", Vector2(0.50, 0.62), "Hub de modos oficiais.", true)
+	_add_refuge_icon_button(host, safe_frame, compact, "shop", "Loja", "accent_bone", Vector2(0.80, 0.62), "Recompensas e compras.", true)
+	_add_refuge_icon_button(host, safe_frame, compact, "collect", "Coletar", "status_success", Vector2(0.34, 0.77), "Coletar producao do Refugio.", true)
+	_add_refuge_icon_button(host, safe_frame, compact, "energy", "Energia", "accent_astral", Vector2(0.66, 0.77), "Comprar Energia.", true)
 	if _refuge_has_dev_tools(host):
 		_add_refuge_dev_button(host, safe_frame, compact)
 	_add_refuge_profile_button(host, safe_frame, compact)
@@ -200,7 +200,7 @@ static func _add_refuge_icon_button(host: Node, board: Control, compact: bool, m
 	button.anchor_bottom = anchor.y
 	var icon_size := Vector2(68, 56) if quick else Vector2(86, 72)
 	if not compact:
-		icon_size = Vector2(82, 58) if quick else Vector2(100, 82)
+		icon_size = Vector2(76, 48) if quick else Vector2(104, 82)
 	button.offset_left = -icon_size.x * 0.5
 	button.offset_right = icon_size.x * 0.5
 	button.offset_top = -icon_size.y * 0.5
