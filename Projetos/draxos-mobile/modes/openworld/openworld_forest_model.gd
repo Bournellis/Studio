@@ -197,7 +197,7 @@ func start_collection(item_id: String) -> Dictionary:
 	last_message = "Coletando %s..." % item_display_name(item_id)
 	return {"ok": true, "item_id": item_id, "duration": active_collection["duration"], "message": last_message}
 
-func advance_collection(delta: float, moved: bool = false, distance: float = 0.0) -> Dictionary:
+func advance_collection(delta: float, moved: bool = false, distance: float = 0.0, commit_to_pocket: bool = true) -> Dictionary:
 	if active_collection.is_empty():
 		return {"ok": false, "reason": "no_active_collection"}
 	if moved or distance > COLLECTION_CANCEL_RADIUS:
@@ -213,6 +213,16 @@ func advance_collection(delta: float, moved: bool = false, distance: float = 0.0
 		}
 	var item_id := str(active_collection.get("item_id", ""))
 	active_collection = {}
+	if not commit_to_pocket:
+		last_message = "Coleta aguardando servidor."
+		return {
+			"ok": true,
+			"completed": true,
+			"item_id": item_id,
+			"quantity": 1,
+			"progress": 1.0,
+			"message": last_message,
+		}
 	var added := add_to_pocket(item_id, 1)
 	added["completed"] = bool(added.get("ok", false))
 	added["progress"] = 1.0 if bool(added.get("ok", false)) else 0.0

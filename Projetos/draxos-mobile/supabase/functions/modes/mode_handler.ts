@@ -278,7 +278,10 @@ async function handleSessionEvent(
     const mapped = mapModeDatabaseError(rpc.error, "MODE_SESSION_EVENT_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  return jsonResponse(foundationRpcPayload(rpc.value));
+  return jsonResponse(stateEnvelope(foundationRpcPayload(rpc.value), {
+    surface: "mode",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleSessionComplete(

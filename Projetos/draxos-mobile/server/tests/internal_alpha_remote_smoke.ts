@@ -379,6 +379,11 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
       { node_id: "node_po_osso_preview_01", item_id: "po_osso_preview" },
     ]
   ) {
+    revision = await recordModeEvent(headers, sessionId, revision, "collect_start", {
+      node_id: node.node_id,
+      item_id: node.item_id,
+      session_seconds: 119,
+    });
     revision = await recordModeEvent(headers, sessionId, revision, "collect_complete", {
       ...node,
       session_seconds: 120,

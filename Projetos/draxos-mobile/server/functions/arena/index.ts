@@ -549,6 +549,7 @@ async function handleDuelRequest(
     arena: {
       attempt_id: attempt.value.id,
       arena_id: attempt.value.arena_id,
+      mode: "PVE_ARENA_V1",
       difficulty_id: attempt.value.difficulty_id,
       step_index: nextStep,
       max_steps: attempt.value.max_steps,

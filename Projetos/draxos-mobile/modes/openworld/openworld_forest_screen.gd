@@ -14,6 +14,7 @@ const CHEST_POSITION := Vector2(220, 250)
 const CHEST_RADIUS := 88.0
 const PLAYER_INITIAL_POSITION := Vector2(220, 330)
 const PLAYER_WORLD_MARGIN := 28.0
+const EVENT_RETRY_SECONDS := 1.25
 const KEYBOARD_ACTION_KEYS := {
 	"openworld_move_left": [KEY_A, KEY_LEFT],
 	"openworld_move_right": [KEY_D, KEY_RIGHT],
@@ -66,6 +67,10 @@ var _snapshot_revision := 0
 var _server_synced := false
 var _network_busy := false
 var _pending_event_count := 0
+var _event_queue: Array[Dictionary] = []
+var _event_flush_active := false
+var _event_retry_scheduled := false
+var _pending_collected_nodes: Dictionary = {}
 var _last_heartbeat_seconds := 0.0
 var _walk_phase := 0.0
 var _last_result_text := ""
@@ -560,9 +565,12 @@ func _advance_nearby_collection(delta: float) -> void:
 			"position": _position_payload(),
 			"session_seconds": int(_session_seconds),
 		})
-	var result: Dictionary = model.advance_collection(delta, false, distance)
+	var authoritative_online := _uses_integrated_authority()
+	var result: Dictionary = model.advance_collection(delta, false, distance, not authoritative_online)
 	if bool(result.get("completed", false)):
 		nearest["collected"] = true
+		if authoritative_online:
+			_pending_collected_nodes[node_id] = true
 		_active_collection_node_id = ""
 		_record_integrated_event_deferred("collect_complete", {
 			"node_id": node_id,
@@ -576,6 +584,8 @@ func _nearest_resource() -> Dictionary:
 	var best_distance := INF
 	for entry: Dictionary in _resource_nodes:
 		if bool(entry.get("collected", false)):
+			continue
+		if bool(_pending_collected_nodes.get(str(entry.get("node_id", "")), false)):
 			continue
 		var distance := _player_pos.distance_to(Vector2(entry.get("position", Vector2.ZERO)))
 		if distance <= RulesetScript.collection_radius() and distance < best_distance:
@@ -593,6 +603,14 @@ func _deposit_near_chest() -> void:
 		model.last_message = "Aproxime-se do bau para depositar."
 		_update_labels()
 		return
+	if _uses_integrated_authority():
+		model.last_message = "Depositando no servidor..."
+		_record_integrated_event_deferred("deposit_all", {
+			"position": _position_payload(),
+			"session_seconds": int(_session_seconds),
+		})
+		_update_labels()
+		return
 	model.deposit_all()
 	_record_integrated_event_deferred("deposit_all", {
 		"position": _position_payload(),
@@ -601,6 +619,19 @@ func _deposit_near_chest() -> void:
 	_update_labels()
 
 func _craft_recipe(recipe_id: String) -> void:
+	if _uses_integrated_authority():
+		if not model.can_craft(recipe_id):
+			model.last_message = "Materiais insuficientes ou upgrade ja ativo."
+			_update_labels()
+			return
+		model.last_message = "Craft aguardando servidor..."
+		_record_integrated_event_deferred("craft", {
+			"recipe_id": recipe_id,
+			"position": _position_payload(),
+			"session_seconds": int(_session_seconds),
+		})
+		_update_labels()
+		return
 	model.craft(recipe_id)
 	_record_integrated_event_deferred("craft", {
 		"recipe_id": recipe_id,
@@ -634,8 +665,8 @@ func _update_labels() -> void:
 	if _feedback_label != null:
 		_feedback_label.text = model.last_message
 	if _deposit_button != null:
-		_deposit_button.disabled = not _near_chest()
-		_deposit_button.tooltip_text = "Depositar bolso no bau." if _near_chest() else "Aproxime-se do bau."
+		_deposit_button.disabled = not _near_chest() or _network_busy or _has_pending_integrated_events()
+		_deposit_button.tooltip_text = "Sincronizacao em andamento." if _has_pending_integrated_events() else ("Depositar bolso no bau." if _near_chest() else "Aproxime-se do bau.")
 	if _complete_button != null:
 		_complete_button.text = "Completar" if integration_mode == "integrated_alpha" else "Preview"
 		_complete_button.disabled = _network_busy or (integration_mode == "integrated_alpha" and not _can_complete_integrated())
@@ -643,12 +674,12 @@ func _update_labels() -> void:
 		_sheet.render(
 			integration_mode,
 			_server_session_id,
-			_network_busy,
-			_last_pending_request_id,
+			_network_busy or _has_pending_integrated_events(),
+			_pending_summary_text(),
 			_last_result_text,
 			model.result_payload(_session_seconds)
 		)
-		_sheet.set_deposit_available(_near_chest())
+		_sheet.set_deposit_available(_near_chest() and not _has_pending_integrated_events())
 
 func _show_result() -> void:
 	if integration_mode == "integrated_alpha":
@@ -791,6 +822,7 @@ func _hydrate_integrated_session(session: Dictionary) -> bool:
 		_apply_remote_snapshot(snapshot_payload)
 	_server_synced = true
 	_pending_event_count = 0
+	_pending_collected_nodes = {}
 	return true
 
 func _apply_remote_snapshot(snapshot_payload: Dictionary) -> void:
@@ -812,55 +844,136 @@ func _apply_collected_nodes(collected_nodes: Dictionary) -> void:
 func _record_integrated_event_deferred(event_type: String, event_payload: Dictionary) -> void:
 	if integration_mode != "integrated_alpha" or _server_session_id == "":
 		return
-	call_deferred("_record_integrated_event", event_type, event_payload)
+	_event_queue.append({
+		"event_type": event_type,
+		"event_payload": event_payload.duplicate(true),
+	})
+	_pending_event_count = _event_queue.size() + (1 if _event_flush_active else 0)
+	_server_synced = false
+	if model.last_message.strip_edges() == "":
+		model.last_message = "Sincronizando Bosque..."
+	_update_labels()
+	call_deferred("_flush_integrated_event_queue")
 
-func _record_integrated_event(event_type: String, event_payload: Dictionary) -> void:
+func _flush_integrated_event_queue() -> void:
 	if integration_mode != "integrated_alpha" or _server_session_id == "":
+		return
+	if _event_flush_active:
 		return
 	if supabase_client == null or session_store == null or access_token == "":
 		_server_synced = false
 		return
-	var request_payload := event_payload.duplicate(true)
-	request_payload["event_type"] = event_type
-	request_payload["session_id"] = _server_session_id
-	request_payload["expected_revision"] = _snapshot_revision
-	var request: Dictionary = session_store.prepare_pending_mutation(
-		"modes/session/event",
-		"mode:openworld:%s" % str(session_store.get("active_save_type")),
-		"open_mode_shell:openworld",
-		request_payload
-	)
-	_pending_event_count += 1
-	_last_pending_request_id = str(request.get("request_id", ""))
-	_server_synced = false
-	var result: Dictionary = await supabase_client.record_mode_session_event(
-		str(request.get("request_id", "")),
-		_server_session_id,
-		ModelScript.MODE_ID,
-		ModelScript.SLICE_ID,
-		event_type,
-		_snapshot_revision,
-		event_payload,
-		access_token,
-		str(request.get("request_hash", ""))
-	)
-	_pending_event_count = maxi(0, _pending_event_count - 1)
-	var body := _response_body(result)
-	if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
-		_hydrate_integrated_session(_as_dictionary(body.get("session", {})))
-		_last_pending_request_id = ""
-		model.last_message = str(_as_dictionary(body.get("event", {})).get("message", model.last_message))
-	else:
+	_event_flush_active = true
+	while not _event_queue.is_empty():
+		var job := _as_dictionary(_event_queue.front())
+		var event_type := str(job.get("event_type", "")).strip_edges()
+		var event_payload := _as_dictionary(job.get("event_payload", {}))
+		if event_type == "":
+			_event_queue.pop_front()
+			continue
+		var request_payload := event_payload.duplicate(true)
+		request_payload["event_type"] = event_type
+		request_payload["session_id"] = _server_session_id
+		request_payload["expected_revision"] = _snapshot_revision
+		var request: Dictionary = session_store.prepare_pending_mutation(
+			"modes/session/event",
+			"mode:openworld:%s" % str(session_store.get("active_save_type")),
+			"open_mode_shell:openworld",
+			request_payload
+		)
+		_last_pending_request_id = str(request.get("request_id", ""))
+		_pending_event_count = _event_queue.size() + 1
 		_server_synced = false
+		_update_labels()
+		var result: Dictionary = await supabase_client.record_mode_session_event(
+			_last_pending_request_id,
+			_server_session_id,
+			ModelScript.MODE_ID,
+			ModelScript.SLICE_ID,
+			event_type,
+			_snapshot_revision,
+			event_payload,
+			access_token,
+			str(request.get("request_hash", ""))
+		)
+		var body := _response_body(result)
+		if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
+			_event_queue.pop_front()
+			_hydrate_integrated_session(_as_dictionary(body.get("session", {})))
+			model.last_message = str(_as_dictionary(body.get("event", {})).get("message", model.last_message))
+			continue
+		_server_synced = false
+		var error_code := _error_code(result)
 		model.last_message = "Sincronizacao pendente."
 		if not _is_network_error(result):
-			session_store.fail_pending_mutation(str(request.get("request_id", "")), _as_dictionary(result.get("body", {})))
+			session_store.fail_pending_mutation(_last_pending_request_id, body)
+			_event_queue.pop_front()
+			if error_code == "MODE_SESSION_REVISION_STALE":
+				await _resync_integrated_session("Bosque resincronizado. Repita a ultima acao se ela nao apareceu.")
+			else:
+				await _resync_integrated_session("Bosque resincronizado apos erro do servidor.")
+			_event_queue.clear()
+		else:
+			model.last_message = "Sincronizacao pendente. Tentando novamente..."
+			_schedule_integrated_event_retry()
+		break
+	_event_flush_active = false
+	_pending_event_count = _event_queue.size()
+	if _event_queue.is_empty():
+		_last_pending_request_id = ""
+		if _server_session_id != "":
+			_server_synced = true
 	_update_labels()
+
+func _schedule_integrated_event_retry() -> void:
+	if _event_retry_scheduled:
+		return
+	_event_retry_scheduled = true
+	call_deferred("_retry_integrated_event_queue")
+
+func _retry_integrated_event_queue() -> void:
+	if is_inside_tree():
+		await get_tree().create_timer(EVENT_RETRY_SECONDS).timeout
+	_event_retry_scheduled = false
+	_flush_integrated_event_queue()
+
+func _resync_integrated_session(success_message: String) -> bool:
+	if supabase_client == null or session_store == null or access_token == "":
+		return false
+	var state_result: Dictionary = await supabase_client.get_mode_state(ModelScript.MODE_ID, access_token)
+	if not bool(state_result.get("ok", false)):
+		return false
+	var body := _response_body(state_result)
+	var active_session := _as_dictionary(body.get("active_session", {}))
+	if active_session.is_empty():
+		var sessions := _as_array(body.get("sessions", []))
+		for session_variant: Variant in sessions:
+			var candidate := _as_dictionary(session_variant)
+			if str(candidate.get("status", "")) == "started":
+				active_session = candidate
+				break
+	if active_session.is_empty() or not _hydrate_integrated_session(active_session):
+		return false
+	model.last_message = success_message
+	return true
 
 func _can_complete_integrated() -> bool:
 	if integration_mode != "integrated_alpha":
 		return true
-	return _server_session_id != "" and _server_synced and _pending_event_count <= 0
+	return _server_session_id != "" and _server_synced and not _has_pending_integrated_events()
+
+func _uses_integrated_authority() -> bool:
+	return integration_mode == "integrated_alpha" and _server_session_id != "" and supabase_client != null and session_store != null and access_token != ""
+
+func _has_pending_integrated_events() -> bool:
+	return _event_flush_active or not _event_queue.is_empty() or _pending_event_count > 0
+
+func _pending_summary_text() -> String:
+	if _last_pending_request_id != "":
+		return _last_pending_request_id
+	if _has_pending_integrated_events():
+		return "fila:%d" % (_event_queue.size() + (1 if _event_flush_active else 0))
+	return ""
 
 func _position_payload() -> Dictionary:
 	return {
@@ -871,11 +984,17 @@ func _position_payload() -> Dictionary:
 func _response_body(result: Dictionary) -> Dictionary:
 	return _as_dictionary(result.get("body", result))
 
-func _is_network_error(result: Dictionary) -> bool:
+func _error_code(result: Dictionary) -> String:
 	var body := _response_body(result)
 	var error := _as_dictionary(body.get("error", body))
-	var code := str(error.get("code", result.get("code", "")))
+	return str(error.get("code", result.get("code", "")))
+
+func _is_network_error(result: Dictionary) -> bool:
+	var code := _error_code(result)
 	return code in ["NETWORK_UNAVAILABLE", "REQUEST_NOT_STARTED", "CLIENT_MISCONFIGURED"]
+
+func _as_array(value: Variant) -> Array:
+	return value if value is Array else []
 
 func _as_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}

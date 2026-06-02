@@ -20,6 +20,8 @@ const HANDLER_PATH = "server/functions/modes/mode_handler.ts";
 const SUPABASE_HANDLER_PATH = "supabase/functions/modes/mode_handler.ts";
 const SUPPORT_PATH = "server/functions/modes/mode_support.ts";
 const SUPABASE_SUPPORT_PATH = "supabase/functions/modes/mode_support.ts";
+const OPENWORLD_SCREEN_PATH = "modes/openworld/openworld_forest_screen.gd";
+const OPENWORLD_MODEL_PATH = "modes/openworld/openworld_forest_model.gd";
 
 Deno.test("mode platform migration is mirrored in server schema", async () => {
   const supabaseMigration = await readProjectText(MIGRATION_PATH);
@@ -300,8 +302,60 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   }
   assertIncludes(handler, "mode_endpoint_session_event", "handler should hash event mutations");
   assertIncludes(handler, "rpc/mode_session_event_v1", "handler should call the event RPC");
+  const eventHandler = codeSection(
+    handler,
+    "async function handleSessionEvent",
+    "async function handleSessionComplete",
+  );
+  assertIncludes(
+    eventHandler,
+    "stateEnvelope(foundationRpcPayload(rpc.value)",
+    "session/event should return the common responsiveness envelope",
+  );
+  assertIncludes(
+    eventHandler,
+    'surface: "mode"',
+    "session/event envelope should be scoped to mode",
+  );
   assertIncludes(support, "session_event", "support should resolve the event route");
   assertIncludes(support, "mode_session_revision_stale", "support should map stale revisions");
+});
+
+Deno.test("openworld client queues authoritative events before local mutation", async () => {
+  const screen = normalizeCode(await readProjectText(OPENWORLD_SCREEN_PATH));
+  const model = normalizeCode(await readProjectText(OPENWORLD_MODEL_PATH));
+
+  for (
+    const required of [
+      "var _event_queue: array[dictionary]",
+      "func _flush_integrated_event_queue",
+      "await supabase_client.record_mode_session_event",
+      "_snapshot_revision",
+      "_event_queue.pop_front()",
+      "_resync_integrated_session",
+      "model.advance_collection(delta, false, distance, not authoritative_online)",
+      "_pending_collected_nodes[node_id] = true",
+      "_deposit_button.disabled = not _near_chest() or _network_busy or _has_pending_integrated_events()",
+      "func _has_pending_integrated_events()",
+    ]
+  ) {
+    assertIncludes(screen, required, `openworld screen should include ${required}`);
+  }
+  assertNotIncludes(
+    screen,
+    'call_deferred("_record_integrated_event"',
+    "openworld should not fire concurrent event mutations with the same revision",
+  );
+  assertIncludes(
+    model,
+    "commit_to_pocket: bool = true",
+    "model should support server-authoritative collection completion",
+  );
+  assertIncludes(
+    model,
+    "if not commit_to_pocket:",
+    "model should avoid optimistic pocket mutation before remote ACK",
+  );
 });
 
 Deno.test("mode session abandon is RPC-backed and hash guarded", async () => {

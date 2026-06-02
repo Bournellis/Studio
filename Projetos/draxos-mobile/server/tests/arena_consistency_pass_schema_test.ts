@@ -117,6 +117,7 @@ Deno.test("arena runtime uses generated Season 1 catalog and tier difficulty ids
       "difficulty_id: tier.difficulty_id",
       "reward_profile_id",
       "duel_power_target",
+      'mode: "PVE_ARENA_V1"',
     ]
   ) {
     assertIncludes(edgeFunction, required, `arena edge function should include ${required}`);
