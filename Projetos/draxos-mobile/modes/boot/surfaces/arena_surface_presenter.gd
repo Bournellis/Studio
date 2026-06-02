@@ -24,6 +24,8 @@ func render_loadout(host: Node) -> void:
 func render_active(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
 	_call_host(host, "_add_body_text", ["Tentativa em andamento. Cada duelo comeca com HP cheio; o loadout segue travado, mas comportamento simples e uso de pocao ainda podem ser ajustados antes do proximo duelo."])
+	_call_host(host, "_add_output_label", [_duel_progress_text(attempt)])
+	_add_loadout_details_control(host, attempt)
 	_call_host(host, "_add_output_label", [_active_attempt_text(attempt)])
 	if not _pending_buff_choices(attempt).is_empty():
 		_call_host(host, "_add_action_button", ["Escolher buff", AppShellActionContractScript.arena_choose_buff_action(_first_buff_id(attempt))])
@@ -161,18 +163,146 @@ func _active_attempt_text(attempt: Dictionary) -> String:
 	var duels_won := int(attempt.get("duels_won", attempt.get("current_step_index", 0)))
 	var next_duel := int(attempt.get("duel_index", duels_won)) + 1
 	var duels_total := maxi(1, int(attempt.get("duel_count", attempt.get("duels_total", 1))))
-	var next_enemy := _as_dictionary(attempt.get("next_enemy", {}))
 	var buffs := _as_array(attempt.get("temporary_buffs", []))
-	var locked_hash := str(attempt.get("locked_loadout_hash", "")).strip_edges()
-	var loadout := _as_dictionary(attempt.get("loadout_summary", {}))
-	return "Duelo: %d/%d\nEstado: %s\nProximo inimigo: %s\nLoadout: %s\nComportamento: ajustavel entre duelos\nBuffs ativos: %d\nHP: cheio no inicio de cada duelo" % [
+	return "Duelo atual: %d/%d\nEstado: %s\nProximo inimigo: %s\nComportamento: ajustavel entre duelos\nBuffs ativos: %d\nHP: cheio no inicio de cada duelo" % [
 		clampi(next_duel, 1, duels_total),
 		duels_total,
 		_friendly_attempt_state(_attempt_state(attempt)),
-		str(next_enemy.get("display_name", attempt.get("next_enemy_id", "pve_aprendiz_cinzas"))),
-		str(loadout.get("label", "travado")) if locked_hash != "" else "pendente",
+		_next_enemy_label(attempt),
 		buffs.size(),
 	]
+
+func _duel_progress_text(attempt: Dictionary) -> String:
+	var duels_won := clampi(int(attempt.get("duels_won", attempt.get("current_step_index", 0))), 0, 99)
+	var duel_index := int(attempt.get("duel_index", duels_won))
+	var duels_total := maxi(1, int(attempt.get("duel_count", attempt.get("duels_total", 1))))
+	var state := _attempt_state(attempt)
+	var current_duel := clampi(duel_index + 1, 1, duels_total)
+	if state in ["completed", "claimed"]:
+		current_duel = duels_total
+	var nodes := PackedStringArray()
+	for index in range(1, duels_total + 1):
+		if index <= duels_won:
+			nodes.append("[%d ganho]" % index)
+		elif state in ["completed", "claimed"] and index <= duels_total:
+			nodes.append("[%d ganho]" % index)
+		elif state == "failed" and index == current_duel:
+			nodes.append("[%d queda]" % index)
+		elif index == current_duel:
+			nodes.append("[%d agora]" % index)
+		else:
+			nodes.append("[%d espera]" % index)
+	return "Progresso dos duelos\n%s\nVencidos: %d/%d" % [
+		" -> ".join(nodes),
+		clampi(duels_won, 0, duels_total),
+		duels_total,
+	]
+
+func _add_loadout_details_control(host: Node, attempt: Dictionary) -> void:
+	var panel := PanelContainer.new()
+	panel.name = "ArenaLoadoutDetailsPanel"
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var style_variant: Variant = _call_host(host, "_panel_style", ["bg_panel", "border_default"])
+	if style_variant is StyleBox:
+		panel.add_theme_stylebox_override("panel", style_variant)
+
+	var stack := VBoxContainer.new()
+	stack.add_theme_constant_override("separation", 6)
+	panel.add_child(stack)
+
+	var title := _arena_label("Loadout travado", 14, "text_primary")
+	stack.add_child(title)
+	var summary := _arena_label(_loadout_locked_summary_text(attempt), 12, "text_secondary")
+	stack.add_child(summary)
+
+	var details := _arena_label(_loadout_details_text(attempt), 12, "text_secondary")
+	details.name = "ArenaLoadoutDetailsText"
+	details.visible = false
+	stack.add_child(details)
+
+	var toggle := Button.new()
+	toggle.name = "ArenaLoadoutDetailsToggle"
+	toggle.text = "Mostrar detalhes do loadout"
+	toggle.tooltip_text = "Abre um resumo read-only do loadout travado nesta tentativa."
+	toggle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_call_host(host, "_prepare_touch_button", [toggle])
+	toggle.pressed.connect(func() -> void:
+		details.visible = not details.visible
+		toggle.text = "Ocultar detalhes do loadout" if details.visible else "Mostrar detalhes do loadout"
+	)
+	stack.add_child(toggle)
+	_call_host(host, "_add_content_control", [panel])
+
+func _arena_label(text: String, font_size: int, color_token: String) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", UiTokens.color(color_token))
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return label
+
+func _loadout_locked_summary_text(attempt: Dictionary) -> String:
+	var locked_hash := str(attempt.get("locked_loadout_hash", "")).strip_edges()
+	var loadout := _as_dictionary(attempt.get("loadout_summary", {}))
+	return "Resumo: %s\nTravado: %s" % [
+		str(loadout.get("label", "Instrumento, habilidades, doutrina, familiar e pocao atuais.")),
+		"sim" if locked_hash != "" else "pendente",
+	]
+
+func _loadout_details_text(attempt: Dictionary) -> String:
+	var loadout := _as_dictionary(attempt.get("loadout_summary", {}))
+	var locked_hash := str(attempt.get("locked_loadout_hash", "")).strip_edges()
+	var lines := PackedStringArray()
+	lines.append("Detalhes somente leitura")
+	lines.append("- Fonte: tentativa ativa da Arena")
+	lines.append("- Resumo: %s" % str(loadout.get("label", "Loadout travado no servidor.")))
+	lines.append("- Hash: %s" % (_short_hash(locked_hash) if locked_hash != "" else "pendente"))
+	for spec in [
+		["instrument", "Instrumento"],
+		["weapon", "Instrumento"],
+		["spells", "Habilidades"],
+		["doctrine", "Doutrina"],
+		["familiar", "Familiar"],
+		["potion", "Pocao"],
+		["behavior", "Comportamento"],
+	]:
+		var key := str(spec[0])
+		if not loadout.has(key):
+			continue
+		lines.append("- %s: %s" % [str(spec[1]), _loadout_value_text(loadout.get(key))])
+	return "\n".join(lines)
+
+func _loadout_value_text(value: Variant) -> String:
+	if value is Array:
+		var parts := PackedStringArray()
+		for entry: Variant in Array(value):
+			parts.append(str(entry))
+		return ", ".join(parts)
+	if value is Dictionary:
+		var parts := PackedStringArray()
+		for key: Variant in Dictionary(value).keys():
+			parts.append("%s=%s" % [str(key), str(Dictionary(value).get(key))])
+		return ", ".join(parts)
+	return str(value)
+
+func _short_hash(value: String) -> String:
+	if value.length() <= 12:
+		return value
+	return "%s..." % value.substr(0, 12)
+
+func _next_enemy_label(attempt: Dictionary) -> String:
+	var next_enemy := _as_dictionary(attempt.get("next_enemy", {}))
+	for value: Variant in [
+		next_enemy.get("display_name", ""),
+		next_enemy.get("name", ""),
+		next_enemy.get("id", ""),
+		attempt.get("next_enemy_id", ""),
+	]:
+		var label := str(value).strip_edges()
+		if label != "":
+			return label
+	return "proximo bot da Arena"
 
 func _buff_choices_text(choices: Array) -> String:
 	var lines := PackedStringArray()

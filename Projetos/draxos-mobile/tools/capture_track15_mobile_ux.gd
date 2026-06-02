@@ -296,6 +296,7 @@ func _run_capture() -> int:
 	await _capture_preparation()
 	await _capture_arena_selection()
 	await _capture_arena_active()
+	await _capture_arena_replay()
 	await _capture_arena_buff_choice()
 	await _capture_battle()
 	await _capture_summary()
@@ -340,6 +341,17 @@ func _capture_arena_active() -> void:
 	var presenter = _arena_surface_presenter_script.new()
 	presenter.render_active(host)
 	await _capture("09_arena_active.png")
+	var toggle := _find_button_by_text(host, "Mostrar detalhes do loadout")
+	if toggle != null:
+		toggle.pressed.emit()
+		await root.get_tree().process_frame
+		await _capture("12_arena_loadout_expanded.png")
+
+func _capture_arena_replay() -> void:
+	var host := _new_host("arena_replay", false)
+	var presenter = _battle_replay_presenter_script.new()
+	presenter.render_fullscreen_replay(host, host, true, _sample_arena_battle_log(), _sample_rewards())
+	await _capture("13_arena_replay.png")
 
 func _capture_arena_buff_choice() -> void:
 	_apply_sample_arena_buff_state()
@@ -411,6 +423,17 @@ func _clear_capture() -> void:
 		root.remove_child(_current_capture)
 		_current_capture.queue_free()
 	_current_capture = null
+
+func _find_button_by_text(node: Node, text: String) -> Button:
+	if node == null:
+		return null
+	if node is Button and str((node as Button).text) == text:
+		return node as Button
+	for child: Node in node.get_children():
+		var found := _find_button_by_text(child, text)
+		if found != null:
+			return found
+	return null
 
 func _capture(file_name: String) -> void:
 	await process_frame
@@ -640,6 +663,7 @@ func _sample_active_attempt(with_buff_offer: bool) -> Dictionary:
 		"duel_index": 1,
 		"duel_count": 3,
 		"duels_won": 1,
+		"enemy_sequence": ["Sentinela das Cinzas", "Guardiao da Barreira", "Arauto do Veu"],
 		"locked_loadout_hash": "sha256:visual",
 		"loadout_summary": {"label": "Varinha de Cinzas, 2 habilidades, Pocao de Vida"},
 		"next_enemy": {"display_name": "Guardiao da Barreira"},
@@ -740,6 +764,23 @@ func _sample_battle_log() -> Dictionary:
 			{"t": 16.5, "seq": 5, "type": "battle_end", "winner": "player"},
 		],
 	}
+
+func _sample_arena_battle_log() -> Dictionary:
+	var battle_log := _sample_battle_log()
+	battle_log["battle_id"] = "track15_visual_arena_duel"
+	battle_log["mode"] = "PVE_ARENA_V1"
+	battle_log["metadata"] = {
+		"mode": "PVE_ARENA_V1",
+		"arena_id": "arena_cinzas_curta",
+		"difficulty_id": "s1_d01_aprendiz",
+		"duel_index": 2,
+		"duel_count": 3,
+	}
+	battle_log["participants"] = {
+		"player": {"id": "track15_visual_player", "display_name": "Draxos"},
+		"opponent": {"id": "arena_guardiao", "display_name": "Guardiao da Barreira", "is_bot": true},
+	}
+	return battle_log
 
 func _sample_rewards() -> Dictionary:
 	return {

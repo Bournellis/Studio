@@ -148,6 +148,8 @@ func render_fullscreen_summary(
 	details.add_theme_constant_override("separation", 8 if compact_layout else 10)
 	details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stack.add_child(details)
+	if arena_log:
+		details.add_child(_summary_detail_panel("Combate", _arena_combat_summary_text(battle_log, summary), compact_layout))
 	var reward_text := str(summary.get("reward_text", ""))
 	if reward_text != "":
 		details.add_child(_summary_detail_panel("Recompensa aplicada" if arena_log else "Recompensa", reward_text, compact_layout))
@@ -175,7 +177,7 @@ func render_fullscreen_summary(
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	actions.custom_minimum_size = Vector2(0, 112 if compact_layout else 128)
 	stack.add_child(actions)
-	actions.add_child(_fullscreen_action_button("Voltar e verificar base", ACTION_RETURN_REFUGE, Vector2(0, 58)))
+	actions.add_child(_fullscreen_action_button("Voltar ao Refugio" if arena_log else "Voltar e verificar base", ACTION_RETURN_REFUGE, Vector2(0, 58)))
 	actions.add_child(_fullscreen_action_button("Ver logs da batalha", ACTION_SHOW_CURRENT_LOGS, Vector2(0, 48)))
 	_timeline_label = null
 
@@ -464,6 +466,20 @@ static func _outcome_text(battle_log: Dictionary, result: Dictionary, winner: St
 		return "%s contra %s - %s em %.1fs." % [arena_context, opponent_label, reason, duration]
 	return "Contra %s - %s em %.1fs." % [opponent_label, reason, duration]
 
+static func _arena_combat_summary_text(battle_log: Dictionary, summary: Dictionary) -> String:
+	var arena_context := _arena_duel_text(battle_log)
+	var duration_text := str(summary.get("duration_text", "0.0s"))
+	var event_count := int(summary.get("event_count", 0))
+	var opponent_label := str(summary.get("opponent_label", _participant_label(battle_log, "opponent", "Oponente")))
+	if arena_context == "":
+		arena_context = "Duelo da Arena"
+	return "%s\nAdversario: %s\nLances: %d | Duracao: %s" % [
+		arena_context,
+		opponent_label,
+		event_count,
+		duration_text,
+	]
+
 static func _reason_text(reason: String, winner: String) -> String:
 	match reason:
 		"opponent_defeated":
@@ -554,16 +570,25 @@ func _request_splash(compact_layout: bool) -> Control:
 func _battle_duel_shell_band(battle_log: Dictionary, _rewards: Dictionary, compact_layout: bool) -> PanelContainer:
 	_duel_total_events = sorted_events(battle_log).size()
 	_duel_visible_events = 0
+	var arena_log := _is_arena_battle_log(battle_log)
 
 	var panel := PanelContainer.new()
 	panel.name = "BattleDuelShellBand"
 	panel.add_theme_stylebox_override("panel", _panel_style("bg_panel", "accent_battle"))
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	panel.custom_minimum_size = Vector2(0, 86 if compact_layout else 96)
+	var shell_height := 86 if compact_layout else 96
+	if arena_log:
+		shell_height = 118 if compact_layout else 132
+	panel.custom_minimum_size = Vector2(0, shell_height)
 
 	var stack := VBoxContainer.new()
 	stack.add_theme_constant_override("separation", 4 if compact_layout else 6)
 	panel.add_child(stack)
+
+	if arena_log:
+		var arena_label := _fullscreen_center_label(_arena_duel_text(battle_log), 13 if compact_layout else 15, "text_secondary")
+		arena_label.name = "BattleDuelArenaContextLabel"
+		stack.add_child(arena_label)
 
 	_duel_matchup_label = _fullscreen_center_label(_matchup_text(battle_log), 15 if compact_layout else 18, "text_primary")
 	_duel_matchup_label.name = "BattleDuelMatchupLabel"
@@ -586,8 +611,19 @@ func _battle_duel_shell_band(battle_log: Dictionary, _rewards: Dictionary, compa
 	_duel_state_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	status_row.add_child(_duel_state_label)
 
+	if arena_log:
+		var reward_label := _fullscreen_center_label(_duel_reward_text(_rewards), 12 if compact_layout else 14, "text_secondary")
+		reward_label.name = "BattleDuelRewardLabel"
+		stack.add_child(reward_label)
+
 	_update_duel_shell_status("Aguardando primeiro lance", 0)
 	return panel
+
+func _duel_reward_text(rewards: Dictionary) -> String:
+	var reward_text := _reward_text(rewards)
+	if reward_text == "":
+		return "Recompensa do duelo: aplicada quando houver clear."
+	return "Recompensa do duelo: %s" % reward_text
 
 func _matchup_text(battle_log: Dictionary) -> String:
 	return "%s vs %s" % [

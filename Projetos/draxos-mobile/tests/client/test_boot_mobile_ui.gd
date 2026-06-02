@@ -655,9 +655,20 @@ func test_arena_active_exposes_behavior_adjustment_without_unlocking_loadout() -
 	assert_not_null(_find_button_by_text(boot._content_body, "Ajustar comportamento"))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_SHOW_PREPARATION))
-	assert_true(_label_tree_contains(boot._content_body, "Duelo: 1/3"))
-	assert_true(_label_tree_contains(boot._content_body, "Loadout: Varinha de Cinzas, 1 habilidade, Pocao de Vida"))
+	assert_true(_label_tree_contains(boot._content_body, "Progresso dos duelos"))
+	assert_true(_label_tree_contains(boot._content_body, "[1 agora] -> [2 espera] -> [3 espera]"))
+	assert_true(_label_tree_contains(boot._content_body, "Duelo atual: 1/3"))
+	assert_true(_label_tree_contains(boot._content_body, "Proximo inimigo: Aprendiz das Cinzas"))
+	assert_true(_label_tree_contains(boot._content_body, "Resumo: Varinha de Cinzas, 1 habilidade, Pocao de Vida"))
 	assert_true(_label_tree_contains(boot._content_body, "Comportamento: ajustavel entre duelos"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaLoadoutDetailsPanel"))
+	var details_button := _find_button_by_text(boot._content_body, "Mostrar detalhes do loadout")
+	assert_not_null(details_button)
+	assert_false(_visible_text_tree(boot._content_body).contains("Detalhes somente leitura"))
+	details_button.pressed.emit()
+	await get_tree().process_frame
+	assert_true(_visible_text_tree(boot._content_body).contains("Detalhes somente leitura"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Ocultar detalhes do loadout"))
 
 func test_arena_summary_continues_to_arena_instead_of_reward_claim_copy() -> void:
 	var boot = BootScreenScript.new()
@@ -1784,6 +1795,27 @@ func test_boot_battle_running_renders_fullscreen_overlay_and_skip() -> void:
 	boot._skip_current_replay()
 	assert_true(boot._skip_replay)
 
+func test_boot_arena_replay_shell_highlights_duel_and_reward() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"last_duel": {
+			"battle_log": _arena_battle_log_fixture(),
+			"rewards": _battle_rewards_fixture(),
+		},
+	}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_REPLAY)
+	await get_tree().process_frame
+
+	assert_not_null(boot._battle_fullscreen_overlay)
+	assert_not_null(_find_node_by_name(boot._battle_fullscreen_overlay, "BattleDuelArenaContextLabel"))
+	assert_not_null(_find_node_by_name(boot._battle_fullscreen_overlay, "BattleDuelRewardLabel"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Duelo 2/3 da Arena"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Draxos vs Guardiao da Barreira"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa do duelo: XP +10"))
+
 func test_boot_battle_summary_renders_reward_result_and_actions() -> void:
 	_prepare_account_state()
 	var boot = BootScreenScript.new()
@@ -1822,6 +1854,25 @@ func test_boot_battle_summary_renders_reward_result_and_actions() -> void:
 	assert_false(boot._action_buttons.has("show_battle_history"))
 	assert_false(boot._action_buttons.has("request_battle"))
 	assert_true(AppShellRouteContractScript.is_read_only_battle_action("show_current_battle_logs"))
+
+func test_boot_arena_battle_summary_uses_combat_reward_copy_without_ranking() -> void:
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.last_battle_log = _arena_battle_log_fixture()
+	SessionStore.last_battle_rewards = _battle_rewards_fixture()
+	boot._battle_summary_skipped = false
+
+	boot._show_screen("battle_summary")
+	await get_tree().process_frame
+
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Resultado da Arena"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Combate"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Duelo 2/3 da Arena"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Adversario: Guardiao da Barreira"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa aplicada"))
+	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Ranking"))
+	assert_not_null(_find_button_by_text(boot._battle_fullscreen_overlay, "Voltar ao Refugio"))
 
 func test_boot_battle_logs_render_current_battle_events() -> void:
 	var boot = BootScreenScript.new()
@@ -2189,6 +2240,23 @@ func _battle_log_fixture() -> Dictionary:
 			{"t": 0.0, "seq": 2, "type": "battle_result", "source": "system", "target": "none", "winner": "player", "reason": "opponent_defeated"},
 		],
 	}
+
+func _arena_battle_log_fixture() -> Dictionary:
+	var battle_log := _battle_log_fixture()
+	battle_log["battle_id"] = "arena-duel-fullscreen-1"
+	battle_log["mode"] = "PVE_ARENA_V1"
+	battle_log["metadata"] = {
+		"mode": "PVE_ARENA_V1",
+		"arena_id": "arena_cinzas_curta",
+		"difficulty_id": "s1_d01_aprendiz",
+		"duel_index": 2,
+		"duel_count": 3,
+	}
+	battle_log["participants"] = {
+		"player": {"id": "player-1", "display_name": "Draxos"},
+		"opponent": {"id": "bot-arena-2", "display_name": "Guardiao da Barreira", "is_bot": true},
+	}
+	return battle_log
 
 func _battle_rewards_fixture() -> Dictionary:
 	return {
