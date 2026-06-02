@@ -57,7 +57,7 @@ func test_result_payload_is_preview_local_only() -> void:
 	model.chest = {"galho": 3, "cinzas_preview": 2}
 	var payload := model.result_payload(12.5)
 	assert_eq(payload.get("mode_id"), "openworld")
-	assert_eq(payload.get("ruleset_id"), "openworld_forest_ruleset_v0")
+	assert_eq(payload.get("ruleset_id"), "openworld_forest_ruleset_v1")
 	assert_true(int(payload.get("activity_score", 0)) > 0)
 	assert_true(Dictionary(payload.get("deposited_items", {})).has("cinzas_preview"))
 

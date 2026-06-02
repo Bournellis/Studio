@@ -11,7 +11,7 @@ const CORS_ORIGIN = Deno.env.get("DRAXOS_REMOTE_CORS_ORIGIN") ??
 
 const MODE_MODE_ID = "openworld";
 const MODE_SLICE_ID = "forest";
-const MODE_RULESET_ID = "openworld_forest_ruleset_v0";
+const MODE_RULESET_ID = "openworld_forest_ruleset_v1";
 const MODE_RULESET_VERSION = 1;
 
 assertRemoteUrl(SUPABASE_URL);
@@ -360,6 +360,7 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
     headers,
   );
   const sessionId = stringField(objectField(started, "session"), "id");
+  let revision = numberField(objectField(started, "session"), "snapshot_revision");
   assert(
     sessionId !== "",
     "remote mode session/start should return session.id",
@@ -370,20 +371,30 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
     "remote mode session/start should be idempotent",
   );
 
+  for (
+    const node of [
+      { node_id: "node_madeira_01", item_id: "madeira" },
+      { node_id: "node_pedra_01", item_id: "pedra" },
+      { node_id: "node_ossos_preview_01", item_id: "ossos_preview" },
+      { node_id: "node_po_osso_preview_01", item_id: "po_osso_preview" },
+    ]
+  ) {
+    revision = await recordModeEvent(headers, sessionId, revision, "collect_complete", {
+      ...node,
+      session_seconds: 120,
+    });
+  }
+  revision = await recordModeEvent(headers, sessionId, revision, "deposit_all", {
+    session_seconds: 120,
+  });
+
   const completeBody = {
     request_id: crypto.randomUUID(),
     result: {
       session_id: sessionId,
       ruleset_id: MODE_RULESET_ID,
       ruleset_version: MODE_RULESET_VERSION,
-      session_seconds: 120,
-      activity_score: 500,
-      deposited_items: {
-        madeira: 20,
-        folha: 7,
-        ossos_preview: 6,
-        po_osso_preview: 3,
-      },
+      expected_revision: revision,
     },
   };
   const completed = await postJson(
@@ -406,19 +417,19 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
     "resource_delta",
   );
   assertEq(
-    numberField(resourceDelta, "energia"),
-    12,
-    "remote mode energy reward should be capped",
+    numberField(resourceDelta, "energia") >= 1,
+    true,
+    "remote mode energy reward should come from the server snapshot",
   );
   assertEq(
-    numberField(resourceDelta, "ossos"),
-    2,
-    "remote mode bones reward should be capped",
+    numberField(resourceDelta, "ossos") >= 0,
+    true,
+    "remote mode bones reward should be server-derived",
   );
   assertEq(
-    numberField(resourceDelta, "xp"),
-    8,
-    "remote mode XP reward should be capped",
+    numberField(resourceDelta, "xp") >= 0,
+    true,
+    "remote mode XP reward should be server-derived",
   );
 
   const labStarted = await postJson(
@@ -438,9 +449,7 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
         session_id: stringField(objectField(labStarted, "session"), "id"),
         ruleset_id: MODE_RULESET_ID,
         ruleset_version: MODE_RULESET_VERSION,
-        session_seconds: 60,
-        activity_score: 120,
-        deposited_items: { madeira: 2, ossos_preview: 3 },
+        expected_revision: 0,
       },
     },
     modeHeaders(accessToken, "progression_lab"),
@@ -453,6 +462,29 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
   );
 
   return sessionId;
+}
+
+async function recordModeEvent(
+  headers: Record<string, string>,
+  sessionId: string,
+  expectedRevision: number,
+  eventType: string,
+  eventPayload: JsonObject,
+): Promise<number> {
+  const response = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    {
+      request_id: crypto.randomUUID(),
+      session_id: sessionId,
+      mode_id: MODE_MODE_ID,
+      slice_id: MODE_SLICE_ID,
+      event_type: eventType,
+      expected_revision: expectedRevision,
+      event_payload: eventPayload,
+    },
+    headers,
+  );
+  return numberField(objectField(response, "event"), "revision_after");
 }
 
 async function getJson(

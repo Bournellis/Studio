@@ -15,8 +15,9 @@
   Cloudflare production URL
   `https://draxos-mobile-internal-alpha.pages.dev`, latest deployment evidence
   `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev`.
-- Latest implemented package: `App Responsiveness Architecture Pass` on
-  `codex/draxos-mobile/app-responsiveness` (local only, not published).
+- Latest implemented package: integrated `App Responsiveness Architecture Pass`,
+  `Arena Loop Simplification` and `Openworld Bosque Hardening V1` on `master`
+  (local integration in progress, not yet published).
 - Previous visual package: `Refugio Visual Cleanup`, release root
   `internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0`,
   deployment evidence `https://f183cd39.draxos-mobile-internal-alpha.pages.dev`.
@@ -27,10 +28,8 @@
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is the Web Launch Resilience release.
-- Active follow-up: App Responsiveness Architecture Pass is implemented and
-  validated locally. Next DraxosMobile decision is human review of the local
-  package, then explicit approval before any Internal Alpha packaging,
-  remote validation, upload or manifest publication.
+- Active follow-up: integrate and publish the combined responsiveness, Arena
+  loop and Openworld Bosque hardening package after local validation.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -87,6 +86,78 @@ Validation:
   passed, and local Supabase transactional RPC live proof passed. The three
   local Edge Runtime live smokes failed because the local Edge worker returned
   `BOOT_ERROR` at `http://127.0.0.1:54321`; no remote mutation was attempted.
+
+## Openworld Bosque Hardening V1 - 2026-06-02
+
+Status: implemented locally in dedicated worktree, not published and not
+remotely applied.
+
+- branch: `codex/draxos-mobile/bosque-hardening`;
+- worktree:
+  `D:\Estudio-worktrees\draxos-mobile--codex--bosque-hardening`;
+- release channel remains `internal_alpha`;
+- no upload, Cloudflare deploy, manifest update, remote migration or
+  `-ConfirmRemoteMutation` command was executed.
+
+Scope delivered:
+
+- `openworld/forest` is prepared as an `active` Internal Alpha mode using
+  `openworld_forest_ruleset_v1`.
+- The Bosque ruleset moved to the shared versioned definition
+  `data/definitions/openworld/forest_ruleset_v1.json`; v0 remains historical.
+- Local client and Edge Functions now share ruleset identity, session limits,
+  item, recipe and node definitions.
+- `mode_sessions` gains remote snapshot/revision fields and
+  `mode_session_events` records revision-gated session events.
+- `POST /modes/session/event` accepts `move_heartbeat`, `collect_start`,
+  `collect_cancel`, `collect_complete`, `deposit_all`, `craft`,
+  `complete_requested` and `abandon_requested`.
+- `GET /modes/state?mode_id=openworld` can return an active resumable Bosque
+  session with snapshot, revision, expiry and status.
+- `mode_session_complete_v1` calculates rewards from the server snapshot only;
+  client-sent reward/deposit payloads are not authoritative.
+- Offline/no-auth/network-failed Bosque remains playable only as preview and
+  cannot complete for reward until resynced.
+- Player-facing UI removes technical labels such as `integrated_alpha`,
+  `online` and `dev_local`, keeping technical state inside operation details.
+- The client mode registry now reports `openworld` as `active`, matching the
+  descriptor while preserving the `internal_alpha` release channel.
+
+Dependency gate:
+
+- Merge/publication must wait for `codex/draxos-mobile/app-responsiveness` to
+  become the baseline or be explicitly superseded, then this branch must be
+  rebased and conflict-reviewed around `SessionStore`, `SupabaseClient`,
+  response envelopes, cache and latency handling.
+- The dirty/unmerged `arena-backend` work remains informative only; it does not
+  block this Bosque hardening branch.
+
+Validation completed locally:
+
+- `git diff --check`: passed.
+- Deno check for `server/functions/modes/index.ts` and
+  `supabase/functions/modes/index.ts`: passed.
+- Deno checks for local/remote mode live smoke scripts: passed.
+- Deno tests for mode domain, reward bridge, ruleset definition, descriptor
+  schema, registry, rate limit and mode platform schema: passed.
+- Godot headless import: passed with known GUT import warnings.
+- `tools/smoke_openworld_forest.gd`: passed.
+- GUT client: passed, `174/174`, `3182` asserts.
+- `tools/smoke_modes_visual_layout.gd`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ServerQuick`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ModePlatform`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`: passed.
+  The plan dry-run reported expected Package blockers because Supabase URL and
+  local APK/ZIP/Web artifacts were intentionally absent in this non-publication
+  delivery.
+
+Remaining gates before publication:
+
+- Re-run `ServerQuick`, `ModePlatform`, `ClientQuick` and `ReleaseDryRun` after
+  the integration merge.
+- Apply the migration only in an explicitly approved remote mutation window.
+- Package/upload/deploy/manifest only after explicit publication approval.
 
 ## Web Launch Resilience - 2026-06-02
 

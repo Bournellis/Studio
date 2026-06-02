@@ -2,6 +2,7 @@ const PROJECT_PREFIX = "Projetos/draxos-mobile";
 
 Deno.test("mode platform V1 declares default session limits", async () => {
   const migration = await projectText("supabase/migrations/202606010001_modes_platform_v1.sql");
+  const bosqueHardening = await projectText("supabase/migrations/202606020001_openworld_bosque_hardening_v1.sql");
   for (
     const fragment of [
       "create table if not exists public.mode_limit_policies",
@@ -13,6 +14,21 @@ Deno.test("mode platform V1 declares default session limits", async () => {
     ]
   ) {
     assertIncludes(migration, fragment, `rate-limit contract should include ${fragment}`);
+  }
+  for (
+    const fragment of [
+      "'openworld_forest_ruleset_v1'",
+      "policy_row public.mode_limit_policies%rowtype",
+      "policy_row.max_active_sessions",
+      "policy_row.start_cooldown_seconds",
+      "policy_row.daily_start_limit",
+      "policy_row.session_expiry_seconds",
+      "MODE_SESSION_ALREADY_ACTIVE",
+      "MODE_SESSION_START_COOLDOWN",
+      "MODE_SESSION_DAILY_LIMIT",
+    ]
+  ) {
+    assertIncludes(bosqueHardening, fragment, `bosque hardening should enforce ${fragment}`);
   }
 });
 

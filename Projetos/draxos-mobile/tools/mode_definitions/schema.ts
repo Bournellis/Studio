@@ -5,6 +5,7 @@ export type SessionModel =
   | "core_base_endpoints"
   | "arena_pve_endpoints"
   | "mode_session_bridge"
+  | "mode_session_snapshot_event_bridge"
   | "none";
 export type DataStrategy =
   | "core-mode-progress"
@@ -159,7 +160,7 @@ export const MODE_EXPECTATIONS: ModeExpectation[] = [
     modeId: "openworld",
     displayName: "Openworld",
     sliceId: "forest",
-    status: "internal_alpha",
+    status: "active",
     releaseChannel: "internal_alpha",
     publicCta: true,
     fullscreen: true,
@@ -168,13 +169,13 @@ export const MODE_EXPECTATIONS: ModeExpectation[] = [
     surface: "fullscreen",
     screenPath: "res://modes/openworld/openworld_forest_screen.gd",
     enabledSetting: "draxos_mobile/modes/openworld/enabled",
-    rulesetId: "openworld_forest_ruleset_v0",
+    rulesetId: "openworld_forest_ruleset_v1",
     rulesetStatus: "active",
-    sessionModel: "mode_session_bridge",
+    sessionModel: "mode_session_snapshot_event_bridge",
     buildOwner: "openworld",
     dataStrategy: "shared-save-progress",
-    economyAuthority: "mode_session_complete_v1_existing",
-    rewardBridge: "openworld_forest_limited_existing",
+    economyAuthority: "mode_session_complete_v1_server_snapshot",
+    rewardBridge: "openworld_forest_limited_snapshot_authoritative",
     docPath: "docs/minigames/openworld.md",
   },
   {
@@ -594,7 +595,9 @@ function validateDescriptor(
     assertEq(
       scaffold,
       "freeze",
-      "no_new_gameplay_tuning_or_rewards",
+      expectation.modeId === "openworld"
+        ? "no_map_combat_risk_or_reward_expansion"
+        : "no_new_gameplay_tuning_or_rewards",
       `${root}.scaffold`,
       issues,
     );

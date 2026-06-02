@@ -183,9 +183,10 @@ novo.
 | POST | `/telemetry/client-event` | `telemetry` | Sim, opcional | Nao | Grava diagnostico client; novos eventos permitidos incluem `request_latency`, `surface_refresh`, `surface_cache_rendered` e `action_latency`; `player_id` pode ser nulo antes de conta/save. |
 | POST | `/progression-lab/apply` | `save-scoped` | Sim, exige `progression_lab` | `request_id` por save Lab | Interno/gated; aplica healthy save apenas no Lab e nunca escreve no Normal. |
 | GET | `/modes/registry` | `mode` | Sim | Nao | Registry dos cinco modos oficiais. |
-| GET | `/modes/state?mode_id=<id>` | `save-scoped` | Sim | Nao | Estado de um modo no save ativo. |
+| GET | `/modes/state?mode_id=<id>` | `save-scoped` | Sim | Nao | Estado de um modo no save ativo; Openworld retorna `active_session` com snapshot/revision quando retomavel. |
 | POST | `/modes/session/start` | `save-scoped` | Sim | `request_id/request_hash` por modo/save | Inicia sessao generica para modos que usam Mode sessions. |
-| POST | `/modes/session/complete` | `save-scoped` | Sim | `request_id/request_hash` por modo/save | Completa sessao e aplica Reward Bridge server-authoritative. |
+| POST | `/modes/session/event` | `save-scoped` | Sim | `request_id/request_hash` por modo/save/revision | Atualiza snapshot remoto de modo event-sourced e rejeita stale revision. |
+| POST | `/modes/session/complete` | `save-scoped` | Sim | `request_id/request_hash` por modo/save | Completa sessao e aplica Reward Bridge server-authoritative a partir do snapshot validado. |
 | POST | `/modes/session/abandon` | `save-scoped` | Sim | `request_id/request_hash` por modo/save | Abandona sessao iniciada. |
 | GET | `/modes/analytics/summary` | `mode` | Sim | Nao | Sumario interno por modo. |
 | POST | `/modes/admin/*` | `admin-internal` | Sim + `admin_roles` | `request_id/request_hash` nas mutacoes | Ops de disable/enable, sessao, reconcile e compensacao auditada. |

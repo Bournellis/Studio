@@ -16,7 +16,7 @@ Este catalogo substitui o registro centrado em `rpgsuave/forest`. A plataforma c
 | --- | --- | --- | --- | --- | --- | --- |
 | `basebuilder` | `Basebuilder` | `refugio` | `active` | Refugio/Base atuais | Base, estruturas, coleta, crafting de base e upgrades | Usa endpoints core de Base; pode receber/consumir recursos compartilhados |
 | `autobattler` | `Autobattler` | `pve_arena` | `active` | Arena PVE atual | Instrumento, Doutrina, Familiar, spells e potions | Usa endpoints `arena/pve/*`, battle rewards e ledger existentes |
-| `openworld` | `Openworld` | `forest` | `internal_alpha` | Fullscreen `mode_shell` | Progresso local do Bosque + Reward Bridge limitado | Pode emitir recompensas pequenas via RPC, idempotencia e ledger |
+| `openworld` | `Openworld` | `forest` | `active` (`internal_alpha`) | Fullscreen `mode_shell` | Bosque com snapshot remoto + Reward Bridge limitado | Pode emitir recompensas pequenas apenas via snapshot validado por RPC, idempotencia e ledger |
 | `towerdefense` | `Towerdefense` | `tbd` | `planned_disabled` | Hub disabled/staged | Build propria futura: torre central, spells, pets e upgrades | Sem recompensa ate contrato proprio |
 | `cardgame` | `Cardgame` | `tbd` | `planned_disabled` | Hub disabled/staged | Build propria futura; sem relacao mecanica com o projeto Steam | Sem recompensa ate contrato proprio |
 
@@ -53,7 +53,7 @@ Para V1 Internal Alpha:
 
 - `Basebuilder`: clicavel; abre Refugio/Base.
 - `Autobattler`: clicavel; abre Arena PVE.
-- `Openworld`: clicavel em Internal Alpha; abre `Openworld Bosque`.
+- `Openworld`: ativo em Internal Alpha; abre `Openworld Bosque`.
 - `Towerdefense`: visivel disabled/staged.
 - `Cardgame`: visivel disabled/staged.
 
@@ -77,6 +77,8 @@ Um modo so pode virar CTA publico quando passar por:
 
 - `rpgsuave` foi renomeado de verdade para `openworld`.
 - O primeiro slice do Openworld e `openworld/forest`, player-facing `Openworld Bosque`.
+- `openworld/forest` usa `openworld_forest_ruleset_v1`; v0 fica apenas historico de prototipo local.
+- Oficial aqui significa `mode_registry.status=active` no canal `internal_alpha`, nao publicacao publica.
 - `/minigames` nao e contrato ativo em V1.
 - `open_minigame_shell` e `minigame_shell` nao sao contrato ativo em V1.
 - Cardgame do DraxosMobile compartilha lore com outros projetos, mas nao herda mecanicas do `draxos-roguelike-cardgame`.

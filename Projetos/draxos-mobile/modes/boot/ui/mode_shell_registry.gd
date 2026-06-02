@@ -50,7 +50,7 @@ const _ENTRIES := {
 		"mode_id": MODE_OPENWORLD,
 		"slice_id": SLICE_OPENWORLD_FOREST,
 		"display_name": "Openworld",
-		"status": "internal_alpha",
+		"status": "active",
 		"release_channel": "internal_alpha",
 		"screen_path": OPENWORLD_SCREEN_PATH,
 		"route_id": "mode_shell",

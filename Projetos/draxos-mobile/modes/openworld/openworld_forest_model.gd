@@ -1,11 +1,13 @@
 class_name OpenworldForestModel
 extends RefCounted
 
+const RulesetScript := preload("res://modes/openworld/openworld_forest_ruleset.gd")
+
 const MODE_ID := "openworld"
 const SLICE_ID := "forest"
-const RULESET_ID := "openworld_forest_ruleset_v0"
+const RULESET_ID := "openworld_forest_ruleset_v1"
 const RULESET_VERSION := 1
-const SCHEMA_VERSION := "openworld_forest_local_v0"
+const SCHEMA_VERSION := "openworld_forest_snapshot_v1"
 
 const BASE_SPEED := 160.0
 const BASE_CAPACITY := 20.0
@@ -14,46 +16,6 @@ const MIN_LOADED_SPEED := 80.0
 const UPGRADED_MIN_LOADED_SPEED := 95.0
 const COLLECTION_RADIUS := 40.0
 const COLLECTION_CANCEL_RADIUS := 52.0
-
-const ITEM_DEFINITIONS := {
-	"madeira": {"display_name": "Madeira", "weight": 2.0, "gather_time": 2.5},
-	"galho": {"display_name": "Galho", "weight": 0.8, "gather_time": 1.2},
-	"folha": {"display_name": "Folha", "weight": 0.2, "gather_time": 0.8},
-	"folha_seca": {"display_name": "Folha seca", "weight": 0.2, "gather_time": 0.8},
-	"pedra": {"display_name": "Pedra", "weight": 2.5, "gather_time": 3.0},
-	"pedra_pequena": {"display_name": "Pedra pequena", "weight": 1.0, "gather_time": 1.5},
-	"cogumelo": {"display_name": "Cogumelo", "weight": 0.4, "gather_time": 1.5},
-	"fungo": {"display_name": "Fungo", "weight": 0.4, "gather_time": 1.8},
-	"inseto": {"display_name": "Inseto", "weight": 0.2, "gather_time": 1.5},
-	"resina": {"display_name": "Resina", "weight": 0.5, "gather_time": 2.2},
-	"cinzas_preview": {"display_name": "Cinzas preview", "weight": 0.3, "gather_time": 2.5},
-	"ossos_preview": {"display_name": "Ossos preview", "weight": 1.2, "gather_time": 2.5},
-	"po_osso_preview": {"display_name": "Po de Osso preview", "weight": 0.5, "gather_time": 2.5},
-}
-
-const RECIPES := {
-	"bolsa_simples_1": {
-		"display_name": "Bolsa simples I",
-		"cost": {"galho": 4, "folha": 3, "resina": 1},
-		"upgrade_id": "bolsa_simples_1",
-	},
-	"maos_rituais_1": {
-		"display_name": "Maos rituais I",
-		"cost": {"madeira": 2, "pedra_pequena": 2, "fungo": 1},
-		"upgrade_id": "maos_rituais_1",
-	},
-	"trilha_aberta_1": {
-		"display_name": "Trilha aberta I",
-		"cost": {"pedra": 2, "galho": 3, "inseto": 2},
-		"upgrade_id": "trilha_aberta_1",
-	},
-	"fogueira_estavel_1": {
-		"display_name": "Fogueira estavel I",
-		"cost": {"galho": 2, "folha_seca": 2, "pedra_pequena": 1},
-		"upgrade_id": "fogueira_estavel_1",
-		"output": {"cinzas_preview": 2},
-	},
-}
 
 var pocket: Dictionary = {}
 var chest: Dictionary = {}
@@ -67,6 +29,12 @@ func reset() -> void:
 	upgrades = {}
 	active_collection = {}
 	last_message = "Bosque local reiniciado."
+
+static func item_definitions() -> Dictionary:
+	return RulesetScript.item_definitions()
+
+static func recipes() -> Dictionary:
+	return RulesetScript.recipes()
 
 func snapshot() -> Dictionary:
 	return {
@@ -83,6 +51,16 @@ func snapshot() -> Dictionary:
 		"current_speed": current_speed(),
 		"last_message": last_message,
 	}
+
+func apply_snapshot(snapshot_payload: Dictionary) -> void:
+	var ruleset_id := str(snapshot_payload.get("ruleset_id", ""))
+	if ruleset_id != "" and ruleset_id != RULESET_ID:
+		return
+	pocket = _positive_int_dictionary(snapshot_payload.get("pocket", {}))
+	chest = _positive_int_dictionary(snapshot_payload.get("chest", {}))
+	upgrades = _boolean_dictionary(snapshot_payload.get("upgrades", {}))
+	active_collection = {}
+	last_message = str(snapshot_payload.get("last_message", "Bosque retomado."))
 
 func result_payload(session_seconds: float = 0.0) -> Dictionary:
 	return {
@@ -144,13 +122,13 @@ func gather_duration(item_id: String) -> float:
 	return maxf(0.1, duration)
 
 func can_carry(item_id: String, quantity: int = 1) -> bool:
-	if not ITEM_DEFINITIONS.has(item_id):
+	if not item_definitions().has(item_id):
 		return false
 	return pocket_weight() + item_weight(item_id) * float(maxi(1, quantity)) <= capacity() + 0.001
 
 func add_to_pocket(item_id: String, quantity: int = 1) -> Dictionary:
 	var amount := maxi(1, quantity)
-	if not ITEM_DEFINITIONS.has(item_id):
+	if not item_definitions().has(item_id):
 		last_message = "Recurso desconhecido: %s." % item_id
 		return {"ok": false, "reason": "unknown_item", "message": last_message}
 	if not can_carry(item_id, amount):
@@ -205,7 +183,7 @@ func has_upgrade(upgrade_id: String) -> bool:
 	return bool(upgrades.get(upgrade_id, false))
 
 func start_collection(item_id: String) -> Dictionary:
-	if not ITEM_DEFINITIONS.has(item_id):
+	if not item_definitions().has(item_id):
 		last_message = "Recurso desconhecido."
 		return {"ok": false, "reason": "unknown_item", "message": last_message}
 	if not can_carry(item_id):
@@ -254,10 +232,27 @@ func collection_progress() -> float:
 	return clampf(float(active_collection.get("elapsed", 0.0)) / duration, 0.0, 1.0)
 
 func _item_definition(item_id: String) -> Dictionary:
-	return _as_dictionary(ITEM_DEFINITIONS.get(item_id, {}))
+	return _as_dictionary(item_definitions().get(item_id, {}))
 
 func _recipe(recipe_id: String) -> Dictionary:
-	return _as_dictionary(RECIPES.get(recipe_id, {}))
+	return _as_dictionary(recipes().get(recipe_id, {}))
+
+func _positive_int_dictionary(value: Variant) -> Dictionary:
+	var result: Dictionary = {}
+	var source := _as_dictionary(value)
+	for key: String in source.keys():
+		var amount := int(source.get(key, 0))
+		if amount > 0 and item_definitions().has(key):
+			result[key] = amount
+	return result
+
+func _boolean_dictionary(value: Variant) -> Dictionary:
+	var result: Dictionary = {}
+	var source := _as_dictionary(value)
+	for key: String in source.keys():
+		if bool(source.get(key, false)):
+			result[key] = true
+	return result
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

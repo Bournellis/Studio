@@ -1,3 +1,7 @@
+import openworldForestRuleset from "../../../data/definitions/openworld/forest_ruleset_v1.json" with {
+  type: "json",
+};
+
 export const MODE_PLATFORM_SCHEMA_VERSION = "mode_platform_v1";
 export const BASEBUILDER_MODE_ID = "basebuilder";
 export const AUTOBATTLER_MODE_ID = "autobattler";
@@ -5,11 +9,16 @@ export const TOWERDEFENSE_MODE_ID = "towerdefense";
 export const CARDGAME_MODE_ID = "cardgame";
 export const OPENWORLD_MODE_ID = "openworld";
 export const OPENWORLD_SLICE_ID = "forest";
-export const OPENWORLD_RULESET_ID = "openworld_forest_ruleset_v0";
-export const OPENWORLD_RULESET_VERSION = 1;
+const OPENWORLD_RULESET_DEFINITION = openworldForestRuleset as Record<string, unknown>;
+export const OPENWORLD_RULESET_ID = stringValue(
+  OPENWORLD_RULESET_DEFINITION.ruleset_id,
+  "openworld_forest_ruleset_v1",
+);
+export const OPENWORLD_RULESET_VERSION = numberValue(OPENWORLD_RULESET_DEFINITION.ruleset_version, 1);
 export const OPENWORLD_RELEASE_CHANNEL = "internal_alpha";
 
 export const MODE_ENDPOINT_SESSION_START = "modes/session/start";
+export const MODE_ENDPOINT_SESSION_EVENT = "modes/session/event";
 export const MODE_ENDPOINT_SESSION_COMPLETE = "modes/session/complete";
 export const MODE_ENDPOINT_SESSION_ABANDON = "modes/session/abandon";
 
@@ -68,6 +77,9 @@ export interface ModeSessionRow {
   abandoned_at?: string | null;
   invalidated_at?: string | null;
   invalidated_reason?: string | null;
+  snapshot_payload?: unknown;
+  snapshot_revision?: number | string | null;
+  last_event_at?: string | null;
 }
 
 export interface ModeRewardClaimRow {
@@ -105,32 +117,41 @@ export interface ModeStateProjection {
 
 export interface OpenworldCompletionResult {
   session_id: string;
-  session_seconds: number;
-  deposited_items: Record<string, number>;
-  activity_score: number;
+  expected_revision: number;
   ruleset_id: string;
   ruleset_version: number;
 }
 
-const OPENWORLD_LOCAL_ITEM_IDS = new Set([
-  "madeira",
-  "galho",
-  "folha",
-  "folha_seca",
-  "pedra",
-  "pedra_pequena",
-  "cogumelo",
-  "fungo",
-  "inseto",
-  "resina",
-  "cinzas_preview",
-  "ossos_preview",
-  "po_osso_preview",
+export interface OpenworldSessionEvent {
+  session_id: string;
+  mode_id: string;
+  slice_id: string;
+  event_type: string;
+  expected_revision: number;
+  event_payload: Record<string, unknown>;
+}
+
+const OPENWORLD_LOCAL_ITEM_IDS = new Set(
+  arrayValue(OPENWORLD_RULESET_DEFINITION.items)
+    .map((item) => stringValue(objectValue(item).item_id, ""))
+    .filter((itemId) => itemId !== ""),
+);
+
+const OPENWORLD_EVENT_TYPES = new Set([
+  "move_heartbeat",
+  "collect_start",
+  "collect_cancel",
+  "collect_complete",
+  "deposit_all",
+  "craft",
+  "complete_requested",
+  "abandon_requested",
 ]);
 
 export function modeStatePayload(
   state: ModeStateProjection,
 ): Record<string, unknown> {
+  const activeSession = state.sessions.find(isActiveSession) ?? null;
   return {
     ok: true,
     schema_version: MODE_PLATFORM_SCHEMA_VERSION,
@@ -157,6 +178,7 @@ export function modeStatePayload(
     })),
     progress: progressPayload(state.progress),
     sessions: state.sessions.map(sessionPayload),
+    active_session: activeSession === null ? null : sessionPayload(activeSession),
     rewards: state.claims.map(rewardClaimPayload),
     resources: resourcePayload(state.resources),
     server_time: state.serverTime.toISOString(),
@@ -203,26 +225,48 @@ export function completionResultFromBody(
   const sessionId = stringValue(source.session_id, "");
   const rulesetId = stringValue(source.ruleset_id, "");
   const rulesetVersion = numberValue(source.ruleset_version, 0);
-  const sessionSeconds = numberValue(source.session_seconds, -1);
-  const activityScore = numberValue(source.activity_score, -1);
-  const depositedItems = normalizeDepositedItems(source.deposited_items);
+  const expectedRevision = numberValue(source.expected_revision, -1);
   if (
     sessionId === "" ||
     rulesetId !== OPENWORLD_RULESET_ID ||
     rulesetVersion !== OPENWORLD_RULESET_VERSION ||
-    sessionSeconds < 0 ||
-    activityScore < 0 ||
-    depositedItems === null
+    expectedRevision < 0
   ) {
     return null;
   }
   return {
     session_id: sessionId,
-    session_seconds: sessionSeconds,
-    deposited_items: depositedItems,
-    activity_score: activityScore,
+    expected_revision: Math.floor(expectedRevision),
     ruleset_id: rulesetId,
     ruleset_version: rulesetVersion,
+  };
+}
+
+export function sessionEventFromBody(
+  body: Record<string, unknown>,
+): OpenworldSessionEvent | null {
+  const sessionId = stringValue(body.session_id, "");
+  const modeId = stringValue(body.mode_id, OPENWORLD_MODE_ID);
+  const sliceId = stringValue(body.slice_id, OPENWORLD_SLICE_ID);
+  const eventType = stringValue(body.event_type, "");
+  const expectedRevision = numberValue(body.expected_revision, -1);
+  const eventPayload = objectValue(body.event_payload);
+  if (
+    sessionId === "" ||
+    modeId !== OPENWORLD_MODE_ID ||
+    sliceId !== OPENWORLD_SLICE_ID ||
+    !OPENWORLD_EVENT_TYPES.has(eventType) ||
+    expectedRevision < 0
+  ) {
+    return null;
+  }
+  return {
+    session_id: sessionId,
+    mode_id: modeId,
+    slice_id: sliceId,
+    event_type: eventType,
+    expected_revision: Math.floor(expectedRevision),
+    event_payload: eventPayload,
   };
 }
 
@@ -249,9 +293,7 @@ export function canonicalCompletionPayload(
     slice_id: OPENWORLD_SLICE_ID,
     ruleset_id: result.ruleset_id,
     ruleset_version: result.ruleset_version,
-    session_seconds: Math.floor(result.session_seconds),
-    activity_score: Math.floor(result.activity_score),
-    deposited_items: sortRecord(result.deposited_items),
+    expected_revision: result.expected_revision,
   };
 }
 
@@ -259,7 +301,7 @@ function progressPayload(row: ModeProgressRow | null): Record<string, unknown> {
   if (row === null) {
     return {
       mode_id: OPENWORLD_MODE_ID,
-      local_schema_version: "openworld_forest_local_v0",
+      local_schema_version: "openworld_forest_snapshot_v1",
       progress_payload: {},
       totals_payload: {},
       last_session_id: null,
@@ -295,7 +337,16 @@ function sessionPayload(row: ModeSessionRow): Record<string, unknown> {
     abandoned_at: row.abandoned_at ?? null,
     invalidated_at: row.invalidated_at ?? null,
     invalidated_reason: row.invalidated_reason ?? "",
+    snapshot_payload: objectValue(row.snapshot_payload),
+    snapshot_revision: nullableNumber(row.snapshot_revision) ?? 0,
+    last_event_at: row.last_event_at ?? null,
   };
+}
+
+function isActiveSession(row: ModeSessionRow): boolean {
+  if (row.status !== "started") return false;
+  if (row.expires_at === null || row.expires_at === undefined) return true;
+  return new Date(row.expires_at).getTime() > Date.now();
 }
 
 function rewardClaimPayload(row: ModeRewardClaimRow): Record<string, unknown> {
@@ -333,6 +384,10 @@ function sortRecord(record: Record<string, number>): Record<string, number> {
 
 function objectValue(value: unknown): Record<string, unknown> {
   return isObject(value) ? value : {};
+}
+
+function arrayValue(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
 }
 
 function nullableNumber(value: unknown): number | null {

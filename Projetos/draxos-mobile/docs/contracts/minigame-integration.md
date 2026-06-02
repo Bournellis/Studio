@@ -23,7 +23,7 @@ Este contrato governa como qualquer modo jogavel entra no DraxosMobile sem quebr
 | --- | --- | --- | --- | --- |
 | `basebuilder` | `Basebuilder` | `refugio` | active | Refugio/Base |
 | `autobattler` | `Autobattler` | `pve_arena` | active | Arena PVE |
-| `openworld` | `Openworld` | `forest` | internal_alpha | `open_mode_shell:openworld` |
+| `openworld` | `Openworld` | `forest` | active (`internal_alpha`) | `open_mode_shell:openworld` |
 | `towerdefense` | `Towerdefense` | `tbd` | planned_disabled | Hub disabled |
 | `cardgame` | `Cardgame` | `tbd` | planned_disabled | Hub disabled |
 
@@ -134,13 +134,25 @@ Dimensoes obrigatorias:
 
 ## Openworld Registro Atual
 
-`openworld/forest` e o primeiro modo que usa generic Mode sessions.
+`openworld/forest` e o primeiro modo que usa generic Mode sessions com
+snapshot remoto retomavel e eventos revisionados. "Oficial" neste contexto
+significa modo `active` no canal `internal_alpha`; nao significa release
+publica, upload, manifest novo ou mutacao remota aplicada.
 
-- ruleset: `openworld_forest_ruleset_v0`
-- local schema: `openworld_forest_local_v0`
+- ruleset: `openworld_forest_ruleset_v1`
+- snapshot schema: `openworld_forest_snapshot_v1`
+- definition: `data/definitions/openworld/forest_ruleset_v1.json`
 - screen: `modes/openworld/openworld_forest_screen.gd`
 - docs: `docs/minigames/openworld.md`
+- state/resume: `GET /modes/state?mode_id=openworld`
+- event bridge: `POST /modes/session/event`
 - reward bridge: `mode_session_complete_v1`
+- authority: rewards derive only from `mode_sessions.snapshot_payload`, with
+  `expected_revision` required on complete.
+- offline/no auth: preview only, no reward ledger mutation.
+
+`openworld_forest_ruleset_v0` permanece historico do prototipo local e nao deve
+ser usado como ruleset ativo.
 
 ## Pendencias Conceituais
 

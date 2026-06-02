@@ -566,11 +566,9 @@ func test_mode_hash_and_session_store_bridge() -> void:
 			"session_id": "00000000-0000-4000-8000-000000000101",
 			"mode_id": "openworld",
 			"slice_id": "forest",
-			"ruleset_id": "openworld_forest_ruleset_v0",
+			"ruleset_id": "openworld_forest_ruleset_v1",
 			"ruleset_version": 1,
-			"session_seconds": 30,
-			"activity_score": 42,
-			"deposited_items": {"galho": 2},
+			"expected_revision": 3,
 		}
 	)
 	assert_true(str(pending.get("request_hash", "")).begins_with("sha256:"))

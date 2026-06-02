@@ -427,6 +427,47 @@ func complete_mode_session(request_id: String, session_id: String, mode_id: Stri
 		_with_request_hash("modes/session/complete", body, request_hash)
 	)
 
+func record_mode_session_event(
+	request_id: String,
+	session_id: String,
+	mode_id: String,
+	slice_id: String,
+	event_type: String,
+	expected_revision: int,
+	event_payload: Dictionary,
+	access_token: String,
+	request_hash: String = ""
+) -> Dictionary:
+	var body := {
+		"request_id": request_id,
+		"session_id": session_id.strip_edges(),
+		"mode_id": mode_id.strip_edges(),
+		"slice_id": slice_id.strip_edges(),
+		"event_type": event_type.strip_edges(),
+		"expected_revision": expected_revision,
+		"event_payload": event_payload.duplicate(true),
+	}
+	return await _send_json(
+		function_url("modes/session/event"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("modes/session/event", body, request_hash)
+	)
+
+func abandon_mode_session(request_id: String, session_id: String, mode_id: String, reason: String, access_token: String, request_hash: String = "") -> Dictionary:
+	var body := {
+		"request_id": request_id,
+		"session_id": session_id.strip_edges(),
+		"mode_id": mode_id.strip_edges(),
+		"reason": reason.strip_edges(),
+	}
+	return await _send_json(
+		function_url("modes/session/abandon"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("modes/session/abandon", body, request_hash)
+	)
+
 func get_mode_admin_me(access_token: String) -> Dictionary:
 	return await _send_json(
 		function_url("modes/admin/me"),

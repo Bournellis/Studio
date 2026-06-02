@@ -29,7 +29,7 @@ Rows V1:
 
 - `basebuilder/refugio`: active.
 - `autobattler/pve_arena`: active.
-- `openworld/forest`: internal_alpha.
+- `openworld/forest`: active on `internal_alpha`.
 - `towerdefense/tbd`: planned_disabled.
 - `cardgame/tbd`: planned_disabled.
 
@@ -42,6 +42,7 @@ Todos exigem JWT e `x-draxos-api-version: 1`. Endpoints save-scoped exigem `x-dr
 | GET | `/modes/registry` | Lista modos e rulesets |
 | GET | `/modes/state?mode_id=<id>` | Estado save-scoped de um modo |
 | POST | `/modes/session/start` | Inicia sessao generica quando o modo usa Mode sessions |
+| POST | `/modes/session/event` | Registra evento/revision e atualiza snapshot remoto da sessao |
 | POST | `/modes/session/complete` | Completa sessao e aplica reward bridge |
 | POST | `/modes/session/abandon` | Abandona sessao started |
 | GET | `/modes/analytics/summary?mode_id=<id>` | Sumario operacional por modo |
@@ -67,7 +68,7 @@ Todos exigem JWT e `x-draxos-api-version: 1`. Endpoints save-scoped exigem `x-dr
 
 - `basebuilder`: usa endpoints core de Base; nao usa generic session V1.
 - `autobattler`: usa `arena/pve/*` e build atual; nao usa generic session V1.
-- `openworld`: usa `openworld/forest` com start/complete/abandon e Reward Bridge.
+- `openworld`: usa `openworld/forest` com state/resume, start, event, complete, abandon, snapshot remoto e Reward Bridge.
 - `towerdefense`: registry visivel, start retorna `MODE_DISABLED`.
 - `cardgame`: registry visivel, start retorna `MODE_DISABLED`.
 
@@ -83,6 +84,10 @@ Recompensa real so pode ser aplicada pelo servidor:
 - idempotencia por `endpoint + request_id + request_hash + scope_id`;
 - bloqueio de `progression_lab`;
 - resposta com `schema_version`, `mode`, `session`, `reward`, `resources`, `limits` e `server_time`.
+
+Para `openworld/forest`, o complete usa `expected_revision` e calcula recompensa
+exclusivamente de `mode_sessions.snapshot_payload`. Campos client-side como
+`deposited_items` e `activity_score` nao sao autoridade de recompensa.
 
 ## Admin/Ops
 
