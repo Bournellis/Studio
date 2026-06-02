@@ -101,7 +101,7 @@ func _show_surface_screen(screen_id: String) -> void:
 	var current_screen := _normalize_route(_current_screen)
 	_show_screen(target_screen, target_screen != current_screen)
 func _go_back() -> void:
-	if _is_busy:
+	if _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE) or _replay_running:
 		return
 	if _close_refuge_menu_popup_if_open():
 		return

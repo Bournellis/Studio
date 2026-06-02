@@ -6,6 +6,7 @@ import {
   saveTypeFromRequest,
   saveTypeQuery,
 } from "../_shared/save_context.ts";
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "bootstrap" | "guest" | "state" | "save_reset";
 
@@ -203,9 +204,10 @@ async function handleGuest(
     return errorResponse(context.error.code, context.error.message, context.error.status);
   }
 
-  return jsonResponse(
+  return jsonResponse(stateEnvelope(
     withFoundationContext(payload, context?.value ?? null, "account_guest_response_v1"),
-  );
+    { surface: "account", saveType: auth.saveType },
+  ));
 }
 
 async function handleBootstrap(
@@ -259,12 +261,14 @@ async function handleBootstrap(
     return errorResponse(context.error.code, context.error.message, context.error.status);
   }
 
-  return jsonResponse(
+  return jsonResponse(stateEnvelope(
     withFoundationContext(payload, context?.value ?? null, "account_bootstrap_response_v1"),
-  );
+    { surface: "account", saveType: auth.saveType },
+  ));
 }
 
 async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
+  const startedAtMs = performance.now();
   const playerResult = await restRequest<PlayerRow[]>(
     config,
     `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
@@ -283,21 +287,23 @@ async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Respo
   }
 
   const playerId = encodeURIComponent(player.id);
-  const resourcesResult = await restRequest<ResourceRow[]>(
-    config,
-    `resources?player_id=eq.${playerId}&select=player_id,almas,energia,sangue,cristais,ossos,po_osso,diamante,updated_at&limit=1`,
-    { method: "GET" },
-  );
-  const buildResult = await restRequest<BuildRow[]>(
-    config,
-    `builds?player_id=eq.${playerId}&select=player_id,weapon_type,weapon_quality,weapon_level,spell_slots,spells_unlocked,pet_id,pet_level,passive_id,passive_level,updated_at&limit=1`,
-    { method: "GET" },
-  );
-  const battlesResult = await restRequest<BattleRow[]>(
-    config,
-    `battles?attacker_id=eq.${playerId}&select=id&order=created_at.desc&limit=1`,
-    { method: "GET" },
-  );
+  const [resourcesResult, buildResult, battlesResult] = await Promise.all([
+    restRequest<ResourceRow[]>(
+      config,
+      `resources?player_id=eq.${playerId}&select=player_id,almas,energia,sangue,cristais,ossos,po_osso,diamante,updated_at&limit=1`,
+      { method: "GET" },
+    ),
+    restRequest<BuildRow[]>(
+      config,
+      `builds?player_id=eq.${playerId}&select=player_id,weapon_type,weapon_quality,weapon_level,spell_slots,spells_unlocked,pet_id,pet_level,passive_id,passive_level,updated_at&limit=1`,
+      { method: "GET" },
+    ),
+    restRequest<BattleRow[]>(
+      config,
+      `battles?attacker_id=eq.${playerId}&select=id&order=created_at.desc&limit=1`,
+      { method: "GET" },
+    ),
+  ]);
 
   if (
     resourcesResult.error !== null ||
@@ -318,16 +324,19 @@ async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Respo
     return errorResponse(context.error.code, context.error.message, context.error.status);
   }
 
-  return jsonResponse(withFoundationContext(
-    {
-      ok: true,
-      player,
-      resources,
-      build,
-      last_battle_id: battlesResult.value[0]?.id ?? null,
-    },
-    context.value,
-    "account_state_v1",
+  return jsonResponse(stateEnvelope(
+    withFoundationContext(
+      {
+        ok: true,
+        player,
+        resources,
+        build,
+        last_battle_id: battlesResult.value[0]?.id ?? null,
+      },
+      context.value,
+      "account_state_v1",
+    ),
+    { surface: "account", saveType: auth.saveType, startedAtMs },
   ));
 }
 
@@ -396,9 +405,10 @@ async function handleSaveReset(
     return errorResponse(context.error.code, context.error.message, context.error.status);
   }
 
-  return jsonResponse(
+  return jsonResponse(stateEnvelope(
     withFoundationContext(payload, context?.value ?? null, "account_save_reset_response_v1"),
-  );
+    { surface: "account", saveType: auth.saveType },
+  ));
 }
 
 async function resetConsumableAndBehaviorState(
@@ -716,9 +726,9 @@ function withFoundationContext(
   payload: unknown,
   context: FoundationContext | null,
   schemaVersion: string,
-): unknown {
+): Record<string, unknown> {
   if (!isObject(payload)) {
-    return payload;
+    return {};
   }
   return {
     schema_version: schemaVersion,

@@ -5,6 +5,7 @@ import {
   saveTypeFromRequest,
   saveTypeQuery,
 } from "../_shared/save_context.ts";
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "matchmaking_preview" | "ranking_current";
 
@@ -116,6 +117,7 @@ async function handleCorsRequest(request: Request): Promise<Response> {
 }
 
 async function handleMatchmakingPreview(auth: AuthContext, config: EdgeConfig): Promise<Response> {
+  const startedAtMs = performance.now();
   const player = await loadPlayer(auth, config);
   if (player.error !== null) {
     return errorResponse(player.error.code, player.error.message, player.error.status);
@@ -133,7 +135,7 @@ async function handleMatchmakingPreview(auth: AuthContext, config: EdgeConfig): 
   const selected =
     bots.toSorted((a, b) => Math.abs(a.power - power) - Math.abs(b.power - power))[0] ??
       null;
-  return jsonResponse({
+  return jsonResponse(stateEnvelope({
     ok: true,
     matchmaking: {
       player_power: power,
@@ -153,10 +155,16 @@ async function handleMatchmakingPreview(auth: AuthContext, config: EdgeConfig): 
       bots_included_in_leaderboard: false,
       fallback_reason: selected === null ? "NO_BOT_AVAILABLE" : "BOT_ALPHA_POOL",
     },
-  });
+  }, {
+    surface: "competition",
+    saveType: auth.saveType,
+    schemaVersion: "competition_matchmaking_preview_v1",
+    startedAtMs,
+  }));
 }
 
 async function handleRankingCurrent(auth: AuthContext, config: EdgeConfig): Promise<Response> {
+  const startedAtMs = performance.now();
   const player = await loadPlayer(auth, config);
   if (player.error !== null) {
     return errorResponse(player.error.code, player.error.message, player.error.status);
@@ -166,7 +174,7 @@ async function handleRankingCurrent(auth: AuthContext, config: EdgeConfig): Prom
     return errorResponse(season.error.code, season.error.message, season.error.status);
   }
   if (isProgressionLabSave(auth.saveType)) {
-    return jsonResponse({
+    return jsonResponse(stateEnvelope({
       ok: true,
       ranking: {
         season: season.value,
@@ -179,7 +187,12 @@ async function handleRankingCurrent(auth: AuthContext, config: EdgeConfig): Prom
         excluded_reason: "PROGRESSION_LAB_DOES_NOT_RANK",
         scoring_model: ARENA_SCORING_MODEL,
       },
-    });
+    }, {
+      surface: "competition",
+      saveType: auth.saveType,
+      schemaVersion: "competition_ranking_current_v1",
+      startedAtMs,
+    }));
   }
   await restRequest<unknown>(config, "ranking", {
     method: "POST",
@@ -208,7 +221,7 @@ async function handleRankingCurrent(auth: AuthContext, config: EdgeConfig): Prom
   );
   const self = rankedEntries.find((entry) => entry.player_id === player.value.id) ?? null;
   const entries = rankedEntries.slice(0, RANKING_TOP_LIMIT);
-  return jsonResponse({
+  return jsonResponse(stateEnvelope({
     ok: true,
     ranking: {
       season: season.value,
@@ -220,7 +233,12 @@ async function handleRankingCurrent(auth: AuthContext, config: EdgeConfig): Prom
       self_in_top: self !== null && self.rank <= RANKING_TOP_LIMIT,
       scoring_model: ARENA_SCORING_MODEL,
     },
-  });
+  }, {
+    surface: "competition",
+    saveType: auth.saveType,
+    schemaVersion: "competition_ranking_current_v1",
+    startedAtMs,
+  }));
 }
 
 async function loadPlayer(

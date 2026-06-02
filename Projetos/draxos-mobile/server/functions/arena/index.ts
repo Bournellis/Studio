@@ -32,6 +32,7 @@ import {
   mutationRequestHash,
 } from "../_shared/transactional_mutation.ts";
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "list" | "start" | "duel/request" | "buff/choose" | "claim" | "abandon";
 type BuffStat =
@@ -126,6 +127,11 @@ interface PlayerState {
   inventory: ConsumableRow[];
   potionSlots: PotionSlotRow[];
   spellBehaviors: SpellBehaviorRow[];
+}
+
+interface ArenaListState {
+  player: PlayerRow;
+  gameSave: FoundationGameSaveRow;
 }
 
 interface ArenaProgressRow {
@@ -295,7 +301,8 @@ async function handleList(
   auth: AuthContext,
   config: EdgeConfig,
 ): Promise<Response> {
-  const state = await loadPlayerState(auth, config);
+  const startedAtMs = performance.now();
+  const state = await loadArenaListState(auth, config);
   if (state.error !== null) {
     return errorResponse(
       state.error.code,
@@ -304,7 +311,16 @@ async function handleList(
     );
   }
 
-  const progress = await loadArenaProgress(config, state.value.gameSave.id);
+  const [progress, attempts] = await Promise.all([
+    loadArenaProgress(config, state.value.gameSave.id),
+    restRequest<ArenaAttemptRow[]>(
+      config,
+      `arena_attempts?game_save_id=eq.${
+        encodeURIComponent(state.value.gameSave.id)
+      }&select=id,game_save_id,player_id,arena_id,difficulty_id,difficulty_rank,max_steps,current_step_index,status,seed,enemy_sequence,active_buffs,reward_payload,started_at,completed_at,abandoned_at,updated_at&order=started_at.desc&limit=5`,
+      { method: "GET" },
+    ),
+  ]);
   if (progress.error !== null) {
     return errorResponse(
       progress.error.code,
@@ -312,13 +328,6 @@ async function handleList(
       progress.error.status,
     );
   }
-  const attempts = await restRequest<ArenaAttemptRow[]>(
-    config,
-    `arena_attempts?game_save_id=eq.${
-      encodeURIComponent(state.value.gameSave.id)
-    }&select=*&order=started_at.desc&limit=5`,
-    { method: "GET" },
-  );
   if (attempts.error !== null) {
     return errorResponse(
       "ARENA_STATE_READ_FAILED",
@@ -327,7 +336,7 @@ async function handleList(
     );
   }
 
-  return jsonResponse({
+  return jsonResponse(stateEnvelope({
     ok: true,
     schema_version: "arena_list_response_v1",
     save_type: auth.saveType,
@@ -336,8 +345,14 @@ async function handleList(
       arenaSummary(definition, progress.value, state.value.player)
     ),
     attempts: attempts.value,
+    active_attempt: attempts.value.find((attempt) => attempt.status === "active") ?? null,
     ranking: { mutated: false, reason: "ARENA_PVE_DOES_NOT_RANK" },
-  });
+  }, {
+    surface: "arena",
+    saveType: auth.saveType,
+    schemaVersion: "arena_list_response_v1",
+    startedAtMs,
+  }));
 }
 
 async function handleStart(
@@ -424,7 +439,10 @@ async function handleStart(
     const mapped = mapArenaDatabaseError(rpc.error, "ARENA_START_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  return jsonResponse(rpc.value);
+  return jsonResponse(stateEnvelope(responsePayload(rpc.value), {
+    surface: "arena",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleDuelRequest(
@@ -600,7 +618,10 @@ async function handleDuelRequest(
     const mapped = mapArenaDatabaseError(rpc.error, "ARENA_DUEL_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  return jsonResponse(rpc.value);
+  return jsonResponse(stateEnvelope(responsePayload(rpc.value), {
+    surface: "arena",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleBuffChoose(
@@ -664,7 +685,10 @@ async function handleBuffChoose(
     const mapped = mapArenaDatabaseError(rpc.error, "ARENA_BUFF_CHOOSE_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  return jsonResponse(rpc.value);
+  return jsonResponse(stateEnvelope(responsePayload(rpc.value), {
+    surface: "arena",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleClaim(
@@ -730,7 +754,7 @@ async function handleClaim(
     attempt_id: attempt.value.id,
     status: attempt.value.status,
   });
-  return jsonResponse({
+  return jsonResponse(stateEnvelope({
     ok: true,
     schema_version: "arena_claim_response_v1",
     endpoint: "arena/pve/claim",
@@ -746,7 +770,11 @@ async function handleClaim(
     reward_already_applied: attempt.value.status === "completed",
     mutates_economy: false,
     ranking: { mutated: false, reason: "ARENA_PVE_DOES_NOT_RANK" },
-  });
+  }, {
+    surface: "arena",
+    saveType: auth.saveType,
+    schemaVersion: "arena_claim_response_v1",
+  }));
 }
 
 async function handleAbandon(
@@ -803,13 +831,88 @@ async function handleAbandon(
     const mapped = mapArenaDatabaseError(rpc.error, "ARENA_ABANDON_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  return jsonResponse(rpc.value);
+  return jsonResponse(stateEnvelope(responsePayload(rpc.value), {
+    surface: "arena",
+    saveType: auth.saveType,
+  }));
 }
 
 async function loadPlayerState(
   auth: AuthContext,
   config: EdgeConfig,
 ): Promise<{ value: PlayerState; error: null } | { value: null; error: RestError }> {
+  const listState = await loadArenaListState(auth, config);
+  if (listState.error !== null) {
+    return { value: null, error: listState.error };
+  }
+  const { player, gameSave } = listState.value;
+
+  const playerId = encodeURIComponent(player.id);
+  const [resourcesResult, buildResult, inventoryResult, slotsResult, behaviorsResult] = await Promise.all([
+    restRequest<ResourceRow[]>(
+      config,
+      `resources?player_id=eq.${playerId}&select=almas,energia,sangue,cristais,ossos,po_osso,diamante&limit=1`,
+      { method: "GET" },
+    ),
+    restRequest<BuildRow[]>(
+      config,
+      `builds?player_id=eq.${playerId}&select=weapon_type,weapon_quality,weapon_level,spell_slots,spells_unlocked,pet_id,pet_level,passive_id,passive_level&limit=1`,
+      { method: "GET" },
+    ),
+    restRequest<ConsumableRow[]>(
+      config,
+      `player_consumables?player_id=eq.${playerId}&select=player_id,item_id,quantity,updated_at&order=item_id.asc`,
+      { method: "GET" },
+    ),
+    restRequest<PotionSlotRow[]>(
+      config,
+      `player_potion_slots?player_id=eq.${playerId}&select=player_id,slot_index,potion_id,behavior,updated_at&order=slot_index.asc`,
+      { method: "GET" },
+    ),
+    restRequest<SpellBehaviorRow[]>(
+      config,
+      `player_spell_behaviors?player_id=eq.${playerId}&select=player_id,spell_id,behavior,updated_at&order=spell_id.asc`,
+      { method: "GET" },
+    ),
+  ]);
+
+  if (
+    resourcesResult.error !== null || buildResult.error !== null ||
+    inventoryResult.error !== null || slotsResult.error !== null ||
+    behaviorsResult.error !== null
+  ) {
+    return { value: null, error: stateReadError() };
+  }
+  const resources = resourcesResult.value[0] ?? null;
+  const build = buildResult.value[0] ?? null;
+  if (resources === null || build === null) {
+    return {
+      value: null,
+      error: {
+        code: "ACCOUNT_STATE_INCOMPLETE",
+        message: "Guest account state is incomplete.",
+        status: 409,
+      },
+    };
+  }
+  return {
+    value: {
+      player,
+      gameSave,
+      resources,
+      build,
+      inventory: inventoryResult.value,
+      potionSlots: slotsResult.value,
+      spellBehaviors: behaviorsResult.value,
+    },
+    error: null,
+  };
+}
+
+async function loadArenaListState(
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<{ value: ArenaListState; error: null } | { value: null; error: RestError }> {
   const playerResult = await restRequest<PlayerRow[]>(
     config,
     `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
@@ -842,62 +945,10 @@ async function loadPlayerState(
   if (gameSave.error !== null) {
     return { value: null, error: gameSave.error };
   }
-
-  const playerId = encodeURIComponent(player.id);
-  const resourcesResult = await restRequest<ResourceRow[]>(
-    config,
-    `resources?player_id=eq.${playerId}&select=almas,energia,sangue,cristais,ossos,po_osso,diamante&limit=1`,
-    { method: "GET" },
-  );
-  const buildResult = await restRequest<BuildRow[]>(
-    config,
-    `builds?player_id=eq.${playerId}&select=weapon_type,weapon_quality,weapon_level,spell_slots,spells_unlocked,pet_id,pet_level,passive_id,passive_level&limit=1`,
-    { method: "GET" },
-  );
-  const inventoryResult = await restRequest<ConsumableRow[]>(
-    config,
-    `player_consumables?player_id=eq.${playerId}&select=player_id,item_id,quantity,updated_at&order=item_id.asc`,
-    { method: "GET" },
-  );
-  const slotsResult = await restRequest<PotionSlotRow[]>(
-    config,
-    `player_potion_slots?player_id=eq.${playerId}&select=player_id,slot_index,potion_id,behavior,updated_at&order=slot_index.asc`,
-    { method: "GET" },
-  );
-  const behaviorsResult = await restRequest<SpellBehaviorRow[]>(
-    config,
-    `player_spell_behaviors?player_id=eq.${playerId}&select=player_id,spell_id,behavior,updated_at&order=spell_id.asc`,
-    { method: "GET" },
-  );
-
-  if (
-    resourcesResult.error !== null || buildResult.error !== null ||
-    inventoryResult.error !== null || slotsResult.error !== null ||
-    behaviorsResult.error !== null
-  ) {
-    return { value: null, error: stateReadError() };
-  }
-  const resources = resourcesResult.value[0] ?? null;
-  const build = buildResult.value[0] ?? null;
-  if (resources === null || build === null) {
-    return {
-      value: null,
-      error: {
-        code: "ACCOUNT_STATE_INCOMPLETE",
-        message: "Guest account state is incomplete.",
-        status: 409,
-      },
-    };
-  }
   return {
     value: {
       player,
       gameSave: gameSave.value,
-      resources,
-      build,
-      inventory: inventoryResult.value,
-      potionSlots: slotsResult.value,
-      spellBehaviors: behaviorsResult.value,
     },
     error: null,
   };
@@ -1187,7 +1238,7 @@ function playerSnapshot(player: PlayerRow): ArenaPlayerSnapshot {
   };
 }
 
-function defaultProgress(state: PlayerState): ArenaProgressRow {
+function defaultProgress(state: ArenaListState): ArenaProgressRow {
   const now = new Date().toISOString();
   return {
     game_save_id: state.gameSave.id,
@@ -1777,6 +1828,13 @@ function recordOfNumbers(value: unknown): Record<string, number> {
     result[key] = numberValue(raw, 1);
   }
   return result;
+}
+
+function responsePayload(value: unknown): Record<string, unknown> {
+  if (isObject(value)) {
+    return value;
+  }
+  return { ok: true, value };
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {

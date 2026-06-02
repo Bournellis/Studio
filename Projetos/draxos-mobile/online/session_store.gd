@@ -8,6 +8,7 @@ const ArenaSliceScript = preload("res://online/session/arena_slice.gd")
 const ModeSliceScript = preload("res://online/session/mode_slice.gd")
 const PendingMutationQueueScript = preload("res://online/session/pending_mutation_queue.gd")
 const SessionCacheSliceScript = preload("res://online/session/session_cache_slice.gd")
+const SurfaceRefreshSliceScript = preload("res://online/session/surface_refresh_slice.gd")
 const TelemetrySliceScript = preload("res://online/session/telemetry_slice.gd")
 
 const CACHE_VERSION := 1
@@ -31,6 +32,9 @@ const SURFACE_ARENA := "arena"
 const SURFACE_CRAFTING := "crafting"
 const SURFACE_BUILD := "build"
 const SURFACE_MODE := "mode"
+const SURFACE_REFRESH_SOURCE_CACHE := "cache"
+const SURFACE_REFRESH_SOURCE_SERVER := "server"
+const REQUEST_LATENCY_LOG_LIMIT := 40
 
 var access_token := ""
 var refresh_token := ""
@@ -62,6 +66,8 @@ var last_battle_result_seen := false
 var last_error: Dictionary = {}
 var runtime_config: Dictionary = {}
 var surface_save_types: Dictionary = {}
+var surface_refresh_meta: Dictionary = {}
+var request_latency_log: Array = []
 var pending_mutations: Dictionary = {}
 var offline := false
 
@@ -147,6 +153,8 @@ func clear_session() -> void:
 	last_battle_result_seen = false
 	last_error = {}
 	surface_save_types = {}
+	surface_refresh_meta = {}
+	request_latency_log = []
 	pending_mutations = {}
 	offline = false
 	if FileAccess.file_exists(CACHE_PATH):
@@ -516,6 +524,9 @@ func apply_monetization_result(payload: Dictionary) -> bool:
 		if not player.has("save_type"):
 			player["save_type"] = active_save_type
 		_remember_surface_snapshot(SURFACE_ACCOUNT)
+	if body.get("base", null) is Dictionary:
+		base_state = _as_dictionary(body.get("base", {})).duplicate(true)
+		_remember_surface_snapshot(SURFACE_BASE)
 	monetization_state = state.duplicate(true)
 	_remember_surface_snapshot(SURFACE_MONETIZATION)
 	last_error = {}
@@ -684,6 +695,41 @@ func has_build_state() -> bool:
 func has_mode_state() -> bool:
 	return not mode_state.is_empty() and _surface_matches_active_save(SURFACE_MODE)
 
+func has_surface_snapshot(surface: String) -> bool:
+	var states := {
+		SURFACE_ACCOUNT: has_account_state(), SURFACE_BASE: has_base_state(), SURFACE_SOCIAL: has_social_state(),
+		SURFACE_COMPETITION: has_competition_state(), SURFACE_MONETIZATION: has_monetization_state(),
+		SURFACE_CRAFTING: has_crafting_state(), SURFACE_BUILD: has_build_state(), SURFACE_BATTLE: has_battle_log(),
+		SURFACE_ARENA: has_arena_state(), SURFACE_MODE: has_mode_state(),
+	}
+	return bool(states.get(surface.strip_edges(), false))
+
+func begin_surface_refresh(surface: String, action_id: String = "", endpoint: String = "", rendered_from_cache: bool = false) -> Dictionary:
+	var token := SurfaceRefreshSliceScript.begin(surface_refresh_meta, surface, active_save_type, SURFACE_REFRESH_SOURCE_CACHE, action_id, endpoint, rendered_from_cache)
+	session_changed.emit()
+	return token
+
+func complete_surface_refresh(surface: String, result: Dictionary = {}, token: Dictionary = {}) -> bool:
+	if not SurfaceRefreshSliceScript.complete(surface_refresh_meta, request_latency_log, surface, active_save_type, result, token, SURFACE_REFRESH_SOURCE_SERVER, REQUEST_LATENCY_LOG_LIMIT):
+		return false
+	session_changed.emit()
+	return true
+
+func fail_surface_refresh(surface: String, result: Dictionary = {}, token: Dictionary = {}) -> bool:
+	if not SurfaceRefreshSliceScript.fail(surface_refresh_meta, request_latency_log, surface, active_save_type, result, token, has_surface_snapshot(surface), SURFACE_REFRESH_SOURCE_CACHE, REQUEST_LATENCY_LOG_LIMIT):
+		return false
+	session_changed.emit()
+	return true
+
+func surface_refresh_snapshot(surface: String) -> Dictionary:
+	return SurfaceRefreshSliceScript.snapshot(surface_refresh_meta, surface, active_save_type, has_surface_snapshot(surface))
+
+func record_request_latency(payload: Dictionary) -> void:
+	SurfaceRefreshSliceScript.record_latency(request_latency_log, payload, REQUEST_LATENCY_LOG_LIMIT)
+
+func recent_request_latencies() -> Array:
+	return request_latency_log.duplicate(true)
+
 func is_progression_lab_local_only() -> bool:
 	return AccountSaveSliceScript.is_progression_lab_local_only(progression_lab)
 
@@ -782,6 +828,7 @@ func diagnostics_snapshot() -> Dictionary:
 		},
 		"runtime_config": runtime_config,
 		"pending_mutations": PendingMutationQueueScript.counts_by_save(pending_mutations),
+		"request_latency_log": recent_request_latencies(),
 		"offline": offline,
 		"last_error": last_error,
 	})
@@ -859,6 +906,8 @@ func snapshot() -> Dictionary:
 		"progression_lab": progression_lab,
 		"arena_state": arena_state,
 		"surface_save_types": surface_save_types,
+		"surface_refresh_meta": surface_refresh_meta,
+		"request_latency_log": request_latency_log,
 		"pending_mutations": pending_mutations,
 		"last_battle_id": last_battle_id,
 		"last_battle_log": last_battle_log,
@@ -929,7 +978,9 @@ func _apply_cache(cache: Dictionary) -> void:
 	mode_state = SessionCacheSliceScript.cache_dict(cache, "mode_state")
 	progression_lab = SessionCacheSliceScript.cache_dict(cache, "progression_lab")
 	arena_state = SessionCacheSliceScript.cache_dict(cache, "arena_state")
-	surface_save_types = _normalized_surface_save_types(SessionCacheSliceScript.cache_dict(cache, "surface_save_types"))
+	surface_save_types = AccountSaveSliceScript.normalized_surface_save_types(SessionCacheSliceScript.cache_dict(cache, "surface_save_types"))
+	surface_refresh_meta = SurfaceRefreshSliceScript.normalized_meta(SessionCacheSliceScript.cache_dict(cache, "surface_refresh_meta"))
+	request_latency_log = SessionCacheSliceScript.cache_array(cache, "request_latency_log")
 	pending_mutations = _normalized_pending_mutations(SessionCacheSliceScript.cache_dict(cache, "pending_mutations"))
 	last_battle_id = cache.get("last_battle_id", null)
 	last_battle_log = SessionCacheSliceScript.cache_dict(cache, "last_battle_log")
@@ -970,6 +1021,7 @@ func _clear_account_snapshots() -> void:
 	last_battle_rewards = {}
 	last_battle_result_seen = false
 	surface_save_types = {}
+	surface_refresh_meta = {}
 
 func _mark_pending_mutation(request_id: String, status: String, payload: Dictionary = {}) -> bool:
 	var result := PendingMutationQueueScript.mark(pending_mutations, request_id, status, payload)
@@ -1003,6 +1055,8 @@ func _clear_gameplay_snapshots() -> void:
 	surface_save_types.erase(SURFACE_BATTLE)
 	surface_save_types.erase(SURFACE_ARENA)
 	surface_save_types.erase(SURFACE_MODE)
+	for surface in [SURFACE_BASE, SURFACE_SOCIAL, SURFACE_COMPETITION, SURFACE_MONETIZATION, SURFACE_CRAFTING, SURFACE_BUILD, SURFACE_BATTLE, SURFACE_ARENA, SURFACE_MODE]:
+		surface_refresh_meta.erase(surface)
 
 func _patch_resources(resource_patch: Dictionary) -> void:
 	for key_variant: Variant in resource_patch.keys():
@@ -1037,31 +1091,26 @@ func _accept_save_scoped_payload(surface: String, payload: Dictionary, fallback_
 
 func _remember_surface_snapshot(surface: String, save_type: String = active_save_type) -> void:
 	surface_save_types[surface] = normalize_save_type(save_type)
+	var meta := SurfaceRefreshSliceScript.surface_meta(surface_refresh_meta, surface, active_save_type)
+	meta["surface"] = surface
+	meta["save_type"] = normalize_save_type(save_type)
+	if str(meta.get("source", "")).strip_edges() == "":
+		meta["source"] = SURFACE_REFRESH_SOURCE_SERVER
+	surface_refresh_meta[surface] = meta
 
 func _surface_matches_active_save(surface: String) -> bool:
 	return AccountSaveSliceScript.surface_matches_active_save(surface_save_types, surface, active_save_type)
 
 func _backfill_surface_save_types() -> void:
-	if has_account_state() and not surface_save_types.has(SURFACE_ACCOUNT):
-		_remember_surface_snapshot(SURFACE_ACCOUNT)
-	if not base_state.is_empty() and not surface_save_types.has(SURFACE_BASE):
-		_remember_surface_snapshot(SURFACE_BASE)
-	if not social_state.is_empty() and not surface_save_types.has(SURFACE_SOCIAL):
-		_remember_surface_snapshot(SURFACE_SOCIAL)
-	if not competition_state.is_empty() and not surface_save_types.has(SURFACE_COMPETITION):
-		_remember_surface_snapshot(SURFACE_COMPETITION)
-	if not monetization_state.is_empty() and not surface_save_types.has(SURFACE_MONETIZATION):
-		_remember_surface_snapshot(SURFACE_MONETIZATION)
-	if not crafting_state.is_empty() and not surface_save_types.has(SURFACE_CRAFTING):
-		_remember_surface_snapshot(SURFACE_CRAFTING)
-	if not combat_build_state.is_empty() and not surface_save_types.has(SURFACE_BUILD):
-		_remember_surface_snapshot(SURFACE_BUILD)
-	if not last_battle_log.is_empty() and not surface_save_types.has(SURFACE_BATTLE):
-		_remember_surface_snapshot(SURFACE_BATTLE)
-	if not arena_state.is_empty() and not surface_save_types.has(SURFACE_ARENA):
-		_remember_surface_snapshot(SURFACE_ARENA)
-	if not mode_state.is_empty() and not surface_save_types.has(SURFACE_MODE):
-		_remember_surface_snapshot(SURFACE_MODE)
+	var present_surfaces := {
+		SURFACE_ACCOUNT: has_account_state(), SURFACE_BASE: not base_state.is_empty(), SURFACE_SOCIAL: not social_state.is_empty(),
+		SURFACE_COMPETITION: not competition_state.is_empty(), SURFACE_MONETIZATION: not monetization_state.is_empty(),
+		SURFACE_CRAFTING: not crafting_state.is_empty(), SURFACE_BUILD: not combat_build_state.is_empty(),
+		SURFACE_BATTLE: not last_battle_log.is_empty(), SURFACE_ARENA: not arena_state.is_empty(), SURFACE_MODE: not mode_state.is_empty(),
+	}
+	for surface: String in present_surfaces.keys():
+		if bool(present_surfaces.get(surface, false)) and not surface_save_types.has(surface):
+			_remember_surface_snapshot(surface)
 
 func _diagnostics_surfaces() -> Dictionary:
 	return {
@@ -1078,10 +1127,9 @@ func _diagnostics_surfaces() -> Dictionary:
 	}
 
 func _diagnostics_surface(surface: String, has_snapshot: bool) -> Dictionary:
-	return AccountSaveSliceScript.diagnostics_surface(surface, has_snapshot, surface_save_types, active_save_type)
-
-func _normalized_surface_save_types(value: Dictionary) -> Dictionary:
-	return AccountSaveSliceScript.normalized_surface_save_types(value)
+	var diagnostics := AccountSaveSliceScript.diagnostics_surface(surface, has_snapshot, surface_save_types, active_save_type)
+	diagnostics["refresh"] = surface_refresh_snapshot(surface)
+	return diagnostics
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

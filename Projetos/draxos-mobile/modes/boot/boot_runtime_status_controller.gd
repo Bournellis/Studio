@@ -76,7 +76,7 @@ func _restart_social_auto_sync() -> void:
 		_social_auto_sync_timer.start()
 
 func _can_start_social_auto_sync() -> bool:
-	return _current_screen == SCREEN_SOCIAL and not _is_busy and not _social_auto_sync_in_flight and _social_auto_sync_last_error == "" and not SessionStore.offline and not SessionStore.is_progression_lab_local_only() and SessionStore.has_valid_access_token() and SessionStore.has_account_state()
+	return _current_screen == SCREEN_SOCIAL and not _surface_scope_busy(SessionStore.SURFACE_SOCIAL) and not _social_auto_sync_in_flight and _social_auto_sync_last_error == "" and not SessionStore.offline and not SessionStore.is_progression_lab_local_only() and SessionStore.has_valid_access_token() and SessionStore.has_account_state()
 
 func _on_social_auto_sync_timeout() -> void:
 	await _auto_sync_social_state()
@@ -85,7 +85,7 @@ func _auto_sync_social_state() -> void:
 	if _current_screen != SCREEN_SOCIAL:
 		_sync_social_auto_sync_for_route()
 		return
-	if _is_busy:
+	if _surface_scope_busy(SessionStore.SURFACE_SOCIAL):
 		_restart_social_auto_sync()
 		return
 	if not _can_start_social_auto_sync():
@@ -110,7 +110,7 @@ func _social_auto_sync_status_text() -> String:
 	if _social_auto_sync_last_error != "": return "Sincronizacao pausada. Use Atualizar social para tentar novamente."
 	if SessionStore.is_progression_lab_local_only(): return "Sincronizacao pausada no Lab local."
 	if not SessionStore.has_valid_access_token() or not SessionStore.has_account_state(): return "Sincronizacao disponivel apos login."
-	if _is_busy: return "Sincronizacao pausada durante outra acao."
+	if _surface_scope_busy(SessionStore.SURFACE_SOCIAL): return "Sincronizacao pausada durante outra acao social."
 	if _social_auto_sync_last_text != "":
 		return "Sincronizacao ativa a cada 8s | ultima: %s" % _social_auto_sync_last_text
 	return "Sincronizacao ativa a cada 8s nesta tela."
@@ -146,7 +146,7 @@ func _sync_buttons() -> void:
 		if not is_instance_valid(button):
 			continue
 		var force_disabled := bool(button.get_meta("force_disabled", false))
-		button.disabled = force_disabled or _is_busy or (_replay_running and not _action_allowed_during_replay(action_id))
+		button.disabled = force_disabled or _action_scope_busy(action_id) or (_replay_running and not _action_allowed_during_replay(action_id))
 		button.disabled = button.disabled or _update_gate_blocks_action(action_id)
 		if force_disabled and str(button.get_meta("disabled_reason", "")).strip_edges() != "":
 			button.tooltip_text = str(button.get_meta("disabled_reason", ""))
@@ -173,12 +173,94 @@ func _sync_buttons() -> void:
 				button.text = "Pular replay" if _replay_running else "Ver resultado"
 	for screen_id: String in _nav_buttons.keys():
 		var nav_button: Button = _nav_buttons[screen_id]
-		nav_button.disabled = _is_busy or _replay_running
+		nav_button.disabled = _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE) or _replay_running
 	if _back_button != null:
-		_back_button.disabled = _is_busy or _replay_running
+		_back_button.disabled = _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE) or _replay_running
 
 func _action_allowed_during_replay(action_id: String) -> bool:
 	return AppShellActionContractScript.is_allowed_during_replay(action_id)
+
+func _action_scope_busy(action_id: String) -> bool:
+	var route := AppShellActionRouterScript.route_action(action_id, _action_context())
+	var scope := str(route.get("scope_id", OperationStateScript.DEFAULT_SCOPE))
+	return _operation_state.is_busy(scope) or _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE)
+
+func _surface_scope_busy(surface: String) -> bool:
+	return _operation_state.is_busy("%s:%s" % [surface.strip_edges(), SessionStore.active_save_type]) or _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE)
+
+func _surface_scope_id(surface: String) -> String:
+	return "%s:%s" % [surface.strip_edges(), SessionStore.active_save_type]
+
+func _begin_surface_refresh(surface: String, endpoint: String, message: String, rendered_from_cache: bool = false) -> Dictionary:
+	var previous_scope := _active_action_scope
+	_active_action_scope = _surface_scope_id(surface)
+	var token := _operation_state.begin_busy(_active_action_scope, _active_action_id)
+	var session_token := SessionStore.begin_surface_refresh(surface, _active_action_id, endpoint, rendered_from_cache)
+	token["session_version"] = int(session_token.get("version", 0))
+	_status_label.text = message
+	_detail_label.text = "Atualizando com o servidor..." if rendered_from_cache else "Aguardando resposta do servidor..."
+	_error_label.text = ""
+	_is_busy = _operation_state.any_busy()
+	_sync_immersive_feedback()
+	_sync_buttons()
+	_active_action_scope = previous_scope
+	if rendered_from_cache:
+		_emit_client_event("surface_cache_rendered", {
+			"surface": surface,
+			"scope_id": str(token.get("scope_id", _surface_scope_id(surface))),
+			"endpoint": endpoint,
+			"action_id": _active_action_id,
+			"save_type": SessionStore.active_save_type,
+		})
+	return token
+
+func _finish_surface_refresh(surface: String, token: Dictionary, result: Dictionary, message: String) -> bool:
+	if not _operation_state.complete_busy(_surface_scope_id(surface), token):
+		return false
+	SessionStore.complete_surface_refresh(surface, result, _surface_token_for_session(token))
+	_emit_surface_latency_event("surface_refresh", surface, result, true)
+	_emit_surface_latency_event("request_latency", surface, result, true)
+	_is_busy = _operation_state.any_busy()
+	_status_label.text = _session_status_text()
+	_detail_label.text = message
+	_sync_immersive_feedback()
+	_sync_buttons()
+	return true
+
+func _fail_surface_refresh(surface: String, token: Dictionary, result: Dictionary) -> bool:
+	if not _operation_state.complete_busy(_surface_scope_id(surface), token):
+		return false
+	SessionStore.fail_surface_refresh(surface, result, _surface_token_for_session(token))
+	_emit_surface_latency_event("surface_refresh", surface, result, false)
+	_emit_surface_latency_event("request_latency", surface, result, false)
+	_is_busy = _operation_state.any_busy()
+	_sync_immersive_feedback()
+	_sync_buttons()
+	return true
+
+func _surface_token_for_session(token: Dictionary) -> Dictionary:
+	return {
+		"version": int(token.get("session_version", 0)),
+	}
+
+func _emit_surface_latency_event(event_type: String, surface: String, result: Dictionary, ok: bool) -> void:
+	var client := _as_dictionary(result.get("_client", {}))
+	var body := _as_dictionary(result.get("body", {}))
+	var refresh := SessionStore.surface_refresh_snapshot(surface)
+	_emit_client_event(event_type, {
+		"surface": surface,
+		"method": str(client.get("method", "")),
+		"endpoint": str(client.get("endpoint", refresh.get("last_endpoint", ""))),
+		"action_id": str(refresh.get("last_action_id", "")),
+		"scope_id": _surface_scope_id(surface),
+		"duration_ms": int(client.get("duration_ms", refresh.get("last_latency_ms", 0))),
+		"response_code": int(client.get("response_code", result.get("status", refresh.get("last_status", 0)))),
+		"ok": ok,
+		"used_cache": str(refresh.get("source", "")) == SessionStore.SURFACE_REFRESH_SOURCE_CACHE,
+		"rendered_from_cache": bool(refresh.get("rendered_from_cache", false)),
+		"server_timing": _as_dictionary(body.get("server_timing", {})),
+		"save_type": SessionStore.active_save_type,
+	})
 
 func _update_status_text() -> String:
 	return HubAccountSurfacePresenterScript.update_status_text(self)

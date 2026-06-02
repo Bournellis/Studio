@@ -15,8 +15,8 @@
   Cloudflare production URL
   `https://draxos-mobile-internal-alpha.pages.dev`, latest deployment evidence
   `https://9ba71c4e.draxos-mobile-internal-alpha.pages.dev`.
-- Latest implemented package: `Web Launch Resilience` on
-  `codex/draxos-mobile/web-launch-resilience`.
+- Latest implemented package: `App Responsiveness Architecture Pass` on
+  `codex/draxos-mobile/app-responsiveness` (local only, not published).
 - Previous visual package: `Refugio Visual Cleanup`, release root
   `internal-alpha/v0-refugio-visual-cleanup-20260602-03f3fb0`,
   deployment evidence `https://f183cd39.draxos-mobile-internal-alpha.pages.dev`.
@@ -27,16 +27,66 @@
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Validation baseline marker: Latest published remote package: `Foundation Hardening V2` remains the required hardening/live-doc guard marker while the current playable package is the Web Launch Resilience release.
-- Active follow-up: Web Launch Resilience is closed after human confirmation on
-  `2026-06-02` that the Web build is functioning. Next DraxosMobile decision is
-  choosing another dedicated visual cleanup package or resuming Openworld
-  functional playtest from updated `master`.
+- Active follow-up: App Responsiveness Architecture Pass is implemented and
+  validated locally. Next DraxosMobile decision is human review of the local
+  package, then explicit approval before any Internal Alpha packaging,
+  remote validation, upload or manifest publication.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## App Responsiveness Architecture Pass - 2026-06-02
+
+This local package improves perceived responsiveness across DraxosMobile
+without changing the Supabase/Cloudflare provider stack and without publishing
+a new remote Internal Alpha.
+
+- branch: `codex/draxos-mobile/app-responsiveness`;
+- worktree:
+  `D:\Estudio-worktrees\draxos-mobile--codex--app-responsiveness`;
+- remote publication: not executed;
+- remote mutation: not executed.
+
+Scope delivered:
+
+- Surface refresh is cache-first, then server-refresh-in-background, with
+  lifecycle tokens preventing stale responses from overwriting newer state.
+- `SessionStore` persists surface refresh metadata and request latency logs.
+- `DraxosOperationState` is the authority for busy state by scope; navigation
+  remains usable unless an app-level/replay scope requires blocking.
+- Account, Base, Arena, Battle, Preparation/Build, Crafting, Social,
+  Competition/Ranking, Shop/Monetization, Mode Hub, Mode Shell, Modes
+  Ops/Admin, Battle Lab and Progression Lab now use the surface refresh pattern.
+- Battle and Arena Duel keep server-authoritative result semantics; the client
+  shows real waiting/status and does not start replay/summary before the server
+  payload arrives.
+- State endpoints now use a shared response envelope with `api_version`,
+  `account`, `save`, `cache.generated_at` and `server_timing`.
+- `/arena/pve/state` now returns a lightweight projection of list/unlocks/
+  records/active attempt, leaving full loadout data to start/duel/buff flows.
+- Mutations return affected surface deltas where useful, reducing immediate
+  follow-up fetches after actions such as alpha purchases.
+- Local and remote telemetry payloads now cover `request_latency`,
+  `surface_refresh`, `surface_cache_rendered` and `action_latency`.
+
+Validation:
+
+- `git diff --check`: passed.
+- `deno task check` in `server/functions`: passed.
+- `deno task check` in `supabase/functions`: passed.
+- `deno test --allow-read server/tests/api_version_contract_test.ts server/tests/arena_loop_unlock_friction_test.ts server/tests/lab_runner_contract_test.ts`:
+  passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ServerQuick`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile FullLocal`: partial;
+  all DocsOnly, ServerQuick, ModePlatform, ClientQuick and ReleaseDryRun stages
+  passed, and local Supabase transactional RPC live proof passed. The three
+  local Edge Runtime live smokes failed because the local Edge worker returned
+  `BOOT_ERROR` at `http://127.0.0.1:54321`; no remote mutation was attempted.
 
 ## Web Launch Resilience - 2026-06-02
 

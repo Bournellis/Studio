@@ -31,6 +31,7 @@ import {
   saveTypeFromRequest,
   saveTypeQuery,
 } from "../_shared/save_context.ts";
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "request" | "latest" | "history" | "replay";
 type BattleMode = "MVP_ONLY" | "FIRST_SLICE_SIM";
@@ -311,6 +312,7 @@ async function handleMvpRequest(
   requestId: string,
   mode: BattleMode,
 ): Promise<Response> {
+  const startedAtMs = performance.now();
   const rpc = await restRequest<unknown>(config, "rpc/request_mvp_battle", {
     method: "POST",
     body: JSON.stringify({
@@ -326,7 +328,11 @@ async function handleMvpRequest(
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
-  return jsonResponse(rpc.value);
+  return jsonResponse(stateEnvelope(responsePayload(rpc.value), {
+    surface: "battle",
+    saveType: auth.saveType,
+    startedAtMs,
+  }));
 }
 
 async function handleFirstSliceRequest(
@@ -336,6 +342,7 @@ async function handleFirstSliceRequest(
   opponentBotId: string,
   body: Record<string, unknown>,
 ): Promise<Response> {
+  const startedAtMs = performance.now();
   const playerState = await loadPlayerState(auth, config);
   if (playerState.error !== null) {
     return errorResponse(
@@ -425,13 +432,18 @@ async function handleFirstSliceRequest(
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
-  return jsonResponse(rpc.value);
+  return jsonResponse(stateEnvelope(responsePayload(rpc.value), {
+    surface: "battle",
+    saveType: auth.saveType,
+    startedAtMs,
+  }));
 }
 
 async function handleLatest(
   auth: AuthContext,
   config: EdgeConfig,
 ): Promise<Response> {
+  const startedAtMs = performance.now();
   const player = await loadPlayerForRead(auth, config);
   if (player.error !== null) {
     return errorResponse(
@@ -459,19 +471,29 @@ async function handleLatest(
 
   const battle = battleResult.value[0] ?? null;
   if (battle === null) {
-    return jsonResponse({
+    return jsonResponse(stateEnvelope({
       ok: true,
       battle_log: null,
       rewards: null,
-    });
+    }, {
+      surface: "battle",
+      saveType: auth.saveType,
+      schemaVersion: "battle_latest_v1",
+      startedAtMs,
+    }));
   }
 
-  return jsonResponse({
+  return jsonResponse(stateEnvelope({
     ok: true,
     battle_log: battleLogFromRow(player.value, battle),
     ruleset: rulesetMetadataFromRow(battle),
     rewards: battle.reward_payload,
-  });
+  }, {
+    surface: "battle",
+    saveType: auth.saveType,
+    schemaVersion: "battle_latest_v1",
+    startedAtMs,
+  }));
 }
 
 async function handleHistory(
@@ -479,6 +501,7 @@ async function handleHistory(
   auth: AuthContext,
   config: EdgeConfig,
 ): Promise<Response> {
+  const startedAtMs = performance.now();
   const player = await loadPlayerForRead(auth, config);
   if (player.error !== null) {
     return errorResponse(
@@ -505,13 +528,18 @@ async function handleHistory(
     );
   }
 
-  return jsonResponse({
+  return jsonResponse(stateEnvelope({
     ok: true,
     schema_version: "battle_history_v1",
     save_type: player.value.save_type ?? auth.saveType,
     ruleset: rulesetMetadata(),
     history: battleResult.value.map((battle) => historyEntryFromRow(battle)),
-  });
+  }, {
+    surface: "battle",
+    saveType: auth.saveType,
+    schemaVersion: "battle_history_v1",
+    startedAtMs,
+  }));
 }
 
 async function handleReplay(
@@ -519,6 +547,7 @@ async function handleReplay(
   auth: AuthContext,
   config: EdgeConfig,
 ): Promise<Response> {
+  const startedAtMs = performance.now();
   const battleId = new URL(request.url).searchParams.get("battle_id")?.trim() ??
     "";
   if (!UUID_PATTERN.test(battleId)) {
@@ -559,7 +588,7 @@ async function handleReplay(
     );
   }
 
-  return jsonResponse({
+  return jsonResponse(stateEnvelope({
     ok: true,
     battle_log: battleLogFromRow(player.value, battle),
     ruleset: rulesetMetadataFromRow(battle),
@@ -570,7 +599,12 @@ async function handleReplay(
       save_type: player.value.save_type ?? auth.saveType,
       read_only: true,
     },
-  });
+  }, {
+    surface: "battle",
+    saveType: auth.saveType,
+    schemaVersion: "battle_replay_v1",
+    startedAtMs,
+  }));
 }
 
 async function loadPlayerForRead(
@@ -1441,6 +1475,13 @@ function numberValue(value: unknown, fallback: number): number {
   }
 
   return fallback;
+}
+
+function responsePayload(value: unknown): Record<string, unknown> {
+  if (isObject(value)) {
+    return value;
+  }
+  return { ok: true, value };
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {

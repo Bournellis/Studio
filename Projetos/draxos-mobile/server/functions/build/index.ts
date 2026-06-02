@@ -21,6 +21,7 @@ import {
   resolveEquipRequest,
 } from "../_shared/progression_domain.ts";
 import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "state" | "equip" | "spell_behavior" | "potion_equip" | "potion_behavior";
 
@@ -147,11 +148,16 @@ async function handleCorsRequest(request: Request): Promise<Response> {
 }
 
 async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
+  const startedAtMs = performance.now();
   const state = await loadBuildState(auth, config);
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  return jsonResponse(buildStatePayload(state.value));
+  return jsonResponse(stateEnvelope(buildStatePayload(state.value), {
+    surface: "build",
+    saveType: auth.saveType,
+    startedAtMs,
+  }));
 }
 
 async function handleBuildEquip(
@@ -217,7 +223,10 @@ async function handleBuildEquip(
     ...buildStatePayload(refreshed.value),
     equipped_build: rpcPayload.equipped_build ?? resolution.value.summary,
   };
-  return jsonResponse(responsePayload);
+  return jsonResponse(stateEnvelope(responsePayload, {
+    surface: "build",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleSpellBehavior(
@@ -277,7 +286,10 @@ async function handleSpellBehavior(
     ...buildStatePayload(refreshed.value),
     updated_behavior: { spell_id: spellId, behavior: behavior.value },
   };
-  return jsonResponse(responsePayload);
+  return jsonResponse(stateEnvelope(responsePayload, {
+    surface: "build",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handlePotionEquip(
@@ -337,7 +349,10 @@ async function handlePotionEquip(
     ...buildStatePayload(refreshed.value),
     equipped_potion: { slot_index: slotIndex, potion_id: requestedItemId },
   };
-  return jsonResponse(responsePayload);
+  return jsonResponse(stateEnvelope(responsePayload, {
+    surface: "build",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handlePotionBehavior(
@@ -397,7 +412,10 @@ async function handlePotionBehavior(
     ...buildStatePayload(refreshed.value),
     updated_behavior: { slot_index: slotIndex, behavior: behavior.value },
   };
-  return jsonResponse(responsePayload);
+  return jsonResponse(stateEnvelope(responsePayload, {
+    surface: "build",
+    saveType: auth.saveType,
+  }));
 }
 
 async function loadBuildState(

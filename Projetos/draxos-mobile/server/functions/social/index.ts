@@ -12,6 +12,7 @@ import {
   mapFoundationDatabaseError,
   mutationRequestHash,
 } from "../_shared/transactional_mutation.ts";
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "state" | "friend_add" | "guild_create" | "guild_join" | "chat_send";
 
@@ -153,11 +154,16 @@ async function handleCorsRequest(request: Request): Promise<Response> {
 }
 
 async function handleState(auth: AuthContext, config: EdgeConfig): Promise<Response> {
+  const startedAtMs = performance.now();
   const context = await loadSocialContext(auth, config);
   if (context.error !== null) {
     return errorResponse(context.error.code, context.error.message, context.error.status);
   }
-  return jsonResponse(await socialStatePayload(config, context.value));
+  return jsonResponse(stateEnvelope(await socialStatePayload(config, context.value), {
+    surface: "social",
+    saveType: auth.saveType,
+    startedAtMs,
+  }));
 }
 
 async function handleFriendAdd(
@@ -207,7 +213,10 @@ async function handleFriendAdd(
   }
 
   const payload = await socialStatePayload(config, context.value);
-  return jsonResponse(payload);
+  return jsonResponse(stateEnvelope(payload, {
+    surface: "social",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleGuildCreate(
@@ -262,7 +271,10 @@ async function handleGuildCreate(
   }
 
   const payload = await socialStatePayload(config, context.value);
-  return jsonResponse(payload);
+  return jsonResponse(stateEnvelope(payload, {
+    surface: "social",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleGuildJoin(
@@ -315,7 +327,10 @@ async function handleGuildJoin(
   }
 
   const payload = await socialStatePayload(config, context.value);
-  return jsonResponse(payload);
+  return jsonResponse(stateEnvelope(payload, {
+    surface: "social",
+    saveType: auth.saveType,
+  }));
 }
 
 async function loadSocialGameSave(
@@ -381,7 +396,10 @@ async function handleChatSend(
   }
 
   const payload = await socialStatePayload(config, context.value);
-  return jsonResponse(payload);
+  return jsonResponse(stateEnvelope(payload, {
+    surface: "social",
+    saveType: auth.saveType,
+  }));
 }
 
 async function socialStatePayload(config: EdgeConfig, context: SocialContext) {

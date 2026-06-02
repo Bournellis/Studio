@@ -22,6 +22,7 @@ import {
   foundationRpcPayload,
   mutationRequestHash,
 } from "../_shared/transactional_mutation.ts";
+import { stateEnvelope } from "../_shared/response_envelope.ts";
 import {
   type AuthContext,
   type EdgeConfig,
@@ -118,6 +119,7 @@ export function modeHandler(request: Request): Promise<Response> {
 }
 
 async function handleRegistry(config: EdgeConfig): Promise<Response> {
+  const startedAtMs = performance.now();
   const registry = await loadRegistry(config, "");
   if (registry.error !== null) {
     return errorResponse(registry.error.code, registry.error.message, registry.error.status);
@@ -126,7 +128,11 @@ async function handleRegistry(config: EdgeConfig): Promise<Response> {
   if (rulesets.error !== null) {
     return errorResponse(rulesets.error.code, rulesets.error.message, rulesets.error.status);
   }
-  return jsonResponse(modeRegistryPayload(registry.value, rulesets.value, new Date()));
+  return jsonResponse(stateEnvelope(modeRegistryPayload(registry.value, rulesets.value, new Date()), {
+    surface: "mode",
+    schemaVersion: "mode_registry_v1",
+    startedAtMs,
+  }));
 }
 
 async function handleState(
@@ -134,6 +140,7 @@ async function handleState(
   auth: AuthContext,
   config: EdgeConfig,
 ): Promise<Response> {
+  const startedAtMs = performance.now();
   const modeId = new URL(request.url).searchParams.get("mode_id")?.trim() ?? OPENWORLD_MODE_ID;
   if (modeId === "") {
     return errorResponse("INVALID_MODE", "mode_id is not part of Mode Platform V1.", 400);
@@ -142,7 +149,11 @@ async function handleState(
   if (state.error !== null) {
     return errorResponse(state.error.code, state.error.message, state.error.status);
   }
-  return jsonResponse(modeStatePayload({ ...state.value, serverTime: new Date() }));
+  return jsonResponse(stateEnvelope(modeStatePayload({ ...state.value, serverTime: new Date() }), {
+    surface: "mode",
+    saveType: auth.saveType,
+    startedAtMs,
+  }));
 }
 
 async function handleSessionStart(
@@ -210,7 +221,10 @@ async function handleSessionStart(
     const mapped = mapModeDatabaseError(rpc.error, "MODE_SESSION_START_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  return jsonResponse(foundationRpcPayload(rpc.value));
+  return jsonResponse(stateEnvelope(foundationRpcPayload(rpc.value), {
+    surface: "mode",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleSessionComplete(
@@ -257,7 +271,10 @@ async function handleSessionComplete(
     const mapped = mapModeDatabaseError(rpc.error, "MODE_SESSION_COMPLETE_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  return jsonResponse(foundationRpcPayload(rpc.value));
+  return jsonResponse(stateEnvelope(foundationRpcPayload(rpc.value), {
+    surface: "mode",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleSessionAbandon(
@@ -304,7 +321,10 @@ async function handleSessionAbandon(
     const mapped = mapModeDatabaseError(rpc.error, "MODE_SESSION_ABANDON_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  return jsonResponse(foundationRpcPayload(rpc.value));
+  return jsonResponse(stateEnvelope(foundationRpcPayload(rpc.value), {
+    surface: "mode",
+    saveType: auth.saveType,
+  }));
 }
 
 async function handleAnalyticsSummary(
@@ -312,6 +332,7 @@ async function handleAnalyticsSummary(
   auth: AuthContext,
   config: EdgeConfig,
 ): Promise<Response> {
+  const startedAtMs = performance.now();
   const modeId = new URL(request.url).searchParams.get("mode_id")?.trim() || OPENWORLD_MODE_ID;
   const state = await loadModeState(auth, config, modeId);
   if (state.error !== null) {
@@ -329,7 +350,7 @@ async function handleAnalyticsSummary(
       durationCount += 1;
     }
   }
-  return jsonResponse({
+  return jsonResponse(stateEnvelope({
     ok: true,
     schema_version: "mode_analytics_v1",
     mode_id: modeId,
@@ -345,7 +366,12 @@ async function handleAnalyticsSummary(
     },
     resources: state.value.claims.map((claim) => claim.resource_delta),
     server_time: new Date().toISOString(),
-  });
+  }, {
+    surface: "mode",
+    saveType: auth.saveType,
+    schemaVersion: "mode_analytics_v1",
+    startedAtMs,
+  }));
 }
 
 async function handleAdminRoute(
@@ -356,12 +382,16 @@ async function handleAdminRoute(
 ): Promise<Response> {
   const admin = await loadAdminRole(config, auth.userId);
   if (route === "admin_me") {
-    return jsonResponse({
+    return jsonResponse(stateEnvelope({
       ok: true,
       schema_version: "mode_admin_v1",
       admin: admin.value,
       server_time: new Date().toISOString(),
-    }, admin.error === null ? 200 : 403);
+    }, {
+      surface: "mode",
+      saveType: auth.saveType,
+      schemaVersion: "mode_admin_v1",
+    }), admin.error === null ? 200 : 403);
   }
   if (admin.error !== null) {
     return errorResponse(admin.error.code, admin.error.message, admin.error.status);
@@ -458,7 +488,9 @@ async function handleAdminModeStatus(
     const mapped = mapModeDatabaseError(rpc.error, "MODE_ADMIN_STATUS_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  return jsonResponse(foundationRpcPayload(rpc.value));
+  return jsonResponse(stateEnvelope(foundationRpcPayload(rpc.value), {
+    surface: "mode",
+  }));
 }
 
 async function handleAdminSessionRpc(
@@ -499,7 +531,9 @@ async function handleAdminSessionRpc(
     const mapped = mapModeDatabaseError(rpc.error, "MODE_ADMIN_SESSION_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  return jsonResponse(foundationRpcPayload(rpc.value));
+  return jsonResponse(stateEnvelope(foundationRpcPayload(rpc.value), {
+    surface: "mode",
+  }));
 }
 
 async function handleAdminReconcile(
@@ -510,7 +544,7 @@ async function handleAdminReconcile(
   const modeId = stringField(body, "mode_id") || OPENWORLD_MODE_ID;
   const sessions = await loadSessions(config, stringField(body, "game_save_id"), modeId);
   const claims = await loadClaims(config, stringField(body, "game_save_id"), modeId);
-  return jsonResponse({
+  return jsonResponse(stateEnvelope({
     ok: true,
     schema_version: "mode_admin_v1",
     request_id: requestId,
@@ -518,7 +552,10 @@ async function handleAdminReconcile(
     sessions: sessions.error === null ? sessions.value : [],
     claims: claims.error === null ? claims.value : [],
     server_time: new Date().toISOString(),
-  });
+  }, {
+    surface: "mode",
+    schemaVersion: "mode_admin_v1",
+  }));
 }
 
 async function handleAdminCompensate(
@@ -545,5 +582,7 @@ async function handleAdminCompensate(
   if (rpc.error !== null) {
     return errorResponse("MODE_ADMIN_COMPENSATE_FAILED", rpc.error.message, 500);
   }
-  return jsonResponse(foundationRpcPayload(rpc.value));
+  return jsonResponse(stateEnvelope(foundationRpcPayload(rpc.value), {
+    surface: "mode",
+  }));
 }

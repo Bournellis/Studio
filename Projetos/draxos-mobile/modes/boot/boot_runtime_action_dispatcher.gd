@@ -2,7 +2,8 @@ extends "res://modes/boot/boot_runtime_navigation_controller.gd"
 
 # Action dispatch bridge preserving host.call action methods and telemetry payloads.
 func _trigger_action(action_id: String, confirm_message: String = "") -> void:
-	if _is_busy:
+	var route := AppShellActionRouterScript.route_action(action_id, _action_context())
+	if _action_scope_is_busy(str(route.get("scope_id", OperationStateScript.DEFAULT_SCOPE))):
 		return
 	if confirm_message != "":
 		_pending_confirmation_action = action_id
@@ -21,9 +22,13 @@ func _on_confirmation_confirmed() -> void:
 func _execute_action(action_id: String) -> void:
 	var route := AppShellActionRouterScript.route_action(action_id, _action_context())
 	var action := str(route.get("action_id", action_id))
+	var scope := str(route.get("scope_id", OperationStateScript.DEFAULT_SCOPE))
+	if _action_scope_is_busy(scope):
+		return
 	_active_action_id = action
-	_active_action_scope = str(route.get("scope_id", OperationStateScript.DEFAULT_SCOPE))
+	_active_action_scope = scope
 	_error_label.text = ""
+	var action_started_ms := int(Time.get_ticks_msec())
 	_emit_client_event("action_start", _as_dictionary(route.get("payload", _action_payload(action))))
 	if bool(route.get("blocked_by_update", false)):
 		_error_label.text = "Update obrigatorio antes de usar recursos online."
@@ -173,6 +178,13 @@ func _execute_action(action_id: String) -> void:
 		var payload := _action_payload(action)
 		if _error_label.text != "":
 			payload["error_text"] = _error_label.text
+		payload["duration_ms"] = maxi(0, int(Time.get_ticks_msec()) - action_started_ms)
+		payload["scope_id"] = _active_action_scope
 		_emit_client_event(event_type, payload)
+		_emit_client_event("action_latency", payload.duplicate(true))
 	_active_action_id = ""
 	_active_action_scope = OperationStateScript.DEFAULT_SCOPE
+
+func _action_scope_is_busy(scope_id: String) -> bool:
+	var scope := OperationStateScript.normalize_scope(scope_id)
+	return _operation_state.is_busy(scope) or _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE)

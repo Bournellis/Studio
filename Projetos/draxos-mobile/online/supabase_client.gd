@@ -707,15 +707,18 @@ static func request_hash_for_mutation(endpoint: String, payload: Dictionary) -> 
 	return PendingMutationQueueScript.request_hash_for_mutation(endpoint, payload)
 
 func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArray, body: Dictionary) -> Dictionary:
+	var started_ms := int(Time.get_ticks_msec())
 	if not backend_config_errors.is_empty():
 		return _with_client_context(
 			_error("CLIENT_MISCONFIGURED", "Backend config invalid: %s" % ", ".join(backend_config_errors)),
-			headers
+			headers,
+			_request_context(url, method, started_ms, 0)
 		)
 	if publishable_key == "":
 		return _with_client_context(
 			_error("CLIENT_MISCONFIGURED", "Supabase publishable key is missing."),
-			headers
+			headers,
+			_request_context(url, method, started_ms, 0)
 		)
 
 	var request := HTTPRequest.new()
@@ -731,7 +734,8 @@ func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArr
 		request.queue_free()
 		return _with_client_context(
 			_error("REQUEST_NOT_STARTED", "HTTP request could not be started."),
-			headers
+			headers,
+			_request_context(url, method, started_ms, 0)
 		)
 
 	var completed: Array = await request.request_completed
@@ -744,7 +748,8 @@ func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArr
 	if result_code != HTTPRequest.RESULT_SUCCESS:
 		return _with_client_context(
 			_error("NETWORK_UNAVAILABLE", _network_unavailable_message(), response_code),
-			headers
+			headers,
+			_request_context(url, method, started_ms, response_code)
 		)
 
 	var parsed: Variant = null
@@ -756,14 +761,15 @@ func _send_json(url: String, method: HTTPClient.Method, headers: PackedStringArr
 	if not parsed is Dictionary:
 		return _with_client_context(
 			_error("INVALID_JSON", "Server response was not a JSON object.", response_code),
-			headers
+			headers,
+			_request_context(url, method, started_ms, response_code)
 		)
 
 	var payload := _as_dictionary(parsed)
 	if response_code < 200 or response_code >= 300 or not bool(payload.get("ok", true)):
-		return _with_client_context(_server_error(payload, response_code), headers)
+		return _with_client_context(_server_error(payload, response_code), headers, _request_context(url, method, started_ms, response_code))
 
-	return _with_client_context({"ok": true, "status": response_code, "body": payload}, headers)
+	return _with_client_context({"ok": true, "status": response_code, "body": payload}, headers, _request_context(url, method, started_ms, response_code))
 
 func _session_from_auth_payload(payload: Dictionary, require_anonymous: bool, require_registered: bool) -> Dictionary:
 	var access_token := str(payload.get("access_token", ""))
@@ -859,8 +865,10 @@ static func _packed_string_array(value: Variant) -> PackedStringArray:
 			result.append(str(item))
 	return result
 
-static func _with_client_context(result: Dictionary, headers: PackedStringArray) -> Dictionary:
+static func _with_client_context(result: Dictionary, headers: PackedStringArray, request_context: Dictionary = {}) -> Dictionary:
 	var context := _client_context_from_headers(headers)
+	for key: Variant in request_context.keys():
+		context[str(key)] = request_context.get(key)
 	if context.is_empty():
 		return result
 	var annotated := result.duplicate(true)
@@ -880,6 +888,41 @@ static func _client_context_from_headers(headers: PackedStringArray) -> Dictiona
 		elif header_name == "x-draxos-api-version":
 			context[CLIENT_API_VERSION_KEY] = header_value
 	return context
+
+func _request_context(url: String, method: HTTPClient.Method, started_ms: int, response_code: int) -> Dictionary:
+	var duration_ms := maxi(0, int(Time.get_ticks_msec()) - started_ms)
+	return {
+		"url": url,
+		"endpoint": _logical_endpoint(url),
+		"method": _method_label(method),
+		"duration_ms": duration_ms,
+		"response_code": response_code,
+		"environment": backend_environment,
+	}
+
+func _logical_endpoint(url: String) -> String:
+	var functions_marker := "/functions/v1/"
+	var marker_index := url.find(functions_marker)
+	if marker_index >= 0:
+		return url.substr(marker_index + functions_marker.length()).get_slice("?", 0)
+	if url.find("/auth/v1/") >= 0:
+		return "auth/%s" % url.get_slice("/auth/v1/", 1).get_slice("?", 0)
+	return url.get_file()
+
+static func _method_label(method: HTTPClient.Method) -> String:
+	match method:
+		HTTPClient.METHOD_GET:
+			return "GET"
+		HTTPClient.METHOD_POST:
+			return "POST"
+		HTTPClient.METHOD_PUT:
+			return "PUT"
+		HTTPClient.METHOD_PATCH:
+			return "PATCH"
+		HTTPClient.METHOD_DELETE:
+			return "DELETE"
+		_:
+			return str(int(method))
 
 static func _stable_json(value: Variant) -> String:
 	return PendingMutationQueueScript.canonical_json(value)

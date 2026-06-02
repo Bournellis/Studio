@@ -1599,7 +1599,7 @@ func test_social_auto_sync_timer_pauses_for_busy_and_offline_states() -> void:
 	boot._set_busy(true, "Testando pausa...")
 	boot._sync_social_auto_sync_for_route()
 	assert_true(boot._social_auto_sync_timer.is_stopped())
-	assert_eq(boot._social_auto_sync_status_text(), "Sincronizacao pausada durante outra acao.")
+	assert_eq(boot._social_auto_sync_status_text(), "Sincronizacao pausada durante outra acao social.")
 
 	boot._set_busy(false, "Teste concluido.")
 	SessionStore.offline = true

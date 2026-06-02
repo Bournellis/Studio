@@ -128,6 +128,68 @@ func test_session_store_keeps_server_state_as_snapshot() -> void:
 	assert_eq(store.account_username, "guest_test")
 	store.free()
 
+func test_session_store_tracks_surface_refresh_metadata_and_rejects_stale_tokens() -> void:
+	var store = SessionStoreScript.new()
+	store.active_save_type = SessionStoreScript.SAVE_TYPE_NORMAL
+	assert_true(store.apply_base_result({
+		"ok": true,
+		"base": {"structures": [{"structure_id": "nucleo_energia"}]},
+		"resources": {"energia": 10},
+	}))
+	assert_true(store.has_surface_snapshot(SessionStoreScript.SURFACE_BASE))
+
+	var stale_token := store.begin_surface_refresh(
+		SessionStoreScript.SURFACE_BASE,
+		"show_base",
+		"base/state",
+		true
+	)
+	var current_token := store.begin_surface_refresh(
+		SessionStoreScript.SURFACE_BASE,
+		"show_base",
+		"base/state",
+		true
+	)
+	assert_false(store.complete_surface_refresh(SessionStoreScript.SURFACE_BASE, {
+		"ok": true,
+		"_client": {"endpoint": "base/state", "method": "GET", "duration_ms": 999, "response_code": 200},
+	}, stale_token))
+	assert_true(store.complete_surface_refresh(SessionStoreScript.SURFACE_BASE, {
+		"ok": true,
+		"_client": {"endpoint": "base/state", "method": "GET", "duration_ms": 42, "response_code": 200},
+		"body": {"cache": {"generated_at": "2026-06-02T12:00:00Z"}},
+	}, current_token))
+
+	var meta := store.surface_refresh_snapshot(SessionStoreScript.SURFACE_BASE)
+	assert_false(bool(meta.get("refreshing", true)))
+	assert_eq(str(meta.get("source", "")), SessionStoreScript.SURFACE_REFRESH_SOURCE_SERVER)
+	assert_eq(int(meta.get("last_latency_ms", 0)), 42)
+	assert_eq(str(meta.get("generated_at", "")), "2026-06-02T12:00:00Z")
+	assert_eq(store.recent_request_latencies().size(), 1)
+
+	var restored = SessionStoreScript.new()
+	restored._apply_cache(store.snapshot())
+	var restored_meta := restored.surface_refresh_snapshot(SessionStoreScript.SURFACE_BASE)
+	assert_eq(int(restored_meta.get("last_latency_ms", 0)), 42)
+	assert_eq(str(restored_meta.get("generated_at", "")), "2026-06-02T12:00:00Z")
+	store.free()
+	restored.free()
+
+func test_monetization_result_can_patch_base_delta_without_followup_fetch() -> void:
+	var store = SessionStoreScript.new()
+	store.active_save_type = SessionStoreScript.SAVE_TYPE_NORMAL
+	assert_true(store.apply_monetization_result({
+		"ok": true,
+		"monetization": {"products": []},
+		"resources": {"energia": 30},
+		"base": {"construction_slots": 2, "structures": [{"structure_id": "nucleo_energia"}]},
+	}))
+	assert_true(store.has_monetization_state())
+	assert_true(store.has_base_state())
+	assert_eq(int(store.resources.get("energia", 0)), 30)
+	assert_eq(int(store.base_state.get("construction_slots", 0)), 2)
+	store.free()
+
 func test_session_store_persists_alpha_account_metadata() -> void:
 	var store = SessionStoreScript.new()
 	var now := int(Time.get_unix_time_from_system())
