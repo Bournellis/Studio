@@ -564,9 +564,12 @@ async function handleDuelRequest(
       ...(isObject((simulation.battleLog as Record<string, unknown>).metadata)
         ? (simulation.battleLog as Record<string, unknown>).metadata as Record<string, unknown>
         : {}),
+      mode: "PVE_ARENA_V1",
       arena_id: attempt.value.arena_id,
       difficulty_id: attempt.value.difficulty_id,
       attempt_id: attempt.value.id,
+      duel_index: nextStep,
+      duel_count: attempt.value.max_steps,
       step_index: nextStep,
       enemy_id: enemyId,
       tier_id: activeTier?.id ?? null,

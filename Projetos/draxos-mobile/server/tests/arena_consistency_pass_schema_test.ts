@@ -133,6 +133,21 @@ Deno.test("arena runtime uses generated Season 1 catalog and tier difficulty ids
   ) {
     assertNotIncludes(edgeFunction, obsolete, `arena edge function should not keep ${obsolete}`);
   }
+
+  const arenaMetadataBlock = objectLiteralBlock(edgeFunction, "metadata");
+  for (
+    const required of [
+      'mode: "PVE_ARENA_V1"',
+      "duel_index: nextStep",
+      "duel_count: attempt.value.max_steps",
+    ]
+  ) {
+    assertIncludes(
+      arenaMetadataBlock,
+      required,
+      `arena battle log metadata should include ${required}`,
+    );
+  }
 });
 
 Deno.test("arena claim remains read-only ack and buff public endpoint is normalized", async () => {
@@ -177,6 +192,18 @@ function functionBlock(source: string, functionName: string): string {
   }
   const next = source.indexOf("\ncreate or replace function public.", start + 1);
   return source.slice(start, next < 0 ? source.length : next);
+}
+
+function objectLiteralBlock(source: string, propertyName: string): string {
+  const start = source.indexOf(`${propertyName}: {`);
+  if (start < 0) {
+    throw new Error(`Object literal ${propertyName} not found`);
+  }
+  const end = source.indexOf("\n    },", start + 1);
+  if (end < 0) {
+    throw new Error(`Object literal ${propertyName} end not found`);
+  }
+  return source.slice(start, end);
 }
 
 function normalizeNewlines(value: string): string {
