@@ -80,8 +80,6 @@ func _check_refuge_layout(viewport_size: Vector2i) -> void:
 		"RefugeSceneBoard",
 		"RefugeSafeFrame",
 		"RefugeTopHud",
-		"RefugeAltarStage",
-		"RefugeLoopPanel",
 		"RefugeContextCta",
 		"RefugeIcon_Perfil",
 		"RefugeIcon_LabsDev",
@@ -93,8 +91,27 @@ func _check_refuge_layout(viewport_size: Vector2i) -> void:
 		"RefugeIcon_Energia",
 	]:
 		_expect_node_fits(boot, node_name, context)
+	_expect(_find_node_by_name(boot, "RefugeAltarStage") == null, "%s removes altar stage." % context)
+	_expect(_find_node_by_name(boot, "RefugeAltarGlow") == null, "%s removes altar glow." % context)
+	_expect(_find_node_by_name(boot, "RefugeAltarCore") == null, "%s removes altar core." % context)
+	_expect(_find_node_by_name(boot, "RefugeLoopPanel") == null, "%s removes persistent loop panel." % context)
+	_expect(_find_node_by_name(boot, "RefugeProgressionPanel") == null, "%s removes persistent progression panel." % context)
 	_expect(_find_node_by_name(boot, "RefugeIcon_Batalha") == null, "%s hides legacy battle shortcut." % context)
 	_expect(_find_node_by_name(boot, "RefugeIcon_Competicao") == null, "%s hides competition shortcut." % context)
+	for spec: Dictionary in [
+		{"prefix": "AR", "title": "Arena PVE"},
+		{"prefix": "PP", "title": "Preparacao"},
+		{"prefix": "RF", "title": "Refugio"},
+		{"prefix": "SO", "title": "Social"},
+		{"prefix": "MD", "title": "Modos"},
+		{"prefix": "LJ", "title": "Loja"},
+		{"prefix": "CL", "title": "Coletar"},
+		{"prefix": "EN", "title": "Energia"},
+	]:
+		var icon := _find_node_by_name(boot, "RefugeIcon_%s" % str(spec.get("title", ""))) as Button
+		_expect(icon != null and str(icon.text) == str(spec.get("title", "")), "%s keeps '%s' label without sigla." % [context, str(spec.get("title", ""))])
+		if icon != null:
+			_expect(not str(icon.text).begins_with("%s\n" % str(spec.get("prefix", ""))), "%s removes '%s' prefix." % [context, str(spec.get("prefix", ""))])
 	var safe_frame := _find_node_by_name(boot, "RefugeSafeFrame") as Control
 	if safe_frame != null:
 		_expect(safe_frame.size.x <= MobileUiContractScript.IMMERSIVE_SAFE_MAX_WIDTH + 1.0, "%s safe frame width is capped." % context)

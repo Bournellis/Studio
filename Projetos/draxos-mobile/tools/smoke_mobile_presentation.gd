@@ -73,17 +73,21 @@ func _check_portrait_app_loop() -> void:
 	_expect(_find_button_by_text(boot, "Base") == null, "portrait Refugio has no separate Base hotspot")
 	_expect(boot.get("_base_state_container") == null or not (boot.get("_base_state_container") as Node).is_visible_in_tree(), "portrait Refugio keeps base management inside popup")
 	_expect(_find_button_by_text(boot, "Atualizar Refugio") == null, "portrait Refugio does not require manual refresh to expose core")
-	_expect(_label_tree_contains(boot, "ALTAR"), "portrait Refugio shows altar scene")
+	_expect(_find_node_by_name(boot, "RefugeAltarStage") == null, "portrait Refugio removes altar stage")
+	_expect(_find_node_by_name(boot, "RefugeLoopPanel") == null, "portrait Refugio removes persistent loop panel")
+	_expect(_find_node_by_name(boot, "RefugeProgressionPanel") == null, "portrait Refugio removes persistent progression panel")
+	_expect(not _label_tree_contains(boot, "ALTAR"), "portrait Refugio removes altar label")
 	_expect(_find_node_by_name(boot, "RefugeIcon_Coletar") != null, "portrait Refugio exposes collect icon")
-	var battle_hotspot := _find_node_by_name(boot, "RefugeIcon_Batalha") as Button
-	_expect(battle_hotspot != null, "portrait Refugio has Battle icon")
-	_expect(battle_hotspot != null and battle_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET, "portrait hotspots keep mobile touch target")
-	if battle_hotspot != null:
-		battle_hotspot.pressed.emit()
+	var arena_hotspot := _find_node_by_name(boot, "RefugeIcon_Arena PVE") as Button
+	_expect(_find_node_by_name(boot, "RefugeIcon_Batalha") == null, "portrait Refugio hides legacy Battle icon")
+	_expect(arena_hotspot != null, "portrait Refugio has Arena PVE icon")
+	_expect(arena_hotspot != null and arena_hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET, "portrait hotspots keep mobile touch target")
+	if arena_hotspot != null:
+		arena_hotspot.pressed.emit()
 		await process_frame
 		var menu_popup := boot.get("_refuge_menu_popup") as PopupPanel
-		_expect(menu_popup != null and menu_popup.visible, "Battle icon opens menu popup")
-		_expect(menu_popup != null and _find_button_by_text(menu_popup, "Pedir batalha") != null, "Battle popup exposes request action")
+		_expect(menu_popup != null and menu_popup.visible, "Arena PVE icon opens menu popup")
+		_expect(menu_popup != null and _find_button_by_text(menu_popup, "Abrir Arena PVE") != null, "Arena PVE popup exposes Arena action")
 		boot.set("_is_busy", false)
 		boot.call("_go_back")
 		await process_frame

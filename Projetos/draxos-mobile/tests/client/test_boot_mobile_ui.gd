@@ -250,7 +250,7 @@ func test_boot_shell_has_no_global_tab_navigation() -> void:
 	assert_true(boot._back_button.visible)
 	assert_true(boot._nav_buttons.is_empty())
 
-func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
+func test_boot_refugio_home_renders_clean_scene_hotspots_and_account_route() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
 
@@ -273,14 +273,22 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarBackground"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarViewSpace"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeSceneBoard"))
-	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarStage"))
-	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeLoopPanel"))
-	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeProgressionPanel"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarStage"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarGlow"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeAltarCore"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeLoopPanel"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeProgressionPanel"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeMenuPopup"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeHotspotPanel"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugePathGrid"))
 	assert_false(_label_tree_contains(boot._first_screen_root, "Caminhos do Refugio"))
 	assert_false(_label_tree_contains(boot._content_body, "Altar do Mago"))
+	assert_false(_label_tree_contains(boot._first_screen_root, "ALTAR"))
+	assert_false(_label_tree_contains(boot._first_screen_root, "Refugio do Mago"))
+	var top_hud := _find_node_by_name(boot._first_screen_root, "RefugeTopHud")
+	assert_not_null(top_hud)
+	assert_true(_visible_text_tree(top_hud).contains("Level - | Almas"))
+	assert_false(_visible_text_tree(top_hud).contains("Refugio"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeFooterPanel"))
 	assert_null(boot._auth_email_input)
 	assert_false(boot._action_buttons.has("email_sign_up"))
@@ -288,12 +296,24 @@ func test_boot_refugio_home_renders_altar_hotspots_and_account_route() -> void:
 	assert_null(_find_button_by_text(boot._first_screen_root, "Base"))
 	assert_false(boot._action_buttons.has("show_base"))
 	assert_null(_find_button_by_text(boot._first_screen_root, "Atualizar Refugio"))
-	assert_true(_label_tree_contains(boot._first_screen_root, "ALTAR"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Coletar"))
 
-	for hotspot_text: String in ["Arena PVE", "Refugio", "Social", "Loja", "Perfil"]:
-		var hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_%s" % hotspot_text) as Button
-		assert_not_null(hotspot, "Refugio should expose icon '%s'." % hotspot_text)
+	for spec: Dictionary in [
+		{"prefix": "AR", "title": "Arena PVE"},
+		{"prefix": "PP", "title": "Preparacao"},
+		{"prefix": "RF", "title": "Refugio"},
+		{"prefix": "SO", "title": "Social"},
+		{"prefix": "MD", "title": "Modos"},
+		{"prefix": "LJ", "title": "Loja"},
+		{"prefix": "CL", "title": "Coletar"},
+		{"prefix": "EN", "title": "Energia"},
+	]:
+		var hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_%s" % str(spec.get("title", ""))) as Button
+		assert_not_null(hotspot, "Refugio should expose icon '%s'." % str(spec.get("title", "")))
+		if hotspot == null:
+			continue
+		assert_eq(str(hotspot.text), str(spec.get("title", "")))
+		assert_false(str(hotspot.text).begins_with("%s\n" % str(spec.get("prefix", ""))))
 		assert_true(hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Batalha"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Competicao"))
@@ -1224,7 +1244,7 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_doctrine_action("pacto_familiar")))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_familiar_action("gato_tumular")))
 
-func test_refuge_progression_clarity_uses_existing_account_and_build_state() -> void:
+func test_refuge_top_hud_uses_existing_account_and_build_state_without_progression_bars() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
 	_prepare_account_state()
@@ -1253,11 +1273,14 @@ func test_refuge_progression_clarity_uses_existing_account_and_build_state() -> 
 	boot._show_screen("refuge")
 	await get_tree().process_frame
 
-	assert_true(_label_tree_contains(boot._first_screen_root, "Progresso"))
-	assert_true(_label_tree_contains(boot._first_screen_root, "Nivel 8 | Poder 243"))
-	assert_true(_label_tree_contains(boot._first_screen_root, "Nivel 10: doutrina de combate."))
-	assert_true(_label_tree_contains(boot._first_screen_root, "Primeira sessao: siga o proximo passo e mantenha a base evoluindo."))
-	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeFirstSessionHintLabel"))
+	var top_hud := _find_node_by_name(boot._first_screen_root, "RefugeTopHud")
+	assert_not_null(top_hud)
+	assert_true(_visible_text_tree(top_hud).contains("Level 8 | Almas 100 | Energia 200 | Ossos 3 | Po 0"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeProgressionPanel"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeProgressionLine"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeFirstSessionHintLabel"))
+	assert_false(_label_tree_contains(boot._first_screen_root, "Progresso"))
+	assert_false(_label_tree_contains(boot._first_screen_root, "Primeira sessao: siga o proximo passo e mantenha a base evoluindo."))
 	var lines := ProgressionClarityPresenterScript.unlock_lines(SessionStore.combat_build_state, 3)
 	assert_true(lines.has("Nivel 10: doutrina de combate."))
 	assert_true(lines.has("Nivel 15: Lobo Tumular."))

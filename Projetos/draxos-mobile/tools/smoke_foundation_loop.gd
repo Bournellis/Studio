@@ -27,31 +27,27 @@ func _run_smoke() -> int:
 	boot.call("_show_screen", "refuge", false)
 	await process_frame
 	_expect_cta(boot, "Ver recompensa", AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE)
-	_expect_label_contains(boot, "RefugeLoopNextLabel", "Ver recompensa")
-	_expect_label_contains(boot, "RefugeFirstSessionHintLabel", "abra a recompensa")
-	_expect_label_contains(boot, "RefugeLoopCollectLabel", "Pronta")
-	_expect_label_contains(boot, "RefugeLoopUpgradeLabel", "Nucleo")
+	_expect_clean_refuge_shell(boot)
 
 	_store.mark_battle_result_seen()
 	boot.call("_show_screen", "refuge", false)
 	await process_frame
 	_expect_cta(boot, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE)
-	_expect_label_contains(boot, "RefugeLoopNextLabel", "Coletar")
-	_expect_label_contains(boot, "RefugeFirstSessionHintLabel", "coletando recursos")
+	_expect_clean_refuge_shell(boot)
 
 	_store.base_state = _base_state_without_collect()
 	_remember_surface(SessionStoreScript.SURFACE_BASE)
 	boot.call("_show_screen", "refuge", false)
 	await process_frame
 	_expect_cta(boot, "Evoluir", AppShellActionContractScript.upgrade_base_structure_action("nucleo_energia"))
-	_expect_label_contains(boot, "RefugeLoopUpgradeLabel", "Nucleo")
-	_expect_label_contains(boot, "RefugeFirstSessionHintLabel", "evolua uma estrutura")
+	_expect_clean_refuge_shell(boot)
 
 	_store.base_state = {}
 	_store.surface_save_types.erase(SessionStoreScript.SURFACE_BASE)
 	boot.call("_show_screen", "refuge", false)
 	await process_frame
-	_expect_cta(boot, "Batalhar", AppShellActionContractScript.ACTION_REQUEST_BATTLE)
+	_expect_cta(boot, "Arena PVE", AppShellActionContractScript.ACTION_OPEN_ARENA)
+	_expect_clean_refuge_shell(boot)
 
 	_prepare_foundation_state()
 	boot.call("_show_screen", "battle_summary", false)
@@ -62,6 +58,7 @@ func _run_smoke() -> int:
 	await process_frame
 	_expect(_store.last_battle_result_seen, "return to Refugio marks reward as seen")
 	_expect_cta(boot, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE)
+	_expect_clean_refuge_shell(boot)
 
 	boot.queue_free()
 	await process_frame
@@ -103,11 +100,11 @@ func _expect_cta(root_node: Node, expected_text: String, expected_action_id: Str
 	var buttons := _as_dictionary(root_node.get("_action_buttons"))
 	_expect(buttons.has(expected_action_id), "CTA action registered: %s" % expected_action_id)
 
-func _expect_label_contains(root_node: Node, node_name: String, expected: String) -> void:
-	var label := _find_node_by_name(root_node, node_name) as Label
-	_expect(label != null, "%s exists" % node_name)
-	if label != null:
-		_expect(label.text.contains(expected), "%s contains '%s' in '%s'" % [node_name, expected, label.text])
+func _expect_clean_refuge_shell(root_node: Node) -> void:
+	_expect(_find_node_by_name(root_node, "RefugeAltarStage") == null, "Refugio has no altar stage")
+	_expect(_find_node_by_name(root_node, "RefugeLoopPanel") == null, "Refugio has no persistent loop panel")
+	_expect(_find_node_by_name(root_node, "RefugeProgressionPanel") == null, "Refugio has no persistent progression panel")
+	_expect(_find_node_by_name(root_node, "RefugeFooterPanel") != null, "Refugio keeps hidden feedback footer")
 
 func _expect_tree_contains(root_node: Node, expected: String, message: String) -> void:
 	_expect(_text_tree_contains(root_node, expected), "%s: '%s'" % [message, expected])
