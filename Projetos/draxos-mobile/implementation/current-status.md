@@ -4,7 +4,7 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Integrated App/Arena/Bosque Publication`
+- Active stage: `Integrated App/Arena/Bosque Publication + Official URL Manifest Alignment`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
@@ -14,9 +14,12 @@
   Pass`, `Arena Loop Simplification/Feedback` and `Openworld Bosque Hardening
   V1`, release root
   `internal-alpha/v0-integrated-app-arena-bosque-20260602-99304ed`,
-  Cloudflare production URL
-  `https://draxos-mobile-internal-alpha.pages.dev`, latest deployment evidence
-  `https://8f2829c0.draxos-mobile-internal-alpha.pages.dev`.
+  official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`,
+  direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`,
+  latest deployment evidence
+  `https://8f2829c0.draxos-mobile-internal-alpha.pages.dev`. The release
+  manifest was republished on 2026-06-02 with `portal_url` pointing at the
+  official root URL.
 - Latest implemented package: same as latest published remote package; master is
   integrated and publication completed.
 - Previous Web shell package: `Web Launch Resilience`, release root
@@ -62,8 +65,11 @@ artifacts, Cloudflare Pages and the remote release manifest.
   `https://draxos-mobile-internal-alpha.pages.dev`;
 - Cloudflare deployment evidence:
   `https://8f2829c0.draxos-mobile-internal-alpha.pages.dev`;
-- Portal:
-  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`;
+- Official Portal / manifest `portal_url`:
+  `https://draxos-mobile-internal-alpha.pages.dev/`;
+- Compatibility Portal path:
+  `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
+  redirects to the official root;
 - Web:
   `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
 - Android APK:
@@ -91,6 +97,18 @@ Publication and validation completed:
   `https://8f2829c0.draxos-mobile-internal-alpha.pages.dev`.
 - `publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation`:
   passed and redeployed the `release` function.
+- Official URL manifest hotfix:
+  `publish_internal_alpha.ps1 -ProjectDir D:\Estudio\Projetos\draxos-mobile -ReleaseRoot internal-alpha/v0-integrated-app-arena-bosque-20260602-99304ed -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation`
+  passed on 2026-06-02; remote manifest `released_at` is
+  `2026-06-02T20:53:32Z`, `portal_url` is
+  `https://draxos-mobile-internal-alpha.pages.dev/`, and direct Web remains
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+- `wrangler pages deployment list`: latest Cloudflare Pages deployment remains
+  Production/main/source `99304ed` with evidence
+  `https://8f2829c0.draxos-mobile-internal-alpha.pages.dev`.
+- `release_manifest_smoke.ts` and `release_artifacts_remote_smoke.ts` passed
+  after the manifest hotfix; Portal/Web official URLs return Cloudflare Access
+  in anonymous reads, as expected.
 - `smoke_web_launch_remote.ps1` against the preview hash: passed,
   `outcome=game_loaded`, `loaded_after_ms=6737`, release root and asset root
   matched.
@@ -106,8 +124,10 @@ Known release notes:
 
 - Android remains `debug_fallback` until release keystore is configured for
   broader Android distribution.
-- Stable Cloudflare Pages domain is canonical for manifest URLs and may be
-  Cloudflare Access-protected; use the hash preview as technical evidence.
+- Stable Cloudflare Pages root is the official Portal and canonical
+  `portal_url`; the direct Web URL remains `/web/index.html`. The production
+  domain may be Cloudflare Access-protected; use the hash preview as technical
+  evidence.
 - Next product step is human playtest of the integrated package: login/cache
   refresh, first Arena real loop and next difficulty unlock, plus online Bosque
   start/event/deposit/complete behavior.

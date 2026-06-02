@@ -320,8 +320,8 @@ Assert-WebShellMatchesRemoteAssets -Html $webHtml -AssetBase $assetBase -PackUrl
 [System.IO.File]::WriteAllText($webIndexPath, $webHtml, [System.Text.UTF8Encoding]::new($false))
 
 # Flat root files make Cloudflare direct upload more forgiving when a browser
-# upload loses nested folders. The canonical URLs remain /portal/index.html and
-# /web/index.html through _redirects rewrites.
+# upload loses nested folders. The canonical Portal URL is /; /portal/index.html
+# and /web/index.html remain compatibility paths through _redirects rewrites.
 [System.IO.File]::WriteAllText((Join-Path $OutputDir "index.html"), $portalHtml, [System.Text.UTF8Encoding]::new($false))
 [System.IO.File]::WriteAllText((Join-Path $OutputDir "web.html"), $webHtml, [System.Text.UTF8Encoding]::new($false))
 

@@ -127,14 +127,14 @@ Com a URL final em maos:
 
 ```powershell
 cd D:\Estudio\Projetos\draxos-mobile
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -SkipUpload -UseManifestSecret
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation
 ```
 
 Esse comando:
 
-- atualiza o manifest remoto com `portal/index.html` e `web/index.html`;
+- atualiza o manifest remoto com `/` e `web/index.html`;
 - preserva os links APK/PC ZIP no Supabase Storage;
-- valida a URL do portal e da Web;
+- valida que o manifest remoto bate com as URLs/hashes planejados;
 - redeploya `release/manifest`.
 
 ## URL Final Esperada
@@ -148,8 +148,8 @@ https://draxos-mobile-internal-alpha.pages.dev
 Os links finais serao:
 
 ```text
-Portal: https://draxos-mobile-internal-alpha.pages.dev/portal/index.html
-Web:    https://draxos-mobile-internal-alpha.pages.dev/web/index.html
+Portal oficial: https://draxos-mobile-internal-alpha.pages.dev/
+Web direto:      https://draxos-mobile-internal-alpha.pages.dev/web/index.html
 ```
 
 ## Segurança

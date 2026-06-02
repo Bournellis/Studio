@@ -258,7 +258,7 @@ function Build-Manifest {
         known_issues = @(
             "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
             "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
-            "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar /portal/index.html e /web/index.html apos cada deploy.",
+            "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar / e /web/index.html apos cada deploy.",
             "Dominio estavel do Cloudflare Pages pode exigir Cloudflare Access; validacao publica anonima deve usar preview liberado ou sessao autenticada."
         )
     }
@@ -401,7 +401,7 @@ $normalizedStaticSiteBaseUrl = $StaticSiteBaseUrl.Trim().TrimEnd("/")
 $portalUrl = ""
 $webUrl = ""
 if ($normalizedStaticSiteBaseUrl -ne "") {
-    $portalUrl = "$normalizedStaticSiteBaseUrl/portal/index.html"
+    $portalUrl = "$normalizedStaticSiteBaseUrl/"
     $webUrl = "$normalizedStaticSiteBaseUrl/web/index.html"
 } else {
     $warnings.Add("StaticSiteBaseUrl is empty; Portal/Web URLs remain pending in the planned manifest.") | Out-Null

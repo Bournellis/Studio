@@ -51,8 +51,10 @@ Track 13 itself remains non-publishing by default. After Track 13, user-approved
 - The canonical playtest host is the production Pages domain:
   `https://draxos-mobile-internal-alpha.pages.dev`. Do not publish the remote
   manifest with a hash deployment URL as `portal_url` or `artifacts.web.url`.
-  Hash URLs such as `https://95f403c5...pages.dev` are evidence/debug links,
-  not the user-facing playtest contract.
+  `portal_url` must be the root `/`; `artifacts.web.url` must remain the direct
+  Web shell path `/web/index.html`. Hash URLs such as
+  `https://95f403c5...pages.dev` are evidence/debug links, not the user-facing
+  playtest contract.
 - Before reporting publication success, verify the deployed `/web/index.html` references the versioned asset root and that the shell `index.pck` size matches the remote `Content-Length`.
 - Before reporting Web launch success, run `tools/smoke_web_launch_remote.ps1` against the hash preview returned by Cloudflare Pages and keep the screenshot/logs under `build/diagnostics/`. If the stable production domain is protected by Cloudflare Access, anonymous Access is expected there and does not replace the preview launch smoke.
 
@@ -165,7 +167,8 @@ Release-ready Web exige:
 - `web/index.html` publicado no Cloudflare aponta para assets grandes no Supabase Storage.
 - `web/index.html` publicado tem `GODOT_CONFIG.fileSizes.index.pck` igual ao `Content-Length` remoto do `index.pck` versionado.
 - `web/index.html` publicado embute `DRAXOS_RELEASE_ROOT`, `DRAXOS_WEB_ASSET_ROOT`, cache-bust nos assets pequenos locais e watchdog legivel para splash acima de 20 segundos.
-- `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html` abre Portal.
+- `https://draxos-mobile-internal-alpha.pages.dev/` abre o Portal oficial.
+- `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html` redireciona para o Portal oficial.
 - `https://draxos-mobile-internal-alpha.pages.dev/web/index.html` abre Web build.
 - Deploy Cloudflare Pages deve ir para a branch production `main`. O comando
   recomendado e:

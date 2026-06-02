@@ -29,7 +29,7 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
   "minimum_supported_version_code": 1,
   "released_at": "2026-05-27T15:02:12Z",
   "requires_save_reset": false,
-  "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/portal/index.html",
+  "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
     "Primeira release candidate interna.",
     "APK Android e PC ZIP compartilham o mesmo backend remoto.",
@@ -55,7 +55,7 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
   "known_issues": [
     "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
     "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
-    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar /portal/index.html e /web/index.html apos cada deploy."
+    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar / e /web/index.html apos cada deploy."
   ]
 }
 ```

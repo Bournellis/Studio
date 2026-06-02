@@ -536,7 +536,7 @@ Response:
   "minimum_supported_version_code": 1,
   "released_at": "2026-05-27T15:02:12Z",
   "requires_save_reset": false,
-  "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/portal/index.html",
+  "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": ["Primeira release candidate interna."],
   "artifacts": {
     "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk" },
