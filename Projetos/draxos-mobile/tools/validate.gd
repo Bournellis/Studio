@@ -57,6 +57,7 @@ func _run_validation() -> int:
 	_check_resource("res://dev/progression_lab/progression_lab_screen.gd")
 	_check_resource("res://modes/openworld/openworld_forest_model.gd")
 	_check_resource("res://modes/openworld/openworld_forest_screen.gd")
+	_check_resource("res://modes/openworld/openworld_integrated_session_bridge.gd")
 	_check_resource("res://modes/openworld/openworld_forest_world_view.gd")
 	_check_resource("res://modes/openworld/openworld_inventory_sheet.gd")
 	_check_resource("res://modes/openworld/openworld_virtual_joystick.gd")

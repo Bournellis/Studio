@@ -8,13 +8,13 @@ const RulesetScript := preload("res://modes/openworld/openworld_forest_ruleset.g
 const World2DScript := preload("res://modes/openworld/openworld_forest_world_2d.gd")
 const JoystickScript := preload("res://modes/openworld/openworld_virtual_joystick.gd")
 const InventorySheetScript := preload("res://modes/openworld/openworld_inventory_sheet.gd")
+const IntegratedSessionBridgeScript := preload("res://modes/openworld/openworld_integrated_session_bridge.gd")
 
 const WORLD_SIZE := Vector2(960, 1400)
 const CHEST_POSITION := Vector2(220, 250)
 const CHEST_RADIUS := 88.0
 const PLAYER_INITIAL_POSITION := Vector2(220, 330)
 const PLAYER_WORLD_MARGIN := 28.0
-const EVENT_RETRY_SECONDS := 1.25
 const KEYBOARD_ACTION_KEYS := {
 	"openworld_move_left": [KEY_A, KEY_LEFT],
 	"openworld_move_right": [KEY_D, KEY_RIGHT],
@@ -39,9 +39,6 @@ const RESOURCE_FIXTURES := [
 
 var model = ModelScript.new()
 var integration_mode := "dev_local"
-var supabase_client: Node = null
-var session_store: Node = null
-var access_token := ""
 
 var _world = null
 var _world_viewport_container: SubViewportContainer
@@ -62,19 +59,9 @@ var _player_pos := PLAYER_INITIAL_POSITION
 var _debug_joystick_vector := Vector2.ZERO
 var _resource_nodes: Array[Dictionary] = []
 var _session_seconds := 0.0
-var _server_session_id := ""
-var _snapshot_revision := 0
-var _server_synced := false
-var _network_busy := false
-var _pending_event_count := 0
-var _event_queue: Array[Dictionary] = []
-var _event_flush_active := false
-var _event_retry_scheduled := false
-var _pending_collected_nodes: Dictionary = {}
-var _last_heartbeat_seconds := 0.0
+var _session_bridge = null
 var _walk_phase := 0.0
 var _last_result_text := ""
-var _last_pending_request_id := ""
 var _active_collection_node_id := ""
 var _free_pointer_active := false
 var _free_pointer_index := -999
@@ -82,6 +69,7 @@ var _keyboard_action_down := {}
 
 func _ready() -> void:
 	name = "OpenworldForestScreen"
+	_ensure_session_bridge()
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	focus_mode = Control.FOCUS_ALL
@@ -150,11 +138,25 @@ func end_free_joystick_for_tests() -> void:
 	_end_free_joystick(-2)
 
 func configure_integrated_alpha(client: Node, store: Node, token: String) -> void:
-	supabase_client = client
-	session_store = store
-	access_token = token.strip_edges()
-	if supabase_client != null and session_store != null and access_token != "":
+	var bridge = _ensure_session_bridge()
+	bridge.configure(model, client, store, token, Callable(self, "_apply_remote_snapshot"))
+	if bridge.is_active():
 		integration_mode = "integrated_alpha"
+
+func _ensure_session_bridge():
+	if _session_bridge == null:
+		_session_bridge = IntegratedSessionBridgeScript.new()
+		_session_bridge.name = "OpenworldIntegratedSessionBridge"
+		_session_bridge.configure(model, null, null, "", Callable(self, "_apply_remote_snapshot"))
+		var callback := Callable(self, "_on_session_bridge_state_changed")
+		if not _session_bridge.state_changed.is_connected(callback):
+			_session_bridge.state_changed.connect(callback)
+	if is_inside_tree() and _session_bridge.get_parent() == null:
+		add_child(_session_bridge)
+	return _session_bridge
+
+func _on_session_bridge_state_changed() -> void:
+	_update_labels()
 
 func _process(delta: float) -> void:
 	_session_seconds += delta
@@ -176,13 +178,12 @@ func _process(delta: float) -> void:
 			})
 	else:
 		_advance_nearby_collection(delta)
-	if integration_mode == "integrated_alpha" and _server_session_id != "" and _server_synced:
-		if _session_seconds - _last_heartbeat_seconds >= RulesetScript.autosave_heartbeat_seconds():
-			_last_heartbeat_seconds = _session_seconds
-			_record_integrated_event_deferred("move_heartbeat", {
-				"position": _position_payload(),
-				"session_seconds": int(_session_seconds),
-			})
+	if integration_mode == "integrated_alpha":
+		_ensure_session_bridge().record_heartbeat_if_due(
+			_session_seconds,
+			RulesetScript.autosave_heartbeat_seconds(),
+			_position_payload()
+		)
 	_update_labels()
 
 func _build_ui() -> void:
@@ -570,7 +571,7 @@ func _advance_nearby_collection(delta: float) -> void:
 	if bool(result.get("completed", false)):
 		nearest["collected"] = true
 		if authoritative_online:
-			_pending_collected_nodes[node_id] = true
+			_ensure_session_bridge().remember_pending_collected_node(node_id)
 		_active_collection_node_id = ""
 		_record_integrated_event_deferred("collect_complete", {
 			"node_id": node_id,
@@ -585,7 +586,7 @@ func _nearest_resource() -> Dictionary:
 	for entry: Dictionary in _resource_nodes:
 		if bool(entry.get("collected", false)):
 			continue
-		if bool(_pending_collected_nodes.get(str(entry.get("node_id", "")), false)):
+		if _ensure_session_bridge().has_pending_collected_node(str(entry.get("node_id", ""))):
 			continue
 		var distance := _player_pos.distance_to(Vector2(entry.get("position", Vector2.ZERO)))
 		if distance <= RulesetScript.collection_radius() and distance < best_distance:
@@ -652,7 +653,7 @@ func _update_labels() -> void:
 	if _weight_label != null:
 		_weight_label.text = "Bolso %.1f / %.1f" % [model.pocket_weight(), model.capacity()]
 	if _mode_label != null:
-		_mode_label.text = "Bosque" if integration_mode == "integrated_alpha" and _server_session_id != "" else "Preview"
+		_mode_label.text = "Bosque" if integration_mode == "integrated_alpha" and _server_session_id() != "" else "Preview"
 	if _status_label != null:
 		if not model.active_collection.is_empty():
 			_status_label.text = "Coletando %s" % model.item_display_name(str(model.active_collection.get("item_id", "")))
@@ -665,18 +666,18 @@ func _update_labels() -> void:
 	if _feedback_label != null:
 		_feedback_label.text = model.last_message
 	if _deposit_button != null:
-		_deposit_button.disabled = not _near_chest() or _network_busy or _has_pending_integrated_events()
+		_deposit_button.disabled = not _near_chest() or _network_busy() or _has_pending_integrated_events()
 		_deposit_button.tooltip_text = "Sincronizacao em andamento." if _has_pending_integrated_events() else ("Depositar bolso no bau." if _near_chest() else "Aproxime-se do bau.")
 	if _complete_button != null:
 		_complete_button.text = "Completar" if integration_mode == "integrated_alpha" else "Preview"
-		_complete_button.disabled = _network_busy or (integration_mode == "integrated_alpha" and not _can_complete_integrated())
+		_complete_button.disabled = _network_busy() or (integration_mode == "integrated_alpha" and not _can_complete_integrated())
 	if _sheet != null:
 		_sheet.render(
 			integration_mode,
-			_server_session_id,
-			_network_busy or _has_pending_integrated_events(),
+			_server_session_id(),
+			_network_busy() or _has_pending_integrated_events(),
 			_pending_summary_text(),
-			_last_result_text,
+			_result_text(),
 			model.result_payload(_session_seconds)
 		)
 		_sheet.set_deposit_available(_near_chest() and not _has_pending_integrated_events())
@@ -697,133 +698,22 @@ func _show_local_result() -> void:
 	_update_labels()
 
 func _resume_or_start_integrated_session() -> void:
-	if _network_busy or integration_mode != "integrated_alpha" or _server_session_id != "":
+	if integration_mode != "integrated_alpha":
 		return
-	if supabase_client == null or session_store == null or access_token == "":
-		model.last_message = "Preview sem recompensa."
-		_server_synced = false
-		_update_labels()
-		return
-	_network_busy = true
-	_update_labels()
-	var state_result: Dictionary = await supabase_client.get_mode_state(ModelScript.MODE_ID, access_token)
-	_network_busy = false
-	if bool(state_result.get("ok", false)):
-		var body := _response_body(state_result)
-		var active_session := _as_dictionary(body.get("active_session", {}))
-		if not active_session.is_empty() and _hydrate_integrated_session(active_session):
-			_last_result_text = "Bosque retomado."
-			model.last_message = "Bosque retomado."
-			_update_labels()
-			return
-	elif not _is_network_error(state_result):
-		model.last_message = "Preview sem recompensa."
-	_update_labels()
-	await _start_integrated_session()
-
-func _start_integrated_session() -> void:
-	if _network_busy or integration_mode != "integrated_alpha" or _server_session_id != "":
-		return
-	if supabase_client == null or session_store == null or access_token == "":
-		model.last_message = "Preview sem recompensa."
-		_server_synced = false
-		return
-	_network_busy = true
-	_update_labels()
-	var request: Dictionary = session_store.prepare_pending_mutation(
-		"modes/session/start",
-		"mode:openworld:%s" % str(session_store.get("active_save_type")),
-		"open_mode_shell:openworld",
-		{
-			"mode_id": ModelScript.MODE_ID,
-			"slice_id": ModelScript.SLICE_ID,
-		}
-	)
-	_last_pending_request_id = str(request.get("request_id", ""))
-	var result: Dictionary = await supabase_client.start_mode_session(
-		str(request.get("request_id", "")),
-		ModelScript.MODE_ID,
-		ModelScript.SLICE_ID,
-		access_token,
-		str(request.get("request_hash", ""))
-	)
-	_network_busy = false
-	var body := _response_body(result)
-	if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
-		_hydrate_integrated_session(_as_dictionary(body.get("session", {})))
-		_last_pending_request_id = ""
-		_last_result_text = "Bosque iniciado."
-		model.last_message = "Bosque pronto."
-	else:
-		_server_synced = false
-		_last_result_text = "Preview sem recompensa."
-		model.last_message = "Preview sem recompensa."
-		if not _is_network_error(result):
-			session_store.fail_pending_mutation(str(request.get("request_id", "")), _as_dictionary(result.get("body", {})))
+	await _ensure_session_bridge().resume_or_start_session()
 	_update_labels()
 
 func _complete_integrated_session() -> void:
-	if _network_busy:
+	var bridge = _ensure_session_bridge()
+	if bridge.network_busy():
 		return
-	if _server_session_id == "":
+	if bridge.server_session_id() == "":
 		await _resume_or_start_integrated_session()
-	if _server_session_id == "":
+	if bridge.server_session_id() == "":
 		_show_local_result()
 		return
-	if not _can_complete_integrated():
-		_last_result_text = "Sincronize o Bosque antes de completar."
-		model.last_message = "Sincronizacao pendente."
-		_update_labels()
-		return
-	var payload: Dictionary = model.result_payload(maxf(_session_seconds, 5.0))
-	payload["session_id"] = _server_session_id
-	payload["expected_revision"] = _snapshot_revision
-	var request: Dictionary = session_store.prepare_pending_mutation(
-		"modes/session/complete",
-		"mode:openworld:%s" % str(session_store.get("active_save_type")),
-		"open_mode_shell:openworld",
-		payload
-	)
-	_last_pending_request_id = str(request.get("request_id", ""))
-	_network_busy = true
+	await bridge.complete_session(model.result_payload(maxf(_session_seconds, 5.0)))
 	_update_labels()
-	var result: Dictionary = await supabase_client.complete_mode_session(
-		str(request.get("request_id", "")),
-		_server_session_id,
-		ModelScript.MODE_ID,
-		payload,
-		access_token,
-		str(request.get("request_hash", ""))
-	)
-	_network_busy = false
-	if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
-		var body := _response_body(result)
-		var reward := _as_dictionary(body.get("reward", {}))
-		_last_pending_request_id = ""
-		_last_result_text = "Recompensa aplicada: %s" % JSON.stringify(reward.get("resource_delta", {}))
-		model.last_message = "Recompensa integrada aplicada."
-		_server_synced = true
-	else:
-		_server_synced = false
-		_last_result_text = "Preview preservado. Recompensa bloqueada ate resync."
-		model.last_message = "Sincronizacao pendente."
-		if not _is_network_error(result):
-			session_store.fail_pending_mutation(str(request.get("request_id", "")), _as_dictionary(result.get("body", {})))
-	_update_labels()
-
-func _hydrate_integrated_session(session: Dictionary) -> bool:
-	var session_id := str(session.get("id", "")).strip_edges()
-	if session_id == "":
-		return false
-	_server_session_id = session_id
-	_snapshot_revision = int(session.get("snapshot_revision", 0))
-	var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
-	if not snapshot_payload.is_empty():
-		_apply_remote_snapshot(snapshot_payload)
-	_server_synced = true
-	_pending_event_count = 0
-	_pending_collected_nodes = {}
-	return true
 
 func _apply_remote_snapshot(snapshot_payload: Dictionary) -> void:
 	model.apply_snapshot(snapshot_payload)
@@ -842,159 +732,40 @@ func _apply_collected_nodes(collected_nodes: Dictionary) -> void:
 		_resource_nodes[index] = node
 
 func _record_integrated_event_deferred(event_type: String, event_payload: Dictionary) -> void:
-	if integration_mode != "integrated_alpha" or _server_session_id == "":
+	if integration_mode != "integrated_alpha":
 		return
-	_event_queue.append({
-		"event_type": event_type,
-		"event_payload": event_payload.duplicate(true),
-	})
-	_pending_event_count = _event_queue.size() + (1 if _event_flush_active else 0)
-	_server_synced = false
-	if model.last_message.strip_edges() == "":
-		model.last_message = "Sincronizando Bosque..."
-	_update_labels()
-	call_deferred("_flush_integrated_event_queue")
-
-func _flush_integrated_event_queue() -> void:
-	if integration_mode != "integrated_alpha" or _server_session_id == "":
-		return
-	if _event_flush_active:
-		return
-	if supabase_client == null or session_store == null or access_token == "":
-		_server_synced = false
-		return
-	_event_flush_active = true
-	while not _event_queue.is_empty():
-		var job := _as_dictionary(_event_queue.front())
-		var event_type := str(job.get("event_type", "")).strip_edges()
-		var event_payload := _as_dictionary(job.get("event_payload", {}))
-		if event_type == "":
-			_event_queue.pop_front()
-			continue
-		var request_payload := event_payload.duplicate(true)
-		request_payload["event_type"] = event_type
-		request_payload["session_id"] = _server_session_id
-		request_payload["expected_revision"] = _snapshot_revision
-		var request: Dictionary = session_store.prepare_pending_mutation(
-			"modes/session/event",
-			"mode:openworld:%s" % str(session_store.get("active_save_type")),
-			"open_mode_shell:openworld",
-			request_payload
-		)
-		_last_pending_request_id = str(request.get("request_id", ""))
-		_pending_event_count = _event_queue.size() + 1
-		_server_synced = false
-		_update_labels()
-		var result: Dictionary = await supabase_client.record_mode_session_event(
-			_last_pending_request_id,
-			_server_session_id,
-			ModelScript.MODE_ID,
-			ModelScript.SLICE_ID,
-			event_type,
-			_snapshot_revision,
-			event_payload,
-			access_token,
-			str(request.get("request_hash", ""))
-		)
-		var body := _response_body(result)
-		if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
-			_event_queue.pop_front()
-			_hydrate_integrated_session(_as_dictionary(body.get("session", {})))
-			model.last_message = str(_as_dictionary(body.get("event", {})).get("message", model.last_message))
-			continue
-		_server_synced = false
-		var error_code := _error_code(result)
-		model.last_message = "Sincronizacao pendente."
-		if not _is_network_error(result):
-			session_store.fail_pending_mutation(_last_pending_request_id, body)
-			_event_queue.pop_front()
-			if error_code == "MODE_SESSION_REVISION_STALE":
-				await _resync_integrated_session("Bosque resincronizado. Repita a ultima acao se ela nao apareceu.")
-			else:
-				await _resync_integrated_session("Bosque resincronizado apos erro do servidor.")
-			_event_queue.clear()
-		else:
-			model.last_message = "Sincronizacao pendente. Tentando novamente..."
-			_schedule_integrated_event_retry()
-		break
-	_event_flush_active = false
-	_pending_event_count = _event_queue.size()
-	if _event_queue.is_empty():
-		_last_pending_request_id = ""
-		if _server_session_id != "":
-			_server_synced = true
-	_update_labels()
-
-func _schedule_integrated_event_retry() -> void:
-	if _event_retry_scheduled:
-		return
-	_event_retry_scheduled = true
-	call_deferred("_retry_integrated_event_queue")
-
-func _retry_integrated_event_queue() -> void:
-	if is_inside_tree():
-		await get_tree().create_timer(EVENT_RETRY_SECONDS).timeout
-	_event_retry_scheduled = false
-	_flush_integrated_event_queue()
-
-func _resync_integrated_session(success_message: String) -> bool:
-	if supabase_client == null or session_store == null or access_token == "":
-		return false
-	var state_result: Dictionary = await supabase_client.get_mode_state(ModelScript.MODE_ID, access_token)
-	if not bool(state_result.get("ok", false)):
-		return false
-	var body := _response_body(state_result)
-	var active_session := _as_dictionary(body.get("active_session", {}))
-	if active_session.is_empty():
-		var sessions := _as_array(body.get("sessions", []))
-		for session_variant: Variant in sessions:
-			var candidate := _as_dictionary(session_variant)
-			if str(candidate.get("status", "")) == "started":
-				active_session = candidate
-				break
-	if active_session.is_empty() or not _hydrate_integrated_session(active_session):
-		return false
-	model.last_message = success_message
-	return true
+	_ensure_session_bridge().record_event_deferred(event_type, event_payload)
 
 func _can_complete_integrated() -> bool:
 	if integration_mode != "integrated_alpha":
 		return true
-	return _server_session_id != "" and _server_synced and not _has_pending_integrated_events()
+	return _ensure_session_bridge().can_complete()
 
 func _uses_integrated_authority() -> bool:
-	return integration_mode == "integrated_alpha" and _server_session_id != "" and supabase_client != null and session_store != null and access_token != ""
+	return integration_mode == "integrated_alpha" and _ensure_session_bridge().uses_authority()
 
 func _has_pending_integrated_events() -> bool:
-	return _event_flush_active or not _event_queue.is_empty() or _pending_event_count > 0
+	return _session_bridge != null and _session_bridge.has_pending_events()
 
 func _pending_summary_text() -> String:
-	if _last_pending_request_id != "":
-		return _last_pending_request_id
-	if _has_pending_integrated_events():
-		return "fila:%d" % (_event_queue.size() + (1 if _event_flush_active else 0))
-	return ""
+	return _ensure_session_bridge().pending_summary_text()
+
+func _server_session_id() -> String:
+	return _ensure_session_bridge().server_session_id()
+
+func _network_busy() -> bool:
+	return _session_bridge != null and _session_bridge.network_busy()
+
+func _result_text() -> String:
+	if integration_mode == "integrated_alpha":
+		return _ensure_session_bridge().last_result_text
+	return _last_result_text
 
 func _position_payload() -> Dictionary:
 	return {
 		"x": snappedf(_player_pos.x, 0.01),
 		"y": snappedf(_player_pos.y, 0.01),
 	}
-
-func _response_body(result: Dictionary) -> Dictionary:
-	return _as_dictionary(result.get("body", result))
-
-func _error_code(result: Dictionary) -> String:
-	var body := _response_body(result)
-	var error := _as_dictionary(body.get("error", body))
-	return str(error.get("code", result.get("code", "")))
-
-func _is_network_error(result: Dictionary) -> bool:
-	var code := _error_code(result)
-	return code in ["NETWORK_UNAVAILABLE", "REQUEST_NOT_STARTED", "CLIENT_MISCONFIGURED"]
-
-func _as_array(value: Variant) -> Array:
-	return value if value is Array else []
 
 func _as_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}

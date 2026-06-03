@@ -29,6 +29,7 @@ const SUPABASE_HANDLER_PATH = "supabase/functions/modes/mode_handler.ts";
 const SUPPORT_PATH = "server/functions/modes/mode_support.ts";
 const SUPABASE_SUPPORT_PATH = "supabase/functions/modes/mode_support.ts";
 const OPENWORLD_SCREEN_PATH = "modes/openworld/openworld_forest_screen.gd";
+const OPENWORLD_BRIDGE_PATH = "modes/openworld/openworld_integrated_session_bridge.gd";
 const OPENWORLD_MODEL_PATH = "modes/openworld/openworld_forest_model.gd";
 
 Deno.test("mode platform migration is mirrored in server schema", async () => {
@@ -357,19 +358,28 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
 
 Deno.test("openworld client queues authoritative events before local mutation", async () => {
   const screen = normalizeCode(await readProjectText(OPENWORLD_SCREEN_PATH));
+  const bridge = normalizeCode(await readProjectText(OPENWORLD_BRIDGE_PATH));
   const model = normalizeCode(await readProjectText(OPENWORLD_MODEL_PATH));
 
   for (
     const required of [
       "var _event_queue: array[dictionary]",
-      "func _flush_integrated_event_queue",
+      "func flush_event_queue",
       "await supabase_client.record_mode_session_event",
       "_snapshot_revision",
       "_event_queue.pop_front()",
-      "_resync_integrated_session",
+      "await resync_session",
+      "func has_pending_events()",
+    ]
+  ) {
+    assertIncludes(bridge, required, `openworld session bridge should include ${required}`);
+  }
+  for (
+    const required of [
       "model.advance_collection(delta, false, distance, not authoritative_online)",
-      "_pending_collected_nodes[node_id] = true",
-      "_deposit_button.disabled = not _near_chest() or _network_busy or _has_pending_integrated_events()",
+      "remember_pending_collected_node(node_id)",
+      "has_pending_collected_node",
+      "_deposit_button.disabled = not _near_chest() or _network_busy() or _has_pending_integrated_events()",
       "func _has_pending_integrated_events()",
     ]
   ) {
