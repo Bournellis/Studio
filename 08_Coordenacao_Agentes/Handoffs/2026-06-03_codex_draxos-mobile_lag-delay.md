@@ -1,0 +1,75 @@
+# DraxosMobile - Lag Delay Responsiveness Pass Handoff
+
+- Date: `2026-06-03`
+- Agent: `codex`
+- Branch: `codex/draxos-mobile/lag-delay-coord`
+- Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--lag-delay-coord`
+- Base: `master` / `247cbae`
+- Remote publication: not requested and not performed.
+- Remote mutation: not performed.
+
+## Scope
+
+Fabio approved Web, Android APK and PC scope; approved use of existing remote
+account credentials if available; approved remote database/RPC work after local
+validation; allowed Internal Alpha API shape changes; requested all newer
+branches be considered and requested real multi-agent execution.
+
+## Integrated Work
+
+- Reconciled technical commits from later branches without pulling publication
+  status/docs commits wholesale:
+  - mutation contract hardening;
+  - session state facade split;
+  - release auth/root guards;
+  - Arena dev fixture provider;
+  - Openworld integrated session bridge split;
+  - Openworld session contracts;
+  - Bosque runtime foundation split.
+- Reduced backend state endpoint latency by parallelizing independent reads in
+  Arena, Base, Build, Crafting, Social, Competition, Monetization and Modes.
+- Added client-side surface lifecycle guards so stale surface responses/failures
+  do not overwrite newer UI state.
+- Preserved server-authoritative battle/Arena behavior; no optimistic battle
+  results or rewards were introduced.
+- Added latency telemetry payload dimensions and read-only baseline tooling.
+- Added Arena claim response delta so the client no longer fetches full Arena
+  state immediately after claim.
+
+## Validation Completed
+
+- `git diff --check`: passed.
+- `npx -y deno task --cwd server/functions check`: passed.
+- `npx -y deno task --cwd supabase/functions check`: passed.
+- `npx -y deno test --allow-read server/tests/latency_backend_contract_test.ts`:
+  passed, 2/2.
+- `npx -y deno test --allow-read server/tests/latency_telemetry_contract_test.ts`:
+  passed, 3/3.
+- `npx -y deno test --allow-read server/tests/arena_loop_unlock_friction_test.ts`:
+  passed, 5/5.
+- `npx -y deno test --allow-read server/tests/api_version_contract_test.ts server/tests/latency_backend_contract_test.ts server/tests/latency_telemetry_contract_test.ts`:
+  passed, 8/8.
+- Godot import passed with known GUT/CSV import warnings.
+- GUT client passed, 204/204 tests and 3381 asserts.
+- `tools/smoke_responsive_layout.gd`: passed.
+- `validate_foundation.ps1 -Profile ClientQuick`: passed.
+- `validate_foundation.ps1 -Profile ServerQuick`: passed.
+
+## Pending Validation
+
+- `validate_foundation.ps1 -Profile ReleaseDryRun` must be rerun after this
+  Handoff replaces the temporary Doing card.
+- Remote authenticated latency measurement still needs a publishable key and an
+  approved existing-user JWT in environment variables.
+- No Internal Alpha publication was requested.
+
+## Blockers / Notes
+
+- `tools/measure_latency_baseline.ps1` can measure public remote portal/web
+  read-only without credentials, but authenticated surface timings require
+  `SUPABASE_PUBLISHABLE_KEY` or `DRAXOS_MOBILE_SUPABASE_PUBLISHABLE_KEY` plus an
+  existing approved account JWT via `DRAXOS_LATENCY_ACCESS_TOKEN`,
+  `DRAXOS_OPS_ACCESS_TOKEN`, `DRAXOS_MOBILE_OPS_ACCESS_TOKEN` or
+  `DRAXOS_MOBILE_SUPABASE_ACCESS_TOKEN`.
+- Android release signing is still not configured; internal alpha can still use
+  `debug_fallback` if packaging is later approved.
