@@ -18,6 +18,10 @@ const BOSQUE_POLICY_ACTIVE_COMPAT_PATH =
   "supabase/migrations/202606020002_openworld_bosque_policy_active_compat.sql";
 const BOSQUE_POLICY_ACTIVE_COMPAT_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606020002_openworld_bosque_policy_active_compat.sql";
+const ADMIN_COMPENSATE_HASH_MIGRATION_PATH =
+  "supabase/migrations/202606020003_admin_compensate_request_hash.sql";
+const ADMIN_COMPENSATE_HASH_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606020003_admin_compensate_request_hash.sql";
 const EDGE_PATH = "server/functions/modes/index.ts";
 const SUPABASE_EDGE_PATH = "supabase/functions/modes/index.ts";
 const HANDLER_PATH = "server/functions/modes/mode_handler.ts";
@@ -79,6 +83,17 @@ Deno.test("openworld bosque policy active compat migration is mirrored in server
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema bosque policy active compat migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("admin compensate request hash migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(ADMIN_COMPENSATE_HASH_MIGRATION_PATH);
+  const serverMirror = await readProjectText(ADMIN_COMPENSATE_HASH_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema admin compensate hash migration should mirror supabase migration exactly",
   );
 });
 
@@ -485,6 +500,67 @@ Deno.test("mode admin RPCs are audited, service-role only and hash guarded", asy
     adminMutationSection,
     'method: "patch"',
     "admin mode/session handlers should not PATCH mode tables directly",
+  );
+});
+
+Deno.test("mode admin compensate is audited, service-role only and hash guarded", async () => {
+  const migration = normalizeSql(await readProjectText(ADMIN_COMPENSATE_HASH_MIGRATION_PATH));
+  const handler = normalizeCode(await readProjectText(HANDLER_PATH));
+
+  assertIncludes(
+    migration,
+    "create or replace function public.admin_adjust_resource_balance_v1",
+    "admin compensate hardening should replace admin_adjust_resource_balance_v1",
+  );
+  assertIncludes(
+    migration,
+    "p_request_hash text",
+    "admin compensate RPC should require p_request_hash",
+  );
+  assertIncludes(
+    migration,
+    "metadata->>'request_hash'",
+    "admin compensate RPC should compare request hashes on retries",
+  );
+  assertIncludes(
+    migration,
+    "'idempotency_hash_mismatch'",
+    "admin compensate RPC should reject reused request_id with a different hash",
+  );
+  assertIncludes(
+    migration,
+    "'request_hash', p_request_hash",
+    "admin compensate RPC should store request_hash in audit metadata",
+  );
+  assertIncludes(
+    migration,
+    "revoke all on function public.admin_adjust_resource_balance_v1(uuid, jsonb, text, uuid, uuid) from public, anon, authenticated, service_role;",
+    "old admin compensate signature should no longer be executable through service_role",
+  );
+  assertRegex(
+    migration,
+    /revoke all on function public\.admin_adjust_resource_balance_v1\(uuid, jsonb, text, uuid, text, uuid\) from public, anon, authenticated;/s,
+    "new admin compensate signature should be revoked from public roles",
+  );
+  assertRegex(
+    migration,
+    /grant execute on function public\.admin_adjust_resource_balance_v1\(uuid, jsonb, text, uuid, text, uuid\) to service_role;/s,
+    "new admin compensate signature should be granted to service_role only",
+  );
+  assertIncludes(
+    handler,
+    "modes/admin/compensate",
+    "admin compensate handler should compute a route-specific request hash",
+  );
+  assertIncludes(
+    handler,
+    "rpc/admin_adjust_resource_balance_v1",
+    "admin compensate handler should call the audited RPC",
+  );
+  assertIncludes(
+    handler,
+    "p_request_hash: requesthash",
+    "admin compensate handler should send p_request_hash to the RPC",
   );
 });
 

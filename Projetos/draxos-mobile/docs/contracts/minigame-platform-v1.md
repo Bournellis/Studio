@@ -51,8 +51,8 @@ Todos exigem JWT e `x-draxos-api-version: 1`. Endpoints save-scoped exigem `x-dr
 | POST | `/modes/admin/enable` | Reabilita modo |
 | POST | `/modes/admin/session/expire` | Expira sessao |
 | POST | `/modes/admin/session/invalidate` | Invalida sessao com motivo |
-| POST | `/modes/admin/reconcile` | Diagnostico de sessoes/claims |
-| POST | `/modes/admin/compensate` | Compensacao limitada via RPC auditada |
+| POST | `/modes/admin/reconcile` | Diagnostico read-only de sessoes/claims; usa `request_id` apenas para correlacao |
+| POST | `/modes/admin/compensate` | Compensacao limitada via RPC auditada com `request_id` e `request_hash` |
 
 ## Session Defaults
 
@@ -101,12 +101,16 @@ Ops pode:
 - reconciliar estado;
 - aplicar compensacao limitada por `admin_adjust_resource_balance_v1`.
 
-Mutacoes admin de modo/sessao devem chamar RPC auditada, nao `PATCH` direto da
-Edge Function:
+Mutacoes admin devem chamar RPC auditada, nao `PATCH` direto da Edge Function:
 
 - `admin_set_mode_status_v1`;
 - `admin_expire_mode_session_v1`;
 - `admin_invalidate_mode_session_v1`.
+- `admin_adjust_resource_balance_v1`.
+
+`/modes/admin/reconcile` e a excecao read-only atual: ele nao corrige estado,
+nao grava audit log e nao usa `request_hash`. Se passar a mutar, precisa virar
+uma nova operacao auditada.
 
 ## Analytics
 

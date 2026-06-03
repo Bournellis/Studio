@@ -626,13 +626,21 @@ async function handleAdminCompensate(
   if (!UUID_PATTERN.test(gameSaveId)) {
     return errorResponse("INVALID_GAME_SAVE_ID", "game_save_id must be a UUID.", 400);
   }
+  const delta = isObject(body.delta) ? body.delta : {};
+  const requestHash = await mutationRequestHash("modes/admin/compensate", body, {
+    request_id: requestId,
+    game_save_id: gameSaveId,
+    reason,
+    delta,
+  });
   const rpc = await restRequest<unknown>(config, "rpc/admin_adjust_resource_balance_v1", {
     method: "POST",
     body: JSON.stringify({
       p_game_save_id: gameSaveId,
-      p_delta: isObject(body.delta) ? body.delta : {},
+      p_delta: delta,
       p_reason: reason,
       p_request_id: requestId,
+      p_request_hash: requestHash,
       p_actor_auth_user_id: actorAuthUserId,
     }),
   });
