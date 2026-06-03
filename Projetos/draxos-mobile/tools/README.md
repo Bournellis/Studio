@@ -16,6 +16,7 @@ Ferramentas de desenvolvimento e validacao.
 - `mode_definitions/scaffold_mode.ts` - gera dry-run de scaffold futuro `planned_disabled` para descriptors/docs; `--write` so deve ser usado apos decisao de pacote.
 - `build_cloudflare_pages_package.ps1` - gera o pacote hibrido para Cloudflare Pages, mantendo HTML no Cloudflare e assets grandes do Web export no Supabase Storage.
 - `smoke_web_launch_remote.ps1` - abre um preview Web remoto em Chrome/Edge via CDP, espera o overlay Godot sumir, valida release root/assets criticos e salva screenshot/logs em `build/diagnostics/`; use `-NoProjectWrites` para diagnostics temporarios fora do projeto em validacao remota read-only.
+- `measure_latency_baseline.ps1` - mede latencia read-only local/remota por endpoint/superficie e gera JSON/Markdown em `build/diagnostics/latency-baseline-*`; use `-CompareWith` para after vs before.
 - `generate_grimoire_catalog.ts` - gera o modulo compartilhado `grimoire_catalog.ts` para `GET /content/grimoire` a partir de `data/definitions/*.json` e a copia estatica do portal em `portal/internal-alpha/assets/grimoire-catalog.json`.
 - `ops_readonly.ts` - CLI ops read-only para manifest/modes/status/audit/reward/session summaries usando publishable key + JWT de usuario, sem service role remoto.
 - `smoke_dev_labs.gd` - smoke do caminho real `OS.execute` para Battle Lab e Progression Lab.
@@ -42,6 +43,7 @@ Validacao local:
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile FullLocal
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly -NoProjectWrites -ExpectedReleaseRoot "internal-alpha/<release-root>" -RemoteWebUrl "https://<preview>.draxos-mobile-internal-alpha.pages.dev/web/index.html"
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\measure_latency_baseline.ps1 -ProjectDir . -Target Remote -Label before
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_mode_definitions.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .

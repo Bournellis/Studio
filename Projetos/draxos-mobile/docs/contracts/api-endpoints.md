@@ -1770,6 +1770,19 @@ Regras:
 - Grava sempre `source = "client"` em `telemetry_events`.
 - Escreve apenas telemetria; nunca muta recursos, ranking, recompensas, base, batalha ou estado social.
 - Rejeita schema desconhecido com `UNSUPPORTED_SCHEMA`.
+- Eventos de latencia client-side devem manter payload diagnostico local/remoto
+  com estes campos quando aplicaveis: `surface`, `endpoint`, `method`,
+  `action_id`, `scope_id`, `duration_ms`, `response_code`, `ok`, `fail`,
+  `used_cache`, `rendered_from_cache`, `server_timing` e `save_type`.
+- `request_latency` mede uma chamada HTTP logica e deve usar o endpoint
+  normalizado do cliente, como `base/state` ou `arena/pve/state`.
+- `surface_refresh` mede a conclusao de refresh de superficie e preserva se a
+  superficie havia renderizado cache local antes da resposta.
+- `surface_cache_rendered` e emitido quando uma superficie usa snapshot local
+  antes da rede; `duration_ms` e `response_code` podem ser `0`.
+- `action_latency` mede a duracao percebida da acao do jogador. Acoes sem
+  mutation direta podem deixar `endpoint` e `method` vazios, mas devem manter
+  `action_id`, `scope_id`, `duration_ms`, `ok` e `fail`.
 
 ## Idempotencia
 

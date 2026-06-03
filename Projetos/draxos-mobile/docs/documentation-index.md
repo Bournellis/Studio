@@ -102,6 +102,7 @@
 | `tools/README.md` | `RUNBOOK` | Tool commands and local validation entrypoint. |
 | `docs/release-ops-checklist.md` | `RUNBOOK` | Safe release and publication procedure. |
 | `docs/ops/read-only-cli.md` | `RUNBOOK` | Ops CLI runbook for manifest/modes/status/audit/reward/session summaries without remote service role. |
+| `docs/ops/latency-baseline.md` | `RUNBOOK` | Read-only request/action/surface latency baseline workflow and artifact format. |
 | `docs/track-13-manual-walkthrough-gate.md` | `RUNBOOK` | Required Android/Windows/Web manual gate. |
 | `docs/internal-alpha-v0.md` | `RUNBOOK` | Internal Alpha v0 runbook. |
 | `docs/internal-alpha-v0-handoff.md` | `RUNBOOK` | Internal Alpha v0 handoff. |
