@@ -54,17 +54,24 @@ branches be considered and requested real multi-agent execution.
 - `tools/smoke_responsive_layout.gd`: passed.
 - `validate_foundation.ps1 -Profile ClientQuick`: passed.
 - `validate_foundation.ps1 -Profile ServerQuick`: passed.
+- `validate_foundation.ps1 -Profile ReleaseDryRun`: passed after replacing the
+  temporary Doing card with this Handoff.
+- `tools/measure_latency_baseline.ps1 -Target Remote -Label after -Samples 1`:
+  passed and generated
+  `build/diagnostics/latency-baseline-after-20260603-184709/`.
 
 ## Pending Validation
 
-- `validate_foundation.ps1 -Profile ReleaseDryRun` must be rerun after this
-  Handoff replaces the temporary Doing card.
+- `validate_foundation.ps1 -Profile FullLocal` remains the next broad local gate.
 - Remote authenticated latency measurement still needs a publishable key and an
   approved existing-user JWT in environment variables.
 - No Internal Alpha publication was requested.
 
 ## Blockers / Notes
 
+- Remote read-only public baseline after this integration measured:
+  - portal `/`: `1223.42 ms` for one sample;
+  - web `/web/index.html`: `155.01 ms` for one sample.
 - `tools/measure_latency_baseline.ps1` can measure public remote portal/web
   read-only without credentials, but authenticated surface timings require
   `SUPABASE_PUBLISHABLE_KEY` or `DRAXOS_MOBILE_SUPABASE_PUBLISHABLE_KEY` plus an
