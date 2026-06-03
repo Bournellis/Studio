@@ -56,13 +56,24 @@ branches be considered and requested real multi-agent execution.
 - `validate_foundation.ps1 -Profile ServerQuick`: passed.
 - `validate_foundation.ps1 -Profile ReleaseDryRun`: passed after replacing the
   temporary Doing card with this Handoff.
+- Local Supabase/Edge was restarted from this worktree after detecting the
+  previous local Edge runtime was mounted to
+  `draxos-mobile--codex--first-access-runtime`; migrations were reapplied cleanly
+  through `202606030003_openworld_session_contracts_v1`.
+- `npx -y deno test --allow-net --allow-env --allow-read server/tests/modes_platform_live_test.ts`:
+  passed after aligning live-test expectations with the current authoritative
+  Openworld session contracts.
+- `npx -y deno test --allow-net --allow-env --allow-read server/tests/foundation_admin_rls_live_smoke.ts`:
+  passed after updating the smoke to call the hardened
+  `admin_adjust_resource_balance_v1` RPC signature with `p_request_hash`.
+- `validate_foundation.ps1 -Profile FullLocal`: passed with the local publishable
+  key emitted by the restarted Supabase stack.
 - `tools/measure_latency_baseline.ps1 -Target Remote -Label after -Samples 1`:
   passed and generated
   `build/diagnostics/latency-baseline-after-20260603-184709/`.
 
 ## Pending Validation
 
-- `validate_foundation.ps1 -Profile FullLocal` remains the next broad local gate.
 - Remote authenticated latency measurement still needs a publishable key and an
   approved existing-user JWT in environment variables.
 - No Internal Alpha publication was requested.

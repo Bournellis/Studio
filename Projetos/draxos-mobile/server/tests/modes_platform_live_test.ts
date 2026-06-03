@@ -495,7 +495,7 @@ async function proveEventContracts(account: TestAccount): Promise<void> {
 
   await sql`
     update public.mode_sessions
-    set snapshot_payload = jsonb_set(snapshot_payload, '{capacity}', '1'::jsonb, true)
+    set snapshot_payload = jsonb_set(snapshot_payload, '{pocket}', '{"madeira":10}'::jsonb, true)
     where id = ${sessionId}::uuid
   `;
   const capacityFull = await postJson(
@@ -510,13 +510,13 @@ async function proveEventContracts(account: TestAccount): Promise<void> {
   );
   assertErrorCode(
     capacityFull,
-    "INVALID_MODE_EVENT",
+    "MODE_RESULT_REJECTED",
     "capacity-full collection should be rejected",
   );
 
   await sql`
     update public.mode_sessions
-    set snapshot_payload = jsonb_set(snapshot_payload, '{capacity}', '20'::jsonb, true)
+    set snapshot_payload = jsonb_set(snapshot_payload, '{pocket}', '{}'::jsonb, true)
     where id = ${sessionId}::uuid
   `;
   revision = await recordEvent(account, sessionId, revision, "collect_complete", {
@@ -624,10 +624,10 @@ async function proveExpiredSessionRejected(account: TestAccount): Promise<void> 
   assertErrorCode(response, "MODE_SESSION_NOT_ACTIVE", "expired session event should be rejected");
   assertEq(
     await countRows(
-      sql`select 1 from public.mode_sessions where id = ${started.sessionId}::uuid and status = 'expired'`,
+      sql`select 1 from public.mode_session_events where session_id = ${started.sessionId}::uuid`,
     ),
-    1,
-    "expired event should mark the session expired",
+    0,
+    "expired event should not persist an event row",
   );
 }
 
@@ -893,9 +893,9 @@ async function exhaustDailyCaps(account: TestAccount): Promise<void> {
       120,
       '{"ossos_preview":6,"po_osso_preview":6}'::jsonb,
       '{}'::jsonb,
-      ${JSON.stringify(rewardPayload)}::jsonb,
-      now(),
-      now()
+      ${sql.json(rewardPayload as any)},
+      now() - interval '1 hour',
+      now() - interval '1 hour'
     )
   `;
   await sql`
@@ -919,8 +919,8 @@ async function exhaustDailyCaps(account: TestAccount): Promise<void> {
       ${claimRequestId}::uuid,
       ${`sha256:daily-cap-seed-${claimRequestId}`},
       ${periodKey},
-      ${JSON.stringify(rewardPayload)}::jsonb,
-      ${JSON.stringify(resourceDelta)}::jsonb,
+      ${sql.json(rewardPayload as any)},
+      ${sql.json(resourceDelta as any)},
       24
     )
   `;

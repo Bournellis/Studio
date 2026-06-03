@@ -444,6 +444,8 @@ async function proveServiceRoleAdminOps(account: TestAccount): Promise<void> {
     p_delta: { almas: 3, energia: 2 },
     p_reason: "foundation admin RLS live smoke resource adjustment",
     p_request_id: adjustRequestId,
+    p_request_hash: `sha256:admin-adjust-${adjustRequestId}`,
+    p_actor_auth_user_id: account.authUserId,
   };
   const adjusted = await postRpc(
     "admin_adjust_resource_balance_v1",
