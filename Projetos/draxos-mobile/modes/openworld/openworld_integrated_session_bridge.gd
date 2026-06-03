@@ -6,8 +6,18 @@ signal state_changed
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 
 const EVENT_RETRY_SECONDS := 1.25
+const MAX_EVENT_QUEUE_SIZE := 20
+const MAX_EVENT_RETRY_BACKOFF_SECONDS := 8.0
 const ACTION_SCOPE_TEMPLATE := "mode:openworld:%s"
 const SOURCE_ID := "open_mode_shell:openworld"
+const SESSION_PREVIEW := "preview"
+const SESSION_STARTING := "starting"
+const SESSION_SYNCED := "synced"
+const SESSION_PENDING := "pending"
+const SESSION_RESYNCING := "resyncing"
+const SESSION_COMPLETED := "completed"
+const SESSION_OFFLINE := "offline"
+const SESSION_BLOCKED := "blocked"
 
 var model: Object = null
 var supabase_client: Node = null
@@ -23,10 +33,13 @@ var _pending_event_count := 0
 var _event_queue: Array[Dictionary] = []
 var _event_flush_active := false
 var _event_retry_scheduled := false
+var _event_retry_attempts := 0
 var _pending_collected_nodes: Dictionary = {}
 var _last_pending_request_id := ""
 var _last_heartbeat_seconds := 0.0
 var _apply_snapshot_callback := Callable()
+var _session_state := SESSION_PREVIEW
+var _completed := false
 
 func configure(target_model: Object, client: Node, store: Node, token: String, apply_snapshot_callback := Callable()) -> void:
 	model = target_model
@@ -51,10 +64,16 @@ func has_pending_events() -> bool:
 	return _event_flush_active or not _event_queue.is_empty() or _pending_event_count > 0
 
 func can_complete() -> bool:
-	return _server_session_id != "" and _server_synced and not has_pending_events()
+	return _server_session_id != "" and not _completed and _server_synced and not has_pending_events()
 
 func uses_authority() -> bool:
-	return is_active() and _server_session_id != ""
+	return is_active() and _server_session_id != "" and not _completed
+
+func session_state() -> String:
+	return _session_state
+
+func is_completed() -> bool:
+	return _completed
 
 func pending_summary_text() -> String:
 	if _last_pending_request_id != "":
@@ -72,7 +91,7 @@ func remember_pending_collected_node(node_id: String) -> void:
 	_pending_collected_nodes[node_id] = true
 
 func record_heartbeat_if_due(session_seconds: float, heartbeat_seconds: float, position_payload: Dictionary) -> void:
-	if _server_session_id == "" or not _server_synced:
+	if _server_session_id == "" or not _server_synced or _completed:
 		return
 	if session_seconds - _last_heartbeat_seconds < heartbeat_seconds:
 		return
@@ -83,14 +102,16 @@ func record_heartbeat_if_due(session_seconds: float, heartbeat_seconds: float, p
 	})
 
 func resume_or_start_session() -> void:
-	if _network_busy or _server_session_id != "":
+	if _network_busy or _server_session_id != "" or _completed:
 		return
 	if not is_active():
 		_set_model_message("Preview sem recompensa.")
 		_server_synced = false
+		_session_state = SESSION_PREVIEW
 		_emit_state_changed()
 		return
 	_network_busy = true
+	_session_state = SESSION_STARTING
 	_emit_state_changed()
 	var state_result: Dictionary = await supabase_client.get_mode_state(ModelScript.MODE_ID, access_token)
 	_network_busy = false
@@ -100,22 +121,31 @@ func resume_or_start_session() -> void:
 		if not active_session.is_empty() and hydrate_session(active_session):
 			last_result_text = "Bosque retomado."
 			_set_model_message("Bosque retomado.")
+			_emit_client_telemetry("mode_session_resumed", {"result": "ok"})
 			_emit_state_changed()
 			return
 	elif not _is_network_error(state_result):
 		_set_model_message("Preview sem recompensa.")
+		_session_state = SESSION_BLOCKED
+		_emit_client_telemetry("mode_preview_started", {"result": "state_blocked", "error_code": _error_code(state_result)})
+	else:
+		_set_model_message("Preview sem recompensa. Conexao indisponivel.")
+		_session_state = SESSION_OFFLINE
+		_emit_client_telemetry("mode_preview_started", {"result": "offline", "error_code": _error_code(state_result)})
 	_emit_state_changed()
 	await start_session()
 
 func start_session() -> void:
-	if _network_busy or _server_session_id != "":
+	if _network_busy or _server_session_id != "" or _completed:
 		return
 	if not is_active():
 		_set_model_message("Preview sem recompensa.")
 		_server_synced = false
+		_session_state = SESSION_PREVIEW
 		_emit_state_changed()
 		return
 	_network_busy = true
+	_session_state = SESSION_STARTING
 	_emit_state_changed()
 	var request_payload := {
 		"mode_id": ModelScript.MODE_ID,
@@ -142,11 +172,18 @@ func start_session() -> void:
 		_last_pending_request_id = ""
 		last_result_text = "Bosque iniciado."
 		_set_model_message("Bosque pronto.")
+		_emit_client_telemetry("mode_session_started", {"result": "ok"})
 	else:
 		_server_synced = false
 		last_result_text = "Preview sem recompensa."
-		_set_model_message("Preview sem recompensa.")
-		if not _is_network_error(result):
+		if _is_network_error(result):
+			_session_state = SESSION_OFFLINE
+			_set_model_message("Preview sem recompensa. Conexao indisponivel.")
+			_emit_client_telemetry("mode_preview_started", {"result": "offline", "error_code": _error_code(result)})
+		else:
+			_session_state = SESSION_BLOCKED
+			_set_model_message("Preview sem recompensa.")
+			_emit_client_telemetry("mode_preview_started", {"result": "blocked", "error_code": _error_code(result)})
 			session_store.fail_pending_mutation(str(request.get("request_id", "")), _as_dictionary(result.get("body", {})))
 	_emit_state_changed()
 
@@ -155,6 +192,8 @@ func complete_session(result_payload: Dictionary) -> Dictionary:
 		return {"ok": false, "busy": true}
 	if _server_session_id == "":
 		return {"ok": false, "missing_session": true}
+	if _completed:
+		return {"ok": false, "completed": true}
 	if not can_complete():
 		last_result_text = "Sincronize o Bosque antes de completar."
 		_set_model_message("Sincronizacao pendente.")
@@ -185,15 +224,93 @@ func complete_session(result_payload: Dictionary) -> Dictionary:
 		var body := _response_body(result)
 		var reward := _as_dictionary(body.get("reward", {}))
 		_last_pending_request_id = ""
-		last_result_text = "Recompensa aplicada: %s" % JSON.stringify(reward.get("resource_delta", {}))
-		_set_model_message("Recompensa integrada aplicada.")
+		_completed = true
+		_session_state = SESSION_COMPLETED
+		_event_queue.clear()
+		_pending_event_count = 0
+		_pending_collected_nodes = {}
+		var reward_summary := _reward_summary(body, reward)
+		last_result_text = reward_summary
+		_set_model_message(reward_summary)
 		_server_synced = true
+		_emit_client_telemetry("mode_session_completed", {
+			"result": "ok",
+			"reward_status": _reward_status(body, reward),
+			"period_key": _period_key(body, reward),
+		})
+		if _is_cap_zero_completion(body, reward):
+			_emit_client_telemetry("mode_cap_zero_completed", {
+				"result": "ok",
+				"reward_status": "cap_zero",
+				"period_key": _period_key(body, reward),
+			})
+		else:
+			_emit_client_telemetry("mode_reward_applied", {
+				"result": "ok",
+				"reward_status": _reward_status(body, reward),
+				"period_key": _period_key(body, reward),
+			})
 	else:
 		_server_synced = false
 		last_result_text = "Preview preservado. Recompensa bloqueada ate resync."
 		_set_model_message("Sincronizacao pendente.")
+		_session_state = SESSION_OFFLINE if _is_network_error(result) else SESSION_BLOCKED
+		_emit_client_telemetry("mode_sync_failed", {"result": "complete_failed", "error_code": _error_code(result)})
 		if not _is_network_error(result):
 			session_store.fail_pending_mutation(str(request.get("request_id", "")), _as_dictionary(result.get("body", {})))
+	_emit_state_changed()
+	return result
+
+func abandon_session(reason: String = "player_abandoned") -> Dictionary:
+	if _network_busy:
+		return {"ok": false, "busy": true}
+	if _server_session_id == "":
+		return {"ok": false, "missing_session": true}
+	if _completed:
+		return {"ok": false, "completed": true}
+	var payload := {
+		"session_id": _server_session_id,
+		"reason": reason.strip_edges(),
+	}
+	var request: Dictionary = session_store.prepare_pending_mutation(
+		"modes/session/abandon",
+		_scope_id(),
+		SOURCE_ID,
+		payload
+	)
+	_last_pending_request_id = str(request.get("request_id", ""))
+	_network_busy = true
+	_session_state = SESSION_PENDING
+	_emit_state_changed()
+	var result: Dictionary = await supabase_client.abandon_mode_session(
+		_last_pending_request_id,
+		_server_session_id,
+		ModelScript.MODE_ID,
+		reason,
+		access_token,
+		str(request.get("request_hash", ""))
+	)
+	_network_busy = false
+	if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
+		_server_session_id = ""
+		_snapshot_revision = 0
+		_server_synced = false
+		_completed = false
+		_event_queue.clear()
+		_pending_event_count = 0
+		_pending_collected_nodes = {}
+		_last_pending_request_id = ""
+		_session_state = SESSION_PREVIEW
+		last_result_text = "Sessao abandonada. Resultado descartado."
+		_set_model_message("Sessao do Bosque abandonada.")
+		_emit_client_telemetry("mode_session_abandoned", {"result": "ok", "reason": reason.strip_edges()})
+	else:
+		_server_synced = false
+		_session_state = SESSION_OFFLINE if _is_network_error(result) else SESSION_BLOCKED
+		_set_model_message("Nao foi possivel abandonar agora. Sessao preservada.")
+		_emit_client_telemetry("mode_sync_failed", {"result": "abandon_failed", "error_code": _error_code(result)})
+		if not _is_network_error(result):
+			session_store.fail_pending_mutation(_last_pending_request_id, _response_body(result))
 	_emit_state_changed()
 	return result
 
@@ -203,12 +320,14 @@ func hydrate_session(session: Dictionary) -> bool:
 		return false
 	_server_session_id = session_id
 	_snapshot_revision = int(session.get("snapshot_revision", 0))
+	_completed = str(session.get("status", "started")) == "completed"
 	var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
 	if not snapshot_payload.is_empty():
 		apply_remote_snapshot(snapshot_payload)
 	_server_synced = true
 	_pending_event_count = 0
 	_pending_collected_nodes = {}
+	_session_state = SESSION_COMPLETED if _completed else SESSION_SYNCED
 	_emit_state_changed()
 	return true
 
@@ -221,14 +340,27 @@ func apply_remote_snapshot(snapshot_payload: Dictionary) -> void:
 func record_event_deferred(event_type: String, event_payload: Dictionary) -> void:
 	if not uses_authority():
 		return
+	if _event_queue.size() >= MAX_EVENT_QUEUE_SIZE:
+		_set_model_message("Sincronizacao cheia. Aguarde o Bosque salvar antes de agir.")
+		_emit_client_telemetry("mode_sync_failed", {
+			"result": "queue_full",
+			"event_type": event_type,
+		})
+		_emit_state_changed()
+		return
 	_event_queue.append({
 		"event_type": event_type,
 		"event_payload": event_payload.duplicate(true),
 	})
 	_pending_event_count = _event_queue.size() + (1 if _event_flush_active else 0)
 	_server_synced = false
+	_session_state = SESSION_PENDING
 	if model != null and str(model.get("last_message")).strip_edges() == "":
 		_set_model_message("Sincronizando Bosque...")
+	_emit_client_telemetry("mode_session_sync_pending", {
+		"result": "queued",
+		"event_type": event_type,
+	})
 	_emit_state_changed()
 	call_deferred("flush_event_queue")
 
@@ -239,6 +371,7 @@ func flush_event_queue() -> void:
 		return
 	if not is_active():
 		_server_synced = false
+		_session_state = SESSION_OFFLINE
 		_emit_state_changed()
 		return
 	_event_flush_active = true
@@ -278,9 +411,11 @@ func flush_event_queue() -> void:
 		if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
 			_event_queue.pop_front()
 			hydrate_session(_as_dictionary(body.get("session", {})))
+			_event_retry_attempts = 0
 			_set_model_message(str(_as_dictionary(body.get("event", {})).get("message", str(model.get("last_message")) if model != null else "")))
 			continue
 		_server_synced = false
+		_session_state = SESSION_PENDING
 		var error_code := _error_code(result)
 		_set_model_message("Sincronizacao pendente.")
 		if not _is_network_error(result):
@@ -291,6 +426,7 @@ func flush_event_queue() -> void:
 			else:
 				await resync_session("Bosque resincronizado apos erro do servidor.")
 			_event_queue.clear()
+			_emit_client_telemetry("mode_sync_failed", {"result": "event_failed", "error_code": error_code})
 		else:
 			_set_model_message("Sincronizacao pendente. Tentando novamente...")
 			_schedule_event_retry()
@@ -301,6 +437,8 @@ func flush_event_queue() -> void:
 		_last_pending_request_id = ""
 		if _server_session_id != "":
 			_server_synced = true
+			if not _completed:
+				_session_state = SESSION_SYNCED
 	_emit_state_changed()
 
 func retry_queued_events_now() -> void:
@@ -310,8 +448,13 @@ func retry_queued_events_now() -> void:
 func resync_session(success_message: String) -> bool:
 	if not is_active():
 		return false
+	_session_state = SESSION_RESYNCING
+	_emit_state_changed()
 	var state_result: Dictionary = await supabase_client.get_mode_state(ModelScript.MODE_ID, access_token)
 	if not bool(state_result.get("ok", false)):
+		_session_state = SESSION_OFFLINE if _is_network_error(state_result) else SESSION_BLOCKED
+		_emit_client_telemetry("mode_sync_failed", {"result": "resync_failed", "error_code": _error_code(state_result)})
+		_emit_state_changed()
 		return false
 	var body := _response_body(state_result)
 	var active_session := _as_dictionary(body.get("active_session", {}))
@@ -323,8 +466,11 @@ func resync_session(success_message: String) -> bool:
 				active_session = candidate
 				break
 	if active_session.is_empty() or not hydrate_session(active_session):
+		_session_state = SESSION_PREVIEW
+		_emit_state_changed()
 		return false
 	_set_model_message(success_message)
+	_emit_client_telemetry("mode_session_resynced", {"result": "ok"})
 	_emit_state_changed()
 	return true
 
@@ -332,24 +478,34 @@ func debug_snapshot() -> Dictionary:
 	return {
 		"server_session_id": _server_session_id,
 		"snapshot_revision": _snapshot_revision,
+		"session_state": _session_state,
+		"completed": _completed,
 		"server_synced": _server_synced,
 		"network_busy": _network_busy,
 		"pending_event_count": _pending_event_count,
 		"event_queue_size": _event_queue.size(),
 		"event_flush_active": _event_flush_active,
 		"event_retry_scheduled": _event_retry_scheduled,
+		"event_retry_attempts": _event_retry_attempts,
 		"last_pending_request_id": _last_pending_request_id,
 	}
+
+func record_exit_preserved() -> void:
+	if _server_session_id == "" or _completed:
+		return
+	_emit_client_telemetry("mode_session_exit_preserved", {"result": "ok"})
 
 func _schedule_event_retry() -> void:
 	if _event_retry_scheduled:
 		return
 	_event_retry_scheduled = true
+	_event_retry_attempts += 1
 	call_deferred("_retry_event_queue")
 
 func _retry_event_queue() -> void:
 	if is_inside_tree():
-		await get_tree().create_timer(EVENT_RETRY_SECONDS).timeout
+		var delay := minf(MAX_EVENT_RETRY_BACKOFF_SECONDS, EVENT_RETRY_SECONDS * float(maxi(1, _event_retry_attempts)))
+		await get_tree().create_timer(delay).timeout
 	_event_retry_scheduled = false
 	flush_event_queue()
 
@@ -362,6 +518,74 @@ func _set_model_message(message: String) -> void:
 
 func _emit_state_changed() -> void:
 	state_changed.emit()
+
+func _emit_client_telemetry(event_type: String, payload: Dictionary) -> void:
+	if bool(ProjectSettings.get_setting("draxos_mobile/testing/disable_telemetry", false)):
+		return
+	if not is_active() or supabase_client == null or not supabase_client.has_method("send_client_telemetry"):
+		return
+	var body := _telemetry_payload(payload)
+	call_deferred("_send_client_telemetry_deferred", event_type, body)
+
+func _send_client_telemetry_deferred(event_type: String, payload: Dictionary) -> void:
+	if supabase_client == null or not supabase_client.has_method("send_client_telemetry"):
+		return
+	await supabase_client.send_client_telemetry(
+		access_token,
+		_telemetry_session_id(),
+		event_type,
+		payload
+	)
+
+func _telemetry_payload(payload: Dictionary) -> Dictionary:
+	var result := payload.duplicate(true)
+	result["mode_id"] = ModelScript.MODE_ID
+	result["slice_id"] = ModelScript.SLICE_ID
+	result["session_id"] = _server_session_id
+	result["revision"] = _snapshot_revision
+	result["pending_count"] = _pending_event_count
+	result["save_type"] = _active_save_type()
+	result["source"] = SOURCE_ID
+	return result
+
+func _telemetry_session_id() -> String:
+	if session_store != null and session_store.has_method("ensure_session_id"):
+		return str(session_store.ensure_session_id())
+	return _server_session_id
+
+func _active_save_type() -> String:
+	if session_store == null:
+		return "normal"
+	return str(session_store.get("active_save_type"))
+
+func _reward_summary(body: Dictionary, reward: Dictionary) -> String:
+	if _is_cap_zero_completion(body, reward):
+		return "Bosque concluido. Limite diario atingido; sem recompensa nova."
+	var delta := _as_dictionary(reward.get("resource_delta", body.get("resource_delta", {})))
+	if delta.is_empty():
+		return "Bosque concluido. Nenhuma recompensa nova."
+	return "Bosque concluido. Recompensa aplicada: %s." % _resource_delta_text(delta)
+
+func _resource_delta_text(delta: Dictionary) -> String:
+	var keys := PackedStringArray()
+	for key: String in delta.keys():
+		keys.append(key)
+	keys.sort()
+	var parts := PackedStringArray()
+	for key: String in keys:
+		var amount := int(delta.get(key, 0))
+		if amount != 0:
+			parts.append("%s %+d" % [key, amount])
+	return ", ".join(parts) if not parts.is_empty() else "sem alteracao"
+
+func _is_cap_zero_completion(body: Dictionary, reward: Dictionary) -> bool:
+	return bool(body.get("cap_zero", reward.get("cap_zero", false))) or _reward_status(body, reward) == "cap_zero"
+
+func _reward_status(body: Dictionary, reward: Dictionary) -> String:
+	return str(body.get("reward_status", reward.get("reward_status", "applied")))
+
+func _period_key(body: Dictionary, reward: Dictionary) -> String:
+	return str(body.get("period_key", reward.get("period_key", "")))
 
 func _response_body(result: Dictionary) -> Dictionary:
 	return _as_dictionary(result.get("body", result))

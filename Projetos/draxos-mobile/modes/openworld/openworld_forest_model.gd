@@ -113,7 +113,12 @@ func item_weight(item_id: String) -> float:
 	return float(_item_definition(item_id).get("weight", 0.0))
 
 func item_display_name(item_id: String) -> String:
-	return str(_item_definition(item_id).get("display_name", item_id))
+	var display_name := str(_item_definition(item_id).get("display_name", item_id))
+	if display_name.ends_with(" preview"):
+		return display_name.substr(0, display_name.length() - " preview".length())
+	if display_name.ends_with(" Preview"):
+		return display_name.substr(0, display_name.length() - " Preview".length())
+	return display_name
 
 func gather_duration(item_id: String) -> float:
 	var duration := float(_item_definition(item_id).get("gather_time", 1.0))

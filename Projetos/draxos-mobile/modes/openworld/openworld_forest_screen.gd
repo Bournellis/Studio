@@ -6,36 +6,11 @@ signal close_requested
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 const RulesetScript := preload("res://modes/openworld/openworld_forest_ruleset.gd")
 const World2DScript := preload("res://modes/openworld/openworld_forest_world_2d.gd")
-const JoystickScript := preload("res://modes/openworld/openworld_virtual_joystick.gd")
-const InventorySheetScript := preload("res://modes/openworld/openworld_inventory_sheet.gd")
+const RuntimeStateScript := preload("res://modes/openworld/openworld_forest_runtime_state.gd")
+const InputControllerScript := preload("res://modes/openworld/openworld_forest_input_controller.gd")
+const HudControllerScript := preload("res://modes/openworld/openworld_forest_hud_controller.gd")
+const InteractionControllerScript := preload("res://modes/openworld/openworld_forest_interaction_controller.gd")
 const IntegratedSessionBridgeScript := preload("res://modes/openworld/openworld_integrated_session_bridge.gd")
-
-const WORLD_SIZE := Vector2(960, 1400)
-const CHEST_POSITION := Vector2(220, 250)
-const CHEST_RADIUS := 88.0
-const PLAYER_INITIAL_POSITION := Vector2(220, 330)
-const PLAYER_WORLD_MARGIN := 28.0
-const KEYBOARD_ACTION_KEYS := {
-	"openworld_move_left": [KEY_A, KEY_LEFT],
-	"openworld_move_right": [KEY_D, KEY_RIGHT],
-	"openworld_move_up": [KEY_W, KEY_UP],
-	"openworld_move_down": [KEY_S, KEY_DOWN],
-}
-const RESOURCE_FIXTURES := [
-	{"item_id": "galho", "position": Vector2(330, 420)},
-	{"item_id": "folha", "position": Vector2(410, 510)},
-	{"item_id": "madeira", "position": Vector2(600, 440)},
-	{"item_id": "pedra_pequena", "position": Vector2(260, 750)},
-	{"item_id": "pedra", "position": Vector2(430, 900)},
-	{"item_id": "cogumelo", "position": Vector2(690, 640)},
-	{"item_id": "fungo", "position": Vector2(760, 820)},
-	{"item_id": "inseto", "position": Vector2(530, 620)},
-	{"item_id": "resina", "position": Vector2(620, 720)},
-	{"item_id": "folha_seca", "position": Vector2(440, 1080)},
-	{"item_id": "cinzas_preview", "position": Vector2(600, 1220)},
-	{"item_id": "ossos_preview", "position": Vector2(710, 1260)},
-	{"item_id": "po_osso_preview", "position": Vector2(790, 1160)},
-]
 
 var model = ModelScript.new()
 var integration_mode := "dev_local"
@@ -43,43 +18,34 @@ var integration_mode := "dev_local"
 var _world = null
 var _world_viewport_container: SubViewportContainer
 var _world_viewport: SubViewport
-var _joystick = null
-var _sheet = null
-var _hud_top: PanelContainer
-var _actions: HBoxContainer
-var _weight_label: Label
-var _status_label: Label
-var _mode_label: Label
-var _feedback_label: Label
-var _inventory_button: Button
-var _deposit_button: Button
-var _complete_button: Button
-var _back_button: Button
-var _player_pos := PLAYER_INITIAL_POSITION
-var _debug_joystick_vector := Vector2.ZERO
-var _resource_nodes: Array[Dictionary] = []
-var _session_seconds := 0.0
+var _runtime: OpenworldForestRuntimeState = RuntimeStateScript.new()
+var _input_controller = InputControllerScript.new()
+var _hud = HudControllerScript.new()
+var _interaction = InteractionControllerScript.new()
 var _session_bridge = null
-var _walk_phase := 0.0
 var _last_result_text := ""
-var _active_collection_node_id := ""
-var _free_pointer_active := false
-var _free_pointer_index := -999
-var _keyboard_action_down := {}
+var _abandon_confirm_pending := false
+var _ready_completed := false
 
 func _ready() -> void:
 	name = "OpenworldForestScreen"
 	_ensure_session_bridge()
+	_runtime.configure(RulesetScript.player_initial_position())
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	focus_mode = Control.FOCUS_ALL
 	set_process_input(true)
-	_ensure_input_actions()
-	_reset_keyboard_state()
 	_spawn_resources()
-	_build_ui()
+	_build_world_viewport()
+	_hud.build(self, model)
+	_connect_hud()
+	_configure_input_controller()
+	_configure_interaction_controller()
+	_input_controller.ensure_input_actions()
+	_layout_overlay()
 	_update_labels()
 	set_process(true)
+	_ready_completed = true
 	call_deferred("_grab_openworld_focus")
 	if integration_mode == "integrated_alpha":
 		call_deferred("_resume_or_start_integrated_session")
@@ -88,14 +54,10 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
 		_layout_overlay()
 	elif what == NOTIFICATION_VISIBILITY_CHANGED and not is_visible_in_tree():
-		_reset_runtime_input()
+		_input_controller.reset_runtime_input()
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey:
-		if _handle_keyboard_event(event as InputEventKey):
-			get_viewport().set_input_as_handled()
-		return
-	if _handle_pointer_event(event, true):
+	if _input_controller.handle_input(event, true):
 		get_viewport().set_input_as_handled()
 
 func get_model() -> Variant:
@@ -103,45 +65,70 @@ func get_model() -> Variant:
 
 func get_player_position() -> Vector2:
 	if _world != null and _world.has_method("get_player_position"):
-		_player_pos = _world.get_player_position()
-	return _player_pos
+		_runtime.update_player_position(_world.get_player_position())
+	return _runtime.player_position
 
 func get_inventory_sheet() -> Variant:
-	return _sheet
+	return _hud.sheet
 
 func get_openworld_world_2d() -> Variant:
 	return _world
 
 func get_joystick_vector_for_tests() -> Vector2:
-	if _joystick == null:
-		return Vector2.ZERO
-	return _joystick.input_vector()
+	return _input_controller.joystick_vector()
 
 func is_free_joystick_active_for_tests() -> bool:
-	return _free_pointer_active
+	return _input_controller.free_pointer_active
 
 func set_debug_joystick_vector(vector: Vector2) -> void:
-	_debug_joystick_vector = vector.limit_length(1.0)
+	_input_controller.set_debug_vector(vector)
 
 func set_player_position_for_tests(position: Vector2) -> void:
-	_player_pos = position
+	_runtime.update_player_position(position)
 	if _world != null and _world.has_method("set_player_position"):
 		_world.set_player_position(position)
 
 func begin_free_joystick_for_tests(screen_position: Vector2) -> void:
-	_begin_free_joystick(screen_position, -2)
+	_input_controller.begin_free_for_tests(screen_position)
 
 func drag_free_joystick_for_tests(screen_position: Vector2) -> void:
-	_drag_free_joystick(screen_position, -2)
+	_input_controller.drag_free_for_tests(screen_position)
 
 func end_free_joystick_for_tests() -> void:
-	_end_free_joystick(-2)
+	_input_controller.end_free_for_tests()
+
+func session_state_for_tests() -> String:
+	return _session_state()
+
+func abandon_confirm_pending_for_tests() -> bool:
+	return _abandon_confirm_pending
 
 func configure_integrated_alpha(client: Node, store: Node, token: String) -> void:
 	var bridge = _ensure_session_bridge()
 	bridge.configure(model, client, store, token, Callable(self, "_apply_remote_snapshot"))
 	if bridge.is_active():
 		integration_mode = "integrated_alpha"
+		if is_inside_tree() and _ready_completed:
+			call_deferred("_resume_or_start_integrated_session")
+
+func _process(delta: float) -> void:
+	_runtime.advance_time(delta)
+	if _world != null and _world.has_method("get_player_position"):
+		_runtime.update_player_position(_world.get_player_position())
+	var movement := _input_controller.movement_vector()
+	var moved := movement.length() > 0.05
+	if _world != null and _world.has_method("set_movement_vector"):
+		_world.set_movement_vector(movement, model.current_speed())
+	if moved:
+		_runtime.advance_walk_phase(delta)
+	_interaction.tick_collection(delta, moved)
+	if integration_mode == "integrated_alpha":
+		_ensure_session_bridge().record_heartbeat_if_due(
+			_runtime.session_seconds,
+			RulesetScript.autosave_heartbeat_seconds(),
+			_runtime.position_payload()
+		)
+	_update_labels()
 
 func _ensure_session_bridge():
 	if _session_bridge == null:
@@ -156,120 +143,8 @@ func _ensure_session_bridge():
 	return _session_bridge
 
 func _on_session_bridge_state_changed() -> void:
+	_abandon_confirm_pending = false if _session_state() != "synced" else _abandon_confirm_pending
 	_update_labels()
-
-func _process(delta: float) -> void:
-	_session_seconds += delta
-	if _world != null and _world.has_method("get_player_position"):
-		_player_pos = _world.get_player_position()
-	var movement := _movement_vector()
-	var moved := movement.length() > 0.05
-	if _world != null and _world.has_method("set_movement_vector"):
-		_world.set_movement_vector(movement, model.current_speed())
-	if moved:
-		_walk_phase += delta * 12.0
-		if not model.active_collection.is_empty():
-			model.advance_collection(0.0, true)
-			_active_collection_node_id = ""
-			_record_integrated_event_deferred("collect_cancel", {
-				"reason": "moved",
-				"position": _position_payload(),
-				"session_seconds": int(_session_seconds),
-			})
-	else:
-		_advance_nearby_collection(delta)
-	if integration_mode == "integrated_alpha":
-		_ensure_session_bridge().record_heartbeat_if_due(
-			_session_seconds,
-			RulesetScript.autosave_heartbeat_seconds(),
-			_position_payload()
-		)
-	_update_labels()
-
-func _build_ui() -> void:
-	_build_world_viewport()
-
-	_hud_top = PanelContainer.new()
-	_hud_top.name = "OpenworldHudTop"
-	_hud_top.add_theme_stylebox_override("panel", _panel_style(Color(0.045, 0.052, 0.045, 0.82), Color(0.74, 0.64, 0.42, 0.36)))
-	add_child(_hud_top)
-
-	var hud_margin := MarginContainer.new()
-	hud_margin.add_theme_constant_override("margin_left", 10)
-	hud_margin.add_theme_constant_override("margin_right", 10)
-	hud_margin.add_theme_constant_override("margin_top", 8)
-	hud_margin.add_theme_constant_override("margin_bottom", 8)
-	_hud_top.add_child(hud_margin)
-
-	var hud_column := VBoxContainer.new()
-	hud_column.add_theme_constant_override("separation", 2)
-	hud_margin.add_child(hud_column)
-
-	var hud_row := HBoxContainer.new()
-	hud_row.add_theme_constant_override("separation", 8)
-	hud_column.add_child(hud_row)
-
-	_weight_label = _hud_label("")
-	_weight_label.name = "OpenworldPocketWeight"
-	_weight_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hud_row.add_child(_weight_label)
-
-	_mode_label = _hud_label("")
-	_mode_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	hud_row.add_child(_mode_label)
-
-	_status_label = _hud_label("")
-	_status_label.name = "OpenworldCollectState"
-	hud_column.add_child(_status_label)
-
-	_feedback_label = _hud_label("")
-	_feedback_label.name = "OpenworldFeedback"
-	_feedback_label.add_theme_color_override("font_color", Color(0.96, 0.86, 0.58))
-	hud_column.add_child(_feedback_label)
-
-	_joystick = JoystickScript.new()
-	_joystick.name = "OpenworldVirtualJoystick"
-	_joystick.visible = false
-	add_child(_joystick)
-
-	_actions = HBoxContainer.new()
-	_actions.name = "OpenworldActionButtons"
-	_actions.add_theme_constant_override("separation", 6)
-	_actions.size_flags_horizontal = Control.SIZE_SHRINK_END
-	add_child(_actions)
-
-	_inventory_button = _action_button("Mochila")
-	_inventory_button.name = "OpenworldInventoryButton"
-	_inventory_button.pressed.connect(func() -> void:
-		_sheet.open_sheet("pocket")
-	)
-	_actions.add_child(_inventory_button)
-
-	_deposit_button = _action_button("Depositar")
-	_deposit_button.name = "OpenworldDepositButton"
-	_deposit_button.pressed.connect(_deposit_near_chest)
-	_actions.add_child(_deposit_button)
-
-	_complete_button = _action_button("Completar")
-	_complete_button.name = "OpenworldCompleteButton"
-	_complete_button.pressed.connect(_show_result)
-	_actions.add_child(_complete_button)
-
-	_back_button = _action_button("Voltar")
-	_back_button.name = "OpenworldBackButton"
-	_back_button.pressed.connect(func() -> void:
-		close_requested.emit()
-	)
-	_actions.add_child(_back_button)
-
-	_sheet = InventorySheetScript.new()
-	_sheet.bind_model(model)
-	_sheet.deposit_requested.connect(_deposit_near_chest)
-	_sheet.craft_requested.connect(_craft_recipe)
-	_sheet.complete_requested.connect(_show_result)
-	add_child(_sheet)
-
-	_layout_overlay()
 
 func _build_world_viewport() -> void:
 	_world_viewport_container = SubViewportContainer.new()
@@ -288,29 +163,52 @@ func _build_world_viewport() -> void:
 	_world_viewport_container.add_child(_world_viewport)
 
 	_world = World2DScript.new()
-	_world.configure(RulesetScript.world_size(), RulesetScript.chest_position(), _resource_fixtures(), RulesetScript.player_initial_position())
+	_world.configure(
+		RulesetScript.world_size(),
+		RulesetScript.chest_position(),
+		_resource_fixtures(),
+		RulesetScript.player_initial_position(),
+		RulesetScript.obstacles()
+	)
 	_world_viewport.add_child(_world)
-	_player_pos = _world.get_player_position()
+	_runtime.update_player_position(_world.get_player_position())
+
+func _connect_hud() -> void:
+	_hud.deposit_requested.connect(_deposit_near_chest)
+	_hud.craft_requested.connect(_craft_recipe)
+	_hud.complete_requested.connect(_show_result)
+	_hud.abandon_requested.connect(_handle_abandon_requested)
+	_hud.back_requested.connect(_handle_back_requested)
+
+func _configure_input_controller() -> void:
+	_input_controller.configure(
+		_hud.joystick,
+		Callable(self, "_screen_size"),
+		Callable(self, "_world_event_screen_position"),
+		Callable(self, "_pointer_over_overlay"),
+		Callable(self, "_grab_openworld_focus")
+	)
+
+func _configure_interaction_controller() -> void:
+	_interaction.configure(
+		model,
+		_runtime,
+		Callable(self, "_record_integrated_event_deferred"),
+		Callable(self, "_uses_integrated_authority"),
+		Callable(self, "_session_blocks_mutation"),
+		Callable(self, "_near_chest"),
+		Callable(self, "_ensure_session_bridge"),
+		Callable(self, "_update_labels")
+	)
 
 func _layout_overlay() -> void:
-	if _hud_top == null:
-		return
 	var screen_size := _screen_size()
 	if _world_viewport_container != null:
 		_world_viewport_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	if _world != null and _world.has_method("set_viewport_size"):
 		_world.set_viewport_size(screen_size)
-	var safe_margin := 12.0
-	var top_width := minf(screen_size.x - safe_margin * 2.0, 460.0)
-	_hud_top.position = Vector2(safe_margin, safe_margin)
-	_hud_top.size = Vector2(top_width, 92.0)
-	if _joystick != null:
-		_joystick.size = JoystickScript.BASE_SIZE
-		if not _joystick.is_active():
-			_joystick.visible = false
-	if _actions != null:
-		_actions.size = Vector2(minf(380.0, screen_size.x - 28.0), 48.0)
-		_actions.position = Vector2(maxf(14.0, screen_size.x - _actions.size.x - 14.0), maxf(16.0, screen_size.y - 72.0))
+	if _hud != null:
+		_hud.layout(screen_size)
 
 func _screen_size() -> Vector2:
 	var next_size := size
@@ -318,79 +216,25 @@ func _screen_size() -> Vector2:
 		next_size = get_viewport_rect().size
 	return Vector2(maxf(1.0, next_size.x), maxf(1.0, next_size.y))
 
-func _hud_label(text: String) -> Label:
-	var label := Label.new()
-	label.text = text
-	label.autowrap_mode = TextServer.AUTOWRAP_OFF
-	label.clip_text = true
-	label.add_theme_font_size_override("font_size", 12)
-	label.add_theme_color_override("font_color", Color(0.94, 0.91, 0.80))
-	return label
-
-func _action_button(text: String) -> Button:
-	var button := Button.new()
-	button.text = text
-	button.custom_minimum_size = Vector2(76, 48)
-	button.tooltip_text = text
-	return button
-
 func _spawn_resources() -> void:
-	_resource_nodes.clear()
-	for fixture: Dictionary in _resource_fixtures():
-		_resource_nodes.append({
-			"node_id": str(fixture.get("node_id", "")),
-			"item_id": str(fixture.get("item_id", "")),
-			"position": Vector2(fixture.get("position", Vector2.ZERO)),
-			"quantity": maxi(1, int(fixture.get("quantity", 1))),
-			"collected": false,
-		})
+	_runtime.reset_resources(_resource_fixtures())
 
 func _resource_fixtures() -> Array[Dictionary]:
 	var fixtures := RulesetScript.resource_fixtures()
-	return fixtures if not fixtures.is_empty() else RESOURCE_FIXTURES.duplicate(true)
+	if not fixtures.is_empty():
+		return fixtures
+	if _dev_resource_fallback_allowed():
+		return RuntimeStateScript.dev_resource_fixtures()
+	model.last_message = "Ruleset do Bosque indisponivel."
+	return []
 
-func _movement_vector() -> Vector2:
-	var movement := _keyboard_vector() + _debug_joystick_vector
-	if _joystick != null:
-		movement += _joystick.input_vector()
-	return movement.limit_length(1.0)
-
-func _keyboard_vector() -> Vector2:
-	return Vector2(
-		_action_strength("openworld_move_right") - _action_strength("openworld_move_left"),
-		_action_strength("openworld_move_down") - _action_strength("openworld_move_up")
-	).limit_length(1.0)
-
-func _ensure_input_actions() -> void:
-	for action_name: String in KEYBOARD_ACTION_KEYS.keys():
-		_ensure_key_action(action_name, KEYBOARD_ACTION_KEYS[action_name])
-
-func _ensure_key_action(action_name: String, keycodes: Array) -> void:
-	if not InputMap.has_action(action_name):
-		InputMap.add_action(action_name, 0.5)
-	for keycode: int in keycodes:
-		if not _input_action_has_key(action_name, keycode, true):
-			var physical_event := InputEventKey.new()
-			physical_event.physical_keycode = keycode
-			InputMap.action_add_event(action_name, physical_event)
-		if not _input_action_has_key(action_name, keycode, false):
-			var key_event := InputEventKey.new()
-			key_event.keycode = keycode
-			InputMap.action_add_event(action_name, key_event)
-
-func _input_action_has_key(action_name: String, keycode: int, physical: bool) -> bool:
-	for event: InputEvent in InputMap.action_get_events(action_name):
-		if not event is InputEventKey:
-			continue
-		var key_event := event as InputEventKey
-		if physical and key_event.physical_keycode == keycode:
-			return true
-		if not physical and key_event.keycode == keycode:
-			return true
-	return false
+func _dev_resource_fallback_allowed() -> bool:
+	return OS.has_feature("editor") \
+		or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/openworld_dev_fixtures_enabled", false)) \
+		or bool(ProjectSettings.get_setting("draxos_mobile/testing/openworld_dev_fixtures_enabled", false))
 
 func _on_world_gui_input(event: InputEvent) -> void:
-	if _handle_pointer_event(event, false):
+	if _input_controller.handle_pointer_event(event, false):
 		accept_event()
 
 func _world_event_screen_position(local_position: Vector2) -> Vector2:
@@ -398,119 +242,9 @@ func _world_event_screen_position(local_position: Vector2) -> Vector2:
 		return local_position
 	return _world_viewport_container.position + local_position
 
-func _event_screen_position(event_position: Vector2, already_screen_position: bool) -> Vector2:
-	if already_screen_position:
-		return event_position
-	return _world_event_screen_position(event_position)
-
-func _handle_pointer_event(event: InputEvent, already_screen_position: bool) -> bool:
-	if _joystick == null:
-		return false
-	if event is InputEventScreenTouch:
-		var touch := event as InputEventScreenTouch
-		var touch_position := _event_screen_position(touch.position, already_screen_position)
-		if touch.pressed:
-			if _free_pointer_active or _pointer_over_overlay(touch_position):
-				return false
-			_begin_free_joystick(touch_position, touch.index)
-			return true
-		if _free_pointer_active and _free_pointer_index == touch.index:
-			_end_free_joystick(touch.index)
-			return true
-	elif event is InputEventScreenDrag:
-		var drag := event as InputEventScreenDrag
-		if _free_pointer_active and _free_pointer_index == drag.index:
-			_drag_free_joystick(_event_screen_position(drag.position, already_screen_position), drag.index)
-			return true
-	elif event is InputEventMouseButton:
-		var mouse := event as InputEventMouseButton
-		if mouse.button_index != MOUSE_BUTTON_LEFT:
-			return false
-		var mouse_position := _event_screen_position(mouse.position, already_screen_position)
-		if mouse.pressed:
-			if _free_pointer_active or _pointer_over_overlay(mouse_position):
-				return false
-			_begin_free_joystick(mouse_position, -2)
-			return true
-		if _free_pointer_active and _free_pointer_index == -2:
-			_end_free_joystick(-2)
-			return true
-	elif event is InputEventMouseMotion and _free_pointer_active and _free_pointer_index == -2:
-		_drag_free_joystick(_event_screen_position((event as InputEventMouseMotion).position, already_screen_position), -2)
-		return true
-	return false
-
-func _begin_free_joystick(screen_position: Vector2, pointer_index: int) -> void:
-	if _joystick == null:
-		return
-	_grab_openworld_focus()
-	_free_pointer_active = true
-	_free_pointer_index = pointer_index
-	_joystick.begin_free(_clamp_joystick_screen_position(screen_position), pointer_index)
-
-func _drag_free_joystick(screen_position: Vector2, pointer_index: int) -> void:
-	if not _free_pointer_active or _free_pointer_index != pointer_index:
-		return
-	_joystick.drag_free(screen_position, pointer_index)
-
-func _end_free_joystick(pointer_index: int) -> void:
-	if not _free_pointer_active or _free_pointer_index != pointer_index:
-		return
-	_joystick.end_free(pointer_index)
-	_free_pointer_active = false
-	_free_pointer_index = -999
-
-func _clamp_joystick_screen_position(screen_position: Vector2) -> Vector2:
-	var half_size := JoystickScript.BASE_SIZE * 0.5
-	var screen_size := _screen_size()
-	return Vector2(
-		clampf(screen_position.x, half_size.x, maxf(half_size.x, screen_size.x - half_size.x)),
-		clampf(screen_position.y, half_size.y, maxf(half_size.y, screen_size.y - half_size.y))
-	)
-
-func _grab_openworld_focus() -> void:
-	if is_inside_tree():
-		grab_focus()
-
-func _reset_runtime_input() -> void:
-	_reset_keyboard_state()
-	if _joystick != null:
-		_joystick.end_free(-999)
-	_free_pointer_active = false
-	_free_pointer_index = -999
-
-func _reset_keyboard_state() -> void:
-	_keyboard_action_down.clear()
-	for action_name: String in KEYBOARD_ACTION_KEYS.keys():
-		_keyboard_action_down[action_name] = false
-
-func _action_strength(action_name: String) -> float:
-	var input_strength := Input.get_action_strength(action_name)
-	var manual_strength := 1.0 if bool(_keyboard_action_down.get(action_name, false)) else 0.0
-	return maxf(input_strength, manual_strength)
-
-func _handle_keyboard_event(event: InputEventKey) -> bool:
-	if event.echo:
-		return false
-	var action_name := _keyboard_action_for_event(event)
-	if action_name == "":
-		return false
-	_keyboard_action_down[action_name] = event.pressed
-	return true
-
-func _keyboard_action_for_event(event: InputEventKey) -> String:
-	for action_name: String in KEYBOARD_ACTION_KEYS.keys():
-		for keycode: int in KEYBOARD_ACTION_KEYS[action_name]:
-			if _key_event_has_key(event, keycode):
-				return action_name
-	return ""
-
-func _key_event_has_key(event: InputEventKey, keycode: int) -> bool:
-	return event.keycode == keycode or event.physical_keycode == keycode or event.key_label == keycode
-
 func _pointer_over_overlay(screen_position: Vector2) -> bool:
 	var global_position := get_global_rect().position + screen_position
-	for node: Control in [_hud_top, _actions, _sheet, _joystick]:
+	for node: Control in _hud.overlay_controls():
 		if node == null:
 			continue
 		if not node.visible:
@@ -519,168 +253,114 @@ func _pointer_over_overlay(screen_position: Vector2) -> bool:
 			return true
 	return false
 
-func _move_player(delta: Vector2) -> void:
-	_player_pos += delta
-	var world_size := RulesetScript.world_size()
-	var margin := RulesetScript.player_margin()
-	_player_pos.x = clampf(_player_pos.x, margin, world_size.x - margin)
-	_player_pos.y = clampf(_player_pos.y, margin, world_size.y - margin)
-
-func _advance_nearby_collection(delta: float) -> void:
-	var nearest := _nearest_resource()
-	if nearest.is_empty():
-		if not model.active_collection.is_empty():
-			model.cancel_collection("distance")
-			_active_collection_node_id = ""
-			_record_integrated_event_deferred("collect_cancel", {
-				"reason": "distance",
-				"position": _position_payload(),
-				"session_seconds": int(_session_seconds),
-			})
-		return
-	var item_id := str(nearest.get("item_id", ""))
-	var node_id := str(nearest.get("node_id", ""))
-	var distance := _player_pos.distance_to(Vector2(nearest.get("position", Vector2.ZERO)))
-	if model.active_collection.is_empty():
-		model.start_collection(item_id)
-		_active_collection_node_id = node_id
-		_record_integrated_event_deferred("collect_start", {
-			"node_id": node_id,
-			"item_id": item_id,
-			"position": _position_payload(),
-			"session_seconds": int(_session_seconds),
-		})
-	var active_item := str(model.active_collection.get("item_id", ""))
-	if active_item != item_id or _active_collection_node_id != node_id:
-		model.cancel_collection("target_changed")
-		_record_integrated_event_deferred("collect_cancel", {
-			"reason": "target_changed",
-			"position": _position_payload(),
-			"session_seconds": int(_session_seconds),
-		})
-		model.start_collection(item_id)
-		_active_collection_node_id = node_id
-		_record_integrated_event_deferred("collect_start", {
-			"node_id": node_id,
-			"item_id": item_id,
-			"position": _position_payload(),
-			"session_seconds": int(_session_seconds),
-		})
-	var authoritative_online := _uses_integrated_authority()
-	var result: Dictionary = model.advance_collection(delta, false, distance, not authoritative_online)
-	if bool(result.get("completed", false)):
-		nearest["collected"] = true
-		if authoritative_online:
-			_ensure_session_bridge().remember_pending_collected_node(node_id)
-		_active_collection_node_id = ""
-		_record_integrated_event_deferred("collect_complete", {
-			"node_id": node_id,
-			"item_id": item_id,
-			"position": _position_payload(),
-			"session_seconds": int(_session_seconds),
-		})
+func _grab_openworld_focus() -> void:
+	if is_inside_tree():
+		grab_focus()
 
 func _nearest_resource() -> Dictionary:
-	var best: Dictionary = {}
-	var best_distance := INF
-	for entry: Dictionary in _resource_nodes:
-		if bool(entry.get("collected", false)):
-			continue
-		if _ensure_session_bridge().has_pending_collected_node(str(entry.get("node_id", ""))):
-			continue
-		var distance := _player_pos.distance_to(Vector2(entry.get("position", Vector2.ZERO)))
-		if distance <= RulesetScript.collection_radius() and distance < best_distance:
-			best = entry
-			best_distance = distance
-	return best
+	return _runtime.nearest_resource(_ensure_session_bridge())
 
 func _near_chest() -> bool:
 	if _world != null and _world.has_method("is_near_chest"):
 		return _world.is_near_chest()
-	return _player_pos.distance_to(RulesetScript.chest_position()) <= RulesetScript.chest_radius()
+	return _runtime.player_position.distance_to(RulesetScript.chest_position()) <= RulesetScript.chest_radius()
 
 func _deposit_near_chest() -> void:
-	if not _near_chest():
-		model.last_message = "Aproxime-se do bau para depositar."
-		_update_labels()
-		return
-	if _uses_integrated_authority():
-		model.last_message = "Depositando no servidor..."
-		_record_integrated_event_deferred("deposit_all", {
-			"position": _position_payload(),
-			"session_seconds": int(_session_seconds),
-		})
-		_update_labels()
-		return
-	model.deposit_all()
-	_record_integrated_event_deferred("deposit_all", {
-		"position": _position_payload(),
-		"session_seconds": int(_session_seconds),
-	})
-	_update_labels()
+	_interaction.deposit_near_chest()
 
 func _craft_recipe(recipe_id: String) -> void:
-	if _uses_integrated_authority():
-		if not model.can_craft(recipe_id):
-			model.last_message = "Materiais insuficientes ou upgrade ja ativo."
-			_update_labels()
-			return
-		model.last_message = "Craft aguardando servidor..."
-		_record_integrated_event_deferred("craft", {
-			"recipe_id": recipe_id,
-			"position": _position_payload(),
-			"session_seconds": int(_session_seconds),
-		})
-		_update_labels()
-		return
-	model.craft(recipe_id)
-	_record_integrated_event_deferred("craft", {
-		"recipe_id": recipe_id,
-		"position": _position_payload(),
-		"session_seconds": int(_session_seconds),
-	})
-	_update_labels()
+	_interaction.craft_recipe(recipe_id)
 
 func _update_labels() -> void:
 	if _world == null:
 		return
 	if _world.has_method("get_player_position"):
-		_player_pos = _world.get_player_position()
+		_runtime.update_player_position(_world.get_player_position())
 	var nearest := _nearest_resource()
 	var nearest_id := str(nearest.get("item_id", ""))
 	var pocket_full := model.pocket_weight() >= model.capacity() - 0.001
-	_world.set_state(_resource_nodes, nearest_id, model.collection_progress(), pocket_full, _walk_phase)
-	if _weight_label != null:
-		_weight_label.text = "Bolso %.1f / %.1f" % [model.pocket_weight(), model.capacity()]
-	if _mode_label != null:
-		_mode_label.text = "Bosque" if integration_mode == "integrated_alpha" and _server_session_id() != "" else "Preview"
-	if _status_label != null:
-		if not model.active_collection.is_empty():
-			_status_label.text = "Coletando %s" % model.item_display_name(str(model.active_collection.get("item_id", "")))
-		elif nearest_id != "":
-			_status_label.text = "Pare para coletar %s" % model.item_display_name(nearest_id)
-		elif _near_chest():
-			_status_label.text = "Bau proximo"
-		else:
-			_status_label.text = "Explore o bosque"
-	if _feedback_label != null:
-		_feedback_label.text = model.last_message
-	if _deposit_button != null:
-		_deposit_button.disabled = not _near_chest() or _network_busy() or _has_pending_integrated_events()
-		_deposit_button.tooltip_text = "Sincronizacao em andamento." if _has_pending_integrated_events() else ("Depositar bolso no bau." if _near_chest() else "Aproxime-se do bau.")
-	if _complete_button != null:
-		_complete_button.text = "Completar" if integration_mode == "integrated_alpha" else "Preview"
-		_complete_button.disabled = _network_busy() or (integration_mode == "integrated_alpha" and not _can_complete_integrated())
-	if _sheet != null:
-		_sheet.render(
-			integration_mode,
-			_server_session_id(),
-			_network_busy() or _has_pending_integrated_events(),
-			_pending_summary_text(),
-			_result_text(),
-			model.result_payload(_session_seconds)
-		)
-		_sheet.set_deposit_available(_near_chest() and not _has_pending_integrated_events())
+	_world.set_state(_runtime.resource_nodes, nearest_id, model.collection_progress(), pocket_full, _runtime.walk_phase)
+	_hud.update(_view_state(nearest_id))
+
+func _view_state(nearest_id: String) -> Dictionary:
+	var network_busy := _network_busy()
+	var pending := _has_pending_integrated_events()
+	var integrated := integration_mode == "integrated_alpha"
+	var completed := _session_blocks_mutation()
+	var can_complete := _can_complete_integrated()
+	var near_chest := _near_chest()
+	var deposit_available := near_chest and not network_busy and not pending and not completed
+	var deposit_tooltip := "Sessao concluida." if completed else ("Sincronizacao em andamento." if pending else ("Depositar bolso no bau." if near_chest else "Aproxime-se do bau."))
+	var complete_tooltip := _complete_tooltip(can_complete, pending, completed)
+	return {
+		"integration_mode": integration_mode,
+		"server_session_id": _server_session_id(),
+		"session_state": _session_state(),
+		"session_message": _session_message(),
+		"network_busy": network_busy,
+		"pending_summary": _pending_summary_text(),
+		"result_text": _result_text(),
+		"payload_preview": model.result_payload(_runtime.session_seconds),
+		"can_complete": can_complete,
+		"abandon_available": integrated and _server_session_id() != "" and not completed,
+		"abandon_confirm_pending": _abandon_confirm_pending,
+		"mode_label": _mode_label(),
+		"status_text": _status_text(nearest_id, completed),
+		"feedback_text": model.last_message,
+		"pocket_weight": model.pocket_weight(),
+		"capacity": model.capacity(),
+		"deposit_available": deposit_available,
+		"deposit_disabled": not deposit_available,
+		"deposit_tooltip": deposit_tooltip,
+		"complete_text": "Completar" if integrated else "Resultado preview",
+		"complete_disabled": network_busy or (integrated and not can_complete),
+		"complete_tooltip": complete_tooltip,
+	}
+
+func _mode_label() -> String:
+	var state := _session_state()
+	if integration_mode == "integrated_alpha" and state in ["starting", "synced", "pending", "resyncing", "completed"]:
+		return "Bosque"
+	return "Preview"
+
+func _status_text(nearest_id: String, completed: bool) -> String:
+	if completed:
+		return "Sessao concluida"
+	if _session_state() in ["pending", "resyncing"]:
+		return "Sincronizando Bosque"
+	if not model.active_collection.is_empty():
+		return "Coletando %s" % model.item_display_name(str(model.active_collection.get("item_id", "")))
+	if nearest_id != "":
+		return "Pare para coletar %s" % model.item_display_name(nearest_id)
+	if _near_chest():
+		return "Bau proximo"
+	return "Explore o bosque"
+
+func _session_message() -> String:
+	match _session_state():
+		"synced":
+			return "Voce pode voltar ao Refugio e retomar esta sessao por ate 2h."
+		"pending":
+			return "Aguarde a sincronizacao antes de completar."
+		"resyncing":
+			return "Resincronizando com o servidor."
+		"completed":
+			return "Resultado fechado para esta sessao."
+		"offline":
+			return "Preview jogavel; nenhuma recompensa sera aplicada."
+		"blocked":
+			return "Preview jogavel; sessao online indisponivel."
+		_:
+			return "Preview jogavel; nenhuma recompensa sera aplicada."
+
+func _complete_tooltip(can_complete: bool, pending: bool, completed: bool) -> String:
+	if completed:
+		return "Sessao ja concluida."
+	if pending:
+		return "Aguarde a sincronizacao do Bosque."
+	if integration_mode == "integrated_alpha" and not can_complete:
+		return "A sessao online ainda nao esta pronta."
+	return "Gerar resultado do Bosque."
 
 func _show_result() -> void:
 	if integration_mode == "integrated_alpha":
@@ -689,12 +369,12 @@ func _show_result() -> void:
 	_show_local_result()
 
 func _show_local_result() -> void:
-	var payload: Dictionary = model.result_payload(_session_seconds)
-	_last_result_text = "Resultado preview local: score=%s, items=%s" % [
+	var payload: Dictionary = model.result_payload(_runtime.session_seconds)
+	_last_result_text = "Resultado preview: score=%s, items=%s. Sem recompensa." % [
 		str(payload.get("activity_score", 0)),
 		JSON.stringify(payload.get("deposited_items", {})),
 	]
-	model.last_message = "Resultado local gerado."
+	model.last_message = "Resultado preview gerado sem recompensa."
 	_update_labels()
 
 func _resume_or_start_integrated_session() -> void:
@@ -705,31 +385,47 @@ func _resume_or_start_integrated_session() -> void:
 
 func _complete_integrated_session() -> void:
 	var bridge = _ensure_session_bridge()
-	if bridge.network_busy():
+	if bridge.network_busy() or bridge.is_completed():
 		return
 	if bridge.server_session_id() == "":
 		await _resume_or_start_integrated_session()
 	if bridge.server_session_id() == "":
 		_show_local_result()
 		return
-	await bridge.complete_session(model.result_payload(maxf(_session_seconds, 5.0)))
+	await bridge.complete_session(model.result_payload(maxf(_runtime.session_seconds, 5.0)))
+	_abandon_confirm_pending = false
 	_update_labels()
+
+func _handle_abandon_requested() -> void:
+	if integration_mode != "integrated_alpha" or _server_session_id() == "" or _session_blocks_mutation():
+		return
+	if not _abandon_confirm_pending:
+		_abandon_confirm_pending = true
+		model.last_message = "Toque Confirmar abandono para descartar a sessao online."
+		_update_labels()
+		return
+	var result: Dictionary = await _ensure_session_bridge().abandon_session("player_abandoned")
+	_abandon_confirm_pending = false
+	if bool(result.get("ok", false)):
+		model.reset()
+		_spawn_resources()
+		set_player_position_for_tests(RulesetScript.player_initial_position())
+	_update_labels()
+
+func _handle_back_requested() -> void:
+	if integration_mode == "integrated_alpha" and _server_session_id() != "" and not _session_blocks_mutation():
+		model.last_message = "Sessao preservada por ate 2h para retomada."
+		_ensure_session_bridge().record_exit_preserved()
+	close_requested.emit()
 
 func _apply_remote_snapshot(snapshot_payload: Dictionary) -> void:
 	model.apply_snapshot(snapshot_payload)
-	_session_seconds = float(snapshot_payload.get("session_seconds", _session_seconds))
+	_runtime.session_seconds = float(snapshot_payload.get("session_seconds", _runtime.session_seconds))
 	var position := _as_dictionary(snapshot_payload.get("player_position", snapshot_payload.get("position", {})))
 	if not position.is_empty():
-		set_player_position_for_tests(Vector2(float(position.get("x", _player_pos.x)), float(position.get("y", _player_pos.y))))
-	_apply_collected_nodes(_as_dictionary(snapshot_payload.get("collected_nodes", {})))
+		set_player_position_for_tests(Vector2(float(position.get("x", _runtime.player_position.x)), float(position.get("y", _runtime.player_position.y))))
+	_runtime.apply_collected_nodes(RulesetScript.collected_nodes_from_snapshot(snapshot_payload))
 	_update_labels()
-
-func _apply_collected_nodes(collected_nodes: Dictionary) -> void:
-	for index in range(_resource_nodes.size()):
-		var node := _resource_nodes[index]
-		var node_id := str(node.get("node_id", ""))
-		node["collected"] = bool(collected_nodes.get(node_id, false))
-		_resource_nodes[index] = node
 
 func _record_integrated_event_deferred(event_type: String, event_payload: Dictionary) -> void:
 	if integration_mode != "integrated_alpha":
@@ -744,6 +440,9 @@ func _can_complete_integrated() -> bool:
 func _uses_integrated_authority() -> bool:
 	return integration_mode == "integrated_alpha" and _ensure_session_bridge().uses_authority()
 
+func _session_blocks_mutation() -> bool:
+	return _session_bridge != null and _session_bridge.has_method("is_completed") and _session_bridge.is_completed()
+
 func _has_pending_integrated_events() -> bool:
 	return _session_bridge != null and _session_bridge.has_pending_events()
 
@@ -756,30 +455,15 @@ func _server_session_id() -> String:
 func _network_busy() -> bool:
 	return _session_bridge != null and _session_bridge.network_busy()
 
+func _session_state() -> String:
+	if integration_mode != "integrated_alpha":
+		return "preview"
+	return _ensure_session_bridge().session_state()
+
 func _result_text() -> String:
 	if integration_mode == "integrated_alpha":
 		return _ensure_session_bridge().last_result_text
 	return _last_result_text
 
-func _position_payload() -> Dictionary:
-	return {
-		"x": snappedf(_player_pos.x, 0.01),
-		"y": snappedf(_player_pos.y, 0.01),
-	}
-
 func _as_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}
-
-func _panel_style(bg: Color, border: Color) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = bg
-	style.border_color = border
-	style.border_width_left = 1
-	style.border_width_top = 1
-	style.border_width_right = 1
-	style.border_width_bottom = 1
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
-	return style

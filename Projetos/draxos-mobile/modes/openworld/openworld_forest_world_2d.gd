@@ -18,6 +18,7 @@ var _object_blocker_body: StaticBody2D
 var _boundary_body: StaticBody2D
 var _viewport_size := Vector2(390, 844)
 var _resource_fixtures: Array = []
+var _obstacle_fixtures: Array = []
 var _objects_by_id: Dictionary = {}
 var _resource_objects: Dictionary = {}
 var _movement_vector := Vector2.ZERO
@@ -33,10 +34,17 @@ func _ready() -> void:
 	set_physics_process(true)
 	queue_redraw()
 
-func configure(next_world_size: Vector2, next_chest_position: Vector2, next_resource_fixtures: Array, next_player_position: Vector2) -> void:
+func configure(
+	next_world_size: Vector2,
+	next_chest_position: Vector2,
+	next_resource_fixtures: Array,
+	next_player_position: Vector2,
+	next_obstacle_fixtures: Array = []
+) -> void:
 	world_size = next_world_size
 	chest_position = next_chest_position
 	_resource_fixtures = next_resource_fixtures.duplicate(true)
+	_obstacle_fixtures = next_obstacle_fixtures.duplicate(true)
 	player_initial_position = next_player_position
 	if is_inside_tree():
 		_build_world()
@@ -149,7 +157,7 @@ func _build_world() -> void:
 	_object_blocker_body.collision_mask = 1
 	add_child(_object_blocker_body)
 
-	var catalog: Array[Dictionary] = CatalogScript.build_catalog(chest_position, _resource_fixtures)
+	var catalog: Array[Dictionary] = CatalogScript.build_catalog(chest_position, _resource_fixtures, _obstacle_fixtures)
 	for object_data: Dictionary in catalog:
 		var object := ObjectScript.new()
 		object.configure(object_data)

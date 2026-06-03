@@ -43,10 +43,12 @@ class FakeSupabaseClient:
 	var state_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var start_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var complete_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
+	var abandon_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var event_results: Array[Dictionary] = []
 	var state_calls: Array[Dictionary] = []
 	var start_calls: Array[Dictionary] = []
 	var complete_calls: Array[Dictionary] = []
+	var abandon_calls: Array[Dictionary] = []
 	var event_calls: Array[Dictionary] = []
 
 	func get_mode_state(mode_id: String, token: String) -> Dictionary:
@@ -73,6 +75,17 @@ class FakeSupabaseClient:
 			"request_hash": request_hash,
 		})
 		return complete_result
+
+	func abandon_mode_session(request_id: String, session_id: String, mode_id: String, reason: String, token: String, request_hash: String) -> Dictionary:
+		abandon_calls.append({
+			"request_id": request_id,
+			"session_id": session_id,
+			"mode_id": mode_id,
+			"reason": reason,
+			"token": token,
+			"request_hash": request_hash,
+		})
+		return abandon_result
 
 	func record_mode_session_event(
 		request_id: String,
@@ -213,8 +226,34 @@ func test_complete_session_uses_request_hash_and_records_reward_summary() -> voi
 	assert_eq(str(client.complete_calls[0].get("request_hash", "")), "hash-1")
 	assert_eq(str(client.complete_calls[0].get("session_id", "")), "session-complete")
 	assert_eq(int(Dictionary(client.complete_calls[0].get("payload", {})).get("expected_revision", 0)), 4)
-	assert_string_contains(bridge.last_result_text, "\"cinzas\":5")
-	assert_eq(model.last_message, "Recompensa integrada aplicada.")
+	assert_string_contains(bridge.last_result_text, "Recompensa aplicada")
+	assert_string_contains(bridge.last_result_text, "cinzas +5")
+	assert_eq(model.last_message, bridge.last_result_text)
+	assert_eq(bridge.session_state(), "completed")
+	assert_false(bridge.can_complete())
+
+func test_abandon_session_uses_request_hash_and_clears_active_session() -> void:
+	var model = ModelScript.new()
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	var bridge = _bridge(model, client, store)
+	bridge.hydrate_session(_session_payload("session-abandon", 5, {"pocket": {"galho": 1}}))
+	client.abandon_result = {
+		"ok": true,
+		"body": {
+			"session": {"id": "session-abandon", "status": "abandoned"},
+		},
+	}
+
+	var result: Dictionary = await bridge.abandon_session("player_abandoned")
+
+	assert_true(bool(result.get("ok", false)))
+	assert_eq(str(store.prepared[0].get("endpoint", "")), "modes/session/abandon")
+	assert_eq(str(client.abandon_calls[0].get("request_hash", "")), "hash-1")
+	assert_eq(str(client.abandon_calls[0].get("session_id", "")), "session-abandon")
+	assert_eq(str(client.abandon_calls[0].get("reason", "")), "player_abandoned")
+	assert_eq(bridge.server_session_id(), "")
+	assert_eq(bridge.session_state(), "preview")
 
 func _bridge(model: Object, client: Node, store: Node):
 	add_child_autofree(client)
