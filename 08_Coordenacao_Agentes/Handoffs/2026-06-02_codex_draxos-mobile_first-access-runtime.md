@@ -8,7 +8,7 @@
 - branch: `codex/draxos-mobile/first-access-runtime`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--first-access-runtime`
 - base_commit: `ad6dce4`
-- status: `DELIVERED_LOCAL`
+- status: `PUBLISHED_INTERNAL_ALPHA`
 
 ## Objetivo
 
@@ -53,8 +53,20 @@ de `BOOT_ERROR` no Edge Runtime local.
 
 ## Remote Mutation
 
-Nao aprovada para esta frente. Nao executar publish, deploy, secrets, upload ou
-`-ConfirmRemoteMutation`.
+Executada apos aprovacao do usuario para finalizar a tarefa e publicar na URL
+principal.
+
+- release root: `internal-alpha/v0-first-access-runtime-20260602-4608977`;
+- official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`;
+- direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Cloudflare deployment evidence:
+  `https://36db2742.draxos-mobile-internal-alpha.pages.dev`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-access-runtime-20260602-4608977/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-access-runtime-20260602-4608977/downloads/draxos-mobile-alpha.zip`;
+- manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
 
 ## Entregue
 
@@ -106,9 +118,20 @@ Nao aprovada para esta frente. Nao executar publish, deploy, secrets, upload ou
   - 3249 asserts;
   - `smoke_runtime_config.gd`, `smoke_foundation_hardening.gd`,
     `smoke_responsive_layout.gd`, `smoke_exports.gd`: PASS.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
+- `publish_internal_alpha.ps1 -Mode Plan`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -ConfirmRemoteMutation`: PASS.
+- `build_cloudflare_pages_package.ps1`: PASS.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: PASS.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ConfirmRemoteMutation`: PASS.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly -AllowCloudflareAccess`: PASS.
+- `tools/smoke_web_launch_remote.ps1` no preview `36db2742`: PASS,
+  `game_loaded` em 4946 ms, release root correto, sem runtime errors.
 
 ## Pendencias
 
-- Nenhuma pendencia local desta frente.
-- Publicacao remota nao foi executada nesta branch.
+- Nenhuma pendencia tecnica desta frente.
 - O playtest humano remoto segue como validacao externa em paralelo.
+- Android segue em `debug_fallback`, como nos pacotes internos anteriores, ate
+  keystore release dedicada.

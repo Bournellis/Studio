@@ -4,23 +4,27 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Integrated Runtime Fix Publication`
+- Active stage: `First Access Runtime Publication`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Integrated Runtime Fix`, release root
-  `internal-alpha/v0-integrated-runtime-fix-20260602-ab5834c`,
+- Latest published remote package: `First Access Runtime Fix`, release root
+  `internal-alpha/v0-first-access-runtime-20260602-4608977`,
   official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`,
   direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`,
   latest deployment evidence
-  `https://888320f4.draxos-mobile-internal-alpha.pages.dev`. This package fixes
-  the integrated App/Arena/Bosque runtime: Bosque event revision serialization,
-  server-confirmed Bosque mutations, common mode event envelopes, Arena replay
-  metadata and live Bosque policy compatibility.
+  `https://36db2742.draxos-mobile-internal-alpha.pages.dev`. This package keeps
+  the integrated runtime fix baseline and adds first-access responsiveness:
+  surfaces render local shells before network refresh when no cache exists, Arena
+  first access shows a server-sync shell without dev fallback actions, and local
+  DatabaseLocal/Mode smoke coverage now matches the active Bosque v1 contract.
 - Latest implemented package: same as latest published remote package; the
-  dedicated runtime fix branch is integrated and publication completed.
+  dedicated first-access runtime branch is packaged and publication completed.
+- Previous runtime fix package: `Integrated Runtime Fix`, release root
+  `internal-alpha/v0-integrated-runtime-fix-20260602-ab5834c`,
+  deployment evidence `https://888320f4.draxos-mobile-internal-alpha.pages.dev`.
 - Previous integrated App/Arena/Bosque package: release root
   `internal-alpha/v0-integrated-app-arena-bosque-20260602-99304ed`,
   deployment evidence `https://8f2829c0.draxos-mobile-internal-alpha.pages.dev`.
@@ -37,20 +41,80 @@
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Validation baseline marker: the latest published remote package is now the
-  integrated runtime fix package; `Foundation Hardening V2` remains the previous
+  first access runtime fix package; `Foundation Hardening V2` remains the previous
   hardening/live-doc guard marker.
 - Compatibility validation marker: Latest published remote package: `Foundation Hardening V2`
   remains as legacy guard text for Track 13/V2 docs validation; actual latest
-  published remote package is the integrated runtime fix release above.
-- Active follow-up: human playtest the integrated runtime fix package across
-  login, cache refresh, first Arena loop, Arena replay/reward states and online
-  Bosque start/event/deposit/complete behavior.
+  published remote package is the first access runtime fix release above.
+- Active follow-up: human playtest the first access runtime package across
+  login, no-cache/cache refresh, first Arena loop, Arena replay/reward states
+  and online Bosque start/event/deposit/complete behavior.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## First Access Runtime Publication - 2026-06-02
+
+This release publishes the first-access responsiveness and local validation
+repair follow-up as one Internal Alpha on the official URL.
+
+- branch: `codex/draxos-mobile/first-access-runtime`;
+- commit: `4608977`;
+- release root:
+  `internal-alpha/v0-first-access-runtime-20260602-4608977`;
+- Cloudflare production:
+  `https://draxos-mobile-internal-alpha.pages.dev`;
+- Cloudflare deployment evidence:
+  `https://36db2742.draxos-mobile-internal-alpha.pages.dev`;
+- Official Portal / manifest `portal_url`:
+  `https://draxos-mobile-internal-alpha.pages.dev/`;
+- Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-access-runtime-20260602-4608977/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-first-access-runtime-20260602-4608977/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`;
+- preview Web launch smoke screenshot:
+  `build/diagnostics/web-launch-remote-20260603-000139/web-launch-remote.png`.
+
+Runtime fixes delivered:
+
+- First access without cache renders a local surface shell immediately before
+  network refresh while preserving `rendered_from_cache = false`.
+- Arena first access without remote state shows a sync shell and suppresses dev
+  fallback attempt actions until the server response arrives.
+- Local Edge `BOOT_ERROR` was isolated to a stale Supabase container mount from
+  an old/deleted worktree; restarting/linking the stack from the current
+  worktree restored healthcheck.
+- Local Supabase DB validation was reset from migrations after the previous DB
+  history proved inconsistent, then `DatabaseLocal` passed.
+- Mode platform live smoke now validates the active Bosque v1 contract:
+  `openworld` status `active`, `release_channel = internal_alpha` and
+  `openworld_forest_ruleset_v1`.
+
+Validation and publication evidence:
+
+- `deno check server/tests/modes_platform_live_test.ts`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile DatabaseLocal`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`: passed
+  with 181/181 GUT tests and 3249 asserts.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passed; Android
+  export mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan`, `Package`, `Upload` and
+  `DeployManifest`: passed with `-ConfirmRemoteMutation` for mutating stages.
+- `build_cloudflare_pages_package.ps1`: passed and matched remote Web asset
+  sizes for the versioned Storage root.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name
+  draxos-mobile-internal-alpha --branch main`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly
+  -AllowCloudflareAccess`: passed.
+- `tools/smoke_web_launch_remote.ps1` on preview `36db2742`: `game_loaded` in
+  4946 ms, release root matched, no runtime errors.
 
 ## Integrated Runtime Fix Publication - 2026-06-02
 
