@@ -42,7 +42,7 @@ Todos exigem JWT e `x-draxos-api-version: 1`. Endpoints save-scoped exigem `x-dr
 | GET | `/modes/registry` | Lista modos e rulesets |
 | GET | `/modes/state?mode_id=<id>` | Estado save-scoped de um modo |
 | POST | `/modes/session/start` | Inicia sessao generica quando o modo usa Mode sessions |
-| POST | `/modes/session/event` | Registra evento/revision e atualiza snapshot remoto da sessao |
+| POST | `/modes/session/event` | Registra evento/revision e retorna ACK com patch autoritativo |
 | POST | `/modes/session/complete` | Completa sessao e aplica reward bridge |
 | POST | `/modes/session/abandon` | Abandona sessao started |
 | GET | `/modes/analytics/summary?mode_id=<id>` | Sumario operacional por modo |
@@ -63,6 +63,25 @@ Todos exigem JWT e `x-draxos-api-version: 1`. Endpoints save-scoped exigem `x-dr
 - `session_expiry_seconds = 7200`
 - `daily_start_limit = 100`
 - reward cap por ruleset
+
+## Session Response Authority
+
+Modos com generic sessions devem separar tres respostas:
+
+- `mode_state_snapshot`: usado por `/modes/state`, `/modes/session/start`,
+  resume e resync explicito. Pode conter snapshot completo e o client pode
+  aplicar estado visual como posicao.
+- `mode_event_ack`: usado por `/modes/session/event`. Confirma evento,
+  `revision_after`, `snapshot_patch`, `authoritative_fields`,
+  `resync_required` e `user_message`. ACK de evento nao e snapshot completo de
+  retomada e nao deve sobrescrever estado visual ativo como posicao do jogador
+  ou coleta em andamento.
+- `mode_completion_result`: usado por `/modes/session/complete`. Contem
+  recompensa, ledger/resources e snapshot final quando aplicavel.
+
+Regra de plataforma: durante gameplay ativo, ACK de evento confirma somente os
+campos declarados em `snapshot_patch`. Campos visuais locais continuam sob
+autoridade do client ate `resume`, `state` ou resync stale explicito.
 
 ## Mode Behavior
 

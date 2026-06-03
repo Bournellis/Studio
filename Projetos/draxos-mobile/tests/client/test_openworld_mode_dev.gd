@@ -5,6 +5,68 @@ const ScreenScript := preload("res://modes/openworld/openworld_forest_screen.gd"
 const RegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
 const RouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const PLAYER_RADIUS := 20.0
+const TEST_SESSION_ID := "00000000-0000-4000-8000-000000000101"
+
+class FakeOpenworldSupabaseClient:
+	extends Node
+
+	var delay_frames := 0
+	var event_responses: Array[Dictionary] = []
+	var captured_events: Array[Dictionary] = []
+
+	func enqueue_event_response(response: Dictionary) -> void:
+		event_responses.append(response)
+
+	func record_mode_session_event(
+		request_id: String,
+		session_id: String,
+		mode_id: String,
+		slice_id: String,
+		event_type: String,
+		expected_revision: int,
+		event_payload: Dictionary,
+		access_token: String,
+		request_hash: String = ""
+	) -> Dictionary:
+		captured_events.append({
+			"request_id": request_id,
+			"session_id": session_id,
+			"mode_id": mode_id,
+			"slice_id": slice_id,
+			"event_type": event_type,
+			"expected_revision": expected_revision,
+			"event_payload": event_payload.duplicate(true),
+			"request_hash": request_hash,
+		})
+		for _frame in delay_frames:
+			await get_tree().process_frame
+		if event_responses.is_empty():
+			return {"ok": false, "body": {"error": {"code": "NO_FAKE_RESPONSE"}}}
+		return event_responses.pop_front()
+
+class FakeOpenworldSessionStore:
+	extends Node
+
+	var active_save_type := "normal"
+	var request_count := 0
+	var failed_requests: Array[Dictionary] = []
+
+	func prepare_pending_mutation(endpoint: String, scope_id: String, route_id: String, payload: Dictionary) -> Dictionary:
+		request_count += 1
+		return {
+			"request_id": "00000000-0000-4000-8000-%012d" % request_count,
+			"request_hash": "fake:%s:%d" % [endpoint, request_count],
+			"endpoint": endpoint,
+			"scope_id": scope_id,
+			"route_id": route_id,
+			"payload": payload.duplicate(true),
+		}
+
+	func apply_mode_result(result: Dictionary) -> bool:
+		return bool(result.get("ok", false))
+
+	func fail_pending_mutation(request_id: String, body: Dictionary) -> void:
+		failed_requests.append({"request_id": request_id, "body": body.duplicate(true)})
 
 func test_openworld_registry_points_to_official_screen() -> void:
 	assert_true(RegistryScript.is_registered("openworld"))
@@ -221,6 +283,75 @@ func test_openworld_chest_blocks_body_but_deposit_area_is_larger() -> void:
 	assert_true(Dictionary(screen.get_model().pocket).is_empty())
 	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
 
+func test_integrated_event_ack_does_not_rollback_player_position() -> void:
+	var setup: Dictionary = await _make_integrated_screen()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var start_position := Vector2(220, 330)
+	var moved_position := Vector2(520, 760)
+	client.delay_frames = 3
+	client.enqueue_event_response(_event_ack("move_heartbeat", 1, {
+		"last_message": "Movimento salvo."
+	}, start_position))
+	screen.set_player_position_for_tests(start_position)
+	screen.call("_record_integrated_event_deferred", "move_heartbeat", {
+		"position": _position_dict(start_position),
+		"session_seconds": 1,
+	})
+	await get_tree().process_frame
+	screen.set_player_position_for_tests(moved_position)
+	await _wait_process_frames(6)
+	assert_eq(screen.get_player_position(), moved_position)
+	assert_eq(int(screen.get("_snapshot_revision")), 1)
+	assert_eq(client.captured_events.size(), 1)
+	assert_true(Dictionary(client.captured_events[0].get("event_payload", {})).has("client_position_revision"))
+
+func test_integrated_collect_start_ack_preserves_active_collection() -> void:
+	var setup: Dictionary = await _make_integrated_screen()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var world = screen.call("get_openworld_world_2d")
+	var resource_position: Vector2 = world.call("resource_position", "galho")
+	client.delay_frames = 3
+	client.enqueue_event_response(_event_ack("collect_start", 1, {
+		"last_message": "Coleta confirmada."
+	}, resource_position))
+	screen.set_player_position_for_tests(resource_position)
+	screen.call("_advance_nearby_collection", 0.05)
+	assert_false(Dictionary(screen.get_model().active_collection).is_empty())
+	await _wait_process_frames(6)
+	assert_false(Dictionary(screen.get_model().active_collection).is_empty())
+	assert_eq(int(screen.get("_snapshot_revision")), 1)
+
+func test_integrated_collect_complete_keeps_pending_until_ack() -> void:
+	var setup: Dictionary = await _make_integrated_screen()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var world = screen.call("get_openworld_world_2d")
+	var resource_position: Vector2 = world.call("resource_position", "galho")
+	var node_id := _resource_node_id(screen, "galho")
+	client.delay_frames = 2
+	client.enqueue_event_response(_event_ack("collect_start", 1, {
+		"last_message": "Coleta confirmada."
+	}, resource_position))
+	client.enqueue_event_response(_event_ack("collect_complete", 2, {
+		"pocket": {"galho": 1},
+		"collected_nodes": {node_id: true},
+		"last_message": "+1 Galho no bolso."
+	}, resource_position))
+	screen.set_player_position_for_tests(resource_position)
+	screen.call("_advance_nearby_collection", 0.05)
+	await _wait_process_frames(5)
+	var active_collection: Dictionary = screen.get_model().active_collection
+	active_collection["elapsed"] = float(active_collection.get("duration", 0.1))
+	screen.get_model().active_collection = active_collection
+	screen.call("_advance_nearby_collection", 0.05)
+	assert_true(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
+	assert_eq(int(Dictionary(screen.get_model().pocket).get("galho", 0)), 0)
+	await _wait_process_frames(6)
+	assert_eq(int(Dictionary(screen.get_model().pocket).get("galho", 0)), 1)
+	assert_false(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
+
 func test_openworld_free_joystick_activates_anywhere_drags_and_resets() -> void:
 	var screen = ScreenScript.new()
 	add_child_autofree(screen)
@@ -327,6 +458,86 @@ func _action_has_physical_key_event(action_name: String) -> bool:
 		if event is InputEventKey and (event as InputEventKey).physical_keycode != 0:
 			return true
 	return false
+
+func _make_integrated_screen() -> Dictionary:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var client := FakeOpenworldSupabaseClient.new()
+	var store := FakeOpenworldSessionStore.new()
+	add_child_autofree(client)
+	add_child_autofree(store)
+	screen.configure_integrated_alpha(client, store, "fake-token")
+	screen.call("_hydrate_integrated_session", _integrated_session(0, Vector2(220, 330), {}, {}, {}, {}))
+	await get_tree().process_frame
+	return {"screen": screen, "client": client, "store": store}
+
+func _integrated_session(
+	revision: int,
+	position: Vector2,
+	pocket: Dictionary,
+	chest: Dictionary,
+	upgrades: Dictionary,
+	collected_nodes: Dictionary
+) -> Dictionary:
+	return {
+		"id": TEST_SESSION_ID,
+		"mode_id": "openworld",
+		"slice_id": "forest",
+		"ruleset_id": "openworld_forest_ruleset_v1",
+		"ruleset_version": 1,
+		"status": "started",
+		"snapshot_revision": revision,
+		"snapshot_payload": {
+			"ruleset_id": "openworld_forest_ruleset_v1",
+			"ruleset_version": 1,
+			"player_position": _position_dict(position),
+			"session_seconds": 1,
+			"pocket": pocket.duplicate(true),
+			"chest": chest.duplicate(true),
+			"upgrades": upgrades.duplicate(true),
+			"collected_nodes": collected_nodes.duplicate(true),
+			"last_message": "Bosque sincronizado.",
+		},
+	}
+
+func _event_ack(event_type: String, revision: int, snapshot_patch: Dictionary, full_snapshot_position: Vector2) -> Dictionary:
+	var patch := snapshot_patch.duplicate(true)
+	var pocket := Dictionary(patch.get("pocket", {}))
+	var chest := Dictionary(patch.get("chest", {}))
+	var upgrades := Dictionary(patch.get("upgrades", {}))
+	var collected_nodes := Dictionary(patch.get("collected_nodes", {}))
+	return {
+		"ok": true,
+		"body": {
+			"ok": true,
+			"type": "mode_event_ack",
+			"session_id": TEST_SESSION_ID,
+			"mode_id": "openworld",
+			"slice_id": "forest",
+			"event_type": event_type,
+			"revision_after": revision,
+			"applied": true,
+			"resync_required": false,
+			"snapshot_patch": patch,
+			"authoritative_fields": patch.keys(),
+			"user_message": str(patch.get("last_message", "")),
+			"session": _integrated_session(revision, full_snapshot_position, pocket, chest, upgrades, collected_nodes),
+		},
+	}
+
+func _position_dict(position: Vector2) -> Dictionary:
+	return {"x": position.x, "y": position.y}
+
+func _resource_node_id(screen, item_id: String) -> String:
+	for node: Dictionary in Array(screen.get("_resource_nodes")):
+		if str(node.get("item_id", "")) == item_id:
+			return str(node.get("node_id", ""))
+	return ""
+
+func _wait_process_frames(frames: int) -> void:
+	for _frame in frames:
+		await get_tree().process_frame
 
 func _wait_physics_frames(frames: int) -> void:
 	for _frame in frames:

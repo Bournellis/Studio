@@ -10,6 +10,7 @@ import {
   MODE_ENDPOINT_SESSION_COMPLETE,
   MODE_ENDPOINT_SESSION_EVENT,
   MODE_ENDPOINT_SESSION_START,
+  modeEventAckPayload,
   modeRegistryPayload,
   modeStatePayload,
   OPENWORLD_MODE_ID,
@@ -278,7 +279,7 @@ async function handleSessionEvent(
     const mapped = mapModeDatabaseError(rpc.error, "MODE_SESSION_EVENT_FAILED");
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
-  return jsonResponse(stateEnvelope(foundationRpcPayload(rpc.value), {
+  return jsonResponse(stateEnvelope(modeEventAckPayload(rpc.value), {
     surface: "mode",
     saveType: auth.saveType,
   }));

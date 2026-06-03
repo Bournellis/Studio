@@ -1,6 +1,6 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-06-02`
+- Last updated: `2026-06-03`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
@@ -20,8 +20,11 @@
   surfaces render local shells before network refresh when no cache exists, Arena
   first access shows a server-sync shell without dev fallback actions, and local
   DatabaseLocal/Mode smoke coverage now matches the active Bosque v1 contract.
-- Latest implemented package: same as latest published remote package; the
-  dedicated first-access runtime branch is packaged and publication completed.
+- Latest implemented local package: `Openworld Sync Stability` on branch
+  `codex/draxos-mobile/openworld-sync-stability`; it fixes Bosque event ACK
+  rollback by applying authoritative event patches instead of hydrating full
+  snapshots during active gameplay. This package is local only and has not been
+  published.
 - Previous runtime fix package: `Integrated Runtime Fix`, release root
   `internal-alpha/v0-integrated-runtime-fix-20260602-ab5834c`,
   deployment evidence `https://888320f4.draxos-mobile-internal-alpha.pages.dev`.
@@ -46,15 +49,68 @@
 - Compatibility validation marker: Latest published remote package: `Foundation Hardening V2`
   remains as legacy guard text for Track 13/V2 docs validation; actual latest
   published remote package is the first access runtime fix release above.
-- Active follow-up: human playtest the first access runtime package across
-  login, no-cache/cache refresh, first Arena loop, Arena replay/reward states
-  and online Bosque start/event/deposit/complete behavior.
+- Active follow-up: human review/playtest of the local Openworld Sync Stability
+  branch, focused on online Bosque movement, collection, deposit, craft,
+  revision conflict/resync and completion behavior. Latest published remote
+  package remains the first access runtime fix until a separate publication is
+  explicitly approved.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## Openworld Sync Stability - 2026-06-03
+
+This local package addresses the frequent Bosque rollback/desync reported after
+the hardening v1 publication. It is implemented in a dedicated worktree and is
+not published.
+
+- branch: `codex/draxos-mobile/openworld-sync-stability`;
+- commit: `HEAD - Fix openworld event ack sync stability`;
+- worktree:
+  `D:\Estudio-worktrees\draxos-mobile--codex--openworld-sync-stability`;
+- remote publication: not executed;
+- remote mutation: not executed;
+- latest published remote package remains
+  `internal-alpha/v0-first-access-runtime-20260602-4608977`.
+
+Scope delivered:
+
+- `/modes/session/event` returns `mode_event_ack` with `revision_after`,
+  `snapshot_patch`, authoritative field metadata and visual authority metadata.
+- Generic mode contract now separates full state snapshots, event ACK patches
+  and completion results.
+- Bosque client no longer hydrates full snapshots from ordinary event ACKs
+  during active play, preventing old server position from pulling the player
+  backward.
+- Player position and active collection remain client-authoritative while the
+  session is active; server-authoritative patch fields still update pocket,
+  chest, upgrades, collected nodes, score, reward payload and derived weights.
+- Collection completion keeps local pending visual state until server ACK
+  confirms the collected node.
+- Stale revision conflict still triggers explicit resync, now with discreet
+  player-facing text.
+- Server/supabase function mirrors remain aligned.
+
+Validation:
+
+- `git diff --check`: passed.
+- `npx -y deno task --cwd server/functions check`: passed.
+- `npx -y deno task --cwd supabase/functions check`: passed.
+- `npx -y deno test --allow-read server/tests/modes_domain_test.ts server/tests/modes_platform_schema_test.ts`:
+  passed.
+- Godot `--headless --import`: passed.
+- GUT `test_openworld_mode_dev`: passed (`25/25`, `107` asserts).
+- `tools/smoke_openworld_forest.gd`: passed.
+- `tools/smoke_modes_visual_layout.gd`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`: passed
+  on rerun; the first run had an unrelated `tools/validate.gd` navigation flake,
+  while its GUT matrix passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ServerQuick`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ModePlatform`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun`: passed.
 
 ## First Access Runtime Publication - 2026-06-02
 

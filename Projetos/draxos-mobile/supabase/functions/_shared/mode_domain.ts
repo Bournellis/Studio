@@ -218,6 +218,39 @@ export function modeRegistryPayload(
   };
 }
 
+export function modeEventAckPayload(value: unknown): Record<string, unknown> {
+  const payload = objectValue(value);
+  const event = objectValue(payload.event);
+  const session = objectValue(payload.session);
+  const snapshot = objectValue(session.snapshot_payload);
+  const snapshotPatch = openworldEventSnapshotPatch(snapshot);
+  return {
+    ...payload,
+    ok: true,
+    type: "mode_event_ack",
+    schema_version: MODE_PLATFORM_SCHEMA_VERSION,
+    mode_id: stringValue(session.mode_id, OPENWORLD_MODE_ID),
+    slice_id: stringValue(session.slice_id, OPENWORLD_SLICE_ID),
+    session_id: stringValue(session.id, ""),
+    event_type: stringValue(event.event_type, ""),
+    request_id: stringValue(payload.request_id, ""),
+    request_hash: stringValue(payload.request_hash, ""),
+    expected_revision: Math.floor(numberValue(event.expected_revision, -1)),
+    revision_after: Math.floor(
+      numberValue(event.revision_after, numberValue(session.snapshot_revision, 0)),
+    ),
+    applied: true,
+    resync_required: false,
+    snapshot_patch: snapshotPatch,
+    authoritative_fields: Object.keys(snapshotPatch).sort(),
+    user_message: stringValue(event.message, stringValue(snapshot.last_message, "")),
+    visual_authority: {
+      player_position: "client_during_active_play",
+      active_collection: "client_until_resume_or_resync",
+    },
+  };
+}
+
 export function completionResultFromBody(
   body: Record<string, unknown>,
 ): OpenworldCompletionResult | null {
@@ -341,6 +374,29 @@ function sessionPayload(row: ModeSessionRow): Record<string, unknown> {
     snapshot_revision: nullableNumber(row.snapshot_revision) ?? 0,
     last_event_at: row.last_event_at ?? null,
   };
+}
+
+function openworldEventSnapshotPatch(snapshot: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  const allowedFields = [
+    "pocket",
+    "chest",
+    "upgrades",
+    "collected_nodes",
+    "reward_payload",
+    "session_seconds",
+    "activity_score",
+    "capacity",
+    "pocket_weight",
+    "current_speed",
+    "last_message",
+  ];
+  for (const field of allowedFields) {
+    if (field in snapshot) {
+      result[field] = snapshot[field];
+    }
+  }
+  return result;
 }
 
 function isActiveSession(row: ModeSessionRow): boolean {

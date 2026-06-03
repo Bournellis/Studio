@@ -149,6 +149,10 @@ publica, upload, manifest novo ou mutacao remota aplicada.
 - reward bridge: `mode_session_complete_v1`
 - authority: rewards derive only from `mode_sessions.snapshot_payload`, with
   `expected_revision` required on complete.
+- event ACK authority: `POST /modes/session/event` returns `type=mode_event_ack`
+  with `revision_after` and `snapshot_patch`; active-play visual state such as
+  player position and collection progress remains client-authoritative until
+  resume/state/stale resync.
 - offline/no auth: preview only, no reward ledger mutation.
 
 `openworld_forest_ruleset_v0` permanece historico do prototipo local e nao deve
