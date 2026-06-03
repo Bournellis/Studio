@@ -569,10 +569,7 @@ static func _arena_reward_summary_text(rewards: Dictionary) -> String:
 	var reward_text := _reward_text(rewards)
 	if reward_text == "":
 		return "Recompensa do duelo/clear: nenhuma recompensa aplicada neste duelo. O clear final da tentativa e o ponto em que o servidor aplica progresso e recursos."
-	return "Recompensa do duelo/clear: %s\nRecompensa aplicada: %s ja veio do servidor para o save; continuar apenas confirma o resumo." % [
-		reward_text,
-		reward_text,
-	]
+	return "Recompensa do duelo/clear: %s\nRecompensa aplicada: %s ja veio do servidor para o save; continuar apenas confirma o resumo." % [reward_text, reward_text]
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

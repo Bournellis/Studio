@@ -29,8 +29,9 @@ If a historical track conflicts with these docs, the live docs win. If local pro
 ## Current Stage
 
 Active stage: `FIRST_ACCESS_RUNTIME_PUBLISHED_INTERNAL_ALPHA`.
+Previous hardening baseline marker: `FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`.
 
-The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout, Lab Track 16 Alignment and Hardening Platform V1 are delivered. First Access Runtime Fix is the latest remote Internal Alpha publication from `codex/draxos-mobile/first-access-runtime`, release root `internal-alpha/v0-first-access-runtime-20260602-4608977`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, and preview evidence `https://36db2742.draxos-mobile-internal-alpha.pages.dev`. Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline for multi-agent and multi-mode expansion work.
+The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout, Lab Track 16 Alignment and Hardening Platform V1 are delivered. First Access Runtime Fix is the latest remote Internal Alpha publication from `codex/draxos-mobile/first-access-runtime`, release root `internal-alpha/v0-first-access-runtime-20260602-4608977`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, and preview evidence `https://36db2742.draxos-mobile-internal-alpha.pages.dev`. Foundation Hardening V2 is the latest remote Internal Alpha publication for the previous hardening/live-doc enforcement baseline, release root `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, preview evidence `https://ca946749.draxos-mobile-internal-alpha.pages.dev`, and remains the baseline for multi-agent and multi-mode expansion work.
 
 Historical app-shell loop baseline from Foundation Loop UX Pass 01, preserved for context but not the current product reading:
 
