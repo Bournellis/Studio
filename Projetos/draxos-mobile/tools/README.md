@@ -91,17 +91,17 @@ Release plan seguro Internal Alpha v0:
 ```powershell
 cd D:\Estudio\Projetos\draxos-mobile
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>"
 ```
 
-`Mode Plan` e default e nunca publica. `Mode Package` so prepara arquivos locais em `build/internal-alpha/`.
+`Mode Plan` e default e nunca publica. `Mode Package` so prepara arquivos locais em `build/internal-alpha/`, mas exige release root fresco e versionado quando empacota artefatos reais.
 
 Publicacao remota exige tarefa aprovada e confirmacao explicita:
 
 ```powershell
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ConfirmRemoteMutation
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ConfirmRemoteMutation
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
 ```
 
 O script usa `SUPABASE_PROJECT_REF`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` de `.env.internal-alpha.local` para modos remotos. Supabase Storage/Edge Functions nao servem HTML como pagina.

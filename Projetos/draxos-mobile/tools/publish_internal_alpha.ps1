@@ -3,7 +3,7 @@ param(
     [string]$EnvFile = "",
     [string]$BucketName = "draxos-internal-alpha",
     [string]$PrivateDownloadBucketName = "draxos-internal-alpha-private",
-    [string]$ReleaseRoot = "internal-alpha/v0",
+    [string]$ReleaseRoot = "",
     [string]$StaticSiteBaseUrl = "https://draxos-mobile-internal-alpha.pages.dev",
     [ValidateSet("Plan", "Package", "Upload", "DeployManifest", "FullPublish")]
     [string]$Mode = "Plan",
@@ -30,6 +30,9 @@ if (-not $ModeProvided -and $LegacyFlagUsed) {
 
 if ($IsRemoteMutation -and -not $ConfirmRemoteMutation) {
     throw "Mode $Mode mutates remote release state. Re-run with -ConfirmRemoteMutation after reviewing the generated release plan."
+}
+if ($ShouldDeployManifest -and $SkipManifestSecret.IsPresent) {
+    throw "-SkipManifestSecret is disabled for DeployManifest/FullPublish. Normal release deploys must update the manifest override secret."
 }
 
 function Read-DotEnv {
@@ -83,6 +86,18 @@ function Assert-Client-Key {
         $normalized.Contains("secret")) {
         throw "Publication refuses admin or secret-like Supabase keys for client/manifest validation."
     }
+}
+
+function Assert-VersionedReleaseRoot {
+    param([string]$Root, [string]$ModeLabel)
+    $normalized = $Root.Trim().Trim("/")
+    if ($normalized.Length -eq 0) {
+        throw "ReleaseRoot is required for Mode $ModeLabel. Use a fresh versioned root like internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>."
+    }
+    if ($normalized -notmatch '^internal-alpha/v[0-9]+-[a-z0-9][a-z0-9._-]*-[0-9]{8}-[0-9a-f]{7,}$') {
+        throw "ReleaseRoot must be a versioned Internal Alpha root: internal-alpha/v0-name-YYYYMMDD-<shortsha>. Got: $Root"
+    }
+    return $normalized
 }
 
 function Assert-NoSecretLikeText {
@@ -350,6 +365,15 @@ function Assert-HeadOk {
 $ProjectDir = (Resolve-Path -LiteralPath $ProjectDir).Path
 if ($EnvFile -eq "") {
     $EnvFile = Join-Path $ProjectDir ".env.internal-alpha.local"
+}
+
+if ($ShouldPackage -or $IsRemoteMutation) {
+    $ReleaseRoot = Assert-VersionedReleaseRoot -Root $ReleaseRoot -ModeLabel $Mode
+} else {
+    $ReleaseRoot = $ReleaseRoot.Trim().Trim("/")
+    if ($ReleaseRoot.Length -eq 0) {
+        $ReleaseRoot = "internal-alpha/<release-root>"
+    }
 }
 
 $envValues = Read-DotEnv -Path $EnvFile

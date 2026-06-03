@@ -221,6 +221,8 @@ Test-PowerShellParses @(
 Test-FileContains 'tools\publish_internal_alpha.ps1' '[ValidateSet("Plan", "Package", "Upload", "DeployManifest", "FullPublish")]'
 Test-FileContains 'tools\publish_internal_alpha.ps1' '[string]$Mode = "Plan"'
 Test-FileContains 'tools\publish_internal_alpha.ps1' 'ConfirmRemoteMutation'
+Test-FileContains 'tools\publish_internal_alpha.ps1' 'Assert-VersionedReleaseRoot'
+Test-FileContains 'tools\publish_internal_alpha.ps1' '-SkipManifestSecret is disabled for DeployManifest/FullPublish'
 Test-FileContains 'tools\publish_internal_alpha.ps1' 'Legacy publish flags were supplied without -Mode'
 Test-FileContains 'tools\publish_internal_alpha.ps1' 'No local package, upload, secret update, deploy or remote verification was executed'
 Test-FileContains 'tools\export_internal_alpha.ps1' 'android_release_keystore_configured'
@@ -249,6 +251,18 @@ if ($blockedOutput.Contains('ConfirmRemoteMutation')) {
   Add-Ok 'remote mutation mode is blocked without ConfirmRemoteMutation'
 } else {
   Add-Failure 'remote mutation block message did not mention ConfirmRemoteMutation'
+}
+
+$missingRootOutput = Invoke-CapturedProcess `
+  -Command 'publish_internal_alpha.ps1 Package without ReleaseRoot' `
+  -ExpectedExitCode 1 `
+  -ScriptBlock {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File '.\tools\publish_internal_alpha.ps1' -ProjectDir '.' -Mode Package
+  }
+if ($missingRootOutput.Contains('ReleaseRoot is required')) {
+  Add-Ok 'package mode requires an explicit versioned ReleaseRoot'
+} else {
+  Add-Failure 'package mode without ReleaseRoot did not fail with the expected guard'
 }
 
 Test-FilesEqual 'server\functions\release\index.ts' 'supabase\functions\release\index.ts' 'release function defaults'

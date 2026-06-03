@@ -31,6 +31,7 @@ npx -y deno test --allow-read server/tests/economy_domain_test.ts
 npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
 npx -y deno test --allow-read server/tests/integer_bones_contract_test.ts
 npx -y deno test --allow-read server/tests/mode_definitions_schema_test.ts
+npx -y deno test --allow-read server/tests/release_auth_contract_test.ts
 ```
 
 O teste `foundation_contracts_test.ts` le `docs/contracts/api-endpoints.md` e o
@@ -195,7 +196,14 @@ artefatos Android/PC/Web.
 
 O smoke `release_download_smoke.ts` valida `GET /release/download` com conta
 email/senha alpha: cria URLs assinadas temporarias de Android/PC e confirma que
-elas usam rota valida de Supabase Storage.
+elas usam rota valida de Supabase Storage. Ele tambem forja o `sub` de um JWT
+valido e confirma que o backend rejeita o token antes de criar URL assinada.
+
+O teste `release_auth_contract_test.ts` bloqueia regressao estatica no
+`/release/download`: o bearer token precisa ser validado em `/auth/v1/user`
+com publishable/anon key, o `sub` decodificado precisa bater com o usuario
+autenticado, contas anonimas/sem email sao rejeitadas e o fallback de manifest
+nao pode apontar para roots antigos de Openworld.
 
 O smoke `grimoire_catalog_smoke.ts` valida `GET /content/grimoire`: auth
 obrigatoria, bloqueio de JWT anonimo, bloqueio de conta email sem save alpha e

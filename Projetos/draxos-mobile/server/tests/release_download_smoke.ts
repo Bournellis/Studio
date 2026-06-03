@@ -35,6 +35,7 @@ await postJson(
 
 await assertProtectedDownload("android", "draxos-mobile-alpha.apk", accessToken);
 await assertProtectedDownload("pc_windows", "draxos-mobile-alpha.zip", accessToken);
+await assertForgedJwtRejected(accessToken);
 
 console.log("[release-download-smoke] OK", {
   url: baseUrl,
@@ -67,6 +68,48 @@ async function assertProtectedDownload(
       `${artifact} signed URL HEAD failed with ${response.status}`,
     );
   }
+}
+
+async function assertForgedJwtRejected(accessToken: string): Promise<void> {
+  const forgedToken = withForgedSubject(accessToken, crypto.randomUUID());
+  const response = await fetch(
+    `${baseUrl}/functions/v1/release/download?artifact=android`,
+    { method: "GET", headers: authHeaders(forgedToken) },
+  );
+  const text = await response.text();
+  const payload = parseJson(text);
+  assert(isObject(payload), `forged token response should be JSON: ${text}`);
+  assert(
+    response.status === 401 || response.status === 403,
+    `forged JWT should be rejected before signed URL creation, got ${response.status}: ${text}`,
+  );
+  assertEq(payload.ok, false, "forged JWT response should return ok=false");
+}
+
+function withForgedSubject(accessToken: string, subject: string): string {
+  const parts = accessToken.split(".");
+  assert(parts.length >= 3, "access token should be a JWT");
+  const payload = parseJson(base64UrlDecode(parts[1]));
+  assert(isObject(payload), "access token payload should be a JSON object");
+  payload.sub = subject;
+  return `${parts[0]}.${base64UrlEncode(JSON.stringify(payload))}.${parts[2]}`;
+}
+
+function base64UrlDecode(value: string): string {
+  const normalized = value.replaceAll("-", "+").replaceAll("_", "/");
+  const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
+  return new TextDecoder().decode(
+    Uint8Array.from(atob(padded), (character) => character.charCodeAt(0)),
+  );
+}
+
+function base64UrlEncode(value: string): string {
+  const bytes = new TextEncoder().encode(value);
+  let binary = "";
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
 }
 
 function baseHeaders(): Record<string, string> {

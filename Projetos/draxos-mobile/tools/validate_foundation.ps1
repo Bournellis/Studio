@@ -978,7 +978,7 @@ Invoke-Step -Name "V2 mode handler/security strictness" -Stage "ServerQuick" -Co
 
 Invoke-Step -Name "Deno release typecheck light" -Stage "ServerQuick" -Command "npx -y deno check release function/tests" -ScriptBlock {
     Invoke-External -Command "npx -y deno check release function/tests" -WorkingDirectory $ProjectPath -ScriptBlock {
-        & npx -y deno check server/functions/release/index.ts supabase/functions/release/index.ts server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/internal_alpha_remote_smoke.ts
+        & npx -y deno check server/functions/release/index.ts supabase/functions/release/index.ts server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/release_auth_contract_test.ts server/tests/internal_alpha_remote_smoke.ts
     }
 }
 
@@ -1018,7 +1018,8 @@ Invoke-Step -Name "Deno foundation contract tests" -Stage "ServerQuick" -Command
             server/tests/modes_disable_rollback_test.ts `
             server/tests/modes_admin_ops_test.ts `
             server/tests/modes_analytics_test.ts `
-            server/tests/openworld_reward_bridge_test.ts
+            server/tests/openworld_reward_bridge_test.ts `
+            server/tests/release_auth_contract_test.ts
     }
 }
 
@@ -1183,7 +1184,7 @@ if ($RunClient) {
 if ($RunRelease) {
     Invoke-Step -Name "release manifest typecheck" -Stage "ReleaseDryRun" -Command "npx -y deno check release smoke tests" -ScriptBlock {
         Invoke-External -Command "npx -y deno check release smoke tests" -WorkingDirectory $ProjectPath -ScriptBlock {
-            & npx -y deno check server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/internal_alpha_remote_smoke.ts tools/ops_readonly.ts server/tests/ops_readonly_cli_test.ts
+            & npx -y deno check server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/release_auth_contract_test.ts server/tests/internal_alpha_remote_smoke.ts tools/ops_readonly.ts server/tests/ops_readonly_cli_test.ts
         }
     }
     Invoke-Step -Name "release plan dry-run" -Stage "ReleaseDryRun" -Command ".\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan" -ScriptBlock {
@@ -1259,6 +1260,13 @@ if ($RunRemoteReadOnly) {
         if (-not $remoteKey) {
             throw "-IncludeRemoteReadOnly requires SUPABASE_PUBLISHABLE_KEY or DRAXOS_MOBILE_SUPABASE_PUBLISHABLE_KEY."
         }
+        $effectiveExpectedReleaseRoot = $ExpectedReleaseRoot.Trim()
+        if ($effectiveExpectedReleaseRoot.Length -eq 0 -and $env:DRAXOS_EXPECTED_RELEASE_ROOT) {
+            $effectiveExpectedReleaseRoot = $env:DRAXOS_EXPECTED_RELEASE_ROOT.Trim()
+        }
+        if ($effectiveExpectedReleaseRoot.Length -eq 0) {
+            throw "-Profile RemoteReadOnly requires -ExpectedReleaseRoot or DRAXOS_EXPECTED_RELEASE_ROOT so artifact/Web release-root validation cannot be skipped."
+        }
         Assert-ClientSafeValue -Value $remoteKey -Label "remote publishable key"
 
         $oldUrl = $env:SUPABASE_URL
@@ -1272,9 +1280,7 @@ if ($RunRemoteReadOnly) {
         try {
             $env:SUPABASE_URL = $remoteUrl.Trim()
             $env:SUPABASE_PUBLISHABLE_KEY = $remoteKey.Trim()
-            if ($ExpectedReleaseRoot.Trim().Length -gt 0) {
-                $env:DRAXOS_EXPECTED_RELEASE_ROOT = $ExpectedReleaseRoot.Trim()
-            }
+            $env:DRAXOS_EXPECTED_RELEASE_ROOT = $effectiveExpectedReleaseRoot
             if ($ExpectedPortalUrl.Trim().Length -gt 0) {
                 $env:DRAXOS_EXPECTED_PORTAL_URL = $ExpectedPortalUrl.Trim()
             }
@@ -1323,9 +1329,14 @@ if ($RunRemoteReadOnly) {
                 "-WebUrl",
                 $webUrl
             )
-            if ($ExpectedReleaseRoot.Trim().Length -gt 0) {
-                $smokeArgs += @("-ExpectedReleaseRoot", $ExpectedReleaseRoot.Trim())
+            $effectiveExpectedReleaseRoot = $ExpectedReleaseRoot.Trim()
+            if ($effectiveExpectedReleaseRoot.Length -eq 0 -and $env:DRAXOS_EXPECTED_RELEASE_ROOT) {
+                $effectiveExpectedReleaseRoot = $env:DRAXOS_EXPECTED_RELEASE_ROOT.Trim()
             }
+            if ($effectiveExpectedReleaseRoot.Length -eq 0) {
+                throw "-RemoteWebUrl validation requires -ExpectedReleaseRoot or DRAXOS_EXPECTED_RELEASE_ROOT."
+            }
+            $smokeArgs += @("-ExpectedReleaseRoot", $effectiveExpectedReleaseRoot)
             if ($RemoteDiagnosticsDir.Trim().Length -gt 0) {
                 $smokeArgs += @("-DiagnosticsDir", $RemoteDiagnosticsDir.Trim())
             }

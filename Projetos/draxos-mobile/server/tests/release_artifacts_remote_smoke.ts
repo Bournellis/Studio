@@ -6,8 +6,7 @@ const MIN_DOWNLOAD_BYTES = Number(
 const ALLOW_CLOUDFLARE_ACCESS =
   Deno.env.get("DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS") === "1";
 const FULL_HASH_DOWNLOAD = Deno.env.get("DRAXOS_RELEASE_FULL_HASH") === "1";
-const EXPECTED_RELEASE_ROOT =
-  (Deno.env.get("DRAXOS_EXPECTED_RELEASE_ROOT") ?? "").trim();
+const EXPECTED_RELEASE_ROOT = requiredEnv("DRAXOS_EXPECTED_RELEASE_ROOT");
 const EXPECTED_PORTAL_URL =
   (Deno.env.get("DRAXOS_EXPECTED_PORTAL_URL") ??
     "https://draxos-mobile-internal-alpha.pages.dev/").trim();
@@ -60,10 +59,8 @@ const webUrl = httpsField(web, "url");
 
 assertStableManifestUrl(portalUrl, EXPECTED_PORTAL_URL, "manifest portal_url");
 assertStableManifestUrl(webUrl, EXPECTED_WEB_URL, "manifest Web artifact URL");
-if (EXPECTED_RELEASE_ROOT !== "") {
-  assertUrlContainsReleaseRoot(androidUrl, "Android APK");
-  assertUrlContainsReleaseRoot(pcUrl, "PC ZIP");
-}
+assertUrlContainsReleaseRoot(androidUrl, "Android APK");
+assertUrlContainsReleaseRoot(pcUrl, "PC ZIP");
 
 const androidSha256 = stringField(android, "sha256").toLowerCase();
 const pcSha256 = stringField(pcWindows, "sha256").toLowerCase();
@@ -87,7 +84,7 @@ await assertDownloadReachable(pcUrl, "PC ZIP", MIN_DOWNLOAD_BYTES, pcSha256);
 await assertPageContains(portalUrl, "Portal", "DraxosMobile");
 await assertPortalWebLink(portalUrl, webUrl);
 const webHtml = await assertPageContains(webUrl, "Web build", "GODOT_CONFIG");
-if (EXPECTED_RELEASE_ROOT !== "" && webHtml !== null) {
+if (webHtml !== null) {
   assert(
     webHtml.includes(EXPECTED_RELEASE_ROOT),
     `Web build should embed expected release root ${EXPECTED_RELEASE_ROOT}`,
