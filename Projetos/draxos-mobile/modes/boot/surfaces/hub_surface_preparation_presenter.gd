@@ -38,8 +38,6 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 	if feedback_message != "":
 		box.add_child(_body_label("Ultima escolha: %s" % feedback_message, compact))
 	var level_text := _preparation_account_power_text(combat_build)
-	if level_text != "":
-		box.add_child(_body_label(level_text, compact))
 
 	var instrument_id := _first_non_empty_string(combat_build, ["weapon_type", "weapon_id", "instrument_id", "ritual_instrument_id"])
 	if instrument_id == "":
@@ -55,7 +53,26 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 	var potion_id := str(potion_slot.get("potion_id", ""))
 	var potion_behavior := _as_dictionary(potion_slot.get("behavior", {}))
 
-	box.add_child(_body_label("Loadout atual:\nInstrumento: %s\nHabilidades: %s\nDoutrina: %s\nFamiliar: %s\nPocao: %s" % [
+	box.add_child(_body_label("Loadout atual: %s, %s, %s, %s" % [
+		_preparation_item_label(instrument_id),
+		_preparation_spell_summary(spell_slots),
+		_preparation_item_label(doctrine_id) if doctrine_id != "" else "Sem Doutrina",
+		_preparation_item_label(familiar_id) if familiar_id != "" else "Sem Familiar",
+	], compact))
+	box.add_child(_body_label("%s\n%s" % [
+		level_text if level_text != "" else "Nivel e poder ainda sincronizando",
+		"Pocao e comportamento: %s | %s" % [
+			_potion_status_text(potion_id),
+			_potion_timing_text(potion_id, potion_behavior) if _potion_timing_text(potion_id, potion_behavior) != "" else "sem uso automatico",
+		],
+	], compact))
+	var cta_grid := _button_grid(compact, 1)
+	box.add_child(cta_grid)
+	cta_grid.add_child(_entry_action_button(host, "Abrir Arena PVE", AppShellActionContractScript.ACTION_OPEN_ARENA, compact, "", true))
+
+	box.add_child(_section_label("Editar loadout e comportamento", compact))
+	box.add_child(_body_label("Ajuste instrumento, habilidades, Doutrina, Familiar, Pocao e preferencias simples.", compact))
+	box.add_child(_body_label("Resumo:\nInstrumento: %s\nHabilidades: %s\nDoutrina: %s\nFamiliar: %s\nPocao: %s" % [
 		_preparation_item_label(instrument_id),
 		_preparation_spell_summary(spell_slots),
 		_preparation_item_label(doctrine_id) if doctrine_id != "" else "Sem Doutrina",
@@ -67,11 +84,6 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 		box.add_child(_section_label("Proximos marcos", compact))
 		for line: String in progression_lines:
 			box.add_child(_body_label(line, compact))
-	var cta_grid := _button_grid(compact, 1)
-	box.add_child(cta_grid)
-	cta_grid.add_child(_entry_action_button(host, "Abrir Arena PVE", AppShellActionContractScript.ACTION_OPEN_ARENA, compact, "", true))
-
-	box.add_child(_section_label("Ajustes completos", compact))
 	box.add_child(_section_label("Instrumento Ritual", compact))
 	if instrument_id != "":
 		box.add_child(_body_label("Em uso: %s%s" % [
