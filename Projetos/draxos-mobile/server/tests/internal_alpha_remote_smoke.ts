@@ -3,8 +3,7 @@ const PUBLISHABLE_KEY = requiredEnv("SUPABASE_PUBLISHABLE_KEY");
 const RUN_ANON_AUTH = Deno.env.get("DRAXOS_REMOTE_ANON_AUTH_SMOKE") === "1";
 const RUN_ACCOUNT_STATE = Deno.env.get("DRAXOS_REMOTE_ACCOUNT_SMOKE") === "1";
 const RUN_EMAIL_AUTH = Deno.env.get("DRAXOS_REMOTE_EMAIL_AUTH_SMOKE") === "1";
-const RUN_RELEASE_MANIFEST =
-  Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
+const RUN_RELEASE_MANIFEST = Deno.env.get("DRAXOS_REMOTE_RELEASE_SMOKE") === "1";
 const RUN_MODE = Deno.env.get("DRAXOS_REMOTE_MODE_SMOKE") === "1";
 const RUN_ARENA = Deno.env.get("DRAXOS_REMOTE_ARENA_SMOKE") === "1";
 const CORS_ORIGIN = Deno.env.get("DRAXOS_REMOTE_CORS_ORIGIN") ??
@@ -344,7 +343,10 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
     headers,
   );
   assertEq(
-    stringField(findObjectByField(arrayField(registry, "modes"), "mode_id", MODE_MODE_ID), "mode_id"),
+    stringField(
+      findObjectByField(arrayField(registry, "modes"), "mode_id", MODE_MODE_ID),
+      "mode_id",
+    ),
     MODE_MODE_ID,
     "remote mode registry should expose openworld",
   );
@@ -393,6 +395,32 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
     stringField(objectField(repeatedStart, "session"), "id"),
     "remote mode session/start should be idempotent",
   );
+
+  const heartbeatBody = {
+    request_id: crypto.randomUUID(),
+    session_id: sessionId,
+    mode_id: MODE_MODE_ID,
+    slice_id: MODE_SLICE_ID,
+    event_type: "move_heartbeat",
+    expected_revision: revision,
+    event_payload: { session_seconds: 7 },
+  };
+  const firstHeartbeat = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    heartbeatBody,
+    headers,
+  );
+  const repeatedHeartbeat = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    heartbeatBody,
+    headers,
+  );
+  assertEq(
+    stableResponseString(firstHeartbeat),
+    stableResponseString(repeatedHeartbeat),
+    "remote mode session/event should be idempotent",
+  );
+  revision = numberField(objectField(firstHeartbeat, "event"), "revision_after");
 
   for (
     const node of [
@@ -452,6 +480,34 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
   const resourceDelta = objectField(
     objectField(completed, "reward"),
     "resource_delta",
+  );
+  const reward = objectField(completed, "reward");
+  const limits = objectField(completed, "limits");
+  assert(
+    ["applied", "no_reward", "cap_zero"].includes(stringField(completed, "reward_status")),
+    "remote mode completion should expose a known reward_status",
+  );
+  assert(
+    typeof completed.cap_zero === "boolean",
+    "remote mode completion should expose cap_zero boolean",
+  );
+  assert(
+    stringField(completed, "period_key") !== "",
+    "remote mode completion should expose period_key",
+  );
+  assert(
+    stringField(completed, "message") !== "",
+    "remote mode completion should expose a player-facing message",
+  );
+  assertEq(
+    stringField(reward, "reward_status"),
+    stringField(completed, "reward_status"),
+    "remote mode reward payload should mirror reward_status",
+  );
+  assertEq(
+    stringField(limits, "period_key"),
+    stringField(completed, "period_key"),
+    "remote mode limits should include the same period_key",
   );
   assertEq(
     numberField(resourceDelta, "energia") >= 1,
@@ -718,9 +774,7 @@ function assert(condition: boolean, message: string): asserts condition {
 function assertEq(actual: unknown, expected: unknown, message: string): void {
   if (actual !== expected) {
     throw new Error(
-      `${message}. Expected ${JSON.stringify(expected)}, got ${
-        JSON.stringify(actual)
-      }`,
+      `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
     );
   }
 }
