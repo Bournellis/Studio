@@ -114,7 +114,10 @@ export async function loadModeState(
     player.value.id,
   );
   if (gameSave.error !== null) return { value: null, error: gameSave.error };
-  const registry = await loadRegistry(config, modeId);
+  const [registry, rulesets] = await Promise.all([
+    loadRegistry(config, modeId),
+    loadRulesets(config, modeId),
+  ]);
   if (registry.error !== null) return { value: null, error: registry.error };
   if (registry.value.length <= 0) {
     return {
@@ -126,15 +129,17 @@ export async function loadModeState(
       },
     };
   }
-  const rulesets = await loadRulesets(config, modeId);
   if (rulesets.error !== null) return { value: null, error: rulesets.error };
-  const progress = await loadProgress(config, gameSave.value.id, modeId);
+
+  const [progress, sessions, claims, resources] = await Promise.all([
+    loadProgress(config, gameSave.value.id, modeId),
+    loadSessions(config, gameSave.value.id, modeId),
+    loadClaims(config, gameSave.value.id, modeId),
+    loadResources(config, player.value.id),
+  ]);
   if (progress.error !== null) return { value: null, error: progress.error };
-  const sessions = await loadSessions(config, gameSave.value.id, modeId);
   if (sessions.error !== null) return { value: null, error: sessions.error };
-  const claims = await loadClaims(config, gameSave.value.id, modeId);
   if (claims.error !== null) return { value: null, error: claims.error };
-  const resources = await loadResources(config, player.value.id);
   if (resources.error !== null) return { value: null, error: resources.error };
   return {
     value: {

@@ -349,32 +349,39 @@ async function loadBaseState(
     };
   }
 
-  const gameSave = await loadGameSave(config, auth, player.id);
-  if (gameSave.error !== null) {
-    return { value: null, error: gameSave.error };
-  }
-
-  await ensureBaseRows(config, player.id);
-  const constructionSlots = await loadConstructionSlots(config, player.id);
-  if (constructionSlots.error !== null) {
-    return { value: null, error: constructionSlots.error };
-  }
   const playerId = encodeURIComponent(player.id);
-  const resourcesResult = await restRequest<ResourceRow[]>(
+  const gameSavePromise = loadGameSave(config, auth, player.id);
+  const constructionSlotsPromise = loadConstructionSlots(config, player.id);
+  const resourcesPromise = restRequest<ResourceRow[]>(
     config,
     `resources?player_id=eq.${playerId}&select=player_id,almas,energia,sangue,cristais,ossos,po_osso,diamante,updated_at&limit=1`,
     { method: "GET" },
   );
-  const structuresResult = await restRequest<BaseStructureRow[]>(
-    config,
-    `base_structures?player_id=eq.${playerId}&select=player_id,structure_id,level,last_collected_at,updated_at&order=structure_id.asc`,
-    { method: "GET" },
-  );
-  const jobsResult = await restRequest<ConstructionJobRow[]>(
+  const jobsPromise = restRequest<ConstructionJobRow[]>(
     config,
     `construction_jobs?player_id=eq.${playerId}&select=*&order=created_at.desc`,
     { method: "GET" },
   );
+
+  await ensureBaseRows(config, player.id);
+  const [gameSave, constructionSlots, resourcesResult, structuresResult, jobsResult] =
+    await Promise.all([
+      gameSavePromise,
+      constructionSlotsPromise,
+      resourcesPromise,
+      restRequest<BaseStructureRow[]>(
+        config,
+        `base_structures?player_id=eq.${playerId}&select=player_id,structure_id,level,last_collected_at,updated_at&order=structure_id.asc`,
+        { method: "GET" },
+      ),
+      jobsPromise,
+    ]);
+  if (gameSave.error !== null) {
+    return { value: null, error: gameSave.error };
+  }
+  if (constructionSlots.error !== null) {
+    return { value: null, error: constructionSlots.error };
+  }
   if (
     resourcesResult.error !== null || structuresResult.error !== null ||
     jobsResult.error !== null
@@ -486,16 +493,16 @@ async function ensureBaseRows(
   config: EdgeConfig,
   playerId: string,
 ): Promise<void> {
-  for (const definition of BASE_STRUCTURES) {
-    await restRequest<unknown>(config, "base_structures", {
+  await Promise.all(BASE_STRUCTURES.map((definition) =>
+    restRequest<unknown>(config, "base_structures", {
       method: "POST",
       headers: { prefer: "resolution=ignore-duplicates,return=minimal" },
       body: JSON.stringify({
         player_id: playerId,
         structure_id: definition.id,
       }),
-    });
-  }
+    })
+  ));
 }
 
 async function completeDueJobs(

@@ -508,11 +508,13 @@ async function handleDuelRequest(
     activeTier?.duel_power_targets.at(-1) ??
     null;
   const opponentBotId = sourceBotIdForEnemy(enemyId);
-  const bot = await loadBot(config, opponentBotId);
+  const [bot, progress] = await Promise.all([
+    loadBot(config, opponentBotId),
+    loadArenaProgress(config, state.value.gameSave.id),
+  ]);
   if (bot.error !== null) {
     return errorResponse(bot.error.code, bot.error.message, bot.error.status);
   }
-  const progress = await loadArenaProgress(config, state.value.gameSave.id);
   if (progress.error !== null) {
     return errorResponse(
       progress.error.code,

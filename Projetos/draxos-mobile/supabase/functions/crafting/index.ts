@@ -296,34 +296,39 @@ async function loadCraftingState(
     };
   }
 
-  const gameSave = await loadFoundationGameSave(
+  const playerId = encodeURIComponent(player.id);
+  const gameSavePromise = loadFoundationGameSave(
     config,
     restRequest,
     auth.userId,
     auth.saveType,
     player.id,
   );
-  if (gameSave.error !== null) {
-    return { value: null, error: gameSave.error };
-  }
-
-  await ensurePotionSlot(config, player.id);
-  const playerId = encodeURIComponent(player.id);
-  const resourcesResult = await restRequest<ResourceRow[]>(
+  const resourcesPromise = restRequest<ResourceRow[]>(
     config,
     `resources?player_id=eq.${playerId}&select=player_id,almas,energia,sangue,cristais,ossos,po_osso,diamante,updated_at&limit=1`,
     { method: "GET" },
   );
-  const inventoryResult = await restRequest<ConsumableRow[]>(
+  const inventoryPromise = restRequest<ConsumableRow[]>(
     config,
     `player_consumables?player_id=eq.${playerId}&select=player_id,item_id,quantity,updated_at&order=item_id.asc`,
     { method: "GET" },
   );
-  const slotsResult = await restRequest<PotionSlotRow[]>(
-    config,
-    `player_potion_slots?player_id=eq.${playerId}&select=player_id,slot_index,potion_id,behavior,updated_at&order=slot_index.asc`,
-    { method: "GET" },
-  );
+
+  await ensurePotionSlot(config, player.id);
+  const [gameSave, resourcesResult, inventoryResult, slotsResult] = await Promise.all([
+    gameSavePromise,
+    resourcesPromise,
+    inventoryPromise,
+    restRequest<PotionSlotRow[]>(
+      config,
+      `player_potion_slots?player_id=eq.${playerId}&select=player_id,slot_index,potion_id,behavior,updated_at&order=slot_index.asc`,
+      { method: "GET" },
+    ),
+  ]);
+  if (gameSave.error !== null) {
+    return { value: null, error: gameSave.error };
+  }
   if (
     resourcesResult.error !== null || inventoryResult.error !== null || slotsResult.error !== null
   ) {
