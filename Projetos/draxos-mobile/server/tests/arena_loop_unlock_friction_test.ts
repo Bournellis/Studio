@@ -119,12 +119,27 @@ Deno.test("client Arena loop removes loadout click and continues inside Arena", 
   );
   assertIncludes(
     lifecycle,
-    'await _refresh_arena_selection(host, "Arena atualizada. Proximo desafio pronto.")',
+    'host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)',
   );
+  assertNotIncludes(lifecycle, "_refresh_arena_selection");
   assertIncludes(lifecycle, "SupabaseClient.fetch_arena_state");
   assertIncludes(presenter, '"Continuar na Arena"');
   assertIncludes(presenter, "Proximo desafio\\n");
   assertNotIncludes(presenter, '"Confirmar resumo"');
+});
+
+Deno.test("arena claim returns selection delta for post-claim responsiveness", async () => {
+  const serverFunction = await Deno.readTextFile(
+    projectFile("server/functions/arena/index.ts"),
+  );
+  const supabaseFunction = await Deno.readTextFile(
+    projectFile("supabase/functions/arena/index.ts"),
+  );
+
+  assertEq(serverFunction, supabaseFunction, "Arena function mirrors");
+  assertIncludes(serverFunction, "arenaStateDeltaPayload");
+  assertIncludes(serverFunction, "arena_state: arenaState.value");
+  assertIncludes(serverFunction, 'schema_version: "pve_arena_state_v1"');
 });
 
 function xpForLevel(level: number): number {

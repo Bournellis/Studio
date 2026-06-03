@@ -157,7 +157,7 @@ novo.
 | POST | `/arena/pve/start` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado para criar tentativa, travar loadout e gerar primeiro inimigo. |
 | POST | `/arena/pve/duel/request` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado para resolver o proximo duelo da tentativa via simulador server-authoritative; no ultimo duelo aplica recompensa/progresso. |
 | POST | `/arena/pve/buff/select` | `save-scoped` | Sim | `request_id/request_hash` por save | Endpoint publico oficial implementado/publicado para escolher 1 buff ofertado apos vitoria. |
-| POST | `/arena/pve/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado como resumo/ack idempotente; nao muta economia. |
+| POST | `/arena/pve/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado como resumo/ack idempotente; nao muta economia; retorna `arena_state` leve para atualizar selecao sem fetch imediato. |
 | POST | `/arena/pve/abandon` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado para encerrar tentativa sem recompensa de conclusao. |
 | GET | `/base/state` | `save-scoped` | Sim | Nao | Estado server-authoritative da Base do save ativo. |
 | POST | `/base/collect` | `save-scoped` | Sim | `request_id/request_hash` por save | Coleta recursos do save ativo via RPC transacional com ledger. |
@@ -310,7 +310,7 @@ Regras comuns:
 - Cooldown: nenhum endpoint de Arena PVE pode impor cooldown de combate.
 - Loadout: `arena/pve/start` grava snapshot/hash de loadout; endpoints seguintes nao aceitam troca de loadout.
 - Comportamento: ajustes simples entre duelos devem reutilizar `build/spell-behavior` e `build/potion-behavior` ate haver contrato proprio.
-- Recompensa: o ultimo `/arena/pve/duel/request` da tentativa aplica recompensa/progresso e ledger `arena_pve_v1`; `/arena/pve/claim` e apenas resumo/ack idempotente e retorna `mutates_economy: false`.
+- Recompensa: o ultimo `/arena/pve/duel/request` da tentativa aplica recompensa/progresso e ledger `arena_pve_v1`; `/arena/pve/claim` e apenas resumo/ack idempotente, retorna `mutates_economy: false` e inclui `arena_state` leve para o cliente voltar a selecao sem buscar `/arena/pve/state` imediatamente.
 - Buff endpoint publico: novos clients, docs e smokes devem usar `/arena/pve/buff/select`. `/arena/buff/choose` existe apenas como alias interno/compatibilidade.
 
 ### `GET /arena/pve/state`
@@ -424,6 +424,15 @@ Response minima:
   "ok": true,
   "schema_version": "arena_claim_response_v1",
   "endpoint": "arena/pve/claim",
+  "arena_state": {
+    "ok": true,
+    "schema_version": "pve_arena_state_v1",
+    "arenas": [],
+    "attempts": [],
+    "active_attempt": null,
+    "progress": {},
+    "records": []
+  },
   "attempt": {},
   "progress": {},
   "resources": {},
