@@ -5,18 +5,33 @@ param(
     [string]$ChromePath = "",
     [int]$TimeoutSeconds = 60,
     [string]$DiagnosticsDir = "",
-    [switch]$AllowCloudflareAccess
+    [switch]$AllowCloudflareAccess,
+    [switch]$NoProjectWrites,
+    [switch]$KeepDiagnostics
 )
 
 $ErrorActionPreference = "Stop"
 
 $ProjectDir = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot "..")).Path
+$diagnosticsWasDefaulted = [string]::IsNullOrWhiteSpace($DiagnosticsDir)
 if ([string]::IsNullOrWhiteSpace($DiagnosticsDir)) {
     $stamp = (Get-Date).ToUniversalTime().ToString("yyyyMMdd-HHmmss")
-    $DiagnosticsDir = Join-Path $ProjectDir "build\diagnostics\web-launch-remote-$stamp"
+    if ($NoProjectWrites.IsPresent) {
+        $DiagnosticsDir = Join-Path ([System.IO.Path]::GetTempPath()) "draxos-mobile-web-launch-remote-$stamp"
+    } else {
+        $DiagnosticsDir = Join-Path $ProjectDir "build\diagnostics\web-launch-remote-$stamp"
+    }
 }
 New-Item -ItemType Directory -Force -Path $DiagnosticsDir | Out-Null
 $DiagnosticsDir = (Resolve-Path -LiteralPath $DiagnosticsDir).Path
+if ($NoProjectWrites.IsPresent) {
+    $resolvedProjectDir = [System.IO.Path]::GetFullPath($ProjectDir).TrimEnd([System.IO.Path]::DirectorySeparatorChar)
+    $resolvedProjectRoot = "$resolvedProjectDir$([System.IO.Path]::DirectorySeparatorChar)"
+    $resolvedDiagnostics = [System.IO.Path]::GetFullPath($DiagnosticsDir)
+    if ($resolvedDiagnostics.StartsWith($resolvedProjectRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "-NoProjectWrites refuses a DiagnosticsDir inside the project: $DiagnosticsDir"
+    }
+}
 
 function Resolve-ChromePath {
     param([string]$RequestedPath)
@@ -88,6 +103,7 @@ $chromeArgs = @(
 )
 
 $chrome = $null
+$smokePassed = $false
 $previousEnv = @{
     DRAXOS_WEB_SMOKE_URL = [Environment]::GetEnvironmentVariable("DRAXOS_WEB_SMOKE_URL", "Process")
     DRAXOS_WEB_SMOKE_EXPECTED_RELEASE = [Environment]::GetEnvironmentVariable("DRAXOS_WEB_SMOKE_EXPECTED_RELEASE", "Process")
@@ -419,6 +435,7 @@ if (failed) {
     }
     Write-Host "Remote Web launch smoke passed."
     Write-Host "Diagnostics: $DiagnosticsDir"
+    $smokePassed = $true
 } finally {
     foreach ($key in $previousEnv.Keys) {
         [Environment]::SetEnvironmentVariable($key, $previousEnv[$key], "Process")
@@ -434,5 +451,9 @@ if (failed) {
     if ($resolvedTemp.StartsWith($resolvedTempRoot, [System.StringComparison]::OrdinalIgnoreCase) -and
         (Test-Path -LiteralPath $resolvedTemp -PathType Container)) {
         Remove-Item -LiteralPath $resolvedTemp -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    if ($NoProjectWrites.IsPresent -and $diagnosticsWasDefaulted -and -not $KeepDiagnostics.IsPresent -and
+        $smokePassed -and (Test-Path -LiteralPath $DiagnosticsDir -PathType Container)) {
+        Remove-Item -LiteralPath $DiagnosticsDir -Recurse -Force -ErrorAction SilentlyContinue
     }
 }

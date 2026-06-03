@@ -6,6 +6,14 @@ const MIN_DOWNLOAD_BYTES = Number(
 const ALLOW_CLOUDFLARE_ACCESS =
   Deno.env.get("DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS") === "1";
 const FULL_HASH_DOWNLOAD = Deno.env.get("DRAXOS_RELEASE_FULL_HASH") === "1";
+const EXPECTED_RELEASE_ROOT =
+  (Deno.env.get("DRAXOS_EXPECTED_RELEASE_ROOT") ?? "").trim();
+const EXPECTED_PORTAL_URL =
+  (Deno.env.get("DRAXOS_EXPECTED_PORTAL_URL") ??
+    "https://draxos-mobile-internal-alpha.pages.dev/").trim();
+const EXPECTED_WEB_URL =
+  (Deno.env.get("DRAXOS_EXPECTED_WEB_URL") ??
+    "https://draxos-mobile-internal-alpha.pages.dev/web/index.html").trim();
 
 assertRemoteUrl(SUPABASE_URL);
 assertClientKey(PUBLISHABLE_KEY);
@@ -50,6 +58,13 @@ const androidUrl = httpsField(android, "url");
 const pcUrl = httpsField(pcWindows, "url");
 const webUrl = httpsField(web, "url");
 
+assertStableManifestUrl(portalUrl, EXPECTED_PORTAL_URL, "manifest portal_url");
+assertStableManifestUrl(webUrl, EXPECTED_WEB_URL, "manifest Web artifact URL");
+if (EXPECTED_RELEASE_ROOT !== "") {
+  assertUrlContainsReleaseRoot(androidUrl, "Android APK");
+  assertUrlContainsReleaseRoot(pcUrl, "PC ZIP");
+}
+
 const androidSha256 = stringField(android, "sha256").toLowerCase();
 const pcSha256 = stringField(pcWindows, "sha256").toLowerCase();
 
@@ -71,7 +86,13 @@ await assertDownloadReachable(
 await assertDownloadReachable(pcUrl, "PC ZIP", MIN_DOWNLOAD_BYTES, pcSha256);
 await assertPageContains(portalUrl, "Portal", "DraxosMobile");
 await assertPortalWebLink(portalUrl, webUrl);
-await assertPageContains(webUrl, "Web build", "GODOT_CONFIG");
+const webHtml = await assertPageContains(webUrl, "Web build", "GODOT_CONFIG");
+if (EXPECTED_RELEASE_ROOT !== "" && webHtml !== null) {
+  assert(
+    webHtml.includes(EXPECTED_RELEASE_ROOT),
+    `Web build should embed expected release root ${EXPECTED_RELEASE_ROOT}`,
+  );
+}
 
 console.log("[release-artifacts-remote-smoke] OK", {
   manifest_url: `${SUPABASE_URL}/functions/v1/release/manifest`,
@@ -173,7 +194,7 @@ async function assertPageContains(
   url: string,
   label: string,
   expectedText: string,
-): Promise<void> {
+): Promise<string | null> {
   const response = await fetch(url, { method: "GET" });
   const text = await response.text();
   assert(
@@ -187,12 +208,13 @@ async function assertPageContains(
     console.warn(
       `[release-artifacts-remote-smoke] ${label} is protected by Cloudflare Access: ${url}`,
     );
-    return;
+    return null;
   }
   assert(
     text.includes(expectedText),
     `${label} does not contain ${expectedText}`,
   );
+  return text;
 }
 
 async function assertPortalWebLink(portalUrl: string, webUrl: string): Promise<void> {
@@ -223,6 +245,38 @@ function isCloudflareAccessPage(text: string): boolean {
   const normalized = text.toLowerCase();
   return normalized.includes("cloudflare access") ||
     (normalized.includes("cloudflare") && normalized.includes("sign in"));
+}
+
+function assertStableManifestUrl(url: string, expectedUrl: string, label: string): void {
+  assert(
+    !isCloudflarePagesHashUrl(url),
+    `${label} must use the stable production Pages domain, not a hash deployment URL: ${url}`,
+  );
+  assertEq(
+    normalizeUrl(url),
+    normalizeUrl(expectedUrl),
+    `${label} should match the canonical stable URL`,
+  );
+}
+
+function assertUrlContainsReleaseRoot(url: string, label: string): void {
+  assert(
+    url.includes(EXPECTED_RELEASE_ROOT),
+    `${label} URL should include expected release root ${EXPECTED_RELEASE_ROOT}: ${url}`,
+  );
+}
+
+function isCloudflarePagesHashUrl(url: string): boolean {
+  try {
+    const host = new URL(url).hostname;
+    return /^[0-9a-f]{6,}\.draxos-mobile-internal-alpha\.pages\.dev$/i.test(host);
+  } catch {
+    return false;
+  }
+}
+
+function normalizeUrl(url: string): string {
+  return url.replace(/\/+$/, "");
 }
 
 function requiredEnv(key: string): string {
