@@ -498,6 +498,9 @@ func is_valid_alpha_username(username: String) -> bool:
 	return true
 
 func apply_recovered_state(host: Node, state_result: Dictionary, message: String, refresh_token: Dictionary = {}) -> bool:
+	if not refresh_token.is_empty() and not bool(host.call("_surface_refresh_current", SessionStore.SURFACE_ACCOUNT, refresh_token)):
+		host.call("_ignore_stale_surface_refresh", SessionStore.SURFACE_ACCOUNT, refresh_token, "Resposta antiga de conta ignorada.")
+		return false
 	if not SessionStore.apply_server_state(state_result):
 		if not refresh_token.is_empty():
 			host.call("_fail_surface_refresh", SessionStore.SURFACE_ACCOUNT, refresh_token, {"error": SessionStore.last_error})

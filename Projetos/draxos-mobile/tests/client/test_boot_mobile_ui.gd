@@ -1004,6 +1004,32 @@ func test_cached_surface_refresh_renders_local_shell_without_cache_flag() -> voi
 	assert_eq(host.notices.size(), 1)
 	assert_eq(str(host.notices[0]), "Superficie local visivel. Sincronizando com o servidor...")
 
+func test_boot_surface_refresh_ignores_stale_completion_and_keeps_current_busy() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	var stale_token: Dictionary = boot._begin_surface_refresh(SessionStore.SURFACE_BATTLE, "battle/latest", "Buscando resultado...", false)
+	var current_token: Dictionary = boot._begin_surface_refresh(SessionStore.SURFACE_BATTLE, "battle/latest", "Buscando resultado novo...", false)
+	assert_false(boot._surface_refresh_current(SessionStore.SURFACE_BATTLE, stale_token))
+	assert_true(boot._surface_refresh_current(SessionStore.SURFACE_BATTLE, current_token))
+
+	var old_result := {
+		"ok": true,
+		"_client": {"endpoint": "battle/latest", "method": "GET", "duration_ms": 900, "response_code": 200},
+	}
+	assert_false(boot._finish_surface_refresh(SessionStore.SURFACE_BATTLE, stale_token, old_result, "Resultado antigo."))
+	assert_true(boot._operation_state.is_busy(boot._surface_scope_id(SessionStore.SURFACE_BATTLE)))
+	assert_true(bool(SessionStore.surface_refresh_snapshot(SessionStore.SURFACE_BATTLE).get("refreshing", false)))
+	assert_false(SessionStore.has_battle_log())
+
+	var current_result := {
+		"ok": true,
+		"_client": {"endpoint": "battle/latest", "method": "GET", "duration_ms": 40, "response_code": 200},
+	}
+	assert_true(boot._finish_surface_refresh(SessionStore.SURFACE_BATTLE, current_token, current_result, "Resultado atual."))
+	assert_false(boot._operation_state.is_busy(boot._surface_scope_id(SessionStore.SURFACE_BATTLE)))
+	assert_false(bool(SessionStore.surface_refresh_snapshot(SessionStore.SURFACE_BATTLE).get("refreshing", true)))
+
 func test_battle_request_pending_state_uses_static_splash_only() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)

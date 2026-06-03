@@ -131,6 +131,9 @@ func show_latest_battle(host: Node) -> void:
 		host.get("_battle_replay_presenter").show_empty_state("Solicite uma batalha para gerar a primeira luta.")
 		return
 
+	if not bool(host.call("_surface_refresh_current", SessionStore.SURFACE_BATTLE, refresh_token)):
+		host.call("_ignore_stale_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, "Resposta antiga de batalha ignorada.")
+		return
 	if not SessionStore.apply_battle_result(latest_result):
 		host.call("_fail_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, {"error": SessionStore.last_error})
 		if rendered_from_cache:
@@ -204,6 +207,9 @@ func show_battle_history(host: Node) -> void:
 
 	var body := _as_dictionary(history_result.get("body", {}))
 	var history_entries := _as_dictionary_array(body.get("history", []))
+	if not bool(host.call("_surface_refresh_current", SessionStore.SURFACE_BATTLE, refresh_token)):
+		host.call("_ignore_stale_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, "Historico antigo ignorado.")
+		return
 	host.set("_battle_history_entries", history_entries)
 	host.set("_battle_history_save_type", SessionStore.active_save_type)
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_BATTLE_ENTRY, false)
@@ -243,6 +249,9 @@ func show_battle_replay(host: Node, battle_id: String) -> void:
 		host.call("_fail_with_error", replay_result)
 		return
 
+	if not bool(host.call("_surface_refresh_current", SessionStore.SURFACE_BATTLE, refresh_token)):
+		host.call("_ignore_stale_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, "Replay antigo ignorado.")
+		return
 	if not SessionStore.apply_battle_result(replay_result):
 		host.call("_fail_surface_refresh", SessionStore.SURFACE_BATTLE, refresh_token, {"error": SessionStore.last_error})
 		if rendered_from_cache:

@@ -175,6 +175,24 @@ func test_session_store_tracks_surface_refresh_metadata_and_rejects_stale_tokens
 	store.free()
 	restored.free()
 
+func test_session_store_marks_first_access_shell_refresh_as_cache_source() -> void:
+	var store = SessionStoreScript.new()
+	store.active_save_type = SessionStoreScript.SAVE_TYPE_NORMAL
+
+	store.begin_surface_refresh(
+		SessionStoreScript.SURFACE_ARENA,
+		"open_arena",
+		"arena/pve/state",
+		false
+	)
+
+	var meta := store.surface_refresh_snapshot(SessionStoreScript.SURFACE_ARENA)
+	assert_true(bool(meta.get("refreshing", false)))
+	assert_false(bool(meta.get("has_snapshot", true)))
+	assert_eq(str(meta.get("source", "")), SessionStoreScript.SURFACE_REFRESH_SOURCE_CACHE)
+	assert_eq(str(meta.get("last_endpoint", "")), "arena/pve/state")
+	store.free()
+
 func test_monetization_result_can_patch_base_delta_without_followup_fetch() -> void:
 	var store = SessionStoreScript.new()
 	store.active_save_type = SessionStoreScript.SAVE_TYPE_NORMAL

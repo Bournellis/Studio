@@ -215,9 +215,13 @@ func _begin_surface_refresh(surface: String, endpoint: String, message: String, 
 	return token
 
 func _finish_surface_refresh(surface: String, token: Dictionary, result: Dictionary, message: String) -> bool:
+	if not _surface_refresh_current(surface, token):
+		_ignore_stale_surface_refresh(surface, token, "Resposta antiga ignorada; mantendo a superficie atual.")
+		return false
 	if not _operation_state.complete_busy(_surface_scope_id(surface), token):
 		return false
-	SessionStore.complete_surface_refresh(surface, result, _surface_token_for_session(token))
+	if not SessionStore.complete_surface_refresh(surface, result, _surface_token_for_session(token)):
+		return false
 	_emit_surface_latency_event("surface_refresh", surface, result, true)
 	_emit_surface_latency_event("request_latency", surface, result, true)
 	_is_busy = _operation_state.any_busy()
@@ -228,9 +232,13 @@ func _finish_surface_refresh(surface: String, token: Dictionary, result: Diction
 	return true
 
 func _fail_surface_refresh(surface: String, token: Dictionary, result: Dictionary) -> bool:
+	if not _surface_refresh_current(surface, token):
+		_ignore_stale_surface_refresh(surface, token, "Falha antiga ignorada; mantendo a superficie atual.")
+		return false
 	if not _operation_state.complete_busy(_surface_scope_id(surface), token):
 		return false
-	SessionStore.fail_surface_refresh(surface, result, _surface_token_for_session(token))
+	if not SessionStore.fail_surface_refresh(surface, result, _surface_token_for_session(token)):
+		return false
 	_emit_surface_latency_event("surface_refresh", surface, result, false)
 	_emit_surface_latency_event("request_latency", surface, result, false)
 	_is_busy = _operation_state.any_busy()
@@ -242,6 +250,31 @@ func _surface_token_for_session(token: Dictionary) -> Dictionary:
 	return {
 		"version": int(token.get("session_version", 0)),
 	}
+
+func _surface_refresh_current(surface: String, token: Dictionary) -> bool:
+	if token.is_empty():
+		return true
+	if not _operation_state.is_current_lifecycle_token(token):
+		return false
+	var refresh := SessionStore.surface_refresh_snapshot(surface)
+	return int(refresh.get("refresh_version", 0)) == int(token.get("session_version", 0))
+
+func _ignore_stale_surface_refresh(surface: String, token: Dictionary, message: String = "") -> bool:
+	if _surface_refresh_current(surface, token):
+		return false
+	if message.strip_edges() != "":
+		_show_notice(message)
+	_emit_client_event("surface_refresh_stale_ignored", {
+		"surface": surface,
+		"scope_id": _surface_scope_id(surface),
+		"token_version": int(token.get("session_version", token.get("version", 0))),
+		"current_version": int(SessionStore.surface_refresh_snapshot(surface).get("refresh_version", 0)),
+		"save_type": SessionStore.active_save_type,
+	})
+	_is_busy = _operation_state.any_busy()
+	_sync_immersive_feedback()
+	_sync_buttons()
+	return true
 
 func _emit_surface_latency_event(event_type: String, surface: String, result: Dictionary, ok: bool) -> void:
 	var client := _as_dictionary(result.get("_client", {}))

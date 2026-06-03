@@ -73,6 +73,14 @@ func _fail_cached_refresh_or_error(host: Node, surface: String, token: Dictionar
 	host.call("_fail_with_error", result)
 	return false
 
+func _refresh_token_current(host: Node, surface: String, token: Dictionary) -> bool:
+	return bool(host.call("_surface_refresh_current", surface, token))
+
+func _session_refresh_token_current(surface: String, token: Dictionary) -> bool:
+	if token.is_empty():
+		return true
+	return int(SessionStore.surface_refresh_snapshot(surface).get("refresh_version", 0)) == int(token.get("version", 0))
+
 func show_base(host: Node) -> void:
 	var target_screen := str(host.call("_base_surface_target_screen"))
 	if SessionStore.is_progression_lab_local_only():
@@ -90,6 +98,8 @@ func show_base(host: Node) -> void:
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_BASE, refresh_token, base_result, "Refugio exibindo cache local; servidor nao respondeu agora.", "_render_base_state")
 		return
 
+	if not _refresh_token_current(host, SessionStore.SURFACE_BASE, refresh_token):
+		return
 	if not SessionStore.apply_base_result(base_result):
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_BASE, refresh_token, {"error": SessionStore.last_error}, "Refugio exibindo cache local; resposta do servidor veio incompleta.", "_render_base_state")
 		return
@@ -213,6 +223,8 @@ func show_crafting(host: Node) -> void:
 	if not bool(crafting_result.get("ok", false)):
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_CRAFTING, refresh_token, crafting_result, "Crafting exibindo cache local; servidor nao respondeu agora.", "_render_base_state")
 		return
+	if not _refresh_token_current(host, SessionStore.SURFACE_CRAFTING, refresh_token):
+		return
 	if not SessionStore.apply_crafting_result(crafting_result):
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_CRAFTING, refresh_token, {"error": SessionStore.last_error}, "Crafting exibindo cache local; resposta do servidor veio incompleta.", "_render_base_state")
 		return
@@ -294,6 +306,8 @@ func show_preparation(host: Node) -> void:
 			_render_refuge_preparation(host)
 			return
 		_fail_preparation_action(host, build_result, "Nao foi possivel carregar a preparacao.")
+		return
+	if not _refresh_token_current(host, SessionStore.SURFACE_BUILD, refresh_token):
 		return
 	if not SessionStore.apply_build_result(build_result):
 		host.call("_fail_surface_refresh", SessionStore.SURFACE_BUILD, refresh_token, {"error": SessionStore.last_error})
@@ -387,6 +401,8 @@ func show_social(host: Node) -> void:
 	var social_result: Dictionary = await SupabaseClient.fetch_social_state(SessionStore.access_token)
 	if not bool(social_result.get("ok", false)):
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_SOCIAL, refresh_token, social_result, "Social exibindo cache local; servidor nao respondeu agora.", "_render_social_state")
+		return
+	if not _refresh_token_current(host, SessionStore.SURFACE_SOCIAL, refresh_token):
 		return
 	if not SessionStore.apply_social_result(social_result):
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_SOCIAL, refresh_token, {"error": SessionStore.last_error}, "Social exibindo cache local; resposta do servidor veio incompleta.", "_render_social_state")
@@ -547,6 +563,9 @@ func auto_sync_social(host: Node) -> void:
 		SessionStore.fail_surface_refresh(SessionStore.SURFACE_SOCIAL, social_result, refresh_token)
 		host.call("_handle_social_auto_sync_error", social_result)
 		return
+	if not _session_refresh_token_current(SessionStore.SURFACE_SOCIAL, refresh_token):
+		host.call("_sync_social_auto_sync_for_route")
+		return
 	if not SessionStore.apply_social_result(social_result):
 		SessionStore.fail_surface_refresh(SessionStore.SURFACE_SOCIAL, {"error": SessionStore.last_error}, refresh_token)
 		host.call("_handle_social_auto_sync_error", {"error": SessionStore.last_error})
@@ -571,6 +590,8 @@ func show_matchmaking(host: Node) -> void:
 	if not bool(competition_result.get("ok", false)):
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_COMPETITION, refresh_token, competition_result, "Competicao exibindo cache local; servidor nao respondeu agora.", "_render_competition_state")
 		return
+	if not _refresh_token_current(host, SessionStore.SURFACE_COMPETITION, refresh_token):
+		return
 	if not SessionStore.apply_competition_result(competition_result):
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_COMPETITION, refresh_token, {"error": SessionStore.last_error}, "Competicao exibindo cache local; resposta do servidor veio incompleta.", "_render_competition_state")
 		return
@@ -587,6 +608,8 @@ func show_ranking(host: Node) -> void:
 	if not bool(competition_result.get("ok", false)):
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_COMPETITION, refresh_token, competition_result, "Competicao exibindo cache local; servidor nao respondeu agora.", "_render_competition_state")
 		return
+	if not _refresh_token_current(host, SessionStore.SURFACE_COMPETITION, refresh_token):
+		return
 	if not SessionStore.apply_competition_result(competition_result):
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_COMPETITION, refresh_token, {"error": SessionStore.last_error}, "Competicao exibindo cache local; resposta do servidor veio incompleta.", "_render_competition_state")
 		return
@@ -602,6 +625,8 @@ func show_shop(host: Node) -> void:
 	var monetization_result: Dictionary = await SupabaseClient.fetch_monetization_state(SessionStore.access_token)
 	if not bool(monetization_result.get("ok", false)):
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_MONETIZATION, refresh_token, monetization_result, "Loja exibindo cache local; servidor nao respondeu agora.", "_render_monetization_state")
+		return
+	if not _refresh_token_current(host, SessionStore.SURFACE_MONETIZATION, refresh_token):
 		return
 	if not SessionStore.apply_monetization_result(monetization_result):
 		_fail_cached_refresh_or_error(host, SessionStore.SURFACE_MONETIZATION, refresh_token, {"error": SessionStore.last_error}, "Loja exibindo cache local; resposta do servidor veio incompleta.", "_render_monetization_state")

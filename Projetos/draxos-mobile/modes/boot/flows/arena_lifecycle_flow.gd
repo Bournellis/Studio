@@ -72,6 +72,9 @@ func open_arena(host: Node) -> void:
 			return
 		host.call("_fail_with_error", state_result)
 		return
+	if not bool(host.call("_surface_refresh_current", SessionStore.SURFACE_ARENA, refresh_token)):
+		host.call("_ignore_stale_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, "Resposta antiga da Arena ignorada.")
+		return
 	if not SessionStore.apply_arena_result(state_result):
 		host.call("_fail_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, {"error": SessionStore.last_error})
 		if rendered_from_cache:
@@ -307,6 +310,9 @@ func _refresh_arena_selection(host: Node, success_text: String) -> void:
 			host.call("_show_notice", "Arena exibindo cache local; servidor nao respondeu agora.")
 			return
 		host.call("_fail_with_error", state_result)
+		return
+	if not bool(host.call("_surface_refresh_current", SessionStore.SURFACE_ARENA, refresh_token)):
+		host.call("_ignore_stale_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, "Refresh antigo da Arena ignorado.")
 		return
 	if not SessionStore.apply_arena_result(state_result):
 		host.call("_fail_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, {"error": SessionStore.last_error})

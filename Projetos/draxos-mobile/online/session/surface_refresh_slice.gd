@@ -23,7 +23,7 @@ static func begin(
 	meta["save_type"] = active_save_type
 	meta["refresh_version"] = version
 	meta["refreshing"] = true
-	meta["source"] = cache_source if rendered_from_cache else str(meta.get("source", ""))
+	meta["source"] = cache_source
 	meta["last_refresh_started_at"] = _now_text()
 	meta["last_refresh_started_ms"] = now_ms
 	meta["last_action_id"] = action_id.strip_edges()
