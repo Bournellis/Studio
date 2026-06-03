@@ -7,7 +7,7 @@ const AccountSaveSliceScript = preload("res://online/session/account_save_slice.
 const ArenaSliceScript = preload("res://online/session/arena_slice.gd")
 const ModeSliceScript = preload("res://online/session/mode_slice.gd")
 const PendingMutationQueueScript = preload("res://online/session/pending_mutation_queue.gd")
-const SessionCacheSliceScript = preload("res://online/session/session_cache_slice.gd")
+const SessionStateFacadeScript = preload("res://online/session/session_state_facade.gd")
 const SurfaceRefreshSliceScript = preload("res://online/session/surface_refresh_slice.gd")
 const TelemetrySliceScript = preload("res://online/session/telemetry_slice.gd")
 
@@ -35,6 +35,29 @@ const SURFACE_MODE := "mode"
 const SURFACE_REFRESH_SOURCE_CACHE := "cache"
 const SURFACE_REFRESH_SOURCE_SERVER := "server"
 const REQUEST_LATENCY_LOG_LIMIT := 40
+const GAMEPLAY_SURFACES := [
+	SURFACE_BASE,
+	SURFACE_SOCIAL,
+	SURFACE_COMPETITION,
+	SURFACE_MONETIZATION,
+	SURFACE_CRAFTING,
+	SURFACE_BUILD,
+	SURFACE_BATTLE,
+	SURFACE_ARENA,
+	SURFACE_MODE,
+]
+const SNAPSHOT_SURFACES := [
+	SURFACE_ACCOUNT,
+	SURFACE_BASE,
+	SURFACE_SOCIAL,
+	SURFACE_COMPETITION,
+	SURFACE_MONETIZATION,
+	SURFACE_CRAFTING,
+	SURFACE_BUILD,
+	SURFACE_BATTLE,
+	SURFACE_ARENA,
+	SURFACE_MODE,
+]
 
 var access_token := ""
 var refresh_token := ""
@@ -124,41 +147,7 @@ func apply_snapshot_cache(cache: Dictionary) -> bool:
 	return true
 
 func clear_session() -> void:
-	access_token = ""
-	refresh_token = ""
-	expires_at = 0
-	auth_user_id = ""
-	auth_method = "guest"
-	auth_email = ""
-	session_id = create_request_id()
-	guest_request_id = ""
-	alpha_account_request_id = ""
-	account_username = ""
-	active_save_type = SAVE_TYPE_NORMAL
-	player = {}
-	resources = {}
-	build = {}
-	base_state = {}
-	social_state = {}
-	competition_state = {}
-	monetization_state = {}
-	crafting_state = {}
-	combat_build_state = {}
-	mode_state = {}
-	progression_lab = {}
-	arena_state = {}
-	last_battle_id = null
-	last_battle_log = {}
-	last_battle_rewards = {}
-	last_battle_result_seen = false
-	last_error = {}
-	surface_save_types = {}
-	surface_refresh_meta = {}
-	request_latency_log = []
-	pending_mutations = {}
-	offline = false
-	if FileAccess.file_exists(CACHE_PATH):
-		DirAccess.remove_absolute(ProjectSettings.globalize_path(CACHE_PATH))
+	SessionStateFacadeScript.clear_session(self, create_request_id(), SAVE_TYPE_NORMAL, CACHE_PATH)
 	session_changed.emit()
 
 func apply_auth_session(session: Dictionary) -> bool:
@@ -247,7 +236,7 @@ func apply_arena_result(payload: Dictionary) -> bool:
 		session_changed.emit()
 		return false
 
-	var state := _arena_state_from_body(body)
+	var state := ArenaSliceScript.state_from_body(body, arena_state)
 	if state.is_empty():
 		last_error = {
 			"code": "ARENA_STATE_MISSING",
@@ -287,42 +276,6 @@ func apply_arena_result(payload: Dictionary) -> bool:
 	offline = false
 	session_changed.emit()
 	return true
-
-func _arena_state_from_body(body: Dictionary) -> Dictionary:
-	return ArenaSliceScript.state_from_body(body, arena_state)
-
-func _normalize_arena_state(state: Dictionary) -> Dictionary:
-	return ArenaSliceScript.normalize_state(state)
-
-func _empty_arena_state() -> Dictionary:
-	return ArenaSliceScript.empty_state()
-
-func _normalize_arena_list(arenas: Array) -> Array:
-	return ArenaSliceScript.normalize_arena_list(arenas)
-
-func _normalize_arena_difficulties(arena: Dictionary, difficulties: Array) -> Array:
-	return ArenaSliceScript.normalize_arena_difficulties(arena, difficulties)
-
-func _default_arena_difficulty(arena: Dictionary) -> Dictionary:
-	return ArenaSliceScript.default_arena_difficulty(arena)
-
-func _normalize_arena_attempts(attempts: Array) -> Array:
-	return ArenaSliceScript.normalize_arena_attempts(attempts)
-
-func _normalize_arena_attempt(attempt: Dictionary, step: Dictionary = {}) -> Dictionary:
-	return ArenaSliceScript.normalize_arena_attempt(attempt, step)
-
-func _arena_buff_offer_from_step(step: Dictionary) -> Dictionary:
-	return ArenaSliceScript.buff_offer_from_step(step)
-
-func _arena_summary_from_body(body: Dictionary, attempt: Dictionary) -> Dictionary:
-	return ArenaSliceScript.summary_from_body(body, attempt)
-
-func _next_arena_enemy_id(attempt: Dictionary) -> String:
-	return ArenaSliceScript.next_enemy_id(attempt)
-
-func _arena_locked_reason(arena: Dictionary) -> String:
-	return ArenaSliceScript.locked_reason(arena)
 
 func apply_server_state(payload: Dictionary) -> bool:
 	var body := _unwrap_body(payload)
@@ -696,13 +649,7 @@ func has_mode_state() -> bool:
 	return not mode_state.is_empty() and _surface_matches_active_save(SURFACE_MODE)
 
 func has_surface_snapshot(surface: String) -> bool:
-	var states := {
-		SURFACE_ACCOUNT: has_account_state(), SURFACE_BASE: has_base_state(), SURFACE_SOCIAL: has_social_state(),
-		SURFACE_COMPETITION: has_competition_state(), SURFACE_MONETIZATION: has_monetization_state(),
-		SURFACE_CRAFTING: has_crafting_state(), SURFACE_BUILD: has_build_state(), SURFACE_BATTLE: has_battle_log(),
-		SURFACE_ARENA: has_arena_state(), SURFACE_MODE: has_mode_state(),
-	}
-	return bool(states.get(surface.strip_edges(), false))
+	return SessionStateFacadeScript.has_surface_snapshot(self, surface)
 
 func begin_surface_refresh(surface: String, action_id: String = "", endpoint: String = "", rendered_from_cache: bool = false) -> Dictionary:
 	var token := SurfaceRefreshSliceScript.begin(surface_refresh_meta, surface, active_save_type, SURFACE_REFRESH_SOURCE_CACHE, action_id, endpoint, rendered_from_cache)
@@ -805,33 +752,7 @@ func mode_snapshot() -> Dictionary:
 	return mode_state.duplicate(true)
 
 func diagnostics_snapshot() -> Dictionary:
-	return TelemetrySliceScript.diagnostics_snapshot({
-		"cache_version": CACHE_VERSION,
-		"session_id": ensure_session_id(),
-		"has_access_token": access_token != "",
-		"has_refresh_token": refresh_token != "",
-		"expires_at": expires_at,
-		"has_auth_user_id": auth_user_id != "",
-		"auth_method": auth_method,
-		"registered": is_registered_session(),
-		"save": {
-			"active_save_type": active_save_type,
-			"label": active_save_label(),
-			"badge": active_save_badge(),
-		},
-		"surfaces": _diagnostics_surfaces(),
-		"progression_lab": {
-			"active": is_progression_lab_active(),
-			"local_only": is_progression_lab_local_only(),
-			"has_metadata": not progression_lab.is_empty(),
-			"label": progression_lab_label(),
-		},
-		"runtime_config": runtime_config,
-		"pending_mutations": PendingMutationQueueScript.counts_by_save(pending_mutations),
-		"request_latency_log": recent_request_latencies(),
-		"offline": offline,
-		"last_error": last_error,
-	})
+	return SessionStateFacadeScript.diagnostics_snapshot(self, CACHE_VERSION, SNAPSHOT_SURFACES)
 
 func active_save_label() -> String:
 	return AccountSaveSliceScript.active_save_label(active_save_type)
@@ -880,42 +801,7 @@ func account_display_name() -> String:
 	return player_display_name()
 
 func snapshot() -> Dictionary:
-	return SessionCacheSliceScript.snapshot({
-		"cache_version": CACHE_VERSION,
-		"access_token": access_token,
-		"refresh_token": refresh_token,
-		"expires_at": expires_at,
-		"auth_user_id": auth_user_id,
-		"auth_method": auth_method,
-		"auth_email": auth_email,
-		"session_id": ensure_session_id(),
-		"guest_request_id": guest_request_id,
-		"alpha_account_request_id": alpha_account_request_id,
-		"account_username": account_username,
-		"active_save_type": active_save_type,
-		"player": player,
-		"resources": resources,
-		"build": build,
-		"base_state": base_state,
-		"social_state": social_state,
-		"competition_state": competition_state,
-		"monetization_state": monetization_state,
-		"crafting_state": crafting_state,
-		"combat_build_state": combat_build_state,
-		"mode_state": mode_state,
-		"progression_lab": progression_lab,
-		"arena_state": arena_state,
-		"surface_save_types": surface_save_types,
-		"surface_refresh_meta": surface_refresh_meta,
-		"request_latency_log": request_latency_log,
-		"pending_mutations": pending_mutations,
-		"last_battle_id": last_battle_id,
-		"last_battle_log": last_battle_log,
-		"last_battle_rewards": last_battle_rewards,
-		"last_battle_result_seen": last_battle_result_seen,
-		"offline": offline,
-		"last_error": last_error,
-	})
+	return SessionStateFacadeScript.snapshot(self, CACHE_VERSION)
 
 static func create_request_id() -> String:
 	return TelemetrySliceScript.create_request_id()
@@ -952,76 +838,10 @@ static func canonical_json(value: Variant) -> String:
 	return PendingMutationQueueScript.canonical_json(value)
 
 func _apply_cache(cache: Dictionary) -> void:
-	var auth := SessionCacheSliceScript.cache_auth(cache)
-	access_token = str(auth.get("access_token", ""))
-	refresh_token = str(auth.get("refresh_token", ""))
-	expires_at = int(auth.get("expires_at", 0))
-	auth_user_id = str(auth.get("user_id", ""))
-	auth_method = str(auth.get("auth_method", "guest")).strip_edges().to_lower()
-	if auth_method == "":
-		auth_method = "guest"
-	auth_email = str(auth.get("email", ""))
-	session_id = SessionCacheSliceScript.cache_string(cache, "session_id")
-	guest_request_id = SessionCacheSliceScript.cache_string(cache, "guest_request_id")
-	alpha_account_request_id = SessionCacheSliceScript.cache_string(cache, "alpha_account_request_id")
-	account_username = SessionCacheSliceScript.cache_string(cache, "account_username")
-	active_save_type = normalize_save_type(SessionCacheSliceScript.cache_string(cache, "active_save_type", SAVE_TYPE_NORMAL))
-	player = SessionCacheSliceScript.cache_dict(cache, "player")
-	resources = SessionCacheSliceScript.cache_dict(cache, "resources")
-	build = SessionCacheSliceScript.cache_dict(cache, "build")
-	base_state = SessionCacheSliceScript.cache_dict(cache, "base_state")
-	social_state = SessionCacheSliceScript.cache_dict(cache, "social_state")
-	competition_state = SessionCacheSliceScript.cache_dict(cache, "competition_state")
-	monetization_state = SessionCacheSliceScript.cache_dict(cache, "monetization_state")
-	crafting_state = SessionCacheSliceScript.cache_dict(cache, "crafting_state")
-	combat_build_state = SessionCacheSliceScript.cache_dict(cache, "combat_build_state")
-	mode_state = SessionCacheSliceScript.cache_dict(cache, "mode_state")
-	progression_lab = SessionCacheSliceScript.cache_dict(cache, "progression_lab")
-	arena_state = SessionCacheSliceScript.cache_dict(cache, "arena_state")
-	surface_save_types = AccountSaveSliceScript.normalized_surface_save_types(SessionCacheSliceScript.cache_dict(cache, "surface_save_types"))
-	surface_refresh_meta = SurfaceRefreshSliceScript.normalized_meta(SessionCacheSliceScript.cache_dict(cache, "surface_refresh_meta"))
-	request_latency_log = SessionCacheSliceScript.cache_array(cache, "request_latency_log")
-	pending_mutations = _normalized_pending_mutations(SessionCacheSliceScript.cache_dict(cache, "pending_mutations"))
-	last_battle_id = cache.get("last_battle_id", null)
-	last_battle_log = SessionCacheSliceScript.cache_dict(cache, "last_battle_log")
-	last_battle_rewards = SessionCacheSliceScript.cache_dict(cache, "last_battle_rewards")
-	last_battle_result_seen = SessionCacheSliceScript.cache_bool(cache, "last_battle_result_seen")
-	offline = SessionCacheSliceScript.cache_bool(cache, "offline")
-	last_error = SessionCacheSliceScript.cache_dict(cache, "last_error")
-	if not progression_lab.is_empty() and not bool(progression_lab.get("local_only", false)):
-		active_save_type = SAVE_TYPE_PROGRESSION_LAB
-	if bool(progression_lab.get("local_only", false)):
-		active_save_type = SAVE_TYPE_PROGRESSION_LAB
-		access_token = ""
-		refresh_token = ""
-		expires_at = 0
-		auth_user_id = ""
-		auth_method = "guest"
-		auth_email = ""
-	if active_save_type == SAVE_TYPE_NORMAL:
-		progression_lab = {}
-	_backfill_surface_save_types()
+	SessionStateFacadeScript.apply_cache(self, cache, SAVE_TYPE_NORMAL, SAVE_TYPE_PROGRESSION_LAB, SNAPSHOT_SURFACES)
 
 func _clear_account_snapshots() -> void:
-	player = {}
-	resources = {}
-	build = {}
-	base_state = {}
-	social_state = {}
-	competition_state = {}
-	monetization_state = {}
-	crafting_state = {}
-	combat_build_state = {}
-	arena_state = {}
-	mode_state = {}
-	if active_save_type == SAVE_TYPE_NORMAL:
-		progression_lab = {}
-	last_battle_id = null
-	last_battle_log = {}
-	last_battle_rewards = {}
-	last_battle_result_seen = false
-	surface_save_types = {}
-	surface_refresh_meta = {}
+	SessionStateFacadeScript.clear_account_snapshots(self, SAVE_TYPE_NORMAL)
 
 func _mark_pending_mutation(request_id: String, status: String, payload: Dictionary = {}) -> bool:
 	var result := PendingMutationQueueScript.mark(pending_mutations, request_id, status, payload)
@@ -1030,33 +850,8 @@ func _mark_pending_mutation(request_id: String, status: String, payload: Diction
 		session_changed.emit()
 	return bool(result.get("changed", false))
 
-func _normalized_pending_mutations(source: Dictionary) -> Dictionary:
-	return PendingMutationQueueScript.normalize(source)
-
 func _clear_gameplay_snapshots() -> void:
-	base_state = {}
-	social_state = {}
-	competition_state = {}
-	monetization_state = {}
-	crafting_state = {}
-	combat_build_state = {}
-	arena_state = {}
-	mode_state = {}
-	last_battle_id = null
-	last_battle_log = {}
-	last_battle_rewards = {}
-	last_battle_result_seen = false
-	surface_save_types.erase(SURFACE_BASE)
-	surface_save_types.erase(SURFACE_SOCIAL)
-	surface_save_types.erase(SURFACE_COMPETITION)
-	surface_save_types.erase(SURFACE_MONETIZATION)
-	surface_save_types.erase(SURFACE_CRAFTING)
-	surface_save_types.erase(SURFACE_BUILD)
-	surface_save_types.erase(SURFACE_BATTLE)
-	surface_save_types.erase(SURFACE_ARENA)
-	surface_save_types.erase(SURFACE_MODE)
-	for surface in [SURFACE_BASE, SURFACE_SOCIAL, SURFACE_COMPETITION, SURFACE_MONETIZATION, SURFACE_CRAFTING, SURFACE_BUILD, SURFACE_BATTLE, SURFACE_ARENA, SURFACE_MODE]:
-		surface_refresh_meta.erase(surface)
+	SessionStateFacadeScript.clear_gameplay_snapshots(self, GAMEPLAY_SURFACES)
 
 func _patch_resources(resource_patch: Dictionary) -> void:
 	for key_variant: Variant in resource_patch.keys():
@@ -1090,46 +885,13 @@ func _accept_save_scoped_payload(surface: String, payload: Dictionary, fallback_
 	return false
 
 func _remember_surface_snapshot(surface: String, save_type: String = active_save_type) -> void:
-	surface_save_types[surface] = normalize_save_type(save_type)
-	var meta := SurfaceRefreshSliceScript.surface_meta(surface_refresh_meta, surface, active_save_type)
-	meta["surface"] = surface
-	meta["save_type"] = normalize_save_type(save_type)
-	if str(meta.get("source", "")).strip_edges() == "":
-		meta["source"] = SURFACE_REFRESH_SOURCE_SERVER
-	surface_refresh_meta[surface] = meta
+	SessionStateFacadeScript.remember_surface_snapshot(self, surface, save_type, active_save_type, SURFACE_REFRESH_SOURCE_SERVER)
 
 func _surface_matches_active_save(surface: String) -> bool:
 	return AccountSaveSliceScript.surface_matches_active_save(surface_save_types, surface, active_save_type)
 
 func _backfill_surface_save_types() -> void:
-	var present_surfaces := {
-		SURFACE_ACCOUNT: has_account_state(), SURFACE_BASE: not base_state.is_empty(), SURFACE_SOCIAL: not social_state.is_empty(),
-		SURFACE_COMPETITION: not competition_state.is_empty(), SURFACE_MONETIZATION: not monetization_state.is_empty(),
-		SURFACE_CRAFTING: not crafting_state.is_empty(), SURFACE_BUILD: not combat_build_state.is_empty(),
-		SURFACE_BATTLE: not last_battle_log.is_empty(), SURFACE_ARENA: not arena_state.is_empty(), SURFACE_MODE: not mode_state.is_empty(),
-	}
-	for surface: String in present_surfaces.keys():
-		if bool(present_surfaces.get(surface, false)) and not surface_save_types.has(surface):
-			_remember_surface_snapshot(surface)
-
-func _diagnostics_surfaces() -> Dictionary:
-	return {
-		SURFACE_ACCOUNT: _diagnostics_surface(SURFACE_ACCOUNT, has_account_state()),
-		SURFACE_BASE: _diagnostics_surface(SURFACE_BASE, has_base_state()),
-		SURFACE_SOCIAL: _diagnostics_surface(SURFACE_SOCIAL, has_social_state()),
-		SURFACE_COMPETITION: _diagnostics_surface(SURFACE_COMPETITION, has_competition_state()),
-		SURFACE_MONETIZATION: _diagnostics_surface(SURFACE_MONETIZATION, has_monetization_state()),
-		SURFACE_CRAFTING: _diagnostics_surface(SURFACE_CRAFTING, has_crafting_state()),
-		SURFACE_BUILD: _diagnostics_surface(SURFACE_BUILD, has_build_state()),
-		SURFACE_BATTLE: _diagnostics_surface(SURFACE_BATTLE, has_battle_log()),
-		SURFACE_ARENA: _diagnostics_surface(SURFACE_ARENA, has_arena_state()),
-		SURFACE_MODE: _diagnostics_surface(SURFACE_MODE, has_mode_state()),
-	}
-
-func _diagnostics_surface(surface: String, has_snapshot: bool) -> Dictionary:
-	var diagnostics := AccountSaveSliceScript.diagnostics_surface(surface, has_snapshot, surface_save_types, active_save_type)
-	diagnostics["refresh"] = surface_refresh_snapshot(surface)
-	return diagnostics
+	SessionStateFacadeScript.backfill_surface_save_types(self, SNAPSHOT_SURFACES)
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
@@ -1144,8 +906,3 @@ static func _parse_json_dictionary(text: String) -> Dictionary:
 	if data is Dictionary:
 		return Dictionary(data)
 	return {}
-
-static func _as_array(value: Variant) -> Array:
-	if value is Array:
-		return Array(value)
-	return []
