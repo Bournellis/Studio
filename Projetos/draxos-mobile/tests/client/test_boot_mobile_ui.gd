@@ -575,6 +575,8 @@ func test_arena_selection_renders_remote_arenas_as_data_driven_actions() -> void
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_EARLY))
 	assert_not_null(_find_button_by_text(boot._content_body, "Tutorial | 1 duelo | Intro"))
 	assert_not_null(_find_button_by_text(boot._content_body, "Cinzas | 3 duelos | Aprendiz"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaRecommendedCard"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaAlternativesPanel"))
 	var locked_button := boot._action_buttons[locked_action] as Button
 	assert_not_null(locked_button)
 	assert_true(locked_button.disabled)
@@ -582,6 +584,8 @@ func test_arena_selection_renders_remote_arenas_as_data_driven_actions() -> void
 	assert_false(locked_button.text.contains("Conclua dificuldade 1."))
 	assert_eq(locked_button.tooltip_text, "Conclua dificuldade 1.")
 	assert_true(_label_tree_contains(boot._content_body, "bloqueada: Conclua dificuldade 1."))
+	assert_true(_label_tree_contains(boot._content_body, "Outras arenas"))
+	assert_false(_visible_text_tree(boot._content_body).contains("Outras opcoes"))
 	assert_false(_visible_text_tree(boot._content_body).contains("s1_d00_intro"))
 	assert_false(_visible_text_tree(boot._content_body).contains("s1_d01_aprendiz"))
 	boot._sync_buttons()
@@ -696,8 +700,12 @@ func test_arena_active_exposes_behavior_adjustment_without_unlocking_loadout() -
 	assert_not_null(_find_button_by_text(boot._content_body, "Ajustar comportamento"))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_SHOW_PREPARATION))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaDuelProgressRail"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaDuelProgressRailSteps"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaDuelProgressStep1"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaAttemptSummaryPanel"))
 	assert_true(_label_tree_contains(boot._content_body, "Progresso dos duelos"))
-	assert_true(_label_tree_contains(boot._content_body, "[1 agora] -> [2 espera] -> [3 espera]"))
+	assert_false(_visible_text_tree(boot._content_body).contains("[1 agora] -> [2 espera] -> [3 espera]"))
 	assert_true(_label_tree_contains(boot._content_body, "Duelo atual: 1/3"))
 	assert_true(_label_tree_contains(boot._content_body, "Proximo inimigo: Aprendiz das Cinzas"))
 	assert_true(_label_tree_contains(boot._content_body, "Resumo: Varinha de Cinzas, 1 habilidade, Pocao de Vida"))
@@ -709,7 +717,49 @@ func test_arena_active_exposes_behavior_adjustment_without_unlocking_loadout() -
 	details_button.pressed.emit()
 	await get_tree().process_frame
 	assert_true(_visible_text_tree(boot._content_body).contains("Detalhes somente leitura"))
+	assert_false(_visible_text_tree(boot._content_body).contains("Hash:"))
+	assert_false(_visible_text_tree(boot._content_body).contains("sha256"))
 	assert_not_null(_find_button_by_text(boot._content_body, "Ocultar detalhes do loadout"))
+
+func test_arena_buff_choice_renders_comparable_cards_with_existing_actions() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"arenas": [],
+		"active_attempt": {
+			"attempt_id": "attempt-buff",
+			"arena_id": "arena_cinzas_curta",
+			"status": "awaiting_buff",
+			"duel_index": 1,
+			"duel_count": 3,
+			"duels_won": 1,
+			"locked_loadout_hash": "sha256:test",
+			"buff_offer": {
+				"choices": [
+					{"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor", "description": "+4% HP maximo"},
+					{"id": "arena_buff_potencia_menor", "display_name": "Potencia Ritual Menor", "description": "+4% Potencia Ritual"},
+					{"id": "arena_buff_guarda_menor", "display_name": "Guarda Menor", "description": "+4% Guarda"},
+				],
+			},
+		},
+	}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_BUFF_CHOICE)
+	await get_tree().process_frame
+
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaBuffChoiceCards"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaBuffChoiceCard1"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaBuffChoiceCard2"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaBuffChoiceCard3"))
+	assert_true(_label_tree_contains(boot._content_body, "Escolha um buff temporario"))
+	assert_true(_label_tree_contains(boot._content_body, "Vitalidade Menor"))
+	assert_true(_label_tree_contains(boot._content_body, "+4% HP maximo"))
+	assert_true(_label_tree_contains(boot._content_body, "Temporario: dura ate encerrar esta tentativa."))
+	assert_false(_visible_text_tree(boot._content_body).contains("Escolhas disponiveis"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.arena_choose_buff_action("arena_buff_vitalidade_menor")))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.arena_choose_buff_action("arena_buff_potencia_menor")))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.arena_choose_buff_action("arena_buff_guarda_menor")))
 
 func test_arena_summary_continues_to_arena_instead_of_reward_claim_copy() -> void:
 	var boot = BootScreenScript.new()
@@ -741,6 +791,8 @@ func test_arena_summary_continues_to_arena_instead_of_reward_claim_copy() -> voi
 	assert_not_null(_find_button_by_text(boot._content_body, "Continuar na Arena"))
 	assert_null(_find_button_by_text(boot._content_body, "Confirmar resumo"))
 	assert_true(_label_tree_contains(boot._content_body, "recompensa ja foi aplicada pelo ultimo duelo"))
+	assert_true(_label_tree_contains(boot._content_body, "Recompensa: COMPLETION_REWARD_APPLIED_ON_DUEL_CLEAR"))
+	assert_true(_label_tree_contains(boot._content_body, "Proximo passo: continuar na Arena ou voltar ao Refugio para evoluir."))
 
 func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -> void:
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
@@ -1312,6 +1364,9 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(_label_tree_contains(popup, "Primeira sessao: confira instrumento, habilidades e pocao antes da Arena."))
 	assert_true(_label_tree_contains(popup, "Poder 243"))
 	assert_true(_label_tree_contains(popup, "Loadout atual:"))
+	assert_true(_label_tree_contains(popup, "Pocao e comportamento: Pocao de Vida equipada | Usa automaticamente com vida baixa"))
+	assert_true(_label_tree_contains(popup, "Editar loadout e comportamento"))
+	assert_true(_label_tree_contains(popup, "Ajuste instrumento, habilidades, Doutrina, Familiar, Pocao e preferencias simples."))
 	assert_true(_label_tree_contains(popup, "Instrumento: Varinha de Cinzas"))
 	assert_true(_label_tree_contains(popup, "Habilidades: 1 habilidade"))
 	assert_true(_label_tree_contains(popup, "Doutrina: Doutrina do Pavor"))
@@ -1870,6 +1925,7 @@ func test_boot_arena_replay_shell_highlights_duel_and_reward() -> void:
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Duelo 2/3 da Arena"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Draxos vs Guardiao da Barreira"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa do duelo: XP +10"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "clear/aplicada no save"))
 
 func test_boot_battle_summary_renders_reward_result_and_actions() -> void:
 	_prepare_account_state()
@@ -1925,7 +1981,9 @@ func test_boot_arena_battle_summary_uses_combat_reward_copy_without_ranking() ->
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Combate"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Duelo 2/3 da Arena"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Adversario: Guardiao da Barreira"))
-	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa aplicada"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa do duelo/clear: XP +10"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Recompensa aplicada: XP +10, Almas +0.8, Ossos +1 ja veio do servidor"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Proximo passo: continuar na Arena"))
 	assert_false(_label_tree_contains(boot._battle_fullscreen_overlay, "Ranking"))
 	assert_not_null(_find_button_by_text(boot._battle_fullscreen_overlay, "Voltar ao Refugio"))
 

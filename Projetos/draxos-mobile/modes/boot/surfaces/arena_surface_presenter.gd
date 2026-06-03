@@ -5,7 +5,7 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 
 func render_selection(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
-	_call_host(host, "_add_body_text", ["Escolha uma lista de duelos. O loadout trava ao iniciar; buffs e comportamento ficam entre vitorias."])
+	_call_host(host, "_add_body_text", ["Escolha uma Arena PVE. O loadout trava ao iniciar; buffs e comportamento ficam entre vitorias."])
 	if _has_remote_arena_state(arena):
 		var arenas := _as_array(arena.get("arenas", []))
 		_render_recommended_arena(host, arenas)
@@ -15,23 +15,23 @@ func render_selection(host: Node) -> void:
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_loading_selection(host: Node) -> void:
-	_call_host(host, "_add_body_text", ["Escolha uma lista de duelos. O loadout trava ao iniciar; buffs e comportamento ficam entre vitorias."])
-	_call_host(host, "_add_output_label", ["Sincronizando Arena PVE\nBuscando arenas, desbloqueios e tentativa ativa no servidor.\nNenhuma tentativa local sera iniciada antes da resposta remota."])
+	_call_host(host, "_add_body_text", ["Carregando Arena PVE. As opcoes aparecem assim que o save sincronizar."])
+	_call_host(host, "_add_output_label", ["Sincronizando Arena PVE\nBuscando arenas e tentativa ativa.\nNenhuma tentativa local sera iniciada antes da resposta remota."])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_loadout(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
-	_call_host(host, "_add_body_text", ["Loadout travado para esta tentativa. Instrumento, habilidades, doutrina, familiar e pocao nao trocam ate a tentativa acabar."])
-	_call_host(host, "_add_output_label", [_loadout_summary_text(attempt)])
+	_call_host(host, "_add_body_text", ["Loadout travado para esta tentativa. Voce ainda pode ajustar comportamento simples entre duelos."])
+	_add_loadout_details_control(host, attempt)
 	_call_host(host, "_add_action_button", ["Continuar com loadout travado", AppShellActionContractScript.ACTION_ARENA_LOCK_LOADOUT])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_active(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
-	_call_host(host, "_add_body_text", ["Tentativa em andamento. Cada duelo comeca com HP cheio; o loadout segue travado, mas comportamento simples e uso de pocao ainda podem ser ajustados antes do proximo duelo."])
-	_call_host(host, "_add_output_label", [_duel_progress_text(attempt)])
+	_call_host(host, "_add_body_text", ["Tentativa em andamento. Cada duelo comeca com HP cheio."])
+	_add_duel_progress_rail(host, attempt)
 	_add_loadout_details_control(host, attempt)
-	_call_host(host, "_add_output_label", [_active_attempt_text(attempt)])
+	_add_attempt_summary_panel(host, attempt)
 	if not _pending_buff_choices(attempt).is_empty():
 		_call_host(host, "_add_action_button", ["Escolher buff", AppShellActionContractScript.arena_choose_buff_action(_first_buff_id(attempt))])
 	else:
@@ -47,14 +47,7 @@ func render_buff_choice(host: Node) -> void:
 		_call_host(host, "_add_output_label", ["Nenhum buff pendente. Volte para a tentativa ativa."])
 		_call_host(host, "_add_action_button", ["Continuar tentativa", AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL])
 		return
-	_call_host(host, "_add_output_label", [_buff_choices_text(choices)])
-	for choice_variant: Variant in choices:
-		var choice := _as_dictionary(choice_variant)
-		var buff_id := str(choice.get("id", "")).strip_edges()
-		if buff_id == "":
-			continue
-		var label := str(choice.get("display_name", buff_id)).strip_edges()
-		_call_host(host, "_add_action_button", ["Escolher %s" % label, AppShellActionContractScript.arena_choose_buff_action(buff_id)])
+	_add_buff_choice_cards(host, choices)
 
 func render_summary(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
@@ -73,8 +66,10 @@ func _render_available_arenas(host: Node, arenas: Array) -> void:
 	if arenas.is_empty():
 		_render_dev_fallback_arenas(host)
 		return
-	var lines := PackedStringArray()
-	lines.append("Outras opcoes")
+	var panel := _arena_panel(host, "ArenaAlternativesPanel", "bg_panel", "border_default")
+	var stack := _arena_panel_stack(panel, 7)
+	stack.add_child(_arena_label("Outras arenas", 14, "text_primary"))
+	stack.add_child(_arena_label("Escolha outra lista ou veja por que ela ainda esta bloqueada.", 12, "text_secondary"))
 	for arena_variant: Variant in arenas:
 		var arena := _as_dictionary(arena_variant)
 		var arena_id := str(arena.get("id", "")).strip_edges()
@@ -92,15 +87,10 @@ func _render_available_arenas(host: Node, arenas: Array) -> void:
 			var locked_reason := _arena_locked_reason(difficulty if not _arena_is_unlocked(difficulty) else arena)
 			if not unlocked:
 				label = "%s | bloqueada" % label
-			lines.append("- %s: %s duelos | %s | Lv %s | %s" % [
-				_short_arena_label(arena),
-				str(difficulty.get("max_steps", arena.get("duel_count", 1))),
-				_difficulty_label(difficulty),
-				_level_range_text(difficulty),
-				"disponivel" if unlocked else "bloqueada: %s" % locked_reason,
-			])
-			_call_host(host, "_add_action_button", [label, action_id, "", not unlocked, locked_reason])
-	_call_host(host, "_add_output_label", ["\n".join(lines)])
+			stack.add_child(_arena_action_button(host, label, action_id, not unlocked, locked_reason))
+			if not unlocked:
+				stack.add_child(_arena_label("bloqueada: %s" % locked_reason, 11, "text_secondary"))
+	_call_host(host, "_add_content_control", [panel])
 
 func _render_recommended_arena(host: Node, arenas: Array) -> void:
 	var recommendation := _recommended_arena_option(arenas)
@@ -114,15 +104,19 @@ func _render_recommended_arena(host: Node, arenas: Array) -> void:
 		return
 	var label := "Comecar"
 	var action_id := AppShellActionContractScript.arena_start_action(arena_id, difficulty_id)
-	_call_host(host, "_add_output_label", ["Proximo desafio\n%s\n%s duelo%s | %s | Lv %s | Poder %s" % [
+	var panel := _arena_panel(host, "ArenaRecommendedCard", "bg_panel_alt", "accent_battle")
+	var stack := _arena_panel_stack(panel, 7)
+	stack.add_child(_arena_label("Proximo desafio", 15, "text_primary"))
+	stack.add_child(_arena_label("%s\n%s duelo%s | %s | Lv %s | Poder %s" % [
 		str(arena.get("display_name", arena_id)),
 		str(difficulty.get("max_steps", arena.get("duel_count", 1))),
 		"" if int(difficulty.get("max_steps", arena.get("duel_count", 1))) == 1 else "s",
 		_difficulty_label(difficulty),
 		_level_range_text(difficulty),
 		_power_range_text(difficulty),
-	]])
-	_call_host(host, "_add_action_button", [label, action_id])
+	], 13, "text_secondary"))
+	stack.add_child(_arena_action_button(host, label, action_id, false, "", true))
+	_call_host(host, "_add_content_control", [panel])
 
 func _recommended_arena_option(arenas: Array) -> Dictionary:
 	var progress := _as_dictionary(SessionStore.arena_snapshot().get("progress", {}))
@@ -203,6 +197,107 @@ func _duel_progress_text(attempt: Dictionary) -> String:
 		duels_total,
 	]
 
+func _add_duel_progress_rail(host: Node, attempt: Dictionary) -> void:
+	var duels_won := clampi(int(attempt.get("duels_won", attempt.get("current_step_index", 0))), 0, 99)
+	var duel_index := int(attempt.get("duel_index", duels_won))
+	var duels_total := maxi(1, int(attempt.get("duel_count", attempt.get("duels_total", 1))))
+	var state := _attempt_state(attempt)
+	var current_duel := clampi(duel_index + 1, 1, duels_total)
+	if state in ["completed", "claimed"]:
+		current_duel = duels_total
+
+	var panel := _arena_panel(host, "ArenaDuelProgressRail", "bg_panel", "border_default")
+	var stack := _arena_panel_stack(panel, 7)
+	stack.add_child(_arena_label("Progresso dos duelos", 14, "text_primary"))
+	var legacy_text := _arena_label(_duel_progress_text(attempt), 1, "text_secondary")
+	legacy_text.name = "ArenaDuelProgressRailText"
+	legacy_text.visible = false
+	stack.add_child(legacy_text)
+	var rail := HBoxContainer.new()
+	rail.name = "ArenaDuelProgressRailSteps"
+	rail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rail.add_theme_constant_override("separation", 6)
+	stack.add_child(rail)
+
+	for index in range(1, duels_total + 1):
+		var step_state := "waiting"
+		if index <= duels_won or state in ["completed", "claimed"]:
+			step_state = "won"
+		elif state == "failed" and index == current_duel:
+			step_state = "failed"
+		elif index == current_duel:
+			step_state = "current"
+		rail.add_child(_duel_progress_step(index, step_state))
+
+	stack.add_child(_arena_label("%d de %d vencidos" % [clampi(duels_won, 0, duels_total), duels_total], 12, "text_secondary"))
+	_call_host(host, "_add_content_control", [panel])
+
+func _duel_progress_step(index: int, step_state: String) -> PanelContainer:
+	var step := PanelContainer.new()
+	step.name = "ArenaDuelProgressStep%d" % index
+	step.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	step.custom_minimum_size = Vector2(0, 38)
+	step.add_theme_stylebox_override("panel", _duel_progress_step_style(step_state))
+
+	var label := _arena_label(str(index), 13, "text_primary")
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.tooltip_text = _duel_progress_step_tooltip(index, step_state)
+	step.tooltip_text = label.tooltip_text
+	step.add_child(label)
+	return step
+
+func _duel_progress_step_tooltip(index: int, step_state: String) -> String:
+	match step_state:
+		"won":
+			return "Duelo %d vencido" % index
+		"failed":
+			return "Duelo %d encerrou a tentativa" % index
+		"current":
+			return "Duelo %d pronto" % index
+	return "Duelo %d aguardando" % index
+
+func _duel_progress_step_style(step_state: String) -> StyleBoxFlat:
+	var color_token := "border_default"
+	var blend := 0.08
+	match step_state:
+		"won":
+			color_token = "status_success"
+			blend = 0.24
+		"failed":
+			color_token = "status_error"
+			blend = 0.22
+		"current":
+			color_token = "accent_battle"
+			blend = 0.28
+	var style := StyleBoxFlat.new()
+	style.bg_color = UiTokens.color("bg_panel").lerp(UiTokens.color(color_token), blend)
+	style.border_color = UiTokens.color(color_token)
+	style.set_border_width_all(2 if step_state == "current" else 1)
+	style.set_corner_radius_all(8)
+	style.content_margin_left = 8
+	style.content_margin_right = 8
+	style.content_margin_top = 6
+	style.content_margin_bottom = 6
+	return style
+
+func _add_attempt_summary_panel(host: Node, attempt: Dictionary) -> void:
+	var panel := _arena_panel(host, "ArenaAttemptSummaryPanel", "bg_panel", "border_default")
+	var stack := _arena_panel_stack(panel, 6)
+	var duels_won := int(attempt.get("duels_won", attempt.get("current_step_index", 0)))
+	var next_duel := int(attempt.get("duel_index", duels_won)) + 1
+	var duels_total := maxi(1, int(attempt.get("duel_count", attempt.get("duels_total", 1))))
+	stack.add_child(_arena_label("Proximo duelo", 14, "text_primary"))
+	stack.add_child(_arena_label("Duelo atual: %d/%d" % [clampi(next_duel, 1, duels_total), duels_total], 12, "text_secondary"))
+	stack.add_child(_arena_label("Proximo inimigo: %s" % _next_enemy_label(attempt), 12, "text_secondary"))
+	stack.add_child(_arena_label("Estado: %s | Buffs ativos: %d" % [
+		_friendly_attempt_state(_attempt_state(attempt)),
+		_as_array(attempt.get("temporary_buffs", [])).size(),
+	], 12, "text_secondary"))
+	stack.add_child(_arena_label("Comportamento: ajustavel entre duelos", 12, "text_secondary"))
+	stack.add_child(_arena_label("Loadout travado. Pocao tambem pode ser ajustada antes do duelo.", 12, "text_secondary"))
+	_call_host(host, "_add_content_control", [panel])
+
 func _add_loadout_details_control(host: Node, attempt: Dictionary) -> void:
 	var panel := PanelContainer.new()
 	panel.name = "ArenaLoadoutDetailsPanel"
@@ -247,6 +342,99 @@ func _arena_label(text: String, font_size: int, color_token: String) -> Label:
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	return label
 
+func _arena_panel(host: Node, name: String, bg_token: String, border_token: String) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.name = name
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var style_variant: Variant = _call_host(host, "_panel_style", [bg_token, border_token])
+	if style_variant is StyleBox:
+		panel.add_theme_stylebox_override("panel", style_variant)
+	return panel
+
+func _arena_panel_stack(panel: PanelContainer, separation: int) -> VBoxContainer:
+	var stack := VBoxContainer.new()
+	stack.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stack.add_theme_constant_override("separation", separation)
+	panel.add_child(stack)
+	return stack
+
+func _arena_action_button(
+	host: Node,
+	text: String,
+	action_id: String,
+	disabled: bool = false,
+	disabled_reason: String = "",
+	primary: bool = false
+) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.tooltip_text = disabled_reason if disabled_reason.strip_edges() != "" else text
+	button.disabled = disabled
+	button.set_meta("force_disabled", disabled)
+	button.set_meta("disabled_reason", disabled_reason.strip_edges())
+	button.custom_minimum_size = Vector2(0, 58 if primary else 48)
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_call_host(host, "_prepare_touch_button", [button])
+	_call_host(host, "_apply_action_button_style", [button, action_id])
+	button.pressed.connect(func() -> void:
+		_call_host(host, "_trigger_action", [action_id, ""])
+	)
+	var action_buttons: Variant = host.get("_action_buttons")
+	if action_buttons is Dictionary:
+		var buttons := action_buttons as Dictionary
+		buttons[action_id] = button
+	return button
+
+func _add_buff_choice_cards(host: Node, choices: Array) -> void:
+	var panel := _arena_panel(host, "ArenaBuffChoiceCards", "bg_panel", "border_default")
+	var stack := _arena_panel_stack(panel, 8)
+	stack.add_child(_arena_label("Escolha um buff temporario", 14, "text_primary"))
+	stack.add_child(_arena_label("Vale so para esta tentativa. Compare as 3 opcoes antes do proximo duelo.", 12, "text_secondary"))
+
+	var cards := GridContainer.new()
+	cards.name = "ArenaBuffChoiceGrid"
+	cards.columns = 1
+	cards.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cards.add_theme_constant_override("h_separation", 8)
+	cards.add_theme_constant_override("v_separation", 8)
+	stack.add_child(cards)
+
+	var visible_count := mini(choices.size(), 3)
+	for index in range(visible_count):
+		var choice := _as_dictionary(choices[index])
+		var buff_id := str(choice.get("id", "")).strip_edges()
+		if buff_id == "":
+			continue
+		cards.add_child(_buff_choice_card(host, choice, index + 1, buff_id))
+	_call_host(host, "_add_content_control", [panel])
+
+func _buff_choice_card(host: Node, choice: Dictionary, index: int, buff_id: String) -> PanelContainer:
+	var card := _arena_panel(host, "ArenaBuffChoiceCard%d" % index, "bg_panel_alt", "border_default")
+	var stack := _arena_panel_stack(card, 5)
+	var label := str(choice.get("display_name", buff_id)).strip_edges()
+	stack.add_child(_arena_label(label, 13, "text_primary"))
+	stack.add_child(_arena_label(_buff_effect_text(choice), 12, "text_secondary"))
+	stack.add_child(_arena_label("Temporario: dura ate encerrar esta tentativa.", 11, "text_secondary"))
+	stack.add_child(_arena_action_button(host, "Escolher", AppShellActionContractScript.arena_choose_buff_action(buff_id), false, "", true))
+	return card
+
+func _buff_effect_text(choice: Dictionary) -> String:
+	var description := str(choice.get("description", "")).strip_edges()
+	if description != "":
+		return description
+	var modifiers := _as_array(choice.get("stat_modifiers", []))
+	if not modifiers.is_empty():
+		var parts := PackedStringArray()
+		for modifier_variant: Variant in modifiers:
+			var modifier := _as_dictionary(modifier_variant)
+			var stat := _humanize_id(str(modifier.get("stat", modifier.get("stat_id", ""))))
+			var amount := str(modifier.get("amount", modifier.get("value", ""))).strip_edges()
+			if stat != "" and amount != "":
+				parts.append("%s %s" % [stat, amount])
+		if not parts.is_empty():
+			return ", ".join(parts)
+	return "Melhora um atributo da Arena."
+
 func _loadout_locked_summary_text(attempt: Dictionary) -> String:
 	var locked_hash := str(attempt.get("locked_loadout_hash", "")).strip_edges()
 	var loadout := _as_dictionary(attempt.get("loadout_summary", {}))
@@ -257,12 +445,9 @@ func _loadout_locked_summary_text(attempt: Dictionary) -> String:
 
 func _loadout_details_text(attempt: Dictionary) -> String:
 	var loadout := _as_dictionary(attempt.get("loadout_summary", {}))
-	var locked_hash := str(attempt.get("locked_loadout_hash", "")).strip_edges()
 	var lines := PackedStringArray()
 	lines.append("Detalhes somente leitura")
-	lines.append("- Fonte: tentativa ativa da Arena")
 	lines.append("- Resumo: %s" % str(loadout.get("label", "Loadout travado no servidor.")))
-	lines.append("- Hash: %s" % (_short_hash(locked_hash) if locked_hash != "" else "pendente"))
 	for spec in [
 		["instrument", "Instrumento"],
 		["weapon", "Instrumento"],
@@ -282,19 +467,35 @@ func _loadout_value_text(value: Variant) -> String:
 	if value is Array:
 		var parts := PackedStringArray()
 		for entry: Variant in Array(value):
-			parts.append(str(entry))
+			var label := _loadout_value_text(entry)
+			if label != "":
+				parts.append(label)
 		return ", ".join(parts)
 	if value is Dictionary:
-		var parts := PackedStringArray()
-		for key: Variant in Dictionary(value).keys():
-			parts.append("%s=%s" % [str(key), str(Dictionary(value).get(key))])
-		return ", ".join(parts)
-	return str(value)
+		var data := Dictionary(value)
+		for key in ["display_name", "name", "label", "item_name", "spell_name"]:
+			var label := str(data.get(key, "")).strip_edges()
+			if label != "":
+				return label
+		for key in ["id", "item_id", "spell_id", "potion_id", "weapon_id", "instrument_id", "doctrine_id", "familiar_id"]:
+			var id_value := str(data.get(key, "")).strip_edges()
+			if id_value != "":
+				return _humanize_id(id_value)
+		return "configurado"
+	return _humanize_id(str(value))
 
 func _short_hash(value: String) -> String:
 	if value.length() <= 12:
 		return value
 	return "%s..." % value.substr(0, 12)
+
+func _humanize_id(value: String) -> String:
+	var cleaned := value.strip_edges()
+	if cleaned == "" or cleaned == "<null>" or cleaned.to_lower() == "null":
+		return "Nao definido"
+	cleaned = cleaned.replace("-", " ")
+	cleaned = cleaned.replace("_", " ")
+	return cleaned.capitalize()
 
 func _next_enemy_label(attempt: Dictionary) -> String:
 	var next_enemy := _as_dictionary(attempt.get("next_enemy", {}))
