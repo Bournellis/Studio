@@ -286,7 +286,7 @@ async function assertCorsPreflight(url: string, method: string): Promise<void> {
       origin: CORS_ORIGIN,
       "access-control-request-method": method,
       "access-control-request-headers":
-        "authorization,apikey,content-type,x-draxos-api-version,x-draxos-save-type",
+        "authorization,apikey,content-type,x-draxos-api-version,x-draxos-save-type,x-draxos-request-id,x-draxos-request-hash",
     },
   });
   assert(
@@ -312,6 +312,16 @@ async function assertCorsPreflight(url: string, method: string): Promise<void> {
     allowHeaders.toLowerCase(),
     "x-draxos-api-version",
     `CORS preflight should allow x-draxos-api-version for ${url}`,
+  );
+  assertIncludes(
+    allowHeaders.toLowerCase(),
+    "x-draxos-request-id",
+    `CORS preflight should allow x-draxos-request-id for ${url}`,
+  );
+  assertIncludes(
+    allowHeaders.toLowerCase(),
+    "x-draxos-request-hash",
+    `CORS preflight should allow x-draxos-request-hash for ${url}`,
   );
 }
 

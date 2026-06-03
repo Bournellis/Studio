@@ -224,6 +224,9 @@ func reset_active_save(request_id: String, access_token: String, request_hash: S
 	)
 
 func apply_progression_lab_save(request_id: String, profile_id: String, milestone_id: String, save_id: String, access_token: String, request_hash: String = "") -> Dictionary:
+	var normalized_hash := request_hash.strip_edges()
+	if normalized_hash == "":
+		return _error("INVALID_REQUEST_HASH", "Progression Lab apply requires a prepared mutation request_hash.")
 	return await _send_json(
 		function_url("progression-lab/apply"),
 		HTTPClient.METHOD_POST,
@@ -233,7 +236,7 @@ func apply_progression_lab_save(request_id: String, profile_id: String, mileston
 			"profile_id": profile_id,
 			"milestone_id": milestone_id,
 			"save_id": save_id,
-		}, request_hash)
+		}, normalized_hash)
 	)
 
 func run_remote_battle_lab(request_payload: Dictionary, access_token: String) -> Dictionary:

@@ -98,7 +98,9 @@ Fluxo atual recomendado para a Track 03:
 
 Esse fluxo chama `POST /progression-lab/apply`, que valida o perfil/milestone
 contra o catalogo versionado de healthy saves e escreve somente no save
-`progression_lab`.
+`progression_lab`. A partir do Foundation Solidification Follow-up, o cliente
+deve enviar `request_id` e `request_hash` preparados pelo `SessionStore`; a RPC
+grava/verifica o hash e faz o reset/seed Track 16 na mesma transacao.
 
 O seeder local continua existindo como ferramenta de apoio/dev:
 
@@ -157,7 +159,7 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 - O runner remoto nao escreve arquivos, nao aplica healthy save e nao altera
   recursos, ranking, economia, XP, progresso ou ledger.
 - Nao substitui Supabase como autoridade do jogo.
-- Aplicacao server-backed usa `POST /progression-lab/apply` e nunca escreve no save `normal`.
+- Aplicacao server-backed usa `POST /progression-lab/apply` com `request_hash` obrigatorio e nunca escreve no save `normal`.
 - Cache local-only e read-only e nunca deve simular autenticacao online.
 - Nao cria pagamento real.
 - Nao muda numeros automaticamente.
@@ -185,8 +187,9 @@ Runbook humano Track 05:
   `pocao_vida`, `potion_slots`, `spell_behaviors` e `combat_build` com
   `potionSlot` quando aplicavel.
 - `POST /progression-lab/apply` preserva o estado Track 16 do healthy save no
-  save `progression_lab`; o cache local-only tambem carrega `build_state` com
-  potion slots, inventario e comportamentos.
+  save `progression_lab`; consumables, potion slots, spell behaviors e item
+  transactions sao resetados/recriados dentro da RPC, e o cache local-only
+  tambem carrega `build_state` com potion slots, inventario e comportamentos.
 - Power recommendations: todos os componentes em `PASS` com os pesos
   `level=42`, `weapon_level=28`, `spell_level=40`, `pet_level=34`,
   `passive_level=22`, `weapon_quality_tier=30`.

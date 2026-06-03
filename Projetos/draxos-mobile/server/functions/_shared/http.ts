@@ -19,7 +19,7 @@ const internalAlphaPreviewOriginPattern = /^https:\/\/[a-f0-9]+\.draxos-mobile-i
 export const corsHeaders = {
   "access-control-allow-origin": defaultCorsOrigin,
   "access-control-allow-headers":
-    "authorization, x-client-info, apikey, content-type, x-draxos-save-type, x-draxos-api-version",
+    "authorization, x-client-info, apikey, content-type, x-draxos-save-type, x-draxos-api-version, x-draxos-request-id, x-draxos-request-hash",
   "access-control-allow-methods": "GET, POST, OPTIONS",
   "vary": "origin",
 };

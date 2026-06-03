@@ -21,6 +21,7 @@ npx -y deno test --allow-read server/tests/lab_heuristics_contract_test.ts
 npx -y deno test --allow-read server/tests/foundation_expansion_schema_test.ts
 npx -y deno test --allow-read server/tests/foundation_closeout_schema_test.ts
 npx -y deno test --allow-read server/tests/api_version_contract_test.ts
+npx -y deno test --allow-read server/tests/progression_lab_apply_contract_test.ts
 npx -y deno test --allow-read server/tests/transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/remaining_transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/battle_combatants_test.ts
@@ -182,8 +183,15 @@ e `save_type` divergente entre body/header e rejeitado.
 
 O smoke `progression_lab_apply_smoke.ts` valida `POST /progression-lab/apply`:
 perfil/milestone versionado aplicado no save `progression_lab`, save normal
-preservado, idempotencia por `request_id`, ranking do Lab bloqueado e batalha do
-Lab ainda jogavel apos a aplicacao.
+preservado, `request_hash` obrigatorio, idempotencia por `request_id` + hash,
+rejeicao de mesmo `request_id` com hash divergente, ranking do Lab bloqueado e
+batalha do Lab ainda jogavel apos a aplicacao.
+
+O teste `progression_lab_apply_contract_test.ts` valida que a nova assinatura da
+RPC exige `p_request_hash`, grava/verifica `idempotency_keys.request_hash`,
+move reset/seed de consumables, potion slots, spell behaviors e item
+transactions para dentro da transacao SQL e impede o adapter Edge de fazer
+cleanup REST pos-RPC.
 
 O smoke `email_auth_alpha_smoke.ts` valida signup/login por email/senha,
 `POST /account/bootstrap`, criacao do save `normal`, criacao do save

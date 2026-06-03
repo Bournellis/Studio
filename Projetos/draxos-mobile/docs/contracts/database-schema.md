@@ -23,6 +23,7 @@ Migrations atuais:
 - `202605300003_remaining_transactional_domain_enforcement.sql`: promove battle rewards, monetization rewards/alpha purchase, build equip, crafting craft/crush-bones e guild create/join para RPCs v1 com lock de `game_saves`, `request_hash`, idempotencia pending/completed, ledger e grants somente para `service_role`.
 - `202605300004_foundation_closeout.sql`: corrige `ruleset_registry` para publicacao imutavel por `publication_id`, persiste hashes de ruleset em saves/historicos, cria admin interno auditavel e promove as mutacoes restantes de build behavior/potion e social friend/chat para RPCs v1 `service_role`-only.
 - `202606020001_openworld_bosque_hardening_v1.sql`: promove `openworld/forest` para `active` no canal `internal_alpha`, adiciona snapshot/revision/event audit em Mode sessions, registra `openworld_forest_ruleset_v1`, aplica limites de sessao e torna o Reward Bridge do Bosque autoritativo pelo snapshot do servidor.
+- `202606030001_progression_lab_apply_request_hash.sql`: adiciona assinatura `apply_progression_lab_save(..., p_request_hash, ...)`, exige hash obrigatorio, bloqueia mismatch de idempotencia e move reset/seed de consumables, potion slots, spell behaviors e item transactions do Progression Lab para dentro da RPC transacional.
 
 ## Regras De Escopo De Servico
 

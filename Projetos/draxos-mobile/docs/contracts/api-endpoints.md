@@ -181,7 +181,7 @@ novo.
 | POST | `/monetization/rewards/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Claim economico do save ativo com ledger. |
 | POST | `/monetization/alpha-purchase` | `save-scoped` | Sim | `request_id/request_hash` por save | Compra/redeem alpha do save ativo com ledger; resposta retorna `monetization`, `resources/player` quando afetados e delta `base` quando produto impacta Refugio/fila. |
 | POST | `/telemetry/client-event` | `telemetry` | Sim, opcional | Nao | Grava diagnostico client; novos eventos permitidos incluem `request_latency`, `surface_refresh`, `surface_cache_rendered` e `action_latency`; `player_id` pode ser nulo antes de conta/save. |
-| POST | `/progression-lab/apply` | `save-scoped` | Sim, exige `progression_lab` | `request_id` por save Lab | Interno/gated; aplica healthy save apenas no Lab e nunca escreve no Normal. |
+| POST | `/progression-lab/apply` | `save-scoped` | Sim, exige `progression_lab` | `request_id/request_hash` por save Lab | Interno/gated; aplica healthy save apenas no Lab e nunca escreve no Normal; reset/seed Track 16 acontece dentro da RPC transacional. |
 | GET | `/modes/registry` | `mode` | Sim | Nao | Registry dos cinco modos oficiais. |
 | GET | `/modes/state?mode_id=<id>` | `save-scoped` | Sim | Nao | Estado de um modo no save ativo; Openworld retorna `active_session` com snapshot/revision quando retomavel. |
 | POST | `/modes/session/start` | `save-scoped` | Sim | `request_id/request_hash` por modo/save | Inicia sessao generica para modos que usam Mode sessions. |
@@ -1191,6 +1191,8 @@ Response logico:
 Aplica um estado gerado pelo Progression Lab no save `progression_lab`.
 
 Status: **implementado localmente em T03-P04**.
+Foundation Solidification Follow-up adiciona `request_hash` obrigatorio e reset
+Track 16 dentro da RPC transacional.
 
 Headers:
 
@@ -1205,6 +1207,7 @@ Request logico:
 ```json
 {
   "request_id": "uuid",
+  "request_hash": "sha256:...",
   "profile_id": "free_100_rewards",
   "milestone_id": "10h",
   "save_id": "free_100_rewards_10h"
@@ -1220,7 +1223,9 @@ Regras:
 - payload referencia perfil/milestone/save gerado e o servidor valida contra o catalogo versionado de healthy saves;
 - a aplicacao substitui player level/xp/power, resources, build, base, job ativo e Battle Pass do save `progression_lab`;
 - a aplicacao limpa batalha, ranking, social vinculado ao player do Lab quando existir, loja anterior, jobs, claims, compras alpha, ledger e idempotencias de acoes daquele save;
-- repetir o mesmo `request_id` retorna o mesmo payload;
+- a RPC tambem reseta/recria `player_consumables`, `player_potion_slots`, `player_spell_behaviors` e `item_transactions` do save Lab a partir do healthy save;
+- repetir o mesmo `request_id` + `request_hash` retorna o mesmo payload;
+- repetir o mesmo `request_id` com `request_hash` diferente retorna `IDEMPOTENCY_HASH_MISMATCH`;
 - usar `x-draxos-save-type: normal` retorna `PROGRESSION_LAB_SAVE_REQUIRED`.
 
 Response logico:
