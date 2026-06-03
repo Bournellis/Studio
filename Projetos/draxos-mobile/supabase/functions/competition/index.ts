@@ -118,19 +118,21 @@ async function handleCorsRequest(request: Request): Promise<Response> {
 
 async function handleMatchmakingPreview(auth: AuthContext, config: EdgeConfig): Promise<Response> {
   const startedAtMs = performance.now();
-  const player = await loadPlayer(auth, config);
+  const [player, botResult] = await Promise.all([
+    loadPlayer(auth, config),
+    restRequest<BotBuildRow[]>(
+      config,
+      "bot_builds?is_active=eq.true&select=id,power,power_band,build_data,is_active&order=power.asc",
+      { method: "GET" },
+    ),
+  ]);
   if (player.error !== null) {
     return errorResponse(player.error.code, player.error.message, player.error.status);
   }
-  const power = Math.max(50, numberValue(player.value.power, 0) || player.value.level * 50);
-  const botResult = await restRequest<BotBuildRow[]>(
-    config,
-    "bot_builds?is_active=eq.true&select=id,power,power_band,build_data,is_active&order=power.asc",
-    { method: "GET" },
-  );
   if (botResult.error !== null) {
     return errorResponse("MATCHMAKING_READ_FAILED", "Unable to load matchmaking pool.", 500);
   }
+  const power = Math.max(50, numberValue(player.value.power, 0) || player.value.level * 50);
   const bots = botResult.value.filter((bot) => !isRankedBot(bot));
   const selected =
     bots.toSorted((a, b) => Math.abs(a.power - power) - Math.abs(b.power - power))[0] ??
@@ -165,11 +167,13 @@ async function handleMatchmakingPreview(auth: AuthContext, config: EdgeConfig): 
 
 async function handleRankingCurrent(auth: AuthContext, config: EdgeConfig): Promise<Response> {
   const startedAtMs = performance.now();
-  const player = await loadPlayer(auth, config);
+  const [player, season] = await Promise.all([
+    loadPlayer(auth, config),
+    activeSeason(config),
+  ]);
   if (player.error !== null) {
     return errorResponse(player.error.code, player.error.message, player.error.status);
   }
-  const season = await activeSeason(config);
   if (season.error !== null) {
     return errorResponse(season.error.code, season.error.message, season.error.status);
   }

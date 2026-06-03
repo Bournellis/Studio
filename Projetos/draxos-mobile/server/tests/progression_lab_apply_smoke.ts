@@ -69,10 +69,28 @@ assertEq(
 );
 
 const applyRequestId = crypto.randomUUID();
+const applyRequestHash = `sha256:progression-lab-apply-${applyRequestId}`;
+const missingHashApply = await postJson(
+  `${SUPABASE_URL}/functions/v1/progression-lab/apply`,
+  {
+    request_id: crypto.randomUUID(),
+    profile_id: "free_100_rewards",
+    milestone_id: "10h",
+    save_id: "free_100_rewards_10h",
+  },
+  labHeaders,
+  false,
+);
+assertEq(
+  stringField(objectField(missingHashApply, "error"), "code"),
+  "INVALID_REQUEST_HASH",
+  "progression lab apply should require request_hash",
+);
 const applied = await postJson(
   `${SUPABASE_URL}/functions/v1/progression-lab/apply`,
   {
     request_id: applyRequestId,
+    request_hash: applyRequestHash,
     profile_id: "free_100_rewards",
     milestone_id: "10h",
     save_id: "free_100_rewards_10h",
@@ -113,6 +131,7 @@ const appliedRepeat = await postJson(
   `${SUPABASE_URL}/functions/v1/progression-lab/apply`,
   {
     request_id: applyRequestId,
+    request_hash: applyRequestHash,
     profile_id: "free_100_rewards",
     milestone_id: "10h",
     save_id: "free_100_rewards_10h",
@@ -123,6 +142,24 @@ assertEq(
   stringField(objectField(appliedRepeat, "progression_lab"), "save_id"),
   "free_100_rewards_10h",
   "apply should be idempotent by request_id",
+);
+
+const appliedHashMismatch = await postJson(
+  `${SUPABASE_URL}/functions/v1/progression-lab/apply`,
+  {
+    request_id: applyRequestId,
+    request_hash: "sha256:changed",
+    profile_id: "free_100_rewards",
+    milestone_id: "10h",
+    save_id: "free_100_rewards_10h",
+  },
+  labHeaders,
+  false,
+);
+assertEq(
+  stringField(objectField(appliedHashMismatch, "error"), "code"),
+  "IDEMPOTENCY_HASH_MISMATCH",
+  "apply should reject same request_id with a different request_hash",
 );
 
 const labState = await getJson(`${SUPABASE_URL}/functions/v1/account/state`, labHeaders);

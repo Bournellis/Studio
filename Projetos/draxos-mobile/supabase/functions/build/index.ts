@@ -444,39 +444,46 @@ async function loadBuildState(
     };
   }
 
-  const gameSave = await loadFoundationGameSave(
+  const playerId = encodeURIComponent(player.id);
+  const gameSavePromise = loadFoundationGameSave(
     config,
     restRequest,
     auth.userId,
     auth.saveType,
     player.id,
   );
-  if (gameSave.error !== null) {
-    return { value: null, error: gameSave.error };
-  }
-
-  await ensurePotionSlot(config, player.id);
-  const playerId = encodeURIComponent(player.id);
-  const buildResult = await restRequest<BuildRow[]>(
+  const buildPromise = restRequest<BuildRow[]>(
     config,
     `builds?player_id=eq.${playerId}&select=player_id,weapon_type,weapon_quality,weapon_level,spell_slots,spells_unlocked,pet_id,pet_level,passive_id,passive_level,updated_at&limit=1`,
     { method: "GET" },
   );
-  const inventoryResult = await restRequest<ConsumableRow[]>(
+  const inventoryPromise = restRequest<ConsumableRow[]>(
     config,
     `player_consumables?player_id=eq.${playerId}&select=player_id,item_id,quantity,updated_at&order=item_id.asc`,
     { method: "GET" },
   );
-  const slotsResult = await restRequest<PotionSlotRow[]>(
-    config,
-    `player_potion_slots?player_id=eq.${playerId}&select=player_id,slot_index,potion_id,behavior,updated_at&order=slot_index.asc`,
-    { method: "GET" },
-  );
-  const behaviorsResult = await restRequest<SpellBehaviorRow[]>(
+  const behaviorsPromise = restRequest<SpellBehaviorRow[]>(
     config,
     `player_spell_behaviors?player_id=eq.${playerId}&select=player_id,spell_id,behavior,updated_at&order=spell_id.asc`,
     { method: "GET" },
   );
+
+  await ensurePotionSlot(config, player.id);
+  const [gameSave, buildResult, inventoryResult, slotsResult, behaviorsResult] =
+    await Promise.all([
+      gameSavePromise,
+      buildPromise,
+      inventoryPromise,
+      restRequest<PotionSlotRow[]>(
+        config,
+        `player_potion_slots?player_id=eq.${playerId}&select=player_id,slot_index,potion_id,behavior,updated_at&order=slot_index.asc`,
+        { method: "GET" },
+      ),
+      behaviorsPromise,
+    ]);
+  if (gameSave.error !== null) {
+    return { value: null, error: gameSave.error };
+  }
   if (
     buildResult.error !== null || inventoryResult.error !== null ||
     slotsResult.error !== null || behaviorsResult.error !== null

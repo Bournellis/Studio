@@ -1,13 +1,10 @@
 const PROJECT_PREFIX = "Projetos/draxos-mobile";
 const MIGRATION_PATH = "supabase/migrations/202606010001_modes_platform_v1.sql";
-const SERVER_MIRROR_PATH =
-  "server/schema/migrations/202606010001_modes_platform_v1.sql";
-const ADMIN_MIGRATION_PATH =
-  "supabase/migrations/202606010002_modes_admin_audit_hardening.sql";
+const SERVER_MIRROR_PATH = "server/schema/migrations/202606010001_modes_platform_v1.sql";
+const ADMIN_MIGRATION_PATH = "supabase/migrations/202606010002_modes_admin_audit_hardening.sql";
 const ADMIN_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606010002_modes_admin_audit_hardening.sql";
-const HARDENING_V2_MIGRATION_PATH =
-  "supabase/migrations/202606010003_foundation_hardening_v2.sql";
+const HARDENING_V2_MIGRATION_PATH = "supabase/migrations/202606010003_foundation_hardening_v2.sql";
 const HARDENING_V2_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606010003_foundation_hardening_v2.sql";
 const BOSQUE_HARDENING_MIGRATION_PATH =
@@ -18,6 +15,14 @@ const BOSQUE_POLICY_ACTIVE_COMPAT_PATH =
   "supabase/migrations/202606020002_openworld_bosque_policy_active_compat.sql";
 const BOSQUE_POLICY_ACTIVE_COMPAT_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606020002_openworld_bosque_policy_active_compat.sql";
+const OPENWORLD_SESSION_CONTRACTS_PATH =
+  "supabase/migrations/202606030003_openworld_session_contracts_v1.sql";
+const OPENWORLD_SESSION_CONTRACTS_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606030003_openworld_session_contracts_v1.sql";
+const ADMIN_COMPENSATE_HASH_MIGRATION_PATH =
+  "supabase/migrations/202606020003_admin_compensate_request_hash.sql";
+const ADMIN_COMPENSATE_HASH_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606020003_admin_compensate_request_hash.sql";
 const EDGE_PATH = "server/functions/modes/index.ts";
 const SUPABASE_EDGE_PATH = "supabase/functions/modes/index.ts";
 const HANDLER_PATH = "server/functions/modes/mode_handler.ts";
@@ -25,7 +30,10 @@ const SUPABASE_HANDLER_PATH = "supabase/functions/modes/mode_handler.ts";
 const SUPPORT_PATH = "server/functions/modes/mode_support.ts";
 const SUPABASE_SUPPORT_PATH = "supabase/functions/modes/mode_support.ts";
 const OPENWORLD_SCREEN_PATH = "modes/openworld/openworld_forest_screen.gd";
+const OPENWORLD_BRIDGE_PATH = "modes/openworld/openworld_integrated_session_bridge.gd";
 const OPENWORLD_MODEL_PATH = "modes/openworld/openworld_forest_model.gd";
+const OPENWORLD_INTERACTION_PATH = "modes/openworld/openworld_forest_interaction_controller.gd";
+const OPENWORLD_HUD_PATH = "modes/openworld/openworld_forest_hud_controller.gd";
 
 Deno.test("mode platform migration is mirrored in server schema", async () => {
   const supabaseMigration = await readProjectText(MIGRATION_PATH);
@@ -79,6 +87,28 @@ Deno.test("openworld bosque policy active compat migration is mirrored in server
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema bosque policy active compat migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("openworld session contracts migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(OPENWORLD_SESSION_CONTRACTS_PATH);
+  const serverMirror = await readProjectText(OPENWORLD_SESSION_CONTRACTS_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema openworld session contracts migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("admin compensate request hash migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(ADMIN_COMPENSATE_HASH_MIGRATION_PATH);
+  const serverMirror = await readProjectText(ADMIN_COMPENSATE_HASH_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema admin compensate hash migration should mirror supabase migration exactly",
   );
 });
 
@@ -145,11 +175,13 @@ Deno.test("mode reward bridge is service-role, idempotent and ledgers resources"
 
   const hardeningV2Migration = normalizeSql(await readProjectText(HARDENING_V2_MIGRATION_PATH));
 
-  for (const [functionName, source] of [
-    ["mode_session_start_v1", migration],
-    ["mode_session_complete_v1", migration],
-    ["mode_session_abandon_v1", hardeningV2Migration],
-  ] as const) {
+  for (
+    const [functionName, source] of [
+      ["mode_session_start_v1", migration],
+      ["mode_session_complete_v1", migration],
+      ["mode_session_abandon_v1", hardeningV2Migration],
+    ] as const
+  ) {
     assertIncludes(
       source,
       `create or replace function public.${functionName}`,
@@ -237,7 +269,7 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
   );
   assertIncludes(
     handler.toLowerCase(),
-    "from \"./mode_support.ts\"",
+    'from "./mode_support.ts"',
     "mode handler should delegate shared support concerns to mode_support",
   );
   for (
@@ -294,6 +326,7 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
 
 Deno.test("openworld bosque hardening declares snapshot, event and server-authoritative reward contracts", async () => {
   const migration = normalizeSql(await readProjectText(BOSQUE_HARDENING_MIGRATION_PATH));
+  const sessionContracts = normalizeSql(await readProjectText(OPENWORLD_SESSION_CONTRACTS_PATH));
   const handler = normalizeCode(await readProjectText(HANDLER_PATH));
   const support = normalizeCode(await readProjectText(SUPPORT_PATH));
 
@@ -316,6 +349,24 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   ) {
     assertIncludes(migration, fragment, `bosque hardening should include ${fragment}`);
   }
+  for (
+    const fragment of [
+      "'reward_status', reward_status",
+      "'cap_zero', cap_zero",
+      "'period_key', reward_period_key",
+      "'message', reward_message",
+      "'per_session', jsonb_build_object('energia', 12, 'ossos', 2, 'xp', 8)",
+      "public.foundation_level_for_xp_v1(coalesce(xp, 0) + greatest(0, reward_xp), 40)",
+      "level = greatest(",
+      "Limite diario UTC do Bosque ja foi usado",
+    ]
+  ) {
+    assertIncludes(
+      sessionContracts,
+      fragment,
+      `openworld session contracts should include ${fragment}`,
+    );
+  }
   assertIncludes(handler, "mode_endpoint_session_event", "handler should hash event mutations");
   assertIncludes(handler, "rpc/mode_session_event_v1", "handler should call the event RPC");
   const eventHandler = codeSection(
@@ -336,51 +387,112 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   );
   assertIncludes(support, "session_event", "support should resolve the event route");
   assertIncludes(support, "mode_session_revision_stale", "support should map stale revisions");
-  assertIncludes(support, "mode_session_already_active", "support should map active-session conflicts");
-  assertIncludes(support, "mode_session_start_cooldown", "support should map start cooldown conflicts");
-  assertIncludes(support, "openworld_node_already_collected", "support should map duplicate node collection");
+  assertIncludes(
+    support,
+    "mode_session_already_active",
+    "support should map active-session conflicts",
+  );
+  assertIncludes(
+    support,
+    "mode_session_start_cooldown",
+    "support should map start cooldown conflicts",
+  );
+  assertIncludes(
+    support,
+    "openworld_node_already_collected",
+    "support should map duplicate node collection",
+  );
+  assertIncludes(support, "invalid_mode_event", "support should map invalid event payloads");
+  const modeDatabaseCodes = codeSection(
+    support,
+    "const codes = [",
+    "for (const code of codes)",
+  );
+  assertLessThan(
+    modeDatabaseCodes.indexOf('"invalid_mode_event"'),
+    modeDatabaseCodes.indexOf('"invalid_mode"'),
+    "specific INVALID_MODE_EVENT mapping should be checked before INVALID_MODE",
+  );
+  assertLessThan(
+    modeDatabaseCodes.indexOf('"invalid_mode_status"'),
+    modeDatabaseCodes.indexOf('"invalid_mode"'),
+    "specific INVALID_MODE_STATUS mapping should be checked before INVALID_MODE",
+  );
 });
 
 Deno.test("openworld client queues authoritative events before local mutation", async () => {
   const screen = normalizeCode(await readProjectText(OPENWORLD_SCREEN_PATH));
+  const bridge = normalizeCode(await readProjectText(OPENWORLD_BRIDGE_PATH));
   const model = normalizeCode(await readProjectText(OPENWORLD_MODEL_PATH));
+  const interaction = normalizeCode(await readOptionalProjectText(OPENWORLD_INTERACTION_PATH));
+  const hud = normalizeCode(await readOptionalProjectText(OPENWORLD_HUD_PATH));
+  const screenOrInteraction = `${screen}\n${interaction}`;
+  const screenOrHud = `${screen}\n${hud}`;
 
   for (
     const required of [
       "var _event_queue: array[dictionary]",
-      "func _flush_integrated_event_queue",
+      "func flush_event_queue",
       "await supabase_client.record_mode_session_event",
       "_snapshot_revision",
       "_event_queue.pop_front()",
-      "_apply_integrated_event_ack(body, job)",
-      "_resync_integrated_session",
-      "model.advance_collection(delta, false, distance, not authoritative_online)",
-      "_pending_collected_nodes[node_id] = true",
-      "_deposit_button.disabled = not _near_chest() or _network_busy or _has_pending_integrated_events()",
-      "func _has_pending_integrated_events()",
+      "_apply_event_ack(body, job)",
+      "await resync_session",
+      "func has_pending_events()",
     ]
   ) {
-    assertIncludes(screen, required, `openworld screen should include ${required}`);
+    assertIncludes(bridge, required, `openworld session bridge should include ${required}`);
   }
   const flushSection = codeSection(
-    screen,
-    "func _flush_integrated_event_queue",
-    "func _schedule_integrated_event_retry",
+    bridge,
+    "func flush_event_queue",
+    "func _apply_event_ack",
   );
   assertNotIncludes(
     flushSection,
-    "_hydrate_integrated_session(",
+    "hydrate_session(",
     "event ACKs should not hydrate the full session snapshot during active play",
   );
   assertIncludes(
-    screen,
+    bridge,
     "func _event_snapshot_patch",
     "openworld should convert legacy event responses to selective patches",
   );
   assertIncludes(
-    screen,
+    `${screen}\n${bridge}`,
     "client_position_revision",
     "openworld events should carry local position revision for sync auditing",
+  );
+  for (
+    const required of [
+      "model.advance_collection(delta, false, distance, not authoritative_online)",
+    ]
+  ) {
+    assertIncludes(
+      screenOrInteraction,
+      required,
+      `openworld interaction path should include ${required}`,
+    );
+  }
+  assertIncludes(
+    `${screenOrInteraction}\n${bridge}`,
+    "remember_pending_collected_node(node_id)",
+    "openworld should remember pending collected nodes before server ACK",
+  );
+  assertIncludes(
+    `${screenOrInteraction}\n${bridge}`,
+    "has_pending_collected_node",
+    "openworld should guard pending collected nodes before server ACK",
+  );
+  assertIncludes(
+    screenOrHud,
+    "deposit_disabled",
+    "openworld UI should share deposit disabled state with server sync state",
+  );
+  assertIncludes(
+    screen,
+    "func _has_pending_integrated_events()",
+    "openworld screen should expose pending integrated event state",
   );
   assertNotIncludes(
     screen,
@@ -515,12 +627,82 @@ Deno.test("mode admin RPCs are audited, service-role only and hash guarded", asy
   );
 });
 
+Deno.test("mode admin compensate is audited, service-role only and hash guarded", async () => {
+  const migration = normalizeSql(await readProjectText(ADMIN_COMPENSATE_HASH_MIGRATION_PATH));
+  const handler = normalizeCode(await readProjectText(HANDLER_PATH));
+
+  assertIncludes(
+    migration,
+    "create or replace function public.admin_adjust_resource_balance_v1",
+    "admin compensate hardening should replace admin_adjust_resource_balance_v1",
+  );
+  assertIncludes(
+    migration,
+    "p_request_hash text",
+    "admin compensate RPC should require p_request_hash",
+  );
+  assertIncludes(
+    migration,
+    "metadata->>'request_hash'",
+    "admin compensate RPC should compare request hashes on retries",
+  );
+  assertIncludes(
+    migration,
+    "'idempotency_hash_mismatch'",
+    "admin compensate RPC should reject reused request_id with a different hash",
+  );
+  assertIncludes(
+    migration,
+    "'request_hash', p_request_hash",
+    "admin compensate RPC should store request_hash in audit metadata",
+  );
+  assertIncludes(
+    migration,
+    "revoke all on function public.admin_adjust_resource_balance_v1(uuid, jsonb, text, uuid, uuid) from public, anon, authenticated, service_role;",
+    "old admin compensate signature should no longer be executable through service_role",
+  );
+  assertRegex(
+    migration,
+    /revoke all on function public\.admin_adjust_resource_balance_v1\(uuid, jsonb, text, uuid, text, uuid\) from public, anon, authenticated;/s,
+    "new admin compensate signature should be revoked from public roles",
+  );
+  assertRegex(
+    migration,
+    /grant execute on function public\.admin_adjust_resource_balance_v1\(uuid, jsonb, text, uuid, text, uuid\) to service_role;/s,
+    "new admin compensate signature should be granted to service_role only",
+  );
+  assertIncludes(
+    handler,
+    "modes/admin/compensate",
+    "admin compensate handler should compute a route-specific request hash",
+  );
+  assertIncludes(
+    handler,
+    "rpc/admin_adjust_resource_balance_v1",
+    "admin compensate handler should call the audited RPC",
+  );
+  assertIncludes(
+    handler,
+    "p_request_hash: requesthash",
+    "admin compensate handler should send p_request_hash to the RPC",
+  );
+});
+
 async function migrationText(): Promise<string> {
   return normalizeSql(await readProjectText(MIGRATION_PATH));
 }
 
 async function readProjectText(relativePath: string): Promise<string> {
   return await Deno.readTextFile(projectFile(relativePath));
+}
+
+async function readOptionalProjectText(relativePath: string): Promise<string> {
+  try {
+    return await readProjectText(relativePath);
+  } catch (error) {
+    if (error instanceof Deno.errors.NotFound) return "";
+    throw error;
+  }
 }
 
 function projectFile(relativePath: string): string {
@@ -587,6 +769,12 @@ function assertEq(actual: unknown, expected: unknown, message: string): void {
 function assertLessOrEq(actual: number, expected: number, message: string): void {
   if (actual > expected) {
     throw new Error(`${message}. Actual=${actual} Expected<=${expected}`);
+  }
+}
+
+function assertLessThan(actual: number, expected: number, message: string): void {
+  if (actual < 0 || expected < 0 || actual >= expected) {
+    throw new Error(`${message}. Actual=${actual} ExpectedGreater=${expected}`);
   }
 }
 

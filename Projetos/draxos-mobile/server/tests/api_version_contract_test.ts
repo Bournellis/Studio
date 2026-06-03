@@ -61,6 +61,16 @@ Deno.test("api version helper and cors are mirrored", async () => {
     "x-draxos-api-version",
     "CORS should allow the API version header",
   );
+  assertIncludes(
+    serverHttp,
+    "x-draxos-request-id",
+    "CORS should allow the request id header",
+  );
+  assertIncludes(
+    serverHttp,
+    "x-draxos-request-hash",
+    "CORS should allow the request hash header",
+  );
 });
 
 Deno.test("state envelope preserves payload and adds timing metadata", () => {

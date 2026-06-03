@@ -1,6 +1,7 @@
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "http://127.0.0.1:54321";
 const PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ??
   "sb_publishable_TLjdd9X4MlzD740dtVCXNg_YTl9IMAi";
+const EXPECTED_RELEASE_ROOT = (Deno.env.get("DRAXOS_EXPECTED_RELEASE_ROOT") ?? "").trim();
 
 interface JsonObject {
   [key: string]: unknown;
@@ -54,6 +55,23 @@ assert(
   isObject(artifacts.web),
   "manifest should include Web artifact metadata",
 );
+const androidUrl = stringField(objectField(artifacts, "android"), "url");
+const pcUrl = stringField(objectField(artifacts, "pc_windows"), "url");
+assert(
+  !androidUrl.includes("internal-alpha/v0-openworld") &&
+    !pcUrl.includes("internal-alpha/v0-openworld"),
+  "manifest should not fall back to old Openworld package roots",
+);
+if (EXPECTED_RELEASE_ROOT !== "") {
+  assert(
+    androidUrl.includes(EXPECTED_RELEASE_ROOT),
+    `Android URL should include expected release root ${EXPECTED_RELEASE_ROOT}`,
+  );
+  assert(
+    pcUrl.includes(EXPECTED_RELEASE_ROOT),
+    `PC URL should include expected release root ${EXPECTED_RELEASE_ROOT}`,
+  );
+}
 assert(
   stringField(objectField(artifacts, "web"), "url").startsWith("https://"),
   "manifest should include the published Web URL",

@@ -5,6 +5,7 @@ signal close_requested
 signal deposit_requested
 signal craft_requested(recipe_id: String)
 signal complete_requested
+signal abandon_requested
 
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 
@@ -15,6 +16,12 @@ var network_busy := false
 var pending_summary := ""
 var result_text := ""
 var payload_preview := {}
+var can_complete := true
+var session_state := "preview"
+var session_message := ""
+var abandon_available := false
+var abandon_confirm_pending := false
+var render_count_for_tests := 0
 
 var _current_tab := "pocket"
 var _technical_visible := false
@@ -23,6 +30,7 @@ var _body: VBoxContainer
 var _tab_buttons: Dictionary = {}
 var _deposit_button: Button
 var _complete_button: Button
+var _abandon_button: Button
 var _technical_button: Button
 
 func _ready() -> void:
@@ -43,7 +51,12 @@ func render(
 	next_network_busy: bool = network_busy,
 	next_pending_summary: String = pending_summary,
 	next_result_text: String = result_text,
-	next_payload_preview: Dictionary = payload_preview
+	next_payload_preview: Dictionary = payload_preview,
+	next_can_complete: bool = can_complete,
+	next_session_state: String = session_state,
+	next_session_message: String = session_message,
+	next_abandon_available: bool = abandon_available,
+	next_abandon_confirm_pending: bool = abandon_confirm_pending
 ) -> void:
 	integration_mode = next_integration_mode
 	server_session_id = next_server_session_id
@@ -51,8 +64,14 @@ func render(
 	pending_summary = next_pending_summary
 	result_text = next_result_text
 	payload_preview = next_payload_preview
+	can_complete = next_can_complete
+	session_state = next_session_state
+	session_message = next_session_message
+	abandon_available = next_abandon_available
+	abandon_confirm_pending = next_abandon_confirm_pending
 	if _body == null or model == null:
 		return
+	render_count_for_tests += 1
 	_title_label.text = _tab_title(_current_tab)
 	_render_tab_buttons()
 	_clear_body()
@@ -80,7 +99,13 @@ func close_sheet() -> void:
 func set_deposit_available(available: bool) -> void:
 	if _deposit_button != null:
 		_deposit_button.disabled = not available or network_busy
-		_deposit_button.tooltip_text = "Aproxime-se do bau para depositar." if not available else "Depositar bolso no bau."
+		_deposit_button.tooltip_text = "Sincronizacao em andamento." if network_busy else ("Aproxime-se do bau para depositar." if not available else "Depositar bolso no bau.")
+
+func current_tab_for_tests() -> String:
+	return _current_tab
+
+func render_count() -> int:
+	return render_count_for_tests
 
 func _build() -> void:
 	var holder := VBoxContainer.new()
@@ -192,17 +217,29 @@ func _render_craft() -> void:
 
 func _render_session() -> void:
 	_body.add_child(_label("Bosque", 16, Color(0.90, 0.82, 0.62)))
-	var state := "Retomada pronta" if integration_mode == "integrated_alpha" and server_session_id != "" else "Preview sem recompensa"
+	var state := _session_state_text()
 	_body.add_child(_label("Estado: %s" % state, 13, Color(0.82, 0.80, 0.70)))
+	if session_message.strip_edges() != "":
+		_body.add_child(_label(session_message, 13, Color(0.86, 0.83, 0.70)))
 	_complete_button = Button.new()
 	_complete_button.name = "OpenworldSheetCompleteButton"
-	_complete_button.text = "Completar" if integration_mode == "integrated_alpha" else "Preview"
+	_complete_button.text = "Completar" if integration_mode == "integrated_alpha" else "Resultado preview"
 	_complete_button.custom_minimum_size = Vector2(0, 48)
-	_complete_button.disabled = network_busy
+	_complete_button.disabled = network_busy or not can_complete
 	_complete_button.pressed.connect(func() -> void:
 		complete_requested.emit()
 	)
 	_body.add_child(_complete_button)
+	if abandon_available:
+		_abandon_button = Button.new()
+		_abandon_button.name = "OpenworldSheetAbandonButton"
+		_abandon_button.text = "Confirmar abandono" if abandon_confirm_pending else "Abandonar sessao"
+		_abandon_button.custom_minimum_size = Vector2(0, 46)
+		_abandon_button.disabled = network_busy
+		_abandon_button.pressed.connect(func() -> void:
+			abandon_requested.emit()
+		)
+		_body.add_child(_abandon_button)
 	if result_text != "":
 		_body.add_child(_label(result_text, 13, Color(0.94, 0.90, 0.74)))
 	_technical_button = Button.new()
@@ -234,6 +271,7 @@ func _clear_body() -> void:
 		child.queue_free()
 	_deposit_button = null
 	_complete_button = null
+	_abandon_button = null
 	_technical_button = null
 
 func _label(text: String, font_size: int, color: Color) -> Label:
@@ -296,6 +334,25 @@ func _tab_button_text(tab_id: String) -> String:
 			return "Sessao"
 		_:
 			return tab_id
+
+func _session_state_text() -> String:
+	match session_state:
+		"starting":
+			return "Iniciando sessao online"
+		"synced":
+			return "Retomada pronta por ate 2h"
+		"pending":
+			return "Sincronizacao pendente"
+		"resyncing":
+			return "Resincronizando"
+		"completed":
+			return "Concluido"
+		"offline":
+			return "Offline - preview sem recompensa"
+		"blocked":
+			return "Bloqueado - preview sem recompensa"
+		_:
+			return "Preview sem recompensa"
 
 func _panel_style(bg: Color, border: Color) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()

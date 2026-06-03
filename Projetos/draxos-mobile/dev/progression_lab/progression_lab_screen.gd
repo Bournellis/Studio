@@ -325,14 +325,26 @@ func _apply_selected_to_server_lab_save() -> void:
 
 	_set_status("Aplicando %s/%s no save Progression Lab..." % [_selected_profile(), _selected_milestone()])
 	supabase_client.configure_save_type(SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB)
+	var mutation: Dictionary = session_store.prepare_pending_mutation(
+		"progression-lab/apply",
+		"progression_lab",
+		"apply_profile",
+		{
+			"profile_id": _selected_profile(),
+			"milestone_id": _selected_milestone(),
+			"save_id": str(save.get("id", "")),
+		}
+	)
 	var result: Dictionary = await supabase_client.apply_progression_lab_save(
-		SessionStoreScript.create_request_id(),
+		str(mutation.get("request_id", "")),
 		_selected_profile(),
 		_selected_milestone(),
 		str(save.get("id", "")),
-		session_store.access_token
+		session_store.access_token,
+		str(mutation.get("request_hash", ""))
 	)
 	if not bool(result.get("ok", false)):
+		session_store.fail_pending_mutation(str(mutation.get("request_id", "")), _as_dictionary(result.get("error", {})))
 		var error_payload := _as_dictionary(result.get("error", {}))
 		_set_status("Aplicacao falhou: %s - %s" % [
 			str(error_payload.get("code", "REQUEST_FAILED")),
@@ -342,6 +354,7 @@ func _apply_selected_to_server_lab_save() -> void:
 	if not session_store.apply_progression_lab_result(result):
 		_set_status("SessionStore recusou o retorno: %s" % str(session_store.last_error.get("message", "erro desconhecido")))
 		return
+	session_store.complete_pending_mutation(str(mutation.get("request_id", "")), result)
 	session_store.save_cache()
 	_write_selected_cache(session_store.snapshot())
 	_set_status("Perfil aplicado no save Progression Lab. Feche o overlay e jogue esse estado isolado.")

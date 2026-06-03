@@ -21,6 +21,7 @@ npx -y deno test --allow-read server/tests/lab_heuristics_contract_test.ts
 npx -y deno test --allow-read server/tests/foundation_expansion_schema_test.ts
 npx -y deno test --allow-read server/tests/foundation_closeout_schema_test.ts
 npx -y deno test --allow-read server/tests/api_version_contract_test.ts
+npx -y deno test --allow-read server/tests/progression_lab_apply_contract_test.ts
 npx -y deno test --allow-read server/tests/transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/remaining_transactional_domain_enforcement_schema_test.ts
 npx -y deno test --allow-read server/tests/battle_combatants_test.ts
@@ -31,6 +32,7 @@ npx -y deno test --allow-read server/tests/economy_domain_test.ts
 npx -y deno test --allow-read server/tests/foundation_ruleset_test.ts
 npx -y deno test --allow-read server/tests/integer_bones_contract_test.ts
 npx -y deno test --allow-read server/tests/mode_definitions_schema_test.ts
+npx -y deno test --allow-read server/tests/release_auth_contract_test.ts
 ```
 
 O teste `foundation_contracts_test.ts` le `docs/contracts/api-endpoints.md` e o
@@ -181,8 +183,15 @@ e `save_type` divergente entre body/header e rejeitado.
 
 O smoke `progression_lab_apply_smoke.ts` valida `POST /progression-lab/apply`:
 perfil/milestone versionado aplicado no save `progression_lab`, save normal
-preservado, idempotencia por `request_id`, ranking do Lab bloqueado e batalha do
-Lab ainda jogavel apos a aplicacao.
+preservado, `request_hash` obrigatorio, idempotencia por `request_id` + hash,
+rejeicao de mesmo `request_id` com hash divergente, ranking do Lab bloqueado e
+batalha do Lab ainda jogavel apos a aplicacao.
+
+O teste `progression_lab_apply_contract_test.ts` valida que a nova assinatura da
+RPC exige `p_request_hash`, grava/verifica `idempotency_keys.request_hash`,
+move reset/seed de consumables, potion slots, spell behaviors e item
+transactions para dentro da transacao SQL e impede o adapter Edge de fazer
+cleanup REST pos-RPC.
 
 O smoke `email_auth_alpha_smoke.ts` valida signup/login por email/senha,
 `POST /account/bootstrap`, criacao do save `normal`, criacao do save
@@ -195,7 +204,14 @@ artefatos Android/PC/Web.
 
 O smoke `release_download_smoke.ts` valida `GET /release/download` com conta
 email/senha alpha: cria URLs assinadas temporarias de Android/PC e confirma que
-elas usam rota valida de Supabase Storage.
+elas usam rota valida de Supabase Storage. Ele tambem forja o `sub` de um JWT
+valido e confirma que o backend rejeita o token antes de criar URL assinada.
+
+O teste `release_auth_contract_test.ts` bloqueia regressao estatica no
+`/release/download`: o bearer token precisa ser validado em `/auth/v1/user`
+com publishable/anon key, o `sub` decodificado precisa bater com o usuario
+autenticado, contas anonimas/sem email sao rejeitadas e o fallback de manifest
+nao pode apontar para roots antigos de Openworld.
 
 O smoke `grimoire_catalog_smoke.ts` valida `GET /content/grimoire`: auth
 obrigatoria, bloqueio de JWT anonimo, bloqueio de conta email sem save alpha e

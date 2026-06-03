@@ -23,11 +23,12 @@ static func begin(
 	meta["save_type"] = active_save_type
 	meta["refresh_version"] = version
 	meta["refreshing"] = true
-	meta["source"] = cache_source if rendered_from_cache else str(meta.get("source", ""))
+	meta["source"] = cache_source
 	meta["last_refresh_started_at"] = _now_text()
 	meta["last_refresh_started_ms"] = now_ms
 	meta["last_action_id"] = action_id.strip_edges()
 	meta["last_endpoint"] = endpoint.strip_edges()
+	meta["last_scope_id"] = "%s:%s" % [normalized_surface, active_save_type]
 	meta["rendered_from_cache"] = rendered_from_cache
 	meta["last_error"] = {}
 	meta_by_surface[normalized_surface] = meta
@@ -62,7 +63,7 @@ static func complete(
 	if str(meta.get("generated_at", "")).strip_edges() == "":
 		meta["generated_at"] = str(meta.get("last_success_at", ""))
 	meta_by_surface[normalized_surface] = meta
-	record_latency(latency_log, request_latency_payload(result, normalized_surface, true), latency_limit)
+	record_latency(latency_log, request_latency_payload(result, normalized_surface, true, meta), latency_limit)
 	return true
 
 static func fail(
@@ -80,13 +81,15 @@ static func fail(
 	if not has_token(meta_by_surface, normalized_surface, active_save_type, token):
 		return false
 	var meta := surface_meta(meta_by_surface, normalized_surface, active_save_type)
+	var client := _dict(result.get("_client", {}))
 	meta["refreshing"] = false
 	meta["last_error"] = _dict(result.get("error", _dict(result.get("body", {})).get("error", {}))).duplicate(true)
-	meta["last_status"] = int(result.get("status", 0))
+	meta["last_latency_ms"] = int(client.get("duration_ms", meta.get("last_latency_ms", 0)))
+	meta["last_status"] = int(result.get("status", client.get("response_code", 0)))
 	if str(meta.get("source", "")).strip_edges() == "":
 		meta["source"] = cache_source if has_snapshot else ""
 	meta_by_surface[normalized_surface] = meta
-	record_latency(latency_log, request_latency_payload(result, normalized_surface, false), latency_limit)
+	record_latency(latency_log, request_latency_payload(result, normalized_surface, false, meta), latency_limit)
 	return true
 
 static func snapshot(meta_by_surface: Dictionary, surface: String, active_save_type: String, has_snapshot: bool) -> Dictionary:
@@ -129,19 +132,28 @@ static func surface_meta(meta_by_surface: Dictionary, surface: String, active_sa
 		"last_error": {},
 		"source": "",
 		"rendered_from_cache": false,
+		"last_scope_id": "%s:%s" % [normalized_surface, active_save_type],
 		"refresh_version": 0,
 	}
 
-static func request_latency_payload(result: Dictionary, surface: String, ok: bool) -> Dictionary:
+static func request_latency_payload(result: Dictionary, surface: String, ok: bool, meta: Dictionary = {}) -> Dictionary:
 	var client := _dict(result.get("_client", {}))
+	var body := _dict(result.get("body", {}))
+	var refresh := _dict(meta)
 	return {
 		"surface": surface,
-		"endpoint": str(client.get("endpoint", "")),
+		"endpoint": str(client.get("endpoint", refresh.get("last_endpoint", ""))),
 		"url": str(client.get("url", "")),
 		"method": str(client.get("method", "")),
-		"duration_ms": int(client.get("duration_ms", 0)),
-		"response_code": int(client.get("response_code", result.get("status", 0))),
+		"action_id": str(refresh.get("last_action_id", "")),
+		"scope_id": str(refresh.get("last_scope_id", "")),
+		"duration_ms": int(client.get("duration_ms", refresh.get("last_latency_ms", 0))),
+		"response_code": int(client.get("response_code", result.get("status", refresh.get("last_status", 0)))),
 		"ok": ok,
+		"fail": not ok,
+		"used_cache": str(refresh.get("source", "")) == "cache",
+		"rendered_from_cache": bool(refresh.get("rendered_from_cache", false)),
+		"server_timing": _dict(body.get("server_timing", {})),
 	}
 
 static func _now_text() -> String:

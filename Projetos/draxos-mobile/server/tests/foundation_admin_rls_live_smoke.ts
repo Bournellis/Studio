@@ -6,8 +6,7 @@ const PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ??
   "sb_publishable_TLjdd9X4MlzD740dtVCXNg_YTl9IMAi";
 const LOCAL_SERVICE_ROLE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU";
-const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ??
-  LOCAL_SERVICE_ROLE_KEY;
+const SERVICE_ROLE_KEY = serviceRoleKeyForTarget();
 const DATABASE_URL = Deno.env.get("DRAXOS_LOCAL_DB_URL") ??
   "postgres://postgres:postgres@127.0.0.1:54322/postgres";
 
@@ -67,11 +66,33 @@ try {
 
 function assertLocalOnly(): void {
   assert(
-    /^http:\/\/(127\.0\.0\.1|localhost|0\.0\.0\.0)(:\d+)?$/.test(
-      SUPABASE_URL,
-    ),
+    isLocalSupabaseUrl(SUPABASE_URL),
     "foundation_admin_rls_live_smoke refuses remote Supabase URLs. Start local Supabase/Edge or set SUPABASE_URL=http://127.0.0.1:54321.",
   );
+}
+
+function serviceRoleKeyForTarget(): string {
+  const configured = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")?.trim() ?? "";
+  if (configured !== "") {
+    return configured;
+  }
+  assert(
+    isLocalSupabaseUrl(SUPABASE_URL),
+    "SUPABASE_SERVICE_ROLE_KEY is required for non-local targets; the bundled local service role fallback is limited to localhost, 127.0.0.1 or ::1.",
+  );
+  return LOCAL_SERVICE_ROLE_KEY;
+}
+
+function isLocalSupabaseUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    return url.protocol === "http:" &&
+      (host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0" ||
+        host === "::1" || host === "[::1]");
+  } catch {
+    return false;
+  }
 }
 
 async function assertLocalEdgeIsReachable(): Promise<void> {
@@ -423,6 +444,8 @@ async function proveServiceRoleAdminOps(account: TestAccount): Promise<void> {
     p_delta: { almas: 3, energia: 2 },
     p_reason: "foundation admin RLS live smoke resource adjustment",
     p_request_id: adjustRequestId,
+    p_request_hash: `sha256:admin-adjust-${adjustRequestId}`,
+    p_actor_auth_user_id: account.authUserId,
   };
   const adjusted = await postRpc(
     "admin_adjust_resource_balance_v1",

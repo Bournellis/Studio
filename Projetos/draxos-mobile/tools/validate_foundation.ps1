@@ -25,6 +25,13 @@ param(
     [switch]$AllowCloudflareAccess,
     [switch]$RemoteFullHash,
     [switch]$ConfirmRemoteMutation,
+    [string]$RemoteWebUrl = "",
+    [string]$ExpectedReleaseRoot = "",
+    [string]$ExpectedPortalUrl = "https://draxos-mobile-internal-alpha.pages.dev/",
+    [string]$ExpectedWebUrl = "https://draxos-mobile-internal-alpha.pages.dev/web/index.html",
+    [string]$RemoteDiagnosticsDir = "",
+    [switch]$NoProjectWrites,
+    [switch]$KeepDiagnostics,
     [string]$JsonReportPath = "",
     [string]$MarkdownReportPath = ""
 )
@@ -33,7 +40,12 @@ $ErrorActionPreference = "Stop"
 
 $ProjectPath = (Resolve-Path -LiteralPath $ProjectDir).Path
 $RepoPath = (Resolve-Path -LiteralPath (Join-Path $ProjectPath "..\..")).Path
-$ValidationDir = Join-Path $ProjectPath "build\validation"
+$ValidationRoot = if ($NoProjectWrites.IsPresent) {
+    Join-Path ([System.IO.Path]::GetTempPath()) "draxos-mobile-foundation-validation"
+} else {
+    Join-Path $ProjectPath "build\validation"
+}
+$ValidationDir = $ValidationRoot
 if ($JsonReportPath.Trim().Length -eq 0) {
     $JsonReportPath = Join-Path $ValidationDir "foundation-validation-latest.json"
 }
@@ -823,6 +835,11 @@ function Write-Reports {
         include_local_edge_rpc = $RunLocalEdgeRpc
         include_local_admin_rls = $RunLocalAdminRls
         confirm_remote_mutation = $ConfirmRemoteMutation.IsPresent
+        no_project_writes = $NoProjectWrites.IsPresent
+        remote_web_url = $RemoteWebUrl
+        expected_release_root = $ExpectedReleaseRoot
+        expected_portal_url = $ExpectedPortalUrl
+        expected_web_url = $ExpectedWebUrl
         summary = $summary
         results = @($Results.ToArray())
     }
@@ -961,7 +978,7 @@ Invoke-Step -Name "V2 mode handler/security strictness" -Stage "ServerQuick" -Co
 
 Invoke-Step -Name "Deno release typecheck light" -Stage "ServerQuick" -Command "npx -y deno check release function/tests" -ScriptBlock {
     Invoke-External -Command "npx -y deno check release function/tests" -WorkingDirectory $ProjectPath -ScriptBlock {
-        & npx -y deno check server/functions/release/index.ts supabase/functions/release/index.ts server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/internal_alpha_remote_smoke.ts
+        & npx -y deno check server/functions/release/index.ts supabase/functions/release/index.ts server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/release_auth_contract_test.ts server/tests/internal_alpha_remote_smoke.ts
     }
 }
 
@@ -986,6 +1003,7 @@ Invoke-Step -Name "Deno foundation contract tests" -Stage "ServerQuick" -Command
             server/tests/transactional_domain_enforcement_schema_test.ts `
             server/tests/remaining_transactional_domain_enforcement_schema_test.ts `
             server/tests/lab_heuristics_contract_test.ts `
+            server/tests/progression_lab_apply_contract_test.ts `
             server/tests/battle_combatants_test.ts `
             server/tests/base_domain_test.ts `
             server/tests/battle_log_projection_test.ts `
@@ -1001,7 +1019,8 @@ Invoke-Step -Name "Deno foundation contract tests" -Stage "ServerQuick" -Command
             server/tests/modes_disable_rollback_test.ts `
             server/tests/modes_admin_ops_test.ts `
             server/tests/modes_analytics_test.ts `
-            server/tests/openworld_reward_bridge_test.ts
+            server/tests/openworld_reward_bridge_test.ts `
+            server/tests/release_auth_contract_test.ts
     }
 }
 
@@ -1166,7 +1185,7 @@ if ($RunClient) {
 if ($RunRelease) {
     Invoke-Step -Name "release manifest typecheck" -Stage "ReleaseDryRun" -Command "npx -y deno check release smoke tests" -ScriptBlock {
         Invoke-External -Command "npx -y deno check release smoke tests" -WorkingDirectory $ProjectPath -ScriptBlock {
-            & npx -y deno check server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/internal_alpha_remote_smoke.ts tools/ops_readonly.ts server/tests/ops_readonly_cli_test.ts
+            & npx -y deno check server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/release_auth_contract_test.ts server/tests/internal_alpha_remote_smoke.ts tools/ops_readonly.ts server/tests/ops_readonly_cli_test.ts
         }
     }
     Invoke-Step -Name "release plan dry-run" -Stage "ReleaseDryRun" -Command ".\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan" -ScriptBlock {
@@ -1242,6 +1261,13 @@ if ($RunRemoteReadOnly) {
         if (-not $remoteKey) {
             throw "-IncludeRemoteReadOnly requires SUPABASE_PUBLISHABLE_KEY or DRAXOS_MOBILE_SUPABASE_PUBLISHABLE_KEY."
         }
+        $effectiveExpectedReleaseRoot = $ExpectedReleaseRoot.Trim()
+        if ($effectiveExpectedReleaseRoot.Length -eq 0 -and $env:DRAXOS_EXPECTED_RELEASE_ROOT) {
+            $effectiveExpectedReleaseRoot = $env:DRAXOS_EXPECTED_RELEASE_ROOT.Trim()
+        }
+        if ($effectiveExpectedReleaseRoot.Length -eq 0) {
+            throw "-Profile RemoteReadOnly requires -ExpectedReleaseRoot or DRAXOS_EXPECTED_RELEASE_ROOT so artifact/Web release-root validation cannot be skipped."
+        }
         Assert-ClientSafeValue -Value $remoteKey -Label "remote publishable key"
 
         $oldUrl = $env:SUPABASE_URL
@@ -1249,9 +1275,19 @@ if ($RunRemoteReadOnly) {
         $oldAccess = $env:DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS
         $oldFullHash = $env:DRAXOS_RELEASE_FULL_HASH
         $oldRemoteRelease = $env:DRAXOS_REMOTE_RELEASE_SMOKE
+        $oldExpectedReleaseRoot = $env:DRAXOS_EXPECTED_RELEASE_ROOT
+        $oldExpectedPortalUrl = $env:DRAXOS_EXPECTED_PORTAL_URL
+        $oldExpectedWebUrl = $env:DRAXOS_EXPECTED_WEB_URL
         try {
             $env:SUPABASE_URL = $remoteUrl.Trim()
             $env:SUPABASE_PUBLISHABLE_KEY = $remoteKey.Trim()
+            $env:DRAXOS_EXPECTED_RELEASE_ROOT = $effectiveExpectedReleaseRoot
+            if ($ExpectedPortalUrl.Trim().Length -gt 0) {
+                $env:DRAXOS_EXPECTED_PORTAL_URL = $ExpectedPortalUrl.Trim()
+            }
+            if ($ExpectedWebUrl.Trim().Length -gt 0) {
+                $env:DRAXOS_EXPECTED_WEB_URL = $ExpectedWebUrl.Trim()
+            }
             if ($AllowCloudflareAccess) {
                 $env:DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS = "1"
             }
@@ -1274,10 +1310,56 @@ if ($RunRemoteReadOnly) {
             $env:DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS = $oldAccess
             $env:DRAXOS_RELEASE_FULL_HASH = $oldFullHash
             $env:DRAXOS_REMOTE_RELEASE_SMOKE = $oldRemoteRelease
+            $env:DRAXOS_EXPECTED_RELEASE_ROOT = $oldExpectedReleaseRoot
+            $env:DRAXOS_EXPECTED_PORTAL_URL = $oldExpectedPortalUrl
+            $env:DRAXOS_EXPECTED_WEB_URL = $oldExpectedWebUrl
         }
+    }
+    if ($RemoteWebUrl.Trim().Length -gt 0) {
+        Invoke-Step -Name "remote Web launch smoke" -Stage "RemoteReadOnly" -Command "tools\smoke_web_launch_remote.ps1 -WebUrl <remote>" -ScriptBlock {
+            $webUrl = $RemoteWebUrl.Trim()
+            if (-not $webUrl.StartsWith("https://")) {
+                throw "-RemoteWebUrl must be an https URL."
+            }
+            $smokeArgs = @(
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                ".\tools\smoke_web_launch_remote.ps1",
+                "-WebUrl",
+                $webUrl
+            )
+            $effectiveExpectedReleaseRoot = $ExpectedReleaseRoot.Trim()
+            if ($effectiveExpectedReleaseRoot.Length -eq 0 -and $env:DRAXOS_EXPECTED_RELEASE_ROOT) {
+                $effectiveExpectedReleaseRoot = $env:DRAXOS_EXPECTED_RELEASE_ROOT.Trim()
+            }
+            if ($effectiveExpectedReleaseRoot.Length -eq 0) {
+                throw "-RemoteWebUrl validation requires -ExpectedReleaseRoot or DRAXOS_EXPECTED_RELEASE_ROOT."
+            }
+            $smokeArgs += @("-ExpectedReleaseRoot", $effectiveExpectedReleaseRoot)
+            if ($RemoteDiagnosticsDir.Trim().Length -gt 0) {
+                $smokeArgs += @("-DiagnosticsDir", $RemoteDiagnosticsDir.Trim())
+            }
+            if ($AllowCloudflareAccess) {
+                $smokeArgs += "-AllowCloudflareAccess"
+            }
+            if ($NoProjectWrites) {
+                $smokeArgs += "-NoProjectWrites"
+            }
+            if ($KeepDiagnostics) {
+                $smokeArgs += "-KeepDiagnostics"
+            }
+            Invoke-External -Command "smoke_web_launch_remote.ps1" -WorkingDirectory $ProjectPath -ScriptBlock {
+                & powershell @smokeArgs
+            }
+        }
+    } else {
+        Skip-Step -Name "remote Web launch smoke" -Stage "RemoteReadOnly" -Command "tools\smoke_web_launch_remote.ps1" -Reason "-RemoteWebUrl was not provided."
     }
 } else {
     Skip-Step -Name "remote read-only artifacts smoke" -Stage "RemoteReadOnly" -Command "release_artifacts_remote_smoke.ts" -Reason "Profile $EffectiveProfile does not include RemoteReadOnly and -IncludeRemoteReadOnly was not set."
+    Skip-Step -Name "remote Web launch smoke" -Stage "RemoteReadOnly" -Command "tools\smoke_web_launch_remote.ps1" -Reason "Profile $EffectiveProfile does not include RemoteReadOnly and -IncludeRemoteReadOnly was not set."
 }
 
 if ($RunFullPublish) {

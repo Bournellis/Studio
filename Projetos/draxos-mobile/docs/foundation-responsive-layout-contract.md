@@ -1,8 +1,8 @@
 # DraxosMobile - Foundation Responsive Layout Contract
 
 - Status: `CONTRATO`
-- Last updated: `2026-05-30`
-- Stage: `FOUNDATION_FINAL_POLISH_DELIVERED`
+- Last updated: `2026-06-03`
+- Stage: `FOUNDATION_SOLIDIFICATION_FOLLOWUP`
 
 This contract exists because Foundation Loop UX Pass 01 exposed a dangerous visual regression pattern: immersive screens could look acceptable in one viewport while overflowing or being clipped in Android/Web builds. It remains a live guardrail after Foundation Final Polish.
 
@@ -15,6 +15,12 @@ This contract covers the current foundation loop surfaces:
 - Battle running
 - Battle summary
 - Battle logs
+- Arena selection
+- Arena loading/sync shell
+- Arena active attempt
+- Arena buff choice
+- Arena replay
+- Arena summary
 
 It does not define final art direction, final battle presentation or final navigation style. Those remain later decisions.
 
@@ -30,13 +36,15 @@ It does not define final art direction, final battle presentation or final navig
 - Entry must expose `Ferramentas internas`, `Battle Lab` and `Progression Lab` when `draxos_mobile/internal_alpha/dev_tools_enabled=true`.
 - Scrollable entry/app-shell content may extend vertically inside scroll containers, but must not overflow horizontally.
 - Refugio and Battle fixed immersive controls must not overflow horizontally or vertically.
+- Arena app-shell routes must keep body content, panels and CTAs inside the viewport horizontally; scrollable content may extend vertically only inside the shell scroll container.
+- Arena replay uses the Battle fullscreen replay shell and therefore must satisfy `BattleFullscreenOverlay`, `BattleSafeFrame`, `BattleRunningStageFrame`, `BattleDuelVisual` and `BattleSkipButton` fit checks.
 
 ## Hard Rules
 
 - Do not size immersive boards from `get_tree().root.size` or physical window size.
 - Prefer the parent `Control`/visible viewport rect and `DraxosMobileUiContract.immersive_safe_rect()`.
 - Do not place gameplay buttons using anchors outside `0.0..1.0`.
-- Do not add a visual pass that changes Refugio/Battle/Entry layout without running the responsive smoke.
+- Do not add a visual pass that changes Refugio/Battle/Arena/Entry layout without running the responsive smoke.
 - Do not hide internal Labs in the Internal Alpha entry flow unless the user explicitly removes them from the tester workflow.
 
 ## Validation

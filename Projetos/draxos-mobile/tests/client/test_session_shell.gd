@@ -166,6 +166,19 @@ func test_session_store_tracks_surface_refresh_metadata_and_rejects_stale_tokens
 	assert_eq(int(meta.get("last_latency_ms", 0)), 42)
 	assert_eq(str(meta.get("generated_at", "")), "2026-06-02T12:00:00Z")
 	assert_eq(store.recent_request_latencies().size(), 1)
+	var latency := Dictionary(store.recent_request_latencies()[0])
+	assert_eq(str(latency.get("surface", "")), SessionStoreScript.SURFACE_BASE)
+	assert_eq(str(latency.get("endpoint", "")), "base/state")
+	assert_eq(str(latency.get("method", "")), "GET")
+	assert_eq(str(latency.get("action_id", "")), "show_base")
+	assert_eq(str(latency.get("scope_id", "")), "base:normal")
+	assert_eq(int(latency.get("duration_ms", 0)), 42)
+	assert_eq(int(latency.get("response_code", 0)), 200)
+	assert_true(bool(latency.get("ok", false)))
+	assert_false(bool(latency.get("fail", true)))
+	assert_false(bool(latency.get("used_cache", true)))
+	assert_true(bool(latency.get("rendered_from_cache", false)))
+	assert_eq(Dictionary(latency.get("server_timing", {})), {})
 
 	var restored = SessionStoreScript.new()
 	restored._apply_cache(store.snapshot())
@@ -174,6 +187,24 @@ func test_session_store_tracks_surface_refresh_metadata_and_rejects_stale_tokens
 	assert_eq(str(restored_meta.get("generated_at", "")), "2026-06-02T12:00:00Z")
 	store.free()
 	restored.free()
+
+func test_session_store_marks_first_access_shell_refresh_as_cache_source() -> void:
+	var store = SessionStoreScript.new()
+	store.active_save_type = SessionStoreScript.SAVE_TYPE_NORMAL
+
+	store.begin_surface_refresh(
+		SessionStoreScript.SURFACE_ARENA,
+		"open_arena",
+		"arena/pve/state",
+		false
+	)
+
+	var meta := store.surface_refresh_snapshot(SessionStoreScript.SURFACE_ARENA)
+	assert_true(bool(meta.get("refreshing", false)))
+	assert_false(bool(meta.get("has_snapshot", true)))
+	assert_eq(str(meta.get("source", "")), SessionStoreScript.SURFACE_REFRESH_SOURCE_CACHE)
+	assert_eq(str(meta.get("last_endpoint", "")), "arena/pve/state")
+	store.free()
 
 func test_monetization_result_can_patch_base_delta_without_followup_fetch() -> void:
 	var store = SessionStoreScript.new()

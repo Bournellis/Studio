@@ -404,15 +404,17 @@ async function handleChatSend(
 
 async function socialStatePayload(config: EdgeConfig, context: SocialContext) {
   const player = context.socialPlayer;
-  const friends = await restRequest<FriendshipRow[]>(
-    config,
-    `friendships?player_id=eq.${
-      encodeURIComponent(player.id)
-    }&select=player_id,friend_id,status,created_at&order=created_at.desc`,
-    { method: "GET" },
-  );
+  const [friends, membership] = await Promise.all([
+    restRequest<FriendshipRow[]>(
+      config,
+      `friendships?player_id=eq.${
+        encodeURIComponent(player.id)
+      }&select=player_id,friend_id,status,created_at&order=created_at.desc`,
+      { method: "GET" },
+    ),
+    loadGuildMembership(config, player.id),
+  ]);
   if (friends.error !== null) throw new Error("Unable to load friends.");
-  const membership = await loadGuildMembership(config, player.id);
   if (membership.error !== null) throw new Error("Unable to load guild membership.");
   let guild: GuildRow | null = null;
   let members: GuildMemberRow[] = [];

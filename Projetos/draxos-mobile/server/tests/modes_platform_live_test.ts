@@ -16,6 +16,7 @@ interface JsonObject {
 interface TestAccount {
   authUserId: string;
   playerId: string;
+  gameSaveId: string;
   headers: Record<string, string>;
   saveType: SaveType;
 }
@@ -41,6 +42,21 @@ try {
   await proveRegistryAndState(account);
   await proveDisabledModesDoNotStart(account);
   await proveSessionRewardAndIdempotency(account);
+
+  const eventAccount = await createTestAccount("mode-live-events", "normal");
+  await proveEventContracts(eventAccount);
+
+  const capAccount = await createTestAccount("mode-live-cap-zero", "normal");
+  await proveDailyCapZeroCompletion(capAccount);
+
+  const expiredAccount = await createTestAccount("mode-live-expired", "normal");
+  await proveExpiredSessionRejected(expiredAccount);
+
+  const abandonAccount = await createTestAccount("mode-live-abandon", "normal");
+  await proveAbandonSession(abandonAccount);
+
+  const disabledAccount = await createTestAccount("mode-live-disabled-policy", "normal");
+  await proveRegistryDisablePolicyPreservesActiveSessions(disabledAccount);
 
   const tamperAccount = await createTestAccount("mode-live-tamper", "normal");
   await proveTamperedResultIsRejected(tamperAccount);
@@ -99,7 +115,8 @@ async function assertLocalDatabaseIsCurrent(): Promise<void> {
       and p.proname in (
         'mode_session_start_v1',
         'mode_session_event_v1',
-        'mode_session_complete_v1'
+        'mode_session_complete_v1',
+        'mode_session_abandon_v1'
       )
   `;
   const grants = new Map(functionRows.map((row) => [row.proname, row]));
@@ -108,6 +125,7 @@ async function assertLocalDatabaseIsCurrent(): Promise<void> {
       "mode_session_start_v1",
       "mode_session_event_v1",
       "mode_session_complete_v1",
+      "mode_session_abandon_v1",
     ]
   ) {
     const grant = grants.get(rpc);
@@ -158,7 +176,11 @@ async function assertLocalDatabaseIsCurrent(): Promise<void> {
       and active_ruleset_id = ${MODE_RULESET_ID}
       and active_ruleset_version = ${MODE_RULESET_VERSION}
   `;
-  assertEq(registryRows.length, 1, "openworld mode registry seed should match the active internal alpha contract");
+  assertEq(
+    registryRows.length,
+    1,
+    "openworld mode registry seed should match the active internal alpha contract",
+  );
 }
 
 async function createTestAccount(
@@ -193,7 +215,16 @@ async function createTestAccount(
   const player = objectField(account, "player");
   const playerId = stringField(player, "id");
   assert(playerId !== "", "account/guest should return player.id");
-  return { authUserId, playerId, headers, saveType };
+  const gameSaveRows = await sql<{ id: string }[]>`
+    select id
+    from public.game_saves
+    where legacy_player_id = ${playerId}::uuid
+      and save_type = ${saveType}
+      and lifecycle_status = 'active'
+    limit 1
+  `;
+  assertEq(gameSaveRows.length, 1, "account/guest should create one active game save");
+  return { authUserId, playerId, gameSaveId: gameSaveRows[0].id, headers, saveType };
 }
 
 async function proveSaveTypeHeaderIsRequired(
@@ -219,12 +250,18 @@ async function proveRegistryAndState(account: TestAccount): Promise<void> {
     account.headers,
   );
   assertEq(
-    stringField(findObjectByField(arrayField(registry, "modes"), "mode_id", MODE_MODE_ID), "mode_id"),
+    stringField(
+      findObjectByField(arrayField(registry, "modes"), "mode_id", MODE_MODE_ID),
+      "mode_id",
+    ),
     MODE_MODE_ID,
     "registry should expose openworld",
   );
   assertEq(
-    stringField(findObjectByField(arrayField(registry, "rulesets"), "ruleset_id", MODE_RULESET_ID), "ruleset_id"),
+    stringField(
+      findObjectByField(arrayField(registry, "rulesets"), "ruleset_id", MODE_RULESET_ID),
+      "ruleset_id",
+    ),
     MODE_RULESET_ID,
     "registry should expose openworld forest ruleset",
   );
@@ -330,7 +367,10 @@ async function proveSessionRewardAndIdempotency(
   );
   const reward = objectField(firstComplete, "reward");
   const resourceDelta = objectField(reward, "resource_delta");
-  assert(numberField(resourceDelta, "energia") >= 1, "reward energy should come from server snapshot");
+  assert(
+    numberField(resourceDelta, "energia") >= 1,
+    "reward energy should come from server snapshot",
+  );
   assert(numberField(resourceDelta, "ossos") >= 0, "reward bones should be server-derived");
   assert(numberField(resourceDelta, "xp") >= 0, "reward XP should be server-derived");
 
@@ -384,6 +424,308 @@ async function proveSessionRewardAndIdempotency(
   assertEq(arrayField(state, "rewards").length, 1, "state should expose reward claim");
 }
 
+async function proveEventContracts(account: TestAccount): Promise<void> {
+  const started = await startSessionWithRevision(account);
+  const sessionId = started.sessionId;
+  let revision = started.revision;
+
+  const eventRequestId = crypto.randomUUID();
+  const heartbeatBody = eventBody(eventRequestId, sessionId, revision, "move_heartbeat", {
+    session_seconds: 7,
+  });
+  const firstHeartbeat = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    heartbeatBody,
+    account.headers,
+  );
+  const repeatedHeartbeat = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    heartbeatBody,
+    account.headers,
+  );
+  assertStableJson(
+    firstHeartbeat,
+    repeatedHeartbeat,
+    "duplicate event request should be idempotent",
+  );
+  revision = numberField(objectField(firstHeartbeat, "event"), "revision_after");
+  await assertCompletedIdempotency("modes/session/event", eventRequestId, "mode:openworld:normal");
+  assertEq(
+    await countRows(
+      sql`select 1 from public.mode_session_events where request_id = ${eventRequestId}::uuid`,
+    ),
+    1,
+    "duplicate event request should persist one event row",
+  );
+
+  const eventMismatch = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    { ...heartbeatBody, request_hash: "sha256:changed" },
+    account.headers,
+    false,
+  );
+  assertErrorCode(
+    eventMismatch,
+    "IDEMPOTENCY_HASH_MISMATCH",
+    "event hash mismatch should be rejected",
+  );
+
+  const staleEvent = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    eventBody(crypto.randomUUID(), sessionId, 0, "move_heartbeat", { session_seconds: 8 }),
+    account.headers,
+    false,
+  );
+  assertErrorCode(
+    staleEvent,
+    "MODE_SESSION_REVISION_STALE",
+    "stale event revision should be rejected",
+  );
+
+  const invalidCraft = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    eventBody(crypto.randomUUID(), sessionId, revision, "craft", {
+      recipe_id: "receita_inexistente",
+      session_seconds: 9,
+    }),
+    account.headers,
+    false,
+  );
+  assertErrorCode(invalidCraft, "INVALID_MODE_EVENT", "invalid craft recipe should be rejected");
+
+  await sql`
+    update public.mode_sessions
+    set snapshot_payload = jsonb_set(snapshot_payload, '{pocket}', '{"madeira":10}'::jsonb, true)
+    where id = ${sessionId}::uuid
+  `;
+  const capacityFull = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    eventBody(crypto.randomUUID(), sessionId, revision, "collect_complete", {
+      node_id: "node_madeira_01",
+      item_id: "madeira",
+      session_seconds: 10,
+    }),
+    account.headers,
+    false,
+  );
+  assertErrorCode(
+    capacityFull,
+    "MODE_RESULT_REJECTED",
+    "capacity-full collection should be rejected",
+  );
+
+  await sql`
+    update public.mode_sessions
+    set snapshot_payload = jsonb_set(snapshot_payload, '{pocket}', '{}'::jsonb, true)
+    where id = ${sessionId}::uuid
+  `;
+  revision = await recordEvent(account, sessionId, revision, "collect_complete", {
+    node_id: "node_galho_01",
+    item_id: "galho",
+    session_seconds: 11,
+  });
+  const duplicateNode = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    eventBody(crypto.randomUUID(), sessionId, revision, "collect_complete", {
+      node_id: "node_galho_01",
+      item_id: "galho",
+      session_seconds: 12,
+    }),
+    account.headers,
+    false,
+  );
+  assertErrorCode(
+    duplicateNode,
+    "OPENWORLD_NODE_ALREADY_COLLECTED",
+    "duplicate node collection should be rejected",
+  );
+}
+
+async function proveDailyCapZeroCompletion(account: TestAccount): Promise<void> {
+  await exhaustDailyCaps(account);
+  const started = await startSessionWithRevision(account);
+  const sessionId = started.sessionId;
+  let revision = started.revision;
+
+  for (
+    const node of [
+      { node_id: "node_madeira_01", item_id: "madeira" },
+      { node_id: "node_pedra_01", item_id: "pedra" },
+      { node_id: "node_pedra_pequena_01", item_id: "pedra_pequena" },
+      { node_id: "node_ossos_preview_01", item_id: "ossos_preview" },
+      { node_id: "node_po_osso_preview_01", item_id: "po_osso_preview" },
+    ]
+  ) {
+    revision = await recordEvent(account, sessionId, revision, "collect_complete", {
+      ...node,
+      session_seconds: 120,
+    });
+  }
+  revision = await recordEvent(account, sessionId, revision, "deposit_all", {
+    session_seconds: 120,
+  });
+
+  const complete = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/complete`,
+    completionBody(crypto.randomUUID(), sessionId, revision),
+    account.headers,
+  );
+  assertEq(
+    stringField(complete, "reward_status"),
+    "cap_zero",
+    "cap-exhausted completion should report cap_zero",
+  );
+  assertEq(complete.cap_zero, true, "cap-exhausted completion should expose cap_zero=true");
+  assertEq(
+    stringField(complete, "period_key"),
+    utcPeriodKey(),
+    "cap-zero period should be UTC day",
+  );
+  assertIncludes(
+    stringField(complete, "message"),
+    "Limite diario UTC",
+    "cap-zero completion should explain the UTC cap",
+  );
+  const reward = objectField(complete, "reward");
+  assertEq(
+    stringField(reward, "reward_status"),
+    "cap_zero",
+    "reward payload should report cap_zero",
+  );
+  const resourceDelta = objectField(reward, "resource_delta");
+  assertEq(numberField(resourceDelta, "energia"), 0, "cap-zero energy delta should be zero");
+  assertEq(numberField(resourceDelta, "ossos"), 0, "cap-zero bones delta should be zero");
+  assertEq(numberField(resourceDelta, "xp"), 0, "cap-zero XP delta should be zero");
+  const limits = objectField(complete, "limits");
+  assertEq(stringField(limits, "reward_status"), "cap_zero", "limits should include reward_status");
+  assertEq(limits.cap_zero, true, "limits should include cap_zero=true");
+  assertEq(
+    stringField(limits, "period_key"),
+    utcPeriodKey(),
+    "limits should include UTC period_key",
+  );
+}
+
+async function proveExpiredSessionRejected(account: TestAccount): Promise<void> {
+  const started = await startSessionWithRevision(account);
+  await sql`
+    update public.mode_sessions
+    set expires_at = now() - interval '1 second'
+    where id = ${started.sessionId}::uuid
+  `;
+  const response = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/event`,
+    eventBody(crypto.randomUUID(), started.sessionId, started.revision, "move_heartbeat", {
+      session_seconds: 10,
+    }),
+    account.headers,
+    false,
+  );
+  assertErrorCode(response, "MODE_SESSION_NOT_ACTIVE", "expired session event should be rejected");
+  assertEq(
+    await countRows(
+      sql`select 1 from public.mode_session_events where session_id = ${started.sessionId}::uuid`,
+    ),
+    0,
+    "expired event should not persist an event row",
+  );
+}
+
+async function proveAbandonSession(account: TestAccount): Promise<void> {
+  const started = await startSessionWithRevision(account);
+  const requestId = crypto.randomUUID();
+  const body = {
+    request_id: requestId,
+    mode_id: MODE_MODE_ID,
+    session_id: started.sessionId,
+    reason: "explicit_player_action",
+  };
+  const firstAbandon = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/abandon`,
+    body,
+    account.headers,
+  );
+  const repeatedAbandon = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/abandon`,
+    body,
+    account.headers,
+  );
+  assertStableJson(firstAbandon, repeatedAbandon, "session/abandon should be idempotent");
+  assertEq(
+    stringField(objectField(firstAbandon, "session"), "status"),
+    "abandoned",
+    "session/abandon should mark the session abandoned",
+  );
+  assertEq(firstAbandon.abandoned, true, "session/abandon should expose abandoned=true");
+  await assertCompletedIdempotency("modes/session/abandon", requestId, "mode:openworld:normal");
+
+  const mismatch = await postJson(
+    `${SUPABASE_URL}/functions/v1/modes/session/abandon`,
+    { ...body, request_hash: "sha256:changed" },
+    account.headers,
+    false,
+  );
+  assertErrorCode(
+    mismatch,
+    "IDEMPOTENCY_HASH_MISMATCH",
+    "abandon hash mismatch should be rejected",
+  );
+}
+
+async function proveRegistryDisablePolicyPreservesActiveSessions(
+  account: TestAccount,
+): Promise<void> {
+  const started = await startSessionWithRevision(account);
+  await sql`update public.mode_registry set status = 'paused' where mode_id = ${MODE_MODE_ID}`;
+  try {
+    const blockedAccount = await createTestAccount("mode-live-disabled-start", "normal");
+    const blockedStart = await postJson(
+      `${SUPABASE_URL}/functions/v1/modes/session/start`,
+      {
+        request_id: crypto.randomUUID(),
+        mode_id: MODE_MODE_ID,
+        slice_id: MODE_SLICE_ID,
+      },
+      blockedAccount.headers,
+      false,
+    );
+    assertErrorCode(blockedStart, "MODE_DISABLED", "paused openworld should block new starts");
+
+    const revisionAfter = await recordEvent(
+      account,
+      started.sessionId,
+      started.revision,
+      "move_heartbeat",
+      {
+        session_seconds: 9,
+      },
+    );
+    assertEq(
+      revisionAfter,
+      started.revision + 1,
+      "paused registry should preserve events for active sessions",
+    );
+
+    const abandon = await postJson(
+      `${SUPABASE_URL}/functions/v1/modes/session/abandon`,
+      {
+        request_id: crypto.randomUUID(),
+        mode_id: MODE_MODE_ID,
+        session_id: started.sessionId,
+        reason: "registry_disable_policy_test",
+      },
+      account.headers,
+    );
+    assertEq(
+      stringField(objectField(abandon, "session"), "status"),
+      "abandoned",
+      "paused registry should preserve abandon for active sessions",
+    );
+  } finally {
+    await sql`update public.mode_registry set status = 'active' where mode_id = ${MODE_MODE_ID}`;
+  }
+}
+
 async function proveTamperedResultIsRejected(
   account: TestAccount,
 ): Promise<void> {
@@ -428,6 +770,12 @@ async function proveProgressionLabCannotClaimReward(
 }
 
 async function startSession(account: TestAccount): Promise<string> {
+  return (await startSessionWithRevision(account)).sessionId;
+}
+
+async function startSessionWithRevision(
+  account: TestAccount,
+): Promise<{ sessionId: string; revision: number }> {
   const start = await postJson(
     `${SUPABASE_URL}/functions/v1/modes/session/start`,
     {
@@ -437,7 +785,11 @@ async function startSession(account: TestAccount): Promise<string> {
     },
     account.headers,
   );
-  return stringField(objectField(start, "session"), "id");
+  const session = objectField(start, "session");
+  return {
+    sessionId: stringField(session, "id"),
+    revision: numberField(session, "snapshot_revision"),
+  };
 }
 
 function completionBody(
@@ -456,6 +808,24 @@ function completionBody(
   };
 }
 
+function eventBody(
+  requestId: string,
+  sessionId: string,
+  expectedRevision: number,
+  eventType: string,
+  eventPayload: JsonObject,
+): JsonObject {
+  return {
+    request_id: requestId,
+    session_id: sessionId,
+    mode_id: MODE_MODE_ID,
+    slice_id: MODE_SLICE_ID,
+    event_type: eventType,
+    expected_revision: expectedRevision,
+    event_payload: eventPayload,
+  };
+}
+
 async function recordEvent(
   account: TestAccount,
   sessionId: string,
@@ -465,18 +835,95 @@ async function recordEvent(
 ): Promise<number> {
   const response = await postJson(
     `${SUPABASE_URL}/functions/v1/modes/session/event`,
-    {
-      request_id: crypto.randomUUID(),
-      session_id: sessionId,
-      mode_id: MODE_MODE_ID,
-      slice_id: MODE_SLICE_ID,
-      event_type: eventType,
-      expected_revision: expectedRevision,
-      event_payload: eventPayload,
-    },
+    eventBody(crypto.randomUUID(), sessionId, expectedRevision, eventType, eventPayload),
     account.headers,
   );
   return numberField(objectField(response, "event"), "revision_after");
+}
+
+async function exhaustDailyCaps(account: TestAccount): Promise<void> {
+  const sessionId = crypto.randomUUID();
+  const startRequestId = crypto.randomUUID();
+  const completeRequestId = crypto.randomUUID();
+  const claimRequestId = crypto.randomUUID();
+  const periodKey = utcPeriodKey();
+  const rewardPayload = {
+    schema_version: "openworld_reward_bridge_v1",
+    mode_id: MODE_MODE_ID,
+    slice_id: MODE_SLICE_ID,
+    ruleset_id: MODE_RULESET_ID,
+    ruleset_version: MODE_RULESET_VERSION,
+    session_id: sessionId,
+    period_key: periodKey,
+    resource_delta: { energia: 30, ossos: 6, xp: 24 },
+    source: "mode:openworld:forest",
+    authority: "test_daily_cap_seed",
+  };
+  const resourceDelta = { energia: 30, ossos: 6, xp: 24 };
+  await sql`
+    insert into public.mode_sessions (
+      id,
+      game_save_id,
+      mode_id,
+      slice_id,
+      ruleset_id,
+      ruleset_version,
+      status,
+      start_request_id,
+      complete_request_id,
+      session_seconds,
+      activity_score,
+      deposited_items,
+      result_payload,
+      reward_payload,
+      started_at,
+      completed_at
+    )
+    values (
+      ${sessionId}::uuid,
+      ${account.gameSaveId}::uuid,
+      ${MODE_MODE_ID},
+      ${MODE_SLICE_ID},
+      ${MODE_RULESET_ID},
+      ${MODE_RULESET_VERSION},
+      'completed',
+      ${startRequestId}::uuid,
+      ${completeRequestId}::uuid,
+      120,
+      120,
+      '{"ossos_preview":6,"po_osso_preview":6}'::jsonb,
+      '{}'::jsonb,
+      ${sql.json(rewardPayload as any)},
+      now() - interval '1 hour',
+      now() - interval '1 hour'
+    )
+  `;
+  await sql`
+    insert into public.mode_reward_claims (
+      game_save_id,
+      player_id,
+      mode_id,
+      session_id,
+      request_id,
+      request_hash,
+      period_key,
+      reward_payload,
+      resource_delta,
+      xp_delta
+    )
+    values (
+      ${account.gameSaveId}::uuid,
+      ${account.playerId}::uuid,
+      ${MODE_MODE_ID},
+      ${sessionId}::uuid,
+      ${claimRequestId}::uuid,
+      ${`sha256:daily-cap-seed-${claimRequestId}`},
+      ${periodKey},
+      ${sql.json(rewardPayload as any)},
+      ${sql.json(resourceDelta as any)},
+      24
+    )
+  `;
 }
 
 async function assertCompletedIdempotency(
@@ -493,6 +940,18 @@ async function assertCompletedIdempotency(
   assertEq(rows.length, 1, `${endpoint} should create one idempotency row`);
   assertEq(rows[0].status, "completed", `${endpoint} idempotency should complete`);
   assertEq(rows[0].scope_id, scopeId, `${endpoint} idempotency scope should match`);
+}
+
+function assertErrorCode(payload: JsonObject, expectedCode: string, message: string): void {
+  assertEq(
+    stringField(objectField(payload, "error"), "code"),
+    expectedCode,
+    message,
+  );
+}
+
+function utcPeriodKey(): string {
+  return new Date().toISOString().slice(0, 10);
 }
 
 function baseHeaders(saveType: SaveType = "normal"): Record<string, string> {
@@ -598,11 +1057,13 @@ function stableStringify(value: unknown, parentKey = ""): string {
     return `[${value.map((item) => stableStringify(item, parentKey)).join(",")}]`;
   }
   if (isObject(value)) {
-    const keys = Object.keys(value).filter((key) => !(parentKey === "cache" && key === "generated_at"));
+    const keys = Object.keys(value).filter((key) =>
+      !(parentKey === "cache" && key === "generated_at")
+    );
     return `{${
-      keys.sort().map((key) =>
-        `${JSON.stringify(key)}:${stableStringify(value[key], key)}`
-      ).join(",")
+      keys.sort().map((key) => `${JSON.stringify(key)}:${stableStringify(value[key], key)}`).join(
+        ",",
+      )
     }}`;
   }
   return JSON.stringify(value);
@@ -619,6 +1080,12 @@ function assertStableJson(
 function assert(condition: boolean, message: string): asserts condition {
   if (!condition) {
     throw new Error(message);
+  }
+}
+
+function assertIncludes(haystack: string, needle: string, message: string): void {
+  if (!haystack.includes(needle)) {
+    throw new Error(`${message}. Missing ${JSON.stringify(needle)} in ${JSON.stringify(haystack)}`);
   }
 }
 

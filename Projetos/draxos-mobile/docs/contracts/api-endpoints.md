@@ -157,7 +157,7 @@ novo.
 | POST | `/arena/pve/start` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado para criar tentativa, travar loadout e gerar primeiro inimigo. |
 | POST | `/arena/pve/duel/request` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado para resolver o proximo duelo da tentativa via simulador server-authoritative; no ultimo duelo aplica recompensa/progresso. |
 | POST | `/arena/pve/buff/select` | `save-scoped` | Sim | `request_id/request_hash` por save | Endpoint publico oficial implementado/publicado para escolher 1 buff ofertado apos vitoria. |
-| POST | `/arena/pve/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado como resumo/ack idempotente; nao muta economia. |
+| POST | `/arena/pve/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado como resumo/ack idempotente; nao muta economia; retorna `arena_state` leve para atualizar selecao sem fetch imediato. |
 | POST | `/arena/pve/abandon` | `save-scoped` | Sim | `request_id/request_hash` por save | Implementado/publicado para encerrar tentativa sem recompensa de conclusao. |
 | GET | `/base/state` | `save-scoped` | Sim | Nao | Estado server-authoritative da Base do save ativo. |
 | POST | `/base/collect` | `save-scoped` | Sim | `request_id/request_hash` por save | Coleta recursos do save ativo via RPC transacional com ledger. |
@@ -181,7 +181,7 @@ novo.
 | POST | `/monetization/rewards/claim` | `save-scoped` | Sim | `request_id/request_hash` por save | Claim economico do save ativo com ledger. |
 | POST | `/monetization/alpha-purchase` | `save-scoped` | Sim | `request_id/request_hash` por save | Compra/redeem alpha do save ativo com ledger; resposta retorna `monetization`, `resources/player` quando afetados e delta `base` quando produto impacta Refugio/fila. |
 | POST | `/telemetry/client-event` | `telemetry` | Sim, opcional | Nao | Grava diagnostico client; novos eventos permitidos incluem `request_latency`, `surface_refresh`, `surface_cache_rendered` e `action_latency`; `player_id` pode ser nulo antes de conta/save. |
-| POST | `/progression-lab/apply` | `save-scoped` | Sim, exige `progression_lab` | `request_id` por save Lab | Interno/gated; aplica healthy save apenas no Lab e nunca escreve no Normal. |
+| POST | `/progression-lab/apply` | `save-scoped` | Sim, exige `progression_lab` | `request_id/request_hash` por save Lab | Interno/gated; aplica healthy save apenas no Lab e nunca escreve no Normal; reset/seed Track 16 acontece dentro da RPC transacional. |
 | GET | `/modes/registry` | `mode` | Sim | Nao | Registry dos cinco modos oficiais. |
 | GET | `/modes/state?mode_id=<id>` | `save-scoped` | Sim | Nao | Estado de um modo no save ativo; Openworld retorna `active_session` com snapshot/revision quando retomavel. |
 | POST | `/modes/session/start` | `save-scoped` | Sim | `request_id/request_hash` por modo/save | Inicia sessao generica para modos que usam Mode sessions. |
@@ -310,7 +310,7 @@ Regras comuns:
 - Cooldown: nenhum endpoint de Arena PVE pode impor cooldown de combate.
 - Loadout: `arena/pve/start` grava snapshot/hash de loadout; endpoints seguintes nao aceitam troca de loadout.
 - Comportamento: ajustes simples entre duelos devem reutilizar `build/spell-behavior` e `build/potion-behavior` ate haver contrato proprio.
-- Recompensa: o ultimo `/arena/pve/duel/request` da tentativa aplica recompensa/progresso e ledger `arena_pve_v1`; `/arena/pve/claim` e apenas resumo/ack idempotente e retorna `mutates_economy: false`.
+- Recompensa: o ultimo `/arena/pve/duel/request` da tentativa aplica recompensa/progresso e ledger `arena_pve_v1`; `/arena/pve/claim` e apenas resumo/ack idempotente, retorna `mutates_economy: false` e inclui `arena_state` leve para o cliente voltar a selecao sem buscar `/arena/pve/state` imediatamente.
 - Buff endpoint publico: novos clients, docs e smokes devem usar `/arena/pve/buff/select`. `/arena/buff/choose` existe apenas como alias interno/compatibilidade.
 
 ### `GET /arena/pve/state`
@@ -424,6 +424,15 @@ Response minima:
   "ok": true,
   "schema_version": "arena_claim_response_v1",
   "endpoint": "arena/pve/claim",
+  "arena_state": {
+    "ok": true,
+    "schema_version": "pve_arena_state_v1",
+    "arenas": [],
+    "attempts": [],
+    "active_attempt": null,
+    "progress": {},
+    "records": []
+  },
   "attempt": {},
   "progress": {},
   "resources": {},
@@ -1191,6 +1200,8 @@ Response logico:
 Aplica um estado gerado pelo Progression Lab no save `progression_lab`.
 
 Status: **implementado localmente em T03-P04**.
+Foundation Solidification Follow-up adiciona `request_hash` obrigatorio e reset
+Track 16 dentro da RPC transacional.
 
 Headers:
 
@@ -1205,6 +1216,7 @@ Request logico:
 ```json
 {
   "request_id": "uuid",
+  "request_hash": "sha256:...",
   "profile_id": "free_100_rewards",
   "milestone_id": "10h",
   "save_id": "free_100_rewards_10h"
@@ -1220,7 +1232,9 @@ Regras:
 - payload referencia perfil/milestone/save gerado e o servidor valida contra o catalogo versionado de healthy saves;
 - a aplicacao substitui player level/xp/power, resources, build, base, job ativo e Battle Pass do save `progression_lab`;
 - a aplicacao limpa batalha, ranking, social vinculado ao player do Lab quando existir, loja anterior, jobs, claims, compras alpha, ledger e idempotencias de acoes daquele save;
-- repetir o mesmo `request_id` retorna o mesmo payload;
+- a RPC tambem reseta/recria `player_consumables`, `player_potion_slots`, `player_spell_behaviors` e `item_transactions` do save Lab a partir do healthy save;
+- repetir o mesmo `request_id` + `request_hash` retorna o mesmo payload;
+- repetir o mesmo `request_id` com `request_hash` diferente retorna `IDEMPOTENCY_HASH_MISMATCH`;
 - usar `x-draxos-save-type: normal` retorna `PROGRESSION_LAB_SAVE_REQUIRED`.
 
 Response logico:
@@ -1765,6 +1779,19 @@ Regras:
 - Grava sempre `source = "client"` em `telemetry_events`.
 - Escreve apenas telemetria; nunca muta recursos, ranking, recompensas, base, batalha ou estado social.
 - Rejeita schema desconhecido com `UNSUPPORTED_SCHEMA`.
+- Eventos de latencia client-side devem manter payload diagnostico local/remoto
+  com estes campos quando aplicaveis: `surface`, `endpoint`, `method`,
+  `action_id`, `scope_id`, `duration_ms`, `response_code`, `ok`, `fail`,
+  `used_cache`, `rendered_from_cache`, `server_timing` e `save_type`.
+- `request_latency` mede uma chamada HTTP logica e deve usar o endpoint
+  normalizado do cliente, como `base/state` ou `arena/pve/state`.
+- `surface_refresh` mede a conclusao de refresh de superficie e preserva se a
+  superficie havia renderizado cache local antes da resposta.
+- `surface_cache_rendered` e emitido quando uma superficie usa snapshot local
+  antes da rede; `duration_ms` e `response_code` podem ser `0`.
+- `action_latency` mede a duracao percebida da acao do jogador. Acoes sem
+  mutation direta podem deixar `endpoint` e `method` vazios, mas devem manter
+  `action_id`, `scope_id`, `duration_ms`, `ok` e `fail`.
 
 ## Idempotencia
 

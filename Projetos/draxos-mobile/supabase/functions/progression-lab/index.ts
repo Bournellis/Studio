@@ -41,16 +41,6 @@ interface HealthySave {
   [key: string]: unknown;
 }
 
-interface Track16Consumables {
-  inventory: Array<{ item_id: string; quantity: number }>;
-  potion_slots: Array<{
-    slot_index: number;
-    potion_id: string | null;
-    behavior: unknown;
-  }>;
-  spell_behaviors: Record<string, unknown>;
-}
-
 interface JwtPayload {
   sub?: unknown;
 }
@@ -58,11 +48,6 @@ interface JwtPayload {
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const HEALTHY_SAVES = (healthySavesDocument as HealthySavesDocument).saves;
-const DEFAULT_POTION_BEHAVIOR = {
-  enabled: true,
-  hp: { mode: "below", percent: 40 },
-  mana: { mode: "ignore", percent: 0 },
-};
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
@@ -156,6 +141,14 @@ async function handleApply(
       400,
     );
   }
+  const requestHash = stringField(body, "request_hash").trim();
+  if (requestHash === "") {
+    return errorResponse(
+      "INVALID_REQUEST_HASH",
+      "request_hash must be a non-empty mutation hash.",
+      400,
+    );
+  }
 
   const profileId = normalizeId(stringField(body, "profile_id"));
   const milestoneId = normalizeId(stringField(body, "milestone_id"));
@@ -185,6 +178,7 @@ async function handleApply(
       body: JSON.stringify({
         p_auth_user_id: auth.userId,
         p_request_id: requestId,
+        p_request_hash: requestHash,
         p_profile_id: profileId,
         p_milestone_id: milestoneId,
         p_save_payload: healthySave,
@@ -197,202 +191,10 @@ async function handleApply(
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
 
-  const playerId = playerIdFromPayload(rpc.value);
-  if (playerId !== "") {
-    const cleanup = await resetConsumableAndBehaviorState(
-      config,
-      playerId,
-      healthySave,
-    );
-    if (cleanup !== null) {
-      return errorResponse(cleanup.code, cleanup.message, cleanup.status);
-    }
-  }
-
   return jsonResponse(stateEnvelope(withResourceDefaults(rpc.value), {
     surface: "progression_lab",
     saveType: auth.saveType,
   }));
-}
-
-async function resetConsumableAndBehaviorState(
-  config: EdgeConfig,
-  playerId: string,
-  healthySave: HealthySave,
-): Promise<RestError | null> {
-  const tables = [
-    "player_consumables",
-    "player_spell_behaviors",
-    "player_potion_slots",
-    "item_transactions",
-  ];
-
-  for (const table of tables) {
-    const result = await restRequest<unknown>(
-      config,
-      `${table}?player_id=eq.${encodeURIComponent(playerId)}`,
-      { method: "DELETE" },
-    );
-    if (result.error !== null) {
-      return {
-        code: "PROGRESSION_LAB_TRACK16_RESET_FAILED",
-        message: "Unable to reset consumables and behavior state.",
-        status: 500,
-      };
-    }
-  }
-
-  const consumables = consumablesFromSave(healthySave);
-  if (consumables.inventory.length > 0) {
-    const inventoryResult = await restRequest<unknown>(
-      config,
-      "player_consumables?on_conflict=player_id,item_id",
-      {
-        method: "POST",
-        headers: { prefer: "resolution=merge-duplicates" },
-        body: JSON.stringify(consumables.inventory.map((item) => ({
-          player_id: playerId,
-          item_id: item.item_id,
-          quantity: item.quantity,
-        }))),
-      },
-    );
-    if (inventoryResult.error !== null) {
-      return {
-        code: "PROGRESSION_LAB_TRACK16_RESET_FAILED",
-        message: "Unable to seed Progression Lab consumables.",
-        status: 500,
-      };
-    }
-  }
-
-  const slotResult = await restRequest<unknown>(
-    config,
-    "player_potion_slots?on_conflict=player_id,slot_index",
-    {
-      method: "POST",
-      headers: { prefer: "resolution=merge-duplicates" },
-      body: JSON.stringify(consumables.potion_slots.map((slot) => ({
-        player_id: playerId,
-        slot_index: slot.slot_index,
-        potion_id: slot.potion_id,
-        behavior: slot.behavior,
-      }))),
-    },
-  );
-
-  if (slotResult.error !== null) {
-    return {
-      code: "PROGRESSION_LAB_TRACK16_RESET_FAILED",
-      message: "Unable to recreate default potion slot.",
-      status: 500,
-    };
-  }
-
-  const spellBehaviorRows = Object.entries(consumables.spell_behaviors).map((
-    [spellId, behavior],
-  ) => ({
-    player_id: playerId,
-    spell_id: spellId,
-    behavior,
-  }));
-  if (spellBehaviorRows.length > 0) {
-    const behaviorResult = await restRequest<unknown>(
-      config,
-      "player_spell_behaviors?on_conflict=player_id,spell_id",
-      {
-        method: "POST",
-        headers: { prefer: "resolution=merge-duplicates" },
-        body: JSON.stringify(spellBehaviorRows),
-      },
-    );
-    if (behaviorResult.error !== null) {
-      return {
-        code: "PROGRESSION_LAB_TRACK16_RESET_FAILED",
-        message: "Unable to seed Progression Lab spell behaviors.",
-        status: 500,
-      };
-    }
-  }
-
-  return null;
-}
-
-function consumablesFromSave(save: HealthySave): Track16Consumables {
-  const value = save.consumables;
-  if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return {
-      inventory: [],
-      potion_slots: [{
-        slot_index: 1,
-        potion_id: null,
-        behavior: DEFAULT_POTION_BEHAVIOR,
-      }],
-      spell_behaviors: {},
-    };
-  }
-  const source = value as Record<string, unknown>;
-  const inventory = Array.isArray(source.inventory)
-    ? source.inventory
-      .map((item) => itemFromUnknown(item))
-      .filter((item): item is { item_id: string; quantity: number } =>
-        item !== null
-      )
-    : [];
-  const potionSlots = Array.isArray(source.potion_slots)
-    ? source.potion_slots
-      .map((slot) => potionSlotFromUnknown(slot))
-      .filter((slot): slot is Track16Consumables["potion_slots"][number] =>
-        slot !== null
-      )
-    : [];
-  const spellBehaviors = source.spell_behaviors !== null &&
-      typeof source.spell_behaviors === "object" &&
-      !Array.isArray(source.spell_behaviors)
-    ? source.spell_behaviors as Record<string, unknown>
-    : {};
-  return {
-    inventory,
-    potion_slots: potionSlots.length > 0 ? potionSlots : [{
-      slot_index: 1,
-      potion_id: null,
-      behavior: DEFAULT_POTION_BEHAVIOR,
-    }],
-    spell_behaviors: spellBehaviors,
-  };
-}
-
-function itemFromUnknown(
-  value: unknown,
-): { item_id: string; quantity: number } | null {
-  if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return null;
-  }
-  const item = value as Record<string, unknown>;
-  const itemId = typeof item.item_id === "string" ? item.item_id : "";
-  const quantity =
-    typeof item.quantity === "number" && Number.isFinite(item.quantity)
-      ? Math.max(0, Math.trunc(item.quantity))
-      : 0;
-  return itemId === "" || quantity <= 0 ? null : { item_id: itemId, quantity };
-}
-
-function potionSlotFromUnknown(
-  value: unknown,
-): Track16Consumables["potion_slots"][number] | null {
-  if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    return null;
-  }
-  const slot = value as Record<string, unknown>;
-  const slotIndex = typeof slot.slot_index === "number" ? slot.slot_index : 1;
-  if (slotIndex !== 1) return null;
-  return {
-    slot_index: 1,
-    potion_id: typeof slot.potion_id === "string" && slot.potion_id !== ""
-      ? slot.potion_id
-      : null,
-    behavior: slot.behavior ?? DEFAULT_POTION_BEHAVIOR,
-  };
 }
 
 function resolveRoute(pathname: string): Route | null {
@@ -611,22 +413,6 @@ function parseJson(text: string): unknown {
   }
 }
 
-function playerIdFromPayload(payload: unknown): string {
-  if (
-    payload === null || typeof payload !== "object" || Array.isArray(payload)
-  ) {
-    return "";
-  }
-
-  const root = payload as Record<string, unknown>;
-  const player = root.player;
-  if (player === null || typeof player !== "object" || Array.isArray(player)) {
-    return "";
-  }
-
-  return stringValue((player as Record<string, unknown>).id, "");
-}
-
 function withResourceDefaults(payload: unknown): Record<string, unknown> {
   if (
     payload === null || typeof payload !== "object" || Array.isArray(payload)
@@ -661,6 +447,22 @@ function mapDatabaseError(error: RestError): RestError {
       code: "INVALID_REQUEST_ID",
       message: "request_id must be a UUID.",
       status: 400,
+    };
+  }
+
+  if (message.includes("INVALID_REQUEST_HASH")) {
+    return {
+      code: "INVALID_REQUEST_HASH",
+      message: "request_hash must be a non-empty mutation hash.",
+      status: 400,
+    };
+  }
+
+  if (message.includes("IDEMPOTENCY_HASH_MISMATCH")) {
+    return {
+      code: "IDEMPOTENCY_HASH_MISMATCH",
+      message: "request_id was already used with a different request_hash.",
+      status: 409,
     };
   }
 

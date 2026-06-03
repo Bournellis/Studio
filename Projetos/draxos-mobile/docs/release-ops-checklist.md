@@ -32,13 +32,13 @@ Comandos:
 
 ```powershell
 .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ConfirmRemoteMutation
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ConfirmRemoteMutation
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>"
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
 ```
 
-Flags antigas (`-SkipUpload`, `-UseManifestSecret`, `-SkipManifestSecret`) sem `-Mode` ficam protegidas: executam apenas `Mode Plan` e emitem aviso.
+Flags antigas (`-SkipUpload`, `-UseManifestSecret`, `-SkipManifestSecret`) sem `-Mode` ficam protegidas: executam apenas `Mode Plan` e emitem aviso. `Mode Package`, `Mode Upload`, `Mode DeployManifest` e `Mode FullPublish` exigem `-ReleaseRoot` fresco e versionado (`internal-alpha/v0-nome-YYYYMMDD-<shortsha>`). `-SkipManifestSecret` e bloqueado para `DeployManifest`/`FullPublish`; deploy normal deve atualizar o secret de override do manifest.
 
 ## Default Test Publication Policy
 
@@ -56,7 +56,7 @@ Track 13 itself remains non-publishing by default. After Track 13, user-approved
   `https://95f403c5...pages.dev` are evidence/debug links, not the user-facing
   playtest contract.
 - Before reporting publication success, verify the deployed `/web/index.html` references the versioned asset root and that the shell `index.pck` size matches the remote `Content-Length`.
-- Before reporting Web launch success, run `tools/smoke_web_launch_remote.ps1` against the hash preview returned by Cloudflare Pages and keep the screenshot/logs under `build/diagnostics/`. If the stable production domain is protected by Cloudflare Access, anonymous Access is expected there and does not replace the preview launch smoke.
+- Before reporting Web launch success, run `tools/smoke_web_launch_remote.ps1` against the hash preview returned by Cloudflare Pages. Use `-NoProjectWrites` for read-only validation jobs and `-KeepDiagnostics` when the screenshot/logs must be retained outside the project. If the stable production domain is protected by Cloudflare Access, anonymous Access is expected there and does not replace the preview launch smoke.
 
 ## Inventario Atual
 
@@ -80,7 +80,7 @@ Track 13 itself remains non-publishing by default. After Track 13, user-approved
 | Foundation admin/RLS live smoke | `server/tests/foundation_admin_rls_live_smoke.ts` | Prova RLS de account/save/ruleset/admin audit e RPCs admin `service_role`-only em Supabase/Edge local | Sim, somente local |
 | Publish script | `tools/publish_internal_alpha.ps1` | Planeja/package local por default; publica somente com modo remoto + confirmacao | `Plan`/`Package` sim; modos remotos sao publicacao |
 | Cloudflare package | `tools/build_cloudflare_pages_package.ps1` | Gera pacote local hibrido para Pages a partir de publish existente | Seguro se rodar sobre artefatos locais existentes; nao faz deploy |
-| Web launch smoke | `tools/smoke_web_launch_remote.ps1` | Valida hash preview real via Chrome/CDP, screenshot e logs de rede/runtime | Sim, leitura remota; usar preview liberado |
+| Web launch smoke | `tools/smoke_web_launch_remote.ps1` | Valida hash preview real via Chrome/CDP, screenshot e logs de rede/runtime | Sim, leitura remota; usar preview liberado; `-NoProjectWrites` evita sujar `build/` |
 | Static hosting doc | `docs/internal-alpha-static-hosting.md` | Regras Cloudflare Pages + Supabase Storage | Sim, leitura |
 | Supabase remote doc | `docs/supabase-remote-tutorial.md` | Setup, deploy e smokes remotos | Leitura. Deploy/comandos administrativos ficam fora de validacao segura |
 
@@ -102,8 +102,9 @@ Antes de qualquer publicacao futura:
 - `tools\check_foundation_expansion_readiness.ps1` verde quando alterar account/save, ruleset, admin, minigame, migrations ou readiness.
 - `server/tests/foundation_admin_rls_live_smoke.ts` verde no `DatabaseLocal`/`FullLocal` quando alterar admin, RLS, account/save ou grants.
 - `publish_internal_alpha.ps1 -Mode Plan` revisado.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot "<root-versionado>"` revisado; modos que empacotam/publicam nao podem usar root default/generico.
 - `release_manifest_smoke.ts` verde contra o alvo de release.
-- `release_artifacts_remote_smoke.ts` verde somente depois que artefatos ja existirem no remoto.
+- `release_artifacts_remote_smoke.ts` verde somente depois que artefatos ja existirem no remoto; o manifest deve apontar para o dominio production estavel, nao para hash URL.
 - Em dominio Cloudflare Pages protegido, usar preview liberado ou rodar o smoke com `DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS=1` apenas para reconhecer a tela de Access como protecao esperada.
 - Para conferir hashes completos de APK/ZIP, rodar o smoke com `DRAXOS_RELEASE_FULL_HASH=1`; sem essa flag ele usa `HEAD`/`GET` parcial para ser rapido.
 - `service_role`, `sb_secret_`, `sb_service_`, senha de banco e senha de keystore ausentes de cliente, portal, APK, ZIP, Web build, manifest e Git.
@@ -187,7 +188,7 @@ npx -y wrangler@latest pages deploy build/internal-alpha/cloudflare-pages --proj
   `wrangler pages deployment list --project-name draxos-mobile-internal-alpha`
   que o ultimo deployment `Production` da branch `main` corresponde ao source
   publicado, e valide o hash URL apenas como espelho tecnico desse deployment.
-- O hash URL deve passar em `tools/smoke_web_launch_remote.ps1 -ExpectedReleaseRoot <release-root>`: o overlay `#status` precisa sumir em ate 60 segundos, `index.pck` e `index.wasm` nao podem falhar e o screenshot final precisa mostrar o jogo, nao a splash.
+- O hash URL deve passar em `tools/smoke_web_launch_remote.ps1 -ExpectedReleaseRoot <release-root> -NoProjectWrites`: o overlay `#status` precisa sumir em ate 60 segundos, `index.pck` e `index.wasm` nao podem falhar e o screenshot final precisa mostrar o jogo, nao a splash.
 - Smoke somente leitura `release_artifacts_remote_smoke.ts` valida Portal com `DraxosMobile` e Web com `GODOT_CONFIG`.
 
 ## Web CORS Troubleshooting
@@ -269,6 +270,7 @@ cd <WORKTREE>\Projetos\draxos-mobile
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <WORKTREE>\Projetos\draxos-mobile -s res://tools/smoke_exports.gd
 npx -y deno check server/tests/release_manifest_smoke.ts
 npx -y deno check server/tests/release_artifacts_remote_smoke.ts
+npx -y deno check server/tests/release_auth_contract_test.ts
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_release_safety.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_android_release_keystore.ps1 -ProjectDir . -Mode InternalAlpha
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_track13_readiness.ps1 -ProjectDir .
@@ -333,6 +335,7 @@ Validado nesta branch em `2026-05-28`:
 - Pass: `tools/validate_foundation.ps1 -Profile Client`.
 - Pass: `tools/check_release_safety.ps1`.
 - Pass: `publish_internal_alpha.ps1 -Mode Plan` sem mutacao remota.
+- Pass: `publish_internal_alpha.ps1 -Mode Package` sem `-ReleaseRoot` bloqueia antes de empacotar.
 - Pass: `publish_internal_alpha.ps1 -Mode Upload` sem confirmacao bloqueia antes de rede.
 - Pass: Deno check de smokes de release.
 - Pass: `git diff --check`.
@@ -345,12 +348,12 @@ Esta sequencia fica fora da validacao automatica segura e deve ser usada apenas 
 2. Exportar Android, PC e Web com `tools/export_internal_alpha.ps1`.
 3. Revisar hashes em `build/internal-alpha/release-artifacts.json`.
 4. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Plan -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` e revisar o plano.
-5. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Package -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para preparar pacote local.
-6. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ConfirmRemoteMutation -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para Storage.
+5. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot <root-versionado> -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para preparar pacote local.
+6. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot <root-versionado> -ConfirmRemoteMutation -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para Storage.
 7. Gerar pacote Cloudflare no mesmo worktree com `tools/build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <asset-root-versionado>/web`; este passo deve acontecer depois do upload porque o script compara o shell local com os assets remotos.
 8. Publicar pacote no Cloudflare Pages production com `npx -y wrangler@latest pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`.
 9. Validar o hash retornado pelo Cloudflare como evidencia tecnica e validar o dominio production fixo como alvo oficial. `/web` deve conter o asset root versionado e `GODOT_CONFIG.fileSizes.index.pck` deve bater com o `Content-Length` de `<asset-root-versionado>/web/index.pck`. Se production estiver sob Access, usar sessao autenticada ou registrar que a validacao anonima encontrou Access esperado.
-10. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ConfirmRemoteMutation -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para manifest/deploy.
+10. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot <root-versionado> -ConfirmRemoteMutation -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para manifest/deploy.
 11. Rodar smokes remotos, incluindo `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` e `internal_alpha_remote_smoke.ts` com flags necessarias.
 12. Registrar relatorio de export/publicacao e atualizar handoff.
 
@@ -364,8 +367,8 @@ Esta sequencia fica fora da validacao automatica segura e deve ser usada apenas 
 | `internal_alpha_remote_smoke.ts` healthcheck/release | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | Nao | Sem flags de auth, so healthcheck; com `DRAXOS_REMOTE_RELEASE_SMOKE=1`, tambem manifest |
 | `internal_alpha_remote_smoke.ts` email/account | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, convite alpha | Sim, cria usuario/save de teste | Usar so quando explicitamente autorizado |
 | `publish_internal_alpha.ps1 -Mode Plan` | Opcional URL/project ref para plano completo | Nao | Gera plano local e nao chama Supabase mutante |
-| `publish_internal_alpha.ps1 -Mode Package` | Artefatos locais e opcional URL/project ref | Nao | Prepara pacote local |
-| `publish_internal_alpha.ps1 -Mode Upload/DeployManifest/FullPublish -ConfirmRemoteMutation` | Project ref, Supabase CLI auth, publishable key e possivel manifest override | Sim | Publica somente em tarefa aprovada |
+| `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot <root-versionado>` | Artefatos locais e opcional URL/project ref | Nao | Prepara pacote local |
+| `publish_internal_alpha.ps1 -Mode Upload/DeployManifest/FullPublish -ReleaseRoot <root-versionado> -ConfirmRemoteMutation` | Project ref, Supabase CLI auth, publishable key e possivel manifest override | Sim | Publica somente em tarefa aprovada |
 | Cloudflare Pages deploy | Conta Cloudflare | Sim | Publica Portal/Web |
 
 ## Red Flags

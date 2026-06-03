@@ -26,10 +26,12 @@ await postJson(
   headers,
 );
 
+const labApplyRequestId = crypto.randomUUID();
 await postJson(
   `${SUPABASE_URL}/functions/v1/progression-lab/apply`,
   {
-    request_id: crypto.randomUUID(),
+    request_id: labApplyRequestId,
+    request_hash: `sha256:build-equip-smoke-${labApplyRequestId}`,
     profile_id: "free_100_rewards",
     milestone_id: "20h",
     save_id: "free_100_rewards_20h",

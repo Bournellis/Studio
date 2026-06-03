@@ -213,6 +213,30 @@ Deno.test("transactional mutation helper and adapters are mirrored", async () =>
     for (const required of ["mutationrequesthash", "request_hash"]) {
       assertIncludes(code, required, `${adapter.label} adapter should include ${required}`);
     }
+    if (adapter.label === "battle") {
+      assertIncludes(
+        code,
+        'stringfield(body, "mode") || "first_slice_sim"',
+        "battle/request should default missing mode to the v1 FIRST_SLICE_SIM path",
+      );
+      assertNotIncludes(
+        code,
+        'stringfield(body, "mode") || "mvp_only"',
+        "battle/request must not default omitted mode to the legacy MVP_ONLY RPC",
+      );
+      for (const forbidden of [
+        "async function applybattlereward",
+        "async function applybattleconsumables",
+        "resource_transactions",
+        "item_transactions",
+      ]) {
+        assertNotIncludes(
+          code,
+          forbidden,
+          `battle adapter should not keep direct reward/consumable mutation path ${forbidden}`,
+        );
+      }
+    }
     if (!code.includes("gamesave.id") && !code.includes("gamesave.value.id")) {
       throw new Error(`${adapter.label} adapter should pass a game save id to its RPC`);
     }

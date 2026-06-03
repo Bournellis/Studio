@@ -10,7 +10,6 @@ import {
   type BattleBotBuildRow,
   type BattleBuildRow,
   type BattleConsumableRow,
-  type BattleConsumableUse,
   type BattlePlayerRow,
   type BattlePotionSlotRow,
   type BattleSpellBehaviorRow,
@@ -269,7 +268,7 @@ async function handleRequest(
   }
 
   const requestId = stringField(body, "request_id");
-  const mode = battleMode(stringField(body, "mode") || "MVP_ONLY");
+  const mode = battleMode(stringField(body, "mode") || "FIRST_SLICE_SIM");
 
   if (!UUID_PATTERN.test(requestId)) {
     return errorResponse(
@@ -814,151 +813,6 @@ async function prepareArenaMutationPayload(
     },
     error: null,
   };
-}
-
-async function applyBattleReward(
-  config: EdgeConfig,
-  state: { player: PlayerRow; resources: ResourceRow },
-  requestId: string,
-  reward: Record<string, number>,
-): Promise<RestError | null> {
-  const xp = numberValue(reward.xp, 0);
-  const playerPatch = await restRequest<unknown>(
-    config,
-    `players?id=eq.${encodeURIComponent(state.player.id)}`,
-    {
-      method: "PATCH",
-      headers: { prefer: "return=minimal" },
-      body: JSON.stringify({
-        xp: numberValue(state.player.xp, 0) + xp,
-        updated_at: new Date().toISOString(),
-      }),
-    },
-  );
-  if (playerPatch.error !== null) {
-    return {
-      code: "REWARD_APPLY_FAILED",
-      message: "Unable to apply player XP reward.",
-      status: 500,
-    };
-  }
-
-  const resourcePatch = await restRequest<unknown>(
-    config,
-    `resources?player_id=eq.${encodeURIComponent(state.player.id)}`,
-    {
-      method: "PATCH",
-      headers: { prefer: "return=minimal" },
-      body: JSON.stringify({
-        almas: numberValue(state.resources.almas, 0) +
-          numberValue(reward.almas, 0),
-        energia: numberValue(state.resources.energia, 0) +
-          numberValue(reward.energia, 0),
-        sangue: numberValue(state.resources.sangue, 0) +
-          numberValue(reward.sangue, 0),
-        ossos: numberValue(state.resources.ossos, 0) +
-          numberValue(reward.ossos, 0),
-        updated_at: new Date().toISOString(),
-      }),
-    },
-  );
-  if (resourcePatch.error !== null) {
-    return {
-      code: "REWARD_APPLY_FAILED",
-      message: "Unable to apply resource reward.",
-      status: 500,
-    };
-  }
-
-  const transaction = await restRequest<unknown>(
-    config,
-    "resource_transactions",
-    {
-      method: "POST",
-      headers: { prefer: "return=minimal" },
-      body: JSON.stringify({
-        player_id: state.player.id,
-        source: "battle/request",
-        request_id: requestId,
-        delta: reward,
-      }),
-    },
-  );
-  if (transaction.error !== null) {
-    return {
-      code: "REWARD_APPLY_FAILED",
-      message: "Unable to record battle reward transaction.",
-      status: 500,
-    };
-  }
-
-  return null;
-}
-
-async function applyBattleConsumables(
-  config: EdgeConfig,
-  state: { player: PlayerRow; inventory: ConsumableRow[] },
-  requestId: string,
-  consumablesUsed: BattleConsumableUse[],
-): Promise<RestError | null> {
-  const playerConsumables = consumablesUsed.filter((item) => item.owner === "player");
-  if (playerConsumables.length === 0) {
-    return null;
-  }
-
-  for (const used of playerConsumables) {
-    const current = state.inventory.find((item) => item.item_id === used.item_id);
-    if (current === undefined || current.quantity < used.quantity) {
-      return {
-        code: "CONSUMABLE_APPLY_FAILED",
-        message: "Potion stock changed before battle could be applied.",
-        status: 409,
-      };
-    }
-    const nextQuantity = current.quantity - used.quantity;
-    const update = await restRequest<unknown>(
-      config,
-      `player_consumables?player_id=eq.${encodeURIComponent(state.player.id)}&item_id=eq.${
-        encodeURIComponent(used.item_id)
-      }`,
-      {
-        method: "PATCH",
-        headers: { prefer: "return=minimal" },
-        body: JSON.stringify({
-          quantity: nextQuantity,
-          updated_at: new Date().toISOString(),
-        }),
-      },
-    );
-    if (update.error !== null) {
-      return {
-        code: "CONSUMABLE_APPLY_FAILED",
-        message: "Unable to consume potion stock.",
-        status: 500,
-      };
-    }
-    const ledger = await restRequest<unknown>(config, "item_transactions", {
-      method: "POST",
-      headers: { prefer: "return=minimal" },
-      body: JSON.stringify({
-        player_id: state.player.id,
-        source: "battle/request",
-        request_id: requestId,
-        item_id: used.item_id,
-        delta: -used.quantity,
-        payload: { slot_index: used.slot_index },
-      }),
-    });
-    if (ledger.error !== null) {
-      return {
-        code: "CONSUMABLE_APPLY_FAILED",
-        message: "Unable to record consumed potion.",
-        status: 500,
-      };
-    }
-  }
-
-  return null;
 }
 
 async function applyArenaResult(

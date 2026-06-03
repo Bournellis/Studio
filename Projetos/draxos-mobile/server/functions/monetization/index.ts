@@ -329,23 +329,29 @@ async function loadMonetizationState(
 ): Promise<{ value: MonetizationState; error: null } | { value: null; error: RestError }> {
   const player = await loadPlayer(auth, config);
   if (player.error !== null) return { value: null, error: player.error };
-  const gameSave = await loadFoundationGameSave(
+  const gameSavePromise = loadFoundationGameSave(
     config,
     restRequest,
     auth.userId,
     auth.saveType,
     player.value.id,
   );
-  if (gameSave.error !== null) return { value: null, error: gameSave.error };
-  const resources = await loadResources(config, player.value.id);
-  if (resources.error !== null) return { value: null, error: resources.error };
+  const resourcesPromise = loadResources(config, player.value.id);
+  const claimsPromise = loadRewardClaims(config, player.value.id);
+  const purchasesPromise = loadAlphaPurchases(config, player.value.id);
   const pass = await activeBattlePass(config);
   if (pass.error !== null) return { value: null, error: pass.error };
-  const progress = await ensureBattlePassProgress(config, player.value.id, pass.value.id);
+  const [gameSave, resources, progress, claims, purchases] = await Promise.all([
+    gameSavePromise,
+    resourcesPromise,
+    ensureBattlePassProgress(config, player.value.id, pass.value.id),
+    claimsPromise,
+    purchasesPromise,
+  ]);
+  if (gameSave.error !== null) return { value: null, error: gameSave.error };
+  if (resources.error !== null) return { value: null, error: resources.error };
   if (progress.error !== null) return { value: null, error: progress.error };
-  const claims = await loadRewardClaims(config, player.value.id);
   if (claims.error !== null) return { value: null, error: claims.error };
-  const purchases = await loadAlphaPurchases(config, player.value.id);
   if (purchases.error !== null) return { value: null, error: purchases.error };
   return {
     value: {

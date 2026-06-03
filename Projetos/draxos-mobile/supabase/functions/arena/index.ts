@@ -508,11 +508,13 @@ async function handleDuelRequest(
     activeTier?.duel_power_targets.at(-1) ??
     null;
   const opponentBotId = sourceBotIdForEnemy(enemyId);
-  const bot = await loadBot(config, opponentBotId);
+  const [bot, progress] = await Promise.all([
+    loadBot(config, opponentBotId),
+    loadArenaProgress(config, state.value.gameSave.id),
+  ]);
   if (bot.error !== null) {
     return errorResponse(bot.error.code, bot.error.message, bot.error.status);
   }
-  const progress = await loadArenaProgress(config, state.value.gameSave.id);
   if (progress.error !== null) {
     return errorResponse(
       progress.error.code,
@@ -752,6 +754,14 @@ async function handleClaim(
       progress.error.status,
     );
   }
+  const arenaState = await arenaStateDeltaPayload(config, state.value, progress.value);
+  if (arenaState.error !== null) {
+    return errorResponse(
+      arenaState.error.code,
+      arenaState.error.message,
+      arenaState.error.status,
+    );
+  }
   const requestHash = await mutationRequestHash("arena/pve/claim", body, {
     request_id: requestId,
     save_type: auth.saveType,
@@ -766,6 +776,7 @@ async function handleClaim(
     request_hash: requestHash,
     game_save_id: state.value.gameSave.id,
     legacy_player_id: state.value.player.id,
+    arena_state: arenaState.value,
     attempt: attempt.value,
     progress: progress.value ?? defaultProgress(state.value),
     player: state.value.player,
@@ -779,6 +790,46 @@ async function handleClaim(
     saveType: auth.saveType,
     schemaVersion: "arena_claim_response_v1",
   }));
+}
+
+async function arenaStateDeltaPayload(
+  config: EdgeConfig,
+  state: { player: PlayerRow; gameSave: FoundationGameSaveRow },
+  progress: ArenaProgressRow | null,
+): Promise<{ value: Record<string, unknown>; error: null } | { value: null; error: RestError }> {
+  const attempts = await restRequest<ArenaAttemptRow[]>(
+    config,
+    `arena_attempts?game_save_id=eq.${
+      encodeURIComponent(state.gameSave.id)
+    }&select=id,game_save_id,player_id,arena_id,difficulty_id,difficulty_rank,max_steps,current_step_index,status,seed,enemy_sequence,active_buffs,reward_payload,started_at,completed_at,abandoned_at,updated_at&order=started_at.desc&limit=5`,
+    { method: "GET" },
+  );
+  if (attempts.error !== null) {
+    return {
+      value: null,
+      error: {
+        code: "ARENA_STATE_READ_FAILED",
+        message: "Unable to load Arena PVE attempts.",
+        status: 500,
+      },
+    };
+  }
+  const resolvedProgress = progress ?? defaultProgress(state);
+  return {
+    value: {
+      ok: true,
+      schema_version: "pve_arena_state_v1",
+      progress: resolvedProgress,
+      records: [resolvedProgress],
+      arenas: arenaDefinitions().map((definition) =>
+        arenaSummary(definition, resolvedProgress, state.player)
+      ),
+      attempts: attempts.value,
+      active_attempt: attempts.value.find((attempt) => attempt.status === "active") ?? null,
+      ranking: { mutated: false, reason: "ARENA_PVE_DOES_NOT_RANK" },
+    },
+    error: null,
+  };
 }
 
 async function handleAbandon(

@@ -82,6 +82,26 @@ static func resource_fixtures() -> Array[Dictionary]:
 		})
 	return result
 
+static func obstacles() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for obstacle: Dictionary in _as_array(data().get("obstacles", [])):
+		result.append({
+			"id": str(obstacle.get("id", "")),
+			"kind": str(obstacle.get("kind", "")),
+			"display_name": str(obstacle.get("display_name", "")),
+			"position": _vector2_from_dict(obstacle.get("position", {}), Vector2.ZERO),
+			"visual_size": _vector2_from_dict(obstacle.get("visual_size", {}), Vector2(80, 80)),
+			"collision_shape": str(obstacle.get("collision_shape", "circle")),
+			"collision_size": _vector2_from_dict(obstacle.get("collision_size", {}), Vector2.ZERO),
+			"collision_radius": float(obstacle.get("collision_radius", 20.0)),
+			"collision_offset": _vector2_from_dict(obstacle.get("collision_offset", {}), Vector2.ZERO),
+			"interaction_radius": float(obstacle.get("interaction_radius", 0.0)),
+			"blocks_player": bool(obstacle.get("blocks_player", true)),
+			"collectible": false,
+			"sort_offset": float(obstacle.get("sort_offset", 20.0)),
+		})
+	return result
+
 static func collected_nodes_from_snapshot(snapshot: Dictionary) -> Dictionary:
 	return _as_dictionary(snapshot.get("collected_nodes", {}))
 

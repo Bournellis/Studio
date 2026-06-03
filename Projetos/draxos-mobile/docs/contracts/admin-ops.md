@@ -58,7 +58,7 @@ log e teste/smoke quando forem expandidas:
 | localizar conta/save | implementado minimo | RPC `admin_lookup_account_v1`, service-role-only, sem painel publico |
 | diagnosticar batalha | implementado minimo | RPC `admin_battle_diagnostics_v1`, leitura por `battle_id`, sem rerodar simulador nem reaplicar recompensa |
 | reconciliar recurso | implementado minimo | RPC `resource_reconciliation_report_v1`, read-only |
-| compensar recurso/item | implementado recurso | RPC `admin_adjust_resource_balance_v1`, ledger dedicado, `request_id`, before/after |
+| compensar recurso/item | implementado recurso | RPC `admin_adjust_resource_balance_v1`, ledger dedicado, `request_id`, `request_hash`, before/after |
 | invalidar ou reconstruir save | futuro | decisao explicita; nao usar reset geral sem registro |
 | flaggar/suspender conta | implementado minimo | RPC `admin_flag_account_v1`, reason obrigatorio e audit log |
 | moderar chat/guilda | futuro | action canonica, reason, alvo, appeal/rollback basico |
@@ -93,7 +93,8 @@ Campos implementados:
 - `created_at`
 
 `admin_adjust_resource_balance_v1` usa essa tabela junto com
-`resource_transactions`, garantindo ledger e auditoria na mesma operacao.
+`resource_transactions`, garantindo ledger, `request_hash` e auditoria na mesma
+operacao.
 
 Mode Platform V1 hardening adiciona RPCs internas auditadas para que
 `/modes/admin/*` nao faca `PATCH` direto em tabelas operacionais:
@@ -128,7 +129,7 @@ As RPCs existentes sao internas e nao devem ser chamadas pelo cliente:
 | `admin_lookup_account_v1` | read-only | sem mutacao; usado para localizar account/profile/save |
 | `admin_battle_diagnostics_v1` | read-only | inclui battle, ruleset/hash, reward e ledger por `battle_id` |
 | `resource_reconciliation_report_v1` | read-only | compara saldo atual e ledger por `game_save_id` |
-| `admin_adjust_resource_balance_v1` | mutacao | exige `request_id`, reason, before/after, ledger e `admin_audit_log` |
+| `admin_adjust_resource_balance_v1` | mutacao | exige `request_id`, `request_hash`, reason, before/after, ledger e `admin_audit_log` |
 | `admin_flag_account_v1` | mutacao | exige `request_id`, status, reason e `admin_audit_log` |
 | `admin_set_mode_status_v1` | mutacao | exige `request_id`, `request_hash`, reason, before/after e `admin_audit_log` |
 | `admin_expire_mode_session_v1` | mutacao | exige `request_id`, `request_hash`, reason, before/after e `admin_audit_log` |
@@ -151,7 +152,12 @@ Todo endpoint admin futuro deve declarar:
 | rollback | como desfazer ou neutralizar |
 | teste | smoke local/remoto ou teste de contrato |
 
-Admin endpoints nao devem conceder recurso por chamada direta a tabela sem ledger. Mutacoes economicas administrativas devem usar fonte propria, por exemplo `admin_adjustment`, com reason e request id.
+`/modes/admin/reconcile` e diagnostico read-only: exige `request_id` para
+correlacao operacional, mas nao usa `request_hash` nem grava audit log porque
+nao muta estado. Qualquer evolucao dele para reconciliacao corretiva deve virar
+nova mutacao auditada.
+
+Admin endpoints nao devem conceder recurso por chamada direta a tabela sem ledger. Mutacoes economicas administrativas devem usar fonte propria, por exemplo `admin_adjustment`, com reason, request id e request hash.
 
 ## Migration De Audit Log
 

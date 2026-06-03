@@ -176,10 +176,19 @@ func _execute_action(action_id: String) -> void:
 	if _active_action_id == action:
 		var event_type := "action_failure" if _error_label.text != "" else "action_success"
 		var payload := _action_payload(action)
+		var endpoint := str(route.get("mutation_endpoint", ""))
 		if _error_label.text != "":
 			payload["error_text"] = _error_label.text
 		payload["duration_ms"] = maxi(0, int(Time.get_ticks_msec()) - action_started_ms)
 		payload["scope_id"] = _active_action_scope
+		payload["endpoint"] = endpoint
+		payload["method"] = "POST" if endpoint != "" else ""
+		payload["response_code"] = 0
+		payload["ok"] = event_type == "action_success"
+		payload["fail"] = event_type != "action_success"
+		payload["used_cache"] = false
+		payload["rendered_from_cache"] = false
+		payload["server_timing"] = {}
 		_emit_client_event(event_type, payload)
 		_emit_client_event("action_latency", payload.duplicate(true))
 	_active_action_id = ""
