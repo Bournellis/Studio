@@ -325,9 +325,10 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   );
   assertIncludes(
     eventHandler,
-    "stateEnvelope(foundationRpcPayload(rpc.value)",
-    "session/event should return the common responsiveness envelope",
+    "modeeventackpayload(rpc.value)",
+    "session/event should return an explicit mode event ACK inside the common envelope",
   );
+  assertIncludes(handler, "modeeventackpayload", "handler should import the mode event ACK builder");
   assertIncludes(
     eventHandler,
     'surface: "mode"',
@@ -351,6 +352,7 @@ Deno.test("openworld client queues authoritative events before local mutation", 
       "await supabase_client.record_mode_session_event",
       "_snapshot_revision",
       "_event_queue.pop_front()",
+      "_apply_integrated_event_ack(body, job)",
       "_resync_integrated_session",
       "model.advance_collection(delta, false, distance, not authoritative_online)",
       "_pending_collected_nodes[node_id] = true",
@@ -360,6 +362,26 @@ Deno.test("openworld client queues authoritative events before local mutation", 
   ) {
     assertIncludes(screen, required, `openworld screen should include ${required}`);
   }
+  const flushSection = codeSection(
+    screen,
+    "func _flush_integrated_event_queue",
+    "func _schedule_integrated_event_retry",
+  );
+  assertNotIncludes(
+    flushSection,
+    "_hydrate_integrated_session(",
+    "event ACKs should not hydrate the full session snapshot during active play",
+  );
+  assertIncludes(
+    screen,
+    "func _event_snapshot_patch",
+    "openworld should convert legacy event responses to selective patches",
+  );
+  assertIncludes(
+    screen,
+    "client_position_revision",
+    "openworld events should carry local position revision for sync auditing",
+  );
   assertNotIncludes(
     screen,
     'call_deferred("_record_integrated_event"',
@@ -374,6 +396,11 @@ Deno.test("openworld client queues authoritative events before local mutation", 
     model,
     "if not commit_to_pocket:",
     "model should avoid optimistic pocket mutation before remote ACK",
+  );
+  assertIncludes(
+    model,
+    "func apply_authoritative_patch",
+    "model should support event ACK patches without clearing active collection",
   );
 });
 

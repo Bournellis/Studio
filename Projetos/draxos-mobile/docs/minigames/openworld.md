@@ -39,6 +39,8 @@ Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitua
 - backend opcional em `integrated_alpha` por `/modes/state`, `/modes/session/start`, `/modes/session/event`, `/modes/session/complete` e `/modes/session/abandon`;
 - snapshot remoto retomavel por ate 2 horas;
 - heartbeat de movimento/tempo a cada 15 segundos e eventos imediatos para acoes relevantes;
+- ACK de evento com patch autoritativo seletivo, sem rollback visual de posicao
+  ou coleta em andamento durante gameplay ativo;
 - Reward Bridge limitado, server-authoritative, idempotente e com ledger.
 
 ## Nao Escopo
@@ -117,6 +119,21 @@ Reward Bridge novo ou fronteira nova com Basebuilder precisa de pacote proprio.
 
 `GET /modes/state?mode_id=openworld` retorna `active_session` quando existe sessao `started` nao expirada, incluindo `snapshot_payload`, `snapshot_revision`, `expires_at` e `last_event_at`.
 
+`POST /modes/session/event` retorna `type=mode_event_ack` dentro do envelope
+comum de modos. Esse ACK confirma o evento e a revisao, mas nao deve ser tratado
+como snapshot completo de retomada pelo client. Durante gameplay ativo:
+
+- `snapshot_patch` e a unica parte aplicada ao inventario/estado economico;
+- `player_position` continua client-authoritative e nao entra no patch;
+- `active_collection` continua client-authoritative ate sair, retomar ou
+  resync stale explicito;
+- `collect_start` pode confirmar revisao sem zerar barra de coleta;
+- `collect_complete` confirma bolso e `collected_nodes`;
+- `deposit_all` confirma bolso/bau;
+- `craft` confirma bau/upgrades;
+- stale revision bloqueia `Completar`, mostra mensagem discreta e aciona resync
+  por `/modes/state`.
+
 Eventos aceitos:
 
 - `move_heartbeat`
@@ -143,6 +160,34 @@ Payload de evento:
     "item_id": "galho",
     "position": {"x": 330, "y": 420},
     "session_seconds": 42
+  }
+}
+```
+
+Resposta de evento:
+
+```json
+{
+  "ok": true,
+  "type": "mode_event_ack",
+  "mode_id": "openworld",
+  "slice_id": "forest",
+  "session_id": "<uuid>",
+  "event_type": "collect_complete",
+  "request_id": "<uuid>",
+  "expected_revision": 3,
+  "revision_after": 4,
+  "applied": true,
+  "resync_required": false,
+  "snapshot_patch": {
+    "pocket": {"galho": 1},
+    "collected_nodes": {"node_galho_01": true},
+    "last_message": "+1 Galho no bolso."
+  },
+  "authoritative_fields": ["collected_nodes", "last_message", "pocket"],
+  "visual_authority": {
+    "player_position": "client_during_active_play",
+    "active_collection": "client_until_resume_or_resync"
   }
 }
 ```

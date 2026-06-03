@@ -59,6 +59,9 @@ var _deposit_button: Button
 var _complete_button: Button
 var _back_button: Button
 var _player_pos := PLAYER_INITIAL_POSITION
+var _last_revision_position := PLAYER_INITIAL_POSITION
+var _local_position_revision := 0
+var _client_event_seq := 0
 var _debug_joystick_vector := Vector2.ZERO
 var _resource_nodes: Array[Dictionary] = []
 var _session_seconds := 0.0
@@ -139,6 +142,7 @@ func set_player_position_for_tests(position: Vector2) -> void:
 	_player_pos = position
 	if _world != null and _world.has_method("set_player_position"):
 		_world.set_player_position(position)
+	_bump_position_revision_if_changed()
 
 func begin_free_joystick_for_tests(screen_position: Vector2) -> void:
 	_begin_free_joystick(screen_position, -2)
@@ -160,6 +164,7 @@ func _process(delta: float) -> void:
 	_session_seconds += delta
 	if _world != null and _world.has_method("get_player_position"):
 		_player_pos = _world.get_player_position()
+	_bump_position_revision_if_changed()
 	var movement := _movement_vector()
 	var moved := movement.length() > 0.05
 	if _world != null and _world.has_method("set_movement_vector"):
@@ -524,6 +529,13 @@ func _move_player(delta: Vector2) -> void:
 	var margin := RulesetScript.player_margin()
 	_player_pos.x = clampf(_player_pos.x, margin, world_size.x - margin)
 	_player_pos.y = clampf(_player_pos.y, margin, world_size.y - margin)
+	_bump_position_revision_if_changed()
+
+func _bump_position_revision_if_changed() -> void:
+	if _player_pos.distance_to(_last_revision_position) < 0.01:
+		return
+	_last_revision_position = _player_pos
+	_local_position_revision += 1
 
 func _advance_nearby_collection(delta: float) -> void:
 	var nearest := _nearest_resource()
@@ -841,12 +853,67 @@ func _apply_collected_nodes(collected_nodes: Dictionary) -> void:
 		node["collected"] = bool(collected_nodes.get(node_id, false))
 		_resource_nodes[index] = node
 
+func _apply_integrated_event_ack(body: Dictionary, job: Dictionary) -> void:
+	var session := _as_dictionary(body.get("session", {}))
+	var session_id := str(body.get("session_id", session.get("id", ""))).strip_edges()
+	if session_id != "":
+		_server_session_id = session_id
+	var revision_after := int(body.get("revision_after", -1))
+	if revision_after < 0 and not session.is_empty():
+		revision_after = int(session.get("snapshot_revision", _snapshot_revision))
+	if revision_after >= 0:
+		_snapshot_revision = revision_after
+	var snapshot_patch := _as_dictionary(body.get("snapshot_patch", {}))
+	if snapshot_patch.is_empty() and not session.is_empty():
+		var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
+		snapshot_patch = _event_snapshot_patch(snapshot_payload)
+	if not snapshot_patch.is_empty():
+		model.apply_authoritative_patch(snapshot_patch, true)
+		var collected_nodes := _as_dictionary(snapshot_patch.get("collected_nodes", {}))
+		if not collected_nodes.is_empty():
+			_apply_collected_nodes(collected_nodes)
+			_clear_confirmed_pending_nodes(collected_nodes)
+	var user_message := str(body.get("user_message", _as_dictionary(body.get("event", {})).get("message", ""))).strip_edges()
+	if user_message != "":
+		model.last_message = user_message
+	_server_synced = true
+
+func _event_snapshot_patch(snapshot_payload: Dictionary) -> Dictionary:
+	var patch: Dictionary = {}
+	for key: String in [
+		"pocket",
+		"chest",
+		"upgrades",
+		"collected_nodes",
+		"reward_payload",
+		"session_seconds",
+		"activity_score",
+		"capacity",
+		"pocket_weight",
+		"current_speed",
+		"last_message",
+	]:
+		if snapshot_payload.has(key):
+			patch[key] = snapshot_payload.get(key)
+	return patch
+
+func _clear_confirmed_pending_nodes(collected_nodes: Dictionary) -> void:
+	for node_id: String in collected_nodes.keys():
+		if bool(collected_nodes.get(node_id, false)):
+			_pending_collected_nodes.erase(node_id)
+
 func _record_integrated_event_deferred(event_type: String, event_payload: Dictionary) -> void:
 	if integration_mode != "integrated_alpha" or _server_session_id == "":
 		return
+	_client_event_seq += 1
+	var payload := event_payload.duplicate(true)
+	payload["client_event_seq"] = _client_event_seq
+	payload["client_position_revision"] = _local_position_revision
 	_event_queue.append({
 		"event_type": event_type,
-		"event_payload": event_payload.duplicate(true),
+		"event_payload": payload,
+		"client_event_seq": _client_event_seq,
+		"position_revision": _local_position_revision,
 	})
 	_pending_event_count = _event_queue.size() + (1 if _event_flush_active else 0)
 	_server_synced = false
@@ -899,19 +966,22 @@ func _flush_integrated_event_queue() -> void:
 		var body := _response_body(result)
 		if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
 			_event_queue.pop_front()
-			_hydrate_integrated_session(_as_dictionary(body.get("session", {})))
-			model.last_message = str(_as_dictionary(body.get("event", {})).get("message", model.last_message))
+			if bool(body.get("resync_required", false)):
+				await _resync_integrated_session("Bosque sincronizado.")
+				_event_queue.clear()
+				break
+			_apply_integrated_event_ack(body, job)
 			continue
 		_server_synced = false
 		var error_code := _error_code(result)
-		model.last_message = "Sincronizacao pendente."
+		model.last_message = "Atualizando progresso..."
 		if not _is_network_error(result):
 			session_store.fail_pending_mutation(_last_pending_request_id, body)
 			_event_queue.pop_front()
 			if error_code == "MODE_SESSION_REVISION_STALE":
-				await _resync_integrated_session("Bosque resincronizado. Repita a ultima acao se ela nao apareceu.")
+				await _resync_integrated_session("Bosque sincronizado. Repita a ultima acao se ela nao apareceu.")
 			else:
-				await _resync_integrated_session("Bosque resincronizado apos erro do servidor.")
+				await _resync_integrated_session("Bosque sincronizado apos erro do servidor.")
 			_event_queue.clear()
 		else:
 			model.last_message = "Sincronizacao pendente. Tentando novamente..."

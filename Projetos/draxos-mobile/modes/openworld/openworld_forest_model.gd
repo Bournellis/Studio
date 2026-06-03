@@ -56,11 +56,21 @@ func apply_snapshot(snapshot_payload: Dictionary) -> void:
 	var ruleset_id := str(snapshot_payload.get("ruleset_id", ""))
 	if ruleset_id != "" and ruleset_id != RULESET_ID:
 		return
-	pocket = _positive_int_dictionary(snapshot_payload.get("pocket", {}))
-	chest = _positive_int_dictionary(snapshot_payload.get("chest", {}))
-	upgrades = _boolean_dictionary(snapshot_payload.get("upgrades", {}))
-	active_collection = {}
-	last_message = str(snapshot_payload.get("last_message", "Bosque retomado."))
+	apply_authoritative_patch(snapshot_payload, false)
+	if not snapshot_payload.has("last_message"):
+		last_message = "Bosque retomado."
+
+func apply_authoritative_patch(snapshot_patch: Dictionary, preserve_active_collection: bool = true) -> void:
+	if snapshot_patch.has("pocket"):
+		pocket = _positive_int_dictionary(snapshot_patch.get("pocket", {}))
+	if snapshot_patch.has("chest"):
+		chest = _positive_int_dictionary(snapshot_patch.get("chest", {}))
+	if snapshot_patch.has("upgrades"):
+		upgrades = _boolean_dictionary(snapshot_patch.get("upgrades", {}))
+	if not preserve_active_collection:
+		active_collection = {}
+	if snapshot_patch.has("last_message"):
+		last_message = str(snapshot_patch.get("last_message", last_message))
 
 func result_payload(session_seconds: float = 0.0) -> Dictionary:
 	return {
