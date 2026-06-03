@@ -325,7 +325,7 @@ func _apply_selected_to_server_lab_save() -> void:
 
 	_set_status("Aplicando %s/%s no save Progression Lab..." % [_selected_profile(), _selected_milestone()])
 	supabase_client.configure_save_type(SessionStoreScript.SAVE_TYPE_PROGRESSION_LAB)
-	var mutation := session_store.prepare_pending_mutation(
+	var mutation: Dictionary = session_store.prepare_pending_mutation(
 		"progression-lab/apply",
 		"progression_lab",
 		"apply_profile",

@@ -2,7 +2,14 @@ extends SceneTree
 
 const MobileUiContractScript = preload("res://modes/boot/ui/mobile_ui_contract.gd")
 const ProjectInfoScript = preload("res://core/project_info.gd")
+const AppShellRouteContractScript = preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const BOOT_SCREEN_PATH := "res://modes/boot/boot.gd"
+const RESPONSIVE_VIEWPORTS := [
+	Vector2i(360, 800),
+	Vector2i(390, 844),
+	Vector2i(1280, 720),
+	Vector2i(1920, 1080),
+]
 
 var _failures: PackedStringArray = PackedStringArray()
 
@@ -30,9 +37,17 @@ func _run_smoke() -> int:
 	await _check_battle_layout(Vector2i(1280, 720))
 	await _check_battle_layout(Vector2i(1920, 1080))
 	print("[smoke-responsive-layout] checking Battle summary/log routes")
-	for viewport_size: Vector2i in [Vector2i(360, 800), Vector2i(390, 844), Vector2i(1280, 720), Vector2i(1920, 1080)]:
+	for viewport_size: Vector2i in RESPONSIVE_VIEWPORTS:
 		await _check_battle_summary_layout(viewport_size)
 		await _check_battle_logs_layout(viewport_size)
+	print("[smoke-responsive-layout] checking Arena routes")
+	for viewport_size: Vector2i in RESPONSIVE_VIEWPORTS:
+		await _check_arena_selection_layout(viewport_size)
+		await _check_arena_loading_layout(viewport_size)
+		await _check_arena_active_layout(viewport_size)
+		await _check_arena_buff_choice_layout(viewport_size)
+		await _check_arena_replay_layout(viewport_size)
+		await _check_arena_summary_layout(viewport_size)
 
 	if not _failures.is_empty():
 		for failure: String in _failures:
@@ -220,11 +235,231 @@ func _check_battle_logs_layout(viewport_size: Vector2i) -> void:
 	boot.queue_free()
 	await process_frame
 
+func _check_arena_selection_layout(viewport_size: Vector2i) -> void:
+	_prepare_viewport(viewport_size)
+	await process_frame
+	var boot: Control = _new_boot()
+	_prepare_arena_selection_store()
+	await process_frame
+	boot.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	await process_frame
+	await process_frame
+
+	var context := "Arena selection %s" % str(viewport_size)
+	_expect_app_shell_fits(boot, context)
+	_expect_button_fits(boot, "Comecar", context)
+	_expect(_find_button_by_text(boot, "Voltar ao Refugio") != null, "%s exposes return CTA." % context)
+	boot.queue_free()
+	await process_frame
+
+func _check_arena_loading_layout(viewport_size: Vector2i) -> void:
+	_prepare_viewport(viewport_size)
+	await process_frame
+	var boot: Control = _new_boot()
+	await process_frame
+	boot.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	var flow = boot.get("_arena_lifecycle_flow")
+	if flow != null:
+		flow.render_loading_selection(boot)
+	await process_frame
+	await process_frame
+
+	var context := "Arena loading %s" % str(viewport_size)
+	_expect_app_shell_fits(boot, context)
+	_expect_button_fits(boot, "Voltar ao Refugio", context)
+	boot.queue_free()
+	await process_frame
+
+func _check_arena_active_layout(viewport_size: Vector2i) -> void:
+	_prepare_viewport(viewport_size)
+	await process_frame
+	var boot: Control = _new_boot()
+	_prepare_arena_active_store(false)
+	await process_frame
+	boot.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_ACTIVE)
+	await process_frame
+	await process_frame
+
+	var context := "Arena active %s" % str(viewport_size)
+	_expect_app_shell_fits(boot, context)
+	_expect_node_fits(boot, "ArenaLoadoutDetailsPanel", context, false)
+	_expect_node_fits(boot, "ArenaLoadoutDetailsToggle", context)
+	_expect_button_fits(boot, "Resolver duelo", context)
+	_expect(_find_button_by_text(boot, "Ajustar comportamento") != null, "%s exposes behavior CTA." % context)
+	_expect(_find_button_by_text(boot, "Voltar ao Refugio") != null, "%s exposes return CTA." % context)
+	boot.queue_free()
+	await process_frame
+
+func _check_arena_buff_choice_layout(viewport_size: Vector2i) -> void:
+	_prepare_viewport(viewport_size)
+	await process_frame
+	var boot: Control = _new_boot()
+	_prepare_arena_active_store(true)
+	await process_frame
+	boot.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_BUFF_CHOICE)
+	await process_frame
+	await process_frame
+
+	var context := "Arena buff choice %s" % str(viewport_size)
+	_expect_app_shell_fits(boot, context)
+	_expect_button_fits(boot, "Escolher Vitalidade Menor", context)
+	_expect(_find_button_by_text(boot, "Escolher Potencia Ritual Menor") != null, "%s exposes second buff CTA." % context)
+	boot.queue_free()
+	await process_frame
+
+func _check_arena_replay_layout(viewport_size: Vector2i) -> void:
+	_prepare_viewport(viewport_size)
+	await process_frame
+	var boot: Control = _new_boot()
+	_prepare_arena_replay_store()
+	await process_frame
+	boot.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_REPLAY)
+	await process_frame
+	await process_frame
+
+	var context := "Arena replay %s" % str(viewport_size)
+	for node_name: String in [
+		"BattleFullscreenOverlay",
+		"BattleSafeFrame",
+		"BattleRunningStageFrame",
+		"BattleDuelVisual",
+		"BattleSkipButton",
+	]:
+		_expect_node_fits(boot, node_name, context)
+	boot.queue_free()
+	await process_frame
+
+func _check_arena_summary_layout(viewport_size: Vector2i) -> void:
+	_prepare_viewport(viewport_size)
+	await process_frame
+	var boot: Control = _new_boot()
+	_prepare_arena_summary_store()
+	await process_frame
+	boot.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SUMMARY)
+	await process_frame
+	await process_frame
+
+	var context := "Arena summary %s" % str(viewport_size)
+	_expect_app_shell_fits(boot, context)
+	_expect_button_fits(boot, "Continuar na Arena", context)
+	_expect(_find_button_by_text(boot, "Voltar ao Refugio") != null, "%s exposes return CTA." % context)
+	boot.queue_free()
+	await process_frame
+
 func _prepare_battle_store() -> void:
 	var store := _session_store()
 	store.last_battle_log = _battle_log_fixture()
 	store.last_battle_rewards = _battle_rewards_fixture()
 	store.resources = {"almas": 7, "energia": 9, "diamante": 2}
+
+func _prepare_arena_selection_store() -> void:
+	_session_store().apply_arena_result({
+		"ok": true,
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"progress": {
+				"tutorial_completed": true,
+				"metadata": {
+					"completed_tiers": {"arena_tutorial_cinzas:s1_d00_intro": true},
+					"completed_arenas": {"arena_tutorial_cinzas": true},
+				},
+			},
+			"arenas": [
+				{
+					"id": "arena_tutorial_cinzas",
+					"display_name": "Tutorial: Cinzas do Refugio",
+					"duel_count": 1,
+					"unlocked": true,
+					"difficulties": [
+						{"difficulty_id": "s1_d00_intro", "max_steps": 1, "recommended_level_min": 1, "recommended_level_max": 3, "recommended_power_min": 80, "recommended_power_max": 180, "unlocked": true},
+					],
+				},
+				{
+					"id": "arena_cinzas_curta",
+					"display_name": "Arena Curta das Cinzas",
+					"duel_count": 3,
+					"unlocked": true,
+					"difficulties": [
+						{"difficulty_id": "s1_d00_intro", "max_steps": 3, "recommended_level_min": 3, "recommended_level_max": 4, "recommended_power_min": 160, "recommended_power_max": 260, "unlocked": true},
+						{"difficulty_id": "s1_d01_aprendiz", "max_steps": 3, "recommended_level_min": 5, "recommended_level_max": 6, "recommended_power_min": 280, "recommended_power_max": 470, "unlocked": true},
+					],
+				},
+			],
+		},
+	})
+
+func _prepare_arena_active_store(with_buff_offer: bool) -> void:
+	_session_store().apply_arena_result({
+		"ok": true,
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"active_attempt": _arena_attempt_fixture(with_buff_offer),
+		},
+	})
+
+func _prepare_arena_replay_store() -> void:
+	_session_store().apply_arena_result({
+		"ok": true,
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"active_attempt": _arena_attempt_fixture(false),
+			"last_duel": {
+				"duel_index": 2,
+				"battle_log": _battle_log_fixture(),
+				"rewards": _battle_rewards_fixture(),
+			},
+		},
+	})
+
+func _prepare_arena_summary_store() -> void:
+	_session_store().apply_arena_result({
+		"ok": true,
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"active_attempt": {
+				"attempt_id": "responsive-arena",
+				"arena_id": "arena_cinzas_curta",
+				"status": "completed",
+				"duel_count": 3,
+				"duels_won": 3,
+				"locked_loadout_hash": "sha256:responsive",
+			},
+			"summary": {
+				"status": "completed",
+				"duels_won": 3,
+				"duels_total": 3,
+				"reward_label": "XP, Ossos e Almas aplicados",
+			},
+		},
+	})
+
+func _arena_attempt_fixture(with_buff_offer: bool) -> Dictionary:
+	var attempt := {
+		"attempt_id": "responsive-arena",
+		"arena_id": "arena_cinzas_curta",
+		"status": "active",
+		"duel_index": 1,
+		"duel_count": 3,
+		"duels_won": 1,
+		"locked_loadout_hash": "sha256:responsive",
+		"loadout_summary": {"label": "Varinha de Cinzas, 2 habilidades, Pocao de Vida"},
+		"next_enemy": {"display_name": "Guardiao da Barreira"},
+		"temporary_buffs": [{"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor"}],
+	}
+	if with_buff_offer:
+		attempt["status"] = "awaiting_buff"
+		attempt["buff_offer"] = {
+			"choices": [
+				{"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor", "description": "+4% HP maximo"},
+				{"id": "arena_buff_potencia_menor", "display_name": "Potencia Ritual Menor", "description": "+4% Potencia Ritual"},
+				{"id": "arena_buff_guarda_menor", "display_name": "Guarda Menor", "description": "+4% Guarda"},
+			],
+		}
+	return attempt
 
 func _prepare_viewport(viewport_size: Vector2i) -> void:
 	root.size = viewport_size
@@ -242,6 +477,12 @@ func _expect_node_fits(root_node: Node, node_name: String, context: String, requ
 	var node := _find_node_by_name(root_node, node_name) as Control
 	if node == null:
 		_failures.append("%s missing node %s." % [context, node_name])
+		return
+	_expect_control_fits(node, node_name, context, require_vertical_fit)
+
+func _expect_control_fits(node: Control, node_name: String, context: String, require_vertical_fit: bool = true) -> void:
+	if node == null:
+		_failures.append("%s missing control %s." % [context, node_name])
 		return
 	if not node.is_visible_in_tree():
 		return
@@ -262,6 +503,21 @@ func _expect_node_fits(root_node: Node, node_name: String, context: String, requ
 			viewport_size.x,
 			viewport_size.y,
 		])
+
+func _expect_app_shell_fits(boot: Control, context: String) -> void:
+	_expect_control_fits(boot.get("_app_chrome_root") as Control, "AppShellChromeRoot", context)
+	_expect_control_fits(boot.get("_content_scroll") as Control, "AppShellContentScroll", context)
+	_expect_control_fits(boot.get("_content_body") as Control, "AppShellContentBody", context, false)
+	for action_id: Variant in Dictionary(boot.get("_action_buttons")).keys():
+		var button := Dictionary(boot.get("_action_buttons")).get(action_id) as Button
+		_expect_control_fits(button, "ActionButton:%s" % str(action_id), context, false)
+
+func _expect_button_fits(root_node: Node, text: String, context: String, require_vertical_fit: bool = true) -> void:
+	var button := _find_button_by_text(root_node, text)
+	if button == null:
+		_failures.append("%s missing button '%s'." % [context, text])
+		return
+	_expect_control_fits(button, "Button:%s" % text, context, require_vertical_fit)
 
 func _expect(condition: bool, message: String) -> void:
 	if not condition:
