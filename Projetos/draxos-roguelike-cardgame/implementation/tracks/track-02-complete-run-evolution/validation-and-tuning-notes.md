@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
-- Last Updated: `2026-05-18`
-- Prompt: `T02-P09`
+- Last Updated: `2026-06-03`
+- Prompt: `FOUNDATION-HARDENING-8`
 - Status: `READY_FOR_USER_PLAYTEST`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `94/94` tests passing, `1126` asserts.
+- GUT: `105/105` tests passing, `1279` asserts.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -16,6 +16,14 @@
 - Final deck size: `38`.
 - Relic count: `6`.
 - Shop usage count: `21`.
+- Shared simulator: `tools/route_pacing_simulator.gd`.
+- Golden metrics: `tools/run_lab_golden_metrics.gd` protects Arcano seed `20260518` exact metrics and checks Invocador/Necromante completion/no-death contracts.
+- Run Lab parity: `--compare-golden --require-golden` passes for Arcano, Invocador, and Necromante with seed `20260518`.
+- Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
+- Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
+- Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
+- Foundation Pass 7 added `tools/catalog_source_loader.gd` and GUT coverage for single-JSON semantic equivalence plus future catalog domains without changing route metrics, generated resource semantics, or gameplay behavior.
+- Foundation Pass 8 moved staged combat, manual attack, slot damage, hero damage, and destruction queue handling into `battle/combat_resolution_director.gd` with wrapper/director parity coverage and without changing route metrics or gameplay behavior.
 
 ## First Tuning Pass
 
@@ -41,3 +49,4 @@ Captured at `1280x720` and `960x540` in:
 - Final card/enemy art is still placeholder-driven where PNGs are absent.
 - Four ship overlay alpha warnings remain non-fatal asset debt.
 - The full-route smoke is deterministic validation telemetry, not a human balance verdict.
+- Human checklist lives at `docs/playtest-track-02.md`.

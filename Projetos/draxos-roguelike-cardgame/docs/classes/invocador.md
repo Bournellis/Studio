@@ -1,79 +1,47 @@
 # Invocador
 
-- Last Updated: `2026-05-15`
-- Status: `Track 01 P05 playtest tuning pass validated`
+- Last Updated: `2026-05-27`
+- Status: `Track 02 complete-run baseline`
 - Indice: `README.md`
 
 ## Identidade
 
-O Invocador domina a mesa com criaturas e buffs permanentes. O plano e estabelecer presenca cedo, crescer uma criatura central e converter lanes frontais em dano.
+O Invocador domina a mesa com criaturas, protecao e buffs. O plano e estabelecer presenca cedo, crescer criaturas-chave e converter lanes frontais em pressao constante.
 
-## Passiva Fixa - Comandante de Campo
+## Passiva Fixa - Comandante De Campo
 
 Desbloqueio: mapa 8.
 
-A primeira vez que o jogador invoca uma criatura a cada turno, a criatura aliada com maior ATK em campo ganha +2/+1 permanente durante a batalha. No slice atual o engine escolhe automaticamente a aliada de maior ATK.
-
-Antes do mapa 8, invocar criaturas nao dispara esse buff.
+A primeira vez que o jogador invoca uma criatura a cada turno, a criatura aliada com maior ATK em campo ganha buff permanente durante a batalha.
 
 ## Habilidade Ativa
 
 Desbloqueio: mapa 10.
 
-**Custo:** 0 mana. Usavel uma vez por turno.
+**Custo:** 1 mana. Usavel uma vez por turno.
 
-**Efeito:** a mesa aliada alvo escolhe automaticamente a criatura aliada de maior ATK para receber +2/+0 permanente, aumentado por poder de habilidade.
+**Efeito:** uma criatura aliada ganha buff permanente de ataque, aumentado por poder de habilidade.
 
-Antes do mapa 10, a habilidade nao aparece na UI e nao pode ser usada.
-
-## Keywords
-
-As antigas funcoes de `protecao` e `voadora` foram removidas.
-
-`iniciativa`, `defensor` e `regeneracao` estao ativos. Regeneracao cura no fim de `Resolver Combate`.
-
-## Deck Atual
-
-Parametros do slice: mana inicial 1, HP do Comandante 20, mao base 3, deck inicial 9 cartas custo 1. O mapa 2 adiciona 3 copias de `Guardiao Arcano`.
+## Deck Inicial
 
 | Carta | Custo | Qty | Stats | Efeito |
 |---|---:|---:|---|---|
-| Soldado Arcano | 1 | 3 inicial | 2/2 | Sem keyword. |
+| Soldado Arcano | 1 | 3 inicial | 2/2 | Criatura base. |
 | Batedor Arcano | 1 | 3 inicial | 2/1 | `iniciativa`. |
-| Promover | 1 | 3 inicial | - | Criatura aliada escolhe +1/+1, `iniciativa` ou `defensor`. |
+| Promover | 1 | 3 inicial | - | Buff/keyword em criatura aliada. |
 | Guardiao Arcano | 2 | 3 no mapa 2 | 2/4 | `defensor`. |
 
-## Upgrades
+## Reward Pool Track 02
 
-| Carta | Lvl 2 | Lvl 3 |
-|---|---|---|
-| Soldado Arcano | Vira 3/4. | Vira 4/5 com Regeneracao 2. |
-| Batedor Arcano | Vira 3/2 com `iniciativa`. | Vira 6/2 com `iniciativa`. |
-| Promover | Escolhe 2 opcoes entre +1/+1, `iniciativa` e `defensor`. | Aplica +1/+1, `iniciativa` e `defensor`. |
-| Guardiao Arcano | Vira 3/6 com `defensor`. | Vira 4/8 com `defensor` e Regeneracao 3. |
-| Atacar | Mesa aliada alvo recebe +2/+2 temporario. | Mesa aliada alvo recebe +4/+4 temporario. |
-| Golem | Vira 5/7 com `defensor` e Regeneracao 2. | Vira 6/10 com `defensor` e Regeneracao 4. |
+| Elemento | Cartas |
+|---|---|
+| Terra | Atacar, Golem |
+| Gelo | Capitao de Campo, Parede de Escudos |
+| Ar | Cavaleiro Arcano, Berserker |
+| Fogo | Arauto, Tita Geminal |
 
-## Cartas Novas
+Todas possuem Lvl 2 e Lvl 3 no catalogo ativo.
 
-| Carta | Custo | Tipo | Lvl 1 |
-|---|---:|---|---|
-| Atacar | 2 | Magia | Mesa aliada alvo recebe +1/+1 ate o final do turno. |
-| Golem | 3 | Criatura | 4/5 com `defensor`. |
+## Proximo Passo
 
-O mapa 7 oferece `Atacar` e `Golem`; o mapa 11 oferece a carta que nao foi escolhida.
-
-## Cartas em Proposta (nao implementadas)
-
-> As cartas abaixo sao sugestoes de design nao definitivas. Nenhuma esta no engine.
-> Detalhes completos (custos, stats, upgrades, quando aparecem na run) em:
-> `../design-proposals/sessao-b-cartas-novas.md`
-
-| Carta | Elemento | Custo | Tipo | Ideia central |
-|---|---|---:|---|---|
-| Capitão de Campo | Gelo | 2 | Criatura 2/4 | Inspirar +1: criaturas adjacentes ganham +1 ATK por ciclo. |
-| Parede de Escudos | Gelo | 2 | Magia | Todas aliadas em campo ganham Escudo até o próximo ciclo. |
-| Cavaleiro Arcano | Ar | 2 | Criatura 3/3 | Atropelar. |
-| Berserker | Ar | 1 | Criatura 3/1 | Atropelar. Fúria: +1 ATK ao sofrer dano e sobreviver. |
-| Arauto | Fogo | 1 | Criatura 1/2 | Entrar: cria token Recruta 1/1 em slot vazio. |
-| Titã Geminal | Fogo | 3 | Criatura 4/5 | Pacto: +2/+2 enquanto outro aliado com Pacto estiver em campo. |
+Playtestar se Inspirar, Escudo, Atropelar e Pacto aumentam presenca sem criar mesa imortal cedo demais.

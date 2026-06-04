@@ -1,6 +1,6 @@
 # Track 02 Linear Execution Plan
 
-- Last Updated: `2026-05-18`
+- Last Updated: `2026-06-03`
 - Status: `TRACK_02_COMPLETE_READY_FOR_USER_PLAYTEST`
 - Execution Owner: `Codex`
 - Scope: `Complete 29-map run evolution`
@@ -28,7 +28,7 @@
 | T02-P06 | complete | Promote placeholder cards into real class cards and add enemy card content. | Green 87/87 |
 | T02-P07 | complete | Implement enemy AI profiles and enemy intent panel. | Green 89/89 + screenshots |
 | T02-P08 | complete | Implement 29-map route, new encounter modes, board formats, field effects, boss phases. | Green 92/92 + screenshots |
-| T02-P09 | complete | Polish UI/visuals, add telemetry, run full-route validation, and tune. | Green 93/93 + screenshots + smoke notes |
+| T02-P09 | complete | Polish UI/visuals, add telemetry, run full-route validation, and tune. | Green; post-hardening baseline 103/103 + smoke/golden/catalog notes |
 
 ## Current Execution Cursor
 

@@ -17,7 +17,7 @@ It should create visible long-run growth through cards, upgrades, relics, Souls,
   - common: `70%`
   - rare: `25%`
   - ultra rare: `5%`
-- New-card rewards keep the Track 01 copy rule:
+- New-card rewards keep the historical Track 01 copy rule:
   - common: add 3 copies;
   - rare: add 4 copies;
   - ultra rare: add 5 copies.

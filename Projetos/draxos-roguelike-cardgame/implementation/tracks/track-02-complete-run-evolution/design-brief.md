@@ -8,7 +8,7 @@
 
 ## Intent
 
-Track 02 evolves the current 13-map Track 01 slice into the first complete version of the game.
+Track 02 evolved the historical 13-map Track 01 slice into the first complete version of the game.
 
 This is not a fast implementation pass. It is a full production stage divided into linear Codex implementation prompts so each future thread can execute one coherent block, validate it, and hand off the next block safely.
 

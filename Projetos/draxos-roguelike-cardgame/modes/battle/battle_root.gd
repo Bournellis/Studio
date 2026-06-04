@@ -3,6 +3,10 @@ extends Control
 const BattleClassActiveTokenScript = preload("res://ui/controls/battle_class_active_token.gd")
 const BattleHeroTargetControlScript = preload("res://ui/controls/battle_hero_target_control.gd")
 const BattleBoardAreaTargetScript = preload("res://ui/controls/battle_board_area_target.gd")
+const EnemyIntentPanelPresenter = preload("res://modes/battle/enemy_intent_panel_presenter.gd")
+const BattlePreviewPresenter = preload("res://modes/battle/battle_preview_presenter.gd")
+const BattleHudPresenter = preload("res://modes/battle/battle_hud_presenter.gd")
+const BattleCombatFxPresenter = preload("res://modes/battle/battle_combat_fx_presenter.gd")
 
 var engine: BattleEngine = BattleEngine.new()
 var player_hud_dock: PanelContainer
@@ -909,13 +913,14 @@ func _display_state() -> Dictionary:
 	return engine.get_state()
 
 func _refresh_player_hud(state: Dictionary) -> void:
+	var values: Dictionary = BattleHudPresenter.player_values(state)
 	if player_hp_value != null:
-		player_hp_value.text = str(int(state.get("player_health", 0)))
+		player_hp_value.text = str(values.get("hp_text", "0"))
 	if player_mana_value != null:
-		player_mana_value.text = "%d/%d" % [int(state.get("mana", 0)), int(state.get("mana_per_turn", 0))]
+		player_mana_value.text = str(values.get("mana_text", "0/0"))
 	if class_resource_chip == null:
 		return
-	var resource: Dictionary = _class_resource_data(state)
+	var resource: Dictionary = Dictionary(values.get("class_resource", {}))
 	class_resource_chip.visible = not resource.is_empty()
 	if resource.is_empty():
 		if class_resource_label != null:
@@ -927,14 +932,15 @@ func _refresh_player_hud(state: Dictionary) -> void:
 	class_resource_value.text = str(resource.get("value", "0"))
 
 func _refresh_enemy_commander_hud(state: Dictionary) -> void:
-	var enabled: bool = bool(state.get("enemy_commander_enabled", false))
+	var values: Dictionary = BattleHudPresenter.enemy_commander_values(state)
+	var enabled: bool = bool(values.get("visible", false))
 	if enemy_commander_hud != null:
 		enemy_commander_hud.visible = enabled
 	if enemy_hp_value != null:
-		enemy_hp_value.text = str(int(state.get("enemy_health", 0)))
+		enemy_hp_value.text = str(values.get("hp_text", "0"))
 	if enemy_mana_value != null:
-		enemy_mana_value.text = "%d/%d" % [int(state.get("enemy_mana", 0)), int(state.get("enemy_mana_per_turn", 0))]
-	_rebuild_enemy_cardbacks(int(state.get("enemy_hand_count", 0)) if enabled else 0)
+		enemy_mana_value.text = str(values.get("mana_text", "0/0"))
+	_rebuild_enemy_cardbacks(int(values.get("hand_count", 0)))
 
 func _refresh_enemy_intent_panel(state: Dictionary) -> void:
 	if enemy_intent_panel == null:
@@ -947,31 +953,12 @@ func _refresh_enemy_intent_panel(state: Dictionary) -> void:
 	if enemy_intent_title_label != null:
 		enemy_intent_title_label.text = str(intent.get("title", "Intencao inimiga"))
 	if enemy_intent_profile_label != null:
-		var profile_text: String = "%s: %s" % [str(intent.get("profile_name", "")), str(intent.get("profile_summary", ""))]
-		if str(intent.get("kind", "")) == "boss":
-			profile_text = "%s | %s" % [str(intent.get("current_phase", "")), profile_text]
-		enemy_intent_profile_label.text = profile_text
+		enemy_intent_profile_label.text = EnemyIntentPanelPresenter.profile_text(intent)
 	if enemy_intent_pressure_label != null:
 		enemy_intent_pressure_label.text = str(intent.get("incoming_pressure", ""))
 	if enemy_intent_body_label != null:
-		var lines: Array[String] = []
-		for priority: Variant in Array(intent.get("priorities", [])):
-			var text: String = str(priority)
-			if text != "":
-				lines.append(text)
-		var lanes: Array = Array(intent.get("lane_pressure", []))
-		if not lanes.is_empty():
-			lines.append(str(lanes[0]))
-		if str(intent.get("kind", "")) == "boss":
-			lines.append("Gatilho: %s" % str(intent.get("next_scripted_trigger", "")))
-			lines.append("Especial: %s" % str(intent.get("next_major_special_action", "")))
-		else:
-			var field_hint: String = str(intent.get("incoming_field_effect", ""))
-			if field_hint != "":
-				lines.append(field_hint)
-		var max_lines: int = 5 if _is_compact_viewport() else 6
-		enemy_intent_body_label.text = "\n".join(lines.slice(0, max_lines))
-	enemy_intent_panel.tooltip_text = _enemy_intent_tooltip(intent)
+		enemy_intent_body_label.text = EnemyIntentPanelPresenter.body_text(intent, _is_compact_viewport())
+	enemy_intent_panel.tooltip_text = EnemyIntentPanelPresenter.tooltip_text(intent)
 
 func _refresh_objective_chip(state: Dictionary) -> void:
 	if objective_chip == null:
@@ -981,37 +968,10 @@ func _refresh_objective_chip(state: Dictionary) -> void:
 	objective_chip.visible = text != ""
 
 func _class_resource_data(state: Dictionary) -> Dictionary:
-	match RunSession.selected_class_id:
-		"arcano":
-			if RunSession.class_passive_unlocked:
-				return {"label": "Fluxo", "value": int(state.get("flow", 0))}
-		"necromante":
-			if RunSession.class_passive_unlocked or RunSession.class_active_unlocked or int(state.get("ashes", 0)) > 0:
-				return {"label": "Cinzas", "value": int(state.get("ashes", 0))}
-	return {}
+	return BattleHudPresenter.class_resource_data(state)
 
 func _objective_text(state: Dictionary) -> String:
-	var mode: String = str(state.get("mode", ""))
-	match mode:
-		BattleEngine.MODE_WAVES:
-			var total_waves: int = int(state.get("waves_total", 0))
-			if total_waves > 0:
-				return "Onda %d/%d" % [int(state.get("wave_index", 0)), total_waves]
-		BattleEngine.MODE_DEFENSE_POSITION:
-			return "Defenda %d/%d" % [int(state.get("survived_turns", 0)), int(state.get("required_defense_turns", 0))]
-		BattleEngine.MODE_SURVIVE_TURNS:
-			return "Sobreviva %d/%d" % [int(state.get("survived_turns", 0)), int(state.get("required_survive_turns", 0))]
-		BattleEngine.MODE_SUMMONER_BOSS:
-			return "Chefe HP %d" % int(state.get("enemy_health", 0))
-		BattleEngine.MODE_AMBUSH:
-			return "Emboscada | mana inicial 0"
-		BattleEngine.MODE_ESCORT:
-			return "Escolte o Cargo ate o ultimo slot"
-		BattleEngine.MODE_INVASION:
-			return "Invasao | portais no 3 e 5"
-	if bool(state.get("enemy_commander_enabled", false)):
-		return "Derrote %s" % _hero_display_name(BattleEngine.ENEMY_ID)
-	return ""
+	return BattleHudPresenter.objective_text(state, _hero_display_name(BattleEngine.ENEMY_ID))
 
 func _rebuild_enemy_cardbacks(count: int) -> void:
 	if enemy_cardback_rail == null:
@@ -1472,7 +1432,7 @@ func _choice_is_enabled(choice_id: String) -> bool:
 	return false
 
 func _enemy_hero_visible(state: Dictionary) -> bool:
-	return str(state.get("mode", "")) in [BattleEngine.MODE_DUEL, BattleEngine.MODE_SUMMONER_BOSS]
+	return BattleHudPresenter.enemy_hero_visible(state)
 
 func _has_enemy_board_area_card_in_hand() -> bool:
 	for card_id: String in engine.hand:
@@ -1493,22 +1453,19 @@ func _has_player_board_area_card_in_hand() -> bool:
 	return false
 
 func _active_event_sources_slot(owner_id: String, slot_index: int) -> bool:
-	return str(active_combat_fx_event.get("source_owner", "")) == owner_id and int(active_combat_fx_event.get("source_slot", -999)) == slot_index
+	return BattleCombatFxPresenter.event_sources_slot(active_combat_fx_event, owner_id, slot_index)
 
 func _active_event_targets_slot(owner_id: String, slot_index: int) -> bool:
-	return not bool(active_combat_fx_event.get("target_hero", false)) and str(active_combat_fx_event.get("target_owner", "")) == owner_id and int(active_combat_fx_event.get("target_slot", -999)) == slot_index
+	return BattleCombatFxPresenter.event_targets_slot(active_combat_fx_event, owner_id, slot_index)
 
 func _active_event_targets_hero(owner_id: String) -> bool:
-	return bool(active_combat_fx_event.get("target_hero", false)) and str(active_combat_fx_event.get("target_owner", "")) == owner_id
+	return BattleCombatFxPresenter.event_targets_hero(active_combat_fx_event, owner_id)
 
 func _combat_fx_playing() -> bool:
 	return not combat_fx_state.is_empty()
 
 func _play_combat_fx_events(events: Array, initial_state: Dictionary = {}) -> void:
-	combat_fx_queue = []
-	for event: Variant in events:
-		if typeof(event) == TYPE_DICTIONARY and str(Dictionary(event).get("type", "")) in ["stage", "attack", "damage"]:
-			combat_fx_queue.append(Dictionary(event))
+	combat_fx_queue = BattleCombatFxPresenter.filtered_events(events)
 	combat_fx_index = 0
 	if combat_fx_queue.is_empty() or combat_fx_panel == null:
 		active_combat_fx_event = {}
@@ -1538,48 +1495,13 @@ func _advance_combat_fx() -> void:
 		combat_fx_timer.start(0.34)
 
 func _apply_combat_fx_event_to_state(event: Dictionary) -> void:
-	if combat_fx_state.is_empty() or str(event.get("type", "")) != "damage":
-		return
-	var owner_id: String = str(event.get("target_owner", ""))
-	if bool(event.get("target_hero", false)):
-		var health_key: String = "player_health" if owner_id == BattleEngine.PLAYER_ID else "enemy_health"
-		if event.has("health_after"):
-			combat_fx_state[health_key] = int(event.get("health_after", combat_fx_state.get(health_key, 0)))
-		else:
-			combat_fx_state[health_key] = max(0, int(combat_fx_state.get(health_key, 0)) - int(event.get("amount", 0)))
-		return
-	var slot_index: int = int(event.get("target_slot", -1))
-	var slots_key: String = _state_slots_key(owner_id)
-	if slots_key == "" or not combat_fx_state.has(slots_key):
-		return
-	var slots: Array = Array(combat_fx_state.get(slots_key, []))
-	if slot_index < 0 or slot_index >= slots.size() or slots[slot_index] == null:
-		return
-	var occupant: Dictionary = Dictionary(slots[slot_index])
-	occupant["health"] = int(event.get("health_after", int(occupant.get("health", 0)) - int(event.get("amount", 0))))
-	if bool(event.get("destroyed", false)):
-		var replacement: Dictionary = Dictionary(event.get("replacement_occupant", {}))
-		slots[slot_index] = replacement if not replacement.is_empty() else null
-	else:
-		slots[slot_index] = occupant
-	combat_fx_state[slots_key] = slots
+	combat_fx_state = BattleCombatFxPresenter.state_after_event(combat_fx_state, event)
 
 func _state_slots_key(owner_id: String) -> String:
-	if owner_id == BattleEngine.PLAYER_ID:
-		return "player_slots"
-	if owner_id == BattleEngine.ENEMY_ID:
-		return "enemy_slots"
-	return ""
+	return BattleCombatFxPresenter.state_slots_key(owner_id)
 
 func _combat_fx_text(event: Dictionary) -> String:
-	match str(event.get("type", "")):
-		"stage":
-			return str(event.get("label", event.get("stage", "Etapa")))
-		"attack":
-			return "%s -> %s | %d dano" % [str(event.get("source_name", "Criatura")), str(event.get("target_name", "Alvo")), int(event.get("damage", 0))]
-		"damage":
-			return "%s | dano %d" % [str(event.get("stage", "Combate")), int(event.get("amount", 0))]
-	return ""
+	return BattleCombatFxPresenter.event_text(event)
 
 func _schedule_preview(data: Dictionary) -> void:
 	pending_preview_data = data
@@ -1606,140 +1528,34 @@ func _hide_preview() -> void:
 		preview_panel.visible = false
 
 func _card_preview_data(card_id: String, occupant: Dictionary) -> Dictionary:
-	var card = ContentLibrary.get_card(card_id)
-	if card == null:
-		return {"title": card_id, "subtitle": "Carta", "body": "", "state": ""}
-	var subtitle: String = "%s | Custo %d" % [UiTokens.type_display_name(str(card.card_type)), int(card.cost)]
-	if card.occupies_slot():
-		subtitle += " | %d/%d" % [int(card.attack), int(card.health)]
-	var body: String = VisualAssets.card_display_text(card, engine.get_card_text_context(card_id))
-	var keyword_text: String = ContentLibrary.keywords_tooltip_text(Array(card.keywords))
-	if keyword_text != "":
-		body += "\n\n%s" % keyword_text
-	var state: String = ""
-	if not occupant.is_empty():
-		var state_parts: Array[String] = []
-		var current_attack: int = int(occupant.get("attack", 0))
-		var current_health: int = int(occupant.get("health", 0))
-		var current_max_health: int = int(occupant.get("max_health", card.health))
-		if current_attack != int(card.attack):
-			state_parts.append("ATK atual %d (base %d)" % [current_attack, int(card.attack)])
-		else:
-			state_parts.append("ATK %d" % current_attack)
-		if current_health != int(card.health) or current_max_health != int(card.health):
-			state_parts.append("HP atual %d/%d (base %d)" % [current_health, current_max_health, int(card.health)])
-		else:
-			state_parts.append("HP %d/%d" % [current_health, current_max_health])
-		var temporary_attack: int = int(occupant.get("temporary_attack_bonus", 0))
-		if temporary_attack != 0:
-			state_parts.append("Bonus temporario +%d ATK" % temporary_attack)
-		state_parts.append_array(ContentLibrary.status_summary_parts(occupant))
-		if bool(occupant.get("defensor", false)):
-			state_parts.append("Defensor")
-		if bool(occupant.get("revive_marker", false)):
-			state_parts.append("Revive usado")
-		state = " | ".join(state_parts)
-	return {"title": str(card.display_name), "subtitle": subtitle, "body": body, "state": state}
+	return BattlePreviewPresenter.card_preview_data(engine, card_id, occupant)
 
 func _slot_preview_data(owner_id: String, slot_index: int, occupant: Variant) -> Dictionary:
-	if occupant == null:
-		return {
-			"title": "%s %d" % ["Slot aliado" if owner_id == BattleEngine.PLAYER_ID else "Slot inimigo", slot_index + 1],
-			"subtitle": "Livre",
-			"body": "Pode receber cartas ou efeitos validos para este lado da mesa.",
-			"state": ""
-		}
-	var data: Dictionary = Dictionary(occupant)
-	if str(data.get("card_id", "")) == "" and bool(data.get("objective", false)):
-		return {
-			"title": str(data.get("name", "Objetivo de Defesa")),
-			"subtitle": "Objetivo de defesa",
-			"body": "Proteja este slot ate o objetivo do encontro ser concluido.",
-			"state": "ATK %d | HP %d/%d" % [int(data.get("attack", 0)), int(data.get("health", 0)), int(data.get("max_health", data.get("health", 0)))]
-		}
-	return _card_preview_data(str(data.get("card_id", "")), data)
+	return BattlePreviewPresenter.slot_preview_data(engine, owner_id, slot_index, occupant)
 
 func _hero_preview_data(owner_id: String, display_name: String, health: int) -> Dictionary:
-	return {
-		"title": display_name,
-		"subtitle": "Heroi %s" % ("aliado" if owner_id == BattleEngine.PLAYER_ID else "inimigo"),
-		"body": "Alvo visivel do combate. Criaturas inimigas sem frente nem defensor causam dano ao jogador; herois inimigos recebem dano direto nos modos apropriados.",
-		"state": "Vida %d" % health
-	}
+	return BattlePreviewPresenter.hero_preview_data(owner_id, display_name, health)
 
 func _class_passive_preview_data() -> Dictionary:
-	if not RunSession.class_passive_unlocked:
-		return {}
-	return {
-		"title": _class_passive_display_name(),
-		"subtitle": "Passiva de classe",
-		"body": _class_passive_detail_text(),
-		"state": "Liberada"
-	}
+	return BattlePreviewPresenter.class_passive_preview_data()
 
 func _class_active_preview_data() -> Dictionary:
-	if not RunSession.class_active_unlocked:
-		return {}
-	return {
-		"title": _class_active_display_name(selected_necromancer_choice_id),
-		"subtitle": "Spell de classe",
-		"body": _class_active_detail_text(selected_necromancer_choice_id),
-		"state": "Disponivel" if engine.can_use_class_active() else "Indisponivel neste turno"
-	}
+	return BattlePreviewPresenter.class_active_preview_data(engine, selected_necromancer_choice_id)
 
 func _class_passive_display_name() -> String:
-	match RunSession.selected_class_id:
-		"arcano":
-			return "Fluxo Continuo"
-		"invocador":
-			return "Comandante de Campo"
-		"necromante":
-			return "Colheita Sombria"
-	return "Passiva"
+	return BattlePreviewPresenter.class_passive_display_name()
 
 func _class_passive_detail_text() -> String:
-	match RunSession.selected_class_id:
-		"arcano":
-			return "Cada carta jogada neste turno gera 1 Fluxo. Fluxo aumenta dano direto de spells e da Rajada Arcana ate o inicio do proximo turno."
-		"invocador":
-			return "A primeira criatura aliada invocada a cada turno faz a criatura aliada com maior ATK receber +2/+1 permanente durante a batalha."
-		"necromante":
-			return "Sempre que qualquer criatura morre em campo, aliada ou inimiga, ganha 1 Cinza. Cinzas acumulam e alimentam o Ritual das Sombras."
-	return ""
+	return BattlePreviewPresenter.class_passive_detail_text()
 
 func _class_active_display_name(choice_id: String = "") -> String:
-	match RunSession.selected_class_id:
-		"arcano":
-			return "Rajada Arcana"
-		"invocador":
-			return "Ordem de Guerra"
-		"necromante":
-			for choice: Dictionary in engine.get_necromancer_active_choices():
-				if str(choice.get("id", "")) == choice_id:
-					return str(choice.get("display_name", "Ritual das Sombras"))
-			return "Ritual das Sombras"
-	return "Spell de Classe"
+	return BattlePreviewPresenter.class_active_display_name(engine, choice_id)
 
 func _class_active_detail_text(choice_id: String = "") -> String:
-	match RunSession.selected_class_id:
-		"arcano":
-			return "1 mana. Arraste para uma criatura ou heroi valido; causa 1 + Fluxo de dano."
-		"invocador":
-			return "0 mana. Arraste para a mesa aliada; concede +2/+0 permanente a aliada com maior ATK."
-		"necromante":
-			for choice: Dictionary in engine.get_necromancer_active_choices():
-				if str(choice.get("id", "")) == choice_id:
-					return "%d Cinzas. %s" % [int(choice.get("cost_ashes", 0)), str(choice.get("text", ""))]
-			return "Clique para escolher Podridao, Furia, Raio das Cinzas ou upgrades antes de arrastar."
-	return ""
+	return BattlePreviewPresenter.class_active_detail_text(engine, choice_id)
 
 func _hero_display_name(owner_id: String) -> String:
-	var catalog = ContentLibrary.get_catalog()
-	if owner_id == BattleEngine.PLAYER_ID:
-		return RunSession.player_display_name()
-	if owner_id == BattleEngine.ENEMY_ID and catalog != null and catalog.enemy_hero != null:
-		return str(catalog.enemy_hero.display_name)
-	return "Inimigo" if owner_id == BattleEngine.ENEMY_ID else "Player"
+	return BattleHudPresenter.hero_display_name(owner_id)
 
 func _hud_stat_style(accent: Color) -> StyleBoxFlat:
 	var style: StyleBoxFlat = StyleBoxFlat.new()
@@ -1858,15 +1674,6 @@ func _apply_enemy_intent_panel_rect(control: Control) -> void:
 	control.offset_top = 62.0 if _is_compact_viewport() and bool(engine.enemy_commander_enabled) else (5.0 if _is_compact_viewport() else 8.0)
 	control.offset_right = control.offset_left + panel_size.x
 	control.offset_bottom = control.offset_top + panel_size.y
-
-func _enemy_intent_tooltip(intent: Dictionary) -> String:
-	var ids: Array = Array(intent.get("tooltip_ids", []))
-	var lines: Array[String] = []
-	for intent_id: Variant in ids:
-		var tooltip: String = ContentLibrary.enemy_intent_tooltip_text(str(intent_id))
-		if tooltip != "":
-			lines.append(tooltip)
-	return "\n".join(lines)
 
 func _apply_area_target_overlay_rect(control: Control) -> void:
 	control.anchor_left = 0.09

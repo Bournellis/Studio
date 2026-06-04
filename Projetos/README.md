@@ -8,7 +8,7 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Implementacao Ativa
 
-- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with Track 02 complete for user playtest: fixed 29-map route, save v5, reward schedule/progression, universal relics, expanded Souls shop, keyword/status tooltips, keyword engine, enemy AI/intent, encounter modes, board formats, field effects, boss hooks, readability polish, pacing telemetry and validation green.
+- `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with Track 02 complete for user playtest: fixed 29-map route, save v5, reward schedule/progression, universal relics, expanded Souls shop, canonical keyword/status tooltips, full keyword engine, promoted class reward cards, elemental enemy galleries, hybrid enemy AI/intent, encounter modes, board formats, field effects, boss hooks, UI readability polish, modular tests, internal foundation directors/services for enemy AI/intent, combat/damage, rewards, Souls shop and BattleRoot presenters, idempotent generated catalog, shared route pacing simulator, local Run Lab JSON/CSV with golden comparison, playtest checklist, full-route pacing telemetry and validation green.
   - Priority/status: `P0_IMPLEMENTACAO`
   - Local agent guide: `draxos-roguelike-cardgame/AGENTS.md`
   - Operational status: `draxos-roguelike-cardgame/implementation/current-status.md`

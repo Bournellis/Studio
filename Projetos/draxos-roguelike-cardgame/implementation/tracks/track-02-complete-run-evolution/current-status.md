@@ -1,14 +1,14 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-18`
+- Last Updated: `2026-06-03`
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `T02-P09 validation green after discard-flow correction: 94/94 GUT tests, 1126 asserts, full-route pacing smoke green`
+- Validation Baseline: `Foundation hardening 8 validation green: 105/105 GUT tests, 1279 asserts, shared full-route pacing smoke green, Run Lab golden comparison green`
 
 ## Purpose
 
-Track 02 turns the validated 13-map playable slice into the first complete version of the game.
+Track 02 turned the historical validated 13-map playable slice into the first complete version of the game.
 
 The target is a fixed, linear 29-map run with all planned encounter types, all planned keywords, improved enemy AI, a redesigned reward economy, universal run relics, a complete Souls shop, and stronger battle/map/reward UI.
 
@@ -81,6 +81,14 @@ Next implementation prompt: none. Track 02 is ready for user playtest.
 - Validation now checks the 29-map route, linear unlock chain, reward schedule, mode/format/effect coverage, and boss hook coverage; representative tests exercise new modes, board formats, and field effects.
 - Screenshot workflow captures RunMap and representative Battle surfaces for the complete-route state.
 - T02-P09 added full-route pacing telemetry to validation, with map count, estimated turns, HP loss, Souls, deck size, relic count, shop usage, and deaths.
+- Foundation hardening 2 extracted that route pacing telemetry into `tools/route_pacing_simulator.gd`, now shared by `tools/validate.gd`, `tools/run_lab.gd`, and GUT coverage.
+- Foundation hardening 2 added `docs/playtest-track-02.md` as the human playtest checklist for the complete route.
+- Foundation hardening 3 extracted enemy turn and intent directors, `core/run_reward_service.gd`, and the pure battle preview presenter while preserving public APIs, route behavior, reward/shop payloads, UI layout, and pacing metrics.
+- Foundation hardening 4 added `tools/run_lab_golden_metrics.gd` and optional Run Lab golden comparison, with Arcano seed `20260518` exact metrics protected and Invocador/Necromante completion/no-death contracts checked.
+- Foundation hardening 5 extracted Souls shop offer generation, purchases, rerolls, max-HP buys, cost helpers, and `shop_state` sync into `core/run_shop_service.gd` while preserving `RunSession` wrappers, snapshot v5 payloads, and golden pacing metrics.
+- Foundation hardening 6 extracted BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters while preserving scene composition, layout, drag/drop, UI node names, route behavior, and golden pacing metrics.
+- Foundation hardening 7 added `tools/catalog_source_loader.gd` as a composition seam for future catalog domain splits while preserving the current single `slice_catalog.json` source, generated `.tres` semantics, route behavior, and golden pacing metrics.
+- Foundation hardening 8 extracted staged combat, manual attack, slot damage, hero damage, and destruction queue handling into `battle/combat_resolution_director.gd` while preserving `BattleEngine` wrappers, keyword timing, route behavior, and golden pacing metrics.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
 - Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.

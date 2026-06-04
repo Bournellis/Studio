@@ -1,58 +1,39 @@
 # Production Status
 
-- Last Updated: `2026-05-15`
-- Status: `Track 01 P05 playtest tuning validation green`
+- Last Updated: `2026-06-03`
+- Status: `Track 02 complete-run build ready for user playtest`
 
 ## Current Reality
 
-The project is official in the Estudio workspace and has a Godot 4.6.2 playable slice with generated catalog, generated scenes, green validation, 3 save slots, 3 classes, 13 linear encounters, fixed and choice-based run rewards, and a local BattleEngine using front-lane combat.
+The project is the Estudio P0 implementation workspace for the menu-first Draxos roguelike cardgame. The live baseline is Track 02, not the older Track 01 slice.
 
-Track 01 now validates the current roguelike cardgame direction:
+Track 02 currently includes:
 
-- class choice before run;
-- mana inicial 1 for all classes;
-- starter decks with 9 cost-1 cards, 3 types x 3 copies, and base hand limit 3;
-- map 1 grants +1 max mana;
-- map 2 grants 3 copies of the class cost-2 core card;
-- map 5 grants +1 max mana;
-- map 6 grants +1 max hand size;
-- maps 3, 4, 9, and 12 grant upgrade choices;
-- maps 7 and 11 grant new-card choices, adding 3/4/5 copies based on common/rare/ultra rare rolls; map 7 offers the 2 class cards, map 11 offers the remaining card;
-- map 8 unlocks the fixed class passive, and for Necromante also unlocks active level 1;
-- map 10 unlocks the fixed class active, and for Necromante upgrades the active to level 2;
-- card upgrades now produce real Lvl 2/Lvl 3 variants through `card_upgrade_counts`;
-- new cards are active: Arcano `Bola de Fogo`/`Acelerar`, Invocador `Atacar`/`Golem`, Necromante `Carniceiro`/`Diabrete`;
-- `iniciativa`, `defensor`, `reviver`, `regeneracao`, `carnica`, `enfraquecer`, `prender`, `remover keywords`, `promover`, and dynamic `poder de habilidade` are active;
-- adjacent damage, temporary mana, temporary spell power, temporary all-ally buffs, Suicida death damage, and delayed automatic target choices are active;
-- battles start with a pre-combat discard/rebuy phase to recover from unusable opening hands;
-- the Souls shop offers 3 card upgrades for 20 souls, limited to 1 purchase per combat;
-- `Resolver Combate` runs combat before maintenance/script, with no separate enemy combat turn and no summoning sickness;
-- front attacks remain simultaneous, while overflow attacks resolve sequentially by lane and skip dead attackers/defenders;
-- duel enemy AI plays new cards after combat/maintenance for the next player turn;
-- summoning over allied creatures requires sacrifice confirmation, and adjacent occupied allied slots can swap if both creatures have movement;
-- defense map 7 is a real hold objective with pressure shifted toward side lanes, and all encounters have roughly +20% enemy stat tuning with careful early-game rounding;
-- validation is green with 67/67 GUT tests and 536 asserts.
+- fixed linear route with 29 maps across Terra, Gelo, Ar, and Fogo;
+- save/snapshot version 5;
+- three playable classes: Arcano, Invocador, Necromante;
+- 8 reward cards per class with Lvl 2 and Lvl 3 upgrades;
+- production reward schedule, utility rewards, relic rewards, universal relics, and expanded Souls shop;
+- full Track 02 keyword/status vocabulary and implemented keyword engine;
+- Terra/Gelo/Ar/Fogo enemy galleries, deterministic hybrid enemy AI, and visible enemy intent;
+- encounter modes, board formats, field effects, and boss hooks for maps 8/15/22/29;
+- modular GUT suites, generated catalog hashing, catalog source loader seam for future domain splits, shared route pacing simulator, local Run Lab CSV/JSON output with Track 02 golden comparison, and internal directors/services for enemy AI/intent, combat/damage resolution, rewards, Souls shop, battle preview data, HUD/objective readouts, and combat FX presentation.
 
-## Present In Code
+## Validation
 
-- Boot, ShipHub, RunMap, Deck, Almas, and Battle scenes.
-- Boot as main menu and ShipHub visual navigation.
-- `SaveManager` with save version 4; v3 and older save files are intentionally invalidated, still shown as old/invalid, deletable, and overwritable.
-- `RunSession` with class, deck, health, max mana, max hand size, souls, completed nodes, fixed rewards, pending rarity-aware reward choices, shop upgrade offers, one-upgrade-purchase tracking, card upgrade counts, passive unlock, active unlock state, and Necromante active level.
-- Front-lane BattleEngine with pre-combat discard/rebuy, simultaneous front damage, sequential overflow, direct lane damage, initiative, defender redirect, revive, regeneration, carrion, weaken, snare, keyword removal, Suicida, promote choices, ability power, waves, duel, defense position, survive turns, and summoner boss.
-- Arcano, Invocador, and Necromante class mechanics gated by map unlocks.
-- Real 2-card reward pools for each class.
-- Real upgrade variants for current starter, map-2, and new reward cards.
-- VisualAssets manifest and fallback reporting for missing optional PNGs.
-- Contract validation and GUT tests for the current slice.
+Latest green local baseline:
 
-## Not Yet Final
+- GUT: `105/105` tests, `1279` asserts.
+- Full-route smoke: `29/29` maps, 217 estimated turns, 116 HP loss, 0 deaths.
+- Arcano seed `20260518`: 362 Souls earned, 291 spent, 71 left, 38-card final deck, 6 relics, 21 shop actions.
+- Run Lab: `--compare-golden --require-golden` passes for Arcano, Invocador, and Necromante with seed `20260518`; Arcano is exact-golden protected and all three complete `29/29` without death.
 
-- Balance of upgrades/new cards is provisional until full-route playtest.
-- Future expansion from 2 reward cards per class toward 6-8 cards remains a design decision.
-- Enemy names/scripts are functional placeholders, though late-map pressure was increased.
-- Card art is still provisional or missing for many cards.
+Known non-fatal debt remains optional missing PNG art and ship overlay alpha warnings.
+
+## Historical Material
+
+Track 01 docs, 13-map notes, save v3/v4 references, and early reward/shop notes are historical implementation context. They are not the live production status unless a current Track 02 doc explicitly adopts them.
 
 ## Next Production Step
 
-Playtest the full 13-map route with save v4, pre-combat discard, rarity rewards, Souls shop upgrades, new Necromante Diabrete, and globally stronger encounters; then tune difficulty/reward cadence.
+Run a human playtest of the complete Track 02 route using `docs/playtest-track-02.md`, then tune difficulty, shop economy, relic value, and pacing from observed feedback.

@@ -1,14 +1,13 @@
 # Keywords — Propostas de Design (Sessão A)
 
 - Data: `2026-05-18`
-- Status: `PROPOSTA — nenhuma keyword desta lista está implementada`
+- Status: `HISTORICO/PROMOVIDO - keywords listadas foram implementadas na Track 02`
 - Sessão: Design Session A
 - Referência de uso: `../design-proposals/sessao-b-cartas-novas.md`, `../design-proposals/rota-29-mapas.md`
 
-> **Aviso:** Este documento registra sugestões de design levantadas em sessão criativa.
-> Nenhuma keyword aqui é canon ou está no engine. Antes de implementar qualquer uma,
-> ela deve ser avaliada em playtest, ter custo de implementação confirmado, e ter
-> seu contrato mecânico formalmente adotado no `game-design-document.md`.
+> **Aviso:** Este documento registra a origem de design das keywords. A Track 02
+> promoveu as keywords para o engine; o contrato atual vive no GDD, no JSON e nos
+> testes. Use os numeros abaixo apenas como contexto historico.
 
 ## Keywords Existentes (Referência)
 

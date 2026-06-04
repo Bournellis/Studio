@@ -1,17 +1,15 @@
 # Rota de 29 Mapas — Proposta de Design (Sessão A+B)
 
 - Data: `2026-05-18`
-- Status: `PROPOSTA — expande a rota atual de 13 mapas; não implementada`
+- Status: `HISTORICO/PROMOVIDO - rota de 29 mapas implementada na Track 02`
 - Sessão: Design Sessions A e B
-- Referência: `../game-design-document.md` (rota atual de 13 mapas)
+- Referência atual: `../game-design-document.md`
 - Referência: `../design-proposals/sessao-a-keywords.md`
 - Referência: `../design-proposals/sessao-b-cartas-novas.md`
 
-> **Aviso:** Este documento descreve uma expansão completa do jogo que ainda
-> não existe no engine. A rota atual implementada e validada é de 13 mapas.
-> Este design é uma proposta de campanha completa — todos os números, inimigos,
-> efeitos e formatos de tabuleiro são provisórios e dependem de validação em
-> playtest antes de qualquer implementação.
+> **Aviso:** Este documento nasceu como proposta. A estrutura de 29 mapas,
+> modos, formatos, efeitos e blocos elementais foi promovida para Track 02.
+> O JSON ativo e o GDD atual prevalecem sobre numeros antigos deste arquivo.
 
 ---
 
@@ -63,7 +61,7 @@ Além dos 6 tipos existentes (`limpar_mesa`, `ondas`, `duelo`, `defesa_posicao`,
 ### Emboscada
 
 O jogador inicia o combate com a mão cheia mas com 0 mana no turno 1 — não pode
-jogar nenhuma carta. O inimigo tem iniciativa total no turno 1 com o campo já
+jogar cartas. O inimigo tem iniciativa total no turno 1 com o campo já
 preenchido. A partir do turno 2, o fluxo retorna ao normal. Força o jogador a
 absorver pressão com o campo vazio e reagir sob desvantagem.
 

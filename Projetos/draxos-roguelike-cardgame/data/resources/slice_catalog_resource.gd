@@ -15,6 +15,7 @@ extends Resource
 @export var encounters: Array[Dictionary] = []
 @export var run_map: Dictionary = {}
 @export var track_contract: Dictionary = {}
+@export var definition_hash: String = ""
 
 func find_card(card_id: String):
 	for card in cards:

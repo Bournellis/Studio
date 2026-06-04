@@ -1,6 +1,6 @@
 # Track 02 Handoff Log
 
-- Last Updated: `2026-05-18`
+- Last Updated: `2026-06-03`
 - Status: `READY_FOR_THREAD_HANDOFFS`
 
 ## Protocol
@@ -108,3 +108,69 @@ Each entry should include:
 - validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 93/93 GUT tests and 1119 asserts. Full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Screenshot workflow saved RunMap, reward screen, shop/relic, keyword tooltip, enemy intent, and late-board Battle screenshots at 1280x720 and 960x540.
 - blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
 - next prompt id: none; Track 02 ready for user playtest.
+
+### 2026-05-27 - Foundation Hardening 2
+
+- prompt id: `FOUNDATION-HARDENING-2`
+- summary: Cleaned stale satellite docs, added the Track 02 human playtest checklist, extracted route pacing into a shared simulator used by validation and Run Lab, and added GUT coverage for simulator schema/parity.
+- changed files: `tools/route_pacing_simulator.gd`, `tools/validate.gd`, `tools/run_lab.gd`, `tests/unit/test_route_pacing_simulator.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 96/96 GUT tests and 1206 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest.
+
+### 2026-05-27 - Foundation Hardening 3
+
+- prompt id: `FOUNDATION-HARDENING-3`
+- summary: Extracted enemy commander turn resolution into `battle/enemy_turn_director.gd`, enemy intent assembly into `battle/enemy_intent_director.gd`, reward choice/application logic into `core/run_reward_service.gd`, and pure battle preview/readout data into `modes/battle/battle_preview_presenter.gd` while preserving public wrappers and Track 02 behavior.
+- changed files: `battle/battle_engine.gd`, `battle/enemy_turn_director.gd`, `battle/enemy_intent_director.gd`, `core/run_session.gd`, `core/run_reward_service.gd`, `modes/battle/battle_root.gd`, `modes/battle/battle_preview_presenter.gd`, `tools/validate.gd`, focused unit tests, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 97/97 GUT tests and 1218 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest.
+
+### 2026-05-27 - Foundation Hardening 4
+
+- prompt id: `FOUNDATION-HARDENING-4`
+- summary: Added Track 02 golden metrics for Run Lab regression checks, wired the Arcano seed `20260518` exact golden into validation, added optional `--compare-golden` / `--require-golden` Run Lab comparison, and covered golden acceptance/mismatch reporting in GUT.
+- changed files: `tools/run_lab_golden_metrics.gd`, `tools/run_lab.gd`, `tools/validate.gd`, `tests/unit/test_route_pacing_simulator.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 99/99 GUT tests and 1228 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: Run Economy Services.
+
+### 2026-05-27 - Foundation Hardening 5
+
+- prompt id: `FOUNDATION-HARDENING-5`
+- summary: Extracted Souls shop economy services from `RunSession` into `core/run_shop_service.gd`, including offer refresh, purchases, rerolls, remove/duplicate/card/relic/max-HP actions, cost helpers, and `shop_state` sync while keeping public `RunSession` wrappers and snapshot v5 payloads compatible.
+- changed files: `core/run_session.gd`, `core/run_shop_service.gd`, `tests/unit/test_run_rewards_shop_save.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 100/100 GUT tests and 1238 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: BattleRoot Composition.
+
+### 2026-05-28 - Foundation Hardening 6
+
+- prompt id: `FOUNDATION-HARDENING-6`
+- summary: Extracted pure BattleRoot composition presenters for HUD/objective readouts and combat FX filtering/text/state projection while preserving scene composition, anchors, sizes, drag/drop behavior, node names, route metrics, and gameplay behavior.
+- changed files: `modes/battle/battle_root.gd`, `modes/battle/battle_hud_presenter.gd`, `modes/battle/battle_combat_fx_presenter.gd`, `tests/unit/test_ui_layout.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 102/102 GUT tests and 1252 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
+- screenshots: not required; this pass extracted pure presentation helpers and did not change visual construction/layout.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: Catalog Foundation.
+
+### 2026-06-03 - Foundation Hardening 7
+
+- prompt id: `FOUNDATION-HARDENING-7`
+- summary: Added `tools/catalog_source_loader.gd` as the catalog composition seam, routing `ContentGenerator` through it while keeping the current single `slice_catalog.json` source of truth. The loader exposes future domains for cards, enemies, classes, rewards, relics, encounters, run map, keywords and visuals, and GUT covers semantic equivalence with the existing JSON.
+- changed files: `tools/catalog_source_loader.gd`, `tools/content_generator.gd`, `tests/unit/test_data_contract.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 103/103 GUT tests and 1271 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
+- screenshots: not required; this pass did not change visual construction/layout.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: BattleEngine Core Directors.
+
+### 2026-06-03 - Foundation Hardening 8
+
+- prompt id: `FOUNDATION-HARDENING-8`
+- summary: Extracted staged combat, manual attack resolution, slot damage, hero damage, and damaged-slot destruction queue handling from `BattleEngine` into `battle/combat_resolution_director.gd`, while keeping all existing `BattleEngine` wrappers and public/private call sites compatible.
+- changed files: `battle/battle_engine.gd`, `battle/combat_resolution_director.gd`, `tests/unit/test_battle_core.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 105/105 GUT tests and 1279 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
+- screenshots: not required; this pass did not change visual construction/layout.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: continue BattleEngine directors only if needed, with field effects and boss hooks as separate small extractions.

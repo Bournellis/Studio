@@ -1,23 +1,20 @@
 # Cartas Novas por Classe — Propostas de Design (Sessão B)
 
 - Data: `2026-05-18`
-- Status: `PROPOSTA — nenhuma carta desta lista está implementada`
+- Status: `HISTORICO/PROMOVIDO - reward cards promovidas na Track 02`
 - Sessão: Design Session B
 - Dependência: `../design-proposals/sessao-a-keywords.md` (definições de keywords)
 - Dependência: `../design-proposals/rota-29-mapas.md` (estrutura de recompensas)
 
-> **Aviso:** Este documento registra sugestões de design levantadas em sessão criativa.
-> As cartas aqui descritas — nomes, custos, stats, efeitos e upgrades — não são
-> definitivas. Qualquer valor pode mudar após playtest, revisão de balanceamento
-> ou decisão de produto. Antes de implementar, cada carta deve ser confirmada
-> individualmente e seu contrato adotado formalmente nos docs de classe.
+> **Aviso:** Este documento registra a origem de design das reward cards. A Track
+> 02 promoveu o pool de 8 cartas por classe; o JSON ativo, os docs de classe e os
+> testes prevalecem sobre qualquer numero antigo desta proposta.
 
 ## Contexto
 
-O pool atual tem 2 cartas novas por classe (mapas 7 e 11 na rota de 13 mapas).
-Esta proposta expande para 8 cartas por classe, distribuídas em 4 elementos ao
-longo da rota de 29 mapas. O jogador recebe todas as 8 ao longo de uma run, mas
-faz escolhas em pontos específicos.
+O pool atual tem 8 cartas de recompensa por classe, distribuidas em 4 elementos
+ao longo da rota de 29 mapas. O jogador recebe o par Terra mais cedo e completa
+os pares Gelo/Ar/Fogo conforme a agenda de recompensas declarada no JSON.
 
 As cartas estão organizadas por **elemento temático** — o elemento do jogo em
 que elas são desbloqueadas como recompensa. Isso alinha identidade mecânica e

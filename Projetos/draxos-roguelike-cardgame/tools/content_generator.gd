@@ -4,14 +4,21 @@ extends RefCounted
 const DEFINITION_PATH: String = "res://data/definitions/slice_catalog.json"
 const GENERATED_DIR: String = "res://data/generated"
 const CATALOG_PATH: String = "res://data/generated/slice_catalog.tres"
+const CatalogSourceLoaderScript = preload("res://tools/catalog_source_loader.gd")
 const SliceCatalogResourceScript = preload("res://data/resources/slice_catalog_resource.gd")
 const HeroDefinitionResourceScript = preload("res://data/resources/hero_definition_resource.gd")
 const CardDefinitionResourceScript = preload("res://data/resources/card_definition_resource.gd")
 
 func generate_all() -> Dictionary:
-	var definition: Dictionary = _load_definition()
-	if definition.is_empty():
-		return {"ok": false, "message": "Failed to load slice catalog definition."}
+	var source: Dictionary = CatalogSourceLoaderScript.new().load_catalog_source()
+	if not bool(source.get("ok", false)):
+		return {"ok": false, "message": str(source.get("message", "Failed to load slice catalog definition."))}
+	var definition: Dictionary = Dictionary(source.get("definition", {}))
+	var definition_hash: String = _definition_hash(definition)
+
+	var existing_catalog = _load_existing_catalog()
+	if existing_catalog != null and str(existing_catalog.definition_hash) == definition_hash:
+		return {"ok": true, "message": "Generated slice catalog unchanged."}
 
 	var catalog = SliceCatalogResourceScript.new()
 	catalog.player_hero = _build_hero(definition.get("player_hero", {}))
@@ -27,6 +34,7 @@ func generate_all() -> Dictionary:
 	catalog.encounters = _typed_dictionary_array(definition.get("encounters", []))
 	catalog.run_map = Dictionary(definition.get("run_map", {}))
 	catalog.track_contract = Dictionary(definition.get("track_contract", {}))
+	catalog.definition_hash = definition_hash
 
 	for card_data: Dictionary in _typed_dictionary_array(definition.get("cards", [])):
 		catalog.cards.append(_build_card(card_data))
@@ -37,14 +45,22 @@ func generate_all() -> Dictionary:
 		return {"ok": false, "message": "Failed to save generated slice catalog."}
 	return {"ok": true, "message": "Generated slice catalog."}
 
+func _load_existing_catalog():
+	if not ResourceLoader.exists(CATALOG_PATH):
+		return null
+	return load(CATALOG_PATH)
+
 func _load_definition() -> Dictionary:
-	if not FileAccess.file_exists(DEFINITION_PATH):
-		return {}
-	var file_text: String = FileAccess.get_file_as_string(DEFINITION_PATH)
-	var parsed: Variant = JSON.parse_string(file_text)
-	if typeof(parsed) != TYPE_DICTIONARY:
-		return {}
-	return parsed
+	return CatalogSourceLoaderScript.new().load_catalog_definition()
+
+func _definition_hash(value: Variant) -> String:
+	return CatalogSourceLoaderScript.stable_definition_hash(value)
+
+func _stable_definition_string(value: Variant) -> String:
+	return CatalogSourceLoaderScript.stable_definition_string(value)
+
+func _escape_json_string(value: String) -> String:
+	return CatalogSourceLoaderScript.escape_stable_json_string(value)
 
 func _build_hero(data: Dictionary):
 	var hero = HeroDefinitionResourceScript.new()
