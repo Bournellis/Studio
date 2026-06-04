@@ -117,6 +117,39 @@ respawn ou geracao procedural.
 - Retomar depois deve continuar do estado server-side normal quando houver
   sessao/snapshot valido.
 
+## Candidatos Futuros Nao Aprovados
+
+O Openworld completo segue fora de escopo. Ainda assim, o Bosque pode servir
+como evidencia para decidir se o DraxosMobile fica melhor como jogo de menus,
+como jogo com um mundo navegavel ou como mistura controlada dos dois.
+
+Essas ideias nao sao backlog automatico. Elas so podem virar trabalho depois de
+decisao propria registrada em `docs/design-pending.md` e no decision pack.
+
+### Etapa 2 - Menu No Mundo
+
+Candidato experimental: expandir o Bosque com uma casa/altar do mago, arredores
+e uma pequena cidade para testar funcoes hoje resolvidas por menus como lugares
+fisicos. A pergunta nao e "criar uma cidade", e sim descobrir quais funcoes
+ganham clareza quando viram espaco navegavel e quais continuam melhores como UI
+direta.
+
+Essa etapa nao aprova combate, NPCs com questline, mapa amplo, economia nova,
+PVP, social completo ou producao pesada de assets.
+
+### Etapa 3 - Conflito Minimo
+
+Candidato experimental posterior: uma area pequena com monstros, poucos NPCs e
+um loop minimo de matar monstros, coletar recursos, cumprir tarefas simples e
+voltar. Essa etapa so existe para testar se conflito leve combina com
+DraxosMobile sem substituir Arena PVE, sem abrir campanha e sem criar mundo
+continuo.
+
+Antes dela, o projeto precisa decidir qual area pode ter risco, quais recursos
+podem sair do modo, como quests se conectam com conta/save, como combate no
+mundo se separa do Autobattler/Arena e qual evidencia justifica sair do Bosque
+relaxante.
+
 ## Fora Do Escopo Atual
 
 - inimigos;

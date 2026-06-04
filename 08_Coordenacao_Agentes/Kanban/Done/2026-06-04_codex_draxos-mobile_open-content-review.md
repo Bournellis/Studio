@@ -1,4 +1,4 @@
-# DraxosMobile Review: conteudo aberto apos merge em master
+# DraxosMobile Done: conteudo aberto apos merge em master
 
 ## Metadata
 
@@ -53,6 +53,23 @@ Sugestao: nao mergear no `master`. Se o historico de publicacao for importante, 
 1. Revisar `openworld-objectives-docs` como decisao de produto, nao como merge tecnico.
 2. Decidir se o registro historico de `publish-latest-main-url` deve ser preservado em `Kanban/Done`/`Handoffs`.
 3. Depois disso, remover worktrees e branches superseded.
+
+## Resolucao - 2026-06-04
+
+- Registros historicos de `publish-latest-main-url` preservados em
+  `Handoffs/` e `Kanban/Done/`, marcados como superseded por Bosque Mecanico
+  Basico v2.
+- Handoff de `openworld-objectives-docs` preservado como historico, com aviso
+  para nao mergear a branch literalmente.
+- Conteudo util de produto extraido seletivamente para docs vivos:
+  - `docs/minigames/openworld-objectives.md`;
+  - `docs/minigames/openworld-decision-pack.md`;
+  - `docs/design-pending.md`.
+- Novas pendencias registradas:
+  - `DMOB-D072` para menu-no-mundo;
+  - `DMOB-D073` para conflito minimo.
+- Nenhuma aprovacao foi dada para cidade, NPCs, quests, combate, mapa amplo,
+  economia nova, PVP/social ou publicacao remota.
 
 ## Validacao
 

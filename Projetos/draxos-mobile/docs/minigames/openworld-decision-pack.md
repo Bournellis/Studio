@@ -89,6 +89,23 @@ slice only.
 `DMOB-D071` remains open for any continuous-world expansion. The Bosque approval
 resolves only the existing slice's readiness as an active Internal Alpha mode.
 
+## Future Candidate Packages
+
+Two future candidates are recorded for review only. They are not approved work:
+
+- `DMOB-D072` - Menu no mundo: a small house/altar, Bosque surroundings, small
+  town or diegetic entrances for existing menu functions. The question is
+  whether navigable space improves routine clarity, not whether the project
+  should build a city.
+- `DMOB-D073` - Conflito minimo: a later small-risk package with monsters, a few
+  NPCs and simple tasks. This requires evidence from Bosque and a separate
+  decision about risk, rewards, account/save boundaries and separation from
+  Arena PVE.
+
+Neither candidate authorizes combat, NPCs, quests, city, map expansion,
+economy, reward source, PVP/social expansion, remote publication or runtime work
+without its own Doing/Handoff and validation plan.
+
 ## Required Evidence For A Future Package
 
 - Updated `docs/minigames/openworld.md`.
