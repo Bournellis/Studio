@@ -1,4 +1,4 @@
-# DraxosMobile Hardening Doing: backend-schema - Openworld Collection Sync Contract
+# DraxosMobile Hardening Done: backend-schema - Openworld Collection Sync Contract
 
 ## Metadata
 
@@ -37,3 +37,9 @@ Corrigir localmente o contrato backend do Bosque para aceitar todos os resource 
 
 - Branch commitada em `defd5e6 Fix openworld collection backend sync contract`.
 - Handoff integrado em `codex/draxos-mobile/openworld-local-validation`.
+
+## Fechamento De Coordenacao - 2026-06-04
+
+- Conteudo incorporado ao `master` via `codex/draxos-mobile/openworld-local-validation` e `codex/draxos-mobile/merge-current-work`.
+- Commit de fechamento no `master`: `1c72399 Fix Arena loop presenter assertion`.
+- Estado: fechado como lane fonte; worktree removida na limpeza operacional, branch preservada como ref nao ancestral.

@@ -1,4 +1,4 @@
-# DraxosMobile Hardening Doing: mode-scaffolds/platform-v1/client-shell - Bosque v2 Guidance
+# DraxosMobile Hardening Done: mode-scaffolds/platform-v1/client-shell - Bosque v2 Guidance
 
 ## Metadata
 
@@ -10,6 +10,7 @@
 - mode_scope: `openworld`
 - branch: `codex/draxos-mobile/bosque-v2-guidance`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--bosque-v2-guidance`
+- cleanup: branch e worktree removidas em `2026-06-04` apos merge/publicacao closeout.
 
 ## Objetivo
 
@@ -77,3 +78,10 @@ Implementar Bosque Mecanico Basico v2 como modo livre e relaxante, com tutorial 
 ## Handoff Point
 
 Handoff quando client, backend, docs e testes estiverem integrados na branch final, com validacoes locais registradas. Publicacao remota fica fora deste pacote ate aprovacao explicita.
+
+## Fechamento De Coordenacao - 2026-06-04
+
+- Publicado como Internal Alpha `Bosque Mecanico Basico v2`.
+- Release root: `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`.
+- Deployment evidence: `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`.
+- Incorporado ao `master`; branch/worktree removidas na limpeza operacional.

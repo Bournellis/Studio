@@ -1,4 +1,4 @@
-# DraxosMobile Hardening Doing: coord-docs/mode-scaffolds - Bosque v2 docs
+# DraxosMobile Hardening Done: coord-docs/mode-scaffolds - Bosque v2 docs
 
 ## Metadata
 
@@ -10,6 +10,7 @@
 - mode_scope: `openworld`
 - branch: `codex/draxos-mobile/bosque-v2-docs`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--bosque-v2-docs`
+- cleanup: worktree removida em `2026-06-04`; branch preservada como ref nao ancestral/superseded.
 
 ## Objetivo
 

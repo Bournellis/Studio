@@ -20,7 +20,7 @@
   six-step guidance, server-persisted guidance state in the normal save, fixed
   resource slack and the first procedural build visual (`fogueira_estavel_1`).
 - Latest implemented local integration: `Openworld Collection Sync Local Fix` +
-  `Main Menu Refactor` on branch `codex/draxos-mobile/merge-current-work`; it
+  `Main Menu Refactor`, merged into `master` at `1c72399`; it
   fixes Bosque collection rollback locally by accepting all 26 active ruleset
   nodes in SQL, persisting `player_position` only via `move_heartbeat`,
   sanitizing event ACKs and preserving local player position during active
@@ -28,7 +28,7 @@
   collect-all and direct energy shortcuts, keeps `Bosque` as the direct
   Openworld entry, moves battle preparation into Arena PVE and keeps Energia
   purchase inside Loja. This integration is local only and has not been
-  published.
+  published as a remote Internal Alpha package.
 - Previous remote package: `First Access Runtime Fix`, release root
   `internal-alpha/v0-first-access-runtime-20260602-4608977`,
   deployment evidence `https://36db2742.draxos-mobile-internal-alpha.pages.dev`;
@@ -74,8 +74,8 @@
 - Compatibility validation marker: Latest published remote package: `Foundation Hardening V2`
   remains as legacy guard text for Track 13/V2 docs validation; actual latest
   published remote package is the Bosque v2 release above.
-- Active follow-up: review and decide publication path for the local Openworld
-  Collection Sync + Main Menu Refactor integration before broadening human
+- Active follow-up: review and decide publication path for the already-merged
+  Openworld Collection Sync + Main Menu Refactor integration before broadening human
   playtest of Bosque v2. The latest remote package remains Bosque Mecanico
   Basico v2; no new Internal Alpha was published by this local integration.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
@@ -94,15 +94,15 @@ node mapping recognized only the original 13 nodes. Collecting the v2 nodes
 could reject the event, require resync and hydrate an older `player_position`.
 
 - source branches/worktrees:
-  - `codex/draxos-mobile/openworld-backend-contract` at
-    `D:\Estudio-worktrees\draxos-mobile--codex--openworld-backend-contract`;
-  - `codex/draxos-mobile/openworld-client-resync` at
-    `D:\Estudio-worktrees\draxos-mobile--codex--openworld-client-resync`;
-  - `codex/draxos-mobile/openworld-local-validation` at
-    `D:\Estudio-worktrees\draxos-mobile--codex--openworld-local-validation`.
-- integration branch/worktree:
-  - `codex/draxos-mobile/merge-current-work` at
-    `D:\Estudio-worktrees\draxos-mobile--codex--merge-current-work`.
+  - historical source branches `codex/draxos-mobile/openworld-backend-contract`
+    and `codex/draxos-mobile/openworld-client-resync` remain as branch refs, but
+    their worktrees were removed during coordination cleanup;
+  - historical integration branch `codex/draxos-mobile/openworld-local-validation`
+    was merged and its worktree was removed during coordination cleanup.
+- integration result:
+  - historical integration branch `codex/draxos-mobile/merge-current-work` was
+    merged into `master` at `1c72399` and its worktree was removed during
+    coordination cleanup.
 - commits integrated in validation branch:
   - `4a91cf2 Fix openworld collection backend sync contract`;
   - `e15c98f Preserve openworld position on active resync`.
@@ -145,15 +145,15 @@ a mechanical slice. It removes the idea of a mandatory session objective from th
 contract and keeps the player free to enter, leave, collect, deposit, craft or
 ignore everything without punishment.
 
-- branch: `codex/draxos-mobile/bosque-v2-guidance`;
+- branch: historical `codex/draxos-mobile/bosque-v2-guidance`, merged into
+  `master` and removed during coordination cleanup;
 - commits:
   - `4d8d9d1 Register Bosque v2 integration work`;
   - `8af97b7 Implement Bosque v2 guidance and campfire client`;
   - `8b2aa61 Document Bosque v2 openworld scaffold`;
   - `f01461e Persist openworld guidance state`;
   - `7c2d981 Record Bosque v2 local validation status`;
-- worktree:
-  `D:\Estudio-worktrees\draxos-mobile--codex--bosque-v2-guidance`;
+- worktree: removed after merge/publication closeout;
 - release root:
   `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`;
 - Cloudflare production:

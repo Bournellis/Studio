@@ -1,4 +1,4 @@
-# DraxosMobile Hardening Doing: backend-schema - Bosque V2 Guidance Persistence
+# DraxosMobile Hardening Done: backend-schema - Bosque V2 Guidance Persistence
 
 ## Metadata
 
@@ -10,6 +10,7 @@
 - mode_scope: `openworld`
 - branch: `codex/draxos-mobile/bosque-v2-backend`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--bosque-v2-backend`
+- cleanup: worktree removida em `2026-06-04`; branch preservada como ref nao ancestral/superseded.
 
 ## Objetivo
 

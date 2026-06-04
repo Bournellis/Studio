@@ -1,4 +1,4 @@
-# DraxosMobile Hardening Doing: validation-release - Openworld Collection Sync Local Validation
+# DraxosMobile Hardening Done: validation-release - Openworld Collection Sync Local Validation
 
 ## Metadata
 
@@ -37,3 +37,9 @@ Integrar as correcoes backend/client do Openworld, atualizar contrato/status loc
 
 - Branch de validacao integra `4a91cf2` e `e15c98f`.
 - Handoff final registrado em `08_Coordenacao_Agentes/Handoffs/2026-06-04_codex_draxos-mobile_openworld-collection-sync-local.md`.
+
+## Fechamento De Coordenacao - 2026-06-04
+
+- Incorporado ao `master` via `codex/draxos-mobile/merge-current-work`.
+- Commit de fechamento no `master`: `1c72399 Fix Arena loop presenter assertion`.
+- Estado: fechado; branch/worktree removidos na limpeza operacional; publicacao remota permanece decisao separada.

@@ -1,4 +1,4 @@
-# DraxosMobile Hardening Doing: client-shell/mode-scaffolds - main menu refactor
+# DraxosMobile Hardening Done: client-shell/mode-scaffolds - main menu refactor
 
 ## Metadata
 
@@ -113,3 +113,9 @@ Handoff quando o menu principal, Preparacao dentro da Arena, remocao do `mode_hu
 - `./tools/validate_foundation.ps1 -Profile DocsOnly`: PASS.
 - `./tools/validate_foundation.ps1 -Profile ClientQuick`: PASS.
 - `./tools/validate_foundation.ps1 -Profile ModePlatform`: PASS, 38/38 Deno mode tests and all mode smokes.
+
+## Fechamento De Coordenacao - 2026-06-04
+
+- Incorporado ao `master` via `codex/draxos-mobile/merge-current-work`.
+- Commit de fechamento no `master`: `1c72399 Fix Arena loop presenter assertion`.
+- Estado: fechado; branch/worktree removidos na limpeza operacional.

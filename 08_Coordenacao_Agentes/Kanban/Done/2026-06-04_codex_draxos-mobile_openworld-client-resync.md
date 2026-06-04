@@ -1,4 +1,4 @@
-# DraxosMobile Hardening Doing: client-shell - Openworld Active Resync Position
+# DraxosMobile Hardening Done: client-shell - Openworld Active Resync Position
 
 ## Metadata
 
@@ -37,3 +37,9 @@ Preservar a posicao local do jogador durante resync ativo do Bosque sem alterar 
 
 - Branch commitada em `0ddcb5e Preserve openworld position on active resync`.
 - Handoff integrado em `codex/draxos-mobile/openworld-local-validation`.
+
+## Fechamento De Coordenacao - 2026-06-04
+
+- Conteudo incorporado ao `master` via `codex/draxos-mobile/openworld-local-validation` e `codex/draxos-mobile/merge-current-work`.
+- Commit de fechamento no `master`: `1c72399 Fix Arena loop presenter assertion`.
+- Estado: fechado como lane fonte; worktree removida na limpeza operacional, branch preservada como ref nao ancestral.
