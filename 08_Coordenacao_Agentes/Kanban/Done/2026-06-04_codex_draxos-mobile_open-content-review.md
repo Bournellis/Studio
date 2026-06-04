@@ -26,9 +26,10 @@ Os quatro cartoes que ainda estavam em `Kanban/Doing/` foram movidos para `Kanba
 As branches/worktrees ancestrais do `master` foram removidas sem force:
 `bosque-v2-guidance`, `main-menu-refactor`, `merge-current-work` e
 `openworld-local-validation`.
-As worktrees duplicadas nao ancestrais tambem foram removidas, preservando os
-refs de branch: `bosque-v2-backend`, `bosque-v2-docs`,
-`openworld-backend-contract` e `openworld-client-resync`.
+As worktrees duplicadas nao ancestrais tambem foram removidas. Depois da
+integracao seletiva final, os refs de branch superseded tambem foram removidos:
+`bosque-v2-backend`, `bosque-v2-docs`, `openworld-backend-contract` e
+`openworld-client-resync`.
 
 ## Aberto De Verdade
 
@@ -70,6 +71,8 @@ Sugestao: nao mergear no `master`. Se o historico de publicacao for importante, 
   - `DMOB-D073` para conflito minimo.
 - Nenhuma aprovacao foi dada para cidade, NPCs, quests, combate, mapa amplo,
   economia nova, PVP/social ou publicacao remota.
+- Branches/worktrees restantes de DraxosMobile removidas apos a integracao
+  seletiva.
 
 ## Validacao
 

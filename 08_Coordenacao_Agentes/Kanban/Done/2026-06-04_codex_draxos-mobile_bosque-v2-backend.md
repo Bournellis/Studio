@@ -10,7 +10,7 @@
 - mode_scope: `openworld`
 - branch: `codex/draxos-mobile/bosque-v2-backend`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--bosque-v2-backend`
-- cleanup: worktree removida em `2026-06-04`; branch preservada como ref nao ancestral/superseded.
+- cleanup: worktree e branch removidas em `2026-06-04` apos integracao seletiva/superseded.
 
 ## Objetivo
 

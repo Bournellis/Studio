@@ -95,8 +95,8 @@ could reject the event, require resync and hydrate an older `player_position`.
 
 - source branches/worktrees:
   - historical source branches `codex/draxos-mobile/openworld-backend-contract`
-    and `codex/draxos-mobile/openworld-client-resync` remain as branch refs, but
-    their worktrees were removed during coordination cleanup;
+    and `codex/draxos-mobile/openworld-client-resync` were selectively
+    integrated and removed during final coordination cleanup;
   - historical integration branch `codex/draxos-mobile/openworld-local-validation`
     was merged and its worktree was removed during coordination cleanup.
 - integration result:

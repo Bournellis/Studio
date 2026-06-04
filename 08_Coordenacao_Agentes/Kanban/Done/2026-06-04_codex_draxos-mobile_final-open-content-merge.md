@@ -61,6 +61,7 @@ Handoff quando o conteudo util estiver em docs vivos, os registros historicos pr
 - `DMOB-D072` e `DMOB-D073` registrados como decisoes futuras abertas.
 - Review `2026-06-04_codex_draxos-mobile_open-content-review.md` movido para
   `Kanban/Done`.
+- Worktrees e branches DraxosMobile superseded removidas apos merge em `master`.
 
 ## Validacao Executada
 

@@ -42,4 +42,4 @@ Corrigir localmente o contrato backend do Bosque para aceitar todos os resource 
 
 - Conteudo incorporado ao `master` via `codex/draxos-mobile/openworld-local-validation` e `codex/draxos-mobile/merge-current-work`.
 - Commit de fechamento no `master`: `1c72399 Fix Arena loop presenter assertion`.
-- Estado: fechado como lane fonte; worktree removida na limpeza operacional, branch preservada como ref nao ancestral.
+- Estado: fechado como lane fonte; worktree e branch removidas na limpeza operacional apos integracao seletiva.
