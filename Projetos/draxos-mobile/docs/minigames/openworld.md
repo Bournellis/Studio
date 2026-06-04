@@ -21,6 +21,26 @@ Oficial, neste documento, significa `mode_registry.status=active` dentro do cana
 
 Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitual; e o primeiro espaco jogavel para validar sensacao de movimento, coleta, bolso, bau, crafting local e uma ponte controlada de recompensa.
 
+## Bosque Mecanico Basico v2
+
+Bosque Mecanico Basico v2 redefine o slice `forest` como um minigame livre,
+relaxante e sem obrigacao de conclusao: entrar, explorar sem pressa, coletar
+recursos, depositar no bau, craftar melhorias pequenas e construir uma primeira
+estrutura permanente.
+
+A orientacao existe para ajudar o jogador a entender o espaco. Ela nao e uma
+quest, nao e objetivo obrigatorio e nao bloqueia entrada, saida, coleta,
+deposito, craft ou retorno posterior. O jogador pode entrar e sair quando quiser.
+
+Contratos de produto para v2:
+
+- `Voltar` preserva/pausa a visita em andamento quando houver sessao ativa;
+- `Encerrar visita` finaliza a visita e mostra um resumo leve;
+- nenhuma acao exige completar a orientacao;
+- nenhuma recompensa nova, economia nova ou publicacao remota entra neste pacote;
+- sem inimigos, NPCs, quests, combate, cidade, full open world, respawn,
+  procedural generation ou expansao de mapa.
+
 ## Escopo Atual
 
 - mobile portrait fullscreen;
@@ -31,6 +51,8 @@ Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitua
 - joystick livre por toque/mouse em area vazia do viewport;
 - HUD dentro do jogo;
 - mochila funcional com `Bolso`, `Bau`, `Craft` e `Sessao`;
+- orientacao tutorial discreta de seis passos, persistida no save normal
+  server-side e reabrivel pela aba `Sessao`;
 - detalhes operacionais escondidos em `Sessao > Detalhes da operacao`;
 - colisao local em bau, arvores grandes, rochas grandes e paredes de borda;
 - recursos pequenos como `Area2D` coletaveis e sem bloqueio de movimento;
@@ -45,14 +67,71 @@ Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitua
 
 ## Nao Escopo
 
-- inimigos, combate, moral system ou gore;
+- inimigos, NPCs, quests, combate, moral system ou gore;
+- cidade, campanha, mapa continuo ou full open world;
 - mundo aberto completo;
+- respawn/procedural generation de recursos;
 - escrita direta do cliente em Conta/Base;
-- ranking, guilda, battle pass ou premium economy do Openworld;
+- ranking, guilda, battle pass, economia ampla ou premium economy do Openworld;
+- recompensa nova;
 - promessa publica de release.
 - expansao do placeholder futuro sem pacote explicito.
-- inimigos, combate, mapa novo, recompensa nova, economia nova ou mundo continuo
-  neste hardening.
+- inimigos, NPCs, quests, combate, cidade, mapa novo, recompensa nova, economia
+  nova ou mundo continuo neste hardening.
+
+## Orientacao Tutorial v2
+
+A orientacao e um banner discreto com seis passos aprovados:
+
+1. Explore o Bosque sem pressa.
+2. Pare perto de um recurso para coletar.
+3. Seu bolso guarda o que voce encontra. Quando pesar, volte ao bau.
+4. Perto do bau, use Depositar para guardar tudo.
+5. Com materiais no bau, crie melhorias e pequenas estruturas.
+6. Quando quiser, encerre a visita e volte depois.
+
+Persistencia e reabertura:
+
+- progresso/dispensa da orientacao usa o save normal server-side do modo;
+- retomar sessao deve preservar a etapa vista ou o estado de orientacao fechada;
+- `Sessao` deve oferecer acao para reabrir a orientacao;
+- fechar o banner nao encerra visita, nao completa sessao e nao concede premio.
+
+## Recursos, Craft E Estrutura v2
+
+Bosque v2 deve usar recursos fixos, autorados no ruleset, em quantidade
+suficiente para craftar `Bolsa Simples I` e `Fogueira Estavel I` numa unica
+visita, com pequena sobra para o jogador nao precisar seguir uma ordem perfeita.
+
+Quantidade minima contratada para os dois crafts:
+
+- `galho`: 6;
+- `folha`: 3;
+- `resina`: 1;
+- `folha_seca`: 2;
+- `pedra_pequena`: 1.
+
+A distribuicao v2 deve ter pequenos excedentes fixos, por exemplo ao menos mais
+1 `galho`, 1 `folha` e 1 recurso leve adicional. Esses excedentes nao sao nova
+economia; sao folga de aprendizagem para o minigame.
+
+`Fogueira Estavel I`:
+
+- aparece depois do craft como objeto procedural permanente da sessao/save;
+- fica perto de `x=305 y=330`;
+- e bloqueante para movimento como estrutura pequena;
+- nao cria combate, NPC, quest, economia ampla, respawn ou recompensa nova;
+- pode aparecer no resumo leve como estrutura construida.
+
+## Entrada, Saida E Resumo
+
+- Entrar no Bosque inicia ou retoma visita conforme sessao ativa disponivel.
+- `Voltar` deve retornar ao shell/refugio preservando a visita quando a sessao
+  ainda estiver ativa.
+- `Encerrar visita` e a acao explicita de finalizacao, com resumo leve de
+  materiais depositados, crafts feitos e estruturas construidas.
+- Nao ha requisito de completar todos os recursos, todos os crafts ou todos os
+  passos de orientacao.
 
 ## Descriptor Scaffold
 
@@ -142,6 +221,9 @@ Eventos aceitos:
 - `collect_complete`
 - `deposit_all`
 - `craft`
+- `guidance_step_seen`
+- `guidance_dismissed`
+- `guidance_reopened`
 - `complete_requested`
 - `abandon_requested`
 

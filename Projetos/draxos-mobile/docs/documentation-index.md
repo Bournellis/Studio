@@ -54,7 +54,8 @@
 | `docs/minigames/mode-catalog.md` | `VIVO` | Official V1 catalog for Basebuilder, Autobattler, Towerdefense, Cardgame and Openworld. |
 | `docs/minigames/basebuilder.md` | `VIVO` | Basebuilder mode doc and descriptor pointer for current Refugio/Base ownership. |
 | `docs/minigames/autobattler.md` | `VIVO` | Autobattler mode doc and descriptor pointer for current Arena PVE ownership. |
-| `docs/minigames/openworld.md` | `VIVO` | Current Openworld Bosque design/implementation contract for fullscreen gameplay and integrated alpha bridge. |
+| `docs/minigames/openworld.md` | `VIVO` | Current Openworld Bosque design/implementation contract for fullscreen gameplay, integrated alpha bridge and Bosque Mecanico Basico v2 boundaries. |
+| `docs/minigames/openworld-objectives.md` | `VIVO` | Product-intent guardrail for Bosque Mecanico Basico v2: free relaxing collect/deposit/craft/build minigame, orientation not mandatory objective. |
 | `docs/minigames/openworld-decision-pack.md` | `VIVO` | Decision pack preserving Openworld Bosque as the only approved slice and blocking expansion without a package decision. |
 | `data/definitions/openworld/forest_ruleset_v1.json` | `CONTRATO` | Active Internal Alpha ruleset definition for Openworld Bosque snapshot/events/resources/recipes. |
 | `docs/minigames/towerdefense.md` | `VIVO` | Non-playable staged Towerdefense mode scaffold. |
