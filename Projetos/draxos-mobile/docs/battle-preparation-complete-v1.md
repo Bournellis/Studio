@@ -6,7 +6,7 @@
 
 ## Resumo
 
-Battle Preparation Complete v1 transforma a Preparacao do Refugio de um painel explicativo em um editor real de loadout antes da batalha.
+Battle Preparation Complete v1 transforma a Preparacao pre-Arena de um painel explicativo em um editor real de loadout antes da batalha.
 
 O jogador deve conseguir ver e alterar, antes de pedir uma batalha:
 
@@ -60,7 +60,9 @@ Campos vivos no pacote:
 
 ## UX
 
-A Preparacao permanece dentro do Refugio pelo hotspot `Preparacao`.
+A navegacao viva apos o main menu refactor coloca a Preparacao dentro da Arena
+PVE, abaixo de `Iniciar Arena PVE`. Ela nao deve voltar como entrada do menu
+principal do Refugio.
 
 O painel deve destacar:
 
@@ -105,4 +107,4 @@ Observacoes de release:
 - O bucket `draxos-internal-alpha` e o bucket privado espelho tiveram `file_size_limit` ajustado para `209715200` bytes por configuracao remota de release.
 - `publish_internal_alpha.ps1 -Mode DeployManifest` ficou bloqueado por falta de `SUPABASE_ACCESS_TOKEN`; o pacote Cloudflare publicado usa `portal/manifest.example.json` embutido com os links e hashes corretos.
 - HEAD remoto passou para `index.pck`, `index.wasm`, APK e ZIP no release root versionado.
-- Hotfix posterior de equip feedback manteve/reabriu a Preparacao apos acoes de equipar e comportamento, exibiu `Ultima escolha: ...` e confirmou em Web que uma acao real de `Equipar` atualiza o item para `Em uso`.
+- Hotfix posterior de equip feedback manteve/reabriu a Preparacao apos acoes de equipar e comportamento, exibiu `Ultima escolha: ...` e confirmou em Web que uma acao real de `Equipar` atualiza o item para `Em uso`. A navegacao atual move essa superficie para dentro da Arena PVE.

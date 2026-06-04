@@ -32,6 +32,14 @@
   rollback by applying authoritative event patches instead of hydrating full
   snapshots during active gameplay. This package is local only and has not been
   published.
+- Current implemented local package: `Main Menu Refactor` on branch
+  `codex/draxos-mobile/main-menu-refactor`; it removes the player-facing Mode
+  Hub, collect-all and direct energy shortcuts, keeps `Bosque` as the direct
+  Openworld entry, moves battle preparation into Arena PVE and keeps Energia
+  purchase inside Loja. Local validation passed `validate.gd`, focused menu
+  smokes, `validate_foundation.ps1 -Profile ClientQuick` and
+  `validate_foundation.ps1 -Profile ModePlatform`. This package is local only
+  and has not been published.
 - Previous runtime fix package: `Integrated Runtime Fix`, release root
   `internal-alpha/v0-integrated-runtime-fix-20260602-ab5834c`,
   deployment evidence `https://888320f4.draxos-mobile-internal-alpha.pages.dev`.
@@ -1956,9 +1964,11 @@ Delivered in the current branch:
 - `SupabaseClient` sends API version and `request_hash`, while `SessionStore`
   persists pending idempotent mutations so retries reuse the same
   `request_id/request_hash`.
-- V1 replaces the previous minigame placeholder with active mode contracts:
-  `ROUTE_MODE_HUB`, `ROUTE_MODE_SHELL` and `open_mode_shell:<mode_id>`.
-  `/modes` is the active API surface; `/minigames` is historical only.
+- V1 replaces the previous minigame placeholder with active mode contracts.
+  The player-facing hub route was retired later by Main Menu Refactor; modes now
+  enter through their own implemented buttons, with `ROUTE_MODE_SHELL` and
+  `open_mode_shell:<mode_id>` kept for direct launches. `/modes` is the active
+  API surface; `/minigames` is historical only.
 - `tools/check_foundation_expansion_readiness.ps1` is the read-only structural
   gate and is called from `validate_foundation.ps1`. Full profile now requires
   local Supabase RPC, Edge RPC and admin/RLS smokes instead of silently skipping

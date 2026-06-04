@@ -19,6 +19,8 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, expandir gates ou selecionar Next Gate sem pedido explicito |
 | Pausado | RPG Turnos | `Projetos/rpg-turnos/` | Pausado | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado | Nao implementar, selecionar track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito |
 
+Nota local DraxosMobile: pacote `Main Menu Refactor` em `codex/draxos-mobile/main-menu-refactor` validado localmente, sem publicacao remota; remove Mode Hub player-facing, `Coletar` geral, `Energia` direta e atalho dev Openworld, mantem `Bosque` como entrada direta, move Preparacao para Arena PVE e passa `ClientQuick`/`ModePlatform`.
+
 ## Status Aceitos
 
 - `P0_IMPLEMENTACAO`: foco principal do trabalho de desenvolvimento, com permissao padrao para codigo, validacao e playtest.

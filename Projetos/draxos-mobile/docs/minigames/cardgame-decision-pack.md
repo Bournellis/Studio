@@ -12,7 +12,7 @@ Foundation Hardening V2 baseline. It does not approve playable work.
 
 ## Decision Summary
 
-Cardgame remains staged/disabled. It may share broad Draxos lore, but it does
+Cardgame remains staged/disabled. It is hidden from player-facing navigation. It may share broad Draxos lore, but it does
 not inherit mechanics, pacing, rewards, deck rules, lane rules or run structure
 from `draxos-roguelike-cardgame`.
 
@@ -21,7 +21,7 @@ from `draxos-roguelike-cardgame`.
 - `status` stays `planned_disabled`.
 - `release_channel` stays `staged`.
 - `public_cta` stays `false`.
-- `entry.action_id` stays `mode_disabled:cardgame`.
+- No player-facing entry is exposed; `entry.action_id=mode_disabled:cardgame` remains internal/technical only.
 - `ruleset.status` stays `draft`.
 - `ownership.reward_bridge` stays `none`.
 

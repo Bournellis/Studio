@@ -28,7 +28,7 @@ Papel do slice:
 
 - mode_id: `openworld`;
 - slice_id: `forest`;
-- player-facing: `Openworld Bosque`;
+- player-facing entry: `Bosque`;
 - funcao: minigame fullscreen de coleta, deposito, craft e construcao leve;
 - estado: pacote documental para orientar futuras lanes de implementacao.
 

@@ -17,7 +17,8 @@ reward path.
 - Opens through the existing Arena PVE selection route.
 - Uses existing `arena/pve/*` endpoints.
 - Keeps current Arena PVE reward and progress behavior unchanged.
-- Appears as a public CTA in the Mode Hub.
+- Does not depend on a player-facing Mode Hub; Arena PVE remains the direct surface.
+- Preparacao lives inside Arena PVE below `Iniciar Arena PVE`, not as a main Refugio menu entry.
 
 ## Freeze For This Scaffold
 

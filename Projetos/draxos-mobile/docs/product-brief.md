@@ -1,6 +1,6 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-06-01`
+- Ultima atualizacao: `2026-06-04`
 - Status: `VIVO`
 
 ---
@@ -11,13 +11,13 @@ DraxosMobile e um jogo mobile-first de progressao persistente construido sobre c
 
 - `Basebuilder`: Refugio/Base atuais.
 - `Autobattler`: Arena PVE atual e futuro PVP async dentro do mesmo modo.
-- `Openworld`: primeiro slice `Openworld Bosque`.
-- `Towerdefense`: staged/disabled ate contrato proprio.
-- `Cardgame`: staged/disabled, sem relacao mecanica com `draxos-roguelike-cardgame`.
+- `Openworld`: primeiro slice `forest`, com entrada direta player-facing `Bosque`.
+- `Towerdefense`: planned/disabled e oculto ao player ate contrato proprio.
+- `Cardgame`: planned/disabled e oculto ao player, sem relacao mecanica com `draxos-roguelike-cardgame`.
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa atual combina `PVE_ARENA_INITIAL_DIRECTION_APPROVED` com `MINIGAME_PLATFORM_V1_MODES`: a Arena PVE continua sendo o primeiro core de produto, agora formalmente dentro do modo `Autobattler`, e a plataforma de modos governa entrada, registry, admin, analytics e rewards.
+A etapa atual combina `PVE_ARENA_INITIAL_DIRECTION_APPROVED` com `MINIGAME_PLATFORM_V1_MODES`: a Arena PVE continua sendo o primeiro core de produto, agora formalmente dentro do modo `Autobattler`, e a plataforma de modos governa registry tecnico, entradas diretas, admin, analytics e rewards.
 
 ## Foco Imediato
 
@@ -27,7 +27,7 @@ A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo de
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-First Session Clarity v1 e o pacote publicado atual para essa pergunta: Refugio, Preparacao e Resultado agora orientam o primeiro ciclo sem novo backend, schema, tuning, economia ou conteudo.
+First Session Clarity v1 e o pacote publicado atual para essa pergunta; a leitura viva apos o main menu refactor e que Refugio, Arena PVE/Preparacao e Resultado orientam o primeiro ciclo sem novo backend, schema, tuning, economia ou conteudo.
 
 Ao abrir o pacote de Arena PVE inicial, devem ser avaliados juntos:
 

@@ -15,7 +15,7 @@ Este contrato governa como qualquer modo jogavel entra no DraxosMobile sem quebr
 4. Recompensa real exige RPC/service role, ledger, idempotencia e ruleset.
 5. `progression_lab` nunca recebe reward real.
 6. Disable/rollback nao apaga saves alpha.
-7. Card disabled/staged pode aparecer no Hub, mas nao promete data nem simula recompensa.
+7. Modo nao implementado permanece no registry tecnico, mas fica oculto para o player e nao promete data nem simula recompensa.
 
 ## Modos Oficiais V1
 
@@ -23,9 +23,9 @@ Este contrato governa como qualquer modo jogavel entra no DraxosMobile sem quebr
 | --- | --- | --- | --- | --- |
 | `basebuilder` | `Basebuilder` | `refugio` | active | Refugio/Base |
 | `autobattler` | `Autobattler` | `pve_arena` | active | Arena PVE |
-| `openworld` | `Openworld` | `forest` | active (`internal_alpha`) | `open_mode_shell:openworld` |
-| `towerdefense` | `Towerdefense` | `tbd` | planned_disabled | Hub disabled |
-| `cardgame` | `Cardgame` | `tbd` | planned_disabled | Hub disabled |
+| `openworld` | `Openworld` | `forest` | active (`internal_alpha`) | Bosque direto: `open_mode_shell:openworld` |
+| `towerdefense` | `Towerdefense` | `tbd` | planned_disabled | Oculto player-facing |
+| `cardgame` | `Cardgame` | `tbd` | planned_disabled | Oculto player-facing |
 
 ## Descriptor Scaffold
 
@@ -75,7 +75,7 @@ Contrato inativo em V1:
 | `mode-local-progress` | Progresso proprio sem Conta/Base | Estado isolado e plano de reset/disable |
 | `shared-save-progress` | Reward real para Conta/Base | RPC, ledger, idempotencia e cap diario |
 
-## Refugio Mode Hub Gate
+## Entrada Player-Facing Direta
 
 Um modo so pode ter `public_cta=true` quando cumprir:
 
@@ -88,7 +88,7 @@ Um modo so pode ter `public_cta=true` quando cumprir:
 - telemetria `mode_analytics_v1`;
 - Reward Bridge com ledger, se emitir recurso;
 - bloqueio de reward real no `progression_lab`;
-- UX clara no Hub;
+- UX clara na propria entrada direta;
 - smoke mobile portrait;
 - GUT client;
 - backend tests;
@@ -97,16 +97,17 @@ Um modo so pode ter `public_cta=true` quando cumprir:
 
 V1 Internal Alpha:
 
-- Basebuilder, Autobattler e Openworld aparecem clicaveis.
-- Towerdefense e Cardgame aparecem staged/disabled.
+- Basebuilder permanece acessivel pela superficie Refugio/Base.
+- Autobattler permanece acessivel pela Arena PVE, com Preparacao interna abaixo de `Iniciar Arena PVE`.
+- Openworld aparece como entrada direta `Bosque`, acionando `open_mode_shell:openworld`.
+- Towerdefense e Cardgame permanecem no registry tecnico, mas nao aparecem como cards, rotas ou atalhos player-facing.
 
 ## Analytics
 
 Eventos oficiais:
 
-- `mode_hub_shown`
-- `mode_card_shown`
-- `mode_card_selected`
+- `mode_entry_shown`
+- `mode_entry_selected`
 - `mode_start_requested`
 - `mode_start_failed`
 - `mode_session_started`
@@ -114,7 +115,6 @@ Eventos oficiais:
 - `mode_session_completed`
 - `mode_reward_applied`
 - `mode_exit`
-- `mode_disabled_seen`
 - `mode_ops_action`
 
 Dimensoes obrigatorias:

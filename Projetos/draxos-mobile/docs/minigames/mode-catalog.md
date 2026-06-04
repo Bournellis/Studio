@@ -12,13 +12,13 @@ Este catalogo substitui o registro centrado em `rpgsuave/forest`. A plataforma c
 
 ## Modos Oficiais
 
-| mode_id | Player-facing | Default slice | Status V1 | Surface | Build ownership | Economia |
+| mode_id | Player-facing entry | Default slice | Status V1 | Surface | Build ownership | Economia |
 | --- | --- | --- | --- | --- | --- | --- |
-| `basebuilder` | `Basebuilder` | `refugio` | `active` | Refugio/Base atuais | Base, estruturas, coleta, crafting de base e upgrades | Usa endpoints core de Base; pode receber/consumir recursos compartilhados |
-| `autobattler` | `Autobattler` | `pve_arena` | `active` | Arena PVE atual | Instrumento, Doutrina, Familiar, spells e potions | Usa endpoints `arena/pve/*`, battle rewards e ledger existentes |
-| `openworld` | `Openworld` | `forest` | `active` (`internal_alpha`) | Fullscreen `mode_shell` | Bosque com snapshot remoto + Reward Bridge limitado | Pode emitir recompensas pequenas apenas via snapshot validado por RPC, idempotencia e ledger |
-| `towerdefense` | `Towerdefense` | `tbd` | `planned_disabled` | Hub disabled/staged | Build propria futura: torre central, spells, pets e upgrades | Sem recompensa ate contrato proprio |
-| `cardgame` | `Cardgame` | `tbd` | `planned_disabled` | Hub disabled/staged | Build propria futura; sem relacao mecanica com o projeto Steam | Sem recompensa ate contrato proprio |
+| `basebuilder` | Refugio/Base | `refugio` | `active` | Refugio/Base atuais | Base, estruturas, crafting de base e upgrades | Usa endpoints core de Base; pode receber/consumir recursos compartilhados |
+| `autobattler` | Arena PVE | `pve_arena` | `active` | Arena PVE atual | Instrumento, Doutrina, Familiar, spells, potions e Preparacao interna | Usa endpoints `arena/pve/*`, battle rewards e ledger existentes |
+| `openworld` | Bosque | `forest` | `active` (`internal_alpha`) | Fullscreen `mode_shell` via `open_mode_shell:openworld` | Bosque com snapshot remoto + Reward Bridge limitado | Pode emitir recompensas pequenas apenas via snapshot validado por RPC, idempotencia e ledger |
+| `towerdefense` | Oculto | `tbd` | `planned_disabled` | Sem entrada player-facing | Build propria futura: torre central, spells, pets e upgrades | Sem recompensa ate contrato proprio |
+| `cardgame` | Oculto | `tbd` | `planned_disabled` | Sem entrada player-facing | Build propria futura; sem relacao mecanica com o projeto Steam | Sem recompensa ate contrato proprio |
 
 ## Descriptors Declarativos
 
@@ -47,17 +47,17 @@ Um novo modo ou slice nao entra no catalogo apenas por criar JSON. Primeiro
 precisa de decision pack, contrato vivo, update de registry/ruleset e aprovacao
 humana.
 
-## Gate De Entrada No Hub
+## Entradas Player-Facing Diretas
 
 Para V1 Internal Alpha:
 
-- `Basebuilder`: clicavel; abre Refugio/Base.
-- `Autobattler`: clicavel; abre Arena PVE.
-- `Openworld`: ativo em Internal Alpha; abre `Openworld Bosque`.
-- `Towerdefense`: visivel disabled/staged.
-- `Cardgame`: visivel disabled/staged.
+- Refugio/Base permanece a superficie principal de base e estruturas.
+- Arena PVE abre diretamente o loop Autobattler; a Preparacao vive dentro de Arena PVE abaixo de `Iniciar Arena PVE`.
+- Bosque abre diretamente `open_mode_shell:openworld`.
+- Towerdefense e Cardgame permanecem no registry tecnico, mas ficam ocultos para o player ate pacote jogavel aprovado.
 
-Um modo so pode virar CTA publico quando passar por:
+O shell nao deve expor uma tela/rota/menu `mode_hub` player-facing. Um modo so
+pode virar entrada publica direta quando passar por:
 
 - descriptor e doc vivos;
 - design contract vivo;
@@ -76,7 +76,7 @@ Um modo so pode virar CTA publico quando passar por:
 ## Decisoes Travadas
 
 - `rpgsuave` foi renomeado de verdade para `openworld`.
-- O primeiro slice do Openworld e `openworld/forest`, player-facing `Openworld Bosque`.
+- O primeiro slice do Openworld e `openworld/forest`; a entrada player-facing direta e `Bosque`.
 - `openworld/forest` usa `openworld_forest_ruleset_v1`; v0 fica apenas historico de prototipo local.
 - Oficial aqui significa `mode_registry.status=active` no canal `internal_alpha`, nao publicacao publica.
 - `/minigames` nao e contrato ativo em V1.
@@ -89,6 +89,6 @@ Um modo so pode virar CTA publico quando passar por:
 - `docs/minigames/openworld-decision-pack.md`: Openworld fica limitado ao Bosque
   atual; expansao de mapa, combate, risco ou rewards exige pacote proprio.
 - `docs/minigames/towerdefense-decision-pack.md`: Towerdefense fica
-  staged/disabled ate contrato de torre/hordas/rewards.
-- `docs/minigames/cardgame-decision-pack.md`: Cardgame fica staged/disabled e
-  sem heranca mecanica do projeto Steam.
+  planned/disabled e oculto ao player ate contrato de torre/hordas/rewards.
+- `docs/minigames/cardgame-decision-pack.md`: Cardgame fica planned/disabled,
+  oculto ao player e sem heranca mecanica do projeto Steam.

@@ -12,21 +12,21 @@ O jogador/tester deve entender rapidamente:
 
 1. onde esta no Refugio;
 2. qual e o proximo passo;
-3. por que coletar, evoluir, preparar e batalhar fazem parte do mesmo ciclo;
+3. por que evoluir, preparar dentro da Arena PVE e batalhar fazem parte do mesmo ciclo;
 4. como a recompensa da batalha volta para a base.
 
 Fluxo protegido:
 
-`Refugio -> coletar -> evoluir -> preparar -> batalhar -> recompensa -> voltar para base`
+`Refugio -> evoluir quando houver oportunidade -> Arena PVE -> Preparacao -> batalhar -> recompensa -> voltar para base`
 
 ## O Que Mudou
 
 - Refugio ganhou uma linha persistente de primeira sessao dentro do painel `Progresso`.
 - A CTA principal do Refugio recebeu tooltips mais orientadas ao ciclo: recompensa, coleta, evolucao e batalha.
-- Preparacao agora explica, em uma frase curta, como ler a tela antes da primeira batalha.
+- Preparacao agora explica, em uma frase curta, como ler a tela antes da primeira batalha; na navegacao viva atual ela fica dentro da Arena PVE, abaixo de `Iniciar Arena PVE`.
 - Resultado de batalha ganhou o bloco `Proximo passo`, conectando recompensa recebida com coleta, evolucao da base e nova batalha.
-- `tools/smoke_foundation_loop.gd` passou a validar as mensagens de primeira sessao em recompensa, coleta, evolucao e resumo.
-- Testes client cobrem a nova copy em Refugio, Preparacao e Resultado.
+- `tools/smoke_foundation_loop.gd` passou a validar as mensagens de primeira sessao em recompensa, evolucao e resumo.
+- Testes client cobrem a nova copy em Refugio, Preparacao/Arena PVE e Resultado.
 
 ## Contratos
 
@@ -48,7 +48,7 @@ Fluxo protegido:
 ## Criterios De Aceite
 
 - Refugio mostra uma pista de primeira sessao junto do painel de progresso.
-- Coleta, evolucao e batalha continuam usando a CTA contextual existente.
+- Evolucao e batalha continuam usando a CTA contextual existente.
 - Preparacao nao usa termos tecnicos visiveis como `build`, `behavior`, `slot`, `endpoint`, `schema` ou `snapshot`.
 - Resultado da batalha orienta o retorno para a base e o proximo passo.
 - Layout responsivo de Entry/Refugio/Batalha continua passando em `tools/smoke_responsive_layout.gd`.

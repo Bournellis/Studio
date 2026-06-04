@@ -12,7 +12,7 @@ V1. It does not approve playable work.
 
 ## Decision Summary
 
-Towerdefense remains staged/disabled. The current concept can be discussed as a
+Towerdefense remains staged/disabled. It is hidden from player-facing navigation. The current concept can be discussed as a
 static central mage or tower surviving hordes with spells, pets and upgrades,
 but it has no live gameplay contract yet.
 
@@ -21,7 +21,7 @@ but it has no live gameplay contract yet.
 - `status` stays `planned_disabled`.
 - `release_channel` stays `staged`.
 - `public_cta` stays `false`.
-- `entry.action_id` stays `mode_disabled:towerdefense`.
+- No player-facing entry is exposed; `entry.action_id=mode_disabled:towerdefense` remains internal/technical only.
 - `ruleset.status` stays `draft`.
 - `ownership.reward_bridge` stays `none`.
 
