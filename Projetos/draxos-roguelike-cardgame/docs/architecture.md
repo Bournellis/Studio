@@ -1,7 +1,7 @@
 # Architecture
 
 - Last Updated: `2026-06-03`
-- Status: `Track 02 foundation hardening 7 baseline`
+- Status: `Track 02 foundation hardening 8 baseline`
 
 ## Goal
 
@@ -109,7 +109,7 @@ Responsibilities:
 - visible enemy intent;
 - visual events and UI refresh.
 
-Foundation checkpoint: the public `BattleEngine` API remains stable while enemy commander turn resolution delegates to `battle/enemy_turn_director.gd`, enemy intent delegates to `battle/enemy_intent_director.gd`, and existing field-effect/encounter/boss hooks stay behavior-compatible behind the engine.
+Foundation checkpoint: the public `BattleEngine` API remains stable while enemy commander turn resolution delegates to `battle/enemy_turn_director.gd`, enemy intent delegates to `battle/enemy_intent_director.gd`, staged combat/manual attack/slot damage/hero damage/destruction queues delegate to `battle/combat_resolution_director.gd`, and existing field-effect/encounter/boss hooks stay behavior-compatible behind the engine.
 
 ### `Data`
 
@@ -155,7 +155,7 @@ Responsibilities:
 - run GUT;
 - report playtest readiness and known non-fatal art alpha debts.
 
-Expected baseline after 2026-06-03 hardening 7: GUT 103/103 with 1271 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
+Expected baseline after 2026-06-03 hardening 8: GUT 105/105 with 1279 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
 
 ### `Run Lab`
 

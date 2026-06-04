@@ -164,3 +164,13 @@ Each entry should include:
 - screenshots: not required; this pass did not change visual construction/layout.
 - blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
 - next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: BattleEngine Core Directors.
+
+### 2026-06-03 - Foundation Hardening 8
+
+- prompt id: `FOUNDATION-HARDENING-8`
+- summary: Extracted staged combat, manual attack resolution, slot damage, hero damage, and damaged-slot destruction queue handling from `BattleEngine` into `battle/combat_resolution_director.gd`, while keeping all existing `BattleEngine` wrappers and public/private call sites compatible.
+- changed files: `battle/battle_engine.gd`, `battle/combat_resolution_director.gd`, `tests/unit/test_battle_core.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 105/105 GUT tests and 1279 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
+- screenshots: not required; this pass did not change visual construction/layout.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: continue BattleEngine directors only if needed, with field effects and boss hooks as separate small extractions.
