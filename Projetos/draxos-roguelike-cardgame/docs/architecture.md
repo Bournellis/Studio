@@ -1,13 +1,13 @@
 # Architecture
 
-- Last Updated: `2026-05-28`
-- Status: `Track 02 foundation hardening 6 baseline`
+- Last Updated: `2026-06-03`
+- Status: `Track 02 foundation hardening 7 baseline`
 
 ## Goal
 
 Keep roguelike run rules, card battle rules, data, validation, and presentation separated so the project can iterate without inheriting RPG Turnos, RPG Isometrico, or DraxosMobile systems by accident.
 
-The JSON Track 02 catalog is the authored source of truth for current content. Generated `.tres` resources must be deterministic and idempotent.
+The JSON Track 02 catalog is the authored source of truth for current content. Generated `.tres` resources must be deterministic and idempotent. `tools/catalog_source_loader.gd` now creates a domain seam for future composed sources while preserving the current single JSON semantics.
 
 ## Runtime Areas
 
@@ -125,7 +125,7 @@ Responsibilities:
 - run map nodes and declarations;
 - visual manifest references.
 
-`ContentGenerator.generate_all()` stores a stable semantic hash in `SliceCatalogResource.definition_hash` and skips saving `data/generated/slice_catalog.tres` when the JSON definition has not changed semantically.
+`ContentGenerator.generate_all()` loads definitions through `tools/catalog_source_loader.gd`, stores a stable semantic hash in `SliceCatalogResource.definition_hash`, and skips saving `data/generated/slice_catalog.tres` when the authored definition has not changed semantically. The loader currently assembles domains from `slice_catalog.json` and `visual_assets.json` without splitting source files; cards, enemies, classes, rewards, relics, encounters, run map, keywords and visuals are exposed as future split domains.
 
 ### `UI`
 
@@ -155,7 +155,7 @@ Responsibilities:
 - run GUT;
 - report playtest readiness and known non-fatal art alpha debts.
 
-Expected baseline after 2026-05-28 hardening 6: GUT 102/102 with 1252 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
+Expected baseline after 2026-06-03 hardening 7: GUT 103/103 with 1271 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
 
 ### `Run Lab`
 

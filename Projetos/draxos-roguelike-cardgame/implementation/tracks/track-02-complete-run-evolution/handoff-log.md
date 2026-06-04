@@ -1,6 +1,6 @@
 # Track 02 Handoff Log
 
-- Last Updated: `2026-05-28`
+- Last Updated: `2026-06-03`
 - Status: `READY_FOR_THREAD_HANDOFFS`
 
 ## Protocol
@@ -154,3 +154,13 @@ Each entry should include:
 - screenshots: not required; this pass extracted pure presentation helpers and did not change visual construction/layout.
 - blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
 - next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: Catalog Foundation.
+
+### 2026-06-03 - Foundation Hardening 7
+
+- prompt id: `FOUNDATION-HARDENING-7`
+- summary: Added `tools/catalog_source_loader.gd` as the catalog composition seam, routing `ContentGenerator` through it while keeping the current single `slice_catalog.json` source of truth. The loader exposes future domains for cards, enemies, classes, rewards, relics, encounters, run map, keywords and visuals, and GUT covers semantic equivalence with the existing JSON.
+- changed files: `tools/catalog_source_loader.gd`, `tools/content_generator.gd`, `tests/unit/test_data_contract.gd`, docs/status snapshots, and coordination note.
+- validation result: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed with 103/103 GUT tests and 1271 asserts. Shared full-route pacing smoke completed 29/29 maps with 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`.
+- screenshots: not required; this pass did not change visual construction/layout.
+- blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
+- next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: BattleEngine Core Directors.

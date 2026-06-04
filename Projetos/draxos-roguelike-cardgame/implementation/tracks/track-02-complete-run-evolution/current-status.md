@@ -1,10 +1,10 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-05-28`
+- Last Updated: `2026-06-03`
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `Foundation hardening 6 validation green: 102/102 GUT tests, 1252 asserts, shared full-route pacing smoke green, Run Lab golden comparison green`
+- Validation Baseline: `Foundation hardening 7 validation green: 103/103 GUT tests, 1271 asserts, shared full-route pacing smoke green, Run Lab golden comparison green`
 
 ## Purpose
 
@@ -87,6 +87,7 @@ Next implementation prompt: none. Track 02 is ready for user playtest.
 - Foundation hardening 4 added `tools/run_lab_golden_metrics.gd` and optional Run Lab golden comparison, with Arcano seed `20260518` exact metrics protected and Invocador/Necromante completion/no-death contracts checked.
 - Foundation hardening 5 extracted Souls shop offer generation, purchases, rerolls, max-HP buys, cost helpers, and `shop_state` sync into `core/run_shop_service.gd` while preserving `RunSession` wrappers, snapshot v5 payloads, and golden pacing metrics.
 - Foundation hardening 6 extracted BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters while preserving scene composition, layout, drag/drop, UI node names, route behavior, and golden pacing metrics.
+- Foundation hardening 7 added `tools/catalog_source_loader.gd` as a composition seam for future catalog domain splits while preserving the current single `slice_catalog.json` source, generated `.tres` semantics, route behavior, and golden pacing metrics.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
 - Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.

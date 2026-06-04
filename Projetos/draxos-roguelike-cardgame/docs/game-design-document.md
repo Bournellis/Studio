@@ -1,6 +1,6 @@
 # Game Design Document
 
-- Last Updated: `2026-05-28`
+- Last Updated: `2026-06-03`
 - Status: `Track 02 complete-run baseline`
 
 ## Direction
@@ -103,14 +103,15 @@ O objetivo do intent nao e ser uma IA final perfeita; e tornar previsivel o bast
 
 ## Validation Baseline
 
-Baseline em 2026-05-28:
+Baseline em 2026-06-03:
 
-- GUT: 102/102.
-- Test scripts: 7 modular suites, 1252 asserts.
+- GUT: 103/103.
+- Test scripts: 7 modular suites, 1271 asserts.
 - Full-route pacing smoke: 29/29 mapas.
 - Telemetria: 217 turnos estimados, 116 HP loss estimado, 0 mortes, 362 Souls earned, 291 Souls spent, 71 Souls left, deck final de 38 cartas, 6 reliquias, 21 acoes de loja.
 - `route_pacing_simulator.gd` e fonte compartilhada para validacao e Run Lab.
 - `run_lab_golden_metrics.gd` protege a regressao Track 02: Arcano seed `20260518` usa comparacao exata e Invocador/Necromante precisam completar `29/29` sem morte.
+- `catalog_source_loader.gd` monta hoje o catalogo a partir do JSON unico e preserva um seam de dominios para futura divisao sem mudar semantica.
 
 ## Historical Material
 
