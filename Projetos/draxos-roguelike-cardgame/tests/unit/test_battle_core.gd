@@ -1,5 +1,7 @@
 ﻿extends "res://tests/unit/draxos_test_base.gd"
 
+const CombatResolutionDirector = preload("res://battle/combat_resolution_director.gd")
+
 func test_battle_engine_draws_to_dynamic_hand_limit() -> void:
 	var engine: BattleEngine = BattleEngine.new()
 	engine.start_battle(ContentLibrary.get_catalog(), ["arcano_choque", "arcano_fagulha", "arcano_barreira", "arcano_tempestade", "arcano_choque"], {
@@ -104,6 +106,29 @@ func test_summon_on_occupied_slot_requires_confirmation_without_spending() -> vo
 	assert_eq(str(Dictionary(engine.player_slots[0]).get("card_id", "")), "invocador_batedor")
 	assert_lt(engine.mana, before_mana)
 
+func test_combat_resolution_director_matches_battle_engine_wrappers() -> void:
+	var wrapper_engine: BattleEngine = _combat_resolution_engine()
+	var direct_engine: BattleEngine = _combat_resolution_engine()
+	var wrapper_attack_target: Dictionary = {"owner": BattleEngine.ENEMY_ID, "slot": 0}
+	var direct_attack_target: Dictionary = {"owner": BattleEngine.ENEMY_ID, "slot": 0}
+	wrapper_engine._resolve_attack(BattleEngine.PLAYER_ID, 0, wrapper_attack_target)
+	CombatResolutionDirector.resolve_attack(direct_engine, BattleEngine.PLAYER_ID, 0, direct_attack_target)
+	assert_eq(wrapper_engine.enemy_slots, direct_engine.enemy_slots)
+	assert_eq(wrapper_engine.player_slots, direct_engine.player_slots)
+	assert_eq(wrapper_engine.discard, direct_engine.discard)
+	assert_eq(wrapper_engine.dead_unit_count, direct_engine.dead_unit_count)
+	assert_eq(wrapper_engine.log_lines, direct_engine.log_lines)
+
+func test_combat_resolution_director_preserves_damage_result_schema() -> void:
+	var wrapper_engine: BattleEngine = _combat_resolution_engine()
+	var direct_engine: BattleEngine = _combat_resolution_engine()
+	var context: Dictionary = {"source_kind": "combat", "source_owner": BattleEngine.PLAYER_ID, "source_slot": 0}
+	var wrapper_result: Dictionary = wrapper_engine._deal_slot_damage(BattleEngine.ENEMY_ID, 0, 2, context)
+	var direct_result: Dictionary = CombatResolutionDirector.deal_slot_damage(direct_engine, BattleEngine.ENEMY_ID, 0, 2, context)
+	assert_eq(wrapper_result, direct_result)
+	assert_eq(wrapper_engine.enemy_slots, direct_engine.enemy_slots)
+	assert_eq(wrapper_engine.player_slots, direct_engine.player_slots)
+
 func test_summon_cannot_replace_defense_objective() -> void:
 	var engine: BattleEngine = BattleEngine.new()
 	engine.start_battle(ContentLibrary.get_catalog(), ["invocador_soldado"], {
@@ -147,6 +172,30 @@ func test_combat_fx_state_removes_dead_slot_only_on_damage_event() -> void:
 	assert_null(Array(battle.combat_fx_state.get("enemy_slots", []))[0])
 	battle.queue_free()
 	await get_tree().process_frame
+
+func _combat_resolution_engine() -> BattleEngine:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), [], {
+		"encounter": {
+			"id": "test_combat_resolution_director",
+			"display_name": "Teste Diretor Combate",
+			"mode": BattleEngine.MODE_DUEL,
+			"enemy_health": 20,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": []
+		},
+		"mana_per_turn": 0,
+		"max_hand_size": 0,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	engine.player_slots[0] = engine._build_occupant(_keyword_card("combat_source", 2, 4, []), BattleEngine.PLAYER_ID, true)
+	engine.enemy_slots[0] = engine._build_occupant(_keyword_card("combat_target", 1, 5, []), BattleEngine.ENEMY_ID, true)
+	engine.outcome = ""
+	engine.current_phase = BattleEngine.PHASE_MAIN
+	engine.log_lines = []
+	return engine
 
 func test_creature_moves_to_adjacent_empty_slot_once_per_turn() -> void:
 	var engine: BattleEngine = BattleEngine.new()
