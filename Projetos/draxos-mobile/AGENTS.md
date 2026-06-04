@@ -8,17 +8,17 @@ This file is the fast entrypoint for agents working in `Projetos/draxos-mobile`.
 
 - Project: `DraxosMobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active operational stage: `First Access Runtime Publication`
+- Active operational stage: `Bosque Mecanico Basico v2 Publication`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
-- Latest remote Internal Alpha package: `First Access Runtime Fix`,
-  release root `internal-alpha/v0-first-access-runtime-20260602-4608977`,
+- Latest remote Internal Alpha package: `Bosque Mecanico Basico v2`,
+  release root `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`,
   official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`,
   direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`,
-  deployment evidence `https://36db2742.draxos-mobile-internal-alpha.pages.dev`.
+  deployment evidence `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`.
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety` delivered on `2026-05-28`; compatibility marker: Track 13 validation/release safety.
 - Agent baseline: `Track 14 - Agent Operations Foundation` is the current operations/docs foundation; compatibility marker: `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting`, technical context and not the current product focus. Current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`.
-- Immediate product gate: First Access Runtime Fix is the latest remote Internal Alpha publication for human playtest. Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline. Track 21 remains the preserved Autobattler/Arena PVE context: Arena PVE first, PVP later, no combat cooldown, locked loadout on start, temporary stat buffs, HP reset per duel, live-stock potion consumption in Arena, summary-only claim, public buff select endpoint, data-driven Arena list, Season 1 tier matrix, tutorial XP -> level recalculation, direct start into active Arena and continue-in-Arena summary flow.
+- Immediate product gate: Bosque Mecanico Basico v2 is the latest remote Internal Alpha publication for human playtest: free entry/exit, non-blocking guidance, collect/deposit/craft, `Voltar`, `Encerrar visita`, guidance persistence and `fogueira_estavel_1`. Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline. Track 21 remains the preserved Autobattler/Arena PVE context: Arena PVE first, PVP later, no combat cooldown, locked loadout on start, temporary stat buffs, HP reset per duel, live-stock potion consumption in Arena, summary-only claim, public buff select endpoint, data-driven Arena list, Season 1 tier matrix, tutorial XP -> level recalculation, direct start into active Arena and continue-in-Arena summary flow.
 - Previous hardening guard baseline: Foundation Hardening V2, release root `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, preview evidence `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 
 DraxosMobile is now a PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. The real product direction is base builder + Arena PVE + later PVP/social, with room for future minigames and seasons. Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
@@ -126,4 +126,4 @@ For user-approved product packages that require human testing on Android, Window
 
 ## Current Handoff
 
-First Access Runtime Fix is the latest remote Internal Alpha publication on `codex/draxos-mobile/first-access-runtime`. New DraxosMobile agents should branch from updated `master`, use a dedicated worktree and follow `docs/multi-agent-workflow.md`. Latest remote preview evidence: `https://36db2742.draxos-mobile-internal-alpha.pages.dev`; release root: `internal-alpha/v0-first-access-runtime-20260602-4608977`. Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, preview evidence `https://ca946749.draxos-mobile-internal-alpha.pages.dev`. Track 21 remains the preserved Arena PVE/Autobattler context. Do not change gameplay tuning, Supabase APIs, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.
+Bosque Mecanico Basico v2 is the latest remote Internal Alpha publication on `codex/draxos-mobile/bosque-v2-guidance`. New DraxosMobile agents should branch from updated `master`, use a dedicated worktree and follow `docs/multi-agent-workflow.md`. Latest remote preview evidence: `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`; release root: `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`. Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, preview evidence `https://ca946749.draxos-mobile-internal-alpha.pages.dev`. Track 21 remains the preserved Arena PVE/Autobattler context. Do not change gameplay tuning, Supabase APIs, economy, content, weapons, spells, potions, crafting, advanced behavior, final visuals or authoritative flows without an explicit package decision.

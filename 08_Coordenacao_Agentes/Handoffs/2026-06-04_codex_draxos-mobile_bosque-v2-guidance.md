@@ -5,10 +5,26 @@
 - Branch: `codex/draxos-mobile/bosque-v2-guidance`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--bosque-v2-guidance`
 - Base branch: `master`
-- Remote mutation: not executed
-- Remote publication: not executed
-- Status: local integration package implemented and validated, with one
-  out-of-scope `ServerQuick` Arena contract failure noted below.
+- Remote mutation: executed with explicit user approval.
+- Remote publication: published to official Internal Alpha URL.
+- Status: Bosque Mecanico Basico v2 implemented, published and remotely
+  validated; one out-of-scope local `ServerQuick` Arena contract failure remains
+  noted below.
+
+## Published Package
+
+- Release root: `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`
+- Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
+- Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Cloudflare deployment evidence:
+  `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981/downloads/draxos-mobile-alpha.apk`
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981/downloads/draxos-mobile-alpha.zip`
+- Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
+- Preview Web smoke screenshot:
+  `Projetos/draxos-mobile/build/diagnostics/web-launch-remote-20260604-194152/web-launch-remote.png`
 
 ## Commits
 
@@ -16,7 +32,8 @@
 - `8af97b7 Implement Bosque v2 guidance and campfire client`
 - `8b2aa61 Document Bosque v2 openworld scaffold`
 - `f01461e Persist openworld guidance state`
-- Final status/handoff commit: see branch HEAD after this file is committed.
+- `7c2d981 Record Bosque v2 local validation status`
+- Final publication/status commit: see branch HEAD after this file is committed.
 
 ## Scope Delivered
 
@@ -48,6 +65,22 @@ Passed:
 - `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`
 - `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile ModePlatform`
 - `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_openworld_forest.gd`
+- `supabase db push --linked --yes`: applied
+  `202606040001_openworld_guidance_persistence_v1.sql`.
+- `supabase functions deploy modes --project-ref armxgipvnbbshzqawklw`
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passed with
+  Android export mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan`, `Package`, `Upload` and
+  `DeployManifest`: passed, with `-ConfirmRemoteMutation` for mutating stages.
+- `build_cloudflare_pages_package.ps1`: passed.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name
+  draxos-mobile-internal-alpha --branch main`: passed; preview
+  `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot
+  internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981 -RemoteWebUrl
+  https://ae049df9.draxos-mobile-internal-alpha.pages.dev/web/index.html
+  -AllowCloudflareAccess`: passed. Preview Web smoke loaded the game in
+  `3699 ms`; production fixed domain returned Cloudflare Access as expected.
 
 Partial:
 
@@ -61,7 +94,7 @@ Partial:
 
 ## Next Recommended Step
 
-Human playtest of the local branch:
+Human playtest of the published package:
 
 - first visit shows guidance and does not block movement;
 - collect/deposit/craft remain free-form;

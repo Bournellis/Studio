@@ -2,8 +2,8 @@
 
 DraxosMobile is the Godot/Supabase project for Android, PC executable and PC browser. It is now a PVE Arena-first async autobattler with Refugio/Base management, later PVP, social systems and server-authoritative progression.
 
-**Status:** `P2_IMPLEMENTACAO - FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`
-**Baseline:** Foundation Hardening V2 is the latest remote Internal Alpha multi-mode expansion enforcement baseline: release root `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`. Track 13 release safety and Track 14 agent ops remain preserved baselines. Track 16 is technical behavior/potion/crafting context. Track 18 Arena PVE Initial, Track 20 Season 1 Arena Calibration, Track 21 Arena Loop Unlock/Friction and Remote Lab Runner remain preserved Arena/Autobattler/Lab context, not the current platform baseline.
+**Status:** `P2_IMPLEMENTACAO - BOSQUE_MECANICO_BASICO_V2_PUBLISHED_INTERNAL_ALPHA`
+**Baseline:** Bosque Mecanico Basico v2 is the latest remote Internal Alpha package: release root `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`, preview `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/` and direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`. Foundation Hardening V2 remains the previous multi-mode expansion enforcement baseline. Track 13 release safety and Track 14 agent ops remain preserved baselines. Track 16 is technical behavior/potion/crafting context. Track 18 Arena PVE Initial, Track 20 Season 1 Arena Calibration, Track 21 Arena Loop Unlock/Friction and Remote Lab Runner remain preserved Arena/Autobattler/Lab context, not the current platform baseline.
 
 ## Current Focus
 
@@ -13,7 +13,7 @@ The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foun
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Final Polish, Track 18 PVE Arena Initial, Track 19 Arena Consistency Pass, Track 20 Season 1 Arena Calibration, Lab Web Export Guard, Remote Lab Runner, Track 21 Arena Loop Unlock/Friction and Hardening Platform V1 are preserved in the Internal Alpha lineage. Foundation Hardening V2 is the current published Internal Alpha baseline for new work.
+Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Final Polish, Track 18 PVE Arena Initial, Track 19 Arena Consistency Pass, Track 20 Season 1 Arena Calibration, Lab Web Export Guard, Remote Lab Runner, Track 21 Arena Loop Unlock/Friction, Hardening Platform V1, Foundation Hardening V2 and First Access Runtime Fix are preserved in the Internal Alpha lineage. Bosque Mecanico Basico v2 is the current published Internal Alpha package for human playtest.
 
 Foundation Hardening V2 makes strict expansion gates, mode decision packs, backend boundary inventory, read-only ops, Android release signing, V2 schema enforcement and remote publication evidence the current baseline before new mode work. Hardening Platform V1 remains the previous multi-agent/mode platform baseline. Track 21 Arena Loop Unlock/Friction remains the Arena/Autobattler context for tutorial of 1 duel, first arenas of 3 duels, locked loadout context, temporary stat buffs, HP reset per duel, no combat cooldown, live-stock potion consumption in Arena, summary-only claim, public buff select endpoint, data-driven Arena selection, XP -> level recalculation on completion and direct continue-in-Arena flow. Remote Lab Runner remains preserved for Battle Lab Dev and Progression Lab Dev in Web export through Edge `lab-runner` with the same Supabase email/password Internal Alpha account gate.
 
@@ -104,8 +104,13 @@ git status --short
 - Version code: `1`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
+- Current release verified preview: `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`
+- Current release root: `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`
+- Current APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981/downloads/draxos-mobile-alpha.apk`
+- Current PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981/downloads/draxos-mobile-alpha.zip`
+- V2 compatibility guard: Foundation Hardening V2 is the latest remote Internal Alpha baseline for hardening/live-doc gates.
 - Latest verified preview: `https://ca946749.draxos-mobile-internal-alpha.pages.dev`
 - Latest release root: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`
 - Latest APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4/downloads/draxos-mobile-alpha.apk`
 - Latest PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4/downloads/draxos-mobile-alpha.zip`
-- Known release risk: Android APK in hotfix2 uses `debug_fallback` because the release keystore was unavailable in this correction worktree; configure or reuse the release keystore before broader Android distribution.
+- Known release risk: Android APK uses `debug_fallback`; configure or reuse the release keystore before broader Android distribution.

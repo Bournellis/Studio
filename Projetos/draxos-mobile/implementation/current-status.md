@@ -4,28 +4,29 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `First Access Runtime Publication`
+- Active stage: `Bosque Mecanico Basico v2 Publication`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `First Access Runtime Fix`, release root
-  `internal-alpha/v0-first-access-runtime-20260602-4608977`,
+- Latest published remote package: `Bosque Mecanico Basico v2`, release root
+  `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`,
   official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`,
   direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`,
   latest deployment evidence
-  `https://36db2742.draxos-mobile-internal-alpha.pages.dev`. This package keeps
-  the integrated runtime fix baseline and adds first-access responsiveness:
-  surfaces render local shells before network refresh when no cache exists, Arena
-  first access shows a server-sync shell without dev fallback actions, and local
-  DatabaseLocal/Mode smoke coverage now matches the active Bosque v1 contract.
-- Latest implemented local package: `Bosque Mecanico Basico v2` on branch
-  `codex/draxos-mobile/bosque-v2-guidance`; it turns Bosque into a free,
-  relaxing collect/deposit/craft/build minigame with optional six-step guidance,
-  server-persisted guidance state in the normal save, fixed resource slack and
-  the first procedural build visual (`fogueira_estavel_1`). This package is
-  local only and has not been published.
+  `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`. This package turns
+  Bosque into a free, relaxing collect/deposit/craft/build minigame with optional
+  six-step guidance, server-persisted guidance state in the normal save, fixed
+  resource slack and the first procedural build visual (`fogueira_estavel_1`).
+- Previous remote package: `First Access Runtime Fix`, release root
+  `internal-alpha/v0-first-access-runtime-20260602-4608977`,
+  deployment evidence `https://36db2742.draxos-mobile-internal-alpha.pages.dev`;
+  it keeps the integrated runtime fix baseline and adds first-access
+  responsiveness: surfaces render local shells before network refresh when no
+  cache exists, Arena first access shows a server-sync shell without dev fallback
+  actions, and local DatabaseLocal/Mode smoke coverage matches the active Bosque
+  v1 contract.
 - Previous implemented local package: `Openworld Sync Stability` on branch
   `codex/draxos-mobile/openworld-sync-stability`; it fixes Bosque event ACK
   rollback by applying authoritative event patches instead of hydrating full
@@ -50,17 +51,16 @@
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Validation baseline marker: the latest published remote package is now the
-  first access runtime fix package; `Foundation Hardening V2` remains the previous
-  hardening/live-doc guard marker.
+  Bosque Mecanico Basico v2 package; `Foundation Hardening V2` remains the
+  previous hardening/live-doc guard marker.
 - Compatibility validation marker: Latest published remote package: `Foundation Hardening V2`
   remains as legacy guard text for Track 13/V2 docs validation; actual latest
-  published remote package is the first access runtime fix release above.
-- Active follow-up: human review/playtest of the local Bosque Mecanico Basico v2
-  branch, focused on free entry/exit, non-blocking guidance, collect/deposit,
-  craft, `Voltar` preserving the visit, `Encerrar visita` summary, guidance
-  persistence and the visual/collision behavior of `fogueira_estavel_1`. Latest
-  published remote package remains the first access runtime fix until a separate
-  publication is explicitly approved.
+  published remote package is the Bosque v2 release above.
+- Active follow-up: human review/playtest of the published Bosque Mecanico Basico
+  v2 package on the official Internal Alpha URL, focused on free entry/exit,
+  non-blocking guidance, collect/deposit, craft, `Voltar` preserving the visit,
+  `Encerrar visita` summary, guidance persistence and the visual/collision
+  behavior of `fogueira_estavel_1`.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -68,10 +68,10 @@
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
-## Bosque Mecanico Basico v2 - 2026-06-04
+## Bosque Mecanico Basico v2 Publication - 2026-06-04
 
-This local package implements the current Bosque direction as an internal alpha
-mechanical slice. It removes the idea of a mandatory session objective from the
+This published Internal Alpha package implements the current Bosque direction as
+a mechanical slice. It removes the idea of a mandatory session objective from the
 contract and keeps the player free to enter, leave, collect, deposit, craft or
 ignore everything without punishment.
 
@@ -81,12 +81,27 @@ ignore everything without punishment.
   - `8af97b7 Implement Bosque v2 guidance and campfire client`;
   - `8b2aa61 Document Bosque v2 openworld scaffold`;
   - `f01461e Persist openworld guidance state`;
+  - `7c2d981 Record Bosque v2 local validation status`;
 - worktree:
   `D:\Estudio-worktrees\draxos-mobile--codex--bosque-v2-guidance`;
-- remote publication: not executed;
-- remote mutation: not executed;
-- latest published remote package remains
-  `internal-alpha/v0-first-access-runtime-20260602-4608977`.
+- release root:
+  `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`;
+- Cloudflare production:
+  `https://draxos-mobile-internal-alpha.pages.dev`;
+- Cloudflare deployment evidence:
+  `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`;
+- Official Portal / manifest `portal_url`:
+  `https://draxos-mobile-internal-alpha.pages.dev/`;
+- Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`;
+- preview Web launch smoke screenshot:
+  `build/diagnostics/web-launch-remote-20260604-194152/web-launch-remote.png`.
 
 Scope delivered:
 
@@ -124,6 +139,23 @@ Validation:
   `server/tests/arena_loop_unlock_friction_test.ts` expecting
   `Proximo desafio\n`; Openworld/mode server contracts in the same run passed,
   including guidance update validation and migration mirror checks.
+- `supabase db push --linked --yes`: passed; applied
+  `202606040001_openworld_guidance_persistence_v1.sql`.
+- `supabase functions deploy modes --project-ref armxgipvnbbshzqawklw`: passed.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passed; Android
+  export mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan`, `Package`, `Upload` and
+  `DeployManifest`: passed with `-ConfirmRemoteMutation` for mutating stages.
+- `build_cloudflare_pages_package.ps1`: passed and matched the versioned Storage
+  Web asset root.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name
+  draxos-mobile-internal-alpha --branch main`: passed; preview evidence
+  `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly
+  -ExpectedReleaseRoot internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981
+  -RemoteWebUrl https://ae049df9.draxos-mobile-internal-alpha.pages.dev/web/index.html
+  -AllowCloudflareAccess`: passed; preview Web smoke loaded the game in 3699 ms
+  and the production fixed domain returned Cloudflare Access as expected.
 
 ## Openworld Sync Stability - 2026-06-03
 
