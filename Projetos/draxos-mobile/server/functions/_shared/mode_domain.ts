@@ -233,11 +233,16 @@ export function modeEventAckPayload(value: unknown): Record<string, unknown> {
   const session = objectValue(payload.session);
   const snapshot = objectValue(session.snapshot_payload);
   const snapshotPatch = openworldEventSnapshotPatch(snapshot);
+  const sanitizedSession = {
+    ...session,
+    snapshot_payload: openworldEventAckSnapshot(snapshot),
+  };
   return {
     ...payload,
     ok: true,
     type: "mode_event_ack",
     schema_version: MODE_PLATFORM_SCHEMA_VERSION,
+    session: sanitizedSession,
     mode_id: stringValue(session.mode_id, OPENWORLD_MODE_ID),
     slice_id: stringValue(session.slice_id, OPENWORLD_SLICE_ID),
     session_id: stringValue(session.id, ""),
@@ -406,6 +411,13 @@ function openworldEventSnapshotPatch(snapshot: Record<string, unknown>): Record<
       result[field] = snapshot[field];
     }
   }
+  return result;
+}
+
+function openworldEventAckSnapshot(snapshot: Record<string, unknown>): Record<string, unknown> {
+  const result = { ...snapshot };
+  delete result.player_position;
+  delete result.active_collection;
   return result;
 }
 
