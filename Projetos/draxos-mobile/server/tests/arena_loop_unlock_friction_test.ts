@@ -124,7 +124,7 @@ Deno.test("client Arena loop removes loadout click and continues inside Arena", 
   assertNotIncludes(lifecycle, "_refresh_arena_selection");
   assertIncludes(lifecycle, "SupabaseClient.fetch_arena_state");
   assertIncludes(presenter, '"Continuar na Arena"');
-  assertIncludes(presenter, "Proximo desafio\\n");
+  assertIncludes(presenter, '"Proximo desafio"');
   assertNotIncludes(presenter, '"Confirmar resumo"');
 });
 
