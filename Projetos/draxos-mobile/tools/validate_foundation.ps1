@@ -662,7 +662,7 @@ function Assert-StructuralReadiness {
         "tools\smoke_foundation_hardening.gd",
         "tools\smoke_responsive_layout.gd",
         "tools\smoke_exports.gd",
-        "tools\smoke_mode_hub.gd",
+        "tools\smoke_bosque_entry.gd",
         "tools\smoke_openworld_forest.gd",
         "tools\smoke_modes_visual_layout.gd",
         "tools\smoke_modes_ops_panel.gd",
@@ -1137,7 +1137,7 @@ if ($RunModePlatform) {
         Assert-FileExists -Path $GodotExe -Label "Godot executable"
     }
     foreach ($smoke in @(
-        "smoke_mode_hub.gd",
+        "smoke_bosque_entry.gd",
         "smoke_openworld_forest.gd",
         "smoke_modes_visual_layout.gd",
         "smoke_modes_ops_panel.gd"

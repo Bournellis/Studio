@@ -2,8 +2,6 @@ class_name BootHubSurfaceRefugePopupPresenter
 extends "res://modes/boot/surfaces/hub_surface_common_presenter.gd"
 
 const BaseSurfacePresenterScript := preload("res://modes/boot/surfaces/base_surface_presenter.gd")
-const ModeHubSurfacePresenterScript := preload("res://modes/boot/surfaces/mode_hub_surface_presenter.gd")
-const PreparationPresenterScript := preload("res://modes/boot/surfaces/hub_surface_preparation_presenter.gd")
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 
 static func create_refuge_menu_popup(host: Node, root: Control, compact: bool) -> Dictionary:
@@ -111,18 +109,9 @@ static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxConta
 			body.add_child(_popup_action_button(host, popup, "Pedir batalha legada", AppShellActionContractScript.ACTION_REQUEST_BATTLE, "", true))
 			body.add_child(_popup_action_button(host, popup, "Historico", AppShellActionContractScript.ACTION_SHOW_BATTLE_HISTORY))
 			body.add_child(_popup_action_button(host, popup, "Ver resultado", AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE))
-		"preparation":
-			body.add_child(_popup_hint("Revise o que Draxos leva para a proxima Arena.", compact))
-			if SessionStore.combat_build_snapshot().is_empty():
-				body.add_child(_popup_action_button(host, popup, "Atualizar preparacao", AppShellActionContractScript.ACTION_SHOW_PREPARATION, "", true))
-			else:
-				body.add_child(PreparationPresenterScript.preparation_panel(host, compact))
 		"refuge":
-			body.add_child(_popup_hint("Coleta, energia, estruturas e upgrades do Refugio.", compact))
+			body.add_child(_popup_hint("Estruturas, crafting, producao pendente e upgrades do Refugio.", compact))
 			BaseSurfacePresenterScript.render_refuge_embedded(host, body)
-		"modes":
-			body.add_child(_popup_hint("Cinco modos oficiais do DraxosMobile. Ativos abrem jogo; staged mostram o contrato sem prometer data.", compact))
-			ModeHubSurfacePresenterScript.add_popup_cards(host, popup, body, compact)
 		"social":
 			body.add_child(_popup_hint("Amigos, guilda e chat em um painel leve.", compact))
 			body.add_child(_popup_action_button(host, popup, "Abrir Social", AppShellActionContractScript.ACTION_SHOW_SOCIAL, "", true))
@@ -142,12 +131,6 @@ static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxConta
 		"dev":
 			body.add_child(_popup_hint("Ferramentas internas para validar batalha e progressao do prototipo.", compact))
 			_add_dev_tool_actions(host, popup, body, true)
-		"collect":
-			body.add_child(_popup_hint("Receber a producao acumulada do Refugio.", compact))
-			body.add_child(_popup_action_button(host, popup, "Coletar agora", AppShellActionContractScript.ACTION_COLLECT_BASE, "", true))
-		"energy":
-			body.add_child(_popup_hint("Comprar pacote de Energia no save ativo.", compact))
-			body.add_child(_popup_action_button(host, popup, "Comprar Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?", true))
 		_:
 			body.add_child(_popup_hint("Menu indisponivel.", compact))
 
@@ -157,12 +140,8 @@ static func _menu_title(menu_id: String) -> String:
 			return "Arena PVE"
 		"battle":
 			return "Batalha Legada"
-		"preparation":
-			return "Preparacao"
 		"refuge":
 			return "Refugio"
-		"modes":
-			return "Modes"
 		"social":
 			return "Social"
 		"competition":
@@ -173,10 +152,6 @@ static func _menu_title(menu_id: String) -> String:
 			return "Perfil"
 		"dev":
 			return "Labs Dev"
-		"collect":
-			return "Coletar"
-		"energy":
-			return "Energia"
 	return "Menu"
 
 static func _add_dev_tool_actions(host: Node, popup: PopupPanel, body: VBoxContainer, primary: bool = false) -> void:
@@ -188,5 +163,3 @@ static func _add_dev_tool_actions(host: Node, popup: PopupPanel, body: VBoxConta
 		body.add_child(_popup_action_button(host, popup, "Batalha legada", AppShellActionContractScript.ACTION_REQUEST_BATTLE))
 		body.add_child(_popup_action_button(host, popup, "Competicao dev", AppShellActionContractScript.ACTION_SHOW_MATCHMAKING))
 		body.add_child(_popup_route_button(host, popup, "Modes Ops", "modes_ops"))
-	if bool(host.call("_openworld_mode_available")):
-		body.add_child(_popup_action_button(host, popup, "Openworld Bosque", AppShellActionContractScript.open_mode_shell_action("openworld"), "", primary))

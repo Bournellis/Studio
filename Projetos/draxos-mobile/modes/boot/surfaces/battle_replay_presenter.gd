@@ -536,8 +536,8 @@ static func _summary_next_step_text(rewards: Dictionary, battle_log: Dictionary 
 			return "Proximo passo: continuar na Arena, ou sair para usar %s no Refugio. Nao ha cooldown de combate." % reward_text
 		return "Proximo passo: continuar a tentativa para buscar o clear, ou voltar ao Refugio para revisar loadout e base."
 	if reward_text != "":
-		return "Use %s no Refugio: colete, evolua a base quando houver Energia e peca outra batalha." % reward_text
-	return "Volte ao Refugio para conferir coleta, evolucao e preparacao antes da proxima batalha."
+		return "Use %s no Refugio: acompanhe producao, evolua a base quando houver Energia e peca outra batalha." % reward_text
+	return "Volte ao Refugio para conferir producao, evolucao e preparacao antes da proxima batalha."
 
 static func _is_arena_battle_log(battle_log: Dictionary) -> bool:
 	var metadata := _as_dictionary(battle_log.get("metadata", {}))

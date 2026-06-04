@@ -127,10 +127,6 @@ func _execute_action(action_id: String) -> void:
 				await _show_battle_history()
 			AppShellActionContractScript.ACTION_SHOW_BASE:
 				await _show_base()
-			AppShellActionContractScript.ACTION_COLLECT_BASE:
-				await _collect_base()
-			AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA:
-				await _buy_energy_pack_alpha()
 			AppShellActionContractScript.ACTION_UPGRADE_NUCLEO:
 				await _upgrade_base_structure(AppShellActionContractScript.STRUCTURE_NUCLEO_ENERGIA)
 			AppShellActionContractScript.ACTION_SHOW_CRAFTING:

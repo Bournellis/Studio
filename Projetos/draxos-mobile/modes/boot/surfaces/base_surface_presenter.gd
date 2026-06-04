@@ -7,11 +7,9 @@ const RESOURCE_KEYS := ["almas", "energia", "sangue", "cristais", "ossos", "po_o
 const BASE_STRUCTURE_IDS := ["altar_das_almas", "nucleo_energia", "pocos_sangue", "minas_cristal", "estrutura_stats", "ossario"]
 
 static func render(host: Node) -> void:
-	_add_body_text(host, "Colete producao, veja a fila e escolha o proximo upgrade.")
+	_add_body_text(host, "Acompanhe producao, veja a fila e escolha o proximo upgrade.")
 	_add_action_button(host, "Sincronizar Refugio", AppShellActionContractScript.ACTION_SHOW_BASE)
 	_add_action_button(host, "Abrir Crafting", AppShellActionContractScript.ACTION_SHOW_CRAFTING)
-	_add_action_button(host, "Coletar producao", AppShellActionContractScript.ACTION_COLLECT_BASE)
-	_add_action_button(host, "Comprar Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?")
 	var timeline := _add_output_label(host, "")
 	timeline.visible = false
 	host.set("_timeline_label", timeline)
@@ -62,9 +60,9 @@ static func render_state(host: Node, collected: Dictionary = {}) -> void:
 	lines.append("Recursos: %s" % _format_resources(resources))
 	if not collected.is_empty():
 		if _resource_total(collected) <= 0.0:
-			lines.append("Coleta: nada acumulado agora.")
+			lines.append("Producao: nada acumulado agora.")
 		else:
-			lines.append("Coletado: %s" % _format_resources(collected, false))
+			lines.append("Producao atualizada: %s" % _format_resources(collected, false))
 
 	var structures := _as_array(base.get("structures", []))
 	if structures.is_empty():
@@ -169,14 +167,6 @@ static func _refuge_empty_panel(host: Node) -> Control:
 	panel.add_child(box)
 	box.add_child(_base_label(host, "Altar do Refugio", "text_primary", 18))
 	box.add_child(_base_label(host, _empty_refuge_body_text(), "text_secondary"))
-	var actions := GridContainer.new()
-	actions.columns = _refuge_action_columns(host)
-	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	actions.add_theme_constant_override("h_separation", 8)
-	actions.add_theme_constant_override("v_separation", 8)
-	box.add_child(actions)
-	actions.add_child(_embedded_action_button(host, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE))
-	actions.add_child(_embedded_action_button(host, "Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
 	return panel
 
 static func _crafting_panel(host: Node) -> Control:
@@ -223,18 +213,10 @@ static func _refuge_command_panel(host: Node, base: Dictionary, collected: Dicti
 	status_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	status_box.add_theme_constant_override("separation", 3)
 	box.add_child(status_box)
-	_add_refuge_status_line(host, status_box, "Coleta", _refuge_collect_status(routine, collected), "status_success" if bool(routine.get("has_collect_ready", false)) else "text_secondary")
+	_add_refuge_status_line(host, status_box, "Producao", _refuge_collect_status(routine, collected), "status_success" if bool(routine.get("has_collect_ready", false)) else "text_secondary")
 	_add_refuge_status_line(host, status_box, "Fila", _refuge_queue_status(routine), "status_success" if int(routine.get("free_slots", 0)) > 0 else "status_warning")
 	_add_refuge_status_line(host, status_box, "Proximo", _refuge_upgrade_status(routine), "status_success" if bool(routine.get("next_upgrade_ready", false)) else "text_secondary")
 
-	var actions := GridContainer.new()
-	actions.columns = _refuge_action_columns(host)
-	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	actions.add_theme_constant_override("h_separation", 8)
-	actions.add_theme_constant_override("v_separation", 8)
-	box.add_child(actions)
-	actions.add_child(_embedded_action_button(host, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE))
-	actions.add_child(_embedded_action_button(host, "Energia", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, "Gastar 80 Diamantes para comprar 80 Energia no save ativo?"))
 	return panel
 
 static func _add_refuge_status_line(host: Node, box: VBoxContainer, title: String, value: String, value_color: String) -> void:
@@ -244,9 +226,9 @@ static func _add_refuge_status_line(host: Node, box: VBoxContainer, title: Strin
 
 static func _refuge_collect_status(routine: Dictionary, collected: Dictionary) -> String:
 	if bool(routine.get("has_collect_ready", false)):
-		return _strip_routine_prefix(str(routine.get("collect_text", "")), "Coleta pronta: ")
+		return _strip_routine_prefix(str(routine.get("collect_text", "")), "Producao pendente: ")
 	if _resource_total(collected) > 0.0:
-		return "Coletado: %s" % _format_nonzero_resources(collected)
+		return "Atualizada: %s" % _format_nonzero_resources(collected)
 	return "Nada agora"
 
 static func _refuge_queue_status(routine: Dictionary) -> String:
@@ -265,7 +247,7 @@ static func _base_summary_panel(host: Node, base: Dictionary, collected: Diction
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
-	box.add_child(_base_label(host, "Coleta e fila", "text_primary", 17))
+	box.add_child(_base_label(host, "Producao e fila", "text_primary", 17))
 	box.add_child(_base_label(host, "Recursos: %s" % _format_short_resources(SessionStore.resources_snapshot(), 3), "text_secondary"))
 	var active_jobs := _active_base_jobs(_as_array(base.get("jobs", [])))
 	box.add_child(_base_label(host, "Fila de construcao: %d/%d" % [
@@ -273,9 +255,9 @@ static func _base_summary_panel(host: Node, base: Dictionary, collected: Diction
 		int(base.get("construction_slots", 1)),
 	], "text_secondary"))
 	if not collected.is_empty():
-		var collect_text := "Coleta: nada acumulado agora."
+		var collect_text := "Producao: nada acumulado agora."
 		if _resource_total(collected) > 0.0:
-			collect_text = "Coletado agora: %s" % _format_resources(collected, false)
+			collect_text = "Producao atualizada: %s" % _format_resources(collected, false)
 		box.add_child(_base_label(host, collect_text, "status_success"))
 	if SessionStore.is_progression_lab_active():
 		box.add_child(_base_label(host, "Lab: Refugio separado do save normal.", "status_warning"))
@@ -416,7 +398,7 @@ static func _empty_refuge_timeline_text() -> String:
 
 static func _empty_refuge_body_text() -> String:
 	if SessionStore.has_valid_access_token():
-		return "Sincronizando predios, coleta e fila."
+		return "Sincronizando predios, producao e fila."
 	if SessionStore.is_progression_lab_local_only():
 		return "Carregue os dados do Lab."
 	return "Entre ou use Guest dev para sincronizar."
@@ -556,7 +538,7 @@ static func _base_benefit_text(structure: Dictionary) -> String:
 static func _base_pending_text(structure: Dictionary) -> String:
 	var produces := str(structure.get("produces", ""))
 	if produces == "" or produces == "<null>":
-		return "Este predio nao gera coleta direta."
+		return "Este predio nao gera recurso direto."
 	return "%s %s de %s" % [
 		_format_number(float(structure.get("pending_collectable", 0.0))),
 		produces.capitalize(),
@@ -626,10 +608,10 @@ static func _collect_ready_resources(structures: Array) -> Dictionary:
 
 static func _routine_collect_text(collect_ready: Dictionary, collected: Dictionary) -> String:
 	if not collect_ready.is_empty():
-		return "Coleta pronta: %s." % _format_nonzero_resources(collect_ready)
+		return "Producao pendente: %s." % _format_nonzero_resources(collect_ready)
 	if _resource_total(collected) > 0.0:
-		return "Coleta pronta: coletado agora %s." % _format_nonzero_resources(collected)
-	return "Coleta pronta: nada acumulado agora."
+		return "Producao pendente: atualizada agora %s." % _format_nonzero_resources(collected)
+	return "Producao pendente: nada acumulado agora."
 
 static func _routine_job_lines(active_jobs: Array) -> Array:
 	var lines: Array = []
@@ -752,8 +734,8 @@ static func _format_short_resources(resources: Dictionary, max_items: int = 3, i
 static func _routine_collect_display_text(routine: Dictionary) -> String:
 	var collect_ready := _as_dictionary(routine.get("collect_ready", {}))
 	if collect_ready.is_empty():
-		return "Coleta pronta: nada agora."
-	return "Coleta pronta: %s." % _format_short_resources(collect_ready, 3, false)
+		return "Producao pendente: nada agora."
+	return "Producao pendente: %s." % _format_short_resources(collect_ready, 3, false)
 
 static func _routine_upgrade_display_text(routine: Dictionary) -> String:
 	var next_upgrade_id := str(routine.get("next_upgrade_id", ""))

@@ -8,7 +8,6 @@ const AppShellErrorContractScript = preload("res://modes/boot/ui/app_shell_error
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
 const HubSurfacePresenterScript = preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
-const ModeHubSurfacePresenterScript = preload("res://modes/boot/surfaces/mode_hub_surface_presenter.gd")
 const ProgressionClarityPresenterScript = preload("res://modes/boot/surfaces/progression_clarity_presenter.gd")
 const SurfaceActionFlowScript = preload("res://modes/boot/flows/surface_action_flow.gd")
 const ModeShellLauncherScript = preload("res://modes/boot/ui/mode_shell_launcher.gd")
@@ -319,17 +318,13 @@ func test_boot_refugio_home_renders_clean_scene_hotspots_and_account_route() -> 
 	assert_null(_find_button_by_text(boot._first_screen_root, "Base"))
 	assert_false(boot._action_buttons.has("show_base"))
 	assert_null(_find_button_by_text(boot._first_screen_root, "Atualizar Refugio"))
-	assert_not_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Coletar"))
 
 	for spec: Dictionary in [
 		{"prefix": "AR", "title": "Arena PVE"},
-		{"prefix": "PP", "title": "Preparacao"},
+		{"prefix": "BQ", "title": "Bosque"},
 		{"prefix": "RF", "title": "Refugio"},
 		{"prefix": "SO", "title": "Social"},
-		{"prefix": "MD", "title": "Modos"},
 		{"prefix": "LJ", "title": "Loja"},
-		{"prefix": "CL", "title": "Coletar"},
-		{"prefix": "EN", "title": "Energia"},
 	]:
 		var hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_%s" % str(spec.get("title", ""))) as Button
 		assert_not_null(hotspot, "Refugio should expose icon '%s'." % str(spec.get("title", "")))
@@ -340,6 +335,10 @@ func test_boot_refugio_home_renders_clean_scene_hotspots_and_account_route() -> 
 		assert_true(hotspot.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Batalha"))
 	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Competicao"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Preparacao"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Modos"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Coletar"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Energia"))
 
 	var arena_hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Arena PVE") as Button
 	arena_hotspot.pressed.emit()
@@ -349,8 +348,19 @@ func test_boot_refugio_home_renders_clean_scene_hotspots_and_account_route() -> 
 	assert_true(menu_popup.visible)
 	assert_true(_label_tree_contains(menu_popup, "Arena PVE"))
 	assert_not_null(_find_button_by_text(menu_popup, "Abrir Arena PVE"))
+	assert_null(_find_button_by_text(menu_popup, "Preparacao"))
 	boot._go_back()
 	assert_false(menu_popup.visible)
+
+	var bosque_hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Bosque") as Button
+	assert_not_null(bosque_hotspot)
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.open_mode_shell_action("openworld")))
+	bosque_hotspot.pressed.emit()
+	await get_tree().process_frame
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+	assert_eq(str(boot.get("_active_mode_id")), "openworld")
+	boot._return_to_refuge()
+	await get_tree().process_frame
 
 	var account_hotspot := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Perfil") as Button
 	account_hotspot.pressed.emit()
@@ -447,17 +457,15 @@ func test_refuge_context_cta_priority_uses_loaded_state() -> void:
 	SessionStore.base_state = _base_state_fixture()
 	SessionStore.mark_battle_result_seen()
 	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
-	assert_eq(str(cta.get("action_id", "")), "collect_base")
-	assert_eq(str(cta.get("text", "")), "Coletar")
-	assert_eq(str(cta.get("confirm", "")), "")
+	assert_eq(str(cta.get("action_id", "")), "upgrade_base_structure:nucleo_energia")
+	assert_eq(str(cta.get("text", "")), "Evoluir")
 
 	SessionStore.last_battle_log = {}
 	SessionStore.last_battle_result_seen = false
 	SessionStore.base_state = _base_state_fixture()
 	cta = HubSurfacePresenterScript._refuge_context_cta_data(boot)
-	assert_eq(str(cta.get("action_id", "")), "collect_base")
-	assert_eq(str(cta.get("text", "")), "Coletar")
-	assert_eq(str(cta.get("confirm", "")), "")
+	assert_eq(str(cta.get("action_id", "")), "upgrade_base_structure:nucleo_energia")
+	assert_eq(str(cta.get("text", "")), "Evoluir")
 
 	var upgrade_only := _base_state_fixture()
 	var structures := Array(upgrade_only.get("structures", []))
@@ -668,7 +676,10 @@ func test_arena_selection_recommends_next_uncompleted_arena_after_tutorial() -> 
 
 	var next_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta", "s1_d00_intro")
 	assert_true(boot._action_buttons.has(next_action))
-	assert_not_null(_find_button_by_text(boot._content_body, "Comecar"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Iniciar Arena PVE"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaPreparationPanel"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Carregar Preparacao"))
+	assert_true(_child_index_by_name(boot._content_body, "ArenaPreparationPanel") > _child_index_by_name(boot._content_body, "ArenaRecommendedCard"))
 	assert_true(_label_tree_contains(boot._content_body, "Proximo desafio"))
 	assert_true(_label_tree_contains(boot._content_body, "Arena Curta Das Cinzas"))
 	assert_false(_visible_text_tree(boot._content_body).contains("s1_d00_intro"))
@@ -720,6 +731,21 @@ func test_arena_active_exposes_behavior_adjustment_without_unlocking_loadout() -
 	assert_false(_visible_text_tree(boot._content_body).contains("Hash:"))
 	assert_false(_visible_text_tree(boot._content_body).contains("sha256"))
 	assert_not_null(_find_button_by_text(boot._content_body, "Ocultar detalhes do loadout"))
+
+	assert_true(_apply_preparation_instrument_fixture("varinha_cinzas"))
+	boot.set_meta("arena_active_preparation_open", true)
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, false)
+	await get_tree().process_frame
+
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaActivePreparationPanel"))
+	assert_true(_label_tree_contains(boot._content_body, "Comportamento da tentativa"))
+	assert_true(_label_tree_contains(boot._content_body, "Loadout travado para esta tentativa."))
+	assert_null(_find_button_by_text(boot._content_body, "Ajustar comportamento"))
+	assert_null(_find_button_by_text(boot._content_body, "Equipar Pocao de Vida"))
+	assert_null(_find_button_by_text(boot._content_body, "Remover pocao"))
+	assert_null(_find_button_by_text(boot._content_body, "Remover"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Usar com vida baixa"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Pausar pocao"))
 
 func test_arena_buff_choice_renders_comparable_cards_with_existing_actions() -> void:
 	var boot = BootScreenScript.new()
@@ -1019,7 +1045,7 @@ func test_boot_surface_presenters_render_shells_without_network() -> void:
 
 	boot._show_screen("base")
 	assert_true(boot._action_buttons.has("show_base"))
-	assert_true(boot._action_buttons.has("collect_base"))
+	assert_false(boot._action_buttons.has("collect_base"))
 	assert_not_null(boot._base_state_container)
 	await get_tree().process_frame
 
@@ -1109,32 +1135,7 @@ func test_battle_request_pending_state_uses_static_splash_only() -> void:
 	assert_not_null(boot._battle_visual)
 	assert_true(boot._action_buttons.has("request_battle"))
 
-func test_mode_hub_route_preserves_active_and_staged_actions() -> void:
-	var boot = BootScreenScript.new()
-	add_child_autofree(boot)
-
-	boot._show_screen("mode_hub")
-	await get_tree().process_frame
-
-	assert_eq(boot._current_screen, "mode_hub")
-	assert_true(_label_tree_contains(boot._content_body, "Hub interno dos cinco modos oficiais"))
-	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_SHOW_BASE))
-	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_OPEN_ARENA))
-	assert_true(boot._action_buttons.has(AppShellActionContractScript.open_mode_shell_action("openworld")))
-	var tower_action := AppShellActionContractScript.mode_disabled_action("towerdefense")
-	var card_action := AppShellActionContractScript.mode_disabled_action("cardgame")
-	assert_true(boot._action_buttons.has(tower_action))
-	assert_true(boot._action_buttons.has(card_action))
-	var tower_button := boot._action_buttons[tower_action] as Button
-	var card_button := boot._action_buttons[card_action] as Button
-	assert_not_null(tower_button)
-	assert_not_null(card_button)
-	assert_true(tower_button.disabled)
-	assert_true(card_button.disabled)
-	assert_true(bool(tower_button.get_meta("force_disabled", false)))
-	assert_string_contains(tower_button.tooltip_text, "staged/disabled")
-
-func test_refuge_mode_popup_preserves_mode_cards_and_disabled_launches() -> void:
+func test_bosque_direct_entry_opens_openworld_without_player_facing_modes_route() -> void:
 	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)
 	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
 	var boot = BootScreenScript.new()
@@ -1142,23 +1143,42 @@ func test_refuge_mode_popup_preserves_mode_cards_and_disabled_launches() -> void
 
 	boot._show_screen("refuge")
 	await get_tree().process_frame
-	assert_true(HubSurfacePresenterScript.open_refuge_menu_popup(boot, "modes"))
+
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Modos"))
+	assert_null(_find_button_by_text(boot._first_screen_root, "Openworld"))
+	assert_null(_find_button_by_text(boot._first_screen_root, "Openworld Bosque"))
+	var bosque_icon := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Bosque") as Button
+	assert_not_null(bosque_icon)
+	assert_eq(str(bosque_icon.text), "Bosque")
+	assert_true(bosque_icon.custom_minimum_size.y >= MobileUiContractScript.MIN_TOUCH_TARGET)
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.open_mode_shell_action("openworld")))
+
+	bosque_icon.pressed.emit()
+	await get_tree().process_frame
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+	assert_eq(str(boot.get("_active_mode_id")), "openworld")
+	assert_false(_label_tree_contains(boot._content_body, "Hub interno dos cinco modos oficiais"))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.mode_disabled_action("towerdefense")))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.mode_disabled_action("cardgame")))
+
+func test_refuge_no_longer_exposes_modes_popup_cards() -> void:
+	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("refuge")
 	await get_tree().process_frame
 
-	var popup: PopupPanel = boot._refuge_menu_popup
-	assert_not_null(popup)
-	assert_not_null(_find_node_by_name(popup, "ModeCard_basebuilder"))
-	assert_not_null(_find_node_by_name(popup, "ModeCard_autobattler"))
-	assert_not_null(_find_node_by_name(popup, "ModeCard_openworld"))
-	assert_not_null(_find_node_by_name(popup, "ModeCard_towerdefense"))
-	assert_not_null(_find_node_by_name(popup, "ModeCard_cardgame"))
-	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_SHOW_BASE))
-	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_OPEN_ARENA))
+	assert_null(_find_node_by_name(boot._first_screen_root, "RefugeIcon_Modos"))
+	assert_null(_find_button_by_text(boot._first_screen_root, "Modos"))
+	assert_null(_find_button_by_text(boot._first_screen_root, "Openworld Bosque"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "ModeCard_basebuilder"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "ModeCard_autobattler"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "ModeCard_openworld"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "ModeCard_towerdefense"))
+	assert_null(_find_node_by_name(boot._first_screen_root, "ModeCard_cardgame"))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.open_mode_shell_action("openworld")))
-	var staged := _find_button_by_text(popup, "Staged")
-	assert_not_null(staged)
-	assert_true(staged.disabled)
-	assert_true(bool(staged.get_meta("force_disabled", false)))
 
 func test_boot_surface_presenters_keep_render_only_contract() -> void:
 	assert_false(FileAccess.file_exists("res://modes/boot/surfaces/battle_surface_presenter.gd"))
@@ -1213,8 +1233,9 @@ func test_boot_decomposition_keeps_shell_budget_and_boundaries() -> void:
 	assert_true(boot_source.contains("surface_action_flow.gd"))
 	assert_true(boot_source.contains("battle_lifecycle_flow.gd"))
 	assert_true(boot_source.contains("surface_ui_helpers.gd"))
-	assert_true(runtime_hot_source.contains("mode_hub_surface_presenter.gd"))
 	assert_true(runtime_hot_source.contains("mode_shell_launcher.gd"))
+	assert_false(runtime_hot_source.contains("mode_hub_surface_presenter.gd"))
+	assert_false(boot_source.contains("\"mode_hub\""))
 	assert_false(runtime_hot_source.contains("func _render_mode_content_body"))
 	assert_false(runtime_hot_source.contains("func _render_mode_fullscreen"))
 	assert_false(boot_source.contains("SupabaseClient.fetch_base_state"))
@@ -1380,46 +1401,42 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	boot._show_screen("refuge")
 	await get_tree().process_frame
 
-	var prep_icon := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Preparacao") as Button
-	assert_not_null(prep_icon)
-	prep_icon.pressed.emit()
-	await get_tree().process_frame
-	var popup := boot.get("_refuge_menu_popup") as PopupPanel
-	assert_not_null(popup)
-	assert_true(_label_tree_contains(popup, "Pronto para Arena"))
-	assert_true(_label_tree_contains(popup, "Primeira sessao: confira instrumento, habilidades e pocao antes da Arena."))
-	assert_true(_label_tree_contains(popup, "Poder 243"))
-	assert_true(_label_tree_contains(popup, "Loadout atual:"))
-	assert_true(_label_tree_contains(popup, "Pocao e comportamento: Pocao de Vida equipada | Usa automaticamente com vida baixa"))
-	assert_true(_label_tree_contains(popup, "Editar loadout e comportamento"))
-	assert_true(_label_tree_contains(popup, "Ajuste instrumento, habilidades, Doutrina, Familiar, Pocao e preferencias simples."))
-	assert_true(_label_tree_contains(popup, "Instrumento: Varinha de Cinzas"))
-	assert_true(_label_tree_contains(popup, "Habilidades: 1 habilidade"))
-	assert_true(_label_tree_contains(popup, "Doutrina: Doutrina do Pavor"))
-	assert_true(_label_tree_contains(popup, "Familiar: Corvo de Pressagio"))
-	assert_true(_label_tree_contains(popup, "Pocao: Pocao de Vida equipada"))
-	assert_true(_label_tree_contains(popup, "Proximos marcos"))
-	assert_true(_label_tree_contains(popup, "Nivel 10: doutrina de combate."))
-	assert_true(_label_tree_contains(popup, "Em uso: Varinha de Cinzas L4"))
-	assert_true(_label_tree_contains(popup, "Athame Hematico: Disponivel"))
-	assert_true(_label_tree_contains(popup, "Pocao de Vida equipada"))
-	assert_true(_label_tree_contains(popup, "Estoque: 3"))
-	assert_true(_label_tree_contains(popup, "Usa automaticamente com vida baixa"))
-	assert_true(_label_tree_contains(popup, "Habilidade 1: Sussurro do Medo | Usa quando estiver pronta"))
-	assert_true(_label_tree_contains(popup, "Habilidade 2: vazia."))
-	assert_true(_label_tree_contains(popup, "Habilidade 3: desbloqueia no nivel 25."))
-	assert_true(_label_tree_contains(popup, "Mandato Oculto: Desbloqueia no nivel 25."))
-	assert_true(_label_tree_contains(popup, "Pacto Familiar: Disponivel"))
-	assert_true(_label_tree_contains(popup, "Gato Tumular: Disponivel"))
-	assert_true(_label_tree_contains(popup, "Lobo Tumular: Desbloqueia no nivel 15."))
-	assert_not_null(_find_button_by_text(popup, "Abrir Arena PVE"))
-	assert_not_null(_find_button_by_text(popup, "Equipar Pocao de Vida"))
-	assert_not_null(_find_button_by_text(popup, "Remover pocao"))
-	assert_not_null(_find_button_by_text(popup, "Usar com vida baixa"))
-	assert_not_null(_find_button_by_text(popup, "Pausar pocao"))
-	assert_not_null(_find_button_by_text(popup, "Usar na Arena"))
-	assert_not_null(_find_button_by_text(popup, "Pausar"))
-	var visible_text := _visible_text_tree(popup).to_lower()
+	var content := await _render_preparation_in_arena_selection(boot)
+	assert_not_null(content)
+	assert_true(_label_tree_contains(content, "Preparacao da Arena"))
+	assert_true(_label_tree_contains(content, "Primeira sessao: confira instrumento, habilidades e pocao antes da Arena."))
+	assert_true(_label_tree_contains(content, "Poder 243"))
+	assert_true(_label_tree_contains(content, "Loadout atual:"))
+	assert_true(_label_tree_contains(content, "Pocao e comportamento: Pocao de Vida equipada | Usa automaticamente com vida baixa"))
+	assert_true(_label_tree_contains(content, "Editar loadout e comportamento"))
+	assert_true(_label_tree_contains(content, "Ajuste instrumento, habilidades, Doutrina, Familiar, Pocao e preferencias simples."))
+	assert_true(_label_tree_contains(content, "Instrumento: Varinha de Cinzas"))
+	assert_true(_label_tree_contains(content, "Habilidades: 1 habilidade"))
+	assert_true(_label_tree_contains(content, "Doutrina: Doutrina do Pavor"))
+	assert_true(_label_tree_contains(content, "Familiar: Corvo de Pressagio"))
+	assert_true(_label_tree_contains(content, "Pocao: Pocao de Vida equipada"))
+	assert_true(_label_tree_contains(content, "Proximos marcos"))
+	assert_true(_label_tree_contains(content, "Nivel 10: doutrina de combate."))
+	assert_true(_label_tree_contains(content, "Em uso: Varinha de Cinzas L4"))
+	assert_true(_label_tree_contains(content, "Athame Hematico: Disponivel"))
+	assert_true(_label_tree_contains(content, "Pocao de Vida equipada"))
+	assert_true(_label_tree_contains(content, "Estoque: 3"))
+	assert_true(_label_tree_contains(content, "Usa automaticamente com vida baixa"))
+	assert_true(_label_tree_contains(content, "Habilidade 1: Sussurro do Medo | Usa quando estiver pronta"))
+	assert_true(_label_tree_contains(content, "Habilidade 2: vazia."))
+	assert_true(_label_tree_contains(content, "Habilidade 3: desbloqueia no nivel 25."))
+	assert_true(_label_tree_contains(content, "Mandato Oculto: Desbloqueia no nivel 25."))
+	assert_true(_label_tree_contains(content, "Pacto Familiar: Disponivel"))
+	assert_true(_label_tree_contains(content, "Gato Tumular: Disponivel"))
+	assert_true(_label_tree_contains(content, "Lobo Tumular: Desbloqueia no nivel 15."))
+	assert_not_null(_find_button_by_text(content, "Equipar Pocao de Vida"))
+	assert_not_null(_find_button_by_text(content, "Remover pocao"))
+	assert_not_null(_find_button_by_text(content, "Usar com vida baixa"))
+	assert_not_null(_find_button_by_text(content, "Pausar pocao"))
+	assert_not_null(_find_button_by_text(content, "Usar na Arena"))
+	assert_not_null(_find_button_by_text(content, "Pausar"))
+	assert_null(_find_button_by_text(content, "Abrir Arena PVE"))
+	var visible_text := _visible_text_tree(content).to_lower()
 	for forbidden: String in ["behavior", "build", "slot", "endpoint", "server-authoritative", "schema", "snapshot"]:
 		assert_false(visible_text.contains(forbidden), "Preparation should hide technical term '%s'." % forbidden)
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION))
@@ -1482,24 +1499,19 @@ func test_refuge_preparation_popup_refreshes_after_equip_feedback() -> void:
 	boot._show_screen("refuge")
 	await get_tree().process_frame
 
-	var prep_icon := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Preparacao") as Button
-	assert_not_null(prep_icon)
-	prep_icon.pressed.emit()
-	await get_tree().process_frame
-	var popup := boot.get("_refuge_menu_popup") as PopupPanel
-	assert_not_null(popup)
-	assert_true(popup.visible)
-	assert_true(_label_tree_contains(popup, "Em uso: Varinha de Cinzas L4"))
+	var content := await _render_preparation_in_arena_selection(boot)
+	assert_not_null(content)
+	assert_true(_label_tree_contains(content, "Em uso: Varinha de Cinzas L4"))
 
 	assert_true(_apply_preparation_instrument_fixture("athame_hematico"))
 	boot.set_meta("preparation_feedback_message", "Instrumento Ritual equipado.")
-	assert_true(HubSurfacePresenterScript.refresh_open_refuge_menu_popup(boot))
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
 	await get_tree().process_frame
+	content = boot._content_body
 
-	assert_true(popup.visible)
-	assert_true(_label_tree_contains(popup, "Ultima escolha: Instrumento Ritual equipado."))
-	assert_true(_label_tree_contains(popup, "Em uso: Athame Hematico L4"))
-	assert_true(_label_tree_contains(popup, "Varinha de Cinzas: Disponivel"))
+	assert_true(_label_tree_contains(content, "Ultima escolha: Instrumento Ritual equipado."))
+	assert_true(_label_tree_contains(content, "Em uso: Athame Hematico L4"))
+	assert_true(_label_tree_contains(content, "Varinha de Cinzas: Disponivel"))
 
 func test_refuge_preparation_renders_empty_and_paused_states_without_network() -> void:
 	var boot = BootScreenScript.new()
@@ -1527,16 +1539,12 @@ func test_refuge_preparation_renders_empty_and_paused_states_without_network() -
 	boot._show_screen("refuge")
 	await get_tree().process_frame
 
-	var prep_icon := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Preparacao") as Button
-	assert_not_null(prep_icon)
-	prep_icon.pressed.emit()
-	await get_tree().process_frame
-	var popup := boot.get("_refuge_menu_popup") as PopupPanel
-	assert_not_null(popup)
-	assert_true(_label_tree_contains(popup, "Em uso: Orbe da Tempestade"))
-	assert_true(_label_tree_contains(popup, "Nenhuma pocao equipada"))
-	assert_true(_label_tree_contains(popup, "Estoque: 0"))
-	assert_true(_label_tree_contains(popup, "Nenhuma habilidade equipada."))
+	var content := await _render_preparation_in_arena_selection(boot)
+	assert_not_null(content)
+	assert_true(_label_tree_contains(content, "Em uso: Orbe da Tempestade"))
+	assert_true(_label_tree_contains(content, "Nenhuma pocao equipada"))
+	assert_true(_label_tree_contains(content, "Estoque: 0"))
+	assert_true(_label_tree_contains(content, "Nenhuma habilidade equipada."))
 
 func test_refuge_preparation_renders_paused_potion_and_spell_publicly() -> void:
 	var boot = BootScreenScript.new()
@@ -1578,21 +1586,17 @@ func test_refuge_preparation_renders_paused_potion_and_spell_publicly() -> void:
 	boot._show_screen("refuge")
 	await get_tree().process_frame
 
-	var prep_icon := _find_node_by_name(boot._first_screen_root, "RefugeIcon_Preparacao") as Button
-	assert_not_null(prep_icon)
-	prep_icon.pressed.emit()
-	await get_tree().process_frame
-	var popup := boot.get("_refuge_menu_popup") as PopupPanel
-	assert_not_null(popup)
-	assert_true(_label_tree_contains(popup, "Pocao pausada"))
-	assert_true(_label_tree_contains(popup, "Habilidade 1: Incisao Ritual | Pausada para Arena"))
-	assert_true(_label_tree_contains(popup, "Corvo de Pressagio L2"))
-	assert_true(_label_tree_contains(popup, "Pacto Familiar L3"))
+	var content := await _render_preparation_in_arena_selection(boot)
+	assert_not_null(content)
+	assert_true(_label_tree_contains(content, "Pocao pausada"))
+	assert_true(_label_tree_contains(content, "Habilidade 1: Incisao Ritual | Pausada para Arena"))
+	assert_true(_label_tree_contains(content, "Corvo de Pressagio L2"))
+	assert_true(_label_tree_contains(content, "Pacto Familiar L3"))
 
 func test_base_routine_panel_derives_objective_from_existing_payload() -> void:
 	var routine: Dictionary = BaseSurfacePresenterScript.routine_summary(_base_state_fixture())
 
-	assert_string_contains(str(routine.get("collect_text", "")), "Coleta pronta: Almas 4 | Energia 12.")
+	assert_string_contains(str(routine.get("collect_text", "")), "Producao pendente: Almas 4 | Energia 12.")
 	assert_eq(int(routine.get("active_job_count", 0)), 1)
 	assert_eq(int(routine.get("free_slots", -1)), 1)
 	assert_eq(str(routine.get("next_upgrade_id", "")), "nucleo_energia")
@@ -1609,7 +1613,8 @@ func test_base_routine_panel_derives_objective_from_existing_payload() -> void:
 	await get_tree().process_frame
 
 	assert_true(_label_tree_contains(boot._base_state_container, "Rotina do Refugio"))
-	assert_true(_label_tree_contains(boot._base_state_container, "Coleta pronta:"))
+	assert_true(_label_tree_contains(boot._base_state_container, "Producao"))
+	assert_false(_label_tree_contains(boot._base_state_container, "Coleta pronta:"))
 	assert_true(_label_tree_contains(boot._base_state_container, "Almas 4"))
 	assert_true(_label_tree_contains(boot._base_state_container, "Energia 12"))
 	assert_true(_label_tree_contains(boot._base_state_container, "Fila em andamento: 1 obra(s)."))
@@ -1628,14 +1633,20 @@ func test_shop_presenter_renders_loaded_state_and_disables_claimed_items() -> vo
 
 	assert_string_contains(boot._timeline_label.text, "Loja sincronizada")
 	assert_string_contains(boot._timeline_label.text, "Resgates hoje: 1/4")
+	assert_true(boot._action_buttons.has("shop_purchase:alpha_energy_pack_small"))
 	assert_true(boot._action_buttons.has("shop_purchase:alpha_battle_pass_premium"))
 	assert_true(boot._action_buttons.has("claim_reward:daily_collect_base"))
 	assert_not_null(boot._shop_state_container)
 	assert_true(_panel_tree_count(boot._shop_state_container) >= 4)
 	var pass_button := boot._action_buttons["shop_purchase:alpha_battle_pass_premium"] as Button
 	assert_true(pass_button.disabled)
+	var energy_button := boot._action_buttons["shop_purchase:alpha_energy_pack_small"] as Button
+	assert_not_null(energy_button)
+	assert_eq(str(energy_button.text), "Comprar Energia")
 	var reward_button := boot._action_buttons["claim_reward:daily_collect_base"] as Button
 	assert_true(reward_button.disabled)
+	assert_true(_label_tree_contains(boot._shop_state_container, "Recompensa diaria"))
+	assert_false(_label_tree_contains(boot._shop_state_container, "Coleta diaria"))
 
 func test_visual_direction_v1_applies_surface_accents_without_changing_controls() -> void:
 	var boot = BootScreenScript.new()
@@ -1982,7 +1993,7 @@ func test_boot_battle_summary_renders_reward_result_and_actions() -> void:
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Nivel 8 | Poder 120"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Esta batalha somou XP +10."))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "Nivel 10: doutrina de combate."))
-	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "colete, evolua a base"))
+	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "acompanhe producao, evolua a base"))
 	assert_true(_label_tree_contains(boot._battle_fullscreen_overlay, "verificar a base"))
 	assert_not_null(_find_button_by_text(boot._battle_fullscreen_overlay, "Voltar e verificar base"))
 	assert_true(boot._action_buttons.has("return_refuge"))
@@ -2126,6 +2137,25 @@ func _find_button_by_text(root: Node, text: String) -> Button:
 			return found
 	return null
 
+func _button_text_index(root: Node, text: String) -> int:
+	if root == null:
+		return -1
+	var buttons := root.find_children("*", "Button", true, false)
+	for index in range(buttons.size()):
+		var button := buttons[index] as Button
+		if button != null and str(button.text) == text:
+			return index
+	return -1
+
+func _render_preparation_in_arena_selection(boot: Node) -> Node:
+	assert_null(_find_node_by_name(boot.get("_first_screen_root") as Node, "RefugeIcon_Preparacao"))
+	boot.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	assert_eq(str(boot.get("_current_screen")), AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	assert_not_null(_find_node_by_name(boot.get("_content_body") as Node, "PreparationPanel"))
+	return boot.get("_content_body") as Node
+
 func _find_node_by_name(root: Node, node_name: String) -> Node:
 	if root == null:
 		return null
@@ -2208,7 +2238,6 @@ func _action_consumer_script_paths() -> PackedStringArray:
 		"res://modes/boot/surfaces/hub_account_surface_presenter.gd",
 		"res://modes/boot/surfaces/hub_surface_common_presenter.gd",
 		"res://modes/boot/surfaces/hub_surface_entry_presenter.gd",
-		"res://modes/boot/surfaces/mode_hub_surface_presenter.gd",
 		"res://modes/boot/surfaces/hub_surface_full_presenter.gd",
 		"res://modes/boot/surfaces/hub_surface_preparation_presenter.gd",
 		"res://modes/boot/surfaces/hub_surface_presenter.gd",
@@ -2251,8 +2280,6 @@ func _centralized_action_literals() -> PackedStringArray:
 		AppShellActionContractScript.ACTION_SHOW_CURRENT_BATTLE_LOGS,
 		AppShellActionContractScript.ACTION_RETURN_BATTLE_SUMMARY,
 		AppShellActionContractScript.ACTION_SHOW_BASE,
-		AppShellActionContractScript.ACTION_COLLECT_BASE,
-		AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA,
 		AppShellActionContractScript.ACTION_UPGRADE_NUCLEO,
 		AppShellActionContractScript.ACTION_SHOW_SOCIAL,
 		AppShellActionContractScript.ACTION_COPY_SOCIAL_USERNAME,
@@ -2500,7 +2527,7 @@ func _shop_state_fixture() -> Dictionary:
 		"daily_rewards": [
 			{
 				"id": "daily_collect_base",
-				"label": "Coleta diaria",
+				"label": "Recompensa diaria",
 				"xp": 20,
 				"claimed": true,
 				"resources": {"energia": 80},

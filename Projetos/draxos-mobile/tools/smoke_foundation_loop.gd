@@ -32,7 +32,7 @@ func _run_smoke() -> int:
 	_store.mark_battle_result_seen()
 	boot.call("_show_screen", "refuge", false)
 	await process_frame
-	_expect_cta(boot, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE)
+	_expect_cta(boot, "Evoluir", AppShellActionContractScript.upgrade_base_structure_action("nucleo_energia"))
 	_expect_clean_refuge_shell(boot)
 
 	_store.base_state = _base_state_without_collect()
@@ -57,7 +57,7 @@ func _run_smoke() -> int:
 	boot.call("_return_to_refuge")
 	await process_frame
 	_expect(_store.last_battle_result_seen, "return to Refugio marks reward as seen")
-	_expect_cta(boot, "Coletar", AppShellActionContractScript.ACTION_COLLECT_BASE)
+	_expect_cta(boot, "Evoluir", AppShellActionContractScript.upgrade_base_structure_action("nucleo_energia"))
 	_expect_clean_refuge_shell(boot)
 
 	boot.queue_free()

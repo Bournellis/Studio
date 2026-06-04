@@ -71,10 +71,11 @@ func _check_entry_dev_tools(viewport_size: Vector2i) -> void:
 	_expect(_find_button_by_text(boot, "Ferramentas internas") != null, "Entry exposes internal tools toggle at %s." % str(viewport_size))
 	_expect(_find_button_by_text(boot, "Battle Lab") != null, "Entry exposes Battle Lab at %s." % str(viewport_size))
 	_expect(_find_button_by_text(boot, "Progression Lab") != null, "Entry exposes Progression Lab at %s." % str(viewport_size))
-	_expect(_find_button_by_text(boot, "Openworld") != null, "Entry exposes Openworld at %s." % str(viewport_size))
+	_expect(_find_button_by_text(boot, "Openworld") == null, "Entry hides Openworld dev shortcut at %s." % str(viewport_size))
+	_expect(_find_button_by_text(boot, "Openworld Bosque") == null, "Entry hides Openworld Bosque dev shortcut at %s." % str(viewport_size))
 	_expect(Dictionary(boot.get("_action_buttons")).has("open_battle_lab"), "Entry registers Battle Lab action.")
 	_expect(Dictionary(boot.get("_action_buttons")).has("open_progression_lab"), "Entry registers Progression Lab action.")
-	_expect(Dictionary(boot.get("_action_buttons")).has("open_mode_shell:openworld"), "Entry registers Openworld action.")
+	_expect(not Dictionary(boot.get("_action_buttons")).has("open_mode_shell:openworld"), "Entry does not register Openworld dev shortcut.")
 	boot.queue_free()
 	await process_frame
 
@@ -99,11 +100,10 @@ func _check_refuge_layout(viewport_size: Vector2i) -> void:
 		"RefugeIcon_Perfil",
 		"RefugeIcon_LabsDev",
 		"RefugeIcon_Arena PVE",
+		"RefugeIcon_Bosque",
 		"RefugeIcon_Refugio",
 		"RefugeIcon_Social",
 		"RefugeIcon_Loja",
-		"RefugeIcon_Coletar",
-		"RefugeIcon_Energia",
 	]:
 		_expect_node_fits(boot, node_name, context)
 	_expect(_find_node_by_name(boot, "RefugeAltarStage") == null, "%s removes altar stage." % context)
@@ -113,15 +113,16 @@ func _check_refuge_layout(viewport_size: Vector2i) -> void:
 	_expect(_find_node_by_name(boot, "RefugeProgressionPanel") == null, "%s removes persistent progression panel." % context)
 	_expect(_find_node_by_name(boot, "RefugeIcon_Batalha") == null, "%s hides legacy battle shortcut." % context)
 	_expect(_find_node_by_name(boot, "RefugeIcon_Competicao") == null, "%s hides competition shortcut." % context)
+	_expect(_find_node_by_name(boot, "RefugeIcon_Preparacao") == null, "%s hides direct Preparation shortcut." % context)
+	_expect(_find_node_by_name(boot, "RefugeIcon_Modos") == null, "%s hides Mode Hub shortcut." % context)
+	_expect(_find_node_by_name(boot, "RefugeIcon_Coletar") == null, "%s hides collect shortcut." % context)
+	_expect(_find_node_by_name(boot, "RefugeIcon_Energia") == null, "%s hides energy shortcut." % context)
 	for spec: Dictionary in [
 		{"prefix": "AR", "title": "Arena PVE"},
-		{"prefix": "PP", "title": "Preparacao"},
+		{"prefix": "BQ", "title": "Bosque"},
 		{"prefix": "RF", "title": "Refugio"},
 		{"prefix": "SO", "title": "Social"},
-		{"prefix": "MD", "title": "Modos"},
 		{"prefix": "LJ", "title": "Loja"},
-		{"prefix": "CL", "title": "Coletar"},
-		{"prefix": "EN", "title": "Energia"},
 	]:
 		var icon := _find_node_by_name(boot, "RefugeIcon_%s" % str(spec.get("title", ""))) as Button
 		_expect(icon != null and str(icon.text) == str(spec.get("title", "")), "%s keeps '%s' label without sigla." % [context, str(spec.get("title", ""))])
@@ -247,7 +248,8 @@ func _check_arena_selection_layout(viewport_size: Vector2i) -> void:
 
 	var context := "Arena selection %s" % str(viewport_size)
 	_expect_app_shell_fits(boot, context)
-	_expect_button_fits(boot, "Comecar", context)
+	_expect_button_fits(boot, "Iniciar Arena PVE", context)
+	_expect_node_fits(boot, "ArenaPreparationPanel", context, false)
 	_expect(_find_button_by_text(boot, "Voltar ao Refugio") != null, "%s exposes return CTA." % context)
 	boot.queue_free()
 	await process_frame

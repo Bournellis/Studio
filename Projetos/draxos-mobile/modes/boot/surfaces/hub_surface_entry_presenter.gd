@@ -91,8 +91,6 @@ static func _entry_dev_panel(host: Node, compact: bool) -> PanelContainer:
 		grid.add_child(_entry_action_button(host, "Battle Lab", AppShellActionContractScript.ACTION_OPEN_BATTLE_LAB, compact))
 	if progression_lab:
 		grid.add_child(_entry_action_button(host, "Progression Lab", AppShellActionContractScript.ACTION_OPEN_PROGRESSION_LAB, compact))
-	if bool(host.call("_openworld_mode_available")):
-		grid.add_child(_entry_action_button(host, "Openworld", AppShellActionContractScript.open_mode_shell_action("openworld"), compact))
 	return panel
 
 static func _entry_reset_panel(host: Node, compact: bool) -> PanelContainer:

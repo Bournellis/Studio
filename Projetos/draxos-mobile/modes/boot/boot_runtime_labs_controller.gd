@@ -42,9 +42,7 @@ func _progression_lab_available() -> bool:
 		return false
 	return ResourceLoader.exists(PROGRESSION_LAB_SCREEN_PATH)
 
-func _openworld_mode_available() -> bool:
-	if not _internal_dev_tools_enabled():
-		return false
+func _bosque_mode_available() -> bool:
 	return ModeShellRegistryScript.is_available(ModeShellRegistryScript.MODE_OPENWORLD)
 
 func _internal_dev_tools_enabled() -> bool:
@@ -131,13 +129,6 @@ func _render_competition_screen() -> void:
 
 func _render_shop_screen() -> void:
 	ShopSurfacePresenterScript.render(self)
-
-func _render_mode_hub_screen() -> void:
-	ModeHubSurfacePresenterScript.render(self)
-	_emit_client_event("mode_hub_shown", {
-		"mode_count": ModeShellRegistryScript.registered_ids().size(),
-		"entry_surface": "refuge",
-	})
 
 func _render_modes_ops_screen() -> void:
 	_add_section_label("Labs Dev Ops")

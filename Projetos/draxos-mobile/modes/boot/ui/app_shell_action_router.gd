@@ -124,8 +124,6 @@ static func mutation_endpoint_for_action(action_id: String) -> String:
 		return "arena/pve/buff/select"
 	if action == AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY:
 		return "arena/pve/claim"
-	if action == AppShellActionContractScript.ACTION_COLLECT_BASE:
-		return "base/collect"
 	if action == AppShellActionContractScript.ACTION_UPGRADE_NUCLEO or AppShellActionContractScript.is_upgrade_base_structure(action):
 		return "base/upgrade"
 	if action == AppShellActionContractScript.ACTION_CRUSH_BONES:
@@ -148,7 +146,7 @@ static func mutation_endpoint_for_action(action_id: String) -> String:
 		return "social/guild/join"
 	if action == AppShellActionContractScript.ACTION_SEND_GUILD_CHAT:
 		return "social/chat/send"
-	if AppShellActionContractScript.is_shop_purchase(action) or action == AppShellActionContractScript.ACTION_BUY_PREMIUM_ALPHA or action == AppShellActionContractScript.ACTION_GRANT_DIAMOND_ALPHA or action == AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA:
+	if AppShellActionContractScript.is_shop_purchase(action) or action == AppShellActionContractScript.ACTION_BUY_PREMIUM_ALPHA or action == AppShellActionContractScript.ACTION_GRANT_DIAMOND_ALPHA:
 		return "monetization/alpha-purchase"
 	if AppShellActionContractScript.is_claim_reward(action) or action == AppShellActionContractScript.ACTION_CLAIM_DAILY_REWARD:
 		return "monetization/rewards/claim"
@@ -159,8 +157,6 @@ static func mutation_endpoint_for_action(action_id: String) -> String:
 static func _is_base_action(action_id: String) -> bool:
 	return action_id in [
 		AppShellActionContractScript.ACTION_SHOW_BASE,
-		AppShellActionContractScript.ACTION_COLLECT_BASE,
-		AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA,
 		AppShellActionContractScript.ACTION_UPGRADE_NUCLEO,
 		AppShellActionContractScript.ACTION_SHOW_CRAFTING,
 		AppShellActionContractScript.ACTION_CRUSH_BONES,

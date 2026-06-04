@@ -4,8 +4,8 @@ Render-only presenters for the Internal Alpha Boot hub.
 
 - `shell_surface_presenter.gd` owns app chrome rendering: background, header, nav, content stack, scroll body and confirmation dialog.
 - `hub_surface_presenter.gd` composes the Hub surface by delegating account/session sections.
-- `hub_account_surface_presenter.gd` owns login, quick test, active save, session status, update gate and screen links.
-- `mode_hub_surface_presenter.gd` owns Mode Hub cards and staged/disabled launch controls for the official modes.
+- `hub_account_surface_presenter.gd` owns login, quick test, active save, session status, update gate and direct screen/mode links, including Bosque via `open_mode_shell:openworld`.
+- The old player-facing mode hub surface is retired; the shell keeps mode descriptors/registry technical, but no Mode Hub route/menu/card surface is owned here.
 - `battle_replay_presenter.gd` owns Battle tab visual replay rendering and timeline updates while the simulator/reward flow stays in `boot.gd`.
 - `base_surface_presenter.gd`, `social_surface_presenter.gd`, `competition_surface_presenter.gd` and `shop_surface_presenter.gd` own render-only tab state, panels and controls.
 - `surface_ui_helpers.gd` is the shared presenter-facing helper facade for labels, panels, responsive layout, resource/cost formatting and small visual compositions that should not live in the app shell.

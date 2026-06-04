@@ -213,7 +213,9 @@ static func _popup_hint(text: String, compact: bool) -> Label:
 	return _body_label(text, compact)
 
 static func _refuge_has_dev_tools(host: Node) -> bool:
-	return bool(host.call("_battle_lab_available")) or bool(host.call("_progression_lab_available")) or bool(host.call("_openworld_mode_available"))
+	return bool(host.call("_battle_lab_available")) \
+		or bool(host.call("_progression_lab_available")) \
+		or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false))
 
 static func _add_texture_layer(parent: Control, texture_path: String, alpha: float) -> void:
 	if parent == null or not ResourceLoader.exists(texture_path):
