@@ -1,8 +1,10 @@
 # Track 00 Current Status
 
 - Last Updated: `2026-05-07`
-- Status: `COMPLETE_FIRST_PLAYABLE_CHECKPOINT`
+- Status: `HISTORICAL_COMPLETE_FIRST_PLAYABLE_CHECKPOINT`
 - Scope: `Create official project scaffold, local docs, validation, and first execution plan`
+
+Historical note: Track 00 is preserved as bootstrap history. It is not the live project status; use `../../current-status.md` and `../track-02-complete-run-evolution/current-status.md` for the current baseline.
 
 ## Completed
 

@@ -4,7 +4,7 @@
 - Status: `APPROVED_FOR_IMPLEMENTATION_PLANNING`
 - Project: `draxos-roguelike-cardgame`
 - Goal: `First complete 29-map version of the game`
-- Baseline Dependency: `Track 01 - Playable Run Loop`
+- Historical Baseline Dependency: `Track 01 - Playable Run Loop`
 
 ## Intent
 

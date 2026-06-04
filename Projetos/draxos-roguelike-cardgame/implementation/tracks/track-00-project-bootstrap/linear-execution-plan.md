@@ -1,10 +1,12 @@
 # Track 00 Linear Execution Plan
 
 - Last Updated: `2026-05-07`
-- Status: `COMPLETE`
+- Status: `HISTORICAL_COMPLETE`
 - Execution Owner: `Codex`
 - Scope: `Draxos Roguelike Cardgame project bootstrap`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
+
+Historical note: this plan records the bootstrap sequence only. It is not the active execution plan after Track 02 foundation closeout.
 
 ## Purpose
 
