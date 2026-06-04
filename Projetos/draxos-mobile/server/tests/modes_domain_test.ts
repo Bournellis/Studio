@@ -128,6 +128,8 @@ Deno.test("openworld mode event ACK exposes patch authority without visual rollb
     },
   });
   const patch = ack.snapshot_patch as Record<string, unknown>;
+  const ackSession = ack.session as Record<string, unknown>;
+  const ackSnapshot = ackSession.snapshot_payload as Record<string, unknown>;
   const visualAuthority = ack.visual_authority as Record<string, unknown>;
   assertEq(ack.type, "mode_event_ack", "event response should identify ACK semantics");
   assertEq(ack.revision_after, 4, "ACK should expose revision_after at top level");
@@ -138,6 +140,21 @@ Deno.test("openworld mode event ACK exposes patch authority without visual rollb
   );
   assertEq("player_position" in patch, false, "ACK patch must not carry player_position");
   assertEq("active_collection" in patch, false, "ACK patch must not clear active collection");
+  assertEq(
+    "player_position" in ackSnapshot,
+    false,
+    "ACK session snapshot must not carry player_position",
+  );
+  assertEq(
+    "active_collection" in ackSnapshot,
+    false,
+    "ACK session snapshot must not carry active_collection",
+  );
+  assertEq(
+    (ackSnapshot.pocket as Record<string, unknown>).galho,
+    1,
+    "ACK session snapshot should preserve authoritative non-visual state",
+  );
   assertEq(
     visualAuthority.player_position,
     "client_during_active_play",

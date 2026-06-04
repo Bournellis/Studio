@@ -198,6 +198,21 @@ Reward Bridge novo ou fronteira nova com Basebuilder precisa de pacote proprio.
 
 `GET /modes/state?mode_id=openworld` retorna `active_session` quando existe sessao `started` nao expirada, incluindo `snapshot_payload`, `snapshot_revision`, `expires_at` e `last_event_at`.
 
+Contrato de posicao e resync:
+
+- start e resume aplicam `player_position` persistida, pois representam entrada
+  ou retomada da sessao;
+- resync ativo da mesma sessao nao aplica `player_position`; o cliente preserva
+  a posicao local do jogador e aplica apenas snapshot autoritativo de inventario,
+  coleta, guidance e revisao;
+- se o resync retornar outra sessao ativa, o client trata como retomada e aplica
+  a posicao remota dessa sessao;
+- no SQL, somente `move_heartbeat` atualiza `player_position`; eventos de
+  coleta, deposito, craft e guidance preservam a posicao persistida;
+- ACK de evento e patch/sanitizado: `snapshot_patch` e
+  `session.snapshot_payload` nao expõem `player_position` nem
+  `active_collection`.
+
 `POST /modes/session/event` retorna `type=mode_event_ack` dentro do envelope
 comum de modos. Esse ACK confirma o evento e a revisao, mas nao deve ser tratado
 como snapshot completo de retomada pelo client. Durante gameplay ativo:

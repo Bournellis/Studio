@@ -19,6 +19,12 @@
   Bosque into a free, relaxing collect/deposit/craft/build minigame with optional
   six-step guidance, server-persisted guidance state in the normal save, fixed
   resource slack and the first procedural build visual (`fogueira_estavel_1`).
+- Latest implemented local package: `Openworld Collection Sync Local Fix` on
+  branch `codex/draxos-mobile/openworld-local-validation`; it fixes Bosque
+  collection rollback locally by accepting all 26 active ruleset nodes in SQL,
+  persisting `player_position` only via `move_heartbeat`, sanitizing event ACKs
+  and preserving local player position during active resync of the same session.
+  This package is local only and has not been published.
 - Previous remote package: `First Access Runtime Fix`, release root
   `internal-alpha/v0-first-access-runtime-20260602-4608977`,
   deployment evidence `https://36db2742.draxos-mobile-internal-alpha.pages.dev`;
@@ -56,17 +62,66 @@
 - Compatibility validation marker: Latest published remote package: `Foundation Hardening V2`
   remains as legacy guard text for Track 13/V2 docs validation; actual latest
   published remote package is the Bosque v2 release above.
-- Active follow-up: human review/playtest of the published Bosque Mecanico Basico
-  v2 package on the official Internal Alpha URL, focused on free entry/exit,
-  non-blocking guidance, collect/deposit, craft, `Voltar` preserving the visit,
-  `Encerrar visita` summary, guidance persistence and the visual/collision
-  behavior of `fogueira_estavel_1`.
+- Active follow-up: review and decide publication path for the local Openworld
+  Collection Sync fix before broadening human playtest of Bosque v2. The latest
+  remote package remains Bosque Mecanico Basico v2; no new Internal Alpha was
+  published by this local fix.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## Openworld Collection Sync Local Fix - 2026-06-04
+
+This local-only package fixes the Bosque rollback/pullback loop that appeared
+after collecting or recently collecting resources. The root cause was a contract
+split: the active ruleset had 26 fixed `resource_nodes`, while the effective SQL
+node mapping recognized only the original 13 nodes. Collecting the v2 nodes
+could reject the event, require resync and hydrate an older `player_position`.
+
+- branches/worktrees:
+  - `codex/draxos-mobile/openworld-backend-contract` at
+    `D:\Estudio-worktrees\draxos-mobile--codex--openworld-backend-contract`;
+  - `codex/draxos-mobile/openworld-client-resync` at
+    `D:\Estudio-worktrees\draxos-mobile--codex--openworld-client-resync`;
+  - `codex/draxos-mobile/openworld-local-validation` at
+    `D:\Estudio-worktrees\draxos-mobile--codex--openworld-local-validation`.
+- commits integrated in validation branch:
+  - `4a91cf2 Fix openworld collection backend sync contract`;
+  - `e15c98f Preserve openworld position on active resync`.
+- backend:
+  - added forward migration
+    `202606040002_openworld_bosque_collection_sync_v1.sql` mirrored in
+    `server/schema/migrations/` and `supabase/migrations/`;
+  - `openworld_forest_node_item_v1` recognizes all 26 active ruleset nodes;
+  - `openworld_forest_apply_event_v1` updates `player_position` only for
+    `move_heartbeat`;
+  - event ACKs in `mode_domain.ts` sanitize `player_position` and
+    `active_collection` out of `snapshot_patch` and `session.snapshot_payload`.
+- client:
+  - session hydration now has explicit `apply_remote_position` policy;
+  - start/resume still restore remote position;
+  - active resync of the same session preserves local position while applying
+    authoritative inventory, collection, guidance and revision state;
+  - resync into a different active session is treated as resume and applies the
+    remote position.
+- validation:
+  - baseline proof before fix: `server/tests/openworld_ruleset_definition_test.ts`
+    failed on missing `node_galho_02`;
+  - targeted backend tests passed: `14 passed | 0 failed`;
+  - direct local SQL proof after `db reset`: `26/26` active ruleset
+    `resource_nodes` recognized by `openworld_forest_node_item_v1`;
+  - `Godot validate`, full GUT client and `smoke_openworld_forest.gd` passed;
+  - `ClientQuick` passed;
+  - `FullLocal -RequireClean` attempted with local Supabase stack, `db reset`
+    applied `202606040002`, `DatabaseLocal`, `ModePlatform`, `ClientQuick` and
+    `ReleaseDryRun` passed;
+  - `ServerQuick`/`FullLocal` remain red only because of the pre-existing Arena
+    contract test `arena_loop_unlock_friction_test.ts`.
+- remote mutation: none. No `supabase db push`, function deploy, Storage upload,
+  Wrangler, RemoteReadOnly or FullPublish command was executed.
 
 ## Bosque Mecanico Basico v2 Publication - 2026-06-04
 

@@ -1019,6 +1019,7 @@ Invoke-Step -Name "Deno foundation contract tests" -Stage "ServerQuick" -Command
             server/tests/modes_disable_rollback_test.ts `
             server/tests/modes_admin_ops_test.ts `
             server/tests/modes_analytics_test.ts `
+            server/tests/openworld_ruleset_definition_test.ts `
             server/tests/openworld_reward_bridge_test.ts `
             server/tests/release_auth_contract_test.ts
     }

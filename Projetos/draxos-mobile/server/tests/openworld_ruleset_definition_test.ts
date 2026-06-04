@@ -1,6 +1,12 @@
 const PROJECT_PREFIX = "Projetos/draxos-mobile";
 const RULESET_PATH = "data/definitions/openworld/forest_ruleset_v1.json";
-const MIGRATION_PATH = "supabase/migrations/202606020001_openworld_bosque_hardening_v1.sql";
+const BASE_MIGRATION_PATH = "server/schema/migrations/202606020001_openworld_bosque_hardening_v1.sql";
+const GUIDANCE_MIGRATION_PATH =
+  "server/schema/migrations/202606040001_openworld_guidance_persistence_v1.sql";
+const COLLECTION_SYNC_MIGRATION_PATH =
+  "server/schema/migrations/202606040002_openworld_bosque_collection_sync_v1.sql";
+const SUPABASE_COLLECTION_SYNC_MIGRATION_PATH =
+  "supabase/migrations/202606040002_openworld_bosque_collection_sync_v1.sql";
 const MODE_DOMAIN_PATH = "server/functions/_shared/mode_domain.ts";
 const SUPABASE_MODE_DOMAIN_PATH = "supabase/functions/_shared/mode_domain.ts";
 
@@ -63,9 +69,16 @@ Deno.test("openworld forest ruleset cross-links resource nodes and recipe items"
   }
 });
 
-Deno.test("openworld forest ruleset is referenced by TS domain and SQL snapshot logic", async () => {
+Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL logic", async () => {
   const ruleset = await rulesetDefinition();
-  const migration = await projectText(MIGRATION_PATH);
+  const baseMigration = await projectText(BASE_MIGRATION_PATH);
+  const guidanceMigration = await projectText(GUIDANCE_MIGRATION_PATH);
+  const collectionSyncMigration = await projectText(COLLECTION_SYNC_MIGRATION_PATH);
+  const supabaseCollectionSyncMigration = await projectText(
+    SUPABASE_COLLECTION_SYNC_MIGRATION_PATH,
+  );
+  const effectiveMigration =
+    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}`;
   const modeDomain = await projectText(MODE_DOMAIN_PATH);
   const supabaseModeDomain = await projectText(SUPABASE_MODE_DOMAIN_PATH);
 
@@ -84,14 +97,50 @@ Deno.test("openworld forest ruleset is referenced by TS domain and SQL snapshot 
     "guidance_update",
     "mode domain should accept Bosque guidance updates",
   );
-  assertIncludes(migration, stringField(ruleset, "ruleset_id"), "migration should seed ruleset v1");
+  assertEq(
+    normalizeNewlines(collectionSyncMigration),
+    normalizeNewlines(supabaseCollectionSyncMigration),
+    "collection sync migration should be mirrored between server and supabase",
+  );
+  assertIncludes(
+    effectiveMigration,
+    stringField(ruleset, "ruleset_id"),
+    "effective migration chain should seed ruleset v1",
+  );
   for (const node of arrayField(ruleset, "resource_nodes").map(objectField)) {
+    const nodeId = stringField(node, "node_id");
+    const itemId = stringField(node, "item_id");
     assertIncludes(
-      migration,
-      stringField(node, "node_id"),
-      `migration should know node ${stringField(node, "node_id")}`,
+      collectionSyncMigration,
+      `when '${nodeId}' then '${itemId}'`,
+      `collection sync migration should map node ${nodeId}`,
     );
   }
+});
+
+Deno.test("openworld forest event migration preserves position except move heartbeat", async () => {
+  const migration = await projectText(COLLECTION_SYNC_MIGRATION_PATH);
+  const applyEventFunction = sqlFunctionBody(migration, "openworld_forest_apply_event_v1");
+  const moveBranchStart = applyEventFunction.indexOf("if p_event_type = 'move_heartbeat'");
+  const collectBranchStart = applyEventFunction.indexOf("elsif p_event_type = 'collect_start'");
+
+  assert(moveBranchStart >= 0, "apply event function should branch on move heartbeat");
+  assert(collectBranchStart > moveBranchStart, "collect branch should follow move heartbeat branch");
+  assertEq(
+    applyEventFunction.slice(0, moveBranchStart).includes("'{player_position}'"),
+    false,
+    "apply event should not write player_position before event type dispatch",
+  );
+  assertIncludes(
+    applyEventFunction.slice(moveBranchStart, collectBranchStart),
+    "'{player_position}'",
+    "move heartbeat branch should write player_position",
+  );
+  assertEq(
+    applyEventFunction.slice(collectBranchStart).includes("'{player_position}'"),
+    false,
+    "collection/deposit/craft/guidance branches should preserve persisted player_position",
+  );
 });
 
 async function rulesetDefinition(): Promise<Record<string, unknown>> {
@@ -138,4 +187,13 @@ function assertIncludes(haystack: string, needle: string, message: string): void
 
 function normalizeNewlines(value: string): string {
   return value.replaceAll("\r\n", "\n");
+}
+
+function sqlFunctionBody(sql: string, functionName: string): string {
+  const marker = `create or replace function public.${functionName}`;
+  const start = sql.indexOf(marker);
+  assert(start >= 0, `migration should define ${functionName}`);
+  const end = sql.indexOf("\n$$;", start);
+  assert(end > start, `migration should close ${functionName}`);
+  return sql.slice(start, end);
 }

@@ -318,7 +318,7 @@ func abandon_session(reason: String = "player_abandoned") -> Dictionary:
 	_emit_state_changed()
 	return result
 
-func hydrate_session(session: Dictionary) -> bool:
+func hydrate_session(session: Dictionary, apply_remote_position := true) -> bool:
 	var session_id := str(session.get("id", "")).strip_edges()
 	if session_id == "":
 		return false
@@ -327,7 +327,7 @@ func hydrate_session(session: Dictionary) -> bool:
 	_completed = str(session.get("status", "started")) == "completed"
 	var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
 	if not snapshot_payload.is_empty():
-		apply_remote_snapshot(snapshot_payload)
+		apply_remote_snapshot(snapshot_payload, apply_remote_position)
 	_server_synced = true
 	_pending_event_count = 0
 	_pending_collected_nodes = {}
@@ -335,9 +335,9 @@ func hydrate_session(session: Dictionary) -> bool:
 	_emit_state_changed()
 	return true
 
-func apply_remote_snapshot(snapshot_payload: Dictionary) -> void:
+func apply_remote_snapshot(snapshot_payload: Dictionary, apply_remote_position := true) -> void:
 	if _apply_snapshot_callback.is_valid():
-		_apply_snapshot_callback.call(snapshot_payload)
+		_apply_snapshot_callback.call(snapshot_payload, apply_remote_position)
 	elif model != null and model.has_method("apply_snapshot"):
 		model.apply_snapshot(snapshot_payload)
 
@@ -530,7 +530,9 @@ func resync_session(success_message: String) -> bool:
 			if str(candidate.get("status", "")) == "started":
 				active_session = candidate
 				break
-	if active_session.is_empty() or not hydrate_session(active_session):
+	var active_session_id := str(active_session.get("id", "")).strip_edges()
+	var apply_remote_position := active_session_id == "" or active_session_id != _server_session_id
+	if active_session.is_empty() or not hydrate_session(active_session, apply_remote_position):
 		_session_state = SESSION_PREVIEW
 		_emit_state_changed()
 		return false

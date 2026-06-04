@@ -12,11 +12,32 @@ class FakeOpenworldSupabaseClient:
 	extends Node
 
 	var delay_frames := 0
+	var state_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
+	var start_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var event_responses: Array[Dictionary] = []
+	var state_calls: Array[Dictionary] = []
+	var start_calls: Array[Dictionary] = []
 	var captured_events: Array[Dictionary] = []
 
 	func enqueue_event_response(response: Dictionary) -> void:
 		event_responses.append(response)
+
+	func get_mode_state(mode_id: String, access_token: String) -> Dictionary:
+		state_calls.append({
+			"mode_id": mode_id,
+			"access_token": access_token,
+		})
+		return state_result
+
+	func start_mode_session(request_id: String, mode_id: String, slice_id: String, access_token: String, request_hash: String) -> Dictionary:
+		start_calls.append({
+			"request_id": request_id,
+			"mode_id": mode_id,
+			"slice_id": slice_id,
+			"access_token": access_token,
+			"request_hash": request_hash,
+		})
+		return start_result
 
 	func record_mode_session_event(
 		request_id: String,
@@ -387,6 +408,140 @@ func test_integrated_event_ack_does_not_rollback_player_position() -> void:
 	assert_false(move_event.is_empty())
 	assert_true(Dictionary(move_event.get("event_payload", {})).has("client_position_revision"))
 
+func test_integrated_active_resync_preserves_local_position_and_applies_authoritative_snapshot() -> void:
+	var setup: Dictionary = await _make_integrated_screen()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var bridge = screen.call("_ensure_session_bridge")
+	var remote_position := Vector2(220, 330)
+	var local_position := Vector2(530, 760)
+	var node_id := _resource_node_id(screen, "galho")
+	var guidance := {
+		"version": 1,
+		"current_step": 4,
+		"completed_steps": [1, 2, 3],
+		"dismissed": false,
+		"last_seen_at": "2026-06-04T15:00:00Z",
+	}
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"active_session": _integrated_session(8, remote_position, {"folha": 2}, {"galho": 3}, {"bolsa_simples_1": true}, {node_id: true}, TEST_SESSION_ID, guidance),
+		},
+	}
+	screen.set_player_position_for_tests(local_position)
+	screen.get_model().active_collection = {"item_id": "galho", "elapsed": 0.3, "duration": 1.0}
+
+	var ok: bool = await bridge.resync_session("Bosque resincronizado.")
+
+	assert_true(ok)
+	assert_eq(screen.get_player_position(), local_position)
+	assert_eq(int(Dictionary(screen.get_model().pocket).get("folha", 0)), 2)
+	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 3)
+	assert_true(bool(Dictionary(screen.get_model().upgrades).get("bolsa_simples_1", false)))
+	assert_eq(int(screen.get_model().guidance_state().get("current_step", 0)), 4)
+	assert_true(Dictionary(screen.get_model().active_collection).is_empty())
+	assert_true(bool(_resource_node(screen, node_id).get("collected", false)))
+	assert_eq(int(screen.get("_snapshot_revision")), 8)
+
+func test_integrated_stale_collection_resync_does_not_rollback_player_position() -> void:
+	var setup: Dictionary = await _make_integrated_screen()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var world = screen.call("get_openworld_world_2d")
+	var resource_position: Vector2 = world.call("resource_position", "galho")
+	var node_id := _resource_node_id(screen, "galho")
+	var moved_position := resource_position + Vector2(16, 0)
+	client.enqueue_event_response(_event_ack("collect_start", 1, {
+		"last_message": "Coleta iniciada."
+	}, resource_position))
+	client.enqueue_event_response({"ok": false, "body": {"error": {"code": "MODE_SESSION_REVISION_STALE"}}})
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"active_session": _integrated_session(5, resource_position, {}, {"folha": 2}, {}, {node_id: false}),
+		},
+	}
+	screen.set_player_position_for_tests(resource_position)
+	screen.call("_advance_nearby_collection", 0.05)
+	await _wait_process_frames(4)
+	var active_collection: Dictionary = screen.get_model().active_collection
+	active_collection["elapsed"] = float(active_collection.get("duration", 0.1))
+	screen.get_model().active_collection = active_collection
+	screen.set_player_position_for_tests(moved_position)
+	screen.call("_advance_nearby_collection", 0.05)
+	await _wait_process_frames(8)
+
+	assert_eq(screen.get_player_position(), moved_position)
+	assert_eq(int(Dictionary(screen.get_model().chest).get("folha", 0)), 2)
+	assert_false(bool(_resource_node(screen, node_id).get("collected", true)))
+	assert_false(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
+	assert_eq(int(screen.get("_snapshot_revision")), 5)
+
+func test_integrated_resync_different_session_applies_remote_player_position() -> void:
+	var setup: Dictionary = await _make_integrated_screen()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var bridge = screen.call("_ensure_session_bridge")
+	var local_position := Vector2(520, 760)
+	var remote_position := Vector2(310, 430)
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"active_session": _integrated_session(3, remote_position, {"galho": 1}, {}, {}, {}, "session-new"),
+		},
+	}
+	screen.set_player_position_for_tests(local_position)
+
+	var ok: bool = await bridge.resync_session("Bosque retomado.")
+
+	assert_true(ok)
+	assert_eq(bridge.server_session_id(), "session-new")
+	assert_eq(screen.get_player_position(), remote_position)
+	assert_eq(int(Dictionary(screen.get_model().pocket).get("galho", 0)), 1)
+
+func test_integrated_start_session_applies_remote_player_position() -> void:
+	var setup: Dictionary = await _make_integrated_screen_for_manual_bridge()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var bridge = setup.get("bridge")
+	var local_position := Vector2(540, 740)
+	var remote_position := Vector2(300, 420)
+	client.start_result = {
+		"ok": true,
+		"body": {
+			"session": _integrated_session(2, remote_position, {"folha": 1}, {}, {}, {}),
+		},
+	}
+	screen.set_player_position_for_tests(local_position)
+
+	await bridge.start_session()
+
+	assert_eq(screen.get_player_position(), remote_position)
+	assert_eq(int(Dictionary(screen.get_model().pocket).get("folha", 0)), 1)
+	assert_eq(client.start_calls.size(), 1)
+
+func test_integrated_resume_session_applies_remote_player_position() -> void:
+	var setup: Dictionary = await _make_integrated_screen_for_manual_bridge()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var bridge = setup.get("bridge")
+	var local_position := Vector2(540, 740)
+	var remote_position := Vector2(280, 390)
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"active_session": _integrated_session(4, remote_position, {}, {"galho": 2}, {}, {}),
+		},
+	}
+	screen.set_player_position_for_tests(local_position)
+
+	await bridge.resume_or_start_session()
+
+	assert_eq(screen.get_player_position(), remote_position)
+	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
+	assert_eq(client.start_calls.size(), 0)
+
 func test_integrated_collect_start_ack_preserves_active_collection() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
@@ -553,33 +708,52 @@ func _make_integrated_screen() -> Dictionary:
 	await get_tree().process_frame
 	return {"screen": screen, "client": client, "store": store}
 
+func _make_integrated_screen_for_manual_bridge() -> Dictionary:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var client := FakeOpenworldSupabaseClient.new()
+	var store := FakeOpenworldSessionStore.new()
+	add_child_autofree(client)
+	add_child_autofree(store)
+	var bridge = screen.call("_ensure_session_bridge")
+	bridge.configure(screen.get_model(), client, store, "fake-token", Callable(screen, "_apply_remote_snapshot"))
+	screen.integration_mode = "integrated_alpha"
+	await get_tree().process_frame
+	return {"screen": screen, "client": client, "store": store, "bridge": bridge}
+
 func _integrated_session(
 	revision: int,
 	position: Vector2,
 	pocket: Dictionary,
 	chest: Dictionary,
 	upgrades: Dictionary,
-	collected_nodes: Dictionary
+	collected_nodes: Dictionary,
+	session_id: String = TEST_SESSION_ID,
+	guidance: Dictionary = {}
 ) -> Dictionary:
+	var snapshot_payload := {
+		"ruleset_id": "openworld_forest_ruleset_v1",
+		"ruleset_version": 1,
+		"player_position": _position_dict(position),
+		"session_seconds": 1,
+		"pocket": pocket.duplicate(true),
+		"chest": chest.duplicate(true),
+		"upgrades": upgrades.duplicate(true),
+		"collected_nodes": collected_nodes.duplicate(true),
+		"last_message": "Bosque sincronizado.",
+	}
+	if not guidance.is_empty():
+		snapshot_payload["guidance"] = guidance.duplicate(true)
 	return {
-		"id": TEST_SESSION_ID,
+		"id": session_id,
 		"mode_id": "openworld",
 		"slice_id": "forest",
 		"ruleset_id": "openworld_forest_ruleset_v1",
 		"ruleset_version": 1,
 		"status": "started",
 		"snapshot_revision": revision,
-		"snapshot_payload": {
-			"ruleset_id": "openworld_forest_ruleset_v1",
-			"ruleset_version": 1,
-			"player_position": _position_dict(position),
-			"session_seconds": 1,
-			"pocket": pocket.duplicate(true),
-			"chest": chest.duplicate(true),
-			"upgrades": upgrades.duplicate(true),
-			"collected_nodes": collected_nodes.duplicate(true),
-			"last_message": "Bosque sincronizado.",
-		},
+		"snapshot_payload": snapshot_payload,
 	}
 
 func _event_ack(event_type: String, revision: int, snapshot_patch: Dictionary, full_snapshot_position: Vector2) -> Dictionary:
@@ -615,6 +789,12 @@ func _resource_node_id(screen, item_id: String) -> String:
 		if str(node.get("item_id", "")) == item_id:
 			return str(node.get("node_id", ""))
 	return ""
+
+func _resource_node(screen, node_id: String) -> Dictionary:
+	for node: Dictionary in Array(screen.get("_resource_nodes")):
+		if str(node.get("node_id", "")) == node_id:
+			return node
+	return {}
 
 func _captured_event(client: FakeOpenworldSupabaseClient, event_type: String) -> Dictionary:
 	for event: Dictionary in client.captured_events:
