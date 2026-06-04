@@ -1,5 +1,29 @@
 ﻿extends "res://tests/unit/draxos_test_base.gd"
 
+const CatalogSourceLoaderScript = preload("res://tools/catalog_source_loader.gd")
+
+func test_catalog_source_loader_preserves_single_json_semantics_and_domains() -> void:
+	var loader = CatalogSourceLoaderScript.new()
+	var raw_definition: Dictionary = loader.load_raw_catalog_definition()
+	var source: Dictionary = loader.load_catalog_source()
+	assert_true(bool(source.get("ok", false)), str(source.get("message", "")))
+	assert_eq(str(source.get("source_mode", "")), "single_json")
+	assert_eq(
+		CatalogSourceLoaderScript.stable_definition_hash(Dictionary(source.get("definition", {}))),
+		CatalogSourceLoaderScript.stable_definition_hash(raw_definition)
+	)
+	var domains: Dictionary = Dictionary(source.get("domains", {}))
+	for domain: String in ["cards", "enemies", "classes", "rewards", "relics", "encounters", "run_map", "keywords", "visuals"]:
+		assert_true(domains.has(domain), "Missing catalog source domain: %s" % domain)
+	assert_eq(Array(Dictionary(Dictionary(domains.get("cards", {})).get("top_level", {})).get("cards", [])).size(), 153)
+	assert_eq(Array(Dictionary(Dictionary(domains.get("encounters", {})).get("top_level", {})).get("encounters", [])).size(), 29)
+	assert_eq(Array(Dictionary(Dictionary(domains.get("run_map", {})).get("top_level", {})).get("run_map", {}).get("nodes", [])).size(), 29)
+	assert_eq(Array(Dictionary(Dictionary(domains.get("relics", {})).get("track_contract", {})).get("relics", [])).size(), 18)
+	assert_eq(Array(Dictionary(Dictionary(domains.get("keywords", {})).get("track_contract", {})).get("keyword_definitions", [])).size(), 30)
+	var summary: Dictionary = loader.domain_summary(domains, loader.load_visual_assets_definition())
+	assert_true(int(Dictionary(summary.get("visuals", {})).get("visual_asset_entries", 0)) > 0)
+	assert_true(PackedStringArray(Dictionary(summary.get("rewards", {})).get("track_contract_keys", PackedStringArray())).has("reward_schedule"))
+
 func test_catalog_uses_redesigned_class_decks() -> void:
 	var catalog = ContentLibrary.get_catalog()
 	for class_id: String in ["arcano", "invocador", "necromante"]:

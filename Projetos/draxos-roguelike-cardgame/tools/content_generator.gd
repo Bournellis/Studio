@@ -4,14 +4,16 @@ extends RefCounted
 const DEFINITION_PATH: String = "res://data/definitions/slice_catalog.json"
 const GENERATED_DIR: String = "res://data/generated"
 const CATALOG_PATH: String = "res://data/generated/slice_catalog.tres"
+const CatalogSourceLoaderScript = preload("res://tools/catalog_source_loader.gd")
 const SliceCatalogResourceScript = preload("res://data/resources/slice_catalog_resource.gd")
 const HeroDefinitionResourceScript = preload("res://data/resources/hero_definition_resource.gd")
 const CardDefinitionResourceScript = preload("res://data/resources/card_definition_resource.gd")
 
 func generate_all() -> Dictionary:
-	var definition: Dictionary = _load_definition()
-	if definition.is_empty():
-		return {"ok": false, "message": "Failed to load slice catalog definition."}
+	var source: Dictionary = CatalogSourceLoaderScript.new().load_catalog_source()
+	if not bool(source.get("ok", false)):
+		return {"ok": false, "message": str(source.get("message", "Failed to load slice catalog definition."))}
+	var definition: Dictionary = Dictionary(source.get("definition", {}))
 	var definition_hash: String = _definition_hash(definition)
 
 	var existing_catalog = _load_existing_catalog()
@@ -49,44 +51,16 @@ func _load_existing_catalog():
 	return load(CATALOG_PATH)
 
 func _load_definition() -> Dictionary:
-	if not FileAccess.file_exists(DEFINITION_PATH):
-		return {}
-	var file_text: String = FileAccess.get_file_as_string(DEFINITION_PATH)
-	var parsed: Variant = JSON.parse_string(file_text)
-	if typeof(parsed) != TYPE_DICTIONARY:
-		return {}
-	return parsed
+	return CatalogSourceLoaderScript.new().load_catalog_definition()
 
 func _definition_hash(value: Variant) -> String:
-	return _stable_definition_string(value).sha256_text()
+	return CatalogSourceLoaderScript.stable_definition_hash(value)
 
 func _stable_definition_string(value: Variant) -> String:
-	match typeof(value):
-		TYPE_DICTIONARY:
-			var data: Dictionary = Dictionary(value)
-			var keys: Array = data.keys()
-			keys.sort()
-			var parts: PackedStringArray = PackedStringArray()
-			for key: Variant in keys:
-				parts.append("%s:%s" % [_stable_definition_string(str(key)), _stable_definition_string(data[key])])
-			return "{%s}" % ",".join(parts)
-		TYPE_ARRAY:
-			var items: PackedStringArray = PackedStringArray()
-			for item: Variant in Array(value):
-				items.append(_stable_definition_string(item))
-			return "[%s]" % ",".join(items)
-		TYPE_STRING:
-			return "\"%s\"" % _escape_json_string(str(value))
-		TYPE_BOOL:
-			return "true" if bool(value) else "false"
-		TYPE_INT, TYPE_FLOAT:
-			return str(value)
-		TYPE_NIL:
-			return "null"
-	return "\"%s\"" % _escape_json_string(str(value))
+	return CatalogSourceLoaderScript.stable_definition_string(value)
 
 func _escape_json_string(value: String) -> String:
-	return value.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+	return CatalogSourceLoaderScript.escape_stable_json_string(value)
 
 func _build_hero(data: Dictionary):
 	var hero = HeroDefinitionResourceScript.new()
