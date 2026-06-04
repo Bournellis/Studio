@@ -440,18 +440,18 @@ func _handle_back_requested() -> void:
 		_ensure_session_bridge().record_exit_preserved()
 	close_requested.emit()
 
-func _apply_remote_snapshot(snapshot_payload: Dictionary) -> void:
+func _apply_remote_snapshot(snapshot_payload: Dictionary, apply_remote_position := true) -> void:
 	model.apply_snapshot(snapshot_payload)
 	_runtime.session_seconds = float(snapshot_payload.get("session_seconds", _runtime.session_seconds))
 	var position := _as_dictionary(snapshot_payload.get("player_position", snapshot_payload.get("position", {})))
-	if not position.is_empty():
+	if apply_remote_position and not position.is_empty():
 		set_player_position_for_tests(Vector2(float(position.get("x", _runtime.player_position.x)), float(position.get("y", _runtime.player_position.y))))
 	_runtime.apply_collected_nodes(RulesetScript.collected_nodes_from_snapshot(snapshot_payload))
 	_sync_runtime_debug_state()
 	_update_labels()
 
-func _hydrate_integrated_session(session: Dictionary) -> bool:
-	var hydrated: bool = _ensure_session_bridge().hydrate_session(session)
+func _hydrate_integrated_session(session: Dictionary, apply_remote_position := true) -> bool:
+	var hydrated: bool = _ensure_session_bridge().hydrate_session(session, apply_remote_position)
 	_sync_session_bridge_debug_state()
 	return hydrated
 
