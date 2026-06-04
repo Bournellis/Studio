@@ -2,6 +2,10 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "http://127.0.0.1:54321";
 const PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ??
   "sb_publishable_TLjdd9X4MlzD740dtVCXNg_YTl9IMAi";
 const EXPECTED_RELEASE_ROOT = (Deno.env.get("DRAXOS_EXPECTED_RELEASE_ROOT") ?? "").trim();
+const LEGACY_OPENWORLD_RELEASE_ROOTS = [
+  "internal-alpha/v0-openworld-node2d-qol-20260601-5707167",
+  "internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129",
+];
 
 interface JsonObject {
   [key: string]: unknown;
@@ -58,8 +62,8 @@ assert(
 const androidUrl = stringField(objectField(artifacts, "android"), "url");
 const pcUrl = stringField(objectField(artifacts, "pc_windows"), "url");
 assert(
-  !androidUrl.includes("internal-alpha/v0-openworld") &&
-    !pcUrl.includes("internal-alpha/v0-openworld"),
+  !includesLegacyReleaseRoot(androidUrl) &&
+    !includesLegacyReleaseRoot(pcUrl),
   "manifest should not fall back to old Openworld package roots",
 );
 if (EXPECTED_RELEASE_ROOT !== "") {
@@ -132,6 +136,10 @@ function parseJson(text: string): unknown {
 
 function isObject(value: unknown): value is JsonObject {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function includesLegacyReleaseRoot(url: string): boolean {
+  return LEGACY_OPENWORLD_RELEASE_ROOTS.some((releaseRoot) => url.includes(releaseRoot));
 }
 
 function assert(condition: boolean, message: string): void {

@@ -4,31 +4,35 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Bosque Mecanico Basico v2 Publication`
+- Active stage: `Openworld Main Menu Sync Publication`
 - Active stage status: `PUBLISHED_INTERNAL_ALPHA`
 - Hardening baseline: `Track 13 - Foundation Validation And Release Safety`
   (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline: `Track 14 - Agent Operations Foundation`
   (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Latest published remote package: `Bosque Mecanico Basico v2`, release root
-  `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`,
+- Latest published remote package: `Openworld Main Menu Sync`, release root
+  `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`,
   official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`,
   direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`,
   latest deployment evidence
-  `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`. This package turns
-  Bosque into a free, relaxing collect/deposit/craft/build minigame with optional
-  six-step guidance, server-persisted guidance state in the normal save, fixed
-  resource slack and the first procedural build visual (`fogueira_estavel_1`).
-- Latest implemented local integration: `Openworld Collection Sync Local Fix` +
-  `Main Menu Refactor`, merged into `master` at `1c72399`; it
-  fixes Bosque collection rollback locally by accepting all 26 active ruleset
+  `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`. This package
+  publishes the already-merged `Openworld Collection Sync Local Fix` + `Main Menu
+  Refactor` from `master` (`bc36cd8`), fixing Bosque collection rollback by
+  accepting all 26 active ruleset
   nodes in SQL, persisting `player_position` only via `move_heartbeat`,
   sanitizing event ACKs and preserving local player position during active
   resync of the same session. It also removes the player-facing Mode Hub,
   collect-all and direct energy shortcuts, keeps `Bosque` as the direct
   Openworld entry, moves battle preparation into Arena PVE and keeps Energia
-  purchase inside Loja. This integration is local only and has not been
-  published as a remote Internal Alpha package.
+  purchase inside Loja. The manifest keeps the production Pages domain as the
+  official player-facing URL and uses the hash deployment only as evidence.
+- Previous remote package: `Bosque Mecanico Basico v2`, release root
+  `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`,
+  deployment evidence `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`;
+  it turns Bosque into a free, relaxing collect/deposit/craft/build minigame
+  with optional six-step guidance, server-persisted guidance state in the normal
+  save, fixed resource slack and the first procedural build visual
+  (`fogueira_estavel_1`).
 - Previous remote package: `First Access Runtime Fix`, release root
   `internal-alpha/v0-first-access-runtime-20260602-4608977`,
   deployment evidence `https://36db2742.draxos-mobile-internal-alpha.pages.dev`;
@@ -69,21 +73,88 @@
   `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, Cloudflare
   preview `https://ca946749.draxos-mobile-internal-alpha.pages.dev`.
 - Validation baseline marker: the latest published remote package is now the
-  Bosque Mecanico Basico v2 package; `Foundation Hardening V2` remains the
+  Openworld Main Menu Sync package; `Foundation Hardening V2` remains the
   previous hardening/live-doc guard marker.
 - Compatibility validation marker: Latest published remote package: `Foundation Hardening V2`
   remains as legacy guard text for Track 13/V2 docs validation; actual latest
-  published remote package is the Bosque v2 release above.
-- Active follow-up: review and decide publication path for the already-merged
-  Openworld Collection Sync + Main Menu Refactor integration before broadening human
-  playtest of Bosque v2. The latest remote package remains Bosque Mecanico
-  Basico v2; no new Internal Alpha was published by this local integration.
+  published remote package is the Openworld Main Menu Sync release above.
+- Active follow-up: human review/playtest of the Openworld Main Menu Sync
+  Internal Alpha package through the production Portal/Web URLs before opening
+  new Openworld, Arena, economy or content expansion.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## Openworld Main Menu Sync Publication - 2026-06-04
+
+This published Internal Alpha package takes the already-merged `master` state
+online after Bosque v2: Openworld collection sync is fixed remotely and the main
+menu is simplified for player-facing playtest.
+
+- branch: `codex/draxos-mobile/publish-master-main-url`;
+- source commit: `bc36cd8 Close Estudio worktree cleanup`;
+- release root:
+  `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`;
+- Cloudflare production:
+  `https://draxos-mobile-internal-alpha.pages.dev`;
+- Cloudflare deployment evidence:
+  `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`;
+- Official Portal / manifest `portal_url`:
+  `https://draxos-mobile-internal-alpha.pages.dev/`;
+- Web:
+  `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`;
+- Android APK:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8/downloads/draxos-mobile-alpha.apk`;
+- PC ZIP:
+  `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8/downloads/draxos-mobile-alpha.zip`;
+- remote manifest:
+  `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`;
+- preview Web launch smoke screenshot:
+  `C:\Users\Fabio\AppData\Local\Temp\draxos-mobile-web-launch-remote-20260604-235215\web-launch-remote.png`.
+
+Scope published:
+
+- `202606040002_openworld_bosque_collection_sync_v1.sql` applied remotely.
+- Supabase Edge Function `modes` redeployed.
+- All 26 active Bosque ruleset resource nodes are accepted by the backend.
+- `player_position` is persisted only through `move_heartbeat`.
+- Event ACK patches sanitize position/active collection out of ordinary event
+  responses.
+- Active resync preserves local position for the same session.
+- Player-facing Mode Hub, collect-all, direct Energia and dev Openworld
+  shortcuts are removed.
+- `Bosque` remains the direct Openworld entry; Preparacao moved under Arena PVE;
+  Energia purchase remains in Loja.
+
+Validation and publication evidence:
+
+- `validate_foundation.ps1 -Profile ReleaseDryRun`: passed after moving the
+  active note from Doing to Handoff to satisfy the no-obsolete-Doing gate.
+- `supabase db push --linked --yes`: passed; applied
+  `202606040002_openworld_bosque_collection_sync_v1.sql`.
+- `supabase functions deploy modes --project-ref armxgipvnbbshzqawklw`: passed.
+- `tools/export_internal_alpha.ps1 -AllowAndroidDebugFallback`: passed; Android
+  export mode `debug_fallback`.
+- `publish_internal_alpha.ps1 -Mode Plan`, `Package`, `Upload` and
+  `DeployManifest`: passed with `-PublicDownloads`, production
+  `StaticSiteBaseUrl` and `-ConfirmRemoteMutation` for mutating stages.
+- `build_cloudflare_pages_package.ps1` passed against the versioned Storage Web
+  asset root.
+- `wrangler@4.98.0 pages deploy build/internal-alpha/cloudflare-pages
+  --project-name draxos-mobile-internal-alpha --branch main`: passed; preview
+  evidence `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot
+  internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8 -RemoteWebUrl
+  https://aeec7403.draxos-mobile-internal-alpha.pages.dev/web/index.html
+  -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: passed.
+- Remote Web smoke loaded the game in `4639 ms`, release root matched, key
+  assets returned `200`, and no runtime errors were reported.
+- `server/tests/release_manifest_smoke.ts` was tightened to block explicit
+  legacy Openworld roots instead of every release root beginning with
+  `internal-alpha/v0-openworld`.
 
 ## Openworld Collection Sync Local Fix - 2026-06-04
 
@@ -2466,12 +2537,14 @@ economy, content tuning or final art.
 
 ## Next Step
 
-Openworld Node2D QoL Foundation is now the latest Internal Alpha publication:
-release root `internal-alpha/v0-openworld-node2d-qol-20260601-5707167`, preview
-`https://2cca25db.draxos-mobile-internal-alpha.pages.dev`. The next product
-step is human review/playtest of the published Openworld Bosque feel: WASD,
-free mouse/touch joystick, obstacle collision, border walls, y-depth/layers,
-HUD/input interference, collection and chest deposit. Foundation Hardening V2
+Openworld Main Menu Sync is now the latest Internal Alpha publication: release
+root `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`, official
+Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL
+`https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, deployment
+evidence `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`. The next
+product step is human review/playtest of the published package, especially
+Bosque collection/deposit/resync behavior after collecting v2 nodes and the
+simplified main menu path into Bosque/Arena PVE/Loja. Foundation Hardening V2
 remains the previous hardening/multi-mode gate baseline. Arena tuning notes can
 follow only after manual confirmation of the tutorial -> first real Arena ->
 next difficulty loop, including potion consumption, remote arena selection,
