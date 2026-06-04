@@ -1,8 +1,10 @@
 # Track 01 Current Status
 
 - Last Updated: `2026-05-15`
-- Status: `P14_PLAYTEST_TUNING_PASS_VALIDATED_BASELINE_FOR_TRACK_02`
+- Status: `HISTORICAL_P14_PLAYTEST_TUNING_PASS_VALIDATED_BASELINE_FOR_TRACK_02`
 - Scope: `First playable class and encounter slice after Track 00 checkpoint`
+
+Historical note: Track 01 is preserved as the validated 13-map slice history that Track 02 evolved from. It is not the live project status; use `../../current-status.md` and `../track-02-complete-run-evolution/current-status.md` for the current baseline.
 
 ## Completed
 

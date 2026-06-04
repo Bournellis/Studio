@@ -1,7 +1,7 @@
 # Production Status
 
-- Last Updated: `2026-06-03`
-- Status: `Track 02 complete-run build ready for user playtest`
+- Last Updated: `2026-06-04`
+- Status: `Track 02 complete-run build ready for user playtest; foundation review closed`
 
 ## Current Reality
 
@@ -19,6 +19,8 @@ Track 02 currently includes:
 - encounter modes, board formats, field effects, and boss hooks for maps 8/15/22/29;
 - modular GUT suites, generated catalog hashing, catalog source loader seam for future domain splits, shared route pacing simulator, local Run Lab CSV/JSON output with Track 02 golden comparison, and internal directors/services for enemy AI/intent, combat/damage resolution, rewards, Souls shop, battle preview data, HUD/objective readouts, and combat FX presentation.
 
+The final foundation ownership/debt map lives in `docs/foundation-closeout.md`.
+
 ## Validation
 
 Latest green local baseline:
@@ -29,6 +31,10 @@ Latest green local baseline:
 - Run Lab: `--compare-golden --require-golden` passes for Arcano, Invocador, and Necromante with seed `20260518`; Arcano is exact-golden protected and all three complete `29/29` without death.
 
 Known non-fatal debt remains optional missing PNG art and ship overlay alpha warnings.
+
+## Foundation Closeout
+
+Foundation hardening is closed for playtest. Remaining engineering work should be driven by human playtest findings, blocking bugs, or a focused future extraction need. Additional catalog splits, BattleRoot reductions, field-effect extraction or boss-hook extraction are optional future work, not prerequisites for Track 02 playtest.
 
 ## Historical Material
 

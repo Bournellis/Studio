@@ -1,10 +1,12 @@
 # Track 01 Linear Execution Plan
 
 - Last Updated: `2026-05-15`
-- Status: `P14_PLAYTEST_TUNING_PASS_VALIDATED_BASELINE_FOR_TRACK_02`
+- Status: `HISTORICAL_P14_PLAYTEST_TUNING_PASS_VALIDATED_BASELINE_FOR_TRACK_02`
 - Execution Owner: `Codex`
 - Scope: `First coherent playable run loop after Track 00 checkpoint`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd`
+
+Historical note: this plan records the old 13-map playable-run slice. It is not the active execution plan after Track 02 foundation closeout.
 
 ## Purpose
 

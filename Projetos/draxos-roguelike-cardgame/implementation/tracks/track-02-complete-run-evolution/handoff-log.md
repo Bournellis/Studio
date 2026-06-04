@@ -1,7 +1,9 @@
 # Track 02 Handoff Log
 
-- Last Updated: `2026-06-03`
+- Last Updated: `2026-06-04`
 - Status: `READY_FOR_THREAD_HANDOFFS`
+
+Historical note: this file is chronological. Older validation counts, 13-map references, and pre-closeout recommendations are preserved as handoff history from the date they were written; the live baseline is defined by `implementation/current-status.md`, `docs/production-status.md`, and `docs/foundation-closeout.md`.
 
 ## Protocol
 
@@ -174,3 +176,13 @@ Each entry should include:
 - screenshots: not required; this pass did not change visual construction/layout.
 - blockers: none. Remaining known debt: optional missing final PNG art and 4 non-fatal ship overlay alpha warnings.
 - next prompt id: none; Track 02 remains ready for human playtest. Recommended next foundation pass: continue BattleEngine directors only if needed, with field effects and boss hooks as separate small extractions.
+
+### 2026-06-04 - Foundation Hardening 9
+
+- prompt id: `FOUNDATION-HARDENING-9`
+- summary: Closed the foundation review in documentation and coordination: added `docs/foundation-closeout.md`, refreshed `docs/architecture.md` with the live ownership map, marked Track 00/01 docs as historical, separated technical foundation debt from product/playtest follow-up, and preserved the next step as human Track 02 playtest.
+- changed files: `docs/foundation-closeout.md`, `docs/architecture.md`, `docs/production-status.md`, `README.md`, `implementation/current-status.md`, Track 00/01 historical status docs, Track 02 status/tuning/handoff docs, `Projetos/README.md`, `08_Coordenacao_Agentes/Estado_Atual.md`, and coordination Doing.
+- validation result: first validation in the new worktree required the standard one-time headless editor import for Godot global class/GUT readiness. After import, `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path <worktree>\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd` passed twice with 105/105 GUT tests and 1279 asserts. Shared full-route pacing smoke stayed 29/29 with 217 estimated turns, 116 estimated HP loss, 0 deaths, 38-card final deck, 6 relics, and 21 shop actions. Run Lab `--compare-golden --require-golden` passed for Arcano, Invocador, and Necromante seed `20260518`, with 3 checked goldens and 0 mismatches.
+- screenshots: not required; this pass changed documentation/status only.
+- blockers: none. Remaining known debt is explicitly separated in `docs/foundation-closeout.md`.
+- next prompt id: none; foundation review is closed for playtest.

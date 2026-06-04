@@ -1,10 +1,10 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-06-03`
+- Last Updated: `2026-06-04`
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
-- Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `Foundation hardening 8 validation green: 105/105 GUT tests, 1279 asserts, shared full-route pacing smoke green, Run Lab golden comparison green`
+- Historical Baseline Dependency: `Track 01 - Playable Run Loop`
+- Validation Baseline: `Foundation closeout preserves the hardening 8 green baseline: 105/105 GUT tests, 1279 asserts, shared full-route pacing smoke green, Run Lab golden comparison green`
 
 ## Purpose
 
@@ -40,7 +40,7 @@ The target is a fixed, linear 29-map run with all planned encounter types, all p
 
 ## Current Execution Cursor
 
-Completed prompt: `T02-P09 - UI Polish, Telemetry, Full-Route Validation, And Tuning`.
+Completed prompt: `FOUNDATION-HARDENING-9 - Cleanup Final And Living Architecture`.
 
 Next implementation prompt: none. Track 02 is ready for user playtest.
 
@@ -89,6 +89,7 @@ Next implementation prompt: none. Track 02 is ready for user playtest.
 - Foundation hardening 6 extracted BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters while preserving scene composition, layout, drag/drop, UI node names, route behavior, and golden pacing metrics.
 - Foundation hardening 7 added `tools/catalog_source_loader.gd` as a composition seam for future catalog domain splits while preserving the current single `slice_catalog.json` source, generated `.tres` semantics, route behavior, and golden pacing metrics.
 - Foundation hardening 8 extracted staged combat, manual attack, slot damage, hero damage, and destruction queue handling into `battle/combat_resolution_director.gd` while preserving `BattleEngine` wrappers, keyword timing, route behavior, and golden pacing metrics.
+- Foundation hardening 9 closed the foundation review with `docs/foundation-closeout.md`, refreshed the live architecture ownership map, separated technical foundation debt from product/playtest follow-up, and kept the next product step focused on human Track 02 playtest.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
 - Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.
@@ -97,10 +98,10 @@ Next implementation prompt: none. Track 02 is ready for user playtest.
 
 ## Handoff Rule
 
-Every future Track 02 implementation thread must:
+Every future Track 02 implementation or playtest-fix thread must:
 
 - read this file and `implementation-prompts.md`;
-- execute exactly one prompt unless the user explicitly expands scope;
+- execute exactly one focused fix group unless the user explicitly expands scope;
 - run the required validation;
 - update this file with status and next prompt;
 - append `handoff-log.md`;
@@ -108,4 +109,4 @@ Every future Track 02 implementation thread must:
 
 ## Current Risk
 
-Track 02 is ready for user playtest. Remaining risk is human balance feedback: the deterministic full-route smoke validates structure and pacing telemetry, but it is not a substitute for a manual run.
+Track 02 is ready for user playtest. Remaining risk is human balance feedback: the deterministic full-route smoke validates structure and pacing telemetry, but it is not a substitute for a manual run. Additional foundation extraction is optional and should be driven by concrete future work, not by the need to unblock playtest.

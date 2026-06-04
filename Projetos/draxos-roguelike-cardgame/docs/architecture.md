@@ -1,13 +1,30 @@
 # Architecture
 
-- Last Updated: `2026-06-03`
-- Status: `Track 02 foundation hardening 8 baseline`
+- Last Updated: `2026-06-04`
+- Status: `Track 02 foundation closeout baseline`
 
 ## Goal
 
 Keep roguelike run rules, card battle rules, data, validation, and presentation separated so the project can iterate without inheriting RPG Turnos, RPG Isometrico, or DraxosMobile systems by accident.
 
 The JSON Track 02 catalog is the authored source of truth for current content. Generated `.tres` resources must be deterministic and idempotent. `tools/catalog_source_loader.gd` now creates a domain seam for future composed sources while preserving the current single JSON semantics.
+
+For closeout ownership and remaining debt, use `docs/foundation-closeout.md` together with this architecture file.
+
+## Authority And Ownership
+
+| Layer | Live owner | Rule |
+|---|---|---|
+| Product status | `implementation/current-status.md` and `docs/production-status.md` | Keep current state short; put historical detail in track docs. |
+| Human playtest | `docs/playtest-track-02.md` | Human feedback decides balance and clarity after automated gates pass. |
+| Run state | `core/run_session.gd` | Public run API and snapshot v5 stay here; services delegate internal work. |
+| Rewards | `core/run_reward_service.gd` behind `RunSession` | Reward payloads, pending queues and category state remain compatible. |
+| Souls shop | `core/run_shop_service.gd` behind `RunSession` | Offers, purchases, rerolls, costs and `shop_state` sync live here. |
+| Battle rules | `battle/battle_engine.gd` facade plus directors | Callers keep using `BattleEngine`; extracted directors own internal slices. |
+| Battle presentation | `modes/battle/battle_root.gd` plus pure presenters | Scene composition remains in `BattleRoot`; pure readouts stay in presenters. |
+| Catalog | `data/definitions/slice_catalog.json` plus loader/generator | JSON is the live source; generated `.tres` must be semantic-hash idempotent. |
+| Validation | `tools/validate.gd`, modular GUT suites | Validate data/scenes/contracts, route smoke and GUT together. |
+| Telemetry | `tools/route_pacing_simulator.gd` and `tools/run_lab.gd` | Regression and tuning comparison only; not a playtest substitute. |
 
 ## Runtime Areas
 

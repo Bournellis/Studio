@@ -1,7 +1,7 @@
 # Track 02 Validation And Tuning Notes
 
-- Last Updated: `2026-06-03`
-- Prompt: `FOUNDATION-HARDENING-8`
+- Last Updated: `2026-06-04`
+- Prompt: `FOUNDATION-HARDENING-9`
 - Status: `READY_FOR_USER_PLAYTEST`
 
 ## Validation Summary
@@ -24,6 +24,7 @@
 - Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
 - Foundation Pass 7 added `tools/catalog_source_loader.gd` and GUT coverage for single-JSON semantic equivalence plus future catalog domains without changing route metrics, generated resource semantics, or gameplay behavior.
 - Foundation Pass 8 moved staged combat, manual attack, slot damage, hero damage, and destruction queue handling into `battle/combat_resolution_director.gd` with wrapper/director parity coverage and without changing route metrics or gameplay behavior.
+- Foundation Pass 9 closed the foundation review in docs only, added `docs/foundation-closeout.md`, refreshed the architecture ownership map, and separated product/playtest follow-up from optional technical extraction debt.
 
 ## First Tuning Pass
 
@@ -44,9 +45,15 @@ Captured at `1280x720` and `960x540` in:
 - `D:\Estudio\builds\draxos-roguelike-cardgame\visual-screenshots\enemy_intent_*.png`
 - `D:\Estudio\builds\draxos-roguelike-cardgame\visual-screenshots\late_board_battle_*.png`
 
-## Remaining Known Debt
+## Product And Playtest Follow-Up
+
+- Manual playtest remains the next production step and should use `docs/playtest-track-02.md`.
+- Balance changes should come from observed human runs, not from Run Lab alone.
+- Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
+
+## Remaining Technical Debt
 
 - Final card/enemy art is still placeholder-driven where PNGs are absent.
 - Four ship overlay alpha warnings remain non-fatal asset debt.
 - The full-route smoke is deterministic validation telemetry, not a human balance verdict.
-- Human checklist lives at `docs/playtest-track-02.md`.
+- Further BattleRoot, field-effect, boss-hook, or catalog-source splitting is optional future foundation work and is not required before Track 02 playtest.
