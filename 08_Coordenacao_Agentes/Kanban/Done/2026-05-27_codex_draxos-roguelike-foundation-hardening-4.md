@@ -1,5 +1,6 @@
 # Draxos Roguelike Cardgame - Foundation Hardening 4
 
+- Status: `Done / mergeado e fechado`
 - Data: `2026-05-27`
 - Agente: `Codex`
 - Branch: `codex/draxos-roguelike-cardgame/foundation-hardening-4`
@@ -56,3 +57,10 @@ Status final: Foundation Pass 4 implementada.
 - Run Lab final com `--compare-golden --require-golden`: Arcano, Invocador e Necromante seed `20260518` verdes; Arcano exato e todas as classes `29/29` sem morte.
 
 Proximo checkpoint recomendado: Foundation Pass 5 - Run Economy Services.
+
+## Fechamento Operacional
+
+- Incorporado ao `master` antes do cleanup global de worktrees em 2026-06-04.
+- Cartao movido de `Doing` para `Done`.
+- Branch local removida como sobra operacional ja mergeada.
+- Sem pendencias abertas desta passada.

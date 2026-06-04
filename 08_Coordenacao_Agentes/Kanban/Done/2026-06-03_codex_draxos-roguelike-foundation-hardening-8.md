@@ -2,7 +2,7 @@
 
 ## Status
 
-Done / commitado
+Done / mergeado e fechado
 
 ## Branch / Worktree
 
@@ -51,3 +51,10 @@ Executar a Foundation Pass 8 - BattleEngine Core Directors, reduzindo risco estr
 ## Handoff Point
 
 Pass 8 entregue em commits separados de codigo/teste e documentacao/coordenacao. Risco residual: field effects e boss hooks seguem dentro de `BattleEngine` e devem ser extraidos apenas em passes pequenos futuros, se necessario.
+
+## Fechamento Operacional
+
+- Incorporado ao `master` antes do cleanup global de worktrees em 2026-06-04.
+- Cartao movido de `Doing` para `Done`.
+- Worktree e branch locais removidos como sobra operacional ja mergeada.
+- Sem pendencias abertas desta passada.

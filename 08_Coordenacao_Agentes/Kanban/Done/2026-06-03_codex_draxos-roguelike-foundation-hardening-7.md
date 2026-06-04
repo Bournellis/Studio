@@ -1,5 +1,6 @@
 # Draxos Roguelike Cardgame - Foundation Hardening 7
 
+- Status: `Done / mergeado e fechado`
 - Data: `2026-06-03`
 - Agente: `Codex`
 - Branch: `codex/draxos-roguelike-cardgame/foundation-hardening-7`
@@ -62,3 +63,10 @@ Validacao:
 Nota de coordenacao: `master` divergiu desta branch com atualizacoes recentes de DraxosMobile em arquivos compartilhados de portfolio. Por isso, esta passada atualizou docs locais do Draxos e esta nota Doing, mas nao reescreveu `Estado_Atual.md` nem `Projetos/README.md` dentro desta branch para evitar sobrescrever contexto mais novo de outro projeto.
 
 Proximo passo recomendado: Foundation Pass 8 - BattleEngine Core Directors.
+
+## Fechamento Operacional
+
+- Incorporado ao `master` antes do cleanup global de worktrees em 2026-06-04.
+- Cartao movido de `Doing` para `Done`.
+- Worktree e branch locais removidos como sobra operacional ja mergeada.
+- Sem pendencias abertas desta passada.

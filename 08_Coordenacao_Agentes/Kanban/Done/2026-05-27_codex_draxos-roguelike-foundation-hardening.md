@@ -1,5 +1,6 @@
 # Codex - Draxos Roguelike Foundation Hardening
 
+- Status: `Done / mergeado e fechado`
 - Data: `2026-05-27`
 - Projeto: `Projetos/draxos-roguelike-cardgame/`
 - Branch: `codex/draxos-roguelike-cardgame/foundation-hardening`
@@ -35,3 +36,10 @@
 - Proximo passo de produto segue sendo playtest humano da Track 02 completa.
 - Run Lab e regressao/tuning comparativo, nao substitui playtest.
 - Validacao final deve ser rodada duas vezes apos commit para confirmar arvore limpa/idempotencia.
+
+## Fechamento Operacional
+
+- Incorporado ao `master` antes do cleanup global de worktrees em 2026-06-04.
+- Cartao movido de `Doing` para `Done`.
+- Branch local removida como sobra operacional ja mergeada.
+- Sem pendencias abertas desta passada.

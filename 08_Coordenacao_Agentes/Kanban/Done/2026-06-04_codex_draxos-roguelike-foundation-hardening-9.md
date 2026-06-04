@@ -1,5 +1,6 @@
 # Draxos Roguelike - Foundation Hardening 9
 
+- Status: `Done / mergeado e fechado`
 - Data: `2026-06-04`
 - Agente: `codex`
 - Branch: `codex/draxos-roguelike-cardgame/foundation-hardening-9`
@@ -48,3 +49,10 @@ Pass 9 terminou com a fundacao tecnica encerrada para playtest, arquitetura/owne
 - Baseline preservado: GUT `105/105`, `1279` asserts, smoke `29/29`, `217` turnos estimados, `116` HP loss, `0` mortes, deck final `38`, `6` reliquias, `21` acoes de loja.
 - Screenshots: nao requeridas; sem mudanca visual/layout.
 - Blockers: nenhum.
+
+## Fechamento Operacional
+
+- Incorporado ao `master` antes do cleanup global de worktrees em 2026-06-04.
+- Cartao movido de `Doing` para `Done`.
+- Worktree e branch locais removidos como sobra operacional ja mergeada.
+- Sem pendencias abertas desta passada.

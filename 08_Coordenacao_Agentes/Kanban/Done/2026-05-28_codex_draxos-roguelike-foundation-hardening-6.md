@@ -1,5 +1,6 @@
 # Draxos Roguelike Cardgame - Foundation Hardening 6
 
+- Status: `Done / mergeado e fechado`
 - Data: `2026-05-28`
 - Agente: `Codex`
 - Branch: `codex/draxos-roguelike-cardgame/foundation-hardening-6`
@@ -58,3 +59,10 @@ Validacao:
 - Screenshots nao foram necessarios porque a passada ficou em presenters puros, sem mudanca de layout/construcao visual.
 
 Proximo passo recomendado: Foundation Pass 7 - Catalog Foundation, preparando fonte composta do catalogo com diff semantico zero.
+
+## Fechamento Operacional
+
+- Incorporado ao `master` antes do cleanup global de worktrees em 2026-06-04.
+- Cartao movido de `Doing` para `Done`.
+- Branch local removida como sobra operacional ja mergeada.
+- Sem pendencias abertas desta passada.

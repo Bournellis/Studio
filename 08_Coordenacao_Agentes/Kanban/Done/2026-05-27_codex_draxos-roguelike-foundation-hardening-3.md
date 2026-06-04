@@ -1,5 +1,6 @@
 # Draxos Roguelike Cardgame - Foundation Hardening 3
 
+- Status: `Done / mergeado e fechado`
 - Data: `2026-05-27`
 - Agente: `Codex`
 - Branch: `codex/draxos-roguelike-cardgame/foundation-hardening-3`
@@ -63,3 +64,10 @@ Validacao final:
 - Busca final por termos obsoletos manteve apenas material historico/arquivo ou referencias de DraxosMobile fora do escopo.
 
 Proximo checkpoint: commits finais e handoff ao usuario.
+
+## Fechamento Operacional
+
+- Incorporado ao `master` antes do cleanup global de worktrees em 2026-06-04.
+- Cartao movido de `Doing` para `Done`.
+- Branch local removida como sobra operacional ja mergeada.
+- Sem pendencias abertas desta passada.
