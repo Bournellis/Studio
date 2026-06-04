@@ -1,6 +1,6 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-06-03`
+- Last updated: `2026-06-04`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
@@ -20,7 +20,13 @@
   surfaces render local shells before network refresh when no cache exists, Arena
   first access shows a server-sync shell without dev fallback actions, and local
   DatabaseLocal/Mode smoke coverage now matches the active Bosque v1 contract.
-- Latest implemented local package: `Openworld Sync Stability` on branch
+- Latest implemented local package: `Bosque Mecanico Basico v2` on branch
+  `codex/draxos-mobile/bosque-v2-guidance`; it turns Bosque into a free,
+  relaxing collect/deposit/craft/build minigame with optional six-step guidance,
+  server-persisted guidance state in the normal save, fixed resource slack and
+  the first procedural build visual (`fogueira_estavel_1`). This package is
+  local only and has not been published.
+- Previous implemented local package: `Openworld Sync Stability` on branch
   `codex/draxos-mobile/openworld-sync-stability`; it fixes Bosque event ACK
   rollback by applying authoritative event patches instead of hydrating full
   snapshots during active gameplay. This package is local only and has not been
@@ -49,17 +55,75 @@
 - Compatibility validation marker: Latest published remote package: `Foundation Hardening V2`
   remains as legacy guard text for Track 13/V2 docs validation; actual latest
   published remote package is the first access runtime fix release above.
-- Active follow-up: human review/playtest of the local Openworld Sync Stability
-  branch, focused on online Bosque movement, collection, deposit, craft,
-  revision conflict/resync and completion behavior. Latest published remote
-  package remains the first access runtime fix until a separate publication is
-  explicitly approved.
+- Active follow-up: human review/playtest of the local Bosque Mecanico Basico v2
+  branch, focused on free entry/exit, non-blocking guidance, collect/deposit,
+  craft, `Voltar` preserving the visit, `Encerrar visita` summary, guidance
+  persistence and the visual/collision behavior of `fogueira_estavel_1`. Latest
+  published remote package remains the first access runtime fix until a separate
+  publication is explicitly approved.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
+
+## Bosque Mecanico Basico v2 - 2026-06-04
+
+This local package implements the current Bosque direction as an internal alpha
+mechanical slice. It removes the idea of a mandatory session objective from the
+contract and keeps the player free to enter, leave, collect, deposit, craft or
+ignore everything without punishment.
+
+- branch: `codex/draxos-mobile/bosque-v2-guidance`;
+- commits:
+  - `4d8d9d1 Register Bosque v2 integration work`;
+  - `8af97b7 Implement Bosque v2 guidance and campfire client`;
+  - `8b2aa61 Document Bosque v2 openworld scaffold`;
+  - `f01461e Persist openworld guidance state`;
+- worktree:
+  `D:\Estudio-worktrees\draxos-mobile--codex--bosque-v2-guidance`;
+- remote publication: not executed;
+- remote mutation: not executed;
+- latest published remote package remains
+  `internal-alpha/v0-first-access-runtime-20260602-4608977`.
+
+Scope delivered:
+
+- Bosque docs now define the mode as a free minigame of collect, deposit, craft
+  and small visual builds; enemies, NPCs, quests, combat, city and complete
+  open world remain out of scope.
+- The old "objective of session" framing is replaced by optional guidance.
+- Client guidance has six approved steps, a discreet HUD banner, hide/advance
+  controls, auto-advance hooks and a `Sessao` sheet action to reopen tips.
+- Guidance state is included in the Bosque model snapshot/result payload and in
+  event ACK patches.
+- Server/supabase mirrors add `guidance_update` and persist state under
+  `game_saves.snapshot.openworld.forest.guidance` for the normal save.
+- `Completar` was renamed to `Encerrar visita`; local preview summary reports
+  visit time, deposited items and creations without objective complete/fail
+  language.
+- `Voltar` continues to preserve the active online visit for resume.
+- Fixed ruleset resources now cover `bolsa_simples_1` and
+  `fogueira_estavel_1` with small slack and no respawn.
+- `fogueira_estavel_1` appears at approximately `x=305, y=330` after the
+  upgrade, uses procedural Godot drawing, respects y-sort and enables a small
+  blocking collision.
+
+Validation:
+
+- `git diff --check`: passed.
+- `Godot --headless --import`: passed.
+- GUT client suite: passed (`214/214`, including `30/30` Openworld mode tests).
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ClientQuick`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ModePlatform`: passed
+  (`38/38` mode contracts plus mode smokes).
+- `tools/smoke_openworld_forest.gd`: passed.
+- `tools/validate_foundation.ps1 -ProjectDir . -Profile ServerQuick`: overall
+  failed on existing out-of-scope Arena contract
+  `server/tests/arena_loop_unlock_friction_test.ts` expecting
+  `Proximo desafio\n`; Openworld/mode server contracts in the same run passed,
+  including guidance update validation and migration mirror checks.
 
 ## Openworld Sync Stability - 2026-06-03
 
