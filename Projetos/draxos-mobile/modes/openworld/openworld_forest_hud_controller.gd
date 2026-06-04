@@ -6,6 +6,10 @@ signal craft_requested(recipe_id: String)
 signal complete_requested
 signal abandon_requested
 signal back_requested
+signal guidance_next_requested
+signal guidance_hide_requested
+signal guidance_reopen_requested
+signal sheet_tab_changed(tab_id: String)
 
 const JoystickScript := preload("res://modes/openworld/openworld_virtual_joystick.gd")
 const InventorySheetScript := preload("res://modes/openworld/openworld_inventory_sheet.gd")
@@ -20,6 +24,11 @@ var weight_label: Label
 var status_label: Label
 var mode_label: Label
 var feedback_label: Label
+var guidance_panel: PanelContainer
+var guidance_label: Label
+var guidance_step_label: Label
+var guidance_next_button: Button
+var guidance_hide_button: Button
 var inventory_button: Button
 var deposit_button: Button
 var complete_button: Button
@@ -69,6 +78,53 @@ func build(root: Control, next_model: Variant) -> void:
 	feedback_label.add_theme_color_override("font_color", Color(0.96, 0.86, 0.58))
 	hud_column.add_child(feedback_label)
 
+	guidance_panel = PanelContainer.new()
+	guidance_panel.name = "OpenworldGuidanceBanner"
+	guidance_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.075, 0.082, 0.064, 0.88), Color(0.76, 0.67, 0.43, 0.40)))
+	guidance_panel.visible = false
+	root.add_child(guidance_panel)
+
+	var guidance_margin := MarginContainer.new()
+	guidance_margin.add_theme_constant_override("margin_left", 10)
+	guidance_margin.add_theme_constant_override("margin_right", 8)
+	guidance_margin.add_theme_constant_override("margin_top", 8)
+	guidance_margin.add_theme_constant_override("margin_bottom", 8)
+	guidance_panel.add_child(guidance_margin)
+
+	var guidance_row := HBoxContainer.new()
+	guidance_row.add_theme_constant_override("separation", 8)
+	guidance_margin.add_child(guidance_row)
+
+	var guidance_text_column := VBoxContainer.new()
+	guidance_text_column.add_theme_constant_override("separation", 2)
+	guidance_text_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	guidance_row.add_child(guidance_text_column)
+
+	guidance_step_label = _hud_label("")
+	guidance_step_label.name = "OpenworldGuidanceStep"
+	guidance_step_label.add_theme_color_override("font_color", Color(0.76, 0.72, 0.58))
+	guidance_text_column.add_child(guidance_step_label)
+
+	guidance_label = _hud_label("")
+	guidance_label.name = "OpenworldGuidanceText"
+	guidance_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	guidance_label.clip_text = false
+	guidance_text_column.add_child(guidance_label)
+
+	guidance_next_button = _mini_button("Proximo")
+	guidance_next_button.name = "OpenworldGuidanceNextButton"
+	guidance_next_button.pressed.connect(func() -> void:
+		guidance_next_requested.emit()
+	)
+	guidance_row.add_child(guidance_next_button)
+
+	guidance_hide_button = _mini_button("Ocultar")
+	guidance_hide_button.name = "OpenworldGuidanceHideButton"
+	guidance_hide_button.pressed.connect(func() -> void:
+		guidance_hide_requested.emit()
+	)
+	guidance_row.add_child(guidance_hide_button)
+
 	joystick = JoystickScript.new()
 	joystick.name = "OpenworldVirtualJoystick"
 	joystick.visible = false
@@ -94,7 +150,7 @@ func build(root: Control, next_model: Variant) -> void:
 	)
 	actions.add_child(deposit_button)
 
-	complete_button = _action_button("Completar")
+	complete_button = _action_button("Encerrar visita")
 	complete_button.name = "OpenworldCompleteButton"
 	complete_button.pressed.connect(func() -> void:
 		complete_requested.emit()
@@ -122,6 +178,12 @@ func build(root: Control, next_model: Variant) -> void:
 	sheet.abandon_requested.connect(func() -> void:
 		abandon_requested.emit()
 	)
+	sheet.guidance_reopen_requested.connect(func() -> void:
+		guidance_reopen_requested.emit()
+	)
+	sheet.tab_changed.connect(func(tab_id: String) -> void:
+		sheet_tab_changed.emit(tab_id)
+	)
 	root.add_child(sheet)
 
 func layout(screen_size: Vector2) -> void:
@@ -131,6 +193,16 @@ func layout(screen_size: Vector2) -> void:
 	var top_width := minf(screen_size.x - safe_margin * 2.0, 460.0)
 	hud_top.position = Vector2(safe_margin, safe_margin)
 	hud_top.size = Vector2(top_width, 92.0)
+	if guidance_panel != null:
+		var guidance_width := minf(screen_size.x - safe_margin * 2.0, 520.0)
+		guidance_panel.position = Vector2(safe_margin, hud_top.position.y + hud_top.size.y + 8.0)
+		guidance_panel.size = Vector2(guidance_width, 70.0)
+		var compact_guidance := screen_size.x < 420.0
+		for button: Button in [guidance_next_button, guidance_hide_button]:
+			if button != null:
+				button.custom_minimum_size = Vector2(62.0 if compact_guidance else 78.0, 42.0)
+		if guidance_next_button != null:
+			guidance_next_button.text = "Prox." if compact_guidance else "Proximo"
 	if joystick != null:
 		joystick.size = JoystickScript.BASE_SIZE
 		if not joystick.is_active():
@@ -172,9 +244,16 @@ func update(state: Dictionary) -> void:
 		deposit_button.disabled = bool(state.get("deposit_disabled", false))
 		deposit_button.tooltip_text = str(state.get("deposit_tooltip", "Depositar bolso no bau."))
 	if complete_button != null:
-		complete_button.text = ("Fim" if str(state.get("integration_mode", "dev_local")) == "integrated_alpha" else "Preview") if _compact_actions else str(state.get("complete_text", "Completar"))
+		complete_button.text = "Encerrar" if _compact_actions else str(state.get("complete_text", "Encerrar visita"))
 		complete_button.disabled = bool(state.get("complete_disabled", false))
-		complete_button.tooltip_text = str(state.get("complete_tooltip", "Completar sessao."))
+		complete_button.tooltip_text = str(state.get("complete_tooltip", "Encerrar visita."))
+	if guidance_panel != null:
+		var guidance_visible := bool(state.get("guidance_visible", false))
+		guidance_panel.visible = guidance_visible
+		if guidance_label != null:
+			guidance_label.text = str(state.get("guidance_text", ""))
+		if guidance_step_label != null:
+			guidance_step_label.text = str(state.get("guidance_step_text", ""))
 	_render_sheet_if_needed(state, false)
 
 func open_sheet(tab_id: String) -> void:
@@ -192,6 +271,8 @@ func overlay_controls() -> Array[Control]:
 	for node: Variant in [hud_top, actions, sheet, joystick]:
 		if node is Control:
 			controls.append(node)
+	if guidance_panel is Control:
+		controls.append(guidance_panel)
 	return controls
 
 func _render_sheet_if_needed(state: Dictionary, force: bool) -> void:
@@ -235,6 +316,7 @@ func _sheet_signature(state: Dictionary) -> String:
 		"chest": model.chest if model != null else {},
 		"upgrades": model.upgrades if model != null else {},
 		"active_collection": model.active_collection if model != null else {},
+		"guidance": model.guidance_state() if model != null and model.has_method("guidance_state") else {},
 	}
 	return JSON.stringify(payload)
 
@@ -254,6 +336,15 @@ func _action_button(text: String) -> Button:
 	button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.custom_minimum_size = Vector2(62, 48)
+	button.tooltip_text = text
+	return button
+
+func _mini_button(text: String) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.clip_text = true
+	button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	button.custom_minimum_size = Vector2(78, 42)
 	button.tooltip_text = text
 	return button
 

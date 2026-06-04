@@ -5,8 +5,9 @@ const KIND_CHEST := "chest"
 const KIND_TREE := "tree_large"
 const KIND_ROCK := "rock_large"
 const KIND_RESOURCE := "resource"
+const KIND_CAMPFIRE := "campfire"
 
-static func build_catalog(chest_position: Vector2, resource_fixtures: Array, obstacle_fixtures: Array = []) -> Array[Dictionary]:
+static func build_catalog(chest_position: Vector2, resource_fixtures: Array, obstacle_fixtures: Array = [], structure_fixtures: Array = []) -> Array[Dictionary]:
 	var entries: Array[Dictionary] = []
 	entries.append({
 		"id": "chest_home",
@@ -34,6 +35,17 @@ static func build_catalog(chest_position: Vector2, resource_fixtures: Array, obs
 		entry["interaction_radius"] = float(entry.get("interaction_radius", 0.0))
 		entry["sort_offset"] = float(entry.get("sort_offset", 20.0))
 		entries.append(entry)
+	for structure: Dictionary in structure_fixtures:
+		var entry := structure.duplicate(true)
+		if str(entry.get("id", "")).strip_edges() == "":
+			continue
+		if str(entry.get("kind", "")).strip_edges() == "":
+			entry["kind"] = KIND_CAMPFIRE
+		entry["blocks_player"] = bool(entry.get("blocks_player", true))
+		entry["collectible"] = false
+		entry["interaction_radius"] = float(entry.get("interaction_radius", 0.0))
+		entry["sort_offset"] = float(entry.get("sort_offset", 20.0))
+		entries.append(entry)
 	for fixture: Dictionary in resource_fixtures:
 		var item_id := str(fixture.get("item_id", ""))
 		var node_id := str(fixture.get("node_id", "")).strip_edges()
@@ -49,6 +61,7 @@ static func build_catalog(chest_position: Vector2, resource_fixtures: Array, obs
 			"blocks_player": false,
 			"collectible": true,
 			"item_id": item_id,
+			"node_id": node_id,
 			"sort_offset": 12.0,
 		})
 	return entries

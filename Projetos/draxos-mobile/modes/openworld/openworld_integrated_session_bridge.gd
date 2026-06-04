@@ -199,7 +199,7 @@ func complete_session(result_payload: Dictionary) -> Dictionary:
 	if _completed:
 		return {"ok": false, "completed": true}
 	if not can_complete():
-		last_result_text = "Sincronize o Bosque antes de completar."
+		last_result_text = "Sincronize o Bosque antes de encerrar."
 		_set_model_message("Sincronizacao pendente.")
 		_emit_state_changed()
 		return {"ok": false, "pending_sync": true}
@@ -494,6 +494,7 @@ func _event_snapshot_patch(snapshot_payload: Dictionary) -> Dictionary:
 		"capacity",
 		"pocket_weight",
 		"current_speed",
+		"guidance",
 		"last_message",
 	]:
 		if snapshot_payload.has(key):
@@ -624,11 +625,11 @@ func _active_save_type() -> String:
 
 func _reward_summary(body: Dictionary, reward: Dictionary) -> String:
 	if _is_cap_zero_completion(body, reward):
-		return "Bosque concluido. Limite diario atingido; sem recompensa nova."
+		return "Visita encerrada. Limite diario atingido; sem recompensa nova."
 	var delta := _as_dictionary(reward.get("resource_delta", body.get("resource_delta", {})))
 	if delta.is_empty():
-		return "Bosque concluido. Nenhuma recompensa nova."
-	return "Bosque concluido. Recompensa aplicada: %s." % _resource_delta_text(delta)
+		return "Visita encerrada. Nenhuma recompensa nova."
+	return "Visita encerrada. Recompensa aplicada: %s." % _resource_delta_text(delta)
 
 func _resource_delta_text(delta: Dictionary) -> String:
 	var keys := PackedStringArray()

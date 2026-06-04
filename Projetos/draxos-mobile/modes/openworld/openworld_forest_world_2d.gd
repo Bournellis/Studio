@@ -19,8 +19,13 @@ var _boundary_body: StaticBody2D
 var _viewport_size := Vector2(390, 844)
 var _resource_fixtures: Array = []
 var _obstacle_fixtures: Array = []
+var _structure_fixtures: Array = []
 var _objects_by_id: Dictionary = {}
 var _resource_objects: Dictionary = {}
+var _resource_objects_by_item: Dictionary = {}
+var _structure_objects: Dictionary = {}
+var _structure_blockers: Dictionary = {}
+var _built_upgrades: Dictionary = {}
 var _movement_vector := Vector2.ZERO
 var _movement_speed := 0.0
 var _last_physics_moved := false
@@ -39,12 +44,14 @@ func configure(
 	next_chest_position: Vector2,
 	next_resource_fixtures: Array,
 	next_player_position: Vector2,
-	next_obstacle_fixtures: Array = []
+	next_obstacle_fixtures: Array = [],
+	next_structure_fixtures: Array = []
 ) -> void:
 	world_size = next_world_size
 	chest_position = next_chest_position
 	_resource_fixtures = next_resource_fixtures.duplicate(true)
 	_obstacle_fixtures = next_obstacle_fixtures.duplicate(true)
+	_structure_fixtures = next_structure_fixtures.duplicate(true)
 	player_initial_position = next_player_position
 	if is_inside_tree():
 		_build_world()
@@ -107,26 +114,48 @@ func obstacle_collision_size(object_id: String) -> Vector2:
 	return object.collision_size if object != null else Vector2.ZERO
 
 func resource_position(item_id: String) -> Vector2:
-	var object := _resource_objects.get(item_id) as OpenworldWorldObject
+	var objects: Array = _resource_objects_by_item.get(item_id, []) as Array
+	var object: OpenworldWorldObject = null
+	if not objects.is_empty():
+		object = objects[0] as OpenworldWorldObject
 	return object.global_position if object != null else Vector2.ZERO
+
+func resource_node_position(node_id: String) -> Vector2:
+	var object := _resource_objects.get(node_id) as OpenworldWorldObject
+	return object.global_position if object != null else Vector2.ZERO
+
+func structure_position(upgrade_id: String) -> Vector2:
+	var object := _structure_objects.get(upgrade_id) as OpenworldWorldObject
+	return object.global_position if object != null else Vector2.ZERO
+
+func structure_visible(upgrade_id: String) -> bool:
+	var object := _structure_objects.get(upgrade_id) as OpenworldWorldObject
+	return object != null and object.visible
+
+func structure_collision_enabled(upgrade_id: String) -> bool:
+	var shape := _structure_blockers.get(upgrade_id) as CollisionShape2D
+	return shape != null and not shape.disabled
 
 func set_state(
 	resources: Array[Dictionary],
-	nearest_item_id: String,
+	nearest_node_id: String,
 	collection_progress: float,
 	pocket_full: bool,
-	next_walk_phase: float
+	next_walk_phase: float,
+	built_upgrades: Dictionary = {}
 ) -> void:
 	_walk_phase = next_walk_phase
+	_set_structure_visibility(built_upgrades)
 	for entry: Dictionary in resources:
 		var resource_item_id := str(entry.get("item_id", ""))
-		var object := _resource_objects.get(resource_item_id) as OpenworldWorldObject
+		var resource_node_id := str(entry.get("node_id", ""))
+		var object := _resource_objects.get(resource_node_id) as OpenworldWorldObject
 		if object == null:
 			continue
 		object.set_resource_state(
 			bool(entry.get("collected", false)),
-			resource_item_id == nearest_item_id,
-			collection_progress if resource_item_id == nearest_item_id else 0.0
+			resource_node_id == nearest_node_id,
+			collection_progress if resource_node_id == nearest_node_id else 0.0
 		)
 	if player != null:
 		player.set_visual_state(pocket_full, _walk_phase)
@@ -144,6 +173,9 @@ func _build_world() -> void:
 		child.queue_free()
 	_objects_by_id.clear()
 	_resource_objects.clear()
+	_resource_objects_by_item.clear()
+	_structure_objects.clear()
+	_structure_blockers.clear()
 	_built = true
 
 	_depth_layer = Node2D.new()
@@ -157,16 +189,25 @@ func _build_world() -> void:
 	_object_blocker_body.collision_mask = 1
 	add_child(_object_blocker_body)
 
-	var catalog: Array[Dictionary] = CatalogScript.build_catalog(chest_position, _resource_fixtures, _obstacle_fixtures)
+	var catalog: Array[Dictionary] = CatalogScript.build_catalog(chest_position, _resource_fixtures, _obstacle_fixtures, _structure_fixtures)
 	for object_data: Dictionary in catalog:
 		var object := ObjectScript.new()
 		object.configure(object_data)
 		_depth_layer.add_child(object)
 		_objects_by_id[object.object_id] = object
 		if object.collectible:
-			_resource_objects[object.item_id] = object
+			_resource_objects[object.node_id] = object
+			if not _resource_objects_by_item.has(object.item_id):
+				_resource_objects_by_item[object.item_id] = []
+			(_resource_objects_by_item[object.item_id] as Array).append(object)
+		elif object.kind == CatalogScript.KIND_CAMPFIRE:
+			_structure_objects[object.upgrade_id] = object
+			var shape := _add_object_blocker(object_data) if bool(object_data.get("blocks_player", false)) else null
+			if shape != null:
+				_structure_blockers[object.upgrade_id] = shape
 		elif bool(object_data.get("blocks_player", false)):
 			_add_object_blocker(object_data)
+	_set_structure_visibility(_built_upgrades)
 
 	player = PlayerScript.new()
 	player.position = player_initial_position
@@ -198,9 +239,9 @@ func _add_wall(label: String, wall_position: Vector2, wall_size: Vector2) -> voi
 	shape.shape = rectangle
 	_boundary_body.add_child(shape)
 
-func _add_object_blocker(object_data: Dictionary) -> void:
+func _add_object_blocker(object_data: Dictionary) -> CollisionShape2D:
 	if _object_blocker_body == null:
-		return
+		return null
 	var shape := CollisionShape2D.new()
 	shape.name = "OpenworldObjectBlocker_%s" % str(object_data.get("id", "object"))
 	shape.position = Vector2(object_data.get("position", Vector2.ZERO)) + Vector2(object_data.get("collision_offset", Vector2.ZERO))
@@ -217,6 +258,18 @@ func _add_object_blocker(object_data: Dictionary) -> void:
 		circle.radius = maxf(1.0, float(object_data.get("collision_radius", 20.0)))
 		shape.shape = circle
 	_object_blocker_body.add_child(shape)
+	return shape
+
+func _set_structure_visibility(built_upgrades: Dictionary) -> void:
+	_built_upgrades = built_upgrades.duplicate(true)
+	for upgrade_id: String in _structure_objects.keys():
+		var built := bool(_built_upgrades.get(upgrade_id, false))
+		var object := _structure_objects.get(upgrade_id) as OpenworldWorldObject
+		if object != null:
+			object.set_built_state(built)
+		var shape := _structure_blockers.get(upgrade_id) as CollisionShape2D
+		if shape != null:
+			shape.disabled = not built
 
 func _update_camera() -> void:
 	if _camera == null:

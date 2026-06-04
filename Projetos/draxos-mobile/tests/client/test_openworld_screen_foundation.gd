@@ -132,7 +132,7 @@ func test_preview_result_without_auth_is_explicitly_no_reward() -> void:
 
 	assert_eq(screen.session_state_for_tests(), "preview")
 	assert_string_contains(screen.get_model().last_message, "sem recompensa")
-	assert_string_contains(str(screen.call("_result_text")), "Resultado preview")
+	assert_string_contains(str(screen.call("_result_text")), "Resumo da visita")
 	assert_string_contains(str(screen.call("_result_text")), "Sem recompensa")
 	await get_tree().process_frame
 

@@ -1,6 +1,7 @@
 extends GutTest
 
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
+const RulesetScript := preload("res://modes/openworld/openworld_forest_ruleset.gd")
 const ScreenScript := preload("res://modes/openworld/openworld_forest_screen.gd")
 const RegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
 const RouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
@@ -41,7 +42,7 @@ class FakeOpenworldSupabaseClient:
 		for _frame in delay_frames:
 			await get_tree().process_frame
 		if event_responses.is_empty():
-			return {"ok": false, "body": {"error": {"code": "NO_FAKE_RESPONSE"}}}
+			return {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 		return event_responses.pop_front()
 
 class FakeOpenworldSessionStore:
@@ -123,6 +124,33 @@ func test_result_payload_is_preview_local_only() -> void:
 	assert_true(int(payload.get("activity_score", 0)) > 0)
 	assert_true(Dictionary(payload.get("deposited_items", {})).has("cinzas_preview"))
 
+func test_guidance_starts_visible_and_persists_in_snapshot() -> void:
+	var model = ModelScript.new()
+	assert_true(model.guidance_visible())
+	assert_eq(model.guidance_text(), "Explore o Bosque sem pressa.")
+	assert_true(model.mark_guidance_step(1))
+	assert_eq(int(model.guidance_state().get("current_step", 0)), 2)
+	assert_false(model.mark_guidance_step(4))
+	model.dismiss_guidance()
+	var snapshot := model.snapshot()
+	var restored = ModelScript.new()
+	restored.apply_snapshot(snapshot)
+	assert_false(restored.guidance_visible())
+	assert_eq(int(restored.guidance_state().get("current_step", 0)), 2)
+	restored.reopen_guidance()
+	assert_true(restored.guidance_visible())
+
+func test_ruleset_has_fixed_resources_for_bag_and_stable_campfire_with_slack() -> void:
+	var totals: Dictionary = {}
+	for node: Dictionary in RulesetScript.resource_fixtures():
+		var item_id := str(node.get("item_id", ""))
+		totals[item_id] = int(totals.get(item_id, 0)) + int(node.get("quantity", 1))
+	assert_gte(int(totals.get("galho", 0)), 7)
+	assert_gte(int(totals.get("folha", 0)), 4)
+	assert_gte(int(totals.get("resina", 0)), 2)
+	assert_gte(int(totals.get("folha_seca", 0)), 3)
+	assert_gte(int(totals.get("pedra_pequena", 0)), 2)
+
 func test_visual_screen_instantiates_fullscreen_with_joystick_hud_and_sheet() -> void:
 	var screen = ScreenScript.new()
 	add_child_autofree(screen)
@@ -137,9 +165,46 @@ func test_visual_screen_instantiates_fullscreen_with_joystick_hud_and_sheet() ->
 	assert_not_null(screen.find_child("OpenworldVirtualJoystick", true, false))
 	assert_false((screen.find_child("OpenworldVirtualJoystick", true, false) as Control).visible)
 	assert_not_null(screen.find_child("OpenworldHudTop", true, false))
+	assert_not_null(screen.find_child("OpenworldGuidanceBanner", true, false))
 	assert_not_null(screen.find_child("OpenworldInventoryButton", true, false))
 	assert_not_null(screen.find_child("OpenworldBackButton", true, false))
+	var complete := screen.find_child("OpenworldCompleteButton", true, false) as Button
+	assert_not_null(complete)
+	assert_eq(complete.text, "Encerrar visita")
 	assert_null(screen.find_child("OpenworldForestBoard", true, false))
+
+func test_guidance_banner_can_hide_and_reopen_from_session_sheet() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var banner := screen.find_child("OpenworldGuidanceBanner", true, false) as Control
+	assert_not_null(banner)
+	assert_true(banner.visible)
+	var hide := screen.find_child("OpenworldGuidanceHideButton", true, false) as Button
+	assert_not_null(hide)
+	hide.pressed.emit()
+	await get_tree().process_frame
+	assert_false(banner.visible)
+	screen.get_inventory_sheet().open_sheet("session")
+	screen.call("_update_labels")
+	await get_tree().process_frame
+	var reopen := screen.find_child("OpenworldGuidanceReopenButton", true, false) as Button
+	assert_not_null(reopen)
+	reopen.pressed.emit()
+	await get_tree().process_frame
+	assert_true(banner.visible)
+	assert_eq(screen.get_model().guidance_text(), "Explore o Bosque sem pressa.")
+
+func test_guidance_advances_after_player_moves() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	assert_eq(int(screen.get_model().guidance_state().get("current_step", 0)), 1)
+	screen.set_debug_joystick_vector(Vector2.RIGHT)
+	await wait_seconds(0.08)
+	screen.set_debug_joystick_vector(Vector2.ZERO)
+	await get_tree().process_frame
+	assert_eq(int(screen.get_model().guidance_state().get("current_step", 0)), 2)
 
 func test_visual_screen_debug_joystick_moves_player_for_smoke_tests() -> void:
 	var screen = ScreenScript.new()
@@ -255,6 +320,21 @@ func test_openworld_resources_are_pass_through_and_still_collectible() -> void:
 	await wait_seconds(1.45)
 	assert_true(Dictionary(screen.get_model().pocket).has("galho"))
 
+func test_stable_campfire_appears_and_blocks_after_upgrade() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var world = screen.call("get_openworld_world_2d")
+	assert_false(bool(world.call("structure_visible", "fogueira_estavel_1")))
+	assert_false(bool(world.call("structure_collision_enabled", "fogueira_estavel_1")))
+	screen.get_model().upgrades["fogueira_estavel_1"] = true
+	screen.call("_update_labels")
+	await get_tree().process_frame
+	assert_true(bool(world.call("structure_visible", "fogueira_estavel_1")))
+	assert_true(bool(world.call("structure_collision_enabled", "fogueira_estavel_1")))
+	assert_eq(world.call("structure_position", "fogueira_estavel_1"), Vector2(305, 330))
+	await _expect_obstacle_blocks(screen, "structure_fogueira_estavel_1", Vector2.RIGHT)
+
 func test_openworld_moving_during_collection_cancels_collection() -> void:
 	var screen = ScreenScript.new()
 	add_child_autofree(screen)
@@ -303,8 +383,9 @@ func test_integrated_event_ack_does_not_rollback_player_position() -> void:
 	await _wait_process_frames(6)
 	assert_eq(screen.get_player_position(), moved_position)
 	assert_eq(int(screen.get("_snapshot_revision")), 1)
-	assert_eq(client.captured_events.size(), 1)
-	assert_true(Dictionary(client.captured_events[0].get("event_payload", {})).has("client_position_revision"))
+	var move_event := _captured_event(client, "move_heartbeat")
+	assert_false(move_event.is_empty())
+	assert_true(Dictionary(move_event.get("event_payload", {})).has("client_position_revision"))
 
 func test_integrated_collect_start_ack_preserves_active_collection() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
@@ -534,6 +615,12 @@ func _resource_node_id(screen, item_id: String) -> String:
 		if str(node.get("item_id", "")) == item_id:
 			return str(node.get("node_id", ""))
 	return ""
+
+func _captured_event(client: FakeOpenworldSupabaseClient, event_type: String) -> Dictionary:
+	for event: Dictionary in client.captured_events:
+		if str(event.get("event_type", "")) == event_type:
+			return event
+	return {}
 
 func _wait_process_frames(frames: int) -> void:
 	for _frame in frames:

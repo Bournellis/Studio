@@ -6,6 +6,8 @@ signal deposit_requested
 signal craft_requested(recipe_id: String)
 signal complete_requested
 signal abandon_requested
+signal guidance_reopen_requested
+signal tab_changed(tab_id: String)
 
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 
@@ -31,6 +33,7 @@ var _tab_buttons: Dictionary = {}
 var _deposit_button: Button
 var _complete_button: Button
 var _abandon_button: Button
+var _guidance_button: Button
 var _technical_button: Button
 
 func _ready() -> void:
@@ -91,6 +94,7 @@ func open_sheet(tab_id: String = "pocket") -> void:
 	_current_tab = tab_id
 	visible = true
 	render()
+	tab_changed.emit(_current_tab)
 
 func close_sheet() -> void:
 	visible = false
@@ -177,6 +181,7 @@ func _select_tab(tab_id: String) -> void:
 	if tab_id != "session":
 		_technical_visible = false
 	render()
+	tab_changed.emit(tab_id)
 
 func _render_tab_buttons() -> void:
 	for key: String in _tab_buttons.keys():
@@ -223,13 +228,14 @@ func _render_session() -> void:
 		_body.add_child(_label(session_message, 13, Color(0.86, 0.83, 0.70)))
 	_complete_button = Button.new()
 	_complete_button.name = "OpenworldSheetCompleteButton"
-	_complete_button.text = "Completar" if integration_mode == "integrated_alpha" else "Resultado preview"
+	_complete_button.text = "Encerrar visita"
 	_complete_button.custom_minimum_size = Vector2(0, 48)
 	_complete_button.disabled = network_busy or not can_complete
 	_complete_button.pressed.connect(func() -> void:
 		complete_requested.emit()
 	)
 	_body.add_child(_complete_button)
+	_render_guidance_session_block()
 	if abandon_available:
 		_abandon_button = Button.new()
 		_abandon_button.name = "OpenworldSheetAbandonButton"
@@ -272,7 +278,28 @@ func _clear_body() -> void:
 	_deposit_button = null
 	_complete_button = null
 	_abandon_button = null
+	_guidance_button = null
 	_technical_button = null
+
+func _render_guidance_session_block() -> void:
+	if model == null or not model.has_method("guidance_state"):
+		return
+	var guidance_text := ""
+	if model.has_method("guidance_text"):
+		guidance_text = str(model.guidance_text())
+	if guidance_text == "":
+		guidance_text = "Dicas ocultas ou concluidas."
+	_body.add_child(_label("Dicas do Bosque", 15, Color(0.90, 0.82, 0.62)))
+	_body.add_child(_label(guidance_text, 13, Color(0.84, 0.80, 0.68)))
+	_guidance_button = Button.new()
+	_guidance_button.name = "OpenworldGuidanceReopenButton"
+	_guidance_button.text = "Reabrir dicas do Bosque"
+	_guidance_button.custom_minimum_size = Vector2(0, 44)
+	_guidance_button.disabled = network_busy
+	_guidance_button.pressed.connect(func() -> void:
+		guidance_reopen_requested.emit()
+	)
+	_body.add_child(_guidance_button)
 
 func _label(text: String, font_size: int, color: Color) -> Label:
 	var label := Label.new()
@@ -346,7 +373,7 @@ func _session_state_text() -> String:
 		"resyncing":
 			return "Resincronizando"
 		"completed":
-			return "Concluido"
+			return "Visita encerrada"
 		"offline":
 			return "Offline - preview sem recompensa"
 		"blocked":

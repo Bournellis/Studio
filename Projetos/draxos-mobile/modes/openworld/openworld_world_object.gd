@@ -6,7 +6,9 @@ const CatalogScript := preload("res://modes/openworld/openworld_world_catalog.gd
 
 var object_id := ""
 var kind := ""
+var node_id := ""
 var item_id := ""
+var upgrade_id := ""
 var display_name := ""
 var collision_shape := "circle"
 var collision_size := Vector2.ZERO
@@ -20,6 +22,7 @@ var visual_size := Vector2(40, 40)
 var collected := false
 var nearest := false
 var collection_progress := 0.0
+var built := true
 
 var _static_body: StaticBody2D
 var _area: Area2D
@@ -27,7 +30,9 @@ var _area: Area2D
 func configure(object_data: Dictionary) -> void:
 	object_id = str(object_data.get("id", "object"))
 	kind = str(object_data.get("kind", ""))
+	node_id = str(object_data.get("node_id", ""))
 	item_id = str(object_data.get("item_id", ""))
+	upgrade_id = str(object_data.get("upgrade_id", ""))
 	display_name = str(object_data.get("display_name", object_id))
 	position = Vector2(object_data.get("position", Vector2.ZERO))
 	visual_size = Vector2(object_data.get("visual_size", Vector2(40, 40)))
@@ -39,7 +44,9 @@ func configure(object_data: Dictionary) -> void:
 	blocks_player = bool(object_data.get("blocks_player", false))
 	collectible = bool(object_data.get("collectible", false))
 	sort_offset = float(object_data.get("sort_offset", 0.0))
+	built = bool(object_data.get("built", true))
 	name = "OpenworldObject_%s" % object_id
+	visible = built
 	_update_depth()
 	if collectible or interaction_radius > 0.0:
 		_add_area()
@@ -56,6 +63,11 @@ func set_resource_state(next_collected: bool, next_nearest: bool, next_progress:
 	if _area != null:
 		_area.monitoring = not collected
 		_area.monitorable = not collected
+	queue_redraw()
+
+func set_built_state(next_built: bool) -> void:
+	built = next_built
+	visible = built
 	queue_redraw()
 
 func _add_static_body() -> void:
@@ -105,6 +117,8 @@ func _draw() -> void:
 			_draw_large_tree()
 		CatalogScript.KIND_ROCK:
 			_draw_large_rock()
+		CatalogScript.KIND_CAMPFIRE:
+			_draw_campfire()
 		_:
 			draw_circle(Vector2.ZERO, 18.0, Color(0.52, 0.48, 0.36))
 
@@ -148,6 +162,29 @@ func _draw_large_rock() -> void:
 		Vector2(half.x * 0.35, -10),
 	]), Color(0.82, 0.82, 0.76, 0.30), 2.0)
 	draw_arc(Vector2.ZERO, collision_radius, 0.0, TAU, 40, Color(0.0, 0.0, 0.0, 0.10), 1.0, true)
+
+func _draw_campfire() -> void:
+	draw_circle(Vector2(0, 12), 30.0, Color(0.0, 0.0, 0.0, 0.28))
+	for index in range(8):
+		var angle := TAU * float(index) / 8.0
+		var point := Vector2(cos(angle), sin(angle) * 0.62) * 22.0 + Vector2(0, 8)
+		draw_circle(point, 8.0, Color(0.36, 0.35, 0.31))
+		draw_arc(point, 8.0, -0.4, 1.2, 10, Color(0.76, 0.72, 0.60, 0.20), 1.2, true)
+	draw_line(Vector2(-20, 15), Vector2(18, -4), Color(0.38, 0.20, 0.09), 7.0)
+	draw_line(Vector2(19, 15), Vector2(-17, -5), Color(0.30, 0.15, 0.07), 7.0)
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(0, -30),
+		Vector2(14, -2),
+		Vector2(3, 17),
+		Vector2(-13, 2),
+	]), Color(0.93, 0.34, 0.10, 0.82))
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(0, -20),
+		Vector2(8, -1),
+		Vector2(0, 12),
+		Vector2(-7, 0),
+	]), Color(1.0, 0.74, 0.26, 0.92))
+	draw_circle(Vector2(0, 9), 10.0, Color(0.18, 0.12, 0.08, 0.48))
 
 func _draw_resource_icon(resource_item_id: String, highlighted: bool) -> void:
 	draw_circle(Vector2(0, 8), 17.0, Color(0.0, 0.0, 0.0, 0.30))

@@ -16,11 +16,21 @@ const MIN_LOADED_SPEED := 80.0
 const UPGRADED_MIN_LOADED_SPEED := 95.0
 const COLLECTION_RADIUS := 40.0
 const COLLECTION_CANCEL_RADIUS := 52.0
+const GUIDANCE_VERSION := 1
+const GUIDANCE_STEPS := [
+	"Explore o Bosque sem pressa.",
+	"Pare perto de um recurso para coletar.",
+	"Seu bolso guarda o que voce encontra. Quando pesar, volte ao bau.",
+	"Perto do bau, use Depositar para guardar tudo.",
+	"Com materiais no bau, crie melhorias e pequenas estruturas.",
+	"Quando quiser, encerre a visita e volte depois.",
+]
 
 var pocket: Dictionary = {}
 var chest: Dictionary = {}
 var upgrades: Dictionary = {}
 var active_collection: Dictionary = {}
+var guidance: Dictionary = _default_guidance()
 var last_message := ""
 
 func reset() -> void:
@@ -28,6 +38,7 @@ func reset() -> void:
 	chest = {}
 	upgrades = {}
 	active_collection = {}
+	guidance = _default_guidance()
 	last_message = "Bosque local reiniciado."
 
 static func item_definitions() -> Dictionary:
@@ -49,6 +60,7 @@ func snapshot() -> Dictionary:
 		"capacity": capacity(),
 		"pocket_weight": pocket_weight(),
 		"current_speed": current_speed(),
+		"guidance": guidance_state(),
 		"last_message": last_message,
 	}
 
@@ -67,6 +79,8 @@ func apply_authoritative_patch(snapshot_patch: Dictionary, preserve_active_colle
 		chest = _positive_int_dictionary(snapshot_patch.get("chest", {}))
 	if snapshot_patch.has("upgrades"):
 		upgrades = _boolean_dictionary(snapshot_patch.get("upgrades", {}))
+	if snapshot_patch.has("guidance"):
+		guidance = _guidance_dictionary(snapshot_patch.get("guidance", {}))
 	if not preserve_active_collection:
 		active_collection = {}
 	if snapshot_patch.has("last_message"):
@@ -81,6 +95,7 @@ func result_payload(session_seconds: float = 0.0) -> Dictionary:
 		"session_seconds": maxf(0.0, session_seconds),
 		"deposited_items": chest.duplicate(true),
 		"local_upgrades": upgrades.duplicate(true),
+		"guidance": guidance_state(),
 		"activity_score": activity_score(),
 	}
 
@@ -197,6 +212,70 @@ func craft(recipe_id: String) -> Dictionary:
 func has_upgrade(upgrade_id: String) -> bool:
 	return bool(upgrades.get(upgrade_id, false))
 
+func guidance_state() -> Dictionary:
+	guidance = _guidance_dictionary(guidance)
+	return guidance.duplicate(true)
+
+func guidance_text() -> String:
+	if not guidance_visible():
+		return ""
+	var step := int(guidance_state().get("current_step", 1))
+	return str(GUIDANCE_STEPS[step - 1]) if step >= 1 and step <= GUIDANCE_STEPS.size() else ""
+
+func guidance_visible() -> bool:
+	var state := guidance_state()
+	var step := int(state.get("current_step", 1))
+	return not bool(state.get("dismissed", false)) and step >= 1 and step <= GUIDANCE_STEPS.size()
+
+func mark_guidance_step(step: int) -> bool:
+	if step < 1 or step > GUIDANCE_STEPS.size():
+		return false
+	var state := guidance_state()
+	if int(state.get("current_step", 1)) != step:
+		return false
+	var completed: Array = _as_array(state.get("completed_steps", []))
+	var changed := false
+	if not completed.has(step):
+		completed.append(step)
+		completed.sort()
+		changed = true
+	var next_step := mini(GUIDANCE_STEPS.size() + 1, max(step + 1, int(state.get("current_step", 1))))
+	if int(state.get("current_step", 1)) != next_step:
+		state["current_step"] = next_step
+		changed = true
+	if next_step > GUIDANCE_STEPS.size() and not bool(state.get("dismissed", false)):
+		state["dismissed"] = true
+		changed = true
+	state["completed_steps"] = completed
+	if changed:
+		state["last_seen_at"] = _now_iso()
+		guidance = _guidance_dictionary(state)
+	return changed
+
+func advance_guidance() -> bool:
+	if not guidance_visible():
+		return false
+	return mark_guidance_step(int(guidance_state().get("current_step", 1)))
+
+func dismiss_guidance() -> bool:
+	var state := guidance_state()
+	if bool(state.get("dismissed", false)):
+		return false
+	state["dismissed"] = true
+	state["last_seen_at"] = _now_iso()
+	guidance = _guidance_dictionary(state)
+	return true
+
+func reopen_guidance() -> bool:
+	var state := guidance_state()
+	if int(state.get("current_step", 1)) > GUIDANCE_STEPS.size() or _as_array(state.get("completed_steps", [])).size() >= GUIDANCE_STEPS.size():
+		state["current_step"] = 1
+		state["completed_steps"] = []
+	state["dismissed"] = false
+	state["last_seen_at"] = _now_iso()
+	guidance = _guidance_dictionary(state)
+	return true
+
 func start_collection(item_id: String) -> Dictionary:
 	if not item_definitions().has(item_id):
 		last_message = "Recurso desconhecido."
@@ -279,7 +358,51 @@ func _boolean_dictionary(value: Variant) -> Dictionary:
 			result[key] = true
 	return result
 
+func _guidance_dictionary(value: Variant) -> Dictionary:
+	var source := _default_guidance()
+	var payload := _as_dictionary(value)
+	source["version"] = GUIDANCE_VERSION
+	source["current_step"] = clampi(int(payload.get("current_step", source.get("current_step", 1))), 1, GUIDANCE_STEPS.size() + 1)
+	source["dismissed"] = bool(payload.get("dismissed", source.get("dismissed", false)))
+	source["last_seen_at"] = str(payload.get("last_seen_at", source.get("last_seen_at", "")))
+	var completed: Array = []
+	var raw_completed: Variant = payload.get("completed_steps", source.get("completed_steps", []))
+	if raw_completed is Dictionary:
+		for key: Variant in raw_completed.keys():
+			if bool(raw_completed.get(key, false)):
+				var step := clampi(int(key), 1, GUIDANCE_STEPS.size())
+				if not completed.has(step):
+					completed.append(step)
+	elif raw_completed is Array:
+		for value_step: Variant in raw_completed:
+			var step := clampi(int(value_step), 1, GUIDANCE_STEPS.size())
+			if not completed.has(step):
+				completed.append(step)
+	completed.sort()
+	source["completed_steps"] = completed
+	if completed.size() >= GUIDANCE_STEPS.size():
+		source["current_step"] = GUIDANCE_STEPS.size() + 1
+		source["dismissed"] = true
+	return source
+
+static func _default_guidance() -> Dictionary:
+	return {
+		"version": GUIDANCE_VERSION,
+		"current_step": 1,
+		"completed_steps": [],
+		"dismissed": false,
+		"last_seen_at": "",
+	}
+
+static func _now_iso() -> String:
+	return Time.get_datetime_string_from_system(true)
+
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
 		return value
 	return {}
+
+static func _as_array(value: Variant) -> Array:
+	if value is Array:
+		return value
+	return []

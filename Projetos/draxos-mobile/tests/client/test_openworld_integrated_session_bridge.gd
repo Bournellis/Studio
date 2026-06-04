@@ -205,6 +205,38 @@ func test_stale_event_resyncs_active_session_and_clears_queue() -> void:
 	assert_eq(model.last_message, "Bosque resincronizado. Repita a ultima acao se ela nao apareceu.")
 	assert_eq(store.failed.size(), 1)
 
+func test_guidance_update_ack_applies_snapshot_patch() -> void:
+	var model = ModelScript.new()
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	var bridge = _bridge(model, client, store)
+	bridge.hydrate_session(_session_payload("session-guidance", 1, {}))
+	var guidance := {
+		"version": 1,
+		"current_step": 4,
+		"completed_steps": [1, 2, 3],
+		"dismissed": false,
+		"last_seen_at": "2026-06-04T12:00:00Z",
+	}
+	client.event_results = [
+		{
+			"ok": true,
+			"body": {
+				"session": _session_payload("session-guidance", 2, {"guidance": guidance}),
+				"snapshot_patch": {"guidance": guidance},
+				"event": {"message": "Dicas atualizadas."},
+			},
+		},
+	]
+
+	bridge.record_event_deferred("guidance_update", {"guidance": guidance})
+	await bridge.flush_event_queue()
+
+	assert_eq(bridge.snapshot_revision(), 2)
+	assert_eq(int(model.guidance_state().get("current_step", 0)), 4)
+	assert_eq(model.guidance_text(), "Perto do bau, use Depositar para guardar tudo.")
+	assert_eq(model.last_message, "Dicas atualizadas.")
+
 func test_complete_session_uses_request_hash_and_records_reward_summary() -> void:
 	var model = ModelScript.new()
 	var client := FakeSupabaseClient.new()

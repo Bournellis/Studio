@@ -124,6 +124,7 @@ func _process(delta: float) -> void:
 		_world.set_movement_vector(movement, model.current_speed())
 	if moved:
 		_runtime.advance_walk_phase(delta)
+		_mark_guidance_step(1)
 	_interaction.tick_collection(delta, moved)
 	if integration_mode == "integrated_alpha":
 		_ensure_session_bridge().record_heartbeat_if_due(
@@ -172,7 +173,8 @@ func _build_world_viewport() -> void:
 		RulesetScript.chest_position(),
 		_resource_fixtures(),
 		RulesetScript.player_initial_position(),
-		RulesetScript.obstacles()
+		RulesetScript.obstacles(),
+		RulesetScript.structures()
 	)
 	_world_viewport.add_child(_world)
 	_runtime.update_player_position(_world.get_player_position())
@@ -183,6 +185,10 @@ func _connect_hud() -> void:
 	_hud.complete_requested.connect(_show_result)
 	_hud.abandon_requested.connect(_handle_abandon_requested)
 	_hud.back_requested.connect(_handle_back_requested)
+	_hud.guidance_next_requested.connect(_handle_guidance_next_requested)
+	_hud.guidance_hide_requested.connect(_handle_guidance_hide_requested)
+	_hud.guidance_reopen_requested.connect(_handle_guidance_reopen_requested)
+	_hud.sheet_tab_changed.connect(_handle_sheet_tab_changed)
 
 func _configure_input_controller() -> void:
 	_input_controller.configure(
@@ -288,8 +294,9 @@ func _update_labels() -> void:
 		_runtime.update_player_position(_world.get_player_position())
 	var nearest := _nearest_resource()
 	var nearest_id := str(nearest.get("item_id", ""))
+	var nearest_node_id := str(nearest.get("node_id", ""))
 	var pocket_full := model.pocket_weight() >= model.capacity() - 0.001
-	_world.set_state(_runtime.resource_nodes, nearest_id, model.collection_progress(), pocket_full, _runtime.walk_phase)
+	_world.set_state(_runtime.resource_nodes, nearest_node_id, model.collection_progress(), pocket_full, _runtime.walk_phase, model.upgrades)
 	_hud.update(_view_state(nearest_id))
 
 func _view_state(nearest_id: String) -> Dictionary:
@@ -300,7 +307,7 @@ func _view_state(nearest_id: String) -> Dictionary:
 	var can_complete := _can_complete_integrated()
 	var near_chest := _near_chest()
 	var deposit_available := near_chest and not network_busy and not pending and not completed
-	var deposit_tooltip := "Sessao concluida." if completed else ("Sincronizacao em andamento." if pending else ("Depositar bolso no bau." if near_chest else "Aproxime-se do bau."))
+	var deposit_tooltip := "Visita encerrada." if completed else ("Sincronizacao em andamento." if pending else ("Depositar bolso no bau." if near_chest else "Aproxime-se do bau."))
 	var complete_tooltip := _complete_tooltip(can_complete, pending, completed)
 	return {
 		"integration_mode": integration_mode,
@@ -322,9 +329,12 @@ func _view_state(nearest_id: String) -> Dictionary:
 		"deposit_available": deposit_available,
 		"deposit_disabled": not deposit_available,
 		"deposit_tooltip": deposit_tooltip,
-		"complete_text": "Completar" if integrated else "Resultado preview",
+		"complete_text": "Encerrar visita",
 		"complete_disabled": network_busy or (integrated and not can_complete),
 		"complete_tooltip": complete_tooltip,
+		"guidance_visible": model.guidance_visible(),
+		"guidance_text": model.guidance_text(),
+		"guidance_step_text": _guidance_step_text(),
 	}
 
 func _mode_label() -> String:
@@ -335,7 +345,7 @@ func _mode_label() -> String:
 
 func _status_text(nearest_id: String, completed: bool) -> String:
 	if completed:
-		return "Sessao concluida"
+		return "Visita encerrada"
 	if _session_state() in ["pending", "resyncing"]:
 		return "Sincronizando Bosque"
 	if not model.active_collection.is_empty():
@@ -351,11 +361,11 @@ func _session_message() -> String:
 		"synced":
 			return "Voce pode voltar ao Refugio e retomar esta sessao por ate 2h."
 		"pending":
-			return "Aguarde a sincronizacao antes de completar."
+			return "Aguarde a sincronizacao antes de encerrar."
 		"resyncing":
 			return "Resincronizando com o servidor."
 		"completed":
-			return "Resultado fechado para esta sessao."
+			return "Visita encerrada."
 		"offline":
 			return "Preview jogavel; nenhuma recompensa sera aplicada."
 		"blocked":
@@ -365,12 +375,12 @@ func _session_message() -> String:
 
 func _complete_tooltip(can_complete: bool, pending: bool, completed: bool) -> String:
 	if completed:
-		return "Sessao ja concluida."
+		return "Visita ja encerrada."
 	if pending:
 		return "Aguarde a sincronizacao do Bosque."
 	if integration_mode == "integrated_alpha" and not can_complete:
 		return "A sessao online ainda nao esta pronta."
-	return "Gerar resultado do Bosque."
+	return "Encerrar visita e mostrar resumo."
 
 func _show_result() -> void:
 	if integration_mode == "integrated_alpha":
@@ -380,11 +390,12 @@ func _show_result() -> void:
 
 func _show_local_result() -> void:
 	var payload: Dictionary = model.result_payload(_runtime.session_seconds)
-	_last_result_text = "Resultado preview: score=%s, items=%s. Sem recompensa." % [
-		str(payload.get("activity_score", 0)),
+	_last_result_text = "Resumo da visita: tempo=%s, depositados=%s, criacoes=%s. Sem recompensa." % [
+		_format_seconds(float(payload.get("session_seconds", 0.0))),
 		JSON.stringify(payload.get("deposited_items", {})),
+		JSON.stringify(payload.get("local_upgrades", {})),
 	]
-	model.last_message = "Resultado preview gerado sem recompensa."
+	model.last_message = "Visita encerrada em preview sem recompensa."
 	_update_labels()
 
 func _resume_or_start_integrated_session() -> void:
@@ -445,12 +456,76 @@ func _hydrate_integrated_session(session: Dictionary) -> bool:
 	return hydrated
 
 func _record_integrated_event_deferred(event_type: String, event_payload: Dictionary) -> void:
+	_handle_guidance_action_for_event(event_type)
 	if integration_mode != "integrated_alpha":
 		return
 	var payload := event_payload.duplicate(true)
 	payload["client_position_revision"] = _runtime.local_position_revision
 	_ensure_session_bridge().record_event_deferred(event_type, payload)
 	_sync_session_bridge_debug_state()
+
+func _handle_guidance_next_requested() -> void:
+	if model.advance_guidance():
+		_sync_guidance_update()
+	_update_labels()
+
+func _handle_guidance_hide_requested() -> void:
+	if model.dismiss_guidance():
+		_sync_guidance_update()
+	_update_labels()
+
+func _handle_guidance_reopen_requested() -> void:
+	model.reopen_guidance()
+	_sync_guidance_update()
+	_update_labels()
+
+func _handle_sheet_tab_changed(tab_id: String) -> void:
+	if tab_id == "craft":
+		_mark_guidance_step(5)
+	elif tab_id == "session":
+		_mark_guidance_step(6)
+
+func _handle_guidance_action_for_event(event_type: String) -> void:
+	match event_type:
+		"collect_start":
+			_mark_guidance_step(2)
+		"collect_complete":
+			_mark_guidance_step(3)
+		"deposit_all":
+			_mark_guidance_step(4)
+		"craft":
+			_mark_guidance_step(5)
+
+func _mark_guidance_step(step: int) -> void:
+	if model.mark_guidance_step(step):
+		_sync_guidance_update()
+
+func _sync_guidance_update() -> void:
+	if integration_mode != "integrated_alpha" or not _uses_integrated_authority():
+		return
+	var payload := {
+		"guidance": model.guidance_state(),
+		"position": _runtime.position_payload(),
+		"session_seconds": int(_runtime.session_seconds),
+		"client_position_revision": _runtime.local_position_revision,
+	}
+	_ensure_session_bridge().record_event_deferred("guidance_update", payload)
+	_sync_session_bridge_debug_state()
+
+func _guidance_step_text() -> String:
+	var state := model.guidance_state()
+	var current_step := int(state.get("current_step", 1))
+	if current_step > ModelScript.GUIDANCE_STEPS.size():
+		return "Dicas do Bosque"
+	return "Dica %d/%d" % [current_step, ModelScript.GUIDANCE_STEPS.size()]
+
+func _format_seconds(seconds: float) -> String:
+	var total := maxi(0, int(round(seconds)))
+	var minutes := total / 60
+	var remainder := total % 60
+	if minutes <= 0:
+		return "%ds" % remainder
+	return "%dm%02ds" % [minutes, remainder]
 
 func _can_complete_integrated() -> bool:
 	if integration_mode != "integrated_alpha":

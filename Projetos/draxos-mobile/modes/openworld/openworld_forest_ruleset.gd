@@ -102,6 +102,27 @@ static func obstacles() -> Array[Dictionary]:
 		})
 	return result
 
+static func structures() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for structure: Dictionary in _as_array(data().get("structures", [])):
+		result.append({
+			"id": str(structure.get("id", "")),
+			"kind": str(structure.get("kind", "")),
+			"display_name": str(structure.get("display_name", "")),
+			"position": _vector2_from_dict(structure.get("position", {}), Vector2.ZERO),
+			"visual_size": _vector2_from_dict(structure.get("visual_size", {}), Vector2(72, 58)),
+			"collision_shape": str(structure.get("collision_shape", "circle")),
+			"collision_size": _vector2_from_dict(structure.get("collision_size", {}), Vector2.ZERO),
+			"collision_radius": float(structure.get("collision_radius", 20.0)),
+			"collision_offset": _vector2_from_dict(structure.get("collision_offset", {}), Vector2.ZERO),
+			"interaction_radius": float(structure.get("interaction_radius", 0.0)),
+			"blocks_player": bool(structure.get("blocks_player", true)),
+			"collectible": false,
+			"upgrade_id": str(structure.get("upgrade_id", "")),
+			"sort_offset": float(structure.get("sort_offset", 20.0)),
+		})
+	return result
+
 static func collected_nodes_from_snapshot(snapshot: Dictionary) -> Dictionary:
 	return _as_dictionary(snapshot.get("collected_nodes", {}))
 
