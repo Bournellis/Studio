@@ -7,8 +7,9 @@ Deno.test("mode analytics contract exposes summary and telemetry dimensions", as
   assertIncludes(edge, "mode_analytics_v1", "edge should return analytics schema");
   for (
     const event of [
-      "mode_hub_shown",
-      "mode_card_selected",
+      "mode_entry_shown",
+      "mode_entry_selected",
+      "mode_start_requested",
       "mode_session_completed",
       "mode_reward_applied",
     ]

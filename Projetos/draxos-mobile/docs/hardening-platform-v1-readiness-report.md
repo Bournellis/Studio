@@ -57,7 +57,7 @@ Local gates passed:
 - `deno task check` in `supabase/functions`
 - Focused Deno mode/admin/reward tests
 - Godot headless import
-- `tools/smoke_mode_hub.gd`
+- `tools/smoke_bosque_entry.gd`
 - `tools/validate_foundation.ps1 -Profile DocsOnly`
 - `tools/validate_foundation.ps1 -Profile ServerQuick`
 - `tools/validate_foundation.ps1 -Profile ModePlatform`

@@ -4,6 +4,13 @@ Status: VIVO
 Atualizado em: 2026-05-29
 Etapa atual: `FOUNDATION_BASELINE_CONFIRMED`
 
+Nota de navegacao viva em 2026-06-04: o main menu refactor supersede a leitura
+antiga de Refugio como colecao de atalhos equivalentes. `Preparacao` sai do menu
+principal e passa a viver dentro de Arena PVE abaixo de `Iniciar Arena PVE`;
+`Coletar` e `Energia` deixam de ser entradas player-facing gerais; compra de
+energia fica dentro da Loja; `Bosque` passa a ser entrada direta para
+`open_mode_shell:openworld`; e modos nao implementados ficam ocultos ao player.
+
 ## Estado Do Passe
 
 Foundation Loop UX Pass 01 foi executado e publicado no Internal Alpha em `2026-05-28` a partir da branch `codex/draxos-mobile/foundation-loop-ux-pass`.
@@ -44,7 +51,7 @@ Leitura curta: a fundacao tecnica existe. O app ja tem Refugio, Base, coleta, ev
 | Area | Fundacao real implementada | Friccao atual | Lacuna para produto live |
 | --- | --- | --- | --- |
 | Entrada pos-login | `entry` e `refuge` existem; Refugio imersivo esconde chrome e vira home jogavel. | Entry ainda mistura login, save, dev tools/reset e pode atrasar a sensacao de "estou no jogo". | Depois do login, o usuario deve cair num estado jogavel com uma proxima acao obvia. |
-| Refugio como centro | Refugio tem board, icones, popup contextual e CTA inferior. | Ha muitos destinos com peso parecido: Batalha, Preparacao, Refugio, Social, Competicao, Loja, Coletar, Energia, Perfil. | O loop principal precisa dominar a primeira decisao; social/loja/competicao devem ficar secundarios nesta etapa. |
+| Refugio como centro | Refugio tem board, icones, popup contextual e CTA inferior. | Leitura historica: muitos destinos competiam com peso parecido. Navegacao viva: Preparacao, Coletar e Energia nao sao entradas gerais do Refugio. | O loop principal precisa dominar a primeira decisao; social/loja/competicao devem ficar secundarios nesta etapa. |
 | Coleta | Coleta existe por CTA contextual, icone rapido, popup de Refugio e tela Base. | Caminhos redundantes e confirmacao tornam uma acao rotineira mais pesada. | Coletar deve ser uma acao primaria curta, com feedback imediato e sem duvida de onde clicar depois. |
 | Evolucao da base | Evolucao existe no Base presenter, no painel embutido do Refugio e na CTA quando `next_upgrade_ready`. | CTA de evoluir so aparece depois de log de batalha e coleta deixarem de ter prioridade; caso contrario exige abrir Refugio, selecionar estrutura e tocar evoluir. | Evoluir precisa ser visivel como parte natural do loop, mesmo quando existe historico de batalha ou coleta recente. |
 | Batalha | Pedido de batalha, replay, skip, resumo e logs existem. | Batalha compete com outras entradas; se o jogador nao entende a CTA contextual, ele abre menus para achar "Pedir batalha". | Batalhar deve ser o proximo passo evidente quando base/coleta/evolucao nao pedem acao imediata. |
@@ -140,7 +147,7 @@ Fora desse pacote:
 - Batalhar vira o proximo passo claro quando base/coleta/evolucao nao pedem acao.
 - O resumo de batalha mostra recompensa e conduz explicitamente para verificar a base.
 - Ao voltar da batalha, a CTA nao fica presa em resultado antigo ja visto.
-- Social, loja, competicao e preparacao continuam acessiveis, mas secundarios ao loop.
+- Social, loja e competicao continuam acessiveis, mas secundarios ao loop; Preparacao fica acessivel dentro de Arena PVE.
 - Existe smoke sem rede para a sequencia de loop e prioridades de CTA.
 
 ## Evidencias

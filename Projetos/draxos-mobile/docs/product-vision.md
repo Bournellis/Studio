@@ -1,6 +1,6 @@
 # DraxosMobile - Product Vision
 
-- Ultima atualizacao: `2026-06-01`
+- Ultima atualizacao: `2026-06-04`
 - Status: `LOCAL_PRODUCT_VISION - fonte viva do produto DraxosMobile`
 - Escopo: direcao de longo prazo, limites de produto, plataforma, economia, social, live ops, backend e monetizacao.
 
@@ -18,7 +18,7 @@ O jogador nao e o heroi. O jogador e um Draxos em ascensao.
 
 Etapa atual: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, sobre `FOUNDATION_FINAL_POLISH_DELIVERED`.
 
-Atualizacao V1 de plataforma: DraxosMobile agora organiza sua visao jogavel em cinco modos oficiais governados por um registry unico: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` e `Openworld`. A Arena PVE atual pertence ao `Autobattler`; Refugio/Base atuais pertencem ao `Basebuilder`; o antigo prototipo Rpgsuave foi renomeado de verdade para `Openworld`, com `Openworld Bosque` como primeiro slice `openworld/forest`.
+Atualizacao V1 de plataforma: DraxosMobile agora organiza sua visao jogavel em cinco modos oficiais governados por um registry unico: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` e `Openworld`. A Arena PVE atual pertence ao `Autobattler`; Refugio/Base atuais pertencem ao `Basebuilder`; o antigo prototipo Rpgsuave foi renomeado de verdade para `Openworld`, com `forest` como primeiro slice e `Bosque` como entrada player-facing direta.
 
 O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish fecha essa base como gate local antes de tuning.
 
@@ -34,10 +34,10 @@ Nesta etapa, nomes, spells, armas, numeros de economia, Battle Pass, visual fina
 
 Ordem de foco:
 
-1. Plataforma V1 de modos: registry, Hub de Modos, `/modes`, admin/ops, analytics e disable/rollback.
+1. Plataforma V1 de modos: registry tecnico, entradas player-facing diretas, `/modes`, admin/ops, analytics e disable/rollback.
 2. Arena PVE inicial dentro do `Autobattler` e tuning integrado de leveling/upgrades/recompensas/poder.
 3. `Basebuilder` como suporte persistente da rotina.
-4. `Openworld Bosque` como Internal Alpha jogavel para validar sensacao de exploracao.
+4. `Bosque` como entrada Internal Alpha jogavel do `Openworld/forest` para validar sensacao de exploracao.
 5. PVP assincrono posterior, social, competicao, Towerdefense e Cardgame quando seus contratos proprios existirem.
 
 ## Pilares

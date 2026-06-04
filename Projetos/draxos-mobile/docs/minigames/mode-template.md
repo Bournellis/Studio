@@ -27,7 +27,8 @@ after a package decision approves creating the staged files.
 - Slice id: `tbd`
 - Descriptor: `data/definitions/modes/<mode_id>/metadata.json`
 - Placeholder: `data/definitions/modes/<mode_id>/placeholder.json`
-- Entry action: `mode_disabled:<mode_id>`
+- Player-facing entry: hidden
+- Internal disabled action: `mode_disabled:<mode_id>`
 - Route: none
 ```
 

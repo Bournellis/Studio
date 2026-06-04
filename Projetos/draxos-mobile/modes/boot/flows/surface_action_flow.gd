@@ -4,7 +4,6 @@ extends RefCounted
 const SessionStoreScript := preload("res://online/session_store.gd")
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
-const HubSurfacePresenterScript := preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
 
 const PRODUCT_ALPHA_DOUBLE_CONSTRUCTION_QUEUE := "alpha_double_construction_queue"
 const PREPARATION_NETWORK_ERROR_CODES := {
@@ -116,68 +115,6 @@ func sync_refuge_state_if_needed(host: Node) -> void:
 	if not SessionStore.has_valid_access_token():
 		return
 	await show_base(host)
-
-func collect_base(host: Node) -> void:
-	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de coletar o Refugio.")):
-		return
-
-	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
-	host.call("_set_busy", true, "Coletando producao offline...")
-	var mutation := _prepare_mutation("base/collect", AppShellActionContractScript.ACTION_COLLECT_BASE)
-	var base_result: Dictionary = await SupabaseClient.collect_base(
-		_request_id(mutation),
-		SessionStore.access_token,
-		_request_hash(mutation)
-	)
-	if not bool(base_result.get("ok", false)):
-		_fail_mutation(mutation, base_result)
-		host.call("_fail_with_error", base_result)
-		return
-
-	if not SessionStore.apply_base_result(base_result):
-		_fail_mutation(mutation, {"error": SessionStore.last_error})
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
-		return
-
-	var body := _as_dictionary(base_result.get("body", {}))
-	var collected := _as_dictionary(body.get("collected", {}))
-	var message := "Coleta registrada no servidor."
-	if _resource_total(collected) <= 0.0:
-		message = "Nada para coletar agora."
-	_complete_mutation(mutation, base_result)
-	SessionStore.save_cache()
-	host.call("_set_busy", false, message)
-	host.call("_render_base_state", collected)
-
-func buy_energy_pack_alpha(host: Node) -> void:
-	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de comprar Energia.")):
-		return
-
-	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
-	host.call("_set_busy", true, "Comprando pacote de Energia...")
-	var mutation := _prepare_mutation("monetization/alpha-purchase", AppShellActionContractScript.ACTION_BUY_ENERGY_PACK_ALPHA, {
-		"product_id": AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK,
-	})
-	var monetization_result: Dictionary = await SupabaseClient.alpha_purchase(
-		_request_id(mutation),
-		AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK,
-		SessionStore.access_token,
-		_request_hash(mutation)
-	)
-	if not bool(monetization_result.get("ok", false)):
-		_fail_mutation(mutation, monetization_result)
-		host.call("_fail_with_error", monetization_result)
-		return
-
-	if not SessionStore.apply_monetization_result(monetization_result):
-		_fail_mutation(mutation, {"error": SessionStore.last_error})
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
-		return
-
-	_complete_mutation(mutation, monetization_result)
-	SessionStore.save_cache()
-	host.call("_set_busy", false, "Energia comprada. O Refugio foi atualizado com o novo saldo.")
-	host.call("_render_base_state")
 
 func upgrade_base_structure(host: Node, structure_id: String) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de evoluir o Refugio.")):
@@ -296,14 +233,17 @@ func show_preparation(host: Node) -> void:
 		return
 
 	host.set_meta("preparation_feedback_message", "")
-	host.call("_show_surface_screen", AppShellRouteContractScript.ROUTE_REFUGE)
-	var refresh_token: Dictionary = _begin_cached_refresh(host, SessionStore.SURFACE_BUILD, "build/state", "Preparando suas escolhas de batalha...", "_render_base_state")
+	var target_route := _preparation_target_route(host)
+	if target_route == AppShellRouteContractScript.ROUTE_ARENA_ACTIVE:
+		host.set_meta("arena_active_preparation_open", true)
+	host.call("_show_surface_screen", target_route)
+	var refresh_token: Dictionary = _begin_cached_refresh(host, SessionStore.SURFACE_BUILD, "build/state", "Preparando suas escolhas de batalha...")
 	var build_result: Dictionary = await SupabaseClient.fetch_build_state(SessionStore.access_token)
 	if not bool(build_result.get("ok", false)):
 		host.call("_fail_surface_refresh", SessionStore.SURFACE_BUILD, refresh_token, build_result)
 		if SessionStore.has_build_state():
 			host.call("_show_notice", "Preparacao exibindo cache local; servidor nao respondeu agora.")
-			_render_refuge_preparation(host)
+			_render_preparation_for_route(host, target_route)
 			return
 		_fail_preparation_action(host, build_result, "Nao foi possivel carregar a preparacao.")
 		return
@@ -313,19 +253,25 @@ func show_preparation(host: Node) -> void:
 		host.call("_fail_surface_refresh", SessionStore.SURFACE_BUILD, refresh_token, {"error": SessionStore.last_error})
 		if SessionStore.has_build_state():
 			host.call("_show_notice", "Preparacao exibindo cache local; resposta do servidor veio incompleta.")
-			_render_refuge_preparation(host)
+			_render_preparation_for_route(host, target_route)
 			return
 		_fail_preparation_action(host, {"error": SessionStore.last_error}, "Nao foi possivel carregar a preparacao.")
 		return
 
 	host.call("_finish_surface_refresh", SessionStore.SURFACE_BUILD, refresh_token, build_result, "Preparacao de batalha pronta.")
 	SessionStore.save_cache()
-	_render_refuge_preparation(host)
+	_render_preparation_for_route(host, target_route)
 
 func equip_health_potion(host: Node) -> void:
+	if _preparation_loadout_locked(host):
+		_block_locked_loadout_action(host)
+		return
 	await _update_potion_equip(host, AppShellActionContractScript.ITEM_HEALTH_POTION, "Pocao de Vida equipada para a proxima batalha.")
 
 func unequip_potion(host: Node) -> void:
+	if _preparation_loadout_locked(host):
+		_block_locked_loadout_action(host)
+		return
 	await _update_potion_equip(host, null, "Pocao removida da proxima batalha.")
 
 func enable_potion_default(host: Node) -> void:
@@ -343,6 +289,9 @@ func disable_spell_behavior(host: Node, spell_id: String) -> void:
 	await _update_spell_behavior(host, spell_id, _default_spell_behavior(false), "Magia pausada para a proxima batalha.")
 
 func handle_build_equip_action(host: Node, action_id: String) -> void:
+	if _preparation_loadout_locked(host):
+		_block_locked_loadout_action(host)
+		return
 	var payload := {}
 	var message := "Preparacao atualizada."
 	if AppShellActionContractScript.is_equip_instrument(action_id):
@@ -704,13 +653,6 @@ func _set_error_text(host: Node, text: String) -> void:
 	if label != null:
 		label.text = text
 
-func _resource_total(resources: Dictionary) -> float:
-	var total := 0.0
-	for value in resources.values():
-		if value is int or value is float:
-			total += float(value)
-	return total
-
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
 		return value
@@ -718,6 +660,9 @@ static func _as_dictionary(value: Variant) -> Dictionary:
 
 func _update_build_equip(host: Node, payload: Dictionary, message: String) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de preparar a batalha.")):
+		return
+	if _preparation_loadout_locked(host):
+		_block_locked_loadout_action(host)
 		return
 	if payload.is_empty():
 		_set_error_text(host, "Escolha de preparacao invalida.")
@@ -744,10 +689,13 @@ func _update_build_equip(host: Node, payload: Dictionary, message: String) -> vo
 	SessionStore.save_cache()
 	host.set_meta("preparation_feedback_message", message)
 	host.call("_set_busy", false, message)
-	_render_refuge_preparation(host)
+	_render_preparation_for_route(host, _preparation_target_route(host))
 
 func _update_potion_equip(host: Node, item_id: Variant, message: String) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de equipar pocao.")):
+		return
+	if _preparation_loadout_locked(host):
+		_block_locked_loadout_action(host)
 		return
 
 	host.call("_set_busy", true, "Ajustando Pocao de Vida...")
@@ -774,7 +722,7 @@ func _update_potion_equip(host: Node, item_id: Variant, message: String) -> void
 	SessionStore.save_cache()
 	host.set_meta("preparation_feedback_message", message)
 	host.call("_set_busy", false, message)
-	_render_refuge_preparation(host)
+	_render_preparation_for_route(host, _preparation_target_route(host))
 
 func _update_potion_behavior(host: Node, behavior: Dictionary, message: String) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de configurar pocao.")):
@@ -804,7 +752,7 @@ func _update_potion_behavior(host: Node, behavior: Dictionary, message: String) 
 	SessionStore.save_cache()
 	host.set_meta("preparation_feedback_message", message)
 	host.call("_set_busy", false, message)
-	_render_refuge_preparation(host)
+	_render_preparation_for_route(host, _preparation_target_route(host))
 
 func _update_spell_behavior(host: Node, spell_id: String, behavior: Dictionary, message: String) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de ajustar magia.")):
@@ -838,14 +786,31 @@ func _update_spell_behavior(host: Node, spell_id: String, behavior: Dictionary, 
 	SessionStore.save_cache()
 	host.set_meta("preparation_feedback_message", message)
 	host.call("_set_busy", false, message)
-	_render_refuge_preparation(host)
+	_render_preparation_for_route(host, _preparation_target_route(host))
 
-func _render_refuge_preparation(host: Node) -> void:
-	if str(host.get("_current_screen")) != AppShellRouteContractScript.ROUTE_REFUGE:
-		host.call("_show_screen", AppShellRouteContractScript.ROUTE_REFUGE, false)
-	else:
-		host.call("_render_refuge_screen")
-	HubSurfacePresenterScript.open_refuge_menu_popup(host, "preparation")
+func _preparation_target_route(host: Node) -> String:
+	var current_route := AppShellRouteContractScript.normalize(str(host.get("_current_screen")))
+	if current_route == AppShellRouteContractScript.ROUTE_ARENA_ACTIVE:
+		return AppShellRouteContractScript.ROUTE_ARENA_ACTIVE
+	return AppShellRouteContractScript.ROUTE_ARENA_SELECTION
+
+func _render_preparation_for_route(host: Node, route_id: String) -> void:
+	var target_route := AppShellRouteContractScript.normalize(route_id)
+	if target_route == AppShellRouteContractScript.ROUTE_ARENA_ACTIVE:
+		host.set_meta("arena_active_preparation_open", true)
+		host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, false)
+		return
+	host.set_meta("arena_active_preparation_open", false)
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+
+func _preparation_loadout_locked(host: Node) -> bool:
+	return AppShellRouteContractScript.normalize(str(host.get("_current_screen"))) == AppShellRouteContractScript.ROUTE_ARENA_ACTIVE
+
+func _block_locked_loadout_action(host: Node) -> void:
+	var message := "Loadout travado nesta tentativa. Entre duelos, ajuste apenas comportamento."
+	host.call("_set_busy", false, message)
+	_set_error_text(host, message)
+	host.set_meta("preparation_feedback_message", message)
 
 func _fail_preparation_action(host: Node, result: Dictionary, detail: String) -> void:
 	var error_payload := _preparation_error_payload(result)
@@ -861,7 +826,6 @@ func _fail_preparation_action(host: Node, result: Dictionary, detail: String) ->
 	var public_message := _preparation_error_message(code)
 	host.set_meta("preparation_feedback_message", public_message)
 	_set_error_text(host, public_message)
-	HubSurfacePresenterScript.refresh_open_refuge_menu_popup(host)
 	host.call("_sync_immersive_feedback")
 	host.call("_emit_client_event", "action_failure", {
 		"action_id": str(host.get("_active_action_id")),

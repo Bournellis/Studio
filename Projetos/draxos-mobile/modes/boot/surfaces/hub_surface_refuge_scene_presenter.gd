@@ -31,14 +31,12 @@ static func _refuge_scene_board(host: Node, root: Control, compact: bool) -> voi
 
 	RefugePopupPresenterScript.create_refuge_menu_popup(host, root, compact)
 
-	_add_refuge_icon_button(host, safe_frame, compact, "arena", "Arena PVE", "accent_blood", Vector2(0.50, 0.24), "Escolher Arena PVE e travar loadout.")
-	_add_refuge_icon_button(host, safe_frame, compact, "preparation", "Preparacao", "accent_astral", Vector2(0.31, 0.43), "Revisar pocao e habilidades antes da Arena.")
-	_add_refuge_icon_button(host, safe_frame, compact, "refuge", "Refugio", "accent_astral", Vector2(0.69, 0.43), "Coleta, energia e estruturas.")
-	_add_refuge_icon_button(host, safe_frame, compact, "social", "Social", "status_success", Vector2(0.20, 0.62), "Amigos, guilda e chat.", true)
-	_add_refuge_icon_button(host, safe_frame, compact, "modes", "Modos", "accent_bone", Vector2(0.50, 0.62), "Hub de modos oficiais.", true)
-	_add_refuge_icon_button(host, safe_frame, compact, "shop", "Loja", "accent_bone", Vector2(0.80, 0.62), "Recompensas e compras.", true)
-	_add_refuge_icon_button(host, safe_frame, compact, "collect", "Coletar", "status_success", Vector2(0.34, 0.77), "Coletar producao do Refugio.", true)
-	_add_refuge_icon_button(host, safe_frame, compact, "energy", "Energia", "accent_astral", Vector2(0.66, 0.77), "Comprar Energia.", true)
+	_add_refuge_icon_button(host, safe_frame, compact, "arena", "Arena PVE", "accent_blood", Vector2(0.50, 0.24), "Escolher Arena PVE, preparar e travar loadout.")
+	if bool(host.call("_bosque_mode_available")):
+		_add_refuge_icon_button(host, safe_frame, compact, "bosque", "Bosque", "status_success", Vector2(0.31, 0.43), "Entrar no Bosque Mecanico.", false, AppShellActionContractScript.open_mode_shell_action("openworld"))
+	_add_refuge_icon_button(host, safe_frame, compact, "refuge", "Refugio", "accent_astral", Vector2(0.69, 0.43), "Estruturas, crafting e upgrades.")
+	_add_refuge_icon_button(host, safe_frame, compact, "social", "Social", "status_success", Vector2(0.31, 0.62), "Amigos, guilda e chat.", true)
+	_add_refuge_icon_button(host, safe_frame, compact, "shop", "Loja", "accent_bone", Vector2(0.69, 0.62), "Recompensas e compras.", true)
 	if _refuge_has_dev_tools(host):
 		_add_refuge_dev_button(host, safe_frame, compact)
 	_add_refuge_profile_button(host, safe_frame, compact)
@@ -189,7 +187,7 @@ static func _add_refuge_dev_button(host: Node, board: Control, compact: bool) ->
 	)
 	board.add_child(button)
 
-static func _add_refuge_icon_button(host: Node, board: Control, compact: bool, menu_id: String, title: String, color_token: String, anchor: Vector2, detail: String, quick: bool = false) -> void:
+static func _add_refuge_icon_button(host: Node, board: Control, compact: bool, menu_id: String, title: String, color_token: String, anchor: Vector2, detail: String, quick: bool = false, action_id: String = "") -> void:
 	var button := Button.new()
 	button.name = "RefugeIcon_%s" % title
 	button.text = title
@@ -213,9 +211,16 @@ static func _add_refuge_icon_button(host: Node, board: Control, compact: bool, m
 	button.add_theme_stylebox_override("pressed", _refuge_icon_style(color_token, true, quick))
 	_apply_optional_icon_texture(button, _asset_id_for_menu(menu_id))
 	host.call("_prepare_touch_button", button)
-	button.pressed.connect(func() -> void:
-		RefugePopupPresenterScript.open_refuge_menu_popup(host, menu_id)
-	)
+	if action_id.strip_edges() != "":
+		button.pressed.connect(func() -> void:
+			host.call("_trigger_action", action_id)
+		)
+		var action_buttons := host.get("_action_buttons") as Dictionary
+		action_buttons[action_id] = button
+	else:
+		button.pressed.connect(func() -> void:
+			RefugePopupPresenterScript.open_refuge_menu_popup(host, menu_id)
+		)
 	board.add_child(button)
 
 static func _hud_style(bg_token: String, border_token: String) -> StyleBoxFlat:
@@ -292,13 +297,6 @@ static func _refuge_context_cta_data(_host: Node) -> Dictionary:
 	var base := SessionStore.base_snapshot()
 	if not base.is_empty():
 		var routine := BaseSurfacePresenterScript.routine_summary(base)
-		if bool(routine.get("has_collect_ready", false)):
-			return {
-				"text": "Coletar",
-				"detail": "Primeiro passo do ciclo: receber recursos acumulados do Refugio.",
-				"action_id": AppShellActionContractScript.ACTION_COLLECT_BASE,
-				"color_token": "status_success",
-			}
 		if bool(routine.get("next_upgrade_ready", false)):
 			var structure_id := str(routine.get("next_upgrade_id", ""))
 			if structure_id != "":

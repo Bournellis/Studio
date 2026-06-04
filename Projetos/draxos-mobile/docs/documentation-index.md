@@ -1,7 +1,7 @@
 # DraxosMobile - Documentation Index
 
 - Status: `VIVO`
-- Last updated: `2026-06-02`
+- Last updated: `2026-06-04`
 - Purpose: classify project documents so agents know what to trust, what to update and what to treat as history.
 
 ## Categories
@@ -47,10 +47,10 @@
 | `docs/visual-direction-v1.md` | `VIVO` | Current client visual direction for the Foundation Loop and Social Basico build; defines surface accents, component rules and non-goals. |
 | `docs/battle-presentation-v1.md` | `VIVO` | Current Battle Presentation v1 package: client-only readability pass for running battle, summary and current-battle logs. |
 | `docs/battle-drama-v1-1.md` | `VIVO` | Follow-up client-only battle drama/readability pass for visible Web difference after Battle Presentation v1. |
-| `docs/battle-preparation-complete-v1.md` | `VIVO` | Current Battle Preparation Complete v1 package: real Refugio loadout editor, `POST /build/equip`, enriched build state and published Internal Alpha release snapshot. |
+| `docs/battle-preparation-complete-v1.md` | `VIVO` | Current Battle Preparation Complete v1 package: real Arena PVE preparation/loadout editor, `POST /build/equip`, enriched build state and published Internal Alpha release snapshot. |
 | `docs/behavior-potion-crafting-v1.md` | `VIVO` | Current technical reference for Track 16 systems now present in the alpha baseline: whole-number Ossos, Po de Osso, first potion, crafting, potion slot and simple behavior controls. |
 | `docs/progression-clarity-v1.md` | `VIVO` | Published Progression Clarity v1 package: client-only readability for level, power, rewards, next unlocks and next objective. |
-| `docs/first-session-clarity-v1.md` | `VIVO` | Published First Session Clarity v1 package: client-only first-session guidance for Refugio, Preparation and battle summary. |
+| `docs/first-session-clarity-v1.md` | `VIVO` | Published First Session Clarity v1 package: client-only first-session guidance for Refugio, Arena PVE preparation and battle summary. |
 | `docs/minigames/mode-catalog.md` | `VIVO` | Official V1 catalog for Basebuilder, Autobattler, Towerdefense, Cardgame and Openworld. |
 | `docs/minigames/basebuilder.md` | `VIVO` | Basebuilder mode doc and descriptor pointer for current Refugio/Base ownership. |
 | `docs/minigames/autobattler.md` | `VIVO` | Autobattler mode doc and descriptor pointer for current Arena PVE ownership. |
@@ -58,9 +58,9 @@
 | `docs/minigames/openworld-objectives.md` | `VIVO` | Product-intent guardrail for Bosque Mecanico Basico v2: free relaxing collect/deposit/craft/build minigame, orientation not mandatory objective. |
 | `docs/minigames/openworld-decision-pack.md` | `VIVO` | Decision pack preserving Openworld Bosque as the only approved slice and blocking expansion without a package decision. |
 | `data/definitions/openworld/forest_ruleset_v1.json` | `CONTRATO` | Active Internal Alpha ruleset definition for Openworld Bosque snapshot/events/resources/recipes. |
-| `docs/minigames/towerdefense.md` | `VIVO` | Non-playable staged Towerdefense mode scaffold. |
-| `docs/minigames/towerdefense-decision-pack.md` | `VIVO` | Decision pack for future Towerdefense questions; keeps the mode staged/disabled. |
-| `docs/minigames/cardgame.md` | `VIVO` | Non-playable staged Cardgame mode scaffold. |
+| `docs/minigames/towerdefense.md` | `VIVO` | Non-playable planned/disabled Towerdefense mode scaffold hidden from player-facing navigation. |
+| `docs/minigames/towerdefense-decision-pack.md` | `VIVO` | Decision pack for future Towerdefense questions; keeps the mode planned/disabled and hidden from player-facing navigation. |
+| `docs/minigames/cardgame.md` | `VIVO` | Non-playable planned/disabled Cardgame mode scaffold hidden from player-facing navigation. |
 | `docs/minigames/cardgame-decision-pack.md` | `VIVO` | Decision pack for future DraxosMobile Cardgame questions; blocks inheritance from the Steam roguelike cardgame. |
 | `docs/minigames/mode-template.md` | `RUNBOOK` | Template for future mode docs and descriptor scaffolds. |
 | `data/definitions/modes/` | `CONTRATO` | Declarative mode descriptors and non-playable placeholders for the five official modes. |

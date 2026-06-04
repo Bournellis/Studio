@@ -4,6 +4,8 @@ extends "res://modes/boot/boot_runtime_flow_facade.gd"
 func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	screen_id = AppShellRouteContractScript.push_route(_screen_history, _current_screen, screen_id, push_history)
 	_current_screen = screen_id
+	if screen_id != ROUTE_ARENA_ACTIVE:
+		set_meta("arena_active_preparation_open", false)
 	if screen_id != ROUTE_BATTLE_ENTRY:
 		_battle_request_splash_active = false
 	_apply_orientation_for_route(screen_id)
@@ -69,8 +71,6 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 			_render_arena_buff_choice_screen()
 		ROUTE_ARENA_SUMMARY:
 			_render_arena_summary_screen()
-		ROUTE_MODE_HUB:
-			_render_mode_hub_screen()
 		ROUTE_MODES_OPS:
 			_render_modes_ops_screen()
 		SCREEN_BASE:

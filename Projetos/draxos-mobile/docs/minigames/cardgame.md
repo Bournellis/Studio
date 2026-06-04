@@ -6,16 +6,17 @@
 - Descriptor: `data/definitions/modes/cardgame/metadata.json`
 - Placeholder: `data/definitions/modes/cardgame/placeholder.json`
 - Decision pack: `docs/minigames/cardgame-decision-pack.md`
-- Entry action: `mode_disabled:cardgame`
+- Player-facing entry: hidden
+- Internal disabled action: `mode_disabled:cardgame`
 - Route: none
 
-Cardgame is a future staged DraxosMobile mode identity. It can share broad lore
+Cardgame is a future planned/disabled DraxosMobile mode identity. It can share broad lore
 with other Draxos projects, but it does not inherit mechanics, pacing, rewards
 or deck rules from `draxos-roguelike-cardgame`.
 
 ## Current Scope
 
-- Visible only as staged/disabled in the Mode Hub.
+- Hidden from the player-facing menu until a playable package is approved.
 - No playable scene.
 - No session start.
 - No reward bridge.
@@ -37,6 +38,6 @@ explicit package decision before any playable work starts.
 ## Decision Pack V1
 
 `docs/minigames/cardgame-decision-pack.md` is the current decision pack. It
-keeps the mode staged/disabled and makes the non-inheritance rule explicit:
+keeps the mode planned/disabled and hidden from the player while making the non-inheritance rule explicit:
 DraxosMobile Cardgame does not import mechanics, pacing, deck rules, rewards or
 run structure from `draxos-roguelike-cardgame`.

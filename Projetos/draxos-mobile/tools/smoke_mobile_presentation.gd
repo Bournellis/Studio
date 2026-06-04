@@ -77,7 +77,10 @@ func _check_portrait_app_loop() -> void:
 	_expect(_find_node_by_name(boot, "RefugeLoopPanel") == null, "portrait Refugio removes persistent loop panel")
 	_expect(_find_node_by_name(boot, "RefugeProgressionPanel") == null, "portrait Refugio removes persistent progression panel")
 	_expect(not _label_tree_contains(boot, "ALTAR"), "portrait Refugio removes altar label")
-	_expect(_find_node_by_name(boot, "RefugeIcon_Coletar") != null, "portrait Refugio exposes collect icon")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Bosque") != null, "portrait Refugio exposes Bosque icon")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Coletar") == null, "portrait Refugio hides collect-all icon")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Energia") == null, "portrait Refugio hides energy shortcut")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Modos") == null, "portrait Refugio hides Mode Hub shortcut")
 	var arena_hotspot := _find_node_by_name(boot, "RefugeIcon_Arena PVE") as Button
 	_expect(_find_node_by_name(boot, "RefugeIcon_Batalha") == null, "portrait Refugio hides legacy Battle icon")
 	_expect(arena_hotspot != null, "portrait Refugio has Arena PVE icon")
@@ -142,7 +145,8 @@ func _check_narrow_loaded_refuge_layout() -> void:
 	_expect(_find_node_by_name(boot, "RefugeSceneBoard") != null, "narrow Refugio shows scene board")
 	_expect(_find_node_by_name(boot, "RefugePathGrid") == null, "narrow Refugio does not render path grid")
 	_expect(_find_node_by_name(boot, "RefugeIcon_Refugio") != null, "narrow Refugio keeps Refugio menu icon")
-	_expect(_find_node_by_name(boot, "RefugeIcon_Coletar") != null, "narrow Refugio keeps collect icon visible")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Bosque") != null, "narrow Refugio keeps Bosque icon visible")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Coletar") == null, "narrow Refugio hides collect-all icon")
 	_expect_layout_fits_width(boot, float(root.size.x), "narrow loaded Refugio")
 	boot.queue_free()
 	await process_frame

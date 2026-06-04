@@ -1,6 +1,7 @@
 extends SceneTree
 
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
+const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const ModeRegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
 const BOOT_SCREEN_PATH := "res://modes/boot/boot.gd"
 
@@ -14,20 +15,19 @@ func _run() -> void:
 	quit(exit_code)
 
 func _run_smoke() -> int:
-	print("[smoke-mode-hub] checking official mode registry and hub")
+	print("[smoke-bosque-entry] checking official registry and Bosque direct entry")
 	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)
 	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
 	_prepare_viewport(Vector2i(390, 844))
 
 	_check_registry_contract()
-	await _check_refuge_mode_entry()
-	await _check_mode_hub_route()
+	await _check_bosque_direct_entry()
 
 	if not _failures.is_empty():
 		for failure: String in _failures:
-			printerr("[smoke-mode-hub] %s" % failure)
+			printerr("[smoke-bosque-entry] %s" % failure)
 		return 1
-	print("[smoke-mode-hub] OK")
+	print("[smoke-bosque-entry] OK")
 	return 0
 
 func _check_registry_contract() -> void:
@@ -39,46 +39,45 @@ func _check_registry_contract() -> void:
 	_expect(ModeRegistryScript.display_name("towerdefense") == "Towerdefense", "Towerdefense display name is official.")
 	_expect(ModeRegistryScript.display_name("cardgame") == "Cardgame", "Cardgame display name is official.")
 	_expect(ModeRegistryScript.display_name("openworld") == "Openworld", "Openworld display name is official.")
-	_expect(ModeRegistryScript.can_launch("basebuilder"), "Basebuilder is launchable.")
-	_expect(ModeRegistryScript.can_launch("autobattler"), "Autobattler is launchable.")
-	_expect(ModeRegistryScript.can_launch("openworld"), "Openworld is launchable.")
+	_expect(ModeRegistryScript.can_launch("basebuilder"), "Basebuilder remains launchable by its own surface.")
+	_expect(ModeRegistryScript.can_launch("autobattler"), "Autobattler remains launchable by Arena PVE.")
+	_expect(ModeRegistryScript.can_launch("openworld"), "Openworld remains launchable by Bosque.")
 	_expect(not ModeRegistryScript.can_launch("towerdefense"), "Towerdefense stays staged.")
 	_expect(not ModeRegistryScript.can_launch("cardgame"), "Cardgame stays staged.")
 
-func _check_refuge_mode_entry() -> void:
+func _check_bosque_direct_entry() -> void:
 	var boot := _new_boot()
 	await process_frame
 	boot.call("_show_screen", "refuge")
 	await process_frame
 	await process_frame
-	var mode_button := _find_node_by_name(boot, "RefugeIcon_Modos") as Button
-	_expect(mode_button != null, "Refugio exposes the mode hub icon.")
-	if mode_button != null:
-		mode_button.emit_signal("pressed")
-	await process_frame
+
+	_expect(_find_node_by_name(boot, "RefugeIcon_Modos") == null, "Refugio no longer exposes a Mode Hub icon.")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Preparacao") == null, "Refugio no longer exposes direct Preparation icon.")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Coletar") == null, "Refugio no longer exposes collect-all icon.")
+	_expect(_find_node_by_name(boot, "RefugeIcon_Energia") == null, "Refugio no longer exposes energy shortcut.")
+	_expect(_find_button_by_text(boot, "Openworld") == null, "Entry dev tools do not expose Openworld shortcut.")
+	_expect(_find_button_by_text(boot, "Openworld Bosque") == null, "Dev tools do not expose Openworld Bosque shortcut.")
+
 	for node_name: String in ["ModeCard_basebuilder", "ModeCard_autobattler", "ModeCard_openworld", "ModeCard_towerdefense", "ModeCard_cardgame"]:
-		_expect(_find_node_by_name(boot, node_name) != null, "Refugio popup renders %s." % node_name)
+		_expect(_find_node_by_name(boot, node_name) == null, "Refugio does not render retired %s." % node_name)
+
+	var bosque_button := _find_node_by_name(boot, "RefugeIcon_Bosque") as Button
+	_expect(bosque_button != null, "Refugio exposes Bosque icon.")
+	_expect(bosque_button != null and str(bosque_button.text) == "Bosque", "Bosque icon keeps player-facing name.")
 	var actions := Dictionary(boot.get("_action_buttons"))
-	_expect(actions.has(AppShellActionContractScript.ACTION_SHOW_BASE), "Mode popup wires Basebuilder.")
-	_expect(actions.has(AppShellActionContractScript.ACTION_OPEN_ARENA), "Mode popup wires Autobattler.")
-	_expect(actions.has(AppShellActionContractScript.open_mode_shell_action("openworld")), "Mode popup wires Openworld.")
-	boot.queue_free()
+	_expect(actions.has(AppShellActionContractScript.open_mode_shell_action("openworld")), "Bosque wires openworld shell action.")
+	_expect(not actions.has(AppShellActionContractScript.mode_disabled_action("towerdefense")), "Towerdefense staged action is not player-facing.")
+	_expect(not actions.has(AppShellActionContractScript.mode_disabled_action("cardgame")), "Cardgame staged action is not player-facing.")
+
+	if bosque_button != null:
+		bosque_button.emit_signal("pressed")
+	await process_frame
 	await process_frame
 
-func _check_mode_hub_route() -> void:
-	var boot := _new_boot()
-	await process_frame
-	boot.call("_show_screen", "mode_hub")
-	await process_frame
-	await process_frame
-	for text: String in ["Basebuilder\nActive", "Autobattler\nActive", "Openworld Bosque\nInternal Alpha", "Towerdefense\nStaged", "Cardgame\nStaged"]:
-		_expect(_find_button_by_text(boot, text) != null, "Mode hub route renders %s." % text.replace("\n", " "))
-	var actions := Dictionary(boot.get("_action_buttons"))
-	_expect(actions.has(AppShellActionContractScript.ACTION_SHOW_BASE), "Mode hub route wires Basebuilder.")
-	_expect(actions.has(AppShellActionContractScript.ACTION_OPEN_ARENA), "Mode hub route wires Autobattler.")
-	_expect(actions.has(AppShellActionContractScript.open_mode_shell_action("openworld")), "Mode hub route wires Openworld.")
-	_expect(actions.has(AppShellActionContractScript.mode_disabled_action("towerdefense")), "Mode hub route marks Towerdefense disabled.")
-	_expect(actions.has(AppShellActionContractScript.mode_disabled_action("cardgame")), "Mode hub route marks Cardgame disabled.")
+	_expect(str(boot.get("_current_screen")) == AppShellRouteContractScript.ROUTE_MODE_SHELL, "Bosque opens mode shell route.")
+	_expect(str(boot.get("_active_mode_id")) == "openworld", "Bosque opens openworld mode id.")
+	_expect(not _label_tree_contains(boot, "Hub interno dos cinco modos oficiais"), "Mode Hub copy is not rendered.")
 	boot.queue_free()
 	await process_frame
 
@@ -95,6 +94,8 @@ func _new_boot() -> Control:
 	return boot
 
 func _find_button_by_text(root_node: Node, text: String) -> Button:
+	if root_node == null:
+		return null
 	for child: Node in root_node.find_children("*", "Button", true, false):
 		var button := child as Button
 		if button != null and button.text == text:
@@ -111,6 +112,16 @@ func _find_node_by_name(root_node: Node, node_name: String) -> Node:
 		if found != null:
 			return found
 	return null
+
+func _label_tree_contains(root_node: Node, needle: String) -> bool:
+	if root_node == null:
+		return false
+	if root_node is Label and str((root_node as Label).text).contains(needle):
+		return true
+	for child: Node in root_node.get_children():
+		if _label_tree_contains(child, needle):
+			return true
+	return false
 
 func _expect(condition: bool, message: String) -> void:
 	if not condition:

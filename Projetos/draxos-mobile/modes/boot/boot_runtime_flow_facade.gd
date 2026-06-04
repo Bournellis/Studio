@@ -144,12 +144,6 @@ func _show_base() -> void:
 func _sync_refuge_state_if_needed() -> void:
 	await _surface_action_flow.sync_refuge_state_if_needed(self)
 
-func _collect_base() -> void:
-	await _surface_action_flow.collect_base(self)
-
-func _buy_energy_pack_alpha() -> void:
-	await _surface_action_flow.buy_energy_pack_alpha(self)
-
 func _upgrade_base_structure(structure_id: String) -> void:
 	await _surface_action_flow.upgrade_base_structure(self, structure_id)
 

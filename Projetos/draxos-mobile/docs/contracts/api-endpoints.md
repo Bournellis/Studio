@@ -1309,7 +1309,7 @@ Implementado localmente em `T03-P03B` por header HTTP:
 | GET | `/chat/poll` | Buscar mensagens por canal |
 | POST | `/chat/send` | Enviar mensagem direct/guilda |
 | GET | `/monetization/state` | Estado do passe atual, recompensas, produtos alpha e claims |
-| POST | `/monetization/rewards/claim` | Coletar recompensa diaria/semanal/passe |
+| POST | `/monetization/rewards/claim` | Resgatar recompensa diaria/semanal/passe |
 | POST | `/monetization/alpha-purchase` | Redeem/compra alpha simulada de Diamante, Premium, fila dupla e pacotes |
 | POST | `/telemetry/client-event` | Registrar evento client-side nao autoritativo |
 
@@ -1698,7 +1698,7 @@ Response v0:
 
 Status: **implementado em T00-P13**.
 
-Coleta recompensa diaria, semanal ou de Battle Pass. O cliente envia somente `reward_id` e `request_id`; XP, recursos, premium requirement, periodo e ledger sao decididos no servidor.
+Resgata recompensa diaria, semanal ou de Battle Pass. O cliente envia somente `reward_id` e `request_id`; XP, recursos, premium requirement, periodo e ledger sao decididos no servidor.
 
 Request:
 

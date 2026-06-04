@@ -19,12 +19,16 @@
   Bosque into a free, relaxing collect/deposit/craft/build minigame with optional
   six-step guidance, server-persisted guidance state in the normal save, fixed
   resource slack and the first procedural build visual (`fogueira_estavel_1`).
-- Latest implemented local package: `Openworld Collection Sync Local Fix` on
-  branch `codex/draxos-mobile/openworld-local-validation`; it fixes Bosque
-  collection rollback locally by accepting all 26 active ruleset nodes in SQL,
-  persisting `player_position` only via `move_heartbeat`, sanitizing event ACKs
-  and preserving local player position during active resync of the same session.
-  This package is local only and has not been published.
+- Latest implemented local integration: `Openworld Collection Sync Local Fix` +
+  `Main Menu Refactor` on branch `codex/draxos-mobile/merge-current-work`; it
+  fixes Bosque collection rollback locally by accepting all 26 active ruleset
+  nodes in SQL, persisting `player_position` only via `move_heartbeat`,
+  sanitizing event ACKs and preserving local player position during active
+  resync of the same session. It also removes the player-facing Mode Hub,
+  collect-all and direct energy shortcuts, keeps `Bosque` as the direct
+  Openworld entry, moves battle preparation into Arena PVE and keeps Energia
+  purchase inside Loja. This integration is local only and has not been
+  published.
 - Previous remote package: `First Access Runtime Fix`, release root
   `internal-alpha/v0-first-access-runtime-20260602-4608977`,
   deployment evidence `https://36db2742.draxos-mobile-internal-alpha.pages.dev`;
@@ -38,6 +42,14 @@
   rollback by applying authoritative event patches instead of hydrating full
   snapshots during active gameplay. This package is local only and has not been
   published.
+- Source local package: `Main Menu Refactor` on branch
+  `codex/draxos-mobile/main-menu-refactor`; it removes the player-facing Mode
+  Hub, collect-all and direct energy shortcuts, keeps `Bosque` as the direct
+  Openworld entry, moves battle preparation into Arena PVE and keeps Energia
+  purchase inside Loja. Local validation passed `validate.gd`, focused menu
+  smokes, `validate_foundation.ps1 -Profile ClientQuick` and
+  `validate_foundation.ps1 -Profile ModePlatform`. This package is local only
+  and has not been published.
 - Previous runtime fix package: `Integrated Runtime Fix`, release root
   `internal-alpha/v0-integrated-runtime-fix-20260602-ab5834c`,
   deployment evidence `https://888320f4.draxos-mobile-internal-alpha.pages.dev`.
@@ -63,9 +75,9 @@
   remains as legacy guard text for Track 13/V2 docs validation; actual latest
   published remote package is the Bosque v2 release above.
 - Active follow-up: review and decide publication path for the local Openworld
-  Collection Sync fix before broadening human playtest of Bosque v2. The latest
-  remote package remains Bosque Mecanico Basico v2; no new Internal Alpha was
-  published by this local fix.
+  Collection Sync + Main Menu Refactor integration before broadening human
+  playtest of Bosque v2. The latest remote package remains Bosque Mecanico
+  Basico v2; no new Internal Alpha was published by this local integration.
 - Latest technical package: `Track 16 - Behavior And Potion Crafting` (technical
   context, not current product focus; current state summarized in
   `docs/behavior-potion-crafting-v1.md`)
@@ -81,13 +93,16 @@ split: the active ruleset had 26 fixed `resource_nodes`, while the effective SQL
 node mapping recognized only the original 13 nodes. Collecting the v2 nodes
 could reject the event, require resync and hydrate an older `player_position`.
 
-- branches/worktrees:
+- source branches/worktrees:
   - `codex/draxos-mobile/openworld-backend-contract` at
     `D:\Estudio-worktrees\draxos-mobile--codex--openworld-backend-contract`;
   - `codex/draxos-mobile/openworld-client-resync` at
     `D:\Estudio-worktrees\draxos-mobile--codex--openworld-client-resync`;
   - `codex/draxos-mobile/openworld-local-validation` at
     `D:\Estudio-worktrees\draxos-mobile--codex--openworld-local-validation`.
+- integration branch/worktree:
+  - `codex/draxos-mobile/merge-current-work` at
+    `D:\Estudio-worktrees\draxos-mobile--codex--merge-current-work`.
 - commits integrated in validation branch:
   - `4a91cf2 Fix openworld collection backend sync contract`;
   - `e15c98f Preserve openworld position on active resync`.
@@ -2011,9 +2026,11 @@ Delivered in the current branch:
 - `SupabaseClient` sends API version and `request_hash`, while `SessionStore`
   persists pending idempotent mutations so retries reuse the same
   `request_id/request_hash`.
-- V1 replaces the previous minigame placeholder with active mode contracts:
-  `ROUTE_MODE_HUB`, `ROUTE_MODE_SHELL` and `open_mode_shell:<mode_id>`.
-  `/modes` is the active API surface; `/minigames` is historical only.
+- V1 replaces the previous minigame placeholder with active mode contracts.
+  The player-facing hub route was retired later by Main Menu Refactor; modes now
+  enter through their own implemented buttons, with `ROUTE_MODE_SHELL` and
+  `open_mode_shell:<mode_id>` kept for direct launches. `/modes` is the active
+  API surface; `/minigames` is historical only.
 - `tools/check_foundation_expansion_readiness.ps1` is the read-only structural
   gate and is called from `validate_foundation.ps1`. Full profile now requires
   local Supabase RPC, Edge RPC and admin/RLS smokes instead of silently skipping

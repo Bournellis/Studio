@@ -4,8 +4,8 @@ extends "res://modes/boot/surfaces/hub_surface_common_presenter.gd"
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const ProgressionClarityPresenterScript := preload("res://modes/boot/surfaces/progression_clarity_presenter.gd")
 
-static func preparation_panel(host: Node, compact: bool) -> PanelContainer:
-	return _preparation_panel(host, compact)
+static func preparation_panel(host: Node, compact: bool, context: String = "refuge_legacy") -> PanelContainer:
+	return _preparation_panel(host, compact, context)
 
 static func _preparation_first_session_hint(combat_build: Dictionary, spell_slots: Array) -> String:
 	var level := int(SessionStore.player_snapshot().get("level", combat_build.get("level", 0)))
@@ -21,8 +21,11 @@ static func _preparation_first_session_hint(combat_build: Dictionary, spell_slot
 		return "Primeira sessao: sem habilidades equipadas, confirme o Instrumento Ritual e abra a Arena."
 	return "Primeira sessao: confira instrumento, habilidades e pocao antes da Arena."
 
-static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
-	var panel := _panel(host, "PreparationPanel", "bg_panel", "border_active")
+static func _preparation_panel(host: Node, compact: bool, context: String = "refuge_legacy") -> PanelContainer:
+	var behavior_only := context == "arena_active_behavior"
+	var arena_embedded := context == "arena_pre_start" or behavior_only
+	var panel_name := "ArenaActivePreparationPanel" if behavior_only else "PreparationPanel"
+	var panel := _panel(host, panel_name, "bg_panel", "border_active")
 	var box := _panel_box(panel, compact)
 	var combat_build := SessionStore.combat_build_snapshot()
 	var account_build := SessionStore.build_snapshot()
@@ -31,9 +34,12 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 	var potion_slots := _as_array(combat_build.get("potion_slots", []))
 	var spell_slots := _preparation_spell_slots(combat_build)
 
-	box.add_child(_section_label("Pronto para Arena", compact))
-	box.add_child(_body_label("Este e o loadout que sera travado ao iniciar uma tentativa.", compact))
-	box.add_child(_body_label(_preparation_first_session_hint(combat_build, spell_slots), compact))
+	box.add_child(_section_label("Comportamento da tentativa" if behavior_only else "Preparacao da Arena", compact))
+	if behavior_only:
+		box.add_child(_body_label("Loadout travado para esta tentativa. Entre duelos, ajuste apenas comportamento simples.", compact))
+	else:
+		box.add_child(_body_label("Este e o loadout que sera travado ao iniciar uma tentativa.", compact))
+		box.add_child(_body_label(_preparation_first_session_hint(combat_build, spell_slots), compact))
 	var feedback_message := str(host.get_meta("preparation_feedback_message", "")).strip_edges()
 	if feedback_message != "":
 		box.add_child(_body_label("Ultima escolha: %s" % feedback_message, compact))
@@ -66,12 +72,16 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 			_potion_timing_text(potion_id, potion_behavior) if _potion_timing_text(potion_id, potion_behavior) != "" else "sem uso automatico",
 		],
 	], compact))
-	var cta_grid := _button_grid(compact, 1)
-	box.add_child(cta_grid)
-	cta_grid.add_child(_entry_action_button(host, "Abrir Arena PVE", AppShellActionContractScript.ACTION_OPEN_ARENA, compact, "", true))
+	if not arena_embedded:
+		var cta_grid := _button_grid(compact, 1)
+		box.add_child(cta_grid)
+		cta_grid.add_child(_entry_action_button(host, "Abrir Arena PVE", AppShellActionContractScript.ACTION_OPEN_ARENA, compact, "", true))
 
-	box.add_child(_section_label("Editar loadout e comportamento", compact))
-	box.add_child(_body_label("Ajuste instrumento, habilidades, Doutrina, Familiar, Pocao e preferencias simples.", compact))
+	box.add_child(_section_label("Ajustar comportamento" if behavior_only else "Editar loadout e comportamento", compact))
+	if behavior_only:
+		box.add_child(_body_label("Instrumento, habilidades equipadas, Doutrina, Familiar e slot de Pocao nao podem mudar ate encerrar a tentativa.", compact))
+	else:
+		box.add_child(_body_label("Ajuste instrumento, habilidades, Doutrina, Familiar, Pocao e preferencias simples.", compact))
 	box.add_child(_body_label("Resumo:\nInstrumento: %s\nHabilidades: %s\nDoutrina: %s\nFamiliar: %s\nPocao: %s" % [
 		_preparation_item_label(instrument_id),
 		_preparation_spell_summary(spell_slots),
@@ -80,25 +90,26 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 		_potion_status_text(potion_id),
 	], compact))
 	var progression_lines := ProgressionClarityPresenterScript.preparation_progress_lines(combat_build, 3)
-	if not progression_lines.is_empty():
+	if not behavior_only and not progression_lines.is_empty():
 		box.add_child(_section_label("Proximos marcos", compact))
 		for line: String in progression_lines:
 			box.add_child(_body_label(line, compact))
-	box.add_child(_section_label("Instrumento Ritual", compact))
-	if instrument_id != "":
-		box.add_child(_body_label("Em uso: %s%s" % [
-			_preparation_item_label(instrument_id),
-			_preparation_level_suffix_with_fallback(combat_build, account_build, ["weapon_level", "instrument_level"]),
-		], compact))
-	_render_preparation_options(
-		host,
-		box,
-		compact,
-		_as_array(options.get("weapons", [])),
-		instrument_id,
-		"instrument",
-		false
-	)
+	if not behavior_only:
+		box.add_child(_section_label("Instrumento Ritual", compact))
+		if instrument_id != "":
+			box.add_child(_body_label("Em uso: %s%s" % [
+				_preparation_item_label(instrument_id),
+				_preparation_level_suffix_with_fallback(combat_build, account_build, ["weapon_level", "instrument_level"]),
+			], compact))
+		_render_preparation_options(
+			host,
+			box,
+			compact,
+			_as_array(options.get("weapons", [])),
+			instrument_id,
+			"instrument",
+			false
+		)
 
 	box.add_child(_section_label("Habilidades", compact))
 	if spell_slots.is_empty():
@@ -123,40 +134,45 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 			box.add_child(remove_spell_actions)
 			remove_spell_actions.add_child(_entry_action_button(host, "Usar na Arena", AppShellActionContractScript.enable_spell_behavior_action(spell_id), compact))
 			remove_spell_actions.add_child(_entry_action_button(host, "Pausar", AppShellActionContractScript.disable_spell_behavior_action(spell_id), compact))
-			remove_spell_actions.add_child(_entry_action_button(host, "Remover", AppShellActionContractScript.remove_spell_position_action(position), compact))
-	_render_spell_options(host, box, compact, _as_array(options.get("spells", [])), spell_slots)
+			if not behavior_only:
+				remove_spell_actions.add_child(_entry_action_button(host, "Remover", AppShellActionContractScript.remove_spell_position_action(position), compact))
+	if behavior_only:
+		box.add_child(_body_label("Para trocar habilidades, encerre a tentativa e volte para a selecao da Arena.", compact))
+	else:
+		_render_spell_options(host, box, compact, _as_array(options.get("spells", [])), spell_slots)
 
-	box.add_child(_section_label("Doutrina", compact))
-	var doctrine_text := _preparation_item_label(doctrine_id) if doctrine_id != "" else "Nenhuma Doutrina equipada"
-	if doctrine_id != "":
-		doctrine_text += _preparation_level_suffix_with_fallback(combat_build, account_build, ["passive_level", "doctrine_level", "doutrina_level"])
-	box.add_child(_body_label("Em uso: %s" % doctrine_text, compact))
-	_render_preparation_options(
-		host,
-		box,
-		compact,
-		_as_array(options.get("doutrines", [])),
-		doctrine_id,
-		"doctrine",
-		true,
-		AppShellActionContractScript.remove_doctrine_action()
-	)
+	if not behavior_only:
+		box.add_child(_section_label("Doutrina", compact))
+		var doctrine_text := _preparation_item_label(doctrine_id) if doctrine_id != "" else "Nenhuma Doutrina equipada"
+		if doctrine_id != "":
+			doctrine_text += _preparation_level_suffix_with_fallback(combat_build, account_build, ["passive_level", "doctrine_level", "doutrina_level"])
+		box.add_child(_body_label("Em uso: %s" % doctrine_text, compact))
+		_render_preparation_options(
+			host,
+			box,
+			compact,
+			_as_array(options.get("doutrines", [])),
+			doctrine_id,
+			"doctrine",
+			true,
+			AppShellActionContractScript.remove_doctrine_action()
+		)
 
-	box.add_child(_section_label("Familiar", compact))
-	var familiar_text := _preparation_item_label(familiar_id) if familiar_id != "" else "Nenhum Familiar equipado"
-	if familiar_id != "":
-		familiar_text += _preparation_level_suffix_with_fallback(combat_build, account_build, ["pet_level", "familiar_level"])
-	box.add_child(_body_label("Em uso: %s" % familiar_text, compact))
-	_render_preparation_options(
-		host,
-		box,
-		compact,
-		_as_array(options.get("familiars", [])),
-		familiar_id,
-		"familiar",
-		true,
-		AppShellActionContractScript.remove_familiar_action()
-	)
+		box.add_child(_section_label("Familiar", compact))
+		var familiar_text := _preparation_item_label(familiar_id) if familiar_id != "" else "Nenhum Familiar equipado"
+		if familiar_id != "":
+			familiar_text += _preparation_level_suffix_with_fallback(combat_build, account_build, ["pet_level", "familiar_level"])
+		box.add_child(_body_label("Em uso: %s" % familiar_text, compact))
+		_render_preparation_options(
+			host,
+			box,
+			compact,
+			_as_array(options.get("familiars", [])),
+			familiar_id,
+			"familiar",
+			true,
+			AppShellActionContractScript.remove_familiar_action()
+		)
 
 	box.add_child(_section_label("Pocao", compact))
 	box.add_child(_body_label(_potion_status_text(potion_id), compact))
@@ -167,8 +183,9 @@ static func _preparation_panel(host: Node, compact: bool) -> PanelContainer:
 
 	var potion_actions := _button_grid(compact, 2)
 	box.add_child(potion_actions)
-	potion_actions.add_child(_entry_action_button(host, "Equipar Pocao de Vida", AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION, compact))
-	potion_actions.add_child(_entry_action_button(host, "Remover pocao", AppShellActionContractScript.ACTION_UNEQUIP_POTION, compact))
+	if not behavior_only:
+		potion_actions.add_child(_entry_action_button(host, "Equipar Pocao de Vida", AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION, compact))
+		potion_actions.add_child(_entry_action_button(host, "Remover pocao", AppShellActionContractScript.ACTION_UNEQUIP_POTION, compact))
 	potion_actions.add_child(_entry_action_button(host, "Usar com vida baixa", AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT, compact))
 	potion_actions.add_child(_entry_action_button(host, "Pausar pocao", AppShellActionContractScript.ACTION_DISABLE_POTION, compact))
 	return panel

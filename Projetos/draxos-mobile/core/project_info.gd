@@ -25,8 +25,7 @@ static func boot_actions() -> PackedStringArray:
 		"Solicitar batalha",
 		"Ver resultado",
 		"Ver base",
-		"Coletar base",
-		"Comprar Energia Refugio",
+		"Acompanhar producao do Refugio",
 		"Evoluir predio do Refugio",
 		"Ver social",
 		"Adicionar amigo",
@@ -36,9 +35,9 @@ static func boot_actions() -> PackedStringArray:
 		"Preview matchmaking",
 		"Ver ranking",
 		"Ver loja",
+		"Comprar Energia na Loja",
 		"Comprar premium",
-		"Receber Diamante",
-		"Resgate diario"
+		"Recompensa diaria"
 	])
 
 static func unchecked_update_status(manifest_url: String = "") -> Dictionary:

@@ -84,9 +84,9 @@ static func render(host: Node) -> void:
 	_add_section_label(host, "Recompensas")
 	var daily_button := _add_action_button(
 		host,
-		"Resgatar coleta diaria",
+		"Recompensa diaria",
 		AppShellActionContractScript.claim_reward_action(AppShellActionContractScript.REWARD_DAILY_COLLECT_BASE),
-		"Resgatar a recompensa diaria de coleta do Refugio?"
+		"Resgatar a recompensa diaria do Refugio?"
 	)
 	daily_button.tooltip_text = "Recompensa diaria ligada a XP, recursos e progresso de Battle Pass."
 	var timeline := _add_output_label(host, "")

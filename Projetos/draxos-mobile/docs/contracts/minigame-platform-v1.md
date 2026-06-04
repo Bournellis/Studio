@@ -25,6 +25,10 @@ Obrigatorio por modo:
 - `metadata.public_cta`
 - `metadata.surface`
 
+`metadata.public_cta=true` significa entrada player-facing direta. O cliente
+player-facing nao possui rota/tela/menu `mode_hub`; modos nao implementados
+continuam no registry tecnico e em `/modes`, mas ficam ocultos do player.
+
 Rows V1:
 
 - `basebuilder/refugio`: active.
@@ -87,9 +91,9 @@ autoridade do client ate `resume`, `state` ou resync stale explicito.
 
 - `basebuilder`: usa endpoints core de Base; nao usa generic session V1.
 - `autobattler`: usa `arena/pve/*` e build atual; nao usa generic session V1.
-- `openworld`: usa `openworld/forest` com state/resume, start, event, complete, abandon, snapshot remoto e Reward Bridge.
-- `towerdefense`: registry visivel, start retorna `MODE_DISABLED`.
-- `cardgame`: registry visivel, start retorna `MODE_DISABLED`.
+- `openworld`: usa entrada direta `Bosque` para `openworld/forest` com state/resume, start, event, complete, abandon, snapshot remoto e Reward Bridge.
+- `towerdefense`: registry tecnico visivel para `/modes`/ops; player-facing oculto, start retorna `MODE_DISABLED` se chamado por integracao tecnica.
+- `cardgame`: registry tecnico visivel para `/modes`/ops; player-facing oculto, start retorna `MODE_DISABLED` se chamado por integracao tecnica.
 
 ## Reward Bridge
 
@@ -137,9 +141,8 @@ Schema: `mode_analytics_v1`.
 
 Eventos:
 
-- `mode_hub_shown`
-- `mode_card_shown`
-- `mode_card_selected`
+- `mode_entry_shown`
+- `mode_entry_selected`
 - `mode_start_requested`
 - `mode_start_failed`
 - `mode_session_started`
@@ -147,7 +150,6 @@ Eventos:
 - `mode_session_completed`
 - `mode_reward_applied`
 - `mode_exit`
-- `mode_disabled_seen`
 - `mode_ops_action`
 
 Dimensoes obrigatorias:

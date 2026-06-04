@@ -17,7 +17,7 @@ Use este documento quando a tarefa tocar:
 - Pocao de Vida, inventario de consumiveis ou slot de pocao;
 - comportamento simples de habilidade ou pocao;
 - eventos de batalha `consumable_use` ou cura de consumivel;
-- UI de Ossario/Base ou Preparacao que exponha esses controles.
+- UI de Ossario/Base ou Preparacao dentro da Arena PVE que exponha esses controles.
 
 ## O Que Existe
 
@@ -33,7 +33,7 @@ Use este documento quando a tarefa tocar:
 - `pocao_vida` dispara cura em cinco ticks de `4%` da vida maxima, sem ultrapassar a vida maxima.
 - O log/replay aceita `consumable_use` e eventos `heal` de consumivel.
 - Base/Ossario expoe triturar Ossos e crafting inicial.
-- Preparacao no Refugio expoe pocao equipada, equip/remover e preferencias simples de uso.
+- Preparacao dentro da Arena PVE expoe pocao equipada, equip/remover e preferencias simples de uso.
 
 ## Contratos Vivos
 
@@ -67,7 +67,7 @@ Os detalhes tecnicos vivem nos contratos abaixo:
 Track 16 nasceu como pacote tecnico local em `2026-05-28`. Depois disso:
 
 - Ossos Inteiros v1 aplicou a migration remota `202605280001_behavior_crafting.sql`, redeployou funcoes e publicou o subconjunto necessario para remover a leitura de `0.1 osso`.
-- Battle Preparation Complete v1 publicou a Preparacao como editor real de loadout e manteve os controles de pocao e comportamento simples no Refugio.
+- Battle Preparation Complete v1 publicou a Preparacao como editor real de loadout; a navegacao viva atual mantem os controles de pocao e comportamento simples dentro da Arena PVE.
 - O hotfix de equip feedback manteve/reabriu a Preparacao apos acoes de equipar e comportamento, exibindo `Ultima escolha: ...` para que a acao nao pareca silenciosa.
 - Progression Clarity v1 roda por cima desses dados sem alterar backend, schema, simulador, economia, tuning ou conteudo.
 
