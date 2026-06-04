@@ -19,6 +19,10 @@ const OPENWORLD_SESSION_CONTRACTS_PATH =
   "supabase/migrations/202606030003_openworld_session_contracts_v1.sql";
 const OPENWORLD_SESSION_CONTRACTS_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606030003_openworld_session_contracts_v1.sql";
+const OPENWORLD_GUIDANCE_PERSISTENCE_PATH =
+  "supabase/migrations/202606040001_openworld_guidance_persistence_v1.sql";
+const OPENWORLD_GUIDANCE_PERSISTENCE_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606040001_openworld_guidance_persistence_v1.sql";
 const ADMIN_COMPENSATE_HASH_MIGRATION_PATH =
   "supabase/migrations/202606020003_admin_compensate_request_hash.sql";
 const ADMIN_COMPENSATE_HASH_SERVER_MIRROR_PATH =
@@ -98,6 +102,17 @@ Deno.test("openworld session contracts migration is mirrored in server schema", 
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema openworld session contracts migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("openworld guidance persistence migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(OPENWORLD_GUIDANCE_PERSISTENCE_PATH);
+  const serverMirror = await readProjectText(OPENWORLD_GUIDANCE_PERSISTENCE_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema openworld guidance persistence migration should mirror supabase migration exactly",
   );
 });
 
@@ -327,6 +342,9 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
 Deno.test("openworld bosque hardening declares snapshot, event and server-authoritative reward contracts", async () => {
   const migration = normalizeSql(await readProjectText(BOSQUE_HARDENING_MIGRATION_PATH));
   const sessionContracts = normalizeSql(await readProjectText(OPENWORLD_SESSION_CONTRACTS_PATH));
+  const guidancePersistence = normalizeSql(
+    await readProjectText(OPENWORLD_GUIDANCE_PERSISTENCE_PATH),
+  );
   const handler = normalizeCode(await readProjectText(HANDLER_PATH));
   const support = normalizeCode(await readProjectText(SUPPORT_PATH));
 
@@ -369,6 +387,32 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   }
   assertIncludes(handler, "mode_endpoint_session_event", "handler should hash event mutations");
   assertIncludes(handler, "rpc/mode_session_event_v1", "handler should call the event RPC");
+  for (
+    const fragment of [
+      "guidance_update",
+      "openworld_forest_normalize_guidance_v1",
+      "openworld_forest_save_guidance_snapshot_v1",
+      "{openworld,forest,guidance}",
+      "save_row.save_type = 'normal'",
+      "snapshot = public.openworld_forest_save_guidance_snapshot_v1",
+    ]
+  ) {
+    assertIncludes(
+      guidancePersistence,
+      fragment,
+      `openworld guidance persistence should include ${fragment}`,
+    );
+  }
+  assertNotIncludes(
+    guidancePersistence,
+    "insert into public.resource_transactions",
+    "guidance persistence must not touch economy ledger",
+  );
+  assertNotIncludes(
+    guidancePersistence,
+    "insert into public.mode_reward_claims",
+    "guidance persistence must not create reward claims",
+  );
   const eventHandler = codeSection(
     handler,
     "async function handleSessionEvent",
@@ -379,7 +423,11 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
     "modeeventackpayload(rpc.value)",
     "session/event should return an explicit mode event ACK inside the common envelope",
   );
-  assertIncludes(handler, "modeeventackpayload", "handler should import the mode event ACK builder");
+  assertIncludes(
+    handler,
+    "modeeventackpayload",
+    "handler should import the mode event ACK builder",
+  );
   assertIncludes(
     eventHandler,
     'surface: "mode"',

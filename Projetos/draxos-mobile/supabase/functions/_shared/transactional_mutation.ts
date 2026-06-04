@@ -13,6 +13,7 @@ export interface FoundationGameSaveRow {
   save_type: SaveType;
   ruleset_id: string;
   ruleset_version: number;
+  snapshot?: unknown;
 }
 
 interface FoundationRestConfig {
@@ -83,7 +84,7 @@ export async function loadFoundationGameSave(
 > {
   const query = `game_saves?legacy_player_id=eq.${encodeURIComponent(playerId)}&save_type=eq.${
     encodeURIComponent(saveType)
-  }&lifecycle_status=eq.active&select=id,account_profile_id,legacy_player_id,save_type,ruleset_id,ruleset_version&limit=1`;
+  }&lifecycle_status=eq.active&select=id,account_profile_id,legacy_player_id,save_type,ruleset_id,ruleset_version,snapshot&limit=1`;
   const existing = await restRequest<FoundationGameSaveRow[]>(config, query, { method: "GET" });
   if (existing.error !== null) {
     return { value: null, error: stateReadError() };

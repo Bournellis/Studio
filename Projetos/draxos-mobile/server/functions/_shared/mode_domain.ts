@@ -14,7 +14,10 @@ export const OPENWORLD_RULESET_ID = stringValue(
   OPENWORLD_RULESET_DEFINITION.ruleset_id,
   "openworld_forest_ruleset_v1",
 );
-export const OPENWORLD_RULESET_VERSION = numberValue(OPENWORLD_RULESET_DEFINITION.ruleset_version, 1);
+export const OPENWORLD_RULESET_VERSION = numberValue(
+  OPENWORLD_RULESET_DEFINITION.ruleset_version,
+  1,
+);
 export const OPENWORLD_RELEASE_CHANNEL = "internal_alpha";
 
 export const MODE_ENDPOINT_SESSION_START = "modes/session/start";
@@ -106,6 +109,9 @@ export interface ModeResourcesRow {
 }
 
 export interface ModeStateProjection {
+  gameSave?: {
+    snapshot?: unknown;
+  };
   registry: ModeRegistryRow[];
   rulesets: ModeRulesetRow[];
   progress: ModeProgressRow | null;
@@ -144,6 +150,7 @@ const OPENWORLD_EVENT_TYPES = new Set([
   "collect_complete",
   "deposit_all",
   "craft",
+  "guidance_update",
   "complete_requested",
   "abandon_requested",
 ]);
@@ -152,6 +159,7 @@ export function modeStatePayload(
   state: ModeStateProjection,
 ): Record<string, unknown> {
   const activeSession = state.sessions.find(isActiveSession) ?? null;
+  const activeSessionPayload = activeSession === null ? null : sessionPayload(activeSession);
   return {
     ok: true,
     schema_version: MODE_PLATFORM_SCHEMA_VERSION,
@@ -178,7 +186,8 @@ export function modeStatePayload(
     })),
     progress: progressPayload(state.progress),
     sessions: state.sessions.map(sessionPayload),
-    active_session: activeSession === null ? null : sessionPayload(activeSession),
+    active_session: activeSessionPayload,
+    guidance: openworldGuidancePayload(state.gameSave?.snapshot, activeSessionPayload),
     rewards: state.claims.map(rewardClaimPayload),
     resources: resourcePayload(state.resources),
     server_time: state.serverTime.toISOString(),
@@ -383,6 +392,7 @@ function openworldEventSnapshotPatch(snapshot: Record<string, unknown>): Record<
     "chest",
     "upgrades",
     "collected_nodes",
+    "guidance",
     "reward_payload",
     "session_seconds",
     "activity_score",
@@ -397,6 +407,35 @@ function openworldEventSnapshotPatch(snapshot: Record<string, unknown>): Record<
     }
   }
   return result;
+}
+
+function openworldGuidancePayload(
+  saveSnapshot: unknown,
+  activeSessionPayload: Record<string, unknown> | null,
+): Record<string, unknown> {
+  const activeSnapshot = objectValue(activeSessionPayload?.snapshot_payload);
+  const activeGuidance = objectValue(activeSnapshot.guidance);
+  if (Object.keys(activeGuidance).length > 0) {
+    return normalizeGuidance(activeGuidance);
+  }
+  const saveGuidance =
+    objectValue(objectValue(objectValue(saveSnapshot).openworld).forest).guidance;
+  return normalizeGuidance(objectValue(saveGuidance));
+}
+
+function normalizeGuidance(value: Record<string, unknown>): Record<string, unknown> {
+  const completedSteps = arrayValue(value.completed_steps)
+    .map((step) => stringValue(step, ""))
+    .filter((step) => step !== "");
+  return {
+    version: 1,
+    current_step: stringValue(value.current_step, ""),
+    completed_steps: Array.from(new Set(completedSteps)).slice(0, 50),
+    dismissed: value.dismissed === true,
+    last_seen_at: typeof value.last_seen_at === "string" && value.last_seen_at.trim() !== ""
+      ? value.last_seen_at.trim()
+      : null,
+  };
 }
 
 function isActiveSession(row: ModeSessionRow): boolean {

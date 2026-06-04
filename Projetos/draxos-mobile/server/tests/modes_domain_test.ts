@@ -46,7 +46,11 @@ Deno.test("openworld canonical completion payload excludes client-side rewards",
   assertEq(canonical.mode_id, OPENWORLD_MODE_ID, "canonical payload should include mode");
   assertEq(canonical.slice_id, OPENWORLD_SLICE_ID, "canonical payload should include slice");
   assertEq(canonical.expected_revision, 7, "canonical payload should include revision");
-  assertEq("deposited_items" in canonical, false, "client deposited_items should not affect rewards");
+  assertEq(
+    "deposited_items" in canonical,
+    false,
+    "client deposited_items should not affect rewards",
+  );
   assertEq("activity_score" in canonical, false, "client activity_score should not affect rewards");
 });
 
@@ -72,6 +76,29 @@ Deno.test("openworld session event payload validates event type and revision", (
     null,
     "unknown events should be rejected",
   );
+});
+
+Deno.test("openworld guidance update event validates lightweight guidance state", () => {
+  const event = sessionEventFromBody({
+    session_id: "00000000-0000-4000-8000-000000000101",
+    mode_id: OPENWORLD_MODE_ID,
+    slice_id: OPENWORLD_SLICE_ID,
+    event_type: "guidance_update",
+    expected_revision: 5,
+    event_payload: {
+      guidance: {
+        version: 1,
+        current_step: "depositar_bau",
+        completed_steps: ["coletar_galho"],
+        dismissed: false,
+        last_seen_at: "2026-06-04T12:00:00Z",
+      },
+    },
+  });
+
+  assert(event !== null, "guidance_update should parse as an Openworld event");
+  assertEq(event.event_type, "guidance_update", "guidance update event type should be preserved");
+  assertEq(event.expected_revision, 5, "guidance update should preserve the revision gate");
 });
 
 Deno.test("openworld mode event ACK exposes patch authority without visual rollback fields", () => {
@@ -104,13 +131,54 @@ Deno.test("openworld mode event ACK exposes patch authority without visual rollb
   const visualAuthority = ack.visual_authority as Record<string, unknown>;
   assertEq(ack.type, "mode_event_ack", "event response should identify ACK semantics");
   assertEq(ack.revision_after, 4, "ACK should expose revision_after at top level");
-  assertEq((patch.pocket as Record<string, unknown>).galho, 1, "ACK patch should include authoritative pocket");
+  assertEq(
+    (patch.pocket as Record<string, unknown>).galho,
+    1,
+    "ACK patch should include authoritative pocket",
+  );
   assertEq("player_position" in patch, false, "ACK patch must not carry player_position");
   assertEq("active_collection" in patch, false, "ACK patch must not clear active collection");
   assertEq(
     visualAuthority.player_position,
     "client_during_active_play",
     "position remains client-authoritative while the mode is active",
+  );
+});
+
+Deno.test("openworld mode event ACK includes guidance in authoritative patches", () => {
+  const ack = modeEventAckPayload({
+    request_id: "00000000-0000-4000-8000-000000000103",
+    request_hash: "sha256:test-guidance",
+    event: {
+      event_type: "guidance_update",
+      expected_revision: 4,
+      revision_after: 5,
+      message: "Orientacao atualizada.",
+    },
+    session: {
+      id: "00000000-0000-4000-8000-000000000101",
+      mode_id: OPENWORLD_MODE_ID,
+      slice_id: OPENWORLD_SLICE_ID,
+      snapshot_revision: 5,
+      snapshot_payload: {
+        guidance: {
+          version: 1,
+          current_step: "depositar_bau",
+          completed_steps: ["coletar_galho"],
+          dismissed: false,
+          last_seen_at: "2026-06-04T12:00:00Z",
+        },
+      },
+    },
+  });
+  const patch = ack.snapshot_patch as Record<string, unknown>;
+  const guidance = patch.guidance as Record<string, unknown>;
+
+  assertEq(ack.event_type, "guidance_update", "ACK should expose the guidance event type");
+  assertEq(guidance.current_step, "depositar_bau", "ACK patch should include guidance state");
+  assert(
+    (ack.authoritative_fields as string[]).includes("guidance"),
+    "guidance should be marked as authoritative in the event patch",
   );
 });
 
