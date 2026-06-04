@@ -27,12 +27,12 @@ Fechar sobras operacionais ja incorporadas ao `master`: mover cartoes finalizado
   - `D:\Estudio-worktrees\draxos-roguelike-cardgame--codex--foundation-hardening-9`
 - Pasta orfa vazia removida:
   - `D:\Estudio-worktrees\draxos-mobile--codex--first-access-runtime`
-- Artefatos `.patch` soltos em `D:\Estudio-worktrees` preservados por seguranca:
-  - `draxos-mobile--codex--latency-client-shell.patch`
-  - `draxos-mobile--codex--latency-mutations-deltas.patch`
-  - `draxos-mobile--codex--latency-telemetry-validation-newfiles.patch`
-  - `draxos-mobile--codex--latency-telemetry-validation.patch`
-  - `t07-coordenacao.patch`
+- Artefatos `.patch` soltos revisados e removidos em cleanup posterior:
+  - `draxos-mobile--codex--latency-client-shell.patch`: conteudo ja incorporado em `27e22a8` (`Guard DraxosMobile surface refresh lifecycle`).
+  - `draxos-mobile--codex--latency-mutations-deltas.patch`: conteudo ja incorporado em `d7a9f8b` (`Return Arena claim state delta`).
+  - `draxos-mobile--codex--latency-telemetry-validation-newfiles.patch`: conteudo exatamente aplicado em `b6644f4` (`Add DraxosMobile latency telemetry baseline`).
+  - `draxos-mobile--codex--latency-telemetry-validation.patch`: conteudo ja incorporado em `b6644f4` (`Add DraxosMobile latency telemetry baseline`).
+  - `t07-coordenacao.patch`: coordenacao historica da Track 07 ja superada por `cb4e019` e pela integracao posterior da Track 07.
 - Branches locais ja mergeadas removidas:
   - `codex/draxos-roguelike-cardgame/foundation-hardening`
   - `codex/draxos-roguelike-cardgame/foundation-hardening-2`
@@ -50,4 +50,6 @@ Fechar sobras operacionais ja incorporadas ao `master`: mover cartoes finalizado
 - `git branch --no-merged master` nao retornou branches locais pendentes.
 - `git diff master...<branch>` para `foundation-hardening-7`, `foundation-hardening-8` e `foundation-hardening-9` nao retornou diferencas.
 - Docker/WSL foi parado com aprovacao do usuario para liberar a pasta orfa vazia.
-- Validacao final esperada: apenas `D:\Estudio` em `master`, sem diretorios de worktree registrados, sem branches locais `codex/draxos-*`, e com os `.patch` soltos preservados como artefatos fora do escopo de worktree.
+- Validacao final do primeiro cleanup: apenas `D:\Estudio` em `master`, sem diretorios de worktree registrados e sem branches locais `codex/draxos-*`, com os `.patch` soltos preservados temporariamente como artefatos fora do escopo de worktree.
+- Validacao posterior dos `.patch`: quatro patches de DraxosMobile latency/arena estavam 99-100% representados no `master`; `t07-coordenacao.patch` estava obsoleto diante do estado atual. Os cinco arquivos foram removidos de `D:\Estudio-worktrees`.
+- Nota: worktree/branch de publicacao `D:\Estudio-worktrees\draxos-mobile--codex--publish-master-main-url` / `codex/draxos-mobile/publish-master-main-url` foi aberta depois do cleanup e preservada intencionalmente.
