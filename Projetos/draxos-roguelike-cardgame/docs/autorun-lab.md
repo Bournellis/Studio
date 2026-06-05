@@ -1,8 +1,8 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-05`
-- Status: `LAB_DIFF_REPORTER_V1_READY`
-- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab and before/after lab diff reporting
+- Status: `CARD_IMPACT_PACK_V1_READY`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting and card impact orchestration
 
 ## Purpose
 
@@ -15,6 +15,8 @@ Scenario Fixtures V1 is the second layer of this toolchain. It runs small named 
 Gameplay Lab V1 is the third layer. It runs isolated real battles through `BattleEngine`, using deterministic policies that only submit legal actions exposed by the engine. It targets combat regressions, keywords, hand/deck behavior, encounter modes, field effects, boss hooks and basic enemy AI signals without changing gameplay content or replacing human playtest.
 
 Lab Diff Reporter V1 is the fourth layer. It compares before/after outputs from AutoRun Lab, Scenario Fixtures and Gameplay Lab, then turns status changes, new failures, removed records and metric deltas into JSON, CSV and Markdown reports. It is built for future large card changes where the important question is not only "did the gate pass?", but "what moved, by how much, and where should a human inspect next?".
+
+Card Impact Pack V1 is the fifth layer. It orchestrates a deterministic before/after impact matrix for active player and enemy cards, runs selected lab components, compares outputs, and reports structural regressions separately from numerical tuning movement. It exists to prepare large future card changes without changing gameplay in this step.
 
 ## Entry Point
 
@@ -48,6 +50,16 @@ Lab diff gate:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/compare_lab_reports.gd -- --before=user://battle_lab/before_cards --after=user://battle_lab/after_cards --type=battle --out=user://lab_diff/card_change_probe --mode=gate
+```
+
+Card impact before/after/compare gates:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=before --mode=gate --pack=track02_card_impact_v1
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v1
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v1
 ```
 
 ## Presets
@@ -230,6 +242,55 @@ Gate behavior:
 - New `WARN` records and metric changes are reported but do not fail the gate.
 - Identical deterministic before/after outputs should produce zero changes and pass the gate.
 
+## Card Impact Pack V1
+
+Card impact packs live under `data/lab/card_impact/`. The first official pack is `track02_card_impact_v1`.
+
+Useful commands:
+
+```text
+--pack=track02_card_impact_v1
+--phase=before|after|compare
+--out=user://card_impact/track02_card_impact_v1
+--cards=all|player|enemy|arcano_choque,enemy_terra_elemental_areia
+--components=battle,scenario,run_lab
+--mode=explore|gate
+--gate
+--stop-on-failure
+```
+
+The V1 matrix covers:
+
+- 54 core player class card variants: six V1 core cards per class across Lvl 1, Lvl 2 and Lvl 3.
+- 30 active enemy cards from `track_contract.enemy_card_galleries`.
+- 15 `elemental_*` legacy inactive cards audited outside the active matrix.
+
+The player-card battle harness uses `card_focus_legal`, which prioritizes the card under test once legal and plays a small enabling creature first when the target card needs an allied board. Enemy-card cases use a deterministic prefilled enemy slot to ensure the enemy card participates in a real `BattleEngine` combat cycle.
+
+Card impact outputs:
+
+- `before/` and `after/`: component lab outputs.
+- `compare/`: per-component diff outputs.
+- `card_impact_results.json`: complete aggregate payload.
+- `card_impact_results.csv`: component and metric-change rows.
+- `card_impact_summary.json`: aggregate summary.
+- `card_impact_summary.md`: human report with impact matrix, component status, top impacted cards, status changes and metric changes.
+- `card_impact_gate.md`: short structural regression view.
+
+Gate behavior:
+
+- Missing active-card cases, target cards not exercised, rejected `BattleEngine` actions, missing expected reports, removed after records and new after `FAIL` records fail `--mode=gate`.
+- HP, turn, damage, units, deck, shop, Souls and other metric changes are reported as impact/WARN data but do not fail the gate by themselves.
+- `PASS -> WARN` is visible in reports and reserved for human inspection, not an automatic veto.
+
+Recommended future card-change flow:
+
+1. Run `run_card_impact --phase=before --mode=gate`.
+2. Apply the intended card changes.
+3. Run `run_card_impact --phase=after --mode=gate`.
+4. Run `run_card_impact --phase=compare --mode=gate`.
+5. Inspect `card_impact_summary.md`, `card_impact_gate.md` and the component diff Markdown before deciding whether the numerical movement is intended.
+
 ## Result Schema
 
 Each detailed record contains:
@@ -267,8 +328,8 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Build a Card Impact Pack V1 with targeted battle/scenario fixtures for starter cards, reward cards and important card families.
-2. Use AutoRun, Scenario Fixtures, Gameplay Lab and Lab Diff Reporter together during the next card-change batch.
-3. Decide which repeated WARN signals should become baseline PASS after real use.
+1. Use Card Impact Pack V1 during the next real card-change batch with a strict `before -> change -> after -> compare` flow.
+2. Decide which repeated WARN or metric movements deserve promoted expectations after real use.
+3. Expand Card Impact Pack V2 to cover the remaining class reward cards once the first real card-change cycle proves the workflow.
 4. Replay Lab: record human or bot decisions and replay them across builds.
 5. Dashboard: read the JSON/CSV/Markdown outputs and compare historical runs visually.

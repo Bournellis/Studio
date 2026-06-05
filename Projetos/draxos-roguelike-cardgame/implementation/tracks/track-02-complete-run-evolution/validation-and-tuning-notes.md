@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
 - Last Updated: `2026-06-05`
-- Prompt: `AUTORUN-GATE-PACK-V1`
-- Status: `READY_FOR_USER_PLAYTEST`
+- Prompt: `CARD-IMPACT-PACK-V1`
+- Status: `CARD_IMPACT_PACK_V1_READY`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `111/111` tests passing, `1313` asserts.
+- GUT: `148/148` tests passing, `1544` asserts.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -23,6 +23,10 @@
 - AutoRun gate smoke: `--mode=gate --preset=smoke --baseline=track02_smoke_v1` passes the official 3-case smoke envelope.
 - AutoRun gate quick: `--mode=gate --preset=quick --baseline=track02_quick_v1` passes 30 macro-route cases and writes scorecard output.
 - Official gate baselines: `data/lab/baselines/track02_smoke_v1.json` and `data/lab/baselines/track02_quick_v1.json`.
+- Card Impact Pack: `tools/run_card_impact.gd` runs explicit `before`, `after` and `compare` phases for `data/lab/card_impact/track02_card_impact_v1.json`.
+- Card Impact coverage: 54 core player class card variants, 30 active enemy cards and 15 legacy inactive `elemental_*` cards audited.
+- Card Impact gate: `--phase=before --mode=gate`, `--phase=after --mode=gate` and `--phase=compare --mode=gate` all pass; same/same compare reports zero structural errors, zero new failures, zero removed records, zero status changes and zero metric changes across battle/scenario/run_lab components.
+- Card Impact reports: `card_impact_results.json`, `card_impact_results.csv`, `card_impact_summary.json`, `card_impact_summary.md`, `card_impact_gate.md`, plus component `before/`, `after/` and `compare/` output directories under `user://card_impact/track02_card_impact_v1`.
 - Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 - Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
 - Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
@@ -53,6 +57,7 @@ Captured at `1280x720` and `960x540` in:
 
 - Manual playtest remains the next production step and should use `docs/playtest-track-02.md`.
 - Balance changes should come from observed human runs, with AutoRun Gate Pack used for explicit regression, distribution checks and tuning comparison rather than as the final verdict.
+- Large card changes should now use the Card Impact flow: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect impact Markdown before deciding whether metric movement is expected.
 - Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
 
 ## Remaining Technical Debt
