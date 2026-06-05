@@ -1,0 +1,78 @@
+{
+	"schema_version": 1,
+	"baseline_id": "track02_smoke_v1",
+	"project": "draxos-roguelike-cardgame",
+	"track": "Track 02 - Complete Run Evolution",
+	"tool": "autorun_lab",
+	"simulation_mode": "macro_route_v1",
+	"preset": "smoke",
+	"description": "Official fast gate for the approved Track 02 complete-route smoke matrix: three classes, seed 20260518, baseline policy.",
+	"source": {
+		"date": "2026-06-05",
+		"commit": "1617043",
+		"command": "run_lab --preset=smoke --compare-golden --require-golden"
+	},
+	"required_groups": {
+		"by_class": ["arcano", "invocador", "necromante"],
+		"by_policy": ["baseline"]
+	},
+	"summary_fields": {
+		"total_runs_min": 3,
+		"total_runs_max": 3,
+		"victory_rate_min": 1.0,
+		"completion_rate_min": 1.0,
+		"failed_runs_max": 0,
+		"avg_completed_maps_min": 29.0,
+		"avg_completed_maps_max": 29.0,
+		"avg_estimated_turns_min": 200.0,
+		"avg_estimated_turns_max": 225.0,
+		"avg_final_hp_min": 10.0,
+		"avg_final_hp_max": 20.0,
+		"min_final_hp_min": 10.0,
+		"max_deaths_max": 0.0,
+		"avg_deck_size_min": 35.0,
+		"avg_deck_size_max": 40.0,
+		"min_deck_size_min": 35.0,
+		"max_deck_size_max": 42.0,
+		"avg_relic_count_min": 6.0,
+		"avg_relic_count_max": 7.0,
+		"avg_shop_usage_min": 20.0,
+		"avg_shop_usage_max": 22.0,
+		"avg_souls_left_min": 35.0,
+		"avg_souls_left_max": 95.0,
+		"avg_souls_spent_min": 275.0,
+		"avg_souls_spent_max": 330.0
+	},
+	"group_fields": {
+		"by_class": {
+			"*": {
+				"total_runs_min": 1,
+				"total_runs_max": 1,
+				"victory_rate_min": 1.0,
+				"completion_rate_min": 1.0,
+				"failed_runs_max": 0,
+				"avg_final_hp_min": 10.0,
+				"min_final_hp_min": 10.0,
+				"max_deaths_max": 0.0,
+				"avg_deck_size_min": 35.0,
+				"avg_deck_size_max": 42.0,
+				"max_deck_size_max": 42.0,
+				"avg_shop_usage_min": 20.0,
+				"avg_shop_usage_max": 22.0
+			}
+		},
+		"by_policy": {
+			"baseline": {
+				"total_runs_min": 3,
+				"total_runs_max": 3,
+				"victory_rate_min": 1.0,
+				"completion_rate_min": 1.0,
+				"failed_runs_max": 0,
+				"avg_deck_size_min": 35.0,
+				"avg_deck_size_max": 40.0,
+				"avg_shop_usage_min": 20.0,
+				"avg_shop_usage_max": 22.0
+			}
+		}
+	}
+}

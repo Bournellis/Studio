@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
 - Last Updated: `2026-06-05`
-- Prompt: `AUTORUN-LAB-V1`
+- Prompt: `AUTORUN-GATE-PACK-V1`
 - Status: `READY_FOR_USER_PLAYTEST`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `108/108` tests passing, `1304` asserts.
+- GUT: `111/111` tests passing, `1313` asserts.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -17,10 +17,12 @@
 - Relic count: `6`.
 - Shop usage count: `21`.
 - Shared simulator: `tools/route_pacing_simulator.gd`.
-- AutoRun Lab: `tools/run_lab.gd` now supports presets, case matrices, macro policies, detailed JSON, compatibility CSV/JSON, aggregate JSON/CSV/Markdown reports, timeline records and statistical baseline comparison through `tools/lab/`.
+- AutoRun Lab: `tools/run_lab.gd` now supports presets, case matrices, macro policies, detailed JSON, compatibility CSV/JSON, aggregate JSON/CSV/Markdown reports, scorecard JSON/Markdown, timeline records, official gate baselines and statistical baseline comparison through `tools/lab/`.
 - Golden metrics: `tools/run_lab_golden_metrics.gd` protects Arcano seed `20260518` exact metrics and checks Invocador/Necromante completion/no-death contracts.
 - Run Lab parity: `--compare-golden --require-golden` passes for Arcano, Invocador, and Necromante with seed `20260518`.
-- AutoRun quick matrix: `--preset=quick --seed-start=20260518 --seed-count=10 --compare-baseline` passes 30 macro-route cases and writes reports under `user://run_lab/autorun_lab_quick`.
+- AutoRun gate smoke: `--mode=gate --preset=smoke --baseline=track02_smoke_v1` passes the official 3-case smoke envelope.
+- AutoRun gate quick: `--mode=gate --preset=quick --baseline=track02_quick_v1` passes 30 macro-route cases and writes scorecard output.
+- Official gate baselines: `data/lab/baselines/track02_smoke_v1.json` and `data/lab/baselines/track02_quick_v1.json`.
 - Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 - Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
 - Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
@@ -50,7 +52,7 @@ Captured at `1280x720` and `960x540` in:
 ## Product And Playtest Follow-Up
 
 - Manual playtest remains the next production step and should use `docs/playtest-track-02.md`.
-- Balance changes should come from observed human runs, with AutoRun Lab used for regression, distribution checks and tuning comparison rather than as the final verdict.
+- Balance changes should come from observed human runs, with AutoRun Gate Pack used for explicit regression, distribution checks and tuning comparison rather than as the final verdict.
 - Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
 
 ## Remaining Technical Debt

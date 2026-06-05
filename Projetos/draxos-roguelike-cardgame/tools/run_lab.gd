@@ -17,6 +17,7 @@ func _run() -> void:
 
 func _run_lab() -> int:
 	var options: Dictionary = LabCaseBuilderScript.parse_options(OS.get_cmdline_user_args())
+	options = _prepare_gate_options(options)
 	print("[run_lab] %s" % LabCaseBuilderScript.describe_options(options))
 	var content_result: Dictionary = ContentGeneratorScript.new().generate_all()
 	if not bool(content_result.get("ok", false)):
@@ -52,10 +53,15 @@ func _run_lab() -> int:
 	var summary: Dictionary = LabAggregatorScript.aggregate(records, options)
 	var baseline_comparison: Dictionary = {}
 	if bool(options.get("compare_baseline", false)) or str(options.get("mode", "")) == "compare":
-		var baseline: Dictionary = LabBaselineStoreScript.load_baseline(str(options.get("baseline_path", "")))
+		var baseline_load: Dictionary = _load_requested_baseline(options)
+		if not bool(baseline_load.get("ok", false)):
+			printerr("[run_lab] %s" % str(baseline_load.get("message", "Could not load baseline.")))
+			return 1
+		var baseline: Dictionary = Dictionary(baseline_load.get("baseline", {}))
 		baseline_comparison = LabBaselineStoreScript.compare_summary(summary, baseline)
+		baseline_comparison["baseline_path"] = str(baseline_load.get("path", ""))
 	var output_dir: String = str(options.get("out", LabCaseBuilderScript.DEFAULT_OUTPUT_DIR))
-	var write_result: Dictionary = LabReporterScript.write_outputs(output_dir, records, summary, comparison, baseline_comparison)
+	var write_result: Dictionary = LabReporterScript.write_outputs(output_dir, records, summary, comparison, baseline_comparison, options)
 	if not bool(write_result.get("ok", false)):
 		printerr("[run_lab] %s" % str(write_result.get("message", "Failed to write outputs.")))
 		return 1
@@ -65,6 +71,8 @@ func _run_lab() -> int:
 		str(write_result.get("summary_path", "")),
 		str(write_result.get("markdown_path", ""))
 	])
+	if str(write_result.get("scorecard_markdown_path", "")) != "":
+		print("[run_lab] scorecard %s" % str(write_result.get("scorecard_markdown_path", "")))
 	if bool(options.get("save_baseline", false)) or str(options.get("mode", "")) == "baseline":
 		var baseline_path: String = str(options.get("baseline_path", ""))
 		if baseline_path == "":
@@ -85,9 +93,31 @@ func _run_lab() -> int:
 		else:
 			printerr("[run_lab] %s" % baseline_message)
 			return 1
-	if str(options.get("mode", "")) == "validate" and not bool(run_result.get("ok", false)):
+	if str(options.get("mode", "")) in ["validate", "gate"] and not bool(run_result.get("ok", false)):
 		return 1
 	return 0
+
+func _prepare_gate_options(options: Dictionary) -> Dictionary:
+	var prepared: Dictionary = options.duplicate(true)
+	var mode: String = str(prepared.get("mode", "explore"))
+	if mode == "gate":
+		prepared["compare_baseline"] = true
+		if str(prepared.get("baseline_path", "")) == "":
+			prepared["baseline_path"] = LabBaselineStoreScript.default_baseline_id_for_preset(str(prepared.get("preset", "")))
+	return prepared
+
+func _load_requested_baseline(options: Dictionary) -> Dictionary:
+	var preset: String = str(options.get("preset", ""))
+	var baseline_ref: String = str(options.get("baseline_path", ""))
+	var mode: String = str(options.get("mode", "explore"))
+	var should_try_official_default: bool = baseline_ref != "" or mode in ["gate", "compare"] or LabBaselineStoreScript.default_baseline_id_for_preset(preset) != ""
+	if should_try_official_default:
+		var load_result: Dictionary = LabBaselineStoreScript.load_baseline_result(baseline_ref, preset)
+		if bool(load_result.get("ok", false)):
+			return load_result
+		if mode == "gate" or baseline_ref != "":
+			return load_result
+	return {"ok": true, "path": "", "baseline": {}}
 
 func _print_run_metrics(result: Dictionary) -> void:
 	print("[run_lab] %s %s seed=%d maps=%d/%d turns_est=%d hp=%d/%d deaths=%d deck=%d relics=%d shop=%d" % [

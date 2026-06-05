@@ -195,3 +195,12 @@ Each entry should include:
 - validation result: `run_lab.gd -- --preset=smoke --compare-golden --require-golden` passed for Arcano/Invocador/Necromante seed `20260518`; `run_lab.gd -- --preset=quick --seed-start=20260518 --seed-count=10 --compare-baseline` passed 30 macro-route cases; after one-time import for the new worktree, `validate.gd` passed with 108/108 GUT tests, 1304 asserts and the shared full-route pacing smoke unchanged at 29/29 maps, 217 estimated turns, 116 HP loss, 0 deaths, 38-card final deck, 6 relics and 21 shop actions.
 - blockers: none. Known non-fatal visual asset debts remain unchanged.
 - next prompt id: none; next tooling phase should be Gameplay Lab with BattleEngine-driven legal-action policies.
+
+### 2026-06-05 - AutoRun Gate Pack V1
+
+- prompt id: `AUTORUN-GATE-PACK-V1`
+- summary: Promoted AutoRun Lab into an explicit regression contract with official smoke/quick baselines, `--mode=gate`, scorecard JSON/Markdown reports, richer baseline comparison by summary/class/policy groups, and focused GUT coverage for baseline pass/failure plus scorecard output.
+- changed files: `tools/run_lab.gd`, `tools/lab/lab_baseline_store.gd`, `tools/lab/lab_case_builder.gd`, `tools/lab/lab_reporter.gd`, `tools/lab/lab_scorecard.gd`, `data/lab/baselines/*.json`, `tests/unit/test_run_lab_tooling.gd`, `docs/autorun-lab.md`, `docs/architecture.md`, local status/tuning docs and coordination note.
+- validation result: first `validate.gd` in the new worktree required the standard one-time headless editor import for Godot global class/GUT readiness. After import, `validate.gd` passed with 111/111 GUT tests, 1313 asserts and the shared full-route pacing smoke unchanged at 29/29 maps, 217 estimated turns, 116 HP loss, 0 deaths, 38-card final deck, 6 relics and 21 shop actions. `run_lab.gd -- --mode=gate --preset=smoke --baseline=track02_smoke_v1` passed. `run_lab.gd -- --mode=gate --preset=quick --baseline=track02_quick_v1` passed 30 cases and wrote scorecard output.
+- blockers: none. Known non-fatal visual asset debts remain unchanged.
+- next prompt id: none; next tooling phase should be Scenario Fixtures or Gameplay Lab with BattleEngine-driven legal-action policies, after at least one human playtest/tuning cycle uses the gate.
