@@ -16,7 +16,7 @@ O jogador nao e o heroi. O jogador e um Draxos em ascensao.
 
 ## Situacao Atual
 
-Etapa operacional atual: `ARENA_PVE_FIRST_REAL_RUN_PUBLISHED_INTERNAL_ALPHA`.
+Etapa operacional atual: `ARENA_PVE_SEASON1_LOOP_V1_PUBLISHED_INTERNAL_ALPHA`.
 
 Direcao viva de produto: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, com Arena PVE
 como core inicial do `Autobattler`; o pacote publicado atual deve ser revisado
@@ -24,7 +24,7 @@ em playtest humano antes de abrir tuning amplo ou nova expansao.
 
 Atualizacao V1 de plataforma: DraxosMobile agora organiza sua visao jogavel em cinco modos oficiais governados por um registry unico: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` e `Openworld`. A Arena PVE atual pertence ao `Autobattler`; Refugio/Base atuais pertencem ao `Basebuilder`; o antigo prototipo Rpgsuave foi renomeado de verdade para `Openworld`, com `forest` como primeiro slice e `Bosque` como entrada player-facing direta.
 
-O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2, Openworld Main Menu Sync, Technical Hardening e Bosque v3 UX/Feel ficam como baselines historicas/tecnicas/conteudo preservadas; Arena PVE First Real Run + Update Recovery e o pacote operacional publicado para revisao humana.
+O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2, Openworld Main Menu Sync, Technical Hardening e Bosque v3 UX/Feel ficam como baselines historicas/tecnicas/conteudo preservadas; Arena PVE Season 1 Loop v1 e o pacote operacional publicado para revisao humana, preservando Arena Duel Flow Hotfix e Arena PVE First Real Run + Update Recovery como pacotes anteriores.
 
 A decisao de produto seguinte foi escolhida em nivel de direcao: o early game deve ser uma Arena PVE inicial, sem cooldown de combate, com tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado antes da arena, vida resetada a 100% em cada duelo, buffs temporarios leves de stat entre lutas e comportamento ajustavel antes do proximo inimigo. A direcao viva esta em `docs/pve-arena-initial-direction.md`, e Track 23 publicou o primeiro pacote operacional para validar esse fluxo e o recovery de updates.
 
@@ -38,7 +38,7 @@ Nesta etapa, nomes, spells, armas, numeros de economia, Battle Pass, visual fina
 
 Ordem de foco operacional:
 
-1. Playtest humano do Arena PVE First Real Run + Update Recovery publicado, preservando o foco de tutorial, primeira arena real de 3 duelos, retomar/abandonar/encerrar tentativa antiga e regressao Bosque/menu.
+1. Playtest humano do Arena PVE Season 1 Loop v1 publicado, preservando o foco de selecao S1 agrupada, reward preview, tutorial, primeira arena real de 3 duelos, buff pendente apos update/reopen, retomar/abandonar/encerrar tentativa antiga e regressao Bosque/menu.
 2. Hotfix estreito de Arena/Bosque/menu se o playtest apontar regressao ou friccao.
 3. Tuning integrado de leveling/upgrades/recompensas/poder quando o pacote publicado estiver confirmado.
 4. `Basebuilder` como suporte persistente da rotina.
@@ -223,7 +223,7 @@ Esses itens podem virar projeto ou fase futura, mas nao devem ser tratados como 
 
 ## Gates De Proxima Decisao
 
-1. Revisar/playtestar Arena PVE First Real Run + Update Recovery no pacote publicado.
+1. Revisar/playtestar Arena PVE Season 1 Loop v1 no pacote publicado.
 2. Decidir se o proximo pacote e hotfix estreito de Arena/Bosque/menu ou tuning/labs de Arena PVE.
 3. Confirmar que `docs/pve-arena-initial-direction.md` e `docs/pve-arena-v1.md` continuam suficientes para tutorial, primeiras arenas, inimigos, buffs, recovery e recompensas.
 4. Rodar Progression Lab e Battle Lab orientados a Arena PVE antes de mexer em valores calibraveis.

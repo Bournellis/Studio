@@ -17,11 +17,11 @@ DraxosMobile e um jogo mobile-first de progressao persistente construido sobre c
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa operacional atual e `ARENA_PVE_FIRST_REAL_RUN_PUBLISHED_INTERNAL_ALPHA`: o pacote publicado preserva Bosque v3 UX/Feel, o hardening tecnico anterior, a correcao de coleta/deposito/resync do Bosque e o menu player-facing simplificado do Openworld Main Menu Sync, e adiciona recovery da Arena PVE com retomar tentativa, abandonar tentativa, encerrar tentativa antiga e primeira arena real de 3 duelos protegida. A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`, e o proximo pacote depende do playtest humano antes de abrir tuning amplo.
+A etapa operacional atual e `ARENA_PVE_SEASON1_LOOP_V1_PUBLISHED_INTERNAL_ALPHA`: o pacote publicado preserva Arena Duel Flow Hotfix, Arena PVE First Real Run + Update Recovery, Bosque v3 UX/Feel, o hardening tecnico anterior, a correcao de coleta/deposito/resync do Bosque e o menu player-facing simplificado do Openworld Main Menu Sync, e adiciona leitura de Season 1 com arenas/dificuldades agrupadas, reward preview, proximo passo e recovery de buff pendente apos update/reopen. A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`, e o proximo pacote depende do playtest humano antes de abrir tuning amplo.
 
 ## Foco Imediato
 
-O foco imediato e validar a leitura humana do pacote Arena PVE First Real Run + Update Recovery publicado: tutorial -> primeira arena real de 3 duelos, buff entre duelos, retomar/abandonar/encerrar tentativa antiga, caminho direto para Bosque/Arena PVE/Loja e ausencia de regressao causada pelo hardening tecnico anterior.
+O foco imediato e validar a leitura humana do pacote Arena PVE Season 1 Loop v1 publicado: selecao S1 agrupada, reward preview, tutorial -> primeira arena real de 3 duelos, buff entre duelos, retomar/abandonar/encerrar tentativa antiga, buff pendente apos update/reopen, caminho direto para Bosque/Arena PVE/Loja e ausencia de regressao causada pelo hardening tecnico anterior.
 
 O foco de fundacao anterior foi fechado: Foundation Closeout entregou account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish, Hardening Platform V1 e Foundation Hardening V2 ficam como baselines tecnicas/historicas preservadas.
 
@@ -29,7 +29,7 @@ A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo de
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening, Bosque v3 UX/Feel e Arena PVE First Real Run + Update Recovery e que Refugio, Arena PVE/Preparacao, Resultado e Bosque devem ser confirmados no pacote publicado antes de abrir novo backend, schema, tuning, economia ou conteudo.
+First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix e Arena PVE Season 1 Loop v1 e que Refugio, Arena PVE/Preparacao, Resultado e Bosque devem ser confirmados no pacote publicado antes de abrir novo backend, schema, tuning, economia ou conteudo.
 
 Ao abrir o pacote de Arena PVE inicial, devem ser avaliados juntos:
 

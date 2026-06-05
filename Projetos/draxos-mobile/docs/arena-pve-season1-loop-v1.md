@@ -1,6 +1,6 @@
 # DraxosMobile - Arena PVE Season 1 Loop v1
 
-- Status: `IMPLEMENTED_LOCAL`
+- Status: `PUBLISHED_INTERNAL_ALPHA`
 - Data: `2026-06-05`
 - Decisao-base: `ARENA_PVE_SEASON1_LOOP_V1`
 - Escopo: tornar a Season 1 da Arena PVE jogavel como loop legivel, recuperavel e publicavel sem abrir PVP, economia final, novas armas/spells/pocoes ou tuning fino.
@@ -70,4 +70,32 @@ Novos/atualizados:
 
 ## Publicacao
 
-Pendente nesta fase ate commit, merge em `main`, export/package/upload/deploy e RemoteReadOnly.
+Publicado em `2026-06-05` como Internal Alpha.
+
+- Release root: `internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32`
+- Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
+- Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- Cloudflare Pages preview evidence: `https://d7333659.draxos-mobile-internal-alpha.pages.dev`
+- Android APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32/downloads/draxos-mobile-alpha.apk`
+- PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32/downloads/draxos-mobile-alpha.zip`
+
+Validacao de publicacao:
+
+- `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS.
+- `validate_foundation.ps1 -Profile ServerQuick -NoProjectWrites`: PASS.
+- `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `build_cloudflare_pages_package.ps1`: PASS.
+- `wrangler pages deploy ... --branch main`: PASS.
+- `supabase functions deploy arena --project-ref armxgipvnbbshzqawklw`: PASS.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly`: PASS.
+- `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1`, `DRAXOS_REMOTE_ARENA_SMOKE=1` e `DRAXOS_REMOTE_RELEASE_SMOKE=1`: PASS.
+
+Artifact hashes:
+
+- Android APK SHA256: `401834de0f7872233f46bbbf52aae5d7fc4bc560e527d32aaa52c3a0b74fb27b`
+- PC Windows ZIP SHA256: `9597c82368d233263075fb87688a1ed4325e4dc6566dc8eebf11bcc836cf4a4a`
+- Web Index SHA256: `09aa3cbdac38dddadfa177f09759dd0cd5ce00ee84b0260d59459138690bff98`

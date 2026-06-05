@@ -5,22 +5,24 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Arena PVE Season 1 Loop v1`
-- Active stage status: `ARENA_PVE_SEASON1_LOOP_V1_IMPLEMENTED_LOCAL`
+- Active stage status: `ARENA_PVE_SEASON1_LOOP_V1_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
 ## Current Truth
 
-- Latest published remote package: `Arena Duel Flow Hotfix` until Arena PVE Season 1 Loop v1 is published.
-- Release root: `internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174`
+- Latest published remote package: `Arena PVE Season 1 Loop v1`.
+- Release root: `internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://0536635b.draxos-mobile-internal-alpha.pages.dev`
-- Source state: `main` after merging and publishing the Arena Duel Flow Hotfix, preserving Track 23 Arena PVE update recovery and later trunk merges.
+- Latest deployment evidence: `https://d7333659.draxos-mobile-internal-alpha.pages.dev`
+- Source state: `main` after merging and publishing Arena PVE Season 1 Loop v1, preserving Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
-- Published source hotfix: `Arena Duel Flow Hotfix` keeps Preparacao/behavior inside the active-duel menu, removes the detached `Ajustar comportamento` CTA, and treats a server step with `selected_buff` as resolved so the next active menu returns to `Resolver duelo` instead of showing `Escolher buff` again.
-- Current local package: `Arena PVE Season 1 Loop v1` is implemented locally and pending commit/merge/publication. It groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
+- Published Arena Season 1 package: `Arena PVE Season 1 Loop v1` groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
+- Previous source hotfix: `Arena Duel Flow Hotfix` keeps Preparacao/behavior inside the active-duel menu, removes the detached `Ajustar comportamento` CTA, and treats a server step with `selected_buff` as resolved so the next active menu returns to `Resolver duelo` instead of showing `Escolher buff` again.
+- Previous hotfix release root: `internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174`
+- Previous hotfix preview: `https://0536635b.draxos-mobile-internal-alpha.pages.dev`
 - Previous Arena package: `Arena PVE First Real Run + Update Recovery`
 - Previous Arena release root: `internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a`
 - Previous Arena preview: `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`
@@ -41,11 +43,11 @@
 - Arena context: Track 18 - PVE Arena Initial, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context and are now extended by Track 23 update recovery.
 - Technical context: Track 16 Behavior And Potion Crafting remains existing alpha substance summarized in `docs/behavior-potion-crafting-v1.md`, not the current product focus.
 
-## Current Local Package
+## Current Published Package
 
-Arena PVE Season 1 Loop v1 is implemented locally. It builds on the accepted Arena Duel Flow Hotfix playtest and moves the next Arena expansion from "functional flow" to "readable Season 1 loop".
+Arena PVE Season 1 Loop v1 is published as the current Internal Alpha package. It builds on the accepted Arena Duel Flow Hotfix playtest and moves the next Arena expansion from "functional flow" to "readable Season 1 loop".
 
-Delivered locally:
+Delivered:
 
 - groups Arena selection by arena and difficulty with `ArenaSeason1ProgressPanel`, `ArenaSeason1Group_*` and `ArenaSeason1NextStepPanel`;
 - shows Season 1 progress, next recommended challenge, locked reasons and reward preview per tier;
@@ -56,11 +58,27 @@ Delivered locally:
 - extends remote Arena smoke to tutorial, claim, unlock of first real 3-duel run, active-start blocker, buff selection between duels and final claim;
 - preserves Bosque v3 UX/Feel, Technical Hardening, Openworld Main Menu Sync, Foundation Hardening V2, Hardening Platform V1, Remote Lab Runner and previous Arena packages.
 
-Publication evidence: pending.
+Publication evidence:
+
+- Export regenerated APK, PC ZIP and Web artifacts from current `main`.
+- Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and RemoteReadOnly passed.
+- Supabase Edge Function `arena` was deployed before remote Arena smoke.
+- Cloudflare Pages preview evidence: `https://d7333659.draxos-mobile-internal-alpha.pages.dev`.
+- Remote Web launch smoke on preview loaded the game in `6361 ms`, matched release root and asset root, and reported no runtime errors.
+- Remote Arena smoke with email auth and `DRAXOS_REMOTE_ARENA_SMOKE=1` passed tutorial, first real 3-duel run, active-start blocker, buff selection and final claim.
+- Stable Portal/Web remain protected by Cloudflare Access and passed RemoteReadOnly with Access marked expected.
+- Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
+- `release/config` remains on `track23-online-actions-hotfix`, so online progression actions are not paused by remote config.
+
+Artifact hashes:
+
+- Android APK SHA256: `401834de0f7872233f46bbbf52aae5d7fc4bc560e527d32aaa52c3a0b74fb27b`
+- PC Windows ZIP SHA256: `9597c82368d233263075fb87688a1ed4325e4dc6566dc8eebf11bcc836cf4a4a`
+- Web Index SHA256: `09aa3cbdac38dddadfa177f09759dd0cd5ce00ee84b0260d59459138690bff98`
 
 ## Previous Published Package
 
-Arena Duel Flow Hotfix is the current Internal Alpha package. It preserves Arena PVE First Real Run + Update Recovery, then fixes the active-duel menu so Preparacao/behavior is available inside the duel flow and a victory buff already selected does not loop the player back into `Escolher buff`.
+Arena Duel Flow Hotfix is the previous Internal Alpha package. It preserves Arena PVE First Real Run + Update Recovery, then fixes the active-duel menu so Preparacao/behavior is available inside the duel flow and a victory buff already selected does not loop the player back into `Escolher buff`.
 
 Delivered in this package:
 
@@ -92,7 +110,7 @@ Artifact hashes:
 
 ## Current Gate
 
-The next operational step is commit, merge, publish and RemoteReadOnly validation for Arena PVE Season 1 Loop v1. The next product step after publication is human playtest of the Season 1 loop before opening Arena tuning, broader Openworld expansion or new mode work.
+The next operational step is human playtest of the published Arena PVE Season 1 Loop v1 package before opening Arena tuning, broader Openworld expansion or new mode work.
 
 Playtest focus:
 
@@ -116,6 +134,18 @@ Playtest focus:
 - Current names, spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance unless a live doc promotes them.
 
 ## Validation Snapshot
+
+Arena PVE Season 1 Loop v1 publication validation:
+
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <versioned-web-asset-root>`: PASS.
+- `wrangler pages deploy ... --branch main`: PASS, preview `https://d7333659.draxos-mobile-internal-alpha.pages.dev`.
+- `supabase functions deploy arena --project-ref armxgipvnbbshzqawklw`: PASS.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32 -RemoteWebUrl https://d7333659.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS.
+- `DRAXOS_REMOTE_EMAIL_AUTH_SMOKE=1 DRAXOS_REMOTE_ARENA_SMOKE=1 DRAXOS_REMOTE_RELEASE_SMOKE=1 deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts`: PASS.
 
 Arena PVE Season 1 Loop v1 local validation:
 

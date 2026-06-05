@@ -6,7 +6,7 @@ This workspace is the primary documentation and implementation home for the stud
 
 - `canon/`: shared product, design, architecture, roadmap, platform truth, and lore context.
 - `Projetos/draxos-roguelike-cardgame/`: active P0 implementation for the menu-first Draxos roguelike cardgame.
-- `Projetos/draxos-mobile/`: active P2 implementation for DraxosMobile, currently at `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`.
+- `Projetos/draxos-mobile/`: active P2 implementation for DraxosMobile, currently at `ARENA_PVE_SEASON1_LOOP_V1_PUBLISHED_INTERNAL_ALPHA`.
 - `Projetos/_conceitos/mobile-universe/`: read-only DraxosMobile design archive.
 - `Projetos/rpg-isometrico/`: paused historical Godot implementation for the campaign-first isometric action RPG.
 - `Projetos/rpg-turnos/`: paused historical Godot implementation for a provisional turn-based RPG-cardgame sharing lore but owning separate mechanics.
