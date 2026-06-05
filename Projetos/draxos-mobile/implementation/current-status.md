@@ -4,23 +4,25 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Arena PVE Season 1 Loop v1`
-- Active stage status: `ARENA_PVE_SEASON1_LOOP_V1_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Arena/Bosque Regression Hotfix`
+- Active stage status: `ARENA_BOSQUE_REGRESSION_HOTFIX_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
 ## Current Truth
 
-- Latest published remote package: `Arena PVE Season 1 Loop v1`.
-- Release root: `internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32`
+- Latest published remote package: `Arena/Bosque Regression Hotfix`.
+- Release root: `internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://d7333659.draxos-mobile-internal-alpha.pages.dev`
-- Source state: `main` after merging and publishing Arena PVE Season 1 Loop v1, preserving Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
-- Local source hotfix pending publication: Arena/Bosque Regression Hotfix restores Preparacao before Arena start, during active attempts and on pending buff choice, and restores Bosque deposit/craft visible feedback plus pending-event flush before leaving an integrated session.
+- Latest deployment evidence: `https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev`
+- Source state: `main` after merging and publishing Arena/Bosque Regression Hotfix, preserving Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
+- Published Arena/Bosque hotfix: restores Preparacao before Arena start, during active attempts and on pending buff choice, and restores Bosque deposit/craft visible feedback plus pending-event flush before leaving an integrated session.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
-- Published Arena Season 1 package: `Arena PVE Season 1 Loop v1` groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
+- Previous Arena Season 1 package: `Arena PVE Season 1 Loop v1` groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
+- Previous Arena Season 1 release root: `internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32`
+- Previous Arena Season 1 preview: `https://d7333659.draxos-mobile-internal-alpha.pages.dev`
 - Previous source hotfix: `Arena Duel Flow Hotfix` keeps Preparacao/behavior inside the active-duel menu, removes the detached `Ajustar comportamento` CTA, and treats a server step with `selected_buff` as resolved so the next active menu returns to `Resolver duelo` instead of showing `Escolher buff` again.
 - Previous hotfix release root: `internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174`
 - Previous hotfix preview: `https://0536635b.draxos-mobile-internal-alpha.pages.dev`
@@ -46,7 +48,37 @@
 
 ## Current Published Package
 
-Arena PVE Season 1 Loop v1 is published as the current Internal Alpha package. It builds on the accepted Arena Duel Flow Hotfix playtest and moves the next Arena expansion from "functional flow" to "readable Season 1 loop".
+Arena/Bosque Regression Hotfix is published as the current Internal Alpha package. It preserves Arena PVE Season 1 Loop v1 and fixes the two regressions found in playtest: Preparacao disappearing from Arena PVE surfaces and Bosque integrated actions not giving/saving expected session feedback.
+
+Delivered:
+
+- restores `Preparacao` before Arena start, inside active attempts and on pending buff choice between fights;
+- keeps behavior-only preparation available after an Arena attempt starts, without unlocking the locked loadout;
+- applies Bosque deposit/craft locally while the server-authoritative event is pending;
+- blocks duplicate deposit/craft events while the Bosque is still saving;
+- waits for pending Bosque event flush before closing the integrated session;
+- preserves Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Arena PVE First Real Run + Update Recovery, Bosque v3 UX/Feel, Technical Hardening, Openworld Main Menu Sync, Foundation Hardening V2, Hardening Platform V1 and Remote Lab Runner.
+
+Publication evidence:
+
+- Export regenerated APK, PC ZIP and Web artifacts from current `main`.
+- Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and Edge Function `release` deploy passed.
+- Cloudflare Pages preview evidence: `https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev`.
+- Remote Web launch smoke on preview loaded the game in `3770 ms`, matched release root and asset root, and reported no runtime errors.
+- Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web; stable Portal/Web remain protected by Cloudflare Access.
+- Remote read-only release/CORS smoke passed.
+- Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
+- `release/config` remains on `track23-online-actions-hotfix`, so online progression actions are not paused by remote config.
+
+Artifact hashes:
+
+- Android APK SHA256: `82b5476504e559ec72b83caac1c6fd82beea7cf35562e4bb0ab49bf81bc89138`
+- PC Windows ZIP SHA256: `54263a71119e3d121ce668f343792da069e73ffc43aac24facfeb8e1da6f9417`
+- Web Index SHA256: `6a1525cd66f95d1ab8f20a781c0c5039813af1ce8cb75a1081ff8f0c6b7dce8a`
+
+## Previous Published Package
+
+Arena PVE Season 1 Loop v1 is the previous Internal Alpha package. It builds on the accepted Arena Duel Flow Hotfix playtest and moves the next Arena expansion from "functional flow" to "readable Season 1 loop".
 
 Delivered:
 
@@ -77,7 +109,7 @@ Artifact hashes:
 - PC Windows ZIP SHA256: `9597c82368d233263075fb87688a1ed4325e4dc6566dc8eebf11bcc836cf4a4a`
 - Web Index SHA256: `09aa3cbdac38dddadfa177f09759dd0cd5ce00ee84b0260d59459138690bff98`
 
-## Previous Published Package
+## Earlier Published Package
 
 Arena Duel Flow Hotfix is the previous Internal Alpha package. It preserves Arena PVE First Real Run + Update Recovery, then fixes the active-duel menu so Preparacao/behavior is available inside the duel flow and a victory buff already selected does not loop the player back into `Escolher buff`.
 
@@ -111,7 +143,7 @@ Artifact hashes:
 
 ## Current Gate
 
-The next operational step is to publish the local Arena/Bosque Regression Hotfix when approved, then repeat the human playtest of Arena PVE Season 1 Loop v1 before opening Arena tuning, broader Openworld expansion or new mode work.
+The next operational step is human playtest of the published Arena/Bosque Regression Hotfix package before opening Arena tuning, broader Openworld expansion or new mode work.
 
 Playtest focus:
 
@@ -119,8 +151,8 @@ Playtest focus:
 2. Confirm an active run can be resumed from Arena selection after leaving/reopening.
 3. Confirm `Abandonar tentativa` and `Encerrar tentativa antiga` clear the blocker without granting completion reward.
 4. Confirm the player is no longer trapped by an inaccessible post-update Arena attempt.
-5. Confirm Preparacao appears inside the active-duel menu and that a selected victory buff leads back to `Resolver duelo`.
-6. Confirm Bosque entry, collect/deposit/craft feedback and main menu still regress cleanly after the Arena package.
+5. Confirm Preparacao appears before starting, inside the active-duel menu and during buff choice, and that a selected victory buff leads back to `Resolver duelo`.
+6. Confirm Bosque entry, collect/deposit/craft feedback, deposit persistence after leaving/reopening and main menu regress cleanly after the hotfix.
 7. Confirm Season 1 selection is readable by arena/difficulty, reward preview and locked reasons.
 8. Confirm reopening during a pending buff returns to the buff choice instead of trapping or auto-selecting.
 
@@ -135,6 +167,26 @@ Playtest focus:
 - Current names, spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance unless a live doc promotes them.
 
 ## Validation Snapshot
+
+Arena/Bosque Regression Hotfix publication validation:
+
+- `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f -PublicDownloads`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <versioned-web-asset-root>`: PASS.
+- `wrangler pages deploy ... --branch main`: PASS, preview `https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `release_artifacts_remote_smoke.ts` with env loaded from `.env.internal-alpha.local`: PASS.
+- `smoke_web_launch_remote.ps1 -WebUrl https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev/web/index.html -ExpectedReleaseRoot internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f -AllowCloudflareAccess -TimeoutSeconds 120 -NoProjectWrites -KeepDiagnostics`: PASS, loaded in `3770 ms`.
+- `internal_alpha_remote_smoke.ts` read-only release/CORS smoke with env loaded from `.env.internal-alpha.local`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f -RemoteWebUrl https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS with env loaded from `.env.internal-alpha.local`; docs/release guards, remote artifacts smoke, read-only release/CORS smoke and Web launch smoke passed, with Web loaded in `3494 ms`.
+
+Arena/Bosque Regression Hotfix local validation:
+
+- `git diff --check`: PASS.
+- `tools/validate.gd`: PASS, 236 tests and 3710 asserts.
+- `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS, including GUT client, runtime config smoke, foundation hardening smoke, responsive layout smoke, modes visual layout smoke and export preset smoke.
 
 Arena PVE Season 1 Loop v1 publication validation:
 
@@ -205,13 +257,6 @@ Arena Duel Flow publication validation:
 - `wrangler pages deploy ... --branch main`: PASS, preview `https://0536635b.draxos-mobile-internal-alpha.pages.dev`.
 - `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174 -PublicDownloads -ConfirmRemoteMutation`: PASS.
 - `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174 -RemoteWebUrl https://0536635b.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS after loading local read-only Supabase URL and publishable key from `.env.internal-alpha.local`.
-
-Arena/Bosque Regression Hotfix local validation:
-
-- `git diff --check`: PASS.
-- `tools/validate.gd`: PASS, 236 tests and 3710 asserts.
-- `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS, including GUT client, runtime config smoke, foundation hardening smoke, responsive layout smoke, modes visual layout smoke and export preset smoke.
-- Remote publication was not run for this hotfix in this task.
 
 Historical validation logs and package-by-package publication evidence belong in `implementation/tracks/`, `docs/*-report.md`, Kanban Done cards or handoffs, not in this decision snapshot.
 

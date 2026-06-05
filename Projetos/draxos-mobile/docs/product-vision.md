@@ -16,7 +16,7 @@ O jogador nao e o heroi. O jogador e um Draxos em ascensao.
 
 ## Situacao Atual
 
-Etapa operacional atual: `ARENA_PVE_SEASON1_LOOP_V1_PUBLISHED_INTERNAL_ALPHA`.
+Etapa operacional atual: `ARENA_BOSQUE_REGRESSION_HOTFIX_PUBLISHED_INTERNAL_ALPHA`.
 
 Direcao viva de produto: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, com Arena PVE
 como core inicial do `Autobattler`; o pacote publicado atual deve ser revisado
@@ -24,7 +24,7 @@ em playtest humano antes de abrir tuning amplo ou nova expansao.
 
 Atualizacao V1 de plataforma: DraxosMobile agora organiza sua visao jogavel em cinco modos oficiais governados por um registry unico: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` e `Openworld`. A Arena PVE atual pertence ao `Autobattler`; Refugio/Base atuais pertencem ao `Basebuilder`; o antigo prototipo Rpgsuave foi renomeado de verdade para `Openworld`, com `forest` como primeiro slice e `Bosque` como entrada player-facing direta.
 
-O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2, Openworld Main Menu Sync, Technical Hardening e Bosque v3 UX/Feel ficam como baselines historicas/tecnicas/conteudo preservadas; Arena PVE Season 1 Loop v1 e o pacote operacional publicado para revisao humana, preservando Arena Duel Flow Hotfix e Arena PVE First Real Run + Update Recovery como pacotes anteriores.
+O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2, Openworld Main Menu Sync, Technical Hardening e Bosque v3 UX/Feel ficam como baselines historicas/tecnicas/conteudo preservadas; Arena/Bosque Regression Hotfix e o pacote operacional publicado para revisao humana, preservando Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix e Arena PVE First Real Run + Update Recovery como pacotes anteriores.
 
 A decisao de produto seguinte foi escolhida em nivel de direcao: o early game deve ser uma Arena PVE inicial, sem cooldown de combate, com tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado antes da arena, vida resetada a 100% em cada duelo, buffs temporarios leves de stat entre lutas e comportamento ajustavel antes do proximo inimigo. A direcao viva esta em `docs/pve-arena-initial-direction.md`, e Track 23 publicou o primeiro pacote operacional para validar esse fluxo e o recovery de updates.
 
