@@ -1,0 +1,438 @@
+{
+	"pack_id": "track02_battle_core_v1",
+	"schema_version": 1,
+	"simulation_mode": "battle_engine_v1",
+	"description": "Gameplay Battle Lab V1 core pack for isolated deterministic BattleEngine regression checks.",
+	"cases": [
+		{
+			"id": "tutorial_arcano_baseline",
+			"name": "Tutorial Arcano baseline",
+			"tags": ["tutorial", "class", "baseline"],
+			"class_id": "arcano",
+			"encounter_id": "tutorial_primeiro_contato",
+			"seed": 20260518,
+			"policy_id": "baseline_legal",
+			"deck": ["arcano_choque", "arcano_choque", "arcano_choque", "arcano_fagulha", "arcano_fagulha", "arcano_fagulha", "arcano_barreira", "arcano_barreira", "arcano_barreira"],
+			"config": {
+				"player_health": 20,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": false,
+				"class_active_unlocked": false,
+				"class_active_level": 0,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 8,
+			"expectations": {
+				"required": {
+					"terminated_equals": true,
+					"outcome_equals": "vitoria",
+					"turn_count_equals": 1,
+					"combat_cycles_equals": 1,
+					"cards_played_equals": 1,
+					"player_hp_equals": 20,
+					"enemy_units_alive_max": 0,
+					"damage_to_player_hero_max": 0
+				}
+			}
+		},
+		{
+			"id": "tutorial_invocador_baseline",
+			"name": "Tutorial Invocador baseline",
+			"tags": ["tutorial", "class", "baseline"],
+			"class_id": "invocador",
+			"encounter_id": "tutorial_primeiro_contato",
+			"seed": 20260518,
+			"policy_id": "baseline_legal",
+			"deck": ["invocador_soldado", "invocador_soldado", "invocador_soldado", "invocador_batedor", "invocador_batedor", "invocador_batedor", "invocador_promover", "invocador_promover", "invocador_promover"],
+			"config": {
+				"player_health": 20,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": false,
+				"class_active_unlocked": false,
+				"class_active_level": 0,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 8,
+			"expectations": {
+				"required": {
+					"terminated_equals": true,
+					"outcome_equals": "vitoria",
+					"turn_count_equals": 1,
+					"combat_cycles_equals": 1,
+					"cards_played_equals": 3,
+					"player_hp_equals": 20,
+					"player_units_alive_min": 1,
+					"enemy_units_alive_max": 0,
+					"damage_to_player_hero_max": 0
+				}
+			}
+		},
+		{
+			"id": "tutorial_necromante_baseline",
+			"name": "Tutorial Necromante baseline",
+			"tags": ["tutorial", "class", "baseline", "keyword"],
+			"class_id": "necromante",
+			"encounter_id": "tutorial_primeiro_contato",
+			"seed": 20260518,
+			"policy_id": "baseline_legal",
+			"deck": ["necro_esqueleto", "necro_esqueleto", "necro_esqueleto", "necro_morto_vivo", "necro_morto_vivo", "necro_morto_vivo", "necro_prender", "necro_prender", "necro_prender"],
+			"config": {
+				"player_health": 20,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": false,
+				"class_active_unlocked": false,
+				"class_active_level": 0,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 8,
+			"expectations": {
+				"required": {
+					"terminated_equals": true,
+					"outcome_equals": "vitoria",
+					"turn_count_equals": 2,
+					"combat_cycles_equals": 2,
+					"cards_played_equals": 6,
+					"player_hp_equals": 20,
+					"player_units_alive_min": 1,
+					"enemy_units_alive_max": 0,
+					"damage_to_player_hero_max": 0
+				}
+			}
+		},
+		{
+			"id": "duel_initial_arcano_baseline",
+			"name": "Duel initial Arcano baseline",
+			"tags": ["duel", "baseline", "enemy_ai"],
+			"class_id": "arcano",
+			"encounter_id": "duelo_inicial",
+			"seed": 20260518,
+			"policy_id": "aggressive_legal",
+			"deck": ["arcano_amplificador", "arcano_barreira", "arcano_sentinela_arcana", "arcano_choque", "arcano_bola_de_fogo", "arcano_acelerar", "arcano_tempestade", "arcano_canalizar", "arcano_descarga", "arcano_fagulha", "arcano_choque", "arcano_barreira", "arcano_fagulha", "arcano_vortice"],
+			"config": {
+				"player_health": 24,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": true,
+				"class_active_unlocked": true,
+				"class_active_level": 1,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 12,
+			"expectations": {
+				"required": {
+					"terminated_equals": true,
+					"outcome_equals": "vitoria",
+					"turn_count_equals": 4,
+					"combat_cycles_equals": 4,
+					"player_hp_equals": 18,
+					"enemy_hp_max": 0,
+					"cards_played_equals": 7,
+					"player_units_alive_min": 1,
+					"damage_to_enemy_hero_min": 20,
+					"damage_to_player_hero_max": 6
+				}
+			}
+		},
+		{
+			"id": "boss_08_arcano_baseline",
+			"name": "Boss 08 Arcano baseline",
+			"tags": ["boss", "baseline", "map_08"],
+			"class_id": "arcano",
+			"encounter_id": "chefe_invocador",
+			"seed": 20260518,
+			"policy_id": "aggressive_legal",
+			"deck": ["arcano_amplificador", "arcano_barreira", "arcano_sentinela_arcana", "arcano_choque", "arcano_bola_de_fogo", "arcano_acelerar", "arcano_tempestade", "arcano_canalizar", "arcano_descarga", "arcano_fagulha", "arcano_choque", "arcano_barreira", "arcano_fagulha", "arcano_vortice", "arcano_bola_de_fogo"],
+			"config": {
+				"player_health": 50,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": true,
+				"class_active_unlocked": true,
+				"class_active_level": 1,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 14,
+			"expectations": {
+				"required": {
+					"terminated_equals": true,
+					"outcome_equals": "vitoria",
+					"turn_count_equals": 8,
+					"combat_cycles_equals": 8,
+					"player_hp_min": 3,
+					"enemy_hp_max": 0,
+					"cards_played_equals": 12,
+					"damage_to_enemy_hero_min": 22,
+					"damage_to_player_hero_max": 47
+				}
+			}
+		},
+		{
+			"id": "boss_08_end_turn_signal",
+			"name": "Boss 08 end-turn-only signal",
+			"tags": ["boss", "stress", "map_08"],
+			"class_id": "arcano",
+			"encounter_id": "chefe_invocador",
+			"seed": 20260518,
+			"policy_id": "end_turn_only",
+			"deck": ["arcano_choque", "arcano_choque", "arcano_choque", "arcano_fagulha", "arcano_fagulha", "arcano_fagulha", "arcano_barreira", "arcano_barreira", "arcano_barreira"],
+			"config": {
+				"player_health": 20,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": false,
+				"class_active_unlocked": false,
+				"class_active_level": 0,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 6,
+			"expectations": {
+				"required": {
+					"outcome_equals": "derrota",
+					"terminated_equals": true,
+					"turn_count_equals": 4,
+					"combat_cycles_equals": 4,
+					"cards_played_max": 0,
+					"enemy_hp_equals": 22,
+					"damage_to_enemy_hero_max": 0,
+					"damage_to_player_hero_max": 20
+				}
+			}
+		},
+		{
+			"id": "survive_glacial_defensive_signal",
+			"name": "Survive mode defensive signal",
+			"tags": ["survive", "field", "defensive", "keyword"],
+			"class_id": "invocador",
+			"encounter_id": "sobreviver_turnos_inicial",
+			"seed": 20260518,
+			"policy_id": "defensive_legal",
+			"deck": ["invocador_guardiao", "invocador_soldado", "invocador_batedor", "invocador_golem", "invocador_parede_de_escudos", "invocador_promover", "invocador_capitao_de_campo", "invocador_atacar", "invocador_soldado", "invocador_batedor", "invocador_golem", "invocador_promover"],
+			"config": {
+				"player_health": 28,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": true,
+				"class_active_unlocked": true,
+				"class_active_level": 1,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 10,
+			"expectations": {
+				"required": {
+					"terminated_equals": true,
+					"outcome_equals": "vitoria",
+					"turn_count_equals": 4,
+					"combat_cycles_equals": 4,
+					"player_hp_equals": 28,
+					"cards_played_equals": 7,
+					"player_units_alive_min": 3,
+					"enemy_units_alive_max": 0,
+					"damage_to_player_hero_max": 0
+				}
+			}
+		},
+		{
+			"id": "defense_position_invocador_signal",
+			"name": "Defense position Invocador signal",
+			"tags": ["defense", "field", "defensive"],
+			"class_id": "invocador",
+			"encounter_id": "defesa_posicao_inicial",
+			"seed": 20260518,
+			"policy_id": "defensive_legal",
+			"deck": ["invocador_guardiao", "invocador_soldado", "invocador_batedor", "invocador_golem", "invocador_parede_de_escudos", "invocador_promover", "invocador_capitao_de_campo", "invocador_atacar", "invocador_soldado", "invocador_batedor", "invocador_golem", "invocador_promover"],
+			"config": {
+				"player_health": 28,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": true,
+				"class_active_unlocked": true,
+				"class_active_level": 1,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 10,
+			"expectations": {
+				"required": {
+					"terminated_equals": true,
+					"outcome_equals": "vitoria",
+					"turn_count_equals": 5,
+					"combat_cycles_equals": 5,
+					"player_hp_equals": 28,
+					"cards_played_equals": 9,
+					"player_units_alive_min": 3,
+					"enemy_units_alive_max": 1,
+					"damage_to_player_hero_max": 0
+				}
+			}
+		},
+		{
+			"id": "field_ar_tempestade_signal",
+			"name": "Ar field effect storm signal",
+			"tags": ["field", "air", "survive", "late_route"],
+			"class_id": "arcano",
+			"encounter_id": "tempestade_eterna",
+			"seed": 20260518,
+			"policy_id": "aggressive_legal",
+			"deck": ["arcano_amplificador", "arcano_barreira", "arcano_sentinela_arcana", "arcano_choque", "arcano_bola_de_fogo", "arcano_acelerar", "arcano_tempestade", "arcano_canalizar", "arcano_descarga", "arcano_fagulha", "arcano_choque", "arcano_barreira", "arcano_fagulha", "arcano_vortice", "arcano_bola_de_fogo"],
+			"config": {
+				"player_health": 32,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": true,
+				"class_active_unlocked": true,
+				"class_active_level": 1,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 12,
+			"expectations": {
+				"required": {
+					"terminated_equals": true,
+					"outcome_equals": "vitoria",
+					"turn_count_equals": 2,
+					"combat_cycles_equals": 2,
+					"player_hp_equals": 32,
+					"cards_played_equals": 3,
+					"enemy_units_alive_max": 0,
+					"damage_to_enemy_hero_max": 0,
+					"damage_to_player_hero_max": 0
+				}
+			}
+		},
+		{
+			"id": "field_fogo_duel_signal",
+			"name": "Fogo field effect duel signal",
+			"tags": ["field", "fire", "duel", "late_route"],
+			"class_id": "necromante",
+			"encounter_id": "duelo_demonio",
+			"seed": 20260518,
+			"policy_id": "aggressive_legal",
+			"deck": ["necro_flagelo", "necro_esqueleto", "necro_carniceiro", "necro_morto_vivo", "necro_prender", "necro_colheita_das_almas", "necro_revenant", "necro_lich", "necro_praga", "necro_diabrete", "necro_arauto_das_sombras", "necro_esqueleto", "necro_morto_vivo", "necro_prender"],
+			"config": {
+				"player_health": 36,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": true,
+				"class_active_unlocked": true,
+				"class_active_level": 2,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 14,
+			"expectations": {
+				"required": {
+					"terminated_equals": true,
+					"turn_count_min": 5,
+					"turn_count_max": 8,
+					"cards_played_min": 10,
+					"cards_played_max": 14,
+					"damage_to_enemy_hero_min": 8,
+					"damage_to_enemy_hero_max": 12,
+					"damage_to_player_hero_max": 36
+				},
+				"watch": {
+					"outcome_equals": "vitoria",
+					"player_hp_min": 1
+				}
+			}
+		},
+		{
+			"id": "boss_22_soberano_signal",
+			"name": "Boss 22 Soberano signal",
+			"tags": ["boss", "field", "air", "late_route", "map_22"],
+			"class_id": "arcano",
+			"encounter_id": "soberano_tempestades",
+			"seed": 20260518,
+			"policy_id": "aggressive_legal",
+			"deck": ["arcano_amplificador", "arcano_barreira", "arcano_sentinela_arcana", "arcano_choque", "arcano_bola_de_fogo", "arcano_acelerar", "arcano_tempestade", "arcano_canalizar", "arcano_descarga", "arcano_fagulha", "arcano_choque", "arcano_barreira", "arcano_fagulha", "arcano_vortice", "arcano_bola_de_fogo", "arcano_descarga"],
+			"config": {
+				"player_health": 40,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": true,
+				"class_active_unlocked": true,
+				"class_active_level": 1,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 16,
+			"expectations": {
+				"required": {
+					"terminated_equals": true,
+					"turn_count_min": 6,
+					"turn_count_max": 10,
+					"cards_played_min": 10,
+					"cards_played_max": 14,
+					"enemy_units_alive_max": 3,
+					"damage_to_enemy_hero_min": 16,
+					"damage_to_enemy_hero_max": 20,
+					"damage_to_player_hero_max": 40
+				},
+				"watch": {
+					"outcome_equals": "vitoria",
+					"player_hp_min": 1
+				}
+			}
+		},
+		{
+			"id": "boss_29_final_stress_signal",
+			"name": "Boss 29 final stress signal",
+			"tags": ["boss", "field", "fire", "stress", "map_29"],
+			"class_id": "necromante",
+			"encounter_id": "chefe_summoner_final",
+			"seed": 20260518,
+			"policy_id": "aggressive_legal",
+			"deck": ["necro_flagelo", "necro_esqueleto", "necro_carniceiro", "necro_morto_vivo", "necro_prender", "necro_colheita_das_almas", "necro_revenant", "necro_lich", "necro_praga", "necro_diabrete", "necro_arauto_das_sombras", "necro_esqueleto", "necro_morto_vivo", "necro_prender", "necro_lich", "necro_praga"],
+			"config": {
+				"player_health": 44,
+				"mana_per_turn": 3,
+				"max_hand_size": 5,
+				"class_passive_unlocked": true,
+				"class_active_unlocked": true,
+				"class_active_level": 2,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"turn_limit": 18,
+			"expectations": {
+				"required": {
+					"terminated_equals": true,
+					"turn_count_min": 2,
+					"turn_count_max": 5,
+					"cards_played_min": 4,
+					"cards_played_max": 8,
+					"enemy_units_alive_max": 8,
+					"damage_to_enemy_hero_min": 4,
+					"damage_to_enemy_hero_max": 8,
+					"damage_to_player_hero_max": 44
+				},
+				"watch": {
+					"outcome_equals": "vitoria",
+					"player_hp_min": 1
+				}
+			}
+		}
+	]
+}
