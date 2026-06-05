@@ -90,3 +90,12 @@ Executar o plano aprovado de hardening tecnico antes de novas expansoes: compact
 ## Handoff Point
 
 Handoff quando cada pacote logico estiver validado e, se possivel, commitado separadamente. Se a execucao completa ficar grande demais para uma unica sessao, o proximo agente deve continuar a partir deste Doing, preservando worktree/branch e validando o ultimo pacote antes de abrir o seguinte.
+
+## Execution Snapshot - 2026-06-05
+
+- Phase 1 delivered locally on branch `codex/draxos-mobile/technical-hardening`.
+- Handoff file: `08_Coordenacao_Agentes/Handoffs/2026-06-05_codex_draxos-mobile_technical-hardening.md`.
+- Latest commit: `676265d Verify progression lab auth context`.
+- No remote mutation/publication.
+- Validated latest backend package with `ServerQuick`; latest client refactors with `ClientQuick`.
+- Remaining recommended phase 2: migrate remaining mutable endpoints to `verifiedAuthContext` and continue optional extraction-only refactors in smaller packages.
