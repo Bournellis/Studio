@@ -198,6 +198,10 @@ func test_app_shell_action_contract_centralizes_online_gates_without_boot_ui() -
 	assert_eq(arena_route.get("category"), AppShellActionRouterScript.CATEGORY_ARENA)
 	assert_eq(arena_route.get("mutation_endpoint"), "arena/pve/start")
 	assert_true(bool(arena_route.get("requires_idempotent_retry", false)))
+	var arena_abandon_route := AppShellActionRouterScript.route_action(AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, {"save_type": "normal"})
+	assert_eq(arena_abandon_route.get("category"), AppShellActionRouterScript.CATEGORY_ARENA)
+	assert_eq(arena_abandon_route.get("mutation_endpoint"), "arena/pve/abandon")
+	assert_true(bool(arena_abandon_route.get("requires_idempotent_retry", false)))
 	assert_eq(AppShellActionContractScript.action_payload("show_shop", "shop", "normal", true, false), {
 		"action_id": "show_shop",
 		"screen": "shop",
@@ -693,6 +697,83 @@ func test_arena_selection_recommends_next_uncompleted_arena_after_tutorial() -> 
 	assert_true(_label_tree_contains(boot._content_body, "Arena Curta Das Cinzas"))
 	assert_false(_visible_text_tree(boot._content_body).contains("s1_d00_intro"))
 
+func test_arena_selection_routes_active_attempt_before_new_start() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	var start_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta", "s1_d00_intro")
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"arenas": [
+			{
+				"id": "arena_cinzas_curta",
+				"display_name": "Arena Curta Das Cinzas",
+				"duel_count": 3,
+				"unlocked": true,
+				"difficulties": [{"difficulty_id": "s1_d00_intro", "max_steps": 3, "unlocked": true}],
+			},
+		],
+		"active_attempt": {
+			"attempt_id": "attempt-open",
+			"arena_id": "arena_cinzas_curta",
+			"status": "active",
+			"current_step_index": 1,
+			"duel_count": 3,
+			"duels_won": 1,
+			"locked_loadout_hash": "sha256:test",
+		},
+	}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	await get_tree().process_frame
+
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaActiveAttemptPanel"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Retomar tentativa"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Abandonar tentativa"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT))
+	assert_false(boot._action_buttons.has(start_action))
+	assert_true(_label_tree_contains(boot._content_body, "Tentativa ativa encontrada"))
+	assert_true(_label_tree_contains(boot._content_body, "duelos vencidos 1/3"))
+
+func test_arena_selection_exposes_update_recovery_for_stuck_attempt() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	var start_action := AppShellActionContractScript.arena_start_action("arena_cinzas_curta", "s1_d00_intro")
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"arenas": [
+			{
+				"id": "arena_cinzas_curta",
+				"display_name": "Arena Curta Das Cinzas",
+				"duel_count": 3,
+				"unlocked": true,
+				"difficulties": [{"difficulty_id": "s1_d00_intro", "max_steps": 3, "unlocked": true}],
+			},
+		],
+		"active_attempt": {
+			"attempt_id": "attempt-stuck",
+			"arena_id": "arena_cinzas_curta",
+			"status": "active",
+			"current_step_index": 3,
+			"duel_count": 3,
+			"duels_won": 3,
+			"locked_loadout_hash": "sha256:test",
+			"buff_offer": {},
+		},
+	}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	await get_tree().process_frame
+
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaAttemptRecoveryPanel"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Encerrar tentativa antiga"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL))
+	assert_false(boot._action_buttons.has(start_action))
+	assert_true(_label_tree_contains(boot._content_body, "ficou aberta antes do update"))
+	assert_true(_label_tree_contains(boot._content_body, "duelos vencidos 3/3"))
+
 func test_arena_active_exposes_behavior_adjustment_without_unlocking_loadout() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
@@ -718,7 +799,9 @@ func test_arena_active_exposes_behavior_adjustment_without_unlocking_loadout() -
 
 	assert_not_null(_find_button_by_text(boot._content_body, "Resolver duelo"))
 	assert_not_null(_find_button_by_text(boot._content_body, "Ajustar comportamento"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Abandonar tentativa"))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_SHOW_PREPARATION))
 	assert_not_null(_find_node_by_name(boot._content_body, "ArenaDuelProgressRail"))
 	assert_not_null(_find_node_by_name(boot._content_body, "ArenaDuelProgressRailSteps"))
@@ -795,6 +878,8 @@ func test_arena_buff_choice_renders_comparable_cards_with_existing_actions() -> 
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.arena_choose_buff_action("arena_buff_vitalidade_menor")))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.arena_choose_buff_action("arena_buff_potencia_menor")))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.arena_choose_buff_action("arena_buff_guarda_menor")))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT))
+	assert_not_null(_find_button_by_text(boot._content_body, "Abandonar tentativa"))
 
 func test_arena_summary_continues_to_arena_instead_of_reward_claim_copy() -> void:
 	var boot = BootScreenScript.new()

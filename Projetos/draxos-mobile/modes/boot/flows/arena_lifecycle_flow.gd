@@ -138,6 +138,30 @@ func lock_loadout(host: Node) -> void:
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, false)
 	host.call("_show_notice", "Loadout ja foi travado ao iniciar a tentativa.")
 
+func resume_attempt(host: Node) -> void:
+	if not bool(host.call("_require_session", "Entre antes de retomar a Arena PVE.")):
+		return
+	var attempt := SessionStore.active_arena_attempt()
+	var attempt_id := _attempt_id(attempt)
+	if attempt_id == "":
+		host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+		host.call("_show_notice", "Nenhuma tentativa ativa encontrada. Escolha uma Arena PVE.")
+		return
+	if _attempt_needs_recovery(attempt):
+		host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+		host.call("_show_notice", "Esta tentativa ficou aberta antes do update. Encerre a tentativa antiga para liberar uma nova run.")
+		return
+	if not _pending_buff_choices(attempt).is_empty():
+		host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_BUFF_CHOICE, false)
+		host.call("_show_notice", "Buff pendente carregado. Escolha uma opcao para seguir.")
+		return
+	var status := _attempt_state(attempt)
+	if status in ["completed", "failed", "claimed", "abandoned"]:
+		host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SUMMARY, false)
+		return
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, false)
+	host.call("_show_notice", "Tentativa de Arena retomada.")
+
 func resolve_duel(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre antes de resolver duelo da Arena.")):
 		return
@@ -145,6 +169,10 @@ func resolve_duel(host: Node) -> void:
 	var attempt_id := _attempt_id(attempt)
 	if attempt_id == "":
 		_set_error_text(host, "Nenhuma tentativa de Arena carregada.")
+		return
+	if _attempt_needs_recovery(attempt):
+		host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+		_set_error_text(host, "Tentativa antiga detectada. Encerre esta tentativa para liberar a Arena.")
 		return
 	var duel_index := int(attempt.get("current_step_index", attempt.get("duel_index", 0))) + 1
 
@@ -196,6 +224,33 @@ func choose_buff(host: Node, buff_id: String) -> void:
 	)
 	result = ArenaDevFixtureProviderScript.choose_buff_fallback_result(result, attempt, normalized_buff, SessionStore)
 	await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, "Buff aplicado.")
+
+func abandon_attempt(host: Node) -> void:
+	if not bool(host.call("_require_account", "Entre antes de encerrar tentativa da Arena.")):
+		return
+	var attempt := SessionStore.active_arena_attempt()
+	var attempt_id := _attempt_id(attempt)
+	if attempt_id == "":
+		_set_error_text(host, "Nenhuma tentativa de Arena para encerrar.")
+		return
+
+	host.call("_set_busy", true, "Encerrando tentativa da Arena...")
+	var mutation := SessionStore.prepare_pending_mutation(
+		"arena/pve/abandon",
+		"arena:%s" % SessionStore.active_save_type,
+		AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT,
+		{"attempt_id": attempt_id}
+	)
+	var result: Dictionary = await SupabaseClient.abandon_arena_attempt(
+		str(mutation.get("request_id", "")),
+		attempt_id,
+		SessionStore.access_token,
+		str(mutation.get("request_hash", ""))
+	)
+	result = ArenaDevFixtureProviderScript.abandon_attempt_fallback_result(result, attempt, SessionStore)
+	if not await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_SELECTION, "Tentativa encerrada. Arena liberada."):
+		return
+	host.call("_show_notice", "Tentativa antiga encerrada. Voce ja pode iniciar uma nova Arena.")
 
 func claim_summary(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre antes de continuar a Arena.")):
@@ -272,6 +327,11 @@ func play_arena_replay(host: Node, battle_log: Dictionary, rewards: Dictionary) 
 func _start_attempt(host: Node, arena_id: String, difficulty_id: String, difficulty_tier: int, action_id: String = "") -> void:
 	if not bool(host.call("_require_account", "Entre antes de iniciar a Arena PVE.")):
 		return
+	var active_attempt := SessionStore.active_arena_attempt()
+	if _attempt_blocks_new_start(active_attempt):
+		host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+		_set_error_text(host, "Existe uma tentativa ativa. Retome ou encerre a tentativa antes de iniciar outra.")
+		return
 	host.call("_set_busy", true, "Iniciando Arena PVE...")
 	var start_action_id := action_id.strip_edges()
 	if start_action_id == "":
@@ -313,6 +373,8 @@ func _next_arena_route_after_replay() -> String:
 	var attempt := SessionStore.active_arena_attempt()
 	if not _pending_buff_choices(attempt).is_empty():
 		return AppShellRouteContractScript.ROUTE_ARENA_BUFF_CHOICE
+	if _attempt_needs_recovery(attempt):
+		return AppShellRouteContractScript.ROUTE_ARENA_SELECTION
 	var status := _attempt_state(attempt)
 	if status in ["completed", "failed", "claimed", "abandoned"]:
 		return AppShellRouteContractScript.ROUTE_ARENA_SUMMARY
@@ -332,6 +394,35 @@ func _current_offer_step_index(attempt: Dictionary) -> int:
 func _pending_buff_choices(attempt: Dictionary) -> Array:
 	var offer := _as_dictionary(attempt.get("buff_offer", {}))
 	return _as_array(offer.get("choices", attempt.get("pending_buff_choices", [])))
+
+func _attempt_blocks_new_start(attempt: Dictionary) -> bool:
+	if attempt.is_empty():
+		return false
+	var status := _attempt_state(attempt)
+	return status in ["active", "awaiting_buff"] or _attempt_needs_recovery(attempt)
+
+func _attempt_needs_recovery(attempt: Dictionary) -> bool:
+	if attempt.is_empty():
+		return false
+	var status := _attempt_state(attempt)
+	if status in ["completed", "failed", "claimed", "abandoned"]:
+		return false
+	if status not in ["active", "awaiting_buff", "active_incompatible"]:
+		return false
+	if _attempt_id(attempt) == "":
+		return true
+	if status == "active_incompatible":
+		return true
+	if not _pending_buff_choices(attempt).is_empty():
+		return false
+	if status == "awaiting_buff":
+		return true
+	var total := maxi(0, int(attempt.get("duel_count", attempt.get("duels_total", attempt.get("max_steps", 0)))))
+	var current := maxi(
+		int(attempt.get("current_step_index", 0)),
+		int(attempt.get("duels_won", attempt.get("duel_index", 0)))
+	)
+	return total <= 0 or current >= total
 
 func _arena_is_unlocked(arena: Dictionary) -> bool:
 	if arena.has("unlocked"):

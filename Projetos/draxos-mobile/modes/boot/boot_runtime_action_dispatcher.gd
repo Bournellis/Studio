@@ -114,8 +114,12 @@ func _execute_action(action_id: String) -> void:
 				await _start_arena_early()
 			AppShellActionContractScript.ACTION_ARENA_LOCK_LOADOUT:
 				_lock_arena_loadout()
+			AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT:
+				_resume_arena_attempt()
 			AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL:
 				await _resolve_arena_duel()
+			AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT:
+				await _abandon_arena_attempt()
 			AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY:
 				await _claim_arena_summary()
 			AppShellActionContractScript.ACTION_REQUEST_BATTLE:

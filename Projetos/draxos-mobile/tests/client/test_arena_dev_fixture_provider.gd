@@ -39,3 +39,31 @@ func test_arena_fixture_setting_keeps_local_fixture_available() -> void:
 	assert_true(bool(result.get("ok", false)))
 	assert_true(bool(Dictionary(result.get("body", {})).get("dev_fixture", false)))
 	assert_eq(Dictionary(result.get("_client", {})).get("save_type"), SessionStoreScript.SAVE_TYPE_NORMAL)
+
+func test_arena_fixture_abandon_returns_terminal_attempt_without_rewards() -> void:
+	ProjectSettings.set_setting(DEV_TOOLS_SETTING, false)
+	ProjectSettings.set_setting(ARENA_FIXTURES_SETTING, true)
+	var store := SessionStoreScript.new()
+	var remote_failure := {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
+	var attempt := {
+		"attempt_id": "dev-stuck",
+		"arena_id": "arena_cinzas_curta",
+		"state": "active",
+		"current_step_index": 3,
+		"duel_count": 3,
+		"duels_won": 3,
+		"buff_offer": {},
+	}
+
+	var result := ArenaDevFixtureProviderScript.abandon_attempt_fallback_result(remote_failure, attempt, store)
+	var body := Dictionary(result.get("body", {}))
+	var arena_state := Dictionary(body.get("arena_state", {}))
+	var active_attempt := Dictionary(arena_state.get("active_attempt", {}))
+	var summary := Dictionary(active_attempt.get("summary", {}))
+
+	assert_true(bool(result.get("ok", false)))
+	assert_eq(str(active_attempt.get("state", "")), "abandoned")
+	assert_eq(str(active_attempt.get("status", "")), "abandoned")
+	assert_false(bool(summary.get("reward_already_applied", true)))
+	assert_false(bool(summary.get("mutates_economy", true)))
+	store.free()

@@ -122,6 +122,8 @@ static func mutation_endpoint_for_action(action_id: String) -> String:
 		return "arena/pve/duel/request"
 	if AppShellActionContractScript.is_arena_choose_buff(action):
 		return "arena/pve/buff/select"
+	if action == AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT:
+		return "arena/pve/abandon"
 	if action == AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY:
 		return "arena/pve/claim"
 	if action == AppShellActionContractScript.ACTION_UPGRADE_NUCLEO or AppShellActionContractScript.is_upgrade_base_structure(action):
@@ -202,7 +204,9 @@ static func _is_arena_action(action_id: String) -> bool:
 		AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL,
 		AppShellActionContractScript.ACTION_ARENA_START_EARLY,
 		AppShellActionContractScript.ACTION_ARENA_LOCK_LOADOUT,
+		AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT,
 		AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL,
+		AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT,
 		AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY,
 	] or AppShellActionContractScript.is_arena_start(action_id) \
 		or AppShellActionContractScript.is_arena_choose_buff(action_id)
