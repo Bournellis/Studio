@@ -4,7 +4,7 @@
 - Agente: `codex`
 - Branch: `codex/draxos-mobile/runtime-config-online-actions`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--runtime-config-online-actions`
-- Status: implementado localmente; publicacao remota pendente de merge/deploy final.
+- Status: implementado, mesclado em `master` e publicado remotamente no endpoint `release/config`.
 
 ## Problema
 
@@ -35,5 +35,7 @@ Com isso, o cliente exibia `Acoes online de progresso estao pausadas pela config
 
 ## Handoff
 
-- Reexecutar `ReleaseDryRun` depois deste cartao sair de `Doing`.
-- Commitar, mesclar em `master`, redeployar `release` com `publish_internal_alpha.ps1 -Mode DeployManifest`, e validar `GET /release/config` remoto com `read_only: false` e `mutable_gameplay_state: true`.
+- `ReleaseDryRun`: PASS depois deste cartao sair de `Doing`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `GET /release/config` remoto validado com `config_version: track23-online-actions-hotfix`, `read_only: false`, `mutable_gameplay_state: true`, `no_service_role: true` e `no_secrets: true`.
+- `runtime_config_smoke.ts` remoto: PASS contra `https://armxgipvnbbshzqawklw.supabase.co`.
