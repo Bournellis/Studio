@@ -204,3 +204,12 @@ Each entry should include:
 - validation result: first `validate.gd` in the new worktree required the standard one-time headless editor import for Godot global class/GUT readiness. After import, `validate.gd` passed with 111/111 GUT tests, 1313 asserts and the shared full-route pacing smoke unchanged at 29/29 maps, 217 estimated turns, 116 HP loss, 0 deaths, 38-card final deck, 6 relics and 21 shop actions. `run_lab.gd -- --mode=gate --preset=smoke --baseline=track02_smoke_v1` passed. `run_lab.gd -- --mode=gate --preset=quick --baseline=track02_quick_v1` passed 30 cases and wrote scorecard output.
 - blockers: none. Known non-fatal visual asset debts remain unchanged.
 - next prompt id: none; next tooling phase should be Scenario Fixtures or Gameplay Lab with BattleEngine-driven legal-action policies, after at least one human playtest/tuning cycle uses the gate.
+
+### 2026-06-05 - Scenario Fixtures V1
+
+- prompt id: `SCENARIO-FIXTURES-V1`
+- summary: Added named deterministic macro-route scenario fixtures as the second layer of gameplay test tooling. The new explicit runner loads versioned scenario packs, filters by scenario id or tags, evaluates required/watch expectations as PASS/WARN/FAIL, keeps WARN signals gate-safe, and writes JSON/CSV/Markdown reports compatible with the AutoRun Lab result envelope.
+- changed files: `data/lab/scenarios/track02_core_v1.json`, `tools/run_scenarios.gd`, `tools/lab/scenario_fixture_loader.gd`, `tools/lab/scenario_evaluator.gd`, `tools/lab/scenario_runner.gd`, `tools/lab/scenario_reporter.gd`, `tests/unit/test_scenario_fixtures_tooling.gd`, `docs/autorun-lab.md`, local status snapshots and coordination note.
+- validation result: `run_scenarios.gd -- --mode=gate --pack=track02_core_v1` passed with 12 scenarios, 9 PASS, 3 WARN and 0 FAIL. `run_lab.gd -- --mode=gate --preset=smoke --baseline=track02_smoke_v1` passed. `run_lab.gd -- --mode=gate --preset=quick --baseline=track02_quick_v1` passed 30 cases. `validate.gd` passed with 120/120 GUT tests, 1343 asserts and the shared full-route pacing smoke unchanged at 29/29 maps, 217 estimated turns, 116 HP loss, 0 deaths, 38-card final deck, 6 relics and 21 shop actions.
+- blockers: none. Known non-fatal visual asset debts remain unchanged. `tools/run_scenarios.gd` remains an explicit gate and is not wired into `tools/validate.gd`.
+- next prompt id: none; next tooling phase should use Scenario Fixtures V1 during the first real gameplay change, then expand fixture coverage only after comparing signal quality.

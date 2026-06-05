@@ -1,14 +1,16 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-05`
-- Status: `AUTORUN_GATE_PACK_V1_READY`
-- Scope: macro-route gameplay testing foundation
+- Status: `SCENARIO_FIXTURES_V1_READY`
+- Scope: macro-route gameplay testing foundation and explicit scenario fixtures
 
 ## Purpose
 
 AutoRun Lab is the first layer of the gameplay test toolchain. It expands the existing Run Lab from one class/seed sweep into a reusable headless framework for run matrices, macro policies, aggregate reports, official gate baselines and human-readable scorecards.
 
 It still uses macro-route simulation through `tools/route_pacing_simulator.gd`. It does not play battles turn by turn and does not replace human playtest. It prepares the contracts that future Gameplay Lab, Scenario Lab and Replay Lab should reuse.
+
+Scenario Fixtures V1 is the second layer of this toolchain. It runs small named scenarios from JSON packs, evaluates explicit expectations as `PASS`, `WARN`, or `FAIL`, and keeps stress signals visible without turning expected stress warnings into hard regressions.
 
 ## Entry Point
 
@@ -25,6 +27,12 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 ```
 
 `--gate` is a shortcut for `--mode=gate`.
+
+Scenario fixture gate:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_scenarios.gd -- --mode=gate --pack=track02_core_v1
+```
 
 ## Presets
 
@@ -85,6 +93,46 @@ The tool writes all outputs under `--out`:
 - `run_lab_scorecard.md`: readable scorecard with overall, class and policy matrices.
 - `run_lab_baseline.json`: optional saved statistical baseline when using `--save-baseline` or `--mode=baseline`.
 
+## Scenario Fixtures V1
+
+Scenario fixture packs live under `data/lab/scenarios/`. The first official pack is `track02_core_v1`.
+
+Useful commands:
+
+```text
+--pack=track02_core_v1
+--scenario=map_08_low_hp_checkpoint_baseline
+--tags=route,economy
+--out=user://scenario_lab/track02_core_v1
+--mode=explore|gate
+--gate
+--stop-on-failure
+```
+
+Scenario outputs:
+
+- `scenario_results.json`: complete records with scenario, result, timeline, expectations, warnings, tags and status.
+- `scenario_results.csv`: one row per scenario.
+- `scenario_summary.json`: aggregate status counts by tag, class and policy.
+- `scenario_summary.md`: human-readable report with status matrix, checkpoints, warnings and failures.
+- `scenario_gate.md`: short regression view for gate runs.
+
+Expectation status:
+
+- `PASS`: required and watch expectations passed.
+- `WARN`: required expectations passed, but one or more watch expectations raised a tuning signal.
+- `FAIL`: at least one required expectation failed. In `--mode=gate`, this exits with code `1`.
+
+`WARN` does not fail the gate. Use it for expected stress cases such as `no_shop`, `big_deck`, and `thin_deck`.
+
+`track02_core_v1` starts with 12 scenarios covering:
+
+- baseline route completion for Arcano, Invocador and Necromante;
+- map 08 low-HP and defensive recovery checkpoints;
+- baseline shop recovery budget and no-shop stress;
+- baseline, big-deck and thin-deck deck-size bands;
+- late-route fire pressure and map 29 boss finish.
+
 ## Result Schema
 
 Each detailed record contains:
@@ -123,6 +171,6 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 ## Future Phases
 
 1. Gameplay Lab: play battles with `BattleEngine` using legal-action policies.
-2. Scenario Lab: fuzz isolated encounters, bosses, field effects and keywords.
+2. Scenario Lab: extend fixtures from `macro_route_v1` into isolated encounter, boss, field effect and keyword simulations.
 3. Replay Lab: record human or bot decisions and replay them across builds.
 4. Dashboard: read the JSON/CSV/Markdown outputs and compare historical runs visually.
