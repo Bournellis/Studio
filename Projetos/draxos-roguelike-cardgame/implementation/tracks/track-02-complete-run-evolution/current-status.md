@@ -4,7 +4,7 @@
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Historical Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `Card Impact Pack V1, Lab Diff Reporter V1, Gameplay Lab V1, Scenario Fixtures V1 and AutoRun Gate Pack V1 preserve Track 02 route metrics and pass 148/148 GUT tests, 1544 asserts, shared full-route pacing smoke green, Card Impact before/after/compare gate green with 84 active card cases covered and zero same/same changes, Battle Lab track02_battle_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, Scenario Fixture track02_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
+- Validation Baseline: `Card Impact Smoke Tuning V1, Card Impact Pack V1, Lab Diff Reporter V1, Gameplay Lab V1, Scenario Fixtures V1 and AutoRun Gate Pack V1 preserve Track 02 route metrics and pass 148/148 GUT tests, 1544 asserts, shared full-route pacing smoke green, Card Impact before/after/compare gate green with 84 active card cases covered and one expected PASS->PASS metric impact for enemy_ar_rajada, Battle Lab track02_battle_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, Scenario Fixture track02_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
 
 ## Purpose
 
@@ -40,9 +40,9 @@ The target is a fixed, linear 29-map run with all planned encounter types, all p
 
 ## Current Execution Cursor
 
-Completed prompt: `CARD-IMPACT-PACK-V1 - before/after orchestration for active player and enemy card impact testing`.
+Completed prompt: `CARD-IMPACT-SMOKE-TUNING-V1 - first real before/change/after/compare card-change cycle using Card Impact Pack V1`.
 
-Next implementation prompt: `FIRST-REAL-CARD-CHANGE-WITH-CARD-IMPACT - run before, apply a small intentional card change, run after, compare and review reports`. Track 02 remains ready for user playtest.
+Next implementation prompt: `CARD-IMPACT-PLAYER-HARNESS-V2-OR-LARGER-CARD-BATCH - either add log-derived player-card effect deltas to the harness or run a slightly larger intentional card batch through the same before/change/after/compare flow`. Track 02 remains ready for user playtest.
 
 ## Implemented Baseline
 
@@ -94,6 +94,8 @@ Next implementation prompt: `FIRST-REAL-CARD-CHANGE-WITH-CARD-IMPACT - run befor
 - AutoRun Gate Pack V1 adds official smoke/quick baselines under `data/lab/baselines/`, explicit `--mode=gate` regression commands, baseline group-field comparisons, gate failure tests, and scorecard JSON/Markdown reports for human tuning reads.
 - Scenario Fixtures V1 adds `data/lab/scenarios/track02_core_v1.json`, `tools/run_scenarios.gd`, loader/evaluator/runner/reporter modules, 12 deterministic route/economy/deck/boss/class/keyword-focused macro scenarios, PASS/WARN/FAIL expectations, explicit gate mode and JSON/CSV/Markdown reports without wiring the command into `tools/validate.gd`.
 - Card Impact Pack V1 adds `data/lab/card_impact/track02_card_impact_v1.json`, `tools/run_card_impact.gd`, card discovery/matrix/runner/reporter modules, the `card_focus_legal` battle policy, 54 core player card variants, 30 active enemy cards, 15 audited legacy inactive elemental cards, explicit before/after/compare gate mode and JSON/CSV/Markdown impact reports without wiring the command into `tools/validate.gd`.
+- Card Impact Smoke Tuning V1 applied a deliberately small card batch: `arcano_choque_lvl2` and `arcano_choque_lvl3` damage `3 -> 4`, `invocador_batedor_lvl3` attack `6 -> 5`, `necro_esqueleto_lvl2` health `2 -> 3`, and `enemy_ar_rajada` attack `4 -> 5`.
+- The first real Card Impact compare stayed structurally green and surfaced one expected metric movement: `enemy_ar_rajada` raised `damage_to_player_hero` from `4` to `5` and lowered isolated harness `player_hp` from `56` to `55`.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
 - Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.
@@ -113,4 +115,4 @@ Every future Track 02 implementation or playtest-fix thread must:
 
 ## Current Risk
 
-Track 02 is ready for user playtest and for the first real card-change batch. Remaining risk is human balance feedback: the deterministic full-route smoke, AutoRun Gate Pack macro matrices, Scenario Fixtures V1, Gameplay Lab V1 and Card Impact Pack V1 validate structure, tuning trends, small named regression signals, isolated combat behavior and card-specific before/after movement, but they are not substitutes for a manual run. Additional foundation extraction is optional and should be driven by concrete future work, not by the need to unblock playtest.
+Track 02 is ready for user playtest and for a slightly larger card-change batch. Remaining risk is human balance feedback: the deterministic full-route smoke, AutoRun Gate Pack macro matrices, Scenario Fixtures V1, Gameplay Lab V1 and Card Impact Pack V1 validate structure, tuning trends, small named regression signals, isolated combat behavior and card-specific before/after movement, but they are not substitutes for a manual run. The first real Card Impact cycle also showed that player-card stat/effect edits may not move final metrics when the harness clears a board in one cycle, so Card Impact V2 should consider log-derived effect deltas before broader card redesign.

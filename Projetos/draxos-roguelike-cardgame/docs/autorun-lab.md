@@ -1,7 +1,7 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-05`
-- Status: `CARD_IMPACT_PACK_V1_READY`
+- Status: `CARD_IMPACT_SMOKE_TUNING_V1_COMPLETE`
 - Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting and card impact orchestration
 
 ## Purpose
@@ -17,6 +17,8 @@ Gameplay Lab V1 is the third layer. It runs isolated real battles through `Battl
 Lab Diff Reporter V1 is the fourth layer. It compares before/after outputs from AutoRun Lab, Scenario Fixtures and Gameplay Lab, then turns status changes, new failures, removed records and metric deltas into JSON, CSV and Markdown reports. It is built for future large card changes where the important question is not only "did the gate pass?", but "what moved, by how much, and where should a human inspect next?".
 
 Card Impact Pack V1 is the fifth layer. It orchestrates a deterministic before/after impact matrix for active player and enemy cards, runs selected lab components, compares outputs, and reports structural regressions separately from numerical tuning movement. It exists to prepare large future card changes without changing gameplay in this step.
+
+Card Impact Smoke Tuning V1 is the first real use of that flow. It applies a deliberately small card batch, runs `before -> after -> compare`, and confirms that numeric impact can be reported without failing the structural gate.
 
 ## Entry Point
 
@@ -291,6 +293,14 @@ Recommended future card-change flow:
 4. Run `run_card_impact --phase=compare --mode=gate`.
 5. Inspect `card_impact_summary.md`, `card_impact_gate.md` and the component diff Markdown before deciding whether the numerical movement is intended.
 
+First real cycle result (`user://card_impact/smoke_tuning_v1`):
+
+- Tuning batch: `arcano_choque_lvl2` and `arcano_choque_lvl3` damage `3 -> 4`, `invocador_batedor_lvl3` attack `6 -> 5`, `necro_esqueleto_lvl2` health `2 -> 3`, and `enemy_ar_rajada` attack `4 -> 5`.
+- Card Impact coverage: `84/84` active card cases, with `54` player variants, `30` enemy cards, and `15` legacy inactive elemental cards audited.
+- Compare gate: PASS, zero structural errors, zero new failures, zero removed records, zero status changes.
+- Impact detected: `enemy_ar_rajada` changed `damage_to_player_hero` from `4` to `5` and `player_hp` from `56` to `55` in its isolated enemy-card harness.
+- Operational lesson: an earlier probe on `enemy_terra_guerreiro_terra` was rejected because it changed the calibrated map 8 boss Battle Lab gate. Keep future smoke-tuning probes either intentionally gate-updating or isolated from calibrated core cases.
+
 ## Result Schema
 
 Each detailed record contains:
@@ -328,8 +338,8 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Use Card Impact Pack V1 during the next real card-change batch with a strict `before -> change -> after -> compare` flow.
+1. Use the same Card Impact flow for a slightly larger real card batch, then decide whether the player-card harness should compare log-derived card-effect deltas in addition to final HP/turn metrics.
 2. Decide which repeated WARN or metric movements deserve promoted expectations after real use.
-3. Expand Card Impact Pack V2 to cover the remaining class reward cards once the first real card-change cycle proves the workflow.
+3. Expand Card Impact Pack V2 to cover the remaining class reward cards once another real card-change cycle proves the workflow.
 4. Replay Lab: record human or bot decisions and replay them across builds.
 5. Dashboard: read the JSON/CSV/Markdown outputs and compare historical runs visually.
