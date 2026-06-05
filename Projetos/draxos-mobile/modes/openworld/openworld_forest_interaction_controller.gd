@@ -65,7 +65,12 @@ func deposit_near_chest() -> void:
 		_update()
 		return
 	if _uses_integrated_authority():
-		model.last_message = "Depositando bolso no servidor..."
+		if not _can_record_authoritative_event():
+			model.last_message = "Aguarde o Bosque salvar antes de depositar."
+			_update()
+			return
+		var deposit_result: Dictionary = model.deposit_all()
+		model.last_message = "%s Salvando..." % str(deposit_result.get("message", "Bolso depositado no bau.")).trim_suffix(".")
 		_record_event("deposit_all", {
 			"position": runtime.position_payload(),
 			"session_seconds": int(runtime.session_seconds),
@@ -91,7 +96,12 @@ func craft_recipe(recipe_id: String) -> void:
 			model.last_message = model.recipe_state_text(recipe_id)
 			_update()
 			return
-		model.last_message = "Criando %s no servidor..." % model.recipe_display_name(recipe_id)
+		if not _can_record_authoritative_event():
+			model.last_message = "Aguarde o Bosque salvar antes de criar."
+			_update()
+			return
+		var craft_result: Dictionary = model.craft(recipe_id)
+		model.last_message = "%s Salvando..." % str(craft_result.get("message", "Criacao enviada ao servidor.")).trim_suffix(".")
 		_record_event("craft", {
 			"recipe_id": recipe_id,
 			"position": runtime.position_payload(),
@@ -168,6 +178,12 @@ func _record_event(event_type: String, event_payload: Dictionary) -> void:
 
 func _uses_integrated_authority() -> bool:
 	return bool(uses_authority_callable.call()) if uses_authority_callable.is_valid() else false
+
+func _can_record_authoritative_event() -> bool:
+	var bridge: Variant = _bridge()
+	if bridge != null and bridge.has_method("can_record_event"):
+		return bool(bridge.call("can_record_event"))
+	return _uses_integrated_authority()
 
 func _session_blocked() -> bool:
 	return bool(session_blocked_callable.call()) if session_blocked_callable.is_valid() else false

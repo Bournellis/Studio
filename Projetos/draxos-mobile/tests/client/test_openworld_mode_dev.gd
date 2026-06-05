@@ -422,6 +422,66 @@ func test_deposit_action_requires_near_chest_and_pocket_items() -> void:
 	assert_true(bool(ready_state.get("deposit_available", false)))
 	assert_true(str(ready_state.get("status_text", "")).contains("deposito pronto"))
 
+func test_integrated_deposit_updates_local_view_while_pending_and_reconciles_ack() -> void:
+	var setup: Dictionary = await _make_integrated_screen()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var chest_position := RulesetScript.chest_position()
+	screen.call("_hydrate_integrated_session", _integrated_session(0, chest_position, {"galho": 2}, {}, {}, {}))
+	screen.set_player_position_for_tests(chest_position)
+	client.delay_frames = 2
+	client.enqueue_event_response(_event_ack("deposit_all", 1, {
+		"pocket": {},
+		"chest": {"galho": 2},
+		"last_message": "Bau atualizado.",
+	}, chest_position))
+
+	screen.call("_deposit_near_chest")
+	await get_tree().process_frame
+
+	assert_true(Dictionary(screen.get_model().pocket).is_empty())
+	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
+	assert_eq(screen.session_state_for_tests(), "pending")
+	assert_false(screen.call("_can_complete_integrated"))
+	var deposit_event := _captured_event(client, "deposit_all")
+	assert_false(deposit_event.is_empty())
+	await _wait_process_frames(6)
+
+	assert_eq(screen.session_state_for_tests(), "synced")
+	assert_true(Dictionary(screen.get_model().pocket).is_empty())
+	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
+	assert_eq(int(screen.get("_snapshot_revision")), 1)
+
+func test_integrated_back_waits_for_pending_deposit_before_closing() -> void:
+	var setup: Dictionary = await _make_integrated_screen()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var chest_position := RulesetScript.chest_position()
+	screen.call("_hydrate_integrated_session", _integrated_session(0, chest_position, {"galho": 2}, {}, {}, {}))
+	screen.set_player_position_for_tests(chest_position)
+	client.delay_frames = 4
+	client.enqueue_event_response(_event_ack("deposit_all", 1, {
+		"pocket": {},
+		"chest": {"galho": 2},
+		"last_message": "Bau atualizado.",
+	}, chest_position))
+	var closed := {"value": false}
+	screen.close_requested.connect(func() -> void:
+		closed["value"] = true
+	)
+
+	screen.call("_deposit_near_chest")
+	screen.call("_handle_back_requested")
+	await get_tree().process_frame
+
+	assert_false(bool(closed.get("value", false)))
+	assert_true(str(screen.get_model().last_message).contains("Salvando"))
+	await _wait_process_frames(8)
+
+	assert_true(bool(closed.get("value", false)))
+	assert_eq(screen.session_state_for_tests(), "synced")
+	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
+
 func test_integrated_event_ack_does_not_rollback_player_position() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")

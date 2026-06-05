@@ -70,6 +70,9 @@ func can_complete() -> bool:
 func uses_authority() -> bool:
 	return is_active() and _server_session_id != "" and not _completed
 
+func can_record_event() -> bool:
+	return uses_authority() and _runtime_allows_mutation() and not has_pending_events()
+
 func session_state() -> String:
 	return _session_state
 

@@ -15,12 +15,12 @@ func render_selection(host: Node) -> void:
 		return
 	if _has_remote_arena_state(arena):
 		var arenas := _as_array(arena.get("arenas", []))
-		_render_recommended_arena(host, arenas)
 		_add_arena_preparation_control(host, false)
+		_render_recommended_arena(host, arenas)
 		_render_available_arenas(host, arenas)
 	else:
-		_render_dev_fallback_arenas(host)
 		_add_arena_preparation_control(host, false)
+		_render_dev_fallback_arenas(host)
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_loading_selection(host: Node) -> void:
@@ -45,19 +45,20 @@ func render_active(host: Node) -> void:
 	_call_host(host, "_add_body_text", ["Tentativa em andamento. Cada duelo comeca com HP cheio."])
 	_add_duel_progress_rail(host, attempt)
 	_add_attempt_summary_panel(host, attempt)
+	_add_arena_preparation_control(host, true)
 	if not _pending_buff_choices(attempt).is_empty():
 		_call_host(host, "_add_action_button", ["Escolher buff", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT])
 	else:
 		_call_host(host, "_add_action_button", ["Resolver duelo", AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL])
 	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
-	_add_arena_preparation_control(host, true)
 	_add_loadout_details_control(host, attempt)
 
 func render_buff_choice(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
 	var choices := _pending_buff_choices(attempt)
 	_call_host(host, "_add_body_text", ["Escolha 1 buff temporario para os proximos duelos desta tentativa."])
+	_add_arena_preparation_control(host, true)
 	if choices.is_empty():
 		_call_host(host, "_add_output_label", ["Nenhum buff pendente. Volte para a tentativa ativa."])
 		_call_host(host, "_add_action_button", ["Retomar tentativa", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT])
@@ -246,7 +247,7 @@ func _add_arena_preparation_control(host: Node, behavior_only: bool) -> void:
 			stack.add_child(_arena_label("Carregue o estado atual para ajustar apenas comportamento entre duelos. O loadout desta tentativa ja esta travado.", 12, "text_secondary"))
 			stack.add_child(_arena_action_button(host, "Carregar comportamento", AppShellActionContractScript.ACTION_SHOW_PREPARATION, false, "", true))
 		else:
-			stack.add_child(_arena_label("Fica aqui, logo abaixo de Iniciar Arena PVE. Carregue para revisar loadout, Pocao e comportamento antes de iniciar.", 12, "text_secondary"))
+			stack.add_child(_arena_label("Revise loadout, Pocao e comportamento antes de iniciar. Este painel fica sempre no topo da Arena.", 12, "text_secondary"))
 			stack.add_child(_arena_action_button(host, "Carregar Preparacao", AppShellActionContractScript.ACTION_SHOW_PREPARATION, false, "", true))
 		_call_host(host, "_add_content_control", [panel])
 		return

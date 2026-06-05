@@ -451,6 +451,16 @@ func _handle_abandon_requested() -> void:
 	_update_labels()
 
 func _handle_back_requested() -> void:
+	if integration_mode == "integrated_alpha" and _has_pending_integrated_events():
+		model.last_message = "Salvando Bosque antes de voltar..."
+		_update_labels()
+		await _ensure_session_bridge().flush_event_queue()
+		_sync_session_bridge_debug_state()
+		_update_labels()
+		if _has_pending_integrated_events():
+			model.last_message = "Sincronizacao pendente. Aguarde salvar antes de voltar."
+			_update_labels()
+			return
 	if integration_mode == "integrated_alpha" and _server_session_id() != "" and not _session_blocks_mutation():
 		model.last_message = "Sessao preservada por ate 2h para retomada."
 		_ensure_session_bridge().record_exit_preserved()

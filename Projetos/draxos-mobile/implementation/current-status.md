@@ -18,6 +18,7 @@
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Latest deployment evidence: `https://d7333659.draxos-mobile-internal-alpha.pages.dev`
 - Source state: `main` after merging and publishing Arena PVE Season 1 Loop v1, preserving Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
+- Local source hotfix pending publication: Arena/Bosque Regression Hotfix restores Preparacao before Arena start, during active attempts and on pending buff choice, and restores Bosque deposit/craft visible feedback plus pending-event flush before leaving an integrated session.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
 - Published Arena Season 1 package: `Arena PVE Season 1 Loop v1` groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
 - Previous source hotfix: `Arena Duel Flow Hotfix` keeps Preparacao/behavior inside the active-duel menu, removes the detached `Ajustar comportamento` CTA, and treats a server step with `selected_buff` as resolved so the next active menu returns to `Resolver duelo` instead of showing `Escolher buff` again.
@@ -110,7 +111,7 @@ Artifact hashes:
 
 ## Current Gate
 
-The next operational step is human playtest of the published Arena PVE Season 1 Loop v1 package before opening Arena tuning, broader Openworld expansion or new mode work.
+The next operational step is to publish the local Arena/Bosque Regression Hotfix when approved, then repeat the human playtest of Arena PVE Season 1 Loop v1 before opening Arena tuning, broader Openworld expansion or new mode work.
 
 Playtest focus:
 
@@ -204,6 +205,13 @@ Arena Duel Flow publication validation:
 - `wrangler pages deploy ... --branch main`: PASS, preview `https://0536635b.draxos-mobile-internal-alpha.pages.dev`.
 - `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174 -PublicDownloads -ConfirmRemoteMutation`: PASS.
 - `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174 -RemoteWebUrl https://0536635b.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS after loading local read-only Supabase URL and publishable key from `.env.internal-alpha.local`.
+
+Arena/Bosque Regression Hotfix local validation:
+
+- `git diff --check`: PASS.
+- `tools/validate.gd`: PASS, 236 tests and 3710 asserts.
+- `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS, including GUT client, runtime config smoke, foundation hardening smoke, responsive layout smoke, modes visual layout smoke and export preset smoke.
+- Remote publication was not run for this hotfix in this task.
 
 Historical validation logs and package-by-package publication evidence belong in `implementation/tracks/`, `docs/*-report.md`, Kanban Done cards or handoffs, not in this decision snapshot.
 
