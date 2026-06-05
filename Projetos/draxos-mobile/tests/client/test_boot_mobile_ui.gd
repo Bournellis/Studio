@@ -594,10 +594,13 @@ func test_arena_selection_renders_remote_arenas_as_data_driven_actions() -> void
 	assert_true(boot._action_buttons.has(locked_action))
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_TUTORIAL))
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_START_EARLY))
-	assert_not_null(_find_button_by_text(boot._content_body, "Tutorial | 1 duelo | Intro"))
-	assert_not_null(_find_button_by_text(boot._content_body, "Cinzas | 3 duelos | Aprendiz"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Intro | 1 duelo | primeiro clear"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Aprendiz | 3 duelos | primeiro clear"))
 	assert_not_null(_find_node_by_name(boot._content_body, "ArenaRecommendedCard"))
-	assert_not_null(_find_node_by_name(boot._content_body, "ArenaAlternativesPanel"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaSeason1ProgressPanel"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaSeason1Group_arena_tutorial_cinzas"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaSeason1Group_arena_cinzas_curta"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaSeason1Group_arena_veu_curta"))
 	var locked_button := boot._action_buttons[locked_action] as Button
 	assert_not_null(locked_button)
 	assert_true(locked_button.disabled)
@@ -605,7 +608,8 @@ func test_arena_selection_renders_remote_arenas_as_data_driven_actions() -> void
 	assert_false(locked_button.text.contains("Conclua dificuldade 1."))
 	assert_eq(locked_button.tooltip_text, "Conclua dificuldade 1.")
 	assert_true(_label_tree_contains(boot._content_body, "bloqueada: Conclua dificuldade 1."))
-	assert_true(_label_tree_contains(boot._content_body, "Outras arenas"))
+	assert_true(_label_tree_contains(boot._content_body, "Temporada 1"))
+	assert_true(_label_tree_contains(boot._content_body, "Dificuldades"))
 	assert_false(_visible_text_tree(boot._content_body).contains("Outras opcoes"))
 	assert_false(_visible_text_tree(boot._content_body).contains("s1_d00_intro"))
 	assert_false(_visible_text_tree(boot._content_body).contains("s1_d01_aprendiz"))
@@ -667,7 +671,7 @@ func test_arena_selection_recommends_next_uncompleted_arena_after_tutorial() -> 
 					"default_difficulty_id": "s1_d00_intro",
 					"unlocked": true,
 					"difficulties": [
-						{"difficulty_id": "s1_d00_intro", "max_steps": 1, "recommended_level_min": 1, "recommended_level_max": 3, "unlocked": true},
+						{"difficulty_id": "s1_d00_intro", "max_steps": 1, "recommended_level_min": 1, "recommended_level_max": 3, "reward_preview": {"xp": 81, "almas": 6}, "unlocked": true},
 					],
 				},
 				{
@@ -677,7 +681,8 @@ func test_arena_selection_recommends_next_uncompleted_arena_after_tutorial() -> 
 					"default_difficulty_id": "s1_d00_intro",
 					"unlocked": true,
 					"difficulties": [
-						{"difficulty_id": "s1_d00_intro", "max_steps": 3, "recommended_level_min": 3, "recommended_level_max": 4, "recommended_power_min": 160, "recommended_power_max": 260, "unlocked": true},
+						{"difficulty_id": "s1_d00_intro", "max_steps": 3, "recommended_level_min": 3, "recommended_level_max": 4, "recommended_power_min": 160, "recommended_power_max": 260, "reward_preview": {"xp": 150, "almas": 9, "ossos": 18}, "unlocked": true},
+						{"difficulty_id": "s1_d01_aprendiz", "max_steps": 3, "recommended_level_min": 5, "recommended_level_max": 6, "recommended_power_min": 240, "recommended_power_max": 320, "reward_preview": {"xp": 180, "almas": 11}, "unlocked": false, "locked_reason": "Conclua a dificuldade anterior."},
 					],
 				},
 			],
@@ -691,10 +696,17 @@ func test_arena_selection_recommends_next_uncompleted_arena_after_tutorial() -> 
 	assert_true(boot._action_buttons.has(next_action))
 	assert_not_null(_find_button_by_text(boot._content_body, "Iniciar Arena PVE"))
 	assert_not_null(_find_node_by_name(boot._content_body, "ArenaPreparationPanel"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaSeason1ProgressPanel"))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaSeason1Group_arena_cinzas_curta"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Iniciar proximo desta arena"))
 	assert_not_null(_find_button_by_text(boot._content_body, "Carregar Preparacao"))
 	assert_true(_child_index_by_name(boot._content_body, "ArenaPreparationPanel") > _child_index_by_name(boot._content_body, "ArenaRecommendedCard"))
 	assert_true(_label_tree_contains(boot._content_body, "Proximo desafio"))
+	assert_true(_label_tree_contains(boot._content_body, "Temporada 1"))
+	assert_true(_label_tree_contains(boot._content_body, "Progresso S1: 1/3 dificuldades concluidas | 2 liberadas"))
 	assert_true(_label_tree_contains(boot._content_body, "Arena Curta Das Cinzas"))
+	assert_true(_label_tree_contains(boot._content_body, "Recompensa prevista: 150 XP, 9 Almas, 18 Ossos"))
+	assert_true(_label_tree_contains(boot._content_body, "bloqueada: Conclua a dificuldade anterior."))
 	assert_false(_visible_text_tree(boot._content_body).contains("s1_d00_intro"))
 
 func test_arena_selection_routes_active_attempt_before_new_start() -> void:
@@ -882,6 +894,38 @@ func test_arena_buff_choice_renders_comparable_cards_with_existing_actions() -> 
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT))
 	assert_not_null(_find_button_by_text(boot._content_body, "Abandonar tentativa"))
 
+func test_arena_active_pending_buff_opens_choice_without_autoselecting_first_buff() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"arenas": [],
+		"active_attempt": {
+			"attempt_id": "attempt-buff-pending",
+			"arena_id": "arena_cinzas_curta",
+			"state": "awaiting_buff",
+			"duel_index": 1,
+			"duel_count": 3,
+			"duels_won": 1,
+			"locked_loadout_hash": "sha256:test",
+			"buff_offer": {
+				"step_index": 1,
+				"choices": [
+					{"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor"},
+					{"id": "arena_buff_potencia_menor", "display_name": "Potencia Ritual Menor"},
+				],
+			},
+		},
+	}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_ACTIVE)
+	await get_tree().process_frame
+
+	assert_not_null(_find_button_by_text(boot._content_body, "Escolher buff"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.arena_choose_buff_action("arena_buff_vitalidade_menor")))
+
 func test_arena_active_after_selected_buff_returns_to_resolve_duel() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
@@ -928,7 +972,24 @@ func test_arena_summary_continues_to_arena_instead_of_reward_claim_copy() -> voi
 	add_child_autofree(boot)
 	SessionStore.arena_state = {
 		"schema_version": "pve_arena_state_v1",
-		"arenas": [],
+		"progress": {
+			"tutorial_completed": true,
+			"metadata": {
+				"completed_tiers": {"arena_tutorial_cinzas:s1_d00_intro": true},
+				"completed_arenas": {"arena_tutorial_cinzas": true},
+			},
+		},
+		"arenas": [
+			{
+				"id": "arena_cinzas_curta",
+				"display_name": "Arena Curta Das Cinzas",
+				"duel_count": 3,
+				"unlocked": true,
+				"difficulties": [
+					{"difficulty_id": "s1_d00_intro", "max_steps": 3, "recommended_level_min": 3, "recommended_level_max": 4, "recommended_power_min": 160, "recommended_power_max": 260, "reward_preview": {"xp": 150, "almas": 9}, "unlocked": true},
+				],
+			},
+		],
 		"active_attempt": {
 			"attempt_id": "attempt-summary",
 			"arena_id": "arena_tutorial_cinzas",
@@ -954,7 +1015,10 @@ func test_arena_summary_continues_to_arena_instead_of_reward_claim_copy() -> voi
 	assert_null(_find_button_by_text(boot._content_body, "Confirmar resumo"))
 	assert_true(_label_tree_contains(boot._content_body, "recompensa ja foi aplicada pelo ultimo duelo"))
 	assert_true(_label_tree_contains(boot._content_body, "Recompensa: COMPLETION_REWARD_APPLIED_ON_DUEL_CLEAR"))
-	assert_true(_label_tree_contains(boot._content_body, "Proximo passo: continuar na Arena ou voltar ao Refugio para evoluir."))
+	assert_true(_label_tree_contains(boot._content_body, "Proximo passo: veja a recomendacao da Temporada 1 antes de continuar."))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaSeason1NextStepPanel"))
+	assert_true(_label_tree_contains(boot._content_body, "Proximo passo S1"))
+	assert_true(_label_tree_contains(boot._content_body, "Continuar na Arena confirma o resumo e abre a lista atualizada de desafios."))
 
 func test_boot_refugio_home_shows_progression_lab_when_dev_tools_are_enabled() -> void:
 	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)

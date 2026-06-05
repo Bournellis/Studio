@@ -622,7 +622,182 @@ async function proveRemoteArenaFlow(accessToken: string): Promise<string> {
     "remote arena battle log arena block should mark PVE_ARENA_V1",
   );
 
-  return attemptId;
+  const tutorialClaim = await postJson(
+    `${SUPABASE_URL}/functions/v1/arena/pve/claim`,
+    {
+      request_id: crypto.randomUUID(),
+      attempt_id: attemptId,
+    },
+    headers,
+  );
+  assertEq(
+    stringField(tutorialClaim, "schema_version"),
+    "arena_claim_response_v1",
+    "remote tutorial claim should be summary-only",
+  );
+  assertEq(
+    tutorialClaim.mutates_economy,
+    false,
+    "remote tutorial claim should not mutate economy",
+  );
+
+  const postTutorialState = await getJson(
+    `${SUPABASE_URL}/functions/v1/arena/pve/state`,
+    headers,
+  );
+  assert(
+    firstUnlockedDifficulty(
+      postTutorialState,
+      "arena_cinzas_curta",
+      "s1_d00_intro",
+    ),
+    "remote tutorial clear should unlock first real Arena difficulty",
+  );
+
+  const firstRealStart = await postJson(
+    `${SUPABASE_URL}/functions/v1/arena/pve/start`,
+    {
+      request_id: crypto.randomUUID(),
+      arena_id: "arena_cinzas_curta",
+      difficulty_id: "s1_d00_intro",
+      difficulty_tier: 0,
+    },
+    headers,
+  );
+  const firstRealAttemptValue = isObject(firstRealStart.active_attempt)
+    ? firstRealStart.active_attempt
+    : firstRealStart.attempt;
+  assert(
+    isObject(firstRealAttemptValue),
+    "remote first real Arena start should return active_attempt or attempt",
+  );
+  const firstRealAttempt = firstRealAttemptValue;
+  const firstRealAttemptId = stringField(firstRealAttempt, "id");
+  assert(firstRealAttemptId !== "", "remote first real Arena should return attempt.id");
+  assertEq(
+    stringField(firstRealAttempt, "difficulty_id"),
+    "s1_d00_intro",
+    "remote first real Arena should start requested difficulty",
+  );
+  assertEq(
+    numberField(firstRealAttempt, "max_steps"),
+    3,
+    "remote first real Arena should be 3 duels",
+  );
+
+  const blockedStart = await postJson(
+    `${SUPABASE_URL}/functions/v1/arena/pve/start`,
+    {
+      request_id: crypto.randomUUID(),
+      arena_id: "arena_cinzas_curta",
+      difficulty_id: "s1_d00_intro",
+      difficulty_tier: 0,
+    },
+    headers,
+    false,
+  );
+  assertEq(
+    stringField(objectField(blockedStart, "error"), "code"),
+    "ARENA_ATTEMPT_ALREADY_ACTIVE",
+    "remote Arena should block starting a second attempt while one is active",
+  );
+
+  for (let stepIndex = 1; stepIndex <= 3; stepIndex += 1) {
+    const duelResult = await postJson(
+      `${SUPABASE_URL}/functions/v1/arena/pve/duel/request`,
+      {
+        request_id: crypto.randomUUID(),
+        attempt_id: firstRealAttemptId,
+      },
+      headers,
+    );
+    const realStep = objectField(duelResult, "step");
+    const realBattleLog = objectField(realStep, "battle_log");
+    const realMetadata = objectField(realBattleLog, "metadata");
+    assertEq(
+      numberField(realMetadata, "duel_count"),
+      3,
+      "remote first real Arena battle log should expose 3-duel count",
+    );
+    assertEq(
+      numberField(realMetadata, "duel_index"),
+      stepIndex,
+      "remote first real Arena battle log should expose current duel index",
+    );
+    if (stepIndex < 3) {
+      const options = arrayField(realStep, "buff_options");
+      assert(options.length > 0, "remote first real Arena win should offer a buff before next duel");
+      const pendingState = await getJson(
+        `${SUPABASE_URL}/functions/v1/arena/pve/state`,
+        headers,
+      );
+      const activeAttempt = objectField(pendingState, "active_attempt");
+      assertEq(
+        stringField(activeAttempt, "state"),
+        "awaiting_buff",
+        "remote Arena state should preserve pending buff on active attempt",
+      );
+      assert(
+        arrayField(objectField(activeAttempt, "buff_offer"), "choices").length > 0,
+        "remote Arena state active attempt should expose buff_offer choices",
+      );
+      const firstBuff = options.find(isObject);
+      assert(isObject(firstBuff), "remote buff options should include object choices");
+      await postJson(
+        `${SUPABASE_URL}/functions/v1/arena/pve/buff/select`,
+        {
+          request_id: crypto.randomUUID(),
+          attempt_id: firstRealAttemptId,
+          step_index: stepIndex,
+          buff_id: stringField(firstBuff, "id"),
+        },
+        headers,
+      );
+    } else {
+      const rewardPayload = objectField(realStep, "reward_payload");
+      const completion = objectField(rewardPayload, "completion");
+      assertEq(
+        completion.completed,
+        true,
+        "remote first real Arena final duel should mark completion",
+      );
+      assertEq(
+        stringField(completion, "arena_id"),
+        "arena_cinzas_curta",
+        "remote first real Arena completion should preserve arena_id",
+      );
+    }
+  }
+
+  const firstRealClaim = await postJson(
+    `${SUPABASE_URL}/functions/v1/arena/pve/claim`,
+    {
+      request_id: crypto.randomUUID(),
+      attempt_id: firstRealAttemptId,
+    },
+    headers,
+  );
+  assertEq(
+    firstRealClaim.mutates_economy,
+    false,
+    "remote first real Arena claim should remain summary-only",
+  );
+
+  return firstRealAttemptId;
+}
+
+function firstUnlockedDifficulty(
+  state: JsonObject,
+  arenaId: string,
+  difficultyId: string,
+): boolean {
+  const arena = findObjectByField(arrayField(state, "arenas"), "id", arenaId);
+  const difficulty = findObjectByField(
+    arrayField(arena, "difficulties"),
+    "difficulty_id",
+    difficultyId,
+  );
+  return difficulty.unlocked === true;
 }
 
 async function recordModeEvent(

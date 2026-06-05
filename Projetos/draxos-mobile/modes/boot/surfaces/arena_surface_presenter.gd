@@ -46,7 +46,7 @@ func render_active(host: Node) -> void:
 	_add_duel_progress_rail(host, attempt)
 	_add_attempt_summary_panel(host, attempt)
 	if not _pending_buff_choices(attempt).is_empty():
-		_call_host(host, "_add_action_button", ["Escolher buff", AppShellActionContractScript.arena_choose_buff_action(_first_buff_id(attempt))])
+		_call_host(host, "_add_action_button", ["Escolher buff", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT])
 	else:
 		_call_host(host, "_add_action_button", ["Resolver duelo", AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL])
 	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
@@ -72,6 +72,7 @@ func render_summary(host: Node) -> void:
 	var summary := _as_dictionary(arena.get("summary", attempt.get("summary", {})))
 	_call_host(host, "_add_body_text", ["Tentativa encerrada. Quando houve clear, a recompensa ja foi aplicada pelo ultimo duelo; este passo apenas atualiza a Arena."])
 	_call_host(host, "_add_output_label", [_summary_text(attempt, summary)])
+	_render_summary_next_step(host)
 	_call_host(host, "_add_action_button", ["Continuar na Arena", AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
@@ -83,31 +84,14 @@ func _render_available_arenas(host: Node, arenas: Array) -> void:
 	if arenas.is_empty():
 		_render_dev_fallback_arenas(host)
 		return
-	var panel := _arena_panel(host, "ArenaAlternativesPanel", "bg_panel", "border_default")
-	var stack := _arena_panel_stack(panel, 7)
-	stack.add_child(_arena_label("Outras arenas", 14, "text_primary"))
-	stack.add_child(_arena_label("Escolha outra lista ou veja por que ela ainda esta bloqueada.", 12, "text_secondary"))
+	var progress := _as_dictionary(SessionStore.arena_snapshot().get("progress", {}))
+	_render_season_progress_panel(host, arenas, progress)
 	for arena_variant: Variant in arenas:
 		var arena := _as_dictionary(arena_variant)
 		var arena_id := str(arena.get("id", "")).strip_edges()
 		if arena_id == "":
 			continue
-		var difficulties := _as_array(arena.get("difficulties", []))
-		if difficulties.is_empty():
-			difficulties = [arena]
-		for difficulty_variant: Variant in difficulties:
-			var difficulty := _as_dictionary(difficulty_variant)
-			var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
-			var label := _arena_button_label(arena, difficulty)
-			var action_id := AppShellActionContractScript.arena_start_action(arena_id, difficulty_id)
-			var unlocked := _arena_is_unlocked(difficulty) and _arena_is_unlocked(arena)
-			var locked_reason := _arena_locked_reason(difficulty if not _arena_is_unlocked(difficulty) else arena)
-			if not unlocked:
-				label = "%s | bloqueada" % label
-			stack.add_child(_arena_action_button(host, label, action_id, not unlocked, locked_reason))
-			if not unlocked:
-				stack.add_child(_arena_label("bloqueada: %s" % locked_reason, 11, "text_secondary"))
-	_call_host(host, "_add_content_control", [panel])
+		_render_arena_group(host, arena, progress)
 
 func _render_recommended_arena(host: Node, arenas: Array) -> void:
 	var recommendation := _recommended_arena_option(arenas)
@@ -132,7 +116,103 @@ func _render_recommended_arena(host: Node, arenas: Array) -> void:
 		_level_range_text(difficulty),
 		_power_range_text(difficulty),
 	], 13, "text_secondary"))
+	stack.add_child(_arena_label("Progresso S1: %s | Recompensa prevista: %s" % [
+		_tier_status_text(arena_id, difficulty, _as_dictionary(SessionStore.arena_snapshot().get("progress", {}))),
+		_reward_preview_text(_as_dictionary(difficulty.get("reward_preview", arena.get("reward_preview", {})))),
+	], 12, "text_secondary"))
 	stack.add_child(_arena_action_button(host, label, action_id, false, "", true))
+	_call_host(host, "_add_content_control", [panel])
+
+func _render_season_progress_panel(host: Node, arenas: Array, progress: Dictionary) -> void:
+	var totals := _season_progress_counts(arenas, progress)
+	var recommendation := _recommended_arena_option(arenas)
+	var next_text := "Complete o tutorial para abrir a primeira arena curta."
+	if not recommendation.is_empty():
+		var arena := _as_dictionary(recommendation.get("arena", {}))
+		var difficulty := _as_dictionary(recommendation.get("difficulty", {}))
+		next_text = "%s - %s" % [
+			str(arena.get("display_name", str(arena.get("id", "Arena PVE")))),
+			_difficulty_meta_text(difficulty),
+		]
+	var panel := _arena_panel(host, "ArenaSeason1ProgressPanel", "bg_panel", "border_default")
+	var stack := _arena_panel_stack(panel, 7)
+	stack.add_child(_arena_label("Temporada 1", 14, "text_primary"))
+	stack.add_child(_arena_label("Progresso S1: %d/%d dificuldades concluidas | %d liberadas" % [
+		int(totals.get("completed", 0)),
+		int(totals.get("total", 0)),
+		int(totals.get("unlocked", 0)),
+	], 12, "text_secondary"))
+	stack.add_child(_arena_label("Proximo recomendado: %s" % next_text, 12, "text_secondary"))
+	_call_host(host, "_add_content_control", [panel])
+
+func _render_arena_group(host: Node, arena: Dictionary, progress: Dictionary) -> void:
+	var arena_id := str(arena.get("id", "")).strip_edges()
+	if arena_id == "":
+		return
+	var difficulties := _as_array(arena.get("difficulties", []))
+	if difficulties.is_empty():
+		difficulties = [arena]
+	var next_option := _best_option_for_arena(arena, progress)
+	var panel := _arena_panel(host, "ArenaSeason1Group_%s" % arena_id, "bg_panel", "border_default")
+	var stack := _arena_panel_stack(panel, 7)
+	stack.add_child(_arena_label(str(arena.get("display_name", arena_id)), 14, "text_primary"))
+	var description := str(arena.get("description", "")).strip_edges()
+	if description != "":
+		stack.add_child(_arena_label(description, 12, "text_secondary"))
+	stack.add_child(_arena_label("%s | %d duelo%s | %d/%d dificuldades concluidas" % [
+		_short_arena_label(arena),
+		int(arena.get("duel_count", arena.get("max_steps", 1))),
+		"" if int(arena.get("duel_count", arena.get("max_steps", 1))) == 1 else "s",
+		_arena_completed_count(arena_id, difficulties, progress),
+		difficulties.size(),
+	], 12, "text_secondary"))
+	if not _arena_is_unlocked(arena):
+		stack.add_child(_arena_label("bloqueada: %s" % _arena_locked_reason(arena), 12, "text_secondary"))
+	elif not next_option.is_empty():
+		var next_difficulty := _as_dictionary(next_option.get("difficulty", {}))
+		var next_difficulty_id := str(next_difficulty.get("difficulty_id", next_difficulty.get("id", ""))).strip_edges()
+		stack.add_child(_arena_label("Proximo desta arena: %s" % _difficulty_detail_text(next_difficulty), 12, "text_secondary"))
+		stack.add_child(_arena_action_button(
+			host,
+			"Iniciar proximo desta arena",
+			AppShellActionContractScript.arena_start_action(arena_id, next_difficulty_id),
+			false,
+			"",
+			true
+		))
+	stack.add_child(_arena_label("Dificuldades", 12, "text_primary"))
+	for difficulty_variant: Variant in difficulties:
+		var difficulty := _as_dictionary(difficulty_variant)
+		var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+		var unlocked := _arena_is_unlocked(arena) and _arena_is_unlocked(difficulty)
+		var locked_reason := _difficulty_locked_reason(arena, difficulty)
+		var action_id := AppShellActionContractScript.arena_start_action(arena_id, difficulty_id)
+		var label := _difficulty_action_label(arena_id, difficulty, progress)
+		if not unlocked:
+			label = "%s | bloqueada" % label
+		var is_next := unlocked and not next_option.is_empty() and difficulty_id == str(_as_dictionary(next_option.get("difficulty", {})).get("difficulty_id", ""))
+		stack.add_child(_arena_action_button(host, label, action_id, not unlocked, locked_reason, is_next))
+		stack.add_child(_arena_label(_difficulty_detail_text(difficulty) if unlocked else "bloqueada: %s" % locked_reason, 11, "text_secondary"))
+	_call_host(host, "_add_content_control", [panel])
+
+func _render_summary_next_step(host: Node) -> void:
+	var arena := SessionStore.arena_snapshot()
+	var arenas := _as_array(arena.get("arenas", []))
+	if arenas.is_empty():
+		return
+	var recommendation := _recommended_arena_option(arenas)
+	if recommendation.is_empty():
+		return
+	var next_arena := _as_dictionary(recommendation.get("arena", {}))
+	var difficulty := _as_dictionary(recommendation.get("difficulty", {}))
+	var panel := _arena_panel(host, "ArenaSeason1NextStepPanel", "bg_panel_alt", "accent_battle")
+	var stack := _arena_panel_stack(panel, 7)
+	stack.add_child(_arena_label("Proximo passo S1", 14, "text_primary"))
+	stack.add_child(_arena_label("%s\n%s" % [
+		str(next_arena.get("display_name", next_arena.get("id", "Arena PVE"))),
+		_difficulty_detail_text(difficulty),
+	], 12, "text_secondary"))
+	stack.add_child(_arena_label("Continuar na Arena confirma o resumo e abre a lista atualizada de desafios.", 12, "text_secondary"))
 	_call_host(host, "_add_content_control", [panel])
 
 func _render_active_attempt_recovery(host: Node, attempt: Dictionary) -> void:
@@ -197,6 +277,80 @@ func _recommended_arena_option(arenas: Array) -> Dictionary:
 			if not _tier_completed(arena_id, difficulty_id, progress):
 				return option
 	return first_unlocked
+
+func _best_option_for_arena(arena: Dictionary, progress: Dictionary) -> Dictionary:
+	if not _arena_is_unlocked(arena):
+		return {}
+	var arena_id := str(arena.get("id", "")).strip_edges()
+	if arena_id == "":
+		return {}
+	var first_unlocked := {}
+	var difficulties := _as_array(arena.get("difficulties", []))
+	if difficulties.is_empty():
+		difficulties = [arena]
+	for difficulty_variant: Variant in difficulties:
+		var difficulty := _as_dictionary(difficulty_variant)
+		if not _arena_is_unlocked(difficulty):
+			continue
+		var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+		var option := {"arena": arena, "difficulty": difficulty}
+		if first_unlocked.is_empty():
+			first_unlocked = option
+		if not _tier_completed(arena_id, difficulty_id, progress):
+			return option
+	return first_unlocked
+
+func _season_progress_counts(arenas: Array, progress: Dictionary) -> Dictionary:
+	var total := 0
+	var unlocked := 0
+	var completed := 0
+	for arena_variant: Variant in arenas:
+		var arena := _as_dictionary(arena_variant)
+		var arena_id := str(arena.get("id", "")).strip_edges()
+		if arena_id == "":
+			continue
+		var difficulties := _as_array(arena.get("difficulties", []))
+		if difficulties.is_empty():
+			difficulties = [arena]
+		for difficulty_variant: Variant in difficulties:
+			var difficulty := _as_dictionary(difficulty_variant)
+			var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+			total += 1
+			if _arena_is_unlocked(arena) and _arena_is_unlocked(difficulty):
+				unlocked += 1
+			if _tier_completed(arena_id, difficulty_id, progress):
+				completed += 1
+	return {"total": total, "unlocked": unlocked, "completed": completed}
+
+func _arena_completed_count(arena_id: String, difficulties: Array, progress: Dictionary) -> int:
+	var count := 0
+	for difficulty_variant: Variant in difficulties:
+		var difficulty := _as_dictionary(difficulty_variant)
+		var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+		if _tier_completed(arena_id, difficulty_id, progress):
+			count += 1
+	return count
+
+func _difficulty_action_label(arena_id: String, difficulty: Dictionary, progress: Dictionary) -> String:
+	return "%s | %s duelo%s | %s" % [
+		_difficulty_label(difficulty),
+		str(difficulty.get("max_steps", difficulty.get("enemy_count", 1))),
+		"" if int(difficulty.get("max_steps", difficulty.get("enemy_count", 1))) == 1 else "s",
+		_tier_status_text(arena_id, difficulty, progress),
+	]
+
+func _difficulty_detail_text(difficulty: Dictionary) -> String:
+	return "%s | Recompensa prevista: %s" % [
+		_difficulty_meta_text(difficulty),
+		_reward_preview_text(_as_dictionary(difficulty.get("reward_preview", {}))),
+	]
+
+func _difficulty_locked_reason(arena: Dictionary, difficulty: Dictionary) -> String:
+	if not _arena_is_unlocked(arena):
+		return _arena_locked_reason(arena)
+	if not _arena_is_unlocked(difficulty):
+		return _arena_locked_reason(difficulty)
+	return ""
 
 func _render_dev_fallback_arenas(host: Node) -> void:
 	_call_host(host, "_add_output_label", ["Estado remoto da Arena indisponivel. Fallback dev local: tutorial e arena curta."])
@@ -452,6 +606,15 @@ func _short_arena_label(arena: Dictionary) -> String:
 
 func _difficulty_label(difficulty: Dictionary) -> String:
 	return ArenaSurfaceTextScript.difficulty_label(difficulty)
+
+func _difficulty_meta_text(difficulty: Dictionary) -> String:
+	return ArenaSurfaceTextScript.difficulty_meta_text(difficulty)
+
+func _reward_preview_text(reward_preview: Dictionary) -> String:
+	return ArenaSurfaceTextScript.reward_preview_text(reward_preview)
+
+func _tier_status_text(arena_id: String, difficulty: Dictionary, progress: Dictionary) -> String:
+	return ArenaSurfaceTextScript.tier_status_text(arena_id, difficulty, progress)
 
 func _friendly_attempt_state(state: String) -> String:
 	return ArenaSurfaceTextScript.friendly_attempt_state(state)

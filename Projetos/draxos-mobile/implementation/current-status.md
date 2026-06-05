@@ -4,15 +4,15 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Arena Duel Flow Hotfix`
-- Active stage status: `ARENA_DUEL_FLOW_HOTFIX_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Arena PVE Season 1 Loop v1`
+- Active stage status: `ARENA_PVE_SEASON1_LOOP_V1_IMPLEMENTED_LOCAL`
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
 ## Current Truth
 
-- Latest published remote package: `Arena Duel Flow Hotfix`
+- Latest published remote package: `Arena Duel Flow Hotfix` until Arena PVE Season 1 Loop v1 is published.
 - Release root: `internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
@@ -20,6 +20,7 @@
 - Source state: `main` after merging and publishing the Arena Duel Flow Hotfix, preserving Track 23 Arena PVE update recovery and later trunk merges.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
 - Published source hotfix: `Arena Duel Flow Hotfix` keeps Preparacao/behavior inside the active-duel menu, removes the detached `Ajustar comportamento` CTA, and treats a server step with `selected_buff` as resolved so the next active menu returns to `Resolver duelo` instead of showing `Escolher buff` again.
+- Current local package: `Arena PVE Season 1 Loop v1` is implemented locally and pending commit/merge/publication. It groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
 - Previous Arena package: `Arena PVE First Real Run + Update Recovery`
 - Previous Arena release root: `internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a`
 - Previous Arena preview: `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`
@@ -40,7 +41,24 @@
 - Arena context: Track 18 - PVE Arena Initial, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context and are now extended by Track 23 update recovery.
 - Technical context: Track 16 Behavior And Potion Crafting remains existing alpha substance summarized in `docs/behavior-potion-crafting-v1.md`, not the current product focus.
 
-## Published Package
+## Current Local Package
+
+Arena PVE Season 1 Loop v1 is implemented locally. It builds on the accepted Arena Duel Flow Hotfix playtest and moves the next Arena expansion from "functional flow" to "readable Season 1 loop".
+
+Delivered locally:
+
+- groups Arena selection by arena and difficulty with `ArenaSeason1ProgressPanel`, `ArenaSeason1Group_*` and `ArenaSeason1NextStepPanel`;
+- shows Season 1 progress, next recommended challenge, locked reasons and reward preview per tier;
+- keeps reward preview as informational only; final reward remains server-authoritative on the last `/arena/pve/duel/request`;
+- changes active pending-buff CTA to navigate to buff choice through resume instead of auto-selecting the first buff;
+- aligns legacy first-real fallback to `s1_d00_intro` + tier `0`;
+- enriches `/arena/pve/state` and claim deltas with active attempt `latest_step`, `last_step`, `state = "awaiting_buff"` and `buff_offer` when a pending buff exists;
+- extends remote Arena smoke to tutorial, claim, unlock of first real 3-duel run, active-start blocker, buff selection between duels and final claim;
+- preserves Bosque v3 UX/Feel, Technical Hardening, Openworld Main Menu Sync, Foundation Hardening V2, Hardening Platform V1, Remote Lab Runner and previous Arena packages.
+
+Publication evidence: pending.
+
+## Previous Published Package
 
 Arena Duel Flow Hotfix is the current Internal Alpha package. It preserves Arena PVE First Real Run + Update Recovery, then fixes the active-duel menu so Preparacao/behavior is available inside the duel flow and a victory buff already selected does not loop the player back into `Escolher buff`.
 
@@ -74,7 +92,7 @@ Artifact hashes:
 
 ## Current Gate
 
-The next product step is human playtest of the published Arena Duel Flow Hotfix before opening Arena tuning, broader Openworld expansion or new mode work.
+The next operational step is commit, merge, publish and RemoteReadOnly validation for Arena PVE Season 1 Loop v1. The next product step after publication is human playtest of the Season 1 loop before opening Arena tuning, broader Openworld expansion or new mode work.
 
 Playtest focus:
 
@@ -84,6 +102,8 @@ Playtest focus:
 4. Confirm the player is no longer trapped by an inaccessible post-update Arena attempt.
 5. Confirm Preparacao appears inside the active-duel menu and that a selected victory buff leads back to `Resolver duelo`.
 6. Confirm Bosque entry, collect/deposit/craft feedback and main menu still regress cleanly after the Arena package.
+7. Confirm Season 1 selection is readable by arena/difficulty, reward preview and locked reasons.
+8. Confirm reopening during a pending buff returns to the buff choice instead of trapping or auto-selecting.
 
 ## Live Boundaries
 
@@ -96,6 +116,15 @@ Playtest focus:
 - Current names, spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance unless a live doc promotes them.
 
 ## Validation Snapshot
+
+Arena PVE Season 1 Loop v1 local validation:
+
+- `deno test --allow-read server/tests/arena_loop_unlock_friction_test.ts server/tests/pve_arena_catalog_test.ts`: PASS, 9 tests.
+- `deno check server/tests/internal_alpha_remote_smoke.ts`: PASS.
+- `npx -y deno task --cwd server/functions check`: PASS.
+- `npx -y deno task --cwd supabase/functions check`: PASS.
+- GUT client suite: PASS, 234 tests and 3690 asserts.
+- `tools/validate.gd`: PASS, 234 tests and 3690 asserts.
 
 Track 23 local validation before publication:
 

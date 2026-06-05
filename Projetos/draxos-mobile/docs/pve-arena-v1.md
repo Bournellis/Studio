@@ -3,14 +3,14 @@
 - Status: `VIVO`
 - Data: `2026-05-31`
 - Decisao-base: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`
-- Estado de entrega: `PUBLISHED_INTERNAL_ALPHA_TRACK_23`; Track 23 adiciona recuperacao client de tentativa ativa antiga e protege a primeira arena real de 3 duelos contra bloqueio pos-update.
+- Estado de entrega: `ARENA_PVE_SEASON1_LOOP_V1_IMPLEMENTED_LOCAL`; Season 1 Loop v1 adiciona leitura agrupada por arena/dificuldade, progresso S1, recompensa prevista, resumo contextual e preservacao remota de buff pendente em tentativa ativa.
 - Escopo: contrato de produto, conteudo, backend, client, schema, labs e regras para o primeiro pacote Arena PVE data-driven publicado.
 
 ## Papel Do Documento
 
 `docs/pve-arena-initial-direction.md` define a direcao de produto. Este documento registra a implementacao publicada de Track 18 para docs, backend, client, Battle Lab, Progression Lab e ruleset.
 
-Track 19 usa este documento como contrato vivo de consistencia antes de tuning fino. O pacote Track 19 esta implementado e publicado em Internal Alpha com consistencia para potion stock, claim, buff endpoint, selecao data-driven e labs. Track 23 publica a camada client de retomar/abandonar/encerrar tentativa antiga e confirma a primeira arena real de 3 duelos como proximo alvo jogavel. Os valores `CALIBRAVEL_ALPHA` continuam sujeitos a labs e playtest humano.
+Track 19 usa este documento como contrato vivo de consistencia antes de tuning fino. O pacote Track 19 esta implementado e publicado em Internal Alpha com consistencia para potion stock, claim, buff endpoint, selecao data-driven e labs. Track 23 publica a camada client de retomar/abandonar/encerrar tentativa antiga e confirma a primeira arena real de 3 duelos como proximo alvo jogavel. Arena PVE Season 1 Loop v1, detalhado em `docs/arena-pve-season1-loop-v1.md`, organiza a selecao em grupos de arena/dificuldade e endurece retomada remota com buff pendente. Os valores `CALIBRAVEL_ALPHA` continuam sujeitos a labs e playtest humano.
 
 ## Decisoes Fechadas Para v1
 
@@ -126,6 +126,24 @@ Contrato client:
 - iniciar nova arena tambem possui guarda local: retomar ou encerrar vem antes de `/arena/pve/start`;
 - abandono usa somente `/arena/pve/abandon` com `request_id/request_hash` e nao concede recompensa de conclusao;
 - a primeira arena real de 3 duelos continua o proximo alvo apos tutorial, com buff entre duelos e retorno para Arena, nao para Refugio obrigatorio.
+
+Season 1 Loop v1 adiciona contrato backend:
+
+- `/arena/pve/state` deve enriquecer `active_attempt` com `latest_step`/`last_step` quando existir step ativa recente;
+- se a ultima step tiver `buff_options` e ainda nao tiver `selected_buff`, `active_attempt.state` deve ser `awaiting_buff`;
+- nesse caso `active_attempt.buff_offer` deve trazer `step_index`, `after_duel_index` e `choices`;
+- o client deve abrir a tela de escolha de buff por retomada/navegacao, nao selecionar automaticamente a primeira opcao.
+
+## UX Season 1
+
+Season 1 Loop v1 define a leitura atual da Arena:
+
+- painel de progresso S1 com dificuldades concluidas/liberadas;
+- proximo desafio recomendado por primeiro tier desbloqueado e ainda nao concluido;
+- grupos por arena (`Tutorial`, `Cinzas`, `Veu`, `Ossos`, `Abismo`) com comprimento e dificuldades;
+- recompensa prevista exibida como preview do perfil do tier, sem substituir o claim autoritativo;
+- resumo de tentativa com proximo passo S1 antes de atualizar a selecao;
+- locked reasons visiveis e preservados em tooltip/botao.
 
 ## Inimigos PVE
 

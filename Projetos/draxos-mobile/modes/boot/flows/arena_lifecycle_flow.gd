@@ -9,7 +9,7 @@ const ARENA_REPLAY_TICK_SECONDS := 0.05
 const TUTORIAL_ARENA_ID := "arena_tutorial_cinzas"
 const EARLY_ARENA_ID := "arena_cinzas_curta"
 const TUTORIAL_DIFFICULTY_TIER := 0
-const EARLY_DIFFICULTY_TIER := 1
+const EARLY_DIFFICULTY_TIER := 0
 
 func render_selection(host: Node) -> void:
 	host.get("_arena_surface_presenter").render_selection(host)

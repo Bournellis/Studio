@@ -125,7 +125,26 @@ Deno.test("client Arena loop removes loadout click and continues inside Arena", 
   assertIncludes(lifecycle, "SupabaseClient.fetch_arena_state");
   assertIncludes(presenter, '"Continuar na Arena"');
   assertIncludes(presenter, '"Proximo desafio"');
+  assertIncludes(presenter, "ArenaSeason1ProgressPanel");
+  assertIncludes(presenter, "ArenaSeason1Group_");
+  assertIncludes(presenter, "ArenaSeason1NextStepPanel");
+  assertIncludes(presenter, "Recompensa prevista");
   assertNotIncludes(presenter, '"Confirmar resumo"');
+});
+
+Deno.test("client Arena active buff button opens choice route without auto-selecting first buff", async () => {
+  const presenter = await Deno.readTextFile(
+    projectFile("modes/boot/surfaces/arena_surface_presenter.gd"),
+  );
+
+  assertIncludes(
+    presenter,
+    '["Escolher buff", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT]',
+  );
+  assertNotIncludes(
+    presenter,
+    '["Escolher buff", AppShellActionContractScript.arena_choose_buff_action(_first_buff_id(attempt))]',
+  );
 });
 
 Deno.test("arena claim returns selection delta for post-claim responsiveness", async () => {
@@ -140,6 +159,23 @@ Deno.test("arena claim returns selection delta for post-claim responsiveness", a
   assertIncludes(serverFunction, "arenaStateDeltaPayload");
   assertIncludes(serverFunction, "arena_state: arenaState.value");
   assertIncludes(serverFunction, 'schema_version: "pve_arena_state_v1"');
+});
+
+Deno.test("arena state enriches active attempt with latest step buff offer", async () => {
+  const serverFunction = await Deno.readTextFile(
+    projectFile("server/functions/arena/index.ts"),
+  );
+  const supabaseFunction = await Deno.readTextFile(
+    projectFile("supabase/functions/arena/index.ts"),
+  );
+
+  assertEq(serverFunction, supabaseFunction, "Arena function mirrors");
+  assertIncludes(serverFunction, "loadLatestAttemptStep");
+  assertIncludes(serverFunction, "enrichActiveAttempt");
+  assertIncludes(serverFunction, "buffOfferFromStep");
+  assertIncludes(serverFunction, "payload.state = \"awaiting_buff\"");
+  assertIncludes(serverFunction, "payload.buff_offer = buffOffer");
+  assertIncludes(serverFunction, "active_attempt: enrichedActiveAttempt");
 });
 
 Deno.test("client exposes Arena update recovery and abandon action", async () => {

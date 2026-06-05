@@ -127,7 +127,7 @@ static func next_enemy_label(attempt: Dictionary) -> String:
 static func summary_text(attempt: Dictionary, summary: Dictionary) -> String:
 	var duels_won := int(summary.get("duels_won", attempt.get("duels_won", 0)))
 	var duels_total := maxi(1, int(attempt.get("duel_count", attempt.get("duels_total", summary.get("duels_total", 1)))))
-	return "Estado: %s\nDuelos vencidos: %d/%d\nRecompensa: %s\nProximo passo: continuar na Arena ou voltar ao Refugio para evoluir." % [
+	return "Estado: %s\nDuelos vencidos: %d/%d\nRecompensa: %s\nProximo passo: veja a recomendacao da Temporada 1 antes de continuar." % [
 		friendly_attempt_state(str(attempt.get("status", summary.get("status", "completed")))),
 		clampi(duels_won, 0, duels_total),
 		duels_total,
@@ -173,11 +173,78 @@ static func difficulty_label(difficulty: Dictionary) -> String:
 			return "Iniciado"
 		"s1_d03_adepto":
 			return "Adepto"
-		"s1_d04_veterano":
-			return "Veterano"
+		"s1_d04_familiar":
+			return "Familiar"
+		"s1_d05_arcano":
+			return "Arcano"
+		"s1_d06_ritualista":
+			return "Ritualista"
+		"s1_d07_assombrado":
+			return "Assombrado"
+		"s1_d08_abissal":
+			return "Abissal"
+		"s1_d09_capstone":
+			return "Capstone"
 	if difficulty_id.begins_with("s1_d"):
 		return difficulty_id.get_slice("_", difficulty_id.get_slice_count("_") - 1).capitalize()
 	return difficulty_id
+
+static func difficulty_meta_text(difficulty: Dictionary) -> String:
+	return "%s | Lv %s | Poder %s | %s" % [
+		difficulty_label(difficulty),
+		level_range_text(difficulty),
+		power_range_text(difficulty),
+		clear_rate_text(difficulty),
+	]
+
+static func reward_preview_text(reward_preview: Dictionary) -> String:
+	if reward_preview.is_empty():
+		return "Recompensa calibravel da Arena."
+	var parts := PackedStringArray()
+	for spec in [
+		["xp", "XP"],
+		["almas", "Almas"],
+		["energia", "Energia"],
+		["ossos", "Ossos"],
+		["po_osso", "Po de osso"],
+		["sangue", "Sangue"],
+		["cristais", "Cristais"],
+	]:
+		var key := str(spec[0])
+		var amount := int(reward_preview.get(key, 0))
+		if amount > 0:
+			parts.append("%d %s" % [amount, str(spec[1])])
+	if parts.is_empty():
+		return "Recompensa calibravel da Arena."
+	return ", ".join(parts)
+
+static func clear_rate_text(difficulty: Dictionary) -> String:
+	var target := as_dictionary(difficulty.get("clear_rate_target", {}))
+	var min_rate := _rate_percent(target.get("min", target.get("min_clear_rate", target.get("min_percent", -1.0))))
+	var max_rate := _rate_percent(target.get("max", target.get("max_clear_rate", target.get("max_percent", -1.0))))
+	if min_rate < 0.0 and max_rate < 0.0:
+		return "taxa alvo alpha"
+	if min_rate >= 0.0 and max_rate >= 0.0:
+		return "clear alvo %d-%d%%" % [roundi(min_rate), roundi(max_rate)]
+	if min_rate >= 0.0:
+		return "clear alvo >= %d%%" % roundi(min_rate)
+	return "clear alvo <= %d%%" % roundi(max_rate)
+
+static func _rate_percent(value: Variant) -> float:
+	var rate := float(value)
+	if rate < 0.0:
+		return -1.0
+	return rate if rate > 1.0 else rate * 100.0
+
+static func tier_status_text(arena_id: String, difficulty: Dictionary, progress: Dictionary) -> String:
+	var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+	if arena_id == "arena_tutorial_cinzas" and bool(progress.get("tutorial_completed", false)):
+		return "concluida"
+	var metadata := as_dictionary(progress.get("metadata", {}))
+	var completed_tiers := as_dictionary(metadata.get("completed_tiers", {}))
+	if difficulty_id != "" and bool(completed_tiers.get("%s:%s" % [arena_id, difficulty_id], false)):
+		return "concluida"
+	return "primeiro clear" if difficulty_id != "" else "disponivel"
 
 static func friendly_attempt_state(state: String) -> String:
 	match state:

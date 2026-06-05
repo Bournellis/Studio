@@ -192,6 +192,23 @@ async function handleList(
       500,
     );
   }
+  const activeAttempt = attempts.value.find((attempt) => attempt.status === "active") ?? null;
+  const activeAttemptStep = activeAttempt === null
+    ? { value: null, error: null }
+    : await loadLatestAttemptStep(config, activeAttempt.id);
+  if (activeAttemptStep.error !== null) {
+    return errorResponse(
+      activeAttemptStep.error.code,
+      activeAttemptStep.error.message,
+      activeAttemptStep.error.status,
+    );
+  }
+  const enrichedActiveAttempt = enrichActiveAttempt(activeAttempt, activeAttemptStep.value);
+  const enrichedAttempts = attempts.value.map((attempt) =>
+    activeAttempt !== null && attempt.id === activeAttempt.id && enrichedActiveAttempt !== null
+      ? enrichedActiveAttempt
+      : attempt
+  );
 
   return jsonResponse(stateEnvelope({
     ok: true,
@@ -201,8 +218,8 @@ async function handleList(
     arenas: arenaDefinitions().map((definition) =>
       arenaSummary(definition, progress.value, state.value.player)
     ),
-    attempts: attempts.value,
-    active_attempt: attempts.value.find((attempt) => attempt.status === "active") ?? null,
+    attempts: enrichedAttempts,
+    active_attempt: enrichedActiveAttempt,
     ranking: { mutated: false, reason: "ARENA_PVE_DOES_NOT_RANK" },
   }, {
     surface: "arena",
@@ -671,6 +688,22 @@ async function arenaStateDeltaPayload(
       },
     };
   }
+  const activeAttempt = attempts.value.find((attempt) => attempt.status === "active") ?? null;
+  const activeAttemptStep = activeAttempt === null
+    ? { value: null, error: null }
+    : await loadLatestAttemptStep(config, activeAttempt.id);
+  if (activeAttemptStep.error !== null) {
+    return {
+      value: null,
+      error: activeAttemptStep.error,
+    };
+  }
+  const enrichedActiveAttempt = enrichActiveAttempt(activeAttempt, activeAttemptStep.value);
+  const enrichedAttempts = attempts.value.map((attempt) =>
+    activeAttempt !== null && attempt.id === activeAttempt.id && enrichedActiveAttempt !== null
+      ? enrichedActiveAttempt
+      : attempt
+  );
   const resolvedProgress = progress ?? defaultProgress(state);
   return {
     value: {
@@ -681,8 +714,8 @@ async function arenaStateDeltaPayload(
       arenas: arenaDefinitions().map((definition) =>
         arenaSummary(definition, resolvedProgress, state.player)
       ),
-      attempts: attempts.value,
-      active_attempt: attempts.value.find((attempt) => attempt.status === "active") ?? null,
+      attempts: enrichedAttempts,
+      active_attempt: enrichedActiveAttempt,
       ranking: { mutated: false, reason: "ARENA_PVE_DOES_NOT_RANK" },
     },
     error: null,
@@ -952,6 +985,32 @@ async function loadAttempt(
   return { value: attempt, error: null };
 }
 
+async function loadLatestAttemptStep(
+  config: EdgeConfig,
+  attemptId: string,
+): Promise<
+  { value: ArenaStepRow | null; error: null } | { value: null; error: RestError }
+> {
+  const result = await restRequest<ArenaStepRow[]>(
+    config,
+    `arena_attempt_steps?attempt_id=eq.${
+      encodeURIComponent(attemptId)
+    }&select=id,attempt_id,step_index,step_type,status,opponent_bot_id,seed,battle_log,result,reward_payload,buff_options,selected_buff,created_at,completed_at&order=step_index.desc&limit=1`,
+    { method: "GET" },
+  );
+  if (result.error !== null) {
+    return {
+      value: null,
+      error: {
+        code: "ARENA_STATE_READ_FAILED",
+        message: "Unable to load Arena PVE active step.",
+        status: 500,
+      },
+    };
+  }
+  return { value: result.value[0] ?? null, error: null };
+}
+
 async function loadBot(
   config: EdgeConfig,
   botId: string,
@@ -1120,6 +1179,45 @@ function difficultyIdForLegacyTier(
     .filter((candidate): candidate is PveArenaDifficultyTier => candidate !== null)
     .find((candidate) => candidate.difficulty_rank === legacyDifficultyTier);
   return tier?.difficulty_id ?? "";
+}
+
+function enrichActiveAttempt(
+  attempt: ArenaAttemptRow | null,
+  latestStep: ArenaStepRow | null,
+): Record<string, unknown> | null {
+  if (attempt === null) {
+    return null;
+  }
+  const payload: Record<string, unknown> = {
+    ...attempt,
+    state: attempt.status,
+  };
+  if (latestStep !== null) {
+    payload.latest_step = latestStep;
+    payload.last_step = latestStep;
+    const buffOffer = buffOfferFromStep(latestStep);
+    if (buffOffer !== null) {
+      payload.state = "awaiting_buff";
+      payload.buff_offer = buffOffer;
+      payload.next_action = "choose_buff";
+    }
+  }
+  return payload;
+}
+
+function buffOfferFromStep(step: ArenaStepRow): Record<string, unknown> | null {
+  const choices = Array.isArray(step.buff_options) ? step.buff_options : [];
+  const selectedBuff = isObject(step.selected_buff) ? step.selected_buff : {};
+  if (choices.length === 0 || Object.keys(selectedBuff).length > 0) {
+    return null;
+  }
+  return {
+    offer_id: `step-${step.step_index}`,
+    step_index: step.step_index,
+    after_duel_index: step.step_index,
+    choices,
+    selected_buff: {},
+  };
 }
 
 function sourceBotIdForEnemy(enemyId: string): string {

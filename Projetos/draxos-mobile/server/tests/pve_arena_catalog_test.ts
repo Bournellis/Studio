@@ -65,6 +65,53 @@ Deno.test("generated PVE arena catalog mirrors definitions and helpers", async (
   assertEq(lockedLongArena.length, 1);
   assertEq(lockedLongArena[0].unlocked, false);
 
+  const mediumArenaUnlock = arenaTierUnlockState(
+    {
+      tutorial_completed: true,
+      best_completed_difficulty: 3,
+      best_completed_length: 4,
+      metadata: {
+        completed_arenas: {
+          arena_tutorial_cinzas: true,
+          arena_cinzas_curta: true,
+          arena_veu_curta: true,
+        },
+        completed_tiers: {
+          "arena_veu_curta:s1_d03_adepto": true,
+        },
+      },
+    },
+    { level: 15, power: 620 },
+    "arena_ossos_media",
+    "s1_d04_familiar",
+  );
+  assertEq(mediumArenaUnlock.length, 1);
+  assertEq(mediumArenaUnlock[0].unlocked, true);
+
+  const longArenaUnlock = arenaTierUnlockState(
+    {
+      tutorial_completed: true,
+      best_completed_difficulty: 4,
+      best_completed_length: 5,
+      metadata: {
+        completed_arenas: {
+          arena_tutorial_cinzas: true,
+          arena_cinzas_curta: true,
+          arena_veu_curta: true,
+          arena_ossos_media: true,
+        },
+        completed_tiers: {
+          "arena_ossos_media:s1_d04_familiar": true,
+        },
+      },
+    },
+    { level: 20, power: 920 },
+    "arena_abismo_longa",
+    "s1_d05_arcano",
+  );
+  assertEq(longArenaUnlock.length, 1);
+  assertEq(longArenaUnlock[0].unlocked, true);
+
   const serverCatalog = await Deno.readTextFile(
     projectFile("server/functions/_shared/pve_arena_catalog.ts"),
   );

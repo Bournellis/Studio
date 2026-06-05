@@ -376,6 +376,45 @@ func test_session_store_clears_selected_arena_buff_offer_from_server_step() -> v
 	assert_eq(str(attempt.get("next_enemy_id", "")), "pve_guardiao_barreira")
 	store.free()
 
+func test_session_store_preserves_remote_active_attempt_buff_offer_from_state() -> void:
+	var store = SessionStoreScript.new()
+	var applied := store.apply_arena_result({
+		"ok": true,
+		"_client": {"save_type": "normal"},
+		"body": {
+			"ok": true,
+			"schema_version": "pve_arena_state_v1",
+			"arenas": [],
+			"active_attempt": {
+				"id": "attempt-state-buff",
+				"arena_id": "arena_cinzas_curta",
+				"state": "awaiting_buff",
+				"difficulty_id": "s1_d00_intro",
+				"max_steps": 3,
+				"current_step_index": 1,
+				"status": "active",
+				"enemy_sequence": ["pve_aprendiz_cinzas", "pve_guardiao_barreira", "pve_sussurrador_veu"],
+				"active_buffs": [],
+				"buff_offer": {
+					"step_index": 1,
+					"after_duel_index": 1,
+					"choices": [
+						{"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor"},
+						{"id": "arena_buff_potencia_menor", "display_name": "Potencia Ritual Menor"},
+					],
+				},
+			},
+		},
+	})
+	assert_true(applied)
+	var attempt := store.active_arena_attempt()
+	assert_eq(str(attempt.get("state", "")), "awaiting_buff")
+	assert_eq(str(attempt.get("difficulty_id", "")), "s1_d00_intro")
+	assert_eq(int(Dictionary(attempt.get("buff_offer", {})).get("step_index", 0)), 1)
+	assert_eq(Array(Dictionary(attempt.get("buff_offer", {})).get("choices", [])).size(), 2)
+	assert_eq(str(attempt.get("next_enemy_id", "")), "pve_guardiao_barreira")
+	store.free()
+
 func test_session_store_heals_cached_arena_buff_offer_after_selected_buff() -> void:
 	var store = SessionStoreScript.new()
 	var selected_buff := {"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor"}
