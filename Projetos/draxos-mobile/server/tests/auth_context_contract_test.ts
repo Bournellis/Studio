@@ -2,6 +2,7 @@ const SERVER_AUTH_HELPER = "server/functions/_shared/auth_context.ts";
 const SUPABASE_AUTH_HELPER = "supabase/functions/_shared/auth_context.ts";
 const MIGRATED_ENDPOINTS = [
   "server/functions/account/index.ts",
+  "server/functions/progression-lab/index.ts",
   "server/functions/telemetry/index.ts",
 ] as const;
 
@@ -27,7 +28,7 @@ Deno.test("shared auth context helper verifies bearer tokens through Supabase Au
   }
 });
 
-Deno.test("migrated account and telemetry endpoints use verified auth context", async () => {
+Deno.test("migrated endpoints use verified auth context", async () => {
   for (const endpoint of MIGRATED_ENDPOINTS) {
     const source = await Deno.readTextFile(endpoint);
     assertIncludes(

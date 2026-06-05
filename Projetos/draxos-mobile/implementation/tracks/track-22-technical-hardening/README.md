@@ -65,6 +65,9 @@ None. This track starts as local hardening only.
   and `telemetry` now call `verifiedAuthContext`, which validates the bearer
   through Supabase Auth before trusting `auth_user_id`; remaining endpoint
   migrations stay split into later packages.
+- Package 5b migrates the mirrored `progression-lab` apply endpoint to
+  `verifiedAuthContext`, removes its local JWT decoder and extends the auth
+  contract test coverage for the migrated endpoint list.
 - Package 6a starts hotspot refactoring by extracting battle replay summary,
   reward, history and textual log formatting into `battle_replay_summary.gd`.
   `battle_replay_presenter.gd` stays focused on fullscreen UI/timeline wiring

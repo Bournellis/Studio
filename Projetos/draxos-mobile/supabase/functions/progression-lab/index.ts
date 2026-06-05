@@ -1,10 +1,7 @@
 import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { validateApiVersion } from "../_shared/api_version.ts";
-import {
-  SAVE_TYPE_PROGRESSION_LAB,
-  type SaveType,
-  saveTypeFromRequest,
-} from "../_shared/save_context.ts";
+import { type AuthContext, verifiedAuthContext } from "../_shared/auth_context.ts";
+import { SAVE_TYPE_PROGRESSION_LAB } from "../_shared/save_context.ts";
 import healthySavesDocument from "../_shared/progression_lab_saves.json" with {
   type: "json",
 };
@@ -15,11 +12,6 @@ type Route = "apply";
 interface EdgeConfig {
   supabaseUrl: string;
   serviceRoleKey: string;
-}
-
-interface AuthContext {
-  userId: string;
-  saveType: SaveType;
 }
 
 interface RestError {
@@ -39,10 +31,6 @@ interface HealthySave {
   profile_id: string;
   milestone_id: string;
   [key: string]: unknown;
-}
-
-interface JwtPayload {
-  sub?: unknown;
 }
 
 const UUID_PATTERN =
@@ -81,13 +69,21 @@ async function handleCorsRequest(request: Request): Promise<Response> {
       );
     }
 
-    const auth = decodeAuthContext(request);
-    if (auth.error !== null) {
+    const config = loadConfig();
+    if (config.error !== null) {
       return errorResponse(
-        auth.error.code,
-        auth.error.message,
-        auth.error.status,
+        config.error.code,
+        config.error.message,
+        config.error.status,
       );
+    }
+
+    const auth = await verifiedAuthContext(request, {
+      supabaseUrl: config.value.supabaseUrl,
+      serviceRoleKey: config.value.serviceRoleKey,
+    });
+    if (auth.error !== null) {
+      return errorResponse(auth.error.code, auth.error.message, auth.error.status);
     }
 
     if (auth.value.saveType !== SAVE_TYPE_PROGRESSION_LAB) {
@@ -95,15 +91,6 @@ async function handleCorsRequest(request: Request): Promise<Response> {
         "PROGRESSION_LAB_SAVE_REQUIRED",
         "Progression Lab apply can only target the progression_lab save.",
         409,
-      );
-    }
-
-    const config = loadConfig();
-    if (config.error !== null) {
-      return errorResponse(
-        config.error.code,
-        config.error.message,
-        config.error.status,
       );
     }
 
@@ -200,93 +187,6 @@ async function handleApply(
 function resolveRoute(pathname: string): Route | null {
   if (pathname.endsWith("/apply")) {
     return "apply";
-  }
-
-  return null;
-}
-
-function decodeAuthContext(
-  request: Request,
-): { value: AuthContext; error: null } | {
-  value: null;
-  error: RestError;
-} {
-  const header = request.headers.get("authorization") ?? "";
-  const prefix = "Bearer ";
-  if (!header.startsWith(prefix)) {
-    return {
-      value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Bearer token is required.",
-        status: 401,
-      },
-    };
-  }
-
-  const token = header.slice(prefix.length);
-  const parts = token.split(".");
-  if (parts.length < 2) {
-    return {
-      value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Invalid bearer token.",
-        status: 401,
-      },
-    };
-  }
-
-  const payload = decodeJwtPayload(parts[1]);
-  if (
-    payload === null || typeof payload.sub !== "string" ||
-    !UUID_PATTERN.test(payload.sub)
-  ) {
-    return {
-      value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Token subject is invalid.",
-        status: 401,
-      },
-    };
-  }
-
-  const saveType = saveTypeFromRequest(request);
-  if (saveType === null) {
-    return {
-      value: null,
-      error: {
-        code: "INVALID_SAVE_TYPE",
-        message: "Save type must be normal or progression_lab.",
-        status: 400,
-      },
-    };
-  }
-
-  return {
-    value: { userId: payload.sub, saveType },
-    error: null,
-  };
-}
-
-function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
-  try {
-    const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
-    const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-    const bytes = Uint8Array.from(
-      atob(padded),
-      (character) => character.charCodeAt(0),
-    );
-    const decoded = new TextDecoder().decode(bytes);
-    const payload: unknown = JSON.parse(decoded);
-    if (
-      payload !== null && typeof payload === "object" && !Array.isArray(payload)
-    ) {
-      return payload as JwtPayload;
-    }
-  } catch {
-    return null;
   }
 
   return null;
