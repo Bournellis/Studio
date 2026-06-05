@@ -41,7 +41,6 @@ const ROUTE_ARENA_REPLAY := AppShellRouteContractScript.ROUTE_ARENA_REPLAY
 const ROUTE_ARENA_BUFF_CHOICE := AppShellRouteContractScript.ROUTE_ARENA_BUFF_CHOICE
 const ROUTE_ARENA_SUMMARY := AppShellRouteContractScript.ROUTE_ARENA_SUMMARY
 const ROUTE_MODE_SHELL := AppShellRouteContractScript.ROUTE_MODE_SHELL
-const ROUTE_MODES_OPS := AppShellRouteContractScript.ROUTE_MODES_OPS
 const ROUTE_BATTLE_LAB := "battle_lab"
 const ROUTE_PROGRESSION_LAB := "progression_lab"
 const SCREEN_HUB := ROUTE_ENTRY
@@ -74,7 +73,6 @@ var _content_body: VBoxContainer
 var _timeline_label: Label
 var _update_output_label: Label
 var _base_state_container: VBoxContainer
-var _modes_ops_state_container: VBoxContainer
 var _social_state_container: VBoxContainer
 var _competition_state_container: VBoxContainer
 var _shop_state_container: VBoxContainer

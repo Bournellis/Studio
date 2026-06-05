@@ -1,6 +1,6 @@
 extends "res://modes/boot/boot_runtime_status_controller.gd"
 
-# Internal lab overlays, mode hub rendering, and mode ops/admin panel.
+# Internal lab overlays and mode hub rendering.
 func _battle_lab_available() -> bool:
 	if not _internal_dev_tools_enabled():
 		return false
@@ -129,102 +129,6 @@ func _render_competition_screen() -> void:
 
 func _render_shop_screen() -> void:
 	ShopSurfacePresenterScript.render(self)
-
-func _render_modes_ops_screen() -> void:
-	_add_section_label("Labs Dev Ops")
-	_add_body_text("Painel interno para investigar registry, analytics e disable/enable de modos. Dados sensiveis aparecem apenas para usuarios com role em admin_roles.")
-	_modes_ops_state_container = VBoxContainer.new()
-	_modes_ops_state_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_modes_ops_state_container.add_theme_constant_override("separation", 8)
-	_add_content_control(_modes_ops_state_container)
-	_add_modes_ops_button("Atualizar Ops", Callable(self, "_load_modes_ops_panel"))
-	_add_modes_ops_button("Desabilitar Openworld", Callable(self, "_admin_disable_openworld"))
-	_add_modes_ops_button("Habilitar Openworld", Callable(self, "_admin_enable_openworld"))
-	call_deferred("_load_modes_ops_panel")
-
-func _add_modes_ops_button(text: String, target: Callable) -> void:
-	var button := Button.new()
-	button.text = text
-	button.custom_minimum_size = _button_min_size()
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_prepare_touch_button(button)
-	_apply_action_button_style(button, "modes_ops", "refuge")
-	button.pressed.connect(target)
-	_add_content_control(button)
-
-func _load_modes_ops_panel() -> void:
-	if _modes_ops_state_container == null or not is_instance_valid(_modes_ops_state_container):
-		return
-	for child: Node in _modes_ops_state_container.get_children():
-		child.queue_free()
-	if not SessionStore.has_valid_access_token():
-		_modes_ops_state_container.add_child(_modes_ops_label("Entre com uma conta alpha para consultar Ops."))
-		return
-	_modes_ops_state_container.add_child(_modes_ops_label("Atualizando Ops com o servidor..."))
-	var refresh_token: Dictionary = _begin_surface_refresh(SessionStore.SURFACE_MODE, "modes/admin/me", "Atualizando Modes Ops...", SessionStore.has_surface_snapshot(SessionStore.SURFACE_MODE))
-	var admin_result: Dictionary = await SupabaseClient.get_mode_admin_me(SessionStore.access_token)
-	if not bool(admin_result.get("ok", false)):
-		_fail_surface_refresh(SessionStore.SURFACE_MODE, refresh_token, admin_result)
-		if _modes_ops_state_container != null and is_instance_valid(_modes_ops_state_container):
-			for child: Node in _modes_ops_state_container.get_children():
-				child.queue_free()
-		_modes_ops_state_container.add_child(_modes_ops_label("Sem role admin ativa. O painel nao exibira dados sensiveis nem acoes."))
-		return
-	var body := _as_dictionary(admin_result.get("body", admin_result))
-	if _as_dictionary(body.get("admin", {})).is_empty():
-		_finish_surface_refresh(SessionStore.SURFACE_MODE, refresh_token, admin_result, "Modes Ops carregado sem role admin.")
-		for child: Node in _modes_ops_state_container.get_children():
-			child.queue_free()
-		_modes_ops_state_container.add_child(_modes_ops_label("Sem role admin ativa."))
-		return
-	for child: Node in _modes_ops_state_container.get_children():
-		child.queue_free()
-	_modes_ops_state_container.add_child(_modes_ops_label("Admin ativo: %s" % str(_as_dictionary(body.get("admin", {})).get("role", "mode_ops"))))
-	var registry: Dictionary = await SupabaseClient.get_mode_registry(SessionStore.access_token)
-	if bool(registry.get("ok", false)):
-		var registry_body := _as_dictionary(registry.get("body", registry))
-		_modes_ops_state_container.add_child(_modes_ops_label("Registry: %d modos" % _as_array(registry_body.get("modes", [])).size()))
-	var analytics: Dictionary = await SupabaseClient.get_mode_analytics_summary("openworld", SessionStore.access_token)
-	if bool(analytics.get("ok", false)):
-		var analytics_body := _as_dictionary(analytics.get("body", analytics))
-		var funnel := _as_dictionary(analytics_body.get("funnel", {}))
-		_modes_ops_state_container.add_child(_modes_ops_label("Openworld: %s sessoes, %s completadas, %s claims" % [
-			str(funnel.get("sessions", 0)),
-			str(funnel.get("completed", 0)),
-			str(funnel.get("reward_claims", 0)),
-		]))
-	_finish_surface_refresh(SessionStore.SURFACE_MODE, refresh_token, analytics if bool(analytics.get("ok", false)) else registry, "Modes Ops atualizado.")
-
-func _admin_disable_openworld() -> void:
-	await _admin_toggle_openworld(false)
-
-func _admin_enable_openworld() -> void:
-	await _admin_toggle_openworld(true)
-
-func _admin_toggle_openworld(enable: bool) -> void:
-	if not SessionStore.has_valid_access_token():
-		_show_notice("Ops exige conta autenticada.")
-		return
-	var request_id := SessionStoreScript.create_request_id()
-	var result: Dictionary
-	if enable:
-		result = await SupabaseClient.admin_enable_mode(request_id, "openworld", "internal_alpha", "V1 ops manual enable from Labs Dev Ops.", SessionStore.access_token)
-	else:
-		result = await SupabaseClient.admin_disable_mode(request_id, "openworld", "V1 ops manual disable from Labs Dev Ops.", SessionStore.access_token)
-	if not bool(result.get("ok", false)):
-		var error_payload := _extract_error(result)
-		_error_label.text = _friendly_error_message(str(error_payload.get("code", "MODE_OPS_FAILED")), str(error_payload.get("message", "")))
-	else:
-		_show_notice("Ops aplicado em Openworld.")
-	await _load_modes_ops_panel()
-
-func _modes_ops_label(text: String) -> Label:
-	var label := Label.new()
-	label.text = text
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.add_theme_color_override("font_color", UiTokens.color("text_secondary"))
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	return label
 
 func _render_mode_shell_screen() -> void:
 	_mode_shell_launcher.render(self)

@@ -99,6 +99,12 @@ func test_boot_route_stack_normalizes_legacy_screen_ids() -> void:
 	assert_eq(boot._normalize_route("perfil"), "account")
 	assert_eq(boot._normalize_route("profile"), "account")
 	assert_eq(boot._normalize_route("monetization"), "shop")
+	assert_eq(boot._normalize_route("modes_ops"), "entry")
+	assert_false(boot._route_supports_back("modes_ops"))
+
+	boot._show_screen("modes_ops")
+	assert_eq(boot._current_screen, "entry")
+	assert_true(boot._screen_history.is_empty())
 
 	boot._show_screen("battle")
 	assert_eq(boot._current_screen, "battle_entry")
@@ -416,6 +422,7 @@ func test_entry_puts_login_before_save_choice_and_exposes_internal_dev_tools() -
 	assert_true(_label_tree_contains(boot._first_screen_root, "Labs Dev"))
 	assert_not_null(_find_button_by_text(boot._first_screen_root, "Battle Lab"))
 	assert_not_null(_find_button_by_text(boot._first_screen_root, "Progression Lab"))
+	assert_null(_find_button_by_text(boot._first_screen_root, "Modes Ops"))
 	assert_true(boot._action_buttons.has("open_battle_lab"))
 	assert_true(boot._action_buttons.has("open_progression_lab"))
 	assert_not_null(_find_node_by_name(boot._first_screen_root, "EntryResetPanel"))
@@ -442,6 +449,7 @@ func test_refuge_exposes_labs_after_login_surface() -> void:
 	assert_true(_label_tree_contains(menu_popup, "Labs Dev"))
 	assert_not_null(_find_button_by_text(menu_popup, "Battle Lab"))
 	assert_not_null(_find_button_by_text(menu_popup, "Progression Lab"))
+	assert_null(_find_button_by_text(menu_popup, "Modes Ops"))
 	assert_true(boot._action_buttons.has("open_battle_lab"))
 	assert_true(boot._action_buttons.has("open_progression_lab"))
 

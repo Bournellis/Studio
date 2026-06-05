@@ -58,6 +58,11 @@ Clientes e smokes devem enviar JWT e `x-draxos-api-version: 1`. Os endpoints alp
 | POST | `/modes/admin/reconcile` | Diagnostico read-only de sessoes/claims; usa `request_id` apenas para correlacao |
 | POST | `/modes/admin/compensate` | Compensacao limitada via RPC auditada com `request_id` e `request_hash` |
 
+`/modes/admin/*` e `/modes/analytics/summary` sao superficies de ops fora do
+cliente. O client Godot nao deve expor rota `modes_ops`, painel admin, botoes
+disable/enable ou wrappers de chamada para esses endpoints; operacao deve viver
+em tooling externo autenticado.
+
 ## Session Defaults
 
 `mode_limit_policies` declara os defaults de playtest:

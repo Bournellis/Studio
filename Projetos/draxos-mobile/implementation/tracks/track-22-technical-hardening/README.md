@@ -42,3 +42,10 @@ track folders, readiness reports, Kanban Done cards, release docs or Git history
 ## Remote Mutation
 
 None. This track starts as local hardening only.
+
+## Package Notes
+
+- Package 3 isolates `Modes Ops` out of the Godot client: the `modes_ops` route
+  normalizes to Entry, the refuge dev menu keeps Battle Lab/Progression Lab but
+  no longer shows admin ops, and client-side admin/analytics wrappers were
+  removed.

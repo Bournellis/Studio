@@ -21,7 +21,6 @@ const ROUTE_ARENA_REPLAY := "arena_replay"
 const ROUTE_ARENA_BUFF_CHOICE := "arena_buff_choice"
 const ROUTE_ARENA_SUMMARY := "arena_summary"
 const ROUTE_MODE_SHELL := "mode_shell"
-const ROUTE_MODES_OPS := "modes_ops"
 
 const ACTION_REQUEST_BATTLE := "request_battle"
 const ACTION_SHOW_BATTLE_HISTORY := "show_battle_history"
@@ -30,6 +29,10 @@ const ACTION_SKIP_REPLAY := "skip_battle_replay"
 const ACTION_REPLAY_LATEST := "replay_latest_battle"
 const ACTION_SHOW_CURRENT_BATTLE_LOGS := "show_current_battle_logs"
 const ACTION_RETURN_BATTLE_SUMMARY := "return_battle_summary"
+
+const _CLIENT_BLOCKED_ROUTES := {
+	"modes_ops": true,
+}
 
 const _ALIASES := {
 	"hub": ROUTE_ENTRY,
@@ -47,7 +50,6 @@ const _ALIASES := {
 	"battle": ROUTE_BATTLE_ENTRY,
 	"arena": ROUTE_ARENA_SELECTION,
 	"arena_pve": ROUTE_ARENA_SELECTION,
-	"modes_ops": ROUTE_MODES_OPS,
 	"monetization": ROUTE_SHOP,
 }
 
@@ -71,7 +73,6 @@ const _TITLES := {
 	ROUTE_ARENA_BUFF_CHOICE: "Buff",
 	ROUTE_ARENA_SUMMARY: "Resumo",
 	ROUTE_MODE_SHELL: "Mode",
-	ROUTE_MODES_OPS: "Modes Ops",
 }
 
 const _BATTLE_MODE_ROUTES := {
@@ -106,6 +107,8 @@ const _IMMERSIVE_ROUTES := {
 static func normalize(route_id: String) -> String:
 	var candidate := route_id.strip_edges()
 	if candidate == "":
+		return ROUTE_ENTRY
+	if bool(_CLIENT_BLOCKED_ROUTES.get(candidate, false)):
 		return ROUTE_ENTRY
 	if _ALIASES.has(candidate):
 		return str(_ALIASES[candidate])

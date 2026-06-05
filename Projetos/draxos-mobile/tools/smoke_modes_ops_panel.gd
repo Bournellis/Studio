@@ -12,8 +12,10 @@ func _run() -> void:
 	quit(exit_code)
 
 func _run_smoke() -> int:
-	print("[smoke-modes-ops-panel] checking Labs Dev Ops safe shell")
+	print("[smoke-modes-ops-panel] checking Modes Ops client isolation")
 	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)
+	ProjectSettings.set_setting("draxos_mobile/battle_lab/enabled", true)
+	ProjectSettings.set_setting("draxos_mobile/progression_lab/enabled", true)
 	_prepare_viewport(Vector2i(390, 844))
 
 	var boot := _new_boot()
@@ -22,12 +24,13 @@ func _run_smoke() -> int:
 	await process_frame
 	await process_frame
 
-	_expect(_find_label_by_text(boot, "Labs Dev Ops") != null, "Ops route renders title.")
-	_expect(_find_button_by_text(boot, "Atualizar Ops") != null, "Ops route renders refresh action.")
-	_expect(_find_button_by_text(boot, "Desabilitar Openworld") != null, "Ops route renders disable action.")
-	_expect(_find_button_by_text(boot, "Habilitar Openworld") != null, "Ops route renders enable action.")
-	_expect(_find_label_by_text(boot, "Entre com uma conta alpha para consultar Ops.") != null, "Ops route hides sensitive data without auth.")
-	_expect(_count_buttons(boot) >= 3, "Ops route keeps actions inside app shell.")
+	_expect(str(boot.get("_current_screen")) == "entry", "Modes Ops route is normalized back to Entry.")
+	_expect(_find_label_by_text(boot, "Labs Dev Ops") == null, "Ops title is not rendered in the client.")
+	_expect(_find_button_by_text(boot, "Atualizar Ops") == null, "Ops refresh action is not rendered in the client.")
+	_expect(_find_button_by_text(boot, "Desabilitar Openworld") == null, "Ops disable action is not rendered in the client.")
+	_expect(_find_button_by_text(boot, "Habilitar Openworld") == null, "Ops enable action is not rendered in the client.")
+	_expect(_find_button_by_text(boot, "Battle Lab") != null, "Battle Lab remains available.")
+	_expect(_find_button_by_text(boot, "Progression Lab") != null, "Progression Lab remains available.")
 	boot.queue_free()
 	await process_frame
 
@@ -63,9 +66,6 @@ func _find_label_by_text(root_node: Node, text: String) -> Label:
 		if label != null and label.text == text:
 			return label
 	return null
-
-func _count_buttons(root_node: Node) -> int:
-	return root_node.find_children("*", "Button", true, false).size()
 
 func _expect(condition: bool, message: String) -> void:
 	if not condition:

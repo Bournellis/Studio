@@ -162,4 +162,3 @@ static func _add_dev_tool_actions(host: Node, popup: PopupPanel, body: VBoxConta
 	if bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false)):
 		body.add_child(_popup_action_button(host, popup, "Batalha legada", AppShellActionContractScript.ACTION_REQUEST_BATTLE))
 		body.add_child(_popup_action_button(host, popup, "Competicao dev", AppShellActionContractScript.ACTION_SHOW_MATCHMAKING))
-		body.add_child(_popup_route_button(host, popup, "Modes Ops", "modes_ops"))

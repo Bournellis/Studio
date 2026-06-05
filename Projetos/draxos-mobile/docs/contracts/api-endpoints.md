@@ -191,6 +191,10 @@ novo.
 | GET | `/modes/analytics/summary` | `mode` | Sim | Nao | Sumario interno por modo. |
 | POST | `/modes/admin/*` | `admin-internal` | Sim + `admin_roles` | `request_id/request_hash` nas mutacoes | Ops de disable/enable, sessao, reconcile e compensacao auditada. |
 
+`mode` analytics e `admin-internal` Mode Ops sao superficies fora do cliente:
+o client Godot nao deve expor `modes_ops`, botoes admin ou wrappers diretos
+para `/modes/admin/*`.
+
 `admin-internal` existe apenas como RPC `service_role`-only no banco:
 `admin_lookup_account_v1`, `admin_battle_diagnostics_v1`,
 `resource_reconciliation_report_v1`, `admin_adjust_resource_balance_v1` e

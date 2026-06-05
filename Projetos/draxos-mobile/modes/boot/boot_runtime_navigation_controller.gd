@@ -14,7 +14,6 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_timeline_label = null
 	_update_output_label = null
 	_base_state_container = null
-	_modes_ops_state_container = null
 	_social_state_container = null
 	_competition_state_container = null
 	_shop_state_container = null
@@ -71,8 +70,6 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 			_render_arena_buff_choice_screen()
 		ROUTE_ARENA_SUMMARY:
 			_render_arena_summary_screen()
-		ROUTE_MODES_OPS:
-			_render_modes_ops_screen()
 		SCREEN_BASE:
 			_render_base_screen()
 		SCREEN_SOCIAL:
