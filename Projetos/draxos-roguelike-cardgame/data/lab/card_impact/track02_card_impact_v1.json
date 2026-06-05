@@ -1,0 +1,91 @@
+{
+	"pack_id": "track02_card_impact_v1",
+	"schema_version": 1,
+	"simulation_mode": "card_impact_v1",
+	"description": "Card Impact Pack V1 for before/after impact testing around future large card changes.",
+	"card_sets": {
+		"player_prefixes": ["arcano_", "invocador_", "necro_"],
+		"player_scope": "core_class_v1",
+		"player_core_reward_elements": ["terra"],
+		"player_upgrade_suffixes": ["", "_lvl2", "_lvl3"],
+		"enemy_source": "track_contract.enemy_card_galleries",
+		"enemy_prefix": "enemy_",
+		"legacy_inactive_prefix": "elemental_",
+		"expected_player_cards": 54,
+		"expected_enemy_cards": 30,
+		"expected_legacy_inactive_cards": 15
+	},
+	"case_templates": {
+		"player": {
+			"encounter_id": "card_impact_player_harness",
+			"policy_id": "card_focus_legal",
+			"seed": 20260518,
+			"turn_limit": 3,
+			"config": {
+				"player_health": 40,
+				"mana_per_turn": 10,
+				"max_hand_size": 5,
+				"class_passive_unlocked": true,
+				"class_active_unlocked": false,
+				"class_active_level": 0,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"expectations": {
+				"required": {
+					"card_under_test_played_equals": true,
+					"policy_action_rejected_equals": false,
+					"combat_cycles_min": 1
+				}
+			}
+		},
+		"enemy": {
+			"encounter_id": "card_impact_enemy_harness",
+			"policy_id": "end_turn_only",
+			"seed": 20260518,
+			"turn_limit": 1,
+			"config": {
+				"player_health": 60,
+				"mana_per_turn": 10,
+				"max_hand_size": 5,
+				"class_passive_unlocked": false,
+				"class_active_unlocked": false,
+				"class_active_level": 0,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"expectations": {
+				"required": {
+					"card_under_test_participated_equals": true,
+					"policy_action_rejected_equals": false,
+					"combat_cycles_min": 1
+				}
+			}
+		}
+	},
+	"components": {
+		"battle": {
+			"enabled": true
+		},
+		"scenario": {
+			"enabled": true,
+			"pack": "track02_core_v1"
+		},
+		"run_lab": {
+			"enabled": true,
+			"preset": "smoke",
+			"classes": ["arcano", "invocador", "necromante"],
+			"seeds": [20260518],
+			"policies": ["baseline"]
+		}
+	},
+	"gate_policy": {
+		"fail_on_structural_errors": true,
+		"fail_on_missing_after_records": true,
+		"fail_on_new_failures": true,
+		"fail_on_metric_deltas": false,
+		"fail_on_new_warnings": false
+	}
+}

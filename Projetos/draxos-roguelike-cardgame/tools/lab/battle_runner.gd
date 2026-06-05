@@ -52,7 +52,7 @@ static func run_case(catalog, pack: Dictionary, case_data: Dictionary, options: 
 	var policy_id: String = BattlePolicyScript.resolve_policy_id(case_data, str(options.get("policy", "")))
 	var turn_limit: int = maxi(1, int(case_data.get("turn_limit", 12)))
 	while str(_engine_state(engine).get("outcome", "")) == "" and int(metrics.get("combat_cycles", 0)) < turn_limit:
-		var policy_result: Dictionary = BattlePolicyScript.play_turn(engine, policy_id, options)
+		var policy_result: Dictionary = BattlePolicyScript.play_turn(engine, policy_id, _policy_options(case_data, options))
 		var state: Dictionary = _engine_state(engine)
 		_record_policy_result(metrics, policy_result)
 		metrics["combat_cycles"] = int(metrics.get("combat_cycles", 0)) + 1
@@ -115,10 +115,12 @@ static func _resolve_encounter(catalog, case_data: Dictionary) -> Dictionary:
 	if catalog == null:
 		return {}
 	var encounter: Dictionary = catalog.find_encounter(str(case_data.get("encounter_id", "")))
+	var encounter_override: Dictionary = Dictionary(case_data.get("encounter_override", {}))
 	if encounter.is_empty():
+		if not encounter_override.is_empty():
+			return encounter_override.duplicate(true)
 		return {}
 	var resolved: Dictionary = encounter.duplicate(true)
-	var encounter_override: Dictionary = Dictionary(case_data.get("encounter_override", {}))
 	for key: Variant in encounter_override.keys():
 		resolved[key] = encounter_override.get(key)
 	return resolved
@@ -190,6 +192,13 @@ static func _initial_metrics(pack: Dictionary, case_data: Dictionary, encounter:
 		"enemy_units_alive": _occupied_count(Array(initial_state.get("enemy_slots", []))),
 		"damage_to_enemy_hero": 0,
 		"damage_to_player_hero": 0,
+		"card_under_test": str(Dictionary(case_data.get("card_under_test", {})).get("id", "")),
+		"card_under_test_kind": str(Dictionary(case_data.get("card_under_test", {})).get("kind", "")),
+		"card_under_test_played": false,
+		"card_under_test_play_count": 0,
+		"card_under_test_seen": _state_contains_card(initial_state, str(Dictionary(case_data.get("card_under_test", {})).get("id", ""))),
+		"card_under_test_participated": false,
+		"policy_action_rejected": false,
 		"outcome": str(initial_state.get("outcome", "")),
 		"terminated": false,
 		"runner_warnings": [],
@@ -197,12 +206,25 @@ static func _initial_metrics(pack: Dictionary, case_data: Dictionary, encounter:
 	}
 
 static func _record_policy_result(metrics: Dictionary, policy_result: Dictionary) -> void:
-	metrics["cards_played"] = int(metrics.get("cards_played", 0)) + Array(policy_result.get("cards_played", [])).size()
+	var cards_played: Array = Array(policy_result.get("cards_played", []))
+	metrics["cards_played"] = int(metrics.get("cards_played", 0)) + cards_played.size()
 	metrics["pending_choices_resolved"] = int(metrics.get("pending_choices_resolved", 0)) + int(policy_result.get("pending_choices_resolved", 0))
 	if bool(policy_result.get("active_used", false)):
 		metrics["class_active_uses"] = int(metrics.get("class_active_uses", 0)) + 1
+	var card_under_test: String = str(metrics.get("card_under_test", ""))
+	if card_under_test != "":
+		for play: Variant in cards_played:
+			var played_card: Dictionary = Dictionary(play)
+			if str(played_card.get("card_id", "")) == card_under_test:
+				metrics["card_under_test_played"] = true
+				metrics["card_under_test_play_count"] = int(metrics.get("card_under_test_play_count", 0)) + 1
+	if not bool(policy_result.get("ok", true)):
+		metrics["policy_action_rejected"] = true
 
 static func _append_timeline(metrics: Dictionary, state: Dictionary, policy_result: Dictionary) -> void:
+	var card_under_test: String = str(metrics.get("card_under_test", ""))
+	if card_under_test != "" and _state_contains_card(state, card_under_test):
+		metrics["card_under_test_seen"] = true
 	var timeline: Array = Array(metrics.get("timeline", []))
 	timeline.append({
 		"cycle": int(metrics.get("combat_cycles", 0)),
@@ -234,6 +256,13 @@ static func _finalize_metrics(metrics: Dictionary, initial_state: Dictionary, fi
 	metrics["enemy_units_alive"] = _occupied_count(Array(final_state.get("enemy_slots", [])))
 	metrics["damage_to_enemy_hero"] = maxi(0, int(initial_state.get("enemy_health", 0)) - int(final_state.get("enemy_health", 0)))
 	metrics["damage_to_player_hero"] = maxi(0, int(initial_state.get("player_health", 0)) - int(final_state.get("player_health", 0)))
+	var card_under_test: String = str(metrics.get("card_under_test", ""))
+	if card_under_test != "" and _state_contains_card(final_state, card_under_test):
+		metrics["card_under_test_seen"] = true
+	var card_kind: String = str(metrics.get("card_under_test_kind", ""))
+	metrics["card_under_test_participated"] = bool(metrics.get("card_under_test_played", false))
+	if card_kind == "enemy":
+		metrics["card_under_test_participated"] = bool(metrics.get("card_under_test_seen", false)) and int(metrics.get("combat_cycles", 0)) > 0
 	metrics["outcome"] = outcome
 	metrics["terminated"] = outcome != ""
 	metrics["turn_limit_hit"] = outcome == "" and int(metrics.get("combat_cycles", 0)) >= turn_limit
@@ -259,9 +288,35 @@ static func _error_metrics(case_data: Dictionary, message: String) -> Dictionary
 		"enemy_units_alive": 0,
 		"damage_to_enemy_hero": 0,
 		"damage_to_player_hero": 0,
+		"card_under_test": str(Dictionary(case_data.get("card_under_test", {})).get("id", "")),
+		"card_under_test_kind": str(Dictionary(case_data.get("card_under_test", {})).get("kind", "")),
+		"card_under_test_played": false,
+		"card_under_test_play_count": 0,
+		"card_under_test_seen": false,
+		"card_under_test_participated": false,
+		"policy_action_rejected": true,
 		"runner_warnings": [message],
 		"timeline": []
 	}
+
+static func _policy_options(case_data: Dictionary, options: Dictionary) -> Dictionary:
+	var policy_options: Dictionary = options.duplicate(true)
+	var card_under_test: Dictionary = Dictionary(case_data.get("card_under_test", {}))
+	if not card_under_test.is_empty():
+		policy_options["card_under_test"] = str(card_under_test.get("id", ""))
+	return policy_options
+
+static func _state_contains_card(state: Dictionary, card_id: String) -> bool:
+	if card_id == "":
+		return false
+	for field: String in ["hand", "deck", "discard", "enemy_hand", "enemy_deck", "enemy_discard"]:
+		if Array(state.get(field, [])).has(card_id):
+			return true
+	for field: String in ["player_slots", "enemy_slots"]:
+		for occupant_value: Variant in Array(state.get(field, [])):
+			if typeof(occupant_value) == TYPE_DICTIONARY and str(Dictionary(occupant_value).get("card_id", "")) == card_id:
+				return true
+	return false
 
 static func _append_critical_checkpoint(summary: Dictionary, record: Dictionary) -> void:
 	var case_data: Dictionary = Dictionary(record.get("case", {}))

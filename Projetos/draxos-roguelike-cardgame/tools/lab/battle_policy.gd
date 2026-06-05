@@ -6,11 +6,12 @@ const POLICY_BASELINE: String = "baseline_legal"
 const POLICY_AGGRESSIVE: String = "aggressive_legal"
 const POLICY_DEFENSIVE: String = "defensive_legal"
 const POLICY_END_TURN: String = "end_turn_only"
+const POLICY_CARD_FOCUS: String = "card_focus_legal"
 const DEFAULT_MAX_ACTIONS_PER_TURN: int = 24
 const DEFAULT_MAX_PENDING_RESOLUTIONS: int = 12
 
 static func supported_policies() -> PackedStringArray:
-	return PackedStringArray([POLICY_BASELINE, POLICY_AGGRESSIVE, POLICY_DEFENSIVE, POLICY_END_TURN])
+	return PackedStringArray([POLICY_BASELINE, POLICY_AGGRESSIVE, POLICY_DEFENSIVE, POLICY_END_TURN, POLICY_CARD_FOCUS])
 
 static func resolve_policy_id(case_data: Dictionary, override_policy_id: String = "") -> String:
 	var policy_id: String = override_policy_id.strip_edges()
@@ -41,7 +42,7 @@ static func play_turn(engine, policy_id: String, options: Dictionary = {}) -> Di
 		var state: Dictionary = _engine_state(engine)
 		if str(state.get("outcome", "")) != "":
 			break
-		var candidate: Dictionary = _best_card_candidate(engine, policy_id)
+		var candidate: Dictionary = _best_card_candidate(engine, policy_id, options)
 		if candidate.is_empty():
 			break
 		var play_result: Dictionary = engine.play_card_from_hand(int(candidate.get("hand_index", -1)), Dictionary(candidate.get("target", {})))
@@ -124,7 +125,14 @@ static func _try_class_active(engine, policy_id: String, result: Dictionary) -> 
 		result["failed_actions"] = failed_actions
 		result["ok"] = false
 
-static func _best_card_candidate(engine, policy_id: String) -> Dictionary:
+static func _best_card_candidate(engine, policy_id: String, options: Dictionary = {}) -> Dictionary:
+	if policy_id == POLICY_CARD_FOCUS:
+		var focused: Dictionary = _focused_card_candidate(engine, str(options.get("card_under_test", "")))
+		if not focused.is_empty():
+			return focused
+		var enabling: Dictionary = _enabling_card_candidate(engine, str(options.get("card_under_test", "")))
+		if not enabling.is_empty():
+			return enabling
 	var state: Dictionary = _engine_state(engine)
 	var hand: Array = Array(state.get("hand", []))
 	var best: Dictionary = {}
@@ -149,6 +157,67 @@ static func _best_card_candidate(engine, policy_id: String) -> Dictionary:
 					"score": score
 				}
 	return best
+
+static func _focused_card_candidate(engine, card_under_test: String) -> Dictionary:
+	if card_under_test == "":
+		return {}
+	var state: Dictionary = _engine_state(engine)
+	var hand: Array = Array(state.get("hand", []))
+	for hand_index: int in range(hand.size()):
+		var card_id: String = str(hand[hand_index])
+		if card_id != card_under_test:
+			continue
+		var card = engine._card(card_id)
+		if card == null:
+			continue
+		var targets: Array[Dictionary] = _legal_targets_for_card(engine, hand_index)
+		if targets.is_empty():
+			return {}
+		var best_target: Dictionary = {}
+		if targets.size() == 1 and Dictionary(targets[0]).is_empty():
+			best_target = {}
+		else:
+			best_target = _best_target(state, targets, POLICY_BASELINE, str(Dictionary(card.effect).get("action", "")))
+		return {
+			"hand_index": hand_index,
+			"card_id": card_id,
+			"name": str(card.display_name),
+			"target": best_target.duplicate(true),
+			"score": 9999.0
+		}
+	return {}
+
+static func _enabling_card_candidate(engine, card_under_test: String) -> Dictionary:
+	if card_under_test == "":
+		return {}
+	var focus_card = engine._card(card_under_test)
+	if focus_card == null:
+		return {}
+	var action: String = str(Dictionary(focus_card.effect).get("action", ""))
+	if not (action in ["buff_ally", "promote", "buff_all_allies", "gain_mana", "shield_all_allies"]):
+		return {}
+	var state: Dictionary = _engine_state(engine)
+	if _occupied_count(Array(state.get("player_slots", []))) != 0:
+		return {}
+	var hand: Array = Array(state.get("hand", []))
+	for hand_index: int in range(hand.size()):
+		var card_id: String = str(hand[hand_index])
+		if card_id == card_under_test:
+			continue
+		var card = engine._card(card_id)
+		if card == null or not card.occupies_slot():
+			continue
+		var targets: Array[Dictionary] = _legal_targets_for_card(engine, hand_index)
+		if targets.is_empty():
+			continue
+		return {
+			"hand_index": hand_index,
+			"card_id": card_id,
+			"name": str(card.display_name),
+			"target": Dictionary(targets[0]).duplicate(true),
+			"score": 9998.0
+		}
+	return {}
 
 static func _legal_targets_for_card(engine, hand_index: int) -> Array[Dictionary]:
 	var targets: Array[Dictionary] = []
@@ -281,6 +350,13 @@ static func _has_open_player_slot(state: Dictionary) -> bool:
 		if slot_value == null:
 			return true
 	return false
+
+static func _occupied_count(slots: Array) -> int:
+	var count: int = 0
+	for slot_value: Variant in slots:
+		if slot_value != null:
+			count += 1
+	return count
 
 static func _should_confirm_sacrifice(engine, policy_id: String) -> bool:
 	if policy_id == POLICY_DEFENSIVE:
