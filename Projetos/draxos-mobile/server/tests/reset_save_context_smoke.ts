@@ -6,6 +6,18 @@ interface JsonObject {
   [key: string]: unknown;
 }
 
+function resetPayload(
+  requestId: string,
+  saveType: "normal" | "progression_lab",
+  requestHash = `sha256:reset-${requestId}-${saveType}`,
+): JsonObject {
+  return {
+    request_id: requestId,
+    request_hash: requestHash,
+    save_type: saveType,
+  };
+}
+
 const auth = await postJson(
   `${SUPABASE_URL}/auth/v1/signup`,
   { data: { provider: "guest" } },
@@ -86,7 +98,7 @@ assertEq(
 
 const mismatchReset = await postJson(
   `${SUPABASE_URL}/functions/v1/account/saves/reset`,
-  { request_id: crypto.randomUUID(), save_type: "progression_lab" },
+  resetPayload(crypto.randomUUID(), "progression_lab"),
   normalHeaders,
   false,
 );
@@ -98,10 +110,7 @@ assertEq(
 
 const labReset = await postJson(
   `${SUPABASE_URL}/functions/v1/account/saves/reset`,
-  {
-    request_id: crypto.randomUUID(),
-    save_type: "progression_lab",
-  },
+  resetPayload(crypto.randomUUID(), "progression_lab"),
   labHeaders,
 );
 assertEq(
@@ -167,18 +176,12 @@ assertEq(
 const normalResetRequestId = crypto.randomUUID();
 const normalReset = await postJson(
   `${SUPABASE_URL}/functions/v1/account/saves/reset`,
-  {
-    request_id: normalResetRequestId,
-    save_type: "normal",
-  },
+  resetPayload(normalResetRequestId, "normal"),
   normalHeaders,
 );
 const normalResetRepeat = await postJson(
   `${SUPABASE_URL}/functions/v1/account/saves/reset`,
-  {
-    request_id: normalResetRequestId,
-    save_type: "normal",
-  },
+  resetPayload(normalResetRequestId, "normal"),
   normalHeaders,
 );
 assertEq(
@@ -186,6 +189,19 @@ assertEq(
   stringField(objectField(normalReset, "player"), "id"),
   "reset should be idempotent by request_id",
 );
+
+const normalResetHashMismatch = await postJson(
+  `${SUPABASE_URL}/functions/v1/account/saves/reset`,
+  resetPayload(normalResetRequestId, "normal", "sha256:changed"),
+  normalHeaders,
+  false,
+);
+assertEq(
+  stringField(objectField(normalResetHashMismatch, "error"), "code"),
+  "IDEMPOTENCY_HASH_MISMATCH",
+  "reset should reject same request_id with a different request_hash",
+);
+
 assertEq(
   numberField(objectField(normalReset, "player"), "xp"),
   0,

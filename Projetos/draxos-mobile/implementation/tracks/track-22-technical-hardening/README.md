@@ -57,3 +57,7 @@ None. This track starts as local hardening only.
   reward profiles. The migration is mirrored in `server/schema`, seeded from
   `data/definitions/arena_rewards.json`, protected by RLS read-only policy for
   enabled profiles, and guarded by ServerQuick/Arena tests.
+- Package 4c promotes account save reset to `reset_player_save_v1` with
+  required `request_hash`, `game_saves.id` scoping, DB-side cleanup for
+  Arena/Modes/Track 16, preservation of account-wide social state and
+  service-role revocation of the legacy no-hash reset RPC.

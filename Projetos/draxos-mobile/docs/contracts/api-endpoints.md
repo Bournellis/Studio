@@ -148,7 +148,7 @@ novo.
 | POST | `/account/bootstrap` | `save-scoped` | Sim | `request_id` por save | Cria/recupera o save `normal` ou `progression_lab` de conta registrada; o gate de convite e account-aware. |
 | POST | `/account/guest` | `save-scoped` | Sim | `request_id` por save | Fallback dev/local anonimo; cria/recupera o save selecionado. |
 | GET | `/account/state` | `save-scoped` | Sim | Nao | Retorna snapshot do save ativo. |
-| POST | `/account/saves/reset` | `save-scoped` | Sim | `request_id` por save | Reseta apenas o save ativo e exige consistencia entre body e header quando ambos aparecem. |
+| POST | `/account/saves/reset` | `save-scoped` | Sim | `request_id/request_hash` por save | Reseta apenas o save ativo via RPC v1, exige consistencia entre body/header e preserva estado social account-wide. |
 | POST | `/battle/request` | `save-scoped` | Sim | `request_id` por save | Rota tecnica de simulador/replay (`FIRST_SLICE_SIM`) para o primeiro slice; aplica recompensa/ranking do save ativo e bloqueia ranking do Lab, mas nao define o produto atual. |
 | GET | `/battle/latest` | `save-scoped` | Sim | Nao | Retorna ultima batalha do save ativo sem reaplicar efeitos. |
 | GET | `/battle/history` | `save-scoped` | Sim | Nao | Retorna historico recente do save ativo como sumarios read-only, sem eventos completos. |
@@ -1156,7 +1156,7 @@ Response logico:
 
 Reseta apenas o save solicitado.
 
-Status: **implementado localmente em T03-P03C**.
+Status: **implementado localmente; Track 22 pacote 4c promoveu reset v1 com `request_hash` obrigatorio**.
 
 Headers:
 
@@ -1171,19 +1171,23 @@ Request logico:
 ```json
 {
   "request_id": "uuid",
+  "request_hash": "sha256:...",
   "save_type": "normal"
 }
 ```
 
 Regras:
 
+- `request_hash` e obrigatorio; chamadas sem hash retornam `INVALID_REQUEST_HASH`.
 - `save_type` deve ser `normal` ou `progression_lab`.
 - `save_type` no body, quando enviado, deve bater com `x-draxos-save-type`.
 - Reset de um save nao altera o outro.
-- Reset reconstrui o mesmo `player_id` para estado inicial: player level/xp/power, resources, build, base, batalha, ranking, social, loja, jobs, claims e compras alpha daquele save.
+- Reset reconstrui o mesmo `player_id` para estado inicial: player level/xp/power, resources, build, base, batalha, ranking, Arena, Modes, Track 16, loja, jobs, claims e compras alpha daquele save.
 - Reset limpa ou desassocia telemetria daquele player, mas nao afeta o outro save da mesma conta.
+- Reset preserva social/guilda/chat/amizades account-wide; wipe total de conta fica fora deste endpoint.
 - Reset grava ledger/audit alpha em `resource_transactions`.
-- Repetir o mesmo `request_id` retorna o mesmo payload.
+- Repetir o mesmo `request_id` + `request_hash` retorna o mesmo payload.
+- Repetir o mesmo `request_id` com `request_hash` diferente retorna `IDEMPOTENCY_HASH_MISMATCH`.
 
 Response logico:
 
@@ -1193,7 +1197,10 @@ Response logico:
   "reset": {
     "save_type": "normal",
     "player_id": "uuid",
-    "request_id": "uuid"
+    "game_save_id": "uuid",
+    "request_id": "uuid",
+    "request_hash": "sha256:...",
+    "preserved_account_social": true
   },
   "player": {},
   "resources": {},

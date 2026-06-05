@@ -1016,6 +1016,7 @@ Invoke-Step -Name "Deno foundation contract tests" -Stage "ServerQuick" -Command
             server/tests/remaining_transactional_domain_enforcement_schema_test.ts `
             server/tests/lab_heuristics_contract_test.ts `
             server/tests/progression_lab_apply_contract_test.ts `
+            server/tests/account_reset_request_hash_contract_test.ts `
             server/tests/battle_combatants_test.ts `
             server/tests/base_domain_test.ts `
             server/tests/battle_log_projection_test.ts `

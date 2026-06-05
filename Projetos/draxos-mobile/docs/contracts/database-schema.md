@@ -25,6 +25,7 @@ Migrations atuais:
 - `202606020001_openworld_bosque_hardening_v1.sql`: promove `openworld/forest` para `active` no canal `internal_alpha`, adiciona snapshot/revision/event audit em Mode sessions, registra `openworld_forest_ruleset_v1`, aplica limites de sessao e torna o Reward Bridge do Bosque autoritativo pelo snapshot do servidor.
 - `202606030001_progression_lab_apply_request_hash.sql`: adiciona assinatura `apply_progression_lab_save(..., p_request_hash, ...)`, exige hash obrigatorio, bloqueia mismatch de idempotencia e move reset/seed de consumables, potion slots, spell behaviors e item transactions do Progression Lab para dentro da RPC transacional.
 - `202606050001_arena_reward_profiles_v1.sql`: cria `arena_reward_profiles`, habilita RLS read-only para perfis ativos, seeda todos os perfis de `data/definitions/arena_rewards.json` e mantem `ledger_source = arena_pve_v1`.
+- `202606050002_account_reset_request_hash_v1.sql`: adiciona `reset_player_save_v1(game_save_id, request_id, request_hash, payload)`, exige hash obrigatorio, usa idempotencia v1 por `game_saves.id`, move limpeza de Arena/Modes/Track 16 para a transacao SQL e preserva social/guilda/chat account-wide.
 
 ## Regras De Escopo De Servico
 
@@ -617,6 +618,14 @@ Implementado em `T03-P03C`:
 - reset usa `request_id`, grava ledger `account/saves/reset` e preserva idempotencia do proprio reset;
 - `account/guest` do mesmo save passa a retornar o payload resetado se repetir o `request_id` original.
 
+Atualizado no Track 22 pacote 4c:
+
+- `reset_player_save_v1` recebe `game_save_id`, `request_id`, `request_hash` e payload canonico;
+- `request_hash` e obrigatorio e mismatch de hash no mesmo `request_id` retorna `IDEMPOTENCY_HASH_MISMATCH` via `reserve_idempotency`;
+- reset limpa runtime save-scoped de batalha/base/ranking/loja/jobs/Arena/Modes/Track 16 dentro da transacao SQL;
+- reset preserva social/guilda/chat/amizades account-wide;
+- a assinatura legada `reset_player_save(uuid, uuid, text)` tem acesso `service_role` revogado pela migration nova.
+
 Implementado em `T03-P04`:
 
 - `apply_progression_lab_save` seleciona somente o `players.id` com `save_type = progression_lab`;
@@ -924,21 +933,24 @@ Regras:
 - Aplica uma unica vez a recompensa tecnica `mvp_training_reward`: `xp +5`, `ossos +1`.
 - `GRANT EXECUTE` fica restrito a `service_role`; cliente usa Edge Function, nao RPC direto.
 
-### `public.reset_player_save(p_auth_user_id, p_request_id, p_save_type)`
+### `public.reset_player_save_v1(p_game_save_id, p_request_id, p_request_hash, p_request_payload)`
 
 Responsabilidade: resetar de forma server-authoritative apenas o save selecionado de uma conta.
 
-Implementado em: `202605260002_reset_save_context.sql`.
+Implementado em: `202606050002_account_reset_request_hash_v1.sql`.
 
 Regras:
 
-- Exige player existente para o `auth_user_id` e `p_save_type`.
-- `p_save_type` aceita apenas `normal` ou `progression_lab`.
+- Exige `game_saves.id` ativo, `request_id` UUID e `request_hash` nao vazio.
+- Usa `public.reserve_idempotency(..., endpoint = 'account/saves/reset', scope_id = game_save_id)`.
+- Repetir `request_id/request_hash` retorna o payload gravado; repetir `request_id` com hash divergente retorna `IDEMPOTENCY_HASH_MISMATCH`.
 - Mantem o mesmo `players.id`, `auth_user_id`, `username`, `account_type` e `save_type`.
-- Reseta `level`, `xp`, `power`, `resources`, `builds`, `base_structures`, `construction_jobs`, `battles`, `ranking`, `battle_pass_progress`, `reward_claims`, `alpha_purchases`, social/guilda/chat vinculado ao player e idempotencias de acoes daquele save.
+- Reseta `level`, `xp`, `power`, `resources`, `builds`, `base_structures`, `construction_jobs`, `battles`, `ranking`, `battle_pass_progress`, `reward_claims`, `alpha_purchases`, Arena PVE, Mode sessions/progress/reward claims, Track 16 consumables/potion slots/spell behaviors/item ledger e idempotencias de acoes daquele save.
 - Nao altera linhas de outro save da mesma conta.
+- Preserva guildas, memberships, amizades, chat, guild contributions e construction helps account-wide.
 - Desassocia telemetria client antiga do `player_id` resetado.
 - Grava `resource_transactions` com source `account/saves/reset`.
+- Atualiza o payload idempotente de `account/guest` do mesmo save para refletir o estado resetado.
 - `GRANT EXECUTE` fica restrito a `service_role`; cliente usa Edge Function, nao RPC direto.
 
 ## Regras De Temporada

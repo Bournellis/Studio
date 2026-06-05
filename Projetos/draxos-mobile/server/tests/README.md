@@ -178,8 +178,15 @@ mesma sessao auth, batalha/base/loja no save Lab e ranking bloqueado para
 `progression_lab`.
 
 O smoke `reset_save_context_smoke.ts` valida `POST /account/saves/reset`: reset
-do Lab preserva Normal, reset do Normal preserva Lab, `request_id` e idempotente
+do Lab preserva Normal, reset do Normal preserva Lab, `request_hash`
+obrigatorio, idempotencia por `request_id` + hash, rejeicao de hash divergente
 e `save_type` divergente entre body/header e rejeitado.
+
+O teste `account_reset_request_hash_contract_test.ts` valida que a nova RPC
+`reset_player_save_v1` exige `p_request_hash`, usa `game_saves.id` como escopo,
+move limpeza de Arena/Modes/Track 16 para dentro da transacao SQL, preserva
+social/guilda/chat account-wide, revoga o acesso da assinatura legada sem hash
+e impede o adapter Edge de fazer cleanup REST pos-RPC.
 
 O smoke `progression_lab_apply_smoke.ts` valida `POST /progression-lab/apply`:
 perfil/milestone versionado aplicado no save `progression_lab`, save normal

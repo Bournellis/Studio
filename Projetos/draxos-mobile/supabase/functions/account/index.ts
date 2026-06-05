@@ -7,6 +7,7 @@ import {
   saveTypeQuery,
 } from "../_shared/save_context.ts";
 import { stateEnvelope } from "../_shared/response_envelope.ts";
+import { loadFoundationGameSave } from "../_shared/transactional_mutation.ts";
 
 type Route = "bootstrap" | "guest" | "state" | "save_reset";
 
@@ -81,12 +82,6 @@ interface JwtPayload {
 }
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const DEFAULT_POTION_BEHAVIOR = {
-  enabled: true,
-  hp: { mode: "below", percent: 40 },
-  mana: { mode: "ignore", percent: 0 },
-};
-
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
 });
@@ -354,6 +349,14 @@ async function handleSaveReset(
   if (!UUID_PATTERN.test(requestId)) {
     return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
   }
+  const requestHash = stringField(body, "request_hash");
+  if (requestHash === "") {
+    return errorResponse(
+      "INVALID_REQUEST_HASH",
+      "request_hash is required for account save reset.",
+      400,
+    );
+  }
 
   const bodySaveType = stringField(body, "save_type");
   if (bodySaveType !== "") {
@@ -374,26 +377,51 @@ async function handleSaveReset(
     }
   }
 
-  const rpc = await restRequest<unknown>(config, "rpc/reset_player_save", {
+  const playerResult = await restRequest<PlayerRow[]>(
+    config,
+    `players?auth_user_id=eq.${encodeURIComponent(auth.userId)}&${
+      saveTypeQuery(auth.saveType)
+    }&select=id,username,account_type,save_type,level,xp,power,created_at,updated_at&limit=1`,
+    { method: "GET" },
+  );
+  if (playerResult.error !== null) {
+    return errorResponse("RESET_TARGET_READ_FAILED", "Unable to load reset target.", 500);
+  }
+  const player = playerResult.value[0] ?? null;
+  if (player === null) {
+    return errorResponse("PLAYER_NOT_FOUND", "Account save was not created yet.", 404);
+  }
+
+  const gameSave = await loadFoundationGameSave(
+    config,
+    restRequest,
+    auth.userId,
+    auth.saveType,
+    player.id,
+  );
+  if (gameSave.error !== null) {
+    return errorResponse(gameSave.error.code, gameSave.error.message, gameSave.error.status);
+  }
+
+  const rpc = await restRequest<unknown>(config, "rpc/reset_player_save_v1", {
     method: "POST",
     body: JSON.stringify({
-      p_auth_user_id: auth.userId,
+      p_game_save_id: gameSave.value.id,
       p_request_id: requestId,
-      p_save_type: auth.saveType,
+      p_request_hash: requestHash,
+      p_request_payload: {
+        endpoint: "account/saves/reset",
+        request_id: requestId,
+        request_hash: requestHash,
+        save_type: auth.saveType,
+        body_save_type: bodySaveType === "" ? null : bodySaveType,
+      },
     }),
   });
 
   if (rpc.error !== null) {
     const mapped = mapDatabaseError(rpc.error);
     return errorResponse(mapped.code, mapped.message, mapped.status);
-  }
-
-  const playerId = playerIdFromPayload(rpc.value);
-  if (playerId !== "") {
-    const cleanup = await resetConsumableAndBehaviorState(config, playerId);
-    if (cleanup !== null) {
-      return errorResponse(cleanup.code, cleanup.message, cleanup.status);
-    }
   }
 
   const payload = withResourceDefaults(rpc.value);
@@ -409,58 +437,6 @@ async function handleSaveReset(
     withFoundationContext(payload, context?.value ?? null, "account_save_reset_response_v1"),
     { surface: "account", saveType: auth.saveType },
   ));
-}
-
-async function resetConsumableAndBehaviorState(
-  config: EdgeConfig,
-  playerId: string,
-): Promise<RestError | null> {
-  const tables = [
-    "player_consumables",
-    "player_spell_behaviors",
-    "player_potion_slots",
-    "item_transactions",
-  ];
-
-  for (const table of tables) {
-    const result = await restRequest<unknown>(
-      config,
-      `${table}?player_id=eq.${encodeURIComponent(playerId)}`,
-      { method: "DELETE" },
-    );
-    if (result.error !== null) {
-      return {
-        code: "RESET_TRACK16_STATE_FAILED",
-        message: "Unable to reset consumables and behavior state.",
-        status: 500,
-      };
-    }
-  }
-
-  const slotResult = await restRequest<unknown>(
-    config,
-    "player_potion_slots?on_conflict=player_id,slot_index",
-    {
-      method: "POST",
-      headers: { prefer: "resolution=merge-duplicates" },
-      body: JSON.stringify({
-        player_id: playerId,
-        slot_index: 1,
-        potion_id: null,
-        behavior: DEFAULT_POTION_BEHAVIOR,
-      }),
-    },
-  );
-
-  if (slotResult.error !== null) {
-    return {
-      code: "RESET_TRACK16_STATE_FAILED",
-      message: "Unable to recreate default potion slot.",
-      status: 500,
-    };
-  }
-
-  return null;
 }
 
 function resolveRoute(pathname: string): Route | null {
@@ -807,6 +783,22 @@ function mapDatabaseError(error: RestError): RestError {
     };
   }
 
+  if (message.includes("INVALID_REQUEST_HASH")) {
+    return {
+      code: "INVALID_REQUEST_HASH",
+      message: "request_hash is required for account save reset.",
+      status: 400,
+    };
+  }
+
+  if (message.includes("IDEMPOTENCY_HASH_MISMATCH")) {
+    return {
+      code: "IDEMPOTENCY_HASH_MISMATCH",
+      message: "request_id was already used with a different request_hash.",
+      status: 409,
+    };
+  }
+
   if (message.includes("INVALID_SAVE_TYPE")) {
     return {
       code: "INVALID_SAVE_TYPE",
@@ -828,6 +820,14 @@ function mapDatabaseError(error: RestError): RestError {
       code: "GAME_SAVE_NOT_FOUND",
       message: "Account save foundation row was not created yet.",
       status: 404,
+    };
+  }
+
+  if (message.includes("INVALID_GAME_SAVE_ID")) {
+    return {
+      code: "INVALID_GAME_SAVE_ID",
+      message: "game_save_id is required for account save reset.",
+      status: 400,
     };
   }
 
