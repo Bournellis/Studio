@@ -1255,10 +1255,10 @@
       "display_name": "Choque",
       "type": "magia",
       "cost": 1,
-      "text": "Causa 2 de dano a qualquer criatura ou heroi inimigo valido.",
+      "text": "Causa 3 de dano a qualquer criatura ou heroi inimigo valido.",
       "effect": {
         "action": "damage",
-        "amount": 2
+        "amount": 3
       }
     },
     {

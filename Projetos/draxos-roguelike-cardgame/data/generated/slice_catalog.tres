@@ -10,11 +10,11 @@ id = "arcano_choque"
 display_name = "Choque"
 card_type = "magia"
 cost = 1
-text = "Causa 2 de dano a qualquer criatura ou heroi inimigo valido."
+text = "Causa 3 de dano a qualquer criatura ou heroi inimigo valido."
 keywords = PackedStringArray()
 effect = {
 "action": "damage",
-"amount": 2.0
+"amount": 3.0
 }
 
 [sub_resource type="Resource" id="Resource_aaqvb"]
@@ -4475,4 +4475,4 @@ track_contract = {
 }
 }
 }
-definition_hash = "719ab88a2e786078bb2e4fe39b14e449e3bacf54a7b20320264a8809abc6a771"
+definition_hash = "3241b2715b89e695a5d0622b55f94864255e42a36882b7a64f494fa3f7971041"
