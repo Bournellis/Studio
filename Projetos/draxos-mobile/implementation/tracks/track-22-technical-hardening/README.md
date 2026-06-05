@@ -70,3 +70,7 @@ None. This track starts as local hardening only.
   `battle_replay_presenter.gd` stays focused on fullscreen UI/timeline wiring
   and drops from 748 to 528 lines while preserving the public `summary_data`
   wrapper used by client tests.
+- Package 6b extracts account form parsing, auth/signup validation and alpha
+  username/invite normalization into `account_form_contract.gd`.
+  `account_session_flow.gd` keeps compatibility wrappers for the runtime facade
+  and drops from 489 to 409 measured nonblank lines.
