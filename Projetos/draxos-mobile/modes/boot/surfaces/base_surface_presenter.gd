@@ -5,6 +5,7 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 const BaseSurfaceSummaryScript := preload("res://modes/boot/surfaces/base_surface_summary.gd")
 const BaseSurfaceTextScript := preload("res://modes/boot/surfaces/base_surface_text.gd")
 const BaseSurfaceVisualsScript := preload("res://modes/boot/surfaces/base_surface_visuals.gd")
+const BaseSurfaceCraftingScript := preload("res://modes/boot/surfaces/base_surface_crafting.gd")
 
 static func render(host: Node) -> void:
 	_add_body_text(host, "Acompanhe producao, veja a fila e escolha o proximo upgrade.")
@@ -153,36 +154,7 @@ static func _refuge_empty_panel(host: Node) -> Control:
 	return panel
 
 static func _crafting_panel(host: Node) -> Control:
-	var panel := _base_panel(host)
-	var box := VBoxContainer.new()
-	box.add_theme_constant_override("separation", 8)
-	panel.add_child(box)
-	box.add_child(_base_label(host, "Crafting", "text_primary", 18))
-
-	var crafting := SessionStore.crafting_snapshot()
-	if crafting.is_empty():
-		box.add_child(_base_label(host, "Triture Ossos em Po de Osso e crie Pocoes de Vida.", "text_secondary"))
-		box.add_child(_embedded_action_button(host, "Sincronizar Crafting", AppShellActionContractScript.ACTION_SHOW_CRAFTING))
-		return panel
-
-	var inventory := _as_array(crafting.get("inventory", []))
-	var stock := _inventory_quantity(inventory, AppShellActionContractScript.ITEM_HEALTH_POTION)
-	box.add_child(_base_label(host, "Ossos %s | Po de Osso %s | Pocao de Vida %d" % [
-		_format_number(float(SessionStore.resources_snapshot().get("ossos", 0))),
-		_format_number(float(SessionStore.resources_snapshot().get("po_osso", 0))),
-		stock,
-	], "text_secondary"))
-	box.add_child(_base_label(host, "Triturar 1 Osso cria 1 Po de Osso. Criar Pocao de Vida custa 50 Po de Osso.", "text_secondary"))
-
-	var actions := GridContainer.new()
-	actions.columns = _refuge_action_columns(host)
-	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	actions.add_theme_constant_override("h_separation", 8)
-	actions.add_theme_constant_override("v_separation", 8)
-	box.add_child(actions)
-	actions.add_child(_embedded_action_button(host, "Triturar Ossos", AppShellActionContractScript.ACTION_CRUSH_BONES, "Triturar 1 Osso em 1 Po de Osso?"))
-	actions.add_child(_embedded_action_button(host, "Criar Pocao de Vida", AppShellActionContractScript.ACTION_CRAFT_HEALTH_POTION, "Gastar 50 Po de Osso para criar 1 Pocao de Vida?"))
-	return panel
+	return BaseSurfaceCraftingScript.crafting_panel(host)
 
 static func _refuge_command_panel(host: Node, base: Dictionary, collected: Dictionary) -> Control:
 	var routine := routine_summary(base, collected)
@@ -358,20 +330,6 @@ static func _base_structure_button(host: Node, structure: Dictionary) -> Button:
 	_register_action_button(host, action_id, button)
 	return button
 
-static func _embedded_action_button(host: Node, text: String, action_id: String, confirm_message: String = "") -> Button:
-	var button := Button.new()
-	button.text = text
-	button.tooltip_text = text
-	button.custom_minimum_size = _button_min_size(host)
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_prepare_touch_button(host, button)
-	host.call("_apply_action_button_style", button, action_id, str(host.get("_current_screen")))
-	button.pressed.connect(func() -> void:
-		host.call("_trigger_action", action_id, confirm_message)
-	)
-	_register_action_button(host, action_id, button)
-	return button
-
 static func _empty_refuge_timeline_text() -> String:
 	return BaseSurfaceTextScript.empty_refuge_timeline_text(
 		SessionStore.has_valid_access_token(),
@@ -479,9 +437,6 @@ static func _resource_total(resources: Dictionary) -> float:
 static func _resource_label(key: String) -> String:
 	return BaseSurfaceSummaryScript.resource_label(key)
 
-static func _inventory_quantity(inventory: Array, item_id: String) -> int:
-	return BaseSurfaceTextScript.inventory_quantity(inventory, item_id)
-
 static func _structure_label(structure_id: String, fallback: String = "") -> String:
 	return BaseSurfaceSummaryScript.structure_label(structure_id, fallback)
 
@@ -502,9 +457,6 @@ static func _compact_layout(host: Node) -> bool:
 
 static func _is_refuge_screen(host: Node) -> bool:
 	return str(host.get("_current_screen")) == "refuge"
-
-static func _refuge_action_columns(host: Node) -> int:
-	return 1 if _compact_layout(host) else 2
 
 static func _base_map_columns(host: Node) -> int:
 	return int(host.call("_base_map_columns"))
