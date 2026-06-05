@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
 - Last Updated: `2026-06-05`
-- Prompt: `CARD-IMPACT-V2-NON-DAMAGE-COVERAGE`
-- Status: `CARD_IMPACT_V2_NON_DAMAGE_COVERAGE_COMPLETE`
+- Prompt: `CARD-IMPACT-V3-ISOLATED-TARGET-CAPTURE`
+- Status: `CARD_IMPACT_V3_ISOLATED_TARGET_CAPTURE_COMPLETE`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `157/157` tests passing.
+- GUT: `164/164` tests passing.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -23,7 +23,7 @@
 - AutoRun gate smoke: `--mode=gate --preset=smoke --baseline=track02_smoke_v1` passes the official 3-case smoke envelope.
 - AutoRun gate quick: `--mode=gate --preset=quick --baseline=track02_quick_v1` passes 30 macro-route cases and writes scorecard output.
 - Official gate baselines: `data/lab/baselines/track02_smoke_v1.json` and `data/lab/baselines/track02_quick_v1.json`.
-- Card Impact Pack: `tools/run_card_impact.gd` runs explicit `before`, `after` and `compare` phases for `data/lab/card_impact/track02_card_impact_v1.json` and `data/lab/card_impact/track02_card_impact_v2.json`.
+- Card Impact Pack: `tools/run_card_impact.gd` runs explicit `before`, `after` and `compare` phases for `data/lab/card_impact/track02_card_impact_v1.json`, `data/lab/card_impact/track02_card_impact_v2.json` and `data/lab/card_impact/track02_card_impact_v3.json`.
 - Card Impact coverage: 54 core player class card variants, 30 active enemy cards and 15 legacy inactive `elemental_*` cards audited.
 - Card Impact gate: `--phase=before --mode=gate`, `--phase=after --mode=gate` and `--phase=compare --mode=gate` all pass for the first real smoke-tuning cycle; compare reports zero structural errors, zero new failures, zero removed records and zero status changes across battle/scenario/run_lab components.
 - Card Impact smoke-tuning output: `user://card_impact/smoke_tuning_v1` reports one expected metric-impact row for `enemy_ar_rajada`: `damage_to_player_hero` `4 -> 5` and isolated harness `player_hp` `56 -> 55`.
@@ -35,6 +35,8 @@
 - Card Redesign Batch 01 regression gates: V1 Card Impact same/same regression passes, Battle Lab remains `9 PASS / 3 WARN / 0 FAIL`, Scenario Fixtures remains `9 PASS / 3 WARN / 0 FAIL`, AutoRun smoke passes, AutoRun quick passes and `validate.gd` passes with `154/154` tests and `1575` asserts.
 - Card Impact V2 Non-Damage Coverage gate: `before`, `after` and `compare` pass at `user://card_impact/track02_card_impact_v2_non_damage_coverage` with 84/84 active cards covered, zero structural errors, zero new failures and zero removed records.
 - Card Impact V2 Non-Damage Coverage signatures: 54 required player signatures present, 30 enemy signatures report-only/missing as expected, 45 clean player signatures, 9 support-assisted signatures, 47 ambiguous signatures from repeated focused-card plays, and non-damage families `buff`, `control`, `debuff`, `economy`, `keyword` and `summon` visible in the Markdown matrix.
+- Card Impact V3 Isolated Target Capture gate: `before`, `after` and `compare` pass at `user://card_impact/track02_card_impact_v3_isolated_target_capture` with 84/84 active cards covered, zero structural errors, zero new failures, zero removed records, zero status changes, zero metric changes and zero effect changes.
+- Card Impact V3 capture quality: player-card target captures are 45 clean, 9 support-required, 0 ambiguous, 0 failed and 0 repeated; enemy-card signatures remain report-only and do not count as isolated capture failures.
 - Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 - Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
 - Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
@@ -113,7 +115,22 @@
   - Quality: 45 clean, 9 support-assisted, 47 ambiguous, 30 enemy report-only missing.
   - Families: `buff`, `control`, `debuff`, `economy`, `keyword`, `summon`.
 - Operational lesson: support before the focused card is real signature contamination; cards played after the focused-card snapshot are still reported but should not mark the signature support-assisted. Ambiguity remains high because the current policy can play the focused card more than once.
-- Next tooling recommendation: add an isolated target-card capture mode to `card_focus_legal` before the next broad redesign batch. It should play minimum legal support, play the focused card once, capture the signature and stop further card plays for the turn when safe.
+- Follow-up status: the isolated target-card capture recommendation from V2 is now implemented by Card Impact V3.
+
+## Card Impact V3 Isolated Target Capture
+
+- Purpose: reduce focused-card ambiguity before broad player-card redesign batches.
+- Scope: tooling only; no gameplay, card, enemy, reward, shop, route or balance changes.
+- New pack: `data/lab/card_impact/track02_card_impact_v3.json`.
+- New policy: `card_focus_isolated`, which plays minimum support, plays the target card once, records the signature and stops further card plays for that turn.
+- New target-capture fields: `target_card_play_count`, `target_card_first_play_turn`, `target_card_first_play_cycle`, `stopped_after_target`, `target_capture_mode`, `capture_quality` and `ambiguity_reasons`.
+- Gate behavior: repeated target capture and failed isolated capture are structural blockers; support-required captures are visible but allowed; enemy signatures remain report-only.
+- Final observed compare at `user://card_impact/track02_card_impact_v3_isolated_target_capture`:
+  - Gate: PASS.
+  - Coverage: 84/84 active cards.
+  - Player capture quality: 45 clean, 9 support-required, 0 ambiguous, 0 failed, 0 repeated.
+  - Compare: zero structural errors, zero new failures, zero removed records, zero status changes, zero metric changes and zero effect changes.
+- Operational lesson: V3 should be the default card-impact pack for broad player-card redesigns because it keeps V2 effect-family visibility while removing repeated-target noise.
 
 ## Screenshots
 
@@ -130,8 +147,8 @@ Captured at `1280x720` and `960x540` in:
 
 - Manual playtest remains the next production step and should use `docs/playtest-track-02.md`.
 - Balance changes should come from observed human runs, with AutoRun Gate Pack used for explicit regression, distribution checks and tuning comparison rather than as the final verdict.
-- Large player-card changes should now use Card Impact V2: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect both metric movement and player-card effect signatures before accepting the batch.
-- Before the next broad card redesign, prefer one tooling hardening pass to reduce repeated-focused-card ambiguity in `card_focus_legal`.
+- Large player-card changes should now use Card Impact V3: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect target-capture quality, metric movement and player-card effect signatures before accepting the batch.
+- Enemy-card signature derivation remains the recommended tooling follow-up once enemy per-card causality is exposed clearly enough.
 - Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
 
 ## Remaining Technical Debt

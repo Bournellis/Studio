@@ -167,6 +167,30 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 				int(entry.get("missing_count", 0))
 			])
 	lines.append("")
+	lines.append("## Target Capture Quality")
+	if signature_quality.is_empty():
+		lines.append("- none")
+	else:
+		lines.append("- Clean/support-required/ambiguous/failed/repeated: `%d/%d/%d/%d/%d`" % [
+			int(signature_quality.get("capture_clean_count", 0)),
+			int(signature_quality.get("capture_support_required_count", 0)),
+			int(signature_quality.get("capture_ambiguous_count", 0)),
+			int(signature_quality.get("capture_failed_count", 0)),
+			int(signature_quality.get("repeated_target_count", 0))
+		])
+		var target_cases: Array = Array(signature_quality.get("cases", []))
+		if target_cases.is_empty():
+			lines.append("- notable cases: none")
+		else:
+			for item: Dictionary in target_cases.slice(0, 20):
+				lines.append("- `%s` `%s`: capture `%s`, plays `%d`, reasons `%s`" % [
+					str(item.get("case_id", "")),
+					str(item.get("card_id", "")),
+					str(item.get("capture_quality", "")),
+					int(item.get("target_card_play_count", 0)),
+					", ".join(Array(item.get("ambiguity_reasons", [])))
+				])
+	lines.append("")
 	lines.append("## Support Contamination")
 	if signature_quality.is_empty():
 		var support_changes: Array = Array(summary.get("support_contamination_changes", []))

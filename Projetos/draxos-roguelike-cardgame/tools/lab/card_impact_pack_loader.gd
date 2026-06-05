@@ -2,7 +2,7 @@ extends RefCounted
 
 const DEFAULT_CARD_IMPACT_DIR: String = "res://data/lab/card_impact"
 const DEFAULT_PACK_ID: String = "track02_card_impact_v1"
-const SUPPORTED_SIMULATION_MODES: Array[String] = ["card_impact_v1", "card_impact_v2"]
+const SUPPORTED_SIMULATION_MODES: Array[String] = ["card_impact_v1", "card_impact_v2", "card_impact_v3"]
 const REQUIRED_PACK_FIELDS: PackedStringArray = ["pack_id", "schema_version", "simulation_mode", "card_sets", "case_templates", "components", "gate_policy"]
 
 static func default_pack_id() -> String:
@@ -45,7 +45,7 @@ static func validate_pack_result(pack: Dictionary, path: String = "") -> Diction
 		if not pack.has(field):
 			errors.append("pack missing `%s`" % field)
 	if pack.has("simulation_mode") and not SUPPORTED_SIMULATION_MODES.has(str(pack.get("simulation_mode", ""))):
-		errors.append("pack simulation_mode must be one of `card_impact_v1,card_impact_v2`")
+		errors.append("pack simulation_mode must be one of `%s`" % ",".join(SUPPORTED_SIMULATION_MODES))
 	for object_field: String in ["card_sets", "case_templates", "components", "gate_policy"]:
 		if pack.has(object_field) and typeof(pack.get(object_field)) != TYPE_DICTIONARY:
 			errors.append("pack `%s` must be an object" % object_field)

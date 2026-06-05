@@ -9,13 +9,14 @@ This directory contains active, conceptual and paused projects for the studio.
 ## Implementacao Ativa
 
 - `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with Track 02 complete for user playtest: fixed 29-map route, save v5, reward schedule/progression, universal relics, expanded Souls shop, canonical keyword/status tooltips, full keyword engine, promoted class reward cards, elemental enemy galleries, hybrid enemy AI/intent, encounter modes, board formats, field effects, boss hooks, UI readability polish, modular tests, internal foundation directors/services for enemy AI/intent, combat/damage, rewards, Souls shop and BattleRoot presenters, idempotent generated catalog, shared route pacing simulator, AutoRun Gate Pack V1 JSON/CSV/Markdown reports with macro policies, official smoke/quick baselines, explicit gate mode, scorecards, statistical baseline and golden comparison, Scenario Fixtures V1 with `track02_core_v1` deterministic named scenarios, Gameplay Lab V1 with `track02_battle_core_v1` isolated real BattleEngine cases and deterministic legal-action policies, Lab Diff Reporter V1 before/after comparison for AutoRun/Scenario/Battle outputs, Card Impact Pack V1/V2 with `track02_card_impact_v1` and `track02_card_impact_v2` covering 84 active card cases plus 15 audited legacy inactive elemental cards, V2 required player-card effect signatures, non-damage derived deltas, support-card contamination reporting and report-only enemy signature schema, first Card Impact Smoke Tuning V1 and Card Redesign Batch 01 before/change/after/compare cycles applied to small card batches, Batch 01 damage-harness calibration and Arcano effect deltas, PASS/WARN/FAIL expectations and JSON/CSV/Markdown reports, foundation closeout/architecture ownership docs, playtest checklist, full-route pacing telemetry and validation green.
+  - Card Impact V3 addendum: `track02_card_impact_v3` adds isolated player target-card capture with `card_focus_isolated`, target play count/first-turn/cycle fields, stopped-after-target markers, `capture_quality`, repeated/failed capture gate blockers, enemy signatures still report-only, and validated 84/84 active-card coverage with 45 clean / 9 support-required / 0 ambiguous / 0 failed / 0 repeated player captures.
   - Priority/status: `P0_IMPLEMENTACAO`
   - Local agent guide: `draxos-roguelike-cardgame/AGENTS.md`
   - Operational status: `draxos-roguelike-cardgame/implementation/current-status.md`
   - AutoRun Lab: `draxos-roguelike-cardgame/docs/autorun-lab.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
   - Allowed work: code, validation, playtest, local documentation.
-  - Current next step: reduce `card_focus_legal` ambiguity with isolated target-card capture before broad card redesigns; Track 02 remains ready for user playtest of the complete-run build.
+  - Current next step: use Card Impact V3 as the default harness for the next broad player-card redesign batch; Track 02 remains ready for user playtest of the complete-run build.
 
 ## Implementacao - Arena PVE Inicial
 

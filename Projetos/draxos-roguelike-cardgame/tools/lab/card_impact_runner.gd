@@ -203,6 +203,7 @@ static func _phase_summary(pack: Dictionary, matrix: Dictionary, component_resul
 			_merge_signature_quality(signature_quality, Dictionary(component.get("signature_quality", {})))
 		if str(component.get("status", "")) == "FAIL":
 			blocking_changes.append("Component `%s` failed." % str(component.get("component", "")))
+	blocking_changes.append_array(_target_capture_blockers(pack, signature_quality))
 	return {
 		"coverage": coverage,
 		"components": component_results,
@@ -265,6 +266,7 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 							"after": row.get("after", null)
 						})
 			_record_card_impact(top_map, diff)
+	blocking_changes.append_array(_target_capture_blockers(pack, signature_quality))
 	return {
 		"coverage": _compare_coverage(pack, component_results),
 		"components": component_results,
@@ -321,6 +323,19 @@ static func _apply_effect_signature_coverage(coverage: Dictionary, pack: Diction
 	coverage["enemy_effect_signature_mode"] = str(enemy_config.get("mode", "off")) if enabled else "off"
 	coverage["expected_player_effect_signatures"] = int(coverage.get("filtered_player_cards", 0)) if str(coverage.get("player_effect_signature_mode", "")) == "required" else 0
 	coverage["expected_enemy_effect_signatures"] = int(coverage.get("filtered_enemy_cards", 0)) if str(coverage.get("enemy_effect_signature_mode", "")) == "required" else 0
+
+static func _target_capture_blockers(pack: Dictionary, signature_quality: Dictionary) -> Array[String]:
+	var gate_policy: Dictionary = Dictionary(pack.get("gate_policy", {}))
+	if not bool(gate_policy.get("fail_on_repeated_target_capture", false)):
+		return []
+	var blockers: Array[String] = []
+	var repeated_count: int = int(signature_quality.get("repeated_target_count", 0))
+	if repeated_count > 0:
+		blockers.append("%d target-card captures played the focused card more than once." % repeated_count)
+	var failed_count: int = int(signature_quality.get("capture_failed_count", 0))
+	if failed_count > 0:
+		blockers.append("%d target-card captures failed." % failed_count)
+	return blockers
 
 static func _record_card_impact(top_map: Dictionary, diff: Dictionary) -> void:
 	var card_id: String = _card_id_from_diff_id(str(diff.get("id", "")))
@@ -379,7 +394,14 @@ static func _is_support_field(field: String) -> bool:
 		"support_card_count_after_target",
 		"support_contamination_status",
 		"signature_confidence",
-		"ambiguous_reason"
+		"ambiguous_reason",
+		"target_card_play_count",
+		"target_card_first_play_turn",
+		"target_card_first_play_cycle",
+		"stopped_after_target",
+		"target_capture_mode",
+		"capture_quality",
+		"ambiguity_reasons"
 	]
 
 static func _signature_quality_from_records(records: Array) -> Dictionary:
@@ -397,13 +419,17 @@ static func _signature_quality_from_records(records: Array) -> Dictionary:
 			families = ["missing" if not bool(signature.get("present", false)) else "played"]
 		var status: String = str(signature.get("support_contamination_status", result.get("support_contamination_status", "none")))
 		var confidence: String = str(signature.get("signature_confidence", result.get("signature_confidence", "none")))
+		var capture_quality: String = str(signature.get("capture_quality", result.get("capture_quality", "none")))
+		var target_play_count: int = int(signature.get("target_card_play_count", result.get("target_card_play_count", result.get("card_under_test_play_count", 0))))
+		var target_capture_mode: String = str(signature.get("target_capture_mode", result.get("target_capture_mode", "")))
 		if not bool(signature.get("present", false)):
 			status = "missing"
 			confidence = "missing"
-		_increment_signature_quality_total(quality, status, confidence)
+			capture_quality = "failed" if target_capture_mode == "isolated_once" else "none"
+		_increment_signature_quality_total(quality, status, confidence, capture_quality, target_play_count)
 		for family_value: Variant in families:
-			_increment_signature_family_quality(quality, str(family_value), status, confidence)
-		if status in ["support_assisted", "missing"] or confidence == "ambiguous":
+			_increment_signature_family_quality(quality, str(family_value), status, confidence, capture_quality, target_play_count)
+		if status in ["support_assisted", "missing"] or confidence == "ambiguous" or capture_quality in ["support_required", "ambiguous", "failed"]:
 			var cases: Array = Array(quality.get("cases", []))
 			cases.append({
 				"case_id": case_id,
@@ -411,7 +437,10 @@ static func _signature_quality_from_records(records: Array) -> Dictionary:
 				"families": families.duplicate(),
 				"support_contamination_status": status,
 				"signature_confidence": confidence,
+				"capture_quality": capture_quality,
+				"target_card_play_count": target_play_count,
 				"reason": str(signature.get("ambiguous_reason", result.get("signature_ambiguous_reason", signature.get("missing_reason", "")))),
+				"ambiguity_reasons": Array(signature.get("ambiguity_reasons", result.get("ambiguity_reasons", []))).duplicate(),
 				"support_cards_before_target": Array(signature.get("support_cards_before_target", result.get("support_cards_before_target", []))).duplicate(),
 				"support_cards_after_target": Array(signature.get("support_cards_after_target", result.get("support_cards_after_target", []))).duplicate()
 			})
@@ -438,21 +467,26 @@ static func _empty_signature_quality() -> Dictionary:
 		"ambiguous_count": 0,
 		"missing_count": 0,
 		"none_count": 0,
+		"capture_clean_count": 0,
+		"capture_support_required_count": 0,
+		"capture_ambiguous_count": 0,
+		"capture_failed_count": 0,
+		"repeated_target_count": 0,
 		"by_family": {},
 		"cases": []
 	}
 
 static func _merge_signature_quality(target: Dictionary, source: Dictionary) -> void:
-	for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count"]:
+	for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count", "capture_clean_count", "capture_support_required_count", "capture_ambiguous_count", "capture_failed_count", "repeated_target_count"]:
 		target[field] = int(target.get(field, 0)) + int(source.get(field, 0))
 	var target_by_family: Dictionary = Dictionary(target.get("by_family", {}))
 	for family_key: Variant in Dictionary(source.get("by_family", {})).keys():
 		var family: String = str(family_key)
 		if not target_by_family.has(family):
-			target_by_family[family] = {"total": 0, "clean_count": 0, "support_assisted_count": 0, "ambiguous_count": 0, "missing_count": 0, "none_count": 0}
+			target_by_family[family] = _empty_signature_quality_family()
 		var target_entry: Dictionary = Dictionary(target_by_family.get(family, {}))
 		var source_entry: Dictionary = Dictionary(Dictionary(source.get("by_family", {})).get(family_key, {}))
-		for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count"]:
+		for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count", "capture_clean_count", "capture_support_required_count", "capture_ambiguous_count", "capture_failed_count", "repeated_target_count"]:
 			target_entry[field] = int(target_entry.get(field, 0)) + int(source_entry.get(field, 0))
 		target_by_family[family] = target_entry
 	target["by_family"] = target_by_family
@@ -462,21 +496,21 @@ static func _merge_signature_quality(target: Dictionary, source: Dictionary) -> 
 			cases.append(Dictionary(case_value).duplicate(true))
 	target["cases"] = cases
 
-static func _increment_signature_quality_total(quality: Dictionary, status: String, confidence: String) -> void:
+static func _increment_signature_quality_total(quality: Dictionary, status: String, confidence: String, capture_quality: String = "none", target_play_count: int = 0) -> void:
 	quality["total"] = int(quality.get("total", 0)) + 1
-	_increment_quality_bucket(quality, status, confidence)
+	_increment_quality_bucket(quality, status, confidence, capture_quality, target_play_count)
 
-static func _increment_signature_family_quality(quality: Dictionary, family: String, status: String, confidence: String) -> void:
+static func _increment_signature_family_quality(quality: Dictionary, family: String, status: String, confidence: String, capture_quality: String = "none", target_play_count: int = 0) -> void:
 	var by_family: Dictionary = Dictionary(quality.get("by_family", {}))
 	if not by_family.has(family):
-		by_family[family] = {"total": 0, "clean_count": 0, "support_assisted_count": 0, "ambiguous_count": 0, "missing_count": 0, "none_count": 0}
+		by_family[family] = _empty_signature_quality_family()
 	var entry: Dictionary = Dictionary(by_family.get(family, {}))
 	entry["total"] = int(entry.get("total", 0)) + 1
-	_increment_quality_bucket(entry, status, confidence)
+	_increment_quality_bucket(entry, status, confidence, capture_quality, target_play_count)
 	by_family[family] = entry
 	quality["by_family"] = by_family
 
-static func _increment_quality_bucket(target: Dictionary, status: String, confidence: String) -> void:
+static func _increment_quality_bucket(target: Dictionary, status: String, confidence: String, capture_quality: String = "none", target_play_count: int = 0) -> void:
 	match status:
 		"clean":
 			target["clean_count"] = int(target.get("clean_count", 0)) + 1
@@ -488,6 +522,32 @@ static func _increment_quality_bucket(target: Dictionary, status: String, confid
 			target["none_count"] = int(target.get("none_count", 0)) + 1
 	if confidence == "ambiguous":
 		target["ambiguous_count"] = int(target.get("ambiguous_count", 0)) + 1
+	match capture_quality:
+		"clean":
+			target["capture_clean_count"] = int(target.get("capture_clean_count", 0)) + 1
+		"support_required":
+			target["capture_support_required_count"] = int(target.get("capture_support_required_count", 0)) + 1
+		"ambiguous":
+			target["capture_ambiguous_count"] = int(target.get("capture_ambiguous_count", 0)) + 1
+		"failed":
+			target["capture_failed_count"] = int(target.get("capture_failed_count", 0)) + 1
+	if target_play_count > 1:
+		target["repeated_target_count"] = int(target.get("repeated_target_count", 0)) + 1
+
+static func _empty_signature_quality_family() -> Dictionary:
+	return {
+		"total": 0,
+		"clean_count": 0,
+		"support_assisted_count": 0,
+		"ambiguous_count": 0,
+		"missing_count": 0,
+		"none_count": 0,
+		"capture_clean_count": 0,
+		"capture_support_required_count": 0,
+		"capture_ambiguous_count": 0,
+		"capture_failed_count": 0,
+		"repeated_target_count": 0
+	}
 
 static func _top_impacted_cards(top_map: Dictionary) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []

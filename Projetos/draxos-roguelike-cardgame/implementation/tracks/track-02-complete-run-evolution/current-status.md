@@ -4,7 +4,7 @@
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Historical Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `Card Impact V2 Non-Damage Coverage, Card Redesign Batch 01, Card Impact Effect Signature V2, Card Impact Smoke Tuning V1, Card Impact Pack V1, Lab Diff Reporter V1, Gameplay Lab V1, Scenario Fixtures V1 and AutoRun Gate Pack V1 preserve Track 02 route metrics and pass 157/157 GUT tests, shared full-route pacing smoke green, Card Impact V2 before/after/compare gate green with 84 active card cases covered, 54/54 required player effect signatures present, non-damage families reported from BattleEngine snapshots/log deltas, support-card contamination metadata reported, 30 enemy signatures report-only, 15 legacy inactive elemental cards audited, zero structural errors, V1 Card Impact regression gate green, Battle Lab track02_battle_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, Scenario Fixture track02_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
+- Validation Baseline: `Card Impact V3 Isolated Target Capture, Card Impact V2 Non-Damage Coverage, Card Redesign Batch 01, Card Impact Effect Signature V2, Card Impact Smoke Tuning V1, Card Impact Pack V1, Lab Diff Reporter V1, Gameplay Lab V1, Scenario Fixtures V1 and AutoRun Gate Pack V1 preserve Track 02 route metrics and pass 164/164 GUT tests, shared full-route pacing smoke green, Card Impact V3 before/after/compare gate green with 84 active card cases covered, 54/54 required player effect signatures present, 30 enemy signatures report-only, 15 legacy inactive elemental cards audited, player target capture quality 45 clean / 9 support-required / 0 ambiguous / 0 failed / 0 repeated, zero structural errors, Battle Lab track02_battle_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, Scenario Fixture track02_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
 
 ## Purpose
 
@@ -40,9 +40,9 @@ The target is a fixed, linear 29-map run with all planned encounter types, all p
 
 ## Current Execution Cursor
 
-Completed prompt: `CARD-IMPACT-V2-NON-DAMAGE-COVERAGE - strengthen summon/support/control/economy effect comparisons and support-card contamination reporting before broader card redesign batches`.
+Completed prompt: `CARD-IMPACT-V3-ISOLATED-TARGET-CAPTURE - play minimum support, play focused card once, capture signature, stop further card plays and report target-capture quality before broader card redesign batches`.
 
-Next implementation prompt: `CARD-IMPACT-V2-ISOLATED-TARGET-CAPTURE - reduce card_focus_legal ambiguity by stopping after the focused card signature capture when safe`. Track 02 remains ready for user playtest.
+Next implementation prompt: `PLAYER-CARD-REDESIGN-BATCH-02 - use Card Impact V3 before/change/after/compare for a coherent broad player-card redesign batch`. Track 02 remains ready for user playtest.
 
 ## Implemented Baseline
 

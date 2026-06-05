@@ -183,6 +183,7 @@ static func _player_case(card_data: Dictionary, pack: Dictionary) -> Dictionary:
 		"effect_signature_required": _requires_player_effect_signature(pack),
 		"effect_signature_scope": "player",
 		"effect_family": family,
+		"target_capture": _target_capture_config(pack),
 		"encounter_override": _player_encounter_override_for(family)
 	}
 
@@ -331,6 +332,12 @@ static func _requires_player_effect_signature(pack: Dictionary) -> bool:
 		return false
 	var player_config: Dictionary = Dictionary(config.get("player", {}))
 	return str(player_config.get("mode", "required")) == "required" and bool(player_config.get("fail_on_missing_signature", true))
+
+static func _target_capture_config(pack: Dictionary) -> Dictionary:
+	var config: Dictionary = Dictionary(Dictionary(pack.get("effect_signatures", {})).get("target_capture", {})).duplicate(true)
+	if config.is_empty():
+		return {}
+	return config
 
 static func _typed_card_array(values: Array) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []

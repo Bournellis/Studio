@@ -1,8 +1,8 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-05`
-- Status: `CARD_REDESIGN_BATCH_01_COMPLETE`
-- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration and player-card effect signatures
+- Status: `CARD_IMPACT_V3_ISOLATED_TARGET_CAPTURE_COMPLETE`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures and isolated target-card capture
 
 ## Purpose
 
@@ -21,6 +21,8 @@ Card Impact Pack V1 is the fifth layer. It orchestrates a deterministic before/a
 Card Impact Smoke Tuning V1 is the first real use of that flow. It applies a deliberately small card batch, runs `before -> after -> compare`, and confirms that numeric impact can be reported without failing the structural gate.
 
 Card Impact Effect Signature V2 extends that flow for player cards. It captures before/after `BattleEngine` snapshots around the focused card play, derives effect signatures from real logs/state deltas, compares those signatures in `before -> after -> compare`, and keeps enemy-card signatures reserved as schema/report-only data for a future enemy implementation pass.
+
+Card Impact V3 Isolated Target Capture makes the player-card harness less ambiguous before broad card redesigns. It plays at most one required support card, plays the focused target card once, captures the signature, stops further card plays for that turn, and turns repeated-target or failed isolated captures into structural gate blockers.
 
 Card Redesign Batch 01 is the first controlled real card-edit cycle using V2. It changes three Arcano damage upgrade variants, calibrates the damage-family harness so overkill does not hide effect movement, and proves that `effect.*` deltas can show intentional player-card movement while every structural gate remains green.
 
@@ -76,6 +78,16 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v2
 
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v2
+```
+
+Card impact V3 isolated target-capture gates:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=before --mode=gate --pack=track02_card_impact_v3
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v3
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v3
 ```
 
 ## Presets
@@ -356,6 +368,32 @@ First controlled V2 redesign result (`user://card_impact/redesign_batch_01`):
 - Effect deltas detected: `card_impact_player_arcano_choque_lvl2` `effect.enemy_hero_damage` `52 -> 57`, `card_impact_player_arcano_choque_lvl3` `86 -> 92`, and `card_impact_player_arcano_tempestade_lvl3` `57 -> 62`.
 - Metric deltas matched the intended direction: the three affected battle harnesses showed lower final enemy HP and higher `damage_to_enemy_hero`, with no Scenario or Run Lab gate regression.
 
+## Card Impact V3 Isolated Target Capture
+
+`track02_card_impact_v3` keeps the V2 matrix and derived player-card effect signatures, then adds `target_capture.mode=isolated_once` for player-card cases.
+
+V3 target capture behavior:
+
+- Player-card cases use `card_focus_isolated`.
+- The policy may play one enabling support card when the target cannot be legally played without a board.
+- The focused card is played once, its effect signature is captured, and no more cards are played that turn.
+- `capture_quality` is reported as `clean`, `support_required`, `ambiguous` or `failed`.
+- Repeated target-card captures and failed isolated captures fail the V3 structural gate.
+- Enemy-card signatures remain schema-ready/report-only; missing enemy signatures do not count as isolated capture failures.
+
+V3 adds:
+
+- `data/lab/card_impact/track02_card_impact_v3.json`.
+- `card_focus_isolated` in `tools/lab/battle_policy.gd`.
+- Target capture fields in battle/card-impact records and `effect.*` diffs: `target_card_play_count`, first play turn/cycle, `stopped_after_target`, `target_capture_mode`, `capture_quality` and `ambiguity_reasons`.
+- `Target Capture Quality` in Card Impact Markdown summaries.
+
+Current calibrated same/same result (`user://card_impact/track02_card_impact_v3_isolated_target_capture`):
+
+- `before`, `after` and `compare` pass with zero structural errors, zero new failures, zero removed records, zero status changes, zero metric changes and zero effect changes.
+- Coverage is 84/84 active cases: 54 player cards, 30 active enemy cards and 15 audited inactive legacy cards.
+- Player target capture quality is 45 clean, 9 support-required, 0 ambiguous, 0 failed and 0 repeated target captures.
+
 ## Result Schema
 
 Each detailed record contains:
@@ -368,7 +406,7 @@ Each detailed record contains:
 - `warnings`
 - `tags`
 
-The current macro-route `simulation_mode` is `macro_route_v1`. Gameplay Lab uses `battle_engine_v1`. Card Impact uses `card_impact_v1` and `card_impact_v2`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
+The current macro-route `simulation_mode` is `macro_route_v1`. Gameplay Lab uses `battle_engine_v1`. Card Impact uses `card_impact_v1`, `card_impact_v2` and `card_impact_v3`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
 
 ## Baseline Strategy
 
@@ -393,7 +431,7 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Harden Card Impact V2 coverage for non-damage player-card families: compare summon stat totals, buff/debuff/control/economy fields more explicitly, and add a guard for support-card contamination in focused-card batches.
+1. Use Card Impact V3 as the default harness for the next broad player-card redesign batch: run `before`, apply a coherent batch, run `after`, run `compare`, and review target-capture quality plus effect-family deltas.
 2. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
 3. Implement enemy-card effect signatures once enemy action logs expose enough per-card causality to avoid guessing.
 4. Replay Lab: record human or bot decisions and replay them across builds.

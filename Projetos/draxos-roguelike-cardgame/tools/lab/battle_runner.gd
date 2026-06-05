@@ -52,16 +52,23 @@ static func run_case(catalog, pack: Dictionary, case_data: Dictionary, options: 
 	var metrics: Dictionary = _initial_metrics(pack, case_data, encounter, initial_state, options)
 	var policy_id: String = BattlePolicyScript.resolve_policy_id(case_data, str(options.get("policy", "")))
 	var turn_limit: int = maxi(1, int(case_data.get("turn_limit", 12)))
+	var target_capture: Dictionary = _target_capture_config(pack, case_data)
 	while str(_engine_state(engine).get("outcome", "")) == "" and int(metrics.get("combat_cycles", 0)) < turn_limit:
-		var policy_result: Dictionary = BattlePolicyScript.play_turn(engine, policy_id, _policy_options(case_data, options))
+		var policy_options: Dictionary = _policy_options(case_data, options)
+		policy_options["target_capture"] = target_capture.duplicate(true)
+		policy_options["target_already_captured"] = bool(metrics.get("target_capture_complete", false))
+		var policy_result: Dictionary = BattlePolicyScript.play_turn(engine, policy_id, policy_options)
 		var state: Dictionary = _engine_state(engine)
 		_record_policy_result(metrics, policy_result)
 		metrics["combat_cycles"] = int(metrics.get("combat_cycles", 0)) + 1
+		_record_target_capture_result(metrics, policy_result, state)
 		_append_timeline(metrics, state, policy_result)
 		if not bool(policy_result.get("ok", true)):
 			var runner_warnings: Array = Array(metrics.get("runner_warnings", []))
 			runner_warnings.append("Policy action rejected: %s" % str(policy_result.get("failed_actions", [])))
 			metrics["runner_warnings"] = runner_warnings
+			break
+		if _should_stop_after_target_capture(metrics, target_capture):
 			break
 	var final_state: Dictionary = _engine_state(engine)
 	_finalize_metrics(metrics, initial_state, final_state, turn_limit)
@@ -208,6 +215,14 @@ static func _initial_metrics(pack: Dictionary, case_data: Dictionary, encounter:
 		"support_contamination_status": "none",
 		"signature_confidence": "none",
 		"signature_ambiguous_reason": "",
+		"capture_quality": "none",
+		"ambiguity_reasons": [],
+		"target_capture_mode": str(Dictionary(case_data.get("target_capture", {})).get("mode", "")),
+		"target_capture_complete": false,
+		"target_card_play_count": 0,
+		"target_card_first_play_turn": -1,
+		"target_card_first_play_cycle": -1,
+		"stopped_after_target": false,
 		"card_effect_samples": [],
 		"card_effect_signature": {},
 		"card_effect_signature_present": false,
@@ -265,8 +280,19 @@ static func _record_policy_result(metrics: Dictionary, policy_result: Dictionary
 			if str(played_card.get("card_id", "")) == card_under_test:
 				metrics["card_under_test_played"] = true
 				metrics["card_under_test_play_count"] = int(metrics.get("card_under_test_play_count", 0)) + 1
+				metrics["target_card_play_count"] = int(metrics.get("card_under_test_play_count", 0))
 	if not bool(policy_result.get("ok", true)):
 		metrics["policy_action_rejected"] = true
+
+static func _record_target_capture_result(metrics: Dictionary, policy_result: Dictionary, state: Dictionary) -> void:
+	if not bool(policy_result.get("target_captured", false)):
+		return
+	metrics["target_capture_complete"] = true
+	metrics["stopped_after_target"] = bool(policy_result.get("stopped_after_target", false))
+	if int(metrics.get("target_card_first_play_cycle", -1)) < 0:
+		metrics["target_card_first_play_cycle"] = int(metrics.get("combat_cycles", 0))
+	if int(metrics.get("target_card_first_play_turn", -1)) < 0:
+		metrics["target_card_first_play_turn"] = int(state.get("turn", 0))
 
 static func _append_timeline(metrics: Dictionary, state: Dictionary, policy_result: Dictionary) -> void:
 	var card_under_test: String = str(metrics.get("card_under_test", ""))
@@ -352,6 +378,14 @@ static func _error_metrics(case_data: Dictionary, message: String) -> Dictionary
 		"support_contamination_status": "missing",
 		"signature_confidence": "missing",
 		"signature_ambiguous_reason": message,
+		"capture_quality": "failed",
+		"ambiguity_reasons": [message],
+		"target_capture_mode": str(Dictionary(case_data.get("target_capture", {})).get("mode", "")),
+		"target_capture_complete": false,
+		"target_card_play_count": 0,
+		"target_card_first_play_turn": -1,
+		"target_card_first_play_cycle": -1,
+		"stopped_after_target": false,
 		"card_effect_samples": [],
 		"card_effect_signature": BattleEffectSignatureScript.empty_missing(str(Dictionary(case_data.get("card_under_test", {})).get("id", "")), message),
 		"card_effect_signature_present": false,
@@ -376,6 +410,8 @@ static func _finalize_effect_signature(metrics: Dictionary) -> void:
 		metrics["card_effect_signature"] = BattleEffectSignatureScript.empty_missing(card_id, reason)
 		metrics["card_effect_signature_present"] = false
 		metrics["card_effect_signature_missing_reason"] = reason
+		metrics["capture_quality"] = "failed"
+		metrics["ambiguity_reasons"] = [reason]
 		metrics["effect_families"] = []
 		return
 	var signature: Dictionary = BattleEffectSignatureScript.aggregate(card_id, samples)
@@ -396,9 +432,12 @@ static func _apply_support_metadata(metrics: Dictionary, signature: Dictionary) 
 		metrics["support_contamination_status"] = "missing"
 		metrics["signature_confidence"] = "missing"
 		metrics["signature_ambiguous_reason"] = "focused card was not found in card play sequence"
+		metrics["capture_quality"] = "failed"
+		metrics["ambiguity_reasons"] = ["focused card was not found in card play sequence"]
 		signature["support_contamination_status"] = "missing"
 		signature["signature_confidence"] = "missing"
 		signature["ambiguous_reason"] = str(metrics["signature_ambiguous_reason"])
+		_apply_target_capture_fields(metrics, signature)
 		return
 	var support_before: Array = _support_cards_in_range(sequence, 0, focused_index, card_id)
 	var support_after: Array = _support_cards_in_range(sequence, focused_index + 1, sequence.size(), card_id)
@@ -415,6 +454,8 @@ static func _apply_support_metadata(metrics: Dictionary, signature: Dictionary) 
 		metrics["support_contamination_status"] = "support_assisted"
 		metrics["signature_confidence"] = "support_assisted"
 		metrics["signature_ambiguous_reason"] = "support cards were played before the focused card"
+		metrics["capture_quality"] = "support_required"
+		metrics["ambiguity_reasons"] = ["support_before_target"]
 		signature["support_contamination_status"] = "support_assisted"
 		signature["signature_confidence"] = "support_assisted"
 		signature["ambiguous_reason"] = str(metrics["signature_ambiguous_reason"])
@@ -422,14 +463,37 @@ static func _apply_support_metadata(metrics: Dictionary, signature: Dictionary) 
 		metrics["support_contamination_status"] = "clean"
 		metrics["signature_confidence"] = "clean"
 		metrics["signature_ambiguous_reason"] = ""
+		metrics["capture_quality"] = "clean"
+		metrics["ambiguity_reasons"] = []
 		signature["support_contamination_status"] = "clean"
 		signature["signature_confidence"] = "clean"
 		signature["ambiguous_reason"] = ""
 	if int(metrics.get("card_under_test_play_count", 0)) > 1:
 		metrics["signature_confidence"] = "ambiguous"
 		metrics["signature_ambiguous_reason"] = "focused card was played more than once"
+		metrics["capture_quality"] = "ambiguous"
+		metrics["ambiguity_reasons"] = _append_unique(Array(metrics.get("ambiguity_reasons", [])), "target_played_multiple_times")
 		signature["signature_confidence"] = "ambiguous"
 		signature["ambiguous_reason"] = str(metrics["signature_ambiguous_reason"])
+	if bool(metrics.get("stopped_after_target", false)) and int(metrics.get("support_card_count_after_target", 0)) == 0:
+		metrics["ambiguity_reasons"] = _remove_value(Array(metrics.get("ambiguity_reasons", [])), "post_target_actions")
+	elif int(metrics.get("support_card_count_after_target", 0)) > 0:
+		metrics["signature_confidence"] = "ambiguous"
+		metrics["capture_quality"] = "ambiguous"
+		metrics["signature_ambiguous_reason"] = "cards were played after the focused card"
+		metrics["ambiguity_reasons"] = _append_unique(Array(metrics.get("ambiguity_reasons", [])), "post_target_actions")
+		signature["signature_confidence"] = "ambiguous"
+		signature["ambiguous_reason"] = str(metrics["signature_ambiguous_reason"])
+	_apply_target_capture_fields(metrics, signature)
+
+static func _apply_target_capture_fields(metrics: Dictionary, signature: Dictionary) -> void:
+	signature["target_capture_mode"] = str(metrics.get("target_capture_mode", ""))
+	signature["target_card_play_count"] = int(metrics.get("target_card_play_count", metrics.get("card_under_test_play_count", 0)))
+	signature["target_card_first_play_turn"] = int(metrics.get("target_card_first_play_turn", -1))
+	signature["target_card_first_play_cycle"] = int(metrics.get("target_card_first_play_cycle", -1))
+	signature["stopped_after_target"] = bool(metrics.get("stopped_after_target", false))
+	signature["capture_quality"] = str(metrics.get("capture_quality", "none"))
+	signature["ambiguity_reasons"] = Array(metrics.get("ambiguity_reasons", [])).duplicate()
 
 static func _card_ids_from_plays(plays: Array) -> Array:
 	var ids: Array = []
@@ -470,11 +534,32 @@ static func _first_index_of(values: Array, target: String) -> int:
 			return index
 	return -1
 
+static func _target_capture_config(pack: Dictionary, case_data: Dictionary) -> Dictionary:
+	var config: Dictionary = Dictionary(case_data.get("target_capture", {})).duplicate(true)
+	if config.is_empty():
+		config = Dictionary(Dictionary(pack.get("effect_signatures", {})).get("target_capture", {})).duplicate(true)
+	if not config.has("mode"):
+		config["mode"] = ""
+	if not config.has("stop_after_target"):
+		config["stop_after_target"] = str(config.get("mode", "")) == "isolated_once"
+	if not config.has("max_support_cards_before_target"):
+		config["max_support_cards_before_target"] = 999
+	return config
+
+static func _should_stop_after_target_capture(metrics: Dictionary, target_capture: Dictionary) -> bool:
+	if str(target_capture.get("mode", "")) != "isolated_once":
+		return false
+	if not bool(target_capture.get("stop_after_target", true)):
+		return false
+	return bool(metrics.get("target_capture_complete", false))
+
 static func _policy_options(case_data: Dictionary, options: Dictionary) -> Dictionary:
 	var policy_options: Dictionary = options.duplicate(true)
 	var card_under_test: Dictionary = Dictionary(case_data.get("card_under_test", {}))
 	if not card_under_test.is_empty():
 		policy_options["card_under_test"] = str(card_under_test.get("id", ""))
+	if case_data.has("target_capture"):
+		policy_options["target_capture"] = Dictionary(case_data.get("target_capture", {})).duplicate(true)
 	return policy_options
 
 static func _state_contains_card(state: Dictionary, card_id: String) -> bool:
@@ -553,4 +638,17 @@ static func _string_array(values: Array) -> Array[String]:
 	var result: Array[String] = []
 	for value: Variant in values:
 		result.append(str(value))
+	return result
+
+static func _append_unique(values: Array, value: String) -> Array:
+	var result: Array = values.duplicate()
+	if value != "" and not result.has(value):
+		result.append(value)
+	return result
+
+static func _remove_value(values: Array, value: String) -> Array:
+	var result: Array = []
+	for item: Variant in values:
+		if str(item) != value:
+			result.append(item)
 	return result
