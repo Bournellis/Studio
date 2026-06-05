@@ -4,7 +4,7 @@
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Historical Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `AutoRun Gate Pack V1 preserves Track 02 route metrics and passes 111/111 GUT tests, 1313 asserts, shared full-route pacing smoke green, Run Lab golden comparison green, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
+- Validation Baseline: `AutoRun Gate Pack V1 and Scenario Fixtures V1 preserve Track 02 route metrics and pass 120/120 GUT tests, 1343 asserts, shared full-route pacing smoke green, Scenario Fixture track02_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
 
 ## Purpose
 
@@ -40,7 +40,7 @@ The target is a fixed, linear 29-map run with all planned encounter types, all p
 
 ## Current Execution Cursor
 
-Completed prompt: `FOUNDATION-HARDENING-9 - Cleanup Final And Living Architecture`.
+Completed prompt: `SCENARIO-FIXTURES-V1 - named deterministic macro-route scenario fixtures`.
 
 Next implementation prompt: none. Track 02 is ready for user playtest.
 
@@ -92,6 +92,7 @@ Next implementation prompt: none. Track 02 is ready for user playtest.
 - Foundation hardening 9 closed the foundation review with `docs/foundation-closeout.md`, refreshed the live architecture ownership map, separated technical foundation debt from product/playtest follow-up, and kept the next product step focused on human Track 02 playtest.
 - AutoRun Lab V1 turns `tools/run_lab.gd` into a modular macro-route lab with `tools/lab/` case building, presets, macro policies, aggregate JSON/CSV/Markdown reporting, detailed timelines, warnings/tags and statistical baseline comparison while preserving the exact Track 02 golden path.
 - AutoRun Gate Pack V1 adds official smoke/quick baselines under `data/lab/baselines/`, explicit `--mode=gate` regression commands, baseline group-field comparisons, gate failure tests, and scorecard JSON/Markdown reports for human tuning reads.
+- Scenario Fixtures V1 adds `data/lab/scenarios/track02_core_v1.json`, `tools/run_scenarios.gd`, loader/evaluator/runner/reporter modules, 12 deterministic route/economy/deck/boss/class/keyword-focused macro scenarios, PASS/WARN/FAIL expectations, explicit gate mode and JSON/CSV/Markdown reports without wiring the command into `tools/validate.gd`.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
 - Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.
@@ -111,4 +112,4 @@ Every future Track 02 implementation or playtest-fix thread must:
 
 ## Current Risk
 
-Track 02 is ready for user playtest. Remaining risk is human balance feedback: the deterministic full-route smoke and AutoRun Gate Pack macro matrices validate structure and tuning trends, but they are not substitutes for a manual run. Additional foundation extraction is optional and should be driven by concrete future work, not by the need to unblock playtest.
+Track 02 is ready for user playtest. Remaining risk is human balance feedback: the deterministic full-route smoke, AutoRun Gate Pack macro matrices and Scenario Fixtures V1 validate structure, tuning trends and small named regression signals, but they are not substitutes for a manual run. Additional foundation extraction is optional and should be driven by concrete future work, not by the need to unblock playtest.
