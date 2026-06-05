@@ -9,6 +9,7 @@ const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surfa
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
 const HubSurfacePresenterScript = preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
 const ProgressionClarityPresenterScript = preload("res://modes/boot/surfaces/progression_clarity_presenter.gd")
+const PreparationActionContractScript = preload("res://modes/boot/flows/preparation_action_contract.gd")
 const SurfaceActionFlowScript = preload("res://modes/boot/flows/surface_action_flow.gd")
 const ModeShellLauncherScript = preload("res://modes/boot/ui/mode_shell_launcher.gd")
 const MobileUiContractScript = preload("res://modes/boot/ui/mobile_ui_contract.gd")
@@ -1457,6 +1458,30 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_doctrine_action("pacto_familiar")))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_familiar_action("gato_tumular")))
 
+func test_preparation_action_contract_keeps_player_safe_defaults_and_errors() -> void:
+	var potion_behavior := PreparationActionContractScript.default_potion_behavior()
+	assert_eq(potion_behavior.get("enabled"), true)
+	assert_eq(potion_behavior.get("hp"), {"mode": "below", "percent": 40})
+	assert_eq(potion_behavior.get("mana"), {"mode": "ignore", "percent": 0})
+	var spell_behavior := PreparationActionContractScript.default_spell_behavior(false)
+	assert_eq(spell_behavior.get("enabled"), false)
+	assert_eq(spell_behavior.get("hp"), {"mode": "ignore", "percent": 0})
+	assert_true(PreparationActionContractScript.is_network_error("NETWORK_UNAVAILABLE"))
+	assert_false(PreparationActionContractScript.is_network_error("POTION_NOT_OWNED"))
+	assert_eq(
+		PreparationActionContractScript.error_message("POTION_NOT_OWNED"),
+		"Voce ainda nao tem essa Pocao de Vida. Crie uma no Refugio primeiro."
+	)
+	assert_eq(
+		PreparationActionContractScript.error_message("NETWORK_UNAVAILABLE"),
+		"Sem conexao para carregar a preparacao. Verifique a internet e tente de novo."
+	)
+	assert_eq(
+		PreparationActionContractScript.error_payload({"body": {"error": {"code": "INVALID_SPELL"}}}).get("code"),
+		"INVALID_SPELL"
+	)
+	assert_eq(PreparationActionContractScript.error_payload({}).get("code"), "REQUEST_FAILED")
+
 func test_refuge_top_hud_uses_existing_account_and_build_state_without_progression_bars() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
@@ -2260,6 +2285,8 @@ func _action_consumer_script_paths() -> PackedStringArray:
 func _flow_script_paths() -> PackedStringArray:
 	return PackedStringArray([
 		"res://modes/boot/flows/account_session_flow.gd",
+		"res://modes/boot/flows/account_form_contract.gd",
+		"res://modes/boot/flows/preparation_action_contract.gd",
 		"res://modes/boot/flows/surface_action_flow.gd",
 		"res://modes/boot/flows/battle_lifecycle_flow.gd",
 	])

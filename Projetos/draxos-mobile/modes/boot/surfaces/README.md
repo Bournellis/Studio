@@ -19,6 +19,7 @@ Track 12 boundary:
 - `modes/boot/flows/account_session_flow.gd` owns guest/email auth, session refresh, local reset, save selection/creation and update manifest checks.
 - `modes/boot/flows/account_form_contract.gd` owns auth/signup form parsing, validation and alpha username/invite normalization without network or SessionStore mutation beyond read-only defaults/session-id fallback.
 - `modes/boot/flows/surface_action_flow.gd` owns online Base, Social, Competition and Shop orchestration through Supabase/client services while keeping server authority intact.
+- `modes/boot/flows/preparation_action_contract.gd` owns pure Preparation action defaults, public error extraction and player-facing error messages used by `surface_action_flow.gd`.
 - `modes/boot/flows/battle_lifecycle_flow.gd` owns battle requests, history/latest fetches, replay entry/skip and summary/log routing without simulating combat on the client.
 - `modes/boot/ui/mode_shell_launcher.gd` owns Mode Shell screen instantiation and fullscreen fallback while preserving `open_mode_shell:<mode_id>` routes/actions.
 

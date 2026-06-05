@@ -2,16 +2,11 @@ class_name DraxosSurfaceActionFlow
 extends RefCounted
 
 const SessionStoreScript := preload("res://online/session_store.gd")
+const PreparationActionContractScript := preload("res://modes/boot/flows/preparation_action_contract.gd")
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 
 const PRODUCT_ALPHA_DOUBLE_CONSTRUCTION_QUEUE := "alpha_double_construction_queue"
-const PREPARATION_NETWORK_ERROR_CODES := {
-	"NETWORK_UNAVAILABLE": true,
-	"REQUEST_NOT_STARTED": true,
-	"CLIENT_MISCONFIGURED": true,
-	"INVALID_JSON": true,
-}
 
 func _prepare_mutation(endpoint: String, action_id: String, payload: Dictionary = {}) -> Dictionary:
 	var scope_prefix := endpoint.get_slice("/", 0)
@@ -275,18 +270,18 @@ func unequip_potion(host: Node) -> void:
 	await _update_potion_equip(host, null, "Pocao removida da proxima batalha.")
 
 func enable_potion_default(host: Node) -> void:
-	await _update_potion_behavior(host, _default_potion_behavior(), "Pocao de Vida sera usada quando a Vida ficar abaixo de 40%.")
+	await _update_potion_behavior(host, PreparationActionContractScript.default_potion_behavior(), "Pocao de Vida sera usada quando a Vida ficar abaixo de 40%.")
 
 func disable_potion(host: Node) -> void:
-	var behavior := _default_potion_behavior()
+	var behavior := PreparationActionContractScript.default_potion_behavior()
 	behavior["enabled"] = false
 	await _update_potion_behavior(host, behavior, "Uso automatico da pocao pausado.")
 
 func enable_spell_behavior(host: Node, spell_id: String) -> void:
-	await _update_spell_behavior(host, spell_id, _default_spell_behavior(true), "Magia ativada para a proxima batalha.")
+	await _update_spell_behavior(host, spell_id, PreparationActionContractScript.default_spell_behavior(true), "Magia ativada para a proxima batalha.")
 
 func disable_spell_behavior(host: Node, spell_id: String) -> void:
-	await _update_spell_behavior(host, spell_id, _default_spell_behavior(false), "Magia pausada para a proxima batalha.")
+	await _update_spell_behavior(host, spell_id, PreparationActionContractScript.default_spell_behavior(false), "Magia pausada para a proxima batalha.")
 
 func handle_build_equip_action(host: Node, action_id: String) -> void:
 	if _preparation_loadout_locked(host):
@@ -813,9 +808,9 @@ func _block_locked_loadout_action(host: Node) -> void:
 	host.set_meta("preparation_feedback_message", message)
 
 func _fail_preparation_action(host: Node, result: Dictionary, detail: String) -> void:
-	var error_payload := _preparation_error_payload(result)
+	var error_payload := PreparationActionContractScript.error_payload(result)
 	var code := str(error_payload.get("code", "REQUEST_FAILED"))
-	var is_network := _is_preparation_network_error(code)
+	var is_network := PreparationActionContractScript.is_network_error(code)
 	if is_network:
 		SessionStore.mark_offline(error_payload)
 	else:
@@ -823,7 +818,7 @@ func _fail_preparation_action(host: Node, result: Dictionary, detail: String) ->
 		SessionStore.last_error = error_payload
 		SessionStore.session_changed.emit()
 	host.call("_set_busy", false, detail)
-	var public_message := _preparation_error_message(code)
+	var public_message := PreparationActionContractScript.error_message(code)
 	host.set_meta("preparation_feedback_message", public_message)
 	_set_error_text(host, public_message)
 	host.call("_sync_immersive_feedback")
@@ -841,69 +836,3 @@ func _fail_preparation_action(host: Node, result: Dictionary, detail: String) ->
 			"code": code,
 		})
 	host.call("_sync_social_auto_sync_for_route")
-
-static func _preparation_error_payload(result: Dictionary) -> Dictionary:
-	var error_payload := _as_dictionary(result.get("error", {}))
-	if error_payload.is_empty():
-		var body := _as_dictionary(result.get("body", {}))
-		error_payload = _as_dictionary(body.get("error", {}))
-	if error_payload.is_empty():
-		error_payload = {
-			"code": "REQUEST_FAILED",
-			"message": "Acao nao concluida.",
-		}
-	return error_payload
-
-static func _preparation_error_message(code: String) -> String:
-	match code.strip_edges():
-		"UNAUTHENTICATED", "AUTH_REQUIRES_EMAIL":
-			return "Entre com email ou use guest dev para preparar a batalha."
-		"POTION_NOT_OWNED":
-			return "Voce ainda nao tem essa Pocao de Vida. Crie uma no Refugio primeiro."
-		"INVALID_POTION":
-			return "Essa pocao ainda nao pode ser usada na preparacao."
-		"INVALID_WEAPON", "INVALID_WEAPON_QUALITY":
-			return "Esse Instrumento Ritual ainda nao pode ser usado na preparacao."
-		"WEAPON_LOCKED":
-			return "Esse Instrumento Ritual ainda esta bloqueado para seu nivel."
-		"SPELL_NOT_EQUIPPED":
-			return "Essa magia nao esta equipada para batalha."
-		"INVALID_SPELL":
-			return "Magia invalida para esta preparacao."
-		"SPELL_LOCKED", "SPELL_SLOT_LOCKED":
-			return "Essa habilidade ainda esta bloqueada para seu nivel."
-		"DUPLICATE_SPELL":
-			return "A mesma habilidade nao pode ocupar dois espacos."
-		"INVALID_DOCTRINE":
-			return "Doutrina invalida para esta preparacao."
-		"DOCTRINE_LOCKED":
-			return "Essa Doutrina ainda esta bloqueada para seu nivel."
-		"INVALID_FAMILIAR":
-			return "Familiar invalido para esta preparacao."
-		"FAMILIAR_LOCKED":
-			return "Esse Familiar ainda esta bloqueado para seu nivel."
-		"BEHAVIOR_UPDATE_FAILED", "POTION_EQUIP_FAILED", "BUILD_EQUIP_FAILED", "POWER_UPDATE_FAILED":
-			return "Nao foi possivel salvar essa escolha agora. Tente novamente."
-		"BUILD_NOT_FOUND", "INVALID_SLOT", "INVALID_SPELL_SLOT", "INVALID_BEHAVIOR", "INVALID_BEHAVIOR_PERCENT", "INVALID_REQUEST_ID", "INVALID_SAVE_TYPE":
-			return "Preparacao indisponivel agora. Tente novamente em instantes."
-		"NETWORK_UNAVAILABLE", "REQUEST_NOT_STARTED", "CLIENT_MISCONFIGURED", "INVALID_JSON":
-			return "Sem conexao para carregar a preparacao. Verifique a internet e tente de novo."
-		_:
-			return "Nao foi possivel atualizar a preparacao. Tente novamente."
-
-static func _is_preparation_network_error(code: String) -> bool:
-	return bool(PREPARATION_NETWORK_ERROR_CODES.get(code.strip_edges(), false))
-
-static func _default_potion_behavior() -> Dictionary:
-	return {
-		"enabled": true,
-		"hp": {"mode": "below", "percent": 40},
-		"mana": {"mode": "ignore", "percent": 0},
-	}
-
-static func _default_spell_behavior(enabled: bool) -> Dictionary:
-	return {
-		"enabled": enabled,
-		"hp": {"mode": "ignore", "percent": 0},
-		"mana": {"mode": "ignore", "percent": 0},
-	}

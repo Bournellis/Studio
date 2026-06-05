@@ -74,3 +74,7 @@ None. This track starts as local hardening only.
   username/invite normalization into `account_form_contract.gd`.
   `account_session_flow.gd` keeps compatibility wrappers for the runtime facade
   and drops from 489 to 409 measured nonblank lines.
+- Package 6c extracts player-facing Preparation defaults and error contract
+  into `preparation_action_contract.gd`, adds direct client coverage for the
+  default potion/spell behavior and error messages, and drops
+  `surface_action_flow.gd` to 743 measured nonblank lines.
