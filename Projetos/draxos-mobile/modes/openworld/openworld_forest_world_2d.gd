@@ -344,19 +344,9 @@ func _draw_base_zone() -> void:
 	draw_circle(chest_position, 100.0, Color(0.18, 0.11, 0.07, 0.36))
 
 func _draw_nonblocking_landmarks() -> void:
-	_draw_ground_marker(Vector2(320, 375), 42.0, Color(0.74, 0.61, 0.32, 0.16))
-	_draw_ground_marker(Vector2(610, 720), 34.0, Color(0.42, 0.60, 0.28, 0.14))
 	_draw_fallen_log(Vector2(735, 905), -0.24)
 	_draw_fern_cluster(Vector2(176, 595))
 	_draw_fern_cluster(Vector2(820, 535))
-
-func _draw_ground_marker(center: Vector2, radius: float, color: Color) -> void:
-	draw_circle(center, radius, Color(color.r, color.g, color.b, color.a * 0.32))
-	draw_arc(center, radius, 0.0, TAU, 48, color, 2.0, true)
-	draw_arc(center, radius * 0.58, 0.4, TAU + 0.4, 48, Color(color.r, color.g, color.b, color.a * 0.72), 1.2, true)
-	for index in range(6):
-		var angle := TAU * float(index) / 6.0
-		draw_circle(center + Vector2(cos(angle), sin(angle)) * radius * 0.72, 3.0, Color(color.r, color.g, color.b, color.a * 0.78))
 
 func _draw_fallen_log(center: Vector2, angle: float) -> void:
 	var direction := Vector2(cos(angle), sin(angle))

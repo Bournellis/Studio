@@ -16,6 +16,8 @@ func _run() -> void:
 
 func _run_smoke() -> int:
 	_expect(RegistryScript.is_available("openworld"), "Openworld registry is available.")
+	var world_source := FileAccess.get_file_as_string("res://modes/openworld/openworld_forest_world_2d.gd")
+	_expect(not world_source.contains("_draw_ground_marker"), "Bosque does not draw disliked double-circle floor markers.")
 	var model = ModelScript.new()
 	_expect(model.start_collection("galho").get("ok") == true, "Can start galho collection.")
 	_expect(model.advance_collection(0.1, true).get("cancelled") == true, "Moving cancels collection.")
