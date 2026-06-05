@@ -388,6 +388,7 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	assert_eq(client.function_url("arena/pve/start"), "http://127.0.0.1:54321/functions/v1/arena/pve/start")
 	assert_eq(client.function_url("arena/pve/duel/request"), "http://127.0.0.1:54321/functions/v1/arena/pve/duel/request")
 	assert_eq(client.function_url("arena/pve/buff/select"), "http://127.0.0.1:54321/functions/v1/arena/pve/buff/select")
+	assert_eq(client.function_url("arena/pve/abandon"), "http://127.0.0.1:54321/functions/v1/arena/pve/abandon")
 	assert_eq(client.function_url("base/state"), "http://127.0.0.1:54321/functions/v1/base/state")
 	assert_eq(client.function_url("modes/registry"), "http://127.0.0.1:54321/functions/v1/modes/registry")
 	assert_eq(client.function_url("modes/session/start"), "http://127.0.0.1:54321/functions/v1/modes/session/start")

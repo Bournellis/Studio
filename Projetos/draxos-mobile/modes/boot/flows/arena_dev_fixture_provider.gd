@@ -54,6 +54,11 @@ static func choose_buff_fallback_result(
 		return result
 	return _fixture_result(_fixture_choose_buff(attempt, buff_id, session_store), _active_save_type(session_store))
 
+static func abandon_attempt_fallback_result(result: Dictionary, attempt: Dictionary, session_store: Object) -> Dictionary:
+	if bool(result.get("ok", false)) or not enabled():
+		return result
+	return _fixture_result(_fixture_abandon_attempt(attempt), _active_save_type(session_store))
+
 static func claim_summary_fallback_result(result: Dictionary, attempt: Dictionary, session_store: Object) -> Dictionary:
 	if bool(result.get("ok", false)) or not enabled():
 		return result
@@ -139,6 +144,21 @@ static func _fixture_choose_buff(attempt: Dictionary, buff_id: String, session_s
 	if not next_attempt.has("loadout_summary"):
 		next_attempt["loadout_summary"] = {"label": _current_loadout_label(session_store)}
 	state["active_attempt"] = next_attempt
+	return state
+
+static func _fixture_abandon_attempt(attempt: Dictionary) -> Dictionary:
+	var state := _base_arena_state()
+	var next_attempt := attempt.duplicate(true)
+	next_attempt["state"] = "abandoned"
+	next_attempt["status"] = "abandoned"
+	next_attempt["buff_offer"] = {}
+	var summary := _summary_for_attempt(next_attempt, 0.0)
+	summary["claimed"] = true
+	summary["reward_already_applied"] = false
+	summary["mutates_economy"] = false
+	next_attempt["summary"] = summary
+	state["active_attempt"] = next_attempt
+	state["summary"] = summary
 	return state
 
 static func _fixture_claim_summary(attempt: Dictionary) -> Dictionary:

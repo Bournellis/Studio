@@ -3,7 +3,7 @@
 - Status: `VIVO`
 - Data: `2026-05-31`
 - Decisao-base: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`
-- Estado de entrega: `IMPLEMENTADO_PUBLICADO_TRACK_19`.
+- Estado de entrega: `IMPLEMENTADO_PUBLICADO_TRACK_19`; Track 23 adiciona recuperacao client de tentativa ativa antiga e protege a primeira arena real de 3 duelos contra bloqueio pos-update.
 - Escopo: contrato de produto, conteudo, backend, client, schema, labs e regras para o primeiro pacote Arena PVE data-driven publicado.
 
 ## Papel Do Documento
@@ -112,6 +112,20 @@ Invariantes:
 - derrota encerra a tentativa v1;
 - abandono nao concede recompensa de conclusao;
 - repeticao com mesmo `request_id/request_hash` retorna o mesmo attempt ou payload.
+
+## Recuperacao De Tentativa Ativa
+
+Track 23 fecha a friccao de update em que uma tentativa antiga ficava ativa no servidor, mas o jogador nao tinha caminho claro para acessa-la ou encerra-la no client novo.
+
+Contrato client:
+
+- a selecao de Arena deve detectar `active_attempt` antes de mostrar botoes de nova arena;
+- tentativa `active` ou `awaiting_buff` mostra `Retomar tentativa` e `Abandonar tentativa`;
+- tentativa ativa sem proximo passo valido, sem `attempt_id`, com estado `active_incompatible`, com `awaiting_buff` sem escolhas, ou com indice de duelo ja no total sem summary, mostra `Encerrar tentativa antiga`;
+- `Resolver duelo` nao aparece para tentativa marcada como recuperacao;
+- iniciar nova arena tambem possui guarda local: retomar ou encerrar vem antes de `/arena/pve/start`;
+- abandono usa somente `/arena/pve/abandon` com `request_id/request_hash` e nao concede recompensa de conclusao;
+- a primeira arena real de 3 duelos continua o proximo alvo apos tutorial, com buff entre duelos e retorno para Arena, nao para Refugio obrigatorio.
 
 ## Inimigos PVE
 

@@ -183,6 +183,8 @@ static func friendly_attempt_state(state: String) -> String:
 	match state:
 		"active":
 			return "em andamento"
+		"active_incompatible":
+			return "precisa encerrar"
 		"awaiting_buff":
 			return "aguardando buff"
 		"completed", "claimed":

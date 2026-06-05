@@ -142,6 +142,34 @@ Deno.test("arena claim returns selection delta for post-claim responsiveness", a
   assertIncludes(serverFunction, 'schema_version: "pve_arena_state_v1"');
 });
 
+Deno.test("client exposes Arena update recovery and abandon action", async () => {
+  const actionContract = await Deno.readTextFile(
+    projectFile("modes/boot/ui/app_shell_action_contract.gd"),
+  );
+  const actionRouter = await Deno.readTextFile(
+    projectFile("modes/boot/ui/app_shell_action_router.gd"),
+  );
+  const lifecycle = await Deno.readTextFile(
+    projectFile("modes/boot/flows/arena_lifecycle_flow.gd"),
+  );
+  const presenter = await Deno.readTextFile(
+    projectFile("modes/boot/surfaces/arena_surface_presenter.gd"),
+  );
+  const supabaseClient = await Deno.readTextFile(
+    projectFile("online/supabase_client.gd"),
+  );
+
+  assertIncludes(actionContract, "ACTION_ARENA_RESUME_ATTEMPT");
+  assertIncludes(actionContract, "ACTION_ARENA_ABANDON_ATTEMPT");
+  assertIncludes(actionRouter, 'return "arena/pve/abandon"');
+  assertIncludes(lifecycle, "SupabaseClient.abandon_arena_attempt");
+  assertIncludes(lifecycle, "_attempt_blocks_new_start");
+  assertIncludes(presenter, '"Retomar tentativa"');
+  assertIncludes(presenter, '"Encerrar tentativa antiga"');
+  assertIncludes(presenter, "ArenaAttemptRecoveryPanel");
+  assertIncludes(supabaseClient, "func abandon_arena_attempt");
+});
+
 function xpForLevel(level: number): number {
   return Math.max(0, 3 * (level ** 3 - 6 * level ** 2 + 17 * level - 12));
 }

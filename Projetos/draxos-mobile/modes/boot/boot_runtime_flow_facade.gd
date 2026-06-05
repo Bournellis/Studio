@@ -119,11 +119,17 @@ func _start_arena_by_id(arena_id: String, difficulty_id: String = "") -> void:
 func _lock_arena_loadout() -> void:
 	_arena_lifecycle_flow.lock_loadout(self)
 
+func _resume_arena_attempt() -> void:
+	_arena_lifecycle_flow.resume_attempt(self)
+
 func _resolve_arena_duel() -> void:
 	await _arena_lifecycle_flow.resolve_duel(self)
 
 func _choose_arena_buff(buff_id: String) -> void:
 	await _arena_lifecycle_flow.choose_buff(self, buff_id)
+
+func _abandon_arena_attempt() -> void:
+	await _arena_lifecycle_flow.abandon_attempt(self)
 
 func _claim_arena_summary() -> void:
 	await _arena_lifecycle_flow.claim_summary(self)

@@ -7,7 +7,12 @@ const ArenaSurfaceTextScript := preload("res://modes/boot/surfaces/arena_surface
 
 func render_selection(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
+	var active_attempt := SessionStore.active_arena_attempt()
 	_call_host(host, "_add_body_text", ["Escolha uma Arena PVE. O loadout trava ao iniciar; buffs e comportamento ficam entre vitorias."])
+	if _selection_blocks_on_attempt(active_attempt):
+		_render_active_attempt_recovery(host, active_attempt)
+		_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
+		return
 	if _has_remote_arena_state(arena):
 		var arenas := _as_array(arena.get("arenas", []))
 		_render_recommended_arena(host, arenas)
@@ -32,6 +37,11 @@ func render_loadout(host: Node) -> void:
 
 func render_active(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
+	if _attempt_needs_recovery(attempt):
+		_call_host(host, "_add_body_text", ["Uma tentativa antiga ficou aberta antes do update. Encerre esta tentativa para liberar uma nova Arena."])
+		_render_active_attempt_recovery(host, attempt)
+		_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
+		return
 	_call_host(host, "_add_body_text", ["Tentativa em andamento. Cada duelo comeca com HP cheio."])
 	_add_duel_progress_rail(host, attempt)
 	_add_loadout_details_control(host, attempt)
@@ -44,6 +54,7 @@ func render_active(host: Node) -> void:
 		_call_host(host, "_add_action_button", ["Resolver duelo", AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL])
 	if not bool(host.get_meta("arena_active_preparation_open", false)):
 		_call_host(host, "_add_action_button", ["Ajustar comportamento", AppShellActionContractScript.ACTION_SHOW_PREPARATION])
+	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_buff_choice(host: Node) -> void:
@@ -52,9 +63,11 @@ func render_buff_choice(host: Node) -> void:
 	_call_host(host, "_add_body_text", ["Escolha 1 buff temporario para os proximos duelos desta tentativa."])
 	if choices.is_empty():
 		_call_host(host, "_add_output_label", ["Nenhum buff pendente. Volte para a tentativa ativa."])
-		_call_host(host, "_add_action_button", ["Continuar tentativa", AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL])
+		_call_host(host, "_add_action_button", ["Retomar tentativa", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT])
+		_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
 		return
 	_add_buff_choice_cards(host, choices)
+	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
 
 func render_summary(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
@@ -124,6 +137,26 @@ func _render_recommended_arena(host: Node, arenas: Array) -> void:
 	], 13, "text_secondary"))
 	stack.add_child(_arena_action_button(host, label, action_id, false, "", true))
 	_call_host(host, "_add_content_control", [panel])
+
+func _render_active_attempt_recovery(host: Node, attempt: Dictionary) -> void:
+	var needs_recovery := _attempt_needs_recovery(attempt)
+	var panel_name := "ArenaAttemptRecoveryPanel" if needs_recovery else "ArenaActiveAttemptPanel"
+	var panel := _arena_panel(host, panel_name, "bg_panel_alt", "accent_battle")
+	var stack := _arena_panel_stack(panel, 7)
+	stack.add_child(_arena_label("Tentativa ativa encontrada", 15, "text_primary"))
+	var status := _friendly_attempt_state(_attempt_state(attempt))
+	if needs_recovery:
+		stack.add_child(_arena_label("Esta tentativa ficou aberta antes do update ou esta sem proximo passo valido. Encerre a tentativa antiga para liberar uma nova run.", 12, "text_secondary"))
+	else:
+		stack.add_child(_arena_label("Retome esta tentativa antes de iniciar outra Arena. O loadout segue travado ate encerrar.", 12, "text_secondary"))
+	stack.add_child(_arena_label("Estado: %s | %s" % [status, _duel_progress_short_text(attempt)], 12, "text_secondary"))
+	if needs_recovery:
+		stack.add_child(_arena_action_button(host, "Encerrar tentativa antiga", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, false, "", true))
+	else:
+		stack.add_child(_arena_action_button(host, "Retomar tentativa", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT, false, "", true))
+		stack.add_child(_arena_action_button(host, "Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT))
+	_call_host(host, "_add_content_control", [panel])
+	_add_duel_progress_rail(host, attempt)
 
 func _add_arena_preparation_control(host: Node, behavior_only: bool) -> void:
 	var compact := bool(host.get("_compact_layout"))
@@ -466,6 +499,43 @@ func _attempt_state(attempt: Dictionary) -> String:
 func _pending_buff_choices(attempt: Dictionary) -> Array:
 	var offer := _as_dictionary(attempt.get("buff_offer", {}))
 	return _as_array(offer.get("choices", attempt.get("pending_buff_choices", [])))
+
+func _selection_blocks_on_attempt(attempt: Dictionary) -> bool:
+	if attempt.is_empty():
+		return false
+	var status := _attempt_state(attempt)
+	return status in ["active", "awaiting_buff"] or _attempt_needs_recovery(attempt)
+
+func _attempt_needs_recovery(attempt: Dictionary) -> bool:
+	if attempt.is_empty():
+		return false
+	var status := _attempt_state(attempt)
+	if status in ["completed", "failed", "claimed", "abandoned"]:
+		return false
+	if status not in ["active", "awaiting_buff", "active_incompatible"]:
+		return false
+	if _attempt_id(attempt) == "":
+		return true
+	if status == "active_incompatible":
+		return true
+	if not _pending_buff_choices(attempt).is_empty():
+		return false
+	if status == "awaiting_buff":
+		return true
+	var total := maxi(0, int(attempt.get("duel_count", attempt.get("duels_total", attempt.get("max_steps", 0)))))
+	var current := maxi(
+		int(attempt.get("current_step_index", 0)),
+		int(attempt.get("duels_won", attempt.get("duel_index", 0)))
+	)
+	return total <= 0 or current >= total
+
+func _attempt_id(attempt: Dictionary) -> String:
+	return str(attempt.get("attempt_id", attempt.get("id", ""))).strip_edges()
+
+func _duel_progress_short_text(attempt: Dictionary) -> String:
+	var duels_won := clampi(int(attempt.get("duels_won", attempt.get("current_step_index", 0))), 0, 99)
+	var duels_total := maxi(1, int(attempt.get("duel_count", attempt.get("duels_total", attempt.get("max_steps", 1)))))
+	return "duelos vencidos %d/%d" % [clampi(duels_won, 0, duels_total), duels_total]
 
 func _call_host(host: Node, method: String, args: Array = []) -> Variant:
 	if host == null or not host.has_method(method):
