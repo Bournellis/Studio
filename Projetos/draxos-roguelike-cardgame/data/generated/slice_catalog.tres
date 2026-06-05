@@ -23,11 +23,11 @@ id = "arcano_choque_lvl2"
 display_name = "Choque Lvl 2"
 card_type = "magia"
 cost = 1
-text = "Causa 3 de dano a qualquer criatura ou heroi inimigo valido."
+text = "Causa 4 de dano a qualquer criatura ou heroi inimigo valido."
 keywords = PackedStringArray()
 effect = {
 "action": "damage",
-"amount": 3.0
+"amount": 4.0
 }
 
 [sub_resource type="Resource" id="Resource_xh3p2"]
@@ -35,11 +35,11 @@ script = ExtResource("1_tqsc8")
 id = "arcano_choque_lvl3"
 display_name = "Choque Lvl 3"
 card_type = "magia"
-text = "Causa 3 de dano a qualquer criatura ou heroi inimigo valido."
+text = "Causa 4 de dano a qualquer criatura ou heroi inimigo valido."
 keywords = PackedStringArray()
 effect = {
 "action": "damage",
-"amount": 3.0
+"amount": 4.0
 }
 
 [sub_resource type="Resource" id="Resource_ayi6x"]
@@ -315,7 +315,7 @@ id = "invocador_batedor_lvl3"
 display_name = "Batedor Arcano Lvl 3"
 card_type = "criatura"
 cost = 1
-attack = 6
+attack = 5
 health = 2
 text = "Iniciativa: causa dano primeiro na lane."
 keywords = PackedStringArray("iniciativa")
@@ -502,7 +502,7 @@ display_name = "Esqueleto Lvl 2"
 card_type = "criatura"
 cost = 1
 attack = 2
-health = 2
+health = 3
 text = "Reviver: volta uma vez no mesmo slot."
 keywords = PackedStringArray("reviver")
 
@@ -2037,7 +2037,7 @@ id = "enemy_ar_rajada"
 display_name = "Rajada"
 card_type = "criatura"
 cost = 3
-attack = 4
+attack = 5
 health = 2
 text = "Iniciativa. Atropelar."
 keywords = PackedStringArray("iniciativa", "atropelar")
@@ -4475,4 +4475,4 @@ track_contract = {
 }
 }
 }
-definition_hash = "3241b2715b89e695a5d0622b55f94864255e42a36882b7a64f494fa3f7971041"
+definition_hash = "3c5b87a7e4e0eb3054af264bd8d764135870175c3bca647575ffd4e8519a57f9"

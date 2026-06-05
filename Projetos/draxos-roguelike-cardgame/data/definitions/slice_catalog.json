@@ -1266,10 +1266,10 @@
       "display_name": "Choque Lvl 2",
       "type": "magia",
       "cost": 1,
-      "text": "Causa 3 de dano a qualquer criatura ou heroi inimigo valido.",
+      "text": "Causa 4 de dano a qualquer criatura ou heroi inimigo valido.",
       "effect": {
         "action": "damage",
-        "amount": 3
+        "amount": 4
       }
     },
     {
@@ -1277,10 +1277,10 @@
       "display_name": "Choque Lvl 3",
       "type": "magia",
       "cost": 0,
-      "text": "Causa 3 de dano a qualquer criatura ou heroi inimigo valido.",
+      "text": "Causa 4 de dano a qualquer criatura ou heroi inimigo valido.",
       "effect": {
         "action": "damage",
-        "amount": 3
+        "amount": 4
       }
     },
     {
@@ -1537,7 +1537,7 @@
       "display_name": "Batedor Arcano Lvl 3",
       "type": "criatura",
       "cost": 1,
-      "attack": 6,
+      "attack": 5,
       "health": 2,
       "keywords": [
         "iniciativa"
@@ -1723,7 +1723,7 @@
       "type": "criatura",
       "cost": 1,
       "attack": 2,
-      "health": 2,
+      "health": 3,
       "keywords": [
         "reviver"
       ],
@@ -3252,7 +3252,7 @@
       "type": "criatura",
       "cost": 3,
       "text": "Iniciativa. Atropelar.",
-      "attack": 4,
+      "attack": 5,
       "health": 2,
       "keywords": [
         "iniciativa",
