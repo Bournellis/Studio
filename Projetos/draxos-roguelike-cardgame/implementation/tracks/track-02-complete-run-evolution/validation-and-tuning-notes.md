@@ -1,8 +1,8 @@
 # Track 02 Validation And Tuning Notes
 
 - Last Updated: `2026-06-05`
-- Prompt: `CARD-IMPACT-EFFECT-SIGNATURE-V2`
-- Status: `CARD_IMPACT_EFFECT_SIGNATURE_V2_COMPLETE`
+- Prompt: `CARD-REDESIGN-BATCH-01-USING-CARD-IMPACT-V2`
+- Status: `CARD_REDESIGN_BATCH_01_COMPLETE`
 
 ## Validation Summary
 
@@ -30,6 +30,9 @@
 - Card Impact reports: `card_impact_results.json`, `card_impact_results.csv`, `card_impact_summary.json`, `card_impact_summary.md`, `card_impact_gate.md`, plus component `before/`, `after/` and `compare/` output directories under `user://card_impact/track02_card_impact_v1`.
 - Card Impact Effect Signature V2: `track02_card_impact_v2` requires derived player-card signatures from real BattleEngine snapshots/log deltas, keeps enemy signatures report-only, and reports `effect.*` diffs, effect-family matrices, top effect-delta cards and missing signatures.
 - Card Impact V2 gate: `before`, `after` and `compare` pass at `user://card_impact/v2_all_gate` with 84/84 active cases, 54/54 required player effect signatures, 30 enemy cards report-only, 15 audited legacy inactive cards, zero structural errors, zero new failures, zero removed records, zero status changes, zero metric changes and zero effect changes in same/same compare.
+- Card Redesign Batch 01 gate: `before`, `after` and `compare` pass at `user://card_impact/redesign_batch_01` with zero structural errors, zero new failures, zero removed records, zero status changes, 9 metric deltas and 3 effect deltas from the intended Arcano damage-upgrade changes.
+- Card Redesign Batch 01 effect deltas: `arcano_choque_lvl2` `effect.enemy_hero_damage` `52 -> 57`, `arcano_choque_lvl3` `86 -> 92`, and `arcano_tempestade_lvl3` `57 -> 62`.
+- Card Redesign Batch 01 regression gates: V1 Card Impact same/same regression passes, Battle Lab remains `9 PASS / 3 WARN / 0 FAIL`, Scenario Fixtures remains `9 PASS / 3 WARN / 0 FAIL`, AutoRun smoke passes, AutoRun quick passes and `validate.gd` passes with `154/154` tests and `1575` asserts.
 - Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 - Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
 - Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
@@ -73,6 +76,23 @@
 - Gate behavior: missing required player signatures fail; effect deltas are review data and do not fail by themselves.
 - Validation result: V2 before/after/compare, V1 regression before/after/compare, Battle Lab, Scenario Fixtures, AutoRun smoke, AutoRun quick and `validate.gd` all pass on 2026-06-05.
 
+## Card Redesign Batch 01
+
+- Purpose: execute a real but deliberately narrow card-change cycle to test the lab stack, not to claim final balance.
+- Final card changes:
+  - `arcano_choque_lvl2`: damage `4 -> 5`, text updated.
+  - `arcano_choque_lvl3`: damage `4 -> 5`, text updated.
+  - `arcano_tempestade_lvl3`: random damage `6 -> 7`, text updated.
+- Tooling calibration kept with the batch: damage-family Card Impact player harnesses now use `enemy_health=160` and `enemy_terra_elemental_tita` to prevent overkill from hiding effect-signature movement.
+- Card Impact V2 compare result: PASS with zero structural errors, zero new failures, zero removed records, zero status changes, 9 metric deltas and 3 effect deltas.
+- Observed effect deltas:
+  - `card_impact_player_arcano_choque_lvl2`: `effect.enemy_hero_damage` `52 -> 57`.
+  - `card_impact_player_arcano_choque_lvl3`: `effect.enemy_hero_damage` `86 -> 92`.
+  - `card_impact_player_arcano_tempestade_lvl3`: `effect.enemy_hero_damage` `57 -> 62`.
+- Observed final metric deltas: the three affected battle harnesses showed lower `enemy_hp`, higher `damage_to_enemy_hero`, and matching `effect.enemy_hero_damage` movement; Scenario and Run Lab component gates did not regress.
+- Operational lesson: changing base/support cards can contaminate many focused cases because they appear as helper cards in deterministic harnesses. Future redesign batches should either isolate upgrades like this batch or explicitly label support-card-wide movement as intended.
+- Next tooling recommendation: strengthen V2 for non-damage families before a large redesign pass by comparing summon stat totals, ally buff totals, enemy debuff/control markers, economy/card-flow fields and support-card contamination signals more directly.
+
 ## Screenshots
 
 Captured at `1280x720` and `960x540` in:
@@ -89,6 +109,7 @@ Captured at `1280x720` and `960x540` in:
 - Manual playtest remains the next production step and should use `docs/playtest-track-02.md`.
 - Balance changes should come from observed human runs, with AutoRun Gate Pack used for explicit regression, distribution checks and tuning comparison rather than as the final verdict.
 - Large player-card changes should now use Card Impact V2: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect both metric movement and player-card effect signatures before accepting the batch.
+- Before the next broad card redesign, prefer one tooling hardening pass for summon/support/control/economy effect comparisons and support-card contamination reporting.
 - Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
 
 ## Remaining Technical Debt

@@ -1,7 +1,7 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-05`
-- Status: `CARD_IMPACT_EFFECT_SIGNATURE_V2_COMPLETE`
+- Status: `CARD_REDESIGN_BATCH_01_COMPLETE`
 - Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration and player-card effect signatures
 
 ## Purpose
@@ -21,6 +21,8 @@ Card Impact Pack V1 is the fifth layer. It orchestrates a deterministic before/a
 Card Impact Smoke Tuning V1 is the first real use of that flow. It applies a deliberately small card batch, runs `before -> after -> compare`, and confirms that numeric impact can be reported without failing the structural gate.
 
 Card Impact Effect Signature V2 extends that flow for player cards. It captures before/after `BattleEngine` snapshots around the focused card play, derives effect signatures from real logs/state deltas, compares those signatures in `before -> after -> compare`, and keeps enemy-card signatures reserved as schema/report-only data for a future enemy implementation pass.
+
+Card Redesign Batch 01 is the first controlled real card-edit cycle using V2. It changes three Arcano damage upgrade variants, calibrates the damage-family harness so overkill does not hide effect movement, and proves that `effect.*` deltas can show intentional player-card movement while every structural gate remains green.
 
 ## Entry Point
 
@@ -346,6 +348,14 @@ Current calibrated same/same result (`user://card_impact/v2_all_gate`):
 - Coverage is 84/84 active cases, 54 required player effect signatures, 30 report-only enemy cases and 15 audited inactive legacy cards.
 - Compare reports zero status changes, zero metric changes, zero effect changes, zero missing signatures and zero structural errors.
 
+First controlled V2 redesign result (`user://card_impact/redesign_batch_01`):
+
+- Card changes: `arcano_choque_lvl2` damage `4 -> 5`, `arcano_choque_lvl3` damage `4 -> 5`, and `arcano_tempestade_lvl3` random damage `6 -> 7`.
+- Harness calibration: damage-family player-card cases now use `enemy_health=160` and `enemy_terra_elemental_tita` so extra damage remains observable instead of being flattened by low-HP overkill.
+- Compare gate: PASS with zero structural errors, zero new failures, zero removed records and zero status changes.
+- Effect deltas detected: `card_impact_player_arcano_choque_lvl2` `effect.enemy_hero_damage` `52 -> 57`, `card_impact_player_arcano_choque_lvl3` `86 -> 92`, and `card_impact_player_arcano_tempestade_lvl3` `57 -> 62`.
+- Metric deltas matched the intended direction: the three affected battle harnesses showed lower final enemy HP and higher `damage_to_enemy_hero`, with no Scenario or Run Lab gate regression.
+
 ## Result Schema
 
 Each detailed record contains:
@@ -383,7 +393,7 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Run the first meaningful player-card redesign batch through Card Impact V2: `before -> card edits -> after -> compare`, then inspect effect deltas before promoting any new expectations.
+1. Harden Card Impact V2 coverage for non-damage player-card families: compare summon stat totals, buff/debuff/control/economy fields more explicitly, and add a guard for support-card contamination in focused-card batches.
 2. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
 3. Implement enemy-card effect signatures once enemy action logs expose enough per-card causality to avoid guessing.
 4. Replay Lab: record human or bot decisions and replay them across builds.

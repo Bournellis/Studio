@@ -85,3 +85,5 @@ Useful filters:
 ```
 
 Card Impact gate mode fails only on structural regressions: missing card coverage, required target cards not exercised, required player-card effect signatures missing in V2, rejected `BattleEngine` actions, missing reports, removed after records or new after `FAIL` records. Numeric gameplay movement and effect-signature deltas are reported for review.
+
+Operational calibration: player-card damage-family harnesses intentionally use a high-health enemy hero and `enemy_terra_elemental_tita` as the starting enemy slot. This keeps extra damage visible in V2 effect signatures instead of masking intentional changes through low-HP overkill.
