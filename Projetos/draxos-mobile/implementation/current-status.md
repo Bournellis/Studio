@@ -19,6 +19,7 @@
 - Latest deployment evidence: `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`
 - Source state: `master` after merging Track 23 Arena PVE update recovery and preserving the later Scenario Fixtures V1 merge on the same trunk.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
+- Local source hotfix pending publication: `Arena Duel Flow Hotfix` keeps Preparacao/behavior inside the active-duel menu, removes the detached `Ajustar comportamento` CTA, and treats a server step with `selected_buff` as resolved so the next active menu returns to `Resolver duelo` instead of showing `Escolher buff` again.
 - Previous content/polish package: `Bosque v3 UX/Feel`
 - Previous content/polish release root: `internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45`
 - Previous content/polish preview: `https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev`
@@ -68,7 +69,7 @@ Artifact hashes:
 
 ## Current Gate
 
-The next product step is human playtest of the published Arena PVE First Real Run + Update Recovery package before opening Arena tuning, broader Openworld expansion or new mode work.
+The next product step is remote publication of the validated local Arena Duel Flow Hotfix if the official URL must receive these two fixes immediately; otherwise keep playtest focused on the published Arena PVE First Real Run + Update Recovery package before opening Arena tuning, broader Openworld expansion or new mode work.
 
 Playtest focus:
 
@@ -119,6 +120,14 @@ Runtime config online actions hotfix validation:
 - `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS after moving the hotfix card from Doing to Done, as required by release safety.
 - `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a -PublicDownloads -ConfirmRemoteMutation`: PASS, redeploying the `release` Edge Function.
 - Remote `GET /release/config`: PASS with `config_version = track23-online-actions-hotfix`, `read_only = false`, `mutable_gameplay_state = true`, `no_service_role = true`, and `no_secrets = true`.
+
+Arena Duel Flow local hotfix validation:
+
+- `git diff --check`: PASS.
+- GUT client suite: PASS, 232 tests and 3666 asserts.
+- `tools/validate.gd`: PASS, 232 tests and 3666 asserts.
+- `tools/smoke_responsive_layout.gd`: PASS.
+- `validate_foundation.ps1 -Profile ClientQuick -RequireClean:$false`: PASS.
 - `deno run --allow-net --allow-env server/tests/runtime_config_smoke.ts` against remote Supabase: PASS.
 
 Historical validation logs and package-by-package publication evidence belong in `implementation/tracks/`, `docs/*-report.md`, Kanban Done cards or handoffs, not in this decision snapshot.

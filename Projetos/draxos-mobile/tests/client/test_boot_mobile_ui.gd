@@ -798,11 +798,13 @@ func test_arena_active_exposes_behavior_adjustment_without_unlocking_loadout() -
 	await get_tree().process_frame
 
 	assert_not_null(_find_button_by_text(boot._content_body, "Resolver duelo"))
-	assert_not_null(_find_button_by_text(boot._content_body, "Ajustar comportamento"))
 	assert_not_null(_find_button_by_text(boot._content_body, "Abandonar tentativa"))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_SHOW_PREPARATION))
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaActivePreparationPanel"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Carregar comportamento"))
+	assert_null(_find_button_by_text(boot._content_body, "Ajustar comportamento"))
 	assert_not_null(_find_node_by_name(boot._content_body, "ArenaDuelProgressRail"))
 	assert_not_null(_find_node_by_name(boot._content_body, "ArenaDuelProgressRailSteps"))
 	assert_not_null(_find_node_by_name(boot._content_body, "ArenaDuelProgressStep1"))
@@ -825,7 +827,6 @@ func test_arena_active_exposes_behavior_adjustment_without_unlocking_loadout() -
 	assert_not_null(_find_button_by_text(boot._content_body, "Ocultar detalhes do loadout"))
 
 	assert_true(_apply_preparation_instrument_fixture("varinha_cinzas"))
-	boot.set_meta("arena_active_preparation_open", true)
 	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, false)
 	await get_tree().process_frame
 
@@ -880,6 +881,47 @@ func test_arena_buff_choice_renders_comparable_cards_with_existing_actions() -> 
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.arena_choose_buff_action("arena_buff_guarda_menor")))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT))
 	assert_not_null(_find_button_by_text(boot._content_body, "Abandonar tentativa"))
+
+func test_arena_active_after_selected_buff_returns_to_resolve_duel() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	var selected_buff := {"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor"}
+	assert_true(SessionStore.apply_arena_result({
+		"ok": true,
+		"_client": {"save_type": SessionStore.SAVE_TYPE_NORMAL},
+		"body": {
+			"ok": true,
+			"schema_version": "arena_buff_select_response_v1",
+			"attempt": {
+				"id": "attempt-buff-selected",
+				"arena_id": "arena_cinzas_curta",
+				"status": "active",
+				"max_steps": 3,
+				"current_step_index": 1,
+				"enemy_sequence": ["pve_aprendiz_cinzas", "pve_guardiao_barreira", "pve_sussurrador_veu"],
+				"active_buffs": [selected_buff],
+				"locked_loadout_hash": "sha256:test",
+			},
+			"step": {
+				"step_index": 1,
+				"buff_options": [
+					selected_buff,
+					{"id": "arena_buff_potencia_menor", "display_name": "Potencia Ritual Menor"},
+					{"id": "arena_buff_guarda_menor", "display_name": "Guarda Menor"},
+				],
+				"selected_buff": selected_buff,
+			},
+			"selected_buff": selected_buff,
+		},
+	}))
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_ACTIVE)
+	await get_tree().process_frame
+
+	assert_not_null(_find_button_by_text(boot._content_body, "Resolver duelo"))
+	assert_null(_find_button_by_text(boot._content_body, "Escolher buff"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.arena_choose_buff_action("arena_buff_vitalidade_menor")))
 
 func test_arena_summary_continues_to_arena_instead_of_reward_claim_copy() -> void:
 	var boot = BootScreenScript.new()

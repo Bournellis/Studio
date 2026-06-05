@@ -147,6 +147,7 @@ static func normalize_arena_attempt(attempt: Dictionary, step: Dictionary = {}) 
 			normalized["state"] = str(normalized.get("status", "active"))
 	elif str(normalized.get("state", "")).strip_edges() == "":
 		normalized["state"] = str(normalized.get("status", "active"))
+	normalized = heal_resolved_buff_offer(normalized)
 	normalized["next_enemy_id"] = next_enemy_id(normalized)
 	normalized["next_enemy"] = {
 		"id": str(normalized.get("next_enemy_id", "")),
@@ -154,7 +155,23 @@ static func normalize_arena_attempt(attempt: Dictionary, step: Dictionary = {}) 
 	}
 	return normalized
 
+static func heal_resolved_buff_offer(attempt: Dictionary) -> Dictionary:
+	if attempt.is_empty():
+		return {}
+	var normalized := attempt.duplicate(true)
+	var offer := _as_dictionary(normalized.get("buff_offer", {}))
+	if offer.is_empty():
+		return normalized
+	if not _buff_offer_already_resolved(normalized, offer):
+		return normalized
+	normalized["buff_offer"] = {}
+	if str(normalized.get("state", "")).strip_edges() == "awaiting_buff":
+		normalized["state"] = "active"
+	return normalized
+
 static func buff_offer_from_step(step: Dictionary) -> Dictionary:
+	if not _as_dictionary(step.get("selected_buff", {})).is_empty():
+		return {}
 	var choices := _as_array(step.get("buff_options", []))
 	if choices.is_empty():
 		return {}
@@ -237,7 +254,18 @@ static func arena_difficulty_by_id(arena_state: Dictionary, arena_id: String, di
 	return {}
 
 static func active_attempt(arena_state: Dictionary) -> Dictionary:
-	return _as_dictionary(arena_state.get("active_attempt", {})).duplicate(true)
+	return heal_resolved_buff_offer(_as_dictionary(arena_state.get("active_attempt", {})))
+
+static func _buff_offer_already_resolved(attempt: Dictionary, offer: Dictionary) -> bool:
+	if not _as_dictionary(offer.get("selected_buff", {})).is_empty():
+		return true
+	if not _as_dictionary(attempt.get("selected_buff", {})).is_empty():
+		return true
+	var after_duel_index := int(offer.get("after_duel_index", offer.get("step_index", 0)))
+	if after_duel_index <= 0:
+		return false
+	var selected_buffs := _as_array(attempt.get("temporary_buffs", attempt.get("active_buffs", [])))
+	return selected_buffs.size() >= after_duel_index
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
