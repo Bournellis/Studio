@@ -24,7 +24,7 @@ For closeout ownership and remaining debt, use `docs/foundation-closeout.md` tog
 | Battle presentation | `modes/battle/battle_root.gd` plus pure presenters | Scene composition remains in `BattleRoot`; pure readouts stay in presenters. |
 | Catalog | `data/definitions/slice_catalog.json` plus loader/generator | JSON is the live source; generated `.tres` must be semantic-hash idempotent. |
 | Validation | `tools/validate.gd`, modular GUT suites | Validate data/scenes/contracts, route smoke and GUT together. |
-| Telemetry | `tools/route_pacing_simulator.gd` and `tools/run_lab.gd` | Regression and tuning comparison only; not a playtest substitute. |
+| Telemetry | `tools/run_lab.gd`, `tools/lab/`, `tools/route_pacing_simulator.gd` | Regression and tuning comparison only; not a playtest substitute. |
 
 ## Runtime Areas
 
@@ -172,17 +172,19 @@ Responsibilities:
 - run GUT;
 - report playtest readiness and known non-fatal art alpha debts.
 
-Expected baseline after 2026-06-03 hardening 8: GUT 105/105 with 1279 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, and repeated validation does not dirty generated content when the JSON is unchanged.
+Expected baseline after 2026-06-05 AutoRun Lab V1: GUT 108/108 with 1304 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, quick AutoRun matrix output, and repeated validation does not dirty generated content when the JSON is unchanged.
 
 ### `Run Lab`
 
-Local simulation/telemetry tool.
+Local simulation/telemetry tool family. AutoRun Lab V1 is the current macro-route layer; later Gameplay Lab, Scenario Lab and Replay Lab should reuse its case/result/reporting contracts.
 
 Responsibilities:
 
-- run route simulations by class and seed;
-- emit CSV/JSON metrics for completed maps, HP, deck size, relics, shop actions, deaths and estimated turns;
+- run route simulations by class, seed, preset and macro policy;
+- emit CSV/JSON/Markdown metrics for completed maps, HP, deck size, relics, shop actions, deaths and estimated turns;
+- write full case records with timeline, warnings, tags and aggregate summaries;
 - compare approved Track 02 golden metrics when run with `--compare-golden`;
+- compare or save statistical baselines for larger matrices;
 - support regression and tuning comparison.
 
 Run Lab is not a replacement for human playtest.

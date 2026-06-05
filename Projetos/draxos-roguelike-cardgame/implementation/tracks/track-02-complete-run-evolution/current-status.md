@@ -1,10 +1,10 @@
 # Track 02 Current Status
 
-- Last Updated: `2026-06-04`
+- Last Updated: `2026-06-05`
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Historical Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `Foundation closeout preserves the hardening 8 green baseline: 105/105 GUT tests, 1279 asserts, shared full-route pacing smoke green, Run Lab golden comparison green`
+- Validation Baseline: `AutoRun Lab V1 preserves Track 02 route metrics and passes 108/108 GUT tests, 1304 asserts, shared full-route pacing smoke green, Run Lab golden comparison green, and quick 30-case macro-route baseline comparison green`
 
 ## Purpose
 
@@ -90,6 +90,7 @@ Next implementation prompt: none. Track 02 is ready for user playtest.
 - Foundation hardening 7 added `tools/catalog_source_loader.gd` as a composition seam for future catalog domain splits while preserving the current single `slice_catalog.json` source, generated `.tres` semantics, route behavior, and golden pacing metrics.
 - Foundation hardening 8 extracted staged combat, manual attack, slot damage, hero damage, and destruction queue handling into `battle/combat_resolution_director.gd` while preserving `BattleEngine` wrappers, keyword timing, route behavior, and golden pacing metrics.
 - Foundation hardening 9 closed the foundation review with `docs/foundation-closeout.md`, refreshed the live architecture ownership map, separated technical foundation debt from product/playtest follow-up, and kept the next product step focused on human Track 02 playtest.
+- AutoRun Lab V1 turns `tools/run_lab.gd` into a modular macro-route lab with `tools/lab/` case building, presets, macro policies, aggregate JSON/CSV/Markdown reporting, detailed timelines, warnings/tags and statistical baseline comparison while preserving the exact Track 02 golden path.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
 - Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.
@@ -109,4 +110,4 @@ Every future Track 02 implementation or playtest-fix thread must:
 
 ## Current Risk
 
-Track 02 is ready for user playtest. Remaining risk is human balance feedback: the deterministic full-route smoke validates structure and pacing telemetry, but it is not a substitute for a manual run. Additional foundation extraction is optional and should be driven by concrete future work, not by the need to unblock playtest.
+Track 02 is ready for user playtest. Remaining risk is human balance feedback: the deterministic full-route smoke and AutoRun Lab macro matrices validate structure and tuning trends, but they are not substitutes for a manual run. Additional foundation extraction is optional and should be driven by concrete future work, not by the need to unblock playtest.
