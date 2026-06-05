@@ -1,8 +1,8 @@
 import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
+import { type AuthContext, verifiedAuthContext } from "../_shared/auth_context.ts";
 import {
   isProgressionLabSave,
   type SaveType,
-  saveTypeFromRequest,
   saveTypeQuery,
 } from "../_shared/save_context.ts";
 import { stateEnvelope } from "../_shared/response_envelope.ts";
@@ -14,20 +14,10 @@ interface EdgeConfig {
   serviceRoleKey: string;
 }
 
-interface AuthContext {
-  userId: string;
-  saveType: SaveType;
-}
-
 interface RestError {
   code: string;
   message: string;
   status: number;
-}
-
-interface JwtPayload {
-  sub?: unknown;
-  is_anonymous?: unknown;
 }
 
 interface PlayerRow {
@@ -97,13 +87,16 @@ async function handleCorsRequest(request: Request): Promise<Response> {
     if (request.method !== "GET") {
       return errorResponse("METHOD_NOT_ALLOWED", "Use GET for competition endpoints.", 405);
     }
-    const auth = decodeAuthContext(request);
-    if (auth.error !== null) {
-      return errorResponse(auth.error.code, auth.error.message, auth.error.status);
-    }
     const config = loadConfig();
     if (config.error !== null) {
       return errorResponse(config.error.code, config.error.message, config.error.status);
+    }
+    const auth = await verifiedAuthContext(request, {
+      supabaseUrl: config.value.supabaseUrl,
+      serviceRoleKey: config.value.serviceRoleKey,
+    });
+    if (auth.error !== null) {
+      return errorResponse(auth.error.code, auth.error.message, auth.error.status);
     }
     if (route === "matchmaking_preview") {
       return await handleMatchmakingPreview(auth.value, config.value);
@@ -342,57 +335,6 @@ function resolveRoute(pathname: string): Route | null {
   if (pathname.endsWith("/matchmaking/preview")) return "matchmaking_preview";
   if (pathname.endsWith("/ranking/current")) return "ranking_current";
   return null;
-}
-
-function decodeAuthContext(
-  request: Request,
-): { value: AuthContext; error: null } | { value: null; error: RestError } {
-  const header = request.headers.get("authorization") ?? "";
-  if (!header.startsWith("Bearer ")) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Bearer token is required.", status: 401 },
-    };
-  }
-  const token = header.slice("Bearer ".length);
-  const parts = token.split(".");
-  if (parts.length < 2) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Invalid bearer token.", status: 401 },
-    };
-  }
-  const payload = decodeJwtPayload(parts[1]);
-  if (payload === null || typeof payload.sub !== "string" || !UUID_PATTERN.test(payload.sub)) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Token subject is invalid.", status: 401 },
-    };
-  }
-  const saveType = saveTypeFromRequest(request);
-  if (saveType === null) {
-    return {
-      value: null,
-      error: {
-        code: "INVALID_SAVE_TYPE",
-        message: "Save type must be normal or progression_lab.",
-        status: 400,
-      },
-    };
-  }
-  return { value: { userId: payload.sub, saveType }, error: null };
-}
-
-function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
-  try {
-    const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
-    const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-    const bytes = Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
-    const payload: unknown = JSON.parse(new TextDecoder().decode(bytes));
-    return isObject(payload) ? payload as JwtPayload : null;
-  } catch {
-    return null;
-  }
 }
 
 function loadConfig(): { value: EdgeConfig; error: null } | { value: null; error: RestError } {

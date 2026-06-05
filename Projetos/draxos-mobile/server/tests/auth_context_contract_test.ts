@@ -2,6 +2,8 @@ const SERVER_AUTH_HELPER = "server/functions/_shared/auth_context.ts";
 const SUPABASE_AUTH_HELPER = "supabase/functions/_shared/auth_context.ts";
 const MIGRATED_ENDPOINTS = [
   "server/functions/account/index.ts",
+  "server/functions/base/index.ts",
+  "server/functions/competition/index.ts",
   "server/functions/content/index.ts",
   "server/functions/lab-runner/index.ts",
   "server/functions/progression-lab/index.ts",
