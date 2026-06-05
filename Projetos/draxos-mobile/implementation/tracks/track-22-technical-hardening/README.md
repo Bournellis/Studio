@@ -1,16 +1,17 @@
 # Track 22 - Technical Hardening
 
-- Status: `TRACK_22_TECHNICAL_HARDENING_DELIVERED_LOCAL`
+- Status: `TECHNICAL_HARDENING_PUBLISHED_INTERNAL_ALPHA`
 - Started: `2026-06-05`
 - Delivered locally: `2026-06-05`
+- Published remotely: `2026-06-05`
 - Branch: `codex/draxos-mobile/technical-hardening`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--technical-hardening`
 
 ## Purpose
 
-This track records the local hardening package approved after the deep
-technical audit of DraxosMobile. It is not a content expansion, tuning pass,
-remote publication package or new playable mode.
+This track records the hardening package approved after the deep technical
+audit of DraxosMobile. It is not a content expansion, tuning pass or new
+playable mode.
 
 ## Scope
 
@@ -26,7 +27,10 @@ remote publication package or new playable mode.
 
 ## Current Context
 
-Openworld Main Menu Sync remains the latest published Internal Alpha package:
+Technical Hardening is the latest published Internal Alpha package:
+`internal-alpha/v0-technical-hardening-20260605-8e54a1f`.
+
+Openworld Main Menu Sync remains the previous content package:
 `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`.
 
 Foundation Hardening V2 remains the previous hardening/live-doc enforcement
@@ -42,7 +46,12 @@ track folders, readiness reports, Kanban Done cards, release docs or Git history
 
 ## Remote Mutation
 
-None. This track starts as local hardening only.
+Published after merge to `master` with explicit user approval.
+
+- Release root: `internal-alpha/v0-technical-hardening-20260605-8e54a1f`
+- Preview evidence: `https://2fe9393e.draxos-mobile-internal-alpha.pages.dev`
+- Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
+- Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
 
 ## Package Notes
 

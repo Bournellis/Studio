@@ -547,16 +547,17 @@ Response:
   "latest_version_code": 1,
   "minimum_supported_version": "0.0.1-alpha.0",
   "minimum_supported_version_code": 1,
-  "released_at": "2026-06-04T23:52:15Z",
+  "released_at": "2026-06-05T06:18:43Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Openworld Main Menu Sync publicado na URL principal de Internal Alpha.",
-    "Openworld Collection Sync Local Fix e Main Menu Refactor estao incluidos neste pacote."
+    "Technical Hardening publicado na URL principal de Internal Alpha.",
+    "Technical Hardening inclui auth compartilhado em endpoints mutaveis, reset idempotente, reward profiles DB-side e refatores de hotspots.",
+    "Openworld Collection Sync Local Fix e Main Menu Refactor seguem incluidos neste pacote."
   ],
   "artifacts": {
-    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8/downloads/draxos-mobile-alpha.apk", "auth_required": "false" },
-    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8/downloads/draxos-mobile-alpha.zip", "auth_required": "false" },
+    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-technical-hardening-20260605-8e54a1f/downloads/draxos-mobile-alpha.apk", "sha256": "676ee0de44ad04cce0c16ad806c02541647188cce1edfe112880c95491acdbbb", "auth_required": "false" },
+    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-technical-hardening-20260605-8e54a1f/downloads/draxos-mobile-alpha.zip", "sha256": "badad63eab969301b6b69900d25b503842e285bcb5d2cb184b2be9e3c629ae45", "auth_required": "false" },
     "web": { "label": "Web", "url": "https://draxos-mobile-internal-alpha.pages.dev/web/index.html" }
   }
 }

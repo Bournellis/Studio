@@ -4,20 +4,23 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Openworld Main Menu Sync Publication`
-- Active stage status: `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Technical Hardening Publication`
+- Active stage status: `TECHNICAL_HARDENING_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
 ## Current Truth
 
-- Latest published remote package: `Openworld Main Menu Sync`
-- Release root: `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`
+- Latest published remote package: `Technical Hardening`
+- Release root: `internal-alpha/v0-technical-hardening-20260605-8e54a1f`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`
-- Source state: already-merged `master` state from Openworld collection sync backend fix plus main menu simplification.
+- Latest deployment evidence: `https://2fe9393e.draxos-mobile-internal-alpha.pages.dev`
+- Source state: `master` after merging Track 22 Technical Hardening.
+- Previous content package: `Openworld Main Menu Sync`
+- Previous content release root: `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`
+- Previous content verified preview: `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`
 - Previous hardening baseline: `Foundation Hardening V2`
 - Previous hardening release root: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`
 - Previous hardening preview: `https://ca946749.draxos-mobile-internal-alpha.pages.dev`
@@ -25,14 +28,15 @@
 - Agent baseline marker: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Arena contract context: `Track 18 - PVE Arena Initial`, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context, not the current platform baseline.
 - Technical context: Track 16 Behavior And Potion Crafting is existing alpha substance summarized in `docs/behavior-potion-crafting-v1.md`, not the current product focus.
-- Latest local hardening branch: `Track 22 - Technical Hardening` delivered locally on `codex/draxos-mobile/technical-hardening`; it is not a remote publication package.
+- Latest hardening package: `Track 22 - Technical Hardening`, merged to `master` and published to Internal Alpha.
 
 ## Published Package
 
-Openworld Main Menu Sync published the current player-facing Internal Alpha package:
+Technical Hardening published the current Internal Alpha package. It preserves the Openworld Main Menu Sync player-facing content and adds the hardening package:
 
-- applies remote migration `202606040002_openworld_bosque_collection_sync_v1.sql`;
-- redeploys Supabase Edge Function `modes`;
+- applies remote migrations `202606050001_arena_reward_profiles_v1.sql` and `202606050002_account_reset_request_hash_v1.sql`;
+- redeploys Supabase Edge Functions after the shared-auth, idempotency and release fallback updates;
+- keeps the Openworld migration `202606040002_openworld_bosque_collection_sync_v1.sql` from the previous content package;
 - accepts all 26 active Bosque ruleset resource nodes in the backend;
 - persists `player_position` only through `move_heartbeat`;
 - sanitizes event ACK patches so ordinary event responses do not roll back active local position;
@@ -40,28 +44,33 @@ Openworld Main Menu Sync published the current player-facing Internal Alpha pack
 - removes player-facing Mode Hub, collect-all, direct Energia and dev Openworld shortcuts;
 - keeps `Bosque` as the direct Openworld entry;
 - moves Preparacao into Arena PVE and keeps Energia purchase inside Loja;
-- keeps the production Pages domain as the official URL and the hash deployment only as evidence.
+- keeps the production Pages domain as the official URL and the hash deployment only as evidence;
+- keeps `Modes Ops` out of the Godot client while Battle Lab and Progression Lab remain available;
+- migrates mutable/lab/release endpoints broadly to shared `verifiedAuthContext`;
+- promotes account reset to request-hash idempotency and Arena rewards to DB-side reward profiles;
+- reduces large client hotspots with extract-only helper modules.
 
 Publication evidence preserved for this package:
 
-- `supabase db push`, `supabase functions deploy modes`, export, Storage upload, Cloudflare Pages production branch `main`, remote manifest, RemoteReadOnly and remote Web launch smoke all passed during publication.
-- Remote Web smoke loaded the game in `4639 ms`, matched release root and reported no runtime errors.
+- `supabase db push`, `supabase functions deploy`, export, Storage upload, Cloudflare Pages production branch `main`, remote manifest, RemoteReadOnly and remote Web launch smoke all passed during publication.
+- Remote Web smoke on preview evidence loaded the game in `6042 ms`, matched release root and reported no runtime errors; the validation rerun loaded it in `3302 ms`.
+- Stable Portal/Web remain protected by Cloudflare Access and pass RemoteReadOnly with Access marked expected.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 
 ## Current Gate
 
-The next product step remains human review/playtest of the published Openworld Main Menu Sync package before any new expansion package.
+The next product step remains human review/playtest of the published Technical Hardening package before any new expansion package.
 
 Playtest focus:
 
 1. Confirm Bosque collect/deposit/resync after collecting v2 nodes.
 2. Confirm simplified main menu path into Bosque, Arena PVE and Loja.
 3. Confirm tutorial Arena and first real Arena loop still read correctly.
-4. Record whether the next package should be a Bosque/menu hotfix or an Arena PVE/tuning package. This decision is not fixed yet.
+4. Record whether the next package should be a hotfix or an Arena PVE/tuning package. This decision is not fixed yet.
 
 ## Latest Local Technical Hardening Work
 
-Track 22 Technical Hardening is delivered locally on branch `codex/draxos-mobile/technical-hardening`.
+Track 22 Technical Hardening is merged to `master` and published as Internal Alpha.
 
 Delivered locally:
 
@@ -73,7 +82,7 @@ Delivered locally:
 - Arena reward authority moved DB-side through explicit reward profiles;
 - large client hotspots reduced with extract-only helpers for battle replay, account forms, preparation actions, Base and Arena surfaces.
 
-No remote publication, Supabase remote mutation, Cloudflare deploy, keystore work, tuning expansion, PVP, new content, new weapons, new spells, new potions or economy pass is included in this local hardening package.
+No keystore work, tuning expansion, PVP, new content, new weapons, new spells, new potions or economy pass is included in this hardening package.
 
 ## Live Boundaries
 
@@ -87,22 +96,19 @@ No remote publication, Supabase remote mutation, Cloudflare deploy, keystore wor
 
 ## Validation Snapshot
 
-Latest local audit before this hardening branch:
+Latest Track 22 validation before publication:
 
-- `validate_foundation.ps1 -Profile DocsOnly -NoProjectWrites`: PASS
-- `validate_foundation.ps1 -Profile ServerQuick -NoProjectWrites`: PASS
-- `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS (`222/222` GUT tests)
-- `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS
-- `validate_foundation.ps1 -Profile ModePlatform -NoProjectWrites`: PASS (`38/38` mode contract tests plus Godot smokes)
-- `git status --short`: clean
+- `validate_foundation.ps1 -Profile FullLocal -NoProjectWrites`: PASS on merged `master`.
+- `validate_foundation.ps1 -Profile DatabaseLocal -NoProjectWrites`: PASS after starting Docker Desktop, local Supabase and local Edge Functions.
+- `smoke_web_launch_remote.ps1 -WebUrl https://2fe9393e.draxos-mobile-internal-alpha.pages.dev/web/index.html -ExpectedReleaseRoot internal-alpha/v0-technical-hardening-20260605-8e54a1f`: PASS.
 
-Latest local Track 22 validation on branch `codex/draxos-mobile/technical-hardening`:
+Latest validation after release fallback/docs update and Edge redeploy:
 
+- `git diff --check`: PASS.
+- `npx -y deno check server/functions/release/index.ts supabase/functions/release/index.ts server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/release_auth_contract_test.ts`: PASS.
+- `validate_foundation.ps1 -Profile DocsOnly -NoProjectWrites`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-technical-hardening-20260605-8e54a1f -RemoteWebUrl https://draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS.
 - `validate_foundation.ps1 -Profile ServerQuick -NoProjectWrites`: PASS (`112` foundation tests and `19` PVE Arena tests).
-- `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS (`223/223` GUT tests, `3608` asserts and responsive/export smokes).
-- `validate_foundation.ps1 -Profile ModePlatform -NoProjectWrites`: PASS (`38/38` mode contract tests plus Bosque/Openworld/Modes Ops smokes).
-- `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS (release plan dry-run, release safety, Android internal-alpha keystore gate, Track 13 readiness and Track 14 agent ops).
-- `validate_foundation.ps1 -Profile DatabaseLocal -NoProjectWrites`: PASS after starting Docker Desktop, local Supabase and local Edge Functions; transactional RPC live proof, Edge transactional RPC adapter smoke, mode platform live proof and admin RLS live smoke passed.
 
 Historical validation logs and package-by-package publication evidence belong in `implementation/tracks/`, `docs/*-report.md`, Kanban Done cards or handoffs, not in this decision snapshot.
 

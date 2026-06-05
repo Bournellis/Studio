@@ -31,15 +31,15 @@ Categorias:
 - `OPERACIONAL`: nao altera game design, mas bloqueia validacao, ambiente, seguranca ou execucao tecnica confiavel.
 - `POS_SLICE`: fora da Track 00 completa.
 
-## Etapa Atual - Openworld Main Menu Sync Publicado
+## Etapa Atual - Technical Hardening Publicado
 
-A etapa atual e `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`. O projeto deve ser lido como o pacote publicado que corrige a coleta/deposito/resync do Bosque no remoto e simplifica o menu principal, preservando Foundation Hardening V2 como baseline anterior de enforcement multi-agente/multi-modo. A direcao viva de produto continua Arena PVE first, registrada em `docs/pve-arena-initial-direction.md`, com Bosque/Openworld como slice ativo de Internal Alpha e nao como expansao de mundo continuo aprovada.
+A etapa atual e `TECHNICAL_HARDENING_PUBLISHED_INTERNAL_ALPHA`. O projeto deve ser lido como o pacote publicado que preserva a coleta/deposito/resync do Bosque e o menu principal simplificado do Openworld Main Menu Sync, agora com hardening tecnico de auth, idempotencia, rewards e hotspots. Foundation Hardening V2 continua como baseline anterior de enforcement multi-agente/multi-modo. A direcao viva de produto continua Arena PVE first, registrada em `docs/pve-arena-initial-direction.md`, com Bosque/Openworld como slice ativo de Internal Alpha e nao como expansao de mundo continuo aprovada.
 
 Foco imediato:
 
-`Revisar/playtestar Openworld Main Menu Sync -> confirmar coleta/deposito/resync do Bosque -> confirmar menu principal simplificado -> confirmar tutorial Arena -> primeira Arena real completa -> registrar tuning/UX antes de novo pacote`
+`Revisar/playtestar Technical Hardening -> confirmar coleta/deposito/resync do Bosque -> confirmar menu principal simplificado -> confirmar tutorial Arena -> primeira Arena real completa -> registrar tuning/UX antes de novo pacote`
 
-Foundation Loop UX Pass 01 foi aceito como baseline historico do app-shell, nao como loop de produto atual. Foundation Closeout, Labs atualizados, Foundation Final Polish, Hardening Platform V1 e Foundation Hardening V2 fecharam a base tecnica/documental anterior. Openworld Main Menu Sync agora e o pacote operacional publicado. Track 21 Arena Loop Unlock/Friction permanece somente como contexto Arena/Autobattler para unlock, loadout travado, buffs temporarios, HP resetado por duelo, claim summary e fluxo de retorno da Arena; PVP entra depois como modo competitivo/fallback.
+Foundation Loop UX Pass 01 foi aceito como baseline historico do app-shell, nao como loop de produto atual. Foundation Closeout, Labs atualizados, Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2 e Openworld Main Menu Sync fecharam a base tecnica/documental/conteudo anterior. Technical Hardening agora e o pacote operacional publicado. Track 21 Arena Loop Unlock/Friction permanece somente como contexto Arena/Autobattler para unlock, loadout travado, buffs temporarios, HP resetado por duelo, claim summary e fluxo de retorno da Arena; PVP entra depois como modo competitivo/fallback.
 
 Revisao manual do build publicado identificou regressao de responsividade: Labs Dev sumiram do menu inicial interno e Refugio/Batalha puderam sair dos limites em Web/Android. A partir de agora, mudancas visuais em Entry, Refugio ou Batalha precisam respeitar `docs/foundation-responsive-layout-contract.md` e passar em `tools/smoke_responsive_layout.gd` antes de nova publicacao.
 

@@ -10,7 +10,7 @@
 - mode_scope: `multi-mode`
 - branch: `codex/draxos-mobile/technical-hardening`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--technical-hardening`
-- status: `TRACK_22_TECHNICAL_HARDENING_DELIVERED_LOCAL`
+- status: `TECHNICAL_HARDENING_PUBLISHED_INTERNAL_ALPHA`
 
 ## Objetivo
 
@@ -18,8 +18,11 @@ Executar o plano aprovado de hardening tecnico antes de novas expansoes: compact
 
 ## Latest Context
 
-- latest published package: `Openworld Main Menu Sync`
-- latest release root: `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`
+- latest published package: `Technical Hardening`
+- latest release root: `internal-alpha/v0-technical-hardening-20260605-8e54a1f`
+- latest deployment evidence: `https://2fe9393e.draxos-mobile-internal-alpha.pages.dev`
+- previous content package: `Openworld Main Menu Sync`
+- previous content release root: `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`
 - latest Arena loop package: `Track 21 - Arena Loop Unlock And Friction Pass`
 - Arena contract source: `docs/pve-arena-v1.md`
 - behavior/potion/crafting source: `docs/behavior-potion-crafting-v1.md`
@@ -90,9 +93,9 @@ Executar o plano aprovado de hardening tecnico antes de novas expansoes: compact
 
 ## Delivery State
 
-Track 22 Technical Hardening is delivered locally on branch `codex/draxos-mobile/technical-hardening`.
+Track 22 Technical Hardening is merged to `master` and published as Internal Alpha.
 
-No remote publication, Supabase remote mutation, Cloudflare deploy or Android keystore work was performed.
+Remote publication was performed after explicit user approval. Android keystore work was not performed; APK remains accepted as `debug_fallback` for closed alpha.
 
 Delivered scope:
 
@@ -128,6 +131,17 @@ Final handoff: review/merge branch `codex/draxos-mobile/technical-hardening`; `D
 - `ModePlatform`: PASS (`38/38`, Bosque/Openworld/Modes Ops smokes included).
 - `ReleaseDryRun`: PASS after this card moved from Doing to Done.
 - `DatabaseLocal`: PASS after starting Docker Desktop, local Supabase and local Edge Functions.
+
+## Merge And Publication Snapshot - 2026-06-05
+
+- Branch `codex/draxos-mobile/technical-hardening` was fast-forward merged into `master`.
+- `FullLocal`: PASS on merged `master`.
+- Remote migrations applied: `202606050001_arena_reward_profiles_v1.sql` and `202606050002_account_reset_request_hash_v1.sql`.
+- Supabase Edge Functions redeployed.
+- Export/package/upload/deploy completed with release root `internal-alpha/v0-technical-hardening-20260605-8e54a1f`.
+- Cloudflare Pages production branch `main` deployed; preview evidence `https://2fe9393e.draxos-mobile-internal-alpha.pages.dev`.
+- Remote Web preview smoke loaded the game and matched release root.
+- Stable Portal/Web are Cloudflare Access protected and passed RemoteReadOnly with Access expected.
 
 ## Phase 2 Execution Plan - 2026-06-05
 

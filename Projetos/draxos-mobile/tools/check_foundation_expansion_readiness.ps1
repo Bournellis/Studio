@@ -488,15 +488,17 @@ function Test-ClientSecretsAbsent {
 }
 
 function Test-LiveDocReleaseRootFreshness {
-  $currentRoot = 'internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8'
-  $currentPreview = 'https://aeec7403.draxos-mobile-internal-alpha.pages.dev'
+  $currentRoot = 'internal-alpha/v0-technical-hardening-20260605-8e54a1f'
+  $currentPreview = 'https://2fe9393e.draxos-mobile-internal-alpha.pages.dev'
+  $previousContentRoot = 'internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8'
+  $previousContentPreview = 'https://aeec7403.draxos-mobile-internal-alpha.pages.dev'
   $hardeningRoot = 'internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4'
   $hardeningPreview = 'https://ca946749.draxos-mobile-internal-alpha.pages.dev'
   foreach ($check in @(
-    @{ Path = 'AGENTS.md'; Needles = @('Openworld Main Menu Sync is the latest remote Internal Alpha publication', $currentRoot, $currentPreview, 'Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
-    @{ Path = 'README.md'; Needles = @(('Current release root: `' + $currentRoot + '`'), ('Current verified preview: `' + $currentPreview + '`'), ('Previous hardening release root: `' + $hardeningRoot + '`'), ('Previous hardening verified preview: `' + $hardeningPreview + '`')) },
-    @{ Path = 'implementation\current-status.md'; Needles = @('Latest published remote package: `Openworld Main Menu Sync`', $currentRoot, $currentPreview, 'Previous hardening baseline: `Foundation Hardening V2`', $hardeningRoot, $hardeningPreview) },
-    @{ Path = 'docs\agent-operating-manual.md'; Needles = @('Openworld Main Menu Sync is the latest remote Internal Alpha publication', $currentRoot, $currentPreview, 'Foundation Hardening V2 is the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
+    @{ Path = 'AGENTS.md'; Needles = @('Technical Hardening is the latest remote Internal Alpha publication', $currentRoot, $currentPreview, 'Openworld Main Menu Sync remains the previous content package', $previousContentRoot, $previousContentPreview, 'Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
+    @{ Path = 'README.md'; Needles = @(('Current release root: `' + $currentRoot + '`'), ('Current verified preview: `' + $currentPreview + '`'), ('Previous content release root: `' + $previousContentRoot + '`'), ('Previous content verified preview: `' + $previousContentPreview + '`'), ('Previous hardening release root: `' + $hardeningRoot + '`'), ('Previous hardening verified preview: `' + $hardeningPreview + '`')) },
+    @{ Path = 'implementation\current-status.md'; Needles = @('Latest published remote package: `Technical Hardening`', $currentRoot, $currentPreview, 'Previous content package: `Openworld Main Menu Sync`', $previousContentRoot, $previousContentPreview, 'Previous hardening baseline: `Foundation Hardening V2`', $hardeningRoot, $hardeningPreview) },
+    @{ Path = 'docs\agent-operating-manual.md'; Needles = @('Technical Hardening is the latest remote Internal Alpha publication', $currentRoot, $currentPreview, 'Openworld Main Menu Sync remains the previous content package', $previousContentRoot, $previousContentPreview, 'Foundation Hardening V2 is the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
     @{ Path = 'docs\foundation-hardening-v2-readiness-report.md'; Needles = @('Status: `HISTORICO_BASELINE`', $hardeningRoot, $hardeningPreview, 'not the latest remote Internal Alpha package') }
   )) {
     foreach ($needle in $check.Needles) {

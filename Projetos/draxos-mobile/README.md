@@ -2,8 +2,8 @@
 
 DraxosMobile is the Godot/Supabase project for Android, PC executable and PC browser. It is now a PVE Arena-first async autobattler with Refugio/Base management, later PVP, social systems and server-authoritative progression.
 
-**Status:** `P2_IMPLEMENTACAO - OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`
-**Baseline:** Openworld Main Menu Sync is the latest remote Internal Alpha package: release root `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`, preview `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/` and direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`. It publishes the Openworld collection sync backend fix and the simplified player-facing main menu. Bosque Mecanico Basico v2 remains the previous Bosque guidance package. Foundation Hardening V2 remains the previous multi-mode expansion enforcement baseline. Track 13 release safety and Track 14 agent ops remain preserved baselines. Track 16 is technical behavior/potion/crafting context. Track 18 Arena PVE Initial, Track 20 Season 1 Arena Calibration, Track 21 Arena Loop Unlock/Friction and Remote Lab Runner remain preserved Arena/Autobattler/Lab context, not the current platform baseline.
+**Status:** `P2_IMPLEMENTACAO - TECHNICAL_HARDENING_PUBLISHED_INTERNAL_ALPHA`
+**Baseline:** Technical Hardening is the latest remote Internal Alpha package: release root `internal-alpha/v0-technical-hardening-20260605-8e54a1f`, preview `https://2fe9393e.draxos-mobile-internal-alpha.pages.dev`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/` and direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`. It publishes the Track 22 hardening package: shared verified auth across mutable/lab/release endpoints, request-hash account reset, Arena reward profiles DB-side and extract-only client hotspot refactors. Openworld Main Menu Sync remains the previous content package and is preserved inside this release. Bosque Mecanico Basico v2 remains the previous Bosque guidance package. Foundation Hardening V2 remains the previous multi-mode expansion enforcement baseline. Track 13 release safety and Track 14 agent ops remain preserved baselines. Track 16 is technical behavior/potion/crafting context. Track 18 Arena PVE Initial, Track 20 Season 1 Arena Calibration, Track 21 Arena Loop Unlock/Friction and Remote Lab Runner remain preserved Arena/Autobattler/Lab context, not the current platform baseline.
 
 ## Current Focus
 
@@ -13,7 +13,7 @@ The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foun
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Final Polish, Track 18 PVE Arena Initial, Track 19 Arena Consistency Pass, Track 20 Season 1 Arena Calibration, Lab Web Export Guard, Remote Lab Runner, Track 21 Arena Loop Unlock/Friction, Hardening Platform V1, Foundation Hardening V2, First Access Runtime Fix and Bosque Mecanico Basico v2 are preserved in the Internal Alpha lineage. Openworld Main Menu Sync is the current published Internal Alpha package for human playtest.
+Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Final Polish, Track 18 PVE Arena Initial, Track 19 Arena Consistency Pass, Track 20 Season 1 Arena Calibration, Lab Web Export Guard, Remote Lab Runner, Track 21 Arena Loop Unlock/Friction, Hardening Platform V1, Foundation Hardening V2, First Access Runtime Fix, Bosque Mecanico Basico v2 and Openworld Main Menu Sync are preserved in the Internal Alpha lineage. Technical Hardening is the current published Internal Alpha package for human playtest.
 
 Foundation Hardening V2 makes strict expansion gates, mode decision packs, backend boundary inventory, read-only ops, Android release signing, V2 schema enforcement and remote publication evidence the current baseline before new mode work. Hardening Platform V1 remains the previous multi-agent/mode platform baseline. Track 21 Arena Loop Unlock/Friction remains the Arena/Autobattler context for tutorial of 1 duel, first arenas of 3 duels, locked loadout context, temporary stat buffs, HP reset per duel, no combat cooldown, live-stock potion consumption in Arena, summary-only claim, public buff select endpoint, data-driven Arena selection, XP -> level recalculation on completion and direct continue-in-Arena flow. Remote Lab Runner remains preserved for Battle Lab Dev and Progression Lab Dev in Web export through Edge `lab-runner` with the same Supabase email/password Internal Alpha account gate.
 
@@ -104,10 +104,13 @@ git status --short
 - Version code: `1`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
-- Current verified preview: `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`
-- Current release root: `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`
-- Current APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8/downloads/draxos-mobile-alpha.apk`
-- Current PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8/downloads/draxos-mobile-alpha.zip`
+- Current verified preview: `https://2fe9393e.draxos-mobile-internal-alpha.pages.dev`
+- Current release root: `internal-alpha/v0-technical-hardening-20260605-8e54a1f`
+- Current APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-technical-hardening-20260605-8e54a1f/downloads/draxos-mobile-alpha.apk`
+- Current PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-technical-hardening-20260605-8e54a1f/downloads/draxos-mobile-alpha.zip`
+- Previous content package: Openworld Main Menu Sync remains the previous content package.
+- Previous content verified preview: `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`
+- Previous content release root: `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`
 - Previous Bosque v2 verified preview: `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`
 - Previous Bosque v2 release root: `internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`
 - Previous hardening guard: Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline.

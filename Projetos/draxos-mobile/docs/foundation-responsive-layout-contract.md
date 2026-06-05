@@ -2,7 +2,7 @@
 
 - Status: `CONTRATO`
 - Last updated: `2026-06-04`
-- Stage: `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`
+- Stage: `TECHNICAL_HARDENING_PUBLISHED_INTERNAL_ALPHA`
 
 This contract exists because Foundation Loop UX Pass 01 exposed a dangerous visual regression pattern: immersive screens could look acceptable in one viewport while overflowing or being clipped in Android/Web builds. It remains a live guardrail after Foundation Final Polish.
 

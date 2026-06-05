@@ -48,7 +48,7 @@ For release or validation work, also read:
 
 ## Track Reading Rules
 
-Openworld Main Menu Sync is the current published Internal Alpha package.
+Technical Hardening is the current published Internal Alpha package. Openworld Main Menu Sync remains the previous content package preserved inside it.
 Foundation Hardening V2 remains the previous baseline for multi-agent and
 multi-mode enforcement. Hardening Platform V1 remains the previous platform
 baseline. Track 21 is the current Arena loop package for agents to use as

@@ -50,8 +50,8 @@ Deno.test("release manifest code fallback points at the current published packag
   for (const path of releaseSources) {
     const source = await Deno.readTextFile(path);
     assert(
-      source.includes("internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8"),
-      `${path} should fall back to Openworld Main Menu Sync, the current published package`,
+      source.includes("internal-alpha/v0-technical-hardening-20260605-8e54a1f"),
+      `${path} should fall back to Technical Hardening, the current published package`,
     );
     assertEquals(
       source.includes("internal-alpha/v0-foundation-solidification-20260602-906101b"),
