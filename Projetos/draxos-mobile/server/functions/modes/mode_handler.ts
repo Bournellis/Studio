@@ -28,10 +28,12 @@ import {
 import { stateEnvelope } from "../_shared/response_envelope.ts";
 import {
   type AuthContext,
+  verifiedAuthContext,
+} from "../_shared/auth_context.ts";
+import {
   type EdgeConfig,
   type Route,
   UUID_PATTERN,
-  decodeAuthContext,
   errorResponse,
   isObject,
   loadAdminRole,
@@ -80,13 +82,19 @@ export class ModeHandler {
         return errorResponse("METHOD_NOT_ALLOWED", "Use POST for mode sessions.", 405);
       }
 
-      const auth = decodeAuthContext(request);
-      if (auth.error !== null) {
-        return errorResponse(auth.error.code, auth.error.message, auth.error.status);
-      }
       const config = loadConfig();
       if (config.error !== null) {
         return errorResponse(config.error.code, config.error.message, config.error.status);
+      }
+      const auth = await verifiedAuthContext(request, {
+        supabaseUrl: config.value.supabaseUrl,
+        serviceRoleKey: config.value.serviceRoleKey,
+      }, {
+        requireExplicitSaveType: true,
+        missingSaveTypeMessage: "x-draxos-save-type is required for mode endpoints.",
+      });
+      if (auth.error !== null) {
+        return errorResponse(auth.error.code, auth.error.message, auth.error.status);
       }
 
       if (route === "registry") {

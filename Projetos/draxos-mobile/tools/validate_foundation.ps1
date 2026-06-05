@@ -418,7 +418,7 @@ function Assert-ModeHandlerModularity {
     if (-not $entryText.Contains('import { modeHandler } from "./mode_handler.ts";') -or -not $entryText.Contains("Deno.serve(modeHandler)")) {
         throw "server/functions/modes/index.ts must only delegate to mode_handler.ts."
     }
-    foreach ($needle in @("export class ModeHandler", "modeHandler(request: Request)", "handleAdminRoute", "mutationRequestHash", "saveTypeFromRequest")) {
+    foreach ($needle in @("export class ModeHandler", "modeHandler(request: Request)", "handleAdminRoute", "mutationRequestHash", "verifiedAuthContext")) {
         if (-not $modeText.Contains($needle)) {
             throw "server/functions/modes mode modules are missing modularity marker: $needle"
         }

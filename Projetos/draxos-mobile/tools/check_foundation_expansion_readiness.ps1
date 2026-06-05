@@ -266,7 +266,7 @@ function Test-ModeHandlerStrictness {
     }
     $text = Get-Content -LiteralPath $path -Raw
     $moduleText = "$text`n$(Get-Content -LiteralPath $supportPath -Raw)"
-    foreach ($needle in @('export class ModeHandler', 'handleAdminRoute', 'mutationRequestHash', 'saveTypeFromRequest')) {
+    foreach ($needle in @('export class ModeHandler', 'handleAdminRoute', 'mutationRequestHash', 'verifiedAuthContext')) {
       if ($moduleText.Contains($needle)) {
         Add-Ok "$relative module set contains modularity marker $needle"
       } else {

@@ -303,6 +303,8 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
       "admin_reconcile",
       "admin_compensate",
       "validateApiVersion",
+      "verifiedAuthContext",
+      "requireExplicitSaveType",
       "request_hash",
     ]
   ) {
@@ -316,7 +318,7 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
     const supportSymbol of [
       "export function resolveRoute",
       "export async function loadModeState",
-      "export function decodeAuthContext",
+      "export function loadConfig",
       "export async function restRequest",
       "export function mapModeDatabaseError",
     ]

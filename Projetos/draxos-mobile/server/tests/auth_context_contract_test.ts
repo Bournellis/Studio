@@ -11,6 +11,7 @@ const MIGRATED_ENDPOINTS = [
   "server/functions/crafting/index.ts",
   "server/functions/lab-runner/index.ts",
   "server/functions/monetization/index.ts",
+  "server/functions/modes/mode_handler.ts",
   "server/functions/progression-lab/index.ts",
   "server/functions/social/index.ts",
   "server/functions/telemetry/index.ts",

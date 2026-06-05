@@ -12,12 +12,8 @@ import {
   loadFoundationGameSave,
   mapFoundationDatabaseError,
 } from "../_shared/transactional_mutation.ts";
-import {
-  SAVE_TYPE_HEADER,
-  type SaveType,
-  saveTypeFromRequest,
-  saveTypeQuery,
-} from "../_shared/save_context.ts";
+import { type SaveType, saveTypeQuery } from "../_shared/save_context.ts";
+import type { AuthContext } from "../_shared/auth_context.ts";
 
 export type Route =
   | "registry"
@@ -40,19 +36,10 @@ export interface EdgeConfig {
   serviceRoleKey: string;
 }
 
-export interface AuthContext {
-  userId: string;
-  saveType: SaveType;
-}
-
 export interface RestError {
   code: string;
   message: string;
   status: number;
-}
-
-interface JwtPayload {
-  sub?: unknown;
 }
 
 interface PlayerRow {
@@ -297,69 +284,6 @@ export async function loadAdminRole(
     };
   }
   return { value: result.value[0], error: null };
-}
-
-export function decodeAuthContext(request: Request): { value: AuthContext; error: null } | {
-  value: null;
-  error: RestError;
-} {
-  const header = request.headers.get("authorization") ?? "";
-  if (!header.startsWith("Bearer ")) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Bearer token is required.", status: 401 },
-    };
-  }
-  const token = header.slice("Bearer ".length);
-  const parts = token.split(".");
-  if (parts.length < 2) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Invalid bearer token.", status: 401 },
-    };
-  }
-  const payload = decodeJwtPayload(parts[1]);
-  if (payload === null || typeof payload.sub !== "string" || !UUID_PATTERN.test(payload.sub)) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Token subject is invalid.", status: 401 },
-    };
-  }
-  const saveTypeHeader = request.headers.get(SAVE_TYPE_HEADER);
-  if (saveTypeHeader === null || saveTypeHeader.trim() === "") {
-    return {
-      value: null,
-      error: {
-        code: "INVALID_SAVE_TYPE",
-        message: "x-draxos-save-type is required for mode endpoints.",
-        status: 400,
-      },
-    };
-  }
-  const saveType = saveTypeFromRequest(request);
-  if (saveType === null) {
-    return {
-      value: null,
-      error: {
-        code: "INVALID_SAVE_TYPE",
-        message: "Save type must be normal or progression_lab.",
-        status: 400,
-      },
-    };
-  }
-  return { value: { userId: payload.sub, saveType }, error: null };
-}
-
-function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
-  try {
-    const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
-    const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-    const bytes = Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
-    const payload: unknown = JSON.parse(new TextDecoder().decode(bytes));
-    return isObject(payload) ? payload as JwtPayload : null;
-  } catch {
-    return null;
-  }
 }
 
 export function loadConfig(): { value: EdgeConfig; error: null } | {
