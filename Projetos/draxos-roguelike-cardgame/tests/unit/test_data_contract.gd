@@ -53,7 +53,7 @@ func test_catalog_removes_old_player_cards_and_keeps_enemies() -> void:
 		assert_not_null(catalog.find_card(enemy_id), "Enemy card should remain: %s" % enemy_id)
 	assert_true(ContentLibrary.get_card("invocador_guardiao").has_keyword("defensor"))
 	assert_true(ContentLibrary.get_card("necro_esqueleto").has_keyword("reviver"))
-	assert_eq(int(ContentLibrary.get_card("arcano_choque").effect.get("amount", 0)), 2)
+	assert_eq(int(ContentLibrary.get_card("arcano_choque").effect.get("amount", 0)), 3)
 	assert_eq(int(ContentLibrary.get_card("arcano_fagulha").health), 2)
 	assert_eq(int(ContentLibrary.get_card("arcano_barreira").attack), 0)
 	assert_true(ContentLibrary.get_card("arcano_barreira").has_keyword("defensor"))

@@ -374,7 +374,7 @@ func test_battle_engine_applies_safe_relic_hooks() -> void:
 	var enemy_before: int = int(Dictionary(engine.enemy_slots[2]).get("health", 0))
 	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 2}).get("ok", false)))
 	assert_eq(engine.mana, 2)
-	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), enemy_before - 3)
+	assert_eq(int(Dictionary(engine.enemy_slots[2]).get("health", 0)), enemy_before - 4)
 	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 0}).get("ok", false)))
 	var ally: Dictionary = Dictionary(engine.player_slots[0])
 	assert_eq(int(ally.get("health", 0)), int(ally.get("max_health", 0)))

@@ -17,7 +17,7 @@ func test_ability_power_updates_spell_values_and_text() -> void:
 	engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "slot": 1})
 	assert_eq(int(engine.get_state().get("ability_power", 0)), 2)
 	var text: String = VisualAssets.card_display_text(ContentLibrary.get_card("arcano_choque"), engine.get_card_text_context("arcano_choque"))
-	assert_string_contains(text, "Causa 6 de dano")
+	assert_string_contains(text, "Causa 7 de dano")
 	var result: Dictionary = engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 2})
 	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
 	assert_null(engine.enemy_slots[2])
