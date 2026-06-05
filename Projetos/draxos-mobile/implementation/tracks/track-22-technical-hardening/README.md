@@ -78,3 +78,7 @@ None. This track starts as local hardening only.
   into `preparation_action_contract.gd`, adds direct client coverage for the
   default potion/spell behavior and error messages, and drops
   `surface_action_flow.gd` to 743 measured nonblank lines.
+- Package 6d extracts Base routine summary, structure lookup and resource/cost
+  formatters into `base_surface_summary.gd`. `base_surface_presenter.gd` keeps
+  compatibility wrappers for `surface_ui_helpers.gd` and drops from 773 to 588
+  measured nonblank lines without moving panel/control rendering.
