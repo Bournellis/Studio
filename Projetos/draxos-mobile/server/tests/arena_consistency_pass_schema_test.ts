@@ -8,6 +8,8 @@ const INITIAL_ARENA_SERVER_MIRROR_PATH =
   "server/schema/migrations/202605310001_arena_pve_initial.sql";
 const SERVER_ARENA_FUNCTION = "server/functions/arena/index.ts";
 const SUPABASE_ARENA_FUNCTION = "supabase/functions/arena/index.ts";
+const SERVER_ARENA_TYPES = "server/functions/arena/arena_types.ts";
+const SUPABASE_ARENA_TYPES = "supabase/functions/arena/arena_types.ts";
 
 Deno.test("arena consistency migration is mirrored in server schema", async () => {
   const supabaseMigration = await readProjectText(MIGRATION_PATH);
@@ -49,11 +51,28 @@ Deno.test("arena initial migration keeps deploy-safe ruleset publication context
 Deno.test("arena edge function is mirrored between server and supabase", async () => {
   const serverFunction = await readProjectText(SERVER_ARENA_FUNCTION);
   const supabaseFunction = await readProjectText(SUPABASE_ARENA_FUNCTION);
+  const serverTypes = await readProjectText(SERVER_ARENA_TYPES);
+  const supabaseTypes = await readProjectText(SUPABASE_ARENA_TYPES);
 
   assertEq(
     normalizeNewlines(serverFunction),
     normalizeNewlines(supabaseFunction),
     "server and supabase arena functions should stay mirrored",
+  );
+  assertEq(
+    normalizeNewlines(serverTypes),
+    normalizeNewlines(supabaseTypes),
+    "server and supabase arena type modules should stay mirrored",
+  );
+  assertIncludes(
+    serverFunction,
+    'from "./arena_types.ts";',
+    "arena function should keep extracted types in the mirrored type module",
+  );
+  assertIncludes(
+    serverTypes,
+    "export interface ArenaAttemptRow",
+    "arena type module should own Arena row contracts",
   );
 });
 
@@ -179,6 +198,23 @@ Deno.test("arena claim remains read-only ack and buff public endpoint is normali
     "'arena/buff/choose'",
     "buff RPC should not expose the old endpoint as a new idempotency source",
   );
+
+  const claimHandler = functionBlock(edgeFunction, "handleClaim");
+  for (
+    const forbidden of [
+      "rpc/",
+      "reserve_idempotency",
+      "complete_idempotency",
+      "idempotency_keys",
+      "p_request_hash",
+    ]
+  ) {
+    assertNotIncludes(
+      claimHandler,
+      forbidden,
+      `claim handler must remain read-only and avoid ${forbidden}`,
+    );
+  }
 });
 
 async function readProjectText(relativePath: string): Promise<string> {
@@ -188,9 +224,18 @@ async function readProjectText(relativePath: string): Promise<string> {
 function functionBlock(source: string, functionName: string): string {
   const start = source.indexOf(`function public.${functionName}`);
   if (start < 0) {
-    throw new Error(`Function ${functionName} not found`);
+    return tsFunctionBlock(source, functionName);
   }
   const next = source.indexOf("\ncreate or replace function public.", start + 1);
+  return source.slice(start, next < 0 ? source.length : next);
+}
+
+function tsFunctionBlock(source: string, functionName: string): string {
+  const start = source.indexOf(`function ${functionName}`);
+  if (start < 0) {
+    throw new Error(`Function ${functionName} not found`);
+  }
+  const next = source.indexOf("\nasync function ", start + 1);
   return source.slice(start, next < 0 ? source.length : next);
 }
 

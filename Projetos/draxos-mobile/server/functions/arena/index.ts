@@ -1,10 +1,5 @@
 import { validateApiVersion } from "../_shared/api_version.ts";
 import {
-  type BattleBotBuildRow,
-  type BattleBuildRow,
-  type BattleConsumableRow,
-  type BattlePotionSlotRow,
-  type BattleSpellBehaviorRow,
   type CombatantBuild,
   playerCombatantFromState,
   potionSlotForBattle,
@@ -27,173 +22,33 @@ import {
   pveEnemyDefinition,
 } from "../_shared/pve_arena_catalog.ts";
 import {
-  type FoundationGameSaveRow,
   loadFoundationGameSave,
   mutationRequestHash,
 } from "../_shared/transactional_mutation.ts";
-import { type SaveType, saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
+import { saveTypeFromRequest, saveTypeQuery } from "../_shared/save_context.ts";
 import { stateEnvelope } from "../_shared/response_envelope.ts";
-
-type Route = "list" | "start" | "duel/request" | "buff/choose" | "claim" | "abandon";
-type BuffStat =
-  | "max_hp"
-  | "ritual_power"
-  | "guard"
-  | "max_mana"
-  | "mana_regen"
-  | "ritual_haste"
-  | "will"
-  | "ritual_control";
-
-interface EdgeConfig {
-  supabaseUrl: string;
-  serviceRoleKey: string;
-}
-
-interface AuthContext {
-  userId: string;
-  saveType: SaveType;
-}
-
-interface RestError {
-  code: string;
-  message: string;
-  status: number;
-}
-
-interface JwtPayload {
-  sub?: unknown;
-}
-
-interface PlayerRow {
-  id: string;
-  username?: string | null;
-  save_type?: SaveType;
-  level?: number;
-  xp?: number;
-  power?: number;
-}
-
-interface ResourceRow {
-  almas: string | number;
-  energia: string | number;
-  sangue: string | number;
-  cristais: string | number;
-  ossos: string | number;
-  po_osso: string | number;
-  diamante: string | number;
-}
-
-interface BuildRow extends BattleBuildRow {
-  weapon_type: string;
-  weapon_quality: string;
-  weapon_level: number;
-  spell_slots: unknown;
-  spells_unlocked: unknown;
-  pet_id: string | null;
-  pet_level: number;
-  passive_id: string | null;
-  passive_level: number;
-}
-
-interface ConsumableRow extends BattleConsumableRow {
-  player_id: string;
-  updated_at: string;
-}
-
-interface PotionSlotRow extends BattlePotionSlotRow {
-  player_id: string;
-  updated_at: string;
-}
-
-interface SpellBehaviorRow extends BattleSpellBehaviorRow {
-  player_id: string;
-  updated_at: string;
-}
-
-interface BotBuildRow extends BattleBotBuildRow {
-  id: string;
-  power: number;
-  power_band: string;
-  build_data: unknown;
-  is_active: boolean;
-}
-
-interface PlayerState {
-  player: PlayerRow;
-  gameSave: FoundationGameSaveRow;
-  resources: ResourceRow;
-  build: BuildRow;
-  inventory: ConsumableRow[];
-  potionSlots: PotionSlotRow[];
-  spellBehaviors: SpellBehaviorRow[];
-}
-
-interface ArenaListState {
-  player: PlayerRow;
-  gameSave: FoundationGameSaveRow;
-}
-
-interface ArenaProgressRow {
-  game_save_id: string;
-  player_id: string;
-  tutorial_completed: boolean;
-  best_completed_difficulty: number;
-  best_completed_length: number;
-  best_attempt_step: number;
-  total_attempts: number;
-  total_clears: number;
-  last_attempt_id: string | null;
-  metadata: unknown;
-  created_at: string;
-  updated_at: string;
-}
-
-interface ArenaAttemptRow {
-  id: string;
-  game_save_id: string;
-  player_id: string;
-  arena_id: string;
-  difficulty_id: string;
-  difficulty_rank: number;
-  max_steps: number;
-  current_step_index: number;
-  status: "active" | "completed" | "failed" | "abandoned";
-  seed: string;
-  enemy_sequence: unknown;
-  loadout_snapshot: unknown;
-  active_buffs: unknown;
-  reward_payload: unknown;
-  started_at: string;
-  completed_at: string | null;
-  abandoned_at: string | null;
-  updated_at: string;
-}
-
-interface ArenaStepRow {
-  id: string;
-  attempt_id: string;
-  step_index: number;
-  step_type: string;
-  status: string;
-  opponent_bot_id: string | null;
-  seed: string | null;
-  battle_log: unknown;
-  result: unknown;
-  reward_payload: unknown;
-  buff_options: unknown;
-  selected_buff: unknown;
-  created_at: string;
-  completed_at: string | null;
-}
-
-interface BuffOption {
-  id: string;
-  label: string;
-  stat: BuffStat;
-  amount_percent: number;
-  stat_modifiers: { stat: BuffStat; operation: "add_percent"; value: number }[];
-}
+import type {
+  ArenaAttemptRow,
+  ArenaListState,
+  ArenaProgressRow,
+  ArenaStepRow,
+  AuthContext,
+  BuildRow,
+  BotBuildRow,
+  BuffOption,
+  BuffStat,
+  ConsumableRow,
+  EdgeConfig,
+  FoundationGameSaveRow,
+  JwtPayload,
+  PlayerRow,
+  PlayerState,
+  PotionSlotRow,
+  ResourceRow,
+  RestError,
+  Route,
+  SpellBehaviorRow,
+} from "./arena_types.ts";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 

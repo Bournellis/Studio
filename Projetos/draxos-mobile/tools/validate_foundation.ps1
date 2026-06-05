@@ -431,6 +431,7 @@ function Assert-HotFileBudgets {
         @{ Path = "server\functions\modes\index.ts"; Max = 80; Label = "server modes entrypoint" },
         @{ Path = "server\functions\modes\mode_handler.ts"; Max = 1100; Label = "server modes handler" },
         @{ Path = "server\functions\arena\index.ts"; Max = 1800; Label = "server arena endpoint" },
+        @{ Path = "server\functions\arena\arena_types.ts"; Max = 220; Label = "server arena type module" },
         @{ Path = "server\functions\battle\index.ts"; Max = 1350; Label = "server battle endpoint" },
         @{ Path = "modes\boot\flows\surface_action_flow.gd"; Max = 850; Label = "client surface action flow" },
         @{ Path = "modes\boot\flows\arena_lifecycle_flow.gd"; Max = 550; Label = "client arena lifecycle flow" },
@@ -658,8 +659,10 @@ function Assert-RegistryMirrors {
     Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\functions\_shared\foundation_ruleset.ts") -RightPath (Join-Path $ProjectPath "supabase\functions\_shared\foundation_ruleset.ts") -Label "foundation ruleset shared module"
     Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\functions\_shared\pve_arena_catalog.ts") -RightPath (Join-Path $ProjectPath "supabase\functions\_shared\pve_arena_catalog.ts") -Label "PVE arena catalog shared module"
     Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\functions\_shared\pve_arena_combatants.ts") -RightPath (Join-Path $ProjectPath "supabase\functions\_shared\pve_arena_combatants.ts") -Label "PVE arena combatants shared module"
+    Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\functions\arena\arena_types.ts") -RightPath (Join-Path $ProjectPath "supabase\functions\arena\arena_types.ts") -Label "PVE arena type module"
     Assert-RelativeFileContains -BasePath $ProjectPath -RelativePath "server\functions\_shared\foundation_ruleset.ts" -Needle "FOUNDATION_RULESET"
     Assert-RelativeFileContains -BasePath $ProjectPath -RelativePath "server\functions\_shared\pve_arena_catalog.ts" -Needle "PVE_ARENA_CATALOG"
+    Assert-RelativeFileContains -BasePath $ProjectPath -RelativePath "server\functions\arena\arena_types.ts" -Needle "export interface ArenaAttemptRow"
 }
 
 function Assert-StructuralReadiness {
