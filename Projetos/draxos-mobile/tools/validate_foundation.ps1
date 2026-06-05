@@ -660,9 +660,11 @@ function Assert-RegistryMirrors {
     Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\functions\_shared\pve_arena_catalog.ts") -RightPath (Join-Path $ProjectPath "supabase\functions\_shared\pve_arena_catalog.ts") -Label "PVE arena catalog shared module"
     Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\functions\_shared\pve_arena_combatants.ts") -RightPath (Join-Path $ProjectPath "supabase\functions\_shared\pve_arena_combatants.ts") -Label "PVE arena combatants shared module"
     Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\functions\arena\arena_types.ts") -RightPath (Join-Path $ProjectPath "supabase\functions\arena\arena_types.ts") -Label "PVE arena type module"
+    Assert-FilesMirror -LeftPath (Join-Path $ProjectPath "server\schema\migrations\202606050001_arena_reward_profiles_v1.sql") -RightPath (Join-Path $ProjectPath "supabase\migrations\202606050001_arena_reward_profiles_v1.sql") -Label "PVE arena reward profiles migration"
     Assert-RelativeFileContains -BasePath $ProjectPath -RelativePath "server\functions\_shared\foundation_ruleset.ts" -Needle "FOUNDATION_RULESET"
     Assert-RelativeFileContains -BasePath $ProjectPath -RelativePath "server\functions\_shared\pve_arena_catalog.ts" -Needle "PVE_ARENA_CATALOG"
     Assert-RelativeFileContains -BasePath $ProjectPath -RelativePath "server\functions\arena\arena_types.ts" -Needle "export interface ArenaAttemptRow"
+    Assert-RelativeFileContains -BasePath $ProjectPath -RelativePath "server\schema\migrations\202606050001_arena_reward_profiles_v1.sql" -Needle "public.arena_reward_profiles"
 }
 
 function Assert-StructuralReadiness {

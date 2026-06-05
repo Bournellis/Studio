@@ -49,3 +49,11 @@ None. This track starts as local hardening only.
   normalizes to Entry, the refuge dev menu keeps Battle Lab/Progression Lab but
   no longer shows admin ops, and client-side admin/analytics wrappers were
   removed.
+- Package 4a extracts Arena endpoint row/type contracts into mirrored
+  `arena/arena_types.ts` modules. The Arena edge entrypoint is back under the
+  1800-line hot-file budget and the claim handler has a static guard to remain
+  read-only.
+- Package 4b adds `arena_reward_profiles` as the DB-side seed table for Arena
+  reward profiles. The migration is mirrored in `server/schema`, seeded from
+  `data/definitions/arena_rewards.json`, protected by RLS read-only policy for
+  enabled profiles, and guarded by ServerQuick/Arena tests.

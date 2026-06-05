@@ -1,11 +1,19 @@
 const MIGRATION_PATH =
   "supabase/migrations/202605310003_s1_arena_calibration_runtime.sql";
+interface JsonObject {
+  [key: string]: unknown;
+}
+
 const SERVER_MIRROR_PATH =
   "server/schema/migrations/202605310003_s1_arena_calibration_runtime.sql";
 const INITIAL_ARENA_MIGRATION_PATH =
   "supabase/migrations/202605310001_arena_pve_initial.sql";
 const INITIAL_ARENA_SERVER_MIRROR_PATH =
   "server/schema/migrations/202605310001_arena_pve_initial.sql";
+const ARENA_REWARD_PROFILES_MIGRATION_PATH =
+  "supabase/migrations/202606050001_arena_reward_profiles_v1.sql";
+const ARENA_REWARD_PROFILES_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606050001_arena_reward_profiles_v1.sql";
 const SERVER_ARENA_FUNCTION = "server/functions/arena/index.ts";
 const SUPABASE_ARENA_FUNCTION = "supabase/functions/arena/index.ts";
 const SERVER_ARENA_TYPES = "server/functions/arena/arena_types.ts";
@@ -46,6 +54,50 @@ Deno.test("arena initial migration keeps deploy-safe ruleset publication context
     "ruleset_publication_id uuid references public.ruleset_registry(publication_id)",
     "arena attempts should reference the immutable ruleset publication identity",
   );
+});
+
+Deno.test("arena reward profiles are seeded DB-side and mirrored", async () => {
+  const supabaseMigration = await readProjectText(ARENA_REWARD_PROFILES_MIGRATION_PATH);
+  const serverMirror = await readProjectText(ARENA_REWARD_PROFILES_SERVER_MIRROR_PATH);
+  const rewardsPayload = await readProjectJson("data/definitions/arena_rewards.json");
+  const difficultiesPayload = await readProjectJson("data/definitions/pve_arena_difficulties.json");
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema reward profiles migration should mirror supabase migration exactly",
+  );
+
+  for (
+    const required of [
+      "create table if not exists public.arena_reward_profiles",
+      "resources jsonb not null",
+      "ledger_source text not null default 'arena_pve_v1'",
+      "alter table public.arena_reward_profiles enable row level security",
+      'create policy "arena_reward_profiles_select_authenticated"',
+      "on conflict (id) do update set",
+      "arena_reward_profiles_seed_v1",
+    ]
+  ) {
+    assertIncludes(supabaseMigration, required, `reward profile migration should include ${required}`);
+  }
+
+  const rewardIds = objectItems(rewardsPayload).map((item) => stringField(item, "id"));
+  const seedIds = extractRewardProfileSeed(supabaseMigration).map((item) => stringField(item, "id"));
+  assertEq(
+    seedIds.join("|"),
+    rewardIds.join("|"),
+    "DB seed should preserve the reward definition order and ids",
+  );
+
+  const seededIdSet = new Set(seedIds);
+  for (const item of objectItems(difficultiesPayload)) {
+    const rewardProfileId = stringField(item, "reward_profile_id");
+    assert(
+      seededIdSet.has(rewardProfileId),
+      `missing DB-side reward profile seed for ${rewardProfileId}`,
+    );
+  }
 });
 
 Deno.test("arena edge function is mirrored between server and supabase", async () => {
@@ -221,6 +273,24 @@ async function readProjectText(relativePath: string): Promise<string> {
   return await Deno.readTextFile(new URL(`../../${relativePath}`, import.meta.url));
 }
 
+async function readProjectJson(relativePath: string): Promise<JsonObject> {
+  return assertObject(JSON.parse(await readProjectText(relativePath)));
+}
+
+function extractRewardProfileSeed(source: string): JsonObject[] {
+  const marker = "$arena_reward_profiles_seed_v1$";
+  const start = source.indexOf(marker);
+  if (start < 0) {
+    throw new Error("Arena reward profile seed marker not found");
+  }
+  const end = source.indexOf(marker, start + marker.length);
+  if (end < 0) {
+    throw new Error("Arena reward profile seed end marker not found");
+  }
+  return assertArray(JSON.parse(source.slice(start + marker.length, end)))
+    .map((item) => assertObject(item));
+}
+
 function functionBlock(source: string, functionName: string): string {
   const start = source.indexOf(`function public.${functionName}`);
   if (start < 0) {
@@ -271,4 +341,34 @@ function assertNotIncludes(source: string, expected: string, message?: string): 
   if (source.includes(expected)) {
     throw new Error(message ?? `Expected source not to include ${expected}`);
   }
+}
+
+function assert(condition: boolean, message: string): asserts condition {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
+
+function assertObject(value: unknown, message = "value should be an object"): JsonObject {
+  assert(
+    typeof value === "object" && value !== null && !Array.isArray(value),
+    message,
+  );
+  return value as JsonObject;
+}
+
+function assertArray(value: unknown, message = "value should be an array"): unknown[] {
+  assert(Array.isArray(value), message);
+  return value;
+}
+
+function objectItems(payload: JsonObject): JsonObject[] {
+  return assertArray(payload.items, "items should be an array")
+    .map((item) => assertObject(item));
+}
+
+function stringField(payload: JsonObject, key: string): string {
+  const value = payload[key];
+  assert(typeof value === "string", `field ${key} should be a string`);
+  return value;
 }

@@ -1,6 +1,6 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-06-02`
+- Ultima atualizacao: `2026-06-05`
 - Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; App Responsiveness Architecture Pass adiciona envelope comum de cache/tempo, telemetry de latencia, Arena PVE state leve e mutations com deltas de superficie afetada.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
@@ -314,7 +314,7 @@ Regras comuns:
 - Cooldown: nenhum endpoint de Arena PVE pode impor cooldown de combate.
 - Loadout: `arena/pve/start` grava snapshot/hash de loadout; endpoints seguintes nao aceitam troca de loadout.
 - Comportamento: ajustes simples entre duelos devem reutilizar `build/spell-behavior` e `build/potion-behavior` ate haver contrato proprio.
-- Recompensa: o ultimo `/arena/pve/duel/request` da tentativa aplica recompensa/progresso e ledger `arena_pve_v1`; `/arena/pve/claim` e apenas resumo/ack idempotente, retorna `mutates_economy: false` e inclui `arena_state` leve para o cliente voltar a selecao sem buscar `/arena/pve/state` imediatamente.
+- Recompensa: perfis calibraveis vivem em `arena_reward_profiles` e espelham `data/definitions/arena_rewards.json`; o ultimo `/arena/pve/duel/request` da tentativa aplica recompensa/progresso e ledger `arena_pve_v1`; `/arena/pve/claim` e apenas resumo/ack idempotente, retorna `mutates_economy: false` e inclui `arena_state` leve para o cliente voltar a selecao sem buscar `/arena/pve/state` imediatamente.
 - Buff endpoint publico: novos clients, docs e smokes devem usar `/arena/pve/buff/select`. `/arena/buff/choose` existe apenas como alias interno/compatibilidade.
 
 ### `GET /arena/pve/state`
@@ -409,7 +409,7 @@ Erros minimos: `ARENA_ATTEMPT_NOT_FOUND`, `BUFF_OFFER_NOT_FOUND`, `BUFF_NOT_OFFE
 
 ### `POST /arena/pve/claim`
 
-Retorna resumo/ack idempotente da tentativa concluida ou encerrada. Claim nao aplica recompensa, nao grava ledger economico, nao altera ranking e nao muda XP/recursos; recompensa/progresso sao aplicados no ultimo `/arena/pve/duel/request`.
+Retorna resumo/ack idempotente da tentativa concluida ou encerrada. Claim calcula e devolve `request_hash`, mas nao usa `idempotency_keys`, nao chama RPC, nao aplica recompensa, nao grava ledger economico, nao altera ranking e nao muda XP/recursos; recompensa/progresso sao aplicados no ultimo `/arena/pve/duel/request`.
 
 Request:
 

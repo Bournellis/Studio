@@ -1,7 +1,7 @@
 # Database Schema Contract
 
-- Ultima atualizacao: `2026-06-02`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1. Arena PVE v1 acrescenta schema contratado para tentativa, duelos, buffs, progresso e rewards sem migration nesta branch.
+- Ultima atualizacao: `2026-06-05`
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1. Arena PVE v1 acrescenta schema implementado para tentativa, duelos, buffs, progresso, first clears e perfis DB-side de recompensa.
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -24,6 +24,7 @@ Migrations atuais:
 - `202605300004_foundation_closeout.sql`: corrige `ruleset_registry` para publicacao imutavel por `publication_id`, persiste hashes de ruleset em saves/historicos, cria admin interno auditavel e promove as mutacoes restantes de build behavior/potion e social friend/chat para RPCs v1 `service_role`-only.
 - `202606020001_openworld_bosque_hardening_v1.sql`: promove `openworld/forest` para `active` no canal `internal_alpha`, adiciona snapshot/revision/event audit em Mode sessions, registra `openworld_forest_ruleset_v1`, aplica limites de sessao e torna o Reward Bridge do Bosque autoritativo pelo snapshot do servidor.
 - `202606030001_progression_lab_apply_request_hash.sql`: adiciona assinatura `apply_progression_lab_save(..., p_request_hash, ...)`, exige hash obrigatorio, bloqueia mismatch de idempotencia e move reset/seed de consumables, potion slots, spell behaviors e item transactions do Progression Lab para dentro da RPC transacional.
+- `202606050001_arena_reward_profiles_v1.sql`: cria `arena_reward_profiles`, habilita RLS read-only para perfis ativos, seeda todos os perfis de `data/definitions/arena_rewards.json` e mantem `ledger_source = arena_pve_v1`.
 
 ## Regras De Escopo De Servico
 
@@ -98,7 +99,9 @@ Contrato detalhado: `admin-ops.md`.
 
 ## Arena PVE v1 Schema Contratado
 
-Status: contrato documental/data-driven; nenhuma migration e aplicada nesta branch.
+Status: implementado parcialmente em migrations locais/remotas espelhadas. Tentativas,
+duelos, progresso e first clears vivem nas migrations de Arena PVE; perfis de
+recompensa calibraveis vivem em `arena_reward_profiles`.
 
 Contrato de produto: `../pve-arena-v1.md`.
 
@@ -250,6 +253,47 @@ Regras:
 - grava deltas economicos em `resource_transactions`;
 - primeira clear, recorde, repeticao e caps devem ser calculados no servidor;
 - nao toca `ranking`.
+
+### `arena_reward_profiles`
+
+Status: **implementado em `202606050001_arena_reward_profiles_v1.sql`**.
+
+Tabela read-only para perfis calibraveis de recompensa da Arena PVE.
+
+Campos minimos:
+
+- `id`
+- `mode`
+- `season_id`
+- `version`
+- `enabled`
+- `display_name`
+- `description`
+- `tags`
+- `resources`
+- `first_clear_multiplier`
+- `completion_multiplier`
+- `repeat_multiplier`
+- `record_bonus`
+- `daily_bonus_key`
+- `weekly_cap_key`
+- `season_cap_key`
+- `ledger_source`
+- `payload`
+- `source_collection`
+- `source_schema_version`
+- `updated_at`
+
+Regras:
+
+- seed idempotente a partir de `data/definitions/arena_rewards.json`;
+- `ledger_source` fixo em `arena_pve_v1`;
+- `mode` fixo em `PVE_ARENA_V1`;
+- `resources`, `record_bonus` e `payload` devem ser objetos JSON;
+- clientes autenticados podem ler apenas perfis `enabled`; escritas passam por
+  migration/ops, nao por cliente;
+- todo `reward_profile_id` de `pve_arena_difficulties.json` deve existir neste
+  seed DB-side.
 
 ## Openworld Bosque v1 Schema Contratado
 
