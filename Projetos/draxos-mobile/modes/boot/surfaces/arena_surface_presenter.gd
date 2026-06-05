@@ -10,6 +10,7 @@ func render_selection(host: Node) -> void:
 	var active_attempt := SessionStore.active_arena_attempt()
 	_call_host(host, "_add_body_text", ["Escolha uma Arena PVE. O loadout trava ao iniciar; buffs e comportamento ficam entre vitorias."])
 	if _selection_blocks_on_attempt(active_attempt):
+		_add_arena_preparation_control(host, true)
 		_render_active_attempt_recovery(host, active_attempt)
 		_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 		return

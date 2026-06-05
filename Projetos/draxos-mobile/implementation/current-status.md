@@ -7,8 +7,8 @@
 - Active stage: `Arena/Bosque Regression Hotfix`
 - Active stage status: `ARENA_BOSQUE_REGRESSION_HOTFIX_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
-- Version: `0.0.1-alpha.0`
-- Version code: `1`
+- Version: `0.0.2-alpha.0`
+- Version code: `2`
 
 ## Current Truth
 

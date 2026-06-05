@@ -101,8 +101,8 @@ git status --short
 ## Release Snapshot
 
 - Channel: `internal_alpha`
-- Version: `0.0.1-alpha.0`
-- Version code: `1`
+- Version: `0.0.2-alpha.0`
+- Version code: `2`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
 - Current verified preview: `https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev`
