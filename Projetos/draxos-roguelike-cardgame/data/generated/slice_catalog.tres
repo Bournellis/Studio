@@ -23,11 +23,11 @@ id = "arcano_choque_lvl2"
 display_name = "Choque Lvl 2"
 card_type = "magia"
 cost = 1
-text = "Causa 4 de dano a qualquer criatura ou heroi inimigo valido."
+text = "Causa 5 de dano a qualquer criatura ou heroi inimigo valido."
 keywords = PackedStringArray()
 effect = {
 "action": "damage",
-"amount": 4.0
+"amount": 5.0
 }
 
 [sub_resource type="Resource" id="Resource_xh3p2"]
@@ -35,11 +35,11 @@ script = ExtResource("1_tqsc8")
 id = "arcano_choque_lvl3"
 display_name = "Choque Lvl 3"
 card_type = "magia"
-text = "Causa 4 de dano a qualquer criatura ou heroi inimigo valido."
+text = "Causa 5 de dano a qualquer criatura ou heroi inimigo valido."
 keywords = PackedStringArray()
 effect = {
 "action": "damage",
-"amount": 4.0
+"amount": 5.0
 }
 
 [sub_resource type="Resource" id="Resource_ayi6x"]
@@ -163,11 +163,11 @@ id = "arcano_tempestade_lvl3"
 display_name = "Tempestade Arcana Lvl 3"
 card_type = "magia"
 cost = 1
-text = "Causa 6 pontos de dano distribuidos aleatoriamente entre alvos inimigos."
+text = "Causa 7 pontos de dano distribuidos aleatoriamente entre alvos inimigos."
 keywords = PackedStringArray()
 effect = {
 "action": "random_damage",
-"amount": 6.0
+"amount": 7.0
 }
 
 [sub_resource type="Resource" id="Resource_js17r"]
@@ -4475,4 +4475,4 @@ track_contract = {
 }
 }
 }
-definition_hash = "3c5b87a7e4e0eb3054af264bd8d764135870175c3bca647575ffd4e8519a57f9"
+definition_hash = "1b16d20d9fd0bfc1623201c1d3341e7cf6eb1fcf1e4ff9d76545980c2584e23d"

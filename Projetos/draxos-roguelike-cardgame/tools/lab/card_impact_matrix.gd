@@ -241,15 +241,17 @@ static func _player_harness_id(template: Dictionary, family: String) -> String:
 
 static func _player_encounter_override_for(family: String) -> Dictionary:
 	var mode: String = "duelo" if family in ["damage", "control"] else "limpar_mesa"
+	var enemy_health: int = 160 if family == "damage" else 40
+	var enemy_card_id: String = "enemy_terra_elemental_tita" if family == "damage" else "enemy_terra_elemental_areia"
 	return {
 		"id": "card_impact_player_%s_harness" % family,
 		"display_name": "Card Impact Player %s Harness" % family.capitalize(),
 		"mode": mode,
 		"enemy_director": "prefilled_board",
-		"enemy_health": 40,
+		"enemy_health": enemy_health,
 		"player_slots_count": 3,
 		"enemy_slots_count": 3,
-		"starting_enemy_slots": [{"slot": 1, "card_id": "enemy_terra_elemental_areia"}],
+		"starting_enemy_slots": [{"slot": 1, "card_id": enemy_card_id}],
 		"enemy_commander_enabled": false
 	}
 
