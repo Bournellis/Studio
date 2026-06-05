@@ -99,3 +99,38 @@ Handoff quando cada pacote logico estiver validado e, se possivel, commitado sep
 - No remote mutation/publication.
 - Validated latest backend package with `ServerQuick`; latest client refactors with `ClientQuick`.
 - Remaining recommended phase 2: migrate remaining mutable endpoints to `verifiedAuthContext` and continue optional extraction-only refactors in smaller packages.
+
+## Phase 2 Execution Plan - 2026-06-05
+
+- Branch/worktree: continue on `codex/draxos-mobile/technical-hardening` at `D:\Estudio-worktrees\draxos-mobile--codex--technical-hardening`.
+- Approved scope:
+  - migrate remaining user-bearer Edge endpoints to shared `verifiedAuthContext`;
+  - include `content`, `lab-runner` and, last, `release`;
+  - preserve Battle Lab and Progression Lab;
+  - continue extraction-only client refactors in small packages, including Base render helpers with responsive smoke validation;
+  - attempt `DatabaseLocal` only if the local Supabase/Edge stack is ready.
+- Out of scope:
+  - remote mutation/publication/deploy/upload;
+  - Android keystore/release signing;
+  - tuning, PVP, new content, new weapons, new spells, new potions or broad economy changes.
+- Planned package order:
+  1. shared auth helper foundation;
+  2. `content` + `lab-runner`;
+  3. `base` + `competition`;
+  4. `build` + `crafting` + `monetization` + `social`;
+  5. `battle` + `arena`;
+  6. `modes`;
+  7. `release`;
+  8. client Base pure text helpers;
+  9. client Base visual helpers;
+  10. client Base/Crafting flow;
+  11. client Arena pure text helpers;
+  12. wrapper cleanup and final validation/handoff.
+- Validation strategy:
+  - targeted `deno check`/tests per backend package;
+  - `ServerQuick` after backend groups;
+  - GUT/client targeted validation and `ClientQuick` after client packages;
+  - `smoke_responsive_layout.gd` for Base/Arena render changes;
+  - `ModePlatform` after modes/lab-sensitive work;
+  - `ReleaseDryRun` and `check_release_safety.ps1` after the release endpoint package;
+  - final `git diff --check` and `git status --short`.
