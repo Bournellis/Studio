@@ -186,3 +186,12 @@ Each entry should include:
 - screenshots: not required; this pass changed documentation/status only.
 - blockers: none. Remaining known debt is explicitly separated in `docs/foundation-closeout.md`.
 - next prompt id: none; foundation review is closed for playtest.
+
+### 2026-06-05 - AutoRun Lab V1
+
+- prompt id: `AUTORUN-LAB-V1`
+- summary: Expanded Run Lab into a structured macro-route gameplay test foundation with reusable `tools/lab/` modules for option parsing, case matrices, presets, policies, execution records, aggregate summaries, baseline comparison and JSON/CSV/Markdown reporting. `route_pacing_simulator.gd` now accepts macro reward/shop policies and timeline output while preserving the default Track 02 golden metrics.
+- changed files: `tools/run_lab.gd`, `tools/route_pacing_simulator.gd`, `tools/lab/*.gd`, `tests/unit/test_run_lab_tooling.gd`, `docs/autorun-lab.md`, `docs/architecture.md`, local status/tuning docs and coordination note.
+- validation result: `run_lab.gd -- --preset=smoke --compare-golden --require-golden` passed for Arcano/Invocador/Necromante seed `20260518`; `run_lab.gd -- --preset=quick --seed-start=20260518 --seed-count=10 --compare-baseline` passed 30 macro-route cases; after one-time import for the new worktree, `validate.gd` passed with 108/108 GUT tests, 1304 asserts and the shared full-route pacing smoke unchanged at 29/29 maps, 217 estimated turns, 116 HP loss, 0 deaths, 38-card final deck, 6 relics and 21 shop actions.
+- blockers: none. Known non-fatal visual asset debts remain unchanged.
+- next prompt id: none; next tooling phase should be Gameplay Lab with BattleEngine-driven legal-action policies.
