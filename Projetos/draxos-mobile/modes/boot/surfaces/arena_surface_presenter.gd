@@ -44,18 +44,15 @@ func render_active(host: Node) -> void:
 		return
 	_call_host(host, "_add_body_text", ["Tentativa em andamento. Cada duelo comeca com HP cheio."])
 	_add_duel_progress_rail(host, attempt)
-	_add_loadout_details_control(host, attempt)
 	_add_attempt_summary_panel(host, attempt)
-	if bool(host.get_meta("arena_active_preparation_open", false)):
-		_add_arena_preparation_control(host, true)
 	if not _pending_buff_choices(attempt).is_empty():
 		_call_host(host, "_add_action_button", ["Escolher buff", AppShellActionContractScript.arena_choose_buff_action(_first_buff_id(attempt))])
 	else:
 		_call_host(host, "_add_action_button", ["Resolver duelo", AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL])
-	if not bool(host.get_meta("arena_active_preparation_open", false)):
-		_call_host(host, "_add_action_button", ["Ajustar comportamento", AppShellActionContractScript.ACTION_SHOW_PREPARATION])
 	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
+	_add_arena_preparation_control(host, true)
+	_add_loadout_details_control(host, attempt)
 
 func render_buff_choice(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()

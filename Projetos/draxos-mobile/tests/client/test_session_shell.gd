@@ -337,6 +337,77 @@ func test_session_store_accepts_arena_state_without_competition_mutation() -> vo
 	assert_eq(str(attempt.get("next_enemy_id", "")), "pve_guardiao_barreira")
 	store.free()
 
+func test_session_store_clears_selected_arena_buff_offer_from_server_step() -> void:
+	var store = SessionStoreScript.new()
+	var selected_buff := {"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor"}
+	var applied := store.apply_arena_result({
+		"ok": true,
+		"_client": {"save_type": "normal"},
+		"body": {
+			"ok": true,
+			"schema_version": "arena_buff_select_response_v1",
+			"attempt": {
+				"id": "attempt-1",
+				"arena_id": "arena_cinzas_curta",
+				"difficulty_rank": 1,
+				"max_steps": 3,
+				"current_step_index": 1,
+				"status": "active",
+				"enemy_sequence": ["pve_aprendiz_cinzas", "pve_guardiao_barreira", "pve_sussurrador_veu"],
+				"active_buffs": [selected_buff],
+			},
+			"step": {
+				"step_index": 1,
+				"buff_options": [
+					selected_buff,
+					{"id": "arena_buff_potencia_menor", "display_name": "Potencia Ritual Menor"},
+					{"id": "arena_buff_guarda_menor", "display_name": "Guarda Menor"},
+				],
+				"selected_buff": selected_buff,
+			},
+			"selected_buff": selected_buff,
+		},
+	})
+	assert_true(applied)
+	var attempt := store.active_arena_attempt()
+	assert_eq(str(attempt.get("state", "")), "active")
+	assert_true(Dictionary(attempt.get("buff_offer", {})).is_empty())
+	assert_eq(Array(attempt.get("temporary_buffs", [])).size(), 1)
+	assert_eq(str(attempt.get("next_enemy_id", "")), "pve_guardiao_barreira")
+	store.free()
+
+func test_session_store_heals_cached_arena_buff_offer_after_selected_buff() -> void:
+	var store = SessionStoreScript.new()
+	var selected_buff := {"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor"}
+	store._apply_cache({
+		"cache_version": SessionStoreScript.CACHE_VERSION,
+		"active_save_type": SessionStoreScript.SAVE_TYPE_NORMAL,
+		"arena_state": {
+			"schema_version": "pve_arena_state_v1",
+			"active_attempt": {
+				"attempt_id": "attempt-cached",
+				"arena_id": "arena_cinzas_curta",
+				"state": "awaiting_buff",
+				"duel_count": 3,
+				"duels_won": 1,
+				"current_step_index": 1,
+				"temporary_buffs": [selected_buff],
+				"buff_offer": {
+					"step_index": 1,
+					"after_duel_index": 1,
+					"choices": [
+						selected_buff,
+						{"id": "arena_buff_potencia_menor", "display_name": "Potencia Ritual Menor"},
+					],
+				},
+			},
+		},
+	})
+	var attempt := store.active_arena_attempt()
+	assert_eq(str(attempt.get("state", "")), "active")
+	assert_true(Dictionary(attempt.get("buff_offer", {})).is_empty())
+	store.free()
+
 func test_session_store_tracks_surface_snapshots_per_save() -> void:
 	var store = SessionStoreScript.new()
 	assert_true(store.apply_server_state({

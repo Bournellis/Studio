@@ -285,9 +285,11 @@ func _check_arena_active_layout(viewport_size: Vector2i) -> void:
 	var context := "Arena active %s" % str(viewport_size)
 	_expect_app_shell_fits(boot, context)
 	_expect_node_fits(boot, "ArenaLoadoutDetailsPanel", context, false)
-	_expect_node_fits(boot, "ArenaLoadoutDetailsToggle", context)
+	_expect_node_fits(boot, "ArenaLoadoutDetailsToggle", context, false)
 	_expect_button_fits(boot, "Resolver duelo", context)
-	_expect(_find_button_by_text(boot, "Ajustar comportamento") != null, "%s exposes behavior CTA." % context)
+	_expect_node_fits(boot, "ArenaActivePreparationPanel", context, false)
+	_expect(_find_button_by_text(boot, "Carregar comportamento") != null, "%s exposes preparation behavior CTA." % context)
+	_expect(_find_button_by_text(boot, "Ajustar comportamento") == null, "%s removes detached behavior CTA." % context)
 	_expect(_find_button_by_text(boot, "Voltar ao Refugio") != null, "%s exposes return CTA." % context)
 	boot.queue_free()
 	await process_frame
