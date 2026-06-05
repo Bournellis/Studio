@@ -1,12 +1,12 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-05`
-- Status: `AUTORUN_LAB_V1_READY`
+- Status: `AUTORUN_GATE_PACK_V1_READY`
 - Scope: macro-route gameplay testing foundation
 
 ## Purpose
 
-AutoRun Lab is the first layer of the gameplay test toolchain. It expands the existing Run Lab from one class/seed sweep into a reusable headless framework for run matrices, macro policies, aggregate reports and statistical baseline comparison.
+AutoRun Lab is the first layer of the gameplay test toolchain. It expands the existing Run Lab from one class/seed sweep into a reusable headless framework for run matrices, macro policies, aggregate reports, official gate baselines and human-readable scorecards.
 
 It still uses macro-route simulation through `tools/route_pacing_simulator.gd`. It does not play battles turn by turn and does not replace human playtest. It prepares the contracts that future Gameplay Lab, Scenario Lab and Replay Lab should reuse.
 
@@ -15,6 +15,16 @@ It still uses macro-route simulation through `tools/route_pacing_simulator.gd`. 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_lab.gd -- --preset=smoke --compare-golden --require-golden
 ```
+
+Official gates:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_lab.gd -- --mode=gate --preset=smoke --baseline=track02_smoke_v1
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_lab.gd -- --mode=gate --preset=quick --baseline=track02_quick_v1
+```
+
+`--gate` is a shortcut for `--mode=gate`.
 
 ## Presets
 
@@ -39,9 +49,14 @@ Useful overrides:
 --require-golden
 --compare-baseline
 --save-baseline
+--baseline=track02_smoke_v1
 --mode=explore|validate|baseline|compare
+--mode=gate
+--gate
 --stop-on-failure
 --no-timeline
+--scorecard
+--no-scorecard
 ```
 
 ## Macro Policies
@@ -66,6 +81,8 @@ The tool writes all outputs under `--out`:
 - `run_lab_summary.json`: aggregate summary.
 - `run_lab_summary.csv`: aggregate rows for all, class and policy groups.
 - `run_lab_summary.md`: human-readable report.
+- `run_lab_scorecard.json`: structured human tuning scorecard.
+- `run_lab_scorecard.md`: readable scorecard with overall, class and policy matrices.
 - `run_lab_baseline.json`: optional saved statistical baseline when using `--save-baseline` or `--mode=baseline`.
 
 ## Result Schema
@@ -87,9 +104,21 @@ The current `simulation_mode` is `macro_route_v1`. Future bot and replay tools s
 AutoRun Lab has two baseline types:
 
 - Exact golden metrics through `tools/run_lab_golden_metrics.gd`.
-- Statistical baseline comparison through `tools/lab/lab_baseline_store.gd`.
+- Official gate baselines under `data/lab/baselines/`, currently `track02_smoke_v1` and `track02_quick_v1`.
+- Ad hoc statistical baseline comparison through `tools/lab/lab_baseline_store.gd`.
 
-Use exact golden metrics for small approved class/seed regressions. Use statistical baselines for larger matrices where exact numbers should vary but aggregate ranges should remain healthy.
+Use exact golden metrics for small approved class/seed regressions. Use official gate baselines for explicit regression checks before tuning or risky gameplay edits. Use ad hoc statistical baselines for larger exploratory matrices where exact numbers should vary but aggregate ranges should remain healthy.
+
+## Gate Pack V1
+
+Gate Pack V1 turns AutoRun Lab into an explicit regression contract:
+
+- `track02_smoke_v1`: fast 3-case gate for Arcano, Invocador and Necromante on seed `20260518` with baseline policy.
+- `track02_quick_v1`: 30-case gate for the three classes across seeds `20260518..20260527` with baseline policy.
+- `--mode=gate`: resolves the requested official baseline, compares aggregate and group fields, and exits with code `1` on mismatch.
+- Scorecards are written by default and summarize survival, route, economy, deck size, class rows, policy rows, risk maps and gate differences.
+
+Do not wire gate mode into `tools/validate.gd` until it has survived a few tuning cycles. For now it is an explicit command operators run before and after balance changes.
 
 ## Future Phases
 

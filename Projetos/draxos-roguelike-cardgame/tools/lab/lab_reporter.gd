@@ -1,5 +1,7 @@
 extends RefCounted
 
+const LabScorecardScript = preload("res://tools/lab/lab_scorecard.gd")
+
 const RUN_HEADERS: PackedStringArray = [
 	"case_id",
 	"class_id",
@@ -23,7 +25,7 @@ const RUN_HEADERS: PackedStringArray = [
 	"message"
 ]
 
-static func write_outputs(output_dir: String, records: Array[Dictionary], summary: Dictionary, comparison: Dictionary = {}, baseline_comparison: Dictionary = {}) -> Dictionary:
+static func write_outputs(output_dir: String, records: Array[Dictionary], summary: Dictionary, comparison: Dictionary = {}, baseline_comparison: Dictionary = {}, options: Dictionary = {}) -> Dictionary:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(output_dir))
 	var metrics: Array[Dictionary] = []
 	for record: Dictionary in records:
@@ -34,6 +36,8 @@ static func write_outputs(output_dir: String, records: Array[Dictionary], summar
 	var summary_path: String = "%s/run_lab_summary.json" % output_dir
 	var summary_csv_path: String = "%s/run_lab_summary.csv" % output_dir
 	var markdown_path: String = "%s/run_lab_summary.md" % output_dir
+	var scorecard_json_path: String = "%s/run_lab_scorecard.json" % output_dir
+	var scorecard_markdown_path: String = "%s/run_lab_scorecard.md" % output_dir
 
 	var detailed_payload: Dictionary = {"records": records, "summary": summary}
 	if not comparison.is_empty():
@@ -64,6 +68,15 @@ static func write_outputs(output_dir: String, records: Array[Dictionary], summar
 	var markdown_result: Dictionary = _write_text(markdown_path, _summary_markdown(summary, comparison, baseline_comparison))
 	if not bool(markdown_result.get("ok", false)):
 		return markdown_result
+	var scorecard: Dictionary = {}
+	if bool(options.get("scorecard", true)):
+		scorecard = LabScorecardScript.build(summary, baseline_comparison)
+		var scorecard_json_result: Dictionary = _write_json(scorecard_json_path, scorecard)
+		if not bool(scorecard_json_result.get("ok", false)):
+			return scorecard_json_result
+		var scorecard_markdown_result: Dictionary = _write_text(scorecard_markdown_path, LabScorecardScript.markdown(scorecard))
+		if not bool(scorecard_markdown_result.get("ok", false)):
+			return scorecard_markdown_result
 	return {
 		"ok": true,
 		"detailed_path": detailed_path,
@@ -71,7 +84,9 @@ static func write_outputs(output_dir: String, records: Array[Dictionary], summar
 		"csv_path": metrics_csv_path,
 		"summary_path": summary_path,
 		"summary_csv_path": summary_csv_path,
-		"markdown_path": markdown_path
+		"markdown_path": markdown_path,
+		"scorecard_json_path": scorecard_json_path if not scorecard.is_empty() else "",
+		"scorecard_markdown_path": scorecard_markdown_path if not scorecard.is_empty() else ""
 	}
 
 static func _write_json(path: String, payload: Dictionary) -> Dictionary:

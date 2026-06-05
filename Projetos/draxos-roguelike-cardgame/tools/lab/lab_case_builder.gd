@@ -34,7 +34,8 @@ static func parse_options(args: PackedStringArray) -> Dictionary:
 		"baseline_path": "",
 		"mode": "explore",
 		"stop_on_failure": false,
-		"timeline": true
+		"timeline": true,
+		"scorecard": true
 	}
 	var class_override: PackedStringArray = PackedStringArray()
 	var seed_override: PackedInt64Array = PackedInt64Array()
@@ -84,10 +85,17 @@ static func parse_options(args: PackedStringArray) -> Dictionary:
 			raw["baseline_path"] = arg.trim_prefix("--baseline-path=")
 		elif arg.begins_with("--mode="):
 			raw["mode"] = arg.trim_prefix("--mode=")
+		elif arg == "--gate":
+			raw["mode"] = "gate"
+			raw["compare_baseline"] = true
 		elif arg == "--stop-on-failure":
 			raw["stop_on_failure"] = true
 		elif arg == "--no-timeline":
 			raw["timeline"] = false
+		elif arg == "--scorecard":
+			raw["scorecard"] = true
+		elif arg == "--no-scorecard":
+			raw["scorecard"] = false
 
 	var preset: String = str(raw.get("preset", DEFAULT_PRESET))
 	if not PRESET_SEED_COUNTS.has(preset):

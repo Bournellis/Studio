@@ -1,7 +1,7 @@
 # Architecture
 
-- Last Updated: `2026-06-04`
-- Status: `Track 02 foundation closeout baseline`
+- Last Updated: `2026-06-05`
+- Status: `Track 02 foundation closeout baseline with AutoRun Gate Pack V1`
 
 ## Goal
 
@@ -24,7 +24,7 @@ For closeout ownership and remaining debt, use `docs/foundation-closeout.md` tog
 | Battle presentation | `modes/battle/battle_root.gd` plus pure presenters | Scene composition remains in `BattleRoot`; pure readouts stay in presenters. |
 | Catalog | `data/definitions/slice_catalog.json` plus loader/generator | JSON is the live source; generated `.tres` must be semantic-hash idempotent. |
 | Validation | `tools/validate.gd`, modular GUT suites | Validate data/scenes/contracts, route smoke and GUT together. |
-| Telemetry | `tools/run_lab.gd`, `tools/lab/`, `tools/route_pacing_simulator.gd` | Regression and tuning comparison only; not a playtest substitute. |
+| Telemetry | `tools/run_lab.gd`, `tools/lab/`, `tools/route_pacing_simulator.gd`, `data/lab/baselines/` | Explicit gates, regression and tuning comparison only; not a playtest substitute. |
 
 ## Runtime Areas
 
@@ -172,7 +172,7 @@ Responsibilities:
 - run GUT;
 - report playtest readiness and known non-fatal art alpha debts.
 
-Expected baseline after 2026-06-05 AutoRun Lab V1: GUT 108/108 with 1304 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, Run Lab parity for class/seed sweeps, quick AutoRun matrix output, and repeated validation does not dirty generated content when the JSON is unchanged.
+Expected baseline after 2026-06-05 AutoRun Gate Pack V1: GUT 111/111 with 1313 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, smoke/quick AutoRun gate commands green, quick AutoRun matrix output, scorecard output, and repeated validation does not dirty generated content when the JSON is unchanged.
 
 ### `Run Lab`
 
@@ -184,7 +184,9 @@ Responsibilities:
 - emit CSV/JSON/Markdown metrics for completed maps, HP, deck size, relics, shop actions, deaths and estimated turns;
 - write full case records with timeline, warnings, tags and aggregate summaries;
 - compare approved Track 02 golden metrics when run with `--compare-golden`;
-- compare or save statistical baselines for larger matrices;
+- compare official gate baselines from `data/lab/baselines/` through `--mode=gate`;
+- write scorecard JSON/Markdown for human regression and tuning reads;
+- compare or save statistical baselines for larger exploratory matrices;
 - support regression and tuning comparison.
 
 Run Lab is not a replacement for human playtest.
