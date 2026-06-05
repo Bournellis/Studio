@@ -1,0 +1,258 @@
+{
+	"pack_id": "track02_core_v1",
+	"schema_version": 1,
+	"simulation_mode": "macro_route_v1",
+	"description": "Core Scenario Fixtures V1 for Track 02 macro-route regression and tuning checkpoints.",
+	"scenarios": [
+		{
+			"id": "route_baseline_arcano_seed_20260518",
+			"name": "Route baseline Arcano seed 20260518",
+			"tags": ["route", "class", "baseline"],
+			"class_id": "arcano",
+			"seed": 20260518,
+			"policy_id": "baseline",
+			"focus": "Approved full-route Arcano baseline.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"no_deaths": true,
+					"final_hp_min": 13,
+					"final_hp_max": 16,
+					"deck_size_min": 35,
+					"deck_size_max": 41,
+					"shop_usage_min": 20,
+					"shop_usage_max": 22,
+					"relic_count_min": 6
+				}
+			}
+		},
+		{
+			"id": "route_baseline_invocador_seed_20260518",
+			"name": "Route baseline Invocador seed 20260518",
+			"tags": ["route", "class", "baseline"],
+			"class_id": "invocador",
+			"seed": 20260518,
+			"policy_id": "baseline",
+			"focus": "Approved full-route Invocador baseline.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"no_deaths": true,
+					"final_hp_min": 13,
+					"final_hp_max": 16,
+					"deck_size_min": 35,
+					"deck_size_max": 41,
+					"shop_usage_min": 20,
+					"shop_usage_max": 22,
+					"relic_count_min": 6
+				}
+			}
+		},
+		{
+			"id": "route_baseline_necromante_seed_20260518",
+			"name": "Route baseline Necromante seed 20260518",
+			"tags": ["route", "class", "baseline"],
+			"class_id": "necromante",
+			"seed": 20260518,
+			"policy_id": "baseline",
+			"focus": "Approved full-route Necromante baseline.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"no_deaths": true,
+					"final_hp_min": 13,
+					"final_hp_max": 16,
+					"deck_size_min": 35,
+					"deck_size_max": 41,
+					"shop_usage_min": 20,
+					"shop_usage_max": 22,
+					"relic_count_min": 6
+				}
+			}
+		},
+		{
+			"id": "map_08_low_hp_checkpoint_baseline",
+			"name": "Map 08 low HP checkpoint baseline",
+			"tags": ["route", "checkpoint", "boss", "baseline"],
+			"class_id": "arcano",
+			"seed": 20260518,
+			"policy_id": "baseline",
+			"focus": "Locks the current map 08 near-collapse checkpoint without changing balance.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"no_deaths": true,
+					"map_checkpoints": [
+						{"map": 8, "hp_after_equals": 5, "hp_loss_est_equals": 5}
+					]
+				}
+			}
+		},
+		{
+			"id": "map_08_defensive_recovery_checkpoint",
+			"name": "Map 08 defensive recovery checkpoint",
+			"tags": ["route", "checkpoint", "economy", "boss"],
+			"class_id": "arcano",
+			"seed": 20260518,
+			"policy_id": "defensive",
+			"focus": "Confirms defensive policy creates a safer map 08 checkpoint.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"no_deaths": true,
+					"final_hp_min": 23,
+					"shop_usage_min": 23,
+					"shop_usage_max": 25,
+					"map_checkpoints": [
+						{"map": 8, "hp_after_min": 10}
+					]
+				}
+			}
+		},
+		{
+			"id": "shop_baseline_recovery_budget",
+			"name": "Shop baseline recovery budget",
+			"tags": ["economy", "shop", "baseline"],
+			"class_id": "arcano",
+			"seed": 20260518,
+			"policy_id": "baseline",
+			"focus": "Keeps approved baseline shop recovery budget visible.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"no_deaths": true,
+					"shop_usage_min": 20,
+					"shop_usage_max": 22,
+					"souls_left_min": 50,
+					"souls_left_max": 80,
+					"relic_count_min": 6
+				}
+			}
+		},
+		{
+			"id": "shop_no_shop_failure_signal",
+			"name": "No shop failure signal",
+			"tags": ["economy", "shop", "stress"],
+			"class_id": "arcano",
+			"seed": 20260518,
+			"policy_id": "no_shop",
+			"focus": "Keeps no-shop route dependence visible without failing the explicit gate.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"shop_usage_equals": 0,
+					"souls_left_min": 300,
+					"final_hp_max": 5
+				},
+				"watch": {
+					"no_deaths": true,
+					"final_hp_min": 10
+				}
+			}
+		},
+		{
+			"id": "deck_baseline_size_band",
+			"name": "Deck baseline size band",
+			"tags": ["deck", "baseline"],
+			"class_id": "arcano",
+			"seed": 20260518,
+			"policy_id": "baseline",
+			"focus": "Locks the current healthy final deck-size band.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"no_deaths": true,
+					"deck_size_min": 35,
+					"deck_size_max": 41
+				}
+			}
+		},
+		{
+			"id": "deck_big_deck_stress_signal",
+			"name": "Big deck stress signal",
+			"tags": ["deck", "stress"],
+			"class_id": "arcano",
+			"seed": 20260518,
+			"policy_id": "big_deck",
+			"focus": "Keeps deck-bloat stress visible as WARN instead of a hard regression.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"deck_size_min": 40,
+					"deck_size_max": 52,
+					"shop_usage_min": 20,
+					"shop_usage_max": 30
+				},
+				"watch": {
+					"no_deaths": true,
+					"final_hp_min": 10
+				}
+			}
+		},
+		{
+			"id": "deck_thin_deck_stress_signal",
+			"name": "Thin deck stress signal",
+			"tags": ["deck", "stress", "shop"],
+			"class_id": "arcano",
+			"seed": 20260518,
+			"policy_id": "thin_deck",
+			"focus": "Keeps removal-heavy thin deck stress visible as WARN instead of a hard regression.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"deck_size_min": 14,
+					"deck_size_max": 22,
+					"shop_usage_min": 24,
+					"shop_usage_max": 28,
+					"souls_left_max": 10
+				},
+				"watch": {
+					"no_deaths": true,
+					"final_hp_min": 10
+				}
+			}
+		},
+		{
+			"id": "late_route_fire_pressure",
+			"name": "Late route fire pressure",
+			"tags": ["route", "keyword", "late_route", "baseline"],
+			"class_id": "arcano",
+			"seed": 20260518,
+			"policy_id": "baseline",
+			"focus": "Keeps late-route elemental pressure visible through map 29 HP loss.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"no_deaths": true,
+					"final_hp_min": 13,
+					"final_hp_max": 16,
+					"map_checkpoints": [
+						{"map": 29, "hp_loss_est_min": 8, "hp_loss_est_max": 8}
+					]
+				}
+			}
+		},
+		{
+			"id": "boss_29_baseline_finish",
+			"name": "Boss 29 baseline finish",
+			"tags": ["route", "boss", "baseline"],
+			"class_id": "necromante",
+			"seed": 20260518,
+			"policy_id": "baseline",
+			"focus": "Confirms the final boss checkpoint remains completable on baseline.",
+			"expectations": {
+				"required": {
+					"complete_route": true,
+					"no_deaths": true,
+					"final_hp_min": 13,
+					"final_hp_max": 16,
+					"deck_size_min": 35,
+					"deck_size_max": 41,
+					"map_checkpoints": [
+						{"map": 29, "hp_after_min": 13, "hp_loss_est_min": 8}
+					]
+				}
+			}
+		}
+	]
+}
