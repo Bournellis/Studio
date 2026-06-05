@@ -4,22 +4,25 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Arena PVE First Real Run + Update Recovery`
-- Active stage status: `ARENA_PVE_FIRST_REAL_RUN_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Arena Duel Flow Hotfix`
+- Active stage status: `ARENA_DUEL_FLOW_HOTFIX_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
 ## Current Truth
 
-- Latest published remote package: `Arena PVE First Real Run + Update Recovery`
-- Release root: `internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a`
+- Latest published remote package: `Arena Duel Flow Hotfix`
+- Release root: `internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`
-- Source state: `master` after merging Track 23 Arena PVE update recovery and preserving the later Scenario Fixtures V1 merge on the same trunk.
+- Latest deployment evidence: `https://0536635b.draxos-mobile-internal-alpha.pages.dev`
+- Source state: `main` after merging and publishing the Arena Duel Flow Hotfix, preserving Track 23 Arena PVE update recovery and later trunk merges.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
-- Local source hotfix pending publication: `Arena Duel Flow Hotfix` keeps Preparacao/behavior inside the active-duel menu, removes the detached `Ajustar comportamento` CTA, and treats a server step with `selected_buff` as resolved so the next active menu returns to `Resolver duelo` instead of showing `Escolher buff` again.
+- Published source hotfix: `Arena Duel Flow Hotfix` keeps Preparacao/behavior inside the active-duel menu, removes the detached `Ajustar comportamento` CTA, and treats a server step with `selected_buff` as resolved so the next active menu returns to `Resolver duelo` instead of showing `Escolher buff` again.
+- Previous Arena package: `Arena PVE First Real Run + Update Recovery`
+- Previous Arena release root: `internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a`
+- Previous Arena preview: `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`
 - Previous content/polish package: `Bosque v3 UX/Feel`
 - Previous content/polish release root: `internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45`
 - Previous content/polish preview: `https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev`
@@ -39,7 +42,7 @@
 
 ## Published Package
 
-Arena PVE First Real Run + Update Recovery is the current Internal Alpha package. It closes the critical update-friction case where a player had an active Arena attempt after a package update, was told to finish the run, but no longer had a useful route to access or end it.
+Arena Duel Flow Hotfix is the current Internal Alpha package. It preserves Arena PVE First Real Run + Update Recovery, then fixes the active-duel menu so Preparacao/behavior is available inside the duel flow and a victory buff already selected does not loop the player back into `Escolher buff`.
 
 Delivered in this package:
 
@@ -48,28 +51,30 @@ Delivered in this package:
 - blocks new Arena starts locally while an active attempt exists, pushing the player to resume or abandon first;
 - routes abandon through `/arena/pve/abandon` with `request_id/request_hash`;
 - treats incompatible or malformed active attempts as recovery state instead of trapping the player;
+- embeds Preparacao/behavior controls in the active-duel menu instead of a detached `Ajustar comportamento` action;
+- treats server steps with `selected_buff` as resolved so the next active menu returns to `Resolver duelo`;
 - preserves server-authoritative rewards: abandon grants no completion reward;
 - keeps Bosque v3 UX/Feel, Technical Hardening, Openworld Main Menu Sync, Foundation Hardening V2, Hardening Platform V1, Remote Lab Runner and the Arena/Lab baselines intact.
 
 Publication evidence:
 
-- Export regenerated APK, PC ZIP and Web artifacts from current `master`.
+- Export regenerated APK, PC ZIP and Web artifacts from current `main`.
 - Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and RemoteReadOnly passed.
-- Cloudflare Pages preview evidence: `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`.
-- Remote Web launch smoke on preview loaded the game in `3463 ms`, matched release root and asset root, and reported no runtime errors.
+- Cloudflare Pages preview evidence: `https://0536635b.draxos-mobile-internal-alpha.pages.dev`.
+- Remote Web launch smoke on preview loaded the game in `3479 ms`, matched release root and asset root, and reported no runtime errors.
 - Stable Portal/Web remain protected by Cloudflare Access and passed RemoteReadOnly with Access marked expected.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
-- `release/config` hotfix applied after publication so the same package no longer pauses online progression actions by remote config.
+- `release/config` remains on `track23-online-actions-hotfix`, so online progression actions are not paused by remote config.
 
 Artifact hashes:
 
-- Android APK SHA256: `ae886a7790c19213c44a728e56481126e20f47b4ddb588e2ffdfc99fd99fd7ce`
-- PC Windows ZIP SHA256: `09f3be25a8a5520876796fbe3ec7ab60281b773f4807e96c7b83422437e706ff`
-- Web Index SHA256: `fb549621d02bafc85cf1eece7ff69bd90c2daa445aa3f83de44e9bc8e8e31a2d`
+- Android APK SHA256: `8565862ba070af58e14d7135077f59c31ca4927c4a23d1b1f79ae968a4dca814`
+- PC Windows ZIP SHA256: `d3d01f17950c2e2cb8cbd34875b86f4ae767864e366114264a5516d9644d127d`
+- Web Index SHA256: `e9023d89326b54ae55fd2a55b4a85424124bd25b99d1679f7096f98252bd1dfa`
 
 ## Current Gate
 
-The next product step is remote publication of the validated local Arena Duel Flow Hotfix if the official URL must receive these two fixes immediately; otherwise keep playtest focused on the published Arena PVE First Real Run + Update Recovery package before opening Arena tuning, broader Openworld expansion or new mode work.
+The next product step is human playtest of the published Arena Duel Flow Hotfix before opening Arena tuning, broader Openworld expansion or new mode work.
 
 Playtest focus:
 
@@ -77,7 +82,8 @@ Playtest focus:
 2. Confirm an active run can be resumed from Arena selection after leaving/reopening.
 3. Confirm `Abandonar tentativa` and `Encerrar tentativa antiga` clear the blocker without granting completion reward.
 4. Confirm the player is no longer trapped by an inaccessible post-update Arena attempt.
-5. Confirm Bosque entry, collect/deposit/craft feedback and main menu still regress cleanly after the Arena package.
+5. Confirm Preparacao appears inside the active-duel menu and that a selected victory buff leads back to `Resolver duelo`.
+6. Confirm Bosque entry, collect/deposit/craft feedback and main menu still regress cleanly after the Arena package.
 
 ## Live Boundaries
 
@@ -129,6 +135,16 @@ Arena Duel Flow local hotfix validation:
 - `tools/smoke_responsive_layout.gd`: PASS.
 - `validate_foundation.ps1 -Profile ClientQuick -RequireClean:$false`: PASS.
 - `deno run --allow-net --allow-env server/tests/runtime_config_smoke.ts` against remote Supabase: PASS.
+
+Arena Duel Flow publication validation:
+
+- `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <versioned-web-asset-root>`: PASS.
+- `wrangler pages deploy ... --branch main`: PASS, preview `https://0536635b.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174 -RemoteWebUrl https://0536635b.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS after loading local read-only Supabase URL and publishable key from `.env.internal-alpha.local`.
 
 Historical validation logs and package-by-package publication evidence belong in `implementation/tracks/`, `docs/*-report.md`, Kanban Done cards or handoffs, not in this decision snapshot.
 
