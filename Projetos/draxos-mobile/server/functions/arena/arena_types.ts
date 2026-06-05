@@ -27,19 +27,10 @@ export interface EdgeConfig {
   serviceRoleKey: string;
 }
 
-export interface AuthContext {
-  userId: string;
-  saveType: SaveType;
-}
-
 export interface RestError {
   code: string;
   message: string;
   status: number;
-}
-
-export interface JwtPayload {
-  sub?: unknown;
 }
 
 export interface PlayerRow {
