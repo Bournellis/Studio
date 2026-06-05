@@ -165,8 +165,10 @@ git status --short
 `tools/publish_internal_alpha.ps1` is intentionally safe by default:
 
 - `Mode Plan`: default; produces a plan and performs no local package, upload, deploy, secret update or remote verification.
-- `Mode Package`: creates local packages only.
-- `Mode Upload`, `Mode DeployManifest`, `Mode FullPublish`: remote mutation; requires explicit user approval and `-ConfirmRemoteMutation`.
+- `Mode Package`: creates local packages only and requires a fresh versioned `-ReleaseRoot`.
+- `Mode Upload`, `Mode DeployManifest`, `Mode FullPublish`: remote mutation; requires explicit user approval, a fresh versioned `-ReleaseRoot` and `-ConfirmRemoteMutation`.
+
+`validate_foundation.ps1 -Profile FullPublish` is disabled by design. Use the validation runner for `ReleaseDryRun`, `FullLocal` or targeted gates, then publish through `publish_internal_alpha.ps1` only in an approved publication task.
 
 Never run remote mutation modes as a drive-by validation step.
 

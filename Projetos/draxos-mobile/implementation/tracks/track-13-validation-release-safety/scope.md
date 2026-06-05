@@ -15,8 +15,8 @@ Transformar validacao, readiness e publicacao Internal Alpha em um sistema segur
 - Relatorios locais nao rastreados em `build/validation/foundation-validation-latest.json` e `.md`.
 - `tools/publish_internal_alpha.ps1` protegido por modos explicitos.
 - `Mode Plan` como default sem upload, deploy, secret update ou verificacao remota.
-- `Mode Package` apenas local em `build/internal-alpha/`.
-- `Mode Upload`, `Mode DeployManifest` e `Mode FullPublish` exigindo `-ConfirmRemoteMutation`.
+- `Mode Package` apenas local em `build/internal-alpha/`, sempre com `-ReleaseRoot` versionado.
+- `Mode Upload`, `Mode DeployManifest` e `Mode FullPublish` exigindo `-ReleaseRoot` versionado e `-ConfirmRemoteMutation`.
 - Checks de regressao `tools/check_release_safety.ps1` e `tools/check_track13_readiness.ps1`.
 - Gate/template de walkthrough manual por plataforma.
 - Documentacao e status do estudio alinhados a Track 13.

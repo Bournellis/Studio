@@ -14,7 +14,8 @@
 - Ops CLI remota deve usar `tools/ops_readonly.ts` com publishable key e JWT de usuario; service role remoto e proibido.
 - Qualquer check remoto automatico deve ser somente leitura: `GET`, `HEAD` ou auth/smoke explicitamente solicitado.
 - `supabase db push`, `supabase functions deploy`, `supabase secrets set`, Wrangler deploy e upload Cloudflare sao comandos de publicacao, nao validacao segura.
-- `publish_internal_alpha.ps1` so pode mutar remoto em `Mode Upload`, `Mode DeployManifest` ou `Mode FullPublish` com `-ConfirmRemoteMutation`.
+- `publish_internal_alpha.ps1` so pode mutar remoto em `Mode Upload`, `Mode DeployManifest` ou `Mode FullPublish` com `-ReleaseRoot` versionado e `-ConfirmRemoteMutation`.
+- `validate_foundation.ps1` nao publica: `FullPublish` fica desabilitado no runner e deve orientar o operador a usar `publish_internal_alpha.ps1` diretamente.
 - Manifest/config publico nao deve exigir JWT nem carregar segredo. Download privado, se voltar a ser usado, deve exigir JWT verificado pelo backend e nunca expor service role.
 - Fonte viva de release e `implementation/current-status.md` + manifest/relatorios atuais; snapshots historicos devem ficar claramente historicos e nao competir com o status vivo.
 
@@ -23,10 +24,10 @@
 | Modo | Mutacao remota | Saida | Uso |
 |---|---:|---|---|
 | `Mode Plan` | Nao | `build/internal-alpha/release-plan.json` e `.md` | Default seguro, revisao local |
-| `Mode Package` | Nao | `build/internal-alpha/publish/` | Preparar pacote local |
-| `Mode Upload` | Sim, exige `-ConfirmRemoteMutation` | Storage Supabase | Upload de artefatos ja aprovados |
-| `Mode DeployManifest` | Sim, exige `-ConfirmRemoteMutation` | Manifest override/deploy `release` | Alinhar manifest remoto |
-| `Mode FullPublish` | Sim, exige `-ConfirmRemoteMutation` | Upload + manifest/deploy + verificacoes | Publicacao completa aprovada |
+| `Mode Package` | Nao; exige `-ReleaseRoot` | `build/internal-alpha/publish/` | Preparar pacote local |
+| `Mode Upload` | Sim, exige `-ReleaseRoot` + `-ConfirmRemoteMutation` | Storage Supabase | Upload de artefatos ja aprovados |
+| `Mode DeployManifest` | Sim, exige `-ReleaseRoot` + `-ConfirmRemoteMutation` | Manifest override/deploy `release` | Alinhar manifest remoto |
+| `Mode FullPublish` | Sim, exige `-ReleaseRoot` + `-ConfirmRemoteMutation` | Upload + manifest/deploy + verificacoes | Publicacao completa aprovada |
 
 Comandos:
 
@@ -69,7 +70,7 @@ Track 13 itself remains non-publishing by default. After Track 13, user-approved
 | Artifact smoke remoto | `server/tests/release_artifacts_remote_smoke.ts` | Valida manifest, downloads APK/ZIP via `HEAD` ou `GET` parcial, Portal e Web HTML existentes | Sim, somente leitura, exige URL e publishable key |
 | Export presets | `export_presets.cfg`, `tools/smoke_exports.gd` | Android Alpha, PC Windows Alpha e PC Browser Alpha | Sim |
 | Export script | `tools/export_internal_alpha.ps1` | Gera APK, PC ZIP, Web e metadata local | Syntax check seguro. Execucao gera builds, usar so em release real |
-| Foundation runner | `tools/validate_foundation.ps1` | Runner unico `DocsOnly`/`ClientQuick`/`ServerQuick`/`ModePlatform`/`DatabaseLocal`/`FullLocal`/`ReleaseDryRun`/`RemoteReadOnly`/`FullPublish` com relatorio local; aliases antigos preservados | Sim |
+| Foundation runner | `tools/validate_foundation.ps1` | Runner unico `DocsOnly`/`ClientQuick`/`ServerQuick`/`ModePlatform`/`DatabaseLocal`/`FullLocal`/`ReleaseDryRun`/`RemoteReadOnly` com relatorio local; aliases antigos preservados; `FullPublish` rejeitado de proposito | Sim |
 | Release safety check | `tools/check_release_safety.ps1` | Garante publish default seguro e mutacao protegida por confirmacao | Sim |
 | Android release keystore gate | `tools/check_android_release_keystore.ps1` | Verifica tuple local de keystore release, ausencia de senha concreta tracked e fallback conhecido | Sim |
 | Ops read-only CLI | `tools/ops_readonly.ts`, `docs/ops/read-only-cli.md` | Sumarios manifest/modes/status/audit/reward/session por `GET`, sem service role remoto | Sim |
@@ -103,6 +104,7 @@ Antes de qualquer publicacao futura:
 - `server/tests/foundation_admin_rls_live_smoke.ts` verde no `DatabaseLocal`/`FullLocal` quando alterar admin, RLS, account/save ou grants.
 - `publish_internal_alpha.ps1 -Mode Plan` revisado.
 - `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot "<root-versionado>"` revisado; modos que empacotam/publicam nao podem usar root default/generico.
+- `validate_foundation.ps1 -Profile FullPublish` nao e usado como caminho de publicacao; o runner deve rejeitar esse perfil.
 - `release_manifest_smoke.ts` verde contra o alvo de release.
 - `release_artifacts_remote_smoke.ts` verde somente depois que artefatos ja existirem no remoto; o manifest deve apontar para o dominio production estavel, nao para hash URL.
 - Em dominio Cloudflare Pages protegido, usar preview liberado ou rodar o smoke com `DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS=1` apenas para reconhecer a tela de Access como protecao esperada.

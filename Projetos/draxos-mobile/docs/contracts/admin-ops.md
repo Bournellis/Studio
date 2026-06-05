@@ -210,8 +210,8 @@ Sem emergencia real, nao use acesso manual ao banco como atalho de produto.
 Operacoes de release continuam governadas por `docs/release-ops-checklist.md` e scripts seguros:
 
 - `Mode Plan` nao muta local/remoto;
-- `Mode Package` gera pacote local;
-- `Mode Upload`, `Mode DeployManifest` e `Mode FullPublish` exigem aprovacao explicita e `-ConfirmRemoteMutation`;
+- `Mode Package` gera pacote local e exige `-ReleaseRoot` versionado;
+- `Mode Upload`, `Mode DeployManifest` e `Mode FullPublish` exigem aprovacao explicita, `-ReleaseRoot` versionado e `-ConfirmRemoteMutation`;
 - override de manifest exige ambiente preparado e nao deve vazar secrets.
 
 O contrato admin nao relaxa esses gates. Ele adiciona rastreabilidade quando release operation virar fluxo de suporte/ops recorrente.

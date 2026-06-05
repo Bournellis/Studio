@@ -14,7 +14,7 @@
 | `ReleaseDryRun` | `DocsOnly` + manifest typecheck, `publish_internal_alpha.ps1 -Mode Plan`, secret-scan pos-plano, release safety, Track 13 readiness e Track 14 agent ops | Nao | Dry-run seguro de release |
 | `RemoteReadOnly` | `ReleaseDryRun` + `release_artifacts_remote_smoke.ts` com publishable key | Sim, somente leitura | Smoke remoto sem mutacao |
 | `FullLocal` | `DocsOnly` + `ServerQuick` + `ClientQuick` + `ModePlatform` + `DatabaseLocal` + `ReleaseDryRun` | Nao remoto | Gate local completo, com stack local esperada |
-| `FullPublish` | `FullLocal` + handoff para `publish_internal_alpha.ps1 -Mode FullPublish` | Sim, mutante | Apenas em tarefa de publicacao aprovada com `-ConfirmRemoteMutation` |
+| `FullPublish` | Desabilitado no runner; publicacao real vive em `publish_internal_alpha.ps1 -Mode FullPublish -ReleaseRoot <root> -ConfirmRemoteMutation` | Sim, mutante fora do runner | Rejeitar no runner e publicar somente pelo script de publish em tarefa aprovada |
 
 Aliases de compatibilidade:
 
@@ -50,10 +50,11 @@ $env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
 .\tools\validate_foundation.ps1 -ProjectDir . -Profile RemoteReadOnly
 ```
 
-Full publish permanece bloqueado fora de tarefa aprovada:
+Full publish nao roda pelo runner. Validar primeiro e publicar pelo script de publish:
 
 ```powershell
-.\tools\validate_foundation.ps1 -ProjectDir . -Profile FullPublish -ConfirmRemoteMutation
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
 ```
 
 ## Relatorios
@@ -76,4 +77,5 @@ Budgets de shell/presenter sao gates duros: `boot.gd <= 1200`, `boot_runtime.gd 
 - Secret-like values em cliente, portal, manifest, artefatos locais ou env publico.
 - Env remoto ausente no `RemoteReadOnly`.
 - Cloudflare Access precisa de preview liberado ou flag/documento apropriado.
-- Tentativa de `FullPublish` sem `-ConfirmRemoteMutation`.
+- Tentativa de `FullPublish` pelo runner.
+- Tentativa de `publish_internal_alpha.ps1 -Mode FullPublish` sem `-ReleaseRoot` ou sem `-ConfirmRemoteMutation`.

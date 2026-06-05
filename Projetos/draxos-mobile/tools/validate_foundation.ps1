@@ -64,6 +64,10 @@ $LegacyProfileMap = @{
 }
 $EffectiveProfile = if ($LegacyProfileMap.ContainsKey($Profile)) { $LegacyProfileMap[$Profile] } else { $Profile }
 
+if ($EffectiveProfile -eq "FullPublish") {
+    throw "Profile FullPublish is disabled in validate_foundation.ps1. Run validation with -Profile FullLocal or -Profile ReleaseDryRun, then publish only through tools\publish_internal_alpha.ps1 -Mode FullPublish -ReleaseRoot <versioned-root> -ConfirmRemoteMutation in an approved publication task."
+}
+
 function Add-StepResult {
     param(
         [string]$Name,
@@ -797,7 +801,7 @@ $RunModePlatform = $EffectiveProfile -in @("ModePlatform", "FullLocal", "FullPub
 $RunDatabaseLocal = $EffectiveProfile -in @("DatabaseLocal", "FullLocal", "FullPublish") -or $RequestedProfile -eq "Full"
 $RunRelease = $EffectiveProfile -in @("ReleaseDryRun", "RemoteReadOnly", "FullLocal", "FullPublish") -or $RequestedProfile -in @("Release", "Full")
 $RunRemoteReadOnly = $IncludeRemoteReadOnly.IsPresent -or $EffectiveProfile -in @("RemoteReadOnly", "FullPublish")
-$RunFullPublish = $EffectiveProfile -eq "FullPublish"
+$RunFullPublish = $false
 $RunLocalSupabaseRpc = $IncludeLocalSupabaseRpc.IsPresent -or $RunDatabaseLocal
 $RunLocalEdgeRpc = $IncludeLocalEdgeRpc.IsPresent -or $RunDatabaseLocal
 $RunLocalAdminRls = $IncludeLocalAdminRls.IsPresent -or $RunDatabaseLocal
@@ -1367,18 +1371,7 @@ if ($RunRemoteReadOnly) {
     Skip-Step -Name "remote Web launch smoke" -Stage "RemoteReadOnly" -Command "tools\smoke_web_launch_remote.ps1" -Reason "Profile $EffectiveProfile does not include RemoteReadOnly and -IncludeRemoteReadOnly was not set."
 }
 
-if ($RunFullPublish) {
-    Invoke-Step -Name "full publish handoff gate" -Stage "FullPublish" -Command ".\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ConfirmRemoteMutation" -ScriptBlock {
-        if (-not $ConfirmRemoteMutation) {
-            throw "Profile FullPublish mutates remote release state. Re-run only in an approved publication task with -ConfirmRemoteMutation."
-        }
-        Invoke-External -Command "publish_internal_alpha.ps1 -Mode FullPublish" -WorkingDirectory $ProjectPath -ScriptBlock {
-            & powershell -NoProfile -ExecutionPolicy Bypass -File ".\tools\publish_internal_alpha.ps1" -ProjectDir "." -Mode "FullPublish" -ConfirmRemoteMutation
-        }
-    }
-} else {
-    Skip-Step -Name "full publish handoff gate" -Stage "FullPublish" -Command "publish_internal_alpha.ps1 -Mode FullPublish" -Reason "Profile $EffectiveProfile does not include FullPublish."
-}
+Skip-Step -Name "full publish handoff gate" -Stage "FullPublish" -Command "publish_internal_alpha.ps1 -Mode FullPublish" -Reason "Publication is disabled in validate_foundation.ps1; use publish_internal_alpha.ps1 directly with -ReleaseRoot and -ConfirmRemoteMutation after validation."
 
 Write-Reports
 Write-Host "Report JSON: $JsonReportPath"

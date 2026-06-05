@@ -225,9 +225,18 @@ Test-FileContains 'tools\publish_internal_alpha.ps1' 'Assert-VersionedReleaseRoo
 Test-FileContains 'tools\publish_internal_alpha.ps1' '-SkipManifestSecret is disabled for DeployManifest/FullPublish'
 Test-FileContains 'tools\publish_internal_alpha.ps1' 'Legacy publish flags were supplied without -Mode'
 Test-FileContains 'tools\publish_internal_alpha.ps1' 'No local package, upload, secret update, deploy or remote verification was executed'
+Test-FileContains 'tools\validate_foundation.ps1' 'Profile FullPublish is disabled in validate_foundation.ps1'
+Test-FileContains 'tools\validate_foundation.ps1' 'Publication is disabled in validate_foundation.ps1'
 Test-FileContains 'tools\export_internal_alpha.ps1' 'android_release_keystore_configured'
 Test-FileContains 'tools\export_internal_alpha.ps1' 'Android release keystore config must provide path, user/alias and password together.'
 Test-MutatingCommandsGuarded
+
+$validationRunnerText = Get-Content -LiteralPath (Join-Path $ProjectPath 'tools\validate_foundation.ps1') -Raw
+if ($validationRunnerText.Contains('-File ".\tools\publish_internal_alpha.ps1"') -and $validationRunnerText.Contains('-Mode "FullPublish"')) {
+  Add-Failure 'validate_foundation.ps1 must not call publish_internal_alpha.ps1 FullPublish directly'
+} else {
+  Add-Ok 'validate_foundation.ps1 does not call publish_internal_alpha.ps1 FullPublish directly'
+}
 
 $planOutput = Invoke-CapturedProcess `
   -Command 'publish_internal_alpha.ps1 default Plan' `
@@ -263,6 +272,18 @@ if ($missingRootOutput.Contains('ReleaseRoot is required')) {
   Add-Ok 'package mode requires an explicit versioned ReleaseRoot'
 } else {
   Add-Failure 'package mode without ReleaseRoot did not fail with the expected guard'
+}
+
+$fullPublishRunnerOutput = Invoke-CapturedProcess `
+  -Command 'validate_foundation.ps1 FullPublish disabled' `
+  -ExpectedExitCode 1 `
+  -ScriptBlock {
+    & powershell -NoProfile -ExecutionPolicy Bypass -File '.\tools\validate_foundation.ps1' -ProjectDir '.' -Profile FullPublish -ConfirmRemoteMutation
+  }
+if ($fullPublishRunnerOutput.Contains('Profile FullPublish is disabled')) {
+  Add-Ok 'validation runner rejects FullPublish profile before publication'
+} else {
+  Add-Failure 'validation runner FullPublish rejection did not include the expected disabled-profile message'
 }
 
 Test-FilesEqual 'server\functions\release\index.ts' 'supabase\functions\release\index.ts' 'release function defaults'

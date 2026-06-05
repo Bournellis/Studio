@@ -127,7 +127,7 @@ Com a URL final em maos:
 
 ```powershell
 cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -Mode DeployManifest -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>" -PublicDownloads -ConfirmRemoteMutation
 ```
 
 Esse comando:

@@ -89,10 +89,10 @@ Release scripts are safe by default:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>"
 ```
 
-`Mode Upload`, `Mode DeployManifest` and `Mode FullPublish` require explicit user approval and `-ConfirmRemoteMutation`.
+`Mode Upload`, `Mode DeployManifest` and `Mode FullPublish` require explicit user approval, a versioned `-ReleaseRoot` and `-ConfirmRemoteMutation`. `validate_foundation.ps1 -Profile FullPublish` is disabled; validate first, then publish only through `publish_internal_alpha.ps1`.
 
 For user-approved product packages that require human testing on Android, Windows or Web, publication to Internal Alpha is the default completion step after local validation. Use a fresh versioned release root, export/package/upload/deploy from the same worktree session, and verify the published Web shell against the remote `index.pck`/`index.wasm` sizes before reporting success.
 

@@ -3,7 +3,7 @@
 Ferramentas de desenvolvimento e validacao.
 
 - `validate.gd` - validacao headless do projeto Godot, gerando conteudo, checando contrato client e rodando GUT.
-- `validate_foundation.ps1` - runner unico Track 13/14/17/18 com perfis `DocsOnly`, `ClientQuick`, `ServerQuick`, `ModePlatform`, `DatabaseLocal`, `FullLocal`, `ReleaseDryRun`, `RemoteReadOnly` e `FullPublish`; gera relatorios em `build/validation/`. Os perfis antigos `Quick`, `Client`, `Release` e `Full` continuam como aliases.
+- `validate_foundation.ps1` - runner unico Track 13/14/17/18 com perfis `DocsOnly`, `ClientQuick`, `ServerQuick`, `ModePlatform`, `DatabaseLocal`, `FullLocal`, `ReleaseDryRun` e `RemoteReadOnly`; gera relatorios em `build/validation/`. Os perfis antigos `Quick`, `Client`, `Release` e `Full` continuam como aliases. `FullPublish` fica desabilitado no runner: publicacao remota deve usar `publish_internal_alpha.ps1` diretamente.
 - `check_foundation_expansion_readiness.ps1` - checker read-only da Foundation Expansion Readiness: contratos, migrations espelhadas, ruleset, shell contracts e testes obrigatorios.
 - `check_release_safety.ps1` - guarda de regressao para publish seguro, parse PowerShell e manifest defaults espelhados.
 - `check_android_release_keystore.ps1` - gate local de Android release keystore: tuple completa, arquivo local existente quando configurado, ausencia de senha concreta tracked e modo `ReleaseCandidate` sem `debug_fallback`.
@@ -106,6 +106,8 @@ Publicacao remota exige tarefa aprovada e confirmacao explicita:
 .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
 ```
 
+Nao use `validate_foundation.ps1 -Profile FullPublish`; esse perfil e rejeitado de proposito. Primeiro valide com `ReleaseDryRun`, `FullLocal` ou os perfis especificos do pacote, depois publique somente pelo script de publish com `-ReleaseRoot` versionado e `-ConfirmRemoteMutation`.
+
 O script usa `SUPABASE_PROJECT_REF`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` de `.env.internal-alpha.local` para modos remotos. Supabase Storage/Edge Functions nao servem HTML como pagina.
 
 Para Cloudflare Pages, gere o pacote hibrido primeiro:
@@ -133,7 +135,7 @@ npx -y deno run --allow-net --allow-env tools/ops_readonly.ts --target manifest,
 Publique `build/internal-alpha/cloudflare-pages/` ou `build/internal-alpha/draxos-mobile-cloudflare-pages.zip` no Cloudflare Pages. Depois rode:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -ConfirmRemoteMutation
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>" -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -ConfirmRemoteMutation
 ```
 
 Grimorio do site alpha:
