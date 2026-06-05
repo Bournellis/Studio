@@ -4,7 +4,7 @@
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Historical Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `Card Impact Smoke Tuning V1, Card Impact Pack V1, Lab Diff Reporter V1, Gameplay Lab V1, Scenario Fixtures V1 and AutoRun Gate Pack V1 preserve Track 02 route metrics and pass 148/148 GUT tests, 1544 asserts, shared full-route pacing smoke green, Card Impact before/after/compare gate green with 84 active card cases covered and one expected PASS->PASS metric impact for enemy_ar_rajada, Battle Lab track02_battle_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, Scenario Fixture track02_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
+- Validation Baseline: `Card Impact Effect Signature V2, Card Impact Smoke Tuning V1, Card Impact Pack V1, Lab Diff Reporter V1, Gameplay Lab V1, Scenario Fixtures V1 and AutoRun Gate Pack V1 preserve Track 02 route metrics and pass 154/154 GUT tests, 1575 asserts, shared full-route pacing smoke green, Card Impact V2 before/after/compare gate green with 84 active card cases covered, 54/54 required player effect signatures present, 30 enemy signatures report-only, 15 legacy inactive elemental cards audited and zero same/same deltas, V1 Card Impact regression gate green, Battle Lab track02_battle_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, Scenario Fixture track02_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
 
 ## Purpose
 
@@ -40,9 +40,9 @@ The target is a fixed, linear 29-map run with all planned encounter types, all p
 
 ## Current Execution Cursor
 
-Completed prompt: `CARD-IMPACT-SMOKE-TUNING-V1 - first real before/change/after/compare card-change cycle using Card Impact Pack V1`.
+Completed prompt: `CARD-IMPACT-EFFECT-SIGNATURE-V2 - derived player-card effect signatures for Card Impact before/after/compare`.
 
-Next implementation prompt: `CARD-IMPACT-PLAYER-HARNESS-V2-OR-LARGER-CARD-BATCH - either add log-derived player-card effect deltas to the harness or run a slightly larger intentional card batch through the same before/change/after/compare flow`. Track 02 remains ready for user playtest.
+Next implementation prompt: `CARD-REDESIGN-BATCH-01-USING-CARD-IMPACT-V2 - run before, apply the first meaningful player-card redesign batch, run after/compare, then inspect metric and effect-signature deltas before accepting the edits`. Track 02 remains ready for user playtest.
 
 ## Implemented Baseline
 
@@ -96,6 +96,8 @@ Next implementation prompt: `CARD-IMPACT-PLAYER-HARNESS-V2-OR-LARGER-CARD-BATCH 
 - Card Impact Pack V1 adds `data/lab/card_impact/track02_card_impact_v1.json`, `tools/run_card_impact.gd`, card discovery/matrix/runner/reporter modules, the `card_focus_legal` battle policy, 54 core player card variants, 30 active enemy cards, 15 audited legacy inactive elemental cards, explicit before/after/compare gate mode and JSON/CSV/Markdown impact reports without wiring the command into `tools/validate.gd`.
 - Card Impact Smoke Tuning V1 applied a deliberately small card batch: `arcano_choque_lvl2` and `arcano_choque_lvl3` damage `3 -> 4`, `invocador_batedor_lvl3` attack `6 -> 5`, `necro_esqueleto_lvl2` health `2 -> 3`, and `enemy_ar_rajada` attack `4 -> 5`.
 - The first real Card Impact compare stayed structurally green and surfaced one expected metric movement: `enemy_ar_rajada` raised `damage_to_player_hero` from `4` to `5` and lowered isolated harness `player_hp` from `56` to `55`.
+- Card Impact Effect Signature V2 adds `data/lab/card_impact/track02_card_impact_v2.json`, `tools/lab/battle_effect_signature.gd`, BattleEngine before/after snapshots around focused player-card plays, required player-card effect signatures, schema-ready enemy report-only signatures, `effect.*` diff rows and Markdown summary sections for effect deltas, effect-family matrices, top effect-delta cards and missing signatures.
+- Current V2 same/same calibration passes with 84/84 active card cases, 54/54 required player effect signatures, 30 enemy cards in report-only signature mode, 15 legacy inactive cards audited, zero structural errors, zero new failures, zero removed records, zero status changes, zero metric changes and zero effect changes.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
 - Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.
@@ -115,4 +117,4 @@ Every future Track 02 implementation or playtest-fix thread must:
 
 ## Current Risk
 
-Track 02 is ready for user playtest and for a slightly larger card-change batch. Remaining risk is human balance feedback: the deterministic full-route smoke, AutoRun Gate Pack macro matrices, Scenario Fixtures V1, Gameplay Lab V1 and Card Impact Pack V1 validate structure, tuning trends, small named regression signals, isolated combat behavior and card-specific before/after movement, but they are not substitutes for a manual run. The first real Card Impact cycle also showed that player-card stat/effect edits may not move final metrics when the harness clears a board in one cycle, so Card Impact V2 should consider log-derived effect deltas before broader card redesign.
+Track 02 is ready for user playtest and for a first meaningful player-card redesign batch using Card Impact V2. Remaining risk is human balance feedback: the deterministic full-route smoke, AutoRun Gate Pack macro matrices, Scenario Fixtures V1, Gameplay Lab V1, Card Impact Pack V1 and Card Impact Effect Signature V2 validate structure, tuning trends, small named regression signals, isolated combat behavior, card-specific before/after movement and player-card effect deltas, but they are not substitutes for a manual run. Enemy-card effect causality is still report-only in V2 and should become required only after a dedicated enemy-signature pass.

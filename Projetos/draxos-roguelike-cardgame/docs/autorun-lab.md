@@ -1,8 +1,8 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-05`
-- Status: `CARD_IMPACT_SMOKE_TUNING_V1_COMPLETE`
-- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting and card impact orchestration
+- Status: `CARD_IMPACT_EFFECT_SIGNATURE_V2_COMPLETE`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration and player-card effect signatures
 
 ## Purpose
 
@@ -19,6 +19,8 @@ Lab Diff Reporter V1 is the fourth layer. It compares before/after outputs from 
 Card Impact Pack V1 is the fifth layer. It orchestrates a deterministic before/after impact matrix for active player and enemy cards, runs selected lab components, compares outputs, and reports structural regressions separately from numerical tuning movement. It exists to prepare large future card changes without changing gameplay in this step.
 
 Card Impact Smoke Tuning V1 is the first real use of that flow. It applies a deliberately small card batch, runs `before -> after -> compare`, and confirms that numeric impact can be reported without failing the structural gate.
+
+Card Impact Effect Signature V2 extends that flow for player cards. It captures before/after `BattleEngine` snapshots around the focused card play, derives effect signatures from real logs/state deltas, compares those signatures in `before -> after -> compare`, and keeps enemy-card signatures reserved as schema/report-only data for a future enemy implementation pass.
 
 ## Entry Point
 
@@ -62,6 +64,16 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v1
 
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v1
+```
+
+Card impact V2 effect-signature gates:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=before --mode=gate --pack=track02_card_impact_v2
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v2
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v2
 ```
 
 ## Presets
@@ -301,6 +313,39 @@ First real cycle result (`user://card_impact/smoke_tuning_v1`):
 - Impact detected: `enemy_ar_rajada` changed `damage_to_player_hero` from `4` to `5` and `player_hp` from `56` to `55` in its isolated enemy-card harness.
 - Operational lesson: an earlier probe on `enemy_terra_guerreiro_terra` was rejected because it changed the calibrated map 8 boss Battle Lab gate. Keep future smoke-tuning probes either intentionally gate-updating or isolated from calibrated core cases.
 
+## Card Impact Effect Signature V2
+
+`track02_card_impact_v2` keeps the V1 active-card matrix and adds derived effect signatures for player-card cases.
+
+Coverage:
+
+- 84/84 active card cases remain covered: 54 player card variants and 30 active enemy cards.
+- 15 `elemental_*` legacy inactive cards remain audited outside the active matrix.
+- 54/54 player-card cases require an effect signature in `--mode=gate`.
+- Enemy-card signatures are schema-ready but `report_only` in V2; missing enemy signatures do not fail the gate.
+
+Player signatures are derived from real `BattleEngine` snapshots around the `card_focus_legal` focused play. They summarize fields such as hero damage, slot damage, summons, ally buffs, enemy debuffs, poison/freeze/shield additions, mana/ashes gains, card draw/discard movement, pending choices, visual/log deltas, keyword deltas and compact effect-family tags.
+
+V2 adds:
+
+- `tools/lab/battle_effect_signature.gd`: pure snapshot/delta/aggregation utility.
+- `data/lab/card_impact/track02_card_impact_v2.json`: schema version 2 pack with effect-signature policy and harness hints.
+- `card_effect_signature`, `card_effect_signature_present`, `effect_families` and `card_effect_samples` fields in Battle Lab/Card Impact battle results.
+- `effect.*` metric comparison rows in lab diffs.
+- Card Impact summary fields for `effect_changes`, `top_effect_delta_cards`, `by_effect_family` and `missing_signatures`.
+
+Gate behavior:
+
+- Missing required player-card effect signatures fail `--mode=gate`.
+- Effect deltas are reported for review but do not fail the gate by themselves.
+- Structural regressions from V1 still fail: missing coverage, rejected engine actions, missing component reports, removed after records and new after `FAIL` records.
+
+Current calibrated same/same result (`user://card_impact/v2_all_gate`):
+
+- `before`, `after` and `compare` pass with 84 common battle cases, 12 common scenario cases and 3 common run-lab cases.
+- Coverage is 84/84 active cases, 54 required player effect signatures, 30 report-only enemy cases and 15 audited inactive legacy cards.
+- Compare reports zero status changes, zero metric changes, zero effect changes, zero missing signatures and zero structural errors.
+
 ## Result Schema
 
 Each detailed record contains:
@@ -313,7 +358,7 @@ Each detailed record contains:
 - `warnings`
 - `tags`
 
-The current macro-route `simulation_mode` is `macro_route_v1`. Gameplay Lab uses `battle_engine_v1`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
+The current macro-route `simulation_mode` is `macro_route_v1`. Gameplay Lab uses `battle_engine_v1`. Card Impact uses `card_impact_v1` and `card_impact_v2`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
 
 ## Baseline Strategy
 
@@ -338,8 +383,8 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Use the same Card Impact flow for a slightly larger real card batch, then decide whether the player-card harness should compare log-derived card-effect deltas in addition to final HP/turn metrics.
-2. Decide which repeated WARN or metric movements deserve promoted expectations after real use.
-3. Expand Card Impact Pack V2 to cover the remaining class reward cards once another real card-change cycle proves the workflow.
+1. Run the first meaningful player-card redesign batch through Card Impact V2: `before -> card edits -> after -> compare`, then inspect effect deltas before promoting any new expectations.
+2. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
+3. Implement enemy-card effect signatures once enemy action logs expose enough per-card causality to avoid guessing.
 4. Replay Lab: record human or bot decisions and replay them across builds.
 5. Dashboard: read the JSON/CSV/Markdown outputs and compare historical runs visually.

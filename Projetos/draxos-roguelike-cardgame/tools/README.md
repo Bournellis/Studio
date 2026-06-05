@@ -13,7 +13,7 @@ Local Godot tools for generation, validation, screenshots, and route telemetry l
 - `run_scenarios.gd`: runs explicit Scenario Fixtures packs with PASS/WARN/FAIL expectations and JSON/CSV/Markdown reports.
 - `run_battle_lab.gd`: runs isolated BattleEngine fixture packs with deterministic legal-action policies and JSON/CSV/Markdown reports.
 - `compare_lab_reports.gd`: compares before/after outputs from AutoRun Lab, Scenario Fixtures or Gameplay Lab and writes JSON/CSV/Markdown diffs.
-- `run_card_impact.gd`: orchestrates Card Impact Pack before/after/compare phases for active player and enemy cards, then writes aggregate JSON/CSV/Markdown reports.
+- `run_card_impact.gd`: orchestrates Card Impact Pack before/after/compare phases for active player and enemy cards, including V2 player-card effect signatures, then writes aggregate JSON/CSV/Markdown reports.
 - `capture_visual_screenshots.gd`: captures visual surfaces when UI work requires screenshots.
 
 ## Validation Command
@@ -54,6 +54,8 @@ Supported `--type` values are `auto`, `battle`, `scenario` and `run_lab`. Gate m
 
 ## Card Impact Pack Gate
 
+V1 structural impact flow:
+
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=before --mode=gate --pack=track02_card_impact_v1
 
@@ -62,4 +64,24 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v1
 ```
 
-Card Impact gate mode fails only on structural regressions: missing card coverage, target cards not exercised, rejected `BattleEngine` actions, missing reports, removed after records or new after `FAIL` records. Numeric gameplay movement is reported for review.
+V2 player-card effect-signature flow:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=before --mode=gate --pack=track02_card_impact_v2
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v2
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v2
+```
+
+Useful filters:
+
+```text
+--cards=all|player|enemy|arcano_choque
+--components=battle,scenario,run_lab
+--effect-signatures
+--effect-scope=player|enemy|all
+--effect-mode=required|report_only|off
+```
+
+Card Impact gate mode fails only on structural regressions: missing card coverage, required target cards not exercised, required player-card effect signatures missing in V2, rejected `BattleEngine` actions, missing reports, removed after records or new after `FAIL` records. Numeric gameplay movement and effect-signature deltas are reported for review.
