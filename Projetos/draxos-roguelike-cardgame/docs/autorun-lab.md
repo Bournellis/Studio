@@ -1,8 +1,8 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-05`
-- Status: `GAMEPLAY_LAB_V1_READY`
-- Scope: macro-route gameplay testing foundation, explicit scenario fixtures and isolated BattleEngine gameplay lab
+- Status: `LAB_DIFF_REPORTER_V1_READY`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab and before/after lab diff reporting
 
 ## Purpose
 
@@ -13,6 +13,8 @@ It still uses macro-route simulation through `tools/route_pacing_simulator.gd`. 
 Scenario Fixtures V1 is the second layer of this toolchain. It runs small named scenarios from JSON packs, evaluates explicit expectations as `PASS`, `WARN`, or `FAIL`, and keeps stress signals visible without turning expected stress warnings into hard regressions.
 
 Gameplay Lab V1 is the third layer. It runs isolated real battles through `BattleEngine`, using deterministic policies that only submit legal actions exposed by the engine. It targets combat regressions, keywords, hand/deck behavior, encounter modes, field effects, boss hooks and basic enemy AI signals without changing gameplay content or replacing human playtest.
+
+Lab Diff Reporter V1 is the fourth layer. It compares before/after outputs from AutoRun Lab, Scenario Fixtures and Gameplay Lab, then turns status changes, new failures, removed records and metric deltas into JSON, CSV and Markdown reports. It is built for future large card changes where the important question is not only "did the gate pass?", but "what moved, by how much, and where should a human inspect next?".
 
 ## Entry Point
 
@@ -40,6 +42,12 @@ Gameplay battle gate:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_battle_lab.gd -- --mode=gate --pack=track02_battle_core_v1
+```
+
+Lab diff gate:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/compare_lab_reports.gd -- --before=user://battle_lab/before_cards --after=user://battle_lab/after_cards --type=battle --out=user://lab_diff/card_change_probe --mode=gate
 ```
 
 ## Presets
@@ -186,6 +194,42 @@ Battle outputs:
 
 The current gate is explicit and is not called by `tools/validate.gd`. Current calibrated result: 9 PASS, 3 WARN and 0 FAIL. The WARN rows are intentional stress/signal cases, and `--mode=gate` fails only on `FAIL`.
 
+## Lab Diff Reporter V1
+
+`tools/compare_lab_reports.gd` compares two existing lab output directories. It does not run simulations itself and does not mutate gameplay data.
+
+Supported report pairs:
+
+- `battle`: `battle_results.json`
+- `scenario`: `scenario_results.json`
+- `run_lab`: `run_lab_detailed.json`, falling back to `run_lab_metrics.json`
+
+Useful commands:
+
+```text
+--before=user://battle_lab/before_cards
+--after=user://battle_lab/after_cards
+--type=auto|battle|scenario|run_lab
+--out=user://lab_diff/card_change_probe
+--mode=explore|gate
+--gate
+--numeric-threshold=0
+```
+
+Diff outputs:
+
+- `lab_diff.json`: complete structured diff.
+- `lab_diff.csv`: one row per status or metric change.
+- `lab_diff.md`: human report with status and metric matrices.
+- `lab_diff_gate.md`: short regression view.
+
+Gate behavior:
+
+- New `FAIL` records fail `--mode=gate`.
+- Removed records fail `--mode=gate`, because the compared matrix stopped covering a previous case.
+- New `WARN` records and metric changes are reported but do not fail the gate.
+- Identical deterministic before/after outputs should produce zero changes and pass the gate.
+
 ## Result Schema
 
 Each detailed record contains:
@@ -223,7 +267,8 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Use Gameplay Lab during the next real gameplay change and decide which WARN signals should become baseline PASS.
-2. Expand battle fixtures only after that first real use, especially for targeted keyword and boss hook regressions.
-3. Replay Lab: record human or bot decisions and replay them across builds.
-4. Dashboard: read the JSON/CSV/Markdown outputs and compare historical runs visually.
+1. Build a Card Impact Pack V1 with targeted battle/scenario fixtures for starter cards, reward cards and important card families.
+2. Use AutoRun, Scenario Fixtures, Gameplay Lab and Lab Diff Reporter together during the next card-change batch.
+3. Decide which repeated WARN signals should become baseline PASS after real use.
+4. Replay Lab: record human or bot decisions and replay them across builds.
+5. Dashboard: read the JSON/CSV/Markdown outputs and compare historical runs visually.
