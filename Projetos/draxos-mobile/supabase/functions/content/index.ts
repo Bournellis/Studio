@@ -1,5 +1,6 @@
 import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { grimoireCatalog } from "../_shared/grimoire_catalog.ts";
+import { verifiedAuthContext } from "../_shared/auth_context.ts";
 
 type Route = "grimoire";
 
@@ -14,17 +15,9 @@ interface RestError {
   status: number;
 }
 
-interface JwtPayload {
-  sub?: unknown;
-  is_anonymous?: unknown;
-}
-
 interface PlayerRow {
   id: string;
 }
-
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
@@ -56,7 +49,13 @@ async function handleCorsRequest(request: Request): Promise<Response> {
     );
   }
 
-  const auth = decodeAuth(request);
+  const auth = await verifiedAuthContext(request, {
+    supabaseUrl: config.value.supabaseUrl,
+    serviceRoleKey: config.value.serviceRoleKey,
+  }, {
+    requireEmailAccount: true,
+    emailAccountRequiredMessage: "The Grimorio requires an email/password alpha account.",
+  });
   if (auth.error !== null) {
     return errorResponse(
       auth.error.code,
@@ -64,14 +63,6 @@ async function handleCorsRequest(request: Request): Promise<Response> {
       auth.error.status,
     );
   }
-  if (auth.value.isAnonymous) {
-    return errorResponse(
-      "AUTH_REQUIRES_EMAIL",
-      "The Grimorio requires an email/password alpha account.",
-      403,
-    );
-  }
-
   const access = await assertAlphaAccess(auth.value.userId, config.value);
   if (access.error !== null) {
     return errorResponse(
@@ -110,56 +101,6 @@ function loadConfig(): { value: EdgeConfig; error: null } | {
     };
   }
   return { value: { supabaseUrl, serviceRoleKey }, error: null };
-}
-
-function decodeAuth(
-  request: Request,
-): { value: { userId: string; isAnonymous: boolean }; error: null } | {
-  value: null;
-  error: RestError;
-} {
-  const header = request.headers.get("authorization") ?? "";
-  const prefix = "Bearer ";
-  if (!header.startsWith(prefix)) {
-    return {
-      value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Bearer token is required.",
-        status: 401,
-      },
-    };
-  }
-  const token = header.slice(prefix.length);
-  const parts = token.split(".");
-  if (parts.length < 2) {
-    return {
-      value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Invalid bearer token.",
-        status: 401,
-      },
-    };
-  }
-  const payload = decodeJwtPayload(parts[1]);
-  if (
-    payload === null || typeof payload.sub !== "string" ||
-    !UUID_PATTERN.test(payload.sub)
-  ) {
-    return {
-      value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Token subject is invalid.",
-        status: 401,
-      },
-    };
-  }
-  return {
-    value: { userId: payload.sub, isAnonymous: payload.is_anonymous === true },
-    error: null,
-  };
 }
 
 async function assertAlphaAccess(
@@ -226,21 +167,6 @@ function serviceHeaders(config: EdgeConfig, hasBody: boolean): Headers {
   headers.set("authorization", `Bearer ${config.serviceRoleKey}`);
   if (hasBody) headers.set("content-type", "application/json");
   return headers;
-}
-
-function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
-  try {
-    const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
-    const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-    const bytes = Uint8Array.from(
-      atob(padded),
-      (character) => character.charCodeAt(0),
-    );
-    const payload: unknown = JSON.parse(new TextDecoder().decode(bytes));
-    return isObject(payload) ? payload as JwtPayload : null;
-  } catch {
-    return null;
-  }
 }
 
 function parseJson(text: string): unknown {

@@ -14,6 +14,11 @@ import progressionModelDocument from "../../../tools/progression_lab/model.v1.js
 import {
   buildProgressionData,
 } from "../../../tools/progression_lab/generate.ts";
+import {
+  bearerTokenFromRequest,
+  decodeBearerSubject,
+  verifiedAuthContext,
+} from "../_shared/auth_context.ts";
 import { stateEnvelope } from "../_shared/response_envelope.ts";
 
 type Route = "battle" | "progression";
@@ -22,18 +27,6 @@ type JsonObject = Record<string, unknown>;
 interface EdgeConfig {
   supabaseUrl: string;
   serviceRoleKey: string;
-}
-
-interface AuthContext {
-  userId: string;
-  email: string;
-  isAnonymous: boolean;
-}
-
-interface JwtPayload {
-  sub?: unknown;
-  email?: unknown;
-  is_anonymous?: unknown;
 }
 
 interface PlayerRow {
@@ -45,9 +38,6 @@ interface RestError {
   message: string;
   status: number;
 }
-
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export async function handleLabRunnerRequest(request: Request): Promise<Response> {
   if (request.method === "OPTIONS") {
@@ -69,11 +59,15 @@ export async function handleLabRunnerRequest(request: Request): Promise<Response
       return errorResponse("METHOD_NOT_ALLOWED", "Use POST for Lab Runner endpoints.", 405);
     }
 
-    const auth = decodeAuth(request);
-    if (auth.error !== null) {
-      return errorResponse(auth.error.code, auth.error.message, auth.error.status);
+    const token = bearerTokenFromRequest(request);
+    if (token.error !== null) {
+      return errorResponse(token.error.code, token.error.message, token.error.status);
     }
-    if (auth.value.isAnonymous || auth.value.email === "") {
+    const subject = decodeBearerSubject(token.value);
+    if (subject.error !== null) {
+      return errorResponse(subject.error.code, subject.error.message, subject.error.status);
+    }
+    if (subject.value.isAnonymous) {
       return errorResponse(
         "AUTH_REQUIRES_EMAIL",
         "Lab Runner requires the same Supabase email/password Internal Alpha account used by the game.",
@@ -84,6 +78,18 @@ export async function handleLabRunnerRequest(request: Request): Promise<Response
     const config = loadConfig();
     if (config.error !== null) {
       return errorResponse(config.error.code, config.error.message, config.error.status);
+    }
+
+    const auth = await verifiedAuthContext(request, {
+      supabaseUrl: config.value.supabaseUrl,
+      serviceRoleKey: config.value.serviceRoleKey,
+    }, {
+      requireEmailAccount: true,
+      emailAccountRequiredMessage:
+        "Lab Runner requires the same Supabase email/password Internal Alpha account used by the game.",
+    });
+    if (auth.error !== null) {
+      return errorResponse(auth.error.code, auth.error.message, auth.error.status);
     }
 
     const access = await assertAlphaAccess(auth.value.userId, config.value);
@@ -191,44 +197,6 @@ function resolveRoute(pathname: string): Route | null {
   return null;
 }
 
-function decodeAuth(
-  request: Request,
-): { value: AuthContext; error: null } | { value: null; error: RestError } {
-  const header = request.headers.get("authorization") ?? "";
-  const prefix = "Bearer ";
-  if (!header.startsWith(prefix)) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Bearer token is required.", status: 401 },
-    };
-  }
-
-  const parts = header.slice(prefix.length).split(".");
-  if (parts.length < 2) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Invalid bearer token.", status: 401 },
-    };
-  }
-
-  const payload = decodeJwtPayload(parts[1]);
-  if (payload === null || typeof payload.sub !== "string" || !UUID_PATTERN.test(payload.sub)) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Token subject is invalid.", status: 401 },
-    };
-  }
-
-  return {
-    value: {
-      userId: payload.sub,
-      email: typeof payload.email === "string" ? payload.email.trim().toLowerCase() : "",
-      isAnonymous: payload.is_anonymous === true,
-    },
-    error: null,
-  };
-}
-
 async function assertAlphaAccess(
   userId: string,
   config: EdgeConfig,
@@ -325,18 +293,6 @@ function cloneBattleModel(): Parameters<typeof runBattleLab>[0] {
 
 function cloneProgressionModel(): Parameters<typeof buildProgressionData>[0] {
   return structuredClone(progressionModelDocument) as Parameters<typeof buildProgressionData>[0];
-}
-
-function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
-  try {
-    const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
-    const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-    const bytes = Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
-    const payload: unknown = JSON.parse(new TextDecoder().decode(bytes));
-    return isObject(payload) ? payload as JwtPayload : null;
-  } catch {
-    return null;
-  }
 }
 
 function parseJson(text: string): unknown {

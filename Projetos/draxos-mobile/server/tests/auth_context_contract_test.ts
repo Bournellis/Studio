@@ -2,9 +2,13 @@ const SERVER_AUTH_HELPER = "server/functions/_shared/auth_context.ts";
 const SUPABASE_AUTH_HELPER = "supabase/functions/_shared/auth_context.ts";
 const MIGRATED_ENDPOINTS = [
   "server/functions/account/index.ts",
+  "server/functions/content/index.ts",
+  "server/functions/lab-runner/index.ts",
   "server/functions/progression-lab/index.ts",
   "server/functions/telemetry/index.ts",
 ] as const;
+
+import { decodeBearerSubject } from "../functions/_shared/auth_context.ts";
 
 Deno.test("shared auth context helper verifies bearer tokens through Supabase Auth", async () => {
   const serverHelper = await Deno.readTextFile(SERVER_AUTH_HELPER);
@@ -58,6 +62,16 @@ Deno.test("migrated endpoints use verified auth context", async () => {
   }
 });
 
+Deno.test("shared auth helper accepts canonical Supabase UUID subjects", () => {
+  const subject = "11111111-1111-4111-8111-111111111111";
+  const result = decodeBearerSubject(fakeJwt({ sub: subject, is_anonymous: true }));
+  if (result.error !== null) {
+    throw new Error(`Expected valid UUID subject, got ${result.error.message}`);
+  }
+  assertEq(result.value.sub, subject, "decoded subject should match");
+  assertEq(result.value.isAnonymous, true, "decoded anonymous flag should match");
+});
+
 function normalize(value: string): string {
   return value.replaceAll("\r\n", "\n");
 }
@@ -80,4 +94,19 @@ function assertEq(actual: unknown, expected: unknown, message: string): void {
       `${message}. Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`,
     );
   }
+}
+
+function fakeJwt(payload: Record<string, unknown>): string {
+  return [
+    encodeBase64Url({ alg: "none", typ: "JWT" }),
+    encodeBase64Url(payload),
+    "signature",
+  ].join(".");
+}
+
+function encodeBase64Url(payload: Record<string, unknown>): string {
+  return btoa(JSON.stringify(payload)).replaceAll("+", "-").replaceAll("/", "_").replaceAll(
+    "=",
+    "",
+  );
 }
