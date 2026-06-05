@@ -64,12 +64,16 @@ assert(
 
 const guardrails = objectField(config, "guardrails");
 assert(booleanField(guardrails, "release_scoped"), "runtime config should be release-scoped");
-assert(booleanField(guardrails, "read_only"), "runtime config should be read-only");
+assert(
+  !booleanField(guardrails, "read_only"),
+  "published runtime config should allow online progression actions",
+);
 assert(booleanField(guardrails, "no_service_role"), "runtime config must not expose service role");
 assert(booleanField(guardrails, "no_player_state"), "runtime config must not expose player state");
+assert(booleanField(guardrails, "no_gameplay_tuning"), "runtime config must not expose gameplay tuning");
 assert(
-  !booleanField(guardrails, "mutable_gameplay_state"),
-  "runtime config must not expose mutable gameplay state",
+  booleanField(guardrails, "mutable_gameplay_state"),
+  "published runtime config should allow server-authoritative gameplay mutations",
 );
 
 const forbidden = findForbiddenKeys(config);

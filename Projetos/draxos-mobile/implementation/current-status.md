@@ -18,6 +18,7 @@
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Latest deployment evidence: `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`
 - Source state: `master` after merging Track 23 Arena PVE update recovery and preserving the later Scenario Fixtures V1 merge on the same trunk.
+- Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
 - Previous content/polish package: `Bosque v3 UX/Feel`
 - Previous content/polish release root: `internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45`
 - Previous content/polish preview: `https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev`
@@ -57,6 +58,7 @@ Publication evidence:
 - Remote Web launch smoke on preview loaded the game in `3463 ms`, matched release root and asset root, and reported no runtime errors.
 - Stable Portal/Web remain protected by Cloudflare Access and passed RemoteReadOnly with Access marked expected.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
+- `release/config` hotfix applied after publication so the same package no longer pauses online progression actions by remote config.
 
 Artifact hashes:
 
@@ -106,6 +108,14 @@ Track 23 publication validation:
 - `wrangler pages deploy ... --branch main`: PASS, preview `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`.
 - `publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation`: PASS.
 - `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a -RemoteWebUrl https://2c020d09.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS after loading local read-only Supabase URL and publishable key from `.env.internal-alpha.local`.
+
+Runtime config online actions hotfix validation:
+
+- `deno test --allow-read server/tests/release_auth_contract_test.ts`: PASS, 4 tests.
+- `deno check server/functions/release/index.ts supabase/functions/release/index.ts server/tests/runtime_config_smoke.ts server/tests/release_auth_contract_test.ts`: PASS.
+- `tools/smoke_runtime_config.gd`: PASS.
+- `validate_foundation.ps1 -Profile ServerQuick -NoProjectWrites`: PASS.
+- `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS after one-time `Godot --headless --import` for the fresh worktree cache.
 
 Historical validation logs and package-by-package publication evidence belong in `implementation/tracks/`, `docs/*-report.md`, Kanban Done cards or handoffs, not in this decision snapshot.
 

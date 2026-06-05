@@ -79,3 +79,21 @@ Deno.test("release route contract returns NOT_FOUND for unknown subpaths", async
     );
   }
 });
+
+Deno.test("release runtime config fallback allows published online progression actions", async () => {
+  for (const path of releaseSources) {
+    const source = await Deno.readTextFile(path);
+    assert(
+      source.includes('config_version: "track23-online-actions-hotfix"'),
+      `${path} should identify the Track 23 online actions runtime config hotfix`,
+    );
+    assert(
+      source.includes("read_only: false"),
+      `${path} should not pause online progression actions in the published runtime config`,
+    );
+    assert(
+      source.includes("mutable_gameplay_state: true"),
+      `${path} should allow server-authoritative gameplay mutations in the published runtime config`,
+    );
+  }
+});

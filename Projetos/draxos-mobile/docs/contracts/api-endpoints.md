@@ -628,8 +628,8 @@ Response:
 {
   "schema_version": "runtime_config_v1",
   "channel": "internal_alpha",
-  "config_version": "t06-c-safe-defaults",
-  "generated_at": "2026-05-27T00:00:00Z",
+  "config_version": "track23-online-actions-hotfix",
+  "generated_at": "2026-06-05T09:23:46Z",
   "features": {
     "profile_account_panel": false,
     "battle_history_replay": false,
@@ -643,12 +643,12 @@ Response:
   },
   "guardrails": {
     "release_scoped": true,
-    "read_only": true,
+    "read_only": false,
     "no_service_role": true,
     "no_secrets": true,
     "no_player_state": true,
     "no_gameplay_tuning": true,
-    "mutable_gameplay_state": false
+    "mutable_gameplay_state": true
   }
 }
 ```
@@ -657,6 +657,7 @@ Regras:
 
 - O payload deve conter apenas configuracao release-scoped e flags conhecidas.
 - O payload nao contem service role, secrets, JWT, player/save state, recursos, builds, battle logs, ranking ou parametros de tuning.
+- Em pacote publicado de Internal Alpha com servicos online ativos, `read_only` deve ser `false` e `mutable_gameplay_state` deve ser `true`; a autoridade da mutacao continua nos endpoints server-side.
 - Overrides operacionais podem alterar apenas campos allowlisted pelo service; flags desconhecidas sao ignoradas.
 - O cliente deve tolerar indisponibilidade usando fallback conservador: todas as flags T06 ficam `false`, `offline_fallback_allowed` fica `true` e nenhuma acao online e destravada por config ausente.
 
