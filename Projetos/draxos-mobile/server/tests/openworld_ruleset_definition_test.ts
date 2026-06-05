@@ -69,6 +69,47 @@ Deno.test("openworld forest ruleset cross-links resource nodes and recipe items"
   }
 });
 
+Deno.test("openworld forest resource nodes stay clear of blockers and borders", async () => {
+  const ruleset = await rulesetDefinition();
+  const world = objectField(ruleset["world"]);
+  const worldSize = vectorField(world, "size");
+  const collectionRadius = numberField(world, "collection_radius");
+  const playerCollisionRadius = 20;
+  const minimumCollectionMargin = 8;
+  const minimumStandableClearance = playerCollisionRadius + minimumCollectionMargin;
+  const blockers = blockingCollisionFixtures(ruleset);
+
+  assert(
+    collectionRadius >= playerCollisionRadius + minimumCollectionMargin,
+    "collection radius should cover the player body plus the minimum collection margin",
+  );
+
+  for (const node of arrayField(ruleset, "resource_nodes").map(objectField)) {
+    const nodeId = stringField(node, "node_id");
+    const position = vectorField(node, "position");
+    const borderClearance = Math.min(
+      position.x,
+      position.y,
+      worldSize.x - position.x,
+      worldSize.y - position.y,
+    );
+    assert(
+      borderClearance >= minimumStandableClearance,
+      `${nodeId} should stay collectable away from map borders. ` +
+        `Clearance=${roundForMessage(borderClearance)}`,
+    );
+
+    for (const blocker of blockers) {
+      const blockerClearance = signedDistanceToBlocker(position, blocker);
+      assert(
+        blockerClearance >= minimumStandableClearance,
+        `${nodeId} should not spawn inside or too close to blocker ${blocker.id}. ` +
+          `Clearance=${roundForMessage(blockerClearance)}`,
+      );
+    }
+  }
+});
+
 Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL logic", async () => {
   const ruleset = await rulesetDefinition();
   const baseMigration = await projectText(BASE_MIGRATION_PATH);
@@ -169,6 +210,89 @@ function stringField(record: Record<string, unknown>, key: string): string {
 
 function numberField(record: Record<string, unknown>, key: string): number {
   return typeof record[key] === "number" ? record[key] as number : Number.NaN;
+}
+
+type Vector2 = {
+  x: number;
+  y: number;
+};
+
+type BlockingCollisionFixture = {
+  id: string;
+  collisionShape: string;
+  position: Vector2;
+  collisionSize: Vector2;
+  collisionRadius: number;
+  collisionOffset: Vector2;
+};
+
+function blockingCollisionFixtures(ruleset: Record<string, unknown>): BlockingCollisionFixture[] {
+  const world = objectField(ruleset["world"]);
+  const result: BlockingCollisionFixture[] = [
+    {
+      id: "chest_home",
+      collisionShape: "rectangle",
+      position: vectorField(world, "chest_position"),
+      collisionSize: { x: 82, y: 54 },
+      collisionRadius: 43,
+      collisionOffset: { x: 0, y: 4 },
+    },
+  ];
+
+  for (const section of ["structures", "obstacles"]) {
+    for (const entry of arrayField(ruleset, section).map(objectField)) {
+      if (entry["blocks_player"] === false) continue;
+      result.push({
+        id: stringField(entry, "id"),
+        collisionShape: stringField(entry, "collision_shape") || "circle",
+        position: vectorField(entry, "position"),
+        collisionSize: vectorField(entry, "collision_size"),
+        collisionRadius: numberField(entry, "collision_radius"),
+        collisionOffset: vectorField(entry, "collision_offset"),
+      });
+    }
+  }
+
+  return result;
+}
+
+function vectorField(
+  record: Record<string, unknown>,
+  key: string,
+  fallback: Vector2 = { x: 0, y: 0 },
+): Vector2 {
+  const value = objectField(record[key]);
+  const x = numberField(value, "x");
+  const y = numberField(value, "y");
+  return Number.isFinite(x) && Number.isFinite(y) ? { x, y } : fallback;
+}
+
+function signedDistanceToBlocker(point: Vector2, blocker: BlockingCollisionFixture): number {
+  const center = addVectors(blocker.position, blocker.collisionOffset);
+  if (blocker.collisionShape === "rectangle") {
+    return signedDistanceToRectangle(point, center, blocker.collisionSize);
+  }
+  return distanceBetween(point, center) - blocker.collisionRadius;
+}
+
+function signedDistanceToRectangle(point: Vector2, center: Vector2, size: Vector2): number {
+  const dx = Math.abs(point.x - center.x) - size.x * 0.5;
+  const dy = Math.abs(point.y - center.y) - size.y * 0.5;
+  const outsideDistance = Math.hypot(Math.max(dx, 0), Math.max(dy, 0));
+  const insideDistance = Math.min(Math.max(dx, dy), 0);
+  return outsideDistance + insideDistance;
+}
+
+function addVectors(left: Vector2, right: Vector2): Vector2 {
+  return { x: left.x + right.x, y: left.y + right.y };
+}
+
+function distanceBetween(left: Vector2, right: Vector2): number {
+  return Math.hypot(left.x - right.x, left.y - right.y);
+}
+
+function roundForMessage(value: number): string {
+  return value.toFixed(2);
 }
 
 function assert(condition: boolean, message: string): asserts condition {

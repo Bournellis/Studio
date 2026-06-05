@@ -6,6 +6,7 @@ const ObjectScript := preload("res://modes/openworld/openworld_world_object.gd")
 const PlayerScript := preload("res://modes/openworld/openworld_player_controller.gd")
 
 const WALL_THICKNESS := 96.0
+const RESOURCE_PROXIMITY_RADIUS := 126.0
 
 var world_size := Vector2(960, 1400)
 var chest_position := Vector2(220, 250)
@@ -124,6 +125,17 @@ func resource_node_position(node_id: String) -> Vector2:
 	var object := _resource_objects.get(node_id) as OpenworldWorldObject
 	return object.global_position if object != null else Vector2.ZERO
 
+func resource_visual_state(item_id: String) -> Dictionary:
+	var objects: Array = _resource_objects_by_item.get(item_id, []) as Array
+	var object: OpenworldWorldObject = null
+	if not objects.is_empty():
+		object = objects[0] as OpenworldWorldObject
+	return _resource_object_visual_state(object)
+
+func resource_node_visual_state(node_id: String) -> Dictionary:
+	var object := _resource_objects.get(node_id) as OpenworldWorldObject
+	return _resource_object_visual_state(object)
+
 func structure_position(upgrade_id: String) -> Vector2:
 	var object := _structure_objects.get(upgrade_id) as OpenworldWorldObject
 	return object.global_position if object != null else Vector2.ZERO
@@ -146,19 +158,25 @@ func set_state(
 ) -> void:
 	_walk_phase = next_walk_phase
 	_set_structure_visibility(built_upgrades)
+	var player_position := get_player_position()
 	for entry: Dictionary in resources:
 		var resource_item_id := str(entry.get("item_id", ""))
 		var resource_node_id := str(entry.get("node_id", ""))
 		var object := _resource_objects.get(resource_node_id) as OpenworldWorldObject
 		if object == null:
 			continue
+		var resource_collected := bool(entry.get("collected", false))
+		var resource_nearest := resource_node_id == nearest_node_id
+		var resource_nearby := not resource_collected and player_position.distance_to(object.global_position) <= RESOURCE_PROXIMITY_RADIUS
 		object.set_resource_state(
-			bool(entry.get("collected", false)),
-			resource_node_id == nearest_node_id,
-			collection_progress if resource_node_id == nearest_node_id else 0.0
+			resource_collected,
+			resource_nearest,
+			collection_progress if resource_nearest else 0.0,
+			resource_nearby
 		)
 	if player != null:
 		player.set_visual_state(pocket_full, _walk_phase)
+	queue_redraw()
 
 func _physics_process(_delta: float) -> void:
 	if player == null:
@@ -299,6 +317,7 @@ func _draw() -> void:
 		draw_circle(point, radius, color)
 	_draw_path()
 	_draw_base_zone()
+	_draw_nonblocking_landmarks()
 	_draw_background_forest()
 	_draw_cemetery_zone()
 
@@ -323,6 +342,39 @@ func _draw_path() -> void:
 func _draw_base_zone() -> void:
 	draw_circle(chest_position + Vector2(0, 8), 108.0, Color(0.05, 0.03, 0.02, 0.20))
 	draw_circle(chest_position, 100.0, Color(0.18, 0.11, 0.07, 0.36))
+
+func _draw_nonblocking_landmarks() -> void:
+	_draw_ground_marker(Vector2(320, 375), 42.0, Color(0.74, 0.61, 0.32, 0.16))
+	_draw_ground_marker(Vector2(610, 720), 34.0, Color(0.42, 0.60, 0.28, 0.14))
+	_draw_fallen_log(Vector2(735, 905), -0.24)
+	_draw_fern_cluster(Vector2(176, 595))
+	_draw_fern_cluster(Vector2(820, 535))
+
+func _draw_ground_marker(center: Vector2, radius: float, color: Color) -> void:
+	draw_circle(center, radius, Color(color.r, color.g, color.b, color.a * 0.32))
+	draw_arc(center, radius, 0.0, TAU, 48, color, 2.0, true)
+	draw_arc(center, radius * 0.58, 0.4, TAU + 0.4, 48, Color(color.r, color.g, color.b, color.a * 0.72), 1.2, true)
+	for index in range(6):
+		var angle := TAU * float(index) / 6.0
+		draw_circle(center + Vector2(cos(angle), sin(angle)) * radius * 0.72, 3.0, Color(color.r, color.g, color.b, color.a * 0.78))
+
+func _draw_fallen_log(center: Vector2, angle: float) -> void:
+	var direction := Vector2(cos(angle), sin(angle))
+	var normal := Vector2(-direction.y, direction.x)
+	var start := center - direction * 44.0
+	var finish := center + direction * 44.0
+	draw_line(start + normal * 8.0, finish + normal * 8.0, Color(0.02, 0.01, 0.0, 0.18), 18.0)
+	draw_line(start, finish, Color(0.26, 0.15, 0.07, 0.40), 13.0)
+	draw_line(start + direction * 10.0, finish - direction * 16.0, Color(0.54, 0.34, 0.16, 0.22), 3.0)
+	draw_circle(start, 7.0, Color(0.55, 0.37, 0.19, 0.28))
+
+func _draw_fern_cluster(center: Vector2) -> void:
+	for index in range(5):
+		var angle := -1.05 + float(index) * 0.52
+		var length := 24.0 + float(index % 2) * 8.0
+		var tip := center + Vector2(cos(angle), sin(angle)) * length
+		draw_line(center, tip, Color(0.20, 0.42, 0.18, 0.32), 3.0)
+		draw_circle(tip, 5.0, Color(0.22, 0.52, 0.22, 0.24))
 
 func _draw_background_forest() -> void:
 	for index in range(24):
@@ -353,3 +405,15 @@ func _decor_point(index: int, x_seed: float, y_seed: float) -> Vector2:
 	var x := fmod(float(index * 97) + x_seed, world_size.x - 80.0) + 40.0
 	var y := fmod(float(index * 163) + y_seed, world_size.y - 90.0) + 45.0
 	return Vector2(x, y)
+
+func _resource_object_visual_state(object: OpenworldWorldObject) -> Dictionary:
+	if object == null:
+		return {"exists": false}
+	return {
+		"exists": true,
+		"visible": object.visible,
+		"collected": object.collected,
+		"nearest": object.nearest,
+		"nearby": object.nearby,
+		"collection_progress": object.collection_progress,
+	}

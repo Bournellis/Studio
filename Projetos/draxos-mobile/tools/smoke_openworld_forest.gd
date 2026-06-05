@@ -71,6 +71,22 @@ func _run_smoke() -> int:
 	await _wait_physics_frames(72)
 	screen.set_debug_joystick_vector(Vector2.ZERO)
 	_expect(screen.get_player_position().x > galho_position.x + 18.0, "Resource areas do not block movement.")
+	screen.call("set_player_position_for_tests", galho_position + Vector2(-88, 0))
+	screen.call("_update_labels")
+	var galho_near_state: Dictionary = world.call("resource_visual_state", "galho")
+	_expect(bool(galho_near_state.get("nearby", false)), "Nearby resource gets a procedural visual marker.")
+	_expect(not bool(galho_near_state.get("nearest", false)), "Nearby resource marker is distinct from active collection range.")
+	screen.call("set_player_position_for_tests", galho_position + Vector2(-12, 0))
+	screen.call("_update_labels")
+	var galho_collect_state: Dictionary = world.call("resource_visual_state", "galho")
+	_expect(bool(galho_collect_state.get("nearest", false)), "Collectable resource gets active collection highlight.")
+	var screen_model = screen.get_model()
+	screen_model.deposit_all()
+	screen_model.chest = {"galho": 2, "folha_seca": 2, "pedra_pequena": 1}
+	_expect(screen_model.craft("fogueira_estavel_1").get("ok") == true, "Crafting campfire succeeds in screen model.")
+	screen.call("_update_labels")
+	_expect(world.call("structure_visible", "fogueira_estavel_1"), "Built campfire becomes visible in the forest.")
+	_expect(world.call("structure_collision_enabled", "fogueira_estavel_1"), "Built campfire keeps its contracted small blocker.")
 
 	var joystick := screen.find_child("OpenworldVirtualJoystick", true, false) as Control
 	_expect(joystick != null and not joystick.visible, "Free joystick starts hidden.")

@@ -237,9 +237,13 @@ func update(state: Dictionary) -> void:
 	if mode_label != null:
 		mode_label.text = str(state.get("mode_label", "Bosque"))
 	if status_label != null:
-		status_label.text = str(state.get("status_text", "Explore o bosque"))
+		var next_status := str(state.get("status_text", "Explore o bosque"))
+		status_label.text = next_status
+		status_label.add_theme_color_override("font_color", _status_color(next_status))
 	if feedback_label != null:
-		feedback_label.text = str(state.get("feedback_text", ""))
+		var next_feedback := str(state.get("feedback_text", ""))
+		feedback_label.text = next_feedback
+		feedback_label.add_theme_color_override("font_color", _feedback_color(next_feedback))
 	if deposit_button != null:
 		deposit_button.disabled = bool(state.get("deposit_disabled", false))
 		deposit_button.tooltip_text = str(state.get("deposit_tooltip", "Depositar bolso no bau."))
@@ -361,6 +365,32 @@ func _panel_style(bg: Color, border: Color) -> StyleBoxFlat:
 	style.corner_radius_bottom_left = 8
 	style.corner_radius_bottom_right = 8
 	return style
+
+func _status_color(text: String) -> Color:
+	var lower := text.to_lower()
+	if lower.begins_with("coletando"):
+		return Color(0.98, 0.78, 0.36)
+	if lower.begins_with("pare para coletar"):
+		return Color(0.96, 0.86, 0.58)
+	if lower.find("bau") >= 0:
+		return Color(0.70, 0.86, 0.78)
+	if lower.find("sincronizando") >= 0:
+		return Color(0.65, 0.78, 0.96)
+	return Color(0.94, 0.91, 0.80)
+
+func _feedback_color(text: String) -> Color:
+	var lower := text.to_lower()
+	if lower == "":
+		return Color(0.96, 0.86, 0.58)
+	if lower.find("bolso cheio") >= 0:
+		return Color(1.0, 0.58, 0.44)
+	if lower.find("deposit") >= 0 or lower.find("bau") >= 0:
+		return Color(0.72, 0.92, 0.78)
+	if lower.find("craft") >= 0 or lower.find("fogueira") >= 0:
+		return Color(0.98, 0.78, 0.36)
+	if lower.begins_with("+"):
+		return Color(0.96, 0.86, 0.58)
+	return Color(0.94, 0.91, 0.80)
 
 func _as_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}

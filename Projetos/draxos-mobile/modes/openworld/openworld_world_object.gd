@@ -21,6 +21,7 @@ var sort_offset := 0.0
 var visual_size := Vector2(40, 40)
 var collected := false
 var nearest := false
+var nearby := false
 var collection_progress := 0.0
 var built := true
 
@@ -55,9 +56,10 @@ func configure(object_data: Dictionary) -> void:
 func collision_center_global() -> Vector2:
 	return global_position + collision_offset
 
-func set_resource_state(next_collected: bool, next_nearest: bool, next_progress: float) -> void:
+func set_resource_state(next_collected: bool, next_nearest: bool, next_progress: float, next_nearby: bool = false) -> void:
 	collected = next_collected
 	nearest = next_nearest
+	nearby = next_nearby or next_nearest
 	collection_progress = clampf(next_progress, 0.0, 1.0)
 	visible = not collected
 	if _area != null:
@@ -105,10 +107,12 @@ func _draw() -> void:
 	if collectible:
 		if collected:
 			return
+		if nearby:
+			_draw_resource_pickup_marker(nearest)
 		if nearest:
 			draw_circle(Vector2.ZERO, ModelScript.COLLECTION_RADIUS, Color(0.82, 0.72, 0.45, 0.13))
 			draw_arc(Vector2.ZERO, ModelScript.COLLECTION_RADIUS, -PI * 0.5, TAU * collection_progress - PI * 0.5, 48, Color(0.90, 0.76, 0.38, 0.78), 4.0, true)
-		_draw_resource_icon(item_id, nearest)
+		_draw_resource_icon(item_id, nearby)
 		return
 	match kind:
 		CatalogScript.KIND_CHEST:
@@ -135,6 +139,7 @@ func _draw_chest() -> void:
 
 func _draw_large_tree() -> void:
 	draw_circle(Vector2(0, 22), 36.0, Color(0.0, 0.0, 0.0, 0.28))
+	draw_arc(Vector2(0, 20), collision_radius, 0.0, TAU, 48, Color(0.02, 0.02, 0.01, 0.18), 2.0, true)
 	draw_line(Vector2(0, 24), Vector2(0, -42), Color(0.14, 0.08, 0.04, 0.88), 13.0)
 	draw_line(Vector2(-12, -4), Vector2(-30, -42), Color(0.14, 0.08, 0.04, 0.58), 6.0)
 	draw_line(Vector2(10, -12), Vector2(34, -49), Color(0.14, 0.08, 0.04, 0.58), 6.0)
@@ -164,7 +169,10 @@ func _draw_large_rock() -> void:
 	draw_arc(Vector2.ZERO, collision_radius, 0.0, TAU, 40, Color(0.0, 0.0, 0.0, 0.10), 1.0, true)
 
 func _draw_campfire() -> void:
+	draw_circle(Vector2(0, 3), 52.0, Color(0.95, 0.36, 0.10, 0.08))
+	draw_circle(Vector2(0, 6), 38.0, Color(1.00, 0.58, 0.20, 0.10))
 	draw_circle(Vector2(0, 12), 30.0, Color(0.0, 0.0, 0.0, 0.28))
+	draw_arc(Vector2(0, 8), 34.0, 0.0, TAU, 64, Color(0.98, 0.68, 0.32, 0.36), 2.0, true)
 	for index in range(8):
 		var angle := TAU * float(index) / 8.0
 		var point := Vector2(cos(angle), sin(angle) * 0.62) * 22.0 + Vector2(0, 8)
@@ -184,7 +192,19 @@ func _draw_campfire() -> void:
 		Vector2(0, 12),
 		Vector2(-7, 0),
 	]), Color(1.0, 0.74, 0.26, 0.92))
+	draw_line(Vector2(-8, -28), Vector2(-18, -48), Color(0.86, 0.70, 0.42, 0.18), 2.0)
+	draw_line(Vector2(8, -26), Vector2(20, -44), Color(0.86, 0.70, 0.42, 0.16), 2.0)
 	draw_circle(Vector2(0, 9), 10.0, Color(0.18, 0.12, 0.08, 0.48))
+
+func _draw_resource_pickup_marker(highlighted: bool) -> void:
+	var radius := 32.0 if highlighted else 27.0
+	var marker_color := Color(0.93, 0.76, 0.38, 0.22 if highlighted else 0.13)
+	draw_circle(Vector2(0, 8), radius, Color(marker_color.r, marker_color.g, marker_color.b, marker_color.a * 0.42))
+	draw_arc(Vector2(0, 8), radius, 0.0, TAU, 48, marker_color, 1.5, true)
+	draw_arc(Vector2(0, 8), radius * 0.62, 0.3, TAU + 0.3, 48, Color(marker_color.r, marker_color.g, marker_color.b, marker_color.a * 0.72), 1.0, true)
+	for index in range(3):
+		var angle := TAU * float(index) / 3.0 - PI * 0.5
+		draw_circle(Vector2(0, 8) + Vector2(cos(angle), sin(angle)) * (radius + 3.0), 2.0, Color(1.0, 0.88, 0.56, 0.44 if highlighted else 0.26))
 
 func _draw_resource_icon(resource_item_id: String, highlighted: bool) -> void:
 	draw_circle(Vector2(0, 8), 17.0, Color(0.0, 0.0, 0.0, 0.30))

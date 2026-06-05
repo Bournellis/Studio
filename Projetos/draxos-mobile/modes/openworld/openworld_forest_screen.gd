@@ -306,8 +306,9 @@ func _view_state(nearest_id: String) -> Dictionary:
 	var completed := _session_blocks_mutation()
 	var can_complete := _can_complete_integrated()
 	var near_chest := _near_chest()
-	var deposit_available := near_chest and not network_busy and not pending and not completed
-	var deposit_tooltip := "Visita encerrada." if completed else ("Sincronizacao em andamento." if pending else ("Depositar bolso no bau." if near_chest else "Aproxime-se do bau."))
+	var has_pocket_items: bool = not model.pocket.is_empty()
+	var deposit_available: bool = near_chest and has_pocket_items and not network_busy and not pending and not completed
+	var deposit_tooltip := _deposit_tooltip(completed, pending, network_busy, near_chest, has_pocket_items)
 	var complete_tooltip := _complete_tooltip(can_complete, pending, completed)
 	return {
 		"integration_mode": integration_mode,
@@ -350,28 +351,48 @@ func _status_text(nearest_id: String, completed: bool) -> String:
 		return "Sincronizando Bosque"
 	if not model.active_collection.is_empty():
 		return "Coletando %s" % model.item_display_name(str(model.active_collection.get("item_id", "")))
+	if model.pocket_weight() >= model.capacity() - 0.001:
+		return "Bolso cheio; volte ao bau"
+	if _near_chest() and not model.pocket.is_empty():
+		return "Bau proximo; deposito pronto"
+	var first_craft := model.first_available_recipe_name()
+	if first_craft != "":
+		return "%s pronto no craft" % first_craft
 	if nearest_id != "":
 		return "Pare para coletar %s" % model.item_display_name(nearest_id)
 	if _near_chest():
 		return "Bau proximo"
+	if model.pocket_load_ratio() >= ModelScript.LOAD_PENALTY_START_RATIO:
+		return model.pocket_status_text()
 	return "Explore o bosque"
 
 func _session_message() -> String:
 	match _session_state():
 		"synced":
-			return "Voce pode voltar ao Refugio e retomar esta sessao por ate 2h."
+			return "Sessao online salva. Voltar preserva o Bosque por ate 2h."
 		"pending":
-			return "Aguarde a sincronizacao antes de encerrar."
+			return "Tem acao aguardando servidor. Espere sincronizar antes de encerrar."
 		"resyncing":
-			return "Resincronizando com o servidor."
+			return "Resincronizando o Bosque com o servidor."
 		"completed":
-			return "Visita encerrada."
+			return "Visita encerrada. O resumo fica abaixo."
 		"offline":
-			return "Preview jogavel; nenhuma recompensa sera aplicada."
+			return "Preview jogavel offline. Nenhuma recompensa sera aplicada."
 		"blocked":
-			return "Preview jogavel; sessao online indisponivel."
+			return "Preview jogavel; a sessao online esta indisponivel agora."
 		_:
 			return "Preview jogavel; nenhuma recompensa sera aplicada."
+
+func _deposit_tooltip(completed: bool, pending: bool, network_busy: bool, near_chest: bool, has_pocket_items: bool) -> String:
+	if completed:
+		return "Visita ja encerrada."
+	if network_busy or pending:
+		return "Aguarde a sincronizacao do Bosque."
+	if not near_chest:
+		return "Aproxime-se do bau."
+	if not has_pocket_items:
+		return "Bolso vazio; colete algo antes."
+	return "Depositar tudo que esta no bolso."
 
 func _complete_tooltip(can_complete: bool, pending: bool, completed: bool) -> String:
 	if completed:
@@ -389,12 +410,7 @@ func _show_result() -> void:
 	_show_local_result()
 
 func _show_local_result() -> void:
-	var payload: Dictionary = model.result_payload(_runtime.session_seconds)
-	_last_result_text = "Resumo da visita: tempo=%s, depositados=%s, criacoes=%s. Sem recompensa." % [
-		_format_seconds(float(payload.get("session_seconds", 0.0))),
-		JSON.stringify(payload.get("deposited_items", {})),
-		JSON.stringify(payload.get("local_upgrades", {})),
-	]
+	_last_result_text = model.visit_summary_text(_runtime.session_seconds, "Sem recompensa.")
 	model.last_message = "Visita encerrada em preview sem recompensa."
 	_update_labels()
 
@@ -423,7 +439,7 @@ func _handle_abandon_requested() -> void:
 		return
 	if not _abandon_confirm_pending:
 		_abandon_confirm_pending = true
-		model.last_message = "Toque Confirmar abandono para descartar a sessao online."
+		model.last_message = "Confirme para descartar esta sessao online."
 		_update_labels()
 		return
 	var result: Dictionary = await _ensure_session_bridge().abandon_session("player_abandoned")

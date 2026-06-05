@@ -100,7 +100,7 @@
     {"node_id": "node_pedra_01", "item_id": "pedra", "position": {"x": 430, "y": 900}, "quantity": 1},
     {"node_id": "node_cogumelo_01", "item_id": "cogumelo", "position": {"x": 690, "y": 640}, "quantity": 1},
     {"node_id": "node_fungo_01", "item_id": "fungo", "position": {"x": 760, "y": 820}, "quantity": 1},
-    {"node_id": "node_inseto_01", "item_id": "inseto", "position": {"x": 530, "y": 620}, "quantity": 1},
+    {"node_id": "node_inseto_01", "item_id": "inseto", "position": {"x": 606, "y": 650}, "quantity": 1},
     {"node_id": "node_resina_01", "item_id": "resina", "position": {"x": 620, "y": 720}, "quantity": 1},
     {"node_id": "node_resina_02", "item_id": "resina", "position": {"x": 680, "y": 760}, "quantity": 1},
     {"node_id": "node_folha_seca_01", "item_id": "folha_seca", "position": {"x": 440, "y": 1080}, "quantity": 1},
@@ -127,12 +127,12 @@
     }
   ],
   "obstacles": [
-    {"id": "tree_large_northwest", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 130, "y": 430}, "visual_size": {"x": 105, "y": 130}, "collision_shape": "circle", "collision_size": {"x": 84, "y": 84}, "collision_radius": 42, "collision_offset": {"x": 0, "y": 18}, "sort_offset": 28},
-    {"id": "tree_large_mid", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 540, "y": 595}, "visual_size": {"x": 120, "y": 142}, "collision_shape": "circle", "collision_size": {"x": 92, "y": 92}, "collision_radius": 46, "collision_offset": {"x": 0, "y": 20}, "sort_offset": 30},
-    {"id": "tree_large_south", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 352, "y": 1135}, "visual_size": {"x": 115, "y": 138}, "collision_shape": "circle", "collision_size": {"x": 90, "y": 90}, "collision_radius": 45, "collision_offset": {"x": 0, "y": 20}, "sort_offset": 30},
-    {"id": "tree_large_east", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 812, "y": 710}, "visual_size": {"x": 118, "y": 136}, "collision_shape": "circle", "collision_size": {"x": 90, "y": 90}, "collision_radius": 45, "collision_offset": {"x": 0, "y": 20}, "sort_offset": 30},
-    {"id": "rock_large_path", "kind": "rock_large", "display_name": "Rocha grande", "position": {"x": 505, "y": 820}, "visual_size": {"x": 82, "y": 58}, "collision_shape": "rectangle", "collision_size": {"x": 82, "y": 52}, "collision_radius": 41, "collision_offset": {"x": 0, "y": 8}, "sort_offset": 18},
-    {"id": "rock_large_cemetery", "kind": "rock_large", "display_name": "Rocha grande", "position": {"x": 655, "y": 1110}, "visual_size": {"x": 92, "y": 62}, "collision_shape": "rectangle", "collision_size": {"x": 90, "y": 56}, "collision_radius": 45, "collision_offset": {"x": 0, "y": 8}, "sort_offset": 18}
+    {"id": "tree_large_northwest", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 130, "y": 430}, "visual_size": {"x": 105, "y": 130}, "collision_shape": "circle", "collision_size": {"x": 76, "y": 76}, "collision_radius": 38, "collision_offset": {"x": 0, "y": 18}, "sort_offset": 28},
+    {"id": "tree_large_mid", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 540, "y": 595}, "visual_size": {"x": 120, "y": 142}, "collision_shape": "circle", "collision_size": {"x": 82, "y": 82}, "collision_radius": 41, "collision_offset": {"x": 0, "y": 20}, "sort_offset": 30},
+    {"id": "tree_large_south", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 352, "y": 1135}, "visual_size": {"x": 115, "y": 138}, "collision_shape": "circle", "collision_size": {"x": 82, "y": 82}, "collision_radius": 41, "collision_offset": {"x": 0, "y": 20}, "sort_offset": 30},
+    {"id": "tree_large_east", "kind": "tree_large", "display_name": "Arvore grande", "position": {"x": 812, "y": 710}, "visual_size": {"x": 118, "y": 136}, "collision_shape": "circle", "collision_size": {"x": 82, "y": 82}, "collision_radius": 41, "collision_offset": {"x": 0, "y": 20}, "sort_offset": 30},
+    {"id": "rock_large_path", "kind": "rock_large", "display_name": "Rocha grande", "position": {"x": 505, "y": 820}, "visual_size": {"x": 82, "y": 58}, "collision_shape": "rectangle", "collision_size": {"x": 74, "y": 47}, "collision_radius": 37, "collision_offset": {"x": 0, "y": 8}, "sort_offset": 18},
+    {"id": "rock_large_cemetery", "kind": "rock_large", "display_name": "Rocha grande", "position": {"x": 655, "y": 1110}, "visual_size": {"x": 92, "y": 62}, "collision_shape": "rectangle", "collision_size": {"x": 81, "y": 50}, "collision_radius": 41, "collision_offset": {"x": 0, "y": 8}, "sort_offset": 18}
   ],
   "reward": {
     "caps_policy": "preserve_mode_limit_policies_current_caps",

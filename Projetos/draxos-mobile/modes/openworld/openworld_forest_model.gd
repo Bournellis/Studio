@@ -99,6 +99,19 @@ func result_payload(session_seconds: float = 0.0) -> Dictionary:
 		"activity_score": activity_score(),
 	}
 
+func visit_summary_text(session_seconds: float = 0.0, reward_text: String = "Sem recompensa.") -> String:
+	var parts := PackedStringArray()
+	parts.append("Resumo da visita: %s no Bosque." % _format_seconds(session_seconds))
+	parts.append("Bau: %s." % inventory_summary_text(chest, "nada depositado"))
+	parts.append("Criacoes: %s." % upgrades_summary_text("nenhuma criacao"))
+	var clean_reward := reward_text.strip_edges()
+	if clean_reward == "":
+		clean_reward = "Sem recompensa."
+	if not clean_reward.ends_with("."):
+		clean_reward += "."
+	parts.append(clean_reward)
+	return " ".join(parts)
+
 func activity_score() -> int:
 	var score := 0
 	for key: String in chest.keys():
@@ -116,6 +129,25 @@ func min_loaded_speed() -> float:
 
 func pocket_weight() -> float:
 	return inventory_weight(pocket)
+
+func pocket_load_ratio() -> float:
+	if capacity() <= 0.0:
+		return 0.0
+	return clampf(pocket_weight() / capacity(), 0.0, 1.0)
+
+func pocket_status_text() -> String:
+	var weight := pocket_weight()
+	var load_ratio := pocket_load_ratio()
+	var prefix := "Bolso %.1f/%.1f" % [weight, capacity()]
+	if pocket.is_empty():
+		return "%s vazio" % prefix
+	if weight >= capacity() - 0.001:
+		return "%s cheio; volte ao bau" % prefix
+	if load_ratio >= 0.82:
+		return "%s quase cheio; planeje deposito" % prefix
+	if load_ratio >= LOAD_PENALTY_START_RATIO:
+		return "%s pesado; velocidade reduzida" % prefix
+	return "%s confortavel" % prefix
 
 func inventory_weight(source: Dictionary) -> float:
 	var total := 0.0
@@ -145,6 +177,16 @@ func item_display_name(item_id: String) -> String:
 		return display_name.substr(0, display_name.length() - " Preview".length())
 	return display_name
 
+func recipe_display_name(recipe_id: String) -> String:
+	return str(_recipe(recipe_id).get("display_name", recipe_id))
+
+func upgrade_display_name(upgrade_id: String) -> String:
+	for recipe_id: String in recipes().keys():
+		var recipe := _recipe(recipe_id)
+		if str(recipe.get("upgrade_id", "")) == upgrade_id:
+			return str(recipe.get("display_name", upgrade_id))
+	return upgrade_id
+
 func gather_duration(item_id: String) -> float:
 	var duration := float(_item_definition(item_id).get("gather_time", 1.0))
 	if has_upgrade("maos_rituais_1"):
@@ -162,10 +204,10 @@ func add_to_pocket(item_id: String, quantity: int = 1) -> Dictionary:
 		last_message = "Recurso desconhecido: %s." % item_id
 		return {"ok": false, "reason": "unknown_item", "message": last_message}
 	if not can_carry(item_id, amount):
-		last_message = "Bolso cheio. Volte ao bau."
+		last_message = "Bolso cheio. Volte ao bau para depositar."
 		return {"ok": false, "reason": "pocket_full", "message": last_message}
 	pocket[item_id] = int(pocket.get(item_id, 0)) + amount
-	last_message = "+%d %s no bolso." % [amount, item_display_name(item_id)]
+	last_message = "+%d %s no bolso. %s." % [amount, item_display_name(item_id), pocket_status_text()]
 	return {"ok": true, "item_id": item_id, "quantity": amount, "message": last_message}
 
 func deposit_all() -> Dictionary:
@@ -174,7 +216,10 @@ func deposit_all() -> Dictionary:
 		chest[key] = int(chest.get(key, 0)) + int(pocket.get(key, 0))
 	pocket = {}
 	active_collection = {}
-	last_message = "Deposito local atualizado." if not moved.is_empty() else "Bolso vazio."
+	if not moved.is_empty():
+		last_message = "Bolso depositado no bau: %s." % inventory_summary_text(moved, "nada para depositar")
+	else:
+		last_message = "Bolso vazio; nada para depositar."
 	return {"ok": true, "moved": moved, "chest": chest.duplicate(true), "message": last_message}
 
 func can_craft(recipe_id: String) -> bool:
@@ -206,11 +251,63 @@ func craft(recipe_id: String) -> Dictionary:
 	var output := _as_dictionary(recipe.get("output", {}))
 	for key: String in output.keys():
 		chest[key] = int(chest.get(key, 0)) + int(output.get(key, 0))
-	last_message = "Craft local: %s." % str(recipe.get("display_name", recipe_id))
+	last_message = "Criado: %s." % str(recipe.get("display_name", recipe_id))
 	return {"ok": true, "recipe_id": recipe_id, "upgrade_id": upgrade_id, "message": last_message}
 
 func has_upgrade(upgrade_id: String) -> bool:
 	return bool(upgrades.get(upgrade_id, false))
+
+func available_craft_count() -> int:
+	var count := 0
+	for recipe_id: String in recipes().keys():
+		if can_craft(recipe_id):
+			count += 1
+	return count
+
+func first_available_recipe_name() -> String:
+	for recipe_id: String in recipes().keys():
+		if can_craft(recipe_id):
+			return recipe_display_name(recipe_id)
+	return ""
+
+func recipe_state_text(recipe_id: String) -> String:
+	var recipe := _recipe(recipe_id)
+	if recipe.is_empty():
+		return "Receita indisponivel."
+	var upgrade_id := str(recipe.get("upgrade_id", "")).strip_edges()
+	if upgrade_id != "" and has_upgrade(upgrade_id):
+		return "Ja criado."
+	var missing := recipe_missing_text(recipe_id)
+	if missing != "":
+		return "Falta: %s." % missing
+	return "Pronto para criar."
+
+func recipe_missing_text(recipe_id: String) -> String:
+	var recipe := _recipe(recipe_id)
+	if recipe.is_empty():
+		return ""
+	var cost := _as_dictionary(recipe.get("cost", {}))
+	var parts := PackedStringArray()
+	for key: String in _sorted_keys(cost):
+		var missing := int(cost.get(key, 0)) - int(chest.get(key, 0))
+		if missing > 0:
+			parts.append("%s x%d" % [item_display_name(key), missing])
+	return ", ".join(parts)
+
+func inventory_summary_text(source: Dictionary, empty_text: String = "-") -> String:
+	if source.is_empty():
+		return empty_text
+	var parts := PackedStringArray()
+	for key: String in _sorted_keys(source):
+		parts.append("%s x%d" % [item_display_name(key), int(source.get(key, 0))])
+	return ", ".join(parts)
+
+func upgrades_summary_text(empty_text: String = "-") -> String:
+	var active := PackedStringArray()
+	for key: String in _sorted_keys(upgrades):
+		if bool(upgrades.get(key, false)):
+			active.append(upgrade_display_name(key))
+	return empty_text if active.is_empty() else ", ".join(active)
 
 func guidance_state() -> Dictionary:
 	guidance = _guidance_dictionary(guidance)
@@ -281,14 +378,14 @@ func start_collection(item_id: String) -> Dictionary:
 		last_message = "Recurso desconhecido."
 		return {"ok": false, "reason": "unknown_item", "message": last_message}
 	if not can_carry(item_id):
-		last_message = "Bolso cheio. Volte ao bau."
+		last_message = "Bolso cheio. Volte ao bau para depositar."
 		return {"ok": false, "reason": "pocket_full", "message": last_message}
 	active_collection = {
 		"item_id": item_id,
 		"elapsed": 0.0,
 		"duration": gather_duration(item_id),
 	}
-	last_message = "Coletando %s..." % item_display_name(item_id)
+	last_message = "Parado perto de %s. Coletando..." % item_display_name(item_id)
 	return {"ok": true, "item_id": item_id, "duration": active_collection["duration"], "message": last_message}
 
 func advance_collection(delta: float, moved: bool = false, distance: float = 0.0, commit_to_pocket: bool = true) -> Dictionary:
@@ -308,7 +405,7 @@ func advance_collection(delta: float, moved: bool = false, distance: float = 0.0
 	var item_id := str(active_collection.get("item_id", ""))
 	active_collection = {}
 	if not commit_to_pocket:
-		last_message = "Coleta aguardando servidor."
+		last_message = "Coleta enviada ao servidor."
 		return {
 			"ok": true,
 			"completed": true,
@@ -326,7 +423,7 @@ func cancel_collection(reason: String = "cancelled") -> Dictionary:
 	if active_collection.is_empty():
 		return {"ok": false, "reason": "no_active_collection"}
 	active_collection = {}
-	last_message = "Coleta cancelada." if reason != "moved" else "Coleta cancelada ao mover."
+	last_message = "Coleta cancelada." if reason != "moved" else "Voce se moveu e a coleta parou."
 	return {"ok": true, "cancelled": true, "reason": reason, "message": last_message}
 
 func collection_progress() -> float:
@@ -396,6 +493,21 @@ static func _default_guidance() -> Dictionary:
 
 static func _now_iso() -> String:
 	return Time.get_datetime_string_from_system(true)
+
+static func _format_seconds(seconds: float) -> String:
+	var total := maxi(0, int(round(seconds)))
+	var minutes := total / 60
+	var remainder := total % 60
+	if minutes <= 0:
+		return "%ds" % remainder
+	return "%dm%02ds" % [minutes, remainder]
+
+static func _sorted_keys(source: Dictionary) -> PackedStringArray:
+	var keys := PackedStringArray()
+	for key: String in source.keys():
+		keys.append(key)
+	keys.sort()
+	return keys
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

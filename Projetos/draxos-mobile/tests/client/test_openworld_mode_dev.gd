@@ -154,6 +154,18 @@ func test_result_payload_is_preview_local_only() -> void:
 	assert_true(int(payload.get("activity_score", 0)) > 0)
 	assert_true(Dictionary(payload.get("deposited_items", {})).has("cinzas_preview"))
 
+func test_visit_summary_uses_player_readable_inventory_names() -> void:
+	var model = ModelScript.new()
+	model.chest = {"galho": 3, "cinzas_preview": 2}
+	model.upgrades = {"fogueira_estavel_1": true}
+	var summary := model.visit_summary_text(72.0, "Sem recompensa.")
+	assert_string_contains(summary, "1m12s")
+	assert_string_contains(summary, "Galho x3")
+	assert_string_contains(summary, "Cinzas x2")
+	assert_string_contains(summary, "Fogueira estavel I")
+	assert_string_contains(summary, "Sem recompensa")
+	assert_false(summary.contains("{"))
+
 func test_guidance_starts_visible_and_persists_in_snapshot() -> void:
 	var model = ModelScript.new()
 	assert_true(model.guidance_visible())
@@ -392,6 +404,23 @@ func test_openworld_chest_blocks_body_but_deposit_area_is_larger() -> void:
 	await get_tree().process_frame
 	assert_true(Dictionary(screen.get_model().pocket).is_empty())
 	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
+
+func test_deposit_action_requires_near_chest_and_pocket_items() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	screen.set_player_position_for_tests(RulesetScript.chest_position())
+	await get_tree().process_frame
+	var empty_state: Dictionary = screen.call("_view_state", "")
+	assert_false(bool(empty_state.get("deposit_available", true)))
+	assert_true(str(empty_state.get("deposit_tooltip", "")).contains("Bolso vazio"))
+
+	screen.get_model().add_to_pocket("galho", 1)
+	screen.call("_update_labels")
+	await get_tree().process_frame
+	var ready_state: Dictionary = screen.call("_view_state", "")
+	assert_true(bool(ready_state.get("deposit_available", false)))
+	assert_true(str(ready_state.get("status_text", "")).contains("deposito pronto"))
 
 func test_integrated_event_ack_does_not_rollback_player_position() -> void:
 	var setup: Dictionary = await _make_integrated_screen()

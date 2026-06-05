@@ -80,7 +80,7 @@ func render(
 	_clear_body()
 	match _current_tab:
 		"pocket":
-			_render_inventory("Bolso", model.pocket, "Peso %.1f / %.1f" % [model.pocket_weight(), model.capacity()])
+			_render_inventory("Bolso", model.pocket, model.pocket_status_text())
 		"chest":
 			_render_inventory("Bau local", model.chest, "Materiais guardados no modo.")
 		"craft":
@@ -103,7 +103,12 @@ func close_sheet() -> void:
 func set_deposit_available(available: bool) -> void:
 	if _deposit_button != null:
 		_deposit_button.disabled = not available or network_busy
-		_deposit_button.tooltip_text = "Sincronizacao em andamento." if network_busy else ("Aproxime-se do bau para depositar." if not available else "Depositar bolso no bau.")
+		if network_busy:
+			_deposit_button.tooltip_text = "Sincronizacao em andamento."
+		elif model != null and model.pocket.is_empty():
+			_deposit_button.tooltip_text = "Bolso vazio; colete algo antes."
+		else:
+			_deposit_button.tooltip_text = "Aproxime-se do bau para depositar." if not available else "Depositar tudo que esta no bolso."
 
 func current_tab_for_tests() -> String:
 	return _current_tab
@@ -196,22 +201,32 @@ func _render_inventory(title: String, source: Dictionary, subtitle: String) -> v
 	if _current_tab == "pocket":
 		_deposit_button = Button.new()
 		_deposit_button.name = "OpenworldSheetDepositButton"
-		_deposit_button.text = "Depositar no bau"
+		_deposit_button.text = "Depositar tudo no bau"
 		_deposit_button.custom_minimum_size = Vector2(0, 48)
 		_deposit_button.pressed.connect(func() -> void:
 			deposit_requested.emit()
 		)
 		_body.add_child(_deposit_button)
+	elif _current_tab == "chest":
+		var craft_ready: int = model.available_craft_count()
+		if craft_ready > 0:
+			_body.add_child(_label("Craft pronto: %s." % model.first_available_recipe_name(), 13, Color(0.96, 0.86, 0.58)))
+		else:
+			_body.add_child(_label("Guarde materiais aqui para liberar upgrades do Bosque.", 13, Color(0.78, 0.75, 0.66)))
 
 func _render_craft() -> void:
 	_body.add_child(_label("Craft local", 16, Color(0.90, 0.82, 0.62)))
-	_body.add_child(_label("Upgrades do modo. Nao altera Base/Conta.", 13, Color(0.75, 0.72, 0.64)))
+	var craft_ready: int = model.available_craft_count()
+	var summary := "%d pronto(s). Upgrades do modo; nao altera Base/Conta." % craft_ready
+	_body.add_child(_label(summary, 13, Color(0.75, 0.72, 0.64)))
 	var recipes := ModelScript.recipes()
 	for recipe_id: String in recipes.keys():
 		var recipe := recipes[recipe_id] as Dictionary
+		var recipe_state: String = model.recipe_state_text(recipe_id)
 		var button := Button.new()
 		button.name = "OpenworldCraft_%s" % recipe_id
-		button.text = "%s  |  %s" % [str(recipe.get("display_name", recipe_id)), _cost_text(recipe.get("cost", {}))]
+		button.text = "%s  |  %s" % [str(recipe.get("display_name", recipe_id)), recipe_state]
+		button.tooltip_text = "Custo: %s" % _cost_text(recipe.get("cost", {}))
 		button.custom_minimum_size = Vector2(0, 48)
 		button.disabled = not model.can_craft(recipe_id)
 		button.pressed.connect(func(id := recipe_id) -> void:
@@ -224,8 +239,13 @@ func _render_session() -> void:
 	_body.add_child(_label("Bosque", 16, Color(0.90, 0.82, 0.62)))
 	var state := _session_state_text()
 	_body.add_child(_label("Estado: %s" % state, 13, Color(0.82, 0.80, 0.70)))
+	_body.add_child(_label("Bolso: %s" % model.inventory_summary_text(model.pocket, "vazio"), 13, Color(0.86, 0.83, 0.70)))
+	_body.add_child(_label("Bau: %s" % model.inventory_summary_text(model.chest, "sem deposito"), 13, Color(0.86, 0.83, 0.70)))
+	_body.add_child(_label("Criacoes: %s" % model.upgrades_summary_text("nenhuma"), 13, Color(0.86, 0.83, 0.70)))
 	if session_message.strip_edges() != "":
 		_body.add_child(_label(session_message, 13, Color(0.86, 0.83, 0.70)))
+	if pending_summary.strip_edges() != "":
+		_body.add_child(_label("Sincronizando: %s" % pending_summary, 12, Color(0.78, 0.77, 0.70)))
 	_complete_button = Button.new()
 	_complete_button.name = "OpenworldSheetCompleteButton"
 	_complete_button.text = "Encerrar visita"
@@ -288,7 +308,7 @@ func _render_guidance_session_block() -> void:
 	if model.has_method("guidance_text"):
 		guidance_text = str(model.guidance_text())
 	if guidance_text == "":
-		guidance_text = "Dicas ocultas ou concluidas."
+		guidance_text = "Dicas ocultas ou concluidas. Reabra se quiser rever o fluxo."
 	_body.add_child(_label("Dicas do Bosque", 15, Color(0.90, 0.82, 0.62)))
 	_body.add_child(_label(guidance_text, 13, Color(0.84, 0.80, 0.68)))
 	_guidance_button = Button.new()
@@ -312,7 +332,7 @@ func _label(text: String, font_size: int, color: Color) -> Label:
 
 func _inventory_lines(source: Dictionary) -> String:
 	if source.is_empty():
-		return "-"
+		return "Nenhum item."
 	var keys := PackedStringArray()
 	for key: String in source.keys():
 		keys.append(key)
@@ -323,11 +343,7 @@ func _inventory_lines(source: Dictionary) -> String:
 	return "\n".join(lines)
 
 func _upgrade_lines() -> String:
-	var active := PackedStringArray()
-	for key: String in model.upgrades.keys():
-		if bool(model.upgrades.get(key, false)):
-			active.append(key)
-	return "-" if active.is_empty() else ", ".join(active)
+	return model.upgrades_summary_text("-")
 
 func _cost_text(value: Variant) -> String:
 	var cost: Dictionary = value if value is Dictionary else {}

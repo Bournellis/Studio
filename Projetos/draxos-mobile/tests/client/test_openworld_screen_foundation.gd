@@ -49,6 +49,7 @@ class FakeSupabaseClient:
 	var start_calls: Array[Dictionary] = []
 	var complete_calls: Array[Dictionary] = []
 	var abandon_calls: Array[Dictionary] = []
+	var event_calls: Array[Dictionary] = []
 	var telemetry_calls: Array[Dictionary] = []
 
 	func get_mode_state(mode_id: String, token: String) -> Dictionary:
@@ -75,6 +76,45 @@ class FakeSupabaseClient:
 			"request_hash": request_hash,
 		})
 		return complete_result
+
+	func record_mode_session_event(
+		request_id: String,
+		session_id: String,
+		mode_id: String,
+		slice_id: String,
+		event_type: String,
+		expected_revision: int,
+		event_payload: Dictionary,
+		token: String,
+		request_hash: String = ""
+	) -> Dictionary:
+		event_calls.append({
+			"request_id": request_id,
+			"session_id": session_id,
+			"mode_id": mode_id,
+			"slice_id": slice_id,
+			"event_type": event_type,
+			"expected_revision": expected_revision,
+			"event_payload": event_payload.duplicate(true),
+			"token": token,
+			"request_hash": request_hash,
+		})
+		return {
+			"ok": true,
+			"body": {
+				"ok": true,
+				"type": "mode_event_ack",
+				"session_id": session_id,
+				"mode_id": mode_id,
+				"slice_id": slice_id,
+				"event_type": event_type,
+				"revision_after": expected_revision + 1,
+				"applied": true,
+				"resync_required": false,
+				"snapshot_patch": {},
+				"user_message": "Bosque sincronizado.",
+			},
+		}
 
 	func abandon_mode_session(request_id: String, session_id: String, mode_id: String, reason: String, token: String, request_hash: String) -> Dictionary:
 		abandon_calls.append({
@@ -161,6 +201,48 @@ func test_back_preserves_online_session_for_resume() -> void:
 	assert_signal_emitted(screen, "close_requested")
 	assert_eq(client.abandon_calls.size(), 0)
 	assert_true(_telemetry_has_event(client, "mode_session_exit_preserved"))
+
+func test_integrated_completion_result_uses_visit_summary_text() -> void:
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	add_child_autofree(client)
+	add_child_autofree(store)
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"active_session": _session_payload("complete-session", 5, {
+				"session_seconds": 72,
+				"chest": {"galho": 3},
+				"upgrades": {"fogueira_estavel_1": true},
+				"last_message": "Bosque online.",
+			}),
+		},
+	}
+	client.complete_result = {
+		"ok": true,
+		"body": {
+			"reward": {"resource_delta": {"wood": 2}},
+			"result_payload": {"session_seconds": 72},
+		},
+	}
+	var screen = ScreenScript.new()
+	screen.configure_integrated_alpha(client, store, "token-alpha")
+	add_child_autofree(screen)
+	await wait_seconds(0.12)
+	var bridge = screen.call("_ensure_session_bridge")
+	if bridge.has_pending_events():
+		await bridge.flush_event_queue()
+		await get_tree().process_frame
+
+	await screen.call("_show_result")
+	await get_tree().process_frame
+
+	var result_text := str(screen.call("_result_text"))
+	assert_string_contains(result_text, "Resumo da visita")
+	assert_string_contains(result_text, "Galho x3")
+	assert_string_contains(result_text, "Fogueira estavel I")
+	assert_string_contains(result_text, "Recompensa aplicada: Madeira +2")
+	assert_false(result_text.contains("resource_delta"))
 
 func test_explicit_abandon_requires_confirmation_and_discards_session() -> void:
 	var client := FakeSupabaseClient.new()

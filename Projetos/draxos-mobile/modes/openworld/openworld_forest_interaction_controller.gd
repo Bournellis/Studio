@@ -60,8 +60,12 @@ func deposit_near_chest() -> void:
 		model.last_message = "Aproxime-se do bau para depositar."
 		_update()
 		return
+	if model.pocket.is_empty():
+		model.last_message = "Bolso vazio; nada para depositar."
+		_update()
+		return
 	if _uses_integrated_authority():
-		model.last_message = "Depositando no servidor..."
+		model.last_message = "Depositando bolso no servidor..."
 		_record_event("deposit_all", {
 			"position": runtime.position_payload(),
 			"session_seconds": int(runtime.session_seconds),
@@ -84,10 +88,10 @@ func craft_recipe(recipe_id: String) -> void:
 		return
 	if _uses_integrated_authority():
 		if not model.can_craft(recipe_id):
-			model.last_message = "Materiais insuficientes ou upgrade ja ativo."
+			model.last_message = model.recipe_state_text(recipe_id)
 			_update()
 			return
-		model.last_message = "Craft aguardando servidor..."
+		model.last_message = "Criando %s no servidor..." % model.recipe_display_name(recipe_id)
 		_record_event("craft", {
 			"recipe_id": recipe_id,
 			"position": runtime.position_payload(),

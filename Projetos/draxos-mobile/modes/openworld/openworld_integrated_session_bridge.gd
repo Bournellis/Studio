@@ -78,9 +78,10 @@ func is_completed() -> bool:
 
 func pending_summary_text() -> String:
 	if _last_pending_request_id != "":
-		return _last_pending_request_id
+		return "pedido %s" % _last_pending_request_id
 	if has_pending_events():
-		return "fila:%d" % (_event_queue.size() + (1 if _event_flush_active else 0))
+		var count := _event_queue.size() + (1 if _event_flush_active else 0)
+		return "salvando %d acao(oes)" % count
 	return ""
 
 func has_pending_collected_node(node_id: String) -> bool:
@@ -674,12 +675,18 @@ func _runtime_mutation_block_result(action: String) -> Dictionary:
 	}
 
 func _reward_summary(body: Dictionary, reward: Dictionary) -> String:
+	var reward_text := ""
 	if _is_cap_zero_completion(body, reward):
-		return "Visita encerrada. Limite diario atingido; sem recompensa nova."
-	var delta := _as_dictionary(reward.get("resource_delta", body.get("resource_delta", {})))
-	if delta.is_empty():
-		return "Visita encerrada. Nenhuma recompensa nova."
-	return "Visita encerrada. Recompensa aplicada: %s." % _resource_delta_text(delta)
+		reward_text = "Limite diario atingido; sem recompensa nova."
+	else:
+		var delta := _as_dictionary(reward.get("resource_delta", body.get("resource_delta", {})))
+		if delta.is_empty():
+			reward_text = "Nenhuma recompensa nova."
+		else:
+			reward_text = "Recompensa aplicada: %s." % _resource_delta_text(delta)
+	if model != null and model.has_method("visit_summary_text"):
+		return str(model.call("visit_summary_text", _completion_seconds(body), reward_text))
+	return "Visita encerrada. %s" % reward_text
 
 func _resource_delta_text(delta: Dictionary) -> String:
 	var keys := PackedStringArray()
@@ -690,8 +697,33 @@ func _resource_delta_text(delta: Dictionary) -> String:
 	for key: String in keys:
 		var amount := int(delta.get(key, 0))
 		if amount != 0:
-			parts.append("%s %+d" % [key, amount])
+			parts.append("%s %+d" % [_reward_resource_display_name(key), amount])
 	return ", ".join(parts) if not parts.is_empty() else "sem alteracao"
+
+func _completion_seconds(body: Dictionary) -> float:
+	var payload := _as_dictionary(body.get("result_payload", body.get("payload", {})))
+	if payload.has("session_seconds"):
+		return float(payload.get("session_seconds", 0.0))
+	return float(body.get("session_seconds", 0.0))
+
+func _reward_resource_display_name(resource_id: String) -> String:
+	match resource_id:
+		"wood":
+			return "Madeira"
+		"herb":
+			return "Ervas"
+		"stone":
+			return "Pedras"
+		"essence":
+			return "Essencia"
+		"ashes":
+			return "Cinzas"
+		"bone":
+			return "Ossos"
+		"bone_dust":
+			return "Po de Osso"
+		_:
+			return resource_id
 
 func _is_cap_zero_completion(body: Dictionary, reward: Dictionary) -> bool:
 	return bool(body.get("cap_zero", reward.get("cap_zero", false))) or _reward_status(body, reward) == "cap_zero"
