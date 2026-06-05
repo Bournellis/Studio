@@ -3,10 +3,14 @@ const SUPABASE_AUTH_HELPER = "supabase/functions/_shared/auth_context.ts";
 const MIGRATED_ENDPOINTS = [
   "server/functions/account/index.ts",
   "server/functions/base/index.ts",
+  "server/functions/build/index.ts",
   "server/functions/competition/index.ts",
   "server/functions/content/index.ts",
+  "server/functions/crafting/index.ts",
   "server/functions/lab-runner/index.ts",
+  "server/functions/monetization/index.ts",
   "server/functions/progression-lab/index.ts",
+  "server/functions/social/index.ts",
   "server/functions/telemetry/index.ts",
 ] as const;
 
