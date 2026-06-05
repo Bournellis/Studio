@@ -50,8 +50,8 @@ Deno.test("release manifest code fallback points at the current published packag
   for (const path of releaseSources) {
     const source = await Deno.readTextFile(path);
     assert(
-      source.includes("internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45"),
-      `${path} should fall back to Bosque v3 UX/Feel, the current published package`,
+      source.includes("internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a"),
+      `${path} should fall back to Arena PVE First Real Run + Update Recovery, the current published package`,
     );
     assertEquals(
       source.includes("internal-alpha/v0-foundation-solidification-20260602-906101b"),

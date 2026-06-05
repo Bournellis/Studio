@@ -2,7 +2,7 @@
 
 - Ultima atualizacao: `2026-06-05`
 - Status: registro vivo de pendencias de design
-- Escopo: DraxosMobile, Arena PVE First Real Run + Update Recovery em implementacao/publicacao, Bosque v3 UX/Feel publicado, Technical Hardening e Openworld Main Menu Sync preservados como pacotes anteriores, Foundation Hardening V2 preservado como baseline anterior de hardening/live-doc gates, Arena PVE inicial preservada como contexto Autobattler, tuning futuro e evolucoes futuras
+- Escopo: DraxosMobile, Arena PVE First Real Run + Update Recovery publicado, Bosque v3 UX/Feel preservado como pacote anterior, Technical Hardening e Openworld Main Menu Sync preservados como pacotes anteriores, Foundation Hardening V2 preservado como baseline anterior de hardening/live-doc gates, Arena PVE inicial preservada como contexto Autobattler, tuning futuro e evolucoes futuras
 
 Este documento e o unico lugar para registrar pendencias de design do projeto ativo. Ele nao resolve design; ele nomeia o que ainda precisa ser decidido, classifica o bloqueio e aponta para o documento que deve receber a resposta quando a decisao existir.
 
@@ -31,15 +31,15 @@ Categorias:
 - `OPERACIONAL`: nao altera game design, mas bloqueia validacao, ambiente, seguranca ou execucao tecnica confiavel.
 - `POS_SLICE`: fora da Track 00 completa.
 
-## Etapa Atual - Bosque v3 UX/Feel Publicado
+## Etapa Atual - Arena PVE First Real Run Publicado
 
-A etapa atual e `BOSQUE_V3_UX_FEEL_PUBLISHED_INTERNAL_ALPHA`. O projeto deve ser lido como o pacote publicado que preserva Technical Hardening, a coleta/deposito/resync do Bosque e o menu principal simplificado do Openworld Main Menu Sync, agora com polimento estreito de spawn/colisao, feedback visual/textual, fogueira, landmarks e resumo de visita. Foundation Hardening V2 continua como baseline anterior de enforcement multi-agente/multi-modo. A direcao viva de produto continua Arena PVE first, registrada em `docs/pve-arena-initial-direction.md`, com Bosque/Openworld como slice ativo de Internal Alpha e nao como expansao de mundo continuo aprovada.
+A etapa atual e `ARENA_PVE_FIRST_REAL_RUN_PUBLISHED_INTERNAL_ALPHA`. O projeto deve ser lido como o pacote publicado que preserva Bosque v3 UX/Feel, Technical Hardening, a coleta/deposito/resync do Bosque e o menu principal simplificado do Openworld Main Menu Sync, agora adicionando recovery da Arena PVE: retomar tentativa ativa, abandonar tentativa e encerrar tentativa antiga quando update deixa a run inacessivel. Foundation Hardening V2 continua como baseline anterior de enforcement multi-agente/multi-modo. A direcao viva de produto continua Arena PVE first, registrada em `docs/pve-arena-initial-direction.md`, com Bosque/Openworld como slice ativo de Internal Alpha e nao como expansao de mundo continuo aprovada.
 
 Foco imediato:
 
-`Revisar/playtestar Bosque v3 UX/Feel -> confirmar coleta/deposito/resync do Bosque -> confirmar leitura de proximidade/deposito/craft -> confirmar menu principal simplificado -> confirmar tutorial Arena -> primeira Arena real completa -> registrar tuning/UX antes de novo pacote`
+`Revisar/playtestar Arena PVE First Real Run + Update Recovery -> confirmar tutorial -> confirmar primeira Arena real de 3 duelos -> confirmar buff entre duelos -> confirmar retomar/abandonar/encerrar tentativa antiga -> regressao Bosque/menu -> registrar tuning/UX antes de novo pacote`
 
-Foundation Loop UX Pass 01 foi aceito como baseline historico do app-shell, nao como loop de produto atual. Foundation Closeout, Labs atualizados, Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2, Openworld Main Menu Sync e Technical Hardening fecharam a base tecnica/documental/conteudo anterior. Bosque v3 UX/Feel agora e o pacote operacional publicado. Track 21 Arena Loop Unlock/Friction permanece somente como contexto Arena/Autobattler para unlock, loadout travado, buffs temporarios, HP resetado por duelo, claim summary e fluxo de retorno da Arena; PVP entra depois como modo competitivo/fallback.
+Foundation Loop UX Pass 01 foi aceito como baseline historico do app-shell, nao como loop de produto atual. Foundation Closeout, Labs atualizados, Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2, Openworld Main Menu Sync, Technical Hardening e Bosque v3 UX/Feel fecharam a base tecnica/documental/conteudo anterior. Arena PVE First Real Run + Update Recovery agora e o pacote operacional publicado. Track 21 Arena Loop Unlock/Friction permanece como contexto Arena/Autobattler para unlock, loadout travado, buffs temporarios, HP resetado por duelo, claim summary e fluxo de retorno da Arena; Track 23 adiciona recovery de tentativa ativa; PVP entra depois como modo competitivo/fallback.
 
 Revisao manual do build publicado identificou regressao de responsividade: Labs Dev sumiram do menu inicial interno e Refugio/Batalha puderam sair dos limites em Web/Android. A partir de agora, mudancas visuais em Entry, Refugio ou Batalha precisam respeitar `docs/foundation-responsive-layout-contract.md` e passar em `tools/smoke_responsive_layout.gd` antes de nova publicacao.
 

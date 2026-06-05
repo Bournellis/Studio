@@ -4,73 +4,77 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Bosque v3 UX/Feel Publication`
-- Active stage status: `BOSQUE_V3_UX_FEEL_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Arena PVE First Real Run + Update Recovery`
+- Active stage status: `ARENA_PVE_FIRST_REAL_RUN_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
 - Version: `0.0.1-alpha.0`
 - Version code: `1`
 
 ## Current Truth
 
-- Latest published remote package: `Bosque v3 UX/Feel`
-- Release root: `internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45`
+- Latest published remote package: `Arena PVE First Real Run + Update Recovery`
+- Release root: `internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev`
-- Source state: `master` after merging Bosque v3 UX/Feel and AutoRun Lab V1 updates.
-- Previous content package: `Openworld Main Menu Sync`
-- Previous content release root: `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`
-- Previous content verified preview: `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`
+- Latest deployment evidence: `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`
+- Source state: `master` after merging Track 23 Arena PVE update recovery and preserving the later Scenario Fixtures V1 merge on the same trunk.
+- Previous content/polish package: `Bosque v3 UX/Feel`
+- Previous content/polish release root: `internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45`
+- Previous content/polish preview: `https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev`
 - Previous technical package: `Technical Hardening`
 - Previous technical release root: `internal-alpha/v0-technical-hardening-20260605-8e54a1f`
 - Previous technical preview: `https://2fe9393e.draxos-mobile-internal-alpha.pages.dev`
+- Previous Openworld content package: `Openworld Main Menu Sync`
+- Previous Openworld release root: `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`
+- Previous Openworld preview: `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`
 - Previous hardening baseline: `Foundation Hardening V2`
 - Previous hardening release root: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`
 - Previous hardening preview: `https://ca946749.draxos-mobile-internal-alpha.pages.dev`
 - Hardening baseline marker: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline marker: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Arena contract context: `Track 18 - PVE Arena Initial`, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context, not the current platform baseline.
-- Technical context: Track 16 Behavior And Potion Crafting is existing alpha substance summarized in `docs/behavior-potion-crafting-v1.md`, not the current product focus.
+- Arena context: Track 18 - PVE Arena Initial, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context and are now extended by Track 23 update recovery.
+- Technical context: Track 16 Behavior And Potion Crafting remains existing alpha substance summarized in `docs/behavior-potion-crafting-v1.md`, not the current product focus.
 
 ## Published Package
 
-Bosque v3 UX/Feel is the current Internal Alpha package. It preserves Technical Hardening, Openworld Main Menu Sync and the Arena/Lab baselines while improving the active Bosque slice without opening continuous Openworld scope.
+Arena PVE First Real Run + Update Recovery is the current Internal Alpha package. It closes the critical update-friction case where a player had an active Arena attempt after a package update, was told to finish the run, but no longer had a useful route to access or end it.
 
 Delivered in this package:
 
-- accepts the Technical Hardening playtest result as OK and resolves `DMOB-D074` toward a narrow Bosque/menu polish package;
-- moves one resource node out of collision risk and slightly reduces blocker collision areas for large trees/rocks;
-- adds a ruleset test that keeps resource nodes clear of blockers and unsafe borders;
-- adds nearby/active resource visual states, pickup markers, blocking-vs-decor visual distinction, campfire glow and nonblocking landmarks;
-- improves HUD, inventory sheet, deposit/craft availability, pocket-full feedback, session/resync copy and visit summaries with player-facing names;
-- keeps `Bosque` as the direct Openworld entry and keeps Openworld as a contained Internal Alpha slice, not approval for enemies, NPCs, quests, city or a continuous world.
+- keeps tutorial Arena as 1 duel and the first real Arena as 3 duels with buff choices between wins;
+- adds `Retomar tentativa`, `Abandonar tentativa` and `Encerrar tentativa antiga` actions in the Arena shell;
+- blocks new Arena starts locally while an active attempt exists, pushing the player to resume or abandon first;
+- routes abandon through `/arena/pve/abandon` with `request_id/request_hash`;
+- treats incompatible or malformed active attempts as recovery state instead of trapping the player;
+- preserves server-authoritative rewards: abandon grants no completion reward;
+- keeps Bosque v3 UX/Feel, Technical Hardening, Openworld Main Menu Sync, Foundation Hardening V2, Hardening Platform V1, Remote Lab Runner and the Arena/Lab baselines intact.
 
-Publication evidence for this package:
+Publication evidence:
 
-- Export regenerated APK, PC ZIP and Web artifacts from the merged Bosque code.
+- Export regenerated APK, PC ZIP and Web artifacts from current `master`.
 - Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and RemoteReadOnly passed.
-- Cloudflare Pages preview evidence: `https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev`.
-- Remote Web launch smoke on preview loaded the game in `3533 ms`, matched release root and asset root, and reported no runtime errors.
+- Cloudflare Pages preview evidence: `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`.
+- Remote Web launch smoke on preview loaded the game in `3463 ms`, matched release root and asset root, and reported no runtime errors.
 - Stable Portal/Web remain protected by Cloudflare Access and passed RemoteReadOnly with Access marked expected.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 
 Artifact hashes:
 
-- Android APK SHA256: `4455af96d285a2ac3f5d8268d5d044ff4933eb10303dfbe113d3aba0811efaa5`
-- PC Windows ZIP SHA256: `bd2ce982a4bba80eedbd8ff165537dbe4bdc49183139d6e5b8e7e598cff85f93`
-- Web Index SHA256: `75b9d6e532b78dbe9a6cdb8caee3a6794ab2ae0c4e2aaf8e7ac619022a20d11f`
+- Android APK SHA256: `ae886a7790c19213c44a728e56481126e20f47b4ddb588e2ffdfc99fd99fd7ce`
+- PC Windows ZIP SHA256: `09f3be25a8a5520876796fbe3ec7ab60281b773f4807e96c7b83422437e706ff`
+- Web Index SHA256: `fb549621d02bafc85cf1eece7ff69bd90c2daa445aa3f83de44e9bc8e8e31a2d`
 
 ## Current Gate
 
-The next product step is human playtest of the published Bosque v3 UX/Feel package before opening Arena tuning or broader Openworld expansion.
+The next product step is human playtest of the published Arena PVE First Real Run + Update Recovery package before opening Arena tuning, broader Openworld expansion or new mode work.
 
 Playtest focus:
 
-1. Confirm resource node readability and collision comfort in Bosque.
-2. Confirm collect, pocket-full, deposit, craft, fogueira and visit summary feedback.
-3. Confirm session/resync messages are readable and do not look technical.
-4. Confirm main menu, Bosque entry and Arena tutorial still read correctly after the package.
-5. Decide whether the next package is an Arena PVE/tuning pass or another narrow Bosque/menu polish pass.
+1. Start from tutorial, then confirm the first real Arena is a 3-duel run with buff choices between victories.
+2. Confirm an active run can be resumed from Arena selection after leaving/reopening.
+3. Confirm `Abandonar tentativa` and `Encerrar tentativa antiga` clear the blocker without granting completion reward.
+4. Confirm the player is no longer trapped by an inaccessible post-update Arena attempt.
+5. Confirm Bosque entry, collect/deposit/craft feedback and main menu still regress cleanly after the Arena package.
 
 ## Live Boundaries
 
@@ -84,27 +88,24 @@ Playtest focus:
 
 ## Validation Snapshot
 
-Bosque v3 local validation before publication:
+Track 23 local validation before publication:
 
 - `git diff --check`: PASS.
-- `npx -y deno test --allow-read server/tests/openworld_ruleset_definition_test.ts`: PASS, 5 tests.
-- `smoke_openworld_forest.gd`: PASS.
-- `smoke_modes_visual_layout.gd`: PASS.
-- GUT client suite: PASS, 226 tests.
+- `deno test --allow-read server/tests/arena_loop_unlock_friction_test.ts`: PASS, 6 tests.
+- GUT client suite: PASS, 229 tests.
 - `validate_foundation.ps1 -Profile ServerQuick -NoProjectWrites`: PASS.
 - `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS.
 - `validate_foundation.ps1 -Profile ModePlatform -NoProjectWrites`: PASS.
-- `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS.
-- `validate_foundation.ps1 -Profile FullLocal -NoProjectWrites`: BLOCKED only in `DatabaseLocal` because Docker Desktop/Supabase local was unavailable; DocsOnly, ServerQuick, ClientQuick, ModePlatform and ReleaseDryRun stages passed before that blocker.
+- `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS after moving the active Doing card to Done, as required by release safety.
 
-Bosque v3 publication validation:
+Track 23 publication validation:
 
 - `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
-- `publish_internal_alpha.ps1 -Mode Upload -PublicDownloads -ConfirmRemoteMutation`: PASS after one retry of a transient Supabase CLI 502.
+- `publish_internal_alpha.ps1 -Mode Upload -PublicDownloads -ConfirmRemoteMutation`: PASS.
 - `build_cloudflare_pages_package.ps1`: PASS.
-- `wrangler pages deploy ... --branch main`: PASS, preview `https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev`.
+- `wrangler pages deploy ... --branch main`: PASS, preview `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`.
 - `publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation`: PASS.
-- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45 -RemoteWebUrl https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a -RemoteWebUrl https://2c020d09.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS after loading local read-only Supabase URL and publishable key from `.env.internal-alpha.local`.
 
 Historical validation logs and package-by-package publication evidence belong in `implementation/tracks/`, `docs/*-report.md`, Kanban Done cards or handoffs, not in this decision snapshot.
 
@@ -115,6 +116,7 @@ Historical validation logs and package-by-package publication evidence belong in
 3. `docs/documentation-index.md`
 4. `docs/multi-agent-workflow.md`
 5. `docs/pve-arena-initial-direction.md`
-6. `docs/product-vision.md`
-7. `docs/product-brief.md`
-8. `docs/design-pending.md`
+6. `docs/pve-arena-v1.md`
+7. `docs/product-vision.md`
+8. `docs/product-brief.md`
+9. `docs/design-pending.md`

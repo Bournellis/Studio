@@ -2,7 +2,7 @@
 
 - Status: `CONTRATO`
 - Last updated: `2026-06-05`
-- Stage: `BOSQUE_V3_UX_FEEL_PUBLISHED_INTERNAL_ALPHA`
+- Stage: `ARENA_PVE_FIRST_REAL_RUN_PUBLISHED_INTERNAL_ALPHA`
 
 This contract exists because Foundation Loop UX Pass 01 exposed a dangerous visual regression pattern: immersive screens could look acceptable in one viewport while overflowing or being clipped in Android/Web builds. It remains a live guardrail after Foundation Final Polish.
 

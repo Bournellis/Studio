@@ -28,10 +28,13 @@ playable mode.
 ## Current Context
 
 Technical Hardening was published as the Track 22 Internal Alpha package and is
-now the previous technical package preserved inside Bosque v3 UX/Feel:
+now the previous technical package preserved inside later packages:
 `internal-alpha/v0-technical-hardening-20260605-8e54a1f`.
 
-Bosque v3 UX/Feel is the latest published package:
+Arena PVE First Real Run + Update Recovery is the latest published package:
+`internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a`.
+
+Bosque v3 UX/Feel is the previous content/polish package:
 `internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45`.
 
 Openworld Main Menu Sync remains the previous content package:

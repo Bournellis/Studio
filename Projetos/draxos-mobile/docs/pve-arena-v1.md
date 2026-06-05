@@ -3,14 +3,14 @@
 - Status: `VIVO`
 - Data: `2026-05-31`
 - Decisao-base: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`
-- Estado de entrega: `IMPLEMENTADO_PUBLICADO_TRACK_19`; Track 23 adiciona recuperacao client de tentativa ativa antiga e protege a primeira arena real de 3 duelos contra bloqueio pos-update.
+- Estado de entrega: `PUBLISHED_INTERNAL_ALPHA_TRACK_23`; Track 23 adiciona recuperacao client de tentativa ativa antiga e protege a primeira arena real de 3 duelos contra bloqueio pos-update.
 - Escopo: contrato de produto, conteudo, backend, client, schema, labs e regras para o primeiro pacote Arena PVE data-driven publicado.
 
 ## Papel Do Documento
 
 `docs/pve-arena-initial-direction.md` define a direcao de produto. Este documento registra a implementacao publicada de Track 18 para docs, backend, client, Battle Lab, Progression Lab e ruleset.
 
-Track 19 usa este documento como contrato vivo de consistencia antes de tuning fino. O pacote Track 19 esta implementado e publicado em Internal Alpha com consistencia para potion stock, claim, buff endpoint, selecao data-driven e labs. Os valores `CALIBRAVEL_ALPHA` continuam sujeitos a labs e playtest humano.
+Track 19 usa este documento como contrato vivo de consistencia antes de tuning fino. O pacote Track 19 esta implementado e publicado em Internal Alpha com consistencia para potion stock, claim, buff endpoint, selecao data-driven e labs. Track 23 publica a camada client de retomar/abandonar/encerrar tentativa antiga e confirma a primeira arena real de 3 duelos como proximo alvo jogavel. Os valores `CALIBRAVEL_ALPHA` continuam sujeitos a labs e playtest humano.
 
 ## Decisoes Fechadas Para v1
 

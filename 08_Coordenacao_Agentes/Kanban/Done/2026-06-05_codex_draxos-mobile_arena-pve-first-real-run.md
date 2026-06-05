@@ -9,7 +9,7 @@
 - branch: `codex/draxos-mobile/arena-pve-first-real-run`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--arena-pve-first-real-run`
 - base: `master` @ `fa59157`
-- status: `READY_FOR_COMMIT_MERGE_PUBLICATION`
+- status: `PUBLISHED_INTERNAL_ALPHA`
 - pacote: `Track 23 - Arena PVE First Real Run + Update Recovery`
 - publicacao_remota: `APROVADA_PELO_USUARIO_NESTE_PEDIDO`
 
@@ -37,6 +37,31 @@ Implementar a proxima fase da Arena PVE como primeira run real de 3 duelos, com 
 - `validate_foundation.ps1 -Profile ModePlatform -NoProjectWrites`: PASS.
 - `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: primeira tentativa BLOCKED somente por card Doing ativo; card movido para Done para repetir.
 
+## Commit, Merge E Publicacao
+
+- Commit de implementacao: `1cbfa66`.
+- Merge em `master`: `852aa71` (`Merge Arena PVE update recovery`).
+- Publicacao final executada a partir do `master` atual `b69108a`, preservando tambem o merge posterior de Scenario Fixtures V1 no trunk.
+- Release root: `internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a`.
+- Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`.
+- Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+- Preview evidence: `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`.
+- Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`.
+- Android APK SHA256: `ae886a7790c19213c44a728e56481126e20f47b4ddb588e2ffdfc99fd99fd7ce`.
+- PC Windows ZIP SHA256: `09f3be25a8a5520876796fbe3ec7ab60281b773f4807e96c7b83422437e706ff`.
+- Web Index SHA256: `fb549621d02bafc85cf1eece7ff69bd90c2daa445aa3f83de44e9bc8e8e31a2d`.
+
+## Validacao Remota
+
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `build_cloudflare_pages_package.ps1`: PASS.
+- `wrangler pages deploy ... --branch main`: PASS.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a -RemoteWebUrl https://2c020d09.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS.
+- Remote Web launch smoke carregou o jogo em `3463 ms`, com release root e asset root corretos e sem runtime errors.
+- Stable Portal/Web seguem Cloudflare Access protected. Android APK usa `debug_fallback`, aceito para closed Internal Alpha.
+
 ## Handoff
 
-Pronto para commit, merge em `master`, export/package/upload/deploy/manifest e validacao remota na URL principal.
+Publicado na URL principal e pronto para playtest humano do pacote Arena PVE First Real Run + Update Recovery.

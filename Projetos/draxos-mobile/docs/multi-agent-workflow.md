@@ -3,9 +3,9 @@
 - Status: `VIVO`
 - Last updated: `2026-06-05`
 - Scope: coordination workflow for hardening lanes, mode work and handoffs.
-- Current published package: `Bosque v3 UX/Feel`.
+- Current published package: `Arena PVE First Real Run + Update Recovery`.
 - Previous hardening/live-doc baseline: `Foundation Hardening V2`.
-- Current Arena loop context: `Track 21 - Arena Loop Unlock And Friction Pass`.
+- Current Arena loop context: `Track 23 - Arena PVE First Real Run + Update Recovery`, preserving Track 21 unlock/friction rules.
 
 ## Purpose
 
@@ -33,7 +33,8 @@ For Arena PVE or tuning-adjacent work, also read:
 
 1. `docs/pve-arena-initial-direction.md`
 2. `docs/pve-arena-v1.md`
-3. `implementation/tracks/track-21-arena-loop-unlock-friction/README.md`
+3. `implementation/tracks/track-23-arena-pve-first-real-run/README.md`
+4. `implementation/tracks/track-21-arena-loop-unlock-friction/README.md`
 
 For behavior, potion, crafting or consumable work, also read:
 
@@ -48,11 +49,11 @@ For release or validation work, also read:
 
 ## Track Reading Rules
 
-Bosque v3 UX/Feel is the current published Internal Alpha package. Technical Hardening remains the previous technical package and Openworld Main Menu Sync remains the previous content package preserved inside it.
+Arena PVE First Real Run + Update Recovery is the current published Internal Alpha package. Bosque v3 UX/Feel remains the previous content/polish package, Technical Hardening remains the previous technical package and Openworld Main Menu Sync remains the previous Openworld content package preserved inside it.
 Foundation Hardening V2 remains the previous baseline for multi-agent and
 multi-mode enforcement. Hardening Platform V1 remains the previous platform
-baseline. Track 21 is the current Arena loop package for agents to use as
-Autobattler/Arena context.
+baseline. Track 23 is the current Arena recovery package for agents to use as
+Autobattler/Arena context; Track 21 remains the preserved unlock/friction context.
 Later link/status hotfixes may be recorded in
 `implementation/current-status.md` or portfolio docs, but they do not reopen
 Track 18/19/20 contracts unless the current task explicitly says so.
