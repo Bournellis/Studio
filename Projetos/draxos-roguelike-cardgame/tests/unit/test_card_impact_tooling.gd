@@ -1,5 +1,6 @@
 extends "res://tests/unit/draxos_test_base.gd"
 
+const BattleEffectSignatureScript = preload("res://tools/lab/battle_effect_signature.gd")
 const BattlePolicyScript = preload("res://tools/lab/battle_policy.gd")
 const BattleRunnerScript = preload("res://tools/lab/battle_runner.gd")
 const CardImpactMatrixScript = preload("res://tools/lab/card_impact_matrix.gd")
@@ -13,6 +14,14 @@ func test_card_impact_loader_loads_track02_pack() -> void:
 	var pack: Dictionary = Dictionary(load_result.get("pack", {}))
 	assert_eq(str(pack.get("pack_id", "")), "track02_card_impact_v1")
 	assert_eq(str(pack.get("simulation_mode", "")), "card_impact_v1")
+
+func test_card_impact_loader_loads_track02_v2_pack() -> void:
+	var load_result: Dictionary = CardImpactPackLoaderScript.load_pack_result("track02_card_impact_v2")
+	assert_true(bool(load_result.get("ok", false)), str(load_result.get("message", "")))
+	var pack: Dictionary = Dictionary(load_result.get("pack", {}))
+	assert_eq(str(pack.get("pack_id", "")), "track02_card_impact_v2")
+	assert_eq(str(pack.get("simulation_mode", "")), "card_impact_v2")
+	assert_true(bool(Dictionary(pack.get("effect_signatures", {})).get("enabled", false)))
 
 func test_card_impact_matrix_discovers_expected_cards() -> void:
 	var pack: Dictionary = _pack()
@@ -51,6 +60,36 @@ func test_card_focus_policy_prioritizes_target_when_legal() -> void:
 	var played: Array = Array(Dictionary(timeline[0]).get("cards_played", []))
 	assert_gt(played.size(), 0)
 	assert_eq(str(Dictionary(played[0]).get("card_id", "")), "arcano_choque")
+	assert_true(bool(metrics.get("card_effect_signature_present", false)), str(metrics.get("card_effect_signature_missing_reason", "")))
+
+func test_battle_effect_signature_detects_damage_and_summon() -> void:
+	var before_damage: Dictionary = _effect_snapshot(40, 40, [], [_slot("enemy_terra_elemental_areia", 2, 4, 4)])
+	var after_damage: Dictionary = _effect_snapshot(40, 36, [], [_slot("enemy_terra_elemental_areia", 2, 1, 4)])
+	var damage_sample: Dictionary = BattleEffectSignatureScript.build_sample("arcano_choque", {"owner": "inimigo", "hero": true}, before_damage, after_damage)
+	assert_eq(int(damage_sample.get("enemy_hero_damage", 0)), 4)
+	assert_eq(int(damage_sample.get("enemy_slot_damage_total", 0)), 3)
+	assert_true(Array(damage_sample.get("families", [])).has("damage"))
+
+	var before_summon: Dictionary = _effect_snapshot(40, 40, [null], [])
+	var after_summon: Dictionary = _effect_snapshot(40, 40, [_slot("necro_esqueleto", 1, 3, 3, ["ressurgir"])], [])
+	var summon_sample: Dictionary = BattleEffectSignatureScript.build_sample("necro_esqueleto", {"owner": "jogador", "slot": 0}, before_summon, after_summon)
+	assert_eq(int(summon_sample.get("summons_created", 0)), 1)
+	assert_eq(int(summon_sample.get("summoned_health_total", 0)), 3)
+	assert_true(Array(summon_sample.get("families", [])).has("summon"))
+
+func test_battle_effect_signature_detects_buff_control_and_economy() -> void:
+	var before: Dictionary = _effect_snapshot(40, 40, [_slot("invocador_soldado", 2, 2, 2)], [_slot("enemy_terra_elemental_areia", 3, 4, 4)])
+	var after: Dictionary = _effect_snapshot(40, 40, [_slot("invocador_soldado", 4, 4, 4, ["escudo"], 0, 0, 1)], [_slot("enemy_terra_elemental_areia", 2, 4, 4, [], 2, 1, 0)], 14, 3, 4, 7, 2, 7)
+	var sample: Dictionary = BattleEffectSignatureScript.build_sample("unit", {"owner": "jogador", "area": "board"}, before, after)
+	assert_eq(int(sample.get("ally_attack_buff_total", 0)), 2)
+	assert_eq(int(sample.get("ally_health_buff_total", 0)), 2)
+	assert_eq(int(sample.get("shield_added_total", 0)), 1)
+	assert_eq(int(sample.get("enemy_attack_debuff_total", 0)), 1)
+	assert_eq(int(sample.get("poison_added_total", 0)), 2)
+	assert_eq(int(sample.get("freeze_added_total", 0)), 1)
+	assert_eq(int(sample.get("mana_gained", 0)), 4)
+	assert_eq(int(sample.get("ashes_gained", 0)), 3)
+	assert_eq(int(sample.get("cards_drawn", 0)), 1)
 
 func test_card_focus_policy_never_chooses_rejected_action() -> void:
 	var case_data: Dictionary = _single_case("arcano_choque")
@@ -64,6 +103,19 @@ func test_card_impact_runner_executes_player_case_and_records_card_under_test() 
 		"components": PackedStringArray(["battle"]),
 		"cards": PackedStringArray(["arcano_choque"]),
 		"out": "user://card_impact/gut_player",
+		"mode": "gate"
+	})
+	assert_true(bool(report.get("ok", false)), str(Dictionary(report.get("summary", {})).get("structural_errors", [])))
+	var components: Array = Array(Dictionary(report.get("summary", {})).get("components", []))
+	assert_eq(components.size(), 1)
+	assert_eq(str(Dictionary(components[0]).get("status", "")), "PASS")
+
+func test_card_impact_v2_runner_executes_player_case_and_records_effect_signature() -> void:
+	var report: Dictionary = CardImpactRunnerScript.run_phase(ContentLibrary.get_catalog(), RunSession, _pack_v2(), {
+		"phase": "before",
+		"components": PackedStringArray(["battle"]),
+		"cards": PackedStringArray(["arcano_choque"]),
+		"out": "user://card_impact/gut_v2_player",
 		"mode": "gate"
 	})
 	assert_true(bool(report.get("ok", false)), str(Dictionary(report.get("summary", {})).get("structural_errors", [])))
@@ -117,6 +169,16 @@ func test_card_impact_compare_metric_delta_keeps_gate_ok() -> void:
 	assert_true(bool(summary.get("gate_ok", false)), str(summary.get("blocking_changes", [])))
 	assert_gt(Array(summary.get("metric_changes", [])).size(), 0)
 
+func test_card_impact_compare_effect_delta_keeps_gate_ok() -> void:
+	var out_dir: String = "user://card_impact/gut_compare_effect_delta"
+	_write_battle_payload("%s/before/battle" % out_dir, [_fake_battle_record("card_impact_player_arcano_choque", "PASS", 12, _effect_signature("arcano_choque", 3))])
+	_write_battle_payload("%s/after/battle" % out_dir, [_fake_battle_record("card_impact_player_arcano_choque", "PASS", 12, _effect_signature("arcano_choque", 4))])
+	var report: Dictionary = CardImpactRunnerScript.compare_phase(_pack_v2(), {"out": out_dir, "components": PackedStringArray(["battle"]), "command": "unit"})
+	var summary: Dictionary = Dictionary(report.get("summary", {}))
+	assert_true(bool(summary.get("gate_ok", false)), str(summary.get("blocking_changes", [])))
+	assert_gt(Array(summary.get("effect_changes", [])).size(), 0)
+	assert_gt(Array(summary.get("top_effect_delta_cards", [])).size(), 0)
+
 func test_card_impact_reporter_markdown_contains_impact_matrix() -> void:
 	var report: Dictionary = {
 		"phase": "compare",
@@ -148,8 +210,46 @@ func test_card_impact_reporter_markdown_contains_impact_matrix() -> void:
 	assert_string_contains(markdown, "Top Impacted Cards")
 	assert_string_contains(markdown, "arcano_choque")
 
+func test_card_impact_reporter_markdown_contains_effect_delta_sections() -> void:
+	var report: Dictionary = {
+		"phase": "compare",
+		"pack_id": "unit_v2",
+		"summary": {
+			"gate_ok": true,
+			"coverage": {
+				"expected_active_cards": 84,
+				"covered_active_cards": 84,
+				"expected_player_cards": 54,
+				"expected_enemy_cards": 30,
+				"expected_legacy_inactive_cards": 15,
+				"filtered_player_cards": 54,
+				"filtered_enemy_cards": 30,
+				"player_cards_total": 54,
+				"enemy_cards_total": 30,
+				"legacy_inactive_cards_total": 15
+			},
+			"structural_errors": [],
+			"components": [{"component": "battle", "status": "PASS", "pass_count": 1, "warn_count": 0, "fail_count": 0}],
+			"top_impacted_cards": [],
+			"top_effect_delta_cards": [{"card_id": "arcano_choque", "change_count": 1}],
+			"by_effect_family": {"damage": {"change_count": 1, "fields": {"enemy_hero_damage": 1}}},
+			"effect_changes": [{"id": "card_impact_player_arcano_choque", "field": "effect.enemy_hero_damage", "before": 3, "after": 4, "delta": 1}],
+			"missing_signatures": [],
+			"status_changes": [],
+			"metric_changes": [],
+			"blocking_changes": []
+		}
+	}
+	var markdown: String = CardImpactReporterScript.markdown(report, {"command": "unit"})
+	assert_string_contains(markdown, "Player Effect Deltas")
+	assert_string_contains(markdown, "Effect Family Matrix")
+	assert_string_contains(markdown, "Top Effect Delta Cards")
+
 func _pack() -> Dictionary:
 	return CardImpactPackLoaderScript.load_pack("track02_card_impact_v1")
+
+func _pack_v2() -> Dictionary:
+	return CardImpactPackLoaderScript.load_pack("track02_card_impact_v2")
 
 func _single_case(card_id: String) -> Dictionary:
 	var matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack(), PackedStringArray([card_id]))
@@ -158,7 +258,7 @@ func _single_case(card_id: String) -> Dictionary:
 	assert_eq(cases.size(), 1)
 	return Dictionary(cases[0])
 
-func _fake_battle_record(case_id: String, status: String, enemy_hp: int) -> Dictionary:
+func _fake_battle_record(case_id: String, status: String, enemy_hp: int, effect_signature: Dictionary = {}) -> Dictionary:
 	return {
 		"schema_version": 1,
 		"tool": "gameplay_battle_lab",
@@ -178,7 +278,8 @@ func _fake_battle_record(case_id: String, status: String, enemy_hp: int) -> Dict
 			"player_units_alive": 1,
 			"enemy_units_alive": 1,
 			"damage_to_enemy_hero": 0,
-			"damage_to_player_hero": 0
+			"damage_to_player_hero": 0,
+			"card_effect_signature": effect_signature
 		},
 		"timeline": [],
 		"expectations": [],
@@ -193,3 +294,43 @@ func _write_battle_payload(dir_path: String, records: Array) -> void:
 	assert_not_null(file)
 	file.store_string(JSON.stringify({"records": records}, "\t"))
 	file.close()
+
+func _effect_snapshot(player_hp: int, enemy_hp: int, player_slots: Array, enemy_slots: Array, mana: int = 10, ashes: int = 0, hand_size: int = 3, deck_size: int = 8, discard_size: int = 1, log_count: int = 3) -> Dictionary:
+	return {
+		"player_health": player_hp,
+		"enemy_health": enemy_hp,
+		"mana": mana,
+		"ashes": ashes,
+		"hand_size": hand_size,
+		"deck_size": deck_size,
+		"discard_size": discard_size,
+		"pending_choice_count": 0,
+		"log_count": log_count,
+		"visual_event_count": 0,
+		"player_slots": player_slots,
+		"enemy_slots": enemy_slots
+	}
+
+func _slot(card_id: String, attack: int, health: int, max_health: int, keywords: Array = [], poison: int = 0, frozen: int = 0, shield: int = 0) -> Dictionary:
+	return {
+		"card_id": card_id,
+		"name": card_id,
+		"attack": attack,
+		"health": health,
+		"max_health": max_health,
+		"keywords": keywords,
+		"poison_amount": poison,
+		"frozen_turns": frozen,
+		"shield_charges": shield
+	}
+
+func _effect_signature(card_id: String, enemy_hero_damage: int) -> Dictionary:
+	return {
+		"card_id": card_id,
+		"present": true,
+		"sample_count": 1,
+		"enemy_hero_damage": enemy_hero_damage,
+		"families": ["damage"],
+		"keywords_added": {},
+		"keywords_removed": {}
+	}

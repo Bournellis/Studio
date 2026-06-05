@@ -1,5 +1,7 @@
 extends RefCounted
 
+const BattleEffectSignatureScript = preload("res://tools/lab/battle_effect_signature.gd")
+
 const PLAYER_ID: String = "jogador"
 const ENEMY_ID: String = "inimigo"
 const POLICY_BASELINE: String = "baseline_legal"
@@ -31,7 +33,8 @@ static func play_turn(engine, policy_id: String, options: Dictionary = {}) -> Di
 		"active_choice": "",
 		"pending_choices_resolved": 0,
 		"failed_actions": [],
-		"combat_cycle": {}
+		"combat_cycle": {},
+		"effect_samples": []
 	}
 	_resolve_pending_choices(engine, policy_id, result)
 	if policy_id != POLICY_END_TURN:
@@ -45,6 +48,9 @@ static func play_turn(engine, policy_id: String, options: Dictionary = {}) -> Di
 		var candidate: Dictionary = _best_card_candidate(engine, policy_id, options)
 		if candidate.is_empty():
 			break
+		var focused_card_id: String = str(options.get("card_under_test", ""))
+		var is_focused_card: bool = policy_id == POLICY_CARD_FOCUS and focused_card_id != "" and str(candidate.get("card_id", "")) == focused_card_id
+		var before_effect_snapshot: Dictionary = BattleEffectSignatureScript.snapshot_from_engine(engine) if is_focused_card else {}
 		var play_result: Dictionary = engine.play_card_from_hand(int(candidate.get("hand_index", -1)), Dictionary(candidate.get("target", {})))
 		if bool(play_result.get("requires_confirmation", false)) and _should_confirm_sacrifice(engine, policy_id):
 			var confirmed_target: Dictionary = Dictionary(play_result.get("target", candidate.get("target", {}))).duplicate()
@@ -62,6 +68,17 @@ static func play_turn(engine, policy_id: String, options: Dictionary = {}) -> Di
 			result["failed_actions"] = failed_actions
 			result["ok"] = false
 			break
+		if is_focused_card:
+			_resolve_pending_choices(engine, policy_id, result)
+			var after_effect_snapshot: Dictionary = BattleEffectSignatureScript.snapshot_from_engine(engine)
+			var effect_samples: Array = Array(result.get("effect_samples", []))
+			effect_samples.append(BattleEffectSignatureScript.build_sample(
+				focused_card_id,
+				Dictionary(candidate.get("target", {})),
+				before_effect_snapshot,
+				after_effect_snapshot
+			))
+			result["effect_samples"] = effect_samples
 		var cards_played: Array = Array(result.get("cards_played", []))
 		cards_played.append({
 			"card_id": str(candidate.get("card_id", "")),

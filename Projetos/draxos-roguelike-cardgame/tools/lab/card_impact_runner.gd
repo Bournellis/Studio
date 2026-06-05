@@ -190,6 +190,7 @@ static func _phase_summary(pack: Dictionary, matrix: Dictionary, component_resul
 	var coverage: Dictionary = Dictionary(Dictionary(matrix.get("summary", {})).duplicate(true))
 	coverage["expected_active_cards"] = int(coverage.get("expected_player_cards", 0)) + int(coverage.get("expected_enemy_cards", 0))
 	coverage["covered_active_cards"] = int(coverage.get("filtered_player_cards", 0)) + int(coverage.get("filtered_enemy_cards", 0))
+	_apply_effect_signature_coverage(coverage, pack)
 	var blocking_changes: Array[String] = structural_errors.duplicate()
 	for component: Dictionary in component_results:
 		if str(component.get("status", "")) == "FAIL":
@@ -210,7 +211,11 @@ static func _phase_summary(pack: Dictionary, matrix: Dictionary, component_resul
 static func _compare_summary(pack: Dictionary, component_results: Array[Dictionary], structural_errors: Array[String]) -> Dictionary:
 	var status_changes: Array[Dictionary] = []
 	var metric_changes: Array[Dictionary] = []
+	var effect_changes: Array[Dictionary] = []
 	var top_map: Dictionary = {}
+	var top_effect_map: Dictionary = {}
+	var effect_family_map: Dictionary = {}
+	var missing_signatures: Array[Dictionary] = []
 	var new_failure_count: int = 0
 	var removed_count: int = 0
 	var blocking_changes: Array[String] = structural_errors.duplicate()
@@ -233,6 +238,17 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 				row["component"] = str(component.get("component", ""))
 				row["id"] = diff_id
 				metric_changes.append(row)
+				if str(row.get("field", "")).begins_with("effect."):
+					effect_changes.append(row)
+					_record_card_impact(top_effect_map, diff)
+					_record_effect_family(effect_family_map, row)
+					if str(row.get("field", "")) == "effect.present" and bool(row.get("after", true)) == false:
+						missing_signatures.append({
+							"component": str(component.get("component", "")),
+							"id": diff_id,
+							"before": row.get("before", null),
+							"after": row.get("after", null)
+						})
 			_record_card_impact(top_map, diff)
 	return {
 		"coverage": _compare_coverage(pack, component_results),
@@ -243,6 +259,11 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 		"removed_count": removed_count,
 		"status_changes": status_changes,
 		"metric_changes": metric_changes,
+		"effect_changes": effect_changes,
+		"effect_change_count": effect_changes.size(),
+		"top_effect_delta_cards": _top_impacted_cards(top_effect_map),
+		"by_effect_family": effect_family_map,
+		"missing_signatures": missing_signatures,
 		"top_impacted_cards": _top_impacted_cards(top_map),
 		"gate_ok": blocking_changes.is_empty() and new_failure_count == 0 and removed_count == 0
 	}
@@ -258,7 +279,7 @@ static func _compare_coverage(pack: Dictionary, component_results: Array[Diction
 			continue
 		var summary: Dictionary = Dictionary(component.get("summary", {}))
 		covered_active = int(summary.get("total_after", summary.get("total_before", 0)))
-	return {
+	var coverage: Dictionary = {
 		"expected_player_cards": expected_player,
 		"expected_enemy_cards": expected_enemy,
 		"expected_legacy_inactive_cards": expected_legacy,
@@ -270,6 +291,19 @@ static func _compare_coverage(pack: Dictionary, component_results: Array[Diction
 		"filtered_player_cards": expected_player if covered_active >= expected_player else 0,
 		"filtered_enemy_cards": expected_enemy if covered_active >= expected_player + expected_enemy else 0
 	}
+	_apply_effect_signature_coverage(coverage, pack)
+	return coverage
+
+static func _apply_effect_signature_coverage(coverage: Dictionary, pack: Dictionary) -> void:
+	var config: Dictionary = Dictionary(pack.get("effect_signatures", {}))
+	var enabled: bool = bool(config.get("enabled", false))
+	var player_config: Dictionary = Dictionary(config.get("player", {}))
+	var enemy_config: Dictionary = Dictionary(config.get("enemy", {}))
+	coverage["effect_signatures_enabled"] = enabled
+	coverage["player_effect_signature_mode"] = str(player_config.get("mode", "off")) if enabled else "off"
+	coverage["enemy_effect_signature_mode"] = str(enemy_config.get("mode", "off")) if enabled else "off"
+	coverage["expected_player_effect_signatures"] = int(coverage.get("filtered_player_cards", 0)) if str(coverage.get("player_effect_signature_mode", "")) == "required" else 0
+	coverage["expected_enemy_effect_signatures"] = int(coverage.get("filtered_enemy_cards", 0)) if str(coverage.get("enemy_effect_signature_mode", "")) == "required" else 0
 
 static func _record_card_impact(top_map: Dictionary, diff: Dictionary) -> void:
 	var card_id: String = _card_id_from_diff_id(str(diff.get("id", "")))
@@ -283,6 +317,39 @@ static func _record_card_impact(top_map: Dictionary, diff: Dictionary) -> void:
 	if bool(diff.get("status_changed", false)):
 		entry["status_change_count"] = int(entry.get("status_change_count", 0)) + 1
 	top_map[card_id] = entry
+
+static func _record_effect_family(effect_family_map: Dictionary, change: Dictionary) -> void:
+	var field: String = str(change.get("field", "")).trim_prefix("effect.")
+	var family: String = _effect_family_for_field(field)
+	if not effect_family_map.has(family):
+		effect_family_map[family] = {"change_count": 0, "fields": {}}
+	var entry: Dictionary = Dictionary(effect_family_map.get(family, {}))
+	entry["change_count"] = int(entry.get("change_count", 0)) + 1
+	var fields: Dictionary = Dictionary(entry.get("fields", {}))
+	fields[field] = int(fields.get(field, 0)) + 1
+	entry["fields"] = fields
+	effect_family_map[family] = entry
+
+static func _effect_family_for_field(field: String) -> String:
+	if field in ["enemy_hero_damage", "player_hero_damage", "enemy_slot_damage_total", "player_slot_damage_total"]:
+		return "damage"
+	if field in ["summons_created", "player_units_delta", "enemy_units_delta", "summoned_attack_total", "summoned_health_total"]:
+		return "summon"
+	if field in ["ally_attack_buff_total", "ally_health_buff_total", "shield_added_total"]:
+		return "buff"
+	if field in ["enemy_attack_debuff_total", "enemy_health_debuff_total"]:
+		return "debuff"
+	if field in ["poison_added_total", "freeze_added_total"]:
+		return "control"
+	if field in ["mana_gained", "ashes_gained", "cards_drawn", "cards_discarded"]:
+		return "economy"
+	if field in ["keywords_added", "keywords_removed", "families"]:
+		return "keyword"
+	if field in ["pending_choices_delta"]:
+		return "choice"
+	if field in ["present", "sample_count"]:
+		return "coverage"
+	return "other"
 
 static func _top_impacted_cards(top_map: Dictionary) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []

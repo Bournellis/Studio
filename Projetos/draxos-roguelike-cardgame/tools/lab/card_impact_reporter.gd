@@ -46,6 +46,12 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 			int(coverage.get("enemy_cards_total", 0)),
 			int(coverage.get("legacy_inactive_cards_total", 0))
 		],
+		"- Effect signatures: player `%s` (`%d` expected), enemy `%s` (`%d` expected)" % [
+			str(coverage.get("player_effect_signature_mode", "off")),
+			int(coverage.get("expected_player_effect_signatures", 0)),
+			str(coverage.get("enemy_effect_signature_mode", "off")),
+			int(coverage.get("expected_enemy_effect_signatures", 0))
+		],
 		"- Structural errors: `%d`" % Array(summary.get("structural_errors", [])).size(),
 		"- Command: `%s`" % str(options.get("command", "")),
 		"",
@@ -96,6 +102,54 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 				int(item.get("status_change_count", 0))
 			])
 	lines.append("")
+	lines.append("## Player Effect Deltas")
+	var effect_changes: Array = Array(summary.get("effect_changes", []))
+	if effect_changes.is_empty():
+		lines.append("- none")
+	else:
+		for item: Dictionary in effect_changes.slice(0, 24):
+			lines.append("- `%s` `%s`: `%s` -> `%s` (`%s`)" % [
+				str(item.get("id", "")),
+				str(item.get("field", "")),
+				str(item.get("before", "")),
+				str(item.get("after", "")),
+				str(item.get("delta", ""))
+			])
+	lines.append("")
+	lines.append("## Effect Family Matrix")
+	var by_effect_family: Dictionary = Dictionary(summary.get("by_effect_family", {}))
+	if by_effect_family.is_empty():
+		lines.append("- none")
+	else:
+		lines.append("| Family | Changes | Fields |")
+		lines.append("|---|---:|---|")
+		for family: String in _sorted_keys(by_effect_family):
+			var entry: Dictionary = Dictionary(by_effect_family.get(family, {}))
+			lines.append("| `%s` | `%d` | `%s` |" % [
+				family,
+				int(entry.get("change_count", 0)),
+				_inline_field_counts(Dictionary(entry.get("fields", {})))
+			])
+	lines.append("")
+	lines.append("## Top Effect Delta Cards")
+	var top_effect_cards: Array = Array(summary.get("top_effect_delta_cards", []))
+	if top_effect_cards.is_empty():
+		lines.append("- none")
+	else:
+		for item: Dictionary in top_effect_cards.slice(0, 12):
+			lines.append("- `%s`: `%d` effect-related changes" % [
+				str(item.get("card_id", "")),
+				int(item.get("change_count", 0))
+			])
+	lines.append("")
+	lines.append("## Missing Effect Signatures")
+	var missing_signatures: Array = Array(summary.get("missing_signatures", []))
+	if missing_signatures.is_empty():
+		lines.append("- none")
+	else:
+		for item: Dictionary in missing_signatures.slice(0, 20):
+			lines.append("- `%s` in `%s`" % [str(item.get("id", "")), str(item.get("component", ""))])
+	lines.append("")
 	lines.append("## Status Changes")
 	var status_changes: Array = Array(summary.get("status_changes", []))
 	if status_changes.is_empty():
@@ -137,6 +191,7 @@ static func gate_markdown(report: Dictionary, options: Dictionary = {}) -> Strin
 		"- Structural errors: `%d`" % Array(summary.get("structural_errors", [])).size(),
 		"- New failures: `%d`" % int(summary.get("new_failure_count", 0)),
 		"- Removed records: `%d`" % int(summary.get("removed_count", 0)),
+		"- Effect changes: `%d`" % int(summary.get("effect_change_count", 0)),
 		"- Command: `%s`" % str(options.get("command", "")),
 		"",
 		"## Blocking Changes"
@@ -189,6 +244,19 @@ static func _write_csv(path: String, report: Dictionary) -> Dictionary:
 		])
 	file.close()
 	return {"ok": true, "path": path}
+
+static func _sorted_keys(values: Dictionary) -> Array[String]:
+	var result: Array[String] = []
+	for key: Variant in values.keys():
+		result.append(str(key))
+	result.sort()
+	return result
+
+static func _inline_field_counts(values: Dictionary) -> String:
+	var parts: PackedStringArray = PackedStringArray()
+	for key: String in _sorted_keys(values):
+		parts.append("%s:%d" % [key, int(values.get(key, 0))])
+	return ", ".join(parts)
 
 static func _csv(value: String) -> String:
 	var escaped: String = value.replace("\"", "\"\"")

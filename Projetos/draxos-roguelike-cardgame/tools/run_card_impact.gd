@@ -81,6 +81,9 @@ func _parse_options(args: PackedStringArray) -> Dictionary:
 		"mode": "explore",
 		"stop_on_failure": false,
 		"numeric_threshold": 0.0,
+		"effect_signatures": false,
+		"effect_scope": "",
+		"effect_mode": "",
 		"command": "run_card_impact %s" % " ".join(Array(args))
 	}
 	for arg: String in args:
@@ -102,6 +105,12 @@ func _parse_options(args: PackedStringArray) -> Dictionary:
 			raw["stop_on_failure"] = true
 		elif arg.begins_with("--numeric-threshold="):
 			raw["numeric_threshold"] = float(arg.trim_prefix("--numeric-threshold="))
+		elif arg == "--effect-signatures":
+			raw["effect_signatures"] = true
+		elif arg.begins_with("--effect-scope="):
+			raw["effect_scope"] = arg.trim_prefix("--effect-scope=")
+		elif arg.begins_with("--effect-mode="):
+			raw["effect_mode"] = arg.trim_prefix("--effect-mode=")
 	if not (str(raw.get("phase", "")).to_lower() in ["before", "after", "compare"]):
 		raw["phase"] = "before"
 	if str(raw.get("out", "")) == "":

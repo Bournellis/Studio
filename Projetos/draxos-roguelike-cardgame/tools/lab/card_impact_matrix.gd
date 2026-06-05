@@ -17,6 +17,11 @@ const CLASS_SUPPORT: Dictionary = {
 	"necromante": ["necro_esqueleto", "necro_morto_vivo", "necro_prender", "necro_esqueleto"]
 }
 
+const EFFECT_DAMAGE_ACTIONS: Array[String] = ["damage", "flow_damage", "adjacent_damage", "random_damage", "all_enemy_damage", "punish_snared"]
+const EFFECT_CONTROL_ACTIONS: Array[String] = ["debuff", "weaken", "snare", "multi_debuff", "freeze_random_enemy", "poison_all_enemies"]
+const EFFECT_BUFF_ACTIONS: Array[String] = ["buff_ally", "promote", "buff_all_allies", "shield_all_allies"]
+const EFFECT_ECONOMY_ACTIONS: Array[String] = ["gain_mana", "gain_ashes"]
+
 static func build_matrix(catalog, pack: Dictionary, card_filter: PackedStringArray = PackedStringArray()) -> Dictionary:
 	var discovery: Dictionary = discover_cards(catalog, pack)
 	var errors: Array[String] = Array(discovery.get("errors", []))
@@ -148,27 +153,37 @@ static func _card_entry(card_id: String, kind: String, class_id: String, card) -
 		"attack": int(card.attack),
 		"health": int(card.health),
 		"action": str(Dictionary(card.effect).get("action", "")),
-		"keywords": Array(card.keywords)
+		"keywords": Array(card.keywords),
+		"effect_family": _effect_family(card)
 	}
 
 static func _player_case(card_data: Dictionary, pack: Dictionary) -> Dictionary:
 	var template: Dictionary = Dictionary(Dictionary(pack.get("case_templates", {})).get("player", {}))
 	var card_id: String = str(card_data.get("id", ""))
 	var class_id: String = str(card_data.get("class_id", "arcano"))
+	var family: String = str(card_data.get("effect_family", "played"))
+	var expectations: Dictionary = Dictionary(template.get("expectations", {})).duplicate(true)
+	if _requires_player_effect_signature(pack):
+		var required: Dictionary = Dictionary(expectations.get("required", {})).duplicate(true)
+		required["card_effect_signature_present_equals"] = true
+		expectations["required"] = required
 	return {
 		"id": "card_impact_player_%s" % card_id,
 		"name": "Card Impact Player %s" % card_id,
-		"tags": ["card_impact", "card_under_test", "player_card", class_id],
+		"tags": ["card_impact", "card_under_test", "player_card", class_id, "effect_%s" % family],
 		"class_id": class_id,
-		"encounter_id": str(template.get("encounter_id", "card_impact_player_harness")),
+		"encounter_id": _player_harness_id(template, family),
 		"seed": int(template.get("seed", DEFAULT_SEED)),
 		"policy_id": str(template.get("policy_id", "card_focus_legal")),
 		"deck": _player_deck(card_data, class_id),
 		"config": Dictionary(template.get("config", {})).duplicate(true),
 		"turn_limit": int(template.get("turn_limit", 3)),
-		"expectations": Dictionary(template.get("expectations", {})).duplicate(true),
+		"expectations": expectations,
 		"card_under_test": card_data.duplicate(true),
-		"encounter_override": _player_encounter_override()
+		"effect_signature_required": _requires_player_effect_signature(pack),
+		"effect_signature_scope": "player",
+		"effect_family": family,
+		"encounter_override": _player_encounter_override_for(family)
 	}
 
 static func _enemy_case(card_data: Dictionary, pack: Dictionary) -> Dictionary:
@@ -187,6 +202,9 @@ static func _enemy_case(card_data: Dictionary, pack: Dictionary) -> Dictionary:
 		"turn_limit": int(template.get("turn_limit", 1)),
 		"expectations": Dictionary(template.get("expectations", {})).duplicate(true),
 		"card_under_test": card_data.duplicate(true),
+		"effect_signature_required": false,
+		"effect_signature_scope": "enemy_report_only",
+		"effect_family": str(card_data.get("effect_family", "enemy")),
 		"encounter_override": _enemy_encounter_override(card_id)
 	}
 
@@ -211,10 +229,22 @@ static func _support_card_for(class_id: String, card_id: String) -> String:
 	return card_id
 
 static func _player_encounter_override() -> Dictionary:
+	return _player_encounter_override_for("played")
+
+static func _player_harness_id(template: Dictionary, family: String) -> String:
+	var harnesses: Dictionary = Dictionary(template.get("harnesses", {}))
+	if harnesses.has(family):
+		return str(harnesses.get(family, ""))
+	if harnesses.has("default"):
+		return str(harnesses.get("default", ""))
+	return str(template.get("encounter_id", "card_impact_player_harness"))
+
+static func _player_encounter_override_for(family: String) -> Dictionary:
+	var mode: String = "duelo" if family in ["damage", "control"] else "limpar_mesa"
 	return {
-		"id": "card_impact_player_harness",
-		"display_name": "Card Impact Player Harness",
-		"mode": "limpar_mesa",
+		"id": "card_impact_player_%s_harness" % family,
+		"display_name": "Card Impact Player %s Harness" % family.capitalize(),
+		"mode": mode,
 		"enemy_director": "prefilled_board",
 		"enemy_health": 40,
 		"player_slots_count": 3,
@@ -276,6 +306,29 @@ static func _unique_strings(values: Array) -> Array[String]:
 		if text != "" and not result.has(text):
 			result.append(text)
 	return result
+
+static func _effect_family(card) -> String:
+	var action: String = str(Dictionary(card.effect).get("action", ""))
+	if EFFECT_DAMAGE_ACTIONS.has(action):
+		return "damage"
+	if EFFECT_CONTROL_ACTIONS.has(action):
+		return "control"
+	if EFFECT_BUFF_ACTIONS.has(action):
+		return "buff"
+	if EFFECT_ECONOMY_ACTIONS.has(action):
+		return "economy"
+	if card.occupies_slot():
+		return "summon"
+	return "played"
+
+static func _requires_player_effect_signature(pack: Dictionary) -> bool:
+	var config: Dictionary = Dictionary(pack.get("effect_signatures", {}))
+	if config.is_empty():
+		return false
+	if not bool(config.get("enabled", false)):
+		return false
+	var player_config: Dictionary = Dictionary(config.get("player", {}))
+	return str(player_config.get("mode", "required")) == "required" and bool(player_config.get("fail_on_missing_signature", true))
 
 static func _typed_card_array(values: Array) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []

@@ -1,0 +1,143 @@
+{
+	"pack_id": "track02_card_impact_v2",
+	"schema_version": 2,
+	"simulation_mode": "card_impact_v2",
+	"description": "Card Impact Pack V2 with player-card effect signatures and enemy-card schema readiness.",
+	"card_sets": {
+		"player_prefixes": ["arcano_", "invocador_", "necro_"],
+		"player_scope": "core_class_v1",
+		"player_core_reward_elements": ["terra"],
+		"player_upgrade_suffixes": ["", "_lvl2", "_lvl3"],
+		"enemy_source": "track_contract.enemy_card_galleries",
+		"enemy_prefix": "enemy_",
+		"legacy_inactive_prefix": "elemental_",
+		"expected_player_cards": 54,
+		"expected_enemy_cards": 30,
+		"expected_legacy_inactive_cards": 15
+	},
+	"effect_signatures": {
+		"enabled": true,
+		"schema_version": 1,
+		"player": {
+			"scope": "player",
+			"mode": "required",
+			"fail_on_missing_signature": true,
+			"fail_on_effect_delta": false
+		},
+		"enemy": {
+			"scope": "enemy",
+			"mode": "report_only",
+			"fail_on_missing_signature": false,
+			"fail_on_effect_delta": false
+		},
+		"compare_fields": [
+			"summons_created",
+			"player_units_delta",
+			"enemy_units_delta",
+			"enemy_hero_damage",
+			"player_hero_damage",
+			"enemy_slot_damage_total",
+			"player_slot_damage_total",
+			"ally_attack_buff_total",
+			"ally_health_buff_total",
+			"enemy_attack_debuff_total",
+			"enemy_health_debuff_total",
+			"poison_added_total",
+			"freeze_added_total",
+			"shield_added_total",
+			"mana_gained",
+			"ashes_gained",
+			"cards_drawn",
+			"cards_discarded",
+			"pending_choices_delta",
+			"keywords_added",
+			"keywords_removed",
+			"families"
+		],
+		"group_by_action": true
+	},
+	"case_templates": {
+		"player": {
+			"encounter_id": "card_impact_player_harness",
+			"harnesses": {
+				"default": "card_impact_player_harness",
+				"damage": "card_impact_player_damage_harness",
+				"summon": "card_impact_player_summon_harness",
+				"buff": "card_impact_player_buff_harness",
+				"control": "card_impact_player_control_harness",
+				"economy": "card_impact_player_economy_harness",
+				"played": "card_impact_player_played_harness"
+			},
+			"policy_id": "card_focus_legal",
+			"seed": 20260518,
+			"turn_limit": 3,
+			"config": {
+				"player_health": 40,
+				"mana_per_turn": 10,
+				"max_hand_size": 5,
+				"class_passive_unlocked": true,
+				"class_active_unlocked": false,
+				"class_active_level": 0,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"expectations": {
+				"required": {
+					"card_under_test_played_equals": true,
+					"policy_action_rejected_equals": false,
+					"combat_cycles_min": 1
+				}
+			}
+		},
+		"enemy": {
+			"encounter_id": "card_impact_enemy_harness",
+			"policy_id": "end_turn_only",
+			"seed": 20260518,
+			"turn_limit": 1,
+			"config": {
+				"player_health": 60,
+				"mana_per_turn": 10,
+				"max_hand_size": 5,
+				"class_passive_unlocked": false,
+				"class_active_unlocked": false,
+				"class_active_level": 0,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"expectations": {
+				"required": {
+					"card_under_test_participated_equals": true,
+					"policy_action_rejected_equals": false,
+					"combat_cycles_min": 1
+				}
+			}
+		}
+	},
+	"components": {
+		"battle": {
+			"enabled": true
+		},
+		"scenario": {
+			"enabled": true,
+			"pack": "track02_core_v1"
+		},
+		"run_lab": {
+			"enabled": true,
+			"preset": "smoke",
+			"classes": ["arcano", "invocador", "necromante"],
+			"seeds": [20260518],
+			"policies": ["baseline"]
+		}
+	},
+	"gate_policy": {
+		"fail_on_structural_errors": true,
+		"fail_on_missing_after_records": true,
+		"fail_on_new_failures": true,
+		"fail_on_missing_player_effect_signature": true,
+		"fail_on_effect_deltas": false,
+		"fail_on_metric_deltas": false,
+		"fail_on_new_warnings": false
+	}
+}

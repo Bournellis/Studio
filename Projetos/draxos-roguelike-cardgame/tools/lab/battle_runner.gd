@@ -1,5 +1,6 @@
 extends RefCounted
 
+const BattleEffectSignatureScript = preload("res://tools/lab/battle_effect_signature.gd")
 const BattleEvaluatorScript = preload("res://tools/lab/battle_evaluator.gd")
 const BattlePolicyScript = preload("res://tools/lab/battle_policy.gd")
 const SCHEMA_VERSION: int = 1
@@ -198,6 +199,11 @@ static func _initial_metrics(pack: Dictionary, case_data: Dictionary, encounter:
 		"card_under_test_play_count": 0,
 		"card_under_test_seen": _state_contains_card(initial_state, str(Dictionary(case_data.get("card_under_test", {})).get("id", ""))),
 		"card_under_test_participated": false,
+		"card_effect_samples": [],
+		"card_effect_signature": {},
+		"card_effect_signature_present": false,
+		"card_effect_signature_missing_reason": "",
+		"effect_families": [],
 		"policy_action_rejected": false,
 		"outcome": str(initial_state.get("outcome", "")),
 		"terminated": false,
@@ -211,6 +217,11 @@ static func _record_policy_result(metrics: Dictionary, policy_result: Dictionary
 	metrics["pending_choices_resolved"] = int(metrics.get("pending_choices_resolved", 0)) + int(policy_result.get("pending_choices_resolved", 0))
 	if bool(policy_result.get("active_used", false)):
 		metrics["class_active_uses"] = int(metrics.get("class_active_uses", 0)) + 1
+	var effect_samples: Array = Array(metrics.get("card_effect_samples", []))
+	for sample_value: Variant in Array(policy_result.get("effect_samples", [])):
+		if typeof(sample_value) == TYPE_DICTIONARY:
+			effect_samples.append(Dictionary(sample_value).duplicate(true))
+	metrics["card_effect_samples"] = effect_samples
 	var card_under_test: String = str(metrics.get("card_under_test", ""))
 	if card_under_test != "":
 		for play: Variant in cards_played:
@@ -238,6 +249,7 @@ static func _append_timeline(metrics: Dictionary, state: Dictionary, policy_resu
 		"player_units_alive": _occupied_count(Array(state.get("player_slots", []))),
 		"enemy_units_alive": _occupied_count(Array(state.get("enemy_slots", []))),
 		"cards_played": Array(policy_result.get("cards_played", [])).duplicate(true),
+		"effect_samples": Array(policy_result.get("effect_samples", [])).duplicate(true),
 		"active_used": bool(policy_result.get("active_used", false)),
 		"pending_choices_resolved": int(policy_result.get("pending_choices_resolved", 0)),
 		"outcome": str(state.get("outcome", "")),
@@ -263,6 +275,7 @@ static func _finalize_metrics(metrics: Dictionary, initial_state: Dictionary, fi
 	metrics["card_under_test_participated"] = bool(metrics.get("card_under_test_played", false))
 	if card_kind == "enemy":
 		metrics["card_under_test_participated"] = bool(metrics.get("card_under_test_seen", false)) and int(metrics.get("combat_cycles", 0)) > 0
+	_finalize_effect_signature(metrics)
 	metrics["outcome"] = outcome
 	metrics["terminated"] = outcome != ""
 	metrics["turn_limit_hit"] = outcome == "" and int(metrics.get("combat_cycles", 0)) >= turn_limit
@@ -294,10 +307,37 @@ static func _error_metrics(case_data: Dictionary, message: String) -> Dictionary
 		"card_under_test_play_count": 0,
 		"card_under_test_seen": false,
 		"card_under_test_participated": false,
+		"card_effect_samples": [],
+		"card_effect_signature": BattleEffectSignatureScript.empty_missing(str(Dictionary(case_data.get("card_under_test", {})).get("id", "")), message),
+		"card_effect_signature_present": false,
+		"card_effect_signature_missing_reason": message,
+		"effect_families": [],
 		"policy_action_rejected": true,
 		"runner_warnings": [message],
 		"timeline": []
 	}
+
+static func _finalize_effect_signature(metrics: Dictionary) -> void:
+	var card_id: String = str(metrics.get("card_under_test", ""))
+	if card_id == "":
+		metrics["card_effect_signature"] = {}
+		metrics["card_effect_signature_present"] = false
+		metrics["card_effect_signature_missing_reason"] = "no card under test"
+		metrics["effect_families"] = []
+		return
+	var samples: Array = Array(metrics.get("card_effect_samples", []))
+	if samples.is_empty():
+		var reason: String = "card was not played" if not bool(metrics.get("card_under_test_played", false)) else "card produced no effect sample"
+		metrics["card_effect_signature"] = BattleEffectSignatureScript.empty_missing(card_id, reason)
+		metrics["card_effect_signature_present"] = false
+		metrics["card_effect_signature_missing_reason"] = reason
+		metrics["effect_families"] = []
+		return
+	var signature: Dictionary = BattleEffectSignatureScript.aggregate(card_id, samples)
+	metrics["card_effect_signature"] = signature
+	metrics["card_effect_signature_present"] = bool(signature.get("present", false))
+	metrics["card_effect_signature_missing_reason"] = ""
+	metrics["effect_families"] = Array(signature.get("families", [])).duplicate()
 
 static func _policy_options(case_data: Dictionary, options: Dictionary) -> Dictionary:
 	var policy_options: Dictionary = options.duplicate(true)
