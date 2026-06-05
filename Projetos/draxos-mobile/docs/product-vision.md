@@ -16,7 +16,7 @@ O jogador nao e o heroi. O jogador e um Draxos em ascensao.
 
 ## Situacao Atual
 
-Etapa operacional atual: `TECHNICAL_HARDENING_PUBLISHED_INTERNAL_ALPHA`.
+Etapa operacional atual: `BOSQUE_V3_UX_FEEL_PUBLISHED_INTERNAL_ALPHA`.
 
 Direcao viva de produto: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, com Arena PVE
 como core inicial do `Autobattler` depois que o pacote publicado atual for
@@ -24,7 +24,7 @@ revisado em playtest humano.
 
 Atualizacao V1 de plataforma: DraxosMobile agora organiza sua visao jogavel em cinco modos oficiais governados por um registry unico: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` e `Openworld`. A Arena PVE atual pertence ao `Autobattler`; Refugio/Base atuais pertencem ao `Basebuilder`; o antigo prototipo Rpgsuave foi renomeado de verdade para `Openworld`, com `forest` como primeiro slice e `Bosque` como entrada player-facing direta.
 
-O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2 e Openworld Main Menu Sync ficam como baselines historicas/tecnicas/conteudo preservadas; Technical Hardening e o pacote operacional publicado para revisao humana.
+O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2, Openworld Main Menu Sync e Technical Hardening ficam como baselines historicas/tecnicas/conteudo preservadas; Bosque v3 UX/Feel e o pacote operacional publicado para revisao humana.
 
 A decisao de produto seguinte foi escolhida em nivel de direcao: o early game deve ser uma Arena PVE inicial, sem cooldown de combate, com tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado antes da arena, vida resetada a 100% em cada duelo, buffs temporarios leves de stat entre lutas e comportamento ajustavel antes do proximo inimigo. A direcao viva esta em `docs/pve-arena-initial-direction.md`, mas a abertura do proximo pacote ainda depende do playtest do pacote publicado; o resultado pode pedir hotfix de Bosque/menu antes de Arena/tuning.
 
@@ -38,7 +38,7 @@ Nesta etapa, nomes, spells, armas, numeros de economia, Battle Pass, visual fina
 
 Ordem de foco operacional:
 
-1. Playtest humano do Technical Hardening publicado, preservando o foco de Bosque/menu/Arena herdado do Openworld Main Menu Sync.
+1. Playtest humano do Bosque v3 UX/Feel publicado, preservando o foco de Bosque/menu/Arena herdado do Openworld Main Menu Sync e o hardening tecnico anterior.
 2. Hotfix estreito de Bosque/menu se o playtest apontar regressao ou friccao.
 3. Arena PVE inicial dentro do `Autobattler` e tuning integrado de leveling/upgrades/recompensas/poder quando o pacote publicado estiver confirmado.
 4. `Basebuilder` como suporte persistente da rotina.
@@ -223,7 +223,7 @@ Esses itens podem virar projeto ou fase futura, mas nao devem ser tratados como 
 
 ## Gates De Proxima Decisao
 
-1. Revisar/playtestar Openworld Main Menu Sync no pacote publicado.
+1. Revisar/playtestar Bosque v3 UX/Feel no pacote publicado.
 2. Decidir se o proximo pacote e hotfix estreito de Bosque/menu ou Arena PVE/tuning.
 3. Se for Arena PVE, confirmar que `docs/pve-arena-initial-direction.md` e `docs/pve-arena-v1.md` continuam suficientes para tutorial, primeiras arenas, inimigos, buffs e recompensas.
 4. Rodar Progression Lab e Battle Lab orientados a Arena PVE antes de mexer em valores calibraveis.

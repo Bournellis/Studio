@@ -17,11 +17,11 @@ DraxosMobile e um jogo mobile-first de progressao persistente construido sobre c
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa operacional atual e `TECHNICAL_HARDENING_PUBLISHED_INTERNAL_ALPHA`: o pacote publicado preserva a correcao de coleta/deposito/resync do Bosque e o menu player-facing simplificado do Openworld Main Menu Sync, e adiciona hardening tecnico de auth, idempotencia, rewards e hotspots. A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`, mas o proximo pacote ainda depende do playtest humano do build publicado e pode ser hotfix estreito de Bosque/menu antes de Arena/tuning.
+A etapa operacional atual e `BOSQUE_V3_UX_FEEL_PUBLISHED_INTERNAL_ALPHA`: o pacote publicado preserva o hardening tecnico anterior, a correcao de coleta/deposito/resync do Bosque e o menu player-facing simplificado do Openworld Main Menu Sync, e adiciona um polimento estreito de Bosque com spawn/colisao mais seguro, feedback visual/textual de coleta, deposito e craft, fogueira/landmarks e resumo de visita mais legiveis. A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`, mas o proximo pacote ainda depende do playtest humano do build publicado e pode ser novo hotfix estreito de Bosque/menu antes de Arena/tuning.
 
 ## Foco Imediato
 
-O foco imediato e validar a leitura humana do pacote Technical Hardening publicado: Bosque coleta/deposito/resync, menu principal simplificado, caminho direto para Bosque/Arena PVE/Loja, continuidade do tutorial Arena e ausencia de regressao causada pelo hardening tecnico.
+O foco imediato e validar a leitura humana do pacote Bosque v3 UX/Feel publicado: Bosque coleta/deposito/resync, menu principal simplificado, caminho direto para Bosque/Arena PVE/Loja, continuidade do tutorial Arena, clareza de proximidade/deposito/craft e ausencia de regressao causada pelo hardening tecnico anterior.
 
 O foco de fundacao anterior foi fechado: Foundation Closeout entregou account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish, Hardening Platform V1 e Foundation Hardening V2 ficam como baselines tecnicas/historicas preservadas.
 
@@ -29,7 +29,7 @@ A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo de
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor e o Technical Hardening e que Refugio, Arena PVE/Preparacao, Resultado e Bosque devem ser confirmados no pacote publicado antes de abrir novo backend, schema, tuning, economia ou conteudo.
+First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening e Bosque v3 UX/Feel e que Refugio, Arena PVE/Preparacao, Resultado e Bosque devem ser confirmados no pacote publicado antes de abrir novo backend, schema, tuning, economia ou conteudo.
 
 Ao abrir o pacote de Arena PVE inicial, devem ser avaliados juntos:
 
@@ -63,7 +63,7 @@ Terminologia implementada preservada como substancia/mock: Instrumento Ritual, S
 
 Ordem recomendada agora:
 
-1. Playtest humano do Technical Hardening publicado.
+1. Playtest humano do Bosque v3 UX/Feel publicado.
 2. Hotfix estreito de Bosque/menu se o playtest indicar regressao.
 3. Arena PVE tutorial e primeiras arenas de 3 lutas.
 4. Dificuldade, recompensas, poder e progression labs orientados a Arena PVE.

@@ -1,9 +1,9 @@
 # DraxosMobile - Multi-Agent Workflow
 
 - Status: `VIVO`
-- Last updated: `2026-06-04`
+- Last updated: `2026-06-05`
 - Scope: coordination workflow for hardening lanes, mode work and handoffs.
-- Current published package: `Openworld Main Menu Sync`.
+- Current published package: `Bosque v3 UX/Feel`.
 - Previous hardening/live-doc baseline: `Foundation Hardening V2`.
 - Current Arena loop context: `Track 21 - Arena Loop Unlock And Friction Pass`.
 
@@ -48,7 +48,7 @@ For release or validation work, also read:
 
 ## Track Reading Rules
 
-Technical Hardening is the current published Internal Alpha package. Openworld Main Menu Sync remains the previous content package preserved inside it.
+Bosque v3 UX/Feel is the current published Internal Alpha package. Technical Hardening remains the previous technical package and Openworld Main Menu Sync remains the previous content package preserved inside it.
 Foundation Hardening V2 remains the previous baseline for multi-agent and
 multi-mode enforcement. Hardening Platform V1 remains the previous platform
 baseline. Track 21 is the current Arena loop package for agents to use as
@@ -180,7 +180,7 @@ git status --short
 
 Expected nuance: historical docs may still mention older tracks. Live entry
 docs should not tell new agents that Track 16, Track 18, Track 19, Track 21,
-Remote Lab Runner, Hardening Platform V1 or Foundation Hardening V2 is the
-latest remote package when Openworld Main Menu Sync is the intended current
-publication. Foundation Hardening V2 remains valid as hardening/live-doc
+Remote Lab Runner, Hardening Platform V1, Foundation Hardening V2, Openworld
+Main Menu Sync or Technical Hardening is the latest remote package when Bosque
+v3 UX/Feel is the intended current publication. Foundation Hardening V2 remains valid as hardening/live-doc
 baseline, and Track 21 remains valid as Arena loop context.

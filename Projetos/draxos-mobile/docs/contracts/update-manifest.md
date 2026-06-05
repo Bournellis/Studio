@@ -1,6 +1,6 @@
 # Update Manifest Contract
 
-- Ultima atualizacao: `2026-06-04`
+- Ultima atualizacao: `2026-06-05`
 - Status: `LIVE_INTERNAL_ALPHA_CONTRACT`
 - Endpoint atual: `GET /release/manifest`
 - Schema: `internal_alpha_manifest_v1`
@@ -27,29 +27,29 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
   "latest_version_code": 1,
   "minimum_supported_version": "0.0.1-alpha.0",
   "minimum_supported_version_code": 1,
-  "released_at": "2026-06-05T06:18:43Z",
+  "released_at": "2026-06-05T07:40:08Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Technical Hardening publicado na URL principal de Internal Alpha.",
+    "Bosque v3 UX/Feel publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
     "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage.",
-    "Technical Hardening inclui auth compartilhado em endpoints mutaveis, reset idempotente, reward profiles DB-side e refatores de hotspots.",
-    "Openworld Collection Sync Local Fix e Main Menu Refactor seguem incluidos neste pacote.",
+    "Bosque v3 UX/Feel melhora colisao/spawn, feedback de coleta, deposito, craft, fogueira, landmarks e resumo de visita no Bosque.",
+    "Technical Hardening e Openworld Main Menu Sync seguem preservados dentro deste pacote.",
     "Battle Lab e Progression Lab no Web usam lab-runner remoto com a mesma conta alpha Supabase do jogo.",
     "Progression Lab usa save separado e nao pontua ranking."
   ],
   "artifacts": {
     "android": {
       "label": "Android APK",
-      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-technical-hardening-20260605-8e54a1f/downloads/draxos-mobile-alpha.apk",
-      "sha256": "676ee0de44ad04cce0c16ad806c02541647188cce1edfe112880c95491acdbbb",
+      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45/downloads/draxos-mobile-alpha.apk",
+      "sha256": "4455af96d285a2ac3f5d8268d5d044ff4933eb10303dfbe113d3aba0811efaa5",
       "auth_required": "false"
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
-      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-technical-hardening-20260605-8e54a1f/downloads/draxos-mobile-alpha.zip",
-      "sha256": "badad63eab969301b6b69900d25b503842e285bcb5d2cb184b2be9e3c629ae45",
+      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45/downloads/draxos-mobile-alpha.zip",
+      "sha256": "bd2ce982a4bba80eedbd8ff165537dbe4bdc49183139d6e5b8e7e598cff85f93",
       "auth_required": "false"
     },
     "web": {
@@ -87,4 +87,4 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
 
 ## Evolucao
 
-Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, APK/PC ZIP foram publicados no Supabase Storage unlisted, Portal/Web foram publicados no Cloudflare Pages e o manifest remoto passou a usar hashes/links reais. Em `T03-P18`, o handoff final foi registrado em `../internal-alpha-v0-handoff.md`. Em `Openworld Main Menu Sync`, o fallback versionado do repo passou a apontar para o release root de conteudo publicado. Em `Technical Hardening`, o fallback versionado do repo passou a apontar para `internal-alpha/v0-technical-hardening-20260605-8e54a1f` com hashes dos artefatos publicados. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.
+Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, APK/PC ZIP foram publicados no Supabase Storage unlisted, Portal/Web foram publicados no Cloudflare Pages e o manifest remoto passou a usar hashes/links reais. Em `T03-P18`, o handoff final foi registrado em `../internal-alpha-v0-handoff.md`. Em `Openworld Main Menu Sync`, o fallback versionado do repo passou a apontar para o release root de conteudo publicado. Em `Technical Hardening`, o fallback versionado do repo passou a apontar para `internal-alpha/v0-technical-hardening-20260605-8e54a1f` com hashes dos artefatos publicados. Em `Bosque v3 UX/Feel`, o fallback versionado passou a apontar para `internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45` com hashes dos artefatos publicados. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.

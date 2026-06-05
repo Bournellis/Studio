@@ -8,8 +8,12 @@
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/draxos-mobile/bosque-v3-ux-feel`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--bosque-v3-ux-feel`
-- status: `IMPLEMENTED_LOCAL_PENDING_PUBLICATION`
-- remote publication: approved by Fabio in-thread for final main URL publication
+- status: `BOSQUE_V3_UX_FEEL_PUBLISHED_INTERNAL_ALPHA`
+- remote publication: completed on the Internal Alpha principal URL
+- release root: `internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45`
+- official URL: `https://draxos-mobile-internal-alpha.pages.dev/`
+- direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- preview evidence: `https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev`
 
 ## Objetivo
 
@@ -38,9 +42,18 @@ Fechar o gate de playtest OK do Technical Hardening e entregar Bosque v3 UX/Feel
 - `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS.
 - `validate_foundation.ps1 -Profile FullLocal -NoProjectWrites`: BLOCKED only in `DatabaseLocal`; Docker Desktop/Supabase local is not running (`127.0.0.1:54321/54322` refused, Docker pipe missing). DocsOnly, ServerQuick, ClientQuick, ModePlatform and ReleaseDryRun stages inside the same run passed before the DatabaseLocal failures.
 
-## Pendente Nesta Entrega
+## Publicacao E Validacao Remota
 
-- Commitar e mergear ao `master`.
-- Publicar via `publish_internal_alpha.ps1 -Mode FullPublish -ReleaseRoot <root> -ConfirmRemoteMutation`.
-- Atualizar fallback/docs/guards com release root, hashes e preview reais da publicacao.
-- Rodar validacao remota contra `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+- Android APK: SHA256 `4455af96d285a2ac3f5d8268d5d044ff4933eb10303dfbe113d3aba0811efaa5`.
+- PC ZIP: SHA256 `bd2ce982a4bba80eedbd8ff165537dbe4bdc49183139d6e5b8e7e598cff85f93`.
+- Web Index: SHA256 `75b9d6e532b78dbe9a6cdb8caee3a6794ab2ae0c4e2aaf8e7ac619022a20d11f`.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -PublicDownloads -ConfirmRemoteMutation`: PASS after retrying an intermittent Supabase CLI `502`.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: PASS, preview `https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45 -RemoteWebUrl https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS.
+- Remote Web launch smoke loaded the game, matched release root/asset root and reported no runtime errors.
+
+## Estado Final
+
+Bosque v3 UX/Feel fica publicado para playtest humano. O proximo trabalho deve partir de `master` atualizado e escolher um pacote pequeno a partir do feedback: novo ajuste estreito de Bosque/menu ou Arena PVE/tuning, sem abrir Openworld continuo por implicacao.

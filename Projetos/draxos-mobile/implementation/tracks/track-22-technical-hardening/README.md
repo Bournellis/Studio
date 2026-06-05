@@ -27,8 +27,12 @@ playable mode.
 
 ## Current Context
 
-Technical Hardening is the latest published Internal Alpha package:
+Technical Hardening was published as the Track 22 Internal Alpha package and is
+now the previous technical package preserved inside Bosque v3 UX/Feel:
 `internal-alpha/v0-technical-hardening-20260605-8e54a1f`.
+
+Bosque v3 UX/Feel is the latest published package:
+`internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45`.
 
 Openworld Main Menu Sync remains the previous content package:
 `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`.

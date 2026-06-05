@@ -8,15 +8,15 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   latest_version_code: 1,
   minimum_supported_version: "0.0.1-alpha.0",
   minimum_supported_version_code: 1,
-  released_at: "2026-06-05T06:18:43Z",
+  released_at: "2026-06-05T07:40:08Z",
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/",
   notes: [
-    "Technical Hardening publicado na URL principal de Internal Alpha.",
+    "Bosque v3 UX/Feel publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
     "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage.",
-    "Technical Hardening inclui auth compartilhado em endpoints mutaveis, reset idempotente, reward profiles DB-side e refatores de hotspots.",
-    "Openworld Collection Sync Local Fix e Main Menu Refactor seguem incluidos neste pacote.",
+    "Bosque v3 UX/Feel melhora colisao/spawn, feedback de coleta, deposito, craft, fogueira, landmarks e resumo de visita no Bosque.",
+    "Technical Hardening e Openworld Main Menu Sync seguem preservados dentro deste pacote.",
     "Battle Lab e Progression Lab no Web usam lab-runner remoto com a mesma conta alpha Supabase do jogo.",
     "Progression Lab usa save separado e nao pontua ranking.",
   ],
@@ -24,15 +24,15 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
     android: {
       label: "Android APK",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-technical-hardening-20260605-8e54a1f/downloads/draxos-mobile-alpha.apk",
-      sha256: "676ee0de44ad04cce0c16ad806c02541647188cce1edfe112880c95491acdbbb",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45/downloads/draxos-mobile-alpha.apk",
+      sha256: "4455af96d285a2ac3f5d8268d5d044ff4933eb10303dfbe113d3aba0811efaa5",
       auth_required: "false",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-technical-hardening-20260605-8e54a1f/downloads/draxos-mobile-alpha.zip",
-      sha256: "badad63eab969301b6b69900d25b503842e285bcb5d2cb184b2be9e3c629ae45",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45/downloads/draxos-mobile-alpha.zip",
+      sha256: "bd2ce982a4bba80eedbd8ff165537dbe4bdc49183139d6e5b8e7e598cff85f93",
       auth_required: "false",
     },
     web: {
@@ -143,7 +143,7 @@ interface PlayerRow {
   id: string;
 }
 
-const DEFAULT_RELEASE_ROOT = "internal-alpha/v0-technical-hardening-20260605-8e54a1f";
+const DEFAULT_RELEASE_ROOT = "internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
