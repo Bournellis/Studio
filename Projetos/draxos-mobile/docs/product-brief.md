@@ -1,6 +1,6 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-06-04`
+- Ultima atualizacao: `2026-06-05`
 - Status: `VIVO`
 
 ---
@@ -17,17 +17,19 @@ DraxosMobile e um jogo mobile-first de progressao persistente construido sobre c
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa atual combina `PVE_ARENA_INITIAL_DIRECTION_APPROVED` com `MINIGAME_PLATFORM_V1_MODES`: a Arena PVE continua sendo o primeiro core de produto, agora formalmente dentro do modo `Autobattler`, e a plataforma de modos governa registry tecnico, entradas diretas, admin, analytics e rewards.
+A etapa operacional atual e `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`: o pacote publicado corrige coleta/deposito/resync do Bosque no remoto e simplifica o menu player-facing. A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`, mas o proximo pacote ainda depende do playtest humano do build publicado e pode ser hotfix estreito de Bosque/menu antes de Arena/tuning.
 
 ## Foco Imediato
 
-O foco imediato de fundacao foi fechado: Foundation Closeout entregou account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish sincroniza docs, shell budgets, presenter guards e smoke local RLS/admin.
+O foco imediato e validar a leitura humana do pacote Openworld Main Menu Sync publicado: Bosque coleta/deposito/resync, menu principal simplificado, caminho direto para Bosque/Arena PVE/Loja e continuidade do tutorial Arena.
 
-A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo deve comecar por Arena PVE, nao por PVP-first. O pacote contratual/data-driven inicial vive em `docs/pve-arena-v1.md` e promove os arquivos `data/definitions/pve_arenas.json`, `pve_arena_difficulties.json`, `pve_enemies.json`, `arena_buffs.json` e `arena_rewards.json` como fonte autorada para a proxima implementacao. O loop interno pos-login aceito continua como fundacao de app:
+O foco de fundacao anterior foi fechado: Foundation Closeout entregou account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish, Hardening Platform V1 e Foundation Hardening V2 ficam como baselines tecnicas/historicas preservadas.
+
+A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo deve comecar por Arena PVE, nao por PVP-first. O pacote contratual/data-driven inicial vive em `docs/pve-arena-v1.md` e promove os arquivos `data/definitions/pve_arenas.json`, `pve_arena_difficulties.json`, `pve_enemies.json`, `arena_buffs.json` e `arena_rewards.json` como fonte autorada para a proxima implementacao. O loop interno pos-login aceito continua como fundacao historica de app:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-First Session Clarity v1 e o pacote publicado atual para essa pergunta; a leitura viva apos o main menu refactor e que Refugio, Arena PVE/Preparacao e Resultado orientam o primeiro ciclo sem novo backend, schema, tuning, economia ou conteudo.
+First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor e que Refugio, Arena PVE/Preparacao, Resultado e Bosque devem ser confirmados no pacote Openworld Main Menu Sync publicado antes de abrir novo backend, schema, tuning, economia ou conteudo.
 
 Ao abrir o pacote de Arena PVE inicial, devem ser avaliados juntos:
 
@@ -61,12 +63,14 @@ Terminologia implementada preservada como substancia/mock: Instrumento Ritual, S
 
 Ordem recomendada agora:
 
-1. Arena PVE tutorial e primeiras arenas de 3 lutas.
-2. Dificuldade, recompensas, poder e progression labs orientados a Arena PVE.
-3. Base/preparacao como suporte da Arena PVE.
-4. PVP assincrono posterior, com bots como fallback transparente.
-5. Social/competicao.
-6. Armas, spells, economia fina, novos conteudos e visual final.
+1. Playtest humano do Openworld Main Menu Sync publicado.
+2. Hotfix estreito de Bosque/menu se o playtest indicar regressao.
+3. Arena PVE tutorial e primeiras arenas de 3 lutas.
+4. Dificuldade, recompensas, poder e progression labs orientados a Arena PVE.
+5. Base/preparacao como suporte da Arena PVE.
+6. PVP assincrono posterior, com bots como fallback transparente.
+7. Social/competicao.
+8. Armas, spells, economia fina, novos conteudos e visual final.
 
 ## Plataformas
 
@@ -110,7 +114,8 @@ Track 16 e o ultimo pacote tecnico, com comportamento/crafting/pocoes. Ele esta 
 
 ## Documentos Vivos
 
-- `foundation-app-v0-audit.md` - bussola atual da Foundation Audit.
+- `foundation-app-v0-audit.md` - bussola historica preservada da Foundation Audit aceita.
+- `implementation/current-status.md` - snapshot vivo da etapa operacional, proximo passo e limites atuais.
 - `pve-arena-initial-direction.md` - direcao viva do early game por Arena PVE.
 - `pve-arena-v1.md` - contrato inicial de Arena PVE para dados, endpoints, schema e labs.
 - `first-session-clarity-v1.md` - pacote publicado de clareza da primeira sessao.

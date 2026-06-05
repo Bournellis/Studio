@@ -1,7 +1,7 @@
 # DraxosMobile - Documentation Index
 
 - Status: `VIVO`
-- Last updated: `2026-06-04`
+- Last updated: `2026-06-05`
 - Purpose: classify project documents so agents know what to trust, what to update and what to treat as history.
 
 ## Categories
@@ -138,6 +138,7 @@
 | `implementation/tracks/track-18-pve-arena-initial/` | `HISTORICO` | Preserved Arena PVE implementation package; live Arena contract lives in `docs/pve-arena-v1.md`. |
 | `implementation/tracks/track-20-season-1-arena-calibration/` | `HISTORICO` | Preserved Season 1 Arena calibration package; current data contracts live in `data/definitions/pve_arena_difficulties.json` and `data/definitions/season_1_progression_targets.json`. |
 | `implementation/tracks/track-21-arena-loop-unlock-friction/` | `HISTORICO` | Preserved Arena loop unlock/friction context for Autobattler; not the current platform baseline. |
+| `implementation/tracks/track-22-technical-hardening/` | `HISTORICO` | Local technical hardening track for docs compaction, release runner safety, Modes Ops removal, hotspot refactors and backend authority hardening. |
 
 ## Design Archive
 
@@ -150,8 +151,9 @@
 ## Drift Rules
 
 - A live doc must not tell agents to start from Track 04, Track 08, Track 10, Track 14, Track 15 or Track 16 as the current stage.
-- A live doc must treat `implementation/current-status.md` as the active stage/status source after the user chooses the next package.
-- A live doc must treat `docs/pve-arena-initial-direction.md` as the current product direction after Foundation Final Polish: Arena PVE initial first, PVP later.
+- A live doc must treat `implementation/current-status.md` as the active operational stage/status source.
+- A live doc must treat `docs/pve-arena-initial-direction.md` as the current product direction: Arena PVE initial first, PVP later.
+- A live doc must distinguish operational publication from product direction: `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA` is the current published package, while Arena PVE remains the approved early-game direction after the published package is reviewed.
 - A live doc may treat `docs/pve-arena-v1.md` as the current implemented/published contract package for Arena PVE, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough. Track 21 is preserved Arena PVE/Autobattler context over Track 20 Season 1 Arena Calibration; it must not be described as the current platform baseline.
 - Parallel hardening and new mode docs must use Foundation Hardening V2 as the current baseline, Hardening Platform V1 as the previous mode-platform baseline, Track 21 as Arena loop context, Track 18 as Arena contract, Track 16 as technical behavior/potion/crafting context and Tracks 1/2 as historical alpha/lab evidence.
 - A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation beyond what the Arena PVE initial package explicitly needs.

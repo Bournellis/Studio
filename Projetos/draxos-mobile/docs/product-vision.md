@@ -1,6 +1,6 @@
 # DraxosMobile - Product Vision
 
-- Ultima atualizacao: `2026-06-04`
+- Ultima atualizacao: `2026-06-05`
 - Status: `LOCAL_PRODUCT_VISION - fonte viva do produto DraxosMobile`
 - Escopo: direcao de longo prazo, limites de produto, plataforma, economia, social, live ops, backend e monetizacao.
 
@@ -16,28 +16,32 @@ O jogador nao e o heroi. O jogador e um Draxos em ascensao.
 
 ## Situacao Atual
 
-Etapa atual: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, sobre `FOUNDATION_FINAL_POLISH_DELIVERED`.
+Etapa operacional atual: `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`.
+
+Direcao viva de produto: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, com Arena PVE
+como core inicial do `Autobattler` depois que o pacote publicado atual for
+revisado em playtest humano.
 
 Atualizacao V1 de plataforma: DraxosMobile agora organiza sua visao jogavel em cinco modos oficiais governados por um registry unico: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` e `Openworld`. A Arena PVE atual pertence ao `Autobattler`; Refugio/Base atuais pertencem ao `Basebuilder`; o antigo prototipo Rpgsuave foi renomeado de verdade para `Openworld`, com `forest` como primeiro slice e `Bosque` como entrada player-facing direta.
 
-O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish fecha essa base como gate local antes de tuning.
+O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish, Hardening Platform V1 e Foundation Hardening V2 ficam como baselines historicas/tecnicas preservadas; Openworld Main Menu Sync e o pacote operacional publicado para revisao humana.
 
-A decisao de produto seguinte foi escolhida: o early game deve ser uma Arena PVE inicial, sem cooldown de combate, com tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado antes da arena, vida resetada a 100% em cada duelo, buffs temporarios leves de stat entre lutas e comportamento ajustavel antes do proximo inimigo. A direcao viva esta em `docs/pve-arena-initial-direction.md`.
+A decisao de produto seguinte foi escolhida em nivel de direcao: o early game deve ser uma Arena PVE inicial, sem cooldown de combate, com tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado antes da arena, vida resetada a 100% em cada duelo, buffs temporarios leves de stat entre lutas e comportamento ajustavel antes do proximo inimigo. A direcao viva esta em `docs/pve-arena-initial-direction.md`, mas a abertura do proximo pacote ainda depende do playtest do pacote publicado; o resultado pode pedir hotfix de Bosque/menu antes de Arena/tuning.
 
 PVP deixa de ser o core inicial. Ele permanece planejado como modo posterior/competitivo, com bots apenas como fallback ou simulacao controlada enquanto nao houver playerbase suficiente.
 
-O loop interno pos-login aceito continua como fundacao de app:
+O loop interno pos-login aceito continua como fundacao historica de app:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
 Nesta etapa, nomes, spells, armas, numeros de economia, Battle Pass, visual final e apresentacao atual de batalha sao tratados como mock/substancia. Eles ajudam a sentir o produto, mas nao definem a direcao final.
 
-Ordem de foco:
+Ordem de foco operacional:
 
-1. Plataforma V1 de modos: registry tecnico, entradas player-facing diretas, `/modes`, admin/ops, analytics e disable/rollback.
-2. Arena PVE inicial dentro do `Autobattler` e tuning integrado de leveling/upgrades/recompensas/poder.
-3. `Basebuilder` como suporte persistente da rotina.
-4. `Bosque` como entrada Internal Alpha jogavel do `Openworld/forest` para validar sensacao de exploracao.
+1. Playtest humano do Openworld Main Menu Sync publicado.
+2. Hotfix estreito de Bosque/menu se o playtest apontar regressao ou friccao.
+3. Arena PVE inicial dentro do `Autobattler` e tuning integrado de leveling/upgrades/recompensas/poder quando o pacote publicado estiver confirmado.
+4. `Basebuilder` como suporte persistente da rotina.
 5. PVP assincrono posterior, social, competicao, Towerdefense e Cardgame quando seus contratos proprios existirem.
 
 ## Pilares
@@ -219,10 +223,9 @@ Esses itens podem virar projeto ou fase futura, mas nao devem ser tratados como 
 
 ## Gates De Proxima Decisao
 
-1. Foundation Final Polish entregue e validada.
-2. Direcao Arena PVE inicial documentada em `docs/pve-arena-initial-direction.md`.
-3. Fechar limite maximo inicial de lutas por arena.
-4. Fechar primeira lista de inimigos/arquetipos e dificuldades.
-5. Rodar Progression Lab e Battle Lab orientados a Arena PVE.
-6. Implementar pacote pequeno de Arena PVE/tutorial sem cooldown.
-7. Reintroduzir PVP como modo posterior/competitivo depois que o core PVE estiver claro.
+1. Revisar/playtestar Openworld Main Menu Sync no pacote publicado.
+2. Decidir se o proximo pacote e hotfix estreito de Bosque/menu ou Arena PVE/tuning.
+3. Se for Arena PVE, confirmar que `docs/pve-arena-initial-direction.md` e `docs/pve-arena-v1.md` continuam suficientes para tutorial, primeiras arenas, inimigos, buffs e recompensas.
+4. Rodar Progression Lab e Battle Lab orientados a Arena PVE antes de mexer em valores calibraveis.
+5. Implementar pacote pequeno de Arena PVE/tutorial sem cooldown somente depois de confirmar o pacote publicado atual.
+6. Reintroduzir PVP como modo posterior/competitivo depois que o core PVE estiver claro.

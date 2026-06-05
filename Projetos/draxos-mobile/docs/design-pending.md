@@ -1,6 +1,6 @@
 # DraxosMobile - Design Pending
 
-- Ultima atualizacao: `2026-06-04`
+- Ultima atualizacao: `2026-06-05`
 - Status: registro vivo de pendencias de design
 - Escopo: DraxosMobile, Openworld Main Menu Sync publicado, Foundation Hardening V2 preservado como baseline anterior de hardening/live-doc gates, Arena PVE inicial preservada como contexto Autobattler, tuning futuro e evolucoes futuras
 
@@ -77,6 +77,7 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 | DMOB-D071 | Openworld continuo | POS_SLICE | Como o Openworld evolui de Bosque para mundo continuo, incluindo mapa, risco, combate e fronteira com Basebuilder? | Playtest aprovou o slice Bosque como modo ativo Internal Alpha; expansao de mundo continuo continua bloqueada sem novo decision pack. | `docs/minigames/openworld-decision-pack.md` | ABERTO | - |
 | DMOB-D072 | Openworld menu-no-mundo | POS_SLICE | O DraxosMobile ganha valor se parte da rotina de menus virar lugar navegavel, como casa/altar do mago, arredores do Bosque, pequena cidade ou acessos diegeticos a funcoes existentes? | Sem decisao, agentes podem abrir cidade/hub diegetico cedo demais ou, no sentido oposto, descartar um experimento util de sensacao de mundo. | `docs/minigames/openworld-decision-pack.md` | ABERTO | - |
 | DMOB-D073 | Openworld conflito minimo | POS_SLICE | Existe evidencia suficiente para testar um pacote minimo com monstros, NPCs e quests dentro do Openworld sem virar campanha, MMO, economia paralela ou substituto da Arena PVE? | Sem decisao, combate/quests podem contaminar o Bosque relaxante, quebrar fronteiras com Arena/Basebuilder ou criar expectativas de Openworld completo. | `docs/minigames/openworld-decision-pack.md` | ABERTO | - |
+| DMOB-D074 | Proximo pacote | OPERACIONAL | Depois do playtest humano do Openworld Main Menu Sync, o proximo pacote deve ser hotfix estreito de Bosque/menu ou Arena PVE/tuning? | Sem essa decisao, agentes podem abrir Arena/tuning cedo demais ou ignorar regressao real do pacote publicado. | `implementation/current-status.md` | ABERTO | - |
 | DMOB-D001 | Escopo | PRIMEIRO_SLICE | O primeiro slice completo usa cap de level 10, 40 ou outro recorte dentro da Season 1? | Resolvido: Season 1 usa cap 40 por padrao, todos os levels sao permanentes e o simulador permite calibrar cap inicial 40/50/60. | `../implementation/tracks/track-00-first-slice-foundation/scope.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D002 | Progressao | PRIMEIRO_SLICE | Quais sao os gatilhos exatos de unlock de slots de spell, Doutrina e Familiar? | Resolvido: 0 slots no inicio; spell slots nos levels 3, 7 e 25; Doutrina no level 10; Familiar no level 15. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |
 | DMOB-D003 | Base Manager | PRIMEIRO_SLICE | Quais stats a Estrutura de Stats altera, quanto por level e com qual custo/recurso? | Resolvido: pacote unico permanente por level com Vida +0.8%, Ataque/dano base +0.5%, Defesa +0.4%, Mana/regen +0.3%, custando Energia + tempo como as demais estruturas. | `game-design-document.md` | RESOLVIDO | 2026-05-20 |
