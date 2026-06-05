@@ -26,12 +26,12 @@ func _run_smoke() -> int:
 		},
 		"guardrails": {
 			"release_scoped": true,
-			"read_only": true,
+			"read_only": false,
 			"no_service_role": true,
 			"no_secrets": true,
 			"no_player_state": true,
 			"no_gameplay_tuning": true,
-			"mutable_gameplay_state": false,
+			"mutable_gameplay_state": true,
 		},
 	})
 	if RuntimeConfigScript.is_fallback(remote_config):
@@ -50,6 +50,9 @@ func _run_smoke() -> int:
 	if not store.runtime_feature_enabled(RuntimeConfigScript.FEATURE_PROFILE_ACCOUNT_PANEL):
 		store.free()
 		return _fail_text("SessionStore should expose enabled runtime flag")
+	if not store.runtime_allows_gameplay_mutation():
+		store.free()
+		return _fail_text("remote runtime config should allow gameplay mutations")
 
 	var fallback_result := RuntimeConfigScript.from_fetch_result({
 		"ok": false,
@@ -63,6 +66,9 @@ func _run_smoke() -> int:
 	if not store.runtime_config_is_fallback():
 		store.free()
 		return _fail_text("failed fetch should produce fallback config")
+	if store.runtime_allows_gameplay_mutation():
+		store.free()
+		return _fail_text("fallback runtime config should block gameplay mutations")
 	for flag: String in RuntimeConfigScript.FEATURE_FLAGS:
 		if store.runtime_feature_enabled(flag):
 			store.free()

@@ -60,8 +60,8 @@ const RUNTIME_FEATURE_FLAGS = [
 const DEFAULT_RUNTIME_CONFIG: RuntimeConfig = {
   schema_version: "runtime_config_v1",
   channel: "internal_alpha",
-  config_version: "t06-c-safe-defaults",
-  generated_at: "2026-05-27T00:00:00Z",
+  config_version: "track23-online-actions-hotfix",
+  generated_at: "2026-06-05T09:23:46Z",
   features: {
     profile_account_panel: false,
     battle_history_replay: false,
@@ -75,12 +75,12 @@ const DEFAULT_RUNTIME_CONFIG: RuntimeConfig = {
   },
   guardrails: {
     release_scoped: true,
-    read_only: true,
+    read_only: false,
     no_service_role: true,
     no_secrets: true,
     no_player_state: true,
     no_gameplay_tuning: true,
-    mutable_gameplay_state: false,
+    mutable_gameplay_state: true,
   },
 };
 
