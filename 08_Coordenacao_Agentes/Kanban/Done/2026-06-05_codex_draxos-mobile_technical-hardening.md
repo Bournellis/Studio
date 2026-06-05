@@ -108,7 +108,7 @@ Delivered scope:
 
 Handoff quando cada pacote logico estiver validado e, se possivel, commitado separadamente. Se a execucao completa ficar grande demais para uma unica sessao, o proximo agente deve continuar a partir deste Doing, preservando worktree/branch e validando o ultimo pacote antes de abrir o seguinte.
 
-Final handoff: review/merge branch `codex/draxos-mobile/technical-hardening`; rerun `DatabaseLocal` only when local Supabase/Edge stack is available.
+Final handoff: review/merge branch `codex/draxos-mobile/technical-hardening`; `DatabaseLocal` was rerun successfully with local Supabase/Edge stack active.
 
 ## Execution Snapshot - 2026-06-05
 
@@ -127,7 +127,7 @@ Final handoff: review/merge branch `codex/draxos-mobile/technical-hardening`; re
 - `ClientQuick`: PASS (`223/223`, `3608` asserts, responsive/export smokes included).
 - `ModePlatform`: PASS (`38/38`, Bosque/Openworld/Modes Ops smokes included).
 - `ReleaseDryRun`: PASS after this card moved from Doing to Done.
-- `DatabaseLocal`: attempted and blocked by unavailable local services (`127.0.0.1:54322`, `127.0.0.1:54321`).
+- `DatabaseLocal`: PASS after starting Docker Desktop, local Supabase and local Edge Functions.
 
 ## Phase 2 Execution Plan - 2026-06-05
 

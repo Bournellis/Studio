@@ -110,8 +110,9 @@ None. This track starts as local hardening only.
   smokes).
 - `ModePlatform`: PASS (`38/38` mode contract tests plus Bosque/Openworld/Modes
   Ops Godot smokes).
-- `DatabaseLocal`: attempted; blocked by local Supabase/Edge stack unavailable
-  (`127.0.0.1:54322` and `127.0.0.1:54321` refused connections).
+- `DatabaseLocal`: PASS after starting Docker Desktop, local Supabase and local
+  Edge Functions. Transactional RPC live proof, Edge transactional RPC adapter
+  smoke, mode platform live proof and admin RLS live smoke passed.
 - `ReleaseDryRun`: PASS after Kanban closeout; release plan, safety checks,
   Android internal-alpha keystore gate, Track 13 readiness and Track 14 agent
   operations checks are green. No remote mutation is allowed through

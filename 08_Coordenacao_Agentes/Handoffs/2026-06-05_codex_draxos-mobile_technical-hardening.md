@@ -66,7 +66,7 @@
 - `powershell -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -Profile ServerQuick -NoProjectWrites`
 - `powershell -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -Profile ModePlatform -NoProjectWrites`
 - `powershell -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`
-- `powershell -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -Profile DatabaseLocal -NoProjectWrites` (bloqueado por Supabase/Edge local indisponivel)
+- `powershell -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -Profile DatabaseLocal -NoProjectWrites`
 
 Observacao: `ClientQuick` segue imprimindo warnings conhecidos de ObjectDB leak no encerramento do Godot, mas a suite passa.
 
@@ -75,12 +75,12 @@ Observacao: `ClientQuick` segue imprimindo warnings conhecidos de ObjectDB leak 
 - `ServerQuick`: PASS (`112` foundation tests + `19` PVE Arena tests).
 - `ClientQuick`: PASS (`223/223`, `3608` asserts, smokes responsive/export incluidos).
 - `ModePlatform`: PASS (`38/38` mode tests + smokes Bosque/Openworld/Modes Ops).
-- `DatabaseLocal`: ambiente indisponivel (`127.0.0.1:54322` e `127.0.0.1:54321` recusaram conexao).
+- `DatabaseLocal`: PASS apos iniciar Docker Desktop, Supabase local e Edge Functions local.
 - `ReleaseDryRun`: PASS apos mover Doing para Done.
 
 ## Proxima Fase Recomendada
 
 - Fazer review humano da branch e decidir merge.
-- Se a stack local Supabase estiver disponivel, rerodar `DatabaseLocal` para prova live DB/Edge.
+- `DatabaseLocal` ja foi rerodado com stack local ativa; repetir apenas se houver alteracao DB/Edge antes do merge.
 - Proximas features devem partir dos helpers extraidos, sem reabrir presenters grandes.
 - Release: antes de qualquer publicacao, rodar release dry-run e usar apenas `publish_internal_alpha.ps1` com confirmacao explicita de remote mutation.

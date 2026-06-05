@@ -102,7 +102,7 @@ Latest local Track 22 validation on branch `codex/draxos-mobile/technical-harden
 - `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS (`223/223` GUT tests, `3608` asserts and responsive/export smokes).
 - `validate_foundation.ps1 -Profile ModePlatform -NoProjectWrites`: PASS (`38/38` mode contract tests plus Bosque/Openworld/Modes Ops smokes).
 - `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS (release plan dry-run, release safety, Android internal-alpha keystore gate, Track 13 readiness and Track 14 agent ops).
-- `validate_foundation.ps1 -Profile DatabaseLocal -NoProjectWrites`: attempted, blocked by local Supabase/Edge services not running (`127.0.0.1:54322` and `127.0.0.1:54321` refused connections).
+- `validate_foundation.ps1 -Profile DatabaseLocal -NoProjectWrites`: PASS after starting Docker Desktop, local Supabase and local Edge Functions; transactional RPC live proof, Edge transactional RPC adapter smoke, mode platform live proof and admin RLS live smoke passed.
 
 Historical validation logs and package-by-package publication evidence belong in `implementation/tracks/`, `docs/*-report.md`, Kanban Done cards or handoffs, not in this decision snapshot.
 
