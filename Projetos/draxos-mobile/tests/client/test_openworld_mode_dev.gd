@@ -70,8 +70,17 @@ class FakeOpenworldSessionStore:
 	extends Node
 
 	var active_save_type := "normal"
+	var access_token := "fake-token"
+	var runtime_mutation_allowed := true
+	var runtime_block_reason := "Runtime bloqueou mutacao."
 	var request_count := 0
 	var failed_requests: Array[Dictionary] = []
+
+	func runtime_allows_gameplay_mutation() -> bool:
+		return runtime_mutation_allowed
+
+	func runtime_mutation_block_reason() -> String:
+		return runtime_block_reason
 
 	func prepare_pending_mutation(endpoint: String, scope_id: String, route_id: String, payload: Dictionary) -> Dictionary:
 		request_count += 1
@@ -520,6 +529,45 @@ func test_integrated_start_session_applies_remote_player_position() -> void:
 	assert_eq(screen.get_player_position(), remote_position)
 	assert_eq(int(Dictionary(screen.get_model().pocket).get("folha", 0)), 1)
 	assert_eq(client.start_calls.size(), 1)
+
+func test_integrated_start_session_uses_live_store_access_token() -> void:
+	var setup: Dictionary = await _make_integrated_screen_for_manual_bridge()
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var store: FakeOpenworldSessionStore = setup.get("store")
+	var bridge = setup.get("bridge")
+	store.access_token = "fresh-token"
+	client.start_result = {
+		"ok": true,
+		"body": {
+			"session": _integrated_session(1, Vector2(220, 330), {}, {}, {}, {}),
+		},
+	}
+
+	await bridge.start_session()
+
+	assert_eq(client.start_calls.size(), 1)
+	assert_eq(str(Dictionary(client.start_calls[0]).get("access_token", "")), "fresh-token")
+
+func test_integrated_start_session_blocks_runtime_read_only_mutation() -> void:
+	var setup: Dictionary = await _make_integrated_screen_for_manual_bridge()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var store: FakeOpenworldSessionStore = setup.get("store")
+	var bridge = setup.get("bridge")
+	store.runtime_mutation_allowed = false
+	store.runtime_block_reason = "Configuracao remota indisponivel; acoes online de progresso estao pausadas."
+	client.start_result = {
+		"ok": true,
+		"body": {
+			"session": _integrated_session(1, Vector2(220, 330), {}, {}, {}, {}),
+		},
+	}
+
+	await bridge.start_session()
+
+	assert_eq(client.start_calls.size(), 0)
+	assert_eq(bridge.session_state(), "blocked")
+	assert_true(str(screen.get_model().last_message).contains("pausadas"))
 
 func test_integrated_resume_session_applies_remote_player_position() -> void:
 	var setup: Dictionary = await _make_integrated_screen_for_manual_bridge()

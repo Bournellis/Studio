@@ -1,18 +1,19 @@
 # DraxosMobile - Foundation Hardening V2 Readiness Report
 
-- Status: `PUBLISHED_INTERNAL_ALPHA`
+- Status: `HISTORICO_BASELINE`
 - Closeout: `COMPLETE_FOR_FUNCTIONAL_PLAYTEST`
 - Date: `2026-06-01`
 - Integration branch: `codex/draxos-mobile/foundation-hardening-v2`
 - Integration worktree: closed after merge/publication
 - Release root: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`
 - Cloudflare preview: `https://ca946749.draxos-mobile-internal-alpha.pages.dev`
-- Current published baseline: `Foundation Hardening V2`
+- Preserved baseline: `Foundation Hardening V2`
+- Current package note: preserved hardening baseline, not the latest remote Internal Alpha package.
 
 ## Summary
 
 Foundation Hardening V2 is implemented, validated, published and closed out as
-the current Internal Alpha enforcement package for multi-mode expansion. It does
+the preserved Internal Alpha enforcement package for multi-mode expansion. It does
 not add gameplay, tuning, economy, new playable content, PVP, social expansion
 or visual redesign.
 
@@ -177,7 +178,7 @@ blockers:
 
 ## Remote Status
 
-Foundation Hardening V2 is the current remote Internal Alpha:
+Foundation Hardening V2 is the previous hardening remote Internal Alpha baseline:
 
 - Release root: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`
 - Cloudflare preview:
@@ -200,10 +201,10 @@ Key publication commands completed after the partial handoff was resumed:
 
 ## Master Baseline Decision
 
-`master` is the official Foundation Hardening V2 baseline for DraxosMobile.
-The hardening package is complete for functional playtest. New DraxosMobile
-work should branch from updated `master`, use a dedicated worktree and follow
-`docs/multi-agent-workflow.md`.
+`master` has advanced beyond this Foundation Hardening V2 baseline. Treat this
+report as preserved enforcement context; the current package is recorded in
+`implementation/current-status.md`. New DraxosMobile work should branch from
+updated `master`, use a dedicated worktree and follow `docs/multi-agent-workflow.md`.
 
 Before broader Android distribution, Play Console testing or update-path
 validation, regenerate and publish the Android artifact with the release

@@ -15,7 +15,7 @@ func _run() -> void:
 func _run_smoke() -> int:
 	_expect(RouteContractScript.is_fullscreen_gameplay("mode_shell"), "mode_shell is registered as fullscreen gameplay.")
 	_expect(not RouteContractScript.shows_app_chrome("mode_shell"), "mode_shell hides app chrome.")
-	for viewport_size: Vector2i in [Vector2i(360, 800), Vector2i(390, 844), Vector2i(432, 936), Vector2i(1280, 720)]:
+	for viewport_size: Vector2i in [Vector2i(360, 800), Vector2i(390, 844), Vector2i(432, 936), Vector2i(1280, 720), Vector2i(1920, 1080)]:
 		await _check_openworld_screen(viewport_size)
 	if not _failures.is_empty():
 		for failure: String in _failures:

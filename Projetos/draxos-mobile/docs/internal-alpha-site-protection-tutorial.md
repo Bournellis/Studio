@@ -68,7 +68,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
   -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" `
   -UseManifestSecret
 
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir .
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/<release-root>/web"
 
 npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages `
   --project-name draxos-mobile-internal-alpha `

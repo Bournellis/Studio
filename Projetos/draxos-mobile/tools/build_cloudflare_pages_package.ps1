@@ -3,7 +3,7 @@ param(
     [string]$PublishDir = "",
     [string]$OutputDir = "",
     [string]$ZipPath = "",
-    [string]$StaticAssetBaseUrl = "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/web",
+    [string]$StaticAssetBaseUrl = "",
     [string]$MainPackUrl = ""
 )
 
@@ -212,6 +212,9 @@ if ($portalHtml.Contains("WEB_GAME_URL_PENDING_T03_P17") -or
 [System.IO.File]::WriteAllText($portalIndexPath, $portalHtml, [System.Text.UTF8Encoding]::new($false))
 
 $assetBase = $StaticAssetBaseUrl.TrimEnd("/")
+if ([string]::IsNullOrWhiteSpace($assetBase)) {
+    throw "StaticAssetBaseUrl is required and must point at the versioned Supabase Web asset root, e.g. https://.../draxos-internal-alpha/internal-alpha/<release-root>/web"
+}
 $mainPack = $MainPackUrl.Trim()
 $releaseRoot = Get-ReleaseRootFromAssetBase -AssetBase $assetBase
 $cacheBust = Get-CacheBustValue -ReleaseRoot $releaseRoot

@@ -1,7 +1,7 @@
 # Update Manifest Contract
 
-- Ultima atualizacao: `2026-05-27`
-- Status: `T03-P18_COMPLETE_HANDOFF_READY`
+- Ultima atualizacao: `2026-06-04`
+- Status: `LIVE_INTERNAL_ALPHA_CONTRACT`
 - Endpoint atual: `GET /release/manifest`
 - Schema: `internal_alpha_manifest_v1`
 
@@ -27,25 +27,29 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
   "latest_version_code": 1,
   "minimum_supported_version": "0.0.1-alpha.0",
   "minimum_supported_version_code": 1,
-  "released_at": "2026-05-27T15:02:12Z",
+  "released_at": "2026-06-04T23:52:15Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Primeira release candidate interna.",
-    "APK Android e PC ZIP compartilham o mesmo backend remoto.",
+    "Openworld Main Menu Sync publicado na URL principal de Internal Alpha.",
+    "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
     "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage.",
+    "Openworld Collection Sync Local Fix e Main Menu Refactor estao incluidos neste pacote.",
+    "Battle Lab e Progression Lab no Web usam lab-runner remoto com a mesma conta alpha Supabase do jogo.",
     "Progression Lab usa save separado e nao pontua ranking."
   ],
   "artifacts": {
     "android": {
       "label": "Android APK",
-      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk",
-      "sha256": "6c39ce9a63eaf4796a67a9e5a29e9252f1f03266f713ffa58c5d2333c15102d6"
+      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8/downloads/draxos-mobile-alpha.apk",
+      "sha256": "",
+      "auth_required": "false"
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
-      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip",
-      "sha256": "4b7dc516bc4c5c4895930f8732ad9e97733cca85ba7574c9a0308c705982d236"
+      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8/downloads/draxos-mobile-alpha.zip",
+      "sha256": "",
+      "auth_required": "false"
     },
     "web": {
       "label": "Web",
@@ -53,9 +57,11 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
     }
   },
   "known_issues": [
+    "Fallback estatico nao substitui o manifest remoto versionado para hashes exatos de artefatos.",
     "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
     "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
-    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar / e /web/index.html apos cada deploy."
+    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar / e /web/index.html apos cada deploy.",
+    "Dominio production fixo do Cloudflare Pages e o link oficial de playtest; se Cloudflare Access estiver ativo, validar conteudo com sessao autenticada."
   ]
 }
 ```
@@ -80,4 +86,4 @@ A funcao retorna um JSON sem secrets e sem depender de login. A implementacao po
 
 ## Evolucao
 
-Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, APK/PC ZIP foram publicados no Supabase Storage unlisted, Portal/Web foram publicados no Cloudflare Pages e o manifest remoto passou a usar hashes/links reais. Em `T03-P18`, o handoff final foi registrado em `../internal-alpha-v0-handoff.md`. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.
+Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, APK/PC ZIP foram publicados no Supabase Storage unlisted, Portal/Web foram publicados no Cloudflare Pages e o manifest remoto passou a usar hashes/links reais. Em `T03-P18`, o handoff final foi registrado em `../internal-alpha-v0-handoff.md`. Em `Openworld Main Menu Sync`, o fallback versionado do repo passou a apontar para o release root publicado atual, enquanto hashes exatos continuam responsabilidade do manifest remoto versionado. Em releases futuras, subir `latest_version_code` gera update recomendado; subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.

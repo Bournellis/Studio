@@ -32,17 +32,36 @@ Deno.test("release download validates bearer tokens with Supabase Auth before se
   }
 });
 
-Deno.test("release manifest code fallback points at the latest safe package root", async () => {
+Deno.test("release manifest code fallback points at the current published package root", async () => {
   for (const path of releaseSources) {
     const source = await Deno.readTextFile(path);
     assert(
+      source.includes("internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8"),
+      `${path} should fall back to Openworld Main Menu Sync, the current published package`,
+    );
+    assertEquals(
       source.includes("internal-alpha/v0-foundation-solidification-20260602-906101b"),
-      `${path} should fall back to Foundation Solidification, the latest safe package`,
+      false,
+      `${path} must not fall back to old Foundation Solidification package roots`,
     );
     assertEquals(
       source.includes("internal-alpha/v0-openworld-node2d-qol"),
       false,
-      `${path} must not fall back to old Openworld package roots`,
+      `${path} must not fall back to legacy Openworld package roots`,
+    );
+  }
+});
+
+Deno.test("release route contract returns NOT_FOUND for unknown subpaths", async () => {
+  for (const path of releaseSources) {
+    const source = await Deno.readTextFile(path);
+    assert(
+      source.includes('type Route = "manifest" | "config" | "download" | "unknown"'),
+      `${path} should classify unknown release subpaths separately`,
+    );
+    assert(
+      source.includes('errorResponse("NOT_FOUND", "Unknown release endpoint.", 404)'),
+      `${path} should return NOT_FOUND for unknown release subpaths`,
     );
   }
 });

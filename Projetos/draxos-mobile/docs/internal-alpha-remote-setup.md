@@ -108,11 +108,11 @@ Modelo recomendado pos-publicacao:
 Ativacao versionada:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y supabase db push
 npx -y supabase functions deploy release --project-ref armxgipvnbbshzqawklw --no-verify-jwt
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -UseManifestSecret
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir .
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/<release-root>/web"
 npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main
 ```
 
@@ -157,7 +157,7 @@ Para executar `T03-P13`:
 ## Smoke Remoto
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 $env:SUPABASE_URL='https://<project-ref>.supabase.co'
 $env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_<public-key>'
 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts

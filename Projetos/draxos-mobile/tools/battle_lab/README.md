@@ -9,7 +9,7 @@ conta, nao aplica recompensa e nao altera estado autoritativo.
 ## Rodar
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts
 ```
 

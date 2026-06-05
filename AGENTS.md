@@ -8,7 +8,7 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `08_Coordenacao_Agentes/Painel_Visual_Estudio.html` is the human-facing local dashboard for the same portfolio state.
 - `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
 - `Projetos/draxos-roguelike-cardgame/` is the current P0 implementation workspace for the menu-first Draxos roguelike cardgame.
-- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile - PVE Arena-first async autobattler, base manager, later PVP, social; Godot 4.6.2 + Supabase; Android + PC + PC browser. Current operational stage: `BOSQUE_MECANICO_BASICO_V2_PUBLISHED_INTERNAL_ALPHA`; the latest remote Internal Alpha package is Bosque Mecanico Basico v2 (`internal-alpha/v0-bosque-v2-guidance-20260604-7c2d981`, preview `https://ae049df9.draxos-mobile-internal-alpha.pages.dev`, official URL `https://draxos-mobile-internal-alpha.pages.dev/`), preserving First Access Runtime Fix, Foundation Hardening V2, Hardening Platform V1, Track 21 Arena Loop Unlock/Friction as Autobattler context, Track 20 Season 1 Arena Calibration, Remote Lab Runner, Track 13 validation/release safety and Track 14 `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`.
+- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile - PVE Arena-first async autobattler, base manager, later PVP, social; Godot 4.6.2 + Supabase; Android + PC + PC browser. Current operational stage: `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`; the latest remote Internal Alpha package is Openworld Main Menu Sync (`internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`, preview evidence `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`, official URL `https://draxos-mobile-internal-alpha.pages.dev/`), preserving Bosque Mecanico Basico v2, First Access Runtime Fix, Foundation Hardening V2 as the previous hardening/live-doc enforcement baseline, Hardening Platform V1, Track 21 Arena Loop Unlock/Friction as Autobattler context, Track 20 Season 1 Arena Calibration, Remote Lab Runner, Track 13 validation/release safety and Track 14 `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`.
 - `Projetos/_conceitos/mobile-universe/` is a design archive; it was promoted to `draxos-mobile/` on 2026-05-18 and is now read-only design reference.
 - `Projetos/rpg-isometrico/` is paused indefinitely and preserved for historical/contextual consultation.
 - `Projetos/rpg-turnos/` is paused indefinitely and preserved for historical/contextual consultation.
@@ -123,7 +123,7 @@ Implementacoes Godot vivem sob `Projetos/`.
 Projetos Godot ativos:
 
 - `Projetos/draxos-roguelike-cardgame/` â€” P0, Steam, roguelike cardgame
-- `Projetos/draxos-mobile/` - P2, mobile + PC + browser, Godot 4.6.2 + Supabase (`BOSQUE_MECANICO_BASICO_V2_PUBLISHED_INTERNAL_ALPHA`; proximo passo e revisao/playtest humano do Bosque v2 publicado antes de abrir novas expansoes de modo)
+- `Projetos/draxos-mobile/` - P2, mobile + PC + browser, Godot 4.6.2 + Supabase (`OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`; proximo passo e revisao/playtest humano do pacote Openworld Main Menu Sync publicado antes de abrir novas expansoes de modo)
 
 Projetos Godot pausados:
 

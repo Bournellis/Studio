@@ -200,7 +200,9 @@ posterior na mesma conta.
 
 O smoke `release_manifest_smoke.ts` valida `GET /release/manifest`: schema do
 manifest de update, canal `internal_alpha`, versao/code atuais e metadados de
-artefatos Android/PC/Web.
+artefatos Android/PC/Web. Defina `DRAXOS_EXPECTED_RELEASE_ROOT` com o release
+root versionado esperado para impedir que smokes passem contra manifest/fallback
+antigo.
 
 O smoke `release_download_smoke.ts` valida `GET /release/download` com conta
 email/senha alpha: cria URLs assinadas temporarias de Android/PC e confirma que

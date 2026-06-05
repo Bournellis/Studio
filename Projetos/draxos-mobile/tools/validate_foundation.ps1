@@ -541,7 +541,7 @@ function Assert-CorsAllowedOrigins {
     if ([regex]::IsMatch($text, '"access-control-allow-origin"\s*:\s*"\*"')) {
         throw "CORS helper uses wildcard origin; V2 requires an explicit allowed-origin policy."
     }
-    foreach ($originMarker in @("ca946749.draxos-mobile-internal-alpha.pages.dev", "draxos-mobile-internal-alpha.pages.dev", "localhost", "127.0.0.1")) {
+    foreach ($originMarker in @("aeec7403.draxos-mobile-internal-alpha.pages.dev", "draxos-mobile-internal-alpha.pages.dev", "localhost", "127.0.0.1")) {
         if (-not $text.Contains($originMarker)) {
             throw "CORS helper must declare allowed origin marker: $originMarker"
         }
@@ -549,17 +549,19 @@ function Assert-CorsAllowedOrigins {
 }
 
 function Assert-LiveDocsReleaseRootFreshness {
-    $latestRoot = "internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4"
-    $latestPreview = "https://ca946749.draxos-mobile-internal-alpha.pages.dev"
+    $currentRoot = "internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8"
+    $currentPreview = "https://aeec7403.draxos-mobile-internal-alpha.pages.dev"
+    $hardeningRoot = "internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4"
+    $hardeningPreview = "https://ca946749.draxos-mobile-internal-alpha.pages.dev"
     foreach ($entry in @(
-        @{ Base = $ProjectPath; Path = "AGENTS.md"; Needles = @("Foundation Hardening V2", $latestRoot, $latestPreview) },
-        @{ Base = $ProjectPath; Path = "README.md"; Needles = @(('Latest release root: `' + $latestRoot + '`'), ('Latest verified preview: `' + $latestPreview + '`')) },
-        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @('Latest published remote package: `Foundation Hardening V2`', $latestRoot, $latestPreview) },
-        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("Foundation Hardening V2 is the latest remote Internal Alpha publication", $latestRoot, $latestPreview) },
-        @{ Base = $ProjectPath; Path = "docs\foundation-hardening-v2-readiness-report.md"; Needles = @('Status: `PUBLISHED_INTERNAL_ALPHA`', $latestRoot, $latestPreview) },
-        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA", $latestRoot, $latestPreview) },
-        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA", $latestRoot, $latestPreview) },
-        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("Foundation Hardening V2 is the latest remote Internal Alpha baseline", $latestRoot, $latestPreview) }
+        @{ Base = $ProjectPath; Path = "AGENTS.md"; Needles = @("Openworld Main Menu Sync is the latest remote Internal Alpha publication", $currentRoot, $currentPreview, "Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline", $hardeningRoot, $hardeningPreview) },
+        @{ Base = $ProjectPath; Path = "README.md"; Needles = @("Current release root:", $currentRoot, "Current verified preview:", $currentPreview, "Previous hardening release root:", $hardeningRoot, "Previous hardening verified preview:", $hardeningPreview) },
+        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Latest published remote package:", "Openworld Main Menu Sync", $currentRoot, $currentPreview, "Previous hardening baseline:", "Foundation Hardening V2", $hardeningRoot, $hardeningPreview) },
+        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("Openworld Main Menu Sync is the latest remote Internal Alpha publication", $currentRoot, $currentPreview, "Foundation Hardening V2 is the previous hardening/live-doc enforcement baseline", $hardeningRoot, $hardeningPreview) },
+        @{ Base = $ProjectPath; Path = "docs\foundation-hardening-v2-readiness-report.md"; Needles = @("Status:", "HISTORICO_BASELINE", $hardeningRoot, $hardeningPreview, "not the latest remote Internal Alpha package") },
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA", $currentRoot, $currentPreview, "FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA", $hardeningRoot, $hardeningPreview) },
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA", $currentRoot, $currentPreview, "FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA", $hardeningRoot, $hardeningPreview) },
+        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("Current published package:", "Openworld Main Menu Sync", $currentRoot, $currentPreview, "Previous hardening guard marker: Foundation Hardening V2", $hardeningRoot, $hardeningPreview) }
     )) {
         foreach ($needle in $entry.Needles) {
             Assert-RelativeFileContains -BasePath $entry.Base -RelativePath $entry.Path -Needle $needle
@@ -568,10 +570,11 @@ function Assert-LiveDocsReleaseRootFreshness {
 
     $readme = Get-Content -LiteralPath (Join-Path $ProjectPath "README.md") -Raw
     foreach ($staleLinePattern in @(
-        'Latest verified preview:\s*`https://(?!ca946749\.)[^`]+`',
-        'Latest release root:\s*`internal-alpha/(?!v0-foundation-hardening-v2-hotfix2-20260601-58671a4)[^`]+`',
-        'Latest APK:\s*`https://[^`]+/internal-alpha/(?!v0-foundation-hardening-v2-hotfix2-20260601-58671a4/)[^`]+`',
-        'Latest PC ZIP:\s*`https://[^`]+/internal-alpha/(?!v0-foundation-hardening-v2-hotfix2-20260601-58671a4/)[^`]+`'
+        'Latest verified preview:\s*`',
+        'Latest release root:\s*`',
+        'Latest APK:\s*`',
+        'Latest PC ZIP:\s*`',
+        'Foundation Hardening V2 is the latest remote Internal Alpha publication'
     )) {
         if ([regex]::IsMatch($readme, $staleLinePattern)) {
             throw "README.md has a stale latest release line matching: $staleLinePattern"
@@ -952,7 +955,7 @@ Invoke-Step -Name "baseline drift guard" -Stage "DocsOnly" -Command "live docs/s
     Assert-BaselineDriftAbsent
 }
 
-Invoke-Step -Name "V2 live-doc release root guard" -Stage "DocsOnly" -Command "live docs must point at current Hardening Platform release root" -ScriptBlock {
+Invoke-Step -Name "V2 live-doc release root guard" -Stage "DocsOnly" -Command "live docs must separate current package and hardening baseline release roots" -ScriptBlock {
     Assert-LiveDocsReleaseRootFreshness
 }
 
@@ -1171,6 +1174,7 @@ if ($RunClient) {
         "smoke_runtime_config.gd",
         "smoke_foundation_hardening.gd",
         "smoke_responsive_layout.gd",
+        "smoke_modes_visual_layout.gd",
         "smoke_exports.gd"
     )) {
         Invoke-Step -Name $smoke -Stage "ClientQuick" -Command "$GodotExe --headless --path . -s res://tools/$smoke" -ScriptBlock {

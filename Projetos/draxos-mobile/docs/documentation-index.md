@@ -25,7 +25,7 @@
 | `docs/documentation-index.md` | `VIVO` | This classification map. |
 | `docs/multi-agent-workflow.md` | `VIVO` | Parallel lane/mode workflow, worktree rules, templates and handoff protocol for DraxosMobile hardening work. |
 | `docs/hardening-platform-v1-readiness-report.md` | `HISTORICO` | Published readiness report for Hardening Platform V1, the previous multi-mode platform baseline. |
-| `docs/foundation-hardening-v2-readiness-report.md` | `VIVO` | Published readiness report for Foundation Hardening V2, the current multi-mode expansion enforcement baseline. |
+| `docs/foundation-hardening-v2-readiness-report.md` | `HISTORICO` | Published readiness report for Foundation Hardening V2, the previous multi-mode expansion enforcement baseline. |
 | `docs/backend-own-boundary.md` | `CONTRATO` | Backend Proprio boundary inventory for future Supabase-to-owned-backend planning without runtime refactor. |
 | `../../08_Coordenacao_Agentes/Prioridades_Estudio.md` | `VIVO` | Portfolio source of truth. |
 | `../../08_Coordenacao_Agentes/Estado_Atual.md` | `VIVO` | Compact studio snapshot. |
@@ -134,7 +134,7 @@
 | `implementation/tracks/track-14-agent-ops-foundation/` | `HISTORICO` | Agent operating foundation and documentation index baseline. |
 | `implementation/tracks/track-15-mobile-ux-overhaul/` | `HISTORICO` | Prior Android portrait UX package; not the active stage. |
 | `implementation/tracks/track-16-behavior-crafting/` | `HISTORICO` | Source track for behavior/crafting; use `docs/behavior-potion-crafting-v1.md` for current state. |
-| `implementation/tracks/track-17-foundation-expansion-readiness/` | `HISTORICO` | Delivered foundation package for future parallel expansion, Foundation Closeout, Foundation Final Polish and production readiness; current platform baseline is Foundation Hardening V2. |
+| `implementation/tracks/track-17-foundation-expansion-readiness/` | `HISTORICO` | Delivered foundation package for future parallel expansion, Foundation Closeout, Foundation Final Polish and production readiness; Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline. |
 | `implementation/tracks/track-18-pve-arena-initial/` | `HISTORICO` | Preserved Arena PVE implementation package; live Arena contract lives in `docs/pve-arena-v1.md`. |
 | `implementation/tracks/track-20-season-1-arena-calibration/` | `HISTORICO` | Preserved Season 1 Arena calibration package; current data contracts live in `data/definitions/pve_arena_difficulties.json` and `data/definitions/season_1_progression_targets.json`. |
 | `implementation/tracks/track-21-arena-loop-unlock-friction/` | `HISTORICO` | Preserved Arena loop unlock/friction context for Autobattler; not the current platform baseline. |

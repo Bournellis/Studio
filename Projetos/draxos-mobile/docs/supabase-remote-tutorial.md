@@ -144,7 +144,7 @@ Este arquivo e ignorado pelo Git por regra da raiz do workspace.
 Opcao recomendada:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y supabase login
 ```
 
@@ -166,7 +166,7 @@ Nao commitar o token.
 Depois do login:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y supabase projects list
 npx -y supabase link --project-ref armxgipvnbbshzqawklw
 ```
@@ -183,7 +183,7 @@ Se a CLI pedir senha do banco e voce nao lembrar:
 Quando o Codex iniciar `T03-P13`, o comando esperado sera:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y supabase db push
 ```
 
@@ -202,7 +202,7 @@ ou veja se o link aponta para `armxgipvnbbshzqawklw`.
 Depois das migrations, o comando esperado sera:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y supabase functions deploy
 ```
 
@@ -228,7 +228,7 @@ A configuracao de `verify_jwt` vive em `supabase/config.toml`.
 Sem conta:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 $env:SUPABASE_URL='https://armxgipvnbbshzqawklw.supabase.co'
 $env:SUPABASE_PUBLISHABLE_KEY='sb_publishable_COLE_AQUI'
 npx -y deno run --allow-net --allow-env server/tests/internal_alpha_remote_smoke.ts

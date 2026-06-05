@@ -1,8 +1,8 @@
 # DraxosMobile - Foundation Responsive Layout Contract
 
 - Status: `CONTRATO`
-- Last updated: `2026-06-03`
-- Stage: `FOUNDATION_SOLIDIFICATION_FOLLOWUP`
+- Last updated: `2026-06-04`
+- Stage: `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`
 
 This contract exists because Foundation Loop UX Pass 01 exposed a dangerous visual regression pattern: immersive screens could look acceptable in one viewport while overflowing or being clipped in Android/Web builds. It remains a live guardrail after Foundation Final Polish.
 
@@ -21,6 +21,7 @@ This contract covers the current foundation loop surfaces:
 - Arena buff choice
 - Arena replay
 - Arena summary
+- Bosque/Openworld fullscreen mode shell
 
 It does not define final art direction, final battle presentation or final navigation style. Those remain later decisions.
 
@@ -38,13 +39,14 @@ It does not define final art direction, final battle presentation or final navig
 - Refugio and Battle fixed immersive controls must not overflow horizontally or vertically.
 - Arena app-shell routes must keep body content, panels and CTAs inside the viewport horizontally; scrollable content may extend vertically only inside the shell scroll container.
 - Arena replay uses the Battle fullscreen replay shell and therefore must satisfy `BattleFullscreenOverlay`, `BattleSafeFrame`, `BattleRunningStageFrame`, `BattleDuelVisual` and `BattleSkipButton` fit checks.
+- Bosque/Openworld must satisfy the fullscreen `mode_shell` contract, with world viewport, HUD, free joystick, action buttons and inventory sheet fitting Android portrait and desktop Web viewports.
 
 ## Hard Rules
 
 - Do not size immersive boards from `get_tree().root.size` or physical window size.
 - Prefer the parent `Control`/visible viewport rect and `DraxosMobileUiContract.immersive_safe_rect()`.
 - Do not place gameplay buttons using anchors outside `0.0..1.0`.
-- Do not add a visual pass that changes Refugio/Battle/Arena/Entry layout without running the responsive smoke.
+- Do not add a visual pass that changes Refugio/Battle/Arena/Entry/Openworld layout without running the responsive and mode visual smokes.
 - Do not hide internal Labs in the Internal Alpha entry flow unless the user explicitly removes them from the tester workflow.
 
 ## Validation
@@ -53,6 +55,7 @@ Run this guardrail before accepting any visual/layout change:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_modes_visual_layout.gd
 ```
 
-`validate_foundation.ps1 -Profile Client` also runs this smoke.
+`validate_foundation.ps1 -Profile Client` runs both smokes.

@@ -1,12 +1,15 @@
 # Estudio Workspace
 
-This workspace is the primary documentation and implementation home for the studio's Godot projects and shared canon.
+This workspace is the primary documentation and implementation home for the studio's Godot projects, coordination state and shared canon.
 
 ## Structure
 
 - `canon/`: shared product, design, architecture, roadmap, platform truth, and lore context.
-- `Projetos/rpg-isometrico/`: active Godot implementation for the campaign-first isometric action RPG.
-- `Projetos/rpg-turnos/`: initial Godot implementation for a provisional turn-based RPG-cardgame sharing lore but owning separate mechanics.
+- `Projetos/draxos-roguelike-cardgame/`: active P0 implementation for the menu-first Draxos roguelike cardgame.
+- `Projetos/draxos-mobile/`: active P2 implementation for DraxosMobile, currently at `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`.
+- `Projetos/_conceitos/mobile-universe/`: read-only DraxosMobile design archive.
+- `Projetos/rpg-isometrico/`: paused historical Godot implementation for the campaign-first isometric action RPG.
+- `Projetos/rpg-turnos/`: paused historical Godot implementation for a provisional turn-based RPG-cardgame sharing lore but owning separate mechanics.
 - `migration/`: historical cutover archive, parity notes, and relocation records.
 - `materiais/`: supporting guides and non-canonical studio material.
 - `builds/`: generated build outputs and other disposable packages.
@@ -15,10 +18,13 @@ This workspace is the primary documentation and implementation home for the stud
 
 For normal work inside `D:\Estudio`, start with:
 
-1. `canon/`
-2. the target project `AGENTS.md`
-3. the target project `implementation/current-status.md`
-4. the active track under the target project `implementation/tracks/`
+1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
+2. `AGENTS.md`
+3. `Projetos/README.md`
+4. `08_Coordenacao_Agentes/Estado_Atual.md`
+5. `canon/canon-brief.md`
+6. the target project `AGENTS.md`
+7. the target project `implementation/current-status.md`
 
 ## Historical Context
 

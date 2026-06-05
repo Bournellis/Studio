@@ -376,6 +376,7 @@ func test_supabase_client_uses_local_contract_urls() -> void:
 	client.configure("http://127.0.0.1:54321/", "publishable")
 	assert_eq(client.auth_anonymous_url(), "http://127.0.0.1:54321/auth/v1/signup")
 	assert_eq(client.auth_password_url(), "http://127.0.0.1:54321/auth/v1/token?grant_type=password")
+	assert_eq(client.auth_refresh_url(), "http://127.0.0.1:54321/auth/v1/token?grant_type=refresh_token")
 	assert_eq(client.function_url("account/bootstrap"), "http://127.0.0.1:54321/functions/v1/account/bootstrap")
 	assert_eq(client.function_url("account/guest"), "http://127.0.0.1:54321/functions/v1/account/guest")
 	assert_eq(client.function_url("account/saves/reset"), "http://127.0.0.1:54321/functions/v1/account/saves/reset")
@@ -505,6 +506,12 @@ func test_runtime_config_fallback_disables_t06_flags_conservatively() -> void:
 	assert_true(bool(guardrails.get("no_service_role", false)))
 	assert_false(bool(guardrails.get("mutable_gameplay_state", true)))
 
+	var store = SessionStoreScript.new()
+	assert_true(store.apply_runtime_config(config))
+	assert_false(store.runtime_allows_gameplay_mutation())
+	assert_true(store.runtime_mutation_block_reason().contains("indisponivel"))
+	store.free()
+
 func test_runtime_config_normalizes_only_known_feature_flags() -> void:
 	var config := RuntimeConfigScript.normalize({
 		"schema_version": "runtime_config_v1",
@@ -548,6 +555,33 @@ func test_runtime_config_fetch_error_returns_fallback_for_session_store() -> voi
 	assert_true(store.apply_runtime_config(Dictionary(result.get("runtime_config", {}))))
 	assert_true(store.runtime_config_is_fallback())
 	assert_false(store.runtime_feature_enabled(RuntimeConfigScript.FEATURE_BASE_ROUTINE_PANEL))
+	assert_false(store.runtime_allows_gameplay_mutation())
+	store.free()
+
+func test_session_store_allows_runtime_mutations_only_when_remote_guardrails_allow() -> void:
+	var store = SessionStoreScript.new()
+	assert_true(store.apply_runtime_config({
+		"schema_version": "runtime_config_v1",
+		"channel": "internal_alpha",
+		"config_version": "remote-openworld-main-menu-sync",
+		"features": {},
+		"client": {
+			"offline_fallback_allowed": false,
+			"config_refresh_seconds": 900,
+		},
+		"guardrails": {
+			"release_scoped": true,
+			"read_only": false,
+			"no_service_role": true,
+			"no_secrets": true,
+			"no_player_state": false,
+			"no_gameplay_tuning": true,
+			"mutable_gameplay_state": true,
+		},
+	}))
+	assert_false(store.runtime_config_is_fallback())
+	assert_true(store.runtime_allows_gameplay_mutation())
+	assert_eq(store.runtime_mutation_block_reason(), "")
 	store.free()
 
 func test_supabase_client_normalizes_save_context_header_state() -> void:

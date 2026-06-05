@@ -28,7 +28,7 @@ Layout oficial da Supabase CLI para o runtime local do DraxosMobile.
 Use `npx -y supabase` enquanto a CLI global nao estiver instalada.
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y supabase db reset
 Invoke-RestMethod -Uri 'http://127.0.0.1:54321/functions/v1/healthcheck'
 ```

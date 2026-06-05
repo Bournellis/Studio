@@ -689,6 +689,25 @@ func is_registered_session() -> bool:
 func runtime_feature_enabled(feature_id: String) -> bool:
 	return RuntimeConfigScript.feature_enabled(runtime_config, feature_id)
 
+func runtime_guardrails() -> Dictionary:
+	var normalized := RuntimeConfigScript.normalize(runtime_config)
+	return _as_dictionary(normalized.get("guardrails", {}))
+
+func runtime_allows_gameplay_mutation() -> bool:
+	var guardrails := runtime_guardrails()
+	if bool(guardrails.get("read_only", true)):
+		return false
+	if not bool(guardrails.get("mutable_gameplay_state", false)):
+		return false
+	return true
+
+func runtime_mutation_block_reason() -> String:
+	if runtime_allows_gameplay_mutation():
+		return ""
+	if runtime_config_is_fallback():
+		return "Configuracao remota indisponivel; acoes online de progresso estao pausadas."
+	return "Acoes online de progresso estao pausadas pela configuracao remota."
+
 func runtime_config_is_fallback() -> bool:
 	return RuntimeConfigScript.is_fallback(runtime_config)
 

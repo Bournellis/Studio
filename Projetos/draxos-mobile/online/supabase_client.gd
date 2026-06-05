@@ -3,6 +3,7 @@ extends Node
 const BackendConfigScript = preload("res://online/backend_config.gd")
 const RuntimeConfigScript = preload("res://online/runtime_config.gd")
 const PendingMutationQueueScript = preload("res://online/session/pending_mutation_queue.gd")
+const ProjectInfoScript = preload("res://core/project_info.gd")
 
 const DEFAULT_SUPABASE_URL := BackendConfigScript.DEFAULT_LOCAL_SUPABASE_URL
 const DEFAULT_PUBLISHABLE_KEY := BackendConfigScript.DEFAULT_LOCAL_PUBLISHABLE_KEY
@@ -88,6 +89,9 @@ func auth_anonymous_url() -> String:
 
 func auth_password_url() -> String:
 	return "%s/auth/v1/token?grant_type=password" % supabase_url
+
+func auth_refresh_url() -> String:
+	return "%s/auth/v1/token?grant_type=refresh_token" % supabase_url
 
 func function_url(endpoint: String) -> String:
 	return "%s/functions/v1/%s" % [supabase_url, endpoint.trim_prefix("/")]
@@ -179,6 +183,26 @@ func sign_in_with_email(email: String, password: String) -> Dictionary:
 
 	return {"ok": true, "session": session}
 
+func refresh_auth_session(refresh_token: String) -> Dictionary:
+	var refresh := refresh_token.strip_edges()
+	if refresh == "":
+		return _error("REFRESH_TOKEN_MISSING", "Refresh token is not available.")
+	var result: Dictionary = await _send_json(
+		auth_refresh_url(),
+		HTTPClient.METHOD_POST,
+		_base_headers(),
+		{"refresh_token": refresh}
+	)
+	if not bool(result.get("ok", false)):
+		return result
+
+	var payload: Dictionary = _as_dictionary(result.get("body", {}))
+	var session := _session_from_auth_payload(payload, false, false)
+	if session.is_empty():
+		return _error("INVALID_AUTH_RESPONSE", "Supabase Auth did not return a refreshed session.")
+
+	return {"ok": true, "session": session}
+
 func bootstrap_alpha_account(invite_code: String, username: String, request_id: String, device_label: String, access_token: String, request_hash: String = "") -> Dictionary:
 	return await _send_json(
 		function_url("account/bootstrap"),
@@ -257,10 +281,13 @@ func run_remote_progression_lab(access_token: String) -> Dictionary:
 		{}
 	)
 
-func request_battle(request_id: String, access_token: String, mode: String = ProjectInfo.DEFAULT_BATTLE_MODE, opponent_bot_id: String = "", request_hash: String = "") -> Dictionary:
+func request_battle(request_id: String, access_token: String, mode: String = "", opponent_bot_id: String = "", request_hash: String = "") -> Dictionary:
+	var effective_mode := mode.strip_edges()
+	if effective_mode == "":
+		effective_mode = ProjectInfoScript.DEFAULT_BATTLE_MODE
 	var body := {
 		"request_id": request_id,
-		"mode": mode,
+		"mode": effective_mode,
 	}
 	if opponent_bot_id.strip_edges() != "":
 		body["opponent_bot_id"] = opponent_bot_id.strip_edges()

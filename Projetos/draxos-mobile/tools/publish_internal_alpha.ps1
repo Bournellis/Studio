@@ -92,7 +92,7 @@ function Assert-VersionedReleaseRoot {
     param([string]$Root, [string]$ModeLabel)
     $normalized = $Root.Trim().Trim("/")
     if ($normalized.Length -eq 0) {
-        throw "ReleaseRoot is required for Mode $ModeLabel. Use a fresh versioned root like internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>."
+        throw "ReleaseRoot is required for Mode $ModeLabel. Use a fresh versioned root like internal-alpha/v0-package-slug-YYYYMMDD-<shortsha>."
     }
     if ($normalized -notmatch '^internal-alpha/v[0-9]+-[a-z0-9][a-z0-9._-]*-[0-9]{8}-[0-9a-f]{7,}$') {
         throw "ReleaseRoot must be a versioned Internal Alpha root: internal-alpha/v0-name-YYYYMMDD-<shortsha>. Got: $Root"

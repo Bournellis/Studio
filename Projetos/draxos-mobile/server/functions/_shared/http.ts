@@ -1,11 +1,12 @@
 export const allowedCorsOrigins = [
+  "https://draxos-mobile-internal-alpha.pages.dev",
+  "https://aeec7403.draxos-mobile-internal-alpha.pages.dev",
   "https://2cca25db.draxos-mobile-internal-alpha.pages.dev",
   "https://95f403c5.draxos-mobile-internal-alpha.pages.dev",
   "https://ca946749.draxos-mobile-internal-alpha.pages.dev",
   "https://68116729.draxos-mobile-internal-alpha.pages.dev",
   "https://4315dd54.draxos-mobile-internal-alpha.pages.dev",
   "https://2cba1ff3.draxos-mobile-internal-alpha.pages.dev",
-  "https://draxos-mobile-internal-alpha.pages.dev",
   "https://68452eed.draxos-mobile-internal-alpha.pages.dev",
   "http://localhost:5173",
   "http://127.0.0.1:5173",

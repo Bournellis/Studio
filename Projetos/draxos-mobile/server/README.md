@@ -24,7 +24,7 @@ Fonte de execucao local da Supabase CLI: `../supabase/`.
 Healthcheck ja pode ser validado com `npx deno`:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile\server\functions
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile\server\functions
 npx -y deno task check
 npx -y deno task lint
 npx -y deno run --allow-net healthcheck/index.ts
@@ -33,7 +33,7 @@ npx -y deno run --allow-net healthcheck/index.ts
 Runtime Supabase validado com Docker Desktop e Supabase CLI via `npx`:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y supabase start
 npx -y supabase db reset
 Invoke-RestMethod -Uri 'http://127.0.0.1:54321/functions/v1/healthcheck'

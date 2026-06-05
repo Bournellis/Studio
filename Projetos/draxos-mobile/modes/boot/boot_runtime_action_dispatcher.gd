@@ -41,6 +41,18 @@ func _execute_action(action_id: String) -> void:
 			"minimum_supported_version": str(_update_gate.get("minimum_supported_version", "")),
 		})
 		_sync_buttons()
+	elif str(route.get("mutation_endpoint", "")).strip_edges() != "" and not SessionStore.runtime_allows_gameplay_mutation():
+		_error_label.text = SessionStore.runtime_mutation_block_reason()
+		_detail_label.text = "Tente sincronizar a configuracao remota antes de executar a acao."
+		_emit_client_event("precondition_failed", {
+			"action_id": action,
+			"screen": _current_screen,
+			"reason": "runtime_read_only",
+			"endpoint": str(route.get("mutation_endpoint", "")),
+			"runtime_fallback": SessionStore.runtime_config_is_fallback(),
+		})
+		_sync_immersive_feedback()
+		_sync_buttons()
 	elif AppShellActionContractScript.is_select_base_structure(action):
 		_select_base_structure(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_upgrade_base_structure(action):

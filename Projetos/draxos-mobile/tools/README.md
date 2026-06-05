@@ -70,7 +70,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --path
 Export Internal Alpha v0:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\export_internal_alpha.ps1 -ProjectDir . -GodotExe "D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe" -AllowAndroidDebugFallback
 ```
 
@@ -91,9 +91,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_android_releas
 Release plan seguro Internal Alpha v0:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>"
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>"
 ```
 
 `Mode Plan` e default e nunca publica. `Mode Package` so prepara arquivos locais em `build/internal-alpha/`, mas exige release root fresco e versionado quando empacota artefatos reais.
@@ -101,9 +101,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 Publicacao remota exige tarefa aprovada e confirmacao explicita:
 
 ```powershell
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
 ```
 
 O script usa `SUPABASE_PROJECT_REF`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` de `.env.internal-alpha.local` para modos remotos. Supabase Storage/Edge Functions nao servem HTML como pagina.
@@ -111,8 +111,8 @@ O script usa `SUPABASE_PROJECT_REF`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY`
 Para Cloudflare Pages, gere o pacote hibrido primeiro:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir .
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/<release-root>/web"
 ```
 
 Depois do deploy Cloudflare Pages, valide o hash preview liberado como prova tecnica do Web abrindo:
@@ -139,28 +139,28 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alp
 Grimorio do site alpha:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y deno run --allow-read --allow-write tools/generate_grimoire_catalog.ts
 ```
 
 Simulador de economia:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y deno run --allow-read --allow-write tools/economy_simulator/generate.ts
 ```
 
 Battle Lab:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y deno run --allow-read --allow-write tools/battle_lab/generate.ts --compare-with 2026-05-21_archetype_source_tuning_v02
 ```
 
 Progression Lab:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts
 npx -y deno run --allow-read tools/progression_lab/seed_supabase.ts --dry-run --all
 ```

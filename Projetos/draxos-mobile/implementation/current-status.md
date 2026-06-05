@@ -2430,7 +2430,7 @@ values, and Base collection preserves sub-one Ossos accrual until at least `1`
 whole Osso is collectable. This fixes the visible `0.1 osso` class of issue
 without adding a new schema/API package beyond Track 16.
 
-## Release Snapshot
+## Minigame Platform V1 Historical Release Snapshot
 
 | Artifact       |      Bytes | SHA256                                                             |
 | -------------- | ---------: | ------------------------------------------------------------------ |
@@ -2446,7 +2446,7 @@ Links:
 - Stable portal:
   `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html`
 - Stable Web: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest verified preview:
+- Verified Minigame Platform V1 preview:
   `https://d3a140a5.draxos-mobile-internal-alpha.pages.dev`
 - Web asset root:
   `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-minigame-platform-v1-modes-20260601-c0c1e9c/web`

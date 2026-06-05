@@ -69,7 +69,7 @@ remoto retorna dados em memoria para revisao interna e nao aplica healthy save.
 1. Gerar relatorio offline:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y deno run --allow-read --allow-write tools/progression_lab/generate.ts
 ```
 

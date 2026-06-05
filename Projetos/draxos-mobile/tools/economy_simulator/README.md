@@ -10,7 +10,7 @@ Baseline calibravel para a economia de seasons do DraxosMobile.
 ## Rodar
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 npx -y deno run --allow-read --allow-write tools/economy_simulator/generate.ts
 ```
 

@@ -1,5 +1,7 @@
 extends Node
 
+const ProjectInfoScript = preload("res://core/project_info.gd")
+
 const COLORS: Dictionary = {
 	"bg_deep": Color("#080B10"),
 	"bg_void": Color("#040507"),
@@ -313,6 +315,6 @@ func action_button_style_id(action_id: String) -> String:
 	return "secondary"
 
 func mode_badge_color(mode_id: String) -> Color:
-	if mode_id == ProjectInfo.MVP_MODE:
+	if mode_id == ProjectInfoScript.MVP_MODE:
 		return color("rarity_mvp")
 	return color("border_default")

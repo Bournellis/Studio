@@ -50,7 +50,7 @@ func configure(target_model: Object, client: Node, store: Node, token: String, a
 	_apply_snapshot_callback = apply_snapshot_callback
 
 func is_active() -> bool:
-	return supabase_client != null and session_store != null and access_token != ""
+	return supabase_client != null and session_store != null and _active_access_token() != ""
 
 func server_session_id() -> String:
 	return _server_session_id
@@ -117,7 +117,7 @@ func resume_or_start_session() -> void:
 	_network_busy = true
 	_session_state = SESSION_STARTING
 	_emit_state_changed()
-	var state_result: Dictionary = await supabase_client.get_mode_state(ModelScript.MODE_ID, access_token)
+	var state_result: Dictionary = await supabase_client.get_mode_state(ModelScript.MODE_ID, _active_access_token())
 	_network_busy = false
 	if bool(state_result.get("ok", false)):
 		var body := _response_body(state_result)
@@ -148,6 +148,9 @@ func start_session() -> void:
 		_session_state = SESSION_PREVIEW
 		_emit_state_changed()
 		return
+	if not _runtime_allows_mutation():
+		_runtime_mutation_block_result("modes/session/start")
+		return
 	_network_busy = true
 	_session_state = SESSION_STARTING
 	_emit_state_changed()
@@ -166,7 +169,7 @@ func start_session() -> void:
 		str(request.get("request_id", "")),
 		ModelScript.MODE_ID,
 		ModelScript.SLICE_ID,
-		access_token,
+		_active_access_token(),
 		str(request.get("request_hash", ""))
 	)
 	_network_busy = false
@@ -203,6 +206,8 @@ func complete_session(result_payload: Dictionary) -> Dictionary:
 		_set_model_message("Sincronizacao pendente.")
 		_emit_state_changed()
 		return {"ok": false, "pending_sync": true}
+	if not _runtime_allows_mutation():
+		return _runtime_mutation_block_result("modes/session/complete")
 	var payload := result_payload.duplicate(true)
 	payload["session_id"] = _server_session_id
 	payload["expected_revision"] = _snapshot_revision
@@ -220,7 +225,7 @@ func complete_session(result_payload: Dictionary) -> Dictionary:
 		_server_session_id,
 		ModelScript.MODE_ID,
 		payload,
-		access_token,
+		_active_access_token(),
 		str(request.get("request_hash", ""))
 	)
 	_network_busy = false
@@ -272,6 +277,8 @@ func abandon_session(reason: String = "player_abandoned") -> Dictionary:
 		return {"ok": false, "missing_session": true}
 	if _completed:
 		return {"ok": false, "completed": true}
+	if not _runtime_allows_mutation():
+		return _runtime_mutation_block_result("modes/session/abandon")
 	var payload := {
 		"session_id": _server_session_id,
 		"reason": reason.strip_edges(),
@@ -291,7 +298,7 @@ func abandon_session(reason: String = "player_abandoned") -> Dictionary:
 		_server_session_id,
 		ModelScript.MODE_ID,
 		reason,
-		access_token,
+		_active_access_token(),
 		str(request.get("request_hash", ""))
 	)
 	_network_busy = false
@@ -344,6 +351,9 @@ func apply_remote_snapshot(snapshot_payload: Dictionary, apply_remote_position :
 func record_event_deferred(event_type: String, event_payload: Dictionary) -> void:
 	if not uses_authority():
 		return
+	if not _runtime_allows_mutation():
+		_runtime_mutation_block_result("modes/session/event")
+		return
 	if _event_queue.size() >= MAX_EVENT_QUEUE_SIZE:
 		_set_model_message("Sincronizacao cheia. Aguarde o Bosque salvar antes de agir.")
 		_emit_client_telemetry("mode_sync_failed", {
@@ -380,6 +390,9 @@ func flush_event_queue() -> void:
 		return
 	if _event_flush_active:
 		return
+	if not _runtime_allows_mutation():
+		_runtime_mutation_block_result("modes/session/event")
+		return
 	if not is_active():
 		_server_synced = false
 		_session_state = SESSION_OFFLINE
@@ -415,7 +428,7 @@ func flush_event_queue() -> void:
 			event_type,
 			_snapshot_revision,
 			event_payload,
-			access_token,
+			_active_access_token(),
 			str(request.get("request_hash", ""))
 		)
 		var body := _response_body(result)
@@ -515,7 +528,7 @@ func resync_session(success_message: String) -> bool:
 		return false
 	_session_state = SESSION_RESYNCING
 	_emit_state_changed()
-	var state_result: Dictionary = await supabase_client.get_mode_state(ModelScript.MODE_ID, access_token)
+	var state_result: Dictionary = await supabase_client.get_mode_state(ModelScript.MODE_ID, _active_access_token())
 	if not bool(state_result.get("ok", false)):
 		_session_state = SESSION_OFFLINE if _is_network_error(state_result) else SESSION_BLOCKED
 		_emit_client_telemetry("mode_sync_failed", {"result": "resync_failed", "error_code": _error_code(state_result)})
@@ -598,7 +611,7 @@ func _send_client_telemetry_deferred(event_type: String, payload: Dictionary) ->
 	if supabase_client == null or not supabase_client.has_method("send_client_telemetry"):
 		return
 	await supabase_client.send_client_telemetry(
-		access_token,
+		_active_access_token(),
 		_telemetry_session_id(),
 		event_type,
 		payload
@@ -624,6 +637,41 @@ func _active_save_type() -> String:
 	if session_store == null:
 		return "normal"
 	return str(session_store.get("active_save_type"))
+
+func _active_access_token() -> String:
+	if session_store != null:
+		var live_token := str(session_store.get("access_token")).strip_edges()
+		if live_token != "":
+			return live_token
+	return access_token.strip_edges()
+
+func _runtime_allows_mutation() -> bool:
+	if session_store != null and session_store.has_method("runtime_allows_gameplay_mutation"):
+		return bool(session_store.call("runtime_allows_gameplay_mutation"))
+	return true
+
+func _runtime_mutation_block_result(action: String) -> Dictionary:
+	var reason := "Acoes online de progresso estao pausadas pela configuracao remota."
+	if session_store != null and session_store.has_method("runtime_mutation_block_reason"):
+		reason = str(session_store.call("runtime_mutation_block_reason"))
+	last_result_text = "Preview sem recompensa."
+	_set_model_message(reason)
+	_server_synced = false
+	_session_state = SESSION_BLOCKED
+	_emit_client_telemetry("mode_mutation_blocked", {
+		"result": "blocked",
+		"action": action,
+		"reason": "runtime_read_only",
+	})
+	_emit_state_changed()
+	return {
+		"ok": false,
+		"blocked_by_runtime_config": true,
+		"error": {
+			"code": "RUNTIME_MUTATION_BLOCKED",
+			"message": reason,
+		},
+	}
 
 func _reward_summary(body: Dictionary, reward: Dictionary) -> String:
 	if _is_cap_zero_completion(body, reward):

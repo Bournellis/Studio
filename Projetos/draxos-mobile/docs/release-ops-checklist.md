@@ -32,10 +32,10 @@ Comandos:
 
 ```powershell
 .\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Plan
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>"
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
-.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ReleaseRoot "internal-alpha/v0-foundation-solidification-followup-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>"
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
+.\tools\publish_internal_alpha.ps1 -ProjectDir . -Mode FullPublish -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>" -ConfirmRemoteMutation
 ```
 
 Flags antigas (`-SkipUpload`, `-UseManifestSecret`, `-SkipManifestSecret`) sem `-Mode` ficam protegidas: executam apenas `Mode Plan` e emitem aviso. `Mode Package`, `Mode Upload`, `Mode DeployManifest` e `Mode FullPublish` exigem `-ReleaseRoot` fresco e versionado (`internal-alpha/v0-nome-YYYYMMDD-<shortsha>`). `-SkipManifestSecret` e bloqueado para `DeployManifest`/`FullPublish`; deploy normal deve atualizar o secret de override do manifest.
@@ -297,7 +297,7 @@ if ($errors.Count -gt 0) { throw $errors }
 Opcional, somente se `build/internal-alpha/publish/` ja existir localmente de um export/publication package anterior e voce nao for publicar:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir .
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/<release-root>/web"
 ```
 
 Remote read-only smoke, somente com URL remota e publishable key local:

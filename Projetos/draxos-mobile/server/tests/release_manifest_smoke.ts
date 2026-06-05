@@ -1,7 +1,7 @@
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "http://127.0.0.1:54321";
 const PUBLISHABLE_KEY = Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ??
   "sb_publishable_TLjdd9X4MlzD740dtVCXNg_YTl9IMAi";
-const EXPECTED_RELEASE_ROOT = (Deno.env.get("DRAXOS_EXPECTED_RELEASE_ROOT") ?? "").trim();
+const EXPECTED_RELEASE_ROOT = requiredExpectedReleaseRoot();
 const LEGACY_OPENWORLD_RELEASE_ROOTS = [
   "internal-alpha/v0-openworld-node2d-qol-20260601-5707167",
   "internal-alpha/v0-openworld-node2d-qol-hotfix-20260601-ba6f129",
@@ -66,16 +66,14 @@ assert(
     !includesLegacyReleaseRoot(pcUrl),
   "manifest should not fall back to old Openworld package roots",
 );
-if (EXPECTED_RELEASE_ROOT !== "") {
-  assert(
-    androidUrl.includes(EXPECTED_RELEASE_ROOT),
-    `Android URL should include expected release root ${EXPECTED_RELEASE_ROOT}`,
-  );
-  assert(
-    pcUrl.includes(EXPECTED_RELEASE_ROOT),
-    `PC URL should include expected release root ${EXPECTED_RELEASE_ROOT}`,
-  );
-}
+assert(
+  androidUrl.includes(EXPECTED_RELEASE_ROOT),
+  `Android URL should include expected release root ${EXPECTED_RELEASE_ROOT}`,
+);
+assert(
+  pcUrl.includes(EXPECTED_RELEASE_ROOT),
+  `PC URL should include expected release root ${EXPECTED_RELEASE_ROOT}`,
+);
 assert(
   stringField(objectField(artifacts, "web"), "url").startsWith("https://"),
   "manifest should include the published Web URL",
@@ -140,6 +138,14 @@ function isObject(value: unknown): value is JsonObject {
 
 function includesLegacyReleaseRoot(url: string): boolean {
   return LEGACY_OPENWORLD_RELEASE_ROOTS.some((releaseRoot) => url.includes(releaseRoot));
+}
+
+function requiredExpectedReleaseRoot(): string {
+  const releaseRoot = (Deno.env.get("DRAXOS_EXPECTED_RELEASE_ROOT") ?? "").trim();
+  if (releaseRoot === "") {
+    throw new Error("DRAXOS_EXPECTED_RELEASE_ROOT is required for release manifest smoke.");
+  }
+  return releaseRoot;
 }
 
 function assert(condition: boolean, message: string): void {

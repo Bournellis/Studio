@@ -39,7 +39,7 @@ Rows V1:
 
 ## Endpoints
 
-Todos exigem JWT e `x-draxos-api-version: 1`. Endpoints save-scoped exigem `x-draxos-save-type`. Mutacoes exigem `request_id` e `request_hash`.
+Clientes e smokes devem enviar JWT e `x-draxos-api-version: 1`. Os endpoints alpha atuais ainda toleram ausencia do header de versao para compatibilidade operacional, mas rejeitam valor explicito diferente de `1` com `UNSUPPORTED_API_VERSION`. Endpoints save-scoped exigem `x-draxos-save-type`. Mutacoes exigem `request_id` e `request_hash`.
 
 | Method | Endpoint | Uso |
 | --- | --- | --- |

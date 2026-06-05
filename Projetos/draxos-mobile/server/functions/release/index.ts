@@ -7,13 +7,14 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   latest_version_code: 1,
   minimum_supported_version: "0.0.1-alpha.0",
   minimum_supported_version_code: 1,
-  released_at: "2026-06-03T01:07:31Z",
+  released_at: "2026-06-04T23:52:15Z",
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/",
   notes: [
-    "Primeira release candidate interna.",
-    "APK Android e PC ZIP compartilham o mesmo backend remoto.",
+    "Openworld Main Menu Sync publicado na URL principal de Internal Alpha.",
+    "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
     "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage.",
+    "Openworld Collection Sync Local Fix e Main Menu Refactor estao incluidos neste pacote.",
     "Battle Lab e Progression Lab no Web usam lab-runner remoto com a mesma conta alpha Supabase do jogo.",
     "Progression Lab usa save separado e nao pontua ranking.",
   ],
@@ -21,15 +22,15 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
     android: {
       label: "Android APK",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-solidification-20260602-906101b/downloads/draxos-mobile-alpha.apk",
-      sha256: "d995410ead14fee24003568ff6c86e85bb6b068f45729a90365ffb4ecec967c7",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8/downloads/draxos-mobile-alpha.apk",
+      sha256: "",
       auth_required: "false",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-foundation-solidification-20260602-906101b/downloads/draxos-mobile-alpha.zip",
-      sha256: "e3685caa5a2c6bfa1757783ed37c982b809b443e3259fe40e3d4896921f7691d",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8/downloads/draxos-mobile-alpha.zip",
+      sha256: "",
       auth_required: "false",
     },
     web: {
@@ -38,6 +39,7 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
     },
   },
   known_issues: [
+    "Fallback estatico nao substitui o manifest remoto versionado para hashes exatos de artefatos.",
     "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
     "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
     "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar / e /web/index.html apos cada deploy.",
@@ -118,7 +120,7 @@ interface RuntimeConfig {
   };
 }
 
-type Route = "manifest" | "config" | "download";
+type Route = "manifest" | "config" | "download" | "unknown";
 
 interface EdgeConfig {
   supabaseUrl: string;
@@ -151,7 +153,7 @@ interface PlayerRow {
 }
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const DEFAULT_RELEASE_ROOT = "internal-alpha/v0-foundation-solidification-20260602-906101b";
+const DEFAULT_RELEASE_ROOT = "internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
@@ -173,6 +175,10 @@ async function handleCorsRequest(request: Request): Promise<Response> {
   }
 
   const route = releaseRoute(request);
+
+  if (route === "unknown") {
+    return errorResponse("NOT_FOUND", "Unknown release endpoint.", 404);
+  }
 
   try {
     if (route === "download") {
@@ -211,7 +217,10 @@ function releaseRoute(request: Request): Route {
   if (pathname.endsWith("/config")) {
     return "config";
   }
-  return "manifest";
+  if (pathname.endsWith("/manifest") || pathname.endsWith("/release")) {
+    return "manifest";
+  }
+  return "unknown";
 }
 
 function buildManifest(): ReleaseManifest {

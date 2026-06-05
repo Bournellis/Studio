@@ -40,10 +40,7 @@ func check_update_manifest(host: Node, manual: bool = false) -> void:
 	var manifest_result: Dictionary = await SupabaseClient.fetch_update_manifest()
 	var update_gate: Dictionary
 	if bool(manifest_result.get("ok", false)):
-		update_gate = ProjectInfoScript.update_status_from_manifest(
-			_as_dictionary(manifest_result.get("body", {})),
-			SupabaseClient.manifest_url()
-		)
+		update_gate = ProjectInfoScript.update_status_from_manifest(_as_dictionary(manifest_result.get("body", {})), SupabaseClient.manifest_url())
 		_set_error_text(host, "")
 	else:
 		var update_error := AppShellErrorContractScript.extract_error(manifest_result)
@@ -140,10 +137,7 @@ func email_sign_up_from_dialog(host: Node) -> void:
 
 func email_sign_up_with_credentials(host: Node, credentials: Dictionary) -> void:
 	host.call("_set_busy", true, "Criando conta por email...")
-	var auth_result: Dictionary = await SupabaseClient.sign_up_with_email(
-		str(credentials.get("email", "")),
-		str(credentials.get("password", ""))
-	)
+	var auth_result: Dictionary = await SupabaseClient.sign_up_with_email(str(credentials.get("email", "")), str(credentials.get("password", "")))
 	if not bool(auth_result.get("ok", false)):
 		host.call("_fail_with_error", auth_result)
 		return
@@ -155,11 +149,7 @@ func email_sign_up_with_credentials(host: Node, credentials: Dictionary) -> void
 	SessionStore.apply_auth_session(_as_dictionary(auth_result.get("session", {})))
 	SessionStore.account_username = str(credentials.get("username", ""))
 	SessionStore.save_cache()
-	var save_ready := await recover_or_create_active_save(
-		host,
-		str(credentials.get("invite", "")),
-		str(credentials.get("username", ""))
-	)
+	var save_ready := await recover_or_create_active_save(host, str(credentials.get("invite", "")), str(credentials.get("username", "")))
 	if not save_ready:
 		return
 	host.call("_show_refuge_root", "Conta criada. O save %s esta pronto." % SessionStore.active_save_label())
@@ -169,10 +159,7 @@ func email_sign_in(host: Node) -> void:
 	if credentials.is_empty():
 		return
 	host.call("_set_busy", true, "Entrando com email...")
-	var auth_result: Dictionary = await SupabaseClient.sign_in_with_email(
-		str(credentials.get("email", "")),
-		str(credentials.get("password", ""))
-	)
+	var auth_result: Dictionary = await SupabaseClient.sign_in_with_email(str(credentials.get("email", "")), str(credentials.get("password", "")))
 	if not bool(auth_result.get("ok", false)):
 		host.call("_fail_with_error", auth_result)
 		return
@@ -191,16 +178,23 @@ func email_sign_in(host: Node) -> void:
 			"error": SessionStore.last_error,
 		})
 		if str(error_payload.get("code", "")) == "PLAYER_NOT_FOUND" and str(credentials.get("username", "")) != "":
-			recovered = await recover_or_create_active_save(
-				host,
-				str(credentials.get("invite", "")),
-				str(credentials.get("username", ""))
-			)
+			recovered = await recover_or_create_active_save(host, str(credentials.get("invite", "")), str(credentials.get("username", "")))
 	if not recovered:
 		return
 	host.call("_show_refuge_root", "Login concluido. Save %s sincronizado." % SessionStore.active_save_label())
 
 func refresh_session(host: Node) -> void:
+	if SessionStore.is_progression_lab_local_only():
+		host.call("_require_session", "Entre com email ou use guest dev antes de sincronizar.")
+		return
+	if not SessionStore.has_valid_access_token() and SessionStore.refresh_token.strip_edges() != "":
+		host.call("_set_busy", true, "Renovando sessao...")
+		var refresh_result: Dictionary = await SupabaseClient.refresh_auth_session(SessionStore.refresh_token)
+		if not bool(refresh_result.get("ok", false)):
+			host.call("_fail_with_error", refresh_result)
+			return
+		SessionStore.apply_auth_session(_as_dictionary(refresh_result.get("session", {})))
+		SessionStore.save_cache()
 	if not bool(host.call("_require_session", "Entre com email ou use guest dev antes de sincronizar.")):
 		return
 	var recovered := await recover_session_state(host)

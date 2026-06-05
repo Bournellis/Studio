@@ -82,8 +82,8 @@ Checklist release-ready e validacao somente leitura: `release-ops-checklist.md`.
 Gerar o pacote especifico para Cloudflare Pages:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir .
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/<release-root>/web"
 ```
 
 Saidas esperadas:
@@ -126,7 +126,7 @@ https://draxos-mobile-internal-alpha.pages.dev
 Com a URL final em maos:
 
 ```powershell
-cd D:\Estudio\Projetos\draxos-mobile
+cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 -ProjectDir . -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" -Mode DeployManifest -PublicDownloads -ConfirmRemoteMutation
 ```
 

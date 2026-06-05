@@ -2,7 +2,7 @@
 
 - Status: `VIVO`
 - Owner: project agents
-- Last updated: `2026-06-01`
+- Last updated: `2026-06-04`
 - Applies to: `Projetos/draxos-mobile/`
 
 This manual explains how agents should operate DraxosMobile without reopening old work, drifting from Foundation Audit or mutating remote infrastructure by accident.
@@ -14,7 +14,7 @@ Read live docs in this order:
 1. `AGENTS.md` - fast operating rules.
 2. `implementation/current-status.md` - short decision snapshot.
 3. `docs/documentation-index.md` - where each doc belongs.
-4. `docs/foundation-app-v0-audit.md` - current Foundation Audit compass.
+4. `docs/foundation-app-v0-audit.md` - historical Foundation Audit compass for closed baseline context.
 5. `docs/foundation-expansion-readiness.md` - delivered pre-expansion gate and closeout contract base.
 6. `docs/foundation-loop-audit.md` - executed audit of post-login loop ergonomics.
 7. `docs/foundation-responsive-layout-contract.md` - required when touching Entry, Refugio, Battle or visual/layout code.
@@ -31,7 +31,7 @@ If a historical track conflicts with these docs, the live docs win. If local pro
 Active stage: `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`.
 Previous hardening baseline marker: `FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`.
 
-The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout, Lab Track 16 Alignment and Hardening Platform V1 are delivered. Openworld Main Menu Sync is the latest remote Internal Alpha publication from `codex/draxos-mobile/publish-master-main-url`, release root `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, and preview evidence `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`. Foundation Hardening V2 is the latest remote Internal Alpha publication for the previous hardening/live-doc enforcement baseline, release root `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, preview evidence `https://ca946749.draxos-mobile-internal-alpha.pages.dev`, and remains the baseline for multi-agent and multi-mode expansion work.
+The project is a base implemented for refinement. First Session Clarity v1 is approved. Foundation Expansion Readiness, Foundation Closeout, Lab Track 16 Alignment and Hardening Platform V1 are delivered. Openworld Main Menu Sync is the latest remote Internal Alpha publication from `codex/draxos-mobile/publish-master-main-url`, release root `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, and preview evidence `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`. Foundation Hardening V2 is the previous hardening/live-doc enforcement baseline, release root `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`, preview evidence `https://ca946749.draxos-mobile-internal-alpha.pages.dev`, and remains the enforcement reference for multi-agent and multi-mode expansion work.
 
 Historical app-shell loop baseline from Foundation Loop UX Pass 01, preserved for context but not the current product reading:
 

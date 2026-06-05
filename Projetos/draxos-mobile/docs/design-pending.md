@@ -1,8 +1,8 @@
 # DraxosMobile - Design Pending
 
-- Ultima atualizacao: `2026-06-01`
+- Ultima atualizacao: `2026-06-04`
 - Status: registro vivo de pendencias de design
-- Escopo: DraxosMobile, Foundation Hardening V2 publicado, Arena PVE inicial preservada como contexto Autobattler, tuning futuro e evolucoes futuras
+- Escopo: DraxosMobile, Openworld Main Menu Sync publicado, Foundation Hardening V2 preservado como baseline anterior de hardening/live-doc gates, Arena PVE inicial preservada como contexto Autobattler, tuning futuro e evolucoes futuras
 
 Este documento e o unico lugar para registrar pendencias de design do projeto ativo. Ele nao resolve design; ele nomeia o que ainda precisa ser decidido, classifica o bloqueio e aponta para o documento que deve receber a resposta quando a decisao existir.
 
@@ -31,15 +31,15 @@ Categorias:
 - `OPERACIONAL`: nao altera game design, mas bloqueia validacao, ambiente, seguranca ou execucao tecnica confiavel.
 - `POS_SLICE`: fora da Track 00 completa.
 
-## Etapa Atual - Foundation Hardening V2 Publicado
+## Etapa Atual - Openworld Main Menu Sync Publicado
 
-A etapa atual e `FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`. O projeto deve ser lido como uma base multi-modo com enforcement de expansao publicada para revisao/playtest humano antes de abrir novos pacotes de modo ou tuning. A direcao viva de produto continua Arena PVE first, registrada em `docs/pve-arena-initial-direction.md`.
+A etapa atual e `OPENWORLD_MAIN_MENU_SYNC_PUBLISHED_INTERNAL_ALPHA`. O projeto deve ser lido como o pacote publicado que corrige a coleta/deposito/resync do Bosque no remoto e simplifica o menu principal, preservando Foundation Hardening V2 como baseline anterior de enforcement multi-agente/multi-modo. A direcao viva de produto continua Arena PVE first, registrada em `docs/pve-arena-initial-direction.md`, com Bosque/Openworld como slice ativo de Internal Alpha e nao como expansao de mundo continuo aprovada.
 
 Foco imediato:
 
-`Revisar/playtestar Foundation Hardening V2 -> confirmar tutorial Arena -> primeira Arena real completa -> proxima dificuldade desbloqueada -> registrar tuning/UX antes de novo pacote`
+`Revisar/playtestar Openworld Main Menu Sync -> confirmar coleta/deposito/resync do Bosque -> confirmar menu principal simplificado -> confirmar tutorial Arena -> primeira Arena real completa -> registrar tuning/UX antes de novo pacote`
 
-Foundation Loop UX Pass 01 foi aceito como baseline historico do app-shell, nao como loop de produto atual. Foundation Closeout, Labs atualizados, Foundation Final Polish e Hardening Platform V1 fecharam a base tecnica/documental anterior. Foundation Hardening V2 agora e o baseline operacional publicado. Track 21 Arena Loop Unlock/Friction permanece somente como contexto Arena/Autobattler para unlock, loadout travado, buffs temporarios, HP resetado por duelo, claim summary e fluxo de retorno da Arena; PVP entra depois como modo competitivo/fallback.
+Foundation Loop UX Pass 01 foi aceito como baseline historico do app-shell, nao como loop de produto atual. Foundation Closeout, Labs atualizados, Foundation Final Polish, Hardening Platform V1 e Foundation Hardening V2 fecharam a base tecnica/documental anterior. Openworld Main Menu Sync agora e o pacote operacional publicado. Track 21 Arena Loop Unlock/Friction permanece somente como contexto Arena/Autobattler para unlock, loadout travado, buffs temporarios, HP resetado por duelo, claim summary e fluxo de retorno da Arena; PVP entra depois como modo competitivo/fallback.
 
 Revisao manual do build publicado identificou regressao de responsividade: Labs Dev sumiram do menu inicial interno e Refugio/Batalha puderam sair dos limites em Web/Android. A partir de agora, mudancas visuais em Entry, Refugio ou Batalha precisam respeitar `docs/foundation-responsive-layout-contract.md` e passar em `tools/smoke_responsive_layout.gd` antes de nova publicacao.
 
@@ -70,7 +70,7 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 | DMOB-D064 | Tamanho da arena | PRIMEIRO_SLICE | Resolvido: cap inicial de 6 duelos; tutorial de 1 duelo; primeira arena real de 3 duelos; arenas de 4, 5 e 6 duelos contratadas para unlock por dificuldade/progresso. | Sem cap, UX de lista, recompensa de conclusao, pacing e Progression Lab ficariam sem alvo. | `pve-arena-v1.md` | RESOLVIDO | 2026-05-31 |
 | DMOB-D065 | Inimigos PVE | PRIMEIRO_SLICE | Resolvido: primeira lista data-driven cobre tutorial, arenas de 3 duelos e primeiras dificuldades com arquetipos starter, defesa, controle, elemental, DoT, familiar, summon e finalizador. | Sem lista inicial, Battle Lab, power target e leitura de progressao ficariam sem fixtures de produto. | `pve-arena-v1.md` | RESOLVIDO | 2026-05-31 |
 | DMOB-D066 | Recompensas Arena PVE | CALIBRAVEL_ALPHA | Formula inicial contratada em `arena_rewards.json`: primeira clear, conclusao, recorde, repeticao reduzida, bonus diario/semanal e caps. Valores numericos continuam calibraveis. | Sem validacao dos labs e rodada humana, ainda ha risco de grind infinito ou progressao lenta demais. | `pve-arena-v1.md` | CALIBRAR | - |
-| DMOB-D067 | Labs Arena PVE | CALIBRAVEL_ALPHA | Contrato v1 exige que Progression Lab e Battle Lab representem listas de duelos, buffs temporarios, vida resetada, loadout travado e comportamento ajustavel. Implementacao dos labs ainda pendente. | Sem modelagem dos labs, tuning integrado de leveling/upgrades/recompensas/poder fica opinativo demais. | `docs/progression-lab/README.md` | CALIBRAR | - |
+| DMOB-D067 | Labs Arena PVE | CALIBRAVEL_ALPHA | Contrato v1 exige que Progression Lab e Battle Lab representem listas de duelos, buffs temporarios, vida resetada, loadout travado e comportamento ajustavel. Labs ja existem no Web export e no runner remoto, mas a modelagem fina da Arena PVE nos labs ainda precisa revisao/calibracao humana. | Sem modelagem dos labs, tuning integrado de leveling/upgrades/recompensas/poder fica opinativo demais. | `docs/progression-lab/README.md` | CALIBRAR | - |
 | DMOB-D068 | Modos oficiais | OPERACIONAL | Resolvido: os modos oficiais V1 sao Basebuilder, Autobattler, Towerdefense, Cardgame e Openworld; `rpgsuave` foi renomeado para `openworld`. | Sem registry unico, cada modo poderia criar entrada, reward e telemetria propria sem governanca. | `docs/minigames/mode-catalog.md` | RESOLVIDO | 2026-06-01 |
 | DMOB-D069 | Towerdefense | POS_SLICE | Qual contrato de gameplay, build, recompensas e UX do modo Towerdefense? | Sem contrato, o modo permanece planned/disabled no registry tecnico e oculto ao player; decision pack v1 lista perguntas e bloqueios sem aprovar gameplay. | `docs/minigames/towerdefense-decision-pack.md` | ABERTO | - |
 | DMOB-D070 | Cardgame | POS_SLICE | Qual contrato proprio do Cardgame mobile sem herdar mecanicas do projeto Steam? | Sem contrato, o modo permanece planned/disabled no registry tecnico e oculto ao player; decision pack v1 fixa a regra de nao-heranca mecanica. | `docs/minigames/cardgame-decision-pack.md` | ABERTO | - |
