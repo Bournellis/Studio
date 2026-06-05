@@ -6,6 +6,7 @@ import {
 
 export interface AuthContext {
   userId: string;
+  email: string;
   isAnonymous: boolean;
   saveType: SaveType;
 }
@@ -32,6 +33,8 @@ export interface SupabaseAuthConfig {
 export interface AuthContextOptions {
   requireExplicitSaveType?: boolean;
   missingSaveTypeMessage?: string;
+  requireEmailAccount?: boolean;
+  emailAccountRequiredMessage?: string;
 }
 
 interface JwtPayload {
@@ -60,6 +63,7 @@ export function decodeAuthContext(
   return {
     value: {
       userId: subject.value.sub,
+      email: "",
       isAnonymous: subject.value.isAnonymous,
       saveType: saveType.value,
     },
@@ -106,6 +110,19 @@ export async function verifiedAuthContext(
       },
     };
   }
+  const email = typeof authUser.value.email === "string" ? authUser.value.email.trim().toLowerCase() : "";
+  const isAnonymous = authUser.value.is_anonymous === true || subject.value.isAnonymous;
+  if (options.requireEmailAccount === true && (isAnonymous || email === "")) {
+    return {
+      value: null,
+      error: {
+        code: "AUTH_REQUIRES_EMAIL",
+        message: options.emailAccountRequiredMessage ??
+          "This endpoint requires a Supabase email/password alpha account.",
+        status: 403,
+      },
+    };
+  }
   const saveType = resolveSaveType(request, options);
   if (saveType.error !== null) {
     return { value: null, error: saveType.error };
@@ -113,7 +130,8 @@ export async function verifiedAuthContext(
   return {
     value: {
       userId,
-      isAnonymous: authUser.value.is_anonymous === true || subject.value.isAnonymous,
+      email,
+      isAnonymous,
       saveType: saveType.value,
     },
     error: null,

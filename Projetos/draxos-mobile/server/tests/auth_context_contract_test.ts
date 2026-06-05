@@ -22,6 +22,9 @@ Deno.test("shared auth context helper verifies bearer tokens through Supabase Au
     "Bearer token subject mismatch.",
     "SAVE_TYPE_HEADER",
     "requireExplicitSaveType",
+    "requireEmailAccount",
+    "AUTH_REQUIRES_EMAIL",
+    "emailAccountRequiredMessage",
     "serviceRoleKey",
   ]) {
     assertIncludes(serverHelper, needle, `${SERVER_AUTH_HELPER} should contain ${needle}`);
