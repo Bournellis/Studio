@@ -101,7 +101,9 @@ static func _run_battle_component(catalog, pack: Dictionary, matrix: Dictionary,
 	var records: Array[Dictionary] = Array(run_result.get("records", []))
 	var summary: Dictionary = Dictionary(run_result.get("summary", {}))
 	var write_result: Dictionary = BattleReporterScript.write_outputs(output_dir, records, summary, run_options)
-	return _component_from_summary("battle", bool(run_result.get("ok", false)) and bool(write_result.get("ok", false)), summary, write_result, records.size())
+	var component_result: Dictionary = _component_from_summary("battle", bool(run_result.get("ok", false)) and bool(write_result.get("ok", false)), summary, write_result, records.size())
+	component_result["signature_quality"] = _signature_quality_from_records(records)
+	return component_result
 
 static func _run_scenario_component(session, catalog, pack: Dictionary, output_dir: String, options: Dictionary) -> Dictionary:
 	var component: Dictionary = Dictionary(Dictionary(pack.get("components", {})).get("scenario", {}))
@@ -157,7 +159,7 @@ static func _component_from_summary(component: String, ok: bool, summary: Dictio
 
 static func _diff_component_result(component: String, diff_report: Dictionary, write_result: Dictionary) -> Dictionary:
 	var summary: Dictionary = Dictionary(diff_report.get("summary", {}))
-	return {
+	var component_result: Dictionary = {
 		"component": component,
 		"ok": bool(summary.get("gate_ok", true)) and bool(write_result.get("ok", true)),
 		"status": "PASS" if bool(summary.get("gate_ok", true)) and bool(write_result.get("ok", true)) else "FAIL",
@@ -173,6 +175,9 @@ static func _diff_component_result(component: String, diff_report: Dictionary, w
 		"write_result": write_result.duplicate(true),
 		"structural_errors": [] if bool(write_result.get("ok", true)) else [str(write_result.get("message", "Could not write %s diff output." % component))]
 	}
+	if component == "battle":
+		component_result["signature_quality"] = _signature_quality_from_battle_results_path(str(diff_report.get("after_path", "")))
+	return component_result
 
 static func _component_error(component: String, message: String) -> Dictionary:
 	return {
@@ -192,12 +197,16 @@ static func _phase_summary(pack: Dictionary, matrix: Dictionary, component_resul
 	coverage["covered_active_cards"] = int(coverage.get("filtered_player_cards", 0)) + int(coverage.get("filtered_enemy_cards", 0))
 	_apply_effect_signature_coverage(coverage, pack)
 	var blocking_changes: Array[String] = structural_errors.duplicate()
+	var signature_quality: Dictionary = _empty_signature_quality()
 	for component: Dictionary in component_results:
+		if component.has("signature_quality"):
+			_merge_signature_quality(signature_quality, Dictionary(component.get("signature_quality", {})))
 		if str(component.get("status", "")) == "FAIL":
 			blocking_changes.append("Component `%s` failed." % str(component.get("component", "")))
 	return {
 		"coverage": coverage,
 		"components": component_results,
+		"signature_quality": signature_quality,
 		"structural_errors": structural_errors,
 		"blocking_changes": blocking_changes,
 		"new_failure_count": 0,
@@ -216,10 +225,14 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 	var top_effect_map: Dictionary = {}
 	var effect_family_map: Dictionary = {}
 	var missing_signatures: Array[Dictionary] = []
+	var support_contamination_changes: Array[Dictionary] = []
+	var signature_quality: Dictionary = _empty_signature_quality()
 	var new_failure_count: int = 0
 	var removed_count: int = 0
 	var blocking_changes: Array[String] = structural_errors.duplicate()
 	for component: Dictionary in component_results:
+		if component.has("signature_quality"):
+			_merge_signature_quality(signature_quality, Dictionary(component.get("signature_quality", {})))
 		new_failure_count += int(component.get("new_failure_count", 0))
 		removed_count += int(component.get("removed_count", 0))
 		if str(component.get("status", "")) == "FAIL":
@@ -242,6 +255,8 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 					effect_changes.append(row)
 					_record_card_impact(top_effect_map, diff)
 					_record_effect_family(effect_family_map, row)
+					if _is_support_field(str(row.get("field", "")).trim_prefix("effect.")):
+						support_contamination_changes.append(row)
 					if str(row.get("field", "")) == "effect.present" and bool(row.get("after", true)) == false:
 						missing_signatures.append({
 							"component": str(component.get("component", "")),
@@ -253,6 +268,7 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 	return {
 		"coverage": _compare_coverage(pack, component_results),
 		"components": component_results,
+		"signature_quality": signature_quality,
 		"structural_errors": structural_errors,
 		"blocking_changes": blocking_changes,
 		"new_failure_count": new_failure_count,
@@ -263,6 +279,7 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 		"effect_change_count": effect_changes.size(),
 		"top_effect_delta_cards": _top_impacted_cards(top_effect_map),
 		"by_effect_family": effect_family_map,
+		"support_contamination_changes": support_contamination_changes,
 		"missing_signatures": missing_signatures,
 		"top_impacted_cards": _top_impacted_cards(top_map),
 		"gate_ok": blocking_changes.is_empty() and new_failure_count == 0 and removed_count == 0
@@ -333,23 +350,144 @@ static func _record_effect_family(effect_family_map: Dictionary, change: Diction
 static func _effect_family_for_field(field: String) -> String:
 	if field in ["enemy_hero_damage", "player_hero_damage", "enemy_slot_damage_total", "player_slot_damage_total"]:
 		return "damage"
-	if field in ["summons_created", "player_units_delta", "enemy_units_delta", "summoned_attack_total", "summoned_health_total"]:
+	if field in ["summons_created", "summoned_count", "summoned_slot_count", "summoned_keyword_count", "player_units_delta", "enemy_units_delta", "summoned_attack_total", "summoned_health_total"]:
 		return "summon"
-	if field in ["ally_attack_buff_total", "ally_health_buff_total", "shield_added_total"]:
+	if field in ["ally_attack_buff_total", "ally_health_buff_total", "shield_added_total", "ally_keyword_gain_count", "ally_shield_gain", "ally_resistance_gain"]:
 		return "buff"
-	if field in ["enemy_attack_debuff_total", "enemy_health_debuff_total"]:
+	if field in ["enemy_attack_debuff_total", "enemy_health_debuff_total", "enemy_keyword_loss_count"]:
 		return "debuff"
-	if field in ["poison_added_total", "freeze_added_total"]:
+	if field in ["poison_added_total", "enemy_poison_added", "freeze_added_total", "enemy_frozen_added", "enemy_snared_added", "enemy_slow_added"]:
 		return "control"
-	if field in ["mana_gained", "ashes_gained", "cards_drawn", "cards_discarded"]:
+	if field in ["mana_gained", "ashes_gained", "cards_drawn", "cards_discarded", "cards_created", "deck_delta", "hand_delta", "discard_delta"]:
 		return "economy"
 	if field in ["keywords_added", "keywords_removed", "families"]:
 		return "keyword"
-	if field in ["pending_choices_delta"]:
+	if field in ["pending_choices_delta", "pending_choice_created", "pending_choice_resolved", "sacrifice_required", "sacrifice_consumed", "sacrifice_units_destroyed"]:
 		return "choice"
 	if field in ["present", "sample_count"]:
 		return "coverage"
+	if _is_support_field(field):
+		return "support"
 	return "other"
+
+static func _is_support_field(field: String) -> bool:
+	return field in [
+		"focused_card_play_index",
+		"support_cards_before_target",
+		"support_cards_after_target",
+		"support_card_count_before_target",
+		"support_card_count_after_target",
+		"support_contamination_status",
+		"signature_confidence",
+		"ambiguous_reason"
+	]
+
+static func _signature_quality_from_records(records: Array) -> Dictionary:
+	var quality: Dictionary = _empty_signature_quality()
+	for record_value: Variant in records:
+		if typeof(record_value) != TYPE_DICTIONARY:
+			continue
+		var record: Dictionary = Dictionary(record_value)
+		var result: Dictionary = Dictionary(record.get("result", {}))
+		var signature: Dictionary = Dictionary(result.get("card_effect_signature", {}))
+		var card_id: String = str(result.get("card_under_test", signature.get("card_id", "")))
+		var case_id: String = str(record.get("id", Dictionary(record.get("case", {})).get("id", "")))
+		var families: Array = Array(signature.get("families", result.get("effect_families", [])))
+		if families.is_empty():
+			families = ["missing" if not bool(signature.get("present", false)) else "played"]
+		var status: String = str(signature.get("support_contamination_status", result.get("support_contamination_status", "none")))
+		var confidence: String = str(signature.get("signature_confidence", result.get("signature_confidence", "none")))
+		if not bool(signature.get("present", false)):
+			status = "missing"
+			confidence = "missing"
+		_increment_signature_quality_total(quality, status, confidence)
+		for family_value: Variant in families:
+			_increment_signature_family_quality(quality, str(family_value), status, confidence)
+		if status in ["support_assisted", "missing"] or confidence == "ambiguous":
+			var cases: Array = Array(quality.get("cases", []))
+			cases.append({
+				"case_id": case_id,
+				"card_id": card_id,
+				"families": families.duplicate(),
+				"support_contamination_status": status,
+				"signature_confidence": confidence,
+				"reason": str(signature.get("ambiguous_reason", result.get("signature_ambiguous_reason", signature.get("missing_reason", "")))),
+				"support_cards_before_target": Array(signature.get("support_cards_before_target", result.get("support_cards_before_target", []))).duplicate(),
+				"support_cards_after_target": Array(signature.get("support_cards_after_target", result.get("support_cards_after_target", []))).duplicate()
+			})
+			quality["cases"] = cases
+	return quality
+
+static func _signature_quality_from_battle_results_path(path: String) -> Dictionary:
+	if path == "" or not FileAccess.file_exists(path):
+		return _empty_signature_quality()
+	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return _empty_signature_quality()
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	file.close()
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return _empty_signature_quality()
+	return _signature_quality_from_records(Array(Dictionary(parsed).get("records", [])))
+
+static func _empty_signature_quality() -> Dictionary:
+	return {
+		"total": 0,
+		"clean_count": 0,
+		"support_assisted_count": 0,
+		"ambiguous_count": 0,
+		"missing_count": 0,
+		"none_count": 0,
+		"by_family": {},
+		"cases": []
+	}
+
+static func _merge_signature_quality(target: Dictionary, source: Dictionary) -> void:
+	for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count"]:
+		target[field] = int(target.get(field, 0)) + int(source.get(field, 0))
+	var target_by_family: Dictionary = Dictionary(target.get("by_family", {}))
+	for family_key: Variant in Dictionary(source.get("by_family", {})).keys():
+		var family: String = str(family_key)
+		if not target_by_family.has(family):
+			target_by_family[family] = {"total": 0, "clean_count": 0, "support_assisted_count": 0, "ambiguous_count": 0, "missing_count": 0, "none_count": 0}
+		var target_entry: Dictionary = Dictionary(target_by_family.get(family, {}))
+		var source_entry: Dictionary = Dictionary(Dictionary(source.get("by_family", {})).get(family_key, {}))
+		for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count"]:
+			target_entry[field] = int(target_entry.get(field, 0)) + int(source_entry.get(field, 0))
+		target_by_family[family] = target_entry
+	target["by_family"] = target_by_family
+	var cases: Array = Array(target.get("cases", []))
+	for case_value: Variant in Array(source.get("cases", [])):
+		if typeof(case_value) == TYPE_DICTIONARY:
+			cases.append(Dictionary(case_value).duplicate(true))
+	target["cases"] = cases
+
+static func _increment_signature_quality_total(quality: Dictionary, status: String, confidence: String) -> void:
+	quality["total"] = int(quality.get("total", 0)) + 1
+	_increment_quality_bucket(quality, status, confidence)
+
+static func _increment_signature_family_quality(quality: Dictionary, family: String, status: String, confidence: String) -> void:
+	var by_family: Dictionary = Dictionary(quality.get("by_family", {}))
+	if not by_family.has(family):
+		by_family[family] = {"total": 0, "clean_count": 0, "support_assisted_count": 0, "ambiguous_count": 0, "missing_count": 0, "none_count": 0}
+	var entry: Dictionary = Dictionary(by_family.get(family, {}))
+	entry["total"] = int(entry.get("total", 0)) + 1
+	_increment_quality_bucket(entry, status, confidence)
+	by_family[family] = entry
+	quality["by_family"] = by_family
+
+static func _increment_quality_bucket(target: Dictionary, status: String, confidence: String) -> void:
+	match status:
+		"clean":
+			target["clean_count"] = int(target.get("clean_count", 0)) + 1
+		"support_assisted":
+			target["support_assisted_count"] = int(target.get("support_assisted_count", 0)) + 1
+		"missing":
+			target["missing_count"] = int(target.get("missing_count", 0)) + 1
+		_:
+			target["none_count"] = int(target.get("none_count", 0)) + 1
+	if confidence == "ambiguous":
+		target["ambiguous_count"] = int(target.get("ambiguous_count", 0)) + 1
 
 static func _top_impacted_cards(top_map: Dictionary) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []

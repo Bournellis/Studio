@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
 - Last Updated: `2026-06-05`
-- Prompt: `CARD-REDESIGN-BATCH-01-USING-CARD-IMPACT-V2`
-- Status: `CARD_REDESIGN_BATCH_01_COMPLETE`
+- Prompt: `CARD-IMPACT-V2-NON-DAMAGE-COVERAGE`
+- Status: `CARD_IMPACT_V2_NON_DAMAGE_COVERAGE_COMPLETE`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `154/154` tests passing, `1575` asserts.
+- GUT: `157/157` tests passing.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -33,6 +33,8 @@
 - Card Redesign Batch 01 gate: `before`, `after` and `compare` pass at `user://card_impact/redesign_batch_01` with zero structural errors, zero new failures, zero removed records, zero status changes, 9 metric deltas and 3 effect deltas from the intended Arcano damage-upgrade changes.
 - Card Redesign Batch 01 effect deltas: `arcano_choque_lvl2` `effect.enemy_hero_damage` `52 -> 57`, `arcano_choque_lvl3` `86 -> 92`, and `arcano_tempestade_lvl3` `57 -> 62`.
 - Card Redesign Batch 01 regression gates: V1 Card Impact same/same regression passes, Battle Lab remains `9 PASS / 3 WARN / 0 FAIL`, Scenario Fixtures remains `9 PASS / 3 WARN / 0 FAIL`, AutoRun smoke passes, AutoRun quick passes and `validate.gd` passes with `154/154` tests and `1575` asserts.
+- Card Impact V2 Non-Damage Coverage gate: `before`, `after` and `compare` pass at `user://card_impact/track02_card_impact_v2_non_damage_coverage` with 84/84 active cards covered, zero structural errors, zero new failures and zero removed records.
+- Card Impact V2 Non-Damage Coverage signatures: 54 required player signatures present, 30 enemy signatures report-only/missing as expected, 45 clean player signatures, 9 support-assisted signatures, 47 ambiguous signatures from repeated focused-card plays, and non-damage families `buff`, `control`, `debuff`, `economy`, `keyword` and `summon` visible in the Markdown matrix.
 - Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 - Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
 - Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
@@ -93,6 +95,26 @@
 - Operational lesson: changing base/support cards can contaminate many focused cases because they appear as helper cards in deterministic harnesses. Future redesign batches should either isolate upgrades like this batch or explicitly label support-card-wide movement as intended.
 - Next tooling recommendation: strengthen V2 for non-damage families before a large redesign pass by comparing summon stat totals, ally buff totals, enemy debuff/control markers, economy/card-flow fields and support-card contamination signals more directly.
 
+## Card Impact V2 Non-Damage Coverage
+
+- Purpose: make Card Impact V2 useful for future large card redesigns that affect more than direct damage.
+- Scope: tooling only; no gameplay, card, enemy, reward, shop, route or balance changes.
+- `track02_card_impact_v2.json` now declares `effect_signatures.schema_version=2`.
+- New derived fields cover summon aliases/totals, summoned keywords, ally keyword/shield/resistance gains, enemy keyword loss, poison/freeze/snare control, card-flow deltas, pending choices, sacrifice counters, log/visual-event deltas and support-card metadata.
+- `card_focus_legal` now tags focused-card samples with support played before the target card.
+- `BattleRunner` now stores card play sequence, focused card play index, support before/after target, support counts, contamination status, signature confidence and ambiguity reason.
+- Compare now includes the expanded `effect.*` field set and aggregates quality from the `after` battle results so same/same compares still show non-damage coverage.
+- Markdown now includes `Non-Damage Coverage Matrix` and `Support Contamination`.
+- Final observed compare at `user://card_impact/track02_card_impact_v2_non_damage_coverage`:
+  - Gate: PASS.
+  - Coverage: 84/84 active cards.
+  - Required player signatures: 54/54.
+  - Enemy signatures: 30 report-only/missing expected.
+  - Quality: 45 clean, 9 support-assisted, 47 ambiguous, 30 enemy report-only missing.
+  - Families: `buff`, `control`, `debuff`, `economy`, `keyword`, `summon`.
+- Operational lesson: support before the focused card is real signature contamination; cards played after the focused-card snapshot are still reported but should not mark the signature support-assisted. Ambiguity remains high because the current policy can play the focused card more than once.
+- Next tooling recommendation: add an isolated target-card capture mode to `card_focus_legal` before the next broad redesign batch. It should play minimum legal support, play the focused card once, capture the signature and stop further card plays for the turn when safe.
+
 ## Screenshots
 
 Captured at `1280x720` and `960x540` in:
@@ -109,7 +131,7 @@ Captured at `1280x720` and `960x540` in:
 - Manual playtest remains the next production step and should use `docs/playtest-track-02.md`.
 - Balance changes should come from observed human runs, with AutoRun Gate Pack used for explicit regression, distribution checks and tuning comparison rather than as the final verdict.
 - Large player-card changes should now use Card Impact V2: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect both metric movement and player-card effect signatures before accepting the batch.
-- Before the next broad card redesign, prefer one tooling hardening pass for summon/support/control/economy effect comparisons and support-card contamination reporting.
+- Before the next broad card redesign, prefer one tooling hardening pass to reduce repeated-focused-card ambiguity in `card_focus_legal`.
 - Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
 
 ## Remaining Technical Debt

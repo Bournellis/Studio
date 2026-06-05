@@ -72,12 +72,21 @@ static func play_turn(engine, policy_id: String, options: Dictionary = {}) -> Di
 			_resolve_pending_choices(engine, policy_id, result)
 			var after_effect_snapshot: Dictionary = BattleEffectSignatureScript.snapshot_from_engine(engine)
 			var effect_samples: Array = Array(result.get("effect_samples", []))
-			effect_samples.append(BattleEffectSignatureScript.build_sample(
+			var effect_sample: Dictionary = BattleEffectSignatureScript.build_sample(
 				focused_card_id,
 				Dictionary(candidate.get("target", {})),
 				before_effect_snapshot,
 				after_effect_snapshot
-			))
+			)
+			var support_cards_before: Array = _card_ids_from_plays(Array(result.get("cards_played", [])))
+			effect_sample["focused_card_play_index"] = support_cards_before.size()
+			effect_sample["support_cards_before_target"] = support_cards_before.duplicate()
+			effect_sample["support_card_count_before_target"] = support_cards_before.size()
+			if not support_cards_before.is_empty():
+				effect_sample["support_contamination_status"] = "support_assisted"
+				effect_sample["signature_confidence"] = "support_assisted"
+				effect_sample["ambiguous_reason"] = "support cards were played before the focused card"
+			effect_samples.append(effect_sample)
 			result["effect_samples"] = effect_samples
 		var cards_played: Array = Array(result.get("cards_played", []))
 		cards_played.append({
@@ -141,6 +150,16 @@ static func _try_class_active(engine, policy_id: String, result: Dictionary) -> 
 		failed_actions.append({"message": str(active_result.get("message", "Class active rejected.")), "kind": "class_active"})
 		result["failed_actions"] = failed_actions
 		result["ok"] = false
+
+static func _card_ids_from_plays(plays: Array) -> Array:
+	var ids: Array = []
+	for play_value: Variant in plays:
+		if typeof(play_value) != TYPE_DICTIONARY:
+			continue
+		var card_id: String = str(Dictionary(play_value).get("card_id", ""))
+		if card_id != "":
+			ids.append(card_id)
+	return ids
 
 static func _best_card_candidate(engine, policy_id: String, options: Dictionary = {}) -> Dictionary:
 	if policy_id == POLICY_CARD_FOCUS:

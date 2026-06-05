@@ -131,6 +131,76 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 				_inline_field_counts(Dictionary(entry.get("fields", {})))
 			])
 	lines.append("")
+	lines.append("## Non-Damage Coverage Matrix")
+	var signature_quality: Dictionary = Dictionary(summary.get("signature_quality", {}))
+	var quality_by_family: Dictionary = Dictionary(signature_quality.get("by_family", {}))
+	if quality_by_family.is_empty():
+		var non_damage_families: Array[String] = []
+		for family: String in _sorted_keys(by_effect_family):
+			if not ["damage", "coverage", "support", "other"].has(family):
+				non_damage_families.append(family)
+		if non_damage_families.is_empty():
+			lines.append("- none")
+		else:
+			lines.append("| Family | Effect changes | Fields |")
+			lines.append("|---|---:|---|")
+			for family: String in non_damage_families:
+				var entry: Dictionary = Dictionary(by_effect_family.get(family, {}))
+				lines.append("| `%s` | `%d` | `%s` |" % [
+					family,
+					int(entry.get("change_count", 0)),
+					_inline_field_counts(Dictionary(entry.get("fields", {})))
+				])
+	else:
+		lines.append("| Family | Total | Clean | Support | Ambiguous | Missing |")
+		lines.append("|---|---:|---:|---:|---:|---:|")
+		for family: String in _sorted_keys(quality_by_family):
+			if family == "damage":
+				continue
+			var entry: Dictionary = Dictionary(quality_by_family.get(family, {}))
+			lines.append("| `%s` | `%d` | `%d` | `%d` | `%d` | `%d` |" % [
+				family,
+				int(entry.get("total", 0)),
+				int(entry.get("clean_count", 0)),
+				int(entry.get("support_assisted_count", 0)),
+				int(entry.get("ambiguous_count", 0)),
+				int(entry.get("missing_count", 0))
+			])
+	lines.append("")
+	lines.append("## Support Contamination")
+	if signature_quality.is_empty():
+		var support_changes: Array = Array(summary.get("support_contamination_changes", []))
+		if support_changes.is_empty():
+			lines.append("- none")
+		else:
+			for item: Dictionary in support_changes.slice(0, 20):
+				lines.append("- `%s` `%s`: `%s` -> `%s`" % [
+					str(item.get("id", "")),
+					str(item.get("field", "")),
+					str(item.get("before", "")),
+					str(item.get("after", ""))
+				])
+	else:
+		lines.append("- Total signatures: `%d`" % int(signature_quality.get("total", 0)))
+		lines.append("- Clean/support/ambiguous/missing: `%d/%d/%d/%d`" % [
+			int(signature_quality.get("clean_count", 0)),
+			int(signature_quality.get("support_assisted_count", 0)),
+			int(signature_quality.get("ambiguous_count", 0)),
+			int(signature_quality.get("missing_count", 0))
+		])
+		var quality_cases: Array = Array(signature_quality.get("cases", []))
+		if quality_cases.is_empty():
+			lines.append("- notable cases: none")
+		else:
+			for item: Dictionary in quality_cases.slice(0, 20):
+				lines.append("- `%s` `%s`: `%s` / `%s` (%s)" % [
+					str(item.get("case_id", "")),
+					str(item.get("card_id", "")),
+					str(item.get("support_contamination_status", "")),
+					str(item.get("signature_confidence", "")),
+					str(item.get("reason", ""))
+				])
+	lines.append("")
 	lines.append("## Top Effect Delta Cards")
 	var top_effect_cards: Array = Array(summary.get("top_effect_delta_cards", []))
 	if top_effect_cards.is_empty():
