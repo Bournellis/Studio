@@ -12,6 +12,7 @@ Local Godot tools for generation, validation, screenshots, and route telemetry l
 - `run_lab.gd`: runs route simulations by class/seed, writes JSON/CSV metrics, and can compare against golden metrics.
 - `run_scenarios.gd`: runs explicit Scenario Fixtures packs with PASS/WARN/FAIL expectations and JSON/CSV/Markdown reports.
 - `run_battle_lab.gd`: runs isolated BattleEngine fixture packs with deterministic legal-action policies and JSON/CSV/Markdown reports.
+- `compare_lab_reports.gd`: compares before/after outputs from AutoRun Lab, Scenario Fixtures or Gameplay Lab and writes JSON/CSV/Markdown diffs.
 - `capture_visual_screenshots.gd`: captures visual surfaces when UI work requires screenshots.
 
 ## Validation Command
@@ -41,3 +42,11 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_battle_lab.gd -- --mode=gate --pack=track02_battle_core_v1
 ```
+
+## Lab Diff Reporter
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/compare_lab_reports.gd -- --before=user://battle_lab/before_cards --after=user://battle_lab/after_cards --type=battle --out=user://lab_diff/card_change_probe --mode=gate
+```
+
+Supported `--type` values are `auto`, `battle`, `scenario` and `run_lab`. Gate mode fails on new `FAIL` records or removed records; warnings and metric deltas are reported for inspection.
