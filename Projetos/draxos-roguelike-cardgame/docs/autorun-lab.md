@@ -1,8 +1,8 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-05`
-- Status: `SCENARIO_FIXTURES_V1_READY`
-- Scope: macro-route gameplay testing foundation and explicit scenario fixtures
+- Status: `GAMEPLAY_LAB_V1_READY`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures and isolated BattleEngine gameplay lab
 
 ## Purpose
 
@@ -11,6 +11,8 @@ AutoRun Lab is the first layer of the gameplay test toolchain. It expands the ex
 It still uses macro-route simulation through `tools/route_pacing_simulator.gd`. It does not play battles turn by turn and does not replace human playtest. It prepares the contracts that future Gameplay Lab, Scenario Lab and Replay Lab should reuse.
 
 Scenario Fixtures V1 is the second layer of this toolchain. It runs small named scenarios from JSON packs, evaluates explicit expectations as `PASS`, `WARN`, or `FAIL`, and keeps stress signals visible without turning expected stress warnings into hard regressions.
+
+Gameplay Lab V1 is the third layer. It runs isolated real battles through `BattleEngine`, using deterministic policies that only submit legal actions exposed by the engine. It targets combat regressions, keywords, hand/deck behavior, encounter modes, field effects, boss hooks and basic enemy AI signals without changing gameplay content or replacing human playtest.
 
 ## Entry Point
 
@@ -32,6 +34,12 @@ Scenario fixture gate:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_scenarios.gd -- --mode=gate --pack=track02_core_v1
+```
+
+Gameplay battle gate:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_battle_lab.gd -- --mode=gate --pack=track02_battle_core_v1
 ```
 
 ## Presets
@@ -133,19 +141,64 @@ Expectation status:
 - baseline, big-deck and thin-deck deck-size bands;
 - late-route fire pressure and map 29 boss finish.
 
+## Gameplay Lab V1
+
+Battle fixture packs live under `data/lab/battles/`. The first official pack is `track02_battle_core_v1`.
+
+Useful commands:
+
+```text
+--pack=track02_battle_core_v1
+--case=boss_08_arcano_baseline
+--tags=keyword,boss
+--policy=baseline_legal
+--out=user://battle_lab/track02_battle_core_v1
+--mode=explore|gate
+--gate
+--stop-on-failure
+```
+
+Policies:
+
+| Policy | Intent |
+|---|---|
+| `baseline_legal` | Balanced deterministic legal-action policy. |
+| `aggressive_legal` | Prioritizes lethal, enemy hero pressure and high-threat removal. |
+| `defensive_legal` | Prioritizes creatures, ally buffs, high-threat removal and avoids sacrifice while slots are open. |
+| `end_turn_only` | Control/stress signal that never plays cards and only advances cycles. |
+
+Battle outputs:
+
+- `battle_results.json`: complete records with case, result, timeline, expectations, warnings, tags and status.
+- `battle_results.csv`: one row per case.
+- `battle_summary.json`: aggregate status counts by tag, class, policy and encounter.
+- `battle_summary.md`: human-readable report with status matrix, critical checkpoints, warnings and failures.
+- `battle_gate.md`: short regression view for gate runs.
+
+`track02_battle_core_v1` starts with 12 isolated battle cases covering:
+
+- tutorial baseline battles for Arcano, Invocador and Necromante;
+- initial duel baseline;
+- map 08 boss baseline and end-turn-only stress signal;
+- survive and defense encounter-mode signals;
+- Ar and Fogo field-effect signals;
+- map 22 boss signal and map 29 final boss stress signal.
+
+The current gate is explicit and is not called by `tools/validate.gd`. Current calibrated result: 9 PASS, 3 WARN and 0 FAIL. The WARN rows are intentional stress/signal cases, and `--mode=gate` fails only on `FAIL`.
+
 ## Result Schema
 
 Each detailed record contains:
 
 - `schema_version`
 - `tool`
-- `case`
+- `case` or `scenario`
 - `result`
 - `timeline`
 - `warnings`
 - `tags`
 
-The current `simulation_mode` is `macro_route_v1`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
+The current macro-route `simulation_mode` is `macro_route_v1`. Gameplay Lab uses `battle_engine_v1`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
 
 ## Baseline Strategy
 
@@ -170,7 +223,7 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Gameplay Lab: play battles with `BattleEngine` using legal-action policies.
-2. Scenario Lab: extend fixtures from `macro_route_v1` into isolated encounter, boss, field effect and keyword simulations.
+1. Use Gameplay Lab during the next real gameplay change and decide which WARN signals should become baseline PASS.
+2. Expand battle fixtures only after that first real use, especially for targeted keyword and boss hook regressions.
 3. Replay Lab: record human or bot decisions and replay them across builds.
 4. Dashboard: read the JSON/CSV/Markdown outputs and compare historical runs visually.
