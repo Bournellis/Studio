@@ -4,7 +4,7 @@
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Historical Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `AutoRun Gate Pack V1 and Scenario Fixtures V1 preserve Track 02 route metrics and pass 120/120 GUT tests, 1343 asserts, shared full-route pacing smoke green, Scenario Fixture track02_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
+- Validation Baseline: `Card Impact V2 Non-Damage Coverage, Card Redesign Batch 01, Card Impact Effect Signature V2, Card Impact Smoke Tuning V1, Card Impact Pack V1, Lab Diff Reporter V1, Gameplay Lab V1, Scenario Fixtures V1 and AutoRun Gate Pack V1 preserve Track 02 route metrics and pass 157/157 GUT tests, shared full-route pacing smoke green, Card Impact V2 before/after/compare gate green with 84 active card cases covered, 54/54 required player effect signatures present, non-damage families reported from BattleEngine snapshots/log deltas, support-card contamination metadata reported, 30 enemy signatures report-only, 15 legacy inactive elemental cards audited, zero structural errors, V1 Card Impact regression gate green, Battle Lab track02_battle_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, Scenario Fixture track02_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
 
 ## Purpose
 
@@ -40,9 +40,9 @@ The target is a fixed, linear 29-map run with all planned encounter types, all p
 
 ## Current Execution Cursor
 
-Completed prompt: `SCENARIO-FIXTURES-V1 - named deterministic macro-route scenario fixtures`.
+Completed prompt: `CARD-IMPACT-V2-NON-DAMAGE-COVERAGE - strengthen summon/support/control/economy effect comparisons and support-card contamination reporting before broader card redesign batches`.
 
-Next implementation prompt: none. Track 02 is ready for user playtest.
+Next implementation prompt: `CARD-IMPACT-V2-ISOLATED-TARGET-CAPTURE - reduce card_focus_legal ambiguity by stopping after the focused card signature capture when safe`. Track 02 remains ready for user playtest.
 
 ## Implemented Baseline
 
@@ -93,6 +93,15 @@ Next implementation prompt: none. Track 02 is ready for user playtest.
 - AutoRun Lab V1 turns `tools/run_lab.gd` into a modular macro-route lab with `tools/lab/` case building, presets, macro policies, aggregate JSON/CSV/Markdown reporting, detailed timelines, warnings/tags and statistical baseline comparison while preserving the exact Track 02 golden path.
 - AutoRun Gate Pack V1 adds official smoke/quick baselines under `data/lab/baselines/`, explicit `--mode=gate` regression commands, baseline group-field comparisons, gate failure tests, and scorecard JSON/Markdown reports for human tuning reads.
 - Scenario Fixtures V1 adds `data/lab/scenarios/track02_core_v1.json`, `tools/run_scenarios.gd`, loader/evaluator/runner/reporter modules, 12 deterministic route/economy/deck/boss/class/keyword-focused macro scenarios, PASS/WARN/FAIL expectations, explicit gate mode and JSON/CSV/Markdown reports without wiring the command into `tools/validate.gd`.
+- Card Impact Pack V1 adds `data/lab/card_impact/track02_card_impact_v1.json`, `tools/run_card_impact.gd`, card discovery/matrix/runner/reporter modules, the `card_focus_legal` battle policy, 54 core player card variants, 30 active enemy cards, 15 audited legacy inactive elemental cards, explicit before/after/compare gate mode and JSON/CSV/Markdown impact reports without wiring the command into `tools/validate.gd`.
+- Card Impact Smoke Tuning V1 applied a deliberately small card batch: `arcano_choque_lvl2` and `arcano_choque_lvl3` damage `3 -> 4`, `invocador_batedor_lvl3` attack `6 -> 5`, `necro_esqueleto_lvl2` health `2 -> 3`, and `enemy_ar_rajada` attack `4 -> 5`.
+- The first real Card Impact compare stayed structurally green and surfaced one expected metric movement: `enemy_ar_rajada` raised `damage_to_player_hero` from `4` to `5` and lowered isolated harness `player_hp` from `56` to `55`.
+- Card Impact Effect Signature V2 adds `data/lab/card_impact/track02_card_impact_v2.json`, `tools/lab/battle_effect_signature.gd`, BattleEngine before/after snapshots around focused player-card plays, required player-card effect signatures, schema-ready enemy report-only signatures, `effect.*` diff rows and Markdown summary sections for effect deltas, effect-family matrices, top effect-delta cards and missing signatures.
+- Current V2 same/same calibration passes with 84/84 active card cases, 54/54 required player effect signatures, 30 enemy cards in report-only signature mode, 15 legacy inactive cards audited, zero structural errors, zero new failures, zero removed records, zero status changes, zero metric changes and zero effect changes.
+- Card Impact V2 Non-Damage Coverage extends player-card signatures with summon aliases/totals, ally keyword/shield/resistance gains, enemy poison/freeze/snare/control counters, deck/hand/discard/card-flow deltas, pending choice/sacrifice counters, support-card before/after metadata, signature confidence, non-damage family matrix and support-contamination Markdown reporting.
+- Current non-damage compare passes with 84/84 active card cases, 54 required player signatures, 30 enemy report-only missing signatures, zero structural errors, zero new failures and zero removed records; reported signature quality is 45 clean, 9 support-assisted, 47 ambiguous from repeated focused-card plays and 30 enemy report-only missing.
+- Card Redesign Batch 01 applied the first controlled real V2 card cycle: `arcano_choque_lvl2` and `arcano_choque_lvl3` damage `4 -> 5`, `arcano_tempestade_lvl3` random damage `6 -> 7`, and damage-family Card Impact harnesses now use `enemy_health=160` plus `enemy_terra_elemental_tita` to keep extra damage observable instead of hidden by overkill.
+- Batch 01 compare stayed structurally green and surfaced the intended effect deltas: `arcano_choque_lvl2` `effect.enemy_hero_damage` `52 -> 57`, `arcano_choque_lvl3` `86 -> 92`, and `arcano_tempestade_lvl3` `57 -> 62`.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
 - Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.
@@ -112,4 +121,4 @@ Every future Track 02 implementation or playtest-fix thread must:
 
 ## Current Risk
 
-Track 02 is ready for user playtest. Remaining risk is human balance feedback: the deterministic full-route smoke, AutoRun Gate Pack macro matrices and Scenario Fixtures V1 validate structure, tuning trends and small named regression signals, but they are not substitutes for a manual run. Additional foundation extraction is optional and should be driven by concrete future work, not by the need to unblock playtest.
+Track 02 is ready for user playtest and now has one real player-card V2 redesign cycle plus non-damage Card Impact coverage validated. Remaining risk is human balance feedback: the deterministic full-route smoke, AutoRun Gate Pack macro matrices, Scenario Fixtures V1, Gameplay Lab V1, Card Impact Pack V1, Card Impact Effect Signature V2, Card Impact V2 Non-Damage Coverage and Batch 01 validate structure, tuning trends, small named regression signals, isolated combat behavior, card-specific before/after movement and player-card effect deltas, but they are not substitutes for a manual run. Enemy-card effect causality is still report-only in V2, and `card_focus_legal` still produces ambiguous signatures when the focused card is played multiple times; reduce that ambiguity before broad redesign batches.

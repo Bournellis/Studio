@@ -367,7 +367,90 @@ static func _metric_changes(before_record: Dictionary, after_record: Dictionary,
 			"after": after_value,
 			"delta": _delta_value(before_value, after_value)
 		})
+	if report_type == TYPE_BATTLE:
+		changes.append_array(_effect_signature_changes(before_result, after_result, threshold))
 	return changes
+
+static func _effect_signature_changes(before_result: Dictionary, after_result: Dictionary, threshold: float) -> Array[Dictionary]:
+	var changes: Array[Dictionary] = []
+	var before_signature: Dictionary = Dictionary(before_result.get("card_effect_signature", {}))
+	var after_signature: Dictionary = Dictionary(after_result.get("card_effect_signature", {}))
+	if before_signature.is_empty() and after_signature.is_empty():
+		return changes
+	for field: String in _effect_signature_fields():
+		var before_value = before_signature.get(field, null)
+		var after_value = after_signature.get(field, null)
+		if before_value == null and after_value == null:
+			continue
+		if _values_equal(before_value, after_value, threshold):
+			continue
+		changes.append({
+			"field": "effect.%s" % field,
+			"before": before_value,
+			"after": after_value,
+			"delta": _delta_value(before_value, after_value)
+		})
+	return changes
+
+static func _effect_signature_fields() -> PackedStringArray:
+	return PackedStringArray([
+		"present",
+		"sample_count",
+		"summons_created",
+		"summoned_count",
+		"summoned_slot_count",
+		"summoned_keyword_count",
+		"player_units_delta",
+		"enemy_units_delta",
+		"enemy_hero_damage",
+		"player_hero_damage",
+		"enemy_slot_damage_total",
+		"player_slot_damage_total",
+		"ally_attack_buff_total",
+		"ally_health_buff_total",
+		"enemy_attack_debuff_total",
+		"enemy_health_debuff_total",
+		"ally_keyword_gain_count",
+		"ally_shield_gain",
+		"ally_resistance_gain",
+		"enemy_keyword_loss_count",
+		"poison_added_total",
+		"enemy_poison_added",
+		"freeze_added_total",
+		"enemy_frozen_added",
+		"enemy_snared_added",
+		"enemy_slow_added",
+		"shield_added_total",
+		"mana_gained",
+		"ashes_gained",
+		"cards_drawn",
+		"cards_discarded",
+		"cards_created",
+		"deck_delta",
+		"hand_delta",
+		"discard_delta",
+		"pending_choices_delta",
+		"pending_choice_created",
+		"pending_choice_resolved",
+		"sacrifice_required",
+		"sacrifice_consumed",
+		"sacrifice_units_destroyed",
+		"log_added",
+		"visual_events_added",
+		"summoned_attack_total",
+		"summoned_health_total",
+		"focused_card_play_index",
+		"support_cards_before_target",
+		"support_cards_after_target",
+		"support_card_count_before_target",
+		"support_card_count_after_target",
+		"support_contamination_status",
+		"signature_confidence",
+		"ambiguous_reason",
+		"keywords_added",
+		"keywords_removed",
+		"families"
+	])
 
 static func _metric_fields(report_type: String) -> PackedStringArray:
 	if report_type == TYPE_BATTLE:
