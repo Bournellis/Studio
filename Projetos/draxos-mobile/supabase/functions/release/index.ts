@@ -4,19 +4,19 @@ import { verifiedAuthContext } from "../_shared/auth_context.ts";
 const DEFAULT_MANIFEST: ReleaseManifest = {
   schema_version: "internal_alpha_manifest_v1",
   channel: "internal_alpha",
-  latest_version: "0.0.1-alpha.0",
-  latest_version_code: 1,
-  minimum_supported_version: "0.0.1-alpha.0",
-  minimum_supported_version_code: 1,
-  released_at: "2026-06-05T08:52:41Z",
+  latest_version: "0.0.2-alpha.0",
+  latest_version_code: 2,
+  minimum_supported_version: "0.0.2-alpha.0",
+  minimum_supported_version_code: 2,
+  released_at: "2026-06-05T21:55:26Z",
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/",
   notes: [
-    "Arena PVE First Real Run + Update Recovery publicado na URL principal de Internal Alpha.",
+    "Arena/Bosque Visible V2 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
-    "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage.",
-    "Arena PVE adiciona retomar tentativa, abandonar tentativa e encerrar tentativa antiga sem recompensa de conclusao.",
-    "Bosque v3 UX/Feel, Technical Hardening e Openworld Main Menu Sync seguem preservados dentro deste pacote.",
+    "Manifesto exige build minima 0.0.2-alpha.0 para evitar instalacao silenciosa da build 0.0.1-alpha.0.",
+    "Preparacao aparece mesmo quando a Arena esta bloqueada por tentativa ativa/travada.",
+    "Bosque v3 UX/Feel e Arena/Bosque Regression Hotfix seguem preservados dentro deste pacote.",
     "Battle Lab e Progression Lab no Web usam lab-runner remoto com a mesma conta alpha Supabase do jogo.",
     "Progression Lab usa save separado e nao pontua ranking.",
   ],
@@ -24,15 +24,15 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
     android: {
       label: "Android APK",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a/downloads/draxos-mobile-alpha.apk",
-      sha256: "ae886a7790c19213c44a728e56481126e20f47b4ddb588e2ffdfc99fd99fd7ce",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-arena-bosque-visible-v2-20260605-01d80d5/downloads/draxos-mobile-alpha.apk",
+      sha256: "aef590a4d5a072153e6c1fb21ed9722e890654a2b2acaa575780758ec18d4282",
       auth_required: "false",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a/downloads/draxos-mobile-alpha.zip",
-      sha256: "09f3be25a8a5520876796fbe3ec7ab60281b773f4807e96c7b83422437e706ff",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-arena-bosque-visible-v2-20260605-01d80d5/downloads/draxos-mobile-alpha.zip",
+      sha256: "f5fde2d9a3274683fa941145718626e929732d76e85acc6babe7d69d6b0c7572",
       auth_required: "false",
     },
     web: {

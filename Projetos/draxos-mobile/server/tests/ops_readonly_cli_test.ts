@@ -55,9 +55,9 @@ Deno.test("ops read-only CLI uses GET-only summaries and handles audit RLS block
       return jsonResponse({
         schema_version: "internal_alpha_manifest_v1",
         channel: "internal_alpha",
-        latest_version: "0.0.1-alpha.0",
-        latest_version_code: 1,
-        minimum_supported_version_code: 1,
+        latest_version: "0.0.2-alpha.0",
+        latest_version_code: 2,
+        minimum_supported_version_code: 2,
         released_at: "2026-06-01T00:00:00Z",
         requires_save_reset: false,
         portal_url: "https://preview/portal/index.html",
