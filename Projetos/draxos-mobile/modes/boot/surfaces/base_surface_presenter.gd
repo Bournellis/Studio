@@ -3,6 +3,7 @@ extends RefCounted
 
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const BaseSurfaceSummaryScript := preload("res://modes/boot/surfaces/base_surface_summary.gd")
+const BaseSurfaceTextScript := preload("res://modes/boot/surfaces/base_surface_text.gd")
 
 static func render(host: Node) -> void:
 	_add_body_text(host, "Acompanhe producao, veja a fila e escolha o proximo upgrade.")
@@ -371,35 +372,22 @@ static func _embedded_action_button(host: Node, text: String, action_id: String,
 	return button
 
 static func _empty_refuge_timeline_text() -> String:
-	if SessionStore.has_valid_access_token():
-		return "Refugio sincronizando automaticamente..."
-	if SessionStore.is_progression_lab_local_only():
-		return "Refugio local do Lab ainda sem dados carregados."
-	return "Refugio pronto para carregar depois da entrada."
+	return BaseSurfaceTextScript.empty_refuge_timeline_text(
+		SessionStore.has_valid_access_token(),
+		SessionStore.is_progression_lab_local_only()
+	)
 
 static func _empty_refuge_body_text() -> String:
-	if SessionStore.has_valid_access_token():
-		return "Sincronizando predios, producao e fila."
-	if SessionStore.is_progression_lab_local_only():
-		return "Carregue os dados do Lab."
-	return "Entre ou use Guest dev para sincronizar."
+	return BaseSurfaceTextScript.empty_refuge_body_text(
+		SessionStore.has_valid_access_token(),
+		SessionStore.is_progression_lab_local_only()
+	)
 
 static func _strip_routine_prefix(text: String, prefix: String) -> String:
-	var stripped := text.strip_edges()
-	if stripped.begins_with(prefix):
-		stripped = stripped.substr(prefix.length()).strip_edges()
-	if stripped.ends_with("."):
-		stripped = stripped.substr(0, stripped.length() - 1).strip_edges()
-	return stripped
+	return BaseSurfaceTextScript.strip_routine_prefix(text, prefix)
 
 static func _strip_after_separator(text: String) -> String:
-	var stripped := text.strip_edges()
-	var separator_index := stripped.find(" | ")
-	if separator_index >= 0:
-		stripped = stripped.substr(0, separator_index).strip_edges()
-	if stripped.ends_with("."):
-		stripped = stripped.substr(0, stripped.length() - 1).strip_edges()
-	return stripped
+	return BaseSurfaceTextScript.strip_after_separator(text)
 
 static func _ensure_selected_base_structure(host: Node, structures: Array) -> void:
 	var selected_id := _selected_base_structure_id(host)
@@ -503,64 +491,25 @@ static func _base_structure_short_label(structure_id: String) -> String:
 	return structure_id
 
 static func _base_benefit_text(structure: Dictionary) -> String:
-	var produces := str(structure.get("produces", ""))
-	if produces != "" and produces != "<null>":
-		return "%s por dia: %s | armazenamento: %s" % [
-			produces.capitalize(),
-			_format_number(float(structure.get("daily_production", 0.0))),
-			_format_number(float(structure.get("storage_cap", 0.0))),
-		]
-	return str(structure.get("benefit_label", "Bonus permanente."))
+	return BaseSurfaceTextScript.benefit_text(structure)
 
 static func _base_pending_text(structure: Dictionary) -> String:
-	var produces := str(structure.get("produces", ""))
-	if produces == "" or produces == "<null>":
-		return "Este predio nao gera recurso direto."
-	return "%s %s de %s" % [
-		_format_number(float(structure.get("pending_collectable", 0.0))),
-		produces.capitalize(),
-		_format_number(float(structure.get("storage_cap", 0.0))),
-	]
+	return BaseSurfaceTextScript.pending_text(structure)
 
 static func _base_upgrade_text(structure: Dictionary) -> String:
-	var next_level: Variant = structure.get("next_level", null)
-	if next_level == null:
-		return "nivel maximo"
-	var cost := _as_dictionary(structure.get("upgrade_cost", {}))
-	return "L%s | custo %s | tempo %s" % [
-		str(next_level),
-		_format_cost(cost),
-		_format_duration(int(structure.get("upgrade_duration_seconds", 0))),
-	]
+	return BaseSurfaceTextScript.upgrade_text(structure)
 
 static func _base_next_level_text(structure: Dictionary) -> String:
-	var next_level: Variant = structure.get("next_level", null)
-	return "max" if next_level == null else "L%s" % str(next_level)
+	return BaseSurfaceTextScript.next_level_text(structure)
 
 static func _base_short_status(structure: Dictionary) -> String:
-	var active_job := _as_dictionary(structure.get("active_job", {}))
-	if not active_job.is_empty():
-		return "Upgrade %s" % _format_duration(int(active_job.get("remaining_seconds", 0)))
-	if bool(structure.get("can_upgrade", false)):
-		return "Upgrade pronto"
-	return str(structure.get("blocked_message", "Bloqueado"))
+	return BaseSurfaceTextScript.short_status(structure)
 
 static func _base_status_color_token(structure: Dictionary) -> String:
-	if bool(structure.get("can_upgrade", false)):
-		return "status_success"
-	var reason := str(structure.get("blocked_reason", ""))
-	if reason == "INSUFFICIENT_RESOURCES" or reason == "CONSTRUCTION_QUEUE_FULL":
-		return "status_warning"
-	return "text_secondary"
+	return BaseSurfaceTextScript.status_color_token(structure)
 
 static func _base_structure_tooltip(structure: Dictionary) -> String:
-	var structure_id := str(structure.get("structure_id", ""))
-	return "%s\nO que e: %s\nComo funciona: %s\nImporta porque: %s" % [
-		_structure_label(structure_id, str(structure.get("display_name", ""))),
-		str(structure.get("description", "")),
-		_base_upgrade_text(structure),
-		_base_benefit_text(structure),
-	]
+	return BaseSurfaceTextScript.structure_tooltip(structure)
 
 static func _active_base_jobs(jobs: Array) -> Array:
 	return BaseSurfaceSummaryScript.active_base_jobs(jobs)
@@ -596,11 +545,7 @@ static func _resource_label(key: String) -> String:
 	return BaseSurfaceSummaryScript.resource_label(key)
 
 static func _inventory_quantity(inventory: Array, item_id: String) -> int:
-	for item_variant: Variant in inventory:
-		var item := _as_dictionary(item_variant)
-		if str(item.get("item_id", "")) == item_id:
-			return int(item.get("quantity", 0))
-	return 0
+	return BaseSurfaceTextScript.inventory_quantity(inventory, item_id)
 
 static func _structure_label(structure_id: String, fallback: String = "") -> String:
 	return BaseSurfaceSummaryScript.structure_label(structure_id, fallback)
