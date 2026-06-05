@@ -172,6 +172,10 @@ O smoke `client_telemetry_smoke.ts` valida auth obrigatoria, evento pre-conta
 com `player_id = null`, evento pos-conta, rejeicao de schema desconhecido e
 bloqueio de insert direto em `telemetry_events` com JWT anonimo.
 
+O teste `auth_context_contract_test.ts` valida o helper compartilhado de auth,
+o espelho `server/supabase`, a verificacao de bearer via `/auth/v1/user` e a
+migracao inicial dos endpoints `account` e `telemetry` para `verifiedAuthContext`.
+
 O smoke `two_save_context_smoke.ts` valida o contexto `normal` e
 `progression_lab` usando o header `x-draxos-save-type`: dois players isolados na
 mesma sessao auth, batalha/base/loja no save Lab e ranking bloqueado para

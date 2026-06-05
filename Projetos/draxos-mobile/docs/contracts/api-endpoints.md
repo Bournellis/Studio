@@ -9,7 +9,7 @@ Este documento descreve a interface logica entre cliente Godot e Supabase Edge F
 
 - Transporte: HTTPS REST via HTTPRequest do Godot.
 - Versao da API: usar header unico `x-draxos-api-version: 1`. A ausencia do header ainda e tolerada pelos endpoints alpha atuais; valor explicito diferente de `1` deve falhar com `UNSUPPORTED_API_VERSION`.
-- Autenticacao: JWT Supabase no header `Authorization: Bearer <token>`.
+- Autenticacao: JWT Supabase no header `Authorization: Bearer <token>`. Endpoints migrados para o helper compartilhado de auth tambem verificam o bearer em `/auth/v1/user` antes de usar `auth_user_id`.
 - Save ativo: endpoints de gameplay aceitam `x-draxos-save-type: normal|progression_lab`; ausencia do header usa `normal`.
 - Internal Alpha: cliente cria sessao Supabase Auth por email/senha; depois chama `/account/bootstrap` com JWT registrado, username e convite para criar o primeiro save.
 - Guest dev: cliente ainda pode criar sessao Supabase Auth anonima e chamar `/account/guest`, mas esse fluxo e ferramenta de desenvolvimento/fallback e nao o caminho real da build interna.

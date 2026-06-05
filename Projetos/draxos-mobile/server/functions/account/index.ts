@@ -1,9 +1,9 @@
 import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
 import { validateApiVersion } from "../_shared/api_version.ts";
+import { type AuthContext, verifiedAuthContext } from "../_shared/auth_context.ts";
 import {
   normalizeSaveType,
   type SaveType,
-  saveTypeFromRequest,
   saveTypeQuery,
 } from "../_shared/save_context.ts";
 import { stateEnvelope } from "../_shared/response_envelope.ts";
@@ -14,12 +14,6 @@ type Route = "bootstrap" | "guest" | "state" | "save_reset";
 interface EdgeConfig {
   supabaseUrl: string;
   serviceRoleKey: string;
-}
-
-interface AuthContext {
-  userId: string;
-  isAnonymous: boolean;
-  saveType: SaveType;
 }
 
 interface RestError {
@@ -76,10 +70,6 @@ interface FoundationContext {
   ruleset?: unknown;
 }
 
-interface JwtPayload {
-  sub?: unknown;
-  is_anonymous?: unknown;
-}
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 Deno.serve(async (request: Request) => {
@@ -118,14 +108,17 @@ async function handleCorsRequest(request: Request): Promise<Response> {
       return errorResponse("METHOD_NOT_ALLOWED", "Use POST /account/saves/reset.", 405);
     }
 
-    const auth = decodeAuthContext(request);
-    if (auth.error !== null) {
-      return errorResponse(auth.error.code, auth.error.message, auth.error.status);
-    }
-
     const config = loadConfig();
     if (config.error !== null) {
       return errorResponse(config.error.code, config.error.message, config.error.status);
+    }
+
+    const auth = await verifiedAuthContext(request, {
+      supabaseUrl: config.value.supabaseUrl,
+      serviceRoleKey: config.value.serviceRoleKey,
+    });
+    if (auth.error !== null) {
+      return errorResponse(auth.error.code, auth.error.message, auth.error.status);
     }
 
     if (route === "guest") {
@@ -454,83 +447,6 @@ function resolveRoute(pathname: string): Route | null {
 
   if (pathname.endsWith("/state")) {
     return "state";
-  }
-
-  return null;
-}
-
-function decodeAuthContext(request: Request): { value: AuthContext; error: null } | {
-  value: null;
-  error: RestError;
-} {
-  const header = request.headers.get("authorization") ?? "";
-  const prefix = "Bearer ";
-  if (!header.startsWith(prefix)) {
-    return {
-      value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Bearer token is required.",
-        status: 401,
-      },
-    };
-  }
-
-  const token = header.slice(prefix.length);
-  const parts = token.split(".");
-  if (parts.length < 2) {
-    return {
-      value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Invalid bearer token.",
-        status: 401,
-      },
-    };
-  }
-
-  const payload = decodeJwtPayload(parts[1]);
-  if (payload === null || typeof payload.sub !== "string" || !UUID_PATTERN.test(payload.sub)) {
-    return {
-      value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Token subject is invalid.",
-        status: 401,
-      },
-    };
-  }
-
-  const saveType = saveTypeFromRequest(request);
-  if (saveType === null) {
-    return {
-      value: null,
-      error: {
-        code: "INVALID_SAVE_TYPE",
-        message: "Save type must be normal or progression_lab.",
-        status: 400,
-      },
-    };
-  }
-
-  return {
-    value: { userId: payload.sub, isAnonymous: payload.is_anonymous === true, saveType },
-    error: null,
-  };
-}
-
-function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
-  try {
-    const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
-    const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-    const bytes = Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
-    const decoded = new TextDecoder().decode(bytes);
-    const payload: unknown = JSON.parse(decoded);
-    if (payload !== null && typeof payload === "object" && !Array.isArray(payload)) {
-      return payload as JwtPayload;
-    }
-  } catch {
-    return null;
   }
 
   return null;

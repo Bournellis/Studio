@@ -61,3 +61,7 @@ None. This track starts as local hardening only.
   required `request_hash`, `game_saves.id` scoping, DB-side cleanup for
   Arena/Modes/Track 16, preservation of account-wide social state and
   service-role revocation of the legacy no-hash reset RPC.
+- Package 5a starts auth hardening with a mirrored shared auth helper. `account`
+  and `telemetry` now call `verifiedAuthContext`, which validates the bearer
+  through Supabase Auth before trusting `auth_user_id`; remaining endpoint
+  migrations stay split into later packages.
