@@ -1,4 +1,4 @@
-# DraxosMobile Hardening Doing: technical-hardening
+# DraxosMobile Hardening Done: technical-hardening
 
 ## Metadata
 
@@ -10,6 +10,7 @@
 - mode_scope: `multi-mode`
 - branch: `codex/draxos-mobile/technical-hardening`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--technical-hardening`
+- status: `TRACK_22_TECHNICAL_HARDENING_DELIVERED_LOCAL`
 
 ## Objetivo
 
@@ -87,9 +88,27 @@ Executar o plano aprovado de hardening tecnico antes de novas expansoes: compact
 - `npx -y deno task --cwd supabase/functions check`
 - targeted Deno/GUT/smoke tests per package.
 
+## Delivery State
+
+Track 22 Technical Hardening is delivered locally on branch `codex/draxos-mobile/technical-hardening`.
+
+No remote publication, Supabase remote mutation, Cloudflare deploy or Android keystore work was performed.
+
+Delivered scope:
+
+- live DraxosMobile docs compacted;
+- validation runner made non-publishing;
+- `Modes Ops` isolated out of the Godot client;
+- account reset idempotency hardened with `request_hash`;
+- Arena rewards moved to explicit DB-side reward profiles;
+- shared `verifiedAuthContext` applied broadly across mutable/lab/release endpoints;
+- Base and Arena client surface presenters split into smaller pure helper modules.
+
 ## Handoff Point
 
 Handoff quando cada pacote logico estiver validado e, se possivel, commitado separadamente. Se a execucao completa ficar grande demais para uma unica sessao, o proximo agente deve continuar a partir deste Doing, preservando worktree/branch e validando o ultimo pacote antes de abrir o seguinte.
+
+Final handoff: review/merge branch `codex/draxos-mobile/technical-hardening`; rerun `DatabaseLocal` only when local Supabase/Edge stack is available.
 
 ## Execution Snapshot - 2026-06-05
 
@@ -99,6 +118,16 @@ Handoff quando cada pacote logico estiver validado e, se possivel, commitado sep
 - No remote mutation/publication.
 - Validated latest backend package with `ServerQuick`; latest client refactors with `ClientQuick`.
 - Remaining recommended phase 2: migrate remaining mutable endpoints to `verifiedAuthContext` and continue optional extraction-only refactors in smaller packages.
+
+## Final Execution Snapshot - 2026-06-05
+
+- Phase 2 delivered locally.
+- Latest commit at handoff: `17f699a Extract arena surface text helpers`.
+- `ServerQuick`: PASS (`112` foundation tests + `19` PVE Arena tests).
+- `ClientQuick`: PASS (`223/223`, `3608` asserts, responsive/export smokes included).
+- `ModePlatform`: PASS (`38/38`, Bosque/Openworld/Modes Ops smokes included).
+- `ReleaseDryRun`: PASS after this card moved from Doing to Done.
+- `DatabaseLocal`: attempted and blocked by unavailable local services (`127.0.0.1:54322`, `127.0.0.1:54321`).
 
 ## Phase 2 Execution Plan - 2026-06-05
 

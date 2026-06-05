@@ -1,7 +1,8 @@
 # Track 22 - Technical Hardening
 
-- Status: `ACTIVE_LOCAL_HARDENING`
+- Status: `TRACK_22_TECHNICAL_HARDENING_DELIVERED_LOCAL`
 - Started: `2026-06-05`
+- Delivered locally: `2026-06-05`
 - Branch: `codex/draxos-mobile/technical-hardening`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--technical-hardening`
 
@@ -85,3 +86,33 @@ None. This track starts as local hardening only.
   formatters into `base_surface_summary.gd`. `base_surface_presenter.gd` keeps
   compatibility wrappers for `surface_ui_helpers.gd` and drops from 773 to 588
   measured nonblank lines without moving panel/control rendering.
+- Phase 2 package 7a extends the mirrored shared auth helper with
+  email-account enforcement helpers and a canonical Supabase UUID subject guard.
+- Phase 2 package 7b migrates `content` and `lab-runner` to shared verified
+  auth while preserving the anonymous lab fast-fail path before config lookup.
+- Phase 2 packages 7c-7e migrate `base`, `competition`, `build`, `crafting`,
+  `monetization`, `social`, `battle` and `arena` to shared verified auth in
+  mirrored `server/` and `supabase/` functions.
+- Phase 2 package 7f migrates `modes` through `mode_handler.ts`, preserving the
+  explicit `x-draxos-save-type` requirement for mode routes.
+- Phase 2 package 7g migrates `release` to shared verified auth before service
+  role download access and keeps alpha access checks intact.
+- Phase 2 packages 8a-8d continue extract-only client refactors: Base text,
+  Base visuals, Base crafting panel helpers and Arena pure text helpers now live
+  in bounded helper modules while presenters remain render/control owners.
+
+## Final Local Validation
+
+- `ServerQuick`: PASS (`112` foundation tests, `19` PVE Arena tests, mirrored
+  Deno function checks and foundation expansion readiness).
+- `ClientQuick`: PASS (`223/223` GUT tests, `3608` asserts, runtime config,
+  foundation hardening, responsive layout, modes visual layout and export
+  smokes).
+- `ModePlatform`: PASS (`38/38` mode contract tests plus Bosque/Openworld/Modes
+  Ops Godot smokes).
+- `DatabaseLocal`: attempted; blocked by local Supabase/Edge stack unavailable
+  (`127.0.0.1:54322` and `127.0.0.1:54321` refused connections).
+- `ReleaseDryRun`: PASS after Kanban closeout; release plan, safety checks,
+  Android internal-alpha keystore gate, Track 13 readiness and Track 14 agent
+  operations checks are green. No remote mutation is allowed through
+  `validate_foundation.ps1`.

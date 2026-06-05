@@ -57,7 +57,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: human playtest of the published Openworld Main Menu Sync package before opening new expansion work.
+  - Current next step: review/merge the local Track 22 Technical Hardening branch, then run human playtest of the published Openworld Main Menu Sync package before opening new expansion work.
 
 ## Arquivo De Design
 

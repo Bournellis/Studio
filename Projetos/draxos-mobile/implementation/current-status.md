@@ -25,6 +25,7 @@
 - Agent baseline marker: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Arena contract context: `Track 18 - PVE Arena Initial`, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context, not the current platform baseline.
 - Technical context: Track 16 Behavior And Potion Crafting is existing alpha substance summarized in `docs/behavior-potion-crafting-v1.md`, not the current product focus.
+- Latest local hardening branch: `Track 22 - Technical Hardening` delivered locally on `codex/draxos-mobile/technical-hardening`; it is not a remote publication package.
 
 ## Published Package
 
@@ -58,17 +59,19 @@ Playtest focus:
 3. Confirm tutorial Arena and first real Arena loop still read correctly.
 4. Record whether the next package should be a Bosque/menu hotfix or an Arena PVE/tuning package. This decision is not fixed yet.
 
-## Current Technical Hardening Work
+## Latest Local Technical Hardening Work
 
-Active local work on branch `codex/draxos-mobile/technical-hardening` is allowed to address the approved hardening package:
+Track 22 Technical Hardening is delivered locally on branch `codex/draxos-mobile/technical-hardening`.
 
-- compact live docs and remove stale blockers from the decision snapshot;
-- move `Modes Ops` out of the client while preserving Battle Lab and Progression Lab;
-- make release publication happen only through `publish_internal_alpha.ps1` with explicit `-ReleaseRoot` and `-ConfirmRemoteMutation`;
-- refactor large hotspots to make upcoming implementation safer;
-- harden mutable backend auth broadly in two phases;
-- add transactional account reset v1 with `request_hash`;
-- move Arena reward authority DB-side through explicit reward profiles.
+Delivered locally:
+
+- live docs compacted and the decision snapshot kept short;
+- `Modes Ops` removed from the Godot client while Battle Lab and Progression Lab remain available;
+- `validate_foundation.ps1` kept non-publishing; remote mutation remains explicit through `publish_internal_alpha.ps1 -ReleaseRoot ... -ConfirmRemoteMutation`;
+- mutable Edge endpoints migrated broadly to shared `verifiedAuthContext`, including `content`, `lab-runner`, gameplay domains, `modes` and `release`;
+- account save reset promoted to request-hash idempotent reset v1;
+- Arena reward authority moved DB-side through explicit reward profiles;
+- large client hotspots reduced with extract-only helpers for battle replay, account forms, preparation actions, Base and Arena surfaces.
 
 No remote publication, Supabase remote mutation, Cloudflare deploy, keystore work, tuning expansion, PVP, new content, new weapons, new spells, new potions or economy pass is included in this local hardening package.
 
@@ -92,6 +95,14 @@ Latest local audit before this hardening branch:
 - `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS
 - `validate_foundation.ps1 -Profile ModePlatform -NoProjectWrites`: PASS (`38/38` mode contract tests plus Godot smokes)
 - `git status --short`: clean
+
+Latest local Track 22 validation on branch `codex/draxos-mobile/technical-hardening`:
+
+- `validate_foundation.ps1 -Profile ServerQuick -NoProjectWrites`: PASS (`112` foundation tests and `19` PVE Arena tests).
+- `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS (`223/223` GUT tests, `3608` asserts and responsive/export smokes).
+- `validate_foundation.ps1 -Profile ModePlatform -NoProjectWrites`: PASS (`38/38` mode contract tests plus Bosque/Openworld/Modes Ops smokes).
+- `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS (release plan dry-run, release safety, Android internal-alpha keystore gate, Track 13 readiness and Track 14 agent ops).
+- `validate_foundation.ps1 -Profile DatabaseLocal -NoProjectWrites`: attempted, blocked by local Supabase/Edge services not running (`127.0.0.1:54322` and `127.0.0.1:54321` refused connections).
 
 Historical validation logs and package-by-package publication evidence belong in `implementation/tracks/`, `docs/*-report.md`, Kanban Done cards or handoffs, not in this decision snapshot.
 
