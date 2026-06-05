@@ -9,26 +9,40 @@ Deno.test("release download validates bearer tokens with Supabase Auth before se
   for (const path of releaseSources) {
     const source = await Deno.readTextFile(path);
     assert(
-      source.includes("/auth/v1/user"),
-      `${path} should validate download bearer tokens against Supabase Auth`,
+      source.includes("../_shared/auth_context.ts") &&
+        source.includes("verifiedAuthContext(request, {"),
+      `${path} should delegate download bearer verification to shared auth context`,
     );
     assert(
-      source.includes("SUPABASE_PUBLISHABLE_KEY") && source.includes("SUPABASE_ANON_KEY"),
+      source.includes("SUPABASE_PUBLISHABLE_KEY") && source.includes("SUPABASE_ANON_KEY") &&
+        source.includes("publishableKey: config.value.publishableKey"),
       `${path} should use publishable/anon key material for Auth user verification`,
     );
     assert(
-      source.includes("Bearer token subject mismatch"),
-      `${path} should reject JWTs whose decoded sub differs from the Auth user id`,
+      source.includes("requireEmailAccount: true"),
+      `${path} should require email/password alpha accounts before download access checks`,
     );
     assert(
-      source.includes("AUTH_REQUIRES_EMAIL"),
-      `${path} should reject anonymous or email-less users before alpha access checks`,
+      source.includes("Internal Alpha downloads require an email/password alpha account."),
+      `${path} should expose the release-specific email account error message`,
     );
     assert(
-      source.indexOf("const auth = await validateDownloadAuth") <
+      source.indexOf("const auth = await verifiedAuthContext") <
         source.indexOf("const access = await assertAlphaAccess"),
       `${path} should verify Auth user before querying alpha access with service role`,
     );
+    for (const forbidden of [
+      "function decodeVerifiedSubject",
+      "function decodeJwtPayload",
+      "interface JwtPayload",
+      "function bearerTokenFromRequest",
+      "function fetchAuthUser",
+    ]) {
+      assert(
+        !source.includes(forbidden),
+        `${path} should not keep local auth verification helper ${forbidden}`,
+      );
+    }
   }
 });
 

@@ -13,6 +13,7 @@ const MIGRATED_ENDPOINTS = [
   "server/functions/monetization/index.ts",
   "server/functions/modes/mode_handler.ts",
   "server/functions/progression-lab/index.ts",
+  "server/functions/release/index.ts",
   "server/functions/social/index.ts",
   "server/functions/telemetry/index.ts",
 ] as const;

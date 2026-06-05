@@ -1,4 +1,5 @@
 import { emptyResponse, jsonResponse, withCorsResponse } from "../_shared/http.ts";
+import { verifiedAuthContext } from "../_shared/auth_context.ts";
 
 const DEFAULT_MANIFEST: ReleaseManifest = {
   schema_version: "internal_alpha_manifest_v1",
@@ -137,22 +138,10 @@ interface RestError {
   status: number;
 }
 
-interface JwtPayload {
-  sub?: unknown;
-  is_anonymous?: unknown;
-}
-
-interface AuthUser {
-  id?: unknown;
-  email?: unknown;
-  is_anonymous?: unknown;
-}
-
 interface PlayerRow {
   id: string;
 }
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const DEFAULT_RELEASE_ROOT = "internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8";
 
 Deno.serve(async (request: Request) => {
@@ -342,7 +331,15 @@ async function handleDownload(request: Request): Promise<Response> {
     return errorResponse(config.error.code, config.error.message, config.error.status);
   }
 
-  const auth = await validateDownloadAuth(request, config.value);
+  const auth = await verifiedAuthContext(request, {
+    supabaseUrl: config.value.supabaseUrl,
+    publishableKey: config.value.publishableKey,
+    serviceRoleKey: config.value.serviceRoleKey,
+  }, {
+    requireEmailAccount: true,
+    emailAccountRequiredMessage:
+      "Internal Alpha downloads require an email/password alpha account.",
+  });
   if (auth.error !== null) {
     return errorResponse(auth.error.code, auth.error.message, auth.error.status);
   }
@@ -402,124 +399,6 @@ function runtimeConfigOverrideText(): string {
     );
   }
   return Deno.env.get("RELEASE_RUNTIME_CONFIG_JSON")?.trim() ?? "";
-}
-
-async function validateDownloadAuth(
-  request: Request,
-  config: EdgeConfig,
-): Promise<{ value: { userId: string }; error: null } | {
-  value: null;
-  error: RestError;
-}> {
-  const tokenResult = bearerTokenFromRequest(request);
-  if (tokenResult.error !== null) {
-    return { value: null, error: tokenResult.error };
-  }
-  const token = tokenResult.value;
-  const payload = decodeVerifiedSubject(token);
-  if (payload.error !== null) {
-    return { value: null, error: payload.error };
-  }
-
-  const authUser = await fetchAuthUser(config, token);
-  if (authUser.error !== null) {
-    return { value: null, error: authUser.error };
-  }
-  const userId = typeof authUser.value.id === "string" ? authUser.value.id : "";
-  if (!UUID_PATTERN.test(userId)) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Authenticated user id is invalid.", status: 401 },
-    };
-  }
-  if (userId !== payload.value.sub) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Bearer token subject mismatch.", status: 401 },
-    };
-  }
-  const email = typeof authUser.value.email === "string" ? authUser.value.email.trim() : "";
-  if (email === "" || authUser.value.is_anonymous === true || payload.value.isAnonymous) {
-    return {
-      value: null,
-      error: {
-        code: "AUTH_REQUIRES_EMAIL",
-        message: "Internal Alpha downloads require an email/password alpha account.",
-        status: 403,
-      },
-    };
-  }
-  return { value: { userId }, error: null };
-}
-
-function bearerTokenFromRequest(
-  request: Request,
-): { value: string; error: null } | { value: null; error: RestError } {
-  const header = request.headers.get("authorization") ?? "";
-  const prefix = "Bearer ";
-  if (!header.startsWith(prefix)) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Bearer token is required.", status: 401 },
-    };
-  }
-  const token = header.slice(prefix.length).trim();
-  if (token === "") {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Bearer token is required.", status: 401 },
-    };
-  }
-  return { value: token, error: null };
-}
-
-function decodeVerifiedSubject(
-  token: string,
-): { value: { sub: string; isAnonymous: boolean }; error: null } | {
-  value: null;
-  error: RestError;
-} {
-  const parts = token.split(".");
-  if (parts.length < 2) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Invalid bearer token.", status: 401 },
-    };
-  }
-  const payload = decodeJwtPayload(parts[1]);
-  if (payload === null || typeof payload.sub !== "string" || !UUID_PATTERN.test(payload.sub)) {
-    return {
-      value: null,
-      error: { code: "UNAUTHENTICATED", message: "Token subject is invalid.", status: 401 },
-    };
-  }
-  return {
-    value: { sub: payload.sub, isAnonymous: payload.is_anonymous === true },
-    error: null,
-  };
-}
-
-async function fetchAuthUser(
-  config: EdgeConfig,
-  token: string,
-): Promise<{ value: AuthUser; error: null } | { value: null; error: RestError }> {
-  const response = await fetch(`${config.supabaseUrl}/auth/v1/user`, {
-    method: "GET",
-    headers: authUserHeaders(config, token),
-  });
-  const text = await response.text();
-  const payload = text === "" ? null : parseJson(text);
-  if (!response.ok || !isObject(payload)) {
-    return {
-      value: null,
-      error: {
-        code: "UNAUTHENTICATED",
-        message: "Bearer token could not be verified by Supabase Auth.",
-        status: 401,
-      },
-    };
-  }
-  return { value: payload as AuthUser, error: null };
 }
 
 async function assertAlphaAccess(
@@ -630,14 +509,6 @@ function serviceHeaders(config: EdgeConfig, hasBody: boolean): Headers {
   return headers;
 }
 
-function authUserHeaders(config: EdgeConfig, token: string): Headers {
-  const headers = new Headers();
-  headers.set("accept", "application/json");
-  headers.set("apikey", config.publishableKey);
-  headers.set("authorization", `Bearer ${token}`);
-  return headers;
-}
-
 function artifactStoragePath(artifact: string, releaseRoot: string): string | null {
   if (artifact === "android") return `${releaseRoot}/downloads/draxos-mobile-alpha.apk`;
   if (artifact === "pc_windows") return `${releaseRoot}/downloads/draxos-mobile-alpha.zip`;
@@ -702,18 +573,6 @@ function firstEnv(keys: string[]): string {
     if (value !== "") return value;
   }
   return "";
-}
-
-function decodeJwtPayload(encodedPayload: string): JwtPayload | null {
-  try {
-    const normalized = encodedPayload.replaceAll("-", "+").replaceAll("_", "/");
-    const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
-    const bytes = Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
-    const payload: unknown = JSON.parse(new TextDecoder().decode(bytes));
-    return isObject(payload) ? payload as JwtPayload : null;
-  } catch {
-    return null;
-  }
 }
 
 function parseJson(text: string): unknown {
