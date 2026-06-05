@@ -173,7 +173,7 @@
 					"combat_cycles_equals": 8,
 					"player_hp_min": 3,
 					"enemy_hp_max": 0,
-					"cards_played_equals": 12,
+					"cards_played_equals": 11,
 					"damage_to_enemy_hero_min": 22,
 					"damage_to_player_hero_max": 47
 				}
