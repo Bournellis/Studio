@@ -6,6 +6,7 @@ import type {
   BehaviorConfig,
   CombatantBuild,
 } from "./battle_combatants.ts";
+import { potionDefinition } from "./economy_domain.ts";
 
 export type {
   BattleConsumableUse,
@@ -979,8 +980,12 @@ function processPotion(
   if (
     slot === undefined || actor.hp <= 0 ||
     actor.consumablesUsed[slot.slotIndex] === true ||
-    slot.quantity <= 0 || slot.itemId !== "pocao_vida"
+    slot.quantity <= 0
   ) {
+    return;
+  }
+  const potion = potionDefinition(slot.itemId);
+  if (potion === undefined) {
     return;
   }
   if (!shouldUseBehavior(slot.behavior, actor, true)) {
@@ -994,25 +999,54 @@ function processPotion(
     item_id: slot.itemId,
     quantity: 1,
   });
-  actor.healingOverTime.push({
-    id: `${actor.side}:${slot.slotIndex}:${slot.itemId}`,
-    itemId: slot.itemId,
-    source: actor.side,
-    tickAmount: Math.max(
-      1,
-      Math.round(actor.maxHp * POTION_HEAL_PERCENT_PER_TICK),
-    ),
-    ticksRemaining: POTION_HEAL_TICKS,
-    nextTickAt: time + POTION_HEAL_TICK_SECONDS,
-  });
+  const effectType = stringValue(potion.effect.type, "");
+  if (effectType === "heal_over_time") {
+    actor.healingOverTime.push({
+      id: `${actor.side}:${slot.slotIndex}:${slot.itemId}`,
+      itemId: slot.itemId,
+      source: actor.side,
+      tickAmount: Math.max(
+        1,
+        Math.round(actor.maxHp * POTION_HEAL_PERCENT_PER_TICK),
+      ),
+      ticksRemaining: POTION_HEAL_TICKS,
+      nextTickAt: time + POTION_HEAL_TICK_SECONDS,
+    });
+  } else if (effectType === "mana_restore") {
+    const percent = numberValue(potion.effect.percent_max_mana, 25);
+    const before = actor.mana;
+    actor.mana = Math.min(actor.maxMana, actor.mana + actor.maxMana * (percent / 100));
+    events.push({
+      ...baseEvent(time, nextSeq(), "potion_mana_restore", actor.side, actor.side),
+      item_id: slot.itemId,
+      amount: Math.max(0, Math.round(actor.mana - before)),
+      mana_after: Math.round(actor.mana),
+      max_mana: actor.maxMana,
+    });
+  } else if (effectType === "barrier_gain") {
+    const percent = numberValue(potion.effect.percent_max_hp, 12);
+    const amount = Math.max(1, Math.round(actor.maxHp * (percent / 100)));
+    actor.barrier += amount;
+    events.push({
+      ...baseEvent(time, nextSeq(), "potion_barrier_gain", actor.side, actor.side),
+      item_id: slot.itemId,
+      amount,
+      barrier_after: Math.round(actor.barrier),
+      max_hp: actor.maxHp,
+    });
+  } else {
+    return;
+  }
   events.push({
     ...baseEvent(time, nextSeq(), "consumable_use", actor.side, actor.side),
     item_id: slot.itemId,
     slot_index: slot.slotIndex,
-    effect: "heal_over_time",
+    effect: effectType,
     duration_seconds: POTION_HEAL_TICKS * POTION_HEAL_TICK_SECONDS,
     tick_percent_max_hp: POTION_HEAL_PERCENT_PER_TICK * 100,
     hp_after: Math.max(0, actor.hp),
+    mana_after: Math.round(actor.mana),
+    barrier_after: Math.round(actor.barrier),
   });
 }
 
@@ -1903,4 +1937,17 @@ function clamp(value: number, min: number, max: number): number {
 function clampPercent(value: number, min: number, max: number): number {
   if (Number.isNaN(value)) return min;
   return Math.max(min, Math.min(max, value));
+}
+
+function stringValue(value: unknown, fallback: string): string {
+  return typeof value === "string" && value !== "" ? value : fallback;
+}
+
+function numberValue(value: unknown, fallback: number): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+  return fallback;
 }

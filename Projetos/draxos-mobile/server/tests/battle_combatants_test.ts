@@ -1,12 +1,12 @@
 import {
   botCombatantFromRow,
-  DEFAULT_POTION_BEHAVIOR,
   DEFAULT_SPELL_BEHAVIOR,
   normalizeBehavior,
   playerCombatantFromState,
   potionSlotForBattle,
   spellBehaviorMap,
 } from "../functions/_shared/battle_combatants.ts";
+import { DEFAULT_POTION_BEHAVIOR } from "../functions/_shared/economy_domain.ts";
 import {
   botCombatantFromRow as supabaseBotCombatantFromRow,
   playerCombatantFromState as supabasePlayerCombatantFromState,

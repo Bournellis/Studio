@@ -2,6 +2,7 @@ import {
   spellLevelMap,
   weaponQualityTierFromQualityId,
 } from "./progression_domain.ts";
+import { DEFAULT_POTION_BEHAVIOR, POTION_IDS, potionDefinition } from "./economy_domain.ts";
 
 export type BattleSideId = "player" | "opponent";
 
@@ -18,7 +19,7 @@ export interface BehaviorCondition {
 
 export interface BattlePotionSlot {
   slotIndex: number;
-  itemId: "pocao_vida";
+  itemId: string;
   quantity: number;
   behavior: BehaviorConfig;
 }
@@ -99,14 +100,6 @@ const DEFAULT_PLAYER_NAME = "Draxos";
 const DEFAULT_BOT_NAME = "Treinador da Primeira Ruina";
 const DEFAULT_WEAPON_ID = "varinha_cinzas";
 const DEFAULT_BOT_WEAPON_QUALITY = "reforcada";
-const LIFE_POTION_ID = "pocao_vida";
-
-export const DEFAULT_POTION_BEHAVIOR: BehaviorConfig = {
-  enabled: true,
-  hp: { mode: "below", percent: 40 },
-  mana: { mode: "ignore", percent: 0 },
-};
-
 export const DEFAULT_SPELL_BEHAVIOR: BehaviorConfig = {
   enabled: true,
   hp: { mode: "ignore", percent: 0 },
@@ -176,7 +169,7 @@ export function potionSlotForBattle(state: {
   const slot = state.potionSlots.find((candidate) =>
     candidate.slot_index === 1
   );
-  if (slot === undefined || slot.potion_id !== LIFE_POTION_ID) {
+  if (slot === undefined || slot.potion_id === null || !POTION_IDS.has(slot.potion_id)) {
     return undefined;
   }
   const inventory = state.inventory.find((item) =>
@@ -188,9 +181,12 @@ export function potionSlotForBattle(state: {
   }
   return {
     slotIndex: 1,
-    itemId: LIFE_POTION_ID,
+    itemId: slot.potion_id,
     quantity,
-    behavior: normalizeBehavior(slot.behavior, DEFAULT_POTION_BEHAVIOR),
+    behavior: normalizeBehavior(
+      slot.behavior,
+      potionDefinition(slot.potion_id)?.defaultBehavior ?? DEFAULT_POTION_BEHAVIOR,
+    ),
   };
 }
 

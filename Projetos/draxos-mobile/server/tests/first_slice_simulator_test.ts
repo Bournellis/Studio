@@ -216,6 +216,94 @@ Deno.test("first-slice simulator uses one health potion and emits five healing t
   );
 });
 
+Deno.test("first-slice simulator supports focus potion mana restore", () => {
+  const result = simulateFirstSliceBattle({
+    battleId: "00000000-0000-4000-8000-000000000015",
+    seed: "first_slice:focus_potion:00000000-0000-4000-8000-000000000016",
+    player: {
+      id: "player-focus-potion",
+      displayName: "Draxos",
+      level: 20,
+      weaponId: "varinha_cinzas",
+      weaponLevel: 3,
+      weaponQualityTier: 0,
+      spellIds: ["coagulo_negro"],
+      spellLevels: { coagulo_negro: 8 },
+      potionSlot: {
+        slotIndex: 1,
+        itemId: "pocao_foco",
+        quantity: 2,
+        behavior: {
+          enabled: true,
+          hp: { mode: "below", percent: 100 },
+          mana: { mode: "ignore", percent: 0 },
+        },
+      },
+    },
+    opponent: {
+      id: "bot-focus-potion-test",
+      displayName: "Atacante de Teste",
+      level: 20,
+      weaponId: "athame_hematico",
+      weaponLevel: 10,
+      weaponQualityTier: 1,
+      spellIds: ["incisao_ritual"],
+      spellLevels: { incisao_ritual: 10 },
+    },
+  });
+
+  assert(
+    hasEvent(result.battleLog.events, "potion_mana_restore"),
+    "focus potion should restore mana",
+  );
+  assertEq(result.consumables.used.length, 1, "simulation should report one consumed item");
+  assertEq(result.consumables.used[0].item_id, "pocao_foco", "focus potion should be consumed");
+});
+
+Deno.test("first-slice simulator supports resguardo potion barrier", () => {
+  const result = simulateFirstSliceBattle({
+    battleId: "00000000-0000-4000-8000-000000000017",
+    seed: "first_slice:resguardo_potion:00000000-0000-4000-8000-000000000018",
+    player: {
+      id: "player-resguardo-potion",
+      displayName: "Draxos",
+      level: 20,
+      weaponId: "varinha_cinzas",
+      weaponLevel: 3,
+      weaponQualityTier: 0,
+      spellIds: ["coagulo_negro"],
+      spellLevels: { coagulo_negro: 8 },
+      potionSlot: {
+        slotIndex: 1,
+        itemId: "pocao_resguardo",
+        quantity: 2,
+        behavior: {
+          enabled: true,
+          hp: { mode: "below", percent: 100 },
+          mana: { mode: "ignore", percent: 0 },
+        },
+      },
+    },
+    opponent: {
+      id: "bot-resguardo-potion-test",
+      displayName: "Atacante de Teste",
+      level: 20,
+      weaponId: "athame_hematico",
+      weaponLevel: 10,
+      weaponQualityTier: 1,
+      spellIds: ["incisao_ritual"],
+      spellLevels: { incisao_ritual: 10 },
+    },
+  });
+
+  assert(
+    hasEvent(result.battleLog.events, "potion_barrier_gain"),
+    "resguardo potion should grant barrier",
+  );
+  assertEq(result.consumables.used.length, 1, "simulation should report one consumed item");
+  assertEq(result.consumables.used[0].item_id, "pocao_resguardo", "resguardo potion should be consumed");
+});
+
 Deno.test("spell behavior disables configured spell while missing behavior keeps baseline", () => {
   const baseInput: BattleSimulationInput = {
     battleId: "00000000-0000-4000-8000-000000000007",

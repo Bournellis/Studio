@@ -1,4 +1,5 @@
 import { GRIMOIRE_CATALOG } from "./grimoire_catalog.ts";
+import { potionDefinition } from "./economy_domain.ts";
 
 export interface ProgressionDomainError {
   code: string;
@@ -313,7 +314,10 @@ export function buildStatePayload(state: ProgressionBuildState): Record<string, 
         slot_index: slot.slot_index,
         unlocked: true,
         potion_id: slot.potion_id,
-        behavior: normalizeBehaviorOrDefault(slot.behavior, DEFAULT_POTION_BEHAVIOR),
+        behavior: normalizeBehaviorOrDefault(
+          slot.behavior,
+          potionDefaultBehavior(slot.potion_id),
+        ),
         updated_at: slot.updated_at,
       })),
       inventory: state.inventory.map((item) => ({
@@ -339,6 +343,13 @@ export function buildStatePayload(state: ProgressionBuildState): Record<string, 
       },
     },
   };
+}
+
+function potionDefaultBehavior(potionId: string | null): ProgressionBehaviorConfig {
+  if (potionId === null) {
+    return DEFAULT_POTION_BEHAVIOR;
+  }
+  return potionDefinition(potionId)?.defaultBehavior ?? DEFAULT_POTION_BEHAVIOR;
 }
 
 export function calculatePower(
