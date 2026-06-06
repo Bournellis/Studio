@@ -1,8 +1,8 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-06`
-- Status: `CARD_IMPACT_V5_ENEMY_CAUSAL_SIGNATURES_COMPLETE`
-- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures, card-flow observability, explicit card-flow expectations, enemy-card causal signatures and V4/V4.1/V4.2/V5 card redesign validation
+- Status: `DESIGN_LAB_V1_FOUNDATION_COMPLETE`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures, card-flow observability, explicit card-flow expectations, enemy-card causal signatures, V4/V4.1/V4.2/V5 card redesign validation and Design Lab V1 proposal-to-playable-number exploration
 
 ## Purpose
 
@@ -33,6 +33,8 @@ Card Flow Redesign Batch 01 Using V4.1 is the first real card-flow edit cycle af
 Card Impact V4.2 Card Flow Expectations promotes the proven V4.1 card-flow observations into explicit `required` and `watch` checks for the three Colheita variants. Required checks gate `card_flow_observed`, `cards_drawn`, `deck_delta` and `hand_delta`; watch checks keep exact calibrated values visible without blocking intentional numeric movement that still satisfies the required floor/ceiling.
 
 Card Impact V5 Enemy Causal Signatures promotes the 30 active enemy cards from report-only participation to required causal effect signatures. V5 uses a commander-driven BattleEngine harness to make each enemy card enter play, captures play and first-combat snapshots, reports explicit `enemy_*` effect fields, and gates missing enemy play/signature data structurally while keeping intentional numeric deltas review-only.
+
+Design Lab V1 is the creation-side companion to these regression tools. It loads JSON proposal packs from `data/lab/design/proposals/`, builds lab-only prototype card variants in an in-memory catalog overlay, runs BattleEngine contexts through the shared Battle Lab runner, ranks candidates by interpretable scoring profiles and writes a promotion manifest. It does not mutate `data/definitions/slice_catalog.json`; accepted content must still be promoted manually and protected with Card Impact/Run Lab regression gates. The full contract lives in `docs/design-lab.md`.
 
 Reward Card Redesign Batch 01 Using V4 is the first real reward-card edit cycle executed against the full 108-player-card matrix. It changes six reward/card-upgrade variants across Arcano, Invocador and Necromante, then uses V4 `before -> after -> compare` to confirm that the battle harness exposes the intended effect deltas while Scenario Fixtures, Run Lab and the full validation suite remain stable.
 
@@ -142,6 +144,12 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v5 --out=user://card_impact/track02_card_impact_v5_enemy_causal_signatures
 
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v5 --out=user://card_impact/track02_card_impact_v5_enemy_causal_signatures
+```
+
+Design Lab V1 sample gate:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_design_lab.gd -- --pack=design_lab_sample_v1 --mode=gate --out=user://design_lab/design_lab_sample_v1_gate
 ```
 
 ## Presets
