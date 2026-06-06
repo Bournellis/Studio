@@ -246,6 +246,16 @@
 - Regression result: Battle Lab 9 PASS / 3 WARN / 0 FAIL, Scenario Fixtures 9 PASS / 3 WARN / 0 FAIL, AutoRun smoke/quick gates green, and `validate.gd` green with 187/187 GUT tests and 1785 asserts.
 - Operational lesson: V4.1 now proved card-flow impact on an actual card change. The next safe step is to decide whether any card-flow thresholds should become promoted expectations before expanding draw/discard/hand/deck redesigns.
 
+## Card Impact V4.2 Card Flow Expectations
+
+- Purpose: promote proven V4.1 card-flow observations into explicit Card Impact expectations before the next broader reward-card/card-flow batch.
+- Tooling-only change: `track02_card_impact_v4_2` preserves V4.1 coverage and adds optional `card_flow_expectations` checks with `required` and `watch` severity.
+- Required checks: Colheita base/Lvl 2/Lvl 3 must keep `card_flow_observed == true`, `cards_drawn >= 2`, `deck_delta <= -2` and `hand_delta >= 1`.
+- Watch checks: exact current values `cards_drawn == 2`, `deck_delta == -2` and `hand_delta == 1` remain visible as WARN-only drift signals.
+- Validation result: V4.2 `before`, `after` and `compare` passed at `user://card_impact/track02_card_impact_v4_2_card_flow_expectations` with 108 player cards, 30 enemy report-only cards, 15 legacy inactive cards, 3 expected card-flow player cards and 21/21 expectation checks passing.
+- Regression result: V4.1 historical compare remains green; Battle Lab 9 PASS / 3 WARN / 0 FAIL, Scenario Fixtures 9 PASS / 3 WARN / 0 FAIL, AutoRun smoke/quick gates green, and `validate.gd` green with 199/199 GUT tests and 1827 asserts.
+- Operational lesson: V4.2 should be the default harness for broad reward-card changes when draw/deck/hand behavior may matter. Intentional reductions in card-flow must update the relevant V4.2 expectation in the same work.
+
 ## Screenshots
 
 Captured at `1280x720` and `960x540` in:
@@ -261,8 +271,8 @@ Captured at `1280x720` and `960x540` in:
 
 - Manual playtest remains the next production step and should use `docs/playtest-track-02.md`.
 - Balance changes should come from observed human runs, with AutoRun Gate Pack used for explicit regression, distribution checks and tuning comparison rather than as the final verdict.
-- Large player-card changes should now use Card Impact V4.1 when draw/discard/hand/deck movement may matter: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect full player coverage, target-capture quality, metric movement, utility/card-flow deltas and player-card effect signatures before accepting the batch.
-- Recommended next implementation batch: review whether V4.1 card-flow fields deserve promoted thresholds, then run the next broader reward-card redesign batch under V4.1.
+- Large player-card changes should now use Card Impact V4.2 when draw/discard/hand/deck movement may matter: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect full player coverage, target-capture quality, metric movement, utility/card-flow deltas, player-card effect signatures and promoted Card Flow Expectations before accepting the batch.
+- Recommended next implementation batch: run the next broader reward-card redesign batch under V4.2 before/change/after/compare.
 - Enemy-card signature derivation remains the recommended tooling follow-up once enemy per-card causality is exposed clearly enough.
 - Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
 

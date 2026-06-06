@@ -1,8 +1,8 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-06`
-- Status: `CARD_FLOW_REDESIGN_BATCH_01_USING_V4_1_COMPLETE`
-- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures, card-flow observability and V4/V4.1 reward-card redesign validation
+- Status: `CARD_FLOW_EXPECTATIONS_V4_2_COMPLETE`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures, card-flow observability, explicit card-flow expectations and V4/V4.1/V4.2 reward-card redesign validation
 
 ## Purpose
 
@@ -29,6 +29,8 @@ Card Impact V4 Full Player Matrix expands the player-card matrix from the 54 cor
 Card Impact V4.1 Card-Flow Harness Pass keeps the V4 full player matrix and adds a focused card-flow harness for draw, discard, hand and deck deltas. It makes `necro_colheita_das_almas` and `necro_colheita_das_almas_lvl3` expected card-flow cases, records lab-only prestate where needed, and gates missing card-flow observation structurally while keeping numeric deltas as review data.
 
 Card Flow Redesign Batch 01 Using V4.1 is the first real card-flow edit cycle after the harness pass. It makes `draw_if_at_least` resolve as a bonus draw after normal hand refill, adds `necro_colheita_das_almas_lvl2` to the expected card-flow matrix, and proves the compare can surface `cards_drawn`, `deck_delta` and `hand_delta` movement without structural gate failure.
+
+Card Impact V4.2 Card Flow Expectations promotes the proven V4.1 card-flow observations into explicit `required` and `watch` checks for the three Colheita variants. Required checks gate `card_flow_observed`, `cards_drawn`, `deck_delta` and `hand_delta`; watch checks keep exact calibrated values visible without blocking intentional numeric movement that still satisfies the required floor/ceiling.
 
 Reward Card Redesign Batch 01 Using V4 is the first real reward-card edit cycle executed against the full 108-player-card matrix. It changes six reward/card-upgrade variants across Arcano, Invocador and Necromante, then uses V4 `before -> after -> compare` to confirm that the battle harness exposes the intended effect deltas while Scenario Fixtures, Run Lab and the full validation suite remain stable.
 
@@ -118,6 +120,16 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v4_1 --out=user://card_impact/track02_card_impact_v4_1_card_flow_harness
 
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v4_1 --out=user://card_impact/track02_card_impact_v4_1_card_flow_harness
+```
+
+Card impact V4.2 card-flow expectation gates:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=before --mode=gate --pack=track02_card_impact_v4_2 --out=user://card_impact/track02_card_impact_v4_2_card_flow_expectations
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v4_2 --out=user://card_impact/track02_card_impact_v4_2_card_flow_expectations
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v4_2 --out=user://card_impact/track02_card_impact_v4_2_card_flow_expectations
 ```
 
 ## Presets
@@ -562,6 +574,40 @@ Macro regression gates after the batch:
 
 Operational lesson: V4.1 now proves card-flow deltas on a real content change. Next, decide whether any card-flow observations should become explicit expectations before broad draw/discard/hand/deck redesigns.
 
+## Card Impact V4.2 Card Flow Expectations
+
+`track02_card_impact_v4_2` keeps V4.1 coverage and adds explicit card-flow expectations to the Card Impact contract.
+
+V4.2 coverage:
+
+- 108 active player card variants, split 36 Arcano / 36 Invocador / 36 Necromante.
+- 30 active enemy cards remain `report_only`.
+- 15 legacy inactive `elemental_*` cards remain audited.
+- 3 expected player card-flow cases: `necro_colheita_das_almas`, `necro_colheita_das_almas_lvl2` and `necro_colheita_das_almas_lvl3`.
+
+V4.2 adds:
+
+- `data/lab/card_impact/track02_card_impact_v4_2.json`.
+- Optional `card_flow_expectations` checks with `card_id`, `field`, `op`, `value` and `severity`.
+- Supported fields: `card_flow_observed`, `cards_drawn`, `cards_discarded`, `cards_created`, `deck_delta`, `hand_delta` and `discard_delta`.
+- Supported severities: `required` becomes a gate-blocking `FAIL`; `watch` becomes a report-only `WARN`.
+- Card Impact Markdown/CSV/Gate reporting for `Card Flow Expectations`.
+
+Initial promoted expectations:
+
+- For each Colheita variant, `card_flow_observed == true`, `cards_drawn >= 2`, `deck_delta <= -2` and `hand_delta >= 1` are `required`.
+- Exact current values `cards_drawn == 2`, `deck_delta == -2` and `hand_delta == 1` are `watch`.
+
+Current calibrated same/same result (`user://card_impact/track02_card_impact_v4_2_card_flow_expectations`):
+
+- `before`, `after` and `compare` pass with zero structural errors, zero new failures and zero removed records.
+- Coverage is 108 player cards, 30 enemy report-only cards, 15 legacy inactive cards and 3 expected card-flow player cards.
+- Card Flow Expectations pass 21/21 checks with 0 WARN, 0 FAIL and 0 required failures.
+- V4.1 historical compare for `user://card_impact/card_flow_redesign_batch_01_v4_1` remains green.
+- Battle Lab remains 9 PASS / 3 WARN / 0 FAIL, Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL, AutoRun smoke/quick gates remain green, and `validate.gd` passes with 199/199 GUT tests and 1827 asserts.
+
+Operational lesson: V4.2 is now the recommended pack for future card-flow or broad reward-card redesigns. Numeric card-flow deltas remain allowed when they satisfy `required` expectations; intentional changes that reduce required draw/deck/hand behavior should update the V4.2 expectation in the same work.
+
 ## Reward Card Redesign Batch 01 Using V4
 
 Purpose: execute a light but real reward-card tuning batch to prove that Card Impact V4 can inspect the full player matrix during intentional card movement.
@@ -677,9 +723,9 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Decide whether V4.1 card-flow fields deserve promoted thresholds after the first real card-flow batch.
-2. Run the next broader reward-card redesign batch under V4.1 before/change/after/compare.
-3. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
+1. Run the next broader reward-card redesign batch under V4.2 before/change/after/compare.
+2. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
+3. Expand explicit expectations for additional draw/discard/hand/deck cards as they enter the active card matrix.
 4. Implement enemy-card effect signatures once enemy action logs expose enough per-card causality to avoid guessing.
-4. Replay Lab: record human or bot decisions and replay them across builds.
-5. Dashboard: read the JSON/CSV/Markdown outputs and compare historical runs visually.
+5. Replay Lab: record human or bot decisions and replay them across builds.
+6. Dashboard: read the JSON/CSV/Markdown outputs and compare historical runs visually.
