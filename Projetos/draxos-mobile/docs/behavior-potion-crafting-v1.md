@@ -11,6 +11,11 @@ Behavior And Potion Crafting registra o pacote tecnico que introduziu o primeiro
 
 Bosque Fogueira Potion Crafting v1 muda a fronteira: a Base/Ossario continua criando `po_osso`, mas pocoes globais sao preparadas somente na `Fogueira Estavel I` do Bosque. O craft de estacao e server-authoritative porque cria consumiveis globais da conta; movimento, coleta, deposito, construcoes locais e cache do Bosque continuam offline-first.
 
+Bosque World Hub Domain Separation v1 reforca essa fronteira para preparar o
+Bosque como futuro hub jogavel: o jogador pode acessar estruturas/painels no
+Bosque, mas os dados continuam separados entre `Bosque duravel`,
+`Conta/Ossario`, `Pocoes globais`, `Arena` e `Station Craft`.
+
 Use este documento quando a tarefa tocar:
 
 - Ossos inteiros, Po de Osso ou trituracao no Ossario/Base;
@@ -24,8 +29,14 @@ Use este documento quando a tarefa tocar:
 
 - Ossos usam escala inteira na base atual.
 - `po_osso` existe como recurso inteiro criado ao triturar Ossos.
+- `ossos` e `po_osso` sao recursos globais da conta, nao itens locais do
+  Bosque.
+- Materiais locais do Bosque com tema ritual usam IDs e nomes proprios:
+  `resto_ritual` (`Resto ritual`) e `po_cinzento` (`Po cinzento`).
 - A Base/Ossario expoe `Triturar Ossos`; ela nao cria mais `Pocao de Vida` diretamente.
 - `Fogueira Estavel I` existe como estrutura duravel do Bosque e como `station_id = fogueira_estavel_1`.
+- `Fogueira Estavel I` deve persistir em `upgrades.fogueira_estavel_1` e
+  `structures.fogueira_estavel_1`.
 - O craft de estacao exige checkpoint aceito do Bosque antes de consumir materiais do Bau e recursos globais.
 - Materiais de estacao saem do `Bau` duravel do Bosque, nao da mochila/bolso.
 - Receitas de estacao v1:
@@ -85,6 +96,9 @@ Track 16 nasceu como pacote tecnico local em `2026-05-28`. Depois disso:
 - O hotfix de equip feedback manteve/reabriu a Preparacao apos acoes de equipar e comportamento, exibindo `Ultima escolha: ...` para que a acao nao pareca silenciosa.
 - Progression Clarity v1 roda por cima desses dados sem alterar backend, schema, simulador, economia, tuning ou conteudo.
 - Bosque Fogueira Potion Crafting v1 move o craft de pocoes para a `Fogueira Estavel I`, adiciona a ponte transacional `crafting/station-craft` e generaliza a Arena para `pocao_vida`, `pocao_foco` e `pocao_resguardo`.
+- Bosque World Hub Domain Separation v1 separa itens locais de recursos globais
+  (`resto_ritual`/`po_cinzento` vs `ossos`/`po_osso`) e endurece a persistencia
+  duravel da Fogueira como estrutura/estacao.
 
 ## Guardrails
 
