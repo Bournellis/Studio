@@ -1,8 +1,8 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-06`
-- Status: `CARD_IMPACT_V4_FULL_PLAYER_MATRIX_COMPLETE`
-- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage and utility effect signatures
+- Status: `REWARD_CARD_REDESIGN_BATCH_01_V4_COMPLETE`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures and V4 reward-card redesign validation
 
 ## Purpose
 
@@ -25,6 +25,8 @@ Card Impact Effect Signature V2 extends that flow for player cards. It captures 
 Card Impact V3 Isolated Target Capture makes the player-card harness less ambiguous before broad card redesigns. It plays at most one required support card, plays the focused target card once, captures the signature, stops further card plays for that turn, and turns repeated-target or failed isolated captures into structural gate blockers.
 
 Card Impact V4 Full Player Matrix expands the player-card matrix from the 54 core class variants to all 108 active player variants, including Terra/Gelo/Ar/Fogo reward cards and upgrades. It also promotes temporary ability power into explicit utility effect-signature fields while keeping enemy-card signatures report-only for a future causal enemy pass.
+
+Reward Card Redesign Batch 01 Using V4 is the first real reward-card edit cycle executed against the full 108-player-card matrix. It changes six reward/card-upgrade variants across Arcano, Invocador and Necromante, then uses V4 `before -> after -> compare` to confirm that the battle harness exposes the intended effect deltas while Scenario Fixtures, Run Lab and the full validation suite remain stable.
 
 Card Redesign Batch 01 is the first controlled real card-edit cycle using V2. It changes three Arcano damage upgrade variants, calibrates the damage-family harness so overkill does not hide effect movement, and proves that `effect.*` deltas can show intentional player-card movement while every structural gate remains green.
 
@@ -477,6 +479,47 @@ Current calibrated same/same result (`user://card_impact/track02_card_impact_v4_
 - V3 compare regression for `user://card_impact/player_card_redesign_batch_02` remains green.
 - Battle Lab remains 9 PASS / 3 WARN / 0 FAIL, Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL, AutoRun smoke/quick gates remain green, and `validate.gd` passes with 175/175 GUT tests and 1704 asserts.
 
+## Reward Card Redesign Batch 01 Using V4
+
+Purpose: execute a light but real reward-card tuning batch to prove that Card Impact V4 can inspect the full player matrix during intentional card movement.
+
+Changed player cards:
+
+- `arcano_canalizar_lvl2`: damage `4 -> 5`.
+- `arcano_descarga_lvl2`: damage `3 -> 4`.
+- `invocador_parede_de_escudos_lvl2`: shield charges `1 -> 2`.
+- `invocador_cavaleiro_arcano_lvl2`: summoned attack `4 -> 5`.
+- `necro_flagelo_lvl3`: poison amount `2 -> 3`.
+- `necro_colheita_das_almas_lvl3`: Ashes gain `3 -> 4`.
+
+Observed V4 compare result (`user://card_impact/reward_card_redesign_batch_01_v4`):
+
+- Gate: PASS.
+- Coverage: 138/138 active report records, with 108 player cards, 30 enemy report-only cards and 15 legacy inactive cards audited.
+- Structural errors, new failures, removed records and status changes: 0.
+- Battle component changes: 6 changed records and 15 metric/effect changes.
+- Scenario and Run Lab components: 0 changes.
+- Target capture quality stayed stable: 96 clean, 12 support-required, 0 ambiguous, 0 failed and 0 repeated target captures.
+
+Detected player effect movement:
+
+- `arcano_canalizar_lvl2`: `effect.enemy_hero_damage` `5 -> 6`.
+- `arcano_descarga_lvl2`: `effect.enemy_units_delta` `0 -> -1`, `effect.enemy_slot_damage_total` `4 -> 5`, and visible final-metric movement from killing the target earlier.
+- `invocador_parede_de_escudos_lvl2`: `effect.ally_shield_gain` `1 -> 2` and `effect.shield_added_total` `1 -> 2`.
+- `invocador_cavaleiro_arcano_lvl2`: `effect.summoned_attack_total` `6 -> 7`.
+- `necro_flagelo_lvl3`: `effect.poison_added_total` `2 -> 3` and `effect.enemy_poison_added` `2 -> 3`.
+- `necro_colheita_das_almas_lvl3`: `effect.ashes_gained` `3 -> 4`.
+
+Macro regression gates after the batch:
+
+- Battle Lab: 9 PASS / 3 WARN / 0 FAIL.
+- Scenario Fixtures: 9 PASS / 3 WARN / 0 FAIL.
+- AutoRun smoke gate: PASS.
+- AutoRun quick gate: PASS across 30 macro-route cases.
+- `tools/validate.gd`: PASS with 175/175 GUT tests, 1704 asserts and unchanged full-route pacing telemetry.
+
+Operational lesson: V4 is now proven on reward-card movement, including damage, shield, summon stat, poison and economy signatures. This batch did not exercise temporary ability power utility deltas, so the next useful card batch should focus on utility/card-flow/AP reward cards before enemy-card causality is promoted from report-only.
+
 ## Result Schema
 
 Each detailed record contains:
@@ -514,7 +557,7 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Use Card Impact V4 as the default harness for the next broad player reward-card redesign batch: run `before`, apply a coherent batch, run `after`, run `compare`, and review full player coverage, target-capture quality, utility deltas and effect-family movement.
+1. Run a second V4 reward-card batch focused on utility/card-flow/AP effects so the new utility signature fields are exercised by real card movement.
 2. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
 3. Implement enemy-card effect signatures once enemy action logs expose enough per-card causality to avoid guessing.
 4. Replay Lab: record human or bot decisions and replay them across builds.

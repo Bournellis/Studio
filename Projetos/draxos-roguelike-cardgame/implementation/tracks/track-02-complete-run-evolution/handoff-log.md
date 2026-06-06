@@ -1,6 +1,6 @@
 # Track 02 Handoff Log
 
-- Last Updated: `2026-06-04`
+- Last Updated: `2026-06-06`
 - Status: `READY_FOR_THREAD_HANDOFFS`
 
 Historical note: this file is chronological. Older validation counts, 13-map references, and pre-closeout recommendations are preserved as handoff history from the date they were written; the live baseline is defined by `implementation/current-status.md`, `docs/production-status.md`, and `docs/foundation-closeout.md`.
@@ -231,3 +231,12 @@ Each entry should include:
 - validation result: `run_card_impact.gd -- --phase=before --mode=gate --pack=track02_card_impact_v4 --out=user://card_impact/track02_card_impact_v4_full_player_matrix`, `after`, and `compare` all passed with 108 player cards, 30 enemy report-only cards, 15 legacy inactive cards, 0 structural errors, 0 new failures and 0 removed records. `run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v3 --out=user://card_impact/player_card_redesign_batch_02` stayed green. `run_battle_lab.gd -- --mode=gate --pack=track02_battle_core_v1` passed with 9 PASS / 3 WARN / 0 FAIL. `run_scenarios.gd -- --mode=gate --pack=track02_core_v1` passed with 9 PASS / 3 WARN / 0 FAIL. `run_lab.gd -- --mode=gate --preset=smoke --baseline=track02_smoke_v1` and `--preset=quick --baseline=track02_quick_v1` passed. `validate.gd` passed with 175/175 GUT tests, 1704 asserts and unchanged full-route pacing telemetry.
 - blockers: none. Known non-fatal optional visual asset, ship alpha and GUT resource warnings remain unchanged.
 - next prompt id: `REWARD-CARD-REDESIGN-BATCH-01-USING-V4`; use Card Impact V4 before/change/after/compare for a coherent reward-card redesign batch, then inspect target capture, utility deltas and effect-family movement before accepting the edits.
+
+### 2026-06-06 - Reward Card Redesign Batch 01 Using V4
+
+- prompt id: `REWARD-CARD-REDESIGN-BATCH-01-USING-V4`
+- summary: Applied the first reward-card change cycle using Card Impact V4 before/change/after/compare. The accepted batch changed `arcano_canalizar_lvl2` damage `4 -> 5`, `arcano_descarga_lvl2` damage `3 -> 4`, `invocador_parede_de_escudos_lvl2` shield charges `1 -> 2`, `invocador_cavaleiro_arcano_lvl2` attack `4 -> 5`, `necro_flagelo_lvl3` poison `2 -> 3`, and `necro_colheita_das_almas_lvl3` Ashes `3 -> 4`.
+- changed files: `data/definitions/slice_catalog.json`, `data/generated/slice_catalog.tres`, `docs/autorun-lab.md`, local Track 02 status/tuning/handoff docs, studio portfolio snapshots, project registry and coordination note.
+- validation result: `run_card_impact.gd -- --phase=before --mode=gate --pack=track02_card_impact_v4 --out=user://card_impact/reward_card_redesign_batch_01_v4`, `after`, and `compare` all passed. Compare covered 108 player cards, 30 enemy report-only cards and 15 legacy inactive cards with 0 structural errors, 0 new failures, 0 removed records, 0 status changes, 6 changed battle records, 15 metric/effect deltas, 0 Scenario changes and 0 Run Lab changes. `run_battle_lab.gd -- --mode=gate --pack=track02_battle_core_v1` passed with 9 PASS / 3 WARN / 0 FAIL. `run_scenarios.gd -- --mode=gate --pack=track02_core_v1` passed with 9 PASS / 3 WARN / 0 FAIL. `run_lab.gd -- --mode=gate --preset=smoke --baseline=track02_smoke_v1` and `--preset=quick --baseline=track02_quick_v1` passed. First `validate.gd` in the new worktree required the standard one-time headless editor import; after import, `validate.gd` passed with 175/175 GUT tests, 1704 asserts and unchanged full-route pacing telemetry.
+- blockers: none. Known non-fatal optional visual asset, ship alpha and GUT resource warnings remain unchanged.
+- next prompt id: `REWARD-CARD-REDESIGN-BATCH-02-UTILITY-USING-V4`; run a second V4 reward-card batch focused on utility/card-flow/AP effects before promoting enemy-card causality work.

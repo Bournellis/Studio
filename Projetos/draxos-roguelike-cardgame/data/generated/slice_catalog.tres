@@ -1084,11 +1084,11 @@ id = "arcano_canalizar_lvl2"
 display_name = "Canalizar Lvl 2"
 card_type = "magia"
 cost = 1
-text = "Causa dano igual ao Fluxo atual + 4 a uma criatura ou heroi inimigo valido. Gera 1 Fluxo."
+text = "Causa dano igual ao Fluxo atual + 5 a uma criatura ou heroi inimigo valido. Gera 1 Fluxo."
 keywords = PackedStringArray()
 effect = {
 "action": "flow_damage",
-"amount": 4.0,
+"amount": 5.0,
 "gain_flow": 1.0
 }
 
@@ -1170,11 +1170,11 @@ id = "arcano_descarga_lvl2"
 display_name = "Descarga Lvl 2"
 card_type = "magia"
 cost = 3
-text = "Causa 3 de dano a cada criatura inimiga em campo. Fluxo e Poder de habilidade amplificam cada alvo."
+text = "Causa 4 de dano a cada criatura inimiga em campo. Fluxo e Poder de habilidade amplificam cada alvo."
 keywords = PackedStringArray()
 effect = {
 "action": "all_enemy_damage",
-"amount": 3.0,
+"amount": 4.0,
 "scale_with_flow": true
 }
 
@@ -1253,12 +1253,12 @@ id = "invocador_parede_de_escudos_lvl2"
 display_name = "Parede de Escudos Lvl 2"
 card_type = "magia"
 cost = 2
-text = "Todas as criaturas aliadas ganham Escudo. Criaturas com Escudo ativo ganham +1/+0."
+text = "Todas as criaturas aliadas ganham Escudo 2. Criaturas com Escudo ativo ganham +1/+0."
 keywords = PackedStringArray()
 effect = {
 "action": "shield_all_allies",
 "attack": 1.0,
-"shield_charges": 1.0
+"shield_charges": 2.0
 }
 
 [sub_resource type="Resource" id="Resource_bo80a"]
@@ -1292,7 +1292,7 @@ id = "invocador_cavaleiro_arcano_lvl2"
 display_name = "Cavaleiro Arcano Lvl 2"
 card_type = "criatura"
 cost = 2
-attack = 4
+attack = 5
 health = 3
 text = "Atropelar."
 keywords = PackedStringArray("atropelar")
@@ -1549,18 +1549,18 @@ card_type = "criatura"
 cost = 1
 attack = 2
 health = 3
-text = "Entrar: Veneno 2. Ao morrer: Veneno 2."
+text = "Entrar: Veneno 3. Ao morrer: Veneno 3."
 keywords = PackedStringArray("entrar", "veneno")
 effect = {
 "on_death": {
 "action": "poison_random_enemy",
-"amount": 2.0
+"amount": 3.0
 },
 "on_enter": {
 "action": "poison_random_enemy",
-"amount": 2.0
+"amount": 3.0
 },
-"poison_apply_amount": 2.0
+"poison_apply_amount": 3.0
 }
 
 [sub_resource type="Resource" id="Resource_sx5sg"]
@@ -1649,11 +1649,11 @@ script = ExtResource("1_tqsc8")
 id = "necro_colheita_das_almas_lvl3"
 display_name = "Colheita das Almas Lvl 3"
 card_type = "magia"
-text = "Gera 3 Cinzas, +1 por morte. Se gerar 6 ou mais, compra 1 carta."
+text = "Gera 4 Cinzas, +1 por morte. Se gerar 6 ou mais, compra 1 carta."
 keywords = PackedStringArray()
 effect = {
 "action": "gain_ashes",
-"amount": 3.0,
+"amount": 4.0,
 "draw_if_at_least": 6.0,
 "per_dead_unit": true
 }
@@ -4475,4 +4475,4 @@ track_contract = {
 }
 }
 }
-definition_hash = "368e7072f73f87abfc5b034bf31a9706901ca37ddc5b8302c78f0a00a15bf362"
+definition_hash = "bfae9c2bef48c9639c087a8d6fdd960628fc0b84c6cd3b7cdbaf853015aec043"
