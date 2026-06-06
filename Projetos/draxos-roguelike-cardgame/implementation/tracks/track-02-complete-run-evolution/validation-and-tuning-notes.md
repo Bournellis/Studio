@@ -1,8 +1,8 @@
 # Track 02 Validation And Tuning Notes
 
 - Last Updated: `2026-06-06`
-- Prompt: `ENEMY-CARD-REDESIGN-BATCH-01-USING-V5`
-- Status: `ENEMY_CARD_REDESIGN_BATCH_01_USING_V5_COMPLETE`
+- Prompt: `ENEMY-CARD-REDESIGN-BATCH-02-USING-V5-TERRA`
+- Status: `ENEMY_CARD_REDESIGN_BATCH_02_USING_V5_TERRA_COMPLETE`
 
 ## Validation Summary
 
@@ -59,6 +59,9 @@
 - Card Impact V5 regression coverage: V4.2 historical compare stays green at `user://card_impact/reward_card_redesign_batch_03_v4_2`; Battle Lab remains 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick remain green; `validate.gd` passes with 211/211 GUT tests and 1906 asserts.
 - Enemy Card Redesign Batch 01 Using V5 gate: `before`, `after` and `compare` pass at `user://card_impact/enemy_card_redesign_batch_01_v5` with 108 player cards, 30 required enemy causal signatures, 15 legacy inactive cards, zero structural errors, zero new failures, zero removed records, zero status changes, 6 changed enemy battle records and 17 metric/effect changes.
 - Enemy Card Redesign Batch 01 regression coverage: V4.2 historical compare stays green; Battle Lab remains 9 PASS / 3 WARN / 0 FAIL after removing an unsafe Terra probe; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick remain green; `validate.gd` passes with 211/211 GUT tests and 1906 asserts.
+- Enemy Card Redesign Batch 02 Using V5 Terra gate: `before`, `after` and `compare` pass at `user://card_impact/enemy_card_redesign_batch_02_v5_terra` with 108 player cards, 30 required enemy causal signatures, 15 legacy inactive cards, zero structural errors, zero new failures, zero removed records, zero status changes, 2 changed enemy records and 4 effect changes.
+- Enemy Card Redesign Batch 02 observed deltas: `enemy_terra_elemental_tita` moved `effect.enemy_summoned_attack_total`, `effect.enemy_damage_to_player_hero` and `effect.enemy_combat_damage_to_player_hero` from `3` to `2`; `enemy_terra_elemental_granito` moved `effect.enemy_summoned_health_total` from `7` to `8`.
+- Enemy Card Redesign Batch 02 regression coverage: V4.2 historical compare stays green; Battle Lab remains 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick remain green; `validate.gd` passes with 211/211 GUT tests and 1906 asserts.
 - Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 - Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
 - Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
@@ -93,6 +96,19 @@
 - Card Flow Expectations: the three Colheita variants stayed untouched and V5 kept `21/21` expectation checks passing.
 - Regression result: V4.2 historical compare stayed green, Battle Lab 9 PASS / 3 WARN / 0 FAIL, Scenario Fixtures 9 PASS / 3 WARN / 0 FAIL, AutoRun smoke and quick gates green, and `validate.gd` green with 211/211 GUT tests and 1906 asserts.
 - Operational lesson: V5 made the enemy-card deltas legible, while Battle Lab supplied the broader encounter safety net. Future Terra edits should be handled as a focused batch with explicit review of early-route Arcano duel/boss expectations.
+
+## Enemy Card Redesign Batch 02 Using V5 - Terra
+
+- Purpose: execute the focused Terra follow-up requested after Batch 01, using Card Impact V5 plus explicit Battle Lab review to avoid repeating the unsafe early-route Terra probe.
+- Scope: two enemy-card data changes only; no player cards, labs, route, encounters, shop, relics, reward schedule or gameplay-structure changes.
+- Accepted Terra changes: `enemy_terra_elemental_tita` attack `3 -> 2`; `enemy_terra_elemental_granito` health `7 -> 8`.
+- Avoided Terra changes: no new probe on `enemy_terra_elemental_pedra` or `enemy_terra_verme_terra`, because the prior batch already proved those directions can break early Arcano duel/boss expectations.
+- Card Impact result: V5 `before`, `after` and `compare` passed at `user://card_impact/enemy_card_redesign_batch_02_v5_terra` with 108 player cards, 30 required enemy causal signatures, 15 legacy inactive cards, zero structural errors, zero new failures, zero removed records, zero status changes and no blocking changes.
+- Effect result: compare surfaced 2 changed enemy records and 4 effect changes. Tita reduced `effect.enemy_summoned_attack_total`, `effect.enemy_damage_to_player_hero` and `effect.enemy_combat_damage_to_player_hero` from `3` to `2`; Granito raised `effect.enemy_summoned_health_total` from `7` to `8`.
+- Card Flow Expectations: the three Colheita variants stayed untouched and V5 kept `21/21` expectation checks passing.
+- Enemy signature quality: 30/30 enemy signatures remained present, 30/30 enemy cards were played, 30 signatures were clean, and missing/not-played stayed `0/0`.
+- Regression result: V4.2 historical compare stayed green, Battle Lab 9 PASS / 3 WARN / 0 FAIL, Scenario Fixtures 9 PASS / 3 WARN / 0 FAIL, AutoRun smoke and quick gates green, and `validate.gd` green with 211/211 GUT tests and 1906 asserts.
+- Operational lesson: the second V5 enemy batch produced a safer Terra adjustment than the rejected probe. At this point the labs have done useful work; the best next signal is a manual Track 02 playtest before more numeric tuning.
 
 ## First Tuning Pass
 
@@ -323,7 +339,7 @@ Captured at `1280x720` and `960x540` in:
 - Balance changes should come from observed human runs, with AutoRun Gate Pack used for explicit regression, distribution checks and tuning comparison rather than as the final verdict.
 - Large player-card changes should use Card Impact V4.2 when draw/discard/hand/deck movement may matter: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect full player coverage, target-capture quality, metric movement, utility/card-flow deltas, player-card effect signatures and promoted Card Flow Expectations before accepting the batch.
 - Enemy-card changes should now use Card Impact V5: run `before`, apply the intended enemy-card edit, run `after`, run `compare`, then inspect enemy causal signatures plus Battle Lab/Scenario/Run Lab gates before accepting the batch.
-- Recommended next implementation batch: a Terra-specific Enemy Card Redesign Batch 02 Using V5 with explicit Battle Lab review, because the first Terra probe was rejected by early-route combat gates.
+- Recommended next step: direct manual Track 02 complete-route playtest before more tuning; if another automated batch is needed first, keep it small and run it through Card Impact V5 plus Battle Lab.
 - Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
 
 ## Remaining Technical Debt
