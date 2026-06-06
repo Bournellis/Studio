@@ -39,6 +39,7 @@
 | `docs/pve-arena-initial-direction.md` | `VIVO` | Current early-game direction: Arena PVE first, PVP later, no combat cooldown, locked loadout, temporary stat buffs and duel-list scaling. |
 | `docs/pve-arena-v1.md` | `VIVO` | Implemented local Track 18 Arena PVE contract for arenas, enemies, temporary buffs, rewards, endpoints, schema and lab modeling. |
 | `docs/arena-pve-season1-loop-v1.md` | `VIVO` | Current Arena PVE Season 1 Loop v1 delivery: grouped arena/difficulty selection, S1 progress/reward preview, contextual summary and active buff recovery hardening. |
+| `docs/arena-pve-menu-flow-simplification-v1.md` | `VIVO` | Current Arena PVE menu-flow simplification package: selection hierarchy, CTA ordering, Preparacao placement and active/buff menu ordering without content/tuning expansion. |
 | `data/definitions/pve_arena_difficulties.json` | `CONTRATO` | Track 20 Season 1 Arena tier matrix: arena/difficulty ids, recommended level/power, enemy sequence, reward profile and clear-rate target. |
 | `data/definitions/season_1_progression_targets.json` | `CONTRATO` | Track 20 Season 1 XP/milestone target contract; declares `arena_tuning_power_v1` as PVE tuning metadata only. |
 | `docs/foundation-app-v0-audit.md` | `HISTORICO` | Closed audit compass: real foundation, current mock, live-product gaps and post-login loop focus preserved as context. |
