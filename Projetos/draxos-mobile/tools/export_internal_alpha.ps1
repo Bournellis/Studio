@@ -201,8 +201,8 @@ try {
     $metadata = [ordered]@{
         schema_version = "internal_alpha_artifacts_v1"
         channel = "internal_alpha"
-        app_version = "0.0.2-alpha.0"
-        app_version_code = 2
+        app_version = "0.0.3-alpha.0"
+        app_version_code = 3
         generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         supabase_url = $supabaseUrl
         update_manifest_url = $manifestUrl
