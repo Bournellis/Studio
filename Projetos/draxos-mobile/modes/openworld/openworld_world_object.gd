@@ -225,8 +225,8 @@ func _draw_resource_icon(resource_item_id: String, highlighted: bool) -> void:
 			_draw_resin(highlighted)
 		"cinzas_preview":
 			_draw_ash(highlighted)
-		"ossos_preview", "po_osso_preview":
-			_draw_bone(highlighted, resource_item_id == "po_osso_preview")
+		"resto_ritual", "po_cinzento", "ossos_preview", "po_osso_preview":
+			_draw_bone(highlighted, resource_item_id == "po_cinzento" or resource_item_id == "po_osso_preview")
 		_:
 			draw_circle(Vector2.ZERO, 14.0, Color(0.55, 0.55, 0.50))
 	if highlighted:

@@ -15,7 +15,7 @@
 
 `Openworld Bosque` e o primeiro slice do modo `Openworld`. Ele nasceu do prototipo `Rpgsuave Bosque`, mas V1 renomeia o modo de verdade: novos payloads, rotas, settings, docs e testes usam `openworld`.
 
-Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Publicacao remota atual registrada explicitamente: `Bosque Durable Bau Mochila v1` esta publicado em `internal-alpha/v0-bosque-durable-bau-mochila-v1-20260606-6e7ca6b`, com progresso duravel server-owned em `openworld_forest_progress_v1`, Web/APK em version code `6` e preview tecnico `https://39198a35.draxos-mobile-internal-alpha.pages.dev`. `Bosque Offline-First Checkpoint v1` permanece como pacote anterior de politica runtime: `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22`, preview tecnico `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`.
+Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Pacote atual em implementacao/publicacao: `Bosque World Hub Domain Separation v1`, version code `8`, separando materiais locais do Bosque dos recursos globais da conta e endurecendo `structures.fogueira_estavel_1`. `Bosque Fogueira Potion Crafting v1` permanece como pacote anterior publicado em `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c`, preview tecnico `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`. `Bosque Durable Bau Mochila v1` preserva o baseline duravel anterior: `internal-alpha/v0-bosque-durable-bau-mochila-v1-20260606-6e7ca6b`, preview tecnico `https://39198a35.draxos-mobile-internal-alpha.pages.dev`.
 
 ## Visao
 
@@ -36,6 +36,22 @@ O servidor e autoridade para sessao ativa, ruleset, progresso duravel aceito do
 Bosque, checkpoint aceito, craft de estacao que gera consumivel global,
 limites, conclusao, recompensa, ledger e auditoria. A recompensa real so existe
 depois de um checkpoint aceito e de `complete` server-authoritative.
+
+O Bosque pode virar a camada visual/navegavel do jogo no futuro, mas nao vira
+um banco economico unico. A politica atual e separar os dominios:
+
+- `Bosque duravel`: `Mochila do Bosque`, `Bau do Bosque`, upgrades e
+  `structures` por save;
+- `Conta/Ossario`: recursos globais como `ossos` e `po_osso`;
+- `Pocoes globais`: `player_consumables` criados por craft de estacao;
+- `Arena`: preparacao, slot de pocao e consumo server-authoritative em batalha;
+- `Station Craft`: ponte transacional entre `Bau do Bosque` e `Conta/Ossario`.
+
+Coletar no Bosque nunca aumenta diretamente `resources.ossos` nem
+`resources.po_osso`. Materiais locais com tema ritual usam nomes proprios:
+`resto_ritual` (`Resto ritual`) e `po_cinzento` (`Po cinzento`). Saves/caches
+legados com `ossos_preview` ou `po_osso_preview` devem ser normalizados para
+esses IDs locais.
 
 `Bau`, `Mochila/Bolso`, upgrades de capacidade e estruturas craftadas sao
 progresso duravel por save. Nodes coletados, posicao, coleta ativa e checkpoint
@@ -91,7 +107,8 @@ Contratos de produto para v2:
 - controles PC/Web por WASD ou setas;
 - joystick livre por toque/mouse em area vazia do viewport;
 - HUD dentro do jogo;
-- mochila funcional com `Bolso`, `Bau`, `Craft` e `Sessao`;
+- mochila funcional com `Mochila do Bosque`, `Bau do Bosque`, `Construcoes`,
+  `Fogueira` e `Sessao`;
 - aba `Fogueira` para receitas de pocao globais quando a estrutura existe;
 - orientacao tutorial discreta de seis passos, persistida no save normal
   server-side e reabrivel pela aba `Sessao`;
@@ -175,6 +192,10 @@ economia; sao folga de aprendizagem para o minigame.
 - consome materiais do Bau do Bosque e `po_osso` da conta; nao consome a
   mochila/bolso;
 - exige checkpoint aceito antes da mutacao de estacao;
+- deve persistir em `upgrades.fogueira_estavel_1` e
+  `structures.fogueira_estavel_1`;
+- enquanto estiver local e pendente, pode aparecer como estrutura `salvando`,
+  mas receitas globais so liberam depois do checkpoint aceito;
 - nao cria combate, NPC, quest, economia ampla, respawn ou recompensa nova;
 - pode aparecer no resumo leve como estrutura construida.
 

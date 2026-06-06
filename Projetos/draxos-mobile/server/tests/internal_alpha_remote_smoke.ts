@@ -435,8 +435,8 @@ async function proveRemoteModeFlow(accessToken: string): Promise<string> {
       { node_id: "node_resina_01", item_id: "resina" },
       { node_id: "node_folha_seca_01", item_id: "folha_seca" },
       { node_id: "node_cinzas_preview_01", item_id: "cinzas_preview" },
-      { node_id: "node_ossos_preview_01", item_id: "ossos_preview" },
-      { node_id: "node_po_osso_preview_01", item_id: "po_osso_preview" },
+      { node_id: "node_ossos_preview_01", item_id: "resto_ritual" },
+      { node_id: "node_po_osso_preview_01", item_id: "po_cinzento" },
     ]
   ) {
     revision = await recordModeEvent(headers, sessionId, revision, "collect_start", {

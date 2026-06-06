@@ -1451,11 +1451,15 @@ Erros minimos: `INVALID_RECIPE`, `INVALID_QUANTITY`, `INSUFFICIENT_RESOURCES`, `
 
 ### `POST /crafting/station-craft`
 
-Status: **implementado em Bosque Fogueira Potion Crafting v1**.
+Status: **implementado em Bosque Fogueira Potion Crafting v1** e endurecido
+em Bosque World Hub Domain Separation v1.
 
 Scope: `save-scoped`. Usa `x-draxos-save-type`.
 
-Executa receita server-authoritative em uma estacao construida. A Fogueira v1 usa materiais do `Bau` duravel do Bosque e recursos globais da conta para criar consumiveis globais. O cliente deve salvar checkpoint pendente antes desta chamada e enviar a revisao duravel esperada.
+Executa receita server-authoritative em uma estacao construida. A Fogueira v1
+usa materiais do `Bau do Bosque` e recursos globais da `Conta/Ossario` para
+criar consumiveis globais. O cliente deve salvar checkpoint pendente antes
+desta chamada e enviar a revisao duravel esperada.
 
 Request minimo:
 
@@ -1478,9 +1482,12 @@ Request minimo:
 Regras:
 
 - exige `request_id/request_hash` e idempotencia v1;
-- valida save ativo, sessao ativa do Bosque, ruleset, Fogueira construida e revisao duravel;
+- valida save ativo, sessao ativa do Bosque, ruleset, Fogueira construida em
+  `mode_progress.progress_payload.structures`/`upgrades` e revisao duravel;
 - consome materiais do `mode_progress.progress_payload.chest`;
 - consome recursos globais como `po_osso` de `resources`;
+- nao consome `pocket`/mochila e nao trata `resto_ritual`/`po_cinzento` como
+  `ossos`/`po_osso`;
 - cria ou incrementa `player_consumables`;
 - atualiza o snapshot da sessao ativa e o progresso duravel aceito;
 - registra `item_transactions` e auditoria `mode_session_events.event_type = station_craft`;

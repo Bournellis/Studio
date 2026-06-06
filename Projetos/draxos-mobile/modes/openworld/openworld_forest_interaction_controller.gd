@@ -93,12 +93,17 @@ func craft_recipe(recipe_id: String) -> void:
 			_update()
 			return
 		var craft_result: Dictionary = model.craft(recipe_id)
-		model.last_message = "%s Salvando Bosque..." % str(craft_result.get("message", "Criacao enviada ao servidor.")).trim_suffix(".")
+		var save_label := "Salvando Fogueira..." if recipe_id == "fogueira_estavel_1" else "Salvando Bosque..."
+		model.last_message = "%s %s" % [str(craft_result.get("message", "Criacao enviada ao servidor.")).trim_suffix("."), save_label]
 		_record_event("craft", {
 			"recipe_id": recipe_id,
 			"position": runtime.position_payload(),
 			"session_seconds": int(runtime.session_seconds),
 		})
+		if recipe_id == "fogueira_estavel_1":
+			var bridge: Variant = _bridge()
+			if bridge != null and bridge.has_method("flush_checkpoint"):
+				bridge.call_deferred("flush_checkpoint", true)
 		_update()
 		return
 	model.craft(recipe_id)

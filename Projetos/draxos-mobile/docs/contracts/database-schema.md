@@ -29,6 +29,7 @@ Migrations atuais:
 - `202606050001_arena_reward_profiles_v1.sql`: cria `arena_reward_profiles`, habilita RLS read-only para perfis ativos, seeda todos os perfis de `data/definitions/arena_rewards.json` e mantem `ledger_source = arena_pve_v1`.
 - `202606050002_account_reset_request_hash_v1.sql`: adiciona `reset_player_save_v1(game_save_id, request_id, request_hash, payload)`, exige hash obrigatorio, usa idempotencia v1 por `game_saves.id`, move limpeza de Arena/Modes/Track 16 para a transacao SQL e preserva social/guilda/chat account-wide.
 - `202606060003_bosque_fogueira_potion_crafting_v1.sql`: adiciona `station_craft` ao audit de `mode_session_events`, registra `fogueira_estavel_1` como estacao via progresso duravel/structures, cria `craft_station_item_v1`, permite `build_potion_equip_v1` para todas as pocoes simples e bloqueia receitas de Fogueira no craft direto.
+- `202606060004_bosque_world_hub_domain_separation_v1.sql`: separa materiais locais do Bosque de recursos globais da conta, normaliza `ossos_preview` -> `resto_ritual` e `po_osso_preview` -> `po_cinzento`, reescreve checkpoint para aceitar/retornar `structures` e atualiza snapshots/progresso duravel legados.
 
 ## Regras De Escopo De Servico
 
@@ -376,6 +377,12 @@ Schema `openworld_forest_progress_v1`:
 
 Regras:
 
+- `pocket` e `chest` sao inventarios locais do Bosque. Eles podem conter
+  `resto_ritual` e `po_cinzento`, mas nunca devem ser tratados como
+  `resources.ossos` ou `resources.po_osso`;
+- snapshots/progresso legados com `ossos_preview` ou `po_osso_preview` devem
+  ser normalizados para `resto_ritual`/`po_cinzento` antes de salvar, validar ou
+  exibir;
 - start injeta `pocket`, `chest`, `upgrades` e `structures` duraveis no snapshot inicial da
   nova sessao;
 - nova sessao com progresso existente comeca com nodes coletados vazios e com
@@ -437,7 +444,7 @@ Regras:
   com hash igual retorna a resposta ja aceita, enquanto hash divergente e
   mismatch de idempotencia. Para Openworld/Bosque, tambem persiste
   `pocket`, `chest`, `upgrades`, `structures`, ledger e resumo duravel aceito em
-  `mode_progress`.
+  `mode_progress`; o resumo aceito retorna `structures` explicitamente.
 - `craft_station_item_v1`: bloqueia `game_saves`, `resources`,
   `mode_progress` e a sessao ativa do Bosque; valida receita, Fogueira
   construida, checkpoint/progress revision, materiais no Bau, `po_osso`,

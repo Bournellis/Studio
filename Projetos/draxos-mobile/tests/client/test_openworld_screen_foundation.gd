@@ -366,8 +366,10 @@ func test_obstacles_are_loaded_from_ruleset_data() -> void:
 func test_preview_item_ids_keep_clean_player_names() -> void:
 	var model = ModelScript.new()
 	assert_eq(model.item_display_name("cinzas_preview"), "Cinzas")
-	assert_eq(model.item_display_name("ossos_preview"), "Ossos")
-	assert_eq(model.item_display_name("po_osso_preview"), "Po de Osso")
+	assert_eq(model.item_display_name("resto_ritual"), "Resto ritual")
+	assert_eq(model.item_display_name("po_cinzento"), "Po cinzento")
+	assert_eq(model.item_display_name("ossos_preview"), "Resto ritual")
+	assert_eq(model.item_display_name("po_osso_preview"), "Po cinzento")
 
 func _session_payload(session_id: String, revision: int, snapshot: Dictionary) -> Dictionary:
 	var payload := snapshot.duplicate(true)

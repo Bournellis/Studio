@@ -239,19 +239,19 @@ function Build-Manifest {
     return [ordered]@{
         schema_version = "internal_alpha_manifest_v1"
         channel = "internal_alpha"
-        latest_version = "0.0.7-alpha.0"
-        latest_version_code = 7
-        minimum_supported_version = "0.0.7-alpha.0"
-        minimum_supported_version_code = 7
+        latest_version = "0.0.8-alpha.0"
+        latest_version_code = 8
+        minimum_supported_version = "0.0.8-alpha.0"
+        minimum_supported_version_code = 8
         released_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         requires_save_reset = $false
         portal_url = $PortalUrl
         notes = @(
-            "Bosque Fogueira Potion Crafting v1 publicado na URL principal de Internal Alpha.",
+            "Bosque World Hub Domain Separation v1 publicado na URL principal de Internal Alpha.",
             "APK Android e PC ZIP compartilham o mesmo backend remoto.",
-            "Fogueira Estavel I prepara Pocoes de Vida, Foco e Resguardo usando materiais do Bau e Po de Osso.",
-            "Base segue triturando Ossos; criacao direta de Pocao de Vida foi movida para o Bosque.",
-            "Arena Preparacao aceita qualquer pocao simples disponivel sem regredir o slot unico por batalha.",
+            "Materiais locais do Bosque agora sao separados de Ossos e Po de Osso da Conta/Ossario.",
+            "Fogueira Estavel I persiste como estrutura duravel e estacao de preparo.",
+            "Fogueira prepara pocoes usando Bau do Bosque + Po de Osso da Conta/Ossario.",
             $(if ($PublicDownloads) { "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage." } else { "Portal/Web rodam no Cloudflare Pages; downloads usam login alpha e URLs assinadas temporarias." }),
             "Progression Lab usa save separado e nao pontua ranking."
         )
@@ -488,8 +488,8 @@ $plan = [ordered]@{
     }
     app = [ordered]@{
         channel = "internal_alpha"
-        version = "0.0.7-alpha.0"
-        version_code = 7
+        version = "0.0.8-alpha.0"
+        version_code = 8
         requires_save_reset = $false
     }
     artifacts = $artifactRecords
@@ -662,8 +662,8 @@ if ($Mode -eq "FullPublish") {
 $report = [ordered]@{
     schema_version = "internal_alpha_publication_v2"
     channel = "internal_alpha"
-    app_version = "0.0.7-alpha.0"
-    app_version_code = 7
+    app_version = "0.0.8-alpha.0"
+    app_version_code = 8
     mode = $Mode
     generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     bucket = $BucketName

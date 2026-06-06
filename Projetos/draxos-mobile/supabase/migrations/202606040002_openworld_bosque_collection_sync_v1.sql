@@ -33,8 +33,8 @@ as $$
 		when 'node_folha_seca_02' then 'folha_seca'
 		when 'node_folha_seca_03' then 'folha_seca'
 		when 'node_cinzas_preview_01' then 'cinzas_preview'
-		when 'node_ossos_preview_01' then 'ossos_preview'
-		when 'node_po_osso_preview_01' then 'po_osso_preview'
+		when 'node_ossos_preview_01' then 'resto_ritual'
+		when 'node_po_osso_preview_01' then 'po_cinzento'
 		else null
 	end
 $$;

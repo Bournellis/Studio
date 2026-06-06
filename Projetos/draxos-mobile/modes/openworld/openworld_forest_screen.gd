@@ -11,6 +11,7 @@ const InputControllerScript := preload("res://modes/openworld/openworld_forest_i
 const HudControllerScript := preload("res://modes/openworld/openworld_forest_hud_controller.gd")
 const InteractionControllerScript := preload("res://modes/openworld/openworld_forest_interaction_controller.gd")
 const IntegratedSessionBridgeScript := preload("res://modes/openworld/openworld_integrated_session_bridge.gd")
+const WorldContextScript := preload("res://modes/openworld/openworld_world_context.gd")
 
 var model = ModelScript.new()
 var integration_mode := "dev_local"
@@ -335,7 +336,7 @@ func _station_craft_recipe(recipe_id: String) -> void:
 		_update_labels()
 		return
 	if bridge.has_pending_events():
-		model.last_message = "Salvando Bosque antes de preparar..."
+		model.last_message = "Salvando Fogueira antes de preparar..." if model.has_upgrade("fogueira_estavel_1") else "Salvando Bosque antes de preparar..."
 		_update_labels()
 		var checkpoint_result: Dictionary = await bridge.flush_checkpoint(true)
 		if not bool(checkpoint_result.get("ok", false)):
@@ -410,9 +411,10 @@ func _view_state(nearest_id: String) -> Dictionary:
 	var can_complete := _can_complete_integrated()
 	var near_chest := _near_chest()
 	var has_pocket_items: bool = not model.pocket.is_empty()
-	var deposit_available: bool = near_chest and has_pocket_items and not network_busy and not completed
+	var deposit_available: bool = near_chest and has_pocket_items and not completed
 	var deposit_tooltip := _deposit_tooltip(completed, pending, network_busy, near_chest, has_pocket_items)
 	var complete_tooltip := _complete_tooltip(can_complete, pending, completed)
+	var station_nearby := _near_fogueira()
 	return {
 		"integration_mode": integration_mode,
 		"server_session_id": _server_session_id(),
@@ -425,9 +427,10 @@ func _view_state(nearest_id: String) -> Dictionary:
 		"can_complete": can_complete,
 		"abandon_available": integrated and _server_session_id() != "" and not completed,
 		"abandon_confirm_pending": _abandon_confirm_pending,
-		"station_nearby": _near_fogueira(),
+		"station_nearby": station_nearby,
 		"crafting": _crafting_signature(),
 		"resources": _resources_signature(),
+		"world_context": WorldContextScript.build(model, _session_store(), _session_bridge, _session_state(), station_nearby),
 		"mode_label": _mode_label(),
 		"status_text": _status_text(nearest_id, completed),
 		"feedback_text": model.last_message,
@@ -495,12 +498,12 @@ func _session_message() -> String:
 func _deposit_tooltip(completed: bool, pending: bool, network_busy: bool, near_chest: bool, has_pocket_items: bool) -> String:
 	if completed:
 		return "Visita ja encerrada."
-	if network_busy:
-		return "Sessao online iniciando."
 	if not near_chest:
 		return "Aproxime-se do bau."
 	if not has_pocket_items:
 		return "Bolso vazio; colete algo antes."
+	if network_busy:
+		return "Depositar agora; o salvamento continua em segundo plano."
 	if pending:
 		return "Depositar agora; o Bosque continua salvando."
 	return "Depositar tudo que esta no bolso."

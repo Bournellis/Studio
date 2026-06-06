@@ -162,6 +162,13 @@ Conteudo atual:
 
 `po_osso` nao e item de inventario; e recurso tecnico inteiro em `resources`. A conversao `1 Osso -> 1 Po de Osso` vive no endpoint `crafting/crush-bones` para manter autoridade no servidor.
 
+No Bosque, materiais locais nao podem usar nomes publicos identicos aos
+recursos globais da conta. `resto_ritual` (`Resto ritual`) e `po_cinzento`
+(`Po cinzento`) sao itens do `Bau do Bosque`/`Mochila do Bosque`; eles nao
+alteram `resources.ossos` nem `resources.po_osso`. Caches ou snapshots antigos
+com `ossos_preview`/`po_osso_preview` devem ser normalizados para os IDs locais
+novos antes de exibir ou validar inventario.
+
 Receitas com `station.station_id` nao podem ser executadas por `/crafting/craft`.
 Elas exigem `/crafting/station-craft`, checkpoint aceito do Bosque e estrutura
 duravel compativel em `mode_progress.progress_payload.structures`.
