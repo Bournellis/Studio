@@ -4,21 +4,25 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Arena PVE Menu Flow Simplification v1`
-- Active stage status: `ARENA_PVE_MENU_FLOW_SIMPLIFICATION_V1_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Bosque Durable Bau Mochila v1`
+- Active stage status: `BOSQUE_DURABLE_BAU_MOCHILA_V1_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
-- Version: `0.0.5-alpha.0`
-- Version code: `5`
+- Version: `0.0.6-alpha.0`
+- Version code: `6`
 
 ## Current Truth
 
-- Latest published remote package: `Arena PVE Menu Flow Simplification v1`.
-- Release root: `internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68`
+- Latest published remote package: `Bosque Durable Bau Mochila v1`.
+- Release root: `internal-alpha/v0-bosque-durable-bau-mochila-v1-20260606-6e7ca6b`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://fdf44707.draxos-mobile-internal-alpha.pages.dev`
-- Source state: `main` after merging and publishing Arena PVE Menu Flow Simplification v1, preserving Bosque Offline-First Checkpoint v1, Bosque Sync Responsiveness v1, Arena/Bosque Visible V2, Arena/Bosque Regression Hotfix, Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
-- Published Arena PVE Menu Flow Simplification v1: bumps APK/manifest to `0.0.5-alpha.0` / version code `5`, reorders the Arena PVE menus around the player's decision flow, keeps a single recommended start CTA, keeps Preparacao visible before start and behavior controls between fights, and preserves all existing Arena functions and server-authoritative rewards.
+- Latest deployment evidence: `https://39198a35.draxos-mobile-internal-alpha.pages.dev`
+- Source state: `main` after merging and publishing Bosque Durable Bau Mochila v1, preserving Arena PVE Menu Flow Simplification v1, Bosque Offline-First Checkpoint v1, Bosque Sync Responsiveness v1, Arena/Bosque Visible V2, Arena/Bosque Regression Hotfix, Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
+- Published Bosque Durable Bau Mochila v1: bumps APK/manifest to `0.0.6-alpha.0` / version code `6`, applies remote migration `202606060002_openworld_bosque_durable_progress_v1.sql`, persists accepted Bosque `Bau`, `Mochila/Bolso`, backpack upgrades and crafted structures in `mode_progress.progress_payload`, preserves active-visit offline-first runtime and keeps completion/reward server-authoritative through checkpoint, caps and ledger.
+- Previous Arena menu package: `Arena PVE Menu Flow Simplification v1`
+- Previous Arena menu release root: `internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68`
+- Previous Arena menu preview: `https://fdf44707.draxos-mobile-internal-alpha.pages.dev`
+- Previous Arena menu package detail: simplified menu hierarchy and CTA order, kept Preparacao visible before start and behavior controls between fights, and preserved all existing Arena functions and server-authoritative rewards.
 - Previous Openworld/Bosque policy package: `Bosque Offline-First Checkpoint v1`
 - Previous Openworld/Bosque policy release root: `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22`
 - Previous Openworld/Bosque policy preview: `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`
@@ -35,7 +39,7 @@
 - Previous visibility hotfix preview: `https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev`
 - Previous visibility hotfix: restored Preparacao before Arena start, during active attempts and on pending buff choice, and restored Bosque deposit/craft visible feedback plus pending-event flush before leaving an integrated session.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
-- Current published implementation: `Arena PVE Menu Flow Simplification v1` is published on `main`. It simplifies menu hierarchy and CTA order without changing Arena content/tuning/backend flow. Bosque Offline-First Checkpoint v1 remains the current Openworld policy package, Bosque Sync Responsiveness v1 remains the previous Bosque sync package and Arena/Bosque Visible V2 remains the previous visible package.
+- Current published implementation: `Bosque Durable Bau Mochila v1` is published on `main`. It extends Bosque Offline-First Checkpoint v1 with durable per-save Openworld progress: `Bau`, `Mochila/Bolso`, upgrades and crafted structures survive exit, completion, expiration and new entry. Arena PVE Menu Flow Simplification v1 remains the previous Arena menu package, Bosque Offline-First Checkpoint v1 remains the previous Openworld policy package, Bosque Sync Responsiveness v1 remains the previous Bosque sync package and Arena/Bosque Visible V2 remains the previous visible package.
 - Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; the visible Bosque update appears healthy so far. The Openworld working policy is now documented as client-owned active play with server-owned checkpoints/rewards.
 - Previous Arena Season 1 package: `Arena PVE Season 1 Loop v1` groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
 - Previous Arena Season 1 release root: `internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32`
@@ -65,37 +69,41 @@
 
 ## Current Published Package
 
-Arena PVE Menu Flow Simplification v1 is published as the current Internal Alpha package. It preserves Bosque Offline-First Checkpoint v1 as the Openworld policy baseline and focuses only on Arena PVE menu clarity: fewer redundant steps, clearer decision order and better placement of Preparacao/behavior controls.
+Bosque Durable Bau Mochila v1 is published as the current Internal Alpha package. It preserves the Offline-First Checkpoint runtime model and changes Bosque persistence so accepted `Bau`, `Mochila/Bolso`, backpack upgrades and crafted structures are durable per save instead of being discarded with a completed/expired visit.
 
 Delivered:
 
-- bumps in-app, export and manifest versioning to `0.0.5-alpha.0` / version code `5`;
-- forces clients on version code `4` or older to update through the remote manifest instead of silently continuing the old APK;
-- reorders Arena selection to context -> Season 1 progress -> recommended challenge -> Preparacao -> other arenas -> back;
-- replaces duplicate start actions with one CTA, `Iniciar desafio recomendado`;
-- shows active attempt recovery before secondary behavior controls when an attempt exists;
-- shows `Resolver duelo` or `Escolher buff` before Preparacao/behavior inside active Arena flow;
-- shows buff cards before behavior controls during buff choice;
-- preserves all Season 1 arena/difficulty data, active-attempt recovery, locked loadout, buff flow and server-authoritative rewards;
+- bumps in-app, export and manifest versioning to `0.0.6-alpha.0` / version code `6`;
+- forces clients on version code `5` or older to update through the remote manifest instead of silently continuing the old APK;
+- adds mirrored durable-progress migration `202606060002_openworld_bosque_durable_progress_v1.sql` in `server/schema` and `supabase/migrations`;
+- stores `openworld_forest_progress_v1` in `mode_progress.progress_payload`, including persistent `pocket`, `chest`, `upgrades`, `reward_ledger`, progress revision and last accepted/completed session metadata;
+- starts new Bosque visits from durable `Bau`, `Mochila/Bolso`, upgrades and structures while keeping collected nodes as per-visit state;
+- checkpoints accepted by the server update both the active session snapshot and durable progress payload atomically;
+- completion merges durable progress instead of clearing inventory/crafts, while reward remains server-authoritative through checkpoint/caps/ledger;
+- client cache separates `openworld_active_session_cache` from `openworld_durable_progress_cache`;
+- `complete_session` clears only active visit cache and keeps durable `Bau`, `Mochila/Bolso`, upgrades and structures;
+- local UX now reports `Bau e mochila salvos`, `Salvando progresso do Bosque...` and `Bosque salvo`;
 - preserves Arena Preparacao before start, in active/stuck attempts, in the duel menu and in buff choice;
 - preserves Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Arena PVE First Real Run + Update Recovery, Bosque v3 UX/Feel, Technical Hardening, Openworld Main Menu Sync, Foundation Hardening V2, Hardening Platform V1 and Remote Lab Runner.
 
 Publication evidence:
 
+- Remote Supabase migration `202606060002_openworld_bosque_durable_progress_v1.sql` applied.
+- Edge Functions `modes` and `release` deployed.
 - Export regenerated APK, PC ZIP and Web artifacts from current `main`.
 - Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and Edge Function `release` deploy passed.
-- Cloudflare Pages preview evidence: `https://fdf44707.draxos-mobile-internal-alpha.pages.dev`.
+- Cloudflare Pages preview evidence: `https://39198a35.draxos-mobile-internal-alpha.pages.dev`.
 - Remote Web launch smoke on preview loaded the game, matched release root and asset root, and reported no runtime errors.
-- Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web after local manifest expectations were updated to version code `5`; stable Portal/Web remain protected by Cloudflare Access.
-- Remote read-only release/CORS smoke passed.
+- Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web after local manifest expectations were updated to version code `6`; stable Portal/Web remain protected by Cloudflare Access.
+- Remote read-only release/CORS smoke passed after moving the active Doing card to Done.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 - `release/config` remains on `track23-online-actions-hotfix`, so online progression actions are not paused by remote config.
 
 Artifact hashes:
 
-- Android APK SHA256: `960c1ca2193a5d5f013437058f7119ac1a31bcc0f34b52a287b6435b0d794d7a`
-- PC Windows ZIP SHA256: `bacd5d421206299a806c629a15a938402f7330c936a72ceefcf410cc75d08fd6`
-- Web Index SHA256: `b39c432610b029560e6fd6672d1ca964f811f46c1dff2e5bd92e9865f35d5300`
+- Android APK SHA256: `36e4aa304a293d68700e7da1ab7c9d15748eb4a0913ab96460b39d52a1abb896`
+- PC Windows ZIP SHA256: `c6e14d49345c2944a0bee4cd00bd5e7ec1a3901940de6f8a90c1812e6447b39b`
+- Web Index SHA256: `1c9cab034e1bae585afbe257ef79c4ba283d78a44d044a0becac4226f39237de`
 
 ## Bosque Offline-First Checkpoint v1 Details
 

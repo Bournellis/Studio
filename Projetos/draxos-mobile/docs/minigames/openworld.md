@@ -15,7 +15,7 @@
 
 `Openworld Bosque` e o primeiro slice do modo `Openworld`. Ele nasceu do prototipo `Rpgsuave Bosque`, mas V1 renomeia o modo de verdade: novos payloads, rotas, settings, docs e testes usam `openworld`.
 
-Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Publicacao remota e registrada explicitamente: `Bosque Offline-First Checkpoint v1` esta publicado em `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22`, com checkpoint server-side aplicado no Supabase remoto, Web/APK em version code `4` e preview tecnico `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`.
+Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Publicacao remota atual registrada explicitamente: `Bosque Durable Bau Mochila v1` esta publicado em `internal-alpha/v0-bosque-durable-bau-mochila-v1-20260606-6e7ca6b`, com progresso duravel server-owned em `openworld_forest_progress_v1`, Web/APK em version code `6` e preview tecnico `https://39198a35.draxos-mobile-internal-alpha.pages.dev`. `Bosque Offline-First Checkpoint v1` permanece como pacote anterior de politica runtime: `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22`, preview tecnico `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`.
 
 ## Visao
 
