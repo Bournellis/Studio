@@ -12,6 +12,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Card Impact V4 addendum: `track02_card_impact_v4` adds `player_scope=full_active_player_v1`, full active player-card coverage across starter/core/reward cards, class/source coverage summaries, temporary ability power utility signatures and validated 108 player / 30 enemy report-only / 15 legacy inactive coverage with zero structural errors.
   - Card Impact V4.1 addendum: `track02_card_impact_v4_1` preserves V4 coverage and adds card-flow quality/signature coverage for `necro_colheita_das_almas`, `necro_colheita_das_almas_lvl2` and `necro_colheita_das_almas_lvl3`, including `cards_drawn`, `deck_delta`, `hand_delta`, `card_flow_expected`, `card_flow_observed`, Markdown Card Flow Coverage and a lab-only dead-unit prestate for the lvl3 threshold case.
   - Card Impact V4.2 addendum: `track02_card_impact_v4_2` preserves V4.1 coverage and promotes Colheita card-flow into explicit required/watch expectations; same/same before/after/compare passed with 108 player / 30 enemy report-only / 15 legacy inactive coverage, 3 expected card-flow cards and 21/21 expectation checks passing.
+  - Reward Card Redesign Batch 03 V4.2 addendum: twelve reward/card-upgrade variants across Arcano, Invocador and Necromante changed under V4.2; compare passed with 12 impacted target cards, 18 effect changes, zero structural errors/status changes/new failures/removed records, and 21/21 Card Flow Expectations still passing.
   - Card Flow Redesign Batch 01 V4.1 addendum: `draw_if_at_least` now resolves as a bonus draw after normal hand refill; `necro_colheita_das_almas_lvl2` gained `draw_if_at_least=3` and moved Ashes `2 -> 3`; compare passed with 3 changed battle records, 11 effect deltas, zero structural errors/status changes, and Scenario/Run Lab unchanged.
   - Reward Card Redesign Batch 02 Utility V4 addendum: four utility/control/economy variants changed under V4 (`arcano_acelerar_lvl3`, `arcano_vortice`, `arcano_vortice_lvl2`, `necro_colheita_das_almas`); compare passed with 4 changed battle records, 7 metric/effect deltas, zero structural errors/status changes, and Scenario/Run Lab unchanged.
   - Player Card Redesign Batch 02 addendum: six core player upgrades changed under V3 (`arcano_acelerar_lvl2`, `arcano_bola_de_fogo_lvl2`, `invocador_batedor_lvl2`, `invocador_guardiao_lvl2`, `necro_prender_lvl3`, `necro_zumbi_lvl2`); compare passed with 14 metric deltas, 13 effect deltas, zero structural errors/status changes, and macro gates unchanged.
@@ -21,7 +22,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - AutoRun Lab: `draxos-roguelike-cardgame/docs/autorun-lab.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
   - Allowed work: code, validation, playtest, local documentation.
-  - Current next step: run the next broader reward-card redesign batch under V4.2 before/change/after/compare; Track 02 remains ready for user playtest of the complete-run build.
+  - Current next step: implement Card Impact V5 enemy-card causal signatures before broad enemy-card redesigns; Track 02 remains ready for user playtest of the complete-run build.
 
 ## Implementacao - Arena PVE Inicial
 

@@ -964,12 +964,12 @@ id = "arcano_vortice_lvl3"
 display_name = "Vortice Lvl 3"
 card_type = "magia"
 cost = 3
-text = "Congela todas as criaturas inimigas em campo."
+text = "Congela todas as criaturas inimigas em campo por 2 turnos."
 keywords = PackedStringArray()
 effect = {
 "action": "freeze_random_enemy",
 "all": true,
-"amount": 1.0
+"amount": 2.0
 }
 
 [sub_resource type="Resource" id="Resource_vs84p"]
@@ -994,7 +994,7 @@ display_name = "Sentinela Arcana Lvl 2"
 card_type = "criatura"
 cost = 2
 attack = 3
-health = 4
+health = 5
 text = "Escudo. Enquanto em campo: cada spell jogada neste turno restaura 1 HP nesta criatura."
 keywords = PackedStringArray("escudo")
 effect = {
@@ -1097,11 +1097,11 @@ script = ExtResource("1_tqsc8")
 id = "arcano_canalizar_lvl3"
 display_name = "Canalizar Lvl 3"
 card_type = "magia"
-text = "Causa dano igual ao Fluxo atual + 4 a uma criatura ou heroi inimigo valido. Gera 1 Fluxo."
+text = "Causa dano igual ao Fluxo atual + 5 a uma criatura ou heroi inimigo valido. Gera 1 Fluxo."
 keywords = PackedStringArray()
 effect = {
 "action": "flow_damage",
-"amount": 4.0,
+"amount": 5.0,
 "gain_flow": 1.0
 }
 
@@ -1184,11 +1184,11 @@ id = "arcano_descarga_lvl3"
 display_name = "Descarga Lvl 3"
 card_type = "magia"
 cost = 2
-text = "Causa 3 de dano a cada criatura inimiga em campo. Fluxo e Poder de habilidade amplificam cada alvo."
+text = "Causa 4 de dano a cada criatura inimiga em campo. Fluxo e Poder de habilidade amplificam cada alvo."
 keywords = PackedStringArray()
 effect = {
 "action": "all_enemy_damage",
-"amount": 3.0,
+"amount": 4.0,
 "scale_with_flow": true
 }
 
@@ -1227,7 +1227,7 @@ display_name = "Capitao de Campo Lvl 3"
 card_type = "criatura"
 cost = 2
 attack = 3
-health = 5
+health = 6
 text = "Inspirar +2."
 keywords = PackedStringArray("inspirar")
 effect = {
@@ -1267,12 +1267,12 @@ id = "invocador_parede_de_escudos_lvl3"
 display_name = "Parede de Escudos Lvl 3"
 card_type = "magia"
 cost = 1
-text = "Todas as criaturas aliadas ganham Escudo. Criaturas com Escudo ativo ganham +1/+0."
+text = "Todas as criaturas aliadas ganham Escudo 2. Criaturas com Escudo ativo ganham +1/+0."
 keywords = PackedStringArray()
 effect = {
 "action": "shield_all_allies",
 "attack": 1.0,
-"shield_charges": 1.0
+"shield_charges": 2.0
 }
 
 [sub_resource type="Resource" id="Resource_334pn"]
@@ -1304,7 +1304,7 @@ display_name = "Cavaleiro Arcano Lvl 3"
 card_type = "criatura"
 cost = 2
 attack = 5
-health = 3
+health = 4
 text = "Atropelar. Ao causar dano excedente, a criatura aliada de maior ATK ganha +1/+0 permanente."
 keywords = PackedStringArray("atropelar")
 effect = {
@@ -1375,12 +1375,12 @@ card_type = "criatura"
 cost = 1
 attack = 2
 health = 2
-text = "Entrar: cria um token Recruta 1/1 no slot aliado vazio mais proximo."
+text = "Entrar: cria um token Recruta 2/1 no slot aliado vazio mais proximo."
 keywords = PackedStringArray("entrar")
 effect = {
 "on_enter": {
 "action": "summon_token",
-"attack": 1.0,
+"attack": 2.0,
 "count": 1.0,
 "health": 1.0,
 "name": "Recruta"
@@ -1487,7 +1487,7 @@ display_name = "Revenant Lvl 3"
 card_type = "criatura"
 cost = 2
 attack = 3
-health = 5
+health = 6
 text = "Ressurgir: ao morrer, retorna uma vez com 2/3 e aplica Enfraquecer 1 em criatura inimiga aleatoria."
 keywords = PackedStringArray("ressurgir")
 effect = {
@@ -1528,16 +1528,16 @@ card_type = "criatura"
 cost = 1
 attack = 2
 health = 2
-text = "Entrar e ao morrer: aplica Veneno 1 em criatura inimiga aleatoria."
+text = "Entrar e ao morrer: aplica Veneno 2 em criatura inimiga aleatoria."
 keywords = PackedStringArray("entrar", "veneno")
 effect = {
 "on_death": {
 "action": "poison_random_enemy",
-"amount": 1.0
+"amount": 2.0
 },
 "on_enter": {
 "action": "poison_random_enemy",
-"amount": 1.0
+"amount": 2.0
 }
 }
 
@@ -1695,7 +1695,7 @@ display_name = "Lich Lvl 3"
 card_type = "criatura"
 cost = 3
 attack = 4
-health = 7
+health = 8
 text = "Imune. Crescer +2. Ao morrer: gera 3 Cinzas."
 keywords = PackedStringArray("imune", "crescer")
 effect = {
@@ -1738,11 +1738,11 @@ id = "necro_praga_lvl3"
 display_name = "Praga Lvl 3"
 card_type = "magia"
 cost = 2
-text = "Aplica Veneno 2 em todas as criaturas inimigas em campo. Gera 1 Cinza por criatura que ja tinha Veneno."
+text = "Aplica Veneno 3 em todas as criaturas inimigas em campo. Gera 1 Cinza por criatura que ja tinha Veneno."
 keywords = PackedStringArray()
 effect = {
 "action": "poison_all_enemies",
-"amount": 2.0,
+"amount": 3.0,
 "gain_ashes_per_prepoisoned": 1.0
 }
 
@@ -4477,4 +4477,4 @@ track_contract = {
 }
 }
 }
-definition_hash = "16c3798be0566fcb8028aa8a7d4874e755d769594ed632cc2b630605a8bc96ff"
+definition_hash = "354d2dda5b70e07c54fa6699c77606890acd963510f627284e4f26ef3dd91211"
