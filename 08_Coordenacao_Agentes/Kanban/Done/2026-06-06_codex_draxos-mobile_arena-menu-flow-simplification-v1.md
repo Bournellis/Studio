@@ -42,4 +42,20 @@
 
 ## Handoff
 
-- Proximo ponto seguro: apos presenter/testes verdes, documentar pacote, commit, merge em `main`, exportar/publicar Web/APK e mover este card para Done.
+- Status: implementacao local concluida e commits preparados.
+- Entregue:
+  - fluxo de selecao reordenado como progresso S1 -> desafio recomendado -> Preparacao -> outras arenas;
+  - CTA recomendado unico `Iniciar desafio recomendado`;
+  - remocao do botao duplicado `Iniciar proximo desta arena`;
+  - tentativa ativa/recuperacao antes de comportamento;
+  - `Resolver duelo`/`Escolher buff` antes de `Carregar comportamento`;
+  - escolha de buff antes de comportamento;
+  - APK/manifest atualizado para `0.0.5-alpha.0` / version code `5`;
+  - doc vivo `docs/arena-pve-menu-flow-simplification-v1.md`.
+- Validacao local:
+  - GUT client suite: PASS, 236 tests / 3741 asserts, com warnings conhecidos de teardown orphan/ObjectDB.
+  - `npx -y deno task --cwd server/functions check`: PASS.
+  - `npx -y deno task --cwd supabase/functions check`: PASS.
+  - `deno test --allow-read --allow-run --allow-env server/tests/ops_readonly_cli_test.ts`: PASS, 3 tests.
+  - `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS.
+- Proximo ponto seguro: merge em `main`, publicacao Web/APK e registro de evidencia final.
