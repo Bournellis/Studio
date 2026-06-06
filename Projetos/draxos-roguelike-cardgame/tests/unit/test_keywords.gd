@@ -71,7 +71,7 @@ func test_new_arcano_cards_resolve_area_damage_and_accelerate() -> void:
 	assert_false(engine.can_play_card_without_target(0))
 	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "area": "board"}).get("ok", false)))
 	assert_eq(engine.mana, 2)
-	assert_eq(int(engine.get_state().get("temporary_ability_power", 0)), 3)
+	assert_eq(int(engine.get_state().get("temporary_ability_power", 0)), 4)
 	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 0}).get("ok", false)))
 	assert_null(engine.enemy_slots[0])
 

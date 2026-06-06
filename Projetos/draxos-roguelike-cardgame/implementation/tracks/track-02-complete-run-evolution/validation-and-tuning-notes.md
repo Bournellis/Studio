@@ -1,8 +1,8 @@
 # Track 02 Validation And Tuning Notes
 
 - Last Updated: `2026-06-06`
-- Prompt: `REWARD-CARD-REDESIGN-BATCH-01-USING-V4`
-- Status: `REWARD_CARD_REDESIGN_BATCH_01_V4_COMPLETE`
+- Prompt: `REWARD-CARD-REDESIGN-BATCH-02-UTILITY-USING-V4`
+- Status: `REWARD_CARD_REDESIGN_BATCH_02_UTILITY_V4_COMPLETE`
 
 ## Validation Summary
 
@@ -42,6 +42,8 @@
 - Card Impact V4 regression coverage: `track02_card_impact_v3` compare remains green at `user://card_impact/player_card_redesign_batch_02`; Battle Lab remains 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick remain green.
 - Reward Card Redesign Batch 01 Using V4 gate: `before`, `after` and `compare` pass at `user://card_impact/reward_card_redesign_batch_01_v4` with 108 player cards, 30 enemy report-only cards, 15 legacy inactive cards, zero structural errors, zero new failures, zero removed records, 6 changed battle records and 15 metric/effect deltas.
 - Reward Card Redesign Batch 01 Using V4 regression coverage: Battle Lab remains 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick remain green; `validate.gd` passes with 175/175 GUT tests and unchanged pacing telemetry.
+- Reward Card Redesign Batch 02 Utility Using V4 gate: `before`, `after` and `compare` pass at `user://card_impact/reward_card_redesign_batch_02_utility_v4` with 108 player cards, 30 enemy report-only cards, 15 legacy inactive cards, zero structural errors, zero new failures, zero removed records, 4 changed battle records and 7 metric/effect deltas.
+- Reward Card Redesign Batch 02 Utility Using V4 regression coverage: Battle Lab remains 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick remain green; `validate.gd` passes with 175/175 GUT tests and unchanged pacing telemetry.
 - Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 - Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
 - Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
@@ -192,7 +194,26 @@
   - `necro_colheita_das_almas_lvl3`: `effect.ashes_gained` `3 -> 4`.
 - Target capture quality stayed stable at 96 clean, 12 support-required, 0 ambiguous, 0 failed and 0 repeated.
 - Macro regression gates stayed green: Battle Lab `9 PASS / 3 WARN / 0 FAIL`, Scenario Fixtures `9 PASS / 3 WARN / 0 FAIL`, AutoRun smoke green, AutoRun quick green, and `validate.gd` passed with `175/175` tests and `1704` asserts.
-- Operational lesson: V4 exposed reward-card movement cleanly for damage, shield, summon stats, poison and economy effects. This batch intentionally did not exercise AP/utility-card movement, so the next useful batch should focus on utility/card-flow/AP reward cards.
+- Operational lesson: V4 exposed reward-card movement cleanly for damage, shield, summon stats, poison and economy effects. This batch intentionally did not exercise AP/utility-card movement; that follow-up is covered by Reward Card Redesign Batch 02 Utility Using V4.
+
+## Reward Card Redesign Batch 02 Utility Using V4
+
+- Purpose: execute a second real reward-card change cycle against Card Impact V4, focused on utility/control/economy effects rather than broad tuning.
+- Scope: four player reward/card variants; no enemy, route, shop, relic, encounter, reward schedule or tooling changes beyond docs/status/test expectation alignment.
+- Card changes:
+  - `arcano_acelerar_lvl3`: temporary ability power `3 -> 4`.
+  - `arcano_vortice`: frozen duration `1 -> 2`.
+  - `arcano_vortice_lvl2`: frozen duration `1 -> 2`.
+  - `necro_colheita_das_almas`: Ashes gain `2 -> 3` and `draw_if_at_least=3`.
+- Card Impact V4 compare at `user://card_impact/reward_card_redesign_batch_02_utility_v4`: PASS with 108 player cards, 30 enemy report-only cards, 15 legacy inactive cards, 0 structural errors, 0 new failures, 0 removed records, 0 status changes, 4 changed battle records and 7 metric/effect deltas.
+- Detected V4 effect deltas:
+  - `arcano_acelerar_lvl3`: `effect.temporary_ability_power_delta` `3 -> 4` and `effect.temporary_ability_power_gained` `3 -> 4`.
+  - `arcano_vortice`: `effect.freeze_added_total` `1 -> 2` and `effect.enemy_frozen_added` `1 -> 2`.
+  - `arcano_vortice_lvl2`: `effect.freeze_added_total` `1 -> 2` and `effect.enemy_frozen_added` `1 -> 2`.
+  - `necro_colheita_das_almas`: `effect.ashes_gained` `2 -> 3`.
+- Target capture quality stayed stable at 96 clean, 12 support-required, 0 ambiguous, 0 failed and 0 repeated.
+- Macro regression gates stayed green: Battle Lab `9 PASS / 3 WARN / 0 FAIL`, Scenario Fixtures `9 PASS / 3 WARN / 0 FAIL`, AutoRun smoke green, AutoRun quick green, and `validate.gd` passed with `175/175` tests and `1704` asserts.
+- Tooling lesson: temporary ability power utility movement is now proven by real V4 before/change/after/compare data. The new `draw_if_at_least` hook on `necro_colheita_das_almas` did not produce an observed `cards_drawn` delta in the current harness, so draw/discard/hand/deck work should get a small Card Impact V4.1 card-flow harness pass before larger card-flow redesigns.
 
 ## Screenshots
 
@@ -210,7 +231,7 @@ Captured at `1280x720` and `960x540` in:
 - Manual playtest remains the next production step and should use `docs/playtest-track-02.md`.
 - Balance changes should come from observed human runs, with AutoRun Gate Pack used for explicit regression, distribution checks and tuning comparison rather than as the final verdict.
 - Large player-card changes should now use Card Impact V4: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect full player coverage, target-capture quality, metric movement, utility deltas and player-card effect signatures before accepting the batch.
-- Recommended next implementation batch: use V4 on utility/card-flow/AP reward cards to exercise temporary ability power and utility-family deltas in a real before/change/after/compare cycle.
+- Recommended next implementation batch: add Card Impact V4.1 card-flow harness coverage so draw, discard, hand and deck deltas become reliable before larger card-flow redesigns.
 - Enemy-card signature derivation remains the recommended tooling follow-up once enemy per-card causality is exposed clearly enough.
 - Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
 

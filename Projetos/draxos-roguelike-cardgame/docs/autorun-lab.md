@@ -1,8 +1,8 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-06`
-- Status: `REWARD_CARD_REDESIGN_BATCH_01_V4_COMPLETE`
-- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures and V4 reward-card redesign validation
+- Status: `REWARD_CARD_REDESIGN_BATCH_02_UTILITY_V4_COMPLETE`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures and V4 utility reward-card redesign validation
 
 ## Purpose
 
@@ -27,6 +27,8 @@ Card Impact V3 Isolated Target Capture makes the player-card harness less ambigu
 Card Impact V4 Full Player Matrix expands the player-card matrix from the 54 core class variants to all 108 active player variants, including Terra/Gelo/Ar/Fogo reward cards and upgrades. It also promotes temporary ability power into explicit utility effect-signature fields while keeping enemy-card signatures report-only for a future causal enemy pass.
 
 Reward Card Redesign Batch 01 Using V4 is the first real reward-card edit cycle executed against the full 108-player-card matrix. It changes six reward/card-upgrade variants across Arcano, Invocador and Necromante, then uses V4 `before -> after -> compare` to confirm that the battle harness exposes the intended effect deltas while Scenario Fixtures, Run Lab and the full validation suite remain stable.
+
+Reward Card Redesign Batch 02 Utility Using V4 is the second real reward-card edit cycle on the full matrix. It focuses on utility/control/economy movement: temporary ability power, freeze duration and Ash generation/card-flow hook data. The V4 compare confirms utility/control/economy effect deltas while Scenario Fixtures, Run Lab and the full validation suite remain stable.
 
 Card Redesign Batch 01 is the first controlled real card-edit cycle using V2. It changes three Arcano damage upgrade variants, calibrates the damage-family harness so overkill does not hide effect movement, and proves that `effect.*` deltas can show intentional player-card movement while every structural gate remains green.
 
@@ -518,7 +520,44 @@ Macro regression gates after the batch:
 - AutoRun quick gate: PASS across 30 macro-route cases.
 - `tools/validate.gd`: PASS with 175/175 GUT tests, 1704 asserts and unchanged full-route pacing telemetry.
 
-Operational lesson: V4 is now proven on reward-card movement, including damage, shield, summon stat, poison and economy signatures. This batch did not exercise temporary ability power utility deltas, so the next useful card batch should focus on utility/card-flow/AP reward cards before enemy-card causality is promoted from report-only.
+Operational lesson: V4 is now proven on reward-card movement, including damage, shield, summon stat, poison and economy signatures. This batch did not exercise temporary ability power utility deltas; that follow-up is covered by Reward Card Redesign Batch 02 Utility Using V4.
+
+## Reward Card Redesign Batch 02 Utility Using V4
+
+Purpose: execute a second light reward-card tuning batch to prove that Card Impact V4 can expose utility/control/economy movement, especially temporary ability power.
+
+Changed player cards:
+
+- `arcano_acelerar_lvl3`: temporary ability power `+3 -> +4`.
+- `arcano_vortice`: frozen duration `1 -> 2` turns on one random enemy.
+- `arcano_vortice_lvl2`: frozen duration `1 -> 2` turns on up to two random enemies.
+- `necro_colheita_das_almas`: Ashes gain `2 -> 3` and `draw_if_at_least=3` hook added.
+
+Observed V4 compare result (`user://card_impact/reward_card_redesign_batch_02_utility_v4`):
+
+- Gate: PASS.
+- Coverage: 138/138 active report records, with 108 player cards, 30 enemy report-only cards and 15 legacy inactive cards audited.
+- Structural errors, new failures, removed records and status changes: 0.
+- Battle component changes: 4 changed records and 7 metric/effect changes.
+- Scenario and Run Lab components: 0 changes.
+- Target capture quality stayed stable: 96 clean, 12 support-required, 0 ambiguous, 0 failed and 0 repeated target captures.
+
+Detected player effect movement:
+
+- `arcano_acelerar_lvl3`: `effect.temporary_ability_power_delta` `3 -> 4` and `effect.temporary_ability_power_gained` `3 -> 4`.
+- `arcano_vortice`: `effect.freeze_added_total` `1 -> 2` and `effect.enemy_frozen_added` `1 -> 2`.
+- `arcano_vortice_lvl2`: `effect.freeze_added_total` `1 -> 2` and `effect.enemy_frozen_added` `1 -> 2`.
+- `necro_colheita_das_almas`: `effect.ashes_gained` `2 -> 3`.
+
+Macro regression gates after the batch:
+
+- Battle Lab: 9 PASS / 3 WARN / 0 FAIL.
+- Scenario Fixtures: 9 PASS / 3 WARN / 0 FAIL.
+- AutoRun smoke gate: PASS.
+- AutoRun quick gate: PASS across 30 macro-route cases.
+- `tools/validate.gd`: PASS with 175/175 GUT tests, 1704 asserts and unchanged full-route pacing telemetry.
+
+Operational lesson: V4 now has a real utility-family delta through temporary ability power and continues to expose control/economy movement cleanly. The new `draw_if_at_least` hook on `necro_colheita_das_almas` did not surface a `cards_drawn` effect delta in the current harness; if card-flow deltas become important, the next tooling step should add a dedicated card-flow harness or fixture before broad draw/discard redesigns.
 
 ## Result Schema
 
@@ -557,7 +596,7 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Run a second V4 reward-card batch focused on utility/card-flow/AP effects so the new utility signature fields are exercised by real card movement.
+1. Add a Card Impact V4.1 card-flow harness/fixture pass for draw, discard, hand and deck deltas so card-flow changes are as observable as damage, control, economy and utility.
 2. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
 3. Implement enemy-card effect signatures once enemy action logs expose enough per-card causality to avoid guessing.
 4. Replay Lab: record human or bot decisions and replay them across builds.

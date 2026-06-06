@@ -1468,11 +1468,11 @@
       "display_name": "Acelerar Lvl 3",
       "type": "magia",
       "cost": 0,
-      "text": "Mesa aliada alvo. Ganha +3 Poder de habilidade e +1 mana ate o final do turno.",
+      "text": "Mesa aliada alvo. Ganha +4 Poder de habilidade e +1 mana ate o final do turno.",
       "effect": {
         "action": "gain_mana",
         "mana": 1,
-        "temporary_ability_power": 3
+        "temporary_ability_power": 4
       }
     },
     {
@@ -2121,11 +2121,11 @@
       "display_name": "Vortice",
       "type": "magia",
       "cost": 2,
-      "text": "Congela 1 criatura inimiga aleatoria. Gera 1 Fluxo.",
+      "text": "Congela 1 criatura inimiga aleatoria por 2 turnos. Gera 1 Fluxo.",
       "effect": {
         "action": "freeze_random_enemy",
         "count": 1,
-        "amount": 1,
+        "amount": 2,
         "gain_flow": 1
       }
     },
@@ -2134,11 +2134,11 @@
       "display_name": "Vortice Lvl 2",
       "type": "magia",
       "cost": 2,
-      "text": "Congela ate 2 criaturas inimigas aleatorias. Gera 1 Fluxo.",
+      "text": "Congela ate 2 criaturas inimigas aleatorias por 2 turnos. Gera 1 Fluxo.",
       "effect": {
         "action": "freeze_random_enemy",
         "count": 2,
-        "amount": 1,
+        "amount": 2,
         "gain_flow": 1
       }
     },
@@ -2830,11 +2830,12 @@
       "display_name": "Colheita das Almas",
       "type": "magia",
       "cost": 0,
-      "text": "Gera 2 Cinzas, +1 para cada criatura morta nesta batalha.",
+      "text": "Gera 3 Cinzas, +1 por morte. Se gerar 3 ou mais, compra 1 carta.",
       "effect": {
         "action": "gain_ashes",
-        "amount": 2,
-        "per_dead_unit": true
+        "amount": 3,
+        "per_dead_unit": true,
+        "draw_if_at_least": 3
       }
     },
     {
