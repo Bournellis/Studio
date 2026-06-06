@@ -340,8 +340,8 @@ async function proveSessionRewardAndIdempotency(
       { node_id: "node_madeira_01", item_id: "madeira" },
       { node_id: "node_pedra_01", item_id: "pedra" },
       { node_id: "node_pedra_pequena_01", item_id: "pedra_pequena" },
-      { node_id: "node_ossos_preview_01", item_id: "ossos_preview" },
-      { node_id: "node_po_osso_preview_01", item_id: "po_osso_preview" },
+      { node_id: "node_ossos_preview_01", item_id: "resto_ritual" },
+      { node_id: "node_po_osso_preview_01", item_id: "po_cinzento" },
     ]
   ) {
     revision = await recordEvent(account, sessionId, revision, "collect_start", {
@@ -552,8 +552,8 @@ async function proveDailyCapZeroCompletion(account: TestAccount): Promise<void> 
       { node_id: "node_madeira_01", item_id: "madeira" },
       { node_id: "node_pedra_01", item_id: "pedra" },
       { node_id: "node_pedra_pequena_01", item_id: "pedra_pequena" },
-      { node_id: "node_ossos_preview_01", item_id: "ossos_preview" },
-      { node_id: "node_po_osso_preview_01", item_id: "po_osso_preview" },
+      { node_id: "node_ossos_preview_01", item_id: "resto_ritual" },
+      { node_id: "node_po_osso_preview_01", item_id: "po_cinzento" },
     ]
   ) {
     revision = await recordEvent(account, sessionId, revision, "collect_complete", {
@@ -891,7 +891,7 @@ async function exhaustDailyCaps(account: TestAccount): Promise<void> {
       ${completeRequestId}::uuid,
       120,
       120,
-      '{"ossos_preview":6,"po_osso_preview":6}'::jsonb,
+      '{"resto_ritual":6,"po_cinzento":6}'::jsonb,
       '{}'::jsonb,
       ${sql.json(rewardPayload as any)},
       now() - interval '1 hour',

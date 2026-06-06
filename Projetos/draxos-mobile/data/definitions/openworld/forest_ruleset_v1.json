@@ -52,8 +52,8 @@
     {"item_id": "inseto", "display_name": "Inseto", "weight": 0.2, "gather_time": 1.5, "reward_resource_id": "essence"},
     {"item_id": "resina", "display_name": "Resina", "weight": 0.5, "gather_time": 2.2, "reward_resource_id": "essence"},
     {"item_id": "cinzas_preview", "display_name": "Cinzas preview", "weight": 0.3, "gather_time": 2.5, "reward_resource_id": "ashes"},
-    {"item_id": "ossos_preview", "display_name": "Ossos preview", "weight": 1.2, "gather_time": 2.5, "reward_resource_id": "bone"},
-    {"item_id": "po_osso_preview", "display_name": "Po de Osso preview", "weight": 0.5, "gather_time": 2.5, "reward_resource_id": "bone_dust"}
+    {"item_id": "resto_ritual", "display_name": "Resto ritual", "weight": 1.2, "gather_time": 2.5, "reward_resource_id": "ritual_scrap"},
+    {"item_id": "po_cinzento", "display_name": "Po cinzento", "weight": 0.5, "gather_time": 2.5, "reward_resource_id": "grey_dust"}
   ],
   "recipes": [
     {
@@ -108,8 +108,8 @@
     {"node_id": "node_folha_seca_02", "item_id": "folha_seca", "position": {"x": 508, "y": 1038}, "quantity": 1},
     {"node_id": "node_folha_seca_03", "item_id": "folha_seca", "position": {"x": 382, "y": 1010}, "quantity": 1},
     {"node_id": "node_cinzas_preview_01", "item_id": "cinzas_preview", "position": {"x": 600, "y": 1220}, "quantity": 1},
-    {"node_id": "node_ossos_preview_01", "item_id": "ossos_preview", "position": {"x": 710, "y": 1260}, "quantity": 1},
-    {"node_id": "node_po_osso_preview_01", "item_id": "po_osso_preview", "position": {"x": 790, "y": 1160}, "quantity": 1}
+    {"node_id": "node_ossos_preview_01", "item_id": "resto_ritual", "position": {"x": 710, "y": 1260}, "quantity": 1},
+    {"node_id": "node_po_osso_preview_01", "item_id": "po_cinzento", "position": {"x": 790, "y": 1160}, "quantity": 1}
   ],
   "structures": [
     {
