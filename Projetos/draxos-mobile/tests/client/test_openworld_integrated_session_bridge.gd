@@ -10,6 +10,7 @@ class FakeSessionStore:
 	var access_token := ""
 	var apply_ok := true
 	var openworld_local_state: Dictionary = {}
+	var openworld_durable_progress_state: Dictionary = {}
 	var prepared: Array[Dictionary] = []
 	var applied: Array[Dictionary] = []
 	var failed: Array[Dictionary] = []
@@ -39,14 +40,45 @@ class FakeSessionStore:
 			"body": body.duplicate(true),
 		})
 
-	func remember_openworld_local_state(state: Dictionary) -> void:
-		openworld_local_state = state.duplicate(true)
+	func remember_openworld_active_session_state(state: Dictionary) -> void:
+		openworld_local_state = {
+			"schema_version": "openworld_forest_local_state_v2",
+			"active_session_cache": state.duplicate(true),
+		}
+		if not openworld_durable_progress_state.is_empty():
+			openworld_local_state["durable_progress_cache"] = openworld_durable_progress_state.duplicate(true)
 
-	func openworld_local_snapshot() -> Dictionary:
+	func remember_openworld_local_state(state: Dictionary) -> void:
+		remember_openworld_active_session_state(state)
+
+	func openworld_active_session_snapshot() -> Dictionary:
+		if str(openworld_local_state.get("schema_version", "")) == "openworld_forest_local_state_v2":
+			return Dictionary(openworld_local_state.get("active_session_cache", {})).duplicate(true)
 		return openworld_local_state.duplicate(true)
 
-	func clear_openworld_local_state() -> void:
+	func openworld_local_snapshot() -> Dictionary:
+		return openworld_active_session_snapshot()
+
+	func remember_openworld_durable_progress_state(progress: Dictionary) -> void:
+		openworld_durable_progress_state = progress.duplicate(true)
+		if str(openworld_local_state.get("schema_version", "")) == "openworld_forest_local_state_v2":
+			openworld_local_state["durable_progress_cache"] = openworld_durable_progress_state.duplicate(true)
+
+	func openworld_durable_progress_snapshot() -> Dictionary:
+		return openworld_durable_progress_state.duplicate(true)
+
+	func clear_openworld_active_session_state() -> void:
+		if str(openworld_local_state.get("schema_version", "")) == "openworld_forest_local_state_v2":
+			openworld_local_state.erase("active_session_cache")
+			if openworld_durable_progress_state.is_empty():
+				openworld_local_state = {}
+			else:
+				openworld_local_state["durable_progress_cache"] = openworld_durable_progress_state.duplicate(true)
+			return
 		openworld_local_state = {}
+
+	func clear_openworld_local_state() -> void:
+		clear_openworld_active_session_state()
 
 	func ensure_session_id() -> String:
 		return "telemetry-session"
@@ -156,7 +188,8 @@ func test_start_session_prepares_idempotent_request_hydrates_and_caches_session(
 	assert_eq(int(model.pocket.get("galho", 0)), 2)
 	assert_eq(str(store.prepared[0].get("endpoint", "")), "modes/session/start")
 	assert_eq(str(client.start_calls[0].get("request_hash", "")), "hash-1")
-	assert_eq(str(store.openworld_local_state.get("session_id", "")), "session-start")
+	assert_eq(str(store.openworld_active_session_snapshot().get("session_id", "")), "session-start")
+	assert_eq(int(Dictionary(store.openworld_durable_progress_snapshot().get("pocket", {})).get("galho", 0)), 2)
 
 func test_resume_prefers_local_cache_and_remote_metadata_does_not_transform_world() -> void:
 	var model = ModelScript.new()
@@ -184,7 +217,7 @@ func test_resume_prefers_local_cache_and_remote_metadata_does_not_transform_worl
 	assert_eq(bridge.snapshot_revision(), 9)
 	assert_eq(int(model.chest.get("galho", 0)), 2)
 	assert_eq(int(model.chest.get("folha", 0)), 0)
-	assert_eq(str(model.last_message), "Bosque salvo localmente.")
+	assert_eq(str(model.last_message), "Bau e mochila salvos.")
 
 func test_collect_and_deposit_save_checkpoint_without_legacy_microevents() -> void:
 	var model = ModelScript.new()
@@ -230,7 +263,7 @@ func test_checkpoint_network_failure_keeps_local_state_and_retries_successfully(
 	assert_eq(client.checkpoint_calls.size(), 1)
 	assert_true(bool(bridge.debug_snapshot().get("checkpoint_dirty", false)))
 	assert_true(bool(bridge.debug_snapshot().get("event_retry_scheduled", false)))
-	assert_eq(int(Dictionary(store.openworld_local_state.get("snapshot_payload", {})).get("session_seconds", 0)), 6)
+	assert_eq(int(Dictionary(store.openworld_active_session_snapshot().get("snapshot_payload", {})).get("session_seconds", 0)), 6)
 
 	await bridge.retry_queued_events_now()
 
@@ -264,7 +297,8 @@ func test_complete_session_flushes_checkpoint_before_reward_complete() -> void:
 	assert_eq(int(Dictionary(client.complete_calls[0].get("payload", {})).get("expected_revision", 0)), 5)
 	assert_string_contains(bridge.last_result_text, "Recompensa aplicada")
 	assert_eq(bridge.session_state(), "completed")
-	assert_true(store.openworld_local_state.is_empty())
+	assert_true(store.openworld_active_session_snapshot().is_empty())
+	assert_eq(int(Dictionary(store.openworld_durable_progress_snapshot().get("chest", {})).get("galho", 0)), 3)
 
 func test_abandon_session_uses_request_hash_and_clears_local_checkpoint_cache() -> void:
 	var model = ModelScript.new()
@@ -286,7 +320,7 @@ func test_abandon_session_uses_request_hash_and_clears_local_checkpoint_cache() 
 	assert_eq(str(client.abandon_calls[0].get("request_hash", "")), "hash-1")
 	assert_eq(bridge.server_session_id(), "")
 	assert_eq(bridge.session_state(), "preview")
-	assert_true(store.openworld_local_state.is_empty())
+	assert_true(store.openworld_active_session_snapshot().is_empty())
 
 func _bridge(model: Object, client: Node, store: Node):
 	add_child_autofree(client)

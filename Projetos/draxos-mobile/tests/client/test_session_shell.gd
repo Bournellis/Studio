@@ -102,6 +102,43 @@ func test_session_store_tracks_active_save_without_mixing_snapshots() -> void:
 	store.free()
 	restored.free()
 
+func test_session_store_separates_openworld_active_cache_from_durable_progress() -> void:
+	var store = SessionStoreScript.new()
+	store.active_save_type = SessionStoreScript.SAVE_TYPE_NORMAL
+
+	store.remember_openworld_active_session_state({
+		"schema_version": "openworld_forest_local_checkpoint_v1",
+		"save_type": "normal",
+		"session_id": "session-active",
+		"ruleset_id": "openworld_forest_ruleset_v1",
+		"ruleset_version": 1,
+		"snapshot_payload": {"chest": {"galho": 1}},
+	})
+	store.remember_openworld_durable_progress_state({
+		"schema_version": "openworld_forest_progress_v1",
+		"save_type": "normal",
+		"ruleset_id": "openworld_forest_ruleset_v1",
+		"ruleset_version": 1,
+		"pocket": {"folha": 2},
+		"chest": {"galho": 4},
+		"upgrades": {"bolsa_simples_1": true, "fogueira_estavel_1": true},
+	})
+
+	assert_eq(str(store.openworld_active_session_snapshot().get("session_id", "")), "session-active")
+	assert_eq(int(Dictionary(store.openworld_durable_progress_snapshot().get("chest", {})).get("galho", 0)), 4)
+
+	store.clear_openworld_active_session_state()
+
+	assert_true(store.openworld_active_session_snapshot().is_empty())
+	assert_eq(int(Dictionary(store.openworld_durable_progress_snapshot().get("pocket", {})).get("folha", 0)), 2)
+	assert_true(bool(Dictionary(store.openworld_durable_progress_snapshot().get("upgrades", {})).get("fogueira_estavel_1", false)))
+
+	store.clear_openworld_all_local_state()
+
+	assert_true(store.openworld_active_session_snapshot().is_empty())
+	assert_true(store.openworld_durable_progress_snapshot().is_empty())
+	store.free()
+
 func test_session_store_keeps_server_state_as_snapshot() -> void:
 	var store = SessionStoreScript.new()
 	store.apply_auth_session({
