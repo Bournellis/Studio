@@ -861,7 +861,7 @@ func test_arena_active_exposes_behavior_adjustment_without_unlocking_loadout() -
 	assert_null(_find_button_by_text(boot._content_body, "Equipar Pocao de Vida"))
 	assert_null(_find_button_by_text(boot._content_body, "Remover pocao"))
 	assert_null(_find_button_by_text(boot._content_body, "Remover"))
-	assert_not_null(_find_button_by_text(boot._content_body, "Usar com vida baixa"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Usar comportamento padrao"))
 	assert_not_null(_find_button_by_text(boot._content_body, "Pausar pocao"))
 
 func test_arena_buff_choice_renders_comparable_cards_with_existing_actions() -> void:
@@ -1236,7 +1236,7 @@ func test_boot_profile_account_panel_shows_save_account_update_and_build_status(
 	assert_true(_label_tree_contains(boot._content_body, "Auth: email/senha (alpha@example.com)"))
 	assert_true(_label_tree_contains(boot._content_body, "Estado: carregado do save ativo"))
 	assert_true(_label_tree_contains(boot._content_body, "Update: Build atualizada"))
-	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.6-alpha.0 | online pronto"))
+	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.7-alpha.0 | online pronto"))
 	assert_null(boot._auth_email_input)
 
 func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> void:
@@ -1246,7 +1246,7 @@ func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> 
 
 	assert_true(_label_tree_contains(boot._content_body, "Username: sem conta carregada"))
 	assert_true(_label_tree_contains(boot._content_body, "Estado: sem sessao auth"))
-	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.6-alpha.0 | aguardando login"))
+	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.7-alpha.0 | aguardando login"))
 	assert_null(boot._auth_email_input)
 
 func test_boot_surface_presenters_render_shells_without_network() -> void:
@@ -1541,10 +1541,11 @@ func test_base_presenter_renders_crafting_state_without_network() -> void:
 	await get_tree().process_frame
 
 	assert_true(_label_tree_contains(boot._base_state_container, "Po de Osso 75"))
-	assert_true(_label_tree_contains(boot._base_state_container, "Pocao de Vida 2"))
-	assert_true(_label_tree_contains(boot._base_state_container, "Criar Pocao de Vida custa 50 Po de Osso"))
+	assert_true(_label_tree_contains(boot._base_state_container, "Pocoes 2"))
+	assert_true(_label_tree_contains(boot._base_state_container, "As pocoes agora usam materiais do Bau e a Fogueira do Bosque."))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_CRUSH_BONES))
-	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_CRAFT_HEALTH_POTION))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.open_mode_shell_action("openworld")))
+	assert_false(boot._action_buttons.has(AppShellActionContractScript.ACTION_CRAFT_HEALTH_POTION))
 
 func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void:
 	var boot = BootScreenScript.new()
@@ -1624,7 +1625,7 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(_label_tree_contains(content, "Primeira sessao: confira instrumento, habilidades e pocao antes da Arena."))
 	assert_true(_label_tree_contains(content, "Poder 243"))
 	assert_true(_label_tree_contains(content, "Loadout atual:"))
-	assert_true(_label_tree_contains(content, "Pocao e comportamento: Pocao de Vida equipada | Usa automaticamente com vida baixa"))
+	assert_true(_label_tree_contains(content, "Pocao e comportamento: Pocao de Vida equipada | Usa automaticamente; entra melhor com Vida abaixo de 40%"))
 	assert_true(_label_tree_contains(content, "Editar loadout e comportamento"))
 	assert_true(_label_tree_contains(content, "Ajuste instrumento, habilidades, Doutrina, Familiar, Pocao e preferencias simples."))
 	assert_true(_label_tree_contains(content, "Instrumento: Varinha de Cinzas"))
@@ -1637,8 +1638,8 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(_label_tree_contains(content, "Em uso: Varinha de Cinzas L4"))
 	assert_true(_label_tree_contains(content, "Athame Hematico: Disponivel"))
 	assert_true(_label_tree_contains(content, "Pocao de Vida equipada"))
-	assert_true(_label_tree_contains(content, "Estoque: 3"))
-	assert_true(_label_tree_contains(content, "Usa automaticamente com vida baixa"))
+	assert_true(_label_tree_contains(content, "Estoque: Pocao de Vida x3"))
+	assert_true(_label_tree_contains(content, "Usa automaticamente; entra melhor com Vida abaixo de 40%"))
 	assert_true(_label_tree_contains(content, "Habilidade 1: Sussurro do Medo | Usa quando estiver pronta"))
 	assert_true(_label_tree_contains(content, "Habilidade 2: vazia."))
 	assert_true(_label_tree_contains(content, "Habilidade 3: desbloqueia no nivel 25."))
@@ -1648,7 +1649,7 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	assert_true(_label_tree_contains(content, "Lobo Tumular: Desbloqueia no nivel 15."))
 	assert_not_null(_find_button_by_text(content, "Equipar Pocao de Vida"))
 	assert_not_null(_find_button_by_text(content, "Remover pocao"))
-	assert_not_null(_find_button_by_text(content, "Usar com vida baixa"))
+	assert_not_null(_find_button_by_text(content, "Usar comportamento padrao"))
 	assert_not_null(_find_button_by_text(content, "Pausar pocao"))
 	assert_not_null(_find_button_by_text(content, "Usar na Arena"))
 	assert_not_null(_find_button_by_text(content, "Pausar"))
@@ -1656,7 +1657,7 @@ func test_refuge_preparation_renders_potion_slot_and_behavior_defaults() -> void
 	var visible_text := _visible_text_tree(content).to_lower()
 	for forbidden: String in ["behavior", "build", "slot", "endpoint", "server-authoritative", "schema", "snapshot"]:
 		assert_false(visible_text.contains(forbidden), "Preparation should hide technical term '%s'." % forbidden)
-	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.equip_potion_action(AppShellActionContractScript.ITEM_HEALTH_POTION)))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_UNEQUIP_POTION))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.enable_spell_behavior_action("sussurro_medo")))
@@ -1678,7 +1679,7 @@ func test_preparation_action_contract_keeps_player_safe_defaults_and_errors() ->
 	assert_false(PreparationActionContractScript.is_network_error("POTION_NOT_OWNED"))
 	assert_eq(
 		PreparationActionContractScript.error_message("POTION_NOT_OWNED"),
-		"Voce ainda nao tem essa Pocao de Vida. Crie uma no Refugio primeiro."
+		"Voce ainda nao tem essa pocao. Prepare uma na Fogueira do Bosque."
 	)
 	assert_eq(
 		PreparationActionContractScript.error_message("NETWORK_UNAVAILABLE"),
@@ -1784,7 +1785,7 @@ func test_refuge_preparation_renders_empty_and_paused_states_without_network() -
 	assert_not_null(content)
 	assert_true(_label_tree_contains(content, "Em uso: Orbe da Tempestade"))
 	assert_true(_label_tree_contains(content, "Nenhuma pocao equipada"))
-	assert_true(_label_tree_contains(content, "Estoque: 0"))
+	assert_true(_label_tree_contains(content, "Estoque: nenhuma"))
 	assert_true(_label_tree_contains(content, "Nenhuma habilidade equipada."))
 
 func test_refuge_preparation_renders_paused_potion_and_spell_publicly() -> void:

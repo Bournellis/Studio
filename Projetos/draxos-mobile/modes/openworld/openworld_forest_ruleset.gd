@@ -119,6 +119,7 @@ static func structures() -> Array[Dictionary]:
 			"blocks_player": bool(structure.get("blocks_player", true)),
 			"collectible": false,
 			"upgrade_id": str(structure.get("upgrade_id", "")),
+			"station_id": str(structure.get("station_id", structure.get("upgrade_id", ""))),
 			"sort_offset": float(structure.get("sort_offset", 20.0)),
 		})
 	return result

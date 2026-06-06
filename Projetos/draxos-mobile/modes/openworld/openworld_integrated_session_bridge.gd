@@ -61,6 +61,12 @@ func server_session_id() -> String:
 func snapshot_revision() -> int:
 	return _snapshot_revision
 
+func durable_progress_revision() -> int:
+	var progress := _durable_progress_cache_snapshot()
+	if not progress.is_empty() and _durable_progress_matches_context(progress):
+		return int(progress.get("progress_revision", _snapshot_revision))
+	return _snapshot_revision
+
 func network_busy() -> bool:
 	return _network_busy
 
@@ -394,6 +400,24 @@ func apply_remote_snapshot(snapshot_payload: Dictionary, apply_remote_position :
 	elif model != null and model.has_method("apply_snapshot"):
 		model.apply_snapshot(snapshot_payload)
 
+func apply_station_craft_ack(body: Dictionary) -> void:
+	_remember_durable_progress_from_body(body)
+	var session := _as_dictionary(body.get("session", {}))
+	var session_id := str(body.get("session_id", session.get("id", ""))).strip_edges()
+	if session_id != "":
+		_server_session_id = session_id
+	var revision_after := int(body.get("snapshot_revision", session.get("snapshot_revision", _snapshot_revision)))
+	_snapshot_revision = maxi(_snapshot_revision, revision_after)
+	var patch := _durable_progress_patch(_durable_progress_cache_snapshot())
+	if not patch.is_empty():
+		patch["last_message"] = "Pocao preparada."
+		apply_remote_snapshot(patch, false)
+	_server_synced = not _checkpoint_dirty
+	_session_state = SESSION_PENDING if _checkpoint_dirty else SESSION_SYNCED
+	_save_local_checkpoint_state()
+	_emit_client_telemetry("station_craft_applied", {"result": "ok"})
+	_emit_state_changed()
+
 func record_event_deferred(event_type: String, event_payload: Dictionary) -> void:
 	if not uses_authority():
 		return
@@ -677,7 +701,7 @@ func _durable_source_from_snapshot(snapshot_payload: Dictionary) -> Dictionary:
 	var durable_progress := _as_dictionary(snapshot_payload.get("durable_progress", {}))
 	if not durable_progress.is_empty():
 		return durable_progress
-	if snapshot_payload.has("pocket") or snapshot_payload.has("chest") or snapshot_payload.has("upgrades"):
+	if snapshot_payload.has("pocket") or snapshot_payload.has("chest") or snapshot_payload.has("upgrades") or snapshot_payload.has("structures"):
 		return snapshot_payload
 	var durable_base := _as_dictionary(snapshot_payload.get("durable_base", {}))
 	return durable_base
@@ -685,6 +709,12 @@ func _durable_source_from_snapshot(snapshot_payload: Dictionary) -> Dictionary:
 func _normalize_durable_progress(source: Dictionary, metadata: Dictionary = {}) -> Dictionary:
 	if source.is_empty() and metadata.is_empty():
 		return {}
+	var upgrades := _true_dictionary(source.get("upgrades", {}))
+	var structures := _true_dictionary(source.get("structures", {}))
+	if bool(upgrades.get("fogueira_estavel_1", false)):
+		structures["fogueira_estavel_1"] = true
+	if bool(structures.get("fogueira_estavel_1", false)):
+		upgrades["fogueira_estavel_1"] = true
 	var progress := {
 		"schema_version": DURABLE_PROGRESS_SCHEMA,
 		"save_type": str(source.get("save_type", metadata.get("save_type", _active_save_type()))),
@@ -692,7 +722,8 @@ func _normalize_durable_progress(source: Dictionary, metadata: Dictionary = {}) 
 		"ruleset_version": int(source.get("ruleset_version", metadata.get("ruleset_version", ModelScript.RULESET_VERSION))),
 		"pocket": _positive_int_dictionary(source.get("pocket", {})),
 		"chest": _positive_int_dictionary(source.get("chest", {})),
-		"upgrades": _true_dictionary(source.get("upgrades", {})),
+		"upgrades": upgrades,
+		"structures": structures,
 		"reward_ledger": _as_dictionary(source.get("reward_ledger", metadata.get("reward_ledger", {}))).duplicate(true),
 		"last_checkpoint_session_id": str(source.get("last_checkpoint_session_id", metadata.get("last_checkpoint_session_id", ""))),
 		"last_completed_session_id": str(source.get("last_completed_session_id", metadata.get("last_completed_session_id", ""))),
@@ -719,6 +750,7 @@ func _durable_progress_patch(progress: Dictionary) -> Dictionary:
 		"pocket": _positive_int_dictionary(progress.get("pocket", {})),
 		"chest": _positive_int_dictionary(progress.get("chest", {})),
 		"upgrades": _true_dictionary(progress.get("upgrades", {})),
+		"structures": _true_dictionary(progress.get("structures", {})),
 	}
 
 func _load_local_checkpoint_state() -> bool:

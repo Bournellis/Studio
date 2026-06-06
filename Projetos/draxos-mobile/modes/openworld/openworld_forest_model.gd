@@ -29,6 +29,7 @@ const GUIDANCE_STEPS := [
 var pocket: Dictionary = {}
 var chest: Dictionary = {}
 var upgrades: Dictionary = {}
+var structures: Dictionary = {}
 var active_collection: Dictionary = {}
 var guidance: Dictionary = _default_guidance()
 var last_message := ""
@@ -37,6 +38,7 @@ func reset() -> void:
 	pocket = {}
 	chest = {}
 	upgrades = {}
+	structures = {}
 	active_collection = {}
 	guidance = _default_guidance()
 	last_message = "Bosque local reiniciado."
@@ -57,6 +59,7 @@ func snapshot() -> Dictionary:
 		"pocket": pocket.duplicate(true),
 		"chest": chest.duplicate(true),
 		"upgrades": upgrades.duplicate(true),
+		"structures": structures.duplicate(true),
 		"capacity": capacity(),
 		"pocket_weight": pocket_weight(),
 		"current_speed": current_speed(),
@@ -79,6 +82,9 @@ func apply_authoritative_patch(snapshot_patch: Dictionary, preserve_active_colle
 		chest = _positive_int_dictionary(snapshot_patch.get("chest", {}))
 	if snapshot_patch.has("upgrades"):
 		upgrades = _boolean_dictionary(snapshot_patch.get("upgrades", {}))
+	if snapshot_patch.has("structures"):
+		structures = _boolean_dictionary(snapshot_patch.get("structures", {}))
+	_sync_structure_upgrade_aliases()
 	if snapshot_patch.has("guidance"):
 		guidance = _guidance_dictionary(snapshot_patch.get("guidance", {}))
 	if snapshot_patch.has("active_collection"):
@@ -97,6 +103,7 @@ func result_payload(session_seconds: float = 0.0) -> Dictionary:
 		"session_seconds": maxf(0.0, session_seconds),
 		"deposited_items": chest.duplicate(true),
 		"local_upgrades": upgrades.duplicate(true),
+		"local_structures": structures.duplicate(true),
 		"guidance": guidance_state(),
 		"activity_score": activity_score(),
 	}
@@ -250,6 +257,8 @@ func craft(recipe_id: String) -> Dictionary:
 	var upgrade_id := str(recipe.get("upgrade_id", "")).strip_edges()
 	if upgrade_id != "":
 		upgrades[upgrade_id] = true
+		if upgrade_id == "fogueira_estavel_1":
+			structures[upgrade_id] = true
 	var output := _as_dictionary(recipe.get("output", {}))
 	for key: String in output.keys():
 		chest[key] = int(chest.get(key, 0)) + int(output.get(key, 0))
@@ -257,7 +266,10 @@ func craft(recipe_id: String) -> Dictionary:
 	return {"ok": true, "recipe_id": recipe_id, "upgrade_id": upgrade_id, "message": last_message}
 
 func has_upgrade(upgrade_id: String) -> bool:
-	return bool(upgrades.get(upgrade_id, false))
+	var clean_id := upgrade_id.strip_edges()
+	if clean_id == "fogueira_estavel_1" and bool(structures.get(clean_id, false)):
+		return true
+	return bool(upgrades.get(clean_id, false))
 
 func available_craft_count() -> int:
 	var count := 0
@@ -308,6 +320,9 @@ func upgrades_summary_text(empty_text: String = "-") -> String:
 	var active := PackedStringArray()
 	for key: String in _sorted_keys(upgrades):
 		if bool(upgrades.get(key, false)):
+			active.append(upgrade_display_name(key))
+	for key: String in _sorted_keys(structures):
+		if bool(structures.get(key, false)) and not bool(upgrades.get(key, false)):
 			active.append(upgrade_display_name(key))
 	return empty_text if active.is_empty() else ", ".join(active)
 
@@ -456,6 +471,12 @@ func _boolean_dictionary(value: Variant) -> Dictionary:
 		if bool(source.get(key, false)):
 			result[key] = true
 	return result
+
+func _sync_structure_upgrade_aliases() -> void:
+	if bool(upgrades.get("fogueira_estavel_1", false)):
+		structures["fogueira_estavel_1"] = true
+	if bool(structures.get("fogueira_estavel_1", false)):
+		upgrades["fogueira_estavel_1"] = true
 
 func _guidance_dictionary(value: Variant) -> Dictionary:
 	var source := _default_guidance()

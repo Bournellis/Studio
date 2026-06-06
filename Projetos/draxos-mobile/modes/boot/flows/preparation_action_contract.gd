@@ -24,7 +24,7 @@ static func error_message(code: String) -> String:
 		"UNAUTHENTICATED", "AUTH_REQUIRES_EMAIL":
 			return "Entre com email ou use guest dev para preparar a batalha."
 		"POTION_NOT_OWNED":
-			return "Voce ainda nao tem essa Pocao de Vida. Crie uma no Refugio primeiro."
+			return "Voce ainda nao tem essa pocao. Prepare uma na Fogueira do Bosque."
 		"INVALID_POTION":
 			return "Essa pocao ainda nao pode ser usada na preparacao."
 		"INVALID_WEAPON", "INVALID_WEAPON_QUALITY":
@@ -59,12 +59,26 @@ static func error_message(code: String) -> String:
 static func is_network_error(code: String) -> bool:
 	return bool(NETWORK_ERROR_CODES.get(code.strip_edges(), false))
 
-static func default_potion_behavior() -> Dictionary:
-	return {
-		"enabled": true,
-		"hp": {"mode": "below", "percent": 40},
-		"mana": {"mode": "ignore", "percent": 0},
-	}
+static func default_potion_behavior(item_id: String = "pocao_vida") -> Dictionary:
+	match item_id.strip_edges():
+		"pocao_foco":
+			return {
+				"enabled": true,
+				"hp": {"mode": "ignore", "percent": 0},
+				"mana": {"mode": "below", "percent": 35},
+			}
+		"pocao_resguardo":
+			return {
+				"enabled": true,
+				"hp": {"mode": "below", "percent": 55},
+				"mana": {"mode": "ignore", "percent": 0},
+			}
+		_:
+			return {
+				"enabled": true,
+				"hp": {"mode": "below", "percent": 40},
+				"mana": {"mode": "ignore", "percent": 0},
+			}
 
 static func default_spell_behavior(enabled: bool) -> Dictionary:
 	return {

@@ -3,6 +3,7 @@ extends RefCounted
 
 signal deposit_requested
 signal craft_requested(recipe_id: String)
+signal station_craft_requested(recipe_id: String)
 signal complete_requested
 signal abandon_requested
 signal back_requested
@@ -172,6 +173,9 @@ func build(root: Control, next_model: Variant) -> void:
 	sheet.craft_requested.connect(func(recipe_id: String) -> void:
 		craft_requested.emit(recipe_id)
 	)
+	sheet.station_craft_requested.connect(func(recipe_id: String) -> void:
+		station_craft_requested.emit(recipe_id)
+	)
 	sheet.complete_requested.connect(func() -> void:
 		complete_requested.emit()
 	)
@@ -297,7 +301,8 @@ func _render_sheet_if_needed(state: Dictionary, force: bool) -> void:
 		str(state.get("session_state", "preview")),
 		str(state.get("session_message", "")),
 		bool(state.get("abandon_available", false)),
-		bool(state.get("abandon_confirm_pending", false))
+		bool(state.get("abandon_confirm_pending", false)),
+		bool(state.get("station_nearby", false))
 	)
 	sheet.set_deposit_available(bool(state.get("deposit_available", false)))
 
@@ -315,12 +320,16 @@ func _sheet_signature(state: Dictionary) -> String:
 		"session_message": state.get("session_message", ""),
 		"abandon_available": state.get("abandon_available", false),
 		"abandon_confirm_pending": state.get("abandon_confirm_pending", false),
+		"station_nearby": state.get("station_nearby", false),
 		"deposit_available": state.get("deposit_available", false),
 		"pocket": model.pocket if model != null else {},
 		"chest": model.chest if model != null else {},
 		"upgrades": model.upgrades if model != null else {},
+		"structures": _model_structures_signature(),
 		"active_collection": model.active_collection if model != null else {},
 		"guidance": model.guidance_state() if model != null and model.has_method("guidance_state") else {},
+		"crafting": _crafting_signature(),
+		"resources": _resources_signature(),
 	}
 	return JSON.stringify(payload)
 
@@ -394,3 +403,15 @@ func _feedback_color(text: String) -> Color:
 
 func _as_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}
+
+func _model_structures_signature() -> Dictionary:
+	if model == null:
+		return {}
+	var value: Variant = model.get("structures")
+	return _as_dictionary(value)
+
+func _crafting_signature() -> Dictionary:
+	return _as_dictionary(_last_state.get("crafting", {}))
+
+func _resources_signature() -> Dictionary:
+	return _as_dictionary(_last_state.get("resources", {}))

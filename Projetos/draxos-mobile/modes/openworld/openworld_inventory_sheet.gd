@@ -4,6 +4,7 @@ extends PanelContainer
 signal close_requested
 signal deposit_requested
 signal craft_requested(recipe_id: String)
+signal station_craft_requested(recipe_id: String)
 signal complete_requested
 signal abandon_requested
 signal guidance_reopen_requested
@@ -23,6 +24,7 @@ var session_state := "preview"
 var session_message := ""
 var abandon_available := false
 var abandon_confirm_pending := false
+var station_nearby := false
 var render_count_for_tests := 0
 
 var _current_tab := "pocket"
@@ -59,7 +61,8 @@ func render(
 	next_session_state: String = session_state,
 	next_session_message: String = session_message,
 	next_abandon_available: bool = abandon_available,
-	next_abandon_confirm_pending: bool = abandon_confirm_pending
+	next_abandon_confirm_pending: bool = abandon_confirm_pending,
+	next_station_nearby: bool = station_nearby
 ) -> void:
 	integration_mode = next_integration_mode
 	server_session_id = next_server_session_id
@@ -72,6 +75,7 @@ func render(
 	session_message = next_session_message
 	abandon_available = next_abandon_available
 	abandon_confirm_pending = next_abandon_confirm_pending
+	station_nearby = next_station_nearby
 	if _body == null or model == null:
 		return
 	render_count_for_tests += 1
@@ -85,6 +89,8 @@ func render(
 			_render_inventory("Bau local", model.chest, "Materiais guardados no modo.")
 		"craft":
 			_render_craft()
+		"fogueira":
+			_render_station_craft()
 		"session":
 			_render_session()
 		_:
@@ -166,7 +172,7 @@ func _build() -> void:
 	tabs.name = "OpenworldInventoryTabs"
 	tabs.add_theme_constant_override("separation", 6)
 	column.add_child(tabs)
-	for tab_id in ["pocket", "chest", "craft", "session"]:
+	for tab_id in ["pocket", "chest", "craft", "fogueira", "session"]:
 		var button := Button.new()
 		button.text = _tab_button_text(tab_id)
 		button.toggle_mode = true
@@ -215,9 +221,9 @@ func _render_inventory(title: String, source: Dictionary, subtitle: String) -> v
 			_body.add_child(_label("Guarde materiais aqui para liberar upgrades do Bosque.", 13, Color(0.78, 0.75, 0.66)))
 
 func _render_craft() -> void:
-	_body.add_child(_label("Craft local", 16, Color(0.90, 0.82, 0.62)))
+	_body.add_child(_label("Construcoes", 16, Color(0.90, 0.82, 0.62)))
 	var craft_ready: int = model.available_craft_count()
-	var summary := "%d pronto(s). Upgrades do modo; nao altera Base/Conta." % craft_ready
+	var summary := "%d pronto(s). Estruturas e melhorias duraveis do Bosque." % craft_ready
 	_body.add_child(_label(summary, 13, Color(0.75, 0.72, 0.64)))
 	var recipes := ModelScript.recipes()
 	for recipe_id: String in recipes.keys():
@@ -234,6 +240,42 @@ func _render_craft() -> void:
 		)
 		_body.add_child(button)
 	_body.add_child(_label("Ativos: %s" % _upgrade_lines(), 13, Color(0.86, 0.81, 0.68)))
+
+func _render_station_craft() -> void:
+	_body.add_child(_label("Fogueira", 16, Color(0.90, 0.82, 0.62)))
+	var built: bool = bool(model.has_upgrade("fogueira_estavel_1"))
+	if not built:
+		_body.add_child(_label("Construa Fogueira estavel I em Construcoes para preparar pocoes.", 13, Color(0.75, 0.72, 0.64)))
+	elif not station_nearby:
+		_body.add_child(_label("Aproxime-se da Fogueira para preparar pocoes globais.", 13, Color(0.75, 0.72, 0.64)))
+	else:
+		_body.add_child(_label("Prepare pocoes na Fogueira usando materiais do Bau e Po de Osso da conta.", 13, Color(0.75, 0.72, 0.64)))
+	if network_busy:
+		_body.add_child(_label("Salvando Bosque antes de preparar...", 13, Color(0.78, 0.77, 0.70)))
+	var recipes := _station_recipes()
+	if recipes.is_empty():
+		_body.add_child(_label("Nenhuma receita de Fogueira disponivel neste pacote.", 13, Color(0.78, 0.75, 0.66)))
+		return
+	for recipe: Dictionary in recipes:
+		var recipe_id := str(recipe.get("id", recipe.get("recipe_id", "")))
+		var missing := _station_recipe_missing_text(recipe)
+		var output_item := _recipe_output_item(recipe)
+		var stock := _global_item_quantity(output_item)
+		var button := Button.new()
+		button.name = "OpenworldStationCraft_%s" % recipe_id
+		button.text = "%s  |  Estoque %d%s" % [
+			str(recipe.get("display_name", recipe_id)),
+			stock,
+			"  |  %s" % missing if missing != "" else "  |  Pronta",
+		]
+		button.tooltip_text = "Custo: %s" % _station_cost_text(recipe)
+		button.custom_minimum_size = Vector2(0, 48)
+		button.disabled = (not built) or (not station_nearby) or network_busy or missing != ""
+		button.pressed.connect(func(id := recipe_id) -> void:
+			station_craft_requested.emit(id)
+		)
+		_body.add_child(button)
+	_body.add_child(_label("A Fogueira cria consumiveis globais para a Arena; por isso confirma no servidor.", 12, Color(0.78, 0.75, 0.66)))
 
 func _render_session() -> void:
 	_body.add_child(_label("Bosque", 16, Color(0.90, 0.82, 0.62)))
@@ -352,6 +394,142 @@ func _cost_text(value: Variant) -> String:
 		parts.append("%s x%d" % [model.item_display_name(key), int(cost.get(key, 0))])
 	return ", ".join(parts)
 
+func _station_recipes() -> Array[Dictionary]:
+	var crafting := _crafting_snapshot()
+	var source := _as_array(crafting.get("recipes", []))
+	var result: Array[Dictionary] = []
+	for recipe_variant: Variant in source:
+		var recipe := _as_dictionary(recipe_variant)
+		var station := _as_dictionary(recipe.get("station", {}))
+		if str(station.get("mode_id", "")) != ModelScript.MODE_ID:
+			continue
+		if str(station.get("slice_id", "")) != ModelScript.SLICE_ID:
+			continue
+		if str(station.get("station_id", "")) != "fogueira_estavel_1":
+			continue
+		result.append(recipe)
+	if result.is_empty():
+		var fallback := [
+			{
+				"id": "craft_pocao_vida",
+				"display_name": "Preparar Pocao de Vida",
+				"inputs": [
+					{"domain": "openworld_chest", "item_id": "folha", "quantity": 2},
+					{"domain": "openworld_chest", "item_id": "cogumelo", "quantity": 1},
+					{"domain": "account_resource", "item_id": "po_osso", "quantity": 25},
+				],
+				"outputs": [{"domain": "account_consumable", "item_id": "pocao_vida", "quantity": 1}],
+			},
+			{
+				"id": "craft_pocao_foco",
+				"display_name": "Preparar Pocao de Foco",
+				"inputs": [
+					{"domain": "openworld_chest", "item_id": "fungo", "quantity": 1},
+					{"domain": "openworld_chest", "item_id": "inseto", "quantity": 1},
+					{"domain": "account_resource", "item_id": "po_osso", "quantity": 15},
+				],
+				"outputs": [{"domain": "account_consumable", "item_id": "pocao_foco", "quantity": 1}],
+			},
+			{
+				"id": "craft_pocao_resguardo",
+				"display_name": "Preparar Pocao de Resguardo",
+				"inputs": [
+					{"domain": "openworld_chest", "item_id": "resina", "quantity": 1},
+					{"domain": "openworld_chest", "item_id": "pedra_pequena", "quantity": 1},
+					{"domain": "account_resource", "item_id": "po_osso", "quantity": 20},
+				],
+				"outputs": [{"domain": "account_consumable", "item_id": "pocao_resguardo", "quantity": 1}],
+			},
+		]
+		for recipe: Dictionary in fallback:
+			result.append(recipe)
+	return result
+
+func _station_recipe_missing_text(recipe: Dictionary) -> String:
+	var parts := PackedStringArray()
+	for input_variant: Variant in _as_array(recipe.get("inputs", [])):
+		var input := _as_dictionary(input_variant)
+		var item_id := str(input.get("item_id", "")).strip_edges()
+		var quantity := maxi(1, int(input.get("quantity", 1)))
+		var missing := quantity - _input_stock(input)
+		if missing > 0:
+			parts.append("%s x%d" % [_input_display_name(input), missing])
+	return ", ".join(parts)
+
+func _station_cost_text(recipe: Dictionary) -> String:
+	var parts := PackedStringArray()
+	for input_variant: Variant in _as_array(recipe.get("inputs", [])):
+		var input := _as_dictionary(input_variant)
+		parts.append("%s x%d" % [_input_display_name(input), maxi(1, int(input.get("quantity", 1)))])
+	return ", ".join(parts)
+
+func _input_stock(input: Dictionary) -> int:
+	var domain := str(input.get("domain", "")).strip_edges()
+	var item_id := str(input.get("item_id", "")).strip_edges()
+	match domain:
+		"openworld_chest":
+			return int(model.chest.get(item_id, 0))
+		"account_resource":
+			return int(_resources_snapshot().get(item_id, 0))
+		"account_consumable":
+			return _global_item_quantity(item_id)
+		_:
+			return 0
+
+func _input_display_name(input: Dictionary) -> String:
+	var domain := str(input.get("domain", "")).strip_edges()
+	var item_id := str(input.get("item_id", "")).strip_edges()
+	if domain == "openworld_chest":
+		return model.item_display_name(item_id)
+	return _global_item_display_name(item_id)
+
+func _recipe_output_item(recipe: Dictionary) -> String:
+	for output_variant: Variant in _as_array(recipe.get("outputs", [])):
+		var output := _as_dictionary(output_variant)
+		if str(output.get("domain", "")) == "account_consumable":
+			return str(output.get("item_id", ""))
+	return ""
+
+func _global_item_quantity(item_id: String) -> int:
+	var clean_id := item_id.strip_edges()
+	if clean_id == "":
+		return 0
+	for item_variant: Variant in _as_array(_crafting_snapshot().get("inventory", [])):
+		var item := _as_dictionary(item_variant)
+		if str(item.get("item_id", "")) == clean_id:
+			return int(item.get("quantity", 0))
+	return 0
+
+func _global_item_display_name(item_id: String) -> String:
+	match item_id:
+		"po_osso":
+			return "Po de Osso"
+		"pocao_vida":
+			return "Pocao de Vida"
+		"pocao_foco":
+			return "Pocao de Foco"
+		"pocao_resguardo":
+			return "Pocao de Resguardo"
+		_:
+			return item_id.replace("_", " ").capitalize()
+
+func _session_store() -> Node:
+	if not is_inside_tree():
+		return null
+	return get_tree().root.get_node_or_null("SessionStore")
+
+func _crafting_snapshot() -> Dictionary:
+	var session_store := _session_store()
+	if session_store != null and session_store.has_method("crafting_snapshot"):
+		return _as_dictionary(session_store.call("crafting_snapshot"))
+	return {}
+
+func _resources_snapshot() -> Dictionary:
+	var session_store := _session_store()
+	if session_store != null and session_store.has_method("resources_snapshot"):
+		return _as_dictionary(session_store.call("resources_snapshot"))
+	return {}
+
 func _tab_title(tab_id: String) -> String:
 	match tab_id:
 		"pocket":
@@ -359,7 +537,9 @@ func _tab_title(tab_id: String) -> String:
 		"chest":
 			return "Mochila - Bau"
 		"craft":
-			return "Mochila - Craft"
+			return "Mochila - Construcoes"
+		"fogueira":
+			return "Mochila - Fogueira"
 		"session":
 			return "Mochila - Sessao"
 		_:
@@ -372,7 +552,9 @@ func _tab_button_text(tab_id: String) -> String:
 		"chest":
 			return "Bau"
 		"craft":
-			return "Craft"
+			return "Constr."
+		"fogueira":
+			return "Fogueira"
 		"session":
 			return "Sessao"
 		_:
@@ -396,6 +578,12 @@ func _session_state_text() -> String:
 			return "Bloqueado - preview sem recompensa"
 		_:
 			return "Preview sem recompensa"
+
+func _as_dictionary(value: Variant) -> Dictionary:
+	return value if value is Dictionary else {}
+
+func _as_array(value: Variant) -> Array:
+	return value if value is Array else []
 
 func _panel_style(bg: Color, border: Color) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()

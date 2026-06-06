@@ -67,6 +67,8 @@ func _execute_action(action_id: String) -> void:
 		await _enable_spell_behavior(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_disable_spell_behavior(action):
 		await _disable_spell_behavior(AppShellActionContractScript.action_value(action))
+	elif AppShellActionContractScript.is_equip_potion(action):
+		await _equip_potion(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_arena_start(action):
 		await _start_arena_by_id(
 			AppShellActionContractScript.action_value(action),

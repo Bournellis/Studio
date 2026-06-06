@@ -144,6 +144,15 @@ func structure_visible(upgrade_id: String) -> bool:
 	var object := _structure_objects.get(upgrade_id) as OpenworldWorldObject
 	return object != null and object.visible
 
+func is_near_structure(upgrade_id: String) -> bool:
+	var object := _structure_objects.get(upgrade_id) as OpenworldWorldObject
+	if object == null or not object.visible:
+		return false
+	var radius := object.interaction_radius
+	if radius <= 0.0:
+		radius = maxf(64.0, object.collision_radius + 46.0)
+	return get_player_position().distance_to(object.global_position) <= radius
+
 func structure_collision_enabled(upgrade_id: String) -> bool:
 	var shape := _structure_blockers.get(upgrade_id) as CollisionShape2D
 	return shape != null and not shape.disabled

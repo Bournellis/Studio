@@ -531,6 +531,19 @@ func craft_item(request_id: String, recipe_id: String, quantity: int, access_tok
 		}, request_hash)
 	)
 
+func station_craft_item(request_id: String, recipe_id: String, quantity: int, station_context: Dictionary, access_token: String, request_hash: String = "") -> Dictionary:
+	return await _send_json(
+		function_url("crafting/station-craft"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("crafting/station-craft", {
+			"request_id": request_id,
+			"recipe_id": recipe_id,
+			"quantity": maxi(1, quantity),
+			"station_context": station_context.duplicate(true),
+		}, request_hash)
+	)
+
 func fetch_build_state(access_token: String) -> Dictionary:
 	return await _send_json(
 		function_url("build/state"),

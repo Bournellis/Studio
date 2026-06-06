@@ -15,18 +15,18 @@ static func crafting_panel(host: Node) -> Control:
 
 	var crafting := SessionStore.crafting_snapshot()
 	if crafting.is_empty():
-		box.add_child(BaseSurfaceVisualsScript.base_label(host, "Triture Ossos em Po de Osso e crie Pocoes de Vida.", "text_secondary"))
+		box.add_child(BaseSurfaceVisualsScript.base_label(host, "Triture Ossos em Po de Osso. Prepare pocoes na Fogueira do Bosque.", "text_secondary"))
 		box.add_child(embedded_action_button(host, "Sincronizar Crafting", AppShellActionContractScript.ACTION_SHOW_CRAFTING))
 		return panel
 
 	var inventory := BaseSurfaceSummaryScript.as_array(crafting.get("inventory", []))
-	var stock := BaseSurfaceTextScript.inventory_quantity(inventory, AppShellActionContractScript.ITEM_HEALTH_POTION)
-	box.add_child(BaseSurfaceVisualsScript.base_label(host, "Ossos %s | Po de Osso %s | Pocao de Vida %d" % [
+	var stock := _total_potions(inventory)
+	box.add_child(BaseSurfaceVisualsScript.base_label(host, "Ossos %s | Po de Osso %s | Pocoes %d" % [
 		BaseSurfaceSummaryScript.format_number(float(SessionStore.resources_snapshot().get("ossos", 0))),
 		BaseSurfaceSummaryScript.format_number(float(SessionStore.resources_snapshot().get("po_osso", 0))),
 		stock,
 	], "text_secondary"))
-	box.add_child(BaseSurfaceVisualsScript.base_label(host, "Triturar 1 Osso cria 1 Po de Osso. Criar Pocao de Vida custa 50 Po de Osso.", "text_secondary"))
+	box.add_child(BaseSurfaceVisualsScript.base_label(host, "Triturar 1 Osso cria 1 Po de Osso. As pocoes agora usam materiais do Bau e a Fogueira do Bosque.", "text_secondary"))
 
 	var actions := GridContainer.new()
 	actions.columns = 1 if BaseSurfaceVisualsScript.compact_layout(host) else 2
@@ -35,8 +35,14 @@ static func crafting_panel(host: Node) -> Control:
 	actions.add_theme_constant_override("v_separation", 8)
 	box.add_child(actions)
 	actions.add_child(embedded_action_button(host, "Triturar Ossos", AppShellActionContractScript.ACTION_CRUSH_BONES, "Triturar 1 Osso em 1 Po de Osso?"))
-	actions.add_child(embedded_action_button(host, "Criar Pocao de Vida", AppShellActionContractScript.ACTION_CRAFT_HEALTH_POTION, "Gastar 50 Po de Osso para criar 1 Pocao de Vida?"))
+	actions.add_child(embedded_action_button(host, "Abrir Bosque", AppShellActionContractScript.open_mode_shell_action("openworld")))
 	return panel
+
+static func _total_potions(inventory: Array) -> int:
+	var total := 0
+	for potion_id: String in ["pocao_vida", "pocao_foco", "pocao_resguardo"]:
+		total += BaseSurfaceTextScript.inventory_quantity(inventory, potion_id)
+	return total
 
 static func embedded_action_button(host: Node, text: String, action_id: String, confirm_message: String = "") -> Button:
 	var button := Button.new()

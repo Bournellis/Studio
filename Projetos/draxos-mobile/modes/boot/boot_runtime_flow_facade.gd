@@ -173,6 +173,9 @@ func _show_preparation() -> void:
 func _equip_health_potion() -> void:
 	await _surface_action_flow.equip_health_potion(self)
 
+func _equip_potion(item_id: String) -> void:
+	await _surface_action_flow.equip_potion(self, item_id)
+
 func _unequip_potion() -> void:
 	await _surface_action_flow.unequip_potion(self)
 

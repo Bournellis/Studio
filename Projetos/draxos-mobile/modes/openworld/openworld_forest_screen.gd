@@ -143,6 +143,16 @@ func _ensure_session_bridge():
 		add_child(_session_bridge)
 	return _session_bridge
 
+func _session_store() -> Node:
+	if not is_inside_tree():
+		return null
+	return get_tree().root.get_node_or_null("SessionStore")
+
+func _supabase_client() -> Node:
+	if not is_inside_tree():
+		return null
+	return get_tree().root.get_node_or_null("SupabaseClient")
+
 func _on_session_bridge_state_changed() -> void:
 	_sync_session_bridge_debug_state()
 	_abandon_confirm_pending = false if _session_state() != "synced" else _abandon_confirm_pending
@@ -179,6 +189,7 @@ func _build_world_viewport() -> void:
 func _connect_hud() -> void:
 	_hud.deposit_requested.connect(_deposit_near_chest)
 	_hud.craft_requested.connect(_craft_recipe)
+	_hud.station_craft_requested.connect(_station_craft_recipe)
 	_hud.complete_requested.connect(_show_result)
 	_hud.abandon_requested.connect(_handle_abandon_requested)
 	_hud.back_requested.connect(_handle_back_requested)
@@ -273,6 +284,13 @@ func _near_chest() -> bool:
 		return _world.is_near_chest()
 	return _runtime.player_position.distance_to(RulesetScript.chest_position()) <= RulesetScript.chest_radius()
 
+func _near_fogueira() -> bool:
+	if not model.has_upgrade("fogueira_estavel_1"):
+		return false
+	if _world != null and _world.has_method("is_near_structure"):
+		return _world.is_near_structure("fogueira_estavel_1")
+	return false
+
 func _advance_nearby_collection(delta: float) -> void:
 	_interaction.tick_collection(delta, false)
 	_sync_runtime_debug_state()
@@ -283,6 +301,94 @@ func _deposit_near_chest() -> void:
 
 func _craft_recipe(recipe_id: String) -> void:
 	_interaction.craft_recipe(recipe_id)
+
+func _station_craft_recipe(recipe_id: String) -> void:
+	if recipe_id.strip_edges() == "":
+		return
+	if not model.has_upgrade("fogueira_estavel_1"):
+		model.last_message = "Construa Fogueira estavel I antes de preparar pocoes."
+		_update_labels()
+		return
+	if not _near_fogueira():
+		model.last_message = "Aproxime-se da Fogueira para preparar pocoes."
+		_update_labels()
+		return
+	var session_store := _session_store()
+	var supabase_client := _supabase_client()
+	if integration_mode != "integrated_alpha" or session_store == null or supabase_client == null or str(session_store.get("access_token")).strip_edges() == "":
+		model.last_message = "Preparar pocoes exige sessao online."
+		_update_labels()
+		return
+	var bridge = _ensure_session_bridge()
+	if bridge.server_session_id() == "":
+		await _resume_or_start_integrated_session()
+	if bridge.server_session_id() == "":
+		model.last_message = "Sessao online do Bosque indisponivel."
+		_update_labels()
+		return
+	if _session_blocks_mutation():
+		model.last_message = "Visita encerrada; reentre no Bosque para preparar pocoes."
+		_update_labels()
+		return
+	if session_store.has_method("runtime_allows_gameplay_mutation") and not session_store.runtime_allows_gameplay_mutation():
+		model.last_message = str(session_store.runtime_mutation_block_reason())
+		_update_labels()
+		return
+	if bridge.has_pending_events():
+		model.last_message = "Salvando Bosque antes de preparar..."
+		_update_labels()
+		var checkpoint_result: Dictionary = await bridge.flush_checkpoint(true)
+		if not bool(checkpoint_result.get("ok", false)):
+			model.last_message = "Salve o checkpoint para preparar pocao."
+			_update_labels()
+			return
+	if bridge.has_pending_events():
+		model.last_message = "Checkpoint pendente; tente preparar novamente em instantes."
+		_update_labels()
+		return
+	var station_context := {
+		"mode_id": ModelScript.MODE_ID,
+		"slice_id": ModelScript.SLICE_ID,
+		"session_id": bridge.server_session_id(),
+		"station_id": "fogueira_estavel_1",
+		"expected_progress_revision": bridge.durable_progress_revision(),
+	}
+	var payload := {
+		"recipe_id": recipe_id.strip_edges(),
+		"quantity": 1,
+		"station_context": station_context.duplicate(true),
+	}
+	var request: Dictionary = session_store.prepare_pending_mutation(
+		"crafting/station-craft",
+		"crafting:station:%s" % str(session_store.get("active_save_type")),
+		"openworld_fogueira:forest",
+		payload
+	)
+	model.last_message = "Preparando pocao..."
+	_update_labels()
+	var result: Dictionary = await supabase_client.station_craft_item(
+		str(request.get("request_id", "")),
+		recipe_id.strip_edges(),
+		1,
+		station_context,
+		str(session_store.get("access_token")),
+		str(request.get("request_hash", ""))
+	)
+	if not bool(result.get("ok", false)):
+		session_store.fail_pending_mutation(str(request.get("request_id", "")), _as_dictionary(result.get("body", result)))
+		model.last_message = _station_craft_error_text(result)
+		_update_labels()
+		return
+	if not session_store.apply_crafting_result(result):
+		session_store.fail_pending_mutation(str(request.get("request_id", "")), {"error": str(session_store.get("last_error"))})
+		model.last_message = "Pocao preparada, mas o cache local precisa atualizar."
+		_update_labels()
+		return
+	session_store.complete_pending_mutation(str(request.get("request_id", "")), _as_dictionary(result.get("body", result)))
+	session_store.save_cache()
+	bridge.apply_station_craft_ack(_as_dictionary(result.get("body", result)))
+	model.last_message = "Pocao preparada."
+	_update_labels()
 
 func _update_labels() -> void:
 	if _world == null:
@@ -319,6 +425,9 @@ func _view_state(nearest_id: String) -> Dictionary:
 		"can_complete": can_complete,
 		"abandon_available": integrated and _server_session_id() != "" and not completed,
 		"abandon_confirm_pending": _abandon_confirm_pending,
+		"station_nearby": _near_fogueira(),
+		"crafting": _crafting_signature(),
+		"resources": _resources_signature(),
 		"mode_label": _mode_label(),
 		"status_text": _status_text(nearest_id, completed),
 		"feedback_text": model.last_message,
@@ -350,6 +459,8 @@ func _status_text(nearest_id: String, completed: bool) -> String:
 		return "Bolso cheio; volte ao bau"
 	if _near_chest() and not model.pocket.is_empty():
 		return "Bau proximo; deposito pronto"
+	if _near_fogueira():
+		return "Fogueira pronta"
 	if _session_state() in ["pending", "resyncing"]:
 		var pending_text := _pending_summary_text()
 		return pending_text if pending_text != "" else "Bosque salvo localmente"
@@ -505,7 +616,7 @@ func _handle_guidance_reopen_requested() -> void:
 	_update_labels()
 
 func _handle_sheet_tab_changed(tab_id: String) -> void:
-	if tab_id == "craft":
+	if tab_id == "craft" or tab_id == "fogueira":
 		_mark_guidance_step(5)
 	elif tab_id == "session":
 		_mark_guidance_step(6)
@@ -608,3 +719,33 @@ func _set_bootstrap_loading(active: bool) -> void:
 
 func _as_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}
+
+func _crafting_signature() -> Dictionary:
+	var session_store := _session_store()
+	if session_store != null and session_store.has_method("crafting_snapshot"):
+		return _as_dictionary(session_store.call("crafting_snapshot"))
+	return {}
+
+func _resources_signature() -> Dictionary:
+	var session_store := _session_store()
+	if session_store != null and session_store.has_method("resources_snapshot"):
+		return _as_dictionary(session_store.call("resources_snapshot"))
+	return {}
+
+func _station_craft_error_text(result: Dictionary) -> String:
+	var body := _as_dictionary(result.get("body", result))
+	var error := _as_dictionary(body.get("error", result.get("error", {})))
+	var code := str(error.get("code", "")).strip_edges()
+	match code:
+		"STATION_NOT_BUILT":
+			return "Construa Fogueira estavel I antes de preparar pocoes."
+		"PROGRESS_REVISION_MISMATCH", "MODE_CHECKPOINT_REQUIRED":
+			return "Bosque precisa salvar o checkpoint antes de preparar."
+		"INSUFFICIENT_OPENWORLD_MATERIALS":
+			return "Materiais insuficientes no Bau."
+		"INSUFFICIENT_RESOURCES":
+			return "Po de Osso insuficiente."
+		"NETWORK_UNAVAILABLE", "REQUEST_NOT_STARTED", "CLIENT_MISCONFIGURED":
+			return "Sem conexao para preparar pocao agora."
+		_:
+			return str(error.get("message", "Nao foi possivel preparar a pocao."))

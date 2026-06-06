@@ -136,7 +136,7 @@ static func mutation_endpoint_for_action(action_id: String) -> String:
 		return "build/equip"
 	if AppShellActionContractScript.is_enable_spell_behavior(action) or AppShellActionContractScript.is_disable_spell_behavior(action):
 		return "build/spell-behavior"
-	if action == AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION or action == AppShellActionContractScript.ACTION_UNEQUIP_POTION:
+	if action == AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION or action == AppShellActionContractScript.ACTION_UNEQUIP_POTION or AppShellActionContractScript.is_equip_potion(action):
 		return "build/potion/equip"
 	if action == AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT or action == AppShellActionContractScript.ACTION_DISABLE_POTION:
 		return "build/potion-behavior"
@@ -175,7 +175,8 @@ static func _is_preparation_action(action_id: String) -> bool:
 		AppShellActionContractScript.ACTION_DISABLE_POTION,
 	] or AppShellActionContractScript.is_build_equip_action(action_id) \
 		or AppShellActionContractScript.is_enable_spell_behavior(action_id) \
-		or AppShellActionContractScript.is_disable_spell_behavior(action_id)
+		or AppShellActionContractScript.is_disable_spell_behavior(action_id) \
+		or AppShellActionContractScript.is_equip_potion(action_id)
 
 static func _is_shop_action(action_id: String) -> bool:
 	return action_id in [

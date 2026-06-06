@@ -54,7 +54,7 @@ static func _preparation_panel(host: Node, compact: bool, context: String = "ref
 	var doctrine_id := _first_non_empty_string(combat_build, ["passive_id", "doctrine_id", "doutrina_id"])
 	if doctrine_id == "":
 		doctrine_id = _first_non_empty_string(account_build, ["passive_id", "doctrine_id", "doutrina_id"])
-	var stock := _inventory_quantity(inventory, AppShellActionContractScript.ITEM_HEALTH_POTION)
+	var potion_inventory := _potion_inventory_entries(inventory)
 	var potion_slot := _first_dictionary(potion_slots)
 	var potion_id := str(potion_slot.get("potion_id", ""))
 	var potion_behavior := _as_dictionary(potion_slot.get("behavior", {}))
@@ -176,7 +176,7 @@ static func _preparation_panel(host: Node, compact: bool, context: String = "ref
 
 	box.add_child(_section_label("Pocao", compact))
 	box.add_child(_body_label(_potion_status_text(potion_id), compact))
-	box.add_child(_body_label("Estoque: %d" % stock, compact))
+	box.add_child(_body_label("Estoque: %s" % _potion_inventory_text(potion_inventory), compact))
 	var potion_timing_text := _potion_timing_text(potion_id, potion_behavior)
 	if potion_timing_text != "":
 		box.add_child(_body_label(potion_timing_text, compact))
@@ -184,9 +184,13 @@ static func _preparation_panel(host: Node, compact: bool, context: String = "ref
 	var potion_actions := _button_grid(compact, 2)
 	box.add_child(potion_actions)
 	if not behavior_only:
-		potion_actions.add_child(_entry_action_button(host, "Equipar Pocao de Vida", AppShellActionContractScript.ACTION_EQUIP_HEALTH_POTION, compact))
+		if potion_inventory.is_empty():
+			box.add_child(_body_label("Prepare pocoes na Fogueira do Bosque para liberar opcoes.", compact))
+		for potion: Dictionary in potion_inventory:
+			var item_id := str(potion.get("item_id", ""))
+			potion_actions.add_child(_entry_action_button(host, "Equipar %s" % _preparation_item_label(item_id), AppShellActionContractScript.equip_potion_action(item_id), compact))
 		potion_actions.add_child(_entry_action_button(host, "Remover pocao", AppShellActionContractScript.ACTION_UNEQUIP_POTION, compact))
-	potion_actions.add_child(_entry_action_button(host, "Usar com vida baixa", AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT, compact))
+	potion_actions.add_child(_entry_action_button(host, "Usar comportamento padrao", AppShellActionContractScript.ACTION_ENABLE_POTION_DEFAULT, compact))
 	potion_actions.add_child(_entry_action_button(host, "Pausar pocao", AppShellActionContractScript.ACTION_DISABLE_POTION, compact))
 	return panel
 
@@ -199,11 +203,14 @@ static func _potion_status_text(potion_id: String) -> String:
 	return "%s equipada" % _preparation_item_label(cleaned)
 
 static func _potion_timing_text(potion_id: String, behavior: Dictionary) -> String:
-	if potion_id.strip_edges() != AppShellActionContractScript.ITEM_HEALTH_POTION:
+	if potion_id.strip_edges() == "" or potion_id.strip_edges() == "<null>" or potion_id.strip_edges().to_lower() == "null":
 		return ""
 	if not bool(behavior.get("enabled", true)):
 		return "Pocao pausada"
-	return "Usa automaticamente com vida baixa"
+	var condition := _condition_text(behavior)
+	if condition == "":
+		return "Usa automaticamente com comportamento padrao"
+	return "Usa automaticamente; %s" % condition
 
 static func _spell_timing_text(behavior: Dictionary) -> String:
 	if behavior.is_empty():
@@ -238,6 +245,10 @@ static func _preparation_item_label(item_id: String) -> String:
 	if cleaned == AppShellActionContractScript.ITEM_HEALTH_POTION:
 		return "Pocao de Vida"
 	match cleaned:
+		AppShellActionContractScript.ITEM_FOCUS_POTION:
+			return "Pocao de Foco"
+		AppShellActionContractScript.ITEM_WARD_POTION:
+			return "Pocao de Resguardo"
 		"varinha_cinzas":
 			return "Varinha de Cinzas"
 		"athame_hematico":
@@ -472,6 +483,27 @@ static func _inventory_quantity(inventory: Array, item_id: String) -> int:
 		if str(item.get("item_id", "")) == item_id:
 			return int(item.get("quantity", 0))
 	return 0
+
+static func _potion_inventory_entries(inventory: Array) -> Array:
+	var result := []
+	for item_id: String in [
+		AppShellActionContractScript.ITEM_HEALTH_POTION,
+		AppShellActionContractScript.ITEM_FOCUS_POTION,
+		AppShellActionContractScript.ITEM_WARD_POTION,
+	]:
+		var quantity := _inventory_quantity(inventory, item_id)
+		if quantity > 0:
+			result.append({"item_id": item_id, "quantity": quantity})
+	return result
+
+static func _potion_inventory_text(entries: Array) -> String:
+	if entries.is_empty():
+		return "nenhuma"
+	var parts := PackedStringArray()
+	for entry_variant: Variant in entries:
+		var entry := _as_dictionary(entry_variant)
+		parts.append("%s x%d" % [_preparation_item_label(str(entry.get("item_id", ""))), int(entry.get("quantity", 0))])
+	return ", ".join(parts)
 
 static func _first_dictionary(items: Array) -> Dictionary:
 	for item: Variant in items:

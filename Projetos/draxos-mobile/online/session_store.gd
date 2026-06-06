@@ -514,6 +514,13 @@ func apply_crafting_result(payload: Dictionary) -> bool:
 	if body.get("resources", null) is Dictionary:
 		resources = _as_dictionary(body.get("resources", {})).duplicate(true)
 		_remember_surface_snapshot(SURFACE_ACCOUNT)
+	if body.get("durable_progress", null) is Dictionary:
+		remember_openworld_durable_progress_state(_as_dictionary(body.get("durable_progress", {})))
+	if body.get("session", null) is Dictionary:
+		var session := _as_dictionary(body.get("session", {}))
+		var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
+		if snapshot_payload.has("durable_progress"):
+			remember_openworld_durable_progress_state(_as_dictionary(snapshot_payload.get("durable_progress", {})))
 	crafting_state = state.duplicate(true)
 	_remember_surface_snapshot(SURFACE_CRAFTING)
 	last_error = {}

@@ -193,34 +193,8 @@ func crush_bones(host: Node) -> void:
 	host.call("_render_base_state")
 
 func craft_health_potion(host: Node) -> void:
-	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de criar Pocao de Vida.")):
-		return
-
 	host.call("_show_screen", str(host.call("_base_surface_target_screen")), false)
-	host.call("_set_busy", true, "Criando Pocao de Vida...")
-	var mutation := _prepare_mutation("crafting/craft", AppShellActionContractScript.ACTION_CRAFT_HEALTH_POTION, {
-		"recipe_id": AppShellActionContractScript.RECIPE_HEALTH_POTION,
-		"quantity": 1,
-	})
-	var crafting_result: Dictionary = await SupabaseClient.craft_item(
-		_request_id(mutation),
-		AppShellActionContractScript.RECIPE_HEALTH_POTION,
-		1,
-		SessionStore.access_token,
-		_request_hash(mutation)
-	)
-	if not bool(crafting_result.get("ok", false)):
-		_fail_mutation(mutation, crafting_result)
-		host.call("_fail_with_error", crafting_result)
-		return
-	if not SessionStore.apply_crafting_result(crafting_result):
-		_fail_mutation(mutation, {"error": SessionStore.last_error})
-		host.call("_fail_with_error", {"error": SessionStore.last_error})
-		return
-
-	_complete_mutation(mutation, crafting_result)
-	SessionStore.save_cache()
-	host.call("_set_busy", false, "Pocao de Vida criada.")
+	host.call("_set_busy", false, "Prepare pocoes na Fogueira do Bosque.")
 	host.call("_render_base_state")
 
 func show_preparation(host: Node) -> void:
@@ -258,10 +232,17 @@ func show_preparation(host: Node) -> void:
 	_render_preparation_for_route(host, target_route)
 
 func equip_health_potion(host: Node) -> void:
+	await equip_potion(host, AppShellActionContractScript.ITEM_HEALTH_POTION)
+
+func equip_potion(host: Node, item_id: String) -> void:
 	if _preparation_loadout_locked(host):
 		_block_locked_loadout_action(host)
 		return
-	await _update_potion_equip(host, AppShellActionContractScript.ITEM_HEALTH_POTION, "Pocao de Vida equipada para a proxima batalha.")
+	var clean_item_id := item_id.strip_edges()
+	if clean_item_id == "":
+		_set_error_text(host, "Pocao invalida.")
+		return
+	await _update_potion_equip(host, clean_item_id, "%s equipada para a proxima batalha." % _potion_display_name(clean_item_id))
 
 func unequip_potion(host: Node) -> void:
 	if _preparation_loadout_locked(host):
@@ -270,10 +251,12 @@ func unequip_potion(host: Node) -> void:
 	await _update_potion_equip(host, null, "Pocao removida da proxima batalha.")
 
 func enable_potion_default(host: Node) -> void:
-	await _update_potion_behavior(host, PreparationActionContractScript.default_potion_behavior(), "Pocao de Vida sera usada quando a Vida ficar abaixo de 40%.")
+	var potion_id := _equipped_potion_id()
+	var behavior := PreparationActionContractScript.default_potion_behavior(potion_id)
+	await _update_potion_behavior(host, behavior, "%s usara o comportamento padrao." % _potion_display_name(potion_id))
 
 func disable_potion(host: Node) -> void:
-	var behavior := PreparationActionContractScript.default_potion_behavior()
+	var behavior := PreparationActionContractScript.default_potion_behavior(_equipped_potion_id())
 	behavior["enabled"] = false
 	await _update_potion_behavior(host, behavior, "Uso automatico da pocao pausado.")
 
@@ -653,6 +636,11 @@ static func _as_dictionary(value: Variant) -> Dictionary:
 		return value
 	return {}
 
+static func _as_array(value: Variant) -> Array:
+	if value is Array:
+		return value
+	return []
+
 func _update_build_equip(host: Node, payload: Dictionary, message: String) -> void:
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de preparar a batalha.")):
 		return
@@ -693,7 +681,7 @@ func _update_potion_equip(host: Node, item_id: Variant, message: String) -> void
 		_block_locked_loadout_action(host)
 		return
 
-	host.call("_set_busy", true, "Ajustando Pocao de Vida...")
+	host.call("_set_busy", true, "Ajustando pocao...")
 	var mutation := _prepare_mutation("build/potion/equip", str(host.get("_active_action_id")), {
 		"slot_index": 1,
 		"item_id": item_id,
@@ -723,7 +711,7 @@ func _update_potion_behavior(host: Node, behavior: Dictionary, message: String) 
 	if not bool(host.call("_require_account", "Entre com email ou use guest dev antes de configurar pocao.")):
 		return
 
-	host.call("_set_busy", true, "Ajustando uso da Pocao de Vida...")
+	host.call("_set_busy", true, "Ajustando uso da pocao...")
 	var mutation := _prepare_mutation("build/potion-behavior", str(host.get("_active_action_id")), {
 		"slot_index": 1,
 		"behavior": behavior,
@@ -806,6 +794,27 @@ func _block_locked_loadout_action(host: Node) -> void:
 	host.call("_set_busy", false, message)
 	_set_error_text(host, message)
 	host.set_meta("preparation_feedback_message", message)
+
+func _equipped_potion_id() -> String:
+	var combat_build := SessionStore.combat_build_snapshot()
+	var slots := _as_array(combat_build.get("potion_slots", []))
+	for slot_variant: Variant in slots:
+		var slot := _as_dictionary(slot_variant)
+		var potion_id := str(slot.get("potion_id", "")).strip_edges()
+		if potion_id != "" and potion_id != "<null>" and potion_id.to_lower() != "null":
+			return potion_id
+	return AppShellActionContractScript.ITEM_HEALTH_POTION
+
+func _potion_display_name(item_id: String) -> String:
+	match item_id.strip_edges():
+		AppShellActionContractScript.ITEM_HEALTH_POTION:
+			return "Pocao de Vida"
+		AppShellActionContractScript.ITEM_FOCUS_POTION:
+			return "Pocao de Foco"
+		AppShellActionContractScript.ITEM_WARD_POTION:
+			return "Pocao de Resguardo"
+		_:
+			return item_id.replace("_", " ").capitalize()
 
 func _fail_preparation_action(host: Node, result: Dictionary, detail: String) -> void:
 	var error_payload := PreparationActionContractScript.error_payload(result)
