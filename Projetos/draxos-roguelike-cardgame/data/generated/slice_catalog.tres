@@ -190,12 +190,12 @@ id = "arcano_bola_de_fogo_lvl2"
 display_name = "Bola de Fogo Lvl 2"
 card_type = "magia"
 cost = 2
-text = "Causa 2 de dano no alvo e 2 nos slots adjacentes."
+text = "Causa 3 de dano no alvo e 2 nos slots adjacentes."
 keywords = PackedStringArray()
 effect = {
 "action": "adjacent_damage",
 "amount": 2.0,
-"primary_bonus": 0.0
+"primary_bonus": 1.0
 }
 
 [sub_resource type="Resource" id="Resource_p3n0t"]
@@ -230,12 +230,12 @@ script = ExtResource("1_tqsc8")
 id = "arcano_acelerar_lvl2"
 display_name = "Acelerar Lvl 2"
 card_type = "magia"
-text = "Mesa aliada alvo. Ganha +3 Poder de habilidade ate o final do turno."
+text = "Mesa aliada alvo. Ganha +2 Poder de habilidade ate o final do turno."
 keywords = PackedStringArray()
 effect = {
 "action": "gain_mana",
 "mana": 0.0,
-"temporary_ability_power": 3.0
+"temporary_ability_power": 2.0
 }
 
 [sub_resource type="Resource" id="Resource_dqqtb"]
@@ -304,7 +304,7 @@ id = "invocador_batedor_lvl2"
 display_name = "Batedor Arcano Lvl 2"
 card_type = "criatura"
 cost = 1
-attack = 3
+attack = 4
 health = 2
 text = "Iniciativa: causa dano primeiro na lane."
 keywords = PackedStringArray("iniciativa")
@@ -382,7 +382,7 @@ display_name = "Guardiao Arcano Lvl 2"
 card_type = "criatura"
 cost = 2
 attack = 3
-health = 6
+health = 7
 text = "Defensor: protege lanes vazias."
 keywords = PackedStringArray("defensor")
 
@@ -606,14 +606,14 @@ id = "necro_prender_lvl3"
 display_name = "Prender Lvl 3"
 card_type = "magia"
 cost = 1
-text = "A criatura inimiga alvo nao ataca no proximo combate, recebe Enfraquecer 1 e perde keywords."
+text = "A criatura inimiga alvo nao ataca no proximo combate, recebe Enfraquecer 2 e perde keywords."
 keywords = PackedStringArray()
 effect = {
 "action": "multi_debuff",
 "remove_keywords": true,
 "snare": true,
 "snare_amount": 1.0,
-"weaken_amount": 1.0
+"weaken_amount": 2.0
 }
 
 [sub_resource type="Resource" id="Resource_r6yjh"]
@@ -641,7 +641,7 @@ display_name = "Zumbi Lvl 2"
 card_type = "criatura"
 cost = 2
 attack = 3
-health = 3
+health = 4
 text = "Ao morrer: Enfraquecer 2."
 keywords = PackedStringArray()
 effect = {
@@ -4475,4 +4475,4 @@ track_contract = {
 }
 }
 }
-definition_hash = "1b16d20d9fd0bfc1623201c1d3341e7cf6eb1fcf1e4ff9d76545980c2584e23d"
+definition_hash = "368e7072f73f87abfc5b034bf31a9706901ca37ddc5b8302c78f0a00a15bf362"

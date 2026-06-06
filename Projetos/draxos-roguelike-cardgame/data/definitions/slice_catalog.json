@@ -1420,11 +1420,11 @@
       "display_name": "Bola de Fogo Lvl 2",
       "type": "magia",
       "cost": 2,
-      "text": "Causa 2 de dano no alvo e 2 nos slots adjacentes.",
+      "text": "Causa 3 de dano no alvo e 2 nos slots adjacentes.",
       "effect": {
         "action": "adjacent_damage",
         "amount": 2,
-        "primary_bonus": 0
+        "primary_bonus": 1
       }
     },
     {
@@ -1456,11 +1456,11 @@
       "display_name": "Acelerar Lvl 2",
       "type": "magia",
       "cost": 0,
-      "text": "Mesa aliada alvo. Ganha +3 Poder de habilidade ate o final do turno.",
+      "text": "Mesa aliada alvo. Ganha +2 Poder de habilidade ate o final do turno.",
       "effect": {
         "action": "gain_mana",
         "mana": 0,
-        "temporary_ability_power": 3
+        "temporary_ability_power": 2
       }
     },
     {
@@ -1525,7 +1525,7 @@
       "display_name": "Batedor Arcano Lvl 2",
       "type": "criatura",
       "cost": 1,
-      "attack": 3,
+      "attack": 4,
       "health": 2,
       "keywords": [
         "iniciativa"
@@ -1600,7 +1600,7 @@
       "type": "criatura",
       "cost": 2,
       "attack": 3,
-      "health": 6,
+      "health": 7,
       "keywords": [
         "defensor"
       ],
@@ -1819,12 +1819,12 @@
       "display_name": "Prender Lvl 3",
       "type": "magia",
       "cost": 1,
-      "text": "A criatura inimiga alvo nao ataca no proximo combate, recebe Enfraquecer 1 e perde keywords.",
+      "text": "A criatura inimiga alvo nao ataca no proximo combate, recebe Enfraquecer 2 e perde keywords.",
       "effect": {
         "action": "multi_debuff",
         "snare": true,
         "snare_amount": 1,
-        "weaken_amount": 1,
+        "weaken_amount": 2,
         "remove_keywords": true
       }
     },
@@ -1850,7 +1850,7 @@
       "type": "criatura",
       "cost": 2,
       "attack": 3,
-      "health": 3,
+      "health": 4,
       "text": "Ao morrer: Enfraquecer 2.",
       "effect": {
         "on_death": {

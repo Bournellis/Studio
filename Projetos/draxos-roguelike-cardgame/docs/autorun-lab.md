@@ -394,6 +394,42 @@ Current calibrated same/same result (`user://card_impact/track02_card_impact_v3_
 - Coverage is 84/84 active cases: 54 player cards, 30 active enemy cards and 15 audited inactive legacy cards.
 - Player target capture quality is 45 clean, 9 support-required, 0 ambiguous, 0 failed and 0 repeated target captures.
 
+## Player Card Redesign Batch 02
+
+Batch 02 is a real but light player-card change cycle using V3 as the default harness. Its purpose is to test the toolchain on a broader core-card edit, not to declare final balance.
+
+Changed core cards:
+
+- `arcano_acelerar_lvl2`: temporary ability power `+3 -> +2`.
+- `arcano_bola_de_fogo_lvl2`: primary damage `2 -> 3`, adjacent damage unchanged.
+- `invocador_batedor_lvl2`: attack `3 -> 4`.
+- `invocador_guardiao_lvl2`: health `6 -> 7`.
+- `necro_prender_lvl3`: Enfraquecer `1 -> 2`.
+- `necro_zumbi_lvl2`: health `3 -> 4`.
+
+Observed V3 compare result (`user://card_impact/player_card_redesign_batch_02`):
+
+- Gate: PASS.
+- Coverage: 84/84 active cases, with 54 player, 30 enemy and 15 legacy inactive cards audited.
+- Structural errors/new failures/removed records/status changes: 0.
+- Battle component changes: 5 changed records, 14 metric changes and 13 effect changes.
+- Scenario and Run Lab components: 0 metric/status changes.
+- Target capture quality stayed stable at 45 clean, 9 support-required, 0 ambiguous, 0 failed and 0 repeated.
+
+Detected effect movement:
+
+- `arcano_bola_de_fogo_lvl2`: `effect.enemy_slot_damage_total` `3 -> 4`.
+- `invocador_batedor_lvl2`: `effect.summoned_attack_total` `5 -> 6`.
+- `invocador_guardiao_lvl2`: `effect.summoned_health_total` `7 -> 8`.
+- `necro_zumbi_lvl2`: `effect.summoned_health_total` `3 -> 4`.
+- `necro_prender_lvl3`: multiple deltas from stronger Enfraquecer killing the target in the isolated harness instead of leaving a debuffed/snared unit alive.
+
+Tooling lesson:
+
+- V3 correctly protected structural coverage and caught effect movement for damage, summon stats and combat-state consequences.
+- `arcano_acelerar_lvl2` did not surface an `effect.*` delta because the current signature does not track temporary ability power directly. Add `temporary_ability_power_delta` or equivalent before larger utility-card redesigns.
+- The first draft of this batch touched reward cards outside the current V3 player matrix. That was corrected before acceptance, and the next tooling step should expand Card Impact coverage to all active player reward cards, not only the 54 core variants.
+
 ## Result Schema
 
 Each detailed record contains:

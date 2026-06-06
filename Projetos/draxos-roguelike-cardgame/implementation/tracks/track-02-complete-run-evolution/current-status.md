@@ -4,7 +4,7 @@
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
 - Historical Baseline Dependency: `Track 01 - Playable Run Loop`
-- Validation Baseline: `Card Impact V3 Isolated Target Capture, Card Impact V2 Non-Damage Coverage, Card Redesign Batch 01, Card Impact Effect Signature V2, Card Impact Smoke Tuning V1, Card Impact Pack V1, Lab Diff Reporter V1, Gameplay Lab V1, Scenario Fixtures V1 and AutoRun Gate Pack V1 preserve Track 02 route metrics and pass 164/164 GUT tests, shared full-route pacing smoke green, Card Impact V3 before/after/compare gate green with 84 active card cases covered, 54/54 required player effect signatures present, 30 enemy signatures report-only, 15 legacy inactive elemental cards audited, player target capture quality 45 clean / 9 support-required / 0 ambiguous / 0 failed / 0 repeated, zero structural errors, Battle Lab track02_battle_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, Scenario Fixture track02_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
+- Validation Baseline: `Player Card Redesign Batch 02, Card Impact V3 Isolated Target Capture, Card Impact V2 Non-Damage Coverage, Card Redesign Batch 01, Card Impact Effect Signature V2, Card Impact Smoke Tuning V1, Card Impact Pack V1, Lab Diff Reporter V1, Gameplay Lab V1, Scenario Fixtures V1 and AutoRun Gate Pack V1 preserve Track 02 route metrics and pass 164/164 GUT tests, shared full-route pacing smoke green, Card Impact V3 before/after/compare gate green with 84 active card cases covered, 54/54 required player effect signatures present, 30 enemy signatures report-only, 15 legacy inactive elemental cards audited, player target capture quality 45 clean / 9 support-required / 0 ambiguous / 0 failed / 0 repeated, zero structural errors, Battle Lab track02_battle_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, Scenario Fixture track02_core_v1 gate green with 9 PASS / 3 WARN / 0 FAIL, smoke gate track02_smoke_v1 green, and quick 30-case track02_quick_v1 gate/scorecard green`
 
 ## Purpose
 
@@ -40,9 +40,9 @@ The target is a fixed, linear 29-map run with all planned encounter types, all p
 
 ## Current Execution Cursor
 
-Completed prompt: `CARD-IMPACT-V3-ISOLATED-TARGET-CAPTURE - play minimum support, play focused card once, capture signature, stop further card plays and report target-capture quality before broader card redesign batches`.
+Completed prompt: `PLAYER-CARD-REDESIGN-BATCH-02 - use Card Impact V3 before/change/after/compare for a coherent broad player-card redesign batch`.
 
-Next implementation prompt: `PLAYER-CARD-REDESIGN-BATCH-02 - use Card Impact V3 before/change/after/compare for a coherent broad player-card redesign batch`. Track 02 remains ready for user playtest.
+Next implementation prompt: `CARD-IMPACT-V4-FULL-PLAYER-MATRIX - expand Card Impact coverage to all active player reward cards and add missing utility signature fields such as temporary ability power before larger card redesigns`. Track 02 remains ready for user playtest.
 
 ## Implemented Baseline
 
@@ -102,6 +102,10 @@ Next implementation prompt: `PLAYER-CARD-REDESIGN-BATCH-02 - use Card Impact V3 
 - Current non-damage compare passes with 84/84 active card cases, 54 required player signatures, 30 enemy report-only missing signatures, zero structural errors, zero new failures and zero removed records; reported signature quality is 45 clean, 9 support-assisted, 47 ambiguous from repeated focused-card plays and 30 enemy report-only missing.
 - Card Redesign Batch 01 applied the first controlled real V2 card cycle: `arcano_choque_lvl2` and `arcano_choque_lvl3` damage `4 -> 5`, `arcano_tempestade_lvl3` random damage `6 -> 7`, and damage-family Card Impact harnesses now use `enemy_health=160` plus `enemy_terra_elemental_tita` to keep extra damage observable instead of hidden by overkill.
 - Batch 01 compare stayed structurally green and surfaced the intended effect deltas: `arcano_choque_lvl2` `effect.enemy_hero_damage` `52 -> 57`, `arcano_choque_lvl3` `86 -> 92`, and `arcano_tempestade_lvl3` `57 -> 62`.
+- Card Impact V3 Isolated Target Capture added `data/lab/card_impact/track02_card_impact_v3.json`, `card_focus_isolated`, one-play target capture, stop-after-target behavior, target capture quality reporting and structural blockers for repeated/failed focused-card capture.
+- Player Card Redesign Batch 02 changed six core player upgrades covered by V3: `arcano_acelerar_lvl2` AP `+3 -> +2`, `arcano_bola_de_fogo_lvl2` primary damage `2 -> 3`, `invocador_batedor_lvl2` attack `3 -> 4`, `invocador_guardiao_lvl2` health `6 -> 7`, `necro_prender_lvl3` Enfraquecer `1 -> 2`, and `necro_zumbi_lvl2` health `3 -> 4`.
+- Batch 02 V3 compare passed with 84/84 active cards, zero structural errors, zero new failures, zero removed records, zero status changes, 14 metric deltas and 13 effect deltas. Macro Battle/Scenario/Run Lab gates stayed green, and `validate.gd` passed with 164/164 tests.
+- Batch 02 exposed the next tooling gap: the current V3 player matrix does not cover reward cards outside the core 54 variants, and signatures do not directly track temporary ability power.
 - Reward screen, RunMap, Souls shop/relic state, keyword preview, enemy intent, and dense Battle layouts received readability polish.
 - Discard marking now happens in the main creature-play phase with right-click card selection, a visible hand hint, and marked-card discard/redraw on combat resolution instead of a separate pre-combat phase.
 - 5/5, 6/6, and 7/7 battle layouts now have regression coverage.
@@ -121,4 +125,4 @@ Every future Track 02 implementation or playtest-fix thread must:
 
 ## Current Risk
 
-Track 02 is ready for user playtest and now has one real player-card V2 redesign cycle plus non-damage Card Impact coverage validated. Remaining risk is human balance feedback: the deterministic full-route smoke, AutoRun Gate Pack macro matrices, Scenario Fixtures V1, Gameplay Lab V1, Card Impact Pack V1, Card Impact Effect Signature V2, Card Impact V2 Non-Damage Coverage and Batch 01 validate structure, tuning trends, small named regression signals, isolated combat behavior, card-specific before/after movement and player-card effect deltas, but they are not substitutes for a manual run. Enemy-card effect causality is still report-only in V2, and `card_focus_legal` still produces ambiguous signatures when the focused card is played multiple times; reduce that ambiguity before broad redesign batches.
+Track 02 is ready for user playtest and now has two real player-card redesign cycles plus Card Impact V3 target capture validated. Remaining risk is human balance feedback: the deterministic full-route smoke, AutoRun Gate Pack macro matrices, Scenario Fixtures V1, Gameplay Lab V1, Card Impact Pack V1/V2/V3 and Batches 01/02 validate structure, tuning trends, small named regression signals, isolated combat behavior, card-specific before/after movement and player-card effect deltas, but they are not substitutes for a manual run. Current Card Impact coverage still misses active reward-card families outside the core 54 player variants, utility values such as temporary ability power are not first-class signature deltas yet, and enemy-card effect causality remains report-only.

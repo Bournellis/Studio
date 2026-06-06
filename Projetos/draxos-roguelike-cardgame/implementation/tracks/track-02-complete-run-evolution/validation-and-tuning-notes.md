@@ -132,6 +132,27 @@
   - Compare: zero structural errors, zero new failures, zero removed records, zero status changes, zero metric changes and zero effect changes.
 - Operational lesson: V3 should be the default card-impact pack for broad player-card redesigns because it keeps V2 effect-family visibility while removing repeated-target noise.
 
+## Player Card Redesign Batch 02
+
+- Purpose: run a broader but still light real player-card change cycle to test Card Impact V3 before future large card redesigns.
+- Scope: six core player-card variants already covered by the current V3 matrix; no enemy, reward, route, shop, relic or encounter changes.
+- Card changes:
+  - `arcano_acelerar_lvl2`: temporary ability power `+3 -> +2`.
+  - `arcano_bola_de_fogo_lvl2`: primary damage `2 -> 3`, adjacent damage unchanged.
+  - `invocador_batedor_lvl2`: attack `3 -> 4`.
+  - `invocador_guardiao_lvl2`: health `6 -> 7`.
+  - `necro_prender_lvl3`: Enfraquecer `1 -> 2`.
+  - `necro_zumbi_lvl2`: health `3 -> 4`.
+- Card Impact V3 compare at `user://card_impact/player_card_redesign_batch_02`: PASS with 84/84 active cases covered, zero structural errors, zero new failures, zero removed records, zero status changes, 14 metric deltas and 13 effect deltas.
+- Detected V3 effect deltas:
+  - `arcano_bola_de_fogo_lvl2`: `effect.enemy_slot_damage_total` `3 -> 4`.
+  - `invocador_batedor_lvl2`: `effect.summoned_attack_total` `5 -> 6`.
+  - `invocador_guardiao_lvl2`: `effect.summoned_health_total` `7 -> 8`.
+  - `necro_zumbi_lvl2`: `effect.summoned_health_total` `3 -> 4`.
+  - `necro_prender_lvl3`: stronger debuff killed the isolated target, moving the signature from control/debuff markers toward damage/economy side effects.
+- Macro regression gates stayed green: Battle Lab `9 PASS / 3 WARN / 0 FAIL`, Scenario Fixtures `9 PASS / 3 WARN / 0 FAIL`, AutoRun smoke green, AutoRun quick green, and `validate.gd` passed with `164/164` tests and `1651` asserts.
+- Tooling lesson: the first draft of this batch touched reward cards outside the V3 core-player matrix; those edits were removed before acceptance. The next tooling step should expand Card Impact to all active player reward cards and add explicit signature fields for utility quantities such as temporary ability power.
+
 ## Screenshots
 
 Captured at `1280x720` and `960x540` in:
@@ -147,7 +168,7 @@ Captured at `1280x720` and `960x540` in:
 
 - Manual playtest remains the next production step and should use `docs/playtest-track-02.md`.
 - Balance changes should come from observed human runs, with AutoRun Gate Pack used for explicit regression, distribution checks and tuning comparison rather than as the final verdict.
-- Large player-card changes should now use Card Impact V3: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect target-capture quality, metric movement and player-card effect signatures before accepting the batch.
+- Large player-card changes should now use Card Impact V3: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect target-capture quality, metric movement and player-card effect signatures before accepting the batch. Before changing reward-card families broadly, expand the Card Impact player matrix beyond the current 54 core variants.
 - Enemy-card signature derivation remains the recommended tooling follow-up once enemy per-card causality is exposed clearly enough.
 - Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
 
