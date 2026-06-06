@@ -42,7 +42,7 @@
 
 ## Handoff
 
-- Status: implementacao local concluida e commits preparados.
+- Status: publicado em Internal Alpha, integrado em `main` e pronto para playtest humano.
 - Entregue:
   - fluxo de selecao reordenado como progresso S1 -> desafio recomendado -> Preparacao -> outras arenas;
   - CTA recomendado unico `Iniciar desafio recomendado`;
@@ -58,4 +58,15 @@
   - `npx -y deno task --cwd supabase/functions check`: PASS.
   - `deno test --allow-read --allow-run --allow-env server/tests/ops_readonly_cli_test.ts`: PASS, 3 tests.
   - `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS.
-- Proximo ponto seguro: merge em `main`, publicacao Web/APK e registro de evidencia final.
+- Validacao/publicacao:
+  - `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS.
+  - export Web/APK/PC ZIP: PASS.
+  - upload Supabase Storage publico: PASS.
+  - Cloudflare Pages production branch `main`: PASS, preview `https://fdf44707.draxos-mobile-internal-alpha.pages.dev`.
+  - release manifest/Edge Function `release`: PASS.
+  - `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68 -RemoteWebUrl https://fdf44707.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS.
+- Release root: `internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68`.
+- Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`.
+- Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+- APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68/downloads/draxos-mobile-alpha.apk`.
+- Proximo ponto seguro: playtest humano do fluxo de menu Arena PVE publicado.
