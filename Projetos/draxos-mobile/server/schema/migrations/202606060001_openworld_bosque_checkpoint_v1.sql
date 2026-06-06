@@ -446,8 +446,14 @@ begin
 end;
 $$;
 
-alter function if exists public.mode_session_complete_v1(uuid, uuid, text, jsonb)
-	rename to mode_session_complete_legacy_v1;
+do $$
+begin
+	if to_regprocedure('public.mode_session_complete_legacy_v1(uuid,uuid,text,jsonb)') is null
+		and to_regprocedure('public.mode_session_complete_v1(uuid,uuid,text,jsonb)') is not null then
+		execute 'alter function public.mode_session_complete_v1(uuid, uuid, text, jsonb) rename to mode_session_complete_legacy_v1';
+	end if;
+end;
+$$;
 
 create or replace function public.mode_session_complete_v1(
 	p_game_save_id uuid,
