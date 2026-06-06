@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
 - Last Updated: `2026-06-06`
-- Prompt: `CARD-IMPACT-V4-1-CARD-FLOW-HARNESS-PASS`
-- Status: `CARD_IMPACT_V4_1_CARD_FLOW_HARNESS_COMPLETE`
+- Prompt: `CARD-FLOW-REDESIGN-BATCH-01-USING-V4-1`
+- Status: `CARD_FLOW_REDESIGN_BATCH_01_USING_V4_1_COMPLETE`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `185/185` tests passing.
+- GUT: `187/187` tests passing, `1785` asserts.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -47,6 +47,9 @@
 - Card Impact V4.1 Card-Flow Harness gate: `before`, `after` and `compare` pass at `user://card_impact/track02_card_impact_v4_1_card_flow_harness` with 108 player cards, 30 enemy report-only cards, 15 legacy inactive cards, 2 expected card-flow player cards, zero structural errors, zero new failures and zero removed records.
 - Card Impact V4.1 observed card-flow signatures: `necro_colheita_das_almas` and `necro_colheita_das_almas_lvl3` both report `cards_drawn=1`, `deck_delta=-1` and `card_flow_observed=true`; the lvl3 case uses Card Impact-only `initial_dead_unit_count=2` and reports `ashes_gained=6`.
 - Card Impact V4.1 regression coverage: V4 historical compare remains green at `user://card_impact/reward_card_redesign_batch_02_utility_v4`; Battle Lab remains 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick remain green; `validate.gd` passes with 185/185 GUT tests and 1766 asserts.
+- Card Flow Redesign Batch 01 Using V4.1 gate: `before`, `after` and `compare` pass at `user://card_impact/card_flow_redesign_batch_01_v4_1` with 108 player cards, 30 enemy report-only cards, 15 legacy inactive cards, 3 expected card-flow player cards, zero structural errors, zero new failures and zero removed records.
+- Card Flow Redesign Batch 01 observed card-flow signatures: Colheita base/Lvl 2/Lvl 3 report `cards_drawn=2`, `deck_delta=-2`, `hand_delta=1` and `card_flow_observed=true`; Lvl 2 now also reports `ashes_gained=3` and became an expected card-flow case.
+- Card Flow Redesign Batch 01 regression coverage: Battle Lab remains 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick remain green; `validate.gd` passes with 187/187 GUT tests and 1785 asserts.
 - Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 - Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
 - Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
@@ -223,7 +226,7 @@
 - Purpose: make draw, discard, hand and deck deltas reliably observable before larger card-flow redesigns.
 - Scope: tooling only; no gameplay, card, enemy, reward, shop, route, relic or balance changes.
 - New pack: `data/lab/card_impact/track02_card_impact_v4_1.json`.
-- Coverage: preserves V4 full matrix with 108 player cards, 30 enemy report-only cards and 15 legacy inactive cards, while requiring exactly 2 expected player card-flow cases.
+- Coverage: preserves V4 full matrix with 108 player cards, 30 enemy report-only cards and 15 legacy inactive cards. The initial harness required 2 expected player card-flow cases; Card Flow Redesign Batch 01 promotes Lvl 2, so the current pack expects 3.
 - Card-flow cases: `necro_colheita_das_almas` and `necro_colheita_das_almas_lvl3`, classified as `card_flow` ahead of economy when draw/deck/hand/discard keys are present.
 - Harness update: player card-flow cases use deterministic hand/deck setup with max hand size 5 so card draw has visible room and a remaining card to draw.
 - Lab prestate: `case_data.lab_prestate.initial_dead_unit_count` is accepted by the battle runner after `BattleEngine.start_battle` and before the first policy action. It is used only by Card Impact tooling; `necro_colheita_das_almas_lvl3` sets it to `2` so `ashes_gained=6` crosses `draw_if_at_least=6`.
@@ -231,6 +234,17 @@
 - Gate behavior: missing expected card-flow cases, missing card-flow signatures, or `card_flow_expected=true` with `card_flow_observed=false` are structural blockers. Numeric card-flow deltas remain review data and do not fail compare by themselves.
 - Validation result: V4.1 `before`, `after` and `compare` pass at `user://card_impact/track02_card_impact_v4_1_card_flow_harness`; V4 historical compare, Battle Lab, Scenario Fixtures, AutoRun smoke, AutoRun quick and `validate.gd` are green.
 - Operational lesson: V4.1 should be the default harness for the next real card-flow redesign batch. Enemy-card signatures should stay report-only until a dedicated enemy causality pass.
+
+## Card Flow Redesign Batch 01 Using V4.1
+
+- Purpose: execute a small real card-flow change against Card Impact V4.1 to prove that draw/deck/hand deltas are visible in a real `before -> change -> after -> compare` cycle.
+- Gameplay/content change: `draw_if_at_least` now returns a bonus draw resolved after normal hand refill, so "compra 1 carta extra" is not hidden by the default refill-to-hand-size behavior.
+- Card text/content change: `necro_colheita_das_almas`, `necro_colheita_das_almas_lvl2` and `necro_colheita_das_almas_lvl3` now describe the draw as `compra 1 carta extra`; `necro_colheita_das_almas_lvl2` moves from 2 to 3 base Ashes and gains `draw_if_at_least=3`.
+- Harness/schema change: `track02_card_impact_v4_1` now expects 3 player card-flow cases: `necro_colheita_das_almas`, `necro_colheita_das_almas_lvl2` and `necro_colheita_das_almas_lvl3`.
+- Observed compare: V4.1 compare passed at `user://card_impact/card_flow_redesign_batch_01_v4_1` with 3 changed battle records and 11 effect deltas, all `PASS -> PASS`.
+- Observed card-flow deltas: Colheita base/Lvl 2/Lvl 3 moved `effect.cards_drawn` `1 -> 2`, `effect.deck_delta` `-1 -> -2` and `effect.hand_delta` `0 -> 1`; Lvl 2 also moved `effect.ashes_gained` `2 -> 3` and `effect.card_flow_expected` `false -> true`.
+- Regression result: Battle Lab 9 PASS / 3 WARN / 0 FAIL, Scenario Fixtures 9 PASS / 3 WARN / 0 FAIL, AutoRun smoke/quick gates green, and `validate.gd` green with 187/187 GUT tests and 1785 asserts.
+- Operational lesson: V4.1 now proved card-flow impact on an actual card change. The next safe step is to decide whether any card-flow thresholds should become promoted expectations before expanding draw/discard/hand/deck redesigns.
 
 ## Screenshots
 
@@ -248,7 +262,7 @@ Captured at `1280x720` and `960x540` in:
 - Manual playtest remains the next production step and should use `docs/playtest-track-02.md`.
 - Balance changes should come from observed human runs, with AutoRun Gate Pack used for explicit regression, distribution checks and tuning comparison rather than as the final verdict.
 - Large player-card changes should now use Card Impact V4.1 when draw/discard/hand/deck movement may matter: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect full player coverage, target-capture quality, metric movement, utility/card-flow deltas and player-card effect signatures before accepting the batch.
-- Recommended next implementation batch: run a small real card-flow redesign using V4.1 before/change/after/compare, then decide whether any new card-flow thresholds deserve promoted expectations.
+- Recommended next implementation batch: review whether V4.1 card-flow fields deserve promoted thresholds, then run the next broader reward-card redesign batch under V4.1.
 - Enemy-card signature derivation remains the recommended tooling follow-up once enemy per-card causality is exposed clearly enough.
 - Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
 

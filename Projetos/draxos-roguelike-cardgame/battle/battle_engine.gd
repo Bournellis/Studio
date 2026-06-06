@@ -453,6 +453,7 @@ func play_card_from_hand(hand_index: int, target: Dictionary = {}) -> Dictionary
 		return _fail("Alvo invalido.")
 	if not target.is_empty() and not can_play_card_on_target(hand_index, target):
 		return _fail("Alvo invalido.")
+	var bonus_draws: int = 0
 	if card.occupies_slot():
 		var slot_index: int = int(target.get("slot", _first_open_slot(player_slots)))
 		if slot_index < 0 or slot_index >= player_slots.size():
@@ -492,8 +493,10 @@ func play_card_from_hand(hand_index: int, target: Dictionary = {}) -> Dictionary
 	else:
 		_spend_card(hand_index, card, _card_play_cost(card))
 		_after_card_played()
-		_resolve_spell(card, target)
+		bonus_draws = _resolve_spell(card, target)
 	_draw_to_hand_size()
+	if bonus_draws > 0:
+		_draw_bonus_cards(bonus_draws)
 	_check_outcome()
 	return {"ok": true, "message": "Carta jogada."}
 
@@ -964,8 +967,9 @@ func _resolve_boss_summon() -> void:
 	_resolve_on_enter(card, ENEMY_ID, open_slot)
 	_log("Chefe Invocador invocou %s no slot %d." % [card.display_name, open_slot + 1])
 
-func _resolve_spell(card, target: Dictionary) -> void:
+func _resolve_spell(card, target: Dictionary) -> int:
 	var effect: Dictionary = Dictionary(card.effect)
+	var bonus_draws: int = 0
 	match str(effect.get("action", "")):
 		"damage":
 			var amount: int = _effect_amount(effect) + _first_damage_spell_bonus()
@@ -1000,7 +1004,7 @@ func _resolve_spell(card, target: Dictionary) -> void:
 			var target_owner: String = str(target.get("owner", ENEMY_ID))
 			if target_slot < 0:
 				_log("%s perdeu efeito: alvo invalido." % card.display_name)
-				return
+				return bonus_draws
 			for slot_index: int in [target_slot - 1, target_slot, target_slot + 1]:
 				if slot_index < 0 or slot_index >= _slots_for_owner(target_owner).size():
 					continue
@@ -1013,7 +1017,7 @@ func _resolve_spell(card, target: Dictionary) -> void:
 				total += flow
 			if str(target.get("area", "")) != "board":
 				_log("%s perdeu efeito: alvo de area invalido." % card.display_name)
-				return
+				return bonus_draws
 			_resolve_random_damage(total, str(target.get("owner", ENEMY_ID)))
 			_log("%s distribuiu %d de dano." % [card.display_name, total])
 		"all_enemy_damage":
@@ -1045,7 +1049,7 @@ func _resolve_spell(card, target: Dictionary) -> void:
 				gained_ashes += dead_unit_count
 			ashes += gained_ashes
 			if int(effect.get("draw_if_at_least", 0)) > 0 and gained_ashes >= int(effect.get("draw_if_at_least", 0)):
-				_draw_cards(1)
+				bonus_draws += maxi(1, int(effect.get("draw_cards", 1)))
 			_log("%s gerou %d Cinza(s)." % [card.display_name, gained_ashes])
 		"debuff", "weaken", "snare":
 			var debuff_effect: Dictionary = effect.duplicate()
@@ -1071,7 +1075,7 @@ func _resolve_spell(card, target: Dictionary) -> void:
 		"buff_all_allies":
 			if str(target.get("owner", PLAYER_ID)) != PLAYER_ID or str(target.get("area", "")) != "board":
 				_log("%s perdeu efeito: alvo aliado invalido." % card.display_name)
-				return
+				return bonus_draws
 			for index: int in range(player_slots.size()):
 				if player_slots[index] != null:
 					_buff_slot(PLAYER_ID, index, _effect_number(effect, "attack"), _effect_number(effect, "health"), bool(effect.get("temporary", false)))
@@ -1079,7 +1083,7 @@ func _resolve_spell(card, target: Dictionary) -> void:
 		"gain_mana":
 			if str(target.get("owner", PLAYER_ID)) != PLAYER_ID or str(target.get("area", "")) != "board":
 				_log("%s perdeu efeito: alvo aliado invalido." % card.display_name)
-				return
+				return bonus_draws
 			var mana_gained: int = int(effect.get("mana", effect.get("amount", 0)))
 			mana += mana_gained
 			temporary_ability_power_bonus += int(effect.get("temporary_ability_power", 0))
@@ -1114,6 +1118,7 @@ func _resolve_spell(card, target: Dictionary) -> void:
 				_log("%s aguarda escolha de promocao." % card.display_name)
 		_:
 			_log("%s foi resolvida sem efeito especial." % card.display_name)
+	return bonus_draws
 
 func _spend_card(hand_index: int, card, play_cost: int = -1) -> void:
 	mana -= _card_play_cost(card) if play_cost < 0 else play_cost
@@ -1146,6 +1151,16 @@ func _draw_cards(count: int) -> void:
 	for _index: int in range(maxi(0, count)):
 		if hand.size() >= max_hand_size:
 			return
+		if deck.is_empty():
+			if discard.is_empty():
+				return
+			deck = discard.duplicate()
+			discard = []
+			_shuffle_deck(deck)
+		hand.append(deck.pop_front())
+
+func _draw_bonus_cards(count: int) -> void:
+	for _index: int in range(maxi(0, count)):
 		if deck.is_empty():
 			if discard.is_empty():
 				return

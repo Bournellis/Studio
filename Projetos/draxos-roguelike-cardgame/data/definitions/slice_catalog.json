@@ -2830,7 +2830,7 @@
       "display_name": "Colheita das Almas",
       "type": "magia",
       "cost": 0,
-      "text": "Gera 3 Cinzas, +1 por morte. Se gerar 3 ou mais, compra 1 carta.",
+      "text": "Gera 3 Cinzas, +1 por morte. Se gerar 3 ou mais, compra 1 carta extra.",
       "effect": {
         "action": "gain_ashes",
         "amount": 3,
@@ -2843,11 +2843,12 @@
       "display_name": "Colheita das Almas Lvl 2",
       "type": "magia",
       "cost": 0,
-      "text": "Gera 2 Cinzas, +1 para cada criatura morta nesta batalha.",
+      "text": "Gera 3 Cinzas, +1 por morte. Se gerar 3 ou mais, compra 1 carta extra.",
       "effect": {
         "action": "gain_ashes",
-        "amount": 2,
-        "per_dead_unit": true
+        "amount": 3,
+        "per_dead_unit": true,
+        "draw_if_at_least": 3
       }
     },
     {
@@ -2855,7 +2856,7 @@
       "display_name": "Colheita das Almas Lvl 3",
       "type": "magia",
       "cost": 0,
-      "text": "Gera 4 Cinzas, +1 por morte. Se gerar 6 ou mais, compra 1 carta.",
+      "text": "Gera 4 Cinzas, +1 por morte. Se gerar 6 ou mais, compra 1 carta extra.",
       "effect": {
         "action": "gain_ashes",
         "amount": 4,

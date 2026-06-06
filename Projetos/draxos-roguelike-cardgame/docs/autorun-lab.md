@@ -1,7 +1,7 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-06`
-- Status: `CARD_IMPACT_V4_1_CARD_FLOW_HARNESS_COMPLETE`
+- Status: `CARD_FLOW_REDESIGN_BATCH_01_USING_V4_1_COMPLETE`
 - Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures, card-flow observability and V4/V4.1 reward-card redesign validation
 
 ## Purpose
@@ -27,6 +27,8 @@ Card Impact V3 Isolated Target Capture makes the player-card harness less ambigu
 Card Impact V4 Full Player Matrix expands the player-card matrix from the 54 core class variants to all 108 active player variants, including Terra/Gelo/Ar/Fogo reward cards and upgrades. It also promotes temporary ability power into explicit utility effect-signature fields while keeping enemy-card signatures report-only for a future causal enemy pass.
 
 Card Impact V4.1 Card-Flow Harness Pass keeps the V4 full player matrix and adds a focused card-flow harness for draw, discard, hand and deck deltas. It makes `necro_colheita_das_almas` and `necro_colheita_das_almas_lvl3` expected card-flow cases, records lab-only prestate where needed, and gates missing card-flow observation structurally while keeping numeric deltas as review data.
+
+Card Flow Redesign Batch 01 Using V4.1 is the first real card-flow edit cycle after the harness pass. It makes `draw_if_at_least` resolve as a bonus draw after normal hand refill, adds `necro_colheita_das_almas_lvl2` to the expected card-flow matrix, and proves the compare can surface `cards_drawn`, `deck_delta` and `hand_delta` movement without structural gate failure.
 
 Reward Card Redesign Batch 01 Using V4 is the first real reward-card edit cycle executed against the full 108-player-card matrix. It changes six reward/card-upgrade variants across Arcano, Invocador and Necromante, then uses V4 `before -> after -> compare` to confirm that the battle harness exposes the intended effect deltas while Scenario Fixtures, Run Lab and the full validation suite remain stable.
 
@@ -500,7 +502,7 @@ Current calibrated same/same result (`user://card_impact/track02_card_impact_v4_
 V4.1 coverage:
 
 - 108 active player card variants, 30 active enemy report-only cards and 15 legacy inactive cards, unchanged from V4.
-- 2 expected player card-flow cases: `necro_colheita_das_almas` and `necro_colheita_das_almas_lvl3`.
+- Initial harness coverage had 2 expected player card-flow cases: `necro_colheita_das_almas` and `necro_colheita_das_almas_lvl3`; Card Flow Redesign Batch 01 promotes Lvl 2, so the current pack expects 3.
 - Enemy-card signatures remain report-only.
 
 V4.1 adds:
@@ -524,6 +526,41 @@ Current calibrated same/same result (`user://card_impact/track02_card_impact_v4_
 - `before`, `after` and `compare` pass with zero structural errors, zero new failures and zero removed records.
 - Focused probes observe both expected card-flow cards drawing 1 card, with `deck_delta=-1` and `card_flow_observed=true`.
 - `necro_colheita_das_almas_lvl3` records `lab_prestate.initial_dead_unit_count=2` and `ashes_gained=6`.
+
+## Card Flow Redesign Batch 01 Using V4.1
+
+Purpose: execute a small real card-flow redesign to validate Card Impact V4.1 on actual card movement.
+
+Changed behavior/content:
+
+- `draw_if_at_least` now grants a bonus draw after the normal hand refill, making the extra draw observable rather than hidden by refill-to-hand-size.
+- `necro_colheita_das_almas`, `necro_colheita_das_almas_lvl2` and `necro_colheita_das_almas_lvl3` now describe the draw as `compra 1 carta extra`.
+- `necro_colheita_das_almas_lvl2` Ashes gain changed `2 -> 3` and gained `draw_if_at_least=3`.
+- `track02_card_impact_v4_1` now expects 3 player card-flow cases: base, Lvl 2 and Lvl 3 Colheita.
+
+Observed V4.1 compare result (`user://card_impact/card_flow_redesign_batch_01_v4_1`):
+
+- Gate: PASS.
+- Coverage: 108 player cards, 30 enemy report-only cards and 15 legacy inactive cards audited.
+- Structural errors, new failures, removed records and status changes: 0.
+- Battle component changes: 3 changed records and 11 effect deltas.
+- Scenario and Run Lab components: 0 changes.
+
+Detected player effect movement:
+
+- `necro_colheita_das_almas`: `effect.cards_drawn` `1 -> 2`, `effect.deck_delta` `-1 -> -2`, `effect.hand_delta` `0 -> 1`.
+- `necro_colheita_das_almas_lvl2`: `effect.ashes_gained` `2 -> 3`, `effect.cards_drawn` `1 -> 2`, `effect.deck_delta` `-1 -> -2`, `effect.hand_delta` `0 -> 1`, `effect.card_flow_expected` `false -> true`.
+- `necro_colheita_das_almas_lvl3`: `effect.cards_drawn` `1 -> 2`, `effect.deck_delta` `-1 -> -2`, `effect.hand_delta` `0 -> 1`.
+
+Macro regression gates after the batch:
+
+- Battle Lab: 9 PASS / 3 WARN / 0 FAIL.
+- Scenario Fixtures: 9 PASS / 3 WARN / 0 FAIL.
+- AutoRun smoke gate: PASS.
+- AutoRun quick gate: PASS across 30 macro-route cases.
+- `tools/validate.gd`: PASS with 187/187 GUT tests, 1785 asserts and unchanged full-route pacing telemetry.
+
+Operational lesson: V4.1 now proves card-flow deltas on a real content change. Next, decide whether any card-flow observations should become explicit expectations before broad draw/discard/hand/deck redesigns.
 
 ## Reward Card Redesign Batch 01 Using V4
 
@@ -640,8 +677,9 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Use Card Impact V4.1 in a small real card-flow redesign batch, then decide whether any card-flow thresholds should become explicit expectations.
-2. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
-3. Implement enemy-card effect signatures once enemy action logs expose enough per-card causality to avoid guessing.
+1. Decide whether V4.1 card-flow fields deserve promoted thresholds after the first real card-flow batch.
+2. Run the next broader reward-card redesign batch under V4.1 before/change/after/compare.
+3. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
+4. Implement enemy-card effect signatures once enemy action logs expose enough per-card causality to avoid guessing.
 4. Replay Lab: record human or bot decisions and replay them across builds.
 5. Dashboard: read the JSON/CSV/Markdown outputs and compare historical runs visually.

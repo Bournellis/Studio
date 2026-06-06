@@ -13,7 +13,7 @@
 		"expected_player_cards": 108,
 		"expected_enemy_cards": 30,
 		"expected_legacy_inactive_cards": 15,
-		"expected_card_flow_player_cards": 2,
+		"expected_card_flow_player_cards": 3,
 		"expected_player_cards_by_class": {
 			"arcano": 36,
 			"invocador": 36,

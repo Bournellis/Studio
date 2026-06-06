@@ -1623,7 +1623,7 @@ script = ExtResource("1_tqsc8")
 id = "necro_colheita_das_almas"
 display_name = "Colheita das Almas"
 card_type = "magia"
-text = "Gera 3 Cinzas, +1 por morte. Se gerar 3 ou mais, compra 1 carta."
+text = "Gera 3 Cinzas, +1 por morte. Se gerar 3 ou mais, compra 1 carta extra."
 keywords = PackedStringArray()
 effect = {
 "action": "gain_ashes",
@@ -1637,11 +1637,12 @@ script = ExtResource("1_tqsc8")
 id = "necro_colheita_das_almas_lvl2"
 display_name = "Colheita das Almas Lvl 2"
 card_type = "magia"
-text = "Gera 2 Cinzas, +1 para cada criatura morta nesta batalha."
+text = "Gera 3 Cinzas, +1 por morte. Se gerar 3 ou mais, compra 1 carta extra."
 keywords = PackedStringArray()
 effect = {
 "action": "gain_ashes",
-"amount": 2.0,
+"amount": 3.0,
+"draw_if_at_least": 3.0,
 "per_dead_unit": true
 }
 
@@ -1650,7 +1651,7 @@ script = ExtResource("1_tqsc8")
 id = "necro_colheita_das_almas_lvl3"
 display_name = "Colheita das Almas Lvl 3"
 card_type = "magia"
-text = "Gera 4 Cinzas, +1 por morte. Se gerar 6 ou mais, compra 1 carta."
+text = "Gera 4 Cinzas, +1 por morte. Se gerar 6 ou mais, compra 1 carta extra."
 keywords = PackedStringArray()
 effect = {
 "action": "gain_ashes",
@@ -4476,4 +4477,4 @@ track_contract = {
 }
 }
 }
-definition_hash = "927615917fec02e064fa58b4df6f99888f561b98e712e1f0dabb1c82bb6eca9e"
+definition_hash = "16c3798be0566fcb8028aa8a7d4874e755d769594ed632cc2b630605a8bc96ff"
