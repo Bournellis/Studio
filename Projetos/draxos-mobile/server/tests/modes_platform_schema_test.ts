@@ -27,6 +27,10 @@ const OPENWORLD_CHECKPOINT_PATH =
   "supabase/migrations/202606060001_openworld_bosque_checkpoint_v1.sql";
 const OPENWORLD_CHECKPOINT_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606060001_openworld_bosque_checkpoint_v1.sql";
+const OPENWORLD_DURABLE_PROGRESS_PATH =
+  "supabase/migrations/202606060002_openworld_bosque_durable_progress_v1.sql";
+const OPENWORLD_DURABLE_PROGRESS_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606060002_openworld_bosque_durable_progress_v1.sql";
 const ADMIN_COMPENSATE_HASH_MIGRATION_PATH =
   "supabase/migrations/202606020003_admin_compensate_request_hash.sql";
 const ADMIN_COMPENSATE_HASH_SERVER_MIRROR_PATH =
@@ -128,6 +132,17 @@ Deno.test("openworld checkpoint migration is mirrored in server schema", async (
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema openworld checkpoint migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("openworld durable progress migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(OPENWORLD_DURABLE_PROGRESS_PATH);
+  const serverMirror = await readProjectText(OPENWORLD_DURABLE_PROGRESS_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema openworld durable progress migration should mirror supabase migration exactly",
   );
 });
 
@@ -364,6 +379,7 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
     await readProjectText(OPENWORLD_GUIDANCE_PERSISTENCE_PATH),
   );
   const checkpointMigration = normalizeSql(await readProjectText(OPENWORLD_CHECKPOINT_PATH));
+  const durableProgress = normalizeSql(await readProjectText(OPENWORLD_DURABLE_PROGRESS_PATH));
   const handler = normalizeCode(await readProjectText(HANDLER_PATH));
   const support = normalizeCode(await readProjectText(SUPPORT_PATH));
 
@@ -426,6 +442,24 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
     "mode_checkpoint_required",
     "completion wrapper should require an accepted checkpoint",
   );
+  for (
+    const fragment of [
+      "openworld_forest_progress_v1",
+      "openworld_forest_validate_checkpoint_v2",
+      "durable_base",
+      "openworld_forest_inventory_delta_above_v1",
+      "openworld_forest_mark_checkpoint_progress_v1",
+      "openworld_forest_mark_completed_progress_v1",
+      "progress_payload = durable_progress",
+      "progress_payload = durable_progress_after",
+    ]
+  ) {
+    assertIncludes(
+      durableProgress,
+      fragment,
+      `openworld durable progress migration should include ${fragment}`,
+    );
+  }
   for (
     const fragment of [
       "guidance_update",

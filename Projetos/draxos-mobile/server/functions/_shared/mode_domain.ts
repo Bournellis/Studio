@@ -432,8 +432,15 @@ function progressPayload(row: ModeProgressRow | null): Record<string, unknown> {
   if (row === null) {
     return {
       mode_id: OPENWORLD_MODE_ID,
-      local_schema_version: "openworld_forest_snapshot_v1",
-      progress_payload: {},
+      local_schema_version: "openworld_forest_progress_v1",
+      progress_payload: {
+        schema_version: "openworld_forest_progress_v1",
+        pocket: {},
+        chest: {},
+        upgrades: {},
+        reward_ledger: { rewarded_chest: {} },
+        progress_revision: 0,
+      },
       totals_payload: {},
       last_session_id: null,
       updated_at: null,

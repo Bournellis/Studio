@@ -15,6 +15,10 @@ const CHECKPOINT_MIGRATION_PATH =
   "server/schema/migrations/202606060001_openworld_bosque_checkpoint_v1.sql";
 const SUPABASE_CHECKPOINT_MIGRATION_PATH =
   "supabase/migrations/202606060001_openworld_bosque_checkpoint_v1.sql";
+const DURABLE_PROGRESS_MIGRATION_PATH =
+  "server/schema/migrations/202606060002_openworld_bosque_durable_progress_v1.sql";
+const SUPABASE_DURABLE_PROGRESS_MIGRATION_PATH =
+  "supabase/migrations/202606060002_openworld_bosque_durable_progress_v1.sql";
 const MODE_DOMAIN_PATH = "server/functions/_shared/mode_domain.ts";
 const SUPABASE_MODE_DOMAIN_PATH = "supabase/functions/_shared/mode_domain.ts";
 
@@ -130,8 +134,10 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
   const supabaseCollectBatchMigration = await projectText(SUPABASE_COLLECT_BATCH_MIGRATION_PATH);
   const checkpointMigration = await projectText(CHECKPOINT_MIGRATION_PATH);
   const supabaseCheckpointMigration = await projectText(SUPABASE_CHECKPOINT_MIGRATION_PATH);
+  const durableProgressMigration = await projectText(DURABLE_PROGRESS_MIGRATION_PATH);
+  const supabaseDurableProgressMigration = await projectText(SUPABASE_DURABLE_PROGRESS_MIGRATION_PATH);
   const effectiveMigration =
-    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}\n${collectBatchMigration}\n${checkpointMigration}`;
+    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}\n${collectBatchMigration}\n${checkpointMigration}\n${durableProgressMigration}`;
   const modeDomain = await projectText(MODE_DOMAIN_PATH);
   const supabaseModeDomain = await projectText(SUPABASE_MODE_DOMAIN_PATH);
 
@@ -175,6 +181,11 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
     normalizeNewlines(supabaseCheckpointMigration),
     "checkpoint migration should be mirrored between server and supabase",
   );
+  assertEq(
+    normalizeNewlines(durableProgressMigration),
+    normalizeNewlines(supabaseDurableProgressMigration),
+    "durable progress migration should be mirrored between server and supabase",
+  );
   assertIncludes(
     collectBatchMigration,
     "'collect_batch'",
@@ -189,6 +200,11 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
     checkpointMigration,
     "'checkpoint'",
     "checkpoint migration should audit accepted checkpoints",
+  );
+  assertIncludes(
+    durableProgressMigration,
+    "openworld_forest_progress_v1",
+    "durable progress migration should define Bosque save progress",
   );
   assertIncludes(
     effectiveMigration,
@@ -269,9 +285,16 @@ Deno.test("openworld forest collect batch migration validates nodes atomically",
 
 Deno.test("openworld forest checkpoint migration validates snapshots and gates rewards", async () => {
   const migration = await projectText(CHECKPOINT_MIGRATION_PATH);
+  const durableMigration = await projectText(DURABLE_PROGRESS_MIGRATION_PATH);
   const validateFunction = sqlFunctionBody(migration, "openworld_forest_validate_checkpoint_v1");
+  const validateV2Function = sqlFunctionBody(
+    durableMigration,
+    "openworld_forest_validate_checkpoint_v2",
+  );
   const checkpointFunction = sqlFunctionBody(migration, "mode_session_checkpoint_v1");
+  const durableCheckpointFunction = sqlFunctionBody(durableMigration, "mode_session_checkpoint_v1");
   const completeWrapper = sqlFunctionBody(migration, "mode_session_complete_v1");
+  const durableCompleteWrapper = sqlFunctionBody(durableMigration, "mode_session_complete_v1");
 
   assertIncludes(
     validateFunction,
@@ -307,6 +330,31 @@ Deno.test("openworld forest checkpoint migration validates snapshots and gates r
     completeWrapper,
     "MODE_CHECKPOINT_REQUIRED",
     "completion should require an accepted checkpoint before reward",
+  );
+  assertIncludes(
+    validateV2Function,
+    "base_progress",
+    "durable checkpoint validation should use the session-start progress base",
+  );
+  assertIncludes(
+    validateV2Function,
+    "recipe_costs",
+    "durable checkpoint validation should still prove new crafts are derivable",
+  );
+  assertIncludes(
+    durableCheckpointFunction,
+    "openworld_forest_mark_checkpoint_progress_v1",
+    "checkpoint should save durable pocket, chest and upgrades",
+  );
+  assertIncludes(
+    durableCheckpointFunction,
+    "openworld_forest_inventory_delta_above_v1",
+    "checkpoint should expose only unrewarded chest deltas to reward completion",
+  );
+  assertIncludes(
+    durableCompleteWrapper,
+    "openworld_forest_mark_completed_progress_v1",
+    "completion should preserve durable Bosque progress and update reward ledger",
   );
 });
 
