@@ -210,6 +210,7 @@ static func _phase_summary(pack: Dictionary, matrix: Dictionary, component_resul
 		if str(component.get("status", "")) == "FAIL":
 			blocking_changes.append("Component `%s` failed." % str(component.get("component", "")))
 	blocking_changes.append_array(_target_capture_blockers(pack, signature_quality))
+	blocking_changes.append_array(_enemy_signature_blockers(pack, signature_quality))
 	blocking_changes.append_array(_card_flow_expectation_blockers(pack, card_flow_expectations))
 	return {
 		"coverage": coverage,
@@ -278,6 +279,7 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 						})
 			_record_card_impact(top_map, diff)
 	blocking_changes.append_array(_target_capture_blockers(pack, signature_quality))
+	blocking_changes.append_array(_enemy_signature_blockers(pack, signature_quality))
 	blocking_changes.append_array(_card_flow_expectation_blockers(pack, card_flow_expectations))
 	return {
 		"coverage": _compare_coverage(pack, component_results),
@@ -346,6 +348,19 @@ static func _apply_effect_signature_coverage(coverage: Dictionary, pack: Diction
 	coverage["enemy_effect_signature_mode"] = str(enemy_config.get("mode", "off")) if enabled else "off"
 	coverage["expected_player_effect_signatures"] = int(coverage.get("filtered_player_cards", 0)) if str(coverage.get("player_effect_signature_mode", "")) == "required" else 0
 	coverage["expected_enemy_effect_signatures"] = int(coverage.get("filtered_enemy_cards", 0)) if str(coverage.get("enemy_effect_signature_mode", "")) == "required" else 0
+
+static func _enemy_signature_blockers(pack: Dictionary, signature_quality: Dictionary) -> Array[String]:
+	var gate_policy: Dictionary = Dictionary(pack.get("gate_policy", {}))
+	var blockers: Array[String] = []
+	if bool(gate_policy.get("fail_on_missing_enemy_card_played", false)):
+		var not_played_count: int = int(signature_quality.get("enemy_card_not_played_count", 0))
+		if not_played_count > 0:
+			blockers.append("%d enemy signature cases did not play the card under test." % not_played_count)
+	if bool(gate_policy.get("fail_on_missing_enemy_effect_signature", false)):
+		var missing_count: int = int(signature_quality.get("enemy_signature_missing_count", 0))
+		if missing_count > 0:
+			blockers.append("%d enemy signature cases are missing causal signatures." % missing_count)
+	return blockers
 
 static func _target_capture_blockers(pack: Dictionary, signature_quality: Dictionary) -> Array[String]:
 	var gate_policy: Dictionary = Dictionary(pack.get("gate_policy", {}))
@@ -422,6 +437,16 @@ static func _effect_family_for_field(field: String) -> String:
 		return "utility"
 	if field in ["keywords_added", "keywords_removed", "families"]:
 		return "keyword"
+	if field in ["enemy_summons_created", "enemy_summoned_count"]:
+		return "enemy_summon"
+	if field in ["enemy_summoned_attack_total", "enemy_summoned_health_total"]:
+		return "enemy_stat"
+	if field in ["enemy_summoned_keyword_count", "enemy_keywords_added"]:
+		return "enemy_keyword"
+	if field in ["enemy_damage_to_player_hero", "enemy_damage_to_player_slots", "enemy_player_units_delta", "enemy_combat_damage_to_player_hero", "enemy_combat_damage_to_player_slots"]:
+		return "enemy_combat_damage"
+	if field in ["enemy_card_played", "enemy_card_play_count", "enemy_signature_phase", "enemy_signature_confidence"]:
+		return "enemy_signature"
 	if field in ["pending_choices_delta", "pending_choice_created", "pending_choice_resolved", "sacrifice_required", "sacrifice_consumed", "sacrifice_units_destroyed"]:
 		return "choice"
 	if field in ["present", "sample_count"]:
@@ -455,13 +480,18 @@ static func _signature_quality_from_records(records: Array) -> Dictionary:
 		if typeof(record_value) != TYPE_DICTIONARY:
 			continue
 		var record: Dictionary = Dictionary(record_value)
+		var case_data: Dictionary = Dictionary(record.get("case", {}))
 		var result: Dictionary = Dictionary(record.get("result", {}))
 		var signature: Dictionary = Dictionary(result.get("card_effect_signature", {}))
 		var card_id: String = str(result.get("card_under_test", signature.get("card_id", "")))
-		var case_id: String = str(record.get("id", Dictionary(record.get("case", {})).get("id", "")))
+		var case_id: String = str(record.get("id", case_data.get("id", "")))
 		var families: Array = Array(signature.get("families", result.get("effect_families", [])))
 		if families.is_empty():
 			families = ["missing" if not bool(signature.get("present", false)) else "played"]
+		var card_under_test: Dictionary = Dictionary(case_data.get("card_under_test", {}))
+		var card_kind: String = str(result.get("card_under_test_kind", card_under_test.get("kind", "")))
+		var effect_scope: String = str(case_data.get("effect_signature_scope", result.get("effect_signature_scope", "")))
+		var enemy_signature_expected: bool = card_kind == "enemy" and effect_scope == "enemy"
 		var card_flow_expected: bool = bool(signature.get("card_flow_expected", result.get("card_flow_expected", false)))
 		var card_flow_observed: bool = bool(signature.get("card_flow_observed", false))
 		if card_flow_expected and not families.has("card_flow"):
@@ -475,6 +505,7 @@ static func _signature_quality_from_records(records: Array) -> Dictionary:
 			status = "missing"
 			confidence = "missing"
 			capture_quality = "failed" if target_capture_mode == "isolated_once" else "none"
+		_increment_enemy_signature_quality(quality, case_id, card_id, enemy_signature_expected, result, signature)
 		_increment_card_flow_quality(quality, case_id, card_id, card_flow_expected, card_flow_observed, bool(signature.get("present", false)), str(signature.get("card_flow_missing_reason", "")))
 		_increment_signature_quality_total(quality, status, confidence, capture_quality, target_play_count)
 		for family_value: Variant in families:
@@ -530,12 +561,21 @@ static func _empty_signature_quality() -> Dictionary:
 		"card_flow_missing_count": 0,
 		"card_flow_signature_missing_count": 0,
 		"card_flow_cases": [],
+		"enemy_signature_expected_count": 0,
+		"enemy_signature_present_count": 0,
+		"enemy_signature_missing_count": 0,
+		"enemy_card_played_count": 0,
+		"enemy_card_not_played_count": 0,
+		"enemy_signature_clean_count": 0,
+		"enemy_signature_ambiguous_count": 0,
+		"enemy_signature_confidence_missing_count": 0,
+		"enemy_signature_cases": [],
 		"by_family": {},
 		"cases": []
 	}
 
 static func _merge_signature_quality(target: Dictionary, source: Dictionary) -> void:
-	for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count", "capture_clean_count", "capture_support_required_count", "capture_ambiguous_count", "capture_failed_count", "repeated_target_count", "card_flow_expected_count", "card_flow_observed_count", "card_flow_missing_count", "card_flow_signature_missing_count"]:
+	for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count", "capture_clean_count", "capture_support_required_count", "capture_ambiguous_count", "capture_failed_count", "repeated_target_count", "card_flow_expected_count", "card_flow_observed_count", "card_flow_missing_count", "card_flow_signature_missing_count", "enemy_signature_expected_count", "enemy_signature_present_count", "enemy_signature_missing_count", "enemy_card_played_count", "enemy_card_not_played_count", "enemy_signature_clean_count", "enemy_signature_ambiguous_count", "enemy_signature_confidence_missing_count"]:
 		target[field] = int(target.get(field, 0)) + int(source.get(field, 0))
 	var target_by_family: Dictionary = Dictionary(target.get("by_family", {}))
 	for family_key: Variant in Dictionary(source.get("by_family", {})).keys():
@@ -558,6 +598,47 @@ static func _merge_signature_quality(target: Dictionary, source: Dictionary) -> 
 		if typeof(case_value) == TYPE_DICTIONARY:
 			card_flow_cases.append(Dictionary(case_value).duplicate(true))
 	target["card_flow_cases"] = card_flow_cases
+	var enemy_signature_cases: Array = Array(target.get("enemy_signature_cases", []))
+	for case_value: Variant in Array(source.get("enemy_signature_cases", [])):
+		if typeof(case_value) == TYPE_DICTIONARY:
+			enemy_signature_cases.append(Dictionary(case_value).duplicate(true))
+	target["enemy_signature_cases"] = enemy_signature_cases
+
+static func _increment_enemy_signature_quality(quality: Dictionary, case_id: String, card_id: String, expected: bool, result: Dictionary, signature: Dictionary) -> void:
+	if not expected:
+		return
+	quality["enemy_signature_expected_count"] = int(quality.get("enemy_signature_expected_count", 0)) + 1
+	var played: bool = bool(result.get("enemy_card_under_test_played", false)) or bool(signature.get("enemy_card_played", false))
+	var present: bool = bool(result.get("enemy_card_effect_signature_present", false)) or bool(signature.get("present", false))
+	var confidence: String = str(signature.get("enemy_signature_confidence", result.get("signature_confidence", "missing")))
+	if played:
+		quality["enemy_card_played_count"] = int(quality.get("enemy_card_played_count", 0)) + 1
+	else:
+		quality["enemy_card_not_played_count"] = int(quality.get("enemy_card_not_played_count", 0)) + 1
+	if present and played:
+		quality["enemy_signature_present_count"] = int(quality.get("enemy_signature_present_count", 0)) + 1
+	else:
+		quality["enemy_signature_missing_count"] = int(quality.get("enemy_signature_missing_count", 0)) + 1
+	match confidence:
+		"clean":
+			quality["enemy_signature_clean_count"] = int(quality.get("enemy_signature_clean_count", 0)) + 1
+		"ambiguous":
+			quality["enemy_signature_ambiguous_count"] = int(quality.get("enemy_signature_ambiguous_count", 0)) + 1
+		_:
+			quality["enemy_signature_confidence_missing_count"] = int(quality.get("enemy_signature_confidence_missing_count", 0)) + 1
+	if played and present and confidence == "clean":
+		return
+	var cases: Array = Array(quality.get("enemy_signature_cases", []))
+	cases.append({
+		"case_id": case_id,
+		"card_id": card_id,
+		"played": played,
+		"signature_present": present and played,
+		"confidence": confidence,
+		"phase": str(signature.get("enemy_signature_phase", "")),
+		"missing_reason": str(result.get("enemy_card_effect_signature_missing_reason", signature.get("missing_reason", "")))
+	})
+	quality["enemy_signature_cases"] = cases
 
 static func _increment_card_flow_quality(quality: Dictionary, case_id: String, card_id: String, expected: bool, observed: bool, signature_present: bool, missing_reason: String) -> void:
 	if not expected:

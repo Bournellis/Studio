@@ -74,6 +74,20 @@ func test_card_impact_loader_loads_track02_v4_2_pack() -> void:
 	assert_true(bool(expectations.get("enabled", false)))
 	assert_eq(Array(expectations.get("checks", [])).size(), 21)
 
+func test_card_impact_loader_loads_track02_v5_pack() -> void:
+	var load_result: Dictionary = CardImpactPackLoaderScript.load_pack_result("track02_card_impact_v5")
+	assert_true(bool(load_result.get("ok", false)), str(load_result.get("message", "")))
+	var pack: Dictionary = Dictionary(load_result.get("pack", {}))
+	var card_sets: Dictionary = Dictionary(pack.get("card_sets", {}))
+	var signatures: Dictionary = Dictionary(pack.get("effect_signatures", {}))
+	assert_eq(str(pack.get("pack_id", "")), "track02_card_impact_v5")
+	assert_eq(str(pack.get("simulation_mode", "")), "card_impact_v5")
+	assert_eq(int(pack.get("schema_version", 0)), 5)
+	assert_eq(int(card_sets.get("expected_player_cards", 0)), 108)
+	assert_eq(int(card_sets.get("expected_enemy_cards", 0)), 30)
+	assert_eq(int(card_sets.get("expected_enemy_effect_signatures", 0)), 30)
+	assert_eq(str(Dictionary(signatures.get("enemy", {})).get("mode", "")), "required")
+
 func test_card_impact_loader_rejects_unknown_simulation_mode() -> void:
 	var pack: Dictionary = _pack_v4().duplicate(true)
 	pack["simulation_mode"] = "card_impact_future"
@@ -93,6 +107,17 @@ func test_card_impact_loader_rejects_invalid_card_flow_expectation() -> void:
 	var result: Dictionary = CardImpactPackLoaderScript.validate_pack_result(pack, "unit")
 	assert_false(bool(result.get("ok", true)))
 	assert_string_contains(str(result.get("message", "")), "card_flow_expectations")
+
+func test_card_impact_loader_rejects_v5_without_required_enemy_signatures() -> void:
+	var pack: Dictionary = _pack_v5().duplicate(true)
+	var signatures: Dictionary = Dictionary(pack.get("effect_signatures", {})).duplicate(true)
+	var enemy: Dictionary = Dictionary(signatures.get("enemy", {})).duplicate(true)
+	enemy["mode"] = "report_only"
+	signatures["enemy"] = enemy
+	pack["effect_signatures"] = signatures
+	var result: Dictionary = CardImpactPackLoaderScript.validate_pack_result(pack, "unit")
+	assert_false(bool(result.get("ok", true)))
+	assert_string_contains(str(result.get("message", "")), "enemy.mode")
 
 func test_card_impact_v4_1_stays_without_explicit_card_flow_expectations() -> void:
 	assert_false(_pack_v4_1().has("card_flow_expectations"))
@@ -141,6 +166,31 @@ func test_card_impact_v4_2_matrix_discovers_card_flow_player_cards() -> void:
 	assert_eq(int(summary.get("battle_cases", 0)), 138)
 	assert_eq(int(summary.get("card_flow_player_cards_total", 0)), 3)
 	assert_eq(int(summary.get("filtered_card_flow_player_cards", 0)), 3)
+
+func test_card_impact_v5_matrix_discovers_required_enemy_signatures() -> void:
+	var matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v5(), PackedStringArray(["all"]))
+	assert_true(bool(matrix.get("ok", false)), "; ".join(Array(matrix.get("errors", []))))
+	assert_eq(Array(matrix.get("player_cards", [])).size(), 108)
+	assert_eq(Array(matrix.get("enemy_cards", [])).size(), 30)
+	var summary: Dictionary = Dictionary(matrix.get("summary", {}))
+	assert_eq(int(summary.get("battle_cases", 0)), 138)
+	assert_eq(int(summary.get("filtered_enemy_effect_signature_cards", 0)), 30)
+	assert_eq(int(summary.get("expected_enemy_effect_signatures", 0)), 30)
+
+func test_card_impact_v5_enemy_case_uses_commander_harness() -> void:
+	var case_data: Dictionary = _single_case_v5("enemy_terra_elemental_areia")
+	var config: Dictionary = Dictionary(case_data.get("config", {}))
+	var override: Dictionary = Dictionary(case_data.get("encounter_override", {}))
+	assert_eq(str(case_data.get("policy_id", "")), "end_turn_only")
+	assert_eq(str(case_data.get("effect_signature_scope", "")), "enemy")
+	assert_true(bool(case_data.get("effect_signature_required", false)))
+	assert_true(Array(case_data.get("tags", [])).has("enemy_causal_signature"))
+	assert_true(bool(config.get("enemy_commander_enabled", false)))
+	assert_eq(int(config.get("enemy_hand_count", 0)), 1)
+	assert_eq(Array(config.get("enemy_deck", [])), ["enemy_terra_elemental_areia"])
+	assert_true(bool(override.get("enemy_commander_enabled", false)))
+	assert_eq(str(override.get("mode", "")), "duelo")
+	assert_eq(Array(override.get("enemy_deck", [])), ["enemy_terra_elemental_areia"])
 
 func test_card_impact_v4_1_matrix_classifies_colheita_as_card_flow() -> void:
 	var matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v4_1(), PackedStringArray(["necro_colheita_das_almas", "necro_colheita_das_almas_lvl2", "necro_colheita_das_almas_lvl3"]))
@@ -251,6 +301,28 @@ func test_battle_effect_signature_detects_temporary_ability_power() -> void:
 	assert_eq(int(sample.get("temporary_ability_power_gained", 0)), 2)
 	assert_eq(int(sample.get("temporary_ability_power_lost", 0)), 0)
 	assert_true(Array(sample.get("families", [])).has("utility"))
+
+func test_battle_effect_signature_detects_enemy_summon_and_keywords() -> void:
+	var before: Dictionary = _effect_snapshot(40, 40, [], [null])
+	var after: Dictionary = _effect_snapshot(40, 40, [], [_slot("enemy_terra_elemental_areia", 2, 4, 4, ["resistencia"])])
+	var sample: Dictionary = BattleEffectSignatureScript.build_enemy_play_sample("enemy_terra_elemental_areia", before, after)
+	assert_true(bool(sample.get("enemy_card_played", false)))
+	assert_eq(int(sample.get("enemy_card_play_count", 0)), 1)
+	assert_eq(int(sample.get("enemy_summoned_count", 0)), 1)
+	assert_eq(int(sample.get("enemy_summoned_attack_total", 0)), 2)
+	assert_eq(int(sample.get("enemy_summoned_health_total", 0)), 4)
+	assert_eq(int(sample.get("enemy_summoned_keyword_count", 0)), 1)
+	assert_true(Dictionary(sample.get("enemy_keywords_added", {})).has("resistencia"))
+	assert_true(Array(sample.get("families", [])).has("enemy_summon"))
+	assert_true(Array(sample.get("families", [])).has("enemy_keyword"))
+
+func test_battle_effect_signature_detects_enemy_combat_damage() -> void:
+	var after_play: Dictionary = _effect_snapshot(40, 40, [], [_slot("enemy_terra_elemental_areia", 2, 4, 4)])
+	var after_combat: Dictionary = _effect_snapshot(38, 40, [], [_slot("enemy_terra_elemental_areia", 2, 4, 4)])
+	var sample: Dictionary = BattleEffectSignatureScript.build_enemy_combat_sample("enemy_terra_elemental_areia", after_play, after_combat)
+	assert_eq(int(sample.get("enemy_combat_damage_to_player_hero", 0)), 2)
+	assert_eq(int(sample.get("enemy_damage_to_player_hero", 0)), 2)
+	assert_true(Array(sample.get("families", [])).has("enemy_combat_damage"))
 
 func test_battle_effect_signature_aggregates_support_metadata() -> void:
 	var sample: Dictionary = BattleEffectSignatureScript.build_sample(
@@ -365,6 +437,20 @@ func test_card_impact_v3_enemy_case_stays_report_only_for_target_capture() -> vo
 	assert_eq(int(signature_quality.get("missing_count", 0)), 1)
 	assert_eq(int(signature_quality.get("capture_failed_count", 0)), 0)
 
+func test_card_impact_v5_runner_executes_enemy_case_and_records_causal_signature() -> void:
+	var case_data: Dictionary = _single_case_v5("enemy_terra_elemental_areia")
+	var metrics: Dictionary = BattleRunnerScript.run_case(ContentLibrary.get_catalog(), {"pack_id": "unit", "simulation_mode": "battle_engine_v1"}, case_data)
+	assert_false(bool(metrics.get("policy_action_rejected", true)), str(metrics.get("runner_warnings", [])))
+	assert_true(bool(metrics.get("enemy_card_under_test_played", false)), str(metrics.get("enemy_card_effect_signature_missing_reason", "")))
+	assert_true(bool(metrics.get("enemy_card_effect_signature_present", false)), str(metrics.get("enemy_card_effect_signature_missing_reason", "")))
+	assert_true(bool(metrics.get("card_effect_signature_present", false)), str(metrics.get("card_effect_signature_missing_reason", "")))
+	var signature: Dictionary = Dictionary(metrics.get("card_effect_signature", {}))
+	assert_true(bool(signature.get("enemy_card_played", false)))
+	assert_eq(str(signature.get("enemy_signature_confidence", "")), "clean")
+	assert_gt(int(signature.get("enemy_summoned_attack_total", 0)), 0)
+	assert_gt(int(signature.get("enemy_summoned_health_total", 0)), 0)
+	assert_true(Array(signature.get("families", [])).has("enemy_summon"))
+
 func test_card_impact_v2_runner_marks_support_assisted_signature() -> void:
 	var case_data: Dictionary = _single_case_v2("invocador_promover")
 	var metrics: Dictionary = BattleRunnerScript.run_case(ContentLibrary.get_catalog(), {"pack_id": "unit", "simulation_mode": "battle_engine_v1"}, case_data)
@@ -418,6 +504,17 @@ func test_card_impact_v4_1_filters_player_enemy_and_card_flow_id() -> void:
 	assert_eq(Array(id_matrix.get("player_cards", [])).size(), 1)
 	assert_eq(str(Dictionary(Array(id_matrix.get("player_cards", []))[0]).get("effect_family", "")), "card_flow")
 	assert_eq(Array(id_matrix.get("cases", [])).size(), 1)
+
+func test_card_impact_v5_filters_enemy_and_enemy_id() -> void:
+	var enemy_matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v5(), PackedStringArray(["enemy"]))
+	assert_eq(Array(enemy_matrix.get("player_cards", [])).size(), 0)
+	assert_eq(Array(enemy_matrix.get("enemy_cards", [])).size(), 30)
+	assert_eq(int(Dictionary(enemy_matrix.get("summary", {})).get("filtered_enemy_effect_signature_cards", 0)), 30)
+	var id_matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v5(), PackedStringArray(["enemy_terra_elemental_areia"]))
+	assert_eq(Array(id_matrix.get("player_cards", [])).size(), 0)
+	assert_eq(Array(id_matrix.get("enemy_cards", [])).size(), 1)
+	assert_eq(Array(id_matrix.get("cases", [])).size(), 1)
+	assert_eq(str(Dictionary(Array(id_matrix.get("cases", []))[0]).get("effect_signature_scope", "")), "enemy")
 
 func test_card_impact_v4_1_runner_observes_base_card_flow() -> void:
 	var case_data: Dictionary = _single_case_v4_1("necro_colheita_das_almas")
@@ -632,6 +729,41 @@ func test_card_impact_v4_2_compare_after_required_regression_fails_gate() -> voi
 	assert_gt(int(expectations.get("required_fail_count", 0)), 0)
 	assert_string_contains("; ".join(Array(summary.get("blocking_changes", []))), "required card-flow expectations")
 
+func test_card_impact_v5_compare_same_same_gate_ok() -> void:
+	var out_dir: String = "user://card_impact/gut_compare_v5_same"
+	var records: Array = [_fake_enemy_battle_record("enemy_terra_elemental_areia", _enemy_effect_signature("enemy_terra_elemental_areia", 2, 4))]
+	_write_battle_payload("%s/before/battle" % out_dir, records)
+	_write_battle_payload("%s/after/battle" % out_dir, records)
+	var report: Dictionary = CardImpactRunnerScript.compare_phase(_pack_v5(), {"out": out_dir, "components": PackedStringArray(["battle"]), "cards": PackedStringArray(["enemy_terra_elemental_areia"]), "command": "unit"})
+	var summary: Dictionary = Dictionary(report.get("summary", {}))
+	var signature_quality: Dictionary = Dictionary(summary.get("signature_quality", {}))
+	assert_true(bool(summary.get("gate_ok", false)), str(summary.get("blocking_changes", [])))
+	assert_eq(int(signature_quality.get("enemy_signature_expected_count", 0)), 1)
+	assert_eq(int(signature_quality.get("enemy_signature_present_count", 0)), 1)
+	assert_eq(int(signature_quality.get("enemy_signature_missing_count", 0)), 0)
+
+func test_card_impact_v5_compare_new_fail_is_not_gate_ok() -> void:
+	var out_dir: String = "user://card_impact/gut_compare_v5_fail"
+	_write_battle_payload("%s/before/battle" % out_dir, [_fake_enemy_battle_record("enemy_terra_elemental_areia", _enemy_effect_signature("enemy_terra_elemental_areia", 2, 4), "PASS")])
+	_write_battle_payload("%s/after/battle" % out_dir, [_fake_enemy_battle_record("enemy_terra_elemental_areia", _enemy_effect_signature("enemy_terra_elemental_areia", 2, 4), "FAIL")])
+	var report: Dictionary = CardImpactRunnerScript.compare_phase(_pack_v5(), {"out": out_dir, "components": PackedStringArray(["battle"]), "cards": PackedStringArray(["enemy_terra_elemental_areia"]), "command": "unit"})
+	var summary: Dictionary = Dictionary(report.get("summary", {}))
+	assert_false(bool(summary.get("gate_ok", true)))
+	assert_eq(int(summary.get("new_failure_count", 0)), 1)
+
+func test_card_impact_v5_compare_enemy_effect_delta_keeps_gate_ok() -> void:
+	var out_dir: String = "user://card_impact/gut_compare_v5_enemy_delta"
+	_write_battle_payload("%s/before/battle" % out_dir, [_fake_enemy_battle_record("enemy_terra_elemental_areia", _enemy_effect_signature("enemy_terra_elemental_areia", 2, 4))])
+	_write_battle_payload("%s/after/battle" % out_dir, [_fake_enemy_battle_record("enemy_terra_elemental_areia", _enemy_effect_signature("enemy_terra_elemental_areia", 3, 4))])
+	var report: Dictionary = CardImpactRunnerScript.compare_phase(_pack_v5(), {"out": out_dir, "components": PackedStringArray(["battle"]), "cards": PackedStringArray(["enemy_terra_elemental_areia"]), "command": "unit"})
+	var summary: Dictionary = Dictionary(report.get("summary", {}))
+	assert_true(bool(summary.get("gate_ok", false)), str(summary.get("blocking_changes", [])))
+	assert_true(Dictionary(summary.get("by_effect_family", {})).has("enemy_stat"))
+	assert_gt(Array(summary.get("effect_changes", [])).size(), 0)
+	var markdown: String = CardImpactReporterScript.markdown(report, {"command": "unit"})
+	assert_string_contains(markdown, "Enemy Causal Signature Coverage")
+	assert_string_contains(markdown, "effect.enemy_summoned_attack_total")
+
 func test_card_impact_reporter_markdown_contains_impact_matrix() -> void:
 	var report: Dictionary = {
 		"phase": "compare",
@@ -834,6 +966,54 @@ func test_card_impact_reporter_markdown_contains_card_flow_expectations() -> voi
 	assert_string_contains(markdown, "Card Flow Expectations")
 	assert_string_contains(markdown, "necro_colheita_das_almas")
 
+func test_card_impact_reporter_markdown_contains_enemy_causal_signature_sections() -> void:
+	var report: Dictionary = {
+		"phase": "compare",
+		"pack_id": "unit_v5",
+		"summary": {
+			"gate_ok": true,
+			"coverage": {
+				"expected_active_cards": 138,
+				"covered_active_cards": 138,
+				"expected_player_cards": 108,
+				"expected_enemy_cards": 30,
+				"expected_enemy_effect_signatures": 30,
+				"expected_legacy_inactive_cards": 15,
+				"filtered_player_cards": 108,
+				"filtered_enemy_cards": 30,
+				"player_cards_total": 108,
+				"enemy_cards_total": 30,
+				"legacy_inactive_cards_total": 15,
+				"enemy_effect_signature_mode": "required"
+			},
+			"structural_errors": [],
+			"components": [{"component": "battle", "status": "PASS", "pass_count": 1, "warn_count": 0, "fail_count": 0}],
+			"effect_changes": [{"id": "card_impact_enemy_enemy_terra_elemental_areia", "field": "effect.enemy_summoned_attack_total", "before": 2, "after": 3, "delta": 1}],
+			"signature_quality": {
+				"enemy_signature_expected_count": 30,
+				"enemy_signature_present_count": 30,
+				"enemy_signature_missing_count": 0,
+				"enemy_card_played_count": 30,
+				"enemy_card_not_played_count": 0,
+				"enemy_signature_clean_count": 30,
+				"enemy_signature_ambiguous_count": 0,
+				"enemy_signature_confidence_missing_count": 0,
+				"enemy_signature_cases": []
+			},
+			"top_impacted_cards": [],
+			"top_effect_delta_cards": [],
+			"by_effect_family": {"enemy_stat": {"change_count": 1, "fields": {"enemy_summoned_attack_total": 1}}},
+			"status_changes": [],
+			"metric_changes": [],
+			"blocking_changes": []
+		}
+	}
+	var markdown: String = CardImpactReporterScript.markdown(report, {"command": "unit"})
+	assert_string_contains(markdown, "Enemy Causal Signature Coverage")
+	assert_string_contains(markdown, "Enemy Signature Quality")
+	assert_string_contains(markdown, "Top Enemy Effect Deltas")
+	assert_string_contains(markdown, "Enemy Missing/Ambiguous Cases")
+
 func _pack() -> Dictionary:
 	return CardImpactPackLoaderScript.load_pack("track02_card_impact_v1")
 
@@ -851,6 +1031,9 @@ func _pack_v4_1() -> Dictionary:
 
 func _pack_v4_2() -> Dictionary:
 	return CardImpactPackLoaderScript.load_pack("track02_card_impact_v4_2")
+
+func _pack_v5() -> Dictionary:
+	return CardImpactPackLoaderScript.load_pack("track02_card_impact_v5")
 
 func _single_case(card_id: String) -> Dictionary:
 	var matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack(), PackedStringArray([card_id]))
@@ -894,6 +1077,13 @@ func _single_case_v4_2(card_id: String) -> Dictionary:
 	assert_eq(cases.size(), 1)
 	return Dictionary(cases[0])
 
+func _single_case_v5(card_id: String) -> Dictionary:
+	var matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v5(), PackedStringArray([card_id]))
+	assert_true(bool(matrix.get("ok", false)), "; ".join(Array(matrix.get("errors", []))))
+	var cases: Array = Array(matrix.get("cases", []))
+	assert_eq(cases.size(), 1)
+	return Dictionary(cases[0])
+
 func _fake_battle_record(case_id: String, status: String, enemy_hp: int, effect_signature: Dictionary = {}) -> Dictionary:
 	return {
 		"schema_version": 1,
@@ -923,6 +1113,26 @@ func _fake_battle_record(case_id: String, status: String, enemy_hp: int, effect_
 		"tags": ["card_impact", "card_under_test"],
 		"status": status
 	}
+
+func _fake_enemy_battle_record(card_id: String, effect_signature: Dictionary, status: String = "PASS") -> Dictionary:
+	var case_id: String = "card_impact_enemy_%s" % card_id
+	var record: Dictionary = _fake_battle_record(case_id, status, 40, effect_signature)
+	record["case"] = {
+		"id": case_id,
+		"name": case_id,
+		"effect_signature_scope": "enemy",
+		"card_under_test": {"id": card_id, "kind": "enemy"}
+	}
+	var result: Dictionary = Dictionary(record.get("result", {}))
+	result["card_under_test"] = card_id
+	result["card_under_test_kind"] = "enemy"
+	result["effect_signature_scope"] = "enemy"
+	result["enemy_card_under_test_played"] = bool(effect_signature.get("enemy_card_played", false))
+	result["enemy_card_effect_signature_present"] = bool(effect_signature.get("present", false))
+	result["enemy_card_effect_signature_missing_reason"] = str(effect_signature.get("missing_reason", ""))
+	record["result"] = result
+	record["tags"] = ["card_impact", "card_under_test", "enemy_card", "enemy_causal_signature"]
+	return record
 
 func _write_battle_payload(dir_path: String, records: Array) -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir_path))
@@ -1056,4 +1266,34 @@ func _card_flow_effect_signature(card_id: String, cards_drawn: int, observed: bo
 		"capture_quality": "clean",
 		"target_card_play_count": 1,
 		"target_capture_mode": "isolated_once"
+	}
+
+func _enemy_effect_signature(card_id: String, attack_total: int, health_total: int) -> Dictionary:
+	return {
+		"card_id": card_id,
+		"present": true,
+		"sample_count": 2,
+		"enemy_card_played": true,
+		"enemy_card_play_count": 1,
+		"enemy_summons_created": 1,
+		"enemy_summoned_count": 1,
+		"enemy_summoned_attack_total": attack_total,
+		"enemy_summoned_health_total": health_total,
+		"enemy_summoned_keyword_count": 0,
+		"enemy_keywords_added": {},
+		"enemy_damage_to_player_hero": 0,
+		"enemy_damage_to_player_slots": 0,
+		"enemy_player_units_delta": 0,
+		"enemy_combat_damage_to_player_hero": 0,
+		"enemy_combat_damage_to_player_slots": 0,
+		"enemy_signature_phase": "play_plus_combat",
+		"enemy_signature_confidence": "clean",
+		"families": ["enemy_summon", "enemy_stat"],
+		"keywords_added": {},
+		"keywords_removed": {},
+		"support_contamination_status": "clean",
+		"signature_confidence": "clean",
+		"capture_quality": "clean",
+		"target_card_play_count": 1,
+		"target_capture_mode": "enemy_causal"
 	}

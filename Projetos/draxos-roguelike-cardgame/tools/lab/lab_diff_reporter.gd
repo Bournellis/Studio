@@ -462,7 +462,22 @@ static func _effect_signature_fields() -> PackedStringArray:
 		"ambiguity_reasons",
 		"keywords_added",
 		"keywords_removed",
-		"families"
+		"families",
+		"enemy_card_played",
+		"enemy_card_play_count",
+		"enemy_summons_created",
+		"enemy_summoned_count",
+		"enemy_summoned_attack_total",
+		"enemy_summoned_health_total",
+		"enemy_summoned_keyword_count",
+		"enemy_keywords_added",
+		"enemy_damage_to_player_hero",
+		"enemy_damage_to_player_slots",
+		"enemy_player_units_delta",
+		"enemy_combat_damage_to_player_hero",
+		"enemy_combat_damage_to_player_slots",
+		"enemy_signature_phase",
+		"enemy_signature_confidence"
 	])
 
 static func _metric_fields(report_type: String) -> PackedStringArray:

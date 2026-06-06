@@ -55,6 +55,7 @@ static func build_matrix(catalog, pack: Dictionary, card_filter: PackedStringArr
 		"summary": {
 			"expected_player_cards": int(Dictionary(pack.get("card_sets", {})).get("expected_player_cards", 0)),
 			"expected_enemy_cards": int(Dictionary(pack.get("card_sets", {})).get("expected_enemy_cards", 0)),
+			"expected_enemy_effect_signatures": int(Dictionary(pack.get("card_sets", {})).get("expected_enemy_effect_signatures", 0)),
 			"expected_legacy_inactive_cards": int(Dictionary(pack.get("card_sets", {})).get("expected_legacy_inactive_cards", 0)),
 			"expected_card_flow_player_cards": int(Dictionary(pack.get("card_sets", {})).get("expected_card_flow_player_cards", 0)),
 			"player_cards_total": Array(discovery.get("player_cards", [])).size(),
@@ -63,6 +64,7 @@ static func build_matrix(catalog, pack: Dictionary, card_filter: PackedStringArr
 			"card_flow_player_cards_total": _card_flow_cards(Array(discovery.get("player_cards", []))).size(),
 			"filtered_player_cards": player_cards.size(),
 			"filtered_enemy_cards": enemy_cards.size(),
+			"filtered_enemy_effect_signature_cards": enemy_cards.size() if _requires_enemy_effect_signature(pack) else 0,
 			"filtered_card_flow_player_cards": _card_flow_cards(player_cards).size(),
 			"battle_cases": cases.size(),
 			"player_cards_total_by_class": _count_cards_by_field(Array(discovery.get("player_cards", [])), "class_id"),
@@ -243,23 +245,41 @@ static func _player_case(card_data: Dictionary, pack: Dictionary) -> Dictionary:
 static func _enemy_case(card_data: Dictionary, pack: Dictionary) -> Dictionary:
 	var template: Dictionary = Dictionary(Dictionary(pack.get("case_templates", {})).get("enemy", {}))
 	var card_id: String = str(card_data.get("id", ""))
+	var enemy_signature_required: bool = _requires_enemy_effect_signature(pack)
+	var tags: Array[String] = ["card_impact", "card_under_test", "enemy_card"]
+	if enemy_signature_required:
+		tags.append("enemy_causal_signature")
+	var config: Dictionary = Dictionary(template.get("config", {})).duplicate(true)
+	if enemy_signature_required:
+		config["enemy_commander_enabled"] = true
+		config["enemy_mana_per_turn"] = int(config.get("enemy_mana_per_turn", 10))
+		config["enemy_mana"] = int(config.get("enemy_mana", 10))
+		config["enemy_hand_count"] = 1
+		config["enemy_deck"] = [card_id]
+	var expectations: Dictionary = Dictionary(template.get("expectations", {})).duplicate(true)
+	if enemy_signature_required:
+		var required: Dictionary = Dictionary(expectations.get("required", {})).duplicate(true)
+		required["card_effect_signature_present_equals"] = true
+		required["enemy_card_under_test_played_equals"] = true
+		required["enemy_card_effect_signature_present_equals"] = true
+		expectations["required"] = required
 	return {
 		"id": "card_impact_enemy_%s" % card_id,
 		"name": "Card Impact Enemy %s" % card_id,
-		"tags": ["card_impact", "card_under_test", "enemy_card"],
+		"tags": tags,
 		"class_id": "arcano",
 		"encounter_id": str(template.get("encounter_id", "card_impact_enemy_harness")),
 		"seed": int(template.get("seed", DEFAULT_SEED)),
 		"policy_id": str(template.get("policy_id", "end_turn_only")),
 		"deck": ["arcano_barreira", "arcano_fagulha", "arcano_choque"],
-		"config": Dictionary(template.get("config", {})).duplicate(true),
+		"config": config,
 		"turn_limit": int(template.get("turn_limit", 1)),
-		"expectations": Dictionary(template.get("expectations", {})).duplicate(true),
+		"expectations": expectations,
 		"card_under_test": card_data.duplicate(true),
-		"effect_signature_required": false,
-		"effect_signature_scope": "enemy_report_only",
+		"effect_signature_required": enemy_signature_required,
+		"effect_signature_scope": "enemy" if enemy_signature_required else "enemy_report_only",
 		"effect_family": str(card_data.get("effect_family", "enemy")),
-		"encounter_override": _enemy_encounter_override(card_id)
+		"encounter_override": _enemy_encounter_override(card_id, enemy_signature_required)
 	}
 
 static func _player_deck(card_data: Dictionary, class_id: String) -> Array[String]:
@@ -309,8 +329,8 @@ static func _player_encounter_override_for(family: String) -> Dictionary:
 		"enemy_commander_enabled": false
 	}
 
-static func _enemy_encounter_override(card_id: String) -> Dictionary:
-	return {
+static func _enemy_encounter_override(card_id: String, causal_signature: bool = false) -> Dictionary:
+	var encounter: Dictionary = {
 		"id": "card_impact_enemy_harness",
 		"display_name": "Card Impact Enemy Harness",
 		"mode": "limpar_mesa",
@@ -318,9 +338,17 @@ static func _enemy_encounter_override(card_id: String) -> Dictionary:
 		"enemy_health": 40,
 		"player_slots_count": 3,
 		"enemy_slots_count": 3,
-		"starting_enemy_slots": [{"slot": 1, "card_id": card_id}],
 		"enemy_commander_enabled": false
 	}
+	if causal_signature:
+		encounter["enemy_commander_enabled"] = true
+		encounter["enemy_hand_count"] = 1
+		encounter["enemy_deck"] = [card_id]
+		encounter["mode"] = "duelo"
+		encounter["starting_enemy_slots"] = []
+	else:
+		encounter["starting_enemy_slots"] = [{"slot": 1, "card_id": card_id}]
+	return encounter
 
 static func _filter_cards(cards: Array, card_filter: PackedStringArray) -> Array[Dictionary]:
 	var mode: String = _filter_mode(card_filter)
@@ -442,6 +470,15 @@ static func _requires_player_effect_signature(pack: Dictionary) -> bool:
 		return false
 	var player_config: Dictionary = Dictionary(config.get("player", {}))
 	return str(player_config.get("mode", "required")) == "required" and bool(player_config.get("fail_on_missing_signature", true))
+
+static func _requires_enemy_effect_signature(pack: Dictionary) -> bool:
+	var config: Dictionary = Dictionary(pack.get("effect_signatures", {}))
+	if config.is_empty():
+		return false
+	if not bool(config.get("enabled", false)):
+		return false
+	var enemy_config: Dictionary = Dictionary(config.get("enemy", {}))
+	return str(enemy_config.get("mode", "report_only")) == "required" and bool(enemy_config.get("fail_on_missing_signature", true))
 
 static func _target_capture_config(pack: Dictionary) -> Dictionary:
 	var config: Dictionary = Dictionary(Dictionary(pack.get("effect_signatures", {})).get("target_capture", {})).duplicate(true)
