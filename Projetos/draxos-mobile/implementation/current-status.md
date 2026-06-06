@@ -5,26 +5,30 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Bosque Sync Responsiveness v1`
-- Active stage status: `BOSQUE_SYNC_RESPONSIVENESS_V1_IMPLEMENTED_LOCAL`
+- Active stage status: `BOSQUE_SYNC_RESPONSIVENESS_V1_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
-- Version: `0.0.2-alpha.0`
-- Version code: `2`
+- Version: `0.0.3-alpha.0`
+- Version code: `3`
 
 ## Current Truth
 
-- Latest published remote package: `Arena/Bosque Visible V2`.
-- Release root: `internal-alpha/v0-arena-bosque-visible-v2-20260605-01d80d5`
+- Latest published remote package: `Bosque Sync Responsiveness v1`.
+- Release root: `internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://7b9c8f38.draxos-mobile-internal-alpha.pages.dev`
-- Source state: `main` after merging and publishing Arena/Bosque Visible V2, preserving Arena/Bosque Regression Hotfix, Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
-- Published Arena/Bosque visible v2: bumps APK/manifest to `0.0.2-alpha.0` / version code `2`, forces old build update, and restores Preparacao even when Arena selection is blocked by an active or stuck attempt.
+- Latest deployment evidence: `https://60e2d4be.draxos-mobile-internal-alpha.pages.dev`
+- Source state: `main` after merging and publishing Bosque Sync Responsiveness v1, preserving Arena/Bosque Visible V2, Arena/Bosque Regression Hotfix, Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
+- Published Bosque Sync Responsiveness v1: applies remote migration `202606050003_openworld_bosque_collect_batch_v1.sql`, bumps APK/manifest to `0.0.3-alpha.0` / version code `3`, restores local-first Bosque collection/deposit/craft responsiveness through `collect_batch`, keeps `Encerrar visita` server-authoritative and preserves Arena Preparacao/buff-flow fixes.
+- Previous visible package: `Arena/Bosque Visible V2`
+- Previous visible release root: `internal-alpha/v0-arena-bosque-visible-v2-20260605-01d80d5`
+- Previous visible preview: `https://7b9c8f38.draxos-mobile-internal-alpha.pages.dev`
+- Previous visible package: bumps APK/manifest to `0.0.2-alpha.0` / version code `2`, forces old build update, and restores Preparacao even when Arena selection is blocked by an active or stuck attempt.
 - Previous visibility hotfix package: `Arena/Bosque Regression Hotfix`
 - Previous visibility hotfix release root: `internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f`
 - Previous visibility hotfix preview: `https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev`
 - Previous visibility hotfix: restored Preparacao before Arena start, during active attempts and on pending buff choice, and restored Bosque deposit/craft visible feedback plus pending-event flush before leaving an integrated session.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
-- Current local implementation: `Bosque Sync Responsiveness v1` is implemented on branch `codex/draxos-mobile/bosque-sync-responsiveness-v1` and not yet published. It restores local-first Bosque collection/deposit/craft responsiveness, batches remote collection into `collect_batch`, keeps `Encerrar visita` server-authoritative, and preserves Arena/Bosque Visible V2 as the latest published package until release is explicitly authorized.
+- Current published implementation: `Bosque Sync Responsiveness v1` is published on `main`. It restores local-first Bosque collection/deposit/craft responsiveness, batches remote collection into `collect_batch`, keeps `Encerrar visita` server-authoritative, and preserves Arena/Bosque Visible V2 as the previous visible package.
 - Previous Arena Season 1 package: `Arena PVE Season 1 Loop v1` groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
 - Previous Arena Season 1 release root: `internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32`
 - Previous Arena Season 1 preview: `https://d7333659.draxos-mobile-internal-alpha.pages.dev`
@@ -53,39 +57,41 @@
 
 ## Current Published Package
 
-Arena/Bosque Visible V2 is published as the current Internal Alpha package. It preserves Arena/Bosque Regression Hotfix and specifically fixes the "nothing changed" playtest path by publishing a fresh release root, APK version code `2`, manifest minimum code `2`, and an Arena selection patch for active/stuck attempts.
+Bosque Sync Responsiveness v1 is published as the current Internal Alpha package. It preserves Arena/Bosque Visible V2 and specifically fixes the Bosque sync regression by publishing a fresh release root, APK version code `3`, manifest minimum code `3`, and the remote `collect_batch` migration.
 
 Delivered:
 
-- bumps in-app, export and manifest versioning to `0.0.2-alpha.0` / version code `2`;
-- forces clients on version code `1` to update through the remote manifest instead of silently continuing the old APK;
-- restores `Preparacao` in Arena selection even when an active or stuck attempt blocks a new start;
-- keeps behavior-only preparation available after an Arena attempt starts, without unlocking the locked loadout;
-- preserves the previous Bosque deposit/craft feedback and pending-event flush fixes from Arena/Bosque Regression Hotfix;
+- applies remote migration `202606050003_openworld_bosque_collect_batch_v1.sql`;
+- bumps in-app, export and manifest versioning to `0.0.3-alpha.0` / version code `3`;
+- forces clients on version code `2` or older to update through the remote manifest instead of silently continuing the old APK;
+- keeps Bosque collection/deposit/craft local-first while queueing deterministic sync as `collect_batch -> deposit_all -> craft -> complete`;
+- keeps `Encerrar visita` blocked until the server-authoritative snapshot is fully synced;
+- preserves Arena Preparacao before start, in active/stuck attempts, in the duel menu and in buff choice;
 - preserves Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Arena PVE First Real Run + Update Recovery, Bosque v3 UX/Feel, Technical Hardening, Openworld Main Menu Sync, Foundation Hardening V2, Hardening Platform V1 and Remote Lab Runner.
 
 Publication evidence:
 
+- Supabase remote migration `202606050003_openworld_bosque_collect_batch_v1.sql` applied and `supabase migration list --linked` aligned local/remote.
 - Export regenerated APK, PC ZIP and Web artifacts from current `main`.
 - Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and Edge Function `release` deploy passed.
-- Cloudflare Pages preview evidence: `https://7b9c8f38.draxos-mobile-internal-alpha.pages.dev`.
-- Remote Web launch smoke on preview loaded the game in `12442 ms`, matched release root and asset root, and reported no runtime errors.
+- Cloudflare Pages preview evidence: `https://60e2d4be.draxos-mobile-internal-alpha.pages.dev`.
+- Remote Web launch smoke on preview loaded the game in `4246 ms`, matched release root and asset root, and reported no runtime errors.
 - Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web; stable Portal/Web remain protected by Cloudflare Access.
-- Remote read-only release/CORS smoke passed after local manifest expectations were updated to version code `2`.
+- Remote read-only release/CORS smoke passed after local manifest expectations were updated to version code `3`.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 - `release/config` remains on `track23-online-actions-hotfix`, so online progression actions are not paused by remote config.
 
 Artifact hashes:
 
-- Android APK SHA256: `aef590a4d5a072153e6c1fb21ed9722e890654a2b2acaa575780758ec18d4282`
-- PC Windows ZIP SHA256: `f5fde2d9a3274683fa941145718626e929732d76e85acc6babe7d69d6b0c7572`
-- Web Index SHA256: `bf3d428d2dd7990ca90d245784ce1b98b43a71e638e4ffcbf84a43d605c769d4`
+- Android APK SHA256: `b6924a295e5a46df7f09f50ca5fa17292b9fc6b24792bfe28055e02ca03c41b5`
+- PC Windows ZIP SHA256: `bee30a683fa3f895ef0e9012f0499d0d521d9395899fa5dc513c411c57a56294`
+- Web Index SHA256: `4c4b9f208d3b7645a810e62439aa3ec62d7db2f88e8c7c8ecafa7ec69d72d1df`
 
-## Current Local Implementation
+## Bosque Sync Responsiveness v1 Details
 
-Bosque Sync Responsiveness v1 is implemented locally and awaits release authorization before remote migration, Web publication or APK update.
+Bosque Sync Responsiveness v1 is published remotely and should be the active Bosque playtest baseline.
 
-Delivered locally:
+Delivered:
 
 - adds `collect_batch` to `/modes/session/event` and mirrored migrations in `server/schema` and `supabase/migrations`;
 - keeps legacy `collect_complete` compatible for older packages;
@@ -107,11 +113,13 @@ Validation:
 - `Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gtest=res://tests/client/test_openworld_integrated_session_bridge.gd -gtest=res://tests/client/test_openworld_mode_dev.gd -gtest=res://tests/client/test_boot_mobile_ui.gd -gexit`: PASS, 238 tests / 3739 asserts. GUT still reports known teardown orphan/ObjectDB warnings.
 - `Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd`: PASS, 238 tests / 3739 asserts and content/catalog validation. GUT still reports known teardown orphan/ObjectDB warnings.
 - `git diff --check`: PASS.
-
-Pending before publication:
-
-- apply the new Supabase migration remotely only with explicit release authorization and the project-required remote mutation confirmation;
-- export/publish Web and APK only in the authorized release phase.
+- `validate_foundation.ps1 -Profile ReleaseDryRun -RequireClean -NoProjectWrites`: PASS.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95 -PublicDownloads`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: PASS, preview `https://60e2d4be.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95 -RemoteWebUrl https://60e2d4be.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS.
 
 ## Previous Visibility Hotfix Package
 
@@ -210,7 +218,7 @@ Artifact hashes:
 
 ## Current Gate
 
-The next operational step is human playtest of the published Arena/Bosque Visible V2 package before opening Arena tuning, broader Openworld expansion or new mode work.
+The next operational step is human playtest of the published Bosque Sync Responsiveness v1 package before opening Arena tuning, broader Openworld expansion or new mode work.
 
 Playtest focus:
 
@@ -219,7 +227,7 @@ Playtest focus:
 3. Confirm `Abandonar tentativa` and `Encerrar tentativa antiga` clear the blocker without granting completion reward.
 4. Confirm the player is no longer trapped by an inaccessible post-update Arena attempt.
 5. Confirm Preparacao appears before starting, inside blocked active/stuck attempts, inside the active-duel menu and during buff choice, and that a selected victory buff leads back to `Resolver duelo`.
-6. Confirm Bosque entry, collect/deposit/craft feedback, deposit persistence after leaving/reopening and main menu regress cleanly after the hotfix.
+6. Confirm Bosque entry, rapid 10+ resource collection, immediate deposit during pending sync, craft feedback, deposit persistence after leaving/reopening and main menu regress cleanly after the hotfix.
 7. Confirm Season 1 selection is readable by arena/difficulty, reward preview and locked reasons.
 8. Confirm reopening during a pending buff returns to the buff choice instead of trapping or auto-selecting.
 
@@ -234,6 +242,24 @@ Playtest focus:
 - Current names, spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance unless a live doc promotes them.
 
 ## Validation Snapshot
+
+Bosque Sync Responsiveness v1 publication validation:
+
+- `deno test --allow-read server/tests/openworld_ruleset_definition_test.ts server/tests/modes_domain_test.ts`: PASS, 14 tests.
+- `deno check server/functions/_shared/mode_domain.ts supabase/functions/_shared/mode_domain.ts server/functions/modes/mode_handler.ts supabase/functions/modes/mode_handler.ts`: PASS.
+- GUT client suite: PASS, 238 tests and 3739 asserts.
+- `validate.gd`: PASS, 238 tests and 3739 asserts.
+- `validate_foundation.ps1 -Profile ReleaseDryRun -RequireClean -NoProjectWrites`: PASS.
+- `supabase db push --linked --dry-run`: PASS, pending only `202606050003_openworld_bosque_collect_batch_v1.sql`.
+- `supabase db push --linked --yes`: PASS, remote migration applied.
+- `supabase migration list --linked`: PASS, local/remote aligned through `202606050003`.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95 -PublicDownloads`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <versioned-web-asset-root>`: PASS.
+- `wrangler pages deploy ... --branch main`: PASS, preview `https://60e2d4be.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95 -RemoteWebUrl https://60e2d4be.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS, Web loaded in `4246 ms`.
 
 Arena/Bosque Visible V2 publication validation:
 

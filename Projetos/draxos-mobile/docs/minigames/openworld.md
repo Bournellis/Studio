@@ -15,7 +15,7 @@
 
 `Openworld Bosque` e o primeiro slice do modo `Openworld`. Ele nasceu do prototipo `Rpgsuave Bosque`, mas V1 renomeia o modo de verdade: novos payloads, rotas, settings, docs e testes usam `openworld`.
 
-Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Nao significa release publico, troca de manifest ou publicacao remota.
+Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Publicacao remota e registrada explicitamente: `Bosque Sync Responsiveness v1` esta publicado em `internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95`, com `collect_batch` aplicado no Supabase remoto, Web/APK em version code `3` e preview tecnico `https://60e2d4be.draxos-mobile-internal-alpha.pages.dev`.
 
 ## Visao
 

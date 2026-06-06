@@ -299,8 +299,9 @@ Regras:
 
 ## Openworld Bosque v1 Schema Contratado
 
-Status: migration local preparada em mirror `server/schema/migrations/` e
-`supabase/migrations/`; nao aplicada remotamente nesta entrega.
+Status: migrations espelhadas em `server/schema/migrations/` e
+`supabase/migrations/`; `202606050003_openworld_bosque_collect_batch_v1.sql`
+aplicada remotamente na publicacao `Bosque Sync Responsiveness v1`.
 
 Definition: `data/definitions/openworld/forest_ruleset_v1.json`.
 
