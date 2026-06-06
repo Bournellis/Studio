@@ -21,6 +21,8 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 Nota DraxosMobile: `Arena/Bosque Visible V2` foi publicado como Internal Alpha em `internal-alpha/v0-arena-bosque-visible-v2-20260605-01d80d5`, mantendo a URL principal como contrato player-facing e usando `main` como trunk local/publicacao Pages. `Arena/Bosque Regression Hotfix` segue preservado como visibility hotfix anterior, `Arena PVE Season 1 Loop v1` segue preservado como pacote Season 1 anterior, `Arena Duel Flow Hotfix` segue preservado como duel-flow hotfix anterior e `Arena PVE First Real Run + Update Recovery` segue preservado como baseline Arena anterior.
 
+Nota DraxosMobile local: `Bosque Sync Responsiveness v1` esta implementado localmente em `codex/draxos-mobile/bosque-sync-responsiveness-v1`, com `collect_batch`, coleta/deposito/craft local-first e conclusao server-authoritative. Ainda nao e pacote remoto publicado; migration remota, Web publish e APK update exigem autorizacao explicita.
+
 ## Status Aceitos
 
 - `P0_IMPLEMENTACAO`: foco principal do trabalho de desenvolvimento, com permissao padrao para codigo, validacao e playtest.

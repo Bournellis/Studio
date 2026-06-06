@@ -60,7 +60,7 @@ Contratos de produto para v2:
 - assets procedurais em Godot, sem raster externo novo;
 - backend opcional em `integrated_alpha` por `/modes/state`, `/modes/session/start`, `/modes/session/event`, `/modes/session/complete` e `/modes/session/abandon`;
 - snapshot remoto retomavel por ate 2 horas;
-- heartbeat de movimento/tempo a cada 15 segundos e eventos imediatos para acoes relevantes;
+- heartbeat de movimento/tempo a cada 15 segundos, coleta em lote e eventos ordenados para acoes relevantes;
 - ACK de evento com patch autoritativo seletivo, sem rollback visual de posicao
   ou coleta em andamento durante gameplay ativo;
 - Reward Bridge limitado, server-authoritative, idempotente e com ledger.
@@ -128,8 +128,12 @@ economia; sao folga de aprendizagem para o minigame.
 - Entrar no Bosque inicia ou retoma visita conforme sessao ativa disponivel.
 - `Voltar` deve retornar ao shell/refugio preservando a visita quando a sessao
   ainda estiver ativa.
+- Se houver fila pendente, `Voltar` tenta flush curto em segundo plano e preserva
+  a sessao; nao prende o jogador num estado de espera obrigatoria.
 - `Encerrar visita` e a acao explicita de finalizacao, com resumo leve de
   materiais depositados, crafts feitos e estruturas construidas.
+- `Encerrar visita` segue bloqueado enquanto houver sync pendente, pois a
+  recompensa real depende do snapshot server-authoritative.
 - Nao ha requisito de completar todos os recursos, todos os crafts ou todos os
   passos de orientacao.
 
@@ -221,10 +225,17 @@ como snapshot completo de retomada pelo client. Durante gameplay ativo:
 - `player_position` continua client-authoritative e nao entra no patch;
 - `active_collection` continua client-authoritative ate sair, retomar ou
   resync stale explicito;
-- `collect_start` pode confirmar revisao sem zerar barra de coleta;
-- `collect_complete` confirma bolso e `collected_nodes`;
-- `deposit_all` confirma bolso/bau;
-- `craft` confirma bau/upgrades;
+- `collect_start` e `collect_cancel` sao lifecycle local/client telemetry no
+  cliente novo e nao sao enviados como mutacoes remotas durante gameplay normal;
+- `collect_complete` permanece compativel para pacotes antigos;
+- o cliente novo prefere `collect_batch`, confirmando varios nodes coletados em
+  uma unica revisao;
+- `deposit_all` confirma bolso/bau, mas a UI aplica localmente e enfileira depois
+  do lote de coleta pendente;
+- `craft` confirma bau/upgrades, mas a UI aplica localmente e enfileira depois
+  de deposito/coleta pendentes;
+- se houver deposito/craft local ja enfileirado, ACK intermediario nao pode
+  reverter bolso/bau/upgrades locais ate o ACK final ou resync;
 - stale revision bloqueia `Completar`, mostra mensagem discreta e aciona resync
   por `/modes/state`.
 
@@ -234,15 +245,40 @@ Eventos aceitos:
 - `collect_start`
 - `collect_cancel`
 - `collect_complete`
+- `collect_batch`
 - `deposit_all`
 - `craft`
-- `guidance_step_seen`
-- `guidance_dismissed`
-- `guidance_reopened`
+- `guidance_update`
 - `complete_requested`
 - `abandon_requested`
 
-Payload de evento:
+Payload principal de coleta em lote:
+
+```json
+{
+  "request_id": "<uuid>",
+  "session_id": "<uuid>",
+  "mode_id": "openworld",
+  "slice_id": "forest",
+  "event_type": "collect_batch",
+  "expected_revision": 3,
+  "event_payload": {
+    "nodes": [
+      {"node_id": "node_galho_01", "item_id": "galho", "session_seconds": 42},
+      {"node_id": "node_folha_01", "item_id": "folha", "session_seconds": 43}
+    ],
+    "position": {"x": 220, "y": 250},
+    "session_seconds": 43
+  }
+}
+```
+
+O SQL valida todos os nodes do lote antes de persistir a revisao final: node
+existente, item esperado pelo ruleset, node ainda nao coletado, duplicata dentro
+do proprio lote e capacidade do bolso. Qualquer falha rejeita o batch sem
+mutacao parcial.
+
+Payload legado de evento unitario:
 
 ```json
 {

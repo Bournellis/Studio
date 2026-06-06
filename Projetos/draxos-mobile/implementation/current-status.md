@@ -4,8 +4,8 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Arena/Bosque Visible V2`
-- Active stage status: `ARENA_BOSQUE_VISIBLE_V2_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Bosque Sync Responsiveness v1`
+- Active stage status: `BOSQUE_SYNC_RESPONSIVENESS_V1_IMPLEMENTED_LOCAL`
 - Build channel: `internal_alpha`
 - Version: `0.0.2-alpha.0`
 - Version code: `2`
@@ -24,6 +24,7 @@
 - Previous visibility hotfix preview: `https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev`
 - Previous visibility hotfix: restored Preparacao before Arena start, during active attempts and on pending buff choice, and restored Bosque deposit/craft visible feedback plus pending-event flush before leaving an integrated session.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
+- Current local implementation: `Bosque Sync Responsiveness v1` is implemented on branch `codex/draxos-mobile/bosque-sync-responsiveness-v1` and not yet published. It restores local-first Bosque collection/deposit/craft responsiveness, batches remote collection into `collect_batch`, keeps `Encerrar visita` server-authoritative, and preserves Arena/Bosque Visible V2 as the latest published package until release is explicitly authorized.
 - Previous Arena Season 1 package: `Arena PVE Season 1 Loop v1` groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
 - Previous Arena Season 1 release root: `internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32`
 - Previous Arena Season 1 preview: `https://d7333659.draxos-mobile-internal-alpha.pages.dev`
@@ -79,6 +80,38 @@ Artifact hashes:
 - Android APK SHA256: `aef590a4d5a072153e6c1fb21ed9722e890654a2b2acaa575780758ec18d4282`
 - PC Windows ZIP SHA256: `f5fde2d9a3274683fa941145718626e929732d76e85acc6babe7d69d6b0c7572`
 - Web Index SHA256: `bf3d428d2dd7990ca90d245784ce1b98b43a71e638e4ffcbf84a43d605c769d4`
+
+## Current Local Implementation
+
+Bosque Sync Responsiveness v1 is implemented locally and awaits release authorization before remote migration, Web publication or APK update.
+
+Delivered locally:
+
+- adds `collect_batch` to `/modes/session/event` and mirrored migrations in `server/schema` and `supabase/migrations`;
+- keeps legacy `collect_complete` compatible for older packages;
+- coalesces multiple `collect_complete` client actions into one `collect_batch` request before `deposit_all`, `craft`, `complete` or exit flush;
+- applies resource collection to the local pocket immediately and marks the node pending until server ACK/resync;
+- allows `Depositar` while collection sync is pending when the local pocket has items and the player is near the chest;
+- applies deposit/craft locally and queues them after pending collection batch without requiring an empty queue;
+- prevents intermediate collection/deposit ACK patches from rolling back later local optimistic deposit/craft state;
+- keeps `Encerrar visita` blocked until the server-authoritative snapshot is fully synced;
+- changes `Voltar` to preserve the session and trigger a short background flush instead of trapping the player behind pending sync;
+- updates Bosque HUD/tooltips/status so pending sync is shown as saving state, not as a normal deposit blocker;
+- keeps Arena regression coverage for Preparacao and selected buff returning to `Resolver duelo`.
+
+Validation:
+
+- `deno test --allow-read server/tests/openworld_ruleset_definition_test.ts server/tests/modes_domain_test.ts`: PASS, 14 tests.
+- `deno check server/functions/_shared/mode_domain.ts supabase/functions/_shared/mode_domain.ts server/functions/modes/mode_handler.ts supabase/functions/modes/mode_handler.ts`: PASS.
+- `Godot_v4.6.2-stable_win64_console.exe --headless --path . --import`: PASS for fresh worktree import.
+- `Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gtest=res://tests/client/test_openworld_integrated_session_bridge.gd -gtest=res://tests/client/test_openworld_mode_dev.gd -gtest=res://tests/client/test_boot_mobile_ui.gd -gexit`: PASS, 238 tests / 3739 asserts. GUT still reports known teardown orphan/ObjectDB warnings.
+- `Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd`: PASS, 238 tests / 3739 asserts and content/catalog validation. GUT still reports known teardown orphan/ObjectDB warnings.
+- `git diff --check`: PASS.
+
+Pending before publication:
+
+- apply the new Supabase migration remotely only with explicit release authorization and the project-required remote mutation confirmation;
+- export/publish Web and APK only in the authorized release phase.
 
 ## Previous Visibility Hotfix Package
 
