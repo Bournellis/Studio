@@ -3086,7 +3086,7 @@
       "cost": 2,
       "text": "Congelar ao atacar.",
       "attack": 2,
-      "health": 3,
+      "health": 4,
       "keywords": [
         "congelar"
       ]
@@ -3161,8 +3161,8 @@
       "display_name": "Coluna de Gelo",
       "type": "criatura",
       "cost": 3,
-      "text": "Resistencia 3.",
-      "attack": 0,
+      "text": "Resistencia 3. Pressao lenta.",
+      "attack": 1,
       "health": 8,
       "keywords": [
         "resistencia"
@@ -3205,7 +3205,7 @@
       "type": "criatura",
       "cost": 1,
       "text": "Ecoar.",
-      "attack": 1,
+      "attack": 2,
       "health": 1,
       "keywords": [
         "ecoar"
@@ -3218,7 +3218,7 @@
       "cost": 3,
       "text": "Brutal.",
       "attack": 3,
-      "health": 3,
+      "health": 4,
       "keywords": [
         "brutal"
       ]
@@ -3297,7 +3297,7 @@
       "cost": 3,
       "text": "Resistencia 2. Ao morrer, explode nos adjacentes.",
       "attack": 2,
-      "health": 6,
+      "health": 7,
       "keywords": [
         "resistencia"
       ],
@@ -3335,9 +3335,12 @@
       "display_name": "Fragmento de Chama",
       "type": "criatura",
       "cost": 1,
-      "text": "Token de pressao de Fogo.",
+      "text": "Furia. Token de pressao de Fogo.",
       "attack": 2,
-      "health": 1
+      "health": 1,
+      "keywords": [
+        "furia"
+      ]
     },
     {
       "id": "enemy_fogo_fenix",

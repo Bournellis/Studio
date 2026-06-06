@@ -1886,7 +1886,7 @@ display_name = "Elemental de Gelo"
 card_type = "criatura"
 cost = 2
 attack = 2
-health = 3
+health = 4
 text = "Congelar ao atacar."
 keywords = PackedStringArray("congelar")
 
@@ -1957,8 +1957,9 @@ id = "enemy_gelo_coluna_de_gelo"
 display_name = "Coluna de Gelo"
 card_type = "criatura"
 cost = 3
+attack = 1
 health = 8
-text = "Resistencia 3."
+text = "Resistencia 3. Pressao lenta."
 keywords = PackedStringArray("resistencia")
 effect = {
 "resistance_amount": 3.0
@@ -1995,7 +1996,7 @@ id = "enemy_ar_brisa_mortal"
 display_name = "Brisa Mortal"
 card_type = "criatura"
 cost = 1
-attack = 1
+attack = 2
 health = 1
 text = "Ecoar."
 keywords = PackedStringArray("ecoar")
@@ -2007,7 +2008,7 @@ display_name = "Tempestade Vivente"
 card_type = "criatura"
 cost = 3
 attack = 3
-health = 3
+health = 4
 text = "Brutal."
 keywords = PackedStringArray("brutal")
 
@@ -2077,7 +2078,7 @@ display_name = "Golem de Lava"
 card_type = "criatura"
 cost = 3
 attack = 2
-health = 6
+health = 7
 text = "Resistencia 2. Ao morrer, explode nos adjacentes."
 keywords = PackedStringArray("resistencia")
 effect = {
@@ -2116,8 +2117,8 @@ card_type = "criatura"
 cost = 1
 attack = 2
 health = 1
-text = "Token de pressao de Fogo."
-keywords = PackedStringArray()
+text = "Furia. Token de pressao de Fogo."
+keywords = PackedStringArray("furia")
 
 [sub_resource type="Resource" id="Resource_s0rnw"]
 script = ExtResource("1_tqsc8")
@@ -4477,4 +4478,4 @@ track_contract = {
 }
 }
 }
-definition_hash = "354d2dda5b70e07c54fa6699c77606890acd963510f627284e4f26ef3dd91211"
+definition_hash = "5516acb7ba4ec69414e9d469377dcadad0e31892d9e24a4d1c865e52aeaf222e"
