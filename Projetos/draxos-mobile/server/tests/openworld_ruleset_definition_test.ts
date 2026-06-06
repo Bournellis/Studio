@@ -11,6 +11,10 @@ const COLLECT_BATCH_MIGRATION_PATH =
   "server/schema/migrations/202606050003_openworld_bosque_collect_batch_v1.sql";
 const SUPABASE_COLLECT_BATCH_MIGRATION_PATH =
   "supabase/migrations/202606050003_openworld_bosque_collect_batch_v1.sql";
+const CHECKPOINT_MIGRATION_PATH =
+  "server/schema/migrations/202606060001_openworld_bosque_checkpoint_v1.sql";
+const SUPABASE_CHECKPOINT_MIGRATION_PATH =
+  "supabase/migrations/202606060001_openworld_bosque_checkpoint_v1.sql";
 const MODE_DOMAIN_PATH = "server/functions/_shared/mode_domain.ts";
 const SUPABASE_MODE_DOMAIN_PATH = "supabase/functions/_shared/mode_domain.ts";
 
@@ -124,8 +128,10 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
   );
   const collectBatchMigration = await projectText(COLLECT_BATCH_MIGRATION_PATH);
   const supabaseCollectBatchMigration = await projectText(SUPABASE_COLLECT_BATCH_MIGRATION_PATH);
+  const checkpointMigration = await projectText(CHECKPOINT_MIGRATION_PATH);
+  const supabaseCheckpointMigration = await projectText(SUPABASE_CHECKPOINT_MIGRATION_PATH);
   const effectiveMigration =
-    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}\n${collectBatchMigration}`;
+    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}\n${collectBatchMigration}\n${checkpointMigration}`;
   const modeDomain = await projectText(MODE_DOMAIN_PATH);
   const supabaseModeDomain = await projectText(SUPABASE_MODE_DOMAIN_PATH);
 
@@ -149,6 +155,11 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
     "collect_batch",
     "mode domain should accept batched Bosque collection events",
   );
+  assertIncludes(
+    modeDomain,
+    "sessionCheckpointFromBody",
+    "mode domain should parse offline-first checkpoint payloads",
+  );
   assertEq(
     normalizeNewlines(collectionSyncMigration),
     normalizeNewlines(supabaseCollectionSyncMigration),
@@ -159,10 +170,25 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
     normalizeNewlines(supabaseCollectBatchMigration),
     "collect batch migration should be mirrored between server and supabase",
   );
+  assertEq(
+    normalizeNewlines(checkpointMigration),
+    normalizeNewlines(supabaseCheckpointMigration),
+    "checkpoint migration should be mirrored between server and supabase",
+  );
   assertIncludes(
     collectBatchMigration,
     "'collect_batch'",
     "collect batch migration should allow collect_batch in event audit",
+  );
+  assertIncludes(
+    checkpointMigration,
+    "mode_session_checkpoint_v1",
+    "checkpoint migration should add a dedicated checkpoint RPC",
+  );
+  assertIncludes(
+    checkpointMigration,
+    "'checkpoint'",
+    "checkpoint migration should audit accepted checkpoints",
   );
   assertIncludes(
     effectiveMigration,
@@ -238,6 +264,49 @@ Deno.test("openworld forest collect batch migration validates nodes atomically",
     batchBranch,
     "batch_count < 1",
     "collect_batch should reject empty batches",
+  );
+});
+
+Deno.test("openworld forest checkpoint migration validates snapshots and gates rewards", async () => {
+  const migration = await projectText(CHECKPOINT_MIGRATION_PATH);
+  const validateFunction = sqlFunctionBody(migration, "openworld_forest_validate_checkpoint_v1");
+  const checkpointFunction = sqlFunctionBody(migration, "mode_session_checkpoint_v1");
+  const completeWrapper = sqlFunctionBody(migration, "mode_session_complete_v1");
+
+  assertIncludes(
+    validateFunction,
+    "public.openworld_forest_node_item_v1",
+    "checkpoint validation should derive collected nodes from the ruleset",
+  );
+  assertIncludes(
+    validateFunction,
+    "public.openworld_forest_clean_inventory_v1",
+    "checkpoint validation should sanitize local pocket and chest",
+  );
+  assertIncludes(
+    validateFunction,
+    "MODE_CHECKPOINT_REJECTED",
+    "invalid checkpoint snapshots should fail atomically",
+  );
+  assertIncludes(
+    checkpointFunction,
+    "'modes/session/checkpoint'",
+    "checkpoint RPC should reserve a dedicated idempotency endpoint",
+  );
+  assertIncludes(
+    checkpointFunction,
+    "'mode_checkpoint_ack'",
+    "checkpoint RPC should return explicit checkpoint ACK semantics",
+  );
+  assertIncludes(
+    checkpointFunction,
+    "snapshot_revision = revision_after",
+    "accepted checkpoint should advance one snapshot revision",
+  );
+  assertIncludes(
+    completeWrapper,
+    "MODE_CHECKPOINT_REQUIRED",
+    "completion should require an accepted checkpoint before reward",
   );
 });
 

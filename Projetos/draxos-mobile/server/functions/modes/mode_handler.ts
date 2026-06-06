@@ -7,9 +7,11 @@ import {
   CARDGAME_MODE_ID,
   completionResultFromBody,
   MODE_ENDPOINT_SESSION_ABANDON,
+  MODE_ENDPOINT_SESSION_CHECKPOINT,
   MODE_ENDPOINT_SESSION_COMPLETE,
   MODE_ENDPOINT_SESSION_EVENT,
   MODE_ENDPOINT_SESSION_START,
+  modeCheckpointAckPayload,
   modeEventAckPayload,
   modeRegistryPayload,
   modeStatePayload,
@@ -18,6 +20,7 @@ import {
   OPENWORLD_RULESET_ID,
   OPENWORLD_RULESET_VERSION,
   OPENWORLD_SLICE_ID,
+  sessionCheckpointFromBody,
   sessionEventFromBody,
   TOWERDEFENSE_MODE_ID,
 } from "../_shared/mode_domain.ts";
@@ -108,6 +111,9 @@ export class ModeHandler {
       }
       if (route === "session_event") {
         return await handleSessionEvent(request, auth.value, config.value);
+      }
+      if (route === "session_checkpoint") {
+        return await handleSessionCheckpoint(request, auth.value, config.value);
       }
       if (route === "session_complete") {
         return await handleSessionComplete(request, auth.value, config.value);
@@ -288,6 +294,53 @@ async function handleSessionEvent(
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
   return jsonResponse(stateEnvelope(modeEventAckPayload(rpc.value), {
+    surface: "mode",
+    saveType: auth.saveType,
+  }));
+}
+
+async function handleSessionCheckpoint(
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  const body = await readJsonObject(request);
+  if (body === null) {
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
+  }
+  const requestId = stringField(body, "request_id");
+  if (!UUID_PATTERN.test(requestId)) {
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
+  }
+  const checkpoint = sessionCheckpointFromBody(body);
+  if (checkpoint === null || !UUID_PATTERN.test(checkpoint.session_id)) {
+    return errorResponse("INVALID_CHECKPOINT", "Openworld checkpoint is invalid.", 400);
+  }
+
+  const state = await loadModeState(auth, config, OPENWORLD_MODE_ID);
+  if (state.error !== null) {
+    return errorResponse(state.error.code, state.error.message, state.error.status);
+  }
+  const canonicalCheckpoint = { request_id: requestId, save_type: auth.saveType, ...checkpoint };
+  const requestHash = await mutationRequestHash(
+    MODE_ENDPOINT_SESSION_CHECKPOINT,
+    body,
+    canonicalCheckpoint,
+  );
+  const rpc = await restRequest<unknown>(config, "rpc/mode_session_checkpoint_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: canonicalCheckpoint,
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapModeDatabaseError(rpc.error, "MODE_SESSION_CHECKPOINT_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
+  }
+  return jsonResponse(stateEnvelope(modeCheckpointAckPayload(rpc.value), {
     surface: "mode",
     saveType: auth.saveType,
   }));

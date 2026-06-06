@@ -22,6 +22,7 @@ export const OPENWORLD_RELEASE_CHANNEL = "internal_alpha";
 
 export const MODE_ENDPOINT_SESSION_START = "modes/session/start";
 export const MODE_ENDPOINT_SESSION_EVENT = "modes/session/event";
+export const MODE_ENDPOINT_SESSION_CHECKPOINT = "modes/session/checkpoint";
 export const MODE_ENDPOINT_SESSION_COMPLETE = "modes/session/complete";
 export const MODE_ENDPOINT_SESSION_ABANDON = "modes/session/abandon";
 
@@ -135,6 +136,19 @@ export interface OpenworldSessionEvent {
   event_type: string;
   expected_revision: number;
   event_payload: Record<string, unknown>;
+}
+
+export interface OpenworldSessionCheckpoint {
+  session_id: string;
+  mode_id: string;
+  slice_id: string;
+  ruleset_id: string;
+  ruleset_version: number;
+  checkpoint_id: string;
+  base_revision: number;
+  client_sequence: number;
+  snapshot_payload: Record<string, unknown>;
+  client_summary: Record<string, unknown>;
 }
 
 const OPENWORLD_LOCAL_ITEM_IDS = new Set(
@@ -266,6 +280,35 @@ export function modeEventAckPayload(value: unknown): Record<string, unknown> {
   };
 }
 
+export function modeCheckpointAckPayload(value: unknown): Record<string, unknown> {
+  const payload = objectValue(value);
+  const session = objectValue(payload.session);
+  return {
+    ...payload,
+    ok: true,
+    type: "mode_checkpoint_ack",
+    schema_version: MODE_PLATFORM_SCHEMA_VERSION,
+    session: {
+      ...session,
+      snapshot_payload: openworldCheckpointAckSnapshot(
+        objectValue(session.snapshot_payload),
+      ),
+    },
+    mode_id: stringValue(payload.mode_id, OPENWORLD_MODE_ID),
+    slice_id: stringValue(payload.slice_id, OPENWORLD_SLICE_ID),
+    session_id: stringValue(payload.session_id, stringValue(session.id, "")),
+    checkpoint_id: stringValue(payload.checkpoint_id, ""),
+    accepted_checkpoint_id: stringValue(payload.accepted_checkpoint_id, ""),
+    snapshot_revision: Math.floor(numberValue(payload.snapshot_revision, 0)),
+    accepted_snapshot_summary: objectValue(payload.accepted_snapshot_summary),
+    complete_ready: payload.complete_ready === true,
+    visual_authority: {
+      checkpoint_ack: "metadata_only_during_active_play",
+      remote_snapshot: "entry_resume_or_recovery_only",
+    },
+  };
+}
+
 export function completionResultFromBody(
   body: Record<string, unknown>,
 ): OpenworldCompletionResult | null {
@@ -287,6 +330,46 @@ export function completionResultFromBody(
     expected_revision: Math.floor(expectedRevision),
     ruleset_id: rulesetId,
     ruleset_version: rulesetVersion,
+  };
+}
+
+export function sessionCheckpointFromBody(
+  body: Record<string, unknown>,
+): OpenworldSessionCheckpoint | null {
+  const source = isObject(body.checkpoint) ? body.checkpoint : body;
+  const sessionId = stringValue(source.session_id, "");
+  const modeId = stringValue(source.mode_id, OPENWORLD_MODE_ID);
+  const sliceId = stringValue(source.slice_id, OPENWORLD_SLICE_ID);
+  const rulesetId = stringValue(source.ruleset_id, "");
+  const rulesetVersion = numberValue(source.ruleset_version, 0);
+  const checkpointId = stringValue(source.checkpoint_id, "");
+  const baseRevision = numberValue(source.base_revision, -1);
+  const clientSequence = numberValue(source.client_sequence, -1);
+  const snapshotPayload = objectValue(source.snapshot_payload);
+  if (
+    sessionId === "" ||
+    modeId !== OPENWORLD_MODE_ID ||
+    sliceId !== OPENWORLD_SLICE_ID ||
+    rulesetId !== OPENWORLD_RULESET_ID ||
+    rulesetVersion !== OPENWORLD_RULESET_VERSION ||
+    checkpointId === "" ||
+    baseRevision < 0 ||
+    clientSequence < 0 ||
+    Object.keys(snapshotPayload).length <= 0
+  ) {
+    return null;
+  }
+  return {
+    session_id: sessionId,
+    mode_id: modeId,
+    slice_id: sliceId,
+    ruleset_id: rulesetId,
+    ruleset_version: rulesetVersion,
+    checkpoint_id: checkpointId,
+    base_revision: Math.floor(baseRevision),
+    client_sequence: Math.floor(clientSequence),
+    snapshot_payload: snapshotPayload,
+    client_summary: objectValue(source.client_summary),
   };
 }
 
@@ -420,6 +503,15 @@ function openworldEventAckSnapshot(snapshot: Record<string, unknown>): Record<st
   delete result.player_position;
   delete result.active_collection;
   return result;
+}
+
+function openworldCheckpointAckSnapshot(snapshot: Record<string, unknown>): Record<string, unknown> {
+  return {
+    checkpoint: objectValue(snapshot.checkpoint),
+    revision: numberValue(snapshot.revision, 0),
+    session_seconds: numberValue(snapshot.session_seconds, 0),
+    activity_score: numberValue(snapshot.activity_score, 0),
+  };
 }
 
 function openworldGuidancePayload(

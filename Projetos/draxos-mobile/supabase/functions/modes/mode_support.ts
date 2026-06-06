@@ -20,6 +20,7 @@ export type Route =
   | "state"
   | "session_start"
   | "session_event"
+  | "session_checkpoint"
   | "session_complete"
   | "session_abandon"
   | "analytics_summary"
@@ -73,6 +74,7 @@ export function resolveRoute(pathname: string): Route | null {
   if (pathname.endsWith("/state")) return "state";
   if (pathname.endsWith("/session/start")) return "session_start";
   if (pathname.endsWith("/session/event")) return "session_event";
+  if (pathname.endsWith("/session/checkpoint")) return "session_checkpoint";
   if (pathname.endsWith("/session/complete")) return "session_complete";
   if (pathname.endsWith("/session/abandon")) return "session_abandon";
   if (pathname.endsWith("/analytics/summary")) return "analytics_summary";
@@ -366,6 +368,9 @@ export function mapModeDatabaseError(error: RestError, fallbackCode: string): Re
     "MODE_SESSION_START_COOLDOWN",
     "MODE_SESSION_DAILY_LIMIT",
     "MODE_SESSION_REVISION_STALE",
+    "MODE_CHECKPOINT_REQUIRED",
+    "MODE_CHECKPOINT_REJECTED",
+    "MODE_CHECKPOINT_STALE",
     "OPENWORLD_NODE_ALREADY_COLLECTED",
     "MODE_ADMIN_AUDIT_FAILED",
     "MODE_ADMIN_STATUS_FAILED",
@@ -395,6 +400,8 @@ function modeStatus(code: string, fallback: number): number {
     code === "MODE_SESSION_START_COOLDOWN" ||
     code === "MODE_SESSION_DAILY_LIMIT" ||
     code === "MODE_SESSION_REVISION_STALE" ||
+    code === "MODE_CHECKPOINT_REQUIRED" ||
+    code === "MODE_CHECKPOINT_STALE" ||
     code === "OPENWORLD_NODE_ALREADY_COLLECTED" ||
     code === "IDEMPOTENCY_HASH_MISMATCH"
   ) return 409;
@@ -405,6 +412,7 @@ function modeStatus(code: string, fallback: number): number {
     code === "INVALID_MODE_STATUS" ||
     code === "INVALID_RESULT" ||
     code === "MODE_RESULT_REJECTED" ||
+    code === "MODE_CHECKPOINT_REJECTED" ||
     code === "INVALID_MODE_EVENT" ||
     code === "MODE_SESSION_UNSUPPORTED"
   ) return 400;
@@ -437,6 +445,12 @@ function modeErrorMessage(code: string): string {
       return "Mode daily session start limit was reached.";
     case "MODE_SESSION_REVISION_STALE":
       return "Mode session revision is stale and must be refreshed.";
+    case "MODE_CHECKPOINT_REQUIRED":
+      return "Save a Bosque checkpoint before completing the visit for reward.";
+    case "MODE_CHECKPOINT_REJECTED":
+      return "Bosque checkpoint failed server validation.";
+    case "MODE_CHECKPOINT_STALE":
+      return "Bosque checkpoint is older than the latest accepted checkpoint.";
     case "OPENWORLD_NODE_ALREADY_COLLECTED":
       return "Openworld resource node was already collected in this session.";
     case "MODE_REWARD_BLOCKED_FOR_LAB":

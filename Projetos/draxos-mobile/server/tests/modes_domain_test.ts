@@ -1,12 +1,14 @@
 import {
   canonicalCompletionPayload,
   completionResultFromBody,
+  modeCheckpointAckPayload,
   modeEventAckPayload,
   normalizeDepositedItems,
   OPENWORLD_MODE_ID,
   OPENWORLD_RULESET_ID,
   OPENWORLD_RULESET_VERSION,
   OPENWORLD_SLICE_ID,
+  sessionCheckpointFromBody,
   sessionEventFromBody,
 } from "../functions/_shared/mode_domain.ts";
 
@@ -98,6 +100,84 @@ Deno.test("openworld session event payload accepts batched collection", () => {
   assert(event !== null, "collect_batch event should parse");
   assertEq(event.event_type, "collect_batch", "batched event type should be preserved");
   assertEq(event.expected_revision, 3, "batched event should preserve the revision gate");
+});
+
+Deno.test("openworld checkpoint payload validates compact offline-first snapshot", () => {
+  const checkpoint = sessionCheckpointFromBody({
+    request_id: "00000000-0000-4000-8000-000000000104",
+    session_id: "00000000-0000-4000-8000-000000000101",
+    mode_id: OPENWORLD_MODE_ID,
+    slice_id: OPENWORLD_SLICE_ID,
+    ruleset_id: OPENWORLD_RULESET_ID,
+    ruleset_version: OPENWORLD_RULESET_VERSION,
+    checkpoint_id: "checkpoint-001",
+    base_revision: 4,
+    client_sequence: 7,
+    snapshot_payload: {
+      ruleset_id: OPENWORLD_RULESET_ID,
+      ruleset_version: OPENWORLD_RULESET_VERSION,
+      pocket: { galho: 1 },
+      chest: { folha: 2 },
+      collected_nodes: { node_galho_01: true, node_folha_01: true },
+      upgrades: {},
+    },
+    client_summary: { collected_count: 2 },
+  });
+
+  assert(checkpoint !== null, "valid checkpoint should parse");
+  assertEq(checkpoint.checkpoint_id, "checkpoint-001", "checkpoint id should be preserved");
+  assertEq(checkpoint.base_revision, 4, "base revision should be preserved");
+  assertEq(checkpoint.client_sequence, 7, "client sequence should be preserved");
+  assertEq(
+    sessionCheckpointFromBody({
+      session_id: "00000000-0000-4000-8000-000000000101",
+      checkpoint_id: "checkpoint-002",
+      base_revision: 0,
+      client_sequence: 1,
+      ruleset_id: OPENWORLD_RULESET_ID,
+      ruleset_version: OPENWORLD_RULESET_VERSION,
+      snapshot_payload: {},
+    }),
+    null,
+    "empty checkpoint snapshots should be rejected",
+  );
+});
+
+Deno.test("openworld checkpoint ACK exposes metadata without visual rollback fields", () => {
+  const ack = modeCheckpointAckPayload({
+    request_id: "00000000-0000-4000-8000-000000000105",
+    request_hash: "sha256:test-checkpoint",
+    session_id: "00000000-0000-4000-8000-000000000101",
+    checkpoint_id: "checkpoint-001",
+    accepted_checkpoint_id: "checkpoint-001",
+    snapshot_revision: 8,
+    complete_ready: true,
+    accepted_snapshot_summary: { collected_count: 2 },
+    session: {
+      id: "00000000-0000-4000-8000-000000000101",
+      snapshot_payload: {
+        player_position: { x: 220, y: 330 },
+        active_collection: { node_id: "node_galho_01" },
+        checkpoint: { accepted_checkpoint_id: "checkpoint-001" },
+        revision: 8,
+        session_seconds: 42,
+        activity_score: 12,
+      },
+    },
+  });
+  const session = ack.session as Record<string, unknown>;
+  const snapshot = session.snapshot_payload as Record<string, unknown>;
+  const visualAuthority = ack.visual_authority as Record<string, unknown>;
+
+  assertEq(ack.type, "mode_checkpoint_ack", "checkpoint ACK should identify metadata-only semantics");
+  assertEq(ack.complete_ready, true, "accepted checkpoint should allow completion");
+  assertEq("player_position" in snapshot, false, "checkpoint ACK must not carry player_position");
+  assertEq("active_collection" in snapshot, false, "checkpoint ACK must not clear active collection");
+  assertEq(
+    visualAuthority.checkpoint_ack,
+    "metadata_only_during_active_play",
+    "checkpoint ACK should not own active visual state",
+  );
 });
 
 Deno.test("openworld guidance update event validates lightweight guidance state", () => {

@@ -23,6 +23,10 @@ const OPENWORLD_GUIDANCE_PERSISTENCE_PATH =
   "supabase/migrations/202606040001_openworld_guidance_persistence_v1.sql";
 const OPENWORLD_GUIDANCE_PERSISTENCE_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606040001_openworld_guidance_persistence_v1.sql";
+const OPENWORLD_CHECKPOINT_PATH =
+  "supabase/migrations/202606060001_openworld_bosque_checkpoint_v1.sql";
+const OPENWORLD_CHECKPOINT_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606060001_openworld_bosque_checkpoint_v1.sql";
 const ADMIN_COMPENSATE_HASH_MIGRATION_PATH =
   "supabase/migrations/202606020003_admin_compensate_request_hash.sql";
 const ADMIN_COMPENSATE_HASH_SERVER_MIRROR_PATH =
@@ -113,6 +117,17 @@ Deno.test("openworld guidance persistence migration is mirrored in server schema
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema openworld guidance persistence migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("openworld checkpoint migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(OPENWORLD_CHECKPOINT_PATH);
+  const serverMirror = await readProjectText(OPENWORLD_CHECKPOINT_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema openworld checkpoint migration should mirror supabase migration exactly",
   );
 });
 
@@ -293,6 +308,7 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
       "state",
       "session_start",
       "session_event",
+      "session_checkpoint",
       "session_complete",
       "session_abandon",
       "analytics_summary",
@@ -331,8 +347,8 @@ Deno.test("mode edge function mirror exposes all v1 routes", async () => {
   }
   assertLessOrEq(
     lineCount(handler),
-    700,
-    "mode_handler.ts should stay below the V2 route/facade budget",
+    725,
+    "mode_handler.ts should stay below the checkpoint route/facade budget",
   );
   assertLessOrEq(
     lineCount(support),
@@ -347,6 +363,7 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   const guidancePersistence = normalizeSql(
     await readProjectText(OPENWORLD_GUIDANCE_PERSISTENCE_PATH),
   );
+  const checkpointMigration = normalizeSql(await readProjectText(OPENWORLD_CHECKPOINT_PATH));
   const handler = normalizeCode(await readProjectText(HANDLER_PATH));
   const support = normalizeCode(await readProjectText(SUPPORT_PATH));
 
@@ -389,6 +406,26 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   }
   assertIncludes(handler, "mode_endpoint_session_event", "handler should hash event mutations");
   assertIncludes(handler, "rpc/mode_session_event_v1", "handler should call the event RPC");
+  assertIncludes(
+    handler,
+    "mode_endpoint_session_checkpoint",
+    "handler should hash checkpoint mutations",
+  );
+  assertIncludes(
+    handler,
+    "rpc/mode_session_checkpoint_v1",
+    "handler should call the checkpoint RPC",
+  );
+  assertIncludes(
+    checkpointMigration,
+    "mode_session_checkpoint_v1",
+    "checkpoint migration should declare the checkpoint RPC",
+  );
+  assertIncludes(
+    checkpointMigration,
+    "mode_checkpoint_required",
+    "completion wrapper should require an accepted checkpoint",
+  );
   for (
     const fragment of [
       "guidance_update",
@@ -436,7 +473,13 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
     "session/event envelope should be scoped to mode",
   );
   assertIncludes(support, "session_event", "support should resolve the event route");
+  assertIncludes(support, "session_checkpoint", "support should resolve the checkpoint route");
   assertIncludes(support, "mode_session_revision_stale", "support should map stale revisions");
+  assertIncludes(
+    support,
+    "mode_checkpoint_rejected",
+    "support should map rejected checkpoint payloads",
+  );
   assertIncludes(
     support,
     "mode_session_already_active",
@@ -470,7 +513,7 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   );
 });
 
-Deno.test("openworld client queues authoritative events before local mutation", async () => {
+Deno.test("openworld client uses offline-first checkpoints during active Bosque play", async () => {
   const screen = normalizeCode(await readProjectText(OPENWORLD_SCREEN_PATH));
   const bridge = normalizeCode(await readProjectText(OPENWORLD_BRIDGE_PATH));
   const model = normalizeCode(await readProjectText(OPENWORLD_MODEL_PATH));
@@ -481,41 +524,39 @@ Deno.test("openworld client queues authoritative events before local mutation", 
 
   for (
     const required of [
-      "var _event_queue: array[dictionary]",
-      "func flush_event_queue",
-      "await supabase_client.record_mode_session_event",
+      "var _checkpoint_dirty := false",
+      "func flush_checkpoint",
+      "await supabase_client.checkpoint_mode_session",
       "_snapshot_revision",
-      "_event_queue.pop_front()",
-      "_apply_event_ack(body, job)",
-      "await resync_session",
+      "_apply_checkpoint_ack(body)",
       "func has_pending_events()",
     ]
   ) {
-    assertIncludes(bridge, required, `openworld session bridge should include ${required}`);
+    assertIncludes(bridge, required, `openworld checkpoint bridge should include ${required}`);
   }
-  const flushSection = codeSection(
+  const checkpointSection = codeSection(
     bridge,
-    "func flush_event_queue",
-    "func _apply_event_ack",
+    "func flush_checkpoint",
+    "func _apply_checkpoint_ack",
   );
   assertNotIncludes(
-    flushSection,
+    checkpointSection,
     "hydrate_session(",
-    "event ACKs should not hydrate the full session snapshot during active play",
+    "checkpoint ACKs should not hydrate the full session snapshot during active play",
   );
   assertIncludes(
     bridge,
-    "func _event_snapshot_patch",
-    "openworld should convert legacy event responses to selective patches",
+    "func _build_checkpoint_payload",
+    "openworld should serialize local state into compact checkpoints",
   );
   assertIncludes(
-    `${screen}\n${bridge}`,
-    "client_position_revision",
-    "openworld events should carry local position revision for sync auditing",
+    bridge,
+    "func _save_local_checkpoint_state",
+    "openworld should persist local Bosque state independently from remote ACKs",
   );
   for (
     const required of [
-      "model.advance_collection(delta, false, distance, not authoritative_online)",
+      "model.advance_collection(delta, true, distance, true)",
     ]
   ) {
     assertIncludes(
@@ -527,42 +568,47 @@ Deno.test("openworld client queues authoritative events before local mutation", 
   assertIncludes(
     `${screenOrInteraction}\n${bridge}`,
     "remember_pending_collected_node(node_id)",
-    "openworld should remember pending collected nodes before server ACK",
+    "openworld should remember local collected nodes before checkpoint ACK",
   );
   assertIncludes(
     `${screenOrInteraction}\n${bridge}`,
     "has_pending_collected_node",
-    "openworld should guard pending collected nodes before server ACK",
+    "openworld should guard pending collected nodes before checkpoint ACK",
   );
   assertIncludes(
     screenOrHud,
     "deposit_disabled",
-    "openworld UI should share deposit disabled state with server sync state",
+    "openworld UI should still compute local deposit disabled state",
   );
   assertIncludes(
     screen,
     "func _has_pending_integrated_events()",
-    "openworld screen should expose pending integrated event state",
+    "openworld screen should expose pending checkpoint state",
   );
   assertNotIncludes(
     screen,
     'call_deferred("_record_integrated_event"',
-    "openworld should not fire concurrent event mutations with the same revision",
+    "openworld should not fire concurrent microevent mutations",
+  );
+  assertNotIncludes(
+    screen,
+    "record_heartbeat_if_due",
+    "openworld should not send movement heartbeat mutations during active play",
+  );
+  assertNotIncludes(
+    bridge,
+    "await supabase_client.record_mode_session_event",
+    "new Openworld bridge should not send gameplay microevents during active play",
   );
   assertIncludes(
     model,
     "commit_to_pocket: bool = true",
-    "model should support server-authoritative collection completion",
-  );
-  assertIncludes(
-    model,
-    "if not commit_to_pocket:",
-    "model should avoid optimistic pocket mutation before remote ACK",
+    "model should support local collection completion",
   );
   assertIncludes(
     model,
     "func apply_authoritative_patch",
-    "model should support event ACK patches without clearing active collection",
+    "model should keep a recovery patch path for explicit resync",
   );
 });
 
