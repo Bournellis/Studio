@@ -248,7 +248,7 @@ func _check_arena_selection_layout(viewport_size: Vector2i) -> void:
 
 	var context := "Arena selection %s" % str(viewport_size)
 	_expect_app_shell_fits(boot, context)
-	_expect_button_fits(boot, "Iniciar Arena PVE", context)
+	_expect_button_fits(boot, "Iniciar desafio recomendado", context)
 	_expect_node_fits(boot, "ArenaPreparationPanel", context, false)
 	_expect(_find_button_by_text(boot, "Voltar ao Refugio") != null, "%s exposes return CTA." % context)
 	boot.queue_free()
