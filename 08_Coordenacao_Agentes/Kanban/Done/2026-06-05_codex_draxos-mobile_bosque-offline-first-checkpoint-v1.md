@@ -5,7 +5,7 @@
 - Branch final: `codex/draxos-mobile/bosque-offline-first-checkpoint-v1`
 - Worktree final: `D:\Estudio-worktrees\draxos-mobile--validation--bosque-checkpoint-v1`
 - Projeto: `Projetos/draxos-mobile`
-- Status: `DOING`
+- Status: `DONE`
 
 ## Objetivo
 
@@ -48,4 +48,26 @@ Implementar `Bosque Offline-First Checkpoint v1`: movimento, coleta, bolso, depo
 
 ## Handoff
 
-Integrar commits dos workers, resolver conflitos, validar localmente, mover este cartao para Done e registrar publicacao em `current-status`, portfolio e docs.
+Pacote integrado, publicado em `main` e registrado nos docs/status.
+
+## Resultado
+
+- Release root: `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a`.
+- Preview: `https://ad0b4a77.draxos-mobile-internal-alpha.pages.dev`.
+- URL oficial: `https://draxos-mobile-internal-alpha.pages.dev/`.
+- APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a/downloads/draxos-mobile-alpha.apk`.
+- Migration remota aplicada: `202606060001_openworld_bosque_checkpoint_v1.sql`.
+- Versionamento: `0.0.4-alpha.0` / version code `4`.
+
+## Validacao Final
+
+- GUT Openworld focado: PASS.
+- Deno modes/openworld tests: PASS.
+- Supabase functions check: PASS.
+- Migration remote push/list: PASS.
+- Edge Function `modes` deploy: PASS.
+- Export Web/APK: PASS.
+- Storage upload: PASS.
+- Cloudflare Pages deploy: PASS.
+- Manifest deploy: PASS.
+- Remote Web launch smoke: PASS.

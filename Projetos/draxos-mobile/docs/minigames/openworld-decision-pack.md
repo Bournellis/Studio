@@ -8,7 +8,8 @@
 - Pending design id: `DMOB-D071`
 
 This pack records the current decision boundary for Openworld after the Bosque
-playtest approval and technical hardening. It does not expand gameplay.
+playtest approval, technical hardening and Offline-First Checkpoint v1 release.
+It does not expand gameplay.
 
 ## Decision Summary
 
@@ -16,13 +17,17 @@ Openworld Bosque remains the only approved Openworld slice. The approved
 technical official state is `mode_registry.status=active` on release channel
 `internal_alpha`, using `openworld_forest_ruleset_v1`.
 
-This is not a public release and does not authorize manifest rotation,
-remote upload, remote migration or broader Openworld expansion.
+This is not a public release and does not authorize broader Openworld expansion.
+The already-published Internal Alpha checkpoint package is recorded as release
+evidence, not as permission for new content.
 
 No Openworld expansion is approved by this pack.
 
-No backend mutation is approved remotely by this pack; the migration remains a
-local implementation artifact until an explicit remote mutation window exists.
+Bosque Offline-First Checkpoint v1 was explicitly approved and published as a
+remote Internal Alpha mutation window: migration
+`202606060001_openworld_bosque_checkpoint_v1.sql`, release root
+`internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a`,
+preview evidence `https://ad0b4a77.draxos-mobile-internal-alpha.pages.dev`.
 
 Runtime/QoL exception approved on 2026-06-01: the Bosque runtime may migrate
 from a drawn `Control` world to a `Control` wrapper plus internal `Node2D`
@@ -35,6 +40,12 @@ snapshot resume, revision-gated events, session event audit, shared ruleset
 definitions and server-snapshot reward authority for the existing `forest`
 slice only.
 
+Authority exception approved on 2026-06-06: the Bosque active runtime is
+client-owned for movement, collection, pocket, chest, craft, guidance and
+position. The server owns session/ruleset, accepted checkpoints, completion,
+reward, caps, ledger and audit. Same-session remote snapshots must not transform
+the world during active player control.
+
 ## Locked For Now
 
 - The mode identity is `openworld`, not `rpgsuave`.
@@ -42,7 +53,8 @@ slice only.
 - The current public entry is `open_mode_shell:openworld`.
 - The current screen is `res://modes/openworld/openworld_forest_screen.gd`.
 - The current ruleset is `openworld_forest_ruleset_v1`; v0 is historical only.
-- Resume authority is server snapshot, with stale writes rejected.
+- Resume authority is stable bootstrap/recovery before control; active runtime
+  uses local cache plus checkpoint confirmation.
 - Offline/no-auth play remains preview-only and never creates reward.
 - Future Openworld slices must start from descriptor/schema changes and a live
   design contract before runtime work.
@@ -54,15 +66,17 @@ slice only.
   slice.
 - WASD/setas, free joystick, local blockers, border walls, resource pass-through
   and depth ordering are allowed as foundation QoL.
-- Server snapshot is the reward authority for collection, pocket, chest and
-  craft once integrated. `OpenworldForestModel` remains preview/local runtime
-  authority only.
+- Checkpoint validation is the reward authority for collection, pocket, chest
+  and craft once integrated. `OpenworldForestModel` and the checkpoint bridge
+  are runtime authority during the visit; completion/reward remain
+  server-authoritative.
 
 ## Not Approved
 
 - No runtime gameplay change beyond the explicit `forest` QoL controls/collision
   exception above.
-- No remote backend mutation in this package until separately approved.
+- No additional remote backend mutation beyond the published checkpoint package
+  without separate approval.
 - No new map.
 - No enemies or combat.
 - No broader RPG campaign scope.

@@ -15,7 +15,7 @@
 
 `Openworld Bosque` e o primeiro slice do modo `Openworld`. Ele nasceu do prototipo `Rpgsuave Bosque`, mas V1 renomeia o modo de verdade: novos payloads, rotas, settings, docs e testes usam `openworld`.
 
-Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Publicacao remota e registrada explicitamente: `Bosque Sync Responsiveness v1` esta publicado em `internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95`, com `collect_batch` aplicado no Supabase remoto, Web/APK em version code `3` e preview tecnico `https://60e2d4be.draxos-mobile-internal-alpha.pages.dev`.
+Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Publicacao remota e registrada explicitamente: `Bosque Offline-First Checkpoint v1` esta publicado em `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a`, com checkpoint server-side aplicado no Supabase remoto, Web/APK em version code `4` e preview tecnico `https://ad0b4a77.draxos-mobile-internal-alpha.pages.dev`.
 
 ## Visao
 
@@ -58,11 +58,11 @@ Contratos de produto para v2:
 - recursos pequenos como `Area2D` coletaveis e sem bloqueio de movimento;
 - ordenacao visual por profundidade no mundo 2D, com HUD sempre acima;
 - assets procedurais em Godot, sem raster externo novo;
-- backend opcional em `integrated_alpha` por `/modes/state`, `/modes/session/start`, `/modes/session/event`, `/modes/session/complete` e `/modes/session/abandon`;
-- snapshot remoto retomavel por ate 2 horas;
-- heartbeat de movimento/tempo a cada 15 segundos, coleta em lote e eventos ordenados para acoes relevantes;
-- ACK de evento com patch autoritativo seletivo, sem rollback visual de posicao
-  ou coleta em andamento durante gameplay ativo;
+- backend em `integrated_alpha` por `/modes/state`, `/modes/session/start`, `/modes/session/checkpoint`, `/modes/session/complete` e `/modes/session/abandon`;
+- snapshot remoto retomavel por ate 2 horas, mas aplicado como bootstrap/recuperacao e nao como rollback visual durante controle ativo;
+- cache local do Bosque por save/sessao/ruleset para nodes coletados, bolso, bau, upgrades, guidance, posicao e checkpoint pendente;
+- checkpoints compactos em background substituem microeventos revisionados durante gameplay normal;
+- nenhum ACK/resync remoto da mesma sessao deve reposicionar o jogador, reiniciar coleta, reverter bolso/bau/craft ou transformar nodes enquanto o jogador esta no Bosque;
 - Reward Bridge limitado, server-authoritative, idempotente e com ledger.
 
 ## Nao Escopo
@@ -128,12 +128,12 @@ economia; sao folga de aprendizagem para o minigame.
 - Entrar no Bosque inicia ou retoma visita conforme sessao ativa disponivel.
 - `Voltar` deve retornar ao shell/refugio preservando a visita quando a sessao
   ainda estiver ativa.
-- Se houver fila pendente, `Voltar` tenta flush curto em segundo plano e preserva
-  a sessao; nao prende o jogador num estado de espera obrigatoria.
+- Se houver checkpoint pendente, `Voltar` agenda/tenta salvar em segundo plano e
+  preserva a sessao; nao prende o jogador num estado de espera obrigatoria.
 - `Encerrar visita` e a acao explicita de finalizacao, com resumo leve de
   materiais depositados, crafts feitos e estruturas construidas.
-- `Encerrar visita` segue bloqueado enquanto houver sync pendente, pois a
-  recompensa real depende do snapshot server-authoritative.
+- `Encerrar visita` segue bloqueado ate existir checkpoint final aceito, pois a
+  recompensa real depende do snapshot validado pelo servidor.
 - Nao ha requisito de completar todos os recursos, todos os crafts ou todos os
   passos de orientacao.
 
@@ -195,6 +195,7 @@ Reward Bridge novo ou fronteira nova com Basebuilder precisa de pacote proprio.
 
 - State/resume: `GET /modes/state?mode_id=openworld`
 - Start: `POST /modes/session/start`
+- Checkpoint: `POST /modes/session/checkpoint`
 - Event: `POST /modes/session/event`
 - Complete: `POST /modes/session/complete`
 - Abandon: `POST /modes/session/abandon`
@@ -202,7 +203,70 @@ Reward Bridge novo ou fronteira nova com Basebuilder precisa de pacote proprio.
 
 `GET /modes/state?mode_id=openworld` retorna `active_session` quando existe sessao `started` nao expirada, incluindo `snapshot_payload`, `snapshot_revision`, `expires_at` e `last_event_at`.
 
-Contrato de posicao e resync:
+Contrato checkpoint-first:
+
+- start/resume carregam cache local compativel antes do primeiro frame jogavel;
+- snapshot remoto atrasado da mesma sessao atualiza apenas metadata de
+  confirmacao, nunca posicao, coleta ativa, bolso, bau, upgrades, guidance ou
+  nodes locais durante controle ativo;
+- se a entrada/recuperacao detectar sessao remota diferente ou conflito real, o
+  servidor pode vencer antes de devolver controle ao jogador;
+- movimento, coleta ativa, nodes visuais, bolso, bau, craft, guidance e posicao
+  sao runtime client-owned durante a visita;
+- servidor valida somente sessao ativa, ruleset, checkpoint aceito, caps,
+  conclusao, reward, ledger e auditoria;
+- stale revision de eventos legados nao deve bloquear deposito/coleta/craft no
+  cliente novo; conflito de checkpoint vira recuperacao fora do controle ativo.
+
+`POST /modes/session/checkpoint` retorna `type=mode_checkpoint_ack` dentro do
+envelope comum de modos. Esse ACK confirma o checkpoint aceito e a revisao, mas
+nao e snapshot visual para rollback durante gameplay ativo.
+
+Payload principal de checkpoint:
+
+```json
+{
+  "request_id": "<uuid>",
+  "session_id": "<uuid>",
+  "mode_id": "openworld",
+  "slice_id": "forest",
+  "checkpoint_id": "<uuid>",
+  "base_revision": 3,
+  "client_sequence": 12,
+  "ruleset_id": "openworld_forest_ruleset_v1",
+  "ruleset_version": 1,
+  "ruleset_hash": "<ruleset-content-hash>",
+  "snapshot_payload": {
+    "collected_nodes": {"node_galho_01": true},
+    "pocket": {},
+    "chest": {"galho": 1},
+    "crafted_upgrades": {"fogueira_estavel_1": true},
+    "guidance": {"step": 4},
+    "player_position": {"x": 220, "y": 250},
+    "session_seconds": 43,
+    "local_version": 12
+  },
+  "client_summary": {
+    "collected_node_count": 1,
+    "chest_item_count": 1,
+    "crafted_count": 1
+  }
+}
+```
+
+O SQL valida o checkpoint atomica e idempotentemente: checkpoint id/request hash,
+ruleset correto, sessao ativa, nodes existentes/unicos, item esperado pelo
+ruleset, capacidade de bolso/bau, crafts derivaveis de recursos disponiveis,
+limites de tempo e ausencia de mutacao parcial. A resposta informa
+`accepted_checkpoint_id`, `snapshot_revision`, `accepted_snapshot_summary` e
+`complete_ready`.
+
+`POST /modes/session/event` permanece compativel para builds antigas. O cliente
+novo nao envia microeventos de gameplay normal (`move_heartbeat`,
+`collect_start`, `collect_cancel`, `collect_complete`, `deposit_all`, `craft`)
+como caminho principal; ele usa checkpoint.
+
+Contrato legado de posicao e resync:
 
 - start e resume aplicam `player_position` persistida, pois representam entrada
   ou retomada da sessao;
@@ -241,6 +305,7 @@ como snapshot completo de retomada pelo client. Durante gameplay ativo:
 
 Eventos aceitos:
 
+- `checkpoint`
 - `move_heartbeat`
 - `collect_start`
 - `collect_cancel`
@@ -252,7 +317,7 @@ Eventos aceitos:
 - `complete_requested`
 - `abandon_requested`
 
-Payload principal de coleta em lote:
+Payload legado de coleta em lote:
 
 ```json
 {

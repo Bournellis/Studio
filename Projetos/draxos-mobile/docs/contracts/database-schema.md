@@ -1,6 +1,6 @@
 # Database Schema Contract
 
-- Ultima atualizacao: `2026-06-05`
+- Ultima atualizacao: `2026-06-06`
 - Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1. Arena PVE v1 acrescenta schema implementado para tentativa, duelos, buffs, progresso, first clears e perfis DB-side de recompensa.
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
@@ -25,6 +25,7 @@ Migrations atuais:
 - `202606020001_openworld_bosque_hardening_v1.sql`: promove `openworld/forest` para `active` no canal `internal_alpha`, adiciona snapshot/revision/event audit em Mode sessions, registra `openworld_forest_ruleset_v1`, aplica limites de sessao e torna o Reward Bridge do Bosque autoritativo pelo snapshot do servidor.
 - `202606030001_progression_lab_apply_request_hash.sql`: adiciona assinatura `apply_progression_lab_save(..., p_request_hash, ...)`, exige hash obrigatorio, bloqueia mismatch de idempotencia e move reset/seed de consumables, potion slots, spell behaviors e item transactions do Progression Lab para dentro da RPC transacional.
 - `202606050003_openworld_bosque_collect_batch_v1.sql`: adiciona `collect_batch` ao audit de `mode_session_events`, substitui `openworld_forest_apply_event_v1` com aplicacao atomica de varios nodes coletados em uma unica revisao e preserva compatibilidade de `collect_complete` para pacotes antigos.
+- `202606060001_openworld_bosque_checkpoint_v1.sql`: adiciona `checkpoint` ao audit de `mode_session_events`, cria validacao SQL `mode_session_checkpoint_v1` para snapshot local do Bosque, valida nodes/capacidade/craft/ruleset em uma unica revisao, preserva compatibilidade de eventos legados e faz `mode_session_complete_v1` exigir checkpoint aceito antes de reward.
 - `202606050001_arena_reward_profiles_v1.sql`: cria `arena_reward_profiles`, habilita RLS read-only para perfis ativos, seeda todos os perfis de `data/definitions/arena_rewards.json` e mantem `ledger_source = arena_pve_v1`.
 - `202606050002_account_reset_request_hash_v1.sql`: adiciona `reset_player_save_v1(game_save_id, request_id, request_hash, payload)`, exige hash obrigatorio, usa idempotencia v1 por `game_saves.id`, move limpeza de Arena/Modes/Track 16 para a transacao SQL e preserva social/guilda/chat account-wide.
 
@@ -300,8 +301,10 @@ Regras:
 ## Openworld Bosque v1 Schema Contratado
 
 Status: migrations espelhadas em `server/schema/migrations/` e
-`supabase/migrations/`; `202606050003_openworld_bosque_collect_batch_v1.sql`
-aplicada remotamente na publicacao `Bosque Sync Responsiveness v1`.
+`supabase/migrations/`; `202606060001_openworld_bosque_checkpoint_v1.sql`
+aplicada remotamente na publicacao `Bosque Offline-First Checkpoint v1`.
+`202606050003_openworld_bosque_collect_batch_v1.sql` permanece como
+compatibilidade para pacotes antigos.
 
 Definition: `data/definitions/openworld/forest_ruleset_v1.json`.
 
@@ -318,8 +321,8 @@ Regras:
 - `openworld/forest` usa `openworld_forest_snapshot_v1`;
 - sessao ativa expira em 2 horas;
 - no maximo uma sessao `started` por save/mode/slice;
-- completion exige `expected_revision` igual a `snapshot_revision`;
-- recompensa real deriva apenas de `snapshot_payload`.
+- completion exige checkpoint aceito compativel com a revisao mais recente;
+- recompensa real deriva apenas do `snapshot_payload` validado pelo servidor.
 
 ### `mode_session_events`
 
@@ -347,6 +350,7 @@ Regras:
 - leitura/escrita direta do cliente proibida por RLS;
 - acesso operacional via RPC `service_role`;
 - stale write rejeita antes de mutar snapshot;
+- `checkpoint` grava a revisao aceita para o snapshot local validado;
 - no coletado nao pode ser consumido duas vezes;
 - coleta em andamento nao e persistida.
 
@@ -357,8 +361,10 @@ Regras:
   100 starts e expiracao de 2h.
 - `mode_session_event_v1`: valida evento, `expected_revision`, ruleset e
   sessao ativa, aplica snapshot e avanca revisao.
-- `mode_session_complete_v1`: usa somente snapshot do servidor para calcular
-  `deposited_items`, `activity_score`, caps e reward ledger.
+- `mode_session_checkpoint_v1`: valida checkpoint idempotente, ruleset, sessao
+  ativa, nodes, capacidade, craft derivavel e grava uma revisao atomica.
+- `mode_session_complete_v1`: usa somente o ultimo checkpoint aceito para
+  calcular `deposited_items`, `activity_score`, caps e reward ledger.
 - `mode_session_abandon_v1`: idempotente, registra estado final e remove a
   sessao de retomada.
 
