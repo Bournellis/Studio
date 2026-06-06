@@ -239,10 +239,10 @@ function Build-Manifest {
     return [ordered]@{
         schema_version = "internal_alpha_manifest_v1"
         channel = "internal_alpha"
-        latest_version = "0.0.3-alpha.0"
-        latest_version_code = 3
-        minimum_supported_version = "0.0.3-alpha.0"
-        minimum_supported_version_code = 3
+        latest_version = "0.0.4-alpha.0"
+        latest_version_code = 4
+        minimum_supported_version = "0.0.4-alpha.0"
+        minimum_supported_version_code = 4
         released_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         requires_save_reset = $false
         portal_url = $PortalUrl
@@ -485,8 +485,8 @@ $plan = [ordered]@{
     }
     app = [ordered]@{
         channel = "internal_alpha"
-        version = "0.0.3-alpha.0"
-        version_code = 3
+        version = "0.0.4-alpha.0"
+        version_code = 4
         requires_save_reset = $false
     }
     artifacts = $artifactRecords
@@ -659,8 +659,8 @@ if ($Mode -eq "FullPublish") {
 $report = [ordered]@{
     schema_version = "internal_alpha_publication_v2"
     channel = "internal_alpha"
-    app_version = "0.0.3-alpha.0"
-    app_version_code = 3
+    app_version = "0.0.4-alpha.0"
+    app_version_code = 4
     mode = $Mode
     generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     bucket = $BucketName
