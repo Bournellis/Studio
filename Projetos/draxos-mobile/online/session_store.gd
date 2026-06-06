@@ -80,6 +80,7 @@ var monetization_state: Dictionary = {}
 var crafting_state: Dictionary = {}
 var combat_build_state: Dictionary = {}
 var mode_state: Dictionary = {}
+var openworld_local_state: Dictionary = {}
 var progression_lab: Dictionary = {}
 var arena_state: Dictionary = {}
 var last_battle_id: Variant = null
@@ -769,6 +770,21 @@ func combat_build_snapshot() -> Dictionary:
 
 func mode_snapshot() -> Dictionary:
 	return mode_state.duplicate(true)
+
+func openworld_local_snapshot() -> Dictionary:
+	return openworld_local_state.duplicate(true)
+
+func remember_openworld_local_state(state: Dictionary) -> void:
+	openworld_local_state = state.duplicate(true)
+	save_cache()
+	session_changed.emit()
+
+func clear_openworld_local_state() -> void:
+	if openworld_local_state.is_empty():
+		return
+	openworld_local_state = {}
+	save_cache()
+	session_changed.emit()
 
 func diagnostics_snapshot() -> Dictionary:
 	return SessionStateFacadeScript.diagnostics_snapshot(self, CACHE_VERSION, SNAPSHOT_SURFACES)

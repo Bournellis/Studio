@@ -29,6 +29,7 @@ var _ready_completed := false
 var _snapshot_revision := 0
 var _pending_collected_nodes: Dictionary = {}
 var _resource_nodes: Array = []
+var _bootstrap_loading := false
 
 func _ready() -> void:
 	name = "OpenworldForestScreen"
@@ -51,6 +52,7 @@ func _ready() -> void:
 	_ready_completed = true
 	call_deferred("_grab_openworld_focus")
 	if integration_mode == "integrated_alpha":
+		_set_bootstrap_loading(true)
 		call_deferred("_resume_or_start_integrated_session")
 
 func _notification(what: int) -> void:
@@ -112,6 +114,7 @@ func configure_integrated_alpha(client: Node, store: Node, token: String) -> voi
 	if bridge.is_active():
 		integration_mode = "integrated_alpha"
 		if is_inside_tree() and _ready_completed:
+			_set_bootstrap_loading(true)
 			call_deferred("_resume_or_start_integrated_session")
 
 func _process(delta: float) -> void:
@@ -126,12 +129,6 @@ func _process(delta: float) -> void:
 		_runtime.advance_walk_phase(delta)
 		_mark_guidance_step(1)
 	_interaction.tick_collection(delta, moved)
-	if integration_mode == "integrated_alpha":
-		_ensure_session_bridge().record_heartbeat_if_due(
-			_runtime.session_seconds,
-			RulesetScript.autosave_heartbeat_seconds(),
-			_runtime.position_payload()
-		)
 	_update_labels()
 
 func _ensure_session_bridge():
@@ -355,7 +352,7 @@ func _status_text(nearest_id: String, completed: bool) -> String:
 		return "Bau proximo; deposito pronto"
 	if _session_state() in ["pending", "resyncing"]:
 		var pending_text := _pending_summary_text()
-		return pending_text if pending_text != "" else "Sincronizando Bosque"
+		return pending_text if pending_text != "" else "Bosque salvo localmente"
 	var first_craft := model.first_available_recipe_name()
 	if first_craft != "":
 		return "%s pronto no craft" % first_craft
@@ -370,11 +367,11 @@ func _status_text(nearest_id: String, completed: bool) -> String:
 func _session_message() -> String:
 	match _session_state():
 		"synced":
-			return "Sessao online salva. Voltar preserva o Bosque por ate 2h."
+			return "Bosque salvo localmente. Recompensa usa o ultimo checkpoint aceito."
 		"pending":
-			return "Tem acao aguardando servidor. Espere sincronizar antes de encerrar."
+			return "Bosque salvo localmente; checkpoint salvando em segundo plano."
 		"resyncing":
-			return "Resincronizando o Bosque com o servidor."
+			return "Recuperando checkpoint do Bosque."
 		"completed":
 			return "Visita encerrada. O resumo fica abaixo."
 		"offline":
@@ -401,7 +398,7 @@ func _complete_tooltip(can_complete: bool, pending: bool, completed: bool) -> St
 	if completed:
 		return "Visita ja encerrada."
 	if pending:
-		return "Aguarde a sincronizacao do Bosque."
+		return "Salve o checkpoint para encerrar com recompensa."
 	if integration_mode == "integrated_alpha" and not can_complete:
 		return "A sessao online ainda nao esta pronta."
 	return "Encerrar visita e mostrar resumo."
@@ -420,7 +417,9 @@ func _show_local_result() -> void:
 func _resume_or_start_integrated_session() -> void:
 	if integration_mode != "integrated_alpha":
 		return
+	_set_bootstrap_loading(true)
 	await _ensure_session_bridge().resume_or_start_session()
+	_set_bootstrap_loading(false)
 	_sync_session_bridge_debug_state()
 	_update_labels()
 
@@ -457,7 +456,7 @@ func _handle_back_requested() -> void:
 	if integration_mode == "integrated_alpha" and _has_pending_integrated_events():
 		model.last_message = "Sessao preservada; Bosque continua salvando."
 		_update_labels()
-		_ensure_session_bridge().flush_event_queue()
+		_ensure_session_bridge().flush_checkpoint(false)
 	elif integration_mode == "integrated_alpha" and _server_session_id() != "" and not _session_blocks_mutation():
 		model.last_message = "Sessao preservada por ate 2h para retomada."
 		_ensure_session_bridge().record_exit_preserved()
@@ -599,6 +598,13 @@ func _sync_session_bridge_debug_state() -> void:
 		_snapshot_revision = int(snapshot.get("snapshot_revision", _snapshot_revision))
 	if _session_bridge.has_method("pending_collected_nodes_for_tests"):
 		_pending_collected_nodes = _session_bridge.pending_collected_nodes_for_tests()
+
+func _set_bootstrap_loading(active: bool) -> void:
+	_bootstrap_loading = active
+	if _world_viewport_container != null:
+		_world_viewport_container.visible = not active
+	if active:
+		model.last_message = "Carregando Bosque..."
 
 func _as_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}

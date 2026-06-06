@@ -476,6 +476,16 @@ func record_mode_session_event(
 		_with_request_hash("modes/session/event", body, request_hash)
 	)
 
+func checkpoint_mode_session(request_id: String, checkpoint_payload: Dictionary, access_token: String, request_hash: String = "") -> Dictionary:
+	var body := checkpoint_payload.duplicate(true)
+	body["request_id"] = request_id
+	return await _send_json(
+		function_url("modes/session/checkpoint"),
+		HTTPClient.METHOD_POST,
+		_auth_headers(access_token),
+		_with_request_hash("modes/session/checkpoint", body, request_hash)
+	)
+
 func abandon_mode_session(request_id: String, session_id: String, mode_id: String, reason: String, access_token: String, request_hash: String = "") -> Dictionary:
 	var body := {
 		"request_id": request_id,

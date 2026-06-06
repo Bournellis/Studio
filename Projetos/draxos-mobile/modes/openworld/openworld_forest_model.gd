@@ -81,7 +81,9 @@ func apply_authoritative_patch(snapshot_patch: Dictionary, preserve_active_colle
 		upgrades = _boolean_dictionary(snapshot_patch.get("upgrades", {}))
 	if snapshot_patch.has("guidance"):
 		guidance = _guidance_dictionary(snapshot_patch.get("guidance", {}))
-	if not preserve_active_collection:
+	if snapshot_patch.has("active_collection"):
+		active_collection = _as_dictionary(snapshot_patch.get("active_collection", {})).duplicate(true)
+	elif not preserve_active_collection:
 		active_collection = {}
 	if snapshot_patch.has("last_message"):
 		last_message = str(snapshot_patch.get("last_message", last_message))

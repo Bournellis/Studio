@@ -26,6 +26,7 @@ static func snapshot(state: Dictionary) -> Dictionary:
 		"crafting_state": _dict(state.get("crafting_state", {})).duplicate(true),
 		"combat_build_state": _dict(state.get("combat_build_state", {})).duplicate(true),
 		"mode_state": _dict(state.get("mode_state", {})).duplicate(true),
+		"openworld_local_state": _dict(state.get("openworld_local_state", {})).duplicate(true),
 		"progression_lab": _dict(state.get("progression_lab", {})).duplicate(true),
 		"arena_state": _dict(state.get("arena_state", {})).duplicate(true),
 		"surface_save_types": _dict(state.get("surface_save_types", {})).duplicate(true),

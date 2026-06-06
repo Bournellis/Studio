@@ -528,7 +528,7 @@ Deno.test("openworld client uses offline-first checkpoints during active Bosque 
       "func flush_checkpoint",
       "await supabase_client.checkpoint_mode_session",
       "_snapshot_revision",
-      "_apply_checkpoint_ack(body)",
+      "_apply_checkpoint_ack(body, sent_sequence)",
       "func has_pending_events()",
     ]
   ) {
@@ -556,7 +556,7 @@ Deno.test("openworld client uses offline-first checkpoints during active Bosque 
   );
   for (
     const required of [
-      "model.advance_collection(delta, true, distance, true)",
+      "model.advance_collection(delta, false, distance, true)",
     ]
   ) {
     assertIncludes(

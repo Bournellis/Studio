@@ -5,13 +5,11 @@ signal state_changed
 
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 
-const EVENT_RETRY_SECONDS := 1.25
-const MAX_EVENT_QUEUE_SIZE := 20
-const COLLECT_BATCH_DEBOUNCE_SECONDS := 0.18
-const MAX_COLLECT_BATCH_NODES := 12
-const MAX_EVENT_RETRY_BACKOFF_SECONDS := 8.0
+const CHECKPOINT_RETRY_SECONDS := 1.25
+const MAX_CHECKPOINT_RETRY_BACKOFF_SECONDS := 8.0
 const ACTION_SCOPE_TEMPLATE := "mode:openworld:%s"
 const SOURCE_ID := "open_mode_shell:openworld"
+const LOCAL_STATE_SCHEMA := "openworld_forest_local_checkpoint_v1"
 const SESSION_PREVIEW := "preview"
 const SESSION_STARTING := "starting"
 const SESSION_SYNCED := "synced"
@@ -31,18 +29,17 @@ var _server_session_id := ""
 var _snapshot_revision := 0
 var _server_synced := false
 var _network_busy := false
-var _pending_event_count := 0
-var _event_queue: Array[Dictionary] = []
-var _event_flush_active := false
-var _event_retry_scheduled := false
-var _event_retry_attempts := 0
-var _client_event_seq := 0
-var _collect_batch_nodes: Array[Dictionary] = []
-var _collect_batch_payload: Dictionary = {}
-var _collect_batch_flush_scheduled := false
+var _checkpoint_dirty := false
+var _checkpoint_in_flight := false
+var _checkpoint_retry_scheduled := false
+var _checkpoint_retry_attempts := 0
+var _client_sequence := 0
+var _accepted_checkpoint_id := ""
 var _pending_collected_nodes: Dictionary = {}
+var _local_collected_nodes: Dictionary = {}
 var _last_pending_request_id := ""
-var _last_heartbeat_seconds := 0.0
+var _last_position_payload: Dictionary = {}
+var _last_session_seconds := 0
 var _apply_snapshot_callback := Callable()
 var _session_state := SESSION_PREVIEW
 var _completed := false
@@ -67,16 +64,16 @@ func network_busy() -> bool:
 	return _network_busy
 
 func has_pending_events() -> bool:
-	return _event_flush_active or not _event_queue.is_empty() or not _collect_batch_nodes.is_empty() or _pending_event_count > 0
+	return _checkpoint_dirty or _checkpoint_in_flight or _checkpoint_retry_scheduled
 
 func can_complete() -> bool:
-	return _server_session_id != "" and not _completed and _server_synced and not has_pending_events()
+	return _server_session_id != "" and not _completed and _accepted_checkpoint_id != "" and not has_pending_events()
 
 func uses_authority() -> bool:
 	return is_active() and _server_session_id != "" and not _completed
 
 func can_record_event() -> bool:
-	return uses_authority() and _runtime_allows_mutation()
+	return uses_authority()
 
 func session_state() -> String:
 	return _session_state
@@ -86,35 +83,33 @@ func is_completed() -> bool:
 
 func pending_summary_text() -> String:
 	if _last_pending_request_id != "":
-		return "pedido %s" % _last_pending_request_id
-	if not _collect_batch_nodes.is_empty():
-		return "Sincronizando coleta em lote"
-	if has_pending_events():
-		var count := _event_queue.size() + (1 if _event_flush_active else 0)
-		return "Salvando %d acoes" % count
+		return "Salvando checkpoint"
+	if _checkpoint_in_flight:
+		return "Salvando checkpoint..."
+	if _checkpoint_dirty:
+		return "Bosque salvo localmente"
+	if _checkpoint_retry_scheduled:
+		return "Recompensa pendente de sincronizacao"
 	return ""
 
 func has_pending_collected_node(node_id: String) -> bool:
-	return bool(_pending_collected_nodes.get(node_id, false))
+	return bool(_pending_collected_nodes.get(node_id, false)) or bool(_local_collected_nodes.get(node_id, false))
 
 func remember_pending_collected_node(node_id: String) -> void:
-	if node_id.strip_edges() == "":
+	var clean_node_id := node_id.strip_edges()
+	if clean_node_id == "":
 		return
-	_pending_collected_nodes[node_id] = true
+	_pending_collected_nodes[clean_node_id] = true
+	_local_collected_nodes[clean_node_id] = true
 
 func pending_collected_nodes_for_tests() -> Dictionary:
 	return _pending_collected_nodes.duplicate(true)
 
-func record_heartbeat_if_due(session_seconds: float, heartbeat_seconds: float, position_payload: Dictionary) -> void:
-	if _server_session_id == "" or not _server_synced or _completed:
+func record_heartbeat_if_due(session_seconds: float, _heartbeat_seconds: float, position_payload: Dictionary) -> void:
+	if _server_session_id == "" or _completed:
 		return
-	if session_seconds - _last_heartbeat_seconds < heartbeat_seconds:
-		return
-	_last_heartbeat_seconds = session_seconds
-	record_event_deferred("move_heartbeat", {
-		"position": position_payload.duplicate(true),
-		"session_seconds": int(session_seconds),
-	})
+	_remember_runtime_context(session_seconds, position_payload)
+	_save_local_checkpoint_state()
 
 func resume_or_start_session() -> void:
 	if _network_busy or _server_session_id != "" or _completed:
@@ -125,30 +120,47 @@ func resume_or_start_session() -> void:
 		_session_state = SESSION_PREVIEW
 		_emit_state_changed()
 		return
+
 	_network_busy = true
 	_session_state = SESSION_STARTING
+	_set_model_message("Carregando Bosque...")
 	_emit_state_changed()
+	var loaded_local := _load_local_checkpoint_state()
 	var state_result: Dictionary = await supabase_client.get_mode_state(ModelScript.MODE_ID, _active_access_token())
 	_network_busy = false
 	if bool(state_result.get("ok", false)):
 		var body := _response_body(state_result)
-		var active_session := _as_dictionary(body.get("active_session", {}))
-		if not active_session.is_empty() and hydrate_session(active_session):
+		var active_session := _active_session_from_body(body)
+		if loaded_local and _same_session(active_session):
+			_apply_remote_metadata(active_session)
+			last_result_text = "Bosque retomado."
+			_set_model_message("Bosque salvo localmente.")
+			_emit_state_changed()
+			return
+		if not active_session.is_empty() and hydrate_session(active_session, true):
 			last_result_text = "Bosque retomado."
 			_set_model_message("Bosque retomado.")
 			_emit_client_telemetry("mode_session_resumed", {"result": "ok"})
 			_emit_state_changed()
 			return
-	elif not _is_network_error(state_result):
+		if not loaded_local:
+			await start_session()
+			return
+	if loaded_local:
+		_session_state = SESSION_PENDING if _checkpoint_dirty else SESSION_SYNCED
+		_set_model_message("Bosque salvo localmente.")
+		_emit_state_changed()
+		return
+	if _is_network_error(state_result):
+		_server_synced = false
+		_session_state = SESSION_OFFLINE
+		_set_model_message("Preview sem recompensa. Conexao indisponivel.")
+		_emit_client_telemetry("mode_preview_started", {"result": "offline", "error_code": _error_code(state_result)})
+	else:
 		_set_model_message("Preview sem recompensa.")
 		_session_state = SESSION_BLOCKED
 		_emit_client_telemetry("mode_preview_started", {"result": "state_blocked", "error_code": _error_code(state_result)})
-	else:
-		_set_model_message("Preview sem recompensa. Conexao indisponivel.")
-		_session_state = SESSION_OFFLINE
-		_emit_client_telemetry("mode_preview_started", {"result": "offline", "error_code": _error_code(state_result)})
 	_emit_state_changed()
-	await start_session()
 
 func start_session() -> void:
 	if _network_busy or _server_session_id != "" or _completed:
@@ -186,7 +198,7 @@ func start_session() -> void:
 	_network_busy = false
 	var body := _response_body(result)
 	if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
-		hydrate_session(_as_dictionary(body.get("session", {})))
+		hydrate_session(_as_dictionary(body.get("session", {})), true)
 		_last_pending_request_id = ""
 		last_result_text = "Bosque iniciado."
 		_set_model_message("Bosque pronto.")
@@ -206,15 +218,17 @@ func start_session() -> void:
 	_emit_state_changed()
 
 func complete_session(result_payload: Dictionary) -> Dictionary:
-	if _network_busy:
+	if _network_busy or _checkpoint_in_flight:
 		return {"ok": false, "busy": true}
 	if _server_session_id == "":
 		return {"ok": false, "missing_session": true}
 	if _completed:
 		return {"ok": false, "completed": true}
+	if _accepted_checkpoint_id == "" or _checkpoint_dirty:
+		await flush_checkpoint(true)
 	if not can_complete():
-		last_result_text = "Sincronize o Bosque antes de encerrar."
-		_set_model_message("Sincronizacao pendente.")
+		last_result_text = "Recompensa pendente de sincronizacao."
+		_set_model_message("Salve o checkpoint para encerrar com recompensa.")
 		_emit_state_changed()
 		return {"ok": false, "pending_sync": true}
 	if not _runtime_allows_mutation():
@@ -246,14 +260,14 @@ func complete_session(result_payload: Dictionary) -> Dictionary:
 		_last_pending_request_id = ""
 		_completed = true
 		_session_state = SESSION_COMPLETED
-		_event_queue.clear()
-		_clear_collect_batch()
-		_pending_event_count = 0
+		_checkpoint_dirty = false
+		_checkpoint_retry_scheduled = false
 		_pending_collected_nodes = {}
 		var reward_summary := _reward_summary(body, reward)
 		last_result_text = reward_summary
 		_set_model_message(reward_summary)
 		_server_synced = true
+		_clear_local_checkpoint_state()
 		_emit_client_telemetry("mode_session_completed", {
 			"result": "ok",
 			"reward_status": _reward_status(body, reward),
@@ -273,12 +287,13 @@ func complete_session(result_payload: Dictionary) -> Dictionary:
 			})
 	else:
 		_server_synced = false
-		last_result_text = "Preview preservado. Recompensa bloqueada ate resync."
-		_set_model_message("Sincronizacao pendente.")
+		last_result_text = "Recompensa pendente de sincronizacao."
+		_set_model_message("Recompensa pendente de sincronizacao.")
 		_session_state = SESSION_OFFLINE if _is_network_error(result) else SESSION_BLOCKED
 		_emit_client_telemetry("mode_sync_failed", {"result": "complete_failed", "error_code": _error_code(result)})
 		if not _is_network_error(result):
 			session_store.fail_pending_mutation(str(request.get("request_id", "")), _as_dictionary(result.get("body", {})))
+		_save_local_checkpoint_state(true)
 	_emit_state_changed()
 	return result
 
@@ -319,14 +334,17 @@ func abandon_session(reason: String = "player_abandoned") -> Dictionary:
 		_snapshot_revision = 0
 		_server_synced = false
 		_completed = false
-		_event_queue.clear()
-		_clear_collect_batch()
-		_pending_event_count = 0
+		_checkpoint_dirty = false
+		_checkpoint_in_flight = false
+		_checkpoint_retry_scheduled = false
 		_pending_collected_nodes = {}
+		_local_collected_nodes = {}
 		_last_pending_request_id = ""
+		_accepted_checkpoint_id = ""
 		_session_state = SESSION_PREVIEW
 		last_result_text = "Sessao abandonada. Resultado descartado."
 		_set_model_message("Sessao do Bosque abandonada.")
+		_clear_local_checkpoint_state()
 		_emit_client_telemetry("mode_session_abandoned", {"result": "ok", "reason": reason.strip_edges()})
 	else:
 		_server_synced = false
@@ -347,12 +365,18 @@ func hydrate_session(session: Dictionary, apply_remote_position := true) -> bool
 	_completed = str(session.get("status", "started")) == "completed"
 	var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
 	if not snapshot_payload.is_empty():
+		_local_collected_nodes = _true_dictionary(snapshot_payload.get("collected_nodes", {}))
+		var checkpoint := _as_dictionary(snapshot_payload.get("checkpoint", {}))
+		_accepted_checkpoint_id = str(checkpoint.get("accepted_checkpoint_id", checkpoint.get("checkpoint_id", ""))).strip_edges()
+		_client_sequence = maxi(_client_sequence, int(checkpoint.get("client_sequence", _client_sequence)))
 		apply_remote_snapshot(snapshot_payload, apply_remote_position)
 	_server_synced = true
-	_pending_event_count = 0
-	_clear_collect_batch()
+	_checkpoint_dirty = false
+	_checkpoint_in_flight = false
+	_checkpoint_retry_scheduled = false
 	_pending_collected_nodes = {}
 	_session_state = SESSION_COMPLETED if _completed else SESSION_SYNCED
+	_save_local_checkpoint_state()
 	_emit_state_changed()
 	return true
 
@@ -365,277 +389,139 @@ func apply_remote_snapshot(snapshot_payload: Dictionary, apply_remote_position :
 func record_event_deferred(event_type: String, event_payload: Dictionary) -> void:
 	if not uses_authority():
 		return
-	if not _runtime_allows_mutation():
-		_runtime_mutation_block_result("modes/session/event")
-		return
-	if event_type == "collect_complete":
-		_record_collect_complete_for_batch(event_payload)
-		return
-	_flush_collect_batch_now()
-	_enqueue_event(event_type, event_payload)
-	call_deferred("flush_event_queue")
-
-func _record_collect_complete_for_batch(event_payload: Dictionary) -> void:
-	if _event_queue.size() >= MAX_EVENT_QUEUE_SIZE:
-		_set_model_message("Sincronizacao cheia. Aguarde o Bosque salvar antes de agir.")
-		_emit_client_telemetry("mode_sync_failed", {
-			"result": "queue_full",
-			"event_type": "collect_batch",
-		})
-		_emit_state_changed()
-		return
-	_client_event_seq += 1
 	var payload := event_payload.duplicate(true)
-	payload["client_event_seq"] = _client_event_seq
-	if not payload.has("client_position_revision"):
-		payload["client_position_revision"] = int(payload.get("position_revision", 0))
-	var node_id := str(payload.get("node_id", "")).strip_edges()
-	var item_id := str(payload.get("item_id", "")).strip_edges()
-	if node_id == "" or item_id == "":
-		return
-	_collect_batch_nodes.append({
-		"node_id": node_id,
-		"item_id": item_id,
-		"session_seconds": int(payload.get("session_seconds", 0)),
-		"client_event_seq": _client_event_seq,
-	})
-	_collect_batch_payload = {
-		"position": _as_dictionary(payload.get("position", {})).duplicate(true),
-		"session_seconds": int(payload.get("session_seconds", 0)),
-		"client_event_seq": _client_event_seq,
-		"client_position_revision": int(payload.get("client_position_revision", 0)),
-	}
-	_update_pending_sync_state("collect_batch")
-	if _collect_batch_nodes.size() >= MAX_COLLECT_BATCH_NODES:
-		_flush_collect_batch_now()
-		call_deferred("flush_event_queue")
-	else:
-		_schedule_collect_batch_flush()
-
-func _schedule_collect_batch_flush() -> void:
-	if _collect_batch_flush_scheduled:
-		return
-	_collect_batch_flush_scheduled = true
-	call_deferred("_flush_collect_batch_after_debounce")
-
-func _flush_collect_batch_after_debounce() -> void:
-	if is_inside_tree():
-		await get_tree().create_timer(COLLECT_BATCH_DEBOUNCE_SECONDS).timeout
-	_collect_batch_flush_scheduled = false
-	if _flush_collect_batch_now():
-		flush_event_queue()
-
-func _flush_collect_batch_now() -> bool:
-	if _collect_batch_nodes.is_empty():
-		return false
-	var payload := _collect_batch_payload.duplicate(true)
-	payload["nodes"] = _collect_batch_nodes.duplicate(true)
-	payload["batch_size"] = _collect_batch_nodes.size()
-	if _enqueue_event("collect_batch", payload):
-		_clear_collect_batch()
-		return true
-	return false
-
-func _enqueue_event(event_type: String, event_payload: Dictionary) -> bool:
-	if _event_queue.size() >= MAX_EVENT_QUEUE_SIZE:
-		_set_model_message("Sincronizacao cheia. Aguarde o Bosque salvar antes de agir.")
-		_emit_client_telemetry("mode_sync_failed", {
-			"result": "queue_full",
-			"event_type": event_type,
-		})
-		_emit_state_changed()
-		return false
-	_client_event_seq += 1
-	var payload := event_payload.duplicate(true)
-	payload["client_event_seq"] = _client_event_seq
-	if not payload.has("client_position_revision"):
-		payload["client_position_revision"] = int(payload.get("position_revision", 0))
-	_event_queue.append({
-		"event_type": event_type,
-		"event_payload": payload,
-		"client_event_seq": _client_event_seq,
-		"position_revision": int(payload.get("client_position_revision", 0)),
-	})
-	_update_pending_sync_state(event_type)
-	return true
-
-func _update_pending_sync_state(event_type: String) -> void:
-	_pending_event_count = _event_queue.size() + _collect_batch_nodes.size() + (1 if _event_flush_active else 0)
-	_server_synced = false
-	_session_state = SESSION_PENDING
-	if model != null and str(model.get("last_message")).strip_edges() == "":
-		_set_model_message("Sincronizando Bosque...")
-	_emit_client_telemetry("mode_session_sync_pending", {
-		"result": "queued",
-		"event_type": event_type,
-	})
-	_emit_state_changed()
+	_remember_runtime_context(float(payload.get("session_seconds", _last_session_seconds)), _as_dictionary(payload.get("position", _last_position_payload)))
+	match event_type:
+		"collect_complete":
+			var node_id := str(payload.get("node_id", "")).strip_edges()
+			if node_id != "":
+				remember_pending_collected_node(node_id)
+			_mark_checkpoint_dirty(event_type)
+		"deposit_all", "craft", "guidance_update":
+			_mark_checkpoint_dirty(event_type)
+		"collect_start", "collect_cancel", "move_heartbeat":
+			_save_local_checkpoint_state()
+		_:
+			_mark_checkpoint_dirty(event_type)
 
 func flush_event_queue() -> void:
+	await flush_checkpoint(false)
+
+func flush_checkpoint(force := false) -> Dictionary:
 	if _server_session_id == "":
-		return
-	if _event_flush_active:
-		return
-	_flush_collect_batch_now()
+		return {"ok": false, "missing_session": true}
+	if _checkpoint_in_flight:
+		return {"ok": false, "busy": true}
+	if not force and not _checkpoint_dirty:
+		return {"ok": true, "skipped": true}
 	if not _runtime_allows_mutation():
-		_runtime_mutation_block_result("modes/session/event")
-		return
+		_runtime_mutation_block_result("modes/session/checkpoint")
+		_save_local_checkpoint_state()
+		return {"ok": false, "blocked_by_runtime_config": true}
 	if not is_active():
-		_server_synced = false
 		_session_state = SESSION_OFFLINE
+		_save_local_checkpoint_state()
 		_emit_state_changed()
-		return
-	_event_flush_active = true
-	while not _event_queue.is_empty():
-		var job := _as_dictionary(_event_queue.front())
-		var event_type := str(job.get("event_type", "")).strip_edges()
-		var event_payload := _as_dictionary(job.get("event_payload", {}))
-		if event_type == "":
-			_event_queue.pop_front()
-			continue
-		var request_payload := event_payload.duplicate(true)
-		request_payload["event_type"] = event_type
-		request_payload["session_id"] = _server_session_id
-		request_payload["expected_revision"] = _snapshot_revision
-		var request: Dictionary = session_store.prepare_pending_mutation(
-			"modes/session/event",
-			_scope_id(),
-			SOURCE_ID,
-			request_payload
-		)
-		_last_pending_request_id = str(request.get("request_id", ""))
-		_pending_event_count = _event_queue.size() + 1
+		return {"ok": false, "offline": true}
+	var payload := _build_checkpoint_payload()
+	var request: Dictionary = session_store.prepare_pending_mutation(
+		"modes/session/checkpoint",
+		_scope_id(),
+		SOURCE_ID,
+		payload
+	)
+	_last_pending_request_id = str(request.get("request_id", ""))
+	var sent_sequence := int(payload.get("client_sequence", _client_sequence))
+	_checkpoint_in_flight = true
+	_session_state = SESSION_PENDING
+	_emit_state_changed()
+	var result: Dictionary = await supabase_client.checkpoint_mode_session(
+		_last_pending_request_id,
+		payload,
+		_active_access_token(),
+		str(request.get("request_hash", ""))
+	)
+	_checkpoint_in_flight = false
+	var body := _response_body(result)
+	if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
+		_apply_checkpoint_ack(body, sent_sequence)
+		_last_pending_request_id = ""
+		_checkpoint_retry_attempts = 0
+		_checkpoint_retry_scheduled = false
+		_emit_client_telemetry("mode_checkpoint_saved", {"result": "ok", "client_sequence": sent_sequence})
+	else:
 		_server_synced = false
-		_emit_state_changed()
-		var result: Dictionary = await supabase_client.record_mode_session_event(
-			_last_pending_request_id,
-			_server_session_id,
-			ModelScript.MODE_ID,
-			ModelScript.SLICE_ID,
-			event_type,
-			_snapshot_revision,
-			event_payload,
-			_active_access_token(),
-			str(request.get("request_hash", ""))
-		)
-		var body := _response_body(result)
-		if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
-			_event_queue.pop_front()
-			if bool(body.get("resync_required", false)):
-				await resync_session("Bosque sincronizado.")
-				_event_queue.clear()
-				_clear_collect_batch()
-				break
-			_apply_event_ack(body, job)
-			_event_retry_attempts = 0
-			continue
-		_server_synced = false
-		_session_state = SESSION_PENDING
+		_checkpoint_dirty = true
 		var error_code := _error_code(result)
-		_set_model_message("Sincronizacao pendente.")
 		if not _is_network_error(result):
 			session_store.fail_pending_mutation(_last_pending_request_id, body)
-			_event_queue.pop_front()
-			if error_code == "MODE_SESSION_REVISION_STALE":
-				await resync_session("Bosque resincronizado. Confira bolso e bau.")
-			else:
-				await resync_session("Bosque resincronizado apos erro do servidor.")
-			_event_queue.clear()
-			_clear_collect_batch()
-			_emit_client_telemetry("mode_sync_failed", {"result": "event_failed", "error_code": error_code})
+			_session_state = SESSION_BLOCKED
+			_set_model_message("Bosque precisa recuperar o servidor. Confira bolso e bau ao reabrir.")
+			_emit_client_telemetry("mode_sync_failed", {"result": "checkpoint_failed", "error_code": error_code})
 		else:
-			_set_model_message("Sincronizacao pendente. Tentando novamente...")
-			_schedule_event_retry()
-		break
-	_event_flush_active = false
-	_pending_event_count = _event_queue.size()
-	if _event_queue.is_empty():
-		_last_pending_request_id = ""
-		if _server_session_id != "":
-			_server_synced = true
-			if not _completed:
-				_session_state = SESSION_SYNCED
+			_session_state = SESSION_OFFLINE
+			_set_model_message("Bosque salvo localmente. Checkpoint pendente.")
+			_schedule_checkpoint_retry()
+		_save_local_checkpoint_state()
 	_emit_state_changed()
+	return result
 
-func _apply_event_ack(body: Dictionary, _job: Dictionary) -> void:
+func _apply_checkpoint_ack(body: Dictionary, sent_sequence: int) -> void:
 	var session := _as_dictionary(body.get("session", {}))
 	var session_id := str(body.get("session_id", session.get("id", ""))).strip_edges()
 	if session_id != "":
 		_server_session_id = session_id
-	var revision_after := int(body.get("revision_after", -1))
-	if revision_after < 0 and not session.is_empty():
-		revision_after = int(session.get("snapshot_revision", _snapshot_revision))
-	if revision_after >= 0:
-		_snapshot_revision = revision_after
-	var snapshot_patch := _as_dictionary(body.get("snapshot_patch", {}))
-	if snapshot_patch.is_empty() and not session.is_empty():
-		var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
-		snapshot_patch = _event_snapshot_patch(snapshot_payload)
-	if _has_queued_local_inventory_mutation():
-		_filter_inventory_patch_after_optimistic_mutation(snapshot_patch)
-	if not snapshot_patch.is_empty() and model != null and model.has_method("apply_authoritative_patch"):
-		model.apply_authoritative_patch(snapshot_patch, true)
-		var collected_nodes := _as_dictionary(snapshot_patch.get("collected_nodes", {}))
-		if not collected_nodes.is_empty():
-			_clear_confirmed_pending_nodes(collected_nodes)
-	var user_message := str(body.get("user_message", _as_dictionary(body.get("event", {})).get("message", ""))).strip_edges()
-	if user_message != "":
-		_set_model_message(user_message)
-	_server_synced = true
-	if not _completed:
+	var revision_after := int(body.get("snapshot_revision", session.get("snapshot_revision", _snapshot_revision)))
+	_snapshot_revision = maxi(_snapshot_revision, revision_after)
+	_accepted_checkpoint_id = str(body.get("accepted_checkpoint_id", body.get("checkpoint_id", _accepted_checkpoint_id))).strip_edges()
+	if sent_sequence >= _client_sequence:
+		_checkpoint_dirty = false
+		_pending_collected_nodes = {}
+		_server_synced = true
 		_session_state = SESSION_SYNCED
+	else:
+		_checkpoint_dirty = true
+		_server_synced = false
+		_session_state = SESSION_PENDING
+	_set_model_message("Bosque salvo localmente." if _checkpoint_dirty else "Checkpoint salvo.")
+	_save_local_checkpoint_state()
+	if _checkpoint_dirty:
+		call_deferred("flush_checkpoint", false)
 
-func _has_queued_local_inventory_mutation() -> bool:
-	for queued_job: Dictionary in _event_queue:
-		var queued_type := str(queued_job.get("event_type", "")).strip_edges()
-		if queued_type == "deposit_all" or queued_type == "craft":
-			return true
-	return false
+func _build_checkpoint_payload() -> Dictionary:
+	var snapshot_payload := _local_snapshot_payload()
+	return {
+		"session_id": _server_session_id,
+		"mode_id": ModelScript.MODE_ID,
+		"slice_id": ModelScript.SLICE_ID,
+		"ruleset_id": ModelScript.RULESET_ID,
+		"ruleset_version": ModelScript.RULESET_VERSION,
+		"checkpoint_id": _checkpoint_id_for_sequence(_client_sequence),
+		"base_revision": _snapshot_revision,
+		"client_sequence": _client_sequence,
+		"snapshot_payload": snapshot_payload,
+		"client_summary": {
+			"collected_count": _local_collected_nodes.size(),
+			"pocket_count": _inventory_count(_as_dictionary(snapshot_payload.get("pocket", {}))),
+			"chest_count": _inventory_count(_as_dictionary(snapshot_payload.get("chest", {}))),
+		},
+	}
 
-func _filter_inventory_patch_after_optimistic_mutation(snapshot_patch: Dictionary) -> void:
-	for key: String in [
-		"pocket",
-		"chest",
-		"upgrades",
-		"capacity",
-		"pocket_weight",
-		"current_speed",
-	]:
-		snapshot_patch.erase(key)
-
-func _event_snapshot_patch(snapshot_payload: Dictionary) -> Dictionary:
-	var patch: Dictionary = {}
-	for key: String in [
-		"pocket",
-		"chest",
-		"upgrades",
-		"collected_nodes",
-		"reward_payload",
-		"session_seconds",
-		"activity_score",
-		"capacity",
-		"pocket_weight",
-		"current_speed",
-		"guidance",
-		"last_message",
-	]:
-		if snapshot_payload.has(key):
-			patch[key] = snapshot_payload.get(key)
-	return patch
-
-func _clear_confirmed_pending_nodes(collected_nodes: Dictionary) -> void:
-	for node_id: String in collected_nodes.keys():
-		if bool(collected_nodes.get(node_id, false)):
-			_pending_collected_nodes.erase(node_id)
+func _local_snapshot_payload() -> Dictionary:
+	var snapshot_payload: Dictionary = model.snapshot() if model != null and model.has_method("snapshot") else {}
+	snapshot_payload["session_seconds"] = _last_session_seconds
+	snapshot_payload["collected_nodes"] = _local_collected_nodes.duplicate(true)
+	if not _last_position_payload.is_empty():
+		snapshot_payload["player_position"] = _last_position_payload.duplicate(true)
+	if model != null:
+		var active_collection: Dictionary = _as_dictionary(model.get("active_collection"))
+		if not active_collection.is_empty():
+			snapshot_payload["active_collection"] = active_collection.duplicate(true)
+	return snapshot_payload
 
 func retry_queued_events_now() -> void:
-	_event_retry_scheduled = false
-	await flush_event_queue()
-
-func _clear_collect_batch() -> void:
-	_collect_batch_nodes.clear()
-	_collect_batch_payload.clear()
-	_collect_batch_flush_scheduled = false
+	_checkpoint_retry_scheduled = false
+	await flush_checkpoint(true)
 
 func resync_session(success_message: String) -> bool:
 	if not is_active():
@@ -648,21 +534,18 @@ func resync_session(success_message: String) -> bool:
 		_emit_client_telemetry("mode_sync_failed", {"result": "resync_failed", "error_code": _error_code(state_result)})
 		_emit_state_changed()
 		return false
-	var body := _response_body(state_result)
-	var active_session := _as_dictionary(body.get("active_session", {}))
+	var active_session := _active_session_from_body(_response_body(state_result))
 	if active_session.is_empty():
-		var sessions := _as_array(body.get("sessions", []))
-		for session_variant: Variant in sessions:
-			var candidate := _as_dictionary(session_variant)
-			if str(candidate.get("status", "")) == "started":
-				active_session = candidate
-				break
-	var active_session_id := str(active_session.get("id", "")).strip_edges()
-	var apply_remote_position := active_session_id == "" or active_session_id != _server_session_id
-	if active_session.is_empty() or not hydrate_session(active_session, apply_remote_position):
 		_session_state = SESSION_PREVIEW
 		_emit_state_changed()
 		return false
+	if _same_session(active_session):
+		_apply_remote_metadata(active_session)
+	else:
+		if not hydrate_session(active_session, true):
+			_session_state = SESSION_PREVIEW
+			_emit_state_changed()
+			return false
 	_set_model_message(success_message)
 	_emit_client_telemetry("mode_session_resynced", {"result": "ok"})
 	_emit_state_changed()
@@ -676,40 +559,153 @@ func debug_snapshot() -> Dictionary:
 		"completed": _completed,
 		"server_synced": _server_synced,
 		"network_busy": _network_busy,
-		"pending_event_count": _pending_event_count,
-		"event_queue_size": _event_queue.size(),
-		"collect_batch_size": _collect_batch_nodes.size(),
-		"event_queue_types": _event_queue_types_for_debug(),
-		"event_flush_active": _event_flush_active,
-		"event_retry_scheduled": _event_retry_scheduled,
-		"event_retry_attempts": _event_retry_attempts,
+		"pending_event_count": 1 if has_pending_events() else 0,
+		"event_queue_size": 1 if _checkpoint_dirty else 0,
+		"collect_batch_size": 0,
+		"event_queue_types": ["checkpoint"] if _checkpoint_dirty else [],
+		"event_flush_active": _checkpoint_in_flight,
+		"event_retry_scheduled": _checkpoint_retry_scheduled,
+		"event_retry_attempts": _checkpoint_retry_attempts,
+		"checkpoint_dirty": _checkpoint_dirty,
+		"checkpoint_in_flight": _checkpoint_in_flight,
+		"accepted_checkpoint_id": _accepted_checkpoint_id,
+		"client_sequence": _client_sequence,
 		"last_pending_request_id": _last_pending_request_id,
 	}
-
-func _event_queue_types_for_debug() -> Array[String]:
-	var result: Array[String] = []
-	for job: Dictionary in _event_queue:
-		result.append(str(job.get("event_type", "")))
-	return result
 
 func record_exit_preserved() -> void:
 	if _server_session_id == "" or _completed:
 		return
+	_save_local_checkpoint_state()
+	if _checkpoint_dirty:
+		call_deferred("flush_checkpoint", false)
 	_emit_client_telemetry("mode_session_exit_preserved", {"result": "ok"})
 
-func _schedule_event_retry() -> void:
-	if _event_retry_scheduled:
-		return
-	_event_retry_scheduled = true
-	_event_retry_attempts += 1
-	call_deferred("_retry_event_queue")
+func _mark_checkpoint_dirty(event_type: String) -> void:
+	_client_sequence += 1
+	_checkpoint_dirty = true
+	_server_synced = false
+	_session_state = SESSION_PENDING
+	if model != null and str(model.get("last_message")).strip_edges() == "":
+		_set_model_message("Bosque salvo localmente.")
+	_save_local_checkpoint_state()
+	_emit_client_telemetry("mode_session_checkpoint_pending", {
+		"result": "queued",
+		"event_type": event_type,
+	})
+	_emit_state_changed()
+	call_deferred("flush_checkpoint", false)
 
-func _retry_event_queue() -> void:
+func _load_local_checkpoint_state() -> bool:
+	if session_store == null or not session_store.has_method("openworld_local_snapshot"):
+		return false
+	var local_state := _as_dictionary(session_store.call("openworld_local_snapshot"))
+	if local_state.is_empty():
+		return false
+	if str(local_state.get("schema_version", "")) != LOCAL_STATE_SCHEMA:
+		return false
+	if str(local_state.get("save_type", _active_save_type())) != _active_save_type():
+		return false
+	if str(local_state.get("ruleset_id", "")) != ModelScript.RULESET_ID:
+		return false
+	if int(local_state.get("ruleset_version", 0)) != ModelScript.RULESET_VERSION:
+		return false
+	var snapshot_payload := _as_dictionary(local_state.get("snapshot_payload", {}))
+	if snapshot_payload.is_empty():
+		return false
+	_server_session_id = str(local_state.get("session_id", "")).strip_edges()
+	if _server_session_id == "":
+		return false
+	_snapshot_revision = int(local_state.get("snapshot_revision", 0))
+	_accepted_checkpoint_id = str(local_state.get("accepted_checkpoint_id", "")).strip_edges()
+	_client_sequence = int(local_state.get("client_sequence", 0))
+	_checkpoint_dirty = bool(local_state.get("checkpoint_dirty", false))
+	_pending_collected_nodes = _true_dictionary(local_state.get("pending_collected_nodes", {}))
+	_local_collected_nodes = _true_dictionary(snapshot_payload.get("collected_nodes", {}))
+	_last_position_payload = _as_dictionary(snapshot_payload.get("player_position", {})).duplicate(true)
+	_last_session_seconds = int(snapshot_payload.get("session_seconds", 0))
+	_completed = false
+	apply_remote_snapshot(snapshot_payload, true)
+	_server_synced = not _checkpoint_dirty
+	_session_state = SESSION_PENDING if _checkpoint_dirty else SESSION_SYNCED
+	return true
+
+func _save_local_checkpoint_state(reward_pending := false) -> void:
+	if session_store == null or _server_session_id == "" or _completed:
+		return
+	if not session_store.has_method("remember_openworld_local_state"):
+		return
+	session_store.call("remember_openworld_local_state", {
+		"schema_version": LOCAL_STATE_SCHEMA,
+		"save_type": _active_save_type(),
+		"session_id": _server_session_id,
+		"ruleset_id": ModelScript.RULESET_ID,
+		"ruleset_version": ModelScript.RULESET_VERSION,
+		"snapshot_revision": _snapshot_revision,
+		"accepted_checkpoint_id": _accepted_checkpoint_id,
+		"client_sequence": _client_sequence,
+		"checkpoint_dirty": _checkpoint_dirty,
+		"checkpoint_in_flight": _checkpoint_in_flight,
+		"reward_pending": reward_pending,
+		"pending_collected_nodes": _pending_collected_nodes.duplicate(true),
+		"snapshot_payload": _local_snapshot_payload(),
+		"updated_at_unix": Time.get_unix_time_from_system(),
+	})
+
+func _clear_local_checkpoint_state() -> void:
+	if session_store != null and session_store.has_method("clear_openworld_local_state"):
+		session_store.call("clear_openworld_local_state")
+
+func _apply_remote_metadata(session: Dictionary) -> void:
+	if not _same_session(session):
+		return
+	_snapshot_revision = maxi(_snapshot_revision, int(session.get("snapshot_revision", _snapshot_revision)))
+	var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
+	var checkpoint := _as_dictionary(snapshot_payload.get("checkpoint", {}))
+	var remote_sequence := int(checkpoint.get("client_sequence", -1))
+	if remote_sequence >= _client_sequence:
+		_accepted_checkpoint_id = str(checkpoint.get("accepted_checkpoint_id", checkpoint.get("checkpoint_id", _accepted_checkpoint_id))).strip_edges()
+		_checkpoint_dirty = false
+		_pending_collected_nodes = {}
+	_server_synced = not _checkpoint_dirty
+	_session_state = SESSION_PENDING if _checkpoint_dirty else SESSION_SYNCED
+	_save_local_checkpoint_state()
+
+func _same_session(session: Dictionary) -> bool:
+	return not session.is_empty() and str(session.get("id", "")).strip_edges() == _server_session_id
+
+func _active_session_from_body(body: Dictionary) -> Dictionary:
+	var active_session := _as_dictionary(body.get("active_session", {}))
+	if active_session.is_empty():
+		var sessions := _as_array(body.get("sessions", []))
+		for session_variant: Variant in sessions:
+			var candidate := _as_dictionary(session_variant)
+			if str(candidate.get("status", "")) == "started":
+				active_session = candidate
+				break
+	return active_session
+
+func _remember_runtime_context(session_seconds: float, position_payload: Dictionary) -> void:
+	_last_session_seconds = maxi(_last_session_seconds, int(session_seconds))
+	if not position_payload.is_empty():
+		_last_position_payload = position_payload.duplicate(true)
+
+func _checkpoint_id_for_sequence(sequence: int) -> String:
+	return "%s-%06d" % [_server_session_id, maxi(0, sequence)]
+
+func _schedule_checkpoint_retry() -> void:
+	if _checkpoint_retry_scheduled:
+		return
+	_checkpoint_retry_scheduled = true
+	_checkpoint_retry_attempts += 1
+	call_deferred("_retry_checkpoint")
+
+func _retry_checkpoint() -> void:
 	if is_inside_tree():
-		var delay := minf(MAX_EVENT_RETRY_BACKOFF_SECONDS, EVENT_RETRY_SECONDS * float(maxi(1, _event_retry_attempts)))
+		var delay := minf(MAX_CHECKPOINT_RETRY_BACKOFF_SECONDS, CHECKPOINT_RETRY_SECONDS * float(maxi(1, _checkpoint_retry_attempts)))
 		await get_tree().create_timer(delay).timeout
-	_event_retry_scheduled = false
-	flush_event_queue()
+	_checkpoint_retry_scheduled = false
+	flush_checkpoint(false)
 
 func _scope_id() -> String:
 	return ACTION_SCOPE_TEMPLATE % str(session_store.get("active_save_type"))
@@ -745,7 +741,7 @@ func _telemetry_payload(payload: Dictionary) -> Dictionary:
 	result["slice_id"] = ModelScript.SLICE_ID
 	result["session_id"] = _server_session_id
 	result["revision"] = _snapshot_revision
-	result["pending_count"] = _pending_event_count
+	result["pending_count"] = 1 if has_pending_events() else 0
 	result["save_type"] = _active_save_type()
 	result["source"] = SOURCE_ID
 	return result
@@ -776,9 +772,10 @@ func _runtime_mutation_block_result(action: String) -> Dictionary:
 	var reason := "Acoes online de progresso estao pausadas pela configuracao remota."
 	if session_store != null and session_store.has_method("runtime_mutation_block_reason"):
 		reason = str(session_store.call("runtime_mutation_block_reason"))
-	last_result_text = "Preview sem recompensa."
+	last_result_text = "Bosque salvo localmente; recompensa pendente."
 	_set_model_message(reason)
 	_server_synced = false
+	_checkpoint_dirty = true
 	_session_state = SESSION_BLOCKED
 	_emit_client_telemetry("mode_mutation_blocked", {
 		"result": "blocked",
@@ -822,10 +819,10 @@ func _resource_delta_text(delta: Dictionary) -> String:
 	return ", ".join(parts) if not parts.is_empty() else "sem alteracao"
 
 func _completion_seconds(body: Dictionary) -> float:
-	var payload := _as_dictionary(body.get("result_payload", body.get("payload", {})))
-	if payload.has("session_seconds"):
-		return float(payload.get("session_seconds", 0.0))
-	return float(body.get("session_seconds", 0.0))
+	var session := _as_dictionary(body.get("session", {}))
+	if session.has("session_seconds"):
+		return float(session.get("session_seconds", 0.0))
+	return float(_last_session_seconds)
 
 func _reward_resource_display_name(resource_id: String) -> String:
 	match resource_id:
@@ -866,6 +863,20 @@ func _error_code(result: Dictionary) -> String:
 func _is_network_error(result: Dictionary) -> bool:
 	var code := _error_code(result)
 	return code in ["NETWORK_UNAVAILABLE", "REQUEST_NOT_STARTED", "CLIENT_MISCONFIGURED"]
+
+func _inventory_count(inventory: Dictionary) -> int:
+	var total := 0
+	for key: String in inventory.keys():
+		total += maxi(0, int(inventory.get(key, 0)))
+	return total
+
+func _true_dictionary(value: Variant) -> Dictionary:
+	var source := _as_dictionary(value)
+	var result: Dictionary = {}
+	for key: String in source.keys():
+		if bool(source.get(key, false)):
+			result[key] = true
+	return result
 
 func _as_array(value: Variant) -> Array:
 	return value if value is Array else []

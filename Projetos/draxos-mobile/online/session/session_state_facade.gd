@@ -28,6 +28,7 @@ static func clear_session(store: Object, session_id: String, save_type_normal: S
 	store.set("crafting_state", {})
 	store.set("combat_build_state", {})
 	store.set("mode_state", {})
+	store.set("openworld_local_state", {})
 	store.set("progression_lab", {})
 	store.set("arena_state", {})
 	store.set("last_battle_id", null)
@@ -67,6 +68,7 @@ static func snapshot(store: Object, cache_version: int) -> Dictionary:
 		"crafting_state": _dict(store.get("crafting_state")),
 		"combat_build_state": _dict(store.get("combat_build_state")),
 		"mode_state": _dict(store.get("mode_state")),
+		"openworld_local_state": _dict(store.get("openworld_local_state")),
 		"progression_lab": _dict(store.get("progression_lab")),
 		"arena_state": _dict(store.get("arena_state")),
 		"surface_save_types": _dict(store.get("surface_save_types")),
@@ -114,6 +116,7 @@ static func apply_cache(
 	store.set("crafting_state", SessionCacheSliceScript.cache_dict(cache, "crafting_state"))
 	store.set("combat_build_state", SessionCacheSliceScript.cache_dict(cache, "combat_build_state"))
 	store.set("mode_state", SessionCacheSliceScript.cache_dict(cache, "mode_state"))
+	store.set("openworld_local_state", SessionCacheSliceScript.cache_dict(cache, "openworld_local_state"))
 	store.set("progression_lab", SessionCacheSliceScript.cache_dict(cache, "progression_lab"))
 	store.set("arena_state", SessionCacheSliceScript.cache_dict(cache, "arena_state"))
 	store.set("surface_save_types", AccountSaveSliceScript.normalized_surface_save_types(SessionCacheSliceScript.cache_dict(cache, "surface_save_types")))
@@ -153,6 +156,7 @@ static func clear_account_snapshots(store: Object, save_type_normal: String) -> 
 	store.set("combat_build_state", {})
 	store.set("arena_state", {})
 	store.set("mode_state", {})
+	store.set("openworld_local_state", {})
 	if str(store.get("active_save_type")) == save_type_normal:
 		store.set("progression_lab", {})
 	store.set("last_battle_id", null)
@@ -171,6 +175,7 @@ static func clear_gameplay_snapshots(store: Object, surfaces: Array) -> void:
 	store.set("combat_build_state", {})
 	store.set("arena_state", {})
 	store.set("mode_state", {})
+	store.set("openworld_local_state", {})
 	store.set("last_battle_id", null)
 	store.set("last_battle_log", {})
 	store.set("last_battle_rewards", {})

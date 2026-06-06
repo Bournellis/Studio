@@ -12,6 +12,7 @@ class FakeSessionStore:
 	var applied: Array[Dictionary] = []
 	var failed: Array[Dictionary] = []
 	var telemetry_session_id := "telemetry-session"
+	var openworld_local_state: Dictionary = {}
 
 	func prepare_pending_mutation(endpoint: String, scope_id: String, source_id: String, payload: Dictionary) -> Dictionary:
 		var index := prepared.size() + 1
@@ -38,6 +39,15 @@ class FakeSessionStore:
 	func ensure_session_id() -> String:
 		return telemetry_session_id
 
+	func remember_openworld_local_state(state: Dictionary) -> void:
+		openworld_local_state = state.duplicate(true)
+
+	func openworld_local_snapshot() -> Dictionary:
+		return openworld_local_state.duplicate(true)
+
+	func clear_openworld_local_state() -> void:
+		openworld_local_state = {}
+
 class FakeSupabaseClient:
 	extends Node
 
@@ -45,10 +55,12 @@ class FakeSupabaseClient:
 	var start_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var complete_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var abandon_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
+	var checkpoint_results: Array[Dictionary] = []
 	var state_calls: Array[Dictionary] = []
 	var start_calls: Array[Dictionary] = []
 	var complete_calls: Array[Dictionary] = []
 	var abandon_calls: Array[Dictionary] = []
+	var checkpoint_calls: Array[Dictionary] = []
 	var event_calls: Array[Dictionary] = []
 	var telemetry_calls: Array[Dictionary] = []
 
@@ -76,6 +88,42 @@ class FakeSupabaseClient:
 			"request_hash": request_hash,
 		})
 		return complete_result
+
+	func checkpoint_mode_session(request_id: String, payload: Dictionary, token: String, request_hash: String) -> Dictionary:
+		checkpoint_calls.append({
+			"request_id": request_id,
+			"payload": payload.duplicate(true),
+			"token": token,
+			"request_hash": request_hash,
+		})
+		if not checkpoint_results.is_empty():
+			return checkpoint_results.pop_front()
+		var session_id := str(payload.get("session_id", "screen-session"))
+		var sequence := int(payload.get("client_sequence", 0))
+		return {
+			"ok": true,
+			"body": {
+				"type": "mode_checkpoint_ack",
+				"session_id": session_id,
+				"checkpoint_id": str(payload.get("checkpoint_id", "")),
+				"accepted_checkpoint_id": str(payload.get("checkpoint_id", "")),
+				"snapshot_revision": int(payload.get("base_revision", 0)) + 1,
+				"complete_ready": true,
+				"session": {
+					"id": session_id,
+					"status": "started",
+					"snapshot_revision": int(payload.get("base_revision", 0)) + 1,
+					"snapshot_payload": {
+						"ruleset_id": ModelScript.RULESET_ID,
+						"checkpoint": {
+							"accepted_checkpoint_id": str(payload.get("checkpoint_id", "")),
+							"checkpoint_id": str(payload.get("checkpoint_id", "")),
+							"client_sequence": sequence,
+						},
+					},
+				},
+			},
+		}
 
 	func record_mode_session_event(
 		request_id: String,

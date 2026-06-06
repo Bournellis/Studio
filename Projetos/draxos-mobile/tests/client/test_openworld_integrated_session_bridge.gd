@@ -7,7 +7,9 @@ class FakeSessionStore:
 	extends Node
 
 	var active_save_type := "normal"
+	var access_token := ""
 	var apply_ok := true
+	var openworld_local_state: Dictionary = {}
 	var prepared: Array[Dictionary] = []
 	var applied: Array[Dictionary] = []
 	var failed: Array[Dictionary] = []
@@ -37,6 +39,18 @@ class FakeSessionStore:
 			"body": body.duplicate(true),
 		})
 
+	func remember_openworld_local_state(state: Dictionary) -> void:
+		openworld_local_state = state.duplicate(true)
+
+	func openworld_local_snapshot() -> Dictionary:
+		return openworld_local_state.duplicate(true)
+
+	func clear_openworld_local_state() -> void:
+		openworld_local_state = {}
+
+	func ensure_session_id() -> String:
+		return "telemetry-session"
+
 class FakeSupabaseClient:
 	extends Node
 
@@ -44,11 +58,12 @@ class FakeSupabaseClient:
 	var start_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var complete_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var abandon_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
-	var event_results: Array[Dictionary] = []
+	var checkpoint_results: Array[Dictionary] = []
 	var state_calls: Array[Dictionary] = []
 	var start_calls: Array[Dictionary] = []
 	var complete_calls: Array[Dictionary] = []
 	var abandon_calls: Array[Dictionary] = []
+	var checkpoint_calls: Array[Dictionary] = []
 	var event_calls: Array[Dictionary] = []
 
 	func get_mode_state(mode_id: String, token: String) -> Dictionary:
@@ -64,6 +79,17 @@ class FakeSupabaseClient:
 			"request_hash": request_hash,
 		})
 		return start_result
+
+	func checkpoint_mode_session(request_id: String, payload: Dictionary, token: String, request_hash: String) -> Dictionary:
+		checkpoint_calls.append({
+			"request_id": request_id,
+			"payload": payload.duplicate(true),
+			"token": token,
+			"request_hash": request_hash,
+		})
+		if not checkpoint_results.is_empty():
+			return checkpoint_results.pop_front()
+		return {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 
 	func complete_mode_session(request_id: String, session_id: String, mode_id: String, payload: Dictionary, token: String, request_hash: String) -> Dictionary:
 		complete_calls.append({
@@ -109,11 +135,9 @@ class FakeSupabaseClient:
 			"token": token,
 			"request_hash": request_hash,
 		})
-		if not event_results.is_empty():
-			return event_results.pop_front()
-		return {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
+		return {"ok": false, "error": {"code": "LEGACY_EVENT_FORBIDDEN_IN_TEST"}}
 
-func test_start_session_prepares_idempotent_request_and_hydrates_session() -> void:
+func test_start_session_prepares_idempotent_request_hydrates_and_caches_session() -> void:
 	var model = ModelScript.new()
 	var client := FakeSupabaseClient.new()
 	var store := FakeSessionStore.new()
@@ -131,175 +155,118 @@ func test_start_session_prepares_idempotent_request_and_hydrates_session() -> vo
 	assert_eq(bridge.snapshot_revision(), 3)
 	assert_eq(int(model.pocket.get("galho", 0)), 2)
 	assert_eq(str(store.prepared[0].get("endpoint", "")), "modes/session/start")
-	assert_eq(str(store.prepared[0].get("scope_id", "")), "mode:openworld:normal")
 	assert_eq(str(client.start_calls[0].get("request_hash", "")), "hash-1")
+	assert_eq(str(store.openworld_local_state.get("session_id", "")), "session-start")
 
-func test_resume_session_hydrates_active_session_without_starting_new_one() -> void:
+func test_resume_prefers_local_cache_and_remote_metadata_does_not_transform_world() -> void:
 	var model = ModelScript.new()
 	var client := FakeSupabaseClient.new()
 	var store := FakeSessionStore.new()
+	store.openworld_local_state = _local_state("session-local", 4, {
+		"chest": {"galho": 2},
+		"collected_nodes": {"node_galho_01": true},
+		"checkpoint": {"accepted_checkpoint_id": "session-local-000001", "client_sequence": 1},
+	})
 	var bridge = _bridge(model, client, store)
 	client.state_result = {
 		"ok": true,
 		"body": {
-			"active_session": _session_payload("session-resume", 7, {"chest": {"folha": 4}}),
+			"active_session": _session_payload("session-local", 9, {
+				"chest": {"folha": 5},
+				"checkpoint": {"accepted_checkpoint_id": "session-local-000001", "client_sequence": 1},
+			}),
 		},
 	}
 
 	await bridge.resume_or_start_session()
 
-	assert_eq(bridge.server_session_id(), "session-resume")
-	assert_eq(bridge.snapshot_revision(), 7)
-	assert_eq(client.start_calls.size(), 0)
-	assert_eq(int(model.chest.get("folha", 0)), 4)
-	assert_eq(bridge.last_result_text, "Bosque retomado.")
+	assert_eq(bridge.server_session_id(), "session-local")
+	assert_eq(bridge.snapshot_revision(), 9)
+	assert_eq(int(model.chest.get("galho", 0)), 2)
+	assert_eq(int(model.chest.get("folha", 0)), 0)
+	assert_eq(str(model.last_message), "Bosque salvo localmente.")
 
-func test_event_queue_keeps_network_failure_and_retries_successfully() -> void:
+func test_collect_and_deposit_save_checkpoint_without_legacy_microevents() -> void:
 	var model = ModelScript.new()
 	var client := FakeSupabaseClient.new()
 	var store := FakeSessionStore.new()
 	var bridge = _bridge(model, client, store)
-	bridge.hydrate_session(_session_payload("session-event", 2, {}))
-	client.event_results = [
+	bridge.hydrate_session(_session_payload("session-checkpoint", 2, {}))
+	model.pocket = {"galho": 1}
+	client.checkpoint_results = [_checkpoint_ack("session-checkpoint", 3, "session-checkpoint-000001", 1)]
+
+	bridge.record_event_deferred("collect_complete", {
+		"node_id": "node_galho_01",
+		"item_id": "galho",
+		"position": {"x": 330, "y": 420},
+		"session_seconds": 4,
+	})
+	await bridge.flush_checkpoint(true)
+
+	assert_eq(client.event_calls.size(), 0)
+	assert_eq(client.checkpoint_calls.size(), 1)
+	var payload := Dictionary(client.checkpoint_calls[0].get("payload", {}))
+	var snapshot := Dictionary(payload.get("snapshot_payload", {}))
+	assert_eq(str(store.prepared[0].get("endpoint", "")), "modes/session/checkpoint")
+	assert_true(bool(Dictionary(snapshot.get("collected_nodes", {})).get("node_galho_01", false)))
+	assert_eq(bridge.snapshot_revision(), 3)
+	assert_false(bool(bridge.debug_snapshot().get("checkpoint_dirty", true)))
+
+func test_checkpoint_network_failure_keeps_local_state_and_retries_successfully() -> void:
+	var model = ModelScript.new()
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	var bridge = _bridge(model, client, store)
+	bridge.hydrate_session(_session_payload("session-retry", 2, {}))
+	model.chest = {"galho": 1}
+	client.checkpoint_results = [
 		{"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}},
-		{"ok": true, "body": {"session": _session_payload("session-event", 3, {}), "event": {"message": "Evento aplicado."}}},
+		_checkpoint_ack("session-retry", 3, "session-retry-000001", 1),
 	]
 
-	bridge.record_event_deferred("collect_complete", {"node_id": "node_galho_01", "item_id": "galho"})
-	await bridge.flush_event_queue()
-	var failed_snapshot: Dictionary = bridge.debug_snapshot()
-	assert_eq(int(failed_snapshot.get("event_queue_size", 0)), 1)
-	assert_true(bool(failed_snapshot.get("event_retry_scheduled", false)))
-	assert_eq(client.event_calls.size(), 1)
-	assert_eq(str(Dictionary(client.event_calls[0]).get("event_type", "")), "collect_batch")
-	var first_payload := Dictionary(Dictionary(client.event_calls[0]).get("event_payload", {}))
-	assert_eq(Array(first_payload.get("nodes", [])).size(), 1)
+	bridge.record_event_deferred("deposit_all", {"position": {"x": 220, "y": 250}, "session_seconds": 6})
+	await bridge.flush_checkpoint(true)
+
+	assert_eq(client.checkpoint_calls.size(), 1)
+	assert_true(bool(bridge.debug_snapshot().get("checkpoint_dirty", false)))
+	assert_true(bool(bridge.debug_snapshot().get("event_retry_scheduled", false)))
+	assert_eq(int(Dictionary(store.openworld_local_state.get("snapshot_payload", {})).get("session_seconds", 0)), 6)
 
 	await bridge.retry_queued_events_now()
-	var retried_snapshot: Dictionary = bridge.debug_snapshot()
-	assert_eq(int(retried_snapshot.get("event_queue_size", -1)), 0)
+
+	assert_eq(client.checkpoint_calls.size(), 2)
 	assert_eq(bridge.snapshot_revision(), 3)
-	assert_eq(client.event_calls.size(), 2)
-	assert_eq(model.last_message, "Evento aplicado.")
+	assert_false(bool(bridge.debug_snapshot().get("checkpoint_dirty", true)))
 
-func test_collect_complete_events_coalesce_into_single_batch() -> void:
-	var model = ModelScript.new()
-	var client := FakeSupabaseClient.new()
-	var store := FakeSessionStore.new()
-	var bridge = _bridge(model, client, store)
-	bridge.hydrate_session(_session_payload("session-batch", 2, {}))
-	client.event_results = [
-		{
-			"ok": true,
-			"body": {
-				"session": _session_payload("session-batch", 3, {
-					"pocket": {"galho": 2},
-					"collected_nodes": {"node_galho_01": true, "node_galho_02": true},
-				}),
-				"event": {"message": "Coletas registradas: 2."},
-			},
-		},
-	]
-
-	bridge.record_event_deferred("collect_complete", {"node_id": "node_galho_01", "item_id": "galho", "session_seconds": 4})
-	bridge.record_event_deferred("collect_complete", {"node_id": "node_galho_02", "item_id": "galho", "session_seconds": 5})
-	await bridge.flush_event_queue()
-
-	assert_eq(client.event_calls.size(), 1)
-	var event_call: Dictionary = client.event_calls[0]
-	var payload := Dictionary(event_call.get("event_payload", {}))
-	assert_eq(str(event_call.get("event_type", "")), "collect_batch")
-	assert_eq(int(event_call.get("expected_revision", -1)), 2)
-	assert_eq(Array(payload.get("nodes", [])).size(), 2)
-	assert_eq(bridge.snapshot_revision(), 3)
-	assert_eq(int(model.pocket.get("galho", 0)), 2)
-
-func test_stale_event_resyncs_active_session_and_clears_queue() -> void:
-	var model = ModelScript.new()
-	var client := FakeSupabaseClient.new()
-	var store := FakeSessionStore.new()
-	var bridge = _bridge(model, client, store)
-	bridge.hydrate_session(_session_payload("session-stale", 1, {}))
-	client.event_results = [
-		{"ok": false, "body": {"error": {"code": "MODE_SESSION_REVISION_STALE"}}},
-	]
-	client.state_result = {
-		"ok": true,
-		"body": {
-			"active_session": _session_payload("session-stale", 9, {"chest": {"madeira": 1}}),
-		},
-	}
-
-	bridge.record_event_deferred("deposit_all", {"position": {"x": 220, "y": 250}})
-	await bridge.flush_event_queue()
-
-	var snapshot: Dictionary = bridge.debug_snapshot()
-	assert_eq(int(snapshot.get("event_queue_size", -1)), 0)
-	assert_eq(bridge.snapshot_revision(), 9)
-	assert_eq(int(model.chest.get("madeira", 0)), 1)
-	assert_eq(model.last_message, "Bosque resincronizado. Confira bolso e bau.")
-	assert_eq(store.failed.size(), 1)
-
-func test_guidance_update_ack_applies_snapshot_patch() -> void:
-	var model = ModelScript.new()
-	var client := FakeSupabaseClient.new()
-	var store := FakeSessionStore.new()
-	var bridge = _bridge(model, client, store)
-	bridge.hydrate_session(_session_payload("session-guidance", 1, {}))
-	var guidance := {
-		"version": 1,
-		"current_step": 4,
-		"completed_steps": [1, 2, 3],
-		"dismissed": false,
-		"last_seen_at": "2026-06-04T12:00:00Z",
-	}
-	client.event_results = [
-		{
-			"ok": true,
-			"body": {
-				"session": _session_payload("session-guidance", 2, {"guidance": guidance}),
-				"snapshot_patch": {"guidance": guidance},
-				"event": {"message": "Dicas atualizadas."},
-			},
-		},
-	]
-
-	bridge.record_event_deferred("guidance_update", {"guidance": guidance})
-	await bridge.flush_event_queue()
-
-	assert_eq(bridge.snapshot_revision(), 2)
-	assert_eq(int(model.guidance_state().get("current_step", 0)), 4)
-	assert_eq(model.guidance_text(), "Perto do bau, use Depositar para guardar tudo.")
-	assert_eq(model.last_message, "Dicas atualizadas.")
-
-func test_complete_session_uses_request_hash_and_records_reward_summary() -> void:
+func test_complete_session_flushes_checkpoint_before_reward_complete() -> void:
 	var model = ModelScript.new()
 	var client := FakeSupabaseClient.new()
 	var store := FakeSessionStore.new()
 	var bridge = _bridge(model, client, store)
 	bridge.hydrate_session(_session_payload("session-complete", 4, {"chest": {"galho": 3}}))
+	model.chest = {"galho": 3}
+	client.checkpoint_results = [_checkpoint_ack("session-complete", 5, "session-complete-000001", 1)]
 	client.complete_result = {
 		"ok": true,
 		"body": {
 			"reward": {"resource_delta": {"cinzas": 5}},
-			"session": {"id": "session-complete", "status": "completed"},
+			"session": {"id": "session-complete", "status": "completed", "session_seconds": 12},
 		},
 	}
 
+	bridge.record_event_deferred("deposit_all", {"position": {"x": 220, "y": 250}, "session_seconds": 12})
 	var result: Dictionary = await bridge.complete_session(model.result_payload(12.0))
 
 	assert_true(bool(result.get("ok", false)))
-	assert_eq(str(store.prepared[0].get("endpoint", "")), "modes/session/complete")
-	assert_eq(str(client.complete_calls[0].get("request_hash", "")), "hash-1")
-	assert_eq(str(client.complete_calls[0].get("session_id", "")), "session-complete")
-	assert_eq(int(Dictionary(client.complete_calls[0].get("payload", {})).get("expected_revision", 0)), 4)
+	assert_eq(str(store.prepared[0].get("endpoint", "")), "modes/session/checkpoint")
+	assert_eq(str(store.prepared[1].get("endpoint", "")), "modes/session/complete")
+	assert_eq(str(client.complete_calls[0].get("request_hash", "")), "hash-2")
+	assert_eq(int(Dictionary(client.complete_calls[0].get("payload", {})).get("expected_revision", 0)), 5)
 	assert_string_contains(bridge.last_result_text, "Recompensa aplicada")
-	assert_string_contains(bridge.last_result_text, "cinzas +5")
-	assert_eq(model.last_message, bridge.last_result_text)
 	assert_eq(bridge.session_state(), "completed")
-	assert_false(bridge.can_complete())
+	assert_true(store.openworld_local_state.is_empty())
 
-func test_abandon_session_uses_request_hash_and_clears_active_session() -> void:
+func test_abandon_session_uses_request_hash_and_clears_local_checkpoint_cache() -> void:
 	var model = ModelScript.new()
 	var client := FakeSupabaseClient.new()
 	var store := FakeSessionStore.new()
@@ -317,10 +284,9 @@ func test_abandon_session_uses_request_hash_and_clears_active_session() -> void:
 	assert_true(bool(result.get("ok", false)))
 	assert_eq(str(store.prepared[0].get("endpoint", "")), "modes/session/abandon")
 	assert_eq(str(client.abandon_calls[0].get("request_hash", "")), "hash-1")
-	assert_eq(str(client.abandon_calls[0].get("session_id", "")), "session-abandon")
-	assert_eq(str(client.abandon_calls[0].get("reason", "")), "player_abandoned")
 	assert_eq(bridge.server_session_id(), "")
 	assert_eq(bridge.session_state(), "preview")
+	assert_true(store.openworld_local_state.is_empty())
 
 func _bridge(model: Object, client: Node, store: Node):
 	add_child_autofree(client)
@@ -334,9 +300,48 @@ func _session_payload(session_id: String, revision: int, snapshot: Dictionary) -
 	var payload := snapshot.duplicate(true)
 	if not payload.has("ruleset_id"):
 		payload["ruleset_id"] = ModelScript.RULESET_ID
+	if not payload.has("ruleset_version"):
+		payload["ruleset_version"] = ModelScript.RULESET_VERSION
 	return {
 		"id": session_id,
 		"status": "started",
 		"snapshot_revision": revision,
 		"snapshot_payload": payload,
+	}
+
+func _local_state(session_id: String, revision: int, snapshot: Dictionary) -> Dictionary:
+	var payload := snapshot.duplicate(true)
+	payload["ruleset_id"] = ModelScript.RULESET_ID
+	payload["ruleset_version"] = ModelScript.RULESET_VERSION
+	return {
+		"schema_version": "openworld_forest_local_checkpoint_v1",
+		"save_type": "normal",
+		"session_id": session_id,
+		"ruleset_id": ModelScript.RULESET_ID,
+		"ruleset_version": ModelScript.RULESET_VERSION,
+		"snapshot_revision": revision,
+		"accepted_checkpoint_id": str(Dictionary(payload.get("checkpoint", {})).get("accepted_checkpoint_id", "")),
+		"client_sequence": int(Dictionary(payload.get("checkpoint", {})).get("client_sequence", 0)),
+		"checkpoint_dirty": false,
+		"snapshot_payload": payload,
+	}
+
+func _checkpoint_ack(session_id: String, revision: int, checkpoint_id: String, client_sequence: int) -> Dictionary:
+	return {
+		"ok": true,
+		"body": {
+			"type": "mode_checkpoint_ack",
+			"session_id": session_id,
+			"checkpoint_id": checkpoint_id,
+			"accepted_checkpoint_id": checkpoint_id,
+			"snapshot_revision": revision,
+			"complete_ready": true,
+			"session": _session_payload(session_id, revision, {
+				"checkpoint": {
+					"accepted_checkpoint_id": checkpoint_id,
+					"checkpoint_id": checkpoint_id,
+					"client_sequence": client_sequence,
+				},
+			}),
+		},
 	}

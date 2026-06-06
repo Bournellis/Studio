@@ -15,12 +15,17 @@ class FakeOpenworldSupabaseClient:
 	var state_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var start_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var event_responses: Array[Dictionary] = []
+	var checkpoint_results: Array[Dictionary] = []
 	var state_calls: Array[Dictionary] = []
 	var start_calls: Array[Dictionary] = []
 	var captured_events: Array[Dictionary] = []
+	var checkpoint_calls: Array[Dictionary] = []
 
 	func enqueue_event_response(response: Dictionary) -> void:
 		event_responses.append(response)
+
+	func enqueue_checkpoint_response(response: Dictionary) -> void:
+		checkpoint_results.append(response)
 
 	func get_mode_state(mode_id: String, access_token: String) -> Dictionary:
 		state_calls.append({
@@ -66,6 +71,19 @@ class FakeOpenworldSupabaseClient:
 			return {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 		return event_responses.pop_front()
 
+	func checkpoint_mode_session(request_id: String, payload: Dictionary, access_token: String, request_hash: String = "") -> Dictionary:
+		checkpoint_calls.append({
+			"request_id": request_id,
+			"payload": payload.duplicate(true),
+			"access_token": access_token,
+			"request_hash": request_hash,
+		})
+		for _frame in delay_frames:
+			await get_tree().process_frame
+		if checkpoint_results.is_empty():
+			return {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
+		return checkpoint_results.pop_front()
+
 class FakeOpenworldSessionStore:
 	extends Node
 
@@ -75,6 +93,7 @@ class FakeOpenworldSessionStore:
 	var runtime_block_reason := "Runtime bloqueou mutacao."
 	var request_count := 0
 	var failed_requests: Array[Dictionary] = []
+	var openworld_local_state: Dictionary = {}
 
 	func runtime_allows_gameplay_mutation() -> bool:
 		return runtime_mutation_allowed
@@ -98,6 +117,15 @@ class FakeOpenworldSessionStore:
 
 	func fail_pending_mutation(request_id: String, body: Dictionary) -> void:
 		failed_requests.append({"request_id": request_id, "body": body.duplicate(true)})
+
+	func remember_openworld_local_state(state: Dictionary) -> void:
+		openworld_local_state = state.duplicate(true)
+
+	func openworld_local_snapshot() -> Dictionary:
+		return openworld_local_state.duplicate(true)
+
+	func clear_openworld_local_state() -> void:
+		openworld_local_state = {}
 
 func test_openworld_registry_points_to_official_screen() -> void:
 	assert_true(RegistryScript.is_registered("openworld"))
@@ -422,7 +450,7 @@ func test_deposit_action_requires_near_chest_and_pocket_items() -> void:
 	assert_true(bool(ready_state.get("deposit_available", false)))
 	assert_true(str(ready_state.get("status_text", "")).contains("deposito pronto"))
 
-func test_integrated_deposit_updates_local_view_while_pending_and_reconciles_ack() -> void:
+func test_integrated_deposit_updates_local_view_while_checkpoint_saves() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
@@ -430,11 +458,7 @@ func test_integrated_deposit_updates_local_view_while_pending_and_reconciles_ack
 	screen.call("_hydrate_integrated_session", _integrated_session(0, chest_position, {"galho": 2}, {}, {}, {}))
 	screen.set_player_position_for_tests(chest_position)
 	client.delay_frames = 2
-	client.enqueue_event_response(_event_ack("deposit_all", 1, {
-		"pocket": {},
-		"chest": {"galho": 2},
-		"last_message": "Bau atualizado.",
-	}, chest_position))
+	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 1, "%s-000001" % TEST_SESSION_ID, 1))
 
 	screen.call("_deposit_near_chest")
 	await get_tree().process_frame
@@ -443,8 +467,13 @@ func test_integrated_deposit_updates_local_view_while_pending_and_reconciles_ack
 	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
 	assert_eq(screen.session_state_for_tests(), "pending")
 	assert_false(screen.call("_can_complete_integrated"))
-	var deposit_event := _captured_event(client, "deposit_all")
-	assert_false(deposit_event.is_empty())
+	assert_eq(client.captured_events.size(), 0)
+	assert_eq(client.checkpoint_calls.size(), 1)
+	var checkpoint_payload := Dictionary(client.checkpoint_calls[0].get("payload", {}))
+	var checkpoint_snapshot := Dictionary(checkpoint_payload.get("snapshot_payload", {}))
+	var checkpoint_chest := Dictionary(checkpoint_snapshot.get("chest", {}))
+	assert_eq(int(checkpoint_payload.get("client_sequence", 0)), 1)
+	assert_eq(int(checkpoint_chest.get("galho", 0)), 2)
 	await _wait_process_frames(6)
 
 	assert_eq(screen.session_state_for_tests(), "synced")
@@ -452,7 +481,7 @@ func test_integrated_deposit_updates_local_view_while_pending_and_reconciles_ack
 	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
 	assert_eq(int(screen.get("_snapshot_revision")), 1)
 
-func test_integrated_back_preserves_pending_deposit_without_blocking_close() -> void:
+func test_integrated_back_preserves_pending_checkpoint_without_blocking_close() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
@@ -460,11 +489,7 @@ func test_integrated_back_preserves_pending_deposit_without_blocking_close() -> 
 	screen.call("_hydrate_integrated_session", _integrated_session(0, chest_position, {"galho": 2}, {}, {}, {}))
 	screen.set_player_position_for_tests(chest_position)
 	client.delay_frames = 4
-	client.enqueue_event_response(_event_ack("deposit_all", 1, {
-		"pocket": {},
-		"chest": {"galho": 2},
-		"last_message": "Bau atualizado.",
-	}, chest_position))
+	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 1, "%s-000001" % TEST_SESSION_ID, 1))
 	var closed := {"value": false}
 	screen.close_requested.connect(func() -> void:
 		closed["value"] = true
@@ -476,22 +501,20 @@ func test_integrated_back_preserves_pending_deposit_without_blocking_close() -> 
 
 	assert_true(bool(closed.get("value", false)))
 	assert_true(str(screen.get_model().last_message).contains("continua salvando"))
+	assert_eq(client.captured_events.size(), 0)
 	await _wait_process_frames(8)
 
 	assert_true(bool(closed.get("value", false)))
 	assert_eq(screen.session_state_for_tests(), "synced")
 	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
 
-func test_integrated_event_ack_does_not_rollback_player_position() -> void:
+func test_integrated_move_heartbeat_stays_local_and_does_not_send_checkpoint() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var store: FakeOpenworldSessionStore = setup.get("store")
 	var start_position := Vector2(220, 330)
 	var moved_position := Vector2(520, 760)
-	client.delay_frames = 3
-	client.enqueue_event_response(_event_ack("move_heartbeat", 1, {
-		"last_message": "Movimento salvo."
-	}, start_position))
 	screen.set_player_position_for_tests(start_position)
 	screen.call("_record_integrated_event_deferred", "move_heartbeat", {
 		"position": _position_dict(start_position),
@@ -501,12 +524,12 @@ func test_integrated_event_ack_does_not_rollback_player_position() -> void:
 	screen.set_player_position_for_tests(moved_position)
 	await _wait_process_frames(6)
 	assert_eq(screen.get_player_position(), moved_position)
-	assert_eq(int(screen.get("_snapshot_revision")), 1)
-	var move_event := _captured_event(client, "move_heartbeat")
-	assert_false(move_event.is_empty())
-	assert_true(Dictionary(move_event.get("event_payload", {})).has("client_position_revision"))
+	assert_eq(int(screen.get("_snapshot_revision")), 0)
+	assert_eq(client.captured_events.size(), 0)
+	assert_eq(client.checkpoint_calls.size(), 0)
+	assert_eq(int(Dictionary(store.openworld_local_state.get("snapshot_payload", {})).get("session_seconds", 0)), 1)
 
-func test_integrated_active_resync_preserves_local_position_and_applies_authoritative_snapshot() -> void:
+func test_integrated_active_resync_same_session_keeps_local_world_and_updates_metadata() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
@@ -528,21 +551,23 @@ func test_integrated_active_resync_preserves_local_position_and_applies_authorit
 		},
 	}
 	screen.set_player_position_for_tests(local_position)
+	screen.get_model().pocket = {"resina": 1}
 	screen.get_model().active_collection = {"item_id": "galho", "elapsed": 0.3, "duration": 1.0}
 
 	var ok: bool = await bridge.resync_session("Bosque resincronizado.")
 
 	assert_true(ok)
 	assert_eq(screen.get_player_position(), local_position)
-	assert_eq(int(Dictionary(screen.get_model().pocket).get("folha", 0)), 2)
-	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 3)
-	assert_true(bool(Dictionary(screen.get_model().upgrades).get("bolsa_simples_1", false)))
-	assert_eq(int(screen.get_model().guidance_state().get("current_step", 0)), 4)
-	assert_true(Dictionary(screen.get_model().active_collection).is_empty())
-	assert_true(bool(_resource_node(screen, node_id).get("collected", false)))
+	assert_eq(int(Dictionary(screen.get_model().pocket).get("resina", 0)), 1)
+	assert_eq(int(Dictionary(screen.get_model().pocket).get("folha", 0)), 0)
+	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 0)
+	assert_false(bool(Dictionary(screen.get_model().upgrades).get("bolsa_simples_1", false)))
+	assert_eq(int(screen.get_model().guidance_state().get("current_step", 0)), 1)
+	assert_false(Dictionary(screen.get_model().active_collection).is_empty())
+	assert_false(bool(_resource_node(screen, node_id).get("collected", false)))
 	assert_eq(int(screen.get("_snapshot_revision")), 8)
 
-func test_integrated_stale_collection_resync_does_not_rollback_player_position() -> void:
+func test_integrated_stale_checkpoint_does_not_rollback_local_collection() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
@@ -550,13 +575,7 @@ func test_integrated_stale_collection_resync_does_not_rollback_player_position()
 	var resource_position: Vector2 = world.call("resource_position", "galho")
 	var node_id := _resource_node_id(screen, "galho")
 	var moved_position := resource_position + Vector2(16, 0)
-	client.enqueue_event_response({"ok": false, "body": {"error": {"code": "MODE_SESSION_REVISION_STALE"}}})
-	client.state_result = {
-		"ok": true,
-		"body": {
-			"active_session": _integrated_session(5, resource_position, {}, {"folha": 2}, {}, {node_id: false}),
-		},
-	}
+	client.enqueue_checkpoint_response({"ok": false, "body": {"error": {"code": "MODE_SESSION_REVISION_STALE"}}})
 	screen.set_player_position_for_tests(resource_position)
 	screen.call("_advance_nearby_collection", 0.05)
 	await _wait_process_frames(4)
@@ -569,10 +588,11 @@ func test_integrated_stale_collection_resync_does_not_rollback_player_position()
 	await _wait_process_frames(8)
 
 	assert_eq(screen.get_player_position(), moved_position)
-	assert_eq(int(Dictionary(screen.get_model().chest).get("folha", 0)), 2)
-	assert_false(bool(_resource_node(screen, node_id).get("collected", true)))
-	assert_false(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
-	assert_eq(int(screen.get("_snapshot_revision")), 5)
+	assert_eq(int(Dictionary(screen.get_model().pocket).get("galho", 0)), 1)
+	assert_true(bool(_resource_node(screen, node_id).get("collected", false)))
+	assert_true(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
+	assert_eq(int(screen.get("_snapshot_revision")), 0)
+	assert_eq(screen.session_state_for_tests(), "blocked")
 
 func test_integrated_resync_different_session_applies_remote_player_position() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
@@ -691,7 +711,7 @@ func test_integrated_collect_start_stays_local_without_remote_mutation() -> void
 	assert_eq(int(screen.get("_snapshot_revision")), 0)
 	assert_true(_captured_event(client, "collect_start").is_empty())
 
-func test_integrated_collect_complete_updates_local_pocket_before_batch_ack() -> void:
+func test_integrated_collect_complete_updates_local_pocket_before_checkpoint_ack() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
@@ -699,11 +719,7 @@ func test_integrated_collect_complete_updates_local_pocket_before_batch_ack() ->
 	var resource_position: Vector2 = world.call("resource_position", "galho")
 	var node_id := _resource_node_id(screen, "galho")
 	client.delay_frames = 2
-	client.enqueue_event_response(_event_ack("collect_batch", 1, {
-		"pocket": {"galho": 1},
-		"collected_nodes": {node_id: true},
-		"last_message": "+1 Galho no bolso."
-	}, resource_position))
+	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 1, "%s-000001" % TEST_SESSION_ID, 1))
 	screen.set_player_position_for_tests(resource_position)
 	screen.call("_advance_nearby_collection", 0.05)
 	var active_collection: Dictionary = screen.get_model().active_collection
@@ -714,13 +730,16 @@ func test_integrated_collect_complete_updates_local_pocket_before_batch_ack() ->
 	assert_eq(int(Dictionary(screen.get_model().pocket).get("galho", 0)), 1)
 	await wait_seconds(0.28)
 	await _wait_process_frames(6)
-	var batch_event := _captured_event(client, "collect_batch")
-	assert_false(batch_event.is_empty())
-	assert_eq(Array(Dictionary(batch_event.get("event_payload", {})).get("nodes", [])).size(), 1)
+	assert_eq(client.captured_events.size(), 0)
+	assert_eq(client.checkpoint_calls.size(), 1)
+	var checkpoint_payload := Dictionary(client.checkpoint_calls[0].get("payload", {}))
+	var snapshot := Dictionary(checkpoint_payload.get("snapshot_payload", {}))
+	assert_true(bool(Dictionary(snapshot.get("collected_nodes", {})).get(node_id, false)))
+	assert_eq(int(Dictionary(snapshot.get("pocket", {})).get("galho", 0)), 1)
 	assert_eq(int(screen.get("_snapshot_revision")), 1)
 	assert_false(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
 
-func test_integrated_deposit_remains_available_during_pending_collect_batch() -> void:
+func test_integrated_deposit_remains_available_during_pending_checkpoint() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
@@ -729,18 +748,8 @@ func test_integrated_deposit_remains_available_during_pending_collect_batch() ->
 	var chest_position := RulesetScript.chest_position()
 	var node_id := _resource_node_id(screen, "galho")
 	client.delay_frames = 2
-	client.enqueue_event_response(_event_ack("collect_batch", 1, {
-		"pocket": {"galho": 1},
-		"chest": {},
-		"collected_nodes": {node_id: true},
-		"last_message": "+1 Galho no bolso."
-	}, resource_position))
-	client.enqueue_event_response(_event_ack("deposit_all", 2, {
-		"pocket": {},
-		"chest": {"galho": 1},
-		"collected_nodes": {node_id: true},
-		"last_message": "Bau atualizado."
-	}, chest_position))
+	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 1, "%s-000001" % TEST_SESSION_ID, 1))
+	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 2, "%s-000002" % TEST_SESSION_ID, 2))
 
 	screen.set_player_position_for_tests(resource_position)
 	screen.call("_advance_nearby_collection", 0.05)
@@ -750,6 +759,8 @@ func test_integrated_deposit_remains_available_during_pending_collect_batch() ->
 	screen.call("_advance_nearby_collection", 0.05)
 	assert_eq(int(Dictionary(screen.get_model().pocket).get("galho", 0)), 1)
 	assert_true(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
+	await get_tree().process_frame
+	assert_eq(client.checkpoint_calls.size(), 1)
 
 	screen.set_player_position_for_tests(chest_position)
 	screen.call("_update_labels")
@@ -762,11 +773,14 @@ func test_integrated_deposit_remains_available_during_pending_collect_batch() ->
 
 	assert_true(Dictionary(screen.get_model().pocket).is_empty())
 	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 1)
-	assert_eq(client.captured_events.size(), 2)
-	assert_eq(str(Dictionary(client.captured_events[0]).get("event_type", "")), "collect_batch")
-	assert_eq(str(Dictionary(client.captured_events[1]).get("event_type", "")), "deposit_all")
-	assert_eq(int(Dictionary(client.captured_events[0]).get("expected_revision", -1)), 0)
-	assert_eq(int(Dictionary(client.captured_events[1]).get("expected_revision", -1)), 1)
+	assert_eq(client.captured_events.size(), 0)
+	assert_eq(client.checkpoint_calls.size(), 2)
+	var first_payload := Dictionary(client.checkpoint_calls[0].get("payload", {}))
+	var second_payload := Dictionary(client.checkpoint_calls[1].get("payload", {}))
+	assert_eq(int(first_payload.get("base_revision", -1)), 0)
+	assert_eq(int(second_payload.get("base_revision", -1)), 1)
+	assert_eq(int(first_payload.get("client_sequence", -1)), 1)
+	assert_eq(int(second_payload.get("client_sequence", -1)), 2)
 	assert_eq(int(screen.get("_snapshot_revision")), 2)
 
 func test_openworld_free_joystick_activates_anywhere_drags_and_resets() -> void:
@@ -959,6 +973,26 @@ func _event_ack(event_type: String, revision: int, snapshot_patch: Dictionary, f
 			"authoritative_fields": patch.keys(),
 			"user_message": str(patch.get("last_message", "")),
 			"session": _integrated_session(revision, full_snapshot_position, pocket, chest, upgrades, collected_nodes),
+		},
+	}
+
+func _checkpoint_ack(session_id: String, revision: int, checkpoint_id: String, client_sequence: int) -> Dictionary:
+	return {
+		"ok": true,
+		"body": {
+			"type": "mode_checkpoint_ack",
+			"session_id": session_id,
+			"checkpoint_id": checkpoint_id,
+			"accepted_checkpoint_id": checkpoint_id,
+			"snapshot_revision": revision,
+			"complete_ready": true,
+			"session": _integrated_session(revision, Vector2(220, 330), {}, {}, {}, {}, session_id, {
+				"checkpoint": {
+					"accepted_checkpoint_id": checkpoint_id,
+					"checkpoint_id": checkpoint_id,
+					"client_sequence": client_sequence,
+				},
+			}),
 		},
 	}
 
