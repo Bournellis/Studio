@@ -68,7 +68,7 @@ if (RUN_RELEASE_MANIFEST) {
   );
   assertEq(
     manifest.latest_version_code,
-    6,
+    7,
     "release manifest should expose the current version code",
   );
   assert(

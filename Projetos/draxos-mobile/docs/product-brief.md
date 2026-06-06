@@ -17,7 +17,7 @@ DraxosMobile e um jogo mobile-first de progressao persistente construido sobre c
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa operacional em implementacao e `Bosque Fogueira Potion Crafting v1`: o pacote preserva Arena PVE Menu Flow Simplification v1, Bosque Durable Bau Mochila v1, Bosque Offline-First Checkpoint v1 e os pacotes anteriores, mas liga Openworld e Arena por uma fronteira controlada. Movimento, coleta, deposito, construcoes e cache do Bosque continuam `client-owned active play`; `Fogueira Estavel I` vira estacao server-authoritative para criar pocoes globais a partir de materiais do Bau + `po_osso` da conta. A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`, e novas expansoes dependem de playtest humano antes de abrir tuning amplo.
+A etapa operacional publicada e `Bosque Fogueira Potion Crafting v1`: o pacote preserva Arena PVE Menu Flow Simplification v1, Bosque Durable Bau Mochila v1, Bosque Offline-First Checkpoint v1 e os pacotes anteriores, mas liga Openworld e Arena por uma fronteira controlada. Movimento, coleta, deposito, construcoes e cache do Bosque continuam `client-owned active play`; `Fogueira Estavel I` vira estacao server-authoritative para criar pocoes globais a partir de materiais do Bau + `po_osso` da conta. A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`, e novas expansoes dependem de playtest humano antes de abrir tuning amplo.
 
 ## Foco Imediato
 
@@ -63,7 +63,7 @@ Terminologia implementada preservada como substancia/mock: Instrumento Ritual, S
 
 Ordem recomendada agora:
 
-1. Publicar e playtestar Bosque Fogueira Potion Crafting v1.
+1. Playtestar Bosque Fogueira Potion Crafting v1 publicado.
 2. Hotfix estreito de Fogueira/Bosque/Arena se o playtest indicar regressao.
 3. Arena PVE tutorial e primeiras arenas de 3 lutas com pocoes simples.
 4. Dificuldade, recompensas, poder e progression labs orientados a Arena PVE.
