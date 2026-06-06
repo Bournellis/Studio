@@ -13,6 +13,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Card Impact V4.1 addendum: `track02_card_impact_v4_1` preserves V4 coverage and adds card-flow quality/signature coverage for `necro_colheita_das_almas`, `necro_colheita_das_almas_lvl2` and `necro_colheita_das_almas_lvl3`, including `cards_drawn`, `deck_delta`, `hand_delta`, `card_flow_expected`, `card_flow_observed`, Markdown Card Flow Coverage and a lab-only dead-unit prestate for the lvl3 threshold case.
   - Card Impact V4.2 addendum: `track02_card_impact_v4_2` preserves V4.1 coverage and promotes Colheita card-flow into explicit required/watch expectations; same/same before/after/compare passed with 108 player / 30 enemy report-only / 15 legacy inactive coverage, 3 expected card-flow cards and 21/21 expectation checks passing.
   - Card Impact V5 addendum: `track02_card_impact_v5` preserves V4.2 player/card-flow coverage and promotes 30 active enemy cards to required causal signatures; same/same before/after/compare passed with 108 player / 30 enemy required / 15 legacy inactive coverage, 30/30 enemy cards played, 30/30 enemy signatures present, 30 clean signatures and 21/21 Card Flow Expectations passing.
+  - Design Lab V1 addendum: `tools/run_design_lab.gd` adds proposal-pack driven lab-only content exploration with `data/lab/design/` mechanic registry/scoring profiles/proposals, in-memory overlay catalog, deterministic grid variants, player/enemy BattleEngine contexts, ranking classifications and `promotion_manifest.json`; sample gate `design_lab_sample_v1` passed with 36 candidates, 3 recommendations and no official catalog mutation.
   - Enemy Card Redesign Batch 01 V5 addendum: six Gelo/Ar/Fogo enemy-card changes passed V5 before/change/after/compare at `user://card_impact/enemy_card_redesign_batch_01_v5` with 6 changed enemy records, 17 metric/effect changes, zero structural errors/status changes/new failures/removed records and 21/21 Card Flow Expectations passing; an unsafe Terra probe was removed after Battle Lab caught Arcano duel/boss regressions.
   - Enemy Card Redesign Batch 02 V5 Terra addendum: two focused Terra enemy-card changes passed V5 before/change/after/compare at `user://card_impact/enemy_card_redesign_batch_02_v5_terra` with `enemy_terra_elemental_tita` attack `3 -> 2`, `enemy_terra_elemental_granito` health `7 -> 8`, 2 changed enemy records, 4 effect changes, zero structural errors/status changes/new failures/removed records and 21/21 Card Flow Expectations passing.
   - Reward Card Redesign Batch 03 V4.2 addendum: twelve reward/card-upgrade variants across Arcano, Invocador and Necromante changed under V4.2; compare passed with 12 impacted target cards, 18 effect changes, zero structural errors/status changes/new failures/removed records, and 21/21 Card Flow Expectations still passing.
@@ -23,9 +24,10 @@ This directory contains active, conceptual and paused projects for the studio.
   - Local agent guide: `draxos-roguelike-cardgame/AGENTS.md`
   - Operational status: `draxos-roguelike-cardgame/implementation/current-status.md`
   - AutoRun Lab: `draxos-roguelike-cardgame/docs/autorun-lab.md`
+  - Design Lab: `draxos-roguelike-cardgame/docs/design-lab.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
   - Allowed work: code, validation, playtest, local documentation.
-  - Current next step: manual Track 02 complete-run playtest before more tuning.
+  - Current next step: author player/enemy card and mechanic ideas as Design Lab proposal packs, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab gates before full-run feel playtests.
 
 ## Implementacao - Arena PVE Inicial
 

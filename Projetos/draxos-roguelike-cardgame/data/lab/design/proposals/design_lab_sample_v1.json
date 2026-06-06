@@ -1,0 +1,155 @@
+{
+	"pack_id": "design_lab_sample_v1",
+	"schema_version": 1,
+	"design_goal": "Prove the Design Lab flow with three small prototype ideas: player damage, player summon and enemy lane pressure.",
+	"notes": "This pack is lab-only. It must generate playable numeric candidates without mutating the official catalog.",
+	"scoring_profile": "early_player_card",
+	"promotion_policy": {
+		"minimum_classification": "viable",
+		"require_signature": true,
+		"require_zero_failures": true,
+		"manual_approval_required": true
+	},
+	"mechanics": [
+		{"mechanic_id": "damage", "usage": "Arcano targeted prototype"},
+		{"mechanic_id": "summon", "usage": "Invocador board prototype"},
+		{"mechanic_id": "enemy_causal_signature", "usage": "Enemy commander harness"}
+	],
+	"cards": [
+		{
+			"id": "proto_arcano_lanca_eter",
+			"new_card_id": "proto_arcano_lanca_eter",
+			"owner": "player",
+			"class_id": "arcano",
+			"element": "ar",
+			"faction": "draxos",
+			"role": "damage",
+			"design_intent": "A cheap Arcano spell that should feel cleaner than Choque but not become the best burst card.",
+			"timing": "early_reward",
+			"valid_targets": ["enemy_unit", "enemy_hero"],
+			"suggested_entry": {"map_min": 3, "block": "early", "rarity": "common"},
+			"mechanics": ["damage"],
+			"display_name": "Lanca de Eter Prototype",
+			"type": "magia",
+			"text": "Causa dano a qualquer criatura ou heroi inimigo valido.",
+			"effect": {"action": "damage", "amount": 3},
+			"variant_space": {
+				"cost": {"min": 1, "max": 2, "step": 1},
+				"effect.amount": {"min": 3, "max": 5, "step": 1}
+			},
+			"context_ids": ["player_isolated", "player_big_target"]
+		},
+		{
+			"id": "proto_invocador_guarda_linha",
+			"new_card_id": "proto_invocador_guarda_linha",
+			"owner": "player",
+			"class_id": "invocador",
+			"element": "terra",
+			"faction": "draxos",
+			"role": "summon",
+			"design_intent": "A board-first Invocador body that stabilizes an early lane without outclassing Guardiao.",
+			"timing": "early_reward",
+			"valid_targets": ["player_empty_slot"],
+			"suggested_entry": {"map_min": 4, "block": "early", "rarity": "common"},
+			"mechanics": ["summon"],
+			"display_name": "Guarda de Linha Prototype",
+			"type": "criatura",
+			"cost": 2,
+			"attack": 2,
+			"health": 3,
+			"text": "Criatura defensiva de entrada.",
+			"keywords": ["defensor"],
+			"effect": {},
+			"variant_space": {
+				"cost": [1, 2],
+				"attack": {"min": 1, "max": 2, "step": 1},
+				"health": {"min": 3, "max": 5, "step": 1}
+			},
+			"context_ids": ["player_isolated", "player_lane_pressure"]
+		}
+	],
+	"enemy_cards": [
+		{
+			"id": "proto_enemy_terra_batedor_lama",
+			"new_card_id": "proto_enemy_terra_batedor_lama",
+			"owner": "enemy",
+			"class_id": "enemy",
+			"element": "terra",
+			"faction": "terra",
+			"role": "enemy_pressure",
+			"design_intent": "A simple Terra enemy body that teaches lane pressure before elite encounters.",
+			"timing": "first_combat",
+			"valid_targets": ["enemy_empty_slot"],
+			"suggested_entry": {"map_min": 2, "block": "tutorial", "rarity": "common"},
+			"mechanics": ["summon", "enemy_causal_signature"],
+			"display_name": "Batedor de Lama Prototype",
+			"type": "criatura",
+			"cost": 1,
+			"attack": 2,
+			"health": 2,
+			"text": "Inimigo simples de pressao por lane.",
+			"effect": {},
+			"variant_space": {
+				"cost": [1, 2],
+				"attack": {"min": 1, "max": 3, "step": 1},
+				"health": {"min": 2, "max": 4, "step": 1}
+			},
+			"context_ids": ["enemy_causal_lane"]
+		}
+	],
+	"encounter_contexts": [
+		{
+			"id": "player_isolated",
+			"name": "Player isolated target capture",
+			"owner": "player",
+			"required": true,
+			"focus": "isolated",
+			"enemy_health": 80,
+			"enemy_slots_count": 3,
+			"player_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 1, "card_id": "enemy_terra_elemental_tita"}],
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 2
+		},
+		{
+			"id": "player_big_target",
+			"name": "Player big target",
+			"owner": "player",
+			"required": false,
+			"focus": "large_target",
+			"enemy_health": 120,
+			"enemy_slots_count": 3,
+			"player_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 1, "card_id": "enemy_terra_elemental_granito"}],
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 2
+		},
+		{
+			"id": "player_lane_pressure",
+			"name": "Player lane pressure",
+			"owner": "player",
+			"required": false,
+			"focus": "lane_pressure",
+			"enemy_health": 60,
+			"enemy_slots_count": 3,
+			"player_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 0, "card_id": "enemy_terra_elemental_areia"}],
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 2
+		},
+		{
+			"id": "enemy_causal_lane",
+			"name": "Enemy causal lane pressure",
+			"owner": "enemy",
+			"required": true,
+			"focus": "enemy_causal",
+			"enemy_health": 40,
+			"player_health": 40,
+			"enemy_slots_count": 3,
+			"player_slots_count": 3,
+			"enemy_commander_enabled": true,
+			"policy_id": "end_turn_only",
+			"turn_limit": 1
+		}
+	]
+}

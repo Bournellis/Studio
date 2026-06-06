@@ -1,0 +1,104 @@
+{
+	"schema_version": 1,
+	"mechanics": [
+		{
+			"mechanic_id": "damage",
+			"name": "Target damage",
+			"description": "Deals direct damage to an enemy unit or hero through effect.action=damage.",
+			"timing": "on_play",
+			"numeric_fields": ["effect.amount", "cost"],
+			"interactions": ["ability_power", "flow", "target_capture"],
+			"status": "implemented",
+			"expected_signature_fields": ["enemy_hero_damage", "enemy_slot_damage_total", "families"],
+			"required_hooks": ["BattleEngine._resolve_spell", "BattlePolicy.target_capture", "BattleEffectSignature"]
+		},
+		{
+			"mechanic_id": "summon",
+			"name": "Board summon",
+			"description": "Plays a creature, structure or permanent into a board slot.",
+			"timing": "on_play",
+			"numeric_fields": ["cost", "attack", "health"],
+			"interactions": ["board_slots", "field_effects", "combat_cycle"],
+			"status": "implemented",
+			"expected_signature_fields": ["summons_created", "summoned_attack_total", "summoned_health_total", "families"],
+			"required_hooks": ["BattleEngine._build_occupant", "BattleEffectSignature"]
+		},
+		{
+			"mechanic_id": "freeze",
+			"name": "Freeze random enemy",
+			"description": "Applies frozen turns to random enemy slots through effect.action=freeze_random_enemy.",
+			"timing": "on_play",
+			"numeric_fields": ["effect.amount", "effect.count", "cost"],
+			"interactions": ["control", "enemy_slots", "duration"],
+			"status": "implemented",
+			"expected_signature_fields": ["freeze_added_total", "enemy_frozen_added", "families"],
+			"required_hooks": ["BattleEngine._freeze_random_enemies", "BattleEffectSignature"]
+		},
+		{
+			"mechanic_id": "poison",
+			"name": "Poison",
+			"description": "Applies poison through poison_all_enemies or poison keyword/on-death effects.",
+			"timing": "on_play_or_combat",
+			"numeric_fields": ["effect.amount", "cost"],
+			"interactions": ["damage_over_time", "death_effects", "ashes"],
+			"status": "implemented",
+			"expected_signature_fields": ["poison_added_total", "enemy_poison_added", "families"],
+			"required_hooks": ["BattleEngine._apply_poison_to_slot", "BattleEffectSignature"]
+		},
+		{
+			"mechanic_id": "buff",
+			"name": "Ally buff",
+			"description": "Adds attack, health, shield or keywords to allied units.",
+			"timing": "on_play",
+			"numeric_fields": ["effect.attack", "effect.health", "effect.shield_charges", "cost"],
+			"interactions": ["board_slots", "targeting"],
+			"status": "implemented",
+			"expected_signature_fields": ["ally_attack_buff_total", "ally_health_buff_total", "shield_added_total", "families"],
+			"required_hooks": ["BattleEngine._buff_slot", "BattleEffectSignature"]
+		},
+		{
+			"mechanic_id": "economy",
+			"name": "Mana or Ashes economy",
+			"description": "Changes mana, temporary ability power or Ashes through economy actions.",
+			"timing": "on_play",
+			"numeric_fields": ["effect.amount", "effect.mana", "effect.temporary_ability_power", "cost"],
+			"interactions": ["card_flow", "class_resource"],
+			"status": "implemented",
+			"expected_signature_fields": ["mana_gained", "ashes_gained", "temporary_ability_power_gained", "families"],
+			"required_hooks": ["BattleEngine._resolve_spell", "BattleEffectSignature"]
+		},
+		{
+			"mechanic_id": "card_flow",
+			"name": "Card flow",
+			"description": "Draws, creates or discards cards and reports hand/deck/discard deltas.",
+			"timing": "on_play",
+			"numeric_fields": ["effect.draw_cards", "effect.draw_if_at_least", "cost"],
+			"interactions": ["hand_size", "deck_size", "discard"],
+			"status": "implemented",
+			"expected_signature_fields": ["cards_drawn", "deck_delta", "hand_delta", "discard_delta", "families"],
+			"required_hooks": ["BattleRunner.lab_prestate", "BattleEffectSignature.apply_card_flow_quality"]
+		},
+		{
+			"mechanic_id": "enemy_causal_signature",
+			"name": "Enemy causal signature",
+			"description": "Forces an enemy card through AI/commander play and captures play plus first combat deltas.",
+			"timing": "enemy_turn",
+			"numeric_fields": ["cost", "attack", "health", "effect.amount"],
+			"interactions": ["EnemyTurnDirector", "enemy_ai", "lane_pressure"],
+			"status": "implemented",
+			"expected_signature_fields": ["enemy_card_played", "enemy_summoned_attack_total", "enemy_damage_to_player_hero", "enemy_combat_damage_to_player_hero"],
+			"required_hooks": ["BattleRunner._play_enemy_signature_turn", "EnemyTurnDirector.best_enemy_play", "BattleEffectSignature"]
+		},
+		{
+			"mechanic_id": "steal_mana",
+			"name": "Steal mana",
+			"description": "Transfers mana between sides. Describable for design, but not supported by the current engine.",
+			"timing": "on_play",
+			"numeric_fields": ["effect.amount", "cost"],
+			"interactions": ["enemy_resource", "player_resource"],
+			"status": "blocked_missing_engine_support",
+			"expected_signature_fields": ["mana_stolen"],
+			"required_hooks": ["BattleEngine resource transfer", "BattleEffectSignature mana_stolen"]
+		}
+	]
+}

@@ -1,0 +1,72 @@
+{
+	"schema_version": 1,
+	"profiles": [
+		{
+			"profile_id": "default",
+			"name": "Default playable band",
+			"description": "General early/mid-route card tuning profile.",
+			"weights": {
+				"role_fit": 0.3,
+				"power_band": 0.25,
+				"reliability": 0.2,
+				"context_fit": 0.15,
+				"risk": 0.05,
+				"novelty": 0.03,
+				"complexity": 0.02
+			},
+			"bands": {
+				"damage": {"min": 3, "ideal": 5, "max": 8},
+				"summon": {"min": 3, "ideal": 6, "max": 10},
+				"control": {"min": 1, "ideal": 2, "max": 4},
+				"economy": {"min": 1, "ideal": 2, "max": 4},
+				"card_flow": {"min": 1, "ideal": 2, "max": 4},
+				"enemy_pressure": {"min": 2, "ideal": 5, "max": 9}
+			},
+			"promotion": {"recommended_score": 78, "viable_score": 62, "max_risk": 0.45}
+		},
+		{
+			"profile_id": "early_player_card",
+			"name": "Early player card",
+			"description": "Conservative profile for cards entering maps 1-8.",
+			"weights": {
+				"role_fit": 0.32,
+				"power_band": 0.28,
+				"reliability": 0.18,
+				"context_fit": 0.12,
+				"risk": 0.06,
+				"novelty": 0.02,
+				"complexity": 0.02
+			},
+			"bands": {
+				"damage": {"min": 2, "ideal": 4, "max": 6},
+				"summon": {"min": 3, "ideal": 5, "max": 8},
+				"control": {"min": 1, "ideal": 2, "max": 3},
+				"economy": {"min": 1, "ideal": 2, "max": 3},
+				"card_flow": {"min": 1, "ideal": 1, "max": 2},
+				"enemy_pressure": {"min": 2, "ideal": 4, "max": 7}
+			},
+			"promotion": {"recommended_score": 76, "viable_score": 60, "max_risk": 0.4}
+		},
+		{
+			"profile_id": "enemy_pressure_basic",
+			"name": "Enemy pressure basic",
+			"description": "Profile for enemy cards that should create readable lane pressure without burst spikes.",
+			"weights": {
+				"role_fit": 0.28,
+				"power_band": 0.28,
+				"reliability": 0.2,
+				"context_fit": 0.12,
+				"risk": 0.07,
+				"novelty": 0.03,
+				"complexity": 0.02
+			},
+			"bands": {
+				"damage": {"min": 2, "ideal": 4, "max": 6},
+				"summon": {"min": 3, "ideal": 6, "max": 10},
+				"control": {"min": 1, "ideal": 1, "max": 3},
+				"enemy_pressure": {"min": 3, "ideal": 6, "max": 10}
+			},
+			"promotion": {"recommended_score": 75, "viable_score": 60, "max_risk": 0.5}
+		}
+	]
+}
