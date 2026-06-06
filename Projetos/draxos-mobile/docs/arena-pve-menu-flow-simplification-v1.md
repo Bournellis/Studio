@@ -1,6 +1,6 @@
 # DraxosMobile - Arena PVE Menu Flow Simplification v1
 
-- Status: `IMPLEMENTED_LOCAL`
+- Status: `PUBLISHED_INTERNAL_ALPHA`
 - Data: `2026-06-06`
 - Decisao-base: `ARENA_PVE_MENU_FLOW_SIMPLIFICATION_V1`
 - Escopo: simplificar o fluxo visual/operacional dos menus de Arena PVE mantendo as funcoes existentes, sem abrir tuning, novas arenas, novos buffs, PVP, economia final ou battle presentation.
@@ -86,10 +86,31 @@ Atualizados em `tests/client/test_boot_mobile_ui.gd`:
 
 ## Validacao
 
-Validacao local inicial:
+Validacao local e remota:
 
 - GUT client suite: PASS, 236 tests and 3741 asserts. GUT ainda reporta warnings conhecidos de teardown orphan/ObjectDB.
+- `npx -y deno task --cwd server/functions check`: PASS.
+- `npx -y deno task --cwd supabase/functions check`: PASS.
+- `deno test --allow-read --allow-run --allow-env server/tests/ops_readonly_cli_test.ts`: PASS, 3 tests.
+- `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS.
+- `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68 -PublicDownloads`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: PASS.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68 -RemoteWebUrl https://fdf44707.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS.
 
-Publicacao remota:
+## Publicacao
 
-- Pendente ate merge em `main` e publicacao Web/APK autorizada.
+- Release root: `internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68`.
+- Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`.
+- Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+- Cloudflare Pages preview evidence: `https://fdf44707.draxos-mobile-internal-alpha.pages.dev`.
+- APK URL: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68/downloads/draxos-mobile-alpha.apk`.
+- PC ZIP URL: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68/downloads/draxos-mobile-alpha.zip`.
+- Version: `0.0.5-alpha.0`.
+- Version code: `5`.
+- Android APK SHA256: `960c1ca2193a5d5f013437058f7119ac1a31bcc0f34b52a287b6435b0d794d7a`.
+- PC Windows ZIP SHA256: `bacd5d421206299a806c629a15a938402f7330c936a72ceefcf410cc75d08fd6`.
+- Web Index SHA256: `b39c432610b029560e6fd6672d1ca964f811f46c1dff2e5bd92e9865f35d5300`.

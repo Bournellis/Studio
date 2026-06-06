@@ -4,21 +4,25 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Bosque Offline-First Checkpoint v1`
-- Active stage status: `BOSQUE_OFFLINE_FIRST_CHECKPOINT_V1_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Arena PVE Menu Flow Simplification v1`
+- Active stage status: `ARENA_PVE_MENU_FLOW_SIMPLIFICATION_V1_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
-- Version: `0.0.4-alpha.0`
-- Version code: `4`
+- Version: `0.0.5-alpha.0`
+- Version code: `5`
 
 ## Current Truth
 
-- Latest published remote package: `Bosque Offline-First Checkpoint v1`.
-- Release root: `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22`
+- Latest published remote package: `Arena PVE Menu Flow Simplification v1`.
+- Release root: `internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`
-- Source state: `main` after merging and publishing Bosque Offline-First Checkpoint v1, preserving Bosque Sync Responsiveness v1, Arena/Bosque Visible V2, Arena/Bosque Regression Hotfix, Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
-- Published Bosque Offline-First Checkpoint v1: applies remote migration `202606060001_openworld_bosque_checkpoint_v1.sql`, bumps APK/manifest to `0.0.4-alpha.0` / version code `4`, makes Bosque movement/collection/pocket/chest/craft client-owned during gameplay, persists local visit state, saves compact checkpoints in the background and keeps completion/reward server-authoritative through the last accepted checkpoint.
+- Latest deployment evidence: `https://fdf44707.draxos-mobile-internal-alpha.pages.dev`
+- Source state: `main` after merging and publishing Arena PVE Menu Flow Simplification v1, preserving Bosque Offline-First Checkpoint v1, Bosque Sync Responsiveness v1, Arena/Bosque Visible V2, Arena/Bosque Regression Hotfix, Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
+- Published Arena PVE Menu Flow Simplification v1: bumps APK/manifest to `0.0.5-alpha.0` / version code `5`, reorders the Arena PVE menus around the player's decision flow, keeps a single recommended start CTA, keeps Preparacao visible before start and behavior controls between fights, and preserves all existing Arena functions and server-authoritative rewards.
+- Previous Openworld/Bosque policy package: `Bosque Offline-First Checkpoint v1`
+- Previous Openworld/Bosque policy release root: `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22`
+- Previous Openworld/Bosque policy preview: `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`
+- Previous Openworld/Bosque policy: applies remote migration `202606060001_openworld_bosque_checkpoint_v1.sql`, makes Bosque movement/collection/pocket/chest/craft client-owned during gameplay, persists local visit state, saves compact checkpoints in the background and keeps completion/reward server-authoritative through the last accepted checkpoint.
 - Previous Bosque sync package: `Bosque Sync Responsiveness v1`
 - Previous Bosque sync release root: `internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95`
 - Previous Bosque sync preview: `https://60e2d4be.draxos-mobile-internal-alpha.pages.dev`
@@ -31,7 +35,7 @@
 - Previous visibility hotfix preview: `https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev`
 - Previous visibility hotfix: restored Preparacao before Arena start, during active attempts and on pending buff choice, and restored Bosque deposit/craft visible feedback plus pending-event flush before leaving an integrated session.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
-- Current published implementation: `Bosque Offline-First Checkpoint v1` is published on `main`. It removes server-driven microaction resync from active Bosque gameplay, keeps runtime state local-first, persists local cache per save/session/ruleset and sends checkpoints for server validation/reward authority. Bosque Sync Responsiveness v1 remains the previous Bosque sync package and Arena/Bosque Visible V2 remains the previous visible package.
+- Current published implementation: `Arena PVE Menu Flow Simplification v1` is published on `main`. It simplifies menu hierarchy and CTA order without changing Arena content/tuning/backend flow. Bosque Offline-First Checkpoint v1 remains the current Openworld policy package, Bosque Sync Responsiveness v1 remains the previous Bosque sync package and Arena/Bosque Visible V2 remains the previous visible package.
 - Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; the visible Bosque update appears healthy so far. The Openworld working policy is now documented as client-owned active play with server-owned checkpoints/rewards.
 - Previous Arena Season 1 package: `Arena PVE Season 1 Loop v1` groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
 - Previous Arena Season 1 release root: `internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32`
@@ -61,37 +65,37 @@
 
 ## Current Published Package
 
-Bosque Offline-First Checkpoint v1 is published as the current Internal Alpha package. It preserves Bosque Sync Responsiveness v1 and specifically fixes the remaining Bosque feel regression by publishing a fresh release root, APK version code `4`, manifest minimum code `4`, and the remote checkpoint migration.
+Arena PVE Menu Flow Simplification v1 is published as the current Internal Alpha package. It preserves Bosque Offline-First Checkpoint v1 as the Openworld policy baseline and focuses only on Arena PVE menu clarity: fewer redundant steps, clearer decision order and better placement of Preparacao/behavior controls.
 
 Delivered:
 
-- applies remote migration `202606060001_openworld_bosque_checkpoint_v1.sql`;
-- bumps in-app, export and manifest versioning to `0.0.4-alpha.0` / version code `4`;
-- forces clients on version code `3` or older to update through the remote manifest instead of silently continuing the old APK;
-- keeps Bosque movement, collection, pocket, chest, craft, guidance and position local-first during active gameplay;
-- persists local Bosque visit cache by save/session/ruleset and never applies late same-session snapshots as visual rollback while the player is in control;
-- sends compact checkpoints to `/modes/session/checkpoint`, with legacy `collect_batch` still compatible for older packages;
-- keeps `Encerrar visita` reward-gated by final accepted checkpoint;
+- bumps in-app, export and manifest versioning to `0.0.5-alpha.0` / version code `5`;
+- forces clients on version code `4` or older to update through the remote manifest instead of silently continuing the old APK;
+- reorders Arena selection to context -> Season 1 progress -> recommended challenge -> Preparacao -> other arenas -> back;
+- replaces duplicate start actions with one CTA, `Iniciar desafio recomendado`;
+- shows active attempt recovery before secondary behavior controls when an attempt exists;
+- shows `Resolver duelo` or `Escolher buff` before Preparacao/behavior inside active Arena flow;
+- shows buff cards before behavior controls during buff choice;
+- preserves all Season 1 arena/difficulty data, active-attempt recovery, locked loadout, buff flow and server-authoritative rewards;
 - preserves Arena Preparacao before start, in active/stuck attempts, in the duel menu and in buff choice;
 - preserves Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Arena PVE First Real Run + Update Recovery, Bosque v3 UX/Feel, Technical Hardening, Openworld Main Menu Sync, Foundation Hardening V2, Hardening Platform V1 and Remote Lab Runner.
 
 Publication evidence:
 
-- Supabase remote migration `202606060001_openworld_bosque_checkpoint_v1.sql` applied and `supabase migration list --linked` aligned local/remote.
 - Export regenerated APK, PC ZIP and Web artifacts from current `main`.
 - Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and Edge Function `release` deploy passed.
-- Cloudflare Pages preview evidence: `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`.
-- Remote Web launch smoke on preview loaded the game in `6623 ms`, matched release root and asset root, and reported no runtime errors.
-- Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web after local manifest expectations were updated; stable Portal/Web remain protected by Cloudflare Access.
-- Remote read-only release/CORS smoke passed after local manifest expectations were updated to version code `3`.
+- Cloudflare Pages preview evidence: `https://fdf44707.draxos-mobile-internal-alpha.pages.dev`.
+- Remote Web launch smoke on preview loaded the game, matched release root and asset root, and reported no runtime errors.
+- Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web after local manifest expectations were updated to version code `5`; stable Portal/Web remain protected by Cloudflare Access.
+- Remote read-only release/CORS smoke passed.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 - `release/config` remains on `track23-online-actions-hotfix`, so online progression actions are not paused by remote config.
 
 Artifact hashes:
 
-- Android APK SHA256: `207c0eb79f36f3420ca539fbffaf7ce92150c38271df5f608916d4c12b0e8d5c`
-- PC Windows ZIP SHA256: `7c0206a3bc0e4b65a5f8a20524921820282904f69e9e8224aff4307bd5cfefa9`
-- Web Index SHA256: `318c68673fda93d76ce90f1a17e87061f85530731a7ddff6ea058e4c79889f4a`
+- Android APK SHA256: `960c1ca2193a5d5f013437058f7119ac1a31bcc0f34b52a287b6435b0d794d7a`
+- PC Windows ZIP SHA256: `bacd5d421206299a806c629a15a938402f7330c936a72ceefcf410cc75d08fd6`
+- Web Index SHA256: `b39c432610b029560e6fd6672d1ca964f811f46c1dff2e5bd92e9865f35d5300`
 
 ## Bosque Offline-First Checkpoint v1 Details
 
@@ -256,7 +260,7 @@ Artifact hashes:
 
 ## Current Gate
 
-The next operational step is a package decision after the successful initial Bosque Offline-First Checkpoint v1 playtest. Do not reopen server-driven microaction sync for Openworld unless a new decision pack explicitly overrides the current client-owned play/server-owned rewards policy.
+The next operational step is human playtest of Arena PVE Menu Flow Simplification v1, especially the Arena selection order, active attempt recovery, between-duel behavior controls and buff-choice menu. Do not reopen server-driven microaction sync for Openworld unless a new decision pack explicitly overrides the current client-owned play/server-owned rewards policy.
 
 Decision focus:
 
