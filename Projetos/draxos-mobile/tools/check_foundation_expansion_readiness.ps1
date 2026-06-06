@@ -511,6 +511,8 @@ function Test-LiveDocReleaseRootFreshness {
   Add-Ok "live-doc current release root detected: $currentRoot"
   Add-Ok "live-doc current preview detected: $currentPreview"
 
+  $previousStationRoot = 'internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c'
+  $previousStationPreview = 'https://08d00f24.draxos-mobile-internal-alpha.pages.dev'
   $durableRoot = 'internal-alpha/v0-bosque-durable-bau-mochila-v1-20260606-6e7ca6b'
   $durablePreview = 'https://39198a35.draxos-mobile-internal-alpha.pages.dev'
   $previousArenaMenuRoot = 'internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68'
@@ -536,6 +538,8 @@ function Test-LiveDocReleaseRootFreshness {
   $hardeningRoot = 'internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4'
   $hardeningPreview = 'https://ca946749.draxos-mobile-internal-alpha.pages.dev'
   $lineageRoots = @(
+    $previousStationRoot,
+    $previousStationPreview,
     $durableRoot,
     $durablePreview,
     $previousArenaMenuRoot,
@@ -546,26 +550,14 @@ function Test-LiveDocReleaseRootFreshness {
     $previousBosqueSyncPreview,
     $previousVisibleRoot,
     $previousVisiblePreview,
-    $previousVisibilityHotfixRoot,
-    $previousVisibilityHotfixPreview,
-    $previousSeasonRoot,
-    $previousSeasonPreview,
-    $previousHotfixRoot,
-    $previousHotfixPreview,
-    $previousArenaRoot,
-    $previousArenaPreview,
-    $previousContentRoot,
-    $previousContentPreview,
-    $previousOpenworldRoot,
-    $previousOpenworldPreview,
     $hardeningRoot,
     $hardeningPreview
   )
   foreach ($check in @(
-    @{ Path = 'AGENTS.md'; Needles = @('latest remote Internal Alpha', $currentRoot, $currentPreview, 'Arena PVE Menu Flow Simplification v1 remains the previous Arena menu package', $previousArenaMenuRoot, $previousArenaMenuPreview, 'Bosque Offline-First Checkpoint v1 remains the previous Openworld policy package', $previousOpenworldPolicyRoot, $previousOpenworldPolicyPreview, 'Bosque Sync Responsiveness v1 remains the previous Bosque sync package', $previousBosqueSyncRoot, $previousBosqueSyncPreview, 'Arena/Bosque Visible V2 remains the previous visible package', $previousVisibleRoot, $previousVisiblePreview, 'Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
+    @{ Path = 'AGENTS.md'; Needles = @('latest remote Internal Alpha', $currentRoot, $currentPreview, 'Bosque Fogueira Potion Crafting v1 remains the previous station-craft package', $previousStationRoot, $previousStationPreview, 'Arena PVE Menu Flow Simplification v1', 'Bosque Offline-First Checkpoint v1', 'Bosque Sync Responsiveness v1', 'Arena/Bosque Visible V2') },
     @{ Path = 'README.md'; Needles = @(('Current release root: `' + $currentRoot + '`'), ('Current verified preview: `' + $currentPreview + '`')) + $lineageRoots },
     @{ Path = 'implementation\current-status.md'; Needles = @('Latest published remote package:', $currentRoot, $currentPreview, 'Previous hardening baseline: `Foundation Hardening V2`') + $lineageRoots },
-    @{ Path = 'docs\agent-operating-manual.md'; Needles = @('latest remote Internal Alpha publication', $currentRoot, $currentPreview, 'Arena PVE Menu Flow Simplification v1 remains the previous Arena menu package', $previousArenaMenuRoot, $previousArenaMenuPreview, 'Bosque Offline-First Checkpoint v1 remains the previous Openworld policy package', $previousOpenworldPolicyRoot, $previousOpenworldPolicyPreview, 'Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
+    @{ Path = 'docs\agent-operating-manual.md'; Needles = @('latest remote Internal Alpha publication', $currentRoot, $currentPreview, 'Bosque Fogueira Potion Crafting v1 remains the previous station-craft package', $previousStationRoot, $previousStationPreview, 'Arena PVE Menu Flow Simplification v1 remains the previous Arena menu package', $previousArenaMenuRoot, $previousArenaMenuPreview, 'Bosque Offline-First Checkpoint v1 remains the previous Openworld policy package', $previousOpenworldPolicyRoot, $previousOpenworldPolicyPreview, 'Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
     @{ Path = 'docs\foundation-hardening-v2-readiness-report.md'; Needles = @('Status: `HISTORICO_BASELINE`', $hardeningRoot, $hardeningPreview, 'not the latest remote Internal Alpha package') }
   )) {
     foreach ($needle in $check.Needles) {

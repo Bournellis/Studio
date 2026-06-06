@@ -22,8 +22,13 @@ Corrigir a separacao entre materiais locais do Bosque e recursos globais da cont
 
 - `validate_foundation.ps1 -Profile ServerQuick`: PASS.
 - `validate_foundation.ps1 -Profile ClientQuick`: PASS.
-- `ReleaseDryRun`: pendente de rerun apos mover este cartao para `Done`.
+- `validate_foundation.ps1 -Profile ReleaseDryRun`: PASS.
+- Remote Supabase migration `202606060004_bosque_world_hub_domain_separation_v1.sql`: aplicada.
+- Export/package/upload/deploy manifest/Web/APK: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly`: PASS.
+- Preview publicado: `https://d1872010.draxos-mobile-internal-alpha.pages.dev`.
+- Release root: `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05`.
 
 ## Proximo Handoff
 
-Branch final mergeada em `main`, publicacao Web/APK concluida ou bloqueio remoto documentado com evidencias.
+Branch final mergeada em `main`, Web/APK publicados, manifest remoto atualizado para `0.0.8-alpha.0`/version code `8` e smokes remotos read-only verdes. Proximo trabalho deve partir de `main` limpo.

@@ -4,114 +4,87 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Bosque Fogueira Potion Crafting v1`
-- Active stage status: `BOSQUE_FOGUEIRA_POTION_CRAFTING_V1_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Bosque World Hub Domain Separation v1`
+- Active stage status: `BOSQUE_WORLD_HUB_DOMAIN_SEPARATION_V1_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
-- Version: `0.0.7-alpha.0`
-- Version code: `7`
+- Version: `0.0.8-alpha.0`
+- Version code: `8`
 
 ## Current Truth
 
-- Latest published remote package: `Bosque Fogueira Potion Crafting v1`.
-- Release root: `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c`
+- Latest published remote package: `Bosque World Hub Domain Separation v1`.
+- Release root: `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`
-- Source state: `main` after merging and publishing Bosque Fogueira Potion Crafting v1, preserving Bosque Durable Bau Mochila v1, Arena PVE Menu Flow Simplification v1, Bosque Offline-First Checkpoint v1, Bosque Sync Responsiveness v1, Arena/Bosque Visible V2, Arena/Bosque Regression Hotfix, Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
-- Published Bosque Fogueira Potion Crafting v1: bumps APK/manifest to `0.0.7-alpha.0` / version code `7`, applies remote migration `202606060003_bosque_fogueira_potion_crafting_v1.sql`, makes `Fogueira Estavel I` a station for global potion craft, requires checkpoint accepted before station craft, consumes Bosque chest materials plus account `po_osso`, creates `player_consumables`, updates durable Bosque progress and active snapshot atomically, and lets Arena Preparation equip/use `pocao_vida`, `pocao_foco` and `pocao_resguardo`.
+- Latest deployment evidence: `https://d1872010.draxos-mobile-internal-alpha.pages.dev`
+- Source state: `main` after merging and publishing Bosque World Hub Domain Separation v1, preserving Bosque Fogueira Potion Crafting v1, Bosque Durable Bau Mochila v1, Arena PVE Menu Flow Simplification v1, Bosque Offline-First Checkpoint v1, Bosque Sync Responsiveness v1, Arena/Bosque Visible V2, Arena/Bosque Regression Hotfix, Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix and earlier trunk packages.
+- Published Bosque World Hub Domain Separation v1: bumps APK/manifest to `0.0.8-alpha.0` / version code `8`, applies remote migration `202606060004_bosque_world_hub_domain_separation_v1.sql`, replaces public Bosque-local `ossos_preview`/`po_osso_preview` with `resto_ritual`/`po_cinzento`, normalizes legacy pocket/chest/progress/session snapshots, keeps global `ossos`/`po_osso` account-owned, persists `fogueira_estavel_1` in both durable `upgrades` and `structures`, returns structures through checkpoint/session snapshots, adds `BosqueWorldContext`, and preserves Fogueira station craft as the server-authoritative bridge from `Bau do Bosque` + `Conta/Ossario` to global potions.
+- Previous station-craft package: `Bosque Fogueira Potion Crafting v1`
+- Previous station-craft release root: `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c`
+- Previous station-craft preview: `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`
 - Previous durable Openworld package: `Bosque Durable Bau Mochila v1`
 - Previous durable Openworld release root: `internal-alpha/v0-bosque-durable-bau-mochila-v1-20260606-6e7ca6b`
 - Previous durable Openworld preview: `https://39198a35.draxos-mobile-internal-alpha.pages.dev`
-- Previous durable Openworld package detail: applies remote migration `202606060002_openworld_bosque_durable_progress_v1.sql`, persists accepted Bosque `Bau`, `Mochila/Bolso`, backpack upgrades and crafted structures in `mode_progress.progress_payload`, preserves active-visit offline-first runtime and keeps completion/reward server-authoritative through checkpoint, caps and ledger.
 - Previous Arena menu package: `Arena PVE Menu Flow Simplification v1`
 - Previous Arena menu release root: `internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68`
 - Previous Arena menu preview: `https://fdf44707.draxos-mobile-internal-alpha.pages.dev`
-- Previous Arena menu package detail: simplified menu hierarchy and CTA order, kept Preparacao visible before start and behavior controls between fights, and preserved all existing Arena functions and server-authoritative rewards.
 - Previous Openworld/Bosque policy package: `Bosque Offline-First Checkpoint v1`
 - Previous Openworld/Bosque policy release root: `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22`
 - Previous Openworld/Bosque policy preview: `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`
-- Previous Openworld/Bosque policy: applies remote migration `202606060001_openworld_bosque_checkpoint_v1.sql`, makes Bosque movement/collection/pocket/chest/craft client-owned during gameplay, persists local visit state, saves compact checkpoints in the background and keeps completion/reward server-authoritative through the last accepted checkpoint.
 - Previous Bosque sync package: `Bosque Sync Responsiveness v1`
 - Previous Bosque sync release root: `internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95`
 - Previous Bosque sync preview: `https://60e2d4be.draxos-mobile-internal-alpha.pages.dev`
 - Previous visible package: `Arena/Bosque Visible V2`
 - Previous visible release root: `internal-alpha/v0-arena-bosque-visible-v2-20260605-01d80d5`
 - Previous visible preview: `https://7b9c8f38.draxos-mobile-internal-alpha.pages.dev`
-- Previous visible package: bumps APK/manifest to `0.0.2-alpha.0` / version code `2`, forces old build update, and restores Preparacao even when Arena selection is blocked by an active or stuck attempt.
-- Previous visibility hotfix package: `Arena/Bosque Regression Hotfix`
-- Previous visibility hotfix release root: `internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f`
-- Previous visibility hotfix preview: `https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev`
-- Previous visibility hotfix: restored Preparacao before Arena start, during active attempts and on pending buff choice, and restored Bosque deposit/craft visible feedback plus pending-event flush before leaving an integrated session.
-- Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
-- Current published implementation: `Bosque Fogueira Potion Crafting v1` is published on `main`. It extends Bosque Durable Bau Mochila v1 by turning durable `Fogueira Estavel I` into a server-authoritative station that bridges Openworld materials and global account consumables. Arena PVE Menu Flow Simplification v1 remains the previous Arena menu package, Bosque Durable Bau Mochila v1 remains the previous durable Openworld package, Bosque Offline-First Checkpoint v1 remains the previous Openworld policy package, Bosque Sync Responsiveness v1 remains the previous Bosque sync package and Arena/Bosque Visible V2 remains the previous visible package.
-- Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; the visible Bosque update appears healthy so far. The Openworld working policy is now documented as client-owned active play with server-owned checkpoints/rewards.
-- Previous Arena Season 1 package: `Arena PVE Season 1 Loop v1` groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
-- Previous Arena Season 1 release root: `internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32`
-- Previous Arena Season 1 preview: `https://d7333659.draxos-mobile-internal-alpha.pages.dev`
-- Previous source hotfix: `Arena Duel Flow Hotfix` keeps Preparacao/behavior inside the active-duel menu, removes the detached `Ajustar comportamento` CTA, and treats a server step with `selected_buff` as resolved so the next active menu returns to `Resolver duelo` instead of showing `Escolher buff` again.
-- Previous duel-flow hotfix release root: `internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174`
-- Previous duel-flow hotfix preview: `https://0536635b.draxos-mobile-internal-alpha.pages.dev`
-- Previous Arena package: `Arena PVE First Real Run + Update Recovery`
-- Previous Arena release root: `internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a`
-- Previous Arena preview: `https://2c020d09.draxos-mobile-internal-alpha.pages.dev`
-- Previous content/polish package: `Bosque v3 UX/Feel`
-- Previous content/polish release root: `internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45`
-- Previous content/polish preview: `https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev`
-- Previous technical package: `Technical Hardening`
-- Previous technical release root: `internal-alpha/v0-technical-hardening-20260605-8e54a1f`
-- Previous technical preview: `https://2fe9393e.draxos-mobile-internal-alpha.pages.dev`
-- Previous Openworld content package: `Openworld Main Menu Sync`
-- Previous Openworld release root: `internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8`
-- Previous Openworld preview: `https://aeec7403.draxos-mobile-internal-alpha.pages.dev`
 - Previous hardening baseline: `Foundation Hardening V2`
 - Previous hardening release root: `internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4`
 - Previous hardening preview: `https://ca946749.draxos-mobile-internal-alpha.pages.dev`
 - Hardening baseline marker: `Track 13 - Foundation Validation And Release Safety` (`TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`)
 - Agent baseline marker: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
-- Arena context: Track 18 - PVE Arena Initial, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context and are now extended by Track 23 update recovery.
-- Technical context: Track 16 Behavior And Potion Crafting remains existing alpha substance summarized in `docs/behavior-potion-crafting-v1.md`, not the current product focus.
+- Arena context: Track 18 - PVE Arena Initial, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context.
+- Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
+- Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; later packages stabilize durable Bosque progress, Fogueira station craft and domain separation. Current playtest should focus relog persistence and resource-source clarity.
 
 ## Current Published Package
 
-Bosque Fogueira Potion Crafting v1 is published as the current Internal Alpha package. It preserves the Offline-First Checkpoint runtime model and durable per-save Bosque progress from Durable Bau Mochila v1, then promotes `Fogueira Estavel I` into a server-authoritative station that creates global potions for Arena from Bosque chest materials plus account `po_osso`.
+Bosque World Hub Domain Separation v1 is published as the current Internal Alpha package. It preserves the Offline-First Checkpoint runtime model, durable per-save Bosque progress and Fogueira station craft, then corrects the architectural boundary for the future world-hub direction: Bosque may host panels/structures visually, but data remains separated between Bosque durable progress, account resources, Arena and station craft.
 
 Delivered:
 
-- bumps in-app, export and manifest versioning to `0.0.7-alpha.0` / version code `7`;
-- forces clients on version code `6` or older to update through the remote manifest instead of silently continuing the old APK;
-- adds mirrored station-craft migration `202606060003_bosque_fogueira_potion_crafting_v1.sql` in `server/schema` and `supabase/migrations`;
-- adds `POST /crafting/station-craft` and RPC `craft_station_item_v1` for idempotent mixed-domain station craft;
-- keeps `/crafting/craft` compatible for non-station recipes and returns `STATION_REQUIRED` for Fogueira recipes;
-- registers `fogueira_estavel_1` as station id, while keeping compatibility with durable `upgrades.fogueira_estavel_1`;
-- adds `craft_pocao_vida`, `craft_pocao_foco` and `craft_pocao_resguardo` as Fogueira recipes that consume Bosque chest materials and account `po_osso`;
-- updates durable Bosque progress, active Bosque session snapshot, global resources, `player_consumables`, `item_transactions` and `mode_session_events` atomically on accepted station craft;
-- splits Bosque crafting UI into `Construcoes` and `Fogueira`, requires proximity to the structure and flushes checkpoint before station craft;
-- removes direct `Pocao de Vida` craft from Base/Ossario while keeping `Triturar Ossos`;
-- lets Arena Preparation list/equip all simple potions and generalizes battle simulation for heal-over-time, mana restore and barrier potion effects;
-- preserves active Bosque runtime as local/offline-first, durable `Bau`/`Mochila/Bolso`/structures, Arena menu simplification, buff flow and Remote Lab Runner.
+- bumps in-app, export and manifest versioning to `0.0.8-alpha.0` / version code `8`;
+- forces clients on version code `7` or older to update through the remote manifest instead of silently continuing the old APK;
+- adds mirrored migration `202606060004_bosque_world_hub_domain_separation_v1.sql` in `server/schema` and `supabase/migrations`;
+- renames Bosque-local public materials from `ossos_preview`/`po_osso_preview` to `resto_ritual`/`po_cinzento` and normalizes legacy cache/progress/session payloads;
+- keeps account `ossos` and `po_osso` exclusively global; Bosque collection/checkpoint does not change them;
+- persists `fogueira_estavel_1` as durable `upgrades.fogueira_estavel_1 = true` and `structures.fogueira_estavel_1 = true`;
+- returns `structures` through accepted checkpoint, durable progress, snapshot summary and new session bootstrap;
+- adds `BosqueWorldContext` to bootstrap durable Bosque progress, active session/cache, account resources, consumables/crafting state and Arena preparation context before the playable frame;
+- labels inventory/panels by source: `Mochila do Bosque`, `Bau do Bosque`, `Conta/Ossario`, `Pocoes globais` and `Arena`;
+- blocks global Fogueira recipes while the local Fogueira is still pending checkpoint confirmation, with clear saving feedback;
+- preserves Base/Ossario `Triturar Ossos`, Arena Preparation, buff flow and station craft behavior from the previous package.
 
 Publication evidence:
 
-- Remote Supabase migration `202606060003_bosque_fogueira_potion_crafting_v1.sql` applied.
-- Edge Functions `crafting`, `build`, `arena`, `battle`, `content`, `monetization` and `release` deployed.
+- Remote Supabase migration `202606060004_bosque_world_hub_domain_separation_v1.sql` applied.
 - Export regenerated APK, PC ZIP and Web artifacts from current `main`.
 - Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and Edge Function `release` deploy passed.
-- Cloudflare Pages preview evidence: `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`.
-- Remote Web launch smoke on preview loaded the game in `3557 ms`, matched release root and asset root, and reported no runtime errors.
-- Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web after local manifest expectations were updated to version code `7`; stable Portal/Web remain protected by Cloudflare Access.
+- Cloudflare Pages preview evidence: `https://d1872010.draxos-mobile-internal-alpha.pages.dev`.
+- Remote Web launch smoke on preview loaded the game in `3139 ms`, matched release root and reported no runtime errors.
+- Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web after local manifest expectations were updated to version code `8`; stable Portal/Web remain protected by Cloudflare Access.
 - Remote read-only release/CORS smoke passed.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 - `release/config` remains on `track23-online-actions-hotfix`, so online progression actions are not paused by remote config.
 
 Artifact hashes:
 
-- Android APK SHA256: `b34770c9174533dc69c03ec19aa5a569ec16a5694b5276577c694c8e70e54848`
-- PC Windows ZIP SHA256: `0fe4b03492334991011452a609bdc03ccf731acf1b79d3d4716f4e02eabe3cbd`
-- Web Index SHA256: `5799cf3555d84bdc279bc3fb9df9faa680419277efb95a519db671d95f0da476`
+- Android APK SHA256: `ebcf7a2849c15ce4c28500c74a6dba64693eee309271be0d6fb5e8e9b617eaa0`
+- PC Windows ZIP SHA256: `ba6e63673a541fb91a4093fbb9bfe5b34617ad79a7227ff4067f87149ed3a987`
+- Web Index SHA256: `217814d177164e6bc67315174c4e42083fc9193a004afe1277bf581fedc0e5f1`
 
 ## Bosque Offline-First Checkpoint v1 Details
 
-Bosque Offline-First Checkpoint v1 is published remotely and should be the active Bosque playtest baseline.
+Bosque Offline-First Checkpoint v1 is preserved as the previous Bosque runtime policy baseline.
 
 Delivered:
 
