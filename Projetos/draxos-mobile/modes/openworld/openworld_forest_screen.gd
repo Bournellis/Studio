@@ -307,7 +307,7 @@ func _view_state(nearest_id: String) -> Dictionary:
 	var can_complete := _can_complete_integrated()
 	var near_chest := _near_chest()
 	var has_pocket_items: bool = not model.pocket.is_empty()
-	var deposit_available: bool = near_chest and has_pocket_items and not network_busy and not pending and not completed
+	var deposit_available: bool = near_chest and has_pocket_items and not network_busy and not completed
 	var deposit_tooltip := _deposit_tooltip(completed, pending, network_busy, near_chest, has_pocket_items)
 	var complete_tooltip := _complete_tooltip(can_complete, pending, completed)
 	return {
@@ -347,14 +347,15 @@ func _mode_label() -> String:
 func _status_text(nearest_id: String, completed: bool) -> String:
 	if completed:
 		return "Visita encerrada"
-	if _session_state() in ["pending", "resyncing"]:
-		return "Sincronizando Bosque"
 	if not model.active_collection.is_empty():
 		return "Coletando %s" % model.item_display_name(str(model.active_collection.get("item_id", "")))
 	if model.pocket_weight() >= model.capacity() - 0.001:
 		return "Bolso cheio; volte ao bau"
 	if _near_chest() and not model.pocket.is_empty():
 		return "Bau proximo; deposito pronto"
+	if _session_state() in ["pending", "resyncing"]:
+		var pending_text := _pending_summary_text()
+		return pending_text if pending_text != "" else "Sincronizando Bosque"
 	var first_craft := model.first_available_recipe_name()
 	if first_craft != "":
 		return "%s pronto no craft" % first_craft
@@ -386,12 +387,14 @@ func _session_message() -> String:
 func _deposit_tooltip(completed: bool, pending: bool, network_busy: bool, near_chest: bool, has_pocket_items: bool) -> String:
 	if completed:
 		return "Visita ja encerrada."
-	if network_busy or pending:
-		return "Aguarde a sincronizacao do Bosque."
+	if network_busy:
+		return "Sessao online iniciando."
 	if not near_chest:
 		return "Aproxime-se do bau."
 	if not has_pocket_items:
 		return "Bolso vazio; colete algo antes."
+	if pending:
+		return "Depositar agora; o Bosque continua salvando."
 	return "Depositar tudo que esta no bolso."
 
 func _complete_tooltip(can_complete: bool, pending: bool, completed: bool) -> String:
@@ -452,16 +455,10 @@ func _handle_abandon_requested() -> void:
 
 func _handle_back_requested() -> void:
 	if integration_mode == "integrated_alpha" and _has_pending_integrated_events():
-		model.last_message = "Salvando Bosque antes de voltar..."
+		model.last_message = "Sessao preservada; Bosque continua salvando."
 		_update_labels()
-		await _ensure_session_bridge().flush_event_queue()
-		_sync_session_bridge_debug_state()
-		_update_labels()
-		if _has_pending_integrated_events():
-			model.last_message = "Sincronizacao pendente. Aguarde salvar antes de voltar."
-			_update_labels()
-			return
-	if integration_mode == "integrated_alpha" and _server_session_id() != "" and not _session_blocks_mutation():
+		_ensure_session_bridge().flush_event_queue()
+	elif integration_mode == "integrated_alpha" and _server_session_id() != "" and not _session_blocks_mutation():
 		model.last_message = "Sessao preservada por ate 2h para retomada."
 		_ensure_session_bridge().record_exit_preserved()
 	close_requested.emit()
@@ -484,6 +481,9 @@ func _hydrate_integrated_session(session: Dictionary, apply_remote_position := t
 func _record_integrated_event_deferred(event_type: String, event_payload: Dictionary) -> void:
 	_handle_guidance_action_for_event(event_type)
 	if integration_mode != "integrated_alpha":
+		return
+	if event_type == "collect_start" or event_type == "collect_cancel":
+		_sync_session_bridge_debug_state()
 		return
 	var payload := event_payload.duplicate(true)
 	payload["client_position_revision"] = _runtime.local_position_revision

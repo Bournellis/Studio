@@ -165,12 +165,15 @@ func test_event_queue_keeps_network_failure_and_retries_successfully() -> void:
 		{"ok": true, "body": {"session": _session_payload("session-event", 3, {}), "event": {"message": "Evento aplicado."}}},
 	]
 
-	bridge.record_event_deferred("collect_complete", {"node_id": "node-a"})
+	bridge.record_event_deferred("collect_complete", {"node_id": "node_galho_01", "item_id": "galho"})
 	await bridge.flush_event_queue()
 	var failed_snapshot: Dictionary = bridge.debug_snapshot()
 	assert_eq(int(failed_snapshot.get("event_queue_size", 0)), 1)
 	assert_true(bool(failed_snapshot.get("event_retry_scheduled", false)))
 	assert_eq(client.event_calls.size(), 1)
+	assert_eq(str(Dictionary(client.event_calls[0]).get("event_type", "")), "collect_batch")
+	var first_payload := Dictionary(Dictionary(client.event_calls[0]).get("event_payload", {}))
+	assert_eq(Array(first_payload.get("nodes", [])).size(), 1)
 
 	await bridge.retry_queued_events_now()
 	var retried_snapshot: Dictionary = bridge.debug_snapshot()
@@ -178,6 +181,38 @@ func test_event_queue_keeps_network_failure_and_retries_successfully() -> void:
 	assert_eq(bridge.snapshot_revision(), 3)
 	assert_eq(client.event_calls.size(), 2)
 	assert_eq(model.last_message, "Evento aplicado.")
+
+func test_collect_complete_events_coalesce_into_single_batch() -> void:
+	var model = ModelScript.new()
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	var bridge = _bridge(model, client, store)
+	bridge.hydrate_session(_session_payload("session-batch", 2, {}))
+	client.event_results = [
+		{
+			"ok": true,
+			"body": {
+				"session": _session_payload("session-batch", 3, {
+					"pocket": {"galho": 2},
+					"collected_nodes": {"node_galho_01": true, "node_galho_02": true},
+				}),
+				"event": {"message": "Coletas registradas: 2."},
+			},
+		},
+	]
+
+	bridge.record_event_deferred("collect_complete", {"node_id": "node_galho_01", "item_id": "galho", "session_seconds": 4})
+	bridge.record_event_deferred("collect_complete", {"node_id": "node_galho_02", "item_id": "galho", "session_seconds": 5})
+	await bridge.flush_event_queue()
+
+	assert_eq(client.event_calls.size(), 1)
+	var event_call: Dictionary = client.event_calls[0]
+	var payload := Dictionary(event_call.get("event_payload", {}))
+	assert_eq(str(event_call.get("event_type", "")), "collect_batch")
+	assert_eq(int(event_call.get("expected_revision", -1)), 2)
+	assert_eq(Array(payload.get("nodes", [])).size(), 2)
+	assert_eq(bridge.snapshot_revision(), 3)
+	assert_eq(int(model.pocket.get("galho", 0)), 2)
 
 func test_stale_event_resyncs_active_session_and_clears_queue() -> void:
 	var model = ModelScript.new()
@@ -202,7 +237,7 @@ func test_stale_event_resyncs_active_session_and_clears_queue() -> void:
 	assert_eq(int(snapshot.get("event_queue_size", -1)), 0)
 	assert_eq(bridge.snapshot_revision(), 9)
 	assert_eq(int(model.chest.get("madeira", 0)), 1)
-	assert_eq(model.last_message, "Bosque resincronizado. Repita a ultima acao se ela nao apareceu.")
+	assert_eq(model.last_message, "Bosque resincronizado. Confira bolso e bau.")
 	assert_eq(store.failed.size(), 1)
 
 func test_guidance_update_ack_applies_snapshot_patch() -> void:

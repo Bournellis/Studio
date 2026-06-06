@@ -452,7 +452,7 @@ func test_integrated_deposit_updates_local_view_while_pending_and_reconciles_ack
 	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
 	assert_eq(int(screen.get("_snapshot_revision")), 1)
 
-func test_integrated_back_waits_for_pending_deposit_before_closing() -> void:
+func test_integrated_back_preserves_pending_deposit_without_blocking_close() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
@@ -474,8 +474,8 @@ func test_integrated_back_waits_for_pending_deposit_before_closing() -> void:
 	screen.call("_handle_back_requested")
 	await get_tree().process_frame
 
-	assert_false(bool(closed.get("value", false)))
-	assert_true(str(screen.get_model().last_message).contains("Salvando"))
+	assert_true(bool(closed.get("value", false)))
+	assert_true(str(screen.get_model().last_message).contains("continua salvando"))
 	await _wait_process_frames(8)
 
 	assert_true(bool(closed.get("value", false)))
@@ -550,9 +550,6 @@ func test_integrated_stale_collection_resync_does_not_rollback_player_position()
 	var resource_position: Vector2 = world.call("resource_position", "galho")
 	var node_id := _resource_node_id(screen, "galho")
 	var moved_position := resource_position + Vector2(16, 0)
-	client.enqueue_event_response(_event_ack("collect_start", 1, {
-		"last_message": "Coleta iniciada."
-	}, resource_position))
 	client.enqueue_event_response({"ok": false, "body": {"error": {"code": "MODE_SESSION_REVISION_STALE"}}})
 	client.state_result = {
 		"ok": true,
@@ -568,6 +565,7 @@ func test_integrated_stale_collection_resync_does_not_rollback_player_position()
 	screen.get_model().active_collection = active_collection
 	screen.set_player_position_for_tests(moved_position)
 	screen.call("_advance_nearby_collection", 0.05)
+	await wait_seconds(0.28)
 	await _wait_process_frames(8)
 
 	assert_eq(screen.get_player_position(), moved_position)
@@ -679,24 +677,21 @@ func test_integrated_resume_session_applies_remote_player_position() -> void:
 	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
 	assert_eq(client.start_calls.size(), 0)
 
-func test_integrated_collect_start_ack_preserves_active_collection() -> void:
+func test_integrated_collect_start_stays_local_without_remote_mutation() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
 	var world = screen.call("get_openworld_world_2d")
 	var resource_position: Vector2 = world.call("resource_position", "galho")
-	client.delay_frames = 3
-	client.enqueue_event_response(_event_ack("collect_start", 1, {
-		"last_message": "Coleta confirmada."
-	}, resource_position))
 	screen.set_player_position_for_tests(resource_position)
 	screen.call("_advance_nearby_collection", 0.05)
 	assert_false(Dictionary(screen.get_model().active_collection).is_empty())
 	await _wait_process_frames(6)
 	assert_false(Dictionary(screen.get_model().active_collection).is_empty())
-	assert_eq(int(screen.get("_snapshot_revision")), 1)
+	assert_eq(int(screen.get("_snapshot_revision")), 0)
+	assert_true(_captured_event(client, "collect_start").is_empty())
 
-func test_integrated_collect_complete_keeps_pending_until_ack() -> void:
+func test_integrated_collect_complete_updates_local_pocket_before_batch_ack() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
@@ -704,26 +699,75 @@ func test_integrated_collect_complete_keeps_pending_until_ack() -> void:
 	var resource_position: Vector2 = world.call("resource_position", "galho")
 	var node_id := _resource_node_id(screen, "galho")
 	client.delay_frames = 2
-	client.enqueue_event_response(_event_ack("collect_start", 1, {
-		"last_message": "Coleta confirmada."
-	}, resource_position))
-	client.enqueue_event_response(_event_ack("collect_complete", 2, {
+	client.enqueue_event_response(_event_ack("collect_batch", 1, {
 		"pocket": {"galho": 1},
 		"collected_nodes": {node_id: true},
 		"last_message": "+1 Galho no bolso."
 	}, resource_position))
 	screen.set_player_position_for_tests(resource_position)
 	screen.call("_advance_nearby_collection", 0.05)
-	await _wait_process_frames(5)
 	var active_collection: Dictionary = screen.get_model().active_collection
 	active_collection["elapsed"] = float(active_collection.get("duration", 0.1))
 	screen.get_model().active_collection = active_collection
 	screen.call("_advance_nearby_collection", 0.05)
 	assert_true(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
-	assert_eq(int(Dictionary(screen.get_model().pocket).get("galho", 0)), 0)
-	await _wait_process_frames(6)
 	assert_eq(int(Dictionary(screen.get_model().pocket).get("galho", 0)), 1)
+	await wait_seconds(0.28)
+	await _wait_process_frames(6)
+	var batch_event := _captured_event(client, "collect_batch")
+	assert_false(batch_event.is_empty())
+	assert_eq(Array(Dictionary(batch_event.get("event_payload", {})).get("nodes", [])).size(), 1)
+	assert_eq(int(screen.get("_snapshot_revision")), 1)
 	assert_false(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
+
+func test_integrated_deposit_remains_available_during_pending_collect_batch() -> void:
+	var setup: Dictionary = await _make_integrated_screen()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var world = screen.call("get_openworld_world_2d")
+	var resource_position: Vector2 = world.call("resource_position", "galho")
+	var chest_position := RulesetScript.chest_position()
+	var node_id := _resource_node_id(screen, "galho")
+	client.delay_frames = 2
+	client.enqueue_event_response(_event_ack("collect_batch", 1, {
+		"pocket": {"galho": 1},
+		"chest": {},
+		"collected_nodes": {node_id: true},
+		"last_message": "+1 Galho no bolso."
+	}, resource_position))
+	client.enqueue_event_response(_event_ack("deposit_all", 2, {
+		"pocket": {},
+		"chest": {"galho": 1},
+		"collected_nodes": {node_id: true},
+		"last_message": "Bau atualizado."
+	}, chest_position))
+
+	screen.set_player_position_for_tests(resource_position)
+	screen.call("_advance_nearby_collection", 0.05)
+	var active_collection: Dictionary = screen.get_model().active_collection
+	active_collection["elapsed"] = float(active_collection.get("duration", 0.1))
+	screen.get_model().active_collection = active_collection
+	screen.call("_advance_nearby_collection", 0.05)
+	assert_eq(int(Dictionary(screen.get_model().pocket).get("galho", 0)), 1)
+	assert_true(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
+
+	screen.set_player_position_for_tests(chest_position)
+	screen.call("_update_labels")
+	var pending_state: Dictionary = screen.call("_view_state", "")
+	assert_true(bool(pending_state.get("deposit_available", false)))
+	assert_true(str(pending_state.get("deposit_tooltip", "")).contains("continua salvando"))
+
+	screen.call("_deposit_near_chest")
+	await _wait_process_frames(10)
+
+	assert_true(Dictionary(screen.get_model().pocket).is_empty())
+	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 1)
+	assert_eq(client.captured_events.size(), 2)
+	assert_eq(str(Dictionary(client.captured_events[0]).get("event_type", "")), "collect_batch")
+	assert_eq(str(Dictionary(client.captured_events[1]).get("event_type", "")), "deposit_all")
+	assert_eq(int(Dictionary(client.captured_events[0]).get("expected_revision", -1)), 0)
+	assert_eq(int(Dictionary(client.captured_events[1]).get("expected_revision", -1)), 1)
+	assert_eq(int(screen.get("_snapshot_revision")), 2)
 
 func test_openworld_free_joystick_activates_anywhere_drags_and_resets() -> void:
 	var screen = ScreenScript.new()

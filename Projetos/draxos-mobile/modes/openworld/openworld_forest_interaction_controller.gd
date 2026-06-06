@@ -65,12 +65,8 @@ func deposit_near_chest() -> void:
 		_update()
 		return
 	if _uses_integrated_authority():
-		if not _can_record_authoritative_event():
-			model.last_message = "Aguarde o Bosque salvar antes de depositar."
-			_update()
-			return
 		var deposit_result: Dictionary = model.deposit_all()
-		model.last_message = "%s Salvando..." % str(deposit_result.get("message", "Bolso depositado no bau.")).trim_suffix(".")
+		model.last_message = "%s Salvando Bosque..." % str(deposit_result.get("message", "Bolso depositado no bau.")).trim_suffix(".")
 		_record_event("deposit_all", {
 			"position": runtime.position_payload(),
 			"session_seconds": int(runtime.session_seconds),
@@ -96,12 +92,8 @@ func craft_recipe(recipe_id: String) -> void:
 			model.last_message = model.recipe_state_text(recipe_id)
 			_update()
 			return
-		if not _can_record_authoritative_event():
-			model.last_message = "Aguarde o Bosque salvar antes de criar."
-			_update()
-			return
 		var craft_result: Dictionary = model.craft(recipe_id)
-		model.last_message = "%s Salvando..." % str(craft_result.get("message", "Criacao enviada ao servidor.")).trim_suffix(".")
+		model.last_message = "%s Salvando Bosque..." % str(craft_result.get("message", "Criacao enviada ao servidor.")).trim_suffix(".")
 		_record_event("craft", {
 			"recipe_id": recipe_id,
 			"position": runtime.position_payload(),
@@ -159,7 +151,7 @@ func _advance_nearby_collection(delta: float) -> void:
 			"session_seconds": int(runtime.session_seconds),
 		})
 	var authoritative_online := _uses_integrated_authority()
-	var result: Dictionary = model.advance_collection(delta, false, distance, not authoritative_online)
+	var result: Dictionary = model.advance_collection(delta, false, distance, true)
 	if bool(result.get("completed", false)):
 		runtime.mark_collected(node_id)
 		if authoritative_online and bridge != null and bridge.has_method("remember_pending_collected_node"):

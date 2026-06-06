@@ -7,6 +7,8 @@ const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 
 const EVENT_RETRY_SECONDS := 1.25
 const MAX_EVENT_QUEUE_SIZE := 20
+const COLLECT_BATCH_DEBOUNCE_SECONDS := 0.18
+const MAX_COLLECT_BATCH_NODES := 12
 const MAX_EVENT_RETRY_BACKOFF_SECONDS := 8.0
 const ACTION_SCOPE_TEMPLATE := "mode:openworld:%s"
 const SOURCE_ID := "open_mode_shell:openworld"
@@ -35,6 +37,9 @@ var _event_flush_active := false
 var _event_retry_scheduled := false
 var _event_retry_attempts := 0
 var _client_event_seq := 0
+var _collect_batch_nodes: Array[Dictionary] = []
+var _collect_batch_payload: Dictionary = {}
+var _collect_batch_flush_scheduled := false
 var _pending_collected_nodes: Dictionary = {}
 var _last_pending_request_id := ""
 var _last_heartbeat_seconds := 0.0
@@ -62,7 +67,7 @@ func network_busy() -> bool:
 	return _network_busy
 
 func has_pending_events() -> bool:
-	return _event_flush_active or not _event_queue.is_empty() or _pending_event_count > 0
+	return _event_flush_active or not _event_queue.is_empty() or not _collect_batch_nodes.is_empty() or _pending_event_count > 0
 
 func can_complete() -> bool:
 	return _server_session_id != "" and not _completed and _server_synced and not has_pending_events()
@@ -71,7 +76,7 @@ func uses_authority() -> bool:
 	return is_active() and _server_session_id != "" and not _completed
 
 func can_record_event() -> bool:
-	return uses_authority() and _runtime_allows_mutation() and not has_pending_events()
+	return uses_authority() and _runtime_allows_mutation()
 
 func session_state() -> String:
 	return _session_state
@@ -82,9 +87,11 @@ func is_completed() -> bool:
 func pending_summary_text() -> String:
 	if _last_pending_request_id != "":
 		return "pedido %s" % _last_pending_request_id
+	if not _collect_batch_nodes.is_empty():
+		return "Sincronizando coleta em lote"
 	if has_pending_events():
 		var count := _event_queue.size() + (1 if _event_flush_active else 0)
-		return "salvando %d acao(oes)" % count
+		return "Salvando %d acoes" % count
 	return ""
 
 func has_pending_collected_node(node_id: String) -> bool:
@@ -240,6 +247,7 @@ func complete_session(result_payload: Dictionary) -> Dictionary:
 		_completed = true
 		_session_state = SESSION_COMPLETED
 		_event_queue.clear()
+		_clear_collect_batch()
 		_pending_event_count = 0
 		_pending_collected_nodes = {}
 		var reward_summary := _reward_summary(body, reward)
@@ -312,6 +320,7 @@ func abandon_session(reason: String = "player_abandoned") -> Dictionary:
 		_server_synced = false
 		_completed = false
 		_event_queue.clear()
+		_clear_collect_batch()
 		_pending_event_count = 0
 		_pending_collected_nodes = {}
 		_last_pending_request_id = ""
@@ -341,6 +350,7 @@ func hydrate_session(session: Dictionary, apply_remote_position := true) -> bool
 		apply_remote_snapshot(snapshot_payload, apply_remote_position)
 	_server_synced = true
 	_pending_event_count = 0
+	_clear_collect_batch()
 	_pending_collected_nodes = {}
 	_session_state = SESSION_COMPLETED if _completed else SESSION_SYNCED
 	_emit_state_changed()
@@ -358,6 +368,75 @@ func record_event_deferred(event_type: String, event_payload: Dictionary) -> voi
 	if not _runtime_allows_mutation():
 		_runtime_mutation_block_result("modes/session/event")
 		return
+	if event_type == "collect_complete":
+		_record_collect_complete_for_batch(event_payload)
+		return
+	_flush_collect_batch_now()
+	_enqueue_event(event_type, event_payload)
+	call_deferred("flush_event_queue")
+
+func _record_collect_complete_for_batch(event_payload: Dictionary) -> void:
+	if _event_queue.size() >= MAX_EVENT_QUEUE_SIZE:
+		_set_model_message("Sincronizacao cheia. Aguarde o Bosque salvar antes de agir.")
+		_emit_client_telemetry("mode_sync_failed", {
+			"result": "queue_full",
+			"event_type": "collect_batch",
+		})
+		_emit_state_changed()
+		return
+	_client_event_seq += 1
+	var payload := event_payload.duplicate(true)
+	payload["client_event_seq"] = _client_event_seq
+	if not payload.has("client_position_revision"):
+		payload["client_position_revision"] = int(payload.get("position_revision", 0))
+	var node_id := str(payload.get("node_id", "")).strip_edges()
+	var item_id := str(payload.get("item_id", "")).strip_edges()
+	if node_id == "" or item_id == "":
+		return
+	_collect_batch_nodes.append({
+		"node_id": node_id,
+		"item_id": item_id,
+		"session_seconds": int(payload.get("session_seconds", 0)),
+		"client_event_seq": _client_event_seq,
+	})
+	_collect_batch_payload = {
+		"position": _as_dictionary(payload.get("position", {})).duplicate(true),
+		"session_seconds": int(payload.get("session_seconds", 0)),
+		"client_event_seq": _client_event_seq,
+		"client_position_revision": int(payload.get("client_position_revision", 0)),
+	}
+	_update_pending_sync_state("collect_batch")
+	if _collect_batch_nodes.size() >= MAX_COLLECT_BATCH_NODES:
+		_flush_collect_batch_now()
+		call_deferred("flush_event_queue")
+	else:
+		_schedule_collect_batch_flush()
+
+func _schedule_collect_batch_flush() -> void:
+	if _collect_batch_flush_scheduled:
+		return
+	_collect_batch_flush_scheduled = true
+	call_deferred("_flush_collect_batch_after_debounce")
+
+func _flush_collect_batch_after_debounce() -> void:
+	if is_inside_tree():
+		await get_tree().create_timer(COLLECT_BATCH_DEBOUNCE_SECONDS).timeout
+	_collect_batch_flush_scheduled = false
+	if _flush_collect_batch_now():
+		flush_event_queue()
+
+func _flush_collect_batch_now() -> bool:
+	if _collect_batch_nodes.is_empty():
+		return false
+	var payload := _collect_batch_payload.duplicate(true)
+	payload["nodes"] = _collect_batch_nodes.duplicate(true)
+	payload["batch_size"] = _collect_batch_nodes.size()
+	if _enqueue_event("collect_batch", payload):
+		_clear_collect_batch()
+		return true
+	return false
+
+func _enqueue_event(event_type: String, event_payload: Dictionary) -> bool:
 	if _event_queue.size() >= MAX_EVENT_QUEUE_SIZE:
 		_set_model_message("Sincronizacao cheia. Aguarde o Bosque salvar antes de agir.")
 		_emit_client_telemetry("mode_sync_failed", {
@@ -365,7 +444,7 @@ func record_event_deferred(event_type: String, event_payload: Dictionary) -> voi
 			"event_type": event_type,
 		})
 		_emit_state_changed()
-		return
+		return false
 	_client_event_seq += 1
 	var payload := event_payload.duplicate(true)
 	payload["client_event_seq"] = _client_event_seq
@@ -377,7 +456,11 @@ func record_event_deferred(event_type: String, event_payload: Dictionary) -> voi
 		"client_event_seq": _client_event_seq,
 		"position_revision": int(payload.get("client_position_revision", 0)),
 	})
-	_pending_event_count = _event_queue.size() + (1 if _event_flush_active else 0)
+	_update_pending_sync_state(event_type)
+	return true
+
+func _update_pending_sync_state(event_type: String) -> void:
+	_pending_event_count = _event_queue.size() + _collect_batch_nodes.size() + (1 if _event_flush_active else 0)
 	_server_synced = false
 	_session_state = SESSION_PENDING
 	if model != null and str(model.get("last_message")).strip_edges() == "":
@@ -387,13 +470,13 @@ func record_event_deferred(event_type: String, event_payload: Dictionary) -> voi
 		"event_type": event_type,
 	})
 	_emit_state_changed()
-	call_deferred("flush_event_queue")
 
 func flush_event_queue() -> void:
 	if _server_session_id == "":
 		return
 	if _event_flush_active:
 		return
+	_flush_collect_batch_now()
 	if not _runtime_allows_mutation():
 		_runtime_mutation_block_result("modes/session/event")
 		return
@@ -441,6 +524,7 @@ func flush_event_queue() -> void:
 			if bool(body.get("resync_required", false)):
 				await resync_session("Bosque sincronizado.")
 				_event_queue.clear()
+				_clear_collect_batch()
 				break
 			_apply_event_ack(body, job)
 			_event_retry_attempts = 0
@@ -453,10 +537,11 @@ func flush_event_queue() -> void:
 			session_store.fail_pending_mutation(_last_pending_request_id, body)
 			_event_queue.pop_front()
 			if error_code == "MODE_SESSION_REVISION_STALE":
-				await resync_session("Bosque resincronizado. Repita a ultima acao se ela nao apareceu.")
+				await resync_session("Bosque resincronizado. Confira bolso e bau.")
 			else:
 				await resync_session("Bosque resincronizado apos erro do servidor.")
 			_event_queue.clear()
+			_clear_collect_batch()
 			_emit_client_telemetry("mode_sync_failed", {"result": "event_failed", "error_code": error_code})
 		else:
 			_set_model_message("Sincronizacao pendente. Tentando novamente...")
@@ -486,6 +571,8 @@ func _apply_event_ack(body: Dictionary, _job: Dictionary) -> void:
 	if snapshot_patch.is_empty() and not session.is_empty():
 		var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
 		snapshot_patch = _event_snapshot_patch(snapshot_payload)
+	if _has_queued_local_inventory_mutation():
+		_filter_inventory_patch_after_optimistic_mutation(snapshot_patch)
 	if not snapshot_patch.is_empty() and model != null and model.has_method("apply_authoritative_patch"):
 		model.apply_authoritative_patch(snapshot_patch, true)
 		var collected_nodes := _as_dictionary(snapshot_patch.get("collected_nodes", {}))
@@ -497,6 +584,24 @@ func _apply_event_ack(body: Dictionary, _job: Dictionary) -> void:
 	_server_synced = true
 	if not _completed:
 		_session_state = SESSION_SYNCED
+
+func _has_queued_local_inventory_mutation() -> bool:
+	for queued_job: Dictionary in _event_queue:
+		var queued_type := str(queued_job.get("event_type", "")).strip_edges()
+		if queued_type == "deposit_all" or queued_type == "craft":
+			return true
+	return false
+
+func _filter_inventory_patch_after_optimistic_mutation(snapshot_patch: Dictionary) -> void:
+	for key: String in [
+		"pocket",
+		"chest",
+		"upgrades",
+		"capacity",
+		"pocket_weight",
+		"current_speed",
+	]:
+		snapshot_patch.erase(key)
 
 func _event_snapshot_patch(snapshot_payload: Dictionary) -> Dictionary:
 	var patch: Dictionary = {}
@@ -526,6 +631,11 @@ func _clear_confirmed_pending_nodes(collected_nodes: Dictionary) -> void:
 func retry_queued_events_now() -> void:
 	_event_retry_scheduled = false
 	await flush_event_queue()
+
+func _clear_collect_batch() -> void:
+	_collect_batch_nodes.clear()
+	_collect_batch_payload.clear()
+	_collect_batch_flush_scheduled = false
 
 func resync_session(success_message: String) -> bool:
 	if not is_active():
@@ -568,11 +678,19 @@ func debug_snapshot() -> Dictionary:
 		"network_busy": _network_busy,
 		"pending_event_count": _pending_event_count,
 		"event_queue_size": _event_queue.size(),
+		"collect_batch_size": _collect_batch_nodes.size(),
+		"event_queue_types": _event_queue_types_for_debug(),
 		"event_flush_active": _event_flush_active,
 		"event_retry_scheduled": _event_retry_scheduled,
 		"event_retry_attempts": _event_retry_attempts,
 		"last_pending_request_id": _last_pending_request_id,
 	}
+
+func _event_queue_types_for_debug() -> Array[String]:
+	var result: Array[String] = []
+	for job: Dictionary in _event_queue:
+		result.append(str(job.get("event_type", "")))
+	return result
 
 func record_exit_preserved() -> void:
 	if _server_session_id == "" or _completed:
