@@ -78,6 +78,28 @@ Deno.test("openworld session event payload validates event type and revision", (
   );
 });
 
+Deno.test("openworld session event payload accepts batched collection", () => {
+  const event = sessionEventFromBody({
+    session_id: "00000000-0000-4000-8000-000000000101",
+    mode_id: OPENWORLD_MODE_ID,
+    slice_id: OPENWORLD_SLICE_ID,
+    event_type: "collect_batch",
+    expected_revision: 3,
+    event_payload: {
+      nodes: [
+        { node_id: "node_galho_01", item_id: "galho", session_seconds: 42 },
+        { node_id: "node_folha_01", item_id: "folha", session_seconds: 43 },
+      ],
+      position: { x: 220, y: 250 },
+      session_seconds: 43,
+    },
+  });
+
+  assert(event !== null, "collect_batch event should parse");
+  assertEq(event.event_type, "collect_batch", "batched event type should be preserved");
+  assertEq(event.expected_revision, 3, "batched event should preserve the revision gate");
+});
+
 Deno.test("openworld guidance update event validates lightweight guidance state", () => {
   const event = sessionEventFromBody({
     session_id: "00000000-0000-4000-8000-000000000101",

@@ -148,6 +148,7 @@ const OPENWORLD_EVENT_TYPES = new Set([
   "collect_start",
   "collect_cancel",
   "collect_complete",
+  "collect_batch",
   "deposit_all",
   "craft",
   "guidance_update",

@@ -7,6 +7,10 @@ const COLLECTION_SYNC_MIGRATION_PATH =
   "server/schema/migrations/202606040002_openworld_bosque_collection_sync_v1.sql";
 const SUPABASE_COLLECTION_SYNC_MIGRATION_PATH =
   "supabase/migrations/202606040002_openworld_bosque_collection_sync_v1.sql";
+const COLLECT_BATCH_MIGRATION_PATH =
+  "server/schema/migrations/202606050001_openworld_bosque_collect_batch_v1.sql";
+const SUPABASE_COLLECT_BATCH_MIGRATION_PATH =
+  "supabase/migrations/202606050001_openworld_bosque_collect_batch_v1.sql";
 const MODE_DOMAIN_PATH = "server/functions/_shared/mode_domain.ts";
 const SUPABASE_MODE_DOMAIN_PATH = "supabase/functions/_shared/mode_domain.ts";
 
@@ -118,8 +122,10 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
   const supabaseCollectionSyncMigration = await projectText(
     SUPABASE_COLLECTION_SYNC_MIGRATION_PATH,
   );
+  const collectBatchMigration = await projectText(COLLECT_BATCH_MIGRATION_PATH);
+  const supabaseCollectBatchMigration = await projectText(SUPABASE_COLLECT_BATCH_MIGRATION_PATH);
   const effectiveMigration =
-    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}`;
+    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}\n${collectBatchMigration}`;
   const modeDomain = await projectText(MODE_DOMAIN_PATH);
   const supabaseModeDomain = await projectText(SUPABASE_MODE_DOMAIN_PATH);
 
@@ -138,10 +144,25 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
     "guidance_update",
     "mode domain should accept Bosque guidance updates",
   );
+  assertIncludes(
+    modeDomain,
+    "collect_batch",
+    "mode domain should accept batched Bosque collection events",
+  );
   assertEq(
     normalizeNewlines(collectionSyncMigration),
     normalizeNewlines(supabaseCollectionSyncMigration),
     "collection sync migration should be mirrored between server and supabase",
+  );
+  assertEq(
+    normalizeNewlines(collectBatchMigration),
+    normalizeNewlines(supabaseCollectBatchMigration),
+    "collect batch migration should be mirrored between server and supabase",
+  );
+  assertIncludes(
+    collectBatchMigration,
+    "'collect_batch'",
+    "collect batch migration should allow collect_batch in event audit",
   );
   assertIncludes(
     effectiveMigration,
@@ -160,7 +181,7 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
 });
 
 Deno.test("openworld forest event migration preserves position except move heartbeat", async () => {
-  const migration = await projectText(COLLECTION_SYNC_MIGRATION_PATH);
+  const migration = await projectText(COLLECT_BATCH_MIGRATION_PATH);
   const applyEventFunction = sqlFunctionBody(migration, "openworld_forest_apply_event_v1");
   const moveBranchStart = applyEventFunction.indexOf("if p_event_type = 'move_heartbeat'");
   const collectBranchStart = applyEventFunction.indexOf("elsif p_event_type = 'collect_start'");
@@ -181,6 +202,42 @@ Deno.test("openworld forest event migration preserves position except move heart
     applyEventFunction.slice(collectBranchStart).includes("'{player_position}'"),
     false,
     "collection/deposit/craft/guidance branches should preserve persisted player_position",
+  );
+});
+
+Deno.test("openworld forest collect batch migration validates nodes atomically", async () => {
+  const migration = await projectText(COLLECT_BATCH_MIGRATION_PATH);
+  const applyEventFunction = sqlFunctionBody(migration, "openworld_forest_apply_event_v1");
+  const batchBranchStart = applyEventFunction.indexOf("elsif p_event_type = 'collect_batch'");
+  const depositBranchStart = applyEventFunction.indexOf("elsif p_event_type = 'deposit_all'");
+  assert(batchBranchStart >= 0, "apply event function should support collect_batch");
+  assert(depositBranchStart > batchBranchStart, "deposit should apply after collect_batch");
+  const batchBranch = applyEventFunction.slice(batchBranchStart, depositBranchStart);
+
+  assertIncludes(
+    batchBranch,
+    "jsonb_array_elements(nodes_payload)",
+    "collect_batch should iterate payload nodes inside one event",
+  );
+  assertIncludes(
+    batchBranch,
+    "batch_seen_nodes ? batch_node_id",
+    "collect_batch should reject duplicate nodes in the same batch",
+  );
+  assertIncludes(
+    batchBranch,
+    "OPENWORLD_NODE_ALREADY_COLLECTED",
+    "collect_batch should reject already collected nodes",
+  );
+  assertIncludes(
+    batchBranch,
+    "MODE_RESULT_REJECTED",
+    "collect_batch should reject capacity overflow",
+  );
+  assertIncludes(
+    batchBranch,
+    "batch_count < 1",
+    "collect_batch should reject empty batches",
   );
 });
 
