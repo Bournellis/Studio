@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
 - Last Updated: `2026-06-06`
-- Prompt: `REWARD-CARD-REDESIGN-BATCH-03-USING-V4-2`
-- Status: `REWARD_CARD_REDESIGN_BATCH_03_USING_V4_2_COMPLETE`
+- Prompt: `CARD-IMPACT-V5-ENEMY-CAUSAL-SIGNATURES`
+- Status: `CARD_IMPACT_V5_ENEMY_CAUSAL_SIGNATURES_COMPLETE`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `199/199` tests passing, `1827` asserts.
+- GUT: `211/211` tests passing, `1906` asserts.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -23,7 +23,7 @@
 - AutoRun gate smoke: `--mode=gate --preset=smoke --baseline=track02_smoke_v1` passes the official 3-case smoke envelope.
 - AutoRun gate quick: `--mode=gate --preset=quick --baseline=track02_quick_v1` passes 30 macro-route cases and writes scorecard output.
 - Official gate baselines: `data/lab/baselines/track02_smoke_v1.json` and `data/lab/baselines/track02_quick_v1.json`.
-- Card Impact Pack: `tools/run_card_impact.gd` runs explicit `before`, `after` and `compare` phases for `data/lab/card_impact/track02_card_impact_v1.json`, `data/lab/card_impact/track02_card_impact_v2.json`, `data/lab/card_impact/track02_card_impact_v3.json`, `data/lab/card_impact/track02_card_impact_v4.json`, `data/lab/card_impact/track02_card_impact_v4_1.json` and `data/lab/card_impact/track02_card_impact_v4_2.json`.
+- Card Impact Pack: `tools/run_card_impact.gd` runs explicit `before`, `after` and `compare` phases for `data/lab/card_impact/track02_card_impact_v1.json`, `data/lab/card_impact/track02_card_impact_v2.json`, `data/lab/card_impact/track02_card_impact_v3.json`, `data/lab/card_impact/track02_card_impact_v4.json`, `data/lab/card_impact/track02_card_impact_v4_1.json`, `data/lab/card_impact/track02_card_impact_v4_2.json` and `data/lab/card_impact/track02_card_impact_v5.json`.
 - Card Impact V4 coverage: 108 active player class/reward card variants, 30 active enemy cards in report-only signature mode and 15 legacy inactive `elemental_*` cards audited.
 - Card Impact gate: `--phase=before --mode=gate`, `--phase=after --mode=gate` and `--phase=compare --mode=gate` all pass for the latest V4 reward-card redesign cycle; compare reports zero structural errors, zero new failures, zero removed records and zero status changes across battle/scenario/run_lab components.
 - Card Impact smoke-tuning output: `user://card_impact/smoke_tuning_v1` reports one expected metric-impact row for `enemy_ar_rajada`: `damage_to_player_hero` `4 -> 5` and isolated harness `player_hp` `56 -> 55`.
@@ -53,12 +53,30 @@
 - Card Impact V4.2 Card Flow Expectations gate: `before`, `after` and `compare` pass at `user://card_impact/track02_card_impact_v4_2_card_flow_expectations` with 108 player cards, 30 enemy report-only cards, 15 legacy inactive cards, 3 expected card-flow player cards and 21/21 expectation checks passing.
 - Reward Card Redesign Batch 03 Using V4.2 gate: `before`, `after` and `compare` pass at `user://card_impact/reward_card_redesign_batch_03_v4_2` with 108 player cards, 30 enemy report-only cards, 15 legacy inactive cards, 12 impacted target cards, 18 effect changes, zero structural errors, zero new failures, zero removed records, zero status changes and 21/21 Card Flow Expectations passing.
 - Reward Card Redesign Batch 03 regression coverage: Battle Lab remains 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick remain green; `validate.gd` passes with 199/199 GUT tests and 1827 asserts.
+- Card Impact V5 Enemy Causal Signatures gate: `before`, `after` and `compare` pass at `user://card_impact/track02_card_impact_v5_enemy_causal_signatures` with 108 player cards, 30 required enemy causal signatures, 15 legacy inactive cards, 3 expected card-flow player cards, zero structural errors, zero new failures, zero removed records and zero status changes.
+- Card Impact V5 enemy coverage: 30/30 enemy cards played, 30/30 enemy signatures present, 0 missing, 30 clean signatures, 0 ambiguous signatures and 0 not-played enemy cases.
+- Card Impact V5 effect families: enemy summon/stat signatures cover all 30 enemy cards, enemy keyword signatures cover 24 current enemy cards, and first-combat enemy damage signatures cover 29 current enemy cards.
+- Card Impact V5 regression coverage: V4.2 historical compare stays green at `user://card_impact/reward_card_redesign_batch_03_v4_2`; Battle Lab remains 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick remain green; `validate.gd` passes with 211/211 GUT tests and 1906 asserts.
 - Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 - Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
 - Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
 - Foundation Pass 7 added `tools/catalog_source_loader.gd` and GUT coverage for single-JSON semantic equivalence plus future catalog domains without changing route metrics, generated resource semantics, or gameplay behavior.
 - Foundation Pass 8 moved staged combat, manual attack, slot damage, hero damage, and destruction queue handling into `battle/combat_resolution_director.gd` with wrapper/director parity coverage and without changing route metrics or gameplay behavior.
 - Foundation Pass 9 closed the foundation review in docs only, added `docs/foundation-closeout.md`, refreshed the architecture ownership map, and separated product/playtest follow-up from optional technical extraction debt.
+
+## Card Impact V5 Enemy Causal Signatures
+
+- Purpose: promote the 30 active enemy cards from report-only participation coverage to required causal signatures before broad enemy-card redesigns.
+- Scope: tooling only; no gameplay, card, enemy, route, reward, shop, relic or balance changes.
+- New pack: `data/lab/card_impact/track02_card_impact_v5.json`.
+- Coverage: preserves V4.2 player/card-flow coverage with 108 player cards, 3 expected Colheita card-flow cases, 21 Card Flow Expectation checks, 30 active enemy cards and 15 legacy inactive cards.
+- Enemy harness: V5 enemy cases use `effect_signature_scope="enemy"`, `effect_signature_required=true`, tag `enemy_causal_signature`, `policy_id=end_turn_only`, a one-turn duel setup and a commander-controlled hand/deck containing only the enemy card under test.
+- Captured phases: snapshot before enemy play, snapshot after commander play and snapshot after the first combat cycle.
+- New signature fields: `enemy_card_played`, `enemy_card_play_count`, `enemy_summons_created`, `enemy_summoned_count`, `enemy_summoned_attack_total`, `enemy_summoned_health_total`, `enemy_summoned_keyword_count`, `enemy_keywords_added`, `enemy_damage_to_player_hero`, `enemy_damage_to_player_slots`, `enemy_player_units_delta`, `enemy_combat_damage_to_player_hero`, `enemy_combat_damage_to_player_slots`, `enemy_signature_phase` and `enemy_signature_confidence`.
+- Gate behavior: missing enemy-card case, not-played enemy card, missing enemy causal signature, rejected engine action, removed after record, new after `FAIL` or failed Card Flow Expectation blocks `--mode=gate`; enemy numeric deltas remain review data.
+- Validation result: V5 `before`, `after` and `compare` pass at `user://card_impact/track02_card_impact_v5_enemy_causal_signatures` with 30/30 enemy cards played, 30/30 enemy signatures present, 30 clean signatures, 0 ambiguous, 0 missing and 21/21 Card Flow Expectations passing.
+- Regression result: V4.2 historical compare stays green at `user://card_impact/reward_card_redesign_batch_03_v4_2`; Battle Lab 9 PASS / 3 WARN / 0 FAIL, Scenario Fixtures 9 PASS / 3 WARN / 0 FAIL, AutoRun smoke/quick gates green, and `validate.gd` green with 211/211 GUT tests and 1906 asserts.
+- Operational lesson: V5 should be the default harness before the first enemy-card redesign batch. It makes attack, health, keyword, summon and first-combat pressure movement visible without treating intentional numeric movement as a structural regression.
 
 ## First Tuning Pass
 

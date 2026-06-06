@@ -58,9 +58,11 @@ static func run_case(catalog, pack: Dictionary, case_data: Dictionary, options: 
 		var policy_options: Dictionary = _policy_options(case_data, options)
 		policy_options["target_capture"] = target_capture.duplicate(true)
 		policy_options["target_already_captured"] = bool(metrics.get("target_capture_complete", false))
-		var policy_result: Dictionary = BattlePolicyScript.play_turn(engine, policy_id, policy_options)
+		var policy_result: Dictionary = _play_enemy_signature_turn(engine, case_data) if _is_enemy_signature_case(case_data) else BattlePolicyScript.play_turn(engine, policy_id, policy_options)
 		var state: Dictionary = _engine_state(engine)
 		_record_policy_result(metrics, policy_result)
+		if _is_enemy_signature_case(case_data):
+			_record_enemy_signature_result(metrics, policy_result)
 		metrics["combat_cycles"] = int(metrics.get("combat_cycles", 0)) + 1
 		_record_target_capture_result(metrics, policy_result, state)
 		_append_timeline(metrics, state, policy_result)
@@ -170,6 +172,9 @@ static func _engine_state(engine) -> Dictionary:
 		"deck": engine.deck.duplicate(),
 		"discard": engine.discard.duplicate(),
 		"hand": engine.hand.duplicate(),
+		"enemy_deck": engine.enemy_deck.duplicate(),
+		"enemy_discard": engine.enemy_discard.duplicate(),
+		"enemy_hand": engine.enemy_hand.duplicate(),
 		"pending_choices": engine.pending_choices.duplicate(true),
 		"player_slots": engine.player_slots.duplicate(true),
 		"enemy_slots": engine.enemy_slots.duplicate(true),
@@ -245,6 +250,12 @@ static func _initial_metrics(pack: Dictionary, case_data: Dictionary, encounter:
 		"card_effect_signature": {},
 		"card_effect_signature_present": false,
 		"card_effect_signature_missing_reason": "",
+		"enemy_card_under_test_played": false,
+		"enemy_card_under_test_play_count": 0,
+		"enemy_card_effect_samples": [],
+		"enemy_card_effect_signature": {},
+		"enemy_card_effect_signature_present": false,
+		"enemy_card_effect_signature_missing_reason": "",
 		"effect_families": [],
 		"policy_action_rejected": false,
 		"outcome": str(initial_state.get("outcome", "")),
@@ -302,6 +313,94 @@ static func _record_policy_result(metrics: Dictionary, policy_result: Dictionary
 	if not bool(policy_result.get("ok", true)):
 		metrics["policy_action_rejected"] = true
 
+static func _record_enemy_signature_result(metrics: Dictionary, policy_result: Dictionary) -> void:
+	var enemy_cards_played: Array = Array(policy_result.get("enemy_cards_played", []))
+	var card_under_test: String = str(metrics.get("card_under_test", ""))
+	var play_count: int = 0
+	for play_value: Variant in enemy_cards_played:
+		if typeof(play_value) != TYPE_DICTIONARY:
+			continue
+		if str(Dictionary(play_value).get("card_id", "")) == card_under_test:
+			play_count += 1
+	if play_count > 0:
+		metrics["enemy_card_under_test_played"] = true
+		metrics["enemy_card_under_test_play_count"] = int(metrics.get("enemy_card_under_test_play_count", 0)) + play_count
+		metrics["card_under_test_played"] = true
+		metrics["card_under_test_play_count"] = int(metrics.get("card_under_test_play_count", 0)) + play_count
+		metrics["target_card_play_count"] = int(metrics.get("enemy_card_under_test_play_count", 0))
+	var samples: Array = Array(metrics.get("enemy_card_effect_samples", []))
+	for sample_value: Variant in Array(policy_result.get("effect_samples", [])):
+		if typeof(sample_value) == TYPE_DICTIONARY:
+			samples.append(Dictionary(sample_value).duplicate(true))
+	metrics["enemy_card_effect_samples"] = samples
+
+static func _play_enemy_signature_turn(engine, case_data: Dictionary) -> Dictionary:
+	var result: Dictionary = {
+		"ok": true,
+		"policy_id": str(case_data.get("policy_id", "end_turn_only")),
+		"cards_played": [],
+		"enemy_cards_played": [],
+		"active_used": false,
+		"active_choice": "",
+		"pending_choices_resolved": 0,
+		"failed_actions": [],
+		"combat_cycle": {},
+		"effect_samples": [],
+		"target_captured": true,
+		"stopped_after_target": true
+	}
+	var card_under_test: String = str(Dictionary(case_data.get("card_under_test", {})).get("id", ""))
+	var before_play: Dictionary = BattleEffectSignatureScript.snapshot_from_engine(engine)
+	var play: Dictionary = engine._best_enemy_play()
+	if play.is_empty():
+		result["ok"] = false
+		result["failed_actions"] = [{"message": "Enemy commander did not find a legal play.", "kind": "enemy_card"}]
+		return result
+	var hand_index: int = int(play.get("hand_index", -1))
+	var enemy_hand: Array = Array(engine.enemy_hand)
+	var played_card_id: String = str(enemy_hand[hand_index]) if hand_index >= 0 and hand_index < enemy_hand.size() else ""
+	if played_card_id != card_under_test:
+		result["ok"] = false
+		result["failed_actions"] = [{
+			"message": "Enemy commander selected `%s` instead of `%s`." % [played_card_id, card_under_test],
+			"kind": "enemy_card"
+		}]
+		return result
+	if not engine._play_enemy_card_from_hand(hand_index, Dictionary(play.get("target", {}))):
+		result["ok"] = false
+		result["failed_actions"] = [{
+			"card_id": played_card_id,
+			"hand_index": hand_index,
+			"target": Dictionary(play.get("target", {})).duplicate(true),
+			"message": "Enemy card play rejected by BattleEngine.",
+			"kind": "enemy_card"
+		}]
+		return result
+	var after_play: Dictionary = BattleEffectSignatureScript.snapshot_from_engine(engine)
+	var effect_samples: Array = Array(result.get("effect_samples", []))
+	effect_samples.append(BattleEffectSignatureScript.build_enemy_play_sample(played_card_id, before_play, after_play))
+	var enemy_cards_played: Array = Array(result.get("enemy_cards_played", []))
+	enemy_cards_played.append({
+		"card_id": played_card_id,
+		"hand_index": hand_index,
+		"target": Dictionary(play.get("target", {})).duplicate(true),
+		"score": float(play.get("score", 0.0))
+	})
+	result["enemy_cards_played"] = enemy_cards_played
+	engine.enemy_hand_count = 0
+	if str(engine.get_state().get("outcome", "")) == "":
+		var cycle_result: Dictionary = engine.resolve_combat_cycle()
+		result["combat_cycle"] = cycle_result.duplicate(true)
+		if not bool(cycle_result.get("ok", false)):
+			var failed_cycle: Array = Array(result.get("failed_actions", []))
+			failed_cycle.append({"message": str(cycle_result.get("message", "Combat cycle rejected.")), "kind": "combat_cycle"})
+			result["failed_actions"] = failed_cycle
+			result["ok"] = false
+	var after_combat: Dictionary = BattleEffectSignatureScript.snapshot_from_engine(engine)
+	effect_samples.append(BattleEffectSignatureScript.build_enemy_combat_sample(played_card_id, after_play, after_combat))
+	result["effect_samples"] = effect_samples
+	return result
+
 static func _record_target_capture_result(metrics: Dictionary, policy_result: Dictionary, state: Dictionary) -> void:
 	if not bool(policy_result.get("target_captured", false)):
 		return
@@ -331,6 +430,7 @@ static func _append_timeline(metrics: Dictionary, state: Dictionary, policy_resu
 		"player_units_alive": _occupied_count(Array(state.get("player_slots", []))),
 		"enemy_units_alive": _occupied_count(Array(state.get("enemy_slots", []))),
 		"cards_played": Array(policy_result.get("cards_played", [])).duplicate(true),
+		"enemy_cards_played": Array(policy_result.get("enemy_cards_played", [])).duplicate(true),
 		"effect_samples": Array(policy_result.get("effect_samples", [])).duplicate(true),
 		"active_used": bool(policy_result.get("active_used", false)),
 		"pending_choices_resolved": int(policy_result.get("pending_choices_resolved", 0)),
@@ -358,7 +458,7 @@ static func _finalize_metrics(metrics: Dictionary, initial_state: Dictionary, fi
 	var card_kind: String = str(metrics.get("card_under_test_kind", ""))
 	metrics["card_under_test_participated"] = bool(metrics.get("card_under_test_played", false))
 	if card_kind == "enemy":
-		metrics["card_under_test_participated"] = bool(metrics.get("card_under_test_seen", false)) and int(metrics.get("combat_cycles", 0)) > 0
+		metrics["card_under_test_participated"] = bool(metrics.get("enemy_card_under_test_played", false)) or (bool(metrics.get("card_under_test_seen", false)) and int(metrics.get("combat_cycles", 0)) > 0)
 	_finalize_effect_signature(metrics)
 	metrics["outcome"] = outcome
 	metrics["terminated"] = outcome != ""
@@ -412,6 +512,12 @@ static func _error_metrics(case_data: Dictionary, message: String) -> Dictionary
 		"card_effect_signature": BattleEffectSignatureScript.empty_missing(str(Dictionary(case_data.get("card_under_test", {})).get("id", "")), message),
 		"card_effect_signature_present": false,
 		"card_effect_signature_missing_reason": message,
+		"enemy_card_under_test_played": false,
+		"enemy_card_under_test_play_count": 0,
+		"enemy_card_effect_samples": [],
+		"enemy_card_effect_signature": BattleEffectSignatureScript.empty_missing(str(Dictionary(case_data.get("card_under_test", {})).get("id", "")), message),
+		"enemy_card_effect_signature_present": false,
+		"enemy_card_effect_signature_missing_reason": message,
 		"effect_families": [],
 		"policy_action_rejected": true,
 		"runner_warnings": [message],
@@ -427,8 +533,9 @@ static func _finalize_effect_signature(metrics: Dictionary) -> void:
 		metrics["effect_families"] = []
 		return
 	var samples: Array = Array(metrics.get("card_effect_samples", []))
+	var card_kind: String = str(metrics.get("card_under_test_kind", ""))
 	if samples.is_empty():
-		var reason: String = "card was not played" if not bool(metrics.get("card_under_test_played", false)) else "card produced no effect sample"
+		var reason: String = "enemy card was not played" if card_kind == "enemy" and not bool(metrics.get("enemy_card_under_test_played", false)) else ("card was not played" if not bool(metrics.get("card_under_test_played", false)) else "card produced no effect sample")
 		var missing_signature: Dictionary = BattleEffectSignatureScript.empty_missing(card_id, reason)
 		missing_signature["card_flow_expected"] = bool(metrics.get("card_flow_expected", false))
 		BattleEffectSignatureScript.apply_card_flow_quality(missing_signature)
@@ -438,13 +545,41 @@ static func _finalize_effect_signature(metrics: Dictionary) -> void:
 		metrics["capture_quality"] = "failed"
 		metrics["ambiguity_reasons"] = [reason]
 		metrics["effect_families"] = []
+		if card_kind == "enemy":
+			metrics["enemy_card_effect_signature"] = missing_signature.duplicate(true)
+			metrics["enemy_card_effect_signature_present"] = false
+			metrics["enemy_card_effect_signature_missing_reason"] = reason
 		return
 	var signature: Dictionary = BattleEffectSignatureScript.aggregate(card_id, samples)
-	_apply_support_metadata(metrics, signature)
+	if card_kind == "enemy":
+		_apply_enemy_signature_metadata(metrics, signature)
+	else:
+		_apply_support_metadata(metrics, signature)
 	metrics["card_effect_signature"] = signature
 	metrics["card_effect_signature_present"] = bool(signature.get("present", false))
 	metrics["card_effect_signature_missing_reason"] = ""
 	metrics["effect_families"] = Array(signature.get("families", [])).duplicate()
+
+static func _apply_enemy_signature_metadata(metrics: Dictionary, signature: Dictionary) -> void:
+	var played: bool = bool(metrics.get("enemy_card_under_test_played", false)) or bool(signature.get("enemy_card_played", false))
+	signature["enemy_card_played"] = played
+	signature["enemy_card_play_count"] = maxi(int(signature.get("enemy_card_play_count", 0)), int(metrics.get("enemy_card_under_test_play_count", 0)))
+	signature["enemy_signature_confidence"] = "clean" if played and bool(signature.get("present", false)) else "missing"
+	signature["support_contamination_status"] = str(signature.get("enemy_signature_confidence", "clean"))
+	signature["signature_confidence"] = str(signature.get("enemy_signature_confidence", "clean"))
+	signature["capture_quality"] = str(signature.get("enemy_signature_confidence", "clean"))
+	signature["target_capture_mode"] = "enemy_causal"
+	signature["target_card_play_count"] = int(signature.get("enemy_card_play_count", 0))
+	signature["target_card_first_play_turn"] = int(metrics.get("turn_count", 0))
+	signature["target_card_first_play_cycle"] = int(metrics.get("combat_cycles", 0))
+	signature["stopped_after_target"] = true
+	metrics["enemy_card_effect_signature"] = signature.duplicate(true)
+	metrics["enemy_card_effect_signature_present"] = bool(signature.get("present", false)) and played
+	metrics["enemy_card_effect_signature_missing_reason"] = "" if bool(metrics.get("enemy_card_effect_signature_present", false)) else "enemy card produced no causal signature"
+	metrics["support_contamination_status"] = str(signature.get("support_contamination_status", "clean"))
+	metrics["signature_confidence"] = str(signature.get("signature_confidence", "clean"))
+	metrics["capture_quality"] = str(signature.get("capture_quality", "clean"))
+	metrics["ambiguity_reasons"] = []
 
 static func _apply_support_metadata(metrics: Dictionary, signature: Dictionary) -> void:
 	var card_id: String = str(metrics.get("card_under_test", ""))
@@ -577,6 +712,9 @@ static func _should_stop_after_target_capture(metrics: Dictionary, target_captur
 	if not bool(target_capture.get("stop_after_target", true)):
 		return false
 	return bool(metrics.get("target_capture_complete", false))
+
+static func _is_enemy_signature_case(case_data: Dictionary) -> bool:
+	return str(case_data.get("effect_signature_scope", "")) == "enemy"
 
 static func _policy_options(case_data: Dictionary, options: Dictionary) -> Dictionary:
 	var policy_options: Dictionary = options.duplicate(true)

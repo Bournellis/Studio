@@ -1,8 +1,8 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-06`
-- Status: `CARD_FLOW_EXPECTATIONS_V4_2_COMPLETE`
-- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures, card-flow observability, explicit card-flow expectations and V4/V4.1/V4.2 reward-card redesign validation
+- Status: `CARD_IMPACT_V5_ENEMY_CAUSAL_SIGNATURES_COMPLETE`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures, card-flow observability, explicit card-flow expectations, enemy-card causal signatures and V4/V4.1/V4.2/V5 card redesign validation
 
 ## Purpose
 
@@ -31,6 +31,8 @@ Card Impact V4.1 Card-Flow Harness Pass keeps the V4 full player matrix and adds
 Card Flow Redesign Batch 01 Using V4.1 is the first real card-flow edit cycle after the harness pass. It makes `draw_if_at_least` resolve as a bonus draw after normal hand refill, adds `necro_colheita_das_almas_lvl2` to the expected card-flow matrix, and proves the compare can surface `cards_drawn`, `deck_delta` and `hand_delta` movement without structural gate failure.
 
 Card Impact V4.2 Card Flow Expectations promotes the proven V4.1 card-flow observations into explicit `required` and `watch` checks for the three Colheita variants. Required checks gate `card_flow_observed`, `cards_drawn`, `deck_delta` and `hand_delta`; watch checks keep exact calibrated values visible without blocking intentional numeric movement that still satisfies the required floor/ceiling.
+
+Card Impact V5 Enemy Causal Signatures promotes the 30 active enemy cards from report-only participation to required causal effect signatures. V5 uses a commander-driven BattleEngine harness to make each enemy card enter play, captures play and first-combat snapshots, reports explicit `enemy_*` effect fields, and gates missing enemy play/signature data structurally while keeping intentional numeric deltas review-only.
 
 Reward Card Redesign Batch 01 Using V4 is the first real reward-card edit cycle executed against the full 108-player-card matrix. It changes six reward/card-upgrade variants across Arcano, Invocador and Necromante, then uses V4 `before -> after -> compare` to confirm that the battle harness exposes the intended effect deltas while Scenario Fixtures, Run Lab and the full validation suite remain stable.
 
@@ -130,6 +132,16 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v4_2 --out=user://card_impact/track02_card_impact_v4_2_card_flow_expectations
 
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v4_2 --out=user://card_impact/track02_card_impact_v4_2_card_flow_expectations
+```
+
+Card impact V5 enemy causal-signature gates:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=before --mode=gate --pack=track02_card_impact_v5 --out=user://card_impact/track02_card_impact_v5_enemy_causal_signatures
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v5 --out=user://card_impact/track02_card_impact_v5_enemy_causal_signatures
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v5 --out=user://card_impact/track02_card_impact_v5_enemy_causal_signatures
 ```
 
 ## Presets
@@ -608,6 +620,46 @@ Current calibrated same/same result (`user://card_impact/track02_card_impact_v4_
 
 Operational lesson: V4.2 is now the recommended pack for future card-flow or broad reward-card redesigns. Numeric card-flow deltas remain allowed when they satisfy `required` expectations; intentional changes that reduce required draw/deck/hand behavior should update the V4.2 expectation in the same work.
 
+## Card Impact V5 Enemy Causal Signatures
+
+`track02_card_impact_v5` keeps V4.2 player coverage and promotes enemy-card effect signatures from report-only to required.
+
+V5 coverage:
+
+- 108 active player card variants, split 36 Arcano / 36 Invocador / 36 Necromante.
+- 30 active enemy cards with required causal signatures.
+- 15 legacy inactive `elemental_*` cards remain audited.
+- 3 expected player card-flow cases and 21 promoted Card Flow Expectation checks remain active.
+
+V5 adds:
+
+- `data/lab/card_impact/track02_card_impact_v5.json`.
+- `effect_signatures.enemy.mode="required"`.
+- `expected_enemy_effect_signatures=30`.
+- Enemy cases tagged `enemy_causal_signature`, with `effect_signature_scope="enemy"` and `effect_signature_required=true`.
+- A controlled commander harness using one enemy card in hand/deck, a one-turn duel setup and first-combat snapshot capture.
+- Explicit enemy-caused fields: `enemy_card_played`, `enemy_card_play_count`, `enemy_summons_created`, `enemy_summoned_count`, `enemy_summoned_attack_total`, `enemy_summoned_health_total`, `enemy_summoned_keyword_count`, `enemy_keywords_added`, `enemy_damage_to_player_hero`, `enemy_damage_to_player_slots`, `enemy_player_units_delta`, `enemy_combat_damage_to_player_hero`, `enemy_combat_damage_to_player_slots`, `enemy_signature_phase` and `enemy_signature_confidence`.
+- Card Impact Markdown sections for `Enemy Causal Signature Coverage`, `Enemy Signature Quality`, `Top Enemy Effect Deltas` and `Enemy Missing/Ambiguous Cases`.
+
+Gate behavior:
+
+- Missing enemy-card coverage, a V5 enemy card not being played, or a missing V5 enemy signature fails `--mode=gate`.
+- Removed after records, new after `FAIL` records, rejected BattleEngine actions and failed Card Flow Expectations remain structural blockers.
+- Numeric enemy signature movement is review data and does not fail compare by itself.
+- V4.2 remains the historical/default player-card-flow harness; V5 is the recommended harness before enemy-card redesigns.
+
+Current calibrated same/same result (`user://card_impact/track02_card_impact_v5_enemy_causal_signatures`):
+
+- `before`, `after` and `compare` pass with zero structural errors, zero new failures and zero removed records.
+- Coverage is 138/138 active report records, with 108 player cards, 30 enemy cards and 15 legacy inactive cards.
+- Enemy signatures are 30 expected, 30 present, 0 missing; enemy cards played/not played is 30/0.
+- Enemy signature quality is 30 clean, 0 ambiguous and 0 missing.
+- Card Flow Expectations remain 21/21 PASS.
+- V4.2 historical compare for `user://card_impact/reward_card_redesign_batch_03_v4_2` remains green.
+- Battle Lab remains 9 PASS / 3 WARN / 0 FAIL, Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL, AutoRun smoke/quick gates remain green, and `validate.gd` passes with 211/211 GUT tests and 1906 asserts.
+
+Operational lesson: V5 is now the recommended pack for the first enemy-card redesign batch. Enemy-card attack, health, keywords, summon totals and first-combat pressure can be compared before/after without turning intentional numeric movement into a structural gate failure.
+
 ## Reward Card Redesign Batch 01 Using V4
 
 Purpose: execute a light but real reward-card tuning batch to prove that Card Impact V4 can inspect the full player matrix during intentional card movement.
@@ -698,7 +750,7 @@ Each detailed record contains:
 - `warnings`
 - `tags`
 
-The current macro-route `simulation_mode` is `macro_route_v1`. Gameplay Lab uses `battle_engine_v1`. Card Impact uses `card_impact_v1`, `card_impact_v2`, `card_impact_v3`, `card_impact_v4` and `card_impact_v4_1`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
+The current macro-route `simulation_mode` is `macro_route_v1`. Gameplay Lab uses `battle_engine_v1`. Card Impact uses `card_impact_v1`, `card_impact_v2`, `card_impact_v3`, `card_impact_v4`, `card_impact_v4_1`, `card_impact_v4_2` and `card_impact_v5`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
 
 ## Baseline Strategy
 
@@ -723,9 +775,9 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Run the next broader reward-card redesign batch under V4.2 before/change/after/compare.
-2. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
-3. Expand explicit expectations for additional draw/discard/hand/deck cards as they enter the active card matrix.
-4. Implement enemy-card effect signatures once enemy action logs expose enough per-card causality to avoid guessing.
+1. Run the first enemy-card redesign batch under V5 before/change/after/compare.
+2. Decide which repeated enemy signature movements deserve promoted expectations after real use.
+3. Continue broad player reward-card redesigns under V4.2 when card-flow expectations matter.
+4. Expand explicit expectations for additional draw/discard/hand/deck cards as they enter the active card matrix.
 5. Replay Lab: record human or bot decisions and replay them across builds.
 6. Dashboard: read the JSON/CSV/Markdown outputs and compare historical runs visually.

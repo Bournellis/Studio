@@ -59,6 +59,11 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 			int(signature_quality.get("card_flow_observed_count", 0)),
 			int(signature_quality.get("card_flow_missing_count", 0))
 		],
+		"- Enemy signatures expected/present/missing: `%d/%d/%d`" % [
+			int(coverage.get("expected_enemy_effect_signatures", signature_quality.get("enemy_signature_expected_count", 0))),
+			int(signature_quality.get("enemy_signature_present_count", 0)),
+			int(signature_quality.get("enemy_signature_missing_count", 0))
+		],
 		"- Card-flow expectations PASS/WARN/FAIL: `%d/%d/%d`" % [
 			int(card_flow_expectations.get("pass_count", 0)),
 			int(card_flow_expectations.get("warn_count", 0)),
@@ -217,6 +222,68 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 				])
 			if expectation_rows.size() > 30:
 				lines.append("| `_truncated` | `card_flow_expectations` |  |  | `%d more` |  |" % (expectation_rows.size() - 30))
+	lines.append("")
+	lines.append("## Enemy Causal Signature Coverage")
+	lines.append("- Expected/present/missing: `%d/%d/%d`" % [
+		int(coverage.get("expected_enemy_effect_signatures", signature_quality.get("enemy_signature_expected_count", 0))),
+		int(signature_quality.get("enemy_signature_present_count", 0)),
+		int(signature_quality.get("enemy_signature_missing_count", 0))
+	])
+	lines.append("- Played/not-played: `%d/%d`" % [
+		int(signature_quality.get("enemy_card_played_count", 0)),
+		int(signature_quality.get("enemy_card_not_played_count", 0))
+	])
+	lines.append("")
+	lines.append("## Enemy Signature Quality")
+	lines.append("- Clean/ambiguous/missing-confidence: `%d/%d/%d`" % [
+		int(signature_quality.get("enemy_signature_clean_count", 0)),
+		int(signature_quality.get("enemy_signature_ambiguous_count", 0)),
+		int(signature_quality.get("enemy_signature_confidence_missing_count", 0))
+	])
+	var enemy_quality_cases: Array = Array(signature_quality.get("enemy_signature_cases", []))
+	if enemy_quality_cases.is_empty():
+		lines.append("- notable cases: none")
+	else:
+		for item: Dictionary in enemy_quality_cases.slice(0, 20):
+			lines.append("- `%s` `%s`: played `%s`, present `%s`, confidence `%s`, phase `%s`, reason `%s`" % [
+				str(item.get("case_id", "")),
+				str(item.get("card_id", "")),
+				str(item.get("played", "")),
+				str(item.get("signature_present", "")),
+				str(item.get("confidence", "")),
+				str(item.get("phase", "")),
+				str(item.get("missing_reason", ""))
+			])
+	lines.append("")
+	lines.append("## Top Enemy Effect Deltas")
+	var enemy_effect_rows: Array = []
+	for item: Dictionary in effect_changes:
+		var field: String = str(item.get("field", ""))
+		var diff_id: String = str(item.get("id", ""))
+		if diff_id.begins_with("card_impact_enemy_") or field.begins_with("effect.enemy_"):
+			enemy_effect_rows.append(item)
+	if enemy_effect_rows.is_empty():
+		lines.append("- none")
+	else:
+		for item: Dictionary in enemy_effect_rows.slice(0, 24):
+			lines.append("- `%s` `%s`: `%s` -> `%s` (`%s`)" % [
+				str(item.get("id", "")),
+				str(item.get("field", "")),
+				str(item.get("before", "")),
+				str(item.get("after", "")),
+				str(item.get("delta", ""))
+			])
+	lines.append("")
+	lines.append("## Enemy Missing/Ambiguous Cases")
+	if enemy_quality_cases.is_empty():
+		lines.append("- none")
+	else:
+		for item: Dictionary in enemy_quality_cases.slice(0, 20):
+			lines.append("- `%s`: confidence `%s`, reason `%s`" % [
+				str(item.get("card_id", "")),
+				str(item.get("confidence", "")),
+				str(item.get("missing_reason", ""))
+			])
 	lines.append("")
 	lines.append("## Effect Family Matrix")
 	var by_effect_family: Dictionary = Dictionary(summary.get("by_effect_family", {}))
@@ -379,6 +446,7 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 static func gate_markdown(report: Dictionary, options: Dictionary = {}) -> String:
 	var summary: Dictionary = Dictionary(report.get("summary", {}))
 	var card_flow_expectations: Dictionary = Dictionary(summary.get("card_flow_expectations", {}))
+	var signature_quality: Dictionary = Dictionary(summary.get("signature_quality", {}))
 	var lines: PackedStringArray = PackedStringArray([
 		"# Card Impact Gate",
 		"",
@@ -389,6 +457,10 @@ static func gate_markdown(report: Dictionary, options: Dictionary = {}) -> Strin
 		"- Removed records: `%d`" % int(summary.get("removed_count", 0)),
 		"- Effect changes: `%d`" % int(summary.get("effect_change_count", 0)),
 		"- Card-flow expectation fails: `%d`" % int(card_flow_expectations.get("fail_count", 0)),
+		"- Enemy signatures missing/not-played: `%d/%d`" % [
+			int(signature_quality.get("enemy_signature_missing_count", 0)),
+			int(signature_quality.get("enemy_card_not_played_count", 0))
+		],
 		"- Command: `%s`" % str(options.get("command", "")),
 		"",
 		"## Blocking Changes"

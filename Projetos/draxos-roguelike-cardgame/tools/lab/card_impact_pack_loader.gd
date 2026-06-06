@@ -2,7 +2,7 @@ extends RefCounted
 
 const DEFAULT_CARD_IMPACT_DIR: String = "res://data/lab/card_impact"
 const DEFAULT_PACK_ID: String = "track02_card_impact_v1"
-const SUPPORTED_SIMULATION_MODES: Array[String] = ["card_impact_v1", "card_impact_v2", "card_impact_v3", "card_impact_v4", "card_impact_v4_1", "card_impact_v4_2"]
+const SUPPORTED_SIMULATION_MODES: Array[String] = ["card_impact_v1", "card_impact_v2", "card_impact_v3", "card_impact_v4", "card_impact_v4_1", "card_impact_v4_2", "card_impact_v5"]
 const REQUIRED_PACK_FIELDS: PackedStringArray = ["pack_id", "schema_version", "simulation_mode", "card_sets", "case_templates", "components", "gate_policy"]
 const VALID_CARD_FLOW_EXPECTATION_FIELDS: Array[String] = ["card_flow_observed", "cards_drawn", "cards_discarded", "cards_created", "deck_delta", "hand_delta", "discard_delta"]
 const VALID_CARD_FLOW_EXPECTATION_OPS: Array[String] = ["==", "!=", ">=", "<=", ">", "<"]
@@ -52,6 +52,8 @@ static func validate_pack_result(pack: Dictionary, path: String = "") -> Diction
 	for object_field: String in ["card_sets", "case_templates", "components", "gate_policy"]:
 		if pack.has(object_field) and typeof(pack.get(object_field)) != TYPE_DICTIONARY:
 			errors.append("pack `%s` must be an object" % object_field)
+	if str(pack.get("simulation_mode", "")) == "card_impact_v5":
+		errors.append_array(_validate_v5_enemy_signatures(pack))
 	if pack.has("card_flow_expectations"):
 		if typeof(pack.get("card_flow_expectations")) != TYPE_DICTIONARY:
 			errors.append("pack `card_flow_expectations` must be an object")
@@ -60,6 +62,22 @@ static func validate_pack_result(pack: Dictionary, path: String = "") -> Diction
 	if not errors.is_empty():
 		return {"ok": false, "message": "Invalid card impact pack: %s." % "; ".join(errors), "path": path, "errors": errors}
 	return {"ok": true, "path": path, "pack": pack}
+
+static func _validate_v5_enemy_signatures(pack: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	var card_sets: Dictionary = Dictionary(pack.get("card_sets", {}))
+	if int(card_sets.get("expected_enemy_effect_signatures", 0)) != 30:
+		errors.append("card_impact_v5 requires card_sets.expected_enemy_effect_signatures=30")
+	var signatures: Dictionary = Dictionary(pack.get("effect_signatures", {}))
+	if signatures.is_empty():
+		errors.append("card_impact_v5 requires `effect_signatures`")
+		return errors
+	var enemy_config: Dictionary = Dictionary(signatures.get("enemy", {}))
+	if enemy_config.is_empty():
+		errors.append("card_impact_v5 requires `effect_signatures.enemy`")
+	elif str(enemy_config.get("mode", "")) != "required":
+		errors.append("card_impact_v5 requires effect_signatures.enemy.mode=`required`")
+	return errors
 
 static func _validate_card_flow_expectations(config: Dictionary) -> Array[String]:
 	var errors: Array[String] = []
