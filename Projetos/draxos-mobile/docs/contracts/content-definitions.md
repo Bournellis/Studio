@@ -1,7 +1,7 @@
 # Content Definitions Contract
 
-- Ultima atualizacao: `2026-05-31`
-- Status: contrato inicial implementado com rework de personagem; Track 16 adicionou pocoes e receitas de crafting; Foundation Expansion Readiness adicionou `foundation_ruleset_v0` como manifest gerado de autoria/publicacao; Arena PVE v1 adiciona definitions ruleset-only para arenas, dificuldades S1, inimigos, buffs e rewards.
+- Ultima atualizacao: `2026-06-06`
+- Status: contrato inicial implementado com rework de personagem; Track 16 adicionou pocoes e receitas de crafting; Bosque Fogueira Potion Crafting v1 adiciona receitas de estacao e tres pocoes simples; Foundation Expansion Readiness adicionou `foundation_ruleset_v0` como manifest gerado de autoria/publicacao; Arena PVE v1 adiciona definitions ruleset-only para arenas, dificuldades S1, inimigos, buffs e rewards.
 
 Conteudo autorado vive em `../../data/definitions/`. Resources Godot gerados vivem em `../../data/generated/` e nao devem ser editados manualmente.
 
@@ -149,14 +149,31 @@ Exemplos:
 - Custos de Ossos dependem de `DMOB-D021`.
 - Recompensas v0 vivem em `../game-design-document.md` e `../economy/README.md`; valores numericos continuam calibraveis no alpha.
 
-## Consumiveis E Crafting Track 16
+## Consumiveis E Crafting
 
-Conteudo inicial:
+Conteudo atual:
 
 - `pocao_vida`: consumivel de batalha, `heal_over_time`, cura `20%` da vida maxima em `5s` (`4%/s`) sem ultrapassar a vida maxima.
-- `craft_pocao_vida`: custa `50 po_osso` e gera `1 pocao_vida`.
+- `pocao_foco`: consumivel de batalha, `mana_restore`, restaura `25%` da mana maxima.
+- `pocao_resguardo`: consumivel de batalha, `barrier_gain`, concede barreira de `12%` do HP maximo.
+- `craft_pocao_vida`: receita de Fogueira, consome `folha x2`, `cogumelo x1` do Bau do Bosque + `po_osso x25`, gera `1 pocao_vida`.
+- `craft_pocao_foco`: receita de Fogueira, consome `fungo x1`, `inseto x1` do Bau do Bosque + `po_osso x15`, gera `1 pocao_foco`.
+- `craft_pocao_resguardo`: receita de Fogueira, consome `resina x1`, `pedra_pequena x1` do Bau do Bosque + `po_osso x20`, gera `1 pocao_resguardo`.
 
 `po_osso` nao e item de inventario; e recurso tecnico inteiro em `resources`. A conversao `1 Osso -> 1 Po de Osso` vive no endpoint `crafting/crush-bones` para manter autoridade no servidor.
+
+Receitas com `station.station_id` nao podem ser executadas por `/crafting/craft`.
+Elas exigem `/crafting/station-craft`, checkpoint aceito do Bosque e estrutura
+duravel compativel em `mode_progress.progress_payload.structures`.
+
+Campos especificos esperados em receitas de estacao:
+
+- `station.station_id`;
+- `station.mode_id`;
+- `station.slice_id`;
+- `inputs.openworld_chest`;
+- `inputs.resources`;
+- `outputs.consumables`.
 
 ## Bots E Faixas De Poder Do Primeiro Slice
 

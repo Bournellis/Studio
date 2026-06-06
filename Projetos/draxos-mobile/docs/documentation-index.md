@@ -50,7 +50,7 @@
 | `docs/battle-presentation-v1.md` | `VIVO` | Current Battle Presentation v1 package: client-only readability pass for running battle, summary and current-battle logs. |
 | `docs/battle-drama-v1-1.md` | `VIVO` | Follow-up client-only battle drama/readability pass for visible Web difference after Battle Presentation v1. |
 | `docs/battle-preparation-complete-v1.md` | `VIVO` | Current Battle Preparation Complete v1 package: real Arena PVE preparation/loadout editor, `POST /build/equip`, enriched build state and published Internal Alpha release snapshot. |
-| `docs/behavior-potion-crafting-v1.md` | `VIVO` | Current technical reference for Track 16 systems now present in the alpha baseline: whole-number Ossos, Po de Osso, first potion, crafting, potion slot and simple behavior controls. |
+| `docs/behavior-potion-crafting-v1.md` | `VIVO` | Current technical reference for behavior/potion/crafting systems now present in the alpha baseline: whole-number Ossos, Po de Osso, Fogueira station crafting, simple potions, potion slot and behavior controls. |
 | `docs/progression-clarity-v1.md` | `VIVO` | Published Progression Clarity v1 package: client-only readability for level, power, rewards, next unlocks and next objective. |
 | `docs/first-session-clarity-v1.md` | `VIVO` | Published First Session Clarity v1 package: client-only first-session guidance for Refugio, Arena PVE preparation and battle summary. |
 | `docs/minigames/mode-catalog.md` | `VIVO` | Official V1 catalog for Basebuilder, Autobattler, Towerdefense, Cardgame and Openworld. |
@@ -166,6 +166,6 @@
 - Visual/layout changes must respect `docs/foundation-responsive-layout-contract.md` and pass `tools/smoke_responsive_layout.gd` before publication.
 - Historical docs can keep old language when they are clearly historical.
 - Product-facing language should use Instrumento Ritual, Doutrina and Familiar.
-- Potion/crafting/behavior systems exist in the current alpha baseline, but new potions, custom thresholds, spell priorities or enemy-specific behavior require the Arena PVE package or another explicit package decision.
+- Potion/crafting/behavior systems exist in the current alpha baseline. `pocao_vida`, `pocao_foco` and `pocao_resguardo` are the approved simple potions; any additional potions, custom thresholds, spell priorities or enemy-specific behavior require another explicit package decision.
 - Technical field names such as `weapon`, `passive`, `pet`, `WeaponQualityTier`, `PassiveLevelsTotal` and `PetLevel` may remain only where they describe existing schema, telemetry or legacy compatibility.
 - New pending design questions must go to `docs/design-pending.md`, not historical track docs.

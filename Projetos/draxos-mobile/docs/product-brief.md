@@ -17,11 +17,11 @@ DraxosMobile e um jogo mobile-first de progressao persistente construido sobre c
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa operacional atual e `BOSQUE_OFFLINE_FIRST_CHECKPOINT_V1_PUBLISHED_INTERNAL_ALPHA`: o pacote publicado preserva Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Arena PVE First Real Run + Update Recovery, Bosque v3 UX/Feel, o hardening tecnico anterior, Bosque Sync Responsiveness v1 e o menu player-facing simplificado do Openworld Main Menu Sync. A mudanca principal e remodelar o Bosque para `client-owned play, server-owned rewards`: movimento, coleta, bolso, bau, craft e guidance respondem localmente e persistem em cache, enquanto checkpoint aceito, conclusao, reward, caps, ledger e auditoria continuam no servidor. A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`, e novas expansoes dependem de playtest humano antes de abrir tuning amplo.
+A etapa operacional em implementacao e `Bosque Fogueira Potion Crafting v1`: o pacote preserva Arena PVE Menu Flow Simplification v1, Bosque Durable Bau Mochila v1, Bosque Offline-First Checkpoint v1 e os pacotes anteriores, mas liga Openworld e Arena por uma fronteira controlada. Movimento, coleta, deposito, construcoes e cache do Bosque continuam `client-owned active play`; `Fogueira Estavel I` vira estacao server-authoritative para criar pocoes globais a partir de materiais do Bau + `po_osso` da conta. A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`, e novas expansoes dependem de playtest humano antes de abrir tuning amplo.
 
 ## Foco Imediato
 
-O foco imediato e validar a leitura humana do pacote Bosque Offline-First Checkpoint v1 publicado: entrada no Bosque sem transformacao visivel apos snapshot, coleta rapida sem reiniciar acao, deposito/craft imediatos enquanto checkpoint salva, `Voltar` preservando visita local, reabrir antes/depois do checkpoint mantendo bolso/bau/nodes e `Encerrar visita` concedendo recompensa apenas depois de checkpoint aceito. A regressao de Arena tambem segue no playtest: Preparacao antes de iniciar Arena, Preparacao no menu ativo e na escolha de buff, buff selecionado -> `Resolver duelo`, tutorial -> primeira arena real de 3 duelos, retomar/abandonar/encerrar tentativa antiga e buff pendente apos update/reopen.
+O foco imediato e validar a leitura humana do pacote de Fogueira: construir/retomar Fogueira duravel, depositar materiais no Bau, preparar `pocao_vida`, `pocao_foco` e `pocao_resguardo`, confirmar que o checkpoint e salvo antes do craft de estacao, equipar qualquer pocao na Preparacao e resolver duelos com os efeitos corretos. A regressao de Arena tambem segue no playtest: Preparacao antes de iniciar Arena, Preparacao no menu ativo e na escolha de buff, buff selecionado -> `Resolver duelo`, tutorial -> primeira arena real de 3 duelos, retomar/abandonar/encerrar tentativa antiga e buff pendente apos update/reopen.
 
 O foco de fundacao anterior foi fechado: Foundation Closeout entregou account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish, Hardening Platform V1 e Foundation Hardening V2 ficam como baselines tecnicas/historicas preservadas.
 
@@ -29,7 +29,7 @@ A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo de
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1 e Bosque Offline-First Checkpoint v1 e que Refugio, Arena PVE/Preparacao, Resultado e Bosque devem ser confirmados no pacote publicado antes de abrir novo backend, schema, tuning, economia ou conteudo.
+First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Bosque Durable Bau Mochila v1 e Bosque Fogueira Potion Crafting v1 e que Refugio, Arena PVE/Preparacao, Resultado e Bosque devem ser confirmados no pacote publicado antes de abrir novo backend, schema, tuning, economia ou conteudo.
 
 Ao abrir o pacote de Arena PVE inicial, devem ser avaliados juntos:
 
@@ -63,9 +63,9 @@ Terminologia implementada preservada como substancia/mock: Instrumento Ritual, S
 
 Ordem recomendada agora:
 
-1. Playtest humano do Bosque Offline-First Checkpoint v1 publicado.
-2. Hotfix estreito de Bosque/Arena se o playtest indicar regressao.
-3. Arena PVE tutorial e primeiras arenas de 3 lutas.
+1. Publicar e playtestar Bosque Fogueira Potion Crafting v1.
+2. Hotfix estreito de Fogueira/Bosque/Arena se o playtest indicar regressao.
+3. Arena PVE tutorial e primeiras arenas de 3 lutas com pocoes simples.
 4. Dificuldade, recompensas, poder e progression labs orientados a Arena PVE.
 5. Base/preparacao como suporte da Arena PVE.
 6. PVP assincrono posterior, com bots como fallback transparente.
@@ -97,7 +97,7 @@ A base tecnica ja contem:
 - release manifest, build channel e runbooks de publicacao segura;
 - validacao local por `validate_foundation.ps1`.
 
-Track 16 e o ultimo pacote tecnico, com comportamento/crafting/pocoes. Ele esta registrado em `behavior-potion-crafting-v1.md` como base tecnica existente: Ossos inteiros, Po de Osso, Pocao de Vida, crafting inicial, slot de pocao e comportamento simples de habilidade/pocao. Ele nao e a etapa ativa de produto e nao libera tuning, economia, novas pocoes ou comportamento avancado sem novo pacote explicito.
+Behavior/potion/crafting esta registrado em `behavior-potion-crafting-v1.md` como base tecnica viva: Ossos inteiros, Po de Osso, Fogueira como estacao, tres pocoes simples, slot de pocao e comportamento simples de habilidade/pocao. Ele nao libera tuning, economia, novas pocoes ou comportamento avancado sem novo pacote explicito.
 
 ## Decisoes Que Permanecem Reais
 

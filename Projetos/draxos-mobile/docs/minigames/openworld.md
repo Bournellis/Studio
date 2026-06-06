@@ -24,7 +24,7 @@ Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitua
 ## Politica Operacional Atual
 
 Politica viva do Openworld/Bosque: **client-owned active play,
-server-owned durable Bosque progress and rewards**.
+server-owned durable Bosque progress, station crafts and rewards**.
 
 Durante uma visita ativa, o cliente e autoridade de runtime para movimento,
 posicao, coleta ativa, nodes visuais, bolso local, bau local, craft local,
@@ -33,14 +33,16 @@ real nem puxar o jogador por ACK, stale revision ou snapshot tardio da mesma
 sessao.
 
 O servidor e autoridade para sessao ativa, ruleset, progresso duravel aceito do
-Bosque, checkpoint aceito, limites, conclusao, recompensa, ledger e auditoria.
-A recompensa real so existe depois de um checkpoint aceito e de `complete`
-server-authoritative.
+Bosque, checkpoint aceito, craft de estacao que gera consumivel global,
+limites, conclusao, recompensa, ledger e auditoria. A recompensa real so existe
+depois de um checkpoint aceito e de `complete` server-authoritative.
 
 `Bau`, `Mochila/Bolso`, upgrades de capacidade e estruturas craftadas sao
 progresso duravel por save. Nodes coletados, posicao, coleta ativa e checkpoint
 pendente sao estado da visita atual. Nova visita pode repovoar nodes coletaveis,
 mas nasce com o bau, mochila, capacidade e estruturas ja aceitos para o save.
+`Fogueira Estavel I` e estrutura duravel local e tambem estacao
+`fogueira_estavel_1` para receitas globais de pocao.
 
 Regra de regressao para agentes: nao reintroduzir `move_heartbeat`,
 `collect_start`, `collect_cancel`, `collect_complete`, `deposit_all` ou `craft`
@@ -90,6 +92,7 @@ Contratos de produto para v2:
 - joystick livre por toque/mouse em area vazia do viewport;
 - HUD dentro do jogo;
 - mochila funcional com `Bolso`, `Bau`, `Craft` e `Sessao`;
+- aba `Fogueira` para receitas de pocao globais quando a estrutura existe;
 - orientacao tutorial discreta de seis passos, persistida no save normal
   server-side e reabrivel pela aba `Sessao`;
 - detalhes operacionais escondidos em `Sessao > Detalhes da operacao`;
@@ -104,6 +107,8 @@ Contratos de produto para v2:
   `openworld_durable_progress_cache`;
 - progresso duravel por save para `Bau`, `Mochila/Bolso`, upgrades de mochila e
   estruturas craftadas;
+- craft de estacao em `/crafting/station-craft`, server-authoritative, com
+  checkpoint aceito antes de consumir materiais do Bau e `po_osso` da conta;
 - checkpoints compactos em background substituem microeventos revisionados durante gameplay normal;
 - nenhum ACK/resync remoto da mesma sessao deve reposicionar o jogador, reiniciar coleta, reverter bolso/bau/craft ou transformar nodes enquanto o jogador esta no Bosque;
 - Reward Bridge limitado, server-authoritative, idempotente e com ledger.
@@ -163,6 +168,13 @@ economia; sao folga de aprendizagem para o minigame.
 - aparece depois do craft como objeto procedural permanente da sessao/save;
 - fica perto de `x=305 y=330`;
 - e bloqueante para movimento como estrutura pequena;
+- registra `station_id = fogueira_estavel_1`;
+- abre painel de Fogueira quando o jogador se aproxima;
+- permite preparar `pocao_vida`, `pocao_foco` e `pocao_resguardo` atraves de
+  `POST /crafting/station-craft`;
+- consome materiais do Bau do Bosque e `po_osso` da conta; nao consome a
+  mochila/bolso;
+- exige checkpoint aceito antes da mutacao de estacao;
 - nao cria combate, NPC, quest, economia ampla, respawn ou recompensa nova;
 - pode aparecer no resumo leve como estrutura construida.
 
@@ -203,6 +215,30 @@ Checkpoints aceitos atualizam o snapshot da sessao e tambem o progresso duravel
 em `mode_progress`. A conclusao usa o ultimo checkpoint aceito, faz merge do
 progresso duravel e atualiza o ledger para que recompensa real nao seja duplicada
 por itens persistentes no bau.
+
+## Fogueira E Pocao Global
+
+A Fogueira e a primeira ponte intencional entre Openworld e Arena:
+
+- o Bosque continua dono local da rotina relaxante: mover, coletar, depositar,
+  construir e salvar checkpoint;
+- a conta continua dona global de `resources`, `player_consumables` e
+  `player_potion_slots`;
+- `POST /crafting/station-craft` e a ponte transacional entre os dois dominios;
+- materiais de estacao saem do Bau duravel aceito;
+- `po_osso` sai de `resources`;
+- a saida entra em `player_consumables` e pode ser equipada na Preparacao da
+  Arena;
+- se houver checkpoint pendente, o cliente salva o Bosque antes de preparar a
+  pocao;
+- se o checkpoint falhar, a pocao nao e criada e o estado local do Bosque deve
+  permanecer recuperavel.
+
+Receitas v1:
+
+- `craft_pocao_vida`: `folha x2`, `cogumelo x1` + `po_osso x25`;
+- `craft_pocao_foco`: `fungo x1`, `inseto x1` + `po_osso x15`;
+- `craft_pocao_resguardo`: `resina x1`, `pedra_pequena x1` + `po_osso x20`.
 
 ## Descriptor Scaffold
 

@@ -405,7 +405,7 @@ Esses bonus devem entrar no calculo server-side de combate e poder, mas nao subs
 
 ### Ossario
 
-Ossos continuam raros. Batalhas, quests e Battle Pass seguem como fontes principais; o Ossario fornece renda constante para crafting de qualidade do Instrumento Ritual. A meta inicial da Season 1 continua `3000 * cap` Ossos para qualidade principal do Instrumento. O Ossario tambem permite triturar `1 Osso` em `1 Po de Osso` para consumiveis; a primeira receita custa `50 Po de Osso` e cria `1 Pocao de Vida`.
+Ossos continuam raros. Batalhas, quests e Battle Pass seguem como fontes principais; o Ossario fornece renda constante para crafting de qualidade do Instrumento Ritual. A meta inicial da Season 1 continua `3000 * cap` Ossos para qualidade principal do Instrumento. O Ossario tambem permite triturar `1 Osso` em `1 Po de Osso`; pocoes globais sao preparadas na `Fogueira Estavel I` do Bosque usando materiais do Bau + `po_osso` da conta.
 
 ### Segundo Slot De Construcao
 

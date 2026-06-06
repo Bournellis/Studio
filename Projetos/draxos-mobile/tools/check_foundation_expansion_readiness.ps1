@@ -488,10 +488,41 @@ function Test-ClientSecretsAbsent {
 }
 
 function Test-LiveDocReleaseRootFreshness {
-  $currentRoot = 'internal-alpha/v0-arena-bosque-visible-v2-20260605-01d80d5'
-  $currentPreview = 'https://7b9c8f38.draxos-mobile-internal-alpha.pages.dev'
-  $previousVisibleRoot = 'internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f'
-  $previousVisiblePreview = 'https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev'
+  $readmePath = Join-Path $ProjectPath 'README.md'
+  if (-not (Test-Path -LiteralPath $readmePath -PathType Leaf)) {
+    Add-Failure 'README.md missing for live-doc release root guard'
+    return
+  }
+  $readmeText = Get-Content -LiteralPath $readmePath -Raw
+  $currentRootMatch = [regex]::Match($readmeText, 'Current release root: `([^`]+)`')
+  $currentPreviewMatch = [regex]::Match($readmeText, 'Current verified preview: `([^`]+)`')
+  if (-not $currentRootMatch.Success) {
+    Add-Failure 'README.md does not declare Current release root'
+  }
+  if (-not $currentPreviewMatch.Success) {
+    Add-Failure 'README.md does not declare Current verified preview'
+  }
+  if (-not $currentRootMatch.Success -or -not $currentPreviewMatch.Success) {
+    return
+  }
+
+  $currentRoot = $currentRootMatch.Groups[1].Value
+  $currentPreview = $currentPreviewMatch.Groups[1].Value
+  Add-Ok "live-doc current release root detected: $currentRoot"
+  Add-Ok "live-doc current preview detected: $currentPreview"
+
+  $durableRoot = 'internal-alpha/v0-bosque-durable-bau-mochila-v1-20260606-6e7ca6b'
+  $durablePreview = 'https://39198a35.draxos-mobile-internal-alpha.pages.dev'
+  $previousArenaMenuRoot = 'internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68'
+  $previousArenaMenuPreview = 'https://fdf44707.draxos-mobile-internal-alpha.pages.dev'
+  $previousOpenworldPolicyRoot = 'internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22'
+  $previousOpenworldPolicyPreview = 'https://fa84e109.draxos-mobile-internal-alpha.pages.dev'
+  $previousBosqueSyncRoot = 'internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95'
+  $previousBosqueSyncPreview = 'https://60e2d4be.draxos-mobile-internal-alpha.pages.dev'
+  $previousVisibleRoot = 'internal-alpha/v0-arena-bosque-visible-v2-20260605-01d80d5'
+  $previousVisiblePreview = 'https://7b9c8f38.draxos-mobile-internal-alpha.pages.dev'
+  $previousVisibilityHotfixRoot = 'internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f'
+  $previousVisibilityHotfixPreview = 'https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev'
   $previousSeasonRoot = 'internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32'
   $previousSeasonPreview = 'https://d7333659.draxos-mobile-internal-alpha.pages.dev'
   $previousHotfixRoot = 'internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174'
@@ -504,11 +535,37 @@ function Test-LiveDocReleaseRootFreshness {
   $previousOpenworldPreview = 'https://aeec7403.draxos-mobile-internal-alpha.pages.dev'
   $hardeningRoot = 'internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4'
   $hardeningPreview = 'https://ca946749.draxos-mobile-internal-alpha.pages.dev'
+  $lineageRoots = @(
+    $durableRoot,
+    $durablePreview,
+    $previousArenaMenuRoot,
+    $previousArenaMenuPreview,
+    $previousOpenworldPolicyRoot,
+    $previousOpenworldPolicyPreview,
+    $previousBosqueSyncRoot,
+    $previousBosqueSyncPreview,
+    $previousVisibleRoot,
+    $previousVisiblePreview,
+    $previousVisibilityHotfixRoot,
+    $previousVisibilityHotfixPreview,
+    $previousSeasonRoot,
+    $previousSeasonPreview,
+    $previousHotfixRoot,
+    $previousHotfixPreview,
+    $previousArenaRoot,
+    $previousArenaPreview,
+    $previousContentRoot,
+    $previousContentPreview,
+    $previousOpenworldRoot,
+    $previousOpenworldPreview,
+    $hardeningRoot,
+    $hardeningPreview
+  )
   foreach ($check in @(
-    @{ Path = 'AGENTS.md'; Needles = @('Arena/Bosque Visible V2 is the latest remote Internal Alpha publication', $currentRoot, $currentPreview, 'Arena/Bosque Regression Hotfix remains the previous visibility hotfix package', $previousVisibleRoot, $previousVisiblePreview, 'Arena PVE Season 1 Loop v1 remains the previous Season 1 package', $previousSeasonRoot, $previousSeasonPreview, 'Arena Duel Flow Hotfix remains the previous duel-flow hotfix package', $previousHotfixRoot, $previousHotfixPreview, 'Arena PVE First Real Run + Update Recovery remains the previous Arena package', $previousArenaRoot, $previousArenaPreview, 'Bosque v3 UX/Feel remains the previous content/polish package', $previousContentRoot, $previousContentPreview, 'Openworld Main Menu Sync remains the previous Openworld content package', $previousOpenworldRoot, $previousOpenworldPreview, 'Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
-    @{ Path = 'README.md'; Needles = @(('Current release root: `' + $currentRoot + '`'), ('Current verified preview: `' + $currentPreview + '`'), ('Previous visibility hotfix release root: `' + $previousVisibleRoot + '`'), ('Previous visibility hotfix verified preview: `' + $previousVisiblePreview + '`'), ('Previous Season 1 release root: `' + $previousSeasonRoot + '`'), ('Previous Season 1 verified preview: `' + $previousSeasonPreview + '`'), ('Previous Arena release root: `' + $previousArenaRoot + '`'), ('Previous Arena verified preview: `' + $previousArenaPreview + '`'), ('Previous content/polish release root: `' + $previousContentRoot + '`'), ('Previous content/polish verified preview: `' + $previousContentPreview + '`'), ('Previous content release root: `' + $previousOpenworldRoot + '`'), ('Previous content verified preview: `' + $previousOpenworldPreview + '`'), ('Previous hardening release root: `' + $hardeningRoot + '`'), ('Previous hardening verified preview: `' + $hardeningPreview + '`')) },
-    @{ Path = 'implementation\current-status.md'; Needles = @('Latest published remote package: `Arena/Bosque Visible V2`', $currentRoot, $currentPreview, 'Previous visibility hotfix package: `Arena/Bosque Regression Hotfix`', $previousVisibleRoot, $previousVisiblePreview, 'Previous Arena Season 1 package: `Arena PVE Season 1 Loop v1`', $previousSeasonRoot, $previousSeasonPreview, 'Previous duel-flow hotfix release root:', $previousHotfixRoot, $previousHotfixPreview, 'Previous Arena package: `Arena PVE First Real Run + Update Recovery`', $previousArenaRoot, $previousArenaPreview, 'Previous content/polish package: `Bosque v3 UX/Feel`', $previousContentRoot, $previousContentPreview, 'Previous Openworld content package: `Openworld Main Menu Sync`', $previousOpenworldRoot, $previousOpenworldPreview, 'Previous hardening baseline: `Foundation Hardening V2`', $hardeningRoot, $hardeningPreview) },
-    @{ Path = 'docs\agent-operating-manual.md'; Needles = @('Arena/Bosque Visible V2 is the latest remote Internal Alpha publication', $currentRoot, $currentPreview, 'Arena/Bosque Regression Hotfix remains the previous visibility hotfix package', $previousVisibleRoot, $previousVisiblePreview, 'Arena PVE Season 1 Loop v1 remains the previous Season 1 package', $previousSeasonRoot, $previousSeasonPreview, 'Arena Duel Flow Hotfix remains the previous duel-flow hotfix package', $previousHotfixRoot, $previousHotfixPreview, 'Arena PVE First Real Run + Update Recovery remains the previous Arena package', $previousArenaRoot, $previousArenaPreview, 'Bosque v3 UX/Feel remains the previous content/polish package', $previousContentRoot, $previousContentPreview, 'Openworld Main Menu Sync remains the previous Openworld content package', $previousOpenworldRoot, $previousOpenworldPreview, 'Foundation Hardening V2 is the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
+    @{ Path = 'AGENTS.md'; Needles = @('latest remote Internal Alpha', $currentRoot, $currentPreview, 'Arena PVE Menu Flow Simplification v1 remains the previous Arena menu package', $previousArenaMenuRoot, $previousArenaMenuPreview, 'Bosque Offline-First Checkpoint v1 remains the previous Openworld policy package', $previousOpenworldPolicyRoot, $previousOpenworldPolicyPreview, 'Bosque Sync Responsiveness v1 remains the previous Bosque sync package', $previousBosqueSyncRoot, $previousBosqueSyncPreview, 'Arena/Bosque Visible V2 remains the previous visible package', $previousVisibleRoot, $previousVisiblePreview, 'Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
+    @{ Path = 'README.md'; Needles = @(('Current release root: `' + $currentRoot + '`'), ('Current verified preview: `' + $currentPreview + '`')) + $lineageRoots },
+    @{ Path = 'implementation\current-status.md'; Needles = @('Latest published remote package:', $currentRoot, $currentPreview, 'Previous hardening baseline: `Foundation Hardening V2`') + $lineageRoots },
+    @{ Path = 'docs\agent-operating-manual.md'; Needles = @('latest remote Internal Alpha publication', $currentRoot, $currentPreview, 'Arena PVE Menu Flow Simplification v1 remains the previous Arena menu package', $previousArenaMenuRoot, $previousArenaMenuPreview, 'Bosque Offline-First Checkpoint v1 remains the previous Openworld policy package', $previousOpenworldPolicyRoot, $previousOpenworldPolicyPreview, 'Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
     @{ Path = 'docs\foundation-hardening-v2-readiness-report.md'; Needles = @('Status: `HISTORICO_BASELINE`', $hardeningRoot, $hardeningPreview, 'not the latest remote Internal Alpha package') }
   )) {
     foreach ($needle in $check.Needles) {

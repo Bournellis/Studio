@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-06-05`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; App Responsiveness Architecture Pass adiciona envelope comum de cache/tempo, telemetry de latencia, Arena PVE state leve e mutations com deltas de superficie afetada.
+- Ultima atualizacao: `2026-06-06`
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; Bosque Fogueira Potion Crafting v1 adiciona `POST /crafting/station-craft` como ponte transacional entre progresso duravel do Bosque e consumiveis globais da conta.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -94,7 +94,8 @@ como slot contratado, mas a rota ainda precisa migrar o efeito de dominio.
 | `POST /base/collect` | `collect_base_v1` | ativo em `202605300002_transactional_domain_enforcement.sql`; adapter preserva payload de UI e move recursos/ledger/idempotencia para RPC |
 | `POST /base/upgrade` | `start_base_upgrade_v1` | ativo em `202605300002_transactional_domain_enforcement.sql`; adapter preserva payload de UI e move gasto/job/ledger/idempotencia para RPC |
 | `POST /build/equip` | `equip_build_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; build + power são aplicados no mesmo RPC |
-| `POST /crafting/craft` | `craft_item_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; recurso + item + ledgers entram no mesmo RPC |
+| `POST /crafting/craft` | `craft_item_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; recurso + item + ledgers entram no mesmo RPC; receitas com `station_id` retornam `STATION_REQUIRED` |
+| `POST /crafting/station-craft` | `craft_station_item_v1` | ativo em `202606060003_bosque_fogueira_potion_crafting_v1.sql`; valida Fogueira, checkpoint aceito, progresso duravel, materiais do Bau, recurso global, output e idempotencia |
 | `POST /monetization/rewards/claim` | `claim_reward_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; claim + XP/recurso/pass/ledger/idempotência entram no mesmo RPC |
 | `POST /monetization/alpha-purchase` | `alpha_purchase_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; custo/recompensa/premium/compra/ledger/idempotência entram no mesmo RPC |
 | `POST /social/guild/create` | `guild_create_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; guilda + owner + estruturas + canal + idempotência entram no mesmo RPC |
@@ -164,7 +165,8 @@ novo.
 | POST | `/base/upgrade` | `save-scoped` | Sim | `request_id/request_hash` por save | Inicia upgrade da Base do save ativo via RPC transacional com ledger. |
 | GET | `/crafting/state` | `save-scoped` | Sim | Nao | Recursos, Po de Osso, receitas, inventario de consumiveis e slot de pocao. |
 | POST | `/crafting/crush-bones` | `save-scoped` | Sim | `request_id/request_hash` por save | Tritura Ossos em Po de Osso sem duplicar por retry. |
-| POST | `/crafting/craft` | `save-scoped` | Sim | `request_id/request_hash` por save | Cria consumiveis a partir de receitas server-authoritative. |
+| POST | `/crafting/craft` | `save-scoped` | Sim | `request_id/request_hash` por save | Cria consumiveis a partir de receitas server-authoritative sem estacao; receitas de Fogueira retornam `STATION_REQUIRED`. |
+| POST | `/crafting/station-craft` | `save-scoped` | Sim | `request_id/request_hash` por save | Cria consumiveis globais em uma estacao validando progresso duravel do Bosque e recursos da conta. |
 | GET | `/build/state` | `save-scoped` | Sim | Nao | Loadout atual, opcoes humanizadas, bloqueios, comportamentos e pocao equipada. |
 | POST | `/build/equip` | `save-scoped` | Sim | `request_id/request_hash` por save | Equipa instrumento, spells, doutrina e familiar com validacao server-side. |
 | POST | `/build/spell-behavior` | `save-scoped` | Sim | `request_id/request_hash` por save | Atualiza comportamento de uma spell equipada. |
@@ -1304,7 +1306,8 @@ Implementado localmente em `T03-P03B` por header HTTP:
 | POST | `/upgrade/request` | Solicitar upgrade de instrumento, spell, familiar, doutrina, stats ou construcao |
 | GET | `/crafting/state` | Ler recursos, receitas, inventario de consumiveis e slot de pocao |
 | POST | `/crafting/crush-bones` | Converter Ossos em Po de Osso |
-| POST | `/crafting/craft` | Criar consumivel por receita |
+| POST | `/crafting/craft` | Criar consumivel por receita sem estacao |
+| POST | `/crafting/station-craft` | Criar consumivel global em uma estacao, como a Fogueira do Bosque |
 | GET | `/build/state` | Ler spells equipadas, comportamentos e pocao equipada |
 | POST | `/build/spell-behavior` | Configurar comportamento de uma spell equipada |
 | POST | `/build/potion/equip` | Equipar ou remover pocao do slot 1 |
@@ -1396,7 +1399,7 @@ Status: **implementado em Track 16**.
 
 Scope: `save-scoped`. Usa `x-draxos-save-type`. Read-only, sem idempotencia.
 
-Retorna recursos relevantes, catalogo inicial de pocoes/receitas, inventario de consumiveis e slot de pocao do save ativo.
+Retorna recursos relevantes, catalogo de pocoes/receitas, inventario de consumiveis e slot de pocao do save ativo.
 
 Response v1 inclui:
 
@@ -1404,8 +1407,8 @@ Response v1 inclui:
 {
   "ok": true,
   "resources": { "ossos": 100, "po_osso": 50 },
-  "potions": [{ "id": "pocao_vida" }],
-  "recipes": [{ "id": "craft_pocao_vida", "input": { "po_osso": 50 } }],
+  "potions": [{ "id": "pocao_vida" }, { "id": "pocao_foco" }, { "id": "pocao_resguardo" }],
+  "recipes": [{ "id": "craft_pocao_vida", "station": { "station_id": "fogueira_estavel_1" } }],
   "inventory": [{ "item_id": "pocao_vida", "quantity": 1 }],
   "potion_slots": [{ "slot_index": 1, "potion_id": null }]
 }
@@ -1432,7 +1435,7 @@ Erros minimos: `INVALID_REQUEST_ID`, `INVALID_AMOUNT`, `INSUFFICIENT_BONES`, `RE
 
 Status: **implementado em Track 16**.
 
-Executa receita server-authoritative. A receita inicial e `craft_pocao_vida`: custa `50 po_osso` e adiciona `1 pocao_vida` ao inventario.
+Executa receita server-authoritative sem estacao. Receitas que declaram `station_id`, incluindo as receitas de Fogueira v1, devem retornar `STATION_REQUIRED` nesta rota para impedir craft direto pela Base.
 
 Request:
 
@@ -1444,7 +1447,66 @@ Request:
 }
 ```
 
-Erros minimos: `INVALID_RECIPE`, `INVALID_QUANTITY`, `INSUFFICIENT_RESOURCES`, `CRAFT_FAILED`.
+Erros minimos: `INVALID_RECIPE`, `INVALID_QUANTITY`, `INSUFFICIENT_RESOURCES`, `STATION_REQUIRED`, `CRAFT_FAILED`.
+
+### `POST /crafting/station-craft`
+
+Status: **implementado em Bosque Fogueira Potion Crafting v1**.
+
+Scope: `save-scoped`. Usa `x-draxos-save-type`.
+
+Executa receita server-authoritative em uma estacao construida. A Fogueira v1 usa materiais do `Bau` duravel do Bosque e recursos globais da conta para criar consumiveis globais. O cliente deve salvar checkpoint pendente antes desta chamada e enviar a revisao duravel esperada.
+
+Request minimo:
+
+```json
+{
+  "request_id": "uuid",
+  "request_hash": "sha256",
+  "recipe_id": "craft_pocao_vida",
+  "quantity": 1,
+  "station_context": {
+    "mode_id": "openworld",
+    "slice_id": "forest",
+    "session_id": "uuid",
+    "station_id": "fogueira_estavel_1",
+    "expected_progress_revision": 3
+  }
+}
+```
+
+Regras:
+
+- exige `request_id/request_hash` e idempotencia v1;
+- valida save ativo, sessao ativa do Bosque, ruleset, Fogueira construida e revisao duravel;
+- consome materiais do `mode_progress.progress_payload.chest`;
+- consome recursos globais como `po_osso` de `resources`;
+- cria ou incrementa `player_consumables`;
+- atualiza o snapshot da sessao ativa e o progresso duravel aceito;
+- registra `item_transactions` e auditoria `mode_session_events.event_type = station_craft`;
+- falha sem mutacao parcial quando faltar Fogueira, checkpoint, revisao, material do Bau ou recurso global.
+
+Response minima:
+
+```json
+{
+  "ok": true,
+  "crafting": {},
+  "resources": { "po_osso": 25 },
+  "durable_progress": {
+    "schema_version": "openworld_forest_progress_v1",
+    "progress_revision": 4,
+    "chest": { "folha": 0, "cogumelo": 0 }
+  },
+  "station_craft": {
+    "recipe_id": "craft_pocao_vida",
+    "station_id": "fogueira_estavel_1",
+    "outputs": [{ "item_id": "pocao_vida", "quantity": 1 }]
+  }
+}
+```
+
+Erros minimos: `INVALID_RECIPE`, `INVALID_QUANTITY`, `STATION_REQUIRED`, `STATION_NOT_BUILT`, `MODE_CHECKPOINT_REQUIRED`, `PROGRESS_REVISION_MISMATCH`, `INSUFFICIENT_OPENWORLD_MATERIALS`, `INSUFFICIENT_RESOURCES`, `CRAFT_FAILED`.
 
 ### `GET /build/state`
 
@@ -1491,7 +1553,7 @@ Request:
 
 Status: **implementado em Track 16**.
 
-Equipa `pocao_vida` no slot 1 ou remove a pocao com `item_id: null`. Equipar exige estoque no inventario; remover nao consome item.
+Equipa qualquer item listado em `POTIONS` no slot 1 ou remove a pocao com `item_id: null`. Equipar exige estoque no inventario; remover nao consome item.
 
 ### `POST /build/potion-behavior`
 

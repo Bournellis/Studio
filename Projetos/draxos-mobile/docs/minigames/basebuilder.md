@@ -9,14 +9,17 @@
 - Route: `refuge`
 
 Basebuilder is the current Refugio/Base surface. It owns structures, base
-resources, base upgrade feedback and the base crafting loop already present in
-the Internal Alpha shell.
+resources, base upgrade feedback and the Ossario/Base resource loop already
+present in the Internal Alpha shell.
 
 ## Current Scope
 
 - Opens through the existing Refugio/Base route.
 - Uses existing Base endpoints and current account/save authority.
 - Keeps current resource and structure behavior unchanged.
+- Keeps `Triturar Ossos` as the Base/Ossario contribution to potion crafting.
+- Does not craft potions directly; potion preparation happens at the Bosque
+  Fogueira station.
 - Does not depend on a player-facing Mode Hub; Refugio/Base remains the direct surface.
 
 ## Freeze For This Scaffold

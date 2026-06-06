@@ -19,8 +19,8 @@ O sistema deve responder:
 - qual diferenca premium e aceitavel;
 - que poder deve ser atribuido a esse personagem;
 - quais bots devem existir para pareamento inicial;
-- se `ossos -> po_osso -> craft_pocao_vida` sustenta estoque saudavel de
-  `pocao_vida` por milestone;
+- se `ossos -> po_osso` e `Bau do Bosque -> Fogueira` sustentam estoque
+  saudavel de pocoes simples por milestone;
 - se a Arena PVE gera pressao aceitavel de pocoes por tentativa, considerando
   estoque vivo consumido por duelo;
 - se o save saudavel exercita slot de pocao e comportamento simples na

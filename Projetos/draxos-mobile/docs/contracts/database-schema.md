@@ -1,7 +1,7 @@
 # Database Schema Contract
 
 - Ultima atualizacao: `2026-06-06`
-- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1. Arena PVE v1 acrescenta schema implementado para tentativa, duelos, buffs, progresso, first clears e perfis DB-side de recompensa.
+- Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis, Fogueira como estacao de crafting, e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1. Arena PVE v1 acrescenta schema implementado para tentativa, duelos, buffs, progresso, first clears e perfis DB-side de recompensa.
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
 
@@ -28,6 +28,7 @@ Migrations atuais:
 - `202606060001_openworld_bosque_checkpoint_v1.sql`: adiciona `checkpoint` ao audit de `mode_session_events`, cria validacao SQL `mode_session_checkpoint_v1` para snapshot local do Bosque, valida nodes/capacidade/craft/ruleset em uma unica revisao, preserva compatibilidade de eventos legados e faz `mode_session_complete_v1` exigir checkpoint aceito antes de reward.
 - `202606050001_arena_reward_profiles_v1.sql`: cria `arena_reward_profiles`, habilita RLS read-only para perfis ativos, seeda todos os perfis de `data/definitions/arena_rewards.json` e mantem `ledger_source = arena_pve_v1`.
 - `202606050002_account_reset_request_hash_v1.sql`: adiciona `reset_player_save_v1(game_save_id, request_id, request_hash, payload)`, exige hash obrigatorio, usa idempotencia v1 por `game_saves.id`, move limpeza de Arena/Modes/Track 16 para a transacao SQL e preserva social/guilda/chat account-wide.
+- `202606060003_bosque_fogueira_potion_crafting_v1.sql`: adiciona `station_craft` ao audit de `mode_session_events`, registra `fogueira_estavel_1` como estacao via progresso duravel/structures, cria `craft_station_item_v1`, permite `build_potion_equip_v1` para todas as pocoes simples e bloqueia receitas de Fogueira no craft direto.
 
 ## Regras De Escopo De Servico
 
@@ -306,7 +307,9 @@ aplicada remotamente na publicacao `Bosque Offline-First Checkpoint v1`.
 `202606060002_openworld_bosque_durable_progress_v1.sql` adiciona progresso
 duravel por save para `Bau`, `Mochila/Bolso`, upgrades, estruturas e ledger.
 `202606050003_openworld_bosque_collect_batch_v1.sql` permanece como
-compatibilidade para pacotes antigos.
+compatibilidade para pacotes antigos. `202606060003_bosque_fogueira_potion_crafting_v1.sql`
+adiciona a ponte transacional de craft de estacao sem mudar a politica
+offline-first do gameplay ativo.
 
 Definition: `data/definitions/openworld/forest_ruleset_v1.json`.
 
@@ -315,6 +318,10 @@ Politica de autoridade:
 - gameplay ativo do Bosque e local/offline-first no cliente;
 - `Bau`, `Mochila/Bolso`, upgrades de capacidade e estruturas craftadas sao
   progresso duravel por save;
+- `Fogueira Estavel I` e tambem uma estacao duravel (`station_id =
+  fogueira_estavel_1`) usada para criar consumiveis globais;
+- craft de estacao e server-authoritative e exige checkpoint aceito antes de
+  consumir materiais do Bau ou recursos globais;
 - nodes coletados, posicao e coleta ativa sao estado da visita;
 - o servidor nao valida nem corrige microacoes em tempo real no pacote novo;
 - checkpoints compactos sao o contrato normal de persistencia integrada;
@@ -358,6 +365,9 @@ Schema `openworld_forest_progress_v1`:
 - `chest`: inventario persistente do bau do Bosque;
 - `upgrades`: upgrades de mochila e estruturas persistentes, como
   `bolsa_simples_1` e `fogueira_estavel_1`;
+- `structures`: estruturas persistentes canonicamente construidas, incluindo
+  `fogueira_estavel_1`; compatibilidade ainda reconhece
+  `upgrades.fogueira_estavel_1`;
 - `reward_ledger`: high-water/caps para recompensas ja consideradas;
 - `last_checkpoint_session_id`;
 - `last_completed_session_id`;
@@ -366,16 +376,16 @@ Schema `openworld_forest_progress_v1`:
 
 Regras:
 
-- start injeta `pocket`, `chest` e `upgrades` duraveis no snapshot inicial da
+- start injeta `pocket`, `chest`, `upgrades` e `structures` duraveis no snapshot inicial da
   nova sessao;
 - nova sessao com progresso existente comeca com nodes coletados vazios e com
   bau/mochila/estruturas preservados;
 - checkpoint aceito atualiza `mode_sessions.snapshot_payload` e
   `mode_progress.progress_payload` na mesma operacao logica;
-- complete nao apaga `pocket`, `chest` nem `upgrades`;
+- complete nao apaga `pocket`, `chest`, `upgrades` nem `structures`;
 - reset explicito de save pode limpar o progresso como parte da limpeza de
   gameplay do save;
-- backfill inicial tenta recuperar `pocket`, `chest` e `upgrades` da ultima
+- backfill inicial tenta recuperar `pocket`, `chest`, `upgrades` e `structures` da ultima
   sessao Openworld com snapshot valido.
 
 ### `mode_session_events`
@@ -405,6 +415,8 @@ Regras:
 - acesso operacional via RPC `service_role`;
 - stale write rejeita antes de mutar snapshot;
 - `checkpoint` grava a revisao aceita para o snapshot local validado;
+- `station_craft` audita craft server-authoritative feito em estrutura do
+  Bosque;
 - no coletado nao pode ser consumido duas vezes;
 - coleta em andamento nao e persistida.
 
@@ -414,7 +426,7 @@ Regras:
   `mode_limit_policies` com 1 sessao ativa, cooldown de 10s, limite diario de
   100 starts e expiracao de 2h. Para Openworld/Bosque, carrega
   `openworld_forest_progress_v1` de `mode_progress`, injeta `pocket`, `chest` e
-  `upgrades` duraveis e inicia `collected_nodes` vazio para a visita.
+  `upgrades`/`structures` duraveis e inicia `collected_nodes` vazio para a visita.
 - `mode_session_event_v1`: valida evento, `expected_revision`, ruleset e
   sessao ativa, aplica snapshot e avanca revisao.
 - `mode_session_checkpoint_v1`: valida checkpoint idempotente, ruleset, sessao
@@ -424,8 +436,14 @@ Regras:
   `snapshot_payload` e `client_summary`; repeticao do mesmo request/checkpoint
   com hash igual retorna a resposta ja aceita, enquanto hash divergente e
   mismatch de idempotencia. Para Openworld/Bosque, tambem persiste
-  `pocket`, `chest`, `upgrades`, ledger e resumo duravel aceito em
+  `pocket`, `chest`, `upgrades`, `structures`, ledger e resumo duravel aceito em
   `mode_progress`.
+- `craft_station_item_v1`: bloqueia `game_saves`, `resources`,
+  `mode_progress` e a sessao ativa do Bosque; valida receita, Fogueira
+  construida, checkpoint/progress revision, materiais no Bau, `po_osso`,
+  output, idempotencia e falha sem mutacao parcial; deduz materiais do Bau e
+  recursos globais, incrementa `player_consumables`, atualiza snapshot/progresso
+  duravel e registra `item_transactions` + `mode_session_events.station_craft`.
 - `mode_session_complete_v1`: usa somente o ultimo checkpoint aceito para
   calcular `deposited_items`, `activity_score`, caps e reward ledger, preserva
   `openworld_forest_progress_v1` e atualiza o ledger para evitar recompensa
@@ -473,6 +491,9 @@ Regras Track 16:
 - `ossos` e inteiro na escala atual (`1 Osso atual = 0.01 Osso antigo`).
 - `po_osso` e inteiro, sempre nao negativo.
 - A migracao Track 16 multiplica saldos/logs/rewards existentes de Ossos por `100` e impede novo saldo fracionario.
+- Bosque Fogueira Potion Crafting v1 usa `po_osso` como insumo global de
+  receitas de Fogueira; os materiais locais da estacao continuam no Bau do
+  Bosque, nao em `resources`.
 
 ### `builds`
 
@@ -515,7 +536,10 @@ Regras:
 
 - chave unica por `player_id + item_id`;
 - `quantity >= 0`;
-- consumo em batalha e crafting sao server-authoritative.
+- consumo em batalha e crafting sao server-authoritative;
+- itens atuais de pocao: `pocao_vida`, `pocao_foco` e `pocao_resguardo`;
+- craft de Fogueira incrementa esta tabela somente depois de validar estacao,
+  checkpoint, Bau e recursos globais.
 
 ### `player_potion_slots`
 
@@ -528,6 +552,13 @@ Campos minimos:
 - `potion_id`
 - `behavior`
 - `updated_at`
+
+Regras:
+
+- V1 continua com um unico slot de pocao;
+- `potion_id` deve ser nulo ou um item registrado em `POTIONS`;
+- equipar exige estoque positivo em `player_consumables`;
+- remover nao consome item.
 
 ### `player_spell_behaviors`
 

@@ -57,6 +57,13 @@ per save. Nodes collected, active collection, position and pending checkpoint
 remain visit state. Reward remains server-authoritative through accepted
 checkpoint, caps and ledger.
 
+Station craft exception approved on 2026-06-06: `Fogueira Estavel I` is a
+durable Bosque structure and the first approved Openworld station. It may create
+global account consumables only through `POST /crafting/station-craft`, after an
+accepted Bosque checkpoint, while consuming materials from durable `Bau` and
+global `po_osso`. This exception approves only the three simple potion recipes
+listed in `docs/behavior-potion-crafting-v1.md`.
+
 ## Openworld Working Policy
 
 The current Openworld policy is:
@@ -64,12 +71,14 @@ The current Openworld policy is:
 - player feel and active control are protected over microaction precision;
 - the Bosque visit is client-owned during play;
 - server authority is reserved for session validity, ruleset identity, durable
-  Bosque progress, caps, accepted checkpoint, completion, reward, ledger and
-  audit;
+  Bosque progress, station crafts that create global account items, caps,
+  accepted checkpoint, completion, reward, ledger and audit;
 - `Bau`, `Mochila/Bolso`, upgrades and crafted structures persist per save;
 - collected nodes, position and active collection are visit state;
 - checkpoint validation is the normal integrated path;
 - event micro-mutators are compatibility only for old packages;
+- `station-craft` is not a microaction sync path; it is a deliberate
+  server-authoritative bridge for global consumables;
 - snapshots can initialize or recover a visit before control, but cannot roll
   back the active same-session world;
 - conflicts are handled as explicit recovery outside active control.
@@ -90,6 +99,9 @@ craft events as the main path for the new client.
   uses local cache plus checkpoint confirmation.
 - Durable Bosque progress is per-save: `Bau`, `Mochila/Bolso`, capacity upgrades
   and crafted structures survive exit, completion, expiry and new entry.
+- `Fogueira Estavel I` is the only approved Openworld station in V1.
+- Approved station recipes are `craft_pocao_vida`, `craft_pocao_foco` and
+  `craft_pocao_resguardo`.
 - Offline/no-auth play remains preview-only and never creates reward.
 - Future Openworld slices must start from descriptor/schema changes and a live
   design contract before runtime work.
@@ -110,15 +122,16 @@ craft events as the main path for the new client.
 
 - No runtime gameplay change beyond the explicit `forest` QoL controls/collision
   exception above.
-- No additional remote backend mutation beyond the published checkpoint package
-  without separate approval.
+- No backend mutation beyond checkpoint/durable progress and the approved
+  Fogueira station craft bridge without separate approval.
 - No new map.
 - No enemies or combat.
 - No broader RPG campaign scope.
 - No new reward source or economy tuning.
 - No Basebuilder ownership changes.
 - No conversion of persistent Bosque storage into global account inventory
-  without a separate Reward Bridge decision.
+  beyond the approved Fogueira potion recipes without a separate Reward Bridge
+  decision.
 - No new public release/publication from this QoL package without separate
   approval.
 
