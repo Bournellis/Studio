@@ -17,6 +17,7 @@ import {
   rewardClaimProjection,
   rewardDefinition,
   rewardPeriodKey,
+  stationCraftProjection,
   weekKeyUTC,
 } from "../functions/_shared/economy_domain.ts";
 import {
@@ -154,16 +155,27 @@ Deno.test("economy domain preserves crafting payload and source-sink projections
   assertEq(stableStringify(payload), stableStringify(supabasePayload));
   assertEq(payload.ok, true);
   const crafting = objectField(payload, "crafting");
-  assertEq(arrayField(crafting, "potions").length, 1);
-  assertEq(arrayField(crafting, "recipes").length, 1);
+  assertEq(arrayField(crafting, "potions").length, 3);
+  assertEq(arrayField(crafting, "recipes").length, 3);
   const slot = objectValue(arrayField(crafting, "potion_slots")[0]);
   assertEq(booleanField(slot, "unlocked"), true);
   assertEq(stringField(slot, "potion_id"), "pocao_vida");
 
   const recipe = craftingRecipe("craft_pocao_vida");
   assert(recipe !== undefined, "craft_pocao_vida should exist");
-  const craft = craftProjection(recipe, 2);
-  assertEq(stableStringify(craft.costPayload), stableStringify({ po_osso: -100 }));
+  let stationRequired = false;
+  try {
+    craftProjection(recipe, 2);
+  } catch (error) {
+    stationRequired = String(error).includes("STATION_REQUIRED");
+  }
+  assert(stationRequired, "station recipes should not use direct craftProjection");
+  const craft = stationCraftProjection(recipe, 2);
+  assertEq(stableStringify(craft.accountCostPayload), stableStringify({ po_osso: -50 }));
+  assertEq(
+    stableStringify(craft.openworldChestCostPayload),
+    stableStringify({ cogumelo: -2, folha: -4 }),
+  );
   assertEq(
     stableStringify(craft.outputPayload),
     stableStringify({

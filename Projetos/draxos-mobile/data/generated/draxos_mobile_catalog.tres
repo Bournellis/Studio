@@ -352,18 +352,94 @@ collections = {
 "weapon_quality": "cosmica"
 }],
 "crafting_recipes": [{
-"description": "Transforma Po de Osso em uma Pocao de Vida.",
-"display_name": "Criar Pocao de Vida",
+"description": "Prepara uma Pocao de Vida na Fogueira usando materiais do Bau do Bosque e Po de Osso da conta.",
+"display_name": "Preparar Pocao de Vida",
 "enabled": true,
 "id": "craft_pocao_vida",
-"input": {
-"po_osso": 50.0
-},
-"output": {
+"inputs": [{
+"domain": "openworld_chest",
+"item_id": "folha",
+"quantity": 2.0
+}, {
+"domain": "openworld_chest",
+"item_id": "cogumelo",
+"quantity": 1.0
+}, {
+"domain": "account_resource",
+"item_id": "po_osso",
+"quantity": 25.0
+}],
+"outputs": [{
+"domain": "account_consumable",
 "item_id": "pocao_vida",
 "quantity": 1.0
+}],
+"station": {
+"mode_id": "openworld",
+"slice_id": "forest",
+"station_id": "fogueira_estavel_1"
 },
-"tags": ["crafting", "potion", "healing"],
+"tags": ["crafting", "potion", "healing", "station", "fogueira"],
+"version": 1.0
+}, {
+"description": "Prepara uma Pocao de Foco na Fogueira usando materiais do Bau do Bosque e Po de Osso da conta.",
+"display_name": "Preparar Pocao de Foco",
+"enabled": true,
+"id": "craft_pocao_foco",
+"inputs": [{
+"domain": "openworld_chest",
+"item_id": "fungo",
+"quantity": 1.0
+}, {
+"domain": "openworld_chest",
+"item_id": "inseto",
+"quantity": 1.0
+}, {
+"domain": "account_resource",
+"item_id": "po_osso",
+"quantity": 15.0
+}],
+"outputs": [{
+"domain": "account_consumable",
+"item_id": "pocao_foco",
+"quantity": 1.0
+}],
+"station": {
+"mode_id": "openworld",
+"slice_id": "forest",
+"station_id": "fogueira_estavel_1"
+},
+"tags": ["crafting", "potion", "mana", "station", "fogueira"],
+"version": 1.0
+}, {
+"description": "Prepara uma Pocao de Resguardo na Fogueira usando materiais do Bau do Bosque e Po de Osso da conta.",
+"display_name": "Preparar Pocao de Resguardo",
+"enabled": true,
+"id": "craft_pocao_resguardo",
+"inputs": [{
+"domain": "openworld_chest",
+"item_id": "resina",
+"quantity": 1.0
+}, {
+"domain": "openworld_chest",
+"item_id": "pedra_pequena",
+"quantity": 1.0
+}, {
+"domain": "account_resource",
+"item_id": "po_osso",
+"quantity": 20.0
+}],
+"outputs": [{
+"domain": "account_consumable",
+"item_id": "pocao_resguardo",
+"quantity": 1.0
+}],
+"station": {
+"mode_id": "openworld",
+"slice_id": "forest",
+"station_id": "fogueira_estavel_1"
+},
+"tags": ["crafting", "potion", "barrier", "station", "fogueira"],
 "version": 1.0
 }],
 "passives": [{
@@ -766,6 +842,52 @@ collections = {
 "id": "pocao_vida",
 "slot_type": "potion",
 "tags": ["battle", "consumable", "potion", "healing"],
+"version": 1.0
+}, {
+"default_behavior": {
+"enabled": true,
+"hp": {
+"mode": "ignore",
+"percent": 0.0
+},
+"mana": {
+"mode": "below",
+"percent": 35.0
+}
+},
+"description": "Consumivel de batalha que restaura 25% da mana maxima.",
+"display_name": "Pocao de Foco",
+"effect": {
+"percent_max_mana": 25.0,
+"type": "mana_restore"
+},
+"enabled": true,
+"id": "pocao_foco",
+"slot_type": "potion",
+"tags": ["battle", "consumable", "potion", "mana"],
+"version": 1.0
+}, {
+"default_behavior": {
+"enabled": true,
+"hp": {
+"mode": "below",
+"percent": 55.0
+},
+"mana": {
+"mode": "ignore",
+"percent": 0.0
+}
+},
+"description": "Consumivel de batalha que concede uma barreira de 12% da vida maxima.",
+"display_name": "Pocao de Resguardo",
+"effect": {
+"percent_max_hp": 12.0,
+"type": "barrier_gain"
+},
+"enabled": true,
+"id": "pocao_resguardo",
+"slot_type": "potion",
+"tags": ["battle", "consumable", "potion", "barrier"],
 "version": 1.0
 }],
 "power_bands": [{

@@ -18,11 +18,12 @@ import {
   crushBonesConversion,
   DEFAULT_POTION_BEHAVIOR,
   type EconomyResourceRow,
+  stationCraftProjection,
 } from "../_shared/economy_domain.ts";
 import { type SaveType, saveTypeQuery } from "../_shared/save_context.ts";
 import { stateEnvelope } from "../_shared/response_envelope.ts";
 
-type Route = "state" | "crush_bones" | "craft";
+type Route = "state" | "crush_bones" | "craft" | "station_craft";
 
 interface EdgeConfig {
   supabaseUrl: string;
@@ -92,6 +93,9 @@ async function handleCorsRequest(request: Request): Promise<Response> {
     if (route === "craft" && request.method !== "POST") {
       return errorResponse("METHOD_NOT_ALLOWED", "Use POST /crafting/craft.", 405);
     }
+    if (route === "station_craft" && request.method !== "POST") {
+      return errorResponse("METHOD_NOT_ALLOWED", "Use POST /crafting/station-craft.", 405);
+    }
 
     const config = loadConfig();
     if (config.error !== null) {
@@ -111,7 +115,10 @@ async function handleCorsRequest(request: Request): Promise<Response> {
     if (route === "crush_bones") {
       return await handleCrushBones(request, auth.value, config.value);
     }
-    return await handleCraft(request, auth.value, config.value);
+    if (route === "craft") {
+      return await handleCraft(request, auth.value, config.value);
+    }
+    return await handleStationCraft(request, auth.value, config.value);
   } catch (error) {
     console.error(error);
     return errorResponse("INTERNAL_ERROR", "Unexpected crafting service error.", 500);
@@ -211,6 +218,9 @@ async function handleCraft(
   if (recipe === undefined) {
     return errorResponse("INVALID_RECIPE", "recipe_id is not part of Crafting v1.", 400);
   }
+  if (recipe.station !== undefined) {
+    return errorResponse("STATION_REQUIRED", "Prepare this recipe at the Bosque Fogueira.", 409);
+  }
 
   const state = await loadCraftingState(auth, config);
   if (state.error !== null) {
@@ -258,6 +268,135 @@ async function handleCraft(
       output: projection.outputPayload,
       cost: projection.costPayload,
     },
+  };
+  return jsonResponse(stateEnvelope(responsePayload, {
+    surface: "crafting",
+    saveType: auth.saveType,
+  }));
+}
+
+async function handleStationCraft(
+  request: Request,
+  auth: AuthContext,
+  config: EdgeConfig,
+): Promise<Response> {
+  const body = await readJsonObject(request);
+  if (body === null) {
+    return errorResponse("INVALID_JSON", "Request body must be a JSON object.", 400);
+  }
+  const requestId = stringField(body, "request_id");
+  const recipeId = stringField(body, "recipe_id");
+  const quantity = positiveIntegerField(body, "quantity", 1);
+  const stationContext = objectField(body, "station_context");
+  if (!UUID_PATTERN.test(requestId)) {
+    return errorResponse("INVALID_REQUEST_ID", "request_id must be a UUID.", 400);
+  }
+  if (quantity === null) {
+    return errorResponse("INVALID_QUANTITY", "quantity must be a positive integer.", 400);
+  }
+  if (stationContext === null) {
+    return errorResponse("INVALID_STATION_CONTEXT", "station_context must be a JSON object.", 400);
+  }
+
+  const recipe = craftingRecipe(recipeId);
+  if (recipe === undefined) {
+    return errorResponse("INVALID_RECIPE", "recipe_id is not part of Crafting v1.", 400);
+  }
+  if (recipe.station === undefined) {
+    return errorResponse("INVALID_RECIPE", "recipe_id does not require a station.", 400);
+  }
+
+  const sessionId = stringField(stationContext, "session_id");
+  const modeId = stringField(stationContext, "mode_id");
+  const sliceId = stringField(stationContext, "slice_id");
+  const stationId = stringField(stationContext, "station_id");
+  const expectedProgressRevision = nonNegativeIntegerField(
+    stationContext,
+    "expected_progress_revision",
+  );
+  if (!UUID_PATTERN.test(sessionId)) {
+    return errorResponse("INVALID_SESSION_ID", "station_context.session_id must be a UUID.", 400);
+  }
+  if (
+    modeId !== recipe.station.modeId || sliceId !== recipe.station.sliceId ||
+    stationId !== recipe.station.stationId
+  ) {
+    return errorResponse("INVALID_STATION_CONTEXT", "station_context does not match the recipe.", 400);
+  }
+  if (expectedProgressRevision === null) {
+    return errorResponse(
+      "INVALID_PROGRESS_REVISION",
+      "expected_progress_revision must be a non-negative integer.",
+      400,
+    );
+  }
+
+  const state = await loadCraftingState(auth, config);
+  if (state.error !== null) {
+    return errorResponse(state.error.code, state.error.message, state.error.status);
+  }
+
+  const projection = stationCraftProjection(recipe, quantity);
+  const canonicalStationContext = {
+    mode_id: recipe.station.modeId,
+    slice_id: recipe.station.sliceId,
+    session_id: sessionId,
+    station_id: recipe.station.stationId,
+    expected_progress_revision: expectedProgressRevision,
+  };
+  const requestHash = await mutationRequestHash("crafting/station-craft", body, {
+    request_id: requestId,
+    save_type: auth.saveType,
+    recipe_id: recipe.id,
+    quantity,
+    station_context: canonicalStationContext,
+    resource_delta: projection.accountCostPayload,
+    openworld_chest_delta: projection.openworldChestCostPayload,
+    inputs: projection.inputsPayload,
+    output: projection.outputPayload,
+    outputs: projection.outputsPayload,
+  });
+  const requestPayload = {
+    request_id: requestId,
+    recipe_id: recipe.id,
+    quantity,
+    station_context: canonicalStationContext,
+    resource_delta: projection.accountCostPayload,
+    openworld_chest_delta: projection.openworldChestCostPayload,
+    inputs: projection.inputsPayload,
+    output: projection.outputPayload,
+    outputs: projection.outputsPayload,
+  };
+  const rpc = await restRequest<unknown>(config, "rpc/craft_station_item_v1", {
+    method: "POST",
+    body: JSON.stringify({
+      p_game_save_id: state.value.gameSave.id,
+      p_request_id: requestId,
+      p_request_hash: requestHash,
+      p_request_payload: requestPayload,
+    }),
+  });
+  if (rpc.error !== null) {
+    const mapped = mapFoundationDatabaseError(rpc.error, "STATION_CRAFT_FAILED");
+    return errorResponse(mapped.code, mapped.message, mapped.status);
+  }
+  const rpcPayload = foundationRpcPayload(rpc.value);
+
+  const refreshed = await loadCraftingState(auth, config);
+  if (refreshed.error !== null) {
+    return errorResponse(refreshed.error.code, refreshed.error.message, refreshed.error.status);
+  }
+  const responsePayload = {
+    ...craftingStatePayload(refreshed.value),
+    crafted: rpcPayload.crafted ?? {
+      recipe_id: recipe.id,
+      output: projection.outputPayload,
+      cost: projection.accountCostPayload,
+      openworld_cost: projection.openworldChestCostPayload,
+    },
+    station_craft: rpcPayload.station_craft ?? requestPayload,
+    durable_progress: rpcPayload.durable_progress ?? null,
+    session: rpcPayload.session ?? null,
   };
   return jsonResponse(stateEnvelope(responsePayload, {
     surface: "crafting",
@@ -363,6 +502,7 @@ async function ensurePotionSlot(config: EdgeConfig, playerId: string): Promise<v
 function resolveRoute(pathname: string): Route | null {
   if (pathname.endsWith("/state")) return "state";
   if (pathname.endsWith("/crush-bones")) return "crush_bones";
+  if (pathname.endsWith("/station-craft")) return "station_craft";
   if (pathname.endsWith("/craft")) return "craft";
   return null;
 }
@@ -442,6 +582,11 @@ function stringField(payload: Record<string, unknown>, key: string): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function objectField(payload: Record<string, unknown>, key: string): Record<string, unknown> | null {
+  const value = payload[key];
+  return isObject(value) ? value : null;
+}
+
 function positiveIntegerField(
   payload: Record<string, unknown>,
   key: string,
@@ -452,6 +597,14 @@ function positiveIntegerField(
   if (!Number.isFinite(parsed)) return null;
   const integer = Math.trunc(parsed);
   return integer > 0 && integer === parsed ? integer : null;
+}
+
+function nonNegativeIntegerField(payload: Record<string, unknown>, key: string): number | null {
+  const value = payload[key];
+  const parsed = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(parsed)) return null;
+  const integer = Math.trunc(parsed);
+  return integer >= 0 && integer === parsed ? integer : null;
 }
 
 function stringValue(value: unknown, fallback: string): string {

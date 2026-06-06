@@ -99,6 +99,7 @@
     {"node_id": "node_pedra_pequena_02", "item_id": "pedra_pequena", "position": {"x": 338, "y": 808}, "quantity": 1},
     {"node_id": "node_pedra_01", "item_id": "pedra", "position": {"x": 430, "y": 900}, "quantity": 1},
     {"node_id": "node_cogumelo_01", "item_id": "cogumelo", "position": {"x": 690, "y": 640}, "quantity": 1},
+    {"node_id": "node_cogumelo_02", "item_id": "cogumelo", "position": {"x": 640, "y": 585}, "quantity": 1},
     {"node_id": "node_fungo_01", "item_id": "fungo", "position": {"x": 760, "y": 820}, "quantity": 1},
     {"node_id": "node_inseto_01", "item_id": "inseto", "position": {"x": 606, "y": 650}, "quantity": 1},
     {"node_id": "node_resina_01", "item_id": "resina", "position": {"x": 620, "y": 720}, "quantity": 1},
@@ -114,13 +115,14 @@
     {
       "id": "structure_fogueira_estavel_1",
       "kind": "campfire",
+      "station_id": "fogueira_estavel_1",
       "display_name": "Fogueira estavel I",
       "position": {"x": 305, "y": 330},
       "visual_size": {"x": 72, "y": 58},
       "collision_shape": "circle",
       "collision_radius": 22,
       "collision_offset": {"x": 0, "y": 8},
-      "interaction_radius": 0,
+      "interaction_radius": 88,
       "blocks_player": true,
       "upgrade_id": "fogueira_estavel_1",
       "sort_offset": 24

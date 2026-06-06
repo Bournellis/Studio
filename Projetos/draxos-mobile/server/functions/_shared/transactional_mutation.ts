@@ -37,6 +37,11 @@ const DOMAIN_CONFLICT_CODES = new Set([
   "GUILD_FULL",
   "GUILD_REQUIRED",
   "CONSUMABLE_APPLY_FAILED",
+  "STATION_REQUIRED",
+  "STATION_NOT_BUILT",
+  "MODE_CHECKPOINT_REQUIRED",
+  "PROGRESS_REVISION_MISMATCH",
+  "INSUFFICIENT_OPENWORLD_MATERIALS",
   "REWARD_ALREADY_CLAIMED",
   "ALPHA_DAILY_ALREADY_REDEEMED",
   "ALPHA_ALREADY_OWNED",
@@ -50,6 +55,8 @@ const DOMAIN_NOT_FOUND_CODES = new Set([
   "USER_NOT_FOUND",
   "RESOURCES_NOT_FOUND",
   "BUILD_NOT_FOUND",
+  "MODE_SESSION_NOT_FOUND",
+  "MODE_SESSION_NOT_ACTIVE",
   "GUILD_NOT_FOUND",
   "BATTLE_PASS_NOT_FOUND",
 ]);
@@ -70,6 +77,11 @@ const DOMAIN_INVALID_CODES = new Set([
   "INVALID_SPELL",
   "INVALID_SLOT",
   "INVALID_POTION",
+  "INVALID_STATION_CONTEXT",
+  "INVALID_SESSION_ID",
+  "INVALID_MODE",
+  "INVALID_RULESET",
+  "INVALID_PROGRESS_REVISION",
   "EMPTY_MESSAGE",
 ]);
 
@@ -169,6 +181,8 @@ export function mapFoundationDatabaseError(
     "CHAT_SEND_FAILED",
     "CHAT_RATE_LIMITED",
     "RANKING_APPLY_FAILED",
+    "STATION_CRAFT_FAILED",
+    "MODE_SESSION_NOT_FOUND",
   ];
   for (const code of codes) {
     if (upperMessage.includes(code)) {
@@ -218,6 +232,16 @@ function foundationErrorMessage(code: string): string {
       return "Spell behavior can only be set for equipped spells.";
     case "POTION_NOT_OWNED":
       return "This potion is not in inventory.";
+    case "STATION_REQUIRED":
+      return "Prepare this recipe at the Bosque Fogueira.";
+    case "STATION_NOT_BUILT":
+      return "Build the Bosque Fogueira before preparing potions.";
+    case "MODE_CHECKPOINT_REQUIRED":
+      return "Save a Bosque checkpoint before preparing potions.";
+    case "PROGRESS_REVISION_MISMATCH":
+      return "Bosque progress changed before the station craft could be applied.";
+    case "INSUFFICIENT_OPENWORLD_MATERIALS":
+      return "The Bosque Bau does not have the required materials.";
     case "INVALID_USERNAME":
       return "username is required.";
     case "INVALID_SPELL":
@@ -226,6 +250,16 @@ function foundationErrorMessage(code: string): string {
       return "Only potion slot 1 is available.";
     case "INVALID_POTION":
       return "item_id is not an available potion.";
+    case "INVALID_STATION_CONTEXT":
+      return "station_context is invalid.";
+    case "INVALID_SESSION_ID":
+      return "session_id is invalid.";
+    case "INVALID_MODE":
+      return "mode_id is invalid for this mutation.";
+    case "INVALID_RULESET":
+      return "ruleset is invalid for this mutation.";
+    case "INVALID_PROGRESS_REVISION":
+      return "expected_progress_revision is invalid.";
     case "EMPTY_MESSAGE":
       return "Chat message cannot be empty.";
     case "CHAT_RATE_LIMITED":
@@ -276,6 +310,12 @@ function foundationErrorMessage(code: string): string {
       return "Unable to send chat message.";
     case "RANKING_APPLY_FAILED":
       return "Unable to update arena ranking.";
+    case "STATION_CRAFT_FAILED":
+      return "Unable to prepare potion at the Bosque station.";
+    case "MODE_SESSION_NOT_FOUND":
+      return "Active Bosque session was not found.";
+    case "MODE_SESSION_NOT_ACTIVE":
+      return "Bosque session is not active.";
     default:
       return "Foundation mutation could not be completed.";
   }

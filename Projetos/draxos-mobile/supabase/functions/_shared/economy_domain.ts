@@ -108,11 +108,36 @@ export interface PotionDefinition {
   defaultBehavior: BehaviorConfig;
 }
 
+export type CraftingInputDomain = "account_resource" | "openworld_chest";
+export type CraftingOutputDomain = "account_consumable";
+
+export interface CraftingRecipeInput {
+  domain: CraftingInputDomain;
+  itemId: string;
+  quantity: number;
+}
+
+export interface CraftingRecipeOutput {
+  domain: CraftingOutputDomain;
+  itemId: string;
+  quantity: number;
+}
+
+export interface CraftingRecipeStation {
+  modeId: "openworld";
+  sliceId: "forest";
+  stationId: "fogueira_estavel_1";
+  displayName: string;
+}
+
 export interface CraftingRecipe {
   id: string;
   displayName: string;
-  input: Partial<Record<EconomyResourceKey, number>>;
+  input?: Partial<Record<EconomyResourceKey, number>>;
   output: { itemId: string; quantity: number };
+  inputs?: CraftingRecipeInput[];
+  outputs?: CraftingRecipeOutput[];
+  station?: CraftingRecipeStation;
 }
 
 export interface CraftingInventoryRow {
@@ -311,6 +336,18 @@ export const DEFAULT_POTION_BEHAVIOR: BehaviorConfig = {
   mana: { mode: "ignore", percent: 0 },
 };
 
+export const DEFAULT_FOCUS_POTION_BEHAVIOR: BehaviorConfig = {
+  enabled: true,
+  hp: { mode: "ignore", percent: 0 },
+  mana: { mode: "below", percent: 35 },
+};
+
+export const DEFAULT_WARD_POTION_BEHAVIOR: BehaviorConfig = {
+  enabled: true,
+  hp: { mode: "below", percent: 55 },
+  mana: { mode: "ignore", percent: 0 },
+};
+
 export const POTIONS: PotionDefinition[] = [
   {
     id: "pocao_vida",
@@ -325,16 +362,83 @@ export const POTIONS: PotionDefinition[] = [
     },
     defaultBehavior: DEFAULT_POTION_BEHAVIOR,
   },
+  {
+    id: "pocao_foco",
+    displayName: "Pocao de Foco",
+    description: "Restaura 25% da mana maxima quando o ritual perde folego.",
+    effect: {
+      type: "mana_restore",
+      percent_max_mana: 25,
+    },
+    defaultBehavior: DEFAULT_FOCUS_POTION_BEHAVIOR,
+  },
+  {
+    id: "pocao_resguardo",
+    displayName: "Pocao de Resguardo",
+    description: "Concede uma barreira de 12% da vida maxima.",
+    effect: {
+      type: "barrier_gain",
+      percent_max_hp: 12,
+    },
+    defaultBehavior: DEFAULT_WARD_POTION_BEHAVIOR,
+  },
 ];
 
 export const CRAFTING_RECIPES: CraftingRecipe[] = [
   {
     id: "craft_pocao_vida",
-    displayName: "Criar Pocao de Vida",
-    input: { po_osso: 50 },
+    displayName: "Preparar Pocao de Vida",
     output: { itemId: "pocao_vida", quantity: 1 },
+    inputs: [
+      { domain: "openworld_chest", itemId: "folha", quantity: 2 },
+      { domain: "openworld_chest", itemId: "cogumelo", quantity: 1 },
+      { domain: "account_resource", itemId: "po_osso", quantity: 25 },
+    ],
+    outputs: [{ domain: "account_consumable", itemId: "pocao_vida", quantity: 1 }],
+    station: {
+      modeId: "openworld",
+      sliceId: "forest",
+      stationId: "fogueira_estavel_1",
+      displayName: "Fogueira Estavel I",
+    },
+  },
+  {
+    id: "craft_pocao_foco",
+    displayName: "Preparar Pocao de Foco",
+    output: { itemId: "pocao_foco", quantity: 1 },
+    inputs: [
+      { domain: "openworld_chest", itemId: "fungo", quantity: 1 },
+      { domain: "openworld_chest", itemId: "inseto", quantity: 1 },
+      { domain: "account_resource", itemId: "po_osso", quantity: 15 },
+    ],
+    outputs: [{ domain: "account_consumable", itemId: "pocao_foco", quantity: 1 }],
+    station: {
+      modeId: "openworld",
+      sliceId: "forest",
+      stationId: "fogueira_estavel_1",
+      displayName: "Fogueira Estavel I",
+    },
+  },
+  {
+    id: "craft_pocao_resguardo",
+    displayName: "Preparar Pocao de Resguardo",
+    output: { itemId: "pocao_resguardo", quantity: 1 },
+    inputs: [
+      { domain: "openworld_chest", itemId: "resina", quantity: 1 },
+      { domain: "openworld_chest", itemId: "pedra_pequena", quantity: 1 },
+      { domain: "account_resource", itemId: "po_osso", quantity: 20 },
+    ],
+    outputs: [{ domain: "account_consumable", itemId: "pocao_resguardo", quantity: 1 }],
+    station: {
+      modeId: "openworld",
+      sliceId: "forest",
+      stationId: "fogueira_estavel_1",
+      displayName: "Fogueira Estavel I",
+    },
   },
 ];
+
+export const POTION_IDS = new Set(POTIONS.map((potion) => potion.id));
 
 export function monetizationStatePayload(
   state: MonetizationProjectionState,
@@ -672,19 +776,42 @@ export function potionPayload(potion: PotionDefinition): Record<string, unknown>
 }
 
 export function recipePayload(recipe: CraftingRecipe): Record<string, unknown> {
+  const legacyInput = recipe.input === undefined ? {} : resourceDelta(recipe.input);
+  const inputs = (recipe.inputs ?? recipeInputsFromLegacy(recipe)).map((input) => ({
+    domain: input.domain,
+    item_id: input.itemId,
+    quantity: input.quantity,
+  }));
+  const outputs = (recipe.outputs ?? recipeOutputsFromLegacy(recipe)).map((output) => ({
+    domain: output.domain,
+    item_id: output.itemId,
+    quantity: output.quantity,
+  }));
   return {
     id: recipe.id,
     display_name: recipe.displayName,
-    input: resourceDelta(recipe.input),
+    input: legacyInput,
+    inputs,
     output: {
       item_id: recipe.output.itemId,
       quantity: recipe.output.quantity,
+    },
+    outputs,
+    station: recipe.station === undefined ? null : {
+      mode_id: recipe.station.modeId,
+      slice_id: recipe.station.sliceId,
+      station_id: recipe.station.stationId,
+      display_name: recipe.station.displayName,
     },
   };
 }
 
 export function craftingRecipe(recipeId: string): CraftingRecipe | undefined {
   return CRAFTING_RECIPES.find((recipe) => recipe.id === recipeId);
+}
+
+export function potionDefinition(itemId: string): PotionDefinition | undefined {
+  return POTIONS.find((potion) => potion.id === itemId);
 }
 
 export function craftProjection(
@@ -694,12 +821,58 @@ export function craftProjection(
   costPayload: Record<string, number>;
   outputPayload: { item_id: string; quantity: number };
 } {
+  if (recipe.station !== undefined) {
+    throw new Error("STATION_REQUIRED");
+  }
   return {
-    costPayload: resourceDelta(scaledResourceDelta(recipe.input, -quantity)),
+    costPayload: resourceDelta(scaledResourceDelta(recipe.input ?? {}, -quantity)),
     outputPayload: {
       item_id: recipe.output.itemId,
       quantity: recipe.output.quantity * quantity,
     },
+  };
+}
+
+export function stationCraftProjection(
+  recipe: CraftingRecipe,
+  quantity: number,
+): {
+  accountCostPayload: Record<string, number>;
+  openworldChestCostPayload: Record<string, number>;
+  outputPayload: { item_id: string; quantity: number };
+  inputsPayload: Array<Record<string, unknown>>;
+  outputsPayload: Array<Record<string, unknown>>;
+} {
+  const accountCost: Partial<Record<EconomyResourceKey, number>> = {};
+  const openworldChestCost: Record<string, number> = {};
+  for (const input of recipe.inputs ?? recipeInputsFromLegacy(recipe)) {
+    const scaledQuantity = input.quantity * quantity;
+    if (input.domain === "account_resource") {
+      const key = input.itemId as EconomyResourceKey;
+      accountCost[key] = numberValue(accountCost[key], 0) - scaledQuantity;
+    } else if (input.domain === "openworld_chest") {
+      openworldChestCost[input.itemId] = numberValue(openworldChestCost[input.itemId], 0) -
+        scaledQuantity;
+    }
+  }
+  const output = recipe.outputs?.[0] ?? recipeOutputsFromLegacy(recipe)[0];
+  return {
+    accountCostPayload: resourceDelta(accountCost),
+    openworldChestCostPayload: openworldChestCost,
+    outputPayload: {
+      item_id: output.itemId,
+      quantity: output.quantity * quantity,
+    },
+    inputsPayload: (recipe.inputs ?? recipeInputsFromLegacy(recipe)).map((input) => ({
+      domain: input.domain,
+      item_id: input.itemId,
+      quantity: input.quantity * quantity,
+    })),
+    outputsPayload: (recipe.outputs ?? recipeOutputsFromLegacy(recipe)).map((recipeOutput) => ({
+      domain: recipeOutput.domain,
+      item_id: recipeOutput.itemId,
+      quantity: recipeOutput.quantity * quantity,
+    })),
   };
 }
 
@@ -777,4 +950,20 @@ function numberValue(value: unknown, fallback: number): number {
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function recipeInputsFromLegacy(recipe: CraftingRecipe): CraftingRecipeInput[] {
+  return Object.entries(recipe.input ?? {}).map(([itemId, quantity]) => ({
+    domain: "account_resource",
+    itemId,
+    quantity: Math.max(0, Math.trunc(numberValue(quantity, 0))),
+  }));
+}
+
+function recipeOutputsFromLegacy(recipe: CraftingRecipe): CraftingRecipeOutput[] {
+  return [{
+    domain: "account_consumable",
+    itemId: recipe.output.itemId,
+    quantity: recipe.output.quantity,
+  }];
 }

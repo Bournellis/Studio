@@ -22,6 +22,42 @@
         "hp": {"mode": "below", "percent": 40},
         "mana": {"mode": "ignore", "percent": 0}
       }
+    },
+    {
+      "id": "pocao_foco",
+      "display_name": "Pocao de Foco",
+      "description": "Consumivel de batalha que restaura 25% da mana maxima.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["battle", "consumable", "potion", "mana"],
+      "slot_type": "potion",
+      "effect": {
+        "type": "mana_restore",
+        "percent_max_mana": 25
+      },
+      "default_behavior": {
+        "enabled": true,
+        "hp": {"mode": "ignore", "percent": 0},
+        "mana": {"mode": "below", "percent": 35}
+      }
+    },
+    {
+      "id": "pocao_resguardo",
+      "display_name": "Pocao de Resguardo",
+      "description": "Consumivel de batalha que concede uma barreira de 12% da vida maxima.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["battle", "consumable", "potion", "barrier"],
+      "slot_type": "potion",
+      "effect": {
+        "type": "barrier_gain",
+        "percent_max_hp": 12
+      },
+      "default_behavior": {
+        "enabled": true,
+        "hp": {"mode": "below", "percent": 55},
+        "mana": {"mode": "ignore", "percent": 0}
+      }
     }
   ]
 }

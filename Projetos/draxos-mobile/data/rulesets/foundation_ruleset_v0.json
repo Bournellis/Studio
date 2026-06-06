@@ -4,8 +4,8 @@
   "ruleset_version": 1,
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
   "primary_product_mode": "PVE_ARENA_INITIAL",
-  "content_hash": "1cb11637f9346e226ca1db7333486b3718a2c38b07e49b1de00ffa32d134e074",
-  "simulator_hash": "e835cadde3c937cba45c46785da3761139373ab23ac9dfaaed814d79f933bbe9",
+  "content_hash": "c9cb2166c562272170c24063fe271bd03f165c39c772b71d3700575ca8bbcc86",
+  "simulator_hash": "f7485f838d65064e0ca9b72b67e0587e7722756658fff49161fbf67f10769a6e",
   "runtime": {
     "mode": "FIRST_SLICE_SIM",
     "primary_product_mode": "PVE_ARENA_INITIAL",
@@ -47,8 +47,8 @@
     {
       "path": "data/definitions/crafting_recipes.json",
       "kind": "definition_json",
-      "sha256": "35b1d036201ed923633744e2a1101067ee208cda26d468bda940028601616db3",
-      "canonical_bytes": 322
+      "sha256": "199df9f689704f9da280779c9e37136de72f0e4fb84657ee20fbfb7b6975c940",
+      "canonical_bytes": 1974
     },
     {
       "path": "data/definitions/passives.json",
@@ -65,8 +65,8 @@
     {
       "path": "data/definitions/potions.json",
       "kind": "definition_json",
-      "sha256": "129f6f8f8f756f9ab5d73926000460c7a11549bf1d729580f73e3cb0d802a766",
-      "canonical_bytes": 528
+      "sha256": "5d073076615a3ddd8faaaa95bc6f559835426d2b158993b0fb8ecb6fe2046711",
+      "canonical_bytes": 1314
     },
     {
       "path": "data/definitions/power_bands.json",
@@ -137,26 +137,26 @@
     {
       "path": "server/functions/_shared/battle_combatants.ts",
       "kind": "battle_simulator",
-      "sha256": "0b4599f1246a351f1f6d7f28f3f0132c929f252804a49f1721ff28c1bf530683",
-      "canonical_bytes": 7796
+      "sha256": "5796bf8a0fd74681b9a919fa21ae2c4c7444fc2cb8c5ee6dec8a4a27d04629b9",
+      "canonical_bytes": 7786
     },
     {
       "path": "server/functions/_shared/battle_simulator.ts",
       "kind": "battle_simulator",
-      "sha256": "314151ebc5cc1179828dab40aee80face4bfb1a2cd9309c889317a9f623a3338",
-      "canonical_bytes": 50127
+      "sha256": "a4443d1cf32e041c77325cbabc4912f5cf0b64f1b0745278dab4c79b7b4a02e9",
+      "canonical_bytes": 51873
     },
     {
       "path": "supabase/functions/_shared/battle_combatants.ts",
       "kind": "battle_simulator",
-      "sha256": "0b4599f1246a351f1f6d7f28f3f0132c929f252804a49f1721ff28c1bf530683",
-      "canonical_bytes": 7796
+      "sha256": "5796bf8a0fd74681b9a919fa21ae2c4c7444fc2cb8c5ee6dec8a4a27d04629b9",
+      "canonical_bytes": 7786
     },
     {
       "path": "supabase/functions/_shared/battle_simulator.ts",
       "kind": "battle_simulator",
-      "sha256": "314151ebc5cc1179828dab40aee80face4bfb1a2cd9309c889317a9f623a3338",
-      "canonical_bytes": 50127
+      "sha256": "a4443d1cf32e041c77325cbabc4912f5cf0b64f1b0745278dab4c79b7b4a02e9",
+      "canonical_bytes": 51873
     }
   ],
   "counts": {

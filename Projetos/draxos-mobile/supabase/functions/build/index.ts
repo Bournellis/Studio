@@ -21,6 +21,7 @@ import {
   type ProgressionSpellBehaviorRow,
   resolveEquipRequest,
 } from "../_shared/progression_domain.ts";
+import { POTION_IDS, potionDefinition } from "../_shared/economy_domain.ts";
 import { type SaveType, saveTypeQuery } from "../_shared/save_context.ts";
 import { stateEnvelope } from "../_shared/response_envelope.ts";
 
@@ -73,8 +74,6 @@ interface BuildState extends ProgressionBuildState {
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ITEM_ID_PATTERN = /^[a-z0-9_]+$/;
-const POTION_IDS = new Set(["pocao_vida"]);
-
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
 });
@@ -308,6 +307,9 @@ async function handlePotionEquip(
   if (requestedItemId !== null && !POTION_IDS.has(requestedItemId)) {
     return errorResponse("INVALID_POTION", "item_id is not an available potion.", 400);
   }
+  const potionBehavior = requestedItemId === null
+    ? DEFAULT_POTION_BEHAVIOR
+    : potionDefinition(requestedItemId)?.defaultBehavior ?? DEFAULT_POTION_BEHAVIOR;
 
   const state = await loadBuildState(auth, config);
   if (state.error !== null) {
@@ -317,6 +319,7 @@ async function handlePotionEquip(
     request_id: requestId,
     slot_index: slotIndex,
     item_id: requestedItemId,
+    behavior: potionBehavior,
   });
   const rpc = await restRequest<unknown>(config, "rpc/build_potion_equip_v1", {
     method: "POST",
@@ -328,6 +331,7 @@ async function handlePotionEquip(
         request_id: requestId,
         slot_index: slotIndex,
         item_id: requestedItemId,
+        behavior: potionBehavior,
       },
     }),
   });

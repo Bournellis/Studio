@@ -24,6 +24,7 @@ as $$
 		when 'node_pedra_pequena_02' then 'pedra_pequena'
 		when 'node_pedra_01' then 'pedra'
 		when 'node_cogumelo_01' then 'cogumelo'
+		when 'node_cogumelo_02' then 'cogumelo'
 		when 'node_fungo_01' then 'fungo'
 		when 'node_inseto_01' then 'inseto'
 		when 'node_resina_01' then 'resina'

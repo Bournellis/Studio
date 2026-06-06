@@ -11,15 +11,14 @@ export const GRIMOIRE_CATALOG = {
     "base_structures": "data/definitions/base_structures.json",
     "rewards": "data/definitions/rewards.json",
     "power_bands": "data/definitions/power_bands.json",
-    "bot_archetypes": "data/definitions/bot_builds.json",
+    "bot_archetypes": "data/definitions/bot_builds.json"
   },
   "collections": {
     "weapons": [
       {
         "id": "athame_hematico",
         "display_name": "Athame Hematico",
-        "description":
-          "Laminal ritual para feridas, Sangue e execucao corporal.",
+        "description": "Laminal ritual para feridas, Sangue e execucao corporal.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -27,7 +26,7 @@ export const GRIMOIRE_CATALOG = {
           "weapon",
           "ritual_instrument",
           "fisico",
-          "sangue",
+          "sangue"
         ],
         "mode": "FIRST_SLICE",
         "weapon_type": "ritual_instrument",
@@ -38,13 +37,12 @@ export const GRIMOIRE_CATALOG = {
         "special_every_attacks": 4,
         "special_damage_multiplier": 2.1,
         "status_bias": "ferida",
-        "qualities": [],
+        "qualities": []
       },
       {
         "id": "cajado_ossario",
         "display_name": "Cajado Ossario",
-        "description":
-          "Instrumento de Morte e Terra para protecao, summons e decaimento.",
+        "description": "Instrumento de Morte e Terra para protecao, summons e decaimento.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -52,7 +50,7 @@ export const GRIMOIRE_CATALOG = {
           "weapon",
           "ritual_instrument",
           "morte",
-          "terra",
+          "terra"
         ],
         "mode": "FIRST_SLICE",
         "weapon_type": "ritual_instrument",
@@ -63,13 +61,12 @@ export const GRIMOIRE_CATALOG = {
         "special_every_attacks": 4,
         "special_damage_multiplier": 2.1,
         "status_bias": "funeral",
-        "qualities": [],
+        "qualities": []
       },
       {
         "id": "cetro_braseiro_negro",
         "display_name": "Cetro do Braseiro Negro",
-        "description":
-          "Instrumento de Fogo e Morte para queimadura, cinzas e pressao sustentada.",
+        "description": "Instrumento de Fogo e Morte para queimadura, cinzas e pressao sustentada.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -77,7 +74,7 @@ export const GRIMOIRE_CATALOG = {
           "weapon",
           "ritual_instrument",
           "fogo",
-          "morte",
+          "morte"
         ],
         "mode": "FIRST_SLICE",
         "weapon_type": "ritual_instrument",
@@ -88,13 +85,12 @@ export const GRIMOIRE_CATALOG = {
         "special_every_attacks": 4,
         "special_damage_multiplier": 2,
         "status_bias": "cinzas",
-        "qualities": [],
+        "qualities": []
       },
       {
         "id": "grimorio_veu",
         "display_name": "Grimorio do Veu",
-        "description":
-          "Instrumento ritual de controle mental, medo e compulsoes.",
+        "description": "Instrumento ritual de controle mental, medo e compulsoes.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -102,7 +98,7 @@ export const GRIMOIRE_CATALOG = {
           "weapon",
           "ritual_instrument",
           "mental",
-          "arcano",
+          "arcano"
         ],
         "mode": "FIRST_SLICE",
         "weapon_type": "ritual_instrument",
@@ -113,13 +109,12 @@ export const GRIMOIRE_CATALOG = {
         "special_every_attacks": 4,
         "special_damage_multiplier": 2,
         "status_bias": "mental",
-        "qualities": [],
+        "qualities": []
       },
       {
         "id": "idolo_pedra_viva",
         "display_name": "Idolo de Pedra Viva",
-        "description":
-          "Instrumento de Terra e Fisico para guarda, raiz e fratura.",
+        "description": "Instrumento de Terra e Fisico para guarda, raiz e fratura.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -127,7 +122,7 @@ export const GRIMOIRE_CATALOG = {
           "weapon",
           "ritual_instrument",
           "terra",
-          "fisico",
+          "fisico"
         ],
         "mode": "FIRST_SLICE",
         "weapon_type": "ritual_instrument",
@@ -138,13 +133,12 @@ export const GRIMOIRE_CATALOG = {
         "special_every_attacks": 4,
         "special_damage_multiplier": 2.1,
         "status_bias": "enraizado",
-        "qualities": [],
+        "qualities": []
       },
       {
         "id": "orbe_tempestade",
         "display_name": "Orbe da Tempestade",
-        "description":
-          "Instrumento de Vento e Raio para interrupcao, velocidade e condutores.",
+        "description": "Instrumento de Vento e Raio para interrupcao, velocidade e condutores.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -152,7 +146,7 @@ export const GRIMOIRE_CATALOG = {
           "weapon",
           "ritual_instrument",
           "vento",
-          "raio",
+          "raio"
         ],
         "mode": "FIRST_SLICE",
         "weapon_type": "ritual_instrument",
@@ -163,13 +157,12 @@ export const GRIMOIRE_CATALOG = {
         "special_every_attacks": 4,
         "special_damage_multiplier": 1.9,
         "status_bias": "condutor",
-        "qualities": [],
+        "qualities": []
       },
       {
         "id": "selo_mare_fria",
         "display_name": "Selo da Mare Fria",
-        "description":
-          "Instrumento de Agua e Gelo para molhar, resfriar e controlar.",
+        "description": "Instrumento de Agua e Gelo para molhar, resfriar e controlar.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -177,7 +170,7 @@ export const GRIMOIRE_CATALOG = {
           "weapon",
           "ritual_instrument",
           "agua",
-          "gelo",
+          "gelo"
         ],
         "mode": "FIRST_SLICE",
         "weapon_type": "ritual_instrument",
@@ -188,13 +181,12 @@ export const GRIMOIRE_CATALOG = {
         "special_every_attacks": 4,
         "special_damage_multiplier": 2,
         "status_bias": "resfriado",
-        "qualities": [],
+        "qualities": []
       },
       {
         "id": "varinha_cinzas",
         "display_name": "Varinha de Cinzas",
-        "description":
-          "Instrumento ritual inicial, equilibrado e focado em dano Arcano.",
+        "description": "Instrumento ritual inicial, equilibrado e focado em dano Arcano.",
         "version": 3,
         "enabled": true,
         "tags": [
@@ -202,7 +194,7 @@ export const GRIMOIRE_CATALOG = {
           "weapon",
           "ritual_instrument",
           "starter",
-          "arcano",
+          "arcano"
         ],
         "mode": "FIRST_SLICE",
         "weapon_type": "ritual_instrument",
@@ -217,41 +209,40 @@ export const GRIMOIRE_CATALOG = {
             "id": "starter",
             "tier": 0,
             "bone_cost": 0,
-            "damage_multiplier": 1,
+            "damage_multiplier": 1
           },
           {
             "id": "reforcada",
             "tier": 1,
             "bone_cost": 120,
-            "damage_multiplier": 1.08,
+            "damage_multiplier": 1.08
           },
           {
             "id": "ritual",
             "tier": 2,
             "bone_cost": 240,
-            "damage_multiplier": 1.18,
+            "damage_multiplier": 1.18
           },
           {
             "id": "abissal",
             "tier": 3,
             "bone_cost": 360,
-            "damage_multiplier": 1.3,
+            "damage_multiplier": 1.3
           },
           {
             "id": "cosmica",
             "tier": 4,
             "bone_cost": 480,
-            "damage_multiplier": 1.45,
-          },
-        ],
-      },
+            "damage_multiplier": 1.45
+          }
+        ]
+      }
     ],
     "spells": [
       {
         "id": "coagulo_negro",
         "display_name": "Coagulo Negro",
-        "description":
-          "Ato defensivo de Sangue que cria uma barreira corporal profana.",
+        "description": "Ato defensivo de Sangue que cria uma barreira corporal profana.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -259,7 +250,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "sangue",
           "barrier",
-          "defense",
+          "defense"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -272,21 +263,20 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "barrier",
-            "amount": 28,
+            "amount": 28
           },
           {
             "kind": "status",
             "status_id": "coagulacao_profana",
             "stacks": 1,
-            "duration_seconds": 7,
-          },
-        ],
+            "duration_seconds": 7
+          }
+        ]
       },
       {
         "id": "coroa_cinzas",
         "display_name": "Coroa de Cinzas",
-        "description":
-          "Payoff de Fogo/Morte que pune alvos marcados por cinzas.",
+        "description": "Payoff de Fogo/Morte que pune alvos marcados por cinzas.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -294,7 +284,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "damage",
           "fogo",
-          "morte",
+          "morte"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 25,
@@ -307,21 +297,20 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 32,
+            "amount": 32
           },
           {
             "kind": "status",
             "status_id": "cinzas_marcadas",
             "stacks": 1,
-            "duration_seconds": 6,
-          },
-        ],
+            "duration_seconds": 6
+          }
+        ]
       },
       {
         "id": "descarga_nervosa",
         "display_name": "Descarga Nervosa",
-        "description":
-          "Raio ritual que aplica Condutor e pode eletrificar alvos preparados.",
+        "description": "Raio ritual que aplica Condutor e pode eletrificar alvos preparados.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -329,7 +318,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "damage",
           "raio",
-          "status",
+          "status"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 7,
@@ -342,15 +331,15 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 18,
+            "amount": 18
           },
           {
             "kind": "status",
             "status_id": "condutor",
             "stacks": 1,
-            "duration_seconds": 4.5,
-          },
-        ],
+            "duration_seconds": 4.5
+          }
+        ]
       },
       {
         "id": "erguer_ossos",
@@ -363,7 +352,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "summon",
           "morte",
-          "advanced",
+          "advanced"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 25,
@@ -375,9 +364,9 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "summon",
-            "summon_id": "guardiao_ossos",
-          },
-        ],
+            "summon_id": "guardiao_ossos"
+          }
+        ]
       },
       {
         "id": "geada_ossos",
@@ -390,7 +379,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "damage",
           "gelo",
-          "status",
+          "status"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 7,
@@ -403,28 +392,27 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 15,
+            "amount": 15
           },
           {
             "kind": "status",
             "status_id": "resfriado",
             "stacks": 1,
-            "duration_seconds": 5,
-          },
-        ],
+            "duration_seconds": 5
+          }
+        ]
       },
       {
         "id": "hemorragia_induzida",
         "display_name": "Hemorragia Induzida",
-        "description":
-          "Ato de Sangue que transforma feridas em perda continua.",
+        "description": "Ato de Sangue que transforma feridas em perda continua.",
         "version": 1,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "spell",
           "sangue",
-          "dot",
+          "dot"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -437,21 +425,20 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 10,
+            "amount": 10
           },
           {
             "kind": "dot",
             "status_id": "hemorragia",
             "tick_damage": 3.8,
-            "duration_seconds": 6,
-          },
-        ],
+            "duration_seconds": 6
+          }
+        ]
       },
       {
         "id": "incisao_ritual",
         "display_name": "Incisao Ritual",
-        "description":
-          "Corte ritual Fisico/Sangue que abre Ferida no primeiro alvo.",
+        "description": "Corte ritual Fisico/Sangue que abre Ferida no primeiro alvo.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -459,7 +446,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "damage",
           "fisico",
-          "sangue",
+          "sangue"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 7,
@@ -472,15 +459,15 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 18,
+            "amount": 18
           },
           {
             "kind": "status",
             "status_id": "ferida",
             "stacks": 1,
-            "duration_seconds": 6,
-          },
-        ],
+            "duration_seconds": 6
+          }
+        ]
       },
       {
         "id": "invocar_brasa_faminta",
@@ -494,7 +481,7 @@ export const GRIMOIRE_CATALOG = {
           "summon",
           "fogo",
           "morte",
-          "advanced",
+          "advanced"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 25,
@@ -506,22 +493,21 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "summon",
-            "summon_id": "brasa_faminta",
-          },
-        ],
+            "summon_id": "brasa_faminta"
+          }
+        ]
       },
       {
         "id": "labirinto_razao",
         "display_name": "Labirinto da Razao",
-        "description":
-          "Ato mental de Confusao que atrasa a leitura ritual do alvo.",
+        "description": "Ato mental de Confusao que atrasa a leitura ritual do alvo.",
         "version": 1,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "spell",
           "mental",
-          "control",
+          "control"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 7,
@@ -534,15 +520,15 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 11,
+            "amount": 11
           },
           {
             "kind": "status",
             "status_id": "confusao",
             "stacks": 1,
-            "duration_seconds": 5,
-          },
-        ],
+            "duration_seconds": 5
+          }
+        ]
       },
       {
         "id": "lamina_vento",
@@ -555,7 +541,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "damage",
           "vento",
-          "fisico",
+          "fisico"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 7,
@@ -568,28 +554,27 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 20,
+            "amount": 20
           },
           {
             "kind": "status",
             "status_id": "desequilibrado",
             "stacks": 1,
-            "duration_seconds": 4,
-          },
-        ],
+            "duration_seconds": 4
+          }
+        ]
       },
       {
         "id": "mandato_oculto",
         "display_name": "Mandato Oculto",
-        "description":
-          "Ato mental de Compulsao que torna a cadencia inimiga menos eficiente.",
+        "description": "Ato mental de Compulsao que torna a cadencia inimiga menos eficiente.",
         "version": 1,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "spell",
           "mental",
-          "control",
+          "control"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -602,15 +587,15 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 16,
+            "amount": 16
           },
           {
             "kind": "status",
             "status_id": "compulsao",
             "stacks": 1,
-            "duration_seconds": 5,
-          },
-        ],
+            "duration_seconds": 5
+          }
+        ]
       },
       {
         "id": "marca_brasa",
@@ -623,7 +608,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "damage",
           "fogo",
-          "dot",
+          "dot"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 7,
@@ -636,21 +621,20 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 14,
+            "amount": 14
           },
           {
             "kind": "dot",
             "status_id": "queimando",
             "tick_damage": 3.2,
-            "duration_seconds": 5,
-          },
-        ],
+            "duration_seconds": 5
+          }
+        ]
       },
       {
         "id": "marca_sepulcral",
         "display_name": "Marca Sepulcral",
-        "description":
-          "Marca de Morte que torna o alvo mais vulneravel a atos funebres.",
+        "description": "Marca de Morte que torna o alvo mais vulneravel a atos funebres.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -658,7 +642,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "morte",
           "status",
-          "advanced",
+          "advanced"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 25,
@@ -671,15 +655,15 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 28,
+            "amount": 28
           },
           {
             "kind": "status",
             "status_id": "marca_sepulcral",
             "stacks": 1,
-            "duration_seconds": 7,
-          },
-        ],
+            "duration_seconds": 7
+          }
+        ]
       },
       {
         "id": "mare_escura",
@@ -691,7 +675,7 @@ export const GRIMOIRE_CATALOG = {
           "FIRST_SLICE",
           "spell",
           "agua",
-          "status",
+          "status"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 7,
@@ -704,15 +688,15 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 12,
+            "amount": 12
           },
           {
             "kind": "status",
             "status_id": "molhado",
             "stacks": 1,
-            "duration_seconds": 7,
-          },
-        ],
+            "duration_seconds": 7
+          }
+        ]
       },
       {
         "id": "prisao_gelo",
@@ -725,7 +709,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "gelo",
           "control",
-          "advanced",
+          "advanced"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 25,
@@ -738,21 +722,20 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 18,
+            "amount": 18
           },
           {
             "kind": "status",
             "status_id": "congelado",
             "stacks": 1,
-            "duration_seconds": 3,
-          },
-        ],
+            "duration_seconds": 3
+          }
+        ]
       },
       {
         "id": "putrefacao",
         "display_name": "Putrefacao",
-        "description":
-          "Ato funebre que aplica Decaimento e pressiona regeneracao.",
+        "description": "Ato funebre que aplica Decaimento e pressiona regeneracao.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -760,7 +743,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "morte",
           "dot",
-          "advanced",
+          "advanced"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 25,
@@ -773,21 +756,20 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 16,
+            "amount": 16
           },
           {
             "kind": "dot",
             "status_id": "decaimento",
             "tick_damage": 5.5,
-            "duration_seconds": 6,
-          },
-        ],
+            "duration_seconds": 6
+          }
+        ]
       },
       {
         "id": "raizes_pedra",
         "display_name": "Raizes de Pedra",
-        "description":
-          "Terra ritual que enraiza o alvo e reforca a guarda do conjurador.",
+        "description": "Terra ritual que enraiza o alvo e reforca a guarda do conjurador.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -795,7 +777,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "terra",
           "control",
-          "defense",
+          "defense"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -810,21 +792,20 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 18,
+            "amount": 18
           },
           {
             "kind": "status",
             "status_id": "enraizado",
             "stacks": 1,
-            "duration_seconds": 5,
-          },
-        ],
+            "duration_seconds": 5
+          }
+        ]
       },
       {
         "id": "sussurro_medo",
         "display_name": "Sussurro do Medo",
-        "description":
-          "Ato mental inicial que planta Inquietacao e abre caminho para Medo.",
+        "description": "Ato mental inicial que planta Inquietacao e abre caminho para Medo.",
         "version": 3,
         "enabled": true,
         "tags": [
@@ -832,7 +813,7 @@ export const GRIMOIRE_CATALOG = {
           "spell",
           "mental",
           "control",
-          "starter",
+          "starter"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 3,
@@ -845,28 +826,27 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 6,
+            "amount": 6
           },
           {
             "kind": "status",
             "status_id": "inquietacao",
             "stacks": 1,
-            "duration_seconds": 6,
-          },
-        ],
+            "duration_seconds": 6
+          }
+        ]
       },
       {
         "id": "terror_primordial",
         "display_name": "Terror Primordial",
-        "description":
-          "Ato mental que transforma medo acumulado em Terror e vulnerabilidade.",
+        "description": "Ato mental que transforma medo acumulado em Terror e vulnerabilidade.",
         "version": 1,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "spell",
           "mental",
-          "control",
+          "control"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 7,
@@ -879,28 +859,27 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 13,
+            "amount": 13
           },
           {
             "kind": "status",
             "status_id": "terror",
             "stacks": 1,
-            "duration_seconds": 4,
-          },
-        ],
+            "duration_seconds": 4
+          }
+        ]
       },
       {
         "id": "toxina_palida",
         "display_name": "Toxina Palida",
-        "description":
-          "Veneno ritual que pressiona Vitalidade e aplica Envenenado.",
+        "description": "Veneno ritual que pressiona Vitalidade e aplica Envenenado.",
         "version": 1,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "spell",
           "veneno",
-          "dot",
+          "dot"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 7,
@@ -913,16 +892,16 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 8,
+            "amount": 8
           },
           {
             "kind": "dot",
             "status_id": "envenenado",
             "tick_damage": 3.5,
-            "duration_seconds": 6,
-          },
-        ],
-      },
+            "duration_seconds": 6
+          }
+        ]
+      }
     ],
     "doutrines": [
       {
@@ -936,7 +915,7 @@ export const GRIMOIRE_CATALOG = {
           "passive",
           "doutrine",
           "veneno",
-          "dot",
+          "dot"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 10,
@@ -947,9 +926,9 @@ export const GRIMOIRE_CATALOG = {
           {
             "kind": "dot_damage_percent",
             "family": "veneno",
-            "amount": 0.035,
-          },
-        ],
+            "amount": 0.035
+          }
+        ]
       },
       {
         "id": "anatomista_profano",
@@ -962,7 +941,7 @@ export const GRIMOIRE_CATALOG = {
           "passive",
           "doutrine",
           "fisico",
-          "sangue",
+          "sangue"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 10,
@@ -972,9 +951,9 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage_percent",
-            "amount": 0.04,
-          },
-        ],
+            "amount": 0.04
+          }
+        ]
       },
       {
         "id": "cinza_viva",
@@ -987,7 +966,7 @@ export const GRIMOIRE_CATALOG = {
           "passive",
           "doutrine",
           "fogo",
-          "dot",
+          "dot"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 10,
@@ -998,15 +977,14 @@ export const GRIMOIRE_CATALOG = {
           {
             "kind": "dot_damage_percent",
             "family": "fogo",
-            "amount": 0.035,
-          },
-        ],
+            "amount": 0.035
+          }
+        ]
       },
       {
         "id": "doutrina_pavor",
         "display_name": "Doutrina do Pavor",
-        "description":
-          "Doutrina mental que fortalece Medo, Terror e quebra de vontade.",
+        "description": "Doutrina mental que fortalece Medo, Terror e quebra de vontade.",
         "version": 3,
         "enabled": true,
         "tags": [
@@ -1014,7 +992,7 @@ export const GRIMOIRE_CATALOG = {
           "passive",
           "doutrine",
           "mental",
-          "control",
+          "control"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 10,
@@ -1025,9 +1003,9 @@ export const GRIMOIRE_CATALOG = {
           {
             "kind": "status_duration_percent",
             "family": "mental",
-            "amount": 0.08,
-          },
-        ],
+            "amount": 0.08
+          }
+        ]
       },
       {
         "id": "mare_silenciosa",
@@ -1040,7 +1018,7 @@ export const GRIMOIRE_CATALOG = {
           "passive",
           "doutrine",
           "agua",
-          "gelo",
+          "gelo"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 10,
@@ -1051,15 +1029,14 @@ export const GRIMOIRE_CATALOG = {
           {
             "kind": "status_duration_percent",
             "family": "gelo",
-            "amount": 0.03,
-          },
-        ],
+            "amount": 0.03
+          }
+        ]
       },
       {
         "id": "mente_fria",
         "display_name": "Mente Fria",
-        "description":
-          "Aumenta Vontade e reduz o impacto de controle recebido.",
+        "description": "Aumenta Vontade e reduz o impacto de controle recebido.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -1067,7 +1044,7 @@ export const GRIMOIRE_CATALOG = {
           "passive",
           "doutrine",
           "mental",
-          "defense",
+          "defense"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 10,
@@ -1077,9 +1054,9 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage_reduction_percent",
-            "amount": 0.03,
-          },
-        ],
+            "amount": 0.03
+          }
+        ]
       },
       {
         "id": "ossuario_interior",
@@ -1092,7 +1069,7 @@ export const GRIMOIRE_CATALOG = {
           "passive",
           "doutrine",
           "morte",
-          "summon",
+          "summon"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 10,
@@ -1102,15 +1079,14 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "summon_damage_percent",
-            "amount": 0.08,
-          },
-        ],
+            "amount": 0.08
+          }
+        ]
       },
       {
         "id": "pacto_familiar",
         "display_name": "Pacto Familiar",
-        "description":
-          "Melhora familiares, cadencia de familiar e suporte de status.",
+        "description": "Melhora familiares, cadencia de familiar e suporte de status.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -1118,7 +1094,7 @@ export const GRIMOIRE_CATALOG = {
           "passive",
           "doutrine",
           "familiar",
-          "pet",
+          "pet"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 10,
@@ -1128,9 +1104,9 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "pet_damage_percent",
-            "amount": 0.04,
-          },
-        ],
+            "amount": 0.04
+          }
+        ]
       },
       {
         "id": "pedra_interna",
@@ -1143,7 +1119,7 @@ export const GRIMOIRE_CATALOG = {
           "passive",
           "doutrine",
           "terra",
-          "defense",
+          "defense"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 10,
@@ -1153,9 +1129,9 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "starting_barrier",
-            "amount": 12,
-          },
-        ],
+            "amount": 12
+          }
+        ]
       },
       {
         "id": "pulso_tempestade",
@@ -1169,7 +1145,7 @@ export const GRIMOIRE_CATALOG = {
           "doutrine",
           "vento",
           "raio",
-          "haste",
+          "haste"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 10,
@@ -1179,15 +1155,14 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "cooldown_reduction_percent",
-            "amount": 0.05,
-          },
-        ],
+            "amount": 0.05
+          }
+        ]
       },
       {
         "id": "sangue_obediente",
         "display_name": "Sangue Obediente",
-        "description":
-          "Converte parte do dano em cura e fortalece efeitos de Sangue.",
+        "description": "Converte parte do dano em cura e fortalece efeitos de Sangue.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -1195,7 +1170,7 @@ export const GRIMOIRE_CATALOG = {
           "passive",
           "doutrine",
           "sangue",
-          "heal",
+          "heal"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 10,
@@ -1205,10 +1180,10 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "lifesteal_percent",
-            "amount": 0.02,
-          },
-        ],
-      },
+            "amount": 0.02
+          }
+        ]
+      }
     ],
     "familiars": [
       {
@@ -1221,7 +1196,7 @@ export const GRIMOIRE_CATALOG = {
           "FIRST_SLICE",
           "pet",
           "familiar",
-          "fogo",
+          "fogo"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -1232,15 +1207,14 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 9,
-          },
-        ],
+            "amount": 9
+          }
+        ]
       },
       {
         "id": "corvo_pressagio",
         "display_name": "Corvo do Pressagio",
-        "description":
-          "Familiar criatura que marca alvos vulneraveis a medo e Morte.",
+        "description": "Familiar criatura que marca alvos vulneraveis a medo e Morte.",
         "version": 3,
         "enabled": true,
         "tags": [
@@ -1248,7 +1222,7 @@ export const GRIMOIRE_CATALOG = {
           "pet",
           "familiar",
           "mental",
-          "morte",
+          "morte"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -1259,15 +1233,15 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 8,
+            "amount": 8
           },
           {
             "kind": "status",
             "status_id": "pressagio",
             "stacks": 1,
-            "duration_seconds": 3,
-          },
-        ],
+            "duration_seconds": 3
+          }
+        ]
       },
       {
         "id": "cranio_errante",
@@ -1279,7 +1253,7 @@ export const GRIMOIRE_CATALOG = {
           "FIRST_SLICE",
           "pet",
           "familiar",
-          "morte",
+          "morte"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -1290,15 +1264,15 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 9,
+            "amount": 9
           },
           {
             "kind": "status",
             "status_id": "decaimento",
             "stacks": 1,
-            "duration_seconds": 3.5,
-          },
-        ],
+            "duration_seconds": 3.5
+          }
+        ]
       },
       {
         "id": "escaravelho_pedra",
@@ -1311,7 +1285,7 @@ export const GRIMOIRE_CATALOG = {
           "pet",
           "familiar",
           "terra",
-          "defense",
+          "defense"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -1322,21 +1296,20 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 9,
+            "amount": 9
           },
           {
             "kind": "status",
             "status_id": "enraizado",
             "stacks": 1,
-            "duration_seconds": 3.5,
-          },
-        ],
+            "duration_seconds": 3.5
+          }
+        ]
       },
       {
         "id": "medusa_mare_fria",
         "display_name": "Medusa de Mare Fria",
-        "description":
-          "Familiar entidade de Agua/Gelo que aplica Molhado e Lento.",
+        "description": "Familiar entidade de Agua/Gelo que aplica Molhado e Lento.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -1344,7 +1317,7 @@ export const GRIMOIRE_CATALOG = {
           "pet",
           "familiar",
           "agua",
-          "gelo",
+          "gelo"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -1355,21 +1328,20 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 10,
+            "amount": 10
           },
           {
             "kind": "status",
             "status_id": "resfriado",
             "stacks": 1,
-            "duration_seconds": 3.5,
-          },
-        ],
+            "duration_seconds": 3.5
+          }
+        ]
       },
       {
         "id": "olho_veu",
         "display_name": "Olho do Veu",
-        "description":
-          "Familiar abstrato mental que revela fraquezas e amplifica controle.",
+        "description": "Familiar abstrato mental que revela fraquezas e amplifica controle.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -1377,7 +1349,7 @@ export const GRIMOIRE_CATALOG = {
           "pet",
           "familiar",
           "mental",
-          "abstract",
+          "abstract"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -1388,21 +1360,20 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 7,
+            "amount": 7
           },
           {
             "kind": "status",
             "status_id": "vulneravel",
             "stacks": 1,
-            "duration_seconds": 3,
-          },
-        ],
+            "duration_seconds": 3
+          }
+        ]
       },
       {
         "id": "sanguessuga_sacramental",
         "display_name": "Sanguessuga Sacramental",
-        "description":
-          "Familiar criatura de Sangue que drena e abre sangramentos leves.",
+        "description": "Familiar criatura de Sangue que drena e abre sangramentos leves.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -1410,7 +1381,7 @@ export const GRIMOIRE_CATALOG = {
           "pet",
           "familiar",
           "sangue",
-          "drain",
+          "drain"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -1421,15 +1392,15 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 8,
+            "amount": 8
           },
           {
             "kind": "dot",
             "status_id": "sangramento",
             "tick_damage": 2.5,
-            "duration_seconds": 4,
-          },
-        ],
+            "duration_seconds": 4
+          }
+        ]
       },
       {
         "id": "serpe_tempestade",
@@ -1442,7 +1413,7 @@ export const GRIMOIRE_CATALOG = {
           "pet",
           "familiar",
           "vento",
-          "raio",
+          "raio"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -1453,21 +1424,20 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 8,
+            "amount": 8
           },
           {
             "kind": "status",
             "status_id": "condutor",
             "stacks": 1,
-            "duration_seconds": 3,
-          },
-        ],
+            "duration_seconds": 3
+          }
+        ]
       },
       {
         "id": "serpente_toxina",
         "display_name": "Serpente de Toxina",
-        "description":
-          "Familiar criatura de Veneno que enfraquece a Vitalidade do alvo.",
+        "description": "Familiar criatura de Veneno que enfraquece a Vitalidade do alvo.",
         "version": 1,
         "enabled": true,
         "tags": [
@@ -1475,7 +1445,7 @@ export const GRIMOIRE_CATALOG = {
           "pet",
           "familiar",
           "veneno",
-          "dot",
+          "dot"
         ],
         "mode": "FIRST_SLICE",
         "unlock_level": 15,
@@ -1486,53 +1456,51 @@ export const GRIMOIRE_CATALOG = {
         "effects": [
           {
             "kind": "damage",
-            "amount": 8,
+            "amount": 8
           },
           {
             "kind": "dot",
             "status_id": "toxina",
             "tick_damage": 2.5,
-            "duration_seconds": 4,
-          },
-        ],
-      },
+            "duration_seconds": 4
+          }
+        ]
+      }
     ],
     "base_structures": [
       {
         "id": "altar_das_almas",
         "display_name": "Altar das Almas",
-        "description":
-          "Produz Almas e abriga upgrades de arma, slots de spell e spells.",
+        "description": "Produz Almas e abriga upgrades de arma, slots de spell e spells.",
         "version": 1,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "base",
-          "almas",
+          "almas"
         ],
         "mode": "FIRST_SLICE",
         "max_level": 40,
         "produces": [
           {
             "resource": "almas",
-            "daily_at_level_40": 10,
-          },
+            "daily_at_level_40": 10
+          }
         ],
         "storage_rule": "max(8, ceil(daily_production * 2))",
         "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
-        "duration_formula": "max(0.033h, 0.1 * level^2 hours)",
+        "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
       },
       {
         "id": "estrutura_stats",
         "display_name": "Estrutura de Stats",
-        "description":
-          "Abriga melhorias permanentes de Vida, dano base, Defesa, Mana e regen.",
+        "description": "Abriga melhorias permanentes de Vida, dano base, Defesa, Mana e regen.",
         "version": 1,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "base",
-          "stats",
+          "stats"
         ],
         "mode": "FIRST_SLICE",
         "max_level": 40,
@@ -1541,10 +1509,10 @@ export const GRIMOIRE_CATALOG = {
           "vida_max": 0.008,
           "ataque_base": 0.005,
           "defesa": 0.004,
-          "mana_regen": 0.003,
+          "mana_regen": 0.003
         },
         "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
-        "duration_formula": "max(0.033h, 0.1 * level^2 hours)",
+        "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
       },
       {
         "id": "minas_cristal",
@@ -1555,19 +1523,19 @@ export const GRIMOIRE_CATALOG = {
         "tags": [
           "FIRST_SLICE",
           "base",
-          "cristais",
+          "cristais"
         ],
         "mode": "FIRST_SLICE",
         "max_level": 40,
         "produces": [
           {
             "resource": "cristais",
-            "daily_at_level_40": 5,
-          },
+            "daily_at_level_40": 5
+          }
         ],
         "storage_rule": "max(8, ceil(daily_production * 2))",
         "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
-        "duration_formula": "max(0.033h, 0.1 * level^2 hours)",
+        "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
       },
       {
         "id": "nucleo_energia",
@@ -1578,43 +1546,42 @@ export const GRIMOIRE_CATALOG = {
         "tags": [
           "FIRST_SLICE",
           "base",
-          "energia",
+          "energia"
         ],
         "mode": "FIRST_SLICE",
         "max_level": 40,
         "produces": [
           {
             "resource": "energia",
-            "daily_at_level_40": 80,
-          },
+            "daily_at_level_40": 80
+          }
         ],
         "storage_rule": "max(8, ceil(daily_production * 2))",
         "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
-        "duration_formula": "max(0.033h, 0.1 * level^2 hours)",
+        "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
       },
       {
         "id": "ossario",
         "display_name": "Ossario",
-        "description":
-          "Produz Ossos e abriga crafting de qualidade da Varinha.",
+        "description": "Produz Ossos e abriga crafting de qualidade da Varinha.",
         "version": 1,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "base",
-          "ossos",
+          "ossos"
         ],
         "mode": "FIRST_SLICE",
         "max_level": 40,
         "produces": [
           {
             "resource": "ossos",
-            "daily_at_level_40": 200,
-          },
+            "daily_at_level_40": 200
+          }
         ],
         "storage_rule": "max(8, ceil(daily_production * 2))",
         "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
-        "duration_formula": "max(0.033h, 0.1 * level^2 hours)",
+        "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
       },
       {
         "id": "pocos_sangue",
@@ -1625,20 +1592,20 @@ export const GRIMOIRE_CATALOG = {
         "tags": [
           "FIRST_SLICE",
           "base",
-          "sangue",
+          "sangue"
         ],
         "mode": "FIRST_SLICE",
         "max_level": 40,
         "produces": [
           {
             "resource": "sangue",
-            "daily_at_level_40": 8,
-          },
+            "daily_at_level_40": 8
+          }
         ],
         "storage_rule": "max(8, ceil(daily_production * 2))",
         "upgrade_cost_formula": "max(20, round(0.5 * level^2)) energia",
-        "duration_formula": "max(0.033h, 0.1 * level^2 hours)",
-      },
+        "duration_formula": "max(0.033h, 0.1 * level^2 hours)"
+      }
     ],
     "rewards": [
       {
@@ -1651,7 +1618,7 @@ export const GRIMOIRE_CATALOG = {
           "FIRST_SLICE",
           "reward",
           "battle_pass",
-          "free",
+          "free"
         ],
         "mode": "FIRST_SLICE",
         "resources": {
@@ -1661,22 +1628,21 @@ export const GRIMOIRE_CATALOG = {
           "sangue": 180,
           "cristais": 120,
           "ossos": 6000,
-          "diamante": 15,
+          "diamante": 15
         },
-        "idempotency_scope": "battle_pass",
+        "idempotency_scope": "battle_pass"
       },
       {
         "id": "battle_pass_premium_tier_total",
         "display_name": "Battle Pass Premium Total",
-        "description":
-          "Total adicional calibravel por passe Premium de 60 dias.",
+        "description": "Total adicional calibravel por passe Premium de 60 dias.",
         "version": 1,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "reward",
           "battle_pass",
-          "premium",
+          "premium"
         ],
         "mode": "FIRST_SLICE",
         "resources": {
@@ -1686,9 +1652,9 @@ export const GRIMOIRE_CATALOG = {
           "sangue": 420,
           "cristais": 240,
           "ossos": 12000,
-          "diamante": 30,
+          "diamante": 30
         },
-        "idempotency_scope": "battle_pass",
+        "idempotency_scope": "battle_pass"
       },
       {
         "id": "first_slice_battle_loss",
@@ -1700,7 +1666,7 @@ export const GRIMOIRE_CATALOG = {
           "FIRST_SLICE",
           "reward",
           "battle",
-          "loss",
+          "loss"
         ],
         "mode": "FIRST_SLICE",
         "resources": {
@@ -1708,9 +1674,9 @@ export const GRIMOIRE_CATALOG = {
           "almas": 0.8,
           "energia": 0.4,
           "sangue": 0.2,
-          "ossos": 4,
+          "ossos": 4
         },
-        "idempotency_scope": "battle_result",
+        "idempotency_scope": "battle_result"
       },
       {
         "id": "daily_first_win",
@@ -1721,7 +1687,7 @@ export const GRIMOIRE_CATALOG = {
         "tags": [
           "FIRST_SLICE",
           "reward",
-          "daily",
+          "daily"
         ],
         "mode": "FIRST_SLICE",
         "resources": {
@@ -1729,41 +1695,39 @@ export const GRIMOIRE_CATALOG = {
           "almas": 8,
           "energia": 4,
           "sangue": 2,
-          "ossos": 100,
+          "ossos": 100
         },
-        "idempotency_scope": "daily_reward",
+        "idempotency_scope": "daily_reward"
       },
       {
         "id": "mvp_training_reward",
         "display_name": "Recompensa MVP de Treino",
-        "description":
-          "Recompensa tecnica idempotente para validar contrato de battle/request.",
+        "description": "Recompensa tecnica idempotente para validar contrato de battle/request.",
         "version": 1,
         "enabled": true,
         "tags": [
           "MVP_ONLY",
           "reward",
-          "battle",
+          "battle"
         ],
         "mode": "MVP_ONLY",
         "resources": {
           "xp": 5,
-          "ossos": 100,
+          "ossos": 100
         },
-        "idempotency_scope": "battle_result",
+        "idempotency_scope": "battle_result"
       },
       {
         "id": "first_slice_battle_win",
         "display_name": "Vitoria de Arena",
-        "description":
-          "Recompensa base calibravel para vitoria no primeiro slice.",
+        "description": "Recompensa base calibravel para vitoria no primeiro slice.",
         "version": 1,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "reward",
           "battle",
-          "win",
+          "win"
         ],
         "mode": "FIRST_SLICE",
         "resources": {
@@ -1771,27 +1735,26 @@ export const GRIMOIRE_CATALOG = {
           "almas": 4,
           "energia": 2,
           "sangue": 1,
-          "ossos": 20,
+          "ossos": 20
         },
-        "idempotency_scope": "battle_result",
-      },
+        "idempotency_scope": "battle_result"
+      }
     ],
     "power_bands": [
       {
         "id": "band_001",
         "display_name": "Banda 001",
-        "description":
-          "Faixa inicial para Draxos sem spells ou com primeiro unlock.",
+        "description": "Faixa inicial para Draxos sem spells ou com primeiro unlock.",
         "version": 1,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
-          "matchmaking",
+          "matchmaking"
         ],
         "mode": "FIRST_SLICE",
         "min_power": 0,
         "max_power": 250,
-        "initial_tolerance_percent": 10,
+        "initial_tolerance_percent": 10
       },
       {
         "id": "band_002",
@@ -1801,12 +1764,12 @@ export const GRIMOIRE_CATALOG = {
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
-          "matchmaking",
+          "matchmaking"
         ],
         "mode": "FIRST_SLICE",
         "min_power": 251,
         "max_power": 600,
-        "initial_tolerance_percent": 10,
+        "initial_tolerance_percent": 10
       },
       {
         "id": "band_003",
@@ -1816,12 +1779,12 @@ export const GRIMOIRE_CATALOG = {
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
-          "matchmaking",
+          "matchmaking"
         ],
         "mode": "FIRST_SLICE",
         "min_power": 601,
         "max_power": 1200,
-        "initial_tolerance_percent": 15,
+        "initial_tolerance_percent": 15
       },
       {
         "id": "band_004",
@@ -1831,12 +1794,12 @@ export const GRIMOIRE_CATALOG = {
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
-          "matchmaking",
+          "matchmaking"
         ],
         "mode": "FIRST_SLICE",
         "min_power": 1201,
         "max_power": 2200,
-        "initial_tolerance_percent": 20,
+        "initial_tolerance_percent": 20
       },
       {
         "id": "band_005",
@@ -1846,12 +1809,12 @@ export const GRIMOIRE_CATALOG = {
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
-          "matchmaking",
+          "matchmaking"
         ],
         "mode": "FIRST_SLICE",
         "min_power": 2201,
         "max_power": 999999,
-        "initial_tolerance_percent": 25,
+        "initial_tolerance_percent": 25
       },
       {
         "id": "mvp_training_band",
@@ -1862,13 +1825,13 @@ export const GRIMOIRE_CATALOG = {
         "tags": [
           "MVP_ONLY",
           "matchmaking",
-          "training",
+          "training"
         ],
         "mode": "MVP_ONLY",
         "min_power": 0,
         "max_power": 999,
-        "initial_tolerance_percent": 10,
-      },
+        "initial_tolerance_percent": 10
+      }
     ],
     "bot_archetypes": [
       {
@@ -1880,7 +1843,7 @@ export const GRIMOIRE_CATALOG = {
         "tags": [
           "FIRST_SLICE",
           "bot",
-          "starter_instrument",
+          "starter_instrument"
         ],
         "mode": "FIRST_SLICE",
         "archetype": "starter_instrument",
@@ -1897,19 +1860,18 @@ export const GRIMOIRE_CATALOG = {
         "pet_id": "",
         "pet_level": 0,
         "variation_seed": 101,
-        "is_ranked": false,
+        "is_ranked": false
       },
       {
         "id": "mvp_training_bot",
         "display_name": "Bot de Treino MVP",
-        "description":
-          "Oponente tecnico fixo para battle fixture server-authoritative.",
+        "description": "Oponente tecnico fixo para battle fixture server-authoritative.",
         "version": 2,
         "enabled": true,
         "tags": [
           "MVP_ONLY",
           "bot",
-          "training",
+          "training"
         ],
         "mode": "MVP_ONLY",
         "archetype": "starter_instrument",
@@ -1920,29 +1882,28 @@ export const GRIMOIRE_CATALOG = {
         "weapon_level": 1,
         "weapon_quality": "starter",
         "spell_ids": [
-          "sussurro_medo",
+          "sussurro_medo"
         ],
         "spell_levels": {
-          "sussurro_medo": 1,
+          "sussurro_medo": 1
         },
         "passive_id": "doutrina_pavor",
         "passive_level": 1,
         "pet_id": "corvo_pressagio",
         "pet_level": 1,
         "variation_seed": 20260525,
-        "is_ranked": false,
+        "is_ranked": false
       },
       {
         "id": "bot_familiar_handler_01",
         "display_name": "Condutor de Familiar",
-        "description":
-          "Bot com familiar e duas spells para validar slot de familiar.",
+        "description": "Bot com familiar e duas spells para validar slot de familiar.",
         "version": 2,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "bot",
-          "familiar_handler",
+          "familiar_handler"
         ],
         "mode": "FIRST_SLICE",
         "archetype": "familiar_handler",
@@ -1954,30 +1915,29 @@ export const GRIMOIRE_CATALOG = {
         "weapon_quality": "abissal",
         "spell_ids": [
           "sussurro_medo",
-          "geada_ossos",
+          "geada_ossos"
         ],
         "spell_levels": {
           "sussurro_medo": 18,
-          "geada_ossos": 16,
+          "geada_ossos": 16
         },
         "passive_id": "pacto_familiar",
         "passive_level": 15,
         "pet_id": "corvo_pressagio",
         "pet_level": 16,
         "variation_seed": 404,
-        "is_ranked": false,
+        "is_ranked": false
       },
       {
         "id": "bot_summoner_01",
         "display_name": "Invocador Ossario",
-        "description":
-          "Bot avancado com summons para validar o simulador completo.",
+        "description": "Bot avancado com summons para validar o simulador completo.",
         "version": 2,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "bot",
-          "summoner",
+          "summoner"
         ],
         "mode": "FIRST_SLICE",
         "archetype": "summoner",
@@ -1990,31 +1950,30 @@ export const GRIMOIRE_CATALOG = {
         "spell_ids": [
           "sussurro_medo",
           "erguer_ossos",
-          "invocar_brasa_faminta",
+          "invocar_brasa_faminta"
         ],
         "spell_levels": {
           "sussurro_medo": 30,
           "erguer_ossos": 28,
-          "invocar_brasa_faminta": 28,
+          "invocar_brasa_faminta": 28
         },
         "passive_id": "ossuario_interior",
         "passive_level": 25,
         "pet_id": "cranio_errante",
         "pet_level": 24,
         "variation_seed": 505,
-        "is_ranked": false,
+        "is_ranked": false
       },
       {
         "id": "bot_elemental_mixer_01",
         "display_name": "Misturador Elemental",
-        "description":
-          "Bot de duas spells elementais para faixa intermediaria.",
+        "description": "Bot de duas spells elementais para faixa intermediaria.",
         "version": 2,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "bot",
-          "elemental_mixer",
+          "elemental_mixer"
         ],
         "mode": "FIRST_SLICE",
         "archetype": "elemental_mixer",
@@ -2026,18 +1985,18 @@ export const GRIMOIRE_CATALOG = {
         "weapon_quality": "ritual",
         "spell_ids": [
           "descarga_nervosa",
-          "marca_brasa",
+          "marca_brasa"
         ],
         "spell_levels": {
           "descarga_nervosa": 12,
-          "marca_brasa": 10,
+          "marca_brasa": 10
         },
         "passive_id": "pulso_tempestade",
         "passive_level": 8,
         "pet_id": "",
         "pet_level": 0,
         "variation_seed": 303,
-        "is_ranked": false,
+        "is_ranked": false
       },
       {
         "id": "bot_mental_controller_01",
@@ -2048,7 +2007,7 @@ export const GRIMOIRE_CATALOG = {
         "tags": [
           "FIRST_SLICE",
           "bot",
-          "mental_controller",
+          "mental_controller"
         ],
         "mode": "FIRST_SLICE",
         "archetype": "mental_controller",
@@ -2059,30 +2018,29 @@ export const GRIMOIRE_CATALOG = {
         "weapon_level": 5,
         "weapon_quality": "reforcada",
         "spell_ids": [
-          "sussurro_medo",
+          "sussurro_medo"
         ],
         "spell_levels": {
-          "sussurro_medo": 5,
+          "sussurro_medo": 5
         },
         "passive_id": "",
         "passive_level": 0,
         "pet_id": "",
         "pet_level": 0,
         "variation_seed": 202,
-        "is_ranked": false,
+        "is_ranked": false
       },
       {
         "id": "bot_effect_trainer_01",
         "display_name": "Treinador de Efeitos",
-        "description":
-          "Bot controlado para validar DoTs, status, barreiras e familiar contra conta guest inicial.",
+        "description": "Bot controlado para validar DoTs, status, barreiras e familiar contra conta guest inicial.",
         "version": 2,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "bot",
           "effect_trainer",
-          "smoke",
+          "smoke"
         ],
         "mode": "FIRST_SLICE",
         "archetype": "effect_trainer",
@@ -2094,31 +2052,30 @@ export const GRIMOIRE_CATALOG = {
         "weapon_quality": "starter",
         "spell_ids": [
           "marca_brasa",
-          "geada_ossos",
+          "geada_ossos"
         ],
         "spell_levels": {
           "marca_brasa": 1,
-          "geada_ossos": 1,
+          "geada_ossos": 1
         },
         "passive_id": "pedra_interna",
         "passive_level": 1,
         "pet_id": "corvo_pressagio",
         "pet_level": 1,
         "variation_seed": 450,
-        "is_ranked": false,
+        "is_ranked": false
       },
       {
         "id": "bot_summon_trainer_01",
         "display_name": "Treinador de Invocacao",
-        "description":
-          "Bot controlado para validar summons contra conta guest inicial.",
+        "description": "Bot controlado para validar summons contra conta guest inicial.",
         "version": 2,
         "enabled": true,
         "tags": [
           "FIRST_SLICE",
           "bot",
           "summon_trainer",
-          "smoke",
+          "smoke"
         ],
         "mode": "FIRST_SLICE",
         "archetype": "summon_trainer",
@@ -2130,20 +2087,20 @@ export const GRIMOIRE_CATALOG = {
         "weapon_quality": "starter",
         "spell_ids": [
           "erguer_ossos",
-          "geada_ossos",
+          "geada_ossos"
         ],
         "spell_levels": {
           "erguer_ossos": 1,
-          "geada_ossos": 1,
+          "geada_ossos": 1
         },
         "passive_id": "",
         "passive_level": 0,
         "pet_id": "corvo_pressagio",
         "pet_level": 1,
         "variation_seed": 460,
-        "is_ranked": false,
-      },
-    ],
+        "is_ranked": false
+      }
+    ]
   },
   "counts": {
     "weapons": 8,
@@ -2153,8 +2110,8 @@ export const GRIMOIRE_CATALOG = {
     "base_structures": 6,
     "rewards": 6,
     "power_bands": 6,
-    "bot_archetypes": 8,
-  },
+    "bot_archetypes": 8
+  }
 } as const;
 
 export type GrimoireCatalog = typeof GRIMOIRE_CATALOG;

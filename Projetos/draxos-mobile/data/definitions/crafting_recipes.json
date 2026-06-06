@@ -4,13 +4,48 @@
   "items": [
     {
       "id": "craft_pocao_vida",
-      "display_name": "Criar Pocao de Vida",
-      "description": "Transforma Po de Osso em uma Pocao de Vida.",
+      "display_name": "Preparar Pocao de Vida",
+      "description": "Prepara uma Pocao de Vida na Fogueira usando materiais do Bau do Bosque e Po de Osso da conta.",
       "version": 1,
       "enabled": true,
-      "tags": ["crafting", "potion", "healing"],
-      "input": {"po_osso": 50},
-      "output": {"item_id": "pocao_vida", "quantity": 1}
+      "tags": ["crafting", "potion", "healing", "station", "fogueira"],
+      "station": {"mode_id": "openworld", "slice_id": "forest", "station_id": "fogueira_estavel_1"},
+      "inputs": [
+        {"domain": "openworld_chest", "item_id": "folha", "quantity": 2},
+        {"domain": "openworld_chest", "item_id": "cogumelo", "quantity": 1},
+        {"domain": "account_resource", "item_id": "po_osso", "quantity": 25}
+      ],
+      "outputs": [{"domain": "account_consumable", "item_id": "pocao_vida", "quantity": 1}]
+    },
+    {
+      "id": "craft_pocao_foco",
+      "display_name": "Preparar Pocao de Foco",
+      "description": "Prepara uma Pocao de Foco na Fogueira usando materiais do Bau do Bosque e Po de Osso da conta.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["crafting", "potion", "mana", "station", "fogueira"],
+      "station": {"mode_id": "openworld", "slice_id": "forest", "station_id": "fogueira_estavel_1"},
+      "inputs": [
+        {"domain": "openworld_chest", "item_id": "fungo", "quantity": 1},
+        {"domain": "openworld_chest", "item_id": "inseto", "quantity": 1},
+        {"domain": "account_resource", "item_id": "po_osso", "quantity": 15}
+      ],
+      "outputs": [{"domain": "account_consumable", "item_id": "pocao_foco", "quantity": 1}]
+    },
+    {
+      "id": "craft_pocao_resguardo",
+      "display_name": "Preparar Pocao de Resguardo",
+      "description": "Prepara uma Pocao de Resguardo na Fogueira usando materiais do Bau do Bosque e Po de Osso da conta.",
+      "version": 1,
+      "enabled": true,
+      "tags": ["crafting", "potion", "barrier", "station", "fogueira"],
+      "station": {"mode_id": "openworld", "slice_id": "forest", "station_id": "fogueira_estavel_1"},
+      "inputs": [
+        {"domain": "openworld_chest", "item_id": "resina", "quantity": 1},
+        {"domain": "openworld_chest", "item_id": "pedra_pequena", "quantity": 1},
+        {"domain": "account_resource", "item_id": "po_osso", "quantity": 20}
+      ],
+      "outputs": [{"domain": "account_consumable", "item_id": "pocao_resguardo", "quantity": 1}]
     }
   ]
 }
