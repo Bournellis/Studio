@@ -2,6 +2,7 @@ extends RefCounted
 
 const BattleReporterScript = preload("res://tools/lab/battle_reporter.gd")
 const BattleRunnerScript = preload("res://tools/lab/battle_runner.gd")
+const CardFlowExpectationEvaluatorScript = preload("res://tools/lab/card_flow_expectation_evaluator.gd")
 const CardImpactMatrixScript = preload("res://tools/lab/card_impact_matrix.gd")
 const LabAggregatorScript = preload("res://tools/lab/lab_aggregator.gd")
 const LabCaseBuilderScript = preload("res://tools/lab/lab_case_builder.gd")
@@ -74,7 +75,7 @@ static func compare_phase(pack: Dictionary, options: Dictionary = {}) -> Diction
 		var write_result: Dictionary = LabDiffReporterScript.write_outputs("%s/%s" % [compare_dir, component], diff_report, diff_options)
 		if not bool(write_result.get("ok", false)):
 			structural_errors.append(str(write_result.get("message", "Could not write compare output for %s." % component)))
-		component_results.append(_diff_component_result(component, diff_report, write_result))
+		component_results.append(_diff_component_result(component, diff_report, write_result, pack, options))
 	var summary: Dictionary = _compare_summary(pack, component_results, structural_errors)
 	return {
 		"ok": bool(summary.get("gate_ok", false)),
@@ -103,6 +104,7 @@ static func _run_battle_component(catalog, pack: Dictionary, matrix: Dictionary,
 	var write_result: Dictionary = BattleReporterScript.write_outputs(output_dir, records, summary, run_options)
 	var component_result: Dictionary = _component_from_summary("battle", bool(run_result.get("ok", false)) and bool(write_result.get("ok", false)), summary, write_result, records.size())
 	component_result["signature_quality"] = _signature_quality_from_records(records)
+	component_result["card_flow_expectations"] = CardFlowExpectationEvaluatorScript.evaluate_records(pack, records, {"card_ids": _matrix_player_card_ids(matrix)})
 	return component_result
 
 static func _run_scenario_component(session, catalog, pack: Dictionary, output_dir: String, options: Dictionary) -> Dictionary:
@@ -157,7 +159,7 @@ static func _component_from_summary(component: String, ok: bool, summary: Dictio
 		"structural_errors": [] if bool(write_result.get("ok", true)) else [str(write_result.get("message", "Could not write %s output." % component))]
 	}
 
-static func _diff_component_result(component: String, diff_report: Dictionary, write_result: Dictionary) -> Dictionary:
+static func _diff_component_result(component: String, diff_report: Dictionary, write_result: Dictionary, pack: Dictionary = {}, options: Dictionary = {}) -> Dictionary:
 	var summary: Dictionary = Dictionary(diff_report.get("summary", {}))
 	var component_result: Dictionary = {
 		"component": component,
@@ -177,6 +179,7 @@ static func _diff_component_result(component: String, diff_report: Dictionary, w
 	}
 	if component == "battle":
 		component_result["signature_quality"] = _signature_quality_from_battle_results_path(str(diff_report.get("after_path", "")))
+		component_result["card_flow_expectations"] = CardFlowExpectationEvaluatorScript.evaluate_records_from_path(pack, str(diff_report.get("after_path", "")), {"card_ids": _card_flow_expectation_ids_from_options(pack, options)})
 	return component_result
 
 static func _component_error(component: String, message: String) -> Dictionary:
@@ -198,15 +201,21 @@ static func _phase_summary(pack: Dictionary, matrix: Dictionary, component_resul
 	_apply_effect_signature_coverage(coverage, pack)
 	var blocking_changes: Array[String] = structural_errors.duplicate()
 	var signature_quality: Dictionary = _empty_signature_quality()
+	var card_flow_expectations: Dictionary = CardFlowExpectationEvaluatorScript.empty_summary(pack)
 	for component: Dictionary in component_results:
 		if component.has("signature_quality"):
 			_merge_signature_quality(signature_quality, Dictionary(component.get("signature_quality", {})))
+		if component.has("card_flow_expectations"):
+			CardFlowExpectationEvaluatorScript.merge_summaries(card_flow_expectations, Dictionary(component.get("card_flow_expectations", {})))
 		if str(component.get("status", "")) == "FAIL":
 			blocking_changes.append("Component `%s` failed." % str(component.get("component", "")))
+	blocking_changes.append_array(_target_capture_blockers(pack, signature_quality))
+	blocking_changes.append_array(_card_flow_expectation_blockers(pack, card_flow_expectations))
 	return {
 		"coverage": coverage,
 		"components": component_results,
 		"signature_quality": signature_quality,
+		"card_flow_expectations": card_flow_expectations,
 		"structural_errors": structural_errors,
 		"blocking_changes": blocking_changes,
 		"new_failure_count": 0,
@@ -227,12 +236,15 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 	var missing_signatures: Array[Dictionary] = []
 	var support_contamination_changes: Array[Dictionary] = []
 	var signature_quality: Dictionary = _empty_signature_quality()
+	var card_flow_expectations: Dictionary = CardFlowExpectationEvaluatorScript.empty_summary(pack)
 	var new_failure_count: int = 0
 	var removed_count: int = 0
 	var blocking_changes: Array[String] = structural_errors.duplicate()
 	for component: Dictionary in component_results:
 		if component.has("signature_quality"):
 			_merge_signature_quality(signature_quality, Dictionary(component.get("signature_quality", {})))
+		if component.has("card_flow_expectations"):
+			CardFlowExpectationEvaluatorScript.merge_summaries(card_flow_expectations, Dictionary(component.get("card_flow_expectations", {})))
 		new_failure_count += int(component.get("new_failure_count", 0))
 		removed_count += int(component.get("removed_count", 0))
 		if str(component.get("status", "")) == "FAIL":
@@ -265,10 +277,13 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 							"after": row.get("after", null)
 						})
 			_record_card_impact(top_map, diff)
+	blocking_changes.append_array(_target_capture_blockers(pack, signature_quality))
+	blocking_changes.append_array(_card_flow_expectation_blockers(pack, card_flow_expectations))
 	return {
 		"coverage": _compare_coverage(pack, component_results),
 		"components": component_results,
 		"signature_quality": signature_quality,
+		"card_flow_expectations": card_flow_expectations,
 		"structural_errors": structural_errors,
 		"blocking_changes": blocking_changes,
 		"new_failure_count": new_failure_count,
@@ -290,6 +305,7 @@ static func _compare_coverage(pack: Dictionary, component_results: Array[Diction
 	var expected_player: int = int(card_sets.get("expected_player_cards", 0))
 	var expected_enemy: int = int(card_sets.get("expected_enemy_cards", 0))
 	var expected_legacy: int = int(card_sets.get("expected_legacy_inactive_cards", 0))
+	var expected_card_flow: int = int(card_sets.get("expected_card_flow_player_cards", 0))
 	var covered_active: int = 0
 	for component: Dictionary in component_results:
 		if str(component.get("component", "")) != "battle":
@@ -300,14 +316,23 @@ static func _compare_coverage(pack: Dictionary, component_results: Array[Diction
 		"expected_player_cards": expected_player,
 		"expected_enemy_cards": expected_enemy,
 		"expected_legacy_inactive_cards": expected_legacy,
+		"expected_card_flow_player_cards": expected_card_flow,
 		"expected_active_cards": expected_player + expected_enemy,
 		"covered_active_cards": covered_active,
 		"player_cards_total": expected_player,
 		"enemy_cards_total": expected_enemy,
 		"legacy_inactive_cards_total": expected_legacy,
+		"card_flow_player_cards_total": expected_card_flow,
 		"filtered_player_cards": expected_player if covered_active >= expected_player else 0,
-		"filtered_enemy_cards": expected_enemy if covered_active >= expected_player + expected_enemy else 0
+		"filtered_enemy_cards": expected_enemy if covered_active >= expected_player + expected_enemy else 0,
+		"filtered_card_flow_player_cards": expected_card_flow if covered_active >= expected_player else 0
 	}
+	if card_sets.has("expected_player_cards_by_class"):
+		coverage["filtered_player_cards_by_class"] = Dictionary(card_sets.get("expected_player_cards_by_class", {})).duplicate(true)
+		coverage["player_cards_total_by_class"] = Dictionary(card_sets.get("expected_player_cards_by_class", {})).duplicate(true)
+	if card_sets.has("expected_player_cards_by_source"):
+		coverage["filtered_player_cards_by_source"] = Dictionary(card_sets.get("expected_player_cards_by_source", {})).duplicate(true)
+		coverage["player_cards_total_by_source"] = Dictionary(card_sets.get("expected_player_cards_by_source", {})).duplicate(true)
 	_apply_effect_signature_coverage(coverage, pack)
 	return coverage
 
@@ -321,6 +346,37 @@ static func _apply_effect_signature_coverage(coverage: Dictionary, pack: Diction
 	coverage["enemy_effect_signature_mode"] = str(enemy_config.get("mode", "off")) if enabled else "off"
 	coverage["expected_player_effect_signatures"] = int(coverage.get("filtered_player_cards", 0)) if str(coverage.get("player_effect_signature_mode", "")) == "required" else 0
 	coverage["expected_enemy_effect_signatures"] = int(coverage.get("filtered_enemy_cards", 0)) if str(coverage.get("enemy_effect_signature_mode", "")) == "required" else 0
+
+static func _target_capture_blockers(pack: Dictionary, signature_quality: Dictionary) -> Array[String]:
+	var gate_policy: Dictionary = Dictionary(pack.get("gate_policy", {}))
+	var blockers: Array[String] = []
+	if bool(gate_policy.get("fail_on_repeated_target_capture", false)):
+		var repeated_count: int = int(signature_quality.get("repeated_target_count", 0))
+		if repeated_count > 0:
+			blockers.append("%d target-card captures played the focused card more than once." % repeated_count)
+		var failed_count: int = int(signature_quality.get("capture_failed_count", 0))
+		if failed_count > 0:
+			blockers.append("%d target-card captures failed." % failed_count)
+	if bool(gate_policy.get("fail_on_missing_card_flow_signature", false)):
+		var card_flow_signature_missing_count: int = int(signature_quality.get("card_flow_signature_missing_count", 0))
+		if card_flow_signature_missing_count > 0:
+			blockers.append("%d card-flow captures are missing effect signatures." % card_flow_signature_missing_count)
+	if bool(gate_policy.get("fail_on_missing_card_flow_observed", false)):
+		var card_flow_missing_count: int = int(signature_quality.get("card_flow_missing_count", 0))
+		if card_flow_missing_count > 0:
+			blockers.append("%d expected card-flow captures did not observe card-flow counters." % card_flow_missing_count)
+	return blockers
+
+static func _card_flow_expectation_blockers(pack: Dictionary, expectation_summary: Dictionary) -> Array[String]:
+	var gate_policy: Dictionary = Dictionary(pack.get("gate_policy", {}))
+	if not bool(gate_policy.get("fail_on_card_flow_expectation_fail", false)):
+		return []
+	if not bool(expectation_summary.get("enabled", false)):
+		return []
+	var required_fail_count: int = int(expectation_summary.get("required_fail_count", 0))
+	if required_fail_count <= 0:
+		return []
+	return ["%d required card-flow expectations failed." % required_fail_count]
 
 static func _record_card_impact(top_map: Dictionary, diff: Dictionary) -> void:
 	var card_id: String = _card_id_from_diff_id(str(diff.get("id", "")))
@@ -358,8 +414,12 @@ static func _effect_family_for_field(field: String) -> String:
 		return "debuff"
 	if field in ["poison_added_total", "enemy_poison_added", "freeze_added_total", "enemy_frozen_added", "enemy_snared_added", "enemy_slow_added"]:
 		return "control"
-	if field in ["mana_gained", "ashes_gained", "cards_drawn", "cards_discarded", "cards_created", "deck_delta", "hand_delta", "discard_delta"]:
+	if field in ["cards_drawn", "cards_discarded", "cards_created", "deck_delta", "hand_delta", "discard_delta", "card_flow_observed", "card_flow_expected", "card_flow_missing_reason"]:
+		return "card_flow"
+	if field in ["mana_gained", "ashes_gained"]:
 		return "economy"
+	if field in ["temporary_ability_power_delta", "temporary_ability_power_gained", "temporary_ability_power_lost"]:
+		return "utility"
 	if field in ["keywords_added", "keywords_removed", "families"]:
 		return "keyword"
 	if field in ["pending_choices_delta", "pending_choice_created", "pending_choice_resolved", "sacrifice_required", "sacrifice_consumed", "sacrifice_units_destroyed"]:
@@ -379,7 +439,14 @@ static func _is_support_field(field: String) -> bool:
 		"support_card_count_after_target",
 		"support_contamination_status",
 		"signature_confidence",
-		"ambiguous_reason"
+		"ambiguous_reason",
+		"target_card_play_count",
+		"target_card_first_play_turn",
+		"target_card_first_play_cycle",
+		"stopped_after_target",
+		"target_capture_mode",
+		"capture_quality",
+		"ambiguity_reasons"
 	]
 
 static func _signature_quality_from_records(records: Array) -> Dictionary:
@@ -395,15 +462,24 @@ static func _signature_quality_from_records(records: Array) -> Dictionary:
 		var families: Array = Array(signature.get("families", result.get("effect_families", [])))
 		if families.is_empty():
 			families = ["missing" if not bool(signature.get("present", false)) else "played"]
+		var card_flow_expected: bool = bool(signature.get("card_flow_expected", result.get("card_flow_expected", false)))
+		var card_flow_observed: bool = bool(signature.get("card_flow_observed", false))
+		if card_flow_expected and not families.has("card_flow"):
+			families.append("card_flow")
 		var status: String = str(signature.get("support_contamination_status", result.get("support_contamination_status", "none")))
 		var confidence: String = str(signature.get("signature_confidence", result.get("signature_confidence", "none")))
+		var capture_quality: String = str(signature.get("capture_quality", result.get("capture_quality", "none")))
+		var target_play_count: int = int(signature.get("target_card_play_count", result.get("target_card_play_count", result.get("card_under_test_play_count", 0))))
+		var target_capture_mode: String = str(signature.get("target_capture_mode", result.get("target_capture_mode", "")))
 		if not bool(signature.get("present", false)):
 			status = "missing"
 			confidence = "missing"
-		_increment_signature_quality_total(quality, status, confidence)
+			capture_quality = "failed" if target_capture_mode == "isolated_once" else "none"
+		_increment_card_flow_quality(quality, case_id, card_id, card_flow_expected, card_flow_observed, bool(signature.get("present", false)), str(signature.get("card_flow_missing_reason", "")))
+		_increment_signature_quality_total(quality, status, confidence, capture_quality, target_play_count)
 		for family_value: Variant in families:
-			_increment_signature_family_quality(quality, str(family_value), status, confidence)
-		if status in ["support_assisted", "missing"] or confidence == "ambiguous":
+			_increment_signature_family_quality(quality, str(family_value), status, confidence, capture_quality, target_play_count)
+		if status in ["support_assisted", "missing"] or confidence == "ambiguous" or capture_quality in ["support_required", "ambiguous", "failed"] or (card_flow_expected and not card_flow_observed):
 			var cases: Array = Array(quality.get("cases", []))
 			cases.append({
 				"case_id": case_id,
@@ -411,7 +487,13 @@ static func _signature_quality_from_records(records: Array) -> Dictionary:
 				"families": families.duplicate(),
 				"support_contamination_status": status,
 				"signature_confidence": confidence,
+				"capture_quality": capture_quality,
+				"target_card_play_count": target_play_count,
+				"card_flow_expected": card_flow_expected,
+				"card_flow_observed": card_flow_observed,
+				"card_flow_missing_reason": str(signature.get("card_flow_missing_reason", "")),
 				"reason": str(signature.get("ambiguous_reason", result.get("signature_ambiguous_reason", signature.get("missing_reason", "")))),
+				"ambiguity_reasons": Array(signature.get("ambiguity_reasons", result.get("ambiguity_reasons", []))).duplicate(),
 				"support_cards_before_target": Array(signature.get("support_cards_before_target", result.get("support_cards_before_target", []))).duplicate(),
 				"support_cards_after_target": Array(signature.get("support_cards_after_target", result.get("support_cards_after_target", []))).duplicate()
 			})
@@ -438,21 +520,31 @@ static func _empty_signature_quality() -> Dictionary:
 		"ambiguous_count": 0,
 		"missing_count": 0,
 		"none_count": 0,
+		"capture_clean_count": 0,
+		"capture_support_required_count": 0,
+		"capture_ambiguous_count": 0,
+		"capture_failed_count": 0,
+		"repeated_target_count": 0,
+		"card_flow_expected_count": 0,
+		"card_flow_observed_count": 0,
+		"card_flow_missing_count": 0,
+		"card_flow_signature_missing_count": 0,
+		"card_flow_cases": [],
 		"by_family": {},
 		"cases": []
 	}
 
 static func _merge_signature_quality(target: Dictionary, source: Dictionary) -> void:
-	for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count"]:
+	for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count", "capture_clean_count", "capture_support_required_count", "capture_ambiguous_count", "capture_failed_count", "repeated_target_count", "card_flow_expected_count", "card_flow_observed_count", "card_flow_missing_count", "card_flow_signature_missing_count"]:
 		target[field] = int(target.get(field, 0)) + int(source.get(field, 0))
 	var target_by_family: Dictionary = Dictionary(target.get("by_family", {}))
 	for family_key: Variant in Dictionary(source.get("by_family", {})).keys():
 		var family: String = str(family_key)
 		if not target_by_family.has(family):
-			target_by_family[family] = {"total": 0, "clean_count": 0, "support_assisted_count": 0, "ambiguous_count": 0, "missing_count": 0, "none_count": 0}
+			target_by_family[family] = _empty_signature_quality_family()
 		var target_entry: Dictionary = Dictionary(target_by_family.get(family, {}))
 		var source_entry: Dictionary = Dictionary(Dictionary(source.get("by_family", {})).get(family_key, {}))
-		for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count"]:
+		for field: String in ["total", "clean_count", "support_assisted_count", "ambiguous_count", "missing_count", "none_count", "capture_clean_count", "capture_support_required_count", "capture_ambiguous_count", "capture_failed_count", "repeated_target_count"]:
 			target_entry[field] = int(target_entry.get(field, 0)) + int(source_entry.get(field, 0))
 		target_by_family[family] = target_entry
 	target["by_family"] = target_by_family
@@ -461,22 +553,47 @@ static func _merge_signature_quality(target: Dictionary, source: Dictionary) -> 
 		if typeof(case_value) == TYPE_DICTIONARY:
 			cases.append(Dictionary(case_value).duplicate(true))
 	target["cases"] = cases
+	var card_flow_cases: Array = Array(target.get("card_flow_cases", []))
+	for case_value: Variant in Array(source.get("card_flow_cases", [])):
+		if typeof(case_value) == TYPE_DICTIONARY:
+			card_flow_cases.append(Dictionary(case_value).duplicate(true))
+	target["card_flow_cases"] = card_flow_cases
 
-static func _increment_signature_quality_total(quality: Dictionary, status: String, confidence: String) -> void:
+static func _increment_card_flow_quality(quality: Dictionary, case_id: String, card_id: String, expected: bool, observed: bool, signature_present: bool, missing_reason: String) -> void:
+	if not expected:
+		return
+	quality["card_flow_expected_count"] = int(quality.get("card_flow_expected_count", 0)) + 1
+	if observed:
+		quality["card_flow_observed_count"] = int(quality.get("card_flow_observed_count", 0)) + 1
+		return
+	quality["card_flow_missing_count"] = int(quality.get("card_flow_missing_count", 0)) + 1
+	if not signature_present:
+		quality["card_flow_signature_missing_count"] = int(quality.get("card_flow_signature_missing_count", 0)) + 1
+	var cases: Array = Array(quality.get("card_flow_cases", []))
+	cases.append({
+		"case_id": case_id,
+		"card_id": card_id,
+		"signature_present": signature_present,
+		"card_flow_observed": observed,
+		"missing_reason": missing_reason
+	})
+	quality["card_flow_cases"] = cases
+
+static func _increment_signature_quality_total(quality: Dictionary, status: String, confidence: String, capture_quality: String = "none", target_play_count: int = 0) -> void:
 	quality["total"] = int(quality.get("total", 0)) + 1
-	_increment_quality_bucket(quality, status, confidence)
+	_increment_quality_bucket(quality, status, confidence, capture_quality, target_play_count)
 
-static func _increment_signature_family_quality(quality: Dictionary, family: String, status: String, confidence: String) -> void:
+static func _increment_signature_family_quality(quality: Dictionary, family: String, status: String, confidence: String, capture_quality: String = "none", target_play_count: int = 0) -> void:
 	var by_family: Dictionary = Dictionary(quality.get("by_family", {}))
 	if not by_family.has(family):
-		by_family[family] = {"total": 0, "clean_count": 0, "support_assisted_count": 0, "ambiguous_count": 0, "missing_count": 0, "none_count": 0}
+		by_family[family] = _empty_signature_quality_family()
 	var entry: Dictionary = Dictionary(by_family.get(family, {}))
 	entry["total"] = int(entry.get("total", 0)) + 1
-	_increment_quality_bucket(entry, status, confidence)
+	_increment_quality_bucket(entry, status, confidence, capture_quality, target_play_count)
 	by_family[family] = entry
 	quality["by_family"] = by_family
 
-static func _increment_quality_bucket(target: Dictionary, status: String, confidence: String) -> void:
+static func _increment_quality_bucket(target: Dictionary, status: String, confidence: String, capture_quality: String = "none", target_play_count: int = 0) -> void:
 	match status:
 		"clean":
 			target["clean_count"] = int(target.get("clean_count", 0)) + 1
@@ -488,6 +605,32 @@ static func _increment_quality_bucket(target: Dictionary, status: String, confid
 			target["none_count"] = int(target.get("none_count", 0)) + 1
 	if confidence == "ambiguous":
 		target["ambiguous_count"] = int(target.get("ambiguous_count", 0)) + 1
+	match capture_quality:
+		"clean":
+			target["capture_clean_count"] = int(target.get("capture_clean_count", 0)) + 1
+		"support_required":
+			target["capture_support_required_count"] = int(target.get("capture_support_required_count", 0)) + 1
+		"ambiguous":
+			target["capture_ambiguous_count"] = int(target.get("capture_ambiguous_count", 0)) + 1
+		"failed":
+			target["capture_failed_count"] = int(target.get("capture_failed_count", 0)) + 1
+	if target_play_count > 1:
+		target["repeated_target_count"] = int(target.get("repeated_target_count", 0)) + 1
+
+static func _empty_signature_quality_family() -> Dictionary:
+	return {
+		"total": 0,
+		"clean_count": 0,
+		"support_assisted_count": 0,
+		"ambiguous_count": 0,
+		"missing_count": 0,
+		"none_count": 0,
+		"capture_clean_count": 0,
+		"capture_support_required_count": 0,
+		"capture_ambiguous_count": 0,
+		"capture_failed_count": 0,
+		"repeated_target_count": 0
+	}
 
 static func _top_impacted_cards(top_map: Dictionary) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
@@ -506,6 +649,42 @@ static func _card_id_from_diff_id(diff_id: String) -> String:
 	if diff_id.begins_with("card_impact_enemy_"):
 		return diff_id.trim_prefix("card_impact_enemy_")
 	return ""
+
+static func _matrix_player_card_ids(matrix: Dictionary) -> PackedStringArray:
+	var ids: PackedStringArray = PackedStringArray()
+	for card_value: Variant in Array(matrix.get("player_cards", [])):
+		if typeof(card_value) != TYPE_DICTIONARY:
+			continue
+		var card_id: String = str(Dictionary(card_value).get("id", ""))
+		if card_id != "":
+			ids.append(card_id)
+	return ids
+
+static func _card_flow_expectation_ids_from_options(pack: Dictionary, options: Dictionary) -> PackedStringArray:
+	var requested: PackedStringArray = PackedStringArray(options.get("cards", PackedStringArray(["all"])))
+	if requested.is_empty() or (requested.size() == 1 and str(requested[0]) in ["all", "player"]):
+		return _card_flow_expectation_ids(pack)
+	if requested.size() == 1 and str(requested[0]) == "enemy":
+		return PackedStringArray()
+	var valid_ids: Dictionary = {}
+	for card_id: String in _card_flow_expectation_ids(pack):
+		valid_ids[card_id] = true
+	var result: PackedStringArray = PackedStringArray()
+	for card_id: String in requested:
+		if valid_ids.has(card_id):
+			result.append(card_id)
+	return result
+
+static func _card_flow_expectation_ids(pack: Dictionary) -> PackedStringArray:
+	var result: PackedStringArray = PackedStringArray()
+	var config: Dictionary = Dictionary(pack.get("card_flow_expectations", {}))
+	for check_value: Variant in Array(config.get("checks", [])):
+		if typeof(check_value) != TYPE_DICTIONARY:
+			continue
+		var card_id: String = str(Dictionary(check_value).get("card_id", ""))
+		if card_id != "" and not result.has(card_id):
+			result.append(card_id)
+	return result
 
 static func _diff_type_for_component(component: String) -> String:
 	match component:

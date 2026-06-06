@@ -1,0 +1,241 @@
+{
+	"pack_id": "track02_card_impact_v4_2",
+	"schema_version": 4,
+	"simulation_mode": "card_impact_v4_2",
+	"description": "Card Impact Pack V4.2 with full active player matrix, card-flow harness coverage and explicit card-flow regression expectations.",
+	"card_sets": {
+		"player_prefixes": ["arcano_", "invocador_", "necro_"],
+		"player_scope": "full_active_player_v1",
+		"player_upgrade_suffixes": ["", "_lvl2", "_lvl3"],
+		"enemy_source": "track_contract.enemy_card_galleries",
+		"enemy_prefix": "enemy_",
+		"legacy_inactive_prefix": "elemental_",
+		"expected_player_cards": 108,
+		"expected_enemy_cards": 30,
+		"expected_legacy_inactive_cards": 15,
+		"expected_card_flow_player_cards": 3,
+		"expected_player_cards_by_class": {
+			"arcano": 36,
+			"invocador": 36,
+			"necromante": 36
+		},
+		"expected_player_cards_by_source": {
+			"starter": 27,
+			"core_cost2": 9,
+			"reward": 72
+		}
+	},
+	"effect_signatures": {
+		"enabled": true,
+		"schema_version": 4,
+		"player": {
+			"scope": "player",
+			"mode": "required",
+			"fail_on_missing_signature": true,
+			"fail_on_effect_delta": false
+		},
+		"enemy": {
+			"scope": "enemy",
+			"mode": "report_only",
+			"fail_on_missing_signature": false,
+			"fail_on_effect_delta": false
+		},
+		"target_capture": {
+			"mode": "isolated_once",
+			"stop_after_target": true,
+			"allow_minimum_support": true,
+			"fail_on_repeated_target": true,
+			"max_support_cards_before_target": 1,
+			"capture_after": "play_card"
+		},
+		"compare_fields": [
+			"summons_created",
+			"summoned_count",
+			"summoned_slot_count",
+			"summoned_keyword_count",
+			"player_units_delta",
+			"enemy_units_delta",
+			"enemy_hero_damage",
+			"player_hero_damage",
+			"enemy_slot_damage_total",
+			"player_slot_damage_total",
+			"ally_attack_buff_total",
+			"ally_health_buff_total",
+			"enemy_attack_debuff_total",
+			"enemy_health_debuff_total",
+			"ally_keyword_gain_count",
+			"ally_shield_gain",
+			"ally_resistance_gain",
+			"enemy_keyword_loss_count",
+			"poison_added_total",
+			"enemy_poison_added",
+			"freeze_added_total",
+			"enemy_frozen_added",
+			"enemy_snared_added",
+			"enemy_slow_added",
+			"shield_added_total",
+			"mana_gained",
+			"temporary_ability_power_delta",
+			"temporary_ability_power_gained",
+			"temporary_ability_power_lost",
+			"ashes_gained",
+			"cards_drawn",
+			"cards_discarded",
+			"cards_created",
+			"deck_delta",
+			"hand_delta",
+			"discard_delta",
+			"card_flow_observed",
+			"card_flow_expected",
+			"card_flow_missing_reason",
+			"pending_choices_delta",
+			"pending_choice_created",
+			"pending_choice_resolved",
+			"sacrifice_required",
+			"sacrifice_consumed",
+			"sacrifice_units_destroyed",
+			"log_added",
+			"visual_events_added",
+			"summoned_attack_total",
+			"summoned_health_total",
+			"focused_card_play_index",
+			"target_card_play_count",
+			"target_card_first_play_turn",
+			"target_card_first_play_cycle",
+			"stopped_after_target",
+			"target_capture_mode",
+			"capture_quality",
+			"support_cards_before_target",
+			"support_cards_after_target",
+			"support_card_count_before_target",
+			"support_card_count_after_target",
+			"support_contamination_status",
+			"signature_confidence",
+			"ambiguous_reason",
+			"ambiguity_reasons",
+			"keywords_added",
+			"keywords_removed",
+			"families"
+		],
+		"group_by_action": true
+	},
+	"card_flow_expectations": {
+		"enabled": true,
+		"schema_version": 1,
+		"checks": [
+			{"card_id": "necro_colheita_das_almas", "field": "card_flow_observed", "op": "==", "value": true, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas", "field": "cards_drawn", "op": ">=", "value": 2, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas", "field": "deck_delta", "op": "<=", "value": -2, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas", "field": "hand_delta", "op": ">=", "value": 1, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas", "field": "cards_drawn", "op": "==", "value": 2, "severity": "watch"},
+			{"card_id": "necro_colheita_das_almas", "field": "deck_delta", "op": "==", "value": -2, "severity": "watch"},
+			{"card_id": "necro_colheita_das_almas", "field": "hand_delta", "op": "==", "value": 1, "severity": "watch"},
+
+			{"card_id": "necro_colheita_das_almas_lvl2", "field": "card_flow_observed", "op": "==", "value": true, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas_lvl2", "field": "cards_drawn", "op": ">=", "value": 2, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas_lvl2", "field": "deck_delta", "op": "<=", "value": -2, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas_lvl2", "field": "hand_delta", "op": ">=", "value": 1, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas_lvl2", "field": "cards_drawn", "op": "==", "value": 2, "severity": "watch"},
+			{"card_id": "necro_colheita_das_almas_lvl2", "field": "deck_delta", "op": "==", "value": -2, "severity": "watch"},
+			{"card_id": "necro_colheita_das_almas_lvl2", "field": "hand_delta", "op": "==", "value": 1, "severity": "watch"},
+
+			{"card_id": "necro_colheita_das_almas_lvl3", "field": "card_flow_observed", "op": "==", "value": true, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas_lvl3", "field": "cards_drawn", "op": ">=", "value": 2, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas_lvl3", "field": "deck_delta", "op": "<=", "value": -2, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas_lvl3", "field": "hand_delta", "op": ">=", "value": 1, "severity": "required"},
+			{"card_id": "necro_colheita_das_almas_lvl3", "field": "cards_drawn", "op": "==", "value": 2, "severity": "watch"},
+			{"card_id": "necro_colheita_das_almas_lvl3", "field": "deck_delta", "op": "==", "value": -2, "severity": "watch"},
+			{"card_id": "necro_colheita_das_almas_lvl3", "field": "hand_delta", "op": "==", "value": 1, "severity": "watch"}
+		]
+	},
+	"case_templates": {
+		"player": {
+			"encounter_id": "card_impact_player_harness",
+			"harnesses": {
+				"default": "card_impact_player_harness",
+				"damage": "card_impact_player_damage_harness",
+				"summon": "card_impact_player_summon_harness",
+				"buff": "card_impact_player_buff_harness",
+				"control": "card_impact_player_control_harness",
+				"economy": "card_impact_player_economy_harness",
+				"card_flow": "card_impact_player_card_flow_harness",
+				"played": "card_impact_player_played_harness"
+			},
+			"policy_id": "card_focus_isolated",
+			"seed": 20260518,
+			"turn_limit": 3,
+			"config": {
+				"player_health": 40,
+				"mana_per_turn": 10,
+				"max_hand_size": 5,
+				"class_passive_unlocked": true,
+				"class_active_unlocked": false,
+				"class_active_level": 0,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"expectations": {
+				"required": {
+					"card_under_test_played_equals": true,
+					"card_under_test_play_count_max": 1,
+					"policy_action_rejected_equals": false,
+					"combat_cycles_min": 1
+				}
+			}
+		},
+		"enemy": {
+			"encounter_id": "card_impact_enemy_harness",
+			"policy_id": "end_turn_only",
+			"seed": 20260518,
+			"turn_limit": 1,
+			"config": {
+				"player_health": 60,
+				"mana_per_turn": 10,
+				"max_hand_size": 5,
+				"class_passive_unlocked": false,
+				"class_active_unlocked": false,
+				"class_active_level": 0,
+				"relic_ids": [],
+				"shuffle_deck": false,
+				"shuffle_seed": 20260518
+			},
+			"expectations": {
+				"required": {
+					"card_under_test_participated_equals": true,
+					"policy_action_rejected_equals": false,
+					"combat_cycles_min": 1
+				}
+			}
+		}
+	},
+	"components": {
+		"battle": {
+			"enabled": true
+		},
+		"scenario": {
+			"enabled": true,
+			"pack": "track02_core_v1"
+		},
+		"run_lab": {
+			"enabled": true,
+			"preset": "smoke",
+			"classes": ["arcano", "invocador", "necromante"],
+			"seeds": [20260518],
+			"policies": ["baseline"]
+		}
+	},
+	"gate_policy": {
+		"fail_on_structural_errors": true,
+		"fail_on_missing_after_records": true,
+		"fail_on_new_failures": true,
+		"fail_on_missing_player_effect_signature": true,
+		"fail_on_repeated_target_capture": true,
+		"fail_on_missing_card_flow_signature": true,
+		"fail_on_missing_card_flow_observed": true,
+		"fail_on_card_flow_expectation_fail": true,
+		"fail_on_effect_deltas": false,
+		"fail_on_metric_deltas": false,
+		"fail_on_new_warnings": false
+	}
+}

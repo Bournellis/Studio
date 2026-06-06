@@ -71,7 +71,7 @@ func test_new_arcano_cards_resolve_area_damage_and_accelerate() -> void:
 	assert_false(engine.can_play_card_without_target(0))
 	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.PLAYER_ID, "area": "board"}).get("ok", false)))
 	assert_eq(engine.mana, 2)
-	assert_eq(int(engine.get_state().get("temporary_ability_power", 0)), 3)
+	assert_eq(int(engine.get_state().get("temporary_ability_power", 0)), 4)
 	assert_true(bool(engine.play_card_from_hand(0, {"owner": BattleEngine.ENEMY_ID, "slot": 0}).get("ok", false)))
 	assert_null(engine.enemy_slots[0])
 
@@ -359,6 +359,37 @@ func test_necromancer_reanimation_does_not_replace_occupied_slots() -> void:
 	assert_false(bool(result.get("ok", false)))
 	assert_eq(str(Dictionary(engine.player_slots[0]).get("card_id", "")), "invocador_soldado")
 	assert_eq(engine.ashes, 4)
+
+func test_colheita_lvl2_draws_when_ash_threshold_is_met() -> void:
+	var engine: BattleEngine = BattleEngine.new()
+	engine.start_battle(ContentLibrary.get_catalog(), [
+		"necro_colheita_das_almas_lvl2",
+		"arcano_fagulha",
+		"arcano_missil",
+		"necro_esqueleto",
+		"necro_zumbi"
+	], {
+		"encounter": {
+			"id": "test_colheita_lvl2_draw",
+			"display_name": "Teste Colheita Lvl 2 Compra",
+			"mode": BattleEngine.MODE_SURVIVE_TURNS,
+			"survive_turns": 99,
+			"player_slots_count": 3,
+			"enemy_slots_count": 3,
+			"starting_enemy_slots": [{"slot": 0, "card_id": "elemental_menor"}]
+		},
+		"class_id": "necromante",
+		"mana_per_turn": 2,
+		"max_hand_size": 2,
+		"player_health": 20,
+		"shuffle_deck": false
+	})
+	assert_eq(engine.hand.size(), 2)
+	assert_eq(engine.deck.size(), 3)
+	assert_true(bool(engine.play_card_from_hand(0, {}).get("ok", false)))
+	assert_eq(engine.ashes, 3)
+	assert_eq(engine.hand.size(), 3)
+	assert_eq(engine.deck.size(), 1)
 
 func test_track02_atropelar_brutal_and_inspirar_resolve_in_combat_stage() -> void:
 	var engine: BattleEngine = _keyword_engine(BattleEngine.MODE_DUEL)

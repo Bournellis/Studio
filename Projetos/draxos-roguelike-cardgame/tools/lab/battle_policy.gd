@@ -9,11 +9,12 @@ const POLICY_AGGRESSIVE: String = "aggressive_legal"
 const POLICY_DEFENSIVE: String = "defensive_legal"
 const POLICY_END_TURN: String = "end_turn_only"
 const POLICY_CARD_FOCUS: String = "card_focus_legal"
+const POLICY_CARD_FOCUS_ISOLATED: String = "card_focus_isolated"
 const DEFAULT_MAX_ACTIONS_PER_TURN: int = 24
 const DEFAULT_MAX_PENDING_RESOLUTIONS: int = 12
 
 static func supported_policies() -> PackedStringArray:
-	return PackedStringArray([POLICY_BASELINE, POLICY_AGGRESSIVE, POLICY_DEFENSIVE, POLICY_END_TURN, POLICY_CARD_FOCUS])
+	return PackedStringArray([POLICY_BASELINE, POLICY_AGGRESSIVE, POLICY_DEFENSIVE, POLICY_END_TURN, POLICY_CARD_FOCUS, POLICY_CARD_FOCUS_ISOLATED])
 
 static func resolve_policy_id(case_data: Dictionary, override_policy_id: String = "") -> String:
 	var policy_id: String = override_policy_id.strip_edges()
@@ -49,7 +50,8 @@ static func play_turn(engine, policy_id: String, options: Dictionary = {}) -> Di
 		if candidate.is_empty():
 			break
 		var focused_card_id: String = str(options.get("card_under_test", ""))
-		var is_focused_card: bool = policy_id == POLICY_CARD_FOCUS and focused_card_id != "" and str(candidate.get("card_id", "")) == focused_card_id
+		var is_focus_policy: bool = policy_id == POLICY_CARD_FOCUS or policy_id == POLICY_CARD_FOCUS_ISOLATED
+		var is_focused_card: bool = is_focus_policy and focused_card_id != "" and str(candidate.get("card_id", "")) == focused_card_id
 		var before_effect_snapshot: Dictionary = BattleEffectSignatureScript.snapshot_from_engine(engine) if is_focused_card else {}
 		var play_result: Dictionary = engine.play_card_from_hand(int(candidate.get("hand_index", -1)), Dictionary(candidate.get("target", {})))
 		if bool(play_result.get("requires_confirmation", false)) and _should_confirm_sacrifice(engine, policy_id):
@@ -78,6 +80,8 @@ static func play_turn(engine, policy_id: String, options: Dictionary = {}) -> Di
 				before_effect_snapshot,
 				after_effect_snapshot
 			)
+			effect_sample["card_flow_expected"] = bool(options.get("card_flow_expected", false))
+			BattleEffectSignatureScript.apply_card_flow_quality(effect_sample)
 			var support_cards_before: Array = _card_ids_from_plays(Array(result.get("cards_played", [])))
 			effect_sample["focused_card_play_index"] = support_cards_before.size()
 			effect_sample["support_cards_before_target"] = support_cards_before.duplicate()
@@ -98,6 +102,11 @@ static func play_turn(engine, policy_id: String, options: Dictionary = {}) -> Di
 		})
 		result["cards_played"] = cards_played
 		action_count += 1
+		if is_focused_card and policy_id == POLICY_CARD_FOCUS_ISOLATED:
+			result["target_captured"] = true
+			result["stopped_after_target"] = bool(Dictionary(options.get("target_capture", {})).get("stop_after_target", true))
+			if bool(result.get("stopped_after_target", true)):
+				break
 	_resolve_pending_choices(engine, policy_id, result)
 	if str(_engine_state(engine).get("outcome", "")) == "":
 		var cycle_result: Dictionary = engine.resolve_combat_cycle()
@@ -162,11 +171,13 @@ static func _card_ids_from_plays(plays: Array) -> Array:
 	return ids
 
 static func _best_card_candidate(engine, policy_id: String, options: Dictionary = {}) -> Dictionary:
-	if policy_id == POLICY_CARD_FOCUS:
+	if policy_id == POLICY_CARD_FOCUS or policy_id == POLICY_CARD_FOCUS_ISOLATED:
+		if policy_id == POLICY_CARD_FOCUS_ISOLATED and bool(options.get("target_already_captured", false)):
+			return {}
 		var focused: Dictionary = _focused_card_candidate(engine, str(options.get("card_under_test", "")))
 		if not focused.is_empty():
 			return focused
-		var enabling: Dictionary = _enabling_card_candidate(engine, str(options.get("card_under_test", "")))
+		var enabling: Dictionary = _enabling_card_candidate(engine, str(options.get("card_under_test", "")), Dictionary(options.get("target_capture", {})))
 		if not enabling.is_empty():
 			return enabling
 	var state: Dictionary = _engine_state(engine)
@@ -223,8 +234,10 @@ static func _focused_card_candidate(engine, card_under_test: String) -> Dictiona
 		}
 	return {}
 
-static func _enabling_card_candidate(engine, card_under_test: String) -> Dictionary:
+static func _enabling_card_candidate(engine, card_under_test: String, target_capture: Dictionary = {}) -> Dictionary:
 	if card_under_test == "":
+		return {}
+	if int(target_capture.get("max_support_cards_before_target", 999)) <= 0:
 		return {}
 	var focus_card = engine._card(card_under_test)
 	if focus_card == null:

@@ -30,6 +30,9 @@ const COUNTER_FIELDS: Array[String] = [
 	"enemy_slow_added",
 	"shield_added_total",
 	"mana_gained",
+	"temporary_ability_power_delta",
+	"temporary_ability_power_gained",
+	"temporary_ability_power_lost",
 	"ashes_gained",
 	"cards_drawn",
 	"cards_discarded",
@@ -52,11 +55,15 @@ const COUNTER_FIELDS: Array[String] = [
 ]
 
 static func snapshot_from_engine(engine) -> Dictionary:
+	var engine_state: Dictionary = engine.get_state() if engine.has_method("get_state") else {}
 	return {
 		"player_health": int(engine.player_health),
 		"enemy_health": int(engine.enemy_health),
 		"mana": int(engine.mana),
 		"ashes": int(engine.ashes),
+		"ability_power": int(engine_state.get("ability_power", 0)),
+		"temporary_ability_power": int(engine_state.get("temporary_ability_power", 0)),
+		"dead_unit_count": int(engine_state.get("dead_unit_count", 0)),
 		"hand_size": Array(engine.hand).size(),
 		"deck_size": Array(engine.deck).size(),
 		"discard_size": Array(engine.discard).size(),
@@ -76,6 +83,10 @@ static func build_sample(card_id: String, target: Dictionary, before: Dictionary
 	sample["enemy_hero_damage"] = maxi(0, int(before.get("enemy_health", 0)) - int(after.get("enemy_health", 0)))
 	sample["player_hero_damage"] = maxi(0, int(before.get("player_health", 0)) - int(after.get("player_health", 0)))
 	sample["mana_gained"] = maxi(0, int(after.get("mana", 0)) - int(before.get("mana", 0)))
+	var temporary_ability_power_delta: int = int(after.get("temporary_ability_power", 0)) - int(before.get("temporary_ability_power", 0))
+	sample["temporary_ability_power_delta"] = temporary_ability_power_delta
+	sample["temporary_ability_power_gained"] = maxi(0, temporary_ability_power_delta)
+	sample["temporary_ability_power_lost"] = maxi(0, -temporary_ability_power_delta)
 	sample["ashes_gained"] = maxi(0, int(after.get("ashes", 0)) - int(before.get("ashes", 0)))
 	sample["cards_drawn"] = maxi(0, int(before.get("deck_size", 0)) - int(after.get("deck_size", 0)))
 	sample["cards_discarded"] = maxi(0, int(after.get("discard_size", 0)) - int(before.get("discard_size", 0)) - 1)
@@ -91,6 +102,7 @@ static func build_sample(card_id: String, target: Dictionary, before: Dictionary
 	sample["visual_events_added"] = maxi(0, int(after.get("visual_event_count", 0)) - int(before.get("visual_event_count", 0)))
 	_apply_slot_delta(sample, PLAYER_ID, Array(before.get("player_slots", [])), Array(after.get("player_slots", [])))
 	_apply_slot_delta(sample, ENEMY_ID, Array(before.get("enemy_slots", [])), Array(after.get("enemy_slots", [])))
+	apply_card_flow_quality(sample)
 	sample["families"] = _families_for(sample)
 	_update_signature_quality(sample)
 	return sample
@@ -118,12 +130,20 @@ static func aggregate(card_id: String, samples: Array) -> Dictionary:
 			signature["support_contamination_status"] = "support_assisted"
 		if str(sample.get("signature_confidence", "")) == "ambiguous":
 			signature["signature_confidence"] = "ambiguous"
+		if bool(sample.get("card_flow_expected", false)):
+			signature["card_flow_expected"] = true
+		if bool(sample.get("card_flow_observed", false)):
+			signature["card_flow_observed"] = true
+		var card_flow_reason: String = str(sample.get("card_flow_missing_reason", ""))
+		if card_flow_reason != "":
+			signature["card_flow_missing_reason"] = card_flow_reason if str(signature.get("card_flow_missing_reason", "")) == "" else "%s; %s" % [str(signature.get("card_flow_missing_reason", "")), card_flow_reason]
 		var ambiguous_reason: String = str(sample.get("ambiguous_reason", sample.get("signature_ambiguous_reason", "")))
 		if ambiguous_reason != "":
 			var existing_reason: String = str(signature.get("ambiguous_reason", ""))
 			signature["ambiguous_reason"] = ambiguous_reason if existing_reason == "" else "%s; %s" % [existing_reason, ambiguous_reason]
 	signature["keywords_added"] = keyword_added
 	signature["keywords_removed"] = keyword_removed
+	apply_card_flow_quality(signature)
 	_update_signature_quality(signature)
 	signature["families"] = _families_for(signature)
 	return signature
@@ -149,15 +169,40 @@ static func _empty_signature(card_id: String) -> Dictionary:
 		"keywords_removed": {},
 		"families": [],
 		"focused_card_play_index": -1,
+		"target_card_play_count": 0,
+		"target_card_first_play_turn": -1,
+		"target_card_first_play_cycle": -1,
+		"stopped_after_target": false,
+		"target_capture_mode": "",
+		"capture_quality": "none",
+		"ambiguity_reasons": [],
 		"support_cards_before_target": [],
 		"support_cards_after_target": [],
 		"support_contamination_status": "none",
 		"signature_confidence": "none",
-		"ambiguous_reason": ""
+		"ambiguous_reason": "",
+		"card_flow_expected": false,
+		"card_flow_observed": false,
+		"card_flow_missing_reason": ""
 	}
 	for field: String in COUNTER_FIELDS:
 		signature[field] = 0
 	return signature
+
+static func apply_card_flow_quality(signature: Dictionary) -> void:
+	var expected: bool = bool(signature.get("card_flow_expected", false))
+	var explicit_flow: bool = (
+		int(signature.get("cards_drawn", 0)) > 0
+		or int(signature.get("cards_discarded", 0)) > 0
+		or int(signature.get("cards_created", 0)) > 0
+	)
+	var expected_deck_shift: bool = expected and int(signature.get("deck_delta", 0)) != 0
+	var observed: bool = bool(signature.get("card_flow_observed", false)) or explicit_flow or expected_deck_shift
+	signature["card_flow_observed"] = observed
+	if expected and not observed:
+		signature["card_flow_missing_reason"] = "expected card-flow counters were not observed"
+	elif observed:
+		signature["card_flow_missing_reason"] = ""
 
 static func _compact_slots(slots: Array) -> Array:
 	var result: Array = []
@@ -309,6 +354,14 @@ static func _families_for(signature: Dictionary) -> Array[String]:
 		or int(signature.get("discard_delta", 0)) != 0
 	):
 		families.append("economy")
+	if bool(signature.get("card_flow_observed", false)):
+		families.append("card_flow")
+	if (
+		int(signature.get("temporary_ability_power_delta", 0)) != 0
+		or int(signature.get("temporary_ability_power_gained", 0)) > 0
+		or int(signature.get("temporary_ability_power_lost", 0)) > 0
+	):
+		families.append("utility")
 	if not Dictionary(signature.get("keywords_added", {})).is_empty() or not Dictionary(signature.get("keywords_removed", {})).is_empty():
 		families.append("keyword")
 	if (

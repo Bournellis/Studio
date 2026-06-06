@@ -2,8 +2,11 @@ extends RefCounted
 
 const DEFAULT_CARD_IMPACT_DIR: String = "res://data/lab/card_impact"
 const DEFAULT_PACK_ID: String = "track02_card_impact_v1"
-const SUPPORTED_SIMULATION_MODES: Array[String] = ["card_impact_v1", "card_impact_v2"]
+const SUPPORTED_SIMULATION_MODES: Array[String] = ["card_impact_v1", "card_impact_v2", "card_impact_v3", "card_impact_v4", "card_impact_v4_1", "card_impact_v4_2"]
 const REQUIRED_PACK_FIELDS: PackedStringArray = ["pack_id", "schema_version", "simulation_mode", "card_sets", "case_templates", "components", "gate_policy"]
+const VALID_CARD_FLOW_EXPECTATION_FIELDS: Array[String] = ["card_flow_observed", "cards_drawn", "cards_discarded", "cards_created", "deck_delta", "hand_delta", "discard_delta"]
+const VALID_CARD_FLOW_EXPECTATION_OPS: Array[String] = ["==", "!=", ">=", "<=", ">", "<"]
+const VALID_CARD_FLOW_EXPECTATION_SEVERITIES: Array[String] = ["required", "watch"]
 
 static func default_pack_id() -> String:
 	return DEFAULT_PACK_ID
@@ -45,10 +48,46 @@ static func validate_pack_result(pack: Dictionary, path: String = "") -> Diction
 		if not pack.has(field):
 			errors.append("pack missing `%s`" % field)
 	if pack.has("simulation_mode") and not SUPPORTED_SIMULATION_MODES.has(str(pack.get("simulation_mode", ""))):
-		errors.append("pack simulation_mode must be one of `card_impact_v1,card_impact_v2`")
+		errors.append("pack simulation_mode must be one of `%s`" % ",".join(SUPPORTED_SIMULATION_MODES))
 	for object_field: String in ["card_sets", "case_templates", "components", "gate_policy"]:
 		if pack.has(object_field) and typeof(pack.get(object_field)) != TYPE_DICTIONARY:
 			errors.append("pack `%s` must be an object" % object_field)
+	if pack.has("card_flow_expectations"):
+		if typeof(pack.get("card_flow_expectations")) != TYPE_DICTIONARY:
+			errors.append("pack `card_flow_expectations` must be an object")
+		else:
+			errors.append_array(_validate_card_flow_expectations(Dictionary(pack.get("card_flow_expectations", {}))))
 	if not errors.is_empty():
 		return {"ok": false, "message": "Invalid card impact pack: %s." % "; ".join(errors), "path": path, "errors": errors}
 	return {"ok": true, "path": path, "pack": pack}
+
+static func _validate_card_flow_expectations(config: Dictionary) -> Array[String]:
+	var errors: Array[String] = []
+	if not bool(config.get("enabled", false)):
+		return errors
+	if not config.has("checks") or typeof(config.get("checks")) != TYPE_ARRAY:
+		errors.append("card_flow_expectations `checks` must be an array")
+		return errors
+	var index: int = 0
+	for check_value: Variant in Array(config.get("checks", [])):
+		if typeof(check_value) != TYPE_DICTIONARY:
+			errors.append("card_flow_expectations check %d must be an object" % index)
+			index += 1
+			continue
+		var check: Dictionary = Dictionary(check_value)
+		for field: String in ["card_id", "field", "op", "severity"]:
+			if str(check.get(field, "")) == "":
+				errors.append("card_flow_expectations check %d missing `%s`" % [index, field])
+		if not check.has("value"):
+			errors.append("card_flow_expectations check %d missing `value`" % index)
+		var effect_field: String = str(check.get("field", ""))
+		if effect_field != "" and not VALID_CARD_FLOW_EXPECTATION_FIELDS.has(effect_field):
+			errors.append("card_flow_expectations check %d field `%s` is not supported" % [index, effect_field])
+		var op: String = str(check.get("op", ""))
+		if op != "" and not VALID_CARD_FLOW_EXPECTATION_OPS.has(op):
+			errors.append("card_flow_expectations check %d op `%s` is not supported" % [index, op])
+		var severity: String = str(check.get("severity", ""))
+		if severity != "" and not VALID_CARD_FLOW_EXPECTATION_SEVERITIES.has(severity):
+			errors.append("card_flow_expectations check %d severity `%s` is not supported" % [index, severity])
+		index += 1
+	return errors
