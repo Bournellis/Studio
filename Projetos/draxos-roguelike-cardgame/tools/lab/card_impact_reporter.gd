@@ -35,6 +35,7 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 	var summary: Dictionary = Dictionary(report.get("summary", {}))
 	var coverage: Dictionary = Dictionary(summary.get("coverage", {}))
 	var signature_quality: Dictionary = Dictionary(summary.get("signature_quality", {}))
+	var card_flow_expectations: Dictionary = Dictionary(summary.get("card_flow_expectations", {}))
 	var lines: PackedStringArray = PackedStringArray([
 		"# Card Impact Report",
 		"",
@@ -57,6 +58,11 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 			int(coverage.get("expected_card_flow_player_cards", signature_quality.get("card_flow_expected_count", 0))),
 			int(signature_quality.get("card_flow_observed_count", 0)),
 			int(signature_quality.get("card_flow_missing_count", 0))
+		],
+		"- Card-flow expectations PASS/WARN/FAIL: `%d/%d/%d`" % [
+			int(card_flow_expectations.get("pass_count", 0)),
+			int(card_flow_expectations.get("warn_count", 0)),
+			int(card_flow_expectations.get("fail_count", 0))
 		],
 		"- Structural errors: `%d`" % Array(summary.get("structural_errors", [])).size(),
 		"- Command: `%s`" % str(options.get("command", "")),
@@ -181,6 +187,36 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 				str(item.get("after", "")),
 				str(item.get("delta", ""))
 			])
+	lines.append("")
+	lines.append("## Card Flow Expectations")
+	if not bool(card_flow_expectations.get("enabled", false)):
+		lines.append("- disabled")
+	else:
+		lines.append("- Checks/pass/warn/fail/skipped: `%d/%d/%d/%d/%d`" % [
+			int(card_flow_expectations.get("total_count", 0)),
+			int(card_flow_expectations.get("pass_count", 0)),
+			int(card_flow_expectations.get("warn_count", 0)),
+			int(card_flow_expectations.get("fail_count", 0)),
+			int(card_flow_expectations.get("skipped_count", 0))
+		])
+		lines.append("| Card | Field | Check | Actual | Status | Severity |")
+		lines.append("|---|---|---|---:|---:|---:|")
+		var expectation_rows: Array = Array(card_flow_expectations.get("results", []))
+		if expectation_rows.is_empty():
+			lines.append("| _none_ |  |  |  |  |  |")
+		else:
+			for item: Dictionary in expectation_rows.slice(0, 30):
+				lines.append("| `%s` | `%s` | `%s %s` | `%s` | `%s` | `%s` |" % [
+					str(item.get("card_id", "")),
+					str(item.get("field", "")),
+					str(item.get("op", "")),
+					str(item.get("expected", "")),
+					str(item.get("actual", "")),
+					str(item.get("status", "")),
+					str(item.get("severity", ""))
+				])
+			if expectation_rows.size() > 30:
+				lines.append("| `_truncated` | `card_flow_expectations` |  |  | `%d more` |  |" % (expectation_rows.size() - 30))
 	lines.append("")
 	lines.append("## Effect Family Matrix")
 	var by_effect_family: Dictionary = Dictionary(summary.get("by_effect_family", {}))
@@ -342,6 +378,7 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 
 static func gate_markdown(report: Dictionary, options: Dictionary = {}) -> String:
 	var summary: Dictionary = Dictionary(report.get("summary", {}))
+	var card_flow_expectations: Dictionary = Dictionary(summary.get("card_flow_expectations", {}))
 	var lines: PackedStringArray = PackedStringArray([
 		"# Card Impact Gate",
 		"",
@@ -351,6 +388,7 @@ static func gate_markdown(report: Dictionary, options: Dictionary = {}) -> Strin
 		"- New failures: `%d`" % int(summary.get("new_failure_count", 0)),
 		"- Removed records: `%d`" % int(summary.get("removed_count", 0)),
 		"- Effect changes: `%d`" % int(summary.get("effect_change_count", 0)),
+		"- Card-flow expectation fails: `%d`" % int(card_flow_expectations.get("fail_count", 0)),
 		"- Command: `%s`" % str(options.get("command", "")),
 		"",
 		"## Blocking Changes"
@@ -400,6 +438,16 @@ static func _write_csv(path: String, report: Dictionary) -> Dictionary:
 			_csv(str(change.get("before", ""))),
 			_csv(str(change.get("after", ""))),
 			_csv(str(change.get("delta", "")))
+		])
+	for expectation: Dictionary in Array(Dictionary(Dictionary(report.get("summary", {})).get("card_flow_expectations", {})).get("results", [])):
+		file.store_line("%s,%s,%s,%s,%s,%s,%s" % [
+			_csv("card_flow_expectations"),
+			_csv(str(expectation.get("card_id", ""))),
+			_csv(str(expectation.get("status", ""))),
+			_csv("%s %s" % [str(expectation.get("field", "")), str(expectation.get("op", ""))]),
+			_csv(str(expectation.get("actual", ""))),
+			_csv(str(expectation.get("expected", ""))),
+			_csv(str(expectation.get("severity", "")))
 		])
 	file.close()
 	return {"ok": true, "path": path}

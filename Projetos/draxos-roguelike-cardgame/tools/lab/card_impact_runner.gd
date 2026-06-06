@@ -2,6 +2,7 @@ extends RefCounted
 
 const BattleReporterScript = preload("res://tools/lab/battle_reporter.gd")
 const BattleRunnerScript = preload("res://tools/lab/battle_runner.gd")
+const CardFlowExpectationEvaluatorScript = preload("res://tools/lab/card_flow_expectation_evaluator.gd")
 const CardImpactMatrixScript = preload("res://tools/lab/card_impact_matrix.gd")
 const LabAggregatorScript = preload("res://tools/lab/lab_aggregator.gd")
 const LabCaseBuilderScript = preload("res://tools/lab/lab_case_builder.gd")
@@ -74,7 +75,7 @@ static func compare_phase(pack: Dictionary, options: Dictionary = {}) -> Diction
 		var write_result: Dictionary = LabDiffReporterScript.write_outputs("%s/%s" % [compare_dir, component], diff_report, diff_options)
 		if not bool(write_result.get("ok", false)):
 			structural_errors.append(str(write_result.get("message", "Could not write compare output for %s." % component)))
-		component_results.append(_diff_component_result(component, diff_report, write_result))
+		component_results.append(_diff_component_result(component, diff_report, write_result, pack, options))
 	var summary: Dictionary = _compare_summary(pack, component_results, structural_errors)
 	return {
 		"ok": bool(summary.get("gate_ok", false)),
@@ -103,6 +104,7 @@ static func _run_battle_component(catalog, pack: Dictionary, matrix: Dictionary,
 	var write_result: Dictionary = BattleReporterScript.write_outputs(output_dir, records, summary, run_options)
 	var component_result: Dictionary = _component_from_summary("battle", bool(run_result.get("ok", false)) and bool(write_result.get("ok", false)), summary, write_result, records.size())
 	component_result["signature_quality"] = _signature_quality_from_records(records)
+	component_result["card_flow_expectations"] = CardFlowExpectationEvaluatorScript.evaluate_records(pack, records, {"card_ids": _matrix_player_card_ids(matrix)})
 	return component_result
 
 static func _run_scenario_component(session, catalog, pack: Dictionary, output_dir: String, options: Dictionary) -> Dictionary:
@@ -157,7 +159,7 @@ static func _component_from_summary(component: String, ok: bool, summary: Dictio
 		"structural_errors": [] if bool(write_result.get("ok", true)) else [str(write_result.get("message", "Could not write %s output." % component))]
 	}
 
-static func _diff_component_result(component: String, diff_report: Dictionary, write_result: Dictionary) -> Dictionary:
+static func _diff_component_result(component: String, diff_report: Dictionary, write_result: Dictionary, pack: Dictionary = {}, options: Dictionary = {}) -> Dictionary:
 	var summary: Dictionary = Dictionary(diff_report.get("summary", {}))
 	var component_result: Dictionary = {
 		"component": component,
@@ -177,6 +179,7 @@ static func _diff_component_result(component: String, diff_report: Dictionary, w
 	}
 	if component == "battle":
 		component_result["signature_quality"] = _signature_quality_from_battle_results_path(str(diff_report.get("after_path", "")))
+		component_result["card_flow_expectations"] = CardFlowExpectationEvaluatorScript.evaluate_records_from_path(pack, str(diff_report.get("after_path", "")), {"card_ids": _card_flow_expectation_ids_from_options(pack, options)})
 	return component_result
 
 static func _component_error(component: String, message: String) -> Dictionary:
@@ -198,16 +201,21 @@ static func _phase_summary(pack: Dictionary, matrix: Dictionary, component_resul
 	_apply_effect_signature_coverage(coverage, pack)
 	var blocking_changes: Array[String] = structural_errors.duplicate()
 	var signature_quality: Dictionary = _empty_signature_quality()
+	var card_flow_expectations: Dictionary = CardFlowExpectationEvaluatorScript.empty_summary(pack)
 	for component: Dictionary in component_results:
 		if component.has("signature_quality"):
 			_merge_signature_quality(signature_quality, Dictionary(component.get("signature_quality", {})))
+		if component.has("card_flow_expectations"):
+			CardFlowExpectationEvaluatorScript.merge_summaries(card_flow_expectations, Dictionary(component.get("card_flow_expectations", {})))
 		if str(component.get("status", "")) == "FAIL":
 			blocking_changes.append("Component `%s` failed." % str(component.get("component", "")))
 	blocking_changes.append_array(_target_capture_blockers(pack, signature_quality))
+	blocking_changes.append_array(_card_flow_expectation_blockers(pack, card_flow_expectations))
 	return {
 		"coverage": coverage,
 		"components": component_results,
 		"signature_quality": signature_quality,
+		"card_flow_expectations": card_flow_expectations,
 		"structural_errors": structural_errors,
 		"blocking_changes": blocking_changes,
 		"new_failure_count": 0,
@@ -228,12 +236,15 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 	var missing_signatures: Array[Dictionary] = []
 	var support_contamination_changes: Array[Dictionary] = []
 	var signature_quality: Dictionary = _empty_signature_quality()
+	var card_flow_expectations: Dictionary = CardFlowExpectationEvaluatorScript.empty_summary(pack)
 	var new_failure_count: int = 0
 	var removed_count: int = 0
 	var blocking_changes: Array[String] = structural_errors.duplicate()
 	for component: Dictionary in component_results:
 		if component.has("signature_quality"):
 			_merge_signature_quality(signature_quality, Dictionary(component.get("signature_quality", {})))
+		if component.has("card_flow_expectations"):
+			CardFlowExpectationEvaluatorScript.merge_summaries(card_flow_expectations, Dictionary(component.get("card_flow_expectations", {})))
 		new_failure_count += int(component.get("new_failure_count", 0))
 		removed_count += int(component.get("removed_count", 0))
 		if str(component.get("status", "")) == "FAIL":
@@ -267,10 +278,12 @@ static func _compare_summary(pack: Dictionary, component_results: Array[Dictiona
 						})
 			_record_card_impact(top_map, diff)
 	blocking_changes.append_array(_target_capture_blockers(pack, signature_quality))
+	blocking_changes.append_array(_card_flow_expectation_blockers(pack, card_flow_expectations))
 	return {
 		"coverage": _compare_coverage(pack, component_results),
 		"components": component_results,
 		"signature_quality": signature_quality,
+		"card_flow_expectations": card_flow_expectations,
 		"structural_errors": structural_errors,
 		"blocking_changes": blocking_changes,
 		"new_failure_count": new_failure_count,
@@ -353,6 +366,17 @@ static func _target_capture_blockers(pack: Dictionary, signature_quality: Dictio
 		if card_flow_missing_count > 0:
 			blockers.append("%d expected card-flow captures did not observe card-flow counters." % card_flow_missing_count)
 	return blockers
+
+static func _card_flow_expectation_blockers(pack: Dictionary, expectation_summary: Dictionary) -> Array[String]:
+	var gate_policy: Dictionary = Dictionary(pack.get("gate_policy", {}))
+	if not bool(gate_policy.get("fail_on_card_flow_expectation_fail", false)):
+		return []
+	if not bool(expectation_summary.get("enabled", false)):
+		return []
+	var required_fail_count: int = int(expectation_summary.get("required_fail_count", 0))
+	if required_fail_count <= 0:
+		return []
+	return ["%d required card-flow expectations failed." % required_fail_count]
 
 static func _record_card_impact(top_map: Dictionary, diff: Dictionary) -> void:
 	var card_id: String = _card_id_from_diff_id(str(diff.get("id", "")))
@@ -625,6 +649,42 @@ static func _card_id_from_diff_id(diff_id: String) -> String:
 	if diff_id.begins_with("card_impact_enemy_"):
 		return diff_id.trim_prefix("card_impact_enemy_")
 	return ""
+
+static func _matrix_player_card_ids(matrix: Dictionary) -> PackedStringArray:
+	var ids: PackedStringArray = PackedStringArray()
+	for card_value: Variant in Array(matrix.get("player_cards", [])):
+		if typeof(card_value) != TYPE_DICTIONARY:
+			continue
+		var card_id: String = str(Dictionary(card_value).get("id", ""))
+		if card_id != "":
+			ids.append(card_id)
+	return ids
+
+static func _card_flow_expectation_ids_from_options(pack: Dictionary, options: Dictionary) -> PackedStringArray:
+	var requested: PackedStringArray = PackedStringArray(options.get("cards", PackedStringArray(["all"])))
+	if requested.is_empty() or (requested.size() == 1 and str(requested[0]) in ["all", "player"]):
+		return _card_flow_expectation_ids(pack)
+	if requested.size() == 1 and str(requested[0]) == "enemy":
+		return PackedStringArray()
+	var valid_ids: Dictionary = {}
+	for card_id: String in _card_flow_expectation_ids(pack):
+		valid_ids[card_id] = true
+	var result: PackedStringArray = PackedStringArray()
+	for card_id: String in requested:
+		if valid_ids.has(card_id):
+			result.append(card_id)
+	return result
+
+static func _card_flow_expectation_ids(pack: Dictionary) -> PackedStringArray:
+	var result: PackedStringArray = PackedStringArray()
+	var config: Dictionary = Dictionary(pack.get("card_flow_expectations", {}))
+	for check_value: Variant in Array(config.get("checks", [])):
+		if typeof(check_value) != TYPE_DICTIONARY:
+			continue
+		var card_id: String = str(Dictionary(check_value).get("card_id", ""))
+		if card_id != "" and not result.has(card_id):
+			result.append(card_id)
+	return result
 
 static func _diff_type_for_component(component: String) -> String:
 	match component:
