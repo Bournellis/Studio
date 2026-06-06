@@ -51,14 +51,23 @@ Checkpoint v1 checks reported that the update felt successful and the visible
 Bosque flow was healthy. This confirms the authority policy as the current
 Openworld working rule. It does not approve new content expansion by itself.
 
+Durable Bosque progress exception approved on 2026-06-06: `Bau`,
+`Mochila/Bolso`, backpack capacity upgrades and crafted structures are durable
+per save. Nodes collected, active collection, position and pending checkpoint
+remain visit state. Reward remains server-authoritative through accepted
+checkpoint, caps and ledger.
+
 ## Openworld Working Policy
 
 The current Openworld policy is:
 
 - player feel and active control are protected over microaction precision;
 - the Bosque visit is client-owned during play;
-- server authority is reserved for session validity, ruleset identity, caps,
-  accepted checkpoint, completion, reward, ledger and audit;
+- server authority is reserved for session validity, ruleset identity, durable
+  Bosque progress, caps, accepted checkpoint, completion, reward, ledger and
+  audit;
+- `Bau`, `Mochila/Bolso`, upgrades and crafted structures persist per save;
+- collected nodes, position and active collection are visit state;
 - checkpoint validation is the normal integrated path;
 - event micro-mutators are compatibility only for old packages;
 - snapshots can initialize or recover a visit before control, but cannot roll
@@ -79,6 +88,8 @@ craft events as the main path for the new client.
 - The current ruleset is `openworld_forest_ruleset_v1`; v0 is historical only.
 - Resume authority is stable bootstrap/recovery before control; active runtime
   uses local cache plus checkpoint confirmation.
+- Durable Bosque progress is per-save: `Bau`, `Mochila/Bolso`, capacity upgrades
+  and crafted structures survive exit, completion, expiry and new entry.
 - Offline/no-auth play remains preview-only and never creates reward.
 - Future Openworld slices must start from descriptor/schema changes and a live
   design contract before runtime work.
@@ -90,10 +101,10 @@ craft events as the main path for the new client.
   slice.
 - WASD/setas, free joystick, local blockers, border walls, resource pass-through
   and depth ordering are allowed as foundation QoL.
-- Checkpoint validation is the reward authority for collection, pocket, chest
-  and craft once integrated. `OpenworldForestModel` and the checkpoint bridge
-  are runtime authority during the visit; completion/reward remain
-  server-authoritative.
+- Checkpoint validation is the persistence and reward authority for collection,
+  pocket, chest and craft once integrated. `OpenworldForestModel` and the
+  checkpoint bridge are runtime authority during the visit; durable progress,
+  completion/reward and ledger remain server-authoritative.
 
 ## Not Approved
 
@@ -106,6 +117,8 @@ craft events as the main path for the new client.
 - No broader RPG campaign scope.
 - No new reward source or economy tuning.
 - No Basebuilder ownership changes.
+- No conversion of persistent Bosque storage into global account inventory
+  without a separate Reward Bridge decision.
 - No new public release/publication from this QoL package without separate
   approval.
 

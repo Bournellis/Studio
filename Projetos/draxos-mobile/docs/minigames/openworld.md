@@ -23,7 +23,8 @@ Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitua
 
 ## Politica Operacional Atual
 
-Politica viva do Openworld/Bosque: **client-owned play, server-owned rewards**.
+Politica viva do Openworld/Bosque: **client-owned active play,
+server-owned durable Bosque progress and rewards**.
 
 Durante uma visita ativa, o cliente e autoridade de runtime para movimento,
 posicao, coleta ativa, nodes visuais, bolso local, bau local, craft local,
@@ -31,9 +32,15 @@ guidance e feedback de HUD. O servidor nao deve comandar microacoes em tempo
 real nem puxar o jogador por ACK, stale revision ou snapshot tardio da mesma
 sessao.
 
-O servidor e autoridade para sessao ativa, ruleset, checkpoint aceito, limites,
-conclusao, recompensa, ledger e auditoria. A recompensa real so existe depois
-de um checkpoint aceito e de `complete` server-authoritative.
+O servidor e autoridade para sessao ativa, ruleset, progresso duravel aceito do
+Bosque, checkpoint aceito, limites, conclusao, recompensa, ledger e auditoria.
+A recompensa real so existe depois de um checkpoint aceito e de `complete`
+server-authoritative.
+
+`Bau`, `Mochila/Bolso`, upgrades de capacidade e estruturas craftadas sao
+progresso duravel por save. Nodes coletados, posicao, coleta ativa e checkpoint
+pendente sao estado da visita atual. Nova visita pode repovoar nodes coletaveis,
+mas nasce com o bau, mochila, capacidade e estruturas ja aceitos para o save.
 
 Regra de regressao para agentes: nao reintroduzir `move_heartbeat`,
 `collect_start`, `collect_cancel`, `collect_complete`, `deposit_all` ou `craft`
@@ -93,6 +100,10 @@ Contratos de produto para v2:
 - backend em `integrated_alpha` por `/modes/state`, `/modes/session/start`, `/modes/session/checkpoint`, `/modes/session/complete` e `/modes/session/abandon`;
 - snapshot remoto retomavel por ate 2 horas, mas aplicado como bootstrap/recuperacao e nao como rollback visual durante controle ativo;
 - cache local do Bosque por save/sessao/ruleset para nodes coletados, bolso, bau, upgrades, guidance, posicao e checkpoint pendente;
+- cache local separado entre `openworld_active_session_cache` e
+  `openworld_durable_progress_cache`;
+- progresso duravel por save para `Bau`, `Mochila/Bolso`, upgrades de mochila e
+  estruturas craftadas;
 - checkpoints compactos em background substituem microeventos revisionados durante gameplay normal;
 - nenhum ACK/resync remoto da mesma sessao deve reposicionar o jogador, reiniciar coleta, reverter bolso/bau/craft ou transformar nodes enquanto o jogador esta no Bosque;
 - Reward Bridge limitado, server-authoritative, idempotente e com ledger.
@@ -158,6 +169,8 @@ economia; sao folga de aprendizagem para o minigame.
 ## Entrada, Saida E Resumo
 
 - Entrar no Bosque inicia ou retoma visita conforme sessao ativa disponivel.
+- Entrar sem visita ativa cria uma nova sessao com o progresso duravel aceito do
+  save: bau, mochila, upgrades e estruturas permanecem.
 - `Voltar` deve retornar ao shell/refugio preservando a visita quando a sessao
   ainda estiver ativa.
 - Se houver checkpoint pendente, `Voltar` agenda/tenta salvar em segundo plano e
@@ -168,6 +181,28 @@ economia; sao folga de aprendizagem para o minigame.
   recompensa real depende do snapshot validado pelo servidor.
 - Nao ha requisito de completar todos os recursos, todos os crafts ou todos os
   passos de orientacao.
+
+## Persistencia Duravel Do Bosque
+
+O Bosque usa dois estados locais e um progresso duravel server-owned:
+
+- `openworld_active_session_cache`: visita ativa, checkpoint pendente, posicao,
+  coleta em andamento, nodes coletados na visita e metadados de retry;
+- `openworld_durable_progress_cache`: `pocket`, `chest`, `upgrades` e metadados
+  de progresso aceito por save;
+- `mode_progress.progress_payload` com schema
+  `openworld_forest_progress_v1`: fonte server-owned para `Bau`,
+  `Mochila/Bolso`, upgrades, estruturas, ledger de recompensa e revisao de
+  progresso.
+
+`complete_session` limpa somente o cache da visita ativa. Ele nao apaga `Bau`,
+`Mochila/Bolso`, upgrades nem estruturas. Reset explicito de save/account ainda
+limpa o progresso do Bosque, como parte da limpeza de gameplay do save.
+
+Checkpoints aceitos atualizam o snapshot da sessao e tambem o progresso duravel
+em `mode_progress`. A conclusao usa o ultimo checkpoint aceito, faz merge do
+progresso duravel e atualiza o ledger para que recompensa real nao seja duplicada
+por itens persistentes no bau.
 
 ## Descriptor Scaffold
 
@@ -246,13 +281,14 @@ Contrato checkpoint-first:
 - movimento, coleta ativa, nodes visuais, bolso, bau, craft, guidance e posicao
   sao runtime client-owned durante a visita;
 - servidor valida somente sessao ativa, ruleset, checkpoint aceito, caps,
-  conclusao, reward, ledger e auditoria;
+  progresso duravel, conclusao, reward, ledger e auditoria;
 - stale revision de eventos legados nao deve bloquear deposito/coleta/craft no
   cliente novo; conflito de checkpoint vira recuperacao fora do controle ativo.
 
 `POST /modes/session/checkpoint` retorna `type=mode_checkpoint_ack` dentro do
-envelope comum de modos. Esse ACK confirma o checkpoint aceito e a revisao, mas
-nao e snapshot visual para rollback durante gameplay ativo.
+envelope comum de modos. Esse ACK confirma o checkpoint aceito, a revisao e o
+resumo de progresso duravel aceito, mas nao e snapshot visual para rollback
+durante gameplay ativo.
 
 Payload principal de checkpoint:
 
@@ -272,7 +308,7 @@ Payload principal de checkpoint:
     "collected_nodes": {"node_galho_01": true},
     "pocket": {},
     "chest": {"galho": 1},
-    "crafted_upgrades": {"fogueira_estavel_1": true},
+    "upgrades": {"fogueira_estavel_1": true},
     "guidance": {"step": 4},
     "player_position": {"x": 220, "y": 250},
     "session_seconds": 43,
@@ -290,8 +326,8 @@ O SQL valida o checkpoint atomica e idempotentemente: checkpoint id/request hash
 ruleset correto, sessao ativa, nodes existentes/unicos, item esperado pelo
 ruleset, capacidade de bolso/bau, crafts derivaveis de recursos disponiveis,
 limites de tempo e ausencia de mutacao parcial. A resposta informa
-`accepted_checkpoint_id`, `snapshot_revision`, `accepted_snapshot_summary` e
-`complete_ready`.
+`accepted_checkpoint_id`, `snapshot_revision`, `accepted_snapshot_summary`,
+`durable_progress` e `complete_ready`.
 
 `POST /modes/session/event` permanece compativel para builds antigas. O cliente
 novo nao envia microeventos de gameplay normal (`move_heartbeat`,

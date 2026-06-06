@@ -303,6 +303,8 @@ Regras:
 Status: migrations espelhadas em `server/schema/migrations/` e
 `supabase/migrations/`; `202606060001_openworld_bosque_checkpoint_v1.sql`
 aplicada remotamente na publicacao `Bosque Offline-First Checkpoint v1`.
+`202606060002_openworld_bosque_durable_progress_v1.sql` adiciona progresso
+duravel por save para `Bau`, `Mochila/Bolso`, upgrades, estruturas e ledger.
 `202606050003_openworld_bosque_collect_batch_v1.sql` permanece como
 compatibilidade para pacotes antigos.
 
@@ -311,13 +313,19 @@ Definition: `data/definitions/openworld/forest_ruleset_v1.json`.
 Politica de autoridade:
 
 - gameplay ativo do Bosque e local/offline-first no cliente;
+- `Bau`, `Mochila/Bolso`, upgrades de capacidade e estruturas craftadas sao
+  progresso duravel por save;
+- nodes coletados, posicao e coleta ativa sao estado da visita;
 - o servidor nao valida nem corrige microacoes em tempo real no pacote novo;
 - checkpoints compactos sao o contrato normal de persistencia integrada;
 - `mode_session_event_v1`, `collect_batch`, `collect_complete`, `deposit_all`,
   `craft` e `move_heartbeat` permanecem como compatibilidade para pacotes
   antigos, nao como caminho principal do cliente checkpoint-first;
+- `mode_session_checkpoint_v1` grava o snapshot aceito da sessao e faz merge do
+  progresso duravel em `mode_progress.progress_payload`;
 - `mode_session_complete_v1` calcula recompensa somente a partir do ultimo
-  checkpoint aceito e nunca de deltas enviados diretamente pelo cliente;
+  checkpoint aceito, preserva progresso duravel e nunca usa deltas enviados
+  diretamente pelo cliente como recompensa real;
 - conflito/stale de checkpoint deve rejeitar sem mutacao parcial e devolver o
   cliente para recuperacao explicita, nao bloquear coleta/deposito/craft durante
   a visita local.
@@ -337,6 +345,38 @@ Regras:
 - no maximo uma sessao `started` por save/mode/slice;
 - completion exige checkpoint aceito compativel com a revisao mais recente;
 - recompensa real deriva apenas do `snapshot_payload` validado pelo servidor.
+
+### `mode_progress`
+
+`mode_progress.progress_payload` armazena progresso duravel do Bosque por
+`game_save_id + mode_id + slice_id`.
+
+Schema `openworld_forest_progress_v1`:
+
+- `schema_version`: `openworld_forest_progress_v1`;
+- `pocket`: inventario persistente carregado na mochila/bolso;
+- `chest`: inventario persistente do bau do Bosque;
+- `upgrades`: upgrades de mochila e estruturas persistentes, como
+  `bolsa_simples_1` e `fogueira_estavel_1`;
+- `reward_ledger`: high-water/caps para recompensas ja consideradas;
+- `last_checkpoint_session_id`;
+- `last_completed_session_id`;
+- `progress_revision`;
+- `updated_at`.
+
+Regras:
+
+- start injeta `pocket`, `chest` e `upgrades` duraveis no snapshot inicial da
+  nova sessao;
+- nova sessao com progresso existente comeca com nodes coletados vazios e com
+  bau/mochila/estruturas preservados;
+- checkpoint aceito atualiza `mode_sessions.snapshot_payload` e
+  `mode_progress.progress_payload` na mesma operacao logica;
+- complete nao apaga `pocket`, `chest` nem `upgrades`;
+- reset explicito de save pode limpar o progresso como parte da limpeza de
+  gameplay do save;
+- backfill inicial tenta recuperar `pocket`, `chest` e `upgrades` da ultima
+  sessao Openworld com snapshot valido.
 
 ### `mode_session_events`
 
@@ -372,7 +412,9 @@ Regras:
 
 - `mode_session_start_v1`: cria snapshot revision `0`, aplica
   `mode_limit_policies` com 1 sessao ativa, cooldown de 10s, limite diario de
-  100 starts e expiracao de 2h.
+  100 starts e expiracao de 2h. Para Openworld/Bosque, carrega
+  `openworld_forest_progress_v1` de `mode_progress`, injeta `pocket`, `chest` e
+  `upgrades` duraveis e inicia `collected_nodes` vazio para a visita.
 - `mode_session_event_v1`: valida evento, `expected_revision`, ruleset e
   sessao ativa, aplica snapshot e avanca revisao.
 - `mode_session_checkpoint_v1`: valida checkpoint idempotente, ruleset, sessao
@@ -381,9 +423,13 @@ Regras:
   `client_sequence`, `ruleset_id`, `ruleset_version`, `ruleset_hash`,
   `snapshot_payload` e `client_summary`; repeticao do mesmo request/checkpoint
   com hash igual retorna a resposta ja aceita, enquanto hash divergente e
-  mismatch de idempotencia.
+  mismatch de idempotencia. Para Openworld/Bosque, tambem persiste
+  `pocket`, `chest`, `upgrades`, ledger e resumo duravel aceito em
+  `mode_progress`.
 - `mode_session_complete_v1`: usa somente o ultimo checkpoint aceito para
-  calcular `deposited_items`, `activity_score`, caps e reward ledger.
+  calcular `deposited_items`, `activity_score`, caps e reward ledger, preserva
+  `openworld_forest_progress_v1` e atualiza o ledger para evitar recompensa
+  duplicada por bau persistente.
 - `mode_session_abandon_v1`: idempotente, registra estado final e remove a
   sessao de retomada.
 
