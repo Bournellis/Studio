@@ -30,6 +30,9 @@ const COUNTER_FIELDS: Array[String] = [
 	"enemy_slow_added",
 	"shield_added_total",
 	"mana_gained",
+	"temporary_ability_power_delta",
+	"temporary_ability_power_gained",
+	"temporary_ability_power_lost",
 	"ashes_gained",
 	"cards_drawn",
 	"cards_discarded",
@@ -52,11 +55,14 @@ const COUNTER_FIELDS: Array[String] = [
 ]
 
 static func snapshot_from_engine(engine) -> Dictionary:
+	var engine_state: Dictionary = engine.get_state() if engine.has_method("get_state") else {}
 	return {
 		"player_health": int(engine.player_health),
 		"enemy_health": int(engine.enemy_health),
 		"mana": int(engine.mana),
 		"ashes": int(engine.ashes),
+		"ability_power": int(engine_state.get("ability_power", 0)),
+		"temporary_ability_power": int(engine_state.get("temporary_ability_power", 0)),
 		"hand_size": Array(engine.hand).size(),
 		"deck_size": Array(engine.deck).size(),
 		"discard_size": Array(engine.discard).size(),
@@ -76,6 +82,10 @@ static func build_sample(card_id: String, target: Dictionary, before: Dictionary
 	sample["enemy_hero_damage"] = maxi(0, int(before.get("enemy_health", 0)) - int(after.get("enemy_health", 0)))
 	sample["player_hero_damage"] = maxi(0, int(before.get("player_health", 0)) - int(after.get("player_health", 0)))
 	sample["mana_gained"] = maxi(0, int(after.get("mana", 0)) - int(before.get("mana", 0)))
+	var temporary_ability_power_delta: int = int(after.get("temporary_ability_power", 0)) - int(before.get("temporary_ability_power", 0))
+	sample["temporary_ability_power_delta"] = temporary_ability_power_delta
+	sample["temporary_ability_power_gained"] = maxi(0, temporary_ability_power_delta)
+	sample["temporary_ability_power_lost"] = maxi(0, -temporary_ability_power_delta)
 	sample["ashes_gained"] = maxi(0, int(after.get("ashes", 0)) - int(before.get("ashes", 0)))
 	sample["cards_drawn"] = maxi(0, int(before.get("deck_size", 0)) - int(after.get("deck_size", 0)))
 	sample["cards_discarded"] = maxi(0, int(after.get("discard_size", 0)) - int(before.get("discard_size", 0)) - 1)
@@ -316,6 +326,12 @@ static func _families_for(signature: Dictionary) -> Array[String]:
 		or int(signature.get("discard_delta", 0)) != 0
 	):
 		families.append("economy")
+	if (
+		int(signature.get("temporary_ability_power_delta", 0)) != 0
+		or int(signature.get("temporary_ability_power_gained", 0)) > 0
+		or int(signature.get("temporary_ability_power_lost", 0)) > 0
+	):
+		families.append("utility")
 	if not Dictionary(signature.get("keywords_added", {})).is_empty() or not Dictionary(signature.get("keywords_removed", {})).is_empty():
 		families.append("keyword")
 	if (

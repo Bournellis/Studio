@@ -1,8 +1,8 @@
 # AutoRun Lab
 
-- Last Updated: `2026-06-05`
-- Status: `CARD_IMPACT_V3_ISOLATED_TARGET_CAPTURE_COMPLETE`
-- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures and isolated target-card capture
+- Last Updated: `2026-06-06`
+- Status: `CARD_IMPACT_V4_FULL_PLAYER_MATRIX_COMPLETE`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage and utility effect signatures
 
 ## Purpose
 
@@ -23,6 +23,8 @@ Card Impact Smoke Tuning V1 is the first real use of that flow. It applies a del
 Card Impact Effect Signature V2 extends that flow for player cards. It captures before/after `BattleEngine` snapshots around the focused card play, derives effect signatures from real logs/state deltas, compares those signatures in `before -> after -> compare`, and keeps enemy-card signatures reserved as schema/report-only data for a future enemy implementation pass.
 
 Card Impact V3 Isolated Target Capture makes the player-card harness less ambiguous before broad card redesigns. It plays at most one required support card, plays the focused target card once, captures the signature, stops further card plays for that turn, and turns repeated-target or failed isolated captures into structural gate blockers.
+
+Card Impact V4 Full Player Matrix expands the player-card matrix from the 54 core class variants to all 108 active player variants, including Terra/Gelo/Ar/Fogo reward cards and upgrades. It also promotes temporary ability power into explicit utility effect-signature fields while keeping enemy-card signatures report-only for a future causal enemy pass.
 
 Card Redesign Batch 01 is the first controlled real card-edit cycle using V2. It changes three Arcano damage upgrade variants, calibrates the damage-family harness so overkill does not hide effect movement, and proves that `effect.*` deltas can show intentional player-card movement while every structural gate remains green.
 
@@ -88,6 +90,16 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v3
 
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v3
+```
+
+Card impact V4 full player-matrix gates:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=before --mode=gate --pack=track02_card_impact_v4 --out=user://card_impact/track02_card_impact_v4_full_player_matrix
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v4 --out=user://card_impact/track02_card_impact_v4_full_player_matrix
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v4 --out=user://card_impact/track02_card_impact_v4_full_player_matrix
 ```
 
 ## Presets
@@ -430,6 +442,41 @@ Tooling lesson:
 - `arcano_acelerar_lvl2` did not surface an `effect.*` delta because the current signature does not track temporary ability power directly. Add `temporary_ability_power_delta` or equivalent before larger utility-card redesigns.
 - The first draft of this batch touched reward cards outside the current V3 player matrix. That was corrected before acceptance, and the next tooling step should expand Card Impact coverage to all active player reward cards, not only the 54 core variants.
 
+## Card Impact V4 Full Player Matrix
+
+`track02_card_impact_v4` keeps the V3 isolated target-capture behavior and expands the player scope to `full_active_player_v1`.
+
+V4 coverage:
+
+- 108 active player card variants: 36 Arcano, 36 Invocador and 36 Necromante.
+- Player source split: 27 starter-deck variants, 9 core cost-2 variants and 72 reward-card variants.
+- 30 active enemy cards remain in report-only signature mode.
+- 15 `elemental_*` legacy inactive cards remain audited outside the active matrix.
+- Reward-card examples now covered include `arcano_vortice`, `invocador_cavaleiro_arcano` and `necro_lich`, plus their Lvl 2 and Lvl 3 upgrades.
+
+V4 adds:
+
+- `data/lab/card_impact/track02_card_impact_v4.json`.
+- `player_scope="full_active_player_v1"` in the Card Impact matrix.
+- Matrix discovery from starter decks, core cost-2 cards and all `track_02_player_card_rewards` entries instead of only Terra reward cards.
+- Explicit utility signature fields: `temporary_ability_power_delta`, `temporary_ability_power_gained` and `temporary_ability_power_lost`.
+- Utility effect-family classification and `effect.temporary_ability_power_*` diff rows.
+- Card Impact Markdown sections for full player coverage by class/source and utility effect deltas.
+
+Gate behavior remains structural:
+
+- Missing active-player coverage, missing expected reports, rejected engine actions, removed records and new `FAIL` records fail `--mode=gate`.
+- Temporary ability power movement is reported as `effect.*` delta data and does not fail the gate by itself.
+- Enemy-card signatures are still schema-ready/report-only and do not fail V4 until a future enemy causality pass promotes them.
+
+Current calibrated same/same result (`user://card_impact/track02_card_impact_v4_full_player_matrix`):
+
+- `before`, `after` and `compare` pass with zero structural errors, zero new failures and zero removed records.
+- Coverage is 153/153 audited cards: 108 player, 30 active enemy and 15 legacy inactive cards.
+- Full player matrix is split evenly across classes: 36 Arcano, 36 Invocador and 36 Necromante.
+- V3 compare regression for `user://card_impact/player_card_redesign_batch_02` remains green.
+- Battle Lab remains 9 PASS / 3 WARN / 0 FAIL, Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL, AutoRun smoke/quick gates remain green, and `validate.gd` passes with 175/175 GUT tests and 1704 asserts.
+
 ## Result Schema
 
 Each detailed record contains:
@@ -442,7 +489,7 @@ Each detailed record contains:
 - `warnings`
 - `tags`
 
-The current macro-route `simulation_mode` is `macro_route_v1`. Gameplay Lab uses `battle_engine_v1`. Card Impact uses `card_impact_v1`, `card_impact_v2` and `card_impact_v3`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
+The current macro-route `simulation_mode` is `macro_route_v1`. Gameplay Lab uses `battle_engine_v1`. Card Impact uses `card_impact_v1`, `card_impact_v2`, `card_impact_v3` and `card_impact_v4`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
 
 ## Baseline Strategy
 
@@ -467,7 +514,7 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Use Card Impact V3 as the default harness for the next broad player-card redesign batch: run `before`, apply a coherent batch, run `after`, run `compare`, and review target-capture quality plus effect-family deltas.
+1. Use Card Impact V4 as the default harness for the next broad player reward-card redesign batch: run `before`, apply a coherent batch, run `after`, run `compare`, and review full player coverage, target-capture quality, utility deltas and effect-family movement.
 2. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
 3. Implement enemy-card effect signatures once enemy action logs expose enough per-card causality to avoid guessing.
 4. Replay Lab: record human or bot decisions and replay them across builds.

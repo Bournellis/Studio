@@ -1,13 +1,13 @@
 # Track 02 Validation And Tuning Notes
 
-- Last Updated: `2026-06-05`
-- Prompt: `CARD-IMPACT-V3-ISOLATED-TARGET-CAPTURE`
-- Status: `CARD_IMPACT_V3_ISOLATED_TARGET_CAPTURE_COMPLETE`
+- Last Updated: `2026-06-06`
+- Prompt: `CARD-IMPACT-V4-FULL-PLAYER-MATRIX`
+- Status: `CARD_IMPACT_V4_FULL_PLAYER_MATRIX_COMPLETE`
 
 ## Validation Summary
 
 - Godot validation command: green.
-- GUT: `164/164` tests passing.
+- GUT: `175/175` tests passing.
 - Full-route pacing smoke: `29/29` maps completed.
 - Estimated route turns: `217`.
 - Estimated HP loss across route: `116`.
@@ -23,8 +23,8 @@
 - AutoRun gate smoke: `--mode=gate --preset=smoke --baseline=track02_smoke_v1` passes the official 3-case smoke envelope.
 - AutoRun gate quick: `--mode=gate --preset=quick --baseline=track02_quick_v1` passes 30 macro-route cases and writes scorecard output.
 - Official gate baselines: `data/lab/baselines/track02_smoke_v1.json` and `data/lab/baselines/track02_quick_v1.json`.
-- Card Impact Pack: `tools/run_card_impact.gd` runs explicit `before`, `after` and `compare` phases for `data/lab/card_impact/track02_card_impact_v1.json`, `data/lab/card_impact/track02_card_impact_v2.json` and `data/lab/card_impact/track02_card_impact_v3.json`.
-- Card Impact coverage: 54 core player class card variants, 30 active enemy cards and 15 legacy inactive `elemental_*` cards audited.
+- Card Impact Pack: `tools/run_card_impact.gd` runs explicit `before`, `after` and `compare` phases for `data/lab/card_impact/track02_card_impact_v1.json`, `data/lab/card_impact/track02_card_impact_v2.json`, `data/lab/card_impact/track02_card_impact_v3.json` and `data/lab/card_impact/track02_card_impact_v4.json`.
+- Card Impact V4 coverage: 108 active player class/reward card variants, 30 active enemy cards in report-only signature mode and 15 legacy inactive `elemental_*` cards audited.
 - Card Impact gate: `--phase=before --mode=gate`, `--phase=after --mode=gate` and `--phase=compare --mode=gate` all pass for the first real smoke-tuning cycle; compare reports zero structural errors, zero new failures, zero removed records and zero status changes across battle/scenario/run_lab components.
 - Card Impact smoke-tuning output: `user://card_impact/smoke_tuning_v1` reports one expected metric-impact row for `enemy_ar_rajada`: `damage_to_player_hero` `4 -> 5` and isolated harness `player_hp` `56 -> 55`.
 - Card Impact reports: `card_impact_results.json`, `card_impact_results.csv`, `card_impact_summary.json`, `card_impact_summary.md`, `card_impact_gate.md`, plus component `before/`, `after/` and `compare/` output directories under `user://card_impact/track02_card_impact_v1`.
@@ -37,6 +37,9 @@
 - Card Impact V2 Non-Damage Coverage signatures: 54 required player signatures present, 30 enemy signatures report-only/missing as expected, 45 clean player signatures, 9 support-assisted signatures, 47 ambiguous signatures from repeated focused-card plays, and non-damage families `buff`, `control`, `debuff`, `economy`, `keyword` and `summon` visible in the Markdown matrix.
 - Card Impact V3 Isolated Target Capture gate: `before`, `after` and `compare` pass at `user://card_impact/track02_card_impact_v3_isolated_target_capture` with 84/84 active cards covered, zero structural errors, zero new failures, zero removed records, zero status changes, zero metric changes and zero effect changes.
 - Card Impact V3 capture quality: player-card target captures are 45 clean, 9 support-required, 0 ambiguous, 0 failed and 0 repeated; enemy-card signatures remain report-only and do not count as isolated capture failures.
+- Card Impact V4 Full Player Matrix gate: `before`, `after` and `compare` pass at `user://card_impact/track02_card_impact_v4_full_player_matrix` with 108 player cards, 30 enemy report-only cards, 15 legacy inactive cards, zero structural errors, zero new failures and zero removed records.
+- Card Impact V4 utility signatures: `temporary_ability_power_delta`, `temporary_ability_power_gained` and `temporary_ability_power_lost` are now captured, aggregated, classified as utility and included in `effect.*` diffs plus Card Impact Markdown reporting.
+- Card Impact V4 regression coverage: `track02_card_impact_v3` compare remains green at `user://card_impact/player_card_redesign_batch_02`; Battle Lab remains 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick remain green.
 - Foundation Pass 4 added the golden comparison harness without changing route metrics or gameplay behavior.
 - Foundation Pass 5 moved Souls shop offers/mutations/sync into `core/run_shop_service.gd` behind `RunSession` wrappers without changing route metrics, shop economy, or gameplay behavior.
 - Foundation Pass 6 moved BattleRoot HUD/objective readouts and combat FX filtering/text/state projection into pure presenters without changing route metrics, UI layout, drag/drop, or gameplay behavior.
@@ -153,6 +156,19 @@
 - Macro regression gates stayed green: Battle Lab `9 PASS / 3 WARN / 0 FAIL`, Scenario Fixtures `9 PASS / 3 WARN / 0 FAIL`, AutoRun smoke green, AutoRun quick green, and `validate.gd` passed with `164/164` tests and `1651` asserts.
 - Tooling lesson: the first draft of this batch touched reward cards outside the V3 core-player matrix; those edits were removed before acceptance. The next tooling step should expand Card Impact to all active player reward cards and add explicit signature fields for utility quantities such as temporary ability power.
 
+## Card Impact V4 Full Player Matrix
+
+- Purpose: expand Card Impact from core-player variants to all active player reward cards before larger card redesigns.
+- Scope: tooling only; no gameplay, card, enemy, reward, shop, route, relic or balance changes.
+- New pack: `data/lab/card_impact/track02_card_impact_v4.json`.
+- New matrix scope: `full_active_player_v1`, discovering starter deck cards, core cost-2 cards and all `track_02_player_card_rewards` entries with Lvl 1/2/3 variants.
+- Coverage: 108 player cards, split 36 Arcano / 36 Invocador / 36 Necromante, plus 30 enemy report-only cards and 15 legacy inactive cards.
+- Reward cards now covered include non-Terra examples such as `arcano_vortice`, `invocador_cavaleiro_arcano` and `necro_lich`.
+- Signature update: temporary ability power is now a first-class utility signature via `temporary_ability_power_delta`, `temporary_ability_power_gained` and `temporary_ability_power_lost`.
+- Reports now show full player coverage by class/source, reward-card coverage, utility effect deltas, target capture quality and top impacted cards without changing the external output filenames.
+- Validation result: V4 `before`, `after` and `compare` pass at `user://card_impact/track02_card_impact_v4_full_player_matrix`; V3 Batch 02 compare remains green; Battle Lab, Scenario Fixtures, AutoRun smoke, AutoRun quick and `validate.gd` are green.
+- Operational lesson: V4 should be the default harness for the next real reward-card redesign batch. Enemy-card signatures should stay report-only until a dedicated enemy causality pass.
+
 ## Screenshots
 
 Captured at `1280x720` and `960x540` in:
@@ -168,7 +184,7 @@ Captured at `1280x720` and `960x540` in:
 
 - Manual playtest remains the next production step and should use `docs/playtest-track-02.md`.
 - Balance changes should come from observed human runs, with AutoRun Gate Pack used for explicit regression, distribution checks and tuning comparison rather than as the final verdict.
-- Large player-card changes should now use Card Impact V3: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect target-capture quality, metric movement and player-card effect signatures before accepting the batch. Before changing reward-card families broadly, expand the Card Impact player matrix beyond the current 54 core variants.
+- Large player-card changes should now use Card Impact V4: run `before`, apply the intended card edit, run `after`, run `compare`, then inspect full player coverage, target-capture quality, metric movement, utility deltas and player-card effect signatures before accepting the batch.
 - Enemy-card signature derivation remains the recommended tooling follow-up once enemy per-card causality is exposed clearly enough.
 - Sort playtest results into blocking bugs, tuning, UX clarity, and content/art debt before implementation.
 

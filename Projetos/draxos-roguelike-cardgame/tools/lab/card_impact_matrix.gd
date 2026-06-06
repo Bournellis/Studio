@@ -4,6 +4,8 @@ const PLAYER_KIND: String = "player"
 const ENEMY_KIND: String = "enemy"
 const LEGACY_KIND: String = "legacy_inactive"
 const DEFAULT_SEED: int = 20260518
+const PLAYER_SCOPE_CORE_CLASS_V1: String = "core_class_v1"
+const PLAYER_SCOPE_FULL_ACTIVE_V1: String = "full_active_player_v1"
 
 const CLASS_CORE_COST2: Dictionary = {
 	"arcano": "arcano_tempestade",
@@ -57,7 +59,11 @@ static func build_matrix(catalog, pack: Dictionary, card_filter: PackedStringArr
 			"legacy_inactive_cards_total": Array(discovery.get("legacy_inactive_cards", [])).size(),
 			"filtered_player_cards": player_cards.size(),
 			"filtered_enemy_cards": enemy_cards.size(),
-			"battle_cases": cases.size()
+			"battle_cases": cases.size(),
+			"player_cards_total_by_class": _count_cards_by_field(Array(discovery.get("player_cards", [])), "class_id"),
+			"filtered_player_cards_by_class": _count_cards_by_field(player_cards, "class_id"),
+			"player_cards_total_by_source": _count_cards_by_field(Array(discovery.get("player_cards", [])), "source"),
+			"filtered_player_cards_by_source": _count_cards_by_field(player_cards, "source")
 		}
 	}
 
@@ -96,26 +102,52 @@ static func _discover_player_cards(catalog, card_sets: Dictionary) -> Array[Dict
 		var class_id: String = str(class_option.get("id", ""))
 		if class_id == "":
 			continue
-		var base_ids: Array[String] = []
-		for card_id: String in _unique_strings(Array(class_option.get("starter_deck", []))):
-			base_ids.append(card_id)
-		var core_id: String = str(CLASS_CORE_COST2.get(class_id, ""))
-		if core_id != "" and not base_ids.has(core_id):
-			base_ids.append(core_id)
-		var rewards: Dictionary = Dictionary(Dictionary(catalog.track_contract.get("track_02_player_card_rewards", {})).get(class_id, {}))
-		for element: Variant in Array(card_sets.get("player_core_reward_elements", ["terra"])):
-			for card_id: String in _unique_strings(Array(rewards.get(str(element), []))):
-				if not base_ids.has(card_id):
-					base_ids.append(card_id)
-		for base_id: String in base_ids:
+		for base_entry: Dictionary in _player_base_entries(catalog, class_option, class_id, card_sets):
+			var base_id: String = str(base_entry.get("id", ""))
 			for suffix: Variant in suffixes:
 				var card_id: String = "%s%s" % [base_id, str(suffix)]
 				var card = catalog.find_card(card_id)
 				if card == null:
 					continue
-				result.append(_card_entry(card_id, PLAYER_KIND, class_id, card))
+				result.append(_card_entry(card_id, PLAYER_KIND, class_id, card, {
+					"base_id": base_id,
+					"source": str(base_entry.get("source", "")),
+					"reward_element": str(base_entry.get("reward_element", ""))
+				}))
 	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a.get("id", "")) < str(b.get("id", "")))
 	return result
+
+static func _player_base_entries(catalog, class_option: Dictionary, class_id: String, card_sets: Dictionary) -> Array[Dictionary]:
+	var entries: Array[Dictionary] = []
+	for card_id: String in _unique_strings(Array(class_option.get("starter_deck", []))):
+		_add_player_base_entry(entries, card_id, "starter", "")
+	var core_id: String = str(CLASS_CORE_COST2.get(class_id, ""))
+	if core_id != "":
+		_add_player_base_entry(entries, core_id, "core_cost2", "")
+	var rewards: Dictionary = Dictionary(Dictionary(catalog.track_contract.get("track_02_player_card_rewards", {})).get(class_id, {}))
+	for element: String in _reward_elements_for_scope(rewards, card_sets):
+		for card_id: String in _unique_strings(Array(rewards.get(element, []))):
+			_add_player_base_entry(entries, card_id, "reward", element)
+	return entries
+
+static func _reward_elements_for_scope(rewards: Dictionary, card_sets: Dictionary) -> Array[String]:
+	var scope: String = str(card_sets.get("player_scope", PLAYER_SCOPE_CORE_CLASS_V1))
+	if scope == PLAYER_SCOPE_FULL_ACTIVE_V1:
+		return _sorted_keys(rewards)
+	var result: Array[String] = []
+	for element: Variant in Array(card_sets.get("player_core_reward_elements", ["terra"])):
+		var element_id: String = str(element)
+		if element_id != "" and not result.has(element_id):
+			result.append(element_id)
+	return result
+
+static func _add_player_base_entry(entries: Array[Dictionary], card_id: String, source: String, reward_element: String) -> void:
+	if card_id == "":
+		return
+	for entry: Dictionary in entries:
+		if str(entry.get("id", "")) == card_id:
+			return
+	entries.append({"id": card_id, "source": source, "reward_element": reward_element})
 
 static func _discover_enemy_cards(catalog, card_sets: Dictionary) -> Array[Dictionary]:
 	var ids: Array[String] = []
@@ -143,8 +175,8 @@ static func _discover_legacy_inactive_cards(catalog, card_sets: Dictionary) -> A
 	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a.get("id", "")) < str(b.get("id", "")))
 	return result
 
-static func _card_entry(card_id: String, kind: String, class_id: String, card) -> Dictionary:
-	return {
+static func _card_entry(card_id: String, kind: String, class_id: String, card, extra: Dictionary = {}) -> Dictionary:
+	var entry: Dictionary = {
 		"id": card_id,
 		"kind": kind,
 		"class_id": class_id,
@@ -156,6 +188,9 @@ static func _card_entry(card_id: String, kind: String, class_id: String, card) -
 		"keywords": Array(card.keywords),
 		"effect_family": _effect_family(card)
 	}
+	for key: Variant in extra.keys():
+		entry[str(key)] = extra.get(key)
+	return entry
 
 static func _player_case(card_data: Dictionary, pack: Dictionary) -> Dictionary:
 	var template: Dictionary = Dictionary(Dictionary(pack.get("case_templates", {})).get("player", {}))
@@ -309,6 +344,22 @@ static func _unique_strings(values: Array) -> Array[String]:
 		if text != "" and not result.has(text):
 			result.append(text)
 	return result
+
+static func _sorted_keys(values: Dictionary) -> Array[String]:
+	var result: Array[String] = []
+	for key: Variant in values.keys():
+		result.append(str(key))
+	result.sort()
+	return result
+
+static func _count_cards_by_field(cards: Array, field: String) -> Dictionary:
+	var counts: Dictionary = {}
+	for card: Dictionary in _typed_card_array(cards):
+		var key: String = str(card.get(field, "unknown"))
+		if key == "":
+			key = "unknown"
+		counts[key] = int(counts.get(key, 0)) + 1
+	return counts
 
 static func _effect_family(card) -> String:
 	var action: String = str(Dictionary(card.effect).get("action", ""))

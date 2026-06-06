@@ -2,7 +2,7 @@ extends RefCounted
 
 const DEFAULT_CARD_IMPACT_DIR: String = "res://data/lab/card_impact"
 const DEFAULT_PACK_ID: String = "track02_card_impact_v1"
-const SUPPORTED_SIMULATION_MODES: Array[String] = ["card_impact_v1", "card_impact_v2", "card_impact_v3"]
+const SUPPORTED_SIMULATION_MODES: Array[String] = ["card_impact_v1", "card_impact_v2", "card_impact_v3", "card_impact_v4"]
 const REQUIRED_PACK_FIELDS: PackedStringArray = ["pack_id", "schema_version", "simulation_mode", "card_sets", "case_templates", "components", "gate_policy"]
 
 static func default_pack_id() -> String:

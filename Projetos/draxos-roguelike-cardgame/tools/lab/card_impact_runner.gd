@@ -310,6 +310,12 @@ static func _compare_coverage(pack: Dictionary, component_results: Array[Diction
 		"filtered_player_cards": expected_player if covered_active >= expected_player else 0,
 		"filtered_enemy_cards": expected_enemy if covered_active >= expected_player + expected_enemy else 0
 	}
+	if card_sets.has("expected_player_cards_by_class"):
+		coverage["filtered_player_cards_by_class"] = Dictionary(card_sets.get("expected_player_cards_by_class", {})).duplicate(true)
+		coverage["player_cards_total_by_class"] = Dictionary(card_sets.get("expected_player_cards_by_class", {})).duplicate(true)
+	if card_sets.has("expected_player_cards_by_source"):
+		coverage["filtered_player_cards_by_source"] = Dictionary(card_sets.get("expected_player_cards_by_source", {})).duplicate(true)
+		coverage["player_cards_total_by_source"] = Dictionary(card_sets.get("expected_player_cards_by_source", {})).duplicate(true)
 	_apply_effect_signature_coverage(coverage, pack)
 	return coverage
 
@@ -375,6 +381,8 @@ static func _effect_family_for_field(field: String) -> String:
 		return "control"
 	if field in ["mana_gained", "ashes_gained", "cards_drawn", "cards_discarded", "cards_created", "deck_delta", "hand_delta", "discard_delta"]:
 		return "economy"
+	if field in ["temporary_ability_power_delta", "temporary_ability_power_gained", "temporary_ability_power_lost"]:
+		return "utility"
 	if field in ["keywords_added", "keywords_removed", "families"]:
 		return "keyword"
 	if field in ["pending_choices_delta", "pending_choice_created", "pending_choice_resolved", "sacrifice_required", "sacrifice_consumed", "sacrifice_units_destroyed"]:

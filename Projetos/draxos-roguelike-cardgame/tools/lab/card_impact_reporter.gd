@@ -74,6 +74,11 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 			int(coverage.get("legacy_inactive_cards_total", 0))
 		],
 		"",
+		"## Player Coverage",
+		"",
+		"- By class: `%s`" % _inline_field_counts(Dictionary(coverage.get("filtered_player_cards_by_class", coverage.get("player_cards_total_by_class", {})))),
+		"- By source: `%s`" % _inline_field_counts(Dictionary(coverage.get("filtered_player_cards_by_source", coverage.get("player_cards_total_by_source", {})))),
+		"",
 		"## Components",
 		"| Component | Status | PASS | WARN | FAIL | Changes | Metric changes |",
 		"|---|---:|---:|---:|---:|---:|---:|"
@@ -108,6 +113,24 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 		lines.append("- none")
 	else:
 		for item: Dictionary in effect_changes.slice(0, 24):
+			lines.append("- `%s` `%s`: `%s` -> `%s` (`%s`)" % [
+				str(item.get("id", "")),
+				str(item.get("field", "")),
+				str(item.get("before", "")),
+				str(item.get("after", "")),
+				str(item.get("delta", ""))
+			])
+	lines.append("")
+	lines.append("## Utility Effect Deltas")
+	var utility_rows: Array = []
+	for item: Dictionary in effect_changes:
+		var field: String = str(item.get("field", ""))
+		if field in ["effect.temporary_ability_power_delta", "effect.temporary_ability_power_gained", "effect.temporary_ability_power_lost"]:
+			utility_rows.append(item)
+	if utility_rows.is_empty():
+		lines.append("- none")
+	else:
+		for item: Dictionary in utility_rows.slice(0, 20):
 			lines.append("- `%s` `%s`: `%s` -> `%s` (`%s`)" % [
 				str(item.get("id", "")),
 				str(item.get("field", "")),
