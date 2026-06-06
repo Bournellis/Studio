@@ -48,6 +48,18 @@ func test_card_impact_loader_loads_track02_v4_pack() -> void:
 	assert_eq(str(card_sets.get("player_scope", "")), "full_active_player_v1")
 	assert_eq(int(card_sets.get("expected_player_cards", 0)), 108)
 
+func test_card_impact_loader_loads_track02_v4_1_pack() -> void:
+	var load_result: Dictionary = CardImpactPackLoaderScript.load_pack_result("track02_card_impact_v4_1")
+	assert_true(bool(load_result.get("ok", false)), str(load_result.get("message", "")))
+	var pack: Dictionary = Dictionary(load_result.get("pack", {}))
+	var signatures: Dictionary = Dictionary(pack.get("effect_signatures", {}))
+	var card_sets: Dictionary = Dictionary(pack.get("card_sets", {}))
+	assert_eq(str(pack.get("pack_id", "")), "track02_card_impact_v4_1")
+	assert_eq(str(pack.get("simulation_mode", "")), "card_impact_v4_1")
+	assert_eq(int(signatures.get("schema_version", 0)), 4)
+	assert_eq(int(card_sets.get("expected_player_cards", 0)), 108)
+	assert_eq(int(card_sets.get("expected_card_flow_player_cards", 0)), 2)
+
 func test_card_impact_loader_rejects_unknown_simulation_mode() -> void:
 	var pack: Dictionary = _pack_v4().duplicate(true)
 	pack["simulation_mode"] = "card_impact_future"
@@ -79,6 +91,31 @@ func test_card_impact_v4_matrix_discovers_full_player_cards() -> void:
 	assert_eq(int(summary.get("battle_cases", 0)), 138)
 	assert_eq(Dictionary(summary.get("filtered_player_cards_by_class", {})), {"arcano": 36, "invocador": 36, "necromante": 36})
 	assert_eq(Dictionary(summary.get("filtered_player_cards_by_source", {})), {"starter": 27, "core_cost2": 9, "reward": 72})
+
+func test_card_impact_v4_1_matrix_discovers_card_flow_player_cards() -> void:
+	var matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v4_1(), PackedStringArray(["all"]))
+	assert_true(bool(matrix.get("ok", false)), "; ".join(Array(matrix.get("errors", []))))
+	assert_eq(Array(matrix.get("player_cards", [])).size(), 108)
+	assert_eq(Array(matrix.get("enemy_cards", [])).size(), 30)
+	var summary: Dictionary = Dictionary(matrix.get("summary", {}))
+	assert_eq(int(summary.get("battle_cases", 0)), 138)
+	assert_eq(int(summary.get("card_flow_player_cards_total", 0)), 2)
+	assert_eq(int(summary.get("filtered_card_flow_player_cards", 0)), 2)
+
+func test_card_impact_v4_1_matrix_classifies_colheita_as_card_flow() -> void:
+	var matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v4_1(), PackedStringArray(["necro_colheita_das_almas", "necro_colheita_das_almas_lvl3"]))
+	assert_true(bool(matrix.get("ok", false)), "; ".join(Array(matrix.get("errors", []))))
+	var cases: Array = Array(matrix.get("cases", []))
+	assert_eq(cases.size(), 2)
+	var found_lvl3_prestate: bool = false
+	for case_data: Dictionary in cases:
+		assert_eq(str(case_data.get("effect_family", "")), "card_flow")
+		assert_true(Array(case_data.get("tags", [])).has("effect_card_flow"))
+		assert_true(bool(case_data.get("card_flow_expected", false)))
+		if str(Dictionary(case_data.get("card_under_test", {})).get("id", "")) == "necro_colheita_das_almas_lvl3":
+			found_lvl3_prestate = true
+			assert_eq(int(Dictionary(case_data.get("lab_prestate", {})).get("initial_dead_unit_count", 0)), 2)
+	assert_true(found_lvl3_prestate)
 
 func test_card_impact_v4_matrix_includes_non_terra_reward_cards() -> void:
 	var discovery: Dictionary = CardImpactMatrixScript.discover_cards(ContentLibrary.get_catalog(), _pack_v4())
@@ -330,6 +367,40 @@ func test_card_impact_v4_filters_player_enemy_and_reward_id() -> void:
 	assert_eq(str(Dictionary(Array(id_matrix.get("player_cards", []))[0]).get("source", "")), "reward")
 	assert_eq(Array(id_matrix.get("cases", [])).size(), 1)
 
+func test_card_impact_v4_1_filters_player_enemy_and_card_flow_id() -> void:
+	var player_matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v4_1(), PackedStringArray(["player"]))
+	assert_eq(Array(player_matrix.get("player_cards", [])).size(), 108)
+	assert_eq(Array(player_matrix.get("enemy_cards", [])).size(), 0)
+	var enemy_matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v4_1(), PackedStringArray(["enemy"]))
+	assert_eq(Array(enemy_matrix.get("player_cards", [])).size(), 0)
+	assert_eq(Array(enemy_matrix.get("enemy_cards", [])).size(), 30)
+	var id_matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v4_1(), PackedStringArray(["necro_colheita_das_almas"]))
+	assert_eq(Array(id_matrix.get("player_cards", [])).size(), 1)
+	assert_eq(str(Dictionary(Array(id_matrix.get("player_cards", []))[0]).get("effect_family", "")), "card_flow")
+	assert_eq(Array(id_matrix.get("cases", [])).size(), 1)
+
+func test_card_impact_v4_1_runner_observes_base_card_flow() -> void:
+	var case_data: Dictionary = _single_case_v4_1("necro_colheita_das_almas")
+	var metrics: Dictionary = BattleRunnerScript.run_case(ContentLibrary.get_catalog(), {"pack_id": "unit", "simulation_mode": "battle_engine_v1"}, case_data)
+	assert_false(bool(metrics.get("policy_action_rejected", true)), str(metrics.get("runner_warnings", [])))
+	assert_true(bool(metrics.get("card_effect_signature_present", false)), str(metrics.get("card_effect_signature_missing_reason", "")))
+	var signature: Dictionary = Dictionary(metrics.get("card_effect_signature", {}))
+	assert_eq(int(signature.get("cards_drawn", 0)), 1)
+	assert_eq(int(signature.get("deck_delta", 0)), -1)
+	assert_true(bool(signature.get("card_flow_expected", false)))
+	assert_true(bool(signature.get("card_flow_observed", false)))
+	assert_true(Array(signature.get("families", [])).has("card_flow"))
+
+func test_card_impact_v4_1_runner_observes_lvl3_card_flow_with_lab_prestate() -> void:
+	var case_data: Dictionary = _single_case_v4_1("necro_colheita_das_almas_lvl3")
+	var metrics: Dictionary = BattleRunnerScript.run_case(ContentLibrary.get_catalog(), {"pack_id": "unit", "simulation_mode": "battle_engine_v1"}, case_data)
+	assert_false(bool(metrics.get("policy_action_rejected", true)), str(metrics.get("runner_warnings", [])))
+	assert_eq(int(metrics.get("initial_dead_unit_count", 0)), 2)
+	var signature: Dictionary = Dictionary(metrics.get("card_effect_signature", {}))
+	assert_eq(int(signature.get("ashes_gained", 0)), 6)
+	assert_eq(int(signature.get("cards_drawn", 0)), 1)
+	assert_true(bool(signature.get("card_flow_observed", false)))
+
 func test_card_impact_compare_same_same_gate_ok() -> void:
 	var out_dir: String = "user://card_impact/gut_compare_same"
 	_write_battle_payload("%s/before/battle" % out_dir, [_fake_battle_record("card_impact_player_arcano_choque", "PASS", 12)])
@@ -405,6 +476,37 @@ func test_card_impact_v4_compare_same_same_gate_ok() -> void:
 	var summary: Dictionary = Dictionary(report.get("summary", {}))
 	assert_true(bool(summary.get("gate_ok", false)), str(summary.get("blocking_changes", [])))
 	assert_eq(Array(summary.get("effect_changes", [])).size(), 0)
+
+func test_card_impact_v4_1_compare_same_same_gate_ok() -> void:
+	var out_dir: String = "user://card_impact/gut_compare_v4_1_same"
+	_write_battle_payload("%s/before/battle" % out_dir, [_fake_battle_record("card_impact_player_necro_colheita_das_almas", "PASS", 12, _card_flow_effect_signature("necro_colheita_das_almas", 1, true))])
+	_write_battle_payload("%s/after/battle" % out_dir, [_fake_battle_record("card_impact_player_necro_colheita_das_almas", "PASS", 12, _card_flow_effect_signature("necro_colheita_das_almas", 1, true))])
+	var report: Dictionary = CardImpactRunnerScript.compare_phase(_pack_v4_1(), {"out": out_dir, "components": PackedStringArray(["battle"]), "command": "unit"})
+	var summary: Dictionary = Dictionary(report.get("summary", {}))
+	assert_true(bool(summary.get("gate_ok", false)), str(summary.get("blocking_changes", [])))
+	assert_eq(int(Dictionary(summary.get("signature_quality", {})).get("card_flow_observed_count", 0)), 1)
+
+func test_card_impact_v4_1_gate_blocks_missing_card_flow_observation() -> void:
+	var out_dir: String = "user://card_impact/gut_compare_v4_1_missing_card_flow"
+	_write_battle_payload("%s/before/battle" % out_dir, [_fake_battle_record("card_impact_player_necro_colheita_das_almas", "PASS", 12, _card_flow_effect_signature("necro_colheita_das_almas", 1, true))])
+	_write_battle_payload("%s/after/battle" % out_dir, [_fake_battle_record("card_impact_player_necro_colheita_das_almas", "PASS", 12, _card_flow_effect_signature("necro_colheita_das_almas", 0, false))])
+	var report: Dictionary = CardImpactRunnerScript.compare_phase(_pack_v4_1(), {"out": out_dir, "components": PackedStringArray(["battle"]), "command": "unit"})
+	var summary: Dictionary = Dictionary(report.get("summary", {}))
+	assert_false(bool(summary.get("gate_ok", true)))
+	assert_gt(int(Dictionary(summary.get("signature_quality", {})).get("card_flow_missing_count", 0)), 0)
+
+func test_card_impact_v4_1_compare_card_flow_delta_keeps_gate_ok() -> void:
+	var out_dir: String = "user://card_impact/gut_compare_v4_1_card_flow_delta"
+	_write_battle_payload("%s/before/battle" % out_dir, [_fake_battle_record("card_impact_player_necro_colheita_das_almas", "PASS", 12, _card_flow_effect_signature("necro_colheita_das_almas", 1, true))])
+	_write_battle_payload("%s/after/battle" % out_dir, [_fake_battle_record("card_impact_player_necro_colheita_das_almas", "PASS", 12, _card_flow_effect_signature("necro_colheita_das_almas", 2, true))])
+	var report: Dictionary = CardImpactRunnerScript.compare_phase(_pack_v4_1(), {"out": out_dir, "components": PackedStringArray(["battle"]), "command": "unit"})
+	var summary: Dictionary = Dictionary(report.get("summary", {}))
+	assert_true(bool(summary.get("gate_ok", false)), str(summary.get("blocking_changes", [])))
+	assert_true(Dictionary(summary.get("by_effect_family", {})).has("card_flow"))
+	assert_gt(Array(summary.get("effect_changes", [])).size(), 0)
+	var markdown: String = CardImpactReporterScript.markdown(report, {"command": "unit"})
+	assert_string_contains(markdown, "Card Flow Coverage")
+	assert_string_contains(markdown, "effect.cards_drawn")
 
 func test_card_impact_reporter_markdown_contains_impact_matrix() -> void:
 	var report: Dictionary = {
@@ -523,6 +625,47 @@ func test_card_impact_reporter_markdown_contains_v4_full_coverage_and_utility() 
 	assert_string_contains(markdown, "Utility Effect Deltas")
 	assert_string_contains(markdown, "temporary_ability_power_gained")
 
+func test_card_impact_reporter_markdown_contains_card_flow_coverage() -> void:
+	var report: Dictionary = {
+		"phase": "compare",
+		"pack_id": "unit_v4_1",
+		"summary": {
+			"gate_ok": true,
+			"coverage": {
+				"expected_active_cards": 138,
+				"covered_active_cards": 138,
+				"expected_player_cards": 108,
+				"expected_enemy_cards": 30,
+				"expected_legacy_inactive_cards": 15,
+				"expected_card_flow_player_cards": 2,
+				"filtered_player_cards": 108,
+				"filtered_enemy_cards": 30,
+				"filtered_card_flow_player_cards": 2,
+				"player_cards_total": 108,
+				"enemy_cards_total": 30,
+				"legacy_inactive_cards_total": 15
+			},
+			"structural_errors": [],
+			"components": [{"component": "battle", "status": "PASS", "pass_count": 1, "warn_count": 0, "fail_count": 0}],
+			"effect_changes": [{"id": "card_impact_player_necro_colheita_das_almas", "field": "effect.cards_drawn", "before": 1, "after": 2, "delta": 1}],
+			"signature_quality": {
+				"card_flow_expected_count": 2,
+				"card_flow_observed_count": 2,
+				"card_flow_missing_count": 0,
+				"card_flow_cases": []
+			},
+			"top_impacted_cards": [],
+			"top_effect_delta_cards": [],
+			"by_effect_family": {"card_flow": {"change_count": 1, "fields": {"cards_drawn": 1}}},
+			"status_changes": [],
+			"metric_changes": [],
+			"blocking_changes": []
+		}
+	}
+	var markdown: String = CardImpactReporterScript.markdown(report, {"command": "unit"})
+	assert_string_contains(markdown, "Card Flow Coverage")
+	assert_string_contains(markdown, "effect.cards_drawn")
+
 func _pack() -> Dictionary:
 	return CardImpactPackLoaderScript.load_pack("track02_card_impact_v1")
 
@@ -534,6 +677,9 @@ func _pack_v3() -> Dictionary:
 
 func _pack_v4() -> Dictionary:
 	return CardImpactPackLoaderScript.load_pack("track02_card_impact_v4")
+
+func _pack_v4_1() -> Dictionary:
+	return CardImpactPackLoaderScript.load_pack("track02_card_impact_v4_1")
 
 func _single_case(card_id: String) -> Dictionary:
 	var matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack(), PackedStringArray([card_id]))
@@ -558,6 +704,13 @@ func _single_case_v3(card_id: String) -> Dictionary:
 
 func _single_case_v4(card_id: String) -> Dictionary:
 	var matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v4(), PackedStringArray([card_id]))
+	assert_true(bool(matrix.get("ok", false)), "; ".join(Array(matrix.get("errors", []))))
+	var cases: Array = Array(matrix.get("cases", []))
+	assert_eq(cases.size(), 1)
+	return Dictionary(cases[0])
+
+func _single_case_v4_1(card_id: String) -> Dictionary:
+	var matrix: Dictionary = CardImpactMatrixScript.build_matrix(ContentLibrary.get_catalog(), _pack_v4_1(), PackedStringArray([card_id]))
 	assert_true(bool(matrix.get("ok", false)), "; ".join(Array(matrix.get("errors", []))))
 	var cases: Array = Array(matrix.get("cases", []))
 	assert_eq(cases.size(), 1)
@@ -686,6 +839,31 @@ func _utility_effect_signature(card_id: String, temporary_ability_power_gained: 
 		"temporary_ability_power_gained": temporary_ability_power_gained,
 		"temporary_ability_power_lost": 0,
 		"families": ["utility"],
+		"keywords_added": {},
+		"keywords_removed": {},
+		"support_contamination_status": "clean",
+		"signature_confidence": "clean",
+		"capture_quality": "clean",
+		"target_card_play_count": 1,
+		"target_capture_mode": "isolated_once"
+	}
+
+func _card_flow_effect_signature(card_id: String, cards_drawn: int, observed: bool) -> Dictionary:
+	return {
+		"card_id": card_id,
+		"present": true,
+		"sample_count": 1,
+		"ashes_gained": 3,
+		"cards_drawn": cards_drawn,
+		"cards_discarded": 0,
+		"cards_created": 0,
+		"deck_delta": -cards_drawn,
+		"hand_delta": 0,
+		"discard_delta": 1,
+		"card_flow_expected": true,
+		"card_flow_observed": observed,
+		"card_flow_missing_reason": "" if observed else "expected card-flow counters were not observed",
+		"families": ["economy", "card_flow"],
 		"keywords_added": {},
 		"keywords_removed": {},
 		"support_contamination_status": "clean",

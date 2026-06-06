@@ -34,6 +34,7 @@ static func write_outputs(output_dir: String, report: Dictionary, options: Dicti
 static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 	var summary: Dictionary = Dictionary(report.get("summary", {}))
 	var coverage: Dictionary = Dictionary(summary.get("coverage", {}))
+	var signature_quality: Dictionary = Dictionary(summary.get("signature_quality", {}))
 	var lines: PackedStringArray = PackedStringArray([
 		"# Card Impact Report",
 		"",
@@ -51,6 +52,11 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 			int(coverage.get("expected_player_effect_signatures", 0)),
 			str(coverage.get("enemy_effect_signature_mode", "off")),
 			int(coverage.get("expected_enemy_effect_signatures", 0))
+		],
+		"- Card-flow expected/observed/missing: `%d/%d/%d`" % [
+			int(coverage.get("expected_card_flow_player_cards", signature_quality.get("card_flow_expected_count", 0))),
+			int(signature_quality.get("card_flow_observed_count", 0)),
+			int(signature_quality.get("card_flow_missing_count", 0))
 		],
 		"- Structural errors: `%d`" % Array(summary.get("structural_errors", [])).size(),
 		"- Command: `%s`" % str(options.get("command", "")),
@@ -139,6 +145,43 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 				str(item.get("delta", ""))
 			])
 	lines.append("")
+	lines.append("## Card Flow Coverage")
+	lines.append("- Expected/filtered/observed/missing: `%d/%d/%d/%d`" % [
+		int(coverage.get("expected_card_flow_player_cards", 0)),
+		int(coverage.get("filtered_card_flow_player_cards", 0)),
+		int(signature_quality.get("card_flow_observed_count", 0)),
+		int(signature_quality.get("card_flow_missing_count", 0))
+	])
+	var card_flow_cases: Array = Array(signature_quality.get("card_flow_cases", []))
+	if card_flow_cases.is_empty():
+		lines.append("- missing cases: none")
+	else:
+		for item: Dictionary in card_flow_cases.slice(0, 12):
+			lines.append("- `%s` `%s`: observed `%s`, signature `%s`, reason `%s`" % [
+				str(item.get("case_id", "")),
+				str(item.get("card_id", "")),
+				str(item.get("card_flow_observed", "")),
+				str(item.get("signature_present", "")),
+				str(item.get("missing_reason", ""))
+			])
+	var card_flow_rows: Array = []
+	for item: Dictionary in effect_changes:
+		var field: String = str(item.get("field", ""))
+		if field in ["effect.cards_drawn", "effect.cards_discarded", "effect.cards_created", "effect.deck_delta", "effect.hand_delta", "effect.discard_delta", "effect.card_flow_observed", "effect.card_flow_expected", "effect.card_flow_missing_reason"]:
+			card_flow_rows.append(item)
+	if card_flow_rows.is_empty():
+		lines.append("- deltas: none")
+	else:
+		lines.append("- deltas:")
+		for item: Dictionary in card_flow_rows.slice(0, 20):
+			lines.append("  - `%s` `%s`: `%s` -> `%s` (`%s`)" % [
+				str(item.get("id", "")),
+				str(item.get("field", "")),
+				str(item.get("before", "")),
+				str(item.get("after", "")),
+				str(item.get("delta", ""))
+			])
+	lines.append("")
 	lines.append("## Effect Family Matrix")
 	var by_effect_family: Dictionary = Dictionary(summary.get("by_effect_family", {}))
 	if by_effect_family.is_empty():
@@ -155,7 +198,6 @@ static func markdown(report: Dictionary, options: Dictionary = {}) -> String:
 			])
 	lines.append("")
 	lines.append("## Non-Damage Coverage Matrix")
-	var signature_quality: Dictionary = Dictionary(summary.get("signature_quality", {}))
 	var quality_by_family: Dictionary = Dictionary(signature_quality.get("by_family", {}))
 	if quality_by_family.is_empty():
 		var non_damage_families: Array[String] = []

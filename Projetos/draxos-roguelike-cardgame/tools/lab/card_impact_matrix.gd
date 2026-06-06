@@ -23,6 +23,8 @@ const EFFECT_DAMAGE_ACTIONS: Array[String] = ["damage", "flow_damage", "adjacent
 const EFFECT_CONTROL_ACTIONS: Array[String] = ["debuff", "weaken", "snare", "multi_debuff", "freeze_random_enemy", "poison_all_enemies"]
 const EFFECT_BUFF_ACTIONS: Array[String] = ["buff_ally", "promote", "buff_all_allies", "shield_all_allies"]
 const EFFECT_ECONOMY_ACTIONS: Array[String] = ["gain_mana", "gain_ashes"]
+const EFFECT_CARD_FLOW_ACTIONS: Array[String] = ["draw", "draw_cards", "discard", "discard_cards", "create_card", "create_cards"]
+const CARD_FLOW_EFFECT_KEYS: Array[String] = ["draw_if_at_least", "draw_cards", "cards_drawn", "discard_cards", "cards_discarded", "create_card", "create_cards", "cards_created", "deck_delta", "hand_delta", "discard_delta"]
 
 static func build_matrix(catalog, pack: Dictionary, card_filter: PackedStringArray = PackedStringArray()) -> Dictionary:
 	var discovery: Dictionary = discover_cards(catalog, pack)
@@ -54,11 +56,14 @@ static func build_matrix(catalog, pack: Dictionary, card_filter: PackedStringArr
 			"expected_player_cards": int(Dictionary(pack.get("card_sets", {})).get("expected_player_cards", 0)),
 			"expected_enemy_cards": int(Dictionary(pack.get("card_sets", {})).get("expected_enemy_cards", 0)),
 			"expected_legacy_inactive_cards": int(Dictionary(pack.get("card_sets", {})).get("expected_legacy_inactive_cards", 0)),
+			"expected_card_flow_player_cards": int(Dictionary(pack.get("card_sets", {})).get("expected_card_flow_player_cards", 0)),
 			"player_cards_total": Array(discovery.get("player_cards", [])).size(),
 			"enemy_cards_total": Array(discovery.get("enemy_cards", [])).size(),
 			"legacy_inactive_cards_total": Array(discovery.get("legacy_inactive_cards", [])).size(),
+			"card_flow_player_cards_total": _card_flow_cards(Array(discovery.get("player_cards", []))).size(),
 			"filtered_player_cards": player_cards.size(),
 			"filtered_enemy_cards": enemy_cards.size(),
+			"filtered_card_flow_player_cards": _card_flow_cards(player_cards).size(),
 			"battle_cases": cases.size(),
 			"player_cards_total_by_class": _count_cards_by_field(Array(discovery.get("player_cards", [])), "class_id"),
 			"filtered_player_cards_by_class": _count_cards_by_field(player_cards, "class_id"),
@@ -78,12 +83,17 @@ static func discover_cards(catalog, pack: Dictionary) -> Dictionary:
 	var expected_player: int = int(card_sets.get("expected_player_cards", 0))
 	var expected_enemy: int = int(card_sets.get("expected_enemy_cards", 0))
 	var expected_legacy: int = int(card_sets.get("expected_legacy_inactive_cards", 0))
+	var expected_card_flow: int = int(card_sets.get("expected_card_flow_player_cards", 0))
 	if expected_player > 0 and player_cards.size() != expected_player:
 		errors.append("Expected %d player cards, found %d." % [expected_player, player_cards.size()])
 	if expected_enemy > 0 and enemy_cards.size() != expected_enemy:
 		errors.append("Expected %d enemy cards, found %d." % [expected_enemy, enemy_cards.size()])
 	if expected_legacy > 0 and legacy_cards.size() != expected_legacy:
 		errors.append("Expected %d legacy inactive cards, found %d." % [expected_legacy, legacy_cards.size()])
+	if expected_card_flow > 0:
+		var card_flow_count: int = _card_flow_cards(player_cards).size()
+		if card_flow_count != expected_card_flow:
+			errors.append("Expected %d card-flow player cards, found %d." % [expected_card_flow, card_flow_count])
 	var active_legacy_refs: Array[String] = _legacy_references_in_encounters(catalog, legacy_cards)
 	if not active_legacy_refs.is_empty():
 		errors.append("Legacy elemental cards are referenced by active encounters: %s." % ",".join(active_legacy_refs))
@@ -176,6 +186,7 @@ static func _discover_legacy_inactive_cards(catalog, card_sets: Dictionary) -> A
 	return result
 
 static func _card_entry(card_id: String, kind: String, class_id: String, card, extra: Dictionary = {}) -> Dictionary:
+	var effect: Dictionary = Dictionary(card.effect).duplicate(true)
 	var entry: Dictionary = {
 		"id": card_id,
 		"kind": kind,
@@ -184,9 +195,11 @@ static func _card_entry(card_id: String, kind: String, class_id: String, card, e
 		"cost": int(card.cost),
 		"attack": int(card.attack),
 		"health": int(card.health),
-		"action": str(Dictionary(card.effect).get("action", "")),
+		"action": str(effect.get("action", "")),
+		"effect": effect,
 		"keywords": Array(card.keywords),
-		"effect_family": _effect_family(card)
+		"effect_family": _effect_family(card),
+		"card_flow_expected": _is_card_flow_card(card)
 	}
 	for key: Variant in extra.keys():
 		entry[str(key)] = extra.get(key)
@@ -202,7 +215,7 @@ static func _player_case(card_data: Dictionary, pack: Dictionary) -> Dictionary:
 		var required: Dictionary = Dictionary(expectations.get("required", {})).duplicate(true)
 		required["card_effect_signature_present_equals"] = true
 		expectations["required"] = required
-	return {
+	var case_result: Dictionary = {
 		"id": "card_impact_player_%s" % card_id,
 		"name": "Card Impact Player %s" % card_id,
 		"tags": ["card_impact", "card_under_test", "player_card", class_id, "effect_%s" % family],
@@ -218,9 +231,14 @@ static func _player_case(card_data: Dictionary, pack: Dictionary) -> Dictionary:
 		"effect_signature_required": _requires_player_effect_signature(pack),
 		"effect_signature_scope": "player",
 		"effect_family": family,
+		"card_flow_expected": bool(card_data.get("card_flow_expected", false)),
 		"target_capture": _target_capture_config(pack),
 		"encounter_override": _player_encounter_override_for(family)
 	}
+	var lab_prestate: Dictionary = _lab_prestate_for(card_data)
+	if not lab_prestate.is_empty():
+		case_result["lab_prestate"] = lab_prestate
+	return case_result
 
 static func _enemy_case(card_data: Dictionary, pack: Dictionary) -> Dictionary:
 	var template: Dictionary = Dictionary(Dictionary(pack.get("case_templates", {})).get("enemy", {}))
@@ -363,6 +381,8 @@ static func _count_cards_by_field(cards: Array, field: String) -> Dictionary:
 
 static func _effect_family(card) -> String:
 	var action: String = str(Dictionary(card.effect).get("action", ""))
+	if _is_card_flow_card(card):
+		return "card_flow"
 	if EFFECT_DAMAGE_ACTIONS.has(action):
 		return "damage"
 	if EFFECT_CONTROL_ACTIONS.has(action):
@@ -374,6 +394,45 @@ static func _effect_family(card) -> String:
 	if card.occupies_slot():
 		return "summon"
 	return "played"
+
+static func _is_card_flow_card(card) -> bool:
+	var effect: Dictionary = Dictionary(card.effect)
+	var action: String = str(effect.get("action", ""))
+	if EFFECT_CARD_FLOW_ACTIONS.has(action):
+		return true
+	for key: String in CARD_FLOW_EFFECT_KEYS:
+		if not effect.has(key):
+			continue
+		var value: Variant = effect.get(key)
+		if typeof(value) == TYPE_BOOL:
+			if bool(value):
+				return true
+		elif typeof(value) == TYPE_INT or typeof(value) == TYPE_FLOAT:
+			if float(value) != 0.0:
+				return true
+		elif str(value) != "":
+			return true
+	return false
+
+static func _card_flow_cards(cards: Array) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for card: Dictionary in _typed_card_array(cards):
+		if bool(card.get("card_flow_expected", false)):
+			result.append(card)
+	return result
+
+static func _lab_prestate_for(card_data: Dictionary) -> Dictionary:
+	if not bool(card_data.get("card_flow_expected", false)):
+		return {}
+	var effect: Dictionary = Dictionary(card_data.get("effect", {}))
+	var threshold: int = int(effect.get("draw_if_at_least", 0))
+	if threshold <= 0 or not bool(effect.get("per_dead_unit", false)):
+		return {}
+	var base_amount: int = int(effect.get("amount", 0))
+	var needed_dead_units: int = maxi(0, threshold - base_amount)
+	if needed_dead_units <= 0:
+		return {}
+	return {"initial_dead_unit_count": needed_dead_units}
 
 static func _requires_player_effect_signature(pack: Dictionary) -> bool:
 	var config: Dictionary = Dictionary(pack.get("effect_signatures", {}))

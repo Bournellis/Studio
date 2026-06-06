@@ -1,8 +1,8 @@
 # AutoRun Lab
 
 - Last Updated: `2026-06-06`
-- Status: `REWARD_CARD_REDESIGN_BATCH_02_UTILITY_V4_COMPLETE`
-- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures and V4 utility reward-card redesign validation
+- Status: `CARD_IMPACT_V4_1_CARD_FLOW_HARNESS_COMPLETE`
+- Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures, card-flow observability and V4/V4.1 reward-card redesign validation
 
 ## Purpose
 
@@ -25,6 +25,8 @@ Card Impact Effect Signature V2 extends that flow for player cards. It captures 
 Card Impact V3 Isolated Target Capture makes the player-card harness less ambiguous before broad card redesigns. It plays at most one required support card, plays the focused target card once, captures the signature, stops further card plays for that turn, and turns repeated-target or failed isolated captures into structural gate blockers.
 
 Card Impact V4 Full Player Matrix expands the player-card matrix from the 54 core class variants to all 108 active player variants, including Terra/Gelo/Ar/Fogo reward cards and upgrades. It also promotes temporary ability power into explicit utility effect-signature fields while keeping enemy-card signatures report-only for a future causal enemy pass.
+
+Card Impact V4.1 Card-Flow Harness Pass keeps the V4 full player matrix and adds a focused card-flow harness for draw, discard, hand and deck deltas. It makes `necro_colheita_das_almas` and `necro_colheita_das_almas_lvl3` expected card-flow cases, records lab-only prestate where needed, and gates missing card-flow observation structurally while keeping numeric deltas as review data.
 
 Reward Card Redesign Batch 01 Using V4 is the first real reward-card edit cycle executed against the full 108-player-card matrix. It changes six reward/card-upgrade variants across Arcano, Invocador and Necromante, then uses V4 `before -> after -> compare` to confirm that the battle harness exposes the intended effect deltas while Scenario Fixtures, Run Lab and the full validation suite remain stable.
 
@@ -104,6 +106,16 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v4 --out=user://card_impact/track02_card_impact_v4_full_player_matrix
 
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v4 --out=user://card_impact/track02_card_impact_v4_full_player_matrix
+```
+
+Card impact V4.1 card-flow gates:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=before --mode=gate --pack=track02_card_impact_v4_1 --out=user://card_impact/track02_card_impact_v4_1_card_flow_harness
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=after --mode=gate --pack=track02_card_impact_v4_1 --out=user://card_impact/track02_card_impact_v4_1_card_flow_harness
+
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_card_impact.gd -- --phase=compare --mode=gate --pack=track02_card_impact_v4_1 --out=user://card_impact/track02_card_impact_v4_1_card_flow_harness
 ```
 
 ## Presets
@@ -481,6 +493,38 @@ Current calibrated same/same result (`user://card_impact/track02_card_impact_v4_
 - V3 compare regression for `user://card_impact/player_card_redesign_batch_02` remains green.
 - Battle Lab remains 9 PASS / 3 WARN / 0 FAIL, Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL, AutoRun smoke/quick gates remain green, and `validate.gd` passes with 175/175 GUT tests and 1704 asserts.
 
+## Card Impact V4.1 Card-Flow Harness Pass
+
+`track02_card_impact_v4_1` keeps V4 coverage and adds focused card-flow observability.
+
+V4.1 coverage:
+
+- 108 active player card variants, 30 active enemy report-only cards and 15 legacy inactive cards, unchanged from V4.
+- 2 expected player card-flow cases: `necro_colheita_das_almas` and `necro_colheita_das_almas_lvl3`.
+- Enemy-card signatures remain report-only.
+
+V4.1 adds:
+
+- `data/lab/card_impact/track02_card_impact_v4_1.json`.
+- `effect_family="card_flow"` classification for cards with draw/discard/hand/deck keys.
+- A player card-flow harness that leaves draw room in hand and at least one card in deck.
+- Card Impact-only `lab_prestate.initial_dead_unit_count`, applied after `BattleEngine.start_battle` and before the first policy action. This is used for `necro_colheita_das_almas_lvl3` so the threshold reaches `draw_if_at_least=6` deterministically.
+- Signature/report fields: `card_flow_expected`, `card_flow_observed`, `card_flow_missing_reason`, plus the existing `cards_drawn`, `cards_discarded`, `deck_delta`, `hand_delta` and `discard_delta`.
+- Card Impact Markdown `Card Flow Coverage`, including missing cases and card-flow deltas.
+
+Gate behavior:
+
+- Missing expected card-flow cases fail `--mode=gate`.
+- Missing expected card-flow signatures fail `--mode=gate`.
+- `card_flow_expected=true` with `card_flow_observed=false` fails `--mode=gate`.
+- Numeric card-flow deltas remain review data and do not fail compare by themselves.
+
+Current calibrated same/same result (`user://card_impact/track02_card_impact_v4_1_card_flow_harness`):
+
+- `before`, `after` and `compare` pass with zero structural errors, zero new failures and zero removed records.
+- Focused probes observe both expected card-flow cards drawing 1 card, with `deck_delta=-1` and `card_flow_observed=true`.
+- `necro_colheita_das_almas_lvl3` records `lab_prestate.initial_dead_unit_count=2` and `ashes_gained=6`.
+
 ## Reward Card Redesign Batch 01 Using V4
 
 Purpose: execute a light but real reward-card tuning batch to prove that Card Impact V4 can inspect the full player matrix during intentional card movement.
@@ -571,7 +615,7 @@ Each detailed record contains:
 - `warnings`
 - `tags`
 
-The current macro-route `simulation_mode` is `macro_route_v1`. Gameplay Lab uses `battle_engine_v1`. Card Impact uses `card_impact_v1`, `card_impact_v2`, `card_impact_v3` and `card_impact_v4`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
+The current macro-route `simulation_mode` is `macro_route_v1`. Gameplay Lab uses `battle_engine_v1`. Card Impact uses `card_impact_v1`, `card_impact_v2`, `card_impact_v3`, `card_impact_v4` and `card_impact_v4_1`. Future bot and replay tools should preserve the same outer schema and add more detailed timelines instead of creating unrelated formats.
 
 ## Baseline Strategy
 
@@ -596,7 +640,7 @@ Do not wire gate mode into `tools/validate.gd` until it has survived a few tunin
 
 ## Future Phases
 
-1. Add a Card Impact V4.1 card-flow harness/fixture pass for draw, discard, hand and deck deltas so card-flow changes are as observable as damage, control, economy and utility.
+1. Use Card Impact V4.1 in a small real card-flow redesign batch, then decide whether any card-flow thresholds should become explicit expectations.
 2. Decide which repeated WARN, metric movements or effect-family deltas deserve promoted expectations after real use.
 3. Implement enemy-card effect signatures once enemy action logs expose enough per-card causality to avoid guessing.
 4. Replay Lab: record human or bot decisions and replay them across builds.

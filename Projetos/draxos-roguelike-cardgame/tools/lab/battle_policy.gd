@@ -80,6 +80,8 @@ static func play_turn(engine, policy_id: String, options: Dictionary = {}) -> Di
 				before_effect_snapshot,
 				after_effect_snapshot
 			)
+			effect_sample["card_flow_expected"] = bool(options.get("card_flow_expected", false))
+			BattleEffectSignatureScript.apply_card_flow_quality(effect_sample)
 			var support_cards_before: Array = _card_ids_from_plays(Array(result.get("cards_played", [])))
 			effect_sample["focused_card_play_index"] = support_cards_before.size()
 			effect_sample["support_cards_before_target"] = support_cards_before.duplicate()

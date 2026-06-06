@@ -48,8 +48,9 @@ static func run_case(catalog, pack: Dictionary, case_data: Dictionary, options: 
 	var battle_engine_script = load("res://battle/battle_engine.gd")
 	var engine = battle_engine_script.new()
 	engine.start_battle(catalog, deck_ids, config)
+	var lab_prestate: Dictionary = _apply_lab_prestate(engine, case_data)
 	var initial_state: Dictionary = _engine_state(engine)
-	var metrics: Dictionary = _initial_metrics(pack, case_data, encounter, initial_state, options)
+	var metrics: Dictionary = _initial_metrics(pack, case_data, encounter, initial_state, options, lab_prestate)
 	var policy_id: String = BattlePolicyScript.resolve_policy_id(case_data, str(options.get("policy", "")))
 	var turn_limit: int = maxi(1, int(case_data.get("turn_limit", 12)))
 	var target_capture: Dictionary = _target_capture_config(pack, case_data)
@@ -144,6 +145,16 @@ static func _battle_config(case_data: Dictionary, encounter: Dictionary) -> Dict
 	config["encounter"] = encounter.duplicate(true)
 	return config
 
+static func _apply_lab_prestate(engine, case_data: Dictionary) -> Dictionary:
+	var source: Dictionary = Dictionary(case_data.get("lab_prestate", {}))
+	if source.is_empty():
+		return {}
+	var applied: Dictionary = {}
+	if source.has("initial_dead_unit_count"):
+		engine.dead_unit_count = maxi(0, int(source.get("initial_dead_unit_count", 0)))
+		applied["initial_dead_unit_count"] = int(engine.dead_unit_count)
+	return applied
+
 static func _engine_state(engine) -> Dictionary:
 	return {
 		"turn": int(engine.turn_number),
@@ -152,6 +163,8 @@ static func _engine_state(engine) -> Dictionary:
 		"enemy_health": int(engine.enemy_health),
 		"enemy_max_health": int(engine.enemy_max_health),
 		"mana": int(engine.mana),
+		"ashes": int(engine.ashes),
+		"dead_unit_count": int(engine.dead_unit_count),
 		"mana_per_turn": int(engine.mana_per_turn),
 		"max_hand_size": int(engine.max_hand_size),
 		"deck": engine.deck.duplicate(),
@@ -171,7 +184,7 @@ static func _engine_state(engine) -> Dictionary:
 		"class_active_used": bool(engine.class_active_used)
 	}
 
-static func _initial_metrics(pack: Dictionary, case_data: Dictionary, encounter: Dictionary, initial_state: Dictionary, options: Dictionary) -> Dictionary:
+static func _initial_metrics(pack: Dictionary, case_data: Dictionary, encounter: Dictionary, initial_state: Dictionary, options: Dictionary, lab_prestate: Dictionary = {}) -> Dictionary:
 	return {
 		"ok": true,
 		"schema_version": SCHEMA_VERSION,
@@ -187,6 +200,8 @@ static func _initial_metrics(pack: Dictionary, case_data: Dictionary, encounter:
 		"policy_id": BattlePolicyScript.resolve_policy_id(case_data, str(options.get("policy", ""))),
 		"seed": int(case_data.get("seed", 0)),
 		"turn_limit": int(case_data.get("turn_limit", 12)),
+		"lab_prestate": lab_prestate.duplicate(true),
+		"initial_dead_unit_count": int(initial_state.get("dead_unit_count", 0)),
 		"turn_count": 0,
 		"combat_cycles": 0,
 		"cards_played": 0,
@@ -194,6 +209,8 @@ static func _initial_metrics(pack: Dictionary, case_data: Dictionary, encounter:
 		"pending_choices_resolved": 0,
 		"player_hp": int(initial_state.get("player_health", 0)),
 		"enemy_hp": int(initial_state.get("enemy_health", 0)),
+		"ashes": int(initial_state.get("ashes", 0)),
+		"dead_unit_count": int(initial_state.get("dead_unit_count", 0)),
 		"player_max_hp": int(initial_state.get("player_max_health", 0)),
 		"enemy_max_hp": int(initial_state.get("enemy_max_health", 0)),
 		"player_units_alive": _occupied_count(Array(initial_state.get("player_slots", []))),
@@ -202,6 +219,7 @@ static func _initial_metrics(pack: Dictionary, case_data: Dictionary, encounter:
 		"damage_to_player_hero": 0,
 		"card_under_test": str(Dictionary(case_data.get("card_under_test", {})).get("id", "")),
 		"card_under_test_kind": str(Dictionary(case_data.get("card_under_test", {})).get("kind", "")),
+		"card_flow_expected": bool(case_data.get("card_flow_expected", false)),
 		"card_under_test_played": false,
 		"card_under_test_play_count": 0,
 		"card_under_test_seen": _state_contains_card(initial_state, str(Dictionary(case_data.get("card_under_test", {})).get("id", ""))),
@@ -305,6 +323,8 @@ static func _append_timeline(metrics: Dictionary, state: Dictionary, policy_resu
 		"player_hp": int(state.get("player_health", 0)),
 		"enemy_hp": int(state.get("enemy_health", 0)),
 		"mana": int(state.get("mana", 0)),
+		"ashes": int(state.get("ashes", 0)),
+		"dead_unit_count": int(state.get("dead_unit_count", 0)),
 		"hand_size": Array(state.get("hand", [])).size(),
 		"deck_size": Array(state.get("deck", [])).size(),
 		"discard_size": Array(state.get("discard", [])).size(),
@@ -326,6 +346,8 @@ static func _finalize_metrics(metrics: Dictionary, initial_state: Dictionary, fi
 	metrics["turn_count"] = int(metrics.get("combat_cycles", 0))
 	metrics["player_hp"] = int(final_state.get("player_health", 0))
 	metrics["enemy_hp"] = int(final_state.get("enemy_health", 0))
+	metrics["ashes"] = int(final_state.get("ashes", 0))
+	metrics["dead_unit_count"] = int(final_state.get("dead_unit_count", 0))
 	metrics["player_units_alive"] = _occupied_count(Array(final_state.get("player_slots", [])))
 	metrics["enemy_units_alive"] = _occupied_count(Array(final_state.get("enemy_slots", [])))
 	metrics["damage_to_enemy_hero"] = maxi(0, int(initial_state.get("enemy_health", 0)) - int(final_state.get("enemy_health", 0)))
@@ -407,7 +429,10 @@ static func _finalize_effect_signature(metrics: Dictionary) -> void:
 	var samples: Array = Array(metrics.get("card_effect_samples", []))
 	if samples.is_empty():
 		var reason: String = "card was not played" if not bool(metrics.get("card_under_test_played", false)) else "card produced no effect sample"
-		metrics["card_effect_signature"] = BattleEffectSignatureScript.empty_missing(card_id, reason)
+		var missing_signature: Dictionary = BattleEffectSignatureScript.empty_missing(card_id, reason)
+		missing_signature["card_flow_expected"] = bool(metrics.get("card_flow_expected", false))
+		BattleEffectSignatureScript.apply_card_flow_quality(missing_signature)
+		metrics["card_effect_signature"] = missing_signature
 		metrics["card_effect_signature_present"] = false
 		metrics["card_effect_signature_missing_reason"] = reason
 		metrics["capture_quality"] = "failed"
@@ -558,6 +583,7 @@ static func _policy_options(case_data: Dictionary, options: Dictionary) -> Dicti
 	var card_under_test: Dictionary = Dictionary(case_data.get("card_under_test", {}))
 	if not card_under_test.is_empty():
 		policy_options["card_under_test"] = str(card_under_test.get("id", ""))
+	policy_options["card_flow_expected"] = bool(case_data.get("card_flow_expected", false))
 	if case_data.has("target_capture"):
 		policy_options["target_capture"] = Dictionary(case_data.get("target_capture", {})).duplicate(true)
 	return policy_options
