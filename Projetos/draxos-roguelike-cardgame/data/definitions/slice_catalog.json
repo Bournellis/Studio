@@ -3031,7 +3031,7 @@
       "type": "criatura",
       "cost": 3,
       "text": "Elite resistente de Terra.",
-      "attack": 3,
+      "attack": 2,
       "health": 5
     },
     {
@@ -3056,7 +3056,7 @@
       "cost": 3,
       "text": "Resistencia 2.",
       "attack": 2,
-      "health": 7,
+      "health": 8,
       "keywords": [
         "resistencia"
       ],

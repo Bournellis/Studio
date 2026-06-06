@@ -1832,7 +1832,7 @@ id = "enemy_terra_elemental_tita"
 display_name = "Elemental Tita de Terra"
 card_type = "criatura"
 cost = 3
-attack = 3
+attack = 2
 health = 5
 text = "Elite resistente de Terra."
 keywords = PackedStringArray()
@@ -1858,7 +1858,7 @@ display_name = "Elemental de Granito"
 card_type = "criatura"
 cost = 3
 attack = 2
-health = 7
+health = 8
 text = "Resistencia 2."
 keywords = PackedStringArray("resistencia")
 effect = {
@@ -4478,4 +4478,4 @@ track_contract = {
 }
 }
 }
-definition_hash = "5516acb7ba4ec69414e9d469377dcadad0e31892d9e24a4d1c865e52aeaf222e"
+definition_hash = "4fe4a7237933bfc28a137cf83a7be75161b5a7e4791b47813fd3fc3f1382ff0b"
