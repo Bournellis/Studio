@@ -8,20 +8,24 @@ const ArenaSurfaceTextScript := preload("res://modes/boot/surfaces/arena_surface
 func render_selection(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
 	var active_attempt := SessionStore.active_arena_attempt()
-	_call_host(host, "_add_body_text", ["Escolha uma Arena PVE. O loadout trava ao iniciar; buffs e comportamento ficam entre vitorias."])
 	if _selection_blocks_on_attempt(active_attempt):
-		_add_arena_preparation_control(host, true)
+		_call_host(host, "_add_body_text", ["Existe uma tentativa de Arena aberta. Retome ou encerre antes de iniciar outra."])
 		_render_active_attempt_recovery(host, active_attempt)
+		_add_arena_preparation_control(host, true)
 		_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 		return
+	_call_host(host, "_add_body_text", ["Escolha uma Arena PVE. O loadout trava ao iniciar; buffs e comportamento ficam entre vitorias."])
 	if _has_remote_arena_state(arena):
 		var arenas := _as_array(arena.get("arenas", []))
-		_add_arena_preparation_control(host, false)
+		var progress := _as_dictionary(arena.get("progress", {}))
+		var recommended_action_id := _recommended_start_action_id(arenas)
+		_render_season_progress_panel(host, arenas, progress)
 		_render_recommended_arena(host, arenas)
-		_render_available_arenas(host, arenas)
-	else:
 		_add_arena_preparation_control(host, false)
+		_render_available_arenas(host, arenas, recommended_action_id)
+	else:
 		_render_dev_fallback_arenas(host)
+		_add_arena_preparation_control(host, false)
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_loading_selection(host: Node) -> void:
@@ -31,9 +35,9 @@ func render_loading_selection(host: Node) -> void:
 
 func render_loadout(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
-	_call_host(host, "_add_body_text", ["Loadout travado para esta tentativa. Voce ainda pode ajustar comportamento simples entre duelos."])
-	_add_loadout_details_control(host, attempt)
+	_call_host(host, "_add_body_text", ["Loadout ja foi travado ao iniciar esta tentativa. Siga para o proximo duelo ou ajuste apenas comportamento simples."])
 	_call_host(host, "_add_action_button", ["Continuar com loadout travado", AppShellActionContractScript.ACTION_ARENA_LOCK_LOADOUT])
+	_add_loadout_details_control(host, attempt)
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_active(host: Node) -> void:
@@ -46,26 +50,27 @@ func render_active(host: Node) -> void:
 	_call_host(host, "_add_body_text", ["Tentativa em andamento. Cada duelo comeca com HP cheio."])
 	_add_duel_progress_rail(host, attempt)
 	_add_attempt_summary_panel(host, attempt)
-	_add_arena_preparation_control(host, true)
 	if not _pending_buff_choices(attempt).is_empty():
 		_call_host(host, "_add_action_button", ["Escolher buff", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT])
 	else:
 		_call_host(host, "_add_action_button", ["Resolver duelo", AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL])
+	_add_arena_preparation_control(host, true)
+	_add_loadout_details_control(host, attempt)
 	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
-	_add_loadout_details_control(host, attempt)
 
 func render_buff_choice(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
 	var choices := _pending_buff_choices(attempt)
 	_call_host(host, "_add_body_text", ["Escolha 1 buff temporario para os proximos duelos desta tentativa."])
-	_add_arena_preparation_control(host, true)
 	if choices.is_empty():
 		_call_host(host, "_add_output_label", ["Nenhum buff pendente. Volte para a tentativa ativa."])
 		_call_host(host, "_add_action_button", ["Retomar tentativa", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT])
+		_add_arena_preparation_control(host, true)
 		_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
 		return
 	_add_buff_choice_cards(host, choices)
+	_add_arena_preparation_control(host, true)
 	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
 
 func render_summary(host: Node) -> void:
@@ -82,18 +87,18 @@ func render_replay(host: Node, overlay: Control, compact_layout: bool, battle_lo
 	var presenter = host.get("_battle_replay_presenter")
 	presenter.render_fullscreen_replay(host, overlay, compact_layout, battle_log, rewards)
 
-func _render_available_arenas(host: Node, arenas: Array) -> void:
+func _render_available_arenas(host: Node, arenas: Array, recommended_action_id: String = "") -> void:
 	if arenas.is_empty():
 		_render_dev_fallback_arenas(host)
 		return
 	var progress := _as_dictionary(SessionStore.arena_snapshot().get("progress", {}))
-	_render_season_progress_panel(host, arenas, progress)
+	_call_host(host, "_add_section_label", ["Outras arenas"])
 	for arena_variant: Variant in arenas:
 		var arena := _as_dictionary(arena_variant)
 		var arena_id := str(arena.get("id", "")).strip_edges()
 		if arena_id == "":
 			continue
-		_render_arena_group(host, arena, progress)
+		_render_arena_group(host, arena, progress, recommended_action_id)
 
 func _render_recommended_arena(host: Node, arenas: Array) -> void:
 	var recommendation := _recommended_arena_option(arenas)
@@ -105,7 +110,7 @@ func _render_recommended_arena(host: Node, arenas: Array) -> void:
 	var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
 	if arena_id == "":
 		return
-	var label := "Iniciar Arena PVE"
+	var label := "Iniciar desafio recomendado"
 	var action_id := AppShellActionContractScript.arena_start_action(arena_id, difficulty_id)
 	var panel := _arena_panel(host, "ArenaRecommendedCard", "bg_panel_alt", "accent_battle")
 	var stack := _arena_panel_stack(panel, 7)
@@ -147,7 +152,7 @@ func _render_season_progress_panel(host: Node, arenas: Array, progress: Dictiona
 	stack.add_child(_arena_label("Proximo recomendado: %s" % next_text, 12, "text_secondary"))
 	_call_host(host, "_add_content_control", [panel])
 
-func _render_arena_group(host: Node, arena: Dictionary, progress: Dictionary) -> void:
+func _render_arena_group(host: Node, arena: Dictionary, progress: Dictionary, recommended_action_id: String = "") -> void:
 	var arena_id := str(arena.get("id", "")).strip_edges()
 	if arena_id == "":
 		return
@@ -172,16 +177,7 @@ func _render_arena_group(host: Node, arena: Dictionary, progress: Dictionary) ->
 		stack.add_child(_arena_label("bloqueada: %s" % _arena_locked_reason(arena), 12, "text_secondary"))
 	elif not next_option.is_empty():
 		var next_difficulty := _as_dictionary(next_option.get("difficulty", {}))
-		var next_difficulty_id := str(next_difficulty.get("difficulty_id", next_difficulty.get("id", ""))).strip_edges()
 		stack.add_child(_arena_label("Proximo desta arena: %s" % _difficulty_detail_text(next_difficulty), 12, "text_secondary"))
-		stack.add_child(_arena_action_button(
-			host,
-			"Iniciar proximo desta arena",
-			AppShellActionContractScript.arena_start_action(arena_id, next_difficulty_id),
-			false,
-			"",
-			true
-		))
 	stack.add_child(_arena_label("Dificuldades", 12, "text_primary"))
 	for difficulty_variant: Variant in difficulties:
 		var difficulty := _as_dictionary(difficulty_variant)
@@ -193,7 +189,10 @@ func _render_arena_group(host: Node, arena: Dictionary, progress: Dictionary) ->
 		if not unlocked:
 			label = "%s | bloqueada" % label
 		var is_next := unlocked and not next_option.is_empty() and difficulty_id == str(_as_dictionary(next_option.get("difficulty", {})).get("difficulty_id", ""))
-		stack.add_child(_arena_action_button(host, label, action_id, not unlocked, locked_reason, is_next))
+		if action_id == recommended_action_id:
+			stack.add_child(_arena_label("%s | recomendado acima" % label, 12, "text_secondary"))
+		else:
+			stack.add_child(_arena_action_button(host, label, action_id, not unlocked, locked_reason, is_next))
 		stack.add_child(_arena_label(_difficulty_detail_text(difficulty) if unlocked else "bloqueada: %s" % locked_reason, 11, "text_secondary"))
 	_call_host(host, "_add_content_control", [panel])
 
@@ -248,12 +247,24 @@ func _add_arena_preparation_control(host: Node, behavior_only: bool) -> void:
 			stack.add_child(_arena_label("Carregue o estado atual para ajustar apenas comportamento entre duelos. O loadout desta tentativa ja esta travado.", 12, "text_secondary"))
 			stack.add_child(_arena_action_button(host, "Carregar comportamento", AppShellActionContractScript.ACTION_SHOW_PREPARATION, false, "", true))
 		else:
-			stack.add_child(_arena_label("Revise loadout, Pocao e comportamento antes de iniciar. Este painel fica sempre no topo da Arena.", 12, "text_secondary"))
+			stack.add_child(_arena_label("Revise loadout, Pocao e comportamento antes de iniciar. O desafio recomendado fica acima para manter o fluxo claro.", 12, "text_secondary"))
 			stack.add_child(_arena_action_button(host, "Carregar Preparacao", AppShellActionContractScript.ACTION_SHOW_PREPARATION, false, "", true))
 		_call_host(host, "_add_content_control", [panel])
 		return
 	var context := "arena_active_behavior" if behavior_only else "arena_pre_start"
 	_call_host(host, "_add_content_control", [PreparationPresenterScript.preparation_panel(host, compact, context)])
+
+func _recommended_start_action_id(arenas: Array) -> String:
+	var recommendation := _recommended_arena_option(arenas)
+	if recommendation.is_empty():
+		return ""
+	var arena := _as_dictionary(recommendation.get("arena", {}))
+	var difficulty := _as_dictionary(recommendation.get("difficulty", {}))
+	var arena_id := str(arena.get("id", "")).strip_edges()
+	var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
+	if arena_id == "":
+		return ""
+	return AppShellActionContractScript.arena_start_action(arena_id, difficulty_id)
 
 func _recommended_arena_option(arenas: Array) -> Dictionary:
 	var progress := _as_dictionary(SessionStore.arena_snapshot().get("progress", {}))
