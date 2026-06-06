@@ -554,8 +554,8 @@ function Assert-CorsAllowedOrigins {
 }
 
 function Assert-LiveDocsReleaseRootFreshness {
-    $currentRoot = "internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a"
-    $currentPreview = "https://ad0b4a77.draxos-mobile-internal-alpha.pages.dev"
+    $currentRoot = "internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22"
+    $currentPreview = "https://fa84e109.draxos-mobile-internal-alpha.pages.dev"
     $previousSyncRoot = "internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95"
     $previousSyncPreview = "https://60e2d4be.draxos-mobile-internal-alpha.pages.dev"
     $previousVisibleRoot = "internal-alpha/v0-arena-bosque-visible-v2-20260605-01d80d5"

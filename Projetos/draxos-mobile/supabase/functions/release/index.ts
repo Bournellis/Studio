@@ -25,15 +25,15 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
     android: {
       label: "Android APK",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a/downloads/draxos-mobile-alpha.apk",
-      sha256: "e83c7e118303150cd81d3759dbefc1c8a2abbdb81e8fafbe08d21c0e29d84339",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22/downloads/draxos-mobile-alpha.apk",
+      sha256: "207c0eb79f36f3420ca539fbffaf7ce92150c38271df5f608916d4c12b0e8d5c",
       auth_required: "false",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a/downloads/draxos-mobile-alpha.zip",
-      sha256: "5cf507777489c897ee221ff675309d08030c24cd97012b5e0f125f5336401ab6",
+        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22/downloads/draxos-mobile-alpha.zip",
+      sha256: "7c0206a3bc0e4b65a5f8a20524921820282904f69e9e8224aff4307bd5cfefa9",
       auth_required: "false",
     },
     web: {

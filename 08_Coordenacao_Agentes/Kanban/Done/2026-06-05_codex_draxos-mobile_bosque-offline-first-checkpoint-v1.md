@@ -52,10 +52,10 @@ Pacote integrado, publicado em `main` e registrado nos docs/status.
 
 ## Resultado
 
-- Release root: `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a`.
-- Preview: `https://ad0b4a77.draxos-mobile-internal-alpha.pages.dev`.
+- Release root: `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22`.
+- Preview: `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`.
 - URL oficial: `https://draxos-mobile-internal-alpha.pages.dev/`.
-- APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a/downloads/draxos-mobile-alpha.apk`.
+- APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22/downloads/draxos-mobile-alpha.apk`.
 - Migration remota aplicada: `202606060001_openworld_bosque_checkpoint_v1.sql`.
 - Versionamento: `0.0.4-alpha.0` / version code `4`.
 

@@ -13,10 +13,10 @@
 ## Current Truth
 
 - Latest published remote package: `Bosque Offline-First Checkpoint v1`.
-- Release root: `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a`
+- Release root: `internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://ad0b4a77.draxos-mobile-internal-alpha.pages.dev`
+- Latest deployment evidence: `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`
 - Source state: `main` after merging and publishing Bosque Offline-First Checkpoint v1, preserving Bosque Sync Responsiveness v1, Arena/Bosque Visible V2, Arena/Bosque Regression Hotfix, Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix, Track 23 Arena PVE update recovery and later trunk merges.
 - Published Bosque Offline-First Checkpoint v1: applies remote migration `202606060001_openworld_bosque_checkpoint_v1.sql`, bumps APK/manifest to `0.0.4-alpha.0` / version code `4`, makes Bosque movement/collection/pocket/chest/craft client-owned during gameplay, persists local visit state, saves compact checkpoints in the background and keeps completion/reward server-authoritative through the last accepted checkpoint.
 - Previous Bosque sync package: `Bosque Sync Responsiveness v1`
@@ -79,7 +79,7 @@ Publication evidence:
 - Supabase remote migration `202606060001_openworld_bosque_checkpoint_v1.sql` applied and `supabase migration list --linked` aligned local/remote.
 - Export regenerated APK, PC ZIP and Web artifacts from current `main`.
 - Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and Edge Function `release` deploy passed.
-- Cloudflare Pages preview evidence: `https://ad0b4a77.draxos-mobile-internal-alpha.pages.dev`.
+- Cloudflare Pages preview evidence: `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`.
 - Remote Web launch smoke on preview loaded the game in `6623 ms`, matched release root and asset root, and reported no runtime errors.
 - Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web after local manifest expectations were updated; stable Portal/Web remain protected by Cloudflare Access.
 - Remote read-only release/CORS smoke passed after local manifest expectations were updated to version code `3`.
@@ -88,8 +88,8 @@ Publication evidence:
 
 Artifact hashes:
 
-- Android APK SHA256: `e83c7e118303150cd81d3759dbefc1c8a2abbdb81e8fafbe08d21c0e29d84339`
-- PC Windows ZIP SHA256: `5cf507777489c897ee221ff675309d08030c24cd97012b5e0f125f5336401ab6`
+- Android APK SHA256: `207c0eb79f36f3420ca539fbffaf7ce92150c38271df5f608916d4c12b0e8d5c`
+- PC Windows ZIP SHA256: `7c0206a3bc0e4b65a5f8a20524921820282904f69e9e8224aff4307bd5cfefa9`
 - Web Index SHA256: `318c68673fda93d76ce90f1a17e87061f85530731a7ddff6ea058e4c79889f4a`
 
 ## Bosque Offline-First Checkpoint v1 Details
@@ -118,11 +118,11 @@ Validation:
 - `supabase db push --linked --yes`: PASS after migration rename fix.
 - `supabase functions deploy modes`: PASS.
 - `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
-- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a -PublicDownloads`: PASS.
-- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a -PublicDownloads -ConfirmRemoteMutation`: PASS.
-- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: PASS, preview `https://ad0b4a77.draxos-mobile-internal-alpha.pages.dev`.
-- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a -PublicDownloads -ConfirmRemoteMutation`: PASS.
-- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a -RemoteWebUrl https://ad0b4a77.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS after docs/test guard refresh.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22 -PublicDownloads`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: PASS, preview `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `validate_foundation.ps1 -Profile RemoteReadOnly -ExpectedReleaseRoot internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22 -RemoteWebUrl https://fa84e109.draxos-mobile-internal-alpha.pages.dev/web/index.html -AllowCloudflareAccess -NoProjectWrites -KeepDiagnostics`: PASS after docs/test guard refresh.
 
 ## Previous Bosque Sync Responsiveness v1 Details
 

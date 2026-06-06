@@ -26,8 +26,8 @@ No Openworld expansion is approved by this pack.
 Bosque Offline-First Checkpoint v1 was explicitly approved and published as a
 remote Internal Alpha mutation window: migration
 `202606060001_openworld_bosque_checkpoint_v1.sql`, release root
-`internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-254ac0a`,
-preview evidence `https://ad0b4a77.draxos-mobile-internal-alpha.pages.dev`.
+`internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22`,
+preview evidence `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`.
 
 Runtime/QoL exception approved on 2026-06-01: the Bosque runtime may migrate
 from a drawn `Control` world to a `Control` wrapper plus internal `Node2D`
