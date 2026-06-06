@@ -67,6 +67,9 @@ func durable_progress_revision() -> int:
 		return int(progress.get("progress_revision", _snapshot_revision))
 	return _snapshot_revision
 
+func durable_progress_snapshot() -> Dictionary:
+	return _durable_progress_cache_snapshot()
+
 func network_busy() -> bool:
 	return _network_busy
 
@@ -1048,9 +1051,10 @@ func _positive_int_dictionary(value: Variant) -> Dictionary:
 	var source := _as_dictionary(value)
 	var result: Dictionary = {}
 	for key: String in source.keys():
+		var clean_key := ModelScript.canonical_item_id(str(key))
 		var amount := maxi(0, int(source.get(key, 0)))
 		if amount > 0:
-			result[key] = amount
+			result[clean_key] = int(result.get(clean_key, 0)) + amount
 	return result
 
 func _true_dictionary(value: Variant) -> Dictionary:

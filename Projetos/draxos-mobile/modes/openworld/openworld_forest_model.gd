@@ -25,6 +25,10 @@ const GUIDANCE_STEPS := [
 	"Com materiais no bau, crie melhorias e pequenas estruturas.",
 	"Quando quiser, encerre a visita e volte depois.",
 ]
+const LEGACY_ITEM_IDS := {
+	"ossos_preview": "resto_ritual",
+	"po_osso_preview": "po_cinzento",
+}
 
 var pocket: Dictionary = {}
 var chest: Dictionary = {}
@@ -176,10 +180,11 @@ func current_speed() -> float:
 	return lerpf(BASE_SPEED, min_loaded_speed(), penalty_ratio)
 
 func item_weight(item_id: String) -> float:
-	return float(_item_definition(item_id).get("weight", 0.0))
+	return float(_item_definition(canonical_item_id(item_id)).get("weight", 0.0))
 
 func item_display_name(item_id: String) -> String:
-	var display_name := str(_item_definition(item_id).get("display_name", item_id))
+	var clean_item_id := canonical_item_id(item_id)
+	var display_name := str(_item_definition(clean_item_id).get("display_name", clean_item_id))
 	if display_name.ends_with(" preview"):
 		return display_name.substr(0, display_name.length() - " preview".length())
 	if display_name.ends_with(" Preview"):
@@ -203,21 +208,23 @@ func gather_duration(item_id: String) -> float:
 	return maxf(0.1, duration)
 
 func can_carry(item_id: String, quantity: int = 1) -> bool:
-	if not item_definitions().has(item_id):
+	var clean_item_id := canonical_item_id(item_id)
+	if not item_definitions().has(clean_item_id):
 		return false
-	return pocket_weight() + item_weight(item_id) * float(maxi(1, quantity)) <= capacity() + 0.001
+	return pocket_weight() + item_weight(clean_item_id) * float(maxi(1, quantity)) <= capacity() + 0.001
 
 func add_to_pocket(item_id: String, quantity: int = 1) -> Dictionary:
+	var clean_item_id := canonical_item_id(item_id)
 	var amount := maxi(1, quantity)
-	if not item_definitions().has(item_id):
-		last_message = "Recurso desconhecido: %s." % item_id
+	if not item_definitions().has(clean_item_id):
+		last_message = "Recurso desconhecido: %s." % clean_item_id
 		return {"ok": false, "reason": "unknown_item", "message": last_message}
-	if not can_carry(item_id, amount):
+	if not can_carry(clean_item_id, amount):
 		last_message = "Bolso cheio. Volte ao bau para depositar."
 		return {"ok": false, "reason": "pocket_full", "message": last_message}
-	pocket[item_id] = int(pocket.get(item_id, 0)) + amount
-	last_message = "+%d %s no bolso. %s." % [amount, item_display_name(item_id), pocket_status_text()]
-	return {"ok": true, "item_id": item_id, "quantity": amount, "message": last_message}
+	pocket[clean_item_id] = int(pocket.get(clean_item_id, 0)) + amount
+	last_message = "+%d %s no bolso. %s." % [amount, item_display_name(clean_item_id), pocket_status_text()]
+	return {"ok": true, "item_id": clean_item_id, "quantity": amount, "message": last_message}
 
 func deposit_all() -> Dictionary:
 	var moved := pocket.duplicate(true)
@@ -391,19 +398,20 @@ func reopen_guidance() -> bool:
 	return true
 
 func start_collection(item_id: String) -> Dictionary:
-	if not item_definitions().has(item_id):
+	var clean_item_id := canonical_item_id(item_id)
+	if not item_definitions().has(clean_item_id):
 		last_message = "Recurso desconhecido."
 		return {"ok": false, "reason": "unknown_item", "message": last_message}
-	if not can_carry(item_id):
+	if not can_carry(clean_item_id):
 		last_message = "Bolso cheio. Volte ao bau para depositar."
 		return {"ok": false, "reason": "pocket_full", "message": last_message}
 	active_collection = {
-		"item_id": item_id,
+		"item_id": clean_item_id,
 		"elapsed": 0.0,
-		"duration": gather_duration(item_id),
+		"duration": gather_duration(clean_item_id),
 	}
-	last_message = "Parado perto de %s. Coletando..." % item_display_name(item_id)
-	return {"ok": true, "item_id": item_id, "duration": active_collection["duration"], "message": last_message}
+	last_message = "Parado perto de %s. Coletando..." % item_display_name(clean_item_id)
+	return {"ok": true, "item_id": clean_item_id, "duration": active_collection["duration"], "message": last_message}
 
 func advance_collection(delta: float, moved: bool = false, distance: float = 0.0, commit_to_pocket: bool = true) -> Dictionary:
 	if active_collection.is_empty():
@@ -450,7 +458,7 @@ func collection_progress() -> float:
 	return clampf(float(active_collection.get("elapsed", 0.0)) / duration, 0.0, 1.0)
 
 func _item_definition(item_id: String) -> Dictionary:
-	return _as_dictionary(item_definitions().get(item_id, {}))
+	return _as_dictionary(item_definitions().get(canonical_item_id(item_id), {}))
 
 func _recipe(recipe_id: String) -> Dictionary:
 	return _as_dictionary(recipes().get(recipe_id, {}))
@@ -459,9 +467,10 @@ func _positive_int_dictionary(value: Variant) -> Dictionary:
 	var result: Dictionary = {}
 	var source := _as_dictionary(value)
 	for key: String in source.keys():
+		var clean_key := canonical_item_id(key)
 		var amount := int(source.get(key, 0))
-		if amount > 0 and item_definitions().has(key):
-			result[key] = amount
+		if amount > 0 and item_definitions().has(clean_key):
+			result[clean_key] = int(result.get(clean_key, 0)) + amount
 	return result
 
 func _boolean_dictionary(value: Variant) -> Dictionary:
@@ -531,6 +540,10 @@ static func _sorted_keys(source: Dictionary) -> PackedStringArray:
 		keys.append(key)
 	keys.sort()
 	return keys
+
+static func canonical_item_id(item_id: String) -> String:
+	var clean_id := item_id.strip_edges()
+	return str(LEGACY_ITEM_IDS.get(clean_id, clean_id))
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

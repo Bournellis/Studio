@@ -108,9 +108,9 @@ func close_sheet() -> void:
 
 func set_deposit_available(available: bool) -> void:
 	if _deposit_button != null:
-		_deposit_button.disabled = not available or network_busy
+		_deposit_button.disabled = not available
 		if network_busy:
-			_deposit_button.tooltip_text = "Sincronizacao em andamento."
+			_deposit_button.tooltip_text = "Deposita agora; o salvamento continua em segundo plano."
 		elif model != null and model.pocket.is_empty():
 			_deposit_button.tooltip_text = "Bolso vazio; colete algo antes."
 		else:
@@ -249,7 +249,7 @@ func _render_station_craft() -> void:
 	elif not station_nearby:
 		_body.add_child(_label("Aproxime-se da Fogueira para preparar pocoes globais.", 13, Color(0.75, 0.72, 0.64)))
 	else:
-		_body.add_child(_label("Prepare pocoes na Fogueira usando materiais do Bau e Po de Osso da conta.", 13, Color(0.75, 0.72, 0.64)))
+		_body.add_child(_label("Prepare pocoes na Fogueira usando materiais do Bau do Bosque e Po de Osso da Conta/Ossario.", 13, Color(0.75, 0.72, 0.64)))
 	if network_busy:
 		_body.add_child(_label("Salvando Bosque antes de preparar...", 13, Color(0.78, 0.77, 0.70)))
 	var recipes := _station_recipes()
@@ -281,8 +281,8 @@ func _render_session() -> void:
 	_body.add_child(_label("Bosque", 16, Color(0.90, 0.82, 0.62)))
 	var state := _session_state_text()
 	_body.add_child(_label("Estado: %s" % state, 13, Color(0.82, 0.80, 0.70)))
-	_body.add_child(_label("Bolso: %s" % model.inventory_summary_text(model.pocket, "vazio"), 13, Color(0.86, 0.83, 0.70)))
-	_body.add_child(_label("Bau: %s" % model.inventory_summary_text(model.chest, "sem deposito"), 13, Color(0.86, 0.83, 0.70)))
+	_body.add_child(_label("Mochila do Bosque: %s" % model.inventory_summary_text(model.pocket, "vazia"), 13, Color(0.86, 0.83, 0.70)))
+	_body.add_child(_label("Bau do Bosque: %s" % model.inventory_summary_text(model.chest, "sem deposito"), 13, Color(0.86, 0.83, 0.70)))
 	_body.add_child(_label("Criacoes: %s" % model.upgrades_summary_text("nenhuma"), 13, Color(0.86, 0.83, 0.70)))
 	if session_message.strip_edges() != "":
 		_body.add_child(_label(session_message, 13, Color(0.86, 0.83, 0.70)))
@@ -480,7 +480,11 @@ func _input_display_name(input: Dictionary) -> String:
 	var domain := str(input.get("domain", "")).strip_edges()
 	var item_id := str(input.get("item_id", "")).strip_edges()
 	if domain == "openworld_chest":
-		return model.item_display_name(item_id)
+		return "%s (Bau do Bosque)" % model.item_display_name(item_id)
+	if domain == "account_resource":
+		return "%s (Conta/Ossario)" % _global_item_display_name(item_id)
+	if domain == "account_consumable":
+		return "%s (Pocoes globais)" % _global_item_display_name(item_id)
 	return _global_item_display_name(item_id)
 
 func _recipe_output_item(recipe: Dictionary) -> String:
