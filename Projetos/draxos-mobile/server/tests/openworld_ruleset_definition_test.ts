@@ -8,9 +8,9 @@ const COLLECTION_SYNC_MIGRATION_PATH =
 const SUPABASE_COLLECTION_SYNC_MIGRATION_PATH =
   "supabase/migrations/202606040002_openworld_bosque_collection_sync_v1.sql";
 const COLLECT_BATCH_MIGRATION_PATH =
-  "server/schema/migrations/202606050001_openworld_bosque_collect_batch_v1.sql";
+  "server/schema/migrations/202606050003_openworld_bosque_collect_batch_v1.sql";
 const SUPABASE_COLLECT_BATCH_MIGRATION_PATH =
-  "supabase/migrations/202606050001_openworld_bosque_collect_batch_v1.sql";
+  "supabase/migrations/202606050003_openworld_bosque_collect_batch_v1.sql";
 const MODE_DOMAIN_PATH = "server/functions/_shared/mode_domain.ts";
 const SUPABASE_MODE_DOMAIN_PATH = "supabase/functions/_shared/mode_domain.ts";
 
