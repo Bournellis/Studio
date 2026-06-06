@@ -46,6 +46,30 @@ position. The server owns session/ruleset, accepted checkpoints, completion,
 reward, caps, ledger and audit. Same-session remote snapshots must not transform
 the world during active player control.
 
+Human playtest confirmation on 2026-06-06: the first Bosque Offline-First
+Checkpoint v1 checks reported that the update felt successful and the visible
+Bosque flow was healthy. This confirms the authority policy as the current
+Openworld working rule. It does not approve new content expansion by itself.
+
+## Openworld Working Policy
+
+The current Openworld policy is:
+
+- player feel and active control are protected over microaction precision;
+- the Bosque visit is client-owned during play;
+- server authority is reserved for session validity, ruleset identity, caps,
+  accepted checkpoint, completion, reward, ledger and audit;
+- checkpoint validation is the normal integrated path;
+- event micro-mutators are compatibility only for old packages;
+- snapshots can initialize or recover a visit before control, but cannot roll
+  back the active same-session world;
+- conflicts are handled as explicit recovery outside active control.
+
+Future agents must not reintroduce revision-gated microaction sync as the normal
+Openworld loop without a new decision pack update and user-approved package.
+This includes movement heartbeats, collect start/cancel/complete, deposit and
+craft events as the main path for the new client.
+
 ## Locked For Now
 
 - The mode identity is `openworld`, not `rpgsuave`.

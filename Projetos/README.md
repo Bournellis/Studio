@@ -58,7 +58,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: human playtest of published Bosque Sync Responsiveness v1: collect 10+ resources quickly, deposit during pending sync, craft, leave/reopen, confirm persistence of pocket/chest/nodes, and recheck Arena Preparacao plus buff -> Resolver duelo regressions.
+  - Current next step: decide the next DraxosMobile package from updated `main`: focused Openworld/Bosque tuning or controlled expansion, Arena PVE follow-up, or another explicit polish pass. Current Openworld policy is client-owned active play with server-owned checkpoints/rewards; do not reintroduce revisioned microaction sync as the normal Bosque loop without a new decision.
 
 ## Arquivo De Design
 

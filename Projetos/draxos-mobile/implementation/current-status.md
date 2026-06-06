@@ -32,6 +32,7 @@
 - Previous visibility hotfix: restored Preparacao before Arena start, during active attempts and on pending buff choice, and restored Bosque deposit/craft visible feedback plus pending-event flush before leaving an integrated session.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
 - Current published implementation: `Bosque Offline-First Checkpoint v1` is published on `main`. It removes server-driven microaction resync from active Bosque gameplay, keeps runtime state local-first, persists local cache per save/session/ruleset and sends checkpoints for server validation/reward authority. Bosque Sync Responsiveness v1 remains the previous Bosque sync package and Arena/Bosque Visible V2 remains the previous visible package.
+- Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; the visible Bosque update appears healthy so far. The Openworld working policy is now documented as client-owned active play with server-owned checkpoints/rewards.
 - Previous Arena Season 1 package: `Arena PVE Season 1 Loop v1` groups Season 1 arenas/difficulties, shows S1 progress/reward previews, adds contextual next-step summary, opens pending buff choice without auto-selecting a buff, and preserves `buff_offer` in remote `/arena/pve/state` active attempts after update/reopen.
 - Previous Arena Season 1 release root: `internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32`
 - Previous Arena Season 1 preview: `https://d7333659.draxos-mobile-internal-alpha.pages.dev`
@@ -255,18 +256,14 @@ Artifact hashes:
 
 ## Current Gate
 
-The next operational step is human playtest of the published Bosque Sync Responsiveness v1 package before opening Arena tuning, broader Openworld expansion or new mode work.
+The next operational step is a package decision after the successful initial Bosque Offline-First Checkpoint v1 playtest. Do not reopen server-driven microaction sync for Openworld unless a new decision pack explicitly overrides the current client-owned play/server-owned rewards policy.
 
-Playtest focus:
+Decision focus:
 
-1. Start from tutorial, then confirm the first real Arena is a 3-duel run with buff choices between victories.
-2. Confirm an active run can be resumed from Arena selection after leaving/reopening.
-3. Confirm `Abandonar tentativa` and `Encerrar tentativa antiga` clear the blocker without granting completion reward.
-4. Confirm the player is no longer trapped by an inaccessible post-update Arena attempt.
-5. Confirm Preparacao appears before starting, inside blocked active/stuck attempts, inside the active-duel menu and during buff choice, and that a selected victory buff leads back to `Resolver duelo`.
-6. Confirm Bosque entry, rapid 10+ resource collection, immediate deposit during pending sync, craft feedback, deposit persistence after leaving/reopening and main menu regress cleanly after the hotfix.
-7. Confirm Season 1 selection is readable by arena/difficulty, reward preview and locked reasons.
-8. Confirm reopening during a pending buff returns to the buff choice instead of trapping or auto-selecting.
+1. Choose whether the next DraxosMobile package is focused Openworld/Bosque tuning, Arena PVE follow-up or another explicitly scoped polish pass.
+2. If Openworld is selected, start from `docs/minigames/openworld.md` and `docs/minigames/openworld-decision-pack.md`.
+3. Preserve active Bosque runtime as local/offline-first; server authority remains checkpoint, completion, reward, caps, ledger and audit.
+4. Keep Arena regressions in the manual smoke list: Preparacao visible before start/in active attempts/buff choice, and selected victory buff returns to `Resolver duelo`.
 
 ## Live Boundaries
 

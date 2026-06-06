@@ -308,6 +308,20 @@ compatibilidade para pacotes antigos.
 
 Definition: `data/definitions/openworld/forest_ruleset_v1.json`.
 
+Politica de autoridade:
+
+- gameplay ativo do Bosque e local/offline-first no cliente;
+- o servidor nao valida nem corrige microacoes em tempo real no pacote novo;
+- checkpoints compactos sao o contrato normal de persistencia integrada;
+- `mode_session_event_v1`, `collect_batch`, `collect_complete`, `deposit_all`,
+  `craft` e `move_heartbeat` permanecem como compatibilidade para pacotes
+  antigos, nao como caminho principal do cliente checkpoint-first;
+- `mode_session_complete_v1` calcula recompensa somente a partir do ultimo
+  checkpoint aceito e nunca de deltas enviados diretamente pelo cliente;
+- conflito/stale de checkpoint deve rejeitar sem mutacao parcial e devolver o
+  cliente para recuperacao explicita, nao bloquear coleta/deposito/craft durante
+  a visita local.
+
 ### `mode_sessions`
 
 Campos adicionais para modos retomaveis:
@@ -363,6 +377,11 @@ Regras:
   sessao ativa, aplica snapshot e avanca revisao.
 - `mode_session_checkpoint_v1`: valida checkpoint idempotente, ruleset, sessao
   ativa, nodes, capacidade, craft derivavel e grava uma revisao atomica.
+  O payload canonico inclui `checkpoint_id`, `base_revision`,
+  `client_sequence`, `ruleset_id`, `ruleset_version`, `ruleset_hash`,
+  `snapshot_payload` e `client_summary`; repeticao do mesmo request/checkpoint
+  com hash igual retorna a resposta ja aceita, enquanto hash divergente e
+  mismatch de idempotencia.
 - `mode_session_complete_v1`: usa somente o ultimo checkpoint aceito para
   calcular `deposited_items`, `activity_score`, caps e reward ledger.
 - `mode_session_abandon_v1`: idempotente, registra estado final e remove a

@@ -1,7 +1,7 @@
 # DraxosMobile - Documentation Index
 
 - Status: `VIVO`
-- Last updated: `2026-06-05`
+- Last updated: `2026-06-06`
 - Purpose: classify project documents so agents know what to trust, what to update and what to treat as history.
 
 ## Categories
@@ -55,7 +55,7 @@
 | `docs/minigames/mode-catalog.md` | `VIVO` | Official V1 catalog for Basebuilder, Autobattler, Towerdefense, Cardgame and Openworld. |
 | `docs/minigames/basebuilder.md` | `VIVO` | Basebuilder mode doc and descriptor pointer for current Refugio/Base ownership. |
 | `docs/minigames/autobattler.md` | `VIVO` | Autobattler mode doc and descriptor pointer for current Arena PVE ownership. |
-| `docs/minigames/openworld.md` | `VIVO` | Current Openworld Bosque design/implementation contract for fullscreen gameplay, integrated alpha bridge and Bosque Mecanico Basico v2 boundaries. |
+| `docs/minigames/openworld.md` | `VIVO` | Current Openworld Bosque design/implementation contract, including client-owned active play, checkpoint-first persistence and server-owned reward/completion authority. |
 | `docs/minigames/openworld-objectives.md` | `VIVO` | Product-intent guardrail for Bosque Mecanico Basico v2: free relaxing collect/deposit/craft/build minigame, orientation not mandatory objective. |
 | `docs/minigames/openworld-decision-pack.md` | `VIVO` | Decision pack preserving Openworld Bosque as the only approved slice and blocking expansion without a package decision. |
 | `data/definitions/openworld/forest_ruleset_v1.json` | `CONTRATO` | Active Internal Alpha ruleset definition for Openworld Bosque snapshot/events/resources/recipes. |
@@ -154,7 +154,7 @@
 - A live doc must not tell agents to start from Track 04, Track 08, Track 10, Track 14, Track 15 or Track 16 as the current stage.
 - A live doc must treat `implementation/current-status.md` as the active operational stage/status source.
 - A live doc must treat `docs/pve-arena-initial-direction.md` as the current product direction: Arena PVE initial first, PVP later.
-- A live doc must distinguish operational publication from product direction: `ARENA_BOSQUE_REGRESSION_HOTFIX_PUBLISHED_INTERNAL_ALPHA` is the current remote package, Arena PVE Season 1 Loop v1 remains the previous Season 1 package, `ARENA_DUEL_FLOW_HOTFIX_PUBLISHED_INTERNAL_ALPHA` is the previous hotfix package, Arena PVE First Real Run + Update Recovery remains the previous Arena package, Bosque v3 UX/Feel remains the previous content/polish package, Technical Hardening remains the previous technical package, Openworld Main Menu Sync remains the previous Openworld content package and Arena PVE remains the approved early-game direction after the published package is reviewed.
+- A live doc must distinguish operational publication from product direction: `BOSQUE_OFFLINE_FIRST_CHECKPOINT_V1_PUBLISHED_INTERNAL_ALPHA` is the current remote package, Bosque Sync Responsiveness v1 remains the previous Bosque sync package, Arena/Bosque Visible V2 remains the previous visible package, Arena/Bosque Regression Hotfix remains the previous visibility hotfix package, Arena PVE Season 1 Loop v1 remains the previous Season 1 package, Arena PVE remains the approved early-game direction, and Openworld/Bosque currently uses client-owned active play with server-owned checkpoints/rewards.
 - A live doc may treat `docs/pve-arena-v1.md` as the current implemented/published contract package for Arena PVE, while values marked `CALIBRAVEL_ALPHA` still require labs and human playthrough. Track 21 is preserved Arena PVE/Autobattler context over Track 20 Season 1 Arena Calibration; it must not be described as the current platform baseline.
 - Parallel hardening and new mode docs must use Foundation Hardening V2 as the current baseline, Hardening Platform V1 as the previous mode-platform baseline, Track 21 as Arena loop context, Track 18 as Arena contract, Track 16 as technical behavior/potion/crafting context and Tracks 1/2 as historical alpha/lab evidence.
 - A live doc must not direct agents to expand balance, weapons, spells, Battle Pass, economy, final visual identity or battle presentation beyond what the Arena PVE initial package explicitly needs.

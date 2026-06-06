@@ -21,6 +21,38 @@ Oficial, neste documento, significa `mode_registry.status=active` dentro do cana
 
 Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitual; e o primeiro espaco jogavel para validar sensacao de movimento, coleta, bolso, bau, crafting local e uma ponte controlada de recompensa.
 
+## Politica Operacional Atual
+
+Politica viva do Openworld/Bosque: **client-owned play, server-owned rewards**.
+
+Durante uma visita ativa, o cliente e autoridade de runtime para movimento,
+posicao, coleta ativa, nodes visuais, bolso local, bau local, craft local,
+guidance e feedback de HUD. O servidor nao deve comandar microacoes em tempo
+real nem puxar o jogador por ACK, stale revision ou snapshot tardio da mesma
+sessao.
+
+O servidor e autoridade para sessao ativa, ruleset, checkpoint aceito, limites,
+conclusao, recompensa, ledger e auditoria. A recompensa real so existe depois
+de um checkpoint aceito e de `complete` server-authoritative.
+
+Regra de regressao para agentes: nao reintroduzir `move_heartbeat`,
+`collect_start`, `collect_cancel`, `collect_complete`, `deposit_all` ou `craft`
+como caminho principal de gameplay remoto revisionado sem uma decisao explicita
+em `docs/minigames/openworld-decision-pack.md`. `collect_batch` e eventos
+legados existem por compatibilidade com pacotes antigos; o cliente novo usa
+cache local + checkpoints compactos.
+
+Snapshots remotos da mesma sessao so podem:
+
+- inicializar/recuperar a visita antes do primeiro frame jogavel;
+- confirmar metadados de checkpoint aceito;
+- recuperar conflito real fora do controle ativo, com mensagem clara para o
+  jogador.
+
+Eles nao podem transformar o mundo ja renderizado, reposicionar o jogador,
+reiniciar coleta, reaparecer node coletado, reverter bolso/bau/craft ou bloquear
+deposito/craft durante o fluxo normal.
+
 ## Bosque Mecanico Basico v2
 
 Bosque Mecanico Basico v2 redefine o slice `forest` como um minigame livre,
@@ -268,22 +300,24 @@ como caminho principal; ele usa checkpoint.
 
 Contrato legado de posicao e resync:
 
-- start e resume aplicam `player_position` persistida, pois representam entrada
-  ou retomada da sessao;
-- resync ativo da mesma sessao nao aplica `player_position`; o cliente preserva
-  a posicao local do jogador e aplica apenas snapshot autoritativo de inventario,
-  coleta, guidance e revisao;
-- se o resync retornar outra sessao ativa, o client trata como retomada e aplica
-  a posicao remota dessa sessao;
-- no SQL, somente `move_heartbeat` atualiza `player_position`; eventos de
-  coleta, deposito, craft e guidance preservam a posicao persistida;
+- este contrato existe para pacotes antigos e para recuperacao controlada;
+- o cliente checkpoint-first nao usa resync ativo como loop normal de gameplay;
+- start/resume podem aplicar `player_position` persistida somente antes de
+  devolver controle ao jogador;
+- resync da mesma sessao durante controle ativo nao aplica `player_position`,
+  `active_collection`, bolso, bau, craft, guidance ou nodes locais;
+- se o resync detectar outra sessao ativa ou conflito real, o cliente deve sair
+  do controle ativo e tratar como recuperacao explicita;
+- no caminho legado SQL, somente `move_heartbeat` atualiza `player_position`;
+  eventos de coleta, deposito, craft e guidance preservam a posicao persistida;
 - ACK de evento e patch/sanitizado: `snapshot_patch` e
-  `session.snapshot_payload` nao expõem `player_position` nem
+  `session.snapshot_payload` nao expoem `player_position` nem
   `active_collection`.
 
 `POST /modes/session/event` retorna `type=mode_event_ack` dentro do envelope
 comum de modos. Esse ACK confirma o evento e a revisao, mas nao deve ser tratado
-como snapshot completo de retomada pelo client. Durante gameplay ativo:
+como snapshot completo de retomada pelo client. Durante gameplay ativo em pacote
+legado:
 
 - `snapshot_patch` e a unica parte aplicada ao inventario/estado economico;
 - `player_position` continua client-authoritative e nao entra no patch;
