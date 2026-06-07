@@ -103,7 +103,9 @@ func craft_recipe(recipe_id: String) -> void:
 		if recipe_id == "fogueira_estavel_1":
 			var bridge: Variant = _bridge()
 			if bridge != null and bridge.has_method("flush_checkpoint"):
-				bridge.call_deferred("flush_checkpoint", true)
+				_update()
+				var checkpoint_result: Dictionary = await bridge.flush_checkpoint(true)
+				model.last_message = "Fogueira salva." if bool(checkpoint_result.get("ok", false)) else "Fogueira pendente de salvamento."
 		_update()
 		return
 	model.craft(recipe_id)

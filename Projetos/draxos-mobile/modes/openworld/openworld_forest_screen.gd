@@ -462,11 +462,11 @@ func _status_text(nearest_id: String, completed: bool) -> String:
 		return "Bolso cheio; volte ao bau"
 	if _near_chest() and not model.pocket.is_empty():
 		return "Bau proximo; deposito pronto"
-	if _near_fogueira():
-		return "Fogueira pronta"
 	if _session_state() in ["pending", "resyncing"]:
 		var pending_text := _pending_summary_text()
 		return pending_text if pending_text != "" else "Bosque salvo localmente"
+	if _near_fogueira():
+		return "Fogueira pronta"
 	var first_craft := model.first_available_recipe_name()
 	if first_craft != "":
 		return "%s pronto no craft" % first_craft

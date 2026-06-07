@@ -244,8 +244,11 @@ func _render_craft() -> void:
 func _render_station_craft() -> void:
 	_body.add_child(_label("Fogueira", 16, Color(0.90, 0.82, 0.62)))
 	var built: bool = bool(model.has_upgrade("fogueira_estavel_1"))
+	var checkpoint_pending := pending_summary.strip_edges() != "" or session_state in ["pending", "resyncing"]
 	if not built:
 		_body.add_child(_label("Construa Fogueira estavel I em Construcoes para preparar pocoes.", 13, Color(0.75, 0.72, 0.64)))
+	elif checkpoint_pending:
+		_body.add_child(_label("Salvando Fogueira antes de preparar...", 13, Color(0.78, 0.77, 0.70)))
 	elif not station_nearby:
 		_body.add_child(_label("Aproxime-se da Fogueira para preparar pocoes globais.", 13, Color(0.75, 0.72, 0.64)))
 	else:
@@ -270,7 +273,7 @@ func _render_station_craft() -> void:
 		]
 		button.tooltip_text = "Custo: %s" % _station_cost_text(recipe)
 		button.custom_minimum_size = Vector2(0, 48)
-		button.disabled = (not built) or (not station_nearby) or network_busy or missing != ""
+		button.disabled = (not built) or checkpoint_pending or (not station_nearby) or network_busy or missing != ""
 		button.pressed.connect(func(id := recipe_id) -> void:
 			station_craft_requested.emit(id)
 		)

@@ -219,6 +219,109 @@ func test_resume_prefers_local_cache_and_remote_metadata_does_not_transform_worl
 	assert_eq(int(model.chest.get("folha", 0)), 0)
 	assert_eq(str(model.last_message), "Bau e mochila salvos.")
 
+func test_resume_discards_expired_remote_session_fallback_and_starts_new_visit() -> void:
+	var model = ModelScript.new()
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	var bridge = _bridge(model, client, store)
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"server_time": _unix_future(0),
+			"active_session": {},
+			"sessions": [
+				_session_payload("session-expired", 9, {
+					"chest": {"galho": 4},
+					"collected_nodes": {"node_galho_01": true},
+				}, _unix_past(7201), _unix_past(1)),
+			],
+		},
+	}
+	client.start_result = {
+		"ok": true,
+		"body": {
+			"session": _session_payload("session-new", 1, {
+				"chest": {"galho": 4},
+				"collected_nodes": {},
+			}),
+		},
+	}
+
+	await bridge.resume_or_start_session()
+
+	assert_eq(bridge.server_session_id(), "session-new")
+	assert_eq(client.start_calls.size(), 1)
+	assert_false(bool(Dictionary(bridge.debug_snapshot()).get("checkpoint_dirty", true)))
+	assert_false(bridge.has_pending_collected_node("node_galho_01"))
+	assert_eq(int(model.chest.get("galho", 0)), 4)
+	assert_eq(str(model.last_message), "Nova visita ao Bosque.")
+
+func test_resume_discards_expired_local_cache_when_server_has_no_active_session() -> void:
+	var model = ModelScript.new()
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	store.openworld_local_state = _local_state("session-local-expired", 8, {
+		"chest": {"galho": 9},
+		"collected_nodes": {"node_galho_01": true},
+	}, _unix_past(7201), _unix_past(1))
+	var bridge = _bridge(model, client, store)
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"server_time": _unix_future(0),
+			"active_session": {},
+			"sessions": [],
+		},
+	}
+	client.start_result = {
+		"ok": true,
+		"body": {
+			"session": _session_payload("session-new-local-expired", 1, {
+				"chest": {"folha": 2},
+				"collected_nodes": {},
+			}),
+		},
+	}
+
+	await bridge.resume_or_start_session()
+
+	assert_eq(bridge.server_session_id(), "session-new-local-expired")
+	assert_eq(client.start_calls.size(), 1)
+	assert_eq(int(model.chest.get("galho", 0)), 0)
+	assert_eq(int(model.chest.get("folha", 0)), 2)
+	assert_false(bridge.has_pending_collected_node("node_galho_01"))
+	assert_eq(str(store.openworld_active_session_snapshot().get("session_id", "")), "session-new-local-expired")
+
+func test_durable_campfire_alias_survives_upgrade_only_snapshot() -> void:
+	var model = ModelScript.new()
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	var bridge = _bridge(model, client, store)
+	bridge.hydrate_session(_session_payload("session-fogueira", 4, {
+		"upgrades": {"fogueira_estavel_1": true},
+	}))
+
+	assert_true(bool(model.upgrades.get("fogueira_estavel_1", false)))
+	assert_true(bool(model.structures.get("fogueira_estavel_1", false)))
+	assert_true(bool(Dictionary(store.openworld_durable_progress_snapshot().get("upgrades", {})).get("fogueira_estavel_1", false)))
+	assert_true(bool(Dictionary(store.openworld_durable_progress_snapshot().get("structures", {})).get("fogueira_estavel_1", false)))
+
+func test_campfire_craft_checkpoint_uses_explicit_pending_status() -> void:
+	var model = ModelScript.new()
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	var bridge = _bridge(model, client, store)
+	bridge.hydrate_session(_session_payload("session-fogueira-pending", 2, {}))
+
+	bridge.record_event_deferred("craft", {
+		"recipe_id": "fogueira_estavel_1",
+		"position": {"x": 305, "y": 330},
+		"session_seconds": 18,
+	})
+
+	assert_string_contains(bridge.pending_summary_text(), "Fogueira")
+	assert_eq(str(Dictionary(bridge.debug_snapshot()).get("last_checkpoint_subject", "")), "fogueira_estavel_1")
+
 func test_collect_and_deposit_save_checkpoint_without_legacy_microevents() -> void:
 	var model = ModelScript.new()
 	var client := FakeSupabaseClient.new()
@@ -330,27 +433,35 @@ func _bridge(model: Object, client: Node, store: Node):
 	add_child_autofree(bridge)
 	return bridge
 
-func _session_payload(session_id: String, revision: int, snapshot: Dictionary) -> Dictionary:
+func _session_payload(session_id: String, revision: int, snapshot: Dictionary, started_at: int = 0, expires_at: int = 0) -> Dictionary:
 	var payload := snapshot.duplicate(true)
 	if not payload.has("ruleset_id"):
 		payload["ruleset_id"] = ModelScript.RULESET_ID
 	if not payload.has("ruleset_version"):
 		payload["ruleset_version"] = ModelScript.RULESET_VERSION
+	var started := started_at if started_at > 0 else _unix_past(60)
+	var expires := expires_at if expires_at > 0 else _unix_future(3600)
 	return {
 		"id": session_id,
 		"status": "started",
+		"started_at": started,
+		"expires_at": expires,
 		"snapshot_revision": revision,
 		"snapshot_payload": payload,
 	}
 
-func _local_state(session_id: String, revision: int, snapshot: Dictionary) -> Dictionary:
+func _local_state(session_id: String, revision: int, snapshot: Dictionary, started_at: int = 0, expires_at: int = 0) -> Dictionary:
 	var payload := snapshot.duplicate(true)
 	payload["ruleset_id"] = ModelScript.RULESET_ID
 	payload["ruleset_version"] = ModelScript.RULESET_VERSION
+	var started := started_at if started_at > 0 else _unix_past(60)
+	var expires := expires_at if expires_at > 0 else _unix_future(3600)
 	return {
 		"schema_version": "openworld_forest_local_checkpoint_v1",
 		"save_type": "normal",
 		"session_id": session_id,
+		"started_at": started,
+		"expires_at": expires,
 		"ruleset_id": ModelScript.RULESET_ID,
 		"ruleset_version": ModelScript.RULESET_VERSION,
 		"snapshot_revision": revision,
@@ -359,6 +470,12 @@ func _local_state(session_id: String, revision: int, snapshot: Dictionary) -> Di
 		"checkpoint_dirty": false,
 		"snapshot_payload": payload,
 	}
+
+func _unix_future(seconds: int) -> int:
+	return int(Time.get_unix_time_from_system()) + seconds
+
+func _unix_past(seconds: int) -> int:
+	return int(Time.get_unix_time_from_system()) - seconds
 
 func _checkpoint_ack(session_id: String, revision: int, checkpoint_id: String, client_sequence: int) -> Dictionary:
 	return {

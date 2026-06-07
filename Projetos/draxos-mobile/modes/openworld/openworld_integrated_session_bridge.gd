@@ -7,6 +7,8 @@ const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 
 const CHECKPOINT_RETRY_SECONDS := 1.25
 const MAX_CHECKPOINT_RETRY_BACKOFF_SECONDS := 8.0
+const MAX_LOCAL_SESSION_CACHE_SECONDS := 7200
+const LOCAL_SESSION_CACHE_GRACE_SECONDS := 60
 const ACTION_SCOPE_TEMPLATE := "mode:openworld:%s"
 const SOURCE_ID := "open_mode_shell:openworld"
 const LOCAL_STATE_SCHEMA := "openworld_forest_local_checkpoint_v1"
@@ -27,6 +29,8 @@ var access_token := ""
 var last_result_text := ""
 
 var _server_session_id := ""
+var _server_started_at_unix := 0
+var _server_expires_at_unix := 0
 var _snapshot_revision := 0
 var _server_synced := false
 var _network_busy := false
@@ -36,6 +40,7 @@ var _checkpoint_retry_scheduled := false
 var _checkpoint_retry_attempts := 0
 var _client_sequence := 0
 var _accepted_checkpoint_id := ""
+var _last_checkpoint_subject := ""
 var _pending_collected_nodes: Dictionary = {}
 var _local_collected_nodes: Dictionary = {}
 var _last_pending_request_id := ""
@@ -92,6 +97,11 @@ func is_completed() -> bool:
 	return _completed
 
 func pending_summary_text() -> String:
+	if _last_checkpoint_subject == "fogueira_estavel_1":
+		if _last_pending_request_id != "" or _checkpoint_in_flight:
+			return "Salvando Fogueira..."
+		if _checkpoint_dirty or _checkpoint_retry_scheduled:
+			return "Fogueira pendente de salvamento"
 	if _last_pending_request_id != "":
 		return "Salvando progresso do Bosque"
 	if _checkpoint_in_flight:
@@ -147,6 +157,9 @@ func resume_or_start_session() -> void:
 			_set_model_message("Bau e mochila salvos.")
 			_emit_state_changed()
 			return
+		if loaded_local:
+			_discard_local_checkpoint_state()
+			loaded_local = false
 		if not active_session.is_empty() and hydrate_session(active_session, true):
 			last_result_text = "Bosque retomado."
 			_set_model_message("Bosque retomado.")
@@ -155,6 +168,9 @@ func resume_or_start_session() -> void:
 			return
 		if not loaded_local:
 			await start_session()
+			if _server_session_id != "":
+				_set_model_message("Nova visita ao Bosque.")
+				_emit_state_changed()
 			return
 	if loaded_local:
 		_session_state = SESSION_PENDING if _checkpoint_dirty else SESSION_SYNCED
@@ -211,6 +227,9 @@ func start_session() -> void:
 	if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
 		_remember_durable_progress_from_body(body)
 		hydrate_session(_as_dictionary(body.get("session", {})), true)
+		var durable_patch := _durable_progress_patch(_durable_progress_cache_snapshot())
+		if not durable_patch.is_empty():
+			apply_remote_snapshot(durable_patch, false)
 		_last_pending_request_id = ""
 		last_result_text = "Bosque iniciado."
 		_set_model_message("Bosque pronto.")
@@ -374,6 +393,8 @@ func hydrate_session(session: Dictionary, apply_remote_position := true) -> bool
 	if session_id == "":
 		return false
 	_server_session_id = session_id
+	_server_started_at_unix = _timestamp_to_unix(session.get("started_at", 0))
+	_server_expires_at_unix = _timestamp_to_unix(session.get("expires_at", 0))
 	_snapshot_revision = int(session.get("snapshot_revision", 0))
 	_completed = str(session.get("status", "started")) == "completed"
 	var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
@@ -392,6 +413,7 @@ func hydrate_session(session: Dictionary, apply_remote_position := true) -> bool
 	_checkpoint_in_flight = false
 	_checkpoint_retry_scheduled = false
 	_pending_collected_nodes = {}
+	_last_checkpoint_subject = ""
 	_session_state = SESSION_COMPLETED if _completed else SESSION_SYNCED
 	_save_local_checkpoint_state()
 	_emit_state_changed()
@@ -431,9 +453,9 @@ func record_event_deferred(event_type: String, event_payload: Dictionary) -> voi
 			var node_id := str(payload.get("node_id", "")).strip_edges()
 			if node_id != "":
 				remember_pending_collected_node(node_id)
-			_mark_checkpoint_dirty(event_type)
+			_mark_checkpoint_dirty(event_type, node_id)
 		"deposit_all", "craft", "guidance_update":
-			_mark_checkpoint_dirty(event_type)
+			_mark_checkpoint_dirty(event_type, str(payload.get("recipe_id", "")).strip_edges())
 		"collect_start", "collect_cancel", "move_heartbeat":
 			_save_local_checkpoint_state()
 		_:
@@ -515,6 +537,7 @@ func _apply_checkpoint_ack(body: Dictionary, sent_sequence: int) -> void:
 		_pending_collected_nodes = {}
 		_server_synced = true
 		_session_state = SESSION_SYNCED
+		_last_checkpoint_subject = ""
 	else:
 		_checkpoint_dirty = true
 		_server_synced = false
@@ -605,6 +628,7 @@ func debug_snapshot() -> Dictionary:
 		"checkpoint_dirty": _checkpoint_dirty,
 		"checkpoint_in_flight": _checkpoint_in_flight,
 		"accepted_checkpoint_id": _accepted_checkpoint_id,
+		"last_checkpoint_subject": _last_checkpoint_subject,
 		"client_sequence": _client_sequence,
 		"last_pending_request_id": _last_pending_request_id,
 	}
@@ -617,9 +641,10 @@ func record_exit_preserved() -> void:
 		call_deferred("flush_checkpoint", false)
 	_emit_client_telemetry("mode_session_exit_preserved", {"result": "ok"})
 
-func _mark_checkpoint_dirty(event_type: String) -> void:
+func _mark_checkpoint_dirty(event_type: String, checkpoint_subject := "") -> void:
 	_client_sequence += 1
 	_checkpoint_dirty = true
+	_last_checkpoint_subject = checkpoint_subject.strip_edges()
 	_server_synced = false
 	_session_state = SESSION_PENDING
 	if model != null and str(model.get("last_message")).strip_edges() == "":
@@ -745,6 +770,8 @@ func _durable_progress_matches_context(progress: Dictionary) -> bool:
 	return true
 
 func _durable_progress_patch(progress: Dictionary) -> Dictionary:
+	if progress.is_empty():
+		return {}
 	if not _durable_progress_matches_context(progress):
 		return {}
 	return {
@@ -770,16 +797,22 @@ func _load_local_checkpoint_state() -> bool:
 		return false
 	if int(local_state.get("ruleset_version", 0)) != ModelScript.RULESET_VERSION:
 		return false
+	if not _local_session_cache_is_live(local_state):
+		_clear_local_checkpoint_state()
+		return false
 	var snapshot_payload := _as_dictionary(local_state.get("snapshot_payload", {}))
 	if snapshot_payload.is_empty():
 		return false
 	_server_session_id = str(local_state.get("session_id", "")).strip_edges()
 	if _server_session_id == "":
 		return false
+	_server_started_at_unix = _timestamp_to_unix(local_state.get("started_at", 0))
+	_server_expires_at_unix = _timestamp_to_unix(local_state.get("expires_at", 0))
 	_snapshot_revision = int(local_state.get("snapshot_revision", 0))
 	_accepted_checkpoint_id = str(local_state.get("accepted_checkpoint_id", "")).strip_edges()
 	_client_sequence = int(local_state.get("client_sequence", 0))
 	_checkpoint_dirty = bool(local_state.get("checkpoint_dirty", false))
+	_last_checkpoint_subject = str(local_state.get("last_checkpoint_subject", "")).strip_edges()
 	_pending_collected_nodes = _true_dictionary(local_state.get("pending_collected_nodes", {}))
 	_local_collected_nodes = _true_dictionary(snapshot_payload.get("collected_nodes", {}))
 	_last_position_payload = _as_dictionary(snapshot_payload.get("player_position", {})).duplicate(true)
@@ -808,6 +841,8 @@ func _save_local_checkpoint_state(reward_pending := false) -> void:
 		"schema_version": LOCAL_STATE_SCHEMA,
 		"save_type": _active_save_type(),
 		"session_id": _server_session_id,
+		"started_at": _server_started_at_unix,
+		"expires_at": _server_expires_at_unix,
 		"ruleset_id": ModelScript.RULESET_ID,
 		"ruleset_version": ModelScript.RULESET_VERSION,
 		"snapshot_revision": _snapshot_revision,
@@ -815,6 +850,7 @@ func _save_local_checkpoint_state(reward_pending := false) -> void:
 		"client_sequence": _client_sequence,
 		"checkpoint_dirty": _checkpoint_dirty,
 		"checkpoint_in_flight": _checkpoint_in_flight,
+		"last_checkpoint_subject": _last_checkpoint_subject,
 		"reward_pending": reward_pending,
 		"pending_collected_nodes": _pending_collected_nodes.duplicate(true),
 		"snapshot_payload": snapshot_payload,
@@ -828,6 +864,25 @@ func _clear_local_checkpoint_state() -> void:
 		session_store.call("clear_openworld_active_session_state")
 	elif session_store.has_method("clear_openworld_local_state"):
 		session_store.call("clear_openworld_local_state")
+
+func _discard_local_checkpoint_state() -> void:
+	_clear_local_checkpoint_state()
+	_server_session_id = ""
+	_server_started_at_unix = 0
+	_server_expires_at_unix = 0
+	_snapshot_revision = 0
+	_accepted_checkpoint_id = ""
+	_client_sequence = 0
+	_checkpoint_dirty = false
+	_checkpoint_in_flight = false
+	_checkpoint_retry_scheduled = false
+	_pending_collected_nodes = {}
+	_local_collected_nodes = {}
+	_last_pending_request_id = ""
+	_last_checkpoint_subject = ""
+	_server_synced = false
+	_completed = false
+	_session_state = SESSION_PREVIEW
 
 func _apply_remote_metadata(session: Dictionary) -> void:
 	if not _same_session(session):
@@ -844,6 +899,7 @@ func _apply_remote_metadata(session: Dictionary) -> void:
 		_accepted_checkpoint_id = str(checkpoint.get("accepted_checkpoint_id", checkpoint.get("checkpoint_id", _accepted_checkpoint_id))).strip_edges()
 		_checkpoint_dirty = false
 		_pending_collected_nodes = {}
+		_last_checkpoint_subject = ""
 	_server_synced = not _checkpoint_dirty
 	_session_state = SESSION_PENDING if _checkpoint_dirty else SESSION_SYNCED
 	_save_local_checkpoint_state()
@@ -852,15 +908,60 @@ func _same_session(session: Dictionary) -> bool:
 	return not session.is_empty() and str(session.get("id", "")).strip_edges() == _server_session_id
 
 func _active_session_from_body(body: Dictionary) -> Dictionary:
+	var now_unix := _body_now_unix(body)
 	var active_session := _as_dictionary(body.get("active_session", {}))
-	if active_session.is_empty():
-		var sessions := _as_array(body.get("sessions", []))
-		for session_variant: Variant in sessions:
-			var candidate := _as_dictionary(session_variant)
-			if str(candidate.get("status", "")) == "started":
-				active_session = candidate
-				break
-	return active_session
+	if not active_session.is_empty():
+		return active_session if _session_is_live(active_session, now_unix) else {}
+	var sessions := _as_array(body.get("sessions", []))
+	for session_variant: Variant in sessions:
+		var candidate := _as_dictionary(session_variant)
+		if str(candidate.get("status", "")) == "started" and _session_is_live(candidate, now_unix):
+			return candidate
+	return {}
+
+func _local_session_cache_is_live(local_state: Dictionary) -> bool:
+	var now_unix := int(Time.get_unix_time_from_system())
+	var expires_at := _timestamp_to_unix(local_state.get("expires_at", 0))
+	if expires_at <= 0 or expires_at <= now_unix:
+		return false
+	var started_at := _timestamp_to_unix(local_state.get("started_at", 0))
+	if started_at > 0 and now_unix - started_at > MAX_LOCAL_SESSION_CACHE_SECONDS + LOCAL_SESSION_CACHE_GRACE_SECONDS:
+		return false
+	return true
+
+func _session_is_live(session: Dictionary, now_unix: int) -> bool:
+	if str(session.get("status", "")) != "started":
+		return false
+	var expires_at := _timestamp_to_unix(session.get("expires_at", 0))
+	if expires_at <= 0:
+		return false
+	return expires_at > now_unix
+
+func _body_now_unix(body: Dictionary) -> int:
+	var server_now := _timestamp_to_unix(body.get("server_time", 0))
+	return server_now if server_now > 0 else int(Time.get_unix_time_from_system())
+
+func _timestamp_to_unix(value: Variant) -> int:
+	if value is int:
+		return int(value)
+	if value is float:
+		return int(value)
+	var text := str(value).strip_edges()
+	if text == "" or text == "<null>":
+		return 0
+	if text.is_valid_int():
+		return int(text)
+	var clean := text.replace("Z", "")
+	var plus_index := clean.find("+", 19)
+	if plus_index >= 0:
+		clean = clean.substr(0, plus_index)
+	var minus_index := clean.find("-", 19)
+	if minus_index >= 0:
+		clean = clean.substr(0, minus_index)
+	if clean.length() > 19:
+		clean = clean.substr(0, 19)
+	return int(Time.get_unix_time_from_datetime_string(clean))
+
 
 func _remember_runtime_context(session_seconds: float, position_payload: Dictionary) -> void:
 	_last_session_seconds = maxi(_last_session_seconds, int(session_seconds))

@@ -375,9 +375,12 @@ func _session_payload(session_id: String, revision: int, snapshot: Dictionary) -
 	var payload := snapshot.duplicate(true)
 	if not payload.has("ruleset_id"):
 		payload["ruleset_id"] = ModelScript.RULESET_ID
+	var now := int(Time.get_unix_time_from_system())
 	return {
 		"id": session_id,
 		"status": "started",
+		"started_at": now - 60,
+		"expires_at": now + 3600,
 		"snapshot_revision": revision,
 		"snapshot_payload": payload,
 	}

@@ -940,6 +940,7 @@ func _integrated_session(
 	}
 	if not guidance.is_empty():
 		snapshot_payload["guidance"] = guidance.duplicate(true)
+	var now := int(Time.get_unix_time_from_system())
 	return {
 		"id": session_id,
 		"mode_id": "openworld",
@@ -947,6 +948,8 @@ func _integrated_session(
 		"ruleset_id": "openworld_forest_ruleset_v1",
 		"ruleset_version": 1,
 		"status": "started",
+		"started_at": now - 60,
+		"expires_at": now + 3600,
 		"snapshot_revision": revision,
 		"snapshot_payload": snapshot_payload,
 	}
