@@ -15,7 +15,7 @@
 
 `Openworld Bosque` e o primeiro slice do modo `Openworld`. Ele nasceu do prototipo `Rpgsuave Bosque`, mas V1 renomeia o modo de verdade: novos payloads, rotas, settings, docs e testes usam `openworld`.
 
-Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Pacote atual em implementacao/publicacao: `Bosque World Hub Domain Separation v1`, version code `8`, separando materiais locais do Bosque dos recursos globais da conta e endurecendo `structures.fogueira_estavel_1`. `Bosque Fogueira Potion Crafting v1` permanece como pacote anterior publicado em `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c`, preview tecnico `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`. `Bosque Durable Bau Mochila v1` preserva o baseline duravel anterior: `internal-alpha/v0-bosque-durable-bau-mochila-v1-20260606-6e7ca6b`, preview tecnico `https://39198a35.draxos-mobile-internal-alpha.pages.dev`.
+Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Pacote atual em implementacao/publicacao: `Bosque Session Lifecycle & Durable Structures Hotfix v1`, version code `9`, corrigindo retomada de sessao expirada e persistencia duravel de estruturas. `Bosque World Hub Domain Separation v1` permanece como pacote anterior publicado em `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05`, preview tecnico `https://d1872010.draxos-mobile-internal-alpha.pages.dev`. `Bosque Fogueira Potion Crafting v1` permanece como pacote station-craft anterior em `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c`, preview tecnico `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`.
 
 ## Visao
 
@@ -59,6 +59,13 @@ pendente sao estado da visita atual. Nova visita pode repovoar nodes coletaveis,
 mas nasce com o bau, mochila, capacidade e estruturas ja aceitos para o save.
 `Fogueira Estavel I` e estrutura duravel local e tambem estacao
 `fogueira_estavel_1` para receitas globais de pocao.
+
+Sessao de visita expira em 2 horas. Uma sessao expirada nunca deve ser retomada
+como `active_session`, mesmo que ainda exista em `mode_sessions` ou no cache
+local. Depois da expiracao, entrar no Bosque inicia nova visita com
+`collected_nodes = {}` e full spawn do ruleset, injetando somente o progresso
+duravel aceito (`Bau`, `Mochila`, `upgrades`, `structures`). Essa regra e a
+fronteira entre ciclo de visita e progresso do save.
 
 Regra de regressao para agentes: nao reintroduzir `move_heartbeat`,
 `collect_start`, `collect_cancel`, `collect_complete`, `deposit_all` ou `craft`
@@ -119,6 +126,9 @@ Contratos de produto para v2:
 - assets procedurais em Godot, sem raster externo novo;
 - backend em `integrated_alpha` por `/modes/state`, `/modes/session/start`, `/modes/session/checkpoint`, `/modes/session/complete` e `/modes/session/abandon`;
 - snapshot remoto retomavel por ate 2 horas, mas aplicado como bootstrap/recuperacao e nao como rollback visual durante controle ativo;
+- sessao remota/local expirada, antiga demais ou sem `expires_at` valido e
+  descartada como visita ativa; a proxima entrada cria nova visita com
+  progresso duravel preservado e nodes resetados;
 - cache local do Bosque por save/sessao/ruleset para nodes coletados, bolso, bau, upgrades, guidance, posicao e checkpoint pendente;
 - cache local separado entre `openworld_active_session_cache` e
   `openworld_durable_progress_cache`;
@@ -196,6 +206,9 @@ economia; sao folga de aprendizagem para o minigame.
   `structures.fogueira_estavel_1`;
 - enquanto estiver local e pendente, pode aparecer como estrutura `salvando`,
   mas receitas globais so liberam depois do checkpoint aceito;
+- mensagens de estado devem ser honestas: `Salvando Fogueira...` antes do ACK,
+  `Fogueira salva.` apos checkpoint aceito e `Fogueira pendente de salvamento.`
+  em falha/rede;
 - nao cria combate, NPC, quest, economia ampla, respawn ou recompensa nova;
 - pode aparecer no resumo leve como estrutura construida.
 
@@ -219,8 +232,9 @@ economia; sao folga de aprendizagem para o minigame.
 
 O Bosque usa dois estados locais e um progresso duravel server-owned:
 
-- `openworld_active_session_cache`: visita ativa, checkpoint pendente, posicao,
-  coleta em andamento, nodes coletados na visita e metadados de retry;
+- `openworld_active_session_cache`: visita ativa, `started_at`, `expires_at`,
+  checkpoint pendente, posicao, coleta em andamento, nodes coletados na visita e
+  metadados de retry;
 - `openworld_durable_progress_cache`: `pocket`, `chest`, `upgrades` e metadados
   de progresso aceito por save;
 - `mode_progress.progress_payload` com schema
@@ -236,6 +250,12 @@ Checkpoints aceitos atualizam o snapshot da sessao e tambem o progresso duravel
 em `mode_progress`. A conclusao usa o ultimo checkpoint aceito, faz merge do
 progresso duravel e atualiza o ledger para que recompensa real nao seja duplicada
 por itens persistentes no bau.
+
+`structures` e campo top-level canonico do progresso duravel. Para
+compatibilidade, `upgrades.fogueira_estavel_1 = true` tambem implica
+`structures.fogueira_estavel_1 = true`, e qualquer checkpoint/snapshot aceito
+deve retornar os dois quando a Fogueira existe. Checkpoint e complete nao podem
+remover `structures`.
 
 ## Fogueira E Pocao Global
 
@@ -325,7 +345,11 @@ Reward Bridge novo ou fronteira nova com Basebuilder precisa de pacote proprio.
 - Abandon: `POST /modes/session/abandon`
 - Ruleset ativo: `openworld_forest_ruleset_v1`
 
-`GET /modes/state?mode_id=openworld` retorna `active_session` quando existe sessao `started` nao expirada, incluindo `snapshot_payload`, `snapshot_revision`, `expires_at` e `last_event_at`.
+`GET /modes/state?mode_id=openworld` retorna `active_session` somente quando
+existe sessao `started` nao expirada, incluindo `snapshot_payload`,
+`snapshot_revision`, `started_at`, `expires_at` e `last_event_at`. Sessoes
+`started` expiradas podem existir para historico/auditoria, mas devem ser
+projetadas como `expired` ou ignoradas como candidatas de retomada.
 
 Contrato checkpoint-first:
 

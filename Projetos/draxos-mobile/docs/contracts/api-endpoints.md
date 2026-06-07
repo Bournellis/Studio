@@ -1,6 +1,6 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-06-06`
+- Ultima atualizacao: `2026-06-07`
 - Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; Bosque Fogueira Potion Crafting v1 adiciona `POST /crafting/station-craft` como ponte transacional entre progresso duravel do Bosque e consumiveis globais da conta.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
@@ -185,7 +185,7 @@ novo.
 | POST | `/telemetry/client-event` | `telemetry` | Sim, opcional | Nao | Grava diagnostico client; novos eventos permitidos incluem `request_latency`, `surface_refresh`, `surface_cache_rendered` e `action_latency`; `player_id` pode ser nulo antes de conta/save. |
 | POST | `/progression-lab/apply` | `save-scoped` | Sim, exige `progression_lab` | `request_id/request_hash` por save Lab | Interno/gated; aplica healthy save apenas no Lab e nunca escreve no Normal; reset/seed Track 16 acontece dentro da RPC transacional. |
 | GET | `/modes/registry` | `mode` | Sim | Nao | Registry dos cinco modos oficiais. |
-| GET | `/modes/state?mode_id=<id>` | `save-scoped` | Sim | Nao | Estado de um modo no save ativo; Openworld retorna `active_session` com snapshot/revision quando retomavel. |
+| GET | `/modes/state?mode_id=<id>` | `save-scoped` | Sim | Nao | Estado de um modo no save ativo; Openworld retorna `active_session` somente quando a sessao `started` ainda nao expirou. |
 | POST | `/modes/session/start` | `save-scoped` | Sim | `request_id/request_hash` por modo/save | Inicia sessao generica para modos que usam Mode sessions. |
 | POST | `/modes/session/event` | `save-scoped` | Sim | `request_id/request_hash` por modo/save/revision | Atualiza snapshot remoto de modo event-sourced e rejeita stale revision. |
 | POST | `/modes/session/complete` | `save-scoped` | Sim | `request_id/request_hash` por modo/save | Completa sessao e aplica Reward Bridge server-authoritative a partir do snapshot validado. |
@@ -1452,7 +1452,8 @@ Erros minimos: `INVALID_RECIPE`, `INVALID_QUANTITY`, `INSUFFICIENT_RESOURCES`, `
 ### `POST /crafting/station-craft`
 
 Status: **implementado em Bosque Fogueira Potion Crafting v1** e endurecido
-em Bosque World Hub Domain Separation v1.
+em Bosque World Hub Domain Separation v1 e Bosque Session Lifecycle & Durable
+Structures Hotfix v1.
 
 Scope: `save-scoped`. Usa `x-draxos-save-type`.
 
@@ -1482,8 +1483,10 @@ Request minimo:
 Regras:
 
 - exige `request_id/request_hash` e idempotencia v1;
-- valida save ativo, sessao ativa do Bosque, ruleset, Fogueira construida em
+- valida save ativo, sessao ativa do Bosque, ruleset, Fogueira confirmada em
   `mode_progress.progress_payload.structures`/`upgrades` e revisao duravel;
+- nao aceita somente a Fogueira visual/local pendente; o cliente deve aguardar
+  checkpoint critico aceito antes de liberar receitas globais;
 - consome materiais do `mode_progress.progress_payload.chest`;
 - consome recursos globais como `po_osso` de `resources`;
 - nao consome `pocket`/mochila e nao trata `resto_ritual`/`po_cinzento` como

@@ -1,6 +1,6 @@
 # Database Schema Contract
 
-- Ultima atualizacao: `2026-06-06`
+- Ultima atualizacao: `2026-06-07`
 - Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis, Fogueira como estacao de crafting, e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1. Arena PVE v1 acrescenta schema implementado para tentativa, duelos, buffs, progresso, first clears e perfis DB-side de recompensa.
 
 Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
@@ -30,6 +30,7 @@ Migrations atuais:
 - `202606050002_account_reset_request_hash_v1.sql`: adiciona `reset_player_save_v1(game_save_id, request_id, request_hash, payload)`, exige hash obrigatorio, usa idempotencia v1 por `game_saves.id`, move limpeza de Arena/Modes/Track 16 para a transacao SQL e preserva social/guilda/chat account-wide.
 - `202606060003_bosque_fogueira_potion_crafting_v1.sql`: adiciona `station_craft` ao audit de `mode_session_events`, registra `fogueira_estavel_1` como estacao via progresso duravel/structures, cria `craft_station_item_v1`, permite `build_potion_equip_v1` para todas as pocoes simples e bloqueia receitas de Fogueira no craft direto.
 - `202606060004_bosque_world_hub_domain_separation_v1.sql`: separa materiais locais do Bosque de recursos globais da conta, normaliza `ossos_preview` -> `resto_ritual` e `po_osso_preview` -> `po_cinzento`, reescreve checkpoint para aceitar/retornar `structures` e atualiza snapshots/progresso duravel legados.
+- `202606070001_openworld_bosque_session_lifecycle_structures_v1.sql`: reforca ciclo de vida da visita do Bosque, canonicaliza `fogueira_estavel_1` em `upgrades` e `structures`, persiste `structures` em progresso duravel, injeta `structures` na nova sessao e reseta `collected_nodes` ao iniciar visita nova.
 
 ## Regras De Escopo De Servico
 
@@ -350,6 +351,9 @@ Regras:
 
 - `openworld/forest` usa `openworld_forest_snapshot_v1`;
 - sessao ativa expira em 2 horas;
+- sessao `started` expirada e historico/auditoria, nao candidata de retomada;
+  `/modes/state` deve marcar/projetar como `expired` ou omitir de
+  `active_session`;
 - no maximo uma sessao `started` por save/mode/slice;
 - completion exige checkpoint aceito compativel com a revisao mais recente;
 - recompensa real deriva apenas do `snapshot_payload` validado pelo servidor.
@@ -385,6 +389,8 @@ Regras:
   exibir;
 - start injeta `pocket`, `chest`, `upgrades` e `structures` duraveis no snapshot inicial da
   nova sessao;
+- start/checkpoint/complete canonicalizam `fogueira_estavel_1` nos dois campos:
+  `upgrades.fogueira_estavel_1` e `structures.fogueira_estavel_1`;
 - nova sessao com progresso existente comeca com nodes coletados vazios e com
   bau/mochila/estruturas preservados;
 - checkpoint aceito atualiza `mode_sessions.snapshot_payload` e

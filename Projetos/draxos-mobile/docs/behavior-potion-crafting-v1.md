@@ -1,7 +1,7 @@
 # DraxosMobile - Behavior And Potion Crafting
 
 - Status: `VIVO`
-- Data: `2026-06-06`
+- Data: `2026-06-07`
 - Track fonte: `implementation/tracks/track-16-behavior-crafting/`
 - Papel atual: referencia viva para pocoes, crafting, estacoes e comportamento simples.
 
@@ -38,6 +38,9 @@ Use este documento quando a tarefa tocar:
 - `Fogueira Estavel I` deve persistir em `upgrades.fogueira_estavel_1` e
   `structures.fogueira_estavel_1`.
 - O craft de estacao exige checkpoint aceito do Bosque antes de consumir materiais do Bau e recursos globais.
+- Fogueira recem-construida libera painel visual localmente, mas receitas
+  globais ficam bloqueadas como `Salvando Fogueira...` ate
+  `structures.fogueira_estavel_1` estar confirmada no progresso duravel.
 - Materiais de estacao saem do `Bau` duravel do Bosque, nao da mochila/bolso.
 - Receitas de estacao v1:
   - `craft_pocao_vida`: `folha x2`, `cogumelo x1` do Bau + `po_osso x25` da conta -> `pocao_vida x1`;
@@ -99,6 +102,9 @@ Track 16 nasceu como pacote tecnico local em `2026-05-28`. Depois disso:
 - Bosque World Hub Domain Separation v1 separa itens locais de recursos globais
   (`resto_ritual`/`po_cinzento` vs `ossos`/`po_osso`) e endurece a persistencia
   duravel da Fogueira como estrutura/estacao.
+- Bosque Session Lifecycle & Durable Structures Hotfix v1 corrige retomada de
+  sessao expirada e reforca que a Fogueira so vira estacao global depois de
+  checkpoint aceito e `structures` duravel confirmado.
 
 ## Guardrails
 

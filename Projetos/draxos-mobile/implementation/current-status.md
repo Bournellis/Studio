@@ -1,24 +1,27 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-06-06`
+- Last updated: `2026-06-07`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Bosque World Hub Domain Separation v1`
-- Active stage status: `BOSQUE_WORLD_HUB_DOMAIN_SEPARATION_V1_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Bosque Session Lifecycle & Durable Structures Hotfix v1`
+- Active stage status: `BOSQUE_SESSION_LIFECYCLE_STRUCTURES_HOTFIX_V1_IMPLEMENTED_PENDING_PUBLICATION`
 - Build channel: `internal_alpha`
-- Version: `0.0.8-alpha.0`
-- Version code: `8`
+- Version: `0.0.9-alpha.0`
+- Version code: `9`
 
 ## Current Truth
 
 - Latest published remote package: `Bosque World Hub Domain Separation v1`.
+- Current local release candidate: `Bosque Session Lifecycle & Durable Structures Hotfix v1`.
+- Candidate release root: `internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-<sha>`
 - Release root: `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
 - Latest deployment evidence: `https://d1872010.draxos-mobile-internal-alpha.pages.dev`
-- Source state: `main` after merging and publishing Bosque World Hub Domain Separation v1, preserving Bosque Fogueira Potion Crafting v1, Bosque Durable Bau Mochila v1, Arena PVE Menu Flow Simplification v1, Bosque Offline-First Checkpoint v1, Bosque Sync Responsiveness v1, Arena/Bosque Visible V2, Arena/Bosque Regression Hotfix, Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix and earlier trunk packages.
-- Published Bosque World Hub Domain Separation v1: bumps APK/manifest to `0.0.8-alpha.0` / version code `8`, applies remote migration `202606060004_bosque_world_hub_domain_separation_v1.sql`, replaces public Bosque-local `ossos_preview`/`po_osso_preview` with `resto_ritual`/`po_cinzento`, normalizes legacy pocket/chest/progress/session snapshots, keeps global `ossos`/`po_osso` account-owned, persists `fogueira_estavel_1` in both durable `upgrades` and `structures`, returns structures through checkpoint/session snapshots, adds `BosqueWorldContext`, and preserves Fogueira station craft as the server-authoritative bridge from `Bau do Bosque` + `Conta/Ossario` to global potions.
+- Source state: release candidate branch for Bosque Session Lifecycle & Durable Structures Hotfix v1, based on `main` after Bosque World Hub Domain Separation v1.
+- Candidate hotfix: bumps APK/manifest to `0.0.9-alpha.0` / version code `9`, adds mirrored migration `202606070001_openworld_bosque_session_lifecycle_structures_v1.sql`, preserves durable `structures`, canonicalizes `fogueira_estavel_1` in both `upgrades` and `structures`, prevents expired Openworld sessions from being projected as resumable active sessions, discards expired local active-session cache, starts a new visit with full spawn after expiration, and keeps Fogueira station recipes blocked until the critical checkpoint confirms the structure.
+- Published Bosque World Hub Domain Separation v1 remains the current remote package until this hotfix is published: bumps APK/manifest to `0.0.8-alpha.0` / version code `8`, applies remote migration `202606060004_bosque_world_hub_domain_separation_v1.sql`, replaces public Bosque-local `ossos_preview`/`po_osso_preview` with `resto_ritual`/`po_cinzento`, normalizes legacy pocket/chest/progress/session snapshots, keeps global `ossos`/`po_osso` account-owned, persists `fogueira_estavel_1` in both durable `upgrades` and `structures`, returns structures through checkpoint/session snapshots, adds `BosqueWorldContext`, and preserves Fogueira station craft as the server-authoritative bridge from `Bau do Bosque` + `Conta/Ossario` to global potions.
 - Previous station-craft package: `Bosque Fogueira Potion Crafting v1`
 - Previous station-craft release root: `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c`
 - Previous station-craft preview: `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`
