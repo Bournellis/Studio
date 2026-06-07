@@ -5,23 +5,23 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
 - Active stage: `Bosque Session Lifecycle & Durable Structures Hotfix v1`
-- Active stage status: `BOSQUE_SESSION_LIFECYCLE_STRUCTURES_HOTFIX_V1_IMPLEMENTED_PENDING_PUBLICATION`
+- Active stage status: `BOSQUE_SESSION_LIFECYCLE_STRUCTURES_HOTFIX_V1_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
 - Version: `0.0.9-alpha.0`
 - Version code: `9`
 
 ## Current Truth
 
-- Latest published remote package: `Bosque World Hub Domain Separation v1`.
-- Current local release candidate: `Bosque Session Lifecycle & Durable Structures Hotfix v1`.
-- Candidate release root: `internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-<sha>`
-- Release root: `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05`
+- Latest published remote package: `Bosque Session Lifecycle & Durable Structures Hotfix v1`.
+- Release root: `internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-c953b51`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://d1872010.draxos-mobile-internal-alpha.pages.dev`
-- Source state: release candidate branch for Bosque Session Lifecycle & Durable Structures Hotfix v1, based on `main` after Bosque World Hub Domain Separation v1.
-- Candidate hotfix: bumps APK/manifest to `0.0.9-alpha.0` / version code `9`, adds mirrored migration `202606070001_openworld_bosque_session_lifecycle_structures_v1.sql`, preserves durable `structures`, canonicalizes `fogueira_estavel_1` in both `upgrades` and `structures`, prevents expired Openworld sessions from being projected as resumable active sessions, discards expired local active-session cache, starts a new visit with full spawn after expiration, and keeps Fogueira station recipes blocked until the critical checkpoint confirms the structure.
-- Published Bosque World Hub Domain Separation v1 remains the current remote package until this hotfix is published: bumps APK/manifest to `0.0.8-alpha.0` / version code `8`, applies remote migration `202606060004_bosque_world_hub_domain_separation_v1.sql`, replaces public Bosque-local `ossos_preview`/`po_osso_preview` with `resto_ritual`/`po_cinzento`, normalizes legacy pocket/chest/progress/session snapshots, keeps global `ossos`/`po_osso` account-owned, persists `fogueira_estavel_1` in both durable `upgrades` and `structures`, returns structures through checkpoint/session snapshots, adds `BosqueWorldContext`, and preserves Fogueira station craft as the server-authoritative bridge from `Bau do Bosque` + `Conta/Ossario` to global potions.
+- Latest deployment evidence: `https://8ecac093.draxos-mobile-internal-alpha.pages.dev`
+- Source state: Bosque Session Lifecycle & Durable Structures Hotfix v1 branch published Web/APK and ready for final merge into `main`; after closeout, new work should branch from updated `main`.
+- Published hotfix: bumps APK/manifest to `0.0.9-alpha.0` / version code `9`, adds mirrored migration `202606070001_openworld_bosque_session_lifecycle_structures_v1.sql`, applies the remote migration, preserves durable `structures`, canonicalizes `fogueira_estavel_1` in both `upgrades` and `structures`, prevents expired Openworld sessions from being projected as resumable active sessions, discards expired local active-session cache, starts a new visit with full spawn after expiration, and keeps Fogueira station recipes blocked until the critical checkpoint confirms the structure.
+- Previous local/account domain package: `Bosque World Hub Domain Separation v1`
+- Previous local/account domain release root: `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05`
+- Previous local/account domain preview: `https://d1872010.draxos-mobile-internal-alpha.pages.dev`
 - Previous station-craft package: `Bosque Fogueira Potion Crafting v1`
 - Previous station-craft release root: `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c`
 - Previous station-craft preview: `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`
@@ -47,43 +47,44 @@
 - Agent baseline marker: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Arena context: Track 18 - PVE Arena Initial, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
-- Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; later packages stabilize durable Bosque progress, Fogueira station craft and domain separation. Current playtest should focus relog persistence and resource-source clarity.
+- Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; later packages stabilize durable Bosque progress, Fogueira station craft and domain separation. Current playtest should focus full spawn after expired visits, Fogueira/structures persistence after checkpoint/relog, preserved Bau/Mochila/upgrades and Arena/station-craft regression.
 
 ## Current Published Package
 
-Bosque World Hub Domain Separation v1 is published as the current Internal Alpha package. It preserves the Offline-First Checkpoint runtime model, durable per-save Bosque progress and Fogueira station craft, then corrects the architectural boundary for the future world-hub direction: Bosque may host panels/structures visually, but data remains separated between Bosque durable progress, account resources, Arena and station craft.
+Bosque Session Lifecycle & Durable Structures Hotfix v1 is published as the current Internal Alpha package. It preserves the Offline-First Checkpoint runtime model, durable per-save Bosque progress, local/account domain separation and Fogueira station craft, then fixes the two reported regressions: expired visits no longer reopen as active sessions, and durable structures, especially `fogueira_estavel_1`, survive checkpoint/relog.
 
 Delivered:
 
-- bumps in-app, export and manifest versioning to `0.0.8-alpha.0` / version code `8`;
-- forces clients on version code `7` or older to update through the remote manifest instead of silently continuing the old APK;
-- adds mirrored migration `202606060004_bosque_world_hub_domain_separation_v1.sql` in `server/schema` and `supabase/migrations`;
-- renames Bosque-local public materials from `ossos_preview`/`po_osso_preview` to `resto_ritual`/`po_cinzento` and normalizes legacy cache/progress/session payloads;
-- keeps account `ossos` and `po_osso` exclusively global; Bosque collection/checkpoint does not change them;
-- persists `fogueira_estavel_1` as durable `upgrades.fogueira_estavel_1 = true` and `structures.fogueira_estavel_1 = true`;
-- returns `structures` through accepted checkpoint, durable progress, snapshot summary and new session bootstrap;
-- adds `BosqueWorldContext` to bootstrap durable Bosque progress, active session/cache, account resources, consumables/crafting state and Arena preparation context before the playable frame;
-- labels inventory/panels by source: `Mochila do Bosque`, `Bau do Bosque`, `Conta/Ossario`, `Pocoes globais` and `Arena`;
-- blocks global Fogueira recipes while the local Fogueira is still pending checkpoint confirmation, with clear saving feedback;
-- preserves Base/Ossario `Triturar Ossos`, Arena Preparation, buff flow and station craft behavior from the previous package.
+- bumps in-app, export and manifest versioning to `0.0.9-alpha.0` / version code `9`;
+- forces clients on version code `8` or older to update through the remote manifest;
+- adds mirrored migration `202606070001_openworld_bosque_session_lifecycle_structures_v1.sql` in `server/schema` and `supabase/migrations`;
+- updates `openworld_forest_progress_from_snapshot_v1` to persist durable `structures` along with `pocket`, `chest` and `upgrades`;
+- updates `openworld_forest_snapshot_with_progress_v1` to inject durable `structures` into new sessions while resetting `collected_nodes = {}`;
+- canonicalizes `fogueira_estavel_1` so legacy saves with the flag in either `upgrades` or `structures` reopen with both fields true;
+- prevents expired `started` Openworld sessions from being projected as resumable `active_session`;
+- discards expired, too-old or malformed local active-session cache before the first playable frame;
+- starts a new Bosque visit with full spawn after session expiration while preserving durable `Bau`, `Mochila`, `upgrades` and `structures`;
+- makes Fogueira construction a critical checkpoint flow with honest `Salvando Fogueira...`, `Fogueira salva.` and `Fogueira pendente de salvamento.` feedback;
+- keeps global Fogueira recipes blocked until the structure is confirmed by durable progress/checkpoint;
+- preserves Base/Ossario `Triturar Ossos`, Arena Preparation, buff flow, station craft behavior and the World Hub domain separation package.
 
 Publication evidence:
 
-- Remote Supabase migration `202606060004_bosque_world_hub_domain_separation_v1.sql` applied.
-- Export regenerated APK, PC ZIP and Web artifacts from current `main`.
+- Remote Supabase migration `202606070001_openworld_bosque_session_lifecycle_structures_v1.sql` applied.
+- Export regenerated APK, PC ZIP and Web artifacts from the hotfix branch.
 - Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and Edge Function `release` deploy passed.
-- Cloudflare Pages preview evidence: `https://d1872010.draxos-mobile-internal-alpha.pages.dev`.
-- Remote Web launch smoke on preview loaded the game in `3139 ms`, matched release root and reported no runtime errors.
-- Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web after local manifest expectations were updated to version code `8`; stable Portal/Web remain protected by Cloudflare Access.
-- Remote read-only release/CORS smoke passed.
+- Cloudflare Pages preview evidence: `https://8ecac093.draxos-mobile-internal-alpha.pages.dev`.
+- Direct preview Web launch smoke loaded the game in `7288 ms`, matched release root and reported no runtime errors.
+- RemoteReadOnly passed after local smoke expectations were updated to version code `9`; remote Web launch smoke loaded the game in `3265 ms`, matched release root and reported no runtime errors.
+- Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web; stable Portal/Web remain protected by Cloudflare Access.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 - `release/config` remains on `track23-online-actions-hotfix`, so online progression actions are not paused by remote config.
 
 Artifact hashes:
 
-- Android APK SHA256: `ebcf7a2849c15ce4c28500c74a6dba64693eee309271be0d6fb5e8e9b617eaa0`
-- PC Windows ZIP SHA256: `ba6e63673a541fb91a4093fbb9bfe5b34617ad79a7227ff4067f87149ed3a987`
-- Web Index SHA256: `217814d177164e6bc67315174c4e42083fc9193a004afe1277bf581fedc0e5f1`
+- Android APK SHA256: `07df047f628a8a25e956f1479acb328093aff07203f223cceeeeecb383a440c9`
+- PC Windows ZIP SHA256: `4c5c151d0a263ba9b44d58846b98f00d862e646ad7e9bf94ae39d533e7ffd6ea`
+- Web Index SHA256: `612241cad16a9260474200572dfd55821ba95795a27375ac89b9ea31fc70206e`
 
 ## Bosque Offline-First Checkpoint v1 Details
 
