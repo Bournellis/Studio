@@ -1,6 +1,7 @@
 import {
   canonicalCompletionPayload,
   completionResultFromBody,
+  modeStatePayload,
   modeCheckpointAckPayload,
   modeEventAckPayload,
   normalizeDepositedItems,
@@ -141,6 +142,44 @@ Deno.test("openworld checkpoint payload validates compact offline-first snapshot
     null,
     "empty checkpoint snapshots should be rejected",
   );
+});
+
+Deno.test("openworld mode state does not resume expired started sessions", () => {
+  const now = new Date();
+  const payload = modeStatePayload({
+    gameSave: {},
+    registry: [],
+    rulesets: [],
+    progress: null,
+    sessions: [{
+      id: "00000000-0000-4000-8000-000000000201",
+      game_save_id: "00000000-0000-4000-8000-000000000301",
+      mode_id: OPENWORLD_MODE_ID,
+      slice_id: OPENWORLD_SLICE_ID,
+      ruleset_id: OPENWORLD_RULESET_ID,
+      ruleset_version: OPENWORLD_RULESET_VERSION,
+      status: "started",
+      server_seed: "seed-expired",
+      session_seconds: 72,
+      activity_score: 3,
+      deposited_items: {},
+      result_payload: {},
+      reward_payload: {},
+      started_at: new Date(now.getTime() - 7200_000).toISOString(),
+      expires_at: new Date(now.getTime() - 1000).toISOString(),
+      snapshot_payload: { collected_nodes: { node_galho_01: true } },
+      snapshot_revision: 7,
+      last_event_at: null,
+    }],
+    claims: [],
+    resources: null,
+    serverTime: now,
+  });
+  const sessions = payload.sessions as Record<string, unknown>[];
+
+  assertEq(payload.active_session, null, "expired session should not be projected as active");
+  assertEq(sessions.length, 1, "history can still include expired sessions");
+  assertEq(sessions[0].status, "expired", "expired started session should be labeled explicitly");
 });
 
 Deno.test("openworld checkpoint ACK exposes metadata without visual rollback fields", () => {

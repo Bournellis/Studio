@@ -438,6 +438,7 @@ function progressPayload(row: ModeProgressRow | null): Record<string, unknown> {
         pocket: {},
         chest: {},
         upgrades: {},
+        structures: {},
         reward_ledger: { rewarded_chest: {} },
         progress_revision: 0,
       },
@@ -463,7 +464,7 @@ function sessionPayload(row: ModeSessionRow): Record<string, unknown> {
     slice_id: row.slice_id,
     ruleset_id: row.ruleset_id,
     ruleset_version: numberValue(row.ruleset_version, 1),
-    status: row.status,
+    status: effectiveSessionStatus(row),
     session_seconds: nullableNumber(row.session_seconds),
     activity_score: nullableNumber(row.activity_score),
     deposited_items: objectValue(row.deposited_items),
@@ -487,6 +488,7 @@ function openworldEventSnapshotPatch(snapshot: Record<string, unknown>): Record<
     "pocket",
     "chest",
     "upgrades",
+    "structures",
     "collected_nodes",
     "guidance",
     "reward_payload",
@@ -554,6 +556,11 @@ function isActiveSession(row: ModeSessionRow): boolean {
   if (row.status !== "started") return false;
   if (row.expires_at === null || row.expires_at === undefined) return true;
   return new Date(row.expires_at).getTime() > Date.now();
+}
+
+function effectiveSessionStatus(row: ModeSessionRow): string {
+  if (row.status === "started" && !isActiveSession(row)) return "expired";
+  return row.status;
 }
 
 function rewardClaimPayload(row: ModeRewardClaimRow): Record<string, unknown> {

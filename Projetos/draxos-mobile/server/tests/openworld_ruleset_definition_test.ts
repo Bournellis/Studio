@@ -19,6 +19,10 @@ const DURABLE_PROGRESS_MIGRATION_PATH =
   "server/schema/migrations/202606060002_openworld_bosque_durable_progress_v1.sql";
 const SUPABASE_DURABLE_PROGRESS_MIGRATION_PATH =
   "supabase/migrations/202606060002_openworld_bosque_durable_progress_v1.sql";
+const SESSION_LIFECYCLE_STRUCTURES_MIGRATION_PATH =
+  "server/schema/migrations/202606070001_openworld_bosque_session_lifecycle_structures_v1.sql";
+const SUPABASE_SESSION_LIFECYCLE_STRUCTURES_MIGRATION_PATH =
+  "supabase/migrations/202606070001_openworld_bosque_session_lifecycle_structures_v1.sql";
 const MODE_DOMAIN_PATH = "server/functions/_shared/mode_domain.ts";
 const SUPABASE_MODE_DOMAIN_PATH = "supabase/functions/_shared/mode_domain.ts";
 
@@ -136,8 +140,12 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
   const supabaseCheckpointMigration = await projectText(SUPABASE_CHECKPOINT_MIGRATION_PATH);
   const durableProgressMigration = await projectText(DURABLE_PROGRESS_MIGRATION_PATH);
   const supabaseDurableProgressMigration = await projectText(SUPABASE_DURABLE_PROGRESS_MIGRATION_PATH);
+  const sessionLifecycleStructuresMigration = await projectText(SESSION_LIFECYCLE_STRUCTURES_MIGRATION_PATH);
+  const supabaseSessionLifecycleStructuresMigration = await projectText(
+    SUPABASE_SESSION_LIFECYCLE_STRUCTURES_MIGRATION_PATH,
+  );
   const effectiveMigration =
-    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}\n${collectBatchMigration}\n${checkpointMigration}\n${durableProgressMigration}`;
+    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}\n${collectBatchMigration}\n${checkpointMigration}\n${durableProgressMigration}\n${sessionLifecycleStructuresMigration}`;
   const modeDomain = await projectText(MODE_DOMAIN_PATH);
   const supabaseModeDomain = await projectText(SUPABASE_MODE_DOMAIN_PATH);
 
@@ -186,6 +194,11 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
     normalizeNewlines(supabaseDurableProgressMigration),
     "durable progress migration should be mirrored between server and supabase",
   );
+  assertEq(
+    normalizeNewlines(sessionLifecycleStructuresMigration),
+    normalizeNewlines(supabaseSessionLifecycleStructuresMigration),
+    "session lifecycle structures migration should be mirrored between server and supabase",
+  );
   assertIncludes(
     collectBatchMigration,
     "'collect_batch'",
@@ -205,6 +218,26 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
     durableProgressMigration,
     "openworld_forest_progress_v1",
     "durable progress migration should define Bosque save progress",
+  );
+  assertIncludes(
+    sessionLifecycleStructuresMigration,
+    "openworld_forest_progress_from_snapshot_v1",
+    "session lifecycle hotfix should override durable progress extraction",
+  );
+  assertIncludes(
+    sessionLifecycleStructuresMigration,
+    "result := jsonb_set(result, '{structures}'",
+    "session lifecycle hotfix should persist durable structures",
+  );
+  assertIncludes(
+    sessionLifecycleStructuresMigration,
+    "result := jsonb_set(result, '{collected_nodes}', '{}'::jsonb",
+    "new sessions should reset visit collected nodes",
+  );
+  assertIncludes(
+    sessionLifecycleStructuresMigration,
+    "fogueira_estavel_1",
+    "session lifecycle hotfix should canonicalize Fogueira between upgrades and structures",
   );
   assertIncludes(
     effectiveMigration,
