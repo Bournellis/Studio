@@ -28,18 +28,18 @@ assertEq(
 );
 assertEq(
   stringField(manifest, "latest_version"),
-  "0.0.9-alpha.0",
+  "0.0.10-alpha.0",
   "release manifest should expose the current alpha version",
 );
 assertEq(
   numberField(manifest, "latest_version_code"),
-  9,
+  10,
   "release manifest should expose the current version code",
 );
 assertEq(
   numberField(manifest, "minimum_supported_version_code"),
-  9,
-  "release manifest should force-update the first alpha build",
+  10,
+  "release manifest should force-update builds before the Openworld operations v2 contract",
 );
 
 const artifacts = objectField(manifest, "artifacts");

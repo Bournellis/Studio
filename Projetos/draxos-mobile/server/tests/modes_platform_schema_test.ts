@@ -31,6 +31,10 @@ const OPENWORLD_DURABLE_PROGRESS_PATH =
   "supabase/migrations/202606060002_openworld_bosque_durable_progress_v1.sql";
 const OPENWORLD_DURABLE_PROGRESS_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606060002_openworld_bosque_durable_progress_v1.sql";
+const OPENWORLD_PERSISTENCE_REBASE_PATH =
+  "supabase/migrations/202606080001_openworld_bosque_persistence_rebase_v1.sql";
+const OPENWORLD_PERSISTENCE_REBASE_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606080001_openworld_bosque_persistence_rebase_v1.sql";
 const ADMIN_COMPENSATE_HASH_MIGRATION_PATH =
   "supabase/migrations/202606020003_admin_compensate_request_hash.sql";
 const ADMIN_COMPENSATE_HASH_SERVER_MIRROR_PATH =
@@ -143,6 +147,17 @@ Deno.test("openworld durable progress migration is mirrored in server schema", a
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema openworld durable progress migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("openworld persistence rebase migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(OPENWORLD_PERSISTENCE_REBASE_PATH);
+  const serverMirror = await readProjectText(OPENWORLD_PERSISTENCE_REBASE_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema openworld persistence rebase migration should mirror supabase migration exactly",
   );
 });
 
@@ -380,6 +395,7 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   );
   const checkpointMigration = normalizeSql(await readProjectText(OPENWORLD_CHECKPOINT_PATH));
   const durableProgress = normalizeSql(await readProjectText(OPENWORLD_DURABLE_PROGRESS_PATH));
+  const persistenceRebase = normalizeSql(await readProjectText(OPENWORLD_PERSISTENCE_REBASE_PATH));
   const handler = normalizeCode(await readProjectText(HANDLER_PATH));
   const support = normalizeCode(await readProjectText(SUPPORT_PATH));
 
@@ -462,6 +478,23 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   }
   for (
     const fragment of [
+      "openworld_forest_progress_v2",
+      "openworld_forest_apply_operations_v1",
+      "node_state",
+      "next_spawn_at",
+      "openworld_node_on_cooldown",
+      "applied_ops",
+      "progress_revision",
+    ]
+  ) {
+    assertIncludes(
+      persistenceRebase,
+      fragment,
+      `openworld persistence rebase migration should include ${fragment}`,
+    );
+  }
+  for (
+    const fragment of [
       "guidance_update",
       "openworld_forest_normalize_guidance_v1",
       "openworld_forest_save_guidance_snapshot_v1",
@@ -529,6 +562,11 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
     "openworld_node_already_collected",
     "support should map duplicate node collection",
   );
+  assertIncludes(
+    support,
+    "openworld_node_on_cooldown",
+    "support should map cooldown conflicts",
+  );
   assertIncludes(support, "invalid_mode_event", "support should map invalid event payloads");
   const modeDatabaseCodes = codeSection(
     support,
@@ -547,7 +585,7 @@ Deno.test("openworld bosque hardening declares snapshot, event and server-author
   );
 });
 
-Deno.test("openworld client uses offline-first checkpoints during active Bosque play", async () => {
+Deno.test("openworld client uses ACK-backed operation checkpoints during active Bosque play", async () => {
   const screen = normalizeCode(await readProjectText(OPENWORLD_SCREEN_PATH));
   const bridge = normalizeCode(await readProjectText(OPENWORLD_BRIDGE_PATH));
   const model = normalizeCode(await readProjectText(OPENWORLD_MODEL_PATH));
@@ -562,7 +600,9 @@ Deno.test("openworld client uses offline-first checkpoints during active Bosque 
       "func flush_checkpoint",
       "await supabase_client.checkpoint_mode_session",
       "_snapshot_revision",
-      "_apply_checkpoint_ack(body, sent_sequence)",
+      "_apply_checkpoint_ack(body, sent_sequence, sent_operation_ids)",
+      "var _pending_operations",
+      "openworld_pending_ops_cache_v1",
       "func has_pending_events()",
     ]
   ) {
@@ -581,7 +621,7 @@ Deno.test("openworld client uses offline-first checkpoints during active Bosque 
   assertIncludes(
     bridge,
     "func _build_checkpoint_payload",
-    "openworld should serialize local state into compact checkpoints",
+    "openworld should serialize operations into checkpoint requests",
   );
   assertIncludes(
     bridge,

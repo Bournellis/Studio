@@ -129,6 +129,7 @@ Deno.test("openworld checkpoint payload validates compact offline-first snapshot
   assertEq(checkpoint.checkpoint_id, "checkpoint-001", "checkpoint id should be preserved");
   assertEq(checkpoint.base_revision, 4, "base revision should be preserved");
   assertEq(checkpoint.client_sequence, 7, "client sequence should be preserved");
+  assertEq(checkpoint.operations.length, 0, "legacy snapshot checkpoints should not invent operations");
   assertEq(
     sessionCheckpointFromBody({
       session_id: "00000000-0000-4000-8000-000000000101",
@@ -141,6 +142,50 @@ Deno.test("openworld checkpoint payload validates compact offline-first snapshot
     }),
     null,
     "empty checkpoint snapshots should be rejected",
+  );
+});
+
+Deno.test("openworld checkpoint payload accepts durable operation batches", () => {
+  const checkpoint = sessionCheckpointFromBody({
+    session_id: "00000000-0000-4000-8000-000000000101",
+    mode_id: OPENWORLD_MODE_ID,
+    slice_id: OPENWORLD_SLICE_ID,
+    ruleset_id: OPENWORLD_RULESET_ID,
+    ruleset_version: OPENWORLD_RULESET_VERSION,
+    checkpoint_id: "checkpoint-ops-001",
+    base_revision: 4,
+    client_sequence: 8,
+    operations: [
+      { op_id: "owop_00000000_0000_4000_8000_000000000111", type: "collect_node", node_id: "node_galho_01" },
+      { op_id: "owop_00000000_0000_4000_8000_000000000112", type: "deposit_all" },
+      { op_id: "owop_00000000_0000_4000_8000_000000000113", type: "craft_recipe", recipe_id: "fogueira_estavel_1" },
+    ],
+    visit_snapshot: {
+      player_position: { x: 220, y: 330 },
+      session_seconds: 43,
+    },
+  });
+
+  assert(checkpoint !== null, "operations-only checkpoint should parse");
+  assertEq(checkpoint.operations.length, 3, "operation batch should be preserved");
+  assertEq(checkpoint.operations[0].type, "collect_node", "first operation should keep its type");
+  assertEq(
+    (checkpoint.visit_snapshot as Record<string, unknown>).session_seconds,
+    43,
+    "visit snapshot should be preserved separately from durable progress",
+  );
+  assertEq(
+    sessionCheckpointFromBody({
+      session_id: "00000000-0000-4000-8000-000000000101",
+      checkpoint_id: "checkpoint-ops-invalid",
+      base_revision: 0,
+      client_sequence: 1,
+      ruleset_id: OPENWORLD_RULESET_ID,
+      ruleset_version: OPENWORLD_RULESET_VERSION,
+      operations: [{ op_id: "owop_invalid", type: "spawn_dragon" }],
+    }),
+    null,
+    "unknown operation types should be rejected",
   );
 });
 
@@ -182,6 +227,43 @@ Deno.test("openworld mode state does not resume expired started sessions", () =>
   assertEq(sessions[0].status, "expired", "expired started session should be labeled explicitly");
 });
 
+Deno.test("openworld mode state treats null expires_at as inactive", () => {
+  const now = new Date();
+  const payload = modeStatePayload({
+    gameSave: {},
+    registry: [],
+    rulesets: [],
+    progress: null,
+    sessions: [{
+      id: "00000000-0000-4000-8000-000000000202",
+      game_save_id: "00000000-0000-4000-8000-000000000302",
+      mode_id: OPENWORLD_MODE_ID,
+      slice_id: OPENWORLD_SLICE_ID,
+      ruleset_id: OPENWORLD_RULESET_ID,
+      ruleset_version: OPENWORLD_RULESET_VERSION,
+      status: "started",
+      server_seed: "seed-null-expiry",
+      session_seconds: 0,
+      activity_score: 0,
+      deposited_items: {},
+      result_payload: {},
+      reward_payload: {},
+      started_at: new Date(now.getTime() - 60_000).toISOString(),
+      expires_at: null,
+      snapshot_payload: {},
+      snapshot_revision: 0,
+      last_event_at: null,
+    }],
+    claims: [],
+    resources: null,
+    serverTime: now,
+  });
+  const sessions = payload.sessions as Record<string, unknown>[];
+
+  assertEq(payload.active_session, null, "null expiry should never be projected as active");
+  assertEq(sessions[0].status, "expired", "started sessions without expires_at should be labeled expired");
+});
+
 Deno.test("openworld checkpoint ACK exposes metadata without visual rollback fields", () => {
   const ack = modeCheckpointAckPayload({
     request_id: "00000000-0000-4000-8000-000000000105",
@@ -198,6 +280,13 @@ Deno.test("openworld checkpoint ACK exposes metadata without visual rollback fie
         player_position: { x: 220, y: 330 },
         active_collection: { node_id: "node_galho_01" },
         checkpoint: { accepted_checkpoint_id: "checkpoint-001" },
+        node_state: {
+          node_galho_01: {
+            last_collected_at: "2026-06-08T12:00:00Z",
+            next_spawn_at: "2026-06-08T12:05:00Z",
+            collected_count: 1,
+          },
+        },
         revision: 8,
         session_seconds: 42,
         activity_score: 12,
@@ -212,6 +301,12 @@ Deno.test("openworld checkpoint ACK exposes metadata without visual rollback fie
   assertEq(ack.complete_ready, true, "accepted checkpoint should allow completion");
   assertEq("player_position" in snapshot, false, "checkpoint ACK must not carry player_position");
   assertEq("active_collection" in snapshot, false, "checkpoint ACK must not clear active collection");
+  assertEq(
+    ((snapshot.node_state as Record<string, unknown>).node_galho_01 as Record<string, unknown>)
+      .next_spawn_at,
+    "2026-06-08T12:05:00Z",
+    "checkpoint ACK should carry server node cooldown state",
+  );
   assertEq(
     visualAuthority.checkpoint_ack,
     "metadata_only_during_active_play",

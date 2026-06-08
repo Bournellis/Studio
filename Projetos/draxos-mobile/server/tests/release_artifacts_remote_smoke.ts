@@ -38,13 +38,13 @@ assertEq(
 );
 assertEq(
   numberField(manifest, "latest_version_code"),
-  9,
+  10,
   "release manifest should expose the current version code",
 );
 assertEq(
   numberField(manifest, "minimum_supported_version_code"),
-  9,
-  "release manifest should force-update the first alpha build",
+  10,
+  "release manifest should force-update builds before the Openworld operations v2 contract",
 );
 
 const portalUrl = httpsField(manifest, "portal_url");

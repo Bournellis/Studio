@@ -23,6 +23,10 @@ const SESSION_LIFECYCLE_STRUCTURES_MIGRATION_PATH =
   "server/schema/migrations/202606070001_openworld_bosque_session_lifecycle_structures_v1.sql";
 const SUPABASE_SESSION_LIFECYCLE_STRUCTURES_MIGRATION_PATH =
   "supabase/migrations/202606070001_openworld_bosque_session_lifecycle_structures_v1.sql";
+const PERSISTENCE_REBASE_MIGRATION_PATH =
+  "server/schema/migrations/202606080001_openworld_bosque_persistence_rebase_v1.sql";
+const SUPABASE_PERSISTENCE_REBASE_MIGRATION_PATH =
+  "supabase/migrations/202606080001_openworld_bosque_persistence_rebase_v1.sql";
 const MODE_DOMAIN_PATH = "server/functions/_shared/mode_domain.ts";
 const SUPABASE_MODE_DOMAIN_PATH = "supabase/functions/_shared/mode_domain.ts";
 
@@ -85,6 +89,34 @@ Deno.test("openworld forest ruleset cross-links resource nodes and recipe items"
   }
 });
 
+Deno.test("openworld forest item cooldowns are explicit by resource tier", async () => {
+  const ruleset = await rulesetDefinition();
+  const expectedCooldowns: Record<string, number> = {
+    galho: 300,
+    folha: 300,
+    folha_seca: 300,
+    pedra_pequena: 600,
+    cogumelo: 600,
+    inseto: 600,
+    resina: 600,
+    madeira: 900,
+    pedra: 900,
+    fungo: 900,
+    cinzas_preview: 1800,
+    resto_ritual: 1800,
+    po_cinzento: 1800,
+  };
+
+  for (const item of arrayField(ruleset, "items").map(objectField)) {
+    const itemId = stringField(item, "item_id");
+    assertEq(
+      numberField(item, "respawn_seconds"),
+      expectedCooldowns[itemId],
+      `${itemId} should declare the Bosque persistence rebase cooldown`,
+    );
+  }
+});
+
 Deno.test("openworld forest resource nodes stay clear of blockers and borders", async () => {
   const ruleset = await rulesetDefinition();
   const world = objectField(ruleset["world"]);
@@ -144,8 +176,10 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
   const supabaseSessionLifecycleStructuresMigration = await projectText(
     SUPABASE_SESSION_LIFECYCLE_STRUCTURES_MIGRATION_PATH,
   );
+  const persistenceRebaseMigration = await projectText(PERSISTENCE_REBASE_MIGRATION_PATH);
+  const supabasePersistenceRebaseMigration = await projectText(SUPABASE_PERSISTENCE_REBASE_MIGRATION_PATH);
   const effectiveMigration =
-    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}\n${collectBatchMigration}\n${checkpointMigration}\n${durableProgressMigration}\n${sessionLifecycleStructuresMigration}`;
+    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}\n${collectBatchMigration}\n${checkpointMigration}\n${durableProgressMigration}\n${sessionLifecycleStructuresMigration}\n${persistenceRebaseMigration}`;
   const modeDomain = await projectText(MODE_DOMAIN_PATH);
   const supabaseModeDomain = await projectText(SUPABASE_MODE_DOMAIN_PATH);
 
@@ -199,6 +233,11 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
     normalizeNewlines(supabaseSessionLifecycleStructuresMigration),
     "session lifecycle structures migration should be mirrored between server and supabase",
   );
+  assertEq(
+    normalizeNewlines(persistenceRebaseMigration),
+    normalizeNewlines(supabasePersistenceRebaseMigration),
+    "persistence rebase migration should be mirrored between server and supabase",
+  );
   assertIncludes(
     collectBatchMigration,
     "'collect_batch'",
@@ -233,6 +272,26 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
     sessionLifecycleStructuresMigration,
     "result := jsonb_set(result, '{collected_nodes}', '{}'::jsonb",
     "new sessions should reset visit collected nodes",
+  );
+  assertIncludes(
+    persistenceRebaseMigration,
+    "openworld_forest_progress_v2",
+    "persistence rebase should promote durable progress to v2",
+  );
+  assertIncludes(
+    persistenceRebaseMigration,
+    "openworld_forest_apply_operations_v1",
+    "persistence rebase should apply durable operation batches",
+  );
+  assertIncludes(
+    persistenceRebaseMigration,
+    "openworld_forest_collected_nodes_from_node_state_v1",
+    "persistence rebase should derive visible cooldown nodes from node_state",
+  );
+  assertIncludes(
+    persistenceRebaseMigration,
+    "OPENWORLD_NODE_ON_COOLDOWN",
+    "persistence rebase should reject node collection before cooldown expires",
   );
   assertIncludes(
     sessionLifecycleStructuresMigration,

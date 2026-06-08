@@ -11,6 +11,7 @@ class FakeSessionStore:
 	var apply_ok := true
 	var openworld_local_state: Dictionary = {}
 	var openworld_durable_progress_state: Dictionary = {}
+	var openworld_pending_ops_state: Dictionary = {}
 	var prepared: Array[Dictionary] = []
 	var applied: Array[Dictionary] = []
 	var failed: Array[Dictionary] = []
@@ -47,6 +48,8 @@ class FakeSessionStore:
 		}
 		if not openworld_durable_progress_state.is_empty():
 			openworld_local_state["durable_progress_cache"] = openworld_durable_progress_state.duplicate(true)
+		if not openworld_pending_ops_state.is_empty():
+			openworld_local_state["pending_ops_cache"] = openworld_pending_ops_state.duplicate(true)
 
 	func remember_openworld_local_state(state: Dictionary) -> void:
 		remember_openworld_active_session_state(state)
@@ -67,6 +70,19 @@ class FakeSessionStore:
 	func openworld_durable_progress_snapshot() -> Dictionary:
 		return openworld_durable_progress_state.duplicate(true)
 
+	func remember_openworld_pending_ops_state(state: Dictionary) -> void:
+		openworld_pending_ops_state = state.duplicate(true)
+		if str(openworld_local_state.get("schema_version", "")) == "openworld_forest_local_state_v2":
+			openworld_local_state["pending_ops_cache"] = openworld_pending_ops_state.duplicate(true)
+
+	func openworld_pending_ops_snapshot() -> Dictionary:
+		return openworld_pending_ops_state.duplicate(true)
+
+	func clear_openworld_pending_ops_state() -> void:
+		openworld_pending_ops_state = {}
+		if str(openworld_local_state.get("schema_version", "")) == "openworld_forest_local_state_v2":
+			openworld_local_state.erase("pending_ops_cache")
+
 	func clear_openworld_active_session_state() -> void:
 		if str(openworld_local_state.get("schema_version", "")) == "openworld_forest_local_state_v2":
 			openworld_local_state.erase("active_session_cache")
@@ -74,6 +90,8 @@ class FakeSessionStore:
 				openworld_local_state = {}
 			else:
 				openworld_local_state["durable_progress_cache"] = openworld_durable_progress_state.duplicate(true)
+			if not openworld_pending_ops_state.is_empty():
+				openworld_local_state["pending_ops_cache"] = openworld_pending_ops_state.duplicate(true)
 			return
 		openworld_local_state = {}
 
@@ -217,7 +235,7 @@ func test_resume_prefers_local_cache_and_remote_metadata_does_not_transform_worl
 	assert_eq(bridge.snapshot_revision(), 9)
 	assert_eq(int(model.chest.get("galho", 0)), 2)
 	assert_eq(int(model.chest.get("folha", 0)), 0)
-	assert_eq(str(model.last_message), "Bau e mochila salvos.")
+	assert_eq(str(model.last_message), "Bosque salvo no servidor.")
 
 func test_resume_discards_expired_remote_session_fallback_and_starts_new_visit() -> void:
 	var model = ModelScript.new()
@@ -264,6 +282,14 @@ func test_resume_discards_expired_local_cache_when_server_has_no_active_session(
 		"chest": {"galho": 9},
 		"collected_nodes": {"node_galho_01": true},
 	}, _unix_past(7201), _unix_past(1))
+	store.openworld_pending_ops_state = {
+		"schema_version": "openworld_pending_ops_cache_v1",
+		"save_type": "normal",
+		"session_id": "session-local-expired",
+		"ruleset_id": ModelScript.RULESET_ID,
+		"ruleset_version": ModelScript.RULESET_VERSION,
+		"operations": [{"op_id": "owop_expired", "type": "deposit_all"}],
+	}
 	var bridge = _bridge(model, client, store)
 	client.state_result = {
 		"ok": true,
@@ -291,6 +317,7 @@ func test_resume_discards_expired_local_cache_when_server_has_no_active_session(
 	assert_eq(int(model.chest.get("folha", 0)), 2)
 	assert_false(bridge.has_pending_collected_node("node_galho_01"))
 	assert_eq(str(store.openworld_active_session_snapshot().get("session_id", "")), "session-new-local-expired")
+	assert_true(store.openworld_pending_ops_snapshot().is_empty())
 
 func test_durable_campfire_alias_survives_upgrade_only_snapshot() -> void:
 	var model = ModelScript.new()
@@ -343,10 +370,16 @@ func test_collect_and_deposit_save_checkpoint_without_legacy_microevents() -> vo
 	assert_eq(client.checkpoint_calls.size(), 1)
 	var payload := Dictionary(client.checkpoint_calls[0].get("payload", {}))
 	var snapshot := Dictionary(payload.get("snapshot_payload", {}))
+	var operations := Array(payload.get("operations", []))
 	assert_eq(str(store.prepared[0].get("endpoint", "")), "modes/session/checkpoint")
 	assert_true(bool(Dictionary(snapshot.get("collected_nodes", {})).get("node_galho_01", false)))
+	assert_eq(operations.size(), 1)
+	assert_eq(str(Dictionary(operations[0]).get("type", "")), "collect_node")
+	assert_eq(str(Dictionary(operations[0]).get("node_id", "")), "node_galho_01")
+	assert_true(str(Dictionary(operations[0]).get("op_id", "")).begins_with("owop_"))
 	assert_eq(bridge.snapshot_revision(), 3)
 	assert_false(bool(bridge.debug_snapshot().get("checkpoint_dirty", true)))
+	assert_true(store.openworld_pending_ops_snapshot().is_empty())
 
 func test_checkpoint_network_failure_keeps_local_state_and_retries_successfully() -> void:
 	var model = ModelScript.new()
@@ -366,6 +399,7 @@ func test_checkpoint_network_failure_keeps_local_state_and_retries_successfully(
 	assert_eq(client.checkpoint_calls.size(), 1)
 	assert_true(bool(bridge.debug_snapshot().get("checkpoint_dirty", false)))
 	assert_true(bool(bridge.debug_snapshot().get("event_retry_scheduled", false)))
+	assert_eq(Array(store.openworld_pending_ops_snapshot().get("operations", [])).size(), 1)
 	assert_eq(int(Dictionary(store.openworld_active_session_snapshot().get("snapshot_payload", {})).get("session_seconds", 0)), 6)
 
 	await bridge.retry_queued_events_now()
@@ -373,6 +407,7 @@ func test_checkpoint_network_failure_keeps_local_state_and_retries_successfully(
 	assert_eq(client.checkpoint_calls.size(), 2)
 	assert_eq(bridge.snapshot_revision(), 3)
 	assert_false(bool(bridge.debug_snapshot().get("checkpoint_dirty", true)))
+	assert_true(store.openworld_pending_ops_snapshot().is_empty())
 
 func test_complete_session_flushes_checkpoint_before_reward_complete() -> void:
 	var model = ModelScript.new()

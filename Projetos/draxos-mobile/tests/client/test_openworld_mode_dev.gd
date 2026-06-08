@@ -2,6 +2,7 @@ extends GutTest
 
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 const RulesetScript := preload("res://modes/openworld/openworld_forest_ruleset.gd")
+const RuntimeStateScript := preload("res://modes/openworld/openworld_forest_runtime_state.gd")
 const ScreenScript := preload("res://modes/openworld/openworld_forest_screen.gd")
 const RegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
 const RouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
@@ -94,6 +95,8 @@ class FakeOpenworldSessionStore:
 	var request_count := 0
 	var failed_requests: Array[Dictionary] = []
 	var openworld_local_state: Dictionary = {}
+	var openworld_durable_progress_state: Dictionary = {}
+	var openworld_pending_ops_state: Dictionary = {}
 
 	func runtime_allows_gameplay_mutation() -> bool:
 		return runtime_mutation_allowed
@@ -121,11 +124,46 @@ class FakeOpenworldSessionStore:
 	func remember_openworld_local_state(state: Dictionary) -> void:
 		openworld_local_state = state.duplicate(true)
 
+	func remember_openworld_active_session_state(state: Dictionary) -> void:
+		openworld_local_state = state.duplicate(true)
+		if not openworld_durable_progress_state.is_empty():
+			openworld_local_state["durable_progress_cache"] = openworld_durable_progress_state.duplicate(true)
+		if not openworld_pending_ops_state.is_empty():
+			openworld_local_state["pending_ops_cache"] = openworld_pending_ops_state.duplicate(true)
+
 	func openworld_local_snapshot() -> Dictionary:
 		return openworld_local_state.duplicate(true)
 
+	func openworld_active_session_snapshot() -> Dictionary:
+		return openworld_local_state.duplicate(true)
+
+	func remember_openworld_durable_progress_state(progress: Dictionary) -> void:
+		openworld_durable_progress_state = progress.duplicate(true)
+		openworld_local_state["durable_progress_cache"] = openworld_durable_progress_state.duplicate(true)
+
+	func openworld_durable_progress_snapshot() -> Dictionary:
+		return openworld_durable_progress_state.duplicate(true)
+
+	func remember_openworld_pending_ops_state(state: Dictionary) -> void:
+		openworld_pending_ops_state = state.duplicate(true)
+		openworld_local_state["pending_ops_cache"] = openworld_pending_ops_state.duplicate(true)
+
+	func openworld_pending_ops_snapshot() -> Dictionary:
+		return openworld_pending_ops_state.duplicate(true)
+
+	func clear_openworld_pending_ops_state() -> void:
+		openworld_pending_ops_state = {}
+		openworld_local_state.erase("pending_ops_cache")
+
 	func clear_openworld_local_state() -> void:
 		openworld_local_state = {}
+
+	func clear_openworld_active_session_state() -> void:
+		openworld_local_state = {}
+
+	func clear_openworld_durable_progress_state() -> void:
+		openworld_durable_progress_state = {}
+		openworld_local_state.erase("durable_progress_cache")
 
 func test_openworld_registry_points_to_official_screen() -> void:
 	assert_true(RegistryScript.is_registered("openworld"))
@@ -220,6 +258,30 @@ func test_ruleset_has_fixed_resources_for_bag_and_stable_campfire_with_slack() -
 	assert_gte(int(totals.get("resina", 0)), 2)
 	assert_gte(int(totals.get("folha_seca", 0)), 3)
 	assert_gte(int(totals.get("pedra_pequena", 0)), 2)
+
+func test_runtime_applies_node_state_cooldown_and_respawn_by_server_time() -> void:
+	var runtime = RuntimeStateScript.new()
+	runtime.configure(RulesetScript.player_initial_position())
+	runtime.reset_resources(RulesetScript.resource_fixtures())
+	var node_id := ""
+	for node: Dictionary in runtime.resource_nodes:
+		if str(node.get("item_id", "")) == "galho":
+			node_id = str(node.get("node_id", ""))
+			break
+	assert_ne(node_id, "")
+
+	var now := int(Time.get_unix_time_from_system())
+	runtime.apply_node_state({
+		node_id: {
+			"last_collected_at": now - 10,
+			"next_spawn_at": now + 300,
+			"collected_count": 1,
+		},
+	}, now)
+	assert_true(bool(_runtime_resource_node(runtime, node_id).get("collected", false)))
+
+	runtime.apply_node_state(runtime.node_state_snapshot(), now + 301)
+	assert_false(bool(_runtime_resource_node(runtime, node_id).get("collected", true)))
 
 func test_visual_screen_instantiates_fullscreen_with_joystick_hud_and_sheet() -> void:
 	var screen = ScreenScript.new()
@@ -458,7 +520,10 @@ func test_integrated_deposit_updates_local_view_while_checkpoint_saves() -> void
 	screen.call("_hydrate_integrated_session", _integrated_session(0, chest_position, {"galho": 2}, {}, {}, {}))
 	screen.set_player_position_for_tests(chest_position)
 	client.delay_frames = 2
-	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 1, "%s-000001" % TEST_SESSION_ID, 1))
+	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 1, "%s-000001" % TEST_SESSION_ID, 1, {
+		"pocket": {},
+		"chest": {"galho": 2},
+	}))
 
 	screen.call("_deposit_near_chest")
 	await get_tree().process_frame
@@ -472,8 +537,12 @@ func test_integrated_deposit_updates_local_view_while_checkpoint_saves() -> void
 	var checkpoint_payload := Dictionary(client.checkpoint_calls[0].get("payload", {}))
 	var checkpoint_snapshot := Dictionary(checkpoint_payload.get("snapshot_payload", {}))
 	var checkpoint_chest := Dictionary(checkpoint_snapshot.get("chest", {}))
+	var operations := Array(checkpoint_payload.get("operations", []))
 	assert_eq(int(checkpoint_payload.get("client_sequence", 0)), 1)
 	assert_eq(int(checkpoint_chest.get("galho", 0)), 2)
+	assert_eq(operations.size(), 1)
+	assert_eq(str(Dictionary(operations[0]).get("type", "")), "deposit_all")
+	assert_true(str(Dictionary(operations[0]).get("op_id", "")).begins_with("owop_"))
 	await _wait_process_frames(6)
 
 	assert_eq(screen.session_state_for_tests(), "synced")
@@ -481,7 +550,7 @@ func test_integrated_deposit_updates_local_view_while_checkpoint_saves() -> void
 	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
 	assert_eq(int(screen.get("_snapshot_revision")), 1)
 
-func test_integrated_back_preserves_pending_checkpoint_without_blocking_close() -> void:
+func test_integrated_back_waits_for_pending_checkpoint_before_close() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
@@ -489,7 +558,10 @@ func test_integrated_back_preserves_pending_checkpoint_without_blocking_close() 
 	screen.call("_hydrate_integrated_session", _integrated_session(0, chest_position, {"galho": 2}, {}, {}, {}))
 	screen.set_player_position_for_tests(chest_position)
 	client.delay_frames = 4
-	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 1, "%s-000001" % TEST_SESSION_ID, 1))
+	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 1, "%s-000001" % TEST_SESSION_ID, 1, {
+		"pocket": {},
+		"chest": {"galho": 2},
+	}))
 	var closed := {"value": false}
 	screen.close_requested.connect(func() -> void:
 		closed["value"] = true
@@ -499,8 +571,8 @@ func test_integrated_back_preserves_pending_checkpoint_without_blocking_close() 
 	screen.call("_handle_back_requested")
 	await get_tree().process_frame
 
-	assert_true(bool(closed.get("value", false)))
-	assert_true(str(screen.get_model().last_message).contains("continua salvando"))
+	assert_false(bool(closed.get("value", true)))
+	assert_true(str(screen.get_model().last_message).contains("Salvando"))
 	assert_eq(client.captured_events.size(), 0)
 	await _wait_process_frames(8)
 
@@ -734,12 +806,17 @@ func test_integrated_collect_complete_updates_local_pocket_before_checkpoint_ack
 	assert_eq(client.checkpoint_calls.size(), 1)
 	var checkpoint_payload := Dictionary(client.checkpoint_calls[0].get("payload", {}))
 	var snapshot := Dictionary(checkpoint_payload.get("snapshot_payload", {}))
+	var operations := Array(checkpoint_payload.get("operations", []))
 	assert_true(bool(Dictionary(snapshot.get("collected_nodes", {})).get(node_id, false)))
 	assert_eq(int(Dictionary(snapshot.get("pocket", {})).get("galho", 0)), 1)
+	assert_eq(operations.size(), 1)
+	assert_eq(str(Dictionary(operations[0]).get("type", "")), "collect_node")
+	assert_eq(str(Dictionary(operations[0]).get("node_id", "")), node_id)
+	assert_true(str(Dictionary(operations[0]).get("op_id", "")).begins_with("owop_"))
 	assert_eq(int(screen.get("_snapshot_revision")), 1)
 	assert_false(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
 
-func test_integrated_deposit_remains_available_during_pending_checkpoint() -> void:
+func test_integrated_deposit_blocks_during_pending_checkpoint_until_ack() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
@@ -748,8 +825,14 @@ func test_integrated_deposit_remains_available_during_pending_checkpoint() -> vo
 	var chest_position := RulesetScript.chest_position()
 	var node_id := _resource_node_id(screen, "galho")
 	client.delay_frames = 2
-	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 1, "%s-000001" % TEST_SESSION_ID, 1))
-	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 2, "%s-000002" % TEST_SESSION_ID, 2))
+	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 1, "%s-000001" % TEST_SESSION_ID, 1, {
+		"pocket": {"galho": 1},
+		"chest": {},
+	}))
+	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 2, "%s-000002" % TEST_SESSION_ID, 2, {
+		"pocket": {},
+		"chest": {"galho": 1},
+	}))
 
 	screen.set_player_position_for_tests(resource_position)
 	screen.call("_advance_nearby_collection", 0.05)
@@ -765,8 +848,15 @@ func test_integrated_deposit_remains_available_during_pending_checkpoint() -> vo
 	screen.set_player_position_for_tests(chest_position)
 	screen.call("_update_labels")
 	var pending_state: Dictionary = screen.call("_view_state", "")
-	assert_true(bool(pending_state.get("deposit_available", false)))
-	assert_true(str(pending_state.get("deposit_tooltip", "")).contains("continua salvando"))
+	assert_false(bool(pending_state.get("deposit_available", true)))
+	assert_true(str(pending_state.get("deposit_tooltip", "")).contains("pendentes"))
+
+	screen.call("_deposit_near_chest")
+	await _wait_process_frames(8)
+
+	assert_eq(client.checkpoint_calls.size(), 1)
+	assert_false(Dictionary(screen.get_model().pocket).is_empty())
+	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 0)
 
 	screen.call("_deposit_near_chest")
 	await _wait_process_frames(10)
@@ -979,8 +1069,8 @@ func _event_ack(event_type: String, revision: int, snapshot_patch: Dictionary, f
 		},
 	}
 
-func _checkpoint_ack(session_id: String, revision: int, checkpoint_id: String, client_sequence: int) -> Dictionary:
-	return {
+func _checkpoint_ack(session_id: String, revision: int, checkpoint_id: String, client_sequence: int, durable_progress: Dictionary = {}) -> Dictionary:
+	var body := {
 		"ok": true,
 		"body": {
 			"type": "mode_checkpoint_ack",
@@ -989,15 +1079,29 @@ func _checkpoint_ack(session_id: String, revision: int, checkpoint_id: String, c
 			"accepted_checkpoint_id": checkpoint_id,
 			"snapshot_revision": revision,
 			"complete_ready": true,
-			"session": _integrated_session(revision, Vector2(220, 330), {}, {}, {}, {}, session_id, {
-				"checkpoint": {
-					"accepted_checkpoint_id": checkpoint_id,
-					"checkpoint_id": checkpoint_id,
-					"client_sequence": client_sequence,
+			"session": {
+				"id": session_id,
+				"mode_id": "openworld",
+				"slice_id": "forest",
+				"ruleset_id": "openworld_forest_ruleset_v1",
+				"ruleset_version": 1,
+				"status": "started",
+				"snapshot_revision": revision,
+				"snapshot_payload": {
+					"ruleset_id": "openworld_forest_ruleset_v1",
+					"ruleset_version": 1,
+					"checkpoint": {
+						"accepted_checkpoint_id": checkpoint_id,
+						"checkpoint_id": checkpoint_id,
+						"client_sequence": client_sequence,
+					},
 				},
-			}),
+			},
 		},
 	}
+	if not durable_progress.is_empty():
+		body["body"]["durable_progress"] = durable_progress.duplicate(true)
+	return body
 
 func _position_dict(position: Vector2) -> Dictionary:
 	return {"x": position.x, "y": position.y}
@@ -1010,6 +1114,12 @@ func _resource_node_id(screen, item_id: String) -> String:
 
 func _resource_node(screen, node_id: String) -> Dictionary:
 	for node: Dictionary in Array(screen.get("_resource_nodes")):
+		if str(node.get("node_id", "")) == node_id:
+			return node
+	return {}
+
+func _runtime_resource_node(runtime, node_id: String) -> Dictionary:
+	for node: Dictionary in runtime.resource_nodes:
 		if str(node.get("node_id", "")) == node_id:
 			return node
 	return {}

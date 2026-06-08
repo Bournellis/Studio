@@ -115,7 +115,7 @@ func test_session_store_separates_openworld_active_cache_from_durable_progress()
 		"snapshot_payload": {"chest": {"galho": 1}},
 	})
 	store.remember_openworld_durable_progress_state({
-		"schema_version": "openworld_forest_progress_v1",
+		"schema_version": "openworld_forest_progress_v2",
 		"save_type": "normal",
 		"ruleset_id": "openworld_forest_ruleset_v1",
 		"ruleset_version": 1,
@@ -133,10 +133,21 @@ func test_session_store_separates_openworld_active_cache_from_durable_progress()
 	assert_eq(int(Dictionary(store.openworld_durable_progress_snapshot().get("pocket", {})).get("folha", 0)), 2)
 	assert_true(bool(Dictionary(store.openworld_durable_progress_snapshot().get("upgrades", {})).get("fogueira_estavel_1", false)))
 
+	store.remember_openworld_pending_ops_state({
+		"schema_version": "openworld_pending_ops_cache_v1",
+		"save_type": "normal",
+		"session_id": "session-active",
+		"ruleset_id": "openworld_forest_ruleset_v1",
+		"ruleset_version": 1,
+		"operations": [{"op_id": "owop_test", "type": "deposit_all"}],
+	})
+	assert_eq(Array(store.openworld_pending_ops_snapshot().get("operations", [])).size(), 1)
+
 	store.clear_openworld_all_local_state()
 
 	assert_true(store.openworld_active_session_snapshot().is_empty())
 	assert_true(store.openworld_durable_progress_snapshot().is_empty())
+	assert_true(store.openworld_pending_ops_snapshot().is_empty())
 	store.free()
 
 func test_session_store_keeps_server_state_as_snapshot() -> void:
