@@ -35,6 +35,7 @@ import {
 } from "../_shared/auth_context.ts";
 import {
   type EdgeConfig,
+  loadOpenworldActiveSessionStartPayload,
   type Route,
   UUID_PATTERN,
   errorResponse,
@@ -239,6 +240,12 @@ async function handleSessionStart(
   });
   if (rpc.error !== null) {
     const mapped = mapModeDatabaseError(rpc.error, "MODE_SESSION_START_FAILED");
+    if (mapped.code === "MODE_SESSION_ALREADY_ACTIVE") {
+      const resumePayload = await loadOpenworldActiveSessionStartPayload(auth, config, requestId, requestHash);
+      if (resumePayload !== null) {
+        return jsonResponse(stateEnvelope(resumePayload, { surface: "mode", saveType: auth.saveType }));
+      }
+    }
     return errorResponse(mapped.code, mapped.message, mapped.status);
   }
   return jsonResponse(stateEnvelope(foundationRpcPayload(rpc.value), {

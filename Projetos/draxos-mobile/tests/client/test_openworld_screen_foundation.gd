@@ -250,6 +250,41 @@ func test_back_preserves_online_session_for_resume() -> void:
 	assert_eq(client.abandon_calls.size(), 0)
 	assert_true(_telemetry_has_event(client, "mode_session_exit_preserved"))
 
+func test_back_with_failed_checkpoint_preserves_pending_state_and_closes() -> void:
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	add_child_autofree(client)
+	add_child_autofree(store)
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"active_session": _session_payload("pending-exit-session", 4, {}),
+		},
+	}
+	client.checkpoint_results = [
+		{"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}},
+		{"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}},
+	]
+	var screen = ScreenScript.new()
+	screen.configure_integrated_alpha(client, store, "token-alpha")
+	add_child_autofree(screen)
+	await wait_seconds(0.12)
+	var bridge = screen.call("_ensure_session_bridge")
+	bridge.record_event_deferred("deposit_all", {"position": {"x": 220, "y": 250}, "session_seconds": 8})
+	await get_tree().process_frame
+	watch_signals(screen)
+
+	var back := screen.find_child("OpenworldBackButton", true, false) as Button
+	assert_not_null(back)
+	back.pressed.emit()
+	await wait_seconds(0.08)
+
+	assert_signal_emitted(screen, "close_requested")
+	assert_eq(str(store.openworld_local_snapshot().get("session_id", "")), "pending-exit-session")
+	assert_true(Array(store.openworld_local_snapshot().get("pending_operations", [])).size() > 0)
+	assert_string_contains(screen.get_model().last_message, "pendentes preservadas")
+	assert_true(_telemetry_has_event(client, "mode_session_exit_preserved"))
+
 func test_integrated_completion_result_uses_visit_summary_text() -> void:
 	var client := FakeSupabaseClient.new()
 	var store := FakeSessionStore.new()

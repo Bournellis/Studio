@@ -237,6 +237,72 @@ func test_resume_prefers_local_cache_and_remote_metadata_does_not_transform_worl
 	assert_eq(int(model.chest.get("folha", 0)), 0)
 	assert_eq(str(model.last_message), "Bosque salvo no servidor.")
 
+func test_resume_uses_matching_session_list_entry_when_active_session_is_missing() -> void:
+	var model = ModelScript.new()
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	store.openworld_local_state = _local_state("session-listed-local", 4, {
+		"chest": {"galho": 2},
+		"checkpoint": {"accepted_checkpoint_id": "session-listed-local-000001", "client_sequence": 1},
+	})
+	var bridge = _bridge(model, client, store)
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"active_session": {},
+			"sessions": [
+				_session_payload("session-listed-local", 7, {
+					"chest": {"folha": 5},
+					"checkpoint": {"accepted_checkpoint_id": "session-listed-local-000001", "client_sequence": 1},
+				}),
+			],
+		},
+	}
+
+	await bridge.resume_or_start_session()
+
+	assert_eq(bridge.server_session_id(), "session-listed-local")
+	assert_eq(bridge.snapshot_revision(), 7)
+	assert_eq(client.start_calls.size(), 0)
+	assert_eq(int(model.chest.get("galho", 0)), 2)
+	assert_eq(int(model.chest.get("folha", 0)), 0)
+	assert_eq(str(store.openworld_active_session_snapshot().get("session_id", "")), "session-listed-local")
+
+func test_resume_preserves_live_local_session_when_state_omits_active_session() -> void:
+	var model = ModelScript.new()
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	var local_state := _local_state("session-local-omitted", 4, {
+		"pocket": {"galho": 1},
+		"checkpoint": {"accepted_checkpoint_id": "session-local-omitted-000001", "client_sequence": 1},
+	})
+	local_state["checkpoint_dirty"] = true
+	local_state["client_sequence"] = 2
+	local_state["pending_operations"] = [
+		{"op_id": "owop_local_omitted", "type": "deposit_all"},
+	]
+	store.openworld_local_state = local_state
+	var bridge = _bridge(model, client, store)
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"active_session": {},
+			"sessions": [],
+		},
+	}
+	client.checkpoint_results = [
+		{"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}},
+	]
+
+	await bridge.resume_or_start_session()
+
+	assert_eq(bridge.server_session_id(), "session-local-omitted")
+	assert_eq(client.start_calls.size(), 0)
+	assert_true(bridge.has_pending_events())
+	assert_eq(Array(store.openworld_pending_ops_snapshot().get("operations", [])).size(), 1)
+	assert_eq(str(store.openworld_active_session_snapshot().get("session_id", "")), "session-local-omitted")
+	assert_string_contains(str(model.last_message), "pendentes")
+
 func test_resume_discards_expired_remote_session_fallback_and_starts_new_visit() -> void:
 	var model = ModelScript.new()
 	var client := FakeSupabaseClient.new()

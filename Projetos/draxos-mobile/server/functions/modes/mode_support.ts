@@ -1,11 +1,17 @@
 import { jsonResponse } from "../_shared/http.ts";
 import {
+  modeStatePayload,
   type ModeProgressRow,
   type ModeRegistryRow,
   type ModeResourcesRow,
   type ModeRewardClaimRow,
   type ModeRulesetRow,
   type ModeSessionRow,
+  OPENWORLD_MODE_ID,
+  OPENWORLD_RELEASE_CHANNEL,
+  OPENWORLD_RULESET_ID,
+  OPENWORLD_RULESET_VERSION,
+  OPENWORLD_SLICE_ID,
 } from "../_shared/mode_domain.ts";
 import {
   type FoundationGameSaveRow,
@@ -58,6 +64,84 @@ export interface ModeState {
   sessions: ModeSessionRow[];
   claims: ModeRewardClaimRow[];
   resources: ModeResourcesRow | null;
+}
+
+export function activeSessionStartPayload(
+  state: ModeState,
+  requestId: string,
+  requestHash: string,
+  modeId: string,
+  sliceId: string,
+  rulesetId: string,
+  rulesetVersion: number,
+  releaseChannel: string,
+): Record<string, unknown> | null {
+  const statePayload = modeStatePayload({ ...state, serverTime: new Date() });
+  const activeSession = isObject(statePayload.active_session) ? statePayload.active_session : {};
+  if (Object.keys(activeSession).length <= 0) return null;
+  const progress = isObject(statePayload.progress) ? statePayload.progress : {};
+  const durableProgress = isObject(progress.progress_payload) ? progress.progress_payload : {};
+  return {
+    ok: true,
+    schema_version: "mode_platform_v1",
+    request_id: requestId,
+    request_hash: requestHash,
+    mode: {
+      mode_id: modeId,
+      slice_id: sliceId,
+      ruleset_id: rulesetId,
+      ruleset_version: rulesetVersion,
+      release_channel: releaseChannel,
+    },
+    session: activeSession,
+    durable_progress: durableProgress,
+    resumed_existing: true,
+    server_time: statePayload.server_time,
+  };
+}
+
+export async function loadActiveSessionStartPayload(
+  auth: AuthContext,
+  config: EdgeConfig,
+  requestId: string,
+  requestHash: string,
+  modeId: string,
+  sliceId: string,
+  rulesetId: string,
+  rulesetVersion: number,
+  releaseChannel: string,
+): Promise<Record<string, unknown> | null> {
+  const state = await loadModeState(auth, config, modeId);
+  if (state.error !== null) return null;
+  return activeSessionStartPayload(
+    state.value,
+    requestId,
+    requestHash,
+    modeId,
+    sliceId,
+    rulesetId,
+    rulesetVersion,
+    releaseChannel,
+  );
+}
+
+export async function loadOpenworldActiveSessionStartPayload(
+  auth: AuthContext,
+  config: EdgeConfig,
+  requestId: string,
+  requestHash: string,
+): Promise<Record<string, unknown> | null> {
+  return await loadActiveSessionStartPayload(
+    auth,
+    config,
+    requestId,
+    requestHash,
+    OPENWORLD_MODE_ID,
+    OPENWORLD_SLICE_ID,
+    OPENWORLD_RULESET_ID,
+    OPENWORLD_RULESET_VERSION,
+    OPENWORLD_RELEASE_CHANNEL,
+  );
 }
 
 export interface AdminRoleRow {

@@ -711,6 +711,46 @@ Deno.test("openworld client uses ACK-backed operation checkpoints during active 
   );
 });
 
+Deno.test("openworld start endpoint resumes active sessions instead of blocking the shell", async () => {
+  const handler = normalizeCode(await readProjectText("server/functions/modes/mode_handler.ts"));
+  const supabaseHandler = normalizeCode(
+    await readProjectText("supabase/functions/modes/mode_handler.ts"),
+  );
+  const support = normalizeCode(await readProjectText("server/functions/modes/mode_support.ts"));
+  const supabaseSupport = normalizeCode(
+    await readProjectText("supabase/functions/modes/mode_support.ts"),
+  );
+  for (const source of [handler, supabaseHandler]) {
+    assertIncludes(
+      source,
+      'mapped.code === "MODE_SESSION_ALREADY_ACTIVE"',
+      "start handler should special-case active Bosque sessions",
+    );
+    assertIncludes(
+      source,
+      "loadOpenworldActiveSessionStartPayload",
+      "start handler should delegate active-session resume payload construction",
+    );
+  }
+  for (const source of [support, supabaseSupport]) {
+    assertIncludes(
+      source,
+      "resumed_existing: true",
+      "start handler should expose active-session resume semantics",
+    );
+    assertIncludes(
+      source,
+      "session: activeSession",
+      "start handler should return the active session in normal start payload shape",
+    );
+    assertIncludes(
+      source,
+      "durable_progress: durableProgress",
+      "start handler should return durable progress with resumed sessions",
+    );
+  }
+});
+
 Deno.test("mode session abandon is RPC-backed and hash guarded", async () => {
   const migration = normalizeSql(await readProjectText(HARDENING_V2_MIGRATION_PATH));
   const handler = normalizeCode(await readProjectText(HANDLER_PATH));

@@ -157,14 +157,27 @@ func resume_or_start_session() -> void:
 		var body := _response_body(state_result)
 		_remember_server_time_from_body(body)
 		var active_session := _active_session_from_body(body)
-		if loaded_local and _same_session(active_session):
-			_apply_remote_metadata(_session_with_server_time(active_session, body))
+		var local_remote_session := _session_from_body_by_id(body, _server_session_id) if loaded_local else {}
+		if loaded_local and not local_remote_session.is_empty():
+			_apply_remote_metadata(_session_with_server_time(local_remote_session, body))
 			last_result_text = "Bosque retomado."
 			if not _pending_operations.is_empty() or _checkpoint_dirty:
 				_set_model_message("Alteracoes locais pendentes; sincronizando.")
 				await flush_checkpoint(true)
 			else:
 				_set_model_message("Bosque salvo no servidor.")
+			_emit_state_changed()
+			return
+		if loaded_local and active_session.is_empty():
+			last_result_text = "Bosque retomado."
+			_session_state = SESSION_PENDING if _checkpoint_dirty or not _pending_operations.is_empty() else SESSION_SYNCED
+			_server_synced = not _checkpoint_dirty and _pending_operations.is_empty()
+			_set_model_message("Alteracoes locais pendentes; sincronizando." if has_pending_events() else "Bosque retomado.")
+			if not _pending_operations.is_empty() or _checkpoint_dirty:
+				await flush_checkpoint(true)
+			else:
+				_save_local_checkpoint_state()
+			_emit_client_telemetry("mode_session_resumed", {"result": "local_preserved_without_remote_active"})
 			_emit_state_changed()
 			return
 		if loaded_local:
@@ -1122,6 +1135,21 @@ func _active_session_from_body(body: Dictionary) -> Dictionary:
 	for session_variant: Variant in sessions:
 		var candidate := _as_dictionary(session_variant)
 		if str(candidate.get("status", "")) == "started" and _session_is_live(candidate, now_unix):
+			return candidate
+	return {}
+
+func _session_from_body_by_id(body: Dictionary, session_id: String) -> Dictionary:
+	var clean_session_id := session_id.strip_edges()
+	if clean_session_id == "":
+		return {}
+	var now_unix := _body_now_unix(body)
+	var active_session := _as_dictionary(body.get("active_session", {}))
+	if str(active_session.get("id", "")).strip_edges() == clean_session_id and _session_is_live(active_session, now_unix):
+		return active_session
+	var sessions := _as_array(body.get("sessions", []))
+	for session_variant: Variant in sessions:
+		var candidate := _as_dictionary(session_variant)
+		if str(candidate.get("id", "")).strip_edges() == clean_session_id and _session_is_live(candidate, now_unix):
 			return candidate
 	return {}
 

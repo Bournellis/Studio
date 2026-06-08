@@ -573,8 +573,11 @@ func _handle_back_requested() -> void:
 		var bridge = _ensure_session_bridge()
 		var checkpoint_result: Dictionary = await _flush_pending_checkpoint_with_wait(bridge)
 		if not bool(checkpoint_result.get("ok", true)) or _has_pending_integrated_events():
-			model.last_message = "Falha ao salvar no servidor; continue no Bosque ou tente sair novamente."
+			model.last_message = "Alteracoes pendentes preservadas; o Bosque tentara sincronizar ao voltar."
+			if _server_session_id() != "":
+				bridge.record_exit_preserved()
 			_update_labels()
+			close_requested.emit()
 			return
 	if integration_mode == "integrated_alpha" and _server_session_id() != "" and not _session_blocks_mutation():
 		model.last_message = "Sessao preservada por ate 2h para retomada."
