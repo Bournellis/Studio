@@ -27,6 +27,10 @@ const PERSISTENCE_REBASE_MIGRATION_PATH =
   "server/schema/migrations/202606080001_openworld_bosque_persistence_rebase_v1.sql";
 const SUPABASE_PERSISTENCE_REBASE_MIGRATION_PATH =
   "supabase/migrations/202606080001_openworld_bosque_persistence_rebase_v1.sql";
+const JSONB_OBJECT_LENGTH_HOTFIX_MIGRATION_PATH =
+  "server/schema/migrations/202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql";
+const SUPABASE_JSONB_OBJECT_LENGTH_HOTFIX_MIGRATION_PATH =
+  "supabase/migrations/202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql";
 const MODE_DOMAIN_PATH = "server/functions/_shared/mode_domain.ts";
 const SUPABASE_MODE_DOMAIN_PATH = "supabase/functions/_shared/mode_domain.ts";
 
@@ -178,8 +182,14 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
   );
   const persistenceRebaseMigration = await projectText(PERSISTENCE_REBASE_MIGRATION_PATH);
   const supabasePersistenceRebaseMigration = await projectText(SUPABASE_PERSISTENCE_REBASE_MIGRATION_PATH);
+  const jsonbObjectLengthHotfixMigration = await projectText(
+    JSONB_OBJECT_LENGTH_HOTFIX_MIGRATION_PATH,
+  );
+  const supabaseJsonbObjectLengthHotfixMigration = await projectText(
+    SUPABASE_JSONB_OBJECT_LENGTH_HOTFIX_MIGRATION_PATH,
+  );
   const effectiveMigration =
-    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}\n${collectBatchMigration}\n${checkpointMigration}\n${durableProgressMigration}\n${sessionLifecycleStructuresMigration}\n${persistenceRebaseMigration}`;
+    `${baseMigration}\n${guidanceMigration}\n${collectionSyncMigration}\n${collectBatchMigration}\n${checkpointMigration}\n${durableProgressMigration}\n${sessionLifecycleStructuresMigration}\n${persistenceRebaseMigration}\n${jsonbObjectLengthHotfixMigration}`;
   const modeDomain = await projectText(MODE_DOMAIN_PATH);
   const supabaseModeDomain = await projectText(SUPABASE_MODE_DOMAIN_PATH);
 
@@ -237,6 +247,16 @@ Deno.test("openworld forest ruleset is referenced by TS domain and effective SQL
     normalizeNewlines(persistenceRebaseMigration),
     normalizeNewlines(supabasePersistenceRebaseMigration),
     "persistence rebase migration should be mirrored between server and supabase",
+  );
+  assertEq(
+    normalizeNewlines(jsonbObjectLengthHotfixMigration),
+    normalizeNewlines(supabaseJsonbObjectLengthHotfixMigration),
+    "jsonb object length hotfix migration should be mirrored between server and supabase",
+  );
+  assertIncludes(
+    effectiveMigration,
+    "create or replace function public.jsonb_object_length(p_value jsonb)",
+    "effective SQL should provide jsonb_object_length for checkpoint runtime compatibility",
   );
   assertIncludes(
     collectBatchMigration,

@@ -35,6 +35,10 @@ const OPENWORLD_PERSISTENCE_REBASE_PATH =
   "supabase/migrations/202606080001_openworld_bosque_persistence_rebase_v1.sql";
 const OPENWORLD_PERSISTENCE_REBASE_SERVER_MIRROR_PATH =
   "server/schema/migrations/202606080001_openworld_bosque_persistence_rebase_v1.sql";
+const OPENWORLD_JSONB_OBJECT_LENGTH_HOTFIX_PATH =
+  "supabase/migrations/202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql";
+const OPENWORLD_JSONB_OBJECT_LENGTH_HOTFIX_SERVER_MIRROR_PATH =
+  "server/schema/migrations/202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql";
 const ADMIN_COMPENSATE_HASH_MIGRATION_PATH =
   "supabase/migrations/202606020003_admin_compensate_request_hash.sql";
 const ADMIN_COMPENSATE_HASH_SERVER_MIRROR_PATH =
@@ -158,6 +162,27 @@ Deno.test("openworld persistence rebase migration is mirrored in server schema",
     normalizeNewlines(serverMirror),
     normalizeNewlines(supabaseMigration),
     "server/schema openworld persistence rebase migration should mirror supabase migration exactly",
+  );
+});
+
+Deno.test("openworld jsonb object length hotfix migration is mirrored in server schema", async () => {
+  const supabaseMigration = await readProjectText(OPENWORLD_JSONB_OBJECT_LENGTH_HOTFIX_PATH);
+  const serverMirror = await readProjectText(OPENWORLD_JSONB_OBJECT_LENGTH_HOTFIX_SERVER_MIRROR_PATH);
+
+  assertEq(
+    normalizeNewlines(serverMirror),
+    normalizeNewlines(supabaseMigration),
+    "server/schema openworld jsonb object length hotfix should mirror supabase migration exactly",
+  );
+  assertIncludes(
+    supabaseMigration,
+    "create or replace function public.jsonb_object_length(p_value jsonb)",
+    "hotfix should provide the jsonb_object_length compatibility shim",
+  );
+  assertIncludes(
+    supabaseMigration,
+    "notify pgrst, 'reload schema'",
+    "hotfix should reload PostgREST schema cache after adding the shim",
   );
 });
 
