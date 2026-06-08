@@ -5,6 +5,7 @@ import type {
   BehaviorCondition,
   BehaviorConfig,
   CombatantBuild,
+  CombatantStatModifiers,
 } from "./battle_combatants.ts";
 import { potionDefinition } from "./economy_domain.ts";
 
@@ -15,6 +16,7 @@ export type {
   BehaviorCondition,
   BehaviorConfig,
   CombatantBuild,
+  CombatantStatModifiers,
 } from "./battle_combatants.ts";
 
 type DamageType =
@@ -570,7 +572,17 @@ export function simulateFirstSliceBattle(
   const opponent = createCombatant("opponent", input.opponent);
   const nextSeq = () => seq++;
 
-  events.push(baseEvent(0, nextSeq(), "battle_start", "system", "none"));
+  events.push({
+    ...baseEvent(0, nextSeq(), "battle_start", "system", "none"),
+    player_hp: player.hp,
+    player_max_hp: player.maxHp,
+    player_max_mana: player.maxMana,
+    opponent_hp: opponent.hp,
+    opponent_max_hp: opponent.maxHp,
+    opponent_max_mana: opponent.maxMana,
+    player_stat_modifiers: cleanStatModifiers(input.player.statModifiers),
+    opponent_stat_modifiers: cleanStatModifiers(input.opponent.statModifiers),
+  });
   emitPassiveStart(0, player, events, nextSeq);
   emitPassiveStart(0, opponent, events, nextSeq);
 
@@ -687,24 +699,35 @@ function createCombatant(
   build: CombatantBuild,
 ): RuntimeCombatant {
   const level = clamp(build.level, 1, 40);
-  const maxHp = maxHpForLevel(level);
-  const maxMana = Math.round(20 + 1.5 * (level - 1));
-  const passive = passiveStats(build.passiveId, build.passiveLevel);
+  const modifiers = normalizedStatModifiers(build.statModifiers);
+  const maxHp = roundedPercent(maxHpForLevel(level), modifiers.maxHpPercent);
+  const maxMana = roundedPercent(
+    Math.round(20 + 1.5 * (level - 1)),
+    modifiers.maxManaPercent,
+  );
+  const passive = passiveStatsForBuild(build);
   const weapon = weaponDefinition(build.weaponId);
+  const baseManaRegen = (2 + 0.05 * (level - 1)) * (1 + passive.manaRegenBonus);
+  const cooldownReduction = clampPercent(
+    passive.cooldownReduction + percentRatio(modifiers.cooldownReductionPercent),
+    0,
+    0.75,
+  );
   return {
     side,
     build,
     hp: maxHp,
     maxHp,
-    hpRegen: hpRegenForLevel(level),
+    hpRegen: hpRegenForLevel(level) * percentMultiplier(modifiers.hpRegenPercent),
     barrier: passive.startingBarrier,
     mana: maxMana,
     maxMana,
-    manaRegen: (2 + 0.05 * (level - 1)) * (1 + passive.manaRegenBonus),
-    damageBonus: passive.damageBonus,
-    damageReduction: passive.damageReduction,
+    manaRegen: baseManaRegen * percentMultiplier(modifiers.manaRegenPercent),
+    damageBonus: passive.damageBonus + percentRatio(modifiers.damageBonusPercent),
+    damageReduction: passive.damageReduction +
+      percentRatio(modifiers.damageReductionPercent),
     lifesteal: passive.lifesteal,
-    cooldownMultiplier: 1 - passive.cooldownReduction,
+    cooldownMultiplier: 1 - cooldownReduction,
     weaponDamage: weaponDamage(build, weapon),
     weaponDamageType: weapon.damageType,
     weaponCadence: weapon.cadence,
@@ -721,6 +744,50 @@ function createCombatant(
     healingOverTime: [],
     consumablesUsed: {},
   };
+}
+
+function normalizedStatModifiers(
+  modifiers: CombatantStatModifiers | undefined,
+): Required<CombatantStatModifiers> {
+  return {
+    maxHpPercent: safePercent(modifiers?.maxHpPercent),
+    maxManaPercent: safePercent(modifiers?.maxManaPercent),
+    hpRegenPercent: safePercent(modifiers?.hpRegenPercent),
+    manaRegenPercent: safePercent(modifiers?.manaRegenPercent),
+    damageBonusPercent: safePercent(modifiers?.damageBonusPercent),
+    damageReductionPercent: safePercent(modifiers?.damageReductionPercent),
+    cooldownReductionPercent: safePercent(modifiers?.cooldownReductionPercent),
+    statusDurationPercent: safePercent(modifiers?.statusDurationPercent),
+  };
+}
+
+function cleanStatModifiers(
+  modifiers: CombatantStatModifiers | undefined,
+): Record<string, number> {
+  const normalized = normalizedStatModifiers(modifiers);
+  const clean: Record<string, number> = {};
+  for (const [key, value] of Object.entries(normalized)) {
+    if (value !== 0) {
+      clean[key] = value;
+    }
+  }
+  return clean;
+}
+
+function roundedPercent(value: number, percent: number): number {
+  return Math.max(1, Math.round(value * percentMultiplier(percent)));
+}
+
+function percentMultiplier(percent: number): number {
+  return Math.max(0.05, 1 + percentRatio(percent));
+}
+
+function percentRatio(percent: number): number {
+  return percent / 100;
+}
+
+function safePercent(value: number | undefined): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
 
 function emitPassiveStart(
@@ -1106,7 +1173,7 @@ function processPet(
     return;
   }
   const petLevel = clamp(actor.build.petLevel, 1, 40);
-  const passive = passiveStats(actor.build.passiveId, actor.build.passiveLevel);
+  const passive = passiveStatsForBuild(actor.build);
   const rawDamage = Math.ceil(
     (pet.baseDamage + pet.damagePerLevel * Math.max(0, petLevel - 1)) *
       (1 + passive.petDamageBonus),
@@ -1175,10 +1242,7 @@ function processSummons(
       continue;
     }
     if (time + 0.0001 >= summon.nextAttackAt && target.hp > 0) {
-      const passive = passiveStats(
-        owner.build.passiveId,
-        owner.build.passiveLevel,
-      );
+      const passive = passiveStatsForBuild(owner.build);
       const rawDamage = Math.ceil(summon.dps * (1 + passive.summonDamageBonus));
       const result = applyDamage(
         time,
@@ -1297,7 +1361,7 @@ function applyDot(
   const existing = target.dots.find((dot) =>
     dot.id === spell.dot?.statusId && dot.source === actor.side
   );
-  const passive = passiveStats(actor.build.passiveId, actor.build.passiveLevel);
+  const passive = passiveStatsForBuild(actor.build);
   const tickDamage =
     (spell.dot.tickDamage + Math.max(0, spellLevel - 1) * 0.35) *
     (1 + passive.dotDamageBonus);
@@ -1354,7 +1418,7 @@ function applyDotDefinition(
   events: BattleEvent[],
   nextSeq: () => number,
 ): void {
-  const passive = passiveStats(actor.build.passiveId, actor.build.passiveLevel);
+  const passive = passiveStatsForBuild(actor.build);
   const duration = dot.duration * (1 + passive.statusDurationBonus);
   const tickDamage = dot.tickDamage * (1 + passive.dotDamageBonus);
   const existing = target.dots.find((current) =>
@@ -1401,7 +1465,7 @@ function applyStatus(
     return;
   }
 
-  const passive = passiveStats(actor.build.passiveId, actor.build.passiveLevel);
+  const passive = passiveStatsForBuild(actor.build);
   const status = createStatus(
     spell.status.statusId,
     actor.side,
@@ -1447,7 +1511,7 @@ function applyStatusDefinition(
   events: BattleEvent[],
   nextSeq: () => number,
 ): void {
-  const passive = passiveStats(actor.build.passiveId, actor.build.passiveLevel);
+  const passive = passiveStatsForBuild(actor.build);
   const duration = statusDefinition.duration *
     (1 + passive.statusDurationBonus);
   const status = createStatus(
@@ -1753,6 +1817,16 @@ function passiveStats(
     default:
       return empty;
   }
+}
+
+function passiveStatsForBuild(build: CombatantBuild): PassiveStats {
+  const passive = passiveStats(build.passiveId, build.passiveLevel);
+  const modifiers = normalizedStatModifiers(build.statModifiers);
+  return {
+    ...passive,
+    statusDurationBonus: passive.statusDurationBonus +
+      percentRatio(modifiers.statusDurationPercent),
+  };
 }
 
 function totalDamageReduction(

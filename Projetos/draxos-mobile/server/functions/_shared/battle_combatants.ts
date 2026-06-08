@@ -31,6 +31,17 @@ export interface BattleConsumableUse {
   quantity: number;
 }
 
+export interface CombatantStatModifiers {
+  maxHpPercent?: number;
+  maxManaPercent?: number;
+  hpRegenPercent?: number;
+  manaRegenPercent?: number;
+  damageBonusPercent?: number;
+  damageReductionPercent?: number;
+  cooldownReductionPercent?: number;
+  statusDurationPercent?: number;
+}
+
 export interface CombatantBuild {
   id: string;
   displayName: string;
@@ -46,6 +57,7 @@ export interface CombatantBuild {
   petLevel?: number;
   spellBehaviors?: Record<string, BehaviorConfig>;
   potionSlot?: BattlePotionSlot;
+  statModifiers?: CombatantStatModifiers;
 }
 
 export interface BattlePlayerRow {

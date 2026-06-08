@@ -147,6 +147,44 @@ Deno.test("client Arena active buff button opens choice route without auto-selec
   );
 });
 
+Deno.test("arena temporary buffs feed explicit simulator stat modifiers", async () => {
+  const serverFunction = await Deno.readTextFile(
+    projectFile("server/functions/arena/index.ts"),
+  );
+  const supabaseFunction = await Deno.readTextFile(
+    projectFile("supabase/functions/arena/index.ts"),
+  );
+
+  assertEq(serverFunction, supabaseFunction, "Arena function mirrors");
+  assertIncludes(
+    serverFunction,
+    'maxHpPercent: totalBuffPercent(buffs, "max_hp")',
+  );
+  assertIncludes(
+    serverFunction,
+    'maxManaPercent: totalBuffPercent(buffs, "max_mana")',
+  );
+  assertIncludes(
+    serverFunction,
+    'damageBonusPercent: totalBuffPercent(buffs, "ritual_power")',
+  );
+  assertIncludes(
+    serverFunction,
+    'damageReductionPercent: totalBuffPercent(buffs, "guard")',
+  );
+  assertIncludes(
+    serverFunction,
+    'cooldownReductionPercent: totalBuffPercent(buffs, "ritual_haste")',
+  );
+  assertIncludes(
+    serverFunction,
+    'statusDurationPercent: totalBuffPercent(buffs, "ritual_control")',
+  );
+  assertIncludes(serverFunction, "mergeStatModifiers");
+  assertNotIncludes(serverFunction, "Math.floor(vitality / 5)");
+  assertNotIncludes(serverFunction, "Math.floor((potency + manaFlow) / 4)");
+});
+
 Deno.test("arena claim returns selection delta for post-claim responsiveness", async () => {
   const serverFunction = await Deno.readTextFile(
     projectFile("server/functions/arena/index.ts"),

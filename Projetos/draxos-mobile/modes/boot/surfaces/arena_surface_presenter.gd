@@ -459,9 +459,9 @@ func _add_attempt_summary_panel(host: Node, attempt: Dictionary) -> void:
 	stack.add_child(_arena_label("Proximo duelo", 14, "text_primary"))
 	stack.add_child(_arena_label("Duelo atual: %d/%d" % [clampi(next_duel, 1, duels_total), duels_total], 12, "text_secondary"))
 	stack.add_child(_arena_label("Proximo inimigo: %s" % _next_enemy_label(attempt), 12, "text_secondary"))
-	stack.add_child(_arena_label("Estado: %s | Buffs ativos: %d" % [
+	stack.add_child(_arena_label("Estado: %s | Buffs ativos: %s" % [
 		_friendly_attempt_state(_attempt_state(attempt)),
-		_as_array(attempt.get("temporary_buffs", [])).size(),
+		ArenaSurfaceTextScript.active_buff_summary_text(attempt),
 	], 12, "text_secondary"))
 	stack.add_child(_arena_label("Comportamento: ajustavel entre duelos", 12, "text_secondary"))
 	stack.add_child(_arena_label("Loadout travado. Pocao tambem pode ser ajustada antes do duelo.", 12, "text_secondary"))
@@ -580,7 +580,9 @@ func _add_buff_choice_cards(host: Node, choices: Array) -> void:
 func _buff_choice_card(host: Node, choice: Dictionary, index: int, buff_id: String) -> PanelContainer:
 	var card := _arena_panel(host, "ArenaBuffChoiceCard%d" % index, "bg_panel_alt", "border_default")
 	var stack := _arena_panel_stack(card, 5)
-	var label := str(choice.get("display_name", buff_id)).strip_edges()
+	var label := ArenaSurfaceTextScript.buff_label_text(choice)
+	if label == "":
+		label = buff_id
 	stack.add_child(_arena_label(label, 13, "text_primary"))
 	stack.add_child(_arena_label(_buff_effect_text(choice), 12, "text_secondary"))
 	stack.add_child(_arena_label("Temporario: dura ate encerrar esta tentativa.", 11, "text_secondary"))

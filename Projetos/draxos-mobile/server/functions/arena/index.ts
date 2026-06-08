@@ -1328,18 +1328,40 @@ function applyArenaBuffs(
   activeBuffs: unknown,
 ): CombatantBuild {
   const buffs = Array.isArray(activeBuffs) ? activeBuffs.filter(isObject) : [];
-  const potency = totalBuffPercent(buffs, "ritual_power") +
-    totalBuffPercent(buffs, "ritual_haste") +
-    totalBuffPercent(buffs, "ritual_control");
-  const vitality = totalBuffPercent(buffs, "max_hp") +
-    totalBuffPercent(buffs, "guard");
-  const manaFlow = totalBuffPercent(buffs, "max_mana") +
-    totalBuffPercent(buffs, "mana_regen") +
-    totalBuffPercent(buffs, "will");
+  const modifiers = {
+    maxHpPercent: totalBuffPercent(buffs, "max_hp"),
+    maxManaPercent: totalBuffPercent(buffs, "max_mana"),
+    hpRegenPercent: totalBuffPercent(buffs, "will"),
+    manaRegenPercent: totalBuffPercent(buffs, "mana_regen"),
+    damageBonusPercent: totalBuffPercent(buffs, "ritual_power"),
+    damageReductionPercent: totalBuffPercent(buffs, "guard"),
+    cooldownReductionPercent: totalBuffPercent(buffs, "ritual_haste"),
+    statusDurationPercent: totalBuffPercent(buffs, "ritual_control"),
+  };
   return {
     ...combatant,
-    level: combatant.level + Math.floor(vitality / 5),
-    weaponLevel: combatant.weaponLevel + Math.floor((potency + manaFlow) / 4),
+    statModifiers: mergeStatModifiers(combatant.statModifiers, modifiers),
+  };
+}
+
+function mergeStatModifiers(
+  base: CombatantBuild["statModifiers"],
+  incoming: NonNullable<CombatantBuild["statModifiers"]>,
+): NonNullable<CombatantBuild["statModifiers"]> {
+  return {
+    maxHpPercent: numberValue(base?.maxHpPercent, 0) + numberValue(incoming.maxHpPercent, 0),
+    maxManaPercent: numberValue(base?.maxManaPercent, 0) + numberValue(incoming.maxManaPercent, 0),
+    hpRegenPercent: numberValue(base?.hpRegenPercent, 0) + numberValue(incoming.hpRegenPercent, 0),
+    manaRegenPercent: numberValue(base?.manaRegenPercent, 0) +
+      numberValue(incoming.manaRegenPercent, 0),
+    damageBonusPercent: numberValue(base?.damageBonusPercent, 0) +
+      numberValue(incoming.damageBonusPercent, 0),
+    damageReductionPercent: numberValue(base?.damageReductionPercent, 0) +
+      numberValue(incoming.damageReductionPercent, 0),
+    cooldownReductionPercent: numberValue(base?.cooldownReductionPercent, 0) +
+      numberValue(incoming.cooldownReductionPercent, 0),
+    statusDurationPercent: numberValue(base?.statusDurationPercent, 0) +
+      numberValue(incoming.statusDurationPercent, 0),
   };
 }
 

@@ -880,7 +880,13 @@ func test_arena_buff_choice_renders_comparable_cards_with_existing_actions() -> 
 			"locked_loadout_hash": "sha256:test",
 			"buff_offer": {
 				"choices": [
-					{"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor", "description": "+4% HP maximo"},
+					{
+						"id": "arena_buff_vitalidade_menor",
+						"label": "Vitalidade Menor",
+						"stat_modifiers": [
+							{"stat": "max_hp", "operation": "add_percent", "value": 4},
+						],
+					},
 					{"id": "arena_buff_potencia_menor", "display_name": "Potencia Ritual Menor", "description": "+4% Potencia Ritual"},
 					{"id": "arena_buff_guarda_menor", "display_name": "Guarda Menor", "description": "+4% Guarda"},
 				],
@@ -946,7 +952,13 @@ func test_arena_active_pending_buff_opens_choice_without_autoselecting_first_buf
 func test_arena_active_after_selected_buff_returns_to_resolve_duel() -> void:
 	var boot = BootScreenScript.new()
 	add_child_autofree(boot)
-	var selected_buff := {"id": "arena_buff_vitalidade_menor", "display_name": "Vitalidade Menor"}
+	var selected_buff := {
+		"id": "arena_buff_vitalidade_menor",
+		"label": "Vitalidade Menor",
+		"stat_modifiers": [
+			{"stat": "max_hp", "operation": "add_percent", "value": 4},
+		],
+	}
 	assert_true(SessionStore.apply_arena_result({
 		"ok": true,
 		"_client": {"save_type": SessionStore.SAVE_TYPE_NORMAL},
@@ -981,6 +993,7 @@ func test_arena_active_after_selected_buff_returns_to_resolve_duel() -> void:
 
 	assert_not_null(_find_button_by_text(boot._content_body, "Resolver duelo"))
 	assert_null(_find_button_by_text(boot._content_body, "Escolher buff"))
+	assert_true(_label_tree_contains(boot._content_body, "Buffs ativos: Vitalidade Menor (+4% HP maximo)"))
 	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL))
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.arena_choose_buff_action("arena_buff_vitalidade_menor")))
 

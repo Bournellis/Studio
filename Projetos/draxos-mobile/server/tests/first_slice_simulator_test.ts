@@ -361,8 +361,89 @@ Deno.test("spell behavior disables configured spell while missing behavior keeps
   );
 });
 
+Deno.test("first-slice simulator applies Arena temporary stat modifiers directly", () => {
+  const baseInput: BattleSimulationInput = {
+    battleId: "00000000-0000-4000-8000-000000000019",
+    seed: "first_slice:arena_buffs:00000000-0000-4000-8000-000000000020",
+    player: {
+      id: "player-arena-buffs",
+      displayName: "Draxos",
+      level: 18,
+      weaponId: "varinha_cinzas",
+      weaponLevel: 2,
+      weaponQualityTier: 0,
+      spellIds: ["descarga_nervosa"],
+      spellLevels: { descarga_nervosa: 12 },
+    },
+    opponent: {
+      id: "bot-arena-buffs",
+      displayName: "Alvo de Teste",
+      level: 18,
+      weaponId: "varinha_cinzas",
+      weaponLevel: 1,
+      weaponQualityTier: 0,
+      spellIds: [],
+      spellLevels: {},
+    },
+  };
+
+  const baseline = simulateFirstSliceBattle(baseInput);
+  const boosted = simulateFirstSliceBattle({
+    ...baseInput,
+    player: {
+      ...baseInput.player,
+      statModifiers: {
+        maxHpPercent: 4,
+        maxManaPercent: 4,
+        hpRegenPercent: 4,
+        manaRegenPercent: 4,
+        damageBonusPercent: 4,
+        damageReductionPercent: 4,
+        cooldownReductionPercent: 3,
+        statusDurationPercent: 4,
+      },
+    },
+  });
+
+  const baselineStart = battleStartEvent(baseline.battleLog.events);
+  const boostedStart = battleStartEvent(boosted.battleLog.events);
+  assert(
+    Number(boostedStart.player_max_hp) > Number(baselineStart.player_max_hp),
+    "max HP buff should increase the next duel HP pool",
+  );
+  assert(
+    Number(boostedStart.player_max_mana) >
+      Number(baselineStart.player_max_mana),
+    "max mana buff should increase the next duel mana pool",
+  );
+  assertEq(
+    JSON.stringify(boostedStart.player_stat_modifiers),
+    JSON.stringify({
+      maxHpPercent: 4,
+      maxManaPercent: 4,
+      hpRegenPercent: 4,
+      manaRegenPercent: 4,
+      damageBonusPercent: 4,
+      damageReductionPercent: 4,
+      cooldownReductionPercent: 3,
+      statusDurationPercent: 4,
+    }),
+    "battle_start should expose the applied temporary Arena modifiers",
+  );
+});
+
 function hasEvent(events: Array<{ type: string }>, type: string): boolean {
   return events.some((event) => event.type === type);
+}
+
+function battleStartEvent(
+  events: Array<Record<string, unknown>>,
+): Record<string, unknown> {
+  const event = events.find((item) => item.type === "battle_start");
+  if (event === undefined) {
+    throw new Error("battle_start event should exist");
+  }
+  return event;
 }
 
 function assert(condition: boolean, message: string): asserts condition {
