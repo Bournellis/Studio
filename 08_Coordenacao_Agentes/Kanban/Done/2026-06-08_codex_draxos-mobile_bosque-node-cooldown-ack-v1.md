@@ -51,3 +51,31 @@ Corrigir o bug em que nodes do Bosque parecem respawnar instantaneamente ao sair
 ## Handoff Point
 
 After implementation and validation, move this card to Done with release root, preview evidence, artifact hashes and remote smoke status.
+
+## Result
+
+- Status: implemented, merged into `main` and published as Internal Alpha.
+- Release package: `Bosque Node Cooldown ACK v1`.
+- Release root: `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`.
+- Preview evidence: `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`.
+- Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`.
+- Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+- Version: `0.0.13-alpha.0` / version code `13`.
+- Android APK SHA256: `c2167096aa2ab0df5c2d4d9e4740e1dd8fa7676bc54ae7af9254d87a2d6e540f`.
+- PC Windows ZIP SHA256: `5bf641d228425f9d47e91b3e7fab20774b21864ac3cd0227a72bb188afb72477`.
+- Web Index SHA256: `4b015300456471c94859406612b22326076ced4f787e458cc6d8f3776461bb73`.
+
+Validation and release evidence:
+
+- Targeted OpenWorld GUT/client suite passed during implementation.
+- Targeted OpenWorld/modes Deno tests passed during implementation.
+- `npx -y deno task --cwd server/functions check`: PASS.
+- `npx -y deno task --cwd supabase/functions check`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad -ConfirmRemoteMutation`: PASS.
+- `build_cloudflare_pages_package.ps1`: PASS.
+- `wrangler pages deploy build\internal-alpha\cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: PASS, preview `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad -ConfirmRemoteMutation`: PASS.
+- Remote manifest smoke: PASS.
+- Remote artifact smoke: PASS; canonical Portal/Web are Cloudflare Access protected as expected.
+- Internal alpha release/CORS smoke: PASS.
+- Preview Web launch smoke: PASS, game loaded and matched release root.
