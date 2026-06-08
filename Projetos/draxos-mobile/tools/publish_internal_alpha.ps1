@@ -239,16 +239,17 @@ function Build-Manifest {
     return [ordered]@{
         schema_version = "internal_alpha_manifest_v1"
         channel = "internal_alpha"
-        latest_version = "0.0.13-alpha.0"
-        latest_version_code = 13
+        latest_version = "0.0.14-alpha.0"
+        latest_version_code = 14
         minimum_supported_version = "0.0.13-alpha.0"
         minimum_supported_version_code = 13
         released_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         requires_save_reset = $false
         portal_url = $PortalUrl
         notes = @(
-            "Bosque Node Cooldown ACK v1 publicado na URL principal de Internal Alpha.",
-            "APK Android e PC ZIP compartilham o mesmo backend remoto.",
+            "Arena PVE Bonus Visual v1 publicado na URL principal de Internal Alpha.",
+            "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
+            "Arena PVE agora exporta e exibe HP/Mana iniciais buffados no replay da proxima luta.",
             "Openworld/Bosque usa operations v2 com ACK obrigatorio e retry local.",
             "Nodes coletaveis mantem cooldown por item via node_state.next_spawn_at e rejeicoes terminais nao ficam presas na fila.",
             "Coleta ativa nao reinicia por movimento leve e ACKs nao fazem rollback visual da mesma sessao.",
@@ -490,8 +491,8 @@ $plan = [ordered]@{
     }
     app = [ordered]@{
         channel = "internal_alpha"
-        version = "0.0.13-alpha.0"
-        version_code = 13
+        version = "0.0.14-alpha.0"
+        version_code = 14
         requires_save_reset = $false
     }
     artifacts = $artifactRecords
@@ -664,8 +665,8 @@ if ($Mode -eq "FullPublish") {
 $report = [ordered]@{
     schema_version = "internal_alpha_publication_v2"
     channel = "internal_alpha"
-    app_version = "0.0.13-alpha.0"
-    app_version_code = 13
+    app_version = "0.0.14-alpha.0"
+    app_version_code = 14
     mode = $Mode
     generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     bucket = $BucketName

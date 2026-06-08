@@ -29,8 +29,23 @@ Arena PVE v1 continua usando `battle_log_v1` por duelo. A sequencia da arena, of
   "mode": "MVP_ONLY",
   "duration": 4.2,
   "participants": {
-    "player": { "id": "uuid", "display_name": "Draxos" },
-    "opponent": { "id": "mvp_training_bot", "display_name": "Bot de Treino", "is_bot": true }
+    "player": {
+      "id": "uuid",
+      "display_name": "Draxos",
+      "hp": 1152,
+      "max_hp": 1152,
+      "max_mana": 32,
+      "stat_modifiers": { "maxHpPercent": 4 }
+    },
+    "opponent": {
+      "id": "mvp_training_bot",
+      "display_name": "Bot de Treino",
+      "hp": 860,
+      "max_hp": 860,
+      "max_mana": 24,
+      "stat_modifiers": {},
+      "is_bot": true
+    }
   },
   "result": {
     "winner": "player",
@@ -106,8 +121,24 @@ Todo evento possui:
 ### `battle_start`
 
 ```json
-{ "t": 0.0, "seq": 1, "type": "battle_start", "source": "system", "target": "none" }
+{
+  "t": 0.0,
+  "seq": 1,
+  "type": "battle_start",
+  "source": "system",
+  "target": "none",
+  "player_hp": 1152,
+  "player_max_hp": 1152,
+  "player_max_mana": 32,
+  "opponent_hp": 860,
+  "opponent_max_hp": 860,
+  "opponent_max_mana": 24,
+  "player_stat_modifiers": { "maxHpPercent": 4 },
+  "opponent_stat_modifiers": {}
+}
 ```
+
+Campos `hp`, `max_hp`, `max_mana` e `stat_modifiers` em `participants` representam o estado inicial calculado para cada lado. Em Arena PVE, esses valores ja incluem buffs temporarios ativos antes do duelo e devem bater com os campos equivalentes de `battle_start`. Replays antigos sem esses campos continuam validos; o cliente deve inferir valores a partir dos eventos quando necessario.
 
 ### `weapon_attack`
 
