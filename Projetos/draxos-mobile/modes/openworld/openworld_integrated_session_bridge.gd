@@ -51,6 +51,7 @@ var _last_session_seconds := 0
 var _apply_snapshot_callback := Callable()
 var _session_state := SESSION_PREVIEW
 var _completed := false
+var _server_time_offset_seconds := 0.0
 
 func configure(target_model: Object, client: Node, store: Node, token: String, apply_snapshot_callback := Callable()) -> void:
 	model = target_model
@@ -115,17 +116,19 @@ func pending_summary_text() -> String:
 	return ""
 
 func has_pending_collected_node(node_id: String) -> bool:
-	return bool(_pending_collected_nodes.get(node_id, false)) or bool(_local_collected_nodes.get(node_id, false))
+	return bool(_pending_collected_nodes.get(node_id, false))
 
 func remember_pending_collected_node(node_id: String) -> void:
 	var clean_node_id := node_id.strip_edges()
 	if clean_node_id == "":
 		return
 	_pending_collected_nodes[clean_node_id] = true
-	_local_collected_nodes[clean_node_id] = true
 
 func pending_collected_nodes_for_tests() -> Dictionary:
 	return _pending_collected_nodes.duplicate(true)
+
+func server_now_unix() -> int:
+	return int(Time.get_unix_time_from_system() + _server_time_offset_seconds)
 
 func record_heartbeat_if_due(session_seconds: float, _heartbeat_seconds: float, position_payload: Dictionary) -> void:
 	if _server_session_id == "" or _completed:
@@ -152,9 +155,10 @@ func resume_or_start_session() -> void:
 	_network_busy = false
 	if bool(state_result.get("ok", false)):
 		var body := _response_body(state_result)
+		_remember_server_time_from_body(body)
 		var active_session := _active_session_from_body(body)
 		if loaded_local and _same_session(active_session):
-			_apply_remote_metadata(active_session)
+			_apply_remote_metadata(_session_with_server_time(active_session, body))
 			last_result_text = "Bosque retomado."
 			if not _pending_operations.is_empty() or _checkpoint_dirty:
 				_set_model_message("Alteracoes locais pendentes; sincronizando.")
@@ -166,7 +170,7 @@ func resume_or_start_session() -> void:
 		if loaded_local:
 			_discard_local_checkpoint_state()
 			loaded_local = false
-		if not active_session.is_empty() and hydrate_session(active_session, true):
+		if not active_session.is_empty() and hydrate_session(_session_with_server_time(active_session, body), true):
 			last_result_text = "Bosque retomado."
 			_set_model_message("Bosque retomado.")
 			_emit_client_telemetry("mode_session_resumed", {"result": "ok"})
@@ -230,9 +234,10 @@ func start_session() -> void:
 	)
 	_network_busy = false
 	var body := _response_body(result)
+	_remember_server_time_from_body(body)
 	if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
 		_remember_durable_progress_from_body(body)
-		hydrate_session(_as_dictionary(body.get("session", {})), true)
+		hydrate_session(_session_with_server_time(_as_dictionary(body.get("session", {})), body), true)
 		var durable_patch := _durable_progress_patch(_durable_progress_cache_snapshot())
 		if not durable_patch.is_empty():
 			apply_remote_snapshot(durable_patch, false)
@@ -407,7 +412,8 @@ func hydrate_session(session: Dictionary, apply_remote_position := true) -> bool
 	_completed = str(session.get("status", "started")) == "completed"
 	var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
 	if not snapshot_payload.is_empty():
-		_local_collected_nodes = _true_dictionary(snapshot_payload.get("collected_nodes", {}))
+		_remember_server_time_from_snapshot(snapshot_payload)
+		_local_collected_nodes = _legacy_collected_nodes_from_snapshot(snapshot_payload)
 		var checkpoint := _as_dictionary(snapshot_payload.get("checkpoint", {}))
 		_accepted_checkpoint_id = str(checkpoint.get("accepted_checkpoint_id", checkpoint.get("checkpoint_id", ""))).strip_edges()
 		_client_sequence = maxi(_client_sequence, int(checkpoint.get("client_sequence", _client_sequence)))
@@ -436,6 +442,7 @@ func apply_remote_snapshot(snapshot_payload: Dictionary, apply_remote_position :
 		model.apply_snapshot(snapshot_payload)
 
 func apply_station_craft_ack(body: Dictionary) -> void:
+	_remember_server_time_from_body(body)
 	_remember_durable_progress_from_body(body)
 	var session := _as_dictionary(body.get("session", {}))
 	var session_id := str(body.get("session_id", session.get("id", ""))).strip_edges()
@@ -525,6 +532,7 @@ func flush_checkpoint(force := false) -> Dictionary:
 	)
 	_checkpoint_in_flight = false
 	var body := _response_body(result)
+	_remember_server_time_from_body(body)
 	if bool(result.get("ok", false)) and session_store.apply_mode_result(result):
 		_apply_checkpoint_ack(body, sent_sequence, sent_operation_ids)
 		_last_pending_request_id = ""
@@ -561,6 +569,9 @@ func _apply_checkpoint_ack(body: Dictionary, sent_sequence: int, sent_operation_
 	var durable_patch := _durable_progress_patch(_durable_progress_cache_snapshot()) if durable_progress_updated else {}
 	if not durable_patch.is_empty():
 		durable_patch["last_message"] = "Bosque salvo no servidor."
+		if body.has("server_time"):
+			durable_patch["server_time"] = body.get("server_time")
+	if not durable_patch.is_empty() and _pending_operations.is_empty():
 		apply_remote_snapshot(durable_patch, false)
 	if sent_sequence >= _client_sequence:
 		_checkpoint_dirty = not _pending_operations.is_empty()
@@ -593,7 +604,7 @@ func _build_checkpoint_payload() -> Dictionary:
 		"visit_snapshot": _visit_snapshot_payload(),
 		"snapshot_payload": snapshot_payload,
 		"client_summary": {
-			"collected_count": _local_collected_nodes.size(),
+			"collected_count": _pending_collected_nodes.size(),
 			"pocket_count": _inventory_count(_as_dictionary(snapshot_payload.get("pocket", {}))),
 			"chest_count": _inventory_count(_as_dictionary(snapshot_payload.get("chest", {}))),
 		},
@@ -602,7 +613,10 @@ func _build_checkpoint_payload() -> Dictionary:
 func _local_snapshot_payload() -> Dictionary:
 	var snapshot_payload: Dictionary = model.snapshot() if model != null and model.has_method("snapshot") else {}
 	snapshot_payload["session_seconds"] = _last_session_seconds
-	snapshot_payload["collected_nodes"] = _local_collected_nodes.duplicate(true)
+	if not _pending_collected_nodes.is_empty():
+		snapshot_payload["collected_nodes"] = _pending_collected_nodes.duplicate(true)
+	else:
+		snapshot_payload.erase("collected_nodes")
 	if not _last_position_payload.is_empty():
 		snapshot_payload["player_position"] = _last_position_payload.duplicate(true)
 	if model != null:
@@ -634,15 +648,17 @@ func resync_session(success_message: String) -> bool:
 		_emit_client_telemetry("mode_sync_failed", {"result": "resync_failed", "error_code": _error_code(state_result)})
 		_emit_state_changed()
 		return false
-	var active_session := _active_session_from_body(_response_body(state_result))
+	var body := _response_body(state_result)
+	_remember_server_time_from_body(body)
+	var active_session := _active_session_from_body(body)
 	if active_session.is_empty():
 		_session_state = SESSION_PREVIEW
 		_emit_state_changed()
 		return false
 	if _same_session(active_session):
-		_apply_remote_metadata(active_session)
+		_apply_remote_metadata(_session_with_server_time(active_session, body))
 	else:
-		if not hydrate_session(active_session, true):
+		if not hydrate_session(_session_with_server_time(active_session, body), true):
 			_session_state = SESSION_PREVIEW
 			_emit_state_changed()
 			return false
@@ -673,6 +689,8 @@ func debug_snapshot() -> Dictionary:
 		"client_sequence": _client_sequence,
 		"last_pending_request_id": _last_pending_request_id,
 		"pending_operations": _pending_operations.duplicate(true),
+		"pending_collected_nodes": _pending_collected_nodes.duplicate(true),
+		"server_now_unix": server_now_unix(),
 	}
 
 func record_exit_preserved() -> void:
@@ -717,7 +735,13 @@ func _remove_acked_operations(operation_ids: Array[String]) -> void:
 	var remaining: Array[Dictionary] = []
 	for operation: Dictionary in _pending_operations:
 		var op_id := str(operation.get("op_id", "")).strip_edges()
-		if op_id == "" or not bool(acked.get(op_id, false)):
+		if op_id != "" and bool(acked.get(op_id, false)):
+			if str(operation.get("type", "")) == "collect_node":
+				var node_id := str(operation.get("node_id", "")).strip_edges()
+				if node_id != "":
+					_pending_collected_nodes.erase(node_id)
+					_local_collected_nodes.erase(node_id)
+		else:
 			remaining.append(operation)
 	_pending_operations = remaining
 	if _pending_operations.is_empty():
@@ -984,7 +1008,8 @@ func _load_local_checkpoint_state() -> bool:
 		_pending_operations = _load_pending_ops_cache_for_session(_server_session_id)
 	if not _pending_operations.is_empty():
 		_checkpoint_dirty = true
-	_local_collected_nodes = _true_dictionary(snapshot_payload.get("collected_nodes", {}))
+	_remember_server_time_from_snapshot(snapshot_payload)
+	_local_collected_nodes = _legacy_collected_nodes_from_snapshot(snapshot_payload)
 	_last_position_payload = _as_dictionary(snapshot_payload.get("player_position", {})).duplicate(true)
 	_last_session_seconds = int(snapshot_payload.get("session_seconds", 0))
 	_completed = false
@@ -1065,6 +1090,7 @@ func _apply_remote_metadata(session: Dictionary) -> void:
 		return
 	_snapshot_revision = maxi(_snapshot_revision, int(session.get("snapshot_revision", _snapshot_revision)))
 	var snapshot_payload := _as_dictionary(session.get("snapshot_payload", session.get("snapshot", {})))
+	_remember_server_time_from_snapshot(snapshot_payload)
 	var checkpoint := _as_dictionary(snapshot_payload.get("checkpoint", {}))
 	_remember_durable_progress_from_snapshot(snapshot_payload, {
 		"last_checkpoint_session_id": _server_session_id,
@@ -1120,6 +1146,35 @@ func _session_is_live(session: Dictionary, now_unix: int) -> bool:
 func _body_now_unix(body: Dictionary) -> int:
 	var server_now := _timestamp_to_unix(body.get("server_time", 0))
 	return server_now if server_now > 0 else int(Time.get_unix_time_from_system())
+
+func _remember_server_time_from_body(body: Dictionary) -> void:
+	_remember_server_time_from_value(body.get("server_time", 0))
+
+func _remember_server_time_from_snapshot(snapshot_payload: Dictionary) -> void:
+	_remember_server_time_from_value(snapshot_payload.get("server_time", 0))
+
+func _remember_server_time_from_value(value: Variant) -> void:
+	var server_unix := _timestamp_to_unix(value)
+	if server_unix <= 0:
+		return
+	_server_time_offset_seconds = float(server_unix - int(Time.get_unix_time_from_system()))
+
+func _session_with_server_time(session: Dictionary, body: Dictionary) -> Dictionary:
+	if session.is_empty() or not body.has("server_time"):
+		return session
+	var next_session := session.duplicate(true)
+	var snapshot_payload := _as_dictionary(next_session.get("snapshot_payload", next_session.get("snapshot", {}))).duplicate(true)
+	snapshot_payload["server_time"] = body.get("server_time")
+	next_session["snapshot_payload"] = snapshot_payload
+	return next_session
+
+func _legacy_collected_nodes_from_snapshot(snapshot_payload: Dictionary) -> Dictionary:
+	if snapshot_payload.has("node_state"):
+		return {}
+	var durable_progress := _as_dictionary(snapshot_payload.get("durable_progress", snapshot_payload.get("durable_base", {})))
+	if durable_progress.has("node_state"):
+		return {}
+	return _true_dictionary(snapshot_payload.get("collected_nodes", {}))
 
 func _timestamp_to_unix(value: Variant) -> int:
 	if value is int:

@@ -3,6 +3,8 @@ extends RefCounted
 
 const RulesetScript := preload("res://modes/openworld/openworld_forest_ruleset.gd")
 
+const RESPAWN_VISUAL_GRACE_SECONDS := 2
+
 var player_position := Vector2.ZERO
 var last_revision_position := Vector2.ZERO
 var local_position_revision := 0
@@ -11,6 +13,7 @@ var walk_phase := 0.0
 var active_collection_node_id := ""
 var resource_nodes: Array[Dictionary] = []
 var node_state: Dictionary = {}
+var server_time_offset_seconds := 0.0
 
 func configure(initial_position: Vector2) -> void:
 	player_position = initial_position
@@ -23,6 +26,16 @@ func configure(initial_position: Vector2) -> void:
 func advance_time(delta: float) -> void:
 	session_seconds += maxf(0.0, delta)
 	_refresh_respawned_nodes()
+
+func sync_server_time(value: Variant) -> void:
+	var server_unix := _timestamp_to_unix(value)
+	if server_unix <= 0:
+		return
+	server_time_offset_seconds = float(server_unix - int(Time.get_unix_time_from_system()))
+	_refresh_respawned_nodes()
+
+func current_server_unix() -> int:
+	return int(Time.get_unix_time_from_system() + server_time_offset_seconds)
 
 func update_player_position(next_position: Vector2) -> void:
 	player_position = next_position
@@ -65,6 +78,15 @@ func nearest_resource(bridge: Variant = null) -> Dictionary:
 			best_distance = distance
 	return best
 
+func resource_by_node_id(node_id: String) -> Dictionary:
+	var clean_node_id := node_id.strip_edges()
+	if clean_node_id == "":
+		return {}
+	for entry: Dictionary in resource_nodes:
+		if str(entry.get("node_id", "")) == clean_node_id:
+			return entry
+	return {}
+
 func mark_collected(node_id: String) -> void:
 	for index in range(resource_nodes.size()):
 		var node := resource_nodes[index]
@@ -80,7 +102,9 @@ func apply_collected_nodes(collected_nodes: Dictionary) -> void:
 		node["collected"] = bool(collected_nodes.get(node_id, false))
 		resource_nodes[index] = node
 
-func apply_node_state(next_node_state: Dictionary, now_unix := int(Time.get_unix_time_from_system())) -> void:
+func apply_node_state(next_node_state: Dictionary, now_unix := -1) -> void:
+	if now_unix < 0:
+		now_unix = current_server_unix()
 	node_state = next_node_state.duplicate(true)
 	for index in range(resource_nodes.size()):
 		var node := resource_nodes[index]
@@ -88,7 +112,7 @@ func apply_node_state(next_node_state: Dictionary, now_unix := int(Time.get_unix
 		var state := _as_dictionary(node_state.get(node_id, {}))
 		var next_spawn_at := _timestamp_to_unix(state.get("next_spawn_at", 0))
 		node["next_spawn_at_unix"] = next_spawn_at
-		node["collected"] = next_spawn_at > now_unix
+		node["collected"] = next_spawn_at + RESPAWN_VISUAL_GRACE_SECONDS > now_unix
 		resource_nodes[index] = node
 
 func node_state_snapshot() -> Dictionary:
@@ -131,11 +155,11 @@ static func dev_resource_fixtures() -> Array[Dictionary]:
 	]
 
 func _refresh_respawned_nodes() -> void:
-	var now_unix := int(Time.get_unix_time_from_system())
+	var now_unix := current_server_unix()
 	for index in range(resource_nodes.size()):
 		var node := resource_nodes[index]
 		var next_spawn_at := int(node.get("next_spawn_at_unix", 0))
-		if next_spawn_at > 0 and next_spawn_at <= now_unix:
+		if next_spawn_at > 0 and next_spawn_at + RESPAWN_VISUAL_GRACE_SECONDS <= now_unix:
 			node["collected"] = false
 			node["next_spawn_at_unix"] = 0
 			resource_nodes[index] = node

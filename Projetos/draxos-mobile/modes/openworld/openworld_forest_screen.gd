@@ -298,10 +298,6 @@ func _advance_nearby_collection(delta: float) -> void:
 	_sync_session_bridge_debug_state()
 
 func _deposit_near_chest() -> void:
-	if integration_mode == "integrated_alpha" and (_has_pending_integrated_events() or _network_busy()):
-		model.last_message = "Aguarde a confirmacao do servidor antes de depositar novamente."
-		_update_labels()
-		return
 	_interaction.deposit_near_chest()
 
 func _craft_recipe(recipe_id: String) -> void:
@@ -342,7 +338,7 @@ func _station_craft_recipe(recipe_id: String) -> void:
 	if bridge.has_pending_events():
 		model.last_message = "Salvando Fogueira antes de preparar..." if model.has_upgrade("fogueira_estavel_1") else "Salvando Bosque antes de preparar..."
 		_update_labels()
-		var checkpoint_result: Dictionary = await bridge.flush_checkpoint(true)
+		var checkpoint_result: Dictionary = await _flush_pending_checkpoint_with_wait(bridge)
 		if not bool(checkpoint_result.get("ok", false)):
 			model.last_message = "Salve o checkpoint para preparar pocao."
 			_update_labels()
@@ -415,7 +411,7 @@ func _view_state(nearest_id: String) -> Dictionary:
 	var can_complete := _can_complete_integrated()
 	var near_chest := _near_chest()
 	var has_pocket_items: bool = not model.pocket.is_empty()
-	var deposit_available: bool = near_chest and has_pocket_items and not completed and not pending and not network_busy
+	var deposit_available: bool = near_chest and has_pocket_items and not completed
 	var deposit_tooltip := _deposit_tooltip(completed, pending, network_busy, near_chest, has_pocket_items)
 	var complete_tooltip := _complete_tooltip(can_complete, pending, completed)
 	var station_nearby := _near_fogueira()
@@ -507,9 +503,9 @@ func _deposit_tooltip(completed: bool, pending: bool, network_busy: bool, near_c
 	if not has_pocket_items:
 		return "Bolso vazio; colete algo antes."
 	if network_busy:
-		return "Aguarde a confirmacao do servidor."
+		return "Depositar agora e manter salvamento em fila."
 	if pending:
-		return "Salve as alteracoes pendentes antes de depositar novamente."
+		return "Depositar agora; o Bosque confirma em ordem no servidor."
 	return "Depositar tudo que esta no bolso."
 
 func _complete_tooltip(can_complete: bool, pending: bool, completed: bool) -> String:
@@ -574,19 +570,8 @@ func _handle_back_requested() -> void:
 	if integration_mode == "integrated_alpha" and _has_pending_integrated_events():
 		model.last_message = "Salvando Bosque antes de sair..."
 		_update_labels()
-		var checkpoint_result: Dictionary = {}
 		var bridge = _ensure_session_bridge()
-		var wait_frames := 0
-		while _has_pending_integrated_events() and wait_frames < 180:
-			var bridge_snapshot := Dictionary(bridge.debug_snapshot()) if bridge.has_method("debug_snapshot") else {}
-			if bool(bridge_snapshot.get("checkpoint_in_flight", false)):
-				await get_tree().process_frame
-			else:
-				checkpoint_result = await bridge.flush_checkpoint(true)
-				if not bool(checkpoint_result.get("ok", false)):
-					break
-				await get_tree().process_frame
-			wait_frames += 1
+		var checkpoint_result: Dictionary = await _flush_pending_checkpoint_with_wait(bridge)
 		if not bool(checkpoint_result.get("ok", true)) or _has_pending_integrated_events():
 			model.last_message = "Falha ao salvar no servidor; continue no Bosque ou tente sair novamente."
 			_update_labels()
@@ -596,8 +581,29 @@ func _handle_back_requested() -> void:
 		_ensure_session_bridge().record_exit_preserved()
 	close_requested.emit()
 
+func _flush_pending_checkpoint_with_wait(bridge: Variant, max_frames := 180) -> Dictionary:
+	var checkpoint_result: Dictionary = {"ok": true}
+	var wait_frames := 0
+	while bridge != null and bridge.has_method("has_pending_events") and bridge.has_pending_events() and wait_frames < max_frames:
+		var bridge_snapshot := Dictionary(bridge.debug_snapshot()) if bridge.has_method("debug_snapshot") else {}
+		if bool(bridge_snapshot.get("checkpoint_in_flight", false)):
+			await get_tree().process_frame
+		else:
+			checkpoint_result = await bridge.flush_checkpoint(true)
+			if not bool(checkpoint_result.get("ok", false)) and not bool(checkpoint_result.get("busy", false)):
+				break
+			await get_tree().process_frame
+		wait_frames += 1
+	if bridge != null and bridge.has_method("has_pending_events") and bridge.has_pending_events() and bool(checkpoint_result.get("ok", true)):
+		checkpoint_result = {"ok": false, "busy": true}
+	return checkpoint_result
+
 func _apply_remote_snapshot(snapshot_payload: Dictionary, apply_remote_position := true) -> void:
-	model.apply_snapshot(snapshot_payload)
+	_sync_runtime_server_time(snapshot_payload)
+	if apply_remote_position:
+		model.apply_snapshot(snapshot_payload)
+	else:
+		model.apply_authoritative_patch(snapshot_payload, true)
 	_runtime.session_seconds = float(snapshot_payload.get("session_seconds", _runtime.session_seconds))
 	var position := _as_dictionary(snapshot_payload.get("player_position", snapshot_payload.get("position", {})))
 	if apply_remote_position and not position.is_empty():
@@ -607,7 +613,7 @@ func _apply_remote_snapshot(snapshot_payload: Dictionary, apply_remote_position 
 		var durable_progress := _as_dictionary(snapshot_payload.get("durable_progress", snapshot_payload.get("durable_base", {})))
 		node_state = _as_dictionary(durable_progress.get("node_state", {}))
 	if not node_state.is_empty():
-		_runtime.apply_node_state(node_state)
+		_runtime.apply_node_state(node_state, _runtime.current_server_unix())
 	else:
 		_runtime.apply_collected_nodes(RulesetScript.collected_nodes_from_snapshot(snapshot_payload))
 	_sync_runtime_debug_state()
@@ -734,6 +740,7 @@ func _sync_session_bridge_debug_state() -> void:
 		_snapshot_revision = 0
 		_pending_collected_nodes = {}
 		return
+	_sync_runtime_server_time()
 	if _session_bridge.has_method("debug_snapshot"):
 		var snapshot: Dictionary = _session_bridge.debug_snapshot()
 		_snapshot_revision = int(snapshot.get("snapshot_revision", _snapshot_revision))
@@ -749,6 +756,13 @@ func _set_bootstrap_loading(active: bool) -> void:
 
 func _as_dictionary(value: Variant) -> Dictionary:
 	return value if value is Dictionary else {}
+
+func _sync_runtime_server_time(snapshot_payload: Dictionary = {}) -> void:
+	if not snapshot_payload.is_empty() and snapshot_payload.has("server_time"):
+		_runtime.sync_server_time(snapshot_payload.get("server_time"))
+		return
+	if _session_bridge != null and _session_bridge.has_method("server_now_unix"):
+		_runtime.sync_server_time(_session_bridge.server_now_unix())
 
 func _crafting_signature() -> Dictionary:
 	var session_store := _session_store()

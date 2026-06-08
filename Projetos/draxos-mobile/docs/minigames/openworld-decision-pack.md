@@ -9,7 +9,8 @@
 
 This pack records the current decision boundary for Openworld after the Bosque
 playtest approval, technical hardening, Offline-First Checkpoint v1 release and
-Bosque Persistence Rebase v1. It does not expand gameplay.
+Bosque Persistence Rebase v1. Bosque Feel & Spawn Authority v1 is a follow-up
+authority/feel package for the same slice and does not expand gameplay.
 
 ## Decision Summary
 
@@ -71,6 +72,15 @@ retry. Nodes use per-item cooldown persisted in `node_state.next_spawn_at`.
 Local caches may support preview and retry, but cannot declare progress saved
 before the server ACK.
 
+Feel/spawn authority exception approved on 2026-06-08: Openworld/Bosque keeps
+server-authoritative durable progress, but active player feel is protected from
+same-session ACK/resync rollback. Collection progress is sticky while the
+player remains inside the cancel radius, movement alone does not restart the
+bar, pending collect ops hide their node locally until ACK/failure, v2 respawn
+uses `node_state.next_spawn_at` plus `server_time` offset instead of legacy
+`collected_nodes`, and menu busy state is scoped so unrelated server requests
+do not freeze navigation or independent actions.
+
 ## Openworld Working Policy
 
 The current Openworld policy is:
@@ -84,6 +94,12 @@ The current Openworld policy is:
   `node_state` persist per save;
 - position and active collection are visit state;
 - checkpoint operations with ACK are the normal integrated path;
+- pending operations may have local preview, but ACK/resync cannot rebootstrap
+  the active same-session world or restart collection;
+- node respawn visuals use server-time-adjusted `node_state`; legacy
+  `collected_nodes` is compatibility only when `node_state` is absent;
+- menu/server busy state is scoped by action domain instead of freezing every
+  independent action globally;
 - event micro-mutators are compatibility only for old packages;
 - `station-craft` is not a microaction sync path; it is a deliberate
   server-authoritative bridge for global consumables;
@@ -112,6 +128,9 @@ craft events as the main path for the new client.
   expiry and new entry.
 - Nodes do not reset only because a visit changed; each node follows
   `next_spawn_at` cooldown.
+- Movement inside the collection cancel radius does not restart collection.
+- Same-session ACK/resync may confirm durable progress, but cannot blink nodes,
+  restart active collection or block unrelated menu actions.
 - `Fogueira Estavel I` is the only approved Openworld station in V1.
 - Approved station recipes are `craft_pocao_vida`, `craft_pocao_foco` and
   `craft_pocao_resguardo`.

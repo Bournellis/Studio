@@ -210,4 +210,6 @@ func _execute_action(action_id: String) -> void:
 
 func _action_scope_is_busy(scope_id: String) -> bool:
 	var scope := OperationStateScript.normalize_scope(scope_id)
-	return _operation_state.is_busy(scope) or _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE)
+	if scope == OperationStateScript.DEFAULT_SCOPE:
+		return _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE)
+	return _operation_state.is_busy(scope)

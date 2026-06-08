@@ -413,11 +413,11 @@ func start_collection(item_id: String) -> Dictionary:
 	last_message = "Parado perto de %s. Coletando..." % item_display_name(clean_item_id)
 	return {"ok": true, "item_id": clean_item_id, "duration": active_collection["duration"], "message": last_message}
 
-func advance_collection(delta: float, moved: bool = false, distance: float = 0.0, commit_to_pocket: bool = true) -> Dictionary:
+func advance_collection(delta: float, _moved: bool = false, distance: float = 0.0, commit_to_pocket: bool = true) -> Dictionary:
 	if active_collection.is_empty():
 		return {"ok": false, "reason": "no_active_collection"}
-	if moved or distance > COLLECTION_CANCEL_RADIUS:
-		return cancel_collection("moved")
+	if distance > COLLECTION_CANCEL_RADIUS:
+		return cancel_collection("distance")
 	active_collection["elapsed"] = float(active_collection.get("elapsed", 0.0)) + maxf(0.0, delta)
 	var duration := float(active_collection.get("duration", 0.1))
 	if float(active_collection.get("elapsed", 0.0)) < duration:

@@ -110,7 +110,7 @@ func set_deposit_available(available: bool) -> void:
 	if _deposit_button != null:
 		_deposit_button.disabled = not available
 		if network_busy:
-			_deposit_button.tooltip_text = "Aguarde a confirmacao do servidor."
+			_deposit_button.tooltip_text = "Depositar agora e manter o salvamento em fila."
 		elif model != null and model.pocket.is_empty():
 			_deposit_button.tooltip_text = "Bolso vazio; colete algo antes."
 		else:
@@ -248,13 +248,13 @@ func _render_station_craft() -> void:
 	if not built:
 		_body.add_child(_label("Construa Fogueira estavel I em Construcoes para preparar pocoes.", 13, Color(0.75, 0.72, 0.64)))
 	elif checkpoint_pending:
-		_body.add_child(_label("Salvando Fogueira antes de preparar...", 13, Color(0.78, 0.77, 0.70)))
+		_body.add_child(_label("Ao preparar, o Bosque salva primeiro e segue em ordem.", 13, Color(0.78, 0.77, 0.70)))
 	elif not station_nearby:
 		_body.add_child(_label("Aproxime-se da Fogueira para preparar pocoes globais.", 13, Color(0.75, 0.72, 0.64)))
 	else:
 		_body.add_child(_label("Prepare pocoes na Fogueira usando materiais do Bau do Bosque e Po de Osso da Conta/Ossario.", 13, Color(0.75, 0.72, 0.64)))
 	if network_busy:
-		_body.add_child(_label("Salvando Bosque antes de preparar...", 13, Color(0.78, 0.77, 0.70)))
+		_body.add_child(_label("Servidor confirmando operacoes anteriores.", 13, Color(0.78, 0.77, 0.70)))
 	var recipes := _station_recipes()
 	if recipes.is_empty():
 		_body.add_child(_label("Nenhuma receita de Fogueira disponivel neste pacote.", 13, Color(0.78, 0.75, 0.66)))
@@ -273,7 +273,7 @@ func _render_station_craft() -> void:
 		]
 		button.tooltip_text = "Custo: %s" % _station_cost_text(recipe)
 		button.custom_minimum_size = Vector2(0, 48)
-		button.disabled = (not built) or checkpoint_pending or (not station_nearby) or network_busy or missing != ""
+		button.disabled = (not built) or (not station_nearby) or missing != ""
 		button.pressed.connect(func(id := recipe_id) -> void:
 			station_craft_requested.emit(id)
 		)

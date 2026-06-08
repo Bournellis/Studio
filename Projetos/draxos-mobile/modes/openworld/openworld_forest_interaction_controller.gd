@@ -2,9 +2,11 @@ class_name OpenworldForestInteractionController
 extends RefCounted
 
 const RulesetScript := preload("res://modes/openworld/openworld_forest_ruleset.gd")
+const COLLECTION_OUT_OF_RANGE_GRACE_SECONDS := 0.22
 
 var model: Variant = null
 var runtime: Variant = null
+var _out_of_range_elapsed := 0.0
 
 var record_event_callable := Callable()
 var uses_authority_callable := Callable()
@@ -32,20 +34,10 @@ func configure(
 	bridge_callable = next_bridge_callable
 	update_callable = next_update_callable
 
-func tick_collection(delta: float, moved: bool) -> void:
+func tick_collection(delta: float, _moved: bool) -> void:
 	if model == null or runtime == null:
 		return
 	if _session_blocked():
-		return
-	if moved:
-		if not model.active_collection.is_empty():
-			model.advance_collection(0.0, true)
-			runtime.active_collection_node_id = ""
-			_record_event("collect_cancel", {
-				"reason": "moved",
-				"position": runtime.position_payload(),
-				"session_seconds": int(runtime.session_seconds),
-			})
 		return
 	_advance_nearby_collection(delta)
 
@@ -125,11 +117,15 @@ func craft_recipe(recipe_id: String) -> void:
 
 func _advance_nearby_collection(delta: float) -> void:
 	var bridge: Variant = _bridge()
+	if not model.active_collection.is_empty() and str(runtime.active_collection_node_id).strip_edges() != "":
+		_advance_active_collection(delta, bridge)
+		return
 	var nearest: Dictionary = runtime.nearest_resource(bridge)
 	if nearest.is_empty():
 		if not model.active_collection.is_empty():
 			model.cancel_collection("distance")
 			runtime.active_collection_node_id = ""
+			_out_of_range_elapsed = 0.0
 			_record_event("collect_cancel", {
 				"reason": "distance",
 				"position": runtime.position_payload(),
@@ -142,28 +138,44 @@ func _advance_nearby_collection(delta: float) -> void:
 	if model.active_collection.is_empty():
 		model.start_collection(item_id)
 		runtime.active_collection_node_id = node_id
+		_out_of_range_elapsed = 0.0
 		_record_event("collect_start", {
 			"node_id": node_id,
 			"item_id": item_id,
 			"position": runtime.position_payload(),
 			"session_seconds": int(runtime.session_seconds),
 		})
-	var active_item := str(model.active_collection.get("item_id", ""))
-	if active_item != item_id or runtime.active_collection_node_id != node_id:
-		model.cancel_collection("target_changed")
+	_advance_active_collection(delta, bridge)
+
+func _advance_active_collection(delta: float, bridge: Variant) -> void:
+	var node_id := str(runtime.active_collection_node_id).strip_edges()
+	var active_node: Dictionary = runtime.resource_by_node_id(node_id) if runtime != null and runtime.has_method("resource_by_node_id") else {}
+	if active_node.is_empty() or bool(active_node.get("collected", false)):
+		model.cancel_collection("distance")
+		runtime.active_collection_node_id = ""
+		_out_of_range_elapsed = 0.0
 		_record_event("collect_cancel", {
-			"reason": "target_changed",
+			"reason": "distance",
 			"position": runtime.position_payload(),
 			"session_seconds": int(runtime.session_seconds),
 		})
-		model.start_collection(item_id)
-		runtime.active_collection_node_id = node_id
-		_record_event("collect_start", {
-			"node_id": node_id,
-			"item_id": item_id,
+		return
+	var distance: float = runtime.player_position.distance_to(Vector2(active_node.get("position", Vector2.ZERO)))
+	if distance > RulesetScript.collection_cancel_radius():
+		_out_of_range_elapsed += maxf(0.0, delta)
+		if _out_of_range_elapsed < COLLECTION_OUT_OF_RANGE_GRACE_SECONDS:
+			return
+		model.cancel_collection("distance")
+		runtime.active_collection_node_id = ""
+		_out_of_range_elapsed = 0.0
+		_record_event("collect_cancel", {
+			"reason": "distance",
 			"position": runtime.position_payload(),
 			"session_seconds": int(runtime.session_seconds),
 		})
+		return
+	_out_of_range_elapsed = 0.0
+	var item_id := str(active_node.get("item_id", ""))
 	var authoritative_online := _uses_integrated_authority()
 	var result: Dictionary = model.advance_collection(delta, false, distance, true)
 	if bool(result.get("completed", false)):
@@ -171,6 +183,7 @@ func _advance_nearby_collection(delta: float) -> void:
 		if authoritative_online and bridge != null and bridge.has_method("remember_pending_collected_node"):
 			bridge.remember_pending_collected_node(node_id)
 		runtime.active_collection_node_id = ""
+		_out_of_range_elapsed = 0.0
 		_record_event("collect_complete", {
 			"node_id": node_id,
 			"item_id": item_id,

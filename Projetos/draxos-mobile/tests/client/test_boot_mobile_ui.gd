@@ -5,6 +5,7 @@ const AppShellRouteContractScript = preload("res://modes/boot/ui/app_shell_route
 const AppShellActionContractScript = preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellActionRouterScript = preload("res://modes/boot/ui/app_shell_action_router.gd")
 const AppShellErrorContractScript = preload("res://modes/boot/ui/app_shell_error_contract.gd")
+const OperationStateScript = preload("res://modes/boot/ui/operation_state.gd")
 const BaseSurfacePresenterScript = preload("res://modes/boot/surfaces/base_surface_presenter.gd")
 const BattleReplayPresenterScript = preload("res://modes/boot/surfaces/battle_replay_presenter.gd")
 const HubSurfacePresenterScript = preload("res://modes/boot/surfaces/hub_surface_presenter.gd")
@@ -241,6 +242,26 @@ func test_surface_actions_opened_from_refuge_go_back_to_refuge() -> void:
 		boot._go_back()
 		assert_eq(boot._current_screen, "refuge")
 		assert_true(boot._screen_history.is_empty())
+
+func test_default_busy_does_not_freeze_scoped_menu_actions_or_back() -> void:
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._show_screen("refuge", false)
+	await get_tree().process_frame
+	var shop_action := AppShellActionContractScript.ACTION_SHOW_SHOP
+	boot._operation_state.begin_busy(OperationStateScript.DEFAULT_SCOPE, AppShellActionContractScript.ACTION_REFRESH_SESSION)
+	boot._sync_buttons()
+	assert_false(boot._action_scope_busy(shop_action))
+
+	boot._show_surface_screen("shop")
+	await get_tree().process_frame
+	boot._operation_state.begin_busy(OperationStateScript.DEFAULT_SCOPE, AppShellActionContractScript.ACTION_REFRESH_SESSION)
+	boot._sync_buttons()
+	assert_false(boot._back_button.disabled)
+	boot._go_back()
+	assert_eq(boot._current_screen, "refuge")
 
 func test_authenticated_back_from_internal_surfaces_returns_to_refuge_root() -> void:
 	_prepare_account_state()

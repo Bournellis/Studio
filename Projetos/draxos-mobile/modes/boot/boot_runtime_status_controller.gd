@@ -173,9 +173,9 @@ func _sync_buttons() -> void:
 				button.text = "Pular replay" if _replay_running else "Ver resultado"
 	for screen_id: String in _nav_buttons.keys():
 		var nav_button: Button = _nav_buttons[screen_id]
-		nav_button.disabled = _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE) or _replay_running
+		nav_button.disabled = _replay_running
 	if _back_button != null:
-		_back_button.disabled = _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE) or _replay_running
+		_back_button.disabled = _replay_running
 
 func _action_allowed_during_replay(action_id: String) -> bool:
 	return AppShellActionContractScript.is_allowed_during_replay(action_id)
@@ -183,7 +183,9 @@ func _action_allowed_during_replay(action_id: String) -> bool:
 func _action_scope_busy(action_id: String) -> bool:
 	var route := AppShellActionRouterScript.route_action(action_id, _action_context())
 	var scope := str(route.get("scope_id", OperationStateScript.DEFAULT_SCOPE))
-	return _operation_state.is_busy(scope) or _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE)
+	if OperationStateScript.normalize_scope(scope) == OperationStateScript.DEFAULT_SCOPE:
+		return _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE)
+	return _operation_state.is_busy(scope)
 
 func _surface_scope_busy(surface: String) -> bool:
 	return _operation_state.is_busy("%s:%s" % [surface.strip_edges(), SessionStore.active_save_type]) or _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE)

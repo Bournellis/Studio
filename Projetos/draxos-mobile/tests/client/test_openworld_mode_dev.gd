@@ -9,6 +9,24 @@ const RouteContractScript := preload("res://modes/boot/ui/app_shell_route_contra
 const PLAYER_RADIUS := 20.0
 const TEST_SESSION_ID := "00000000-0000-4000-8000-000000000101"
 
+class _LegacyCollectedBridge:
+	var node_id := ""
+
+	func _init(next_node_id := "") -> void:
+		node_id = next_node_id
+
+	func has_pending_collected_node(_candidate_node_id: String) -> bool:
+		return false
+
+class _PendingCollectedBridge:
+	var node_id := ""
+
+	func _init(next_node_id := "") -> void:
+		node_id = next_node_id
+
+	func has_pending_collected_node(candidate_node_id: String) -> bool:
+		return candidate_node_id == node_id
+
 class FakeOpenworldSupabaseClient:
 	extends Node
 
@@ -174,11 +192,20 @@ func test_mode_shell_is_fullscreen_without_app_chrome() -> void:
 	assert_true(RouteContractScript.is_fullscreen_gameplay("mode_shell"))
 	assert_false(RouteContractScript.shows_app_chrome("mode_shell"))
 
-func test_collection_cancels_when_player_moves() -> void:
+func test_collection_continues_when_player_moves_inside_cancel_radius() -> void:
 	var model = ModelScript.new()
 	var start := model.start_collection("galho")
 	assert_true(bool(start.get("ok", false)))
-	var cancel := model.advance_collection(0.2, true)
+	var progress := model.advance_collection(0.2, true, 0.0)
+	assert_true(bool(progress.get("ok", false)))
+	assert_false(bool(progress.get("cancelled", false)))
+	assert_false(model.active_collection.is_empty())
+
+func test_collection_cancels_only_after_leaving_cancel_radius() -> void:
+	var model = ModelScript.new()
+	var start := model.start_collection("galho")
+	assert_true(bool(start.get("ok", false)))
+	var cancel := model.advance_collection(0.2, false, RulesetScript.collection_cancel_radius() + 1.0)
 	assert_true(bool(cancel.get("cancelled", false)))
 	assert_true(model.active_collection.is_empty())
 
@@ -280,8 +307,35 @@ func test_runtime_applies_node_state_cooldown_and_respawn_by_server_time() -> vo
 	}, now)
 	assert_true(bool(_runtime_resource_node(runtime, node_id).get("collected", false)))
 
-	runtime.apply_node_state(runtime.node_state_snapshot(), now + 301)
+	runtime.apply_node_state(runtime.node_state_snapshot(), now + 303)
 	assert_false(bool(_runtime_resource_node(runtime, node_id).get("collected", true)))
+
+func test_runtime_uses_pending_only_for_v2_interaction_gate() -> void:
+	var runtime = RuntimeStateScript.new()
+	runtime.configure(RulesetScript.player_initial_position())
+	runtime.reset_resources(RulesetScript.resource_fixtures())
+	var node_id := ""
+	var node_position := Vector2.ZERO
+	for node: Dictionary in runtime.resource_nodes:
+		if str(node.get("item_id", "")) == "galho":
+			node_id = str(node.get("node_id", ""))
+			node_position = Vector2(node.get("position", Vector2.ZERO))
+			break
+	assert_ne(node_id, "")
+	runtime.update_player_position(node_position)
+	runtime.apply_collected_nodes({node_id: true})
+	var now := int(Time.get_unix_time_from_system())
+	runtime.apply_node_state({
+		node_id: {
+			"last_collected_at": now - 360,
+			"next_spawn_at": now - 10,
+			"collected_count": 1,
+		},
+	}, now)
+	var legacy_bridge := _LegacyCollectedBridge.new(node_id)
+	var pending_bridge := _PendingCollectedBridge.new(node_id)
+	assert_false(runtime.nearest_resource(legacy_bridge).is_empty())
+	assert_true(runtime.nearest_resource(pending_bridge).is_empty())
 
 func test_visual_screen_instantiates_fullscreen_with_joystick_hud_and_sheet() -> void:
 	var screen = ScreenScript.new()
@@ -467,7 +521,7 @@ func test_stable_campfire_appears_and_blocks_after_upgrade() -> void:
 	assert_eq(world.call("structure_position", "fogueira_estavel_1"), Vector2(305, 330))
 	await _expect_obstacle_blocks(screen, "structure_fogueira_estavel_1", Vector2.RIGHT)
 
-func test_openworld_moving_during_collection_cancels_collection() -> void:
+func test_openworld_moving_during_collection_keeps_collection_inside_radius() -> void:
 	var screen = ScreenScript.new()
 	add_child_autofree(screen)
 	await get_tree().process_frame
@@ -477,7 +531,7 @@ func test_openworld_moving_during_collection_cancels_collection() -> void:
 	screen.set_debug_joystick_vector(Vector2.RIGHT)
 	await wait_seconds(0.12)
 	screen.set_debug_joystick_vector(Vector2.ZERO)
-	assert_true(Dictionary(screen.get_model().active_collection).is_empty())
+	assert_false(Dictionary(screen.get_model().active_collection).is_empty())
 
 func test_openworld_chest_blocks_body_but_deposit_area_is_larger() -> void:
 	var screen = ScreenScript.new()
@@ -816,7 +870,7 @@ func test_integrated_collect_complete_updates_local_pocket_before_checkpoint_ack
 	assert_eq(int(screen.get("_snapshot_revision")), 1)
 	assert_false(Dictionary(screen.get("_pending_collected_nodes")).has(node_id))
 
-func test_integrated_deposit_blocks_during_pending_checkpoint_until_ack() -> void:
+func test_integrated_deposit_queues_during_pending_checkpoint_without_blocking_feel() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
 	var client: FakeOpenworldSupabaseClient = setup.get("client")
@@ -848,15 +902,8 @@ func test_integrated_deposit_blocks_during_pending_checkpoint_until_ack() -> voi
 	screen.set_player_position_for_tests(chest_position)
 	screen.call("_update_labels")
 	var pending_state: Dictionary = screen.call("_view_state", "")
-	assert_false(bool(pending_state.get("deposit_available", true)))
-	assert_true(str(pending_state.get("deposit_tooltip", "")).contains("pendentes"))
-
-	screen.call("_deposit_near_chest")
-	await _wait_process_frames(8)
-
-	assert_eq(client.checkpoint_calls.size(), 1)
-	assert_false(Dictionary(screen.get_model().pocket).is_empty())
-	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 0)
+	assert_true(bool(pending_state.get("deposit_available", false)))
+	assert_true(str(pending_state.get("deposit_tooltip", "")).contains("ordem"))
 
 	screen.call("_deposit_near_chest")
 	await _wait_process_frames(10)

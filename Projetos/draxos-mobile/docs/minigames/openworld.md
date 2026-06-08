@@ -15,7 +15,7 @@
 
 `Openworld Bosque` e o primeiro slice do modo `Openworld`. Ele nasceu do prototipo `Rpgsuave Bosque`, mas V1 renomeia o modo de verdade: novos payloads, rotas, settings, docs e testes usam `openworld`.
 
-Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Pacote remoto atual em implementacao/publicacao: `Bosque Persistence Rebase v1`, version code `10`, substituindo o modelo de snapshot local como promessa de save por operacoes duraveis com ACK do servidor e cooldown por item. `Bosque Session Lifecycle & Durable Structures Hotfix v1` permanece como pacote remoto anterior: release root `internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-c953b51`, preview tecnico `https://8ecac093.draxos-mobile-internal-alpha.pages.dev`, version code `9`. `Bosque World Hub Domain Separation v1` permanece como pacote anterior publicado em `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05`, preview tecnico `https://d1872010.draxos-mobile-internal-alpha.pages.dev`. `Bosque Fogueira Potion Crafting v1` permanece como pacote station-craft anterior em `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c`, preview tecnico `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`.
+Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Pacote atual em implementacao/publicacao: `Bosque Feel & Spawn Authority v1`, version code `11`, preservando o contrato duravel ACK-backed do pacote anterior e corrigindo o feel client-owned de coleta, spawn visual e menu durante ACKs. `Bosque Persistence Rebase v1` permanece como pacote remoto anterior: release root `internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74`, preview tecnico `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`, version code `10`, substituindo o modelo de snapshot local como promessa de save por operacoes duraveis com ACK do servidor e cooldown por item. `Bosque Session Lifecycle & Durable Structures Hotfix v1` permanece como pacote remoto anterior: release root `internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-c953b51`, preview tecnico `https://8ecac093.draxos-mobile-internal-alpha.pages.dev`, version code `9`. `Bosque World Hub Domain Separation v1` permanece como pacote anterior publicado em `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05`, preview tecnico `https://d1872010.draxos-mobile-internal-alpha.pages.dev`. `Bosque Fogueira Potion Crafting v1` permanece como pacote station-craft anterior em `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c`, preview tecnico `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`.
 
 ## Visao
 
@@ -88,6 +88,27 @@ Eles nao podem transformar o mundo ja renderizado, reposicionar o jogador,
 reiniciar coleta, reaparecer node em cooldown, reverter bolso/bau/craft ACKed
 ou declarar save antes do servidor.
 
+Contrato de feel/spawn v1:
+
+- coleta ativa pertence ao cliente ate completar, falhar por distancia real ou
+  sumir por conflito explicito; movimento dentro do raio de cancelamento nao
+  reinicia a barra;
+- node coletado some imediatamente como overlay local pendente, mas apenas a
+  operacao ACKed limpa a pendencia e grava o cooldown duravel;
+- `collected_nodes` legado nunca bloqueia um node quando o payload duravel ja
+  contem `node_state`; no contrato v2, a autoridade visual de respawn e
+  `node_state.next_spawn_at` comparado com `server_time`;
+- o cliente guarda offset de `server_time` e aplica uma pequena grace visual no
+  respawn para evitar o flicker de "aparece por 1s e some";
+- ACK de checkpoint durante controle ativo aplica patch duravel e metadados,
+  mas nao faz rebootstrap do mundo inteiro nem reinicia coleta;
+- deposito e craft local podem entrar na fila enquanto outro checkpoint esta em
+  voo; a UI pode mostrar preview/pendencia, mas sucesso duravel continua
+  dependendo do ACK;
+- busy de menu e por escopo. Uma requisicao em `app`, `base`, `mode`, `social`
+  ou outro dominio nao deve congelar botoes de escopos independentes nem o
+  `Voltar`, exceto durante replay ou update gate explicito.
+
 ## Bosque Mecanico Basico v2
 
 Bosque Mecanico Basico v2 redefine o slice `forest` como um minigame livre,
@@ -143,6 +164,10 @@ Contratos de produto para v2:
   checkpoint aceito antes de consumir materiais do Bau e `po_osso` da conta;
 - checkpoints de operacoes duraveis substituem microeventos revisionados durante gameplay normal;
 - nenhum ACK/resync remoto da mesma sessao deve reposicionar o jogador, reiniciar coleta, reverter bolso/bau/craft ou transformar nodes enquanto o jogador esta no Bosque;
+- coleta ativa e sticky dentro do raio de cancelamento, sem reset por movimento
+  pequeno ou por ACK de checkpoint;
+- node cooldown renderiza por `server_time`/offset e ignora caches legados de
+  nodes coletados quando `node_state` v2 esta presente;
 - Reward Bridge limitado, server-authoritative, idempotente e com ledger.
 
 ## Nao Escopo
