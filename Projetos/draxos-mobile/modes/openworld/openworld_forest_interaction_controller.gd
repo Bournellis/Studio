@@ -72,6 +72,11 @@ func deposit_near_chest() -> void:
 			"session_seconds": int(runtime.session_seconds),
 		})
 		_update()
+		var bridge: Variant = _bridge()
+		if bridge != null and bridge.has_method("flush_checkpoint"):
+			var checkpoint_result: Dictionary = await bridge.flush_checkpoint(true)
+			model.last_message = "Bau salvo no servidor." if bool(checkpoint_result.get("ok", false)) and not bridge.has_pending_events() else "Deposito pendente de confirmacao do servidor."
+			_update()
 		return
 	model.deposit_all()
 	_record_event("deposit_all", {
@@ -100,12 +105,14 @@ func craft_recipe(recipe_id: String) -> void:
 			"position": runtime.position_payload(),
 			"session_seconds": int(runtime.session_seconds),
 		})
-		if recipe_id == "fogueira_estavel_1":
-			var bridge: Variant = _bridge()
-			if bridge != null and bridge.has_method("flush_checkpoint"):
-				_update()
-				var checkpoint_result: Dictionary = await bridge.flush_checkpoint(true)
-				model.last_message = "Fogueira salva." if bool(checkpoint_result.get("ok", false)) else "Fogueira pendente de salvamento."
+		var bridge: Variant = _bridge()
+		if bridge != null and bridge.has_method("flush_checkpoint"):
+			_update()
+			var checkpoint_result: Dictionary = await bridge.flush_checkpoint(true)
+			if bool(checkpoint_result.get("ok", false)) and not bridge.has_pending_events():
+				model.last_message = "Fogueira salva no servidor." if recipe_id == "fogueira_estavel_1" else "Criacao salva no servidor."
+			else:
+				model.last_message = "Fogueira pendente de confirmacao do servidor." if recipe_id == "fogueira_estavel_1" else "Criacao pendente de confirmacao do servidor."
 		_update()
 		return
 	model.craft(recipe_id)

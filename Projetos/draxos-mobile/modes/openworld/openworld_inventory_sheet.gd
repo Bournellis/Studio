@@ -110,7 +110,7 @@ func set_deposit_available(available: bool) -> void:
 	if _deposit_button != null:
 		_deposit_button.disabled = not available
 		if network_busy:
-			_deposit_button.tooltip_text = "Deposita agora; o salvamento continua em segundo plano."
+			_deposit_button.tooltip_text = "Aguarde a confirmacao do servidor."
 		elif model != null and model.pocket.is_empty():
 			_deposit_button.tooltip_text = "Bolso vazio; colete algo antes."
 		else:

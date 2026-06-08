@@ -36,7 +36,7 @@ const SURFACE_REFRESH_SOURCE_CACHE := "cache"
 const SURFACE_REFRESH_SOURCE_SERVER := "server"
 const REQUEST_LATENCY_LOG_LIMIT := 40
 const OPENWORLD_LOCAL_STATE_SCHEMA_V2 := "openworld_forest_local_state_v2"
-const OPENWORLD_DURABLE_PROGRESS_SCHEMA := "openworld_forest_progress_v1"
+const OPENWORLD_DURABLE_PROGRESS_SCHEMA := "openworld_forest_progress_v2"
 const GAMEPLAY_SURFACES := [
 	SURFACE_BASE,
 	SURFACE_SOCIAL,
@@ -811,6 +811,24 @@ func remember_openworld_durable_progress_state(progress: Dictionary) -> void:
 		container["durable_progress_cache"] = durable_progress
 	_commit_openworld_state_container(container)
 
+func openworld_pending_ops_snapshot() -> Dictionary:
+	return _openworld_pending_ops_state(openworld_local_state).duplicate(true)
+
+func remember_openworld_pending_ops_state(state: Dictionary) -> void:
+	var container := _openworld_state_container()
+	if state.is_empty():
+		container.erase("pending_ops_cache")
+	else:
+		container["pending_ops_cache"] = state.duplicate(true)
+	_commit_openworld_state_container(container)
+
+func clear_openworld_pending_ops_state() -> void:
+	if _openworld_pending_ops_state(openworld_local_state).is_empty():
+		return
+	var container := _openworld_state_container()
+	container.erase("pending_ops_cache")
+	_commit_openworld_state_container(container)
+
 func clear_openworld_active_session_state() -> void:
 	if _openworld_active_session_state(openworld_local_state).is_empty():
 		return
@@ -999,10 +1017,16 @@ func _openworld_durable_progress_state(source: Dictionary) -> Dictionary:
 		return _as_dictionary(source.get("durable_progress_cache", {}))
 	return {}
 
+func _openworld_pending_ops_state(source: Dictionary) -> Dictionary:
+	if str(source.get("schema_version", "")) == OPENWORLD_LOCAL_STATE_SCHEMA_V2:
+		return _as_dictionary(source.get("pending_ops_cache", {}))
+	return {}
+
 func _commit_openworld_state_container(container: Dictionary) -> void:
 	var active_cache := _as_dictionary(container.get("active_session_cache", {}))
 	var durable_cache := _as_dictionary(container.get("durable_progress_cache", {}))
-	if active_cache.is_empty() and durable_cache.is_empty():
+	var pending_ops_cache := _as_dictionary(container.get("pending_ops_cache", {}))
+	if active_cache.is_empty() and durable_cache.is_empty() and pending_ops_cache.is_empty():
 		openworld_local_state = {}
 	else:
 		var next_state := {
@@ -1014,6 +1038,8 @@ func _commit_openworld_state_container(container: Dictionary) -> void:
 			next_state["active_session_cache"] = active_cache.duplicate(true)
 		if not durable_cache.is_empty():
 			next_state["durable_progress_cache"] = durable_cache.duplicate(true)
+		if not pending_ops_cache.is_empty():
+			next_state["pending_ops_cache"] = pending_ops_cache.duplicate(true)
 		openworld_local_state = next_state
 	save_cache()
 	session_changed.emit()

@@ -298,6 +298,10 @@ func _advance_nearby_collection(delta: float) -> void:
 	_sync_session_bridge_debug_state()
 
 func _deposit_near_chest() -> void:
+	if integration_mode == "integrated_alpha" and (_has_pending_integrated_events() or _network_busy()):
+		model.last_message = "Aguarde a confirmacao do servidor antes de depositar novamente."
+		_update_labels()
+		return
 	_interaction.deposit_near_chest()
 
 func _craft_recipe(recipe_id: String) -> void:
@@ -411,7 +415,7 @@ func _view_state(nearest_id: String) -> Dictionary:
 	var can_complete := _can_complete_integrated()
 	var near_chest := _near_chest()
 	var has_pocket_items: bool = not model.pocket.is_empty()
-	var deposit_available: bool = near_chest and has_pocket_items and not completed
+	var deposit_available: bool = near_chest and has_pocket_items and not completed and not pending and not network_busy
 	var deposit_tooltip := _deposit_tooltip(completed, pending, network_busy, near_chest, has_pocket_items)
 	var complete_tooltip := _complete_tooltip(can_complete, pending, completed)
 	var station_nearby := _near_fogueira()
@@ -464,7 +468,7 @@ func _status_text(nearest_id: String, completed: bool) -> String:
 		return "Bau proximo; deposito pronto"
 	if _session_state() in ["pending", "resyncing"]:
 		var pending_text := _pending_summary_text()
-		return pending_text if pending_text != "" else "Bosque salvo localmente"
+		return pending_text if pending_text != "" else "Alteracoes locais pendentes"
 	if _near_fogueira():
 		return "Fogueira pronta"
 	var first_craft := model.first_available_recipe_name()
@@ -481,9 +485,9 @@ func _status_text(nearest_id: String, completed: bool) -> String:
 func _session_message() -> String:
 	match _session_state():
 		"synced":
-			return "Bosque salvo localmente. Recompensa usa o ultimo checkpoint aceito."
+			return "Bosque salvo no servidor."
 		"pending":
-			return "Bosque salvo localmente; checkpoint salvando em segundo plano."
+			return "Alteracoes locais pendentes; aguardando confirmacao do servidor."
 		"resyncing":
 			return "Recuperando checkpoint do Bosque."
 		"completed":
@@ -503,9 +507,9 @@ func _deposit_tooltip(completed: bool, pending: bool, network_busy: bool, near_c
 	if not has_pocket_items:
 		return "Bolso vazio; colete algo antes."
 	if network_busy:
-		return "Depositar agora; o salvamento continua em segundo plano."
+		return "Aguarde a confirmacao do servidor."
 	if pending:
-		return "Depositar agora; o Bosque continua salvando."
+		return "Salve as alteracoes pendentes antes de depositar novamente."
 	return "Depositar tudo que esta no bolso."
 
 func _complete_tooltip(can_complete: bool, pending: bool, completed: bool) -> String:
@@ -568,10 +572,26 @@ func _handle_abandon_requested() -> void:
 
 func _handle_back_requested() -> void:
 	if integration_mode == "integrated_alpha" and _has_pending_integrated_events():
-		model.last_message = "Sessao preservada; Bosque continua salvando."
+		model.last_message = "Salvando Bosque antes de sair..."
 		_update_labels()
-		_ensure_session_bridge().flush_checkpoint(false)
-	elif integration_mode == "integrated_alpha" and _server_session_id() != "" and not _session_blocks_mutation():
+		var checkpoint_result: Dictionary = {}
+		var bridge = _ensure_session_bridge()
+		var wait_frames := 0
+		while _has_pending_integrated_events() and wait_frames < 180:
+			var bridge_snapshot := Dictionary(bridge.debug_snapshot()) if bridge.has_method("debug_snapshot") else {}
+			if bool(bridge_snapshot.get("checkpoint_in_flight", false)):
+				await get_tree().process_frame
+			else:
+				checkpoint_result = await bridge.flush_checkpoint(true)
+				if not bool(checkpoint_result.get("ok", false)):
+					break
+				await get_tree().process_frame
+			wait_frames += 1
+		if not bool(checkpoint_result.get("ok", true)) or _has_pending_integrated_events():
+			model.last_message = "Falha ao salvar no servidor; continue no Bosque ou tente sair novamente."
+			_update_labels()
+			return
+	if integration_mode == "integrated_alpha" and _server_session_id() != "" and not _session_blocks_mutation():
 		model.last_message = "Sessao preservada por ate 2h para retomada."
 		_ensure_session_bridge().record_exit_preserved()
 	close_requested.emit()
@@ -582,7 +602,14 @@ func _apply_remote_snapshot(snapshot_payload: Dictionary, apply_remote_position 
 	var position := _as_dictionary(snapshot_payload.get("player_position", snapshot_payload.get("position", {})))
 	if apply_remote_position and not position.is_empty():
 		set_player_position_for_tests(Vector2(float(position.get("x", _runtime.player_position.x)), float(position.get("y", _runtime.player_position.y))))
-	_runtime.apply_collected_nodes(RulesetScript.collected_nodes_from_snapshot(snapshot_payload))
+	var node_state := _as_dictionary(snapshot_payload.get("node_state", {}))
+	if node_state.is_empty():
+		var durable_progress := _as_dictionary(snapshot_payload.get("durable_progress", snapshot_payload.get("durable_base", {})))
+		node_state = _as_dictionary(durable_progress.get("node_state", {}))
+	if not node_state.is_empty():
+		_runtime.apply_node_state(node_state)
+	else:
+		_runtime.apply_collected_nodes(RulesetScript.collected_nodes_from_snapshot(snapshot_payload))
 	_sync_runtime_debug_state()
 	_update_labels()
 
