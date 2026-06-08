@@ -38,12 +38,12 @@ assertEq(
 );
 assertEq(
   numberField(manifest, "latest_version_code"),
-  11,
+  12,
   "release manifest should expose the current version code",
 );
 assertEq(
   numberField(manifest, "minimum_supported_version_code"),
-  11,
+  12,
   "release manifest should force-update builds before the Openworld operations v2 contract",
 );
 
@@ -56,11 +56,23 @@ const web = objectField(artifacts, "web");
 const androidUrl = httpsField(android, "url");
 const pcUrl = httpsField(pcWindows, "url");
 const webUrl = httpsField(web, "url");
+const androidAuthRequired = booleanishField(android, "auth_required");
+const pcAuthRequired = booleanishField(pcWindows, "auth_required");
 
 assertStableManifestUrl(portalUrl, EXPECTED_PORTAL_URL, "manifest portal_url");
 assertStableManifestUrl(webUrl, EXPECTED_WEB_URL, "manifest Web artifact URL");
-assertUrlContainsReleaseRoot(androidUrl, "Android APK");
-assertUrlContainsReleaseRoot(pcUrl, "PC ZIP");
+assertArtifactUrlMatchesContract(
+  androidUrl,
+  androidAuthRequired,
+  "android",
+  "Android APK",
+);
+assertArtifactUrlMatchesContract(
+  pcUrl,
+  pcAuthRequired,
+  "pc_windows",
+  "PC ZIP",
+);
 
 const androidSha256 = stringField(android, "sha256").toLowerCase();
 const pcSha256 = stringField(pcWindows, "sha256").toLowerCase();
@@ -74,13 +86,17 @@ assert(
   "PC artifact should expose a SHA256 hash",
 );
 
-await assertDownloadReachable(
-  androidUrl,
-  "Android APK",
-  MIN_DOWNLOAD_BYTES,
-  androidSha256,
-);
-await assertDownloadReachable(pcUrl, "PC ZIP", MIN_DOWNLOAD_BYTES, pcSha256);
+if (!androidAuthRequired) {
+  await assertDownloadReachable(
+    androidUrl,
+    "Android APK",
+    MIN_DOWNLOAD_BYTES,
+    androidSha256,
+  );
+}
+if (!pcAuthRequired) {
+  await assertDownloadReachable(pcUrl, "PC ZIP", MIN_DOWNLOAD_BYTES, pcSha256);
+}
 await assertPageContains(portalUrl, "Portal", "DraxosMobile");
 await assertPortalWebLink(portalUrl, webUrl);
 const webHtml = await assertPageContains(webUrl, "Web build", "GODOT_CONFIG");
@@ -256,7 +272,20 @@ function assertStableManifestUrl(url: string, expectedUrl: string, label: string
   );
 }
 
-function assertUrlContainsReleaseRoot(url: string, label: string): void {
+function assertArtifactUrlMatchesContract(
+  url: string,
+  authRequired: boolean,
+  artifact: string,
+  label: string,
+): void {
+  if (authRequired) {
+    assert(
+      url.includes("/functions/v1/release/download") &&
+        url.includes(`artifact=${artifact}`),
+      `${label} protected URL should use release/download?artifact=${artifact}: ${url}`,
+    );
+    return;
+  }
   assert(
     url.includes(EXPECTED_RELEASE_ROOT),
     `${label} URL should include expected release root ${EXPECTED_RELEASE_ROOT}: ${url}`,
@@ -326,6 +355,11 @@ function httpsField(payload: JsonObject, key: string): string {
   const value = stringField(payload, key);
   assert(value.startsWith("https://"), `${key} should be an https URL`);
   return value;
+}
+
+function booleanishField(payload: JsonObject, key: string): boolean {
+  const value = payload[key];
+  return value === true || value === "true";
 }
 
 function parseJson(text: string): unknown {

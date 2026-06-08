@@ -33,12 +33,12 @@ assertEq(
 );
 assertEq(
   numberField(manifest, "latest_version_code"),
-  11,
+  12,
   "release manifest should expose the current version code",
 );
 assertEq(
   numberField(manifest, "minimum_supported_version_code"),
-  11,
+  12,
   "release manifest should force-update builds before the Openworld operations v2 contract",
 );
 
@@ -61,19 +61,26 @@ assert(
 );
 const androidUrl = stringField(objectField(artifacts, "android"), "url");
 const pcUrl = stringField(objectField(artifacts, "pc_windows"), "url");
+const androidAuthRequired = booleanishField(
+  objectField(artifacts, "android"),
+  "auth_required",
+);
+const pcAuthRequired = booleanishField(
+  objectField(artifacts, "pc_windows"),
+  "auth_required",
+);
 assert(
   !includesLegacyReleaseRoot(androidUrl) &&
     !includesLegacyReleaseRoot(pcUrl),
   "manifest should not fall back to old Openworld package roots",
 );
-assert(
-  androidUrl.includes(EXPECTED_RELEASE_ROOT),
-  `Android URL should include expected release root ${EXPECTED_RELEASE_ROOT}`,
+assertArtifactUrlMatchesContract(
+  androidUrl,
+  androidAuthRequired,
+  "android",
+  "Android",
 );
-assert(
-  pcUrl.includes(EXPECTED_RELEASE_ROOT),
-  `PC URL should include expected release root ${EXPECTED_RELEASE_ROOT}`,
-);
+assertArtifactUrlMatchesContract(pcUrl, pcAuthRequired, "pc_windows", "PC");
 assert(
   stringField(objectField(artifacts, "web"), "url").startsWith("https://"),
   "manifest should include the published Web URL",
@@ -117,6 +124,31 @@ function objectField(payload: JsonObject, key: string): JsonObject {
 function stringField(payload: JsonObject, key: string): string {
   const value = payload[key];
   return typeof value === "string" ? value : "";
+}
+
+function booleanishField(payload: JsonObject, key: string): boolean {
+  const value = payload[key];
+  return value === true || value === "true";
+}
+
+function assertArtifactUrlMatchesContract(
+  url: string,
+  authRequired: boolean,
+  artifact: string,
+  label: string,
+): void {
+  if (authRequired) {
+    assert(
+      url.includes("/functions/v1/release/download") &&
+        url.includes(`artifact=${artifact}`),
+      `${label} protected URL should use release/download?artifact=${artifact}`,
+    );
+    return;
+  }
+  assert(
+    url.includes(EXPECTED_RELEASE_ROOT),
+    `${label} URL should include expected release root ${EXPECTED_RELEASE_ROOT}`,
+  );
 }
 
 function numberField(payload: JsonObject, key: string): number {
