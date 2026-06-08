@@ -46,13 +46,70 @@ static func buff_effect_text(choice: Dictionary) -> String:
 		var parts := PackedStringArray()
 		for modifier_variant: Variant in modifiers:
 			var modifier := as_dictionary(modifier_variant)
-			var stat := humanize_id(str(modifier.get("stat", modifier.get("stat_id", ""))))
-			var amount := str(modifier.get("amount", modifier.get("value", ""))).strip_edges()
+			var stat := buff_stat_label(str(modifier.get("stat", modifier.get("stat_id", ""))))
+			var amount := _amount_text(modifier.get("amount", modifier.get("value", "")))
 			if stat != "" and amount != "":
-				parts.append("%s %s" % [stat, amount])
+				parts.append("+%s%% %s" % [amount, stat])
 		if not parts.is_empty():
 			return ", ".join(parts)
+	var stat := buff_stat_label(str(choice.get("stat", "")))
+	var amount := _amount_text(choice.get("amount_percent", ""))
+	if stat != "" and amount != "":
+		return "+%s%% %s" % [amount, stat]
 	return "Melhora um atributo da Arena."
+
+static func active_buff_summary_text(attempt: Dictionary) -> String:
+	var buffs := as_array(attempt.get("temporary_buffs", attempt.get("active_buffs", [])))
+	if buffs.is_empty():
+		return "nenhum"
+	var parts := PackedStringArray()
+	for buff_variant: Variant in buffs:
+		var buff := as_dictionary(buff_variant)
+		var label := buff_label_text(buff)
+		if label == "":
+			label = humanize_id(str(buff.get("id", "buff")))
+		parts.append("%s (%s)" % [label, buff_effect_text(buff)])
+	return ", ".join(parts)
+
+static func buff_label_text(choice: Dictionary) -> String:
+	for key in ["display_name", "label", "name", "title"]:
+		var label := str(choice.get(key, "")).strip_edges()
+		if label != "":
+			return label
+	return ""
+
+static func buff_stat_label(stat_id: String) -> String:
+	match stat_id.strip_edges():
+		"max_hp":
+			return "HP maximo"
+		"ritual_power":
+			return "Potencia Ritual"
+		"guard":
+			return "Guarda"
+		"max_mana":
+			return "Mana maxima"
+		"mana_regen":
+			return "Regen de Mana"
+		"ritual_haste":
+			return "Celeridade Ritual"
+		"will":
+			return "Vontade"
+		"ritual_control":
+			return "Controle Ritual"
+	return humanize_id(stat_id)
+
+static func _amount_text(value: Variant) -> String:
+	if value is float:
+		var numeric := float(value)
+		if is_equal_approx(numeric, roundf(numeric)):
+			return str(roundi(numeric))
+		return "%.1f" % numeric
+	if value is int:
+		return str(value)
+	var text := str(value).strip_edges()
+	if text.ends_with("%"):
+		text = text.substr(0, text.length() - 1).strip_edges()
+	return text
 
 static func loadout_locked_summary_text(attempt: Dictionary) -> String:
 	var locked_hash := str(attempt.get("locked_loadout_hash", "")).strip_edges()
