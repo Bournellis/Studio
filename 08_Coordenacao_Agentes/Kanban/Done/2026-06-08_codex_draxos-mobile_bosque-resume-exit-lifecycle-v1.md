@@ -27,6 +27,8 @@ Corrigir a retomada do Bosque apos `Voltar`, impedindo que uma sessao preservada
 
 - `86fdc51` - docs: register bosque resume exit lifecycle work
 - `bc835a6` - fix: stabilize bosque resume exit lifecycle
+- `a73a171` - release: prepare bosque resume exit lifecycle alpha
+- `9a0f7c0` - test: align release smokes with alpha 12
 
 ## Validacao Local
 
@@ -36,10 +38,22 @@ Corrigir a retomada do Bosque apos `Voltar`, impedindo que uma sessao preservada
 - `npx -y deno task --cwd supabase/functions check`: PASS.
 - `validate_foundation.ps1 -Profile ClientQuick`: PASS, incluindo GUT client completo `248 tests / 3820 asserts`; warnings conhecidos de ObjectDB/orphans seguem sem falhar o gate.
 - `validate_foundation.ps1 -Profile ServerQuick`: PASS.
+- `validate_foundation.ps1 -Profile ReleaseDryRun`: PASS apos mover este card para Done.
+- `npx -y deno check server/tests/release_manifest_smoke.ts server/tests/release_artifacts_remote_smoke.ts server/tests/internal_alpha_remote_smoke.ts`: PASS apos alinhar os smokes para alpha 12 e downloads protegidos por Access.
 
 ## Release
 
-- Publicacao Web/APK segue no mesmo worktree e branch apos os gates de release.
-- Release root planejado: `internal-alpha/v0-bosque-resume-exit-lifecycle-v1-20260608-<shortsha>`.
-- Proximo passo operacional: repetir `ReleaseDryRun` sem cards em `Doing`, empacotar, publicar Storage/Cloudflare/manifest e registrar evidencias remotas em status/docs.
-
+- Publicado como `Bosque Resume Exit Lifecycle v1`.
+- Release root: `internal-alpha/v0-bosque-resume-exit-lifecycle-v1-20260608-9a0f7c0`.
+- Preview evidence: `https://39128c59.draxos-mobile-internal-alpha.pages.dev`.
+- Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`.
+- Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+- APK/manifest: `0.0.12-alpha.0` / version code `12`.
+- Remote functions: `modes` and `release` redeployed.
+- Android APK SHA256: `546131c81c7bab0d43f04f4223b44ef7e5df7b25fb9877b743f4ff4c3622d0e3`.
+- PC ZIP SHA256: `8bbd031d3e0b43c5a9b38c04509b1b7db0f0e8e372f427ba31634138c443c554`.
+- Web Index SHA256: `fca57c810699ac80bd05a633905618ed569a3dbeb22850ce63af8b9b96390893`.
+- `release_manifest_smoke.ts`: PASS remoto para `0.0.12-alpha.0` / version code `12`.
+- `internal_alpha_remote_smoke.ts`: PASS remoto.
+- `release_artifacts_remote_smoke.ts`: PASS remoto com `DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS=1`; Portal/Web oficiais continuam Cloudflare Access protected.
+- `smoke_web_launch_remote.ps1` contra preview `39128c59`: PASS, outcome `game_loaded`, release root esperado confirmado.
