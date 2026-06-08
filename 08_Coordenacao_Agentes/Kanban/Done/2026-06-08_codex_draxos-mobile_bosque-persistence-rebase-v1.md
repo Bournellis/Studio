@@ -17,8 +17,10 @@ Rebasear a persistencia do Bosque para ACK + retry server-authoritative, com nod
 
 ## Latest Context
 
-- latest remote package: `Bosque Session Lifecycle & Durable Structures Hotfix v1`
-- latest release root: `internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-c953b51`
+- latest remote package before this work: `Bosque Session Lifecycle & Durable Structures Hotfix v1`
+- published package from this work: `Bosque Persistence Rebase v1`
+- published release root: `internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74`
+- published preview evidence: `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`
 - platform/modes source: `docs/contracts/minigame-platform-v1.md`
 - Openworld source: `docs/minigames/openworld.md`
 - Openworld decision source: `docs/minigames/openworld-decision-pack.md`
@@ -85,7 +87,7 @@ Rebasear a persistencia do Bosque para ACK + retry server-authoritative, com nod
 
 ## Handoff Point
 
-Implementacao e validacao local principais concluidas; release/publish segue no mesmo branch/worktree. Registrar commits, arquivos alterados, comandos, resultados, release root, preview Web, APK, estado do worktree e qualquer pendencia de playtest humano no handoff/final.
+Implementacao, validacao local, merge em `main`, publicacao Web/APK e smokes remotos concluidos. O pacote publicado usa artefatos gerados no commit `bc23f74`; depois do primeiro smoke remoto de operations v2 foi aplicada e documentada a hotfix SQL `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`.
 
 ## Resultados Locais
 
@@ -95,11 +97,53 @@ Implementacao e validacao local principais concluidas; release/publish segue no 
 - GUT client completo: PASS, 242 tests / 3794 asserts.
 - `validate_foundation.ps1 -Profile ClientQuick`: PASS.
 - `validate_foundation.ps1 -Profile ServerQuick`: PASS apos atualizar o release fallback contract para o pacote novo.
+- `validate_foundation.ps1 -Profile ReleaseDryRun`: PASS.
+- `check_release_safety.ps1 -ProjectDir .`: PASS.
+- `check_android_release_keystore.ps1 -ProjectDir . -Mode InternalAlpha`: PASS com warning esperado de `debug_fallback`.
+- `check_foundation_expansion_readiness.ps1 -ProjectDir .`: PASS.
+- `git diff --check`: PASS antes e depois da hotfix.
 - Migracao `202606080001_openworld_bosque_persistence_rebase_v1.sql`: server/supabase byte-equivalente por SHA-256.
+- Hotfix `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`: server/supabase byte-equivalente por SHA-256 `85EAE02DBFB0FC7DAF42C6E4012531E39A9A1E4DC3762C724030FE361B3CC5DD`.
+- Tests pos-hotfix `npx -y deno test --allow-read server/tests/modes_platform_schema_test.ts server/tests/openworld_ruleset_definition_test.ts`: PASS, 28 tests.
 
-## Pendencias De Release
+## Publicacao
 
-- `validate_foundation.ps1 -Profile ReleaseDryRun` deve ser repetido apos a remocao desta Doing card.
-- Commitar etapas logicas.
-- Rebase/merge em `main`.
-- Aplicar migracao Supabase remota, deploy functions, package/upload/deploy Web/APK, smokes remotos e registro final de evidencias.
+- Commits logicos criados na branch:
+  - `2b137b5 docs: register bosque persistence rebase contract`
+  - `0195f2b backend: add bosque operations persistence v2`
+  - `2bfe2d5 client: make bosque saves ack-backed`
+  - `07f5723 test: cover bosque persistence rebase`
+  - `bc23f74 release: bump internal alpha to 0.0.10`
+- Branch fast-forward merged em `main` no commit `bc23f74`.
+- Remote Supabase migration `202606080001_openworld_bosque_persistence_rebase_v1.sql`: aplicada.
+- Remote Supabase migration `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`: aplicada apos smoke remoto detectar que o runtime nao possui `jsonb_object_length(jsonb)`.
+- Supabase functions `modes` e `release`: deployadas.
+- `publish_internal_alpha.ps1 -Mode Plan -ReleaseRoot internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74 -PublicDownloads`: PASS.
+- `export_internal_alpha.ps1 -AllowAndroidDebugFallback`: PASS.
+- `publish_internal_alpha.ps1 -Mode Package -ReleaseRoot internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74 -PublicDownloads`: PASS.
+- `publish_internal_alpha.ps1 -Mode Upload -ReleaseRoot internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+- `build_cloudflare_pages_package.ps1`: PASS.
+- `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`: PASS, preview `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`.
+- `publish_internal_alpha.ps1 -Mode DeployManifest -ReleaseRoot internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74 -PublicDownloads -ConfirmRemoteMutation`: PASS.
+
+## Smokes Remotos
+
+- `release_manifest_smoke.ts`: PASS, manifest `0.0.10-alpha.0` / code `10` / minimum `10`.
+- `release_artifacts_remote_smoke.ts`: PASS; APK, ZIP, Portal e Web URLs corretos; stable Portal/Web protegidos por Cloudflare Access.
+- `internal_alpha_remote_smoke.ts` com `DRAXOS_REMOTE_RELEASE_SMOKE=1`: PASS.
+- `smoke_web_launch_remote.ps1` no preview hash: PASS, `game_loaded` em `6658 ms`, release root correto, assets principais 200, sem runtime errors.
+- `smoke_web_launch_remote.ps1` na URL principal direta: PASS como `cloudflare_access_expected`.
+- Remote Openworld operations-v2 smoke: PASS; `collect_node` ACK persistiu pocket/cooldown, coleta duplicada retornou `OPENWORLD_NODE_ON_COOLDOWN`, `deposit_all + craft_recipe:fogueira_estavel_1` persistiu `upgrades` + `structures`, `/modes/state` recarregou cooldown e Fogueira.
+
+## Artefatos
+
+- APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74/downloads/draxos-mobile-alpha.apk`
+- PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74/downloads/draxos-mobile-alpha.zip`
+- Android APK SHA256: `1679e8db843331707d22bb083c29eeb5182cb92cf141b4d6f46fd2ddeee3c858`
+- PC Windows ZIP SHA256: `49d080f57a31f2ceead45f678a60c57e27f89a9d8964114a3499bc42ca8e63e3`
+- Web Index SHA256: `a79ce8e74a64468611806cdaa41e73cfbbf6671180d33a9b7d422503ff91c2d9`
+
+## Pendencias Humanas
+
+- Smoke humano in-game na URL principal ainda depende de autenticar pelo Cloudflare Access no navegador do jogador/testador.
+- Playtest recomendado: ACK/retry, cooldown apos relog, Fogueira somente apos ACK, aviso ao sair durante `Salvando...`, descarte claro de ops pendentes quando a sessao expira, e regressao Arena/Bosque.
