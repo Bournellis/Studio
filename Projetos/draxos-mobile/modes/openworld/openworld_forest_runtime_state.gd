@@ -92,6 +92,10 @@ func mark_collected(node_id: String) -> void:
 		var node := resource_nodes[index]
 		if str(node.get("node_id", "")) == node_id:
 			node["collected"] = true
+			var item_id := str(node.get("item_id", ""))
+			var respawn_seconds := maxi(0, int(node.get("respawn_seconds", RulesetScript.item_respawn_seconds(item_id))))
+			var local_next_spawn := current_server_unix() + respawn_seconds
+			node["next_spawn_at_unix"] = maxi(int(node.get("next_spawn_at_unix", 0)), local_next_spawn)
 			resource_nodes[index] = node
 			return
 
@@ -161,7 +165,6 @@ func _refresh_respawned_nodes() -> void:
 		var next_spawn_at := int(node.get("next_spawn_at_unix", 0))
 		if next_spawn_at > 0 and next_spawn_at + RESPAWN_VISUAL_GRACE_SECONDS <= now_unix:
 			node["collected"] = false
-			node["next_spawn_at_unix"] = 0
 			resource_nodes[index] = node
 
 static func _timestamp_to_unix(value: Variant) -> int:

@@ -209,7 +209,7 @@ func test_start_session_prepares_idempotent_request_hydrates_and_caches_session(
 	assert_eq(str(store.openworld_active_session_snapshot().get("session_id", "")), "session-start")
 	assert_eq(int(Dictionary(store.openworld_durable_progress_snapshot().get("pocket", {})).get("galho", 0)), 2)
 
-func test_resume_prefers_local_cache_and_remote_metadata_does_not_transform_world() -> void:
+func test_resume_applies_matching_remote_durable_metadata_when_idle() -> void:
 	var model = ModelScript.new()
 	var client := FakeSupabaseClient.new()
 	var store := FakeSessionStore.new()
@@ -233,8 +233,8 @@ func test_resume_prefers_local_cache_and_remote_metadata_does_not_transform_worl
 
 	assert_eq(bridge.server_session_id(), "session-local")
 	assert_eq(bridge.snapshot_revision(), 9)
-	assert_eq(int(model.chest.get("galho", 0)), 2)
-	assert_eq(int(model.chest.get("folha", 0)), 0)
+	assert_eq(int(model.chest.get("galho", 0)), 0)
+	assert_eq(int(model.chest.get("folha", 0)), 5)
 	assert_eq(str(model.last_message), "Bosque salvo no servidor.")
 
 func test_resume_uses_matching_session_list_entry_when_active_session_is_missing() -> void:
@@ -264,8 +264,8 @@ func test_resume_uses_matching_session_list_entry_when_active_session_is_missing
 	assert_eq(bridge.server_session_id(), "session-listed-local")
 	assert_eq(bridge.snapshot_revision(), 7)
 	assert_eq(client.start_calls.size(), 0)
-	assert_eq(int(model.chest.get("galho", 0)), 2)
-	assert_eq(int(model.chest.get("folha", 0)), 0)
+	assert_eq(int(model.chest.get("galho", 0)), 0)
+	assert_eq(int(model.chest.get("folha", 0)), 5)
 	assert_eq(str(store.openworld_active_session_snapshot().get("session_id", "")), "session-listed-local")
 
 func test_resume_preserves_live_local_session_when_state_omits_active_session() -> void:
@@ -474,6 +474,54 @@ func test_checkpoint_network_failure_keeps_local_state_and_retries_successfully(
 	assert_eq(bridge.snapshot_revision(), 3)
 	assert_false(bool(bridge.debug_snapshot().get("checkpoint_dirty", true)))
 	assert_true(store.openworld_pending_ops_snapshot().is_empty())
+
+func test_checkpoint_server_cooldown_discards_collect_without_retry_loop() -> void:
+	var model = ModelScript.new()
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	var bridge = _bridge(model, client, store)
+	var now := _unix_future(0)
+	var node_state := {
+		"node_galho_01": {
+			"last_collected_at": now - 10,
+			"next_spawn_at": now + 290,
+			"collected_count": 1,
+		},
+	}
+	var snapshot := {
+		"node_state": node_state,
+		"server_time": now,
+		"checkpoint": {"accepted_checkpoint_id": "session-cooldown-000001", "client_sequence": 0},
+	}
+	bridge.hydrate_session(_session_payload("session-cooldown", 2, snapshot))
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"server_time": now,
+			"active_session": _session_payload("session-cooldown", 2, snapshot),
+		},
+	}
+	client.checkpoint_results = [{
+		"ok": false,
+		"body": {"error": {"code": "OPENWORLD_NODE_ON_COOLDOWN"}},
+	}]
+
+	bridge.record_event_deferred("collect_complete", {
+		"node_id": "node_galho_01",
+		"item_id": "galho",
+		"position": {"x": 330, "y": 420},
+		"session_seconds": 9,
+	})
+	await bridge.flush_checkpoint(true)
+
+	assert_eq(client.checkpoint_calls.size(), 1)
+	assert_eq(client.state_calls.size(), 1)
+	assert_false(bridge.has_pending_events())
+	assert_false(bridge.has_pending_collected_node("node_galho_01"))
+	assert_eq(store.failed.size(), 0)
+	assert_true(store.openworld_pending_ops_snapshot().is_empty())
+	assert_string_contains(str(model.last_message), "regenerando")
+	assert_eq(bridge.pending_summary_text(), "")
 
 func test_complete_session_flushes_checkpoint_before_reward_complete() -> void:
 	var model = ModelScript.new()

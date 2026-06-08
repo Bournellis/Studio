@@ -309,6 +309,24 @@ func test_runtime_applies_node_state_cooldown_and_respawn_by_server_time() -> vo
 
 	runtime.apply_node_state(runtime.node_state_snapshot(), now + 303)
 	assert_false(bool(_runtime_resource_node(runtime, node_id).get("collected", true)))
+	assert_eq(int(_runtime_resource_node(runtime, node_id).get("next_spawn_at_unix", 0)), now + 300)
+
+func test_runtime_local_collect_starts_cooldown_from_collection_time() -> void:
+	var runtime = RuntimeStateScript.new()
+	runtime.configure(RulesetScript.player_initial_position())
+	runtime.reset_resources(RulesetScript.resource_fixtures())
+	var node_id := ""
+	for node: Dictionary in runtime.resource_nodes:
+		if str(node.get("item_id", "")) == "galho":
+			node_id = str(node.get("node_id", ""))
+			break
+	assert_ne(node_id, "")
+
+	var before_collect := runtime.current_server_unix()
+	runtime.mark_collected(node_id)
+	var collected_node := _runtime_resource_node(runtime, node_id)
+	assert_true(bool(collected_node.get("collected", false)))
+	assert_gte(int(collected_node.get("next_spawn_at_unix", 0)), before_collect + RulesetScript.item_respawn_seconds("galho"))
 
 func test_runtime_uses_pending_only_for_v2_interaction_gate() -> void:
 	var runtime = RuntimeStateScript.new()
@@ -684,11 +702,11 @@ func test_integrated_active_resync_same_session_keeps_local_world_and_updates_me
 
 	assert_true(ok)
 	assert_eq(screen.get_player_position(), local_position)
-	assert_eq(int(Dictionary(screen.get_model().pocket).get("resina", 0)), 1)
-	assert_eq(int(Dictionary(screen.get_model().pocket).get("folha", 0)), 0)
-	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 0)
-	assert_false(bool(Dictionary(screen.get_model().upgrades).get("bolsa_simples_1", false)))
-	assert_eq(int(screen.get_model().guidance_state().get("current_step", 0)), 1)
+	assert_eq(int(Dictionary(screen.get_model().pocket).get("resina", 0)), 0)
+	assert_eq(int(Dictionary(screen.get_model().pocket).get("folha", 0)), 2)
+	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 3)
+	assert_true(bool(Dictionary(screen.get_model().upgrades).get("bolsa_simples_1", false)))
+	assert_eq(int(screen.get_model().guidance_state().get("current_step", 0)), 4)
 	assert_false(Dictionary(screen.get_model().active_collection).is_empty())
 	assert_false(bool(_resource_node(screen, node_id).get("collected", false)))
 	assert_eq(int(screen.get("_snapshot_revision")), 8)

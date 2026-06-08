@@ -556,7 +556,10 @@ func flush_checkpoint(force := false) -> Dictionary:
 		_server_synced = false
 		_checkpoint_dirty = true
 		var error_code := _error_code(result)
-		if not _is_network_error(result):
+		var terminal_error_handled := await _handle_terminal_checkpoint_error(error_code, sent_operation_ids, body)
+		if terminal_error_handled:
+			pass
+		elif not _is_network_error(result):
 			session_store.fail_pending_mutation(_last_pending_request_id, body)
 			_session_state = SESSION_BLOCKED
 			_set_model_message("Falha ao salvar no servidor. Alteracoes seguem pendentes.")
@@ -568,6 +571,38 @@ func flush_checkpoint(force := false) -> Dictionary:
 		_save_local_checkpoint_state()
 	_emit_state_changed()
 	return result
+
+func _handle_terminal_checkpoint_error(error_code: String, sent_operation_ids: Array[String], _body: Dictionary) -> bool:
+	if error_code != "OPENWORLD_NODE_ON_COOLDOWN":
+		return false
+	var sent_collect_ids := _collect_operation_ids(sent_operation_ids, "collect_node")
+	if sent_collect_ids.is_empty():
+		return false
+	await resync_session("Recurso ainda regenerando.")
+	var rejected_operation_ids := _collect_operation_ids_on_server_cooldown(sent_operation_ids)
+	if rejected_operation_ids.is_empty():
+		rejected_operation_ids = sent_collect_ids
+	_remove_acked_operations(rejected_operation_ids)
+	_last_pending_request_id = ""
+	_checkpoint_retry_attempts = 0
+	_checkpoint_retry_scheduled = false
+	_checkpoint_dirty = not _pending_operations.is_empty()
+	_server_synced = not _checkpoint_dirty
+	_session_state = SESSION_PENDING if _checkpoint_dirty else SESSION_SYNCED
+	if not _checkpoint_dirty:
+		_last_checkpoint_subject = ""
+		_apply_current_durable_progress_if_idle("Recurso ainda regenerando; coleta descartada.")
+	_set_model_message("Recurso ainda regenerando; outras alteracoes seguem pendentes." if _checkpoint_dirty else "Recurso ainda regenerando; coleta descartada.")
+	_save_local_checkpoint_state()
+	_emit_client_telemetry("mode_checkpoint_terminal_reject", {
+		"result": "discarded",
+		"error_code": error_code,
+		"discarded_count": rejected_operation_ids.size(),
+		"pending_count": _pending_operations.size(),
+	})
+	if _checkpoint_dirty:
+		call_deferred("flush_checkpoint", false)
+	return true
 
 func _apply_checkpoint_ack(body: Dictionary, sent_sequence: int, sent_operation_ids: Array[String] = []) -> void:
 	var durable_progress_updated := _remember_durable_progress_from_body(body)
@@ -601,6 +636,15 @@ func _apply_checkpoint_ack(body: Dictionary, sent_sequence: int, sent_operation_
 	_save_local_checkpoint_state()
 	if _checkpoint_dirty:
 		call_deferred("flush_checkpoint", false)
+
+func _apply_current_durable_progress_if_idle(message: String) -> void:
+	if not _pending_operations.is_empty():
+		return
+	var durable_patch := _durable_progress_patch(_durable_progress_cache_snapshot())
+	if durable_patch.is_empty():
+		return
+	durable_patch["last_message"] = message
+	apply_remote_snapshot(durable_patch, false)
 
 func _build_checkpoint_payload() -> Dictionary:
 	var snapshot_payload := _local_snapshot_payload()
@@ -737,6 +781,44 @@ func _pending_operation_types() -> Array[String]:
 	var result: Array[String] = []
 	for operation: Dictionary in _pending_operations:
 		result.append(str(operation.get("type", "operation")))
+	return result
+
+func _collect_operation_ids(operation_ids: Array[String], operation_type: String) -> Array[String]:
+	if operation_ids.is_empty():
+		return []
+	var sent: Dictionary = {}
+	for op_id in operation_ids:
+		sent[str(op_id)] = true
+	var result: Array[String] = []
+	for operation: Dictionary in _pending_operations:
+		var op_id := str(operation.get("op_id", "")).strip_edges()
+		if op_id == "" or not bool(sent.get(op_id, false)):
+			continue
+		if str(operation.get("type", "")) == operation_type:
+			result.append(op_id)
+	return result
+
+func _collect_operation_ids_on_server_cooldown(operation_ids: Array[String]) -> Array[String]:
+	if operation_ids.is_empty():
+		return []
+	var sent: Dictionary = {}
+	for op_id in operation_ids:
+		sent[str(op_id)] = true
+	var progress := _durable_progress_cache_snapshot()
+	var node_state := _as_dictionary(progress.get("node_state", {}))
+	if node_state.is_empty():
+		return []
+	var now_unix := server_now_unix()
+	var result: Array[String] = []
+	for operation: Dictionary in _pending_operations:
+		var op_id := str(operation.get("op_id", "")).strip_edges()
+		if op_id == "" or not bool(sent.get(op_id, false)) or str(operation.get("type", "")) != "collect_node":
+			continue
+		var node_id := str(operation.get("node_id", "")).strip_edges()
+		var state := _as_dictionary(node_state.get(node_id, {}))
+		var next_spawn_at := _timestamp_to_unix(state.get("next_spawn_at", 0))
+		if next_spawn_at > now_unix:
+			result.append(op_id)
 	return result
 
 func _remove_acked_operations(operation_ids: Array[String]) -> void:
@@ -1121,6 +1203,8 @@ func _apply_remote_metadata(session: Dictionary) -> void:
 			_checkpoint_dirty = true
 	_server_synced = not _checkpoint_dirty
 	_session_state = SESSION_PENDING if _checkpoint_dirty else SESSION_SYNCED
+	if not _checkpoint_dirty:
+		_apply_current_durable_progress_if_idle("Bosque sincronizado.")
 	_save_local_checkpoint_state()
 
 func _same_session(session: Dictionary) -> bool:
