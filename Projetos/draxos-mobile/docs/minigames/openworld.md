@@ -15,7 +15,7 @@
 
 `Openworld Bosque` e o primeiro slice do modo `Openworld`. Ele nasceu do prototipo `Rpgsuave Bosque`, mas V1 renomeia o modo de verdade: novos payloads, rotas, settings, docs e testes usam `openworld`.
 
-Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Pacote remoto atual: `Bosque Session Lifecycle & Durable Structures Hotfix v1`, release root `internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-c953b51`, preview tecnico `https://8ecac093.draxos-mobile-internal-alpha.pages.dev`, version code `9`, corrigindo retomada de sessao expirada e persistencia duravel de estruturas. `Bosque World Hub Domain Separation v1` permanece como pacote anterior publicado em `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05`, preview tecnico `https://d1872010.draxos-mobile-internal-alpha.pages.dev`. `Bosque Fogueira Potion Crafting v1` permanece como pacote station-craft anterior em `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c`, preview tecnico `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`.
+Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Pacote remoto atual em implementacao/publicacao: `Bosque Persistence Rebase v1`, version code `10`, substituindo o modelo de snapshot local como promessa de save por operacoes duraveis com ACK do servidor e cooldown por item. `Bosque Session Lifecycle & Durable Structures Hotfix v1` permanece como pacote remoto anterior: release root `internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-c953b51`, preview tecnico `https://8ecac093.draxos-mobile-internal-alpha.pages.dev`, version code `9`. `Bosque World Hub Domain Separation v1` permanece como pacote anterior publicado em `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05`, preview tecnico `https://d1872010.draxos-mobile-internal-alpha.pages.dev`. `Bosque Fogueira Potion Crafting v1` permanece como pacote station-craft anterior em `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c`, preview tecnico `https://08d00f24.draxos-mobile-internal-alpha.pages.dev`.
 
 ## Visao
 
@@ -23,19 +23,20 @@ Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitua
 
 ## Politica Operacional Atual
 
-Politica viva do Openworld/Bosque: **client-owned active play,
-server-owned durable Bosque progress, station crafts and rewards**.
+Politica viva do Openworld/Bosque: **client-owned active preview,
+server-authoritative durable Bosque progress, station crafts and rewards**.
 
 Durante uma visita ativa, o cliente e autoridade de runtime para movimento,
-posicao, coleta ativa, nodes visuais, bolso local, bau local, craft local,
-guidance e feedback de HUD. O servidor nao deve comandar microacoes em tempo
-real nem puxar o jogador por ACK, stale revision ou snapshot tardio da mesma
-sessao.
+posicao, coleta ativa, preview visual, guidance local e feedback de HUD. O
+cliente pode aplicar preview otimista para coleta, deposito e craft, mas esse
+preview nao e progresso salvo. Save duravel so existe depois de ACK do
+servidor em `/modes/session/checkpoint`.
 
 O servidor e autoridade para sessao ativa, ruleset, progresso duravel aceito do
-Bosque, checkpoint aceito, craft de estacao que gera consumivel global,
-limites, conclusao, recompensa, ledger e auditoria. A recompensa real so existe
-depois de um checkpoint aceito e de `complete` server-authoritative.
+Bosque, cooldown de node, checkpoint aceito, craft de estacao que gera
+consumivel global, limites, conclusao, recompensa, ledger e auditoria. A
+recompensa real so existe depois de um checkpoint aceito e de `complete`
+server-authoritative.
 
 O Bosque pode virar a camada visual/navegavel do jogo no futuro, mas nao vira
 um banco economico unico. A politica atual e separar os dominios:
@@ -53,37 +54,39 @@ Coletar no Bosque nunca aumenta diretamente `resources.ossos` nem
 legados com `ossos_preview` ou `po_osso_preview` devem ser normalizados para
 esses IDs locais.
 
-`Bau`, `Mochila/Bolso`, upgrades de capacidade e estruturas craftadas sao
-progresso duravel por save. Nodes coletados, posicao, coleta ativa e checkpoint
-pendente sao estado da visita atual. Nova visita pode repovoar nodes coletaveis,
-mas nasce com o bau, mochila, capacidade e estruturas ja aceitos para o save.
-`Fogueira Estavel I` e estrutura duravel local e tambem estacao
-`fogueira_estavel_1` para receitas globais de pocao.
+`Bau`, `Mochila/Bolso`, upgrades de capacidade, estruturas craftadas, guidance
+confirmado e `node_state` sao progresso duravel por save. Nodes nao resetam por
+visita; cada node usa `next_spawn_at` proprio e reaparece somente quando o
+cooldown do item vence. Posicao, coleta ativa e tempo de visita continuam sendo
+estado de visita. `Fogueira Estavel I` e estrutura duravel local e tambem
+estacao `fogueira_estavel_1` para receitas globais de pocao.
 
 Sessao de visita expira em 2 horas. Uma sessao expirada nunca deve ser retomada
 como `active_session`, mesmo que ainda exista em `mode_sessions` ou no cache
-local. Depois da expiracao, entrar no Bosque inicia nova visita com
-`collected_nodes = {}` e full spawn do ruleset, injetando somente o progresso
-duravel aceito (`Bau`, `Mochila`, `upgrades`, `structures`). Essa regra e a
-fronteira entre ciclo de visita e progresso do save.
+local. Depois da expiracao, entrar no Bosque inicia nova visita injetando o
+progresso duravel aceito (`Bau`, `Mochila`, `upgrades`, `structures`,
+`guidance`, `node_state`). Operacoes pendentes locais so podem ser reexecutadas
+se a sessao original ainda estiver valida; se a sessao morreu, a fila e
+descartada com mensagem clara de alteracoes nao confirmadas expiradas.
 
 Regra de regressao para agentes: nao reintroduzir `move_heartbeat`,
 `collect_start`, `collect_cancel`, `collect_complete`, `deposit_all` ou `craft`
 como caminho principal de gameplay remoto revisionado sem uma decisao explicita
 em `docs/minigames/openworld-decision-pack.md`. `collect_batch` e eventos
 legados existem por compatibilidade com pacotes antigos; o cliente novo usa
-cache local + checkpoints compactos.
+fila `openworld_pending_ops_cache` + checkpoints de operacoes duraveis.
 
 Snapshots remotos da mesma sessao so podem:
 
 - inicializar/recuperar a visita antes do primeiro frame jogavel;
 - confirmar metadados de checkpoint aceito;
 - recuperar conflito real fora do controle ativo, com mensagem clara para o
-  jogador.
+  jogador;
+- confirmar operacoes duraveis ACKed e limpar a fila local correspondente.
 
 Eles nao podem transformar o mundo ja renderizado, reposicionar o jogador,
-reiniciar coleta, reaparecer node coletado, reverter bolso/bau/craft ou bloquear
-deposito/craft durante o fluxo normal.
+reiniciar coleta, reaparecer node em cooldown, reverter bolso/bau/craft ACKed
+ou declarar save antes do servidor.
 
 ## Bosque Mecanico Basico v2
 
@@ -128,15 +131,17 @@ Contratos de produto para v2:
 - snapshot remoto retomavel por ate 2 horas, mas aplicado como bootstrap/recuperacao e nao como rollback visual durante controle ativo;
 - sessao remota/local expirada, antiga demais ou sem `expires_at` valido e
   descartada como visita ativa; a proxima entrada cria nova visita com
-  progresso duravel preservado e nodes resetados;
-- cache local do Bosque por save/sessao/ruleset para nodes coletados, bolso, bau, upgrades, guidance, posicao e checkpoint pendente;
+  progresso duravel preservado e node cooldown vindo de `node_state`;
+- cache local de fila `openworld_pending_ops_cache` por
+  `account_id/save_id/session_id/ruleset_id` para retry de operacoes ainda sem
+  ACK;
 - cache local separado entre `openworld_active_session_cache` e
   `openworld_durable_progress_cache`;
 - progresso duravel por save para `Bau`, `Mochila/Bolso`, upgrades de mochila e
-  estruturas craftadas;
+  estruturas craftadas, guidance e `node_state`;
 - craft de estacao em `/crafting/station-craft`, server-authoritative, com
   checkpoint aceito antes de consumir materiais do Bau e `po_osso` da conta;
-- checkpoints compactos em background substituem microeventos revisionados durante gameplay normal;
+- checkpoints de operacoes duraveis substituem microeventos revisionados durante gameplay normal;
 - nenhum ACK/resync remoto da mesma sessao deve reposicionar o jogador, reiniciar coleta, reverter bolso/bau/craft ou transformar nodes enquanto o jogador esta no Bosque;
 - Reward Bridge limitado, server-authoritative, idempotente e com ledger.
 
@@ -145,7 +150,7 @@ Contratos de produto para v2:
 - inimigos, NPCs, quests, combate, moral system ou gore;
 - cidade, campanha, mapa continuo ou full open world;
 - mundo aberto completo;
-- respawn/procedural generation de recursos;
+- procedural generation ampla de recursos;
 - escrita direta do cliente em Conta/Base;
 - ranking, guilda, battle pass, economia ampla ou premium economy do Openworld;
 - recompensa nova;
@@ -216,11 +221,13 @@ economia; sao folga de aprendizagem para o minigame.
 
 - Entrar no Bosque inicia ou retoma visita conforme sessao ativa disponivel.
 - Entrar sem visita ativa cria uma nova sessao com o progresso duravel aceito do
-  save: bau, mochila, upgrades e estruturas permanecem.
+  save: bau, mochila, upgrades, estruturas e node cooldown permanecem.
 - `Voltar` deve retornar ao shell/refugio preservando a visita quando a sessao
   ainda estiver ativa.
-- Se houver checkpoint pendente, `Voltar` agenda/tenta salvar em segundo plano e
-  preserva a sessao; nao prende o jogador num estado de espera obrigatoria.
+- Se houver operacao duravel pendente, `Voltar` tenta flush e aguarda o ACK.
+  Se falhar, a tela deve oferecer escolha clara: continuar no Bosque ou sair
+  sabendo que ha alteracoes nao confirmadas. O texto nao pode prometer
+  "continua salvando" quando o browser/app pode encerrar a requisicao.
 - `Encerrar visita` e a acao explicita de finalizacao, com resumo leve de
   materiais depositados, crafts feitos e estruturas construidas.
 - `Encerrar visita` segue bloqueado ate existir checkpoint final aceito, pois a
@@ -230,26 +237,45 @@ economia; sao folga de aprendizagem para o minigame.
 
 ## Persistencia Duravel Do Bosque
 
-O Bosque usa dois estados locais e um progresso duravel server-owned:
+O Bosque usa caches locais somente para bootstrap visual/retry e um progresso
+duravel server-owned:
 
 - `openworld_active_session_cache`: visita ativa, `started_at`, `expires_at`,
-  checkpoint pendente, posicao, coleta em andamento, nodes coletados na visita e
-  metadados de retry;
-- `openworld_durable_progress_cache`: `pocket`, `chest`, `upgrades` e metadados
-  de progresso aceito por save;
+  posicao e estado visual da visita;
+- `openworld_durable_progress_cache`: cache visual do ultimo progresso aceito;
+  ele nunca vence `/modes/state` depois de login online;
+- `openworld_pending_ops_cache`: fila local de operacoes sem ACK, por
+  `account_id/save_id/session_id/ruleset_id`;
 - `mode_progress.progress_payload` com schema
-  `openworld_forest_progress_v1`: fonte server-owned para `Bau`,
-  `Mochila/Bolso`, upgrades, estruturas, ledger de recompensa e revisao de
-  progresso.
+  `openworld_forest_progress_v2`: fonte server-owned para `pocket`, `chest`,
+  `upgrades`, `structures`, `guidance`, `node_state`, `progress_revision` e
+  `applied_ops`.
+
+Cada operacao recebe `op_id` estavel no formato `owop_<uuid>`. Operacoes v1:
+
+- `collect_node`: coleta um node disponivel, valida item/capacidade/cooldown e
+  grava `node_state[node_id].next_spawn_at`;
+- `deposit_all`: move todo `pocket` para `chest`;
+- `craft_recipe`: consome custo do `chest` e cria upgrade/structure/output;
+- `guidance_update`: normaliza e persiste orientacao;
+- `position_update`: atualiza somente snapshot de visita, nao progresso duravel.
+
+Status visual permitido:
+
+- `Salvando...` quando ha checkpoint em voo;
+- `Salvo no servidor` somente apos ACK;
+- `Falha ao salvar` quando o flush falhou;
+- `Alteracoes locais pendentes` quando existe fila aguardando retry.
 
 `complete_session` limpa somente o cache da visita ativa. Ele nao apaga `Bau`,
-`Mochila/Bolso`, upgrades nem estruturas. Reset explicito de save/account ainda
-limpa o progresso do Bosque, como parte da limpeza de gameplay do save.
+`Mochila/Bolso`, upgrades, estruturas, guidance nem `node_state`. Reset
+explicito de save/account ainda limpa o progresso do Bosque, como parte da
+limpeza de gameplay do save.
 
-Checkpoints aceitos atualizam o snapshot da sessao e tambem o progresso duravel
-em `mode_progress`. A conclusao usa o ultimo checkpoint aceito, faz merge do
-progresso duravel e atualiza o ledger para que recompensa real nao seja duplicada
-por itens persistentes no bau.
+Checkpoints aceitos aplicam operacoes atomica e idempotentemente e retornam o
+progresso duravel aceito. A conclusao usa o ultimo checkpoint aceito, faz merge
+do progresso duravel e atualiza o ledger para que recompensa real nao seja
+duplicada por itens persistentes no bau.
 
 `structures` e campo top-level canonico do progresso duravel. Para
 compatibilidade, `upgrades.fogueira_estavel_1 = true` tambem implica
@@ -351,18 +377,23 @@ existe sessao `started` nao expirada, incluindo `snapshot_payload`,
 `started` expiradas podem existir para historico/auditoria, mas devem ser
 projetadas como `expired` ou ignoradas como candidatas de retomada.
 
-Contrato checkpoint-first:
+Contrato operations-first:
 
-- start/resume carregam cache local compativel antes do primeiro frame jogavel;
+- start/resume buscam `/modes/state?mode_id=openworld` antes do primeiro frame
+  jogavel online;
+- a base canonica vem de `mode_progress.progress_payload`;
+- cache local so completa preview/retry quando a sessao ainda e valida;
 - snapshot remoto atrasado da mesma sessao atualiza apenas metadata de
   confirmacao, nunca posicao, coleta ativa, bolso, bau, upgrades, guidance ou
   nodes locais durante controle ativo;
 - se a entrada/recuperacao detectar sessao remota diferente ou conflito real, o
   servidor pode vencer antes de devolver controle ao jogador;
-- movimento, coleta ativa, nodes visuais, bolso, bau, craft, guidance e posicao
-  sao runtime client-owned durante a visita;
+- movimento, coleta ativa, nodes visuais e posicao sao runtime client-owned
+  durante a visita;
+- coleta, deposito, craft e guidance podem ter preview local, mas a versao
+  duravel depende de operacao ACKed;
 - servidor valida somente sessao ativa, ruleset, checkpoint aceito, caps,
-  progresso duravel, conclusao, reward, ledger e auditoria;
+  cooldown, progresso duravel, conclusao, reward, ledger e auditoria;
 - stale revision de eventos legados nao deve bloquear deposito/coleta/craft no
   cliente novo; conflito de checkpoint vira recuperacao fora do controle ativo.
 
@@ -379,46 +410,45 @@ Payload principal de checkpoint:
   "session_id": "<uuid>",
   "mode_id": "openworld",
   "slice_id": "forest",
-  "checkpoint_id": "<uuid>",
-  "base_revision": 3,
   "client_sequence": 12,
   "ruleset_id": "openworld_forest_ruleset_v1",
   "ruleset_version": 1,
-  "ruleset_hash": "<ruleset-content-hash>",
-  "snapshot_payload": {
-    "collected_nodes": {"node_galho_01": true},
-    "pocket": {},
-    "chest": {"galho": 1},
-    "upgrades": {"fogueira_estavel_1": true},
-    "guidance": {"step": 4},
+  "operations": [
+    {"op_id": "owop_<uuid>", "type": "collect_node", "node_id": "node_galho_01"},
+    {"op_id": "owop_<uuid>", "type": "deposit_all"},
+    {"op_id": "owop_<uuid>", "type": "craft_recipe", "recipe_id": "fogueira_estavel_1"}
+  ],
+  "visit_snapshot": {
     "player_position": {"x": 220, "y": 250},
-    "session_seconds": 43,
-    "local_version": 12
-  },
-  "client_summary": {
-    "collected_node_count": 1,
-    "chest_item_count": 1,
-    "crafted_count": 1
+    "session_seconds": 43
   }
 }
 ```
 
-O SQL valida o checkpoint atomica e idempotentemente: checkpoint id/request hash,
-ruleset correto, sessao ativa, nodes existentes/unicos, item esperado pelo
-ruleset, capacidade de bolso/bau, crafts derivaveis de recursos disponiveis,
-limites de tempo e ausencia de mutacao parcial. A resposta informa
+O SQL aplica o checkpoint atomica e idempotentemente por `op_id`: ruleset
+correto, sessao ativa, node existente, item esperado pelo ruleset, cooldown
+vencido, capacidade de bolso, custos de craft disponiveis no `chest`, guidance
+normalizado e ausencia de mutacao parcial. A resposta informa
 `accepted_checkpoint_id`, `snapshot_revision`, `accepted_snapshot_summary`,
-`durable_progress` e `complete_ready`.
+`durable_progress`, `complete_ready` e `server_time`.
+
+`collect_node` grava `last_collected_at`, `next_spawn_at` e
+`collected_count` em `node_state[node_id]`. Cooldowns v1 por item:
+
+- `galho`, `folha`, `folha_seca`: 300s;
+- `pedra_pequena`, `cogumelo`, `inseto`, `resina`: 600s;
+- `madeira`, `pedra`, `fungo`: 900s;
+- `cinzas_preview`, `resto_ritual`, `po_cinzento`: 1800s.
 
 `POST /modes/session/event` permanece compativel para builds antigas. O cliente
 novo nao envia microeventos de gameplay normal (`move_heartbeat`,
 `collect_start`, `collect_cancel`, `collect_complete`, `deposit_all`, `craft`)
-como caminho principal; ele usa checkpoint.
+como caminho principal; ele usa checkpoint com `operations`.
 
 Contrato legado de posicao e resync:
 
 - este contrato existe para pacotes antigos e para recuperacao controlada;
-- o cliente checkpoint-first nao usa resync ativo como loop normal de gameplay;
+- o cliente operations-first nao usa resync ativo como loop normal de gameplay;
 - start/resume podem aplicar `player_position` persistida somente antes de
   devolver controle ao jogador;
 - resync da mesma sessao durante controle ativo nao aplica `player_position`,

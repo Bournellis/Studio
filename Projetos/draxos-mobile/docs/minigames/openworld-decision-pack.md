@@ -8,8 +8,8 @@
 - Pending design id: `DMOB-D071`
 
 This pack records the current decision boundary for Openworld after the Bosque
-playtest approval, technical hardening and Offline-First Checkpoint v1 release.
-It does not expand gameplay.
+playtest approval, technical hardening, Offline-First Checkpoint v1 release and
+Bosque Persistence Rebase v1. It does not expand gameplay.
 
 ## Decision Summary
 
@@ -64,24 +64,34 @@ accepted Bosque checkpoint, while consuming materials from durable `Bau` and
 global `po_osso`. This exception approves only the three simple potion recipes
 listed in `docs/behavior-potion-crafting-v1.md`.
 
+Persistence rebase exception approved on 2026-06-08: Openworld/Bosque abandons
+`full spawn reset per visit` as the primary persistence model. Durable progress
+is server-authoritative through idempotent checkpoint operations with ACK +
+retry. Nodes use per-item cooldown persisted in `node_state.next_spawn_at`.
+Local caches may support preview and retry, but cannot declare progress saved
+before the server ACK.
+
 ## Openworld Working Policy
 
 The current Openworld policy is:
 
 - player feel and active control are protected over microaction precision;
-- the Bosque visit is client-owned during play;
+- the Bosque visit is client-owned for movement and visual preview during play;
 - server authority is reserved for session validity, ruleset identity, durable
-  Bosque progress, station crafts that create global account items, caps,
-  accepted checkpoint, completion, reward, ledger and audit;
-- `Bau`, `Mochila/Bolso`, upgrades and crafted structures persist per save;
-- collected nodes, position and active collection are visit state;
-- checkpoint validation is the normal integrated path;
+  Bosque progress, node cooldown, station crafts that create global account
+  items, caps, accepted checkpoint, completion, reward, ledger and audit;
+- `Bau`, `Mochila/Bolso`, upgrades, crafted structures, guidance and
+  `node_state` persist per save;
+- position and active collection are visit state;
+- checkpoint operations with ACK are the normal integrated path;
 - event micro-mutators are compatibility only for old packages;
 - `station-craft` is not a microaction sync path; it is a deliberate
   server-authoritative bridge for global consumables;
 - snapshots can initialize or recover a visit before control, but cannot roll
   back the active same-session world;
 - conflicts are handled as explicit recovery outside active control.
+- local durable cache is visual/retry only and never beats the server after
+  online login.
 
 Future agents must not reintroduce revision-gated microaction sync as the normal
 Openworld loop without a new decision pack update and user-approved package.
@@ -96,9 +106,12 @@ craft events as the main path for the new client.
 - The current screen is `res://modes/openworld/openworld_forest_screen.gd`.
 - The current ruleset is `openworld_forest_ruleset_v1`; v0 is historical only.
 - Resume authority is stable bootstrap/recovery before control; active runtime
-  uses local cache plus checkpoint confirmation.
+  uses local preview plus checkpoint operation confirmation.
 - Durable Bosque progress is per-save: `Bau`, `Mochila/Bolso`, capacity upgrades
-  and crafted structures survive exit, completion, expiry and new entry.
+  crafted structures, guidance and `node_state` survive exit, completion,
+  expiry and new entry.
+- Nodes do not reset only because a visit changed; each node follows
+  `next_spawn_at` cooldown.
 - `Fogueira Estavel I` is the only approved Openworld station in V1.
 - Approved station recipes are `craft_pocao_vida`, `craft_pocao_foco` and
   `craft_pocao_resguardo`.
