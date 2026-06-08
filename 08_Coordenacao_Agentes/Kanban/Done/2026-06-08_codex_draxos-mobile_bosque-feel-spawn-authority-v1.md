@@ -90,3 +90,44 @@ Corrigir os regressos de spawn/feel do Bosque apos Persistence Rebase v1 mantend
 ## Handoff Point
 
 Handoff apenas se a reconciliacao client/server ou a publicacao remota bloquear por credencial/infra indisponivel. Caso contrario, finalizar com commits logicos, fast-forward para `main`, publicacao Web/APK na URL principal e docs de status atualizados.
+
+## Resultado
+
+- Implementado overlay local previsivel sobre o contrato server-authoritative:
+  - nodes usam `server_time`/offset local e grace visual para `next_spawn_at`;
+  - `collected_nodes` legado deixa de bloquear interacao v2 quando `node_state` duravel existe;
+  - pending collected nodes ficam escondidos ate ACK/retry sem flicker de uma frame;
+  - coleta fica sticky durante movimento leve dentro do raio de cancelamento;
+  - deposito/craft podem enfileirar sem travar menu por busy global alheio;
+  - ACKs aplicam patch autoritativo sem rollback visual da mesma sessao.
+- Publicado como `Bosque Feel & Spawn Authority v1`.
+- Release root: `internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-70b79c3`.
+- Preview evidence: `https://16ac3cb7.draxos-mobile-internal-alpha.pages.dev`.
+- Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`.
+- Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`.
+- APK: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-70b79c3/downloads/draxos-mobile-alpha.apk`.
+- PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-70b79c3/downloads/draxos-mobile-alpha.zip`.
+- APK/manifest: `0.0.11-alpha.0` / version code `11`.
+- Android APK SHA256: `ba036f905d569510f572ea988345846a07bc6cf99691ae384a95d2ab2d61c0a7`.
+- PC ZIP SHA256: `583979a6d14c0dbd4bd934ede19bd5c7b500a0f6b2ef714fffb57d2dfc86671a`.
+- Web Index SHA256: `062dfaae2c468070b2e3cb712045daa0fe2fb9fafe8c2429a2e39993c913f59a`.
+
+## Validacao Executada
+
+- PASS: Godot import headless.
+- PASS: GUT focado/amplo acionado pelos alvos OpenWorld/Boot/Project Info, 245 tests / 3802 asserts.
+- PASS: `npx -y deno task --cwd server/functions check`.
+- PASS: `npx -y deno task --cwd supabase/functions check`.
+- PASS: `validate_foundation.ps1 -Profile ClientQuick`.
+- PASS: `validate_foundation.ps1 -Profile ServerQuick`.
+- PASS: `check_release_safety.ps1`.
+- PASS: `check_android_release_keystore.ps1 -Mode InternalAlpha` com aviso esperado de `debug_fallback`.
+- PASS: `check_foundation_expansion_readiness.ps1`.
+- PASS: `publish_internal_alpha.ps1 -Mode Plan`, `Package`, `Upload`, `DeployManifest`.
+- PASS: `build_cloudflare_pages_package.ps1`.
+- PASS: `wrangler pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`.
+- PASS: `release_manifest_smoke.ts`.
+- PASS: `release_artifacts_remote_smoke.ts` com `DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS=1`.
+- PASS: `internal_alpha_remote_smoke.ts` read-only release/CORS.
+- PASS: `smoke_web_launch_remote.ps1` no preview hash, carregou o jogo em `7168 ms` e confirmou release root.
+- Stable Portal/Web estao protegidos por Cloudflare Access, conforme known issue operacional; preview hash validou o shell publico.

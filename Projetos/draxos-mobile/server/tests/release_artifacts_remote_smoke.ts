@@ -38,12 +38,12 @@ assertEq(
 );
 assertEq(
   numberField(manifest, "latest_version_code"),
-  10,
+  11,
   "release manifest should expose the current version code",
 );
 assertEq(
   numberField(manifest, "minimum_supported_version_code"),
-  10,
+  11,
   "release manifest should force-update builds before the Openworld operations v2 contract",
 );
 

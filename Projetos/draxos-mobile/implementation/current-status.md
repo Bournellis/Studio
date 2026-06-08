@@ -4,23 +4,26 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Bosque Persistence Rebase v1`
-- Active stage status: `BOSQUE_PERSISTENCE_REBASE_V1_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Bosque Feel & Spawn Authority v1`
+- Active stage status: `BOSQUE_FEEL_SPAWN_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
-- Version: `0.0.10-alpha.0`
-- Version code: `10`
+- Version: `0.0.11-alpha.0`
+- Version code: `11`
 
 ## Current Truth
 
-- Latest published remote package: `Bosque Persistence Rebase v1`.
-- Release root: `internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74`
+- Latest published remote package: `Bosque Feel & Spawn Authority v1`.
+- Release root: `internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-70b79c3`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`
-- Source state: implementation branch fast-forward merged into `main`; release artifacts were built from commit `bc23f74`, then remote SQL hotfix `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql` was added and applied after the first operations-v2 remote smoke exposed a Postgres runtime compatibility issue.
-- Published rebase: bumps APK/manifest to `0.0.10-alpha.0` / version code `10`; raises `minimum_supported_version_code` to `10`; replaces "local snapshot in background = saved" with ACK-backed checkpoint `operations`; adds durable `openworld_forest_progress_v2` fields (`pocket`, `chest`, `upgrades`, `structures`, `guidance`, `node_state`, `progress_revision`, `applied_ops`); gives Bosque nodes item cooldowns via `next_spawn_at`; reclassifies `openworld_durable_progress_cache` as visual/retry cache only; blocks silent internal exit while durable operations are pending; and keeps Fogueira station/recipes locked until `structures.fogueira_estavel_1 = true` is confirmed by server ACK.
+- Latest deployment evidence: `https://16ac3cb7.draxos-mobile-internal-alpha.pages.dev`
+- Source state: implementation branch fast-forward target is `main`; release artifacts were built from commit `70b79c3`.
+- Published package: bumps APK/manifest to `0.0.11-alpha.0` / version code `11`; keeps `minimum_supported_version_code` at `11`; preserves operations-v2 durable persistence; changes the client/server reconciliation layer so same-session ACKs no longer cause visual rollback; makes node availability use server-time cooldowns with respawn grace; makes collection sticky through light movement; removes legacy `collected_nodes` from the v2 interaction gate when durable `node_state` exists; queues deposit/craft without global menu freeze; and keeps Fogueira station/recipes locked until `structures.fogueira_estavel_1 = true` is confirmed by server ACK.
 - Remote SQL applied: `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`.
-- Remote functions deployed: `modes` and `release`.
+- Remote functions deployed: `modes` from Bosque Persistence Rebase v1 remain active; `release` redeployed for version `0.0.11-alpha.0`.
+- Previous persistence/operations package: `Bosque Persistence Rebase v1`
+- Previous persistence/operations release root: `internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74`
+- Previous persistence/operations preview: `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`
 - Previous session-lifecycle package: `Bosque Session Lifecycle & Durable Structures Hotfix v1`
 - Previous session-lifecycle release root: `internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-c953b51`
 - Previous session-lifecycle preview: `https://8ecac093.draxos-mobile-internal-alpha.pages.dev`
@@ -52,45 +55,46 @@
 - Agent baseline marker: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Arena context: Track 18 - PVE Arena Initial, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
-- Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; later packages stabilized durable Bosque progress, Fogueira station craft and domain separation. Current playtest should focus ACK/retry truthfulness, pending-operation exit warnings, node cooldown persistence after relog, Fogueira/structures persistence after ACK/relog, preserved Bau/Mochila/upgrades and Arena/station-craft regression.
+- Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; later packages stabilized durable Bosque progress, Fogueira station craft, domain separation and operations-v2 persistence. Current playtest should focus collection feel, no progress-bar restarts from light movement, no node flicker, no same-session rollback after ACK, node cooldown persistence after relog, Fogueira/structures persistence after ACK/relog, preserved Bau/Mochila/upgrades and Arena/station-craft regression.
 
 ## Current Published Package
 
-Bosque Persistence Rebase v1 is published as the current Internal Alpha package. It rebases OpenWorld/Bosque persistence around server ACKs and durable operations instead of trusting background local snapshots. The server is the source of truth for durable progress; the client may preview/retry locally, but must show pending/failure states honestly until checkpoint ACK.
+Bosque Feel & Spawn Authority v1 is published as the current Internal Alpha package. It keeps OpenWorld/Bosque persistence server-authoritative through the operations-v2 contract from Bosque Persistence Rebase v1, but moves the feel-sensitive layer back to local preview with explicit reconciliation rules. The client can hide collected nodes, keep collection progress and queue deposit/craft immediately; the server remains the only durable source of truth after ACK.
 
 Delivered:
 
-- bumps in-app, export and manifest versioning to `0.0.10-alpha.0` / version code `10`;
-- forces clients on version code `9` or older to update through the remote manifest;
-- adds mirrored migration `202606080001_openworld_bosque_persistence_rebase_v1.sql` plus remote runtime hotfix `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`;
-- changes `/modes/session/checkpoint` to accept durable `operations` with stable `owop_<uuid>` ids: `collect_node`, `deposit_all`, `craft_recipe`, `guidance_update` and `position_update`;
-- persists canonical `openworld_forest_progress_v2` with durable `pocket`, `chest`, `upgrades`, `structures`, `guidance`, `node_state`, `progress_revision` and `applied_ops`;
-- applies operation batches atomically and idempotently; duplicate node collection before cooldown returns `OPENWORLD_NODE_ON_COOLDOWN`;
-- moves Bosque node respawn from visit reset to per-item `next_spawn_at` cooldowns;
-- keeps local pending ops in `openworld_pending_ops_cache_v1` keyed by account/save/session/ruleset for retry/preview only;
-- makes `Voltar` flush and warn instead of silently closing over durable pending operations;
+- bumps in-app, export and manifest versioning to `0.0.11-alpha.0` / version code `11`;
+- uses server time offset when applying `node_state.next_spawn_at`, with a short respawn visual grace to prevent one-frame flicker;
+- treats legacy `collected_nodes` as migration/preview only when durable `node_state` exists, so old local snapshots cannot block newly spawned v2 nodes;
+- keeps pending collected nodes hidden locally until ACK or retry outcome instead of reviving them during routine checkpoint reconciliation;
+- makes collection sticky while the player moves inside the cancel radius, preventing early progress restarts;
+- allows deposit/craft actions to queue without disabling menu actions through unrelated global busy state;
 - keeps Fogueira construction and station unlock behind the ACK that confirms `structures.fogueira_estavel_1 = true`;
-- preserves Base/Ossario `Triturar Ossos`, Arena Preparation, buff flow, station craft behavior and the World Hub domain separation package.
+- preserves Base/Ossario `Triturar Ossos`, Arena Preparation, buff flow, station craft behavior, operations-v2 persistence and the World Hub domain separation package.
 
 Publication evidence:
 
 - Remote Supabase migrations `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql` applied.
 - Supabase Edge Functions `modes` and `release` deployed.
-- Export regenerated APK, PC ZIP and Web artifacts from `bc23f74`.
+- Export regenerated APK, PC ZIP and Web artifacts from `70b79c3`.
 - Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and Edge Function `release` deploy passed.
-- Cloudflare Pages preview evidence: `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`.
-- Direct preview Web launch smoke loaded the game in `6658 ms`, matched release root and reported no runtime errors.
+- Cloudflare Pages preview evidence: `https://16ac3cb7.draxos-mobile-internal-alpha.pages.dev`.
+- Direct preview Web launch smoke loaded the game in `7168 ms`, matched release root and reported no runtime errors.
 - Stable direct Web smoke reached Cloudflare Access as expected; Portal/Web remain protected on the canonical domain.
-- Remote artifact smoke passed for manifest, APK, ZIP, Portal and Web.
-- Remote Openworld operations-v2 smoke passed with generated account/session: `collect_node` ACK added `galho` and `node_state.next_spawn_at`, duplicate collection returned `OPENWORLD_NODE_ON_COOLDOWN`, `deposit_all + craft_recipe:fogueira_estavel_1` persisted durable `upgrades` + `structures`, and `/modes/state` reloaded the cooldown and Fogueira structure.
+- Remote artifact smoke passed for manifest, APK and ZIP; canonical Portal/Web are Cloudflare Access protected and preview Web launch validated the public Pages deployment.
+- Remote read-only release/CORS smoke passed.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 - `release/config` remains on `track23-online-actions-hotfix`, so online progression actions are not paused by remote config.
 
 Artifact hashes:
 
-- Android APK SHA256: `1679e8db843331707d22bb083c29eeb5182cb92cf141b4d6f46fd2ddeee3c858`
-- PC Windows ZIP SHA256: `49d080f57a31f2ceead45f678a60c57e27f89a9d8964114a3499bc42ca8e63e3`
-- Web Index SHA256: `a79ce8e74a64468611806cdaa41e73cfbbf6671180d33a9b7d422503ff91c2d9`
+- Android APK SHA256: `ba036f905d569510f572ea988345846a07bc6cf99691ae384a95d2ab2d61c0a7`
+- PC Windows ZIP SHA256: `583979a6d14c0dbd4bd934ede19bd5c7b500a0f6b2ef714fffb57d2dfc86671a`
+- Web Index SHA256: `062dfaae2c468070b2e3cb712045daa0fe2fb9fafe8c2429a2e39993c913f59a`
+
+## Previous Persistence Rebase Package
+
+Bosque Persistence Rebase v1 is preserved as the previous persistence/operations package. It rebased OpenWorld/Bosque persistence around server ACKs and durable operations instead of trusting background local snapshots. The server is the source of truth for durable progress; the client may preview/retry locally, but must show pending/failure states honestly until checkpoint ACK. Release root: `internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74`; preview evidence: `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`; APK/manifest: `0.0.10-alpha.0` / version code `10`.
 
 ## Previous Session Lifecycle Hotfix Package
 
