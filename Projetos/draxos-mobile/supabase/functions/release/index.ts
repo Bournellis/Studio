@@ -4,19 +4,20 @@ import { verifiedAuthContext } from "../_shared/auth_context.ts";
 const DEFAULT_MANIFEST: ReleaseManifest = {
   schema_version: "internal_alpha_manifest_v1",
   channel: "internal_alpha",
-  latest_version: "0.0.9-alpha.0",
-  latest_version_code: 9,
-  minimum_supported_version: "0.0.9-alpha.0",
-  minimum_supported_version_code: 9,
-  released_at: "2026-06-07T00:00:00Z",
+  latest_version: "0.0.10-alpha.0",
+  latest_version_code: 10,
+  minimum_supported_version: "0.0.10-alpha.0",
+  minimum_supported_version_code: 10,
+  released_at: "2026-06-08T00:00:00Z",
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/",
   notes: [
-    "Bosque Session Lifecycle & Durable Structures Hotfix v1 publicado na URL principal de Internal Alpha.",
+    "Bosque Persistence Rebase v1 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
-    "Manifesto exige build minima 0.0.9-alpha.0 para corrigir retomada de sessao expirada e Fogueira duravel.",
-    "Visitas expiradas iniciam novo full spawn mantendo Bau, Mochila, upgrades e structures duraveis.",
-    "Fogueira Estavel I persiste como estrutura duravel e prepara pocoes com Bau do Bosque + Po de Osso da Conta/Ossario apos checkpoint confirmado.",
+    "Manifesto exige build minima 0.0.10-alpha.0 para usar o contrato Openworld operations v2.",
+    "Coletas, deposito no Bau, craft local e orientacao so aparecem como salvos depois de ACK do servidor.",
+    "Nodes do Bosque usam cooldown por item via node_state.next_spawn_at, sem full reset por visita.",
+    "Fogueira Estavel I so libera station/receitas depois de checkpoint ACK com structures.fogueira_estavel_1 confirmado.",
     "Coletas locais de Resto ritual e Po cinzento nao alteram Ossos ou Po de Osso globais.",
     "Arena Preparacao aceita qualquer pocao simples disponivel sem regredir o slot unico por batalha.",
     "Battle Lab e Progression Lab no Web usam lab-runner remoto com a mesma conta alpha Supabase do jogo.",
@@ -145,7 +146,7 @@ interface PlayerRow {
   id: string;
 }
 
-const DEFAULT_RELEASE_ROOT = "internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a";
+const DEFAULT_RELEASE_ROOT = "internal-alpha/v0-bosque-persistence-rebase-v1-20260608-local";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
