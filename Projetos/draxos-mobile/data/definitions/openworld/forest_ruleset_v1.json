@@ -41,19 +41,19 @@
     "ritual_hands_gather_multiplier": 0.9
   },
   "items": [
-    {"item_id": "madeira", "display_name": "Madeira", "weight": 2, "gather_time": 2.5, "reward_resource_id": "wood"},
-    {"item_id": "galho", "display_name": "Galho", "weight": 0.8, "gather_time": 1.2, "reward_resource_id": "wood"},
-    {"item_id": "folha", "display_name": "Folha", "weight": 0.2, "gather_time": 0.8, "reward_resource_id": "herb"},
-    {"item_id": "folha_seca", "display_name": "Folha seca", "weight": 0.2, "gather_time": 0.8, "reward_resource_id": "herb"},
-    {"item_id": "pedra", "display_name": "Pedra", "weight": 2.5, "gather_time": 3, "reward_resource_id": "stone"},
-    {"item_id": "pedra_pequena", "display_name": "Pedra pequena", "weight": 1, "gather_time": 1.5, "reward_resource_id": "stone"},
-    {"item_id": "cogumelo", "display_name": "Cogumelo", "weight": 0.4, "gather_time": 1.5, "reward_resource_id": "herb"},
-    {"item_id": "fungo", "display_name": "Fungo", "weight": 0.4, "gather_time": 1.8, "reward_resource_id": "herb"},
-    {"item_id": "inseto", "display_name": "Inseto", "weight": 0.2, "gather_time": 1.5, "reward_resource_id": "essence"},
-    {"item_id": "resina", "display_name": "Resina", "weight": 0.5, "gather_time": 2.2, "reward_resource_id": "essence"},
-    {"item_id": "cinzas_preview", "display_name": "Cinzas preview", "weight": 0.3, "gather_time": 2.5, "reward_resource_id": "ashes"},
-    {"item_id": "resto_ritual", "display_name": "Resto ritual", "weight": 1.2, "gather_time": 2.5, "reward_resource_id": "ritual_scrap"},
-    {"item_id": "po_cinzento", "display_name": "Po cinzento", "weight": 0.5, "gather_time": 2.5, "reward_resource_id": "grey_dust"}
+    {"item_id": "madeira", "display_name": "Madeira", "weight": 2, "gather_time": 2.5, "respawn_seconds": 900, "reward_resource_id": "wood"},
+    {"item_id": "galho", "display_name": "Galho", "weight": 0.8, "gather_time": 1.2, "respawn_seconds": 300, "reward_resource_id": "wood"},
+    {"item_id": "folha", "display_name": "Folha", "weight": 0.2, "gather_time": 0.8, "respawn_seconds": 300, "reward_resource_id": "herb"},
+    {"item_id": "folha_seca", "display_name": "Folha seca", "weight": 0.2, "gather_time": 0.8, "respawn_seconds": 300, "reward_resource_id": "herb"},
+    {"item_id": "pedra", "display_name": "Pedra", "weight": 2.5, "gather_time": 3, "respawn_seconds": 900, "reward_resource_id": "stone"},
+    {"item_id": "pedra_pequena", "display_name": "Pedra pequena", "weight": 1, "gather_time": 1.5, "respawn_seconds": 600, "reward_resource_id": "stone"},
+    {"item_id": "cogumelo", "display_name": "Cogumelo", "weight": 0.4, "gather_time": 1.5, "respawn_seconds": 600, "reward_resource_id": "herb"},
+    {"item_id": "fungo", "display_name": "Fungo", "weight": 0.4, "gather_time": 1.8, "respawn_seconds": 900, "reward_resource_id": "herb"},
+    {"item_id": "inseto", "display_name": "Inseto", "weight": 0.2, "gather_time": 1.5, "respawn_seconds": 600, "reward_resource_id": "essence"},
+    {"item_id": "resina", "display_name": "Resina", "weight": 0.5, "gather_time": 2.2, "respawn_seconds": 600, "reward_resource_id": "essence"},
+    {"item_id": "cinzas_preview", "display_name": "Cinzas preview", "weight": 0.3, "gather_time": 2.5, "respawn_seconds": 1800, "reward_resource_id": "ashes"},
+    {"item_id": "resto_ritual", "display_name": "Resto ritual", "weight": 1.2, "gather_time": 2.5, "respawn_seconds": 1800, "reward_resource_id": "ritual_scrap"},
+    {"item_id": "po_cinzento", "display_name": "Po cinzento", "weight": 0.5, "gather_time": 2.5, "respawn_seconds": 1800, "reward_resource_id": "grey_dust"}
   ],
   "recipes": [
     {

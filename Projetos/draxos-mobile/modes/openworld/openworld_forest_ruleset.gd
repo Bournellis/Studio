@@ -60,6 +60,10 @@ static func item_definitions() -> Dictionary:
 		result[item_id] = definition
 	return result
 
+static func item_respawn_seconds(item_id: String) -> int:
+	var definition := _as_dictionary(item_definitions().get(item_id.strip_edges(), {}))
+	return maxi(0, int(definition.get("respawn_seconds", 300)))
+
 static func recipes() -> Dictionary:
 	var result: Dictionary = {}
 	for recipe: Dictionary in _as_array(data().get("recipes", [])):
@@ -79,6 +83,7 @@ static func resource_fixtures() -> Array[Dictionary]:
 			"item_id": str(node.get("item_id", "")),
 			"position": _vector2_from_dict(node.get("position", {}), Vector2.ZERO),
 			"quantity": maxi(1, int(node.get("quantity", 1))),
+			"respawn_seconds": item_respawn_seconds(str(node.get("item_id", ""))),
 		})
 	return result
 

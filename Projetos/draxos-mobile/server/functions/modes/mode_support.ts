@@ -372,6 +372,7 @@ export function mapModeDatabaseError(error: RestError, fallbackCode: string): Re
     "MODE_CHECKPOINT_REJECTED",
     "MODE_CHECKPOINT_STALE",
     "OPENWORLD_NODE_ALREADY_COLLECTED",
+    "OPENWORLD_NODE_ON_COOLDOWN",
     "MODE_ADMIN_AUDIT_FAILED",
     "MODE_ADMIN_STATUS_FAILED",
     "MODE_ADMIN_SESSION_FAILED",
@@ -403,6 +404,7 @@ function modeStatus(code: string, fallback: number): number {
     code === "MODE_CHECKPOINT_REQUIRED" ||
     code === "MODE_CHECKPOINT_STALE" ||
     code === "OPENWORLD_NODE_ALREADY_COLLECTED" ||
+    code === "OPENWORLD_NODE_ON_COOLDOWN" ||
     code === "IDEMPOTENCY_HASH_MISMATCH"
   ) return 409;
   if (
@@ -453,6 +455,8 @@ function modeErrorMessage(code: string): string {
       return "Bosque checkpoint is older than the latest accepted checkpoint.";
     case "OPENWORLD_NODE_ALREADY_COLLECTED":
       return "Openworld resource node was already collected in this session.";
+    case "OPENWORLD_NODE_ON_COOLDOWN":
+      return "Openworld resource node is still on cooldown.";
     case "MODE_REWARD_BLOCKED_FOR_LAB":
       return "Progression Lab saves cannot receive account/base rewards.";
     case "MODE_REWARD_APPLY_FAILED":

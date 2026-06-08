@@ -147,6 +147,8 @@ export interface OpenworldSessionCheckpoint {
   checkpoint_id: string;
   base_revision: number;
   client_sequence: number;
+  operations: Record<string, unknown>[];
+  visit_snapshot: Record<string, unknown>;
   snapshot_payload: Record<string, unknown>;
   client_summary: Record<string, unknown>;
 }
@@ -168,6 +170,14 @@ const OPENWORLD_EVENT_TYPES = new Set([
   "guidance_update",
   "complete_requested",
   "abandon_requested",
+]);
+
+const OPENWORLD_OPERATION_TYPES = new Set([
+  "collect_node",
+  "deposit_all",
+  "craft_recipe",
+  "guidance_update",
+  "position_update",
 ]);
 
 export function modeStatePayload(
@@ -346,6 +356,10 @@ export function sessionCheckpointFromBody(
   const baseRevision = numberValue(source.base_revision, -1);
   const clientSequence = numberValue(source.client_sequence, -1);
   const snapshotPayload = objectValue(source.snapshot_payload);
+  const operations = normalizeOpenworldOperations(source.operations);
+  const visitSnapshot = objectValue(source.visit_snapshot);
+  const hasSnapshot = Object.keys(snapshotPayload).length > 0;
+  const hasOperations = operations !== null && operations.length > 0;
   if (
     sessionId === "" ||
     modeId !== OPENWORLD_MODE_ID ||
@@ -355,7 +369,8 @@ export function sessionCheckpointFromBody(
     checkpointId === "" ||
     baseRevision < 0 ||
     clientSequence < 0 ||
-    Object.keys(snapshotPayload).length <= 0
+    operations === null ||
+    (!hasSnapshot && !hasOperations)
   ) {
     return null;
   }
@@ -368,6 +383,8 @@ export function sessionCheckpointFromBody(
     checkpoint_id: checkpointId,
     base_revision: Math.floor(baseRevision),
     client_sequence: Math.floor(clientSequence),
+    operations,
+    visit_snapshot: visitSnapshot,
     snapshot_payload: snapshotPayload,
     client_summary: objectValue(source.client_summary),
   };
@@ -432,14 +449,17 @@ function progressPayload(row: ModeProgressRow | null): Record<string, unknown> {
   if (row === null) {
     return {
       mode_id: OPENWORLD_MODE_ID,
-      local_schema_version: "openworld_forest_progress_v1",
+      local_schema_version: "openworld_forest_progress_v2",
       progress_payload: {
-        schema_version: "openworld_forest_progress_v1",
+        schema_version: "openworld_forest_progress_v2",
         pocket: {},
         chest: {},
         upgrades: {},
         structures: {},
+        guidance: {},
+        node_state: {},
         reward_ledger: { rewarded_chest: {} },
+        applied_ops: {},
         progress_revision: 0,
       },
       totals_payload: {},
@@ -490,6 +510,7 @@ function openworldEventSnapshotPatch(snapshot: Record<string, unknown>): Record<
     "upgrades",
     "structures",
     "collected_nodes",
+    "node_state",
     "guidance",
     "reward_payload",
     "session_seconds",
@@ -520,6 +541,7 @@ function openworldCheckpointAckSnapshot(snapshot: Record<string, unknown>): Reco
     revision: numberValue(snapshot.revision, 0),
     session_seconds: numberValue(snapshot.session_seconds, 0),
     activity_score: numberValue(snapshot.activity_score, 0),
+    node_state: objectValue(snapshot.node_state),
   };
 }
 
@@ -554,8 +576,25 @@ function normalizeGuidance(value: Record<string, unknown>): Record<string, unkno
 
 function isActiveSession(row: ModeSessionRow): boolean {
   if (row.status !== "started") return false;
-  if (row.expires_at === null || row.expires_at === undefined) return true;
+  if (row.expires_at === null || row.expires_at === undefined) return false;
   return new Date(row.expires_at).getTime() > Date.now();
+}
+
+function normalizeOpenworldOperations(value: unknown): Record<string, unknown>[] | null {
+  if (value === undefined || value === null) return [];
+  if (!Array.isArray(value)) return null;
+  if (value.length > 50) return null;
+  const result: Record<string, unknown>[] = [];
+  for (const rawOperation of value) {
+    const operation = objectValue(rawOperation);
+    const opId = stringValue(operation.op_id, "");
+    const type = stringValue(operation.type, "");
+    if (!opId.startsWith("owop_") || opId.length > 80 || !OPENWORLD_OPERATION_TYPES.has(type)) {
+      return null;
+    }
+    result.push(operation);
+  }
+  return result;
 }
 
 function effectiveSessionStatus(row: ModeSessionRow): string {
