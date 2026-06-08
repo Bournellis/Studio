@@ -5,7 +5,7 @@
   "lifecycle": "FOUNDATION_AUDIT_ACTIVE",
   "primary_product_mode": "PVE_ARENA_INITIAL",
   "content_hash": "c9cb2166c562272170c24063fe271bd03f165c39c772b71d3700575ca8bbcc86",
-  "simulator_hash": "f7485f838d65064e0ca9b72b67e0587e7722756658fff49161fbf67f10769a6e",
+  "simulator_hash": "96f9ef05a9dcb1218c7c0ef93d1a2269150a1ca1cdfa894eddd25b0be37edffe",
   "runtime": {
     "mode": "FIRST_SLICE_SIM",
     "primary_product_mode": "PVE_ARENA_INITIAL",
@@ -137,26 +137,26 @@
     {
       "path": "server/functions/_shared/battle_combatants.ts",
       "kind": "battle_simulator",
-      "sha256": "5796bf8a0fd74681b9a919fa21ae2c4c7444fc2cb8c5ee6dec8a4a27d04629b9",
-      "canonical_bytes": 7786
+      "sha256": "ff1fc69b18dcf218d1fb46d0fd6ec611f13bca1d59949722dff8074f19c32747",
+      "canonical_bytes": 8118
     },
     {
       "path": "server/functions/_shared/battle_simulator.ts",
       "kind": "battle_simulator",
-      "sha256": "a4443d1cf32e041c77325cbabc4912f5cf0b64f1b0745278dab4c79b7b4a02e9",
-      "canonical_bytes": 51873
+      "sha256": "aa5e041f2e616660e274375ef311be2ac3d6097d235573fb68652eb58c28a614",
+      "canonical_bytes": 54442
     },
     {
       "path": "supabase/functions/_shared/battle_combatants.ts",
       "kind": "battle_simulator",
-      "sha256": "5796bf8a0fd74681b9a919fa21ae2c4c7444fc2cb8c5ee6dec8a4a27d04629b9",
-      "canonical_bytes": 7786
+      "sha256": "ff1fc69b18dcf218d1fb46d0fd6ec611f13bca1d59949722dff8074f19c32747",
+      "canonical_bytes": 8118
     },
     {
       "path": "supabase/functions/_shared/battle_simulator.ts",
       "kind": "battle_simulator",
-      "sha256": "a4443d1cf32e041c77325cbabc4912f5cf0b64f1b0745278dab4c79b7b4a02e9",
-      "canonical_bytes": 51873
+      "sha256": "aa5e041f2e616660e274375ef311be2ac3d6097d235573fb68652eb58c28a614",
+      "canonical_bytes": 54442
     }
   ],
   "counts": {

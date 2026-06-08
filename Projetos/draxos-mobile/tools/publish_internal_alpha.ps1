@@ -239,18 +239,20 @@ function Build-Manifest {
     return [ordered]@{
         schema_version = "internal_alpha_manifest_v1"
         channel = "internal_alpha"
-        latest_version = "0.0.10-alpha.0"
-        latest_version_code = 10
-        minimum_supported_version = "0.0.10-alpha.0"
-        minimum_supported_version_code = 10
+        latest_version = "0.0.11-alpha.0"
+        latest_version_code = 11
+        minimum_supported_version = "0.0.11-alpha.0"
+        minimum_supported_version_code = 11
         released_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         requires_save_reset = $false
         portal_url = $PortalUrl
         notes = @(
-            "Bosque Persistence Rebase v1 publicado na URL principal de Internal Alpha.",
+            "Bosque Feel & Spawn Authority v1 publicado na URL principal de Internal Alpha.",
             "APK Android e PC ZIP compartilham o mesmo backend remoto.",
             "Openworld/Bosque usa operations v2 com ACK obrigatorio e retry local.",
             "Nodes coletaveis usam cooldown por item via node_state.next_spawn_at.",
+            "Coleta ativa nao reinicia por movimento leve e ACKs nao fazem rollback visual da mesma sessao.",
+            "Menu usa busy por escopo para nao congelar acoes independentes durante requisicoes pendentes.",
             "Fogueira Estavel I so libera receitas apos ACK de structures.fogueira_estavel_1.",
             $(if ($PublicDownloads) { "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage." } else { "Portal/Web rodam no Cloudflare Pages; downloads usam login alpha e URLs assinadas temporarias." }),
             "Progression Lab usa save separado e nao pontua ranking."
@@ -488,8 +490,8 @@ $plan = [ordered]@{
     }
     app = [ordered]@{
         channel = "internal_alpha"
-        version = "0.0.10-alpha.0"
-        version_code = 10
+        version = "0.0.11-alpha.0"
+        version_code = 11
         requires_save_reset = $false
     }
     artifacts = $artifactRecords
@@ -662,8 +664,8 @@ if ($Mode -eq "FullPublish") {
 $report = [ordered]@{
     schema_version = "internal_alpha_publication_v2"
     channel = "internal_alpha"
-    app_version = "0.0.10-alpha.0"
-    app_version_code = 10
+    app_version = "0.0.11-alpha.0"
+    app_version_code = 11
     mode = $Mode
     generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     bucket = $BucketName

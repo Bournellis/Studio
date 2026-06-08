@@ -4,19 +4,21 @@ import { verifiedAuthContext } from "../_shared/auth_context.ts";
 const DEFAULT_MANIFEST: ReleaseManifest = {
   schema_version: "internal_alpha_manifest_v1",
   channel: "internal_alpha",
-  latest_version: "0.0.10-alpha.0",
-  latest_version_code: 10,
-  minimum_supported_version: "0.0.10-alpha.0",
-  minimum_supported_version_code: 10,
+  latest_version: "0.0.11-alpha.0",
+  latest_version_code: 11,
+  minimum_supported_version: "0.0.11-alpha.0",
+  minimum_supported_version_code: 11,
   released_at: "2026-06-08T00:00:00Z",
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/",
   notes: [
-    "Bosque Persistence Rebase v1 publicado na URL principal de Internal Alpha.",
+    "Bosque Feel & Spawn Authority v1 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
-    "Manifesto exige build minima 0.0.10-alpha.0 para usar o contrato Openworld operations v2.",
+    "Manifesto exige build minima 0.0.11-alpha.0 para usar o contrato Openworld operations v2 com feel client-owned.",
     "Coletas, deposito no Bau, craft local e orientacao so aparecem como salvos depois de ACK do servidor.",
     "Nodes do Bosque usam cooldown por item via node_state.next_spawn_at, sem full reset por visita.",
+    "Coleta ativa nao reinicia por movimento leve e ACKs de checkpoint nao fazem rollback visual da mesma sessao.",
+    "Menu usa busy por escopo para nao congelar acoes independentes durante requisicoes pendentes.",
     "Fogueira Estavel I so libera station/receitas depois de checkpoint ACK com structures.fogueira_estavel_1 confirmado.",
     "Coletas locais de Resto ritual e Po cinzento nao alteram Ossos ou Po de Osso globais.",
     "Arena Preparacao aceita qualquer pocao simples disponivel sem regredir o slot unico por batalha.",
@@ -146,7 +148,7 @@ interface PlayerRow {
   id: string;
 }
 
-const DEFAULT_RELEASE_ROOT = "internal-alpha/v0-bosque-persistence-rebase-v1-20260608-local";
+const DEFAULT_RELEASE_ROOT = "internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-local";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
