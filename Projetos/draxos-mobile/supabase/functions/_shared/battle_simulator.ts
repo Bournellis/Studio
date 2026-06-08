@@ -50,8 +50,23 @@ export interface BattleSimulationResult {
     mode: "FIRST_SLICE_SIM";
     duration: number;
     participants: {
-      player: { id: string; display_name: string };
-      opponent: { id: string; display_name: string; is_bot: true };
+      player: {
+        id: string;
+        display_name: string;
+        hp: number;
+        max_hp: number;
+        max_mana: number;
+        stat_modifiers: Record<string, number>;
+      };
+      opponent: {
+        id: string;
+        display_name: string;
+        hp: number;
+        max_hp: number;
+        max_mana: number;
+        stat_modifiers: Record<string, number>;
+        is_bot: true;
+      };
     };
     result: {
       winner: BattleSideId;
@@ -679,10 +694,21 @@ export function simulateFirstSliceBattle(
       mode: "FIRST_SLICE_SIM",
       duration: Number((duration + 0.2).toFixed(1)),
       participants: {
-        player: { id: input.player.id, display_name: input.player.displayName },
+        player: {
+          id: input.player.id,
+          display_name: input.player.displayName,
+          hp: player.maxHp,
+          max_hp: player.maxHp,
+          max_mana: player.maxMana,
+          stat_modifiers: cleanStatModifiers(input.player.statModifiers),
+        },
         opponent: {
           id: input.opponent.id,
           display_name: input.opponent.displayName,
+          hp: opponent.maxHp,
+          max_hp: opponent.maxHp,
+          max_mana: opponent.maxMana,
+          stat_modifiers: cleanStatModifiers(input.opponent.statModifiers),
           is_bot: true,
         },
       },

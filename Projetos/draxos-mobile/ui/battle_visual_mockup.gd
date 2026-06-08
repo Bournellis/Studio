@@ -407,9 +407,9 @@ func _build_initial_side_state() -> Dictionary:
 		side_data["display_name"] = str(participant.get("display_name", _default_side_name(side)))
 		side_data["id"] = str(participant.get("id", side))
 		side_data["max_hp"] = _infer_max_hp(side, participant)
-		side_data["hp"] = float(side_data.get("max_hp", 100.0))
-		side_data["max_mana"] = _infer_max_mana(side)
-		side_data["mana"] = float(side_data.get("max_mana", 0.0))
+		side_data["hp"] = _infer_initial_hp(side, participant, float(side_data.get("max_hp", 100.0)))
+		side_data["max_mana"] = _infer_max_mana(side, participant)
+		side_data["mana"] = _infer_initial_mana(side, participant, float(side_data.get("max_mana", 0.0)))
 		state[side] = side_data
 	return state
 
@@ -449,6 +449,14 @@ func _infer_max_hp(side: String, participant: Dictionary) -> float:
 	var maximum: float = max(1.0, float(participant.get("max_hp", participant.get("hp", 100.0))))
 	for event: Dictionary in _events:
 		var event_type := str(event.get("type", ""))
+		if event_type == "battle_start":
+			var start_max_key: String = "%s_max_hp" % side
+			var start_hp_key: String = "%s_hp" % side
+			if event.has(start_max_key):
+				maximum = max(maximum, float(event.get(start_max_key, maximum)))
+			if event.has(start_hp_key):
+				maximum = max(maximum, float(event.get(start_hp_key, maximum)))
+			continue
 		if event_type == "anti_stall":
 			var key := "%s_hp_after" % side
 			if event.has(key):
@@ -466,15 +474,46 @@ func _infer_max_hp(side: String, participant: Dictionary) -> float:
 		maximum = max(maximum, max(hp_after, before_hp))
 	return ceil(maximum)
 
-func _infer_max_mana(side: String) -> float:
-	var maximum := 20.0
+func _infer_initial_hp(side: String, participant: Dictionary, max_hp: float) -> float:
 	for event: Dictionary in _events:
+		if str(event.get("type", "")) != "battle_start":
+			continue
+		var hp_key: String = "%s_hp" % side
+		if event.has(hp_key):
+			return clampf(float(event.get(hp_key, max_hp)), 0.0, max_hp)
+		var max_hp_key: String = "%s_max_hp" % side
+		if event.has(max_hp_key):
+			return clampf(float(event.get(max_hp_key, max_hp)), 0.0, max_hp)
+		break
+	return clampf(float(participant.get("hp", max_hp)), 0.0, max_hp)
+
+func _infer_max_mana(side: String, participant: Dictionary) -> float:
+	var maximum: float = max(0.0, float(participant.get("max_mana", 20.0)))
+	for event: Dictionary in _events:
+		if str(event.get("type", "")) == "battle_start":
+			var start_max_key: String = "%s_max_mana" % side
+			if event.has(start_max_key):
+				maximum = max(maximum, float(event.get(start_max_key, maximum)))
+			continue
 		if str(event.get("type", "")) != "mana_change":
 			continue
 		var event_side := _side_from_actor(str(event.get("target", event.get("source", ""))))
 		if event_side == side:
 			maximum = max(maximum, float(event.get("mana_after", 0.0)))
 	return maximum
+
+func _infer_initial_mana(side: String, participant: Dictionary, max_mana: float) -> float:
+	for event: Dictionary in _events:
+		if str(event.get("type", "")) != "battle_start":
+			continue
+		var mana_key: String = "%s_mana" % side
+		if event.has(mana_key):
+			return clampf(float(event.get(mana_key, max_mana)), 0.0, max_mana)
+		var max_mana_key: String = "%s_max_mana" % side
+		if event.has(max_mana_key):
+			return clampf(float(event.get(max_mana_key, max_mana)), 0.0, max_mana)
+		break
+	return clampf(float(participant.get("mana", max_mana)), 0.0, max_mana)
 
 func _render_all() -> void:
 	_summary_label.text = BattleLogPresenterScript.format_summary(_battle_log, _rewards)
@@ -626,6 +665,9 @@ func _apply_event(event: Dictionary) -> void:
 	var source_side := _side_from_actor(str(event.get("source", "")))
 	var target_side := _side_from_actor(str(event.get("target", "")))
 
+	if event_type == "battle_start":
+		_apply_battle_start(event)
+		return
 	if event_type == "anti_stall":
 		_apply_anti_stall(event)
 		return
@@ -683,6 +725,31 @@ func _apply_event(event: Dictionary) -> void:
 				_clear_status(target_side, str(event.get("item_id", "consumivel")))
 		"reward_preview":
 			_result_label.text = "Recompensa: %s" % str(event.get("reward_type", "desconhecida"))
+
+func _apply_battle_start(event: Dictionary) -> void:
+	for side: String in SIDES:
+		var data := _as_dictionary(_side_state.get(side, {}))
+		var max_hp: float = max(1.0, float(data.get("max_hp", 100.0)))
+		var max_hp_key: String = "%s_max_hp" % side
+		var hp_key: String = "%s_hp" % side
+		if event.has(max_hp_key):
+			max_hp = max(1.0, float(event.get(max_hp_key, max_hp)))
+			_set_side_number(side, "max_hp", max_hp)
+		if event.has(hp_key):
+			_set_side_number(side, "hp", clampf(float(event.get(hp_key, max_hp)), 0.0, max_hp))
+		elif event.has(max_hp_key):
+			_set_side_number(side, "hp", max_hp)
+
+		var max_mana: float = max(0.0, float(data.get("max_mana", 0.0)))
+		var max_mana_key: String = "%s_max_mana" % side
+		var mana_key: String = "%s_mana" % side
+		if event.has(max_mana_key):
+			max_mana = max(0.0, float(event.get(max_mana_key, max_mana)))
+			_set_side_number(side, "max_mana", max_mana)
+		if event.has(mana_key):
+			_set_side_number(side, "mana", clampf(float(event.get(mana_key, max_mana)), 0.0, max_mana))
+		elif event.has(max_mana_key):
+			_set_side_number(side, "mana", max_mana)
 
 func _apply_anti_stall(event: Dictionary) -> void:
 	if event.has("player_hp_after"):

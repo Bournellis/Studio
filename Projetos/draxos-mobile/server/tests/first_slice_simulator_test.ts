@@ -430,6 +430,33 @@ Deno.test("first-slice simulator applies Arena temporary stat modifiers directly
     }),
     "battle_start should expose the applied temporary Arena modifiers",
   );
+
+  const baselineParticipant = baseline.battleLog.participants.player;
+  const boostedParticipant = boosted.battleLog.participants.player;
+  assert(
+    boostedParticipant.max_hp > baselineParticipant.max_hp,
+    "participant max_hp should expose the buffed initial HP pool",
+  );
+  assertEq(
+    boostedParticipant.hp,
+    boostedParticipant.max_hp,
+    "participant hp should start full after the Arena per-duel HP reset",
+  );
+  assertEq(
+    boostedParticipant.max_hp,
+    Number(boostedStart.player_max_hp),
+    "participant max_hp should match battle_start player_max_hp",
+  );
+  assertEq(
+    boostedParticipant.max_mana,
+    Number(boostedStart.player_max_mana),
+    "participant max_mana should match battle_start player_max_mana",
+  );
+  assertEq(
+    JSON.stringify(boostedParticipant.stat_modifiers),
+    JSON.stringify(boostedStart.player_stat_modifiers),
+    "participant stat_modifiers should match battle_start player_stat_modifiers",
+  );
 });
 
 function hasEvent(events: Array<{ type: string }>, type: string): boolean {

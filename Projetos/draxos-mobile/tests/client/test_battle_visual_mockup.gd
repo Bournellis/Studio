@@ -49,6 +49,28 @@ func test_battle_visual_mockup_empty_state_is_stable() -> void:
 	assert_eq(visual.get_current_event_index(), 0)
 	assert_string_contains(visual.get_timeline_text(), "Nenhuma batalha")
 
+func test_battle_visual_mockup_uses_battle_start_stats_for_arena_buffs() -> void:
+	var visual = BattleVisualMockupScript.new()
+	add_child_autofree(visual)
+	visual.load_battle_log(_arena_buffed_battle_log())
+
+	var snapshot := Dictionary(visual.debug_snapshot())
+	var player := Dictionary(snapshot.get("player", {}))
+	var opponent := Dictionary(snapshot.get("opponent", {}))
+	assert_eq(float(player.get("max_hp", 0.0)), 1152.0)
+	assert_eq(float(player.get("hp", 0.0)), 1152.0)
+	assert_eq(float(player.get("max_mana", 0.0)), 32.0)
+	assert_eq(float(player.get("mana", 0.0)), 32.0)
+	assert_eq(float(opponent.get("max_hp", 0.0)), 860.0)
+	assert_eq(float(opponent.get("hp", 0.0)), 860.0)
+
+	assert_true(visual.step_next_event())
+	snapshot = Dictionary(visual.debug_snapshot())
+	player = Dictionary(snapshot.get("player", {}))
+	assert_eq(str(snapshot.get("latest_event_type", "")), "battle_start")
+	assert_eq(float(player.get("max_hp", 0.0)), 1152.0)
+	assert_eq(float(player.get("hp", 0.0)), 1152.0)
+
 func test_battle_visual_mockup_stage_only_keeps_replay_state_without_outer_panels() -> void:
 	var visual = BattleVisualMockupScript.new()
 	add_child_autofree(visual)
@@ -121,6 +143,37 @@ func _rich_battle_log() -> Dictionary:
 			{"t": 5.5, "seq": 14, "type": "heal", "source": "player", "target": "player", "item_id": "pocao_vida", "effect_id": "heal_over_time", "amount": 8, "hp_after": 196, "max_hp": 200, "ticks_remaining": 4},
 			{"t": 30.0, "seq": 15, "type": "anti_stall", "source": "system", "target": "none", "player_hp_after": 90, "opponent_hp_after": 42},
 			{"t": 31.0, "seq": 16, "type": "battle_result", "source": "system", "target": "none", "winner": "player", "reason": "combatant_defeated"},
+		],
+	}
+
+func _arena_buffed_battle_log() -> Dictionary:
+	return {
+		"schema_version": "battle_log_v1",
+		"battle_id": "arena-buffed-visual-test",
+		"seed": "arena-buffed-visual-test-seed",
+		"mode": ProjectInfo.FIRST_SLICE_MODE,
+		"duration": 0.2,
+		"participants": {
+			"player": {"id": "player-test", "display_name": "Draxos Buffado"},
+			"opponent": {"id": "bot-test", "display_name": "Bot Teste", "is_bot": true},
+		},
+		"result": {"winner": "player", "reason": "duration_limit"},
+		"events": [
+			{
+				"t": 0.0,
+				"seq": 1,
+				"type": "battle_start",
+				"source": "system",
+				"target": "none",
+				"player_hp": 1152,
+				"player_max_hp": 1152,
+				"player_max_mana": 32,
+				"opponent_hp": 860,
+				"opponent_max_hp": 860,
+				"opponent_max_mana": 24,
+				"player_stat_modifiers": {"maxHpPercent": 4},
+			},
+			{"t": 0.2, "seq": 2, "type": "battle_result", "source": "system", "target": "none", "winner": "player", "reason": "duration_limit"},
 		],
 	}
 
