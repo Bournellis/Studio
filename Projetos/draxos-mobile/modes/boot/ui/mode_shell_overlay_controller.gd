@@ -170,7 +170,7 @@ func _build_overlay(host: Node) -> void:
 	_root = Control.new()
 	_root.name = "ModeShellMenuOverlay"
 	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.mouse_filter = Control.MOUSE_FILTER_PASS
 
 	_backdrop = ColorRect.new()
 	_backdrop.name = "ModeShellMenuBackdrop"
@@ -205,6 +205,7 @@ func _build_overlay(host: Node) -> void:
 	)
 	if host.has_method("_prepare_touch_button"):
 		host.call("_prepare_touch_button", _back_button)
+	_back_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	header.add_child(_back_button)
 
 	_content_title = Label.new()
@@ -224,6 +225,7 @@ func _build_overlay(host: Node) -> void:
 	)
 	if host.has_method("_prepare_touch_button"):
 		host.call("_prepare_touch_button", _close_button)
+	_close_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	header.add_child(_close_button)
 
 	_status_label = Label.new()
@@ -341,8 +343,13 @@ func _close_blocked(host: Node) -> bool:
 	var action_id := str(host.get("_active_action_id")).strip_edges()
 	if action_id == "":
 		return false
+	if not _host_has_blocking_busy(host):
+		return false
 	var route := AppShellActionRouterScript.route_action(action_id, _as_dictionary(host.call("_action_context")))
 	return str(route.get("mutation_endpoint", "")).strip_edges() != ""
+
+func _host_has_blocking_busy(host: Node) -> bool:
+	return bool(host.get("_is_busy"))
 
 func _show_blocked_message(host: Node) -> void:
 	var message := "Aguarde a acao atual terminar antes de fechar."

@@ -18,8 +18,15 @@ func _ready() -> void:
 	call_deferred("_check_update_manifest")
 	if SessionStore.has_valid_access_token() and not SessionStore.is_progression_lab_local_only():
 		call_deferred("_recover_session_state")
+
+func _input(event: InputEvent) -> void:
+	_handle_cancel_input(event)
+
 func _unhandled_input(event: InputEvent) -> void:
-	if not event.is_action_pressed("ui_cancel"):
+	_handle_cancel_input(event)
+
+func _handle_cancel_input(event: InputEvent) -> void:
+	if not _is_cancel_input(event):
 		return
 	get_viewport().set_input_as_handled()
 	if _create_account_dialog != null and _create_account_dialog.visible:
@@ -44,6 +51,17 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if _current_screen != SCREEN_HUB:
 		_go_back()
+
+func _is_cancel_input(event: InputEvent) -> bool:
+	if event.is_action_pressed("ui_cancel"):
+		return true
+	var key_event := event as InputEventKey
+	if key_event == null:
+		return false
+	if not key_event.pressed or key_event.echo:
+		return false
+	return key_event.keycode == KEY_ESCAPE or key_event.physical_keycode == KEY_ESCAPE
+
 func _clear_existing_scene() -> void:
 	for child: Node in get_children():
 		remove_child(child)

@@ -4,8 +4,8 @@ import { verifiedAuthContext } from "../_shared/auth_context.ts";
 const DEFAULT_MANIFEST: ReleaseManifest = {
   schema_version: "internal_alpha_manifest_v1",
   channel: "internal_alpha",
-  latest_version: "0.0.17-alpha.0",
-  latest_version_code: 17,
+  latest_version: "0.0.18-alpha.0",
+  latest_version_code: 18,
   minimum_supported_version: "0.0.13-alpha.0",
   minimum_supported_version_code: 13,
   released_at: "2026-06-09T00:00:00Z",
@@ -20,7 +20,7 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
     "Fechar/Voltar bloqueia apenas durante mutacoes criticas da Arena ou replay em andamento.",
     "Bosque integrado continua ocultando o viewport ate aplicar bootstrap remoto ou cache canonico, evitando flash de full spawn.",
     "Arena PVE exporta HP/Mana iniciais buffados no log e o replay aplica battle_start/participants antes da primeira acao.",
-    "Manifesto recomenda build 0.0.17-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+    "Manifesto recomenda build 0.0.18-alpha.0 e mantem build minima 0.0.13-alpha.0.",
     "Coletas, deposito no Bau, craft local e orientacao so aparecem como salvos depois de ACK do servidor.",
     "Nodes do Bosque mantem cooldown por item via node_state.next_spawn_at e descartam rejeicoes terminais de cooldown sem fila infinita.",
     "Coleta ativa nao reinicia por movimento leve e ACKs de checkpoint nao fazem rollback visual da mesma sessao.",
@@ -155,7 +155,7 @@ interface PlayerRow {
 }
 
 const DEFAULT_RELEASE_ROOT =
-  "internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-local";
+  "internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-local";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
