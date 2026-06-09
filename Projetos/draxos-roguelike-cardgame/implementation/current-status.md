@@ -1,50 +1,44 @@
 # Current Status
 
-- Last Updated: `2026-06-06`
-- Active Project Name: `draxos-roguelike-cardgame`
-- Active Surface: `Design Lab-guided content expansion on top of the linear 29-map complete-run roguelike cardgame`
-- Active Track: `Track 02 - Complete Run Evolution`
-- Active Track Status: `T02-P09_COMPLETE`
-- Current Operational Baseline: `Godot 4.6.2 Track 02 complete-run build with foundation closeout, AutoRun Gate Pack V1, Scenario Fixtures V1, Gameplay Lab V1, Lab Diff Reporter V1, Card Impact Pack V1, Card Impact Smoke Tuning V1, Card Impact Effect Signature V2, Card Impact V2 Non-Damage Coverage, Card Impact V3 Isolated Target Capture, Card Redesign Batch 01, Player Card Redesign Batch 02, Card Impact V4 Full Player Matrix, Reward Card Redesign Batch 01 Using V4, Reward Card Redesign Batch 02 Utility Using V4, Card Impact V4.1 Card-Flow Harness Pass, Card Flow Redesign Batch 01 Using V4.1, Card Impact V4.2 Card Flow Expectations, Reward Card Redesign Batch 03 Using V4.2, Card Impact V5 Enemy Causal Signatures, Enemy Card Redesign Batch 01 Using V5, Enemy Card Redesign Batch 02 Using V5 Terra and Design Lab V1 Foundation: fixed 29-map route, save/snapshot version 5, production reward schedule, universal relics, expanded Souls shop, keyword tooltip vocabulary, all Track 02 keyword mechanics, 8 reward cards per class with upgrades, Terra/Gelo/Ar/Fogo enemy galleries, deterministic hybrid enemy AI, visible enemy intent, encounter modes, board formats, elemental field effects, boss hooks for maps 8/15/22/29, polished reward/map/shop/relic/keyword/intent/battle readability, discard marks folded into the main creature-play phase, 5/5, 6/6, and 7/7 layout coverage, shared route pacing simulator for validation and AutoRun Lab, exact golden comparison for approved Track 02 class/seed regressions, official smoke/quick gate baselines in data/lab/baselines, explicit AutoRun --mode=gate regression commands, Scenario Fixture pack data/lab/scenarios/track02_core_v1.json, Gameplay Battle pack data/lab/battles/track02_battle_core_v1.json, deterministic legal-action policies baseline/aggressive/defensive/end-turn-only/card-focus/card-focus-isolated, PASS/WARN/FAIL expectations, tools/compare_lab_reports.gd before/after diff runner, Card Impact packs v1/v2/v3/v4/v4_1/v4_2/v5, V4/V4.1/V4.2/V5 full player matrix covering 108 player card variants plus 30 active enemy cards and 15 audited legacy inactive elemental cards, V4 temporary ability power utility signatures, V4.1 card-flow observability for draw/deck/hand/discard deltas, V4.2 explicit card-flow expectations for the three Colheita variants, V5 required causal enemy-card signatures with play/combat enemy_* fields, Design Lab proposal packs/mechanic registry/scoring profiles/lab-only overlay catalog/grid variants/player and enemy BattleEngine contexts/interpretable ranking/promotion manifest, V4/V4.1/V4.2/V5 before/change/after/compare workflow proven on damage/shield/summon/poison/economy plus utility/control/economy/card-flow/enemy-causality coverage, JSON/CSV/Markdown scenario, battle, AutoRun, lab-diff, card-impact and design-lab reports, presets/case matrix/macro policies/aggregate reports/scorecards/statistical baseline comparison, docs/playtest-track-02.md checklist, docs/autorun-lab.md and docs/design-lab.md tool contracts, docs/foundation-closeout.md ownership/debt map, idempotent generated slice catalog hashing, catalog source loader seam for future domain splits, internal enemy-turn/intent and combat/damage resolution directors, reward and Souls shop service delegation, battle preview/HUD/combat-FX presenters, and first tuning pass keeping upgrade rewards level-only to hit final deck-size targets.`
-- Current Tooling Addendum: `Design Lab V1 is now the recommended bridge from card/mechanic/enemy idea to playable numeric candidates before official content promotion. It loads JSON proposal packs from data/lab/design/proposals, blocks mechanics without registry/engine support, creates lab-only prototype variants in an in-memory catalog overlay, runs shared BattleEngine contexts, ranks candidates and writes design_lab_results.json, design_lab_candidates.csv, design_lab_summary.md, design_lab_gate.md and promotion_manifest.json. Card Impact V5 remains the recommended regression harness before broad enemy-card redesigns; V4.2 remains the default player-card-flow regression harness; V1-V4.2 remain intact as historical baselines.`
-- Current Tuning Addendum: `Reward Card Redesign Batch 03 Using V4.2 applied 12 light reward-card edits across Arcano, Invocador and Necromante without changing labs, route, enemies, shop, relics or reward schedule. The batch exercises V4.2 impact reporting across damage, control, shield/buff, summon and health signatures while preserving Colheita card-flow expectations.`
-- Current Enemy Tuning Addendum: `Enemy Card Redesign Batch 01 Using V5 applied 6 light enemy-card edits across Gelo, Ar and Fogo, and Enemy Card Redesign Batch 02 Using V5 Terra applied 2 focused Terra edits: enemy_terra_elemental_tita attack 3->2 and enemy_terra_elemental_granito health 7->8. Both batches avoided lab/tooling, player-card, route, encounter, shop, relic and reward-schedule changes. Batch 02 deliberately avoided the earlier unsafe Terra probe targets and kept Battle Lab green.`
-- Active Goal: `Design Lab-guided expansion of player/enemy cards, mechanics and encounter contexts before full-run feel playtests`
-- Validation: `2026-06-05 Card Impact V2 Non-Damage Coverage passed: Card Impact V2 before/after/compare --mode=gate --pack=track02_card_impact_v2 --out=user://card_impact/track02_card_impact_v2_non_damage_coverage green with zero structural errors, zero new failures and zero removed records, covering 84/84 active cards; compare report shows 54 required player signatures, 30 enemy report-only missing signatures, non-damage families buff/control/debuff/economy/keyword/summon, and support quality 45 clean / 9 support-assisted / 47 ambiguous / 30 enemy report-only missing; run_battle_lab --mode=gate --pack=track02_battle_core_v1 green with 9 PASS, 3 WARN and 0 FAIL; run_scenarios --mode=gate --pack=track02_core_v1 green with 9 PASS, 3 WARN and 0 FAIL; run_lab --mode=gate --preset=smoke --baseline=track02_smoke_v1 green; run_lab --mode=gate --preset=quick --baseline=track02_quick_v1 green across 30 macro-route cases; validate.gd passed with 157/157 GUT tests, shared full-route pacing smoke 29/29 maps, 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics and 21 shop actions. Non-fatal visual asset/ship alpha warnings remain known. Human playtest and broader balance feedback remain pending.`
-- Latest Validation Addendum: `2026-06-06 Card Impact V5 Enemy Causal Signatures completed: Card Impact V5 before/after/compare passed in gate mode at user://card_impact/track02_card_impact_v5_enemy_causal_signatures with 108 player cards, 30 enemy cards, 15 legacy inactive cards, zero structural errors, zero new failures, zero removed records, 30/30 required enemy signatures present, 30/30 enemy cards played, 30 clean enemy signatures, 0 ambiguous, 0 missing, and Card Flow Expectations still 21/21 PASS. V4.2 historical compare at user://card_impact/reward_card_redesign_batch_03_v4_2 stayed green. Battle Lab remains 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures remains 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke and quick gates remain green; validate.gd passed with 211/211 GUT tests and 1906 asserts. Known optional visual asset, GUT resource and ship alpha warnings remain non-fatal.`
-- Latest Enemy Batch Validation Addendum: `2026-06-06 Enemy Card Redesign Batch 02 Using V5 Terra completed: Card Impact V5 before/after/compare passed at user://card_impact/enemy_card_redesign_batch_02_v5_terra with zero structural errors, zero new failures, zero removed records and zero status changes. Final compare shows 2 changed enemy records, 4 effect changes, enemy_terra_elemental_tita moving enemy_summoned_attack_total and enemy combat/hero damage 3->2, enemy_terra_elemental_granito moving enemy_summoned_health_total 7->8, 30/30 enemy signatures still present, 30 clean enemy signatures, 0 missing/not-played enemy cards, and 21/21 Card Flow Expectations passing. V4.2 historical compare stayed green; Battle Lab stayed 9 PASS / 3 WARN / 0 FAIL; Scenario Fixtures stayed 9 PASS / 3 WARN / 0 FAIL; AutoRun smoke/quick gates stayed green; validate.gd passed with 211/211 GUT tests and 1906 asserts.`
-- Latest Design Lab Addendum: `2026-06-06 Design Lab V1 Foundation completed: sample proposal pack design_lab_sample_v1 passed gate at user://design_lab/design_lab_sample_v1_gate with 36 candidates, 3 selected recommendations and 0 blocked mechanics. The flow generated lab-only player/enemy prototype variants, ran BattleEngine contexts through the shared battle runner, produced JSON/CSV/Markdown/gate/promotion outputs and did not alter data/definitions/slice_catalog.json. Regression checks stayed green: validate.gd passed with 220/220 GUT tests and 1947 asserts, run_card_impact.gd V5 official before gate passed with zero structural errors/new failures/removed records, and run_lab.gd smoke/quick official gates passed.`
+- Last Updated: `2026-06-09`
+- Project: `draxos-roguelike-cardgame`
+- Portfolio status: `P0_IMPLEMENTACAO`
+- Active surface: `Design Lab-guided content expansion on top of the linear 29-map complete-run roguelike cardgame`
+- Preserved long-form history: `implementation/tracks/track-02-complete-run-evolution/status-history-2026-06-06-design-lab-v1.md`
+
+## Current Truth
+
+Track 02 remains a complete Godot 4.6.2 roguelike cardgame baseline with fixed 29-map route, save/snapshot v5, reward schedule, relics, expanded Souls shop, keyword/status tooltips, complete Track 02 keyword mechanics, enemy galleries, hybrid enemy AI/intent, encounter modes, board formats, field effects, boss hooks, readability polish and modular validation.
+
+Design Lab V1 is the recommended bridge from card/mechanic/enemy idea to playable numeric candidates before official content promotion. It uses proposal packs, mechanic registry/scoring profiles, lab-only overlay catalog variants, deterministic BattleEngine contexts, ranked candidates and promotion manifests without mutating `data/definitions/slice_catalog.json`.
+
+Card Impact V5 remains the recommended regression harness before broad enemy-card redesigns. Card Impact V4.2 remains the default player-card-flow regression harness. Earlier V1-V4.1 packs remain preserved historical baselines.
+
+## Active Goal
+
+Expand player/enemy cards, mechanics and encounter contexts through Design Lab proposal packs before full-run feel playtests.
+
+## Current Gate
+
+Author the next player/enemy card and mechanic ideas as Design Lab packs, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab smoke/quick before full-run feel playtests.
+
+## Validation Snapshot
+
+- Design Lab sample gate `design_lab_sample_v1`: PASS with 36 candidates, 3 selected recommendations and 0 blocked mechanics.
+- `validate.gd`: PASS at 220/220 GUT tests and 1947 asserts in the latest preserved Design Lab baseline.
+- Card Impact V5 official before gate: PASS with zero structural errors, zero new failures and zero removed records.
+- Run Lab smoke/quick official gates: PASS.
+- Known optional visual asset, GUT resource and ship alpha warnings remain non-fatal.
 
 ## Read Next
 
-- `../AGENTS.md`
-- `../../canon/canon-brief.md`
-- `../docs/product-brief.md`
-- `../docs/game-design-document.md`
-- `../docs/design-early-game.md`
-- `../docs/architecture.md`
-- `../docs/autorun-lab.md`
-- `../docs/design-lab.md`
-- `../docs/foundation-closeout.md`
-- `../docs/reuse-map.md`
-- `tracks/track-02-complete-run-evolution/current-status.md`
-- `tracks/track-02-complete-run-evolution/design-brief.md`
-- `tracks/track-02-complete-run-evolution/validation-and-tuning-notes.md`
-- `tracks/track-02-complete-run-evolution/handoff-log.md`
+1. `AGENTS.md`
+2. `docs/design-lab.md`
+3. `docs/autorun-lab.md`
+4. `docs/playtest-track-02.md`
+5. `docs/foundation-closeout.md`
+6. `implementation/tracks/track-02-complete-run-evolution/status-history-2026-06-06-design-lab-v1.md`
 
-Historical reference only:
+## Preserved History
 
-- `tracks/track-00-project-bootstrap/current-status.md`
-- `tracks/track-00-project-bootstrap/linear-execution-plan.md`
-- `tracks/track-01-playable-run-loop/current-status.md`
-- `tracks/track-01-playable-run-loop/linear-execution-plan.md`
-
-## Validation
-
-```powershell
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/validate.gd
-```
-
-## Next
-
-Track 02 remains ready for user playtest, but the active content-expansion path should start with Design Lab proposal packs. Recommended next step: author the next player/enemy card and mechanic ideas as Design Lab packs, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab smoke/quick before full-run feel playtests.
+The long baseline, validation addendums, Card Impact V1-V5 details, Enemy Card Redesign Batch 02 Using V5 Terra, Design Lab V1 Foundation and prior validation notes were moved to `implementation/tracks/track-02-complete-run-evolution/status-history-2026-06-06-design-lab-v1.md`.
