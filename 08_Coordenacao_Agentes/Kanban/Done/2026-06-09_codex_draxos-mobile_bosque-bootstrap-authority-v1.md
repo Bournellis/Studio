@@ -6,7 +6,7 @@
 - Branch: `codex/draxos-mobile/bosque-bootstrap-authority-v1`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--bosque-bootstrap-authority-v1`
 - Base: `main` em `16ae233`
-- Status: `DOING`
+- Status: `READY_FOR_PUBLISH`
 
 ## Objetivo
 
@@ -66,3 +66,14 @@ Após implementação, validação, commit, merge e publicação Web+APK, regist
 - preview hash;
 - evidências de validação;
 - links APK/PC/Web/manifest quando disponíveis.
+
+## Progresso
+
+- Código cliente implementado.
+- Regressão de bootstrap visual adicionada.
+- Versionamento local preparado para `0.0.15-alpha.0` / version code `15`.
+- `npx -y deno task --cwd server/functions check`: PASS.
+- `npx -y deno task --cwd supabase/functions check`: PASS.
+- GUT client: PASS, 252 testes / 3849 asserts.
+- `validate_foundation.ps1 -Profile ClientQuick`: PASS.
+- `validate_foundation.ps1 -Profile ReleaseDryRun`: falhou enquanto este cartão ainda estava em `Doing`; repetir após este move.
