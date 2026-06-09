@@ -48,7 +48,7 @@ func _reset_active_save() -> void:
 	await _account_session_flow.reset_active_save(self)
 
 func _show_account() -> void:
-	_show_screen(ROUTE_ACCOUNT)
+	call("_show_screen", ROUTE_ACCOUNT)
 
 func _select_save(save_type: String) -> void:
 	await _account_session_flow.select_save(self, save_type)
