@@ -1,5 +1,7 @@
 # Direct Thread Templates
 
+> Historical templates. For current work, use `direct-thread-templates-current.md`. Do not use paused-project templates here as active implementation prompts unless the user explicitly asks to resume that project.
+
 Templates diretos para abrir threads em `D:\Estudio`.
 
 ## Regra Global

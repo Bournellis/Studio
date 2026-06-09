@@ -1,5 +1,7 @@
 # Codex Workflow Guide
 
+> Historical guide. For current work, use `estudio-agent-workflow-current.md`, `thread-cheat-sheet-current.md` and `direct-thread-templates-current.md`. The portfolio source of truth remains `08_Coordenacao_Agentes/Prioridades_Estudio.md`.
+
 Este guia explica como abrir e conduzir threads do Codex em `D:\Estudio` sem ler contexto demais. O workspace agora e multi-projeto: escolha o projeto antes de seguir docs profundas.
 
 ## Modelo Central

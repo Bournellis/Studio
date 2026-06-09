@@ -1,5 +1,7 @@
 # Thread Cheat Sheet
 
+> Historical cheat sheet. For current project priorities and prompt shapes, use `thread-cheat-sheet-current.md`. Paused projects listed here are historical unless `08_Coordenacao_Agentes/Prioridades_Estudio.md` says otherwise.
+
 Versao curta para abrir threads em `D:\Estudio`.
 
 ## Starter Padrao

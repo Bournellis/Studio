@@ -1,10 +1,12 @@
 # Unity Legacy Surface
 
+> Historical compatibility guide. RPG Isometrico is currently paused in the Estudio portfolio; use this file only for explicit historical consultation, not for current implementation routing.
+
 This guide records Unity paths that are still important to RPG Isometrico history but no longer reflect current naming canon.
 
 ## Purpose
 
-For RPG Isometrico, the active project now lives in `D:\Estudio\Projetos\rpg-isometrico` as a Godot implementation. Track 02 is the active operational line unless `implementation/current-status.md` says otherwise, and the canonical loadout has no passives.
+For RPG Isometrico, the preserved Godot project lives in `D:\Estudio\Projetos\rpg-isometrico`. It is paused unless `08_Coordenacao_Agentes/Prioridades_Estudio.md` and the user explicitly say otherwise.
 
 This is not a studio-wide routing guide. For general `D:\Estudio` work, start with `AGENTS.md`, `Projetos/README.md`, and `08_Coordenacao_Agentes/Estado_Atual.md`.
 
