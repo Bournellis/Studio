@@ -125,7 +125,7 @@ static func _populate_refuge_menu(host: Node, popup: PopupPanel, body: VBoxConta
 			body.add_child(_popup_action_button(host, popup, "Recompensa diaria", AppShellActionContractScript.ACTION_CLAIM_DAILY_REWARD))
 		"profile":
 			body.add_child(_popup_hint(_short_account_status(), compact))
-			body.add_child(_popup_route_button(host, popup, "Abrir Perfil", "account", true))
+			body.add_child(_popup_action_button(host, popup, "Abrir Perfil", AppShellActionContractScript.ACTION_SHOW_ACCOUNT, "", true))
 			_add_dev_tool_actions(host, popup, body)
 			body.add_child(_popup_action_button(host, popup, "Checar atualizacao", AppShellActionContractScript.ACTION_CHECK_UPDATE))
 		"dev":

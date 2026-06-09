@@ -6,8 +6,9 @@ const KIND_TREE := "tree_large"
 const KIND_ROCK := "rock_large"
 const KIND_RESOURCE := "resource"
 const KIND_CAMPFIRE := "campfire"
+const KIND_LAUNCHER := "launcher"
 
-static func build_catalog(chest_position: Vector2, resource_fixtures: Array, obstacle_fixtures: Array = [], structure_fixtures: Array = []) -> Array[Dictionary]:
+static func build_catalog(chest_position: Vector2, resource_fixtures: Array, obstacle_fixtures: Array = [], structure_fixtures: Array = [], launcher_fixtures: Array = []) -> Array[Dictionary]:
 	var entries: Array[Dictionary] = []
 	entries.append({
 		"id": "chest_home",
@@ -45,6 +46,18 @@ static func build_catalog(chest_position: Vector2, resource_fixtures: Array, obs
 		entry["collectible"] = false
 		entry["interaction_radius"] = float(entry.get("interaction_radius", 0.0))
 		entry["sort_offset"] = float(entry.get("sort_offset", 20.0))
+		entries.append(entry)
+	for launcher: Dictionary in launcher_fixtures:
+		var entry := launcher.duplicate(true)
+		if str(entry.get("entry_id", "")).strip_edges() == "":
+			continue
+		entry["id"] = str(entry.get("id", "launcher_%s" % str(entry.get("entry_id", ""))))
+		entry["kind"] = KIND_LAUNCHER
+		entry["display_name"] = str(entry.get("display_name", entry.get("label", ""))).strip_edges()
+		entry["blocks_player"] = bool(entry.get("blocks_player", false))
+		entry["collectible"] = false
+		entry["interaction_radius"] = float(entry.get("interaction_radius", 0.0))
+		entry["sort_offset"] = float(entry.get("sort_offset", 18.0))
 		entries.append(entry)
 	for fixture: Dictionary in resource_fixtures:
 		var item_id := str(fixture.get("item_id", ""))

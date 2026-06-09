@@ -5,6 +5,7 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 
 const CATEGORY_UNKNOWN := "unknown"
 const CATEGORY_SESSION := "session"
+const CATEGORY_ACCOUNT := "account"
 const CATEGORY_BATTLE := "battle"
 const CATEGORY_ARENA := "arena"
 const CATEGORY_BASE := "base"
@@ -67,6 +68,8 @@ static func category_for_action(action_id: String) -> String:
 		return CATEGORY_SHOP
 	if AppShellActionContractScript.is_open_mode_shell(action):
 		return CATEGORY_MODE
+	if action == AppShellActionContractScript.ACTION_SHOW_ACCOUNT:
+		return CATEGORY_ACCOUNT
 	if _is_arena_action(action):
 		return CATEGORY_ARENA
 	if _is_battle_action(action):
@@ -103,6 +106,8 @@ static func scope_for_action(action_id: String, context: Dictionary = {}) -> Str
 			return "social:%s" % save_type
 		CATEGORY_SHOP:
 			return "monetization:%s" % save_type
+		CATEGORY_ACCOUNT:
+			return "account:%s" % save_type
 		CATEGORY_COMPETITION:
 			return "competition:%s" % save_type
 		CATEGORY_SESSION:

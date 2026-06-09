@@ -12,6 +12,7 @@ const ACTION_EMAIL_SIGN_IN := "email_sign_in"
 const ACTION_REFRESH_SESSION := "refresh_session"
 const ACTION_RESET_SESSION := "reset_session"
 const ACTION_RESET_ACTIVE_SAVE := "reset_active_save"
+const ACTION_SHOW_ACCOUNT := "show_account"
 const ACTION_SELECT_SAVE_NORMAL := "select_save_normal"
 const ACTION_SELECT_SAVE_PROGRESSION_LAB := "select_save_progression_lab"
 const ACTION_OPEN_BATTLE_LAB := "open_battle_lab"
@@ -93,6 +94,7 @@ const _UPDATE_GATE_ALLOWED_ACTIONS := {
 	ACTION_SELECT_SAVE_PROGRESSION_LAB: true,
 	ACTION_OPEN_BATTLE_LAB: true,
 	ACTION_OPEN_PROGRESSION_LAB: true,
+	ACTION_SHOW_ACCOUNT: true,
 	ACTION_SKIP_REPLAY: true,
 	ACTION_RETURN_REFUGE: true,
 	ACTION_REPLAY_LATEST: true,

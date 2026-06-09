@@ -100,6 +100,8 @@ func _execute_action(action_id: String) -> void:
 				await _reset_local_session()
 			AppShellActionContractScript.ACTION_RESET_ACTIVE_SAVE:
 				await _reset_active_save()
+			AppShellActionContractScript.ACTION_SHOW_ACCOUNT:
+				_show_account()
 			AppShellActionContractScript.ACTION_SELECT_SAVE_NORMAL:
 				await _select_save(SessionStoreScript.SAVE_TYPE_NORMAL)
 			AppShellActionContractScript.ACTION_SELECT_SAVE_PROGRESSION_LAB:

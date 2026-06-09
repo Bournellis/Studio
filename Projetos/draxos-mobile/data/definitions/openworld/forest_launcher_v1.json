@@ -1,0 +1,52 @@
+{
+  "catalog_id": "openworld_forest_launcher_v1",
+  "version": 1,
+  "mode_id": "openworld",
+  "entries": [
+    {
+      "entry_id": "arena_pve_gate",
+      "label": "Arena PVE",
+      "action_id": "open_arena",
+      "visual_kind": "arena_gate",
+      "position": {"x": 520, "y": 300},
+      "interaction_radius": 96,
+      "blocks_player": false
+    },
+    {
+      "entry_id": "refugio_workbench",
+      "label": "Refugio",
+      "action_id": "show_base",
+      "visual_kind": "workbench",
+      "position": {"x": 340, "y": 190},
+      "interaction_radius": 92,
+      "blocks_player": false
+    },
+    {
+      "entry_id": "shop_stall",
+      "label": "Loja",
+      "action_id": "show_shop",
+      "visual_kind": "shop_stall",
+      "position": {"x": 120, "y": 220},
+      "interaction_radius": 92,
+      "blocks_player": false
+    },
+    {
+      "entry_id": "social_totem",
+      "label": "Social",
+      "action_id": "show_social",
+      "visual_kind": "social_totem",
+      "position": {"x": 120, "y": 335},
+      "interaction_radius": 92,
+      "blocks_player": false
+    },
+    {
+      "entry_id": "profile_shrine",
+      "label": "Perfil",
+      "action_id": "show_account",
+      "visual_kind": "profile_shrine",
+      "position": {"x": 240, "y": 125},
+      "interaction_radius": 88,
+      "blocks_player": false
+    }
+  ]
+}
