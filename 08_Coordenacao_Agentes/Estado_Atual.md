@@ -8,7 +8,7 @@
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
 - Foco P2 de implementacao: `Projetos/draxos-mobile/` (`BOSQUE_OVERLAY_NAVIGATION_HOTFIX_V1_PUBLISHED_INTERNAL_ALPHA`, release root `internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-9b93e5d`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, deployment evidence `https://92cc0579.draxos-mobile-internal-alpha.pages.dev`, publicado Web/APK, APK/manifest `0.0.18-alpha.0`/version code `18`; Bosque permanece vivo e visivel atras de Arena/Base/Shop/Social/Profile em overlay, com input pausado e retorno por `Fechar`, `Voltar` e Esc sem rebootstrap, mantem minimum supported version code `13`, proximo passo operacional: playtest humano focado do pacote publicado)
-- Tech probe P2 de implementacao: `Projetos/FpsShooter/` (`FPS_SHOOTER_TRACK_01B_VERTICAL_AWARENESS_COMPLETE`; PC Windows editor-first FPS 3D independente com tema Draxos leve; proximo passo: playtest humano de 3 minutos da Track 01B com foco em cover baixo/parede alta e selecao do proximo foco da Track 01)
+- Tech probe P2 de implementacao: `Projetos/FpsShooter/` (`FPS_SHOOTER_TRACK_01C_ARENA_LAYOUT_COMPLETE`; PC Windows editor-first FPS 3D independente com tema Draxos leve; proximo passo: playtest humano de 3-5 minutos do mapa `Duel Pit V1` e selecao do proximo foco da Track 01)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -40,13 +40,13 @@
 
 ## FpsShooter
 
-- Status: **P2_IMPLEMENTACAO - FPS_SHOOTER_TRACK_01B_VERTICAL_AWARENESS_COMPLETE**
+- Status: **P2_IMPLEMENTACAO - FPS_SHOOTER_TRACK_01C_ARENA_LAYOUT_COMPLETE**
 - Fase: `Implementacao - FPS 3D Tech Probe`
 - Local: `Projetos/FpsShooter/`
-- Baseline atual: projeto oficial implementavel criado para testar Godot 4.6.2 em FPS 3D primeira pessoa, PC Windows editor-first. Track 01B Bot Duelista V1 completa sobre a Track 01A com upgrade de percepcao vertical: jogador FPS com FOV `86`, movimento agil, rifle hitscan simples, HUD com crosshair por controles, barras de vida, hit/miss, dano recebido, round end, efeitos runtime de muzzle/tracer/impacto, audio sintetico simples, bot com estados `idle/engage/strafe/reposition/windup/cooldown/dead`, linha de visao real por pontos expostos do jogador, reconhecimento de camera/cabeca acima de cover baixo, bloqueio por parede alta, erro leve deterministico, strafe/reposicionamento simples, tiros normais resolvidos por raycast na arena e `force_fire()` imediato preservado para testes.
+- Baseline atual: projeto oficial implementavel criado para testar Godot 4.6.2 em FPS 3D primeira pessoa, PC Windows editor-first. Track 01C Arena Layout V1 completa sobre a Track 01A/01B: mapa `Duel Pit V1` com spawns protegidos, bloqueador central, cover baixo/alto, plataformas laterais baixas, rampas primitivas e marcacoes visuais de rota; jogador FPS com FOV `86`, movimento agil, rifle hitscan simples, HUD com crosshair por controles, barras de vida, hit/miss, dano recebido, round end, efeitos runtime de muzzle/tracer/impacto, audio sintetico simples, bot com estados `idle/engage/strafe/reposition/windup/cooldown/dead`, linha de visao real por pontos expostos do jogador, reconhecimento de camera/cabeca acima de cover baixo, bloqueio por parede alta, erro leve deterministico, strafe/reposicionamento simples, tiros normais resolvidos por raycast na arena e `force_fire()` imediato preservado para testes.
 - Trabalho permitido: codigo, validacao, playtest no editor e documentacao local.
 - Restricao operacional: tech probe independente com tema Draxos leve; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem export/Web/mobile, multiplayer, matchmaking, Ricochet, jump pads, plataformas suspensas ou void/queda ate track explicita.
-- Proximo passo: playtest humano de 3 minutos da Track 01B com foco em cover baixo/parede alta e selecionar o proximo foco da Track 01: layout de arena, knockback/movimento de combate ou futuras variantes de arma/projetil.
+- Proximo passo: playtest humano de 3-5 minutos do mapa `Duel Pit V1` e selecionar o proximo foco da Track 01: knockback/movimento de combate, futuras variantes de arma/projetil ou primeira expansao de hazard/verticalidade.
 
 ## rpg-isometrico
 

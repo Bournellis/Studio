@@ -1,7 +1,7 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-09`
-- Status: `TRACK_01B_VERTICAL_AWARENESS_COMPLETE`
+- Status: `TRACK_01C_ARENA_LAYOUT_COMPLETE`
 
 ## North Star
 
@@ -31,7 +31,7 @@ Acceptance:
 
 Goal: editor-playable local 1x1 arena shooter.
 
-Status: active; Track 01A and Track 01B, including the vertical-awareness upgrade, are complete.
+Status: active; Track 01A, Track 01B and Track 01C are complete.
 
 Acceptance:
 
@@ -74,15 +74,30 @@ Delivered:
 - bot line-of-sight and windup aim use visible target points, so camera/head exposure over low cover is recognized while tall blockers still deny shots;
 - automated coverage for line of sight, vertical exposure over low cover, windup, hit, miss, strafe/reposition, cancel and restart.
 
+## Track 01C - Arena Layout V1
+
+Goal: replace the bootstrap rectangle with the first real duel map.
+
+Status: complete.
+
+Delivered:
+
+- `Duel Pit V1` runtime layout expanded to `30x30`;
+- protected diagonal spawns that block first direct shots;
+- central high blocker, spawn covers and high covers for clear line-of-sight breaks;
+- low covers that continue testing head/camera exposure over cover;
+- two side platforms and two ramp primitives for controlled early height testing;
+- visual route markings without gameplay collision;
+- bot reposition points rebuilt around the new map;
+- automated coverage for map structure, spawn sightline blocking, route markers and bot reposition points.
+
 ## Track 02 - Next Combat Shape
 
 Goal: choose the next gameplay shape after the first readable duel baseline.
 
 Candidate scope:
 
-- arena layout pass with clearer cover, sightlines and spawns;
-- authored vertical cover/sightline rules that build on the bot awareness baseline;
-- knockback and movement-combat pass;
+- knockback and movement-combat pass using the new `Duel Pit V1` routes;
 - recoil/spread or ammo/reload only if explicitly selected;
 - future projectile variants after hitscan feel remains stable.
 

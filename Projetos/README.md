@@ -29,8 +29,8 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: author player/enemy card and mechanic ideas as Design Lab proposal packs, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab gates before full-run feel playtests.
 
-- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 first-person shooter tech probe with a light Draxos visual theme. The first contract is a traditional FPS baseline in a local 1x1 arena against a bot. Track 01B Bot Duelista V1 is complete on top of the feel/feedback baseline with vertical awareness: agile movement defaults, simple hitscan rifle, HUD crosshair/health bars, hit/miss feedback, damage overlay, round-end feedback, runtime primitive muzzle/tracer/impact effects, synthetic audio, bot states, strafe/reposition, line-of-sight gated normal shots, exposed camera/head checks over low cover, tall-cover denial and deterministic aim error.
-  - Priority/status: `P2_IMPLEMENTACAO - FPS_SHOOTER_TRACK_01B_VERTICAL_AWARENESS_COMPLETE`
+- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 first-person shooter tech probe with a light Draxos visual theme. The first contract is a traditional FPS baseline in a local 1x1 arena against a bot. Track 01C Arena Layout V1 is complete on top of the feel/feedback and bot baselines: `Duel Pit V1` map, protected spawns, central blocker, low/high cover, side platforms, ramp primitives, route markings, simple hitscan rifle, HUD combat feedback, synthetic audio, bot states, strafe/reposition, line-of-sight gated normal shots, exposed camera/head checks over low cover, tall-cover denial and deterministic aim error.
+  - Priority/status: `P2_IMPLEMENTACAO - FPS_SHOOTER_TRACK_01C_ARENA_LAYOUT_COMPLETE`
   - Local agent guide: `FpsShooter/AGENTS.md`
   - Operational status: `FpsShooter/implementation/current-status.md`
   - Work plan: `FpsShooter/docs/work-plan.md`
@@ -38,7 +38,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Validation reference: `FpsShooter/docs/validation.md`
   - Validation command: `FpsShooter/tools/validate.gd`
   - Allowed work: code, validation, editor playtest and local documentation.
-  - Current next step: run the 3-minute editor human smoke for Track 01B with low-cover/high-cover checks and select the next Track 01 focus: arena layout, knockback/movement combat or future weapon/projectile variants.
+  - Current next step: run the 3-5 minute editor human smoke for `Duel Pit V1` and select the next Track 01 focus: knockback/movement combat, future weapon/projectile variants or first hazard/verticality expansion.
 
 ## Implementacao - Arena PVE Inicial
 

@@ -4,7 +4,7 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS 3D tech probe`
-- Active stage: `Track 01B - Bot Duelista V1 + Vertical Awareness Upgrade`
+- Active stage: `Track 01C - Arena Layout V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -19,17 +19,18 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - Traditional FPS baseline.
 - Local 1x1 arena against a bot.
 - Player movement, mouse look, jump, hitscan shot and knockback.
-- Bot V1 walks and shoots.
-- Simple arena, HUD, round state and bidirectional feel/feedback.
+- Fair bot baseline with vertical-aware line of sight.
+- `Duel Pit V1` arena layout with protected spawns, low/high cover, side platforms and ramps.
+- HUD, round state and bidirectional feel/feedback.
 - No export, Web, mobile, multiplayer or online/backend scope.
 
 ## Active Goal
 
-`Track 01B - Bot Duelista V1` is complete with a vertical-awareness upgrade. The project now has a fair bot baseline for editor duel playtesting, including recognition of player camera/head exposure over low cover.
+`Track 01C - Arena Layout V1` is complete. The project now has a first real duel map for editor playtesting, built on the Track 01A feel baseline and Track 01B fair bot with vertical awareness.
 
 ## Current Gate
 
-Closed for Track 01B vertical awareness. Run the 3-minute editor smoke with low-cover/high-cover checks, then continue with Track 01 follow-up decisions around arena layout, knockback/movement combat or future weapon/projectile variants.
+Closed for Track 01C. Run the 3-5 minute editor smoke focused on `Duel Pit V1`, then select the next Track 01 focus: knockback/movement combat, future weapon/projectile variants, or first hazard/verticality expansion.
 
 ## Validation Snapshot
 
@@ -88,6 +89,17 @@ Track 01B Vertical Awareness Upgrade:
 - tall blockers still cancel normal windup and push the bot into reposition;
 - validation passes `17/17` GUT tests with `132` asserts.
 
+Track 01C Arena Layout V1:
+
+- arena expanded into `Duel Pit V1`, replacing the bootstrap rectangle with a 1x1 duel map;
+- protected diagonal spawns block first-frame direct shots;
+- central high blocker, spawn covers and high covers define safe breaks in line of sight;
+- low covers preserve head/camera exposure tests for the vertical-aware bot;
+- side platforms and ramp primitives add first controlled height changes without jump pads, suspended platforms or void/fall rules;
+- route markers are visual-only primitives;
+- bot reposition points are rebuilt around the map and exposed through debug helpers;
+- validation passes `19/19` GUT tests with `186` asserts.
+
 ## Read Next
 
 1. `AGENTS.md`
@@ -97,3 +109,4 @@ Track 01B Vertical Awareness Upgrade:
 5. `implementation/tracks/track-01-arena-1x1-v1/current-status.md`
 6. `implementation/tracks/track-01a-feel-feedback-v1/current-status.md`
 7. `implementation/tracks/track-01b-bot-duelist-v1/current-status.md`
+8. `implementation/tracks/track-01c-arena-layout-v1/current-status.md`

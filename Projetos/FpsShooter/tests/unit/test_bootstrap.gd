@@ -41,7 +41,15 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_not_null(arena.get_node_or_null("KeyLight"))
 	assert_not_null(arena.get_node_or_null("ArenaFloor"))
 	assert_not_null(arena.get_node_or_null("NorthWall"))
+	assert_not_null(arena.get_node_or_null("MidBlocker"))
+	assert_not_null(arena.get_node_or_null("HighCoverA"))
 	assert_not_null(arena.get_node_or_null("LowCoverA"))
+	assert_not_null(arena.get_node_or_null("LowCoverD"))
+	assert_not_null(arena.get_node_or_null("WestPlatform"))
+	assert_not_null(arena.get_node_or_null("EastPlatform"))
+	assert_not_null(arena.get_node_or_null("WestRamp"))
+	assert_not_null(arena.get_node_or_null("EastRamp"))
+	assert_not_null(arena.get_node_or_null("CenterLaneMark"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Player"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Bot"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/BotRepositionPoints"))
@@ -53,7 +61,7 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_not_null(player.get_node_or_null("Head/Camera3D"))
 	assert_true((player.get_node("Head/Camera3D") as Camera3D).current)
 	assert_almost_eq((player.get_node("Head/Camera3D") as Camera3D).fov, 86.0, 0.01)
-	assert_eq(bot.debug_get_state(), &"engage")
+	assert_eq(bot.debug_get_state(), &"reposition")
 	assert_true(bot.debug_get_target() == player)
 	assert_gt(bot.debug_get_reposition_point_count(), 0)
 	var hud_root := arena.get_node("ArenaHud/HudRoot") as Control
@@ -68,6 +76,40 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_not_null(hud_root.get_node_or_null("Crosshair/Top"))
 	assert_not_null(hud_root.get_node_or_null("Crosshair/HitMarker"))
 	assert_not_null(hud_root.get_node_or_null("PauseMenuPanel/PauseMenuMargin/PauseMenuBox/SensitivitySlider"))
+	assert_no_new_orphans()
+
+func test_duel_pit_layout_blocks_spawn_sightline() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var feedback = arena.get_node("FeedbackController")
+	var before: float = bot.health
+	var direction: Vector3 = (bot.get_body_center() - player.get_shot_origin()).normalized()
+	arena._on_player_shot(player.get_shot_origin(), direction, player.shot_damage, player.shot_knockback)
+
+	assert_eq(bot.health, before)
+	assert_eq(feedback.last_event, &"miss")
+	assert_no_new_orphans()
+
+func test_duel_pit_layout_exposes_route_markers_and_bot_points() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var points: Array[Vector3] = arena.debug_get_bot_reposition_points()
+	assert_eq(points.size(), 12)
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/BotRepositionPoints/BotRepositionPoint11"))
+	for point in points:
+		assert_lte(absf(point.x), 12.0)
+		assert_lte(absf(point.z), 12.0)
+		assert_almost_eq(point.y, 0.05, 0.001)
 	assert_no_new_orphans()
 
 func test_player_mouse_motion_updates_view_when_captured() -> void:
@@ -89,6 +131,9 @@ func test_player_shot_ray_damages_bot_when_aimed_at_body() -> void:
 	add_child_autofree(arena)
 	await get_tree().process_frame
 	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
 	await get_tree().physics_frame
 
 	var player = arena.debug_get_player()
@@ -195,6 +240,9 @@ func test_bot_force_fire_damages_player() -> void:
 	await get_tree().process_frame
 	await get_tree().physics_frame
 
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
 	var player = arena.debug_get_player()
 	var bot = arena.debug_get_bot()
 	var hud = arena.get_node("ArenaHud")
@@ -215,6 +263,9 @@ func test_bot_respects_line_of_sight_before_windup() -> void:
 	var arena := arena_scene.instantiate()
 	add_child_autofree(arena)
 	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
 	await get_tree().physics_frame
 
 	var player = arena.debug_get_player()
@@ -241,6 +292,9 @@ func test_bot_detects_player_visible_over_low_cover() -> void:
 	await get_tree().process_frame
 	await get_tree().physics_frame
 
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
 	var player = arena.debug_get_player()
 	var bot = arena.debug_get_bot()
 	player.global_position = Vector3(-2.0, 0.05, 0.8)
@@ -263,6 +317,9 @@ func test_bot_normal_fire_uses_short_windup_before_damage() -> void:
 	var arena := arena_scene.instantiate()
 	add_child_autofree(arena)
 	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
 	await get_tree().physics_frame
 
 	var player = arena.debug_get_player()
@@ -294,6 +351,9 @@ func test_bot_normal_fire_can_miss_without_damage() -> void:
 	await get_tree().process_frame
 	await get_tree().physics_frame
 
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
 	var player = arena.debug_get_player()
 	var bot = arena.debug_get_bot()
 	var feedback = arena.get_node("FeedbackController")
@@ -321,6 +381,9 @@ func test_bot_strafes_when_cooling_down() -> void:
 	await get_tree().process_frame
 	await get_tree().physics_frame
 
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
 	var bot = arena.debug_get_bot()
 	bot.shoot_cooldown_remaining = 3.0
 	bot.reaction_remaining = 0.0
@@ -342,6 +405,9 @@ func test_bot_cancels_windup_when_target_dies() -> void:
 	var arena := arena_scene.instantiate()
 	add_child_autofree(arena)
 	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
 	await get_tree().physics_frame
 
 	var player = arena.debug_get_player()
@@ -367,6 +433,9 @@ func test_restart_resets_bot_duelist_state() -> void:
 	await get_tree().process_frame
 	await get_tree().physics_frame
 
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
 	var bot = arena.debug_get_bot()
 	bot.aim_error_radius = 0.0
 	bot.close_range_aim_error_radius = 0.0
@@ -379,6 +448,10 @@ func test_restart_resets_bot_duelist_state() -> void:
 
 	assert_false(bot.is_telegraphing)
 	assert_eq(bot.debug_get_state(), &"engage")
+	assert_almost_eq(bot.global_position.x, arena.debug_get_bot_spawn().x, 0.001)
+	assert_almost_eq(bot.global_position.z, arena.debug_get_bot_spawn().z, 0.001)
+	assert_almost_eq(arena.debug_get_player().global_position.x, arena.debug_get_player_spawn().x, 0.001)
+	assert_almost_eq(arena.debug_get_player().global_position.z, arena.debug_get_player_spawn().z, 0.001)
 	assert_gt(bot.debug_get_reposition_point_count(), 0)
 	assert_eq((arena.get_node("FeedbackController")).debug_active_effect_count(), 0)
 	assert_no_new_orphans()
@@ -409,3 +482,12 @@ func _add_static_blocker(parent: Node, blocker_position: Vector3, blocker_size: 
 	blocker.add_child(shape)
 	parent.add_child(blocker)
 	return blocker
+
+func _place_open_duel(arena: Node) -> void:
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	player.global_position = Vector3(12.2, 0.05, 4.8)
+	player.rotation = Vector3.ZERO
+	bot.global_position = Vector3(12.2, 0.05, -4.8)
+	bot.rotation = Vector3.ZERO
+	bot.configure(player)

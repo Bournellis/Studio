@@ -21,9 +21,9 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `17/17`;
-- `132` asserts;
-- Track 01B validates feedback controller, player hit/miss, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()` and synthetic audio stream creation.
+- GUT `19/19`;
+- `186` asserts;
+- Track 01C validates feedback controller, player hit/miss, map structure, protected spawn sightline, route markers, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()` and synthetic audio stream creation.
 
 ## Manual Smoke
 
@@ -39,6 +39,10 @@ Expected:
 - each player shot has muzzle/tracer feedback and a short synthetic shot sound;
 - aiming at the bot and shooting reduces bot health, flashes the bot, shows hitmarker and plays hit feedback;
 - missing the bot still shows shot/tracer feedback without false hit confirmation;
+- the map is `Duel Pit V1`, with a central blocker, low/high cover, route markings, side platforms and ramps;
+- direct first shot from spawn does not immediately damage the bot;
+- player can move around the central blocker and read the side routes;
+- player can walk onto/down the ramp/platform primitives without getting stuck in ordinary movement;
 - bot moves, strafes and repositions instead of only walking straight;
 - cover can break bot line of sight, preventing normal bot damage through obstacles;
 - low cover can hide the body center while the bot still recognizes player camera/head exposure above it;
