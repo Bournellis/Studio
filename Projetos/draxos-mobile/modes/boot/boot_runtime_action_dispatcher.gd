@@ -85,8 +85,8 @@ func _execute_action(action_id: String) -> void:
 	elif AppShellActionContractScript.is_open_mode_shell(action):
 		if _shell_overlay_is_open():
 			_close_shell_overlay()
-			return
-		_open_mode_shell(AppShellActionContractScript.action_value(action))
+		else:
+			_open_mode_shell(AppShellActionContractScript.action_value(action))
 	else:
 		match action:
 			AppShellActionContractScript.ACTION_ENTER_GUEST:
@@ -140,8 +140,8 @@ func _execute_action(action_id: String) -> void:
 			ACTION_RETURN_REFUGE:
 				if _shell_overlay_is_open():
 					_close_shell_overlay()
-					return
-				_return_to_refuge()
+				else:
+					_return_to_refuge()
 			ACTION_REPLAY_LATEST:
 				await _replay_latest_battle_from_summary()
 			ACTION_SHOW_CURRENT_BATTLE_LOGS:
@@ -151,8 +151,8 @@ func _execute_action(action_id: String) -> void:
 			AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE:
 				if _replay_running:
 					_skip_replay = true
-					return
-				await _show_latest_battle()
+				else:
+					await _show_latest_battle()
 			AppShellActionContractScript.ACTION_SHOW_BATTLE_HISTORY:
 				await _show_battle_history()
 			AppShellActionContractScript.ACTION_SHOW_BASE:

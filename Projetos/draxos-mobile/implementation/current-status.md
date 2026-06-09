@@ -4,41 +4,41 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Bosque Persistent Overlay Shell v1`
-- Active stage status: `BOSQUE_PERSISTENT_OVERLAY_SHELL_V1_PUBLISHED_INTERNAL_ALPHA`
-- Local follow-up stage: `Bosque Persistent Overlay Shell v1`
-- Local follow-up status: `BOSQUE_PERSISTENT_OVERLAY_SHELL_V1_IMPLEMENTED_LOCAL`
+- Active stage: `Bosque Overlay Navigation Hotfix v1`
+- Active stage status: `BOSQUE_OVERLAY_NAVIGATION_HOTFIX_V1_PUBLISHED_INTERNAL_ALPHA`
+- Local follow-up stage: `Bosque Overlay Navigation Hotfix v1`
+- Local follow-up status: none; the navigation hotfix is already published.
 - Build channel: `internal_alpha`
-- Version: `0.0.17-alpha.0`
-- Version code: `17`
+- Version: `0.0.18-alpha.0`
+- Version code: `18`
 - Minimum supported version code: `13`
 
 ## Current Truth
 
-- Latest published remote package: `Bosque Persistent Overlay Shell v1`.
+- Latest published remote package: `Bosque Overlay Navigation Hotfix v1`.
 
-- Release root: `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`
+- Release root: `internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-9b93e5d`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Deployment evidence: `https://a53c1d27.draxos-mobile-internal-alpha.pages.dev`
-- Source state: release root was generated from implementation commit `d05081c`; publication/status closure is recorded in the Kanban Done handoff.
-- Published package: bumps APK/manifest to `0.0.17-alpha.0` / version code `17`, keeps `minimum_supported_version_code` at `13`, redeploys `release`, publishes the persistent overlay shell over the live Bosque, and keeps the Bosque visible but input-paused while menus/Arena are open.
+- Deployment evidence: `https://92cc0579.draxos-mobile-internal-alpha.pages.dev`
+- Source state: release root was generated from implementation commit `9b93e5d`; publication/status closure is recorded in the Kanban Done handoff.
+- Published package: bumps APK/manifest to `0.0.18-alpha.0` / version code `18`, keeps `minimum_supported_version_code` at `13`, redeploys `release`, publishes the overlay navigation hotfix over the live Bosque, and keeps the Bosque visible but input-paused while menus/Arena are open.
 - Remote SQL already applied: `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`.
-- Remote functions: `release` redeployed for Bosque Persistent Overlay Shell v1; `arena` remains on Arena PVE Bonus Visual v1; `modes` remains on the operations-v2 backend from the previous Bosque packages.
+- Remote functions: `release` redeployed for Bosque Overlay Navigation Hotfix v1; `arena` remains on Arena PVE Bonus Visual v1; `modes` remains on the operations-v2 backend from the previous Bosque packages.
 
-Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`: everything tested at that point appeared to work. `DMOB-D076` was resolved by choosing the diegetic launcher foundation, `DMOB-D077` published it, and `Bosque Persistent Overlay Shell v1` now publishes the follow-up UX/runtime package that keeps Bosque alive behind menus. The next operational step is focused human playtest of this newly published overlay package. If future errors appear, they return to the normal bugfix flow.
+Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`: everything tested at that point appeared to work. `DMOB-D076` was resolved by choosing the diegetic launcher foundation, `DMOB-D077` published it, `DMOB-D078` published the persistent overlay shell, and `Bosque Overlay Navigation Hotfix v1` now publishes the follow-up navigation fix for `Fechar`, `Voltar` and Esc over that overlay model. The next operational step is focused human playtest of this newly published overlay package. If future errors appear, they return to the normal bugfix flow.
 
 ## Operational Vs Product Direction
 
-- Operational package: Bosque Persistent Overlay Shell v1 is current.
-- Implementation stage: Bosque Persistent Overlay Shell v1 is now published as the current Internal Alpha package.
+- Operational package: Bosque Overlay Navigation Hotfix v1 is current.
+- Implementation stage: Bosque Overlay Navigation Hotfix v1 is now published as the current Internal Alpha package.
 - Product direction: Arena PVE remains the first approved core, governed by `docs/pve-arena-initial-direction.md` and `docs/pve-arena-v1.md`.
 - Bosque/Openworld status: approved integrated Internal Alpha slice with diegetic launcher and persistent overlay shell, not approval for broad continuous-open-world expansion.
 - Do not open tuning, PVP, economy, content, weapons, spells, potions, final visuals, remote mutation or a new package without an explicit decision.
 
 ## Published Overlay Scope
 
-`Bosque Persistent Overlay Shell v1` keeps the Bosque instantiated, visible and input-paused while launcher targets render as a responsive overlay, and is now published as the current Internal Alpha Web/APK package:
+`Bosque Overlay Navigation Hotfix v1` keeps the Bosque instantiated, visible and input-paused while launcher targets render as a responsive overlay, and is now published as the current Internal Alpha Web/APK package:
 
 - preserves the `mode_shell` and active `openworld_forest_screen.gd` node while Shop/Base/Social/Profile and the Arena flow open above it;
 - renders a shared overlay sheet over the Bosque, with a near-full-height mobile panel, desktop side panel, backdrop dimming and a separate overlay route stack;
@@ -58,28 +58,29 @@ Delivered:
 - routes overlay back/close through a dedicated stack before returning focus to the same `mode_shell`;
 - runs Arena selection, active attempt, replay, buff choice and summary inside the overlay;
 - blocks overlay close/back during replay or critical server mutation;
-- aligns release/export scripts and remote smokes with version code `17`;
+- aligns release/export scripts and remote smokes with version code `18`;
 - preserves Arena PVE Bonus Visual v1, Bosque Node Cooldown ACK v1, resume/exit lifecycle, feel/spawn authority, persistence rebase and station-craft behavior.
 
 Publication evidence:
 
-- Cloudflare Pages preview evidence: `https://a53c1d27.draxos-mobile-internal-alpha.pages.dev`.
-- Direct preview Web launch smoke loaded the game in `4491 ms`, matched release root and reported no runtime errors.
+- Cloudflare Pages preview evidence: `https://92cc0579.draxos-mobile-internal-alpha.pages.dev`.
+- Direct preview Web launch smoke loaded the game in `3711 ms` during consolidated `RemoteReadOnly` validation, matched release root and reported no runtime errors.
 - Remote manifest smoke, internal alpha release smoke and remote artifact smoke passed.
 - Canonical Portal/Web are Cloudflare Access protected; preview Web launch validated the public Pages deployment.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 
 Artifact hashes:
 
-- Android APK SHA256: `94bc88662174a5f9568672dcba9fc0a3686cf02b36ed4f8ab36f9f321b9a9f48`
-- PC Windows ZIP SHA256: `e14202f010a1d024e360322b5630f471e56254608fbe89b3e91e2d96a98039ca`
-- Web Index SHA256: `bca76e8043cac9952e338bf18694d198a9533a5b5ddb72f5f12d63a961e7476c`
+- Android APK SHA256: `80d30c54f315d2a0681374ae603a33d8c4cb19759b3bb3262752ccc7f06624d8`
+- PC Windows ZIP SHA256: `4fa2fba1505d4dfe97e365923209b3ea76c7601a8e9f03da6bf2da8828357de0`
+- Web Index SHA256: `33244df3094513af49d57b3b6f9bc32e755b66671926c92db9baaffc3905db55`
 
 ## Preserved Lineage
 
 These packages are preserved history/context, not the current publication:
 
 - Previous launcher package: `Bosque Diegetic Launcher Foundation v1`, release root `internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c`, preview `https://56b58162.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.16-alpha.0` / version code `16`.
+- Previous overlay package: `Bosque Persistent Overlay Shell v1`, release root `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`, preview `https://a53c1d27.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.17-alpha.0` / version code `17`.
 - Previous bootstrap package: `Bosque Bootstrap Authority v1`, release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.15-alpha.0` / version code `15`.
 - Previous Arena package: `Arena PVE Bonus Visual v1`, release root `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`, preview `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.14-alpha.0` / version code `14`.
 - Previous Bosque package: `Bosque Node Cooldown ACK v1`, release root `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`, preview `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.13-alpha.0` / version code `13`.
@@ -105,7 +106,7 @@ Track markers that remain active as guardrails:
 
 ## Current Gate
 
-The next operational step is focused human playtest of the published `Bosque Persistent Overlay Shell v1` Web/APK package. Validate that Bosque landmarks open Arena/Base/Shop/Social/Profile through shell actions, that `Voltar` returns to the Bosque when possible, that pending Bosque state remains honest on menu exit, and that no Tower/Card/dev-tool launcher entries appear.
+The next operational step is focused human playtest of the published `Bosque Overlay Navigation Hotfix v1` Web/APK package. Validate that Bosque landmarks open Arena/Base/Shop/Social/Profile through shell actions, that `Fechar`, `Voltar` and Esc return to the Bosque when possible, that pending Bosque state remains honest on menu exit, and that no Tower/Card/dev-tool launcher entries appear.
 
 Open decision focus:
 
