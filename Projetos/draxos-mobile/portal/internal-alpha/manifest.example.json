@@ -5,38 +5,38 @@
   "latest_version_code": 19,
   "minimum_supported_version": "0.0.13-alpha.0",
   "minimum_supported_version_code": 13,
-  "released_at": "2026-06-09T00:00:00Z",
+  "released_at": "2026-06-09T22:09:57Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Bosque Overlay Navigation Hotfix v1 publicado na URL principal de Internal Alpha.",
-    "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
+    "Bosque Overlay Interaction Authority v1 publicado na URL principal de Internal Alpha.",
+    "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
     "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
-    "Voltar percorre a pilha do overlay e fechar devolve input ao mesmo node do Bosque sem rebootstrap.",
-    "Arena PVE roda dentro do overlay e bloqueia fechamento durante replay ou mutacao critica.",
-    "Arena PVE exporta HP/Mana iniciais buffados no log e o replay aplica battle_start/participants antes da primeira acao.",
-    "Manifesto recomenda build 0.0.19-alpha.0 e mantem build minima 0.0.13-alpha.0.",
-    "Coletas, deposito no Bau, craft local e orientacao so aparecem como salvos depois de ACK do servidor.",
-    "Nodes do Bosque mantem cooldown por item via node_state.next_spawn_at e descartam rejeicoes terminais de cooldown sem fila infinita.",
-    "Coleta ativa nao reinicia por movimento leve e ACKs de checkpoint nao fazem rollback visual da mesma sessao.",
+    "Voltar, Fechar e Esc/Web usam a mesma autoridade de fechamento do overlay e devolvem input ao mesmo node do Bosque sem rebootstrap.",
+    "Menus abertos pelo Bosque usam rota de overlay sem acao mutante fantasma.",
+    "Refresh read-only nao bloqueia fechamento; respostas tardias sao ignoradas quando o overlay fecha ou muda de rota.",
+    "Arena PVE roda dentro do overlay e bloqueia fechamento apenas durante replay ou mutacao critica explicita.",
+    "Arena PVE agora exporta e exibe HP/Mana iniciais buffados no replay da proxima luta.",
+    "Openworld/Bosque usa operations v2 com ACK obrigatorio e retry local.",
+    "Nodes coletaveis mantem cooldown por item via node_state.next_spawn_at e rejeicoes terminais nao ficam presas na fila.",
+    "Coleta ativa nao reinicia por movimento leve e ACKs nao fazem rollback visual da mesma sessao.",
     "Menu usa busy por escopo para nao congelar acoes independentes durante requisicoes pendentes.",
-    "Fogueira Estavel I so libera station/receitas depois de checkpoint ACK com structures.fogueira_estavel_1 confirmado.",
-    "Coletas locais de Resto ritual e Po cinzento nao alteram Ossos ou Po de Osso globais.",
-    "Arena Preparacao aceita qualquer pocao simples disponivel sem regredir o slot unico por batalha.",
-    "Battle Lab e Progression Lab no Web usam lab-runner remoto com a mesma conta alpha Supabase do jogo.",
+    "Fogueira Estavel I so libera receitas apos ACK de structures.fogueira_estavel_1.",
+    "Portal/Web rodam no Cloudflare Pages; downloads usam login alpha e URLs assinadas temporarias.",
+    "Manifesto recomenda build 0.0.19-alpha.0 e mantem build minima 0.0.13-alpha.0.",
     "Progression Lab usa save separado e nao pontua ranking."
   ],
   "artifacts": {
     "android": {
       "label": "Android APK",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      "sha256": "80d30c54f315d2a0681374ae603a33d8c4cb19759b3bb3262752ccc7f06624d8",
+      "sha256": "acffb52c8ff149b215e86de0e713603018b97ec6b9cd06cea530caa58b1e1f7c",
       "auth_required": true
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      "sha256": "4fa2fba1505d4dfe97e365923209b3ea76c7601a8e9f03da6bf2da8828357de0",
+      "sha256": "72110533a1096a39b53efe55129f066032dc43ad58e5b6e5cbca27556756a34b",
       "auth_required": true
     },
     "web": {
@@ -45,10 +45,9 @@
     }
   },
   "known_issues": [
-    "Fallback estatico nao substitui o manifest remoto versionado para hashes exatos de artefatos.",
     "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
     "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
     "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar / e /web/index.html apos cada deploy.",
-    "Dominio production fixo do Cloudflare Pages e o link oficial de playtest; se Cloudflare Access estiver ativo, validar conteudo com sessao autenticada."
+    "Dominio estavel do Cloudflare Pages pode exigir Cloudflare Access; validacao publica anonima deve usar preview liberado ou sessao autenticada."
   ]
 }

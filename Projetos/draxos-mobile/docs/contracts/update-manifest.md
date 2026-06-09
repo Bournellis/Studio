@@ -17,7 +17,7 @@ https://<project-ref>.supabase.co/functions/v1/release/manifest
 
 A funcao retorna um JSON sem secrets e sem depender de login. A implementacao possui um manifest padrao versionado no repo em `server/functions/release/index.ts` e `supabase/functions/release/index.ts`. Override operacional por `RELEASE_MANIFEST_JSON_BASE64` ou `RELEASE_MANIFEST_JSON` fica disponivel apenas quando `RELEASE_MANIFEST_OVERRIDE_ENABLED=1`, para evitar que secrets antigos mantenham links obsoletos.
 
-O pacote operacional publicado atual e `Bosque Overlay Navigation Hotfix v1` (`0.0.18-alpha.0`, version code `18`). Os downloads default do manifest continuam apontando para os artefatos configurados na funcao de release; nao derivar novos hashes ou URLs a partir do nome do pacote sem nova publicacao de artefatos.
+O pacote operacional publicado atual e `Bosque Overlay Interaction Authority v1` (`0.0.19-alpha.0`, version code `19`). Os downloads default do manifest continuam apontando para os artefatos configurados na funcao de release; nao derivar novos hashes ou URLs a partir do nome do pacote sem nova publicacao de artefatos.
 
 ## Payload
 
@@ -25,21 +25,23 @@ O pacote operacional publicado atual e `Bosque Overlay Navigation Hotfix v1` (`0
 {
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
-  "latest_version": "0.0.18-alpha.0",
-  "latest_version_code": 18,
+  "latest_version": "0.0.19-alpha.0",
+  "latest_version_code": 19,
   "minimum_supported_version": "0.0.13-alpha.0",
   "minimum_supported_version_code": 13,
   "released_at": "2026-06-09T00:00:00Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Bosque Overlay Navigation Hotfix v1 publicado na URL principal de Internal Alpha.",
+    "Bosque Overlay Interaction Authority v1 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
     "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
-    "Voltar percorre a pilha do overlay e fechar devolve input ao mesmo node do Bosque sem rebootstrap.",
-    "Arena PVE roda dentro do overlay e bloqueia fechamento durante replay ou mutacao critica.",
+    "Voltar, Fechar e Esc/Web usam a mesma autoridade de fechamento do overlay e devolvem input ao mesmo node do Bosque sem rebootstrap.",
+    "Menus abertos pelo Bosque usam rota de overlay sem acao mutante fantasma.",
+    "Refresh read-only nao bloqueia fechamento; respostas tardias sao ignoradas quando o overlay fecha ou muda de rota.",
+    "Arena PVE roda dentro do overlay e bloqueia fechamento apenas durante replay ou mutacao critica explicita.",
     "Arena PVE exporta HP/Mana iniciais buffados no log e o replay aplica battle_start/participants antes da primeira acao.",
-    "Manifesto recomenda build 0.0.18-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+    "Manifesto recomenda build 0.0.19-alpha.0 e mantem build minima 0.0.13-alpha.0.",
     "Coletas, deposito no Bau, craft local e orientacao so aparecem como salvos depois de ACK do servidor.",
     "Nodes do Bosque mantem cooldown por item via node_state.next_spawn_at e descartam rejeicoes terminais de cooldown sem fila infinita.",
     "Coleta ativa nao reinicia por movimento leve e ACKs de checkpoint nao fazem rollback visual da mesma sessao.",
@@ -54,13 +56,13 @@ O pacote operacional publicado atual e `Bosque Overlay Navigation Hotfix v1` (`0
     "android": {
       "label": "Android APK",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      "sha256": "80d30c54f315d2a0681374ae603a33d8c4cb19759b3bb3262752ccc7f06624d8",
+      "sha256": "acffb52c8ff149b215e86de0e713603018b97ec6b9cd06cea530caa58b1e1f7c",
       "auth_required": true
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      "sha256": "4fa2fba1505d4dfe97e365923209b3ea76c7601a8e9f03da6bf2da8828357de0",
+      "sha256": "72110533a1096a39b53efe55129f066032dc43ad58e5b6e5cbca27556756a34b",
       "auth_required": true
     },
     "web": {
@@ -92,10 +94,10 @@ O pacote operacional publicado atual e `Bosque Overlay Navigation Hotfix v1` (`0
 | Campo | Valor |
 |---|---|
 | `ProjectInfo.RELEASE_CHANNEL` | `internal_alpha` |
-| `ProjectInfo.APP_VERSION` | `0.0.18-alpha.0` |
-| `ProjectInfo.APP_VERSION_CODE` | `18` |
+| `ProjectInfo.APP_VERSION` | `0.0.19-alpha.0` |
+| `ProjectInfo.APP_VERSION_CODE` | `19` |
 | `ProjectInfo.MANIFEST_SCHEMA_VERSION` | `internal_alpha_manifest_v1` |
 
 ## Evolucao
 
-Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, APK/PC ZIP foram publicados no Supabase Storage unlisted, Portal/Web foram publicados no Cloudflare Pages e o manifest remoto passou a usar hashes/links reais. Em `T03-P18`, o handoff final foi registrado em `../internal-alpha-v0-handoff.md`. Pacotes posteriores atualizaram o fallback versionado do repo conforme a funcao de release. Em `Bosque Diegetic Launcher Foundation v1`, o manifest remoto passou a recomendar `0.0.16-alpha.0`, manter minimo `0.0.13-alpha.0`, documentar o launcher diegetico do Bosque e apontar downloads Android/PC para `GET /release/download` com `INTERNAL_ALPHA_RELEASE_ROOT` no root publicado. Em `Bosque Overlay Navigation Hotfix v1`, o manifest passa a recomendar `0.0.18-alpha.0`, manter minimo `0.0.13-alpha.0` e documentar o hotfix de `Fechar`, `Voltar` e Esc sobre o overlay persistente do Bosque vivo. Em releases futuras, subir `latest_version_code` gera update recomendado, e subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.
+Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, APK/PC ZIP foram publicados no Supabase Storage unlisted, Portal/Web foram publicados no Cloudflare Pages e o manifest remoto passou a usar hashes/links reais. Em `T03-P18`, o handoff final foi registrado em `../internal-alpha-v0-handoff.md`. Pacotes posteriores atualizaram o fallback versionado do repo conforme a funcao de release. Em `Bosque Diegetic Launcher Foundation v1`, o manifest remoto passou a recomendar `0.0.16-alpha.0`, manter minimo `0.0.13-alpha.0`, documentar o launcher diegetico do Bosque e apontar downloads Android/PC para `GET /release/download` com `INTERNAL_ALPHA_RELEASE_ROOT` no root publicado. Em `Bosque Overlay Navigation Hotfix v1`, o manifest passou a recomendar `0.0.18-alpha.0`, manter minimo `0.0.13-alpha.0` e documentar o hotfix de `Fechar`, `Voltar` e Esc sobre o overlay persistente do Bosque vivo. Em `Bosque Overlay Interaction Authority v1`, o manifest passa a recomendar `0.0.19-alpha.0`, manter minimo `0.0.13-alpha.0`, documentar a autoridade unica de fechamento/back/Esc no Web e preservar fechamento durante refresh read-only com guarda contra respostas tardias. Em releases futuras, subir `latest_version_code` gera update recomendado, e subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.

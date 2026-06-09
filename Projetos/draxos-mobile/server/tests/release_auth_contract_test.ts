@@ -50,8 +50,8 @@ Deno.test("release manifest code fallback points at the current published packag
   for (const path of releaseSources) {
     const source = await Deno.readTextFile(path);
     assert(
-      source.includes("internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-9b93e5d"),
-      `${path} should fall back to Bosque Overlay Navigation Hotfix v1, the current package root`,
+      source.includes("internal-alpha/v0-bosque-overlay-interaction-authority-v1-20260609-a8aa9a0"),
+      `${path} should fall back to Bosque Overlay Interaction Authority v1, the current package root`,
     );
     assertEquals(
       source.includes("internal-alpha/v0-foundation-solidification-20260602-906101b"),
