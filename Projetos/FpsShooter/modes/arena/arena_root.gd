@@ -26,16 +26,21 @@ func _process(_delta: float) -> void:
 	if hud != null:
 		hud.update_snapshot(_build_hud_snapshot())
 
-func _unhandled_input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("ui_back"):
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_back"):
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 		else:
 			_capture_mouse_if_playing()
-	if event is InputEventMouseButton and Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
+		get_viewport().set_input_as_handled()
+		return
+	if event is InputEventMouseButton and event.is_pressed() and Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
 		_capture_mouse_if_playing()
-	if Input.is_action_just_pressed("restart_round"):
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("restart_round"):
 		restart_round()
+		get_viewport().set_input_as_handled()
 
 func restart_round() -> void:
 	round_status = "Arena 1x1 V1"
@@ -146,13 +151,13 @@ func _build_hud_snapshot() -> Dictionary:
 		"player_max_health": 1.0 if player == null else player.max_health,
 		"bot_health": 0.0 if bot == null else bot.health,
 		"bot_max_health": 1.0 if bot == null else bot.max_health,
-		"hint": "WASD move | Mouse look | LMB shoot | Space jump | R restart | Esc mouse"
+		"hint": "Click captures mouse | WASD move | Mouse look | LMB shoot | Space jump | R restart | Esc mouse"
 	}
 
-func _add_box(node_name: String, position: Vector3, size: Vector3, color: Color) -> StaticBody3D:
+func _add_box(node_name: String, box_position: Vector3, size: Vector3, color: Color) -> StaticBody3D:
 	var body := StaticBody3D.new()
 	body.name = node_name
-	body.position = position
+	body.position = box_position
 	add_child(body)
 
 	var collider := CollisionShape3D.new()

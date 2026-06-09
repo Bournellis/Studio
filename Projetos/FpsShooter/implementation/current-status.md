@@ -41,6 +41,13 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 Manual smoke lives in `docs/validation.md`.
 
+Latest editor-input fix:
+
+- editor import no longer reports `INT_AS_ENUM_WITHOUT_CAST` in `app_bootstrap.gd`;
+- editor import no longer reports `SHADOWED_VARIABLE_BASE_CLASS` in `arena_root.gd`;
+- HUD controls are mouse-pass-through so FPS look is not swallowed by UI;
+- player mouse look is handled through `_input` and has a slightly stronger bootstrap sensitivity.
+
 ## Read Next
 
 1. `AGENTS.md`

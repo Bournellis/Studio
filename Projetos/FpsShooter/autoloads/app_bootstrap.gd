@@ -26,10 +26,12 @@ func _ensure_input_map() -> void:
 		for binding: Dictionary in ACTIONS[action_name]:
 			if binding["kind"] == "key":
 				var key_event := InputEventKey.new()
-				key_event.physical_keycode = int(binding["code"])
+				var keycode: Key = int(binding["code"]) as Key
+				key_event.physical_keycode = keycode
 				InputMap.action_add_event(action_name, key_event)
 				continue
 
 			var mouse_event := InputEventMouseButton.new()
-			mouse_event.button_index = int(binding["code"])
+			var mouse_button: MouseButton = int(binding["code"]) as MouseButton
+			mouse_event.button_index = mouse_button
 			InputMap.action_add_event(action_name, mouse_event)

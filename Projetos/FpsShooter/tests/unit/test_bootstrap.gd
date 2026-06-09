@@ -2,6 +2,7 @@ extends "res://addons/gut/test.gd"
 
 const BootstrapSceneGeneratorScript = preload("res://tools/bootstrap_scene_generator.gd")
 const CombatantScript = preload("res://gameplay/combat/combatant_3d.gd")
+const PlayerScript = preload("res://gameplay/player/fps_player_controller.gd")
 
 const EXPECTED_ACTIONS: PackedStringArray = [
 	"move_forward",
@@ -46,7 +47,24 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	var player = arena.get_node("RuntimeRoot/Player")
 	assert_not_null(player.get_node_or_null("Head/Camera3D"))
 	assert_true((player.get_node("Head/Camera3D") as Camera3D).current)
-	assert_not_null(arena.get_node("ArenaHud").get_node_or_null("HudRoot/StatusPanel/StatusBox/PlayerLabel"))
+	var hud_root := arena.get_node("ArenaHud/HudRoot") as Control
+	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/PlayerLabel"))
+	assert_eq(hud_root.mouse_filter, Control.MOUSE_FILTER_IGNORE)
+	assert_eq((hud_root.get_node("StatusPanel") as Control).mouse_filter, Control.MOUSE_FILTER_IGNORE)
+	assert_eq((hud_root.get_node("HintLabel") as Control).mouse_filter, Control.MOUSE_FILTER_IGNORE)
+	assert_eq((hud_root.get_node("Crosshair") as Control).mouse_filter, Control.MOUSE_FILTER_IGNORE)
+	assert_no_new_orphans()
+
+func test_player_mouse_motion_updates_view_when_captured() -> void:
+	var player = PlayerScript.new()
+	add_child_autofree(player)
+	await get_tree().process_frame
+
+	var before_yaw: float = player.rotation.y
+	player.apply_mouse_look(Vector2(120.0, -60.0))
+
+	assert_gt(absf(player.rotation.y - before_yaw), 0.01)
+	assert_gt((player.get_node("Head") as Node3D).rotation.x, 0.01)
 	assert_no_new_orphans()
 
 func test_combatant_damage_and_knockback_contract() -> void:

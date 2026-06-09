@@ -5,7 +5,7 @@ signal shoot_requested(origin: Vector3, direction: Vector3, damage: float, knock
 
 @export var move_speed: float = 7.2
 @export var jump_velocity: float = 5.2
-@export var mouse_sensitivity: float = 0.0024
+@export var mouse_sensitivity: float = 0.0034
 @export var shot_damage: float = 22.0
 @export var shot_knockback: float = 7.5
 @export var shot_cooldown: float = 0.18
@@ -18,6 +18,7 @@ var shot_cooldown_remaining: float = 0.0
 
 func _ready() -> void:
 	super._ready()
+	set_process_input(true)
 	configure_for_round()
 	_ensure_camera_nodes()
 
@@ -25,14 +26,14 @@ func configure_for_round() -> void:
 	configure_combatant(&"player", 100.0, Color(0.32, 0.82, 1.0, 1.0))
 	vertical_velocity = 0.0
 	shot_cooldown_remaining = 0.0
+	pitch = 0.0
+	if head != null:
+		head.rotation.x = pitch
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not is_dead:
 		var motion := event as InputEventMouseMotion
-		rotate_y(-motion.relative.x * mouse_sensitivity)
-		pitch = clampf(pitch - motion.relative.y * mouse_sensitivity, deg_to_rad(-82.0), deg_to_rad(82.0))
-		if head != null:
-			head.rotation.x = pitch
+		apply_mouse_look(motion.relative)
 
 func _physics_process(delta: float) -> void:
 	if is_dead:
@@ -55,6 +56,12 @@ func get_shot_origin() -> Vector3:
 
 func get_shot_direction() -> Vector3:
 	return -camera.global_transform.basis.z.normalized() if camera != null else -global_transform.basis.z.normalized()
+
+func apply_mouse_look(relative_motion: Vector2) -> void:
+	rotate_y(-relative_motion.x * mouse_sensitivity)
+	pitch = clampf(pitch - relative_motion.y * mouse_sensitivity, deg_to_rad(-82.0), deg_to_rad(82.0))
+	if head != null:
+		head.rotation.x = pitch
 
 func _handle_shooting() -> void:
 	if not Input.is_action_just_pressed("shoot"):

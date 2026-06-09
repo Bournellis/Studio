@@ -25,7 +25,7 @@ Open `Projetos/FpsShooter/project.godot` in Godot 4.6.2 and press Play.
 
 Expected:
 
-- mouse is captured in the arena;
+- mouse is captured in the arena, or captured after the first click inside the game window;
 - `WASD` moves;
 - mouse look rotates the camera;
 - `Space` jumps;
