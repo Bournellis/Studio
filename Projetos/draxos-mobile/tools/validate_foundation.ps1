@@ -975,6 +975,7 @@ Invoke-Step -Name "PowerShell parse" -Stage "DocsOnly" -Command "[Parser]::Parse
         "tools\check_android_release_keystore.ps1",
         "tools\check_track13_readiness.ps1",
         "tools\check_agent_ops_foundation.ps1",
+        "tools\check_hardening_contracts.ps1",
         "tools\check_foundation_expansion_readiness.ps1"
     )) {
         if (Test-Path -LiteralPath (Join-Path $ProjectPath $optional) -PathType Leaf) {
@@ -986,6 +987,12 @@ Invoke-Step -Name "PowerShell parse" -Stage "DocsOnly" -Command "[Parser]::Parse
 
 Invoke-Step -Name "structural readiness" -Stage "DocsOnly" -Command "required files + real shell/presenter budgets" -ScriptBlock {
     Assert-StructuralReadiness
+}
+
+Invoke-Step -Name "hardening contract guard" -Stage "DocsOnly" -Command ".\tools\check_hardening_contracts.ps1 -ProjectDir ." -ScriptBlock {
+    Invoke-External -Command "check_hardening_contracts.ps1" -WorkingDirectory $ProjectPath -ScriptBlock {
+        & powershell -NoProfile -ExecutionPolicy Bypass -File ".\tools\check_hardening_contracts.ps1" -ProjectDir "."
+    }
 }
 
 Invoke-Step -Name "V2 descriptor schema strictness hook" -Stage "DocsOnly" -Command "strict mode descriptor JSON schema checks" -ScriptBlock {

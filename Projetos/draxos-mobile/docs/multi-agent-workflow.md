@@ -27,7 +27,8 @@ Read in this order before touching files:
 6. `docs/documentation-index.md`
 7. `docs/agent-operating-manual.md`
 8. This file.
-9. The lane or mode contract that owns the work.
+9. `docs/hardening-program.md` for long-term refactor/hardening work.
+10. The lane or mode contract that owns the work.
 
 For Arena PVE or tuning-adjacent work, also read:
 
@@ -120,6 +121,10 @@ intended files, docs read, validation plan and the next handoff point.
 | `mode-scaffolds` | Official mode catalog, mode entry, staged modes and disabled mode affordances. | Mode contracts, registry data, mode shell docs/client/server only if selected. | Mode contract tests, `/modes` checks, no `/minigames` revival. |
 | `platform-v1` | Mode Platform V1 readiness, analytics/admin/reward bridge alignment and cross-mode boundaries. | `docs/contracts/minigame-platform-v1.md`, platform docs/tests. | Platform contract tests, foundation expansion readiness checks. |
 | `validation-release` | Release safety, local/full gates, publish plan/package and remote read-only smokes. | Release runbooks, validation matrices, reports. | Track 13 gates; remote mutation only with task approval and `-ConfirmRemoteMutation`. |
+
+For long-term hardening, `docs/hardening-program.md` is the change-type matrix
+that maps each lane to the minimum validation profile and non-negotiable
+account/save, lab-authority and release-safety boundaries.
 
 ## Mode Ownership
 

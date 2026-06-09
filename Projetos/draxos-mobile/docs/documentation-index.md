@@ -24,6 +24,7 @@
 | `docs/agent-operating-manual.md` | `VIVO` | Detailed agent runbook. |
 | `docs/documentation-index.md` | `VIVO` | This classification map. |
 | `docs/multi-agent-workflow.md` | `VIVO` | Parallel lane/mode workflow, worktree rules, templates and handoff protocol for DraxosMobile hardening work. |
+| `docs/hardening-program.md` | `VIVO` | Long-term hardening/refactor guardrails, change matrix and validation profile mapping for the current package. |
 | `docs/hardening-platform-v1-readiness-report.md` | `HISTORICO` | Published readiness report for Hardening Platform V1, the previous multi-mode platform baseline. |
 | `docs/foundation-hardening-v2-readiness-report.md` | `HISTORICO` | Published readiness report for Foundation Hardening V2, the previous multi-mode expansion enforcement baseline. |
 | `docs/backend-own-boundary.md` | `CONTRATO` | Backend Proprio boundary inventory for future Supabase-to-owned-backend planning without runtime refactor. |
@@ -103,6 +104,7 @@
 | Document | Category | Role |
 |---|---|---|
 | `tools/README.md` | `RUNBOOK` | Tool commands and local validation entrypoint. |
+| `tools/check_hardening_contracts.ps1` | `RUNBOOK` | Docs-safe hardening contract checker wired into `DocsOnly`. |
 | `docs/release-ops-checklist.md` | `RUNBOOK` | Safe release and publication procedure. |
 | `docs/ops/read-only-cli.md` | `RUNBOOK` | Ops CLI runbook for manifest/modes/status/audit/reward/session summaries without remote service role. |
 | `docs/ops/latency-baseline.md` | `RUNBOOK` | Read-only request/action/surface latency baseline workflow and artifact format. |

@@ -132,7 +132,8 @@ For docs-only changes:
 
 - Run `git diff --check`.
 - Run targeted `rg` drift checks against live docs.
-- Run `validate_foundation.ps1 -Profile DocsOnly` from `Projetos/draxos-mobile` when docs affect status or agent operation.
+- Run `validate_foundation.ps1 -Profile DocsOnly` from `Projetos/draxos-mobile` when docs affect status or agent operation; this now includes `tools/check_hardening_contracts.ps1` for validation-profile, account/save, lab-authority, release-safety and mirror-drift boundaries.
+- Run `validate_foundation.ps1 -Profile ReleaseDryRun` after changing PowerShell validation/release tooling.
 
 Do not run build, deploy, upload, manifest deploy, `supabase db push` or remote mutation for documentation-only follow-ups.
 

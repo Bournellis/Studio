@@ -23,6 +23,7 @@ Read live docs in this order:
 10. `docs/game-design-document.md` - implementation reference and mock/substance context.
 11. `docs/design-pending.md` - only live register of unresolved design decisions.
 12. `docs/multi-agent-workflow.md` - required when coordinating parallel hardening lanes or mode work.
+13. `docs/hardening-program.md` - required for long-term refactor/hardening gates across active lanes.
 
 If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
 
@@ -124,6 +125,7 @@ For Foundation Audit, the expected DraxosMobile Doing card must state the branch
 | Small code fix | `AGENTS.md`, `implementation/current-status.md`, touched files |
 | Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md`, `docs/foundation-loop-audit.md` |
 | Multi-agent hardening | `AGENTS.md`, this manual, `docs/multi-agent-workflow.md`, `docs/documentation-index.md`, `docs/foundation-hardening-v2-readiness-report.md` |
+| Long-term refactor/hardening | `AGENTS.md`, this manual, `docs/hardening-program.md`, `docs/multi-agent-workflow.md`, touched lane contracts |
 | Product/design | `docs/product-vision.md`, `docs/pve-arena-initial-direction.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
 | Backend/contracts | `docs/architecture.md`, `docs/contracts/`, `server/schema/`, `server/functions/`, `supabase/` mirrors |
 | Foundation expansion/final polish | `docs/foundation-expansion-readiness.md`, `docs/contracts/account-save.md`, `docs/contracts/ruleset-registry.md`, `docs/contracts/admin-ops.md`, `docs/contracts/minigame-integration.md` |
@@ -140,6 +142,7 @@ Use the smallest profile that proves the change, then broaden when touching shar
 | Change | Minimum validation |
 |---|---|
 | Docs only | `git diff --check`; `validate_foundation.ps1 -Profile DocsOnly` when docs affect status/operation |
+| Hardening/refactor setup | `validate_foundation.ps1 -Profile DocsOnly`, including `tools/check_hardening_contracts.ps1` |
 | PowerShell tools | `validate_foundation.ps1 -Profile ReleaseDryRun` |
 | Godot client | Godot `validate.gd`, GUT client, then `validate_foundation.ps1 -Profile ClientQuick` |
 | Entry/Refugio/Battle layout | `tools/smoke_responsive_layout.gd` plus relevant GUT/client validation |

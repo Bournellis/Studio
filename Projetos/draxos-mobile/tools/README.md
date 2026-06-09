@@ -6,6 +6,7 @@ Ferramentas de desenvolvimento e validacao.
 - `validate_foundation.ps1` - runner unico Track 13/14/17/18 com perfis `DocsOnly`, `ClientQuick`, `ServerQuick`, `ModePlatform`, `DatabaseLocal`, `FullLocal`, `ReleaseDryRun` e `RemoteReadOnly`; gera relatorios em `build/validation/`. Os perfis antigos `Quick`, `Client`, `Release` e `Full` continuam como aliases. `FullPublish` fica desabilitado no runner: publicacao remota deve usar `publish_internal_alpha.ps1` diretamente.
 - `check_foundation_expansion_readiness.ps1` - checker read-only da Foundation Expansion Readiness: contratos, migrations espelhadas, ruleset, shell contracts e testes obrigatorios.
 - `check_release_safety.ps1` - guarda de regressao para publish seguro, parse PowerShell e manifest defaults espelhados.
+- `check_hardening_contracts.ps1` - guarda de contratos de hardening para perfis de validacao, autoridade account/save, Labs como evidencia, release safety e espelhos server/supabase.
 - `check_android_release_keystore.ps1` - gate local de Android release keystore: tuple completa, arquivo local existente quando configurado, ausencia de senha concreta tracked e modo `ReleaseCandidate` sem `debug_fallback`.
 - `check_track13_readiness.ps1` - readiness final da Track 13: docs/status, mirrors, Kanban e budgets duros de shell/presenter (`boot.gd`, `boot_runtime.gd`, `hub_surface_presenter.gd`, `hub_surface_full_presenter.gd`).
 - `check_agent_ops_foundation.ps1` - readiness da Track 14: entrada de agentes, indice documental, portfolio/Kanban, terminologia viva e ausencia de entrypoints obsoletos.
@@ -46,6 +47,7 @@ Validacao local:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\measure_latency_baseline.ps1 -ProjectDir . -Target Remote -Label before
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_mode_definitions.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_hardening_contracts.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_agent_ops_foundation.ps1 -ProjectDir .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_android_release_keystore.ps1 -ProjectDir . -Mode InternalAlpha
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
