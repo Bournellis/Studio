@@ -1,29 +1,41 @@
 {
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
-  "latest_version": "0.0.1-alpha.0",
-  "latest_version_code": 1,
-  "minimum_supported_version": "0.0.1-alpha.0",
-  "minimum_supported_version_code": 1,
-  "released_at": "2026-05-28T04:50:33Z",
+  "latest_version": "0.0.15-alpha.0",
+  "latest_version_code": 15,
+  "minimum_supported_version": "0.0.13-alpha.0",
+  "minimum_supported_version_code": 13,
+  "released_at": "2026-06-09T00:00:00Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Primeira release candidate interna.",
-    "APK Android e PC ZIP compartilham o mesmo backend remoto.",
-    "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage.",
+    "Bosque Bootstrap Authority v1 publicado na URL principal de Internal Alpha.",
+    "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
+    "Bosque integrado oculta o viewport ate aplicar bootstrap remoto ou cache canonico, evitando flash de full spawn.",
+    "Arena PVE exporta HP/Mana iniciais buffados no log e o replay aplica battle_start/participants antes da primeira acao.",
+    "Manifesto recomenda build 0.0.15-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+    "Coletas, deposito no Bau, craft local e orientacao so aparecem como salvos depois de ACK do servidor.",
+    "Nodes do Bosque mantem cooldown por item via node_state.next_spawn_at e descartam rejeicoes terminais de cooldown sem fila infinita.",
+    "Coleta ativa nao reinicia por movimento leve e ACKs de checkpoint nao fazem rollback visual da mesma sessao.",
+    "Menu usa busy por escopo para nao congelar acoes independentes durante requisicoes pendentes.",
+    "Fogueira Estavel I so libera station/receitas depois de checkpoint ACK com structures.fogueira_estavel_1 confirmado.",
+    "Coletas locais de Resto ritual e Po cinzento nao alteram Ossos ou Po de Osso globais.",
+    "Arena Preparacao aceita qualquer pocao simples disponivel sem regredir o slot unico por batalha.",
+    "Battle Lab e Progression Lab no Web usam lab-runner remoto com a mesma conta alpha Supabase do jogo.",
     "Progression Lab usa save separado e nao pontua ranking."
   ],
   "artifacts": {
     "android": {
       "label": "Android APK",
-      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.apk",
-      "sha256": "ad6d2579ce003769cfce2536b788c1330abb283d0ae90cc785d1d016ae514ca6"
+      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22/downloads/draxos-mobile-alpha.apk",
+      "sha256": "207c0eb79f36f3420ca539fbffaf7ce92150c38271df5f608916d4c12b0e8d5c",
+      "auth_required": "false"
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
-      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0/downloads/draxos-mobile-alpha.zip",
-      "sha256": "ad5fb8351bb001604479d95737fc702bb9b0ff6779afb9e3e31692b7bc189031"
+      "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22/downloads/draxos-mobile-alpha.zip",
+      "sha256": "7c0206a3bc0e4b65a5f8a20524921820282904f69e9e8224aff4307bd5cfefa9",
+      "auth_required": "false"
     },
     "web": {
       "label": "Web",
@@ -31,9 +43,10 @@
     }
   },
   "known_issues": [
+    "Fallback estatico nao substitui o manifest remoto versionado para hashes exatos de artefatos.",
     "Layout Android paisagem ainda precisa de ergonomia real no aparelho.",
     "APK desta publicacao usa debug_fallback enquanto a keystore release dedicada nao estiver configurada.",
-    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar / e /web/index.html no dominio production fixo apos cada deploy.",
+    "Web usa hospedagem hibrida Cloudflare Pages + Supabase Storage; validar / e /web/index.html apos cada deploy.",
     "Dominio production fixo do Cloudflare Pages e o link oficial de playtest; se Cloudflare Access estiver ativo, validar conteudo com sessao autenticada."
   ]
 }

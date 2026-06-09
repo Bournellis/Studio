@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-06-07`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; Bosque Fogueira Potion Crafting v1 adiciona `POST /crafting/station-craft` como ponte transacional entre progresso duravel do Bosque e consumiveis globais da conta.
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; `release/*` esta alinhado ao manifest default de Bosque Bootstrap Authority v1 (`0.0.15-alpha.0`, code `15`, minimo `0.0.13-alpha.0`, code `13`).
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -533,7 +533,7 @@ Response:
 
 Retorna o manifest publico de updates da Internal Alpha v0.
 
-Status: **contrato vivo; fallback estatico alinhado ao pacote publicado atual**.
+Status: **contrato vivo; fallback estatico alinhado ao pacote publicado atual Bosque Bootstrap Authority v1**.
 
 Scope: `release`.
 
@@ -545,25 +545,28 @@ Response:
 {
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
-  "latest_version": "0.0.1-alpha.0",
-  "latest_version_code": 1,
-  "minimum_supported_version": "0.0.1-alpha.0",
-  "minimum_supported_version_code": 1,
-  "released_at": "2026-06-05T07:40:08Z",
+  "latest_version": "0.0.15-alpha.0",
+  "latest_version_code": 15,
+  "minimum_supported_version": "0.0.13-alpha.0",
+  "minimum_supported_version_code": 13,
+  "released_at": "2026-06-09T00:00:00Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Bosque v3 UX/Feel publicado na URL principal de Internal Alpha.",
-    "Bosque v3 UX/Feel melhora colisao/spawn, feedback de coleta, deposito, craft, fogueira, landmarks e resumo de visita no Bosque.",
-    "Technical Hardening e Openworld Main Menu Sync seguem preservados dentro deste pacote."
+    "Bosque Bootstrap Authority v1 publicado na URL principal de Internal Alpha.",
+    "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
+    "Bosque integrado oculta o viewport ate aplicar bootstrap remoto ou cache canonico, evitando flash de full spawn.",
+    "Manifesto recomenda build 0.0.15-alpha.0 e mantem build minima 0.0.13-alpha.0."
   ],
   "artifacts": {
-    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45/downloads/draxos-mobile-alpha.apk", "sha256": "4455af96d285a2ac3f5d8268d5d044ff4933eb10303dfbe113d3aba0811efaa5", "auth_required": "false" },
-    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45/downloads/draxos-mobile-alpha.zip", "sha256": "bd2ce982a4bba80eedbd8ff165537dbe4bdc49183139d6e5b8e7e598cff85f93", "auth_required": "false" },
+    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22/downloads/draxos-mobile-alpha.apk", "sha256": "207c0eb79f36f3420ca539fbffaf7ce92150c38271df5f608916d4c12b0e8d5c", "auth_required": "false" },
+    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22/downloads/draxos-mobile-alpha.zip", "sha256": "7c0206a3bc0e4b65a5f8a20524921820282904f69e9e8224aff4307bd5cfefa9", "auth_required": "false" },
     "web": { "label": "Web", "url": "https://draxos-mobile-internal-alpha.pages.dev/web/index.html" }
   }
 }
 ```
+
+Os links Android/PC acima sao os artefatos default configurados no backend da funcao de release. Nao derivar novos hashes ou URLs do nome do pacote sem nova publicacao de artefatos.
 
 Regras do cliente:
 
