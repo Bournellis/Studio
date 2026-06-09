@@ -1,7 +1,10 @@
 # Production Status
 
-- Last Updated: `2026-06-04`
-- Status: `Track 02 complete-run build ready for user playtest; foundation review closed`
+- Last Updated: `2026-06-09`
+- Status: `Track 02 complete-run build preserved; Design Lab content expansion is the current operational bridge before full-run feel playtests`
+
+This file is a production summary. The live operational authority is
+`implementation/current-status.md`.
 
 ## Current Reality
 
@@ -23,9 +26,9 @@ The final foundation ownership/debt map lives in `docs/foundation-closeout.md`.
 
 ## Validation
 
-Latest green local baseline:
+Live validation counts are maintained in `implementation/current-status.md`.
+Preserved production signals:
 
-- GUT: `105/105` tests, `1279` asserts.
 - Full-route smoke: `29/29` maps, 217 estimated turns, 116 HP loss, 0 deaths.
 - Arcano seed `20260518`: 362 Souls earned, 291 spent, 71 left, 38-card final deck, 6 relics, 21 shop actions.
 - Run Lab: `--compare-golden --require-golden` passes for Arcano, Invocador, and Necromante with seed `20260518`; Arcano is exact-golden protected and all three complete `29/29` without death.
@@ -34,7 +37,7 @@ Known non-fatal debt remains optional missing PNG art and ship overlay alpha war
 
 ## Foundation Closeout
 
-Foundation hardening is closed for playtest. Remaining engineering work should be driven by human playtest findings, blocking bugs, or a focused future extraction need. Additional catalog splits, BattleRoot reductions, field-effect extraction or boss-hook extraction are optional future work, not prerequisites for Track 02 playtest.
+Foundation hardening remains closed. Track 02 is technically playable, but new content and tuning candidates should now flow through Design Lab proposal packs before manual promotion and regression protection.
 
 ## Historical Material
 
@@ -42,4 +45,4 @@ Track 01 docs, 13-map notes, save v3/v4 references, and early reward/shop notes 
 
 ## Next Production Step
 
-Run a human playtest of the complete Track 02 route using `docs/playtest-track-02.md`, then tune difficulty, shop economy, relic value, and pacing from observed feedback.
+Author player/enemy card and mechanic ideas as Design Lab proposal packs, tune candidates to viable/recommended, promote accepted content manually, then protect the promoted changes with Card Impact V4.2/V5 and Run Lab smoke/quick before full-run feel playtests.

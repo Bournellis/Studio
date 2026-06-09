@@ -101,14 +101,14 @@ Inimigos usam perfis deterministas por elemento (`terra`, `gelo`, `ar`, `fogo`) 
 
 O objetivo do intent nao e ser uma IA final perfeita; e tornar previsivel o bastante para debug, tuning e feedback humano.
 
-## Validation Baseline
+## Validation Authority
 
-Baseline em 2026-06-03:
+As contagens vivas de validacao e o gate operacional atual ficam em
+`implementation/current-status.md`. Este GDD registra o contrato de design, nao
+substitui o status operacional.
 
-- GUT: 103/103.
-- Test scripts: 7 modular suites, 1271 asserts.
-- Full-route pacing smoke: 29/29 mapas.
-- Telemetria: 217 turnos estimados, 116 HP loss estimado, 0 mortes, 362 Souls earned, 291 Souls spent, 71 Souls left, deck final de 38 cartas, 6 reliquias, 21 acoes de loja.
+- Full-route pacing smoke preservado: 29/29 mapas.
+- Telemetria preservada: 217 turnos estimados, 116 HP loss estimado, 0 mortes, 362 Souls earned, 291 Souls spent, 71 Souls left, deck final de 38 cartas, 6 reliquias, 21 acoes de loja.
 - `route_pacing_simulator.gd` e fonte compartilhada para validacao e Run Lab.
 - `run_lab_golden_metrics.gd` protege a regressao Track 02: Arcano seed `20260518` usa comparacao exata e Invocador/Necromante precisam completar `29/29` sem morte.
 - `catalog_source_loader.gd` monta hoje o catalogo a partir do JSON unico e preserva um seam de dominios para futura divisao sem mudar semantica.
@@ -119,7 +119,8 @@ Track 01 / 13 mapas e save v3/v4 sao material historico. Use apenas como referen
 
 ## Pending Design
 
-- Playtest humano completo da rota 29 mapas.
-- Ajuste de dificuldade, shop economy, reliquias e pacing apos feedback.
+- Criar proposal packs no Design Lab para novas cartas de jogador/inimigo e mecanicas antes de playtests completos de sensacao.
+- Promover manualmente apenas candidatos viaveis/recomendados e proteger com Card Impact V4.2/V5 e Run Lab smoke/quick.
+- Ajuste de dificuldade, shop economy, reliquias e pacing apos feedback humano.
 - Run Lab serve para regressao e comparacao de tuning, nao como substituto de playtest.
 - Checklist vivo de playtest: `playtest-track-02.md`.

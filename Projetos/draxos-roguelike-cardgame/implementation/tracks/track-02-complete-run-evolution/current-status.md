@@ -1,5 +1,8 @@
 # Track 02 Current Status
 
+> Historical Track 02 snapshot. This file preserves track detail and does not
+> replace `../../current-status.md`, which is the live operational authority.
+
 - Last Updated: `2026-06-06`
 - Status: `T02-P09_COMPLETE`
 - Scope: `First complete 29-map version of the Draxos roguelike cardgame`
@@ -42,7 +45,7 @@ The target is a fixed, linear 29-map run with all planned encounter types, all p
 
 Completed prompt: `ENEMY-CARD-REDESIGN-BATCH-02-USING-V5-TERRA - apply a focused Terra enemy-card batch under Card Impact V5 before/change/after/compare with explicit Battle Lab review`.
 
-Next implementation prompt: `TRACK-02-MANUAL-PLAYTEST-REVIEW - run or collect a human complete-route playtest before additional tuning`. If implementation continues before that, use a very small V5 enemy batch and keep Battle Lab as the broader encounter veto. Track 02 remains ready for user playtest.
+Next implementation pointer: follow `../../current-status.md`. The current operational bridge is Design Lab proposal packs, manual promotion of viable/recommended candidates, then Card Impact V4.2/V5 plus Run Lab smoke/quick before full-run feel playtests. This track snapshot preserves the earlier playtest-ready state as historical evidence.
 
 ## Implemented Baseline
 
@@ -153,6 +156,7 @@ Next implementation prompt: `TRACK-02-MANUAL-PLAYTEST-REVIEW - run or collect a 
 
 Every future Track 02 implementation or playtest-fix thread must:
 
+- read `../../current-status.md` as the live status authority before using this historical snapshot;
 - read this file and `implementation-prompts.md`;
 - execute exactly one focused fix group unless the user explicitly expands scope;
 - run the required validation;
@@ -162,4 +166,4 @@ Every future Track 02 implementation or playtest-fix thread must:
 
 ## Current Risk
 
-Track 02 is ready for user playtest and now has multiple real player-card and enemy-card redesign cycles plus Card Impact V4/V4.1/V4.2/V5 coverage validated. Remaining risk is human balance feedback: the deterministic full-route smoke, AutoRun Gate Pack macro matrices, Scenario Fixtures V1, Gameplay Lab V1, Card Impact Pack V1/V2/V3/V4/V4.1/V4.2/V5 and card redesign batches validate structure, tuning trends, small named regression signals, isolated combat behavior, card-specific before/after movement, player-card effect deltas, promoted card-flow expectations and enemy-card causal signatures, but they are not substitutes for a manual run. Current Card Impact coverage now includes active reward-card families, temporary ability power signatures, card-flow observability, explicit Colheita card-flow thresholds, a broader reward-card batch proven under V4.2, required causal signatures for all 30 enemy cards, and two accepted V5 enemy-card batches including a focused Terra pass. The recommended next step is direct manual playtest of the complete route before additional tuning.
+Track 02 remains technically playtest-ready and now has multiple real player-card and enemy-card redesign cycles plus Card Impact V4/V4.1/V4.2/V5 coverage validated. Remaining risk is human balance feedback: the deterministic full-route smoke, AutoRun Gate Pack macro matrices, Scenario Fixtures V1, Gameplay Lab V1, Card Impact Pack V1/V2/V3/V4/V4.1/V4.2/V5 and card redesign batches validate structure, tuning trends, small named regression signals, isolated combat behavior, card-specific before/after movement, player-card effect deltas, promoted card-flow expectations and enemy-card causal signatures, but they are not substitutes for a manual run. Current Card Impact coverage now includes active reward-card families, temporary ability power signatures, card-flow observability, explicit Colheita card-flow thresholds, a broader reward-card batch proven under V4.2, required causal signatures for all 30 enemy cards, and two accepted V5 enemy-card batches including a focused Terra pass. The live next step is governed by `../../current-status.md`: Design Lab proposal packs, manual promotion of viable/recommended candidates, and Card Impact V4.2/V5 plus Run Lab smoke/quick before full-run feel playtests.

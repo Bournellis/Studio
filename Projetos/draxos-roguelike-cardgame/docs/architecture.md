@@ -15,7 +15,7 @@ For closeout ownership and remaining debt, use `docs/foundation-closeout.md` tog
 
 | Layer | Live owner | Rule |
 |---|---|---|
-| Product status | `implementation/current-status.md` and `docs/production-status.md` | Keep current state short; put historical detail in track docs. |
+| Product status | `implementation/current-status.md` | Live operational authority. `docs/production-status.md` is a production summary/history and must not override the status root. |
 | Human playtest | `docs/playtest-track-02.md` | Human feedback decides balance and clarity after automated gates pass. |
 | Run state | `core/run_session.gd` | Public run API and snapshot v5 stay here; services delegate internal work. |
 | Rewards | `core/run_reward_service.gd` behind `RunSession` | Reward payloads, pending queues and category state remain compatible. |
@@ -172,7 +172,7 @@ Responsibilities:
 - run GUT;
 - report playtest readiness and known non-fatal art alpha debts.
 
-Expected baseline after 2026-06-05 AutoRun Gate Pack V1: GUT 111/111 with 1313 asserts, full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, smoke/quick AutoRun gate commands green, quick AutoRun matrix output, scorecard output, and repeated validation does not dirty generated content when the JSON is unchanged.
+Live validation counts live in `implementation/current-status.md`. Preserved architecture signals include full-route smoke 29/29 through the shared route pacing simulator, Arcano seed `20260518` protected by exact golden metrics, smoke/quick AutoRun gate commands, quick AutoRun matrix output, scorecard output, and repeated validation that does not dirty generated content when the JSON is unchanged.
 
 ### `Run Lab`
 

@@ -1,7 +1,7 @@
 # Product Brief
 
-- Last Updated: `2026-06-03`
-- Status: `Track 02 complete-run build ready for user playtest`
+- Last Updated: `2026-06-09`
+- Status: `Track 02 complete-run build preserved; Design Lab-guided content expansion before full-run feel playtests`
 
 ## Identity
 
@@ -51,9 +51,10 @@ The current checkpoint is Track 02 complete-run build:
 - Deterministic hybrid enemy AI and visible enemy intent.
 - Encounter modes, board formats, field effects, and boss hooks for maps 8/15/22/29.
 - Shared validation/Run Lab telemetry for full-route pacing smoke, with Track 02 golden regression comparison.
+- Design Lab proposal packs for lab-only card/mechanic/enemy exploration before official content promotion.
 - Internal directors/services for enemy AI/intent, reward choices, Souls shop, battle preview data, HUD/objective readouts, combat FX presentation, and catalog source loading.
 
-Current validation baseline on 2026-06-03: GUT 103/103 across 7 modular suites, 1271 asserts, full-route pacing smoke 29/29, 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, and 21 estimated shop actions. Run Lab golden comparison passes for Arcano, Invocador, and Necromante with seed `20260518`.
+Live validation counts and the current operational gate live in `implementation/current-status.md`. Preserved production telemetry includes full-route pacing smoke 29/29, 217 estimated turns, 116 estimated HP loss, 0 deaths, 362 Souls earned, 291 Souls spent, 71 Souls left, 38-card final deck, 6 relics, 21 estimated shop actions, and Run Lab golden comparison for Arcano, Invocador, and Necromante with seed `20260518`.
 
 ## Historical Material
 
@@ -61,4 +62,4 @@ Track 01 / 13-map material is historical unless a document explicitly says it ha
 
 ## Open Product Risk
 
-The build is technically validated and ready for user playtest, but human balance feedback is still pending. Run Lab telemetry is useful for regression and tuning comparisons; it is not a substitute for playtest.
+The build is technically validated and remains playtestable, but the current recommended path is to create Design Lab proposal packs first, promote only viable/recommended candidates manually, then protect them with Card Impact V4.2/V5 and Run Lab smoke/quick before full-run feel playtests. Run Lab telemetry is useful for regression and tuning comparisons; it is not a substitute for playtest.
