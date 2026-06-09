@@ -1,11 +1,11 @@
 # DraxosMobile - Multi-Agent Workflow
 
 - Status: `VIVO`
-- Last updated: `2026-06-05`
+- Last updated: `2026-06-09`
 - Scope: coordination workflow for hardening lanes, mode work and handoffs.
-- Current published package: `Arena PVE First Real Run + Update Recovery`.
+- Current published package: `Bosque Bootstrap Authority v1`.
 - Previous hardening/live-doc baseline: `Foundation Hardening V2`.
-- Current Arena loop context: `Track 23 - Arena PVE First Real Run + Update Recovery`, preserving Track 21 unlock/friction rules.
+- Current Arena/Autobattler context: Track 18/20/21 plus preserved Arena PVE packages, including Arena PVE Bonus Visual v1.
 
 ## Purpose
 
@@ -49,11 +49,12 @@ For release or validation work, also read:
 
 ## Track Reading Rules
 
-Arena PVE First Real Run + Update Recovery is the current published Internal Alpha package. Bosque v3 UX/Feel remains the previous content/polish package, Technical Hardening remains the previous technical package and Openworld Main Menu Sync remains the previous Openworld content package preserved inside it.
+Bosque Bootstrap Authority v1 is the current published Internal Alpha package: release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview evidence `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, Portal `https://draxos-mobile-internal-alpha.pages.dev/`, Web `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, APK/manifest `0.0.15-alpha.0` / version code `15`, minimum supported version code `13`. Initial human playtest was reported OK by Fabio on `2026-06-09`, so the immediate operational focus is documentation drift cleanup and live-source consolidation.
 Foundation Hardening V2 remains the previous baseline for multi-agent and
 multi-mode enforcement. Hardening Platform V1 remains the previous platform
-baseline. Track 23 is the current Arena recovery package for agents to use as
-Autobattler/Arena context; Track 21 remains the preserved unlock/friction context.
+baseline. Arena PVE remains the first approved product core; Track 18/20/21 and
+the later preserved Arena packages remain Autobattler/Arena context. Bosque/Openworld
+is an integrated Internal Alpha slice, not authorization for broad expansion.
 Later link/status hotfixes may be recorded in
 `implementation/current-status.md` or portfolio docs, but they do not reopen
 Track 18/19/20 contracts unless the current task explicitly says so.
@@ -182,6 +183,9 @@ git status --short
 Expected nuance: historical docs may still mention older tracks. Live entry
 docs should not tell new agents that Track 16, Track 18, Track 19, Track 21,
 Remote Lab Runner, Hardening Platform V1, Foundation Hardening V2, Openworld
-Main Menu Sync or Technical Hardening is the latest remote package when Bosque
-v3 UX/Feel is the intended current publication. Foundation Hardening V2 remains valid as hardening/live-doc
+Main Menu Sync, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run,
+Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Arena PVE Menu Flow
+Simplification v1, Bosque Fogueira Potion Crafting v1 or Bosque Feel & Spawn
+Authority v1 is the latest remote package. Bosque Bootstrap Authority v1 is the
+current publication; Foundation Hardening V2 remains valid as hardening/live-doc
 baseline, and Track 21 remains valid as Arena loop context.
