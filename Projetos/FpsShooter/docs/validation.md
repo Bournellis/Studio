@@ -29,8 +29,11 @@ Expected:
 - `WASD` moves;
 - mouse look rotates the camera;
 - `Space` jumps;
-- left click shoots;
+- left click shoots while mouse is captured;
+- aiming at the bot and shooting reduces bot health;
 - bot moves and shoots;
 - health values change;
 - `R` restarts the round;
-- `Esc` releases/captures mouse.
+- `Esc` opens the menu;
+- the menu sensitivity slider changes mouse look speed;
+- `Retomar` or `Esc` closes the menu and captures mouse again.

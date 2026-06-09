@@ -20,6 +20,7 @@ func before_all() -> void:
 	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
 
 func after_each() -> void:
+	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func test_input_actions_are_bootstrapped() -> void:
@@ -53,6 +54,7 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_eq((hud_root.get_node("StatusPanel") as Control).mouse_filter, Control.MOUSE_FILTER_IGNORE)
 	assert_eq((hud_root.get_node("HintLabel") as Control).mouse_filter, Control.MOUSE_FILTER_IGNORE)
 	assert_eq((hud_root.get_node("Crosshair") as Control).mouse_filter, Control.MOUSE_FILTER_IGNORE)
+	assert_not_null(hud_root.get_node_or_null("PauseMenuPanel/PauseMenuMargin/PauseMenuBox/SensitivitySlider"))
 	assert_no_new_orphans()
 
 func test_player_mouse_motion_updates_view_when_captured() -> void:
@@ -63,8 +65,49 @@ func test_player_mouse_motion_updates_view_when_captured() -> void:
 	var before_yaw: float = player.rotation.y
 	player.apply_mouse_look(Vector2(120.0, -60.0))
 
+	assert_lt(player.mouse_sensitivity, 0.0034)
 	assert_gt(absf(player.rotation.y - before_yaw), 0.01)
 	assert_gt((player.get_node("Head") as Node3D).rotation.x, 0.01)
+	assert_no_new_orphans()
+
+func test_player_shot_ray_damages_bot_when_aimed_at_body() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var before: float = bot.health
+	var origin: Vector3 = player.get_shot_origin()
+	var aim_point: Vector3 = bot.global_position + Vector3.UP * 1.2
+	var direction: Vector3 = (aim_point - origin).normalized()
+	arena._on_player_shot(origin, direction, player.shot_damage, player.shot_knockback)
+
+	assert_lt(bot.health, before)
+	assert_gt(bot.knockback_velocity.length(), 0.1)
+	assert_no_new_orphans()
+
+func test_escape_menu_exposes_sensitivity_slider() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+
+	var player = arena.debug_get_player()
+	var hud = arena.get_node("ArenaHud")
+	arena._set_menu_open(true)
+	assert_true(get_tree().paused)
+	assert_true(hud.pause_menu_panel.visible)
+
+	hud.sensitivity_slider.value = 0.0012
+	assert_almost_eq(player.mouse_sensitivity, 0.0012, 0.00001)
+
+	arena._set_menu_open(false)
+	assert_false(get_tree().paused)
+	assert_false(hud.pause_menu_panel.visible)
 	assert_no_new_orphans()
 
 func test_combatant_damage_and_knockback_contract() -> void:

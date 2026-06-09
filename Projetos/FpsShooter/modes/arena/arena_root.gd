@@ -8,16 +8,18 @@ const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FLOOR_SIZE: Vector3 = Vector3(26.0, 1.0, 26.0)
 const WALL_HEIGHT: float = 3.2
 const WALL_THICKNESS: float = 0.8
-const PLAYER_SPAWN: Vector3 = Vector3(-7.0, 1.1, 5.2)
-const BOT_SPAWN: Vector3 = Vector3(7.0, 1.1, -5.2)
+const PLAYER_SPAWN: Vector3 = Vector3(-7.0, 0.05, 5.2)
+const BOT_SPAWN: Vector3 = Vector3(7.0, 0.05, -5.2)
 
 var player
 var bot
 var hud
 var round_status: String = "Arena 1x1 V1"
 var round_ended: bool = false
+var menu_open: bool = false
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_configure_world()
 	_spawn_runtime()
 	_capture_mouse_if_playing()
@@ -28,11 +30,10 @@ func _process(_delta: float) -> void:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_back"):
-		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		else:
-			_capture_mouse_if_playing()
+		_set_menu_open(not menu_open)
 		get_viewport().set_input_as_handled()
+		return
+	if menu_open:
 		return
 	if event is InputEventMouseButton and event.is_pressed() and Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
 		_capture_mouse_if_playing()
@@ -43,6 +44,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func restart_round() -> void:
+	_set_menu_open(false)
 	round_status = "Arena 1x1 V1"
 	round_ended = false
 	player.global_position = PLAYER_SPAWN
@@ -117,9 +119,14 @@ func _spawn_runtime() -> void:
 	hud = ArenaHudScript.new()
 	hud.name = "ArenaHud"
 	add_child(hud)
+	hud.sensitivity_changed.connect(_on_sensitivity_changed)
+	hud.resume_requested.connect(func() -> void:
+		_set_menu_open(false)
+	)
+	hud.set_sensitivity_value(player.mouse_sensitivity)
 
 func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockback: float) -> void:
-	if round_ended:
+	if round_ended or menu_open:
 		return
 	var query := PhysicsRayQueryParameters3D.create(origin, origin + direction.normalized() * 96.0)
 	query.exclude = [player.get_rid()]
@@ -135,11 +142,13 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 			hud.flash_hit()
 
 func _on_player_died() -> void:
+	_set_menu_open(false)
 	round_ended = true
 	round_status = "Bot venceu. Aperte R para reiniciar."
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _on_bot_died() -> void:
+	_set_menu_open(false)
 	round_ended = true
 	round_status = "Player venceu. Aperte R para reiniciar."
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -151,7 +160,7 @@ func _build_hud_snapshot() -> Dictionary:
 		"player_max_health": 1.0 if player == null else player.max_health,
 		"bot_health": 0.0 if bot == null else bot.health,
 		"bot_max_health": 1.0 if bot == null else bot.max_health,
-		"hint": "Click captures mouse | WASD move | Mouse look | LMB shoot | Space jump | R restart | Esc mouse"
+		"hint": "Click captures mouse | WASD move | Mouse look | LMB shoot | Space jump | R restart | Esc menu"
 	}
 
 func _add_box(node_name: String, box_position: Vector3, size: Vector3, color: Color) -> StaticBody3D:
@@ -185,4 +194,22 @@ func _add_box(node_name: String, box_position: Vector3, size: Vector3, color: Co
 func _capture_mouse_if_playing() -> void:
 	if DisplayServer.get_name().to_lower().contains("headless"):
 		return
+	if menu_open or round_ended:
+		return
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+func _set_menu_open(is_open: bool) -> void:
+	menu_open = is_open
+	get_tree().paused = menu_open
+	if hud != null:
+		hud.set_pause_menu_visible(menu_open, player.mouse_sensitivity)
+	if menu_open:
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	else:
+		_capture_mouse_if_playing()
+
+func _on_sensitivity_changed(value: float) -> void:
+	if player != null:
+		player.set_mouse_sensitivity(value)
+	if hud != null:
+		hud.set_sensitivity_value(player.mouse_sensitivity)

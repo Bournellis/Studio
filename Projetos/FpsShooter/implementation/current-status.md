@@ -46,7 +46,14 @@ Latest editor-input fix:
 - editor import no longer reports `INT_AS_ENUM_WITHOUT_CAST` in `app_bootstrap.gd`;
 - editor import no longer reports `SHADOWED_VARIABLE_BASE_CLASS` in `arena_root.gd`;
 - HUD controls are mouse-pass-through so FPS look is not swallowed by UI;
-- player mouse look is handled through `_input` and has a slightly stronger bootstrap sensitivity.
+- player mouse look is handled through `_input`.
+
+Latest shoot/menu fix:
+
+- default mouse sensitivity lowered to `0.0018`;
+- player shooting can be requested directly from input events and still respects cooldown;
+- combatant collider now matches the visible capsule body so eye-height hitscan can damage the bot;
+- `Esc` opens a pause menu with a sensitivity slider and `Retomar` button.
 
 ## Read Next
 

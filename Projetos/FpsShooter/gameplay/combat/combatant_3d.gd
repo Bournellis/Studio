@@ -4,6 +4,10 @@ extends CharacterBody3D
 signal damaged(amount: float, remaining_health: float)
 signal died()
 
+const BODY_HEIGHT: float = 1.65
+const BODY_RADIUS: float = 0.38
+const BODY_CENTER_Y: float = BODY_HEIGHT * 0.5
+
 var combatant_id: StringName = &"combatant"
 var max_health: float = 100.0
 var health: float = 100.0
@@ -59,9 +63,10 @@ func _ensure_body_nodes() -> void:
 	if get_node_or_null("CollisionShape3D") == null:
 		var collider := CollisionShape3D.new()
 		collider.name = "CollisionShape3D"
+		collider.position = Vector3(0.0, BODY_CENTER_Y, 0.0)
 		var capsule := CapsuleShape3D.new()
-		capsule.height = 1.65
-		capsule.radius = 0.38
+		capsule.height = BODY_HEIGHT
+		capsule.radius = BODY_RADIUS
 		collider.shape = capsule
 		add_child(collider)
 
@@ -69,10 +74,10 @@ func _ensure_body_nodes() -> void:
 		var mesh_instance := MeshInstance3D.new()
 		mesh_instance.name = "MeshInstance3D"
 		var mesh := CapsuleMesh.new()
-		mesh.height = 1.65
-		mesh.radius = 0.38
+		mesh.height = BODY_HEIGHT
+		mesh.radius = BODY_RADIUS
 		mesh_instance.mesh = mesh
-		mesh_instance.position = Vector3(0.0, 0.82, 0.0)
+		mesh_instance.position = Vector3(0.0, BODY_CENTER_Y, 0.0)
 		mesh_instance.material_override = _build_material(body_color)
 		add_child(mesh_instance)
 

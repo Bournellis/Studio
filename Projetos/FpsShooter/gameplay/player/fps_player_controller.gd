@@ -3,9 +3,13 @@ extends "res://gameplay/combat/combatant_3d.gd"
 
 signal shoot_requested(origin: Vector3, direction: Vector3, damage: float, knockback: float)
 
+const MIN_MOUSE_SENSITIVITY: float = 0.0008
+const MAX_MOUSE_SENSITIVITY: float = 0.0032
+const DEFAULT_MOUSE_SENSITIVITY: float = 0.0018
+
 @export var move_speed: float = 7.2
 @export var jump_velocity: float = 5.2
-@export var mouse_sensitivity: float = 0.0034
+@export var mouse_sensitivity: float = DEFAULT_MOUSE_SENSITIVITY
 @export var shot_damage: float = 22.0
 @export var shot_knockback: float = 7.5
 @export var shot_cooldown: float = 0.18
@@ -34,6 +38,9 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not is_dead:
 		var motion := event as InputEventMouseMotion
 		apply_mouse_look(motion.relative)
+		return
+	if event.is_action_pressed("shoot"):
+		request_shot()
 
 func _physics_process(delta: float) -> void:
 	if is_dead:
@@ -63,13 +70,20 @@ func apply_mouse_look(relative_motion: Vector2) -> void:
 	if head != null:
 		head.rotation.x = pitch
 
-func _handle_shooting() -> void:
-	if not Input.is_action_just_pressed("shoot"):
+func set_mouse_sensitivity(next_sensitivity: float) -> void:
+	mouse_sensitivity = clampf(next_sensitivity, MIN_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY)
+
+func request_shot() -> void:
+	if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
 		return
 	if shot_cooldown_remaining > 0.0:
 		return
 	shot_cooldown_remaining = shot_cooldown
 	shoot_requested.emit(get_shot_origin(), get_shot_direction(), shot_damage, shot_knockback)
+
+func _handle_shooting() -> void:
+	if Input.is_action_just_pressed("shoot"):
+		request_shot()
 
 func _handle_movement(delta: float) -> void:
 	var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
