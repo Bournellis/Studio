@@ -12,6 +12,7 @@ const EXPECTED_ACTIONS: PackedStringArray = [
 	"move_right",
 	"jump",
 	"shoot",
+	"alt_fire",
 	"restart_round",
 	"ui_back"
 ]
@@ -53,6 +54,9 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Player"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Bot"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/BotRepositionPoints"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/Projectiles"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/HealthShard"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/Overcharge"))
 	assert_not_null(arena.get_node_or_null("ArenaHud"))
 	assert_not_null(arena.get_node_or_null("FeedbackController"))
 
@@ -68,6 +72,7 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/PlayerLabel"))
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/PlayerHealthBar"))
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/BotHealthBar"))
+	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/CombatLoopLabel"))
 	assert_not_null(hud_root.get_node_or_null("DamageOverlay"))
 	assert_eq(hud_root.mouse_filter, Control.MOUSE_FILTER_IGNORE)
 	assert_eq((hud_root.get_node("StatusPanel") as Control).mouse_filter, Control.MOUSE_FILTER_IGNORE)
@@ -201,6 +206,164 @@ func test_player_miss_feedback_does_not_damage_bot() -> void:
 	assert_gt(hud.miss_count, 0)
 	assert_eq(feedback.last_event, &"miss")
 	assert_gt(feedback.miss_count, 0)
+	assert_no_new_orphans()
+
+func test_player_alt_fire_emits_overcharged_plasma_payload() -> void:
+	var player = PlayerScript.new()
+	add_child_autofree(player)
+	await get_tree().process_frame
+
+	var payloads: Array[Dictionary] = []
+	player.alt_fire_requested.connect(func(origin: Vector3, direction: Vector3, damage: float, knockback: float, speed: float, radius: float, overcharged: bool) -> void:
+		payloads.append({
+			"origin": origin,
+			"direction": direction,
+			"damage": damage,
+			"knockback": knockback,
+			"speed": speed,
+			"radius": radius,
+			"overcharged": overcharged
+		})
+	)
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	player.grant_overcharge()
+	player.request_alt_fire()
+
+	assert_eq(payloads.size(), 1)
+	assert_true(bool(payloads[0].get("overcharged", false)))
+	assert_gt(float(payloads[0].get("damage", 0.0)), player.alt_fire_damage)
+	assert_gt(float(payloads[0].get("knockback", 0.0)), player.alt_fire_knockback)
+	assert_false(player.has_overcharge_charge())
+	assert_gt(player.alt_fire_cooldown_remaining, 0.0)
+	assert_no_new_orphans()
+
+func test_player_alt_fire_spawns_visible_plasma_projectile() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var hud = arena.get_node("ArenaHud")
+	var feedback = arena.get_node("FeedbackController")
+	bot.shoot_cooldown_remaining = 99.0
+	var origin: Vector3 = player.get_shot_origin()
+	var direction: Vector3 = (bot.get_body_center() - origin).normalized()
+	arena._on_player_alt_fire(origin, direction, player.alt_fire_damage, player.alt_fire_knockback, player.alt_fire_speed, player.alt_fire_radius, false)
+
+	assert_eq(arena.debug_get_active_projectile_count(), 1)
+	assert_eq(hud.last_feedback, &"plasma_shot")
+	assert_gt(hud.alt_fire_count, 0)
+	assert_gt(feedback.plasma_shot_count, 0)
+	assert_no_new_orphans()
+
+func test_player_plasma_bolt_hits_bot_with_strong_knockback() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var hud = arena.get_node("ArenaHud")
+	var feedback = arena.get_node("FeedbackController")
+	bot.shoot_cooldown_remaining = 99.0
+	bot.reaction_remaining = 99.0
+	var before: float = bot.health
+	var origin: Vector3 = player.get_shot_origin()
+	var direction: Vector3 = (bot.get_body_center() - origin).normalized()
+	arena._on_player_alt_fire(origin, direction, player.alt_fire_damage, player.alt_fire_knockback, player.alt_fire_speed, player.alt_fire_radius, true)
+	for _step in range(80):
+		await get_tree().physics_frame
+		if arena.debug_get_active_projectile_count() == 0:
+			break
+
+	assert_lt(bot.health, before)
+	assert_gt(bot.debug_get_last_knockback_impulse().y, 2.0)
+	assert_eq(hud.last_feedback, &"hit")
+	assert_gt(feedback.plasma_hit_count, 0)
+	assert_gt(feedback.knockback_count, 0)
+	assert_no_new_orphans()
+
+func test_pickups_heal_player_and_grant_overcharge() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var feedback = arena.get_node("FeedbackController")
+	player.take_damage(45.0, &"test")
+	var damaged_health: float = player.health
+	var health_position: Vector3 = arena.debug_get_pickup_position(&"health")
+	player.global_position = health_position - Vector3.UP * 0.82
+	await get_tree().physics_frame
+
+	assert_gt(player.health, damaged_health)
+	assert_false(arena.debug_is_pickup_available(&"health"))
+	assert_gt(feedback.pickup_count, 0)
+
+	arena.debug_force_pickup_available(&"overcharge", true)
+	var overcharge_position: Vector3 = arena.debug_get_pickup_position(&"overcharge")
+	player.global_position = overcharge_position - Vector3.UP * 0.82
+	await get_tree().physics_frame
+
+	assert_true(player.has_overcharge_charge())
+	assert_false(arena.debug_is_pickup_available(&"overcharge"))
+	assert_no_new_orphans()
+
+func test_bot_prioritizes_health_pickup_when_hurt() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	var health_position: Vector3 = arena.debug_get_pickup_position(&"health")
+	bot.take_damage(65.0, &"test")
+	bot.global_position = health_position + Vector3(2.4, -1.37, 0.0)
+	bot.reaction_remaining = 1.0
+	bot.shoot_cooldown_remaining = 3.0
+	arena.debug_force_pickup_available(&"health", true)
+	await get_tree().physics_frame
+
+	assert_eq(bot.debug_get_state(), &"reposition")
+	var destination: Vector3 = bot.debug_get_reposition_destination()
+	assert_lt(Vector3(destination.x, 0.0, destination.z).distance_to(Vector3(health_position.x, 0.0, health_position.z)), 0.2)
+	assert_no_new_orphans()
+
+func test_bot_receives_plasma_threat_and_can_dodge() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var threat_origin: Vector3 = bot.get_body_center() + Vector3.RIGHT * 2.0
+	arena._spawn_player_plasma_bolt(threat_origin, Vector3.LEFT, player.alt_fire_damage, player.alt_fire_knockback, player.alt_fire_speed, player.alt_fire_radius, false)
+	arena._update_bot_awareness()
+
+	assert_true(bot.debug_is_projectile_dodging())
+	assert_eq(arena.debug_get_active_projectile_count(), 1)
 	assert_no_new_orphans()
 
 func test_escape_menu_exposes_sensitivity_slider() -> void:
@@ -522,6 +685,8 @@ func _add_static_blocker(parent: Node, blocker_position: Vector3, blocker_size: 
 func _place_open_duel(arena: Node) -> void:
 	var player = arena.debug_get_player()
 	var bot = arena.debug_get_bot()
+	arena.debug_force_pickup_available(&"health", false)
+	arena.debug_force_pickup_available(&"overcharge", false)
 	player.global_position = Vector3(12.2, 0.05, 4.8)
 	player.rotation = Vector3.ZERO
 	bot.global_position = Vector3(12.2, 0.05, -4.8)

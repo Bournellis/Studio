@@ -34,6 +34,13 @@ const STATE_DEAD: StringName = &"dead"
 @export var target_upper_visibility_height: float = 1.18
 @export var target_center_visibility_height: float = 0.82
 @export var target_lower_visibility_height: float = 0.42
+@export var low_health_pickup_threshold: float = 0.48
+@export var pickup_interest_distance: float = 17.0
+@export var overcharge_interest_distance: float = 14.0
+@export var overcharge_damage_multiplier: float = 1.25
+@export var overcharge_knockback_multiplier: float = 1.18
+@export var projectile_dodge_radius: float = 3.2
+@export var projectile_dodge_strength: float = 1.2
 
 var target
 var shoot_cooldown_remaining: float = 0.0
@@ -56,6 +63,14 @@ var last_has_line_of_sight: bool = false
 var last_visible_target_position: Vector3 = Vector3.ZERO
 var stuck_time: float = 0.0
 var last_desired_move: Vector3 = Vector3.ZERO
+var health_pickup_position: Vector3 = Vector3.ZERO
+var health_pickup_available: bool = false
+var overcharge_pickup_position: Vector3 = Vector3.ZERO
+var overcharge_pickup_available: bool = false
+var projectile_threat_active: bool = false
+var projectile_threat_position: Vector3 = Vector3.ZERO
+var projectile_threat_velocity: Vector3 = Vector3.ZERO
+var overcharge_shots_remaining: int = 0
 
 func _ready() -> void:
 	super._ready()
@@ -80,6 +95,8 @@ func configure(next_target) -> void:
 	last_has_line_of_sight = false
 	pending_shot_direction = Vector3.ZERO
 	stuck_time = 0.0
+	projectile_threat_active = false
+	overcharge_shots_remaining = 0
 	_cancel_windup(STATE_ENGAGE)
 
 func set_reposition_points(points: Array[Vector3]) -> void:
@@ -88,6 +105,25 @@ func set_reposition_points(points: Array[Vector3]) -> void:
 func force_fire() -> void:
 	_cancel_windup(STATE_ENGAGE)
 	_force_fire_direct()
+
+func set_pickup_awareness(next_health_position: Vector3, next_health_available: bool, next_overcharge_position: Vector3, next_overcharge_available: bool) -> void:
+	health_pickup_position = next_health_position
+	health_pickup_available = next_health_available
+	overcharge_pickup_position = next_overcharge_position
+	overcharge_pickup_available = next_overcharge_available
+
+func set_projectile_threat(threat_position: Vector3, threat_velocity: Vector3, active: bool) -> void:
+	projectile_threat_position = threat_position
+	projectile_threat_velocity = threat_velocity
+	projectile_threat_active = active
+
+func grant_overcharge() -> void:
+	if is_dead:
+		return
+	overcharge_shots_remaining = 1
+
+func has_overcharge_charge() -> bool:
+	return overcharge_shots_remaining > 0
 
 func debug_get_state() -> StringName:
 	return current_state
@@ -110,6 +146,9 @@ func debug_get_last_aim_position() -> Vector3:
 func debug_get_visible_target_position() -> Vector3:
 	return last_visible_target_position
 
+func debug_is_projectile_dodging() -> bool:
+	return _projectile_dodge_movement().length_squared() > 0.01
+
 func _physics_process(delta: float) -> void:
 	if is_dead:
 		_cancel_windup(STATE_DEAD)
@@ -127,6 +166,7 @@ func _physics_process(delta: float) -> void:
 	var before_position := global_position
 	last_has_line_of_sight = _refresh_target_visibility()
 	last_desired_move = _handle_duel_state(delta)
+	last_desired_move = _apply_projectile_dodge(last_desired_move)
 	velocity = _build_velocity(last_desired_move, delta)
 	move_and_slide()
 	_update_grounded_vertical_velocity()
@@ -154,6 +194,8 @@ func _handle_duel_state(delta: float) -> Vector3:
 			return _handle_engage()
 
 func _handle_engage() -> Vector3:
+	if _try_start_pickup_reposition():
+		return _movement_toward_reposition()
 	if not last_has_line_of_sight:
 		_start_reposition()
 		return _movement_toward_reposition()
@@ -166,6 +208,8 @@ func _handle_engage() -> Vector3:
 	return _distance_management_movement()
 
 func _handle_strafe() -> Vector3:
+	if _try_start_pickup_reposition():
+		return _movement_toward_reposition()
 	if not last_has_line_of_sight:
 		_start_reposition()
 		return _movement_toward_reposition()
@@ -242,6 +286,24 @@ func _start_reposition() -> void:
 	_choose_reposition_destination()
 	_set_state(STATE_REPOSITION, maxf(0.8, preferred_distance / maxf(0.1, move_speed)))
 
+func _start_reposition_to(destination: Vector3) -> void:
+	reposition_destination = _clamp_arena_point(destination)
+	_set_state(STATE_REPOSITION, maxf(0.8, global_position.distance_to(reposition_destination) / maxf(0.1, move_speed)))
+
+func _try_start_pickup_reposition() -> bool:
+	if current_state == STATE_REPOSITION or current_state == STATE_WINDUP:
+		return false
+	if health_pickup_available and health_fraction() <= low_health_pickup_threshold:
+		if _flat_distance_to(health_pickup_position) <= pickup_interest_distance:
+			_start_reposition_to(health_pickup_position)
+			return true
+	var can_contest_overcharge := not last_has_line_of_sight or shoot_cooldown_remaining > shoot_cooldown * 0.45
+	if overcharge_pickup_available and not has_overcharge_charge() and can_contest_overcharge:
+		if _flat_distance_to(overcharge_pickup_position) <= overcharge_interest_distance:
+			_start_reposition_to(overcharge_pickup_position)
+			return true
+	return false
+
 func _fire_requested_shot() -> void:
 	if target == null or target.is_dead:
 		_cancel_windup(STATE_IDLE)
@@ -255,7 +317,10 @@ func _fire_requested_shot() -> void:
 	shoot_cooldown_remaining = shoot_cooldown
 	reaction_remaining = reaction_time
 	_set_state(STATE_COOLDOWN, reaction_time)
-	shot_resolution_requested.emit(origin, direction, shoot_damage, shoot_knockback)
+	var was_overcharged := _consume_overcharge()
+	var damage := shoot_damage * (overcharge_damage_multiplier if was_overcharged else 1.0)
+	var knockback := shoot_knockback * (overcharge_knockback_multiplier if was_overcharged else 1.0)
+	shot_resolution_requested.emit(origin, direction, damage, knockback)
 	shot_fired.emit()
 
 func _force_fire_direct() -> void:
@@ -267,8 +332,11 @@ func _force_fire_direct() -> void:
 	var target_position := _get_target_position()
 	last_aim_position = target_position
 	var direction: Vector3 = target_position - origin
-	target.take_damage(shoot_damage, combatant_id)
-	target.apply_knockback(direction, shoot_knockback)
+	var was_overcharged := _consume_overcharge()
+	var damage := shoot_damage * (overcharge_damage_multiplier if was_overcharged else 1.0)
+	var knockback := shoot_knockback * (overcharge_knockback_multiplier if was_overcharged else 1.0)
+	target.take_damage(damage, combatant_id)
+	target.apply_knockback(direction, knockback)
 	shot_feedback_requested.emit(origin, target_position)
 	shot_fired.emit()
 	_set_state(STATE_COOLDOWN, reaction_time)
@@ -425,6 +493,38 @@ func _build_velocity(desired_move: Vector3, delta: float) -> Vector3:
 		speed_multiplier = 0.45
 	return horizontal * move_speed * speed_multiplier + Vector3(knockback.x, vertical_velocity + knockback.y, knockback.z)
 
+func _apply_projectile_dodge(desired_move: Vector3) -> Vector3:
+	var dodge := _projectile_dodge_movement()
+	if dodge.length_squared() <= 0.0001:
+		return desired_move
+	var dodge_weight := 0.45 if current_state == STATE_WINDUP else projectile_dodge_strength
+	var combined := desired_move + dodge * dodge_weight
+	if combined.length_squared() <= 0.0001:
+		return dodge
+	return combined.normalized()
+
+func _projectile_dodge_movement() -> Vector3:
+	if not projectile_threat_active or is_dead:
+		return Vector3.ZERO
+	var to_threat := projectile_threat_position - global_position
+	to_threat.y = 0.0
+	if to_threat.length() > projectile_dodge_radius:
+		return Vector3.ZERO
+	var travel := Vector3(projectile_threat_velocity.x, 0.0, projectile_threat_velocity.z)
+	if travel.length_squared() <= 0.0001:
+		return -to_threat.normalized()
+	var travel_direction := travel.normalized()
+	var to_bot := -to_threat
+	if to_bot.length_squared() > 0.0001 and travel_direction.dot(to_bot.normalized()) < -0.18:
+		return Vector3.ZERO
+	var lateral := Vector3(-travel_direction.z, 0.0, travel_direction.x).normalized()
+	var side := 1.0
+	if to_bot.length_squared() > 0.0001:
+		side = signf(lateral.dot(to_bot.normalized()))
+	if is_zero_approx(side):
+		side = strafe_direction
+	return lateral * side
+
 func _apply_gravity(delta: float) -> void:
 	var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
 	if not is_on_floor():
@@ -474,6 +574,11 @@ func _distance_to_reposition_destination() -> float:
 	to_destination.y = 0.0
 	return to_destination.length()
 
+func _flat_distance_to(point: Vector3) -> float:
+	var delta := point - global_position
+	delta.y = 0.0
+	return delta.length()
+
 func _clamp_arena_point(point: Vector3) -> Vector3:
 	return Vector3(
 		clampf(point.x, -arena_half_extent, arena_half_extent),
@@ -511,4 +616,12 @@ func _update_bot_state_visual() -> void:
 			color = Color(0.55, 0.58, 0.64, 1.0)
 	if health_fraction() < 0.35:
 		color = color.lerp(Color(1.0, 0.12, 0.08, 1.0), 0.42)
+	if has_overcharge_charge():
+		color = color.lerp(Color(0.32, 0.95, 1.0, 1.0), 0.38)
 	mesh_instance.material_override = _build_material(color)
+
+func _consume_overcharge() -> bool:
+	if overcharge_shots_remaining <= 0:
+		return false
+	overcharge_shots_remaining -= 1
+	return true

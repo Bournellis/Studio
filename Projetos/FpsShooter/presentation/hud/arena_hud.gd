@@ -7,6 +7,7 @@ signal sensitivity_changed(value: float)
 var status_label: Label
 var player_label: Label
 var bot_label: Label
+var combat_loop_label: Label
 var hint_label: Label
 var player_health_bar: ProgressBar
 var bot_health_bar: ProgressBar
@@ -24,11 +25,14 @@ var hit_feedback_time: float = 0.0
 var miss_feedback_time: float = 0.0
 var damage_feedback_time: float = 0.0
 var kill_feedback_time: float = 0.0
+var plasma_feedback_time: float = 0.0
 var event_message_time: float = 0.0
 var last_feedback: StringName = &""
 var hit_confirm_count: int = 0
 var miss_count: int = 0
 var player_damage_count: int = 0
+var alt_fire_count: int = 0
+var pickup_count: int = 0
 var last_damage_amount: float = 0.0
 var last_round_end_player_won: bool = false
 
@@ -42,6 +46,7 @@ func _process(delta: float) -> void:
 	miss_feedback_time = maxf(0.0, miss_feedback_time - delta)
 	damage_feedback_time = maxf(0.0, damage_feedback_time - delta)
 	kill_feedback_time = maxf(0.0, kill_feedback_time - delta)
+	plasma_feedback_time = maxf(0.0, plasma_feedback_time - delta)
 	event_message_time = maxf(0.0, event_message_time - delta)
 	_refresh_crosshair()
 	_refresh_damage_overlay()
@@ -59,6 +64,7 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	player_health_bar.value = player_health
 	bot_health_bar.max_value = maxf(1.0, bot_max)
 	bot_health_bar.value = bot_health
+	_update_combat_loop_label(snapshot)
 	hint_label.text = str(snapshot.get("hint", "WASD move | Mouse look | LMB rifle | Space jump | R restart | Esc menu"))
 
 func flash_hit() -> void:
@@ -67,6 +73,14 @@ func flash_hit() -> void:
 func show_player_shot() -> void:
 	last_feedback = &"player_shot"
 	shot_feedback_time = 0.11
+
+func show_player_alt_fire(overcharged: bool) -> void:
+	last_feedback = &"plasma_shot"
+	alt_fire_count += 1
+	plasma_feedback_time = 0.18
+	shot_feedback_time = 0.08
+	if overcharged:
+		_set_event_message("OVERCHARGED PLASMA", 0.42)
 
 func show_hit_confirm(killed: bool) -> void:
 	last_feedback = &"kill" if killed else &"hit"
@@ -88,6 +102,12 @@ func show_player_damage(amount: float, remaining_fraction: float) -> void:
 	damage_feedback_time = clampf(0.18 + (1.0 - remaining_fraction) * 0.18, 0.18, 0.38)
 	_set_event_message("-%.0f" % amount, 0.34)
 
+func show_pickup(pickup_kind: StringName) -> void:
+	last_feedback = &"pickup"
+	pickup_count += 1
+	var message := "HEALTH +%.0f" % 28.0 if pickup_kind == &"health" else "OVERCHARGE READY"
+	_set_event_message(message, 0.58)
+
 func show_round_end(player_won: bool) -> void:
 	last_feedback = &"round_end"
 	last_round_end_player_won = player_won
@@ -100,6 +120,7 @@ func reset_feedback() -> void:
 	miss_feedback_time = 0.0
 	damage_feedback_time = 0.0
 	kill_feedback_time = 0.0
+	plasma_feedback_time = 0.0
 	event_message_time = 0.0
 	last_feedback = &""
 	if event_label != null:
@@ -120,6 +141,19 @@ func set_sensitivity_value(value: float) -> void:
 	sensitivity_slider.set_value_no_signal(value)
 	_update_sensitivity_label(value)
 
+func _update_combat_loop_label(snapshot: Dictionary) -> void:
+	if combat_loop_label == null:
+		return
+	var plasma_ready := bool(snapshot.get("alt_fire_ready", true))
+	var cooldown_fraction := float(snapshot.get("alt_fire_cooldown_fraction", 0.0))
+	var plasma_text := "Plasma ready" if plasma_ready else "Plasma %.0f%%" % [(1.0 - cooldown_fraction) * 100.0]
+	var overcharge_text := "Overcharge ready" if bool(snapshot.get("player_overcharge", false)) else "Overcharge empty"
+	var health_pickup_text := "Health up" if bool(snapshot.get("health_pickup_available", false)) else "Health %.0fs" % [float(snapshot.get("health_pickup_respawn", 0.0))]
+	var overcharge_pickup_text := "OVR up" if bool(snapshot.get("overcharge_pickup_available", false)) else "OVR %.0fs" % [float(snapshot.get("overcharge_pickup_respawn", 0.0))]
+	if bool(snapshot.get("bot_overcharge", false)):
+		overcharge_pickup_text += " | Bot charged"
+	combat_loop_label.text = "%s | %s | %s | %s" % [plasma_text, overcharge_text, health_pickup_text, overcharge_pickup_text]
+
 func _build_ui() -> void:
 	var root := Control.new()
 	root.name = "HudRoot"
@@ -139,7 +173,7 @@ func _build_ui() -> void:
 	panel.name = "StatusPanel"
 	_ignore_mouse(panel)
 	panel.position = Vector2(18.0, 18.0)
-	panel.custom_minimum_size = Vector2(380.0, 126.0)
+	panel.custom_minimum_size = Vector2(380.0, 150.0)
 	root.add_child(panel)
 
 	var box := VBoxContainer.new()
@@ -170,11 +204,19 @@ func _build_ui() -> void:
 	bot_health_bar = _build_health_bar("BotHealthBar", Color(1.0, 0.34, 0.22, 1.0))
 	box.add_child(bot_health_bar)
 
+	combat_loop_label = Label.new()
+	combat_loop_label.name = "CombatLoopLabel"
+	_ignore_mouse(combat_loop_label)
+	combat_loop_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	combat_loop_label.add_theme_font_size_override("font_size", 12)
+	combat_loop_label.text = "Plasma ready | Pickups active"
+	box.add_child(combat_loop_label)
+
 	hint_label = Label.new()
 	hint_label.name = "HintLabel"
 	_ignore_mouse(hint_label)
-	hint_label.position = Vector2(18.0, 158.0)
-	hint_label.text = "Click captures mouse | WASD move | Mouse look | LMB rifle | Space jump | R restart | Esc menu"
+	hint_label.position = Vector2(18.0, 182.0)
+	hint_label.text = "Click captures mouse | WASD move | Mouse look | LMB rifle | RMB plasma | Space jump | R restart | Esc menu"
 	root.add_child(hint_label)
 
 	_build_crosshair(root)
@@ -332,6 +374,9 @@ func _refresh_crosshair() -> void:
 	elif hit_feedback_time > 0.0:
 		color = Color(0.5, 1.0, 0.58, 1.0)
 		pulse = 0.14
+	elif plasma_feedback_time > 0.0:
+		color = Color(0.78, 0.46, 1.0, 1.0)
+		pulse = 0.12
 	elif shot_feedback_time > 0.0:
 		color = Color(0.28, 0.92, 1.0, 1.0)
 		pulse = 0.08

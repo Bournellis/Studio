@@ -7,6 +7,9 @@ const HIT_COLOR: Color = Color(0.52, 1.0, 0.58, 1.0)
 const MISS_COLOR: Color = Color(0.62, 0.76, 0.9, 0.72)
 const BOT_COLOR: Color = Color(1.0, 0.58, 0.22, 1.0)
 const DAMAGE_COLOR: Color = Color(1.0, 0.14, 0.08, 1.0)
+const PLASMA_COLOR: Color = Color(0.38, 0.98, 1.0, 1.0)
+const OVERCHARGE_COLOR: Color = Color(0.78, 0.46, 1.0, 1.0)
+const HEALTH_COLOR: Color = Color(0.38, 1.0, 0.52, 1.0)
 
 var active_effects: Array[Dictionary] = []
 var last_event: StringName = &""
@@ -19,6 +22,10 @@ var bot_shot_count: int = 0
 var bot_miss_count: int = 0
 var knockback_count: int = 0
 var round_end_count: int = 0
+var plasma_shot_count: int = 0
+var plasma_hit_count: int = 0
+var plasma_miss_count: int = 0
+var pickup_count: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -43,6 +50,31 @@ func play_player_shot(origin: Vector3, direction: Vector3) -> void:
 	_spawn_light(origin + shot_direction * 0.22, PLAYER_COLOR, 1.45, 1.1, 0.045)
 	_spawn_tone(origin, 760.0, 0.045, -11.0)
 
+func play_plasma_shot(origin: Vector3, direction: Vector3, overcharged: bool) -> void:
+	last_event = &"plasma_shot"
+	plasma_shot_count += 1
+	var shot_direction := direction.normalized()
+	var color := OVERCHARGE_COLOR if overcharged else PLASMA_COLOR
+	_spawn_sphere(origin + shot_direction * 0.16, 0.16 if overcharged else 0.12, color, 0.09, true)
+	_spawn_light(origin + shot_direction * 0.22, color, 2.2 if overcharged else 1.65, 1.9, 0.08)
+	_spawn_tone(origin, 610.0 if overcharged else 520.0, 0.075, -11.5)
+
+func play_plasma_hit(impact_position: Vector3, overcharged: bool) -> void:
+	last_event = &"plasma_hit"
+	plasma_hit_count += 1
+	var color := OVERCHARGE_COLOR if overcharged else PLASMA_COLOR
+	_spawn_sphere(impact_position, 0.36 if overcharged else 0.28, color, 0.18, true)
+	_spawn_light(impact_position, color, 3.7 if overcharged else 2.8, 3.2, 0.16)
+	_spawn_tone(impact_position, 760.0 if overcharged else 640.0, 0.09, -8.8)
+
+func play_plasma_miss(impact_position: Vector3, overcharged: bool) -> void:
+	last_event = &"plasma_miss"
+	plasma_miss_count += 1
+	var color := OVERCHARGE_COLOR if overcharged else PLASMA_COLOR
+	_spawn_sphere(impact_position, 0.18, Color(color.r, color.g, color.b, 0.68), 0.11, true)
+	_spawn_light(impact_position, color, 1.5, 1.7, 0.08)
+	_spawn_tone(impact_position, 310.0, 0.055, -15.5)
+
 func play_hit(origin: Vector3, impact_position: Vector3) -> void:
 	last_event = &"hit"
 	hit_count += 1
@@ -63,6 +95,14 @@ func play_player_damage(amount: float, remaining_fraction: float, global_positio
 	var intensity := clampf(1.0 - remaining_fraction + amount / 80.0, 0.35, 1.0)
 	_spawn_light(global_position_hint + Vector3.UP * 0.6, DAMAGE_COLOR, 2.6 * intensity, 2.0, 0.13)
 	_spawn_tone(global_position_hint, 180.0, 0.08, -9.5)
+
+func play_pickup(pickup_position: Vector3, pickup_kind: StringName) -> void:
+	last_event = &"pickup"
+	pickup_count += 1
+	var color := HEALTH_COLOR if pickup_kind == &"health" else OVERCHARGE_COLOR
+	_spawn_sphere(pickup_position, 0.28, color, 0.16, true)
+	_spawn_light(pickup_position, color, 2.9, 2.6, 0.15)
+	_spawn_tone(pickup_position, 920.0 if pickup_kind == &"health" else 1040.0, 0.08, -10.0)
 
 func play_bot_tell(origin: Vector3, target_position: Vector3, duration: float) -> void:
 	last_event = &"bot_tell"
