@@ -1,7 +1,7 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-09`
-- Status: `BOOTSTRAP_COMPLETE_TRACK_01_READY_NEXT`
+- Status: `TRACK_01A_FEEL_FEEDBACK_COMPLETE`
 
 ## North Star
 
@@ -31,7 +31,7 @@ Acceptance:
 
 Goal: editor-playable local 1x1 arena shooter.
 
-Status: ready next.
+Status: active; Track 01A is complete.
 
 Acceptance:
 
@@ -43,17 +43,30 @@ Acceptance:
 - simple arena with walls and obstacles;
 - no export requirement.
 
-## Track 02 - Shooter Feel
+## Track 01A - Feel/Feedback V1
 
 Goal: make the first-person feel readable and worth iterating.
 
+Status: complete.
+
+Delivered:
+
+- agile movement baseline: FOV `86`, move speed `7.8`, jump `5.6` and simple air control;
+- rifle hitscan feedback with muzzle flash, tracer, hit/miss distinction, impact flash and synthetic audio;
+- HUD crosshair, health bars, damage overlay, short combat messages and round-end feedback;
+- bot `0.18s` shot tell before normal damage, while `force_fire()` stays immediate for tests;
+- 3-minute manual smoke checklist for editor feel validation.
+
+## Track 02 - Next Combat Shape
+
+Goal: choose the next gameplay shape after the first readable duel baseline.
+
 Candidate scope:
 
-- tune FOV, speed, acceleration and jump;
-- improve hit feedback, damage feedback and crosshair;
-- add basic recoil/spread decision if useful;
-- improve bot readability;
-- add a manual smoke checklist.
+- arena layout pass with clearer cover, sightlines and spawns;
+- bot duel behavior pass;
+- recoil/spread or ammo/reload only if explicitly selected;
+- future projectile variants after hitscan feel remains stable.
 
 ## Track 03 - Verticality And Hazards
 

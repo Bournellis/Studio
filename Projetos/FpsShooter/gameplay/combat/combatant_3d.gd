@@ -15,9 +15,17 @@ var body_color: Color = Color(0.8, 0.86, 0.95, 1.0)
 var is_dead: bool = false
 var knockback_velocity: Vector3 = Vector3.ZERO
 var knockback_decay: float = 18.0
+var damage_flash_time: float = 0.0
+var damage_flash_duration: float = 0.14
 
 func _ready() -> void:
 	_ensure_body_nodes()
+	_update_visual_state()
+
+func _process(delta: float) -> void:
+	if damage_flash_time <= 0.0:
+		return
+	damage_flash_time = maxf(0.0, damage_flash_time - delta)
 	_update_visual_state()
 
 func configure_combatant(next_id: StringName, next_max_health: float, next_color: Color) -> void:
@@ -27,6 +35,7 @@ func configure_combatant(next_id: StringName, next_max_health: float, next_color
 	body_color = next_color
 	is_dead = false
 	knockback_velocity = Vector3.ZERO
+	damage_flash_time = 0.0
 	_update_visual_state()
 
 func take_damage(amount: float, _source_id: StringName = &"") -> void:
@@ -37,9 +46,12 @@ func take_damage(amount: float, _source_id: StringName = &"") -> void:
 		return
 	health = maxf(0.0, health - applied)
 	damaged.emit(applied, health)
+	damage_flash_time = damage_flash_duration
 	_update_visual_state()
 	if health <= 0.0:
 		is_dead = true
+		damage_flash_time = 0.0
+		_update_visual_state()
 		died.emit()
 
 func apply_knockback(direction: Vector3, force: float) -> void:
@@ -58,6 +70,9 @@ func consume_knockback(delta: float) -> Vector3:
 
 func health_fraction() -> float:
 	return health / maxf(1.0, max_health)
+
+func get_body_center() -> Vector3:
+	return global_position + Vector3.UP * BODY_CENTER_Y
 
 func _ensure_body_nodes() -> void:
 	if get_node_or_null("CollisionShape3D") == null:
@@ -88,6 +103,9 @@ func _update_visual_state() -> void:
 	var color := body_color
 	if is_dead:
 		color = Color(0.18, 0.2, 0.24, 1.0)
+	elif damage_flash_time > 0.0:
+		var flash_weight := clampf(damage_flash_time / maxf(0.01, damage_flash_duration), 0.0, 1.0)
+		color = body_color.lerp(Color(1.0, 0.96, 0.72, 1.0), flash_weight)
 	elif health_fraction() < 0.35:
 		color = body_color.lerp(Color(1.0, 0.22, 0.16, 1.0), 0.55)
 	mesh_instance.material_override = _build_material(color)

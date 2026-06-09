@@ -19,6 +19,12 @@ When working from a dedicated worktree, run with that worktree path.
 - runs the GUT suite under `res://tests/unit`;
 - prints the manual editor follow-up instead of exporting.
 
+Latest automated baseline:
+
+- GUT `10/10`;
+- `94` asserts;
+- Track 01A validates feedback controller, hit/miss feedback, player damage HUD, bot tell, immediate `force_fire()` and synthetic audio stream creation.
+
 ## Manual Smoke
 
 Open `Projetos/FpsShooter/project.godot` in Godot 4.6.2 and press Play.
@@ -30,9 +36,14 @@ Expected:
 - mouse look rotates the camera;
 - `Space` jumps;
 - left click shoots while mouse is captured;
-- aiming at the bot and shooting reduces bot health;
+- each player shot has muzzle/tracer feedback and a short synthetic shot sound;
+- aiming at the bot and shooting reduces bot health, flashes the bot, shows hitmarker and plays hit feedback;
+- missing the bot still shows shot/tracer feedback without false hit confirmation;
 - bot moves and shoots;
+- bot normal shots show a short amber tell before damage;
+- receiving bot damage shows red overlay, player health change, knockback and feedback audio;
 - health values change;
+- round victory/defeat gives clear HUD feedback;
 - `R` restarts the round;
 - `Esc` opens the menu;
 - the menu sensitivity slider changes mouse look speed;

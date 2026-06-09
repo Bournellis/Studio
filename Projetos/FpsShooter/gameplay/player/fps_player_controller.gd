@@ -7,8 +7,9 @@ const MIN_MOUSE_SENSITIVITY: float = 0.0008
 const MAX_MOUSE_SENSITIVITY: float = 0.0032
 const DEFAULT_MOUSE_SENSITIVITY: float = 0.0018
 
-@export var move_speed: float = 7.2
-@export var jump_velocity: float = 5.2
+@export var move_speed: float = 7.8
+@export var jump_velocity: float = 5.6
+@export var air_control: float = 0.72
 @export var mouse_sensitivity: float = DEFAULT_MOUSE_SENSITIVITY
 @export var shot_damage: float = 22.0
 @export var shot_knockback: float = 7.5
@@ -104,8 +105,13 @@ func _handle_movement(delta: float) -> void:
 	if direction.length_squared() > 0.0001:
 		direction = direction.normalized()
 
+	var horizontal_velocity := direction * move_speed
+	if not is_on_floor():
+		var previous_horizontal := Vector3(velocity.x, 0.0, velocity.z)
+		horizontal_velocity = previous_horizontal.lerp(horizontal_velocity, clampf(air_control, 0.0, 1.0))
+
 	var knockback := consume_knockback(delta)
-	velocity = direction * move_speed + Vector3(knockback.x, 0.0, knockback.z)
+	velocity = horizontal_velocity + Vector3(knockback.x, 0.0, knockback.z)
 	velocity.y = vertical_velocity + knockback.y
 
 func _ensure_camera_nodes() -> void:
@@ -120,7 +126,7 @@ func _ensure_camera_nodes() -> void:
 	if camera == null:
 		camera = Camera3D.new()
 		camera.name = "Camera3D"
-		camera.fov = 82.0
+		camera.fov = 86.0
 		camera.near = 0.04
 		head.add_child(camera)
 	camera.current = true

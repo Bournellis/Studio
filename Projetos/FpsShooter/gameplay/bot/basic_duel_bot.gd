@@ -2,6 +2,8 @@ class_name BasicDuelBot
 extends "res://gameplay/combat/combatant_3d.gd"
 
 signal shot_fired()
+signal shot_windup_started(origin: Vector3, target_position: Vector3, duration: float)
+signal shot_feedback_requested(origin: Vector3, target_position: Vector3)
 
 @export var move_speed: float = 4.4
 @export var preferred_distance: float = 9.0
@@ -9,10 +11,13 @@ signal shot_fired()
 @export var shoot_damage: float = 9.0
 @export var shoot_knockback: float = 3.6
 @export var shoot_cooldown: float = 0.75
+@export var shot_tell_duration: float = 0.18
 
 var target
 var shoot_cooldown_remaining: float = 0.0
 var vertical_velocity: float = 0.0
+var shot_tell_remaining: float = 0.0
+var is_telegraphing: bool = false
 
 func _ready() -> void:
 	super._ready()
@@ -23,8 +28,10 @@ func configure(next_target) -> void:
 	configure_combatant(&"bot", 100.0, Color(1.0, 0.34, 0.22, 1.0))
 	shoot_cooldown_remaining = 0.2
 	vertical_velocity = 0.0
+	_cancel_windup()
 
 func force_fire() -> void:
+	_cancel_windup()
 	_fire()
 
 func _physics_process(delta: float) -> void:
@@ -35,7 +42,7 @@ func _physics_process(delta: float) -> void:
 
 	shoot_cooldown_remaining = maxf(0.0, shoot_cooldown_remaining - delta)
 	_handle_movement(delta)
-	_try_fire()
+	_handle_shot_flow(delta)
 	move_and_slide()
 	if is_on_floor() and vertical_velocity < 0.0:
 		vertical_velocity = -0.1
@@ -76,14 +83,45 @@ func _try_fire() -> void:
 		return
 	if global_position.distance_to(target.global_position) > shoot_range:
 		return
-	_fire()
+	is_telegraphing = true
+	shot_tell_remaining = shot_tell_duration
+	shot_windup_started.emit(_get_shot_origin(), _get_target_position(), shot_tell_duration)
+
+func _handle_shot_flow(delta: float) -> void:
+	if is_telegraphing:
+		if target == null or target.is_dead:
+			_cancel_windup()
+			return
+		shot_tell_remaining = maxf(0.0, shot_tell_remaining - delta)
+		if shot_tell_remaining <= 0.0:
+			_cancel_windup()
+			_fire()
+		return
+	_try_fire()
 
 func _fire() -> void:
 	if target == null or target.is_dead:
 		return
 	shoot_cooldown_remaining = shoot_cooldown
-	var direction: Vector3 = target.global_position - global_position
+	var origin := _get_shot_origin()
+	var target_position := _get_target_position()
+	var direction: Vector3 = target_position - origin
 	direction.y = 0.0
 	target.take_damage(shoot_damage, combatant_id)
 	target.apply_knockback(direction, shoot_knockback)
+	shot_feedback_requested.emit(origin, target_position)
 	shot_fired.emit()
+
+func _cancel_windup() -> void:
+	is_telegraphing = false
+	shot_tell_remaining = 0.0
+
+func _get_shot_origin() -> Vector3:
+	return get_body_center() + Vector3.UP * 0.2
+
+func _get_target_position() -> Vector3:
+	if target != null and target.has_method("get_body_center"):
+		return target.get_body_center()
+	if target != null:
+		return target.global_position + Vector3.UP * 0.8
+	return global_position

@@ -4,7 +4,7 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS 3D tech probe`
-- Active stage: `Track 00 - Project Bootstrap`
+- Active stage: `Track 01A - Feel/Feedback V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -20,16 +20,16 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - Local 1x1 arena against a bot.
 - Player movement, mouse look, jump, hitscan shot and knockback.
 - Bot V1 walks and shoots.
-- Simple arena, HUD and round state.
+- Simple arena, HUD, round state and bidirectional feel/feedback.
 - No export, Web, mobile, multiplayer or online/backend scope.
 
 ## Active Goal
 
-Bootstrap is complete. The project can now move into `Track 01 - Arena 1x1 V1` for the first stronger duel loop.
+`Track 01A - Feel/Feedback V1` is complete. The project now has a readable agile duel baseline for editor playtesting.
 
 ## Current Gate
 
-Closed for Track 00. Continue with Track 01 planning and implementation decisions.
+Closed for Track 01A. Continue with Track 01 follow-up decisions around arena layout, bot duel behavior or future weapon/projectile variants.
 
 ## Validation Snapshot
 
@@ -61,6 +61,15 @@ Bootstrap closeout:
 - headless validation passes the FpsShooter GUT suite;
 - first playable editor baseline is accepted as complete for Track 00.
 
+Track 01A Feel/Feedback V1:
+
+- player rifle remains simple hitscan with no ammo, reload, spread or projectile variants;
+- player shot feedback now includes muzzle flash, tracer, hit/miss states, hit impact and synthetic audio;
+- HUD now has a control-based crosshair, health bars, hit/kill states, damage overlay and round-end feedback;
+- bot normal shots use a short `0.18s` tell before damage while `force_fire()` remains immediate for tests;
+- player movement defaults are tuned for a lighter agile arena feel: FOV `86`, move speed `7.8`, jump `5.6`, air control `0.72`;
+- validation passes `10/10` GUT tests with `94` asserts.
+
 ## Read Next
 
 1. `AGENTS.md`
@@ -68,3 +77,4 @@ Bootstrap closeout:
 3. `docs/reuse-map.md`
 4. `docs/validation.md`
 5. `implementation/tracks/track-01-arena-1x1-v1/current-status.md`
+6. `implementation/tracks/track-01a-feel-feedback-v1/current-status.md`

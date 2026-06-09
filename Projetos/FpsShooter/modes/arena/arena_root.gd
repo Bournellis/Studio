@@ -4,6 +4,7 @@ extends Node3D
 const PlayerController = preload("res://gameplay/player/fps_player_controller.gd")
 const BotController = preload("res://gameplay/bot/basic_duel_bot.gd")
 const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
+const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 
 const FLOOR_SIZE: Vector3 = Vector3(26.0, 1.0, 26.0)
 const WALL_HEIGHT: float = 3.2
@@ -14,6 +15,7 @@ const BOT_SPAWN: Vector3 = Vector3(7.0, 0.05, -5.2)
 var player
 var bot
 var hud
+var feedback
 var round_status: String = "Arena 1x1 V1"
 var round_ended: bool = false
 var menu_open: bool = false
@@ -53,6 +55,10 @@ func restart_round() -> void:
 	bot.global_position = BOT_SPAWN
 	bot.rotation = Vector3.ZERO
 	bot.configure(player)
+	if hud != null:
+		hud.reset_feedback()
+	if feedback != null:
+		feedback.clear_effects()
 	_capture_mouse_if_playing()
 
 func debug_get_player():
@@ -112,7 +118,14 @@ func _spawn_runtime() -> void:
 	bot.position = BOT_SPAWN
 	runtime_root.add_child(bot)
 	bot.configure(player)
+	bot.shot_windup_started.connect(_on_bot_shot_windup_started)
+	bot.shot_feedback_requested.connect(_on_bot_shot_feedback_requested)
 
+	feedback = FeedbackControllerScript.new()
+	feedback.name = "FeedbackController"
+	add_child(feedback)
+
+	player.damaged.connect(_on_player_damaged)
 	player.died.connect(_on_player_died)
 	bot.died.connect(_on_bot_died)
 
@@ -128,29 +141,75 @@ func _spawn_runtime() -> void:
 func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockback: float) -> void:
 	if round_ended or menu_open:
 		return
-	var query := PhysicsRayQueryParameters3D.create(origin, origin + direction.normalized() * 96.0)
+	var shot_direction := direction.normalized()
+	var shot_end := origin + shot_direction * 96.0
+	if hud != null:
+		hud.show_player_shot()
+	if feedback != null:
+		feedback.play_player_shot(origin, shot_direction)
+
+	var query := PhysicsRayQueryParameters3D.create(origin, shot_end)
 	query.exclude = [player.get_rid()]
 	var result := get_world_3d().direct_space_state.intersect_ray(query)
 	if result.is_empty():
+		if hud != null:
+			hud.show_miss()
+		if feedback != null:
+			feedback.play_miss(origin, shot_end)
 		return
+	var impact_position: Vector3 = result.get("position", shot_end)
 	var collider: Object = result.get("collider", null)
 	if collider != null and collider.has_method("take_damage"):
 		collider.take_damage(damage, &"player")
 		if collider.has_method("apply_knockback"):
-			collider.apply_knockback(direction, knockback)
+			collider.apply_knockback(shot_direction, knockback)
 		if hud != null:
-			hud.flash_hit()
+			var killed: bool = collider.get("is_dead") == true
+			hud.show_hit_confirm(killed)
+		if feedback != null:
+			feedback.play_hit(origin, impact_position)
+		return
+	if hud != null:
+		hud.show_miss()
+	if feedback != null:
+		feedback.play_miss(origin, impact_position)
+
+func _on_player_damaged(amount: float, remaining_health: float) -> void:
+	if hud != null and player != null:
+		hud.show_player_damage(amount, remaining_health / maxf(1.0, player.max_health))
+	if feedback != null and player != null:
+		feedback.play_player_damage(amount, player.health_fraction(), player.get_body_center())
+
+func _on_bot_shot_windup_started(origin: Vector3, target_position: Vector3, duration: float) -> void:
+	if round_ended or menu_open:
+		return
+	if feedback != null:
+		feedback.play_bot_tell(origin, target_position, duration)
+
+func _on_bot_shot_feedback_requested(origin: Vector3, target_position: Vector3) -> void:
+	if round_ended or menu_open:
+		return
+	if feedback != null:
+		feedback.play_bot_shot(origin, target_position)
 
 func _on_player_died() -> void:
 	_set_menu_open(false)
 	round_ended = true
 	round_status = "Bot venceu. Aperte R para reiniciar."
+	if hud != null:
+		hud.show_round_end(false)
+	if feedback != null:
+		feedback.play_round_end(false)
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _on_bot_died() -> void:
 	_set_menu_open(false)
 	round_ended = true
 	round_status = "Player venceu. Aperte R para reiniciar."
+	if hud != null:
+		hud.show_round_end(true)
+	if feedback != null:
+		feedback.play_round_end(true)
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _build_hud_snapshot() -> Dictionary:
