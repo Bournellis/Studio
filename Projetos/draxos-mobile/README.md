@@ -2,8 +2,8 @@
 
 DraxosMobile is the Godot/Supabase project for Android, PC executable and PC browser. It is now a PVE Arena-first async autobattler with Refugio/Base management, later PVP, social systems and server-authoritative progression.
 
-**Status:** `P2_IMPLEMENTACAO - ARENA_PVE_BONUS_VISUAL_V1_PUBLISHED_INTERNAL_ALPHA`
-**Baseline:** Arena PVE Bonus Visual v1 is the latest remote Internal Alpha package: release root `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`, preview `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/` and direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`. It publishes APK/manifest `0.0.14-alpha.0` / version code `14`, keeps minimum supported version code `13`, redeploys `arena` and `release`, and fixes Arena PVE bonus HP/Mana visibility between fights by exporting buffed initial stats in the battle log and applying `battle_start` before replay actions. Bosque Node Cooldown ACK v1 remains preserved as the previous Bosque package. Track 13 release safety and Track 14 agent ops remain preserved baselines.
+**Status:** `P2_IMPLEMENTACAO - BOSQUE_BOOTSTRAP_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
+**Baseline:** Bosque Bootstrap Authority v1 is the latest remote Internal Alpha package: release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/` and direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`. It publishes APK/manifest `0.0.15-alpha.0` / version code `15`, keeps minimum supported version code `13`, redeploys `release`, and prevents the integrated Bosque from rendering a transient full-spawn world before canonical remote/cache bootstrap completes. Arena PVE Bonus Visual v1 remains preserved as the previous Arena package; Bosque Node Cooldown ACK v1 remains preserved as the previous Bosque persistence/spawn package. Track 13 release safety and Track 14 agent ops remain preserved baselines.
 ## Current Focus
 
 The project is a strong implemented base for refinement, not a final product and not a content-expansion track.
@@ -12,7 +12,7 @@ The Foundation Loop Audit is documented in `docs/foundation-loop-audit.md`. Foun
 
 `Base -> collect resources -> evolve base -> battle -> receive rewards -> check base again`
 
-Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Final Polish, Track 18 PVE Arena Initial, Track 19 Arena Consistency Pass, Track 20 Season 1 Arena Calibration, Lab Web Export Guard, Remote Lab Runner, Track 21 Arena Loop Unlock/Friction, Hardening Platform V1, Foundation Hardening V2, First Access Runtime Fix, Bosque Mecanico Basico v2, Openworld Main Menu Sync, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Arena/Bosque Visible V2, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Arena PVE Menu Flow Simplification v1, Bosque Durable Bau Mochila v1, Bosque Fogueira Potion Crafting v1, Bosque World Hub Domain Separation v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque Persistence Rebase v1, Bosque Feel & Spawn Authority v1, Bosque Resume Exit Lifecycle v1 and Bosque Node Cooldown ACK v1 are preserved in the Internal Alpha lineage. Arena PVE Bonus Visual v1 is the current published Internal Alpha package for human playtest.
+Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1, First Session Clarity v1, Foundation Final Polish, Track 18 PVE Arena Initial, Track 19 Arena Consistency Pass, Track 20 Season 1 Arena Calibration, Lab Web Export Guard, Remote Lab Runner, Track 21 Arena Loop Unlock/Friction, Hardening Platform V1, Foundation Hardening V2, First Access Runtime Fix, Bosque Mecanico Basico v2, Openworld Main Menu Sync, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Arena/Bosque Visible V2, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Arena PVE Menu Flow Simplification v1, Bosque Durable Bau Mochila v1, Bosque Fogueira Potion Crafting v1, Bosque World Hub Domain Separation v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque Persistence Rebase v1, Bosque Feel & Spawn Authority v1, Bosque Resume Exit Lifecycle v1, Bosque Node Cooldown ACK v1 and Arena PVE Bonus Visual v1 are preserved in the Internal Alpha lineage. Bosque Bootstrap Authority v1 is the current published Internal Alpha package for human playtest.
 
 Foundation Hardening V2 makes strict expansion gates, mode decision packs, backend boundary inventory, read-only ops, Android release signing, V2 schema enforcement and remote publication evidence the current baseline before new mode work. Hardening Platform V1 remains the previous multi-agent/mode platform baseline. Track 21 Arena Loop Unlock/Friction remains the Arena/Autobattler context for tutorial of 1 duel, first arenas of 3 duels, locked loadout context, temporary stat buffs, HP reset per duel, no combat cooldown, live-stock potion consumption in Arena, summary-only claim, public buff select endpoint, data-driven Arena selection, XP -> level recalculation on completion and direct continue-in-Arena flow. Remote Lab Runner remains preserved for Battle Lab Dev and Progression Lab Dev in Web export through Edge `lab-runner` with the same Supabase email/password Internal Alpha account gate.
 
@@ -46,7 +46,7 @@ Before any new feature, numeric tuning, assets-final pass, battle presentation p
 1. Read `docs/foundation-hardening-v2-readiness-report.md` and `docs/multi-agent-workflow.md`.
 2. Treat Foundation Hardening V2 as the current multi-mode expansion enforcement baseline. Treat Foundation Loop UX Pass 01 as historical app-shell UX baseline, and Track 18/20/21 plus Remote Lab Runner as Arena/Autobattler/Lab context; then follow `docs/pve-arena-initial-direction.md` before expanding PVP, social, visuals, battle presentation, base builder or content systems.
 3. Keep release publishing in `Mode Plan` or `Mode Package` unless the user explicitly approves remote mutation.
-4. Playtest the published Arena PVE Bonus Visual v1 package first, focusing bonus HP/Mana between fights, next fight/replay showing buffed initial HP, buff choice/reward continuation, Arena preparation/potion regression and a quick Bosque Node Cooldown ACK v1 regression pass.
+4. Playtest the published Bosque Bootstrap Authority v1 package first, focusing `Voltar -> entrar` without full-spawn flash, node cooldown persistence, second collection ACK completion, exit handling, and a quick Arena PVE Bonus Visual regression pass.
 5. Run `validate_foundation.ps1 -Profile Full -RequireClean` with local Supabase/Edge active before tuning work starts, and run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before future remote publications.
 
 ## Safe Validation
@@ -100,17 +100,20 @@ git status --short
 ## Release Snapshot
 
 - Channel: `internal_alpha`
-- Version: `0.0.14-alpha.0`
-- Version code: `14`
+- Version: `0.0.15-alpha.0`
+- Version code: `15`
 - Manifest: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/manifest`
 - Stable portal/Web: Cloudflare Access protected.
-- Current verified preview: `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`
-- Current release root: `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`
+- Current verified preview: `https://0123894f.draxos-mobile-internal-alpha.pages.dev`
+- Current release root: `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`
 - Current APK: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android`
 - Current PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows`
-- Current APK SHA256: `1f78020ae1ec5101c9d7b6bc41ca0727d57f4ffa84d769e6fadf076165593720`
-- Current PC ZIP SHA256: `60c4101e0c23f83e16d9bc2307c7da32d4052091807a85cae80b84fa6e954a93`
-- Current Web Index SHA256: `6703e00323874c127cf49bf1db0afeb8a02068d8fed5f093df3b00d4b58febc9`
+- Current APK SHA256: `f7406c57b1a8ef6af6496395eba25c7cde0358781c5c47e845daa457405b84f4`
+- Current PC ZIP SHA256: `b45826aaa8fbd70959795f3758c43d1b7e6f4590378d63f47a071958ed5d588b`
+- Current Web Index SHA256: `9f410baff95d901a65f46d05eae316f7bdc203b0fcc200e8bacdf750e42dde56`
+- Previous Arena package: Arena PVE Bonus Visual v1 remains the previous Arena package.
+- Previous Arena verified preview: `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`
+- Previous Arena release root: `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`
 - Previous Bosque package: Bosque Node Cooldown ACK v1 remains the previous Bosque package.
 - Previous Bosque verified preview: `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`
 - Previous Bosque release root: `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`

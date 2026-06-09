@@ -1,26 +1,29 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-06-08`
+- Last updated: `2026-06-09`
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Arena PVE Bonus Visual v1`
-- Active stage status: `ARENA_PVE_BONUS_VISUAL_V1_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Bosque Bootstrap Authority v1`
+- Active stage status: `BOSQUE_BOOTSTRAP_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
-- Version: `0.0.14-alpha.0`
-- Version code: `14`
+- Version: `0.0.15-alpha.0`
+- Version code: `15`
 
 ## Current Truth
 
-- Latest published remote package: `Arena PVE Bonus Visual v1`.
-- Release root: `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`
+- Latest published remote package: `Bosque Bootstrap Authority v1`.
+- Release root: `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`
-- Source state: implementation branch merged into `main`; release commit is `e281d63`.
-- Published package: bumps APK/manifest to `0.0.14-alpha.0` / version code `14`; keeps `minimum_supported_version_code` at `13`; fixes Arena PVE bonus stat visibility by exporting initial buffed `hp`, `max_hp`, `max_mana` and `stat_modifiers` in battle log participants and applying `battle_start` before replay actions.
+- Latest deployment evidence: `https://0123894f.draxos-mobile-internal-alpha.pages.dev`
+- Source state: implementation branch merged into `main`; release commit is `ba99e70`.
+- Published package: bumps APK/manifest to `0.0.15-alpha.0` / version code `15`; keeps `minimum_supported_version_code` at `13`; fixes Bosque reentry bootstrap by hiding the playable integrated viewport until canonical remote/cache state arrives, preventing a transient full-spawn world from rendering before authority sync.
 - Remote SQL applied: `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`.
-- Remote functions deployed: `arena` and `release` redeployed for `Arena PVE Bonus Visual v1`; `modes` remains on the operations-v2 backend from the previous packages.
+- Remote functions deployed: `release` redeployed for `Bosque Bootstrap Authority v1`; `arena` remains on Arena PVE Bonus Visual v1; `modes` remains on the operations-v2 backend from the previous Bosque packages.
+- Previous Arena package: `Arena PVE Bonus Visual v1`
+- Previous Arena release root: `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`
+- Previous Arena preview: `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`
 - Previous Bosque package: `Bosque Node Cooldown ACK v1`
 - Previous Bosque release root: `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`
 - Previous Bosque preview: `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`
@@ -64,38 +67,41 @@
 - Agent baseline marker: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Arena context: Track 18 - PVE Arena Initial, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
-- Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; later packages stabilized durable Bosque progress, Fogueira station craft, domain separation, operations-v2 persistence, feel/spawn authority, preserved reentry/exit lifecycle and node cooldown ACK handling. Current playtest should focus Arena PVE HP/Mana buffs between fights, next fight/replay showing buffed initial HP, buff choice/reward continuation and quick Bosque regression.
+- Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; later packages stabilized durable Bosque progress, Fogueira station craft, domain separation, operations-v2 persistence, feel/spawn authority, preserved reentry/exit lifecycle, node cooldown ACK handling and bootstrap authority on reentry. Current playtest should focus quick Bosque reentry regression (`Voltar -> entrar` must not flash a full-spawn world), node cooldown persistence, second collection ACK completion, plus a light Arena PVE bonus visual regression.
 
 ## Current Published Package
 
-Arena PVE Bonus Visual v1 is published as the current Internal Alpha package. It fixes Arena PVE temporary reward buffs not being visible in the next fight/replay while preserving the Bosque Node Cooldown ACK v1 package as the previous Bosque baseline.
+Bosque Bootstrap Authority v1 is published as the current Internal Alpha package. It fixes the reentry flash where the integrated Bosque could render a fresh full-spawn world before the remote/cache authority bootstrap completed, while preserving the Bosque Node Cooldown ACK v1 package as the previous Bosque persistence/spawn baseline.
 
 Delivered:
 
-- bumps in-app, export and manifest versioning to `0.0.14-alpha.0` / version code `14`;
+- bumps in-app, export and manifest versioning to `0.0.15-alpha.0` / version code `15`;
 - keeps `minimum_supported_version_code` at `13`;
-- serializes Arena battle log participants with initial `hp`, `max_hp`, `max_mana` and `stat_modifiers`;
-- makes `BattleVisualMockup` infer and apply `battle_start` initial HP/Mana before the first replay action;
-- deploys `arena` so the remote simulator returns the corrected battle log contract.
+- marks the integrated Bosque screen as bootstrap-loading before the world viewport is created;
+- keeps the playable viewport hidden until canonical remote/cache state arrives;
+- adds a regression test proving delayed `/modes/state` does not expose a full-spawn frame before sync;
+- aligns release/export scripts and remote smokes with version code `15`.
 
 Publication evidence:
 
-- Remote Supabase migrations `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql` remain applied.
-- Supabase Edge Functions `arena` and `release` deployed.
-- Export regenerated APK, PC ZIP and Web artifacts for `0.0.14-alpha.0` / version code `14`; Android uses `debug_fallback`.
+- Release root: `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`.
+- Supabase Edge Function `release` deployed; `modes` remains on operations-v2 and `arena` remains on Arena PVE Bonus Visual v1.
+- Export regenerated APK, PC ZIP and Web artifacts for `0.0.15-alpha.0` / version code `15`; Android uses `debug_fallback`.
 - Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and Edge Function `release` deploy passed.
-- Cloudflare Pages preview evidence: `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`.
-- Direct preview Web launch smoke loaded the game in `4568 ms`, matched release root and reported no runtime errors.
-- Stable direct Web smoke reached Cloudflare Access as expected; Portal/Web remain protected on the canonical domain.
+- Cloudflare Pages preview evidence: `https://0123894f.draxos-mobile-internal-alpha.pages.dev`.
+- Direct preview Web launch smoke loaded the game in `6890 ms`, matched release root and reported no runtime errors.
 - Remote manifest smoke, internal alpha release smoke and remote artifact smoke passed. Canonical Portal/Web are Cloudflare Access protected; preview Web launch validated the public Pages deployment.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
-- `release/config` remains on `track23-online-actions-hotfix`, so online progression actions are not paused by remote config.
 
 Artifact hashes:
 
-- Android APK SHA256: `1f78020ae1ec5101c9d7b6bc41ca0727d57f4ffa84d769e6fadf076165593720`
-- PC Windows ZIP SHA256: `60c4101e0c23f83e16d9bc2307c7da32d4052091807a85cae80b84fa6e954a93`
-- Web Index SHA256: `6703e00323874c127cf49bf1db0afeb8a02068d8fed5f093df3b00d4b58febc9`
+- Android APK SHA256: `f7406c57b1a8ef6af6496395eba25c7cde0358781c5c47e845daa457405b84f4`
+- PC Windows ZIP SHA256: `b45826aaa8fbd70959795f3758c43d1b7e6f4590378d63f47a071958ed5d588b`
+- Web Index SHA256: `9f410baff95d901a65f46d05eae316f7bdc203b0fcc200e8bacdf750e42dde56`
+
+## Previous Arena Bonus Visual Package
+
+Arena PVE Bonus Visual v1 is preserved as the previous Arena package. It fixes Arena PVE temporary reward buffs not being visible in the next fight/replay by exporting initial buffed `hp`, `max_hp`, `max_mana` and `stat_modifiers` in battle log participants and applying `battle_start` before replay actions. Release root: `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`; preview evidence: `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`; APK/manifest: `0.0.14-alpha.0` / version code `14`.
 
 ## Previous Resume Exit Lifecycle Package
 
