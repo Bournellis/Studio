@@ -14,7 +14,15 @@ var health: float = 100.0
 var body_color: Color = Color(0.8, 0.86, 0.95, 1.0)
 var is_dead: bool = false
 var knockback_velocity: Vector3 = Vector3.ZERO
-var knockback_decay: float = 18.0
+var knockback_decay: float = 12.5
+var knockback_air_decay_multiplier: float = 0.62
+var knockback_lift_ratio: float = 0.22
+var knockback_min_lift: float = 1.05
+var knockback_max_lift: float = 2.8
+var knockback_max_horizontal_speed: float = 12.0
+var knockback_max_vertical_speed: float = 4.4
+var last_knockback_impulse: Vector3 = Vector3.ZERO
+var knockback_event_count: int = 0
 var damage_flash_time: float = 0.0
 var damage_flash_duration: float = 0.14
 
@@ -35,6 +43,8 @@ func configure_combatant(next_id: StringName, next_max_health: float, next_color
 	body_color = next_color
 	is_dead = false
 	knockback_velocity = Vector3.ZERO
+	last_knockback_impulse = Vector3.ZERO
+	knockback_event_count = 0
 	damage_flash_time = 0.0
 	_update_visual_state()
 
@@ -54,18 +64,27 @@ func take_damage(amount: float, _source_id: StringName = &"") -> void:
 		_update_visual_state()
 		died.emit()
 
-func apply_knockback(direction: Vector3, force: float) -> void:
+func apply_knockback(direction: Vector3, force: float, lift_force: float = -1.0) -> void:
 	if is_dead or force <= 0.0:
 		return
 	var flat := Vector3(direction.x, 0.0, direction.z)
 	if flat.length_squared() <= 0.0001:
 		flat = -global_transform.basis.z
-	var impulse := (flat.normalized() + Vector3.UP * 0.18).normalized() * force
+	var normalized_direction := direction.normalized() if direction.length_squared() > 0.0001 else flat.normalized()
+	var lift := lift_force
+	if lift < 0.0:
+		var vertical_bias := normalized_direction.y * force * 0.24
+		lift = clampf(force * knockback_lift_ratio + vertical_bias, knockback_min_lift, knockback_max_lift)
+	var impulse := flat.normalized() * force + Vector3.UP * lift
+	last_knockback_impulse = impulse
+	knockback_event_count += 1
 	knockback_velocity += impulse
+	knockback_velocity = _clamp_knockback_velocity(knockback_velocity)
 
-func consume_knockback(delta: float) -> Vector3:
+func consume_knockback(delta: float, grounded: bool = false) -> Vector3:
 	var current := knockback_velocity
-	knockback_velocity = knockback_velocity.move_toward(Vector3.ZERO, knockback_decay * delta)
+	var decay_multiplier := 1.0 if grounded else knockback_air_decay_multiplier
+	knockback_velocity = knockback_velocity.move_toward(Vector3.ZERO, knockback_decay * decay_multiplier * delta)
 	return current
 
 func health_fraction() -> float:
@@ -73,6 +92,25 @@ func health_fraction() -> float:
 
 func get_body_center() -> Vector3:
 	return global_position + Vector3.UP * BODY_CENTER_Y
+
+func debug_get_last_knockback_impulse() -> Vector3:
+	return last_knockback_impulse
+
+func debug_get_knockback_event_count() -> int:
+	return knockback_event_count
+
+func debug_get_knockback_horizontal_speed() -> float:
+	return Vector3(knockback_velocity.x, 0.0, knockback_velocity.z).length()
+
+func _clamp_knockback_velocity(next_velocity: Vector3) -> Vector3:
+	var flat := Vector3(next_velocity.x, 0.0, next_velocity.z)
+	if flat.length() > knockback_max_horizontal_speed:
+		flat = flat.normalized() * knockback_max_horizontal_speed
+	return Vector3(
+		flat.x,
+		clampf(next_velocity.y, -knockback_max_vertical_speed, knockback_max_vertical_speed),
+		flat.z
+	)
 
 func _ensure_body_nodes() -> void:
 	if get_node_or_null("CollisionShape3D") == null:

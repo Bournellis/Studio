@@ -14,6 +14,8 @@ const BOT_SPAWN: Vector3 = Vector3(10.8, 0.05, -8.6)
 const PLAYER_VISUAL_MUZZLE_RIGHT_OFFSET: float = 0.34
 const PLAYER_VISUAL_MUZZLE_DOWN_OFFSET: float = 0.24
 const PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET: float = 0.82
+const PLAYER_SHOT_KNOCKBACK_LIFT: float = 1.75
+const BOT_SHOT_KNOCKBACK_LIFT: float = 1.12
 const BOT_REPOSITION_POINTS: Array[Vector3] = [
 	Vector3(-11.2, 0.05, 7.8),
 	Vector3(-10.8, 0.05, -7.2),
@@ -214,12 +216,16 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 	if collider != null and collider.has_method("take_damage"):
 		collider.take_damage(damage, &"player")
 		if collider.has_method("apply_knockback"):
-			collider.apply_knockback(shot_direction, knockback)
+			collider.apply_knockback(shot_direction, knockback, PLAYER_SHOT_KNOCKBACK_LIFT)
 		if hud != null:
 			var killed: bool = collider.get("is_dead") == true
 			hud.show_hit_confirm(killed)
 		if feedback != null:
 			feedback.play_hit(visual_origin, impact_position)
+			var knockback_position := impact_position
+			if collider.has_method("get_body_center"):
+				knockback_position = collider.get_body_center()
+			feedback.play_knockback(knockback_position, shot_direction, knockback, true)
 		return
 	if hud != null:
 		hud.show_miss()
@@ -265,7 +271,9 @@ func _on_bot_shot_resolution_requested(origin: Vector3, direction: Vector3, dama
 		if feedback != null:
 			feedback.play_bot_shot(origin, impact_position)
 		player.take_damage(damage, &"bot")
-		player.apply_knockback(shot_direction, knockback)
+		player.apply_knockback(shot_direction, knockback, BOT_SHOT_KNOCKBACK_LIFT)
+		if feedback != null:
+			feedback.play_knockback(player.get_body_center(), shot_direction, knockback, false)
 		return
 	if feedback != null:
 		feedback.play_bot_miss(origin, impact_position)

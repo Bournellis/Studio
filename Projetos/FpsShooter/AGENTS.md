@@ -14,7 +14,7 @@ Current identity:
 - PC Windows editor-first;
 - local 1x1 arena shooter against a bot;
 - traditional FPS baseline first;
-- future additions may include projectile types, stronger effects, jump pads, suspended platforms, void/fall rules and deeper knockback play;
+- future additions may include projectile types, stronger effects, jump pads, suspended platforms, void/fall rules and deeper movement-combat play;
 - no Ricochet-style contract is active unless Fabio explicitly reopens that direction.
 
 ## Multi-Agent And Git Rule

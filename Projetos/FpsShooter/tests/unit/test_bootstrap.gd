@@ -148,12 +148,16 @@ func test_player_shot_ray_damages_bot_when_aimed_at_body() -> void:
 
 	assert_lt(bot.health, before)
 	assert_gt(bot.knockback_velocity.length(), 0.1)
+	var impulse: Vector3 = bot.debug_get_last_knockback_impulse()
+	assert_gt(Vector3(impulse.x, 0.0, impulse.z).length(), 7.0)
+	assert_gt(impulse.y, 1.6)
 	assert_eq(hud.last_feedback, &"hit")
 	assert_gt(hud.hit_confirm_count, 0)
 	assert_gt(bot.damage_flash_time, 0.0)
 	assert_eq(feedback.last_event, &"hit")
 	assert_gt(feedback.player_shot_count, 0)
 	assert_gt(feedback.hit_count, 0)
+	assert_gt(feedback.knockback_count, 0)
 	assert_gt(feedback.debug_active_effect_count(), 0)
 	assert_no_new_orphans()
 
@@ -229,8 +233,32 @@ func test_combatant_damage_and_knockback_contract() -> void:
 	assert_gt(combatant.get_body_center().y, combatant.global_position.y)
 	combatant.apply_knockback(Vector3.FORWARD, 4.0)
 	assert_gt(combatant.knockback_velocity.length(), 0.1)
+	var impulse: Vector3 = combatant.debug_get_last_knockback_impulse()
+	assert_gt(Vector3(impulse.x, 0.0, impulse.z).length(), 3.9)
+	assert_gt(impulse.y, 1.0)
+	assert_eq(combatant.debug_get_knockback_event_count(), 1)
 	combatant.take_damage(80.0, &"test")
 	assert_true(combatant.is_dead)
+	assert_no_new_orphans()
+
+func test_knockback_clamps_stack_and_decays_slower_airborne() -> void:
+	var airborne = CombatantScript.new()
+	add_child_autofree(airborne)
+	airborne.configure_combatant(&"airborne", 50.0, Color.WHITE)
+	airborne.apply_knockback(Vector3.RIGHT, 50.0, 3.0)
+
+	var grounded = CombatantScript.new()
+	add_child_autofree(grounded)
+	grounded.configure_combatant(&"grounded", 50.0, Color.WHITE)
+	grounded.apply_knockback(Vector3.RIGHT, 50.0, 3.0)
+
+	assert_lte(airborne.debug_get_knockback_horizontal_speed(), airborne.knockback_max_horizontal_speed + 0.001)
+	assert_lte(airborne.knockback_velocity.y, airborne.knockback_max_vertical_speed + 0.001)
+
+	airborne.consume_knockback(0.12, false)
+	grounded.consume_knockback(0.12, true)
+
+	assert_gt(airborne.knockback_velocity.length(), grounded.knockback_velocity.length())
 	assert_no_new_orphans()
 
 func test_bot_force_fire_damages_player() -> void:
@@ -251,6 +279,7 @@ func test_bot_force_fire_damages_player() -> void:
 	bot.force_fire()
 	assert_lt(player.health, before)
 	assert_gt(player.knockback_velocity.length(), 0.1)
+	assert_gt(player.debug_get_last_knockback_impulse().y, 1.0)
 	assert_eq(hud.last_feedback, &"player_damage")
 	assert_gt(hud.player_damage_count, 0)
 	assert_gt(feedback.bot_shot_count, 0)
@@ -341,6 +370,9 @@ func test_bot_normal_fire_uses_short_windup_before_damage() -> void:
 
 	assert_false(bot.is_telegraphing)
 	assert_lt(player.health, before)
+	assert_gt(player.debug_get_knockback_event_count(), 0)
+	assert_gt(player.debug_get_last_knockback_impulse().y, 1.0)
+	assert_gt(feedback.knockback_count, 0)
 	assert_gt(feedback.bot_shot_count, 0)
 	assert_no_new_orphans()
 
@@ -372,6 +404,8 @@ func test_bot_normal_fire_can_miss_without_damage() -> void:
 	assert_eq(player.health, before)
 	assert_gt(feedback.bot_miss_count, 0)
 	assert_eq(feedback.last_event, &"bot_miss")
+	assert_eq(player.debug_get_knockback_event_count(), 0)
+	assert_eq(feedback.knockback_count, 0)
 	assert_no_new_orphans()
 
 func test_bot_strafes_when_cooling_down() -> void:
@@ -466,8 +500,10 @@ func test_feedback_controller_builds_synthetic_audio_stream() -> void:
 	assert_gt(stream.data.size(), 0)
 	feedback.play_player_shot(Vector3.ZERO, Vector3.FORWARD)
 	feedback.play_bot_miss(Vector3.ZERO, Vector3.FORWARD)
+	feedback.play_knockback(Vector3.ZERO, Vector3.FORWARD, 5.0, true)
 	assert_gt(feedback.player_shot_count, 0)
 	assert_gt(feedback.bot_miss_count, 0)
+	assert_gt(feedback.knockback_count, 0)
 	assert_gt(feedback.debug_active_effect_count(), 0)
 	assert_no_new_orphans()
 
