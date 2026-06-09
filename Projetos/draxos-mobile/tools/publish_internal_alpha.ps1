@@ -239,16 +239,17 @@ function Build-Manifest {
     return [ordered]@{
         schema_version = "internal_alpha_manifest_v1"
         channel = "internal_alpha"
-        latest_version = "0.0.14-alpha.0"
-        latest_version_code = 14
+        latest_version = "0.0.15-alpha.0"
+        latest_version_code = 15
         minimum_supported_version = "0.0.13-alpha.0"
         minimum_supported_version_code = 13
         released_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         requires_save_reset = $false
         portal_url = $PortalUrl
         notes = @(
-            "Arena PVE Bonus Visual v1 publicado na URL principal de Internal Alpha.",
+            "Bosque Bootstrap Authority v1 publicado na URL principal de Internal Alpha.",
             "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
+            "Bosque integrado oculta o viewport jogavel ate receber bootstrap canonico remoto/cache, evitando flash full-spawn ao reentrar.",
             "Arena PVE agora exporta e exibe HP/Mana iniciais buffados no replay da proxima luta.",
             "Openworld/Bosque usa operations v2 com ACK obrigatorio e retry local.",
             "Nodes coletaveis mantem cooldown por item via node_state.next_spawn_at e rejeicoes terminais nao ficam presas na fila.",
@@ -491,8 +492,8 @@ $plan = [ordered]@{
     }
     app = [ordered]@{
         channel = "internal_alpha"
-        version = "0.0.14-alpha.0"
-        version_code = 14
+        version = "0.0.15-alpha.0"
+        version_code = 15
         requires_save_reset = $false
     }
     artifacts = $artifactRecords
@@ -665,8 +666,8 @@ if ($Mode -eq "FullPublish") {
 $report = [ordered]@{
     schema_version = "internal_alpha_publication_v2"
     channel = "internal_alpha"
-    app_version = "0.0.14-alpha.0"
-    app_version_code = 14
+    app_version = "0.0.15-alpha.0"
+    app_version_code = 15
     mode = $Mode
     generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     bucket = $BucketName
