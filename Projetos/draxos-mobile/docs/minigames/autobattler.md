@@ -33,5 +33,9 @@ reward path.
 ## Future Gate
 
 Future Autobattler work must wait for explicit package direction. The immediate
-product next step remains human playtest of the published Arena PVE sequence
-before tuning or expansion.
+operational focus is documentation drift cleanup after the initial human
+playtest of `Bosque Bootstrap Authority v1` was reported OK by Fabio on
+2026-06-09. Future bugs return to the normal bugfix flow if they appear.
+Arena PVE remains the first product core, but tuning, new enemies, PVP,
+economy, content, visual-final work or remote mutations require an explicit
+next-package decision.

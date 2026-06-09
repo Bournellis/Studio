@@ -1,6 +1,6 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-06-06`
+- Ultima atualizacao: `2026-06-09`
 - Status: `VIVO`
 
 ---
@@ -17,11 +17,15 @@ DraxosMobile e um jogo mobile-first de progressao persistente construido sobre c
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa operacional publicada e `Bosque Fogueira Potion Crafting v1`: o pacote preserva Arena PVE Menu Flow Simplification v1, Bosque Durable Bau Mochila v1, Bosque Offline-First Checkpoint v1 e os pacotes anteriores, mas liga Openworld e Arena por uma fronteira controlada. Movimento, coleta, deposito, construcoes e cache do Bosque continuam `client-owned active play`; `Fogueira Estavel I` vira estacao server-authoritative para criar pocoes globais a partir de materiais do Bau + `po_osso` da conta. A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`, e novas expansoes dependem de playtest humano antes de abrir tuning amplo.
+A etapa operacional publicada e `Bosque Bootstrap Authority v1`: release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, evidencia `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, versao `0.0.15-alpha.0`, version code `15`, minimum supported version code `13`. O pacote impede que o Bosque integrado renderize um mundo jogavel full-spawn antes do bootstrap canonico remoto/cache e preserva Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1 e todos os pacotes anteriores como historico.
+
+A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`. Bosque/Openworld e slice integrado de Internal Alpha para validar movimento, coleta, persistencia, cache e fronteira controlada com Arena/Basebuilder; nao e autorizacao para expansao ampla de mundo, economia, conteudo, armas/spells, PVP, visual final ou mutacoes remotas.
 
 ## Foco Imediato
 
-O foco imediato e validar a leitura humana do pacote de Fogueira: construir/retomar Fogueira duravel, depositar materiais no Bau, preparar `pocao_vida`, `pocao_foco` e `pocao_resguardo`, confirmar que o checkpoint e salvo antes do craft de estacao, equipar qualquer pocao na Preparacao e resolver duelos com os efeitos corretos. A regressao de Arena tambem segue no playtest: Preparacao antes de iniciar Arena, Preparacao no menu ativo e na escolha de buff, buff selecionado -> `Resolver duelo`, tutorial -> primeira arena real de 3 duelos, retomar/abandonar/encerrar tentativa antiga e buff pendente apos update/reopen.
+Playtest humano inicial do Bosque Bootstrap Authority v1 foi reportado OK por Fabio em 2026-06-09: tudo testado ate agora parece funcionando. O foco imediato e corrigir drift documental e consolidar fontes vivas; bugs futuros voltam ao fluxo normal se aparecerem.
+
+Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final, expansao ampla de Openworld ou mutacoes remotas sem decisao propria. Se aparecer bug novo, tratar como bugfix estreito a partir do pacote atual.
 
 O foco de fundacao anterior foi fechado: Foundation Closeout entregou account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish, Hardening Platform V1 e Foundation Hardening V2 ficam como baselines tecnicas/historicas preservadas.
 
@@ -29,7 +33,7 @@ A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo de
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Bosque Durable Bau Mochila v1 e Bosque Fogueira Potion Crafting v1 e que Refugio, Arena PVE/Preparacao, Resultado e Bosque devem ser confirmados no pacote publicado antes de abrir novo backend, schema, tuning, economia ou conteudo.
+First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Bosque Durable Bau Mochila v1, Bosque Fogueira Potion Crafting v1, Bosque World Hub Domain Separation v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque Persistence Rebase v1, Bosque Feel & Spawn Authority v1, Bosque Resume Exit Lifecycle v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1 e Bosque Bootstrap Authority v1 e que Refugio, Arena PVE/Preparacao, Resultado e Bosque devem permanecer coerentes antes de abrir novo backend, schema, tuning, economia ou conteudo.
 
 Ao abrir o pacote de Arena PVE inicial, devem ser avaliados juntos:
 
@@ -63,14 +67,15 @@ Terminologia implementada preservada como substancia/mock: Instrumento Ritual, S
 
 Ordem recomendada agora:
 
-1. Playtestar Bosque Fogueira Potion Crafting v1 publicado.
-2. Hotfix estreito de Fogueira/Bosque/Arena se o playtest indicar regressao.
-3. Arena PVE tutorial e primeiras arenas de 3 lutas com pocoes simples.
-4. Dificuldade, recompensas, poder e progression labs orientados a Arena PVE.
-5. Base/preparacao como suporte da Arena PVE.
-6. PVP assincrono posterior, com bots como fallback transparente.
-7. Social/competicao.
-8. Armas, spells, economia fina, novos conteudos e visual final.
+1. Corrigir drift documental do Bosque Bootstrap Authority v1 publicado.
+2. Registrar o playtest humano inicial OK como contexto operacional, sem criar novo status formal.
+3. Tratar bugs futuros por bugfix estreito se aparecerem.
+4. Decidir explicitamente o proximo pacote antes de tuning amplo ou expansao.
+5. Retomar Arena PVE tutorial/primeiras arenas, labs e tuning apenas quando essa decisao existir.
+6. Base/preparacao como suporte da Arena PVE.
+7. PVP assincrono posterior, com bots como fallback transparente.
+8. Social/competicao.
+9. Armas, spells, economia fina, novos conteudos e visual final.
 
 ## Plataformas
 

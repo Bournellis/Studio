@@ -1,6 +1,6 @@
 # DraxosMobile - Product Vision
 
-- Ultima atualizacao: `2026-06-05`
+- Ultima atualizacao: `2026-06-09`
 - Status: `LOCAL_PRODUCT_VISION - fonte viva do produto DraxosMobile`
 - Escopo: direcao de longo prazo, limites de produto, plataforma, economia, social, live ops, backend e monetizacao.
 
@@ -16,15 +16,21 @@ O jogador nao e o heroi. O jogador e um Draxos em ascensao.
 
 ## Situacao Atual
 
-Etapa operacional atual: `ARENA_BOSQUE_REGRESSION_HOTFIX_PUBLISHED_INTERNAL_ALPHA`.
+Etapa operacional atual: `BOSQUE_BOOTSTRAP_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`.
+
+Pacote remoto Internal Alpha atual: `Bosque Bootstrap Authority v1`, release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, evidencia `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, versao `0.0.15-alpha.0`, version code `15`, minimum supported version code `13`.
+
+Playtest humano inicial do Bosque Bootstrap Authority v1 foi reportado OK por Fabio em 2026-06-09: tudo testado ate agora parece funcionando. O foco imediato e corrigir drift documental e consolidar fontes vivas; bugs futuros voltam ao fluxo normal se aparecerem.
 
 Direcao viva de produto: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, com Arena PVE
-como core inicial do `Autobattler`; o pacote publicado atual deve ser revisado
-em playtest humano antes de abrir tuning amplo ou nova expansao.
+como core inicial do `Autobattler`. O estado operacional atual nao muda essa
+direcao: Bootstrap Authority v1 e o pacote publicado atual; Arena PVE segue
+primeiro core; Bosque/Openworld e slice integrado de Internal Alpha, nao
+autorizacao para expansao ampla de mundo, economia, conteudo ou visual final.
 
 Atualizacao V1 de plataforma: DraxosMobile agora organiza sua visao jogavel em cinco modos oficiais governados por um registry unico: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` e `Openworld`. A Arena PVE atual pertence ao `Autobattler`; Refugio/Base atuais pertencem ao `Basebuilder`; o antigo prototipo Rpgsuave foi renomeado de verdade para `Openworld`, com `forest` como primeiro slice e `Bosque` como entrada player-facing direta.
 
-O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2, Openworld Main Menu Sync, Technical Hardening e Bosque v3 UX/Feel ficam como baselines historicas/tecnicas/conteudo preservadas; Arena/Bosque Regression Hotfix e o pacote operacional publicado para revisao humana, preservando Arena PVE Season 1 Loop v1, Arena Duel Flow Hotfix e Arena PVE First Real Run + Update Recovery como pacotes anteriores.
+O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2, Openworld Main Menu Sync, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Bosque Durable Bau Mochila v1, Bosque Fogueira Potion Crafting v1, Bosque World Hub Domain Separation v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque Persistence Rebase v1, Bosque Feel & Spawn Authority v1, Bosque Resume Exit Lifecycle v1, Bosque Node Cooldown ACK v1 e Arena PVE Bonus Visual v1 ficam como baselines historicas/tecnicas/conteudo preservadas; Bosque Bootstrap Authority v1 e o pacote operacional publicado atual.
 
 A decisao de produto seguinte foi escolhida em nivel de direcao: o early game deve ser uma Arena PVE inicial, sem cooldown de combate, com tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado antes da arena, vida resetada a 100% em cada duelo, buffs temporarios leves de stat entre lutas e comportamento ajustavel antes do proximo inimigo. A direcao viva esta em `docs/pve-arena-initial-direction.md`, e Track 23 publicou o primeiro pacote operacional para validar esse fluxo e o recovery de updates.
 
@@ -38,11 +44,11 @@ Nesta etapa, nomes, spells, armas, numeros de economia, Battle Pass, visual fina
 
 Ordem de foco operacional:
 
-1. Playtest humano do Arena PVE Season 1 Loop v1 publicado, preservando o foco de selecao S1 agrupada, reward preview, tutorial, primeira arena real de 3 duelos, buff pendente apos update/reopen, retomar/abandonar/encerrar tentativa antiga e regressao Bosque/menu.
-2. Hotfix estreito de Arena/Bosque/menu se o playtest apontar regressao ou friccao.
-3. Tuning integrado de leveling/upgrades/recompensas/poder quando o pacote publicado estiver confirmado.
-4. `Basebuilder` como suporte persistente da rotina.
-5. PVP assincrono posterior, social, competicao, Towerdefense e Cardgame quando seus contratos proprios existirem.
+1. Corrigir drift documental e consolidar as fontes vivas apos playtest humano inicial OK do Bosque Bootstrap Authority v1.
+2. Manter bugs futuros no fluxo normal de bugfix, sem reabrir regressao preventiva se nada novo aparecer.
+3. Decidir explicitamente o proximo pacote antes de abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final, mutacoes remotas ou expansao de Openworld.
+4. Quando houver decisao, retomar Arena PVE como primeiro core de produto para labs/tuning/UX estreitos.
+5. PVP assincrono posterior, social, competicao, Towerdefense e Cardgame somente quando seus contratos proprios existirem.
 
 ## Pilares
 
@@ -223,9 +229,10 @@ Esses itens podem virar projeto ou fase futura, mas nao devem ser tratados como 
 
 ## Gates De Proxima Decisao
 
-1. Revisar/playtestar Arena PVE Season 1 Loop v1 no pacote publicado.
-2. Decidir se o proximo pacote e hotfix estreito de Arena/Bosque/menu ou tuning/labs de Arena PVE.
-3. Confirmar que `docs/pve-arena-initial-direction.md` e `docs/pve-arena-v1.md` continuam suficientes para tutorial, primeiras arenas, inimigos, buffs, recovery e recompensas.
-4. Rodar Progression Lab e Battle Lab orientados a Arena PVE antes de mexer em valores calibraveis.
-5. Implementar pacote pequeno de tuning/UX de Arena PVE somente depois de confirmar o pacote publicado atual.
-6. Reintroduzir PVP como modo posterior/competitivo depois que o core PVE estiver claro.
+1. Concluir a correcao de drift documental do estado Bosque Bootstrap Authority v1.
+2. Confirmar se bugs novos apareceram depois do playtest humano inicial OK; se aparecerem, tratar por bugfix estreito.
+3. Escolher explicitamente o proximo pacote de produto antes de qualquer tuning amplo ou expansao.
+4. Confirmar que `docs/pve-arena-initial-direction.md` e `docs/pve-arena-v1.md` continuam suficientes para tutorial, primeiras arenas, inimigos, buffs, recovery e recompensas.
+5. Rodar Progression Lab e Battle Lab orientados a Arena PVE antes de mexer em valores calibraveis.
+6. Implementar pacote pequeno de tuning/UX de Arena PVE somente depois da decisao explicita do proximo pacote.
+7. Reintroduzir PVP como modo posterior/competitivo depois que o core PVE estiver claro.
