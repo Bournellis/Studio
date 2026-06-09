@@ -14,7 +14,7 @@ Current identity:
 - PC Windows editor-first;
 - local 1x1 arena shooter against a bot;
 - traditional FPS baseline first;
-- future additions may include projectile types, stronger effects, jump pads, suspended platforms, void/fall rules and deeper movement-combat play;
+- future additions may include additional projectile types, stronger effects, jump pads, suspended platforms, void/fall rules and deeper movement-combat play;
 - no Ricochet-style contract is active unless Fabio explicitly reopens that direction.
 
 ## Multi-Agent And Git Rule
@@ -61,7 +61,7 @@ Initial boundaries:
 
 - `autoloads/`: input/bootstrap only.
 - `gameplay/combat/`: health, damage, knockback and shared combat body behavior.
-- `gameplay/player/`: FPS movement, camera, aiming and shooting.
+- `gameplay/player/`: FPS movement, camera, aiming, rifle shooting and alt-fire requests.
 - `gameplay/bot/`: basic bot movement and shooting behavior.
 - `modes/arena/`: mode assembly, arena geometry, round state and hit resolution.
 - `presentation/hud/`: player-facing HUD.

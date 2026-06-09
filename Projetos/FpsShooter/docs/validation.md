@@ -21,9 +21,9 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `20/20`;
-- `203` asserts;
-- Track 01D validates feedback controller, player hit/miss, combatant impulse/lift/clamp/decay, player hit knockback, bot hit knockback, bot miss without knockback, map structure, protected spawn sightline, route markers, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()` and synthetic audio stream creation.
+- GUT `26/26`;
+- `239` asserts;
+- Track 02A validates feedback controller, player hit/miss, combatant impulse/lift/clamp/decay, player hit knockback, bot hit knockback, bot miss without knockback, map structure, protected spawn sightline, route markers, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()`, synthetic audio stream creation, RMB plasma input, Plasma Bolt spawn/hit/knockback, pickups, overcharge, bot pickup priority and bot plasma dodge awareness.
 
 ## Manual Smoke
 
@@ -36,9 +36,12 @@ Expected:
 - mouse look rotates the camera;
 - `Space` jumps;
 - left click shoots while mouse is captured;
+- right click fires Plasma Bolt while mouse is captured;
 - each player shot has muzzle/tracer feedback and a short synthetic shot sound;
+- Plasma Bolt is visibly slower than rifle, glows, travels from the muzzle side and has clear impact/miss feedback;
 - aiming at the bot and shooting reduces bot health, flashes the bot, shows hitmarker and plays hit feedback;
 - hitting the bot pushes it in the shot direction with a small readable lift and short knockback pulse;
+- hitting the bot with Plasma Bolt creates stronger but still controlled knockback;
 - missing the bot still shows shot/tracer feedback without false hit confirmation;
 - missing the bot does not move it or show hit/knockback feedback;
 - the map is `Duel Pit V1`, with a central blocker, low/high cover, route markings, side platforms and ramps;
@@ -46,6 +49,11 @@ Expected:
 - player can move around the central blocker and read the side routes;
 - player can walk onto/down the ramp/platform primitives without getting stuck in ordinary movement;
 - bot moves, strafes and repositions instead of only walking straight;
+- health and overcharge pickups are visible on the side platforms;
+- walking through Health Shard heals only if damaged and hides it until respawn;
+- walking through Overcharge primes the next rifle or plasma shot and updates HUD state;
+- the bot can seek health when hurt and contest overcharge when the pickup is available;
+- the bot reacts to nearby visible Plasma Bolt pressure with a dodge vector;
 - cover can break bot line of sight, preventing normal bot damage through obstacles;
 - low cover can hide the body center while the bot still recognizes player camera/head exposure above it;
 - tall cover blocks the exposed points and pushes the bot to reposition instead of firing;

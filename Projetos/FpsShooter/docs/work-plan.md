@@ -1,13 +1,13 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-09`
-- Status: `TRACK_01D_KNOCKBACK_MOVEMENT_COMBAT_COMPLETE`
+- Status: `FPS_SHOOTER_TRACK_02A_COMBAT_LOOP_EXPANSION_COMPLETE`
 
 ## North Star
 
 Create a small first-person shooter tech probe that proves Godot 4.6.2 can support a satisfying PC editor-first 3D combat loop for the studio.
 
-The project starts as a traditional FPS. Special projectile types, jump pads, suspended platforms, void/fall rules and richer knockback play come later.
+The project starts as a traditional FPS. Track 02A adds the first special projectile and micro-objectives; jump pads, suspended platforms, void/fall rules and deeper movement-combat play still come later.
 
 ## Track 00 - Project Bootstrap
 
@@ -107,14 +107,32 @@ Delivered:
 - primitive knockback pulse/thump feedback on real hits only;
 - automated coverage for impulse, clamp, decay, player hit, bot hit and bot miss.
 
-## Track 02 - Next Combat Shape
+## Track 02 - Combat Shape Expansion
 
-Goal: choose the next gameplay shape after the first readable duel baseline.
+Goal: expand the duel from pure rifle pressure into a first tactical combat loop.
 
-Candidate scope:
+Status: active; Track 02A is complete.
+
+## Track 02A - Combat Loop Expansion V1
+
+Goal: add a robust first gameplay layer after feel/bot/map/knockback are accepted.
+
+Status: complete.
+
+Delivered:
+
+- RMB `Plasma Bolt`: visible slow projectile, cooldown, primitive glow, hit/miss feedback and stronger controlled knockback;
+- overcharge pickup that empowers the next rifle or plasma shot;
+- health pickup that creates a recovery objective;
+- pickup respawn timers and simple HUD readability;
+- bot awareness for health seeking, overcharge contest and nearby plasma dodge;
+- arena-side authority for projectile collision, pickup consumption, damage, knockback and feedback;
+- automated coverage for input, projectile spawn/hit, pickup effects, bot pickup priority and bot dodge awareness.
+
+Future candidate scope:
 
 - recoil/spread or ammo/reload only if explicitly selected;
-- future projectile variants after hitscan feel remains stable.
+- additional projectile variants only after Plasma Bolt is accepted in editor smoke.
 
 ## Track 03 - Verticality And Hazards
 

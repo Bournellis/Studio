@@ -15,7 +15,15 @@ const PLAYER_VISUAL_MUZZLE_RIGHT_OFFSET: float = 0.34
 const PLAYER_VISUAL_MUZZLE_DOWN_OFFSET: float = 0.24
 const PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET: float = 0.82
 const PLAYER_SHOT_KNOCKBACK_LIFT: float = 1.75
+const PLAYER_PLASMA_KNOCKBACK_LIFT: float = 2.25
 const BOT_SHOT_KNOCKBACK_LIFT: float = 1.12
+const PLASMA_BOLT_TTL: float = 2.45
+const PICKUP_RADIUS: float = 1.05
+const HEALTH_PICKUP_AMOUNT: float = 28.0
+const HEALTH_PICKUP_RESPAWN: float = 8.0
+const OVERCHARGE_PICKUP_RESPAWN: float = 12.0
+const HEALTH_PICKUP_POSITION: Vector3 = Vector3(-9.6, 1.42, -1.6)
+const OVERCHARGE_PICKUP_POSITION: Vector3 = Vector3(9.6, 1.42, 1.6)
 const BOT_REPOSITION_POINTS: Array[Vector3] = [
 	Vector3(-11.2, 0.05, 7.8),
 	Vector3(-10.8, 0.05, -7.2),
@@ -38,6 +46,10 @@ var feedback
 var round_status: String = "Duel Pit V1"
 var round_ended: bool = false
 var menu_open: bool = false
+var projectile_root: Node3D
+var pickup_root: Node3D
+var active_projectiles: Array[Dictionary] = []
+var pickups: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -48,6 +60,13 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if hud != null:
 		hud.update_snapshot(_build_hud_snapshot())
+
+func _physics_process(delta: float) -> void:
+	if round_ended or menu_open:
+		return
+	_process_projectiles(delta)
+	_process_pickups(delta)
+	_update_bot_awareness()
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_back"):
@@ -78,6 +97,9 @@ func restart_round() -> void:
 		hud.reset_feedback()
 	if feedback != null:
 		feedback.clear_effects()
+	_clear_projectiles()
+	_reset_pickups()
+	_update_bot_awareness()
 	_capture_mouse_if_playing()
 
 func debug_get_player():
@@ -97,6 +119,29 @@ func debug_get_bot_spawn() -> Vector3:
 
 func debug_get_bot_reposition_points() -> Array[Vector3]:
 	return BOT_REPOSITION_POINTS.duplicate()
+
+func debug_get_active_projectile_count() -> int:
+	return active_projectiles.size()
+
+func debug_get_pickup_position(pickup_kind: StringName) -> Vector3:
+	var entry: Dictionary = pickups.get(pickup_kind, {})
+	return entry.get("position", Vector3.ZERO)
+
+func debug_is_pickup_available(pickup_kind: StringName) -> bool:
+	var entry: Dictionary = pickups.get(pickup_kind, {})
+	return bool(entry.get("available", false))
+
+func debug_force_pickup_available(pickup_kind: StringName, available: bool) -> void:
+	if not pickups.has(pickup_kind):
+		return
+	var entry: Dictionary = pickups[pickup_kind]
+	entry["available"] = available
+	entry["respawn_remaining"] = 0.0 if available else 9999.0
+	var node := entry.get("node", null) as Node3D
+	if node != null:
+		node.visible = available
+	pickups[pickup_kind] = entry
+	_update_bot_awareness()
 
 func _configure_world() -> void:
 	var environment := WorldEnvironment.new()
@@ -163,6 +208,7 @@ func _spawn_runtime() -> void:
 	player.position = PLAYER_SPAWN
 	runtime_root.add_child(player)
 	player.shoot_requested.connect(_on_player_shot)
+	player.alt_fire_requested.connect(_on_player_alt_fire)
 
 	bot = BotController.new()
 	bot.name = "Bot"
@@ -173,6 +219,16 @@ func _spawn_runtime() -> void:
 	bot.shot_windup_started.connect(_on_bot_shot_windup_started)
 	bot.shot_feedback_requested.connect(_on_bot_shot_feedback_requested)
 	bot.shot_resolution_requested.connect(_on_bot_shot_resolution_requested)
+
+	projectile_root = Node3D.new()
+	projectile_root.name = "Projectiles"
+	runtime_root.add_child(projectile_root)
+
+	pickup_root = Node3D.new()
+	pickup_root.name = "Pickups"
+	runtime_root.add_child(pickup_root)
+	_build_pickups()
+	_update_bot_awareness()
 
 	feedback = FeedbackControllerScript.new()
 	feedback.name = "FeedbackController"
@@ -231,6 +287,131 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 		hud.show_miss()
 	if feedback != null:
 		feedback.play_miss(visual_origin, impact_position)
+
+func _on_player_alt_fire(origin: Vector3, direction: Vector3, damage: float, knockback: float, speed: float, radius: float, overcharged: bool) -> void:
+	if round_ended or menu_open:
+		return
+	var shot_direction := direction.normalized()
+	if shot_direction.length_squared() <= 0.0001:
+		return
+	var visual_origin := _get_player_visual_muzzle_origin(origin, shot_direction)
+	if hud != null:
+		hud.show_player_alt_fire(overcharged)
+	if feedback != null:
+		feedback.play_plasma_shot(visual_origin, shot_direction, overcharged)
+	_spawn_player_plasma_bolt(visual_origin, shot_direction, damage, knockback, speed, radius, overcharged)
+
+func _spawn_player_plasma_bolt(origin: Vector3, direction: Vector3, damage: float, knockback: float, speed: float, radius: float, overcharged: bool) -> void:
+	if projectile_root == null:
+		return
+	var bolt := Node3D.new()
+	bolt.name = "PlayerPlasmaBolt"
+	projectile_root.add_child(bolt)
+	bolt.global_position = origin
+
+	var mesh_instance := MeshInstance3D.new()
+	mesh_instance.name = "PlasmaBoltMesh"
+	var mesh := SphereMesh.new()
+	mesh.radius = radius * (1.12 if overcharged else 1.0)
+	mesh.height = mesh.radius * 2.0
+	mesh.radial_segments = 16
+	mesh.rings = 8
+	mesh_instance.mesh = mesh
+	mesh_instance.material_override = _build_plasma_material(overcharged)
+	bolt.add_child(mesh_instance)
+
+	var light := OmniLight3D.new()
+	light.name = "PlasmaBoltLight"
+	light.light_color = Color(0.78, 0.46, 1.0, 1.0) if overcharged else Color(0.38, 0.98, 1.0, 1.0)
+	light.light_energy = 2.5 if overcharged else 1.8
+	light.omni_range = 2.8
+	bolt.add_child(light)
+
+	active_projectiles.append({
+		"node": bolt,
+		"velocity": direction.normalized() * maxf(1.0, speed),
+		"damage": damage,
+		"knockback": knockback,
+		"radius": radius,
+		"ttl": PLASMA_BOLT_TTL,
+		"source": &"player",
+		"overcharged": overcharged
+	})
+	_update_bot_awareness()
+
+func _process_projectiles(delta: float) -> void:
+	for index in range(active_projectiles.size() - 1, -1, -1):
+		var entry := active_projectiles[index]
+		var bolt := entry.get("node", null) as Node3D
+		if bolt == null or not is_instance_valid(bolt):
+			active_projectiles.remove_at(index)
+			continue
+		var ttl := float(entry.get("ttl", 0.0)) - delta
+		var velocity: Vector3 = entry.get("velocity", Vector3.ZERO)
+		var start_position := bolt.global_position
+		var end_position := start_position + velocity * delta
+		var query := PhysicsRayQueryParameters3D.create(start_position, end_position)
+		query.exclude = [player.get_rid()]
+		var result := get_world_3d().direct_space_state.intersect_ray(query)
+		if not result.is_empty():
+			var impact_position: Vector3 = result.get("position", end_position)
+			var collider: Object = result.get("collider", null)
+			_resolve_player_projectile_hit(entry, impact_position, collider)
+			_remove_projectile(index)
+			continue
+		bolt.global_position = end_position
+		if ttl <= 0.0:
+			if hud != null:
+				hud.show_miss()
+			if feedback != null:
+				feedback.play_plasma_miss(end_position, bool(entry.get("overcharged", false)))
+			_remove_projectile(index)
+			continue
+		entry["ttl"] = ttl
+		active_projectiles[index] = entry
+	_update_bot_awareness()
+
+func _resolve_player_projectile_hit(entry: Dictionary, impact_position: Vector3, collider: Object) -> void:
+	var velocity: Vector3 = entry.get("velocity", Vector3.FORWARD)
+	var shot_direction := velocity.normalized()
+	var overcharged := bool(entry.get("overcharged", false))
+	if collider != null and collider.has_method("take_damage"):
+		var damage := float(entry.get("damage", 0.0))
+		var knockback := float(entry.get("knockback", 0.0))
+		collider.take_damage(damage, &"player")
+		if collider.has_method("apply_knockback"):
+			collider.apply_knockback(shot_direction, knockback, PLAYER_PLASMA_KNOCKBACK_LIFT)
+		if hud != null:
+			var killed: bool = collider.get("is_dead") == true
+			hud.show_hit_confirm(killed)
+		if feedback != null:
+			feedback.play_plasma_hit(impact_position, overcharged)
+			var knockback_position := impact_position
+			if collider.has_method("get_body_center"):
+				knockback_position = collider.get_body_center()
+			feedback.play_knockback(knockback_position, shot_direction, knockback, true)
+		return
+	if hud != null:
+		hud.show_miss()
+	if feedback != null:
+		feedback.play_plasma_miss(impact_position, overcharged)
+
+func _remove_projectile(index: int) -> void:
+	if index < 0 or index >= active_projectiles.size():
+		return
+	var entry := active_projectiles[index]
+	var bolt := entry.get("node", null) as Node3D
+	if bolt != null and is_instance_valid(bolt):
+		bolt.queue_free()
+	active_projectiles.remove_at(index)
+	_update_bot_awareness()
+
+func _clear_projectiles() -> void:
+	for entry: Dictionary in active_projectiles:
+		var bolt := entry.get("node", null) as Node3D
+		if bolt != null and is_instance_valid(bolt):
+			bolt.queue_free()
+	active_projectiles.clear()
 
 func _on_player_damaged(amount: float, remaining_health: float) -> void:
 	if hud != null and player != null:
@@ -305,8 +486,173 @@ func _build_hud_snapshot() -> Dictionary:
 		"player_max_health": 1.0 if player == null else player.max_health,
 		"bot_health": 0.0 if bot == null else bot.health,
 		"bot_max_health": 1.0 if bot == null else bot.max_health,
-		"hint": "Click captures mouse | WASD move | Mouse look | LMB shoot | Space jump | R restart | Esc menu"
+		"alt_fire_cooldown_fraction": 0.0 if player == null else player.get_alt_fire_cooldown_fraction(),
+		"alt_fire_ready": true if player == null else player.alt_fire_cooldown_remaining <= 0.0,
+		"player_overcharge": false if player == null else player.has_overcharge_charge(),
+		"bot_overcharge": false if bot == null else bot.has_overcharge_charge(),
+		"health_pickup_available": debug_is_pickup_available(&"health"),
+		"health_pickup_respawn": _get_pickup_respawn_remaining(&"health"),
+		"overcharge_pickup_available": debug_is_pickup_available(&"overcharge"),
+		"overcharge_pickup_respawn": _get_pickup_respawn_remaining(&"overcharge"),
+		"hint": "Click captures mouse | WASD move | Mouse look | LMB rifle | RMB plasma | Space jump | R restart | Esc menu"
 	}
+
+func _build_pickups() -> void:
+	pickups.clear()
+	_create_pickup(&"health", HEALTH_PICKUP_POSITION, Color(0.38, 1.0, 0.52, 1.0))
+	_create_pickup(&"overcharge", OVERCHARGE_PICKUP_POSITION, Color(0.78, 0.46, 1.0, 1.0))
+
+func _create_pickup(pickup_kind: StringName, pickup_position: Vector3, color: Color) -> void:
+	if pickup_root == null:
+		return
+	var pickup := Node3D.new()
+	pickup.name = "HealthShard" if pickup_kind == &"health" else "Overcharge"
+	pickup_root.add_child(pickup)
+	pickup.global_position = pickup_position
+
+	var mesh_instance := MeshInstance3D.new()
+	mesh_instance.name = "PickupMesh"
+	if pickup_kind == &"health":
+		var mesh := SphereMesh.new()
+		mesh.radius = 0.32
+		mesh.height = 0.64
+		mesh.radial_segments = 12
+		mesh.rings = 6
+		mesh_instance.mesh = mesh
+	else:
+		var mesh := BoxMesh.new()
+		mesh.size = Vector3(0.52, 0.52, 0.52)
+		mesh_instance.mesh = mesh
+	mesh_instance.material_override = _build_pickup_material(color)
+	pickup.add_child(mesh_instance)
+
+	var light := OmniLight3D.new()
+	light.name = "PickupLight"
+	light.light_color = color
+	light.light_energy = 1.55
+	light.omni_range = 2.6
+	pickup.add_child(light)
+
+	pickups[pickup_kind] = {
+		"node": pickup,
+		"position": pickup_position,
+		"available": true,
+		"respawn_remaining": 0.0
+	}
+
+func _process_pickups(delta: float) -> void:
+	for pickup_kind in pickups.keys():
+		var entry: Dictionary = pickups[pickup_kind]
+		var pickup_node := entry.get("node", null) as Node3D
+		if pickup_node != null and bool(entry.get("available", false)):
+			pickup_node.rotate_y(delta * 1.8)
+		if not bool(entry.get("available", false)):
+			var remaining := maxf(0.0, float(entry.get("respawn_remaining", 0.0)) - delta)
+			entry["respawn_remaining"] = remaining
+			if remaining <= 0.0:
+				entry["available"] = true
+				if pickup_node != null:
+					pickup_node.visible = true
+			pickups[pickup_kind] = entry
+			continue
+		if player != null and _try_consume_pickup(pickup_kind, player):
+			continue
+		if bot != null:
+			_try_consume_pickup(pickup_kind, bot)
+
+func _try_consume_pickup(pickup_kind: StringName, combatant) -> bool:
+	if not pickups.has(pickup_kind) or combatant == null:
+		return false
+	if combatant.get("is_dead") == true:
+		return false
+	var entry: Dictionary = pickups[pickup_kind]
+	if not bool(entry.get("available", false)):
+		return false
+	var pickup_position: Vector3 = entry.get("position", Vector3.ZERO)
+	if combatant.get_body_center().distance_to(pickup_position) > PICKUP_RADIUS:
+		return false
+	match pickup_kind:
+		&"health":
+			if not combatant.has_method("heal"):
+				return false
+			var applied: float = combatant.heal(HEALTH_PICKUP_AMOUNT)
+			if applied <= 0.0:
+				return false
+		&"overcharge":
+			if not combatant.has_method("grant_overcharge"):
+				return false
+			if combatant.has_method("has_overcharge_charge") and combatant.has_overcharge_charge():
+				return false
+			combatant.grant_overcharge()
+		_:
+			return false
+	_set_pickup_available(pickup_kind, false)
+	if hud != null and combatant == player:
+		hud.show_pickup(pickup_kind)
+	if feedback != null:
+		feedback.play_pickup(pickup_position, pickup_kind)
+	_update_bot_awareness()
+	return true
+
+func _set_pickup_available(pickup_kind: StringName, available: bool) -> void:
+	if not pickups.has(pickup_kind):
+		return
+	var entry: Dictionary = pickups[pickup_kind]
+	entry["available"] = available
+	entry["respawn_remaining"] = 0.0 if available else _get_pickup_respawn_duration(pickup_kind)
+	var pickup_node := entry.get("node", null) as Node3D
+	if pickup_node != null:
+		pickup_node.visible = available
+	pickups[pickup_kind] = entry
+
+func _reset_pickups() -> void:
+	for pickup_kind in pickups.keys():
+		_set_pickup_available(pickup_kind, true)
+
+func _get_pickup_respawn_duration(pickup_kind: StringName) -> float:
+	return HEALTH_PICKUP_RESPAWN if pickup_kind == &"health" else OVERCHARGE_PICKUP_RESPAWN
+
+func _get_pickup_respawn_remaining(pickup_kind: StringName) -> float:
+	var entry: Dictionary = pickups.get(pickup_kind, {})
+	return float(entry.get("respawn_remaining", 0.0))
+
+func _update_bot_awareness() -> void:
+	if bot == null:
+		return
+	bot.set_pickup_awareness(
+		debug_get_pickup_position(&"health"),
+		debug_is_pickup_available(&"health"),
+		debug_get_pickup_position(&"overcharge"),
+		debug_is_pickup_available(&"overcharge")
+	)
+	var threat := _get_nearest_player_projectile_to_bot()
+	if threat.is_empty():
+		bot.set_projectile_threat(Vector3.ZERO, Vector3.ZERO, false)
+		return
+	var threat_node := threat.get("node", null) as Node3D
+	if threat_node == null:
+		bot.set_projectile_threat(Vector3.ZERO, Vector3.ZERO, false)
+		return
+	bot.set_projectile_threat(threat_node.global_position, threat.get("velocity", Vector3.ZERO), true)
+
+func _get_nearest_player_projectile_to_bot() -> Dictionary:
+	if bot == null:
+		return {}
+	var best_entry: Dictionary = {}
+	var best_distance := 1000000.0
+	for entry: Dictionary in active_projectiles:
+		if entry.get("source", &"") != &"player":
+			continue
+		var threat_node := entry.get("node", null) as Node3D
+		if threat_node == null or not is_instance_valid(threat_node):
+			continue
+		var distance := threat_node.global_position.distance_to(bot.get_body_center())
+		if distance < best_distance:
+			best_distance = distance
+			best_entry = entry
+	if best_distance > bot.projectile_dodge_radius * 1.7:
+		return {}
+	return best_entry
 
 func _get_player_visual_muzzle_origin(origin: Vector3, direction: Vector3) -> Vector3:
 	var shot_direction := direction.normalized()
@@ -371,6 +717,27 @@ func _add_visual_box(node_name: String, box_position: Vector3, box_size: Vector3
 	mesh_instance.material_override = _build_box_material(color, 0.18)
 	add_child(mesh_instance)
 	return mesh_instance
+
+func _build_plasma_material(overcharged: bool) -> StandardMaterial3D:
+	var color := Color(0.78, 0.46, 1.0, 1.0) if overcharged else Color(0.38, 0.98, 1.0, 1.0)
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = 0.22
+	material.emission_enabled = true
+	material.emission = color
+	material.emission_energy_multiplier = 2.3 if overcharged else 1.8
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	return material
+
+func _build_pickup_material(color: Color) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = 0.3
+	material.emission_enabled = true
+	material.emission = color
+	material.emission_energy_multiplier = 1.35
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	return material
 
 func _build_box_material(color: Color, emission_energy: float = 0.05) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()

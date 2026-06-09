@@ -2,6 +2,7 @@ class_name FpsCombatant3D
 extends CharacterBody3D
 
 signal damaged(amount: float, remaining_health: float)
+signal healed(amount: float, current_health: float)
 signal died()
 
 const BODY_HEIGHT: float = 1.65
@@ -63,6 +64,17 @@ func take_damage(amount: float, _source_id: StringName = &"") -> void:
 		damage_flash_time = 0.0
 		_update_visual_state()
 		died.emit()
+
+func heal(amount: float) -> float:
+	if is_dead:
+		return 0.0
+	var applied := minf(maxf(0.0, amount), maxf(0.0, max_health - health))
+	if applied <= 0.0:
+		return 0.0
+	health += applied
+	healed.emit(applied, health)
+	_update_visual_state()
+	return applied
 
 func apply_knockback(direction: Vector3, force: float, lift_force: float = -1.0) -> void:
 	if is_dead or force <= 0.0:
