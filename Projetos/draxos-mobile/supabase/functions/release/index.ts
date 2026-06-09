@@ -12,7 +12,7 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/",
   notes: [
-    "Bosque Persistent Overlay Shell v1 publicado na URL principal de Internal Alpha.",
+    "Bosque Overlay Navigation Hotfix v1 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
     "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
     "Overlay usa stack unico com Voltar/Fechar, pausa input/coleta/movimento do Bosque e preserva o node existente.",
@@ -36,14 +36,14 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
       label: "Android APK",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      sha256: "94bc88662174a5f9568672dcba9fc0a3686cf02b36ed4f8ab36f9f321b9a9f48",
+      sha256: "80d30c54f315d2a0681374ae603a33d8c4cb19759b3bb3262752ccc7f06624d8",
       auth_required: "true",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      sha256: "e14202f010a1d024e360322b5630f471e56254608fbe89b3e91e2d96a98039ca",
+      sha256: "4fa2fba1505d4dfe97e365923209b3ea76c7601a8e9f03da6bf2da8828357de0",
       auth_required: "true",
     },
     web: {
@@ -155,7 +155,7 @@ interface PlayerRow {
 }
 
 const DEFAULT_RELEASE_ROOT =
-  "internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-local";
+  "internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-9b93e5d";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));

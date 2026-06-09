@@ -3,7 +3,7 @@
 - Status: `VIVO`
 - Last updated: `2026-06-09`
 - Scope: long-term hardening/refactor guardrails for DraxosMobile after
-  `Bosque Persistent Overlay Shell v1`.
+  `Bosque Overlay Navigation Hotfix v1`.
 
 ## Purpose
 
@@ -54,11 +54,11 @@ each kind of refactor.
 
 ## Current Package Guard
 
-The current package is `Bosque Persistent Overlay Shell v1`:
+The current package is `Bosque Overlay Navigation Hotfix v1`:
 
-- release root `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`;
-- version `0.0.17-alpha.0`;
-- version code `17`;
+- release root `internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-9b93e5d`;
+- version `0.0.18-alpha.0`;
+- version code `18`;
 - minimum supported version code `13`.
 
 The next operational step remains focused human playtest of the published
