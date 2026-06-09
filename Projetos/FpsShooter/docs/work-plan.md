@@ -1,7 +1,7 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-09`
-- Status: `TRACK_01B_BOT_DUELIST_COMPLETE`
+- Status: `TRACK_01B_VERTICAL_AWARENESS_COMPLETE`
 
 ## North Star
 
@@ -31,7 +31,7 @@ Acceptance:
 
 Goal: editor-playable local 1x1 arena shooter.
 
-Status: active; Track 01A and Track 01B are complete.
+Status: active; Track 01A and Track 01B, including the vertical-awareness upgrade, are complete.
 
 Acceptance:
 
@@ -71,7 +71,8 @@ Delivered:
 - deterministic aim error so the bot can miss without relying on loose randomness;
 - simple reposition points derived from the current flat map;
 - readable bot state colors and bot miss tracer/audio feedback;
-- automated coverage for line of sight, windup, hit, miss, strafe/reposition, cancel and restart.
+- bot line-of-sight and windup aim use visible target points, so camera/head exposure over low cover is recognized while tall blockers still deny shots;
+- automated coverage for line of sight, vertical exposure over low cover, windup, hit, miss, strafe/reposition, cancel and restart.
 
 ## Track 02 - Next Combat Shape
 
@@ -80,6 +81,7 @@ Goal: choose the next gameplay shape after the first readable duel baseline.
 Candidate scope:
 
 - arena layout pass with clearer cover, sightlines and spawns;
+- authored vertical cover/sightline rules that build on the bot awareness baseline;
 - knockback and movement-combat pass;
 - recoil/spread or ammo/reload only if explicitly selected;
 - future projectile variants after hitscan feel remains stable.

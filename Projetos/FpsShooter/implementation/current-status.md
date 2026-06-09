@@ -4,7 +4,7 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS 3D tech probe`
-- Active stage: `Track 01B - Bot Duelista V1`
+- Active stage: `Track 01B - Bot Duelista V1 + Vertical Awareness Upgrade`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -25,11 +25,11 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 
 ## Active Goal
 
-`Track 01B - Bot Duelista V1` is complete. The project now has a fair bot baseline for editor duel playtesting.
+`Track 01B - Bot Duelista V1` is complete with a vertical-awareness upgrade. The project now has a fair bot baseline for editor duel playtesting, including recognition of player camera/head exposure over low cover.
 
 ## Current Gate
 
-Closed for Track 01B. Continue with Track 01 follow-up decisions around arena layout, knockback/movement combat or future weapon/projectile variants.
+Closed for Track 01B vertical awareness. Run the 3-minute editor smoke with low-cover/high-cover checks, then continue with Track 01 follow-up decisions around arena layout, knockback/movement combat or future weapon/projectile variants.
 
 ## Validation Snapshot
 
@@ -78,7 +78,15 @@ Track 01B Bot Duelista V1:
 - bot moves with strafe and simple map-derived reposition points, without `NavigationAgent3D`;
 - bot visual color shifts by state and bot miss feedback uses a lighter amber tracer/audio;
 - `force_fire()` remains immediate for tests;
-- validation passes `16/16` GUT tests with `127` asserts.
+- validation passed `16/16` GUT tests with `127` asserts before the vertical-awareness upgrade.
+
+Track 01B Vertical Awareness Upgrade:
+
+- bot line-of-sight now scans multiple target exposure points instead of only the body center;
+- player camera/shot origin and head/upper-body points are checked first, so low cover can hide the torso while still leaving a valid visible target;
+- bot windup and deterministic aim now use the visible target point, making height relevant to tell/readability and shot resolution;
+- tall blockers still cancel normal windup and push the bot into reposition;
+- validation passes `17/17` GUT tests with `132` asserts.
 
 ## Read Next
 

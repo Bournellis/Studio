@@ -16,12 +16,15 @@ Make the bot useful enough to evaluate the local 1x1 FPS duel loop.
 - Bot movement now alternates distance management, strafe and simple reposition points derived from the current flat arena.
 - Bot state is readable through lightweight color changes and existing tell feedback.
 - Bot miss feedback uses a short amber tracer/audio without damaging the player.
+- Vertical awareness upgrade: normal line of sight scans player camera/head, upper body, body center and lower body points instead of only the body center.
+- Low cover can hide the torso while still letting the bot recognize the exposed camera/head point; tall blockers still cancel windup and force reposition.
+- Bot windup and deterministic aim use the current visible target point, keeping height important without making `force_fire()` stricter.
 
 ## Validation
 
 - `tools/validate.gd`: PASS.
-- GUT: `16/16` tests, `127` asserts.
-- Manual smoke target: 3-minute editor duel confirming line of sight, bot strafe/reposition, bot hit/miss, received damage, restart and sensitivity menu.
+- GUT: `17/17` tests, `132` asserts.
+- Manual smoke target: 3-minute editor duel confirming line of sight, bot vertical awareness over low cover, tall cover blocking, bot strafe/reposition, bot hit/miss, received damage, restart and sensitivity menu.
 
 ## Still Deferred
 

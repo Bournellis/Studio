@@ -30,6 +30,10 @@ const STATE_DEAD: StringName = &"dead"
 @export var lost_line_of_sight_grace: float = 0.08
 @export var stuck_switch_time: float = 0.35
 @export var arena_half_extent: float = 11.2
+@export var target_head_visibility_height: float = 1.52
+@export var target_upper_visibility_height: float = 1.18
+@export var target_center_visibility_height: float = 0.82
+@export var target_lower_visibility_height: float = 0.42
 
 var target
 var shoot_cooldown_remaining: float = 0.0
@@ -49,6 +53,7 @@ var last_aim_position: Vector3 = Vector3.ZERO
 var pending_shot_direction: Vector3 = Vector3.ZERO
 var windup_line_of_sight_grace_remaining: float = 0.0
 var last_has_line_of_sight: bool = false
+var last_visible_target_position: Vector3 = Vector3.ZERO
 var stuck_time: float = 0.0
 var last_desired_move: Vector3 = Vector3.ZERO
 
@@ -71,6 +76,8 @@ func configure(next_target) -> void:
 	strafe_direction = 1.0
 	reposition_destination = Vector3.ZERO
 	last_aim_position = _get_target_position()
+	last_visible_target_position = last_aim_position
+	last_has_line_of_sight = false
 	pending_shot_direction = Vector3.ZERO
 	stuck_time = 0.0
 	_cancel_windup(STATE_ENGAGE)
@@ -89,7 +96,7 @@ func debug_get_target():
 	return target
 
 func debug_has_line_of_sight() -> bool:
-	return _has_line_of_sight_to_target()
+	return _refresh_target_visibility()
 
 func debug_get_reposition_destination() -> Vector3:
 	return reposition_destination
@@ -99,6 +106,9 @@ func debug_get_reposition_point_count() -> int:
 
 func debug_get_last_aim_position() -> Vector3:
 	return last_aim_position
+
+func debug_get_visible_target_position() -> Vector3:
+	return last_visible_target_position
 
 func _physics_process(delta: float) -> void:
 	if is_dead:
@@ -115,7 +125,7 @@ func _physics_process(delta: float) -> void:
 	_apply_gravity(delta)
 
 	var before_position := global_position
-	last_has_line_of_sight = _has_line_of_sight_to_target()
+	last_has_line_of_sight = _refresh_target_visibility()
 	last_desired_move = _handle_duel_state(delta)
 	velocity = _build_velocity(last_desired_move, delta)
 	move_and_slide()
@@ -219,7 +229,7 @@ func _start_windup() -> void:
 	is_telegraphing = true
 	shot_tell_remaining = shot_tell_duration
 	windup_line_of_sight_grace_remaining = lost_line_of_sight_grace
-	last_aim_position = _build_aim_position()
+	last_aim_position = _build_aim_position(last_visible_target_position)
 	pending_shot_direction = (last_aim_position - _get_shot_origin()).normalized()
 	_set_state(STATE_WINDUP, shot_tell_duration)
 	shot_windup_started.emit(_get_shot_origin(), last_aim_position, shot_tell_duration)
@@ -274,20 +284,48 @@ func _set_state(next_state: StringName, duration: float = 0.0) -> void:
 	current_state = next_state
 	state_time_remaining = duration
 
-func _has_line_of_sight_to_target() -> bool:
+func _refresh_target_visibility() -> bool:
 	if target == null or target.is_dead:
+		last_visible_target_position = _get_target_position()
 		return false
+	for target_point in _get_target_visibility_points():
+		if _has_clear_visibility_to_point(target_point):
+			last_visible_target_position = target_point
+			return true
+	last_visible_target_position = _get_target_position()
+	return false
+
+func _get_target_visibility_points() -> Array[Vector3]:
+	var points: Array[Vector3] = []
+	if target == null:
+		return points
+	if target.has_method("get_shot_origin"):
+		_append_unique_visibility_point(points, target.get_shot_origin())
+	var target_base: Vector3 = target.global_position
+	_append_unique_visibility_point(points, target_base + Vector3.UP * target_head_visibility_height)
+	_append_unique_visibility_point(points, target_base + Vector3.UP * target_upper_visibility_height)
+	_append_unique_visibility_point(points, _get_target_position())
+	_append_unique_visibility_point(points, target_base + Vector3.UP * target_center_visibility_height)
+	_append_unique_visibility_point(points, target_base + Vector3.UP * target_lower_visibility_height)
+	return points
+
+func _append_unique_visibility_point(points: Array[Vector3], target_point: Vector3) -> void:
+	for existing_point in points:
+		if existing_point.distance_squared_to(target_point) <= 0.0001:
+			return
+	points.append(target_point)
+
+func _has_clear_visibility_to_point(target_point: Vector3) -> bool:
 	var origin := _get_shot_origin()
-	var target_position := _get_target_position()
-	var query := PhysicsRayQueryParameters3D.create(origin, target_position)
+	var query := PhysicsRayQueryParameters3D.create(origin, target_point)
 	query.exclude = [get_rid()]
 	var result := get_world_3d().direct_space_state.intersect_ray(query)
 	if result.is_empty():
-		return false
+		return true
 	return result.get("collider", null) == target
 
-func _build_aim_position() -> Vector3:
-	var target_position := _get_target_position()
+func _build_aim_position(base_target_position: Vector3) -> Vector3:
+	var target_position := base_target_position
 	var to_target := target_position - _get_shot_origin()
 	var flat := Vector3(to_target.x, 0.0, to_target.z)
 	var distance := flat.length()

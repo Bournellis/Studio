@@ -21,9 +21,9 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `16/16`;
-- `127` asserts;
-- Track 01B validates feedback controller, player hit/miss, bot line of sight, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()` and synthetic audio stream creation.
+- GUT `17/17`;
+- `132` asserts;
+- Track 01B validates feedback controller, player hit/miss, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()` and synthetic audio stream creation.
 
 ## Manual Smoke
 
@@ -41,6 +41,8 @@ Expected:
 - missing the bot still shows shot/tracer feedback without false hit confirmation;
 - bot moves, strafes and repositions instead of only walking straight;
 - cover can break bot line of sight, preventing normal bot damage through obstacles;
+- low cover can hide the body center while the bot still recognizes player camera/head exposure above it;
+- tall cover blocks the exposed points and pushes the bot to reposition instead of firing;
 - bot normal shots show a short amber tell before damage;
 - bot shots can miss without damaging the player;
 - receiving bot damage shows red overlay, player health change, knockback and feedback audio;

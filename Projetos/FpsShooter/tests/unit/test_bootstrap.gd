@@ -221,6 +221,9 @@ func test_bot_respects_line_of_sight_before_windup() -> void:
 	var bot = arena.debug_get_bot()
 	player.global_position = Vector3(-2.0, 0.05, 0.8)
 	bot.global_position = Vector3(-2.0, 0.05, -5.8)
+	_add_static_blocker(arena, Vector3(-2.0, 1.25, -2.5), Vector3(2.6, 2.5, 1.3))
+	await get_tree().physics_frame
+
 	bot.configure(player)
 	bot.shoot_cooldown_remaining = 0.0
 	bot.reaction_remaining = 0.0
@@ -229,6 +232,30 @@ func test_bot_respects_line_of_sight_before_windup() -> void:
 	assert_false(bot.debug_has_line_of_sight())
 	assert_false(bot.is_telegraphing)
 	assert_eq(bot.debug_get_state(), &"reposition")
+	assert_no_new_orphans()
+
+func test_bot_detects_player_visible_over_low_cover() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	player.global_position = Vector3(-2.0, 0.05, 0.8)
+	bot.global_position = Vector3(-2.0, 0.05, -5.8)
+	bot.configure(player)
+	bot.aim_error_radius = 0.0
+	bot.close_range_aim_error_radius = 0.0
+	bot.shoot_cooldown_remaining = 0.0
+	bot.reaction_remaining = 0.0
+	await get_tree().physics_frame
+
+	assert_true(bot.debug_has_line_of_sight())
+	assert_true(bot.is_telegraphing)
+	assert_gt(bot.debug_get_visible_target_position().y, player.get_body_center().y + 0.4)
+	assert_gt(bot.debug_get_last_aim_position().y, player.get_body_center().y + 0.35)
 	assert_no_new_orphans()
 
 func test_bot_normal_fire_uses_short_windup_before_damage() -> void:
@@ -370,3 +397,15 @@ func test_feedback_controller_builds_synthetic_audio_stream() -> void:
 	assert_gt(feedback.bot_miss_count, 0)
 	assert_gt(feedback.debug_active_effect_count(), 0)
 	assert_no_new_orphans()
+
+func _add_static_blocker(parent: Node, blocker_position: Vector3, blocker_size: Vector3) -> StaticBody3D:
+	var blocker := StaticBody3D.new()
+	blocker.name = "TestSightBlocker"
+	blocker.position = blocker_position
+	var shape := CollisionShape3D.new()
+	var box_shape := BoxShape3D.new()
+	box_shape.size = blocker_size
+	shape.shape = box_shape
+	blocker.add_child(shape)
+	parent.add_child(blocker)
+	return blocker
