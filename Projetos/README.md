@@ -70,7 +70,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
   - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: documentation drift cleanup and live-source consolidation after Fabio reported the initial Bosque Bootstrap Authority v1 human playtest OK on 2026-06-09; future bugs return to the normal bugfix flow if they appear.
+  - Current next step: decide `DMOB-D076`, the next post-Bootstrap product package, after Fabio reported the initial Bosque Bootstrap Authority v1 human playtest OK on 2026-06-09 and documentation drift cleanup was completed; future bugs return to the normal bugfix flow if they appear.
 
 ## Arquivo De Design
 

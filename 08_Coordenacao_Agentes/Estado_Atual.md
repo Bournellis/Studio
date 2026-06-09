@@ -7,7 +7,7 @@
 ## Prioridade Do Estudio
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
-- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`BOSQUE_BOOTSTRAP_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`, release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, deployment evidence `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, publicado Web/APK, APK/manifest `0.0.15-alpha.0`/version code `15`; Bosque preserva autoridade de bootstrap antes de renderizar o viewport jogavel, mantem minimum supported version code `13`, playtest humano inicial reportado OK por Fabio em 2026-06-09, foco imediato em corrigir drift documental)
+- Foco P2 de implementacao: `Projetos/draxos-mobile/` (`BOSQUE_BOOTSTRAP_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`, release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, deployment evidence `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, publicado Web/APK, APK/manifest `0.0.15-alpha.0`/version code `15`; Bosque preserva autoridade de bootstrap antes de renderizar o viewport jogavel, mantem minimum supported version code `13`, playtest humano inicial reportado OK por Fabio em 2026-06-09, drift documental corrigido, proxima decisao aberta `DMOB-D076`)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -35,7 +35,7 @@
 - Guardrails preservados: Track 13 release safety e Track 14 agent ops continuam ativos para validacao, publicacao e operacao multiagente.
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation` e Supabase/Cloudflare CLI autenticada. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, PVP, tuning numerico amplo, novas armas, novas spells, economia ampla, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
-- Proximo passo: corrigir drift documental e consolidar fontes vivas apos playtest humano inicial do Bosque Bootstrap Authority v1 reportado OK por Fabio em 2026-06-09; bugs futuros voltam ao fluxo normal se aparecerem. Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final ou mutacoes remotas sem decisao propria.
+- Proximo passo: decidir explicitamente `DMOB-D076`, o pacote de produto pos-Bootstrap, apos playtest humano inicial do Bosque Bootstrap Authority v1 reportado OK por Fabio em 2026-06-09 e drift documental corrigido. Bugs futuros voltam ao fluxo normal se aparecerem. Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final ou mutacoes remotas sem decisao propria.
 
 ## rpg-isometrico
 

@@ -24,7 +24,7 @@
 - Remote SQL already applied: `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`.
 - Remote functions: `release` redeployed for Bosque Bootstrap Authority v1; `arena` remains on Arena PVE Bonus Visual v1; `modes` remains on the operations-v2 backend from the previous Bosque packages.
 
-Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`: everything tested so far appeared to work. The immediate focus is documentation drift cleanup and live-source consolidation. If future errors appear, they return to the normal bugfix flow.
+Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`: everything tested so far appeared to work. Documentation drift cleanup is complete. The current open decision is `DMOB-D076`, choosing the next post-Bootstrap product package. If future errors appear, they return to the normal bugfix flow.
 
 ## Operational Vs Product Direction
 
@@ -85,14 +85,13 @@ Track markers that remain active as guardrails:
 
 ## Current Gate
 
-The next operational step is documentation drift cleanup across live sources. Do not repeat the Bosque Bootstrap Authority v1 playtest as the required next step unless a new bug report or explicit validation request appears.
+The next operational step is the explicit `DMOB-D076` decision for the next post-Bootstrap product package. Do not repeat the Bosque Bootstrap Authority v1 playtest as the required next step unless a new bug report or explicit validation request appears.
 
-Decision focus after cleanup:
+Open decision focus:
 
-1. Confirm that all live docs point to the same current package, release root, version, playtest result and boundaries.
-2. Choose the next product package explicitly: Arena PVE follow-up, focused Openworld/Bosque tuning or another scoped polish pass.
-3. Preserve active Bosque runtime as local/offline-first feel plus server-owned checkpoint, completion, reward, caps, ledger and audit authority.
-4. Keep Arena regressions in future manual smoke lists: Preparacao visible before start/in active attempts/buff choice, selected victory buff returns to `Resolver duelo`, and temporary bonus stats are visible in the next fight/replay.
+1. Choose the next product package explicitly: Arena PVE follow-up, focused Openworld/Bosque tuning or another scoped polish pass.
+2. Preserve active Bosque runtime as local/offline-first feel plus server-owned checkpoint, completion, reward, caps, ledger and audit authority.
+3. Keep Arena regressions in future manual smoke lists: Preparacao visible before start/in active attempts/buff choice, selected victory buff returns to `Resolver duelo`, and temporary bonus stats are visible in the next fight/replay.
 
 ## Live Boundaries
 
@@ -114,7 +113,7 @@ For docs-only changes:
 - Run targeted `rg` drift checks against live docs.
 - Run `validate_foundation.ps1 -Profile DocsOnly` from `Projetos/draxos-mobile` when docs affect status or agent operation.
 
-Do not run build, deploy, upload, manifest deploy, `supabase db push` or remote mutation for documentation drift cleanup.
+Do not run build, deploy, upload, manifest deploy, `supabase db push` or remote mutation for documentation-only follow-ups.
 
 ## Read Next
 

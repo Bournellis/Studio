@@ -20,7 +20,7 @@ Etapa operacional atual: `BOSQUE_BOOTSTRAP_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA
 
 Pacote remoto Internal Alpha atual: `Bosque Bootstrap Authority v1`, release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, evidencia `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, versao `0.0.15-alpha.0`, version code `15`, minimum supported version code `13`.
 
-Playtest humano inicial do Bosque Bootstrap Authority v1 foi reportado OK por Fabio em 2026-06-09: tudo testado ate agora parece funcionando. O foco imediato e corrigir drift documental e consolidar fontes vivas; bugs futuros voltam ao fluxo normal se aparecerem.
+Playtest humano inicial do Bosque Bootstrap Authority v1 foi reportado OK por Fabio em 2026-06-09: tudo testado ate agora parece funcionando. O drift documental foi corrigido. O foco atual e decidir explicitamente `DMOB-D076`, o proximo pacote de produto pos-Bootstrap; bugs futuros voltam ao fluxo normal se aparecerem.
 
 Direcao viva de produto: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, com Arena PVE
 como core inicial do `Autobattler`. O estado operacional atual nao muda essa
@@ -44,10 +44,10 @@ Nesta etapa, nomes, spells, armas, numeros de economia, Battle Pass, visual fina
 
 Ordem de foco operacional:
 
-1. Corrigir drift documental e consolidar as fontes vivas apos playtest humano inicial OK do Bosque Bootstrap Authority v1.
+1. Decidir explicitamente `DMOB-D076`, o proximo pacote de produto pos-Bootstrap.
 2. Manter bugs futuros no fluxo normal de bugfix, sem reabrir regressao preventiva se nada novo aparecer.
-3. Decidir explicitamente o proximo pacote antes de abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final, mutacoes remotas ou expansao de Openworld.
-4. Quando houver decisao, retomar Arena PVE como primeiro core de produto para labs/tuning/UX estreitos.
+3. Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final, mutacoes remotas ou expansao de Openworld antes dessa decisao.
+4. Quando houver decisao, retomar Arena PVE como primeiro core de produto para labs/tuning/UX estreitos, se esse for o pacote escolhido.
 5. PVP assincrono posterior, social, competicao, Towerdefense e Cardgame somente quando seus contratos proprios existirem.
 
 ## Pilares
@@ -229,10 +229,9 @@ Esses itens podem virar projeto ou fase futura, mas nao devem ser tratados como 
 
 ## Gates De Proxima Decisao
 
-1. Concluir a correcao de drift documental do estado Bosque Bootstrap Authority v1.
+1. Escolher explicitamente `DMOB-D076`, o proximo pacote de produto pos-Bootstrap.
 2. Confirmar se bugs novos apareceram depois do playtest humano inicial OK; se aparecerem, tratar por bugfix estreito.
-3. Escolher explicitamente o proximo pacote de produto antes de qualquer tuning amplo ou expansao.
-4. Confirmar que `docs/pve-arena-initial-direction.md` e `docs/pve-arena-v1.md` continuam suficientes para tutorial, primeiras arenas, inimigos, buffs, recovery e recompensas.
-5. Rodar Progression Lab e Battle Lab orientados a Arena PVE antes de mexer em valores calibraveis.
-6. Implementar pacote pequeno de tuning/UX de Arena PVE somente depois da decisao explicita do proximo pacote.
-7. Reintroduzir PVP como modo posterior/competitivo depois que o core PVE estiver claro.
+3. Se o pacote escolhido for Arena PVE, confirmar que `docs/pve-arena-initial-direction.md` e `docs/pve-arena-v1.md` continuam suficientes para tutorial, primeiras arenas, inimigos, buffs, recovery e recompensas.
+4. Rodar Progression Lab e Battle Lab orientados a Arena PVE antes de mexer em valores calibraveis, se Arena PVE for o pacote escolhido.
+5. Implementar pacote pequeno de tuning/UX somente depois da decisao explicita do proximo pacote.
+6. Reintroduzir PVP como modo posterior/competitivo depois que o core PVE estiver claro.

@@ -21,9 +21,9 @@ A etapa operacional publicada e `Bosque Bootstrap Authority v1`: release root `i
 
 A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`. Bosque/Openworld e slice integrado de Internal Alpha para validar movimento, coleta, persistencia, cache e fronteira controlada com Arena/Basebuilder; nao e autorizacao para expansao ampla de mundo, economia, conteudo, armas/spells, PVP, visual final ou mutacoes remotas.
 
-## Foco Imediato
+## Foco Atual
 
-Playtest humano inicial do Bosque Bootstrap Authority v1 foi reportado OK por Fabio em 2026-06-09: tudo testado ate agora parece funcionando. O foco imediato e corrigir drift documental e consolidar fontes vivas; bugs futuros voltam ao fluxo normal se aparecerem.
+Playtest humano inicial do Bosque Bootstrap Authority v1 foi reportado OK por Fabio em 2026-06-09: tudo testado ate agora parece funcionando. O drift documental foi corrigido. O foco atual e decidir explicitamente `DMOB-D076`, o proximo pacote de produto pos-Bootstrap; bugs futuros voltam ao fluxo normal se aparecerem.
 
 Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final, expansao ampla de Openworld ou mutacoes remotas sem decisao propria. Se aparecer bug novo, tratar como bugfix estreito a partir do pacote atual.
 
@@ -67,15 +67,13 @@ Terminologia implementada preservada como substancia/mock: Instrumento Ritual, S
 
 Ordem recomendada agora:
 
-1. Corrigir drift documental do Bosque Bootstrap Authority v1 publicado.
-2. Registrar o playtest humano inicial OK como contexto operacional, sem criar novo status formal.
-3. Tratar bugs futuros por bugfix estreito se aparecerem.
-4. Decidir explicitamente o proximo pacote antes de tuning amplo ou expansao.
-5. Retomar Arena PVE tutorial/primeiras arenas, labs e tuning apenas quando essa decisao existir.
-6. Base/preparacao como suporte da Arena PVE.
-7. PVP assincrono posterior, com bots como fallback transparente.
-8. Social/competicao.
-9. Armas, spells, economia fina, novos conteudos e visual final.
+1. Decidir explicitamente `DMOB-D076`, o proximo pacote de produto pos-Bootstrap.
+2. Tratar bugs futuros por bugfix estreito se aparecerem.
+3. Retomar Arena PVE tutorial/primeiras arenas, labs e tuning apenas quando essa decisao existir.
+4. Base/preparacao como suporte da Arena PVE.
+5. PVP assincrono posterior, com bots como fallback transparente.
+6. Social/competicao.
+7. Armas, spells, economia fina, novos conteudos e visual final.
 
 ## Plataformas
 

@@ -49,7 +49,7 @@ For release or validation work, also read:
 
 ## Track Reading Rules
 
-Bosque Bootstrap Authority v1 is the current published Internal Alpha package: release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview evidence `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, Portal `https://draxos-mobile-internal-alpha.pages.dev/`, Web `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, APK/manifest `0.0.15-alpha.0` / version code `15`, minimum supported version code `13`. Initial human playtest was reported OK by Fabio on `2026-06-09`, so the immediate operational focus is documentation drift cleanup and live-source consolidation.
+Bosque Bootstrap Authority v1 is the current published Internal Alpha package: release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview evidence `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, Portal `https://draxos-mobile-internal-alpha.pages.dev/`, Web `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, APK/manifest `0.0.15-alpha.0` / version code `15`, minimum supported version code `13`. Initial human playtest was reported OK by Fabio on `2026-06-09`, documentation drift cleanup is complete, and the current open decision is `DMOB-D076`, choosing the next post-Bootstrap product package.
 Foundation Hardening V2 remains the previous baseline for multi-agent and
 multi-mode enforcement. Hardening Platform V1 remains the previous platform
 baseline. Arena PVE remains the first approved product core; Track 18/20/21 and

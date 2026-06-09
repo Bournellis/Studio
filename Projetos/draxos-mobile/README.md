@@ -46,7 +46,7 @@ Before any new feature, numeric tuning, assets-final pass, battle presentation p
 1. Read `docs/foundation-hardening-v2-readiness-report.md` and `docs/multi-agent-workflow.md`.
 2. Treat Foundation Hardening V2 as the current multi-mode expansion enforcement baseline. Treat Foundation Loop UX Pass 01 as historical app-shell UX baseline, and Track 18/20/21 plus Remote Lab Runner as Arena/Autobattler/Lab context; then follow `docs/pve-arena-initial-direction.md` before expanding PVP, social, visuals, battle presentation, base builder or content systems.
 3. Keep release publishing in `Mode Plan` or `Mode Package` unless the user explicitly approves remote mutation.
-4. Treat documentation drift cleanup as the immediate work after the initial Bosque Bootstrap Authority v1 playtest was reported OK. Do not open tuning, PVP, economy, content, weapons, spells, potions, final visuals, remote mutation or new package scope without a separate explicit decision.
+4. Treat `DMOB-D076` as the next open decision after the initial Bosque Bootstrap Authority v1 playtest was reported OK and documentation drift cleanup was completed. Do not open tuning, PVP, economy, content, weapons, spells, potions, final visuals, remote mutation or new package scope without a separate explicit decision.
 5. Run `validate_foundation.ps1 -Profile FullLocal -RequireClean` with local Supabase/Edge active before future tuning work starts, and run the real Android / Windows / Web walkthrough in `docs/track-13-manual-walkthrough-gate.md` before future remote publications.
 
 ## Safe Validation
