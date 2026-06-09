@@ -13,6 +13,10 @@ Imortais replaces the old player-facing placeholder `Heroic` / `Heroico`.
 
 Detailed Imortais lore is TBD.
 
+This TBD is an intentional canon gap, not a blocker for the current active P0
+or P2 work. Do not fill it from historical placeholder material without an
+explicit lore decision.
+
 Do not use old placeholder files, old campaign notes, or old Troll/Dragon campaign fragments as canon for the Imortais until the user explicitly re-establishes that material.
 
 ## Current Mechanical Territory

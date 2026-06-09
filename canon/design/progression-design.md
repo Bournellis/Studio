@@ -6,6 +6,12 @@ This document defines how the player enters the game, how the first campaign tea
 
 It does not replace `game-design-document.md` for combat rules or `../../materiais/references/discovery/campaign-design-discovery.md` for broader campaign exploration.
 
+Scope note: this progression contract governs RPG Isometrico. Do not apply its
+campaign, mode unlock, co-op or menu rules to DraxosMobile or Draxos Roguelike
+Cardgame unless a local project document explicitly adopts them. `TBD` entries
+below are intentional future decisions, not blockers for the current active P0
+or P2 work.
+
 ---
 
 ## 2. First Contact - Direct Menu

@@ -10,6 +10,8 @@ This document defines the active story direction for the Draxos invasion campaig
 It is the shared canon for all studio projects using this setting. The authoritative lore source is `Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`.
 
 It does not finalize names for NPCs, cards, missions, classes, the elemental planet, the volcano crystal, or the race helping the elementals. Those remain placeholders until explicitly authored.
+These TBDs are intentional canon gaps, not blockers for current DraxosMobile or
+Draxos Roguelike operational work.
 
 ## Campaign Premise
 
