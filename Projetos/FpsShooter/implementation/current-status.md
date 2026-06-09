@@ -4,7 +4,7 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS 3D tech probe`
-- Active stage: `Track 02A - Combat Loop Expansion V1`
+- Active stage: `Track 02A - Bot Pressure Jump Hotfix V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -23,17 +23,19 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - Runtime pickups: health shard and overcharge.
 - Fair bot baseline with vertical-aware line of sight.
 - Bot tactical awareness for health pickup, overcharge contest and visible plasma dodge.
+- Bot pressure tuning: ready shots interrupt pickup routes and health pickup is a survival/rotation choice instead of the default concern.
+- Bot simple jump support for raised reposition goals and low navigation blockers.
 - `Duel Pit V1` arena layout with protected spawns, low/high cover, side platforms and ramps.
 - HUD, round state and bidirectional feel/feedback.
 - No export, Web, mobile, multiplayer or online/backend scope.
 
 ## Active Goal
 
-`Track 02A - Combat Loop Expansion V1` is complete. The project now has a first expanded duel loop over `Duel Pit V1`: rifle hitscan remains the baseline, RMB adds a visible Plasma Bolt, pickups create micro-objectives and the bot can react to both pickups and incoming plasma.
+`Track 02A - Bot Pressure Jump Hotfix V1` is complete. The expanded duel loop remains the accepted baseline, now with the bot preserving shot pressure over pickup routes and gaining first simple jump behavior for the current ramps/platform setup.
 
 ## Current Gate
 
-Closed for Track 02A. Run the 5-minute editor smoke focused on rifle vs Plasma Bolt choice, pickup readability, overcharge clarity, bot pickup contest/dodge behavior and whether the expanded loop feels fair.
+Closed for the Track 02A hotfix. Run the 5-minute editor smoke focused on rifle vs Plasma Bolt choice, pickup readability, overcharge clarity, bot shot pressure before health routes, bot jump readability and whether the expanded loop feels fair.
 
 ## Validation Snapshot
 
@@ -122,6 +124,14 @@ Track 02A Combat Loop Expansion V1:
 - arena remains authority for projectile collision, pickup consumption, damage, knockback and feedback;
 - validation passes `26/26` GUT tests with `239` asserts.
 
+Track 02A Bot Pressure Jump Hotfix V1:
+
+- bot now starts a ready normal shot before considering health or overcharge routes;
+- bot can still seek Health Shard when hurt, but only as survival/rotation while shot pressure is unavailable or health is critical;
+- bot interrupts an active health route as soon as line of sight, cooldown and reaction allow a windup;
+- bot simple jump uses a cooldown and ground-contact probe to reach raised reposition goals or clear low blockers;
+- validation passes `29/29` GUT tests with `249` asserts.
+
 ## Read Next
 
 1. `AGENTS.md`
@@ -134,3 +144,4 @@ Track 02A Combat Loop Expansion V1:
 8. `implementation/tracks/track-01c-arena-layout-v1/current-status.md`
 9. `implementation/tracks/track-01d-knockback-movement-combat-v1/current-status.md`
 10. `implementation/tracks/track-02a-combat-loop-expansion-v1/current-status.md`
+11. `implementation/tracks/track-02a-bot-pressure-jump-hotfix-v1/current-status.md`

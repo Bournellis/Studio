@@ -346,6 +346,80 @@ func test_bot_prioritizes_health_pickup_when_hurt() -> void:
 	assert_lt(Vector3(destination.x, 0.0, destination.z).distance_to(Vector3(health_position.x, 0.0, health_position.z)), 0.2)
 	assert_no_new_orphans()
 
+func test_bot_takes_ready_shot_before_health_pickup() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	bot.take_damage(65.0, &"test")
+	bot.aim_error_radius = 0.0
+	bot.close_range_aim_error_radius = 0.0
+	bot.shoot_cooldown_remaining = 0.0
+	bot.reaction_remaining = 0.0
+	arena.debug_force_pickup_available(&"health", true)
+	await get_tree().physics_frame
+
+	assert_true(bot.is_telegraphing)
+	assert_eq(bot.debug_get_state(), &"windup")
+	assert_no_new_orphans()
+
+func test_bot_interrupts_health_route_when_shot_becomes_ready() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var health_position: Vector3 = arena.debug_get_pickup_position(&"health")
+	bot.take_damage(65.0, &"test")
+	bot.global_position = health_position + Vector3(2.4, -1.37, 0.0)
+	player.global_position = bot.global_position + Vector3(0.0, 0.0, 8.0)
+	bot.shoot_cooldown_remaining = 3.0
+	bot.reaction_remaining = 1.0
+	arena.debug_force_pickup_available(&"health", true)
+	await get_tree().physics_frame
+
+	assert_eq(bot.debug_get_state(), &"reposition")
+	bot.shoot_cooldown_remaining = 0.0
+	bot.reaction_remaining = 0.0
+	await get_tree().physics_frame
+
+	assert_true(bot.is_telegraphing)
+	assert_eq(bot.debug_get_state(), &"windup")
+	assert_no_new_orphans()
+
+func test_bot_jumps_toward_higher_reposition_goal() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	bot.shoot_cooldown_remaining = 3.0
+	bot.reaction_remaining = 1.0
+	bot._start_reposition_to(bot.global_position + Vector3(-2.2, 1.1, 2.2))
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+	assert_gt(bot.debug_get_jump_count(), 0)
+	assert_gt(bot.debug_get_vertical_velocity(), 0.0)
+	assert_no_new_orphans()
+
 func test_bot_receives_plasma_threat_and_can_dodge() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	var arena := arena_scene.instantiate()

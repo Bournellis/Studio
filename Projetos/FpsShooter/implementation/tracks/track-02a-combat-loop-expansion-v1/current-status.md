@@ -3,7 +3,7 @@
 - Last updated: `2026-06-09`
 - Status: `COMPLETE`
 - Project: `FpsShooter`
-- Portfolio marker: `FPS_SHOOTER_TRACK_02A_COMBAT_LOOP_EXPANSION_COMPLETE`
+- Portfolio marker: `FPS_SHOOTER_TRACK_02A_BOT_PRESSURE_JUMP_HOTFIX_COMPLETE`
 
 ## Goal
 
@@ -38,14 +38,21 @@ Expand the accepted rifle/bot/map/knockback baseline into a first tactical duel 
   - pickup consumption/respawn is owned by arena;
   - damage, knockback and feedback stay centralized.
 
+## Bot Pressure Jump Hotfix V1
+
+- Ready normal shots now take priority over pickup routing.
+- Health Shard is treated as survival/rotation when shot pressure is unavailable or health is critical.
+- Existing health routes are interrupted when line of sight, range, cooldown and reaction allow a windup.
+- Bot simple jump supports raised reposition goals and low blockers with a short cooldown.
+
 ## Validation
 
 Automated:
 
 - `tools/validate.gd`: PASS.
-- GUT: `26/26`.
-- Asserts: `239`.
-- Coverage includes RMB input, Plasma Bolt spawn/hit/knockback, pickup heal/overcharge, bot pickup priority, bot plasma dodge awareness and all prior Track 01D combat/map/bot contracts.
+- GUT: `29/29`.
+- Asserts: `249`.
+- Coverage includes RMB input, Plasma Bolt spawn/hit/knockback, pickup heal/overcharge, bot pickup priority, bot ready-shot-over-health pressure, bot pickup-route interruption, bot jump toward raised reposition goals, bot plasma dodge awareness and all prior Track 01D combat/map/bot contracts.
 
 Manual smoke:
 
@@ -55,6 +62,8 @@ Manual smoke:
 - Pick up Health Shard while damaged and confirm heal/respawn readability.
 - Pick up Overcharge and confirm the next rifle/plasma shot is empowered.
 - Observe bot seeking health when hurt, contesting overcharge and dodging nearby plasma.
+- Confirm the bot does not abandon a ready shot just to run toward health.
+- Confirm the bot can make simple jumps toward raised map pieces without constant jump spam.
 - Confirm `Esc` sensitivity menu and `R` restart still work.
 
 ## Out Of Scope
