@@ -175,8 +175,6 @@ func request_button(host: Node, relative_path: String, point: Vector2) -> bool:
 		return false
 	if button.disabled or not button.visible or not button.is_visible_in_tree():
 		return false
-	if not _button_visual_rect(button).grow(3.0).has_point(point):
-		return false
 	_record_input("button", str(button.text), relative_path.strip_edges())
 	button.emit_signal("pressed")
 	_publish_diagnostics(host)

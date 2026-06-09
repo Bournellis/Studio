@@ -299,10 +299,15 @@ func _ensure_web_overlay_input_bridge() -> void:
 				bottom: top + 80
 			};
 		}
-		window.addEventListener('pointerdown', function(event) {
+		let lastPointerDownAt = 0;
+		function handleOverlayPress(event) {
+			const now = Date.now();
+			if (event.type === 'mousedown' && now - lastPointerDownAt < 250) return;
+			if (event.type === 'pointerdown') lastPointerDownAt = now;
 			const state = overlayState();
 			if (!state.overlayOpen) return;
 			const point = canvasPoint(event, state);
+			if (!point) return;
 			const button = overlayButtonAt(state, point);
 			if (button && button.path) {
 				event.preventDefault();
@@ -330,7 +335,9 @@ func _ensure_web_overlay_input_bridge() -> void:
 				event.stopPropagation();
 				callGodot('back');
 			}
-		}, true);
+		}
+		window.addEventListener('pointerdown', handleOverlayPress, true);
+		window.addEventListener('mousedown', handleOverlayPress, true);
 		window.addEventListener('wheel', function(event) {
 			const state = overlayState();
 			if (!state.overlayOpen) return;
