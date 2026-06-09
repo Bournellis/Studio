@@ -1,0 +1,35 @@
+extends Node
+
+const ACTIONS: Dictionary[String, Array] = {
+	"move_forward": [{"kind": "key", "code": KEY_W}],
+	"move_back": [{"kind": "key", "code": KEY_S}],
+	"move_left": [{"kind": "key", "code": KEY_A}],
+	"move_right": [{"kind": "key", "code": KEY_D}],
+	"jump": [{"kind": "key", "code": KEY_SPACE}],
+	"shoot": [{"kind": "mouse", "code": MOUSE_BUTTON_LEFT}],
+	"restart_round": [{"kind": "key", "code": KEY_R}],
+	"ui_back": [{"kind": "key", "code": KEY_ESCAPE}]
+}
+
+func _ready() -> void:
+	_ensure_input_map()
+
+func _ensure_input_map() -> void:
+	for action_name: String in ACTIONS.keys():
+		if not InputMap.has_action(action_name):
+			InputMap.add_action(action_name)
+
+		var existing: Array[InputEvent] = InputMap.action_get_events(action_name)
+		if not existing.is_empty():
+			continue
+
+		for binding: Dictionary in ACTIONS[action_name]:
+			if binding["kind"] == "key":
+				var key_event := InputEventKey.new()
+				key_event.physical_keycode = int(binding["code"])
+				InputMap.action_add_event(action_name, key_event)
+				continue
+
+			var mouse_event := InputEventMouseButton.new()
+			mouse_event.button_index = int(binding["code"])
+			InputMap.action_add_event(action_name, mouse_event)

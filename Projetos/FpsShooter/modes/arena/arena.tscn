@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/arena/arena_root.gd" id="1_vmmv5"]
+
+[node name="ArenaRoot" type="Node3D" unique_id=1442128668]
+script = ExtResource("1_vmmv5")

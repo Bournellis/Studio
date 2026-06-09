@@ -95,4 +95,3 @@ Before handoff, also run:
 git diff --check
 git status --short
 ```
-

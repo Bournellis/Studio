@@ -1,0 +1,104 @@
+extends SceneTree
+
+const BootstrapSceneGeneratorScript = preload("res://tools/bootstrap_scene_generator.gd")
+
+var _failures: Array[String] = []
+
+func _initialize() -> void:
+	call_deferred("_run")
+
+func _run() -> void:
+	var exit_code := await _run_validation()
+	quit(exit_code)
+
+func _run_validation() -> int:
+	print("[validate] generating bootstrap arena scene")
+	var scene_result: Dictionary = BootstrapSceneGeneratorScript.new().generate_all()
+	if not bool(scene_result.get("ok", false)):
+		printerr("[validate] %s" % str(scene_result.get("message", "Scene generation failed.")))
+		return 1
+
+	print("[validate] checking project resources and settings")
+	_check_project_setting("application/run/main_scene", "res://modes/arena/arena.tscn")
+	_check_project_setting("autoload/AppBootstrap", "*res://autoloads/app_bootstrap.gd")
+	_check_resource("res://modes/arena/arena.tscn")
+	_check_resource("res://modes/arena/arena_root.gd")
+	_check_resource("res://gameplay/combat/combatant_3d.gd")
+	_check_resource("res://gameplay/player/fps_player_controller.gd")
+	_check_resource("res://gameplay/bot/basic_duel_bot.gd")
+	_check_resource("res://presentation/hud/arena_hud.gd")
+	_check_resource("res://tools/bootstrap_scene_generator.gd")
+	_check_resource("res://addons/gut/plugin.cfg")
+	_check_resource("res://.gutconfig.json")
+
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	if arena_scene == null:
+		_failures.append("Generated arena scene did not load.")
+
+	if _failures.is_empty():
+		print("[validate] running GUT")
+		var gut_exit_code := await _run_gut()
+		if gut_exit_code != 0:
+			printerr("[validate] GUT failed with exit code %d." % gut_exit_code)
+			return gut_exit_code
+		print("[validate] manual editor smoke: res://docs/validation.md")
+		print("[validate] success")
+		return 0
+
+	for failure: String in _failures:
+		printerr("[validate] %s" % failure)
+	return 1
+
+func _check_project_setting(key: String, expected: Variant) -> void:
+	var actual: Variant = ProjectSettings.get_setting(key)
+	if actual != expected:
+		_failures.append("%s expected %s, got %s" % [key, expected, actual])
+
+func _check_resource(path: String) -> void:
+	if not FileAccess.file_exists(path):
+		_failures.append("Missing resource: %s" % path)
+
+func _run_gut() -> int:
+	var gut_config_script: Script = load("res://addons/gut/gut_config.gd")
+	if gut_config_script == null or not gut_config_script.can_instantiate():
+		printerr("[validate] GUT is not ready. Run a one-time headless editor import, then validate again.")
+		return 1
+
+	var gut_config = gut_config_script.new()
+	var load_result: int = int(gut_config.load_options("res://.gutconfig.json"))
+	if load_result == -1:
+		printerr("[validate] Failed to load res://.gutconfig.json.")
+		return 1
+
+	gut_config.options.should_exit = false
+	gut_config.options.should_exit_on_success = false
+
+	var gut_script: Script = load("res://addons/gut/gut.gd")
+	if gut_script == null or not gut_script.can_instantiate():
+		printerr("[validate] Failed to instantiate GUT runner.")
+		return 1
+
+	var gut = gut_script.new()
+	gut.name = "ValidationGut"
+	root.add_child(gut)
+	gut_config.apply_options(gut)
+	gut.ignore_pause_before_teardown = true
+
+	var completed: Array[bool] = [false]
+	var exit_code: Array[int] = [0]
+	gut.end_run.connect(func() -> void:
+		exit_code[0] = 1 if gut.get_fail_count() > 0 else 0
+		completed[0] = true
+	)
+
+	gut.test_scripts(gut.unit_test_name == "")
+	while not completed[0]:
+		await process_frame
+
+	gut.queue_free()
+	await _drain_frames(8)
+	return exit_code[0]
+
+func _drain_frames(count: int) -> void:
+	for _index: int in range(count):
+		await process_frame

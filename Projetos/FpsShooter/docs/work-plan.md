@@ -71,4 +71,3 @@ Candidate scope:
 - Draxos economy/progression/lore systems;
 - broad weapon roster;
 - Ricochet-like projectile contract.
-

@@ -34,4 +34,3 @@ Expected:
 - health values change;
 - `R` restarts the round;
 - `Esc` releases/captures mouse.
-

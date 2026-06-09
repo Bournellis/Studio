@@ -33,4 +33,3 @@ From a dedicated worktree, replace the `--path` value with that worktree project
 3. `docs/work-plan.md`
 4. `docs/reuse-map.md`
 5. `docs/validation.md`
-

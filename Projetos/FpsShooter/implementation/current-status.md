@@ -48,4 +48,3 @@ Manual smoke lives in `docs/validation.md`.
 3. `docs/reuse-map.md`
 4. `docs/validation.md`
 5. `implementation/tracks/track-00-project-bootstrap/current-status.md`
-

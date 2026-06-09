@@ -34,4 +34,3 @@ This document records what `FpsShooter` can reuse from the studio without accide
 - RPG Turnos turn-based battle systems.
 - RPG Isometrico campaign/loadout/isometric mode contracts.
 - Any promise that this is a lore-canon Draxos product.
-

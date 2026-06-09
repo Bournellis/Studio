@@ -27,4 +27,3 @@ Create the official `FpsShooter` Godot project with local docs, editor-first run
 - suspended platforms;
 - void/fall arena;
 - broad weapon/projectile roster.
-

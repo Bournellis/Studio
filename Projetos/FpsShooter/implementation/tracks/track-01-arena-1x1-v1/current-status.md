@@ -25,4 +25,3 @@ Make the first editor-playable 1x1 FPS arena loop against a basic bot.
 - suspended platforms;
 - void/fall rules;
 - export/build packaging.
-
