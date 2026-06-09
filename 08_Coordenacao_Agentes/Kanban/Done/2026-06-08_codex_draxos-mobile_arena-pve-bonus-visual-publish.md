@@ -5,7 +5,7 @@
 - Branch: `codex/draxos-mobile/arena-pve-bonus-visual-publish`
 - Worktree: `D:\Estudio-worktrees\draxos-mobile--codex--arena-pve-bonus-visual-publish`
 - Base: `main` em `7725342`
-- Status: `Done - local validation complete; publication in progress`
+- Status: `Done - published Web+APK`
 
 ## Objetivo
 
@@ -32,4 +32,15 @@ Corrigir a regressao reportada em que bonus temporarios da Arena PVE, especialme
 
 ## Publicacao
 
-Pendente nesta execucao: commit, merge, publish Web+APK, deploy remoto de `arena`, smokes remotos e registro final de release root/preview.
+- Commit de implementacao: `e625808`
+- Merge em `main`: `e281d63`
+- Release root: `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`
+- Preview evidence: `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`
+- Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
+- Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
+- APK/manifest: `0.0.14-alpha.0` / version code `14`; minimum supported version code `13`
+- Android APK SHA256: `1f78020ae1ec5101c9d7b6bc41ca0727d57f4ffa84d769e6fadf076165593720`
+- PC Windows ZIP SHA256: `60c4101e0c23f83e16d9bc2307c7da32d4052091807a85cae80b84fa6e954a93`
+- Web Index SHA256: `6703e00323874c127cf49bf1db0afeb8a02068d8fed5f093df3b00d4b58febc9`
+- Remote functions deployed: `arena`, `release`
+- RemoteReadOnly: PASS; Web launch smoke loaded preview in `4568 ms`.

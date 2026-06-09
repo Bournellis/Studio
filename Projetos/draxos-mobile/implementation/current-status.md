@@ -4,23 +4,26 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Bosque Node Cooldown ACK v1`
-- Active stage status: `BOSQUE_NODE_COOLDOWN_ACK_V1_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Arena PVE Bonus Visual v1`
+- Active stage status: `ARENA_PVE_BONUS_VISUAL_V1_PUBLISHED_INTERNAL_ALPHA`
 - Build channel: `internal_alpha`
-- Version: `0.0.13-alpha.0`
-- Version code: `13`
+- Version: `0.0.14-alpha.0`
+- Version code: `14`
 
 ## Current Truth
 
-- Latest published remote package: `Bosque Node Cooldown ACK v1`.
-- Release root: `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`
+- Latest published remote package: `Arena PVE Bonus Visual v1`.
+- Release root: `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Latest deployment evidence: `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`
-- Source state: implementation branch fast-forwarded into `main`; release commit is `626b4ad`.
-- Published package: bumps APK/manifest to `0.0.13-alpha.0` / version code `13`; keeps `minimum_supported_version_code` at `13`; preserves operations-v2 durable persistence, the feel layer, and the resume/exit lifecycle fix; corrects node cooldown timing so local respawn remains anchored to collection time, same-session remote metadata cannot overwrite idle durable progress with stale cache, and terminal `OPENWORLD_NODE_ON_COOLDOWN` ACK failures clear invalid collect ops instead of retrying forever.
+- Latest deployment evidence: `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`
+- Source state: implementation branch merged into `main`; release commit is `e281d63`.
+- Published package: bumps APK/manifest to `0.0.14-alpha.0` / version code `14`; keeps `minimum_supported_version_code` at `13`; fixes Arena PVE bonus stat visibility by exporting initial buffed `hp`, `max_hp`, `max_mana` and `stat_modifiers` in battle log participants and applying `battle_start` before replay actions.
 - Remote SQL applied: `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`.
-- Remote functions deployed: `release` redeployed for `Bosque Node Cooldown ACK v1`; `modes` remains on the operations-v2 backend from the previous packages.
+- Remote functions deployed: `arena` and `release` redeployed for `Arena PVE Bonus Visual v1`; `modes` remains on the operations-v2 backend from the previous packages.
+- Previous Bosque package: `Bosque Node Cooldown ACK v1`
+- Previous Bosque release root: `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`
+- Previous Bosque preview: `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`
 - Previous resume/exit package: `Bosque Resume Exit Lifecycle v1`
 - Previous resume/exit release root: `internal-alpha/v0-bosque-resume-exit-lifecycle-v1-20260608-9a0f7c0`
 - Previous resume/exit preview: `https://39128c59.draxos-mobile-internal-alpha.pages.dev`
@@ -61,28 +64,28 @@
 - Agent baseline marker: `Track 14 - Agent Operations Foundation` (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`)
 - Arena context: Track 18 - PVE Arena Initial, Track 20 Season 1 Arena Calibration and Track 21 Arena Loop Unlock/Friction are preserved Arena/Autobattler context.
 - Runtime config hotfix: `release/config` now uses `config_version = track23-online-actions-hotfix` and allows online server-authoritative progression actions (`read_only: false`, `mutable_gameplay_state: true`) while preserving the conservative client fallback when remote config is unavailable.
-- Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; later packages stabilized durable Bosque progress, Fogueira station craft, domain separation, operations-v2 persistence, feel/spawn authority, preserved reentry/exit lifecycle and node cooldown ACK handling. Current playtest should focus node respawn timing after sair/voltar/relog, second collection ACK completion without permanent "aguardando servidor", Bau/Fogueira persistence after ACK/relog, preserved Bau/Mochila/upgrades and Arena/station-craft regression.
+- Human playtest initial result: Bosque Offline-First Checkpoint v1 was reported successful on 2026-06-06; later packages stabilized durable Bosque progress, Fogueira station craft, domain separation, operations-v2 persistence, feel/spawn authority, preserved reentry/exit lifecycle and node cooldown ACK handling. Current playtest should focus Arena PVE HP/Mana buffs between fights, next fight/replay showing buffed initial HP, buff choice/reward continuation and quick Bosque regression.
 
 ## Current Published Package
 
-Bosque Node Cooldown ACK v1 is published as the current Internal Alpha package. It keeps OpenWorld/Bosque persistence server-authoritative through the operations-v2 contract and preserves the feel and resume/exit fixes, while correcting the remaining node cooldown and terminal ACK handling bugs reported after the last playtest.
+Arena PVE Bonus Visual v1 is published as the current Internal Alpha package. It fixes Arena PVE temporary reward buffs not being visible in the next fight/replay while preserving the Bosque Node Cooldown ACK v1 package as the previous Bosque baseline.
 
 Delivered:
 
-- bumps in-app, export and manifest versioning to `0.0.13-alpha.0` / version code `13`;
-- starts local node cooldown from the collection moment, preserving `next_spawn_at_unix` through visual respawn so sair/voltar cannot instantly re-enable a freshly collected node;
-- applies same-session remote durable progress to model/runtime only when no durable ops are pending, preventing stale local cache from winning after login/reentry while preserving active collection/player-position feel;
-- treats server `OPENWORLD_NODE_ON_COOLDOWN` as a terminal collect-op outcome: the client resyncs, clears the invalid pending collect op and leaves the bridge in synced/pending-local state instead of retrying forever;
-- keeps prior feel fixes: server-time cooldowns, visual grace, sticky collection, no same-session rollback/flicker, scoped deposit/craft/menu actions and `Voltar -> reabrir -> sair` lifecycle preservation.
+- bumps in-app, export and manifest versioning to `0.0.14-alpha.0` / version code `14`;
+- keeps `minimum_supported_version_code` at `13`;
+- serializes Arena battle log participants with initial `hp`, `max_hp`, `max_mana` and `stat_modifiers`;
+- makes `BattleVisualMockup` infer and apply `battle_start` initial HP/Mana before the first replay action;
+- deploys `arena` so the remote simulator returns the corrected battle log contract.
 
 Publication evidence:
 
-- Remote Supabase migrations `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql` applied.
-- Supabase Edge Function `release` deployed.
-- Export regenerated APK, PC ZIP and Web artifacts for `0.0.13-alpha.0` / version code `13`; Android uses `debug_fallback`.
+- Remote Supabase migrations `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql` remain applied.
+- Supabase Edge Functions `arena` and `release` deployed.
+- Export regenerated APK, PC ZIP and Web artifacts for `0.0.14-alpha.0` / version code `14`; Android uses `debug_fallback`.
 - Public Storage upload, Cloudflare Pages production branch `main`, release manifest deploy and Edge Function `release` deploy passed.
-- Cloudflare Pages preview evidence: `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`.
-- Direct preview Web launch smoke loaded the game in `7513 ms`, matched release root and reported no runtime errors.
+- Cloudflare Pages preview evidence: `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`.
+- Direct preview Web launch smoke loaded the game in `4568 ms`, matched release root and reported no runtime errors.
 - Stable direct Web smoke reached Cloudflare Access as expected; Portal/Web remain protected on the canonical domain.
 - Remote manifest smoke, internal alpha release smoke and remote artifact smoke passed. Canonical Portal/Web are Cloudflare Access protected; preview Web launch validated the public Pages deployment.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
@@ -90,9 +93,9 @@ Publication evidence:
 
 Artifact hashes:
 
-- Android APK SHA256: `c2167096aa2ab0df5c2d4d9e4740e1dd8fa7676bc54ae7af9254d87a2d6e540f`
-- PC Windows ZIP SHA256: `5bf641d228425f9d47e91b3e7fab20774b21864ac3cd0227a72bb188afb72477`
-- Web Index SHA256: `4b015300456471c94859406612b22326076ced4f787e458cc6d8f3776461bb73`
+- Android APK SHA256: `1f78020ae1ec5101c9d7b6bc41ca0727d57f4ffa84d769e6fadf076165593720`
+- PC Windows ZIP SHA256: `60c4101e0c23f83e16d9bc2307c7da32d4052091807a85cae80b84fa6e954a93`
+- Web Index SHA256: `6703e00323874c127cf49bf1db0afeb8a02068d8fed5f093df3b00d4b58febc9`
 
 ## Previous Resume Exit Lifecycle Package
 
