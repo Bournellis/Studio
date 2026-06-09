@@ -3,6 +3,7 @@ extends GutTest
 const OperationStateScript := preload("res://modes/boot/ui/operation_state.gd")
 const AppShellActionRouterScript := preload("res://modes/boot/ui/app_shell_action_router.gd")
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
+const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 
 func test_operation_state_tracks_busy_by_scope() -> void:
 	var state = OperationStateScript.new()
@@ -90,6 +91,16 @@ func test_action_router_wraps_contract_payload_and_update_gate() -> void:
 	assert_eq(update_route.get("category"), AppShellActionRouterScript.CATEGORY_SESSION)
 	assert_false(bool(update_route.get("blocked_by_update", true)))
 
+	var account_route := AppShellActionRouterScript.route_action(
+		AppShellActionContractScript.ACTION_SHOW_ACCOUNT,
+		context
+	)
+	assert_eq(account_route.get("category"), AppShellActionRouterScript.CATEGORY_ACCOUNT)
+	assert_eq(account_route.get("scope_id"), "account:normal")
+	assert_eq(account_route.get("mutation_endpoint"), "")
+	assert_false(bool(account_route.get("requires_idempotent_retry", true)))
+	assert_false(bool(account_route.get("blocked_by_update", true)))
+
 func test_action_router_classifies_dynamic_contract_actions() -> void:
 	var select_route := AppShellActionRouterScript.route_action(
 		AppShellActionContractScript.select_base_structure_action("nucleo_energia"),
@@ -132,3 +143,28 @@ func test_action_router_exposes_mutation_scope_and_mode_placeholder() -> void:
 	assert_eq(mode_route.get("scope_id"), "mode:openworld:normal")
 	assert_eq(mode_route.get("mutation_endpoint"), "")
 	assert_false(bool(mode_route.get("blocked_by_update", true)))
+
+func test_player_surfaces_opened_from_mode_shell_can_return_to_bosque() -> void:
+	for route_id: String in [
+		AppShellRouteContractScript.ROUTE_BASE,
+		AppShellRouteContractScript.ROUTE_SHOP,
+		AppShellRouteContractScript.ROUTE_SOCIAL,
+		AppShellRouteContractScript.ROUTE_ACCOUNT,
+	]:
+		var history: Array[String] = []
+		var target := AppShellRouteContractScript.push_route(
+			history,
+			AppShellRouteContractScript.ROUTE_MODE_SHELL,
+			route_id,
+			true
+		)
+		assert_eq(target, route_id)
+		assert_eq(history, [AppShellRouteContractScript.ROUTE_MODE_SHELL])
+		assert_eq(AppShellRouteContractScript.pop_back_or_root(history), AppShellRouteContractScript.ROUTE_MODE_SHELL)
+		assert_true(history.is_empty())
+
+func test_arena_flow_preserves_mode_shell_history_when_opened_from_bosque_source_contract() -> void:
+	var source := FileAccess.get_file_as_string("res://modes/boot/flows/arena_lifecycle_flow.gd")
+	assert_true(source.contains("push_from_mode_shell"))
+	assert_true(source.contains("AppShellRouteContractScript.ROUTE_MODE_SHELL"))
+	assert_true(source.contains("host.call(\"_show_screen\", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, push_from_mode_shell)"))

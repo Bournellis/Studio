@@ -220,6 +220,10 @@ func world_position_from_viewport_point(viewport_point: Vector2) -> Vector2:
 	var camera_position := _camera.position if _camera != null else _camera_center_for(get_player_position())
 	return camera_position - _viewport_size * 0.5 + viewport_point
 
+func viewport_point_from_world_position(world_point: Vector2) -> Vector2:
+	var camera_position := _camera.position if _camera != null else _camera_center_for(get_player_position())
+	return world_point - camera_position + _viewport_size * 0.5
+
 func set_state(
 	resources: Array[Dictionary],
 	nearest_node_id: String,

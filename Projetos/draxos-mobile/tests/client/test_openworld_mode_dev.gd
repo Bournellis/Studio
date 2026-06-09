@@ -4,7 +4,10 @@ const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 const RulesetScript := preload("res://modes/openworld/openworld_forest_ruleset.gd")
 const RuntimeStateScript := preload("res://modes/openworld/openworld_forest_runtime_state.gd")
 const ScreenScript := preload("res://modes/openworld/openworld_forest_screen.gd")
+const LauncherCatalogScript := preload("res://modes/openworld/openworld_forest_launcher_catalog.gd")
+const LauncherControllerScript := preload("res://modes/openworld/openworld_forest_launcher_controller.gd")
 const RegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
+const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const RouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
 const PLAYER_RADIUS := 20.0
 const TEST_SESSION_ID := "00000000-0000-4000-8000-000000000101"
@@ -188,6 +191,59 @@ func test_openworld_registry_points_to_official_screen() -> void:
 	assert_eq(RegistryScript.normalize_mode_id("openworld_bosque"), "openworld")
 	assert_eq(RegistryScript.screen_path("openworld"), "res://modes/openworld/openworld_forest_screen.gd")
 
+func test_launcher_catalog_loads_public_entries_and_rejects_invalid_entry() -> void:
+	var entries := LauncherCatalogScript.entries()
+	assert_eq(entries.size(), 5)
+	var ids: Array[String] = []
+	var actions: Dictionary = {}
+	for entry: Dictionary in entries:
+		ids.append(str(entry.get("entry_id", "")))
+		actions[str(entry.get("entry_id", ""))] = str(entry.get("action_id", ""))
+		assert_false(str(entry.get("entry_id", "")).contains("tower"))
+		assert_false(str(entry.get("entry_id", "")).contains("card"))
+	ids.sort()
+	assert_eq(ids, [
+		"arena_pve_gate",
+		"profile_shrine",
+		"refugio_workbench",
+		"shop_stall",
+		"social_totem",
+	])
+	assert_eq(actions.get("arena_pve_gate"), AppShellActionContractScript.ACTION_OPEN_ARENA)
+	assert_eq(actions.get("profile_shrine"), AppShellActionContractScript.ACTION_SHOW_ACCOUNT)
+
+	var invalid := {
+		"entry_id": "broken_entry",
+		"label": "Broken",
+		"action_id": "show_shop",
+		"visual_kind": "shop_stall",
+		"interaction_radius": 48,
+	}
+	assert_false(bool(LauncherCatalogScript.validate_entry(invalid).get("ok", true)))
+	var filtered := LauncherCatalogScript.entries_from_data({
+		"entries": [
+			{
+				"entry_id": "valid_entry",
+				"label": "Valid",
+				"action_id": "show_shop",
+				"visual_kind": "shop_stall",
+				"position": {"x": 10, "y": 12},
+				"interaction_radius": 48,
+			},
+			invalid,
+		],
+	})
+	assert_eq(filtered.size(), 1)
+
+func test_launcher_controller_resolves_nearest_and_tap_targets() -> void:
+	var controller = LauncherControllerScript.new()
+	controller.configure(LauncherCatalogScript.entries())
+	var arena := LauncherCatalogScript.entry_by_id("arena_pve_gate")
+	var position := Vector2(arena.get("position", Vector2.ZERO))
+	assert_eq(controller.nearest_entry(position).get("entry_id"), "arena_pve_gate")
+	assert_eq(controller.entry_at_world_position(position + Vector2(12, 0)).get("action_id"), AppShellActionContractScript.ACTION_OPEN_ARENA)
+	assert_true(controller.nearest_entry(Vector2(-4000, -4000)).is_empty())
+
 func test_mode_shell_is_fullscreen_without_app_chrome() -> void:
 	assert_true(RouteContractScript.is_fullscreen_gameplay("mode_shell"))
 	assert_false(RouteContractScript.shows_app_chrome("mode_shell"))
@@ -370,12 +426,94 @@ func test_visual_screen_instantiates_fullscreen_with_joystick_hud_and_sheet() ->
 	assert_false((screen.find_child("OpenworldVirtualJoystick", true, false) as Control).visible)
 	assert_not_null(screen.find_child("OpenworldHudTop", true, false))
 	assert_not_null(screen.find_child("OpenworldGuidanceBanner", true, false))
+	assert_not_null(screen.find_child("OpenworldLauncherPrompt", true, false))
 	assert_not_null(screen.find_child("OpenworldInventoryButton", true, false))
 	assert_not_null(screen.find_child("OpenworldBackButton", true, false))
 	var complete := screen.find_child("OpenworldCompleteButton", true, false) as Button
 	assert_not_null(complete)
 	assert_eq(complete.text, "Encerrar visita")
 	assert_null(screen.find_child("OpenworldForestBoard", true, false))
+
+func test_bosque_instantiates_diegetic_launcher_landmarks_without_future_or_dev_entries() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var world = screen.call("get_openworld_world_2d")
+	assert_eq(int(world.call("launcher_count")), 5)
+	var ids: Array = world.call("launcher_entry_ids")
+	assert_eq(ids, [
+		"arena_pve_gate",
+		"profile_shrine",
+		"refugio_workbench",
+		"shop_stall",
+		"social_totem",
+	])
+	for entry_id: String in ids:
+		assert_false(entry_id.contains("tower"))
+		assert_false(entry_id.contains("card"))
+		assert_false(entry_id.contains("dev"))
+
+func test_launcher_prompt_tracks_nearest_public_landmark() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var world = screen.call("get_openworld_world_2d")
+	var prompt := screen.find_child("OpenworldLauncherPrompt", true, false) as Control
+	var prompt_label := screen.find_child("OpenworldLauncherPromptLabel", true, false) as Label
+	assert_not_null(prompt)
+	assert_not_null(prompt_label)
+	assert_false(prompt.visible)
+	var shop_position: Vector2 = world.call("launcher_position", "shop_stall")
+	screen.set_player_position_for_tests(shop_position)
+	screen.call("_update_labels")
+	await get_tree().process_frame
+	assert_true(prompt.visible)
+	assert_string_contains(prompt_label.text, "Loja")
+	var shop_state: Dictionary = world.call("launcher_visual_state", "shop_stall")
+	var arena_state: Dictionary = world.call("launcher_visual_state", "arena_pve_gate")
+	assert_true(bool(shop_state.get("highlighted", false)))
+	assert_false(bool(arena_state.get("highlighted", true)))
+
+func test_landmark_click_emits_shell_action_requested() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var world = screen.call("get_openworld_world_2d")
+	var received: Array[Dictionary] = []
+	screen.shell_action_requested.connect(func(action_id: String, entry_id: String) -> void:
+		received.append({"action_id": action_id, "entry_id": entry_id})
+	)
+	var arena_position: Vector2 = world.call("launcher_position", "arena_pve_gate")
+	screen.set_player_position_for_tests(arena_position)
+	screen.call("_update_labels")
+	await get_tree().process_frame
+	var viewport_position: Vector2 = world.call("viewport_point_from_world_position", arena_position)
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = true
+	event.position = viewport_position
+	screen.call("_on_world_gui_input", event)
+	await get_tree().process_frame
+	assert_eq(received.size(), 1)
+	assert_eq(received[0].get("action_id"), AppShellActionContractScript.ACTION_OPEN_ARENA)
+	assert_eq(received[0].get("entry_id"), "arena_pve_gate")
+
+func test_preview_navigation_snapshot_restores_position_and_model_state() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	screen.set_player_position_for_tests(Vector2(512, 444))
+	screen.get_model().add_to_pocket("galho", 2)
+	screen.get_model().chest = {"folha": 3}
+	var snapshot: Dictionary = screen.navigation_state_snapshot()
+
+	var restored = ScreenScript.new()
+	restored.apply_navigation_state_snapshot(snapshot)
+	add_child_autofree(restored)
+	await get_tree().process_frame
+	assert_eq(restored.get_player_position().snapped(Vector2(0.01, 0.01)), Vector2(512, 444))
+	assert_eq(int(Dictionary(restored.get_model().pocket).get("galho", 0)), 2)
+	assert_eq(int(Dictionary(restored.get_model().chest).get("folha", 0)), 3)
 
 func test_guidance_banner_can_hide_and_reopen_from_session_sheet() -> void:
 	var screen = ScreenScript.new()
@@ -651,6 +789,63 @@ func test_integrated_back_waits_for_pending_checkpoint_before_close() -> void:
 	assert_true(bool(closed.get("value", false)))
 	assert_eq(screen.session_state_for_tests(), "synced")
 	assert_eq(int(Dictionary(screen.get_model().chest).get("galho", 0)), 2)
+
+func test_launcher_navigation_waits_for_pending_checkpoint_before_emitting_action() -> void:
+	var setup: Dictionary = await _make_integrated_screen()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var chest_position := RulesetScript.chest_position()
+	screen.call("_hydrate_integrated_session", _integrated_session(0, chest_position, {"galho": 2}, {}, {}, {}))
+	screen.set_player_position_for_tests(chest_position)
+	client.delay_frames = 4
+	client.enqueue_checkpoint_response(_checkpoint_ack(TEST_SESSION_ID, 1, "%s-000001" % TEST_SESSION_ID, 1, {
+		"pocket": {},
+		"chest": {"galho": 2},
+	}))
+	var received: Array[Dictionary] = []
+	screen.shell_action_requested.connect(func(action_id: String, entry_id: String) -> void:
+		received.append({"action_id": action_id, "entry_id": entry_id})
+	)
+
+	screen.call("_deposit_near_chest")
+	screen.call("_handle_launcher_action_requested", AppShellActionContractScript.ACTION_SHOW_SHOP, "shop_stall")
+	await get_tree().process_frame
+
+	assert_true(received.is_empty())
+	assert_true(str(screen.get_model().last_message).contains("Salvando"))
+	assert_eq(client.checkpoint_calls.size(), 1)
+
+	await _wait_process_frames(8)
+
+	assert_eq(received.size(), 1)
+	assert_eq(str(received[0].get("action_id", "")), AppShellActionContractScript.ACTION_SHOW_SHOP)
+	assert_eq(str(received[0].get("entry_id", "")), "shop_stall")
+	assert_eq(screen.session_state_for_tests(), "synced")
+	assert_true(str(screen.get_model().last_message).contains("Abrindo Loja"))
+
+func test_launcher_navigation_preserves_pending_checkpoint_failure_and_still_emits_action() -> void:
+	var setup: Dictionary = await _make_integrated_screen()
+	var screen = setup.get("screen")
+	var client: FakeOpenworldSupabaseClient = setup.get("client")
+	var store: FakeOpenworldSessionStore = setup.get("store")
+	var chest_position := RulesetScript.chest_position()
+	screen.call("_hydrate_integrated_session", _integrated_session(0, chest_position, {"galho": 2}, {}, {}, {}))
+	screen.set_player_position_for_tests(chest_position)
+	var received: Array[Dictionary] = []
+	screen.shell_action_requested.connect(func(action_id: String, entry_id: String) -> void:
+		received.append({"action_id": action_id, "entry_id": entry_id})
+	)
+
+	screen.call("_deposit_near_chest")
+	screen.call("_handle_launcher_action_requested", AppShellActionContractScript.ACTION_SHOW_ACCOUNT, "profile_shrine")
+	await _wait_process_frames(6)
+
+	assert_eq(received.size(), 1)
+	assert_eq(str(received[0].get("action_id", "")), AppShellActionContractScript.ACTION_SHOW_ACCOUNT)
+	assert_eq(str(received[0].get("entry_id", "")), "profile_shrine")
+	assert_gte(client.checkpoint_calls.size(), 1)
+	assert_false(Dictionary(store.openworld_pending_ops_state).is_empty())
+	assert_true(str(screen.get_model().last_message).to_lower().contains("pendentes"))
 
 func test_integrated_move_heartbeat_stays_local_and_does_not_send_checkpoint() -> void:
 	var setup: Dictionary = await _make_integrated_screen()

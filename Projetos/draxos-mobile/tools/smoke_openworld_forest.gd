@@ -3,6 +3,7 @@ extends SceneTree
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 const ScreenScript := preload("res://modes/openworld/openworld_forest_screen.gd")
 const RegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
+const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 
 var _failures: Array[String] = []
 const PLAYER_RADIUS := 20.0
@@ -38,11 +39,26 @@ func _run_smoke() -> int:
 	_expect(screen.name == "OpenworldForestScreen", "Screen instantiates.")
 	_expect(screen.find_child("OpenworldForestWorldView", true, false) is SubViewportContainer, "Fullscreen world viewport wrapper exists.")
 	_expect(screen.find_child("OpenworldForestWorld2D", true, false) is Node2D, "Node2D world exists.")
+	var world = screen.call("get_openworld_world_2d")
 	_expect(screen.find_child("OpenworldPlayer", true, false) is CharacterBody2D, "CharacterBody2D player exists.")
 	_expect(screen.find_child("OpenworldBoundaryWalls", true, false) is StaticBody2D, "Boundary walls exist.")
 	_expect(screen.find_child("OpenworldVirtualJoystick", true, false) != null, "Virtual joystick exists.")
 	_expect(screen.find_child("OpenworldHudTop", true, false) != null, "In-game HUD exists.")
 	_expect(screen.find_child("OpenworldInventoryButton", true, false) != null, "Inventory button exists.")
+	var launcher_prompt := screen.find_child("OpenworldLauncherPrompt", true, false) as Control
+	_expect(launcher_prompt != null, "Diegetic launcher prompt exists.")
+	_expect(int(world.call("launcher_count")) == 5, "Bosque instantiates five public diegetic launcher landmarks.")
+	var launcher_ids := Array(world.call("launcher_entry_ids"))
+	_expect(launcher_ids.has("arena_pve_gate"), "Arena PVE launcher landmark exists.")
+	_expect(launcher_ids.has("refugio_workbench"), "Refugio launcher landmark exists.")
+	_expect(launcher_ids.has("shop_stall"), "Shop launcher landmark exists.")
+	_expect(launcher_ids.has("social_totem"), "Social launcher landmark exists.")
+	_expect(launcher_ids.has("profile_shrine"), "Profile launcher landmark exists.")
+	for launcher_id in launcher_ids:
+		var clean_id := str(launcher_id)
+		_expect(not clean_id.contains("tower"), "Tower/Card future launcher entries stay out of V1.")
+		_expect(not clean_id.contains("card"), "Tower/Card future launcher entries stay out of V1.")
+		_expect(not clean_id.contains("dev"), "Dev tools stay out of launcher catalog.")
 	_expect(screen.find_child("OpenworldForestBoard", true, false) == null, "Legacy fixed board was removed.")
 	var player_before: Vector2 = screen.get_player_position()
 	screen.set_debug_joystick_vector(Vector2.RIGHT)
@@ -59,7 +75,24 @@ func _run_smoke() -> int:
 	_send_key_event(screen, KEY_D, false)
 	_expect(screen.get_player_position().x > keyboard_before.x, "Real D key event moves the player.")
 
-	var world = screen.call("get_openworld_world_2d")
+	var launcher_signals: Array[Dictionary] = []
+	screen.shell_action_requested.connect(func(action_id: String, entry_id: String) -> void:
+		launcher_signals.append({"action_id": action_id, "entry_id": entry_id})
+	)
+	var arena_launcher_position: Vector2 = world.call("launcher_position", "arena_pve_gate")
+	screen.call("set_player_position_for_tests", arena_launcher_position)
+	screen.call("_update_labels")
+	var arena_launcher_state: Dictionary = world.call("launcher_visual_state", "arena_pve_gate")
+	_expect(launcher_prompt != null and launcher_prompt.visible, "Nearest launcher shows one contextual prompt.")
+	_expect(bool(arena_launcher_state.get("highlighted", false)), "Nearest launcher receives procedural highlight.")
+	var tapped_entry: Dictionary = world.call("launcher_entry_at_world_position", arena_launcher_position)
+	_expect(str(tapped_entry.get("entry_id", "")) == "arena_pve_gate", "Arena launcher can be resolved from a tap/click world position.")
+	screen.call("_handle_launcher_action_requested", str(tapped_entry.get("action_id", "")), str(tapped_entry.get("entry_id", "")))
+	await _wait_process_frames(4)
+	var launcher_signal := launcher_signals[0] if not launcher_signals.is_empty() else {}
+	_expect(str(launcher_signal.get("action_id", "")) == AppShellActionContractScript.ACTION_OPEN_ARENA, "Clicking Arena landmark emits open_arena.")
+	_expect(str(launcher_signal.get("entry_id", "")) == "arena_pve_gate", "Clicking Arena landmark preserves entry id.")
+
 	await _expect_obstacle_blocks(screen, "chest_home", Vector2.RIGHT)
 	await _expect_obstacle_blocks(screen, "tree_large_mid", Vector2.RIGHT)
 	await _expect_obstacle_blocks(screen, "rock_large_path", Vector2.RIGHT)
@@ -118,6 +151,10 @@ func _expect(condition: bool, message: String) -> void:
 func _wait_physics_frames(frames: int) -> void:
 	for _frame in frames:
 		await physics_frame
+
+func _wait_process_frames(frames: int) -> void:
+	for _frame in frames:
+		await process_frame
 
 func _expect_obstacle_blocks(screen, object_id: String, movement_direction: Vector2) -> void:
 	var world = screen.call("get_openworld_world_2d")
