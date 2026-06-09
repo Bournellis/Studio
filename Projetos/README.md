@@ -29,8 +29,8 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: author player/enemy card and mechanic ideas as Design Lab proposal packs, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab gates before full-run feel playtests.
 
-- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 first-person shooter tech probe with a light Draxos visual theme. The first contract is a traditional FPS baseline in a local 1x1 arena against a basic bot. Bootstrap includes local operating docs, status, work plan, reuse map, input autoload, generated arena scene, player FPS controller, bot V1 that walks and shoots, HUD, hitscan damage, initial knockback, validation entrypoint and GUT tests.
-  - Priority/status: `P2_IMPLEMENTACAO - FPS_SHOOTER_BOOTSTRAP_ACTIVE`
+- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 first-person shooter tech probe with a light Draxos visual theme. The first contract is a traditional FPS baseline in a local 1x1 arena against a basic bot. Bootstrap is complete and includes local operating docs, status, work plan, reuse map, input autoload, generated arena scene, player FPS controller, bot V1 that walks and shoots, HUD, hitscan damage, initial knockback, pause/sensitivity menu, validation entrypoint and GUT tests.
+  - Priority/status: `P2_IMPLEMENTACAO - FPS_SHOOTER_BOOTSTRAP_COMPLETE`
   - Local agent guide: `FpsShooter/AGENTS.md`
   - Operational status: `FpsShooter/implementation/current-status.md`
   - Work plan: `FpsShooter/docs/work-plan.md`
@@ -38,7 +38,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Validation reference: `FpsShooter/docs/validation.md`
   - Validation command: `FpsShooter/tools/validate.gd`
   - Allowed work: code, validation, editor playtest and local documentation.
-  - Current next step: open in Godot editor, test the bootstrap arena and move into Track 01 - Arena 1x1 V1.
+  - Current next step: select and start the focus for Track 01 - Arena 1x1 V1.
 
 ## Implementacao - Arena PVE Inicial
 

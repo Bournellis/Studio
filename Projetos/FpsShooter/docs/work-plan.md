@@ -1,7 +1,7 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-09`
-- Status: `BOOTSTRAP_ACTIVE`
+- Status: `BOOTSTRAP_COMPLETE_TRACK_01_READY_NEXT`
 
 ## North Star
 
@@ -13,6 +13,8 @@ The project starts as a traditional FPS. Special projectile types, jump pads, su
 
 Goal: make `Projetos/FpsShooter` an official implementable Godot project.
 
+Status: complete.
+
 Acceptance:
 
 - local `AGENTS.md`;
@@ -23,10 +25,13 @@ Acceptance:
 - validation entrypoint;
 - initial GUT tests;
 - portfolio docs updated.
+- editor-playable FPS baseline with movement, mouse look, hitscan damage, bot V1, HUD, knockback, restart and pause sensitivity menu.
 
 ## Track 01 - Arena 1x1 V1
 
 Goal: editor-playable local 1x1 arena shooter.
+
+Status: ready next.
 
 Acceptance:
 

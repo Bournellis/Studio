@@ -8,7 +8,7 @@
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
 - Foco P2 de implementacao: `Projetos/draxos-mobile/` (`BOSQUE_PERSISTENT_OVERLAY_SHELL_V1_PUBLISHED_INTERNAL_ALPHA`, release root `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, deployment evidence `https://a53c1d27.draxos-mobile-internal-alpha.pages.dev`, publicado Web/APK, APK/manifest `0.0.17-alpha.0`/version code `17`; Bosque permanece vivo e visivel atras de Arena/Base/Shop/Social/Profile em overlay, com input pausado e retorno sem rebootstrap, mantem minimum supported version code `13`, proximo passo operacional: playtest humano focado do pacote publicado)
-- Tech probe P2 de implementacao: `Projetos/FpsShooter/` (`FPS_SHOOTER_BOOTSTRAP_ACTIVE`; PC Windows editor-first FPS 3D independente com tema Draxos leve; proximo passo: editor playtest do bootstrap e Track 01 - Arena 1x1 V1)
+- Tech probe P2 de implementacao: `Projetos/FpsShooter/` (`FPS_SHOOTER_BOOTSTRAP_COMPLETE`; PC Windows editor-first FPS 3D independente com tema Draxos leve; proximo passo: selecionar foco da Track 01 - Arena 1x1 V1)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -40,13 +40,13 @@
 
 ## FpsShooter
 
-- Status: **P2_IMPLEMENTACAO - FPS_SHOOTER_BOOTSTRAP_ACTIVE**
+- Status: **P2_IMPLEMENTACAO - FPS_SHOOTER_BOOTSTRAP_COMPLETE**
 - Fase: `Implementacao - FPS 3D Tech Probe`
 - Local: `Projetos/FpsShooter/`
-- Baseline atual: projeto oficial implementavel criado para testar Godot 4.6.2 em FPS 3D primeira pessoa, PC Windows editor-first. Bootstrap inclui docs locais, status, plano de tracks, projeto Godot, input bootstrap, cena de arena gerada por ferramenta, jogador FPS basico, bot V1 que anda e atira, HUD basico, hitscan, dano e knockback inicial.
+- Baseline atual: projeto oficial implementavel criado para testar Godot 4.6.2 em FPS 3D primeira pessoa, PC Windows editor-first. Bootstrap completo inclui docs locais, status, plano de tracks, projeto Godot, input bootstrap, cena de arena gerada por ferramenta, jogador FPS basico, bot V1 que anda e atira, HUD basico, hitscan, dano, knockback inicial, menu `Esc` com controle de sensibilidade e warnings iniciais corrigidos.
 - Trabalho permitido: codigo, validacao, playtest no editor e documentacao local.
 - Restricao operacional: tech probe independente com tema Draxos leve; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem export/Web/mobile, multiplayer, matchmaking, Ricochet, jump pads, plataformas suspensas ou void/queda ate track explicita.
-- Proximo passo: abrir no editor, testar o bootstrap jogavel e selecionar o foco da Track 01 - Arena 1x1 V1.
+- Proximo passo: selecionar e iniciar o foco da Track 01 - Arena 1x1 V1.
 
 ## rpg-isometrico
 

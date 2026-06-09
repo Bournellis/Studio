@@ -5,7 +5,7 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS 3D tech probe`
 - Active stage: `Track 00 - Project Bootstrap`
-- Active stage status: `BOOTSTRAP_ACTIVE`
+- Active stage status: `COMPLETE`
 
 ## Current Truth
 
@@ -25,11 +25,11 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 
 ## Active Goal
 
-Complete bootstrap and then move into `Track 01 - Arena 1x1 V1` for the first editor-playable round.
+Bootstrap is complete. The project can now move into `Track 01 - Arena 1x1 V1` for the first stronger duel loop.
 
 ## Current Gate
 
-Run headless validation and then open the project in Godot editor for manual feel testing.
+Closed for Track 00. Continue with Track 01 planning and implementation decisions.
 
 ## Validation Snapshot
 
@@ -55,10 +55,16 @@ Latest shoot/menu fix:
 - combatant collider now matches the visible capsule body so eye-height hitscan can damage the bot;
 - `Esc` opens a pause menu with a sensitivity slider and `Retomar` button.
 
+Bootstrap closeout:
+
+- editor warning `SHADOWED_VARIABLE_BASE_CLASS` in `arena_hud.gd` fixed by avoiding a `CanvasLayer` method name collision;
+- headless validation passes the FpsShooter GUT suite;
+- first playable editor baseline is accepted as complete for Track 00.
+
 ## Read Next
 
 1. `AGENTS.md`
 2. `docs/work-plan.md`
 3. `docs/reuse-map.md`
 4. `docs/validation.md`
-5. `implementation/tracks/track-00-project-bootstrap/current-status.md`
+5. `implementation/tracks/track-01-arena-1x1-v1/current-status.md`

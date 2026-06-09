@@ -40,10 +40,10 @@ func update_snapshot(snapshot: Dictionary) -> void:
 func flash_hit() -> void:
 	hit_flash_time = 0.12
 
-func set_pause_menu_visible(is_visible: bool, sensitivity_value: float) -> void:
+func set_pause_menu_visible(menu_visible: bool, sensitivity_value: float) -> void:
 	if pause_menu_panel == null:
 		return
-	pause_menu_panel.visible = is_visible
+	pause_menu_panel.visible = menu_visible
 	set_sensitivity_value(sensitivity_value)
 
 func set_sensitivity_value(value: float) -> void:
