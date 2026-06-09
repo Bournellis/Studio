@@ -17,7 +17,10 @@ Descreva o resultado esperado em uma frase.
 
 ## Latest Context
 
-- latest Arena loop package: `Track 21 - Arena Loop Unlock And Friction Pass`
+- Current published package: `<package name + status + release root>`
+- Current local implemented stage: `<stage name + local/published status>`
+- Preserved Arena context: `Arena PVE remains the first approved core; see docs below`
+- Open decision: `<decision id or explicit none>`
 - Arena contract source: `docs/pve-arena-v1.md`
 - behavior/potion/crafting source: `docs/behavior-potion-crafting-v1.md`
 - platform/modes source: `docs/contracts/minigame-platform-v1.md`
@@ -50,7 +53,14 @@ Descreva o resultado esperado em uma frase.
 ## Validation Plan
 
 - `git diff --check`
+- Validation profile: `<DocsOnly | ClientQuick | ModePlatform | ReleaseSafety | other>`
 - `<lane-specific command>`
+
+## Remote Mutation / Publication
+
+- remote mutation/publication run: `yes/no`
+- if yes, evidence: `<release root, preview, command summaries>`
+- if no, preserved boundary: `no deploy, no Supabase/Cloudflare mutation, no export/publication`
 
 ## Handoff Point
 

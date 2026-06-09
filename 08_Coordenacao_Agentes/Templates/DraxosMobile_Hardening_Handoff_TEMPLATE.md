@@ -19,9 +19,13 @@ Explique por que o handoff existe e qual pacote/track ele preserva.
 
 ## Current State
 
-- latest Arena loop package considered: `Track 21 - Arena Loop Unlock And Friction Pass`
+- Current published package: `<package name + status + release root>`
+- Current local implemented stage: `<stage name + local/published status>`
+- Preserved Arena context: `Arena PVE remains the first approved core; cite the relevant docs`
+- Open decision: `<decision id or explicit none>`
 - runtime touched: `yes/no`
 - remote mutation/publication run: `yes/no`
+- Validation profile: `<DocsOnly | ClientQuick | ModePlatform | ReleaseSafety | other>`
 - worktree clean at handoff: `yes/no`
 
 ## Changed Files

@@ -167,7 +167,7 @@ Estas cartas existem no catálogo mas são usadas apenas pelo inimigo. Arte não
 | `TEXT_PRIMARY` | `#E0E0D8` | Texto principal |
 | `TYPE_CRIATURA` | `#4A7A5A` | Verde floresta |
 | `TYPE_ESTRUTURA` | `#5A6A7A` | Azul ardósia |
-| `TYPE_PERMANENTE` | `#7A6A3A` | Âmbar |
+| `TYPE_PERMANENTE` | `#7A6A3A` | Ambar |
 | `TYPE_MAGIA` | `#6A4A7A` | Violeta |
 | `TYPE_COMANDO` | `#7A4A4A` | Vermelho |
 

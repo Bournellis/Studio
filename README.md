@@ -6,7 +6,8 @@ This workspace is the primary documentation and implementation home for the stud
 
 - `canon/`: shared product, design, architecture, roadmap, platform truth, and lore context.
 - `Projetos/draxos-roguelike-cardgame/`: active P0 implementation for the menu-first Draxos roguelike cardgame.
-- `Projetos/draxos-mobile/`: active P2 implementation for DraxosMobile, currently at `ARENA_PVE_SEASON1_LOOP_V1_PUBLISHED_INTERNAL_ALPHA`.
+- `Projetos/draxos-mobile/`: active P2 implementation for DraxosMobile, currently at `BOSQUE_DIEGETIC_LAUNCHER_FOUNDATION_V1_PUBLISHED_INTERNAL_ALPHA`.
+- `07_Aprendizados/`: operational lessons for agents, documentation drift, snapshot compaction and worktree hygiene.
 - `Projetos/_conceitos/mobile-universe/`: read-only DraxosMobile design archive.
 - `Projetos/rpg-isometrico/`: paused historical Godot implementation for the campaign-first isometric action RPG.
 - `Projetos/rpg-turnos/`: paused historical Godot implementation for a provisional turn-based RPG-cardgame sharing lore but owning separate mechanics.
@@ -25,6 +26,8 @@ For normal work inside `D:\Estudio`, start with:
 5. `canon/canon-brief.md`
 6. the target project `AGENTS.md`
 7. the target project `implementation/current-status.md`
+
+For current agent workflow examples, prefer `materiais/guides/*-current.md`. Older guide files in that directory are preserved as historical/reference material.
 
 ## Historical Context
 

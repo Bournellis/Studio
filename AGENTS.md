@@ -15,6 +15,7 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `Projetos/rpg-turnos/` is paused indefinitely and preserved for historical/contextual consultation.
 - `migration/` is a historical archive for cutover, relocation, and legacy comparison context.
 - `08_Coordenacao_Agentes/` is the coordination hub: Kanban, Handoffs, Decisoes, Prioridades, Painel Visual, and Estado_Atual.
+- `07_Aprendizados/` preserves operational lessons for agents, documentation drift, snapshot compaction and worktree hygiene.
 - `Projetos/README.md` is the lightweight project registry for active, conceptual, and paused projects.
 
 ## Multi-Agent Worktree And Git Rule
@@ -55,7 +56,7 @@ Use esses documentos para identificar se o pedido e sobre implementacao ativa, c
 - Projetos com `P0_IMPLEMENTACAO` podem receber codigo, validacao, playtest e documentacao local por padrao.
 - Projetos com `P2_IMPLEMENTACAO` podem receber codigo, design, documentacao local e configuracao de infraestrutura por padrao.
 - Projetos com `P1_CONCEITO` permitem somente conceito, pitch, design, referencias e documentacao conceitual.
-- Projetos com `ARQUIVO_DESIGN` permitem apenas leitura e referencia de design ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â nao criar codigo, cenas ou assets.
+- Projetos com `ARQUIVO_DESIGN` permitem apenas leitura e referencia de design - nao criar codigo, cenas ou assets.
 - Projetos com `PAUSADO_INDEFINIDO` nao devem receber implementacao, expansao de escopo, novas gates ou selecao de track sem pedido explicito do usuario.
 - Ao concluir qualquer tarefa que mude status observavel, atualize `Prioridades_Estudio.md`, `Estado_Atual.md` e o registro relevante em `Projetos/README.md`.
 
@@ -65,7 +66,7 @@ Depois do Portfolio Gate, escolha o projeto alvo usando o pedido do usuario, `Pr
 
 - Se o usuario citar `draxos-roguelike-cardgame`, `Draxos roguelike`, `roguelike cardgame`, `ship hub`, `run map`, `mapa de run`, `10 mapas`, `almas`, `classe no hub`, `rota completa`, `sacrificio`, `Cinzas` ou `batalhas por lanes`, use `Projetos/draxos-roguelike-cardgame/`.
 - Se o usuario citar `draxos-mobile`, `DraxosMobile`, `Draxos mobile`, `Bosque Node Cooldown ACK v1`, `BOSQUE_NODE_COOLDOWN_ACK_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Resume Exit Lifecycle v1`, `BOSQUE_RESUME_EXIT_LIFECYCLE_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Feel & Spawn Authority v1`, `BOSQUE_FEEL_SPAWN_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Persistence Rebase v1`, `BOSQUE_PERSISTENCE_REBASE_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Session Lifecycle & Durable Structures Hotfix v1`, `BOSQUE_SESSION_LIFECYCLE_STRUCTURES_HOTFIX_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque World Hub Domain Separation v1`, `BOSQUE_WORLD_HUB_DOMAIN_SEPARATION_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Fogueira Potion Crafting v1`, `BOSQUE_FOGUEIRA_POTION_CRAFTING_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Durable Bau Mochila v1`, `BOSQUE_DURABLE_BAU_MOCHILA_V1_PUBLISHED_INTERNAL_ALPHA`, `Arena PVE Menu Flow Simplification v1`, `ARENA_PVE_MENU_FLOW_SIMPLIFICATION_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque`, `Bosque Offline-First Checkpoint v1`, `BOSQUE_OFFLINE_FIRST_CHECKPOINT_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Sync Responsiveness v1`, `BOSQUE_SYNC_RESPONSIVENESS_V1_PUBLISHED_INTERNAL_ALPHA`, `Arena/Bosque Visible V2`, `ARENA_BOSQUE_VISIBLE_V2_PUBLISHED_INTERNAL_ALPHA`, `Arena/Bosque Regression Hotfix`, `ARENA_BOSQUE_REGRESSION_HOTFIX_PUBLISHED_INTERNAL_ALPHA`, `Bosque v3 UX/Feel`, `BOSQUE_V3_UX_FEEL_PUBLISHED_INTERNAL_ALPHA`, `Openworld`, `BOSQUE_MECANICO_BASICO_V2_PUBLISHED_INTERNAL_ALPHA`, `autobattler`, `base manager`, `Arena PVE`, `ARENA_PVE_SEASON1_LOOP_V1_PUBLISHED_INTERNAL_ALPHA`, `Arena PVE Season 1 Loop v1`, `ARENA_PVE_FIRST_REAL_RUN_PUBLISHED_INTERNAL_ALPHA`, `Arena PVE First Real Run`, `Track 23`, `FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`, `Foundation Hardening V2`, `HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA`, `Hardening Platform V1`, `REMOTE_LAB_RUNNER_PUBLISHED_INTERNAL_ALPHA`, `LAB_WEB_EXPORT_GUARD_PUBLISHED_INTERNAL_ALPHA`, `ARENA_CONSISTENCY_PASS_PUBLISHED_INTERNAL_ALPHA`, `ARENA_CONSISTENCY_PASS_IMPLEMENTED_LOCAL`, `PVE_ARENA_INITIAL_PUBLISHED_INTERNAL_ALPHA`, `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, `PVP assincrono`, `Supabase`, `Foundation Final Polish`, `Foundation Closeout`, `FOUNDATION_FINAL_POLISH_DELIVERED`, `Foundation Audit`, `FOUNDATION_AUDIT_ACTIVE`, `Foundation Loop UX Pass`, `loop pos-login`, `Track 00`, `Track 04`, `Track 11`, `Track 13`, `Track 14`, `Track 15`, `Track 16`, `Track 17`, `Track 18`, `Track 19`, `Track 21`, `Agent Operating Manual`, `documentation-index`, `primeiro slice mobile`, `guilda`, `conta guest`, `matchmaking por poder`, `Progression Lab humano`, `Battle Lab`, `account_profiles`, `game_saves`, `Hub modularization`, `release artifacts`, `release safety`, `Cloudflare Access` ou `simulacao no servidor`, use `Projetos/draxos-mobile/`.
-- Se o usuario citar `mobile-universe` ou `_conceitos/mobile-universe`, use `Projetos/_conceitos/mobile-universe/` apenas para leitura e referencia de design ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â nao criar codigo, cenas ou assets a partir dali.
+- Se o usuario citar `mobile-universe` ou `_conceitos/mobile-universe`, use `Projetos/_conceitos/mobile-universe/` apenas para leitura e referencia de design - nao criar codigo, cenas ou assets a partir dali.
 - Se o usuario citar `rpg-turnos`, `RPG Turnos`, exploracao 2D, NPC, mundo, `class_select`, `Track 02 - Draxos Lore And Progression Alignment` ou `P10 - Necromante`, use `Projetos/rpg-turnos/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
 - Se o usuario citar `rpg-isometrico`, campanha isometrica, Arena, Survival, Boss, loadout de acao ou gates Fxx, use `Projetos/rpg-isometrico/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
 - `Draxos` sozinho e contexto de lore compartilhada nao bastam para escolher `rpg-turnos` ou `draxos-mobile`; confirme pelo projeto citado, pela prioridade atual ou pelos termos operacionais acima.
@@ -123,7 +124,7 @@ Implementacoes Godot vivem sob `Projetos/`.
 
 Projetos Godot ativos:
 
-- `Projetos/draxos-roguelike-cardgame/` ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â P0, Steam, roguelike cardgame
+- `Projetos/draxos-roguelike-cardgame/` - P0, Steam, roguelike cardgame
 - `Projetos/draxos-mobile/` - P2, mobile + PC + browser, Godot 4.6.2 + Supabase (`BOSQUE_DIEGETIC_LAUNCHER_FOUNDATION_V1_PUBLISHED_INTERNAL_ALPHA`; proximo passo e playtest humano do pacote publicado, validando landmarks/prompts do Bosque, abertura de Arena/Base/Shop/Social/Profile, retorno via `Voltar`, guard de bootstrap sem flash full-spawn e regressao rapida de Arena/Bosque)
 
 Projetos Godot pausados:
