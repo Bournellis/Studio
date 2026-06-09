@@ -1,7 +1,7 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-09`
-- Status: `FPS_SHOOTER_TRACK_02A_COMBAT_LOOP_EXPANSION_COMPLETE`
+- Status: `FPS_SHOOTER_TRACK_02A_BOT_PRESSURE_JUMP_HOTFIX_COMPLETE`
 
 ## North Star
 
@@ -126,8 +126,9 @@ Delivered:
 - health pickup that creates a recovery objective;
 - pickup respawn timers and simple HUD readability;
 - bot awareness for health seeking, overcharge contest and nearby plasma dodge;
+- bot pressure hotfix: ready shots now beat pickup routes, health routes can be interrupted by a ready shot and the bot can make simple jumps toward raised reposition goals/low blockers;
 - arena-side authority for projectile collision, pickup consumption, damage, knockback and feedback;
-- automated coverage for input, projectile spawn/hit, pickup effects, bot pickup priority and bot dodge awareness.
+- automated coverage for input, projectile spawn/hit, pickup effects, bot pickup priority, ready-shot-over-health pressure, pickup-route interruption, simple bot jump and bot dodge awareness.
 
 Future candidate scope:
 

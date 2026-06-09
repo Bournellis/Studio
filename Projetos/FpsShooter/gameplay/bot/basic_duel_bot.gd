@@ -35,16 +35,24 @@ const STATE_DEAD: StringName = &"dead"
 @export var target_center_visibility_height: float = 0.82
 @export var target_lower_visibility_height: float = 0.42
 @export var low_health_pickup_threshold: float = 0.48
+@export var critical_health_pickup_threshold: float = 0.22
 @export var pickup_interest_distance: float = 17.0
 @export var overcharge_interest_distance: float = 14.0
 @export var overcharge_damage_multiplier: float = 1.25
 @export var overcharge_knockback_multiplier: float = 1.18
 @export var projectile_dodge_radius: float = 3.2
 @export var projectile_dodge_strength: float = 1.2
+@export var jump_velocity: float = 5.4
+@export var jump_cooldown: float = 0.72
+@export var jump_height_goal_threshold: float = 0.42
+@export var jump_height_goal_distance: float = 4.8
+@export var jump_probe_distance: float = 0.78
 
 var target
 var shoot_cooldown_remaining: float = 0.0
 var vertical_velocity: float = 0.0
+var jump_cooldown_remaining: float = 0.0
+var jump_count: int = 0
 var shot_tell_remaining: float = 0.0
 var is_telegraphing: bool = false
 var current_state: StringName = STATE_IDLE
@@ -86,6 +94,8 @@ func configure(next_target) -> void:
 	configure_combatant(&"bot", 100.0, Color(1.0, 0.34, 0.22, 1.0))
 	shoot_cooldown_remaining = 0.24
 	vertical_velocity = 0.0
+	jump_cooldown_remaining = 0.0
+	jump_count = 0
 	reaction_remaining = reaction_time
 	reposition_cooldown_remaining = 0.65
 	strafe_direction = 1.0
@@ -149,6 +159,12 @@ func debug_get_visible_target_position() -> Vector3:
 func debug_is_projectile_dodging() -> bool:
 	return _projectile_dodge_movement().length_squared() > 0.01
 
+func debug_get_jump_count() -> int:
+	return jump_count
+
+func debug_get_vertical_velocity() -> float:
+	return vertical_velocity
+
 func _physics_process(delta: float) -> void:
 	if is_dead:
 		_cancel_windup(STATE_DEAD)
@@ -158,6 +174,7 @@ func _physics_process(delta: float) -> void:
 		return
 
 	shoot_cooldown_remaining = maxf(0.0, shoot_cooldown_remaining - delta)
+	jump_cooldown_remaining = maxf(0.0, jump_cooldown_remaining - delta)
 	reposition_cooldown_remaining = maxf(0.0, reposition_cooldown_remaining - delta)
 	state_time_remaining = maxf(0.0, state_time_remaining - delta)
 	reaction_remaining = maxf(0.0, reaction_remaining - delta)
@@ -167,6 +184,7 @@ func _physics_process(delta: float) -> void:
 	last_has_line_of_sight = _refresh_target_visibility()
 	last_desired_move = _handle_duel_state(delta)
 	last_desired_move = _apply_projectile_dodge(last_desired_move)
+	_maybe_jump_for_navigation(last_desired_move)
 	velocity = _build_velocity(last_desired_move, delta)
 	move_and_slide()
 	_update_grounded_vertical_velocity()
@@ -194,33 +212,40 @@ func _handle_duel_state(delta: float) -> Vector3:
 			return _handle_engage()
 
 func _handle_engage() -> Vector3:
-	if _try_start_pickup_reposition():
-		return _movement_toward_reposition()
 	if not last_has_line_of_sight:
+		if _try_start_pickup_reposition():
+			return _movement_toward_reposition()
 		_start_reposition()
 		return _movement_toward_reposition()
 	if _can_start_windup():
 		_start_windup()
 		return Vector3.ZERO
+	if _try_start_pickup_reposition():
+		return _movement_toward_reposition()
 	if reposition_cooldown_remaining <= 0.0:
 		_start_strafe()
 		return _strafe_movement()
 	return _distance_management_movement()
 
 func _handle_strafe() -> Vector3:
-	if _try_start_pickup_reposition():
-		return _movement_toward_reposition()
 	if not last_has_line_of_sight:
+		if _try_start_pickup_reposition():
+			return _movement_toward_reposition()
 		_start_reposition()
 		return _movement_toward_reposition()
 	if _can_start_windup():
 		_start_windup()
 		return Vector3.ZERO
+	if _try_start_pickup_reposition():
+		return _movement_toward_reposition()
 	if state_time_remaining <= 0.0:
 		_set_state(STATE_ENGAGE)
 	return _strafe_movement()
 
 func _handle_reposition() -> Vector3:
+	if _can_start_windup():
+		_start_windup()
+		return Vector3.ZERO
 	if _distance_to_reposition_destination() <= reposition_arrival_distance:
 		reposition_cooldown_remaining = reposition_interval
 		_start_strafe()
@@ -251,6 +276,8 @@ func _handle_windup(delta: float) -> Vector3:
 	return _strafe_movement() * 0.18
 
 func _handle_cooldown() -> Vector3:
+	if _try_start_pickup_reposition():
+		return _movement_toward_reposition()
 	if state_time_remaining <= 0.0:
 		if not last_has_line_of_sight:
 			_start_reposition()
@@ -293,7 +320,7 @@ func _start_reposition_to(destination: Vector3) -> void:
 func _try_start_pickup_reposition() -> bool:
 	if current_state == STATE_REPOSITION or current_state == STATE_WINDUP:
 		return false
-	if health_pickup_available and health_fraction() <= low_health_pickup_threshold:
+	if health_pickup_available and _should_seek_health_pickup():
 		if _flat_distance_to(health_pickup_position) <= pickup_interest_distance:
 			_start_reposition_to(health_pickup_position)
 			return true
@@ -303,6 +330,17 @@ func _try_start_pickup_reposition() -> bool:
 			_start_reposition_to(overcharge_pickup_position)
 			return true
 	return false
+
+func _should_seek_health_pickup() -> bool:
+	var health_ratio := health_fraction()
+	if health_ratio > low_health_pickup_threshold:
+		return false
+	if _can_start_windup():
+		return false
+	var target_in_pressure_range := last_has_line_of_sight and _distance_to_target() <= shoot_range
+	if health_ratio <= critical_health_pickup_threshold:
+		return true
+	return not target_in_pressure_range or shoot_cooldown_remaining > shoot_cooldown * 0.45 or reaction_remaining > 0.0 or current_state == STATE_COOLDOWN
 
 func _fire_requested_shot() -> void:
 	if target == null or target.is_dead:
@@ -493,6 +531,62 @@ func _build_velocity(desired_move: Vector3, delta: float) -> Vector3:
 		speed_multiplier = 0.45
 	return horizontal * move_speed * speed_multiplier + Vector3(knockback.x, vertical_velocity + knockback.y, knockback.z)
 
+func _maybe_jump_for_navigation(desired_move: Vector3) -> void:
+	if jump_cooldown_remaining > 0.0:
+		return
+	if not _has_jump_ground_contact():
+		return
+	if current_state == STATE_WINDUP or current_state == STATE_IDLE or current_state == STATE_DEAD:
+		return
+	var flat_move := Vector3(desired_move.x, 0.0, desired_move.z)
+	if flat_move.length_squared() <= 0.01:
+		return
+	if _should_jump_toward_height_goal() or _should_jump_over_low_obstacle(flat_move.normalized()):
+		_trigger_jump()
+
+func _should_jump_toward_height_goal() -> bool:
+	if current_state != STATE_REPOSITION:
+		return false
+	var height_delta := reposition_destination.y - global_position.y
+	if height_delta < jump_height_goal_threshold:
+		return false
+	var flat_delta := reposition_destination - global_position
+	flat_delta.y = 0.0
+	return flat_delta.length() <= jump_height_goal_distance
+
+func _should_jump_over_low_obstacle(flat_direction: Vector3) -> bool:
+	var low_origin := global_position + Vector3.UP * 0.36
+	var low_result := _raycast_navigation_probe(low_origin, low_origin + flat_direction * jump_probe_distance)
+	if low_result.is_empty():
+		return false
+	var low_collider: Object = low_result.get("collider", null)
+	if low_collider == target:
+		return false
+	var high_origin := global_position + Vector3.UP * 1.32
+	var high_result := _raycast_navigation_probe(high_origin, high_origin + flat_direction * jump_probe_distance)
+	if high_result.is_empty():
+		return true
+	return high_result.get("collider", null) == target
+
+func _has_jump_ground_contact() -> bool:
+	if is_on_floor():
+		return true
+	if vertical_velocity > 0.05:
+		return false
+	var probe_origin := global_position + Vector3.UP * 0.24
+	var probe_result := _raycast_navigation_probe(probe_origin, probe_origin - Vector3.UP * 0.5)
+	return not probe_result.is_empty()
+
+func _raycast_navigation_probe(start_position: Vector3, end_position: Vector3) -> Dictionary:
+	var query := PhysicsRayQueryParameters3D.create(start_position, end_position)
+	query.exclude = [get_rid()]
+	return get_world_3d().direct_space_state.intersect_ray(query)
+
+func _trigger_jump() -> void:
+	vertical_velocity = jump_velocity
+	jump_cooldown_remaining = jump_cooldown
+	jump_count += 1
+
 func _apply_projectile_dodge(desired_move: Vector3) -> Vector3:
 	var dodge := _projectile_dodge_movement()
 	if dodge.length_squared() <= 0.0001:
@@ -582,7 +676,7 @@ func _flat_distance_to(point: Vector3) -> float:
 func _clamp_arena_point(point: Vector3) -> Vector3:
 	return Vector3(
 		clampf(point.x, -arena_half_extent, arena_half_extent),
-		global_position.y,
+		point.y,
 		clampf(point.z, -arena_half_extent, arena_half_extent)
 	)
 
