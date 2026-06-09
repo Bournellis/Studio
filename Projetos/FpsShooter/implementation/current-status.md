@@ -4,7 +4,7 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS 3D tech probe`
-- Active stage: `Track 01A - Feel/Feedback V1`
+- Active stage: `Track 01B - Bot Duelista V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -25,11 +25,11 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 
 ## Active Goal
 
-`Track 01A - Feel/Feedback V1` is complete. The project now has a readable agile duel baseline for editor playtesting.
+`Track 01B - Bot Duelista V1` is complete. The project now has a fair bot baseline for editor duel playtesting.
 
 ## Current Gate
 
-Closed for Track 01A. Continue with Track 01 follow-up decisions around arena layout, bot duel behavior or future weapon/projectile variants.
+Closed for Track 01B. Continue with Track 01 follow-up decisions around arena layout, knockback/movement combat or future weapon/projectile variants.
 
 ## Validation Snapshot
 
@@ -68,7 +68,17 @@ Track 01A Feel/Feedback V1:
 - HUD now has a control-based crosshair, health bars, hit/kill states, damage overlay and round-end feedback;
 - bot normal shots use a short `0.18s` tell before damage while `force_fire()` remains immediate for tests;
 - player movement defaults are tuned for a lighter agile arena feel: FOV `86`, move speed `7.8`, jump `5.6`, air control `0.72`;
-- validation passes `10/10` GUT tests with `94` asserts.
+- validation passed `10/10` GUT tests with `94` asserts before Track 01B.
+
+Track 01B Bot Duelista V1:
+
+- bot behavior now uses explicit states: `idle`, `engage`, `strafe`, `reposition`, `windup`, `cooldown` and `dead`;
+- normal bot shots require line of sight, use a short tell and are resolved by arena raycast;
+- deterministic aim error can produce real misses without damaging the player;
+- bot moves with strafe and simple map-derived reposition points, without `NavigationAgent3D`;
+- bot visual color shifts by state and bot miss feedback uses a lighter amber tracer/audio;
+- `force_fire()` remains immediate for tests;
+- validation passes `16/16` GUT tests with `127` asserts.
 
 ## Read Next
 
@@ -78,3 +88,4 @@ Track 01A Feel/Feedback V1:
 4. `docs/validation.md`
 5. `implementation/tracks/track-01-arena-1x1-v1/current-status.md`
 6. `implementation/tracks/track-01a-feel-feedback-v1/current-status.md`
+7. `implementation/tracks/track-01b-bot-duelist-v1/current-status.md`

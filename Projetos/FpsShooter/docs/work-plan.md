@@ -1,7 +1,7 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-09`
-- Status: `TRACK_01A_FEEL_FEEDBACK_COMPLETE`
+- Status: `TRACK_01B_BOT_DUELIST_COMPLETE`
 
 ## North Star
 
@@ -31,7 +31,7 @@ Acceptance:
 
 Goal: editor-playable local 1x1 arena shooter.
 
-Status: active; Track 01A is complete.
+Status: active; Track 01A and Track 01B are complete.
 
 Acceptance:
 
@@ -57,6 +57,22 @@ Delivered:
 - bot `0.18s` shot tell before normal damage, while `force_fire()` stays immediate for tests;
 - 3-minute manual smoke checklist for editor feel validation.
 
+## Track 01B - Bot Duelista V1
+
+Goal: make the bot useful enough to evaluate the FPS duel loop.
+
+Status: complete.
+
+Delivered:
+
+- fair duel bot states for engage, strafe, reposition, windup, cooldown and dead;
+- line-of-sight gate before normal bot shots;
+- arena-side raycast resolution for bot hit/miss, damage and knockback;
+- deterministic aim error so the bot can miss without relying on loose randomness;
+- simple reposition points derived from the current flat map;
+- readable bot state colors and bot miss tracer/audio feedback;
+- automated coverage for line of sight, windup, hit, miss, strafe/reposition, cancel and restart.
+
 ## Track 02 - Next Combat Shape
 
 Goal: choose the next gameplay shape after the first readable duel baseline.
@@ -64,7 +80,7 @@ Goal: choose the next gameplay shape after the first readable duel baseline.
 Candidate scope:
 
 - arena layout pass with clearer cover, sightlines and spawns;
-- bot duel behavior pass;
+- knockback and movement-combat pass;
 - recoil/spread or ammo/reload only if explicitly selected;
 - future projectile variants after hitscan feel remains stable.
 

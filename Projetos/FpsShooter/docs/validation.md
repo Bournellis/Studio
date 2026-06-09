@@ -21,9 +21,9 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `10/10`;
-- `94` asserts;
-- Track 01A validates feedback controller, hit/miss feedback, player damage HUD, bot tell, immediate `force_fire()` and synthetic audio stream creation.
+- GUT `16/16`;
+- `127` asserts;
+- Track 01B validates feedback controller, player hit/miss, bot line of sight, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()` and synthetic audio stream creation.
 
 ## Manual Smoke
 
@@ -39,8 +39,10 @@ Expected:
 - each player shot has muzzle/tracer feedback and a short synthetic shot sound;
 - aiming at the bot and shooting reduces bot health, flashes the bot, shows hitmarker and plays hit feedback;
 - missing the bot still shows shot/tracer feedback without false hit confirmation;
-- bot moves and shoots;
+- bot moves, strafes and repositions instead of only walking straight;
+- cover can break bot line of sight, preventing normal bot damage through obstacles;
 - bot normal shots show a short amber tell before damage;
+- bot shots can miss without damaging the player;
 - receiving bot damage shows red overlay, player health change, knockback and feedback audio;
 - health values change;
 - round victory/defeat gives clear HUD feedback;

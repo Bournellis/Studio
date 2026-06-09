@@ -8,7 +8,7 @@
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
 - Foco P2 de implementacao: `Projetos/draxos-mobile/` (`BOSQUE_OVERLAY_NAVIGATION_HOTFIX_V1_PUBLISHED_INTERNAL_ALPHA`, release root `internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-9b93e5d`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, deployment evidence `https://92cc0579.draxos-mobile-internal-alpha.pages.dev`, publicado Web/APK, APK/manifest `0.0.18-alpha.0`/version code `18`; Bosque permanece vivo e visivel atras de Arena/Base/Shop/Social/Profile em overlay, com input pausado e retorno por `Fechar`, `Voltar` e Esc sem rebootstrap, mantem minimum supported version code `13`, proximo passo operacional: playtest humano focado do pacote publicado)
-- Tech probe P2 de implementacao: `Projetos/FpsShooter/` (`FPS_SHOOTER_TRACK_01A_FEEL_FEEDBACK_COMPLETE`; PC Windows editor-first FPS 3D independente com tema Draxos leve; proximo passo: playtest humano de 3 minutos e selecao do proximo foco da Track 01)
+- Tech probe P2 de implementacao: `Projetos/FpsShooter/` (`FPS_SHOOTER_TRACK_01B_BOT_DUELIST_COMPLETE`; PC Windows editor-first FPS 3D independente com tema Draxos leve; proximo passo: playtest humano de 3 minutos da Track 01B e selecao do proximo foco da Track 01)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -40,13 +40,13 @@
 
 ## FpsShooter
 
-- Status: **P2_IMPLEMENTACAO - FPS_SHOOTER_TRACK_01A_FEEL_FEEDBACK_COMPLETE**
+- Status: **P2_IMPLEMENTACAO - FPS_SHOOTER_TRACK_01B_BOT_DUELIST_COMPLETE**
 - Fase: `Implementacao - FPS 3D Tech Probe`
 - Local: `Projetos/FpsShooter/`
-- Baseline atual: projeto oficial implementavel criado para testar Godot 4.6.2 em FPS 3D primeira pessoa, PC Windows editor-first. Track 01A Feel/Feedback V1 completa sobre o bootstrap: jogador FPS com FOV `86`, movimento mais agil, rifle hitscan simples, HUD com crosshair por controles, barras de vida, hit/miss, dano recebido, round end, efeitos runtime de muzzle/tracer/impacto, audio sintetico simples, bot com tell curto antes do tiro normal e `force_fire()` imediato preservado para testes.
+- Baseline atual: projeto oficial implementavel criado para testar Godot 4.6.2 em FPS 3D primeira pessoa, PC Windows editor-first. Track 01B Bot Duelista V1 completa sobre a Track 01A: jogador FPS com FOV `86`, movimento agil, rifle hitscan simples, HUD com crosshair por controles, barras de vida, hit/miss, dano recebido, round end, efeitos runtime de muzzle/tracer/impacto, audio sintetico simples, bot com estados `idle/engage/strafe/reposition/windup/cooldown/dead`, linha de visao real, erro leve deterministico, strafe/reposicionamento simples, tiros normais resolvidos por raycast na arena e `force_fire()` imediato preservado para testes.
 - Trabalho permitido: codigo, validacao, playtest no editor e documentacao local.
 - Restricao operacional: tech probe independente com tema Draxos leve; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem export/Web/mobile, multiplayer, matchmaking, Ricochet, jump pads, plataformas suspensas ou void/queda ate track explicita.
-- Proximo passo: playtest humano de 3 minutos da Track 01A e selecionar o proximo foco da Track 01: layout de arena, bot duelista V1 ou futuras variantes de arma/projetil.
+- Proximo passo: playtest humano de 3 minutos da Track 01B e selecionar o proximo foco da Track 01: layout de arena, knockback/movimento de combate ou futuras variantes de arma/projetil.
 
 ## rpg-isometrico
 
