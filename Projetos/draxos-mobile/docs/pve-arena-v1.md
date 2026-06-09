@@ -3,14 +3,14 @@
 - Status: `VIVO`
 - Data: `2026-05-31`
 - Decisao-base: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`
-- Estado operacional atual: `BOSQUE_BOOTSTRAP_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`; pacote remoto atual `Bosque Bootstrap Authority v1`, release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, evidencia `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, versao `0.0.15-alpha.0`, version code `15`, minimum supported version code `13`.
+- Estado operacional atual: `BOSQUE_DIEGETIC_LAUNCHER_FOUNDATION_V1_PUBLISHED_INTERNAL_ALPHA`; pacote remoto atual `Bosque Diegetic Launcher Foundation v1`, release root `internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c`, evidencia `https://56b58162.draxos-mobile-internal-alpha.pages.dev`, versao `0.0.16-alpha.0`, version code `16`, minimum supported version code `13`.
 - Escopo: contrato de produto, conteudo, backend, client, schema, labs e regras para o primeiro pacote Arena PVE data-driven publicado.
 
 ## Papel Do Documento
 
 `docs/pve-arena-initial-direction.md` define a direcao de produto. Este documento registra a implementacao publicada de Track 18 para docs, backend, client, Battle Lab, Progression Lab e ruleset.
 
-Track 19 usa este documento como contrato vivo de consistencia antes de tuning fino. O pacote Track 19 esta implementado e publicado em Internal Alpha com consistencia para potion stock, claim, buff endpoint, selecao data-driven e labs. Track 23 publica a camada client de retomar/abandonar/encerrar tentativa antiga e confirma a primeira arena real de 3 duelos como alvo jogavel preservado. Arena PVE Season 1 Loop v1, detalhado em `docs/arena-pve-season1-loop-v1.md`, esta preservado como pacote Season 1 anterior, organiza a selecao em grupos de arena/dificuldade e endurece retomada remota com buff pendente. Arena/Bosque Regression Hotfix permanece como pacote historico que validou Preparacao e os caminhos de Bosque junto do loop Season 1; Bosque Bootstrap Authority v1 e o pacote operacional publicado atual e teve playtest humano inicial reportado OK por Fabio em 2026-06-09. Os valores `CALIBRAVEL_ALPHA` continuam sujeitos a labs e playtest humano especifico antes de tuning amplo.
+Track 19 usa este documento como contrato vivo de consistencia antes de tuning fino. O pacote Track 19 esta implementado e publicado em Internal Alpha com consistencia para potion stock, claim, buff endpoint, selecao data-driven e labs. Track 23 publica a camada client de retomar/abandonar/encerrar tentativa antiga e confirma a primeira arena real de 3 duelos como alvo jogavel preservado. Arena PVE Season 1 Loop v1, detalhado em `docs/arena-pve-season1-loop-v1.md`, esta preservado como pacote Season 1 anterior, organiza a selecao em grupos de arena/dificuldade e endurece retomada remota com buff pendente. Arena/Bosque Regression Hotfix permanece como pacote historico que validou Preparacao e os caminhos de Bosque junto do loop Season 1; Bosque Diegetic Launcher Foundation v1 e o pacote operacional publicado atual e aguarda playtest humano focado do launcher publicado. Os valores `CALIBRAVEL_ALPHA` continuam sujeitos a labs e playtest humano especifico antes de tuning amplo.
 
 ## Decisoes Fechadas Para v1
 

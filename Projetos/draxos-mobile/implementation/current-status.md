@@ -4,41 +4,41 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Bosque Bootstrap Authority v1`
-- Active stage status: `BOSQUE_BOOTSTRAP_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
+- Active stage: `Bosque Diegetic Launcher Foundation v1`
+- Active stage status: `BOSQUE_DIEGETIC_LAUNCHER_FOUNDATION_V1_PUBLISHED_INTERNAL_ALPHA`
 - Local follow-up stage: `Bosque Diegetic Launcher Foundation v1`
 - Local follow-up status: `BOSQUE_DIEGETIC_LAUNCHER_FOUNDATION_V1_IMPLEMENTED_LOCAL`
 - Build channel: `internal_alpha`
-- Version: `0.0.15-alpha.0`
-- Version code: `15`
+- Version: `0.0.16-alpha.0`
+- Version code: `16`
 - Minimum supported version code: `13`
 
 ## Current Truth
 
-- Latest published remote package: `Bosque Bootstrap Authority v1`.
+- Latest published remote package: `Bosque Diegetic Launcher Foundation v1`.
 
-- Release root: `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`
+- Release root: `internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Deployment evidence: `https://0123894f.draxos-mobile-internal-alpha.pages.dev`
-- Source state: implementation branch merged into `main`; release commit is `ba99e70`.
-- Published package: bumps APK/manifest to `0.0.15-alpha.0` / version code `15`, keeps `minimum_supported_version_code` at `13`, redeploys `release`, and fixes Bosque reentry bootstrap by hiding the playable integrated viewport until canonical remote/cache state arrives.
+- Deployment evidence: `https://56b58162.draxos-mobile-internal-alpha.pages.dev`
+- Source state: implementation branch merged into `main`; release commit is `e55ed0c`.
+- Published package: bumps APK/manifest to `0.0.16-alpha.0` / version code `16`, keeps `minimum_supported_version_code` at `13`, redeploys `release`, publishes the Bosque diegetic launcher foundation, and preserves the Bootstrap Authority guard that hides the playable integrated viewport until canonical remote/cache state arrives.
 - Remote SQL already applied: `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`.
-- Remote functions: `release` redeployed for Bosque Bootstrap Authority v1; `arena` remains on Arena PVE Bonus Visual v1; `modes` remains on the operations-v2 backend from the previous Bosque packages.
+- Remote functions: `release` redeployed for Bosque Diegetic Launcher Foundation v1; `arena` remains on Arena PVE Bonus Visual v1; `modes` remains on the operations-v2 backend from the previous Bosque packages.
 
-Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`: everything tested so far appeared to work. Documentation drift cleanup is complete. `DMOB-D076` was resolved by choosing `Bosque Diegetic Launcher Foundation v1` as the next local hardening/product-foundation step. If future errors appear, they return to the normal bugfix flow.
+Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`: everything tested at that point appeared to work. `DMOB-D076` was resolved by choosing `Bosque Diegetic Launcher Foundation v1` as the local hardening/product-foundation step, and `DMOB-D077` was resolved when Fabio asked to publish Web+APK. The next operational step is focused human playtest of the newly published launcher package. If future errors appear, they return to the normal bugfix flow.
 
 ## Operational Vs Product Direction
 
-- Operational package: Bosque Bootstrap Authority v1 is current.
-- Local implementation stage: Bosque Diegetic Launcher Foundation v1 is implemented locally only and is not a published Internal Alpha package.
+- Operational package: Bosque Diegetic Launcher Foundation v1 is current.
+- Implementation stage: Bosque Diegetic Launcher Foundation v1 is now published as the current Internal Alpha package.
 - Product direction: Arena PVE remains the first approved core, governed by `docs/pve-arena-initial-direction.md` and `docs/pve-arena-v1.md`.
 - Bosque/Openworld status: approved integrated Internal Alpha slice and diegetic launcher foundation, not approval for broad continuous-open-world expansion.
 - Do not open tuning, PVP, economy, content, weapons, spells, potions, final visuals, remote mutation or a new package without an explicit decision.
 
-## Local Follow-Up Implemented
+## Published Launcher Scope
 
-`Bosque Diegetic Launcher Foundation v1` turns the Bosque into a local diegetic launcher shell without publishing or changing backend/schema:
+`Bosque Diegetic Launcher Foundation v1` turns the Bosque into a diegetic launcher shell and is now published as the current Internal Alpha Web/APK package:
 
 - adds the versioned local launcher catalog `data/definitions/openworld/forest_launcher_v1.json`;
 - exposes five player-facing Bosque entries only: Arena PVE, Refugio/Base, Loja, Social and Perfil;
@@ -49,36 +49,39 @@ Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio
 - attempts pending Bosque checkpoint flush before opening a menu, preserves pending state with an honest message if the flush fails, and still opens the requested menu;
 - restores a minimum local/preview navigation snapshot when returning to the Bosque without persisting preview state to disk.
 
-This stage is local foundation hardening. It does not change manifest, portal, release artifacts, Supabase schema/functions, economy, rewards, tuning or public/Internal Alpha publication.
+This publication updates release metadata, manifest defaults, APK/Web artifacts, Cloudflare Pages and the `release` function only. It does not change Supabase schema, economy, rewards, tuning, content, broad Openworld scope or the Arena PVE product direction.
 
 ## Current Package Evidence
 
 Delivered:
 
+- publishes five diegetic Bosque launcher landmarks for Arena PVE, Refugio/Base, Loja, Social and Perfil;
+- routes launcher interactions through shell actions and preserves return history back to `mode_shell`;
 - hides the integrated Bosque playable viewport until canonical remote/cache bootstrap completes;
 - prevents the `Voltar -> entrar` transient full-spawn world flash before authority sync;
 - adds regression coverage for delayed `/modes/state` not exposing a full-spawn frame before sync;
-- aligns release/export scripts and remote smokes with version code `15`;
+- aligns release/export scripts and remote smokes with version code `16`;
 - preserves Arena PVE Bonus Visual v1, Bosque Node Cooldown ACK v1, resume/exit lifecycle, feel/spawn authority, persistence rebase and station-craft behavior.
 
 Publication evidence:
 
-- Cloudflare Pages preview evidence: `https://0123894f.draxos-mobile-internal-alpha.pages.dev`.
-- Direct preview Web launch smoke loaded the game in `6890 ms`, matched release root and reported no runtime errors.
+- Cloudflare Pages preview evidence: `https://56b58162.draxos-mobile-internal-alpha.pages.dev`.
+- Direct preview Web launch smoke loaded the game in `6859 ms`, matched release root and reported no runtime errors.
 - Remote manifest smoke, internal alpha release smoke and remote artifact smoke passed.
 - Canonical Portal/Web are Cloudflare Access protected; preview Web launch validated the public Pages deployment.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 
 Artifact hashes:
 
-- Android APK SHA256: `f7406c57b1a8ef6af6496395eba25c7cde0358781c5c47e845daa457405b84f4`
-- PC Windows ZIP SHA256: `b45826aaa8fbd70959795f3758c43d1b7e6f4590378d63f47a071958ed5d588b`
-- Web Index SHA256: `9f410baff95d901a65f46d05eae316f7bdc203b0fcc200e8bacdf750e42dde56`
+- Android APK SHA256: `610c3cbfecda3819e0d18ce107e18bf22ccadb99e7b5ab8b8888a6873f2780e7`
+- PC Windows ZIP SHA256: `91317eccc56a921b49e602f7b4e8a054e7b7be100bbcb26e38f428684701d8b6`
+- Web Index SHA256: `6e199bebd93f12db42898340010d265e3e2665698a43b4f40248cea75649fef8`
 
 ## Preserved Lineage
 
 These packages are preserved history/context, not the current publication:
 
+- Previous bootstrap package: `Bosque Bootstrap Authority v1`, release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.15-alpha.0` / version code `15`.
 - Previous Arena package: `Arena PVE Bonus Visual v1`, release root `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`, preview `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.14-alpha.0` / version code `14`.
 - Previous Bosque package: `Bosque Node Cooldown ACK v1`, release root `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`, preview `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.13-alpha.0` / version code `13`.
 - Previous resume/exit package: `Bosque Resume Exit Lifecycle v1`, release root `internal-alpha/v0-bosque-resume-exit-lifecycle-v1-20260608-9a0f7c0`, preview `https://39128c59.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.12-alpha.0` / version code `12`.
@@ -103,11 +106,11 @@ Track markers that remain active as guardrails:
 
 ## Current Gate
 
-The next operational step is to review the local `Bosque Diegetic Launcher Foundation v1` result and decide explicitly whether to publish a new Internal Alpha package, run a human playtest on the local branch/export, or continue with another scoped hardening/product step. Do not repeat the Bosque Bootstrap Authority v1 playtest as the required next step unless a new bug report or explicit validation request appears.
+The next operational step is focused human playtest of the published `Bosque Diegetic Launcher Foundation v1` Web/APK package. Validate that Bosque landmarks open Arena/Base/Shop/Social/Profile through shell actions, that `Voltar` returns to the Bosque when possible, that pending Bosque state remains honest on menu exit, and that no Tower/Card/dev-tool launcher entries appear.
 
 Open decision focus:
 
-1. Choose the next post-local action explicitly: publish/test the diegetic launcher foundation, open an Arena PVE follow-up, perform focused Openworld/Bosque tuning, or run another scoped polish pass.
+1. After the focused launcher playtest, choose any next package explicitly: bugfix, launcher polish, Arena PVE follow-up, focused Openworld/Bosque tuning, or another scoped hardening/product step.
 2. Preserve active Bosque runtime as local/offline-first feel plus server-owned checkpoint, completion, reward, caps, ledger and audit authority.
 3. Keep Arena regressions in future manual smoke lists: Preparacao visible before start/in active attempts/buff choice, selected victory buff returns to `Resolver duelo`, and temporary bonus stats are visible in the next fight/replay.
 

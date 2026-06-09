@@ -3,7 +3,7 @@
 - Status: `VIVO`
 - Last updated: `2026-06-09`
 - Scope: coordination workflow for hardening lanes, mode work and handoffs.
-- Current published package: `Bosque Bootstrap Authority v1`.
+- Current published package: `Bosque Diegetic Launcher Foundation v1`.
 - Previous hardening/live-doc baseline: `Foundation Hardening V2`.
 - Current Arena/Autobattler context: Track 18/20/21 plus preserved Arena PVE packages, including Arena PVE Bonus Visual v1.
 
@@ -49,7 +49,7 @@ For release or validation work, also read:
 
 ## Track Reading Rules
 
-Bosque Bootstrap Authority v1 is the current published Internal Alpha package: release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview evidence `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, Portal `https://draxos-mobile-internal-alpha.pages.dev/`, Web `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, APK/manifest `0.0.15-alpha.0` / version code `15`, minimum supported version code `13`. Initial human playtest was reported OK by Fabio on `2026-06-09`, documentation drift cleanup is complete, and the current open decision is `DMOB-D076`, choosing the next post-Bootstrap product package.
+Bosque Diegetic Launcher Foundation v1 is the current published Internal Alpha package: release root `internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c`, preview evidence `https://56b58162.draxos-mobile-internal-alpha.pages.dev`, Portal `https://draxos-mobile-internal-alpha.pages.dev/`, Web `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, APK/manifest `0.0.16-alpha.0` / version code `16`, minimum supported version code `13`. The next operational step is focused human playtest of this published launcher package on Web/APK.
 Foundation Hardening V2 remains the previous baseline for multi-agent and
 multi-mode enforcement. Hardening Platform V1 remains the previous platform
 baseline. Arena PVE remains the first approved product core; Track 18/20/21 and
@@ -185,7 +185,8 @@ docs should not tell new agents that Track 16, Track 18, Track 19, Track 21,
 Remote Lab Runner, Hardening Platform V1, Foundation Hardening V2, Openworld
 Main Menu Sync, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run,
 Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Arena PVE Menu Flow
-Simplification v1, Bosque Fogueira Potion Crafting v1 or Bosque Feel & Spawn
-Authority v1 is the latest remote package. Bosque Bootstrap Authority v1 is the
-current publication; Foundation Hardening V2 remains valid as hardening/live-doc
-baseline, and Track 21 remains valid as Arena loop context.
+Simplification v1, Bosque Fogueira Potion Crafting v1, Bosque Feel & Spawn
+Authority v1 or Bosque Bootstrap Authority v1 is the latest remote package.
+Bosque Diegetic Launcher Foundation v1 is the current publication; Foundation
+Hardening V2 remains valid as hardening/live-doc baseline, and Track 21 remains
+valid as Arena loop context.

@@ -32,11 +32,10 @@ reward path.
 
 ## Future Gate
 
-Future Autobattler work must wait for explicit package direction. Documentation
-drift cleanup is complete after the initial human playtest of `Bosque Bootstrap
-Authority v1` was reported OK by Fabio on 2026-06-09. The current open decision
-is `DMOB-D076`, choosing the next post-Bootstrap product package. Future bugs
-return to the normal bugfix flow if they appear.
+Future Autobattler work must wait for explicit package direction. Bosque
+Diegetic Launcher Foundation v1 is the current published Internal Alpha package,
+and the next operational step is focused human playtest of that launcher package.
+Future bugs return to the normal bugfix flow if they appear.
 Arena PVE remains the first product core, but tuning, new enemies, PVP,
 economy, content, visual-final work or remote mutations require an explicit
 next-package decision.
