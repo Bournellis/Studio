@@ -37,8 +37,8 @@ func play_player_shot(origin: Vector3, direction: Vector3) -> void:
 	last_event = &"player_shot"
 	player_shot_count += 1
 	var shot_direction := direction.normalized()
-	_spawn_sphere(origin + shot_direction * 0.42, 0.13, PLAYER_COLOR, 0.07, true)
-	_spawn_light(origin + shot_direction * 0.5, PLAYER_COLOR, 2.2, 1.8, 0.06)
+	_spawn_sphere(origin + shot_direction * 0.18, 0.08, PLAYER_COLOR, 0.055, true)
+	_spawn_light(origin + shot_direction * 0.22, PLAYER_COLOR, 1.45, 1.1, 0.045)
 	_spawn_tone(origin, 760.0, 0.045, -11.0)
 
 func play_hit(origin: Vector3, impact_position: Vector3) -> void:

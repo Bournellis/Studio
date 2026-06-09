@@ -11,6 +11,9 @@ const WALL_HEIGHT: float = 3.2
 const WALL_THICKNESS: float = 0.8
 const PLAYER_SPAWN: Vector3 = Vector3(-7.0, 0.05, 5.2)
 const BOT_SPAWN: Vector3 = Vector3(7.0, 0.05, -5.2)
+const PLAYER_VISUAL_MUZZLE_RIGHT_OFFSET: float = 0.34
+const PLAYER_VISUAL_MUZZLE_DOWN_OFFSET: float = 0.24
+const PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET: float = 0.82
 
 var player
 var bot
@@ -66,6 +69,9 @@ func debug_get_player():
 
 func debug_get_bot():
 	return bot
+
+func debug_get_player_visual_muzzle_origin(origin: Vector3, direction: Vector3) -> Vector3:
+	return _get_player_visual_muzzle_origin(origin, direction)
 
 func _configure_world() -> void:
 	var environment := WorldEnvironment.new()
@@ -143,10 +149,11 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 		return
 	var shot_direction := direction.normalized()
 	var shot_end := origin + shot_direction * 96.0
+	var visual_origin := _get_player_visual_muzzle_origin(origin, shot_direction)
 	if hud != null:
 		hud.show_player_shot()
 	if feedback != null:
-		feedback.play_player_shot(origin, shot_direction)
+		feedback.play_player_shot(visual_origin, shot_direction)
 
 	var query := PhysicsRayQueryParameters3D.create(origin, shot_end)
 	query.exclude = [player.get_rid()]
@@ -155,7 +162,7 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 		if hud != null:
 			hud.show_miss()
 		if feedback != null:
-			feedback.play_miss(origin, shot_end)
+			feedback.play_miss(visual_origin, shot_end)
 		return
 	var impact_position: Vector3 = result.get("position", shot_end)
 	var collider: Object = result.get("collider", null)
@@ -167,12 +174,12 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 			var killed: bool = collider.get("is_dead") == true
 			hud.show_hit_confirm(killed)
 		if feedback != null:
-			feedback.play_hit(origin, impact_position)
+			feedback.play_hit(visual_origin, impact_position)
 		return
 	if hud != null:
 		hud.show_miss()
 	if feedback != null:
-		feedback.play_miss(origin, impact_position)
+		feedback.play_miss(visual_origin, impact_position)
 
 func _on_player_damaged(amount: float, remaining_health: float) -> void:
 	if hud != null and player != null:
@@ -221,6 +228,21 @@ func _build_hud_snapshot() -> Dictionary:
 		"bot_max_health": 1.0 if bot == null else bot.max_health,
 		"hint": "Click captures mouse | WASD move | Mouse look | LMB shoot | Space jump | R restart | Esc menu"
 	}
+
+func _get_player_visual_muzzle_origin(origin: Vector3, direction: Vector3) -> Vector3:
+	var shot_direction := direction.normalized()
+	var fallback_origin := origin + shot_direction * PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET
+	if player == null or not player.has_method("get_camera"):
+		return fallback_origin
+	var camera: Camera3D = player.get_camera()
+	if camera == null:
+		return fallback_origin
+	var camera_basis := camera.global_transform.basis
+	var visual_origin := origin
+	visual_origin += camera_basis.x.normalized() * PLAYER_VISUAL_MUZZLE_RIGHT_OFFSET
+	visual_origin -= camera_basis.y.normalized() * PLAYER_VISUAL_MUZZLE_DOWN_OFFSET
+	visual_origin += shot_direction * PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET
+	return visual_origin
 
 func _add_box(node_name: String, box_position: Vector3, size: Vector3, color: Color) -> StaticBody3D:
 	var body := StaticBody3D.new()

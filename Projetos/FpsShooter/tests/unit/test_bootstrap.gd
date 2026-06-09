@@ -107,6 +107,26 @@ func test_player_shot_ray_damages_bot_when_aimed_at_body() -> void:
 	assert_gt(feedback.debug_active_effect_count(), 0)
 	assert_no_new_orphans()
 
+func test_player_shot_visual_origin_is_offset_from_camera_ray() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var camera: Camera3D = player.get_camera()
+	var origin: Vector3 = player.get_shot_origin()
+	var direction: Vector3 = player.get_shot_direction()
+	var visual_origin: Vector3 = arena.debug_get_player_visual_muzzle_origin(origin, direction)
+	var offset := visual_origin - origin
+
+	assert_gt(offset.length(), 0.86)
+	assert_gt(offset.dot(camera.global_transform.basis.x), 0.28)
+	assert_gt(offset.dot(-camera.global_transform.basis.y), 0.18)
+	assert_gt(offset.dot(direction), 0.72)
+	assert_no_new_orphans()
+
 func test_player_miss_feedback_does_not_damage_bot() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	var arena := arena_scene.instantiate()
