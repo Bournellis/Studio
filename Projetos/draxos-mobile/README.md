@@ -108,9 +108,10 @@ git status --short
 - Current release root: `internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c`
 - Current APK: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android`
 - Current PC ZIP: `https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows`
-- Current APK SHA256: `f7406c57b1a8ef6af6496395eba25c7cde0358781c5c47e845daa457405b84f4`
-- Current PC ZIP SHA256: `b45826aaa8fbd70959795f3758c43d1b7e6f4590378d63f47a071958ed5d588b`
-- Current Web Index SHA256: `9f410baff95d901a65f46d05eae316f7bdc203b0fcc200e8bacdf750e42dde56`
+- Current APK SHA256: `610c3cbfecda3819e0d18ce107e18bf22ccadb99e7b5ab8b8888a6873f2780e7`
+- Current PC ZIP SHA256: `91317eccc56a921b49e602f7b4e8a054e7b7be100bbcb26e38f428684701d8b6`
+- Current Web Index SHA256: `6e199bebd93f12db42898340010d265e3e2665698a43b4f40248cea75649fef8`
+- Current artifact hashes must match `implementation/current-status.md`, `docs/contracts/update-manifest.md` and the versioned `release` function fallback.
 - Previous Arena package: Arena PVE Bonus Visual v1 remains the previous Arena package.
 - Previous Arena verified preview: `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`
 - Previous Arena release root: `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`

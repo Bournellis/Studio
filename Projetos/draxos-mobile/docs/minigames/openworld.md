@@ -112,10 +112,14 @@ Contrato de feel/spawn v1:
 
 ## Bosque Diegetic Launcher Foundation v1
 
-Bosque Diegetic Launcher Foundation v1 e uma etapa local, sem publicacao,
-backend, schema, economia, recompensa, tuning ou asset novo. O Bosque passa a
+Bosque Diegetic Launcher Foundation v1 nasceu como hardening/fundacao local e
+foi publicado por DMOB-D077 como o pacote Internal Alpha atual. O Bosque passa a
 ser o launcher diegetico estreito do app: construcoes procedurais no proprio
 Bosque abrem menus player-facing existentes por contratos do app-shell.
+
+Restricoes preservadas: sem backend novo, sem schema novo, sem economia nova,
+sem recompensa nova, sem tuning novo, sem asset novo e sem aprovacao automatica
+para expansao ampla do Bosque/Openworld.
 
 Fonte de dados:
 

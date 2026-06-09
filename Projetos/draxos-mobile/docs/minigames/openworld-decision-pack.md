@@ -9,10 +9,11 @@
 
 This pack records the current decision boundary for Openworld after the Bosque
 playtest approval, technical hardening, Offline-First Checkpoint v1 release,
-Bosque Persistence Rebase v1, Bosque Bootstrap Authority v1 and the local
-Bosque Diegetic Launcher Foundation v1 implementation. The launcher foundation
-is a narrow menu-entry layer for existing player-facing menus and does not
-expand Openworld gameplay.
+Bosque Persistence Rebase v1, Bosque Bootstrap Authority v1 and Bosque
+Diegetic Launcher Foundation v1. The launcher foundation was implemented as a
+local hardening step and later published by DMOB-D077 as the current Internal
+Alpha package. It remains a narrow menu-entry layer for existing player-facing
+menus and does not expand Openworld gameplay.
 
 ## Decision Summary
 
@@ -20,9 +21,9 @@ Openworld Bosque remains the only approved Openworld slice. The approved
 technical official state is `mode_registry.status=active` on release channel
 `internal_alpha`, using `openworld_forest_ruleset_v1`.
 
-This is not a public release and does not authorize broader Openworld expansion.
-The already-published Internal Alpha checkpoint package is recorded as release
-evidence, not as permission for new content.
+The current Internal Alpha publication is not approval for broader Openworld
+expansion. Published package evidence is recorded as release evidence, not as
+permission for new content.
 
 No Openworld expansion is approved by this pack.
 
@@ -186,7 +187,7 @@ craft events as the main path for the new client.
 - No conversion of persistent Bosque storage into global account inventory
   beyond the approved Fogueira potion recipes without a separate Reward Bridge
   decision.
-- No new public release/publication from this QoL package without separate
+- No further public release/publication from this QoL package without separate
   approval.
 
 ## Decision Questions Before Expansion
