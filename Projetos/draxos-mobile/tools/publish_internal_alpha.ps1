@@ -300,6 +300,49 @@ function Write-TextUtf8NoBom {
     [System.IO.File]::WriteAllText($Path, $Text, [System.Text.UTF8Encoding]::new($false))
 }
 
+function ConvertTo-JavascriptStringLiteral {
+    param([string]$Value)
+    return (($Value | ConvertTo-Json -Compress))
+}
+
+function Write-WebReleaseDiagnostics {
+    param(
+        [string]$IndexPath,
+        [string]$ReleaseRoot,
+        [string]$StorageBaseUrl,
+        [string]$AppVersion,
+        [int]$AppVersionCode
+    )
+    if (-not (Test-Path -LiteralPath $IndexPath -PathType Leaf)) {
+        throw "Web index is missing for release diagnostics: $IndexPath"
+    }
+    $html = Get-Content -LiteralPath $IndexPath -Raw
+    $releaseRootLiteral = ConvertTo-JavascriptStringLiteral -Value $ReleaseRoot
+    $assetRootLiteral = ConvertTo-JavascriptStringLiteral -Value (($StorageBaseUrl.TrimEnd("/")) + "/web")
+    $appVersionLiteral = ConvertTo-JavascriptStringLiteral -Value $AppVersion
+    $diagnostics = @"
+<script>
+window.DRAXOS_WEB_RELEASE = Object.freeze({
+	releaseRoot: $releaseRootLiteral,
+	assetRoot: $assetRootLiteral,
+	appVersion: $appVersionLiteral,
+	appVersionCode: $AppVersionCode,
+	channel: "internal_alpha"
+});
+</script>
+"@
+    $diagnosticsPattern = '(?s)<script>\s*window\.DRAXOS_WEB_RELEASE\s*=\s*Object\.freeze\(\{.*?\}\);\s*</script>'
+    if ([regex]::IsMatch($html, $diagnosticsPattern)) {
+        $html = [regex]::Replace($html, $diagnosticsPattern, $diagnostics)
+    } elseif ($html.Contains("</head>")) {
+        $html = $html.Replace("</head>", "$diagnostics`n`t</head>")
+    } else {
+        $html = $diagnostics + $html
+    }
+    Assert-NoSecretLikeText -Text $html -Label "web release diagnostics"
+    Write-TextUtf8NoBom -Path $IndexPath -Text $html
+}
+
 function Write-ReleasePlan {
     param(
         [hashtable]$Plan,
@@ -445,6 +488,15 @@ if ($normalizedStaticSiteBaseUrl -ne "") {
 $androidUrl = if ($PublicDownloads) { "$storageBaseUrl/downloads/draxos-mobile-alpha.apk" } else { "${protectedDownloadBaseUrl}?artifact=android" }
 $pcUrl = if ($PublicDownloads) { "$storageBaseUrl/downloads/draxos-mobile-alpha.zip" } else { "${protectedDownloadBaseUrl}?artifact=pc_windows" }
 
+if ($ShouldPackage -or $IsRemoteMutation) {
+    Write-WebReleaseDiagnostics `
+        -IndexPath $webIndex `
+        -ReleaseRoot $ReleaseRoot `
+        -StorageBaseUrl $storageBaseUrl `
+        -AppVersion "0.0.19-alpha.0" `
+        -AppVersionCode 19
+}
+
 $androidRecord = Artifact-Record -Path $androidApk -Label "Android APK" -Url $androidUrl -ExpectedMinimumBytes 1000000
 $pcRecord = Artifact-Record -Path $pcZip -Label "PC Windows ZIP" -Url $pcUrl -ExpectedMinimumBytes 1000000
 $webRecord = Artifact-Record -Path $webIndex -Label "Web Index" -Url $webUrl
@@ -535,6 +587,12 @@ if (Test-Path -LiteralPath $publishDir -PathType Container) {
 New-Item -ItemType Directory -Force -Path $portalPublishDir, $webPublishDir, $downloadsPublishDir | Out-Null
 
 Copy-DirectoryFiles -SourceDir $webDir -DestinationDir $webPublishDir -ExcludeExtensions @(".import")
+Write-WebReleaseDiagnostics `
+    -IndexPath (Join-Path $webPublishDir "index.html") `
+    -ReleaseRoot $ReleaseRoot `
+    -StorageBaseUrl $storageBaseUrl `
+    -AppVersion $plan.app.version `
+    -AppVersionCode $plan.app.version_code
 Copy-Item -LiteralPath $androidApk -Destination (Join-Path $downloadsPublishDir "draxos-mobile-alpha.apk") -Force
 Copy-Item -LiteralPath $pcZip -Destination (Join-Path $downloadsPublishDir "draxos-mobile-alpha.zip") -Force
 
