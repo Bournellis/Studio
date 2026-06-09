@@ -6,6 +6,8 @@
 - Active surface: `Internal Alpha`
 - Active stage: `Bosque Bootstrap Authority v1`
 - Active stage status: `BOSQUE_BOOTSTRAP_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
+- Local follow-up stage: `Bosque Diegetic Launcher Foundation v1`
+- Local follow-up status: `BOSQUE_DIEGETIC_LAUNCHER_FOUNDATION_V1_IMPLEMENTED_LOCAL`
 - Build channel: `internal_alpha`
 - Version: `0.0.15-alpha.0`
 - Version code: `15`
@@ -24,14 +26,30 @@
 - Remote SQL already applied: `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`.
 - Remote functions: `release` redeployed for Bosque Bootstrap Authority v1; `arena` remains on Arena PVE Bonus Visual v1; `modes` remains on the operations-v2 backend from the previous Bosque packages.
 
-Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`: everything tested so far appeared to work. Documentation drift cleanup is complete. The current open decision is `DMOB-D076`, choosing the next post-Bootstrap product package. If future errors appear, they return to the normal bugfix flow.
+Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`: everything tested so far appeared to work. Documentation drift cleanup is complete. `DMOB-D076` was resolved by choosing `Bosque Diegetic Launcher Foundation v1` as the next local hardening/product-foundation step. If future errors appear, they return to the normal bugfix flow.
 
 ## Operational Vs Product Direction
 
 - Operational package: Bosque Bootstrap Authority v1 is current.
+- Local implementation stage: Bosque Diegetic Launcher Foundation v1 is implemented locally only and is not a published Internal Alpha package.
 - Product direction: Arena PVE remains the first approved core, governed by `docs/pve-arena-initial-direction.md` and `docs/pve-arena-v1.md`.
-- Bosque/Openworld status: approved integrated Internal Alpha slice, not approval for broad continuous-open-world expansion.
+- Bosque/Openworld status: approved integrated Internal Alpha slice and diegetic launcher foundation, not approval for broad continuous-open-world expansion.
 - Do not open tuning, PVP, economy, content, weapons, spells, potions, final visuals, remote mutation or a new package without an explicit decision.
+
+## Local Follow-Up Implemented
+
+`Bosque Diegetic Launcher Foundation v1` turns the Bosque into a local diegetic launcher shell without publishing or changing backend/schema:
+
+- adds the versioned local launcher catalog `data/definitions/openworld/forest_launcher_v1.json`;
+- exposes five player-facing Bosque entries only: Arena PVE, Refugio/Base, Loja, Social and Perfil;
+- keeps Tower, Card and dev tools out of the V1 launcher catalog;
+- routes launcher interactions through shell actions, including new `show_account`, instead of calling Boot/Supabase directly from the Bosque;
+- shows one contextual prompt for the nearest landmark and supports proximity plus tap/click action;
+- preserves route history so Arena/Base/Shop/Social/Profile can return to `mode_shell`;
+- attempts pending Bosque checkpoint flush before opening a menu, preserves pending state with an honest message if the flush fails, and still opens the requested menu;
+- restores a minimum local/preview navigation snapshot when returning to the Bosque without persisting preview state to disk.
+
+This stage is local foundation hardening. It does not change manifest, portal, release artifacts, Supabase schema/functions, economy, rewards, tuning or public/Internal Alpha publication.
 
 ## Current Package Evidence
 
@@ -85,18 +103,18 @@ Track markers that remain active as guardrails:
 
 ## Current Gate
 
-The next operational step is the explicit `DMOB-D076` decision for the next post-Bootstrap product package. Do not repeat the Bosque Bootstrap Authority v1 playtest as the required next step unless a new bug report or explicit validation request appears.
+The next operational step is to review the local `Bosque Diegetic Launcher Foundation v1` result and decide explicitly whether to publish a new Internal Alpha package, run a human playtest on the local branch/export, or continue with another scoped hardening/product step. Do not repeat the Bosque Bootstrap Authority v1 playtest as the required next step unless a new bug report or explicit validation request appears.
 
 Open decision focus:
 
-1. Choose the next product package explicitly: Arena PVE follow-up, focused Openworld/Bosque tuning or another scoped polish pass.
+1. Choose the next post-local action explicitly: publish/test the diegetic launcher foundation, open an Arena PVE follow-up, perform focused Openworld/Bosque tuning, or run another scoped polish pass.
 2. Preserve active Bosque runtime as local/offline-first feel plus server-owned checkpoint, completion, reward, caps, ledger and audit authority.
 3. Keep Arena regressions in future manual smoke lists: Preparacao visible before start/in active attempts/buff choice, selected victory buff returns to `Resolver duelo`, and temporary bonus stats are visible in the next fight/replay.
 
 ## Live Boundaries
 
 - DraxosMobile is a PVE Arena-first async autobattler with Refugio/Base, later PVP and social systems.
-- Openworld/Bosque is an approved Internal Alpha slice, not approval for a continuous open world expansion.
+- Openworld/Bosque is an approved Internal Alpha slice and local diegetic launcher foundation, not approval for a continuous open world expansion.
 - Arena PVE remains the living product direction for early game.
 - Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline.
 - Hardening Platform V1 remains the previous mode-platform baseline.

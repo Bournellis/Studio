@@ -8,9 +8,11 @@
 - Pending design id: `DMOB-D071`
 
 This pack records the current decision boundary for Openworld after the Bosque
-playtest approval, technical hardening, Offline-First Checkpoint v1 release and
-Bosque Persistence Rebase v1. Bosque Feel & Spawn Authority v1 is a follow-up
-authority/feel package for the same slice and does not expand gameplay.
+playtest approval, technical hardening, Offline-First Checkpoint v1 release,
+Bosque Persistence Rebase v1, Bosque Bootstrap Authority v1 and the local
+Bosque Diegetic Launcher Foundation v1 implementation. The launcher foundation
+is a narrow menu-entry layer for existing player-facing menus and does not
+expand Openworld gameplay.
 
 ## Decision Summary
 
@@ -81,6 +83,13 @@ uses `node_state.next_spawn_at` plus `server_time` offset instead of legacy
 `collected_nodes`, and menu busy state is scoped so unrelated server requests
 do not freeze navigation or independent actions.
 
+Diegetic launcher exception approved on 2026-06-09: the Bosque may act as a
+local diegetic launcher for existing player-facing menus. V1 is limited to a
+versioned local catalog, procedural non-blocking landmarks, one proximity
+prompt, tap/click interaction, shell action routing and return-to-Bosque stack
+behavior. Approved V1 entries are Arena PVE, Refugio/Base, Loja, Social and
+Perfil. Towerdefense, Cardgame and dev tools remain outside the catalog.
+
 ## Openworld Working Policy
 
 The current Openworld policy is:
@@ -100,6 +109,8 @@ The current Openworld policy is:
   `collected_nodes` is compatibility only when `node_state` is absent;
 - menu/server busy state is scoped by action domain instead of freezing every
   independent action globally;
+- Bosque may expose existing player-facing menus as diegetic launcher landmarks,
+  but only through app-shell actions and route history;
 - event micro-mutators are compatibility only for old packages;
 - `station-craft` is not a microaction sync path; it is a deliberate
   server-authoritative bridge for global consumables;
@@ -131,6 +142,13 @@ craft events as the main path for the new client.
 - Movement inside the collection cancel radius does not restart collection.
 - Same-session ACK/resync may confirm durable progress, but cannot blink nodes,
   restart active collection or block unrelated menu actions.
+- Diegetic launcher V1 is locked to local catalog
+  `data/definitions/openworld/forest_launcher_v1.json`.
+- Approved launcher entries are `arena_pve_gate`, `refugio_workbench`,
+  `shop_stall`, `social_totem` and `profile_shrine`.
+- Launcher actions are `open_arena`, `show_base`, `show_shop`, `show_social`
+  and `show_account`; the Bosque must emit shell action requests, not call
+  Boot/Supabase/backend directly.
 - `Fogueira Estavel I` is the only approved Openworld station in V1.
 - Approved station recipes are `craft_pocao_vida`, `craft_pocao_foco` and
   `craft_pocao_resguardo`.
@@ -149,6 +167,8 @@ craft events as the main path for the new client.
   pocket, chest and craft once integrated. `OpenworldForestModel` and the
   checkpoint bridge are runtime authority during the visit; durable progress,
   completion/reward and ledger remain server-authoritative.
+- Procedural non-blocking landmarks, one nearest prompt and tap/click launcher
+  interaction are allowed for the five V1 menu entries.
 
 ## Not Approved
 
@@ -160,6 +180,8 @@ craft events as the main path for the new client.
 - No enemies or combat.
 - No broader RPG campaign scope.
 - No new reward source or economy tuning.
+- No embedded menu implementation inside the Bosque.
+- No Towerdefense, Cardgame or dev-tool launcher entries in V1.
 - No Basebuilder ownership changes.
 - No conversion of persistent Bosque storage into global account inventory
   beyond the approved Fogueira potion recipes without a separate Reward Bridge
@@ -187,18 +209,18 @@ resolves only the existing slice's readiness as an active Internal Alpha mode.
 
 ## Future Candidate Packages
 
-Two future candidates are recorded for review only. They are not approved work:
+Two future candidates are recorded for review context:
 
-- `DMOB-D072` - Menu no mundo: a small house/altar, Bosque surroundings, small
-  town or diegetic entrances for existing menu functions. The question is
-  whether navigable space improves routine clarity, not whether the project
-  should build a city.
+- `DMOB-D072` - Menu no mundo: resolved on 2026-06-09 as
+  `Bosque Diegetic Launcher Foundation v1`, limited to diegetic entrances for
+  existing menu functions. This does not approve a small town, city, NPCs,
+  quests, economy, reward source or broad Openworld expansion.
 - `DMOB-D073` - Conflito minimo: a later small-risk package with monsters, a few
   NPCs and simple tasks. This requires evidence from Bosque and a separate
   decision about risk, rewards, account/save boundaries and separation from
   Arena PVE.
 
-Neither candidate authorizes combat, NPCs, quests, city, map expansion,
+No future candidate authorizes combat, NPCs, quests, city, map expansion,
 economy, reward source, PVP/social expansion, remote publication or runtime work
 without its own Doing/Handoff and validation plan.
 

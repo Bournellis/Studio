@@ -6,6 +6,7 @@
 - Ruleset: `openworld_forest_ruleset_v1`, version `1`
 - Snapshot schema: `openworld_forest_snapshot_v1`
 - Shared definition: `data/definitions/openworld/forest_ruleset_v1.json`
+- Launcher catalog: `data/definitions/openworld/forest_launcher_v1.json`
 - Descriptor: `data/definitions/modes/openworld/metadata.json`
 - Placeholder: `data/definitions/modes/openworld/placeholder.json`
 - Decision pack: `docs/minigames/openworld-decision-pack.md`
@@ -15,11 +16,11 @@
 
 `Openworld Bosque` e o primeiro slice do modo `Openworld`. Ele nasceu do prototipo `Rpgsuave Bosque`, mas V1 renomeia o modo de verdade: novos payloads, rotas, settings, docs e testes usam `openworld`.
 
-Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Pacote atual publicado: `Bosque Bootstrap Authority v1`, versao `0.0.15-alpha.0`, version code `15`, minimum supported version code `13`, release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview tecnico `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, impedindo que o Bosque integrado renderize um mundo jogavel full-spawn antes do bootstrap canonico remoto/cache. Playtest humano inicial do pacote foi reportado OK por Fabio em 2026-06-09; o drift documental foi corrigido, e a decisao aberta atual e `DMOB-D076`, escolher o proximo pacote de produto pos-Bootstrap. Bugs futuros voltam ao fluxo normal se aparecerem. `Bosque Node Cooldown ACK v1` permanece como pacote Bosque anterior de cooldown/ACK: release root `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`, preview tecnico `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`, version code `14`. `Bosque Resume Exit Lifecycle v1` permanece como pacote remoto anterior de reentrada/saida: release root `internal-alpha/v0-bosque-resume-exit-lifecycle-v1-20260608-9a0f7c0`, preview tecnico `https://39128c59.draxos-mobile-internal-alpha.pages.dev`, version code `12`. `Bosque Feel & Spawn Authority v1` permanece como pacote remoto anterior de feel/spawn: release root `internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-70b79c3`, preview tecnico `https://16ac3cb7.draxos-mobile-internal-alpha.pages.dev`, version code `11`. `Bosque Persistence Rebase v1` permanece como pacote remoto anterior de persistencia: release root `internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74`, preview tecnico `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`, version code `10`, substituindo o modelo de snapshot local como promessa de save por operacoes duraveis com ACK do servidor e cooldown por item.
+Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Pacote atual publicado: `Bosque Bootstrap Authority v1`, versao `0.0.15-alpha.0`, version code `15`, minimum supported version code `13`, release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview tecnico `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, impedindo que o Bosque integrado renderize um mundo jogavel full-spawn antes do bootstrap canonico remoto/cache. Playtest humano inicial do pacote foi reportado OK por Fabio em 2026-06-09; o drift documental foi corrigido, e `DMOB-D076` escolheu `Bosque Diegetic Launcher Foundation v1` como etapa local seguinte. Bugs futuros voltam ao fluxo normal se aparecerem. `Bosque Node Cooldown ACK v1` permanece como pacote Bosque anterior de cooldown/ACK: release root `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`, preview tecnico `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`, version code `13`. `Bosque Resume Exit Lifecycle v1` permanece como pacote remoto anterior de reentrada/saida: release root `internal-alpha/v0-bosque-resume-exit-lifecycle-v1-20260608-9a0f7c0`, preview tecnico `https://39128c59.draxos-mobile-internal-alpha.pages.dev`, version code `12`. `Bosque Feel & Spawn Authority v1` permanece como pacote remoto anterior de feel/spawn: release root `internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-70b79c3`, preview tecnico `https://16ac3cb7.draxos-mobile-internal-alpha.pages.dev`, version code `11`. `Bosque Persistence Rebase v1` permanece como pacote remoto anterior de persistencia: release root `internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74`, preview tecnico `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`, version code `10`, substituindo o modelo de snapshot local como promessa de save por operacoes duraveis com ACK do servidor e cooldown por item.
 
 ## Visao
 
-Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitual; e o primeiro espaco jogavel para validar sensacao de movimento, coleta, bolso, bau, crafting local e uma ponte controlada de recompensa. O pacote atual nao autoriza expansao ampla de mundo, combate, quests, NPCs, economia paralela ou hub diegetico sem novo decision pack.
+Openworld mira um mundo continuo no longo prazo. O Bosque nao e o teto conceitual; e o primeiro espaco jogavel para validar sensacao de movimento, coleta, bolso, bau, crafting local, uma ponte controlada de recompensa e, agora localmente, um launcher diegetico estreito para menus existentes. O pacote atual nao autoriza expansao ampla de mundo, combate, quests, NPCs, economia paralela, cidade ou hub amplo alem das entradas V1 descritas abaixo.
 
 ## Politica Operacional Atual
 
@@ -109,6 +110,63 @@ Contrato de feel/spawn v1:
   ou outro dominio nao deve congelar botoes de escopos independentes nem o
   `Voltar`, exceto durante replay ou update gate explicito.
 
+## Bosque Diegetic Launcher Foundation v1
+
+Bosque Diegetic Launcher Foundation v1 e uma etapa local, sem publicacao,
+backend, schema, economia, recompensa, tuning ou asset novo. O Bosque passa a
+ser o launcher diegetico estreito do app: construcoes procedurais no proprio
+Bosque abrem menus player-facing existentes por contratos do app-shell.
+
+Fonte de dados:
+
+- catalogo local versionado:
+  `data/definitions/openworld/forest_launcher_v1.json`;
+- loader/validador client-side:
+  `modes/openworld/openworld_forest_launcher_catalog.gd`;
+- controller de proximidade/toque:
+  `modes/openworld/openworld_forest_launcher_controller.gd`;
+- separado do ruleset de coleta/craft
+  `data/definitions/openworld/forest_ruleset_v1.json`.
+
+Entradas V1:
+
+| Entry id | Label | Action |
+|---|---|---|
+| `arena_pve_gate` | `Arena PVE` | `open_arena` |
+| `refugio_workbench` | `Refugio` | `show_base` |
+| `shop_stall` | `Loja` | `show_shop` |
+| `social_totem` | `Social` | `show_social` |
+| `profile_shrine` | `Perfil` | `show_account` |
+
+Contrato de runtime:
+
+- cada entrada precisa de `entry_id`, `label`, `action_id`, `visual_kind`,
+  `position` e `interaction_radius`;
+- o HUD mostra no maximo um prompt contextual para a construcao mais proxima;
+- proximidade e tap/click em landmark resolvem o mesmo `action_id`;
+- `OpenworldForestScreen` emite
+  `shell_action_requested(action_id, entry_id)`;
+- o Bosque nao chama Boot, Supabase, backend ou mutacao diretamente para abrir
+  menus;
+- `ModeShellLauncher` conecta o signal ao action router do shell;
+- `Voltar` de Arena/Base/Loja/Social/Perfil deve retornar ao `mode_shell`
+  quando a entrada veio do Bosque;
+- antes de abrir menu com operacoes pendentes, o Bosque tenta flush/checkpoint;
+  se falhar, preserva o estado local, mostra mensagem honesta e segue para o
+  menu sem prometer salvamento final;
+- em `integrated_alpha`, o retorno usa sessao/cache existentes do Bosque;
+- em preview/local, o shell guarda snapshot minimo em memoria por `mode_id`
+  durante a navegacao, incluindo posicao e snapshot do modelo, sem persistir em
+  disco.
+
+Fora de V1:
+
+- Towerdefense, Cardgame e dev tools nao entram no catalogo;
+- menus nao sao embutidos dentro do Bosque;
+- nenhum novo predio com economia, recompensa, craft, ranking, social expansivo
+  ou mutacao remota entra por implicacao;
+- visual permanece procedural simples.
+
 ## Bosque Mecanico Basico v2
 
 Bosque Mecanico Basico v2 redefine o slice `forest` como um minigame livre,
@@ -138,6 +196,10 @@ Contratos de produto para v2:
 - controles PC/Web por WASD ou setas;
 - joystick livre por toque/mouse em area vazia do viewport;
 - HUD dentro do jogo;
+- prompt contextual unico para o landmark diegetico mais proximo;
+- cinco landmarks procedurais V1 para abrir Arena PVE, Refugio/Base, Loja,
+  Social e Perfil por action router;
+- suporte a tap/click em landmark com o mesmo contrato de action da proximidade;
 - mochila funcional com `Mochila do Bosque`, `Bau do Bosque`, `Construcoes`,
   `Fogueira` e `Sessao`;
 - aba `Fogueira` para receitas de pocao globais quando a estrutura existe;
@@ -168,6 +230,9 @@ Contratos de produto para v2:
   pequeno ou por ACK de checkpoint;
 - node cooldown renderiza por `server_time`/offset e ignora caches legados de
   nodes coletados quando `node_state` v2 esta presente;
+- saida para menu pelo launcher tenta checkpoint pendente antes de navegar,
+  preserva pendencia local se falhar e retorna ao Bosque via stack do shell
+  quando possivel;
 - Reward Bridge limitado, server-authoritative, idempotente e com ledger.
 
 ## Nao Escopo
@@ -181,6 +246,8 @@ Contratos de produto para v2:
 - recompensa nova;
 - promessa publica de release.
 - expansao do placeholder futuro sem pacote explicito.
+- Towerdefense, Cardgame ou ferramentas dev no launcher diegetico V1.
+- menus embutidos dentro do Bosque em vez de action router.
 - inimigos, NPCs, quests, combate, cidade, mapa novo, recompensa nova, economia
   nova ou mundo continuo neste hardening.
 
@@ -250,9 +317,12 @@ economia; sao folga de aprendizagem para o minigame.
 - `Voltar` deve retornar ao shell/refugio preservando a visita quando a sessao
   ainda estiver ativa.
 - Se houver operacao duravel pendente, `Voltar` tenta flush e aguarda o ACK.
-  Se falhar, a tela deve oferecer escolha clara: continuar no Bosque ou sair
-  sabendo que ha alteracoes nao confirmadas. O texto nao pode prometer
-  "continua salvando" quando o browser/app pode encerrar a requisicao.
+  Se falhar, preserva o estado local, mostra mensagem clara e sai sabendo que
+  ha alteracoes nao confirmadas. O texto nao pode prometer "continua salvando"
+  quando o browser/app pode encerrar a requisicao.
+- Ao abrir um menu pelo launcher diegetico, o Bosque segue a mesma politica de
+  flush/preservacao: tenta salvar, preserva pendencias se falhar e emite a
+  action do shell para abrir o menu.
 - `Encerrar visita` e a acao explicita de finalizacao, com resumo leve de
   materiais depositados, crafts feitos e estruturas construidas.
 - `Encerrar visita` segue bloqueado ate existir checkpoint final aceito, pois a
