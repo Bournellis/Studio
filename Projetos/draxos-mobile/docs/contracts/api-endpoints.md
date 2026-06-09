@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
-- Ultima atualizacao: `2026-06-07`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; `release/*` esta alinhado ao manifest default de Bosque Bootstrap Authority v1 (`0.0.15-alpha.0`, code `15`, minimo `0.0.13-alpha.0`, code `13`).
+- Ultima atualizacao: `2026-06-09`
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; `release/*` esta alinhado ao manifest remoto de Bosque Diegetic Launcher Foundation v1 (`0.0.16-alpha.0`, code `16`, minimo `0.0.13-alpha.0`, code `13`).
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -93,13 +93,13 @@ como slot contratado, mas a rota ainda precisa migrar o efeito de dominio.
 | `POST /battle/request` | `request_battle_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql` para `FIRST_SLICE_SIM`, que e modo tecnico de simulador/replay do primeiro slice, nao modo de produto; simulacao continua no adapter e persistencia/reward/consumables/ranking/idempotencia entram no RPC |
 | `POST /base/collect` | `collect_base_v1` | ativo em `202605300002_transactional_domain_enforcement.sql`; adapter preserva payload de UI e move recursos/ledger/idempotencia para RPC |
 | `POST /base/upgrade` | `start_base_upgrade_v1` | ativo em `202605300002_transactional_domain_enforcement.sql`; adapter preserva payload de UI e move gasto/job/ledger/idempotencia para RPC |
-| `POST /build/equip` | `equip_build_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; build + power são aplicados no mesmo RPC |
+| `POST /build/equip` | `equip_build_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; build + power sao aplicados no mesmo RPC |
 | `POST /crafting/craft` | `craft_item_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; recurso + item + ledgers entram no mesmo RPC; receitas com `station_id` retornam `STATION_REQUIRED` |
 | `POST /crafting/station-craft` | `craft_station_item_v1` | ativo em `202606060003_bosque_fogueira_potion_crafting_v1.sql`; valida Fogueira, checkpoint aceito, progresso duravel, materiais do Bau, recurso global, output e idempotencia |
-| `POST /monetization/rewards/claim` | `claim_reward_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; claim + XP/recurso/pass/ledger/idempotência entram no mesmo RPC |
-| `POST /monetization/alpha-purchase` | `alpha_purchase_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; custo/recompensa/premium/compra/ledger/idempotência entram no mesmo RPC |
-| `POST /social/guild/create` | `guild_create_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; guilda + owner + estruturas + canal + idempotência entram no mesmo RPC |
-| `POST /social/guild/join` | `guild_join_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; membership + contador + idempotência entram no mesmo RPC |
+| `POST /monetization/rewards/claim` | `claim_reward_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; claim + XP/recurso/pass/ledger/idempotencia entram no mesmo RPC |
+| `POST /monetization/alpha-purchase` | `alpha_purchase_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; custo/recompensa/premium/compra/ledger/idempotencia entram no mesmo RPC |
+| `POST /social/guild/create` | `guild_create_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; guilda + owner + estruturas + canal + idempotencia entram no mesmo RPC |
+| `POST /social/guild/join` | `guild_join_v1` | ativo em `202605300003_remaining_transactional_domain_enforcement.sql`; membership + contador + idempotencia entram no mesmo RPC |
 
 | `POST /build/spell-behavior` | `build_spell_behavior_v1` | ativo em `202605300004_foundation_closeout.sql`; comportamento de spell equipada + idempotencia entram no mesmo RPC |
 | `POST /build/potion/equip` | `build_potion_equip_v1` | ativo em `202605300004_foundation_closeout.sql`; slot de pocao + idempotencia entram no mesmo RPC |
@@ -533,7 +533,7 @@ Response:
 
 Retorna o manifest publico de updates da Internal Alpha v0.
 
-Status: **contrato vivo; fallback estatico alinhado ao pacote publicado atual Bosque Bootstrap Authority v1**.
+Status: **contrato vivo; fallback estatico e override remoto alinhados ao pacote publicado atual Bosque Diegetic Launcher Foundation v1**.
 
 Scope: `release`.
 
@@ -545,22 +545,24 @@ Response:
 {
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
-  "latest_version": "0.0.15-alpha.0",
-  "latest_version_code": 15,
+  "latest_version": "0.0.16-alpha.0",
+  "latest_version_code": 16,
   "minimum_supported_version": "0.0.13-alpha.0",
   "minimum_supported_version_code": 13,
   "released_at": "2026-06-09T00:00:00Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Bosque Bootstrap Authority v1 publicado na URL principal de Internal Alpha.",
-    "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
-    "Bosque integrado oculta o viewport ate aplicar bootstrap remoto ou cache canonico, evitando flash de full spawn.",
-    "Manifesto recomenda build 0.0.15-alpha.0 e mantem build minima 0.0.13-alpha.0."
+    "Bosque Diegetic Launcher Foundation v1 publicado na URL principal de Internal Alpha.",
+    "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
+    "Bosque agora funciona como launcher diegetico com construcoes para Arena, Refugio/Base, Loja, Social e Perfil.",
+    "Abertura de menus pelo Bosque passa pelo shell action router e o Voltar retorna ao Bosque quando possivel.",
+    "Bosque integrado oculta o viewport jogavel ate receber bootstrap canonico remoto/cache, evitando flash full-spawn ao reentrar.",
+    "Manifesto recomenda build 0.0.16-alpha.0 e mantem build minima 0.0.13-alpha.0."
   ],
   "artifacts": {
-    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22/downloads/draxos-mobile-alpha.apk", "sha256": "207c0eb79f36f3420ca539fbffaf7ce92150c38271df5f608916d4c12b0e8d5c", "auth_required": "false" },
-    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22/downloads/draxos-mobile-alpha.zip", "sha256": "7c0206a3bc0e4b65a5f8a20524921820282904f69e9e8224aff4307bd5cfefa9", "auth_required": "false" },
+    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android", "sha256": "610c3cbfecda3819e0d18ce107e18bf22ccadb99e7b5ab8b8888a6873f2780e7", "auth_required": true },
+    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows", "sha256": "91317eccc56a921b49e602f7b4e8a054e7b7be100bbcb26e38f428684701d8b6", "auth_required": true },
     "web": { "label": "Web", "url": "https://draxos-mobile-internal-alpha.pages.dev/web/index.html" }
   }
 }

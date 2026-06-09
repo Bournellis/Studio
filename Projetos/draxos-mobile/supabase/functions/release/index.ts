@@ -33,16 +33,16 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
     android: {
       label: "Android APK",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22/downloads/draxos-mobile-alpha.apk",
-      sha256: "207c0eb79f36f3420ca539fbffaf7ce92150c38271df5f608916d4c12b0e8d5c",
-      auth_required: "false",
+        "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
+      sha256: "610c3cbfecda3819e0d18ce107e18bf22ccadb99e7b5ab8b8888a6873f2780e7",
+      auth_required: "true",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
-        "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22/downloads/draxos-mobile-alpha.zip",
-      sha256: "7c0206a3bc0e4b65a5f8a20524921820282904f69e9e8224aff4307bd5cfefa9",
-      auth_required: "false",
+        "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
+      sha256: "91317eccc56a921b49e602f7b4e8a054e7b7be100bbcb26e38f428684701d8b6",
+      auth_required: "true",
     },
     web: {
       label: "Web",
@@ -152,7 +152,8 @@ interface PlayerRow {
   id: string;
 }
 
-const DEFAULT_RELEASE_ROOT = "internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-local";
+const DEFAULT_RELEASE_ROOT =
+  "internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
