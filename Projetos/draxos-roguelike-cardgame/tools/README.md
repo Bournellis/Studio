@@ -14,7 +14,11 @@ Local Godot tools for generation, validation, screenshots, and route telemetry l
 - `run_battle_lab.gd`: runs isolated BattleEngine fixture packs with deterministic legal-action policies and JSON/CSV/Markdown reports.
 - `compare_lab_reports.gd`: compares before/after outputs from AutoRun Lab, Scenario Fixtures or Gameplay Lab and writes JSON/CSV/Markdown diffs.
 - `run_card_impact.gd`: orchestrates Card Impact Pack before/after/compare phases for active player and enemy cards, including V2 player-card effect signatures, then writes aggregate JSON/CSV/Markdown reports.
+- `run_design_lab.gd`: runs proposal-pack driven Design Lab exploration and writes advisory promotion manifests.
+- `lab/design_lab_promotion_manifest_validator.gd`: validates Design Lab promotion manifests before manual catalog promotion.
 - `capture_visual_screenshots.gd`: captures visual surfaces when UI work requires screenshots.
+
+Hardening gate selection lives in `docs/hardening-validation-matrix.md`.
 
 ## Validation Command
 

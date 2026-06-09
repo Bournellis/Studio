@@ -25,7 +25,8 @@ Author the next player/enemy card and mechanic ideas as Design Lab packs, tune c
 ## Validation Snapshot
 
 - Design Lab sample gate `design_lab_sample_v1`: PASS with 36 candidates, 3 selected recommendations and 0 blocked mechanics.
-- `validate.gd`: PASS at 220/220 GUT tests and 1947 asserts in the latest preserved Design Lab baseline.
+- Design Lab promotion manifests now have a static safety validator and must preserve manual approval plus required validation gates before official catalog promotion.
+- `validate.gd`: PASS at 221/221 GUT tests and 1953 asserts in the current hardening baseline.
 - Card Impact V5 official before gate: PASS with zero structural errors, zero new failures and zero removed records.
 - Run Lab smoke/quick official gates: PASS.
 - Known optional visual asset, GUT resource and ship alpha warnings remain non-fatal.

@@ -175,6 +175,15 @@ promotion_manifest.json
 
 `promotion_manifest.json` is advisory only. It names selected candidates, suggested numeric diffs and validations to run before manual promotion. It does not patch official content.
 
+Promotion manifests are structurally validated by
+`tools/lab/design_lab_promotion_manifest_validator.gd` before outputs are
+accepted. The validator requires manual approval, promotable classifications
+(`recommended` or `viable`) and explicit follow-up validations for Design Lab,
+Card Impact, Run Lab and `validate.gd`.
+
+The operational matrix for deciding which gates to run per change type lives in
+`docs/hardening-validation-matrix.md`.
+
 ## Acceptance Baseline
 
 Current sample gate:
@@ -193,7 +202,7 @@ Result:
 
 Regression checks after V1:
 
-- `validate.gd`: PASS, 220/220 tests, 1947 asserts.
+- `validate.gd`: PASS, 221/221 tests, 1953 asserts.
 - `run_card_impact.gd --phase=before --mode=gate --pack=track02_card_impact_v5`: PASS.
 - `run_lab.gd --mode=gate --preset=smoke --baseline=track02_smoke_v1`: PASS.
 - `run_lab.gd --mode=gate --preset=quick --baseline=track02_quick_v1`: PASS.

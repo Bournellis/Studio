@@ -3,6 +3,7 @@ extends "res://tests/unit/draxos_test_base.gd"
 const ContextBuilderScript = preload("res://tools/lab/design_lab_context_builder.gd")
 const OverlayCatalogScript = preload("res://tools/lab/design_lab_overlay_catalog.gd")
 const ProposalLoaderScript = preload("res://tools/lab/design_lab_proposal_loader.gd")
+const PromotionManifestValidatorScript = preload("res://tools/lab/design_lab_promotion_manifest_validator.gd")
 const ReporterScript = preload("res://tools/lab/design_lab_reporter.gd")
 const ScorerScript = preload("res://tools/lab/design_lab_scorer.gd")
 const VariantGeneratorScript = preload("res://tools/lab/design_lab_variant_generator.gd")
@@ -169,6 +170,34 @@ func test_design_lab_reporter_writes_candidates_blocked_and_promotion_manifest()
 	assert_string_contains(markdown, "Promotion Manifest")
 	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string("%s/promotion_manifest.json" % out_dir))
 	assert_eq(Array(Dictionary(manifest).get("selected_candidates", [])).size(), 1)
+	var validation: Dictionary = PromotionManifestValidatorScript.validate_manifest(Dictionary(manifest))
+	assert_true(bool(validation.get("ok", false)), "; ".join(Array(validation.get("errors", []))))
+
+func test_design_lab_promotion_manifest_validator_rejects_unsafe_manifest() -> void:
+	var manifest: Dictionary = {
+		"schema_version": 1,
+		"pack_id": "unit_design_lab",
+		"generated_by": "Design Lab",
+		"manual_approval_required": false,
+		"selected_candidates": [{
+			"card_id": "card_a",
+			"variant_id": "card_a__broken",
+			"owner": "player",
+			"role": "damage",
+			"classification": "risky",
+			"numbers": {"effect.amount": 99},
+			"suggested_diffs": [{"field": "effect.amount", "value": 99}],
+			"required_validations": ["validate.gd"]
+		}],
+		"blocked_mechanics": []
+	}
+	var validation: Dictionary = PromotionManifestValidatorScript.validate_manifest(manifest)
+	assert_false(bool(validation.get("ok", true)))
+	var errors: String = "; ".join(Array(validation.get("errors", [])))
+	assert_string_contains(errors, "manual_approval_required")
+	assert_string_contains(errors, "classification")
+	assert_string_contains(errors, "run_design_lab")
+	assert_string_contains(errors, "run_card_impact")
 
 func _minimal_pack() -> Dictionary:
 	return {

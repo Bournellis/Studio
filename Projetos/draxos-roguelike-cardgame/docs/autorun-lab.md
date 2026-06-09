@@ -48,6 +48,11 @@ Card Redesign Batch 01 is the first controlled real card-edit cycle using V2. It
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\draxos-roguelike-cardgame -s res://tools/run_lab.gd -- --preset=smoke --compare-golden --require-golden
 ```
 
+For hardening work, choose the gate set from
+`docs/hardening-validation-matrix.md` before editing. The matrix maps player
+cards, enemy cards, battle rules, UI, save/shop/reward work, catalog splits and
+lab tooling to the minimum required validation stack.
+
 Official gates:
 
 ```powershell

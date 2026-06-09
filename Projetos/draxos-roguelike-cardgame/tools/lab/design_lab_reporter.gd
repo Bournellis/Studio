@@ -1,5 +1,7 @@
 extends RefCounted
 
+const PromotionManifestValidatorScript = preload("res://tools/lab/design_lab_promotion_manifest_validator.gd")
+
 const RESULTS_FILE: String = "design_lab_results.json"
 const CANDIDATES_FILE: String = "design_lab_candidates.csv"
 const SUMMARY_FILE: String = "design_lab_summary.md"
@@ -12,6 +14,9 @@ static func write_outputs(out_dir: String, report: Dictionary, options: Dictiona
 		target_dir = "user://design_lab/%s" % str(report.get("pack_id", "design_lab"))
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(target_dir))
 	var promotion_manifest: Dictionary = promotion_manifest(report, options)
+	var manifest_validation: Dictionary = PromotionManifestValidatorScript.assert_valid_manifest(promotion_manifest)
+	if not bool(manifest_validation.get("ok", false)):
+		return manifest_validation
 	var results_path: String = "%s/%s" % [target_dir, RESULTS_FILE]
 	var csv_path: String = "%s/%s" % [target_dir, CANDIDATES_FILE]
 	var summary_path: String = "%s/%s" % [target_dir, SUMMARY_FILE]
@@ -19,6 +24,7 @@ static func write_outputs(out_dir: String, report: Dictionary, options: Dictiona
 	var promotion_path: String = "%s/%s" % [target_dir, PROMOTION_FILE]
 	var results_payload: Dictionary = report.duplicate(true)
 	results_payload["promotion_manifest"] = promotion_manifest
+	results_payload["promotion_manifest_validation"] = manifest_validation
 	var writes: Array[Dictionary] = [
 		{"path": results_path, "text": JSON.stringify(results_payload, "\t")},
 		{"path": csv_path, "text": candidates_csv(Array(report.get("candidates", [])))},
