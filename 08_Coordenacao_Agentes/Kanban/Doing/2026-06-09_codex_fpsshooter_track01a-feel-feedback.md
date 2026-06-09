@@ -52,4 +52,6 @@
 - GUT: `10/10`, `94` asserts.
 - Editor headless script check: `NO_TARGET_SCRIPT_WARNINGS_FOUND`.
 - `git diff --check`: sem problemas.
-- Pendente: commit, merge em `main` e validacao final na pasta oficial.
+- Commit e merge fast-forward em `main`: concluido.
+- Validacao final na pasta oficial `D:\Estudio\Projetos\FpsShooter`: PASS, GUT `10/10`, `94` asserts.
+- Checagem final de editor na pasta oficial: `NO_TARGET_SCRIPT_WARNINGS_FOUND`.
