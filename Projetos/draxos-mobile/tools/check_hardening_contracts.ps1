@@ -106,7 +106,7 @@ function Test-ReleaseSafety {
   foreach ($needle in @('FullPublish', 'ConfirmRemoteMutation', 'ReleaseRoot', 'check_release_safety.ps1', 'check_android_release_keystore.ps1')) {
     Test-Contains 'docs\hardening-program.md' $needle 'hardening program'
   }
-  Test-Contains 'docs\contracts\update-manifest.md' '0.0.16-alpha.0' 'update manifest contract'
+  Test-Contains 'docs\contracts\update-manifest.md' '0.0.17-alpha.0' 'update manifest contract'
   Test-Contains 'docs\contracts\update-manifest.md' '610c3cbfecda3819e0d18ce107e18bf22ccadb99e7b5ab8b8888a6873f2780e7' 'update manifest contract'
 }
 

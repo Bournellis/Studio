@@ -1270,7 +1270,7 @@ func test_boot_profile_account_panel_shows_save_account_update_and_build_status(
 	assert_true(_label_tree_contains(boot._content_body, "Auth: email/senha (alpha@example.com)"))
 	assert_true(_label_tree_contains(boot._content_body, "Estado: carregado do save ativo"))
 	assert_true(_label_tree_contains(boot._content_body, "Update: Build atualizada"))
-	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.16-alpha.0 | online pronto"))
+	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.17-alpha.0 | online pronto"))
 	assert_null(boot._auth_email_input)
 
 func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> void:
@@ -1280,7 +1280,7 @@ func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> 
 
 	assert_true(_label_tree_contains(boot._content_body, "Username: sem conta carregada"))
 	assert_true(_label_tree_contains(boot._content_body, "Estado: sem sessao auth"))
-	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.16-alpha.0 | aguardando login"))
+	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.17-alpha.0 | aguardando login"))
 	assert_null(boot._auth_email_input)
 
 func test_boot_surface_presenters_render_shells_without_network() -> void:
@@ -1411,6 +1411,141 @@ func test_bosque_direct_entry_opens_openworld_without_player_facing_modes_route(
 	assert_false(_label_tree_contains(boot._content_body, "Hub interno dos cinco modos oficiais"))
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.mode_disabled_action("towerdefense")))
 	assert_false(boot._action_buttons.has(AppShellActionContractScript.mode_disabled_action("cardgame")))
+
+func test_bosque_launcher_action_opens_overlay_without_recreating_openworld() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+
+	var mode_screen := boot.get("_mode_shell_active_screen") as Control
+	assert_not_null(mode_screen)
+	if mode_screen == null:
+		return
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+	assert_false(boot._shell_overlay_is_open())
+	if mode_screen != null and mode_screen.has_method("set_player_position_for_tests"):
+		mode_screen.call("set_player_position_for_tests", Vector2(512, 444))
+
+	await boot._trigger_shell_overlay_action(AppShellActionContractScript.ACTION_SHOW_ACCOUNT)
+	await wait_process_frames(3)
+
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+	assert_true(boot._shell_overlay_is_open())
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ACCOUNT)
+	assert_true(mode_screen == boot.get("_mode_shell_active_screen"))
+	assert_true(bool(mode_screen.call("shell_overlay_paused_for_tests")))
+	assert_not_null(_find_node_by_name(boot, "ModeShellMenuOverlay"))
+	assert_not_null(_find_node_by_name(boot, "ModeShellMenuPanel"))
+	assert_eq(boot._active_route_for_context(), AppShellRouteContractScript.ROUTE_ACCOUNT)
+
+	boot._go_back()
+	await get_tree().process_frame
+
+	assert_false(boot._shell_overlay_is_open())
+	assert_true(mode_screen == boot.get("_mode_shell_active_screen"))
+	assert_false(bool(mode_screen.call("shell_overlay_paused_for_tests")))
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+	if mode_screen.has_method("get_player_position"):
+		var player_position: Vector2 = mode_screen.call("get_player_position")
+		assert_eq(player_position.snapped(Vector2(0.01, 0.01)), Vector2(512, 444))
+
+func test_bosque_overlay_back_pops_subroute_before_closing() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+	await boot._trigger_shell_overlay_action(AppShellActionContractScript.ACTION_SHOW_ACCOUNT)
+	await wait_process_frames(3)
+	boot._show_overlay_screen(AppShellRouteContractScript.ROUTE_SHOP)
+	await get_tree().process_frame
+
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_SHOP)
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+
+	boot._go_back()
+	await get_tree().process_frame
+
+	assert_true(boot._shell_overlay_is_open())
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ACCOUNT)
+
+	boot._go_back()
+	await get_tree().process_frame
+
+	assert_false(boot._shell_overlay_is_open())
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+
+func test_bosque_overlay_arena_replay_uses_overlay_fullscreen_parent() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"last_duel": {
+			"battle_log": _arena_battle_log_fixture(),
+			"rewards": {"almas": 7},
+		},
+	}
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+	await boot._trigger_shell_overlay_action(AppShellActionContractScript.ACTION_OPEN_ARENA)
+	await wait_process_frames(3)
+
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+
+	boot._show_overlay_screen(AppShellRouteContractScript.ROUTE_ARENA_REPLAY)
+	await get_tree().process_frame
+
+	var overlay := _find_node_by_name(boot, "ModeShellMenuOverlay")
+	assert_not_null(overlay)
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_REPLAY)
+	assert_not_null(_find_node_by_name(overlay, "BattleFullscreenOverlay"))
+	assert_true(boot._mode_shell_active_screen != null and is_instance_valid(boot._mode_shell_active_screen))
+
+func test_bosque_overlay_close_blocks_only_for_replay_or_critical_mutation() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+	await boot._trigger_shell_overlay_action(AppShellActionContractScript.ACTION_SHOW_ACCOUNT)
+	await wait_process_frames(3)
+
+	boot._active_action_id = AppShellActionContractScript.ACTION_OPEN_ARENA
+	boot._is_busy = true
+	boot._go_back()
+	await get_tree().process_frame
+	assert_false(boot._shell_overlay_is_open())
+
+	await boot._trigger_shell_overlay_action(AppShellActionContractScript.ACTION_SHOW_ACCOUNT)
+	await wait_process_frames(3)
+	boot._active_action_id = AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL
+	boot._is_busy = true
+	boot._go_back()
+	await get_tree().process_frame
+	assert_true(boot._shell_overlay_is_open())
+	boot._active_action_id = ""
+	boot._is_busy = false
+
+	boot._replay_running = true
+	boot._go_back()
+	await get_tree().process_frame
+	assert_true(boot._shell_overlay_is_open())
+	boot._replay_running = false
+	boot._go_back()
+	await get_tree().process_frame
+	assert_false(boot._shell_overlay_is_open())
 
 func test_refuge_no_longer_exposes_modes_popup_cards() -> void:
 	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)

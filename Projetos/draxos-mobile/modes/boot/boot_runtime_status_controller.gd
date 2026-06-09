@@ -38,7 +38,7 @@ func _fail_with_error(result: Dictionary) -> void:
 	_sync_immersive_feedback()
 	_emit_client_event("action_failure", {
 		"action_id": _active_action_id,
-		"screen": _current_screen,
+		"screen": _active_route_for_context(),
 		"code": code,
 		"message": str(error_payload.get("message", "")),
 		"network": _is_network_error(code),
@@ -46,7 +46,7 @@ func _fail_with_error(result: Dictionary) -> void:
 	if _is_network_error(code):
 		_emit_client_event("network_failure", {
 			"action_id": _active_action_id,
-			"screen": _current_screen,
+			"screen": _active_route_for_context(),
 			"code": code,
 		})
 	_sync_social_auto_sync_for_route()
@@ -76,13 +76,13 @@ func _restart_social_auto_sync() -> void:
 		_social_auto_sync_timer.start()
 
 func _can_start_social_auto_sync() -> bool:
-	return _current_screen == SCREEN_SOCIAL and not _surface_scope_busy(SessionStore.SURFACE_SOCIAL) and not _social_auto_sync_in_flight and _social_auto_sync_last_error == "" and not SessionStore.offline and not SessionStore.is_progression_lab_local_only() and SessionStore.has_valid_access_token() and SessionStore.has_account_state()
+	return _active_route_for_context() == SCREEN_SOCIAL and not _surface_scope_busy(SessionStore.SURFACE_SOCIAL) and not _social_auto_sync_in_flight and _social_auto_sync_last_error == "" and not SessionStore.offline and not SessionStore.is_progression_lab_local_only() and SessionStore.has_valid_access_token() and SessionStore.has_account_state()
 
 func _on_social_auto_sync_timeout() -> void:
 	await _auto_sync_social_state()
 
 func _auto_sync_social_state() -> void:
-	if _current_screen != SCREEN_SOCIAL:
+	if _active_route_for_context() != SCREEN_SOCIAL:
 		_sync_social_auto_sync_for_route()
 		return
 	if _surface_scope_busy(SessionStore.SURFACE_SOCIAL):
@@ -176,6 +176,8 @@ func _sync_buttons() -> void:
 		nav_button.disabled = _replay_running
 	if _back_button != null:
 		_back_button.disabled = _replay_running
+	if _shell_overlay_is_open():
+		_mode_shell_overlay_controller.sync_controls(self)
 
 func _action_allowed_during_replay(action_id: String) -> bool:
 	return AppShellActionContractScript.is_allowed_during_replay(action_id)

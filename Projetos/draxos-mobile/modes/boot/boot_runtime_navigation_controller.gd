@@ -2,6 +2,12 @@ extends "res://modes/boot/boot_runtime_flow_facade.gd"
 
 # Screen lifecycle, route normalization, history, and chrome visibility.
 func _show_screen(screen_id: String, push_history: bool = true) -> void:
+	screen_id = _normalize_route(screen_id)
+	if _shell_overlay_should_capture_screen(screen_id):
+		_show_overlay_screen(screen_id, push_history)
+		return
+	if _shell_overlay_is_open():
+		_mode_shell_overlay_controller.force_close(self)
 	screen_id = AppShellRouteContractScript.push_route(_screen_history, _current_screen, screen_id, push_history)
 	_current_screen = screen_id
 	if screen_id != ROUTE_ARENA_ACTIVE:
@@ -43,6 +49,16 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_back_button.visible = _route_shows_app_chrome(screen_id) and _route_supports_back(screen_id)
 	_sync_app_chrome_for_route(screen_id)
 	_sync_nav_buttons()
+	_render_route_contents(screen_id)
+	_sync_status_from_session()
+	_emit_client_event("screen_opened", {
+		"screen": screen_id,
+		"has_account": SessionStore.has_account_state(),
+		"offline": SessionStore.offline,
+	})
+	_sync_social_auto_sync_for_route()
+
+func _render_route_contents(screen_id: String) -> void:
 	match screen_id:
 		SCREEN_HUB:
 			_render_entry_screen()
@@ -82,22 +98,19 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 			_render_mode_shell_screen()
 		_:
 			_render_entry_screen()
-	_sync_status_from_session()
-	_emit_client_event("screen_opened", {
-		"screen": screen_id,
-		"has_account": SessionStore.has_account_state(),
-		"offline": SessionStore.offline,
-	})
-	_sync_social_auto_sync_for_route()
+
 func _show_refuge_root(message: String = "") -> void:
 	_show_screen(AppShellRouteContractScript.clear_for_refuge_return(_screen_history), false)
 	if message != "":
 		_show_notice(message)
 func _show_surface_screen(screen_id: String) -> void:
 	var target_screen := _normalize_route(screen_id)
-	var current_screen := _normalize_route(_current_screen)
+	var current_screen := _active_route_for_context()
 	_show_screen(target_screen, target_screen != current_screen)
 func _go_back() -> void:
+	if _shell_overlay_is_open():
+		if _mode_shell_overlay_controller.go_back(self):
+			return
 	if _replay_running:
 		return
 	if _close_refuge_menu_popup_if_open():
@@ -132,3 +145,37 @@ func _apply_orientation_for_route(_route_id: String) -> void:
 	if OS.get_name() != "Android":
 		return
 	DisplayServer.screen_set_orientation(APP_ORIENTATION_PORTRAIT)
+
+func _show_overlay_screen(route_id: String, push_history: bool = true) -> void:
+	_mode_shell_overlay_controller.show_screen(self, route_id, push_history)
+
+func _open_shell_overlay_action(action_id: String) -> bool:
+	if _current_screen != ROUTE_MODE_SHELL:
+		return false
+	if not _mode_shell_overlay_controller.open_for_action(self, action_id):
+		return false
+	return true
+
+func _close_shell_overlay() -> bool:
+	return _mode_shell_overlay_controller.close(self)
+
+func _shell_overlay_is_open() -> bool:
+	return _mode_shell_overlay_controller.is_open()
+
+func _shell_overlay_current_route() -> String:
+	return _mode_shell_overlay_controller.current_route()
+
+func _active_route_for_context() -> String:
+	if _shell_overlay_is_open() and _mode_shell_overlay_controller.current_route() != "":
+		return _mode_shell_overlay_controller.current_route()
+	return _current_screen
+
+func _shell_overlay_should_capture_screen(screen_id: String) -> bool:
+	if not _shell_overlay_is_open():
+		return false
+	if screen_id == ROUTE_MODE_SHELL or screen_id == SCREEN_HUB or screen_id == SCREEN_REFUGE:
+		return false
+	return true
+
+func _shell_overlay_fullscreen_parent() -> Control:
+	return _mode_shell_overlay_controller.fullscreen_parent()

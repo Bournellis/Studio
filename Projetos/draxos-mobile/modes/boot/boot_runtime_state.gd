@@ -16,6 +16,7 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 const AppShellActionRouterScript := preload("res://modes/boot/ui/app_shell_action_router.gd")
 const ModeShellRegistryScript := preload("res://modes/boot/ui/mode_shell_registry.gd")
 const ModeShellLauncherScript := preload("res://modes/boot/ui/mode_shell_launcher.gd")
+const ModeShellOverlayControllerScript := preload("res://modes/boot/ui/mode_shell_overlay_controller.gd")
 const AppShellErrorContractScript := preload("res://modes/boot/ui/app_shell_error_contract.gd")
 const OperationStateScript := preload("res://modes/boot/ui/operation_state.gd")
 const MobileUiContractScript := preload("res://modes/boot/ui/mobile_ui_contract.gd")
@@ -139,6 +140,7 @@ var _operation_state = OperationStateScript.new()
 var _battle_replay_presenter = BattleReplayPresenterScript.new()
 var _arena_surface_presenter = ArenaSurfacePresenterScript.new()
 var _mode_shell_launcher = ModeShellLauncherScript.new()
+var _mode_shell_overlay_controller = ModeShellOverlayControllerScript.new()
 @warning_ignore("unused_private_class_variable")
 var _battle_history_entries: Array[Dictionary] = []
 @warning_ignore("unused_private_class_variable")
@@ -146,6 +148,26 @@ var _battle_history_save_type := SessionStoreScript.SAVE_TYPE_NORMAL
 
 func _screen_title(screen_id: String) -> String:
 	return AppShellRouteContractScript.title_for(screen_id)
+
+func _active_route_for_context() -> String:
+	if _mode_shell_overlay_controller != null \
+			and _mode_shell_overlay_controller.is_open() \
+			and _mode_shell_overlay_controller.current_route() != "":
+		return _mode_shell_overlay_controller.current_route()
+	return _current_screen
+
+func _shell_overlay_is_open() -> bool:
+	return _mode_shell_overlay_controller != null and _mode_shell_overlay_controller.is_open()
+
+func _shell_overlay_current_route() -> String:
+	if _mode_shell_overlay_controller == null:
+		return ""
+	return _mode_shell_overlay_controller.current_route()
+
+func _shell_overlay_fullscreen_parent() -> Control:
+	if _mode_shell_overlay_controller != null:
+		return _mode_shell_overlay_controller.fullscreen_parent()
+	return null
 
 func _session_status_text() -> String:
 	if bool(_update_gate.get("block_online", false)):
@@ -234,7 +256,7 @@ func _clear_battle_history() -> void:
 func _action_payload(action_id: String) -> Dictionary:
 	return AppShellActionContractScript.action_payload(
 		action_id,
-		_current_screen,
+		_active_route_for_context(),
 		SessionStore.active_save_type,
 		SessionStore.has_account_state(),
 		SessionStore.offline
@@ -242,7 +264,7 @@ func _action_payload(action_id: String) -> Dictionary:
 
 func _action_context() -> Dictionary:
 	return {
-		"screen": _current_screen,
+		"screen": _active_route_for_context(),
 		"save_type": SessionStore.active_save_type,
 		"has_account": SessionStore.has_account_state(),
 		"offline": SessionStore.offline,

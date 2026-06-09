@@ -86,6 +86,9 @@ func _apply_navigation_cache(host: Node, mode_id: String, screen: Control) -> vo
 
 func _handle_shell_action_requested(action_id: String, _entry_id: String, host: Node, mode_id: String) -> void:
 	_cache_mode_navigation_state(host, mode_id)
+	if host.has_method("_trigger_shell_overlay_action"):
+		host.call("_trigger_shell_overlay_action", action_id)
+		return
 	host.call("_trigger_action", action_id)
 
 func _cache_mode_navigation_state(host: Node, mode_id: String) -> void:

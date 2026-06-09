@@ -12,6 +12,10 @@ func _trigger_action(action_id: String, confirm_message: String = "") -> void:
 		return
 	await _execute_action(action_id)
 
+func _trigger_shell_overlay_action(action_id: String) -> void:
+	if _open_shell_overlay_action(action_id):
+		await _trigger_action(action_id)
+
 func _on_confirmation_confirmed() -> void:
 	var action_id := _pending_confirmation_action
 	_pending_confirmation_action = ""
@@ -79,6 +83,9 @@ func _execute_action(action_id: String) -> void:
 	elif AppShellActionContractScript.is_battle_replay(action):
 		await _show_battle_replay(AppShellActionContractScript.action_value(action))
 	elif AppShellActionContractScript.is_open_mode_shell(action):
+		if _shell_overlay_is_open():
+			_close_shell_overlay()
+			return
 		_open_mode_shell(AppShellActionContractScript.action_value(action))
 	else:
 		match action:
@@ -131,6 +138,9 @@ func _execute_action(action_id: String) -> void:
 			ACTION_SKIP_REPLAY:
 				_skip_current_replay()
 			ACTION_RETURN_REFUGE:
+				if _shell_overlay_is_open():
+					_close_shell_overlay()
+					return
 				_return_to_refuge()
 			ACTION_REPLAY_LATEST:
 				await _replay_latest_battle_from_summary()

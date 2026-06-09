@@ -101,7 +101,7 @@ func show_base(host: Node) -> void:
 	_finish_cached_refresh(host, SessionStore.SURFACE_BASE, refresh_token, base_result, "Refugio recuperado.", "_render_base_state")
 
 func sync_refuge_state_if_needed(host: Node) -> void:
-	if str(host.get("_current_screen")) != AppShellRouteContractScript.ROUTE_REFUGE:
+	if str(host.call("_active_route_for_context")) != AppShellRouteContractScript.ROUTE_REFUGE:
 		return
 	if bool(host.get("_is_busy")) or not SessionStore.base_state.is_empty():
 		return
@@ -482,7 +482,7 @@ func auto_sync_social(host: Node) -> void:
 	var refresh_token := SessionStore.begin_surface_refresh(SessionStore.SURFACE_SOCIAL, "social_auto_sync", "social/state", SessionStore.has_surface_snapshot(SessionStore.SURFACE_SOCIAL))
 	var social_result: Dictionary = await SupabaseClient.fetch_social_state(SessionStore.access_token)
 	host.set("_social_auto_sync_in_flight", false)
-	if str(host.get("_current_screen")) != AppShellRouteContractScript.ROUTE_SOCIAL:
+	if str(host.call("_active_route_for_context")) != AppShellRouteContractScript.ROUTE_SOCIAL:
 		SessionStore.complete_surface_refresh(SessionStore.SURFACE_SOCIAL, social_result, refresh_token)
 		host.call("_sync_social_auto_sync_for_route")
 		return
@@ -772,7 +772,7 @@ func _update_spell_behavior(host: Node, spell_id: String, behavior: Dictionary, 
 	_render_preparation_for_route(host, _preparation_target_route(host))
 
 func _preparation_target_route(host: Node) -> String:
-	var current_route := AppShellRouteContractScript.normalize(str(host.get("_current_screen")))
+	var current_route := AppShellRouteContractScript.normalize(str(host.call("_active_route_for_context")))
 	if current_route == AppShellRouteContractScript.ROUTE_ARENA_ACTIVE:
 		return AppShellRouteContractScript.ROUTE_ARENA_ACTIVE
 	return AppShellRouteContractScript.ROUTE_ARENA_SELECTION
@@ -787,7 +787,7 @@ func _render_preparation_for_route(host: Node, route_id: String) -> void:
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
 
 func _preparation_loadout_locked(host: Node) -> bool:
-	return AppShellRouteContractScript.normalize(str(host.get("_current_screen"))) == AppShellRouteContractScript.ROUTE_ARENA_ACTIVE
+	return AppShellRouteContractScript.normalize(str(host.call("_active_route_for_context"))) == AppShellRouteContractScript.ROUTE_ARENA_ACTIVE
 
 func _block_locked_loadout_action(host: Node) -> void:
 	var message := "Loadout travado nesta tentativa. Entre duelos, ajuste apenas comportamento."
@@ -833,7 +833,7 @@ func _fail_preparation_action(host: Node, result: Dictionary, detail: String) ->
 	host.call("_sync_immersive_feedback")
 	host.call("_emit_client_event", "action_failure", {
 		"action_id": str(host.get("_active_action_id")),
-		"screen": str(host.get("_current_screen")),
+		"screen": str(host.call("_active_route_for_context")),
 		"code": code,
 		"message": str(error_payload.get("message", "")),
 		"network": is_network,
@@ -841,7 +841,7 @@ func _fail_preparation_action(host: Node, result: Dictionary, detail: String) ->
 	if is_network:
 		host.call("_emit_client_event", "network_failure", {
 			"action_id": str(host.get("_active_action_id")),
-			"screen": str(host.get("_current_screen")),
+			"screen": str(host.call("_active_route_for_context")),
 			"code": code,
 		})
 	host.call("_sync_social_auto_sync_for_route")

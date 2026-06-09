@@ -36,6 +36,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _progression_lab_overlay != null and is_instance_valid(_progression_lab_overlay):
 		_close_progression_lab_overlay()
 		return
+	if _shell_overlay_is_open():
+		_go_back()
+		return
 	if _replay_running:
 		_skip_current_replay()
 		return

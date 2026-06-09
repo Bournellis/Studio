@@ -166,7 +166,7 @@ func _craft_health_potion() -> void:
 	await _surface_action_flow.craft_health_potion(self)
 
 func _base_surface_target_screen() -> String:
-	if _current_screen == SCREEN_REFUGE:
+	if _active_route_for_context() == SCREEN_REFUGE:
 		return SCREEN_REFUGE
 	return SCREEN_BASE
 

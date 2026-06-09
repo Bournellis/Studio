@@ -4,21 +4,23 @@ import { verifiedAuthContext } from "../_shared/auth_context.ts";
 const DEFAULT_MANIFEST: ReleaseManifest = {
   schema_version: "internal_alpha_manifest_v1",
   channel: "internal_alpha",
-  latest_version: "0.0.16-alpha.0",
-  latest_version_code: 16,
+  latest_version: "0.0.17-alpha.0",
+  latest_version_code: 17,
   minimum_supported_version: "0.0.13-alpha.0",
   minimum_supported_version_code: 13,
   released_at: "2026-06-09T00:00:00Z",
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/",
   notes: [
-    "Bosque Diegetic Launcher Foundation v1 publicado na URL principal de Internal Alpha.",
+    "Bosque Persistent Overlay Shell v1 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
-    "Bosque agora funciona como launcher diegetico com construcoes para Arena, Refugio/Base, Loja, Social e Perfil.",
-    "Abertura de menus pelo Bosque passa pelo shell action router e o Voltar retorna ao Bosque quando possivel.",
-    "Bosque integrado oculta o viewport ate aplicar bootstrap remoto ou cache canonico, evitando flash de full spawn.",
+    "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
+    "Overlay usa stack unico com Voltar/Fechar, pausa input/coleta/movimento do Bosque e preserva o node existente.",
+    "Arena PVE roda dentro do overlay, incluindo replay, buff choice, summary e tentativa ativa preservada.",
+    "Fechar/Voltar bloqueia apenas durante mutacoes criticas da Arena ou replay em andamento.",
+    "Bosque integrado continua ocultando o viewport ate aplicar bootstrap remoto ou cache canonico, evitando flash de full spawn.",
     "Arena PVE exporta HP/Mana iniciais buffados no log e o replay aplica battle_start/participants antes da primeira acao.",
-    "Manifesto recomenda build 0.0.16-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+    "Manifesto recomenda build 0.0.17-alpha.0 e mantem build minima 0.0.13-alpha.0.",
     "Coletas, deposito no Bau, craft local e orientacao so aparecem como salvos depois de ACK do servidor.",
     "Nodes do Bosque mantem cooldown por item via node_state.next_spawn_at e descartam rejeicoes terminais de cooldown sem fila infinita.",
     "Coleta ativa nao reinicia por movimento leve e ACKs de checkpoint nao fazem rollback visual da mesma sessao.",
@@ -153,7 +155,7 @@ interface PlayerRow {
 }
 
 const DEFAULT_RELEASE_ROOT =
-  "internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c";
+  "internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-local";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));

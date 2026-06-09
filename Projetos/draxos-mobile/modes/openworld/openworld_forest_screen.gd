@@ -38,6 +38,7 @@ var _launcher_entries: Array[Dictionary] = []
 var _pending_navigation_state: Dictionary = {}
 var _external_navigation_pending := false
 var _bootstrap_loading := false
+var _shell_overlay_paused := false
 
 func _ready() -> void:
 	name = "OpenworldForestScreen"
@@ -72,6 +73,10 @@ func _notification(what: int) -> void:
 		_input_controller.reset_runtime_input()
 
 func _input(event: InputEvent) -> void:
+	if _shell_overlay_paused:
+		_input_controller.reset_runtime_input()
+		get_viewport().set_input_as_handled()
+		return
 	if _input_controller.handle_input(event, true):
 		get_viewport().set_input_as_handled()
 
@@ -149,6 +154,16 @@ func abandon_confirm_pending_for_tests() -> bool:
 func bootstrap_loading_for_tests() -> bool:
 	return _bootstrap_loading
 
+func shell_overlay_paused_for_tests() -> bool:
+	return _shell_overlay_paused
+
+func set_shell_overlay_paused(paused: bool) -> void:
+	_shell_overlay_paused = paused
+	_input_controller.reset_runtime_input()
+	if _world != null and _world.has_method("set_movement_vector"):
+		_world.set_movement_vector(Vector2.ZERO, 0.0)
+	_update_labels()
+
 func configure_integrated_alpha(client: Node, store: Node, token: String) -> void:
 	var bridge = _ensure_session_bridge()
 	bridge.configure(model, client, store, token, Callable(self, "_apply_remote_snapshot"))
@@ -159,6 +174,11 @@ func configure_integrated_alpha(client: Node, store: Node, token: String) -> voi
 			call_deferred("_resume_or_start_integrated_session")
 
 func _process(delta: float) -> void:
+	if _shell_overlay_paused:
+		if _world != null and _world.has_method("set_movement_vector"):
+			_world.set_movement_vector(Vector2.ZERO, 0.0)
+		_update_labels()
+		return
 	_runtime.advance_time(delta)
 	if _world != null and _world.has_method("get_player_position"):
 		_runtime.update_player_position(_world.get_player_position())
@@ -355,12 +375,18 @@ func _advance_nearby_collection(delta: float) -> void:
 	_sync_session_bridge_debug_state()
 
 func _deposit_near_chest() -> void:
+	if _shell_overlay_paused:
+		return
 	_interaction.deposit_near_chest()
 
 func _craft_recipe(recipe_id: String) -> void:
+	if _shell_overlay_paused:
+		return
 	_interaction.craft_recipe(recipe_id)
 
 func _station_craft_recipe(recipe_id: String) -> void:
+	if _shell_overlay_paused:
+		return
 	if recipe_id.strip_edges() == "":
 		return
 	if not model.has_upgrade("fogueira_estavel_1"):
@@ -654,6 +680,8 @@ func _handle_back_requested() -> void:
 	close_requested.emit()
 
 func _handle_launcher_action_requested(action_id: String, entry_id: String) -> void:
+	if _shell_overlay_paused:
+		return
 	var clean_action := action_id.strip_edges()
 	var clean_entry := entry_id.strip_edges()
 	if clean_action == "" or clean_entry == "":
@@ -689,6 +717,8 @@ func _prepare_launcher_navigation(entry: Dictionary) -> void:
 	_update_labels()
 
 func _handle_launcher_pointer_event(event: InputEvent) -> bool:
+	if _shell_overlay_paused:
+		return true
 	var local_position := Vector2.ZERO
 	if event is InputEventMouseButton:
 		var mouse_event := event as InputEventMouseButton

@@ -111,7 +111,10 @@ func _create_battle_fullscreen_overlay() -> Control:
 	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	overlay.position = Vector2.ZERO
 	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-	add_child(overlay)
+	var parent: Control = _shell_overlay_fullscreen_parent()
+	if parent == null:
+		parent = self
+	parent.add_child(overlay)
 	_battle_fullscreen_overlay = overlay
 	return overlay
 
@@ -130,7 +133,7 @@ func _add_section_label(text: String) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.add_theme_font_size_override("font_size", 16 if _compact_layout else 18)
-	label.add_theme_color_override("font_color", UiTokens.surface_accent_color(_current_screen, "text_primary"))
+	label.add_theme_color_override("font_color", UiTokens.surface_accent_color(_active_route_for_context(), "text_primary"))
 	_content_body.add_child(label)
 	return label
 
@@ -149,7 +152,7 @@ func _add_body_text(text: String) -> Label:
 func _add_output_label(text: String) -> Label:
 	_reset_action_group()
 	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", UiTokens.surface_panel_style(_current_screen, _compact_layout, "bg_panel", "border_default"))
+	panel.add_theme_stylebox_override("panel", UiTokens.surface_panel_style(_active_route_for_context(), _compact_layout, "bg_panel", "border_default"))
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_content_body.add_child(panel)
 
@@ -231,7 +234,7 @@ func _add_social_input(label_text: String, placeholder: String, initial_text: St
 
 	var label := Label.new()
 	label.text = label_text
-	label.add_theme_color_override("font_color", UiTokens.surface_accent_color(_current_screen, "text_secondary"))
+	label.add_theme_color_override("font_color", UiTokens.surface_accent_color(_active_route_for_context(), "text_secondary"))
 	box.add_child(label)
 
 	var input := LineEdit.new()
@@ -267,7 +270,7 @@ func _apply_action_button_style(button: Button, action_id: String, surface_id: S
 	var style_id := UiTokens.action_button_style_id(action_id)
 	var resolved_surface := surface_id.strip_edges()
 	if resolved_surface == "":
-		resolved_surface = _current_screen
+		resolved_surface = _active_route_for_context()
 	var accent_token := UiTokens.action_accent_token(action_id, resolved_surface)
 	button.add_theme_color_override("font_color", UiTokens.color("text_on_accent" if style_id == "cta" else "text_primary"))
 	button.add_theme_stylebox_override("normal", UiTokens.button_style(style_id, "normal", accent_token))

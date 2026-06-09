@@ -847,6 +847,43 @@ func test_launcher_navigation_preserves_pending_checkpoint_failure_and_still_emi
 	assert_false(Dictionary(store.openworld_pending_ops_state).is_empty())
 	assert_true(str(screen.get_model().last_message).to_lower().contains("pendentes"))
 
+func test_shell_overlay_pause_blocks_movement_collection_and_launcher_actions() -> void:
+	var screen = ScreenScript.new()
+	add_child_autofree(screen)
+	await get_tree().process_frame
+	var received: Array[Dictionary] = []
+	screen.shell_action_requested.connect(func(action_id: String, entry_id: String) -> void:
+		received.append({"action_id": action_id, "entry_id": entry_id})
+	)
+	var world = screen.call("get_openworld_world_2d")
+	var arena_position: Vector2 = world.call("launcher_position", "arena_pve_gate")
+	screen.set_player_position_for_tests(arena_position)
+	await get_tree().process_frame
+
+	screen.call("set_shell_overlay_paused", true)
+	assert_true(bool(screen.call("shell_overlay_paused_for_tests")))
+	var before := screen.get_player_position()
+	screen.set_debug_joystick_vector(Vector2.RIGHT)
+	await wait_seconds(0.18)
+	screen.set_debug_joystick_vector(Vector2.ZERO)
+	await get_tree().process_frame
+
+	assert_eq(screen.get_player_position().snapped(Vector2(0.01, 0.01)), before.snapped(Vector2(0.01, 0.01)))
+	screen.call("_handle_launcher_action_requested", AppShellActionContractScript.ACTION_OPEN_ARENA, "arena_pve_gate")
+	await _wait_process_frames(2)
+	assert_true(received.is_empty())
+
+	var event := InputEventMouseButton.new()
+	event.button_index = MOUSE_BUTTON_LEFT
+	event.pressed = true
+	event.position = world.call("viewport_point_from_world_position", arena_position)
+	screen.call("_on_world_gui_input", event)
+	await _wait_process_frames(2)
+	assert_true(received.is_empty())
+
+	screen.call("set_shell_overlay_paused", false)
+	assert_false(bool(screen.call("shell_overlay_paused_for_tests")))
+
 func test_integrated_move_heartbeat_stays_local_and_does_not_send_checkpoint() -> void:
 	var setup: Dictionary = await _make_integrated_screen()
 	var screen = setup.get("screen")
