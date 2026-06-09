@@ -9,6 +9,9 @@ var kind := ""
 var node_id := ""
 var item_id := ""
 var upgrade_id := ""
+var entry_id := ""
+var action_id := ""
+var visual_kind := ""
 var display_name := ""
 var collision_shape := "circle"
 var collision_size := Vector2.ZERO
@@ -24,6 +27,7 @@ var nearest := false
 var nearby := false
 var collection_progress := 0.0
 var built := true
+var launcher_highlighted := false
 
 var _static_body: StaticBody2D
 var _area: Area2D
@@ -34,6 +38,9 @@ func configure(object_data: Dictionary) -> void:
 	node_id = str(object_data.get("node_id", ""))
 	item_id = str(object_data.get("item_id", ""))
 	upgrade_id = str(object_data.get("upgrade_id", ""))
+	entry_id = str(object_data.get("entry_id", ""))
+	action_id = str(object_data.get("action_id", ""))
+	visual_kind = str(object_data.get("visual_kind", ""))
 	display_name = str(object_data.get("display_name", object_id))
 	position = Vector2(object_data.get("position", Vector2.ZERO))
 	visual_size = Vector2(object_data.get("visual_size", Vector2(40, 40)))
@@ -70,6 +77,12 @@ func set_resource_state(next_collected: bool, next_nearest: bool, next_progress:
 func set_built_state(next_built: bool) -> void:
 	built = next_built
 	visible = built
+	queue_redraw()
+
+func set_launcher_state(next_highlighted: bool) -> void:
+	if launcher_highlighted == next_highlighted:
+		return
+	launcher_highlighted = next_highlighted
 	queue_redraw()
 
 func _add_static_body() -> void:
@@ -123,6 +136,8 @@ func _draw() -> void:
 			_draw_large_rock()
 		CatalogScript.KIND_CAMPFIRE:
 			_draw_campfire()
+		CatalogScript.KIND_LAUNCHER:
+			_draw_launcher()
 		_:
 			draw_circle(Vector2.ZERO, 18.0, Color(0.52, 0.48, 0.36))
 
@@ -195,6 +210,79 @@ func _draw_campfire() -> void:
 	draw_line(Vector2(-8, -28), Vector2(-18, -48), Color(0.86, 0.70, 0.42, 0.18), 2.0)
 	draw_line(Vector2(8, -26), Vector2(20, -44), Color(0.86, 0.70, 0.42, 0.16), 2.0)
 	draw_circle(Vector2(0, 9), 10.0, Color(0.18, 0.12, 0.08, 0.48))
+
+func _draw_launcher() -> void:
+	var pulse := 1.0 + (0.06 if launcher_highlighted else 0.0)
+	var marker_alpha := 0.18 if launcher_highlighted else 0.08
+	draw_circle(Vector2(0, 12), interaction_radius * 0.42 * pulse, Color(0.88, 0.75, 0.42, marker_alpha))
+	if launcher_highlighted:
+		draw_arc(Vector2(0, 12), interaction_radius * 0.45, 0.0, TAU, 56, Color(0.96, 0.82, 0.48, 0.62), 2.0, true)
+	match visual_kind:
+		"arena_gate":
+			_draw_launcher_arena_gate()
+		"workbench":
+			_draw_launcher_workbench()
+		"shop_stall":
+			_draw_launcher_shop_stall()
+		"social_totem":
+			_draw_launcher_social_totem()
+		"profile_shrine":
+			_draw_launcher_profile_shrine()
+		_:
+			draw_circle(Vector2.ZERO, 24.0, Color(0.56, 0.48, 0.34))
+
+func _draw_launcher_arena_gate() -> void:
+	var accent := Color(0.82, 0.34, 0.22).lightened(0.10 if launcher_highlighted else 0.0)
+	draw_circle(Vector2(0, 27), 36.0, Color(0.0, 0.0, 0.0, 0.30))
+	draw_line(Vector2(-30, 26), Vector2(-30, -36), Color(0.20, 0.14, 0.10), 12.0)
+	draw_line(Vector2(30, 26), Vector2(30, -36), Color(0.20, 0.14, 0.10), 12.0)
+	draw_arc(Vector2(0, -34), 30.0, PI, TAU, 32, accent, 9.0, true)
+	draw_line(Vector2(-18, 20), Vector2(18, -12), Color(0.86, 0.58, 0.34), 4.0)
+	draw_line(Vector2(18, 20), Vector2(-18, -12), Color(0.86, 0.58, 0.34), 4.0)
+
+func _draw_launcher_workbench() -> void:
+	var wood := Color(0.44, 0.24, 0.11).lightened(0.08 if launcher_highlighted else 0.0)
+	draw_circle(Vector2(0, 20), 34.0, Color(0.0, 0.0, 0.0, 0.26))
+	draw_rect(Rect2(Vector2(-38, -12), Vector2(76, 24)), wood, true)
+	draw_line(Vector2(-26, 8), Vector2(-34, 34), Color(0.24, 0.12, 0.05), 6.0)
+	draw_line(Vector2(26, 8), Vector2(34, 34), Color(0.24, 0.12, 0.05), 6.0)
+	draw_line(Vector2(-10, -18), Vector2(26, -31), Color(0.70, 0.66, 0.56), 6.0)
+	draw_circle(Vector2(-18, -14), 8.0, Color(0.55, 0.52, 0.46))
+
+func _draw_launcher_shop_stall() -> void:
+	var cloth := Color(0.75, 0.48, 0.22).lightened(0.10 if launcher_highlighted else 0.0)
+	draw_circle(Vector2(0, 23), 39.0, Color(0.0, 0.0, 0.0, 0.26))
+	draw_rect(Rect2(Vector2(-38, -10), Vector2(76, 42)), Color(0.36, 0.20, 0.10), true)
+	for index in range(4):
+		var x := -38.0 + float(index) * 19.0
+		draw_rect(Rect2(Vector2(x, -34), Vector2(19, 24)), cloth if index % 2 == 0 else Color(0.86, 0.75, 0.48), true)
+	draw_line(Vector2(-42, -10), Vector2(42, -10), Color(0.18, 0.09, 0.04), 4.0)
+	draw_circle(Vector2(-22, 32), 8.0, Color(0.10, 0.07, 0.04))
+	draw_circle(Vector2(22, 32), 8.0, Color(0.10, 0.07, 0.04))
+
+func _draw_launcher_social_totem() -> void:
+	var stone := Color(0.38, 0.42, 0.37).lightened(0.08 if launcher_highlighted else 0.0)
+	draw_circle(Vector2(0, 24), 28.0, Color(0.0, 0.0, 0.0, 0.28))
+	draw_rect(Rect2(Vector2(-15, -40), Vector2(30, 74)), stone, true)
+	draw_rect(Rect2(Vector2(-12, -36), Vector2(24, 22)), Color(0.16, 0.24, 0.18), true)
+	draw_circle(Vector2(-6, -24), 4.0, Color(0.92, 0.78, 0.42))
+	draw_circle(Vector2(6, -24), 4.0, Color(0.92, 0.78, 0.42))
+	draw_line(Vector2(-10, 1), Vector2(10, 1), Color(0.82, 0.72, 0.46), 3.0)
+	draw_circle(Vector2(0, 23), 8.0, Color(0.30, 0.54, 0.34))
+
+func _draw_launcher_profile_shrine() -> void:
+	var stone := Color(0.46, 0.43, 0.38).lightened(0.10 if launcher_highlighted else 0.0)
+	draw_circle(Vector2(0, 25), 31.0, Color(0.0, 0.0, 0.0, 0.28))
+	draw_colored_polygon(PackedVector2Array([
+		Vector2(0, -44),
+		Vector2(25, -12),
+		Vector2(18, 32),
+		Vector2(-18, 32),
+		Vector2(-25, -12),
+	]), stone)
+	draw_circle(Vector2(0, -11), 14.0, Color(0.20, 0.18, 0.16))
+	draw_arc(Vector2(0, -11), 9.0, 0.2, TAU - 0.2, 30, Color(0.86, 0.74, 0.44), 2.0, true)
+	draw_line(Vector2(-13, 13), Vector2(13, 13), Color(0.86, 0.74, 0.44), 3.0)
 
 func _draw_resource_pickup_marker(highlighted: bool) -> void:
 	var radius := 32.0 if highlighted else 27.0

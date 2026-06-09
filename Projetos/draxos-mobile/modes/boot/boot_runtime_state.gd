@@ -120,6 +120,8 @@ var _social_auto_sync_last_error := ""
 var _battle_lab_overlay: Control
 var _progression_lab_overlay: Control
 var _active_mode_id := ""
+var _mode_shell_navigation_cache: Dictionary = {}
+var _mode_shell_active_screen: Control = null
 @warning_ignore("unused_private_class_variable")
 var _selected_base_structure_id := "nucleo_energia"
 @warning_ignore("unused_private_class_variable")

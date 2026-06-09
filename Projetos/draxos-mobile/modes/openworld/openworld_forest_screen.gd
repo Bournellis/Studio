@@ -2,6 +2,7 @@ class_name OpenworldForestScreen
 extends Control
 
 signal close_requested
+signal shell_action_requested(action_id: String, entry_id: String)
 
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 const RulesetScript := preload("res://modes/openworld/openworld_forest_ruleset.gd")
@@ -10,6 +11,8 @@ const RuntimeStateScript := preload("res://modes/openworld/openworld_forest_runt
 const InputControllerScript := preload("res://modes/openworld/openworld_forest_input_controller.gd")
 const HudControllerScript := preload("res://modes/openworld/openworld_forest_hud_controller.gd")
 const InteractionControllerScript := preload("res://modes/openworld/openworld_forest_interaction_controller.gd")
+const LauncherCatalogScript := preload("res://modes/openworld/openworld_forest_launcher_catalog.gd")
+const LauncherControllerScript := preload("res://modes/openworld/openworld_forest_launcher_controller.gd")
 const IntegratedSessionBridgeScript := preload("res://modes/openworld/openworld_integrated_session_bridge.gd")
 const WorldContextScript := preload("res://modes/openworld/openworld_world_context.gd")
 
@@ -23,6 +26,7 @@ var _runtime = RuntimeStateScript.new()
 var _input_controller = InputControllerScript.new()
 var _hud = HudControllerScript.new()
 var _interaction = InteractionControllerScript.new()
+var _launcher = LauncherControllerScript.new()
 var _session_bridge = null
 var _last_result_text := ""
 var _abandon_confirm_pending := false
@@ -30,11 +34,15 @@ var _ready_completed := false
 var _snapshot_revision := 0
 var _pending_collected_nodes: Dictionary = {}
 var _resource_nodes: Array = []
+var _launcher_entries: Array[Dictionary] = []
+var _pending_navigation_state: Dictionary = {}
+var _external_navigation_pending := false
 var _bootstrap_loading := false
 
 func _ready() -> void:
 	name = "OpenworldForestScreen"
 	_ensure_session_bridge()
+	_load_launcher_entries()
 	_runtime.configure(RulesetScript.player_initial_position())
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -51,6 +59,7 @@ func _ready() -> void:
 	_update_labels()
 	set_process(true)
 	_ready_completed = true
+	_apply_pending_navigation_state()
 	call_deferred("_grab_openworld_focus")
 	if integration_mode == "integrated_alpha":
 		_set_bootstrap_loading(true)
@@ -93,6 +102,34 @@ func set_player_position_for_tests(position: Vector2) -> void:
 	_runtime.update_player_position(position)
 	if _world != null and _world.has_method("set_player_position"):
 		_world.set_player_position(position)
+
+func launcher_entries_for_tests() -> Array[Dictionary]:
+	return _launcher.entries()
+
+func should_use_local_navigation_cache() -> bool:
+	return integration_mode != "integrated_alpha"
+
+func navigation_state_snapshot() -> Dictionary:
+	if _world != null and _world.has_method("get_player_position"):
+		_runtime.update_player_position(_world.get_player_position())
+	return {
+		"schema_version": "openworld_forest_launcher_navigation_v1",
+		"mode_id": ModelScript.MODE_ID,
+		"slice_id": ModelScript.SLICE_ID,
+		"integration_mode": integration_mode,
+		"player_position": _runtime.position_payload(),
+		"runtime": {
+			"session_seconds": _runtime.session_seconds,
+			"walk_phase": _runtime.walk_phase,
+			"node_state": _runtime.node_state_snapshot(),
+		},
+		"model_snapshot": model.snapshot(),
+	}
+
+func apply_navigation_state_snapshot(state: Dictionary) -> void:
+	_pending_navigation_state = state.duplicate(true)
+	if _ready_completed:
+		_apply_pending_navigation_state()
 
 func begin_free_joystick_for_tests(screen_position: Vector2) -> void:
 	_input_controller.begin_free_for_tests(screen_position)
@@ -186,7 +223,8 @@ func _build_world_viewport() -> void:
 		_resource_fixtures(),
 		RulesetScript.player_initial_position(),
 		RulesetScript.obstacles(),
-		RulesetScript.structures()
+		RulesetScript.structures(),
+		_launcher_entries
 	)
 	_world_viewport.add_child(_world)
 	_runtime.update_player_position(_world.get_player_position())
@@ -201,6 +239,7 @@ func _connect_hud() -> void:
 	_hud.guidance_next_requested.connect(_handle_guidance_next_requested)
 	_hud.guidance_hide_requested.connect(_handle_guidance_hide_requested)
 	_hud.guidance_reopen_requested.connect(_handle_guidance_reopen_requested)
+	_hud.launcher_action_requested.connect(_handle_launcher_action_requested)
 	_hud.sheet_tab_changed.connect(_handle_sheet_tab_changed)
 
 func _configure_input_controller() -> void:
@@ -243,6 +282,10 @@ func _spawn_resources() -> void:
 	_runtime.reset_resources(_resource_fixtures())
 	_sync_runtime_debug_state()
 
+func _load_launcher_entries() -> void:
+	_launcher_entries = LauncherCatalogScript.entries()
+	_launcher.configure(_launcher_entries)
+
 func _resource_fixtures() -> Array[Dictionary]:
 	var fixtures := RulesetScript.resource_fixtures()
 	if not fixtures.is_empty():
@@ -258,6 +301,9 @@ func _dev_resource_fallback_allowed() -> bool:
 		or bool(ProjectSettings.get_setting("draxos_mobile/testing/openworld_dev_fixtures_enabled", false))
 
 func _on_world_gui_input(event: InputEvent) -> void:
+	if _handle_launcher_pointer_event(event):
+		accept_event()
+		return
 	if _input_controller.handle_pointer_event(event, false):
 		accept_event()
 
@@ -283,6 +329,13 @@ func _grab_openworld_focus() -> void:
 
 func _nearest_resource() -> Dictionary:
 	return _runtime.nearest_resource(_ensure_session_bridge())
+
+func _nearest_launcher_entry() -> Dictionary:
+	if _world != null and _world.has_method("nearest_launcher"):
+		var world_entry: Dictionary = _world.nearest_launcher(_runtime.player_position)
+		if not world_entry.is_empty():
+			return world_entry
+	return _launcher.nearest_entry(_runtime.player_position)
 
 func _near_chest() -> bool:
 	if _world != null and _world.has_method("is_near_chest"):
@@ -401,13 +454,22 @@ func _update_labels() -> void:
 	if _world.has_method("get_player_position"):
 		_runtime.update_player_position(_world.get_player_position())
 	var nearest := _nearest_resource()
+	var launcher_entry := _nearest_launcher_entry()
 	var nearest_id := str(nearest.get("item_id", ""))
 	var nearest_node_id := str(nearest.get("node_id", ""))
 	var pocket_full := model.pocket_weight() >= model.capacity() - 0.001
-	_world.set_state(_runtime.resource_nodes, nearest_node_id, model.collection_progress(), pocket_full, _runtime.walk_phase, model.upgrades)
-	_hud.update(_view_state(nearest_id))
+	_world.set_state(
+		_runtime.resource_nodes,
+		nearest_node_id,
+		model.collection_progress(),
+		pocket_full,
+		_runtime.walk_phase,
+		model.upgrades,
+		str(launcher_entry.get("entry_id", ""))
+	)
+	_hud.update(_view_state(nearest_id, launcher_entry))
 
-func _view_state(nearest_id: String) -> Dictionary:
+func _view_state(nearest_id: String, launcher_entry: Dictionary = {}) -> Dictionary:
 	var network_busy := _network_busy()
 	var pending := _has_pending_integrated_events()
 	var integrated := integration_mode == "integrated_alpha"
@@ -436,8 +498,9 @@ func _view_state(nearest_id: String) -> Dictionary:
 		"resources": _resources_signature(),
 		"world_context": WorldContextScript.build(model, _session_store(), _session_bridge, _session_state(), station_nearby),
 		"mode_label": _mode_label(),
-		"status_text": _status_text(nearest_id, completed),
+		"status_text": _status_text(nearest_id, completed, launcher_entry),
 		"feedback_text": model.last_message,
+		"launcher_entry": launcher_entry.duplicate(true),
 		"pocket_weight": model.pocket_weight(),
 		"capacity": model.capacity(),
 		"deposit_available": deposit_available,
@@ -457,7 +520,7 @@ func _mode_label() -> String:
 		return "Bosque"
 	return "Preview"
 
-func _status_text(nearest_id: String, completed: bool) -> String:
+func _status_text(nearest_id: String, completed: bool, launcher_entry: Dictionary = {}) -> String:
 	if completed:
 		return "Visita encerrada"
 	if not model.active_collection.is_empty():
@@ -478,6 +541,8 @@ func _status_text(nearest_id: String, completed: bool) -> String:
 		return "Pare para coletar %s" % model.item_display_name(nearest_id)
 	if _near_chest():
 		return "Bau proximo"
+	if not launcher_entry.is_empty():
+		return "Entrada proxima: %s" % str(launcher_entry.get("label", "menu"))
 	if model.pocket_load_ratio() >= ModelScript.LOAD_PENALTY_START_RATIO:
 		return model.pocket_status_text()
 	return "Explore o bosque"
@@ -588,6 +653,64 @@ func _handle_back_requested() -> void:
 		_ensure_session_bridge().record_exit_preserved()
 	close_requested.emit()
 
+func _handle_launcher_action_requested(action_id: String, entry_id: String) -> void:
+	var clean_action := action_id.strip_edges()
+	var clean_entry := entry_id.strip_edges()
+	if clean_action == "" or clean_entry == "":
+		return
+	if _external_navigation_pending:
+		return
+	var entry := _launcher.entry_by_id(clean_entry)
+	if entry.is_empty() or str(entry.get("action_id", "")) != clean_action:
+		return
+	_external_navigation_pending = true
+	await _prepare_launcher_navigation(entry)
+	shell_action_requested.emit(clean_action, clean_entry)
+	_external_navigation_pending = false
+
+func _prepare_launcher_navigation(entry: Dictionary) -> void:
+	var label := str(entry.get("label", entry.get("display_name", "menu"))).strip_edges()
+	if label == "":
+		label = "menu"
+	if integration_mode == "integrated_alpha" and _has_pending_integrated_events():
+		model.last_message = "Salvando Bosque antes de abrir %s..." % label
+		_update_labels()
+		var bridge = _ensure_session_bridge()
+		var checkpoint_result: Dictionary = await _flush_pending_checkpoint_with_wait(bridge)
+		if not bool(checkpoint_result.get("ok", true)) or _has_pending_integrated_events():
+			model.last_message = "Alteracoes pendentes preservadas; abrindo %s." % label
+			if _server_session_id() != "":
+				bridge.record_exit_preserved()
+			_update_labels()
+			return
+	if integration_mode == "integrated_alpha" and _server_session_id() != "" and not _session_blocks_mutation():
+		_ensure_session_bridge().record_exit_preserved()
+	model.last_message = "Abrindo %s..." % label
+	_update_labels()
+
+func _handle_launcher_pointer_event(event: InputEvent) -> bool:
+	var local_position := Vector2.ZERO
+	if event is InputEventMouseButton:
+		var mouse_event := event as InputEventMouseButton
+		if not mouse_event.pressed or mouse_event.button_index != MOUSE_BUTTON_LEFT:
+			return false
+		local_position = mouse_event.position
+	elif event is InputEventScreenTouch:
+		var touch_event := event as InputEventScreenTouch
+		if not touch_event.pressed:
+			return false
+		local_position = touch_event.position
+	else:
+		return false
+	if _world == null or not _world.has_method("world_position_from_viewport_point"):
+		return false
+	var world_position: Vector2 = _world.world_position_from_viewport_point(local_position)
+	var entry := _launcher.entry_at_world_position(world_position)
+	if entry.is_empty():
+		return false
+	_handle_launcher_action_requested(str(entry.get("action_id", "")), str(entry.get("entry_id", "")))
+	return true
+
 func _flush_pending_checkpoint_with_wait(bridge: Variant, max_frames := 180) -> Dictionary:
 	var checkpoint_result: Dictionary = {"ok": true}
 	var wait_frames := 0
@@ -623,6 +746,32 @@ func _apply_remote_snapshot(snapshot_payload: Dictionary, apply_remote_position 
 		_runtime.apply_node_state(node_state, _runtime.current_server_unix())
 	else:
 		_runtime.apply_collected_nodes(RulesetScript.collected_nodes_from_snapshot(snapshot_payload))
+	_sync_runtime_debug_state()
+	_update_labels()
+
+func _apply_pending_navigation_state() -> void:
+	if _pending_navigation_state.is_empty():
+		return
+	var state := _pending_navigation_state.duplicate(true)
+	_pending_navigation_state = {}
+	if str(state.get("schema_version", "")) != "openworld_forest_launcher_navigation_v1":
+		return
+	if str(state.get("mode_id", "")) != ModelScript.MODE_ID:
+		return
+	var model_snapshot := _as_dictionary(state.get("model_snapshot", {}))
+	if not model_snapshot.is_empty():
+		model.apply_snapshot(model_snapshot)
+	var runtime_snapshot := _as_dictionary(state.get("runtime", {}))
+	_runtime.session_seconds = float(runtime_snapshot.get("session_seconds", _runtime.session_seconds))
+	_runtime.walk_phase = float(runtime_snapshot.get("walk_phase", _runtime.walk_phase))
+	var node_state := _as_dictionary(runtime_snapshot.get("node_state", {}))
+	if not node_state.is_empty():
+		_runtime.apply_node_state(node_state, _runtime.current_server_unix())
+	var position := _as_dictionary(state.get("player_position", {}))
+	if not position.is_empty():
+		set_player_position_for_tests(Vector2(float(position.get("x", _runtime.player_position.x)), float(position.get("y", _runtime.player_position.y))))
+	if model.last_message.strip_edges() == "":
+		model.last_message = "Bosque retomado."
 	_sync_runtime_debug_state()
 	_update_labels()
 

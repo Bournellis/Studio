@@ -46,7 +46,8 @@ func open_arena(host: Node) -> void:
 	if not bool(host.call("_require_session", "Entre antes de abrir a Arena PVE.")):
 		return
 
-	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+	var push_from_mode_shell := str(host.get("_current_screen")) == AppShellRouteContractScript.ROUTE_MODE_SHELL
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, push_from_mode_shell)
 	var rendered_from_cache := SessionStore.has_surface_snapshot(SessionStore.SURFACE_ARENA)
 	if rendered_from_cache:
 		render_selection(host)

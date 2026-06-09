@@ -10,6 +10,7 @@ signal back_requested
 signal guidance_next_requested
 signal guidance_hide_requested
 signal guidance_reopen_requested
+signal launcher_action_requested(action_id: String, entry_id: String)
 signal sheet_tab_changed(tab_id: String)
 
 const JoystickScript := preload("res://modes/openworld/openworld_virtual_joystick.gd")
@@ -30,6 +31,9 @@ var guidance_label: Label
 var guidance_step_label: Label
 var guidance_next_button: Button
 var guidance_hide_button: Button
+var launcher_panel: PanelContainer
+var launcher_label: Label
+var launcher_button: Button
 var inventory_button: Button
 var deposit_button: Button
 var complete_button: Button
@@ -125,6 +129,38 @@ func build(root: Control, next_model: Variant) -> void:
 		guidance_hide_requested.emit()
 	)
 	guidance_row.add_child(guidance_hide_button)
+
+	launcher_panel = PanelContainer.new()
+	launcher_panel.name = "OpenworldLauncherPrompt"
+	launcher_panel.add_theme_stylebox_override("panel", _panel_style(Color(0.075, 0.070, 0.052, 0.90), Color(0.92, 0.74, 0.38, 0.46)))
+	launcher_panel.visible = false
+	root.add_child(launcher_panel)
+
+	var launcher_margin := MarginContainer.new()
+	launcher_margin.add_theme_constant_override("margin_left", 10)
+	launcher_margin.add_theme_constant_override("margin_right", 8)
+	launcher_margin.add_theme_constant_override("margin_top", 7)
+	launcher_margin.add_theme_constant_override("margin_bottom", 7)
+	launcher_panel.add_child(launcher_margin)
+
+	var launcher_row := HBoxContainer.new()
+	launcher_row.add_theme_constant_override("separation", 8)
+	launcher_margin.add_child(launcher_row)
+
+	launcher_label = _hud_label("")
+	launcher_label.name = "OpenworldLauncherPromptLabel"
+	launcher_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	launcher_row.add_child(launcher_label)
+
+	launcher_button = _mini_button("Abrir")
+	launcher_button.name = "OpenworldLauncherPromptButton"
+	launcher_button.pressed.connect(func() -> void:
+		var action_id := str(launcher_button.get_meta("action_id", "")).strip_edges()
+		var entry_id := str(launcher_button.get_meta("entry_id", "")).strip_edges()
+		if action_id != "" and entry_id != "":
+			launcher_action_requested.emit(action_id, entry_id)
+	)
+	launcher_row.add_child(launcher_button)
 
 	joystick = JoystickScript.new()
 	joystick.name = "OpenworldVirtualJoystick"
@@ -230,6 +266,16 @@ func layout(screen_size: Vector2) -> void:
 		var minimum_width := actions.get_combined_minimum_size().x
 		var scale_x := minf(1.0, screen_size.x / maxf(1.0, minimum_width))
 		actions.scale = Vector2(scale_x, 1.0)
+	if launcher_panel != null:
+		var prompt_width := minf(screen_size.x - safe_margin * 2.0, 430.0)
+		var action_top := actions.position.y if actions != null else maxf(16.0, screen_size.y - 72.0)
+		launcher_panel.size = Vector2(prompt_width, 52.0)
+		launcher_panel.position = Vector2(
+			maxf(safe_margin, screen_size.x - prompt_width - safe_margin),
+			maxf(hud_top.position.y + hud_top.size.y + 8.0, action_top - 62.0)
+		)
+		if launcher_button != null:
+			launcher_button.custom_minimum_size = Vector2(66.0 if screen_size.x < 420.0 else 78.0, 38.0)
 
 func update(state: Dictionary) -> void:
 	_last_state = state.duplicate(true)
@@ -262,6 +308,23 @@ func update(state: Dictionary) -> void:
 			guidance_label.text = str(state.get("guidance_text", ""))
 		if guidance_step_label != null:
 			guidance_step_label.text = str(state.get("guidance_step_text", ""))
+	if launcher_panel != null:
+		var launcher_entry := _as_dictionary(state.get("launcher_entry", {}))
+		var launcher_visible := not launcher_entry.is_empty()
+		launcher_panel.visible = launcher_visible
+		if launcher_visible:
+			var label := str(launcher_entry.get("label", launcher_entry.get("display_name", "Entrada"))).strip_edges()
+			if label == "":
+				label = "Entrada"
+			var action_id := str(launcher_entry.get("action_id", "")).strip_edges()
+			var entry_id := str(launcher_entry.get("entry_id", "")).strip_edges()
+			if launcher_label != null:
+				launcher_label.text = "Perto: %s" % label
+			if launcher_button != null:
+				launcher_button.text = "Abrir"
+				launcher_button.tooltip_text = "Abrir %s" % label
+				launcher_button.set_meta("action_id", action_id)
+				launcher_button.set_meta("entry_id", entry_id)
 	_render_sheet_if_needed(state, false)
 
 func open_sheet(tab_id: String) -> void:
@@ -276,7 +339,7 @@ func force_sheet_render() -> void:
 
 func overlay_controls() -> Array[Control]:
 	var controls: Array[Control] = []
-	for node: Variant in [hud_top, actions, sheet, joystick]:
+	for node: Variant in [hud_top, actions, sheet, joystick, launcher_panel]:
 		if node is Control:
 			controls.append(node)
 	if guidance_panel is Control:

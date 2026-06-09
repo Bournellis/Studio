@@ -21,11 +21,13 @@ var _viewport_size := Vector2(390, 844)
 var _resource_fixtures: Array = []
 var _obstacle_fixtures: Array = []
 var _structure_fixtures: Array = []
+var _launcher_fixtures: Array = []
 var _objects_by_id: Dictionary = {}
 var _resource_objects: Dictionary = {}
 var _resource_objects_by_item: Dictionary = {}
 var _structure_objects: Dictionary = {}
 var _structure_blockers: Dictionary = {}
+var _launcher_objects: Dictionary = {}
 var _built_upgrades: Dictionary = {}
 var _movement_vector := Vector2.ZERO
 var _movement_speed := 0.0
@@ -46,13 +48,15 @@ func configure(
 	next_resource_fixtures: Array,
 	next_player_position: Vector2,
 	next_obstacle_fixtures: Array = [],
-	next_structure_fixtures: Array = []
+	next_structure_fixtures: Array = [],
+	next_launcher_fixtures: Array = []
 ) -> void:
 	world_size = next_world_size
 	chest_position = next_chest_position
 	_resource_fixtures = next_resource_fixtures.duplicate(true)
 	_obstacle_fixtures = next_obstacle_fixtures.duplicate(true)
 	_structure_fixtures = next_structure_fixtures.duplicate(true)
+	_launcher_fixtures = next_launcher_fixtures.duplicate(true)
 	player_initial_position = next_player_position
 	if is_inside_tree():
 		_build_world()
@@ -157,13 +161,73 @@ func structure_collision_enabled(upgrade_id: String) -> bool:
 	var shape := _structure_blockers.get(upgrade_id) as CollisionShape2D
 	return shape != null and not shape.disabled
 
+func launcher_count() -> int:
+	return _launcher_objects.size()
+
+func launcher_entry_ids() -> Array[String]:
+	var result: Array[String] = []
+	for key: String in _launcher_objects.keys():
+		result.append(key)
+	result.sort()
+	return result
+
+func launcher_position(entry_id: String) -> Vector2:
+	var object := _launcher_objects.get(entry_id) as OpenworldWorldObject
+	return object.global_position if object != null else Vector2.ZERO
+
+func launcher_visual_state(entry_id: String) -> Dictionary:
+	var object := _launcher_objects.get(entry_id) as OpenworldWorldObject
+	if object == null:
+		return {"exists": false}
+	return {
+		"exists": true,
+		"visible": object.visible,
+		"entry_id": object.entry_id,
+		"action_id": object.action_id,
+		"visual_kind": object.visual_kind,
+		"highlighted": object.launcher_highlighted,
+		"interaction_radius": object.interaction_radius,
+	}
+
+func nearest_launcher(player_position: Vector2) -> Dictionary:
+	var best: Dictionary = {}
+	var best_distance := INF
+	for entry_id: String in _launcher_objects.keys():
+		var object := _launcher_objects.get(entry_id) as OpenworldWorldObject
+		if object == null or not object.visible:
+			continue
+		var distance := player_position.distance_to(object.global_position)
+		if object.interaction_radius > 0.0 and distance <= object.interaction_radius and distance < best_distance:
+			best = _launcher_object_entry(object)
+			best_distance = distance
+	return best
+
+func launcher_entry_at_world_position(world_position: Vector2) -> Dictionary:
+	var best: Dictionary = {}
+	var best_distance := INF
+	for entry_id: String in _launcher_objects.keys():
+		var object := _launcher_objects.get(entry_id) as OpenworldWorldObject
+		if object == null or not object.visible:
+			continue
+		var radius := maxf(object.interaction_radius, maxf(object.visual_size.x, object.visual_size.y) * 0.65)
+		var distance := world_position.distance_to(object.global_position)
+		if radius > 0.0 and distance <= radius and distance < best_distance:
+			best = _launcher_object_entry(object)
+			best_distance = distance
+	return best
+
+func world_position_from_viewport_point(viewport_point: Vector2) -> Vector2:
+	var camera_position := _camera.position if _camera != null else _camera_center_for(get_player_position())
+	return camera_position - _viewport_size * 0.5 + viewport_point
+
 func set_state(
 	resources: Array[Dictionary],
 	nearest_node_id: String,
 	collection_progress: float,
 	pocket_full: bool,
 	next_walk_phase: float,
-	built_upgrades: Dictionary = {}
+	built_upgrades: Dictionary = {},
+	nearest_launcher_entry_id: String = ""
 ) -> void:
 	_walk_phase = next_walk_phase
 	_set_structure_visibility(built_upgrades)
@@ -183,6 +247,10 @@ func set_state(
 			collection_progress if resource_nearest else 0.0,
 			resource_nearby
 		)
+	for entry_id: String in _launcher_objects.keys():
+		var launcher := _launcher_objects.get(entry_id) as OpenworldWorldObject
+		if launcher != null:
+			launcher.set_launcher_state(entry_id == nearest_launcher_entry_id)
 	if player != null:
 		player.set_visual_state(pocket_full, _walk_phase)
 	queue_redraw()
@@ -203,6 +271,7 @@ func _build_world() -> void:
 	_resource_objects_by_item.clear()
 	_structure_objects.clear()
 	_structure_blockers.clear()
+	_launcher_objects.clear()
 	_built = true
 
 	_depth_layer = Node2D.new()
@@ -216,7 +285,7 @@ func _build_world() -> void:
 	_object_blocker_body.collision_mask = 1
 	add_child(_object_blocker_body)
 
-	var catalog: Array[Dictionary] = CatalogScript.build_catalog(chest_position, _resource_fixtures, _obstacle_fixtures, _structure_fixtures)
+	var catalog: Array[Dictionary] = CatalogScript.build_catalog(chest_position, _resource_fixtures, _obstacle_fixtures, _structure_fixtures, _launcher_fixtures)
 	for object_data: Dictionary in catalog:
 		var object := ObjectScript.new()
 		object.configure(object_data)
@@ -232,6 +301,10 @@ func _build_world() -> void:
 			var shape := _add_object_blocker(object_data) if bool(object_data.get("blocks_player", false)) else null
 			if shape != null:
 				_structure_blockers[object.upgrade_id] = shape
+		elif object.kind == CatalogScript.KIND_LAUNCHER:
+			_launcher_objects[object.entry_id] = object
+			if bool(object_data.get("blocks_player", false)):
+				_add_object_blocker(object_data)
 		elif bool(object_data.get("blocks_player", false)):
 			_add_object_blocker(object_data)
 	_set_structure_visibility(_built_upgrades)
@@ -415,4 +488,16 @@ func _resource_object_visual_state(object: OpenworldWorldObject) -> Dictionary:
 		"nearest": object.nearest,
 		"nearby": object.nearby,
 		"collection_progress": object.collection_progress,
+	}
+
+func _launcher_object_entry(object: OpenworldWorldObject) -> Dictionary:
+	return {
+		"entry_id": object.entry_id,
+		"label": object.display_name,
+		"display_name": object.display_name,
+		"action_id": object.action_id,
+		"visual_kind": object.visual_kind,
+		"position": object.global_position,
+		"interaction_radius": object.interaction_radius,
+		"visual_size": object.visual_size,
 	}
