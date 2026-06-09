@@ -239,20 +239,21 @@ function Build-Manifest {
     return [ordered]@{
         schema_version = "internal_alpha_manifest_v1"
         channel = "internal_alpha"
-        latest_version = "0.0.18-alpha.0"
-        latest_version_code = 18
+        latest_version = "0.0.19-alpha.0"
+        latest_version_code = 19
         minimum_supported_version = "0.0.13-alpha.0"
         minimum_supported_version_code = 13
         released_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         requires_save_reset = $false
         portal_url = $PortalUrl
         notes = @(
-            "Bosque Overlay Navigation Hotfix v1 publicado na URL principal de Internal Alpha.",
+            "Bosque Overlay Interaction Authority v1 publicado na URL principal de Internal Alpha.",
             "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
             "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
-            "Voltar, Fechar e Esc/Web fecham o overlay e devolvem input ao mesmo node do Bosque sem rebootstrap.",
-            "Acoes internas do overlay limpam estado ativo antes de devolver foco ao Bosque.",
-            "Arena PVE roda dentro do overlay e bloqueia fechamento durante replay ou mutacao critica.",
+            "Voltar, Fechar e Esc/Web usam a mesma autoridade de fechamento do overlay e devolvem input ao mesmo node do Bosque sem rebootstrap.",
+            "Menus abertos pelo Bosque usam rota de overlay sem acao mutante fantasma.",
+            "Refresh read-only nao bloqueia fechamento; respostas tardias sao ignoradas quando o overlay fecha ou muda de rota.",
+            "Arena PVE roda dentro do overlay e bloqueia fechamento apenas durante replay ou mutacao critica explicita.",
             "Arena PVE agora exporta e exibe HP/Mana iniciais buffados no replay da proxima luta.",
             "Openworld/Bosque usa operations v2 com ACK obrigatorio e retry local.",
             "Nodes coletaveis mantem cooldown por item via node_state.next_spawn_at e rejeicoes terminais nao ficam presas na fila.",
@@ -260,7 +261,7 @@ function Build-Manifest {
             "Menu usa busy por escopo para nao congelar acoes independentes durante requisicoes pendentes.",
             "Fogueira Estavel I so libera receitas apos ACK de structures.fogueira_estavel_1.",
             $(if ($PublicDownloads) { "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage." } else { "Portal/Web rodam no Cloudflare Pages; downloads usam login alpha e URLs assinadas temporarias." }),
-            "Manifesto recomenda build 0.0.18-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+            "Manifesto recomenda build 0.0.19-alpha.0 e mantem build minima 0.0.13-alpha.0.",
             "Progression Lab usa save separado e nao pontua ranking."
         )
         artifacts = [ordered]@{
@@ -297,6 +298,49 @@ function Write-TextUtf8NoBom {
         New-Item -ItemType Directory -Force -Path $parent | Out-Null
     }
     [System.IO.File]::WriteAllText($Path, $Text, [System.Text.UTF8Encoding]::new($false))
+}
+
+function ConvertTo-JavascriptStringLiteral {
+    param([string]$Value)
+    return (($Value | ConvertTo-Json -Compress))
+}
+
+function Write-WebReleaseDiagnostics {
+    param(
+        [string]$IndexPath,
+        [string]$ReleaseRoot,
+        [string]$StorageBaseUrl,
+        [string]$AppVersion,
+        [int]$AppVersionCode
+    )
+    if (-not (Test-Path -LiteralPath $IndexPath -PathType Leaf)) {
+        throw "Web index is missing for release diagnostics: $IndexPath"
+    }
+    $html = Get-Content -LiteralPath $IndexPath -Raw
+    $releaseRootLiteral = ConvertTo-JavascriptStringLiteral -Value $ReleaseRoot
+    $assetRootLiteral = ConvertTo-JavascriptStringLiteral -Value (($StorageBaseUrl.TrimEnd("/")) + "/web")
+    $appVersionLiteral = ConvertTo-JavascriptStringLiteral -Value $AppVersion
+    $diagnostics = @"
+<script>
+window.DRAXOS_WEB_RELEASE = Object.freeze({
+	releaseRoot: $releaseRootLiteral,
+	assetRoot: $assetRootLiteral,
+	appVersion: $appVersionLiteral,
+	appVersionCode: $AppVersionCode,
+	channel: "internal_alpha"
+});
+</script>
+"@
+    $diagnosticsPattern = '(?s)<script>\s*window\.DRAXOS_WEB_RELEASE\s*=\s*Object\.freeze\(\{.*?\}\);\s*</script>'
+    if ([regex]::IsMatch($html, $diagnosticsPattern)) {
+        $html = [regex]::Replace($html, $diagnosticsPattern, $diagnostics)
+    } elseif ($html.Contains("</head>")) {
+        $html = $html.Replace("</head>", "$diagnostics`n`t</head>")
+    } else {
+        $html = $diagnostics + $html
+    }
+    Assert-NoSecretLikeText -Text $html -Label "web release diagnostics"
+    Write-TextUtf8NoBom -Path $IndexPath -Text $html
 }
 
 function Write-ReleasePlan {
@@ -444,6 +488,15 @@ if ($normalizedStaticSiteBaseUrl -ne "") {
 $androidUrl = if ($PublicDownloads) { "$storageBaseUrl/downloads/draxos-mobile-alpha.apk" } else { "${protectedDownloadBaseUrl}?artifact=android" }
 $pcUrl = if ($PublicDownloads) { "$storageBaseUrl/downloads/draxos-mobile-alpha.zip" } else { "${protectedDownloadBaseUrl}?artifact=pc_windows" }
 
+if ($ShouldPackage -or $IsRemoteMutation) {
+    Write-WebReleaseDiagnostics `
+        -IndexPath $webIndex `
+        -ReleaseRoot $ReleaseRoot `
+        -StorageBaseUrl $storageBaseUrl `
+        -AppVersion "0.0.19-alpha.0" `
+        -AppVersionCode 19
+}
+
 $androidRecord = Artifact-Record -Path $androidApk -Label "Android APK" -Url $androidUrl -ExpectedMinimumBytes 1000000
 $pcRecord = Artifact-Record -Path $pcZip -Label "PC Windows ZIP" -Url $pcUrl -ExpectedMinimumBytes 1000000
 $webRecord = Artifact-Record -Path $webIndex -Label "Web Index" -Url $webUrl
@@ -496,8 +549,8 @@ $plan = [ordered]@{
     }
     app = [ordered]@{
         channel = "internal_alpha"
-        version = "0.0.18-alpha.0"
-        version_code = 18
+        version = "0.0.19-alpha.0"
+        version_code = 19
         requires_save_reset = $false
     }
     artifacts = $artifactRecords
@@ -534,6 +587,12 @@ if (Test-Path -LiteralPath $publishDir -PathType Container) {
 New-Item -ItemType Directory -Force -Path $portalPublishDir, $webPublishDir, $downloadsPublishDir | Out-Null
 
 Copy-DirectoryFiles -SourceDir $webDir -DestinationDir $webPublishDir -ExcludeExtensions @(".import")
+Write-WebReleaseDiagnostics `
+    -IndexPath (Join-Path $webPublishDir "index.html") `
+    -ReleaseRoot $ReleaseRoot `
+    -StorageBaseUrl $storageBaseUrl `
+    -AppVersion $plan.app.version `
+    -AppVersionCode $plan.app.version_code
 Copy-Item -LiteralPath $androidApk -Destination (Join-Path $downloadsPublishDir "draxos-mobile-alpha.apk") -Force
 Copy-Item -LiteralPath $pcZip -Destination (Join-Path $downloadsPublishDir "draxos-mobile-alpha.zip") -Force
 
@@ -670,8 +729,8 @@ if ($Mode -eq "FullPublish") {
 $report = [ordered]@{
     schema_version = "internal_alpha_publication_v2"
     channel = "internal_alpha"
-    app_version = "0.0.18-alpha.0"
-    app_version_code = 18
+    app_version = "0.0.19-alpha.0"
+    app_version_code = 19
     mode = $Mode
     generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     bucket = $BucketName

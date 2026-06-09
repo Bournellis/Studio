@@ -6,8 +6,8 @@ func test_project_info_constants_are_set() -> void:
 	assert_eq(ProjectInfo.GUT_VERSION, "9.6.0")
 	assert_eq(ProjectInfo.ACTIVE_TRACK, "Track 03 - Internal Alpha v0")
 	assert_eq(ProjectInfo.RELEASE_CHANNEL, "internal_alpha")
-	assert_eq(ProjectInfo.APP_VERSION, "0.0.18-alpha.0")
-	assert_eq(ProjectInfo.APP_VERSION_CODE, 18)
+	assert_eq(ProjectInfo.APP_VERSION, "0.0.19-alpha.0")
+	assert_eq(ProjectInfo.APP_VERSION_CODE, 19)
 	assert_eq(ProjectInfo.MANIFEST_SCHEMA_VERSION, "internal_alpha_manifest_v1")
 	assert_eq(ProjectInfo.MVP_MODE, "MVP_ONLY")
 	assert_eq(ProjectInfo.FIRST_SLICE_MODE, "FIRST_SLICE_SIM")
@@ -65,7 +65,7 @@ func test_update_manifest_current_recommended_and_required_status() -> void:
 	assert_false(bool(current.get("update_available", true)))
 
 	var recommended_manifest := base_manifest.duplicate(true)
-	recommended_manifest["latest_version"] = "0.0.18-alpha.0"
+	recommended_manifest["latest_version"] = "0.0.19-alpha.0"
 	recommended_manifest["latest_version_code"] = ProjectInfo.APP_VERSION_CODE + 1
 	var recommended := ProjectInfo.update_status_from_manifest(recommended_manifest)
 	assert_eq(str(recommended.get("status", "")), "recommended")
@@ -73,7 +73,7 @@ func test_update_manifest_current_recommended_and_required_status() -> void:
 	assert_true(bool(recommended.get("update_available", false)))
 
 	var required_manifest := base_manifest.duplicate(true)
-	required_manifest["minimum_supported_version"] = "0.0.18-alpha.0"
+	required_manifest["minimum_supported_version"] = "0.0.19-alpha.0"
 	required_manifest["minimum_supported_version_code"] = ProjectInfo.APP_VERSION_CODE + 1
 	var required := ProjectInfo.update_status_from_manifest(required_manifest)
 	assert_eq(str(required.get("status", "")), "required")

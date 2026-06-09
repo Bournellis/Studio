@@ -66,7 +66,8 @@ func open_arena(host: Node) -> void:
 	var state_result: Dictionary = await SupabaseClient.fetch_arena_state(SessionStore.access_token)
 	state_result = ArenaDevFixtureProviderScript.state_fallback_result(state_result, SessionStore.active_save_type)
 	if not bool(state_result.get("ok", false)):
-		host.call("_fail_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, state_result)
+		if not bool(host.call("_fail_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, state_result)):
+			return
 		if rendered_from_cache:
 			render_selection(host)
 			host.call("_show_notice", "Arena exibindo cache local; servidor nao respondeu agora.")
@@ -77,7 +78,8 @@ func open_arena(host: Node) -> void:
 		host.call("_ignore_stale_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, "Resposta antiga da Arena ignorada.")
 		return
 	if not SessionStore.apply_arena_result(state_result):
-		host.call("_fail_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, {"error": SessionStore.last_error})
+		if not bool(host.call("_fail_surface_refresh", SessionStore.SURFACE_ARENA, refresh_token, {"error": SessionStore.last_error})):
+			return
 		if rendered_from_cache:
 			render_selection(host)
 			host.call("_show_notice", "Arena exibindo cache local; resposta do servidor veio incompleta.")

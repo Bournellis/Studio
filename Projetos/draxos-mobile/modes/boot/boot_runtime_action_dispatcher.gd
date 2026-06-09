@@ -13,8 +13,23 @@ func _trigger_action(action_id: String, confirm_message: String = "") -> void:
 	await _execute_action(action_id)
 
 func _trigger_shell_overlay_action(action_id: String) -> void:
-	if _open_shell_overlay_action(action_id):
+	if not _open_shell_overlay_action(action_id):
 		await _trigger_action(action_id)
+		return
+	await _run_shell_overlay_entry_action(action_id)
+
+func _run_shell_overlay_entry_action(action_id: String) -> void:
+	match action_id:
+		AppShellActionContractScript.ACTION_SHOW_ACCOUNT:
+			_show_account()
+		AppShellActionContractScript.ACTION_SHOW_BASE:
+			await _show_base()
+		AppShellActionContractScript.ACTION_SHOW_SHOP:
+			await _show_shop()
+		AppShellActionContractScript.ACTION_SHOW_SOCIAL:
+			await _show_social()
+		AppShellActionContractScript.ACTION_OPEN_ARENA:
+			await _open_arena()
 
 func _on_confirmation_confirmed() -> void:
 	var action_id := _pending_confirmation_action
@@ -27,10 +42,13 @@ func _execute_action(action_id: String) -> void:
 	var route := AppShellActionRouterScript.route_action(action_id, _action_context())
 	var action := str(route.get("action_id", action_id))
 	var scope := str(route.get("scope_id", OperationStateScript.DEFAULT_SCOPE))
+	var endpoint := str(route.get("mutation_endpoint", "")).strip_edges()
 	if _action_scope_is_busy(scope):
 		return
 	_active_action_id = action
 	_active_action_scope = scope
+	if endpoint != "" and _shell_overlay_is_open():
+		_shell_overlay_close_lock_action_id = action
 	_error_label.text = ""
 	var action_started_ms := int(Time.get_ticks_msec())
 	_emit_client_event("action_start", _as_dictionary(route.get("payload", _action_payload(action))))
@@ -45,14 +63,14 @@ func _execute_action(action_id: String) -> void:
 			"minimum_supported_version": str(_update_gate.get("minimum_supported_version", "")),
 		})
 		_sync_buttons()
-	elif str(route.get("mutation_endpoint", "")).strip_edges() != "" and not SessionStore.runtime_allows_gameplay_mutation():
+	elif endpoint != "" and not SessionStore.runtime_allows_gameplay_mutation():
 		_error_label.text = SessionStore.runtime_mutation_block_reason()
 		_detail_label.text = "Tente sincronizar a configuracao remota antes de executar a acao."
 		_emit_client_event("precondition_failed", {
 			"action_id": action,
 			"screen": _current_screen,
 			"reason": "runtime_read_only",
-			"endpoint": str(route.get("mutation_endpoint", "")),
+			"endpoint": endpoint,
 			"runtime_fallback": SessionStore.runtime_config_is_fallback(),
 		})
 		_sync_immersive_feedback()
@@ -202,7 +220,6 @@ func _execute_action(action_id: String) -> void:
 	if _active_action_id == action:
 		var event_type := "action_failure" if _error_label.text != "" else "action_success"
 		var payload := _action_payload(action)
-		var endpoint := str(route.get("mutation_endpoint", ""))
 		if _error_label.text != "":
 			payload["error_text"] = _error_label.text
 		payload["duration_ms"] = maxi(0, int(Time.get_ticks_msec()) - action_started_ms)
@@ -219,6 +236,8 @@ func _execute_action(action_id: String) -> void:
 		_emit_client_event("action_latency", payload.duplicate(true))
 	_active_action_id = ""
 	_active_action_scope = OperationStateScript.DEFAULT_SCOPE
+	if _shell_overlay_close_lock_action_id == action:
+		_shell_overlay_close_lock_action_id = ""
 
 func _action_scope_is_busy(scope_id: String) -> bool:
 	var scope := OperationStateScript.normalize_scope(scope_id)

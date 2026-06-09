@@ -20,10 +20,22 @@ func _ready() -> void:
 		call_deferred("_recover_session_state")
 
 func _input(event: InputEvent) -> void:
+	if _handle_shell_overlay_input(event):
+		return
 	_handle_cancel_input(event)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _handle_shell_overlay_input(event):
+		return
 	_handle_cancel_input(event)
+
+func _handle_shell_overlay_input(event: InputEvent) -> bool:
+	if not _shell_overlay_is_open():
+		return false
+	if _mode_shell_overlay_controller.handle_input(self, event):
+		get_viewport().set_input_as_handled()
+		return true
+	return false
 
 func _handle_cancel_input(event: InputEvent) -> void:
 	if not _is_cancel_input(event):
