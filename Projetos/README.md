@@ -29,6 +29,17 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: author player/enemy card and mechanic ideas as Design Lab proposal packs, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab gates before full-run feel playtests.
 
+- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 first-person shooter tech probe with a light Draxos visual theme. The first contract is a traditional FPS baseline in a local 1x1 arena against a basic bot. Bootstrap includes local operating docs, status, work plan, reuse map, input autoload, generated arena scene, player FPS controller, bot V1 that walks and shoots, HUD, hitscan damage, initial knockback, validation entrypoint and GUT tests.
+  - Priority/status: `P2_IMPLEMENTACAO - FPS_SHOOTER_BOOTSTRAP_ACTIVE`
+  - Local agent guide: `FpsShooter/AGENTS.md`
+  - Operational status: `FpsShooter/implementation/current-status.md`
+  - Work plan: `FpsShooter/docs/work-plan.md`
+  - Reuse map: `FpsShooter/docs/reuse-map.md`
+  - Validation reference: `FpsShooter/docs/validation.md`
+  - Validation command: `FpsShooter/tools/validate.gd`
+  - Allowed work: code, validation, editor playtest and local documentation.
+  - Current next step: open in Godot editor, test the bootstrap arena and move into Track 01 - Arena 1x1 V1.
+
 ## Implementacao - Arena PVE Inicial
 
 - `draxos-mobile/`: mobile-first Draxos PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. The latest remote Internal Alpha package is `Bosque Persistent Overlay Shell v1` from 2026-06-09. Release root: `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`; official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`; direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`; deployment evidence: `https://a53c1d27.draxos-mobile-internal-alpha.pages.dev`. The package bumps APK/manifest to `0.0.17-alpha.0` / version code `17`, keeps minimum supported version code `13`, deploys `release`, and keeps the Bosque alive and visible behind Arena/Base/Shop/Social/Profile overlays while world input is paused and close/back returns to the same Bosque node without rebootstrap. Fabio reported the initial human playtest OK on 2026-06-09. Bosque Diegetic Launcher Foundation v1 remains the previous launcher package. Arena PVE Bonus Visual v1 remains the previous Arena package. Bosque Node Cooldown ACK v1 remains the previous Bosque persistence/spawn package. Bosque Resume Exit Lifecycle v1 remains the previous resume/exit package. Bosque Feel & Spawn Authority v1 remains the previous feel/spawn package. Bosque Persistence Rebase v1 remains the previous persistence/operations package. Track 13 release safety and Track 14 agent ops remain preserved operational baselines. Remote manifest smoke, remote artifact smoke, release/CORS smoke and remote Web launch smoke passed; preview loaded the game with release root matched and no runtime errors. Stable Portal/Web are Cloudflare Access protected. Android APK uses `debug_fallback`, accepted for playtest while release signing is deferred to broader Android distribution.
@@ -100,6 +111,7 @@ This directory contains active, conceptual and paused projects for the studio.
 
 - Use `draxos-roguelike-cardgame/` for the current P0 implementation focus: roguelike cardgame, ship hub, run map, complete-run route, Souls, relics, keyword engine, enemy intent and lane battles.
 - Use `draxos-mobile/` for DraxosMobile implementation: Godot mobile/PC/browser client, Supabase, Arena PVE-first async autobattler, Base, later PVP/social, Internal Alpha, release ops, validation and agent foundation.
+- Use `FpsShooter/` for the independent FPS tech probe: PC Windows editor-first, first-person controller, arena 1x1, bot shooter, hitscan, knockback, jump pads/platforms/void in future tracks, and light Draxos visual theme only.
 - Use `_conceitos/mobile-universe/` only as design reference for DraxosMobile.
 - Use `rpg-isometrico/` only for explicit historical/contextual consultation about the isometric action RPG.
 - Use `rpg-turnos/` only for explicit historical/contextual consultation about the 2D turn-based RPG-cardgame.

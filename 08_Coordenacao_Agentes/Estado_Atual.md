@@ -8,6 +8,7 @@
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
 - Foco P2 de implementacao: `Projetos/draxos-mobile/` (`BOSQUE_PERSISTENT_OVERLAY_SHELL_V1_PUBLISHED_INTERNAL_ALPHA`, release root `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, deployment evidence `https://a53c1d27.draxos-mobile-internal-alpha.pages.dev`, publicado Web/APK, APK/manifest `0.0.17-alpha.0`/version code `17`; Bosque permanece vivo e visivel atras de Arena/Base/Shop/Social/Profile em overlay, com input pausado e retorno sem rebootstrap, mantem minimum supported version code `13`, proximo passo operacional: playtest humano focado do pacote publicado)
+- Tech probe P2 de implementacao: `Projetos/FpsShooter/` (`FPS_SHOOTER_BOOTSTRAP_ACTIVE`; PC Windows editor-first FPS 3D independente com tema Draxos leve; proximo passo: editor playtest do bootstrap e Track 01 - Arena 1x1 V1)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -36,6 +37,16 @@
 - Trabalho permitido: codigo, design, documentacao local, configuracao de infraestrutura.
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation` e Supabase/Cloudflare CLI autenticada. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, PVP, tuning numerico amplo, novas armas, novas spells, economia ampla, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
 - Proximo passo: playtest humano focado do `Bosque Persistent Overlay Shell v1` publicado em Web/APK, validando prompts/landmarks do Bosque, abertura de Arena/Base/Shop/Social/Profile e retorno via `Voltar`. Bugs futuros voltam ao fluxo normal se aparecerem. Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final ou mutacoes remotas sem decisao propria.
+
+## FpsShooter
+
+- Status: **P2_IMPLEMENTACAO - FPS_SHOOTER_BOOTSTRAP_ACTIVE**
+- Fase: `Implementacao - FPS 3D Tech Probe`
+- Local: `Projetos/FpsShooter/`
+- Baseline atual: projeto oficial implementavel criado para testar Godot 4.6.2 em FPS 3D primeira pessoa, PC Windows editor-first. Bootstrap inclui docs locais, status, plano de tracks, projeto Godot, input bootstrap, cena de arena gerada por ferramenta, jogador FPS basico, bot V1 que anda e atira, HUD basico, hitscan, dano e knockback inicial.
+- Trabalho permitido: codigo, validacao, playtest no editor e documentacao local.
+- Restricao operacional: tech probe independente com tema Draxos leve; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem export/Web/mobile, multiplayer, matchmaking, Ricochet, jump pads, plataformas suspensas ou void/queda ate track explicita.
+- Proximo passo: abrir no editor, testar o bootstrap jogavel e selecionar o foco da Track 01 - Arena 1x1 V1.
 
 ## rpg-isometrico
 
