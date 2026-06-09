@@ -3,7 +3,7 @@
 - Status: `VIVO`
 - Last updated: `2026-06-09`
 - Scope: long-term hardening/refactor guardrails for DraxosMobile after
-  `Bosque Diegetic Launcher Foundation v1`.
+  `Bosque Persistent Overlay Shell v1`.
 
 ## Purpose
 
@@ -54,11 +54,11 @@ each kind of refactor.
 
 ## Current Package Guard
 
-The current package is `Bosque Diegetic Launcher Foundation v1`:
+The current package is `Bosque Persistent Overlay Shell v1`:
 
-- release root `internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c`;
-- version `0.0.16-alpha.0`;
-- version code `16`;
+- release root `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`;
+- version `0.0.17-alpha.0`;
+- version code `17`;
 - minimum supported version code `13`.
 
 The next operational step remains focused human playtest of the published

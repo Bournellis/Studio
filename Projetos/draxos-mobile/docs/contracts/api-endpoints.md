@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-06-09`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; `release/*` esta alinhado ao manifest remoto de Bosque Diegetic Launcher Foundation v1 (`0.0.16-alpha.0`, code `16`, minimo `0.0.13-alpha.0`, code `13`).
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; `release/*` esta alinhado ao manifest remoto de Bosque Persistent Overlay Shell v1 (`0.0.17-alpha.0`, code `17`, minimo `0.0.13-alpha.0`, code `13`).
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -533,7 +533,7 @@ Response:
 
 Retorna o manifest publico de updates da Internal Alpha v0.
 
-Status: **contrato vivo; fallback estatico e override remoto alinhados ao pacote publicado atual Bosque Diegetic Launcher Foundation v1**.
+Status: **contrato vivo; fallback estatico e override remoto alinhados ao pacote publicado atual Bosque Persistent Overlay Shell v1**.
 
 Scope: `release`.
 
@@ -545,24 +545,24 @@ Response:
 {
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
-  "latest_version": "0.0.16-alpha.0",
-  "latest_version_code": 16,
+  "latest_version": "0.0.17-alpha.0",
+  "latest_version_code": 17,
   "minimum_supported_version": "0.0.13-alpha.0",
   "minimum_supported_version_code": 13,
   "released_at": "2026-06-09T00:00:00Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Bosque Diegetic Launcher Foundation v1 publicado na URL principal de Internal Alpha.",
+    "Bosque Persistent Overlay Shell v1 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
-    "Bosque agora funciona como launcher diegetico com construcoes para Arena, Refugio/Base, Loja, Social e Perfil.",
-    "Abertura de menus pelo Bosque passa pelo shell action router e o Voltar retorna ao Bosque quando possivel.",
-    "Bosque integrado oculta o viewport jogavel ate receber bootstrap canonico remoto/cache, evitando flash full-spawn ao reentrar.",
-    "Manifesto recomenda build 0.0.16-alpha.0 e mantem build minima 0.0.13-alpha.0."
+    "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
+    "Voltar percorre a pilha do overlay e fechar devolve input ao mesmo node do Bosque sem rebootstrap.",
+    "Arena PVE roda dentro do overlay e bloqueia fechamento durante replay ou mutacao critica.",
+    "Manifesto recomenda build 0.0.17-alpha.0 e mantem build minima 0.0.13-alpha.0."
   ],
   "artifacts": {
-    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android", "sha256": "610c3cbfecda3819e0d18ce107e18bf22ccadb99e7b5ab8b8888a6873f2780e7", "auth_required": true },
-    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows", "sha256": "91317eccc56a921b49e602f7b4e8a054e7b7be100bbcb26e38f428684701d8b6", "auth_required": true },
+    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android", "sha256": "94bc88662174a5f9568672dcba9fc0a3686cf02b36ed4f8ab36f9f321b9a9f48", "auth_required": true },
+    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows", "sha256": "e14202f010a1d024e360322b5630f471e56254608fbe89b3e91e2d96a98039ca", "auth_required": true },
     "web": { "label": "Web", "url": "https://draxos-mobile-internal-alpha.pages.dev/web/index.html" }
   }
 }

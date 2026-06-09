@@ -17,7 +17,7 @@ https://<project-ref>.supabase.co/functions/v1/release/manifest
 
 A funcao retorna um JSON sem secrets e sem depender de login. A implementacao possui um manifest padrao versionado no repo em `server/functions/release/index.ts` e `supabase/functions/release/index.ts`. Override operacional por `RELEASE_MANIFEST_JSON_BASE64` ou `RELEASE_MANIFEST_JSON` fica disponivel apenas quando `RELEASE_MANIFEST_OVERRIDE_ENABLED=1`, para evitar que secrets antigos mantenham links obsoletos.
 
-O pacote operacional em preparacao para publicacao e `Bosque Persistent Overlay Shell v1` (`0.0.17-alpha.0`, version code `17`). Os downloads default do manifest continuam apontando para os artefatos configurados na funcao de release; nao derivar novos hashes ou URLs a partir do nome do pacote sem nova publicacao de artefatos.
+O pacote operacional publicado atual e `Bosque Persistent Overlay Shell v1` (`0.0.17-alpha.0`, version code `17`). Os downloads default do manifest continuam apontando para os artefatos configurados na funcao de release; nao derivar novos hashes ou URLs a partir do nome do pacote sem nova publicacao de artefatos.
 
 ## Payload
 
@@ -54,13 +54,13 @@ O pacote operacional em preparacao para publicacao e `Bosque Persistent Overlay 
     "android": {
       "label": "Android APK",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      "sha256": "610c3cbfecda3819e0d18ce107e18bf22ccadb99e7b5ab8b8888a6873f2780e7",
+      "sha256": "94bc88662174a5f9568672dcba9fc0a3686cf02b36ed4f8ab36f9f321b9a9f48",
       "auth_required": true
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      "sha256": "91317eccc56a921b49e602f7b4e8a054e7b7be100bbcb26e38f428684701d8b6",
+      "sha256": "e14202f010a1d024e360322b5630f471e56254608fbe89b3e91e2d96a98039ca",
       "auth_required": true
     },
     "web": {

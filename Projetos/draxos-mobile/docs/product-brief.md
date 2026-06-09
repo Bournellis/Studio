@@ -17,13 +17,13 @@ DraxosMobile e um jogo mobile-first de progressao persistente construido sobre c
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa operacional publicada e `Bosque Diegetic Launcher Foundation v1`: release root `internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c`, evidencia `https://56b58162.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, versao `0.0.16-alpha.0`, version code `16`, minimum supported version code `13`. O pacote transforma o Bosque em launcher diegetico para Arena PVE, Refugio/Base, Loja, Social e Perfil, preserva retorno via shell/`Voltar`, impede que o Bosque integrado renderize um mundo jogavel full-spawn antes do bootstrap canonico remoto/cache e preserva Bosque Bootstrap Authority v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1 e todos os pacotes anteriores como historico.
+A etapa operacional publicada e `Bosque Persistent Overlay Shell v1`: release root `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`, evidencia `https://a53c1d27.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, versao `0.0.17-alpha.0`, version code `17`, minimum supported version code `13`. O pacote mantem o Bosque vivo e visivel atras de Arena PVE, Refugio/Base, Loja, Social e Perfil em overlay, pausa input/coleta/movimento enquanto menus estao abertos e preserva retorno via shell/`Voltar` sem rebootstrap. Bosque Diegetic Launcher Foundation v1, Bosque Bootstrap Authority v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1 e todos os pacotes anteriores ficam preservados como historico.
 
 A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`. Bosque/Openworld e slice integrado de Internal Alpha para validar movimento, coleta, persistencia, cache e fronteira controlada com Arena/Basebuilder; nao e autorizacao para expansao ampla de mundo, economia, conteudo, armas/spells, PVP, visual final ou mutacoes remotas.
 
 ## Foco Atual
 
-Playtest humano inicial do pacote anterior, Bosque Bootstrap Authority v1, foi reportado OK por Fabio em 2026-06-09: tudo testado ate aquele momento parecia funcionar. O pacote atual publicado agora precisa de playtest humano focado no launcher diegetico: prompts/landmarks do Bosque, abertura de Arena/Base/Shop/Social/Profile e retorno via `Voltar`. Bugs futuros voltam ao fluxo normal se aparecerem.
+Playtest humano inicial do pacote anterior, Bosque Bootstrap Authority v1, foi reportado OK por Fabio em 2026-06-09: tudo testado ate aquele momento parecia funcionar. O pacote atual publicado agora precisa de playtest humano focado no overlay persistente: prompts/landmarks do Bosque, abertura de Arena/Base/Shop/Social/Profile e retorno via `Voltar` sem rebootstrap. Bugs futuros voltam ao fluxo normal se aparecerem.
 
 Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final, expansao ampla de Openworld ou mutacoes remotas sem decisao propria. Se aparecer bug novo, tratar como bugfix estreito a partir do pacote atual.
 
@@ -33,7 +33,7 @@ A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo de
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Bosque Durable Bau Mochila v1, Bosque Fogueira Potion Crafting v1, Bosque World Hub Domain Separation v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque Persistence Rebase v1, Bosque Feel & Spawn Authority v1, Bosque Resume Exit Lifecycle v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1, Bosque Bootstrap Authority v1 e Bosque Diegetic Launcher Foundation v1 e que Refugio, Arena PVE/Preparacao, Resultado e Bosque devem permanecer coerentes antes de abrir novo backend, schema, tuning, economia ou conteudo.
+First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Bosque Durable Bau Mochila v1, Bosque Fogueira Potion Crafting v1, Bosque World Hub Domain Separation v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque Persistence Rebase v1, Bosque Feel & Spawn Authority v1, Bosque Resume Exit Lifecycle v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1, Bosque Bootstrap Authority v1 e Bosque Persistent Overlay Shell v1 e que Refugio, Arena PVE/Preparacao, Resultado e Bosque devem permanecer coerentes antes de abrir novo backend, schema, tuning, economia ou conteudo.
 
 Ao abrir o pacote de Arena PVE inicial, devem ser avaliados juntos:
 
@@ -67,7 +67,7 @@ Terminologia implementada preservada como substancia/mock: Instrumento Ritual, S
 
 Ordem recomendada agora:
 
-1. Playtestar o pacote publicado `Bosque Diegetic Launcher Foundation v1` em Web/APK.
+1. Playtestar o pacote publicado `Bosque Persistent Overlay Shell v1` em Web/APK.
 2. Tratar bugs futuros por bugfix estreito se aparecerem.
 3. Retomar Arena PVE tutorial/primeiras arenas, labs e tuning apenas quando essa decisao existir.
 4. Base/preparacao como suporte da Arena PVE.

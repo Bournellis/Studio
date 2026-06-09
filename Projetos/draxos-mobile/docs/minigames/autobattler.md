@@ -33,8 +33,8 @@ reward path.
 ## Future Gate
 
 Future Autobattler work must wait for explicit package direction. Bosque
-Diegetic Launcher Foundation v1 is the current published Internal Alpha package,
-and the next operational step is focused human playtest of that launcher package.
+Persistent Overlay Shell v1 is the current published Internal Alpha package,
+and the next operational step is focused human playtest of that overlay package.
 Future bugs return to the normal bugfix flow if they appear.
 Arena PVE remains the first product core, but tuning, new enemies, PVP,
 economy, content, visual-final work or remote mutations require an explicit

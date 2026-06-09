@@ -107,7 +107,7 @@ function Test-ReleaseSafety {
     Test-Contains 'docs\hardening-program.md' $needle 'hardening program'
   }
   Test-Contains 'docs\contracts\update-manifest.md' '0.0.17-alpha.0' 'update manifest contract'
-  Test-Contains 'docs\contracts\update-manifest.md' '610c3cbfecda3819e0d18ce107e18bf22ccadb99e7b5ab8b8888a6873f2780e7' 'update manifest contract'
+  Test-Contains 'docs\contracts\update-manifest.md' '94bc88662174a5f9568672dcba9fc0a3686cf02b36ed4f8ab36f9f321b9a9f48' 'update manifest contract'
 }
 
 Write-Host 'DraxosMobile hardening contract check'
