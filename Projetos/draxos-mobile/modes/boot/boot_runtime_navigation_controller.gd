@@ -51,6 +51,7 @@ func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	_sync_nav_buttons()
 	_render_route_contents(screen_id)
 	_sync_status_from_session()
+	_publish_web_diagnostics_state()
 	_emit_client_event("screen_opened", {
 		"screen": screen_id,
 		"has_account": SessionStore.has_account_state(),
@@ -148,6 +149,7 @@ func _apply_orientation_for_route(_route_id: String) -> void:
 
 func _show_overlay_screen(route_id: String, push_history: bool = true) -> void:
 	_mode_shell_overlay_controller.show_screen(self, route_id, push_history)
+	_publish_web_diagnostics_state()
 
 func _open_shell_overlay_action(action_id: String) -> bool:
 	if _current_screen != ROUTE_MODE_SHELL:
@@ -157,13 +159,18 @@ func _open_shell_overlay_action(action_id: String) -> bool:
 	return true
 
 func _close_shell_overlay() -> bool:
-	return _mode_shell_overlay_controller.close(self)
+	var closed := _mode_shell_overlay_controller.close(self)
+	_publish_web_diagnostics_state()
+	return closed
 
 func _shell_overlay_is_open() -> bool:
 	return _mode_shell_overlay_controller.is_open()
 
 func _shell_overlay_current_route() -> String:
 	return _mode_shell_overlay_controller.current_route()
+
+func _shell_overlay_epoch() -> int:
+	return _mode_shell_overlay_controller.epoch()
 
 func _active_route_for_context() -> String:
 	if _shell_overlay_is_open() and _mode_shell_overlay_controller.current_route() != "":
@@ -179,3 +186,148 @@ func _shell_overlay_should_capture_screen(screen_id: String) -> bool:
 
 func _shell_overlay_fullscreen_parent() -> Control:
 	return _mode_shell_overlay_controller.fullscreen_parent()
+
+func _publish_web_diagnostics_state() -> void:
+	if not OS.has_feature("web"):
+		return
+	var payload := {
+		"project": ProjectInfoScript.PROJECT_NAME,
+		"releaseChannel": ProjectInfoScript.RELEASE_CHANNEL,
+		"appVersion": ProjectInfoScript.APP_VERSION,
+		"appVersionCode": ProjectInfoScript.APP_VERSION_CODE,
+		"currentScreen": _current_screen,
+		"activeRoute": _active_route_for_context(),
+		"overlayOpen": _shell_overlay_is_open(),
+		"overlayRoute": _shell_overlay_current_route(),
+		"overlayEpoch": _shell_overlay_epoch(),
+		"busy": _is_busy,
+		"criticalCloseLock": _shell_overlay_close_lock_action_id,
+		"replayRunning": _replay_running,
+	}
+	JavaScriptBridge.eval("window.DRAXOS_GODOT_STATE = %s;" % JSON.stringify(payload), true)
+	_ensure_web_overlay_input_bridge()
+	_focus_web_canvas_for_shell_input()
+	_apply_web_smoke_overlay_request()
+
+func _ensure_web_overlay_input_bridge() -> void:
+	if _web_overlay_input_bridge_bound:
+		return
+	_web_overlay_input_bridge_callback = JavaScriptBridge.create_callback(_handle_web_overlay_input_command)
+	JavaScriptBridge.get_interface("window").__draxosGodotOverlayCommand = _web_overlay_input_bridge_callback
+	JavaScriptBridge.eval("""(function(){
+		if (window.__DRAXOS_OVERLAY_INPUT_BRIDGE_BOUND) return;
+		window.__DRAXOS_OVERLAY_INPUT_BRIDGE_BOUND = true;
+		function overlayState() {
+			return window.DRAXOS_GODOT_STATE || {};
+		}
+		function callGodot(command) {
+			if (typeof window.__draxosGodotOverlayCommand === 'function') {
+				window.__draxosGodotOverlayCommand(command);
+			}
+		}
+		function overlayChromeMetrics() {
+			const canvas = document.querySelector('canvas');
+			if (!canvas) return null;
+			const rect = canvas.getBoundingClientRect();
+			const compact = rect.width <= 820;
+			if (compact) {
+				const margin = 12;
+				const top = rect.top + Math.max(28, rect.height * 0.08);
+				return {
+					left: rect.left + margin,
+					right: rect.right - margin,
+					top,
+					bottom: top + 80
+				};
+			}
+			const panelWidth = Math.min(640, Math.max(440, rect.width * 0.42));
+			const top = rect.top + 24;
+			return {
+				left: rect.right - panelWidth - 24,
+				right: rect.right - 24,
+				top,
+				bottom: top + 80
+			};
+		}
+		window.addEventListener('pointerdown', function(event) {
+			const state = overlayState();
+			if (!state.overlayOpen) return;
+			const metrics = overlayChromeMetrics();
+			if (!metrics) return;
+			if (event.clientY < metrics.top || event.clientY > metrics.bottom) return;
+			if (event.clientX >= metrics.right - 112 && event.clientX <= metrics.right) {
+				event.preventDefault();
+				event.stopPropagation();
+				callGodot('close');
+				return;
+			}
+			if (event.clientX >= metrics.left && event.clientX <= metrics.left + 112) {
+				event.preventDefault();
+				event.stopPropagation();
+				callGodot('back');
+			}
+		}, true);
+		window.addEventListener('keydown', function(event) {
+			const state = overlayState();
+			if (!state.overlayOpen) return;
+			if (event.key !== 'Escape' && event.code !== 'Escape') return;
+			event.preventDefault();
+			event.stopPropagation();
+			callGodot('escape');
+		}, true);
+	})();""", true)
+	_web_overlay_input_bridge_bound = true
+
+func _handle_web_overlay_input_command(args: Array) -> void:
+	if not _shell_overlay_is_open():
+		return
+	var command := ""
+	if not args.is_empty():
+		command = str(args[0]).strip_edges()
+	match command:
+		"close":
+			_mode_shell_overlay_controller.request_close(self)
+		"back", "escape":
+			_mode_shell_overlay_controller.request_back(self)
+		_:
+			return
+	_publish_web_diagnostics_state()
+
+func _focus_web_canvas_for_shell_input() -> void:
+	if not (_shell_overlay_is_open() or _current_screen == ROUTE_MODE_SHELL):
+		return
+	JavaScriptBridge.eval("""(function(){
+		const canvas = document.querySelector('canvas');
+		if (!canvas) return;
+		canvas.tabIndex = 0;
+		if (!canvas.__draxosFocusBound) {
+			canvas.__draxosFocusBound = true;
+			canvas.addEventListener('pointerdown', function(){
+				canvas.focus({ preventScroll: true });
+			}, true);
+		}
+		if (document.activeElement !== canvas) {
+			canvas.focus({ preventScroll: true });
+		}
+	})();""", true)
+
+func _apply_web_smoke_overlay_request() -> void:
+	if _web_smoke_overlay_request_applied:
+		return
+	if not OS.has_feature("web"):
+		return
+	if ProjectInfoScript.RELEASE_CHANNEL != "internal_alpha":
+		return
+	if not bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false)):
+		return
+	var request := str(JavaScriptBridge.eval("(new URLSearchParams(window.location.search).get('draxos_smoke') || '')", true)).strip_edges()
+	if request != "overlay-account":
+		return
+	_web_smoke_overlay_request_applied = true
+	call_deferred("_open_web_smoke_overlay_account")
+
+func _open_web_smoke_overlay_account() -> void:
+	if _shell_overlay_is_open():
+		return
+	_open_mode_shell(ModeShellRegistryScript.MODE_OPENWORLD)
+	_show_overlay_screen(AppShellRouteContractScript.ROUTE_ACCOUNT, false)

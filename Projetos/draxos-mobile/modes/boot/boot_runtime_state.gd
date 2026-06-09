@@ -107,6 +107,7 @@ var _current_screen := SCREEN_HUB
 var _pending_confirmation_action := ""
 var _active_action_id := ""
 var _active_action_scope := OperationStateScript.DEFAULT_SCOPE
+var _shell_overlay_close_lock_action_id := ""
 var _is_busy := false
 var _replay_running := false
 var _skip_replay := false
@@ -123,6 +124,9 @@ var _progression_lab_overlay: Control
 var _active_mode_id := ""
 var _mode_shell_navigation_cache: Dictionary = {}
 var _mode_shell_active_screen: Control = null
+var _web_smoke_overlay_request_applied := false
+var _web_overlay_input_bridge_bound := false
+var _web_overlay_input_bridge_callback = null
 @warning_ignore("unused_private_class_variable")
 var _selected_base_structure_id := "nucleo_energia"
 @warning_ignore("unused_private_class_variable")
@@ -163,6 +167,11 @@ func _shell_overlay_current_route() -> String:
 	if _mode_shell_overlay_controller == null:
 		return ""
 	return _mode_shell_overlay_controller.current_route()
+
+func _shell_overlay_epoch() -> int:
+	if _mode_shell_overlay_controller == null:
+		return 0
+	return _mode_shell_overlay_controller.epoch()
 
 func _shell_overlay_fullscreen_parent() -> Control:
 	if _mode_shell_overlay_controller != null:

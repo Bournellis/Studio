@@ -58,7 +58,8 @@ func _finish_cached_refresh(host: Node, surface: String, token: Dictionary, resu
 	return true
 
 func _fail_cached_refresh_or_error(host: Node, surface: String, token: Dictionary, result: Dictionary, fallback_message: String, render_method: String = "") -> bool:
-	host.call("_fail_surface_refresh", surface, token, result)
+	if not bool(host.call("_fail_surface_refresh", surface, token, result)):
+		return false
 	if SessionStore.has_surface_snapshot(surface):
 		if render_method != "":
 			host.call(render_method)

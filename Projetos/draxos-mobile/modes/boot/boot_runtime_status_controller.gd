@@ -201,6 +201,9 @@ func _begin_surface_refresh(surface: String, endpoint: String, message: String, 
 	var token := _operation_state.begin_busy(_active_action_scope, _active_action_id)
 	var session_token := SessionStore.begin_surface_refresh(surface, _active_action_id, endpoint, rendered_from_cache)
 	token["session_version"] = int(session_token.get("version", 0))
+	if _shell_overlay_is_open():
+		token["shell_overlay_epoch"] = _shell_overlay_epoch()
+		token["shell_overlay_route"] = _shell_overlay_current_route()
 	_status_label.text = message
 	_detail_label.text = "Atualizando com o servidor..." if rendered_from_cache else "Aguardando resposta do servidor..."
 	_error_label.text = ""
@@ -268,13 +271,19 @@ func _surface_refresh_current(surface: String, token: Dictionary) -> bool:
 		return true
 	if not _operation_state.is_current_lifecycle_token(token):
 		return false
+	if not _surface_refresh_overlay_context_current(token):
+		return false
 	var refresh := SessionStore.surface_refresh_snapshot(surface)
 	return int(refresh.get("refresh_version", 0)) == int(token.get("session_version", 0))
 
 func _ignore_stale_surface_refresh(surface: String, token: Dictionary, message: String = "") -> bool:
 	if _surface_refresh_current(surface, token):
 		return false
-	if message.strip_edges() != "":
+	var overlay_stale := _surface_refresh_overlay_context_stale(token)
+	if overlay_stale and _operation_state.is_current_lifecycle_token(token):
+		_operation_state.clear_busy(str(token.get("scope", _surface_scope_id(surface))))
+		SessionStore.fail_surface_refresh(surface, {"error": "OVERLAY_CONTEXT_CLOSED"}, _surface_token_for_session(token))
+	elif message.strip_edges() != "":
 		_show_notice(message)
 	_emit_client_event("surface_refresh_stale_ignored", {
 		"surface": surface,
@@ -282,11 +291,45 @@ func _ignore_stale_surface_refresh(surface: String, token: Dictionary, message: 
 		"token_version": int(token.get("session_version", token.get("version", 0))),
 		"current_version": int(SessionStore.surface_refresh_snapshot(surface).get("refresh_version", 0)),
 		"save_type": SessionStore.active_save_type,
+		"overlay_stale": overlay_stale,
+		"token_overlay_epoch": int(token.get("shell_overlay_epoch", 0)),
+		"current_overlay_epoch": _shell_overlay_epoch(),
+		"token_overlay_route": str(token.get("shell_overlay_route", "")),
+		"current_overlay_route": _shell_overlay_current_route(),
 	})
 	_is_busy = _operation_state.any_busy()
 	_sync_immersive_feedback()
 	_sync_buttons()
 	return true
+
+func _clear_shell_overlay_transient_busy() -> void:
+	var cleared := false
+	for scope: String in _operation_state.busy_scopes():
+		if scope == OperationStateScript.DEFAULT_SCOPE:
+			continue
+		_operation_state.invalidate_scope(scope)
+		cleared = true
+	if not cleared:
+		return
+	_is_busy = _operation_state.any_busy()
+	_sync_immersive_feedback()
+	_sync_buttons()
+
+func _surface_refresh_overlay_context_current(token: Dictionary) -> bool:
+	if not token.has("shell_overlay_epoch"):
+		return true
+	var token_epoch := int(token.get("shell_overlay_epoch", 0))
+	if token_epoch <= 0:
+		return true
+	if not _shell_overlay_is_open():
+		return false
+	if _shell_overlay_epoch() != token_epoch:
+		return false
+	var token_route := str(token.get("shell_overlay_route", "")).strip_edges()
+	return token_route == "" or token_route == _shell_overlay_current_route()
+
+func _surface_refresh_overlay_context_stale(token: Dictionary) -> bool:
+	return token.has("shell_overlay_epoch") and not _surface_refresh_overlay_context_current(token)
 
 func _emit_surface_latency_event(event_type: String, surface: String, result: Dictionary, ok: bool) -> void:
 	var client := _as_dictionary(result.get("_client", {}))

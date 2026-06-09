@@ -2,8 +2,8 @@ class_name DraxosModeShellOverlayController
 extends RefCounted
 
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
-const AppShellActionRouterScript := preload("res://modes/boot/ui/app_shell_action_router.gd")
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
+const ProjectInfoScript := preload("res://core/project_info.gd")
 
 const _OVERLAY_ACTION_ROUTES := {
 	AppShellActionContractScript.ACTION_OPEN_ARENA: AppShellRouteContractScript.ROUTE_ARENA_SELECTION,
@@ -20,6 +20,7 @@ var _content_title: Label
 var _status_label: Label
 var _detail_label: Label
 var _error_label: Label
+var _release_label: Label
 var _back_button: Button
 var _close_button: Button
 var _content_scroll: ScrollContainer
@@ -27,12 +28,16 @@ var _content_body: VBoxContainer
 var _current_route := ""
 var _history: Array[String] = []
 var _saved_targets: Dictionary = {}
+var _epoch := 0
 
 func is_open() -> bool:
 	return _root != null and is_instance_valid(_root)
 
 func current_route() -> String:
 	return _current_route
+
+func epoch() -> int:
+	return _epoch
 
 func history_size() -> int:
 	return _history.size()
@@ -60,6 +65,7 @@ func show_screen(host: Node, route_id: String, push_history: bool = true) -> voi
 	_prepare_host_for_route(host, target)
 	host.call("_render_route_contents", target)
 	host.call("_sync_status_from_session")
+	_publish_diagnostics(host)
 	var context := _as_dictionary(host.call("_action_context"))
 	host.call("_emit_client_event", "screen_opened", {
 		"screen": target,
@@ -71,6 +77,9 @@ func show_screen(host: Node, route_id: String, push_history: bool = true) -> voi
 	host.call("_sync_social_auto_sync_for_route")
 
 func go_back(host: Node) -> bool:
+	return request_back(host)
+
+func request_back(host: Node) -> bool:
 	if not is_open():
 		return false
 	if _close_blocked(host):
@@ -83,14 +92,20 @@ func go_back(host: Node) -> bool:
 	return true
 
 func close(host: Node) -> bool:
+	return request_close(host)
+
+func request_close(host: Node) -> bool:
 	if not is_open():
 		return false
 	if _close_blocked(host):
 		_show_blocked_message(host)
 		return false
 	host.call("_clear_battle_fullscreen_overlay")
+	if host.has_method("_clear_shell_overlay_transient_busy"):
+		host.call("_clear_shell_overlay_transient_busy")
 	_restore_host_targets(host)
 	_set_bosque_paused(host, false)
+	_epoch += 1
 	if is_instance_valid(_root):
 		_root.queue_free()
 	_root = null
@@ -99,19 +114,24 @@ func close(host: Node) -> bool:
 	_current_route = ""
 	_history.clear()
 	host.call("_sync_status_from_session")
+	_publish_diagnostics(host)
 	return true
 
 func force_close(host: Node) -> void:
 	if not is_open():
 		return
 	host.call("_clear_battle_fullscreen_overlay")
+	if host.has_method("_clear_shell_overlay_transient_busy"):
+		host.call("_clear_shell_overlay_transient_busy")
 	_restore_host_targets(host)
 	_set_bosque_paused(host, false)
+	_epoch += 1
 	if is_instance_valid(_root):
 		_root.queue_free()
 	_root = null
 	_current_route = ""
 	_history.clear()
+	_publish_diagnostics(host)
 
 func fullscreen_parent() -> Control:
 	if is_open():
@@ -153,6 +173,17 @@ func sync_controls(host: Node) -> void:
 	sync_layout(host)
 	_sync_busy_buttons(host)
 
+func handle_input(host: Node, event: InputEvent) -> bool:
+	if not is_open():
+		return false
+	if _is_cancel_input(event):
+		request_back(host)
+		return true
+	for position in _pointing_positions(host, event):
+		if _handle_chrome_point(host, position):
+			return true
+	return false
+
 func bind_targets_for_tests(host: Node) -> void:
 	_ensure_open(host)
 
@@ -160,6 +191,7 @@ func _ensure_open(host: Node) -> void:
 	if is_open():
 		sync_layout(host)
 		return
+	_epoch += 1
 	_build_overlay(host)
 	host.add_child(_root)
 	_bind_host_targets(host)
@@ -171,6 +203,7 @@ func _build_overlay(host: Node) -> void:
 	_root.name = "ModeShellMenuOverlay"
 	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.mouse_filter = Control.MOUSE_FILTER_PASS
+	_root.z_index = 1000
 
 	_backdrop = ColorRect.new()
 	_backdrop.name = "ModeShellMenuBackdrop"
@@ -182,6 +215,7 @@ func _build_overlay(host: Node) -> void:
 	_panel = PanelContainer.new()
 	_panel.name = "ModeShellMenuPanel"
 	_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	_panel.z_index = 1001
 	_panel.add_theme_stylebox_override("panel", UiTokens.panel_style_from_tokens("bg_panel", "border_active", bool(host.get("_compact_layout")), "accent_refuge", 1, 8, 12))
 	_root.add_child(_panel)
 
@@ -201,7 +235,7 @@ func _build_overlay(host: Node) -> void:
 	_back_button.name = "ModeShellMenuBackButton"
 	_back_button.text = "Voltar"
 	_back_button.pressed.connect(func() -> void:
-		go_back(host)
+		request_back(host)
 	)
 	if host.has_method("_prepare_touch_button"):
 		host.call("_prepare_touch_button", _back_button)
@@ -221,7 +255,7 @@ func _build_overlay(host: Node) -> void:
 	_close_button.name = "ModeShellMenuCloseButton"
 	_close_button.text = "Fechar"
 	_close_button.pressed.connect(func() -> void:
-		close(host)
+		request_close(host)
 	)
 	if host.has_method("_prepare_touch_button"):
 		host.call("_prepare_touch_button", _close_button)
@@ -245,6 +279,18 @@ func _build_overlay(host: Node) -> void:
 	_error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_error_label.add_theme_color_override("font_color", UiTokens.color("status_error"))
 	shell.add_child(_error_label)
+
+	_release_label = Label.new()
+	_release_label.name = "ModeShellMenuReleaseMarker"
+	_release_label.text = "Build %s %s code %d" % [
+		ProjectInfoScript.RELEASE_CHANNEL,
+		ProjectInfoScript.APP_VERSION,
+		ProjectInfoScript.APP_VERSION_CODE,
+	]
+	_release_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_release_label.add_theme_font_size_override("font_size", 11)
+	_release_label.add_theme_color_override("font_color", UiTokens.color("text_muted"))
+	shell.add_child(_release_label)
 
 	_content_scroll = ScrollContainer.new()
 	_content_scroll.name = "ModeShellMenuScroll"
@@ -340,19 +386,10 @@ func _set_bosque_paused(host: Node, paused: bool) -> void:
 func _close_blocked(host: Node) -> bool:
 	if bool(host.get("_replay_running")):
 		return true
-	var action_id := str(host.get("_active_action_id")).strip_edges()
-	if action_id == "":
-		return false
-	if not _host_has_blocking_busy(host):
-		return false
-	var route := AppShellActionRouterScript.route_action(action_id, _as_dictionary(host.call("_action_context")))
-	return str(route.get("mutation_endpoint", "")).strip_edges() != ""
-
-func _host_has_blocking_busy(host: Node) -> bool:
-	return bool(host.get("_is_busy"))
+	return str(host.get("_shell_overlay_close_lock_action_id")).strip_edges() != ""
 
 func _show_blocked_message(host: Node) -> void:
-	var message := "Aguarde a acao atual terminar antes de fechar."
+	var message := "Aguarde a acao critica terminar antes de fechar."
 	if bool(host.get("_replay_running")):
 		message = "Replay em andamento; use Pular replay ou aguarde concluir."
 	_detail_label.text = message
@@ -363,6 +400,77 @@ func _sync_busy_buttons(host: Node) -> void:
 		_back_button.disabled = _close_blocked(host)
 	if _close_button != null:
 		_close_button.disabled = _close_blocked(host)
+	if _release_label != null:
+		_release_label.text = "Build %s %s code %d" % [
+			ProjectInfoScript.RELEASE_CHANNEL,
+			ProjectInfoScript.APP_VERSION,
+			ProjectInfoScript.APP_VERSION_CODE,
+		]
+
+func _is_cancel_input(event: InputEvent) -> bool:
+	if event.is_action_pressed("ui_cancel"):
+		return true
+	var key_event := event as InputEventKey
+	if key_event == null:
+		return false
+	if not key_event.pressed or key_event.echo:
+		return false
+	return key_event.keycode == KEY_ESCAPE or key_event.physical_keycode == KEY_ESCAPE
+
+func _pointing_positions(host: Node, event: InputEvent) -> Array[Vector2]:
+	var positions: Array[Vector2] = []
+	var has_pointing_event := false
+	var mouse_event := event as InputEventMouseButton
+	if mouse_event != null and mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
+		positions.append(mouse_event.position)
+		has_pointing_event = true
+	var touch_event := event as InputEventScreenTouch
+	if touch_event != null and touch_event.pressed:
+		positions.append(touch_event.position)
+		has_pointing_event = true
+	if not has_pointing_event:
+		return positions
+	var host_control := host as Control
+	if host_control != null:
+		var mouse_position := host_control.get_global_mouse_position()
+		if not positions.has(mouse_position):
+			positions.append(mouse_position)
+	return positions
+
+func _handle_chrome_point(host: Node, position: Vector2) -> bool:
+	if _close_button != null \
+			and is_instance_valid(_close_button) \
+			and _close_button.visible \
+			and _close_button.get_global_rect().has_point(position):
+		request_close(host)
+		return true
+	if _back_button != null \
+			and is_instance_valid(_back_button) \
+			and _back_button.visible \
+			and _back_button.get_global_rect().has_point(position):
+		request_back(host)
+		return true
+	if _panel == null or not is_instance_valid(_panel):
+		return false
+	var panel_rect := _panel.get_global_rect()
+	if panel_rect.size.x <= 0.0 or panel_rect.size.y <= 0.0:
+		return false
+	var header_height := minf(80.0, panel_rect.size.y)
+	var header_rect := Rect2(panel_rect.position, Vector2(panel_rect.size.x, header_height))
+	if not header_rect.has_point(position):
+		return false
+	var local_x := position.x - panel_rect.position.x
+	if local_x >= panel_rect.size.x - 112.0:
+		request_close(host)
+		return true
+	if local_x <= 112.0:
+		request_back(host)
+		return true
+	return false
+
+func _publish_diagnostics(host: Node) -> void:
+	if host != null and host.has_method("_publish_web_diagnostics_state"):
+		host.call("_publish_web_diagnostics_state")
 
 func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:
