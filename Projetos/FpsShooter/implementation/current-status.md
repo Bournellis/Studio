@@ -4,7 +4,7 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS 3D tech probe`
-- Active stage: `Track 01C - Arena Layout V1`
+- Active stage: `Track 01D - Knockback Movement Combat V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -18,7 +18,7 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - PC Windows editor-first.
 - Traditional FPS baseline.
 - Local 1x1 arena against a bot.
-- Player movement, mouse look, jump, hitscan shot and knockback.
+- Player movement, mouse look, jump, hitscan shot and combat-readable knockback.
 - Fair bot baseline with vertical-aware line of sight.
 - `Duel Pit V1` arena layout with protected spawns, low/high cover, side platforms and ramps.
 - HUD, round state and bidirectional feel/feedback.
@@ -26,11 +26,11 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 
 ## Active Goal
 
-`Track 01C - Arena Layout V1` is complete. The project now has a first real duel map for editor playtesting, built on the Track 01A feel baseline and Track 01B fair bot with vertical awareness.
+`Track 01D - Knockback Movement Combat V1` is complete. The project now has a readable combat impulse baseline over `Duel Pit V1`, built on the Track 01A feel baseline, Track 01B fair bot with vertical awareness and Track 01C arena layout.
 
 ## Current Gate
 
-Closed for Track 01C. Run the 3-5 minute editor smoke focused on `Duel Pit V1`, then select the next Track 01 focus: knockback/movement combat, future weapon/projectile variants, or first hazard/verticality expansion.
+Closed for Track 01D. Run the 3-5 minute editor smoke focused on hit knockback, received knockback, ramp/platform movement and bot pressure. Then select the next focus: future weapon/projectile variants or first hazard/verticality expansion.
 
 ## Validation Snapshot
 
@@ -100,6 +100,15 @@ Track 01C Arena Layout V1:
 - bot reposition points are rebuilt around the map and exposed through debug helpers;
 - validation passes `19/19` GUT tests with `186` asserts.
 
+Track 01D Knockback Movement Combat V1:
+
+- combatant knockback now stores explicit impulse/debug data, clamps stacked horizontal/vertical force and decays more slowly while airborne than while grounded;
+- player hits apply a clearer horizontal push plus controlled lift, preserving the hitscan rifle while making knockback readable on ramps/platforms;
+- bot hits apply a smaller controlled lift and use the same combatant impulse contract;
+- feedback controller adds a short knockback pulse/thump effect without overwriting hit/miss/damage event semantics;
+- misses do not create false knockback or hit confirmation;
+- validation passes `20/20` GUT tests with `203` asserts.
+
 ## Read Next
 
 1. `AGENTS.md`
@@ -110,3 +119,4 @@ Track 01C Arena Layout V1:
 6. `implementation/tracks/track-01a-feel-feedback-v1/current-status.md`
 7. `implementation/tracks/track-01b-bot-duelist-v1/current-status.md`
 8. `implementation/tracks/track-01c-arena-layout-v1/current-status.md`
+9. `implementation/tracks/track-01d-knockback-movement-combat-v1/current-status.md`

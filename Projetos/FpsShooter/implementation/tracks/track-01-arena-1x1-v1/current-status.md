@@ -9,7 +9,7 @@ Make the first editor-playable 1x1 FPS arena loop against a basic bot.
 
 ## Entry Readiness
 
-Track 00 is complete. `Track 01A - Feel/Feedback V1`, `Track 01B - Bot Duelista V1` and `Track 01C - Arena Layout V1` are complete and can be used as the baseline for the rest of Track 01.
+Track 00 is complete. `Track 01A - Feel/Feedback V1`, `Track 01B - Bot Duelista V1`, `Track 01C - Arena Layout V1` and `Track 01D - Knockback Movement Combat V1` are complete and can be used as the baseline for the rest of Track 01.
 
 ## Completed Slice
 
@@ -19,20 +19,22 @@ Track 00 is complete. `Track 01A - Feel/Feedback V1`, `Track 01B - Bot Duelista 
 
 `Track 01C - Arena Layout V1` delivered `Duel Pit V1`: protected spawns, a central blocker, low/high cover, side platforms, ramps, visual route marks and bot reposition points tied to the new map.
 
+`Track 01D - Knockback Movement Combat V1` delivered readable hit/received knockback: horizontal force, controlled lift, stacked impulse clamps, air/ground decay differences, debug helpers and primitive knockback feedback on real hits.
+
 ## Planned Acceptance
 
 - player movement and mouse look feel usable;
 - player shot damages bot;
 - bot strafes/repositions and shoots with line of sight;
-- basic knockback is visible enough to evaluate;
+- knockback is visible, directional and useful enough to evaluate;
 - HUD communicates health and round state;
 - `R` restarts the round;
 - manual editor smoke is documented.
 
 ## Remaining Track 01 Directions
 
-- knockback and movement-combat pass;
 - later weapon/projectile variants after the hitscan feel remains stable.
+- first hazard/verticality expansion when movement-combat feel is accepted.
 
 ## Deferred
 

@@ -110,7 +110,7 @@ func _handle_movement(delta: float) -> void:
 		var previous_horizontal := Vector3(velocity.x, 0.0, velocity.z)
 		horizontal_velocity = previous_horizontal.lerp(horizontal_velocity, clampf(air_control, 0.0, 1.0))
 
-	var knockback := consume_knockback(delta)
+	var knockback := consume_knockback(delta, is_on_floor())
 	velocity = horizontal_velocity + Vector3(knockback.x, 0.0, knockback.z)
 	velocity.y = vertical_velocity + knockback.y
 

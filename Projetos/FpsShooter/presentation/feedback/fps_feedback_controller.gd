@@ -17,6 +17,7 @@ var player_damage_count: int = 0
 var bot_tell_count: int = 0
 var bot_shot_count: int = 0
 var bot_miss_count: int = 0
+var knockback_count: int = 0
 var round_end_count: int = 0
 
 func _ready() -> void:
@@ -85,6 +86,21 @@ func play_bot_miss(origin: Vector3, miss_position: Vector3) -> void:
 	_spawn_beam(origin, miss_position, Color(1.0, 0.52, 0.2, 0.52), 0.032, 0.075)
 	_spawn_light(origin, BOT_COLOR, 1.2, 1.4, 0.055)
 	_spawn_tone(origin, 250.0, 0.045, -16.0)
+
+func play_knockback(body_position: Vector3, direction: Vector3, force: float, from_player: bool) -> void:
+	knockback_count += 1
+	var flat := Vector3(direction.x, 0.0, direction.z)
+	if flat.length_squared() <= 0.0001:
+		flat = Vector3.FORWARD
+	flat = flat.normalized()
+	var color := PLAYER_COLOR if from_player else BOT_COLOR
+	var pulse_distance := clampf(force * 0.16, 0.42, 1.35)
+	var end_position := body_position + flat * pulse_distance + Vector3.UP * 0.12
+	var start_position := body_position + Vector3.UP * 0.12
+	_spawn_beam(start_position, end_position, color, 0.035, 0.085)
+	_spawn_sphere(start_position, 0.14, color, 0.09, true)
+	_spawn_light(start_position, color, 1.8, 1.65, 0.075)
+	_spawn_tone(start_position, 135.0 if from_player else 105.0, 0.055, -14.5)
 
 func play_round_end(player_won: bool) -> void:
 	last_event = &"round_end"

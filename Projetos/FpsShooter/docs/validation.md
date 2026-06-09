@@ -21,9 +21,9 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `19/19`;
-- `186` asserts;
-- Track 01C validates feedback controller, player hit/miss, map structure, protected spawn sightline, route markers, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()` and synthetic audio stream creation.
+- GUT `20/20`;
+- `203` asserts;
+- Track 01D validates feedback controller, player hit/miss, combatant impulse/lift/clamp/decay, player hit knockback, bot hit knockback, bot miss without knockback, map structure, protected spawn sightline, route markers, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()` and synthetic audio stream creation.
 
 ## Manual Smoke
 
@@ -38,7 +38,9 @@ Expected:
 - left click shoots while mouse is captured;
 - each player shot has muzzle/tracer feedback and a short synthetic shot sound;
 - aiming at the bot and shooting reduces bot health, flashes the bot, shows hitmarker and plays hit feedback;
+- hitting the bot pushes it in the shot direction with a small readable lift and short knockback pulse;
 - missing the bot still shows shot/tracer feedback without false hit confirmation;
+- missing the bot does not move it or show hit/knockback feedback;
 - the map is `Duel Pit V1`, with a central blocker, low/high cover, route markings, side platforms and ramps;
 - direct first shot from spawn does not immediately damage the bot;
 - player can move around the central blocker and read the side routes;
@@ -50,6 +52,7 @@ Expected:
 - bot normal shots show a short amber tell before damage;
 - bot shots can miss without damaging the player;
 - receiving bot damage shows red overlay, player health change, knockback and feedback audio;
+- received knockback is lighter than player-applied knockback but still readable;
 - health values change;
 - round victory/defeat gives clear HUD feedback;
 - `R` restarts the round;

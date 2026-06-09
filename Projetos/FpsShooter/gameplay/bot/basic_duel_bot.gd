@@ -414,7 +414,7 @@ func _distance_management_movement() -> Vector3:
 	return Vector3.ZERO
 
 func _build_velocity(desired_move: Vector3, delta: float) -> Vector3:
-	var knockback := consume_knockback(delta)
+	var knockback := consume_knockback(delta, is_on_floor())
 	var horizontal := desired_move
 	if horizontal.length_squared() > 1.0:
 		horizontal = horizontal.normalized()

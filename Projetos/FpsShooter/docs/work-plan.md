@@ -1,7 +1,7 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-09`
-- Status: `TRACK_01C_ARENA_LAYOUT_COMPLETE`
+- Status: `TRACK_01D_KNOCKBACK_MOVEMENT_COMBAT_COMPLETE`
 
 ## North Star
 
@@ -31,7 +31,7 @@ Acceptance:
 
 Goal: editor-playable local 1x1 arena shooter.
 
-Status: active; Track 01A, Track 01B and Track 01C are complete.
+Status: active; Track 01A, Track 01B, Track 01C and Track 01D are complete.
 
 Acceptance:
 
@@ -91,13 +91,28 @@ Delivered:
 - bot reposition points rebuilt around the new map;
 - automated coverage for map structure, spawn sightline blocking, route markers and bot reposition points.
 
+## Track 01D - Knockback Movement Combat V1
+
+Goal: make knockback useful and readable on the first real duel map.
+
+Status: complete.
+
+Delivered:
+
+- explicit combatant impulse contract with last impulse/event debug data;
+- horizontal force, controlled lift and stacked impulse clamps;
+- slower airborne decay and faster grounded decay;
+- player hit knockback tuned for readable displacement without changing weapon scope;
+- bot hit knockback tuned as a lighter received-damage impulse;
+- primitive knockback pulse/thump feedback on real hits only;
+- automated coverage for impulse, clamp, decay, player hit, bot hit and bot miss.
+
 ## Track 02 - Next Combat Shape
 
 Goal: choose the next gameplay shape after the first readable duel baseline.
 
 Candidate scope:
 
-- knockback and movement-combat pass using the new `Duel Pit V1` routes;
 - recoil/spread or ammo/reload only if explicitly selected;
 - future projectile variants after hitscan feel remains stable.
 
