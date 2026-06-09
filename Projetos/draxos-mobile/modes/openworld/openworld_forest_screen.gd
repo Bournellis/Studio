@@ -109,13 +109,16 @@ func session_state_for_tests() -> String:
 func abandon_confirm_pending_for_tests() -> bool:
 	return _abandon_confirm_pending
 
+func bootstrap_loading_for_tests() -> bool:
+	return _bootstrap_loading
+
 func configure_integrated_alpha(client: Node, store: Node, token: String) -> void:
 	var bridge = _ensure_session_bridge()
 	bridge.configure(model, client, store, token, Callable(self, "_apply_remote_snapshot"))
 	if bridge.is_active():
 		integration_mode = "integrated_alpha"
+		_set_bootstrap_loading(true)
 		if is_inside_tree() and _ready_completed:
-			_set_bootstrap_loading(true)
 			call_deferred("_resume_or_start_integrated_session")
 
 func _process(delta: float) -> void:
@@ -166,6 +169,7 @@ func _build_world_viewport() -> void:
 	_world_viewport_container.mouse_filter = Control.MOUSE_FILTER_STOP
 	_world_viewport_container.gui_input.connect(_on_world_gui_input)
 	_world_viewport_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_world_viewport_container.visible = not _bootstrap_loading
 	add_child(_world_viewport_container)
 
 	_world_viewport = SubViewport.new()

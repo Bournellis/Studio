@@ -56,6 +56,7 @@ class FakeSupabaseClient:
 	var complete_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var abandon_result: Dictionary = {"ok": false, "error": {"code": "NETWORK_UNAVAILABLE"}}
 	var checkpoint_results: Array[Dictionary] = []
+	var state_delay_frames := 0
 	var state_calls: Array[Dictionary] = []
 	var start_calls: Array[Dictionary] = []
 	var complete_calls: Array[Dictionary] = []
@@ -66,6 +67,8 @@ class FakeSupabaseClient:
 
 	func get_mode_state(mode_id: String, token: String) -> Dictionary:
 		state_calls.append({"mode_id": mode_id, "token": token})
+		for _index in range(state_delay_frames):
+			await get_tree().process_frame
 		return state_result
 
 	func start_mode_session(request_id: String, mode_id: String, slice_id: String, token: String, request_hash: String) -> Dictionary:
@@ -210,6 +213,44 @@ func test_integrated_screen_starts_session_and_reports_synced_state() -> void:
 	assert_eq(str(client.start_calls[0].get("request_hash", "")), "screen-hash-1")
 	assert_eq(str(screen.call("_server_session_id")), "screen-session")
 	assert_true(_telemetry_has_event(client, "mode_session_started"))
+
+func test_integrated_bootstrap_hides_world_until_remote_state_arrives() -> void:
+	var client := FakeSupabaseClient.new()
+	var store := FakeSessionStore.new()
+	add_child_autofree(client)
+	add_child_autofree(store)
+	client.state_delay_frames = 4
+	var now_unix := int(Time.get_unix_time_from_system())
+	client.state_result = {
+		"ok": true,
+		"body": {
+			"server_time": now_unix,
+			"active_session": _session_payload("hidden-bootstrap-session", 7, {
+				"last_message": "Bosque online.",
+				"node_state": {
+					"node_galho_01": {
+						"next_spawn_at": now_unix + 300,
+					},
+				},
+			}),
+		},
+	}
+	var screen = ScreenScript.new()
+	screen.configure_integrated_alpha(client, store, "token-alpha")
+	add_child_autofree(screen)
+
+	var world_view := screen.find_child("OpenworldForestWorldView", true, false) as SubViewportContainer
+	assert_not_null(world_view)
+	assert_true(screen.bootstrap_loading_for_tests())
+	assert_false(world_view.visible)
+
+	await get_tree().process_frame
+	assert_false(world_view.visible)
+
+	await wait_seconds(0.18)
+	assert_eq(screen.session_state_for_tests(), "synced")
+	assert_false(screen.bootstrap_loading_for_tests())
+	assert_true(world_view.visible)
 
 func test_preview_result_without_auth_is_explicitly_no_reward() -> void:
 	var screen = ScreenScript.new()
