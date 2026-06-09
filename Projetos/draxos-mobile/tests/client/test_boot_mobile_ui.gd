@@ -1520,6 +1520,99 @@ func test_bosque_overlay_header_buttons_keep_clickable_input_and_navigation() ->
 	assert_false(boot._shell_overlay_is_open())
 	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
 
+func test_bosque_overlay_internal_button_uses_viewport_rect_authority() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+	boot._show_overlay_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+	await wait_process_frames(3)
+
+	var mode_screen := boot.get("_mode_shell_active_screen") as Control
+	var return_button := _find_button_by_text(_find_node_by_name(boot, "ModeShellMenuOverlay"), "Voltar ao Refugio")
+	assert_not_null(mode_screen)
+	assert_not_null(return_button)
+	assert_true(boot._shell_overlay_is_open())
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+
+	await _click_button_via_viewport(return_button)
+	await wait_process_frames(2)
+
+	if boot._shell_overlay_is_open():
+		var overlay := _find_node_by_name(boot, "ModeShellMenuOverlay")
+		var relative_path := str(overlay.get_path_to(return_button))
+		var center := return_button.get_global_rect().get_center()
+		boot._handle_web_overlay_input_command([JSON.stringify({
+			"type": "button",
+			"path": relative_path,
+			"x": center.x,
+			"y": center.y,
+			"text": return_button.text,
+		})])
+		await wait_process_frames(2)
+
+	assert_false(boot._shell_overlay_is_open())
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+	assert_true(mode_screen == boot.get("_mode_shell_active_screen"))
+
+func test_bosque_overlay_web_button_bridge_activates_internal_button() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+	boot._show_overlay_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+	await wait_process_frames(3)
+
+	var overlay := _find_node_by_name(boot, "ModeShellMenuOverlay")
+	var return_button := _find_button_by_text(overlay, "Voltar ao Refugio")
+	assert_not_null(overlay)
+	assert_not_null(return_button)
+	assert_true(boot._shell_overlay_is_open())
+
+	var relative_path := str(overlay.get_path_to(return_button))
+	var center := return_button.get_global_rect().get_center()
+	boot._handle_web_overlay_input_command([JSON.stringify({
+		"type": "button",
+		"path": relative_path,
+		"x": center.x,
+		"y": center.y,
+		"text": return_button.text,
+	})])
+	await wait_process_frames(2)
+
+	assert_false(boot._shell_overlay_is_open())
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+
+func test_bosque_overlay_web_wheel_bridge_scrolls_menu_body() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+	await boot._trigger_shell_overlay_action(AppShellActionContractScript.ACTION_SHOW_ACCOUNT)
+	await wait_process_frames(3)
+
+	var scroll := _find_node_by_name(boot, "ModeShellMenuScroll") as ScrollContainer
+	assert_not_null(scroll)
+	assert_true(boot._shell_overlay_is_open())
+	assert_eq(scroll.scroll_vertical, 0)
+
+	boot._handle_web_overlay_input_command([JSON.stringify({
+		"type": "wheel",
+		"deltaY": 420,
+	})])
+	await wait_process_frames(2)
+
+	assert_gt(scroll.scroll_vertical, 0)
+
 func test_bosque_overlay_escape_key_closes_from_web_input_phase() -> void:
 	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
 	_prepare_account_state()
@@ -2738,6 +2831,24 @@ func _send_raw_click_to_boot(boot: Node, position: Vector2) -> void:
 	event.pressed = true
 	event.position = position
 	boot.call("_input", event)
+
+func _click_button_via_viewport(button: Button) -> void:
+	assert_not_null(button)
+	if button == null:
+		return
+	var center := button.get_global_rect().get_center()
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	press.position = center
+	get_viewport().push_input(press)
+	await get_tree().process_frame
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.pressed = false
+	release.position = center
+	get_viewport().push_input(release)
+	await get_tree().process_frame
 
 func _child_index_by_name(root: Node, node_name: String) -> int:
 	if root == null:

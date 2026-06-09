@@ -150,6 +150,7 @@ func _apply_orientation_for_route(_route_id: String) -> void:
 func _show_overlay_screen(route_id: String, push_history: bool = true) -> void:
 	_mode_shell_overlay_controller.show_screen(self, route_id, push_history)
 	_publish_web_diagnostics_state()
+	call_deferred("_publish_web_diagnostics_state")
 
 func _open_shell_overlay_action(action_id: String) -> bool:
 	if _current_screen != ROUTE_MODE_SHELL:
@@ -190,16 +191,34 @@ func _shell_overlay_fullscreen_parent() -> Control:
 func _publish_web_diagnostics_state() -> void:
 	if not OS.has_feature("web"):
 		return
+	var overlay_panel := {}
+	var overlay_buttons: Array[Dictionary] = []
+	var overlay_input := {}
+	if _shell_overlay_is_open():
+		overlay_panel = _mode_shell_overlay_controller.panel_diagnostics()
+		overlay_buttons = _mode_shell_overlay_controller.button_diagnostics()
+		overlay_input = _mode_shell_overlay_controller.input_diagnostics()
 	var payload := {
 		"project": ProjectInfoScript.PROJECT_NAME,
 		"releaseChannel": ProjectInfoScript.RELEASE_CHANNEL,
 		"appVersion": ProjectInfoScript.APP_VERSION,
 		"appVersionCode": ProjectInfoScript.APP_VERSION_CODE,
+		"viewportSize": {
+			"width": get_viewport_rect().size.x,
+			"height": get_viewport_rect().size.y,
+		},
 		"currentScreen": _current_screen,
 		"activeRoute": _active_route_for_context(),
 		"overlayOpen": _shell_overlay_is_open(),
 		"overlayRoute": _shell_overlay_current_route(),
 		"overlayEpoch": _shell_overlay_epoch(),
+		"overlayPanel": overlay_panel,
+		"overlayButtons": overlay_buttons,
+		"overlayInput": overlay_input,
+		"actionInput": {
+			"sequence": _web_action_sequence,
+			"last": _web_last_action.duplicate(true),
+		},
 		"busy": _is_busy,
 		"criticalCloseLock": _shell_overlay_close_lock_action_id,
 		"replayRunning": _replay_running,
@@ -224,6 +243,37 @@ func _ensure_web_overlay_input_bridge() -> void:
 			if (typeof window.__draxosGodotOverlayCommand === 'function') {
 				window.__draxosGodotOverlayCommand(command);
 			}
+		}
+		function callGodotPayload(payload) {
+			callGodot(JSON.stringify(payload));
+		}
+		function canvasPoint(event, state) {
+			const canvas = document.querySelector('canvas');
+			if (!canvas) return null;
+			const rect = canvas.getBoundingClientRect();
+			if (rect.width <= 0 || rect.height <= 0) return null;
+			const viewport = state && state.viewportSize ? state.viewportSize : null;
+			const scaleX = viewport && viewport.width ? viewport.width / rect.width : 1;
+			const scaleY = viewport && viewport.height ? viewport.height / rect.height : 1;
+			return {
+				x: (event.clientX - rect.left) * scaleX,
+				y: (event.clientY - rect.top) * scaleY,
+			};
+		}
+		function rectContains(rect, point) {
+			if (!rect || !point) return false;
+			return point.x >= rect.x &&
+				point.x <= rect.x + rect.width &&
+				point.y >= rect.y &&
+				point.y <= rect.y + rect.height;
+		}
+		function overlayButtonAt(state, point) {
+			const buttons = Array.isArray(state.overlayButtons) ? state.overlayButtons : [];
+			for (let index = buttons.length - 1; index >= 0; index -= 1) {
+				const button = buttons[index];
+				if (rectContains(button, point)) return button;
+			}
+			return null;
 		}
 		function overlayChromeMetrics() {
 			const canvas = document.querySelector('canvas');
@@ -252,6 +302,20 @@ func _ensure_web_overlay_input_bridge() -> void:
 		window.addEventListener('pointerdown', function(event) {
 			const state = overlayState();
 			if (!state.overlayOpen) return;
+			const point = canvasPoint(event, state);
+			const button = overlayButtonAt(state, point);
+			if (button && button.path) {
+				event.preventDefault();
+				event.stopPropagation();
+				callGodotPayload({
+					type: 'button',
+					path: button.path,
+					x: point.x,
+					y: point.y,
+					text: button.text || ''
+				});
+				return;
+			}
 			const metrics = overlayChromeMetrics();
 			if (!metrics) return;
 			if (event.clientY < metrics.top || event.clientY > metrics.bottom) return;
@@ -267,6 +331,19 @@ func _ensure_web_overlay_input_bridge() -> void:
 				callGodot('back');
 			}
 		}, true);
+		window.addEventListener('wheel', function(event) {
+			const state = overlayState();
+			if (!state.overlayOpen) return;
+			const point = canvasPoint(event, state);
+			const panel = state.overlayPanel || null;
+			if (!rectContains(panel, point)) return;
+			event.preventDefault();
+			event.stopPropagation();
+			callGodotPayload({
+				type: 'wheel',
+				deltaY: event.deltaY || 0
+			});
+		}, { capture: true, passive: false });
 		window.addEventListener('keydown', function(event) {
 			const state = overlayState();
 			if (!state.overlayOpen) return;
@@ -284,6 +361,25 @@ func _handle_web_overlay_input_command(args: Array) -> void:
 	var command := ""
 	if not args.is_empty():
 		command = str(args[0]).strip_edges()
+	var parsed: Variant = null
+	if command.begins_with("{"):
+		parsed = JSON.parse_string(command)
+	if parsed is Dictionary:
+		var payload := parsed as Dictionary
+		match str(payload.get("type", "")).strip_edges():
+			"button":
+				var point := Vector2(
+					float(payload.get("x", -100000.0)),
+					float(payload.get("y", -100000.0))
+				)
+				if _mode_shell_overlay_controller.request_button(self, str(payload.get("path", "")), point):
+					call_deferred("_publish_web_diagnostics_state")
+			"wheel":
+				if _mode_shell_overlay_controller.request_scroll(self, float(payload.get("deltaY", 0.0))):
+					call_deferred("_publish_web_diagnostics_state")
+			_:
+				return
+		return
 	match command:
 		"close":
 			_mode_shell_overlay_controller.request_close(self)
@@ -321,13 +417,25 @@ func _apply_web_smoke_overlay_request() -> void:
 	if not bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/dev_tools_enabled", false)):
 		return
 	var request := str(JavaScriptBridge.eval("(new URLSearchParams(window.location.search).get('draxos_smoke') || '')", true)).strip_edges()
-	if request != "overlay-account":
-		return
+	var route_id := ""
+	match request:
+		"overlay-account":
+			route_id = AppShellRouteContractScript.ROUTE_ACCOUNT
+		"overlay-base":
+			route_id = AppShellRouteContractScript.ROUTE_BASE
+		"overlay-shop":
+			route_id = AppShellRouteContractScript.ROUTE_SHOP
+		"overlay-social":
+			route_id = AppShellRouteContractScript.ROUTE_SOCIAL
+		"overlay-arena":
+			route_id = AppShellRouteContractScript.ROUTE_ARENA_SELECTION
+		_:
+			return
 	_web_smoke_overlay_request_applied = true
-	call_deferred("_open_web_smoke_overlay_account")
+	call_deferred("_open_web_smoke_overlay_route", route_id)
 
-func _open_web_smoke_overlay_account() -> void:
+func _open_web_smoke_overlay_route(route_id: String) -> void:
 	if _shell_overlay_is_open():
 		return
 	_open_mode_shell(ModeShellRegistryScript.MODE_OPENWORLD)
-	_show_overlay_screen(AppShellRouteContractScript.ROUTE_ACCOUNT, false)
+	_show_overlay_screen(route_id, false)
