@@ -16,6 +16,7 @@ var miss_count: int = 0
 var player_damage_count: int = 0
 var bot_tell_count: int = 0
 var bot_shot_count: int = 0
+var bot_miss_count: int = 0
 var round_end_count: int = 0
 
 func _ready() -> void:
@@ -77,6 +78,13 @@ func play_bot_shot(origin: Vector3, target_position: Vector3) -> void:
 	_spawn_sphere(origin, 0.2, BOT_COLOR, 0.1, true)
 	_spawn_light(origin, BOT_COLOR, 2.5, 2.4, 0.09)
 	_spawn_tone(origin, 320.0, 0.06, -10.5)
+
+func play_bot_miss(origin: Vector3, miss_position: Vector3) -> void:
+	last_event = &"bot_miss"
+	bot_miss_count += 1
+	_spawn_beam(origin, miss_position, Color(1.0, 0.52, 0.2, 0.52), 0.032, 0.075)
+	_spawn_light(origin, BOT_COLOR, 1.2, 1.4, 0.055)
+	_spawn_tone(origin, 250.0, 0.045, -16.0)
 
 func play_round_end(player_won: bool) -> void:
 	last_event = &"round_end"

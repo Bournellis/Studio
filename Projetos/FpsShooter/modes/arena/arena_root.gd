@@ -14,6 +14,16 @@ const BOT_SPAWN: Vector3 = Vector3(7.0, 0.05, -5.2)
 const PLAYER_VISUAL_MUZZLE_RIGHT_OFFSET: float = 0.34
 const PLAYER_VISUAL_MUZZLE_DOWN_OFFSET: float = 0.24
 const PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET: float = 0.82
+const BOT_REPOSITION_POINTS: Array[Vector3] = [
+	Vector3(-7.0, 0.05, -1.0),
+	Vector3(-6.0, 0.05, 6.2),
+	Vector3(-1.6, 0.05, -6.4),
+	Vector3(1.8, 0.05, 6.2),
+	Vector3(6.8, 0.05, 0.8),
+	Vector3(6.4, 0.05, -6.2),
+	Vector3(-4.0, 0.05, 2.6),
+	Vector3(4.0, 0.05, -2.8)
+]
 
 var player
 var bot
@@ -123,9 +133,11 @@ func _spawn_runtime() -> void:
 	bot.name = "Bot"
 	bot.position = BOT_SPAWN
 	runtime_root.add_child(bot)
+	bot.set_reposition_points(_create_bot_reposition_points(runtime_root))
 	bot.configure(player)
 	bot.shot_windup_started.connect(_on_bot_shot_windup_started)
 	bot.shot_feedback_requested.connect(_on_bot_shot_feedback_requested)
+	bot.shot_resolution_requested.connect(_on_bot_shot_resolution_requested)
 
 	feedback = FeedbackControllerScript.new()
 	feedback.name = "FeedbackController"
@@ -199,6 +211,32 @@ func _on_bot_shot_feedback_requested(origin: Vector3, target_position: Vector3) 
 	if feedback != null:
 		feedback.play_bot_shot(origin, target_position)
 
+func _on_bot_shot_resolution_requested(origin: Vector3, direction: Vector3, damage: float, knockback: float) -> void:
+	if round_ended or menu_open or player == null or bot == null:
+		return
+	var shot_direction := direction.normalized()
+	if shot_direction.length_squared() <= 0.0001:
+		return
+	var shot_end := origin + shot_direction * maxf(1.0, bot.shoot_range)
+	var query := PhysicsRayQueryParameters3D.create(origin, shot_end)
+	query.exclude = [bot.get_rid()]
+	var result := get_world_3d().direct_space_state.intersect_ray(query)
+	if result.is_empty():
+		if feedback != null:
+			feedback.play_bot_miss(origin, shot_end)
+		return
+
+	var impact_position: Vector3 = result.get("position", shot_end)
+	var collider: Object = result.get("collider", null)
+	if collider == player:
+		if feedback != null:
+			feedback.play_bot_shot(origin, impact_position)
+		player.take_damage(damage, &"bot")
+		player.apply_knockback(shot_direction, knockback)
+		return
+	if feedback != null:
+		feedback.play_bot_miss(origin, impact_position)
+
 func _on_player_died() -> void:
 	_set_menu_open(false)
 	round_ended = true
@@ -243,6 +281,20 @@ func _get_player_visual_muzzle_origin(origin: Vector3, direction: Vector3) -> Ve
 	visual_origin -= camera_basis.y.normalized() * PLAYER_VISUAL_MUZZLE_DOWN_OFFSET
 	visual_origin += shot_direction * PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET
 	return visual_origin
+
+func _create_bot_reposition_points(parent: Node3D) -> Array[Vector3]:
+	var marker_root := Node3D.new()
+	marker_root.name = "BotRepositionPoints"
+	parent.add_child(marker_root)
+	var points: Array[Vector3] = []
+	for index in range(BOT_REPOSITION_POINTS.size()):
+		var point := BOT_REPOSITION_POINTS[index]
+		points.append(point)
+		var marker := Marker3D.new()
+		marker.name = "BotRepositionPoint%02d" % index
+		marker.position = point
+		marker_root.add_child(marker)
+	return points
 
 func _add_box(node_name: String, box_position: Vector3, size: Vector3, color: Color) -> StaticBody3D:
 	var body := StaticBody3D.new()

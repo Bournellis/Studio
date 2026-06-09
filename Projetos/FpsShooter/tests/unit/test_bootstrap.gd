@@ -44,13 +44,18 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_not_null(arena.get_node_or_null("LowCoverA"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Player"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Bot"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/BotRepositionPoints"))
 	assert_not_null(arena.get_node_or_null("ArenaHud"))
 	assert_not_null(arena.get_node_or_null("FeedbackController"))
 
 	var player = arena.get_node("RuntimeRoot/Player")
+	var bot = arena.get_node("RuntimeRoot/Bot")
 	assert_not_null(player.get_node_or_null("Head/Camera3D"))
 	assert_true((player.get_node("Head/Camera3D") as Camera3D).current)
 	assert_almost_eq((player.get_node("Head/Camera3D") as Camera3D).fov, 86.0, 0.01)
+	assert_eq(bot.debug_get_state(), &"engage")
+	assert_true(bot.debug_get_target() == player)
+	assert_gt(bot.debug_get_reposition_point_count(), 0)
 	var hud_root := arena.get_node("ArenaHud/HudRoot") as Control
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/PlayerLabel"))
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/PlayerHealthBar"))
@@ -205,6 +210,27 @@ func test_bot_force_fire_damages_player() -> void:
 	assert_false(bot.is_telegraphing)
 	assert_no_new_orphans()
 
+func test_bot_respects_line_of_sight_before_windup() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	player.global_position = Vector3(-2.0, 0.05, 0.8)
+	bot.global_position = Vector3(-2.0, 0.05, -5.8)
+	bot.configure(player)
+	bot.shoot_cooldown_remaining = 0.0
+	bot.reaction_remaining = 0.0
+	await get_tree().physics_frame
+
+	assert_false(bot.debug_has_line_of_sight())
+	assert_false(bot.is_telegraphing)
+	assert_eq(bot.debug_get_state(), &"reposition")
+	assert_no_new_orphans()
+
 func test_bot_normal_fire_uses_short_windup_before_damage() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	var arena := arena_scene.instantiate()
@@ -215,7 +241,10 @@ func test_bot_normal_fire_uses_short_windup_before_damage() -> void:
 	var player = arena.debug_get_player()
 	var bot = arena.debug_get_bot()
 	var feedback = arena.get_node("FeedbackController")
+	bot.aim_error_radius = 0.0
+	bot.close_range_aim_error_radius = 0.0
 	bot.shoot_cooldown_remaining = 0.0
+	bot.reaction_remaining = 0.0
 	var before: float = player.health
 	await get_tree().physics_frame
 
@@ -231,6 +260,102 @@ func test_bot_normal_fire_uses_short_windup_before_damage() -> void:
 	assert_gt(feedback.bot_shot_count, 0)
 	assert_no_new_orphans()
 
+func test_bot_normal_fire_can_miss_without_damage() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var feedback = arena.get_node("FeedbackController")
+	bot.aim_error_radius = 10.0
+	bot.close_range_aim_error_radius = 10.0
+	bot.shoot_cooldown_remaining = 0.0
+	bot.reaction_remaining = 0.0
+	var before: float = player.health
+	await get_tree().physics_frame
+
+	assert_true(bot.is_telegraphing)
+	assert_gt(bot.debug_get_last_aim_position().distance_to(player.get_body_center()), 0.5)
+	for _step in range(18):
+		await get_tree().physics_frame
+
+	assert_eq(player.health, before)
+	assert_gt(feedback.bot_miss_count, 0)
+	assert_eq(feedback.last_event, &"bot_miss")
+	assert_no_new_orphans()
+
+func test_bot_strafes_when_cooling_down() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	bot.shoot_cooldown_remaining = 3.0
+	bot.reaction_remaining = 0.0
+	bot.reposition_cooldown_remaining = 0.0
+	var start_position: Vector3 = bot.global_position
+	await get_tree().physics_frame
+
+	assert_eq(bot.debug_get_state(), &"strafe")
+	for _step in range(16):
+		await get_tree().physics_frame
+
+	var flat_delta: Vector3 = bot.global_position - start_position
+	flat_delta.y = 0.0
+	assert_gt(flat_delta.length(), 0.1)
+	assert_no_new_orphans()
+
+func test_bot_cancels_windup_when_target_dies() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	bot.aim_error_radius = 0.0
+	bot.close_range_aim_error_radius = 0.0
+	bot.shoot_cooldown_remaining = 0.0
+	bot.reaction_remaining = 0.0
+	await get_tree().physics_frame
+
+	assert_true(bot.is_telegraphing)
+	player.take_damage(200.0, &"test")
+	await get_tree().physics_frame
+
+	assert_false(bot.is_telegraphing)
+	assert_eq(bot.debug_get_state(), &"idle")
+	assert_no_new_orphans()
+
+func test_restart_resets_bot_duelist_state() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	bot.aim_error_radius = 0.0
+	bot.close_range_aim_error_radius = 0.0
+	bot.shoot_cooldown_remaining = 0.0
+	bot.reaction_remaining = 0.0
+	await get_tree().physics_frame
+
+	assert_true(bot.is_telegraphing)
+	arena.restart_round()
+
+	assert_false(bot.is_telegraphing)
+	assert_eq(bot.debug_get_state(), &"engage")
+	assert_gt(bot.debug_get_reposition_point_count(), 0)
+	assert_eq((arena.get_node("FeedbackController")).debug_active_effect_count(), 0)
+	assert_no_new_orphans()
+
 func test_feedback_controller_builds_synthetic_audio_stream() -> void:
 	var feedback = FeedbackScript.new()
 	add_child_autofree(feedback)
@@ -240,6 +365,8 @@ func test_feedback_controller_builds_synthetic_audio_stream() -> void:
 	assert_not_null(stream)
 	assert_gt(stream.data.size(), 0)
 	feedback.play_player_shot(Vector3.ZERO, Vector3.FORWARD)
+	feedback.play_bot_miss(Vector3.ZERO, Vector3.FORWARD)
 	assert_gt(feedback.player_shot_count, 0)
+	assert_gt(feedback.bot_miss_count, 0)
 	assert_gt(feedback.debug_active_effect_count(), 0)
 	assert_no_new_orphans()
