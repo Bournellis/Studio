@@ -20,7 +20,10 @@ func _run_smoke() -> int:
 	_expect(not world_source.contains("_draw_ground_marker"), "Bosque does not draw disliked double-circle floor markers.")
 	var model = ModelScript.new()
 	_expect(model.start_collection("galho").get("ok") == true, "Can start galho collection.")
-	_expect(model.advance_collection(0.1, true).get("cancelled") == true, "Moving cancels collection.")
+	var moving_progress: Dictionary = model.advance_collection(0.1, true, 0.0)
+	_expect(moving_progress.get("ok") == true and moving_progress.get("cancelled") != true, "Moving inside collection radius keeps collection.")
+	var distance_cancel: Dictionary = model.advance_collection(0.1, false, 999.0)
+	_expect(distance_cancel.get("cancelled") == true and distance_cancel.get("reason") == "distance", "Distance cancels collection.")
 	for _index in 20:
 		model.add_to_pocket("pedra_pequena")
 	_expect(model.start_collection("pedra").get("reason") == "pocket_full", "Full pocket blocks heavy collection.")
