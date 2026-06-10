@@ -44,6 +44,9 @@ const PLAYER_KICK_LIFT: float = 2.35
 const PLAYER_STRONG_KICK_LIFT: float = 7.2
 const PLAYER_TOUCH_COOLDOWN: float = 0.18
 const GOAL_RESET_DELAY: float = 1.25
+const RENDER_GLOW_ENABLED: bool = true
+const RENDER_SSAO_ENABLED: bool = true
+const RENDER_FOG_ENABLED: bool = true
 
 var player
 var player_avatar
@@ -229,30 +232,104 @@ func debug_get_arena_config() -> Dictionary:
 func _configure_world() -> void:
 	var environment := WorldEnvironment.new()
 	environment.name = "WorldEnvironment"
-	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.03, 0.08, 0.12, 1.0)
-	env.ambient_light_color = Color(0.84, 0.9, 0.78, 1.0)
-	env.ambient_light_energy = 0.94
-	environment.environment = env
+	environment.environment = _build_night_environment()
 	add_child(environment)
 
+	_add_stadium_key_light()
+	_build_football_pitch()
+
+func _build_night_environment() -> Environment:
+	var env := Environment.new()
+	var sky_material := ProceduralSkyMaterial.new()
+	sky_material.sky_top_color = Color(0.004, 0.01, 0.04, 1.0)
+	sky_material.sky_horizon_color = Color(0.02, 0.065, 0.14, 1.0)
+	sky_material.sky_curve = 0.18
+	sky_material.sky_energy_multiplier = 0.72
+	sky_material.ground_bottom_color = Color(0.012, 0.02, 0.028, 1.0)
+	sky_material.ground_horizon_color = Color(0.02, 0.05, 0.08, 1.0)
+	sky_material.ground_curve = 0.12
+	sky_material.ground_energy_multiplier = 0.36
+	sky_material.sun_angle_max = 1.0
+	sky_material.sun_curve = 0.04
+	sky_material.sky_cover = _build_star_cover_texture()
+	sky_material.sky_cover_modulate = Color(1.0, 1.0, 1.0, 0.18)
+
+	var sky := Sky.new()
+	sky.sky_material = sky_material
+
+	env.background_mode = Environment.BG_SKY
+	env.sky = sky
+	env.background_energy_multiplier = 0.82
+	env.background_intensity = 0.72
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+	env.ambient_light_color = Color(0.44, 0.58, 0.72, 1.0)
+	env.ambient_light_energy = 0.34
+	env.ambient_light_sky_contribution = 0.74
+	env.tonemap_mode = Environment.TONE_MAPPER_ACES
+	env.tonemap_exposure = 1.08
+	env.tonemap_white = 1.72
+
+	env.glow_enabled = RENDER_GLOW_ENABLED
+	env.set("glow_levels/1", false)
+	env.set("glow_levels/2", true)
+	env.set("glow_levels/3", true)
+	env.set("glow_levels/4", true)
+	env.set("glow_levels/5", false)
+	env.set("glow_levels/6", false)
+	env.set("glow_levels/7", false)
+	env.glow_normalized = true
+	env.glow_intensity = 0.42
+	env.glow_strength = 0.92
+	env.glow_bloom = 0.28
+	env.glow_hdr_threshold = 0.86
+	env.glow_hdr_scale = 1.65
+	env.glow_hdr_luminance_cap = 9.0
+
+	env.ssao_enabled = RENDER_SSAO_ENABLED
+	env.ssao_radius = 2.6
+	env.ssao_intensity = 0.52
+	env.ssao_power = 1.22
+	env.ssao_detail = 0.38
+	env.ssao_sharpness = 0.48
+	env.ssao_light_affect = 0.18
+
+	env.fog_enabled = RENDER_FOG_ENABLED
+	env.fog_light_color = Color(0.12, 0.22, 0.36, 1.0)
+	env.fog_light_energy = 0.28
+	env.fog_density = 0.014
+	env.fog_aerial_perspective = 0.34
+	env.fog_sky_affect = 0.24
+	env.fog_depth_begin = 30.0
+	env.fog_depth_end = 110.0
+	env.fog_depth_curve = 1.1
+	return env
+
+func _build_star_cover_texture() -> Texture2D:
+	var noise := FastNoiseLite.new()
+	noise.seed = 20260610
+	noise.frequency = 0.032
+	noise.fractal_octaves = 1
+	var texture := NoiseTexture2D.new()
+	texture.width = 512
+	texture.height = 256
+	texture.normalize = true
+	texture.noise = noise
+	return texture
+
+func _add_stadium_key_light() -> void:
 	var key_light := DirectionalLight3D.new()
 	key_light.name = "StadiumKeyLight"
-	key_light.rotation_degrees = Vector3(-62.0, -30.0, 0.0)
-	key_light.light_energy = 2.8
+	key_light.rotation_degrees = Vector3(-56.0, -34.0, 0.0)
+	key_light.light_color = Color(0.74, 0.86, 1.0, 1.0)
+	key_light.light_energy = 1.85
+	key_light.light_indirect_energy = 0.44
+	key_light.light_specular = 0.64
 	key_light.shadow_enabled = true
+	key_light.directional_shadow_max_distance = 88.0
+	key_light.directional_shadow_fade_start = 0.74
+	key_light.shadow_bias = 0.045
+	key_light.shadow_normal_bias = 0.82
 	add_child(key_light)
-
-	var fill_light := OmniLight3D.new()
-	fill_light.name = "FestiveFillLight"
-	fill_light.position = Vector3(0.0, 7.0, 0.0)
-	fill_light.light_color = Color(0.95, 0.82, 0.42, 1.0)
-	fill_light.light_energy = 1.3
-	fill_light.omni_range = 34.0
-	add_child(fill_light)
-
-	_build_football_pitch()
 
 func _build_football_pitch() -> void:
 	FootballFieldBuilderScript.build(self, {

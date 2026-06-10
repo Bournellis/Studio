@@ -59,6 +59,20 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	await get_tree().process_frame
 
 	assert_not_null(football.get_node_or_null("WorldEnvironment"))
+	var world_environment := football.get_node("WorldEnvironment") as WorldEnvironment
+	var environment := world_environment.environment
+	assert_not_null(environment)
+	assert_eq(environment.background_mode, Environment.BG_SKY)
+	assert_not_null(environment.sky)
+	assert_eq(environment.tonemap_mode, Environment.TONE_MAPPER_ACES)
+	assert_true(environment.glow_enabled)
+	assert_true(environment.ssao_enabled)
+	assert_true(environment.fog_enabled)
+	assert_lt(environment.ambient_light_energy, 0.5)
+	var key_light := football.get_node("StadiumKeyLight") as DirectionalLight3D
+	assert_not_null(key_light)
+	assert_true(key_light.shadow_enabled)
+	assert_gt(key_light.directional_shadow_max_distance, 70.0)
 	assert_not_null(football.get_node_or_null("FootballPitch"))
 	assert_not_null(football.get_node_or_null("NorthGoalSideWallL"))
 	assert_not_null(football.get_node_or_null("SouthGoalSideWallR"))
@@ -83,6 +97,10 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_not_null(football.get_node_or_null("SouthCountryBanner7Stripe2"))
 	assert_not_null(football.get_node_or_null("WorldCupScoreboardNorth"))
 	assert_not_null(football.get_node_or_null("StadiumLightNW"))
+	assert_true(football.get_node("StadiumLightNW") is SpotLight3D)
+	var stadium_spot := football.get_node("StadiumLightNW") as SpotLight3D
+	assert_false(stadium_spot.shadow_enabled)
+	assert_gt(stadium_spot.spot_range, 45.0)
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player/PlayerAvatar"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballChaseCamera"))
@@ -124,6 +142,19 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_gt(north_roof_shape.size.x, 10.0)
 	assert_gt(north_roof_shape.size.z, 3.6)
 	assert_gt(north_roof_shape.size.y, 0.3)
+	var frame_mesh := football.get_node("WestGlassFrameTop") as MeshInstance3D
+	var frame_material := frame_mesh.material_override as StandardMaterial3D
+	assert_not_null(frame_material)
+	if frame_material != null:
+		assert_true(frame_material.emission_enabled)
+		assert_gt(frame_material.emission_energy_multiplier, 1.5)
+	var glass_mesh := football.get_node("WestGlassWall/WestGlassWallMesh") as MeshInstance3D
+	var glass_material := glass_mesh.material_override as StandardMaterial3D
+	assert_not_null(glass_material)
+	if glass_material != null:
+		assert_true(glass_material.rim_enabled)
+		assert_true(glass_material.clearcoat_enabled)
+		assert_gt(glass_material.emission_energy_multiplier, 0.5)
 	assert_gt(football.debug_get_ball().physics_material_override.bounce, 0.8)
 	assert_gt(football.debug_get_ball().physics_material_override.friction, 0.3)
 	assert_no_new_orphans()

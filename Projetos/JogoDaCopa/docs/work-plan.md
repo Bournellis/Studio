@@ -20,14 +20,9 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 
 ## Recommended Next Track
 
-Run editor playtest focused on the visual arena/stadium pass plus the tuned ball/goal/kick feel. Then choose between:
+`Track 02A - Render & Lighting Foundation V1`.
 
-- character/avatar quality upgrade;
-- ball/wall/ceiling rebound tuning;
-- bot football decision upgrade;
-- boost/stamina tuning and player mobility polish;
-- additional football minigame shell;
-- product/export identity for the first Copa module.
+On 2026-06-10 Fabio approved the quality upgrade plan in `quality-upgrade-plan.md`: hybrid visual path (procedural arena/VFX + CC0 assets only for the animated character and ball) covering visual, game feel, bot, menu and product identity across Tracks 02A-02G. That document is the authoritative roadmap for the Track 02 series, including the explicitly approved authored-asset track (02C).
 
 ## Out Of Scope
 

@@ -82,24 +82,24 @@ static func _add_goal_roof(parent: Node3D, prefix: String, goal_center_z: float,
 	var roof_width := goal_half_width * 2.45
 	_add_glass_box(parent, "%sGoalRoofGlass" % prefix, Vector3(0.0, roof_y, goal_center_z), Vector3(roof_width, 0.34, goal_closed_depth), 0.34)
 	_add_visual_box(parent, "%sGoalRoofTint" % prefix, Vector3(0.0, roof_y + 0.025, goal_center_z), Vector3(goal_half_width * 2.05, 0.05, goal_closed_depth * 0.88), Color(0.22, 0.68, 0.92, 0.34))
-	_add_box(parent, "%sGoalRoofFrontFrame" % prefix, Vector3(0.0, roof_y + 0.08, goal_line + side * 0.08), Vector3(roof_width + 0.22, 0.24, 0.22), Color(0.95, 0.95, 0.9, 1.0))
-	_add_box(parent, "%sGoalRoofBackFrame" % prefix, Vector3(0.0, roof_y + 0.08, goal_line + side * goal_closed_depth), Vector3(roof_width + 0.22, 0.24, 0.22), Color(0.95, 0.95, 0.9, 1.0))
-	_add_box(parent, "%sGoalRoofLeftRib" % prefix, Vector3(-roof_width * 0.5, roof_y + 0.08, goal_center_z), Vector3(0.22, 0.24, goal_closed_depth), Color(0.95, 0.95, 0.9, 1.0))
-	_add_box(parent, "%sGoalRoofRightRib" % prefix, Vector3(roof_width * 0.5, roof_y + 0.08, goal_center_z), Vector3(0.22, 0.24, goal_closed_depth), Color(0.95, 0.95, 0.9, 1.0))
+	_add_box(parent, "%sGoalRoofFrontFrame" % prefix, Vector3(0.0, roof_y + 0.08, goal_line + side * 0.08), Vector3(roof_width + 0.22, 0.24, 0.22), Color(0.9, 0.98, 1.0, 1.0), 0.72, 0.0, 2.4, 0.24, 0.12, 0.45, 0.55)
+	_add_box(parent, "%sGoalRoofBackFrame" % prefix, Vector3(0.0, roof_y + 0.08, goal_line + side * goal_closed_depth), Vector3(roof_width + 0.22, 0.24, 0.22), Color(0.9, 0.98, 1.0, 1.0), 0.72, 0.0, 2.4, 0.24, 0.12, 0.45, 0.55)
+	_add_box(parent, "%sGoalRoofLeftRib" % prefix, Vector3(-roof_width * 0.5, roof_y + 0.08, goal_center_z), Vector3(0.22, 0.24, goal_closed_depth), Color(0.9, 0.98, 1.0, 1.0), 0.72, 0.0, 2.2, 0.24, 0.12, 0.42, 0.5)
+	_add_box(parent, "%sGoalRoofRightRib" % prefix, Vector3(roof_width * 0.5, roof_y + 0.08, goal_center_z), Vector3(0.22, 0.24, goal_closed_depth), Color(0.9, 0.98, 1.0, 1.0), 0.72, 0.0, 2.2, 0.24, 0.12, 0.42, 0.5)
 
 static func _add_goal_frame(parent: Node3D, prefix: String, goal_z: float, side: float, goal_half_width: float, goal_height: float, goal_closed_depth: float) -> void:
-	var post_color := Color(0.95, 0.95, 0.9, 1.0)
+	var post_color := Color(0.94, 0.98, 1.0, 1.0)
 	var post_size := Vector3(0.28, goal_height, 0.28)
 	var post_center_y := goal_height * 0.5
 	var back_z := goal_z + side * (goal_closed_depth - 0.22)
-	_add_box(parent, "%sGoalPostL" % prefix, Vector3(-goal_half_width, post_center_y, goal_z), post_size, post_color)
-	_add_box(parent, "%sGoalPostR" % prefix, Vector3(goal_half_width, post_center_y, goal_z), post_size, post_color)
-	_add_box(parent, "%sGoalCrossbar" % prefix, Vector3(0.0, goal_height, goal_z), Vector3(goal_half_width * 2.0 + 0.28, 0.28, 0.28), post_color)
-	_add_box(parent, "%sGoalBackPostL" % prefix, Vector3(-goal_half_width, post_center_y, back_z), post_size, post_color)
-	_add_box(parent, "%sGoalBackPostR" % prefix, Vector3(goal_half_width, post_center_y, back_z), post_size, post_color)
-	_add_box(parent, "%sGoalBackTopBar" % prefix, Vector3(0.0, goal_height, back_z), Vector3(goal_half_width * 2.0 + 0.28, 0.28, 0.28), post_color)
-	_add_box(parent, "%sGoalTopRailL" % prefix, Vector3(-goal_half_width, goal_height, goal_z + side * goal_closed_depth * 0.5), Vector3(0.24, 0.24, goal_closed_depth), post_color)
-	_add_box(parent, "%sGoalTopRailR" % prefix, Vector3(goal_half_width, goal_height, goal_z + side * goal_closed_depth * 0.5), Vector3(0.24, 0.24, goal_closed_depth), post_color)
+	_add_box(parent, "%sGoalPostL" % prefix, Vector3(-goal_half_width, post_center_y, goal_z), post_size, post_color, 0.72, 0.0, 2.25, 0.22, 0.1, 0.4, 0.52)
+	_add_box(parent, "%sGoalPostR" % prefix, Vector3(goal_half_width, post_center_y, goal_z), post_size, post_color, 0.72, 0.0, 2.25, 0.22, 0.1, 0.4, 0.52)
+	_add_box(parent, "%sGoalCrossbar" % prefix, Vector3(0.0, goal_height, goal_z), Vector3(goal_half_width * 2.0 + 0.28, 0.28, 0.28), post_color, 0.72, 0.0, 2.35, 0.22, 0.1, 0.4, 0.52)
+	_add_box(parent, "%sGoalBackPostL" % prefix, Vector3(-goal_half_width, post_center_y, back_z), post_size, post_color, 0.72, 0.0, 2.05, 0.24, 0.08, 0.35, 0.48)
+	_add_box(parent, "%sGoalBackPostR" % prefix, Vector3(goal_half_width, post_center_y, back_z), post_size, post_color, 0.72, 0.0, 2.05, 0.24, 0.08, 0.35, 0.48)
+	_add_box(parent, "%sGoalBackTopBar" % prefix, Vector3(0.0, goal_height, back_z), Vector3(goal_half_width * 2.0 + 0.28, 0.28, 0.28), post_color, 0.72, 0.0, 2.05, 0.24, 0.08, 0.35, 0.48)
+	_add_box(parent, "%sGoalTopRailL" % prefix, Vector3(-goal_half_width, goal_height, goal_z + side * goal_closed_depth * 0.5), Vector3(0.24, 0.24, goal_closed_depth), post_color, 0.72, 0.0, 2.0, 0.24, 0.08, 0.35, 0.48)
+	_add_box(parent, "%sGoalTopRailR" % prefix, Vector3(goal_half_width, goal_height, goal_z + side * goal_closed_depth * 0.5), Vector3(0.24, 0.24, goal_closed_depth), post_color, 0.72, 0.0, 2.0, 0.24, 0.08, 0.35, 0.48)
 	_add_visual_box(parent, "%sNetTint" % prefix, Vector3(0.0, goal_height * 0.5, goal_z + side * 0.62), Vector3(goal_half_width * 2.0, goal_height * 0.92, 0.12), Color(0.22, 0.68, 0.92, 0.72))
 
 static func _add_arena_glass(parent: Node3D, field_width: float, field_length: float, field_half_width: float, wall_height: float, ceiling_height: float, wall_thickness: float, goal_side_wall_x: float, goal_closed_depth: float, goal_line_north: float, goal_line_south: float) -> void:
@@ -116,32 +116,32 @@ static func _add_arena_glass(parent: Node3D, field_width: float, field_length: f
 	_add_glass_frames(parent, field_width, field_half_width, total_length, wall_height, ceiling_height, goal_line_north, goal_line_south, end_wall_center_x, end_wall_span, wall_thickness)
 
 static func _add_glass_frames(parent: Node3D, field_width: float, field_half_width: float, total_length: float, wall_height: float, ceiling_height: float, goal_line_north: float, goal_line_south: float, end_wall_center_x: float, end_wall_span: float, wall_thickness: float) -> void:
-	var frame_color := Color(0.78, 0.96, 1.0, 0.92)
-	_add_visual_box(parent, "WestGlassFrameTop", Vector3(-field_half_width, wall_height + 0.08, 0.0), Vector3(0.24, 0.22, total_length), frame_color)
-	_add_visual_box(parent, "EastGlassFrameTop", Vector3(field_half_width, wall_height + 0.08, 0.0), Vector3(0.24, 0.22, total_length), frame_color)
-	_add_visual_box(parent, "WestGlassFrameMid", Vector3(-field_half_width, wall_height * 0.52, 0.0), Vector3(0.18, 0.16, total_length), Color(0.62, 0.88, 1.0, 0.58))
-	_add_visual_box(parent, "EastGlassFrameMid", Vector3(field_half_width, wall_height * 0.52, 0.0), Vector3(0.18, 0.16, total_length), Color(0.62, 0.88, 1.0, 0.58))
+	var frame_color := Color(0.78, 0.96, 1.0, 0.96)
+	_add_neon_box(parent, "WestGlassFrameTop", Vector3(-field_half_width, wall_height + 0.08, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, 2.15)
+	_add_neon_box(parent, "EastGlassFrameTop", Vector3(field_half_width, wall_height + 0.08, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, 2.15)
+	_add_neon_box(parent, "WestGlassFrameMid", Vector3(-field_half_width, wall_height * 0.52, 0.0), Vector3(0.18, 0.16, total_length), Color(0.62, 0.88, 1.0, 0.72), Vector3.ZERO, 1.55)
+	_add_neon_box(parent, "EastGlassFrameMid", Vector3(field_half_width, wall_height * 0.52, 0.0), Vector3(0.18, 0.16, total_length), Color(0.62, 0.88, 1.0, 0.72), Vector3.ZERO, 1.55)
 	for index in range(8):
 		var z := -total_length * 0.5 + total_length * float(index) / 7.0
-		_add_visual_box(parent, "WestGlassFramePost%d" % index, Vector3(-field_half_width, wall_height * 0.5, z), Vector3(0.24, wall_height + 0.25, 0.2), frame_color)
-		_add_visual_box(parent, "EastGlassFramePost%d" % index, Vector3(field_half_width, wall_height * 0.5, z), Vector3(0.24, wall_height + 0.25, 0.2), frame_color)
+		_add_neon_box(parent, "WestGlassFramePost%d" % index, Vector3(-field_half_width, wall_height * 0.5, z), Vector3(0.24, wall_height + 0.25, 0.2), frame_color, Vector3.ZERO, 2.0)
+		_add_neon_box(parent, "EastGlassFramePost%d" % index, Vector3(field_half_width, wall_height * 0.5, z), Vector3(0.24, wall_height + 0.25, 0.2), frame_color, Vector3.ZERO, 2.0)
 	for side_name in ["North", "South"]:
 		var z_line := goal_line_north if side_name == "North" else goal_line_south
-		_add_visual_box(parent, "%sGlassFrameTopLeft" % side_name, Vector3(-end_wall_center_x, wall_height + 0.08, z_line), Vector3(end_wall_span, 0.22, 0.24), frame_color)
-		_add_visual_box(parent, "%sGlassFrameTopRight" % side_name, Vector3(end_wall_center_x, wall_height + 0.08, z_line), Vector3(end_wall_span, 0.22, 0.24), frame_color)
-		_add_visual_box(parent, "%sGlassFrameMidLeft" % side_name, Vector3(-end_wall_center_x, wall_height * 0.52, z_line), Vector3(end_wall_span, 0.16, 0.18), Color(0.62, 0.88, 1.0, 0.58))
-		_add_visual_box(parent, "%sGlassFrameMidRight" % side_name, Vector3(end_wall_center_x, wall_height * 0.52, z_line), Vector3(end_wall_span, 0.16, 0.18), Color(0.62, 0.88, 1.0, 0.58))
-	_add_visual_box(parent, "ArenaCornerPostNW", Vector3(-field_half_width, wall_height * 0.5, goal_line_north), Vector3(0.34, wall_height + 0.35, 0.34), frame_color)
-	_add_visual_box(parent, "ArenaCornerPostNE", Vector3(field_half_width, wall_height * 0.5, goal_line_north), Vector3(0.34, wall_height + 0.35, 0.34), frame_color)
-	_add_visual_box(parent, "ArenaCornerPostSW", Vector3(-field_half_width, wall_height * 0.5, goal_line_south), Vector3(0.34, wall_height + 0.35, 0.34), frame_color)
-	_add_visual_box(parent, "ArenaCornerPostSE", Vector3(field_half_width, wall_height * 0.5, goal_line_south), Vector3(0.34, wall_height + 0.35, 0.34), frame_color)
-	_add_visual_box(parent, "ArenaRoofFrameNorth", Vector3(0.0, ceiling_height + 0.18, -total_length * 0.5), Vector3(field_width, 0.22, 0.24), frame_color)
-	_add_visual_box(parent, "ArenaRoofFrameSouth", Vector3(0.0, ceiling_height + 0.18, total_length * 0.5), Vector3(field_width, 0.22, 0.24), frame_color)
-	_add_visual_box(parent, "ArenaRoofFrameWest", Vector3(-field_half_width, ceiling_height + 0.18, 0.0), Vector3(0.24, 0.22, total_length), frame_color)
-	_add_visual_box(parent, "ArenaRoofFrameEast", Vector3(field_half_width, ceiling_height + 0.18, 0.0), Vector3(0.24, 0.22, total_length), frame_color)
+		_add_neon_box(parent, "%sGlassFrameTopLeft" % side_name, Vector3(-end_wall_center_x, wall_height + 0.08, z_line), Vector3(end_wall_span, 0.22, 0.24), frame_color, Vector3.ZERO, 2.0)
+		_add_neon_box(parent, "%sGlassFrameTopRight" % side_name, Vector3(end_wall_center_x, wall_height + 0.08, z_line), Vector3(end_wall_span, 0.22, 0.24), frame_color, Vector3.ZERO, 2.0)
+		_add_neon_box(parent, "%sGlassFrameMidLeft" % side_name, Vector3(-end_wall_center_x, wall_height * 0.52, z_line), Vector3(end_wall_span, 0.16, 0.18), Color(0.62, 0.88, 1.0, 0.72), Vector3.ZERO, 1.5)
+		_add_neon_box(parent, "%sGlassFrameMidRight" % side_name, Vector3(end_wall_center_x, wall_height * 0.52, z_line), Vector3(end_wall_span, 0.16, 0.18), Color(0.62, 0.88, 1.0, 0.72), Vector3.ZERO, 1.5)
+	_add_neon_box(parent, "ArenaCornerPostNW", Vector3(-field_half_width, wall_height * 0.5, goal_line_north), Vector3(0.34, wall_height + 0.35, 0.34), frame_color, Vector3.ZERO, 2.2)
+	_add_neon_box(parent, "ArenaCornerPostNE", Vector3(field_half_width, wall_height * 0.5, goal_line_north), Vector3(0.34, wall_height + 0.35, 0.34), frame_color, Vector3.ZERO, 2.2)
+	_add_neon_box(parent, "ArenaCornerPostSW", Vector3(-field_half_width, wall_height * 0.5, goal_line_south), Vector3(0.34, wall_height + 0.35, 0.34), frame_color, Vector3.ZERO, 2.2)
+	_add_neon_box(parent, "ArenaCornerPostSE", Vector3(field_half_width, wall_height * 0.5, goal_line_south), Vector3(0.34, wall_height + 0.35, 0.34), frame_color, Vector3.ZERO, 2.2)
+	_add_neon_box(parent, "ArenaRoofFrameNorth", Vector3(0.0, ceiling_height + 0.18, -total_length * 0.5), Vector3(field_width, 0.22, 0.24), frame_color, Vector3.ZERO, 2.25)
+	_add_neon_box(parent, "ArenaRoofFrameSouth", Vector3(0.0, ceiling_height + 0.18, total_length * 0.5), Vector3(field_width, 0.22, 0.24), frame_color, Vector3.ZERO, 2.25)
+	_add_neon_box(parent, "ArenaRoofFrameWest", Vector3(-field_half_width, ceiling_height + 0.18, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, 2.25)
+	_add_neon_box(parent, "ArenaRoofFrameEast", Vector3(field_half_width, ceiling_height + 0.18, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, 2.25)
 	for index in range(5):
 		var x := -field_half_width + field_width * (float(index) + 1.0) / 6.0
-		_add_visual_box(parent, "ArenaRoofRib%d" % index, Vector3(x, ceiling_height + 0.16, 0.0), Vector3(0.16, 0.18, total_length), Color(0.62, 0.88, 1.0, 0.46))
+		_add_neon_box(parent, "ArenaRoofRib%d" % index, Vector3(x, ceiling_height + 0.16, 0.0), Vector3(0.16, 0.18, total_length), Color(0.62, 0.88, 1.0, 0.62), Vector3.ZERO, 1.45)
 
 static func _add_stadium_shell(parent: Node3D, field_width: float, field_length: float, field_half_width: float, goal_closed_depth: float, goal_line_north: float, goal_line_south: float) -> void:
 	_add_stadium_seating(parent, field_width, field_length, field_half_width, goal_closed_depth, goal_line_north, goal_line_south)
@@ -235,16 +235,33 @@ static func _add_light_rigs(parent: Node3D, field_half_width: float, goal_line_n
 		var label: String = entry[0]
 		var position: Vector3 = entry[1]
 		_add_visual_box(parent, "StadiumLightRig%s" % label, position - Vector3.UP * 1.8, Vector3(0.42, 3.6, 0.42), Color(0.2, 0.22, 0.26, 1.0))
-		_add_visual_box(parent, "StadiumLightBar%s" % label, position + Vector3.UP * 0.25, Vector3(2.0, 0.34, 0.34), Color(0.95, 0.95, 0.86, 1.0))
-		var light := OmniLight3D.new()
+		_add_neon_box(parent, "StadiumLightBar%s" % label, position + Vector3.UP * 0.25, Vector3(2.0, 0.34, 0.34), Color(1.0, 0.93, 0.72, 1.0), Vector3.ZERO, 4.4, 0.18)
+		var light := SpotLight3D.new()
 		light.name = "StadiumLight%s" % label
 		light.position = position
-		light.light_color = Color(0.98, 0.92, 0.72, 1.0)
-		light.light_energy = 1.65
-		light.omni_range = 35.0
+		light.light_color = Color(1.0, 0.88, 0.62, 1.0)
+		light.light_energy = 5.2
+		light.spot_range = 58.0
+		light.spot_angle = 42.0
+		light.spot_angle_attenuation = 0.72
+		light.shadow_enabled = false
 		parent.add_child(light)
+		light.look_at(Vector3(0.0, 1.0, 0.0), Vector3.UP)
 
-static func _add_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, color: Color, physics_friction: float = 0.72, physics_bounce: float = 0.0) -> StaticBody3D:
+static func _add_box(
+	parent: Node3D,
+	node_name: String,
+	node_position: Vector3,
+	node_size: Vector3,
+	color: Color,
+	physics_friction: float = 0.72,
+	physics_bounce: float = 0.0,
+	emission_energy: float = 0.08,
+	roughness: float = 0.72,
+	metallic: float = 0.0,
+	rim_strength: float = 0.0,
+	clearcoat_strength: float = 0.0
+) -> StaticBody3D:
 	return RuntimePrimitiveFactoryScript.add_static_box(
 		parent,
 		node_name,
@@ -252,29 +269,43 @@ static func _add_box(parent: Node3D, node_name: String, node_position: Vector3, 
 		node_size,
 		color,
 		Vector3.ZERO,
-		0.08,
-		0.72,
+		emission_energy,
+		roughness,
 		"%sMesh" % node_name,
 		"%sCollision" % node_name,
 		physics_friction,
-		physics_bounce
+		physics_bounce,
+		metallic,
+		rim_strength,
+		clearcoat_strength
 	)
 
 static func _add_glass_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, alpha: float = 0.34) -> StaticBody3D:
-	return RuntimePrimitiveFactoryScript.add_static_box(
+	var glass_color := Color(0.34, 0.86, 1.0, alpha)
+	var body := RuntimePrimitiveFactoryScript.add_static_box(
 		parent,
 		node_name,
 		node_position,
 		node_size,
-		Color(0.34, 0.86, 1.0, alpha),
+		glass_color,
 		Vector3.ZERO,
-		0.28,
-		0.18,
+		0.68,
+		0.1,
 		"%sMesh" % node_name,
 		"%sCollision" % node_name,
 		0.08,
-		0.72
+		0.72,
+		0.0,
+		0.72,
+		0.82
 	)
+	var mesh := body.get_node_or_null("%sMesh" % node_name) as MeshInstance3D
+	if mesh != null:
+		mesh.material_override = RuntimePrimitiveFactoryScript.build_glass_material(glass_color, 0.68, 0.1)
+	return body
 
 static func _add_visual_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, color: Color, node_rotation_degrees: Vector3 = Vector3.ZERO) -> MeshInstance3D:
 	return RuntimePrimitiveFactoryScript.add_visual_box(parent, node_name, node_position, node_size, color, node_rotation_degrees, 0.55, 0.72)
+
+static func _add_neon_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, color: Color, node_rotation_degrees: Vector3 = Vector3.ZERO, emission_energy: float = 2.0, roughness: float = 0.24) -> MeshInstance3D:
+	return RuntimePrimitiveFactoryScript.add_visual_box(parent, node_name, node_position, node_size, color, node_rotation_degrees, emission_energy, roughness, 0.08, 0.42, 0.38)
