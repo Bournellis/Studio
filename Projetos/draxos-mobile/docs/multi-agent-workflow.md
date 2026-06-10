@@ -3,7 +3,7 @@
 - Status: `VIVO`
 - Last updated: `2026-06-09`
 - Scope: coordination workflow for hardening lanes, mode work and handoffs.
-- Current published package: `Bosque Overlay Menu Action Authority v1`.
+- Current published package: `Bosque Overlay Interactive Controls Authority v1`.
 - Previous hardening/live-doc baseline: `Foundation Hardening V2`.
 - Current Arena/Autobattler context: Track 18/20/21 plus preserved Arena PVE packages, including Arena PVE Bonus Visual v1.
 
@@ -50,7 +50,7 @@ For release or validation work, also read:
 
 ## Track Reading Rules
 
-Bosque Overlay Menu Action Authority v1 is the current published Internal Alpha package: release root `internal-alpha/v0-bosque-overlay-menu-action-authority-v1-20260609-aa9402d`, preview evidence `https://5f04e6ae.draxos-mobile-internal-alpha.pages.dev`, Portal `https://draxos-mobile-internal-alpha.pages.dev/`, Web `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, APK/manifest `0.0.20-alpha.0` / version code `20`, minimum supported version code `13`. The next operational step is focused human playtest of this published overlay package on Web/APK.
+Bosque Overlay Interactive Controls Authority v1 is the current published Internal Alpha package: release root `internal-alpha/v0-bosque-overlay-interactive-controls-authority-v1-20260609-d3be1fb`, preview evidence `https://9461e4be.draxos-mobile-internal-alpha.pages.dev`, Portal `https://draxos-mobile-internal-alpha.pages.dev/`, Web `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, APK/manifest `0.0.21-alpha.0` / version code `21`, minimum supported version code `13`. The next operational step is focused human playtest of this published overlay package on Web/APK.
 Foundation Hardening V2 remains the previous baseline for multi-agent and
 multi-mode enforcement. Hardening Platform V1 remains the previous platform
 baseline. Arena PVE remains the first approved product core; Track 18/20/21 and
@@ -192,6 +192,6 @@ Main Menu Sync, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run
 Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Arena PVE Menu Flow
 Simplification v1, Bosque Fogueira Potion Crafting v1, Bosque Feel & Spawn
 Authority v1 or Bosque Bootstrap Authority v1 is the latest remote package.
-Bosque Overlay Menu Action Authority v1 is the current publication; Foundation
+Bosque Overlay Interactive Controls Authority v1 is the current publication; Foundation
 Hardening V2 remains valid as hardening/live-doc baseline, and Track 21 remains
 valid as Arena loop context.

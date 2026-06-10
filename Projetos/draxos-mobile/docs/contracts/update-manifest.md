@@ -17,7 +17,7 @@ https://<project-ref>.supabase.co/functions/v1/release/manifest
 
 A funcao retorna um JSON sem secrets e sem depender de login. A implementacao possui um manifest padrao versionado no repo em `server/functions/release/index.ts` e `supabase/functions/release/index.ts`. Override operacional por `RELEASE_MANIFEST_JSON_BASE64` ou `RELEASE_MANIFEST_JSON` fica disponivel apenas quando `RELEASE_MANIFEST_OVERRIDE_ENABLED=1`, para evitar que secrets antigos mantenham links obsoletos.
 
-O pacote operacional publicado atual e `Bosque Overlay Interactive Controls Authority v1` (`0.0.21-alpha.0`, version code `21`). Os downloads default do manifest continuam apontando para os artefatos configurados na funcao de release; nao derivar novos hashes ou URLs a partir do nome do pacote sem nova publicacao de artefatos. `Bosque Overlay Menu Action Authority v1` (`0.0.20-alpha.0`, version code `20`) permanece como pacote historico anterior.
+O pacote operacional publicado atual e `Bosque Overlay Interactive Controls Authority v1` (`0.0.21-alpha.0`, version code `21`). Os downloads default do manifest continuam apontando para os artefatos configurados na funcao de release; nao derivar novos hashes ou URLs a partir do nome do pacote sem nova publicacao de artefatos. `Bosque Overlay Menu Action Authority v1` (`0.0.20-alpha.0`, version code `20`) permanece como pacote historico anterior de botoes internos do overlay.
 
 ## Payload
 
