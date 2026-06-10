@@ -488,11 +488,14 @@ func _ensure_web_overlay_input_bridge() -> void:
 	_web_overlay_input_bridge_bound = true
 
 func _handle_web_overlay_input_command(args: Array) -> void:
-	if not _shell_overlay_is_open():
-		return
 	var command := ""
 	if not args.is_empty():
 		command = str(args[0]).strip_edges()
+	if command == "diagnostics":
+		_publish_web_diagnostics_state()
+		return
+	if not _shell_overlay_is_open():
+		return
 	var parsed: Variant = null
 	if command.begins_with("{"):
 		parsed = JSON.parse_string(command)

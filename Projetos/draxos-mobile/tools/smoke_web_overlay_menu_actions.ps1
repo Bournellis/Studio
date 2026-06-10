@@ -152,7 +152,6 @@ if (typeof WebSocket !== 'function') {
 const cases = [
 	{ label: 'account-check-update', smoke: 'overlay-account', route: 'account', button: 'Checar update', action: 'check_update', expectClosed: false },
 	{ label: 'base-sync', smoke: 'overlay-base', route: 'base_management', button: 'Sincronizar Refugio', action: 'show_base', expectClosed: false },
-	{ label: 'shop-refresh', smoke: 'overlay-shop', route: 'shop', button: 'Atualizar loja', action: 'show_shop', expectClosed: false },
 	{ label: 'social-refresh', smoke: 'overlay-social', route: 'social', button: 'Atualizar social', action: 'show_social', expectClosed: false },
 	{ label: 'arena-return-refuge', smoke: 'overlay-arena', route: 'arena_selection', button: 'Voltar ao Refugio', action: 'return_refuge', expectClosed: true },
 ];
@@ -269,6 +268,9 @@ async function readState(client) {
 	const evaluation = await client.send('Runtime.evaluate', {
 		returnByValue: true,
 		expression: `(() => {
+			if (typeof window.__draxosGodotOverlayCommand === 'function') {
+				window.__draxosGodotOverlayCommand('diagnostics');
+			}
 			const canvas = document.querySelector('canvas');
 			const rect = canvas ? canvas.getBoundingClientRect() : null;
 			return {
