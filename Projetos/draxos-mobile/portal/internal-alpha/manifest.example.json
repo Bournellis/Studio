@@ -35,13 +35,13 @@
     "android": {
       "label": "Android APK",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      "sha256": "10cdc2bc4f7ea25db7c05be917efe0a0d73baa1047b01311748857e6637dfc99",
+      "sha256": "986bff2ac180de883f5dfa97078e0a3ff31e2c0d4de139b8863c18e1d37507ab",
       "auth_required": true
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      "sha256": "ff63afa6b605d699d101a4a9eb5177f98cd994e155445d0ba2ccbdbbac49fb13",
+      "sha256": "4659da781b027dcb1c9f1b5d6ec32e56630eac14160413a35cb75a90c2e8c0dc",
       "auth_required": true
     },
     "web": {

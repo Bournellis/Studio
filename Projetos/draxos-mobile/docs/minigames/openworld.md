@@ -16,7 +16,7 @@
 
 `Openworld Bosque` e o primeiro slice do modo `Openworld`. Ele nasceu do prototipo `Rpgsuave Bosque`, mas V1 renomeia o modo de verdade: novos payloads, rotas, settings, docs e testes usam `openworld`.
 
-Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Pacote atual publicado: `Bosque Arena Abandon Recovery Authority v1`, versao `0.0.22-alpha.0`, version code `22`, minimum supported version code `13`, release root `internal-alpha/v0-bosque-arena-abandon-recovery-authority-v1-20260610-a252241`, preview tecnico `https://b149da8f.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, mantendo o Bosque vivo e visivel atras dos overlays de Arena/Base/Shop/Social/Profile, com input pausado, Social digitavel, Shop confirmavel, Arena retomar/abandonar e retorno por `Fechar`, `Voltar` e Esc sem rebootstrap. O proximo passo operacional e playtest humano focado do pacote publicado; bugs futuros voltam ao fluxo normal se aparecerem. `Bosque Overlay Menu Action Authority v1` permanece como pacote anterior de botoes internos: release root `internal-alpha/v0-bosque-overlay-menu-action-authority-v1-20260609-aa9402d`, preview tecnico `https://5f04e6ae.draxos-mobile-internal-alpha.pages.dev`, version code `20`. `Bosque Overlay Navigation Hotfix v1` permanece como hotfix de interacao anterior: release root `internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-9b93e5d`, preview tecnico `https://92cc0579.draxos-mobile-internal-alpha.pages.dev`, version code `18`. `Bosque Persistent Overlay Shell v1` permanece como pacote overlay anterior: release root `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`, preview tecnico `https://a53c1d27.draxos-mobile-internal-alpha.pages.dev`, version code `17`. `Bosque Diegetic Launcher Foundation v1` permanece como pacote launcher anterior: release root `internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c`, preview tecnico `https://56b58162.draxos-mobile-internal-alpha.pages.dev`, version code `16`. `Bosque Bootstrap Authority v1` permanece como pacote bootstrap anterior: release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview tecnico `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, version code `15`. `Bosque Node Cooldown ACK v1` permanece como pacote Bosque anterior de cooldown/ACK: release root `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`, preview tecnico `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`, version code `13`. `Bosque Resume Exit Lifecycle v1` permanece como pacote remoto anterior de reentrada/saida: release root `internal-alpha/v0-bosque-resume-exit-lifecycle-v1-20260608-9a0f7c0`, preview tecnico `https://39128c59.draxos-mobile-internal-alpha.pages.dev`, version code `12`. `Bosque Feel & Spawn Authority v1` permanece como pacote remoto anterior de feel/spawn: release root `internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-70b79c3`, preview tecnico `https://16ac3cb7.draxos-mobile-internal-alpha.pages.dev`, version code `11`. `Bosque Persistence Rebase v1` permanece como pacote remoto anterior de persistencia: release root `internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74`, preview tecnico `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`, version code `10`, substituindo o modelo de snapshot local como promessa de save por operacoes duraveis com ACK do servidor e cooldown por item.
+Oficial, neste documento, significa `mode_registry.status=active` dentro do canal `internal_alpha`. Pacote atual publicado: `Bosque Overlay Layer And Readiness Authority v1`, versao `0.0.23-alpha.0`, version code `23`, minimum supported version code `13`, release root `internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c`, preview tecnico `https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, mantendo o Bosque vivo e visivel atras dos overlays de Arena/Base/Shop/Social/Profile, com input pausado, Arena active/replay em camada fullscreen acima do menu, modal global/topmost para confirmacoes, prontidao explicita de menus com servidor e retorno por `Fechar`, `Voltar` e Esc sem rebootstrap. O proximo passo operacional e playtest humano focado do pacote publicado; bugs futuros voltam ao fluxo normal se aparecerem. `Bosque Arena Abandon Recovery Authority v1` permanece como pacote anterior de recuperacao de abandono da Arena: release root `internal-alpha/v0-bosque-arena-abandon-recovery-authority-v1-20260610-a252241`, preview tecnico `https://b149da8f.draxos-mobile-internal-alpha.pages.dev`, version code `22`. `Bosque Overlay Menu Action Authority v1` permanece como pacote anterior de botoes internos: release root `internal-alpha/v0-bosque-overlay-menu-action-authority-v1-20260609-aa9402d`, preview tecnico `https://5f04e6ae.draxos-mobile-internal-alpha.pages.dev`, version code `20`. `Bosque Overlay Navigation Hotfix v1` permanece como hotfix de interacao anterior: release root `internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-9b93e5d`, preview tecnico `https://92cc0579.draxos-mobile-internal-alpha.pages.dev`, version code `18`. `Bosque Persistent Overlay Shell v1` permanece como pacote overlay anterior: release root `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`, preview tecnico `https://a53c1d27.draxos-mobile-internal-alpha.pages.dev`, version code `17`. `Bosque Diegetic Launcher Foundation v1` permanece como pacote launcher anterior: release root `internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c`, preview tecnico `https://56b58162.draxos-mobile-internal-alpha.pages.dev`, version code `16`. `Bosque Bootstrap Authority v1` permanece como pacote bootstrap anterior: release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview tecnico `https://0123894f.draxos-mobile-internal-alpha.pages.dev`, version code `15`. `Bosque Node Cooldown ACK v1` permanece como pacote Bosque anterior de cooldown/ACK: release root `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`, preview tecnico `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`, version code `13`. `Bosque Resume Exit Lifecycle v1` permanece como pacote remoto anterior de reentrada/saida: release root `internal-alpha/v0-bosque-resume-exit-lifecycle-v1-20260608-9a0f7c0`, preview tecnico `https://39128c59.draxos-mobile-internal-alpha.pages.dev`, version code `12`. `Bosque Feel & Spawn Authority v1` permanece como pacote remoto anterior de feel/spawn: release root `internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-70b79c3`, preview tecnico `https://16ac3cb7.draxos-mobile-internal-alpha.pages.dev`, version code `11`. `Bosque Persistence Rebase v1` permanece como pacote remoto anterior de persistencia: release root `internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74`, preview tecnico `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`, version code `10`, substituindo o modelo de snapshot local como promessa de save por operacoes duraveis com ACK do servidor e cooldown por item.
 
 ## Visao
 
@@ -171,26 +171,26 @@ Fora de V1:
   ou mutacao remota entra por implicacao;
 - visual permanece procedural simples.
 
-## Bosque Arena Abandon Recovery Authority v1
+## Bosque Overlay Layer And Readiness Authority v1
 
-Bosque Arena Abandon Recovery Authority v1 e o pacote Internal Alpha atual. Ele
-preserva o modelo do overlay persistente e endurece a interacao real do shell no
-Web: `Fechar`, `Voltar` e Esc usam uma unica autoridade de fechamento, Social
-recebe foco/texto em campos dentro do overlay, Shop usa confirmacao propria do
-overlay, Arena retoma/abandona tentativas sem sair do stack, menus simples
-abertos pelo Bosque nao viram acao mutante fantasma, refresh read-only nao
-bloqueia saida e respostas tardias nao renderizam depois que o overlay fecha ou
-muda de rota.
+Bosque Overlay Layer And Readiness Authority v1 e o pacote Internal Alpha atual.
+Ele preserva o modelo do overlay persistente e adiciona autoridade explicita de
+camadas: menu, Arena fullscreen, modal global e diagnosticos. Arena
+active/replay fica acima do painel do menu, confirmacoes de Arena/Loja ficam no
+modal topmost, menus com servidor expõem `refreshing -> ready`, e o Web smoke
+prova clique/tecla reais no controle que o Godot considera topmost.
 
 O pacote nao muda backend, schema, economia, recompensa, tuning, conteudo,
 contratos HTTP ou a politica de expansao do Openworld. A etapa existe para
-provar clique/tecla reais no Web publicado e deixar a autoridade de controles
-internos, fechamento/back/Esc previsivel antes do playtest humano focado.
+provar clique/tecla reais no Web publicado e deixar a autoridade de camadas,
+controles internos, fechamento/back/Esc e prontidao de menus previsivel antes
+do playtest humano focado.
 
-Bosque Overlay Menu Action Authority v1 permanece como pacote anterior de botoes
-internos. Bosque Overlay Navigation Hotfix v1 permanece como hotfix anterior de
-interacao e historico da primeira correcao de `Fechar`, `Voltar` e Esc sobre o
-overlay persistente do Bosque vivo.
+Bosque Arena Abandon Recovery Authority v1 permanece como pacote anterior de
+recuperacao do abandono da Arena. Bosque Overlay Menu Action Authority v1
+permanece como pacote anterior de botoes internos. Bosque Overlay Navigation
+Hotfix v1 permanece como hotfix anterior de interacao e historico da primeira
+correcao de `Fechar`, `Voltar` e Esc sobre o overlay persistente do Bosque vivo.
 
 ## Bosque Mecanico Basico v2
 

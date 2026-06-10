@@ -1,6 +1,6 @@
 # Update Manifest Contract
 
-- Ultima atualizacao: `2026-06-09`
+- Ultima atualizacao: `2026-06-10`
 - Status: `LIVE_INTERNAL_ALPHA_CONTRACT`
 - Endpoint atual: `GET /release/manifest`
 - Schema: `internal_alpha_manifest_v1`
@@ -17,7 +17,7 @@ https://<project-ref>.supabase.co/functions/v1/release/manifest
 
 A funcao retorna um JSON sem secrets e sem depender de login. A implementacao possui um manifest padrao versionado no repo em `server/functions/release/index.ts` e `supabase/functions/release/index.ts`. Override operacional por `RELEASE_MANIFEST_JSON_BASE64` ou `RELEASE_MANIFEST_JSON` fica disponivel apenas quando `RELEASE_MANIFEST_OVERRIDE_ENABLED=1`, para evitar que secrets antigos mantenham links obsoletos.
 
-O pacote operacional publicado atual e `Bosque Arena Abandon Recovery Authority v1` (`0.0.22-alpha.0`, version code `22`). Os downloads default do manifest continuam apontando para os artefatos configurados na funcao de release; nao derivar novos hashes ou URLs a partir do nome do pacote sem nova publicacao de artefatos. `Bosque Overlay Interactive Controls Authority v1` (`0.0.21-alpha.0`, version code `21`) permanece como pacote historico anterior de controles interativos Social/Shop/Arena no overlay.
+O pacote operacional publicado atual e `Bosque Overlay Layer And Readiness Authority v1` (`0.0.23-alpha.0`, version code `23`). Os downloads default do manifest continuam apontando para os artefatos configurados na funcao de release; nao derivar novos hashes ou URLs a partir do nome do pacote sem nova publicacao de artefatos. `Bosque Arena Abandon Recovery Authority v1` (`0.0.22-alpha.0`, version code `22`) permanece como pacote historico anterior de recuperacao do abandono da Arena.
 
 ## Payload
 
@@ -25,24 +25,27 @@ O pacote operacional publicado atual e `Bosque Arena Abandon Recovery Authority 
 {
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
-  "latest_version": "0.0.22-alpha.0",
-  "latest_version_code": 22,
+  "latest_version": "0.0.23-alpha.0",
+  "latest_version_code": 23,
   "minimum_supported_version": "0.0.13-alpha.0",
   "minimum_supported_version_code": 13,
   "released_at": "2026-06-10T00:00:00Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Bosque Arena Abandon Recovery Authority v1 publicado na URL principal de Internal Alpha.",
+    "Bosque Overlay Layer And Readiness Authority v1 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
     "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
     "Voltar, Fechar e Esc/Web usam a mesma autoridade de fechamento do overlay e devolvem input ao mesmo node do Bosque sem rebootstrap.",
+    "Arena active/replay agora usa camada fullscreen acima do painel do menu, sem corte lateral do duelo.",
+    "Confirmacoes de Arena, Loja e fluxos futuros usam modal global acima de menu e Arena.",
+    "Menus com refresh de servidor mostram estado de sincronizacao antes de aceitar comandos dependentes da resposta.",
     "Social, Loja e Arena usam controles interativos no overlay com foco, texto, confirmacao, retomada e abandono validados no Web/canvas.",
     "Menus abertos pelo Bosque usam rota de overlay sem acao mutante fantasma.",
     "Refresh read-only nao bloqueia fechamento; respostas tardias sao ignoradas quando o overlay fecha ou muda de rota.",
     "Arena PVE roda dentro do overlay e bloqueia fechamento apenas durante replay ou mutacao critica explicita.",
     "Arena PVE exporta HP/Mana iniciais buffados no log e o replay aplica battle_start/participants antes da primeira acao.",
-    "Manifesto recomenda build 0.0.22-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+    "Manifesto recomenda build 0.0.23-alpha.0 e mantem build minima 0.0.13-alpha.0.",
     "Coletas, deposito no Bau, craft local e orientacao so aparecem como salvos depois de ACK do servidor.",
     "Nodes do Bosque mantem cooldown por item via node_state.next_spawn_at e descartam rejeicoes terminais de cooldown sem fila infinita.",
     "Coleta ativa nao reinicia por movimento leve e ACKs de checkpoint nao fazem rollback visual da mesma sessao.",
@@ -57,13 +60,13 @@ O pacote operacional publicado atual e `Bosque Arena Abandon Recovery Authority 
     "android": {
       "label": "Android APK",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      "sha256": "10cdc2bc4f7ea25db7c05be917efe0a0d73baa1047b01311748857e6637dfc99",
+      "sha256": "986bff2ac180de883f5dfa97078e0a3ff31e2c0d4de139b8863c18e1d37507ab",
       "auth_required": true
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      "sha256": "ff63afa6b605d699d101a4a9eb5177f98cd994e155445d0ba2ccbdbbac49fb13",
+      "sha256": "4659da781b027dcb1c9f1b5d6ec32e56630eac14160413a35cb75a90c2e8c0dc",
       "auth_required": true
     },
     "web": {
@@ -95,10 +98,10 @@ O pacote operacional publicado atual e `Bosque Arena Abandon Recovery Authority 
 | Campo | Valor |
 |---|---|
 | `ProjectInfo.RELEASE_CHANNEL` | `internal_alpha` |
-| `ProjectInfo.APP_VERSION` | `0.0.22-alpha.0` |
-| `ProjectInfo.APP_VERSION_CODE` | `22` |
+| `ProjectInfo.APP_VERSION` | `0.0.23-alpha.0` |
+| `ProjectInfo.APP_VERSION_CODE` | `23` |
 | `ProjectInfo.MANIFEST_SCHEMA_VERSION` | `internal_alpha_manifest_v1` |
 
 ## Evolucao
 
-Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, APK/PC ZIP foram publicados no Supabase Storage unlisted, Portal/Web foram publicados no Cloudflare Pages e o manifest remoto passou a usar hashes/links reais. Em `T03-P18`, o handoff final foi registrado em `../internal-alpha-v0-handoff.md`. Pacotes posteriores atualizaram o fallback versionado do repo conforme a funcao de release. Em `Bosque Diegetic Launcher Foundation v1`, o manifest remoto passou a recomendar `0.0.16-alpha.0`, manter minimo `0.0.13-alpha.0`, documentar o launcher diegetico do Bosque e apontar downloads Android/PC para `GET /release/download` com `INTERNAL_ALPHA_RELEASE_ROOT` no root publicado. Em `Bosque Overlay Navigation Hotfix v1`, o manifest passou a recomendar `0.0.18-alpha.0`, manter minimo `0.0.13-alpha.0` e documentar o hotfix de `Fechar`, `Voltar` e Esc sobre o overlay persistente do Bosque vivo. Em `Bosque Overlay Interaction Authority v1`, o manifest passou a recomendar `0.0.19-alpha.0`, manter minimo `0.0.13-alpha.0`, documentar a autoridade unica de fechamento/back/Esc no Web e preservar fechamento durante refresh read-only com guarda contra respostas tardias. Em `Bosque Overlay Menu Action Authority v1`, o manifest passou a recomendar `0.0.20-alpha.0`, manter minimo `0.0.13-alpha.0` e documentar botoes internos de Account/Base/Shop/Social/Arena executando dentro do overlay com clique real Web/canvas. Em `Bosque Overlay Interactive Controls Authority v1`, o manifest passou a recomendar `0.0.21-alpha.0`, manter minimo `0.0.13-alpha.0` e documentar foco/texto do Social, confirmacao propria da Loja e retomada/abandono da Arena dentro do overlay com smoke Web/canvas real. Em `Bosque Arena Abandon Recovery Authority v1`, o manifest passa a recomendar `0.0.22-alpha.0`, manter minimo `0.0.13-alpha.0` e documentar abandono confirmado da Arena com verificacao de liberacao real, limpeza local de tentativa antiga sem UUID remoto valido e diagnostico Web `lastArenaOperation`. Em releases futuras, subir `latest_version_code` gera update recomendado, e subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.
+Em `T03-P16`, os artefatos locais foram exportados e seus hashes foram registrados em `../internal-alpha-v0-export-report.md`. Em `T03-P17`, APK/PC ZIP foram publicados no Supabase Storage unlisted, Portal/Web foram publicados no Cloudflare Pages e o manifest remoto passou a usar hashes/links reais. Em `T03-P18`, o handoff final foi registrado em `../internal-alpha-v0-handoff.md`. Pacotes posteriores atualizaram o fallback versionado do repo conforme a funcao de release. Em `Bosque Diegetic Launcher Foundation v1`, o manifest remoto passou a recomendar `0.0.16-alpha.0`, manter minimo `0.0.13-alpha.0`, documentar o launcher diegetico do Bosque e apontar downloads Android/PC para `GET /release/download` com `INTERNAL_ALPHA_RELEASE_ROOT` no root publicado. Em `Bosque Overlay Navigation Hotfix v1`, o manifest passou a recomendar `0.0.18-alpha.0`, manter minimo `0.0.13-alpha.0` e documentar o hotfix de `Fechar`, `Voltar` e Esc sobre o overlay persistente do Bosque vivo. Em `Bosque Overlay Interaction Authority v1`, o manifest passou a recomendar `0.0.19-alpha.0`, manter minimo `0.0.13-alpha.0`, documentar a autoridade unica de fechamento/back/Esc no Web e preservar fechamento durante refresh read-only com guarda contra respostas tardias. Em `Bosque Overlay Menu Action Authority v1`, o manifest passou a recomendar `0.0.20-alpha.0`, manter minimo `0.0.13-alpha.0` e documentar botoes internos de Account/Base/Shop/Social/Arena executando dentro do overlay com clique real Web/canvas. Em `Bosque Overlay Interactive Controls Authority v1`, o manifest passou a recomendar `0.0.21-alpha.0`, manter minimo `0.0.13-alpha.0` e documentar foco/texto do Social, confirmacao propria da Loja e retomada/abandono da Arena dentro do overlay com smoke Web/canvas real. Em `Bosque Arena Abandon Recovery Authority v1`, o manifest passou a recomendar `0.0.22-alpha.0`, manter minimo `0.0.13-alpha.0` e documentar abandono confirmado da Arena com verificacao de liberacao real, limpeza local de tentativa antiga sem UUID remoto valido e diagnostico Web `lastArenaOperation`. Em `Bosque Overlay Layer And Readiness Authority v1`, o manifest passa a recomendar `0.0.23-alpha.0`, manter minimo `0.0.13-alpha.0` e documentar camadas explicitas do overlay, Arena fullscreen acima do menu, modal global/topmost, estados `opening`/`refreshing`/`ready`/`mutating`/`critical` e diagnostico Web fresco antes de cliques reais. Em releases futuras, subir `latest_version_code` gera update recomendado, e subir `minimum_supported_version_code` torna o update obrigatorio para acoes online.

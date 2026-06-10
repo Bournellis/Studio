@@ -4,49 +4,50 @@
 - Project: `draxos-mobile`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `Internal Alpha`
-- Active stage: `Bosque Arena Abandon Recovery Authority v1`
-- Active stage status: `BOSQUE_ARENA_ABANDON_RECOVERY_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
-- Local follow-up stage: none; the Arena abandon recovery authority package is already published.
+- Active stage: `Bosque Overlay Layer And Readiness Authority v1`
+- Active stage status: `BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
+- Local follow-up stage: none; the overlay layer/readiness authority package is already published.
 - Local follow-up status: none.
 - Build channel: `internal_alpha`
-- Version: `0.0.22-alpha.0`
-- Version code: `22`
+- Version: `0.0.23-alpha.0`
+- Version code: `23`
 - Minimum supported version code: `13`
 
 ## Current Truth
 
-- Latest published remote package: `Bosque Arena Abandon Recovery Authority v1`.
+- Latest published remote package: `Bosque Overlay Layer And Readiness Authority v1`.
 
-- Release root: `internal-alpha/v0-bosque-arena-abandon-recovery-authority-v1-20260610-a252241`
+- Release root: `internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c`
 - Official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`
 - Direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`
-- Deployment evidence: `https://b149da8f.draxos-mobile-internal-alpha.pages.dev`
-- Source state: release root was generated from implementation commit `a252241`; publication/status closure is recorded in the Kanban handoff.
-- Published package: bumps APK/manifest to `0.0.22-alpha.0` / version code `22`, keeps `minimum_supported_version_code` at `13`, redeploys `release`, publishes the Arena abandon recovery authority over the live Bosque overlay, validates that abandon only reports success after the active attempt no longer blocks Arena selection, and keeps local stale/non-UUID attempts recoverable without remote mutation.
+- Deployment evidence: `https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev`
+- Source state: release root was generated from implementation commit `181861c`; publication/status closure is recorded in the Kanban handoff.
+- Published package: bumps APK/manifest to `0.0.23-alpha.0` / version code `23`, keeps `minimum_supported_version_code` at `13`, redeploys `release`, publishes explicit overlay layer authority, renders Arena active/replay fullscreen above the menu panel, moves confirmations to a global topmost modal, and exposes route readiness so server-backed menus show synchronization before accepting dependent commands.
 - Remote SQL already applied: `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`.
-- Remote functions: `release` redeployed for Bosque Arena Abandon Recovery Authority v1; `arena` remains on Arena PVE Bonus Visual v1; `modes` remains on the operations-v2 backend from the previous Bosque packages.
+- Remote functions: `release` redeployed for Bosque Overlay Layer And Readiness Authority v1; `arena` remains on Arena PVE Bonus Visual v1; `modes` remains on the operations-v2 backend from the previous Bosque packages.
 
-Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`: everything tested at that point appeared to work. `DMOB-D076` was resolved by choosing the diegetic launcher foundation, `DMOB-D077` published it, `DMOB-D078` published the persistent overlay shell, `Bosque Overlay Interactive Controls Authority v1` remains the previous Social/Shop/Arena-controls package, and `Bosque Arena Abandon Recovery Authority v1` now publishes the recovery authority for Arena retomar/abandonar after Fabio reported that an open Arena still could not be cancelled. The next operational step is focused human playtest of this newly published overlay package. If future errors appear, they return to the normal bugfix flow.
+Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`: everything tested at that point appeared to work. `DMOB-D076` was resolved by choosing the diegetic launcher foundation, `DMOB-D077` published it, `DMOB-D078` published the persistent overlay shell, `Bosque Arena Abandon Recovery Authority v1` remains the previous Arena abandon recovery package, and `Bosque Overlay Layer And Readiness Authority v1` now publishes the layer/readiness authority after Fabio reported that Arena/new duel could appear under the menu panel and server-backed menus looked ready before they really accepted commands. The next operational step is focused human playtest of this newly published overlay package. If future errors appear, they return to the normal bugfix flow.
 
 ## Operational Vs Product Direction
 
-- Operational package: Bosque Arena Abandon Recovery Authority v1 is current.
-- Implementation stage: Bosque Arena Abandon Recovery Authority v1 is now published as the current Internal Alpha package.
+- Operational package: Bosque Overlay Layer And Readiness Authority v1 is current.
+- Implementation stage: Bosque Overlay Layer And Readiness Authority v1 is now published as the current Internal Alpha package.
 - Product direction: Arena PVE remains the first approved core, governed by `docs/pve-arena-initial-direction.md` and `docs/pve-arena-v1.md`.
 - Bosque/Openworld status: approved integrated Internal Alpha slice with diegetic launcher and persistent overlay shell, not approval for broad continuous-open-world expansion.
 - Do not open tuning, PVP, economy, content, weapons, spells, potions, final visuals, remote mutation or a new package without an explicit decision.
 
 ## Published Overlay Scope
 
-`Bosque Arena Abandon Recovery Authority v1` keeps the Bosque instantiated, visible and input-paused while launcher targets render as a responsive overlay, and is now published as the current Internal Alpha Web/APK package:
+`Bosque Overlay Layer And Readiness Authority v1` keeps the Bosque instantiated, visible and input-paused while launcher targets render as a layered responsive overlay, and is now published as the current Internal Alpha Web/APK package:
 
 - preserves the `mode_shell` and active `openworld_forest_screen.gd` node while Shop/Base/Social/Profile and the Arena flow open above it;
 - renders a shared overlay sheet over the Bosque, with a near-full-height mobile panel, desktop side panel, backdrop dimming and a separate overlay route stack;
 - pauses Bosque input, movement, collection, launcher taps and joystick while the overlay is open, then restores focus without rebootstrap;
-- keeps Arena Selection -> Active -> Replay -> Buff/Summary inside the overlay and blocks close/back during replay or critical mutation;
+- keeps Arena Selection -> Active -> Replay -> Buff/Summary inside the overlay, with Active/Replay in a fullscreen layer above the menu panel and close/back blocked only during replay or critical mutation;
 - routes `Voltar`, `ACTION_RETURN_REFUGE` and `open_mode_shell:openworld` back to the existing Bosque node instead of recreating the shell;
 - keeps the overlay diagnostics for buttons, LineEdit focus, pending confirmation, last overlay command and last Arena operation so Web smokes can prove real interaction instead of direct method calls;
-- keeps overlay-owned confirmation chrome while adding abandon verification and local stale-attempt recovery;
+- keeps confirmation chrome in a global modal layer above menu/Arena while preserving abandon verification and local stale-attempt recovery;
+- publishes route phases `opening`, `refreshing`, `ready`, `mutating` and `critical`, so server-backed menus can show synchronization and reject early dependent clicks with visible feedback;
 - preserves pending checkpoint behavior before opening overlay targets: flush when possible, keep pending ops and show an honest message when not.
 
 This publication updates release metadata, manifest defaults, APK/Web artifacts, Cloudflare Pages and the `release` function only. It does not change Supabase schema, economy, rewards, tuning, content, broad Openworld scope or the Arena PVE product direction.
@@ -60,29 +61,30 @@ Delivered:
 - routes overlay back/close through a dedicated stack before returning focus to the same `mode_shell`;
 - runs Arena selection, active attempt, replay, buff choice and summary inside the overlay;
 - blocks overlay close/back during replay or critical server mutation;
-- aligns release/export scripts and remote smokes with version code `22`;
-- proves real Web/canvas interaction through local and remote smokes for `Fechar`, `Voltar`, Esc, Social text entry, Shop confirm/cancel/confirm and Arena retomar/abandonar; the Arena smoke now requires `activeAttemptBlocksSelection=false` and `lastArenaOperation.phase=abandon_released` after confirmation;
+- aligns release/export scripts and remote smokes with version code `23`;
+- proves real Web/canvas interaction through local and remote smokes for `Fechar`, `Voltar`, Esc, Social text entry, Shop confirm/cancel/confirm, Arena retomar/abandonar, Arena fullscreen topmost above the menu panel, global modal topmost and readiness diagnostics; the Arena smoke now requires `activeAttemptBlocksSelection=false` and `lastArenaOperation.phase=abandon_released` after confirmation;
 - preserves Arena PVE Bonus Visual v1, Bosque Node Cooldown ACK v1, resume/exit lifecycle, feel/spawn authority, persistence rebase and station-craft behavior.
 
 Publication evidence:
 
-- Cloudflare Pages preview evidence: `https://b149da8f.draxos-mobile-internal-alpha.pages.dev`.
+- Cloudflare Pages preview evidence: `https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev`.
 - Direct preview Web launch smoke loaded the game, matched release root and reported no runtime errors.
 - Remote overlay controls smoke passed for close/back/Esc.
-- Remote overlay menu-actions smoke passed for real Web click/keyboard interaction on Account/Base/Shop/Social/Arena, Social `LineEdit` typing, Shop confirmation and Arena retomar/abandonar.
+- Remote overlay menu-actions smoke passed for real Web click/keyboard interaction on Account/Base/Shop/Social/Arena, Social `LineEdit` typing, Shop confirmation, Arena fullscreen topmost and Arena retomar/abandonar.
 - Remote manifest/deploy validation passed. Anonymous canonical Portal/Web returned Cloudflare Access content, so the hash preview remains the automated Web evidence and the official URL should be tested with an authenticated Access session.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 
 Artifact hashes:
 
-- Android APK SHA256: `10cdc2bc4f7ea25db7c05be917efe0a0d73baa1047b01311748857e6637dfc99`
-- PC Windows ZIP SHA256: `ff63afa6b605d699d101a4a9eb5177f98cd994e155445d0ba2ccbdbbac49fb13`
-- Web Index SHA256: `5f5faac20e9798cc84fd47cee9a6c2f36ab6407a1d1ff9d8ae4ee735f023bce9`
+- Android APK SHA256: `986bff2ac180de883f5dfa97078e0a3ff31e2c0d4de139b8863c18e1d37507ab`
+- PC Windows ZIP SHA256: `4659da781b027dcb1c9f1b5d6ec32e56630eac14160413a35cb75a90c2e8c0dc`
+- Web Index SHA256: `0f6e3e655367df73f9a6d3ba2ee5a4e205b487bbda03a108ec9fc6db3a7bd73b`
 
 ## Preserved Lineage
 
 These packages are preserved history/context, not the current publication:
 
+- Previous Arena abandon recovery package: `Bosque Arena Abandon Recovery Authority v1`, release root `internal-alpha/v0-bosque-arena-abandon-recovery-authority-v1-20260610-a252241`, preview `https://b149da8f.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.22-alpha.0` / version code `22`.
 - Previous launcher package: `Bosque Diegetic Launcher Foundation v1`, release root `internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c`, preview `https://56b58162.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.16-alpha.0` / version code `16`.
 - Previous overlay package: `Bosque Persistent Overlay Shell v1`, release root `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`, preview `https://a53c1d27.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.17-alpha.0` / version code `17`.
 - Previous interactive-controls package: `Bosque Overlay Interactive Controls Authority v1`, release root `internal-alpha/v0-bosque-overlay-interactive-controls-authority-v1-20260609-d3be1fb`, preview `https://9461e4be.draxos-mobile-internal-alpha.pages.dev`, APK/manifest `0.0.21-alpha.0` / version code `21`.
@@ -113,7 +115,7 @@ Track markers that remain active as guardrails:
 
 ## Current Gate
 
-The next operational step is focused human playtest of the published `Bosque Arena Abandon Recovery Authority v1` Web/APK package. Validate that Bosque landmarks open Arena/Base/Shop/Social/Profile through shell actions, that Social fields accept typing, Shop confirmations cancel/confirm correctly, Arena resume/abandon stays in the overlay, `Fechar`/`Voltar`/Esc return to the Bosque when possible, pending Bosque state remains honest on menu exit, and no Tower/Card/dev-tool launcher entries appear.
+The next operational step is focused human playtest of the published `Bosque Overlay Layer And Readiness Authority v1` Web/APK package. Validate that Bosque landmarks open Arena/Base/Shop/Social/Profile through shell actions, that Social fields preserve typing through refresh, Shop confirmations cancel/confirm in the global modal, Arena resume/abandon stays in the overlay, a new Arena opens fullscreen above the menu without right-side clipping, `Fechar`/`Voltar`/Esc return to the Bosque when possible, server-backed menus show `refreshing -> ready` honestly, pending Bosque state remains honest on menu exit, and no Tower/Card/dev-tool launcher entries appear.
 
 Open decision focus:
 

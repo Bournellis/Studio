@@ -3,7 +3,7 @@
 - Status: `VIVO`
 - Last updated: `2026-06-10`
 - Scope: long-term hardening/refactor guardrails for DraxosMobile after
-  `Bosque Arena Abandon Recovery Authority v1`.
+  `Bosque Overlay Layer And Readiness Authority v1`.
 
 ## Purpose
 
@@ -54,15 +54,16 @@ each kind of refactor.
 
 ## Current Package Guard
 
-The current package is `Bosque Arena Abandon Recovery Authority v1`:
+The current package is `Bosque Overlay Layer And Readiness Authority v1`:
 
-- release root `internal-alpha/v0-bosque-arena-abandon-recovery-authority-v1-20260610-a252241`;
-- version `0.0.22-alpha.0`;
-- version code `22`;
+- release root `internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c`;
+- version `0.0.23-alpha.0`;
+- version code `23`;
 - minimum supported version code `13`.
 
 The next operational step remains focused human playtest of the published
-Web/APK package, including Arena resume/abandon recovery, Social/Shop overlay
-controls, real `Fechar`, `Voltar` and Esc interaction over the live Bosque.
+Web/APK package, including Arena fullscreen layer authority, global modal
+authority, menu readiness feedback, Social/Shop overlay controls, real `Fechar`,
+`Voltar` and Esc interaction over the live Bosque.
 Hardening bugs can return to normal bugfix flow, but this program does not
 create a new release package by itself.
