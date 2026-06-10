@@ -278,10 +278,12 @@ func test_player_plasma_bolt_hits_bot_with_strong_knockback() -> void:
 	var feedback = arena.get_node("FeedbackController")
 	bot.shoot_cooldown_remaining = 99.0
 	bot.reaction_remaining = 99.0
+	bot.move_speed = 0.0
 	var before: float = bot.health
-	var origin: Vector3 = player.get_shot_origin()
-	var direction: Vector3 = (bot.get_body_center() - origin).normalized()
-	arena._on_player_alt_fire(origin, direction, player.alt_fire_damage, player.alt_fire_knockback, player.alt_fire_speed, player.alt_fire_radius, true)
+	var camera: Camera3D = player.get_camera()
+	camera.look_at(bot.get_body_center(), Vector3.UP)
+	player.grant_overcharge()
+	player.request_alt_fire()
 	for _step in range(80):
 		await get_tree().physics_frame
 		if arena.debug_get_active_projectile_count() == 0:
@@ -292,6 +294,35 @@ func test_player_plasma_bolt_hits_bot_with_strong_knockback() -> void:
 	assert_eq(hud.last_feedback, &"hit")
 	assert_gt(feedback.plasma_hit_count, 0)
 	assert_gt(feedback.knockback_count, 0)
+	assert_no_new_orphans()
+
+func test_player_alt_fire_request_hits_crosshair_body_edge_from_offset_muzzle() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var feedback = arena.get_node("FeedbackController")
+	bot.shoot_cooldown_remaining = 99.0
+	bot.reaction_remaining = 99.0
+	var before: float = bot.health
+	var camera: Camera3D = player.get_camera()
+	camera.look_at(bot.get_body_center() + Vector3.RIGHT * 0.28, Vector3.UP)
+	player.request_alt_fire()
+	for _step in range(80):
+		await get_tree().physics_frame
+		if arena.debug_get_active_projectile_count() == 0:
+			break
+
+	assert_lt(bot.health, before)
+	assert_gt(feedback.plasma_hit_count, 0)
+	assert_gt(bot.debug_get_last_knockback_impulse().length(), 0.1)
 	assert_no_new_orphans()
 
 func test_pickups_heal_player_and_grant_overcharge() -> void:

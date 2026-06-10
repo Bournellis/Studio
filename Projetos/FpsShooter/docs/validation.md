@@ -21,9 +21,9 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `29/29`;
-- `249` asserts;
-- Track 02A validates feedback controller, player hit/miss, combatant impulse/lift/clamp/decay, player hit knockback, bot hit knockback, bot miss without knockback, map structure, protected spawn sightline, route markers, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()`, synthetic audio stream creation, RMB plasma input, Plasma Bolt spawn/hit/knockback, pickups, overcharge, bot pickup priority, ready-shot-over-health pressure, pickup-route interruption, bot simple jump and bot plasma dodge awareness.
+- GUT `30/30`;
+- `253` asserts;
+- Track 02A validates feedback controller, player hit/miss, combatant impulse/lift/clamp/decay, player hit knockback, bot hit knockback, bot miss without knockback, map structure, protected spawn sightline, route markers, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()`, synthetic audio stream creation, RMB plasma input, Plasma Bolt spawn/hit/knockback, offset-muzzle crosshair hits, pickups, overcharge, bot pickup priority, ready-shot-over-health pressure, pickup-route interruption, bot simple jump and bot plasma dodge awareness.
 
 ## Manual Smoke
 
@@ -42,6 +42,7 @@ Expected:
 - aiming at the bot and shooting reduces bot health, flashes the bot, shows hitmarker and plays hit feedback;
 - hitting the bot pushes it in the shot direction with a small readable lift and short knockback pulse;
 - hitting the bot with Plasma Bolt creates stronger but still controlled knockback;
+- aiming directly at the bot with RMB reliably causes Plasma Bolt damage/knockback instead of only showing the projectile;
 - missing the bot still shows shot/tracer feedback without false hit confirmation;
 - missing the bot does not move it or show hit/knockback feedback;
 - the map is `Duel Pit V1`, with a central blocker, low/high cover, route markings, side platforms and ramps;

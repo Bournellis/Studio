@@ -4,7 +4,7 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS 3D tech probe`
-- Active stage: `Track 02A - Bot Pressure Jump Hotfix V1`
+- Active stage: `Track 02A - Plasma Damage Hotfix V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -19,7 +19,7 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - Traditional FPS baseline.
 - Local 1x1 arena against a bot.
 - Player movement, mouse look, jump, hitscan shot and combat-readable knockback.
-- Secondary `Plasma Bolt` alt-fire on RMB with visible slow projectile, stronger knockback and cooldown.
+- Secondary `Plasma Bolt` alt-fire on RMB with visible slow projectile, crosshair-aligned damage, stronger knockback and cooldown.
 - Runtime pickups: health shard and overcharge.
 - Fair bot baseline with vertical-aware line of sight.
 - Bot tactical awareness for health pickup, overcharge contest and visible plasma dodge.
@@ -31,11 +31,11 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 
 ## Active Goal
 
-`Track 02A - Bot Pressure Jump Hotfix V1` is complete. The expanded duel loop remains the accepted baseline, now with the bot preserving shot pressure over pickup routes and gaining first simple jump behavior for the current ramps/platform setup.
+`Track 02A - Plasma Damage Hotfix V1` is complete. The expanded duel loop remains the accepted baseline, now with RMB Plasma Bolt damage aligned to the player's crosshair from the offset muzzle.
 
 ## Current Gate
 
-Closed for the Track 02A hotfix. Run the 5-minute editor smoke focused on rifle vs Plasma Bolt choice, pickup readability, overcharge clarity, bot shot pressure before health routes, bot jump readability and whether the expanded loop feels fair.
+Closed for the Plasma Damage Hotfix. Run the 5-minute editor smoke focused on RMB Plasma Bolt damage/knockback reliability, rifle vs Plasma Bolt choice, pickup readability, overcharge clarity, bot shot pressure before health routes, bot jump readability and whether the expanded loop feels fair.
 
 ## Validation Snapshot
 
@@ -132,6 +132,13 @@ Track 02A Bot Pressure Jump Hotfix V1:
 - bot simple jump uses a cooldown and ground-contact probe to reach raised reposition goals or clear low blockers;
 - validation passes `29/29` GUT tests with `249` asserts.
 
+Track 02A Plasma Damage Hotfix V1:
+
+- Plasma Bolt now converges from the offset visual muzzle toward the player's camera/crosshair aim point instead of travelling parallel to the camera ray;
+- player projectile collision uses a radius-aware overlap fallback after the centerline raycast, so visible plasma body contact can damage the bot reliably;
+- tests now cover both overcharged Plasma Bolt damage/strong knockback and a real `request_alt_fire()` body-edge hit from the offset muzzle;
+- validation passes `30/30` GUT tests with `253` asserts.
+
 ## Read Next
 
 1. `AGENTS.md`
@@ -145,3 +152,4 @@ Track 02A Bot Pressure Jump Hotfix V1:
 9. `implementation/tracks/track-01d-knockback-movement-combat-v1/current-status.md`
 10. `implementation/tracks/track-02a-combat-loop-expansion-v1/current-status.md`
 11. `implementation/tracks/track-02a-bot-pressure-jump-hotfix-v1/current-status.md`
+12. `implementation/tracks/track-02a-plasma-damage-hotfix-v1/current-status.md`

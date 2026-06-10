@@ -1,7 +1,7 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-09`
-- Status: `FPS_SHOOTER_TRACK_02A_BOT_PRESSURE_JUMP_HOTFIX_COMPLETE`
+- Status: `FPS_SHOOTER_TRACK_02A_PLASMA_DAMAGE_HOTFIX_COMPLETE`
 
 ## North Star
 
@@ -121,12 +121,13 @@ Status: complete.
 
 Delivered:
 
-- RMB `Plasma Bolt`: visible slow projectile, cooldown, primitive glow, hit/miss feedback and stronger controlled knockback;
+- RMB `Plasma Bolt`: visible slow projectile, cooldown, primitive glow, crosshair-aligned damage from the offset muzzle, hit/miss feedback and stronger controlled knockback;
 - overcharge pickup that empowers the next rifle or plasma shot;
 - health pickup that creates a recovery objective;
 - pickup respawn timers and simple HUD readability;
 - bot awareness for health seeking, overcharge contest and nearby plasma dodge;
 - bot pressure hotfix: ready shots now beat pickup routes, health routes can be interrupted by a ready shot and the bot can make simple jumps toward raised reposition goals/low blockers;
+- plasma damage hotfix: the projectile now converges toward the camera/crosshair aim point and uses radius-aware collision fallback so visible hits reliably damage the bot;
 - arena-side authority for projectile collision, pickup consumption, damage, knockback and feedback;
 - automated coverage for input, projectile spawn/hit, pickup effects, bot pickup priority, ready-shot-over-health pressure, pickup-route interruption, simple bot jump and bot dodge awareness.
 
