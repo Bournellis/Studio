@@ -1,7 +1,7 @@
 # Track 05 - Foundation Hardening & Refactor V1
 
 - Created: `2026-06-10`
-- Status: `ACTIVE`
+- Status: `COMPLETE`
 - Branch: `codex/fpsshooter/track05-foundation-hardening-refactor-v1`
 - Worktree: `D:\Estudio-worktrees\FpsShooter--codex--track05-foundation-hardening-refactor-v1`
 
@@ -50,13 +50,30 @@ Before Track 05 edits:
 
 - [x] Worktree and Kanban registered.
 - [x] Baseline validation run.
-- [ ] Documentation and contracts.
-- [ ] Validation/tooling hardening.
-- [ ] Runtime primitive/tuning helpers.
-- [ ] Arena/Futebol layout and rule extraction.
-- [ ] Bot hardening helper extraction.
-- [ ] Test suite split.
-- [ ] Closeout docs and portfolio update.
+- [x] Documentation and contracts.
+- [x] Validation/tooling hardening.
+- [x] Runtime primitive/tuning helpers.
+- [x] Arena/Futebol layout and rule extraction.
+- [x] Bot hardening helper extraction.
+- [x] Test suite split.
+- [x] Closeout docs and portfolio update.
+
+## Delivered
+
+- Added local documentation index, architecture overview, mode contract, bot contract, tuning guide, validation profile guide, publication-readiness checklist and codebase audit.
+- Added validation profiles: `full`, `quick`, `structure` and `--list-profiles`.
+- Extracted shared runtime primitive creation into `modes/shared/runtime_primitive_factory.gd`.
+- Extracted `Duel Pit V2` static layout into `modes/arena/arena_duel_pit_layout_builder.gd`.
+- Extracted football pitch/goal/stadium construction into `modes/football/football_field_builder.gd`.
+- Extracted arena combat helper math into `gameplay/arena/arena_combat_rules.gd`.
+- Extracted football match helper rules into `gameplay/football/football_match_rules.gd`.
+- Extracted bot aim and visibility helper logic into `gameplay/bot/bot_aim_model.gd` and `gameplay/bot/bot_visibility_points.gd`.
+- Added focused pure helper tests in `tests/unit/test_rule_helpers.gd` while preserving the broad integration regression in `tests/unit/test_bootstrap.gd`.
+
+## Validation
+
+- Final automated validation passed with `51/51` GUT tests and `386` asserts.
+- Known warning class remains limited to GUT UID/text-path fallback warnings.
 
 ## Acceptance
 

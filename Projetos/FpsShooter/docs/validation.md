@@ -26,10 +26,11 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `42/42`;
-- `355` asserts;
+- GUT `51/51`;
+- `386` asserts;
 - Track 04A validates menu boot and mode routes, centered menu container hierarchy, generated menu/arena/football scenes, paused football intro panel, football goal safety floors and side walls, football player kick and strong kick, no weapon damage in football, football goal scoring/match end, bot kick handoff, arena pause menu return button and the full previous arena shooter regression suite.
-- Track 05 baseline before refactor remains `42/42` and `355` asserts after the one-time fresh worktree editor import.
+- Track 05 final validation is `51/51` and `386` asserts after helper-rule test split.
+- Track 05 baseline before refactor was `42/42` and `355` asserts after the one-time fresh worktree editor import.
 
 ## Manual Smoke
 

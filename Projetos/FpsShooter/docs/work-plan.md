@@ -1,7 +1,7 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-10`
-- Status: `FPS_PLAYGROUND_TRACK_05_FOUNDATION_HARDENING_REFACTOR_ACTIVE`
+- Status: `FPS_PLAYGROUND_TRACK_05_FOUNDATION_HARDENING_REFACTOR_COMPLETE`
 
 ## North Star
 
@@ -226,16 +226,16 @@ Future candidate scope:
 
 Goal: turn the accepted two-mode prototype into a cleaner professional foundation without changing gameplay.
 
-Status: active.
+Status: complete.
 
-Planned:
+Delivered:
 
 - documentation index, architecture overview, codebase audit and mode/bot/tuning/validation/publication contracts;
 - validation profile hardening and clearer known-warning policy;
 - shared runtime primitive helpers so mode roots stop owning every mesh/collision detail;
-- safe Arena/Futebol rule and layout extraction;
-- bot helper extraction where tests protect behavior;
-- test suite split into focused files with shared helpers;
+- safe Arena/Futebol layout builders and rule extraction;
+- bot aim/visibility helper extraction while preserving state-machine behavior;
+- test suite split into broad integration regression plus focused pure-helper coverage;
 - closeout docs and portfolio update.
 
 Acceptance:
@@ -246,6 +246,12 @@ Acceptance:
 - docs explain where new work belongs;
 - mode roots are easier to extend for the next mode/map;
 - test failures become easier to locate.
+
+Future candidate scope:
+
+- choose a gameplay growth track now that the foundation is clean;
+- recommended candidates are football feel/possession tuning, arena content/map expansion, or another small FPS Playground mode;
+- keep export/publication as a separate readiness track.
 
 ## Deferred
 

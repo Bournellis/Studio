@@ -18,11 +18,11 @@ Current identity:
 - future additions may include additional projectile types, stronger effects, jump pads, suspended platforms, void/fall rules and deeper movement-combat play;
 - no Ricochet-style contract is active unless Fabio explicitly reopens that direction.
 
-Current hardening direction:
+Current hardening baseline:
 
-- Track 05 - Foundation Hardening & Refactor V1 is the active structural track;
+- Track 05 - Foundation Hardening & Refactor V1 is complete;
 - preserve accepted behavior in both `Arena Shooter` and `Futebol`;
-- improve documentation, validation, shared runtime helpers, mode boundaries, bot contracts and test organization before adding gameplay;
+- documentation, validation, shared runtime helpers, mode boundaries, bot contracts and test organization are the baseline before adding gameplay;
 - use `docs/documentation-index.md` as the local map for agents.
 
 ## Multi-Agent And Git Rule
@@ -88,7 +88,7 @@ Track 05 target additions:
 
 - `modes/shared/`: shared runtime primitive creation and mode utilities.
 - `gameplay/arena/`: arena rule helpers when extracted from the mode root.
-- `tests/helpers/`: shared GUT setup helpers after the test suite split.
+- `tests/unit/test_rule_helpers.gd`: focused pure-helper coverage alongside the broader integration regression.
 
 ## Reuse Rule
 

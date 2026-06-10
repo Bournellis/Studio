@@ -5,7 +5,7 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS Playground tech probe`
 - Active stage: `Track 05 - Foundation Hardening & Refactor V1`
-- Active stage status: `ACTIVE`
+- Active stage status: `COMPLETE`
 
 ## Current Truth
 
@@ -35,11 +35,11 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 
 ## Active Goal
 
-`Track 05 - Foundation Hardening & Refactor V1` is active. The goal is to preserve the accepted `Arena Shooter` and `Futebol` behavior while hardening documentation, validation, shared runtime helpers, mode boundaries, bot contracts and test organization.
+`Track 05 - Foundation Hardening & Refactor V1` is complete. The accepted `Arena Shooter` and `Futebol` behavior is preserved while documentation, validation, shared runtime helpers, mode boundaries, bot contracts and test organization are hardened for the next gameplay track.
 
 ## Current Gate
 
-Open for Track 05 Foundation Hardening & Refactor V1. Run automated validation after every phase and preserve the Track 04A manual smoke expectations for both modes.
+Open for next gameplay planning. Recommended next work is choosing a focused gameplay growth track now that the foundation is cleaner: football feel tuning, arena content/map expansion or another FPS Playground mode.
 
 ## Validation Snapshot
 
@@ -196,10 +196,16 @@ Track 04A Menu/Goal Fix V2:
 
 Track 05 Foundation Hardening & Refactor V1:
 
-- active as a large sequential documentation, hardening and refactor track;
-- documentation index, architecture overview, mode contract, bot contract, tuning guide, validation profiles, publication readiness and audit docs are being established first;
-- baseline validation before refactor passes `42/42` GUT tests with `355` asserts after the one-time fresh worktree import;
-- gameplay changes are out of scope except for behavior-preserving refactor fixes.
+- complete as a large sequential documentation, hardening and refactor track;
+- added documentation index, architecture overview, mode contract, bot contract, tuning guide, validation profiles, publication readiness and audit docs;
+- validation now supports `full`, `quick`, `structure` and `--list-profiles`;
+- shared runtime primitive creation lives in `modes/shared/runtime_primitive_factory.gd`;
+- arena and football static layout construction now live in dedicated builders under `modes/arena/` and `modes/football/`;
+- arena combat math and football match rules now live under `gameplay/arena/` and `gameplay/football/`;
+- bot aim/visibility helper logic now lives under `gameplay/bot/`;
+- tests are split into broad integration regression plus focused helper coverage;
+- final validation passes `51/51` GUT tests with `386` asserts;
+- gameplay changes remained out of scope except for behavior-preserving refactor fixes.
 
 ## Read Next
 
@@ -221,3 +227,4 @@ Track 05 Foundation Hardening & Refactor V1:
 16. `implementation/tracks/track-03a-vertical-arena-fall-pressure-v1/current-status.md`
 17. `implementation/tracks/track-03b-arena-flow-route-tuning-v1/current-status.md`
 18. `implementation/tracks/track-04a-fps-playground-football-v1/current-status.md`
+19. `implementation/tracks/track-05-foundation-hardening-refactor-v1/current-status.md`
