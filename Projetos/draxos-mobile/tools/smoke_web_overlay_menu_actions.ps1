@@ -499,11 +499,14 @@ async function clickOverlayButton(client, label, text, expectedAction = '') {
 	const clicked = await waitFor(client, (state) => {
 		const overlayMatched = Number(state.state?.overlayInput?.sequence || 0) > beforeOverlaySequence &&
 			String(state.state?.overlayInput?.last?.text || '') === text;
+		const confirmOpenMatched = Number(state.state?.overlayInput?.sequence || 0) > beforeOverlaySequence &&
+			String(state.state?.overlayInput?.last?.type || '') === 'confirm_open' &&
+			String(state.state?.pendingConfirmation?.action_id || '') === String(candidate.action_id || '');
 		const actionMatched = expectedAction &&
 			Number(state.state?.actionInput?.sequence || 0) > beforeActionSequence &&
 			String(state.state?.actionInput?.last?.action_id || '') === expectedAction &&
 			Boolean(state.state?.actionInput?.last?.overlay_open) === true;
-		return overlayMatched || actionMatched;
+		return overlayMatched || confirmOpenMatched || actionMatched;
 	}, `${label}: button '${text}' input`);
 	return {
 		button: candidate,

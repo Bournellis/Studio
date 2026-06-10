@@ -328,6 +328,7 @@ func sync_layout(host: Node) -> void:
 		viewport_size = host_control.size if host_control != null else Vector2(1280, 720)
 	var compact: bool = bool(host.get("_compact_layout")) or viewport_size.x <= 820.0
 	var safe_margin: float = 12.0 if compact else 24.0
+	var panel_width := viewport_size.x - safe_margin * 2.0
 	if compact:
 		_panel.anchor_left = 0.0
 		_panel.anchor_top = 0.0
@@ -338,7 +339,7 @@ func sync_layout(host: Node) -> void:
 		_panel.offset_top = maxf(28.0, viewport_size.y * 0.08)
 		_panel.offset_bottom = -safe_margin
 	else:
-		var panel_width := clampf(viewport_size.x * 0.42, 440.0, 640.0)
+		panel_width = clampf(viewport_size.x * 0.42, 440.0, 640.0)
 		_panel.anchor_left = 1.0
 		_panel.anchor_top = 0.0
 		_panel.anchor_right = 1.0
@@ -347,6 +348,17 @@ func sync_layout(host: Node) -> void:
 		_panel.offset_right = -safe_margin
 		_panel.offset_top = safe_margin
 		_panel.offset_bottom = -safe_margin
+	if _confirm_panel != null and is_instance_valid(_confirm_panel):
+		var inset := 14.0 if compact else 12.0
+		var confirm_height := 150.0 if compact else 136.0
+		_confirm_panel.anchor_left = 0.0 if compact else 1.0
+		_confirm_panel.anchor_top = 1.0
+		_confirm_panel.anchor_right = 1.0
+		_confirm_panel.anchor_bottom = 1.0
+		_confirm_panel.offset_left = safe_margin + inset if compact else -panel_width - safe_margin + inset
+		_confirm_panel.offset_right = -safe_margin - inset
+		_confirm_panel.offset_top = -safe_margin - inset - confirm_height
+		_confirm_panel.offset_bottom = -safe_margin - inset
 
 func sync_controls(host: Node) -> void:
 	if not is_open():
@@ -467,8 +479,9 @@ func _build_overlay(host: Node) -> void:
 	_confirm_panel.visible = false
 	_confirm_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	_confirm_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_confirm_panel.z_index = 1002
 	_confirm_panel.add_theme_stylebox_override("panel", UiTokens.panel_style_from_tokens("bg_panel_alt", "status_warning", bool(host.get("_compact_layout")), "status_warning", 1, 8, 10))
-	shell.add_child(_confirm_panel)
+	_root.add_child(_confirm_panel)
 
 	var confirm_stack := VBoxContainer.new()
 	confirm_stack.name = "ModeShellMenuConfirmStack"
@@ -743,6 +756,8 @@ func _sync_confirmation_panel() -> void:
 		return
 	var pending := _pending_confirm_action != ""
 	_confirm_panel.visible = pending
+	if pending:
+		_confirm_panel.move_to_front()
 	if _confirm_label != null:
 		_confirm_label.text = _pending_confirm_message if pending else ""
 	if _confirm_button != null:
