@@ -4,9 +4,11 @@
 - Project: `JogoDaCopa`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames`
-- Active stage: `Track 01C - Arena Stadium Visual Rework V1`
-- Active stage status: `COMPLETE`
+- Active stage: `Track 02 - Quality Upgrade Series V1 (02A-02G)`
+- Active stage status: `PLANNED_APPROVED`
 - Status marker: `JOGO_DA_COPA_TRACK_01C_ARENA_STADIUM_VISUAL_REWORK_COMPLETE`
+- Approved plan: `docs/quality-upgrade-plan.md` (2026-06-10, hybrid visual path; authored-asset track 02C explicitly approved)
+- Kanban card: `../../08_Coordenacao_Agentes/Kanban/Backlog/2026-06-10_codex_jogodacopa_track02-quality-upgrade-series-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -49,11 +51,7 @@ Manual smoke lives in `docs/validation.md`.
 ## Read Next
 
 1. `AGENTS.md`
-2. `docs/documentation-index.md`
+2. `docs/quality-upgrade-plan.md`
+3. `docs/documentation-index.md`
 3. `docs/architecture-overview.md`
-4. `docs/work-plan.md`
-5. `docs/mode-contract.md`
-6. `docs/validation.md`
-7. `implementation/tracks/track-01c-arena-stadium-visual-rework-v1/current-status.md`
-8. `implementation/tracks/track-01b-ball-goal-kick-tuning-v1/current-status.md`
-9. `implementation/tracks/track-01a-arcade-arena-boost-v1/current-status.md`
+4. `docs/work-plan

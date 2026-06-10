@@ -6,7 +6,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional temporario unico: `Projetos/JogoDaCopa/` (`JOGO_DA_COPA_TRACK_01C_ARENA_STADIUM_VISUAL_REWORK_COMPLETE`; PC Windows editor-first futebol/minigames independente; proximo passo: playtest humano do Futebol com gols fechados, arena de vidro, estadio de Copa e tuning de bola/gol/chute)
+- Foco operacional temporario unico: `Projetos/JogoDaCopa/` (`JOGO_DA_COPA_TRACK_01C_ARENA_STADIUM_VISUAL_REWORK_COMPLETE`; PC Windows editor-first futebol/minigames independente; proximo passo: implementar a serie Track 02 Quality Upgrade 02A-02G conforme `Projetos/JogoDaCopa/docs/quality-upgrade-plan.md`, card em `Kanban/Backlog/2026-06-10_codex_jogodacopa_track02-quality-upgrade-series-v1.md`)
 - Pausados temporariamente por poucos dias: `Projetos/draxos-roguelike-cardgame/`, `Projetos/draxos-mobile/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -55,7 +55,7 @@
 - Baseline atual: projeto oficial implementavel separado do antigo `FPS Playground` para futebol e minigames de copa em Godot 4.6.2, PC Windows editor-first. A baseline atual preserva o modo `Futebol`: 1x1 contra bot em terceira pessoa, sem armas, inicia pausado em `Como Jogar`/`Comecar`, LMB chute mais forte, RMB chute forte alto com lift claro, bola `RigidBody3D` arcade solta sem possession lock, grip maior quando rola no chao, velocidade mais preservada no ar, quique maior, campo 38x54, gols 20% mais estreitos e 50% mais altos fechados por teto de vidro, regra de gol com altura, paredes altas de vidro com molduras, teto com colisao e ribs visuais, estadio festivo por primitivas com arquibancadas, blocos de torcida, banners inspirados em paises, placares decorativos e torres de luz, gols ate 3, boost em `Shift` com stamina no HUD, bot que ataca/defende dentro do campo maior, score HUD, feedback/audio sintetico de chute/gol, retorno ao menu pelo pause, avatares humanoides procedurais por primitivas para player/bot, selecao em memoria de pele/camisa inspirada em paises, animacoes basicas e camera third-person com foco de bola sutil.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
 - Restricao operacional: tech probe independente para minigames de futebol; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem armas/FPS shooter, export/Web/mobile, multiplayer, matchmaking ou economia ate track explicita.
-- Proximo passo: foco imediato do estudio em playtest humano do `Futebol` com gols fechados, leitura da arena/estadio e tuning de bola/gol/chute.
+- Proximo passo: implementar a serie `Track 02 Quality Upgrade V1` (02A Render/Lighting -> 02B Pitch/Arena Materials -> 02C Ball/Character Assets CC0 aprovados -> 02D VFX/Game Feel -> 02E HUD/Menu -> 02F Bot/Match Flow -> 02G Identidade/Export) conforme plano aprovado em `Projetos/JogoDaCopa/docs/quality-upgrade-plan.md`; card: `Kanban/Backlog/2026-06-10_codex_jogodacopa_track02-quality-upgrade-series-v1.md`.
 
 ## rpg-isometrico
 
@@ -74,17 +74,4 @@
 - Baseline preservada: slice Godot 4.6.2 jogavel com runtime C1, modos de batalha, 3 classes, 13 encontros, ranks de operacao e save/load JSON v2.
 - Ultima atualizacao do current-status: `2026-05-13`
 - Trabalho permitido: consulta historica e leitura de contexto quando o usuario pedir explicitamente.
-- Restricao operacional: nao implementar, selecionar proxima track/gate, regenerar `.tres` ou alterar escopo sem pedido explicito.
-- Proximo passo: nenhum enquanto pausado.
-
-## Kanban Rapido
-
-- Backlog: `08_Coordenacao_Agentes/Kanban/Backlog/`
-- Doing: `08_Coordenacao_Agentes/Kanban/Doing/`
-- Review: `08_Coordenacao_Agentes/Kanban/Review/`
-- Done: `08_Coordenacao_Agentes/Kanban/Done/`
-
-## Canon
-
-- Fonte de verdade compartilhada: `canon/`
-- Brief rapido: `canon/canon-brief.md`
+- Restricao operacional: nao implementar, selecionar proxima track/gate, regenerar `.tres` ou alterar escopo sem pe

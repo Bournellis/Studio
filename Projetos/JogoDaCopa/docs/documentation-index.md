@@ -10,6 +10,7 @@
 2. `../implementation/current-status.md`
 3. `architecture-overview.md`
 4. `work-plan.md`
+5. `quality-upgrade-plan.md`
 5. `mode-contract.md`
 6. `validation.md`
 
