@@ -223,15 +223,20 @@ func _build_event_label(root: Control) -> void:
 	root.add_child(event_label)
 
 func _build_pause_menu(root: Control) -> void:
+	var pause_center := CenterContainer.new()
+	pause_center.name = "PauseMenuCenter"
+	pause_center.process_mode = Node.PROCESS_MODE_ALWAYS
+	pause_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pause_center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.add_child(pause_center)
+
 	pause_menu_panel = PanelContainer.new()
 	pause_menu_panel.name = "PauseMenuPanel"
 	pause_menu_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	pause_menu_panel.custom_minimum_size = Vector2(390.0, 232.0)
-	pause_menu_panel.set_anchors_preset(Control.PRESET_CENTER)
-	pause_menu_panel.position = Vector2(-195.0, -116.0)
 	pause_menu_panel.visible = false
-	root.add_child(pause_menu_panel)
+	pause_center.add_child(pause_menu_panel)
 
 	var margin := MarginContainer.new()
 	margin.name = "PauseMenuMargin"
@@ -288,20 +293,19 @@ func _build_pause_menu(root: Control) -> void:
 	box.add_child(menu_button)
 
 func _build_intro_panel(root: Control) -> void:
+	var intro_center := CenterContainer.new()
+	intro_center.name = "IntroCenter"
+	intro_center.process_mode = Node.PROCESS_MODE_ALWAYS
+	intro_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	intro_center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.add_child(intro_center)
+
 	intro_panel = PanelContainer.new()
 	intro_panel.name = "IntroPanel"
 	intro_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	intro_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	intro_panel.custom_minimum_size = Vector2(520.0, 390.0)
-	intro_panel.anchor_left = 0.5
-	intro_panel.anchor_top = 0.5
-	intro_panel.anchor_right = 0.5
-	intro_panel.anchor_bottom = 0.5
-	intro_panel.offset_left = -260.0
-	intro_panel.offset_top = -195.0
-	intro_panel.offset_right = 260.0
-	intro_panel.offset_bottom = 195.0
-	root.add_child(intro_panel)
+	intro_panel.custom_minimum_size = Vector2(560.0, 420.0)
+	intro_center.add_child(intro_panel)
 
 	var margin := MarginContainer.new()
 	margin.name = "IntroMargin"
@@ -321,6 +325,7 @@ func _build_intro_panel(root: Control) -> void:
 	title.name = "IntroTitle"
 	title.text = "Como Jogar"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.add_theme_font_size_override("font_size", 28)
 	_ignore_mouse(title)
 	box.add_child(title)
@@ -329,6 +334,7 @@ func _build_intro_panel(root: Control) -> void:
 	summary.name = "IntroSummary"
 	summary.text = "Futebol 1x1 em primeira pessoa. Primeiro a 3 gols vence."
 	summary.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	summary.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_ignore_mouse(summary)
 	box.add_child(summary)
@@ -336,6 +342,7 @@ func _build_intro_panel(root: Control) -> void:
 	var hotkeys := Label.new()
 	hotkeys.name = "HotkeysLabel"
 	hotkeys.text = "WASD - mover\nMouse - olhar\nEspaco - pular\nLMB - chute\nRMB - chute forte\nR - reiniciar partida\nEsc - menu de sensibilidade"
+	hotkeys.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hotkeys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hotkeys.add_theme_font_size_override("font_size", 15)
 	_ignore_mouse(hotkeys)
@@ -343,8 +350,9 @@ func _build_intro_panel(root: Control) -> void:
 
 	var start_button := Button.new()
 	start_button.name = "StartButton"
-	start_button.text = "Começar"
+	start_button.text = "Comecar"
 	start_button.custom_minimum_size = Vector2(320.0, 46.0)
+	start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	start_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	start_button.pressed.connect(func() -> void:
 		start_requested.emit()

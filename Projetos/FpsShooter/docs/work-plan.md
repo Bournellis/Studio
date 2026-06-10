@@ -1,13 +1,13 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-10`
-- Status: `FPS_PLAYGROUND_TRACK_04A_FOOTBALL_FIRST_FIXES_COMPLETE`
+- Status: `FPS_PLAYGROUND_TRACK_04A_MENU_GOAL_FIX_V2_COMPLETE`
 
 ## North Star
 
 Create a small first-person playground tech probe that proves Godot 4.6.2 can support satisfying PC editor-first first-person 3D game modes for the studio.
 
-The project started as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Track 04A turns the project into `FPS Playground` by adding a centered main menu and the first alternate first-person mode: `Futebol` 1x1 against a bot, now with a paused how-to intro and safe goal floors. Void/fall pressure is reserved for future dedicated maps.
+The project started as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Track 04A turns the project into `FPS Playground` by adding a container-centered main menu and the first alternate first-person mode: `Futebol` 1x1 against a bot, now with a paused how-to intro and fully closed goal interiors. Void/fall pressure is reserved for future dedicated maps.
 
 ## Track 00 - Project Bootstrap
 
@@ -204,13 +204,13 @@ Status: complete.
 Delivered:
 
 - project display name changed to `FPS Playground`, with folder name `FpsShooter` preserved;
-- generated centered main menu scene with `Arena Shooter`, `Futebol` and `Sair`;
+- generated container-centered main menu scene with `Arena Shooter`, `Futebol` and `Sair`;
 - `Arena Shooter` remains intact and can return to the main menu from pause;
 - `Futebol` mode in first person, 1x1 against a bot, no weapons, score to 3 goals;
-- paused `Como Jogar` / `Começar` intro before football gameplay and mouse capture;
+- paused `Como Jogar` / `Comecar` intro before football gameplay and mouse capture;
 - LMB kick and RMB strong kick reuse the existing FPS input/camera flow without applying damage;
 - arcade loose `RigidBody3D` football with velocity clamps and reset safeguards;
-- primitive festive stadium with field, safe goal floors, goal frames, crowd bands and score/flow HUD;
+- primitive festive stadium with field, safe goal floors and side walls, goal frames, crowd bands and score/flow HUD;
 - simple football bot that chases, attacks, defends, jumps toward high ball positions and emits kick requests;
 - shared feedback controller extended with football kick/goal primitives and synthetic audio;
 - bootstrap generation and validation now cover menu, arena and football scenes.

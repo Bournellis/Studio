@@ -41,14 +41,14 @@ func test_main_menu_scene_boots_with_mode_buttons() -> void:
 
 	assert_eq(menu.debug_get_mode_path(&"arena"), "res://modes/arena/arena.tscn")
 	assert_eq(menu.debug_get_mode_path(&"football"), "res://modes/football/football.tscn")
-	assert_not_null(menu.get_node_or_null("MenuBox/ArenaButton"))
-	assert_not_null(menu.get_node_or_null("MenuBox/FootballButton"))
-	assert_not_null(menu.get_node_or_null("MenuBox/QuitButton"))
-	var menu_box := menu.get_node("MenuBox") as Control
-	assert_almost_eq(menu_box.anchor_left, 0.5, 0.001)
-	assert_almost_eq(menu_box.anchor_top, 0.5, 0.001)
-	assert_almost_eq(menu_box.offset_left, -220.0, 0.001)
-	assert_almost_eq(menu_box.offset_top, -176.0, 0.001)
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/ArenaButton"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/FootballButton"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/QuitButton"))
+	var menu_center := menu.get_node("MenuCenter") as CenterContainer
+	var menu_panel := menu.get_node("MenuCenter/MenuPanel") as PanelContainer
+	assert_almost_eq(menu_center.anchor_left, 0.0, 0.001)
+	assert_almost_eq(menu_center.anchor_right, 1.0, 0.001)
+	assert_eq(menu_panel.custom_minimum_size, Vector2(500.0, 390.0))
 	assert_no_new_orphans()
 
 func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
@@ -63,6 +63,10 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_not_null(football.get_node_or_null("FootballPitch"))
 	assert_not_null(football.get_node_or_null("NorthGoalFloor"))
 	assert_not_null(football.get_node_or_null("SouthGoalFloor"))
+	assert_not_null(football.get_node_or_null("NorthGoalSideWallL"))
+	assert_not_null(football.get_node_or_null("NorthGoalSideWallR"))
+	assert_not_null(football.get_node_or_null("SouthGoalSideWallL"))
+	assert_not_null(football.get_node_or_null("SouthGoalSideWallR"))
 	assert_not_null(football.get_node_or_null("NorthGoalPostL"))
 	assert_not_null(football.get_node_or_null("SouthGoalPostR"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player"))
@@ -79,6 +83,7 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_true(get_tree().paused)
 	var football_hud = football.get_node("FootballHud")
 	assert_true(football_hud.intro_panel.visible)
+	assert_not_null(football_hud.get_node_or_null("HudRoot/IntroCenter/IntroPanel"))
 	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/StartButton"))
 	assert_no_new_orphans()
 
