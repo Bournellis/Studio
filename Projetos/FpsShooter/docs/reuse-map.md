@@ -1,6 +1,6 @@
 # FpsShooter Reuse Map
 
-- Last updated: `2026-06-09`
+- Last updated: `2026-06-10`
 - Status: `VIVO`
 
 ## Purpose
@@ -34,3 +34,9 @@ This document records what `FpsShooter` can reuse from the studio without accide
 - RPG Turnos turn-based battle systems.
 - RPG Isometrico campaign/loadout/isometric mode contracts.
 - Any promise that this is a lore-canon Draxos product.
+
+## Track 05 Applied Reuse
+
+- `draxos-mobile` documentation index and validation-profile thinking are approved as process reuse for `docs/documentation-index.md` and `docs/validation-profiles.md`.
+- `draxos-roguelike-cardgame` lab/report discipline is approved as inspiration for future gameplay matrices, but Track 05 only documents readiness and validation shape.
+- No runtime gameplay or online systems are imported from any other project.

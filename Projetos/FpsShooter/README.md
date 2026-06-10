@@ -19,6 +19,17 @@ Current goal:
 - Bot duelista V1+: line-of-sight gated shots, short tell, deterministic aim error, strafe/reposition, vertical awareness, pickup awareness and nearby plasma dodge.
 - Futebol: first-person 1x1 against a bot, no weapons, LMB kick, RMB strong kick, arcade loose ball physics and match to 3 goals.
 - HUD/feedback: arena health/combat feedback plus football score/kick/goal feedback, synthetic audio and runtime primitive effects.
+- Track 05 is complete: documentation, validation, runtime helpers, mode boundaries, bot contracts and tests are hardened while accepted gameplay is preserved.
+
+## Documentation
+
+Start here:
+
+1. `AGENTS.md`
+2. `implementation/current-status.md`
+3. `docs/documentation-index.md`
+4. `docs/architecture-overview.md`
+5. `docs/work-plan.md`
 
 ## Validation
 

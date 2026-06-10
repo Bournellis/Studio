@@ -6,6 +6,8 @@ const FootballBallScript = preload("res://gameplay/football/football_ball.gd")
 const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
 const FootballHudScript = preload("res://presentation/hud/football_hud.gd")
 const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
+const FootballFieldBuilderScript = preload("res://modes/football/football_field_builder.gd")
+const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const MODE_NAME: String = "Futebol 1x1"
@@ -174,55 +176,18 @@ func _configure_world() -> void:
 	_build_football_pitch()
 
 func _build_football_pitch() -> void:
-	_add_box("FootballPitch", Vector3(0.0, -0.5, 0.0), Vector3(FIELD_WIDTH, 1.0, FIELD_LENGTH), Color(0.08, 0.34, 0.16, 1.0))
-	_add_visual_box("CenterLine", Vector3(0.0, 0.035, 0.0), Vector3(FIELD_WIDTH - 1.5, 0.05, 0.14), Color(0.92, 0.96, 0.86, 1.0))
-	_add_visual_box("MidStripe", Vector3(0.0, 0.032, 0.0), Vector3(0.14, 0.05, FIELD_LENGTH - 2.0), Color(0.12, 0.42, 0.19, 1.0))
-	_add_visual_box("NorthGoalBox", Vector3(0.0, 0.04, -17.7), Vector3(10.8, 0.05, 0.16), Color(0.92, 0.96, 0.86, 1.0))
-	_add_visual_box("SouthGoalBox", Vector3(0.0, 0.04, 17.7), Vector3(10.8, 0.05, 0.16), Color(0.92, 0.96, 0.86, 1.0))
-	_add_visual_box("NorthGoalMouth", Vector3(0.0, 0.05, GOAL_LINE_NORTH + 0.45), Vector3(GOAL_HALF_WIDTH * 2.0, 0.08, 0.32), Color(1.0, 0.88, 0.24, 1.0))
-	_add_visual_box("SouthGoalMouth", Vector3(0.0, 0.05, GOAL_LINE_SOUTH - 0.45), Vector3(GOAL_HALF_WIDTH * 2.0, 0.08, 0.32), Color(1.0, 0.88, 0.24, 1.0))
-	_add_box("NorthGoalFloor", Vector3(0.0, -0.5, GOAL_LINE_NORTH - 1.35), Vector3(GOAL_HALF_WIDTH * 2.4, 1.0, 2.9), Color(0.07, 0.28, 0.14, 1.0))
-	_add_box("SouthGoalFloor", Vector3(0.0, -0.5, GOAL_LINE_SOUTH + 1.35), Vector3(GOAL_HALF_WIDTH * 2.4, 1.0, 2.9), Color(0.07, 0.28, 0.14, 1.0))
-	_add_goal_side_walls("North", GOAL_LINE_NORTH - 1.35)
-	_add_goal_side_walls("South", GOAL_LINE_SOUTH + 1.35)
-
-	_add_box("WestWall", Vector3(-FIELD_HALF_WIDTH, WALL_HEIGHT * 0.5, 0.0), Vector3(WALL_THICKNESS, WALL_HEIGHT, FIELD_LENGTH), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("EastWall", Vector3(FIELD_HALF_WIDTH, WALL_HEIGHT * 0.5, 0.0), Vector3(WALL_THICKNESS, WALL_HEIGHT, FIELD_LENGTH), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("NorthWallLeft", Vector3(-10.2, WALL_HEIGHT * 0.5, GOAL_LINE_NORTH), Vector3(11.6, WALL_HEIGHT, WALL_THICKNESS), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("NorthWallRight", Vector3(10.2, WALL_HEIGHT * 0.5, GOAL_LINE_NORTH), Vector3(11.6, WALL_HEIGHT, WALL_THICKNESS), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("SouthWallLeft", Vector3(-10.2, WALL_HEIGHT * 0.5, GOAL_LINE_SOUTH), Vector3(11.6, WALL_HEIGHT, WALL_THICKNESS), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("SouthWallRight", Vector3(10.2, WALL_HEIGHT * 0.5, GOAL_LINE_SOUTH), Vector3(11.6, WALL_HEIGHT, WALL_THICKNESS), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("NorthBackStop", Vector3(0.0, 1.1, GOAL_LINE_NORTH - 2.2), Vector3(10.5, 2.2, 0.45), Color(0.18, 0.2, 0.24, 1.0))
-	_add_box("SouthBackStop", Vector3(0.0, 1.1, GOAL_LINE_SOUTH + 2.2), Vector3(10.5, 2.2, 0.45), Color(0.18, 0.2, 0.24, 1.0))
-	_add_goal_frame("North", GOAL_LINE_NORTH - 0.22, -1.0)
-	_add_goal_frame("South", GOAL_LINE_SOUTH + 0.22, 1.0)
-	_add_stadium_bands()
-
-func _add_goal_side_walls(prefix: String, goal_center_z: float) -> void:
-	var side_wall_color := Color(0.14, 0.17, 0.2, 1.0)
-	var side_size := Vector3(GOAL_SIDE_WALL_THICKNESS, WALL_HEIGHT, GOAL_CLOSED_DEPTH)
-	_add_box("%sGoalSideWallL" % prefix, Vector3(-GOAL_SIDE_WALL_X, WALL_HEIGHT * 0.5, goal_center_z), side_size, side_wall_color)
-	_add_box("%sGoalSideWallR" % prefix, Vector3(GOAL_SIDE_WALL_X, WALL_HEIGHT * 0.5, goal_center_z), side_size, side_wall_color)
-
-func _add_goal_frame(prefix: String, goal_z: float, side: float) -> void:
-	var post_color := Color(0.95, 0.95, 0.9, 1.0)
-	_add_box("%sGoalPostL" % prefix, Vector3(-GOAL_HALF_WIDTH, 1.15, goal_z), Vector3(0.28, 2.3, 0.28), post_color)
-	_add_box("%sGoalPostR" % prefix, Vector3(GOAL_HALF_WIDTH, 1.15, goal_z), Vector3(0.28, 2.3, 0.28), post_color)
-	_add_box("%sGoalCrossbar" % prefix, Vector3(0.0, 2.28, goal_z), Vector3(GOAL_HALF_WIDTH * 2.0 + 0.28, 0.28, 0.28), post_color)
-	_add_visual_box("%sNetTint" % prefix, Vector3(0.0, 1.1, goal_z + side * 0.62), Vector3(GOAL_HALF_WIDTH * 2.0, 2.1, 0.12), Color(0.22, 0.68, 0.92, 0.72))
-
-func _add_stadium_bands() -> void:
-	var band_colors: Array[Color] = [
-		Color(0.9, 0.06, 0.06, 1.0),
-		Color(0.95, 0.82, 0.08, 1.0),
-		Color(0.08, 0.52, 0.18, 1.0),
-		Color(0.14, 0.42, 0.88, 1.0)
-	]
-	for index in range(8):
-		var x := -14.0 + float(index) * 4.0
-		var color := band_colors[index % band_colors.size()]
-		_add_visual_box("NorthCrowdBand%d" % index, Vector3(x, 2.8, GOAL_LINE_NORTH - 2.8), Vector3(2.4, 1.2, 0.18), color)
-		_add_visual_box("SouthCrowdBand%d" % index, Vector3(x, 2.8, GOAL_LINE_SOUTH + 2.8), Vector3(2.4, 1.2, 0.18), color)
+	FootballFieldBuilderScript.build(self, {
+		"field_width": FIELD_WIDTH,
+		"field_length": FIELD_LENGTH,
+		"wall_height": WALL_HEIGHT,
+		"wall_thickness": WALL_THICKNESS,
+		"goal_half_width": GOAL_HALF_WIDTH,
+		"goal_side_wall_x": GOAL_SIDE_WALL_X,
+		"goal_side_wall_thickness": GOAL_SIDE_WALL_THICKNESS,
+		"goal_closed_depth": GOAL_CLOSED_DEPTH,
+		"goal_line_north": GOAL_LINE_NORTH,
+		"goal_line_south": GOAL_LINE_SOUTH,
+	})
 
 func _spawn_runtime() -> void:
 	var runtime_root := Node3D.new()
@@ -319,32 +284,31 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 func _process_player_ball_contact() -> void:
 	if player_touch_cooldown_remaining > 0.0:
 		return
-	var player_center: Vector3 = player.global_position + Vector3.UP * 0.5
-	var delta: Vector3 = ball.global_position - player_center
-	var flat_delta := Vector3(delta.x, 0.0, delta.z)
-	if flat_delta.length() > PLAYER_TOUCH_RADIUS:
+	var contact: Dictionary = FootballMatchRulesScript.get_player_contact_kick(
+		player.global_position,
+		player.velocity,
+		ball.global_position,
+		PLAYER_TOUCH_RADIUS,
+		2.0
+	)
+	if not bool(contact.get("connected", false)):
 		return
-	var player_velocity := Vector3(player.velocity.x, 0.0, player.velocity.z)
-	if player_velocity.length() < 2.0:
-		return
-	var contact_direction := (flat_delta.normalized() + player_velocity.normalized() * 0.6).normalized()
+	var contact_direction: Vector3 = contact.get("direction", Vector3.ZERO)
 	ball.kick(contact_direction, PLAYER_TOUCH_FORCE, 0.12)
 	player_touch_cooldown_remaining = PLAYER_TOUCH_COOLDOWN
 
 func _process_goal_detection() -> void:
-	if absf(ball.global_position.x) > GOAL_HALF_WIDTH:
-		return
-	if ball.global_position.z <= GOAL_LINE_NORTH:
+	var goal_side := FootballMatchRulesScript.detect_goal(ball.global_position, GOAL_HALF_WIDTH, GOAL_LINE_NORTH, GOAL_LINE_SOUTH)
+	if goal_side == 1:
 		_register_goal(true)
-	elif ball.global_position.z >= GOAL_LINE_SOUTH:
+	elif goal_side == -1:
 		_register_goal(false)
 
 func _register_goal(player_scored: bool) -> void:
 	last_goal_player_scored = player_scored
-	if player_scored:
-		player_score += 1
-	else:
-		bot_score += 1
+	var score_result: Dictionary = FootballMatchRulesScript.apply_goal_score(player_score, bot_score, player_scored, GOAL_LIMIT)
+	player_score = int(score_result.get("player_score", player_score))
+	bot_score = int(score_result.get("bot_score", bot_score))
 	phase_label = &"goal"
 	goal_reset_timer = GOAL_RESET_DELAY
 	bot.set_celebrating(true)
@@ -353,41 +317,22 @@ func _register_goal(player_scored: bool) -> void:
 	if feedback != null:
 		var goal_z := GOAL_LINE_NORTH if player_scored else GOAL_LINE_SOUTH
 		feedback.play_football_goal(Vector3(0.0, 1.0, goal_z), player_scored)
-	if player_score >= GOAL_LIMIT or bot_score >= GOAL_LIMIT:
+	if bool(score_result.get("match_over", false)):
 		match_over = true
 		goal_reset_timer = 0.0
 		phase_label = &"match_end"
+		var player_won := bool(score_result.get("player_won", false))
 		if hud != null:
-			hud.show_match_end(player_score >= GOAL_LIMIT)
+			hud.show_match_end(player_won)
 		if feedback != null:
-			feedback.play_round_end(player_score >= GOAL_LIMIT)
+			feedback.play_round_end(player_won)
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _can_reach_ball(origin: Vector3, direction: Vector3) -> bool:
-	var shot_direction: Vector3 = direction.normalized()
-	if shot_direction.length_squared() <= 0.0001:
-		return false
-	var to_ball: Vector3 = ball.global_position - origin
-	if to_ball.length() > PLAYER_KICK_REACH + 0.7:
-		return false
-	var projected: float = to_ball.dot(shot_direction)
-	if projected < -0.15 or projected > PLAYER_KICK_REACH + 0.85:
-		return false
-	var closest: Vector3 = origin + shot_direction * projected
-	return closest.distance_to(ball.global_position) <= ball.ball_radius + 0.75
+	return FootballMatchRulesScript.can_reach_ball(origin, direction, ball.global_position, ball.ball_radius, PLAYER_KICK_REACH)
 
 func _build_kick_direction(origin: Vector3, direction: Vector3) -> Vector3:
-	var camera_direction: Vector3 = direction.normalized()
-	var to_ball: Vector3 = ball.global_position - origin
-	var flat_to_ball := Vector3(to_ball.x, 0.0, to_ball.z)
-	var flat_camera := Vector3(camera_direction.x, 0.0, camera_direction.z)
-	if flat_camera.length_squared() <= 0.0001:
-		flat_camera = -player.global_transform.basis.z
-		flat_camera.y = 0.0
-	var blended := flat_camera.normalized()
-	if flat_to_ball.length_squared() > 0.0001:
-		blended = (blended * 0.82 + flat_to_ball.normalized() * 0.18).normalized()
-	return blended
+	return FootballMatchRulesScript.build_kick_direction(origin, direction, ball.global_position, -player.global_transform.basis.z)
 
 func _build_hud_snapshot() -> Dictionary:
 	var ball_distance := 0.0
@@ -457,45 +402,3 @@ func _on_sensitivity_changed(value: float) -> void:
 		player.set_mouse_sensitivity(value)
 	if hud != null:
 		hud.set_sensitivity_value(player.mouse_sensitivity)
-
-func _add_box(node_name: String, node_position: Vector3, node_size: Vector3, color: Color) -> StaticBody3D:
-	var body := StaticBody3D.new()
-	body.name = node_name
-	add_child(body)
-	body.global_position = node_position
-
-	var mesh_instance := MeshInstance3D.new()
-	mesh_instance.name = "%sMesh" % node_name
-	var mesh := BoxMesh.new()
-	mesh.size = node_size
-	mesh_instance.mesh = mesh
-	mesh_instance.material_override = _build_material(color, 0.08)
-	body.add_child(mesh_instance)
-
-	var collider := CollisionShape3D.new()
-	collider.name = "%sCollision" % node_name
-	var shape := BoxShape3D.new()
-	shape.size = node_size
-	collider.shape = shape
-	body.add_child(collider)
-	return body
-
-func _add_visual_box(node_name: String, node_position: Vector3, node_size: Vector3, color: Color) -> MeshInstance3D:
-	var mesh_instance := MeshInstance3D.new()
-	mesh_instance.name = node_name
-	var mesh := BoxMesh.new()
-	mesh.size = node_size
-	mesh_instance.mesh = mesh
-	mesh_instance.material_override = _build_material(color, 0.55)
-	add_child(mesh_instance)
-	mesh_instance.global_position = node_position
-	return mesh_instance
-
-func _build_material(color: Color, emission_energy: float) -> StandardMaterial3D:
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	material.roughness = 0.72
-	material.emission_enabled = true
-	material.emission = color
-	material.emission_energy_multiplier = emission_energy
-	return material

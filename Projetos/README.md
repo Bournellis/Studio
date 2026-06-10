@@ -29,8 +29,8 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: author player/enemy card and mechanic ideas as Design Lab proposal packs, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab gates before full-run feel playtests.
 
-- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 first-person playground tech probe with a light Draxos visual theme. The historical folder remains `FpsShooter`, while the runnable project now presents as `FPS Playground`. Track 04A Menu & Futebol V1 is complete with second playtest fixes on top of the accepted Arena Shooter baselines: the project opens in a container-centered menu with `Arena Shooter`, `Futebol` and `Sair`; `Arena Shooter` preserves `Duel Pit V2`, rifle hitscan, RMB Plasma Bolt, Health Shard/Overcharge, jump pads, vertical-aware bot, route/LOS HUD, synthetic feedback and no active void/fall zones; `Futebol` adds first-person 1x1 football against a bot, no weapons, paused `Como Jogar`/`Comecar` intro, LMB kick, RMB strong kick, arcade loose `RigidBody3D` ball, festive primitive stadium, fully closed goal interiors, score to 3 goals, football HUD and kick/goal feedback.
-  - Priority/status: `P2_IMPLEMENTACAO - FPS_PLAYGROUND_TRACK_04A_MENU_GOAL_FIX_V2_COMPLETE`
+- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 first-person playground tech probe with a light Draxos visual theme. The historical folder remains `FpsShooter`, while the runnable project now presents as `FPS Playground`. Track 05 Foundation Hardening & Refactor V1 is complete on top of the accepted Arena Shooter and Futebol baselines: the project opens in a container-centered menu with `Arena Shooter`, `Futebol` and `Sair`; `Arena Shooter` preserves `Duel Pit V2`, rifle hitscan, RMB Plasma Bolt, Health Shard/Overcharge, jump pads, vertical-aware bot, route/LOS HUD, synthetic feedback and no active void/fall zones; `Futebol` adds first-person 1x1 football against a bot, no weapons, paused `Como Jogar`/`Comecar` intro, LMB kick, RMB strong kick, arcade loose `RigidBody3D` ball, festive primitive stadium, fully closed goal interiors, score to 3 goals, football HUD and kick/goal feedback. The foundation now includes local docs, validation profiles, runtime primitive/layout builders, pure rule helpers, bot aim/visibility helpers and focused helper tests.
+  - Priority/status: `P2_IMPLEMENTACAO - FPS_PLAYGROUND_TRACK_05_FOUNDATION_HARDENING_REFACTOR_COMPLETE`
   - Local agent guide: `FpsShooter/AGENTS.md`
   - Operational status: `FpsShooter/implementation/current-status.md`
   - Work plan: `FpsShooter/docs/work-plan.md`
@@ -38,7 +38,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Validation reference: `FpsShooter/docs/validation.md`
   - Validation command: `FpsShooter/tools/validate.gd`
   - Allowed work: code, validation, editor playtest and local documentation.
-  - Current next step: run the 5-minute editor human smoke for `FPS Playground`: centered menu panel, `Arena Shooter`, return to menu, `Futebol`, `Como Jogar`/`Comecar`, LMB/RMB kick, goal mouths without hole/fall including lateral interior sides, goals to 3, bot football, restart, pause, sensitivity and return to menu.
+  - Current next step: choose the next focused gameplay growth track for `FPS Playground`; recommended candidates are football feel/possession tuning, arena content/map expansion or another small first-person mode.
 
 ## Implementacao - Arena PVE Inicial
 

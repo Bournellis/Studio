@@ -3,6 +3,10 @@
 - Last updated: `2026-06-10`
 - Status: `VIVO`
 
+## Validation Profiles
+
+See `docs/validation-profiles.md` for the Track 05 profile policy, known warning list and fresh-worktree import note.
+
 ## Headless Command
 
 ```powershell
@@ -15,15 +19,18 @@ When working from a dedicated worktree, run with that worktree path.
 
 - regenerates `res://modes/menu/main_menu.tscn`, `res://modes/arena/arena.tscn` and `res://modes/football/football.tscn` from `tools/bootstrap_scene_generator.gd`;
 - checks required project settings, autoloads and resources;
+- in `full` profile, checks the local documentation contract;
 - checks the generated menu, arena and football scenes load;
 - runs the GUT suite under `res://tests/unit`;
 - prints the manual editor follow-up instead of exporting.
 
 Latest automated baseline:
 
-- GUT `42/42`;
-- `355` asserts;
+- GUT `51/51`;
+- `386` asserts;
 - Track 04A validates menu boot and mode routes, centered menu container hierarchy, generated menu/arena/football scenes, paused football intro panel, football goal safety floors and side walls, football player kick and strong kick, no weapon damage in football, football goal scoring/match end, bot kick handoff, arena pause menu return button and the full previous arena shooter regression suite.
+- Track 05 final validation is `51/51` and `386` asserts after helper-rule test split.
+- Track 05 baseline before refactor was `42/42` and `355` asserts after the one-time fresh worktree editor import.
 
 ## Manual Smoke
 

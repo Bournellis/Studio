@@ -1,13 +1,13 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-10`
-- Status: `FPS_PLAYGROUND_TRACK_04A_MENU_GOAL_FIX_V2_COMPLETE`
+- Status: `FPS_PLAYGROUND_TRACK_05_FOUNDATION_HARDENING_REFACTOR_COMPLETE`
 
 ## North Star
 
 Create a small first-person playground tech probe that proves Godot 4.6.2 can support satisfying PC editor-first first-person 3D game modes for the studio.
 
-The project started as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Track 04A turns the project into `FPS Playground` by adding a container-centered main menu and the first alternate first-person mode: `Futebol` 1x1 against a bot, now with a paused how-to intro and fully closed goal interiors. Void/fall pressure is reserved for future dedicated maps.
+The project started as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Track 04A turns the project into `FPS Playground` by adding a container-centered main menu and the first alternate first-person mode: `Futebol` 1x1 against a bot, now with a paused how-to intro and fully closed goal interiors. Track 05 hardens the project so both accepted modes can grow from a cleaner professional foundation. Void/fall pressure is reserved for future dedicated maps.
 
 ## Track 00 - Project Bootstrap
 
@@ -221,6 +221,37 @@ Future candidate scope:
 - add goalkeeper-style positioning only if 1x1 defense feels unreadable;
 - add boost/dash or slide tackle only after the base kick loop is accepted;
 - add multiple football maps only after this first field is fun enough to iterate.
+
+## Track 05 - Foundation Hardening & Refactor V1
+
+Goal: turn the accepted two-mode prototype into a cleaner professional foundation without changing gameplay.
+
+Status: complete.
+
+Delivered:
+
+- documentation index, architecture overview, codebase audit and mode/bot/tuning/validation/publication contracts;
+- validation profile hardening and clearer known-warning policy;
+- shared runtime primitive helpers so mode roots stop owning every mesh/collision detail;
+- safe Arena/Futebol layout builders and rule extraction;
+- bot aim/visibility helper extraction while preserving state-machine behavior;
+- test suite split into broad integration regression plus focused pure-helper coverage;
+- closeout docs and portfolio update.
+
+Acceptance:
+
+- `Arena Shooter` behavior preserved;
+- `Futebol` behavior preserved;
+- automated validation green after every phase;
+- docs explain where new work belongs;
+- mode roots are easier to extend for the next mode/map;
+- test failures become easier to locate.
+
+Future candidate scope:
+
+- choose a gameplay growth track now that the foundation is clean;
+- recommended candidates are football feel/possession tuning, arena content/map expansion, or another small FPS Playground mode;
+- keep export/publication as a separate readiness track.
 
 ## Deferred
 
