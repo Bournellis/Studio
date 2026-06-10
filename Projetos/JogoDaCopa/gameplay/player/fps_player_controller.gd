@@ -41,6 +41,7 @@ var overcharge_shots_remaining: int = 0
 var boost_stamina: float = 100.0
 var boost_recharge_delay_remaining: float = 0.0
 var boost_active: bool = false
+var input_locked: bool = false
 
 func _ready() -> void:
 	super._ready()
@@ -64,6 +65,8 @@ func configure_for_round() -> void:
 		head.rotation.x = pitch
 
 func _input(event: InputEvent) -> void:
+	if input_locked:
+		return
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED and not is_dead:
 		var motion := event as InputEventMouseMotion
 		apply_mouse_look(motion.relative)
@@ -107,6 +110,8 @@ func set_mouse_sensitivity(next_sensitivity: float) -> void:
 	mouse_sensitivity = clampf(next_sensitivity, MIN_MOUSE_SENSITIVITY, MAX_MOUSE_SENSITIVITY)
 
 func request_shot() -> void:
+	if input_locked:
+		return
 	if not _can_request_fire():
 		return
 	if shot_cooldown_remaining > 0.0:
@@ -118,6 +123,8 @@ func request_shot() -> void:
 	shoot_requested.emit(get_shot_origin(), get_shot_direction(), damage, knockback)
 
 func request_alt_fire() -> void:
+	if input_locked:
+		return
 	if not _can_request_fire():
 		return
 	if alt_fire_cooldown_remaining > 0.0:
@@ -162,6 +169,13 @@ func clear_movement_impulses() -> void:
 	velocity = Vector3.ZERO
 	knockback_velocity = Vector3.ZERO
 
+func set_input_locked(is_locked: bool) -> void:
+	input_locked = is_locked
+	if input_locked:
+		boost_active = false
+		velocity = Vector3.ZERO
+		vertical_velocity = 0.0
+
 func debug_get_vertical_velocity() -> float:
 	return vertical_velocity
 
@@ -176,6 +190,8 @@ func debug_set_boost_stamina(next_stamina: float) -> void:
 	boost_recharge_delay_remaining = 0.0
 
 func _handle_shooting() -> void:
+	if input_locked:
+		return
 	if Input.is_action_just_pressed("shoot"):
 		request_shot()
 	if Input.is_action_just_pressed("alt_fire"):
@@ -193,6 +209,10 @@ func _can_request_fire() -> bool:
 	return Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED
 
 func _handle_movement(delta: float) -> void:
+	if input_locked:
+		boost_active = false
+		velocity = Vector3.ZERO
+		return
 	var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
 	if not is_on_floor():
 		vertical_velocity -= gravity * delta

@@ -26,6 +26,8 @@ func test_avatar_instantiates_expected_runtime_parts() -> void:
 	assert_true(avatar.debug_has_part(&"left_hand"))
 	assert_true(avatar.debug_has_part(&"right_foot"))
 	assert_not_null(avatar.get_node_or_null("AvatarParts"))
+	assert_true(avatar.debug_has_asset_skeleton())
+	assert_true(avatar.debug_has_animation_tree())
 	assert_no_new_orphans()
 
 func test_avatar_appearance_updates_skin_and_shirt_materials() -> void:
@@ -59,10 +61,13 @@ func test_avatar_animation_states_are_presentation_only() -> void:
 
 	avatar.play_kick(false)
 	assert_eq(avatar.debug_get_animation_state(), &"kick")
+	assert_eq(avatar.debug_get_current_asset_clip(), &"kick")
 	avatar.play_kick(true)
 	assert_eq(avatar.debug_get_animation_state(), &"strong_kick")
+	assert_eq(avatar.debug_get_current_asset_clip(), &"kick")
 	avatar.play_celebrate()
 	assert_eq(avatar.debug_get_animation_state(), &"celebrate")
+	assert_eq(avatar.debug_get_current_asset_clip(), &"celebrate")
 	avatar.play_hit()
 	assert_eq(avatar.debug_get_animation_state(), &"hit")
 	assert_no_new_orphans()

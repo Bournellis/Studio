@@ -14,7 +14,7 @@ const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
-const MODE_NAME: String = "Futebol 1x1"
+const MODE_NAME: String = "Copa Arena Futebol"
 const GOAL_LIMIT: int = 3
 const FIELD_WIDTH: float = 38.0
 const FIELD_LENGTH: float = 54.0
@@ -44,6 +44,12 @@ const PLAYER_KICK_LIFT: float = 2.35
 const PLAYER_STRONG_KICK_LIFT: float = 7.2
 const PLAYER_TOUCH_COOLDOWN: float = 0.18
 const GOAL_RESET_DELAY: float = 1.25
+const KICKOFF_COUNTDOWN_DURATION: float = 3.15
+const GOAL_SLOWMO_DURATION: float = 0.4
+const GOAL_SLOWMO_SCALE: float = 0.38
+const RENDER_GLOW_ENABLED: bool = true
+const RENDER_SSAO_ENABLED: bool = true
+const RENDER_FOG_ENABLED: bool = true
 
 var player
 var player_avatar
@@ -67,6 +73,13 @@ var player_ball_control_state: StringName = &"free"
 var player_ball_control_strength: float = 0.0
 var last_kick_assist_strength: float = 0.0
 var last_goal_player_scored: bool = false
+var kickoff_owner: StringName = &"player"
+var bot_difficulty_id: StringName = &"normal"
+var kickoff_countdown_remaining: float = 0.0
+var countdown_last_number: int = 0
+var goal_slowmo_remaining: float = 0.0
+var boost_fx_cooldown: float = 0.0
+var skid_fx_cooldown: float = 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -78,9 +91,15 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if hud != null:
 		hud.update_snapshot(_build_hud_snapshot())
+	_update_stadium_scoreboards()
+	_update_goal_slowmo(_delta)
 
 func _physics_process(delta: float) -> void:
 	if intro_open or menu_open:
+		return
+	_update_player_presentation_fx(delta)
+	if kickoff_countdown_remaining > 0.0:
+		_update_kickoff_countdown(delta)
 		return
 	player_touch_cooldown_remaining = maxf(0.0, player_touch_cooldown_remaining - delta)
 	if goal_reset_timer > 0.0:
@@ -120,6 +139,7 @@ func restart_match() -> void:
 	match_over = false
 	goal_reset_timer = 0.0
 	last_goal_player_scored = false
+	kickoff_owner = &"player"
 	_restart_play(false)
 	if hud != null:
 		hud.reset_feedback()
@@ -160,6 +180,18 @@ func debug_get_last_kick_assist_strength() -> float:
 func debug_get_player_boost_fraction() -> float:
 	return player.get_boost_stamina_fraction() if player != null else 0.0
 
+func debug_is_kickoff_locked() -> bool:
+	return kickoff_countdown_remaining > 0.0
+
+func debug_get_kickoff_countdown_remaining() -> float:
+	return kickoff_countdown_remaining
+
+func debug_is_goal_slowmo_active() -> bool:
+	return goal_slowmo_remaining > 0.0
+
+func debug_get_feedback():
+	return feedback
+
 func debug_update_player_ball_control(delta: float = 0.1) -> void:
 	_update_player_ball_control(delta)
 
@@ -168,6 +200,21 @@ func debug_build_hud_snapshot() -> Dictionary:
 
 func debug_get_bot():
 	return bot
+
+func debug_get_bot_difficulty_id() -> StringName:
+	return bot_difficulty_id
+
+func debug_set_bot_difficulty(next_difficulty_id: StringName) -> void:
+	bot_difficulty_id = next_difficulty_id
+	if bot != null:
+		bot.set_difficulty(bot_difficulty_id)
+		bot_difficulty_id = bot.debug_get_difficulty_id()
+
+func debug_get_kickoff_owner() -> StringName:
+	return kickoff_owner
+
+func debug_set_kickoff_owner(next_owner: StringName) -> void:
+	kickoff_owner = &"bot" if next_owner == &"bot" else &"player"
 
 func debug_get_bot_avatar():
 	return bot_avatar
@@ -192,6 +239,18 @@ func debug_is_intro_open() -> bool:
 
 func debug_start_match() -> void:
 	_start_match()
+	debug_finish_kickoff_countdown()
+
+func debug_start_match_with_countdown() -> void:
+	_start_match()
+
+func debug_finish_kickoff_countdown() -> void:
+	kickoff_countdown_remaining = 0.0
+	countdown_last_number = 0
+	_set_round_input_locked(false)
+	if not match_over:
+		phase_label = &"play"
+	Engine.time_scale = 1.0
 
 func debug_cycle_skin_tone(step: int = 1) -> void:
 	_cycle_skin_tone(step)
@@ -226,33 +285,111 @@ func debug_get_arena_config() -> Dictionary:
 		"goal_height": GOAL_HEIGHT
 	}
 
+func debug_get_stadium_scoreboard_text(side_name: String = "North") -> String:
+	var label := _get_stadium_scoreboard_score_label(side_name)
+	return label.text if label != null else ""
+
 func _configure_world() -> void:
 	var environment := WorldEnvironment.new()
 	environment.name = "WorldEnvironment"
-	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.03, 0.08, 0.12, 1.0)
-	env.ambient_light_color = Color(0.84, 0.9, 0.78, 1.0)
-	env.ambient_light_energy = 0.94
-	environment.environment = env
+	environment.environment = _build_night_environment()
 	add_child(environment)
 
+	_add_stadium_key_light()
+	_build_football_pitch()
+
+func _build_night_environment() -> Environment:
+	var env := Environment.new()
+	var sky_material := ProceduralSkyMaterial.new()
+	sky_material.sky_top_color = Color(0.004, 0.01, 0.04, 1.0)
+	sky_material.sky_horizon_color = Color(0.02, 0.065, 0.14, 1.0)
+	sky_material.sky_curve = 0.18
+	sky_material.sky_energy_multiplier = 0.72
+	sky_material.ground_bottom_color = Color(0.012, 0.02, 0.028, 1.0)
+	sky_material.ground_horizon_color = Color(0.02, 0.05, 0.08, 1.0)
+	sky_material.ground_curve = 0.12
+	sky_material.ground_energy_multiplier = 0.36
+	sky_material.sun_angle_max = 1.0
+	sky_material.sun_curve = 0.04
+	sky_material.sky_cover = _build_star_cover_texture()
+	sky_material.sky_cover_modulate = Color(1.0, 1.0, 1.0, 0.18)
+
+	var sky := Sky.new()
+	sky.sky_material = sky_material
+
+	env.background_mode = Environment.BG_SKY
+	env.sky = sky
+	env.background_energy_multiplier = 0.82
+	env.background_intensity = 0.72
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+	env.ambient_light_color = Color(0.44, 0.58, 0.72, 1.0)
+	env.ambient_light_energy = 0.34
+	env.ambient_light_sky_contribution = 0.74
+	env.tonemap_mode = Environment.TONE_MAPPER_ACES
+	env.tonemap_exposure = 1.08
+	env.tonemap_white = 1.72
+
+	env.glow_enabled = RENDER_GLOW_ENABLED
+	env.set("glow_levels/1", false)
+	env.set("glow_levels/2", true)
+	env.set("glow_levels/3", true)
+	env.set("glow_levels/4", true)
+	env.set("glow_levels/5", false)
+	env.set("glow_levels/6", false)
+	env.set("glow_levels/7", false)
+	env.glow_normalized = true
+	env.glow_intensity = 0.42
+	env.glow_strength = 0.92
+	env.glow_bloom = 0.28
+	env.glow_hdr_threshold = 0.86
+	env.glow_hdr_scale = 1.65
+	env.glow_hdr_luminance_cap = 9.0
+
+	env.ssao_enabled = RENDER_SSAO_ENABLED
+	env.ssao_radius = 2.6
+	env.ssao_intensity = 0.52
+	env.ssao_power = 1.22
+	env.ssao_detail = 0.38
+	env.ssao_sharpness = 0.48
+	env.ssao_light_affect = 0.18
+
+	env.fog_enabled = RENDER_FOG_ENABLED
+	env.fog_light_color = Color(0.12, 0.22, 0.36, 1.0)
+	env.fog_light_energy = 0.28
+	env.fog_density = 0.014
+	env.fog_aerial_perspective = 0.34
+	env.fog_sky_affect = 0.24
+	env.fog_depth_begin = 30.0
+	env.fog_depth_end = 110.0
+	env.fog_depth_curve = 1.1
+	return env
+
+func _build_star_cover_texture() -> Texture2D:
+	var noise := FastNoiseLite.new()
+	noise.seed = 20260610
+	noise.frequency = 0.032
+	noise.fractal_octaves = 1
+	var texture := NoiseTexture2D.new()
+	texture.width = 512
+	texture.height = 256
+	texture.normalize = true
+	texture.noise = noise
+	return texture
+
+func _add_stadium_key_light() -> void:
 	var key_light := DirectionalLight3D.new()
 	key_light.name = "StadiumKeyLight"
-	key_light.rotation_degrees = Vector3(-62.0, -30.0, 0.0)
-	key_light.light_energy = 2.8
+	key_light.rotation_degrees = Vector3(-56.0, -34.0, 0.0)
+	key_light.light_color = Color(0.74, 0.86, 1.0, 1.0)
+	key_light.light_energy = 1.85
+	key_light.light_indirect_energy = 0.44
+	key_light.light_specular = 0.64
 	key_light.shadow_enabled = true
+	key_light.directional_shadow_max_distance = 88.0
+	key_light.directional_shadow_fade_start = 0.74
+	key_light.shadow_bias = 0.045
+	key_light.shadow_normal_bias = 0.82
 	add_child(key_light)
-
-	var fill_light := OmniLight3D.new()
-	fill_light.name = "FestiveFillLight"
-	fill_light.position = Vector3(0.0, 7.0, 0.0)
-	fill_light.light_color = Color(0.95, 0.82, 0.42, 1.0)
-	fill_light.light_energy = 1.3
-	fill_light.omni_range = 34.0
-	add_child(fill_light)
-
-	_build_football_pitch()
 
 func _build_football_pitch() -> void:
 	FootballFieldBuilderScript.build(self, {
@@ -321,6 +458,7 @@ func _spawn_runtime() -> void:
 	bot.rotation.y = PI
 	runtime_root.add_child(bot)
 	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH), FIELD_HALF_WIDTH, FIELD_HALF_LENGTH)
+	bot.set_difficulty(bot_difficulty_id)
 	bot.kick_requested.connect(_on_bot_kick_requested)
 	bot.damaged.connect(func(_amount: float, _remaining_health: float) -> void:
 		if bot_avatar != null:
@@ -344,6 +482,7 @@ func _spawn_runtime() -> void:
 	hud.resume_requested.connect(func() -> void:
 		_set_menu_open(false)
 	)
+	hud.rematch_requested.connect(restart_match)
 	hud.main_menu_requested.connect(_return_to_main_menu)
 	hud.skin_tone_previous_requested.connect(func() -> void:
 		_cycle_skin_tone(-1)
@@ -362,14 +501,19 @@ func _spawn_runtime() -> void:
 
 func _restart_play(after_goal: bool) -> void:
 	phase_label = &"kickoff" if not after_goal else &"reset"
-	player.global_position = PLAYER_SPAWN
+	Engine.time_scale = 1.0
+	goal_slowmo_remaining = 0.0
+	if after_goal:
+		_advance_kickoff_owner()
+	player.global_position = _get_player_spawn_for_kickoff()
 	player.rotation = Vector3.ZERO
 	player.configure_for_round()
 	player.clear_movement_impulses()
-	bot.global_position = BOT_SPAWN
+	bot.global_position = _get_bot_spawn_for_kickoff()
 	bot.rotation.y = PI
 	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH), FIELD_HALF_WIDTH, FIELD_HALF_LENGTH)
-	ball.configure(BALL_SPAWN)
+	bot.set_difficulty(bot_difficulty_id)
+	ball.configure(_get_ball_spawn_for_kickoff())
 	if chase_camera != null:
 		chase_camera.snap_to_target()
 	player_touch_cooldown_remaining = 0.0
@@ -380,7 +524,10 @@ func _restart_play(after_goal: bool) -> void:
 		bot.set_celebrating(true)
 	else:
 		bot.set_celebrating(false)
-	phase_label = &"play"
+	if not intro_open:
+		_start_kickoff_countdown()
+	else:
+		phase_label = &"play"
 
 func _on_player_kick_requested(_origin: Vector3, _direction: Vector3, _damage: float, _knockback: float) -> void:
 	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, false)
@@ -389,7 +536,7 @@ func _on_player_strong_kick_requested(_origin: Vector3, _direction: Vector3, _da
 	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_STRONG_KICK_FORCE, PLAYER_STRONG_KICK_LIFT, true)
 
 func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: float, strong: bool) -> void:
-	if match_over or intro_open or menu_open or goal_reset_timer > 0.0:
+	if match_over or intro_open or menu_open or goal_reset_timer > 0.0 or kickoff_countdown_remaining > 0.0:
 		return
 	var connected := _can_reach_ball(origin, direction)
 	last_kick_assist_strength = _get_kick_assist_strength(origin, direction) if connected else 0.0
@@ -403,9 +550,11 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 	ball.kick(kick_direction, force, lift)
 	if feedback != null:
 		feedback.play_football_kick(ball.global_position, kick_direction, strong)
+	if chase_camera != null:
+		chase_camera.play_shake(0.09 if strong else 0.045, 0.18 if strong else 0.1)
 
 func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, lift: float) -> void:
-	if match_over or intro_open or goal_reset_timer > 0.0:
+	if match_over or intro_open or goal_reset_timer > 0.0 or kickoff_countdown_remaining > 0.0:
 		return
 	var to_ball: Vector3 = ball.global_position - origin
 	if to_ball.length() > bot.kick_range + 0.55:
@@ -415,6 +564,8 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 	ball.kick(direction, force, lift)
 	if feedback != null:
 		feedback.play_football_kick(ball.global_position, direction, false)
+	if chase_camera != null:
+		chase_camera.play_shake(0.035, 0.08)
 
 func _update_player_ball_control(_delta: float) -> void:
 	if player == null or ball == null:
@@ -474,6 +625,7 @@ func _register_goal(player_scored: bool) -> void:
 	if feedback != null:
 		var goal_z := GOAL_LINE_NORTH if player_scored else GOAL_LINE_SOUTH
 		feedback.play_football_goal(Vector3(0.0, 1.0, goal_z), player_scored)
+	_trigger_goal_gamefeel()
 	if bool(score_result.get("match_over", false)):
 		match_over = true
 		goal_reset_timer = 0.0
@@ -524,7 +676,9 @@ func _get_player_kick_direction() -> Vector3:
 
 func _build_hud_snapshot() -> Dictionary:
 	var ball_distance := 0.0
+	var ball_relative := Vector3.ZERO
 	if player != null and ball != null:
+		ball_relative = ball.global_position - player.global_position
 		ball_distance = Vector3(player.global_position.x, 0.0, player.global_position.z).distance_to(Vector3(ball.global_position.x, 0.0, ball.global_position.z))
 	return {
 		"status": MODE_NAME,
@@ -532,19 +686,158 @@ func _build_hud_snapshot() -> Dictionary:
 		"bot_score": bot_score,
 		"goal_limit": GOAL_LIMIT,
 		"ball_distance": ball_distance,
+		"ball_relative_x": ball_relative.x,
+		"ball_relative_z": ball_relative.z,
+		"player_kit_code": _get_kit_code(selected_appearance.country_kit_id),
+		"bot_kit_code": _get_kit_code(bot_appearance.country_kit_id),
+		"player_kit_color": AvatarCatalogScript.get_kit_primary_color(selected_appearance.country_kit_id),
+		"bot_kit_color": AvatarCatalogScript.get_kit_primary_color(bot_appearance.country_kit_id),
 		"ball_control": player_ball_control_state,
 		"ball_control_strength": player_ball_control_strength,
 		"boost_fraction": player.get_boost_stamina_fraction() if player != null else 0.0,
 		"boost_active": player.is_boosting() if player != null else false,
 		"bot_state": bot.debug_get_state() if bot != null else "none",
+		"bot_difficulty": bot_difficulty_id,
+		"kickoff_owner": kickoff_owner,
 		"phase": phase_label,
+		"countdown": kickoff_countdown_remaining,
 		"hint": "Comecar inicia | WASD move | Shift boost | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | paredes/teto rebatem | R restart | Esc menu"
 	}
+
+func _advance_kickoff_owner() -> void:
+	kickoff_owner = &"bot" if kickoff_owner == &"player" else &"player"
+
+func _get_player_spawn_for_kickoff() -> Vector3:
+	if kickoff_owner == &"bot":
+		return Vector3(0.0, PLAYER_SPAWN.y, FIELD_HALF_LENGTH - 6.0)
+	return PLAYER_SPAWN
+
+func _get_bot_spawn_for_kickoff() -> Vector3:
+	if kickoff_owner == &"bot":
+		return Vector3(0.0, BOT_SPAWN.y, -FIELD_HALF_LENGTH + 9.0)
+	return BOT_SPAWN
+
+func _get_ball_spawn_for_kickoff() -> Vector3:
+	if kickoff_owner == &"bot":
+		return Vector3(0.0, BALL_SPAWN.y, -9.0)
+	return Vector3(0.0, BALL_SPAWN.y, 9.0)
+
+func _get_kit_code(country_kit_id: StringName) -> String:
+	match country_kit_id:
+		&"brazil":
+			return "BRA"
+		&"argentina":
+			return "ARG"
+		&"france":
+			return "FRA"
+		&"japan":
+			return "JPN"
+		&"portugal":
+			return "POR"
+		&"germany":
+			return "GER"
+		_:
+			return "KIT"
+
+func _update_stadium_scoreboards() -> void:
+	for side_name in ["North", "South"]:
+		var score_label := _get_stadium_scoreboard_score_label(side_name)
+		if score_label != null:
+			score_label.text = "BRA %d - %d FRA" % [player_score, bot_score]
+		var phase_label_node := _get_stadium_scoreboard_phase_label(side_name)
+		if phase_label_node != null:
+			phase_label_node.text = _get_stadium_scoreboard_phase_text()
+
+func _get_stadium_scoreboard_score_label(side_name: String) -> Label:
+	return get_node_or_null("WorldCupScoreboard%sViewport/ScoreRoot/ScoreLabel" % side_name) as Label
+
+func _get_stadium_scoreboard_phase_label(side_name: String) -> Label:
+	return get_node_or_null("WorldCupScoreboard%sViewport/ScoreRoot/PhaseLabel" % side_name) as Label
+
+func _get_stadium_scoreboard_phase_text() -> String:
+	if match_over:
+		return "FIM DE JOGO"
+	if phase_label == &"goal":
+		return "GOL!"
+	if phase_label == &"intro":
+		return "FUTEBOL 1x1"
+	if phase_label == &"kickoff" or phase_label == &"reset":
+		return "SAIDA"
+	return "AO VIVO"
+
+func _start_kickoff_countdown() -> void:
+	kickoff_countdown_remaining = KICKOFF_COUNTDOWN_DURATION
+	countdown_last_number = 0
+	phase_label = &"kickoff"
+	_set_round_input_locked(true)
+	if hud != null:
+		hud.show_countdown("3", 0.45)
+
+func _update_kickoff_countdown(delta: float) -> void:
+	kickoff_countdown_remaining = maxf(0.0, kickoff_countdown_remaining - delta)
+	var next_number := int(ceilf(kickoff_countdown_remaining))
+	if next_number > 0 and next_number != countdown_last_number:
+		countdown_last_number = next_number
+		if hud != null:
+			hud.show_countdown(str(next_number), 0.36)
+	if kickoff_countdown_remaining > 0.0:
+		return
+	_set_round_input_locked(false)
+	phase_label = &"play"
+	if hud != null:
+		hud.show_countdown("VAI!", 0.48)
+
+func _set_round_input_locked(is_locked: bool) -> void:
+	if player != null and player.has_method("set_input_locked"):
+		player.set_input_locked(is_locked)
+	if bot != null:
+		bot.set_physics_process(not is_locked)
+	if is_locked:
+		if player != null:
+			player.clear_movement_impulses()
+		if bot != null:
+			bot.velocity = Vector3.ZERO
+		if ball != null:
+			ball.linear_velocity = Vector3.ZERO
+			ball.angular_velocity = Vector3.ZERO
+
+func _update_player_presentation_fx(delta: float) -> void:
+	boost_fx_cooldown = maxf(0.0, boost_fx_cooldown - delta)
+	skid_fx_cooldown = maxf(0.0, skid_fx_cooldown - delta)
+	var boost_fraction := 0.0
+	if player != null and player.is_boosting():
+		boost_fraction = 1.0
+		if feedback != null and boost_fx_cooldown <= 0.0:
+			feedback.play_boost_trail(player.global_position, -player.global_transform.basis.z)
+			boost_fx_cooldown = 0.08
+	if chase_camera != null:
+		chase_camera.set_boost_fov_fraction(boost_fraction)
+	if player != null and player.is_on_floor():
+		var flat_speed := Vector3(player.velocity.x, 0.0, player.velocity.z).length()
+		if flat_speed > 7.2 and not player.is_boosting() and feedback != null and skid_fx_cooldown <= 0.0:
+			feedback.play_skid_dust(player.global_position)
+			skid_fx_cooldown = 0.18
+
+func _trigger_goal_gamefeel() -> void:
+	goal_slowmo_remaining = GOAL_SLOWMO_DURATION
+	if not DisplayServer.get_name().to_lower().contains("headless"):
+		Engine.time_scale = GOAL_SLOWMO_SCALE
+	if chase_camera != null:
+		chase_camera.focus_goal(GOAL_SLOWMO_DURATION)
+		chase_camera.play_shake(0.16, 0.32)
+
+func _update_goal_slowmo(delta: float) -> void:
+	if goal_slowmo_remaining <= 0.0:
+		return
+	goal_slowmo_remaining = maxf(0.0, goal_slowmo_remaining - delta)
+	if goal_slowmo_remaining <= 0.0:
+		Engine.time_scale = 1.0
 
 func _start_match() -> void:
 	_set_intro_open(false)
 	if hud != null:
 		hud.reset_feedback()
+	_start_kickoff_countdown()
 	_capture_mouse_if_playing()
 
 func _set_intro_open(is_open: bool) -> void:
@@ -579,6 +872,7 @@ func _set_menu_open(is_open: bool) -> void:
 func _return_to_main_menu() -> void:
 	intro_open = false
 	get_tree().paused = false
+	Engine.time_scale = 1.0
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	get_tree().change_scene_to_file(MENU_SCENE_PATH)
 

@@ -35,6 +35,8 @@ var jump_pad_count: int = 0
 var fall_penalty_count: int = 0
 var football_kick_count: int = 0
 var football_goal_count: int = 0
+var boost_trail_count: int = 0
+var skid_dust_count: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -138,6 +140,7 @@ func play_football_kick(ball_position: Vector3, direction: Vector3, strong: bool
 	var reach := 1.4 if strong else 0.9
 	_spawn_beam(ball_position + Vector3.UP * 0.08, ball_position + kick_direction * reach + Vector3.UP * 0.18, color, 0.05 if strong else 0.035, 0.13)
 	_spawn_sphere(ball_position, 0.26 if strong else 0.2, color, 0.14, true)
+	_spawn_particle_burst(ball_position, color, 26 if strong else 14, 0.24 if strong else 0.16, 1.8 if strong else 1.1)
 	_spawn_light(ball_position + Vector3.UP * 0.28, color, 2.8 if strong else 1.9, 2.6, 0.12)
 	_spawn_tone(ball_position, 520.0 if strong else 390.0, 0.065, -10.5 if strong else -12.0)
 
@@ -146,8 +149,20 @@ func play_football_goal(goal_position: Vector3, player_scored: bool) -> void:
 	football_goal_count += 1
 	var color := FOOTBALL_GOAL_COLOR if player_scored else DAMAGE_COLOR
 	_spawn_sphere(goal_position + Vector3.UP * 0.7, 0.72, color, 0.42, true)
+	_spawn_particle_burst(goal_position + Vector3.UP * 1.0, color, 96, 0.7, 5.8)
+	_spawn_particle_burst(goal_position + Vector3.UP * 1.35, Color(0.34, 0.88, 1.0, 1.0), 44, 0.55, 4.0)
 	_spawn_light(goal_position + Vector3.UP * 1.2, color, 6.0, 8.0, 0.52)
 	_spawn_tone(goal_position, 980.0 if player_scored else 220.0, 0.16, -7.5)
+
+func play_boost_trail(player_position: Vector3, direction: Vector3) -> void:
+	boost_trail_count += 1
+	var trail_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector3.BACK
+	var color := Color(0.3, 0.92, 1.0, 1.0)
+	_spawn_particle_burst(player_position - trail_direction * 0.55 + Vector3.UP * 0.25, color, 10, 0.18, 1.3)
+
+func play_skid_dust(player_position: Vector3) -> void:
+	skid_dust_count += 1
+	_spawn_particle_burst(player_position + Vector3.UP * 0.08, Color(0.72, 0.84, 0.68, 0.82), 8, 0.22, 0.8)
 
 func play_bot_tell(origin: Vector3, target_position: Vector3, duration: float) -> void:
 	last_event = &"bot_tell"
@@ -204,6 +219,12 @@ func clear_effects() -> void:
 func debug_active_effect_count() -> int:
 	return active_effects.size()
 
+func debug_get_boost_trail_count() -> int:
+	return boost_trail_count
+
+func debug_get_skid_dust_count() -> int:
+	return skid_dust_count
+
 func debug_make_synthetic_stream(frequency: float, duration: float) -> AudioStreamWAV:
 	return _build_tone_stream(frequency, duration)
 
@@ -252,6 +273,36 @@ func _spawn_light(effect_position: Vector3, color: Color, energy: float, radius:
 	add_child(light)
 	light.global_position = effect_position
 	_track_effect(light, lifetime)
+
+func _spawn_particle_burst(effect_position: Vector3, color: Color, amount: int, lifetime: float, speed: float) -> void:
+	var particles := GPUParticles3D.new()
+	particles.name = "FeedbackParticles"
+	particles.amount = amount
+	particles.lifetime = lifetime
+	particles.one_shot = true
+	particles.explosiveness = 1.0
+	particles.randomness = 0.72
+	particles.emitting = true
+	particles.local_coords = false
+	var process_material := ParticleProcessMaterial.new()
+	process_material.gravity = Vector3(0.0, -1.2, 0.0)
+	process_material.initial_velocity_min = speed * 0.45
+	process_material.initial_velocity_max = speed
+	process_material.spread = 52.0
+	process_material.scale_min = 0.16
+	process_material.scale_max = 0.58
+	particles.process_material = process_material
+	var mesh := SphereMesh.new()
+	mesh.radius = 0.045
+	mesh.height = 0.09
+	mesh.radial_segments = 8
+	mesh.rings = 4
+	var material := _build_material(color, true)
+	mesh.material = material
+	particles.draw_pass_1 = mesh
+	add_child(particles)
+	particles.global_position = effect_position
+	_track_effect(particles, lifetime + 0.18)
 
 func _spawn_tone(effect_position: Vector3, frequency: float, duration: float, volume_db: float) -> void:
 	var player := AudioStreamPlayer3D.new()

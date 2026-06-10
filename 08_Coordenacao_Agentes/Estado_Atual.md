@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_01C_ARENA_STADIUM_VISUAL_REWORK_COMPLETE`
-- Baseline: modo `Futebol` 1x1 vs bot em terceira pessoa, arena de vidro fechada com estadio de Copa por primitivas, gols com teto, bola arcade solta, boost com stamina, avatares procedurais com camisas por pais. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
+- Marker: `JOGO_DA_COPA_TRACK_02_QUALITY_UPGRADE_V1_COMPLETE`
+- Baseline: `Copa Arena Futebol`, modo `Futebol` 1x1 vs bot em terceira pessoa, arena noturna de vidro, pitch em shader, placares vivos, bola com trail/squash, avatares humanoides, countdown, VFX, HUD broadcast, menu 3D, resultado/rematch e bot com dificuldades. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: implementar a serie `Track 02 Quality Upgrade V1` (02A-02G) conforme `Projetos/JogoDaCopa/docs/quality-upgrade-plan.md`; card: `Kanban/Backlog/2026-06-10_codex_jogodacopa_track02-quality-upgrade-series-v1.md`.
+- Proximo passo: playtest humano no editor/debug export e tuning pos-Track 02; card concluido em `Kanban/Done/2026-06-10_codex_jogodacopa_track02-quality-upgrade-series-v1.md`.
 
 ## draxos-roguelike-cardgame
 

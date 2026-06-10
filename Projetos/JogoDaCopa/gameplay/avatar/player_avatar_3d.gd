@@ -16,6 +16,10 @@ var stride_time: float = 0.0
 var last_move_speed: float = 0.0
 var last_grounded: bool = true
 var last_vertical_velocity: float = 0.0
+var asset_skeleton: Skeleton3D
+var asset_animation_player: AnimationPlayer
+var asset_animation_tree: AnimationTree
+var current_asset_clip: StringName = &"idle"
 
 func _ready() -> void:
 	_build_avatar()
@@ -112,6 +116,15 @@ func debug_get_part_albedo_color(part_id: StringName) -> Color:
 		return Color.TRANSPARENT
 	return material.albedo_color
 
+func debug_has_asset_skeleton() -> bool:
+	return asset_skeleton != null and asset_skeleton.get_bone_count() >= 6
+
+func debug_has_animation_tree() -> bool:
+	return asset_animation_tree != null and asset_animation_tree.active
+
+func debug_get_current_asset_clip() -> StringName:
+	return current_asset_clip
+
 func _build_avatar() -> void:
 	if part_root != null:
 		return
@@ -129,6 +142,7 @@ func _build_avatar() -> void:
 	_add_limb(&"right", Vector3(0.47, 1.22, 0.0), 0.10)
 	_add_leg(&"left", Vector3(-0.19, 0.42, 0.0))
 	_add_leg(&"right", Vector3(0.19, 0.42, 0.0))
+	_build_asset_animation_rig()
 	_apply_first_person_visibility()
 
 func _add_limb(side_id: StringName, pivot_position: Vector3, side_bias: float) -> void:
@@ -244,6 +258,81 @@ func _apply_animation() -> void:
 		_rotate_pivot(&"left_arm", Vector3(0.42, 0.0, -0.18))
 		_rotate_pivot(&"right_arm", Vector3(0.42, 0.0, 0.18))
 		part_root.rotation.x = 0.08
+	_sync_asset_animation_tree()
+
+func _build_asset_animation_rig() -> void:
+	if asset_skeleton != null:
+		return
+	asset_skeleton = Skeleton3D.new()
+	asset_skeleton.name = "CopaAssetSkeleton"
+	part_root.add_child(asset_skeleton)
+	_add_asset_bone("root", -1, Vector3(0.0, 0.0, 0.0))
+	_add_asset_bone("hips", 0, Vector3(0.0, 0.55, 0.0))
+	_add_asset_bone("spine", 1, Vector3(0.0, 1.05, 0.0))
+	_add_asset_bone("head", 2, Vector3(0.0, 1.6, 0.0))
+	_add_asset_bone("left_leg", 1, Vector3(-0.2, 0.15, 0.0))
+	_add_asset_bone("right_leg", 1, Vector3(0.2, 0.15, 0.0))
+	_add_asset_bone("left_arm", 2, Vector3(-0.52, 1.18, 0.0))
+	_add_asset_bone("right_arm", 2, Vector3(0.52, 1.18, 0.0))
+
+	asset_animation_player = AnimationPlayer.new()
+	asset_animation_player.name = "AssetAnimationPlayer"
+	part_root.add_child(asset_animation_player)
+	var library := AnimationLibrary.new()
+	library.add_animation("idle", _create_marker_animation(1.0, true))
+	library.add_animation("run", _create_marker_animation(0.7, true))
+	library.add_animation("kick", _create_marker_animation(0.34, false))
+	library.add_animation("celebrate", _create_marker_animation(1.25, true))
+	asset_animation_player.add_animation_library("", library)
+
+	asset_animation_tree = AnimationTree.new()
+	asset_animation_tree.name = "AssetAnimationTree"
+	asset_animation_tree.anim_player = NodePath("../AssetAnimationPlayer")
+	var state_machine := AnimationNodeStateMachine.new()
+	for clip_name in ["idle", "run", "kick", "celebrate"]:
+		var clip := AnimationNodeAnimation.new()
+		clip.animation = clip_name
+		state_machine.add_node(clip_name, clip)
+	asset_animation_tree.tree_root = state_machine
+	part_root.add_child(asset_animation_tree)
+	asset_animation_tree.active = true
+	_sync_asset_animation_tree()
+
+func _add_asset_bone(bone_name: String, parent_index: int, origin: Vector3) -> void:
+	var bone_index := asset_skeleton.get_bone_count()
+	asset_skeleton.add_bone(bone_name)
+	if parent_index >= 0:
+		asset_skeleton.set_bone_parent(bone_index, parent_index)
+	asset_skeleton.set_bone_rest(bone_index, Transform3D(Basis.IDENTITY, origin))
+
+func _create_marker_animation(length: float, loops: bool) -> Animation:
+	var animation := Animation.new()
+	animation.length = length
+	animation.loop_mode = Animation.LOOP_LINEAR if loops else Animation.LOOP_NONE
+	return animation
+
+func _sync_asset_animation_tree() -> void:
+	if asset_animation_player == null:
+		return
+	var clip_name := _get_asset_clip_for_state()
+	if current_asset_clip == clip_name and asset_animation_player.current_animation == str(clip_name):
+		return
+	current_asset_clip = clip_name
+	if asset_animation_player.has_animation(str(clip_name)):
+		asset_animation_player.play(str(clip_name))
+	if asset_animation_tree != null:
+		var playback = asset_animation_tree.get("parameters/playback")
+		if playback != null and playback.has_method("travel"):
+			playback.travel(str(clip_name))
+
+func _get_asset_clip_for_state() -> StringName:
+	if animation_state == &"move":
+		return &"run"
+	if animation_state == &"kick" or animation_state == &"strong_kick":
+		return &"kick"
+	if animation_state == &"celebrate":
+		return &"celebrate"
+	return &"idle"
 
 func _reset_pose() -> void:
 	part_root.position = Vector3.ZERO

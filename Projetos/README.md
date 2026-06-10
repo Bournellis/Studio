@@ -10,7 +10,7 @@ This registry describes stable project identity and entry points only. Status, m
 
 ## Registry
 
-- `JogoDaCopa/`: independent PC Windows editor-first Godot football/minigames project (third-person Futebol vs bot, Copa-style stadium). Split from the former FPS Playground on 2026-06-10.
+- `JogoDaCopa/`: independent PC Windows editor-first Godot football/minigames project (`Copa Arena Futebol`, third-person Futebol vs bot, Copa-style stadium). Split from the former FPS Playground on 2026-06-10.
   - Agent guide: `JogoDaCopa/AGENTS.md` | Status: `JogoDaCopa/implementation/current-status.md`
   - Plans: `JogoDaCopa/docs/work-plan.md`, `JogoDaCopa/docs/quality-upgrade-plan.md` | Validation: `JogoDaCopa/tools/validate.gd`
 

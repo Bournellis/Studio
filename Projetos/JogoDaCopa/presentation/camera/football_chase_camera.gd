@@ -15,6 +15,12 @@ var camera: Camera3D
 var last_focus_position: Vector3 = Vector3.ZERO
 var last_desired_position: Vector3 = Vector3.ZERO
 var last_ball_focus_weight: float = 0.0
+var shake_time: float = 0.0
+var shake_duration: float = 0.0
+var shake_intensity: float = 0.0
+var boost_fov_fraction: float = 0.0
+var goal_focus_time: float = 0.0
+var goal_focus_duration: float = 0.0
 
 func _ready() -> void:
 	_ensure_camera()
@@ -48,8 +54,26 @@ func debug_get_desired_position() -> Vector3:
 func debug_get_ball_focus_weight() -> float:
 	return last_ball_focus_weight
 
+func debug_get_boost_fov_fraction() -> float:
+	return boost_fov_fraction
+
+func debug_is_goal_focus_active() -> bool:
+	return goal_focus_time > 0.0
+
 func debug_is_configured() -> bool:
 	return target != null and ball != null and camera != null
+
+func play_shake(intensity: float, duration: float) -> void:
+	shake_intensity = maxf(shake_intensity, intensity)
+	shake_duration = maxf(0.01, duration)
+	shake_time = maxf(shake_time, duration)
+
+func set_boost_fov_fraction(next_fraction: float) -> void:
+	boost_fov_fraction = clampf(next_fraction, 0.0, 1.0)
+
+func focus_goal(duration: float = 0.4) -> void:
+	goal_focus_duration = maxf(0.01, duration)
+	goal_focus_time = goal_focus_duration
 
 func _update_camera(delta: float, snap: bool) -> void:
 	if target == null:
@@ -63,6 +87,9 @@ func _update_camera(delta: float, snap: bool) -> void:
 		var ball_distance := _flat_distance(target.global_position, ball.global_position)
 		var distance_factor := clampf(ball_distance / maxf(0.01, far_ball_focus_distance), 0.0, 1.0)
 		last_ball_focus_weight = lerpf(ball_focus_weight, far_ball_focus_weight, distance_factor)
+		if goal_focus_time > 0.0:
+			var goal_focus_alpha := clampf(goal_focus_time / maxf(0.01, goal_focus_duration), 0.0, 1.0)
+			last_ball_focus_weight = maxf(last_ball_focus_weight, lerpf(0.32, 0.72, goal_focus_alpha))
 		focus = target_focus.lerp(ball_focus, clampf(last_ball_focus_weight, 0.0, 0.75))
 	else:
 		last_ball_focus_weight = 0.0
@@ -78,6 +105,28 @@ func _update_camera(delta: float, snap: bool) -> void:
 
 	if global_position.distance_squared_to(focus) > 0.0001:
 		look_at(focus, Vector3.UP)
+	_update_camera_fx(delta)
+
+func _update_camera_fx(delta: float) -> void:
+	_ensure_camera()
+	if camera == null:
+		return
+	var base_fov := 82.0
+	var goal_focus_boost := 3.5 if goal_focus_time > 0.0 else 0.0
+	camera.fov = lerpf(base_fov, 89.0, boost_fov_fraction) + goal_focus_boost
+	if shake_time > 0.0:
+		shake_time = maxf(0.0, shake_time - delta)
+		var shake_alpha := shake_time / maxf(0.01, shake_duration)
+		var offset := Vector3(
+			sin(float(Time.get_ticks_msec()) * 0.041) * shake_intensity * shake_alpha,
+			cos(float(Time.get_ticks_msec()) * 0.037) * shake_intensity * shake_alpha,
+			0.0
+		)
+		camera.position = offset
+	else:
+		shake_intensity = 0.0
+		camera.position = Vector3.ZERO
+	goal_focus_time = maxf(0.0, goal_focus_time - delta)
 
 func _get_target_forward() -> Vector3:
 	if target == null:
