@@ -4,6 +4,8 @@ const BootstrapSceneGeneratorScript = preload("res://tools/bootstrap_scene_gener
 const CombatantScript = preload("res://gameplay/combat/combatant_3d.gd")
 const PlayerScript = preload("res://gameplay/player/fps_player_controller.gd")
 const FeedbackScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
+const FootballBallScript = preload("res://gameplay/football/football_ball.gd")
+const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
 
 const EXPECTED_ACTIONS: PackedStringArray = [
 	"move_forward",
@@ -29,6 +31,119 @@ func test_input_actions_are_bootstrapped() -> void:
 	for action_name: String in EXPECTED_ACTIONS:
 		assert_true(InputMap.has_action(action_name), "Missing input action %s" % action_name)
 		assert_gt(InputMap.action_get_events(action_name).size(), 0, "Input action %s has no binding" % action_name)
+
+func test_main_menu_scene_boots_with_mode_buttons() -> void:
+	var menu_scene := load("res://modes/menu/main_menu.tscn") as PackedScene
+	assert_not_null(menu_scene)
+	var menu := menu_scene.instantiate()
+	add_child_autofree(menu)
+	await get_tree().process_frame
+
+	assert_eq(menu.debug_get_mode_path(&"arena"), "res://modes/arena/arena.tscn")
+	assert_eq(menu.debug_get_mode_path(&"football"), "res://modes/football/football.tscn")
+	assert_not_null(menu.get_node_or_null("MenuBox/ArenaButton"))
+	assert_not_null(menu.get_node_or_null("MenuBox/FootballButton"))
+	assert_not_null(menu.get_node_or_null("MenuBox/QuitButton"))
+	assert_no_new_orphans()
+
+func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	assert_not_null(football_scene)
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	assert_not_null(football.get_node_or_null("WorldEnvironment"))
+	assert_not_null(football.get_node_or_null("StadiumKeyLight"))
+	assert_not_null(football.get_node_or_null("FootballPitch"))
+	assert_not_null(football.get_node_or_null("NorthGoalPostL"))
+	assert_not_null(football.get_node_or_null("SouthGoalPostR"))
+	assert_not_null(football.get_node_or_null("RuntimeRoot/Player"))
+	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballBot"))
+	assert_not_null(football.get_node_or_null("RuntimeRoot/Ball"))
+	assert_not_null(football.get_node_or_null("FootballHud"))
+	assert_not_null(football.get_node_or_null("FeedbackController"))
+	assert_eq(football.debug_get_goal_limit(), 3)
+	assert_eq(football.debug_get_player_score(), 0)
+	assert_eq(football.debug_get_bot_score(), 0)
+	assert_true(football.debug_get_ball().get_script() == FootballBallScript)
+	assert_true(football.debug_get_bot().get_script() == FootballBotScript)
+	assert_no_new_orphans()
+
+func test_football_player_kick_moves_ball_without_weapon_damage() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var ball = football.debug_get_ball()
+	var hud = football.get_node("FootballHud")
+	var feedback = football.get_node("FeedbackController")
+	football.debug_force_ball_position(player.get_shot_origin() + player.get_shot_direction() * 1.45 + Vector3.DOWN * 0.82)
+	var before_kicks: int = ball.debug_get_kick_count()
+	football._on_player_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 99.0, 99.0)
+
+	assert_eq(ball.debug_get_kick_count(), before_kicks + 1)
+	assert_almost_eq(ball.debug_get_last_kick_force(), 15.0, 0.01)
+	assert_eq(hud.last_event, &"kick")
+	assert_eq(feedback.last_event, &"football_kick")
+	assert_eq(football.debug_get_bot().health, 100.0)
+	assert_no_new_orphans()
+
+func test_football_strong_kick_uses_stronger_force() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var ball = football.debug_get_ball()
+	var hud = football.get_node("FootballHud")
+	football.debug_force_ball_position(player.get_shot_origin() + player.get_shot_direction() * 1.45 + Vector3.DOWN * 0.82)
+	football._on_player_strong_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 0.0, 0.0, 0.0, 0.0, false)
+
+	assert_almost_eq(ball.debug_get_last_kick_force(), 23.0, 0.01)
+	assert_eq(hud.last_event, &"strong_kick")
+	assert_gt(ball.linear_velocity.length(), 0.1)
+	assert_no_new_orphans()
+
+func test_football_goal_updates_score_and_match_ends_at_three() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	football.debug_set_score(2, 0)
+	football.debug_force_ball_position(Vector3(0.0, 0.58, -22.35))
+	football._process_goal_detection()
+
+	assert_eq(football.debug_get_player_score(), 3)
+	assert_eq(football.debug_get_bot_score(), 0)
+	assert_true(football.debug_is_match_over())
+	assert_eq(football.get_node("FootballHud").last_event, &"match_end")
+	assert_no_new_orphans()
+
+func test_football_bot_kick_request_moves_ball() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var bot = football.debug_get_bot()
+	var ball = football.debug_get_ball()
+	football.debug_force_ball_position(bot.global_position + Vector3(0.0, 0.55, 1.1))
+	football._on_bot_kick_requested(bot.global_position + Vector3.UP * 0.9, Vector3.BACK, 11.0, 0.7)
+
+	assert_eq(ball.debug_get_kick_count(), 1)
+	assert_almost_eq(ball.debug_get_last_kick_force(), 11.0, 0.01)
+	assert_gt(ball.linear_velocity.length(), 0.1)
+	assert_no_new_orphans()
 
 func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
@@ -628,6 +743,7 @@ func test_escape_menu_exposes_sensitivity_slider() -> void:
 	arena._set_menu_open(true)
 	assert_true(get_tree().paused)
 	assert_true(hud.pause_menu_panel.visible)
+	assert_not_null(hud.pause_menu_panel.get_node_or_null("PauseMenuMargin/PauseMenuBox/MainMenuButton"))
 
 	hud.sensitivity_slider.value = 0.0012
 	assert_almost_eq(player.mouse_sensitivity, 0.0012, 0.00001)

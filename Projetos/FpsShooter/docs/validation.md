@@ -13,23 +13,32 @@ When working from a dedicated worktree, run with that worktree path.
 
 ## What It Does
 
-- regenerates `res://modes/arena/arena.tscn` from `tools/bootstrap_scene_generator.gd`;
+- regenerates `res://modes/menu/main_menu.tscn`, `res://modes/arena/arena.tscn` and `res://modes/football/football.tscn` from `tools/bootstrap_scene_generator.gd`;
 - checks required project settings, autoloads and resources;
-- checks the generated arena scene loads;
+- checks the generated menu, arena and football scenes load;
 - runs the GUT suite under `res://tests/unit`;
 - prints the manual editor follow-up instead of exporting.
 
 Latest automated baseline:
 
-- GUT `36/36`;
-- `297` asserts;
-- Track 03B route tuning validates feedback controller, player hit/miss, combatant impulse/lift/clamp/decay, player hit knockback, bot hit knockback, bot miss without knockback, map structure, protected spawn sightline, route markers, high-platform cover, pickup-to-jump-target spacing, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()`, synthetic audio stream creation, RMB plasma input, Plasma Bolt spawn/hit/knockback, offset-muzzle crosshair hits, pickups, overcharge, bot pickup priority, ready-shot-over-health pressure, pickup-route interruption, overcharge contest when shot pressure is unavailable, vertical-route cooldown, compact HUD bot flow line, bot simple jump, bot plasma dodge awareness, `Duel Pit V2` high platforms, jump-pad launch, absent void wells and bot jump-pad route awareness.
+- GUT `42/42`;
+- `341` asserts;
+- Track 04A validates menu boot and mode routes, generated menu/arena/football scenes, football player kick and strong kick, no weapon damage in football, football goal scoring/match end, bot kick handoff, arena pause menu return button and the full previous arena shooter regression suite.
 
 ## Manual Smoke
 
 Open `Projetos/FpsShooter/project.godot` in Godot 4.6.2 and press Play.
 
-Expected:
+Expected menu flow:
+
+- Play opens the `FPS Playground` main menu;
+- `Arena Shooter` loads the accepted duel arena;
+- `Futebol` loads the first-person football mode;
+- `Sair` exits when running from editor/player;
+- `Esc` inside a mode opens pause;
+- `Menu inicial` returns to the menu from both modes.
+
+Expected Arena Shooter:
 
 - mouse is captured in the arena, or captured after the first click inside the game window;
 - `WASD` moves;
@@ -81,3 +90,17 @@ Expected:
 - `Esc` opens the menu;
 - the menu sensitivity slider changes mouse look speed;
 - `Retomar` or `Esc` closes the menu and captures mouse again.
+
+Expected Futebol:
+
+- first-person camera/mouse look and `WASD` movement work;
+- `Space` jumps;
+- LMB kicks the ball when it is in reach;
+- RMB performs a stronger kick with more force/lift;
+- missing the ball gives a subtle `SEM CONTATO` HUD cue and no weapon damage occurs;
+- the bot chases, attacks and defends the ball;
+- the ball feels loose/arcade and can be moved by player/bot kicks;
+- scoring in the opponent goal updates the scoreboard and shows goal feedback;
+- match ends at 3 goals with clear win/loss feedback;
+- `R` restarts the match;
+- `Esc` opens the pause menu and sensitivity still works.

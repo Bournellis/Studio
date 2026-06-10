@@ -3,21 +3,22 @@
 - Last updated: `2026-06-10`
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active surface: `PC Windows editor-first FPS 3D tech probe`
-- Active stage: `Track 03B - Arena Flow & Route Tuning V1`
+- Active surface: `PC Windows editor-first FPS Playground tech probe`
+- Active stage: `Track 04A - FPS Playground Menu & Futebol V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
 
-`FpsShooter` is an official implementable Godot project for testing first-person 3D shooter fundamentals in the studio.
+`FpsShooter` is an official implementable Godot project for testing first-person 3D gameplay fundamentals in the studio. The folder name remains `FpsShooter`, while the local product identity now presents as `FPS Playground`.
 
 The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMobile, RPG Isometrico and RPG Turnos. It may use a light Draxos visual theme, but no other project gameplay system is inherited.
 
 ## Current Scope
 
 - PC Windows editor-first.
-- Traditional FPS baseline.
-- Local 1x1 arena against a bot.
+- `FPS Playground` main menu with selectable modes.
+- `Arena Shooter`: traditional FPS baseline in a local 1x1 arena against a bot.
+- `Futebol`: first-person 1x1 football mode against a bot, no weapons, match to 3 goals.
 - Player movement, mouse look, jump, hitscan shot and combat-readable knockback.
 - Secondary `Plasma Bolt` alt-fire on RMB with visible slow projectile, crosshair-aligned damage, stronger knockback and cooldown.
 - Runtime pickups: elevated health shard and overcharge.
@@ -29,15 +30,16 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - `Duel Pit V2` arena layout with protected spawns, low/high cover, side platforms, ramps, high platforms, jump pads, elevated pickups, route/landing markers and high-platform soft cover, without void/fall zones in the current map.
 - Void/fall pressure is reserved for future dedicated maps.
 - HUD, round state and bidirectional feel/feedback.
+- Futebol mode reuses the FPS controller and sensitivity flow, turns LMB/RMB into kick/strong kick, uses a loose arcade `RigidBody3D` ball, primitive festive stadium visuals, simple football bot attack/defend behavior, score HUD and goal feedback.
 - No export, Web, mobile, multiplayer or online/backend scope.
 
 ## Active Goal
 
-`Track 03B - Arena Flow & Route Tuning V1` is complete. The current duel loop keeps the accepted no-void vertical arena contract and improves high-objective readability, jump-pad route reading, bot route variety and discrete HUD playtest intent.
+`Track 04A - FPS Playground Menu & Futebol V1` is complete. The project now starts at the `FPS Playground` menu, preserves the accepted `Arena Shooter` duel loop and adds the first alternate first-person mode: `Futebol` 1x1 against a bot with arcade ball physics and score to 3.
 
 ## Current Gate
 
-Closed for Track 03B Arena Flow & Route Tuning. Run the 5-minute editor smoke focused on `Duel Pit V2`, jump pad readability, elevated pickups requiring micro-commit, high-platform cover risk/reward, bot route alternation, knockback readability without void hazards and whether the accepted duel feel is preserved.
+Closed for Track 04A FPS Playground Menu & Futebol V1. Run the 5-minute editor smoke focused on opening the main menu, launching `Arena Shooter`, returning to menu, launching `Futebol`, kicking/strong-kicking the ball, bot attack/defense, scoring to 3, restart and pause sensitivity.
 
 ## Validation Snapshot
 
@@ -165,6 +167,16 @@ Track 03B Arena Flow & Route Tuning V1:
 - HUD shows a compact bot flow line with state, route, LOS and last pad cue for playtest readability;
 - validation passes `36/36` GUT tests with `297` asserts.
 
+Track 04A FPS Playground Menu & Futebol V1:
+
+- project display name is now `FPS Playground` and the main scene is `res://modes/menu/main_menu.tscn`;
+- menu offers `Arena Shooter`, `Futebol` and `Sair`;
+- `Arena Shooter` remains available and its pause menu can return to the main menu;
+- `Futebol` adds a first-person 1x1 football mode with no weapons, LMB kick, RMB strong kick, loose arcade ball physics, simple attack/defend bot, festive primitive stadium, goal posts, score HUD and match to 3 goals;
+- shared `FpsFeedbackController` now includes football kick and goal feedback using runtime primitives and synthetic audio;
+- validation now generates/checks menu, arena and football scenes;
+- validation passes `42/42` GUT tests with `341` asserts.
+
 ## Read Next
 
 1. `AGENTS.md`
@@ -181,3 +193,4 @@ Track 03B Arena Flow & Route Tuning V1:
 12. `implementation/tracks/track-02a-plasma-damage-hotfix-v1/current-status.md`
 13. `implementation/tracks/track-03a-vertical-arena-fall-pressure-v1/current-status.md`
 14. `implementation/tracks/track-03b-arena-flow-route-tuning-v1/current-status.md`
+15. `implementation/tracks/track-04a-fps-playground-football-v1/current-status.md`

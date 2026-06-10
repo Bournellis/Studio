@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="FpsShooter"
-run/main_scene="res://modes/arena/arena.tscn"
+config/name="FPS Playground"
+run/main_scene="res://modes/menu/main_menu.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 

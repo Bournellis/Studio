@@ -6,6 +6,7 @@ const BotController = preload("res://gameplay/bot/basic_duel_bot.gd")
 const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 
+const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const MAP_NAME: String = "Duel Pit V2"
 const FLOOR_SIZE: Vector3 = Vector3(30.0, 1.0, 30.0)
 const WALL_HEIGHT: float = 3.6
@@ -322,6 +323,7 @@ func _spawn_runtime() -> void:
 	hud.resume_requested.connect(func() -> void:
 		_set_menu_open(false)
 	)
+	hud.main_menu_requested.connect(_return_to_main_menu)
 	hud.set_sensitivity_value(player.mouse_sensitivity)
 
 func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockback: float) -> void:
@@ -1003,6 +1005,11 @@ func _set_menu_open(is_open: bool) -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	else:
 		_capture_mouse_if_playing()
+
+func _return_to_main_menu() -> void:
+	get_tree().paused = false
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	get_tree().change_scene_to_file(MENU_SCENE_PATH)
 
 func _on_sensitivity_changed(value: float) -> void:
 	if player != null:
