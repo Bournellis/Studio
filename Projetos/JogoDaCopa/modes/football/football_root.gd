@@ -44,6 +44,9 @@ const PLAYER_KICK_LIFT: float = 2.35
 const PLAYER_STRONG_KICK_LIFT: float = 7.2
 const PLAYER_TOUCH_COOLDOWN: float = 0.18
 const GOAL_RESET_DELAY: float = 1.25
+const KICKOFF_COUNTDOWN_DURATION: float = 3.15
+const GOAL_SLOWMO_DURATION: float = 0.4
+const GOAL_SLOWMO_SCALE: float = 0.38
 const RENDER_GLOW_ENABLED: bool = true
 const RENDER_SSAO_ENABLED: bool = true
 const RENDER_FOG_ENABLED: bool = true
@@ -70,6 +73,11 @@ var player_ball_control_state: StringName = &"free"
 var player_ball_control_strength: float = 0.0
 var last_kick_assist_strength: float = 0.0
 var last_goal_player_scored: bool = false
+var kickoff_countdown_remaining: float = 0.0
+var countdown_last_number: int = 0
+var goal_slowmo_remaining: float = 0.0
+var boost_fx_cooldown: float = 0.0
+var skid_fx_cooldown: float = 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -82,9 +90,14 @@ func _process(_delta: float) -> void:
 	if hud != null:
 		hud.update_snapshot(_build_hud_snapshot())
 	_update_stadium_scoreboards()
+	_update_goal_slowmo(_delta)
 
 func _physics_process(delta: float) -> void:
 	if intro_open or menu_open:
+		return
+	_update_player_presentation_fx(delta)
+	if kickoff_countdown_remaining > 0.0:
+		_update_kickoff_countdown(delta)
 		return
 	player_touch_cooldown_remaining = maxf(0.0, player_touch_cooldown_remaining - delta)
 	if goal_reset_timer > 0.0:
@@ -164,6 +177,18 @@ func debug_get_last_kick_assist_strength() -> float:
 func debug_get_player_boost_fraction() -> float:
 	return player.get_boost_stamina_fraction() if player != null else 0.0
 
+func debug_is_kickoff_locked() -> bool:
+	return kickoff_countdown_remaining > 0.0
+
+func debug_get_kickoff_countdown_remaining() -> float:
+	return kickoff_countdown_remaining
+
+func debug_is_goal_slowmo_active() -> bool:
+	return goal_slowmo_remaining > 0.0
+
+func debug_get_feedback():
+	return feedback
+
 func debug_update_player_ball_control(delta: float = 0.1) -> void:
 	_update_player_ball_control(delta)
 
@@ -196,6 +221,18 @@ func debug_is_intro_open() -> bool:
 
 func debug_start_match() -> void:
 	_start_match()
+	debug_finish_kickoff_countdown()
+
+func debug_start_match_with_countdown() -> void:
+	_start_match()
+
+func debug_finish_kickoff_countdown() -> void:
+	kickoff_countdown_remaining = 0.0
+	countdown_last_number = 0
+	_set_round_input_locked(false)
+	if not match_over:
+		phase_label = &"play"
+	Engine.time_scale = 1.0
 
 func debug_cycle_skin_tone(step: int = 1) -> void:
 	_cycle_skin_tone(step)
@@ -444,6 +481,8 @@ func _spawn_runtime() -> void:
 
 func _restart_play(after_goal: bool) -> void:
 	phase_label = &"kickoff" if not after_goal else &"reset"
+	Engine.time_scale = 1.0
+	goal_slowmo_remaining = 0.0
 	player.global_position = PLAYER_SPAWN
 	player.rotation = Vector3.ZERO
 	player.configure_for_round()
@@ -462,7 +501,10 @@ func _restart_play(after_goal: bool) -> void:
 		bot.set_celebrating(true)
 	else:
 		bot.set_celebrating(false)
-	phase_label = &"play"
+	if not intro_open:
+		_start_kickoff_countdown()
+	else:
+		phase_label = &"play"
 
 func _on_player_kick_requested(_origin: Vector3, _direction: Vector3, _damage: float, _knockback: float) -> void:
 	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, false)
@@ -471,7 +513,7 @@ func _on_player_strong_kick_requested(_origin: Vector3, _direction: Vector3, _da
 	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_STRONG_KICK_FORCE, PLAYER_STRONG_KICK_LIFT, true)
 
 func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: float, strong: bool) -> void:
-	if match_over or intro_open or menu_open or goal_reset_timer > 0.0:
+	if match_over or intro_open or menu_open or goal_reset_timer > 0.0 or kickoff_countdown_remaining > 0.0:
 		return
 	var connected := _can_reach_ball(origin, direction)
 	last_kick_assist_strength = _get_kick_assist_strength(origin, direction) if connected else 0.0
@@ -485,9 +527,11 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 	ball.kick(kick_direction, force, lift)
 	if feedback != null:
 		feedback.play_football_kick(ball.global_position, kick_direction, strong)
+	if chase_camera != null:
+		chase_camera.play_shake(0.09 if strong else 0.045, 0.18 if strong else 0.1)
 
 func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, lift: float) -> void:
-	if match_over or intro_open or goal_reset_timer > 0.0:
+	if match_over or intro_open or goal_reset_timer > 0.0 or kickoff_countdown_remaining > 0.0:
 		return
 	var to_ball: Vector3 = ball.global_position - origin
 	if to_ball.length() > bot.kick_range + 0.55:
@@ -497,6 +541,8 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 	ball.kick(direction, force, lift)
 	if feedback != null:
 		feedback.play_football_kick(ball.global_position, direction, false)
+	if chase_camera != null:
+		chase_camera.play_shake(0.035, 0.08)
 
 func _update_player_ball_control(_delta: float) -> void:
 	if player == null or ball == null:
@@ -556,6 +602,7 @@ func _register_goal(player_scored: bool) -> void:
 	if feedback != null:
 		var goal_z := GOAL_LINE_NORTH if player_scored else GOAL_LINE_SOUTH
 		feedback.play_football_goal(Vector3(0.0, 1.0, goal_z), player_scored)
+	_trigger_goal_gamefeel()
 	if bool(score_result.get("match_over", false)):
 		match_over = true
 		goal_reset_timer = 0.0
@@ -620,6 +667,7 @@ func _build_hud_snapshot() -> Dictionary:
 		"boost_active": player.is_boosting() if player != null else false,
 		"bot_state": bot.debug_get_state() if bot != null else "none",
 		"phase": phase_label,
+		"countdown": kickoff_countdown_remaining,
 		"hint": "Comecar inicia | WASD move | Shift boost | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | paredes/teto rebatem | R restart | Esc menu"
 	}
 
@@ -649,10 +697,79 @@ func _get_stadium_scoreboard_phase_text() -> String:
 		return "SAIDA"
 	return "AO VIVO"
 
+func _start_kickoff_countdown() -> void:
+	kickoff_countdown_remaining = KICKOFF_COUNTDOWN_DURATION
+	countdown_last_number = 0
+	phase_label = &"kickoff"
+	_set_round_input_locked(true)
+	if hud != null:
+		hud.show_countdown("3", 0.45)
+
+func _update_kickoff_countdown(delta: float) -> void:
+	kickoff_countdown_remaining = maxf(0.0, kickoff_countdown_remaining - delta)
+	var next_number := int(ceilf(kickoff_countdown_remaining))
+	if next_number > 0 and next_number != countdown_last_number:
+		countdown_last_number = next_number
+		if hud != null:
+			hud.show_countdown(str(next_number), 0.36)
+	if kickoff_countdown_remaining > 0.0:
+		return
+	_set_round_input_locked(false)
+	phase_label = &"play"
+	if hud != null:
+		hud.show_countdown("VAI!", 0.48)
+
+func _set_round_input_locked(is_locked: bool) -> void:
+	if player != null and player.has_method("set_input_locked"):
+		player.set_input_locked(is_locked)
+	if bot != null:
+		bot.set_physics_process(not is_locked)
+	if is_locked:
+		if player != null:
+			player.clear_movement_impulses()
+		if bot != null:
+			bot.velocity = Vector3.ZERO
+		if ball != null:
+			ball.linear_velocity = Vector3.ZERO
+			ball.angular_velocity = Vector3.ZERO
+
+func _update_player_presentation_fx(delta: float) -> void:
+	boost_fx_cooldown = maxf(0.0, boost_fx_cooldown - delta)
+	skid_fx_cooldown = maxf(0.0, skid_fx_cooldown - delta)
+	var boost_fraction := 0.0
+	if player != null and player.is_boosting():
+		boost_fraction = 1.0
+		if feedback != null and boost_fx_cooldown <= 0.0:
+			feedback.play_boost_trail(player.global_position, -player.global_transform.basis.z)
+			boost_fx_cooldown = 0.08
+	if chase_camera != null:
+		chase_camera.set_boost_fov_fraction(boost_fraction)
+	if player != null and player.is_on_floor():
+		var flat_speed := Vector3(player.velocity.x, 0.0, player.velocity.z).length()
+		if flat_speed > 7.2 and not player.is_boosting() and feedback != null and skid_fx_cooldown <= 0.0:
+			feedback.play_skid_dust(player.global_position)
+			skid_fx_cooldown = 0.18
+
+func _trigger_goal_gamefeel() -> void:
+	goal_slowmo_remaining = GOAL_SLOWMO_DURATION
+	if not DisplayServer.get_name().to_lower().contains("headless"):
+		Engine.time_scale = GOAL_SLOWMO_SCALE
+	if chase_camera != null:
+		chase_camera.focus_goal(GOAL_SLOWMO_DURATION)
+		chase_camera.play_shake(0.16, 0.32)
+
+func _update_goal_slowmo(delta: float) -> void:
+	if goal_slowmo_remaining <= 0.0:
+		return
+	goal_slowmo_remaining = maxf(0.0, goal_slowmo_remaining - delta)
+	if goal_slowmo_remaining <= 0.0:
+		Engine.time_scale = 1.0
+
 func _start_match() -> void:
 	_set_intro_open(false)
 	if hud != null:
 		hud.reset_feedback()
+	_start_kickoff_countdown()
 	_capture_mouse_if_playing()
 
 func _set_intro_open(is_open: bool) -> void:
@@ -687,6 +804,7 @@ func _set_menu_open(is_open: bool) -> void:
 func _return_to_main_menu() -> void:
 	intro_open = false
 	get_tree().paused = false
+	Engine.time_scale = 1.0
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	get_tree().change_scene_to_file(MENU_SCENE_PATH)
 

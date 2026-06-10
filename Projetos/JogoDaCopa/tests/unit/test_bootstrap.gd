@@ -295,6 +295,27 @@ func test_football_player_boost_spends_stamina() -> void:
 	assert_lt(football.debug_get_player_boost_fraction(), 1.0)
 	assert_no_new_orphans()
 
+func test_football_kickoff_countdown_locks_ball_interaction() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match_with_countdown()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var ball = football.debug_get_ball()
+	football.debug_force_ball_position(football.debug_get_player_kick_origin() + football.debug_get_player_kick_direction() * 1.45 + Vector3.DOWN * 0.34)
+	var before_kicks: int = ball.debug_get_kick_count()
+	football._on_player_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 0.0, 0.0)
+
+	assert_true(football.debug_is_kickoff_locked())
+	assert_eq(ball.debug_get_kick_count(), before_kicks)
+	football.debug_finish_kickoff_countdown()
+	football._on_player_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 0.0, 0.0)
+	assert_eq(ball.debug_get_kick_count(), before_kicks + 1)
+	assert_no_new_orphans()
+
 func test_football_player_kick_assist_connects_near_front_side_ball() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
@@ -375,6 +396,23 @@ func test_football_goal_updates_score_and_match_ends_at_three() -> void:
 	assert_true(football.debug_is_match_over())
 	assert_eq(football.get_node("FootballHud").last_event, &"match_end")
 	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"celebrate")
+	assert_true(football.debug_is_goal_slowmo_active())
+	assert_true(football.debug_get_chase_camera().debug_is_goal_focus_active())
+	assert_no_new_orphans()
+
+func test_football_feedback_exposes_boost_and_skid_vfx() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	var feedback = football.debug_get_feedback()
+	feedback.play_boost_trail(Vector3.ZERO, Vector3.FORWARD)
+	feedback.play_skid_dust(Vector3.ZERO)
+
+	assert_eq(feedback.debug_get_boost_trail_count(), 1)
+	assert_eq(feedback.debug_get_skid_dust_count(), 1)
+	assert_gt(feedback.debug_active_effect_count(), 0)
 	assert_no_new_orphans()
 
 func test_football_bot_kick_request_moves_ball() -> void:

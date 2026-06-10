@@ -10,7 +10,8 @@
 - `2026-06-10` - `Track 02A Render & Lighting Foundation V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02A_RENDER_LIGHTING_FOUNDATION_V1_COMPLETE`). `tools/validate.gd` PASS (24 tests, 219 asserts). Performance sample Windows/Forward+ after warmup: average `143.9fps`, min warmed instant `63.6fps`, `0/360` frames below 60.
 - `2026-06-10` - `Track 02B Pitch & Arena Material Pass V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02B_PITCH_ARENA_MATERIAL_PASS_V1_COMPLETE`). `tools/validate.gd` PASS (24 tests, 230 asserts).
 - `2026-06-10` - `Track 02C Ball & Character Assets V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02C_BALL_CHARACTER_ASSETS_V1_COMPLETE`). Asset import spike PASS. `tools/validate.gd` PASS (24 tests, 240 asserts). Licenses recorded in `docs/asset-licenses.md`.
-- `Track 02D VFX & Game Feel V1`: next.
+- `2026-06-10` - `Track 02D VFX & Game Feel V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02D_VFX_GAME_FEEL_V1_COMPLETE`). `tools/validate.gd` PASS (26 tests, 250 asserts). Performance sample Windows/Forward+ after warmup with VFX spawned: average `144.2fps`, min warmed instant `63.3fps`, `0/360` frames below 60.
+- `Track 02E HUD & Menu Polish V1`: next.
 
 ## 1. Analise do Estado Atual
 

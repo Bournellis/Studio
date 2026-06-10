@@ -112,6 +112,10 @@ func show_match_end(player_won: bool) -> void:
 	goal_feedback_time = 1.5
 	_set_event_message("CAMPEAO" if player_won else "DERROTA", 1.6)
 
+func show_countdown(message: String, duration: float = 0.32) -> void:
+	last_event = &"countdown"
+	_set_event_message(message, duration)
+
 func reset_feedback() -> void:
 	kick_feedback_time = 0.0
 	strong_kick_feedback_time = 0.0
