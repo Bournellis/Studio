@@ -9,6 +9,7 @@ extends RigidBody3D
 var spawn_position: Vector3 = Vector3(0.0, 0.58, 0.0)
 var last_kick_force: float = 0.0
 var kick_count: int = 0
+var dribble_control_count: int = 0
 var reset_count: int = 0
 
 func _ready() -> void:
@@ -40,6 +41,18 @@ func kick(direction: Vector3, force: float, lift: float = 0.0) -> void:
 	kick_count += 1
 	_clamp_velocity()
 
+func apply_dribble_control(direction: Vector3, target_speed: float, blend: float) -> void:
+	var flat := Vector3(direction.x, 0.0, direction.z)
+	if flat.length_squared() <= 0.0001:
+		return
+	var desired_flat := flat.normalized() * clampf(target_speed, 0.0, max_horizontal_speed)
+	var current_flat := Vector3(linear_velocity.x, 0.0, linear_velocity.z)
+	var next_flat := current_flat.lerp(desired_flat, clampf(blend, 0.0, 0.7))
+	linear_velocity = Vector3(next_flat.x, linear_velocity.y, next_flat.z)
+	angular_velocity += Vector3(-flat.z, 0.0, flat.x).normalized() * clampf(target_speed * 0.04, 0.0, 1.2)
+	dribble_control_count += 1
+	_clamp_velocity()
+
 func reset_to_center() -> void:
 	global_position = spawn_position
 	linear_velocity = Vector3.ZERO
@@ -52,6 +65,9 @@ func debug_get_last_kick_force() -> float:
 
 func debug_get_kick_count() -> int:
 	return kick_count
+
+func debug_get_dribble_control_count() -> int:
+	return dribble_control_count
 
 func debug_get_reset_count() -> int:
 	return reset_count

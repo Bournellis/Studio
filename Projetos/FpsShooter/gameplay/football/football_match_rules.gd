@@ -19,6 +19,39 @@ static func can_reach_ball(
 	var closest := origin + shot_direction * projected
 	return closest.distance_to(ball_position) <= ball_radius + 0.75
 
+static func get_kick_assist(
+	origin: Vector3,
+	direction: Vector3,
+	ball_position: Vector3,
+	ball_radius: float,
+	kick_reach: float,
+	assist_radius: float
+) -> Dictionary:
+	if can_reach_ball(origin, direction, ball_position, ball_radius, kick_reach):
+		return {"connected": true, "assist_strength": 0.0}
+	var flat_direction := _flatten_normalized(direction)
+	if flat_direction.length_squared() <= 0.0001:
+		return {"connected": false, "assist_strength": 0.0}
+	var flat_delta := Vector3(ball_position.x - origin.x, 0.0, ball_position.z - origin.z)
+	var distance := flat_delta.length()
+	if distance > assist_radius or distance <= 0.0001:
+		return {"connected": false, "assist_strength": 0.0}
+	var forward_dot := flat_delta.normalized().dot(flat_direction)
+	if forward_dot < -0.08:
+		return {"connected": false, "assist_strength": 0.0}
+	var projected := clampf(flat_delta.dot(flat_direction), 0.0, assist_radius)
+	var closest := flat_direction * projected
+	var side_distance := closest.distance_to(flat_delta)
+	var side_limit := ball_radius + 1.05
+	if side_distance > side_limit:
+		return {"connected": false, "assist_strength": 0.0}
+	var distance_strength := 1.0 - clampf((distance - kick_reach) / maxf(0.01, assist_radius - kick_reach), 0.0, 1.0)
+	var side_strength := 1.0 - clampf(side_distance / side_limit, 0.0, 1.0)
+	return {
+		"connected": true,
+		"assist_strength": clampf((distance_strength * 0.55 + side_strength * 0.45), 0.0, 1.0)
+	}
+
 static func build_kick_direction(
 	origin: Vector3,
 	direction: Vector3,
@@ -55,6 +88,47 @@ static func get_player_contact_kick(
 	var contact_direction := (flat_delta.normalized() + flat_velocity.normalized() * 0.6).normalized()
 	return {"connected": true, "direction": contact_direction}
 
+static func get_player_possession_state(
+	player_position: Vector3,
+	player_forward: Vector3,
+	player_velocity: Vector3,
+	ball_position: Vector3,
+	possession_radius: float,
+	reach_radius: float
+) -> Dictionary:
+	var flat_forward := _flatten_normalized(player_forward)
+	if flat_forward.length_squared() <= 0.0001:
+		flat_forward = Vector3.FORWARD
+	var player_center := player_position + Vector3.UP * 0.48
+	var flat_delta := Vector3(ball_position.x - player_center.x, 0.0, ball_position.z - player_center.z)
+	var distance := flat_delta.length()
+	if distance <= 0.0001:
+		return {
+			"state": &"possession",
+			"strength": 1.0,
+			"direction": flat_forward
+		}
+	var ball_direction := flat_delta.normalized()
+	var forward_dot := ball_direction.dot(flat_forward)
+	var reachable := distance <= reach_radius and forward_dot >= -0.2
+	var possessed := distance <= possession_radius and forward_dot >= 0.02
+	var state: StringName = &"free"
+	if possessed:
+		state = &"possession"
+	elif reachable:
+		state = &"reachable"
+	var flat_velocity := _flatten_normalized(player_velocity)
+	var dribble_direction := flat_forward
+	if flat_velocity.length_squared() > 0.0001:
+		dribble_direction = (flat_forward * 0.68 + flat_velocity * 0.32).normalized()
+	var proximity_strength := 1.0 - clampf(distance / maxf(0.01, possession_radius), 0.0, 1.0)
+	var facing_strength := clampf((forward_dot + 0.18) / 1.18, 0.0, 1.0)
+	return {
+		"state": state,
+		"strength": clampf(proximity_strength * 0.62 + facing_strength * 0.38, 0.0, 1.0),
+		"direction": dribble_direction
+	}
+
 static func detect_goal(ball_position: Vector3, goal_half_width: float, north_goal_line: float, south_goal_line: float) -> int:
 	if absf(ball_position.x) > goal_half_width:
 		return 0
@@ -79,3 +153,9 @@ static func apply_goal_score(player_score: int, bot_score: int, player_scored: b
 		"match_over": player_won or bot_won,
 		"player_won": player_won
 	}
+
+static func _flatten_normalized(vector: Vector3) -> Vector3:
+	var flat := Vector3(vector.x, 0.0, vector.z)
+	if flat.length_squared() <= 0.0001:
+		return Vector3.ZERO
+	return flat.normalized()

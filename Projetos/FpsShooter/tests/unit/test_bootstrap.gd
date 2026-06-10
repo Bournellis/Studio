@@ -99,6 +99,7 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_true(football_hud.intro_panel.visible)
 	assert_not_null(football_hud.get_node_or_null("HudRoot/IntroCenter/IntroPanel"))
 	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/StartButton"))
+	assert_not_null(football_hud.get_node_or_null("HudRoot/ScorePanel/ScoreBox/ControlLabel"))
 	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/AvatarSelectionBox/SkinToneRow/SkinPreviousButton"))
 	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/AvatarSelectionBox/SkinToneRow/SkinNextButton"))
 	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/AvatarSelectionBox/CountryKitRow/KitPreviousButton"))
@@ -126,6 +127,28 @@ func test_football_chase_camera_tracks_behind_player() -> void:
 	assert_gt(chase_camera.global_position.z, player.global_position.z + 5.0)
 	assert_gt(chase_camera.global_position.y, player.global_position.y + 2.5)
 	assert_lt(chase_camera.debug_get_focus_position().distance_to(ball.global_position + Vector3.UP * 0.45), 12.0)
+	assert_no_new_orphans()
+
+func test_football_chase_camera_increases_ball_focus_when_ball_is_far() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var chase_camera = football.debug_get_chase_camera()
+	player.global_position = Vector3.ZERO
+	player.rotation = Vector3.ZERO
+	football.debug_force_ball_position(Vector3(0.0, 0.58, -1.0))
+	chase_camera.snap_to_target()
+	var close_weight: float = chase_camera.debug_get_ball_focus_weight()
+	football.debug_force_ball_position(Vector3(0.0, 0.58, -16.0))
+	chase_camera.snap_to_target()
+	var far_weight: float = chase_camera.debug_get_ball_focus_weight()
+
+	assert_gt(far_weight, close_weight)
 	assert_no_new_orphans()
 
 func test_football_intro_cycles_avatar_skin_and_country_kit() -> void:
@@ -177,6 +200,58 @@ func test_football_player_kick_moves_ball_without_weapon_damage() -> void:
 	assert_eq(football.debug_get_bot().health, 100.0)
 	assert_no_new_orphans()
 
+func test_football_player_dribble_control_nudges_near_ball_without_kick() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var ball = football.debug_get_ball()
+	player.global_position = Vector3(0.0, 0.05, 4.0)
+	player.rotation = Vector3.ZERO
+	player.velocity = Vector3(0.0, 0.0, -6.0)
+	football.debug_force_ball_position(player.global_position + Vector3(0.0, 0.53, -1.0))
+	var before_kicks: int = ball.debug_get_kick_count()
+	var before_dribbles: int = ball.debug_get_dribble_control_count()
+
+	football.debug_update_player_ball_control(0.1)
+
+	assert_eq(ball.debug_get_kick_count(), before_kicks)
+	assert_gt(ball.debug_get_dribble_control_count(), before_dribbles)
+	assert_eq(football.debug_get_player_ball_control_state(), &"possession")
+	assert_gt(football.debug_get_player_ball_control_strength(), 0.0)
+	assert_lt(ball.linear_velocity.z, -0.1)
+	var snapshot: Dictionary = football.debug_build_hud_snapshot()
+	assert_eq(snapshot.get("ball_control", &"free"), &"possession")
+	assert_no_new_orphans()
+
+func test_football_player_kick_assist_connects_near_front_side_ball() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var ball = football.debug_get_ball()
+	player.global_position = Vector3.ZERO
+	player.rotation = Vector3.ZERO
+	var origin: Vector3 = football.debug_get_player_kick_origin()
+	var direction: Vector3 = football.debug_get_player_kick_direction()
+	football.debug_force_ball_position(origin + direction * 2.35 + Vector3.RIGHT * 1.34 + Vector3.DOWN * 0.34)
+
+	var before_kicks: int = ball.debug_get_kick_count()
+	football._on_player_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 99.0, 99.0)
+
+	assert_eq(ball.debug_get_kick_count(), before_kicks + 1)
+	assert_gt(football.debug_get_last_kick_assist_strength(), 0.0)
+	assert_eq((football.get_node("FootballHud") as FootballHud).last_event, &"kick")
+	assert_no_new_orphans()
+
 func test_football_strong_kick_uses_stronger_force() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
@@ -195,6 +270,22 @@ func test_football_strong_kick_uses_stronger_force() -> void:
 	assert_eq(hud.last_event, &"strong_kick")
 	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"strong_kick")
 	assert_gt(ball.linear_velocity.length(), 0.1)
+	assert_no_new_orphans()
+
+func test_football_bot_approaches_behind_ball_before_attacking() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var bot = football.debug_get_bot()
+	football.debug_force_ball_position(Vector3(0.0, 0.58, 0.0))
+	await get_tree().physics_frame
+
+	assert_eq(bot.debug_get_last_approach_label(), &"chase_setup")
+	assert_lt(bot.debug_get_last_move_target().z, football.debug_get_ball().global_position.z)
 	assert_no_new_orphans()
 
 func test_football_goal_updates_score_and_match_ends_at_three() -> void:

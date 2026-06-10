@@ -4,7 +4,7 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS Playground tech probe`
-- Active stage: `Track 06B - Third-Person Football Camera V1`
+- Active stage: `Track 06C - Football Feel & Possession V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -19,7 +19,7 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - `FPS Playground` main menu with selectable modes.
 - `Arena Shooter`: traditional FPS baseline in a local 1x1 arena against a bot.
 - `Futebol`: third-person 1x1 football mode against a bot, no weapons, match to 3 goals.
-- `Futebol` includes a Rocket League-inspired chase camera, visible local player avatar, runtime primitive humanoid avatars for player and bot, skin tone selection and country-inspired shirt/kit selection in the intro panel.
+- `Futebol` includes a Rocket League-inspired chase camera, visible local player avatar, lightweight possession/assist feel, runtime primitive humanoid avatars for player and bot, skin tone selection and country-inspired shirt/kit selection in the intro panel.
 - Player movement, mouse look, jump, hitscan shot and combat-readable knockback.
 - Secondary `Plasma Bolt` alt-fire on RMB with visible slow projectile, crosshair-aligned damage, stronger knockback and cooldown.
 - Runtime pickups: elevated health shard and overcharge.
@@ -31,16 +31,16 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - `Duel Pit V2` arena layout with protected spawns, low/high cover, side platforms, ramps, high platforms, jump pads, elevated pickups, route/landing markers and high-platform soft cover, without void/fall zones in the current map.
 - Void/fall pressure is reserved for future dedicated maps.
 - HUD, round state and bidirectional feel/feedback.
-- Futebol mode reuses the FPS controller and sensitivity flow, starts with a paused `Como Jogar` / `Comecar` intro panel, uses a football-only third-person chase camera, turns LMB/RMB into body-forward kick/strong kick, uses a loose arcade `RigidBody3D` ball, primitive festive stadium visuals, fully closed goal interiors, simple football bot attack/defend behavior, score HUD and goal feedback.
+- Futebol mode reuses the FPS controller and sensitivity flow, starts with a paused `Como Jogar` / `Comecar` intro panel, uses a football-only third-person chase camera, turns LMB/RMB into body-forward kick/strong kick with light near-ball assist, uses a loose arcade `RigidBody3D` ball with close-possession dribble nudges, primitive festive stadium visuals, fully closed goal interiors, simple football bot attack/defend behavior, score/control HUD and goal feedback.
 - No export, Web, mobile, multiplayer or online/backend scope.
 
 ## Active Goal
 
-`Track 06B - Third-Person Football Camera V1` is complete. `Futebol` now uses a third-person chase camera, keeps the local player avatar visible and resolves kicks from player body direction instead of invisible FPS camera pitch.
+`Track 06C - Football Feel & Possession V1` is complete. `Futebol` now has lightweight close control, kick assist, dynamic ball focus, compact control HUD and better bot approach setup on top of the third-person camera baseline.
 
 ## Current Gate
 
-Ready for editor playtest focused on third-person football readability: chase camera framing, visible local avatar, body-forward kick feel, kit/skin selection and whether the Rocket League-style view improves the 1x1 duel.
+Ready for editor playtest focused on third-person football feel: close possession, assisted kicks, body-forward direction, camera ball focus, bot approach behavior and whether the mode now feels less like an FPS adaptation.
 
 ## Validation Snapshot
 
@@ -228,6 +228,18 @@ Track 06B Third-Person Football Camera V1:
 - intro and HUD hints now describe third-person player/camera rotation;
 - final validation passed `58/58` GUT tests with `455` asserts before closeout.
 
+Track 06C Football Feel & Possession V1:
+
+- football match rules now expose kick assist and possession state helpers;
+- the ball supports dribble control nudges that do not count as kicks;
+- `FootballRoot` tracks `free`, `reachable` and `possession` ball-control states;
+- close possession gently steers the ball along player body/movement direction;
+- near front-side kicks get light assist and expose assist strength for tests/HUD;
+- HUD adds a compact `Controle` line and adjusted-kick feedback;
+- chase camera increases ball focus when the ball is far away;
+- football bot approaches behind the ball relative to the opponent goal before attacking;
+- final validation passed `64/64` tests with `477` asserts before closeout.
+
 ## Read Next
 
 1. `AGENTS.md`
@@ -251,3 +263,4 @@ Track 06B Third-Person Football Camera V1:
 19. `implementation/tracks/track-05-foundation-hardening-refactor-v1/current-status.md`
 20. `implementation/tracks/track-06a-avatar-visual-foundation-v1/current-status.md`
 21. `implementation/tracks/track-06b-third-person-football-camera-v1/current-status.md`
+22. `implementation/tracks/track-06c-football-feel-possession-v1/current-status.md`

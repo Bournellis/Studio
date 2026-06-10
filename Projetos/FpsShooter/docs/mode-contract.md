@@ -1,7 +1,7 @@
 # FPS Playground Mode Contract
 
 - Last updated: `2026-06-10`
-- Status: `TRACK_06B_COMPLETE`
+- Status: `TRACK_06C_COMPLETE`
 
 ## Purpose
 
@@ -51,7 +51,7 @@ The player controller can be reused by modes, but the meaning of fire requests i
 
 Modes must not let football kicks apply weapon damage.
 
-`Futebol` currently reuses the FPS controller for movement/input but owns kick direction in the mode root so kicks follow the visible body-forward direction in third person.
+`Futebol` currently reuses the FPS controller for movement/input but owns kick direction, near-ball assist and possession state in the mode root so kicks follow the visible body-forward direction in third person.
 
 ## HUD Snapshot Contract
 

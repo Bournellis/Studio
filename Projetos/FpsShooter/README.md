@@ -17,9 +17,9 @@ Current goal:
 - Arena Shooter: mouse look, WASD movement, jump, hitscan rifle, RMB Plasma Bolt, overcharge consumption and combat-readable knockback output.
 - Arena: `Duel Pit V2`, runtime Health Shard and Overcharge pickups with respawn timers, jump pads and no void/fall zones.
 - Bot duelista V1+: line-of-sight gated shots, short tell, deterministic aim error, strafe/reposition, vertical awareness, pickup awareness and nearby plasma dodge.
-- Futebol: third-person 1x1 against a bot, no weapons, visible local avatar, chase camera, LMB kick, RMB strong kick, arcade loose ball physics and match to 3 goals.
+- Futebol: third-person 1x1 against a bot, no weapons, visible local avatar, chase camera, close possession, kick assist, LMB kick, RMB strong kick, arcade loose ball physics and match to 3 goals.
 - HUD/feedback: arena health/combat feedback plus football score/kick/goal feedback, synthetic audio and runtime primitive effects.
-- Track 06B is complete: Futebol now uses a third-person chase camera while Arena Shooter preserves the first-person baseline.
+- Track 06C is complete: Futebol now has third-person chase camera, close control, light kick assist and improved bot approach while Arena Shooter preserves the first-person baseline.
 
 ## Documentation
 

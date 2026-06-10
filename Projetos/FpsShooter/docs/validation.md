@@ -26,12 +26,13 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `58/58`;
-- `455` asserts;
+- GUT `64/64`;
+- `477` asserts;
 - Track 04A validates menu boot and mode routes, centered menu container hierarchy, generated menu/arena/football scenes, paused football intro panel, football goal safety floors and side walls, football player kick and strong kick, no weapon damage in football, football goal scoring/match end, bot kick handoff, arena pause menu return button and the full previous arena shooter regression suite.
 - Track 05 final validation is `51/51` and `386` asserts after helper-rule test split.
 - Track 06A validates avatar catalog defaults, runtime avatar body parts, material/appearance updates, first-person head hiding, Futebol player/bot avatar spawning, intro selection controls, selection cycling and kick/goal animation hooks.
 - Track 06B validates the Futebol third-person chase camera, inactive FPS camera in football, visible local avatar, follow-behind placement and body-forward kick behavior.
+- Track 06C validates possession state, near-ball kick assist, dribble control without kick count, dynamic ball focus, compact HUD control line and bot approach setup.
 - Track 05 baseline before refactor was `42/42` and `355` asserts after the one-time fresh worktree editor import.
 
 ## Manual Smoke
@@ -109,12 +110,16 @@ Expected Futebol:
 - pressing `Comecar` starts the match and captures mouse for gameplay;
 - third-person chase camera follows behind the player and keeps the local avatar visible;
 - mouse rotates the player/camera relationship and `WASD` movement works;
+- the HUD `Controle` line changes between loose/reachable/possession states without blocking play;
+- close possession nudges the ball without feeling magnetized;
 - `Space` jumps;
 - LMB kicks the ball when it is in reach;
 - RMB performs a stronger kick with more force/lift;
 - kicks travel from the player's body-forward direction, not from an invisible first-person pitch;
+- near front-side balls can still be kicked with light assist;
 - missing the ball gives a subtle `SEM CONTATO` HUD cue and no weapon damage occurs;
 - the bot chases, attacks and defends the ball;
+- the bot approaches behind the ball before attacking instead of only charging the ball center;
 - the ball feels loose/arcade and can be moved by player/bot kicks;
 - entering either goal mouth does not drop the player or ball out of the map, including the lateral interior sides of the goal;
 - scoring in the opponent goal updates the scoreboard and shows goal feedback;

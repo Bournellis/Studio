@@ -14,6 +14,7 @@ var status_label: Label
 var score_label: Label
 var clock_label: Label
 var flow_label: Label
+var control_label: Label
 var hint_label: Label
 var event_label: Label
 var crosshair_root: Control
@@ -36,6 +37,7 @@ var kick_count: int = 0
 var whiff_count: int = 0
 var goal_count: int = 0
 var last_player_scored: bool = false
+var last_kick_assist_strength: float = 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -64,9 +66,13 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	var bot_state := str(snapshot.get("bot_state", "kickoff"))
 	var phase := str(snapshot.get("phase", "kickoff"))
 	flow_label.text = "Futebol: %s | Bot: %s" % [phase, bot_state]
+	var control_state := StringName(str(snapshot.get("ball_control", "free")))
+	var control_strength := float(snapshot.get("ball_control_strength", 0.0))
+	control_label.text = "Controle: %s %.0f%%" % [_get_control_label(control_state), control_strength * 100.0]
 	hint_label.text = str(snapshot.get("hint", "WASD move | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"))
 
-func show_kick(strong: bool, connected: bool) -> void:
+func show_kick(strong: bool, connected: bool, assist_strength: float = 0.0) -> void:
+	last_kick_assist_strength = assist_strength
 	if connected:
 		last_event = &"strong_kick" if strong else &"kick"
 		kick_count += 1
@@ -74,6 +80,8 @@ func show_kick(strong: bool, connected: bool) -> void:
 		if strong:
 			strong_kick_feedback_time = 0.24
 			_set_event_message("CHUTE FORTE", 0.36)
+		elif assist_strength > 0.05:
+			_set_event_message("CHUTE AJUSTADO", 0.32)
 		else:
 			_set_event_message("CHUTE", 0.28)
 		return
@@ -101,6 +109,7 @@ func reset_feedback() -> void:
 	goal_feedback_time = 0.0
 	event_message_time = 0.0
 	last_event = &""
+	last_kick_assist_strength = 0.0
 	if event_label != null:
 		event_label.text = ""
 		event_label.modulate = Color(1.0, 1.0, 1.0, 0.0)
@@ -149,7 +158,7 @@ func _build_ui() -> void:
 	panel.name = "ScorePanel"
 	_ignore_mouse(panel)
 	panel.position = Vector2(18.0, 18.0)
-	panel.custom_minimum_size = Vector2(360.0, 126.0)
+	panel.custom_minimum_size = Vector2(390.0, 146.0)
 	root.add_child(panel)
 
 	var box := VBoxContainer.new()
@@ -184,9 +193,16 @@ func _build_ui() -> void:
 	_ignore_mouse(flow_label)
 	box.add_child(flow_label)
 
+	control_label = Label.new()
+	control_label.name = "ControlLabel"
+	control_label.add_theme_font_size_override("font_size", 12)
+	control_label.text = "Controle: solta 0%"
+	_ignore_mouse(control_label)
+	box.add_child(control_label)
+
 	hint_label = Label.new()
 	hint_label.name = "HintLabel"
-	hint_label.position = Vector2(18.0, 152.0)
+	hint_label.position = Vector2(18.0, 174.0)
 	hint_label.text = "Click captura mouse | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"
 	_ignore_mouse(hint_label)
 	root.add_child(hint_label)
@@ -504,3 +520,10 @@ func _refresh_event_label() -> void:
 func _set_event_message(message: String, duration: float) -> void:
 	event_label.text = message
 	event_message_time = maxf(0.05, duration)
+
+func _get_control_label(control_state: StringName) -> String:
+	if control_state == &"possession":
+		return "posse"
+	if control_state == &"reachable":
+		return "alcance"
+	return "solta"

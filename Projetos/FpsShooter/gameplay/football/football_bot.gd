@@ -21,6 +21,7 @@ const STATE_CELEBRATE: StringName = &"celebrate"
 @export var kick_windup_duration: float = 0.16
 @export var aim_error_radius: float = 0.42
 @export var defend_goal_distance: float = 9.0
+@export var approach_offset_distance: float = 1.35
 @export var jump_velocity: float = 5.4
 @export var jump_cooldown: float = 0.85
 
@@ -36,6 +37,7 @@ var aim_cycle: int = 0
 var kick_count: int = 0
 var last_kick_direction: Vector3 = Vector3.FORWARD
 var last_move_target: Vector3 = Vector3.ZERO
+var last_approach_label: StringName = &"none"
 var windup_is_defensive: bool = false
 
 func _ready() -> void:
@@ -56,6 +58,7 @@ func configure(next_ball: Node3D, next_own_goal_position: Vector3, next_opponent
 	windup_is_defensive = false
 	last_kick_direction = (opponent_goal_position - global_position).normalized()
 	last_move_target = global_position
+	last_approach_label = &"kickoff"
 	clear_movement_impulses()
 
 func set_celebrating(is_celebrating: bool) -> void:
@@ -80,6 +83,9 @@ func debug_get_last_kick_direction() -> Vector3:
 
 func debug_get_last_move_target() -> Vector3:
 	return last_move_target
+
+func debug_get_last_approach_label() -> StringName:
+	return last_approach_label
 
 func _physics_process(delta: float) -> void:
 	if ball == null or current_state == STATE_CELEBRATE:
@@ -116,14 +122,18 @@ func _handle_ball_state() -> void:
 	if own_goal_distance <= defend_goal_distance:
 		current_state = STATE_DEFEND_GOAL
 		last_move_target = _build_defend_target()
+		last_approach_label = &"defend"
 		return
 
 	var opponent_goal_distance: float = _flat_distance(ball_position, opponent_goal_position)
 	if opponent_goal_distance < own_goal_distance:
 		current_state = STATE_ATTACK_GOAL
+		last_move_target = _build_ball_approach_target(opponent_goal_position, approach_offset_distance)
+		last_approach_label = &"attack_setup"
 	else:
 		current_state = STATE_CHASE_BALL
-	last_move_target = ball_position
+		last_move_target = _build_ball_approach_target(opponent_goal_position, approach_offset_distance * 0.72)
+		last_approach_label = &"chase_setup"
 
 func _handle_windup(delta: float) -> void:
 	windup_remaining = maxf(0.0, windup_remaining - delta)
@@ -171,6 +181,17 @@ func _build_defend_target() -> Vector3:
 	if goal_to_ball.length_squared() <= 0.0001:
 		goal_to_ball = Vector3.FORWARD
 	return own_goal_position + goal_to_ball.normalized() * 4.2
+
+func _build_ball_approach_target(goal_position: Vector3, offset_distance: float) -> Vector3:
+	var ball_position: Vector3 = ball.global_position
+	var ball_to_goal: Vector3 = goal_position - ball_position
+	ball_to_goal.y = 0.0
+	if ball_to_goal.length_squared() <= 0.0001:
+		ball_to_goal = Vector3.FORWARD
+	var target := ball_position - ball_to_goal.normalized() * maxf(0.0, offset_distance)
+	target.x = clampf(target.x, -14.0, 14.0)
+	target.z = clampf(target.z, -20.5, 20.5)
+	return target
 
 func _apply_aim_error(direction: Vector3) -> Vector3:
 	var pattern := _aim_pattern(aim_cycle)

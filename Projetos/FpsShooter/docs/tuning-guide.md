@@ -1,7 +1,7 @@
 # FPS Playground Tuning Guide
 
 - Last updated: `2026-06-10`
-- Status: `TRACK_06B_COMPLETE`
+- Status: `TRACK_06C_COMPLETE`
 
 ## Purpose
 
@@ -20,10 +20,10 @@ During foundation refactors, move or group values only when behavior remains ide
 | Arena pickups | `modes/arena/arena_root.gd` with `gameplay/arena/arena_combat_rules.gd` for respawn choice | pickup radius, health amount, respawn timers. |
 | Arena bot | `gameplay/bot/basic_duel_bot.gd` | speed, ideal distance, cooldown, aim error, route intervals, jump values. |
 | Football field | `modes/football/football_root.gd` | field size, goals, spawns, goal limit. |
-| Football kicks and scoring | `modes/football/football_root.gd` with `gameplay/football/football_match_rules.gd` for pure match math | kick reach, force, lift, contact radius, goal limit. |
-| Football ball | `gameplay/football/football_ball.gd` | velocity clamp, reset behavior, physics tuning. |
-| Football bot | `gameplay/football/football_bot.gd` | attack/defend movement and kick behavior. |
-| Football camera | `presentation/camera/football_chase_camera.gd` | follow distance, height, look-ahead, ball focus and smoothing. |
+| Football kicks, possession and scoring | `modes/football/football_root.gd` with `gameplay/football/football_match_rules.gd` for pure match math | kick reach, assist radius, force, lift, possession radius, dribble speed, contact radius, goal limit. |
+| Football ball | `gameplay/football/football_ball.gd` | velocity clamp, dribble control blend target, reset behavior, physics tuning. |
+| Football bot | `gameplay/football/football_bot.gd` | attack/defend movement, behind-ball approach and kick behavior. |
+| Football camera | `presentation/camera/football_chase_camera.gd` | follow distance, height, look-ahead, close/far ball focus and smoothing. |
 | Feedback | `presentation/feedback/fps_feedback_controller.gd` | effect colors, lifetimes, audio tones. |
 
 ## Target Direction
@@ -70,6 +70,8 @@ Futebol:
 
 - third-person arcade football;
 - chase camera follows behind the player and lightly biases focus toward the ball;
+- close possession gently nudges the ball without counting as a kick;
+- near front-side kick assist improves reliability without hard lock-on;
 - loose ball physics;
 - LMB kick and RMB strong kick use body-forward direction;
 - match to 3 goals;

@@ -1,13 +1,13 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-10`
-- Status: `FPS_PLAYGROUND_TRACK_06B_THIRD_PERSON_FOOTBALL_CAMERA_COMPLETE`
+- Status: `FPS_PLAYGROUND_TRACK_06C_FOOTBALL_FEEL_POSSESSION_COMPLETE`
 
 ## North Star
 
 Create a small first-person playground tech probe that proves Godot 4.6.2 can support satisfying PC editor-first first-person 3D game modes for the studio.
 
-The project started as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Track 04A turns the project into `FPS Playground` by adding a container-centered main menu and the first alternate mode: `Futebol` 1x1 against a bot, now with a paused how-to intro and fully closed goal interiors. Track 05 hardens the project so both accepted modes can grow from a cleaner professional foundation. Track 06A starts the character visual foundation with procedural avatars, skin tones and country-inspired football kits. Track 06B converts `Futebol` to a third-person chase camera while preserving the Arena Shooter first-person baseline. Void/fall pressure is reserved for future dedicated maps.
+The project started as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Track 04A turns the project into `FPS Playground` by adding a container-centered main menu and the first alternate mode: `Futebol` 1x1 against a bot, now with a paused how-to intro and fully closed goal interiors. Track 05 hardens the project so both accepted modes can grow from a cleaner professional foundation. Track 06A starts the character visual foundation with procedural avatars, skin tones and country-inspired football kits. Track 06B converts `Futebol` to a third-person chase camera while preserving the Arena Shooter first-person baseline. Track 06C improves football feel with close possession, kick assist, dynamic ball focus and better bot approach setup. Void/fall pressure is reserved for future dedicated maps.
 
 ## Track 00 - Project Bootstrap
 
@@ -257,7 +257,7 @@ Future candidate scope:
 
 Goal: make `FPS Playground` characters more readable and extensible while preserving editor-first prototype speed.
 
-Status: active; Track 06A and Track 06B are complete.
+Status: active; Track 06A, Track 06B and Track 06C are complete.
 
 ## Track 06A - Avatar Visual Foundation V1
 
@@ -301,6 +301,28 @@ Future candidate scope:
 - editor smoke on camera distance/height and ball focus;
 - tune football possession, kick assist and body contact now that the local character is visible;
 - replace primitive avatar quality through an authored/AI-assisted asset pipeline when selected as a dedicated art track.
+
+## Track 06C - Football Feel & Possession V1
+
+Goal: make `Futebol` feel more like a purpose-built third-person football mode.
+
+Status: complete.
+
+Delivered:
+
+- pure football helpers for kick assist and possession state;
+- close-possession dribble control that nudges the ball without counting as a kick;
+- light near front-side kick assist for LMB/RMB;
+- compact HUD control state line;
+- dynamic chase-camera ball focus based on ball distance;
+- bot approach targets behind the ball relative to the opponent goal;
+- automated coverage for possession, assist, dribble control, HUD, camera focus and bot approach.
+
+Future candidate scope:
+
+- human smoke tuning for assist radius, dribble blend and camera focus;
+- add a small dash/boost only if base possession still feels too slow;
+- improve character asset/animation quality after the football control scale is accepted.
 
 ## Deferred
 

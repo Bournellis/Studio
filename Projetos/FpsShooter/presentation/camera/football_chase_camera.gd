@@ -5,6 +5,8 @@ extends Node3D
 @export var follow_height: float = 3.15
 @export var look_ahead_distance: float = 2.35
 @export var ball_focus_weight: float = 0.28
+@export var far_ball_focus_weight: float = 0.44
+@export var far_ball_focus_distance: float = 15.0
 @export var position_smoothing: float = 10.0
 
 var target: Node3D
@@ -12,6 +14,7 @@ var ball: Node3D
 var camera: Camera3D
 var last_focus_position: Vector3 = Vector3.ZERO
 var last_desired_position: Vector3 = Vector3.ZERO
+var last_ball_focus_weight: float = 0.0
 
 func _ready() -> void:
 	_ensure_camera()
@@ -42,6 +45,9 @@ func debug_get_focus_position() -> Vector3:
 func debug_get_desired_position() -> Vector3:
 	return last_desired_position
 
+func debug_get_ball_focus_weight() -> float:
+	return last_ball_focus_weight
+
 func debug_is_configured() -> bool:
 	return target != null and ball != null and camera != null
 
@@ -54,7 +60,12 @@ func _update_camera(delta: float, snap: bool) -> void:
 	var focus := target_focus
 	if ball != null:
 		var ball_focus := ball.global_position + Vector3.UP * 0.45
-		focus = target_focus.lerp(ball_focus, clampf(ball_focus_weight, 0.0, 0.75))
+		var ball_distance := _flat_distance(target.global_position, ball.global_position)
+		var distance_factor := clampf(ball_distance / maxf(0.01, far_ball_focus_distance), 0.0, 1.0)
+		last_ball_focus_weight = lerpf(ball_focus_weight, far_ball_focus_weight, distance_factor)
+		focus = target_focus.lerp(ball_focus, clampf(last_ball_focus_weight, 0.0, 0.75))
+	else:
+		last_ball_focus_weight = 0.0
 
 	var desired := target.global_position - forward * follow_distance + Vector3.UP * follow_height
 	last_focus_position = focus
@@ -87,3 +98,8 @@ func _ensure_camera() -> void:
 	camera.near = 0.04
 	camera.far = 220.0
 	add_child(camera)
+
+func _flat_distance(a: Vector3, b: Vector3) -> float:
+	a.y = 0.0
+	b.y = 0.0
+	return a.distance_to(b)

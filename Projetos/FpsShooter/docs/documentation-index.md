@@ -1,7 +1,7 @@
 # FPS Playground Documentation Index
 
 - Last updated: `2026-06-10`
-- Status: `TRACK_06B_COMPLETE`
+- Status: `TRACK_06C_COMPLETE`
 
 ## Purpose
 
@@ -70,7 +70,7 @@ Track history lives in `implementation/tracks/`. Completed tracks are historical
 
 Latest gameplay track:
 
-- `implementation/tracks/track-06b-third-person-football-camera-v1/current-status.md`
+- `implementation/tracks/track-06c-football-feel-possession-v1/current-status.md`
 
 ## Source Boundaries
 

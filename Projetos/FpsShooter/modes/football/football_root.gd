@@ -32,8 +32,14 @@ const PLAYER_SPAWN: Vector3 = Vector3(0.0, 0.05, 14.2)
 const BOT_SPAWN: Vector3 = Vector3(0.0, 0.05, -14.2)
 const BALL_SPAWN: Vector3 = Vector3(0.0, 0.58, 0.0)
 const PLAYER_KICK_REACH: float = 2.25
-const PLAYER_TOUCH_RADIUS: float = 1.15
-const PLAYER_TOUCH_FORCE: float = 4.8
+const PLAYER_KICK_ASSIST_RADIUS: float = 2.85
+const PLAYER_TOUCH_RADIUS: float = 1.22
+const PLAYER_TOUCH_FORCE: float = 3.7
+const PLAYER_POSSESSION_RADIUS: float = 1.72
+const PLAYER_BALL_REACH_RADIUS: float = 2.72
+const PLAYER_DRIBBLE_MIN_SPEED: float = 3.2
+const PLAYER_DRIBBLE_MAX_SPEED: float = 11.5
+const PLAYER_DRIBBLE_SPEED_FACTOR: float = 0.92
 const PLAYER_KICK_FORCE: float = 15.0
 const PLAYER_STRONG_KICK_FORCE: float = 23.0
 const PLAYER_KICK_LIFT: float = 1.0
@@ -59,6 +65,9 @@ var menu_open: bool = false
 var phase_label: StringName = &"kickoff"
 var goal_reset_timer: float = 0.0
 var player_touch_cooldown_remaining: float = 0.0
+var player_ball_control_state: StringName = &"free"
+var player_ball_control_strength: float = 0.0
+var last_kick_assist_strength: float = 0.0
 var last_goal_player_scored: bool = false
 
 func _ready() -> void:
@@ -83,6 +92,7 @@ func _physics_process(delta: float) -> void:
 		return
 	if match_over:
 		return
+	_update_player_ball_control(delta)
 	_process_player_ball_contact()
 	_process_goal_detection()
 	_update_avatar_states()
@@ -139,6 +149,21 @@ func debug_get_player_kick_origin() -> Vector3:
 
 func debug_get_player_kick_direction() -> Vector3:
 	return _get_player_kick_direction()
+
+func debug_get_player_ball_control_state() -> StringName:
+	return player_ball_control_state
+
+func debug_get_player_ball_control_strength() -> float:
+	return player_ball_control_strength
+
+func debug_get_last_kick_assist_strength() -> float:
+	return last_kick_assist_strength
+
+func debug_update_player_ball_control(delta: float = 0.1) -> void:
+	_update_player_ball_control(delta)
+
+func debug_build_hud_snapshot() -> Dictionary:
+	return _build_hud_snapshot()
 
 func debug_get_bot():
 	return bot
@@ -241,8 +266,9 @@ func _spawn_runtime() -> void:
 	player.name = "Player"
 	player.position = PLAYER_SPAWN
 	player.rotation.y = 0.0
-	player.move_speed = 8.4
+	player.move_speed = 8.8
 	player.jump_velocity = 5.8
+	player.air_control = 0.78
 	player.shot_cooldown = 0.2
 	player.alt_fire_cooldown = 0.88
 	runtime_root.add_child(player)
@@ -331,6 +357,9 @@ func _restart_play(after_goal: bool) -> void:
 	if chase_camera != null:
 		chase_camera.snap_to_target()
 	player_touch_cooldown_remaining = 0.0
+	player_ball_control_state = &"free"
+	player_ball_control_strength = 0.0
+	last_kick_assist_strength = 0.0
 	if match_over:
 		bot.set_celebrating(true)
 	else:
@@ -347,10 +376,11 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 	if match_over or intro_open or menu_open or goal_reset_timer > 0.0:
 		return
 	var connected := _can_reach_ball(origin, direction)
+	last_kick_assist_strength = _get_kick_assist_strength(origin, direction) if connected else 0.0
 	if player_avatar != null:
 		player_avatar.play_kick(strong)
 	if hud != null:
-		hud.show_kick(strong, connected)
+		hud.show_kick(strong, connected, last_kick_assist_strength)
 	if not connected:
 		return
 	var kick_direction := _build_kick_direction(origin, direction)
@@ -369,6 +399,31 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 	ball.kick(direction, force, lift)
 	if feedback != null:
 		feedback.play_football_kick(ball.global_position, direction, false)
+
+func _update_player_ball_control(delta: float) -> void:
+	if player == null or ball == null:
+		player_ball_control_state = &"free"
+		player_ball_control_strength = 0.0
+		return
+	var state: Dictionary = FootballMatchRulesScript.get_player_possession_state(
+		player.global_position,
+		_get_player_kick_direction(),
+		player.velocity,
+		ball.global_position,
+		PLAYER_POSSESSION_RADIUS,
+		PLAYER_BALL_REACH_RADIUS
+	)
+	player_ball_control_state = state.get("state", &"free")
+	player_ball_control_strength = float(state.get("strength", 0.0))
+	if player_ball_control_state != &"possession":
+		return
+	var flat_speed := Vector3(player.velocity.x, 0.0, player.velocity.z).length()
+	if flat_speed < 0.35:
+		return
+	var control_direction: Vector3 = state.get("direction", _get_player_kick_direction())
+	var target_speed := clampf(flat_speed * PLAYER_DRIBBLE_SPEED_FACTOR, PLAYER_DRIBBLE_MIN_SPEED, PLAYER_DRIBBLE_MAX_SPEED)
+	var blend := clampf(delta * (4.2 + player_ball_control_strength * 5.2), 0.0, 0.58)
+	ball.apply_dribble_control(control_direction, target_speed, blend)
 
 func _process_player_ball_contact() -> void:
 	if player_touch_cooldown_remaining > 0.0:
@@ -422,7 +477,26 @@ func _register_goal(player_scored: bool) -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _can_reach_ball(origin: Vector3, direction: Vector3) -> bool:
-	return FootballMatchRulesScript.can_reach_ball(origin, direction, ball.global_position, ball.ball_radius, PLAYER_KICK_REACH)
+	var assist: Dictionary = FootballMatchRulesScript.get_kick_assist(
+		origin,
+		direction,
+		ball.global_position,
+		ball.ball_radius,
+		PLAYER_KICK_REACH,
+		PLAYER_KICK_ASSIST_RADIUS
+	)
+	return bool(assist.get("connected", false))
+
+func _get_kick_assist_strength(origin: Vector3, direction: Vector3) -> float:
+	var assist: Dictionary = FootballMatchRulesScript.get_kick_assist(
+		origin,
+		direction,
+		ball.global_position,
+		ball.ball_radius,
+		PLAYER_KICK_REACH,
+		PLAYER_KICK_ASSIST_RADIUS
+	)
+	return float(assist.get("assist_strength", 0.0))
 
 func _build_kick_direction(origin: Vector3, direction: Vector3) -> Vector3:
 	return FootballMatchRulesScript.build_kick_direction(origin, direction, ball.global_position, -player.global_transform.basis.z)
@@ -449,6 +523,8 @@ func _build_hud_snapshot() -> Dictionary:
 		"bot_score": bot_score,
 		"goal_limit": GOAL_LIMIT,
 		"ball_distance": ball_distance,
+		"ball_control": player_ball_control_state,
+		"ball_control_strength": player_ball_control_strength,
 		"bot_state": bot.debug_get_state() if bot != null else "none",
 		"phase": phase_label,
 		"hint": "Comecar inicia | WASD move | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"

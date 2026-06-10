@@ -100,6 +100,11 @@ Track 06B target addition:
 
 - `presentation/camera/`: football-only third-person chase camera; `Arena Shooter` remains first-person.
 
+Track 06C target addition:
+
+- `gameplay/football/football_match_rules.gd`: football possession state and kick assist helpers.
+- `modes/football/football_root.gd`: mode authority for close possession, body-forward assist and HUD snapshot keys.
+
 ## Reuse Rule
 
 Allowed reuse from existing studio projects:
