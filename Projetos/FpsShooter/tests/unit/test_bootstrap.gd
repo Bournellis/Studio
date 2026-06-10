@@ -117,6 +117,8 @@ func test_duel_pit_layout_exposes_route_markers_and_bot_points() -> void:
 	var points: Array[Vector3] = arena.debug_get_bot_reposition_points()
 	assert_eq(points.size(), 18)
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/BotRepositionPoints/BotRepositionPoint17"))
+	assert_gt(arena.debug_get_flow_marker_count(), 5)
+	assert_true(arena.debug_has_high_platform_cover())
 	var high_point_count := 0
 	var ground_point_count := 0
 	for point in points:
@@ -141,6 +143,8 @@ func test_duel_pit_v2_exposes_jump_pads_without_void_zones_to_bot() -> void:
 	assert_eq(arena.debug_get_jump_pad_count(), 2)
 	assert_gt(arena.debug_get_jump_pad_target(0).y, arena.debug_get_jump_pad_position(0).y + 2.0)
 	assert_gt(arena.debug_get_jump_pad_target(1).y, arena.debug_get_jump_pad_position(1).y + 2.0)
+	assert_gt(arena.debug_get_pickup_jump_target_distance(&"health"), 1.4)
+	assert_gt(arena.debug_get_pickup_jump_target_distance(&"overcharge"), 1.4)
 	assert_eq(bot.debug_get_jump_pad_route_count(), 2)
 	assert_null(arena.get_node_or_null("NorthVoidWell"))
 	assert_null(arena.get_node_or_null("SouthVoidWell"))
@@ -196,6 +200,28 @@ func test_bot_routes_high_reposition_goal_through_jump_pad() -> void:
 	await get_tree().physics_frame
 
 	assert_lt(bot.debug_get_last_navigation_target().distance_to(pad_position), 0.4)
+	assert_no_new_orphans()
+
+func test_bot_high_route_cooldown_discourages_repeated_high_destination() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	bot.recent_high_route_penalty = 100.0
+	bot._start_reposition_to(arena.debug_get_jump_pad_target(0), &"high")
+	assert_true(bot.debug_is_high_route_active())
+	assert_eq(bot.debug_get_route_label(), &"high")
+	bot._start_reposition()
+
+	assert_false(bot.debug_is_high_route_active())
+	assert_false(bot.debug_get_route_label() == &"high")
+	assert_gt(bot.debug_get_last_reposition_score(), -1000000.0)
 	assert_no_new_orphans()
 
 func test_player_mouse_motion_updates_view_when_captured() -> void:
@@ -511,6 +537,30 @@ func test_bot_interrupts_health_route_when_shot_becomes_ready() -> void:
 	assert_eq(bot.debug_get_state(), &"windup")
 	assert_no_new_orphans()
 
+func test_bot_contests_overcharge_when_shot_pressure_is_unavailable() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	_place_open_duel(arena)
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	var overcharge_position: Vector3 = arena.debug_get_pickup_position(&"overcharge")
+	arena.debug_force_pickup_available(&"health", false)
+	arena.debug_force_pickup_available(&"overcharge", true)
+	bot.global_position = Vector3(overcharge_position.x + 2.0, 0.05, overcharge_position.z - 5.0)
+	bot.shoot_cooldown_remaining = 3.0
+	bot.reaction_remaining = 0.0
+	await get_tree().physics_frame
+
+	assert_eq(bot.debug_get_state(), &"reposition")
+	assert_eq(bot.debug_get_route_label(), &"overcharge")
+	assert_lt(Vector3(bot.debug_get_reposition_destination().x, 0.0, bot.debug_get_reposition_destination().z).distance_to(Vector3(overcharge_position.x, 0.0, overcharge_position.z)), 0.2)
+	assert_no_new_orphans()
+
 func test_bot_jumps_toward_higher_reposition_goal() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	var arena := arena_scene.instantiate()
@@ -530,6 +580,21 @@ func test_bot_jumps_toward_higher_reposition_goal() -> void:
 
 	assert_gt(bot.debug_get_jump_count(), 0)
 	assert_gt(bot.debug_get_vertical_velocity(), 0.0)
+	assert_no_new_orphans()
+
+func test_hud_snapshot_exposes_discreet_bot_flow_line() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var hud = arena.get_node("ArenaHud")
+	hud.update_snapshot(arena._build_hud_snapshot())
+
+	assert_true(hud.last_bot_flow_text.contains("Bot:"))
+	assert_true(hud.last_bot_flow_text.contains("Route:"))
+	assert_true(hud.last_bot_flow_text.contains("LOS") or hud.last_bot_flow_text.contains("No LOS"))
 	assert_no_new_orphans()
 
 func test_bot_receives_plasma_threat_and_can_dodge() -> void:

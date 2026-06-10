@@ -8,6 +8,7 @@ var status_label: Label
 var player_label: Label
 var bot_label: Label
 var combat_loop_label: Label
+var bot_flow_label: Label
 var hint_label: Label
 var player_health_bar: ProgressBar
 var bot_health_bar: ProgressBar
@@ -37,6 +38,7 @@ var jump_pad_count: int = 0
 var fall_penalty_count: int = 0
 var last_damage_amount: float = 0.0
 var last_round_end_player_won: bool = false
+var last_bot_flow_text: String = ""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -67,6 +69,7 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	bot_health_bar.max_value = maxf(1.0, bot_max)
 	bot_health_bar.value = bot_health
 	_update_combat_loop_label(snapshot)
+	_update_bot_flow_label(snapshot)
 	hint_label.text = str(snapshot.get("hint", "WASD move | Mouse look | LMB rifle | Space jump | R restart | Esc menu"))
 
 func flash_hit() -> void:
@@ -169,6 +172,17 @@ func _update_combat_loop_label(snapshot: Dictionary) -> void:
 		overcharge_pickup_text += " | Bot charged"
 	combat_loop_label.text = "%s | %s | %s | %s" % [plasma_text, overcharge_text, health_pickup_text, overcharge_pickup_text]
 
+func _update_bot_flow_label(snapshot: Dictionary) -> void:
+	if bot_flow_label == null:
+		return
+	var bot_state := str(snapshot.get("bot_state", "none"))
+	var route_label := str(snapshot.get("bot_route_label", "none"))
+	var los_text := "LOS" if bool(snapshot.get("bot_has_line_of_sight", false)) else "No LOS"
+	var pad_id := str(snapshot.get("last_jump_pad_id", ""))
+	var pad_text := "" if pad_id.is_empty() else " | Pad %s" % pad_id
+	last_bot_flow_text = "Bot: %s | Route: %s | %s%s" % [bot_state, route_label, los_text, pad_text]
+	bot_flow_label.text = last_bot_flow_text
+
 func _build_ui() -> void:
 	var root := Control.new()
 	root.name = "HudRoot"
@@ -188,7 +202,7 @@ func _build_ui() -> void:
 	panel.name = "StatusPanel"
 	_ignore_mouse(panel)
 	panel.position = Vector2(18.0, 18.0)
-	panel.custom_minimum_size = Vector2(380.0, 150.0)
+	panel.custom_minimum_size = Vector2(420.0, 168.0)
 	root.add_child(panel)
 
 	var box := VBoxContainer.new()
@@ -226,6 +240,14 @@ func _build_ui() -> void:
 	combat_loop_label.add_theme_font_size_override("font_size", 12)
 	combat_loop_label.text = "Plasma ready | Pickups active"
 	box.add_child(combat_loop_label)
+
+	bot_flow_label = Label.new()
+	bot_flow_label.name = "BotFlowLabel"
+	_ignore_mouse(bot_flow_label)
+	bot_flow_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	bot_flow_label.add_theme_font_size_override("font_size", 12)
+	bot_flow_label.text = "Bot: idle | Route: none | No LOS"
+	box.add_child(bot_flow_label)
 
 	hint_label = Label.new()
 	hint_label.name = "HintLabel"

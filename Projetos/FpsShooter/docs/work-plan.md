@@ -1,13 +1,13 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-10`
-- Status: `FPS_SHOOTER_TRACK_03A_VERTICAL_ARENA_NO_VOID_COMPLETE`
+- Status: `FPS_SHOOTER_TRACK_03B_ARENA_FLOW_ROUTE_TUNING_COMPLETE`
 
 ## North Star
 
 Create a small first-person shooter tech probe that proves Godot 4.6.2 can support a satisfying PC editor-first 3D combat loop for the studio.
 
-The project starts as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first vertical arena with jump pads and elevated objectives. Void/fall pressure is reserved for future dedicated maps.
+The project starts as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Void/fall pressure is reserved for future dedicated maps.
 
 ## Track 00 - Project Bootstrap
 
@@ -140,7 +140,7 @@ Future candidate scope:
 
 Goal: add the first gameplay shape beyond a flat arena.
 
-Status: complete; Track 03A no-void hotfix is complete.
+Status: complete; Track 03A no-void baseline and Track 03B route tuning are complete.
 
 ## Track 03A - Vertical Arena No Void V1
 
@@ -165,6 +165,29 @@ Future candidate scope:
 - add one more vertical route only if Duel Pit V2 feels too binary;
 - improve bot route choice if it overuses or underuses jump pads;
 - add a dedicated void/fall map variant later, after the no-void vertical duel baseline is accepted.
+
+## Track 03B - Arena Flow & Route Tuning V1
+
+Goal: consolidate `Duel Pit V2` as the first readable no-void vertical duel arena.
+
+Status: complete.
+
+Delivered:
+
+- Health Shard moved to `Vector3(-7.6, 3.55, -8.6)` and Overcharge moved to `Vector3(7.6, 3.55, 8.6)`;
+- pickup respawns tuned to Health `10s` and Overcharge `14s`;
+- jump pad targets remain near the elevated objectives, but pickups require a small micro-commit after landing;
+- cyan route/landing markers, green health objective marker and purple overcharge objective marker added with runtime primitives;
+- high platforms gained light cover pieces that support short duels without fully closing shooting lanes;
+- bot route selection now exposes route labels/debug score data and uses vertical-route cooldown/objective intervals to reduce immediate high-route loops;
+- ready shot pressure still beats pickup routing, while health and overcharge routes remain available when the bot is hurt or lacks a clear shot window;
+- HUD now shows a compact bot flow line with state, route, LOS and last jump pad cue for editor playtest.
+
+Future candidate scope:
+
+- compare editor smoke notes against bot route labels to tune route weights;
+- add one more ground/high connection only if the arena still feels binary;
+- keep void/fall pressure for a dedicated future map, not this `Duel Pit V2` baseline.
 
 ## Deferred
 
