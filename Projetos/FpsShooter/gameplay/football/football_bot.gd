@@ -24,7 +24,7 @@ const STATE_CELEBRATE: StringName = &"celebrate"
 @export var jump_velocity: float = 5.4
 @export var jump_cooldown: float = 0.85
 
-var ball: FootballBall3D
+var ball
 var own_goal_position: Vector3 = Vector3(0.0, 0.0, -19.0)
 var opponent_goal_position: Vector3 = Vector3(0.0, 0.0, 19.0)
 var current_state: StringName = STATE_KICKOFF
@@ -42,7 +42,7 @@ func _ready() -> void:
 	super._ready()
 	configure_combatant(&"football_bot", 100.0, Color(0.94, 0.2, 0.16, 1.0))
 
-func configure(next_ball: FootballBall3D, next_own_goal_position: Vector3, next_opponent_goal_position: Vector3) -> void:
+func configure(next_ball: Node3D, next_own_goal_position: Vector3, next_opponent_goal_position: Vector3) -> void:
 	ball = next_ball
 	own_goal_position = next_own_goal_position
 	opponent_goal_position = next_opponent_goal_position
@@ -103,8 +103,8 @@ func _physics_process(delta: float) -> void:
 	_face_ball(delta)
 
 func _handle_ball_state() -> void:
-	var ball_position := ball.global_position
-	var distance_to_ball := _flat_distance(global_position, ball_position)
+	var ball_position: Vector3 = ball.global_position
+	var distance_to_ball: float = _flat_distance(global_position, ball_position)
 	if distance_to_ball <= kick_range and kick_cooldown_remaining <= 0.0:
 		windup_is_defensive = _flat_distance(ball_position, own_goal_position) <= defend_goal_distance
 		current_state = STATE_KICK_WINDUP
@@ -112,13 +112,13 @@ func _handle_ball_state() -> void:
 		velocity = Vector3.ZERO
 		return
 
-	var own_goal_distance := _flat_distance(ball_position, own_goal_position)
+	var own_goal_distance: float = _flat_distance(ball_position, own_goal_position)
 	if own_goal_distance <= defend_goal_distance:
 		current_state = STATE_DEFEND_GOAL
 		last_move_target = _build_defend_target()
 		return
 
-	var opponent_goal_distance := _flat_distance(ball_position, opponent_goal_position)
+	var opponent_goal_distance: float = _flat_distance(ball_position, opponent_goal_position)
 	if opponent_goal_distance < own_goal_distance:
 		current_state = STATE_ATTACK_GOAL
 	else:
@@ -137,10 +137,10 @@ func _handle_windup(delta: float) -> void:
 	kick_cooldown_remaining = kick_cooldown
 
 func _emit_kick() -> void:
-	var target := opponent_goal_position
+	var target: Vector3 = opponent_goal_position
 	if windup_is_defensive:
 		target = opponent_goal_position + Vector3(_aim_pattern(aim_cycle).x * 2.5, 0.0, 0.0)
-	var direction := target - ball.global_position
+	var direction: Vector3 = target - ball.global_position
 	direction.y = 0.0
 	if direction.length_squared() <= 0.0001:
 		direction = global_transform.basis.z
@@ -165,8 +165,8 @@ func _move_toward_target(delta: float) -> void:
 	velocity.y = vertical_velocity
 
 func _build_defend_target() -> Vector3:
-	var ball_position := ball.global_position
-	var goal_to_ball := ball_position - own_goal_position
+	var ball_position: Vector3 = ball.global_position
+	var goal_to_ball: Vector3 = ball_position - own_goal_position
 	goal_to_ball.y = 0.0
 	if goal_to_ball.length_squared() <= 0.0001:
 		goal_to_ball = Vector3.FORWARD
@@ -203,9 +203,9 @@ func _apply_gravity(delta: float) -> void:
 		vertical_velocity = -0.1
 
 func _face_ball(delta: float) -> void:
-	var target := ball.global_position
+	var target: Vector3 = ball.global_position
 	target.y = global_position.y
-	var to_ball := target - global_position
+	var to_ball: Vector3 = target - global_position
 	if to_ball.length_squared() <= 0.001:
 		return
 	var desired_yaw := atan2(-to_ball.x, -to_ball.z)

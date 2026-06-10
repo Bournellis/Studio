@@ -32,11 +32,11 @@ const PLAYER_STRONG_KICK_LIFT: float = 2.35
 const PLAYER_TOUCH_COOLDOWN: float = 0.18
 const GOAL_RESET_DELAY: float = 1.25
 
-var player: FpsPlayerController
-var bot: FootballBot
-var ball: FootballBall3D
-var hud: FootballHud
-var feedback: FpsFeedbackController
+var player
+var bot
+var ball
+var hud
+var feedback
 var player_score: int = 0
 var bot_score: int = 0
 var match_over: bool = false
@@ -285,7 +285,7 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, lift: float) -> void:
 	if match_over or goal_reset_timer > 0.0:
 		return
-	var to_ball := ball.global_position - origin
+	var to_ball: Vector3 = ball.global_position - origin
 	if to_ball.length() > bot.kick_range + 0.55:
 		return
 	ball.kick(direction, force, lift)
@@ -295,8 +295,8 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 func _process_player_ball_contact() -> void:
 	if player_touch_cooldown_remaining > 0.0:
 		return
-	var player_center := player.global_position + Vector3.UP * 0.5
-	var delta := ball.global_position - player_center
+	var player_center: Vector3 = player.global_position + Vector3.UP * 0.5
+	var delta: Vector3 = ball.global_position - player_center
 	var flat_delta := Vector3(delta.x, 0.0, delta.z)
 	if flat_delta.length() > PLAYER_TOUCH_RADIUS:
 		return
@@ -340,21 +340,21 @@ func _register_goal(player_scored: bool) -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _can_reach_ball(origin: Vector3, direction: Vector3) -> bool:
-	var shot_direction := direction.normalized()
+	var shot_direction: Vector3 = direction.normalized()
 	if shot_direction.length_squared() <= 0.0001:
 		return false
-	var to_ball := ball.global_position - origin
+	var to_ball: Vector3 = ball.global_position - origin
 	if to_ball.length() > PLAYER_KICK_REACH + 0.7:
 		return false
-	var projected := to_ball.dot(shot_direction)
+	var projected: float = to_ball.dot(shot_direction)
 	if projected < -0.15 or projected > PLAYER_KICK_REACH + 0.85:
 		return false
-	var closest := origin + shot_direction * projected
+	var closest: Vector3 = origin + shot_direction * projected
 	return closest.distance_to(ball.global_position) <= ball.ball_radius + 0.75
 
 func _build_kick_direction(origin: Vector3, direction: Vector3) -> Vector3:
-	var camera_direction := direction.normalized()
-	var to_ball := ball.global_position - origin
+	var camera_direction: Vector3 = direction.normalized()
+	var to_ball: Vector3 = ball.global_position - origin
 	var flat_to_ball := Vector3(to_ball.x, 0.0, to_ball.z)
 	var flat_camera := Vector3(camera_direction.x, 0.0, camera_direction.z)
 	if flat_camera.length_squared() <= 0.0001:
