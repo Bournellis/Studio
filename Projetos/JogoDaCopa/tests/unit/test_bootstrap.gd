@@ -60,6 +60,8 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_eq(menu.debug_get_selected_bot_difficulty_id(), &"normal")
 	assert_eq(menu.debug_get_selected_match_mode_id(), &"timer")
 	assert_false(menu.debug_is_toon_render_enabled())
+	assert_true(menu.debug_has_audio_buses())
+	assert_eq(menu.debug_get_ui_audio_pool_size(), 5)
 	menu.debug_cycle_bot_difficulty(1)
 	assert_eq(menu.debug_get_selected_bot_difficulty_id(), &"hard")
 	menu.debug_cycle_match_mode(1)
@@ -74,11 +76,14 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/BotDifficultyRow"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/MatchModeRow"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/VolumeRow/VolumeSlider"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/SfxVolumeRow/SfxVolumeSlider"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/UiVolumeRow/UiVolumeSlider"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/AmbienceVolumeRow/AmbienceVolumeSlider"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/QualityRow/QualityOption"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/ToonRenderRow/ToonRenderToggle"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/QuitButton"))
 	var menu_panel := menu.get_node("MenuCenter/MenuPanel") as PanelContainer
-	assert_eq(menu_panel.custom_minimum_size, Vector2(560.0, 640.0))
+	assert_eq(menu_panel.custom_minimum_size, Vector2(560.0, 720.0))
 	assert_no_new_orphans()
 
 func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
@@ -589,6 +594,7 @@ func test_football_jump_pad_launches_characters_not_ball() -> void:
 	football.debug_update_arcade_field(0.1)
 
 	assert_eq(player.debug_get_jump_pad_launch_count(), before_player_launches + 1)
+	assert_eq(football.debug_get_feedback().debug_get_last_audio_event(), &"ui_confirmation")
 	assert_gt(player.debug_get_vertical_velocity(), 8.0)
 	assert_eq(ball.debug_get_kick_count(), before_kicks)
 	assert_almost_eq(ball.linear_velocity.length(), 0.0, 0.001)
@@ -889,6 +895,31 @@ func test_football_feedback_exposes_boost_and_skid_vfx() -> void:
 	assert_true(avatar.debug_is_boost_trail_emitting())
 	assert_true(avatar.debug_is_skid_dust_emitting())
 	assert_eq(feedback.debug_active_effect_count(), 0)
+	assert_no_new_orphans()
+
+func test_football_feedback_uses_real_audio_pools_and_synthetic_whistle() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	var feedback = football.debug_get_feedback()
+	assert_true(feedback.debug_has_real_audio())
+	assert_eq(feedback.debug_get_sfx_pool_size(), 14)
+	assert_eq(feedback.debug_get_ui_pool_size(), 8)
+	assert_true(feedback.debug_is_ambience_playing())
+
+	feedback.play_football_kick(Vector3.ZERO, Vector3.FORWARD, false)
+	assert_eq(feedback.debug_get_last_audio_event(), &"kick")
+	feedback.play_ball_glass(Vector3.ZERO)
+	assert_eq(feedback.debug_get_last_audio_event(), &"ball_glass")
+	feedback.play_countdown_tick(true)
+	assert_eq(feedback.debug_get_last_audio_event(), &"ui_confirmation")
+
+	var before_whistles: int = feedback.debug_get_synthetic_whistle_count()
+	feedback.play_referee_whistle(Vector3.ZERO)
+	assert_eq(feedback.debug_get_synthetic_whistle_count(), before_whistles + 1)
+	assert_eq(feedback.debug_get_last_audio_event(), &"synthetic_whistle")
 	assert_no_new_orphans()
 
 func test_football_bot_kick_request_moves_ball() -> void:

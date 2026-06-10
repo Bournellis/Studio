@@ -1,7 +1,7 @@
 # JogoDaCopa - Asset Licenses
 
 - Last updated: `2026-06-10`
-- Scope: assets introduced or approved for `Track 02 Quality Upgrade V1`.
+- Scope: assets introduced or approved for `Track 02 Quality Upgrade V1`, including 02C-bis and 02D-bis real asset replacements.
 
 ## Track 02C - Ball & Character Assets V1
 
@@ -10,21 +10,38 @@
 | Asset | Path | Author | License | Notes |
 |---|---|---|---|---|
 | Procedural football panel shader | `assets/football/football_ball_panels.gdshader` | Codex for JogoDaCopa | `CC0-1.0` | Loaded by `FootballBall3D`; gives the ball a football-panel visual without binary texture/model dependency. |
-| Procedural avatar proxy and persistent VFX emitters | `gameplay/avatar/player_avatar_3d.gd` runtime box/sphere meshes and `GPUParticles3D` emitters | Codex for JogoDaCopa | `CC0-1.0` | Track 02H removed the decorative unskinned `CopaAssetSkeleton`/`AnimationTree`; real character asset integration is deferred to 02C-bis after manual CC0 download. |
+| Runtime avatar tint, toon outline and persistent VFX wiring | `gameplay/avatar/player_avatar_3d.gd` | Codex for JogoDaCopa | `CC0-1.0` | Runtime code applies kit/skin colors to real models and generates authored kick animation in code. |
 
 ### Asset Import Spike
 
 - `2026-06-10`: Godot headless loaded `res://assets/football/football_ball_panels.gdshader` successfully before committing Track 02C changes.
 - Result: `[asset-spike] Track02C loaded football_ball_panels.gdshader code_chars=859`.
 
-### Approved External CC0 Sources For Future Replacement
+## Track 02C-bis - Real Character V1
 
-These sources were checked during Track 02C but no external binary asset was committed in this pass.
+| Asset Pack | Path | Author / Source | License | Evidence | Runtime Use |
+|---|---|---|---|---|---|
+| Universal Base Characters Kit - standard free version | `assets/characters/quaternius_ubc/base/` and `assets/characters/quaternius_ubc/hair/` | Quaternius | `CC0 1.0 Universal` | `assets/characters/quaternius_ubc/License_Standard.txt` | Player male and bot female humanoid models. |
+| Universal Animation Library | `assets/characters/quaternius_ubc/animations/` | Quaternius | `CC0 1.0 Universal` | `assets/characters/quaternius_ubc/animations/License.txt` | 45 animation clips copied into the runtime `AnimationPlayer`. |
+| Kenney Animated Characters 3 fallback subset | `assets/characters/kenney_animated/` | Kenney | `CC0 1.0 Universal` | Pack source metadata from manual download; no local license text shipped in this subset. | Registered fallback only; not used by runtime in 02C-bis. |
 
-| Source | URL | License Evidence | Notes |
+## Track 02D-bis - Real Audio V1
+
+| Asset Pack | Path | Author / Source | License | Runtime Use |
+|---|---|---|---|---|
+| Kenney SFX subset | `assets/audio/kenney_sfx/` | Kenney | `CC0 1.0 Universal` | Kick, bounce, glass, menu click/back/confirmation, countdown ticks. |
+| Kenney Music Jingles subset | `assets/audio/kenney_jingles/` | Kenney | `CC0 1.0 Universal` | Goal, win and loss jingles. |
+| Stadium ambience and crowd clips | `assets/audio/stadium_pixabay/` | Pixabay contributors listed below | `Pixabay Content License` | Stadium ambience loop and goal crowd accent. |
+
+### Pixabay Clip Registry
+
+| File | Contributor | Source ID | Runtime Use |
 |---|---|---|---|
-| Kenney Animated Characters 3 | `https://kenney-assets.itch.io/animated-characters-3` | Page lists `CC0 1.0 Universal`, rigged model, human skins, idle/jump/running animations. | Itch download requires its purchase/download flow; not committed. |
-| Quaternius Universal Base Characters | `https://quaternius.com/packs/universalbasecharacters.html` | Page lists `CC0`, glTF/FBX formats, humanoid rig and Godot compatibility. | Candidate for a later binary asset replacement if desired. |
+| `freesound_community-soccer-stadium-10-6709.mp3` | `freesound_community` | `6709` | Stadium ambience loop. |
+| `freesound_community-soccer-stadium-game-fcsp-vs-buchum-25743.mp3` | `freesound_community` | `25743` | Registered stadium alternate. |
+| `mrmark81-stadium-roar-concert-471943.mp3` | `mrmark81` | `471943` | Registered crowd alternate. |
+| `u_xg7ssi08yr-crowd-cheering-379666.mp3` | `u_xg7ssi08yr` | `379666` | Goal crowd accent. |
+| `vishiv-crowd-cheering-in-stadium-435357.mp3` | `vishiv` | `435357` | Registered crowd alternate. |
 
 ## Track 02G - Product Identity V1
 
@@ -38,4 +55,4 @@ These sources were checked during Track 02C but no external binary asset was com
 ## License Rule
 
 - No official FIFA/Copa logos are included.
-- Any future external asset must be `CC0` or `CC-BY` and must be listed here before use.
+- Decision Fabio/Codex `2026-06-10`: external assets allowed only when they are `CC0`, `CC-BY` with attribution registered, or `Pixabay Content License`, always listed in this file before use.

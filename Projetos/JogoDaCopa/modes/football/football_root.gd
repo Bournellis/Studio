@@ -102,6 +102,7 @@ var phase_label: StringName = &"kickoff"
 var goal_reset_timer: float = 0.0
 var player_touch_cooldown_remaining: float = 0.0
 var arcade_contact_cooldown_remaining: float = 0.0
+var ball_contact_audio_cooldown_remaining: float = 0.0
 var player_ball_control_state: StringName = &"free"
 var player_ball_control_strength: float = 0.0
 var last_kick_assist_strength: float = 0.0
@@ -149,6 +150,7 @@ func _physics_process(delta: float) -> void:
 		return
 	player_touch_cooldown_remaining = maxf(0.0, player_touch_cooldown_remaining - delta)
 	arcade_contact_cooldown_remaining = maxf(0.0, arcade_contact_cooldown_remaining - delta)
+	ball_contact_audio_cooldown_remaining = maxf(0.0, ball_contact_audio_cooldown_remaining - delta)
 	if goal_reset_timer > 0.0:
 		goal_reset_timer = maxf(0.0, goal_reset_timer - delta)
 		if goal_reset_timer <= 0.0 and not match_over:
@@ -594,6 +596,7 @@ func _spawn_runtime() -> void:
 	ball.position = BALL_SPAWN
 	runtime_root.add_child(ball)
 	ball.configure(BALL_SPAWN)
+	ball.body_entered.connect(_on_ball_body_entered)
 
 	var first_person_camera: Camera3D = player.get_camera() as Camera3D
 	if first_person_camera != null:
@@ -693,6 +696,7 @@ func _restart_play(after_goal: bool) -> void:
 		chase_camera.snap_to_target()
 	player_touch_cooldown_remaining = 0.0
 	arcade_contact_cooldown_remaining = 0.0
+	ball_contact_audio_cooldown_remaining = 0.0
 	player_ball_control_state = &"free"
 	player_ball_control_strength = 0.0
 	last_kick_assist_strength = 0.0
@@ -800,6 +804,19 @@ func _process_player_ball_contact() -> void:
 	ball.kick(contact_direction, PLAYER_TOUCH_FORCE * boost_multiplier, contact_lift)
 	_add_player_super(SUPER_TOUCH_GAIN)
 	player_touch_cooldown_remaining = PLAYER_TOUCH_COOLDOWN
+
+func _on_ball_body_entered(body: Node) -> void:
+	if feedback == null or ball == null or ball_contact_audio_cooldown_remaining > 0.0:
+		return
+	var ball_speed: float = ball.linear_velocity.length()
+	if ball_speed < 2.0:
+		return
+	var body_name := str(body.name).to_lower()
+	if body_name.contains("glass") or body_name.contains("wall") or body_name.contains("goal"):
+		feedback.play_ball_glass(ball.global_position)
+	else:
+		feedback.play_ball_bounce(ball.global_position, ball_speed > 12.0)
+	ball_contact_audio_cooldown_remaining = 0.12
 
 func _process_arcade_action_contacts() -> void:
 	if arcade_contact_cooldown_remaining > 0.0 or player == null or bot == null or ball == null:
@@ -927,6 +944,8 @@ func _collect_boost_pad(pad: Area3D, collected_by_player: bool) -> void:
 		bot.notify_boost_pad_collected(full_pad)
 	_set_boost_pad_active(pad, false)
 	pad.set_meta("respawn_remaining", BOOST_PAD_RESPAWN_SECONDS)
+	if feedback != null:
+		feedback.play_pickup(pad.global_position, &"boost")
 
 func _is_boost_pad_active(pad: Area3D) -> bool:
 	return bool(pad.get_meta("active", true))
@@ -950,9 +969,13 @@ func _update_jump_pads(delta: float) -> void:
 		if player != null and _flat_distance(player.global_position, jump_pad.global_position) <= JUMP_PAD_COLLECT_RADIUS:
 			player.apply_jump_pad_launch(JUMP_PAD_LAUNCH_VELOCITY)
 			jump_pad.set_meta("cooldown_remaining", JUMP_PAD_COOLDOWN_SECONDS)
+			if feedback != null:
+				feedback.play_jump_pad(jump_pad.global_position, JUMP_PAD_LAUNCH_VELOCITY)
 		elif bot != null and _flat_distance(bot.global_position, jump_pad.global_position) <= JUMP_PAD_COLLECT_RADIUS:
 			bot.apply_jump_pad_launch(JUMP_PAD_LAUNCH_VELOCITY)
 			jump_pad.set_meta("cooldown_remaining", JUMP_PAD_COOLDOWN_SECONDS)
+			if feedback != null:
+				feedback.play_jump_pad(jump_pad.global_position, JUMP_PAD_LAUNCH_VELOCITY)
 
 func _process_goal_detection() -> void:
 	var goal_side := FootballMatchRulesScript.detect_goal(ball.global_position, GOAL_HALF_WIDTH, GOAL_LINE_NORTH, GOAL_LINE_SOUTH, GOAL_HEIGHT)
@@ -1223,6 +1246,9 @@ func _start_kickoff_countdown() -> void:
 	_set_round_input_locked(true)
 	if hud != null:
 		hud.show_countdown("3", 0.45)
+	if feedback != null:
+		feedback.play_countdown_tick(false)
+		feedback.set_ambience_ducked(false)
 
 func _update_kickoff_countdown(delta: float) -> void:
 	kickoff_countdown_remaining = maxf(0.0, kickoff_countdown_remaining - delta)
@@ -1231,12 +1257,17 @@ func _update_kickoff_countdown(delta: float) -> void:
 		countdown_last_number = next_number
 		if hud != null:
 			hud.show_countdown(str(next_number), 0.36)
+		if feedback != null:
+			feedback.play_countdown_tick(false)
 	if kickoff_countdown_remaining > 0.0:
 		return
 	_set_round_input_locked(false)
 	phase_label = &"play"
 	if hud != null:
 		hud.show_countdown("VAI!", 0.48)
+	if feedback != null:
+		feedback.play_countdown_tick(true)
+		feedback.play_referee_whistle(ball.global_position if ball != null else Vector3.ZERO)
 
 func _set_round_input_locked(is_locked: bool) -> void:
 	if is_locked:
@@ -1305,11 +1336,15 @@ func _set_intro_open(is_open: bool) -> void:
 		phase_label = &"intro"
 		get_tree().paused = true
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		if feedback != null:
+			feedback.set_ambience_ducked(true)
 		if hud != null:
 			hud.set_pause_menu_visible(false, player.mouse_sensitivity)
 			hud.set_intro_visible(true)
 		return
 	get_tree().paused = false
+	if feedback != null:
+		feedback.set_ambience_ducked(false)
 	if phase_label == &"intro":
 		phase_label = &"play"
 	if hud != null:
@@ -1324,6 +1359,8 @@ func _set_menu_open(is_open: bool) -> void:
 	get_tree().paused = menu_open
 	if hud != null:
 		hud.set_pause_menu_visible(menu_open, player.mouse_sensitivity)
+	if feedback != null:
+		feedback.set_ambience_ducked(menu_open)
 	if menu_open:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	else:
