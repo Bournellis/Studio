@@ -77,7 +77,9 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	]
 	var bot_state := str(snapshot.get("bot_state", "kickoff"))
 	var phase := str(snapshot.get("phase", "kickoff"))
-	flow_label.text = "Futebol: %s | Bot: %s" % [phase, bot_state]
+	var kickoff_owner := str(snapshot.get("kickoff_owner", "player"))
+	var bot_difficulty := str(snapshot.get("bot_difficulty", "normal"))
+	flow_label.text = "Futebol: %s | Saida: %s | Bot %s: %s" % [phase, kickoff_owner, bot_difficulty, bot_state]
 	var control_state := StringName(str(snapshot.get("ball_control", "free")))
 	var control_strength := float(snapshot.get("ball_control_strength", 0.0))
 	var boost_fraction := float(snapshot.get("boost_fraction", 1.0))

@@ -24,6 +24,11 @@ const STATE_CELEBRATE: StringName = &"celebrate"
 @export var approach_offset_distance: float = 1.35
 @export var jump_velocity: float = 5.4
 @export var jump_cooldown: float = 0.85
+@export var prediction_time: float = 0.45
+@export var boost_speed_multiplier: float = 1.32
+@export var boost_duration: float = 0.42
+@export var boost_cooldown: float = 1.35
+@export var bot_boost_enabled: bool = true
 
 var ball
 var own_goal_position: Vector3 = Vector3(0.0, 0.0, -19.0)
@@ -34,13 +39,17 @@ var current_state: StringName = STATE_KICKOFF
 var kick_cooldown_remaining: float = 0.0
 var windup_remaining: float = 0.0
 var jump_cooldown_remaining: float = 0.0
+var boost_cooldown_remaining: float = 0.0
+var boost_remaining: float = 0.0
 var vertical_velocity: float = 0.0
 var aim_cycle: int = 0
 var kick_count: int = 0
 var last_kick_direction: Vector3 = Vector3.FORWARD
 var last_move_target: Vector3 = Vector3.ZERO
+var last_predicted_ball_position: Vector3 = Vector3.ZERO
 var last_approach_label: StringName = &"none"
 var windup_is_defensive: bool = false
+var difficulty_id: StringName = &"normal"
 
 func _ready() -> void:
 	super._ready()
@@ -56,6 +65,8 @@ func configure(next_ball: Node3D, next_own_goal_position: Vector3, next_opponent
 	kick_cooldown_remaining = 0.0
 	windup_remaining = 0.0
 	jump_cooldown_remaining = 0.0
+	boost_cooldown_remaining = 0.0
+	boost_remaining = 0.0
 	vertical_velocity = 0.0
 	aim_cycle = 0
 	kick_count = 0
@@ -64,6 +75,38 @@ func configure(next_ball: Node3D, next_own_goal_position: Vector3, next_opponent
 	last_move_target = global_position
 	last_approach_label = &"kickoff"
 	clear_movement_impulses()
+
+func set_difficulty(next_difficulty_id: StringName) -> void:
+	difficulty_id = next_difficulty_id
+	match difficulty_id:
+		&"easy":
+			move_speed = 6.7
+			kick_force = 13.4
+			clear_force = 16.0
+			kick_cooldown = 1.08
+			aim_error_radius = 0.9
+			prediction_time = 0.18
+			boost_speed_multiplier = 1.0
+			bot_boost_enabled = false
+		&"hard":
+			move_speed = 10.1
+			kick_force = 17.6
+			clear_force = 20.2
+			kick_cooldown = 0.54
+			aim_error_radius = 0.14
+			prediction_time = 0.82
+			boost_speed_multiplier = 1.46
+			bot_boost_enabled = true
+		_:
+			difficulty_id = &"normal"
+			move_speed = 8.2
+			kick_force = 15.5
+			clear_force = 18.0
+			kick_cooldown = 0.78
+			aim_error_radius = 0.42
+			prediction_time = 0.45
+			boost_speed_multiplier = 1.32
+			bot_boost_enabled = true
 
 func set_celebrating(is_celebrating: bool) -> void:
 	current_state = STATE_CELEBRATE if is_celebrating else STATE_CHASE_BALL
@@ -88,8 +131,20 @@ func debug_get_last_kick_direction() -> Vector3:
 func debug_get_last_move_target() -> Vector3:
 	return last_move_target
 
+func debug_get_last_predicted_ball_position() -> Vector3:
+	return last_predicted_ball_position
+
 func debug_get_last_approach_label() -> StringName:
 	return last_approach_label
+
+func debug_get_difficulty_id() -> StringName:
+	return difficulty_id
+
+func debug_is_boosting() -> bool:
+	return boost_remaining > 0.0
+
+func debug_get_aim_error_radius() -> float:
+	return aim_error_radius
 
 func _physics_process(delta: float) -> void:
 	if ball == null or current_state == STATE_CELEBRATE:
@@ -99,6 +154,8 @@ func _physics_process(delta: float) -> void:
 
 	kick_cooldown_remaining = maxf(0.0, kick_cooldown_remaining - delta)
 	jump_cooldown_remaining = maxf(0.0, jump_cooldown_remaining - delta)
+	boost_cooldown_remaining = maxf(0.0, boost_cooldown_remaining - delta)
+	boost_remaining = maxf(0.0, boost_remaining - delta)
 	_apply_gravity(delta)
 
 	if current_state == STATE_KICK_WINDUP:
@@ -113,10 +170,10 @@ func _physics_process(delta: float) -> void:
 	_face_ball(delta)
 
 func _handle_ball_state() -> void:
-	var ball_position: Vector3 = ball.global_position
+	var ball_position := _get_predicted_ball_position()
 	var distance_to_ball: float = _flat_distance(global_position, ball_position)
-	if distance_to_ball <= kick_range and kick_cooldown_remaining <= 0.0:
-		windup_is_defensive = _flat_distance(ball_position, own_goal_position) <= defend_goal_distance
+	if _flat_distance(global_position, ball.global_position) <= kick_range and kick_cooldown_remaining <= 0.0:
+		windup_is_defensive = _flat_distance(ball.global_position, own_goal_position) <= defend_goal_distance
 		current_state = STATE_KICK_WINDUP
 		windup_remaining = kick_windup_duration
 		velocity = Vector3.ZERO
@@ -125,18 +182,18 @@ func _handle_ball_state() -> void:
 	var own_goal_distance: float = _flat_distance(ball_position, own_goal_position)
 	if own_goal_distance <= defend_goal_distance:
 		current_state = STATE_DEFEND_GOAL
-		last_move_target = _build_defend_target()
+		last_move_target = _build_defend_target(ball_position)
 		last_approach_label = &"defend"
 		return
 
 	var opponent_goal_distance: float = _flat_distance(ball_position, opponent_goal_position)
 	if opponent_goal_distance < own_goal_distance:
 		current_state = STATE_ATTACK_GOAL
-		last_move_target = _build_ball_approach_target(opponent_goal_position, approach_offset_distance)
+		last_move_target = _build_ball_approach_target(opponent_goal_position, approach_offset_distance, ball_position)
 		last_approach_label = &"attack_setup"
 	else:
 		current_state = STATE_CHASE_BALL
-		last_move_target = _build_ball_approach_target(opponent_goal_position, approach_offset_distance * 0.72)
+		last_move_target = _build_ball_approach_target(opponent_goal_position, approach_offset_distance * 0.72, ball_position)
 		last_approach_label = &"chase_setup"
 
 func _handle_windup(delta: float) -> void:
@@ -172,22 +229,27 @@ func _move_toward_target(delta: float) -> void:
 	to_target.y = 0.0
 	var desired := Vector3.ZERO
 	if to_target.length_squared() > 0.05:
-		desired = to_target.normalized() * move_speed
+		if _should_start_boost(to_target.length()):
+			boost_remaining = boost_duration
+			boost_cooldown_remaining = boost_cooldown
+		var speed := move_speed * (boost_speed_multiplier if boost_remaining > 0.0 else 1.0)
+		desired = to_target.normalized() * speed
 	if ball.global_position.y > global_position.y + 1.0 and _flat_distance(global_position, ball.global_position) < 3.1:
 		_try_jump()
 	velocity = desired
 	velocity.y = vertical_velocity
 
-func _build_defend_target() -> Vector3:
-	var ball_position: Vector3 = ball.global_position
+func _build_defend_target(ball_position: Vector3) -> Vector3:
 	var goal_to_ball: Vector3 = ball_position - own_goal_position
 	goal_to_ball.y = 0.0
 	if goal_to_ball.length_squared() <= 0.0001:
 		goal_to_ball = Vector3.FORWARD
-	return own_goal_position + goal_to_ball.normalized() * 4.2
+	var target := own_goal_position + goal_to_ball.normalized() * 4.2
+	target.x = clampf(target.x, -field_half_width + 1.8, field_half_width - 1.8)
+	target.z = clampf(target.z, -field_half_length + 1.8, field_half_length - 1.8)
+	return target
 
-func _build_ball_approach_target(goal_position: Vector3, offset_distance: float) -> Vector3:
-	var ball_position: Vector3 = ball.global_position
+func _build_ball_approach_target(goal_position: Vector3, offset_distance: float, ball_position: Vector3) -> Vector3:
 	var ball_to_goal: Vector3 = goal_position - ball_position
 	ball_to_goal.y = 0.0
 	if ball_to_goal.length_squared() <= 0.0001:
@@ -196,6 +258,22 @@ func _build_ball_approach_target(goal_position: Vector3, offset_distance: float)
 	target.x = clampf(target.x, -field_half_width + 1.6, field_half_width - 1.6)
 	target.z = clampf(target.z, -field_half_length + 1.8, field_half_length - 1.8)
 	return target
+
+func _get_predicted_ball_position() -> Vector3:
+	var ball_velocity := Vector3.ZERO
+	if ball != null:
+		ball_velocity = ball.linear_velocity
+	last_predicted_ball_position = ball.global_position + ball_velocity * prediction_time
+	last_predicted_ball_position.x = clampf(last_predicted_ball_position.x, -field_half_width + 0.8, field_half_width - 0.8)
+	last_predicted_ball_position.z = clampf(last_predicted_ball_position.z, -field_half_length + 0.8, field_half_length - 0.8)
+	return last_predicted_ball_position
+
+func _should_start_boost(flat_distance_to_target: float) -> bool:
+	if not bot_boost_enabled or boost_remaining > 0.0 or boost_cooldown_remaining > 0.0:
+		return false
+	if flat_distance_to_target < 5.2:
+		return false
+	return current_state == STATE_ATTACK_GOAL or current_state == STATE_CHASE_BALL or current_state == STATE_DEFEND_GOAL
 
 func _apply_aim_error(direction: Vector3) -> Vector3:
 	var pattern := _aim_pattern(aim_cycle)

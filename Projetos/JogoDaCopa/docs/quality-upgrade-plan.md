@@ -12,7 +12,8 @@
 - `2026-06-10` - `Track 02C Ball & Character Assets V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02C_BALL_CHARACTER_ASSETS_V1_COMPLETE`). Asset import spike PASS. `tools/validate.gd` PASS (24 tests, 240 asserts). Licenses recorded in `docs/asset-licenses.md`.
 - `2026-06-10` - `Track 02D VFX & Game Feel V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02D_VFX_GAME_FEEL_V1_COMPLETE`). `tools/validate.gd` PASS (26 tests, 250 asserts). Performance sample Windows/Forward+ after warmup with VFX spawned: average `144.2fps`, min warmed instant `63.3fps`, `0/360` frames below 60.
 - `2026-06-10` - `Track 02E HUD & Menu Polish V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02E_HUD_MENU_POLISH_V1_COMPLETE`). `tools/validate.gd` PASS (26 tests, 267 asserts).
-- `Track 02F Bot & Match Flow V1`: next.
+- `2026-06-10` - `Track 02F Bot & Match Flow V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02F_BOT_MATCH_FLOW_V1_COMPLETE`). `tools/validate.gd` PASS (28 tests, 279 asserts).
+- `Track 02G Product Identity V1`: next.
 
 ## 1. Analise do Estado Atual
 

@@ -73,6 +73,8 @@ var player_ball_control_state: StringName = &"free"
 var player_ball_control_strength: float = 0.0
 var last_kick_assist_strength: float = 0.0
 var last_goal_player_scored: bool = false
+var kickoff_owner: StringName = &"player"
+var bot_difficulty_id: StringName = &"normal"
 var kickoff_countdown_remaining: float = 0.0
 var countdown_last_number: int = 0
 var goal_slowmo_remaining: float = 0.0
@@ -137,6 +139,7 @@ func restart_match() -> void:
 	match_over = false
 	goal_reset_timer = 0.0
 	last_goal_player_scored = false
+	kickoff_owner = &"player"
 	_restart_play(false)
 	if hud != null:
 		hud.reset_feedback()
@@ -197,6 +200,21 @@ func debug_build_hud_snapshot() -> Dictionary:
 
 func debug_get_bot():
 	return bot
+
+func debug_get_bot_difficulty_id() -> StringName:
+	return bot_difficulty_id
+
+func debug_set_bot_difficulty(next_difficulty_id: StringName) -> void:
+	bot_difficulty_id = next_difficulty_id
+	if bot != null:
+		bot.set_difficulty(bot_difficulty_id)
+		bot_difficulty_id = bot.debug_get_difficulty_id()
+
+func debug_get_kickoff_owner() -> StringName:
+	return kickoff_owner
+
+func debug_set_kickoff_owner(next_owner: StringName) -> void:
+	kickoff_owner = &"bot" if next_owner == &"bot" else &"player"
 
 func debug_get_bot_avatar():
 	return bot_avatar
@@ -440,6 +458,7 @@ func _spawn_runtime() -> void:
 	bot.rotation.y = PI
 	runtime_root.add_child(bot)
 	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH), FIELD_HALF_WIDTH, FIELD_HALF_LENGTH)
+	bot.set_difficulty(bot_difficulty_id)
 	bot.kick_requested.connect(_on_bot_kick_requested)
 	bot.damaged.connect(func(_amount: float, _remaining_health: float) -> void:
 		if bot_avatar != null:
@@ -484,14 +503,17 @@ func _restart_play(after_goal: bool) -> void:
 	phase_label = &"kickoff" if not after_goal else &"reset"
 	Engine.time_scale = 1.0
 	goal_slowmo_remaining = 0.0
-	player.global_position = PLAYER_SPAWN
+	if after_goal:
+		_advance_kickoff_owner()
+	player.global_position = _get_player_spawn_for_kickoff()
 	player.rotation = Vector3.ZERO
 	player.configure_for_round()
 	player.clear_movement_impulses()
-	bot.global_position = BOT_SPAWN
+	bot.global_position = _get_bot_spawn_for_kickoff()
 	bot.rotation.y = PI
 	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH), FIELD_HALF_WIDTH, FIELD_HALF_LENGTH)
-	ball.configure(BALL_SPAWN)
+	bot.set_difficulty(bot_difficulty_id)
+	ball.configure(_get_ball_spawn_for_kickoff())
 	if chase_camera != null:
 		chase_camera.snap_to_target()
 	player_touch_cooldown_remaining = 0.0
@@ -675,10 +697,30 @@ func _build_hud_snapshot() -> Dictionary:
 		"boost_fraction": player.get_boost_stamina_fraction() if player != null else 0.0,
 		"boost_active": player.is_boosting() if player != null else false,
 		"bot_state": bot.debug_get_state() if bot != null else "none",
+		"bot_difficulty": bot_difficulty_id,
+		"kickoff_owner": kickoff_owner,
 		"phase": phase_label,
 		"countdown": kickoff_countdown_remaining,
 		"hint": "Comecar inicia | WASD move | Shift boost | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | paredes/teto rebatem | R restart | Esc menu"
 	}
+
+func _advance_kickoff_owner() -> void:
+	kickoff_owner = &"bot" if kickoff_owner == &"player" else &"player"
+
+func _get_player_spawn_for_kickoff() -> Vector3:
+	if kickoff_owner == &"bot":
+		return Vector3(0.0, PLAYER_SPAWN.y, FIELD_HALF_LENGTH - 6.0)
+	return PLAYER_SPAWN
+
+func _get_bot_spawn_for_kickoff() -> Vector3:
+	if kickoff_owner == &"bot":
+		return Vector3(0.0, BOT_SPAWN.y, -FIELD_HALF_LENGTH + 9.0)
+	return BOT_SPAWN
+
+func _get_ball_spawn_for_kickoff() -> Vector3:
+	if kickoff_owner == &"bot":
+		return Vector3(0.0, BALL_SPAWN.y, -9.0)
+	return Vector3(0.0, BALL_SPAWN.y, 9.0)
 
 func _get_kit_code(country_kit_id: StringName) -> String:
 	match country_kit_id:

@@ -396,6 +396,45 @@ func test_football_bot_approaches_behind_ball_before_attacking() -> void:
 	assert_lt(bot.debug_get_last_move_target().z, football.debug_get_ball().global_position.z)
 	assert_no_new_orphans()
 
+func test_football_bot_uses_prediction_difficulty_and_boost() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+
+	var bot = football.debug_get_bot()
+	var ball = football.debug_get_ball()
+	football.debug_set_bot_difficulty(&"hard")
+	football.debug_force_ball_position(Vector3(0.0, 0.58, 0.0))
+	ball.linear_velocity = Vector3(8.0, 0.0, 0.0)
+	bot._physics_process(0.1)
+
+	assert_eq(football.debug_get_bot_difficulty_id(), &"hard")
+	assert_eq(bot.debug_get_difficulty_id(), &"hard")
+	assert_lt(bot.debug_get_aim_error_radius(), 0.2)
+	assert_gt(bot.debug_get_last_predicted_ball_position().x, ball.global_position.x)
+	assert_true(bot.debug_is_boosting())
+	assert_no_new_orphans()
+
+func test_football_kickoff_alternates_after_goal_reset() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+
+	assert_eq(football.debug_get_kickoff_owner(), &"player")
+	football.debug_force_ball_position(Vector3(0.0, 0.68, -27.35))
+	football._physics_process(0.1)
+	assert_eq(football.debug_get_player_score(), 1)
+	football._physics_process(1.3)
+
+	assert_eq(football.debug_get_kickoff_owner(), &"bot")
+	assert_lt(football.debug_get_ball().global_position.z, 0.0)
+	assert_true(football.debug_is_kickoff_locked())
+	assert_no_new_orphans()
+
 func test_football_goal_updates_score_and_match_ends_at_three() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
