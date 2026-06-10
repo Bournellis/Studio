@@ -295,11 +295,17 @@ func _on_player_alt_fire(origin: Vector3, direction: Vector3, damage: float, kno
 	if shot_direction.length_squared() <= 0.0001:
 		return
 	var visual_origin := _get_player_visual_muzzle_origin(origin, shot_direction)
+	var aim_point := _resolve_player_aim_point(origin, shot_direction)
+	var projectile_direction := aim_point - visual_origin
+	if projectile_direction.length_squared() <= 0.0001:
+		projectile_direction = shot_direction
+	else:
+		projectile_direction = projectile_direction.normalized()
 	if hud != null:
 		hud.show_player_alt_fire(overcharged)
 	if feedback != null:
-		feedback.play_plasma_shot(visual_origin, shot_direction, overcharged)
-	_spawn_player_plasma_bolt(visual_origin, shot_direction, damage, knockback, speed, radius, overcharged)
+		feedback.play_plasma_shot(visual_origin, projectile_direction, overcharged)
+	_spawn_player_plasma_bolt(visual_origin, projectile_direction, damage, knockback, speed, radius, overcharged)
 
 func _spawn_player_plasma_bolt(origin: Vector3, direction: Vector3, damage: float, knockback: float, speed: float, radius: float, overcharged: bool) -> void:
 	if projectile_root == null:
@@ -332,7 +338,7 @@ func _spawn_player_plasma_bolt(origin: Vector3, direction: Vector3, damage: floa
 		"velocity": direction.normalized() * maxf(1.0, speed),
 		"damage": damage,
 		"knockback": knockback,
-		"radius": radius,
+		"radius": radius * (1.12 if overcharged else 1.0),
 		"ttl": PLASMA_BOLT_TTL,
 		"source": &"player",
 		"overcharged": overcharged
@@ -350,9 +356,7 @@ func _process_projectiles(delta: float) -> void:
 		var velocity: Vector3 = entry.get("velocity", Vector3.ZERO)
 		var start_position := bolt.global_position
 		var end_position := start_position + velocity * delta
-		var query := PhysicsRayQueryParameters3D.create(start_position, end_position)
-		query.exclude = [player.get_rid()]
-		var result := get_world_3d().direct_space_state.intersect_ray(query)
+		var result := _query_player_projectile_impact(start_position, end_position, float(entry.get("radius", 0.0)))
 		if not result.is_empty():
 			var impact_position: Vector3 = result.get("position", end_position)
 			var collider: Object = result.get("collider", null)
@@ -395,6 +399,45 @@ func _resolve_player_projectile_hit(entry: Dictionary, impact_position: Vector3,
 		hud.show_miss()
 	if feedback != null:
 		feedback.play_plasma_miss(impact_position, overcharged)
+
+func _resolve_player_aim_point(origin: Vector3, direction: Vector3) -> Vector3:
+	var aim_end := origin + direction.normalized() * 96.0
+	var query := PhysicsRayQueryParameters3D.create(origin, aim_end)
+	if player != null:
+		query.exclude = [player.get_rid()]
+	var result := get_world_3d().direct_space_state.intersect_ray(query)
+	if result.is_empty():
+		return aim_end
+	return result.get("position", aim_end)
+
+func _query_player_projectile_impact(start_position: Vector3, end_position: Vector3, radius: float) -> Dictionary:
+	var exclusions: Array[RID] = []
+	if player != null:
+		exclusions.append(player.get_rid())
+
+	var ray_query := PhysicsRayQueryParameters3D.create(start_position, end_position)
+	ray_query.exclude = exclusions
+	var ray_result := get_world_3d().direct_space_state.intersect_ray(ray_query)
+	if not ray_result.is_empty():
+		return ray_result
+
+	var sphere := SphereShape3D.new()
+	sphere.radius = maxf(0.05, radius)
+	var shape_query := PhysicsShapeQueryParameters3D.new()
+	shape_query.shape = sphere
+	shape_query.transform = Transform3D(Basis(), end_position)
+	shape_query.exclude = exclusions
+	var overlaps := get_world_3d().direct_space_state.intersect_shape(shape_query, 8)
+	if overlaps.is_empty():
+		return {}
+	for overlap: Dictionary in overlaps:
+		var collider: Object = overlap.get("collider", null)
+		if collider != null and collider.has_method("take_damage"):
+			overlap["position"] = end_position
+			return overlap
+	var first_overlap: Dictionary = overlaps[0]
+	first_overlap["position"] = end_position
+	return first_overlap
 
 func _remove_projectile(index: int) -> void:
 	if index < 0 or index >= active_projectiles.size():
