@@ -8,7 +8,7 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   latest_version_code: 22,
   minimum_supported_version: "0.0.13-alpha.0",
   minimum_supported_version_code: 13,
-  released_at: "2026-06-09T00:00:00Z",
+  released_at: "2026-06-10T00:00:00Z",
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/",
   notes: [
@@ -160,7 +160,7 @@ interface PlayerRow {
 }
 
 const DEFAULT_RELEASE_ROOT =
-  "internal-alpha/v0-bosque-overlay-interactive-controls-authority-v1-20260609-d3be1fb";
+  "internal-alpha/v0-bosque-arena-abandon-recovery-authority-v1-20260610-a252241";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
