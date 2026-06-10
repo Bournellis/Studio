@@ -22,8 +22,8 @@ When working from a dedicated worktree, run with that worktree path.
 Latest automated baseline:
 
 - GUT `42/42`;
-- `341` asserts;
-- Track 04A validates menu boot and mode routes, generated menu/arena/football scenes, football player kick and strong kick, no weapon damage in football, football goal scoring/match end, bot kick handoff, arena pause menu return button and the full previous arena shooter regression suite.
+- `351` asserts;
+- Track 04A validates menu boot and mode routes, centered menu offsets, generated menu/arena/football scenes, paused football intro panel, football goal safety floors, football player kick and strong kick, no weapon damage in football, football goal scoring/match end, bot kick handoff, arena pause menu return button and the full previous arena shooter regression suite.
 
 ## Manual Smoke
 
@@ -32,6 +32,7 @@ Open `Projetos/FpsShooter/project.godot` in Godot 4.6.2 and press Play.
 Expected menu flow:
 
 - Play opens the `FPS Playground` main menu;
+- the menu is centered and readable in the first viewport;
 - `Arena Shooter` loads the accepted duel arena;
 - `Futebol` loads the first-person football mode;
 - `Sair` exits when running from editor/player;
@@ -93,6 +94,8 @@ Expected Arena Shooter:
 
 Expected Futebol:
 
+- the mode starts paused on `Como Jogar` with hotkeys/basic rules;
+- pressing `Começar` starts the match and captures mouse for gameplay;
 - first-person camera/mouse look and `WASD` movement work;
 - `Space` jumps;
 - LMB kicks the ball when it is in reach;
@@ -100,6 +103,7 @@ Expected Futebol:
 - missing the ball gives a subtle `SEM CONTATO` HUD cue and no weapon damage occurs;
 - the bot chases, attacks and defends the ball;
 - the ball feels loose/arcade and can be moved by player/bot kicks;
+- entering either goal mouth does not drop the player or ball out of the map;
 - scoring in the opponent goal updates the scoreboard and shows goal feedback;
 - match ends at 3 goals with clear win/loss feedback;
 - `R` restarts the match;

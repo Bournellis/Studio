@@ -4,8 +4,8 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS Playground tech probe`
-- Active stage: `Track 04A - FPS Playground Menu & Futebol V1`
-- Active stage status: `COMPLETE`
+- Active stage: `Track 04A - FPS Playground Menu & Futebol V1 - First Fixes`
+- Active stage status: `HOTFIX COMPLETE`
 
 ## Current Truth
 
@@ -30,16 +30,16 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - `Duel Pit V2` arena layout with protected spawns, low/high cover, side platforms, ramps, high platforms, jump pads, elevated pickups, route/landing markers and high-platform soft cover, without void/fall zones in the current map.
 - Void/fall pressure is reserved for future dedicated maps.
 - HUD, round state and bidirectional feel/feedback.
-- Futebol mode reuses the FPS controller and sensitivity flow, turns LMB/RMB into kick/strong kick, uses a loose arcade `RigidBody3D` ball, primitive festive stadium visuals, simple football bot attack/defend behavior, score HUD and goal feedback.
+- Futebol mode reuses the FPS controller and sensitivity flow, starts with a paused `Como Jogar` / `Começar` intro panel, turns LMB/RMB into kick/strong kick, uses a loose arcade `RigidBody3D` ball, primitive festive stadium visuals, goal safety floors, simple football bot attack/defend behavior, score HUD and goal feedback.
 - No export, Web, mobile, multiplayer or online/backend scope.
 
 ## Active Goal
 
-`Track 04A - FPS Playground Menu & Futebol V1` is complete. The project now starts at the `FPS Playground` menu, preserves the accepted `Arena Shooter` duel loop and adds the first alternate first-person mode: `Futebol` 1x1 against a bot with arcade ball physics and score to 3.
+`Track 04A - FPS Playground Menu & Futebol V1` is complete with first playtest fixes. The project now starts at the centered `FPS Playground` menu, preserves the accepted `Arena Shooter` duel loop and adds the first alternate first-person mode: `Futebol` 1x1 against a bot with arcade ball physics, a paused how-to start panel, goal safety floors and score to 3.
 
 ## Current Gate
 
-Closed for Track 04A FPS Playground Menu & Futebol V1. Run the 5-minute editor smoke focused on opening the main menu, launching `Arena Shooter`, returning to menu, launching `Futebol`, kicking/strong-kicking the ball, bot attack/defense, scoring to 3, restart and pause sensitivity.
+Closed for Track 04A FPS Playground Menu & Futebol V1 first fixes. Run the 5-minute editor smoke focused on opening the centered main menu, launching `Arena Shooter`, returning to menu, launching `Futebol`, reading `Como Jogar`, pressing `Começar`, kicking/strong-kicking the ball, confirming the goal floors do not drop the player/ball, bot attack/defense, scoring to 3, restart and pause sensitivity.
 
 ## Validation Snapshot
 
@@ -176,6 +176,14 @@ Track 04A FPS Playground Menu & Futebol V1:
 - shared `FpsFeedbackController` now includes football kick and goal feedback using runtime primitives and synthetic audio;
 - validation now generates/checks menu, arena and football scenes;
 - validation passes `42/42` GUT tests with `341` asserts.
+
+Track 04A Football First Fixes:
+
+- main menu layout now uses deterministic centered anchors/offsets instead of drifting from the center preset;
+- Futebol now starts paused on a `Como Jogar` panel with hotkeys/basic rules and a `Começar` button before mouse capture/gameplay;
+- north/south goals now include collision floor extensions so entering the goal mouth no longer drops out of the map;
+- tests cover centered menu offsets, intro panel visibility/start contract and goal safety floors;
+- validation passes `42/42` GUT tests with `351` asserts.
 
 ## Read Next
 
