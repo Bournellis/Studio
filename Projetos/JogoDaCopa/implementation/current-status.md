@@ -7,6 +7,7 @@
 - Active stage: `Project Split Foundation V1`
 - Active stage status: `COMPLETE`
 - Status marker: `JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE`
+- Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
 
@@ -29,6 +30,8 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 ## Current Gate
 
 Ready for editor playtest focused on `Futebol 1x1`: camera, possession, dribble nudges, assisted kicks, bot approach and avatar readability.
+
+This project is the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
 ## Validation
 

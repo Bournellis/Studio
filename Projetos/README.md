@@ -6,7 +6,14 @@ This directory contains active, conceptual and paused projects for the studio.
 - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
 - Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
-## Implementacao Ativa
+## Foco Temporario Atual
+
+- Foco operacional temporario unico: `JogoDaCopa/`.
+- Projetos ativos pausados por poucos dias: `draxos-roguelike-cardgame/`, `draxos-mobile/`, `FpsPlayground/`.
+- Enquanto esta regra estiver ativa, agentes devem assumir `JogoDaCopa/` para trabalho tecnico/design/validacao/playtest sem projeto explicito.
+- Os projetos pausados temporariamente devem receber apenas consulta historica ou retomada explicita do usuario.
+
+## Projetos Implementaveis
 
 - `draxos-roguelike-cardgame/`: menu-first Draxos roguelike cardgame with Track 02 complete for user playtest: fixed 29-map route, save v5, reward schedule/progression, universal relics, expanded Souls shop, canonical keyword/status tooltips, full keyword engine, promoted class reward cards, elemental enemy galleries, hybrid enemy AI/intent, encounter modes, board formats, field effects, boss hooks, UI readability polish, modular tests, internal foundation directors/services for enemy AI/intent, combat/damage, rewards, Souls shop and BattleRoot presenters, idempotent generated catalog, shared route pacing simulator, AutoRun Gate Pack V1 JSON/CSV/Markdown reports with macro policies, official smoke/quick baselines, explicit gate mode, scorecards, statistical baseline and golden comparison, Scenario Fixtures V1 with `track02_core_v1` deterministic named scenarios, Gameplay Lab V1 with `track02_battle_core_v1` isolated real BattleEngine cases and deterministic legal-action policies, Lab Diff Reporter V1 before/after comparison for AutoRun/Scenario/Battle outputs, Card Impact Pack V1/V2/V3/V4/V4.1/V4.2/V5 with `track02_card_impact_v1`, `track02_card_impact_v2`, `track02_card_impact_v3`, `track02_card_impact_v4`, `track02_card_impact_v4_1`, `track02_card_impact_v4_2` and `track02_card_impact_v5` covering V4/V4.1/V4.2/V5 full active player matrix of 108 player variants plus 30 active enemy cards and 15 audited legacy inactive elemental cards, required player-card effect signatures, V3 isolated target capture, V4 temporary ability power utility signatures, V4.1 card-flow observability for draw/deck/hand/discard deltas, V4.2 explicit card-flow expectations for Colheita variants, V5 required enemy causal signatures, non-damage/enemy derived deltas, support-card contamination reporting and enemy signature quality reporting, Card Impact Smoke Tuning V1, Card Redesign Batch 01, Player Card Redesign Batch 02, Reward Card Redesign Batch 01 Using V4, Reward Card Redesign Batch 02 Utility Using V4, Card Flow Redesign Batch 01 Using V4.1, Enemy Card Redesign Batch 01 Using V5 and Enemy Card Redesign Batch 02 Using V5 Terra before/change/after/compare cycles applied to small card batches, latest accepted V5 enemy batch covering 2 Terra enemy-card changes with 30/30 enemy signatures and 21/21 card-flow checks passing, PASS/WARN/FAIL expectations and JSON/CSV/Markdown reports, foundation closeout/architecture ownership docs, playtest checklist, full-route pacing telemetry and validation green.
   - Card Impact V4 addendum: `track02_card_impact_v4` adds `player_scope=full_active_player_v1`, full active player-card coverage across starter/core/reward cards, class/source coverage summaries, temporary ability power utility signatures and validated 108 player / 30 enemy report-only / 15 legacy inactive coverage with zero structural errors.
@@ -20,28 +27,28 @@ This directory contains active, conceptual and paused projects for the studio.
   - Card Flow Redesign Batch 01 V4.1 addendum: `draw_if_at_least` now resolves as a bonus draw after normal hand refill; `necro_colheita_das_almas_lvl2` gained `draw_if_at_least=3` and moved Ashes `2 -> 3`; compare passed with 3 changed battle records, 11 effect deltas, zero structural errors/status changes, and Scenario/Run Lab unchanged.
   - Reward Card Redesign Batch 02 Utility V4 addendum: four utility/control/economy variants changed under V4 (`arcano_acelerar_lvl3`, `arcano_vortice`, `arcano_vortice_lvl2`, `necro_colheita_das_almas`); compare passed with 4 changed battle records, 7 metric/effect deltas, zero structural errors/status changes, and Scenario/Run Lab unchanged.
   - Player Card Redesign Batch 02 addendum: six core player upgrades changed under V3 (`arcano_acelerar_lvl2`, `arcano_bola_de_fogo_lvl2`, `invocador_batedor_lvl2`, `invocador_guardiao_lvl2`, `necro_prender_lvl3`, `necro_zumbi_lvl2`); compare passed with 14 metric deltas, 13 effect deltas, zero structural errors/status changes, and macro gates unchanged.
-  - Priority/status: `P0_IMPLEMENTACAO`
+  - Priority/status: `PAUSADO_TEMPORARIO`
   - Local agent guide: `draxos-roguelike-cardgame/AGENTS.md`
   - Operational status: `draxos-roguelike-cardgame/implementation/current-status.md`
   - AutoRun Lab: `draxos-roguelike-cardgame/docs/autorun-lab.md`
   - Design Lab: `draxos-roguelike-cardgame/docs/design-lab.md`
   - Validation command: `draxos-roguelike-cardgame/tools/validate.gd`
-  - Allowed work: code, validation, playtest, local documentation.
-  - Current next step: author player/enemy card and mechanic ideas as Design Lab proposal packs, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab gates before full-run feel playtests.
+  - Allowed work: historical/contextual consultation or explicit resume request only while the temporary JogoDaCopa focus is active.
+  - Current next step: resume in a few days when the temporary JogoDaCopa focus ends; the Design Lab content plan remains preserved.
 
 - `FpsPlayground/`: independent PC Windows editor-first Godot 4.6.2 FPS laboratory with a light Draxos visual theme. Created by splitting the former `FpsShooter/FPS Playground`; it now keeps only the Arena Shooter branch: `Duel Pit V2`, rifle hitscan, RMB Plasma Bolt, Health Shard/Overcharge, jump pads, vertical-aware bot, route/LOS HUD, synthetic feedback and no active void/fall zones. The project opens in a focused menu with `Arena Shooter` and `Sair`.
-  - Priority/status: `P2_IMPLEMENTACAO - FPS_PLAYGROUND_PROJECT_SPLIT_FOUNDATION_COMPLETE`
+  - Priority/status: `PAUSADO_TEMPORARIO - FPS_PLAYGROUND_PROJECT_SPLIT_FOUNDATION_COMPLETE`
   - Local agent guide: `FpsPlayground/AGENTS.md`
   - Operational status: `FpsPlayground/implementation/current-status.md`
   - Work plan: `FpsPlayground/docs/work-plan.md`
   - Reuse map: `FpsPlayground/docs/reuse-map.md`
   - Validation reference: `FpsPlayground/docs/validation.md`
   - Validation command: `FpsPlayground/tools/validate.gd`
-  - Allowed work: code, validation, editor playtest and local documentation.
-  - Current next step: editor regression playtest focused on Arena Shooter after the split.
+  - Allowed work: historical/contextual consultation or explicit resume request only while the temporary JogoDaCopa focus is active.
+  - Current next step: resume in a few days when the temporary JogoDaCopa focus ends; editor regression playtest focused on Arena Shooter remains preserved.
 
 - `JogoDaCopa/`: independent PC Windows editor-first Godot 4.6.2 football/minigames project. Created by splitting the accepted football branch out of the former FPS Playground; the initial playable mode is `Futebol`: 1x1 against a bot, no weapons, paused `Como Jogar`/`Comecar` intro, LMB kick, RMB strong kick, arcade loose `RigidBody3D` ball, festive primitive stadium, fully closed goal interiors, score to 3 goals, football HUD and kick/goal feedback, runtime primitive humanoid avatars for player/bot, memory-only skin tone selection, country-inspired shirt kit selection, basic procedural animation states, third-person chase camera with visible local avatar/body-forward kicks, lightweight close possession, dribble nudges, near-front kick assist, dynamic ball focus and improved bot attack approach behind the ball.
-  - Priority/status: `P2_IMPLEMENTACAO - JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE`
+  - Priority/status: `P2_IMPLEMENTACAO - FOCO_TEMPORARIO_UNICO - JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE`
   - Local agent guide: `JogoDaCopa/AGENTS.md`
   - Operational status: `JogoDaCopa/implementation/current-status.md`
   - Work plan: `JogoDaCopa/docs/work-plan.md`
@@ -49,12 +56,12 @@ This directory contains active, conceptual and paused projects for the studio.
   - Validation reference: `JogoDaCopa/docs/validation.md`
   - Validation command: `JogoDaCopa/tools/validate.gd`
   - Allowed work: code, design, validation, editor playtest and local documentation.
-  - Current next step: editor playtest focused on Futebol and selection of the next minigame/gameplay track.
+  - Current next step: immediate studio focus on Futebol editor playtest and selection of the next minigame/gameplay track.
 
-## Implementacao - Arena PVE Inicial
+## Implementacao Pausada Temporariamente - Arena PVE Inicial
 
 - `draxos-mobile/`: mobile-first Draxos PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression. Platforms: Android app, PC executable and PC browser. Backend alpha: Supabase, with Backend Proprio + Postgres as the preferred long-term exit path. The latest remote Internal Alpha package is `Bosque Overlay Layer And Readiness Authority v1` from 2026-06-10. Release root: `internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c`; official Portal URL: `https://draxos-mobile-internal-alpha.pages.dev/`; direct Web URL: `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`; deployment evidence: `https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev`. The package bumps APK/manifest to `0.0.23-alpha.0` / version code `23`, keeps minimum supported version code `13`, deploys `release`, and keeps the Bosque alive and visible behind Arena/Base/Shop/Social/Profile overlays while world input is paused, Arena active/replay renders fullscreen above the menu panel, global confirmations stay topmost and server-backed menus expose readiness. Bosque Arena Abandon Recovery Authority v1 remains the previous Arena abandon recovery package. Bosque Overlay Menu Action Authority v1 remains the previous internal-menu-button package. Bosque Overlay Navigation Hotfix v1 remains the previous interaction hotfix package. Bosque Persistent Overlay Shell v1 remains the previous overlay package. Bosque Diegetic Launcher Foundation v1 remains the previous launcher package. Arena PVE Bonus Visual v1 remains the previous Arena package. Bosque Node Cooldown ACK v1 remains the previous Bosque persistence/spawn package. Bosque Resume Exit Lifecycle v1 remains the previous resume/exit package. Bosque Feel & Spawn Authority v1 remains the previous feel/spawn package. Bosque Persistence Rebase v1 remains the previous persistence/operations package. Track 13 release safety and Track 14 agent ops remain preserved operational baselines. Remote Web launch smoke and remote overlay interaction smoke passed; preview loaded the game with release root matched and no runtime errors. Stable Portal/Web are Cloudflare Access protected. Android APK uses `debug_fallback`, accepted for playtest while release signing is deferred to broader Android distribution.
-  - Priority/status: `P2_IMPLEMENTACAO - BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
+  - Priority/status: `PAUSADO_TEMPORARIO - BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
   - Canonical local base for new work after integration: updated `main`; branch mode work from a dedicated worktree using `docs/multi-agent-workflow.md`.
   - Current published package: `Bosque Overlay Layer And Readiness Authority v1`, release root `internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c`, preview `https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev`; adds explicit overlay layers, Arena fullscreen topmost above the menu, global modal authority, route readiness diagnostics and real Web/canvas smoke coverage, pauses world input behind overlays, version code `23`, Web/APK new package and redeployed `release`. Previous Arena abandon recovery package: Bosque Arena Abandon Recovery Authority v1, release root `internal-alpha/v0-bosque-arena-abandon-recovery-authority-v1-20260610-a252241`, preview `https://b149da8f.draxos-mobile-internal-alpha.pages.dev`. Previous interactive-controls package: Bosque Overlay Interactive Controls Authority v1, release root `internal-alpha/v0-bosque-overlay-interactive-controls-authority-v1-20260609-d3be1fb`, preview `https://9461e4be.draxos-mobile-internal-alpha.pages.dev`. Previous internal-menu-button package: Bosque Overlay Menu Action Authority v1, release root `internal-alpha/v0-bosque-overlay-menu-action-authority-v1-20260609-aa9402d`, preview `https://5f04e6ae.draxos-mobile-internal-alpha.pages.dev`. Previous interaction hotfix package: Bosque Overlay Navigation Hotfix v1, release root `internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-9b93e5d`, preview `https://92cc0579.draxos-mobile-internal-alpha.pages.dev`. Previous overlay package: Bosque Persistent Overlay Shell v1, release root `internal-alpha/v0-bosque-persistent-overlay-shell-v1-20260609-d05081c`, preview `https://a53c1d27.draxos-mobile-internal-alpha.pages.dev`. Previous launcher package: Bosque Diegetic Launcher Foundation v1, release root `internal-alpha/v0-bosque-diegetic-launcher-foundation-v1-20260609-e55ed0c`, preview `https://56b58162.draxos-mobile-internal-alpha.pages.dev`. Previous bootstrap package: Bosque Bootstrap Authority v1, release root `internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70`, preview `https://0123894f.draxos-mobile-internal-alpha.pages.dev`. Previous Arena package: Arena PVE Bonus Visual v1, release root `internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63`, preview `https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev`. Previous Bosque package: Bosque Node Cooldown ACK v1, release root `internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad`, preview `https://5cce952e.draxos-mobile-internal-alpha.pages.dev`. Previous resume/exit package: Bosque Resume Exit Lifecycle v1, release root `internal-alpha/v0-bosque-resume-exit-lifecycle-v1-20260608-9a0f7c0`, preview `https://39128c59.draxos-mobile-internal-alpha.pages.dev`. Previous feel/spawn package: Bosque Feel & Spawn Authority v1, release root `internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-70b79c3`, preview `https://16ac3cb7.draxos-mobile-internal-alpha.pages.dev`. Previous persistence/operations package: Bosque Persistence Rebase v1, release root `internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74`, preview `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev`.
   - Local agent guide: `draxos-mobile/AGENTS.md`
@@ -91,8 +98,8 @@ This directory contains active, conceptual and paused projects for the studio.
   - Progression Lab: `draxos-mobile/docs/progression-lab/README.md`
   - Battle Lab: `draxos-mobile/docs/battle-lab/README.md`
   - Design archive: `_conceitos/mobile-universe/`
-  - Allowed work: code, design, documentation, infrastructure setup.
-  - Current next step: focused human playtest of the published Bosque Overlay Layer And Readiness Authority v1 Web/APK package, especially Arena fullscreen without menu clipping, global modal/topmost behavior, menu readiness, Social typing/actions, Shop confirmation and Arena resume/abandon; future bugs return to the normal bugfix flow if they appear.
+  - Allowed work: historical/contextual consultation or explicit resume request only while the temporary JogoDaCopa focus is active.
+  - Current next step: resume in a few days when the temporary JogoDaCopa focus ends; focused human playtest of the published Bosque Overlay Layer And Readiness Authority v1 Web/APK package remains preserved.
 
 ## Arquivo De Design
 
@@ -120,9 +127,10 @@ This directory contains active, conceptual and paused projects for the studio.
 
 ## Project Disambiguation
 
-- Use `draxos-roguelike-cardgame/` for the current P0 implementation focus: roguelike cardgame, ship hub, run map, complete-run route, Souls, relics, keyword engine, enemy intent and lane battles.
-- Use `draxos-mobile/` for DraxosMobile implementation: Godot mobile/PC/browser client, Supabase, Arena PVE-first async autobattler, Base, later PVP/social, Internal Alpha, release ops, validation and agent foundation.
-- Use `FpsPlayground/` for the independent FPS laboratory: PC Windows editor-first, first-person controller, arena 1x1, bot shooter, hitscan, knockback, jump pads/platforms/void in future shooter tracks, and light Draxos visual theme only. `FpsShooter` is a legacy name and should route here unless the request is about football/Copa.
+- Temporary override: while the JogoDaCopa focus is active, use `JogoDaCopa/` for implementation, design, validation and playtest work unless the user explicitly asks to resume another project.
+- Use `draxos-roguelike-cardgame/` only for historical/contextual consultation or explicit resume while the temporary JogoDaCopa focus is active: roguelike cardgame, ship hub, run map, complete-run route, Souls, relics, keyword engine, enemy intent and lane battles.
+- Use `draxos-mobile/` only for historical/contextual consultation or explicit resume while the temporary JogoDaCopa focus is active: Godot mobile/PC/browser client, Supabase, Arena PVE-first async autobattler, Base, later PVP/social, Internal Alpha, release ops, validation and agent foundation.
+- Use `FpsPlayground/` only for historical/contextual consultation or explicit resume while the temporary JogoDaCopa focus is active: PC Windows editor-first, first-person controller, arena 1x1, bot shooter, hitscan, knockback, jump pads/platforms/void in future shooter tracks, and light Draxos visual theme only. `FpsShooter` is a legacy name and should route here unless the request is about football/Copa.
 - Use `JogoDaCopa/` for the independent football/minigames project: PC Windows editor-first, Futebol, Copa, third-person football, ball physics, goals, shirts/countries, bot football and future football minigames.
 - Use `_conceitos/mobile-universe/` only as design reference for DraxosMobile.
 - Use `rpg-isometrico/` only for explicit historical/contextual consultation about the isometric action RPG.
@@ -139,6 +147,8 @@ Before working in a project, read:
 3. this registry
 4. the relevant section of `../08_Coordenacao_Agentes/Estado_Atual.md`
 5. the target project's local `AGENTS.md` and current status if the portfolio status allows the requested work
+
+While the temporary JogoDaCopa focus is active, default unspecified implementation/design/validation/playtest work to `JogoDaCopa/`; treat `draxos-roguelike-cardgame/`, `draxos-mobile/` and `FpsPlayground/` as paused unless explicitly resumed by the user.
 
 Multi-agent default:
 

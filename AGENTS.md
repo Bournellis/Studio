@@ -7,10 +7,10 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `08_Coordenacao_Agentes/Prioridades_Estudio.md` is the portfolio source of truth for focus, priority, project status, and allowed work.
 - `08_Coordenacao_Agentes/Painel_Visual_Estudio.html` is the human-facing local dashboard for the same portfolio state.
 - `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
-- `Projetos/draxos-roguelike-cardgame/` is the current P0 implementation workspace for the menu-first Draxos roguelike cardgame.
-- `Projetos/draxos-mobile/` is the P2 implementation workspace for DraxosMobile - PVE Arena-first async autobattler, base manager, later PVP, social; Godot 4.6.2 + Supabase; Android + PC + PC browser. Current operational stage: `BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`; the latest remote Internal Alpha package is Bosque Overlay Layer And Readiness Authority v1 (`internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c`, preview evidence `https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev`, official URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, APK/manifest `0.0.23-alpha.0`/version code `23`, minimum supported code `13`), preserving the persistent overlay shell while adding explicit menu/Arena/modal/diagnostics layers, Arena active/replay fullscreen above the menu panel, global topmost confirmations and route readiness for server-backed menus. The next operational step is focused human playtest of the published Web/APK package; future bugs return to the normal bugfix flow if they appear. Bosque Arena Abandon Recovery Authority v1 remains the previous Arena abandon recovery package; Bosque Overlay Interactive Controls Authority v1 remains the previous interactive-controls package; Bosque Overlay Menu Action Authority v1 remains the previous internal-menu-button package; Bosque Overlay Interaction Authority v1 remains the previous close/back package; Bosque Overlay Navigation Hotfix v1 remains the previous interaction hotfix package; Bosque Persistent Overlay Shell v1 remains the previous overlay package; Bosque Diegetic Launcher Foundation v1 remains the previous launcher package; Bosque Bootstrap Authority v1 remains the previous bootstrap package, Arena PVE Bonus Visual v1 remains the previous Arena package, and Bosque Node Cooldown ACK v1 remains the previous Bosque persistence/spawn package, followed by Bosque Resume Exit Lifecycle v1, Bosque Feel & Spawn Authority v1, Bosque Persistence Rebase v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque World Hub Domain Separation v1, Bosque Fogueira Potion Crafting v1, Bosque Durable Bau Mochila v1, Arena PVE Menu Flow Simplification v1, Bosque Offline-First Checkpoint v1, Bosque Sync Responsiveness v1, Arena/Bosque Visible V2, Arena/Bosque Regression Hotfix, Arena PVE Season 1 Loop v1 and the earlier Internal Alpha lineage.
-- `Projetos/FpsPlayground/` is a P2 implementation tech probe for PC Windows editor-first FPS experiments in Godot 4.6.2. It preserves the Arena Shooter baseline from the former FpsShooter/FPS Playground work and is independent from the Draxos product projects, with only a light Draxos visual theme allowed. Current stage: `FPS_PLAYGROUND_PROJECT_SPLIT_FOUNDATION_COMPLETE`; next step is editor regression playtest of Arena Shooter after the split.
-- `Projetos/JogoDaCopa/` is a P2 implementation project for PC Windows editor-first football minigames in Godot 4.6.2. It starts from the accepted third-person 1x1 football mode and is separate from the FPS laboratory. Current stage: `JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE`; next step is editor playtest of Futebol and planning the next football minigame/gameplay track.
+- `Projetos/JogoDaCopa/` is the temporary sole implementation focus for the studio. It is a PC Windows editor-first football minigames project in Godot 4.6.2. Current stage: `JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE`; next step is editor playtest of Futebol and planning the next football minigame/gameplay track.
+- `Projetos/draxos-roguelike-cardgame/` is temporarily paused for a few days while the studio focuses on JogoDaCopa. Preserve its P0 baseline and only consult or resume it when the user explicitly asks.
+- `Projetos/draxos-mobile/` is temporarily paused for a few days while the studio focuses on JogoDaCopa. Current preserved operational stage: `BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`; only consult or resume it when the user explicitly asks.
+- `Projetos/FpsPlayground/` is temporarily paused for a few days while the studio focuses on JogoDaCopa. It preserves the Arena Shooter baseline from the former FpsShooter/FPS Playground work; only consult or resume it when the user explicitly asks.
 - DraxosMobile operational guard markers remain active: Track 13 validation/release safety and `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`.
 - `Projetos/_conceitos/mobile-universe/` is a design archive; it was promoted to `draxos-mobile/` on 2026-05-18 and is now read-only design reference.
 - `Projetos/rpg-isometrico/` is paused indefinitely and preserved for historical/contextual consultation.
@@ -54,17 +54,23 @@ Antes de abrir documentacao profunda de qualquer projeto, consulte:
 
 Use esses documentos para identificar se o pedido e sobre implementacao ativa, conceito, projeto pausado, canon compartilhado ou coordenacao do estudio.
 
-- Se o usuario nao citar projeto e pedir implementacao, validacao, playtest ou trabalho tecnico, assuma `Projetos/draxos-roguelike-cardgame/`.
+- Enquanto o foco temporario do JogoDaCopa estiver ativo, se o usuario nao citar projeto e pedir implementacao, design, validacao, playtest ou trabalho tecnico, assuma `Projetos/JogoDaCopa/`.
+- Enquanto o foco temporario do JogoDaCopa estiver ativo, trate `Projetos/draxos-roguelike-cardgame/`, `Projetos/draxos-mobile/` e `Projetos/FpsPlayground/` como pausados temporariamente, salvo pedido explicito de retomada ou consulta historica.
 - Projetos com `P0_IMPLEMENTACAO` podem receber codigo, validacao, playtest e documentacao local por padrao.
 - Projetos com `P2_IMPLEMENTACAO` podem receber codigo, design, documentacao local e configuracao de infraestrutura por padrao.
 - Projetos com `P1_CONCEITO` permitem somente conceito, pitch, design, referencias e documentacao conceitual.
 - Projetos com `ARQUIVO_DESIGN` permitem apenas leitura e referencia de design - nao criar codigo, cenas ou assets.
+- Projetos com `PAUSADO_TEMPORARIO` devem ser ignorados por padrao durante o foco temporario atual; permitem somente consulta historica ou retomada explicita do usuario.
 - Projetos com `PAUSADO_INDEFINIDO` nao devem receber implementacao, expansao de escopo, novas gates ou selecao de track sem pedido explicito do usuario.
 - Ao concluir qualquer tarefa que mude status observavel, atualize `Prioridades_Estudio.md`, `Estado_Atual.md` e o registro relevante em `Projetos/README.md`.
 
 ## Project Selection Gate
 
 Depois do Portfolio Gate, escolha o projeto alvo usando o pedido do usuario, `Prioridades_Estudio.md`, `Projetos/README.md` e `Estado_Atual.md`.
+
+Regra temporaria ativa: se o pedido for de implementacao, design, validacao, playtest ou trabalho tecnico e nao pedir explicitamente retomada de outro projeto, use `Projetos/JogoDaCopa/`.
+
+Enquanto essa regra temporaria estiver ativa, as rotas para `draxos-roguelike-cardgame`, `draxos-mobile` e `FpsPlayground` abaixo so liberam implementacao quando o usuario pedir explicitamente para retomar esse projeto; caso contrario, use-as apenas para consulta historica.
 
 - Se o usuario citar `draxos-roguelike-cardgame`, `Draxos roguelike`, `roguelike cardgame`, `ship hub`, `run map`, `mapa de run`, `29 mapas`, `10 mapas legado`, `almas`, `classe no hub`, `rota completa`, `sacrificio`, `Cinzas` ou `batalhas por lanes`, use `Projetos/draxos-roguelike-cardgame/`.
 - Se o usuario citar `draxos-mobile`, `DraxosMobile`, `Draxos mobile`, `Bosque Node Cooldown ACK v1`, `BOSQUE_NODE_COOLDOWN_ACK_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Resume Exit Lifecycle v1`, `BOSQUE_RESUME_EXIT_LIFECYCLE_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Feel & Spawn Authority v1`, `BOSQUE_FEEL_SPAWN_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Persistence Rebase v1`, `BOSQUE_PERSISTENCE_REBASE_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Session Lifecycle & Durable Structures Hotfix v1`, `BOSQUE_SESSION_LIFECYCLE_STRUCTURES_HOTFIX_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque World Hub Domain Separation v1`, `BOSQUE_WORLD_HUB_DOMAIN_SEPARATION_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Fogueira Potion Crafting v1`, `BOSQUE_FOGUEIRA_POTION_CRAFTING_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Durable Bau Mochila v1`, `BOSQUE_DURABLE_BAU_MOCHILA_V1_PUBLISHED_INTERNAL_ALPHA`, `Arena PVE Menu Flow Simplification v1`, `ARENA_PVE_MENU_FLOW_SIMPLIFICATION_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque`, `Bosque Offline-First Checkpoint v1`, `BOSQUE_OFFLINE_FIRST_CHECKPOINT_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Sync Responsiveness v1`, `BOSQUE_SYNC_RESPONSIVENESS_V1_PUBLISHED_INTERNAL_ALPHA`, `Arena/Bosque Visible V2`, `ARENA_BOSQUE_VISIBLE_V2_PUBLISHED_INTERNAL_ALPHA`, `Arena/Bosque Regression Hotfix`, `ARENA_BOSQUE_REGRESSION_HOTFIX_PUBLISHED_INTERNAL_ALPHA`, `Bosque v3 UX/Feel`, `BOSQUE_V3_UX_FEEL_PUBLISHED_INTERNAL_ALPHA`, `Openworld`, `BOSQUE_MECANICO_BASICO_V2_PUBLISHED_INTERNAL_ALPHA`, `autobattler`, `base manager`, `Arena PVE`, `ARENA_PVE_SEASON1_LOOP_V1_PUBLISHED_INTERNAL_ALPHA`, `Arena PVE Season 1 Loop v1`, `ARENA_PVE_FIRST_REAL_RUN_PUBLISHED_INTERNAL_ALPHA`, `Arena PVE First Real Run`, `Track 23`, `FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`, `Foundation Hardening V2`, `HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA`, `Hardening Platform V1`, `REMOTE_LAB_RUNNER_PUBLISHED_INTERNAL_ALPHA`, `LAB_WEB_EXPORT_GUARD_PUBLISHED_INTERNAL_ALPHA`, `ARENA_CONSISTENCY_PASS_PUBLISHED_INTERNAL_ALPHA`, `ARENA_CONSISTENCY_PASS_IMPLEMENTED_LOCAL`, `PVE_ARENA_INITIAL_PUBLISHED_INTERNAL_ALPHA`, `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, `PVP assincrono`, `Supabase`, `Foundation Final Polish`, `Foundation Closeout`, `FOUNDATION_FINAL_POLISH_DELIVERED`, `Foundation Audit`, `FOUNDATION_AUDIT_ACTIVE`, `Foundation Loop UX Pass`, `loop pos-login`, `Track 00`, `Track 04`, `Track 11`, `Track 13`, `Track 14`, `Track 15`, `Track 16`, `Track 17`, `Track 18`, `Track 19`, `Track 21`, `Agent Operating Manual`, `documentation-index`, `primeiro slice mobile`, `guilda`, `conta guest`, `matchmaking por poder`, `Progression Lab humano`, `Battle Lab`, `account_profiles`, `game_saves`, `Hub modularization`, `release artifacts`, `release safety`, `Cloudflare Access` ou `simulacao no servidor`, use `Projetos/draxos-mobile/`.
@@ -126,14 +132,17 @@ Nao trate RPGMobile ou BattleMobile como projetos Godot oficiais ate que recebam
 
 Implementacoes Godot vivem sob `Projetos/`.
 
-Projetos Godot ativos:
+Projetos Godot ativos durante o foco temporario:
 
-- `Projetos/draxos-roguelike-cardgame/` - P0, Steam, roguelike cardgame
-- `Projetos/draxos-mobile/` - P2, mobile + PC + browser, Godot 4.6.2 + Supabase (`BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`; proximo passo e playtest humano do pacote publicado, validando landmarks/prompts do Bosque, Arena fullscreen acima do menu sem corte lateral, modal global/topmost, prontidao `refreshing -> ready` dos menus, Social/Shop/Arena dentro do overlay e retorno via `Fechar`, `Voltar` e Esc sem rebootstrap)
-- `Projetos/FpsPlayground/` - P2 tech probe, PC Windows editor-first FPS 3D em Godot 4.6.2 (`FPS_PLAYGROUND_PROJECT_SPLIT_FOUNDATION_COMPLETE`; proximo passo e playtest humano/regressao do Arena Shooter no `Duel Pit V2`, sem export/Web/mobile/multiplayer)
 - `Projetos/JogoDaCopa/` - P2 tech probe, PC Windows editor-first futebol/minigames 3D em Godot 4.6.2 (`JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE`; proximo passo e playtest humano do modo `Futebol`, 1x1 contra bot em terceira pessoa, sem export/Web/mobile/multiplayer)
 
-Projetos Godot pausados:
+Projetos Godot pausados temporariamente:
+
+- `Projetos/draxos-roguelike-cardgame/`
+- `Projetos/draxos-mobile/`
+- `Projetos/FpsPlayground/`
+
+Projetos Godot pausados por tempo indeterminado:
 
 - `Projetos/rpg-isometrico/`
 - `Projetos/rpg-turnos/`
