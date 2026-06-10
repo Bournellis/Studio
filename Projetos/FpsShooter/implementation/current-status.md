@@ -1,10 +1,10 @@
 # FpsShooter - Current Status
 
-- Last updated: `2026-06-09`
+- Last updated: `2026-06-10`
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS 3D tech probe`
-- Active stage: `Track 02A - Plasma Damage Hotfix V1`
+- Active stage: `Track 03A - Vertical Arena And Fall Pressure V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -20,22 +20,23 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - Local 1x1 arena against a bot.
 - Player movement, mouse look, jump, hitscan shot and combat-readable knockback.
 - Secondary `Plasma Bolt` alt-fire on RMB with visible slow projectile, crosshair-aligned damage, stronger knockback and cooldown.
-- Runtime pickups: health shard and overcharge.
+- Runtime pickups: elevated health shard and overcharge.
 - Fair bot baseline with vertical-aware line of sight.
 - Bot tactical awareness for health pickup, overcharge contest and visible plasma dodge.
 - Bot pressure tuning: ready shots interrupt pickup routes and health pickup is a survival/rotation choice instead of the default concern.
 - Bot simple jump support for raised reposition goals and low navigation blockers.
-- `Duel Pit V1` arena layout with protected spawns, low/high cover, side platforms and ramps.
+- Bot awareness for jump-pad routes and fall-zone danger.
+- `Duel Pit V2` arena layout with protected spawns, low/high cover, side platforms, ramps, high platforms, jump pads and void/fall pressure.
 - HUD, round state and bidirectional feel/feedback.
 - No export, Web, mobile, multiplayer or online/backend scope.
 
 ## Active Goal
 
-`Track 02A - Plasma Damage Hotfix V1` is complete. The expanded duel loop remains the accepted baseline, now with RMB Plasma Bolt damage aligned to the player's crosshair from the offset muzzle.
+`Track 03A - Vertical Arena And Fall Pressure V1` is complete. The duel loop now includes the first vertical arena contract: jump pads to high pickups/platforms, void/fall penalty, safe recovery and bot awareness for vertical routes and danger zones.
 
 ## Current Gate
 
-Closed for the Plasma Damage Hotfix. Run the 5-minute editor smoke focused on RMB Plasma Bolt damage/knockback reliability, rifle vs Plasma Bolt choice, pickup readability, overcharge clarity, bot shot pressure before health routes, bot jump readability and whether the expanded loop feels fair.
+Closed for Track 03A. Run the 5-minute editor smoke focused on `Duel Pit V2`, jump pad readability, elevated pickups, void/fall penalty, knockback into hazards, bot use of vertical routes and whether the expanded arena still preserves the accepted duel feel.
 
 ## Validation Snapshot
 
@@ -139,6 +140,17 @@ Track 02A Plasma Damage Hotfix V1:
 - tests now cover both overcharged Plasma Bolt damage/strong knockback and a real `request_alt_fire()` body-edge hit from the offset muzzle;
 - validation passes `30/30` GUT tests with `253` asserts.
 
+Track 03A Vertical Arena And Fall Pressure V1:
+
+- arena promoted to `Duel Pit V2` with two high duel platforms above the previous side routes;
+- Health Shard and Overcharge moved to elevated platform objectives;
+- two runtime jump pads launch player and bot toward the high platforms with primitive glow/light/audio feedback;
+- two void/fall zones apply damage, HUD/feedback pulses and safe recovery to spawn-side positions;
+- falling below world floor uses the same fall penalty path;
+- player and bot have explicit jump-pad launch support plus movement impulse reset hooks for recovery;
+- bot receives jump-pad route data and fall-zone awareness, routes high reposition goals through pads and avoids danger centers during movement scoring;
+- validation passes `35/35` GUT tests with `294` asserts.
+
 ## Read Next
 
 1. `AGENTS.md`
@@ -153,3 +165,4 @@ Track 02A Plasma Damage Hotfix V1:
 10. `implementation/tracks/track-02a-combat-loop-expansion-v1/current-status.md`
 11. `implementation/tracks/track-02a-bot-pressure-jump-hotfix-v1/current-status.md`
 12. `implementation/tracks/track-02a-plasma-damage-hotfix-v1/current-status.md`
+13. `implementation/tracks/track-03a-vertical-arena-fall-pressure-v1/current-status.md`

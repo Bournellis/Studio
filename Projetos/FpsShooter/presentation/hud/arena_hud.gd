@@ -33,6 +33,8 @@ var miss_count: int = 0
 var player_damage_count: int = 0
 var alt_fire_count: int = 0
 var pickup_count: int = 0
+var jump_pad_count: int = 0
+var fall_penalty_count: int = 0
 var last_damage_amount: float = 0.0
 var last_round_end_player_won: bool = false
 
@@ -107,6 +109,19 @@ func show_pickup(pickup_kind: StringName) -> void:
 	pickup_count += 1
 	var message := "HEALTH +%.0f" % 28.0 if pickup_kind == &"health" else "OVERCHARGE READY"
 	_set_event_message(message, 0.58)
+
+func show_jump_pad() -> void:
+	last_feedback = &"jump_pad"
+	jump_pad_count += 1
+	plasma_feedback_time = 0.16
+	_set_event_message("JUMP PAD", 0.42)
+
+func show_fall_penalty(amount: float, for_player: bool) -> void:
+	last_feedback = &"fall"
+	fall_penalty_count += 1
+	damage_feedback_time = 0.32 if for_player else damage_feedback_time
+	var message := "VOID -%.0f" % amount if for_player else "BOT VOID"
+	_set_event_message(message, 0.68)
 
 func show_round_end(player_won: bool) -> void:
 	last_feedback = &"round_end"

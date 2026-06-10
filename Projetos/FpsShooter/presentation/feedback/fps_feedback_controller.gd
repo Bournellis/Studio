@@ -10,6 +10,8 @@ const DAMAGE_COLOR: Color = Color(1.0, 0.14, 0.08, 1.0)
 const PLASMA_COLOR: Color = Color(0.38, 0.98, 1.0, 1.0)
 const OVERCHARGE_COLOR: Color = Color(0.78, 0.46, 1.0, 1.0)
 const HEALTH_COLOR: Color = Color(0.38, 1.0, 0.52, 1.0)
+const JUMP_PAD_COLOR: Color = Color(0.18, 0.78, 1.0, 1.0)
+const VOID_COLOR: Color = Color(0.95, 0.22, 0.72, 1.0)
 
 var active_effects: Array[Dictionary] = []
 var last_event: StringName = &""
@@ -26,6 +28,8 @@ var plasma_shot_count: int = 0
 var plasma_hit_count: int = 0
 var plasma_miss_count: int = 0
 var pickup_count: int = 0
+var jump_pad_count: int = 0
+var fall_penalty_count: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -103,6 +107,23 @@ func play_pickup(pickup_position: Vector3, pickup_kind: StringName) -> void:
 	_spawn_sphere(pickup_position, 0.28, color, 0.16, true)
 	_spawn_light(pickup_position, color, 2.9, 2.6, 0.15)
 	_spawn_tone(pickup_position, 920.0 if pickup_kind == &"health" else 1040.0, 0.08, -10.0)
+
+func play_jump_pad(pad_position: Vector3, launch_velocity: Vector3) -> void:
+	last_event = &"jump_pad"
+	jump_pad_count += 1
+	var launch_direction := launch_velocity.normalized() if launch_velocity.length_squared() > 0.0001 else Vector3.UP
+	_spawn_beam(pad_position + Vector3.UP * 0.1, pad_position + launch_direction * 1.8 + Vector3.UP * 0.75, JUMP_PAD_COLOR, 0.052, 0.16)
+	_spawn_sphere(pad_position + Vector3.UP * 0.16, 0.34, JUMP_PAD_COLOR, 0.18, true)
+	_spawn_light(pad_position + Vector3.UP * 0.25, JUMP_PAD_COLOR, 3.6, 3.4, 0.16)
+	_spawn_tone(pad_position, 980.0, 0.08, -10.0)
+
+func play_fall_penalty(effect_position: Vector3, for_player: bool) -> void:
+	last_event = &"fall_penalty"
+	fall_penalty_count += 1
+	var color := DAMAGE_COLOR if for_player else VOID_COLOR
+	_spawn_sphere(effect_position + Vector3.UP * 0.35, 0.44, color, 0.22, true)
+	_spawn_light(effect_position + Vector3.UP * 0.7, color, 4.2, 4.0, 0.22)
+	_spawn_tone(effect_position, 120.0 if for_player else 170.0, 0.12, -8.8)
 
 func play_bot_tell(origin: Vector3, target_position: Vector3, duration: float) -> void:
 	last_event = &"bot_tell"

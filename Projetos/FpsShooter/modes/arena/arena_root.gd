@@ -6,6 +6,7 @@ const BotController = preload("res://gameplay/bot/basic_duel_bot.gd")
 const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 
+const MAP_NAME: String = "Duel Pit V2"
 const FLOOR_SIZE: Vector3 = Vector3(30.0, 1.0, 30.0)
 const WALL_HEIGHT: float = 3.6
 const WALL_THICKNESS: float = 0.8
@@ -22,8 +23,22 @@ const PICKUP_RADIUS: float = 1.05
 const HEALTH_PICKUP_AMOUNT: float = 28.0
 const HEALTH_PICKUP_RESPAWN: float = 8.0
 const OVERCHARGE_PICKUP_RESPAWN: float = 12.0
-const HEALTH_PICKUP_POSITION: Vector3 = Vector3(-9.6, 1.42, -1.6)
-const OVERCHARGE_PICKUP_POSITION: Vector3 = Vector3(9.6, 1.42, 1.6)
+const HEALTH_PICKUP_POSITION: Vector3 = Vector3(-9.6, 3.55, -8.6)
+const OVERCHARGE_PICKUP_POSITION: Vector3 = Vector3(9.6, 3.55, 8.6)
+const JUMP_PAD_RADIUS: float = 1.25
+const JUMP_PAD_COOLDOWN: float = 0.64
+const JUMP_PAD_VERTICAL_SPEED: float = 8.4
+const JUMP_PAD_FORWARD_SPEED: float = 5.8
+const WEST_JUMP_PAD_POSITION: Vector3 = Vector3(-10.8, 0.08, -4.4)
+const WEST_JUMP_PAD_TARGET: Vector3 = Vector3(-9.6, 3.05, -8.6)
+const EAST_JUMP_PAD_POSITION: Vector3 = Vector3(10.8, 0.08, 4.4)
+const EAST_JUMP_PAD_TARGET: Vector3 = Vector3(9.6, 3.05, 8.6)
+const FALL_DAMAGE: float = 22.0
+const FALL_ZONE_TRIGGER_MAX_Y: float = 1.15
+const FALL_WORLD_Y: float = -3.2
+const FALL_RECOVERY_COOLDOWN: float = 0.85
+const PLAYER_FALL_RECOVERY_POSITION: Vector3 = PLAYER_SPAWN
+const BOT_FALL_RECOVERY_POSITION: Vector3 = BOT_SPAWN
 const BOT_REPOSITION_POINTS: Array[Vector3] = [
 	Vector3(-11.2, 0.05, 7.8),
 	Vector3(-10.8, 0.05, -7.2),
@@ -36,20 +51,34 @@ const BOT_REPOSITION_POINTS: Array[Vector3] = [
 	Vector3(10.8, 0.05, 7.2),
 	Vector3(11.2, 0.05, -7.8),
 	Vector3(-2.2, 0.05, 2.4),
-	Vector3(2.2, 0.05, -2.4)
+	Vector3(2.2, 0.05, -2.4),
+	Vector3(-9.6, 3.05, -8.6),
+	Vector3(-6.0, 3.05, -8.6),
+	Vector3(9.6, 3.05, 8.6),
+	Vector3(6.0, 3.05, 8.6),
+	WEST_JUMP_PAD_POSITION,
+	EAST_JUMP_PAD_POSITION
 ]
 
 var player
 var bot
 var hud
 var feedback
-var round_status: String = "Duel Pit V1"
+var round_status: String = MAP_NAME
 var round_ended: bool = false
 var menu_open: bool = false
 var projectile_root: Node3D
 var pickup_root: Node3D
 var active_projectiles: Array[Dictionary] = []
 var pickups: Dictionary = {}
+var jump_pads: Array[Dictionary] = []
+var fall_zones: Array[Dictionary] = []
+var player_fall_cooldown: float = 0.0
+var bot_fall_cooldown: float = 0.0
+var jump_pad_trigger_count: int = 0
+var fall_penalty_count: int = 0
+var last_fall_recovery_position: Vector3 = Vector3.ZERO
+var last_jump_pad_id: StringName = &""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -66,6 +95,8 @@ func _physics_process(delta: float) -> void:
 		return
 	_process_projectiles(delta)
 	_process_pickups(delta)
+	_process_jump_pads(delta)
+	_process_fall_zones(delta)
 	_update_bot_awareness()
 
 func _input(event: InputEvent) -> void:
@@ -85,7 +116,7 @@ func _input(event: InputEvent) -> void:
 
 func restart_round() -> void:
 	_set_menu_open(false)
-	round_status = "Duel Pit V1"
+	round_status = MAP_NAME
 	round_ended = false
 	player.global_position = PLAYER_SPAWN
 	player.rotation = Vector3.ZERO
@@ -99,6 +130,7 @@ func restart_round() -> void:
 		feedback.clear_effects()
 	_clear_projectiles()
 	_reset_pickups()
+	_reset_vertical_hazards()
 	_update_bot_awareness()
 	_capture_mouse_if_playing()
 
@@ -122,6 +154,48 @@ func debug_get_bot_reposition_points() -> Array[Vector3]:
 
 func debug_get_active_projectile_count() -> int:
 	return active_projectiles.size()
+
+func debug_get_jump_pad_count() -> int:
+	return jump_pads.size()
+
+func debug_get_jump_pad_position(index: int = 0) -> Vector3:
+	if index < 0 or index >= jump_pads.size():
+		return Vector3.ZERO
+	var pad: Dictionary = jump_pads[index]
+	return pad.get("position", Vector3.ZERO)
+
+func debug_get_jump_pad_target(index: int = 0) -> Vector3:
+	if index < 0 or index >= jump_pads.size():
+		return Vector3.ZERO
+	var pad: Dictionary = jump_pads[index]
+	return pad.get("target", Vector3.ZERO)
+
+func debug_get_jump_pad_trigger_count() -> int:
+	return jump_pad_trigger_count
+
+func debug_get_last_jump_pad_id() -> StringName:
+	return last_jump_pad_id
+
+func debug_get_fall_zone_count() -> int:
+	return fall_zones.size()
+
+func debug_get_fall_zone_center(index: int = 0) -> Vector3:
+	if index < 0 or index >= fall_zones.size():
+		return Vector3.ZERO
+	var zone: Dictionary = fall_zones[index]
+	return zone.get("center", Vector3.ZERO)
+
+func debug_get_fall_zone_size(index: int = 0) -> Vector2:
+	if index < 0 or index >= fall_zones.size():
+		return Vector2.ZERO
+	var zone: Dictionary = fall_zones[index]
+	return zone.get("size", Vector2.ZERO)
+
+func debug_get_fall_penalty_count() -> int:
+	return fall_penalty_count
+
+func debug_get_last_fall_recovery_position() -> Vector3:
+	return last_fall_recovery_position
 
 func debug_get_pickup_position(pickup_kind: StringName) -> Vector3:
 	var entry: Dictionary = pickups.get(pickup_kind, {})
@@ -172,6 +246,9 @@ func _configure_world() -> void:
 	_build_duel_pit_layout()
 
 func _build_duel_pit_layout() -> void:
+	jump_pads.clear()
+	fall_zones.clear()
+
 	_add_box("ArenaFloor", Vector3(0.0, -0.5, 0.0), FLOOR_SIZE, Color(0.13, 0.17, 0.23, 1.0))
 	var half := FLOOR_SIZE.x * 0.5
 	_add_box("NorthWall", Vector3(0.0, WALL_HEIGHT * 0.5, -half), Vector3(FLOOR_SIZE.x, WALL_HEIGHT, WALL_THICKNESS), Color(0.22, 0.28, 0.34, 1.0))
@@ -197,6 +274,14 @@ func _build_duel_pit_layout() -> void:
 	_add_box("EastPlatform", Vector3(9.6, 0.55, 1.6), Vector3(4.4, 1.1, 5.0), Color(0.18, 0.26, 0.33, 1.0))
 	_add_box("WestRamp", Vector3(-9.6, 0.52, 2.9), Vector3(4.4, 0.32, 4.8), Color(0.22, 0.38, 0.44, 1.0), Vector3(-12.0, 0.0, 0.0))
 	_add_box("EastRamp", Vector3(9.6, 0.52, -2.9), Vector3(4.4, 0.32, 4.8), Color(0.22, 0.38, 0.44, 1.0), Vector3(12.0, 0.0, 0.0))
+	_add_box("WestHighPlatform", Vector3(-8.0, 2.78, -8.6), Vector3(6.8, 0.58, 4.2), Color(0.16, 0.3, 0.39, 1.0))
+	_add_box("EastHighPlatform", Vector3(8.0, 2.78, 8.6), Vector3(6.8, 0.58, 4.2), Color(0.16, 0.3, 0.39, 1.0))
+	_add_visual_box("WestHighGuardMark", Vector3(-8.0, 3.12, -10.6), Vector3(6.2, 0.08, 0.18), Color(0.18, 0.72, 0.86, 1.0))
+	_add_visual_box("EastHighGuardMark", Vector3(8.0, 3.12, 10.6), Vector3(6.2, 0.08, 0.18), Color(0.18, 0.72, 0.86, 1.0))
+	_add_jump_pad(&"west_pad", "WestJumpPad", WEST_JUMP_PAD_POSITION, WEST_JUMP_PAD_TARGET)
+	_add_jump_pad(&"east_pad", "EastJumpPad", EAST_JUMP_PAD_POSITION, EAST_JUMP_PAD_TARGET)
+	_add_fall_zone(&"north_void", "NorthVoidWell", Vector3(0.0, 0.04, -9.6), Vector2(5.6, 2.8))
+	_add_fall_zone(&"south_void", "SouthVoidWell", Vector3(0.0, 0.04, 9.6), Vector2(5.6, 2.8))
 
 func _spawn_runtime() -> void:
 	var runtime_root := Node3D.new()
@@ -215,6 +300,8 @@ func _spawn_runtime() -> void:
 	bot.position = BOT_SPAWN
 	runtime_root.add_child(bot)
 	bot.set_reposition_points(_create_bot_reposition_points(runtime_root))
+	bot.set_jump_pad_routes(_get_jump_pad_routes())
+	bot.set_fall_zone_awareness(_get_fall_zone_centers())
 	bot.configure(player)
 	bot.shot_windup_started.connect(_on_bot_shot_windup_started)
 	bot.shot_feedback_requested.connect(_on_bot_shot_feedback_requested)
@@ -537,7 +624,7 @@ func _build_hud_snapshot() -> Dictionary:
 		"health_pickup_respawn": _get_pickup_respawn_remaining(&"health"),
 		"overcharge_pickup_available": debug_is_pickup_available(&"overcharge"),
 		"overcharge_pickup_respawn": _get_pickup_respawn_remaining(&"overcharge"),
-		"hint": "Click captures mouse | WASD move | Mouse look | LMB rifle | RMB plasma | Space jump | R restart | Esc menu"
+		"hint": "Click captures mouse | WASD move | Mouse look | LMB rifle | RMB plasma | Pads launch | Void hurts | R restart | Esc menu"
 	}
 
 func _build_pickups() -> void:
@@ -603,6 +690,101 @@ func _process_pickups(delta: float) -> void:
 		if bot != null:
 			_try_consume_pickup(pickup_kind, bot)
 
+func _process_jump_pads(delta: float) -> void:
+	for index in range(jump_pads.size()):
+		var pad: Dictionary = jump_pads[index]
+		pad["player_cooldown"] = maxf(0.0, float(pad.get("player_cooldown", 0.0)) - delta)
+		pad["bot_cooldown"] = maxf(0.0, float(pad.get("bot_cooldown", 0.0)) - delta)
+		if _try_trigger_jump_pad(pad, player, &"player"):
+			pad["player_cooldown"] = JUMP_PAD_COOLDOWN
+		if _try_trigger_jump_pad(pad, bot, &"bot"):
+			pad["bot_cooldown"] = JUMP_PAD_COOLDOWN
+		jump_pads[index] = pad
+
+func _try_trigger_jump_pad(pad: Dictionary, combatant, actor_id: StringName) -> bool:
+	if combatant == null or combatant.get("is_dead") == true:
+		return false
+	var cooldown_key := "player_cooldown" if actor_id == &"player" else "bot_cooldown"
+	if float(pad.get(cooldown_key, 0.0)) > 0.0:
+		return false
+	var pad_position: Vector3 = pad.get("position", Vector3.ZERO)
+	var flat_delta: Vector3 = combatant.global_position - pad_position
+	flat_delta.y = 0.0
+	if flat_delta.length() > JUMP_PAD_RADIUS:
+		return false
+	if combatant.global_position.y > pad_position.y + 1.1:
+		return false
+	var launch_velocity := _build_jump_pad_launch_velocity(pad)
+	if combatant.has_method("apply_jump_pad_launch"):
+		combatant.apply_jump_pad_launch(launch_velocity)
+	else:
+		combatant.apply_knockback(launch_velocity.normalized(), launch_velocity.length(), JUMP_PAD_VERTICAL_SPEED)
+	jump_pad_trigger_count += 1
+	last_jump_pad_id = pad.get("id", &"")
+	if hud != null and actor_id == &"player":
+		hud.show_jump_pad()
+	if feedback != null:
+		feedback.play_jump_pad(pad_position, launch_velocity)
+	return true
+
+func _build_jump_pad_launch_velocity(pad: Dictionary) -> Vector3:
+	var pad_position: Vector3 = pad.get("position", Vector3.ZERO)
+	var target_position: Vector3 = pad.get("target", pad_position + Vector3.FORWARD)
+	var flat := target_position - pad_position
+	flat.y = 0.0
+	if flat.length_squared() <= 0.0001:
+		flat = Vector3.FORWARD
+	return flat.normalized() * JUMP_PAD_FORWARD_SPEED + Vector3.UP * JUMP_PAD_VERTICAL_SPEED
+
+func _process_fall_zones(delta: float) -> void:
+	player_fall_cooldown = maxf(0.0, player_fall_cooldown - delta)
+	bot_fall_cooldown = maxf(0.0, bot_fall_cooldown - delta)
+	_try_apply_fall_penalty(player, &"player")
+	_try_apply_fall_penalty(bot, &"bot")
+
+func _try_apply_fall_penalty(combatant, actor_id: StringName) -> bool:
+	if combatant == null or combatant.get("is_dead") == true:
+		return false
+	if actor_id == &"player" and player_fall_cooldown > 0.0:
+		return false
+	if actor_id == &"bot" and bot_fall_cooldown > 0.0:
+		return false
+	if not _is_in_fall_hazard(combatant.global_position):
+		return false
+	var fall_position: Vector3 = combatant.global_position
+	fall_penalty_count += 1
+	combatant.take_damage(FALL_DAMAGE, &"void")
+	if hud != null:
+		hud.show_fall_penalty(FALL_DAMAGE, actor_id == &"player")
+	if feedback != null:
+		feedback.play_fall_penalty(fall_position, actor_id == &"player")
+	if actor_id == &"player":
+		player_fall_cooldown = FALL_RECOVERY_COOLDOWN
+	else:
+		bot_fall_cooldown = FALL_RECOVERY_COOLDOWN
+	if combatant.get("is_dead") == true:
+		return true
+	var recovery_position := PLAYER_FALL_RECOVERY_POSITION if actor_id == &"player" else BOT_FALL_RECOVERY_POSITION
+	last_fall_recovery_position = recovery_position
+	combatant.global_position = recovery_position
+	if combatant.has_method("clear_movement_impulses"):
+		combatant.clear_movement_impulses()
+	else:
+		combatant.velocity = Vector3.ZERO
+	return true
+
+func _is_in_fall_hazard(world_position: Vector3) -> bool:
+	if world_position.y < FALL_WORLD_Y:
+		return true
+	if world_position.y > FALL_ZONE_TRIGGER_MAX_Y:
+		return false
+	for zone: Dictionary in fall_zones:
+		var center: Vector3 = zone.get("center", Vector3.ZERO)
+		var size: Vector2 = zone.get("size", Vector2.ZERO)
+		if absf(world_position.x - center.x) <= size.x * 0.5 and absf(world_position.z - center.z) <= size.y * 0.5:
+			return true
+	return false
+
 func _try_consume_pickup(pickup_kind: StringName, combatant) -> bool:
 	if not pickups.has(pickup_kind) or combatant == null:
 		return false
@@ -652,6 +834,19 @@ func _reset_pickups() -> void:
 	for pickup_kind in pickups.keys():
 		_set_pickup_available(pickup_kind, true)
 
+func _reset_vertical_hazards() -> void:
+	player_fall_cooldown = 0.0
+	bot_fall_cooldown = 0.0
+	jump_pad_trigger_count = 0
+	fall_penalty_count = 0
+	last_fall_recovery_position = Vector3.ZERO
+	last_jump_pad_id = &""
+	for index in range(jump_pads.size()):
+		var pad: Dictionary = jump_pads[index]
+		pad["player_cooldown"] = 0.0
+		pad["bot_cooldown"] = 0.0
+		jump_pads[index] = pad
+
 func _get_pickup_respawn_duration(pickup_kind: StringName) -> float:
 	return HEALTH_PICKUP_RESPAWN if pickup_kind == &"health" else OVERCHARGE_PICKUP_RESPAWN
 
@@ -662,6 +857,8 @@ func _get_pickup_respawn_remaining(pickup_kind: StringName) -> float:
 func _update_bot_awareness() -> void:
 	if bot == null:
 		return
+	bot.set_jump_pad_routes(_get_jump_pad_routes())
+	bot.set_fall_zone_awareness(_get_fall_zone_centers())
 	bot.set_pickup_awareness(
 		debug_get_pickup_position(&"health"),
 		debug_is_pickup_available(&"health"),
@@ -697,6 +894,22 @@ func _get_nearest_player_projectile_to_bot() -> Dictionary:
 		return {}
 	return best_entry
 
+func _get_jump_pad_routes() -> Array[Dictionary]:
+	var routes: Array[Dictionary] = []
+	for pad: Dictionary in jump_pads:
+		routes.append({
+			"id": pad.get("id", &""),
+			"position": pad.get("position", Vector3.ZERO),
+			"target": pad.get("target", Vector3.ZERO)
+		})
+	return routes
+
+func _get_fall_zone_centers() -> Array[Vector3]:
+	var centers: Array[Vector3] = []
+	for zone: Dictionary in fall_zones:
+		centers.append(zone.get("center", Vector3.ZERO))
+	return centers
+
 func _get_player_visual_muzzle_origin(origin: Vector3, direction: Vector3) -> Vector3:
 	var shot_direction := direction.normalized()
 	var fallback_origin := origin + shot_direction * PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET
@@ -725,6 +938,85 @@ func _create_bot_reposition_points(parent: Node3D) -> Array[Vector3]:
 		marker.position = point
 		marker_root.add_child(marker)
 	return points
+
+func _add_jump_pad(pad_id: StringName, pad_name: String, pad_position: Vector3, target_position: Vector3) -> void:
+	var pad := Node3D.new()
+	pad.name = pad_name
+	pad.position = pad_position
+	add_child(pad)
+
+	var base_mesh := MeshInstance3D.new()
+	base_mesh.name = "PadSurface"
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(2.0, 0.12, 2.0)
+	base_mesh.mesh = mesh
+	base_mesh.position = Vector3(0.0, 0.04, 0.0)
+	base_mesh.material_override = _build_box_material(Color(0.04, 0.85, 1.0, 1.0), 1.75)
+	pad.add_child(base_mesh)
+
+	var core_mesh := MeshInstance3D.new()
+	core_mesh.name = "LaunchCore"
+	var core := BoxMesh.new()
+	core.size = Vector3(0.85, 0.18, 0.85)
+	core_mesh.mesh = core
+	core_mesh.position = Vector3(0.0, 0.18, 0.0)
+	core_mesh.material_override = _build_box_material(Color(0.95, 0.95, 1.0, 1.0), 2.2)
+	pad.add_child(core_mesh)
+
+	var light := OmniLight3D.new()
+	light.name = "JumpPadLight"
+	light.light_color = Color(0.18, 0.9, 1.0, 1.0)
+	light.light_energy = 0.65
+	light.omni_range = 4.5
+	light.position = Vector3(0.0, 0.55, 0.0)
+	pad.add_child(light)
+
+	jump_pads.append({
+		"id": pad_id,
+		"node": pad,
+		"position": pad_position,
+		"target": target_position,
+		"player_cooldown": 0.0,
+		"bot_cooldown": 0.0,
+	})
+
+func _add_fall_zone(zone_id: StringName, zone_name: String, zone_center: Vector3, zone_size: Vector2) -> void:
+	var zone := Node3D.new()
+	zone.name = zone_name
+	zone.position = zone_center
+	add_child(zone)
+
+	var mesh_instance := MeshInstance3D.new()
+	mesh_instance.name = "DangerSurface"
+	var mesh := BoxMesh.new()
+	mesh.size = Vector3(zone_size.x, 0.06, zone_size.y)
+	mesh_instance.mesh = mesh
+	mesh_instance.position = Vector3(0.0, 0.02, 0.0)
+	mesh_instance.material_override = _build_box_material(Color(0.18, 0.03, 0.18, 1.0), 1.55)
+	zone.add_child(mesh_instance)
+
+	var rim_mesh := BoxMesh.new()
+	rim_mesh.size = Vector3(zone_size.x + 0.35, 0.08, 0.18)
+	var rim_a := MeshInstance3D.new()
+	rim_a.name = "DangerRimA"
+	rim_a.mesh = rim_mesh
+	rim_a.position = Vector3(0.0, 0.11, zone_size.y * 0.5)
+	rim_a.material_override = _build_box_material(Color(0.95, 0.08, 0.52, 1.0), 1.9)
+	zone.add_child(rim_a)
+
+	var rim_b := MeshInstance3D.new()
+	rim_b.name = "DangerRimB"
+	rim_b.mesh = rim_mesh
+	rim_b.position = Vector3(0.0, 0.11, -zone_size.y * 0.5)
+	rim_b.material_override = _build_box_material(Color(0.95, 0.08, 0.52, 1.0), 1.9)
+	zone.add_child(rim_b)
+
+	fall_zones.append({
+		"id": zone_id,
+		"node": zone,
+		"center": zone_center,
+		"size": zone_size,
+	})
 
 func _add_box(node_name: String, box_position: Vector3, box_size: Vector3, color: Color, box_rotation_degrees: Vector3 = Vector3.ZERO) -> StaticBody3D:
 	var body := StaticBody3D.new()
