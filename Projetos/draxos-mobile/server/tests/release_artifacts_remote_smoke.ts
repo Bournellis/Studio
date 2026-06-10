@@ -38,7 +38,7 @@ assertEq(
 );
 assertEq(
   numberField(manifest, "latest_version_code"),
-  19,
+  20,
   "release manifest should expose the current version code",
 );
 assertEq(

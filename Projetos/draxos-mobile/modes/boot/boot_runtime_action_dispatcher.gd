@@ -45,6 +45,7 @@ func _execute_action(action_id: String) -> void:
 	var endpoint := str(route.get("mutation_endpoint", "")).strip_edges()
 	if _action_scope_is_busy(scope):
 		return
+	_record_web_action_input(action)
 	_active_action_id = action
 	_active_action_scope = scope
 	if endpoint != "" and _shell_overlay_is_open():
@@ -238,6 +239,19 @@ func _execute_action(action_id: String) -> void:
 	_active_action_scope = OperationStateScript.DEFAULT_SCOPE
 	if _shell_overlay_close_lock_action_id == action:
 		_shell_overlay_close_lock_action_id = ""
+
+func _record_web_action_input(action_id: String) -> void:
+	_web_action_sequence += 1
+	_web_last_action = {
+		"action_id": action_id,
+		"screen": _current_screen,
+		"active_route": _active_route_for_context(),
+		"overlay_open": _shell_overlay_is_open(),
+		"overlay_route": _shell_overlay_current_route(),
+	}
+	if has_method("_publish_web_diagnostics_state"):
+		_publish_web_diagnostics_state()
+		call_deferred("_publish_web_diagnostics_state")
 
 func _action_scope_is_busy(scope_id: String) -> bool:
 	var scope := OperationStateScript.normalize_scope(scope_id)

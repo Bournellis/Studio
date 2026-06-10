@@ -29,6 +29,8 @@ var _current_route := ""
 var _history: Array[String] = []
 var _saved_targets: Dictionary = {}
 var _epoch := 0
+var _input_sequence := 0
+var _last_input: Dictionary = {}
 
 func is_open() -> bool:
 	return _root != null and is_instance_valid(_root)
@@ -75,6 +77,8 @@ func show_screen(host: Node, route_id: String, push_history: bool = true) -> voi
 		"offline": bool(context.get("offline", false)),
 	})
 	host.call("_sync_social_auto_sync_for_route")
+	if host.has_method("_publish_web_diagnostics_state"):
+		host.call_deferred("_publish_web_diagnostics_state")
 
 func go_back(host: Node) -> bool:
 	return request_back(host)
@@ -137,6 +141,59 @@ func fullscreen_parent() -> Control:
 	if is_open():
 		return _root
 	return null
+
+func panel_diagnostics() -> Dictionary:
+	if not is_open() or _panel == null or not is_instance_valid(_panel):
+		return {}
+	var rect := _panel.get_global_rect()
+	return {
+		"x": rect.position.x,
+		"y": rect.position.y,
+		"width": rect.size.x,
+		"height": rect.size.y,
+	}
+
+func button_diagnostics() -> Array[Dictionary]:
+	var buttons: Array[Dictionary] = []
+	if not is_open():
+		return buttons
+	_collect_button_diagnostics(_root, buttons)
+	return buttons
+
+func input_diagnostics() -> Dictionary:
+	return {
+		"sequence": _input_sequence,
+		"last": _last_input.duplicate(true),
+	}
+
+func request_button(host: Node, relative_path: String, point: Vector2) -> bool:
+	if not is_open() or relative_path.strip_edges() == "":
+		return false
+	var node := _root.get_node_or_null(NodePath(relative_path.strip_edges()))
+	var button := node as Button
+	if button == null or not is_instance_valid(button):
+		return false
+	if button.disabled or not button.visible or not button.is_visible_in_tree():
+		return false
+	_record_input("button", str(button.text), relative_path.strip_edges())
+	button.emit_signal("pressed")
+	_publish_diagnostics(host)
+	return true
+
+func request_scroll(host: Node, delta_y: float) -> bool:
+	if not is_open() or _content_scroll == null or not is_instance_valid(_content_scroll):
+		return false
+	if absf(delta_y) < 0.1:
+		return false
+	_record_input("wheel", "", "")
+	var next_scroll := _content_scroll.scroll_vertical + int(round(delta_y))
+	var max_scroll := next_scroll
+	var scrollbar := _content_scroll.get_v_scroll_bar()
+	if scrollbar != null:
+		max_scroll = maxi(0, int(round(scrollbar.max_value - scrollbar.page)))
+	_content_scroll.scroll_vertical = clampi(next_scroll, 0, max_scroll)
+	_publish_diagnostics(host)
+	return true
 
 func sync_layout(host: Node) -> void:
 	if not is_open():
@@ -304,6 +361,37 @@ func _build_overlay(host: Node) -> void:
 	_content_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_content_body.add_theme_constant_override("separation", 10)
 	_content_scroll.add_child(_content_body)
+
+func _collect_button_diagnostics(node: Node, buttons: Array[Dictionary]) -> void:
+	if node == null:
+		return
+	if node is Button:
+		var button := node as Button
+		if button.visible and button.is_visible_in_tree() and not button.disabled:
+			var rect := _button_visual_rect(button)
+			if rect.size.x > 0.0 and rect.size.y > 0.0:
+				buttons.append({
+					"path": str(_root.get_path_to(button)),
+					"text": str(button.text),
+					"x": rect.position.x,
+					"y": rect.position.y,
+					"width": rect.size.x,
+					"height": rect.size.y,
+				})
+	for child: Node in node.get_children():
+		_collect_button_diagnostics(child, buttons)
+
+func _button_visual_rect(button: Button) -> Rect2:
+	return button.get_global_rect()
+
+func _record_input(input_type: String, text: String, relative_path: String) -> void:
+	_input_sequence += 1
+	_last_input = {
+		"type": input_type,
+		"text": text,
+		"path": relative_path,
+		"epoch": _epoch,
+	}
 
 func _bind_host_targets(host: Node) -> void:
 	_saved_targets = {

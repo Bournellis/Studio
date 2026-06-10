@@ -239,18 +239,19 @@ function Build-Manifest {
     return [ordered]@{
         schema_version = "internal_alpha_manifest_v1"
         channel = "internal_alpha"
-        latest_version = "0.0.19-alpha.0"
-        latest_version_code = 19
+        latest_version = "0.0.20-alpha.0"
+        latest_version_code = 20
         minimum_supported_version = "0.0.13-alpha.0"
         minimum_supported_version_code = 13
         released_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         requires_save_reset = $false
         portal_url = $PortalUrl
         notes = @(
-            "Bosque Overlay Interaction Authority v1 publicado na URL principal de Internal Alpha.",
+            "Bosque Overlay Menu Action Authority v1 publicado na URL principal de Internal Alpha.",
             "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
             "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
             "Voltar, Fechar e Esc/Web usam a mesma autoridade de fechamento do overlay e devolvem input ao mesmo node do Bosque sem rebootstrap.",
+            "Botoes internos de Account, Refugio/Base, Loja, Social e Arena executam no contexto do overlay com clique real no Web/canvas.",
             "Menus abertos pelo Bosque usam rota de overlay sem acao mutante fantasma.",
             "Refresh read-only nao bloqueia fechamento; respostas tardias sao ignoradas quando o overlay fecha ou muda de rota.",
             "Arena PVE roda dentro do overlay e bloqueia fechamento apenas durante replay ou mutacao critica explicita.",
@@ -261,7 +262,7 @@ function Build-Manifest {
             "Menu usa busy por escopo para nao congelar acoes independentes durante requisicoes pendentes.",
             "Fogueira Estavel I so libera receitas apos ACK de structures.fogueira_estavel_1.",
             $(if ($PublicDownloads) { "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage." } else { "Portal/Web rodam no Cloudflare Pages; downloads usam login alpha e URLs assinadas temporarias." }),
-            "Manifesto recomenda build 0.0.19-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+            "Manifesto recomenda build 0.0.20-alpha.0 e mantem build minima 0.0.13-alpha.0.",
             "Progression Lab usa save separado e nao pontua ranking."
         )
         artifacts = [ordered]@{
@@ -493,8 +494,8 @@ if ($ShouldPackage -or $IsRemoteMutation) {
         -IndexPath $webIndex `
         -ReleaseRoot $ReleaseRoot `
         -StorageBaseUrl $storageBaseUrl `
-        -AppVersion "0.0.19-alpha.0" `
-        -AppVersionCode 19
+        -AppVersion "0.0.20-alpha.0" `
+        -AppVersionCode 20
 }
 
 $androidRecord = Artifact-Record -Path $androidApk -Label "Android APK" -Url $androidUrl -ExpectedMinimumBytes 1000000
@@ -549,8 +550,8 @@ $plan = [ordered]@{
     }
     app = [ordered]@{
         channel = "internal_alpha"
-        version = "0.0.19-alpha.0"
-        version_code = 19
+        version = "0.0.20-alpha.0"
+        version_code = 20
         requires_save_reset = $false
     }
     artifacts = $artifactRecords
@@ -729,8 +730,8 @@ if ($Mode -eq "FullPublish") {
 $report = [ordered]@{
     schema_version = "internal_alpha_publication_v2"
     channel = "internal_alpha"
-    app_version = "0.0.19-alpha.0"
-    app_version_code = 19
+    app_version = "0.0.20-alpha.0"
+    app_version_code = 20
     mode = $Mode
     generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     bucket = $BucketName

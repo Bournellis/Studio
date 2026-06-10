@@ -3,7 +3,7 @@
 - Status: `VIVO`
 - Last updated: `2026-06-09`
 - Scope: long-term hardening/refactor guardrails for DraxosMobile after
-  `Bosque Overlay Interaction Authority v1`.
+  `Bosque Overlay Menu Action Authority v1`.
 
 ## Purpose
 
@@ -54,11 +54,11 @@ each kind of refactor.
 
 ## Current Package Guard
 
-The current package is `Bosque Overlay Interaction Authority v1`:
+The current package is `Bosque Overlay Menu Action Authority v1`:
 
-- release root `internal-alpha/v0-bosque-overlay-interaction-authority-v1-20260609-a8aa9a0`;
-- version `0.0.19-alpha.0`;
-- version code `19`;
+- release root `internal-alpha/v0-bosque-overlay-menu-action-authority-v1-20260609-aa9402d`;
+- version `0.0.20-alpha.0`;
+- version code `20`;
 - minimum supported version code `13`.
 
 The next operational step remains focused human playtest of the published

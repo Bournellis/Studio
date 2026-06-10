@@ -28,12 +28,12 @@ assertEq(
 );
 assertEq(
   stringField(manifest, "latest_version"),
-  "0.0.19-alpha.0",
+  "0.0.20-alpha.0",
   "release manifest should expose the current alpha version",
 );
 assertEq(
   numberField(manifest, "latest_version_code"),
-  19,
+  20,
   "release manifest should expose the current version code",
 );
 assertEq(
