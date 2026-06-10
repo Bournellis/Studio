@@ -5,6 +5,10 @@ signal resume_requested()
 signal main_menu_requested()
 signal sensitivity_changed(value: float)
 signal start_requested()
+signal skin_tone_previous_requested()
+signal skin_tone_next_requested()
+signal country_kit_previous_requested()
+signal country_kit_next_requested()
 
 var status_label: Label
 var score_label: Label
@@ -19,6 +23,8 @@ var intro_panel: PanelContainer
 var pause_menu_panel: PanelContainer
 var sensitivity_label: Label
 var sensitivity_slider: HSlider
+var skin_tone_label: Label
+var country_kit_label: Label
 
 var kick_feedback_time: float = 0.0
 var strong_kick_feedback_time: float = 0.0
@@ -117,6 +123,12 @@ func set_sensitivity_value(value: float) -> void:
 		return
 	sensitivity_slider.set_value_no_signal(value)
 	_update_sensitivity_label(value)
+
+func set_avatar_selection_labels(skin_label: String, kit_label: String) -> void:
+	if skin_tone_label != null:
+		skin_tone_label.text = "Pele: %s" % skin_label
+	if country_kit_label != null:
+		country_kit_label.text = "Camisa: %s" % kit_label
 
 func _build_ui() -> void:
 	var root := Control.new()
@@ -304,7 +316,7 @@ func _build_intro_panel(root: Control) -> void:
 	intro_panel.name = "IntroPanel"
 	intro_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	intro_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	intro_panel.custom_minimum_size = Vector2(560.0, 420.0)
+	intro_panel.custom_minimum_size = Vector2(600.0, 510.0)
 	intro_center.add_child(intro_panel)
 
 	var margin := MarginContainer.new()
@@ -347,6 +359,88 @@ func _build_intro_panel(root: Control) -> void:
 	hotkeys.add_theme_font_size_override("font_size", 15)
 	_ignore_mouse(hotkeys)
 	box.add_child(hotkeys)
+
+	var avatar_box := VBoxContainer.new()
+	avatar_box.name = "AvatarSelectionBox"
+	avatar_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	avatar_box.add_theme_constant_override("separation", 8)
+	box.add_child(avatar_box)
+
+	var avatar_title := Label.new()
+	avatar_title.name = "AvatarTitle"
+	avatar_title.text = "Jogador"
+	avatar_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	avatar_title.add_theme_font_size_override("font_size", 17)
+	_ignore_mouse(avatar_title)
+	avatar_box.add_child(avatar_title)
+
+	var skin_row := HBoxContainer.new()
+	skin_row.name = "SkinToneRow"
+	skin_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	skin_row.add_theme_constant_override("separation", 8)
+	avatar_box.add_child(skin_row)
+
+	var skin_previous := Button.new()
+	skin_previous.name = "SkinPreviousButton"
+	skin_previous.text = "<"
+	skin_previous.custom_minimum_size = Vector2(42.0, 34.0)
+	skin_previous.mouse_filter = Control.MOUSE_FILTER_STOP
+	skin_previous.pressed.connect(func() -> void:
+		skin_tone_previous_requested.emit()
+	)
+	skin_row.add_child(skin_previous)
+
+	skin_tone_label = Label.new()
+	skin_tone_label.name = "SkinToneLabel"
+	skin_tone_label.text = "Pele: Pele bronze"
+	skin_tone_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	skin_tone_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_ignore_mouse(skin_tone_label)
+	skin_row.add_child(skin_tone_label)
+
+	var skin_next := Button.new()
+	skin_next.name = "SkinNextButton"
+	skin_next.text = ">"
+	skin_next.custom_minimum_size = Vector2(42.0, 34.0)
+	skin_next.mouse_filter = Control.MOUSE_FILTER_STOP
+	skin_next.pressed.connect(func() -> void:
+		skin_tone_next_requested.emit()
+	)
+	skin_row.add_child(skin_next)
+
+	var kit_row := HBoxContainer.new()
+	kit_row.name = "CountryKitRow"
+	kit_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	kit_row.add_theme_constant_override("separation", 8)
+	avatar_box.add_child(kit_row)
+
+	var kit_previous := Button.new()
+	kit_previous.name = "KitPreviousButton"
+	kit_previous.text = "<"
+	kit_previous.custom_minimum_size = Vector2(42.0, 34.0)
+	kit_previous.mouse_filter = Control.MOUSE_FILTER_STOP
+	kit_previous.pressed.connect(func() -> void:
+		country_kit_previous_requested.emit()
+	)
+	kit_row.add_child(kit_previous)
+
+	country_kit_label = Label.new()
+	country_kit_label.name = "CountryKitLabel"
+	country_kit_label.text = "Camisa: Brasil inspirado"
+	country_kit_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	country_kit_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_ignore_mouse(country_kit_label)
+	kit_row.add_child(country_kit_label)
+
+	var kit_next := Button.new()
+	kit_next.name = "KitNextButton"
+	kit_next.text = ">"
+	kit_next.custom_minimum_size = Vector2(42.0, 34.0)
+	kit_next.mouse_filter = Control.MOUSE_FILTER_STOP
+	kit_next.pressed.connect(func() -> void:
+		country_kit_next_requested.emit()
+	)
+	kit_row.add_child(kit_next)
 
 	var start_button := Button.new()
 	start_button.name = "StartButton"
