@@ -45,6 +45,7 @@ func _execute_action(action_id: String) -> void:
 	var action := str(route.get("action_id", action_id))
 	var scope := str(route.get("scope_id", OperationStateScript.DEFAULT_SCOPE))
 	var endpoint := str(route.get("mutation_endpoint", "")).strip_edges()
+	var allow_local_arena_abandon := _arena_abandon_can_run_locally(action)
 	if _action_scope_is_busy(scope):
 		return
 	_record_web_action_input(action)
@@ -55,7 +56,7 @@ func _execute_action(action_id: String) -> void:
 	_error_label.text = ""
 	var action_started_ms := int(Time.get_ticks_msec())
 	_emit_client_event("action_start", _as_dictionary(route.get("payload", _action_payload(action))))
-	if bool(route.get("blocked_by_update", false)):
+	if bool(route.get("blocked_by_update", false)) and not allow_local_arena_abandon:
 		_error_label.text = "Update obrigatorio antes de usar recursos online."
 		_detail_label.text = str(_update_gate.get("detail", "Baixe a nova build pelo portal."))
 		_emit_client_event("precondition_failed", {
@@ -66,7 +67,7 @@ func _execute_action(action_id: String) -> void:
 			"minimum_supported_version": str(_update_gate.get("minimum_supported_version", "")),
 		})
 		_sync_buttons()
-	elif endpoint != "" and not SessionStore.runtime_allows_gameplay_mutation():
+	elif endpoint != "" and not SessionStore.runtime_allows_gameplay_mutation() and not allow_local_arena_abandon:
 		_error_label.text = SessionStore.runtime_mutation_block_reason()
 		_detail_label.text = "Tente sincronizar a configuracao remota antes de executar a acao."
 		_emit_client_event("precondition_failed", {

@@ -226,6 +226,8 @@ func _publish_web_diagnostics_state() -> void:
 			"sequence": _web_action_sequence,
 			"last": _web_last_action.duplicate(true),
 		},
+		"arena": _web_arena_diagnostics(),
+		"lastArenaOperation": _arena_last_operation.duplicate(true),
 		"busy": _is_busy,
 		"criticalCloseLock": _shell_overlay_close_lock_action_id,
 		"replayRunning": _replay_running,
@@ -234,6 +236,25 @@ func _publish_web_diagnostics_state() -> void:
 	_ensure_web_overlay_input_bridge()
 	_focus_web_canvas_for_shell_input()
 	_apply_web_smoke_overlay_request()
+
+func _web_arena_diagnostics() -> Dictionary:
+	var attempt := SessionStore.active_arena_attempt()
+	var attempt_id := str(attempt.get("attempt_id", attempt.get("id", ""))).strip_edges()
+	var attempt_state := str(attempt.get("state", attempt.get("status", ""))).strip_edges()
+	var terminal := attempt_state in ["completed", "failed", "claimed", "abandoned", "local_cleared"]
+	var blocks := not attempt.is_empty() and not terminal and attempt_state in ["active", "awaiting_buff", "active_incompatible"]
+	var requires_local_clear := false
+	if _arena_lifecycle_flow != null and _arena_lifecycle_flow.has_method("attempt_requires_local_clear"):
+		requires_local_clear = bool(_arena_lifecycle_flow.call("attempt_requires_local_clear", attempt))
+	return {
+		"activeAttemptPresent": not attempt.is_empty(),
+		"activeAttemptId": attempt_id,
+		"activeAttemptState": attempt_state,
+		"activeAttemptBlocksSelection": blocks,
+		"activeAttemptRequiresLocalClear": requires_local_clear,
+		"devFixture": bool(SessionStore.arena_snapshot().get("dev_fixture", false)),
+		"summary": _as_dictionary(SessionStore.arena_snapshot().get("summary", {})),
+	}
 
 func _ensure_web_overlay_input_bridge() -> void:
 	if _web_overlay_input_bridge_bound:
@@ -539,7 +560,6 @@ func _apply_web_smoke_overlay_request() -> void:
 		"overlay-arena-active":
 			route_id = AppShellRouteContractScript.ROUTE_ARENA_SELECTION
 			seed_arena_active = true
-			seed_required_update = true
 		_:
 			return
 	if seed_arena_active:
@@ -565,6 +585,7 @@ func _seed_web_smoke_required_update_gate() -> void:
 	}
 
 func _seed_web_smoke_arena_active_attempt() -> void:
+	ProjectSettings.set_setting("draxos_mobile/internal_alpha/arena_dev_fixtures_enabled", true)
 	SessionStore.access_token = "web-smoke-token"
 	SessionStore.expires_at = int(Time.get_unix_time_from_system()) + 3600
 	SessionStore.player = {"id": "web-smoke-player", "level": 8, "power": 120, "username": "web_smoke"}
@@ -572,6 +593,7 @@ func _seed_web_smoke_arena_active_attempt() -> void:
 	SessionStore.build = {"weapon_id": "varinha_cinzas"}
 	SessionStore.arena_state = {
 		"schema_version": "pve_arena_state_v1",
+		"dev_fixture": true,
 		"arenas": [
 			{
 				"id": "arena_cinzas_curta",
@@ -582,7 +604,7 @@ func _seed_web_smoke_arena_active_attempt() -> void:
 			},
 		],
 		"active_attempt": {
-			"attempt_id": "attempt-web-smoke-active",
+			"attempt_id": "22222222-2222-4222-8222-222222222222",
 			"arena_id": "arena_cinzas_curta",
 			"status": "active",
 			"current_step_index": 1,

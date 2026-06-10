@@ -129,6 +129,7 @@ var _web_overlay_input_bridge_bound := false
 var _web_overlay_input_bridge_callback = null
 var _web_action_sequence := 0
 var _web_last_action: Dictionary = {}
+var _arena_last_operation: Dictionary = {}
 @warning_ignore("unused_private_class_variable")
 var _selected_base_structure_id := "nucleo_energia"
 @warning_ignore("unused_private_class_variable")

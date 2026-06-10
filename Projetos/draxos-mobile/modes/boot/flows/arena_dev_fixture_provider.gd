@@ -85,7 +85,7 @@ static func _base_arena_state() -> Dictionary:
 static func _fixture_start_attempt(arena_id: String, difficulty_id: String, difficulty_tier: int, session_store: Object) -> Dictionary:
 	var duels_total := 1 if arena_id == TUTORIAL_ARENA_ID else 3
 	return {
-		"attempt_id": "dev-%s-%d" % [arena_id, difficulty_tier],
+		"attempt_id": _dev_attempt_id(arena_id, difficulty_tier),
 		"arena_id": arena_id,
 		"difficulty_id": difficulty_id,
 		"difficulty_tier": difficulty_tier,
@@ -101,6 +101,14 @@ static func _fixture_start_attempt(arena_id: String, difficulty_id: String, diff
 		"temporary_buffs": [],
 		"buff_offer": {},
 	}
+
+static func _dev_attempt_id(arena_id: String, difficulty_tier: int) -> String:
+	if arena_id == TUTORIAL_ARENA_ID:
+		return "33333333-3333-4333-8333-333333333330"
+	if arena_id == EARLY_ARENA_ID:
+		return "33333333-3333-4333-8333-333333333331"
+	var clamped_tier := clampi(difficulty_tier, 0, 9)
+	return "33333333-3333-4333-8333-33333333333%d" % clamped_tier
 
 static func _fixture_resolve_duel(attempt: Dictionary, duel_index: int, session_store: Object) -> Dictionary:
 	var state := _base_arena_state()

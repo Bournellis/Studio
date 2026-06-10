@@ -10,6 +10,7 @@ const TUTORIAL_ARENA_ID := "arena_tutorial_cinzas"
 const EARLY_ARENA_ID := "arena_cinzas_curta"
 const TUTORIAL_DIFFICULTY_TIER := 0
 const EARLY_DIFFICULTY_TIER := 0
+const UUID_HEX_CHARS := "0123456789abcdefABCDEF"
 
 func render_selection(host: Node) -> void:
 	host.get("_arena_surface_presenter").render_selection(host)
@@ -232,28 +233,56 @@ func abandon_attempt(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre antes de encerrar tentativa da Arena.")):
 		return
 	var attempt := SessionStore.active_arena_attempt()
-	var attempt_id := _attempt_id(attempt)
-	if attempt_id == "":
+	if attempt.is_empty():
 		_set_error_text(host, "Nenhuma tentativa de Arena para encerrar.")
+		_record_arena_operation(host, "abandon_missing_attempt", {"ok": false})
+		return
+	var attempt_id := _attempt_id(attempt)
+	if attempt_requires_local_clear(attempt):
+		await _clear_stale_attempt_locally(host, attempt)
 		return
 
 	host.call("_set_busy", true, "Encerrando tentativa da Arena...")
+	_record_arena_operation(host, "abandon_started", {
+		"attempt_id": attempt_id,
+		"attempt_state": _attempt_state(attempt),
+		"local_recovery": false,
+	})
 	var mutation := SessionStore.prepare_pending_mutation(
 		"arena/pve/abandon",
 		"arena:%s" % SessionStore.active_save_type,
 		AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT,
 		{"attempt_id": attempt_id}
 	)
-	var result: Dictionary = await SupabaseClient.abandon_arena_attempt(
-		str(mutation.get("request_id", "")),
-		attempt_id,
-		SessionStore.access_token,
-		str(mutation.get("request_hash", ""))
-	)
-	result = ArenaDevFixtureProviderScript.abandon_attempt_fallback_result(result, attempt, SessionStore)
-	if not await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_SELECTION, "Tentativa encerrada. Arena liberada."):
+	var result: Dictionary = {}
+	if _should_use_dev_fixture_without_remote():
+		result = ArenaDevFixtureProviderScript.abandon_attempt_fallback_result({"ok": false}, attempt, SessionStore)
+	else:
+		result = await SupabaseClient.abandon_arena_attempt(
+			str(mutation.get("request_id", "")),
+			attempt_id,
+			SessionStore.access_token,
+			str(mutation.get("request_hash", ""))
+		)
+		result = ArenaDevFixtureProviderScript.abandon_attempt_fallback_result(result, attempt, SessionStore)
+	if not await _complete_arena_mutation(host, mutation, result, "", "Tentativa encerrada. Confirmando Arena..."):
+		_record_arena_operation(host, "abandon_failed", {
+			"attempt_id": attempt_id,
+			"attempt_state": _attempt_state(attempt),
+			"ok": false,
+			"error": SessionStore.last_error.duplicate(true),
+		})
 		return
-	host.call("_show_notice", "Tentativa antiga encerrada. Voce ja pode iniciar uma nova Arena.")
+	if not await _verify_abandon_released(host, attempt_id):
+		return
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+	host.call("_set_busy", false, "Tentativa encerrada. Arena liberada.")
+	host.call("_show_notice", "Tentativa encerrada. Voce ja pode iniciar uma nova Arena.")
+	_record_arena_operation(host, "abandon_released", {
+		"attempt_id": attempt_id,
+		"ok": true,
+		"active_attempt_blocks": _attempt_blocks_new_start(SessionStore.active_arena_attempt()),
+	})
 
 func claim_summary(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre antes de continuar a Arena.")):
@@ -414,6 +443,8 @@ func _attempt_needs_recovery(attempt: Dictionary) -> bool:
 		return false
 	if _attempt_id(attempt) == "":
 		return true
+	if not _is_uuid(_attempt_id(attempt)):
+		return true
 	if status == "active_incompatible":
 		return true
 	if not _pending_buff_choices(attempt).is_empty():
@@ -426,6 +457,92 @@ func _attempt_needs_recovery(attempt: Dictionary) -> bool:
 		int(attempt.get("duels_won", attempt.get("duel_index", 0)))
 	)
 	return total <= 0 or current >= total
+
+func attempt_requires_local_clear(attempt: Dictionary) -> bool:
+	if attempt.is_empty():
+		return false
+	var status := _attempt_state(attempt)
+	if status in ["completed", "failed", "claimed", "abandoned"]:
+		return false
+	return not _is_uuid(_attempt_id(attempt))
+
+func _clear_stale_attempt_locally(host: Node, attempt: Dictionary) -> void:
+	var attempt_id := _attempt_id(attempt)
+	host.call("_set_busy", true, "Limpando tentativa local antiga...")
+	_record_arena_operation(host, "abandon_local_recovery_started", {
+		"attempt_id": attempt_id,
+		"attempt_state": _attempt_state(attempt),
+		"local_recovery": true,
+	})
+	var reason := "Tentativa local antiga removida porque nao possui attempt_id remoto valido."
+	if not SessionStore.clear_stale_arena_attempt(reason):
+		host.call("_set_busy", false, "Tentativa local nao foi alterada.")
+		_set_error_text(host, "Nao foi possivel limpar a tentativa local antiga. Use Sincronizar Arena.")
+		_record_arena_operation(host, "abandon_local_recovery_failed", {
+			"attempt_id": attempt_id,
+			"ok": false,
+			"local_recovery": true,
+		})
+		return
+	SessionStore.save_cache()
+	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+	host.call("_set_busy", false, "Tentativa local antiga limpa. Arena liberada.")
+	host.call("_show_notice", "Tentativa local antiga limpa. Nenhuma recompensa foi concedida; sincronize a Arena se o servidor divergir.")
+	_record_arena_operation(host, "abandon_local_recovery_released", {
+		"attempt_id": attempt_id,
+		"ok": true,
+		"local_recovery": true,
+		"active_attempt_blocks": _attempt_blocks_new_start(SessionStore.active_arena_attempt()),
+	})
+
+func _verify_abandon_released(host: Node, attempt_id: String) -> bool:
+	if not _attempt_blocks_new_start(SessionStore.active_arena_attempt()):
+		return true
+	if bool(SessionStore.arena_snapshot().get("dev_fixture", false)):
+		_set_error_text(host, "Fixture da Arena ainda reporta tentativa ativa apos abandono.")
+		_record_arena_operation(host, "abandon_verify_failed", {
+			"attempt_id": attempt_id,
+			"ok": false,
+			"active_attempt_blocks": true,
+		})
+		return false
+	host.call("_set_busy", true, "Confirmando estado da Arena...")
+	var state_result: Dictionary = await SupabaseClient.fetch_arena_state(SessionStore.access_token)
+	state_result = ArenaDevFixtureProviderScript.state_fallback_result(state_result, SessionStore.active_save_type)
+	if bool(state_result.get("ok", false)) and SessionStore.apply_arena_result(state_result):
+		SessionStore.save_cache()
+	if _attempt_blocks_new_start(SessionStore.active_arena_attempt()):
+		host.call("_set_busy", false, "Arena ainda bloqueada.")
+		_set_error_text(host, "O servidor ainda reporta tentativa ativa. Tente Sincronizar Arena e repetir o abandono.")
+		_record_arena_operation(host, "abandon_verify_failed", {
+			"attempt_id": attempt_id,
+			"ok": false,
+			"active_attempt_blocks": true,
+			"state_result_ok": bool(state_result.get("ok", false)),
+			"error": SessionStore.last_error.duplicate(true),
+		})
+		return false
+	_record_arena_operation(host, "abandon_verify_released", {
+		"attempt_id": attempt_id,
+		"ok": true,
+		"active_attempt_blocks": false,
+		"state_result_ok": bool(state_result.get("ok", false)),
+	})
+	return true
+
+func _should_use_dev_fixture_without_remote() -> bool:
+	return ArenaDevFixtureProviderScript.enabled() and bool(SessionStore.arena_snapshot().get("dev_fixture", false))
+
+func _record_arena_operation(host: Node, phase: String, details: Dictionary = {}) -> void:
+	if host == null:
+		return
+	var payload := details.duplicate(true)
+	payload["phase"] = phase
+	payload["route"] = str(host.call("_active_route_for_context")) if host.has_method("_active_route_for_context") else ""
+	payload["overlay_route"] = str(host.call("_shell_overlay_current_route")) if host.has_method("_shell_overlay_current_route") else ""
+	host.set("_arena_last_operation", payload)
+	if host.has_method("_publish_web_diagnostics_state"):
+		host.call_deferred("_publish_web_diagnostics_state")
 
 func _arena_is_unlocked(arena: Dictionary) -> bool:
 	if arena.has("unlocked"):
@@ -443,6 +560,20 @@ func _set_error_text(host: Node, text: String) -> void:
 	var label := host.get("_error_label") as Label
 	if label != null:
 		label.text = text
+
+func _is_uuid(value: String) -> bool:
+	var text := value.strip_edges()
+	if text.length() != 36:
+		return false
+	for index in [8, 13, 18, 23]:
+		if text.substr(index, 1) != "-":
+			return false
+	for index in range(text.length()):
+		if index in [8, 13, 18, 23]:
+			continue
+		if not UUID_HEX_CHARS.contains(text.substr(index, 1)):
+			return false
+	return true
 
 static func _as_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

@@ -5,6 +5,10 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 const PreparationPresenterScript := preload("res://modes/boot/surfaces/hub_surface_preparation_presenter.gd")
 const ArenaSurfaceTextScript := preload("res://modes/boot/surfaces/arena_surface_text.gd")
 
+const ABANDON_CONFIRM_MESSAGE := "Encerrar esta tentativa da Arena? Nenhuma recompensa de conclusao sera concedida e a Arena volta para a selecao."
+const STALE_ABANDON_CONFIRM_MESSAGE := "Limpar esta tentativa antiga da Arena? Isto apenas libera o estado local; nenhuma recompensa sera concedida."
+const UUID_HEX_CHARS := "0123456789abcdefABCDEF"
+
 func render_selection(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
 	var active_attempt := SessionStore.active_arena_attempt()
@@ -56,7 +60,7 @@ func render_active(host: Node) -> void:
 		_call_host(host, "_add_action_button", ["Resolver duelo", AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL])
 	_add_arena_preparation_control(host, true)
 	_add_loadout_details_control(host, attempt)
-	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
+	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, ABANDON_CONFIRM_MESSAGE])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 
 func render_buff_choice(host: Node) -> void:
@@ -67,11 +71,11 @@ func render_buff_choice(host: Node) -> void:
 		_call_host(host, "_add_output_label", ["Nenhum buff pendente. Volte para a tentativa ativa."])
 		_call_host(host, "_add_action_button", ["Retomar tentativa", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT])
 		_add_arena_preparation_control(host, true)
-		_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
+		_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, ABANDON_CONFIRM_MESSAGE])
 		return
 	_add_buff_choice_cards(host, choices)
 	_add_arena_preparation_control(host, true)
-	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT])
+	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, ABANDON_CONFIRM_MESSAGE])
 
 func render_summary(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
@@ -229,10 +233,10 @@ func _render_active_attempt_recovery(host: Node, attempt: Dictionary) -> void:
 		stack.add_child(_arena_label("Retome esta tentativa antes de iniciar outra Arena. O loadout segue travado ate encerrar.", 12, "text_secondary"))
 	stack.add_child(_arena_label("Estado: %s | %s" % [status, _duel_progress_short_text(attempt)], 12, "text_secondary"))
 	if needs_recovery:
-		stack.add_child(_arena_action_button(host, "Encerrar tentativa antiga", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, false, "", true))
+		stack.add_child(_arena_action_button(host, "Encerrar tentativa antiga", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, false, "", true, STALE_ABANDON_CONFIRM_MESSAGE))
 	else:
 		stack.add_child(_arena_action_button(host, "Retomar tentativa", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT, false, "", true))
-		stack.add_child(_arena_action_button(host, "Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT))
+		stack.add_child(_arena_action_button(host, "Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, false, "", false, ABANDON_CONFIRM_MESSAGE))
 	_call_host(host, "_add_content_control", [panel])
 	_add_duel_progress_rail(host, attempt)
 
@@ -533,7 +537,8 @@ func _arena_action_button(
 	action_id: String,
 	disabled: bool = false,
 	disabled_reason: String = "",
-	primary: bool = false
+	primary: bool = false,
+	confirm_message: String = ""
 ) -> Button:
 	var button := Button.new()
 	button.name = "ArenaAction_%s" % _control_name_fragment(action_id)
@@ -548,7 +553,7 @@ func _arena_action_button(
 	_call_host(host, "_prepare_touch_button", [button])
 	_call_host(host, "_apply_action_button_style", [button, action_id])
 	button.pressed.connect(func() -> void:
-		_call_host(host, "_trigger_action", [action_id, ""])
+		_call_host(host, "_trigger_action", [action_id, confirm_message])
 	)
 	var action_buttons: Variant = host.get("_action_buttons")
 	if action_buttons is Dictionary:
@@ -693,6 +698,8 @@ func _attempt_needs_recovery(attempt: Dictionary) -> bool:
 		return false
 	if _attempt_id(attempt) == "":
 		return true
+	if not _is_uuid(_attempt_id(attempt)):
+		return true
 	if status == "active_incompatible":
 		return true
 	if not _pending_buff_choices(attempt).is_empty():
@@ -746,3 +753,17 @@ static func _control_name_fragment(value: String) -> String:
 	while result.ends_with("_"):
 		result = result.substr(0, result.length() - 1)
 	return result if result != "" else "arena_action"
+
+static func _is_uuid(value: String) -> bool:
+	var text := value.strip_edges()
+	if text.length() != 36:
+		return false
+	for index in [8, 13, 18, 23]:
+		if text.substr(index, 1) != "-":
+			return false
+	for index in range(text.length()):
+		if index in [8, 13, 18, 23]:
+			continue
+		if not UUID_HEX_CHARS.contains(text.substr(index, 1)):
+			return false
+	return true

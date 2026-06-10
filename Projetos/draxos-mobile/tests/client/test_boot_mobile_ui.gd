@@ -40,11 +40,13 @@ class SurfaceRefreshHost:
 
 func before_each() -> void:
 	ProjectSettings.set_setting("draxos_mobile/testing/disable_telemetry", true)
+	ProjectSettings.set_setting("draxos_mobile/internal_alpha/arena_dev_fixtures_enabled", false)
 	_reset_session_store_for_test()
 
 func after_each() -> void:
 	ProjectSettings.set_setting("draxos_mobile/ui/force_compact_layout", false)
 	ProjectSettings.set_setting("draxos_mobile/testing/disable_telemetry", false)
+	ProjectSettings.set_setting("draxos_mobile/internal_alpha/arena_dev_fixtures_enabled", false)
 	_reset_session_store_for_test()
 	await wait_process_frames(2)
 
@@ -749,7 +751,7 @@ func test_arena_selection_routes_active_attempt_before_new_start() -> void:
 			},
 		],
 		"active_attempt": {
-			"attempt_id": "attempt-open",
+			"attempt_id": "44444444-4444-4444-8444-444444444440",
 			"arena_id": "arena_cinzas_curta",
 			"status": "active",
 			"current_step_index": 1,
@@ -823,7 +825,7 @@ func test_arena_active_exposes_behavior_adjustment_without_unlocking_loadout() -
 		"schema_version": "pve_arena_state_v1",
 		"arenas": [],
 		"active_attempt": {
-			"attempt_id": "attempt-active",
+			"attempt_id": "44444444-4444-4444-8444-444444444441",
 			"arena_id": "arena_cinzas_curta",
 			"status": "active",
 			"duel_index": 0,
@@ -892,7 +894,7 @@ func test_arena_buff_choice_renders_comparable_cards_with_existing_actions() -> 
 		"schema_version": "pve_arena_state_v1",
 		"arenas": [],
 		"active_attempt": {
-			"attempt_id": "attempt-buff",
+			"attempt_id": "44444444-4444-4444-8444-444444444442",
 			"arena_id": "arena_cinzas_curta",
 			"status": "awaiting_buff",
 			"duel_index": 1,
@@ -943,7 +945,7 @@ func test_arena_active_pending_buff_opens_choice_without_autoselecting_first_buf
 		"schema_version": "pve_arena_state_v1",
 		"arenas": [],
 		"active_attempt": {
-			"attempt_id": "attempt-buff-pending",
+			"attempt_id": "44444444-4444-4444-8444-444444444443",
 			"arena_id": "arena_cinzas_curta",
 			"state": "awaiting_buff",
 			"duel_index": 1,
@@ -987,7 +989,7 @@ func test_arena_active_after_selected_buff_returns_to_resolve_duel() -> void:
 			"ok": true,
 			"schema_version": "arena_buff_select_response_v1",
 			"attempt": {
-				"id": "attempt-buff-selected",
+				"id": "44444444-4444-4444-8444-444444444444",
 				"arena_id": "arena_cinzas_curta",
 				"status": "active",
 				"max_steps": 3,
@@ -1270,7 +1272,7 @@ func test_boot_profile_account_panel_shows_save_account_update_and_build_status(
 	assert_true(_label_tree_contains(boot._content_body, "Auth: email/senha (alpha@example.com)"))
 	assert_true(_label_tree_contains(boot._content_body, "Estado: carregado do save ativo"))
 	assert_true(_label_tree_contains(boot._content_body, "Update: Build atualizada"))
-	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.21-alpha.0 | online pronto"))
+	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha %s | online pronto" % ProjectInfo.APP_VERSION))
 	assert_null(boot._auth_email_input)
 
 func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> void:
@@ -1280,7 +1282,7 @@ func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> 
 
 	assert_true(_label_tree_contains(boot._content_body, "Username: sem conta carregada"))
 	assert_true(_label_tree_contains(boot._content_body, "Estado: sem sessao auth"))
-	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.21-alpha.0 | aguardando login"))
+	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha %s | aguardando login" % ProjectInfo.APP_VERSION))
 	assert_null(boot._auth_email_input)
 
 func test_boot_surface_presenters_render_shells_without_network() -> void:
@@ -1908,11 +1910,13 @@ func test_bosque_overlay_shop_confirmable_actions_use_overlay_confirmation() -> 
 	assert_eq(str(boot._web_last_action.get("action_id", "")), AppShellActionContractScript.shop_purchase_action(AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK))
 	assert_string_contains(boot._error_label.text, "Update obrigatorio")
 
-func test_bosque_overlay_arena_resume_and_abandon_buttons_execute_inside_overlay() -> void:
+func test_bosque_overlay_arena_resume_and_abandon_releases_attempt_after_confirmation() -> void:
 	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	ProjectSettings.set_setting("draxos_mobile/internal_alpha/arena_dev_fixtures_enabled", true)
 	_prepare_account_state()
 	SessionStore.arena_state = {
 		"schema_version": "pve_arena_state_v1",
+		"dev_fixture": true,
 		"arenas": [
 			{
 				"id": "arena_cinzas_curta",
@@ -1923,7 +1927,7 @@ func test_bosque_overlay_arena_resume_and_abandon_buttons_execute_inside_overlay
 			},
 		],
 		"active_attempt": {
-			"attempt_id": "attempt-overlay-active",
+			"attempt_id": "11111111-1111-4111-8111-111111111111",
 			"arena_id": "arena_cinzas_curta",
 			"status": "active",
 			"current_step_index": 1,
@@ -1954,7 +1958,6 @@ func test_bosque_overlay_arena_resume_and_abandon_buttons_execute_inside_overlay
 	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_ACTIVE)
 	assert_eq(str(boot._web_last_action.get("action_id", "")), AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT)
 
-	_set_required_update_gate(boot)
 	overlay = _find_node_by_name(boot, "ModeShellMenuOverlay")
 	var abandon_button := _find_button_by_text(overlay, "Abandonar tentativa")
 	assert_not_null(abandon_button)
@@ -1962,10 +1965,78 @@ func test_bosque_overlay_arena_resume_and_abandon_buttons_execute_inside_overlay
 	await wait_process_frames(3)
 
 	assert_true(boot._shell_overlay_is_open())
-	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
 	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_ACTIVE)
+	assert_true(boot._mode_shell_overlay_controller.confirmation_pending())
+	assert_eq(str(boot.get("_pending_confirmation_action")), AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT)
+	assert_ne(str(boot._web_last_action.get("action_id", "")), AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT)
+
+	var confirm_button := _find_node_by_name(boot, "ModeShellConfirmButton") as Button
+	assert_not_null(confirm_button)
+	await _send_overlay_web_button_command(boot, confirm_button)
+	await wait_process_frames(6)
+
+	assert_true(boot._shell_overlay_is_open())
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
 	assert_eq(str(boot._web_last_action.get("action_id", "")), AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT)
-	assert_string_contains(boot._error_label.text, "Update obrigatorio")
+	assert_false(boot._mode_shell_overlay_controller.confirmation_pending())
+	assert_eq(str(SessionStore.active_arena_attempt().get("state", "")), "abandoned")
+	assert_eq(str(boot._arena_last_operation.get("phase", "")), "abandon_released")
+	assert_false(bool(boot._arena_last_operation.get("active_attempt_blocks", true)))
+
+func test_bosque_overlay_arena_stale_attempt_clears_locally_even_when_update_gate_blocks_remote() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"arenas": [
+			{
+				"id": "arena_cinzas_curta",
+				"display_name": "Arena Curta Das Cinzas",
+				"duel_count": 3,
+				"unlocked": true,
+				"difficulties": [{"difficulty_id": "s1_d00_intro", "max_steps": 3, "unlocked": true}],
+			},
+		],
+		"active_attempt": {
+			"attempt_id": "attempt-overlay-stale",
+			"arena_id": "arena_cinzas_curta",
+			"status": "active",
+			"current_step_index": 1,
+			"duel_count": 3,
+			"duels_won": 1,
+			"locked_loadout_hash": "sha256:stale",
+		},
+	}
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+	_set_required_update_gate(boot)
+	boot._show_overlay_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+	await wait_process_frames(3)
+
+	var overlay := _find_node_by_name(boot, "ModeShellMenuOverlay")
+	var stale_button := _find_button_by_text(overlay, "Encerrar tentativa antiga")
+	assert_not_null(stale_button)
+
+	await _send_overlay_web_button_command(boot, stale_button)
+	await wait_process_frames(2)
+	assert_true(boot._mode_shell_overlay_controller.confirmation_pending())
+
+	var confirm_button := _find_node_by_name(boot, "ModeShellConfirmButton") as Button
+	assert_not_null(confirm_button)
+	await _send_overlay_web_button_command(boot, confirm_button)
+	await wait_process_frames(5)
+
+	assert_true(boot._shell_overlay_is_open())
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	assert_eq(str(boot._web_last_action.get("action_id", "")), AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT)
+	assert_true(SessionStore.active_arena_attempt().is_empty())
+	assert_eq(str(boot._arena_last_operation.get("phase", "")), "abandon_local_recovery_released")
+	assert_false(bool(boot._arena_last_operation.get("active_attempt_blocks", true)))
+	assert_false(boot._error_label.text.contains("Update obrigatorio"))
 
 func test_refuge_no_longer_exposes_modes_popup_cards() -> void:
 	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)

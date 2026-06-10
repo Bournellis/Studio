@@ -762,6 +762,36 @@ func arena_difficulty_by_id(arena_id: String, difficulty_id: String = "") -> Dic
 func active_arena_attempt() -> Dictionary:
 	return ArenaSliceScript.active_attempt(arena_state)
 
+func clear_stale_arena_attempt(reason: String = "") -> bool:
+	var current_state := arena_state.duplicate(true)
+	if current_state.is_empty():
+		current_state = ArenaSliceScript.empty_state()
+	var attempt := ArenaSliceScript.active_attempt(current_state)
+	if attempt.is_empty():
+		return false
+	current_state["active_attempt"] = null
+	var recovery_summary := {
+		"status": "local_cleared",
+		"duels_won": int(attempt.get("duels_won", attempt.get("current_step_index", 0))),
+		"duels_total": int(attempt.get("duel_count", attempt.get("duels_total", attempt.get("max_steps", 1)))),
+		"reward_already_applied": false,
+		"mutates_economy": false,
+		"reason": reason.strip_edges() if reason.strip_edges() != "" else "Tentativa local antiga removida.",
+	}
+	current_state["summary"] = recovery_summary
+	current_state["local_recovery"] = {
+		"kind": "stale_arena_attempt_cleared",
+		"previous_attempt_id": str(attempt.get("attempt_id", attempt.get("id", ""))).strip_edges(),
+		"previous_state": str(attempt.get("state", attempt.get("status", ""))).strip_edges(),
+		"reason": str(recovery_summary.get("reason", "")),
+	}
+	arena_state = current_state
+	_remember_surface_snapshot(SURFACE_ARENA)
+	last_error = {}
+	offline = false
+	session_changed.emit()
+	return true
+
 func social_snapshot() -> Dictionary:
 	return social_state.duplicate(true)
 

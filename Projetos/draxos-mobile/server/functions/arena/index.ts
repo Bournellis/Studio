@@ -755,7 +755,7 @@ async function handleAbandon(
       state.error.status,
     );
   }
-  const requestHash = await mutationRequestHash("arena/abandon", body, {
+  const requestHash = await mutationRequestHash("arena/pve/abandon", body, {
     request_id: requestId,
     save_type: auth.saveType,
     attempt_id: attemptId,

@@ -147,7 +147,7 @@ func _sync_buttons() -> void:
 			continue
 		var force_disabled := bool(button.get_meta("force_disabled", false))
 		button.disabled = force_disabled or _action_scope_busy(action_id) or (_replay_running and not _action_allowed_during_replay(action_id))
-		button.disabled = button.disabled or _update_gate_blocks_action(action_id)
+		button.disabled = button.disabled or (_update_gate_blocks_action(action_id) and not _arena_abandon_can_run_locally(action_id))
 		if force_disabled and str(button.get_meta("disabled_reason", "")).strip_edges() != "":
 			button.tooltip_text = str(button.get_meta("disabled_reason", ""))
 		if action_id == ACTION_SKIP_REPLAY:
@@ -188,6 +188,17 @@ func _action_scope_busy(action_id: String) -> bool:
 	if OperationStateScript.normalize_scope(scope) == OperationStateScript.DEFAULT_SCOPE:
 		return _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE)
 	return _operation_state.is_busy(scope)
+
+func _arena_abandon_can_run_locally(action_id: String) -> bool:
+	if action_id != AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT:
+		return false
+	var fixture_enabled := OS.has_feature("editor") or bool(ProjectSettings.get_setting("draxos_mobile/internal_alpha/arena_dev_fixtures_enabled", false))
+	var fixture_state := bool(SessionStore.arena_snapshot().get("dev_fixture", false))
+	if fixture_state and fixture_enabled:
+		return true
+	if _arena_lifecycle_flow == null or not _arena_lifecycle_flow.has_method("attempt_requires_local_clear"):
+		return false
+	return bool(_arena_lifecycle_flow.call("attempt_requires_local_clear", SessionStore.active_arena_attempt()))
 
 func _surface_scope_busy(surface: String) -> bool:
 	return _operation_state.is_busy("%s:%s" % [surface.strip_edges(), SessionStore.active_save_type]) or _operation_state.is_busy(OperationStateScript.DEFAULT_SCOPE)

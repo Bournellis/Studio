@@ -2,8 +2,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$WebUrl,
     [string]$ExpectedReleaseRoot = "",
-    [string]$ExpectedAppVersion = "0.0.21-alpha.0",
-    [int]$ExpectedAppVersionCode = 21,
+    [string]$ExpectedAppVersion = "0.0.22-alpha.0",
+    [int]$ExpectedAppVersionCode = 22,
     [string]$ChromePath = "",
     [int]$TimeoutSeconds = 90,
     [string]$DiagnosticsDir = "",
@@ -729,14 +729,22 @@ try {
 					state.state.overlayRoute === 'arena_active' &&
 					String(state.state.actionInput?.last?.action_id || '') === testCase.resumeAction;
 			}, `${testCase.label}: resume reaches active route`);
-			const abandonClick = await clickOverlayButton(client, testCase.label, testCase.abandonButton, testCase.abandonAction);
+			const abandonClick = await clickOverlayButton(client, testCase.label, testCase.abandonButton, '');
+			const confirmOpen = await waitFor(client, (state) => {
+				return state.state?.pendingConfirmation?.pending === true &&
+					String(state.state?.pendingConfirmation?.action_id || '') === testCase.abandonAction;
+			}, `${testCase.label}: abandon confirmation opens`);
+			const confirmClick = await clickOverlayButton(client, testCase.label, 'Confirmar', testCase.abandonAction);
 			const after = await waitFor(client, (state) => {
 				return state.state &&
 					state.state.currentScreen === 'mode_shell' &&
 					state.state.overlayOpen === true &&
-					state.state.overlayRoute === 'arena_active' &&
-					String(state.state.actionInput?.last?.action_id || '') === testCase.abandonAction;
-			}, `${testCase.label}: abandon input records inside overlay`);
+					state.state.overlayRoute === 'arena_selection' &&
+					String(state.state.actionInput?.last?.action_id || '') === testCase.abandonAction &&
+					state.state.pendingConfirmation?.pending === false &&
+					state.state.arena?.activeAttemptBlocksSelection === false &&
+					['abandon_released', 'abandon_local_recovery_released'].includes(String(state.state.lastArenaOperation?.phase || ''));
+			}, `${testCase.label}: abandon releases active attempt`);
 			finalState = after.state;
 			screenshots.push(await capture(client, `${testCase.label}-after`));
 			results.push({
@@ -750,8 +758,12 @@ try {
 				abandon_action: testCase.abandonAction,
 				resume_action_after_input: resumeClick.action_after_input,
 				abandon_action_after_input: abandonClick.action_after_input,
+				confirm_message: confirmOpen.state.state?.pendingConfirmation?.message || '',
+				confirm_action_after_input: confirmClick.action_after_input,
 				overlay_route_after_resume: active.state.state?.overlayRoute || '',
 				overlay_route_after_abandon: after.state.state?.overlayRoute || '',
+				arena_after_abandon: after.state.state?.arena || null,
+				last_arena_operation: after.state.state?.lastArenaOperation || null,
 			});
 		} else {
 			throw new Error(`${testCase.label}: unknown interactive case kind ${testCase.kind}.`);
