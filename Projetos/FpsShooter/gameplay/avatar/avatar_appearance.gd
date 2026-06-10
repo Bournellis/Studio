@@ -8,5 +8,5 @@ func _init(next_skin_tone_id: StringName = &"tan", next_country_kit_id: StringNa
 	skin_tone_id = next_skin_tone_id
 	country_kit_id = next_country_kit_id
 
-func duplicate_appearance() -> FpsAvatarAppearance:
-	return FpsAvatarAppearance.new(skin_tone_id, country_kit_id)
+func duplicate_appearance():
+	return get_script().new(skin_tone_id, country_kit_id)

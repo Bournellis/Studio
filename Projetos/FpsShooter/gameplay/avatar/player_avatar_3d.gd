@@ -6,7 +6,7 @@ const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 
 @export var local_first_person: bool = false
 
-var appearance: FpsAvatarAppearance = AvatarCatalogScript.get_default_appearance()
+var appearance = AvatarCatalogScript.get_default_appearance()
 var part_root: Node3D
 var part_meshes: Dictionary = {}
 var part_pivots: Dictionary = {}
@@ -29,7 +29,7 @@ func _process(delta: float) -> void:
 			_update_state_from_motion()
 	_apply_animation()
 
-func apply_appearance(next_appearance: FpsAvatarAppearance) -> void:
+func apply_appearance(next_appearance) -> void:
 	if next_appearance == null:
 		appearance = AvatarCatalogScript.get_default_appearance()
 	else:

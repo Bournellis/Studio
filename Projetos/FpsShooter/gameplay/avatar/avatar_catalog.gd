@@ -64,7 +64,7 @@ const COUNTRY_KITS: Array[Dictionary] = [
 	},
 ]
 
-static func get_default_appearance() -> FpsAvatarAppearance:
+static func get_default_appearance():
 	return AvatarAppearanceScript.new(DEFAULT_SKIN_TONE_ID, DEFAULT_COUNTRY_KIT_ID)
 
 static func get_skin_tone_count() -> int:

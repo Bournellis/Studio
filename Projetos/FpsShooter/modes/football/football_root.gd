@@ -47,8 +47,8 @@ var bot_avatar
 var ball
 var hud
 var feedback
-var selected_appearance: FpsAvatarAppearance = AvatarCatalogScript.get_default_appearance()
-var bot_appearance: FpsAvatarAppearance = AvatarAppearanceScript.new(&"brown", &"france")
+var selected_appearance = AvatarCatalogScript.get_default_appearance()
+var bot_appearance = AvatarAppearanceScript.new(&"brown", &"france")
 var player_score: int = 0
 var bot_score: int = 0
 var match_over: bool = false
