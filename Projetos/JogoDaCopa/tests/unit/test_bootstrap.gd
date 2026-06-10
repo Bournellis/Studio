@@ -151,6 +151,7 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_not_null(load("res://assets/football/football_ball_panels.gdshader"))
 	assert_true(football.debug_get_ball().debug_has_panel_asset_material())
 	assert_true(football.debug_get_ball().debug_has_speed_trail())
+	assert_true(football.debug_get_ball().debug_has_fireball_particles())
 	assert_true(football.debug_get_bot().get_script() == FootballBotScript)
 	assert_true(football.debug_get_player_avatar().get_script() == PlayerAvatarScript)
 	assert_true(football.debug_get_bot_avatar().get_script() == PlayerAvatarScript)
@@ -394,6 +395,28 @@ func test_football_player_kick_assist_connects_near_front_side_ball() -> void:
 	assert_eq((football.get_node("FootballHud") as FootballHud).last_event, &"kick")
 	assert_no_new_orphans()
 
+func test_football_charged_kick_preserves_tap_and_scales_hold() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var ball = football.debug_get_ball()
+	football.debug_force_ball_position(football.debug_get_player_kick_origin() + football.debug_get_player_kick_direction() * 1.45 + Vector3.DOWN * 0.34)
+	football._on_player_charged_kick_requested(Vector3.ZERO, Vector3.FORWARD, 0.0, 0.1)
+
+	assert_almost_eq(ball.debug_get_last_kick_force(), 20.5, 0.01)
+	assert_almost_eq(ball.linear_velocity.y, 2.35, 0.01)
+
+	football.debug_force_ball_position(football.debug_get_player_kick_origin() + football.debug_get_player_kick_direction() * 1.45 + Vector3.DOWN * 0.34)
+	football._on_player_charged_kick_requested(Vector3.ZERO, Vector3.FORWARD, 1.0, 0.8)
+
+	assert_almost_eq(ball.debug_get_last_kick_force(), 31.775, 0.01)
+	assert_almost_eq(ball.linear_velocity.y, 3.45, 0.01)
+	assert_no_new_orphans()
+
 func test_football_strong_kick_uses_stronger_force() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
@@ -414,6 +437,51 @@ func test_football_strong_kick_uses_stronger_force() -> void:
 	assert_eq(hud.last_event, &"strong_kick")
 	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"strong_kick")
 	assert_gt(ball.linear_velocity.length(), 0.1)
+	assert_no_new_orphans()
+
+func test_football_super_shot_is_once_per_kickoff() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var ball = football.debug_get_ball()
+	football.debug_set_player_super_meter(100.0)
+	football.debug_force_ball_position(football.debug_get_player_kick_origin() + football.debug_get_player_kick_direction() * 1.45 + Vector3.DOWN * 0.34)
+	football._on_player_strong_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 0.0, 0.0, 0.0, 0.0, false)
+
+	assert_almost_eq(ball.debug_get_last_kick_force(), 38.5, 0.01)
+	assert_almost_eq(ball.linear_velocity.y, 9.4, 0.01)
+	assert_almost_eq(football.debug_get_player_super_meter(), 0.0, 0.01)
+	assert_true(football.debug_player_super_used_this_kickoff())
+
+	football.debug_set_player_super_meter(100.0)
+	football.debug_force_ball_position(football.debug_get_player_kick_origin() + football.debug_get_player_kick_direction() * 1.45 + Vector3.DOWN * 0.34)
+	football._on_player_strong_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 0.0, 0.0, 0.0, 0.0, false)
+
+	assert_almost_eq(ball.debug_get_last_kick_force(), 29.0, 0.01)
+	assert_almost_eq(ball.linear_velocity.y, 7.2, 0.01)
+	assert_no_new_orphans()
+
+func test_football_ball_fireball_uses_speed_hysteresis() -> void:
+	var ball = FootballBallScript.new()
+	add_child_autofree(ball)
+	await get_tree().process_frame
+
+	ball.linear_velocity = Vector3(25.0, 0.0, 0.0)
+	ball.debug_update_visual_asset(0.1)
+	assert_true(ball.debug_is_fireball_active())
+
+	ball.linear_velocity = Vector3(22.0, 0.0, 0.0)
+	ball.debug_update_visual_asset(0.1)
+	assert_true(ball.debug_is_fireball_active())
+
+	ball.linear_velocity = Vector3(20.0, 0.0, 0.0)
+	ball.debug_update_visual_asset(0.1)
+	assert_false(ball.debug_is_fireball_active())
 	assert_no_new_orphans()
 
 func test_football_bot_approaches_behind_ball_before_attacking() -> void:

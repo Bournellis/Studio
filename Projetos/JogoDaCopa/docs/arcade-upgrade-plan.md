@@ -8,6 +8,7 @@
 ## Progress
 
 - `2026-06-10` - `Track 03A Arcade Movement & Actions V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_03A_ARCADE_MOVEMENT_ACTIONS_V1_COMPLETE`). `tools/validate.gd` PASS (33 tests, 316 asserts). Performance sample Windows/Forward+: average `1275.8fps`, min warmed instant `787.4fps`, `0/360` frames below 60.
+- `2026-06-10` - `Track 03C Super Shot & Fireball V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_03C_SUPER_SHOT_FIREBALL_V1_COMPLETE`). `tools/validate.gd` PASS (36 tests, 333 asserts).
 
 ## Direcao
 

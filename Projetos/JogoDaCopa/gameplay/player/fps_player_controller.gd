@@ -5,6 +5,7 @@ signal shoot_requested(origin: Vector3, direction: Vector3, damage: float, knock
 signal alt_fire_requested(origin: Vector3, direction: Vector3, damage: float, knockback: float, speed: float, radius: float, overcharged: bool)
 signal arcade_dash_started(direction: Vector3)
 signal arcade_flip_started(direction: Vector3)
+signal charged_shoot_requested(origin: Vector3, direction: Vector3, charge_fraction: float, held_seconds: float)
 
 const MIN_MOUSE_SENSITIVITY: float = 0.0008
 const MAX_MOUSE_SENSITIVITY: float = 0.0032
@@ -15,6 +16,8 @@ const ARCADE_DASH_COOLDOWN: float = 1.6
 const ARCADE_DASH_STAMINA_COST: float = 20.0
 const ARCADE_FLIP_VERTICAL_VELOCITY: float = 4.4
 const ARCADE_FLIP_HORIZONTAL_SPEED: float = 8.0
+const CHARGED_SHOT_FULL_TIME: float = 0.8
+const CHARGED_SHOT_TAP_MAX: float = 0.15
 
 @export var move_speed: float = 7.8
 @export var jump_velocity: float = 5.6
@@ -57,6 +60,8 @@ var arcade_dash_count: int = 0
 var arcade_flip_available: bool = true
 var arcade_flip_count: int = 0
 var arcade_stun_remaining: float = 0.0
+var shoot_charge_active: bool = false
+var shoot_charge_time: float = 0.0
 
 func _ready() -> void:
 	super._ready()
@@ -82,6 +87,8 @@ func configure_for_round() -> void:
 	arcade_flip_available = true
 	arcade_flip_count = 0
 	arcade_stun_remaining = 0.0
+	shoot_charge_active = false
+	shoot_charge_time = 0.0
 	pitch = 0.0
 	if head != null:
 		head.rotation.x = pitch
@@ -94,7 +101,10 @@ func _input(event: InputEvent) -> void:
 		apply_mouse_look(motion.relative)
 		return
 	if event.is_action_pressed("shoot"):
-		request_shot()
+		begin_charged_shot()
+		return
+	if event.is_action_released("shoot"):
+		release_charged_shot()
 		return
 	if event.is_action_pressed("alt_fire"):
 		request_alt_fire()
@@ -112,6 +122,8 @@ func _physics_process(delta: float) -> void:
 	alt_fire_cooldown_remaining = maxf(0.0, alt_fire_cooldown_remaining - delta)
 	arcade_dash_cooldown_remaining = maxf(0.0, arcade_dash_cooldown_remaining - delta)
 	arcade_stun_remaining = maxf(0.0, arcade_stun_remaining - delta)
+	if shoot_charge_active:
+		shoot_charge_time = minf(CHARGED_SHOT_FULL_TIME, shoot_charge_time + delta)
 	if arcade_stun_remaining > 0.0:
 		boost_active = false
 		var stun_knockback := consume_knockback(delta, is_on_floor())
@@ -154,6 +166,29 @@ func request_shot() -> void:
 	var damage := shot_damage * (overcharge_damage_multiplier if was_overcharged else 1.0)
 	var knockback := shot_knockback * (overcharge_knockback_multiplier if was_overcharged else 1.0)
 	shoot_requested.emit(get_shot_origin(), get_shot_direction(), damage, knockback)
+
+func begin_charged_shot() -> bool:
+	if input_locked or not _can_request_fire() or shot_cooldown_remaining > 0.0:
+		return false
+	shoot_charge_active = true
+	shoot_charge_time = 0.0
+	return true
+
+func release_charged_shot() -> bool:
+	if not shoot_charge_active:
+		return false
+	shoot_charge_active = false
+	if input_locked or not _can_request_fire() or shot_cooldown_remaining > 0.0:
+		shoot_charge_time = 0.0
+		return false
+	shot_cooldown_remaining = shot_cooldown
+	var held_seconds := shoot_charge_time
+	var charge_fraction := 0.0
+	if held_seconds > CHARGED_SHOT_TAP_MAX:
+		charge_fraction = clampf(held_seconds / CHARGED_SHOT_FULL_TIME, 0.0, 1.0)
+	shoot_charge_time = 0.0
+	charged_shoot_requested.emit(get_shot_origin(), get_shot_direction(), charge_fraction, held_seconds)
+	return true
 
 func request_alt_fire() -> void:
 	if input_locked:
@@ -241,6 +276,11 @@ func get_arcade_dash_cooldown_fraction() -> float:
 		return 0.0
 	return clampf(arcade_dash_cooldown_remaining / ARCADE_DASH_COOLDOWN, 0.0, 1.0)
 
+func get_shoot_charge_fraction() -> float:
+	if not shoot_charge_active:
+		return 0.0
+	return clampf(shoot_charge_time / CHARGED_SHOT_FULL_TIME, 0.0, 1.0)
+
 func apply_jump_pad_launch(launch_velocity: Vector3) -> void:
 	if is_dead:
 		return
@@ -262,6 +302,8 @@ func set_input_locked(is_locked: bool) -> void:
 		velocity = Vector3.ZERO
 		vertical_velocity = 0.0
 		arcade_dash_remaining = 0.0
+		shoot_charge_active = false
+		shoot_charge_time = 0.0
 
 func debug_get_vertical_velocity() -> float:
 	return vertical_velocity
@@ -288,6 +330,10 @@ func debug_is_arcade_flip_available() -> bool:
 func debug_get_arcade_stun_remaining() -> float:
 	return arcade_stun_remaining
 
+func debug_set_shoot_charge_time(next_time: float) -> void:
+	shoot_charge_active = true
+	shoot_charge_time = clampf(next_time, 0.0, CHARGED_SHOT_FULL_TIME)
+
 func debug_force_arcade_flip_available(is_available: bool) -> void:
 	arcade_flip_available = is_available
 
@@ -298,7 +344,9 @@ func _handle_shooting() -> void:
 	if input_locked:
 		return
 	if Input.is_action_just_pressed("shoot"):
-		request_shot()
+		begin_charged_shot()
+	if Input.is_action_just_released("shoot"):
+		release_charged_shot()
 	if Input.is_action_just_pressed("alt_fire"):
 		request_alt_fire()
 	if Input.is_action_just_pressed("arcade_dash"):

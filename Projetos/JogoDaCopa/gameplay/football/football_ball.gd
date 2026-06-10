@@ -2,6 +2,8 @@ class_name FootballBall3D
 extends RigidBody3D
 
 const BallPanelShader = preload("res://assets/football/football_ball_panels.gdshader")
+const FIREBALL_ON_SPEED: float = 24.0
+const FIREBALL_OFF_SPEED: float = 21.0
 
 @export var ball_radius: float = 0.48
 @export var max_horizontal_speed: float = 34.0
@@ -20,8 +22,10 @@ var dribble_control_count: int = 0
 var reset_count: int = 0
 var ball_mesh_instance: MeshInstance3D
 var trail_particles: GPUParticles3D
+var fireball_particles: GPUParticles3D
 var squash_timer: float = 0.0
 var speed_trail_active: bool = false
+var fireball_active: bool = false
 
 func _ready() -> void:
 	mass = 0.74
@@ -77,8 +81,12 @@ func reset_to_center() -> void:
 	sleeping = false
 	squash_timer = 0.0
 	speed_trail_active = false
+	fireball_active = false
 	if trail_particles != null:
 		trail_particles.emitting = false
+	if fireball_particles != null:
+		fireball_particles.emitting = false
+	_update_fireball_material()
 	if ball_mesh_instance != null:
 		ball_mesh_instance.scale = Vector3.ONE
 	reset_count += 1
@@ -110,8 +118,17 @@ func debug_has_speed_trail() -> bool:
 func debug_is_speed_trail_emitting() -> bool:
 	return trail_particles != null and trail_particles.emitting
 
+func debug_is_fireball_active() -> bool:
+	return fireball_active
+
+func debug_has_fireball_particles() -> bool:
+	return fireball_particles != null
+
 func debug_get_ball_mesh_scale() -> Vector3:
 	return ball_mesh_instance.scale if ball_mesh_instance != null else Vector3.ONE
+
+func debug_update_visual_asset(delta: float) -> void:
+	_update_visual_asset(delta)
 
 func _clamp_velocity() -> void:
 	var flat := Vector3(linear_velocity.x, 0.0, linear_velocity.z)
@@ -183,6 +200,32 @@ func _ensure_ball_nodes() -> void:
 		add_child(trail_particles)
 	trail_particles = get_node_or_null("BallSpeedTrail") as GPUParticles3D
 
+	if get_node_or_null("BallFireTrail") == null:
+		fireball_particles = GPUParticles3D.new()
+		fireball_particles.name = "BallFireTrail"
+		fireball_particles.amount = 56
+		fireball_particles.lifetime = 0.22
+		fireball_particles.emitting = false
+		fireball_particles.local_coords = false
+		fireball_particles.explosiveness = 0.0
+		fireball_particles.randomness = 0.42
+		var fire_mesh := SphereMesh.new()
+		fire_mesh.radius = 0.06
+		fire_mesh.height = 0.12
+		fire_mesh.radial_segments = 8
+		fire_mesh.rings = 4
+		fire_mesh.material = _build_fireball_particle_material()
+		fireball_particles.draw_pass_1 = fire_mesh
+		var fire_process := ParticleProcessMaterial.new()
+		fire_process.gravity = Vector3(0.0, 0.25, 0.0)
+		fire_process.initial_velocity_min = 0.15
+		fire_process.initial_velocity_max = 0.7
+		fire_process.scale_min = 0.2
+		fire_process.scale_max = 0.72
+		fireball_particles.process_material = fire_process
+		add_child(fireball_particles)
+	fireball_particles = get_node_or_null("BallFireTrail") as GPUParticles3D
+
 func _build_ball_material() -> ShaderMaterial:
 	var material := ShaderMaterial.new()
 	material.shader = BallPanelShader
@@ -196,11 +239,33 @@ func _update_visual_asset(delta: float) -> void:
 		elif ball_speed < 9.0:
 			speed_trail_active = false
 		trail_particles.emitting = speed_trail_active
+		if ball_speed > FIREBALL_ON_SPEED:
+			fireball_active = true
+		elif ball_speed < FIREBALL_OFF_SPEED:
+			fireball_active = false
+	if fireball_particles != null:
+		fireball_particles.emitting = fireball_active
+	_update_fireball_material()
 	if ball_mesh_instance == null:
 		return
 	squash_timer = maxf(0.0, squash_timer - delta)
 	var squash_strength := clampf(squash_timer / 0.18, 0.0, 1.0) * clampf(linear_velocity.length() / 24.0, 0.0, 1.0)
 	ball_mesh_instance.scale = Vector3(1.0 + squash_strength * 0.08, 1.0 - squash_strength * 0.13, 1.0 + squash_strength * 0.08)
+
+func _update_fireball_material() -> void:
+	if ball_mesh_instance == null or not ball_mesh_instance.material_override is ShaderMaterial:
+		return
+	var material := ball_mesh_instance.material_override as ShaderMaterial
+	material.set_shader_parameter("fireball_intensity", 1.0 if fireball_active else 0.0)
+
+func _build_fireball_particle_material() -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color(1.0, 0.36, 0.08, 0.82)
+	material.emission_enabled = true
+	material.emission = Color(1.0, 0.28, 0.04, 1.0)
+	material.emission_energy_multiplier = 1.8
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	return material
 
 func _build_physics_material() -> PhysicsMaterial:
 	var material := PhysicsMaterial.new()

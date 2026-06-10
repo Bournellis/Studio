@@ -50,6 +50,14 @@ const PLAYER_KICK_FORCE: float = 20.5
 const PLAYER_STRONG_KICK_FORCE: float = 29.0
 const PLAYER_KICK_LIFT: float = 2.35
 const PLAYER_STRONG_KICK_LIFT: float = 7.2
+const CHARGED_KICK_FORCE_MULTIPLIER: float = 1.55
+const CHARGED_KICK_LIFT_BONUS: float = 1.1
+const SUPER_METER_MAX: float = 100.0
+const SUPER_TOUCH_GAIN: float = 15.0
+const SUPER_GOAL_SUFFERED_GAIN: float = 45.0
+const SUPER_BOT_HARD_GAIN_MULTIPLIER: float = 1.25
+const SUPER_SHOT_FORCE: float = 38.5
+const SUPER_SHOT_LIFT: float = 9.4
 const PLAYER_TOUCH_COOLDOWN: float = 0.18
 const GOAL_RESET_DELAY: float = 1.25
 const KICKOFF_COUNTDOWN_DURATION: float = 3.15
@@ -86,6 +94,10 @@ var last_kick_assist_strength: float = 0.0
 var last_goal_player_scored: bool = false
 var kickoff_owner: StringName = &"player"
 var bot_difficulty_id: StringName = &"normal"
+var player_super_meter: float = 0.0
+var bot_super_meter: float = 0.0
+var player_super_used_this_kickoff: bool = false
+var bot_super_used_this_kickoff: bool = false
 var kickoff_countdown_remaining: float = 0.0
 var countdown_last_number: int = 0
 var goal_slowmo_remaining: float = 0.0
@@ -154,6 +166,10 @@ func restart_match() -> void:
 	goal_reset_timer = 0.0
 	last_goal_player_scored = false
 	kickoff_owner = &"player"
+	player_super_meter = 0.0
+	bot_super_meter = 0.0
+	player_super_used_this_kickoff = false
+	bot_super_used_this_kickoff = false
 	_restart_play(false)
 	if hud != null:
 		hud.reset_feedback()
@@ -196,6 +212,21 @@ func debug_get_player_boost_fraction() -> float:
 
 func debug_get_player_dash_cooldown_fraction() -> float:
 	return player.get_arcade_dash_cooldown_fraction() if player != null and player.has_method("get_arcade_dash_cooldown_fraction") else 0.0
+
+func debug_get_player_super_meter() -> float:
+	return player_super_meter
+
+func debug_get_bot_super_meter() -> float:
+	return bot_super_meter
+
+func debug_set_player_super_meter(next_meter: float) -> void:
+	player_super_meter = clampf(next_meter, 0.0, SUPER_METER_MAX)
+
+func debug_set_bot_super_meter(next_meter: float) -> void:
+	bot_super_meter = clampf(next_meter, 0.0, SUPER_METER_MAX)
+
+func debug_player_super_used_this_kickoff() -> bool:
+	return player_super_used_this_kickoff
 
 func debug_is_kickoff_locked() -> bool:
 	return kickoff_countdown_remaining > 0.0
@@ -449,6 +480,7 @@ func _spawn_runtime() -> void:
 	player.alt_fire_cooldown = 0.88
 	runtime_root.add_child(player)
 	player.shoot_requested.connect(_on_player_kick_requested)
+	player.charged_shoot_requested.connect(_on_player_charged_kick_requested)
 	player.alt_fire_requested.connect(_on_player_strong_kick_requested)
 	player.arcade_dash_started.connect(func(_direction: Vector3) -> void:
 		if player_avatar != null:
@@ -549,6 +581,8 @@ func _restart_play(after_goal: bool) -> void:
 	phase_label = &"kickoff" if not after_goal else &"reset"
 	Engine.time_scale = 1.0
 	goal_slowmo_remaining = 0.0
+	player_super_used_this_kickoff = false
+	bot_super_used_this_kickoff = false
 	if after_goal:
 		_advance_kickoff_owner()
 	player.global_position = _get_player_spawn_for_kickoff()
@@ -579,10 +613,21 @@ func _restart_play(after_goal: bool) -> void:
 func _on_player_kick_requested(_origin: Vector3, _direction: Vector3, _damage: float, _knockback: float) -> void:
 	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, false)
 
+func _on_player_charged_kick_requested(_origin: Vector3, _direction: Vector3, charge_fraction: float, _held_seconds: float) -> void:
+	var clamped_charge := clampf(charge_fraction, 0.0, 1.0)
+	var force := PLAYER_KICK_FORCE * lerpf(1.0, CHARGED_KICK_FORCE_MULTIPLIER, clamped_charge)
+	var lift := PLAYER_KICK_LIFT + CHARGED_KICK_LIFT_BONUS * clamped_charge
+	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), force, lift, false)
+
 func _on_player_strong_kick_requested(_origin: Vector3, _direction: Vector3, _damage: float, _knockback: float, _speed: float, _radius: float, _overcharged: bool) -> void:
+	if _can_player_use_super():
+		player_super_meter = 0.0
+		player_super_used_this_kickoff = true
+		_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), SUPER_SHOT_FORCE, SUPER_SHOT_LIFT, true, true)
+		return
 	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_STRONG_KICK_FORCE, PLAYER_STRONG_KICK_LIFT, true)
 
-func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: float, strong: bool) -> void:
+func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: float, strong: bool, super_shot: bool = false) -> void:
 	if match_over or intro_open or menu_open or goal_reset_timer > 0.0 or kickoff_countdown_remaining > 0.0:
 		return
 	var connected := _can_reach_ball(origin, direction)
@@ -595,10 +640,12 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 		return
 	var kick_direction := _build_kick_direction(origin, direction)
 	ball.kick(kick_direction, force, lift)
+	if not super_shot:
+		_add_player_super(SUPER_TOUCH_GAIN)
 	if feedback != null:
 		feedback.play_football_kick(ball.global_position, kick_direction, strong)
 	if chase_camera != null:
-		chase_camera.play_shake(0.09 if strong else 0.045, 0.18 if strong else 0.1)
+		chase_camera.play_shake(0.2 if super_shot else (0.09 if strong else 0.045), 0.22 if super_shot else (0.18 if strong else 0.1))
 
 func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, lift: float) -> void:
 	if match_over or intro_open or goal_reset_timer > 0.0 or kickoff_countdown_remaining > 0.0:
@@ -608,11 +655,21 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 		return
 	if bot_avatar != null:
 		bot_avatar.play_kick(false)
-	ball.kick(direction, force, lift)
+	var applied_force := force
+	var applied_lift := lift
+	var bot_super := _can_bot_use_super()
+	if bot_super:
+		bot_super_meter = 0.0
+		bot_super_used_this_kickoff = true
+		applied_force = SUPER_SHOT_FORCE
+		applied_lift = SUPER_SHOT_LIFT
+	ball.kick(direction, applied_force, applied_lift)
+	if not bot_super:
+		_add_bot_super(SUPER_TOUCH_GAIN)
 	if feedback != null:
-		feedback.play_football_kick(ball.global_position, direction, false)
+		feedback.play_football_kick(ball.global_position, direction, bot_super)
 	if chase_camera != null:
-		chase_camera.play_shake(0.035, 0.08)
+		chase_camera.play_shake(0.16 if bot_super else 0.035, 0.2 if bot_super else 0.08)
 
 func _update_player_ball_control(_delta: float) -> void:
 	if player == null or ball == null:
@@ -646,6 +703,7 @@ func _process_player_ball_contact() -> void:
 	var boost_multiplier := 1.35 if player.is_boosting() else 1.0
 	var contact_lift := 0.42 if player.is_boosting() else 0.18
 	ball.kick(contact_direction, PLAYER_TOUCH_FORCE * boost_multiplier, contact_lift)
+	_add_player_super(SUPER_TOUCH_GAIN)
 	player_touch_cooldown_remaining = PLAYER_TOUCH_COOLDOWN
 
 func _process_arcade_action_contacts() -> void:
@@ -669,6 +727,10 @@ func _process_arcade_dash_contact(actor: Node3D, target: Node3D, actor_is_player
 		return false
 	if ball_close:
 		ball.kick(dash_direction, ARCADE_SLIDE_BALL_FORCE, ARCADE_SLIDE_BALL_LIFT)
+		if actor_is_player:
+			_add_player_super(SUPER_TOUCH_GAIN)
+		else:
+			_add_bot_super(SUPER_TOUCH_GAIN)
 		if actor_is_player and player_avatar != null:
 			player_avatar.play_slide()
 		elif not actor_is_player and bot_avatar != null:
@@ -718,6 +780,10 @@ func _register_goal(player_scored: bool) -> void:
 	phase_label = &"goal"
 	goal_reset_timer = GOAL_RESET_DELAY
 	bot.set_celebrating(true)
+	if player_scored:
+		_add_bot_super(SUPER_GOAL_SUFFERED_GAIN)
+	else:
+		_add_player_super(SUPER_GOAL_SUFFERED_GAIN)
 	if hud != null:
 		hud.show_goal(player_scored)
 	if player_scored and player_avatar != null:
@@ -738,6 +804,21 @@ func _register_goal(player_scored: bool) -> void:
 		if feedback != null:
 			feedback.play_round_end(player_won)
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+func _add_player_super(amount: float) -> void:
+	player_super_meter = clampf(player_super_meter + amount, 0.0, SUPER_METER_MAX)
+
+func _add_bot_super(amount: float) -> void:
+	bot_super_meter = clampf(bot_super_meter + amount * _get_bot_super_gain_multiplier(), 0.0, SUPER_METER_MAX)
+
+func _can_player_use_super() -> bool:
+	return player_super_meter >= SUPER_METER_MAX and not player_super_used_this_kickoff
+
+func _can_bot_use_super() -> bool:
+	return bot_super_meter >= SUPER_METER_MAX and not bot_super_used_this_kickoff
+
+func _get_bot_super_gain_multiplier() -> float:
+	return SUPER_BOT_HARD_GAIN_MULTIPLIER if bot_difficulty_id == &"hard" else 1.0
 
 func _can_reach_ball(origin: Vector3, direction: Vector3) -> bool:
 	var assist: Dictionary = FootballMatchRulesScript.get_kick_assist(
@@ -801,12 +882,14 @@ func _build_hud_snapshot() -> Dictionary:
 		"boost_fraction": player.get_boost_stamina_fraction() if player != null else 0.0,
 		"boost_active": player.is_boosting() if player != null else false,
 		"dash_cooldown_fraction": player.get_arcade_dash_cooldown_fraction() if player != null and player.has_method("get_arcade_dash_cooldown_fraction") else 0.0,
+		"shoot_charge_fraction": player.get_shoot_charge_fraction() if player != null and player.has_method("get_shoot_charge_fraction") else 0.0,
+		"player_super_fraction": player_super_meter / SUPER_METER_MAX,
 		"bot_state": bot.debug_get_state() if bot != null else "none",
 		"bot_difficulty": bot_difficulty_id,
 		"kickoff_owner": kickoff_owner,
 		"phase": phase_label,
 		"countdown": kickoff_countdown_remaining,
-		"hint": "Comecar inicia | WASD move | Shift boost | E/Ctrl dash | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Shift boost | E/Ctrl dash | LMB chute | RMB chute forte | Space jump/flip | paredes/teto rebatem | R restart | Esc menu"
+		"hint": "Comecar inicia | WASD move | Shift boost | E/Ctrl dash | Mouse gira jogador/camera | LMB segura/carrega | RMB forte/SUPER | Space jump | R restart | Esc menu" if intro_open else "WASD move | Shift boost | E/Ctrl dash | LMB segura/carrega | RMB forte/SUPER | Space jump/flip | paredes/teto rebatem | R restart | Esc menu"
 	}
 
 func _advance_kickoff_owner() -> void:

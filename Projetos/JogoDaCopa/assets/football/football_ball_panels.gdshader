@@ -4,7 +4,9 @@ render_mode diffuse_burley, specular_schlick_ggx;
 uniform vec3 panel_color = vec3(0.96, 0.97, 0.92);
 uniform vec3 seam_color = vec3(0.03, 0.035, 0.04);
 uniform vec3 accent_color = vec3(0.12, 0.42, 0.95);
+uniform vec3 fireball_color = vec3(1.0, 0.34, 0.05);
 uniform float seam_width = 0.055;
+uniform float fireball_intensity = 0.0;
 
 void fragment() {
 	vec2 uv = UV;
@@ -14,7 +16,7 @@ void fragment() {
 	float seam = 1.0 - smoothstep(seam_width, seam_width + 0.012, min(min(longitude, latitude), diagonal));
 	float accent = smoothstep(0.43, 0.5, abs(sin((uv.x * 5.0 + uv.y * 3.0) * 6.28318)));
 	vec3 base = mix(panel_color, accent_color, accent * 0.18);
-	ALBEDO = mix(base, seam_color, clamp(seam, 0.0, 1.0));
-	EMISSION = accent_color * accent * 0.045;
+	ALBEDO = mix(mix(base, fireball_color, fireball_intensity * 0.14), seam_color, clamp(seam, 0.0, 1.0));
+	EMISSION = accent_color * accent * 0.045 + fireball_color * fireball_intensity * 1.65;
 	ROUGHNESS = 0.44;
 }
