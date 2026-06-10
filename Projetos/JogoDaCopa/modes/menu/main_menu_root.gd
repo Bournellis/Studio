@@ -6,7 +6,17 @@ const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
-const MENU_PANEL_SIZE: Vector2 = Vector2(560.0, 640.0)
+const MENU_PANEL_SIZE: Vector2 = Vector2(560.0, 720.0)
+const BUS_MASTER: StringName = &"Master"
+const BUS_SFX: StringName = &"SFX"
+const BUS_UI: StringName = &"UI"
+const BUS_AMBIENCE: StringName = &"Ambience"
+const UI_AUDIO_POOL_SIZE: int = 5
+const MENU_UI_AUDIO_PATHS: Dictionary = {
+	&"ui_click": "res://assets/audio/kenney_sfx/click_001.ogg",
+	&"ui_confirmation": "res://assets/audio/kenney_sfx/confirmation_001.ogg",
+	&"ui_back": "res://assets/audio/kenney_sfx/back_001.ogg",
+}
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
 const TOON_RENDER_META_KEY: String = "jogodacopa_toon_render"
@@ -37,8 +47,14 @@ var match_mode_label: Label
 var skin_swatch: ColorRect
 var kit_swatch: ColorRect
 var volume_slider: HSlider
+var sfx_volume_slider: HSlider
+var ui_volume_slider: HSlider
+var ambience_volume_slider: HSlider
 var quality_option: OptionButton
 var toon_check_button: CheckButton
+var ui_audio_streams: Dictionary = {}
+var ui_audio_pool: Array[AudioStreamPlayer] = []
+var ui_audio_pool_cursor: int = 0
 
 var preview_time: float = 0.0
 var selected_skin_tone_id: StringName = AvatarCatalogScript.DEFAULT_SKIN_TONE_ID
@@ -51,7 +67,11 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	_ensure_audio_buses()
+	_load_ui_audio_streams()
+	_build_ui_audio_pool()
 	_build_ui()
+	_apply_initial_audio_mix()
 	_update_preview_selection()
 
 func _process(delta: float) -> void:
@@ -99,6 +119,16 @@ func debug_get_quality_text() -> String:
 	if quality_option == null:
 		return ""
 	return quality_option.get_item_text(quality_option.selected)
+
+func debug_has_audio_buses() -> bool:
+	return (
+		AudioServer.get_bus_index(str(BUS_SFX)) >= 0
+		and AudioServer.get_bus_index(str(BUS_UI)) >= 0
+		and AudioServer.get_bus_index(str(BUS_AMBIENCE)) >= 0
+	)
+
+func debug_get_ui_audio_pool_size() -> int:
+	return ui_audio_pool.size()
 
 func _build_ui() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -181,12 +211,14 @@ func _build_ui() -> void:
 
 	football_button = _build_button("FootballButton", "Jogar Futebol 1x1")
 	football_button.pressed.connect(func() -> void:
+		_play_ui_sound(&"ui_confirmation")
 		_load_mode(FOOTBALL_SCENE_PATH)
 	)
 	center.add_child(football_button)
 
 	quit_button = _build_button("QuitButton", "Sair")
 	quit_button.pressed.connect(func() -> void:
+		_play_ui_sound(&"ui_back")
 		get_tree().quit()
 	)
 	center.add_child(quit_button)
@@ -373,24 +405,10 @@ func _build_selector_rows(parent: VBoxContainer) -> void:
 	))
 
 func _build_settings_rows(parent: VBoxContainer) -> void:
-	var volume_row := HBoxContainer.new()
-	volume_row.name = "VolumeRow"
-	volume_row.add_theme_constant_override("separation", 8)
-	parent.add_child(volume_row)
-
-	var volume_label := _build_row_label("VolumeLabel", "Volume")
-	volume_label.custom_minimum_size.x = 96.0
-	volume_row.add_child(volume_label)
-
-	volume_slider = HSlider.new()
-	volume_slider.name = "VolumeSlider"
-	volume_slider.min_value = 0.0
-	volume_slider.max_value = 1.0
-	volume_slider.step = 0.05
-	volume_slider.value = 0.82
-	volume_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	volume_slider.value_changed.connect(_on_volume_changed)
-	volume_row.add_child(volume_slider)
+	volume_slider = _build_volume_row(parent, "VolumeRow", "VolumeLabel", "Master", "VolumeSlider", _on_volume_changed, 0.82)
+	sfx_volume_slider = _build_volume_row(parent, "SfxVolumeRow", "SfxVolumeLabel", "SFX", "SfxVolumeSlider", _on_sfx_volume_changed, 0.86)
+	ui_volume_slider = _build_volume_row(parent, "UiVolumeRow", "UiVolumeLabel", "UI", "UiVolumeSlider", _on_ui_volume_changed, 0.9)
+	ambience_volume_slider = _build_volume_row(parent, "AmbienceVolumeRow", "AmbienceVolumeLabel", "Ambiente", "AmbienceVolumeSlider", _on_ambience_volume_changed, 0.78)
 
 	var quality_row := HBoxContainer.new()
 	quality_row.name = "QualityRow"
@@ -408,6 +426,7 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
 	quality_option.add_item("Performance")
 	quality_option.select(0)
 	quality_option.item_selected.connect(func(index: int) -> void:
+		_play_ui_sound(&"ui_click")
 		status_label.text = "Qualidade: %s" % quality_option.get_item_text(index)
 	)
 	quality_row.add_child(quality_option)
@@ -427,10 +446,32 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
 	toon_check_button.button_pressed = selected_toon_render_enabled
 	toon_check_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	toon_check_button.toggled.connect(func(is_pressed: bool) -> void:
+		_play_ui_sound(&"ui_click")
 		selected_toon_render_enabled = is_pressed
 		status_label.text = "Toon: %s" % ("ON" if selected_toon_render_enabled else "OFF")
 	)
 	toon_row.add_child(toon_check_button)
+
+func _build_volume_row(parent: VBoxContainer, row_name: String, label_name: String, label: String, slider_name: String, callback: Callable, default_value: float) -> HSlider:
+	var volume_row := HBoxContainer.new()
+	volume_row.name = row_name
+	volume_row.add_theme_constant_override("separation", 8)
+	parent.add_child(volume_row)
+
+	var volume_label := _build_row_label(label_name, label)
+	volume_label.custom_minimum_size.x = 96.0
+	volume_row.add_child(volume_label)
+
+	var slider := HSlider.new()
+	slider.name = slider_name
+	slider.min_value = 0.0
+	slider.max_value = 1.0
+	slider.step = 0.05
+	slider.value = default_value
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.value_changed.connect(callback)
+	volume_row.add_child(slider)
+	return slider
 
 func _build_button(node_name: String, label: String) -> Button:
 	var button := Button.new()
@@ -446,7 +487,10 @@ func _build_cycle_button(node_name: String, label: String, callback: Callable) -
 	button.name = node_name
 	button.text = label
 	button.custom_minimum_size = Vector2(42.0, 34.0)
-	button.pressed.connect(callback)
+	button.pressed.connect(func() -> void:
+		_play_ui_sound(&"ui_click")
+		callback.call()
+	)
 	return button
 
 func _build_row_label(node_name: String, label: String) -> Label:
@@ -532,10 +576,82 @@ func _get_match_mode_label(match_mode_id: StringName) -> String:
 	return str(MATCH_MODE_LABELS.get(match_mode_id, "3 minutos"))
 
 func _on_volume_changed(value: float) -> void:
-	var master_bus := AudioServer.get_bus_index("Master")
-	if master_bus >= 0:
-		AudioServer.set_bus_volume_db(master_bus, linear_to_db(maxf(value, 0.01)))
+	_set_bus_volume(BUS_MASTER, value)
 	status_label.text = "Volume: %.0f%%" % [value * 100.0]
+
+func _apply_initial_audio_mix() -> void:
+	if volume_slider != null:
+		_set_bus_volume(BUS_MASTER, volume_slider.value)
+	if sfx_volume_slider != null:
+		_set_bus_volume(BUS_SFX, sfx_volume_slider.value)
+	if ui_volume_slider != null:
+		_set_bus_volume(BUS_UI, ui_volume_slider.value)
+	if ambience_volume_slider != null:
+		_set_bus_volume(BUS_AMBIENCE, ambience_volume_slider.value)
+
+func _on_sfx_volume_changed(value: float) -> void:
+	_set_bus_volume(BUS_SFX, value)
+	status_label.text = "SFX: %.0f%%" % [value * 100.0]
+
+func _on_ui_volume_changed(value: float) -> void:
+	_set_bus_volume(BUS_UI, value)
+	status_label.text = "UI: %.0f%%" % [value * 100.0]
+
+func _on_ambience_volume_changed(value: float) -> void:
+	_set_bus_volume(BUS_AMBIENCE, value)
+	status_label.text = "Ambiente: %.0f%%" % [value * 100.0]
+
+func _set_bus_volume(bus_name: StringName, value: float) -> void:
+	_ensure_audio_bus(bus_name)
+	var bus_index := AudioServer.get_bus_index(str(bus_name))
+	if bus_index < 0:
+		return
+	var clamped_value := clampf(value, 0.0, 1.0)
+	AudioServer.set_bus_mute(bus_index, clamped_value <= 0.001)
+	AudioServer.set_bus_volume_db(bus_index, -80.0 if clamped_value <= 0.001 else linear_to_db(clamped_value))
+
+func _ensure_audio_buses() -> void:
+	_ensure_audio_bus(BUS_SFX)
+	_ensure_audio_bus(BUS_UI)
+	_ensure_audio_bus(BUS_AMBIENCE)
+
+func _ensure_audio_bus(bus_name: StringName) -> void:
+	if AudioServer.get_bus_index(str(bus_name)) >= 0:
+		return
+	AudioServer.add_bus(AudioServer.get_bus_count())
+	var bus_index := AudioServer.get_bus_count() - 1
+	AudioServer.set_bus_name(bus_index, str(bus_name))
+	AudioServer.set_bus_send(bus_index, "Master")
+
+func _load_ui_audio_streams() -> void:
+	ui_audio_streams.clear()
+	for audio_key: StringName in MENU_UI_AUDIO_PATHS.keys():
+		var audio_path := str(MENU_UI_AUDIO_PATHS[audio_key])
+		var stream := load(audio_path) as AudioStream
+		if stream == null:
+			push_warning("Missing menu audio stream: %s" % audio_path)
+			continue
+		ui_audio_streams[audio_key] = stream
+
+func _build_ui_audio_pool() -> void:
+	for index in range(UI_AUDIO_POOL_SIZE):
+		var player := AudioStreamPlayer.new()
+		player.name = "MenuUiAudioPlayer%d" % index
+		player.bus = BUS_UI
+		add_child(player)
+		ui_audio_pool.append(player)
+
+func _play_ui_sound(audio_key: StringName) -> void:
+	var stream := ui_audio_streams.get(audio_key) as AudioStream
+	if stream == null or ui_audio_pool.is_empty():
+		return
+	var player := ui_audio_pool[ui_audio_pool_cursor]
+	ui_audio_pool_cursor = (ui_audio_pool_cursor + 1) % ui_audio_pool.size()
+	player.stop()
+	player.stream = stream
+	player.volume_db = -8.0 if audio_key == &"ui_confirmation" else -11.0
+	player.pitch_scale = 1.0
+	player.play()
 
 func _load_mode(scene_path: String) -> void:
 	status_label.text = "Carregando..."
