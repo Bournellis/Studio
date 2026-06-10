@@ -3,7 +3,7 @@ extends Control
 
 const ARENA_SCENE_PATH: String = "res://modes/arena/arena.tscn"
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
-const MENU_BOX_SIZE: Vector2 = Vector2(440.0, 352.0)
+const MENU_PANEL_SIZE: Vector2 = Vector2(500.0, 390.0)
 
 var arena_button: Button
 var football_button: Button
@@ -31,12 +31,14 @@ func _build_ui() -> void:
 
 	var background := ColorRect.new()
 	background.name = "WorldCupBackdrop"
+	background.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	background.color = Color(0.02, 0.09, 0.08, 1.0)
 	add_child(background)
 
 	var pitch_band := ColorRect.new()
 	pitch_band.name = "PitchBand"
+	pitch_band.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pitch_band.anchor_left = 0.0
 	pitch_band.anchor_top = 0.62
 	pitch_band.anchor_right = 1.0
@@ -46,6 +48,7 @@ func _build_ui() -> void:
 
 	var gold_strip := ColorRect.new()
 	gold_strip.name = "GoldStrip"
+	gold_strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	gold_strip.anchor_left = 0.0
 	gold_strip.anchor_top = 0.6
 	gold_strip.anchor_right = 1.0
@@ -53,24 +56,40 @@ func _build_ui() -> void:
 	gold_strip.color = Color(0.96, 0.76, 0.14, 1.0)
 	add_child(gold_strip)
 
+	var menu_center := CenterContainer.new()
+	menu_center.name = "MenuCenter"
+	menu_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	menu_center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(menu_center)
+
+	var menu_panel := PanelContainer.new()
+	menu_panel.name = "MenuPanel"
+	menu_panel.custom_minimum_size = MENU_PANEL_SIZE
+	menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	menu_center.add_child(menu_panel)
+
+	var margin := MarginContainer.new()
+	margin.name = "MenuMargin"
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	margin.add_theme_constant_override("margin_left", 28)
+	margin.add_theme_constant_override("margin_top", 24)
+	margin.add_theme_constant_override("margin_right", 28)
+	margin.add_theme_constant_override("margin_bottom", 24)
+	menu_panel.add_child(margin)
+
 	var center := VBoxContainer.new()
 	center.name = "MenuBox"
-	center.anchor_left = 0.5
-	center.anchor_top = 0.5
-	center.anchor_right = 0.5
-	center.anchor_bottom = 0.5
-	center.offset_left = -MENU_BOX_SIZE.x * 0.5
-	center.offset_top = -MENU_BOX_SIZE.y * 0.5
-	center.offset_right = MENU_BOX_SIZE.x * 0.5
-	center.offset_bottom = MENU_BOX_SIZE.y * 0.5
-	center.custom_minimum_size = MENU_BOX_SIZE
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	center.add_theme_constant_override("separation", 14)
-	add_child(center)
+	margin.add_child(center)
 
 	var title := Label.new()
 	title.name = "TitleLabel"
 	title.text = "FPS Playground"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.add_theme_font_size_override("font_size", 42)
 	center.add_child(title)
 
@@ -78,6 +97,7 @@ func _build_ui() -> void:
 	subtitle.name = "SubtitleLabel"
 	subtitle.text = "Arena Shooter + Futebol 1x1"
 	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	subtitle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	subtitle.add_theme_font_size_override("font_size", 16)
 	center.add_child(subtitle)
 
@@ -85,6 +105,7 @@ func _build_ui() -> void:
 	status_label.name = "StatusLabel"
 	status_label.text = "Escolha um modo"
 	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	status_label.add_theme_font_size_override("font_size", 14)
 	center.add_child(status_label)
 
@@ -110,6 +131,7 @@ func _build_ui() -> void:
 	footer.name = "FooterLabel"
 	footer.text = "PC Windows editor-first | Copa mode prototype"
 	footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	footer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	footer.add_theme_font_size_override("font_size", 12)
 	center.add_child(footer)
 
@@ -118,6 +140,7 @@ func _build_button(node_name: String, label: String) -> Button:
 	button.name = node_name
 	button.text = label
 	button.custom_minimum_size = Vector2(320.0, 46.0)
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.focus_mode = Control.FOCUS_ALL
 	return button
 

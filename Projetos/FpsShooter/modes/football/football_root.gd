@@ -17,6 +17,9 @@ const FIELD_HALF_LENGTH: float = FIELD_LENGTH * 0.5
 const WALL_HEIGHT: float = 2.4
 const WALL_THICKNESS: float = 0.8
 const GOAL_HALF_WIDTH: float = 4.1
+const GOAL_SIDE_WALL_X: float = GOAL_HALF_WIDTH + 0.62
+const GOAL_SIDE_WALL_THICKNESS: float = 0.55
+const GOAL_CLOSED_DEPTH: float = 2.9
 const GOAL_LINE_NORTH: float = -FIELD_HALF_LENGTH
 const GOAL_LINE_SOUTH: float = FIELD_HALF_LENGTH
 const PLAYER_SPAWN: Vector3 = Vector3(0.0, 0.05, 14.2)
@@ -180,6 +183,8 @@ func _build_football_pitch() -> void:
 	_add_visual_box("SouthGoalMouth", Vector3(0.0, 0.05, GOAL_LINE_SOUTH - 0.45), Vector3(GOAL_HALF_WIDTH * 2.0, 0.08, 0.32), Color(1.0, 0.88, 0.24, 1.0))
 	_add_box("NorthGoalFloor", Vector3(0.0, -0.5, GOAL_LINE_NORTH - 1.35), Vector3(GOAL_HALF_WIDTH * 2.4, 1.0, 2.9), Color(0.07, 0.28, 0.14, 1.0))
 	_add_box("SouthGoalFloor", Vector3(0.0, -0.5, GOAL_LINE_SOUTH + 1.35), Vector3(GOAL_HALF_WIDTH * 2.4, 1.0, 2.9), Color(0.07, 0.28, 0.14, 1.0))
+	_add_goal_side_walls("North", GOAL_LINE_NORTH - 1.35)
+	_add_goal_side_walls("South", GOAL_LINE_SOUTH + 1.35)
 
 	_add_box("WestWall", Vector3(-FIELD_HALF_WIDTH, WALL_HEIGHT * 0.5, 0.0), Vector3(WALL_THICKNESS, WALL_HEIGHT, FIELD_LENGTH), Color(0.12, 0.16, 0.18, 1.0))
 	_add_box("EastWall", Vector3(FIELD_HALF_WIDTH, WALL_HEIGHT * 0.5, 0.0), Vector3(WALL_THICKNESS, WALL_HEIGHT, FIELD_LENGTH), Color(0.12, 0.16, 0.18, 1.0))
@@ -192,6 +197,12 @@ func _build_football_pitch() -> void:
 	_add_goal_frame("North", GOAL_LINE_NORTH - 0.22, -1.0)
 	_add_goal_frame("South", GOAL_LINE_SOUTH + 0.22, 1.0)
 	_add_stadium_bands()
+
+func _add_goal_side_walls(prefix: String, goal_center_z: float) -> void:
+	var side_wall_color := Color(0.14, 0.17, 0.2, 1.0)
+	var side_size := Vector3(GOAL_SIDE_WALL_THICKNESS, WALL_HEIGHT, GOAL_CLOSED_DEPTH)
+	_add_box("%sGoalSideWallL" % prefix, Vector3(-GOAL_SIDE_WALL_X, WALL_HEIGHT * 0.5, goal_center_z), side_size, side_wall_color)
+	_add_box("%sGoalSideWallR" % prefix, Vector3(GOAL_SIDE_WALL_X, WALL_HEIGHT * 0.5, goal_center_z), side_size, side_wall_color)
 
 func _add_goal_frame(prefix: String, goal_z: float, side: float) -> void:
 	var post_color := Color(0.95, 0.95, 0.9, 1.0)

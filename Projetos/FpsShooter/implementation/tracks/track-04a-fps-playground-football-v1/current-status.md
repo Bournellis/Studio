@@ -1,12 +1,14 @@
 # Track 04A - FPS Playground Menu & Futebol V1
 
 - Last updated: `2026-06-10`
-- Status: `COMPLETE_WITH_FIRST_FIXES`
-- Portfolio marker: `FPS_PLAYGROUND_TRACK_04A_FOOTBALL_FIRST_FIXES_COMPLETE`
+- Status: `COMPLETE_WITH_MENU_GOAL_FIX_V2`
+- Portfolio marker: `FPS_PLAYGROUND_TRACK_04A_MENU_GOAL_FIX_V2_COMPLETE`
 - Branch: `codex/fpsshooter/track04a-fps-playground-football-v1`
 - Worktree: `D:\Estudio-worktrees\FpsShooter--codex--track04a-fps-playground-football-v1`
 - First fixes branch: `codex/fpsshooter/track04a-football-first-fixes`
 - First fixes worktree: `D:\Estudio-worktrees\FpsShooter--codex--track04a-football-first-fixes`
+- Menu/goal fix v2 branch: `codex/fpsshooter/track04a-football-menu-goal-fix-v2`
+- Menu/goal fix v2 worktree: `D:\Estudio-worktrees\FpsShooter--codex--track04a-football-menu-goal-fix-v2`
 
 ## Goal
 
@@ -39,9 +41,17 @@ Transform the accepted FPS arena tech probe into `FPS Playground` with a main me
 ## First Fixes
 
 - Main menu layout now uses explicit centered anchors and offsets so `FPS Playground` is stable in the first viewport.
-- `Futebol` now opens into a paused `Como Jogar` overlay with hotkeys/basic rules and a `Começar` button before mouse capture.
+- `Futebol` now opens into a paused `Como Jogar` overlay with hotkeys/basic rules and a `Comecar` button before mouse capture.
 - Goal mouths now have north/south collision floor extensions, preventing the player/ball from dropping through the goal area.
 - Tests now also cover menu offsets, the paused football intro panel and goal safety floors.
+
+## Menu/Goal Fix V2
+
+- Main menu now uses `MenuCenter/MenuPanel/MenuMargin/MenuBox`, with a real `CenterContainer` and panel wrapper instead of a direct offset-positioned `VBoxContainer`.
+- `Futebol` intro and pause panels now use full-rect center containers instead of manual center positions.
+- Goal interiors are fully closed with north/south side wall collision bodies on both sides, covering the lateral gaps between front wall and backstop.
+- The intro start button text is normalized to `Comecar`.
+- Tests now cover the centered menu hierarchy, the intro center path and all four goal side walls.
 
 ## Validation
 
@@ -54,7 +64,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 Result:
 
 - GUT `42/42`.
-- `351` asserts.
+- `355` asserts.
 
 PASS:
 
@@ -73,8 +83,8 @@ Notes:
 2. Confirm the first screen is `FPS Playground`.
 3. Enter `Arena Shooter`, move/shoot, open `Esc`, return to menu.
 4. Enter `Futebol`, confirm the paused `Como Jogar` panel appears before play.
-5. Press `Começar`, then confirm mouse look, WASD, jump, LMB kick and RMB strong kick.
-6. Enter both goal mouths and confirm there is no map hole/fall.
+5. Press `Comecar`, then confirm mouse look, WASD, jump, LMB kick and RMB strong kick.
+6. Enter both goal mouths and confirm there is no map hole/fall, including the lateral interior sides.
 7. Score and concede at least one goal.
 8. Confirm match ends at 3 goals and `R` restarts.
 9. Confirm `Esc` sensitivity and `Menu inicial` work in Futebol.
