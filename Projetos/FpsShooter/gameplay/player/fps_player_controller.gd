@@ -27,6 +27,8 @@ var head: Node3D
 var camera: Camera3D
 var pitch: float = 0.0
 var vertical_velocity: float = 0.0
+var launch_boost_velocity: Vector3 = Vector3.ZERO
+var jump_pad_launch_count: int = 0
 var shot_cooldown_remaining: float = 0.0
 var alt_fire_cooldown_remaining: float = 0.0
 var overcharge_shots_remaining: int = 0
@@ -40,6 +42,8 @@ func _ready() -> void:
 func configure_for_round() -> void:
 	configure_combatant(&"player", 100.0, Color(0.32, 0.82, 1.0, 1.0))
 	vertical_velocity = 0.0
+	launch_boost_velocity = Vector3.ZERO
+	jump_pad_launch_count = 0
 	shot_cooldown_remaining = 0.0
 	alt_fire_cooldown_remaining = 0.0
 	overcharge_shots_remaining = 0
@@ -125,6 +129,25 @@ func get_alt_fire_cooldown_fraction() -> float:
 		return 0.0
 	return clampf(alt_fire_cooldown_remaining / alt_fire_cooldown, 0.0, 1.0)
 
+func apply_jump_pad_launch(launch_velocity: Vector3) -> void:
+	if is_dead:
+		return
+	vertical_velocity = maxf(vertical_velocity, launch_velocity.y)
+	launch_boost_velocity = Vector3(launch_velocity.x, 0.0, launch_velocity.z)
+	jump_pad_launch_count += 1
+
+func clear_movement_impulses() -> void:
+	vertical_velocity = 0.0
+	launch_boost_velocity = Vector3.ZERO
+	velocity = Vector3.ZERO
+	knockback_velocity = Vector3.ZERO
+
+func debug_get_vertical_velocity() -> float:
+	return vertical_velocity
+
+func debug_get_jump_pad_launch_count() -> int:
+	return jump_pad_launch_count
+
 func _handle_shooting() -> void:
 	if Input.is_action_just_pressed("shoot"):
 		request_shot()
@@ -167,8 +190,14 @@ func _handle_movement(delta: float) -> void:
 		horizontal_velocity = previous_horizontal.lerp(horizontal_velocity, clampf(air_control, 0.0, 1.0))
 
 	var knockback := consume_knockback(delta, is_on_floor())
-	velocity = horizontal_velocity + Vector3(knockback.x, 0.0, knockback.z)
+	var launch_boost := _consume_launch_boost(delta)
+	velocity = horizontal_velocity + Vector3(knockback.x, 0.0, knockback.z) + launch_boost
 	velocity.y = vertical_velocity + knockback.y
+
+func _consume_launch_boost(delta: float) -> Vector3:
+	var current := launch_boost_velocity
+	launch_boost_velocity = launch_boost_velocity.move_toward(Vector3.ZERO, 5.8 * delta)
+	return current
 
 func _ensure_camera_nodes() -> void:
 	head = get_node_or_null("Head") as Node3D

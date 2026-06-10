@@ -47,12 +47,16 @@ const STATE_DEAD: StringName = &"dead"
 @export var jump_height_goal_threshold: float = 0.42
 @export var jump_height_goal_distance: float = 4.8
 @export var jump_probe_distance: float = 0.78
+@export var fall_zone_avoid_radius: float = 2.8
+@export var jump_pad_route_distance: float = 3.2
 
 var target
 var shoot_cooldown_remaining: float = 0.0
 var vertical_velocity: float = 0.0
+var launch_boost_velocity: Vector3 = Vector3.ZERO
 var jump_cooldown_remaining: float = 0.0
 var jump_count: int = 0
+var jump_pad_launch_count: int = 0
 var shot_tell_remaining: float = 0.0
 var is_telegraphing: bool = false
 var current_state: StringName = STATE_IDLE
@@ -79,6 +83,9 @@ var projectile_threat_active: bool = false
 var projectile_threat_position: Vector3 = Vector3.ZERO
 var projectile_threat_velocity: Vector3 = Vector3.ZERO
 var overcharge_shots_remaining: int = 0
+var jump_pad_routes: Array[Dictionary] = []
+var fall_zone_centers: Array[Vector3] = []
+var last_navigation_target: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	super._ready()
@@ -94,8 +101,10 @@ func configure(next_target) -> void:
 	configure_combatant(&"bot", 100.0, Color(1.0, 0.34, 0.22, 1.0))
 	shoot_cooldown_remaining = 0.24
 	vertical_velocity = 0.0
+	launch_boost_velocity = Vector3.ZERO
 	jump_cooldown_remaining = 0.0
 	jump_count = 0
+	jump_pad_launch_count = 0
 	reaction_remaining = reaction_time
 	reposition_cooldown_remaining = 0.65
 	strafe_direction = 1.0
@@ -107,10 +116,17 @@ func configure(next_target) -> void:
 	stuck_time = 0.0
 	projectile_threat_active = false
 	overcharge_shots_remaining = 0
+	last_navigation_target = global_position
 	_cancel_windup(STATE_ENGAGE)
 
 func set_reposition_points(points: Array[Vector3]) -> void:
 	reposition_points = points.duplicate()
+
+func set_jump_pad_routes(routes: Array[Dictionary]) -> void:
+	jump_pad_routes = routes.duplicate(true)
+
+func set_fall_zone_awareness(next_centers: Array[Vector3]) -> void:
+	fall_zone_centers = next_centers.duplicate()
 
 func force_fire() -> void:
 	_cancel_windup(STATE_ENGAGE)
@@ -165,6 +181,32 @@ func debug_get_jump_count() -> int:
 func debug_get_vertical_velocity() -> float:
 	return vertical_velocity
 
+func debug_get_jump_pad_launch_count() -> int:
+	return jump_pad_launch_count
+
+func debug_get_jump_pad_route_count() -> int:
+	return jump_pad_routes.size()
+
+func debug_get_fall_zone_count() -> int:
+	return fall_zone_centers.size()
+
+func debug_get_last_navigation_target() -> Vector3:
+	return last_navigation_target
+
+func apply_jump_pad_launch(launch_velocity: Vector3) -> void:
+	if is_dead:
+		return
+	vertical_velocity = maxf(vertical_velocity, launch_velocity.y)
+	launch_boost_velocity = Vector3(launch_velocity.x, 0.0, launch_velocity.z)
+	jump_cooldown_remaining = jump_cooldown
+	jump_pad_launch_count += 1
+
+func clear_movement_impulses() -> void:
+	vertical_velocity = 0.0
+	launch_boost_velocity = Vector3.ZERO
+	velocity = Vector3.ZERO
+	knockback_velocity = Vector3.ZERO
+
 func _physics_process(delta: float) -> void:
 	if is_dead:
 		_cancel_windup(STATE_DEAD)
@@ -183,6 +225,7 @@ func _physics_process(delta: float) -> void:
 	var before_position := global_position
 	last_has_line_of_sight = _refresh_target_visibility()
 	last_desired_move = _handle_duel_state(delta)
+	last_desired_move = _apply_fall_zone_avoidance(last_desired_move)
 	last_desired_move = _apply_projectile_dodge(last_desired_move)
 	_maybe_jump_for_navigation(last_desired_move)
 	velocity = _build_velocity(last_desired_move, delta)
@@ -472,7 +515,9 @@ func _choose_reposition_destination() -> void:
 		var distance_score := -absf(target_distance - preferred_distance)
 		var travel_score := global_position.distance_to(point) * 0.12
 		var cycle_score := 0.01 * float((index + reposition_cycle_index) % maxi(1, candidate_points.size()))
-		var score := distance_score + travel_score + cycle_score
+		var height_score := clampf(point.y - global_position.y, 0.0, 4.0) * 0.42
+		var danger_penalty := _fall_zone_penalty(point)
+		var score := distance_score + travel_score + cycle_score + height_score - danger_penalty
 		if score > best_score:
 			best_score = score
 			best_point = point
@@ -490,7 +535,8 @@ func _fallback_reposition_points() -> Array[Vector3]:
 	]
 
 func _movement_toward_reposition() -> Vector3:
-	var to_destination := reposition_destination - global_position
+	last_navigation_target = _resolve_navigation_target(reposition_destination)
+	var to_destination := last_navigation_target - global_position
 	to_destination.y = 0.0
 	if to_destination.length_squared() <= 0.0001:
 		return _distance_management_movement()
@@ -529,7 +575,13 @@ func _build_velocity(desired_move: Vector3, delta: float) -> Vector3:
 		speed_multiplier = 1.05
 	elif current_state == STATE_WINDUP:
 		speed_multiplier = 0.45
-	return horizontal * move_speed * speed_multiplier + Vector3(knockback.x, vertical_velocity + knockback.y, knockback.z)
+	var launch_boost := _consume_launch_boost(delta)
+	return horizontal * move_speed * speed_multiplier + Vector3(knockback.x, vertical_velocity + knockback.y, knockback.z) + launch_boost
+
+func _consume_launch_boost(delta: float) -> Vector3:
+	var current := launch_boost_velocity
+	launch_boost_velocity = launch_boost_velocity.move_toward(Vector3.ZERO, 5.2 * delta)
+	return current
 
 func _maybe_jump_for_navigation(desired_move: Vector3) -> void:
 	if jump_cooldown_remaining > 0.0:
@@ -543,6 +595,27 @@ func _maybe_jump_for_navigation(desired_move: Vector3) -> void:
 		return
 	if _should_jump_toward_height_goal() or _should_jump_over_low_obstacle(flat_move.normalized()):
 		_trigger_jump()
+
+func _resolve_navigation_target(destination: Vector3) -> Vector3:
+	if destination.y <= global_position.y + jump_height_goal_threshold:
+		return destination
+	if jump_pad_routes.is_empty():
+		return destination
+	var best_route: Dictionary = {}
+	var best_score := 1000000.0
+	for route: Dictionary in jump_pad_routes:
+		var pad_position: Vector3 = route.get("position", Vector3.ZERO)
+		var target_position: Vector3 = route.get("target", pad_position)
+		var target_score := target_position.distance_to(destination) + global_position.distance_to(pad_position) * 0.22
+		if target_score < best_score:
+			best_score = target_score
+			best_route = route
+	if best_route.is_empty():
+		return destination
+	var best_pad: Vector3 = best_route.get("position", destination)
+	if _flat_distance_to(best_pad) > jump_pad_route_distance:
+		return best_pad
+	return destination
 
 func _should_jump_toward_height_goal() -> bool:
 	if current_state != STATE_REPOSITION:
@@ -618,6 +691,36 @@ func _projectile_dodge_movement() -> Vector3:
 	if is_zero_approx(side):
 		side = strafe_direction
 	return lateral * side
+
+func _apply_fall_zone_avoidance(desired_move: Vector3) -> Vector3:
+	if fall_zone_centers.is_empty():
+		return desired_move
+	var avoid := Vector3.ZERO
+	for center: Vector3 in fall_zone_centers:
+		var delta := global_position - center
+		delta.y = 0.0
+		var distance := delta.length()
+		if distance <= 0.01:
+			avoid += Vector3.RIGHT
+			continue
+		if distance < fall_zone_avoid_radius:
+			avoid += delta.normalized() * (1.0 - distance / fall_zone_avoid_radius)
+	if avoid.length_squared() <= 0.0001:
+		return desired_move
+	var combined := desired_move + avoid.normalized() * 0.85
+	if combined.length_squared() <= 0.0001:
+		return avoid.normalized()
+	return combined.normalized()
+
+func _fall_zone_penalty(point: Vector3) -> float:
+	var penalty := 0.0
+	for center: Vector3 in fall_zone_centers:
+		var delta := point - center
+		delta.y = 0.0
+		var distance := delta.length()
+		if distance < fall_zone_avoid_radius:
+			penalty += (fall_zone_avoid_radius - distance) * 1.75
+	return penalty
 
 func _apply_gravity(delta: float) -> void:
 	var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
