@@ -21,11 +21,14 @@ var kick_count: int = 0
 var dribble_control_count: int = 0
 var reset_count: int = 0
 var ball_mesh_instance: MeshInstance3D
+var toon_outline_mesh_instance: MeshInstance3D
 var trail_particles: GPUParticles3D
 var fireball_particles: GPUParticles3D
 var squash_timer: float = 0.0
 var speed_trail_active: bool = false
 var fireball_active: bool = false
+var toon_render_enabled: bool = false
+var toon_outline_material: StandardMaterial3D
 
 func _ready() -> void:
 	mass = 0.74
@@ -48,6 +51,11 @@ func _physics_process(delta: float) -> void:
 func configure(next_spawn_position: Vector3) -> void:
 	spawn_position = next_spawn_position
 	reset_to_center()
+
+func set_toon_render_enabled(is_enabled: bool) -> void:
+	toon_render_enabled = is_enabled
+	_sync_toon_outline_node()
+	_update_fireball_material()
 
 func kick(direction: Vector3, force: float, lift: float = 0.0) -> void:
 	var flat := Vector3(direction.x, 0.0, direction.z)
@@ -124,6 +132,12 @@ func debug_is_fireball_active() -> bool:
 func debug_has_fireball_particles() -> bool:
 	return fireball_particles != null
 
+func debug_is_toon_render_enabled() -> bool:
+	return toon_render_enabled
+
+func debug_has_toon_outline() -> bool:
+	return toon_outline_mesh_instance != null and toon_outline_mesh_instance.visible
+
 func debug_get_ball_mesh_scale() -> Vector3:
 	return ball_mesh_instance.scale if ball_mesh_instance != null else Vector3.ONE
 
@@ -174,6 +188,7 @@ func _ensure_ball_nodes() -> void:
 		mesh_instance.material_override = _build_ball_material()
 		add_child(mesh_instance)
 	ball_mesh_instance = get_node_or_null("BallMesh") as MeshInstance3D
+	_sync_toon_outline_node()
 
 	if get_node_or_null("BallSpeedTrail") == null:
 		trail_particles = GPUParticles3D.new()
@@ -257,6 +272,33 @@ func _update_fireball_material() -> void:
 		return
 	var material := ball_mesh_instance.material_override as ShaderMaterial
 	material.set_shader_parameter("fireball_intensity", 1.0 if fireball_active else 0.0)
+	material.set_shader_parameter("toon_intensity", 1.0 if toon_render_enabled else 0.0)
+
+func _sync_toon_outline_node() -> void:
+	if ball_mesh_instance == null:
+		return
+	toon_outline_mesh_instance = ball_mesh_instance.get_node_or_null("BallToonOutline") as MeshInstance3D
+	if toon_outline_mesh_instance == null and toon_render_enabled:
+		toon_outline_mesh_instance = MeshInstance3D.new()
+		toon_outline_mesh_instance.name = "BallToonOutline"
+		toon_outline_mesh_instance.mesh = ball_mesh_instance.mesh
+		toon_outline_mesh_instance.scale = Vector3.ONE * 1.075
+		toon_outline_mesh_instance.material_override = _get_toon_outline_material()
+		toon_outline_mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		ball_mesh_instance.add_child(toon_outline_mesh_instance)
+	if toon_outline_mesh_instance != null:
+		toon_outline_mesh_instance.visible = toon_render_enabled
+		toon_outline_mesh_instance.mesh = ball_mesh_instance.mesh
+		toon_outline_mesh_instance.material_override = _get_toon_outline_material()
+
+func _get_toon_outline_material() -> StandardMaterial3D:
+	if toon_outline_material != null:
+		return toon_outline_material
+	toon_outline_material = StandardMaterial3D.new()
+	toon_outline_material.albedo_color = Color(0.012, 0.016, 0.022, 1.0)
+	toon_outline_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	toon_outline_material.cull_mode = BaseMaterial3D.CULL_FRONT
+	return toon_outline_material
 
 func _build_fireball_particle_material() -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()

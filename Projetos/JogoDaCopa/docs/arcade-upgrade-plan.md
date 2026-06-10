@@ -11,6 +11,7 @@
 - `2026-06-10` - `Track 03C Super Shot & Fireball V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_03C_SUPER_SHOT_FIREBALL_V1_COMPLETE`). `tools/validate.gd` PASS (36 tests, 333 asserts).
 - `2026-06-10` - `Track 03B Arcade Field V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_03B_ARCADE_FIELD_V1_COMPLETE`). `tools/validate.gd` PASS (39 tests, 358 asserts). Performance sample Windows/Forward+: average `1097.6fps`, min warmed instant `607.2fps`, `0/360` frames below 60.
 - `2026-06-10` - `Track 03D Arcade Match Flavor V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_03D_ARCADE_MATCH_FLAVOR_V1_COMPLETE`). `tools/validate.gd` PASS (45 tests, 403 asserts).
+- `2026-06-10` - `Track 03E Toon Look Experiment V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_03E_TOON_LOOK_EXPERIMENT_V1_COMPLETE`). Toggle `RENDER_TOON_ENABLED` default OFF. `tools/validate.gd` PASS (46 tests, 426 asserts). Screenshots comparativos: `docs/screenshots/track-03e-toon/track-03e-toon-off.png` e `docs/screenshots/track-03e-toon/track-03e-toon-on.png`.
 
 ## Direcao
 

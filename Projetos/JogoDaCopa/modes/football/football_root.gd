@@ -76,8 +76,10 @@ const DOUBLE_GOAL_WINDOW_SECONDS: float = 30.0
 const RENDER_GLOW_ENABLED: bool = true
 const RENDER_SSAO_ENABLED: bool = true
 const RENDER_FOG_ENABLED: bool = true
+const RENDER_TOON_ENABLED: bool = false
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
+const TOON_RENDER_META_KEY: String = "jogodacopa_toon_render"
 const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 const MATCH_MODE_IDS: Array = [&"timer", &"goals"]
 
@@ -107,6 +109,7 @@ var last_goal_player_scored: bool = false
 var kickoff_owner: StringName = &"player"
 var bot_difficulty_id: StringName = &"normal"
 var match_mode_id: StringName = MATCH_MODE_TIMER
+var toon_render_enabled: bool = RENDER_TOON_ENABLED
 var match_time_remaining: float = MATCH_DURATION_SECONDS
 var golden_goal_active: bool = false
 var last_thirty_announced: bool = false
@@ -314,6 +317,10 @@ func set_match_mode(next_match_mode_id: StringName) -> void:
 	if match_mode_id == MATCH_MODE_TIMER and match_time_remaining <= 0.0 and not golden_goal_active:
 		match_time_remaining = MATCH_DURATION_SECONDS
 
+func set_toon_render_enabled(is_enabled: bool) -> void:
+	toon_render_enabled = is_enabled
+	_apply_toon_rendering()
+
 func debug_get_kickoff_owner() -> StringName:
 	return kickoff_owner
 
@@ -337,6 +344,12 @@ func debug_get_goal_limit() -> int:
 
 func debug_get_match_mode() -> StringName:
 	return match_mode_id
+
+func debug_is_toon_render_enabled() -> bool:
+	return toon_render_enabled
+
+func debug_set_toon_render_enabled(is_enabled: bool) -> void:
+	set_toon_render_enabled(is_enabled)
 
 func debug_set_match_mode(next_match_mode_id: StringName) -> void:
 	set_match_mode(next_match_mode_id)
@@ -645,6 +658,7 @@ func _spawn_runtime() -> void:
 	hud.set_sensitivity_value(player.mouse_sensitivity)
 	_update_avatar_selection_labels()
 	_collect_arcade_field_nodes()
+	_apply_toon_rendering()
 
 func _apply_main_menu_settings() -> void:
 	var tree := get_tree()
@@ -654,6 +668,8 @@ func _apply_main_menu_settings() -> void:
 		set_bot_difficulty(StringName(str(tree.root.get_meta(BOT_DIFFICULTY_META_KEY))))
 	if tree.root.has_meta(MATCH_MODE_META_KEY):
 		set_match_mode(StringName(str(tree.root.get_meta(MATCH_MODE_META_KEY))))
+	if tree.root.has_meta(TOON_RENDER_META_KEY):
+		set_toon_render_enabled(bool(tree.root.get_meta(TOON_RENDER_META_KEY)))
 
 func _restart_play(after_goal: bool) -> void:
 	phase_label = &"kickoff" if not after_goal else &"reset"
@@ -1336,6 +1352,14 @@ func _apply_selected_player_appearance() -> void:
 	if player_avatar != null:
 		player_avatar.apply_appearance(selected_appearance)
 	_update_avatar_selection_labels()
+
+func _apply_toon_rendering() -> void:
+	if player_avatar != null and player_avatar.has_method("set_toon_render_enabled"):
+		player_avatar.set_toon_render_enabled(toon_render_enabled)
+	if bot_avatar != null and bot_avatar.has_method("set_toon_render_enabled"):
+		bot_avatar.set_toon_render_enabled(toon_render_enabled)
+	if ball != null and ball.has_method("set_toon_render_enabled"):
+		ball.set_toon_render_enabled(toon_render_enabled)
 
 func _update_avatar_selection_labels() -> void:
 	if hud == null:

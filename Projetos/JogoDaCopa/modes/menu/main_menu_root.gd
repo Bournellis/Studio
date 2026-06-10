@@ -9,6 +9,7 @@ const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
 const MENU_PANEL_SIZE: Vector2 = Vector2(560.0, 640.0)
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
+const TOON_RENDER_META_KEY: String = "jogodacopa_toon_render"
 const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 const BOT_DIFFICULTY_LABELS: Dictionary = {
 	&"easy": "Bot facil",
@@ -37,12 +38,14 @@ var skin_swatch: ColorRect
 var kit_swatch: ColorRect
 var volume_slider: HSlider
 var quality_option: OptionButton
+var toon_check_button: CheckButton
 
 var preview_time: float = 0.0
 var selected_skin_tone_id: StringName = AvatarCatalogScript.DEFAULT_SKIN_TONE_ID
 var selected_country_kit_id: StringName = AvatarCatalogScript.DEFAULT_COUNTRY_KIT_ID
 var selected_bot_difficulty_id: StringName = &"normal"
 var selected_match_mode_id: StringName = &"timer"
+var selected_toon_render_enabled: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -82,6 +85,9 @@ func debug_get_selected_bot_difficulty_id() -> StringName:
 
 func debug_get_selected_match_mode_id() -> StringName:
 	return selected_match_mode_id
+
+func debug_is_toon_render_enabled() -> bool:
+	return selected_toon_render_enabled
 
 func debug_cycle_bot_difficulty(step: int = 1) -> void:
 	_cycle_bot_difficulty(step)
@@ -406,6 +412,26 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
 	)
 	quality_row.add_child(quality_option)
 
+	var toon_row := HBoxContainer.new()
+	toon_row.name = "ToonRenderRow"
+	toon_row.add_theme_constant_override("separation", 8)
+	parent.add_child(toon_row)
+
+	var toon_label := _build_row_label("ToonRenderLabel", "Toon")
+	toon_label.custom_minimum_size.x = 96.0
+	toon_row.add_child(toon_label)
+
+	toon_check_button = CheckButton.new()
+	toon_check_button.name = "ToonRenderToggle"
+	toon_check_button.text = "Experimento"
+	toon_check_button.button_pressed = selected_toon_render_enabled
+	toon_check_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	toon_check_button.toggled.connect(func(is_pressed: bool) -> void:
+		selected_toon_render_enabled = is_pressed
+		status_label.text = "Toon: %s" % ("ON" if selected_toon_render_enabled else "OFF")
+	)
+	toon_row.add_child(toon_check_button)
+
 func _build_button(node_name: String, label: String) -> Button:
 	var button := Button.new()
 	button.name = node_name
@@ -515,4 +541,5 @@ func _load_mode(scene_path: String) -> void:
 	status_label.text = "Carregando..."
 	get_tree().root.set_meta(BOT_DIFFICULTY_META_KEY, selected_bot_difficulty_id)
 	get_tree().root.set_meta(MATCH_MODE_META_KEY, selected_match_mode_id)
+	get_tree().root.set_meta(TOON_RENDER_META_KEY, selected_toon_render_enabled)
 	get_tree().change_scene_to_file(scene_path)

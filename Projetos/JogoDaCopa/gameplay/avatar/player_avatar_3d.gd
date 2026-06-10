@@ -18,6 +18,8 @@ var last_grounded: bool = true
 var last_vertical_velocity: float = 0.0
 var boost_trail_particles: GPUParticles3D
 var skid_dust_particles: GPUParticles3D
+var toon_render_enabled: bool = false
+var toon_outline_material: StandardMaterial3D
 
 func _ready() -> void:
 	_build_avatar()
@@ -60,6 +62,13 @@ func apply_appearance(next_appearance) -> void:
 	_set_part_material(&"right_lower_leg", socks_color, 0.08)
 	_set_part_material(&"left_foot", Color(0.04, 0.045, 0.05, 1.0), 0.04)
 	_set_part_material(&"right_foot", Color(0.04, 0.045, 0.05, 1.0), 0.04)
+	_sync_toon_outline_nodes()
+
+func set_toon_render_enabled(is_enabled: bool) -> void:
+	toon_render_enabled = is_enabled
+	if part_root != null:
+		apply_appearance(appearance)
+		_sync_toon_outline_nodes()
 
 func set_move_state(move_speed: float, grounded: bool, vertical_velocity: float = 0.0) -> void:
 	last_move_speed = move_speed
@@ -141,6 +150,19 @@ func debug_is_boost_trail_emitting() -> bool:
 func debug_is_skid_dust_emitting() -> bool:
 	return skid_dust_particles != null and skid_dust_particles.emitting
 
+func debug_is_toon_render_enabled() -> bool:
+	return toon_render_enabled
+
+func debug_get_toon_outline_count() -> int:
+	var count := 0
+	for part_id: StringName in part_meshes.keys():
+		var mesh_instance := part_meshes.get(part_id) as MeshInstance3D
+		if mesh_instance != null:
+			var outline := mesh_instance.get_node_or_null("ToonOutline") as MeshInstance3D
+			if outline != null and outline.visible:
+				count += 1
+	return count
+
 func _build_avatar() -> void:
 	if part_root != null:
 		return
@@ -216,7 +238,48 @@ func _set_part_material(part_id: StringName, color: Color, emission_energy: floa
 	material.emission_enabled = true
 	material.emission = color
 	material.emission_energy_multiplier = emission_energy
+	if toon_render_enabled:
+		material.albedo_color = _quantize_toon_color(color)
+		material.emission = material.albedo_color
+		material.emission_energy_multiplier = maxf(emission_energy, 0.16)
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mesh_instance.material_override = material
+
+func _sync_toon_outline_nodes() -> void:
+	for part_id: StringName in part_meshes.keys():
+		var mesh_instance := part_meshes.get(part_id) as MeshInstance3D
+		if mesh_instance == null:
+			continue
+		var outline := mesh_instance.get_node_or_null("ToonOutline") as MeshInstance3D
+		if outline == null and toon_render_enabled:
+			outline = MeshInstance3D.new()
+			outline.name = "ToonOutline"
+			outline.mesh = mesh_instance.mesh
+			outline.scale = Vector3.ONE * 1.065
+			outline.material_override = _get_toon_outline_material()
+			outline.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mesh_instance.add_child(outline)
+		if outline != null:
+			outline.visible = toon_render_enabled
+			outline.mesh = mesh_instance.mesh
+			outline.material_override = _get_toon_outline_material()
+
+func _get_toon_outline_material() -> StandardMaterial3D:
+	if toon_outline_material != null:
+		return toon_outline_material
+	toon_outline_material = StandardMaterial3D.new()
+	toon_outline_material.albedo_color = Color(0.012, 0.016, 0.022, 1.0)
+	toon_outline_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	toon_outline_material.cull_mode = BaseMaterial3D.CULL_FRONT
+	return toon_outline_material
+
+func _quantize_toon_color(color: Color) -> Color:
+	return Color(
+		floorf(color.r * 3.0 + 0.5) / 3.0,
+		floorf(color.g * 3.0 + 0.5) / 3.0,
+		floorf(color.b * 3.0 + 0.5) / 3.0,
+		color.a
+	)
 
 func _apply_first_person_visibility() -> void:
 	if not local_first_person:
