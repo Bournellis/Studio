@@ -12,6 +12,9 @@ const OVERCHARGE_COLOR: Color = Color(0.78, 0.46, 1.0, 1.0)
 const HEALTH_COLOR: Color = Color(0.38, 1.0, 0.52, 1.0)
 const JUMP_PAD_COLOR: Color = Color(0.18, 0.78, 1.0, 1.0)
 const VOID_COLOR: Color = Color(0.95, 0.22, 0.72, 1.0)
+const FOOTBALL_COLOR: Color = Color(0.36, 1.0, 0.58, 1.0)
+const FOOTBALL_STRONG_COLOR: Color = Color(0.34, 0.88, 1.0, 1.0)
+const FOOTBALL_GOAL_COLOR: Color = Color(1.0, 0.86, 0.22, 1.0)
 
 var active_effects: Array[Dictionary] = []
 var last_event: StringName = &""
@@ -30,6 +33,8 @@ var plasma_miss_count: int = 0
 var pickup_count: int = 0
 var jump_pad_count: int = 0
 var fall_penalty_count: int = 0
+var football_kick_count: int = 0
+var football_goal_count: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -124,6 +129,25 @@ func play_fall_penalty(effect_position: Vector3, for_player: bool) -> void:
 	_spawn_sphere(effect_position + Vector3.UP * 0.35, 0.44, color, 0.22, true)
 	_spawn_light(effect_position + Vector3.UP * 0.7, color, 4.2, 4.0, 0.22)
 	_spawn_tone(effect_position, 120.0 if for_player else 170.0, 0.12, -8.8)
+
+func play_football_kick(ball_position: Vector3, direction: Vector3, strong: bool) -> void:
+	last_event = &"football_strong_kick" if strong else &"football_kick"
+	football_kick_count += 1
+	var kick_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector3.FORWARD
+	var color := FOOTBALL_STRONG_COLOR if strong else FOOTBALL_COLOR
+	var reach := 1.4 if strong else 0.9
+	_spawn_beam(ball_position + Vector3.UP * 0.08, ball_position + kick_direction * reach + Vector3.UP * 0.18, color, 0.05 if strong else 0.035, 0.13)
+	_spawn_sphere(ball_position, 0.26 if strong else 0.2, color, 0.14, true)
+	_spawn_light(ball_position + Vector3.UP * 0.28, color, 2.8 if strong else 1.9, 2.6, 0.12)
+	_spawn_tone(ball_position, 520.0 if strong else 390.0, 0.065, -10.5 if strong else -12.0)
+
+func play_football_goal(goal_position: Vector3, player_scored: bool) -> void:
+	last_event = &"football_goal"
+	football_goal_count += 1
+	var color := FOOTBALL_GOAL_COLOR if player_scored else DAMAGE_COLOR
+	_spawn_sphere(goal_position + Vector3.UP * 0.7, 0.72, color, 0.42, true)
+	_spawn_light(goal_position + Vector3.UP * 1.2, color, 6.0, 8.0, 0.52)
+	_spawn_tone(goal_position, 980.0 if player_scored else 220.0, 0.16, -7.5)
 
 func play_bot_tell(origin: Vector3, target_position: Vector3, duration: float) -> void:
 	last_event = &"bot_tell"

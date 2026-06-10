@@ -29,8 +29,8 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: author player/enemy card and mechanic ideas as Design Lab proposal packs, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab gates before full-run feel playtests.
 
-- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 first-person shooter tech probe with a light Draxos visual theme. The first contract is a traditional FPS baseline in a local 1x1 arena against a bot. Track 03B Arena Flow & Route Tuning V1 is complete on top of the feel/feedback, bot, arena layout, knockback, combat-loop and no-void vertical arena baselines: `Duel Pit V2` map, protected spawns, central blocker, low/high cover, side platforms, ramp primitives, high platforms, jump pads, route/landing/objective markings, light high-platform cover, simple hitscan rifle, RMB Plasma Bolt with crosshair-aligned offset-muzzle damage and radius-aware collision, Health Shard and Overcharge on elevated objectives that require micro-commit after pad landing, HUD combat/pickup/jump feedback plus compact bot state/route/LOS line, synthetic audio, bot states, strafe/reposition, line-of-sight gated normal shots, exposed camera/head checks over low cover, tall-cover denial, deterministic aim error, health seeking that does not steal ready shots, overcharge contest, vertical-route cooldown, plasma dodge, simple bot jump, jump-pad routing toward high goals and knockback with horizontal force, controlled lift, clamps and air/ground decay. The current map has no active void/fall zones; void/queda are reserved for future maps.
-  - Priority/status: `P2_IMPLEMENTACAO - FPS_SHOOTER_TRACK_03B_ARENA_FLOW_ROUTE_TUNING_COMPLETE`
+- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 first-person playground tech probe with a light Draxos visual theme. The historical folder remains `FpsShooter`, while the runnable project now presents as `FPS Playground`. Track 04A Menu & Futebol V1 is complete on top of the accepted Arena Shooter baselines: the project opens in a menu with `Arena Shooter`, `Futebol` and `Sair`; `Arena Shooter` preserves `Duel Pit V2`, rifle hitscan, RMB Plasma Bolt, Health Shard/Overcharge, jump pads, vertical-aware bot, route/LOS HUD, synthetic feedback and no active void/fall zones; `Futebol` adds first-person 1x1 football against a bot, no weapons, LMB kick, RMB strong kick, arcade loose `RigidBody3D` ball, festive primitive stadium, score to 3 goals, football HUD and kick/goal feedback.
+  - Priority/status: `P2_IMPLEMENTACAO - FPS_PLAYGROUND_TRACK_04A_MENU_FOOTBALL_V1_COMPLETE`
   - Local agent guide: `FpsShooter/AGENTS.md`
   - Operational status: `FpsShooter/implementation/current-status.md`
   - Work plan: `FpsShooter/docs/work-plan.md`
@@ -38,7 +38,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Validation reference: `FpsShooter/docs/validation.md`
   - Validation command: `FpsShooter/tools/validate.gd`
   - Allowed work: code, validation, editor playtest and local documentation.
-  - Current next step: run the 5-minute editor human smoke for `Duel Pit V2`, jump pads, elevated pickups with micro-commit, high cover, bot vertical routes, HUD route/LOS readability, knockback without void hazards and preservation of the accepted duel feel.
+  - Current next step: run the 5-minute editor human smoke for `FPS Playground`: menu, `Arena Shooter`, return to menu, `Futebol`, LMB/RMB kick, goals to 3, bot football, restart, pause, sensitivity and return to menu.
 
 ## Implementacao - Arena PVE Inicial
 
@@ -111,7 +111,7 @@ This directory contains active, conceptual and paused projects for the studio.
 
 - Use `draxos-roguelike-cardgame/` for the current P0 implementation focus: roguelike cardgame, ship hub, run map, complete-run route, Souls, relics, keyword engine, enemy intent and lane battles.
 - Use `draxos-mobile/` for DraxosMobile implementation: Godot mobile/PC/browser client, Supabase, Arena PVE-first async autobattler, Base, later PVP/social, Internal Alpha, release ops, validation and agent foundation.
-- Use `FpsShooter/` for the independent FPS tech probe: PC Windows editor-first, first-person controller, arena 1x1, bot shooter, hitscan, knockback, jump pads/platforms/void in future tracks, and light Draxos visual theme only.
+- Use `FpsShooter/` for the independent FPS Playground tech probe: PC Windows editor-first, first-person controller, arena 1x1, bot shooter, hitscan, knockback, jump pads/platforms/void in future shooter tracks, football mode, and light Draxos visual theme only.
 - Use `_conceitos/mobile-universe/` only as design reference for DraxosMobile.
 - Use `rpg-isometrico/` only for explicit historical/contextual consultation about the isometric action RPG.
 - Use `rpg-turnos/` only for explicit historical/contextual consultation about the 2D turn-based RPG-cardgame.

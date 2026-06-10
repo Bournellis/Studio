@@ -2,6 +2,7 @@ class_name ArenaHud
 extends CanvasLayer
 
 signal resume_requested()
+signal main_menu_requested()
 signal sensitivity_changed(value: float)
 
 var status_label: Label
@@ -340,9 +341,9 @@ func _build_pause_menu(root: Control) -> void:
 	pause_menu_panel.name = "PauseMenuPanel"
 	pause_menu_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	pause_menu_panel.custom_minimum_size = Vector2(380.0, 190.0)
+	pause_menu_panel.custom_minimum_size = Vector2(380.0, 232.0)
 	pause_menu_panel.set_anchors_preset(Control.PRESET_CENTER)
-	pause_menu_panel.position = Vector2(-190.0, -95.0)
+	pause_menu_panel.position = Vector2(-190.0, -116.0)
 	pause_menu_panel.visible = false
 	root.add_child(pause_menu_panel)
 
@@ -390,6 +391,15 @@ func _build_pause_menu(root: Control) -> void:
 		resume_requested.emit()
 	)
 	box.add_child(resume_button)
+
+	var menu_button := Button.new()
+	menu_button.name = "MainMenuButton"
+	menu_button.text = "Menu inicial"
+	menu_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	menu_button.pressed.connect(func() -> void:
+		main_menu_requested.emit()
+	)
+	box.add_child(menu_button)
 
 func _on_sensitivity_slider_changed(value: float) -> void:
 	_update_sensitivity_label(value)

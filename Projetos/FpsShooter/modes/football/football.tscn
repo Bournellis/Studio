@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://modes/football/football_root.gd" id="1_ec3gq"]
+
+[node name="FootballRoot" type="Node3D"]
+script = ExtResource("1_ec3gq")

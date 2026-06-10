@@ -4,16 +4,17 @@ This file governs agent behavior for `Projetos/FpsShooter`.
 
 ## Project Role
 
-`FpsShooter` is an official implementable Godot project for a PC Windows first-person shooter tech probe.
+`FpsShooter` is an official implementable Godot project for a PC Windows first-person playground tech probe. The folder keeps the historical `FpsShooter` name, while the runtime identity is `FPS Playground`.
 
 It is independent from Draxos Roguelike Cardgame, DraxosMobile, RPG Isometrico and RPG Turnos. It may use a light Draxos visual theme, but it must not silently inherit lore promises, combat mechanics, economy, backend, progression, save systems, online systems or content contracts from those projects.
 
 Current identity:
 
-- first-person shooter tech probe;
+- first-person playground tech probe;
 - PC Windows editor-first;
-- local 1x1 arena shooter against a bot;
-- traditional FPS baseline first;
+- local `Arena Shooter` 1x1 mode against a bot;
+- local `Futebol` 1x1 first-person football mode against a bot;
+- traditional FPS baseline remains preserved as one mode;
 - future additions may include additional projectile types, stronger effects, jump pads, suspended platforms, void/fall rules and deeper movement-combat play;
 - no Ricochet-style contract is active unless Fabio explicitly reopens that direction.
 
@@ -63,7 +64,10 @@ Initial boundaries:
 - `gameplay/combat/`: health, damage, knockback and shared combat body behavior.
 - `gameplay/player/`: FPS movement, camera, aiming, rifle shooting and alt-fire requests.
 - `gameplay/bot/`: basic bot movement and shooting behavior.
+- `gameplay/football/`: football ball and football bot behavior.
+- `modes/menu/`: FPS Playground mode selection.
 - `modes/arena/`: mode assembly, arena geometry, round state and hit resolution.
+- `modes/football/`: football field assembly, score state, goal resolution and kick handling.
 - `presentation/hud/`: player-facing HUD.
 - `tools/`: scene generation and validation.
 - `tests/`: GUT coverage for bootstrap, input, scene assembly and combat primitives.

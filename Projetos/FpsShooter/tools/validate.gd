@@ -12,28 +12,42 @@ func _run() -> void:
 	quit(exit_code)
 
 func _run_validation() -> int:
-	print("[validate] generating bootstrap arena scene")
+	print("[validate] generating FPS Playground scenes")
 	var scene_result: Dictionary = BootstrapSceneGeneratorScript.new().generate_all()
 	if not bool(scene_result.get("ok", false)):
 		printerr("[validate] %s" % str(scene_result.get("message", "Scene generation failed.")))
 		return 1
 
 	print("[validate] checking project resources and settings")
-	_check_project_setting("application/run/main_scene", "res://modes/arena/arena.tscn")
+	_check_project_setting("application/run/main_scene", "res://modes/menu/main_menu.tscn")
 	_check_project_setting("autoload/AppBootstrap", "*res://autoloads/app_bootstrap.gd")
+	_check_resource("res://modes/menu/main_menu.tscn")
+	_check_resource("res://modes/menu/main_menu_root.gd")
 	_check_resource("res://modes/arena/arena.tscn")
 	_check_resource("res://modes/arena/arena_root.gd")
+	_check_resource("res://modes/football/football.tscn")
+	_check_resource("res://modes/football/football_root.gd")
 	_check_resource("res://gameplay/combat/combatant_3d.gd")
 	_check_resource("res://gameplay/player/fps_player_controller.gd")
 	_check_resource("res://gameplay/bot/basic_duel_bot.gd")
+	_check_resource("res://gameplay/football/football_ball.gd")
+	_check_resource("res://gameplay/football/football_bot.gd")
 	_check_resource("res://presentation/hud/arena_hud.gd")
+	_check_resource("res://presentation/hud/football_hud.gd")
+	_check_resource("res://presentation/feedback/fps_feedback_controller.gd")
 	_check_resource("res://tools/bootstrap_scene_generator.gd")
 	_check_resource("res://addons/gut/plugin.cfg")
 	_check_resource("res://.gutconfig.json")
 
+	var menu_scene := load("res://modes/menu/main_menu.tscn") as PackedScene
+	if menu_scene == null:
+		_failures.append("Generated main menu scene did not load.")
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	if arena_scene == null:
 		_failures.append("Generated arena scene did not load.")
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	if football_scene == null:
+		_failures.append("Generated football scene did not load.")
 
 	if _failures.is_empty():
 		print("[validate] running GUT")

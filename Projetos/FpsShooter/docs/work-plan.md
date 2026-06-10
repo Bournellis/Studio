@@ -1,13 +1,13 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-10`
-- Status: `FPS_SHOOTER_TRACK_03B_ARENA_FLOW_ROUTE_TUNING_COMPLETE`
+- Status: `FPS_PLAYGROUND_TRACK_04A_MENU_FOOTBALL_V1_COMPLETE`
 
 ## North Star
 
-Create a small first-person shooter tech probe that proves Godot 4.6.2 can support a satisfying PC editor-first 3D combat loop for the studio.
+Create a small first-person playground tech probe that proves Godot 4.6.2 can support satisfying PC editor-first first-person 3D game modes for the studio.
 
-The project starts as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Void/fall pressure is reserved for future dedicated maps.
+The project started as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Track 04A turns the project into `FPS Playground` by adding a main menu and the first alternate first-person mode: `Futebol` 1x1 against a bot. Void/fall pressure is reserved for future dedicated maps.
 
 ## Track 00 - Project Bootstrap
 
@@ -188,6 +188,38 @@ Future candidate scope:
 - compare editor smoke notes against bot route labels to tune route weights;
 - add one more ground/high connection only if the arena still feels binary;
 - keep void/fall pressure for a dedicated future map, not this `Duel Pit V2` baseline.
+
+## Track 04 - FPS Playground Modes
+
+Goal: preserve the accepted FPS arena loop while opening the project to alternate first-person prototypes.
+
+Status: active; Track 04A is complete.
+
+## Track 04A - Menu & Futebol V1
+
+Goal: create the `FPS Playground` shell and first alternate mode.
+
+Status: complete.
+
+Delivered:
+
+- project display name changed to `FPS Playground`, with folder name `FpsShooter` preserved;
+- generated main menu scene with `Arena Shooter`, `Futebol` and `Sair`;
+- `Arena Shooter` remains intact and can return to the main menu from pause;
+- `Futebol` mode in first person, 1x1 against a bot, no weapons, score to 3 goals;
+- LMB kick and RMB strong kick reuse the existing FPS input/camera flow without applying damage;
+- arcade loose `RigidBody3D` football with velocity clamps and reset safeguards;
+- primitive festive stadium with field, goal frames, crowd bands and score/flow HUD;
+- simple football bot that chases, attacks, defends, jumps toward high ball positions and emits kick requests;
+- shared feedback controller extended with football kick/goal primitives and synthetic audio;
+- bootstrap generation and validation now cover menu, arena and football scenes.
+
+Future candidate scope:
+
+- tune ball friction/bounce and kick reach after human smoke;
+- add goalkeeper-style positioning only if 1x1 defense feels unreadable;
+- add boost/dash or slide tackle only after the base kick loop is accepted;
+- add multiple football maps only after this first field is fun enough to iterate.
 
 ## Deferred
 
