@@ -8,7 +8,8 @@
 ## Progress
 
 - `2026-06-10` - `Track 02A Render & Lighting Foundation V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02A_RENDER_LIGHTING_FOUNDATION_V1_COMPLETE`). `tools/validate.gd` PASS (24 tests, 219 asserts). Performance sample Windows/Forward+ after warmup: average `143.9fps`, min warmed instant `63.6fps`, `0/360` frames below 60.
-- `Track 02B Pitch & Arena Material Pass V1`: next.
+- `2026-06-10` - `Track 02B Pitch & Arena Material Pass V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02B_PITCH_ARENA_MATERIAL_PASS_V1_COMPLETE`). `tools/validate.gd` PASS (24 tests, 230 asserts).
+- `Track 02C Ball & Character Assets V1`: next.
 
 ## 1. Analise do Estado Atual
 

@@ -19,21 +19,17 @@ static func build(parent: Node3D, config: Dictionary) -> void:
 	var goal_line_north: float = float(config.get("goal_line_north", -field_half_length))
 	var goal_line_south: float = float(config.get("goal_line_south", field_half_length))
 
-	_add_pitch(parent, field_width, field_length)
-	_add_pitch_markings(parent, field_width, field_length, goal_half_width, goal_line_north, goal_line_south)
+	_add_pitch(parent, field_width, field_length, goal_half_width)
 	_add_goal_shell(parent, "North", goal_line_north, -1.0, goal_half_width, goal_height, goal_side_wall_x, goal_side_wall_thickness, goal_closed_depth, wall_height)
 	_add_goal_shell(parent, "South", goal_line_south, 1.0, goal_half_width, goal_height, goal_side_wall_x, goal_side_wall_thickness, goal_closed_depth, wall_height)
 	_add_arena_glass(parent, field_width, field_length, field_half_width, wall_height, ceiling_height, wall_thickness, goal_side_wall_x, goal_closed_depth, goal_line_north, goal_line_south)
 	_add_stadium_shell(parent, field_width, field_length, field_half_width, goal_closed_depth, goal_line_north, goal_line_south)
 
-static func _add_pitch(parent: Node3D, field_width: float, field_length: float) -> void:
-	_add_box(parent, "FootballPitch", Vector3(0.0, -0.5, 0.0), Vector3(field_width, 1.0, field_length), Color(0.07, 0.32, 0.15, 1.0), 0.96, 0.18)
-	var stripe_count := 9
-	var stripe_length := field_length / float(stripe_count)
-	for index in range(stripe_count):
-		var z := -field_length * 0.5 + stripe_length * (float(index) + 0.5)
-		var color := Color(0.09, 0.39, 0.18, 1.0) if index % 2 == 0 else Color(0.06, 0.29, 0.14, 1.0)
-		_add_visual_box(parent, "PitchGrassStripe%d" % index, Vector3(0.0, 0.022, z), Vector3(field_width - 0.9, 0.035, stripe_length - 0.08), color)
+static func _add_pitch(parent: Node3D, field_width: float, field_length: float, goal_half_width: float) -> void:
+	var pitch := _add_box(parent, "FootballPitch", Vector3(0.0, -0.5, 0.0), Vector3(field_width, 1.0, field_length), Color(0.07, 0.32, 0.15, 1.0), 0.96, 0.18)
+	var pitch_mesh := pitch.get_node_or_null("FootballPitchMesh") as MeshInstance3D
+	if pitch_mesh != null:
+		pitch_mesh.material_override = _build_pitch_material(field_width, field_length, goal_half_width)
 
 static func _add_pitch_markings(parent: Node3D, field_width: float, field_length: float, goal_half_width: float, goal_line_north: float, goal_line_south: float) -> void:
 	var line_color := Color(0.92, 0.96, 0.86, 1.0)
@@ -100,7 +96,7 @@ static func _add_goal_frame(parent: Node3D, prefix: String, goal_z: float, side:
 	_add_box(parent, "%sGoalBackTopBar" % prefix, Vector3(0.0, goal_height, back_z), Vector3(goal_half_width * 2.0 + 0.28, 0.28, 0.28), post_color, 0.72, 0.0, 2.05, 0.24, 0.08, 0.35, 0.48)
 	_add_box(parent, "%sGoalTopRailL" % prefix, Vector3(-goal_half_width, goal_height, goal_z + side * goal_closed_depth * 0.5), Vector3(0.24, 0.24, goal_closed_depth), post_color, 0.72, 0.0, 2.0, 0.24, 0.08, 0.35, 0.48)
 	_add_box(parent, "%sGoalTopRailR" % prefix, Vector3(goal_half_width, goal_height, goal_z + side * goal_closed_depth * 0.5), Vector3(0.24, 0.24, goal_closed_depth), post_color, 0.72, 0.0, 2.0, 0.24, 0.08, 0.35, 0.48)
-	_add_visual_box(parent, "%sNetTint" % prefix, Vector3(0.0, goal_height * 0.5, goal_z + side * 0.62), Vector3(goal_half_width * 2.0, goal_height * 0.92, 0.12), Color(0.22, 0.68, 0.92, 0.72))
+	_add_net_panel(parent, "%sNetTint" % prefix, Vector3(0.0, goal_height * 0.5, goal_z + side * 0.62), Vector3(goal_half_width * 2.0, goal_height * 0.92, 0.12))
 
 static func _add_arena_glass(parent: Node3D, field_width: float, field_length: float, field_half_width: float, wall_height: float, ceiling_height: float, wall_thickness: float, goal_side_wall_x: float, goal_closed_depth: float, goal_line_north: float, goal_line_south: float) -> void:
 	var total_length := field_length + goal_closed_depth * 2.0
@@ -177,15 +173,15 @@ static func _add_crowd_tiles(parent: Node3D, field_width: float, field_length: f
 	for index in range(14):
 		var x := -field_width * 0.5 - 2.0 + float(index) * ((field_width + 4.0) / 13.0)
 		var color: Color = crowd_colors[index % crowd_colors.size()]
-		_add_visual_box(parent, "NorthCrowdBand%d" % index, Vector3(x, 2.75, goal_line_north - goal_closed_depth - 4.65), Vector3(2.25, 1.0, 0.2), color)
-		_add_visual_box(parent, "SouthCrowdBand%d" % index, Vector3(x, 2.75, goal_line_south + goal_closed_depth + 4.65), Vector3(2.25, 1.0, 0.2), color)
+		_add_crowd_tile(parent, "NorthCrowdBand%d" % index, Vector3(x, 2.75, goal_line_north - goal_closed_depth - 4.65), Vector3(2.25, 1.0, 0.2), color)
+		_add_crowd_tile(parent, "SouthCrowdBand%d" % index, Vector3(x, 2.75, goal_line_south + goal_closed_depth + 4.65), Vector3(2.25, 1.0, 0.2), color)
 	for side: float in [-1.0, 1.0]:
 		var x_side := side * (field_half_width + 4.1)
 		var side_prefix := "East" if side > 0.0 else "West"
 		for index in range(8):
 			var z := -field_length * 0.5 + 4.0 + float(index) * ((field_length - 8.0) / 7.0)
 			var color: Color = crowd_colors[(index + (1 if side > 0.0 else 3)) % crowd_colors.size()]
-			_add_visual_box(parent, "%sCrowdBand%d" % [side_prefix, index], Vector3(x_side, 2.35, z), Vector3(0.2, 0.95, 2.35), color)
+			_add_crowd_tile(parent, "%sCrowdBand%d" % [side_prefix, index], Vector3(x_side, 2.35, z), Vector3(0.2, 0.95, 2.35), color)
 
 static func _add_country_banners(parent: Node3D, field_width: float, goal_closed_depth: float, goal_line_north: float, goal_line_south: float) -> void:
 	var banner_sets: Array = [
@@ -198,20 +194,31 @@ static func _add_country_banners(parent: Node3D, field_width: float, goal_closed
 		[Color(0.0, 0.42, 0.22, 1.0), Color(0.86, 0.04, 0.04, 1.0), Color(0.95, 0.82, 0.05, 1.0)],
 		[Color(1.0, 1.0, 1.0, 1.0), Color(0.86, 0.04, 0.04, 1.0), Color(1.0, 1.0, 1.0, 1.0)]
 	]
+	var country_names: PackedStringArray = ["BRASIL", "ARG", "FRANCA", "ALEMANHA", "ESPANHA", "INGLATERRA", "PORTUGAL", "JAPAO"]
 	var banner_count := 8
 	for index in range(banner_count):
 		var x := -field_width * 0.5 + 3.0 + float(index) * ((field_width - 6.0) / float(banner_count - 1))
 		var north_z := goal_line_north - goal_closed_depth - 6.0
 		var south_z := goal_line_south + goal_closed_depth + 6.0
-		_add_banner(parent, "NorthCountryBanner%d" % index, Vector3(x, 4.25, north_z), Vector3(2.7, 1.05, 0.12), banner_sets[index % banner_sets.size()])
-		_add_banner(parent, "SouthCountryBanner%d" % index, Vector3(x, 4.25, south_z), Vector3(2.7, 1.05, 0.12), banner_sets[(index + 3) % banner_sets.size()])
+		_add_banner(parent, "NorthCountryBanner%d" % index, Vector3(x, 4.25, north_z), Vector3(2.7, 1.05, 0.12), banner_sets[index % banner_sets.size()], country_names[index % country_names.size()])
+		_add_banner(parent, "SouthCountryBanner%d" % index, Vector3(x, 4.25, south_z), Vector3(2.7, 1.05, 0.12), banner_sets[(index + 3) % banner_sets.size()], country_names[(index + 3) % country_names.size()])
 
-static func _add_banner(parent: Node3D, node_name: String, center: Vector3, size: Vector3, colors: Array) -> void:
+static func _add_banner(parent: Node3D, node_name: String, center: Vector3, size: Vector3, colors: Array, label_text: String) -> void:
 	_add_visual_box(parent, node_name, center, size + Vector3(0.16, 0.16, 0.02), Color(0.94, 0.94, 0.88, 1.0))
 	for stripe_index in range(3):
 		var stripe_y := center.y + (float(stripe_index) - 1.0) * size.y / 3.0
 		var color: Color = colors[stripe_index]
 		_add_visual_box(parent, "%sStripe%d" % [node_name, stripe_index], Vector3(center.x, stripe_y, center.z - 0.015), Vector3(size.x, size.y / 3.0, size.z + 0.04), color)
+	var label := Label3D.new()
+	label.name = "%sLabel" % node_name
+	label.text = label_text
+	label.position = center + Vector3(0.0, 0.0, -0.105)
+	label.font_size = 26
+	label.pixel_size = 0.014
+	label.modulate = Color(1.0, 1.0, 1.0, 1.0)
+	label.outline_size = 8
+	label.outline_modulate = Color(0.02, 0.03, 0.04, 1.0)
+	parent.add_child(label)
 
 static func _add_scoreboards(parent: Node3D, field_width: float, goal_closed_depth: float, goal_line_north: float, goal_line_south: float) -> void:
 	var board_size := Vector3(field_width * 0.38, 2.2, 0.22)
@@ -223,6 +230,7 @@ static func _add_scoreboards(parent: Node3D, field_width: float, goal_closed_dep
 		_add_visual_box(parent, "WorldCupScoreboard%sGoldBand" % side_name, Vector3(0.0, 6.35, z - side * 0.02), Vector3(board_size.x * 0.92, 0.28, 0.26), Color(1.0, 0.82, 0.08, 1.0))
 		_add_visual_box(parent, "WorldCupScoreboard%sBluePanel" % side_name, Vector3(-board_size.x * 0.22, 5.35, z - side * 0.03), Vector3(board_size.x * 0.34, 0.82, 0.28), Color(0.1, 0.32, 0.9, 1.0))
 		_add_visual_box(parent, "WorldCupScoreboard%sGreenPanel" % side_name, Vector3(board_size.x * 0.22, 5.35, z - side * 0.03), Vector3(board_size.x * 0.34, 0.82, 0.28), Color(0.04, 0.58, 0.24, 1.0))
+		_add_live_scoreboard(parent, side_name, Vector3(0.0, 5.42, z - side * 0.08), Vector3(board_size.x * 0.82, 1.25, 0.08))
 
 static func _add_light_rigs(parent: Node3D, field_half_width: float, goal_line_north: float, goal_line_south: float) -> void:
 	var rig_data: Array = [
@@ -309,3 +317,200 @@ static func _add_visual_box(parent: Node3D, node_name: String, node_position: Ve
 
 static func _add_neon_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, color: Color, node_rotation_degrees: Vector3 = Vector3.ZERO, emission_energy: float = 2.0, roughness: float = 0.24) -> MeshInstance3D:
 	return RuntimePrimitiveFactoryScript.add_visual_box(parent, node_name, node_position, node_size, color, node_rotation_degrees, emission_energy, roughness, 0.08, 0.42, 0.38)
+
+static func _add_net_panel(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3) -> MeshInstance3D:
+	var mesh := _add_visual_box(parent, node_name, node_position, node_size, Color(0.22, 0.68, 0.92, 0.58))
+	mesh.material_override = _build_net_material()
+	return mesh
+
+static func _add_crowd_tile(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, color: Color) -> MeshInstance3D:
+	var mesh := _add_visual_box(parent, node_name, node_position, node_size, color)
+	mesh.material_override = _build_crowd_material(color)
+	return mesh
+
+static func _add_live_scoreboard(parent: Node3D, side_name: String, node_position: Vector3, node_size: Vector3) -> void:
+	var viewport := SubViewport.new()
+	viewport.name = "WorldCupScoreboard%sViewport" % side_name
+	viewport.size = Vector2i(512, 192)
+	viewport.transparent_bg = false
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	parent.add_child(viewport)
+
+	var root := Control.new()
+	root.name = "ScoreRoot"
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	viewport.add_child(root)
+
+	var background := ColorRect.new()
+	background.name = "Background"
+	background.color = Color(0.015, 0.025, 0.04, 1.0)
+	background.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.add_child(background)
+
+	var top_band := ColorRect.new()
+	top_band.name = "TopBand"
+	top_band.color = Color(1.0, 0.78, 0.08, 1.0)
+	top_band.anchor_right = 1.0
+	top_band.offset_bottom = 24.0
+	root.add_child(top_band)
+
+	var score_label := Label.new()
+	score_label.name = "ScoreLabel"
+	score_label.text = "BRA 0 - 0 FRA"
+	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	score_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	score_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	score_label.add_theme_font_size_override("font_size", 58)
+	score_label.add_theme_color_override("font_color", Color(0.96, 0.98, 1.0, 1.0))
+	score_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.9))
+	score_label.add_theme_constant_override("shadow_offset_x", 3)
+	score_label.add_theme_constant_override("shadow_offset_y", 3)
+	root.add_child(score_label)
+
+	var phase_label := Label.new()
+	phase_label.name = "PhaseLabel"
+	phase_label.text = "FUTEBOL 1x1"
+	phase_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	phase_label.anchor_left = 0.0
+	phase_label.anchor_right = 1.0
+	phase_label.anchor_top = 0.78
+	phase_label.anchor_bottom = 1.0
+	phase_label.add_theme_font_size_override("font_size", 24)
+	phase_label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.18, 1.0))
+	root.add_child(phase_label)
+
+	var display := _add_visual_box(parent, "WorldCupScoreboard%sLiveDisplay" % side_name, node_position, node_size, Color(1.0, 1.0, 1.0, 1.0))
+	var material := StandardMaterial3D.new()
+	material.albedo_texture = viewport.get_texture()
+	material.emission_enabled = true
+	material.emission_texture = viewport.get_texture()
+	material.emission_energy_multiplier = 1.25
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	display.material_override = material
+
+static func _build_pitch_material(field_width: float, field_length: float, goal_half_width: float) -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+shader_type spatial;
+render_mode diffuse_burley, specular_schlick_ggx;
+
+uniform vec2 pitch_size = vec2(38.0, 54.0);
+uniform float goal_half_width = 4.32;
+uniform vec3 grass_dark = vec3(0.045, 0.24, 0.105);
+uniform vec3 grass_light = vec3(0.075, 0.36, 0.16);
+uniform vec3 line_color = vec3(0.92, 0.98, 0.86);
+uniform vec3 gold_color = vec3(1.0, 0.82, 0.18);
+varying vec3 local_pos;
+
+void vertex() {
+	local_pos = VERTEX;
+}
+
+float stroke(float value, float width) {
+	return 1.0 - smoothstep(width, width + 0.035, abs(value));
+}
+
+float box_outline(vec2 point, vec2 center, vec2 half_size, float width) {
+	vec2 d = abs(point - center) - half_size;
+	float outside = length(max(d, vec2(0.0)));
+	float inside = min(max(d.x, d.y), 0.0);
+	float signed_distance = outside + inside;
+	return 1.0 - smoothstep(width, width + 0.04, abs(signed_distance));
+}
+
+void fragment() {
+	vec2 p = vec2(local_pos.x, local_pos.z);
+	float stripe_width = pitch_size.y / 9.0;
+	float stripe = step(0.5, fract((p.y + pitch_size.y * 0.5) / stripe_width));
+	float mowing_noise = sin(p.x * 3.7 + p.y * 0.41) * sin(p.y * 2.9) * 0.025;
+	vec3 grass = mix(grass_dark, grass_light, stripe) + vec3(mowing_noise);
+
+	float half_width = pitch_size.x * 0.5;
+	float half_length = pitch_size.y * 0.5;
+	float line_width = 0.085;
+	float line_mask = 0.0;
+	line_mask = max(line_mask, stroke(p.y, line_width));
+	line_mask = max(line_mask, stroke(length(p) - 3.8, line_width));
+	line_mask = max(line_mask, stroke(abs(p.x) - (half_width - 0.55), line_width));
+	line_mask = max(line_mask, stroke(abs(p.y) - (half_length - 0.55), line_width));
+
+	float box_depth = 6.1;
+	float box_width = goal_half_width * 2.55;
+	line_mask = max(line_mask, box_outline(p, vec2(0.0, -half_length + box_depth * 0.5), vec2(box_width * 0.5, box_depth * 0.5), line_width));
+	line_mask = max(line_mask, box_outline(p, vec2(0.0, half_length - box_depth * 0.5), vec2(box_width * 0.5, box_depth * 0.5), line_width));
+
+	float spot_mask = 1.0 - smoothstep(0.12, 0.2, length(p - vec2(0.0, -half_length + 4.2)));
+	spot_mask = max(spot_mask, 1.0 - smoothstep(0.12, 0.2, length(p - vec2(0.0, half_length - 4.2))));
+	float mouth_mask = max(stroke(p.y + half_length - 0.45, 0.16), stroke(p.y - half_length + 0.45, 0.16)) * (1.0 - smoothstep(goal_half_width, goal_half_width + 0.08, abs(p.x)));
+
+	vec3 color = mix(grass, line_color, clamp(line_mask, 0.0, 1.0));
+	color = mix(color, gold_color, clamp(max(spot_mask, mouth_mask), 0.0, 1.0));
+	ALBEDO = color;
+	EMISSION = color * (0.04 + line_mask * 0.08 + mouth_mask * 0.12);
+	ROUGHNESS = 0.88;
+}
+"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	material.set_shader_parameter("pitch_size", Vector2(field_width, field_length))
+	material.set_shader_parameter("goal_half_width", goal_half_width)
+	return material
+
+static func _build_net_material() -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+shader_type spatial;
+render_mode blend_mix, cull_disabled, depth_prepass_alpha;
+
+uniform vec3 net_color = vec3(0.38, 0.86, 1.0);
+uniform float grid_density = 10.0;
+uniform float line_width = 0.055;
+
+void fragment() {
+	vec2 grid = abs(fract(UV * grid_density - 0.5) - 0.5) / fwidth(UV * grid_density);
+	float line = 1.0 - min(min(grid.x, grid.y), 1.0);
+	float alpha = mix(0.16, 0.74, smoothstep(1.0 - line_width, 1.0, line));
+	ALBEDO = net_color;
+	EMISSION = net_color * smoothstep(0.55, 1.0, line) * 0.85;
+	ALPHA = alpha;
+	ROUGHNESS = 0.18;
+}
+"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	return material
+
+static func _build_crowd_material(base_color: Color) -> ShaderMaterial:
+	var shader := Shader.new()
+	shader.code = """
+shader_type spatial;
+render_mode diffuse_burley, specular_schlick_ggx;
+
+uniform vec3 base_color = vec3(0.9, 0.1, 0.1);
+varying vec3 local_pos;
+
+float hash(vec2 p) {
+	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+}
+
+void vertex() {
+	local_pos = VERTEX;
+	float wave = sin(TIME * 2.2 + VERTEX.x * 4.0 + VERTEX.z * 2.1) * 0.035;
+	VERTEX.y += wave;
+}
+
+void fragment() {
+	vec2 cell = floor(UV * vec2(9.0, 3.0));
+	float h = hash(cell);
+	vec3 seat_color = base_color * (0.72 + h * 0.46);
+	seat_color = mix(seat_color, vec3(1.0), step(0.82, h) * 0.35);
+	ALBEDO = seat_color;
+	EMISSION = seat_color * 0.14;
+	ROUGHNESS = 0.64;
+}
+"""
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	material.set_shader_parameter("base_color", Vector3(base_color.r, base_color.g, base_color.b))
+	return material

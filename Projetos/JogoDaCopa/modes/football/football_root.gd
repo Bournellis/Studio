@@ -81,6 +81,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if hud != null:
 		hud.update_snapshot(_build_hud_snapshot())
+	_update_stadium_scoreboards()
 
 func _physics_process(delta: float) -> void:
 	if intro_open or menu_open:
@@ -228,6 +229,10 @@ func debug_get_arena_config() -> Dictionary:
 		"goal_half_width": GOAL_HALF_WIDTH,
 		"goal_height": GOAL_HEIGHT
 	}
+
+func debug_get_stadium_scoreboard_text(side_name: String = "North") -> String:
+	var label := _get_stadium_scoreboard_score_label(side_name)
+	return label.text if label != null else ""
 
 func _configure_world() -> void:
 	var environment := WorldEnvironment.new()
@@ -617,6 +622,32 @@ func _build_hud_snapshot() -> Dictionary:
 		"phase": phase_label,
 		"hint": "Comecar inicia | WASD move | Shift boost | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | paredes/teto rebatem | R restart | Esc menu"
 	}
+
+func _update_stadium_scoreboards() -> void:
+	for side_name in ["North", "South"]:
+		var score_label := _get_stadium_scoreboard_score_label(side_name)
+		if score_label != null:
+			score_label.text = "BRA %d - %d FRA" % [player_score, bot_score]
+		var phase_label_node := _get_stadium_scoreboard_phase_label(side_name)
+		if phase_label_node != null:
+			phase_label_node.text = _get_stadium_scoreboard_phase_text()
+
+func _get_stadium_scoreboard_score_label(side_name: String) -> Label:
+	return get_node_or_null("WorldCupScoreboard%sViewport/ScoreRoot/ScoreLabel" % side_name) as Label
+
+func _get_stadium_scoreboard_phase_label(side_name: String) -> Label:
+	return get_node_or_null("WorldCupScoreboard%sViewport/ScoreRoot/PhaseLabel" % side_name) as Label
+
+func _get_stadium_scoreboard_phase_text() -> String:
+	if match_over:
+		return "FIM DE JOGO"
+	if phase_label == &"goal":
+		return "GOL!"
+	if phase_label == &"intro":
+		return "FUTEBOL 1x1"
+	if phase_label == &"kickoff" or phase_label == &"reset":
+		return "SAIDA"
+	return "AO VIVO"
 
 func _start_match() -> void:
 	_set_intro_open(false)
