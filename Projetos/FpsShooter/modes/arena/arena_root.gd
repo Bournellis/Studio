@@ -6,6 +6,7 @@ const BotController = preload("res://gameplay/bot/basic_duel_bot.gd")
 const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 const ArenaDuelPitLayoutBuilderScript = preload("res://modes/arena/arena_duel_pit_layout_builder.gd")
+const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const MAP_NAME: String = "Duel Pit V2"
@@ -349,11 +350,7 @@ func _on_player_alt_fire(origin: Vector3, direction: Vector3, damage: float, kno
 		return
 	var visual_origin := _get_player_visual_muzzle_origin(origin, shot_direction)
 	var aim_point := _resolve_player_aim_point(origin, shot_direction)
-	var projectile_direction := aim_point - visual_origin
-	if projectile_direction.length_squared() <= 0.0001:
-		projectile_direction = shot_direction
-	else:
-		projectile_direction = projectile_direction.normalized()
+	var projectile_direction := ArenaCombatRulesScript.build_projectile_direction(visual_origin, aim_point, shot_direction)
 	if hud != null:
 		hud.show_player_alt_fire(overcharged)
 	if feedback != null:
@@ -765,7 +762,7 @@ func _reset_vertical_hazards() -> void:
 		jump_pads[index] = pad
 
 func _get_pickup_respawn_duration(pickup_kind: StringName) -> float:
-	return HEALTH_PICKUP_RESPAWN if pickup_kind == &"health" else OVERCHARGE_PICKUP_RESPAWN
+	return ArenaCombatRulesScript.get_pickup_respawn_duration(pickup_kind, HEALTH_PICKUP_RESPAWN, OVERCHARGE_PICKUP_RESPAWN)
 
 func _get_pickup_respawn_remaining(pickup_kind: StringName) -> float:
 	var entry: Dictionary = pickups.get(pickup_kind, {})
@@ -822,18 +819,25 @@ func _get_jump_pad_routes() -> Array[Dictionary]:
 
 func _get_player_visual_muzzle_origin(origin: Vector3, direction: Vector3) -> Vector3:
 	var shot_direction := direction.normalized()
-	var fallback_origin := origin + shot_direction * PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET
+	var camera: Camera3D = null
 	if player == null or not player.has_method("get_camera"):
-		return fallback_origin
-	var camera: Camera3D = player.get_camera()
-	if camera == null:
-		return fallback_origin
-	var camera_basis := camera.global_transform.basis
-	var visual_origin := origin
-	visual_origin += camera_basis.x.normalized() * PLAYER_VISUAL_MUZZLE_RIGHT_OFFSET
-	visual_origin -= camera_basis.y.normalized() * PLAYER_VISUAL_MUZZLE_DOWN_OFFSET
-	visual_origin += shot_direction * PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET
-	return visual_origin
+		return ArenaCombatRulesScript.build_visual_muzzle_origin(
+			origin,
+			shot_direction,
+			camera,
+			PLAYER_VISUAL_MUZZLE_RIGHT_OFFSET,
+			PLAYER_VISUAL_MUZZLE_DOWN_OFFSET,
+			PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET
+		)
+	camera = player.get_camera()
+	return ArenaCombatRulesScript.build_visual_muzzle_origin(
+		origin,
+		shot_direction,
+		camera,
+		PLAYER_VISUAL_MUZZLE_RIGHT_OFFSET,
+		PLAYER_VISUAL_MUZZLE_DOWN_OFFSET,
+		PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET
+	)
 
 func _create_bot_reposition_points(parent: Node3D) -> Array[Vector3]:
 	var marker_root := Node3D.new()

@@ -17,10 +17,10 @@ During foundation refactors, move or group values only when behavior remains ide
 |---|---|---|
 | Player movement and fire | `gameplay/player/fps_player_controller.gd` | move speed, jump, air control, mouse sensitivity, rifle/plasma cooldowns. |
 | Arena map | `modes/arena/arena_root.gd` | floor size, spawn positions, jump pads, pickup positions, map markers. |
-| Arena pickups | `modes/arena/arena_root.gd` | pickup radius, health amount, respawn timers. |
+| Arena pickups | `modes/arena/arena_root.gd` with `gameplay/arena/arena_combat_rules.gd` for respawn choice | pickup radius, health amount, respawn timers. |
 | Arena bot | `gameplay/bot/basic_duel_bot.gd` | speed, ideal distance, cooldown, aim error, route intervals, jump values. |
 | Football field | `modes/football/football_root.gd` | field size, goals, spawns, goal limit. |
-| Football kicks | `modes/football/football_root.gd` | kick reach, force, lift, contact radius. |
+| Football kicks and scoring | `modes/football/football_root.gd` with `gameplay/football/football_match_rules.gd` for pure match math | kick reach, force, lift, contact radius, goal limit. |
 | Football ball | `gameplay/football/football_ball.gd` | velocity clamp, reset behavior, physics tuning. |
 | Football bot | `gameplay/football/football_bot.gd` | attack/defend movement and kick behavior. |
 | Feedback | `presentation/feedback/fps_feedback_controller.gd` | effect colors, lifetimes, audio tones. |
@@ -34,6 +34,7 @@ Track 05 may introduce:
 - rule helpers that receive tuning values as parameters;
 - tests that assert tuning-sensitive behavior.
 - shared primitive builders that preserve per-mode material roughness/emission while removing construction duplication.
+- pure match/combat helpers that keep the root scenes responsible for authority, signals and feedback.
 
 Track 05 should avoid:
 

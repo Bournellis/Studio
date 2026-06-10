@@ -30,7 +30,7 @@ The project is healthy for a fast prototype: both modes run, validation is green
 2. Validation profile/tooling hardening.
 3. Shared runtime primitive/tuning helpers.
 4. Arena and football layout builders.
-5. Isolated rule helpers for football kicks/score and arena hit/projectile math.
+5. Isolated rule helpers for football kicks/score and arena hit/projectile math. Completed through `gameplay/football/football_match_rules.gd` and `gameplay/arena/arena_combat_rules.gd`.
 6. Bot helper extraction if behavior remains protected.
 7. Test suite split.
 8. Status and portfolio closeout.

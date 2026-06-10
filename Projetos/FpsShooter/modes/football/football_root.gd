@@ -7,6 +7,7 @@ const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
 const FootballHudScript = preload("res://presentation/hud/football_hud.gd")
 const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 const FootballFieldBuilderScript = preload("res://modes/football/football_field_builder.gd")
+const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const MODE_NAME: String = "Futebol 1x1"
@@ -283,32 +284,31 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 func _process_player_ball_contact() -> void:
 	if player_touch_cooldown_remaining > 0.0:
 		return
-	var player_center: Vector3 = player.global_position + Vector3.UP * 0.5
-	var delta: Vector3 = ball.global_position - player_center
-	var flat_delta := Vector3(delta.x, 0.0, delta.z)
-	if flat_delta.length() > PLAYER_TOUCH_RADIUS:
+	var contact: Dictionary = FootballMatchRulesScript.get_player_contact_kick(
+		player.global_position,
+		player.velocity,
+		ball.global_position,
+		PLAYER_TOUCH_RADIUS,
+		2.0
+	)
+	if not bool(contact.get("connected", false)):
 		return
-	var player_velocity := Vector3(player.velocity.x, 0.0, player.velocity.z)
-	if player_velocity.length() < 2.0:
-		return
-	var contact_direction := (flat_delta.normalized() + player_velocity.normalized() * 0.6).normalized()
+	var contact_direction: Vector3 = contact.get("direction", Vector3.ZERO)
 	ball.kick(contact_direction, PLAYER_TOUCH_FORCE, 0.12)
 	player_touch_cooldown_remaining = PLAYER_TOUCH_COOLDOWN
 
 func _process_goal_detection() -> void:
-	if absf(ball.global_position.x) > GOAL_HALF_WIDTH:
-		return
-	if ball.global_position.z <= GOAL_LINE_NORTH:
+	var goal_side := FootballMatchRulesScript.detect_goal(ball.global_position, GOAL_HALF_WIDTH, GOAL_LINE_NORTH, GOAL_LINE_SOUTH)
+	if goal_side == 1:
 		_register_goal(true)
-	elif ball.global_position.z >= GOAL_LINE_SOUTH:
+	elif goal_side == -1:
 		_register_goal(false)
 
 func _register_goal(player_scored: bool) -> void:
 	last_goal_player_scored = player_scored
-	if player_scored:
-		player_score += 1
-	else:
-		bot_score += 1
+	var score_result: Dictionary = FootballMatchRulesScript.apply_goal_score(player_score, bot_score, player_scored, GOAL_LIMIT)
+	player_score = int(score_result.get("player_score", player_score))
+	bot_score = int(score_result.get("bot_score", bot_score))
 	phase_label = &"goal"
 	goal_reset_timer = GOAL_RESET_DELAY
 	bot.set_celebrating(true)
@@ -317,41 +317,22 @@ func _register_goal(player_scored: bool) -> void:
 	if feedback != null:
 		var goal_z := GOAL_LINE_NORTH if player_scored else GOAL_LINE_SOUTH
 		feedback.play_football_goal(Vector3(0.0, 1.0, goal_z), player_scored)
-	if player_score >= GOAL_LIMIT or bot_score >= GOAL_LIMIT:
+	if bool(score_result.get("match_over", false)):
 		match_over = true
 		goal_reset_timer = 0.0
 		phase_label = &"match_end"
+		var player_won := bool(score_result.get("player_won", false))
 		if hud != null:
-			hud.show_match_end(player_score >= GOAL_LIMIT)
+			hud.show_match_end(player_won)
 		if feedback != null:
-			feedback.play_round_end(player_score >= GOAL_LIMIT)
+			feedback.play_round_end(player_won)
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _can_reach_ball(origin: Vector3, direction: Vector3) -> bool:
-	var shot_direction: Vector3 = direction.normalized()
-	if shot_direction.length_squared() <= 0.0001:
-		return false
-	var to_ball: Vector3 = ball.global_position - origin
-	if to_ball.length() > PLAYER_KICK_REACH + 0.7:
-		return false
-	var projected: float = to_ball.dot(shot_direction)
-	if projected < -0.15 or projected > PLAYER_KICK_REACH + 0.85:
-		return false
-	var closest: Vector3 = origin + shot_direction * projected
-	return closest.distance_to(ball.global_position) <= ball.ball_radius + 0.75
+	return FootballMatchRulesScript.can_reach_ball(origin, direction, ball.global_position, ball.ball_radius, PLAYER_KICK_REACH)
 
 func _build_kick_direction(origin: Vector3, direction: Vector3) -> Vector3:
-	var camera_direction: Vector3 = direction.normalized()
-	var to_ball: Vector3 = ball.global_position - origin
-	var flat_to_ball := Vector3(to_ball.x, 0.0, to_ball.z)
-	var flat_camera := Vector3(camera_direction.x, 0.0, camera_direction.z)
-	if flat_camera.length_squared() <= 0.0001:
-		flat_camera = -player.global_transform.basis.z
-		flat_camera.y = 0.0
-	var blended := flat_camera.normalized()
-	if flat_to_ball.length_squared() > 0.0001:
-		blended = (blended * 0.82 + flat_to_ball.normalized() * 0.18).normalized()
-	return blended
+	return FootballMatchRulesScript.build_kick_direction(origin, direction, ball.global_position, -player.global_transform.basis.z)
 
 func _build_hud_snapshot() -> Dictionary:
 	var ball_distance := 0.0

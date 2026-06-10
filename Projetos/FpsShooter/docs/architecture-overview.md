@@ -51,6 +51,8 @@ Track 05 first code extraction:
 - `modes/shared/runtime_primitive_factory.gd` owns common runtime box collision/mesh/material creation for mode layouts.
 - `modes/arena/arena_duel_pit_layout_builder.gd` owns static `Duel Pit V2` geometry, route markers and jump-pad node construction.
 - `modes/football/football_field_builder.gd` owns static football pitch, goal, wall and stadium-band construction.
+- `gameplay/arena/arena_combat_rules.gd` owns small arena combat calculations that do not need scene authority, such as visual muzzle origin, projectile direction and pickup respawn choice.
+- `gameplay/football/football_match_rules.gd` owns football reach checks, kick direction math, player ball contact, goal detection and score/match-end calculation.
 
 Track 05 should not move toward:
 
