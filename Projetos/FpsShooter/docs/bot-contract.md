@@ -100,6 +100,11 @@ Safe extractions:
 - route scoring/classification;
 - debug data structs or helper methods.
 
+Track 05 implemented the first two low-risk helper seams:
+
+- `gameplay/bot/bot_visibility_points.gd` builds the target exposure points used by the existing raycast flow.
+- `gameplay/bot/bot_aim_model.gd` owns deterministic aim offset patterns and distance-scaled aim error.
+
 Risky extractions:
 
 - splitting state transitions before tests are split;

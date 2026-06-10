@@ -96,6 +96,8 @@ func _check_core_project_contract() -> void:
 	_check_resource("res://gameplay/combat/combatant_3d.gd")
 	_check_resource("res://gameplay/player/fps_player_controller.gd")
 	_check_resource("res://gameplay/bot/basic_duel_bot.gd")
+	_check_resource("res://gameplay/bot/bot_aim_model.gd")
+	_check_resource("res://gameplay/bot/bot_visibility_points.gd")
 	_check_resource("res://gameplay/football/football_ball.gd")
 	_check_resource("res://gameplay/football/football_bot.gd")
 	_check_resource("res://gameplay/football/football_match_rules.gd")

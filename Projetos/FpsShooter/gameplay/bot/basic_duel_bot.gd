@@ -6,6 +6,9 @@ signal shot_windup_started(origin: Vector3, target_position: Vector3, duration: 
 signal shot_feedback_requested(origin: Vector3, target_position: Vector3)
 signal shot_resolution_requested(origin: Vector3, direction: Vector3, damage: float, knockback: float)
 
+const BotAimModelScript = preload("res://gameplay/bot/bot_aim_model.gd")
+const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_points.gd")
+
 const STATE_IDLE: StringName = &"idle"
 const STATE_ENGAGE: StringName = &"engage"
 const STATE_STRAFE: StringName = &"strafe"
@@ -471,24 +474,17 @@ func _refresh_target_visibility() -> bool:
 	return false
 
 func _get_target_visibility_points() -> Array[Vector3]:
-	var points: Array[Vector3] = []
-	if target == null:
-		return points
-	if target.has_method("get_shot_origin"):
-		_append_unique_visibility_point(points, target.get_shot_origin())
-	var target_base: Vector3 = target.global_position
-	_append_unique_visibility_point(points, target_base + Vector3.UP * target_head_visibility_height)
-	_append_unique_visibility_point(points, target_base + Vector3.UP * target_upper_visibility_height)
-	_append_unique_visibility_point(points, _get_target_position())
-	_append_unique_visibility_point(points, target_base + Vector3.UP * target_center_visibility_height)
-	_append_unique_visibility_point(points, target_base + Vector3.UP * target_lower_visibility_height)
-	return points
+	return BotVisibilityPointsScript.build_target_points(
+		target,
+		_get_target_position(),
+		target_head_visibility_height,
+		target_upper_visibility_height,
+		target_center_visibility_height,
+		target_lower_visibility_height
+	)
 
 func _append_unique_visibility_point(points: Array[Vector3], target_point: Vector3) -> void:
-	for existing_point in points:
-		if existing_point.distance_squared_to(target_point) <= 0.0001:
-			return
-	points.append(target_point)
+	BotVisibilityPointsScript.append_unique_point(points, target_point)
 
 func _has_clear_visibility_to_point(target_point: Vector3) -> bool:
 	var origin := _get_shot_origin()
@@ -500,34 +496,19 @@ func _has_clear_visibility_to_point(target_point: Vector3) -> bool:
 	return result.get("collider", null) == target
 
 func _build_aim_position(base_target_position: Vector3) -> Vector3:
-	var target_position := base_target_position
-	var to_target := target_position - _get_shot_origin()
-	var flat := Vector3(to_target.x, 0.0, to_target.z)
-	var distance := flat.length()
-	var distance_factor := clampf(distance / maxf(1.0, shoot_range), 0.0, 1.0)
-	var error_radius := lerpf(close_range_aim_error_radius, aim_error_radius, distance_factor)
-	var right := Vector3.RIGHT
-	if flat.length_squared() > 0.0001:
-		var forward := flat.normalized()
-		right = Vector3(-forward.z, 0.0, forward.x).normalized()
-	var pattern := _aim_pattern(aim_cycle_index)
+	var pattern := BotAimModelScript.pattern_for_index(aim_cycle_index)
 	aim_cycle_index += 1
-	return target_position + right * pattern.x * error_radius + Vector3.UP * pattern.y * error_radius
+	return BotAimModelScript.build_aim_position(
+		base_target_position,
+		_get_shot_origin(),
+		shoot_range,
+		close_range_aim_error_radius,
+		aim_error_radius,
+		pattern
+	)
 
 func _aim_pattern(index: int) -> Vector2:
-	match index % 6:
-		0:
-			return Vector2(0.12, 0.04)
-		1:
-			return Vector2(-0.28, 0.12)
-		2:
-			return Vector2(0.46, -0.05)
-		3:
-			return Vector2(-0.56, 0.16)
-		4:
-			return Vector2(0.72, 0.1)
-		_:
-			return Vector2(-0.18, -0.08)
+	return BotAimModelScript.pattern_for_index(index)
 
 func _choose_reposition_destination() -> void:
 	var candidate_points := reposition_points
