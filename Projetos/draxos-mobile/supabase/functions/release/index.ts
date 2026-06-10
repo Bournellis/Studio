@@ -163,7 +163,7 @@ interface PlayerRow {
 }
 
 const DEFAULT_RELEASE_ROOT =
-  "internal-alpha/v0-bosque-arena-abandon-recovery-authority-v1-20260610-a252241";
+  "internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-53a9cd5";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));
