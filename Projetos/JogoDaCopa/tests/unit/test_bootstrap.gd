@@ -98,8 +98,13 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	var arena_config: Dictionary = football.debug_get_arena_config()
 	assert_gt(float(arena_config.get("field_width", 0.0)), 32.0)
 	assert_gt(float(arena_config.get("wall_height", 0.0)), 6.0)
-	assert_gt(float(arena_config.get("goal_half_width", 0.0)), 5.0)
-	assert_gt(football.debug_get_ball().physics_material_override.bounce, 0.5)
+	assert_almost_eq(float(arena_config.get("goal_half_width", 0.0)), 4.32, 0.01)
+	assert_almost_eq(float(arena_config.get("goal_height", 0.0)), 3.45, 0.01)
+	var north_post_collision := football.get_node("NorthGoalPostL/NorthGoalPostLCollision") as CollisionShape3D
+	var north_post_shape := north_post_collision.shape as BoxShape3D
+	assert_almost_eq(north_post_shape.size.y, 3.45, 0.01)
+	assert_gt(football.debug_get_ball().physics_material_override.bounce, 0.8)
+	assert_gt(football.debug_get_ball().physics_material_override.friction, 0.3)
 	assert_no_new_orphans()
 
 func test_football_chase_camera_keeps_ball_focus_subtle_when_far() -> void:
@@ -173,6 +178,30 @@ func test_football_player_near_ball_stays_loose_without_dribble_lock() -> void:
 	assert_almost_eq(ball.linear_velocity.length(), 0.0, 0.001)
 	assert_no_new_orphans()
 
+func test_football_ball_ground_grip_slows_roll_without_air_drag() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var ball = football.debug_get_ball()
+	ball.global_position = Vector3(0.0, 0.58, 0.0)
+	ball.linear_velocity = Vector3(12.0, 0.1, 0.0)
+	assert_true(ball.debug_is_ground_rolling())
+	ball.debug_apply_ground_roll_drag(0.25)
+	var ground_speed := Vector2(ball.linear_velocity.x, ball.linear_velocity.z).length()
+	assert_lt(ground_speed, 9.0)
+
+	ball.global_position = Vector3(0.0, 2.4, 0.0)
+	ball.linear_velocity = Vector3(12.0, 0.1, 0.0)
+	assert_false(ball.debug_is_ground_rolling())
+	ball.debug_apply_ground_roll_drag(0.25)
+	var air_speed := Vector2(ball.linear_velocity.x, ball.linear_velocity.z).length()
+	assert_almost_eq(air_speed, 12.0, 0.001)
+	assert_no_new_orphans()
+
 func test_football_player_boost_spends_stamina() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
@@ -213,6 +242,8 @@ func test_football_player_kick_assist_connects_near_front_side_ball() -> void:
 	football._on_player_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 99.0, 99.0)
 
 	assert_eq(ball.debug_get_kick_count(), before_kicks + 1)
+	assert_almost_eq(ball.debug_get_last_kick_force(), 20.5, 0.01)
+	assert_gt(ball.linear_velocity.y, 2.0)
 	assert_gt(football.debug_get_last_kick_assist_strength(), 0.0)
 	assert_eq((football.get_node("FootballHud") as FootballHud).last_event, &"kick")
 	assert_no_new_orphans()
@@ -232,6 +263,7 @@ func test_football_strong_kick_uses_stronger_force() -> void:
 	football._on_player_strong_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 0.0, 0.0, 0.0, 0.0, false)
 
 	assert_almost_eq(ball.debug_get_last_kick_force(), 29.0, 0.01)
+	assert_gt(ball.linear_velocity.y, 6.5)
 	assert_eq(hud.last_event, &"strong_kick")
 	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"strong_kick")
 	assert_gt(ball.linear_velocity.length(), 0.1)

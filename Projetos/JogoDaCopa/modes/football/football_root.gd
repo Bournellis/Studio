@@ -23,7 +23,8 @@ const FIELD_HALF_LENGTH: float = FIELD_LENGTH * 0.5
 const WALL_HEIGHT: float = 7.2
 const CEILING_HEIGHT: float = 8.8
 const WALL_THICKNESS: float = 0.8
-const GOAL_HALF_WIDTH: float = 5.4
+const GOAL_HALF_WIDTH: float = 4.32
+const GOAL_HEIGHT: float = 3.45
 const GOAL_SIDE_WALL_X: float = GOAL_HALF_WIDTH + 0.72
 const GOAL_SIDE_WALL_THICKNESS: float = 0.55
 const GOAL_CLOSED_DEPTH: float = 3.8
@@ -37,10 +38,10 @@ const PLAYER_KICK_ASSIST_RADIUS: float = 2.38
 const PLAYER_TOUCH_RADIUS: float = 1.42
 const PLAYER_TOUCH_FORCE: float = 5.2
 const PLAYER_NEAR_BALL_RADIUS: float = 2.5
-const PLAYER_KICK_FORCE: float = 18.5
+const PLAYER_KICK_FORCE: float = 20.5
 const PLAYER_STRONG_KICK_FORCE: float = 29.0
-const PLAYER_KICK_LIFT: float = 1.8
-const PLAYER_STRONG_KICK_LIFT: float = 4.1
+const PLAYER_KICK_LIFT: float = 2.35
+const PLAYER_STRONG_KICK_LIFT: float = 7.2
 const PLAYER_TOUCH_COOLDOWN: float = 0.18
 const GOAL_RESET_DELAY: float = 1.25
 
@@ -221,7 +222,8 @@ func debug_get_arena_config() -> Dictionary:
 		"field_length": FIELD_LENGTH,
 		"wall_height": WALL_HEIGHT,
 		"ceiling_height": CEILING_HEIGHT,
-		"goal_half_width": GOAL_HALF_WIDTH
+		"goal_half_width": GOAL_HALF_WIDTH,
+		"goal_height": GOAL_HEIGHT
 	}
 
 func _configure_world() -> void:
@@ -260,6 +262,7 @@ func _build_football_pitch() -> void:
 		"ceiling_height": CEILING_HEIGHT,
 		"wall_thickness": WALL_THICKNESS,
 		"goal_half_width": GOAL_HALF_WIDTH,
+		"goal_height": GOAL_HEIGHT,
 		"goal_side_wall_x": GOAL_SIDE_WALL_X,
 		"goal_side_wall_thickness": GOAL_SIDE_WALL_THICKNESS,
 		"goal_closed_depth": GOAL_CLOSED_DEPTH,

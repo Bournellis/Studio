@@ -4,9 +4,9 @@
 - Project: `JogoDaCopa`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames`
-- Active stage: `Arcade Arena Boost V1`
+- Active stage: `Ball Goal Kick Tuning V1`
 - Active stage status: `COMPLETE`
-- Status marker: `JOGO_DA_COPA_ARCADE_ARENA_BOOST_V1_COMPLETE`
+- Status marker: `JOGO_DA_COPA_BALL_GOAL_KICK_TUNING_V1_COMPLETE`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -23,15 +23,16 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Match to 3 goals.
 - Runtime primitive stadium, closed goals, procedural avatars and synthetic feedback.
 - Skin tone and country-inspired shirt selection.
-- Loose arcade ball physics with no possession lock, tighter kick assist, bouncy walls/ceiling and arena rebound play.
-- Closed glass arena with larger field, larger goals, high walls, roof collision and primitive stadium bands.
+- Loose arcade ball physics with no possession lock, tighter kick assist, higher bounce, air-friendly damping and extra ground-roll grip.
+- Closed glass arena with larger field, 20% narrower and 50% taller goals, high walls, roof collision and primitive stadium bands.
+- LMB kick is slightly stronger; RMB strong kick keeps forward punch and now lifts the ball clearly.
 - Player speed boost on `Shift` with stamina HUD.
 - Football bot attack/defend baseline.
 - No FPS arena, no weapons, no shooter combat loop, no export, no Web/mobile, no multiplayer/backend.
 
 ## Current Gate
 
-Ready for editor playtest focused on `Futebol 1x1`: loose ball rebound feel, glass wall/ceiling play, boost stamina, larger goals, bot approach and TPS camera readability.
+Ready for editor playtest focused on `Futebol 1x1`: ball ground grip versus air speed, higher bounce, narrower/taller goals, LMB kick strength, RMB lifted shot, boost stamina, bot approach and TPS camera readability.
 
 This project is the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -53,4 +54,5 @@ Manual smoke lives in `docs/validation.md`.
 4. `docs/work-plan.md`
 5. `docs/mode-contract.md`
 6. `docs/validation.md`
-7. `implementation/tracks/track-01a-arcade-arena-boost-v1/current-status.md`
+7. `implementation/tracks/track-01b-ball-goal-kick-tuning-v1/current-status.md`
+8. `implementation/tracks/track-01a-arcade-arena-boost-v1/current-status.md`

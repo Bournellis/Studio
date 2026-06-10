@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_ARCADE_ARENA_BOOST_V1_COMPLETE`
+- Status: `JOGO_DA_COPA_BALL_GOAL_KICK_TUNING_V1_COMPLETE`
 - Current surface: TPS football minigames.
 
 ## North Star
@@ -13,12 +13,13 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Menu launches only `Futebol 1x1`.
 - Football mode preserves the accepted third-person camera, visible avatar, country-inspired kits and bot approach baseline.
 - Track 01A re-centered the feel around a closed arcade arena: larger field/goals, glass walls, roof collision, bouncy loose ball, tighter kick assist and player boost/stamina.
+- Track 01B tuned the active arena feel: more ground grip while preserving air speed, higher bounce, 20% narrower and 50% taller goals, slightly stronger LMB kick and a clearer lifted RMB shot.
 - Validation now targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Track
 
-Run editor playtest focused on the new arcade arena feel. Then choose between:
+Run editor playtest focused on the tuned ball/goal/kick feel. Then choose between:
 
 - character/avatar quality upgrade;
 - ball/wall/ceiling rebound tuning;

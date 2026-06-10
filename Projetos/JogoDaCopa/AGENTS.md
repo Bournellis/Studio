@@ -57,13 +57,13 @@ For most work:
 - `gameplay/player/`: reused player movement/input controller.
 - `gameplay/football/`: ball, football bot and football rule helpers.
 - `modes/menu/`: JogoDaCopa minigame entry.
-- `modes/football/`: field assembly, score state, goal resolution, possession and kick handling.
+- `modes/football/`: field assembly, score state, goal resolution, loose-ball contact and kick handling.
 - `modes/shared/`: shared runtime primitive creation.
 - `presentation/camera/`: football chase camera.
 - `presentation/hud/`: football HUD.
 - `presentation/feedback/`: transient primitive/audio feedback.
 - `tools/`: scene generation and validation.
-- `tests/`: GUT coverage for input, scene assembly, football rules, avatar and possession contracts.
+- `tests/`: GUT coverage for input, scene assembly, football rules, avatar and loose-ball contracts.
 - `docs/`: local product/technical references.
 - `implementation/`: status and track records.
 

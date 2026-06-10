@@ -3,10 +3,13 @@ extends RigidBody3D
 
 @export var ball_radius: float = 0.48
 @export var max_horizontal_speed: float = 34.0
-@export var max_vertical_speed: float = 15.5
+@export var max_vertical_speed: float = 18.0
 @export var anti_stuck_height: float = -3.0
-@export var floor_wall_bounce: float = 0.72
-@export var surface_friction: float = 0.22
+@export var floor_wall_bounce: float = 0.86
+@export var surface_friction: float = 0.38
+@export var ground_roll_drag_per_second: float = 1.45
+@export var ground_contact_height_margin: float = 0.18
+@export var ground_drag_vertical_speed_limit: float = 1.2
 
 var spawn_position: Vector3 = Vector3(0.0, 0.58, 0.0)
 var last_kick_force: float = 0.0
@@ -17,15 +20,16 @@ var reset_count: int = 0
 func _ready() -> void:
 	mass = 0.74
 	gravity_scale = 1.0
-	linear_damp = 0.18
-	angular_damp = 0.34
+	linear_damp = 0.05
+	angular_damp = 0.46
 	physics_material_override = _build_physics_material()
 	contact_monitor = true
 	max_contacts_reported = 8
 	can_sleep = false
 	_ensure_ball_nodes()
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	_apply_ground_roll_drag(delta)
 	_clamp_velocity()
 	if global_position.y < anti_stuck_height:
 		reset_to_center()
@@ -77,6 +81,12 @@ func debug_get_dribble_control_count() -> int:
 func debug_get_reset_count() -> int:
 	return reset_count
 
+func debug_is_ground_rolling() -> bool:
+	return _is_ground_rolling()
+
+func debug_apply_ground_roll_drag(delta: float) -> void:
+	_apply_ground_roll_drag(delta)
+
 func _clamp_velocity() -> void:
 	var flat := Vector3(linear_velocity.x, 0.0, linear_velocity.z)
 	if flat.length() > max_horizontal_speed:
@@ -86,6 +96,19 @@ func _clamp_velocity() -> void:
 		clampf(linear_velocity.y, -max_vertical_speed, max_vertical_speed),
 		flat.z
 	)
+
+func _apply_ground_roll_drag(delta: float) -> void:
+	if not _is_ground_rolling():
+		return
+	var flat := Vector3(linear_velocity.x, 0.0, linear_velocity.z)
+	if flat.length_squared() <= 0.0001:
+		return
+	var drag_factor := clampf(1.0 - ground_roll_drag_per_second * delta, 0.0, 1.0)
+	var next_flat := flat * drag_factor
+	linear_velocity = Vector3(next_flat.x, linear_velocity.y, next_flat.z)
+
+func _is_ground_rolling() -> bool:
+	return global_position.y <= ball_radius + ground_contact_height_margin and absf(linear_velocity.y) <= ground_drag_vertical_speed_limit
 
 func _ensure_ball_nodes() -> void:
 	if get_node_or_null("CollisionShape3D") == null:
