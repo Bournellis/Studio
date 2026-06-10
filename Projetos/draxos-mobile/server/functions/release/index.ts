@@ -4,27 +4,27 @@ import { verifiedAuthContext } from "../_shared/auth_context.ts";
 const DEFAULT_MANIFEST: ReleaseManifest = {
   schema_version: "internal_alpha_manifest_v1",
   channel: "internal_alpha",
-  latest_version: "0.0.20-alpha.0",
-  latest_version_code: 20,
+  latest_version: "0.0.21-alpha.0",
+  latest_version_code: 21,
   minimum_supported_version: "0.0.13-alpha.0",
   minimum_supported_version_code: 13,
   released_at: "2026-06-09T00:00:00Z",
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/",
   notes: [
-    "Bosque Overlay Menu Action Authority v1 publicado na URL principal de Internal Alpha.",
+    "Bosque Overlay Interactive Controls Authority v1 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
     "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
     "Overlay usa stack unico com Voltar/Fechar, pausa input/coleta/movimento do Bosque e preserva o node existente.",
     "Arena PVE roda dentro do overlay, incluindo replay, buff choice, summary e tentativa ativa preservada.",
     "Voltar, Fechar e Esc/Web usam a mesma autoridade de fechamento do overlay.",
-    "Botoes internos de Account, Refugio/Base, Loja, Social e Arena executam no contexto do overlay com clique real no Web/canvas.",
+    "Social, Loja e Arena usam controles interativos no overlay com foco, texto, confirmacao, retomada e abandono validados no Web/canvas.",
     "Menus abertos pelo Bosque usam rota de overlay sem acao mutante fantasma.",
     "Refresh read-only nao bloqueia fechamento; respostas tardias sao ignoradas quando o overlay fecha ou muda de rota.",
     "Fechar/Voltar bloqueia apenas durante mutacoes criticas da Arena ou replay em andamento.",
     "Bosque integrado continua ocultando o viewport ate aplicar bootstrap remoto ou cache canonico, evitando flash de full spawn.",
     "Arena PVE exporta HP/Mana iniciais buffados no log e o replay aplica battle_start/participants antes da primeira acao.",
-    "Manifesto recomenda build 0.0.20-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+    "Manifesto recomenda build 0.0.21-alpha.0 e mantem build minima 0.0.13-alpha.0.",
     "Coletas, deposito no Bau, craft local e orientacao so aparecem como salvos depois de ACK do servidor.",
     "Nodes do Bosque mantem cooldown por item via node_state.next_spawn_at e descartam rejeicoes terminais de cooldown sem fila infinita.",
     "Coleta ativa nao reinicia por movimento leve e ACKs de checkpoint nao fazem rollback visual da mesma sessao.",
@@ -40,14 +40,14 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
       label: "Android APK",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      sha256: "1f3aa89eebdf6296dca222f3d0f128feb532dd26a315245d5cbc4dc9c39f0da2",
+      sha256: "fc4f414d7c1f769a0505c2ff9cef01ad919a149f28279c4ffc13cf56ce2aa06c",
       auth_required: "true",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      sha256: "024d402d8355bea0d92b7b8b77de7c7a30cdda16724064fe92872cc35c2a9920",
+      sha256: "a0621dcd27c1fa6d78f0e4c4a393b1f5ee21a2138901eba170f7558aeea94c9f",
       auth_required: "true",
     },
     web: {
@@ -159,7 +159,7 @@ interface PlayerRow {
 }
 
 const DEFAULT_RELEASE_ROOT =
-  "internal-alpha/v0-bosque-overlay-menu-action-authority-v1-20260609-aa9402d";
+  "internal-alpha/v0-bosque-overlay-interactive-controls-authority-v1-20260609-d3be1fb";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));

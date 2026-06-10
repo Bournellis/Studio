@@ -2,8 +2,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$WebUrl,
     [string]$ExpectedReleaseRoot = "",
-    [string]$ExpectedAppVersion = "0.0.20-alpha.0",
-    [int]$ExpectedAppVersionCode = 20,
+    [string]$ExpectedAppVersion = "0.0.21-alpha.0",
+    [int]$ExpectedAppVersionCode = 21,
     [string]$ChromePath = "",
     [int]$TimeoutSeconds = 90,
     [string]$DiagnosticsDir = "",
@@ -154,6 +154,37 @@ const cases = [
 	{ label: 'shop-refresh', smoke: 'overlay-shop', route: 'shop', button: 'Atualizar loja', action: 'show_shop', expectClosed: false },
 	{ label: 'social-refresh', smoke: 'overlay-social', route: 'social', button: 'Atualizar social', action: 'show_social', expectClosed: false },
 	{ label: 'arena-return-refuge', smoke: 'overlay-arena', route: 'arena_selection', button: 'Voltar ao Refugio', action: 'return_refuge', expectClosed: true },
+];
+
+const interactiveCases = [
+	{
+		label: 'social-type-add-friend',
+		smoke: 'overlay-social-form',
+		route: 'social',
+		kind: 'social_text_action',
+		lineEditPlaceholder: 'guest_12345678',
+		text: 'web_smoke_friend',
+		button: 'Adicionar amigo',
+		action: 'add_friend',
+	},
+	{
+		label: 'shop-confirm-buy-energy',
+		smoke: 'overlay-shop-confirm',
+		route: 'shop',
+		kind: 'shop_confirm',
+		button: 'Comprar Energia',
+		action: 'shop_purchase:alpha_energy_pack_small',
+	},
+	{
+		label: 'arena-resume-abandon-active',
+		smoke: 'overlay-arena-active',
+		route: 'arena_selection',
+		kind: 'arena_resume_abandon',
+		resumeButton: 'Retomar tentativa',
+		resumeAction: 'arena_resume_attempt',
+		abandonButton: 'Abandonar tentativa',
+		abandonAction: 'arena_abandon_attempt',
+	},
 ];
 
 function sleep(ms) {
@@ -317,8 +348,8 @@ function rectContains(rect, point) {
 		point.y <= rect.y + rect.height;
 }
 
-function visibleButton(state, button) {
-	const point = centerOf(button);
+function visibleControl(state, control) {
+	const point = centerOf(control);
 	const panel = state.state?.overlayPanel || null;
 	const viewport = state.state?.viewportSize || {};
 	const viewportWidth = Number(viewport.width || state.canvasRect?.width || 0);
@@ -332,9 +363,13 @@ function visibleButton(state, button) {
 		point.y <= viewportHeight;
 }
 
-function scrollDeltaForButton(state, button) {
-	if (!button) return 420;
-	const point = centerOf(button);
+function visibleButton(state, button) {
+	return visibleControl(state, button);
+}
+
+function scrollDeltaForControl(state, control) {
+	if (!control) return 420;
+	const point = centerOf(control);
 	const panel = state.state?.overlayPanel || null;
 	const viewport = state.state?.viewportSize || {};
 	const viewportHeight = Number(viewport.height || state.canvasRect?.height || 0);
@@ -345,8 +380,12 @@ function scrollDeltaForButton(state, button) {
 	return 0;
 }
 
-function buttonPoint(state, button) {
-	const point = centerOf(button);
+function scrollDeltaForButton(state, button) {
+	return scrollDeltaForControl(state, button);
+}
+
+function controlPoint(state, control) {
+	const point = centerOf(control);
 	const canvasRect = state.canvasRect;
 	const viewport = state.state?.viewportSize || {};
 	const scaleX = canvasRect.width / Number(viewport.width || canvasRect.width);
@@ -355,6 +394,10 @@ function buttonPoint(state, button) {
 		x: canvasRect.left + point.x * scaleX,
 		y: canvasRect.top + point.y * scaleY,
 	};
+}
+
+function buttonPoint(state, button) {
+	return controlPoint(state, button);
 }
 
 function panelPoint(state) {
@@ -409,12 +452,26 @@ async function wheelOverlay(client, state, deltaY) {
 	});
 }
 
+function findControl(state, predicate) {
+	const controls = Array.isArray(state.state?.overlayControls) ? state.state.overlayControls : [];
+	return controls.find(predicate) || null;
+}
+
 function findButton(state, text) {
+	const control = findControl(state, (item) => String(item.type || '') === 'button' && String(item.text || '') === text);
+	if (control) return control;
 	const buttons = Array.isArray(state.state?.overlayButtons) ? state.state.overlayButtons : [];
 	return buttons.find((button) => String(button.text || '') === text) || null;
 }
 
-async function clickOverlayButton(client, label, text, expectedAction) {
+function findLineEdit(state, placeholder) {
+	return findControl(state, (item) => {
+		return String(item.type || '') === 'line_edit' &&
+			(String(item.placeholder || '') === placeholder || String(item.placeholder || '').includes(placeholder));
+	});
+}
+
+async function clickOverlayButton(client, label, text, expectedAction = '') {
 	let beforeState = await readState(client);
 	let candidate = null;
 	for (let attempt = 0; attempt < 18; attempt += 1) {
@@ -442,10 +499,18 @@ async function clickOverlayButton(client, label, text, expectedAction) {
 	const clicked = await waitFor(client, (state) => {
 		const overlayMatched = Number(state.state?.overlayInput?.sequence || 0) > beforeOverlaySequence &&
 			String(state.state?.overlayInput?.last?.text || '') === text;
-		const actionMatched = Number(state.state?.actionInput?.sequence || 0) > beforeActionSequence &&
+		const confirmOpenMatched = Number(state.state?.overlayInput?.sequence || 0) > beforeOverlaySequence &&
+			String(state.state?.overlayInput?.last?.type || '') === 'confirm_open' &&
+			String(state.state?.pendingConfirmation?.action_id || '') === String(candidate.action_id || '');
+		const confirmCancelMatched = Number(state.state?.overlayInput?.sequence || 0) > beforeOverlaySequence &&
+			String(state.state?.overlayInput?.last?.type || '') === 'confirm_cancel' &&
+			text === 'Voltar' &&
+			state.state?.pendingConfirmation?.pending === false;
+		const actionMatched = expectedAction &&
+			Number(state.state?.actionInput?.sequence || 0) > beforeActionSequence &&
 			String(state.state?.actionInput?.last?.action_id || '') === expectedAction &&
 			Boolean(state.state?.actionInput?.last?.overlay_open) === true;
-		return overlayMatched || actionMatched;
+		return overlayMatched || confirmOpenMatched || confirmCancelMatched || actionMatched;
 	}, `${label}: button '${text}' input`);
 	return {
 		button: candidate,
@@ -455,6 +520,65 @@ async function clickOverlayButton(client, label, text, expectedAction) {
 		after_action_sequence: Number(clicked.state.state?.actionInput?.sequence || 0),
 		action_after_input: clicked.state.state?.actionInput?.last || null,
 		state_after_input: clicked.state,
+	};
+}
+
+async function focusOverlayLineEdit(client, label, placeholder) {
+	let beforeState = await readState(client);
+	let candidate = null;
+	for (let attempt = 0; attempt < 18; attempt += 1) {
+		candidate = findLineEdit(beforeState, placeholder);
+		if (candidate && visibleControl(beforeState, candidate)) {
+			break;
+		}
+		const delta = scrollDeltaForControl(beforeState, candidate);
+		if (delta === 0) {
+			break;
+		}
+		await wheelOverlay(client, beforeState, delta);
+		await sleep(150);
+		beforeState = await readState(client);
+	}
+	if (!candidate) {
+		throw new Error(`${label}: line edit '${placeholder}' was not reported in overlayControls.`);
+	}
+	if (!visibleControl(beforeState, candidate)) {
+		throw new Error(`${label}: line edit '${placeholder}' was reported but never became visible.`);
+	}
+	const beforeOverlaySequence = Number(beforeState.state?.overlayInput?.sequence || 0);
+	await clickPoint(client, controlPoint(beforeState, candidate));
+	const focused = await waitFor(client, (state) => {
+		return Number(state.state?.overlayInput?.sequence || 0) > beforeOverlaySequence &&
+			String(state.state?.focusedControl || '') === String(candidate.path || '');
+	}, `${label}: focus line edit '${placeholder}'`);
+	return {
+		control: candidate,
+		state_after_focus: focused.state,
+	};
+}
+
+async function typeOverlayText(client, label, placeholder, text) {
+	const focus = await focusOverlayLineEdit(client, label, placeholder);
+	for (const char of text) {
+		await client.send('Input.dispatchKeyEvent', {
+			type: 'keyDown',
+			key: char,
+			text: char,
+			unmodifiedText: char,
+		});
+		await client.send('Input.dispatchKeyEvent', {
+			type: 'keyUp',
+			key: char,
+		});
+		await sleep(20);
+	}
+	const typed = await waitFor(client, (state) => {
+		const control = findLineEdit(state, placeholder);
+		return control && String(control.text || '') === text;
+	}, `${label}: type text '${text}'`);
+	return {
+		control: focus.control,
+		state_after_text: typed.state,
 	};
 }
 
@@ -519,6 +643,120 @@ try {
 			active_route_after: after.state.state?.activeRoute || '',
 		});
 	}
+	for (const testCase of interactiveCases) {
+		await client.send('Page.navigate', { url: smokeUrl(testCase.smoke, testCase.label) });
+		const open = await waitFor(client, (state) => {
+			return state.canvasCount > 0 &&
+				state.state &&
+				state.state.currentScreen === 'mode_shell' &&
+				state.state.overlayOpen === true &&
+				state.state.overlayRoute === testCase.route;
+		}, `${testCase.label}: overlay open`);
+		if (open.access) {
+			outcome = 'cloudflare_access_expected';
+			finalState = open.state;
+			break;
+		}
+		assertBuild(open.state, testCase.label);
+		screenshots.push(await capture(client, `${testCase.label}-open`));
+
+		if (testCase.kind === 'social_text_action') {
+			const typed = await typeOverlayText(client, testCase.label, testCase.lineEditPlaceholder, testCase.text);
+			const click = await clickOverlayButton(client, testCase.label, testCase.button, testCase.action);
+			const after = await waitFor(client, (state) => {
+				return state.state &&
+					state.state.currentScreen === 'mode_shell' &&
+					state.state.overlayOpen === true &&
+					state.state.overlayRoute === testCase.route &&
+					String(state.state.actionInput?.last?.action_id || '') === testCase.action;
+			}, `${testCase.label}: post social action state`);
+			finalState = after.state;
+			screenshots.push(await capture(client, `${testCase.label}-after`));
+			results.push({
+				label: testCase.label,
+				smoke: testCase.smoke,
+				route: testCase.route,
+				kind: testCase.kind,
+				line_edit_placeholder: testCase.lineEditPlaceholder,
+				typed_text: testCase.text,
+				button: testCase.button,
+				action: testCase.action,
+				focused_control_after_focus: typed.state_after_text.state?.focusedControl || '',
+				action_after_input: click.action_after_input,
+				overlay_route_after: after.state.state?.overlayRoute || '',
+			});
+		} else if (testCase.kind === 'shop_confirm') {
+			const firstClick = await clickOverlayButton(client, testCase.label, testCase.button, '');
+			const confirmOpen = await waitFor(client, (state) => {
+				return state.state?.pendingConfirmation?.pending === true;
+			}, `${testCase.label}: confirmation opens`);
+			await clickOverlayButton(client, testCase.label, 'Voltar', '');
+			await waitFor(client, (state) => {
+				return state.state?.pendingConfirmation?.pending === false;
+			}, `${testCase.label}: confirmation cancels`);
+			await clickOverlayButton(client, testCase.label, testCase.button, '');
+			await waitFor(client, (state) => {
+				return state.state?.pendingConfirmation?.pending === true;
+			}, `${testCase.label}: confirmation reopens`);
+			const confirmClick = await clickOverlayButton(client, testCase.label, 'Confirmar', testCase.action);
+			const after = await waitFor(client, (state) => {
+				return state.state &&
+					state.state.currentScreen === 'mode_shell' &&
+					state.state.overlayOpen === true &&
+					state.state.overlayRoute === testCase.route &&
+					String(state.state.actionInput?.last?.action_id || '') === testCase.action;
+			}, `${testCase.label}: post confirm action state`);
+			finalState = after.state;
+			screenshots.push(await capture(client, `${testCase.label}-after`));
+			results.push({
+				label: testCase.label,
+				smoke: testCase.smoke,
+				route: testCase.route,
+				kind: testCase.kind,
+				button: testCase.button,
+				action: testCase.action,
+				first_click_overlay_sequence: firstClick.after_overlay_sequence,
+				confirm_message: confirmOpen.state.state?.pendingConfirmation?.message || '',
+				action_after_input: confirmClick.action_after_input,
+				overlay_route_after: after.state.state?.overlayRoute || '',
+			});
+		} else if (testCase.kind === 'arena_resume_abandon') {
+			const resumeClick = await clickOverlayButton(client, testCase.label, testCase.resumeButton, testCase.resumeAction);
+			const active = await waitFor(client, (state) => {
+				return state.state &&
+					state.state.currentScreen === 'mode_shell' &&
+					state.state.overlayOpen === true &&
+					state.state.overlayRoute === 'arena_active' &&
+					String(state.state.actionInput?.last?.action_id || '') === testCase.resumeAction;
+			}, `${testCase.label}: resume reaches active route`);
+			const abandonClick = await clickOverlayButton(client, testCase.label, testCase.abandonButton, testCase.abandonAction);
+			const after = await waitFor(client, (state) => {
+				return state.state &&
+					state.state.currentScreen === 'mode_shell' &&
+					state.state.overlayOpen === true &&
+					state.state.overlayRoute === 'arena_active' &&
+					String(state.state.actionInput?.last?.action_id || '') === testCase.abandonAction;
+			}, `${testCase.label}: abandon input records inside overlay`);
+			finalState = after.state;
+			screenshots.push(await capture(client, `${testCase.label}-after`));
+			results.push({
+				label: testCase.label,
+				smoke: testCase.smoke,
+				route: testCase.route,
+				kind: testCase.kind,
+				resume_button: testCase.resumeButton,
+				resume_action: testCase.resumeAction,
+				abandon_button: testCase.abandonButton,
+				abandon_action: testCase.abandonAction,
+				resume_action_after_input: resumeClick.action_after_input,
+				abandon_action_after_input: abandonClick.action_after_input,
+				overlay_route_after_resume: active.state.state?.overlayRoute || '',
+				overlay_route_after_abandon: after.state.state?.overlayRoute || '',
+			});
+		} else {
+			throw new Error(`${testCase.label}: unknown interactive case kind ${testCase.kind}.`);
+		}
+	}
 	if (outcome !== 'cloudflare_access_expected') {
 		outcome = 'overlay_menu_actions_passed';
 	}
@@ -531,7 +769,7 @@ try {
 }
 
 const summary = {
-	schema_version: 'draxos_mobile_web_overlay_menu_actions_smoke_v1',
+	schema_version: 'draxos_mobile_web_overlay_menu_actions_smoke_v2',
 	web_url: webUrl,
 	expected_release_root: expectedReleaseRoot,
 	expected_app_version: expectedAppVersion,

@@ -21,6 +21,10 @@ var _status_label: Label
 var _detail_label: Label
 var _error_label: Label
 var _release_label: Label
+var _confirm_panel: PanelContainer
+var _confirm_label: Label
+var _confirm_button: Button
+var _cancel_confirm_button: Button
 var _back_button: Button
 var _close_button: Button
 var _content_scroll: ScrollContainer
@@ -31,6 +35,9 @@ var _saved_targets: Dictionary = {}
 var _epoch := 0
 var _input_sequence := 0
 var _last_input: Dictionary = {}
+var _focused_control_path := ""
+var _pending_confirm_action := ""
+var _pending_confirm_message := ""
 
 func is_open() -> bool:
 	return _root != null and is_instance_valid(_root)
@@ -86,6 +93,8 @@ func go_back(host: Node) -> bool:
 func request_back(host: Node) -> bool:
 	if not is_open():
 		return false
+	if _cancel_confirmation(host, true):
+		return true
 	if _close_blocked(host):
 		_show_blocked_message(host)
 		return true
@@ -101,12 +110,15 @@ func close(host: Node) -> bool:
 func request_close(host: Node) -> bool:
 	if not is_open():
 		return false
+	if _cancel_confirmation(host, true):
+		return true
 	if _close_blocked(host):
 		_show_blocked_message(host)
 		return false
 	host.call("_clear_battle_fullscreen_overlay")
 	if host.has_method("_clear_shell_overlay_transient_busy"):
 		host.call("_clear_shell_overlay_transient_busy")
+	_cancel_confirmation(host, false)
 	_restore_host_targets(host)
 	_set_bosque_paused(host, false)
 	_epoch += 1
@@ -115,6 +127,11 @@ func request_close(host: Node) -> bool:
 	_root = null
 	_backdrop = null
 	_panel = null
+	_confirm_panel = null
+	_confirm_label = null
+	_confirm_button = null
+	_cancel_confirm_button = null
+	_focused_control_path = ""
 	_current_route = ""
 	_history.clear()
 	host.call("_sync_status_from_session")
@@ -127,12 +144,20 @@ func force_close(host: Node) -> void:
 	host.call("_clear_battle_fullscreen_overlay")
 	if host.has_method("_clear_shell_overlay_transient_busy"):
 		host.call("_clear_shell_overlay_transient_busy")
+	_cancel_confirmation(host, false)
 	_restore_host_targets(host)
 	_set_bosque_paused(host, false)
 	_epoch += 1
 	if is_instance_valid(_root):
 		_root.queue_free()
 	_root = null
+	_backdrop = null
+	_panel = null
+	_confirm_panel = null
+	_confirm_label = null
+	_confirm_button = null
+	_cancel_confirm_button = null
+	_focused_control_path = ""
 	_current_route = ""
 	_history.clear()
 	_publish_diagnostics(host)
@@ -160,11 +185,47 @@ func button_diagnostics() -> Array[Dictionary]:
 	_collect_button_diagnostics(_root, buttons)
 	return buttons
 
+func control_diagnostics() -> Array[Dictionary]:
+	var controls: Array[Dictionary] = []
+	if not is_open():
+		return controls
+	_collect_control_diagnostics(_root, controls)
+	return controls
+
 func input_diagnostics() -> Dictionary:
 	return {
 		"sequence": _input_sequence,
 		"last": _last_input.duplicate(true),
+		"focused_control": _focused_control_path,
 	}
+
+func focused_control_path() -> String:
+	return _focused_control_path
+
+func confirmation_diagnostics() -> Dictionary:
+	return {
+		"pending": _pending_confirm_action != "",
+		"action_id": _pending_confirm_action,
+		"message": _pending_confirm_message,
+	}
+
+func confirmation_pending() -> bool:
+	return _pending_confirm_action != ""
+
+func request_confirmation(host: Node, action_id: String, message: String) -> bool:
+	if not is_open():
+		return false
+	var normalized_action := action_id.strip_edges()
+	if normalized_action == "":
+		return false
+	_pending_confirm_action = normalized_action
+	_pending_confirm_message = message.strip_edges()
+	host.set("_pending_confirmation_action", normalized_action)
+	_focused_control_path = ""
+	_record_input("confirm_open", normalized_action, "")
+	_sync_confirmation_panel()
+	_publish_diagnostics(host)
+	return true
 
 func request_button(host: Node, relative_path: String, point: Vector2) -> bool:
 	if not is_open() or relative_path.strip_edges() == "":
@@ -175,8 +236,71 @@ func request_button(host: Node, relative_path: String, point: Vector2) -> bool:
 		return false
 	if button.disabled or not button.visible or not button.is_visible_in_tree():
 		return false
+	_focused_control_path = ""
 	_record_input("button", str(button.text), relative_path.strip_edges())
 	button.emit_signal("pressed")
+	_publish_diagnostics(host)
+	return true
+
+func request_focus(host: Node, relative_path: String, point: Vector2) -> bool:
+	if not is_open() or relative_path.strip_edges() == "":
+		return false
+	var node := _root.get_node_or_null(NodePath(relative_path.strip_edges()))
+	var input := node as LineEdit
+	if input == null or not is_instance_valid(input):
+		return false
+	if not input.visible or not input.is_visible_in_tree() or not input.editable:
+		return false
+	var rect := input.get_global_rect()
+	if rect.size.x > 0.0 and rect.size.y > 0.0 and not rect.has_point(point):
+		return false
+	_focused_control_path = relative_path.strip_edges()
+	input.grab_focus()
+	input.caret_column = input.text.length()
+	_record_input("focus", str(input.placeholder_text), _focused_control_path)
+	_publish_diagnostics(host)
+	return true
+
+func request_text_input(host: Node, relative_path: String, text: String, replace_existing: bool = false) -> bool:
+	if not is_open() or relative_path.strip_edges() == "":
+		return false
+	var node := _root.get_node_or_null(NodePath(relative_path.strip_edges()))
+	var input := node as LineEdit
+	if input == null or not is_instance_valid(input):
+		return false
+	if not input.visible or not input.is_visible_in_tree() or not input.editable:
+		return false
+	_focused_control_path = relative_path.strip_edges()
+	input.grab_focus()
+	if replace_existing:
+		input.text = text
+		input.caret_column = input.text.length()
+	else:
+		input.insert_text_at_caret(text)
+	_persist_text_input(host, input)
+	_record_input("text", text, _focused_control_path)
+	_publish_diagnostics(host)
+	return true
+
+func request_text_backspace(host: Node, relative_path: String) -> bool:
+	if not is_open() or relative_path.strip_edges() == "":
+		return false
+	var node := _root.get_node_or_null(NodePath(relative_path.strip_edges()))
+	var input := node as LineEdit
+	if input == null or not is_instance_valid(input):
+		return false
+	if not input.visible or not input.is_visible_in_tree() or not input.editable:
+		return false
+	_focused_control_path = relative_path.strip_edges()
+	input.grab_focus()
+	if input.caret_column <= 0:
+		input.caret_column = input.text.length()
+	if input.caret_column > 0:
+		var caret := input.caret_column
+		input.text = input.text.substr(0, caret - 1) + input.text.substr(caret)
+		input.caret_column = caret - 1
+	_persist_text_input(host, input)
+	_record_input("backspace", "", _focused_control_path)
 	_publish_diagnostics(host)
 	return true
 
@@ -204,6 +328,7 @@ func sync_layout(host: Node) -> void:
 		viewport_size = host_control.size if host_control != null else Vector2(1280, 720)
 	var compact: bool = bool(host.get("_compact_layout")) or viewport_size.x <= 820.0
 	var safe_margin: float = 12.0 if compact else 24.0
+	var panel_width := viewport_size.x - safe_margin * 2.0
 	if compact:
 		_panel.anchor_left = 0.0
 		_panel.anchor_top = 0.0
@@ -214,7 +339,7 @@ func sync_layout(host: Node) -> void:
 		_panel.offset_top = maxf(28.0, viewport_size.y * 0.08)
 		_panel.offset_bottom = -safe_margin
 	else:
-		var panel_width := clampf(viewport_size.x * 0.42, 440.0, 640.0)
+		panel_width = clampf(viewport_size.x * 0.42, 440.0, 640.0)
 		_panel.anchor_left = 1.0
 		_panel.anchor_top = 0.0
 		_panel.anchor_right = 1.0
@@ -223,12 +348,24 @@ func sync_layout(host: Node) -> void:
 		_panel.offset_right = -safe_margin
 		_panel.offset_top = safe_margin
 		_panel.offset_bottom = -safe_margin
+	if _confirm_panel != null and is_instance_valid(_confirm_panel):
+		var inset := 14.0 if compact else 12.0
+		var confirm_height := 150.0 if compact else 136.0
+		_confirm_panel.anchor_left = 0.0 if compact else 1.0
+		_confirm_panel.anchor_top = 1.0
+		_confirm_panel.anchor_right = 1.0
+		_confirm_panel.anchor_bottom = 1.0
+		_confirm_panel.offset_left = safe_margin + inset if compact else -panel_width - safe_margin + inset
+		_confirm_panel.offset_right = -safe_margin - inset
+		_confirm_panel.offset_top = -safe_margin - inset - confirm_height
+		_confirm_panel.offset_bottom = -safe_margin - inset
 
 func sync_controls(host: Node) -> void:
 	if not is_open():
 		return
 	sync_layout(host)
 	_sync_busy_buttons(host)
+	_sync_confirmation_panel()
 
 func handle_input(host: Node, event: InputEvent) -> bool:
 	if not is_open():
@@ -337,6 +474,61 @@ func _build_overlay(host: Node) -> void:
 	_error_label.add_theme_color_override("font_color", UiTokens.color("status_error"))
 	shell.add_child(_error_label)
 
+	_confirm_panel = PanelContainer.new()
+	_confirm_panel.name = "ModeShellMenuConfirmPanel"
+	_confirm_panel.visible = false
+	_confirm_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	_confirm_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_confirm_panel.z_index = 1002
+	_confirm_panel.add_theme_stylebox_override("panel", UiTokens.panel_style_from_tokens("bg_panel_alt", "status_warning", bool(host.get("_compact_layout")), "status_warning", 1, 8, 10))
+	_root.add_child(_confirm_panel)
+
+	var confirm_stack := VBoxContainer.new()
+	confirm_stack.name = "ModeShellMenuConfirmStack"
+	confirm_stack.add_theme_constant_override("separation", 8)
+	_confirm_panel.add_child(confirm_stack)
+
+	_confirm_label = Label.new()
+	_confirm_label.name = "ModeShellMenuConfirmLabel"
+	_confirm_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_confirm_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
+	confirm_stack.add_child(_confirm_label)
+
+	var confirm_actions := HBoxContainer.new()
+	confirm_actions.name = "ModeShellMenuConfirmActions"
+	confirm_actions.add_theme_constant_override("separation", 8)
+	confirm_stack.add_child(confirm_actions)
+
+	_confirm_button = Button.new()
+	_confirm_button.name = "ModeShellConfirmButton"
+	_confirm_button.text = "Confirmar"
+	_confirm_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_confirm_button.set_meta("action_id", "overlay_confirm")
+	_confirm_button.pressed.connect(func() -> void:
+		_confirm_pending_action(host)
+	)
+	if host.has_method("_prepare_touch_button"):
+		host.call("_prepare_touch_button", _confirm_button)
+	if host.has_method("_apply_action_button_style"):
+		host.call("_apply_action_button_style", _confirm_button, "confirm_overlay")
+	_confirm_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	confirm_actions.add_child(_confirm_button)
+
+	_cancel_confirm_button = Button.new()
+	_cancel_confirm_button.name = "ModeShellCancelConfirmButton"
+	_cancel_confirm_button.text = "Voltar"
+	_cancel_confirm_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_cancel_confirm_button.set_meta("action_id", "overlay_confirm_cancel")
+	_cancel_confirm_button.pressed.connect(func() -> void:
+		_cancel_confirmation(host, true)
+	)
+	if host.has_method("_prepare_touch_button"):
+		host.call("_prepare_touch_button", _cancel_confirm_button)
+	if host.has_method("_apply_action_button_style"):
+		host.call("_apply_action_button_style", _cancel_confirm_button, "cancel_overlay")
+	_cancel_confirm_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	confirm_actions.add_child(_cancel_confirm_button)
+
 	_release_label = Label.new()
 	_release_label.name = "ModeShellMenuReleaseMarker"
 	_release_label.text = "Build %s %s code %d" % [
@@ -373,6 +565,7 @@ func _collect_button_diagnostics(node: Node, buttons: Array[Dictionary]) -> void
 				buttons.append({
 					"path": str(_root.get_path_to(button)),
 					"text": str(button.text),
+					"action_id": str(button.get_meta("action_id", "")),
 					"x": rect.position.x,
 					"y": rect.position.y,
 					"width": rect.size.x,
@@ -381,8 +574,56 @@ func _collect_button_diagnostics(node: Node, buttons: Array[Dictionary]) -> void
 	for child: Node in node.get_children():
 		_collect_button_diagnostics(child, buttons)
 
+func _collect_control_diagnostics(node: Node, controls: Array[Dictionary]) -> void:
+	if node == null:
+		return
+	if node is Button:
+		var button := node as Button
+		if button.visible and button.is_visible_in_tree() and not button.disabled:
+			var rect := button.get_global_rect()
+			if rect.size.x > 0.0 and rect.size.y > 0.0:
+				var path := str(_root.get_path_to(button))
+				controls.append({
+					"type": "button",
+					"path": path,
+					"text": str(button.text),
+					"action_id": str(button.get_meta("action_id", "")),
+					"focused": path == _focused_control_path,
+					"x": rect.position.x,
+					"y": rect.position.y,
+					"width": rect.size.x,
+					"height": rect.size.y,
+				})
+	elif node is LineEdit:
+		var input := node as LineEdit
+		if input.visible and input.is_visible_in_tree() and input.editable:
+			var rect := input.get_global_rect()
+			if rect.size.x > 0.0 and rect.size.y > 0.0:
+				var path := str(_root.get_path_to(input))
+				controls.append({
+					"type": "line_edit",
+					"path": path,
+					"text": str(input.text),
+					"placeholder": str(input.placeholder_text),
+					"focused": path == _focused_control_path,
+					"x": rect.position.x,
+					"y": rect.position.y,
+					"width": rect.size.x,
+					"height": rect.size.y,
+				})
+	for child: Node in node.get_children():
+		_collect_control_diagnostics(child, controls)
+
 func _button_visual_rect(button: Button) -> Rect2:
 	return button.get_global_rect()
+
+func _persist_text_input(host: Node, input: LineEdit) -> void:
+	if host == null or input == null:
+		return
+	var bind_property := str(input.get_meta("bind_property", "")).strip_edges()
+	if bind_property == "":
+		return
+	host.set(bind_property, input.text)
 
 func _record_input(input_type: String, text: String, relative_path: String) -> void:
 	_input_sequence += 1
@@ -430,6 +671,8 @@ func _restore_host_targets(host: Node) -> void:
 	_saved_targets.clear()
 
 func _prepare_host_for_route(host: Node, route_id: String) -> void:
+	_cancel_confirmation(host, false)
+	_focused_control_path = ""
 	if route_id != AppShellRouteContractScript.ROUTE_ARENA_ACTIVE:
 		host.set_meta("arena_active_preparation_open", false)
 	if route_id != AppShellRouteContractScript.ROUTE_BATTLE_ENTRY:
@@ -465,6 +708,7 @@ func _prepare_host_for_route(host: Node, route_id: String) -> void:
 	_back_button.visible = true
 	_back_button.disabled = _close_blocked(host)
 	_close_button.disabled = _close_blocked(host)
+	_sync_confirmation_panel()
 
 func _set_bosque_paused(host: Node, paused: bool) -> void:
 	var screen := host.get("_mode_shell_active_screen") as Control
@@ -482,6 +726,44 @@ func _show_blocked_message(host: Node) -> void:
 		message = "Replay em andamento; use Pular replay ou aguarde concluir."
 	_detail_label.text = message
 	host.call("_sync_buttons")
+
+func _confirm_pending_action(host: Node) -> void:
+	if _pending_confirm_action == "":
+		return
+	var action_id := _pending_confirm_action
+	_pending_confirm_action = ""
+	_pending_confirm_message = ""
+	_sync_confirmation_panel()
+	_record_input("confirm_accept", action_id, str(_root.get_path_to(_confirm_button)) if _confirm_button != null else "")
+	host.call("_on_confirmation_confirmed")
+	_publish_diagnostics(host)
+
+func _cancel_confirmation(host: Node, record_input: bool) -> bool:
+	if _pending_confirm_action == "":
+		return false
+	var action_id := _pending_confirm_action
+	_pending_confirm_action = ""
+	_pending_confirm_message = ""
+	host.set("_pending_confirmation_action", "")
+	_sync_confirmation_panel()
+	if record_input:
+		_record_input("confirm_cancel", action_id, str(_root.get_path_to(_cancel_confirm_button)) if _cancel_confirm_button != null else "")
+	_publish_diagnostics(host)
+	return true
+
+func _sync_confirmation_panel() -> void:
+	if _confirm_panel == null or not is_instance_valid(_confirm_panel):
+		return
+	var pending := _pending_confirm_action != ""
+	_confirm_panel.visible = pending
+	if pending:
+		_confirm_panel.move_to_front()
+	if _confirm_label != null:
+		_confirm_label.text = _pending_confirm_message if pending else ""
+	if _confirm_button != null:
+		_confirm_button.disabled = not pending
+	if _cancel_confirm_button != null:
+		_cancel_confirm_button.disabled = not pending
 
 func _sync_busy_buttons(host: Node) -> void:
 	if _back_button != null:

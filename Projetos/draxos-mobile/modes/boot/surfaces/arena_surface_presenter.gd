@@ -536,7 +536,9 @@ func _arena_action_button(
 	primary: bool = false
 ) -> Button:
 	var button := Button.new()
+	button.name = "ArenaAction_%s" % _control_name_fragment(action_id)
 	button.text = text
+	button.set_meta("action_id", action_id)
 	button.tooltip_text = disabled_reason if disabled_reason.strip_edges() != "" else text
 	button.disabled = disabled
 	button.set_meta("force_disabled", disabled)
@@ -726,3 +728,21 @@ static func _as_array(value: Variant) -> Array:
 	if value is Array:
 		return Array(value)
 	return []
+
+static func _control_name_fragment(value: String) -> String:
+	var text := value.strip_edges().to_lower()
+	var output := PackedStringArray()
+	for index in range(text.length()):
+		var character := text.substr(index, 1)
+		var code := character.unicode_at(0)
+		var valid := (code >= 48 and code <= 57) or (code >= 97 and code <= 122)
+		output.append(character if valid else "_")
+	var result := "".join(output)
+	while result.contains("__"):
+		result = result.replace("__", "_")
+	result = result.strip_edges()
+	while result.begins_with("_"):
+		result = result.substr(1)
+	while result.ends_with("_"):
+		result = result.substr(0, result.length() - 1)
+	return result if result != "" else "arena_action"

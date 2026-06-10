@@ -106,8 +106,8 @@ function Test-ReleaseSafety {
   foreach ($needle in @('FullPublish', 'ConfirmRemoteMutation', 'ReleaseRoot', 'check_release_safety.ps1', 'check_android_release_keystore.ps1')) {
     Test-Contains 'docs\hardening-program.md' $needle 'hardening program'
   }
-  Test-Contains 'docs\contracts\update-manifest.md' '0.0.20-alpha.0' 'update manifest contract'
-  Test-Contains 'docs\contracts\update-manifest.md' '1f3aa89eebdf6296dca222f3d0f128feb532dd26a315245d5cbc4dc9c39f0da2' 'update manifest contract'
+  Test-Contains 'docs\contracts\update-manifest.md' '0.0.21-alpha.0' 'update manifest contract'
+  Test-Contains 'docs\contracts\update-manifest.md' 'fc4f414d7c1f769a0505c2ff9cef01ad919a149f28279c4ffc13cf56ce2aa06c' 'update manifest contract'
 }
 
 Write-Host 'DraxosMobile hardening contract check'

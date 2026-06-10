@@ -1270,7 +1270,7 @@ func test_boot_profile_account_panel_shows_save_account_update_and_build_status(
 	assert_true(_label_tree_contains(boot._content_body, "Auth: email/senha (alpha@example.com)"))
 	assert_true(_label_tree_contains(boot._content_body, "Estado: carregado do save ativo"))
 	assert_true(_label_tree_contains(boot._content_body, "Update: Build atualizada"))
-	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.20-alpha.0 | online pronto"))
+	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.21-alpha.0 | online pronto"))
 	assert_null(boot._auth_email_input)
 
 func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> void:
@@ -1280,7 +1280,7 @@ func test_boot_profile_account_panel_has_clear_empty_state_without_account() -> 
 
 	assert_true(_label_tree_contains(boot._content_body, "Username: sem conta carregada"))
 	assert_true(_label_tree_contains(boot._content_body, "Estado: sem sessao auth"))
-	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.20-alpha.0 | aguardando login"))
+	assert_true(_label_tree_contains(boot._content_body, "Build: internal_alpha 0.0.21-alpha.0 | aguardando login"))
 	assert_null(boot._auth_email_input)
 
 func test_boot_surface_presenters_render_shells_without_network() -> void:
@@ -1650,7 +1650,7 @@ func test_bosque_overlay_arena_replay_uses_overlay_fullscreen_parent() -> void:
 
 	boot._open_mode_shell("openworld")
 	await wait_process_frames(2)
-	await boot._trigger_shell_overlay_action(AppShellActionContractScript.ACTION_OPEN_ARENA)
+	boot._show_overlay_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
 	await wait_process_frames(3)
 
 	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
@@ -1793,6 +1793,179 @@ func test_bosque_overlay_internal_exit_actions_clear_active_action_state() -> vo
 	assert_eq(boot._active_action_id, "")
 	assert_eq(boot._active_action_scope, OperationStateScript.DEFAULT_SCOPE)
 	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+
+func test_bosque_overlay_web_text_bridge_focuses_social_inputs_and_preserves_values() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+	await boot._trigger_shell_overlay_action(AppShellActionContractScript.ACTION_SHOW_SOCIAL)
+	await wait_process_frames(3)
+
+	var friend_input := boot.get("_social_friend_input") as LineEdit
+	assert_not_null(friend_input)
+	assert_true(boot._shell_overlay_is_open())
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_SOCIAL)
+
+	await _send_overlay_web_focus_command(boot, friend_input)
+	await _send_overlay_web_text_command(boot, friend_input, "friend_alpha", true)
+	await wait_process_frames(2)
+
+	assert_eq(friend_input.text, "friend_alpha")
+	assert_eq(str(boot.get("_last_social_friend_username")), "friend_alpha")
+	assert_eq(str(boot._mode_shell_overlay_controller.focused_control_path()), str((_find_node_by_name(boot, "ModeShellMenuOverlay") as Node).get_path_to(friend_input)))
+	assert_true(_overlay_control_diagnostics_has_line_edit(boot, "friend_alpha"))
+
+	boot._show_overlay_screen(AppShellRouteContractScript.ROUTE_SOCIAL, false)
+	await wait_process_frames(2)
+
+	var refreshed_friend_input := boot.get("_social_friend_input") as LineEdit
+	assert_not_null(refreshed_friend_input)
+	assert_eq(refreshed_friend_input.text, "friend_alpha")
+
+func test_bosque_overlay_social_action_buttons_read_overlay_line_edits() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+	await boot._trigger_shell_overlay_action(AppShellActionContractScript.ACTION_SHOW_SOCIAL)
+	await wait_process_frames(3)
+
+	var friend_input := boot.get("_social_friend_input") as LineEdit
+	var add_friend_button := _find_button_by_text(_find_node_by_name(boot, "ModeShellMenuOverlay"), "Adicionar amigo")
+	assert_not_null(friend_input)
+	assert_not_null(add_friend_button)
+
+	await _send_overlay_web_focus_command(boot, friend_input)
+	await _send_overlay_web_text_command(boot, friend_input, "friend_alpha", true)
+	_set_required_update_gate(boot)
+	await _send_overlay_web_button_command(boot, add_friend_button)
+	await wait_process_frames(3)
+
+	assert_true(boot._shell_overlay_is_open())
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_SOCIAL)
+	assert_eq(str(boot.get("_last_social_friend_username")), "friend_alpha")
+	assert_eq(str(boot._web_last_action.get("action_id", "")), AppShellActionContractScript.ACTION_ADD_FRIEND)
+	assert_string_contains(boot._error_label.text, "Update obrigatorio")
+
+func test_bosque_overlay_shop_confirmable_actions_use_overlay_confirmation() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	SessionStore.monetization_state = _shop_state_fixture()
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+	await boot._trigger_shell_overlay_action(AppShellActionContractScript.ACTION_SHOW_SHOP)
+	await wait_process_frames(3)
+
+	var overlay := _find_node_by_name(boot, "ModeShellMenuOverlay")
+	var buy_button := _find_button_by_text(overlay, "Comprar Energia")
+	assert_not_null(overlay)
+	assert_not_null(buy_button)
+	assert_true(boot._shell_overlay_is_open())
+
+	await _send_overlay_web_button_command(boot, buy_button)
+	await wait_process_frames(2)
+
+	var confirm_panel := _find_node_by_name(boot, "ModeShellMenuConfirmPanel") as Control
+	var cancel_button := _find_node_by_name(boot, "ModeShellCancelConfirmButton") as Button
+	assert_not_null(confirm_panel)
+	assert_not_null(cancel_button)
+	assert_true(confirm_panel.visible)
+	assert_true(boot._mode_shell_overlay_controller.confirmation_pending())
+	assert_eq(
+		str(boot.get("_pending_confirmation_action")),
+		AppShellActionContractScript.shop_purchase_action(AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK)
+	)
+	assert_false(boot._confirm_dialog.visible)
+
+	await _send_overlay_web_button_command(boot, cancel_button)
+	await wait_process_frames(2)
+
+	assert_false(boot._mode_shell_overlay_controller.confirmation_pending())
+	assert_eq(str(boot.get("_pending_confirmation_action")), "")
+	assert_false(confirm_panel.visible)
+
+	await _send_overlay_web_button_command(boot, buy_button)
+	await wait_process_frames(2)
+	_set_required_update_gate(boot)
+	var confirm_button := _find_node_by_name(boot, "ModeShellConfirmButton") as Button
+	assert_not_null(confirm_button)
+	await _send_overlay_web_button_command(boot, confirm_button)
+	await wait_process_frames(3)
+
+	assert_true(boot._shell_overlay_is_open())
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_SHOP)
+	assert_false(boot._mode_shell_overlay_controller.confirmation_pending())
+	assert_eq(str(boot._web_last_action.get("action_id", "")), AppShellActionContractScript.shop_purchase_action(AppShellActionContractScript.PRODUCT_ALPHA_ENERGY_PACK))
+	assert_string_contains(boot._error_label.text, "Update obrigatorio")
+
+func test_bosque_overlay_arena_resume_and_abandon_buttons_execute_inside_overlay() -> void:
+	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
+	_prepare_account_state()
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"arenas": [
+			{
+				"id": "arena_cinzas_curta",
+				"display_name": "Arena Curta Das Cinzas",
+				"duel_count": 3,
+				"unlocked": true,
+				"difficulties": [{"difficulty_id": "s1_d00_intro", "max_steps": 3, "unlocked": true}],
+			},
+		],
+		"active_attempt": {
+			"attempt_id": "attempt-overlay-active",
+			"arena_id": "arena_cinzas_curta",
+			"status": "active",
+			"current_step_index": 1,
+			"duel_count": 3,
+			"duels_won": 1,
+			"locked_loadout_hash": "sha256:test",
+		},
+	}
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+
+	boot._open_mode_shell("openworld")
+	await wait_process_frames(2)
+	boot._show_overlay_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
+	await wait_process_frames(3)
+
+	var overlay := _find_node_by_name(boot, "ModeShellMenuOverlay")
+	var resume_button := _find_button_by_text(overlay, "Retomar tentativa")
+	assert_not_null(overlay)
+	assert_not_null(resume_button)
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+
+	await _send_overlay_web_button_command(boot, resume_button)
+	await wait_process_frames(3)
+
+	assert_true(boot._shell_overlay_is_open())
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_ACTIVE)
+	assert_eq(str(boot._web_last_action.get("action_id", "")), AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT)
+
+	_set_required_update_gate(boot)
+	overlay = _find_node_by_name(boot, "ModeShellMenuOverlay")
+	var abandon_button := _find_button_by_text(overlay, "Abandonar tentativa")
+	assert_not_null(abandon_button)
+	await _send_overlay_web_button_command(boot, abandon_button)
+	await wait_process_frames(3)
+
+	assert_true(boot._shell_overlay_is_open())
+	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
+	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_ACTIVE)
+	assert_eq(str(boot._web_last_action.get("action_id", "")), AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT)
+	assert_string_contains(boot._error_label.text, "Update obrigatorio")
 
 func test_refuge_no_longer_exposes_modes_popup_cards() -> void:
 	ProjectSettings.set_setting("draxos_mobile/internal_alpha/dev_tools_enabled", true)
@@ -2849,6 +3022,77 @@ func _click_button_via_viewport(button: Button) -> void:
 	release.position = center
 	get_viewport().push_input(release)
 	await get_tree().process_frame
+
+func _send_overlay_web_button_command(boot: Node, button: Button) -> void:
+	assert_not_null(button)
+	if boot == null or button == null:
+		return
+	var overlay := _find_node_by_name(boot, "ModeShellMenuOverlay")
+	assert_not_null(overlay)
+	if overlay == null:
+		return
+	var center := button.get_global_rect().get_center()
+	boot.call("_handle_web_overlay_input_command", [JSON.stringify({
+		"type": "button",
+		"path": str(overlay.get_path_to(button)),
+		"x": center.x,
+		"y": center.y,
+		"text": str(button.text),
+	})])
+	await wait_process_frames(2)
+
+func _send_overlay_web_focus_command(boot: Node, input: LineEdit) -> void:
+	assert_not_null(input)
+	if boot == null or input == null:
+		return
+	var overlay := _find_node_by_name(boot, "ModeShellMenuOverlay")
+	assert_not_null(overlay)
+	if overlay == null:
+		return
+	var center := input.get_global_rect().get_center()
+	boot.call("_handle_web_overlay_input_command", [JSON.stringify({
+		"type": "focus",
+		"path": str(overlay.get_path_to(input)),
+		"x": center.x,
+		"y": center.y,
+		"text": str(input.text),
+	})])
+	await wait_process_frames(2)
+
+func _send_overlay_web_text_command(boot: Node, input: LineEdit, text: String, replace_existing: bool = false) -> void:
+	assert_not_null(input)
+	if boot == null or input == null:
+		return
+	var overlay := _find_node_by_name(boot, "ModeShellMenuOverlay")
+	assert_not_null(overlay)
+	if overlay == null:
+		return
+	boot.call("_handle_web_overlay_input_command", [JSON.stringify({
+		"type": "text",
+		"path": str(overlay.get_path_to(input)),
+		"text": text,
+		"replace": replace_existing,
+	})])
+	await wait_process_frames(2)
+
+func _overlay_control_diagnostics_has_line_edit(boot: Node, expected_text: String) -> bool:
+	if boot == null or boot.get("_mode_shell_overlay_controller") == null:
+		return false
+	var controls: Array = boot._mode_shell_overlay_controller.control_diagnostics()
+	for item: Variant in controls:
+		var control := item as Dictionary
+		if str(control.get("type", "")) == "line_edit" and str(control.get("text", "")) == expected_text:
+			return true
+	return false
+
+func _set_required_update_gate(boot: Node) -> void:
+	boot.set("_update_gate", {
+		"block_online": true,
+		"summary": "Update obrigatorio antes de usar recursos online.",
+		"detail": "Baixe a nova build pelo portal.",
+		"minimum_supported_version": "0.0.99-alpha.0",
+		"minimum_supported_version_code": 99,
+	})
 
 func _child_index_by_name(root: Node, node_name: String) -> int:
 	if root == null:

@@ -209,7 +209,9 @@ func _add_action_button(
 	disabled_reason: String = ""
 ) -> Button:
 	var button := Button.new()
+	button.name = "ActionButton_%s" % _control_name_fragment(action_id)
 	button.text = text
+	button.set_meta("action_id", action_id)
 	button.custom_minimum_size = _button_min_size()
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.tooltip_text = disabled_reason if disabled_reason.strip_edges() != "" else text
@@ -238,9 +240,14 @@ func _add_social_input(label_text: String, placeholder: String, initial_text: St
 	box.add_child(label)
 
 	var input := LineEdit.new()
+	input.name = "SocialInput_%s" % _control_name_fragment(label_text)
 	input.placeholder_text = placeholder
 	input.text = initial_text
 	input.tooltip_text = input_tooltip
+	input.set_meta("control_role", "social_input")
+	var bind_property := _social_input_bind_property(label_text)
+	if bind_property != "":
+		input.set_meta("bind_property", bind_property)
 	input.custom_minimum_size = MobileUiContractScript.input_min_size(_compact_layout)
 	input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	box.add_child(input)
@@ -249,7 +256,10 @@ func _add_social_input(label_text: String, placeholder: String, initial_text: St
 func _add_screen_button(text: String, screen_id: String) -> Button:
 	var target_screen := AppShellRouteContractScript.normalize(screen_id)
 	var button := Button.new()
+	button.name = "ScreenButton_%s" % _control_name_fragment(target_screen)
 	button.text = text
+	button.set_meta("route_id", target_screen)
+	button.set_meta("action_id", "screen:%s" % target_screen)
 	button.custom_minimum_size = _button_min_size()
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.tooltip_text = "Abrir %s." % _screen_title(screen_id)
@@ -260,6 +270,34 @@ func _add_screen_button(text: String, screen_id: String) -> Button:
 	)
 	_ensure_action_grid().add_child(button)
 	return button
+
+func _control_name_fragment(value: String) -> String:
+	var text := value.strip_edges().to_lower()
+	var output := PackedStringArray()
+	for index in range(text.length()):
+		var character := text.substr(index, 1)
+		var code := character.unicode_at(0)
+		var valid := (code >= 48 and code <= 57) or (code >= 97 and code <= 122)
+		output.append(character if valid else "_")
+	var result := "".join(output)
+	while result.contains("__"):
+		result = result.replace("__", "_")
+	result = result.strip_edges()
+	while result.begins_with("_"):
+		result = result.substr(1)
+	while result.ends_with("_"):
+		result = result.substr(0, result.length() - 1)
+	return result if result != "" else "control"
+
+func _social_input_bind_property(label_text: String) -> String:
+	var text := label_text.strip_edges().to_lower()
+	if text.contains("amigo"):
+		return "_last_social_friend_username"
+	if text.contains("guilda"):
+		return "_last_social_guild_name"
+	if text.contains("mensagem"):
+		return "_last_social_chat_message"
+	return ""
 
 func _prepare_touch_button(button: Button) -> void:
 	MobileUiContractScript.apply_touch_button(button)
