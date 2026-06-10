@@ -128,6 +128,13 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	var stadium_spot := football.get_node("StadiumLightNW") as SpotLight3D
 	assert_false(stadium_spot.shadow_enabled)
 	assert_gt(stadium_spot.spot_range, 45.0)
+	assert_eq(football.debug_get_boost_pad_count(), 8)
+	assert_eq(football.debug_get_jump_pad_count(), 2)
+	assert_not_null(football.get_node_or_null("BoostPadSmall0"))
+	assert_not_null(football.get_node_or_null("BoostPadLarge1"))
+	assert_not_null(football.get_node_or_null("JumpPadNorth"))
+	assert_not_null(football.get_node_or_null("WestWallRamp"))
+	assert_not_null(football.get_node_or_null("CornerRampEN"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player/PlayerAvatar"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballChaseCamera"))
@@ -482,6 +489,97 @@ func test_football_ball_fireball_uses_speed_hysteresis() -> void:
 	ball.linear_velocity = Vector3(20.0, 0.0, 0.0)
 	ball.debug_update_visual_asset(0.1)
 	assert_false(ball.debug_is_fireball_active())
+	assert_no_new_orphans()
+
+func test_football_boost_pads_respawn_and_restore_stamina() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var bot = football.debug_get_bot()
+	var small_pad := football.get_node("BoostPadSmall0") as Area3D
+	var large_pad := football.get_node("BoostPadLarge0") as Area3D
+	bot.global_position = Vector3(0.0, 0.05, 16.0)
+
+	player.debug_set_boost_stamina(40.0)
+	player.global_position = small_pad.global_position + Vector3.UP * 0.05
+	football.debug_update_arcade_field(0.1)
+
+	assert_almost_eq(player.debug_get_boost_stamina(), 65.0, 0.01)
+	assert_false(bool(small_pad.get_meta("active", true)))
+	football.debug_update_arcade_field(3.8)
+	assert_false(bool(small_pad.get_meta("active", true)))
+	football.debug_update_arcade_field(0.3)
+	assert_true(bool(small_pad.get_meta("active", false)))
+
+	player.debug_set_boost_stamina(12.0)
+	player.global_position = large_pad.global_position + Vector3.UP * 0.05
+	football.debug_update_arcade_field(0.1)
+
+	assert_almost_eq(player.debug_get_boost_stamina(), 100.0, 0.01)
+	assert_false(bool(large_pad.get_meta("active", true)))
+	assert_no_new_orphans()
+
+func test_football_bot_collects_route_boost_pad() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var bot = football.debug_get_bot()
+	var player = football.debug_get_player()
+	var pad := football.get_node("BoostPadSmall1") as Area3D
+	player.global_position = Vector3(-14.0, 0.05, 16.0)
+	bot.global_position = pad.global_position + Vector3(0.0, 0.0, -4.0)
+	football.debug_force_ball_position(pad.global_position + Vector3(0.0, 0.6, 4.5))
+	bot._physics_process(0.1)
+
+	assert_eq(bot.debug_get_last_approach_label(), &"boost_pad")
+	bot.global_position = pad.global_position + Vector3.UP * 0.05
+	football.debug_update_arcade_field(0.1)
+
+	assert_eq(bot.debug_get_boost_pad_collect_count(), 1)
+	assert_false(bool(pad.get_meta("active", true)))
+	assert_no_new_orphans()
+
+func test_football_jump_pad_launches_characters_not_ball() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var bot = football.debug_get_bot()
+	var ball = football.debug_get_ball()
+	var jump_pad := football.get_node("JumpPadNorth") as Area3D
+	football.debug_force_ball_position(jump_pad.global_position + Vector3(0.0, 0.58, 0.0))
+	var before_kicks: int = ball.debug_get_kick_count()
+	var before_player_launches: int = player.debug_get_jump_pad_launch_count()
+
+	player.global_position = jump_pad.global_position + Vector3.UP * 0.05
+	bot.global_position = Vector3(12.0, 0.05, 12.0)
+	football.debug_update_arcade_field(0.1)
+
+	assert_eq(player.debug_get_jump_pad_launch_count(), before_player_launches + 1)
+	assert_gt(player.debug_get_vertical_velocity(), 8.0)
+	assert_eq(ball.debug_get_kick_count(), before_kicks)
+	assert_almost_eq(ball.linear_velocity.length(), 0.0, 0.001)
+
+	player.global_position = Vector3(-12.0, 0.05, 12.0)
+	bot.global_position = jump_pad.global_position + Vector3.UP * 0.05
+	football.debug_update_arcade_field(0.8)
+	football.debug_update_arcade_field(0.1)
+
+	assert_gt(bot.debug_get_vertical_velocity(), 8.0)
+	assert_eq(ball.debug_get_kick_count(), before_kicks)
 	assert_no_new_orphans()
 
 func test_football_bot_approaches_behind_ball_before_attacking() -> void:

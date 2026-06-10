@@ -24,6 +24,7 @@ static func build(parent: Node3D, config: Dictionary) -> void:
 	_add_goal_shell(parent, "South", goal_line_south, 1.0, goal_half_width, goal_height, goal_side_wall_x, goal_side_wall_thickness, goal_closed_depth, wall_height)
 	_add_arena_glass(parent, field_width, field_length, field_half_width, wall_height, ceiling_height, wall_thickness, goal_side_wall_x, goal_closed_depth, goal_line_north, goal_line_south)
 	_add_stadium_shell(parent, field_width, field_length, field_half_width, goal_closed_depth, goal_line_north, goal_line_south)
+	_add_arcade_field(parent, field_half_width, field_half_length, goal_line_north, goal_line_south)
 
 static func _add_pitch(parent: Node3D, field_width: float, field_length: float, goal_half_width: float) -> void:
 	var pitch := _add_box(parent, "FootballPitch", Vector3(0.0, -0.5, 0.0), Vector3(field_width, 1.0, field_length), Color(0.07, 0.32, 0.15, 1.0), 0.96, 0.18)
@@ -144,6 +145,122 @@ static func _add_stadium_shell(parent: Node3D, field_width: float, field_length:
 	_add_country_banners(parent, field_width, goal_closed_depth, goal_line_north, goal_line_south)
 	_add_scoreboards(parent, field_width, goal_closed_depth, goal_line_north, goal_line_south)
 	_add_light_rigs(parent, field_half_width, goal_line_north, goal_line_south)
+
+static func _add_arcade_field(parent: Node3D, field_half_width: float, field_half_length: float, goal_line_north: float, goal_line_south: float) -> void:
+	_add_boost_pads(parent, field_half_width, field_half_length)
+	_add_corner_ramps(parent, field_half_width, field_half_length)
+	_add_jump_pads(parent, goal_line_north, goal_line_south)
+
+static func _add_boost_pads(parent: Node3D, field_half_width: float, field_half_length: float) -> void:
+	var small_positions: Array[Vector3] = [
+		Vector3(-8.5, 0.08, -10.0),
+		Vector3(8.5, 0.08, -10.0),
+		Vector3(-10.0, 0.08, 0.0),
+		Vector3(10.0, 0.08, 0.0),
+		Vector3(-8.5, 0.08, 10.0),
+		Vector3(8.5, 0.08, 10.0)
+	]
+	for index in range(small_positions.size()):
+		_add_boost_pad(parent, "BoostPadSmall%d" % index, small_positions[index], false)
+
+	var large_positions: Array[Vector3] = [
+		Vector3(-field_half_width + 4.2, 0.08, -field_half_length + 5.4),
+		Vector3(field_half_width - 4.2, 0.08, field_half_length - 5.4)
+	]
+	for index in range(large_positions.size()):
+		_add_boost_pad(parent, "BoostPadLarge%d" % index, large_positions[index], true)
+
+static func _add_boost_pad(parent: Node3D, node_name: String, pad_position: Vector3, full_pad: bool) -> void:
+	var area := Area3D.new()
+	area.name = node_name
+	area.position = pad_position
+	area.set_meta("pad_type", "large" if full_pad else "small")
+	area.set_meta("active", true)
+	area.add_to_group("football_boost_pad")
+	parent.add_child(area)
+
+	var collision := CollisionShape3D.new()
+	collision.name = "%sCollision" % node_name
+	var shape := CylinderShape3D.new()
+	shape.radius = 1.05 if full_pad else 0.78
+	shape.height = 0.42
+	collision.shape = shape
+	area.add_child(collision)
+
+	var disc := MeshInstance3D.new()
+	disc.name = "%sDisc" % node_name
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = shape.radius
+	mesh.bottom_radius = shape.radius
+	mesh.height = 0.08
+	mesh.radial_segments = 32
+	disc.mesh = mesh
+	disc.material_override = RuntimePrimitiveFactoryScript.build_material(
+		Color(1.0, 0.74, 0.12, 1.0) if full_pad else Color(0.15, 0.92, 1.0, 1.0),
+		2.2 if full_pad else 1.55,
+		0.18,
+		true
+	)
+	area.add_child(disc)
+
+static func _add_jump_pads(parent: Node3D, goal_line_north: float, goal_line_south: float) -> void:
+	_add_jump_pad(parent, "JumpPadNorth", Vector3(0.0, 0.1, goal_line_north - 2.25))
+	_add_jump_pad(parent, "JumpPadSouth", Vector3(0.0, 0.1, goal_line_south + 2.25))
+
+static func _add_jump_pad(parent: Node3D, node_name: String, pad_position: Vector3) -> void:
+	var area := Area3D.new()
+	area.name = node_name
+	area.position = pad_position
+	area.add_to_group("football_jump_pad")
+	parent.add_child(area)
+
+	var collision := CollisionShape3D.new()
+	collision.name = "%sCollision" % node_name
+	var shape := CylinderShape3D.new()
+	shape.radius = 1.35
+	shape.height = 0.5
+	collision.shape = shape
+	area.add_child(collision)
+
+	var disc := MeshInstance3D.new()
+	disc.name = "%sRing" % node_name
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = 1.35
+	mesh.bottom_radius = 1.35
+	mesh.height = 0.09
+	mesh.radial_segments = 36
+	disc.mesh = mesh
+	disc.material_override = RuntimePrimitiveFactoryScript.build_material(Color(0.72, 0.36, 1.0, 1.0), 2.4, 0.14, true)
+	area.add_child(disc)
+
+static func _add_corner_ramps(parent: Node3D, field_half_width: float, field_half_length: float) -> void:
+	var ramp_color := Color(0.12, 0.52, 0.62, 0.86)
+	var side_z_size := field_half_length * 2.0 - 7.0
+	_add_ramp_box(parent, "WestWallRamp", Vector3(-field_half_width + 0.85, 0.42, 0.0), Vector3(1.8, 0.52, side_z_size), ramp_color, Vector3(0.0, 0.0, -24.0))
+	_add_ramp_box(parent, "EastWallRamp", Vector3(field_half_width - 0.85, 0.42, 0.0), Vector3(1.8, 0.52, side_z_size), ramp_color, Vector3(0.0, 0.0, 24.0))
+	_add_ramp_box(parent, "NorthBackRamp", Vector3(0.0, 0.42, -field_half_length + 0.85), Vector3(field_half_width * 2.0 - 9.0, 0.52, 1.8), ramp_color, Vector3(24.0, 0.0, 0.0))
+	_add_ramp_box(parent, "SouthBackRamp", Vector3(0.0, 0.42, field_half_length - 0.85), Vector3(field_half_width * 2.0 - 9.0, 0.52, 1.8), ramp_color, Vector3(-24.0, 0.0, 0.0))
+	for x_side: float in [-1.0, 1.0]:
+		for z_side: float in [-1.0, 1.0]:
+			var corner_name := "CornerRamp%s%s" % ["E" if x_side > 0.0 else "W", "S" if z_side > 0.0 else "N"]
+			var rotation := Vector3(-18.0 * z_side, 0.0, 18.0 * x_side)
+			_add_ramp_box(parent, corner_name, Vector3(x_side * (field_half_width - 1.15), 0.5, z_side * (field_half_length - 1.15)), Vector3(2.15, 0.52, 2.15), ramp_color, rotation)
+
+static func _add_ramp_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, color: Color, node_rotation_degrees: Vector3) -> StaticBody3D:
+	return RuntimePrimitiveFactoryScript.add_static_box(
+		parent,
+		node_name,
+		node_position,
+		node_size,
+		color,
+		node_rotation_degrees,
+		0.42,
+		0.34,
+		"%sMesh" % node_name,
+		"%sCollision" % node_name,
+		0.74,
+		0.08
+	)
 
 static func _add_stadium_seating(parent: Node3D, field_width: float, field_length: float, field_half_width: float, goal_closed_depth: float, goal_line_north: float, goal_line_south: float) -> void:
 	var stand_color := Color(0.12, 0.15, 0.18, 1.0)

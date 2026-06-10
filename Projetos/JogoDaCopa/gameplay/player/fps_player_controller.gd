@@ -262,6 +262,17 @@ func get_boost_stamina_fraction() -> float:
 		return 0.0
 	return clampf(boost_stamina / boost_stamina_max, 0.0, 1.0)
 
+func add_boost_stamina(amount: float) -> float:
+	var before := boost_stamina
+	boost_stamina = clampf(boost_stamina + maxf(0.0, amount), 0.0, boost_stamina_max)
+	if boost_stamina > before:
+		boost_recharge_delay_remaining = 0.0
+	return boost_stamina - before
+
+func refill_boost_stamina() -> void:
+	boost_stamina = boost_stamina_max
+	boost_recharge_delay_remaining = 0.0
+
 func is_boosting() -> bool:
 	return boost_active
 

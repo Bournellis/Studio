@@ -66,6 +66,8 @@ var last_predicted_ball_position: Vector3 = Vector3.ZERO
 var last_approach_label: StringName = &"none"
 var windup_is_defensive: bool = false
 var difficulty_id: StringName = &"normal"
+var boost_pad_targets: Array[Node3D] = []
+var boost_pad_collect_count: int = 0
 
 func _ready() -> void:
 	super._ready()
@@ -98,7 +100,11 @@ func configure(next_ball: Node3D, next_own_goal_position: Vector3, next_opponent
 	last_kick_direction = (opponent_goal_position - global_position).normalized()
 	last_move_target = global_position
 	last_approach_label = &"kickoff"
+	boost_pad_collect_count = 0
 	clear_movement_impulses()
+
+func set_boost_pad_targets(next_targets: Array[Node3D]) -> void:
+	boost_pad_targets = next_targets
 
 func set_difficulty(next_difficulty_id: StringName) -> void:
 	difficulty_id = next_difficulty_id
@@ -148,6 +154,17 @@ func clear_movement_impulses() -> void:
 	arcade_dash_remaining = 0.0
 	arcade_flip_boost_velocity = Vector3.ZERO
 
+func notify_boost_pad_collected(full_pad: bool) -> void:
+	boost_pad_collect_count += 1
+	boost_cooldown_remaining = 0.0
+	if full_pad:
+		boost_remaining = maxf(boost_remaining, boost_duration)
+
+func apply_jump_pad_launch(launch_velocity: Vector3) -> void:
+	vertical_velocity = maxf(vertical_velocity, launch_velocity.y)
+	arcade_flip_boost_velocity = Vector3(launch_velocity.x, 0.0, launch_velocity.z)
+	arcade_flip_available = true
+
 func apply_arcade_stun(duration: float) -> void:
 	arcade_stun_remaining = maxf(arcade_stun_remaining, duration)
 	boost_remaining = 0.0
@@ -171,6 +188,12 @@ func debug_get_last_predicted_ball_position() -> Vector3:
 
 func debug_get_last_approach_label() -> StringName:
 	return last_approach_label
+
+func debug_get_boost_pad_collect_count() -> int:
+	return boost_pad_collect_count
+
+func debug_get_vertical_velocity() -> float:
+	return vertical_velocity
 
 func debug_get_difficulty_id() -> StringName:
 	return difficulty_id
@@ -283,6 +306,11 @@ func _emit_kick() -> void:
 
 func _move_toward_target(delta: float) -> void:
 	var target := last_move_target
+	var boost_pad_target: Node3D = _get_route_boost_pad_target(target)
+	if boost_pad_target != null:
+		target = boost_pad_target.global_position
+		last_move_target = target
+		last_approach_label = &"boost_pad"
 	target.y = global_position.y
 	var to_target := target - global_position
 	to_target.y = 0.0
@@ -340,6 +368,35 @@ func _should_start_boost(flat_distance_to_target: float) -> bool:
 	if flat_distance_to_target < 5.2:
 		return false
 	return current_state == STATE_ATTACK_GOAL or current_state == STATE_CHASE_BALL or current_state == STATE_DEFEND_GOAL
+
+func _get_route_boost_pad_target(route_target: Vector3) -> Node3D:
+	var best_pad: Node3D = null
+	var best_distance: float = INF
+	for pad: Node3D in boost_pad_targets:
+		if pad == null or not bool(pad.get_meta("active", true)):
+			continue
+		var pad_position: Vector3 = pad.global_position
+		var distance_to_bot: float = _flat_distance(global_position, pad_position)
+		if distance_to_bot > 7.5:
+			continue
+		var route_distance: float = _distance_point_to_segment_2d(pad_position, global_position, route_target)
+		if route_distance > 2.0:
+			continue
+		if distance_to_bot < best_distance:
+			best_distance = distance_to_bot
+			best_pad = pad
+	return best_pad
+
+func _distance_point_to_segment_2d(point: Vector3, start: Vector3, end: Vector3) -> float:
+	var p: Vector2 = Vector2(point.x, point.z)
+	var a: Vector2 = Vector2(start.x, start.z)
+	var b: Vector2 = Vector2(end.x, end.z)
+	var ab: Vector2 = b - a
+	var ab_length_sq: float = ab.length_squared()
+	if ab_length_sq <= 0.0001:
+		return p.distance_to(a)
+	var t: float = clampf((p - a).dot(ab) / ab_length_sq, 0.0, 1.0)
+	return p.distance_to(a + ab * t)
 
 func _should_start_arcade_dash(flat_distance_to_target: float) -> bool:
 	if arcade_dash_remaining > 0.0 or arcade_dash_cooldown_remaining > 0.0 or current_state != STATE_DEFEND_GOAL:
