@@ -2,106 +2,88 @@
 
 This file governs agent behavior for the `D:\Estudio` workspace.
 
+## Single Source Of State
+
+Operational state lives in exactly two files:
+
+1. `08_Coordenacao_Agentes/Prioridades_Estudio.md` - portfolio source of truth: focus, priority, status and allowed work per project.
+2. `08_Coordenacao_Agentes/Estado_Atual.md` - live snapshot: marker, short baseline and next step per project.
+
+No other workspace-level document may carry project status, active tracks, published package names, release URLs, version codes or next steps. `README.md`, `CLAUDE.md`, `canon/canon-brief.md`, `Projetos/README.md` and this file are pointer documents. Run `tools/check_doc_drift.ps1` to verify; it is part of the docs-only validation habit.
+
+When a task changes observable status, update `Estado_Atual.md` (and the `Prioridades_Estudio.md` table if focus/priority changed). Do not replicate the change anywhere else; history goes to the project's history files (`implementation/tracks/`, `docs/release-history.md`, Kanban Done, Handoffs).
+
 ## Workspace Roles
 
-- `08_Coordenacao_Agentes/Prioridades_Estudio.md` is the portfolio source of truth for focus, priority, project status, and allowed work.
-- `08_Coordenacao_Agentes/Painel_Visual_Estudio.html` is the human-facing local dashboard for the same portfolio state.
-- `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
-- `Projetos/JogoDaCopa/` is the temporary sole implementation focus for the studio. It is a PC Windows editor-first football minigames project in Godot 4.6.2. Current stage: `JOGO_DA_COPA_TRACK_01C_ARENA_STADIUM_VISUAL_REWORK_COMPLETE`; next step is editor playtest of the roofed-goal glass arena, Copa stadium presentation and tuned Futebol ball/goal/kick feel.
-- `Projetos/draxos-roguelike-cardgame/` is temporarily paused for a few days while the studio focuses on JogoDaCopa. Preserve its P0 baseline and only consult or resume it when the user explicitly asks.
-- `Projetos/draxos-mobile/` is temporarily paused for a few days while the studio focuses on JogoDaCopa. Current preserved operational stage: `BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`; only consult or resume it when the user explicitly asks.
-- `Projetos/FpsPlayground/` is temporarily paused for a few days while the studio focuses on JogoDaCopa. It preserves the Arena Shooter baseline from the former FpsShooter/FPS Playground work; only consult or resume it when the user explicitly asks.
-- DraxosMobile operational guard markers remain active: Track 13 validation/release safety and `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`.
-- `Projetos/_conceitos/mobile-universe/` is a design archive; it was promoted to `draxos-mobile/` on 2026-05-18 and is now read-only design reference.
-- `Projetos/rpg-isometrico/` is paused indefinitely and preserved for historical/contextual consultation.
-- `Projetos/rpg-turnos/` is paused indefinitely and preserved for historical/contextual consultation.
-- `migration/` is a historical archive for cutover, relocation, and legacy comparison context.
-- `08_Coordenacao_Agentes/` is the coordination hub: Kanban, Handoffs, Decisoes, Prioridades, Painel Visual, and Estado_Atual.
-- `07_Aprendizados/` preserves operational lessons for agents, documentation drift, snapshot compaction and worktree hygiene.
-- `Projetos/README.md` is the lightweight project registry for active, conceptual, and paused projects.
+- `08_Coordenacao_Agentes/` is the coordination hub: Prioridades, Estado_Atual, Kanban, Handoffs, Decisoes, Templates and Painel Visual (`Painel_Visual_Estudio.html`).
+- `canon/` is the shared source of truth for established lore, product identity, gameplay contracts, progression, shared architecture, mode standard and platform strategy. It carries no operational state.
+- `Projetos/` holds all Godot projects; `Projetos/README.md` is the stable registry (identity and entry points only).
+- `07_Aprendizados/` preserves operational lessons for agents.
+- `materiais/` holds supporting guides (`materiais/guides/*-current.md` are the live ones) and non-canonical material.
+- `migration/` is a historical archive for cutover, relocation and legacy comparison context.
+- `tools/` holds studio-level scripts (doc drift check).
 
 ## Multi-Agent Worktree And Git Rule
 
 `D:\Estudio` is the main coordination/read workspace. By default, agents must not use it as an implementation worktree. Each agent working on implementation, documentation, contracts, backend, client, validation, release or portfolio changes must create or use a dedicated Git worktree outside the main root, unless the user explicitly asks for direct work in `D:\Estudio`.
 
-Default worktree path:
+Default worktree path and branch names:
 
 ```text
 D:\Estudio-worktrees\<projeto>--<agente>--<slug>
+codex/<projeto>/<slug>        (Codex)
+<agente>/<projeto>/<slug>     (other agents)
 ```
-
-Default branch names:
-
-- Codex: `codex/<projeto>/<slug>`
-- Other agents: `<agente>/<projeto>/<slug>`
 
 Rules:
 
 - Never edit another agent's worktree unless the user explicitly asks for intervention there.
 - Before touching shared files (`AGENTS.md`, `canon/`, `08_Coordenacao_Agentes/`, `Projetos/README.md`) run `git status --short`, `git worktree list`, and read the current coordination docs.
 - At the start of work, register branch, worktree, objective, intended files, base docs read, validation plan and next handoff point in `08_Coordenacao_Agentes/Kanban/Doing/` or `08_Coordenacao_Agentes/Handoffs/`.
-- Commit by logical stage by default: documentation, contract, backend, client, validation, publication, and coordination updates should not be mixed into one mega commit.
-- Keep commits coherent and explain the delivered state. If a stage cannot be committed yet, record the reason in the Doing/Handoff note.
+- Commit by logical stage: documentation, contract, backend, client, validation, publication and coordination updates should not be mixed into one mega commit.
 - Keep the worktree clean at handoff whenever possible. If not clean, list every remaining changed file and why it remains changed.
 
 ## Portfolio Gate
 
-Antes de abrir documentacao profunda de qualquer projeto, consulte:
+Before opening deep documentation of any project, read:
 
 1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 2. `Projetos/README.md`
 3. `08_Coordenacao_Agentes/Estado_Atual.md`
 
-Use esses documentos para identificar se o pedido e sobre implementacao ativa, conceito, projeto pausado, canon compartilhado ou coordenacao do estudio.
-
-- Enquanto o foco temporario do JogoDaCopa estiver ativo, se o usuario nao citar projeto e pedir implementacao, design, validacao, playtest ou trabalho tecnico, assuma `Projetos/JogoDaCopa/`.
-- Enquanto o foco temporario do JogoDaCopa estiver ativo, trate `Projetos/draxos-roguelike-cardgame/`, `Projetos/draxos-mobile/` e `Projetos/FpsPlayground/` como pausados temporariamente, salvo pedido explicito de retomada ou consulta historica.
-- Projetos com `P0_IMPLEMENTACAO` podem receber codigo, validacao, playtest e documentacao local por padrao.
-- Projetos com `P2_IMPLEMENTACAO` podem receber codigo, design, documentacao local e configuracao de infraestrutura por padrao.
-- Projetos com `P1_CONCEITO` permitem somente conceito, pitch, design, referencias e documentacao conceitual.
-- Projetos com `ARQUIVO_DESIGN` permitem apenas leitura e referencia de design - nao criar codigo, cenas ou assets.
-- Projetos com `PAUSADO_TEMPORARIO` devem ser ignorados por padrao durante o foco temporario atual; permitem somente consulta historica ou retomada explicita do usuario.
-- Projetos com `PAUSADO_INDEFINIDO` nao devem receber implementacao, expansao de escopo, novas gates ou selecao de track sem pedido explicito do usuario.
-- Ao concluir qualquer tarefa que mude status observavel, atualize `Prioridades_Estudio.md`, `Estado_Atual.md` e o registro relevante em `Projetos/README.md`.
+The status taxonomy (`P0_IMPLEMENTACAO`, `P1_CONCEITO`, `P2_IMPLEMENTACAO`, `PAUSADO_TEMPORARIO`, `PAUSADO_INDEFINIDO`, `AGUARDANDO_DECISAO`, `ARQUIVO_DESIGN`, `ARQUIVO_HISTORICO`) and what each status allows are defined in `Prioridades_Estudio.md`. Follow them; do not infer permissions from history.
 
 ## Project Selection Gate
 
-Depois do Portfolio Gate, escolha o projeto alvo usando o pedido do usuario, `Prioridades_Estudio.md`, `Projetos/README.md` e `Estado_Atual.md`.
+Choose the target project using the user's request and the portfolio table. Route by request domain:
 
-Regra temporaria ativa: se o pedido for de implementacao, design, validacao, playtest ou trabalho tecnico e nao pedir explicitamente retomada de outro projeto, use `Projetos/JogoDaCopa/`.
+- football/Copa/ball/goals/shirts -> `Projetos/JogoDaCopa/`
+- FPS/arena 1x1/hitscan/jump pads (legacy name `FpsShooter`) -> `Projetos/FpsPlayground/`
+- roguelike/ship hub/run map/Souls/relics/lane battles -> `Projetos/draxos-roguelike-cardgame/`
+- mobile/PC browser client/Supabase/async autobattler/Base/Internal Alpha/release ops -> `Projetos/draxos-mobile/`
+- isometric action campaign -> `Projetos/rpg-isometrico/` (historical consultation by default)
+- turn-based board/cards exploration RPG -> `Projetos/rpg-turnos/` (historical consultation by default)
+- `_conceitos/mobile-universe/` -> read-only design reference for DraxosMobile
 
-Enquanto essa regra temporaria estiver ativa, as rotas para `draxos-roguelike-cardgame`, `draxos-mobile` e `FpsPlayground` abaixo so liberam implementacao quando o usuario pedir explicitamente para retomar esse projeto; caso contrario, use-as apenas para consulta historica.
+`Draxos` alone is shared vocabulary and does not select a project. If the request names no project, use the current focus in `Prioridades_Estudio.md`. If the domain is ambiguous, confirm against the portfolio table before reading deep docs.
 
-- Se o usuario citar `draxos-roguelike-cardgame`, `Draxos roguelike`, `roguelike cardgame`, `ship hub`, `run map`, `mapa de run`, `29 mapas`, `10 mapas legado`, `almas`, `classe no hub`, `rota completa`, `sacrificio`, `Cinzas` ou `batalhas por lanes`, use `Projetos/draxos-roguelike-cardgame/`.
-- Se o usuario citar `draxos-mobile`, `DraxosMobile`, `Draxos mobile`, `Bosque Node Cooldown ACK v1`, `BOSQUE_NODE_COOLDOWN_ACK_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Resume Exit Lifecycle v1`, `BOSQUE_RESUME_EXIT_LIFECYCLE_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Feel & Spawn Authority v1`, `BOSQUE_FEEL_SPAWN_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Persistence Rebase v1`, `BOSQUE_PERSISTENCE_REBASE_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Session Lifecycle & Durable Structures Hotfix v1`, `BOSQUE_SESSION_LIFECYCLE_STRUCTURES_HOTFIX_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque World Hub Domain Separation v1`, `BOSQUE_WORLD_HUB_DOMAIN_SEPARATION_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Fogueira Potion Crafting v1`, `BOSQUE_FOGUEIRA_POTION_CRAFTING_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Durable Bau Mochila v1`, `BOSQUE_DURABLE_BAU_MOCHILA_V1_PUBLISHED_INTERNAL_ALPHA`, `Arena PVE Menu Flow Simplification v1`, `ARENA_PVE_MENU_FLOW_SIMPLIFICATION_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque`, `Bosque Offline-First Checkpoint v1`, `BOSQUE_OFFLINE_FIRST_CHECKPOINT_V1_PUBLISHED_INTERNAL_ALPHA`, `Bosque Sync Responsiveness v1`, `BOSQUE_SYNC_RESPONSIVENESS_V1_PUBLISHED_INTERNAL_ALPHA`, `Arena/Bosque Visible V2`, `ARENA_BOSQUE_VISIBLE_V2_PUBLISHED_INTERNAL_ALPHA`, `Arena/Bosque Regression Hotfix`, `ARENA_BOSQUE_REGRESSION_HOTFIX_PUBLISHED_INTERNAL_ALPHA`, `Bosque v3 UX/Feel`, `BOSQUE_V3_UX_FEEL_PUBLISHED_INTERNAL_ALPHA`, `Openworld`, `BOSQUE_MECANICO_BASICO_V2_PUBLISHED_INTERNAL_ALPHA`, `autobattler`, `base manager`, `Arena PVE`, `ARENA_PVE_SEASON1_LOOP_V1_PUBLISHED_INTERNAL_ALPHA`, `Arena PVE Season 1 Loop v1`, `ARENA_PVE_FIRST_REAL_RUN_PUBLISHED_INTERNAL_ALPHA`, `Arena PVE First Real Run`, `Track 23`, `FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA`, `Foundation Hardening V2`, `HARDENING_PLATFORM_V1_PUBLISHED_INTERNAL_ALPHA`, `Hardening Platform V1`, `REMOTE_LAB_RUNNER_PUBLISHED_INTERNAL_ALPHA`, `LAB_WEB_EXPORT_GUARD_PUBLISHED_INTERNAL_ALPHA`, `ARENA_CONSISTENCY_PASS_PUBLISHED_INTERNAL_ALPHA`, `ARENA_CONSISTENCY_PASS_IMPLEMENTED_LOCAL`, `PVE_ARENA_INITIAL_PUBLISHED_INTERNAL_ALPHA`, `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, `PVP assincrono`, `Supabase`, `Foundation Final Polish`, `Foundation Closeout`, `FOUNDATION_FINAL_POLISH_DELIVERED`, `Foundation Audit`, `FOUNDATION_AUDIT_ACTIVE`, `Foundation Loop UX Pass`, `loop pos-login`, `Track 00`, `Track 04`, `Track 11`, `Track 13`, `Track 14`, `Track 15`, `Track 16`, `Track 17`, `Track 18`, `Track 19`, `Track 21`, `Agent Operating Manual`, `documentation-index`, `primeiro slice mobile`, `guilda`, `conta guest`, `matchmaking por poder`, `Progression Lab humano`, `Battle Lab`, `account_profiles`, `game_saves`, `Hub modularization`, `release artifacts`, `release safety`, `Cloudflare Access` ou `simulacao no servidor`, use `Projetos/draxos-mobile/`.
-- Se o usuario citar `JogoDaCopa`, `Jogo Da Copa`, `Copa`, `futebol`, `football`, `minigames de futebol`, `Futebol`, `Rocket League`, `bola`, `gols`, `camisas da copa` ou `jogo da copa`, use `Projetos/JogoDaCopa/`.
-- Se o usuario citar `FpsPlayground`, `FPS Playground`, `FpsShooter` como nome legado, `FPS`, `first-person shooter`, `shooter em primeira pessoa`, `arena 1x1`, `bot shooter`, `mouse look`, `hitscan`, `knockback`, `jump pads`, `plataformas suspensas`, `void/queda` ou `tech probe FPS`, use `Projetos/FpsPlayground/`.
-- Se o usuario citar `mobile-universe` ou `_conceitos/mobile-universe`, use `Projetos/_conceitos/mobile-universe/` apenas para leitura e referencia de design - nao criar codigo, cenas ou assets a partir dali.
-- Se o usuario citar `rpg-turnos`, `RPG Turnos`, exploracao 2D, NPC, mundo, `class_select`, `Track 02 - Draxos Lore And Progression Alignment` ou `P10 - Necromante`, use `Projetos/rpg-turnos/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
-- Se o usuario citar `rpg-isometrico`, campanha isometrica, Arena, Survival, Boss, loadout de acao ou gates Fxx, use `Projetos/rpg-isometrico/` apenas para consulta historica, salvo pedido explicito de retomar trabalho.
-- `Draxos` sozinho e contexto de lore compartilhada nao bastam para escolher `rpg-turnos` ou `draxos-mobile`; confirme pelo projeto citado, pela prioridade atual ou pelos termos operacionais acima.
-- Depois de escolher o projeto alvo, leia apenas o `AGENTS.md`, `implementation/current-status.md` e etapa local desse projeto, salvo tarefa transversal. Para DraxosMobile, comece pelo `AGENTS.md` local e siga `docs/agent-operating-manual.md`, `docs/documentation-index.md`, `docs/pve-arena-initial-direction.md`, `docs/foundation-app-v0-audit.md` e `implementation/current-status.md`.
+After choosing the target project, read only that project's `AGENTS.md`, `implementation/current-status.md` and active stage docs, unless the task is cross-cutting.
 
 ## Read Order - Fast Lane
 
-Para tarefas localizadas num unico projeto ou area, comece com:
+For tasks localized in a single project or area:
 
 1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
-2. `canon/canon-brief.md`
-3. `Projetos/README.md`
-4. `08_Coordenacao_Agentes/Estado_Atual.md`
-5. A tarefa ativa em `08_Coordenacao_Agentes/Kanban/Doing/`, se existir
-6. O `AGENTS.md` local do projeto Godot, se entrar no codigo
+2. `08_Coordenacao_Agentes/Estado_Atual.md` (relevant section)
+3. The active task in `08_Coordenacao_Agentes/Kanban/Doing/`, if any
+4. The target project's `AGENTS.md` and `implementation/current-status.md`
+5. `canon/canon-brief.md` when the task touches shared identity, lore or architecture
 
-Escale para a ordem completa imediatamente se:
-
-- a tarefa afetar mais de um projeto ou a direcao do canon;
-- houver decisao de produto, arquitetura ou plataforma;
-- o escopo se expandir alem dos arquivos tocados inicialmente.
+Escalate to the full order immediately if the task affects more than one project or canon direction, involves a product/architecture/platform decision, or the scope grows beyond the initially touched files.
 
 ## Read Order - Full
 
-Antes de trabalho substancial que afete multiplos projetos ou o canon:
+Before substantial work affecting multiple projects or the canon:
 
 1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 2. `canon/product/product-vision.md`
@@ -109,85 +91,51 @@ Antes de trabalho substancial que afete multiplos projetos ou o canon:
 4. `canon/design/progression-design.md`
 5. `canon/architecture/shared-architecture.md`
 6. `canon/architecture/game-mode-standard.md`
-7. `canon/roadmap/evolution-roadmap.md`
-8. `canon/roadmap/release-horizons.md`
-9. `canon/platform/steam-platform.md`
-10. O `AGENTS.md` local do projeto, quando houver
-11. O `implementation/current-status.md` local do projeto, quando houver
-12. Este arquivo
+7. `canon/roadmap/evolution-roadmap.md` and `canon/roadmap/release-horizons.md`
+8. `canon/platform/steam-platform.md`
+9. The target project's `AGENTS.md` and `implementation/current-status.md`
+10. This file
 
 ## Canon Rule
 
-Se o canon compartilhado conflitar com qualquer nota historica de implementacao, o canon prevalece.
+If shared canon conflicts with any historical implementation note, the canon prevails.
 
-Nao aplique silenciosamente a mecanica de um projeto em outro. `rpg-turnos` pode compartilhar lore com `rpg-isometrico`, mas os contratos de modo e loadout do RPG Isometrico nao sao canon do RPG Turnos a menos que um documento local do RPG Turnos os adote explicitamente.
+Do not silently apply one project's mechanics in another. Projects share lore and studio conventions only; a mechanic crosses projects only when a local document of the receiving project explicitly adopts it. This applies in every direction: RPG Isometrico contracts are not RPG Turnos canon; `draxos-roguelike-cardgame` is not a variant of `rpg-turnos`; DraxosMobile inherits no gameplay from any of them; `JogoDaCopa` and `FpsPlayground` are independent tech probes that inherit no Draxos gameplay/economy/progression/backend systems.
 
-Nao trate `draxos-roguelike-cardgame` como variante de `rpg-turnos`. O projeto foi bootstrapped com reuso estreito, mas possui contratos locais proprios. Qualquer regra de combate, deck, mana, compra, recompensa, hub, mapa ou pacing de `rpg-turnos` so vale em Draxos se um documento local de `draxos-roguelike-cardgame` adotar explicitamente.
-
-DraxosMobile tem visao longa local em `Projetos/draxos-mobile/docs/product-vision.md`. Ate promocao explicita ao canon compartilhado, use esse documento para pilares, anti-pilares, limites de plataforma, monetizacao, live ops e futuro nao prometido do mobile. A etapa atual vive em `Projetos/draxos-mobile/implementation/current-status.md`; a direcao viva do early game vive em `Projetos/draxos-mobile/docs/pve-arena-initial-direction.md`; a auditoria original vive em `Projetos/draxos-mobile/docs/foundation-app-v0-audit.md` como referencia fechada. A operacao de agentes vive em `Projetos/draxos-mobile/docs/agent-operating-manual.md`, e o mapa de autoridade documental vive em `Projetos/draxos-mobile/docs/documentation-index.md`.
-
-Nao trate RPGMobile ou BattleMobile como projetos Godot oficiais ate que recebam `AGENTS.md`, `implementation/current-status.md`, entrada oficial em `Projetos/README.md` como projeto implementavel e entrada resumida em `Estado_Atual.md`.
+DraxosMobile keeps local long-term product canon in `Projetos/draxos-mobile/docs/product-vision.md` until parts are promoted into shared canon.
 
 ## Godot Rule
 
-Implementacoes Godot vivem sob `Projetos/`.
+Implementations live under `Projetos/`. Expected Godot version: see `.godot-version` at the workspace root. Which projects are active, paused or archived is defined only in `Prioridades_Estudio.md`.
 
-Projetos Godot ativos durante o foco temporario:
+When entering a Godot project:
 
-- `Projetos/JogoDaCopa/` - P2 tech probe, PC Windows editor-first futebol/minigames 3D em Godot 4.6.2 (`JOGO_DA_COPA_TRACK_01C_ARENA_STADIUM_VISUAL_REWORK_COMPLETE`; proximo passo e playtest humano do modo `Futebol`, agora com gols fechados por teto de vidro, arena de vidro com molduras, estadio festivo de Copa, bola solta, mais grip no chao, quique maior, boost e rebote em paredes/teto/gol, sem export/Web/mobile/multiplayer)
+1. Confirm allowed work in `Prioridades_Estudio.md`
+2. Read the project's `AGENTS.md` and `implementation/current-status.md`
+3. Read the active track in `implementation/tracks/` when one exists
+4. Use historical validation docs only to answer specific questions
 
-Projetos Godot pausados temporariamente:
-
-- `Projetos/draxos-roguelike-cardgame/`
-- `Projetos/draxos-mobile/`
-- `Projetos/FpsPlayground/`
-
-Projetos Godot pausados por tempo indeterminado:
-
-- `Projetos/rpg-isometrico/`
-- `Projetos/rpg-turnos/`
-
-Ao entrar num projeto Godot ativo:
-
-1. Consulte `Prioridades_Estudio.md` primeiro
-2. Consulte o canon compartilhado
-3. Consulte `Projetos/README.md` para confirmar o registro do projeto
-4. Consulte `implementation/current-status.md` do projeto
-5. Consulte o `AGENTS.md` local do projeto Godot e a track ativa em `implementation/tracks/`
-6. Consulte docs de validacao historica apenas quando responderem uma pergunta especifica
-
-Um projeto futuro em `Projetos/` so deve ser tratado como oficial quando tiver `AGENTS.md`, `implementation/current-status.md`, entrada em `Projetos/README.md`, e entrada resumida em `08_Coordenacao_Agentes/Estado_Atual.md`.
-
-Use caminhos relativos ao referenciar o canon compartilhado de dentro de um projeto Godot.
-Versao esperada do Godot: ver `.godot-version` na raiz deste workspace.
+A future project under `Projetos/` only becomes official when it has a local `AGENTS.md`, a local `implementation/current-status.md`, an entry in `Projetos/README.md` and a summary entry in `Estado_Atual.md`.
 
 ## Historical Context Rule
 
-Se contexto historico for necessario, consulte nesta ordem:
+If historical context is needed, consult in order: `migration/`, then `Projetos/rpg-isometrico/implementation/phase-g1/` through `phase-g4/`, and only then any external legacy repository if the task is explicitly historical.
 
-1. `migration/`
-2. `Projetos/rpg-isometrico/implementation/phase-g1/` a `phase-g4/`
-3. Apenas entao qualquer repositorio legado externo, se a tarefa for explicitamente historica
+## Manutencao Do Estado_Atual.md
 
-## Manutencao do Estado_Atual.md
-
-`08_Coordenacao_Agentes/Estado_Atual.md` e o snapshot vivo dos projetos. Mantenha-o atual:
-
-- **Quando atualizar**: ao concluir qualquer tarefa que mude o status observavel de um projeto, prioridade de portfolio, track ativa, baseline ou proximo passo.
-- **O que atualizar**: somente as linhas que mudaram - status, fase, prioridade, baseline curta, proximo passo e restricao operacional.
-- **O que nao colocar**: historico de gates, detalhes tecnicos de implementacao, listas longas de arquivos. Isso vai para Done do Kanban ou para `implementation/current-status.md` do projeto.
-- **Regra do tamanho**: mantenha o arquivo compacto e orientado a decisao.
+- **Quando atualizar**: ao concluir qualquer tarefa que mude status observavel, prioridade, track ativa, baseline ou proximo passo.
+- **O que atualizar**: somente as linhas que mudaram.
+- **O que nao colocar**: historico de gates/pacotes, detalhes tecnicos, listas longas de arquivos - isso vai para Kanban Done, Handoffs, `implementation/tracks/` ou `docs/release-history.md` do projeto.
+- **Regra do tamanho**: maximo ~12 linhas por projeto.
 
 ## Coordination Structure
 
-- Prioridades e foco do estudio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
+- Prioridades e foco: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
+- Estado atual: `08_Coordenacao_Agentes/Estado_Atual.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
-- Estado atual dos projetos: `08_Coordenacao_Agentes/Estado_Atual.md`
-- Tarefas ativas: `08_Coordenacao_Agentes/Kanban/Doing/`
-- Backlog: `08_Coordenacao_Agentes/Kanban/Backlog/`
-- Handoffs entre agentes: `08_Coordenacao_Agentes/Handoffs/`
-- Decisoes de produto e arquitetura: `08_Coordenacao_Agentes/Decisoes/`
+- Tarefas: `08_Coordenacao_Agentes/Kanban/` (Backlog, Doing, Review, Done)
+- Handoffs: `08_Coordenacao_Agentes/Handoffs/`
+- Decisoes de produto e arquitetura: `08_Coordenacao_Agentes/Decisoes/` (registre toda decisao de produto/arquitetura/processo em 5-15 linhas usando o template)
 - Templates oficiais: `08_Coordenacao_Agentes/Templates/`
 
-**Nomenclatura de arquivos Kanban**: `YYYY-MM-DD_agente_slug.md`
-Exemplos: `2026-05-04_codex_rpg-turnos_duelo-mode.md`, `2026-05-14_codex_estudio_portfolio.md`
+**Nomenclatura de arquivos Kanban**: `YYYY-MM-DD_agente_slug.md` (ex.: `2026-06-10_codex_jogodacopa_track02-quality-upgrade-series-v1.md`)
