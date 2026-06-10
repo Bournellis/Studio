@@ -16,21 +16,21 @@ O jogador nao e o heroi. O jogador e um Draxos em ascensao.
 
 ## Situacao Atual
 
-Etapa operacional atual: `BOSQUE_OVERLAY_INTERACTION_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`.
+Etapa operacional atual: `BOSQUE_OVERLAY_MENU_ACTION_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`.
 
-Pacote remoto Internal Alpha atual: `Bosque Overlay Interaction Authority v1`, release root `internal-alpha/v0-bosque-overlay-interaction-authority-v1-20260609-a8aa9a0`, evidencia `https://1ee9e2a0.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, versao `0.0.19-alpha.0`, version code `19`, minimum supported version code `13`.
+Pacote remoto Internal Alpha atual: `Bosque Overlay Menu Action Authority v1`, release root `internal-alpha/v0-bosque-overlay-menu-action-authority-v1-20260609-aa9402d`, evidencia `https://5f04e6ae.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, versao `0.0.20-alpha.0`, version code `20`, minimum supported version code `13`.
 
-Playtest humano inicial do pacote anterior, Bosque Bootstrap Authority v1, foi reportado OK por Fabio em 2026-06-09: tudo testado ate aquele momento parecia funcionar. `DMOB-D076` escolheu o launcher diegetico como etapa local, `DMOB-D077` foi resolvido pela publicacao Web/APK, `DMOB-D078` publicou o overlay persistente, `DMOB-D079` publicou o primeiro hotfix de navegacao e o foco atual e playtest humano estreito do pacote publicado Bosque Overlay Interaction Authority v1; bugs futuros voltam ao fluxo normal se aparecerem.
+Playtest humano inicial do pacote anterior, Bosque Bootstrap Authority v1, foi reportado OK por Fabio em 2026-06-09: tudo testado ate aquele momento parecia funcionar. `DMOB-D076` escolheu o launcher diegetico como etapa local, `DMOB-D077` foi resolvido pela publicacao Web/APK, `DMOB-D078` publicou o overlay persistente, `DMOB-D079` publicou o primeiro hotfix de navegacao e o foco atual e playtest humano estreito do pacote publicado Bosque Overlay Menu Action Authority v1; bugs futuros voltam ao fluxo normal se aparecerem.
 
 Direcao viva de produto: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`, com Arena PVE
 como core inicial do `Autobattler`. O estado operacional atual nao muda essa
-direcao: Bosque Overlay Interaction Authority v1 e o pacote publicado atual; Arena PVE segue
+direcao: Bosque Overlay Menu Action Authority v1 e o pacote publicado atual; Arena PVE segue
 primeiro core; Bosque/Openworld e slice integrado de Internal Alpha, nao
 autorizacao para expansao ampla de mundo, economia, conteudo ou visual final.
 
 Atualizacao V1 de plataforma: DraxosMobile agora organiza sua visao jogavel em cinco modos oficiais governados por um registry unico: `Basebuilder`, `Autobattler`, `Towerdefense`, `Cardgame` e `Openworld`. A Arena PVE atual pertence ao `Autobattler`; Refugio/Base atuais pertencem ao `Basebuilder`; o antigo prototipo Rpgsuave foi renomeado de verdade para `Openworld`, com `forest` como primeiro slice e `Bosque` como entrada player-facing direta.
 
-O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2, Openworld Main Menu Sync, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Bosque Durable Bau Mochila v1, Bosque Fogueira Potion Crafting v1, Bosque World Hub Domain Separation v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque Persistence Rebase v1, Bosque Feel & Spawn Authority v1, Bosque Resume Exit Lifecycle v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1, Bosque Bootstrap Authority v1 e Bosque Overlay Navigation Hotfix v1 ficam como baselines historicas/tecnicas/conteudo preservadas; Bosque Overlay Interaction Authority v1 e o pacote operacional publicado atual.
+O projeto ja tem uma base implementada com substancia suficiente para nao parecer um app vazio. Foundation Closeout e Lab Track 16 Alignment anteciparam a fundacao de producao futura: `account_profiles/game_saves`, registry imutavel de ruleset, idempotencia com `request_hash`, admin minimo auditavel, shell/retry client e labs alinhados ao estado de pocoes/comportamento/crafting. Foundation Final Polish, Hardening Platform V1, Foundation Hardening V2, Openworld Main Menu Sync, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Bosque Durable Bau Mochila v1, Bosque Fogueira Potion Crafting v1, Bosque World Hub Domain Separation v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque Persistence Rebase v1, Bosque Feel & Spawn Authority v1, Bosque Resume Exit Lifecycle v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1, Bosque Bootstrap Authority v1 e Bosque Overlay Navigation Hotfix v1 ficam como baselines historicas/tecnicas/conteudo preservadas; Bosque Overlay Menu Action Authority v1 e o pacote operacional publicado atual.
 
 A decisao de produto seguinte foi escolhida em nivel de direcao: o early game deve ser uma Arena PVE inicial, sem cooldown de combate, com tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado antes da arena, vida resetada a 100% em cada duelo, buffs temporarios leves de stat entre lutas e comportamento ajustavel antes do proximo inimigo. A direcao viva esta em `docs/pve-arena-initial-direction.md`, e Track 23 publicou o primeiro pacote operacional para validar esse fluxo e o recovery de updates.
 
@@ -44,7 +44,7 @@ Nesta etapa, nomes, spells, armas, numeros de economia, Battle Pass, visual fina
 
 Ordem de foco operacional:
 
-1. Playtestar o pacote publicado `Bosque Overlay Interaction Authority v1` em Web/APK, focando prompts/landmarks do Bosque, abertura de Arena/Base/Shop/Social/Profile e retorno via `Fechar`, `Voltar` e Esc.
+1. Playtestar o pacote publicado `Bosque Overlay Menu Action Authority v1` em Web/APK, focando prompts/landmarks do Bosque, abertura de Arena/Base/Shop/Social/Profile e retorno via `Fechar`, `Voltar` e Esc.
 2. Manter bugs futuros no fluxo normal de bugfix, sem reabrir regressao preventiva se nada novo aparecer.
 3. Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final, mutacoes remotas ou expansao de Openworld antes de uma nova decisao propria.
 4. Depois do playtest do launcher, escolher explicitamente qualquer proximo pacote: bugfix, polish do launcher, Arena PVE, Openworld/Bosque estreito ou outro hardening.
@@ -229,7 +229,7 @@ Esses itens podem virar projeto ou fase futura, mas nao devem ser tratados como 
 
 ## Gates De Proxima Decisao
 
-1. Rodar playtest humano do pacote publicado `Bosque Overlay Interaction Authority v1`.
+1. Rodar playtest humano do pacote publicado `Bosque Overlay Menu Action Authority v1`.
 2. Confirmar se bugs novos apareceram no launcher diegetico publicado; se aparecerem, tratar por bugfix estreito.
 3. Se o pacote escolhido for Arena PVE, confirmar que `docs/pve-arena-initial-direction.md` e `docs/pve-arena-v1.md` continuam suficientes para tutorial, primeiras arenas, inimigos, buffs, recovery e recompensas.
 4. Rodar Progression Lab e Battle Lab orientados a Arena PVE antes de mexer em valores calibraveis, se Arena PVE for o pacote escolhido.
