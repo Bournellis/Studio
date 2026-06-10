@@ -2,34 +2,37 @@
 
 Este workspace e multi-projeto. Siga `AGENTS.md` como autoridade principal.
 
+## Fonte Unica De Estado
+
+O estado operacional vive somente em:
+
+1. `08_Coordenacao_Agentes/Prioridades_Estudio.md` - foco, prioridades e trabalho permitido por projeto
+2. `08_Coordenacao_Agentes/Estado_Atual.md` - snapshot e proximo passo por projeto
+
+Este arquivo nao carrega status, track ativa, pacote publicado nem proximo passo de nenhum projeto. Se outro documento conflitar com os dois acima, os dois acima prevalecem.
+
 ## Entrada Padrao
 
-1. Leia `AGENTS.md`.
-2. Leia `Projetos/README.md`.
+1. Leia `08_Coordenacao_Agentes/Prioridades_Estudio.md` e escolha o projeto alvo.
+2. Leia `AGENTS.md` (worktrees, gates, roteamento).
 3. Leia a secao relevante de `08_Coordenacao_Agentes/Estado_Atual.md`.
-4. Escolha o projeto alvo antes de ler documentacao profunda.
-5. Ao entrar em um projeto, leia o `AGENTS.md` local e `implementation/current-status.md`.
+4. Ao entrar em um projeto, leia o `AGENTS.md` local e `implementation/current-status.md`.
 
 ## Regra De Leitura
 
 Use Fast Lane por padrao. Escale para a leitura completa somente quando a tarefa afetar canon, arquitetura, plataforma, produto, mais de um projeto, ou quando o escopo deixar de ser local.
 
-## Fronteiras
+## Fronteiras (identidade estavel - sem status)
 
-- `canon/` e a fonte compartilhada de produto, arquitetura, plataforma, progressao e lore.
+- `canon/` e a fonte compartilhada de lore, identidade de produto, arquitetura e plataforma. Nao carrega estado operacional.
+- `Projetos/draxos-roguelike-cardgame/` e o roguelike cardgame Draxos menu-first para Steam/PC: ship hub, run map, almas, reliquias, batalhas por lanes.
+- `Projetos/draxos-mobile/` e o Draxos PVE Arena-first async autobattler mobile/PC/browser com Refugio/Base e backend Supabase server-authoritative (batalha nunca simulada no cliente). Nao confundir com o roguelike.
+- `Projetos/JogoDaCopa/` e o projeto de futebol/minigames de copa, PC Windows editor-first, terceira pessoa.
+- `Projetos/FpsPlayground/` e o laboratorio FPS PC editor-first (sucessor do antigo `FpsShooter`).
 - `Projetos/rpg-isometrico/` e o RPG de acao isometrico campaign-first.
-- `Projetos/rpg-turnos/` e o RPG-cardgame por turnos; ele pode compartilhar lore, mas possui mecanicas independentes.
-- `Projetos/draxos-roguelike-cardgame/` e o roguelike cardgame Draxos menu-first; use para ship hub, run map, rota de 10 mapas, almas/cura, batalhas por lanes e Track 01.
-- `Projetos/draxos-mobile/` e o jogo mobile PVP assincrono com base manager e sistema social. Promovido de `_conceitos/mobile-universe/` em 2026-05-18. Stack: Godot 4.6.2 (GDScript) + Supabase (TypeScript Edge Functions). Batalha 100% servidor. Track ativa: Track 00. Nao confundir com `draxos-roguelike-cardgame`.
+- `Projetos/rpg-turnos/` e o RPG-cardgame por turnos; compartilha lore, mecanica independente.
+- `Projetos/_conceitos/mobile-universe/` e arquivo de design somente leitura.
 - Nao importe mecanicas entre projetos sem documento local adotando a regra.
 - Nao use historico como canon atual.
 
-## Desambiguacao Rapida
-
-`Draxos` e `cardgame` aparecem em mais de um projeto. Se o pedido citar `draxos-roguelike-cardgame`, `Draxos roguelike`, `ship hub`, `run map`, `10 mapas`, `almas`, ou `rota completa`, escolha `Projetos/draxos-roguelike-cardgame/` antes de ler qualquer guia local de `rpg-turnos`.
-
-Se o pedido citar `draxos-mobile`, `DraxosMobile`, `PVP assincrono`, `base manager`, `mobile`, `mago Draxos`, `autobattler` ou `primeiro slice`, escolha `Projetos/draxos-mobile/`.
-
-## Estado Operacional
-
-`08_Coordenacao_Agentes/Estado_Atual.md` e o snapshot vivo do estudio. Atualize apenas quando uma tarefa mudar status observavel, track ativa, baseline ou proximo passo.
+## Desambiguacao R
