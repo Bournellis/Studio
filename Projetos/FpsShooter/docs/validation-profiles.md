@@ -19,6 +19,12 @@ Should cover:
 - project setting/resource checks;
 - full GUT unit suite.
 
+Command:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\FpsShooter -s res://tools/validate.gd -- --profile=quick
+```
+
 ### `full`
 
 Intended before commits, merges and handoffs.
@@ -27,8 +33,38 @@ Should cover:
 
 - everything in `quick`;
 - generated scene load checks;
+- documentation contract checks;
 - warning summary;
 - manual smoke pointer.
+
+Default command:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\FpsShooter -s res://tools/validate.gd
+```
+
+Explicit command:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\FpsShooter -s res://tools/validate.gd -- --profile=full
+```
+
+### `structure`
+
+Intended for very fast checks while moving docs/resources/scene generation contracts.
+
+Should cover:
+
+- scene regeneration;
+- project setting/resource checks;
+- generated scene load checks;
+- no GUT execution.
+
+Command:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\FpsShooter -s res://tools/validate.gd -- --profile=structure
+```
 
 ### `editor-smoke`
 
@@ -47,6 +83,12 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 ```
 
 From a worktree, replace the path with the worktree project path.
+
+List profiles:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\FpsShooter -s res://tools/validate.gd -- --list-profiles
+```
 
 ## Known Warnings
 

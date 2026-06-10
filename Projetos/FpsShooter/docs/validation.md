@@ -19,6 +19,7 @@ When working from a dedicated worktree, run with that worktree path.
 
 - regenerates `res://modes/menu/main_menu.tscn`, `res://modes/arena/arena.tscn` and `res://modes/football/football.tscn` from `tools/bootstrap_scene_generator.gd`;
 - checks required project settings, autoloads and resources;
+- in `full` profile, checks the local documentation contract;
 - checks the generated menu, arena and football scenes load;
 - runs the GUT suite under `res://tests/unit`;
 - prints the manual editor follow-up instead of exporting.
