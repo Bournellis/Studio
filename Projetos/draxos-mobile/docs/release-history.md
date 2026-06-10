@@ -29,8 +29,8 @@ This file is the single historical record of published Internal Alpha packages. 
 | 2026-06-08 | Bosque Resume Exit Lifecycle v1 | `internal-alpha/v0-bosque-resume-exit-lifecycle-v1-20260608-9a0f7c0` | `https://39128c59.draxos-mobile-internal-alpha.pages.dev` | Resume/exit lifecycle |
 | 2026-06-08 | Bosque Feel & Spawn Authority v1 | `internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-70b79c3` | `https://16ac3cb7.draxos-mobile-internal-alpha.pages.dev` | Feel/spawn authority |
 | 2026-06-08 | Bosque Persistence Rebase v1 | `internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74` | `https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev` | Remote migrations `202606080001_openworld_bosque_persistence_rebase_v1.sql`, `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql` |
-| 2026-06-07 | Bosque Session Lifecycle & Durable Structures Hotfix v1 | `internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-c953b51` | - | Expired-session/structures hotfix |
-| 2026-06-06 | Bosque World Hub Domain Separation v1 | `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05` | - | Local/account domain separation |
+| 2026-06-07 | Bosque Session Lifecycle & Durable Structures Hotfix v1 | `internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-c953b51` | `https://8ecac093.draxos-mobile-internal-alpha.pages.dev` | Expired-session/structures hotfix. APK vc `9` |
+| 2026-06-06 | Bosque World Hub Domain Separation v1 | `internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05` | `https://d1872010.draxos-mobile-internal-alpha.pages.dev` | Local/account domain separation, `BosqueWorldContext` |
 | 2026-06-06 | Bosque Fogueira Potion Crafting v1 | `internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c` | `https://08d00f24.draxos-mobile-internal-alpha.pages.dev` | Station craft, server-authoritative |
 | 2026-06-06 | Bosque Durable Bau Mochila v1 | `internal-alpha/v0-bosque-durable-bau-mochila-v1-20260606-6e7ca6b` | `https://39198a35.draxos-mobile-internal-alpha.pages.dev` | Durable Openworld progress |
 | 2026-06-06 | Arena PVE Menu Flow Simplification v1 | `internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68` | `https://fdf44707.draxos-mobile-internal-alpha.pages.dev` | Arena menu flow |
@@ -51,4 +51,4 @@ Earlier packages (pre-2026-06-01) are recorded in `implementation/tracks/` and K
 
 - Track 13 - Foundation Validation And Release Safety (delivered 2026-05-28).
 - Track 14 - Agent Operations Foundation (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`).
-- Arena PVE is the first approved product core; Bosque/Openworld is an integrated Internal Alpha slice, not automatic approval for broad expansion.
+- 
