@@ -8,7 +8,8 @@
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
 - Foco P2 de implementacao: `Projetos/draxos-mobile/` (`BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`, release root `internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, deployment evidence `https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev`, publicado Web/APK, APK/manifest `0.0.23-alpha.0`/version code `23`; Bosque permanece vivo e visivel atras de Arena/Base/Shop/Social/Profile em overlay, com input pausado, Arena fullscreen acima do menu, modal global/topmost, menu readiness e retorno por `Fechar`, `Voltar` e Esc sem rebootstrap, validado por smoke real Web/canvas, mantem minimum supported version code `13`, proximo passo operacional: playtest humano focado do pacote publicado)
-- Tech probe P2 de implementacao: `Projetos/FpsShooter/` (`FPS_PLAYGROUND_TRACK_06C_FOOTBALL_FEEL_POSSESSION_COMPLETE`; PC Windows editor-first FPS Playground independente com tema Draxos leve; proximo passo: playtest humano no editor focado no Futebol em terceira pessoa, posse leve, drible proximo, assist de chute, foco dinamico da camera e aproximacao do bot atras da bola)
+- Tech probe P2 de implementacao: `Projetos/FpsPlayground/` (`FPS_PLAYGROUND_PROJECT_SPLIT_FOUNDATION_COMPLETE`; PC Windows editor-first FPS Playground independente com tema Draxos leve; proximo passo: regressao/playtest humano do Arena Shooter no editor)
+- Tech probe P2 de implementacao: `Projetos/JogoDaCopa/` (`JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE`; PC Windows editor-first futebol/minigames independente; proximo passo: playtest humano do Futebol em terceira pessoa e planejamento da proxima track)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -38,15 +39,25 @@
 - Restricao operacional: iOS sem pedido explicito. Mobile browser fora do escopo. Secrets e service role nunca entram no cliente/export. Publicacao remota exige `-ConfirmRemoteMutation` e Supabase/Cloudflare CLI autenticada. Mudancas visuais em Entry/Refugio/Batalha exigem `foundation-responsive-layout-contract.md` + `smoke_responsive_layout.gd`. Novas features devem respeitar `account_profiles/game_saves`, ruleset registry, idempotencia v1 e RPC transacional v1 para mutations economicas/social. Direct chat, ajudas, contribuicoes, moderacao, PVP, tuning numerico amplo, novas armas, novas spells, economia ampla, visual final, previsao de vitoria, contra-escolha por oponente, thresholds customizados, comportamento por inimigo e controles avancados de replay ficam bloqueados ate decisao propria.
 - Proximo passo: playtest humano focado do `Bosque Overlay Layer And Readiness Authority v1` publicado em Web/APK, validando prompts/landmarks do Bosque, Arena fullscreen sem corte lateral, modal global/topmost, menu readiness, Social/Shop/Arena e retorno via `Fechar`, `Voltar` e Esc. Bugs futuros voltam ao fluxo normal se aparecerem. Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final ou mutacoes remotas sem decisao propria.
 
-## FpsShooter
+## FpsPlayground
 
-- Status: **P2_IMPLEMENTACAO - FPS_PLAYGROUND_TRACK_06C_FOOTBALL_FEEL_POSSESSION_COMPLETE**
+- Status: **P2_IMPLEMENTACAO - FPS_PLAYGROUND_PROJECT_SPLIT_FOUNDATION_COMPLETE**
 - Fase: `Implementacao - FPS Playground Tech Probe`
-- Local: `Projetos/FpsShooter/`
-- Baseline atual: projeto oficial implementavel criado para testar Godot 4.6.2 em gameplay 3D, PC Windows editor-first. Track 06C Football Feel & Possession V1 completa sobre Track 06B, Track 06A, Track 05 e baselines anteriores: `FPS Playground` preserva menu principal centralizado por container/painel com `Arena Shooter` e `Futebol`, preserva o comportamento aceito dos dois modos, mantem documentacao local/perfis de validacao/builders/helpers/testes focados e agora deixa o Futebol em terceira pessoa mais jogavel com posse leve, drible proximo sem contar como chute, assist discreto em bolas proximas na frente do corpo, HUD de controle, camera com foco dinamico na bola distante e bot que se aproxima atras da bola antes de atacar. `Arena Shooter` preserva `Duel Pit V2` com spawns protegidos, cover, plataformas, jump pads, pickups elevados com micro-commit, rifle hitscan, RMB Plasma Bolt, feedback/HUD de combate, bot vertical-aware, rotas por jump pads, dodge de plasma, salto simples e knockback aceito, sem void/fall zones no mapa atual. `Futebol` preserva 1x1 contra bot, sem armas, inicia pausado em `Como Jogar`/`Comecar`, LMB chute, RMB chute forte, bola `RigidBody3D` arcade solta, campo festivo por primitivas, gols fechados com piso e paredes laterais internas, gols ate 3, bot que ataca/defende, score HUD, feedback/audio sintetico de chute/gol, retorno ao menu pelo pause, avatares humanoides procedurais por primitivas para player/bot, selecao em memoria de pele/camisa inspirada em paises, animacoes basicas, camera third-person estilo Rocket League com avatar local visivel e chute por direcao corporal.
+- Local: `Projetos/FpsPlayground/`
+- Baseline atual: projeto oficial implementavel separado do antigo `FpsShooter/FPS Playground` para manter somente o laboratorio FPS em Godot 4.6.2, PC Windows editor-first. Preserva `Arena Shooter` com `Duel Pit V2`, spawns protegidos, cover, plataformas, jump pads, pickups elevados com micro-commit, rifle hitscan, RMB Plasma Bolt, feedback/HUD de combate, bot vertical-aware, rotas por jump pads, dodge de plasma, salto simples e knockback aceito, sem void/fall zones no mapa atual. O menu agora expõe apenas `Arena Shooter`.
 - Trabalho permitido: codigo, validacao, playtest no editor e documentacao local.
-- Restricao operacional: tech probe independente com tema Draxos leve; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem export/Web/mobile, multiplayer, matchmaking, Ricochet, ammo/reload, recoil/spread amplo ou novas armas ate track explicita.
-- Proximo passo: playtest humano no editor focado no `Futebol` em terceira pessoa: posse leve, drible proximo, assist de chute, foco dinamico da camera, aproximacao do bot atras da bola e decisao da proxima track de gameplay/personagem.
+- Restricao operacional: tech probe independente com tema Draxos leve; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem futebol/minigames, export/Web/mobile, multiplayer, matchmaking, Ricochet, ammo/reload, recoil/spread amplo ou novas armas ate track explicita.
+- Proximo passo: regressao/playtest humano no editor focado em `Arena Shooter` depois da separacao.
+
+## JogoDaCopa
+
+- Status: **P2_IMPLEMENTACAO - JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE**
+- Fase: `Implementacao - Football Minigames Tech Probe`
+- Local: `Projetos/JogoDaCopa/`
+- Baseline atual: projeto oficial implementavel separado do antigo `FPS Playground` para futebol e minigames de copa em Godot 4.6.2, PC Windows editor-first. A baseline inicial preserva o modo `Futebol`: 1x1 contra bot em terceira pessoa, sem armas, inicia pausado em `Como Jogar`/`Comecar`, LMB chute, RMB chute forte, bola `RigidBody3D` arcade solta, campo festivo por primitivas, gols fechados com piso e paredes laterais internas, gols ate 3, bot que ataca/defende, score HUD, feedback/audio sintetico de chute/gol, retorno ao menu pelo pause, avatares humanoides procedurais por primitivas para player/bot, selecao em memoria de pele/camisa inspirada em paises, animacoes basicas, camera third-person estilo Rocket League com avatar local visivel e chute por direcao corporal.
+- Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
+- Restricao operacional: tech probe independente para minigames de futebol; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem armas/FPS shooter, export/Web/mobile, multiplayer, matchmaking ou economia ate track explicita.
+- Proximo passo: playtest humano no editor focado no `Futebol` e escolha da proxima track de minigame/gameplay.
 
 ## rpg-isometrico
 

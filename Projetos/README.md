@@ -29,16 +29,27 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: author player/enemy card and mechanic ideas as Design Lab proposal packs, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab gates before full-run feel playtests.
 
-- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 FPS Playground tech probe with a light Draxos visual theme. The historical folder remains `FpsShooter`, while the runnable project now presents as `FPS Playground`. Track 06C Football Feel & Possession V1 is complete on top of Track 06B, Track 06A, Track 05 and the accepted Arena Shooter/Futebol baselines: the project opens in a container-centered menu with `Arena Shooter`, `Futebol` and `Sair`; `Arena Shooter` preserves `Duel Pit V2`, rifle hitscan, RMB Plasma Bolt, Health Shard/Overcharge, jump pads, vertical-aware bot, route/LOS HUD, synthetic feedback and no active void/fall zones; `Futebol` preserves 1x1 football against a bot, no weapons, paused `Como Jogar`/`Comecar` intro, LMB kick, RMB strong kick, arcade loose `RigidBody3D` ball, festive primitive stadium, fully closed goal interiors, score to 3 goals, football HUD and kick/goal feedback, runtime primitive humanoid avatars for player/bot, memory-only skin tone selection, country-inspired shirt kit selection, basic procedural animation states, third-person chase camera with visible local avatar/body-forward kicks, lightweight close possession, dribble nudges, near-front kick assist, dynamic ball focus and improved bot attack approach behind the ball. The foundation includes local docs, validation profiles, runtime primitive/layout builders, pure rule helpers, bot aim/visibility helpers and focused helper tests.
-  - Priority/status: `P2_IMPLEMENTACAO - FPS_PLAYGROUND_TRACK_06C_FOOTBALL_FEEL_POSSESSION_COMPLETE`
-  - Local agent guide: `FpsShooter/AGENTS.md`
-  - Operational status: `FpsShooter/implementation/current-status.md`
-  - Work plan: `FpsShooter/docs/work-plan.md`
-  - Reuse map: `FpsShooter/docs/reuse-map.md`
-  - Validation reference: `FpsShooter/docs/validation.md`
-  - Validation command: `FpsShooter/tools/validate.gd`
+- `FpsPlayground/`: independent PC Windows editor-first Godot 4.6.2 FPS laboratory with a light Draxos visual theme. Created by splitting the former `FpsShooter/FPS Playground`; it now keeps only the Arena Shooter branch: `Duel Pit V2`, rifle hitscan, RMB Plasma Bolt, Health Shard/Overcharge, jump pads, vertical-aware bot, route/LOS HUD, synthetic feedback and no active void/fall zones. The project opens in a focused menu with `Arena Shooter` and `Sair`.
+  - Priority/status: `P2_IMPLEMENTACAO - FPS_PLAYGROUND_PROJECT_SPLIT_FOUNDATION_COMPLETE`
+  - Local agent guide: `FpsPlayground/AGENTS.md`
+  - Operational status: `FpsPlayground/implementation/current-status.md`
+  - Work plan: `FpsPlayground/docs/work-plan.md`
+  - Reuse map: `FpsPlayground/docs/reuse-map.md`
+  - Validation reference: `FpsPlayground/docs/validation.md`
+  - Validation command: `FpsPlayground/tools/validate.gd`
   - Allowed work: code, validation, editor playtest and local documentation.
-  - Current next step: editor playtest focused on Futebol close possession, dribble nudges, assisted body-forward kicks, dynamic ball focus, bot approach behavior and then choosing the next gameplay/personagem growth track.
+  - Current next step: editor regression playtest focused on Arena Shooter after the split.
+
+- `JogoDaCopa/`: independent PC Windows editor-first Godot 4.6.2 football/minigames project. Created by splitting the accepted football branch out of the former FPS Playground; the initial playable mode is `Futebol`: 1x1 against a bot, no weapons, paused `Como Jogar`/`Comecar` intro, LMB kick, RMB strong kick, arcade loose `RigidBody3D` ball, festive primitive stadium, fully closed goal interiors, score to 3 goals, football HUD and kick/goal feedback, runtime primitive humanoid avatars for player/bot, memory-only skin tone selection, country-inspired shirt kit selection, basic procedural animation states, third-person chase camera with visible local avatar/body-forward kicks, lightweight close possession, dribble nudges, near-front kick assist, dynamic ball focus and improved bot attack approach behind the ball.
+  - Priority/status: `P2_IMPLEMENTACAO - JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE`
+  - Local agent guide: `JogoDaCopa/AGENTS.md`
+  - Operational status: `JogoDaCopa/implementation/current-status.md`
+  - Work plan: `JogoDaCopa/docs/work-plan.md`
+  - Reuse map: `JogoDaCopa/docs/reuse-map.md`
+  - Validation reference: `JogoDaCopa/docs/validation.md`
+  - Validation command: `JogoDaCopa/tools/validate.gd`
+  - Allowed work: code, design, validation, editor playtest and local documentation.
+  - Current next step: editor playtest focused on Futebol and selection of the next minigame/gameplay track.
 
 ## Implementacao - Arena PVE Inicial
 
@@ -111,7 +122,8 @@ This directory contains active, conceptual and paused projects for the studio.
 
 - Use `draxos-roguelike-cardgame/` for the current P0 implementation focus: roguelike cardgame, ship hub, run map, complete-run route, Souls, relics, keyword engine, enemy intent and lane battles.
 - Use `draxos-mobile/` for DraxosMobile implementation: Godot mobile/PC/browser client, Supabase, Arena PVE-first async autobattler, Base, later PVP/social, Internal Alpha, release ops, validation and agent foundation.
-- Use `FpsShooter/` for the independent FPS Playground tech probe: PC Windows editor-first, first-person controller, arena 1x1, bot shooter, hitscan, knockback, jump pads/platforms/void in future shooter tracks, football mode, and light Draxos visual theme only.
+- Use `FpsPlayground/` for the independent FPS laboratory: PC Windows editor-first, first-person controller, arena 1x1, bot shooter, hitscan, knockback, jump pads/platforms/void in future shooter tracks, and light Draxos visual theme only. `FpsShooter` is a legacy name and should route here unless the request is about football/Copa.
+- Use `JogoDaCopa/` for the independent football/minigames project: PC Windows editor-first, Futebol, Copa, third-person football, ball physics, goals, shirts/countries, bot football and future football minigames.
 - Use `_conceitos/mobile-universe/` only as design reference for DraxosMobile.
 - Use `rpg-isometrico/` only for explicit historical/contextual consultation about the isometric action RPG.
 - Use `rpg-turnos/` only for explicit historical/contextual consultation about the 2D turn-based RPG-cardgame.
