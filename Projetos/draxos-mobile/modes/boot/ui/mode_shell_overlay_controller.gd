@@ -332,6 +332,7 @@ func request_confirmation(host: Node, action_id: String, message: String) -> boo
 	_focused_control_path = ""
 	_record_input("confirm_open", normalized_action, "")
 	_sync_confirmation_panel()
+	sync_layout(host)
 	_publish_diagnostics(host)
 	return true
 
@@ -497,6 +498,7 @@ func sync_layout(host: Node) -> void:
 		var inset := 14.0 if compact else 12.0
 		var confirm_width := clampf(viewport_size.x - (safe_margin + inset) * 2.0, 300.0, 560.0)
 		var confirm_height := 168.0 if compact else 152.0
+		_confirm_panel.custom_minimum_size = Vector2(confirm_width, confirm_height)
 		_confirm_panel.anchor_left = 0.5
 		_confirm_panel.anchor_top = 0.5
 		_confirm_panel.anchor_right = 0.5
@@ -505,13 +507,16 @@ func sync_layout(host: Node) -> void:
 		_confirm_panel.offset_right = confirm_width * 0.5
 		_confirm_panel.offset_top = -confirm_height * 0.5
 		_confirm_panel.offset_bottom = confirm_height * 0.5
+		_confirm_panel.size = Vector2(confirm_width, confirm_height)
+		if _confirm_label != null and is_instance_valid(_confirm_label):
+			_confirm_label.custom_minimum_size = Vector2(maxf(160.0, confirm_width - 32.0), 0.0)
 
 func sync_controls(host: Node) -> void:
 	if not is_open():
 		return
+	_sync_confirmation_panel()
 	sync_layout(host)
 	_sync_busy_buttons(host)
-	_sync_confirmation_panel()
 
 func handle_input(host: Node, event: InputEvent) -> bool:
 	if not is_open():
@@ -667,6 +672,7 @@ func _build_overlay(host: Node) -> void:
 	_confirm_label = Label.new()
 	_confirm_label.name = "ModeShellMenuConfirmLabel"
 	_confirm_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_confirm_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_confirm_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	confirm_stack.add_child(_confirm_label)
 
