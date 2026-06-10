@@ -15,6 +15,7 @@ const EXPECTED_ACTIONS: PackedStringArray = [
 	"move_right",
 	"jump",
 	"boost",
+	"arcade_dash",
 	"shoot",
 	"alt_fire",
 	"restart_round",
@@ -387,6 +388,7 @@ func test_football_player_kick_assist_connects_near_front_side_ball() -> void:
 
 	assert_eq(ball.debug_get_kick_count(), before_kicks + 1)
 	assert_almost_eq(ball.debug_get_last_kick_force(), 20.5, 0.01)
+	assert_almost_eq(ball.linear_velocity.y, 2.35, 0.01)
 	assert_gt(ball.linear_velocity.y, 2.0)
 	assert_gt(football.debug_get_last_kick_assist_strength(), 0.0)
 	assert_eq((football.get_node("FootballHud") as FootballHud).last_event, &"kick")
@@ -407,6 +409,7 @@ func test_football_strong_kick_uses_stronger_force() -> void:
 	football._on_player_strong_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 0.0, 0.0, 0.0, 0.0, false)
 
 	assert_almost_eq(ball.debug_get_last_kick_force(), 29.0, 0.01)
+	assert_almost_eq(ball.linear_velocity.y, 7.2, 0.01)
 	assert_gt(ball.linear_velocity.y, 6.5)
 	assert_eq(hud.last_event, &"strong_kick")
 	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"strong_kick")
@@ -448,6 +451,79 @@ func test_football_bot_uses_prediction_difficulty_and_boost() -> void:
 	assert_lt(bot.debug_get_aim_error_radius(), 0.2)
 	assert_gt(bot.debug_get_last_predicted_ball_position().x, ball.global_position.x)
 	assert_true(bot.debug_is_boosting())
+	assert_no_new_orphans()
+
+func test_football_arcade_dash_spends_stamina_and_slides_ball_with_stun() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var bot = football.debug_get_bot()
+	var ball = football.debug_get_ball()
+	player.global_position = Vector3.ZERO
+	player.rotation = Vector3.ZERO
+	bot.global_position = Vector3(0.0, 0.05, -0.92)
+	football.debug_force_ball_position(Vector3(0.0, 0.68, -1.1))
+	var before_stamina: float = player.debug_get_boost_stamina()
+	var before_kicks: int = ball.debug_get_kick_count()
+
+	assert_true(player.request_arcade_dash(Vector3.FORWARD))
+	football.debug_process_arcade_action_contacts()
+
+	assert_eq(player.debug_get_arcade_dash_count(), 1)
+	assert_lt(player.debug_get_boost_stamina(), before_stamina)
+	assert_gt(football.debug_get_player_dash_cooldown_fraction(), 0.0)
+	assert_eq(ball.debug_get_kick_count(), before_kicks + 1)
+	assert_almost_eq(ball.debug_get_last_kick_force(), 7.2, 0.01)
+	assert_gt(bot.debug_get_arcade_stun_remaining(), 0.0)
+	assert_gt(bot.debug_get_knockback_event_count(), 0)
+	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"slide")
+	assert_no_new_orphans()
+
+func test_football_arcade_flip_consumes_once_and_resets_for_floor() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	player.global_position.y = 2.0
+	player.debug_force_arcade_flip_available(true)
+	await get_tree().physics_frame
+
+	assert_true(player.request_arcade_flip(Vector3.FORWARD))
+	assert_eq(player.debug_get_arcade_flip_count(), 1)
+	assert_false(player.debug_is_arcade_flip_available())
+	assert_false(player.request_arcade_flip(Vector3.FORWARD))
+	player.debug_reset_arcade_flip_for_floor()
+	assert_true(player.debug_is_arcade_flip_available())
+	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"flip")
+	assert_no_new_orphans()
+
+func test_football_bot_uses_arcade_dash_for_defense() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+
+	var bot = football.debug_get_bot()
+	var ball = football.debug_get_ball()
+	football.set_bot_difficulty(&"hard")
+	bot.global_position = Vector3(8.0, 0.05, -18.0)
+	football.debug_force_ball_position(Vector3(0.0, 0.68, -20.0))
+	ball.linear_velocity = Vector3(0.0, 0.0, -8.0)
+	bot._physics_process(0.1)
+
+	assert_gt(bot.debug_get_arcade_dash_count(), 0)
+	assert_true(bot.debug_is_arcade_dashing())
+	assert_eq(football.debug_get_bot_avatar().debug_get_animation_state(), &"slide")
 	assert_no_new_orphans()
 
 func test_football_uses_main_menu_bot_difficulty_in_hud() -> void:

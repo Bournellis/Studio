@@ -2,6 +2,8 @@ class_name FootballBot
 extends "res://gameplay/combat/combatant_3d.gd"
 
 signal kick_requested(origin: Vector3, direction: Vector3, force: float, lift: float)
+signal arcade_dash_started(direction: Vector3)
+signal arcade_flip_started(direction: Vector3)
 
 const STATE_KICKOFF: StringName = &"kickoff"
 const STATE_CHASE_BALL: StringName = &"chase_ball"
@@ -10,6 +12,11 @@ const STATE_DEFEND_GOAL: StringName = &"defend_goal"
 const STATE_KICK_WINDUP: StringName = &"kick_windup"
 const STATE_RECOVER: StringName = &"recover"
 const STATE_CELEBRATE: StringName = &"celebrate"
+const ARCADE_DASH_SPEED: float = 13.4
+const ARCADE_DASH_DURATION: float = 0.22
+const ARCADE_DASH_BASE_COOLDOWN: float = 1.65
+const ARCADE_FLIP_VERTICAL_VELOCITY: float = 4.1
+const ARCADE_FLIP_HORIZONTAL_SPEED: float = 6.8
 
 @export var move_speed: float = 8.2
 @export var turn_speed: float = 9.0
@@ -41,6 +48,15 @@ var windup_remaining: float = 0.0
 var jump_cooldown_remaining: float = 0.0
 var boost_cooldown_remaining: float = 0.0
 var boost_remaining: float = 0.0
+var arcade_dash_remaining: float = 0.0
+var arcade_dash_cooldown_remaining: float = 0.0
+var arcade_dash_cooldown: float = ARCADE_DASH_BASE_COOLDOWN
+var arcade_dash_direction: Vector3 = Vector3.FORWARD
+var arcade_dash_count: int = 0
+var arcade_flip_available: bool = true
+var arcade_flip_count: int = 0
+var arcade_stun_remaining: float = 0.0
+var arcade_flip_boost_velocity: Vector3 = Vector3.ZERO
 var vertical_velocity: float = 0.0
 var aim_cycle: int = 0
 var kick_count: int = 0
@@ -67,6 +83,14 @@ func configure(next_ball: Node3D, next_own_goal_position: Vector3, next_opponent
 	jump_cooldown_remaining = 0.0
 	boost_cooldown_remaining = 0.0
 	boost_remaining = 0.0
+	arcade_dash_remaining = 0.0
+	arcade_dash_cooldown_remaining = 0.0
+	arcade_dash_direction = Vector3.FORWARD
+	arcade_dash_count = 0
+	arcade_flip_available = true
+	arcade_flip_count = 0
+	arcade_stun_remaining = 0.0
+	arcade_flip_boost_velocity = Vector3.ZERO
 	vertical_velocity = 0.0
 	aim_cycle = 0
 	kick_count = 0
@@ -88,6 +112,7 @@ func set_difficulty(next_difficulty_id: StringName) -> void:
 			prediction_time = 0.18
 			boost_speed_multiplier = 1.0
 			bot_boost_enabled = false
+			arcade_dash_cooldown = 2.25
 		&"hard":
 			move_speed = 10.1
 			kick_force = 17.6
@@ -97,6 +122,7 @@ func set_difficulty(next_difficulty_id: StringName) -> void:
 			prediction_time = 0.82
 			boost_speed_multiplier = 1.46
 			bot_boost_enabled = true
+			arcade_dash_cooldown = 1.12
 		_:
 			difficulty_id = &"normal"
 			move_speed = 8.2
@@ -107,6 +133,7 @@ func set_difficulty(next_difficulty_id: StringName) -> void:
 			prediction_time = 0.45
 			boost_speed_multiplier = 1.32
 			bot_boost_enabled = true
+			arcade_dash_cooldown = ARCADE_DASH_BASE_COOLDOWN
 
 func set_celebrating(is_celebrating: bool) -> void:
 	current_state = STATE_CELEBRATE if is_celebrating else STATE_CHASE_BALL
@@ -118,6 +145,14 @@ func clear_movement_impulses() -> void:
 	velocity = Vector3.ZERO
 	knockback_velocity = Vector3.ZERO
 	vertical_velocity = 0.0
+	arcade_dash_remaining = 0.0
+	arcade_flip_boost_velocity = Vector3.ZERO
+
+func apply_arcade_stun(duration: float) -> void:
+	arcade_stun_remaining = maxf(arcade_stun_remaining, duration)
+	boost_remaining = 0.0
+	arcade_dash_remaining = 0.0
+	current_state = STATE_RECOVER
 
 func debug_get_state() -> StringName:
 	return current_state
@@ -143,6 +178,21 @@ func debug_get_difficulty_id() -> StringName:
 func debug_is_boosting() -> bool:
 	return boost_remaining > 0.0
 
+func debug_is_arcade_dashing() -> bool:
+	return arcade_dash_remaining > 0.0
+
+func debug_get_arcade_dash_count() -> int:
+	return arcade_dash_count
+
+func debug_get_arcade_flip_count() -> int:
+	return arcade_flip_count
+
+func debug_get_arcade_stun_remaining() -> float:
+	return arcade_stun_remaining
+
+func debug_get_arcade_dash_direction() -> Vector3:
+	return arcade_dash_direction
+
 func debug_get_aim_error_radius() -> float:
 	return aim_error_radius
 
@@ -156,7 +206,14 @@ func _physics_process(delta: float) -> void:
 	jump_cooldown_remaining = maxf(0.0, jump_cooldown_remaining - delta)
 	boost_cooldown_remaining = maxf(0.0, boost_cooldown_remaining - delta)
 	boost_remaining = maxf(0.0, boost_remaining - delta)
+	arcade_dash_cooldown_remaining = maxf(0.0, arcade_dash_cooldown_remaining - delta)
+	arcade_stun_remaining = maxf(0.0, arcade_stun_remaining - delta)
 	_apply_gravity(delta)
+	if arcade_stun_remaining > 0.0:
+		var stun_knockback := consume_knockback(delta, is_on_floor())
+		velocity = Vector3(stun_knockback.x, stun_knockback.y, stun_knockback.z)
+		move_and_slide()
+		return
 
 	if current_state == STATE_KICK_WINDUP:
 		_handle_windup(delta)
@@ -167,6 +224,8 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	if is_on_floor() and vertical_velocity < 0.0:
 		vertical_velocity = -0.1
+	if is_on_floor():
+		arcade_flip_available = true
 	_face_ball(delta)
 
 func _handle_ball_state() -> void:
@@ -229,6 +288,8 @@ func _move_toward_target(delta: float) -> void:
 	to_target.y = 0.0
 	var desired := Vector3.ZERO
 	if to_target.length_squared() > 0.05:
+		if _should_start_arcade_dash(to_target.length()):
+			_start_arcade_dash(to_target)
 		if _should_start_boost(to_target.length()):
 			boost_remaining = boost_duration
 			boost_cooldown_remaining = boost_cooldown
@@ -236,7 +297,12 @@ func _move_toward_target(delta: float) -> void:
 		desired = to_target.normalized() * speed
 	if ball.global_position.y > global_position.y + 1.0 and _flat_distance(global_position, ball.global_position) < 3.1:
 		_try_jump()
+		_try_arcade_flip()
 	velocity = desired
+	var dash_velocity := _consume_arcade_dash(delta)
+	if dash_velocity.length_squared() > 0.0001:
+		velocity = dash_velocity
+	velocity += _consume_arcade_flip_boost(delta)
 	velocity.y = vertical_velocity
 
 func _build_defend_target(ball_position: Vector3) -> Vector3:
@@ -274,6 +340,52 @@ func _should_start_boost(flat_distance_to_target: float) -> bool:
 	if flat_distance_to_target < 5.2:
 		return false
 	return current_state == STATE_ATTACK_GOAL or current_state == STATE_CHASE_BALL or current_state == STATE_DEFEND_GOAL
+
+func _should_start_arcade_dash(flat_distance_to_target: float) -> bool:
+	if arcade_dash_remaining > 0.0 or arcade_dash_cooldown_remaining > 0.0 or current_state != STATE_DEFEND_GOAL:
+		return false
+	if flat_distance_to_target < kick_range + 1.2:
+		return false
+	var ball_velocity: Vector3 = ball.linear_velocity if ball != null else Vector3.ZERO
+	var ball_to_goal: Vector3 = own_goal_position - ball.global_position
+	ball_to_goal.y = 0.0
+	var threat_speed: float = Vector3(ball_velocity.x, 0.0, ball_velocity.z).dot(ball_to_goal.normalized()) if ball_to_goal.length_squared() > 0.0001 else 0.0
+	return _flat_distance(ball.global_position, own_goal_position) <= defend_goal_distance + 4.5 or threat_speed > 3.5
+
+func _start_arcade_dash(direction: Vector3) -> bool:
+	var flat: Vector3 = Vector3(direction.x, 0.0, direction.z)
+	if flat.length_squared() <= 0.0001:
+		return false
+	arcade_dash_direction = flat.normalized()
+	arcade_dash_remaining = ARCADE_DASH_DURATION
+	arcade_dash_cooldown_remaining = arcade_dash_cooldown
+	arcade_dash_count += 1
+	arcade_dash_started.emit(arcade_dash_direction)
+	return true
+
+func _consume_arcade_dash(delta: float) -> Vector3:
+	if arcade_dash_remaining <= 0.0:
+		return Vector3.ZERO
+	arcade_dash_remaining = maxf(0.0, arcade_dash_remaining - delta)
+	return arcade_dash_direction * ARCADE_DASH_SPEED
+
+func _try_arcade_flip() -> void:
+	if is_on_floor() or not arcade_flip_available:
+		return
+	var direction: Vector3 = ball.global_position - global_position
+	direction.y = 0.0
+	if direction.length_squared() <= 0.0001:
+		direction = -global_transform.basis.z
+	vertical_velocity = maxf(vertical_velocity, ARCADE_FLIP_VERTICAL_VELOCITY)
+	arcade_flip_boost_velocity = direction.normalized() * ARCADE_FLIP_HORIZONTAL_SPEED
+	arcade_flip_available = false
+	arcade_flip_count += 1
+	arcade_flip_started.emit(direction.normalized())
+
+func _consume_arcade_flip_boost(delta: float) -> Vector3:
+	var current: Vector3 = arcade_flip_boost_velocity
+	arcade_flip_boost_velocity = arcade_flip_boost_velocity.move_toward(Vector3.ZERO, 5.4 * delta)
+	return current
 
 func _apply_aim_error(direction: Vector3) -> Vector3:
 	var pattern := _aim_pattern(aim_cycle)

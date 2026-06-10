@@ -38,6 +38,14 @@ const PLAYER_KICK_ASSIST_RADIUS: float = 2.38
 const PLAYER_TOUCH_RADIUS: float = 1.42
 const PLAYER_TOUCH_FORCE: float = 5.2
 const PLAYER_NEAR_BALL_RADIUS: float = 2.5
+const ARCADE_SLIDE_BALL_RADIUS: float = 2.05
+const ARCADE_BODY_CONTACT_RADIUS: float = 1.35
+const ARCADE_CONTACT_COOLDOWN: float = 0.24
+const ARCADE_SLIDE_BALL_FORCE: float = 7.2
+const ARCADE_SLIDE_BALL_LIFT: float = 0.32
+const ARCADE_SLIDE_STUN_DURATION: float = 0.5
+const ARCADE_SLIDE_KNOCKBACK_FORCE: float = 8.0
+const ARCADE_SHOULDER_KNOCKBACK_FORCE: float = 4.6
 const PLAYER_KICK_FORCE: float = 20.5
 const PLAYER_STRONG_KICK_FORCE: float = 29.0
 const PLAYER_KICK_LIFT: float = 2.35
@@ -71,6 +79,7 @@ var menu_open: bool = false
 var phase_label: StringName = &"kickoff"
 var goal_reset_timer: float = 0.0
 var player_touch_cooldown_remaining: float = 0.0
+var arcade_contact_cooldown_remaining: float = 0.0
 var player_ball_control_state: StringName = &"free"
 var player_ball_control_strength: float = 0.0
 var last_kick_assist_strength: float = 0.0
@@ -105,6 +114,7 @@ func _physics_process(delta: float) -> void:
 		_update_kickoff_countdown(delta)
 		return
 	player_touch_cooldown_remaining = maxf(0.0, player_touch_cooldown_remaining - delta)
+	arcade_contact_cooldown_remaining = maxf(0.0, arcade_contact_cooldown_remaining - delta)
 	if goal_reset_timer > 0.0:
 		goal_reset_timer = maxf(0.0, goal_reset_timer - delta)
 		if goal_reset_timer <= 0.0 and not match_over:
@@ -114,6 +124,7 @@ func _physics_process(delta: float) -> void:
 		return
 	_update_player_ball_control(delta)
 	_process_player_ball_contact()
+	_process_arcade_action_contacts()
 	_process_goal_detection()
 	_update_avatar_states()
 
@@ -183,6 +194,9 @@ func debug_get_last_kick_assist_strength() -> float:
 func debug_get_player_boost_fraction() -> float:
 	return player.get_boost_stamina_fraction() if player != null else 0.0
 
+func debug_get_player_dash_cooldown_fraction() -> float:
+	return player.get_arcade_dash_cooldown_fraction() if player != null and player.has_method("get_arcade_dash_cooldown_fraction") else 0.0
+
 func debug_is_kickoff_locked() -> bool:
 	return kickoff_countdown_remaining > 0.0
 
@@ -197,6 +211,9 @@ func debug_get_feedback():
 
 func debug_update_player_ball_control(delta: float = 0.1) -> void:
 	_update_player_ball_control(delta)
+
+func debug_process_arcade_action_contacts() -> void:
+	_process_arcade_action_contacts()
 
 func debug_build_hud_snapshot() -> Dictionary:
 	return _build_hud_snapshot()
@@ -433,6 +450,14 @@ func _spawn_runtime() -> void:
 	runtime_root.add_child(player)
 	player.shoot_requested.connect(_on_player_kick_requested)
 	player.alt_fire_requested.connect(_on_player_strong_kick_requested)
+	player.arcade_dash_started.connect(func(_direction: Vector3) -> void:
+		if player_avatar != null:
+			player_avatar.play_slide()
+	)
+	player.arcade_flip_started.connect(func(_direction: Vector3) -> void:
+		if player_avatar != null:
+			player_avatar.play_flip()
+	)
 	player.damaged.connect(func(_amount: float, _remaining_health: float) -> void:
 		if player_avatar != null:
 			player_avatar.play_hit()
@@ -466,6 +491,14 @@ func _spawn_runtime() -> void:
 	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH), FIELD_HALF_WIDTH, FIELD_HALF_LENGTH)
 	bot.set_difficulty(bot_difficulty_id)
 	bot.kick_requested.connect(_on_bot_kick_requested)
+	bot.arcade_dash_started.connect(func(_direction: Vector3) -> void:
+		if bot_avatar != null:
+			bot_avatar.play_slide()
+	)
+	bot.arcade_flip_started.connect(func(_direction: Vector3) -> void:
+		if bot_avatar != null:
+			bot_avatar.play_flip()
+	)
 	bot.damaged.connect(func(_amount: float, _remaining_health: float) -> void:
 		if bot_avatar != null:
 			bot_avatar.play_hit()
@@ -530,6 +563,7 @@ func _restart_play(after_goal: bool) -> void:
 	if chase_camera != null:
 		chase_camera.snap_to_target()
 	player_touch_cooldown_remaining = 0.0
+	arcade_contact_cooldown_remaining = 0.0
 	player_ball_control_state = &"free"
 	player_ball_control_strength = 0.0
 	last_kick_assist_strength = 0.0
@@ -613,6 +647,61 @@ func _process_player_ball_contact() -> void:
 	var contact_lift := 0.42 if player.is_boosting() else 0.18
 	ball.kick(contact_direction, PLAYER_TOUCH_FORCE * boost_multiplier, contact_lift)
 	player_touch_cooldown_remaining = PLAYER_TOUCH_COOLDOWN
+
+func _process_arcade_action_contacts() -> void:
+	if arcade_contact_cooldown_remaining > 0.0 or player == null or bot == null or ball == null:
+		return
+	var handled := false
+	if player.has_method("is_arcade_dashing") and player.is_arcade_dashing():
+		handled = _process_arcade_dash_contact(player, bot, true) or handled
+	if bot.has_method("debug_is_arcade_dashing") and bot.debug_is_arcade_dashing():
+		handled = _process_arcade_dash_contact(bot, player, false) or handled
+	if handled:
+		arcade_contact_cooldown_remaining = ARCADE_CONTACT_COOLDOWN
+
+func _process_arcade_dash_contact(actor: Node3D, target: Node3D, actor_is_player: bool) -> bool:
+	var actor_position: Vector3 = actor.global_position
+	var target_position: Vector3 = target.global_position
+	var dash_direction := _get_arcade_dash_direction(actor, actor_is_player)
+	var ball_close := _flat_distance(actor_position, ball.global_position) <= ARCADE_SLIDE_BALL_RADIUS
+	var body_close := _flat_distance(actor_position, target_position) <= ARCADE_BODY_CONTACT_RADIUS
+	if not ball_close and not body_close:
+		return false
+	if ball_close:
+		ball.kick(dash_direction, ARCADE_SLIDE_BALL_FORCE, ARCADE_SLIDE_BALL_LIFT)
+		if actor_is_player and player_avatar != null:
+			player_avatar.play_slide()
+		elif not actor_is_player and bot_avatar != null:
+			bot_avatar.play_slide()
+		if body_close:
+			_apply_arcade_knockback_and_stun(target, dash_direction, ARCADE_SLIDE_KNOCKBACK_FORCE, ARCADE_SLIDE_STUN_DURATION)
+		return true
+	if body_close:
+		_apply_arcade_knockback(target, dash_direction, ARCADE_SHOULDER_KNOCKBACK_FORCE)
+		_apply_arcade_knockback(actor, -dash_direction, ARCADE_SHOULDER_KNOCKBACK_FORCE * 0.72)
+		return true
+	return false
+
+func _get_arcade_dash_direction(actor: Node3D, actor_is_player: bool) -> Vector3:
+	var direction := Vector3.ZERO
+	if actor_is_player and actor.has_method("get_arcade_dash_direction"):
+		direction = actor.get_arcade_dash_direction()
+	elif not actor_is_player and actor.has_method("debug_get_arcade_dash_direction"):
+		direction = actor.debug_get_arcade_dash_direction()
+	direction.y = 0.0
+	if direction.length_squared() <= 0.0001:
+		direction = -actor.global_transform.basis.z
+		direction.y = 0.0
+	return direction.normalized() if direction.length_squared() > 0.0001 else Vector3.FORWARD
+
+func _apply_arcade_knockback_and_stun(target: Node, direction: Vector3, force: float, stun_duration: float) -> void:
+	_apply_arcade_knockback(target, direction, force)
+	if target.has_method("apply_arcade_stun"):
+		target.apply_arcade_stun(stun_duration)
+
+func _apply_arcade_knockback(target: Node, direction: Vector3, force: float) -> void:
+	if target.has_method("apply_knockback"):
+		target.apply_knockback(direction, force, 1.05)
 
 func _process_goal_detection() -> void:
 	var goal_side := FootballMatchRulesScript.detect_goal(ball.global_position, GOAL_HALF_WIDTH, GOAL_LINE_NORTH, GOAL_LINE_SOUTH, GOAL_HEIGHT)
@@ -711,12 +800,13 @@ func _build_hud_snapshot() -> Dictionary:
 		"ball_control_strength": player_ball_control_strength,
 		"boost_fraction": player.get_boost_stamina_fraction() if player != null else 0.0,
 		"boost_active": player.is_boosting() if player != null else false,
+		"dash_cooldown_fraction": player.get_arcade_dash_cooldown_fraction() if player != null and player.has_method("get_arcade_dash_cooldown_fraction") else 0.0,
 		"bot_state": bot.debug_get_state() if bot != null else "none",
 		"bot_difficulty": bot_difficulty_id,
 		"kickoff_owner": kickoff_owner,
 		"phase": phase_label,
 		"countdown": kickoff_countdown_remaining,
-		"hint": "Comecar inicia | WASD move | Shift boost | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | paredes/teto rebatem | R restart | Esc menu"
+		"hint": "Comecar inicia | WASD move | Shift boost | E/Ctrl dash | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Shift boost | E/Ctrl dash | LMB chute | RMB chute forte | Space jump/flip | paredes/teto rebatem | R restart | Esc menu"
 	}
 
 func _advance_kickoff_owner() -> void:
@@ -833,6 +923,8 @@ func _update_player_presentation_fx(_delta: float) -> void:
 	if player != null and player.is_boosting():
 		boost_fraction = 1.0
 		boost_active = true
+	if player != null and player.has_method("is_arcade_dashing") and player.is_arcade_dashing():
+		boost_active = true
 	if chase_camera != null:
 		chase_camera.set_boost_fov_fraction(boost_fraction)
 	var skid_active := false
@@ -948,3 +1040,8 @@ func _update_avatar_states() -> void:
 	if bot_avatar != null and bot != null:
 		var bot_flat_speed := Vector3(bot.velocity.x, 0.0, bot.velocity.z).length()
 		bot_avatar.set_move_state(bot_flat_speed, bot.is_on_floor(), bot.velocity.y)
+
+func _flat_distance(a: Vector3, b: Vector3) -> float:
+	a.y = 0.0
+	b.y = 0.0
+	return a.distance_to(b)

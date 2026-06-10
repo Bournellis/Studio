@@ -68,6 +68,10 @@ func test_avatar_animation_states_are_presentation_only() -> void:
 	assert_eq(avatar.debug_get_animation_state(), &"celebrate")
 	avatar.play_hit()
 	assert_eq(avatar.debug_get_animation_state(), &"hit")
+	avatar.play_slide()
+	assert_eq(avatar.debug_get_animation_state(), &"slide")
+	avatar.play_flip()
+	assert_eq(avatar.debug_get_animation_state(), &"flip")
 	assert_no_new_orphans()
 
 func test_local_first_person_avatar_hides_head_and_neck() -> void:

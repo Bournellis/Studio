@@ -5,6 +5,10 @@
 - Decisao: pacotes A (movimento), C (super shot), B (campo), D (tempero de partida) aprovados; E (toon look) aprovado como experimento atras de toggle. Power-ups classicos de campo ficam explicitamente fora (mudariam a identidade para party game; possivel modo separado futuro).
 - Baseline: serie Track 02 + hotfix 02H completa (`JOGO_DA_COPA_TRACK_02H_QUALITY_HOTFIX_V1_COMPLETE`, 30 tests/289 asserts). 02C-bis (personagem) e 02D-bis (audio) seguem pendentes de download manual de assets por Fabio e nao bloqueiam esta serie.
 
+## Progress
+
+- `2026-06-10` - `Track 03A Arcade Movement & Actions V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_03A_ARCADE_MOVEMENT_ACTIONS_V1_COMPLETE`). `tools/validate.gd` PASS (33 tests, 316 asserts). Performance sample Windows/Forward+: average `1275.8fps`, min warmed instant `787.4fps`, `0/360` frames below 60.
+
 ## Direcao
 
 Transformar o "futebol 1x1 com fisica" em "futebol de arena arcade": acoes de personagem com risco/recompensa (dash, flip, super), campo que convida a jogadas (pads, rampas) e partida com climax garantido (timer curto, golden goal, anunciador). Referencias: Rocket League (movimento/arena), Mario Strikers (super shot/provocacao). Tudo procedural - nenhum asset externo nesta serie.

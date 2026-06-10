@@ -84,6 +84,16 @@ func play_hit() -> void:
 	animation_timer = 0.22
 	_apply_animation()
 
+func play_slide() -> void:
+	animation_state = &"slide"
+	animation_timer = 0.28
+	_apply_animation()
+
+func play_flip() -> void:
+	animation_state = &"flip"
+	animation_timer = 0.32
+	_apply_animation()
+
 func set_boost_trail_active(is_active: bool) -> void:
 	if boost_trail_particles != null:
 		boost_trail_particles.emitting = is_active
@@ -264,6 +274,20 @@ func _apply_animation() -> void:
 		_rotate_pivot(&"left_arm", Vector3(0.42, 0.0, -0.18))
 		_rotate_pivot(&"right_arm", Vector3(0.42, 0.0, 0.18))
 		part_root.rotation.x = 0.08
+	elif animation_state == &"slide":
+		_rotate_pivot(&"left_arm", Vector3(0.52, 0.0, -0.16))
+		_rotate_pivot(&"right_arm", Vector3(0.52, 0.0, 0.16))
+		_rotate_pivot(&"left_leg", Vector3(-0.42, 0.0, -0.08))
+		_rotate_pivot(&"right_leg", Vector3(0.7, 0.0, 0.08))
+		part_root.rotation.x = 0.22
+		part_root.position.y = -0.08
+	elif animation_state == &"flip":
+		var spin := sin(stride_time * TAU * 1.2) * 0.24
+		_rotate_pivot(&"left_arm", Vector3(-0.72, 0.0, -0.36))
+		_rotate_pivot(&"right_arm", Vector3(-0.72, 0.0, 0.36))
+		_rotate_pivot(&"left_leg", Vector3(0.44, 0.0, -0.08))
+		_rotate_pivot(&"right_leg", Vector3(-0.44, 0.0, 0.08))
+		part_root.rotation.x = -0.28 + spin
 
 func _build_persistent_vfx() -> void:
 	if boost_trail_particles == null:

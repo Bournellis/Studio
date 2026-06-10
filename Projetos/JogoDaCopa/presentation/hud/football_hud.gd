@@ -84,10 +84,13 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	var control_strength := float(snapshot.get("ball_control_strength", 0.0))
 	var boost_fraction := float(snapshot.get("boost_fraction", 1.0))
 	var boost_active := bool(snapshot.get("boost_active", false))
-	control_label.text = "Bola: %s %.0f%% | Boost %s" % [
+	var dash_cooldown_fraction := float(snapshot.get("dash_cooldown_fraction", 0.0))
+	var dash_label := "pronto" if dash_cooldown_fraction <= 0.0 else "%.0f%%" % [(1.0 - dash_cooldown_fraction) * 100.0]
+	control_label.text = "Bola: %s %.0f%% | Boost %s | Dash %s" % [
 		_get_control_label(control_state),
 		control_strength * 100.0,
-		"ATIVO" if boost_active else "%.0f%%" % [boost_fraction * 100.0]
+		"ATIVO" if boost_active else "%.0f%%" % [boost_fraction * 100.0],
+		dash_label
 	]
 	if boost_bar != null:
 		boost_bar.value = boost_fraction * 100.0
