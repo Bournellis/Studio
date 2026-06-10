@@ -443,7 +443,7 @@ func _prepare_arena_summary_store() -> void:
 
 func _arena_attempt_fixture(with_buff_offer: bool) -> Dictionary:
 	var attempt := {
-		"attempt_id": "responsive-arena",
+		"attempt_id": "55555555-5555-4555-8555-555555555555",
 		"arena_id": "arena_cinzas_curta",
 		"status": "active",
 		"duel_index": 1,
