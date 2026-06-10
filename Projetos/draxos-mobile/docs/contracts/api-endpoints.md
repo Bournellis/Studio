@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-06-09`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; `release/*` esta alinhado ao manifest remoto de Bosque Overlay Interactive Controls Authority v1 (`0.0.21-alpha.0`, code `21`, minimo `0.0.13-alpha.0`, code `13`).
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; `release/*` esta alinhado ao manifest remoto de Bosque Arena Abandon Recovery Authority v1 (`0.0.22-alpha.0`, code `22`, minimo `0.0.13-alpha.0`, code `13`).
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -533,7 +533,7 @@ Response:
 
 Retorna o manifest publico de updates da Internal Alpha v0.
 
-Status: **contrato vivo; fallback estatico e override remoto alinhados ao pacote publicado atual Bosque Overlay Interactive Controls Authority v1**.
+Status: **contrato vivo; fallback estatico e override remoto alinhados ao pacote publicado atual Bosque Arena Abandon Recovery Authority v1**.
 
 Scope: `release`.
 
@@ -545,15 +545,15 @@ Response:
 {
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
-  "latest_version": "0.0.21-alpha.0",
-  "latest_version_code": 21,
+  "latest_version": "0.0.22-alpha.0",
+  "latest_version_code": 22,
   "minimum_supported_version": "0.0.13-alpha.0",
   "minimum_supported_version_code": 13,
-  "released_at": "2026-06-09T00:00:00Z",
+  "released_at": "2026-06-10T00:00:00Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Bosque Overlay Interactive Controls Authority v1 publicado na URL principal de Internal Alpha.",
+    "Bosque Arena Abandon Recovery Authority v1 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
     "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
     "Voltar, Fechar e Esc/Web usam a mesma autoridade de fechamento do overlay e devolvem input ao mesmo node do Bosque sem rebootstrap.",
@@ -561,11 +561,11 @@ Response:
     "Refresh read-only nao bloqueia fechamento; respostas tardias sao ignoradas quando o overlay fecha ou muda de rota.",
     "Arena PVE roda dentro do overlay e bloqueia fechamento apenas durante replay ou mutacao critica explicita.",
     "Social, Loja e Arena usam controles interativos no overlay com foco, texto, confirmacao, retomada e abandono validados no Web/canvas.",
-    "Manifesto recomenda build 0.0.21-alpha.0 e mantem build minima 0.0.13-alpha.0."
+    "Manifesto recomenda build 0.0.22-alpha.0 e mantem build minima 0.0.13-alpha.0."
   ],
   "artifacts": {
-    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android", "sha256": "fc4f414d7c1f769a0505c2ff9cef01ad919a149f28279c4ffc13cf56ce2aa06c", "auth_required": true },
-    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows", "sha256": "a0621dcd27c1fa6d78f0e4c4a393b1f5ee21a2138901eba170f7558aeea94c9f", "auth_required": true },
+    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android", "sha256": "10cdc2bc4f7ea25db7c05be917efe0a0d73baa1047b01311748857e6637dfc99", "auth_required": true },
+    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows", "sha256": "ff63afa6b605d699d101a4a9eb5177f98cd994e155445d0ba2ccbdbbac49fb13", "auth_required": true },
     "web": { "label": "Web", "url": "https://draxos-mobile-internal-alpha.pages.dev/web/index.html" }
   }
 }

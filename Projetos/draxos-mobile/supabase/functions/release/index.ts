@@ -41,14 +41,14 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
       label: "Android APK",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      sha256: "fc4f414d7c1f769a0505c2ff9cef01ad919a149f28279c4ffc13cf56ce2aa06c",
+      sha256: "10cdc2bc4f7ea25db7c05be917efe0a0d73baa1047b01311748857e6637dfc99",
       auth_required: "true",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      sha256: "a0621dcd27c1fa6d78f0e4c4a393b1f5ee21a2138901eba170f7558aeea94c9f",
+      sha256: "ff63afa6b605d699d101a4a9eb5177f98cd994e155445d0ba2ccbdbbac49fb13",
       auth_required: "true",
     },
     web: {
