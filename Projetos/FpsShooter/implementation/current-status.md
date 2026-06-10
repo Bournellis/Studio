@@ -4,8 +4,8 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS Playground tech probe`
-- Active stage: `Track 05 - Foundation Hardening & Refactor V1`
-- Active stage status: `COMPLETE`
+- Active stage: `Track 06A - Avatar Visual Foundation V1`
+- Active stage status: `ACTIVE`
 
 ## Current Truth
 
@@ -35,11 +35,11 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 
 ## Active Goal
 
-`Track 05 - Foundation Hardening & Refactor V1` is complete. The accepted `Arena Shooter` and `Futebol` behavior is preserved while documentation, validation, shared runtime helpers, mode boundaries, bot contracts and test organization are hardened for the next gameplay track.
+`Track 06A - Avatar Visual Foundation V1` is active. The current objective is to add a procedural runtime avatar foundation to `Futebol`: visible primitive humanoids for player/bot, skin tone selection, country-inspired shirt kits and basic presentation-only animation states.
 
 ## Current Gate
 
-Open for next gameplay planning. Recommended next work is choosing a focused gameplay growth track now that the foundation is cleaner: football feel tuning, arena content/map expansion or another FPS Playground mode.
+Implement Track 06A in a dedicated worktree, keep Arena Shooter behavior preserved and validate that Futebol remains playable while gaining avatar customization/animation.
 
 ## Validation Snapshot
 
@@ -228,3 +228,4 @@ Track 05 Foundation Hardening & Refactor V1:
 17. `implementation/tracks/track-03b-arena-flow-route-tuning-v1/current-status.md`
 18. `implementation/tracks/track-04a-fps-playground-football-v1/current-status.md`
 19. `implementation/tracks/track-05-foundation-hardening-refactor-v1/current-status.md`
+20. `implementation/tracks/track-06a-avatar-visual-foundation-v1/current-status.md`

@@ -1,7 +1,7 @@
 # FPS Playground Documentation Index
 
 - Last updated: `2026-06-10`
-- Status: `TRACK_05_COMPLETE`
+- Status: `TRACK_06A_ACTIVE`
 
 ## Purpose
 
@@ -62,14 +62,15 @@ For tuning work:
 | `docs/validation-profiles.md` | Validation profiles and known warnings. |
 | `docs/publication-readiness.md` | Future professional publication checklist. |
 | `docs/codebase-audit-track05.md` | Track 05 audit, risks and refactor order. |
+| `docs/avatar-visual-contract.md` | Runtime avatar, appearance and animation contract for Futebol visuals. |
 
 ## Implementation Tracks
 
 Track history lives in `implementation/tracks/`. Completed tracks are historical baselines, not active instructions, unless current status explicitly points to them.
 
-Current hardening track:
+Current gameplay track:
 
-- `implementation/tracks/track-05-foundation-hardening-refactor-v1/current-status.md`
+- `implementation/tracks/track-06a-avatar-visual-foundation-v1/current-status.md`
 
 ## Source Boundaries
 
@@ -79,6 +80,7 @@ Current hardening track:
 | `gameplay/combat/` | Health, damage, knockback and shared combat body behavior. |
 | `gameplay/player/` | FPS movement, camera, aiming and player fire requests. |
 | `gameplay/bot/` | Arena bot decisions, movement, shot requests and debug. |
+| `gameplay/avatar/` | Runtime procedural avatar visuals, appearance catalog and presentation-only animation. |
 | `gameplay/football/` | Football ball and football bot behavior. |
 | `modes/menu/` | Main menu and mode selection. |
 | `modes/arena/` | Arena mode composition, map assembly and round authority. |

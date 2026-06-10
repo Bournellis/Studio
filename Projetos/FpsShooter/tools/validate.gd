@@ -123,6 +123,7 @@ func _check_documentation_contract() -> void:
 	_check_resource("res://docs/validation-profiles.md")
 	_check_resource("res://docs/publication-readiness.md")
 	_check_resource("res://docs/codebase-audit-track05.md")
+	_check_resource("res://docs/avatar-visual-contract.md")
 
 func _check_generated_scenes() -> void:
 	var menu_scene := load("res://modes/menu/main_menu.tscn") as PackedScene
