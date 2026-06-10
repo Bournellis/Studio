@@ -4,7 +4,7 @@
 
 - id: `2026-06-10_codex_jogodacopa_track03-arcade-series-v1`
 - owner: `Codex`
-- status: `Doing`
+- status: `Done`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track03-arcade-series-v1`
@@ -51,16 +51,25 @@ Implementar a Serie Track 03 Arcade V1 completa em `Copa Arena Futebol`, seguind
 
 ## Acceptance Criteria
 
-- [ ] Plano arcade commitado e indexado antes da worktree de implementacao.
-- [ ] `03A`, `03C`, `03B`, `03D` e `03E` implementadas na ordem solicitada.
-- [ ] `tools/validate.gd` PASS apos cada track antes de avancar.
-- [ ] Performance medida apos `03A` e `03B`, mantendo 60fps.
-- [ ] Bot tem paridade na mesma track para dash/flip/stun, super/carga e coleta de boost pads.
-- [ ] Tap LMB e RMB preservados com regressao explicita de forca/lift.
-- [ ] Todo impulso novo na bola passa por `FootballBall3D.kick()`.
-- [ ] `03E` fica atras de `RENDER_TOON_ENABLED` default OFF e gera screenshots comparativos ON/OFF.
-- [ ] Nenhum segredo ou credencial foi salvo no projeto.
-- [ ] Handoff foi criado se outro agente precisar continuar.
+- [x] Plano arcade commitado e indexado antes da worktree de implementacao.
+- [x] `03A`, `03C`, `03B`, `03D` e `03E` implementadas na ordem solicitada.
+- [x] `tools/validate.gd` PASS apos cada track antes de avancar.
+- [x] Performance medida apos `03A` e `03B`, mantendo 60fps.
+- [x] Bot tem paridade na mesma track para dash/flip/stun, super/carga e coleta de boost pads.
+- [x] Tap LMB e RMB preservados com regressao explicita de forca/lift.
+- [x] Todo impulso novo na bola passa por `FootballBall3D.kick()`.
+- [x] `03E` fica atras de `RENDER_TOON_ENABLED` default OFF e gera screenshots comparativos ON/OFF.
+- [x] Nenhum segredo ou credencial foi salvo no projeto.
+- [x] Handoff foi criado se outro agente precisar continuar.
+
+## Validation Log
+
+- `03A`: `tools/validate.gd` PASS (33 tests, 316 asserts). Performance Windows/Forward+: average `1275.8fps`, min warmed instant `787.4fps`, `0/360` frames below 60.
+- `03C`: `tools/validate.gd` PASS (36 tests, 333 asserts).
+- `03B`: `tools/validate.gd` PASS (39 tests, 358 asserts). Performance Windows/Forward+: average `1097.6fps`, min warmed instant `607.2fps`, `0/360` frames below 60.
+- `03D`: `tools/validate.gd` PASS (45 tests, 403 asserts).
+- `03E`: `tools/validate.gd` PASS (46 tests, 426 asserts). Screenshots ON/OFF gerados em `Projetos/JogoDaCopa/docs/screenshots/track-03e-toon/`.
+- Known validation noise: GUT UID/text-path warnings.
 
 ## Handoff Needed
 
