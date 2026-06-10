@@ -47,7 +47,6 @@ const STATE_DEAD: StringName = &"dead"
 @export var jump_height_goal_threshold: float = 0.42
 @export var jump_height_goal_distance: float = 4.8
 @export var jump_probe_distance: float = 0.78
-@export var fall_zone_avoid_radius: float = 2.8
 @export var jump_pad_route_distance: float = 3.2
 
 var target
@@ -84,7 +83,6 @@ var projectile_threat_position: Vector3 = Vector3.ZERO
 var projectile_threat_velocity: Vector3 = Vector3.ZERO
 var overcharge_shots_remaining: int = 0
 var jump_pad_routes: Array[Dictionary] = []
-var fall_zone_centers: Array[Vector3] = []
 var last_navigation_target: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
@@ -124,9 +122,6 @@ func set_reposition_points(points: Array[Vector3]) -> void:
 
 func set_jump_pad_routes(routes: Array[Dictionary]) -> void:
 	jump_pad_routes = routes.duplicate(true)
-
-func set_fall_zone_awareness(next_centers: Array[Vector3]) -> void:
-	fall_zone_centers = next_centers.duplicate()
 
 func force_fire() -> void:
 	_cancel_windup(STATE_ENGAGE)
@@ -187,9 +182,6 @@ func debug_get_jump_pad_launch_count() -> int:
 func debug_get_jump_pad_route_count() -> int:
 	return jump_pad_routes.size()
 
-func debug_get_fall_zone_count() -> int:
-	return fall_zone_centers.size()
-
 func debug_get_last_navigation_target() -> Vector3:
 	return last_navigation_target
 
@@ -225,7 +217,6 @@ func _physics_process(delta: float) -> void:
 	var before_position := global_position
 	last_has_line_of_sight = _refresh_target_visibility()
 	last_desired_move = _handle_duel_state(delta)
-	last_desired_move = _apply_fall_zone_avoidance(last_desired_move)
 	last_desired_move = _apply_projectile_dodge(last_desired_move)
 	_maybe_jump_for_navigation(last_desired_move)
 	velocity = _build_velocity(last_desired_move, delta)
@@ -516,8 +507,7 @@ func _choose_reposition_destination() -> void:
 		var travel_score := global_position.distance_to(point) * 0.12
 		var cycle_score := 0.01 * float((index + reposition_cycle_index) % maxi(1, candidate_points.size()))
 		var height_score := clampf(point.y - global_position.y, 0.0, 4.0) * 0.42
-		var danger_penalty := _fall_zone_penalty(point)
-		var score := distance_score + travel_score + cycle_score + height_score - danger_penalty
+		var score := distance_score + travel_score + cycle_score + height_score
 		if score > best_score:
 			best_score = score
 			best_point = point
@@ -691,36 +681,6 @@ func _projectile_dodge_movement() -> Vector3:
 	if is_zero_approx(side):
 		side = strafe_direction
 	return lateral * side
-
-func _apply_fall_zone_avoidance(desired_move: Vector3) -> Vector3:
-	if fall_zone_centers.is_empty():
-		return desired_move
-	var avoid := Vector3.ZERO
-	for center: Vector3 in fall_zone_centers:
-		var delta := global_position - center
-		delta.y = 0.0
-		var distance := delta.length()
-		if distance <= 0.01:
-			avoid += Vector3.RIGHT
-			continue
-		if distance < fall_zone_avoid_radius:
-			avoid += delta.normalized() * (1.0 - distance / fall_zone_avoid_radius)
-	if avoid.length_squared() <= 0.0001:
-		return desired_move
-	var combined := desired_move + avoid.normalized() * 0.85
-	if combined.length_squared() <= 0.0001:
-		return avoid.normalized()
-	return combined.normalized()
-
-func _fall_zone_penalty(point: Vector3) -> float:
-	var penalty := 0.0
-	for center: Vector3 in fall_zone_centers:
-		var delta := point - center
-		delta.y = 0.0
-		var distance := delta.length()
-		if distance < fall_zone_avoid_radius:
-			penalty += (fall_zone_avoid_radius - distance) * 1.75
-	return penalty
 
 func _apply_gravity(delta: float) -> void:
 	var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)

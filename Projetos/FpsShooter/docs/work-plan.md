@@ -1,13 +1,13 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-10`
-- Status: `FPS_SHOOTER_TRACK_03A_VERTICAL_ARENA_FALL_PRESSURE_COMPLETE`
+- Status: `FPS_SHOOTER_TRACK_03A_VERTICAL_ARENA_NO_VOID_COMPLETE`
 
 ## North Star
 
 Create a small first-person shooter tech probe that proves Godot 4.6.2 can support a satisfying PC editor-first 3D combat loop for the studio.
 
-The project starts as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first vertical arena with jump pads, elevated objectives and fall pressure.
+The project starts as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first vertical arena with jump pads and elevated objectives. Void/fall pressure is reserved for future dedicated maps.
 
 ## Track 00 - Project Bootstrap
 
@@ -140,11 +140,11 @@ Future candidate scope:
 
 Goal: add the first gameplay shape beyond a flat arena.
 
-Status: active; Track 03A is complete.
+Status: complete; Track 03A no-void hotfix is complete.
 
-## Track 03A - Vertical Arena And Fall Pressure V1
+## Track 03A - Vertical Arena No Void V1
 
-Goal: make vertical positioning and hazard pressure part of the playable 1x1 duel loop.
+Goal: make vertical positioning part of the playable 1x1 duel loop without using void/fall pressure in the current map.
 
 Status: complete.
 
@@ -155,18 +155,16 @@ Delivered:
 - Health Shard and Overcharge moved onto elevated objectives;
 - two jump pads that launch player and bot toward high platforms;
 - jump-pad visual/audio/HUD feedback using runtime primitives only;
-- void/fall zones that apply damage, feedback and safe recovery;
-- fall-below-world safety using the same penalty path;
 - bot jump-pad route awareness for high reposition goals;
-- bot fall-zone awareness in destination scoring and movement avoidance;
-- automated coverage for map structure, jump pads, void recovery, knockback into void and bot vertical routing.
+- `Duel Pit V2` has no active north/south void wells and no fall penalty processing;
+- automated coverage for map structure, jump pads, absent void wells and bot vertical routing.
 
 Future candidate scope:
 
 - refine platform geometry after editor smoke;
 - add one more vertical route only if Duel Pit V2 feels too binary;
 - improve bot route choice if it overuses or underuses jump pads;
-- tune fall damage/recovery after human tests.
+- add a dedicated void/fall map variant later, after the no-void vertical duel baseline is accepted.
 
 ## Deferred
 

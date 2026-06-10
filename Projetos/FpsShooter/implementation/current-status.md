@@ -4,7 +4,7 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS 3D tech probe`
-- Active stage: `Track 03A - Vertical Arena And Fall Pressure V1`
+- Active stage: `Track 03A - Vertical Arena No Void Hotfix V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -25,18 +25,19 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - Bot tactical awareness for health pickup, overcharge contest and visible plasma dodge.
 - Bot pressure tuning: ready shots interrupt pickup routes and health pickup is a survival/rotation choice instead of the default concern.
 - Bot simple jump support for raised reposition goals and low navigation blockers.
-- Bot awareness for jump-pad routes and fall-zone danger.
-- `Duel Pit V2` arena layout with protected spawns, low/high cover, side platforms, ramps, high platforms, jump pads and void/fall pressure.
+- Bot awareness for jump-pad routes and elevated reposition goals.
+- `Duel Pit V2` arena layout with protected spawns, low/high cover, side platforms, ramps, high platforms, jump pads and elevated pickups, without void/fall zones in the current map.
+- Void/fall pressure is reserved for future dedicated maps.
 - HUD, round state and bidirectional feel/feedback.
 - No export, Web, mobile, multiplayer or online/backend scope.
 
 ## Active Goal
 
-`Track 03A - Vertical Arena And Fall Pressure V1` is complete. The duel loop now includes the first vertical arena contract: jump pads to high pickups/platforms, void/fall penalty, safe recovery and bot awareness for vertical routes and danger zones.
+`Track 03A - Vertical Arena No Void Hotfix V1` is complete. The current duel loop keeps the accepted vertical arena contract with jump pads, high pickups/platforms and bot vertical routing, while removing void/fall pressure from `Duel Pit V2`.
 
 ## Current Gate
 
-Closed for Track 03A. Run the 5-minute editor smoke focused on `Duel Pit V2`, jump pad readability, elevated pickups, void/fall penalty, knockback into hazards, bot use of vertical routes and whether the expanded arena still preserves the accepted duel feel.
+Closed for Track 03A No Void Hotfix. Run the 5-minute editor smoke focused on `Duel Pit V2`, jump pad readability, elevated pickups, bot use of vertical routes, knockback readability without void hazards and whether the expanded arena still preserves the accepted duel feel.
 
 ## Validation Snapshot
 
@@ -140,16 +141,17 @@ Track 02A Plasma Damage Hotfix V1:
 - tests now cover both overcharged Plasma Bolt damage/strong knockback and a real `request_alt_fire()` body-edge hit from the offset muzzle;
 - validation passes `30/30` GUT tests with `253` asserts.
 
-Track 03A Vertical Arena And Fall Pressure V1:
+Track 03A Vertical Arena No Void Hotfix V1:
 
 - arena promoted to `Duel Pit V2` with two high duel platforms above the previous side routes;
 - Health Shard and Overcharge moved to elevated platform objectives;
 - two runtime jump pads launch player and bot toward the high platforms with primitive glow/light/audio feedback;
-- two void/fall zones apply damage, HUD/feedback pulses and safe recovery to spawn-side positions;
-- falling below world floor uses the same fall penalty path;
-- player and bot have explicit jump-pad launch support plus movement impulse reset hooks for recovery;
-- bot receives jump-pad route data and fall-zone awareness, routes high reposition goals through pads and avoids danger centers during movement scoring;
-- validation passes `35/35` GUT tests with `294` asserts.
+- the current `Duel Pit V2` map no longer creates north/south void wells or fall penalty processing;
+- player and bot keep explicit jump-pad launch support;
+- bot receives jump-pad route data and routes high reposition goals through pads without fall-zone awareness in the current map;
+- tests assert that `NorthVoidWell` and `SouthVoidWell` are absent from the active scene;
+- void/fall pressure remains a future-map candidate instead of part of the current duel pit baseline;
+- validation passes `33/33` GUT tests with `279` asserts.
 
 ## Read Next
 

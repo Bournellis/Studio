@@ -29,8 +29,8 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: code, validation, playtest, local documentation.
   - Current next step: author player/enemy card and mechanic ideas as Design Lab proposal packs, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab gates before full-run feel playtests.
 
-- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 first-person shooter tech probe with a light Draxos visual theme. The first contract is a traditional FPS baseline in a local 1x1 arena against a bot. Track 03A Vertical Arena And Fall Pressure V1 is complete on top of the feel/feedback, bot, arena layout, knockback and combat-loop baselines: `Duel Pit V2` map, protected spawns, central blocker, low/high cover, side platforms, ramp primitives, high platforms, jump pads, void/fall zones, route markings, simple hitscan rifle, RMB Plasma Bolt with crosshair-aligned offset-muzzle damage and radius-aware collision, Health Shard and Overcharge on elevated objectives, HUD combat/pickup/jump/void feedback, synthetic audio, bot states, strafe/reposition, line-of-sight gated normal shots, exposed camera/head checks over low cover, tall-cover denial, deterministic aim error, health seeking that does not steal ready shots, overcharge contest, plasma dodge, simple bot jump, jump-pad routing toward high goals, fall-zone awareness and knockback with horizontal force, controlled lift, clamps and air/ground decay.
-  - Priority/status: `P2_IMPLEMENTACAO - FPS_SHOOTER_TRACK_03A_VERTICAL_ARENA_FALL_PRESSURE_COMPLETE`
+- `FpsShooter/`: independent PC Windows editor-first Godot 4.6.2 first-person shooter tech probe with a light Draxos visual theme. The first contract is a traditional FPS baseline in a local 1x1 arena against a bot. Track 03A Vertical Arena No Void V1 is complete on top of the feel/feedback, bot, arena layout, knockback and combat-loop baselines: `Duel Pit V2` map, protected spawns, central blocker, low/high cover, side platforms, ramp primitives, high platforms, jump pads, route markings, simple hitscan rifle, RMB Plasma Bolt with crosshair-aligned offset-muzzle damage and radius-aware collision, Health Shard and Overcharge on elevated objectives, HUD combat/pickup/jump feedback, synthetic audio, bot states, strafe/reposition, line-of-sight gated normal shots, exposed camera/head checks over low cover, tall-cover denial, deterministic aim error, health seeking that does not steal ready shots, overcharge contest, plasma dodge, simple bot jump, jump-pad routing toward high goals and knockback with horizontal force, controlled lift, clamps and air/ground decay. The current map has no active void/fall zones; void/queda are reserved for future maps.
+  - Priority/status: `P2_IMPLEMENTACAO - FPS_SHOOTER_TRACK_03A_VERTICAL_ARENA_NO_VOID_COMPLETE`
   - Local agent guide: `FpsShooter/AGENTS.md`
   - Operational status: `FpsShooter/implementation/current-status.md`
   - Work plan: `FpsShooter/docs/work-plan.md`
@@ -38,7 +38,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Validation reference: `FpsShooter/docs/validation.md`
   - Validation command: `FpsShooter/tools/validate.gd`
   - Allowed work: code, validation, editor playtest and local documentation.
-  - Current next step: run the 5-minute editor human smoke for `Duel Pit V2`, jump pads, elevated pickups, void/fall penalty, knockback into hazards, bot vertical routes and preservation of the accepted duel feel.
+  - Current next step: run the 5-minute editor human smoke for `Duel Pit V2`, jump pads, elevated pickups, bot vertical routes, knockback without void hazards and preservation of the accepted duel feel.
 
 ## Implementacao - Arena PVE Inicial
 

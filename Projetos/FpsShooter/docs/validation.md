@@ -21,9 +21,9 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `35/35`;
-- `294` asserts;
-- Track 03A validates feedback controller, player hit/miss, combatant impulse/lift/clamp/decay, player hit knockback, bot hit knockback, bot miss without knockback, map structure, protected spawn sightline, route markers, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()`, synthetic audio stream creation, RMB plasma input, Plasma Bolt spawn/hit/knockback, offset-muzzle crosshair hits, pickups, overcharge, bot pickup priority, ready-shot-over-health pressure, pickup-route interruption, bot simple jump, bot plasma dodge awareness, `Duel Pit V2` high platforms, jump-pad launch, void/fall recovery, knockback into void and bot jump-pad route awareness.
+- GUT `33/33`;
+- `279` asserts;
+- Track 03A no-void hotfix validates feedback controller, player hit/miss, combatant impulse/lift/clamp/decay, player hit knockback, bot hit knockback, bot miss without knockback, map structure, protected spawn sightline, route markers, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()`, synthetic audio stream creation, RMB plasma input, Plasma Bolt spawn/hit/knockback, offset-muzzle crosshair hits, pickups, overcharge, bot pickup priority, ready-shot-over-health pressure, pickup-route interruption, bot simple jump, bot plasma dodge awareness, `Duel Pit V2` high platforms, jump-pad launch, absent void wells and bot jump-pad route awareness.
 
 ## Manual Smoke
 
@@ -45,7 +45,7 @@ Expected:
 - aiming directly at the bot with RMB reliably causes Plasma Bolt damage/knockback instead of only showing the projectile;
 - missing the bot still shows shot/tracer feedback without false hit confirmation;
 - missing the bot does not move it or show hit/knockback feedback;
-- the map is `Duel Pit V2`, with a central blocker, low/high cover, route markings, side platforms, ramps, high platforms, jump pads and void/fall zones;
+- the map is `Duel Pit V2`, with a central blocker, low/high cover, route markings, side platforms, ramps, high platforms and jump pads, with no active void/fall zones;
 - direct first shot from spawn does not immediately damage the bot;
 - player can move around the central blocker and read the side routes;
 - player can walk onto/down the ramp/platform primitives without getting stuck in ordinary movement;
@@ -53,16 +53,14 @@ Expected:
 - health and overcharge pickups are visible on elevated platforms;
 - jump pads launch the player toward the high platform objectives with visible cyan feedback;
 - jump pads can also launch the bot without trapping it in launch loops;
-- walking or being knocked into a void/fall zone applies damage, shows feedback and recovers the combatant to a safe spawn-side point;
-- falling below the map applies the same fall penalty instead of leaving the combatant lost;
-- knocking the bot near a void zone can turn knockback into real positional pressure;
+- moving around the lower floor and side routes does not trigger void/fall damage or recovery in the current map;
 - walking through Health Shard heals only if damaged and hides it until respawn;
 - walking through Overcharge primes the next rifle or plasma shot and updates HUD state;
 - the bot can seek health when hurt and contest overcharge when the pickup is available;
 - the bot starts a ready tell/shot instead of abandoning pressure for health;
 - the bot interrupts a health route when line of sight, range, cooldown and reaction are ready again;
 - the bot can make simple jumps toward raised map pieces or low blockers without constant jump spam;
-- the bot can route toward high objectives through jump pads and avoids treating void zones as safe destinations;
+- the bot can route toward high objectives through jump pads without falling into a void-avoidance loop;
 - the bot reacts to nearby visible Plasma Bolt pressure with a dodge vector;
 - cover can break bot line of sight, preventing normal bot damage through obstacles;
 - low cover can hide the body center while the bot still recognizes player camera/head exposure above it;

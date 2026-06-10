@@ -54,8 +54,8 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_not_null(arena.get_node_or_null("EastHighPlatform"))
 	assert_not_null(arena.get_node_or_null("WestJumpPad"))
 	assert_not_null(arena.get_node_or_null("EastJumpPad"))
-	assert_not_null(arena.get_node_or_null("NorthVoidWell"))
-	assert_not_null(arena.get_node_or_null("SouthVoidWell"))
+	assert_null(arena.get_node_or_null("NorthVoidWell"))
+	assert_null(arena.get_node_or_null("SouthVoidWell"))
 	assert_not_null(arena.get_node_or_null("CenterLaneMark"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Player"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Bot"))
@@ -130,7 +130,7 @@ func test_duel_pit_layout_exposes_route_markers_and_bot_points() -> void:
 	assert_gt(ground_point_count, 0)
 	assert_no_new_orphans()
 
-func test_duel_pit_v2_exposes_jump_pads_and_void_zones_to_bot() -> void:
+func test_duel_pit_v2_exposes_jump_pads_without_void_zones_to_bot() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	var arena := arena_scene.instantiate()
 	add_child_autofree(arena)
@@ -139,11 +139,11 @@ func test_duel_pit_v2_exposes_jump_pads_and_void_zones_to_bot() -> void:
 
 	var bot = arena.debug_get_bot()
 	assert_eq(arena.debug_get_jump_pad_count(), 2)
-	assert_eq(arena.debug_get_fall_zone_count(), 2)
 	assert_gt(arena.debug_get_jump_pad_target(0).y, arena.debug_get_jump_pad_position(0).y + 2.0)
 	assert_gt(arena.debug_get_jump_pad_target(1).y, arena.debug_get_jump_pad_position(1).y + 2.0)
 	assert_eq(bot.debug_get_jump_pad_route_count(), 2)
-	assert_eq(bot.debug_get_fall_zone_count(), 2)
+	assert_null(arena.get_node_or_null("NorthVoidWell"))
+	assert_null(arena.get_node_or_null("SouthVoidWell"))
 	assert_no_new_orphans()
 
 func test_jump_pad_launches_player_and_bot() -> void:
@@ -175,62 +175,6 @@ func test_jump_pad_launches_player_and_bot() -> void:
 	assert_false(arena.debug_get_last_jump_pad_id() == &"")
 	assert_eq(hud.last_feedback, &"jump_pad")
 	assert_gt(feedback.jump_pad_count, 1)
-	assert_no_new_orphans()
-
-func test_void_zone_applies_fall_penalty_and_safe_recovery() -> void:
-	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
-	var arena := arena_scene.instantiate()
-	add_child_autofree(arena)
-	await get_tree().process_frame
-	await get_tree().physics_frame
-
-	var player = arena.debug_get_player()
-	var hud = arena.get_node("ArenaHud")
-	var feedback = arena.get_node("FeedbackController")
-	var before: float = player.health
-	player.global_position = arena.debug_get_fall_zone_center(0)
-	player.clear_movement_impulses()
-	await get_tree().physics_frame
-
-	assert_lt(player.health, before)
-	assert_gt(arena.debug_get_fall_penalty_count(), 0)
-	assert_eq(hud.last_feedback, &"fall")
-	assert_gt(hud.fall_penalty_count, 0)
-	assert_gt(feedback.fall_penalty_count, 0)
-	assert_eq(feedback.last_event, &"fall_penalty")
-	assert_almost_eq(player.global_position.x, arena.debug_get_last_fall_recovery_position().x, 0.001)
-	assert_almost_eq(player.global_position.z, arena.debug_get_last_fall_recovery_position().z, 0.001)
-	assert_no_new_orphans()
-
-func test_knockback_can_push_bot_into_void_recovery() -> void:
-	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
-	var arena := arena_scene.instantiate()
-	add_child_autofree(arena)
-	await get_tree().process_frame
-	await get_tree().physics_frame
-
-	arena.debug_force_pickup_available(&"health", false)
-	arena.debug_force_pickup_available(&"overcharge", false)
-	var bot = arena.debug_get_bot()
-	var zone_center: Vector3 = arena.debug_get_fall_zone_center(0)
-	var zone_size: Vector2 = arena.debug_get_fall_zone_size(0)
-	bot.move_speed = 0.0
-	bot.shoot_cooldown_remaining = 99.0
-	bot.reaction_remaining = 99.0
-	bot.global_position = Vector3(zone_center.x - zone_size.x * 0.5 - 0.35, 0.05, zone_center.z)
-	bot.clear_movement_impulses()
-	var before: float = bot.health
-	bot.apply_knockback(Vector3.RIGHT, 12.0, 0.0)
-	for _step in range(90):
-		await get_tree().physics_frame
-		if arena.debug_get_fall_penalty_count() > 0:
-			break
-
-	assert_lt(bot.health, before)
-	assert_gt(arena.debug_get_fall_penalty_count(), 0)
-	assert_gt((arena.get_node("FeedbackController")).fall_penalty_count, 0)
-	assert_almost_eq(bot.global_position.x, arena.debug_get_last_fall_recovery_position().x, 0.001)
-	assert_almost_eq(bot.global_position.z, arena.debug_get_last_fall_recovery_position().z, 0.001)
 	assert_no_new_orphans()
 
 func test_bot_routes_high_reposition_goal_through_jump_pad() -> void:

@@ -1,6 +1,6 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-06-09`
+- Ultima atualizacao: `2026-06-10`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 
@@ -8,7 +8,7 @@
 
 - Foco P0 de implementacao: `Projetos/draxos-roguelike-cardgame/`
 - Foco P2 de implementacao: `Projetos/draxos-mobile/` (`BOSQUE_OVERLAY_MENU_ACTION_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`, release root `internal-alpha/v0-bosque-overlay-menu-action-authority-v1-20260609-aa9402d`, official Portal URL `https://draxos-mobile-internal-alpha.pages.dev/`, direct Web URL `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, deployment evidence `https://5f04e6ae.draxos-mobile-internal-alpha.pages.dev`, publicado Web/APK, APK/manifest `0.0.20-alpha.0`/version code `20`; Bosque permanece vivo e visivel atras de Arena/Base/Shop/Social/Profile em overlay, com input pausado e retorno por `Fechar`, `Voltar` e Esc sem rebootstrap, validado por smoke real Web/canvas, mantem minimum supported version code `13`, proximo passo operacional: playtest humano focado do pacote publicado)
-- Tech probe P2 de implementacao: `Projetos/FpsShooter/` (`FPS_SHOOTER_TRACK_03A_VERTICAL_ARENA_FALL_PRESSURE_COMPLETE`; PC Windows editor-first FPS 3D independente com tema Draxos leve; proximo passo: playtest humano de 5 minutos focado em `Duel Pit V2`, jump pads, pickups elevados, void/fall penalty, knockback em hazards, rotas verticais do bot e leitura do duelo)
+- Tech probe P2 de implementacao: `Projetos/FpsShooter/` (`FPS_SHOOTER_TRACK_03A_VERTICAL_ARENA_NO_VOID_COMPLETE`; PC Windows editor-first FPS 3D independente com tema Draxos leve; proximo passo: playtest humano de 5 minutos focado em `Duel Pit V2`, jump pads, pickups elevados, rotas verticais do bot, knockback sem hazards de void e leitura do duelo)
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -40,13 +40,13 @@
 
 ## FpsShooter
 
-- Status: **P2_IMPLEMENTACAO - FPS_SHOOTER_TRACK_03A_VERTICAL_ARENA_FALL_PRESSURE_COMPLETE**
+- Status: **P2_IMPLEMENTACAO - FPS_SHOOTER_TRACK_03A_VERTICAL_ARENA_NO_VOID_COMPLETE**
 - Fase: `Implementacao - FPS 3D Tech Probe`
 - Local: `Projetos/FpsShooter/`
-- Baseline atual: projeto oficial implementavel criado para testar Godot 4.6.2 em FPS 3D primeira pessoa, PC Windows editor-first. Track 03A Vertical Arena And Fall Pressure V1 completa sobre Track 01A/01B/01C/01D e Track 02A: mapa `Duel Pit V2` com spawns protegidos, bloqueador central, cover baixo/alto, plataformas laterais baixas, rampas primitivas, plataformas altas, jump pads, void/fall zones e marcacoes visuais de rota; jogador FPS com FOV `86`, movimento agil, rifle hitscan simples, RMB Plasma Bolt lento/visivel com cooldown, convergencia do muzzle deslocado para o crosshair, colisao radius-aware e knockback mais forte, Health Shard e Overcharge em objetivos elevados, HUD com crosshair por controles, barras de vida, hit/miss, dano recebido, plasma cooldown, pickup timers, jump/void feedback, round end, efeitos runtime de muzzle/tracer/impacto/knockback/pickup/jump/void, audio sintetico simples, bot com estados `idle/engage/strafe/reposition/windup/cooldown/dead`, linha de visao real por pontos expostos do jogador, reconhecimento de camera/cabeca acima de cover baixo, bloqueio por parede alta, erro leve deterministico, strafe/reposicionamento simples, tiros normais resolvidos por raycast na arena, busca de cura quando ferido sem roubar tiro pronto, interrupcao de rota de cura quando cooldown/reacao/LOS permitem windup, disputa de overcharge, dodge de Plasma Bolt proximo, salto simples, rotas por jump pads para objetivos altos, consciencia de fall zones, `force_fire()` imediato preservado para testes e knockback com impulso horizontal, lift controlado, clamp de acumulacao e decay diferente no ar/chao.
+- Baseline atual: projeto oficial implementavel criado para testar Godot 4.6.2 em FPS 3D primeira pessoa, PC Windows editor-first. Track 03A Vertical Arena No Void V1 completa sobre Track 01A/01B/01C/01D e Track 02A: mapa `Duel Pit V2` com spawns protegidos, bloqueador central, cover baixo/alto, plataformas laterais baixas, rampas primitivas, plataformas altas, jump pads, pickups elevados e marcacoes visuais de rota, sem void/fall zones no mapa atual; jogador FPS com FOV `86`, movimento agil, rifle hitscan simples, RMB Plasma Bolt lento/visivel com cooldown, convergencia do muzzle deslocado para o crosshair, colisao radius-aware e knockback mais forte, Health Shard e Overcharge em objetivos elevados, HUD com crosshair por controles, barras de vida, hit/miss, dano recebido, plasma cooldown, pickup timers, jump feedback, round end, efeitos runtime de muzzle/tracer/impacto/knockback/pickup/jump, audio sintetico simples, bot com estados `idle/engage/strafe/reposition/windup/cooldown/dead`, linha de visao real por pontos expostos do jogador, reconhecimento de camera/cabeca acima de cover baixo, bloqueio por parede alta, erro leve deterministico, strafe/reposicionamento simples, tiros normais resolvidos por raycast na arena, busca de cura quando ferido sem roubar tiro pronto, interrupcao de rota de cura quando cooldown/reacao/LOS permitem windup, disputa de overcharge, dodge de Plasma Bolt proximo, salto simples, rotas por jump pads para objetivos altos, `force_fire()` imediato preservado para testes e knockback com impulso horizontal, lift controlado, clamp de acumulacao e decay diferente no ar/chao. Void/queda ficam reservados para mapas futuros.
 - Trabalho permitido: codigo, validacao, playtest no editor e documentacao local.
 - Restricao operacional: tech probe independente com tema Draxos leve; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem export/Web/mobile, multiplayer, matchmaking, Ricochet, ammo/reload, recoil/spread amplo ou novas armas ate track explicita.
-- Proximo passo: playtest humano de 5 minutos do `Duel Pit V2` focado em jump pads, pickups elevados, void/fall penalty, knockback em hazards, bot usando rotas verticais e se o duelo manteve o feel aceito.
+- Proximo passo: playtest humano de 5 minutos do `Duel Pit V2` focado em jump pads, pickups elevados, bot usando rotas verticais, knockback sem hazards de void e se o duelo manteve o feel aceito.
 
 ## rpg-isometrico
 
