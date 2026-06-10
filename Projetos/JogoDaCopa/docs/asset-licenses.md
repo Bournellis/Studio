@@ -26,6 +26,15 @@ These sources were checked during Track 02C but no external binary asset was com
 | Kenney Animated Characters 3 | `https://kenney-assets.itch.io/animated-characters-3` | Page lists `CC0 1.0 Universal`, rigged model, human skins, idle/jump/running animations. | Itch download requires its purchase/download flow; not committed. |
 | Quaternius Universal Base Characters | `https://quaternius.com/packs/universalbasecharacters.html` | Page lists `CC0`, glTF/FBX formats, humanoid rig and Godot compatibility. | Candidate for a later binary asset replacement if desired. |
 
+## Track 02G - Product Identity V1
+
+### In-Repo Authored Assets
+
+| Asset | Path | Author | License | Notes |
+|---|---|---|---|---|
+| Copa Arena Futebol icon | `assets/branding/copa_arena_icon.svg` | Codex for JogoDaCopa | `CC0-1.0` | Generic football/arena mark; no official logos or federation marks. |
+| Copa Arena Futebol splash | `assets/branding/copa_arena_splash.png` | Codex for JogoDaCopa | `CC0-1.0` | Generated in-repo from authored vector-style composition for Godot boot splash PNG requirement. |
+
 ## License Rule
 
 - No official FIFA/Copa logos are included.

@@ -14,7 +14,7 @@ const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
-const MODE_NAME: String = "Futebol 1x1"
+const MODE_NAME: String = "Copa Arena Futebol"
 const GOAL_LIMIT: int = 3
 const FIELD_WIDTH: float = 38.0
 const FIELD_LENGTH: float = 54.0

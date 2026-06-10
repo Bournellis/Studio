@@ -10,10 +10,12 @@ config_version=5
 
 [application]
 
-config/name="Jogo Da Copa"
+config/name="Copa Arena Futebol"
 run/main_scene="res://modes/menu/main_menu.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="res://assets/branding/copa_arena_icon.svg"
+boot_splash/image="res://assets/branding/copa_arena_splash.png"
+boot_splash/bg_color=Color(0.0235294, 0.0784314, 0.121569, 1)
 
 [autoload]
 

@@ -119,7 +119,7 @@ func _build_ui() -> void:
 
 	var title := Label.new()
 	title.name = "TitleLabel"
-	title.text = "Jogo Da Copa"
+	title.text = "Copa Arena Futebol"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.add_theme_font_size_override("font_size", 44)

@@ -6,7 +6,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional temporario unico: `Projetos/JogoDaCopa/` (`JOGO_DA_COPA_TRACK_01C_ARENA_STADIUM_VISUAL_REWORK_COMPLETE`; PC Windows editor-first futebol/minigames independente; proximo passo: implementar a serie Track 02 Quality Upgrade 02A-02G conforme `Projetos/JogoDaCopa/docs/quality-upgrade-plan.md`, card em `Kanban/Backlog/2026-06-10_codex_jogodacopa_track02-quality-upgrade-series-v1.md`)
+- Foco operacional temporario unico: `Projetos/JogoDaCopa/` (`JOGO_DA_COPA_TRACK_02_QUALITY_UPGRADE_V1_COMPLETE`; produto `Copa Arena Futebol`; PC Windows editor-first futebol/minigames independente; proximo passo: playtest humano no editor e no debug export Windows)
 - Pausados temporariamente por poucos dias: `Projetos/draxos-roguelike-cardgame/`, `Projetos/draxos-mobile/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -49,13 +49,13 @@
 
 ## JogoDaCopa
 
-- Status: **P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO - JOGO_DA_COPA_TRACK_01C_ARENA_STADIUM_VISUAL_REWORK_COMPLETE**
+- Status: **P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO - JOGO_DA_COPA_TRACK_02_QUALITY_UPGRADE_V1_COMPLETE**
 - Fase: `Implementacao - Football Minigames Tech Probe`
 - Local: `Projetos/JogoDaCopa/`
-- Baseline atual: projeto oficial implementavel separado do antigo `FPS Playground` para futebol e minigames de copa em Godot 4.6.2, PC Windows editor-first. A baseline atual preserva o modo `Futebol`: 1x1 contra bot em terceira pessoa, sem armas, inicia pausado em `Como Jogar`/`Comecar`, LMB chute mais forte, RMB chute forte alto com lift claro, bola `RigidBody3D` arcade solta sem possession lock, grip maior quando rola no chao, velocidade mais preservada no ar, quique maior, campo 38x54, gols 20% mais estreitos e 50% mais altos fechados por teto de vidro, regra de gol com altura, paredes altas de vidro com molduras, teto com colisao e ribs visuais, estadio festivo por primitivas com arquibancadas, blocos de torcida, banners inspirados em paises, placares decorativos e torres de luz, gols ate 3, boost em `Shift` com stamina no HUD, bot que ataca/defende dentro do campo maior, score HUD, feedback/audio sintetico de chute/gol, retorno ao menu pelo pause, avatares humanoides procedurais por primitivas para player/bot, selecao em memoria de pele/camisa inspirada em paises, animacoes basicas e camera third-person com foco de bola sutil.
+- Baseline atual: projeto oficial implementavel separado do antigo `FPS Playground` para futebol e minigames de copa em Godot 4.6.2, PC Windows editor-first. O produto jogavel se chama `Copa Arena Futebol` e preserva o modo `Futebol`: 1x1 contra bot em terceira pessoa, arena noturna de vidro com glow/SSAO/fog, pitch em shader, redes grid, placares de estadio vivos, campo 38x54, gols roofed/fechados com regra de altura, bola `RigidBody3D` arcade solta com shader de paineis/trail/squash, LMB/RMB com feel aprovado, boost em `Shift`, avatares humanoides com rig/AnimationTree e contratos preservados, selecao de pele/camisa inspirada em paises, countdown de kickoff, slow-mo de gol, VFX de chute/gol/boost/freada, HUD broadcast, indicador da bola, menu 3D com preview, resultado/rematch, bot com predicao/defesa/boost/dificuldades e kickoff alternado. Nome/icone/splash/preset Windows criados; `tools/validate.gd` PASS 28 tests / 279 asserts; debug export Windows smoke PASS.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Restricao operacional: tech probe independente para minigames de futebol; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem armas/FPS shooter, export/Web/mobile, multiplayer, matchmaking ou economia ate track explicita.
-- Proximo passo: implementar a serie `Track 02 Quality Upgrade V1` (02A Render/Lighting -> 02B Pitch/Arena Materials -> 02C Ball/Character Assets CC0 aprovados -> 02D VFX/Game Feel -> 02E HUD/Menu -> 02F Bot/Match Flow -> 02G Identidade/Export) conforme plano aprovado em `Projetos/JogoDaCopa/docs/quality-upgrade-plan.md`; card: `Kanban/Backlog/2026-06-10_codex_jogodacopa_track02-quality-upgrade-series-v1.md`.
+- Restricao operacional: tech probe independente para minigames de futebol; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem armas/FPS shooter, Web/mobile, multiplayer, matchmaking ou economia ate track explicita.
+- Proximo passo: playtest humano de `Copa Arena Futebol` no editor e no debug export Windows, focado em menu -> partida -> resultado -> revanche, leitura dos gols/vidro/estadio, tuning de bola/chute/boost, bot e kickoff alternado.
 
 ## rpg-isometrico
 

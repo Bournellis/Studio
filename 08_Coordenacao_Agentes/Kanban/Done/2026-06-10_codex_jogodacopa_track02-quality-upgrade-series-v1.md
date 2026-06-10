@@ -4,13 +4,13 @@
 
 - id: `2026-06-10_jogodacopa-track02-quality-upgrade-series-v1`
 - owner: `Codex`
-- status: `Doing`
+- status: `Done`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track02-quality-upgrade-series-v1`
 - worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track02-quality-upgrade-series-v1`
 - started_at: `2026-06-10`
-- current_track: `02G Product Identity V1`
+- current_track: `Series complete`
 
 ## Execution Registration
 
@@ -27,6 +27,8 @@
 - `2026-06-10` - `02D VFX & Game Feel V1` complete. `tools/validate.gd` PASS (26 tests, 250 asserts). Performance sample Windows/Forward+ with VFX spawned after warmup: average `144.2fps`, min warmed instant `63.3fps`, `0/360` frames below 60. Status file: `Projetos/JogoDaCopa/implementation/tracks/track-02d-vfx-game-feel-v1/current-status.md`.
 - `2026-06-10` - `02E HUD & Menu Polish V1` complete. `tools/validate.gd` PASS (26 tests, 267 asserts). Status file: `Projetos/JogoDaCopa/implementation/tracks/track-02e-hud-menu-polish-v1/current-status.md`.
 - `2026-06-10` - `02F Bot & Match Flow V1` complete. `tools/validate.gd` PASS (28 tests, 279 asserts). Status file: `Projetos/JogoDaCopa/implementation/tracks/track-02f-bot-match-flow-v1/current-status.md`.
+- `2026-06-10` - `02G Product Identity V1` complete. `tools/validate.gd` PASS (28 tests, 279 asserts). Windows debug export smoke PASS, exit code `0`, generated ignored artifacts under `Projetos/JogoDaCopa/builds/windows/`. Status file: `Projetos/JogoDaCopa/implementation/tracks/track-02g-product-identity-v1/current-status.md`.
+- `2026-06-10` - Series complete with marker `JOGO_DA_COPA_TRACK_02_QUALITY_UPGRADE_V1_COMPLETE`; portfolio/current-status/work-plan/publication-readiness updated. Next step: human editor/debug-export playtest and tuning.
 
 ## Goal
 
@@ -70,18 +72,18 @@ Resumo por track (detalhes e criterios de aceite no plano):
 
 ## Acceptance Criteria
 
-- [ ] Tracks implementadas em ordem 02A -> 02B -> 02C -> 02D -> 02E -> 02F -> 02G, um commit logico por track. (`02A`, `02B`, `02C`, `02D`, `02E`, `02F` complete)
-- [ ] `tools/validate.gd` PASS apos cada track (nao apenas no final). (`02A`, `02B`, `02C`, `02D`, `02E`, `02F` PASS)
-- [ ] Contratos preservados: avatar API, regras de gol com altura, feel de chute/boost cobertos por testes existentes.
+- [x] Tracks implementadas em ordem 02A -> 02B -> 02C -> 02D -> 02E -> 02F -> 02G, um commit logico por track.
+- [x] `tools/validate.gd` PASS apos cada track (nao apenas no final). (`02A`, `02B`, `02C`, `02D`, `02E`, `02F`, `02G` PASS)
+- [x] Contratos preservados: avatar API, regras de gol com altura, feel de chute/boost cobertos por testes existentes.
 - [x] Track 02C: spike de import de 1 asset antes de comprometer a track; licencas em `docs/asset-licenses.md`.
 - [x] 60fps no editor com glow+SSAO+particulas (medir apos 02A e 02D; reduzir custo se cair). (`02A` and `02D` samples above 60 after warmup)
-- [ ] Cada track concluida ganha `implementation/tracks/track-02x-*/current-status.md` no padrao das tracks 01A-01C. (`02A`, `02B`, `02C`, `02D`, `02E`, `02F` created)
-- [ ] Docs e este card atualizados no final; card movido para Done.
-- [ ] Se a thread atingir limite antes de 02G, registrar Handoff com a proxima track exata e estado.
+- [x] Cada track concluida ganha `implementation/tracks/track-02x-*/current-status.md` no padrao das tracks 01A-01C.
+- [x] Docs e este card atualizados no final; card movido para Done.
+- [x] Se a thread atingir limite antes de 02G, registrar Handoff com a proxima track exata e estado. (Nao aplicavel; serie concluida.)
 
 ## Handoff Needed
 
-`Yes - to Usuario` (playtest humano no editor ao final da serie ou de cada bloco visual)
+`Yes - to Usuario` (playtest humano no editor e no debug export Windows)
 
 ## Notes
 

@@ -13,7 +13,8 @@
 - `2026-06-10` - `Track 02D VFX & Game Feel V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02D_VFX_GAME_FEEL_V1_COMPLETE`). `tools/validate.gd` PASS (26 tests, 250 asserts). Performance sample Windows/Forward+ after warmup with VFX spawned: average `144.2fps`, min warmed instant `63.3fps`, `0/360` frames below 60.
 - `2026-06-10` - `Track 02E HUD & Menu Polish V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02E_HUD_MENU_POLISH_V1_COMPLETE`). `tools/validate.gd` PASS (26 tests, 267 asserts).
 - `2026-06-10` - `Track 02F Bot & Match Flow V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02F_BOT_MATCH_FLOW_V1_COMPLETE`). `tools/validate.gd` PASS (28 tests, 279 asserts).
-- `Track 02G Product Identity V1`: next.
+- `2026-06-10` - `Track 02G Product Identity V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02G_PRODUCT_IDENTITY_V1_COMPLETE`; series marker `JOGO_DA_COPA_TRACK_02_QUALITY_UPGRADE_V1_COMPLETE`). `tools/validate.gd` PASS (28 tests, 279 asserts). Windows debug export smoke PASS, exit code `0`, generated `builds/windows/CopaArenaFutebol.exe`.
+- Series complete; next step is human editor/debug-export playtest.
 
 ## 1. Analise do Estado Atual
 
