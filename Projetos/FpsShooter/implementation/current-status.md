@@ -4,8 +4,8 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS Playground tech probe`
-- Active stage: `Track 04A - FPS Playground Menu & Futebol V1 - Menu/Goal Fix V2`
-- Active stage status: `HOTFIX V2 COMPLETE`
+- Active stage: `Track 05 - Foundation Hardening & Refactor V1`
+- Active stage status: `ACTIVE`
 
 ## Current Truth
 
@@ -35,11 +35,11 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 
 ## Active Goal
 
-`Track 04A - FPS Playground Menu & Futebol V1` is complete with second playtest fixes. The project now starts at a robust container-centered `FPS Playground` menu, preserves the accepted `Arena Shooter` duel loop and adds the first alternate first-person mode: `Futebol` 1x1 against a bot with arcade ball physics, a paused how-to start panel, fully closed goal interiors and score to 3.
+`Track 05 - Foundation Hardening & Refactor V1` is active. The goal is to preserve the accepted `Arena Shooter` and `Futebol` behavior while hardening documentation, validation, shared runtime helpers, mode boundaries, bot contracts and test organization.
 
 ## Current Gate
 
-Closed for Track 04A FPS Playground Menu & Futebol V1 menu/goal fix v2. Run the 5-minute editor smoke focused on opening the centered main menu, launching `Arena Shooter`, returning to menu, launching `Futebol`, reading `Como Jogar`, pressing `Comecar`, kicking/strong-kicking the ball, confirming the goal floors and side walls do not leave gaps or drops, bot attack/defense, scoring to 3, restart and pause sensitivity.
+Open for Track 05 Foundation Hardening & Refactor V1. Run automated validation after every phase and preserve the Track 04A manual smoke expectations for both modes.
 
 ## Validation Snapshot
 
@@ -194,20 +194,30 @@ Track 04A Menu/Goal Fix V2:
 - tests cover the new centered menu hierarchy, intro center path and four goal side wall nodes;
 - validation passes `42/42` GUT tests with `355` asserts.
 
+Track 05 Foundation Hardening & Refactor V1:
+
+- active as a large sequential documentation, hardening and refactor track;
+- documentation index, architecture overview, mode contract, bot contract, tuning guide, validation profiles, publication readiness and audit docs are being established first;
+- baseline validation before refactor passes `42/42` GUT tests with `355` asserts after the one-time fresh worktree import;
+- gameplay changes are out of scope except for behavior-preserving refactor fixes.
+
 ## Read Next
 
 1. `AGENTS.md`
-2. `docs/work-plan.md`
-3. `docs/reuse-map.md`
-4. `docs/validation.md`
-5. `implementation/tracks/track-01-arena-1x1-v1/current-status.md`
-6. `implementation/tracks/track-01a-feel-feedback-v1/current-status.md`
-7. `implementation/tracks/track-01b-bot-duelist-v1/current-status.md`
-8. `implementation/tracks/track-01c-arena-layout-v1/current-status.md`
-9. `implementation/tracks/track-01d-knockback-movement-combat-v1/current-status.md`
-10. `implementation/tracks/track-02a-combat-loop-expansion-v1/current-status.md`
-11. `implementation/tracks/track-02a-bot-pressure-jump-hotfix-v1/current-status.md`
-12. `implementation/tracks/track-02a-plasma-damage-hotfix-v1/current-status.md`
-13. `implementation/tracks/track-03a-vertical-arena-fall-pressure-v1/current-status.md`
-14. `implementation/tracks/track-03b-arena-flow-route-tuning-v1/current-status.md`
-15. `implementation/tracks/track-04a-fps-playground-football-v1/current-status.md`
+2. `docs/documentation-index.md`
+3. `docs/architecture-overview.md`
+4. `docs/work-plan.md`
+5. `docs/reuse-map.md`
+6. `docs/validation.md`
+7. `implementation/tracks/track-05-foundation-hardening-refactor-v1/current-status.md`
+8. `implementation/tracks/track-01-arena-1x1-v1/current-status.md`
+9. `implementation/tracks/track-01a-feel-feedback-v1/current-status.md`
+10. `implementation/tracks/track-01b-bot-duelist-v1/current-status.md`
+11. `implementation/tracks/track-01c-arena-layout-v1/current-status.md`
+12. `implementation/tracks/track-01d-knockback-movement-combat-v1/current-status.md`
+13. `implementation/tracks/track-02a-combat-loop-expansion-v1/current-status.md`
+14. `implementation/tracks/track-02a-bot-pressure-jump-hotfix-v1/current-status.md`
+15. `implementation/tracks/track-02a-plasma-damage-hotfix-v1/current-status.md`
+16. `implementation/tracks/track-03a-vertical-arena-fall-pressure-v1/current-status.md`
+17. `implementation/tracks/track-03b-arena-flow-route-tuning-v1/current-status.md`
+18. `implementation/tracks/track-04a-fps-playground-football-v1/current-status.md`

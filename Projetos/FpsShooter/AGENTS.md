@@ -18,6 +18,13 @@ Current identity:
 - future additions may include additional projectile types, stronger effects, jump pads, suspended platforms, void/fall rules and deeper movement-combat play;
 - no Ricochet-style contract is active unless Fabio explicitly reopens that direction.
 
+Current hardening direction:
+
+- Track 05 - Foundation Hardening & Refactor V1 is the active structural track;
+- preserve accepted behavior in both `Arena Shooter` and `Futebol`;
+- improve documentation, validation, shared runtime helpers, mode boundaries, bot contracts and test organization before adding gameplay;
+- use `docs/documentation-index.md` as the local map for agents.
+
 ## Multi-Agent And Git Rule
 
 - By default, work in a dedicated worktree outside `D:\Estudio`: `D:\Estudio-worktrees\FpsShooter--<agente>--<slug>`.
@@ -36,8 +43,10 @@ For most work:
 3. `../../08_Coordenacao_Agentes/Estado_Atual.md`
 4. `implementation/current-status.md`
 5. this file
-6. `docs/work-plan.md`
-7. `docs/reuse-map.md`
+6. `docs/documentation-index.md`
+7. `docs/architecture-overview.md`
+8. `docs/work-plan.md`
+9. `docs/reuse-map.md`
 8. touched files
 
 For bounded implementation work after the project is registered:
@@ -45,7 +54,8 @@ For bounded implementation work after the project is registered:
 1. `implementation/current-status.md`
 2. this file
 3. active track under `implementation/tracks/`
-4. touched files
+4. relevant contract doc under `docs/`
+5. touched files
 
 ## Godot Rule
 
@@ -73,6 +83,12 @@ Initial boundaries:
 - `tests/`: GUT coverage for bootstrap, input, scene assembly and combat primitives.
 - `docs/`: local product/technical references.
 - `implementation/`: status and track records.
+
+Track 05 target additions:
+
+- `modes/shared/`: shared runtime primitive creation and mode utilities.
+- `gameplay/arena/`: arena rule helpers when extracted from the mode root.
+- `tests/helpers/`: shared GUT setup helpers after the test suite split.
 
 ## Reuse Rule
 

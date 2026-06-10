@@ -3,6 +3,10 @@
 - Last updated: `2026-06-10`
 - Status: `VIVO`
 
+## Validation Profiles
+
+See `docs/validation-profiles.md` for the Track 05 profile policy, known warning list and fresh-worktree import note.
+
 ## Headless Command
 
 ```powershell
@@ -24,6 +28,7 @@ Latest automated baseline:
 - GUT `42/42`;
 - `355` asserts;
 - Track 04A validates menu boot and mode routes, centered menu container hierarchy, generated menu/arena/football scenes, paused football intro panel, football goal safety floors and side walls, football player kick and strong kick, no weapon damage in football, football goal scoring/match end, bot kick handoff, arena pause menu return button and the full previous arena shooter regression suite.
+- Track 05 baseline before refactor remains `42/42` and `355` asserts after the one-time fresh worktree editor import.
 
 ## Manual Smoke
 
