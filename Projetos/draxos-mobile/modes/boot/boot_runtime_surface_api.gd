@@ -114,7 +114,11 @@ func _create_battle_fullscreen_overlay() -> Control:
 	var parent: Control = _shell_overlay_fullscreen_parent()
 	if parent == null:
 		parent = self
+	else:
+		parent.visible = true
+		parent.mouse_filter = Control.MOUSE_FILTER_STOP
 	parent.add_child(overlay)
+	overlay.move_to_front()
 	_battle_fullscreen_overlay = overlay
 	return overlay
 

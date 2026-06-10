@@ -188,6 +188,14 @@ func _shell_overlay_should_capture_screen(screen_id: String) -> bool:
 func _shell_overlay_fullscreen_parent() -> Control:
 	return _mode_shell_overlay_controller.fullscreen_parent()
 
+func _shell_overlay_set_route_phase(phase: String, route_id: String = "", reason: String = "") -> void:
+	if _shell_overlay_is_open():
+		_mode_shell_overlay_controller.set_route_phase(self, phase, route_id, reason)
+
+func _shell_overlay_record_ignored_input(reason: String) -> void:
+	if _shell_overlay_is_open():
+		_mode_shell_overlay_controller.record_ignored_input(self, reason)
+
 func _publish_web_diagnostics_state() -> void:
 	if not OS.has_feature("web"):
 		return
@@ -196,12 +204,24 @@ func _publish_web_diagnostics_state() -> void:
 	var overlay_controls: Array[Dictionary] = []
 	var overlay_input := {}
 	var pending_confirmation := {}
+	var overlay_route_phase := "closed"
+	var overlay_route_ready := false
+	var overlay_top_layer := "none"
+	var overlay_last_ignored := ""
+	var overlay_modal := {}
+	var overlay_arena_fullscreen := {}
 	if _shell_overlay_is_open():
 		overlay_panel = _mode_shell_overlay_controller.panel_diagnostics()
 		overlay_buttons = _mode_shell_overlay_controller.button_diagnostics()
 		overlay_controls = _mode_shell_overlay_controller.control_diagnostics()
 		overlay_input = _mode_shell_overlay_controller.input_diagnostics()
 		pending_confirmation = _mode_shell_overlay_controller.confirmation_diagnostics()
+		overlay_route_phase = _mode_shell_overlay_controller.route_phase()
+		overlay_route_ready = _mode_shell_overlay_controller.route_ready()
+		overlay_top_layer = _mode_shell_overlay_controller.top_layer_name()
+		overlay_last_ignored = _mode_shell_overlay_controller.last_ignored_input_reason()
+		overlay_modal = _mode_shell_overlay_controller.modal_diagnostics()
+		overlay_arena_fullscreen = _mode_shell_overlay_controller.arena_fullscreen_diagnostics()
 	var payload := {
 		"project": ProjectInfoScript.PROJECT_NAME,
 		"releaseChannel": ProjectInfoScript.RELEASE_CHANNEL,
@@ -216,10 +236,21 @@ func _publish_web_diagnostics_state() -> void:
 		"overlayOpen": _shell_overlay_is_open(),
 		"overlayRoute": _shell_overlay_current_route(),
 		"overlayEpoch": _shell_overlay_epoch(),
+		"overlayRoutePhase": overlay_route_phase,
+		"overlayRouteReady": overlay_route_ready,
+		"overlayBusyScopes": Array(_operation_state.busy_scopes()),
+		"overlayTopLayer": overlay_top_layer,
+		"lastIgnoredInputReason": overlay_last_ignored,
 		"overlayPanel": overlay_panel,
 		"overlayButtons": overlay_buttons,
 		"overlayControls": overlay_controls,
+		"overlayTopControlAtPointer": {},
 		"overlayInput": overlay_input,
+		"modalVisible": bool(overlay_modal.get("visible", false)),
+		"modalRect": overlay_modal,
+		"arenaFullscreenVisible": bool(overlay_arena_fullscreen.get("visible", false)),
+		"arenaFullscreenRect": overlay_arena_fullscreen,
+		"menuPanelRect": overlay_panel,
 		"focusedControl": str(overlay_input.get("focused_control", "")),
 		"pendingConfirmation": pending_confirmation,
 		"actionInput": {
@@ -299,6 +330,7 @@ func _ensure_web_overlay_input_bridge() -> void:
 			const buttons = Array.isArray(state.overlayButtons) ? state.overlayButtons : [];
 			for (let index = buttons.length - 1; index >= 0; index -= 1) {
 				const button = buttons[index];
+				if (button.topmost !== true) continue;
 				if (rectContains(button, point)) return button;
 			}
 			return null;
@@ -307,6 +339,7 @@ func _ensure_web_overlay_input_bridge() -> void:
 			const controls = Array.isArray(state.overlayControls) ? state.overlayControls : [];
 			for (let index = controls.length - 1; index >= 0; index -= 1) {
 				const control = controls[index];
+				if (control.topmost !== true) continue;
 				if (rectContains(control, point)) return control;
 			}
 			const button = overlayButtonAt(state, point);
@@ -319,7 +352,8 @@ func _ensure_web_overlay_input_bridge() -> void:
 					x: button.x,
 					y: button.y,
 					width: button.width,
-					height: button.height
+					height: button.height,
+					topmost: true
 				};
 			}
 			return null;
@@ -364,6 +398,7 @@ func _ensure_web_overlay_input_bridge() -> void:
 				callGodotPayload({
 					type: 'button',
 					path: control.path,
+					action_id: control.action_id || '',
 					x: point.x,
 					y: point.y,
 					text: control.text || ''
@@ -404,7 +439,8 @@ func _ensure_web_overlay_input_bridge() -> void:
 			if (!state.overlayOpen) return;
 			const point = canvasPoint(event, state);
 			const panel = state.overlayPanel || null;
-			if (!rectContains(panel, point)) return;
+			const arena = state.arenaFullscreenRect || null;
+			if (!rectContains(panel, point) && !rectContains(arena, point)) return;
 			event.preventDefault();
 			event.stopPropagation();
 			callGodotPayload({
@@ -452,11 +488,14 @@ func _ensure_web_overlay_input_bridge() -> void:
 	_web_overlay_input_bridge_bound = true
 
 func _handle_web_overlay_input_command(args: Array) -> void:
-	if not _shell_overlay_is_open():
-		return
 	var command := ""
 	if not args.is_empty():
 		command = str(args[0]).strip_edges()
+	if command == "diagnostics":
+		_publish_web_diagnostics_state()
+		return
+	if not _shell_overlay_is_open():
+		return
 	var parsed: Variant = null
 	if command.begins_with("{"):
 		parsed = JSON.parse_string(command)
@@ -468,8 +507,17 @@ func _handle_web_overlay_input_command(args: Array) -> void:
 					float(payload.get("x", -100000.0)),
 					float(payload.get("y", -100000.0))
 				)
+				var button_action := str(payload.get("action_id", "")).strip_edges()
 				if _mode_shell_overlay_controller.request_button(self, str(payload.get("path", "")), point):
 					call_deferred("_publish_web_diagnostics_state")
+				elif button_action != "" and _mode_shell_overlay_controller.request_button_by_action(self, button_action, point):
+					call_deferred("_publish_web_diagnostics_state")
+				elif button_action == "overlay_confirm":
+					if _mode_shell_overlay_controller.request_confirm_modal(self):
+						call_deferred("_publish_web_diagnostics_state")
+				elif button_action == "overlay_confirm_cancel":
+					if _mode_shell_overlay_controller.request_cancel_modal(self):
+						call_deferred("_publish_web_diagnostics_state")
 			"focus":
 				var focus_point := Vector2(
 					float(payload.get("x", -100000.0)),

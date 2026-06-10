@@ -1662,9 +1662,16 @@ func test_bosque_overlay_arena_replay_uses_overlay_fullscreen_parent() -> void:
 	await get_tree().process_frame
 
 	var overlay := _find_node_by_name(boot, "ModeShellMenuOverlay")
+	var fullscreen_layer := _find_node_by_name(boot, "ModeShellArenaFullscreenLayer") as Control
+	var menu_panel := _find_node_by_name(boot, "ModeShellMenuPanel") as Control
 	assert_not_null(overlay)
+	assert_not_null(fullscreen_layer)
 	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_REPLAY)
-	assert_not_null(_find_node_by_name(overlay, "BattleFullscreenOverlay"))
+	var battle_overlay := _find_node_by_name(overlay, "BattleFullscreenOverlay") as Control
+	assert_not_null(battle_overlay)
+	assert_true(fullscreen_layer.visible)
+	assert_true(battle_overlay.get_parent() == fullscreen_layer)
+	assert_true(menu_panel == null or not menu_panel.visible or menu_panel.get_parent() != fullscreen_layer)
 	assert_true(boot._mode_shell_active_screen != null and is_instance_valid(boot._mode_shell_active_screen))
 
 func test_bosque_overlay_close_blocks_only_for_replay_or_critical_mutation() -> void:
@@ -1752,6 +1759,13 @@ func test_bosque_overlay_read_only_refresh_does_not_block_close_or_late_response
 	assert_false(close_button.disabled)
 	assert_true(boot._shell_overlay_is_open())
 	assert_true(boot._is_busy)
+	assert_eq(boot._mode_shell_overlay_controller.route_phase(), "refreshing")
+	assert_false(boot._mode_shell_overlay_controller.route_ready())
+
+	var refresh_button := _find_button_by_text(_find_node_by_name(boot, "ModeShellMenuOverlay"), "Atualizar perfil")
+	if refresh_button != null:
+		await _send_overlay_web_button_command(boot, refresh_button)
+		assert_eq(boot._mode_shell_overlay_controller.last_ignored_input_reason(), "route_not_ready")
 
 	boot._close_shell_overlay()
 	await get_tree().process_frame
@@ -1766,7 +1780,13 @@ func test_bosque_overlay_read_only_refresh_does_not_block_close_or_late_response
 		"Resposta tardia nao deve renderizar."
 	)
 	assert_false(finished)
-	assert_false(boot._is_busy)
+	assert_false(
+		boot._is_busy,
+		"busy flag should be false after stale read-only refresh is ignored; scopes=%s phase=%s" % [
+			Array(boot._operation_state.busy_scopes()),
+			boot._mode_shell_overlay_controller.route_phase(),
+		]
+	)
 	assert_false(_label_tree_contains(boot._content_body, "Resposta tardia nao deve renderizar."))
 
 func test_bosque_overlay_internal_exit_actions_clear_active_action_state() -> void:
@@ -1957,6 +1977,14 @@ func test_bosque_overlay_arena_resume_and_abandon_releases_attempt_after_confirm
 	assert_eq(boot._current_screen, AppShellRouteContractScript.ROUTE_MODE_SHELL)
 	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_ACTIVE)
 	assert_eq(str(boot._web_last_action.get("action_id", "")), AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT)
+	var fullscreen_layer := _find_node_by_name(boot, "ModeShellArenaFullscreenLayer") as Control
+	var active_panel := _find_node_by_name(boot, "ModeShellArenaFullscreenPanel") as Control
+	assert_not_null(fullscreen_layer)
+	assert_not_null(active_panel)
+	assert_true(fullscreen_layer.visible)
+	assert_true(active_panel.get_parent() == fullscreen_layer)
+	assert_true(active_panel.get_global_rect().size.x >= get_viewport().get_visible_rect().size.x * 0.8)
+	assert_eq(boot._mode_shell_overlay_controller.top_layer_name(), "arena_fullscreen")
 
 	overlay = _find_node_by_name(boot, "ModeShellMenuOverlay")
 	var abandon_button := _find_button_by_text(overlay, "Abandonar tentativa")
@@ -1967,6 +1995,14 @@ func test_bosque_overlay_arena_resume_and_abandon_releases_attempt_after_confirm
 	assert_true(boot._shell_overlay_is_open())
 	assert_eq(boot._shell_overlay_current_route(), AppShellRouteContractScript.ROUTE_ARENA_ACTIVE)
 	assert_true(boot._mode_shell_overlay_controller.confirmation_pending())
+	var modal_layer := _find_node_by_name(boot, "ModeShellModalLayer") as Control
+	var confirm_panel := _find_node_by_name(boot, "ModeShellMenuConfirmPanel") as Control
+	assert_not_null(modal_layer)
+	assert_not_null(confirm_panel)
+	assert_true(modal_layer.visible)
+	assert_true(confirm_panel.visible)
+	assert_true(confirm_panel.get_parent() == modal_layer)
+	assert_eq(boot._mode_shell_overlay_controller.top_layer_name(), "modal")
 	assert_eq(str(boot.get("_pending_confirmation_action")), AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT)
 	assert_ne(str(boot._web_last_action.get("action_id", "")), AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT)
 
@@ -1983,6 +2019,14 @@ func test_bosque_overlay_arena_resume_and_abandon_releases_attempt_after_confirm
 	assert_eq(str(SessionStore.active_arena_attempt().get("state", "")), "abandoned")
 	assert_eq(str(boot._arena_last_operation.get("phase", "")), "abandon_released")
 	assert_false(bool(boot._arena_last_operation.get("active_attempt_blocks", true)))
+	assert_eq(boot._mode_shell_overlay_controller.route_phase(), "ready")
+	assert_false(
+		boot._is_busy,
+		"busy flag should be false after abandon release; scopes=%s phase=%s" % [
+			Array(boot._operation_state.busy_scopes()),
+			boot._mode_shell_overlay_controller.route_phase(),
+		]
+	)
 
 func test_bosque_overlay_arena_stale_attempt_clears_locally_even_when_update_gate_blocks_remote() -> void:
 	ProjectSettings.set_setting("draxos_mobile/modes/openworld/enabled", true)
@@ -3102,13 +3146,25 @@ func _send_overlay_web_button_command(boot: Node, button: Button) -> void:
 	assert_not_null(overlay)
 	if overlay == null:
 		return
-	var center := button.get_global_rect().get_center()
+	var command := {}
+	for _attempt in range(8):
+		command = _overlay_visible_control_payload(
+			boot,
+			str(overlay.get_path_to(button)),
+			str(button.text),
+			button.get_global_rect()
+		)
+		if bool(command.get("matched", false)):
+			break
+		boot._mode_shell_overlay_controller.request_scroll(boot, 420.0)
+		await wait_process_frames(1)
 	boot.call("_handle_web_overlay_input_command", [JSON.stringify({
 		"type": "button",
-		"path": str(overlay.get_path_to(button)),
-		"x": center.x,
-		"y": center.y,
+		"path": str(command.get("path", str(overlay.get_path_to(button)))),
+		"x": float(command.get("x", 0.0)),
+		"y": float(command.get("y", 0.0)),
 		"text": str(button.text),
+		"action_id": str(button.get_meta("action_id", "")),
 	})])
 	await wait_process_frames(2)
 
@@ -3120,12 +3176,23 @@ func _send_overlay_web_focus_command(boot: Node, input: LineEdit) -> void:
 	assert_not_null(overlay)
 	if overlay == null:
 		return
-	var center := input.get_global_rect().get_center()
+	var command := {}
+	for _attempt in range(8):
+		command = _overlay_visible_control_payload(
+			boot,
+			str(overlay.get_path_to(input)),
+			str(input.placeholder_text),
+			input.get_global_rect()
+		)
+		if bool(command.get("matched", false)):
+			break
+		boot._mode_shell_overlay_controller.request_scroll(boot, 420.0)
+		await wait_process_frames(1)
 	boot.call("_handle_web_overlay_input_command", [JSON.stringify({
 		"type": "focus",
-		"path": str(overlay.get_path_to(input)),
-		"x": center.x,
-		"y": center.y,
+		"path": str(command.get("path", str(overlay.get_path_to(input)))),
+		"x": float(command.get("x", 0.0)),
+		"y": float(command.get("y", 0.0)),
 		"text": str(input.text),
 	})])
 	await wait_process_frames(2)
@@ -3145,6 +3212,36 @@ func _send_overlay_web_text_command(boot: Node, input: LineEdit, text: String, r
 		"replace": replace_existing,
 	})])
 	await wait_process_frames(2)
+
+func _overlay_visible_control_payload(boot: Node, relative_path: String, label: String, fallback_rect: Rect2) -> Dictionary:
+	if boot != null and boot.get("_mode_shell_overlay_controller") != null:
+		var controls: Array = boot._mode_shell_overlay_controller.control_diagnostics()
+		for item: Variant in controls:
+			var control := item as Dictionary
+			if str(control.get("path", "")) == relative_path:
+				return _overlay_control_command_payload(control, relative_path, fallback_rect)
+		for item: Variant in controls:
+			var control := item as Dictionary
+			if str(control.get("text", "")) == label or str(control.get("placeholder", "")) == label:
+				return _overlay_control_command_payload(control, relative_path, fallback_rect)
+	var fallback_center := fallback_rect.get_center()
+	return {
+		"path": relative_path,
+		"x": fallback_center.x,
+		"y": fallback_center.y,
+		"matched": false,
+	}
+
+func _overlay_control_command_payload(control: Dictionary, fallback_path: String, fallback_rect: Rect2) -> Dictionary:
+	var fallback_center := fallback_rect.get_center()
+	var width := float(control.get("width", 0.0))
+	var height := float(control.get("height", 0.0))
+	return {
+		"path": str(control.get("path", fallback_path)),
+		"x": float(control.get("x", fallback_center.x)) + width * 0.5,
+		"y": float(control.get("y", fallback_center.y)) + height * 0.5,
+		"matched": true,
+	}
 
 func _overlay_control_diagnostics_has_line_edit(boot: Node, expected_text: String) -> bool:
 	if boot == null or boot.get("_mode_shell_overlay_controller") == null:

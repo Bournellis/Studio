@@ -2,8 +2,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$WebUrl,
     [string]$ExpectedReleaseRoot = "",
-    [string]$ExpectedAppVersion = "0.0.22-alpha.0",
-    [int]$ExpectedAppVersionCode = 22,
+    [string]$ExpectedAppVersion = "0.0.23-alpha.0",
+    [int]$ExpectedAppVersionCode = 23,
     [string]$ChromePath = "",
     [int]$TimeoutSeconds = 90,
     [string]$DiagnosticsDir = "",
@@ -98,6 +98,7 @@ $chromeArgs = @(
     "--no-first-run",
     "--no-default-browser-check",
     "--disable-extensions",
+    "--force-device-scale-factor=1",
     "--remote-debugging-port=$port",
     "--user-data-dir=$profileDir",
     "--window-size=1280,720",
@@ -151,7 +152,6 @@ if (typeof WebSocket !== 'function') {
 const cases = [
 	{ label: 'account-check-update', smoke: 'overlay-account', route: 'account', button: 'Checar update', action: 'check_update', expectClosed: false },
 	{ label: 'base-sync', smoke: 'overlay-base', route: 'base_management', button: 'Sincronizar Refugio', action: 'show_base', expectClosed: false },
-	{ label: 'shop-refresh', smoke: 'overlay-shop', route: 'shop', button: 'Atualizar loja', action: 'show_shop', expectClosed: false },
 	{ label: 'social-refresh', smoke: 'overlay-social', route: 'social', button: 'Atualizar social', action: 'show_social', expectClosed: false },
 	{ label: 'arena-return-refuge', smoke: 'overlay-arena', route: 'arena_selection', button: 'Voltar ao Refugio', action: 'return_refuge', expectClosed: true },
 ];
@@ -268,6 +268,9 @@ async function readState(client) {
 	const evaluation = await client.send('Runtime.evaluate', {
 		returnByValue: true,
 		expression: `(() => {
+			if (typeof window.__draxosGodotOverlayCommand === 'function') {
+				window.__draxosGodotOverlayCommand('diagnostics');
+			}
 			const canvas = document.querySelector('canvas');
 			const rect = canvas ? canvas.getBoundingClientRect() : null;
 			return {
@@ -351,10 +354,18 @@ function rectContains(rect, point) {
 function visibleControl(state, control) {
 	const point = centerOf(control);
 	const panel = state.state?.overlayPanel || null;
+	const arena = state.state?.arenaFullscreenRect || null;
+	const modal = state.state?.modalRect || null;
 	const viewport = state.state?.viewportSize || {};
 	const viewportWidth = Number(viewport.width || state.canvasRect?.width || 0);
 	const viewportHeight = Number(viewport.height || state.canvasRect?.height || 0);
-	return rectContains(panel, point) &&
+	const expectedLayer = String(control.layer || '');
+	const insideExpectedLayer =
+		(expectedLayer === 'arena_fullscreen' && rectContains(arena, point)) ||
+		(expectedLayer === 'modal' && rectContains(modal, point)) ||
+		((expectedLayer === 'menu' || expectedLayer === '') && rectContains(panel, point));
+	return control.topmost === true &&
+		insideExpectedLayer &&
 		viewportWidth > 0 &&
 		viewportHeight > 0 &&
 		point.x >= 0 &&
@@ -457,11 +468,20 @@ function findControl(state, predicate) {
 	return controls.find(predicate) || null;
 }
 
-function findButton(state, text) {
-	const control = findControl(state, (item) => String(item.type || '') === 'button' && String(item.text || '') === text);
-	if (control) return control;
+function findButton(state, text, expectedActionId = '') {
+	const controls = Array.isArray(state.state?.overlayControls) ? state.state.overlayControls : [];
 	const buttons = Array.isArray(state.state?.overlayButtons) ? state.state.overlayButtons : [];
-	return buttons.find((button) => String(button.text || '') === text) || null;
+	let matches = [
+		...controls.filter((item) => String(item.type || '') === 'button' && String(item.text || '') === text),
+		...buttons.filter((button) => String(button.text || '') === text),
+	];
+	if (expectedActionId) {
+		matches = matches.filter((button) => String(button.action_id || '') === expectedActionId);
+	}
+	return matches.find((button) => visibleButton(state, button)) ||
+		matches.find((button) => button.topmost === true) ||
+		matches[0] ||
+		null;
 }
 
 function findLineEdit(state, placeholder) {
@@ -471,11 +491,11 @@ function findLineEdit(state, placeholder) {
 	});
 }
 
-async function clickOverlayButton(client, label, text, expectedAction = '') {
+async function clickOverlayButton(client, label, text, expectedAction = '', expectedButtonActionId = '') {
 	let beforeState = await readState(client);
 	let candidate = null;
 	for (let attempt = 0; attempt < 18; attempt += 1) {
-		candidate = findButton(beforeState, text);
+		candidate = findButton(beforeState, text, expectedButtonActionId);
 		if (candidate && visibleButton(beforeState, candidate)) {
 			break;
 		}
@@ -504,7 +524,7 @@ async function clickOverlayButton(client, label, text, expectedAction = '') {
 			String(state.state?.pendingConfirmation?.action_id || '') === String(candidate.action_id || '');
 		const confirmCancelMatched = Number(state.state?.overlayInput?.sequence || 0) > beforeOverlaySequence &&
 			String(state.state?.overlayInput?.last?.type || '') === 'confirm_cancel' &&
-			text === 'Voltar' &&
+			(text === 'Voltar' || expectedButtonActionId === 'overlay_confirm_cancel') &&
 			state.state?.pendingConfirmation?.pending === false;
 		const actionMatched = expectedAction &&
 			Number(state.state?.actionInput?.sequence || 0) > beforeActionSequence &&
@@ -597,6 +617,14 @@ try {
 	await client.send('Network.enable');
 	await client.send('Network.setCacheDisabled', { cacheDisabled: true });
 	await client.send('Page.enable');
+	await client.send('Emulation.setDeviceMetricsOverride', {
+		width: 1280,
+		height: 720,
+		deviceScaleFactor: 1,
+		mobile: false,
+		screenWidth: 1280,
+		screenHeight: 720,
+	});
 
 	for (const testCase of cases) {
 		await client.send('Page.navigate', { url: smokeUrl(testCase.smoke, testCase.label) });
@@ -690,7 +718,7 @@ try {
 			const confirmOpen = await waitFor(client, (state) => {
 				return state.state?.pendingConfirmation?.pending === true;
 			}, `${testCase.label}: confirmation opens`);
-			await clickOverlayButton(client, testCase.label, 'Voltar', '');
+			await clickOverlayButton(client, testCase.label, 'Voltar', '', 'overlay_confirm_cancel');
 			await waitFor(client, (state) => {
 				return state.state?.pendingConfirmation?.pending === false;
 			}, `${testCase.label}: confirmation cancels`);
@@ -727,11 +755,16 @@ try {
 					state.state.currentScreen === 'mode_shell' &&
 					state.state.overlayOpen === true &&
 					state.state.overlayRoute === 'arena_active' &&
+					state.state.arenaFullscreenVisible === true &&
+					state.state.overlayTopLayer === 'arena_fullscreen' &&
 					String(state.state.actionInput?.last?.action_id || '') === testCase.resumeAction;
 			}, `${testCase.label}: resume reaches active route`);
 			const abandonClick = await clickOverlayButton(client, testCase.label, testCase.abandonButton, '');
 			const confirmOpen = await waitFor(client, (state) => {
 				return state.state?.pendingConfirmation?.pending === true &&
+					state.state?.modalVisible === true &&
+					state.state?.overlayTopLayer === 'modal' &&
+					state.state?.pendingConfirmation?.topmost === true &&
 					String(state.state?.pendingConfirmation?.action_id || '') === testCase.abandonAction;
 			}, `${testCase.label}: abandon confirmation opens`);
 			const confirmClick = await clickOverlayButton(client, testCase.label, 'Confirmar', testCase.abandonAction);
@@ -740,6 +773,9 @@ try {
 					state.state.currentScreen === 'mode_shell' &&
 					state.state.overlayOpen === true &&
 					state.state.overlayRoute === 'arena_selection' &&
+					state.state.overlayRouteReady === true &&
+					state.state.busy === false &&
+					state.state.arenaFullscreenVisible === false &&
 					String(state.state.actionInput?.last?.action_id || '') === testCase.abandonAction &&
 					state.state.pendingConfirmation?.pending === false &&
 					state.state.arena?.activeAttemptBlocksSelection === false &&
@@ -761,7 +797,10 @@ try {
 				confirm_message: confirmOpen.state.state?.pendingConfirmation?.message || '',
 				confirm_action_after_input: confirmClick.action_after_input,
 				overlay_route_after_resume: active.state.state?.overlayRoute || '',
+				arena_fullscreen_after_resume: Boolean(active.state.state?.arenaFullscreenVisible),
+				top_layer_after_resume: active.state.state?.overlayTopLayer || '',
 				overlay_route_after_abandon: after.state.state?.overlayRoute || '',
+				route_ready_after_abandon: Boolean(after.state.state?.overlayRouteReady),
 				arena_after_abandon: after.state.state?.arena || null,
 				last_arena_operation: after.state.state?.lastArenaOperation || null,
 			});

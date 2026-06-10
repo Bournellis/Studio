@@ -15,6 +15,10 @@ const _OVERLAY_ACTION_ROUTES := {
 
 var _root: Control
 var _backdrop: ColorRect
+var _menu_layer: Control
+var _arena_fullscreen_layer: Control
+var _modal_layer: Control
+var _modal_backdrop: ColorRect
 var _panel: PanelContainer
 var _content_title: Label
 var _status_label: Label
@@ -38,6 +42,8 @@ var _last_input: Dictionary = {}
 var _focused_control_path := ""
 var _pending_confirm_action := ""
 var _pending_confirm_message := ""
+var _route_phase := "ready"
+var _last_ignored_input_reason := ""
 
 func is_open() -> bool:
 	return _root != null and is_instance_valid(_root)
@@ -71,9 +77,12 @@ func show_screen(host: Node, route_id: String, push_history: bool = true) -> voi
 	if push_history and _current_route != "" and target != _current_route:
 		_history.append(_current_route)
 	_current_route = target
+	set_route_phase(host, "opening", target)
 	_prepare_host_for_route(host, target)
 	host.call("_render_route_contents", target)
 	host.call("_sync_status_from_session")
+	if _route_phase == "opening":
+		set_route_phase(host, "ready", target)
 	_publish_diagnostics(host)
 	var context := _as_dictionary(host.call("_action_context"))
 	host.call("_emit_client_event", "screen_opened", {
@@ -127,11 +136,17 @@ func request_close(host: Node) -> bool:
 	_root = null
 	_backdrop = null
 	_panel = null
+	_menu_layer = null
+	_arena_fullscreen_layer = null
+	_modal_layer = null
+	_modal_backdrop = null
 	_confirm_panel = null
 	_confirm_label = null
 	_confirm_button = null
 	_cancel_confirm_button = null
 	_focused_control_path = ""
+	_route_phase = "ready"
+	_last_ignored_input_reason = ""
 	_current_route = ""
 	_history.clear()
 	host.call("_sync_status_from_session")
@@ -153,18 +168,25 @@ func force_close(host: Node) -> void:
 	_root = null
 	_backdrop = null
 	_panel = null
+	_menu_layer = null
+	_arena_fullscreen_layer = null
+	_modal_layer = null
+	_modal_backdrop = null
 	_confirm_panel = null
 	_confirm_label = null
 	_confirm_button = null
 	_cancel_confirm_button = null
 	_focused_control_path = ""
+	_route_phase = "ready"
+	_last_ignored_input_reason = ""
 	_current_route = ""
 	_history.clear()
 	_publish_diagnostics(host)
 
 func fullscreen_parent() -> Control:
 	if is_open():
-		return _root
+		_show_arena_fullscreen_layer(true)
+		return _arena_fullscreen_layer
 	return null
 
 func panel_diagnostics() -> Dictionary:
@@ -176,7 +198,84 @@ func panel_diagnostics() -> Dictionary:
 		"y": rect.position.y,
 		"width": rect.size.x,
 		"height": rect.size.y,
+		"layer": _layer_name_for_control(_panel),
+		"fullscreen": _route_uses_arena_fullscreen(_current_route),
 	}
+
+func arena_fullscreen_diagnostics() -> Dictionary:
+	if not is_open() or _arena_fullscreen_layer == null or not is_instance_valid(_arena_fullscreen_layer):
+		return {}
+	var rect := _arena_fullscreen_layer.get_global_rect()
+	return {
+		"visible": _arena_fullscreen_layer.visible,
+		"x": rect.position.x,
+		"y": rect.position.y,
+		"width": rect.size.x,
+		"height": rect.size.y,
+		"children": _arena_fullscreen_layer.get_child_count(),
+	}
+
+func modal_diagnostics() -> Dictionary:
+	if not is_open() or _modal_layer == null or not is_instance_valid(_modal_layer):
+		return {}
+	var rect := _modal_layer.get_global_rect()
+	var confirm_rect := Rect2()
+	if _confirm_panel != null and is_instance_valid(_confirm_panel):
+		confirm_rect = _confirm_panel.get_global_rect()
+	return {
+		"visible": _modal_layer.visible,
+		"x": rect.position.x,
+		"y": rect.position.y,
+		"width": rect.size.x,
+		"height": rect.size.y,
+		"confirm_x": confirm_rect.position.x,
+		"confirm_y": confirm_rect.position.y,
+		"confirm_width": confirm_rect.size.x,
+		"confirm_height": confirm_rect.size.y,
+		"topmost": top_layer_name() == "modal",
+	}
+
+func route_phase() -> String:
+	return _route_phase
+
+func route_ready() -> bool:
+	return _route_phase == "ready"
+
+func last_ignored_input_reason() -> String:
+	return _last_ignored_input_reason
+
+func top_layer_name() -> String:
+	if confirmation_pending():
+		return "modal"
+	if _arena_fullscreen_layer != null and is_instance_valid(_arena_fullscreen_layer) and _arena_fullscreen_layer.visible:
+		return "arena_fullscreen"
+	if is_open():
+		return "menu"
+	return "none"
+
+func set_route_phase(host: Node, phase: String, route_id: String = "", reason: String = "") -> void:
+	if not is_open():
+		return
+	var normalized := phase.strip_edges().to_lower()
+	if not (normalized in ["opening", "refreshing", "ready", "mutating", "critical"]):
+		normalized = "ready"
+	var target_route := AppShellRouteContractScript.normalize(route_id)
+	if target_route != "" and _current_route != "" and target_route != _current_route:
+		return
+	_route_phase = normalized
+	if reason.strip_edges() != "":
+		_detail_label.text = reason
+	elif normalized == "refreshing":
+		_detail_label.text = "Sincronizando com o servidor..."
+	elif normalized == "opening":
+		_detail_label.text = "Abrindo a superficie sobre o Bosque..."
+	elif normalized == "critical":
+		_detail_label.text = "Acao critica em andamento..."
+	_sync_busy_buttons(host)
+	_publish_diagnostics(host)
+
+func record_ignored_input(host: Node, reason: String) -> void:
+	_record_ignored_input(host, reason)
 
 func button_diagnostics() -> Array[Dictionary]:
 	var buttons: Array[Dictionary] = []
@@ -203,10 +302,19 @@ func focused_control_path() -> String:
 	return _focused_control_path
 
 func confirmation_diagnostics() -> Dictionary:
+	var rect := Rect2()
+	if _confirm_panel != null and is_instance_valid(_confirm_panel):
+		rect = _confirm_panel.get_global_rect()
 	return {
 		"pending": _pending_confirm_action != "",
 		"action_id": _pending_confirm_action,
 		"message": _pending_confirm_message,
+		"visible": _pending_confirm_action != "" and _confirm_panel != null and is_instance_valid(_confirm_panel) and _confirm_panel.visible,
+		"x": rect.position.x,
+		"y": rect.position.y,
+		"width": rect.size.x,
+		"height": rect.size.y,
+		"topmost": _pending_confirm_action != "" and top_layer_name() == "modal",
 	}
 
 func confirmation_pending() -> bool:
@@ -224,8 +332,20 @@ func request_confirmation(host: Node, action_id: String, message: String) -> boo
 	_focused_control_path = ""
 	_record_input("confirm_open", normalized_action, "")
 	_sync_confirmation_panel()
+	sync_layout(host)
 	_publish_diagnostics(host)
 	return true
+
+func request_confirm_modal(host: Node) -> bool:
+	if not is_open() or not confirmation_pending():
+		return false
+	_confirm_pending_action(host)
+	return true
+
+func request_cancel_modal(host: Node) -> bool:
+	if not is_open():
+		return false
+	return _cancel_confirmation(host, true)
 
 func request_button(host: Node, relative_path: String, point: Vector2) -> bool:
 	if not is_open() or relative_path.strip_edges() == "":
@@ -234,9 +354,36 @@ func request_button(host: Node, relative_path: String, point: Vector2) -> bool:
 	var button := node as Button
 	if button == null or not is_instance_valid(button):
 		return false
-	if button.disabled or not button.visible or not button.is_visible_in_tree():
+	return _request_button_control(host, button, relative_path.strip_edges(), point)
+
+func request_button_by_action(host: Node, action_id: String, point: Vector2) -> bool:
+	if not is_open() or action_id.strip_edges() == "":
+		return false
+	var button := _find_visible_button_by_action(_root, action_id.strip_edges(), point)
+	if button == null:
+		return false
+	return _request_button_control(host, button, str(_root.get_path_to(button)), point)
+
+func _request_button_control(host: Node, button: Button, relative_path: String, point: Vector2) -> bool:
+	if not button.visible or not button.is_visible_in_tree():
+		_record_ignored_input(host, "control_not_visible")
+		return false
+	var rect := _control_visible_rect(button)
+	if rect.size.x > 0.0 and rect.size.y > 0.0 and not rect.has_point(point):
+		_record_ignored_input(host, "point_outside_control")
+		return false
+	if rect.size.x <= 0.0 or rect.size.y <= 0.0:
+		_record_ignored_input(host, "control_not_visible")
+		return false
+	var top_control := _top_control_at_point(point)
+	if top_control != button:
+		_record_ignored_input(host, "control_not_topmost")
+		return false
+	if button.disabled:
+		_record_ignored_input(host, _disabled_reason_for_button(button))
 		return false
 	_focused_control_path = ""
+	_last_ignored_input_reason = ""
 	_record_input("button", str(button.text), relative_path.strip_edges())
 	button.emit_signal("pressed")
 	_publish_diagnostics(host)
@@ -250,11 +397,21 @@ func request_focus(host: Node, relative_path: String, point: Vector2) -> bool:
 	if input == null or not is_instance_valid(input):
 		return false
 	if not input.visible or not input.is_visible_in_tree() or not input.editable:
+		_record_ignored_input(host, "control_not_editable")
 		return false
-	var rect := input.get_global_rect()
+	var rect := _control_visible_rect(input)
 	if rect.size.x > 0.0 and rect.size.y > 0.0 and not rect.has_point(point):
+		_record_ignored_input(host, "point_outside_control")
+		return false
+	if rect.size.x <= 0.0 or rect.size.y <= 0.0:
+		_record_ignored_input(host, "control_not_visible")
+		return false
+	var top_control := _top_control_at_point(point)
+	if top_control != input:
+		_record_ignored_input(host, "control_not_topmost")
 		return false
 	_focused_control_path = relative_path.strip_edges()
+	_last_ignored_input_reason = ""
 	input.grab_focus()
 	input.caret_column = input.text.length()
 	_record_input("focus", str(input.placeholder_text), _focused_control_path)
@@ -329,7 +486,24 @@ func sync_layout(host: Node) -> void:
 	var compact: bool = bool(host.get("_compact_layout")) or viewport_size.x <= 820.0
 	var safe_margin: float = 12.0 if compact else 24.0
 	var panel_width := viewport_size.x - safe_margin * 2.0
-	if compact:
+	if _menu_layer != null and is_instance_valid(_menu_layer):
+		_menu_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if _arena_fullscreen_layer != null and is_instance_valid(_arena_fullscreen_layer):
+		_arena_fullscreen_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if _modal_layer != null and is_instance_valid(_modal_layer):
+		_modal_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if _modal_backdrop != null and is_instance_valid(_modal_backdrop):
+		_modal_backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if _route_uses_arena_fullscreen(_current_route):
+		_panel.anchor_left = 0.0
+		_panel.anchor_top = 0.0
+		_panel.anchor_right = 1.0
+		_panel.anchor_bottom = 1.0
+		_panel.offset_left = safe_margin
+		_panel.offset_right = -safe_margin
+		_panel.offset_top = safe_margin
+		_panel.offset_bottom = -safe_margin
+	elif compact:
 		_panel.anchor_left = 0.0
 		_panel.anchor_top = 0.0
 		_panel.anchor_right = 1.0
@@ -350,22 +524,27 @@ func sync_layout(host: Node) -> void:
 		_panel.offset_bottom = -safe_margin
 	if _confirm_panel != null and is_instance_valid(_confirm_panel):
 		var inset := 14.0 if compact else 12.0
-		var confirm_height := 150.0 if compact else 136.0
-		_confirm_panel.anchor_left = 0.0 if compact else 1.0
-		_confirm_panel.anchor_top = 1.0
-		_confirm_panel.anchor_right = 1.0
-		_confirm_panel.anchor_bottom = 1.0
-		_confirm_panel.offset_left = safe_margin + inset if compact else -panel_width - safe_margin + inset
-		_confirm_panel.offset_right = -safe_margin - inset
-		_confirm_panel.offset_top = -safe_margin - inset - confirm_height
-		_confirm_panel.offset_bottom = -safe_margin - inset
+		var confirm_width := clampf(viewport_size.x - (safe_margin + inset) * 2.0, 300.0, 560.0)
+		var confirm_height := 168.0 if compact else 152.0
+		_confirm_panel.custom_minimum_size = Vector2(confirm_width, confirm_height)
+		_confirm_panel.anchor_left = 0.5
+		_confirm_panel.anchor_top = 0.5
+		_confirm_panel.anchor_right = 0.5
+		_confirm_panel.anchor_bottom = 0.5
+		_confirm_panel.offset_left = -confirm_width * 0.5
+		_confirm_panel.offset_right = confirm_width * 0.5
+		_confirm_panel.offset_top = -confirm_height * 0.5
+		_confirm_panel.offset_bottom = confirm_height * 0.5
+		_confirm_panel.size = Vector2(confirm_width, confirm_height)
+		if _confirm_label != null and is_instance_valid(_confirm_label):
+			_confirm_label.custom_minimum_size = Vector2(maxf(160.0, confirm_width - 32.0), 0.0)
 
 func sync_controls(host: Node) -> void:
 	if not is_open():
 		return
+	_sync_confirmation_panel()
 	sync_layout(host)
 	_sync_busy_buttons(host)
-	_sync_confirmation_panel()
 
 func handle_input(host: Node, event: InputEvent) -> bool:
 	if not is_open():
@@ -406,12 +585,42 @@ func _build_overlay(host: Node) -> void:
 	_backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(_backdrop)
 
+	_menu_layer = Control.new()
+	_menu_layer.name = "ModeShellMenuLayer"
+	_menu_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_menu_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_menu_layer.z_index = 1001
+	_root.add_child(_menu_layer)
+
+	_arena_fullscreen_layer = Control.new()
+	_arena_fullscreen_layer.name = "ModeShellArenaFullscreenLayer"
+	_arena_fullscreen_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_arena_fullscreen_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_arena_fullscreen_layer.visible = false
+	_arena_fullscreen_layer.z_index = 1010
+	_root.add_child(_arena_fullscreen_layer)
+
+	_modal_layer = Control.new()
+	_modal_layer.name = "ModeShellModalLayer"
+	_modal_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_modal_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_modal_layer.visible = false
+	_modal_layer.z_index = 1020
+	_root.add_child(_modal_layer)
+
+	_modal_backdrop = ColorRect.new()
+	_modal_backdrop.name = "ModeShellModalBackdrop"
+	_modal_backdrop.color = Color(0.0, 0.0, 0.0, 0.54)
+	_modal_backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	_modal_backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_modal_layer.add_child(_modal_backdrop)
+
 	_panel = PanelContainer.new()
 	_panel.name = "ModeShellMenuPanel"
 	_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	_panel.z_index = 1001
+	_panel.z_index = 1
 	_panel.add_theme_stylebox_override("panel", UiTokens.panel_style_from_tokens("bg_panel", "border_active", bool(host.get("_compact_layout")), "accent_refuge", 1, 8, 12))
-	_root.add_child(_panel)
+	_menu_layer.add_child(_panel)
 
 	var shell := VBoxContainer.new()
 	shell.name = "ModeShellMenuLayout"
@@ -479,9 +688,9 @@ func _build_overlay(host: Node) -> void:
 	_confirm_panel.visible = false
 	_confirm_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	_confirm_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_confirm_panel.z_index = 1002
+	_confirm_panel.z_index = 1
 	_confirm_panel.add_theme_stylebox_override("panel", UiTokens.panel_style_from_tokens("bg_panel_alt", "status_warning", bool(host.get("_compact_layout")), "status_warning", 1, 8, 10))
-	_root.add_child(_confirm_panel)
+	_modal_layer.add_child(_confirm_panel)
 
 	var confirm_stack := VBoxContainer.new()
 	confirm_stack.name = "ModeShellMenuConfirmStack"
@@ -491,6 +700,7 @@ func _build_overlay(host: Node) -> void:
 	_confirm_label = Label.new()
 	_confirm_label.name = "ModeShellMenuConfirmLabel"
 	_confirm_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_confirm_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_confirm_label.add_theme_color_override("font_color", UiTokens.color("text_primary"))
 	confirm_stack.add_child(_confirm_label)
 
@@ -560,8 +770,9 @@ func _collect_button_diagnostics(node: Node, buttons: Array[Dictionary]) -> void
 	if node is Button:
 		var button := node as Button
 		if button.visible and button.is_visible_in_tree() and not button.disabled:
-			var rect := _button_visual_rect(button)
+			var rect := _control_visible_rect(button)
 			if rect.size.x > 0.0 and rect.size.y > 0.0:
+				var top_control := _top_control_at_point(rect.get_center())
 				buttons.append({
 					"path": str(_root.get_path_to(button)),
 					"text": str(button.text),
@@ -570,6 +781,8 @@ func _collect_button_diagnostics(node: Node, buttons: Array[Dictionary]) -> void
 					"y": rect.position.y,
 					"width": rect.size.x,
 					"height": rect.size.y,
+					"layer": _layer_name_for_control(button),
+					"topmost": top_control == button,
 				})
 	for child: Node in node.get_children():
 		_collect_button_diagnostics(child, buttons)
@@ -579,16 +792,22 @@ func _collect_control_diagnostics(node: Node, controls: Array[Dictionary]) -> vo
 		return
 	if node is Button:
 		var button := node as Button
-		if button.visible and button.is_visible_in_tree() and not button.disabled:
-			var rect := button.get_global_rect()
+		if button.visible and button.is_visible_in_tree():
+			var rect := _control_visible_rect(button)
 			if rect.size.x > 0.0 and rect.size.y > 0.0:
 				var path := str(_root.get_path_to(button))
+				var top_control := _top_control_at_point(rect.get_center())
 				controls.append({
 					"type": "button",
 					"path": path,
 					"text": str(button.text),
 					"action_id": str(button.get_meta("action_id", "")),
 					"focused": path == _focused_control_path,
+					"enabled": not button.disabled,
+					"blocked_reason": "" if not button.disabled else _disabled_reason_for_button(button),
+					"soft_block_reason": str(button.get_meta("soft_block_reason", "")).strip_edges() if not button.disabled else "",
+					"layer": _layer_name_for_control(button),
+					"topmost": top_control == button,
 					"x": rect.position.x,
 					"y": rect.position.y,
 					"width": rect.size.x,
@@ -597,15 +816,20 @@ func _collect_control_diagnostics(node: Node, controls: Array[Dictionary]) -> vo
 	elif node is LineEdit:
 		var input := node as LineEdit
 		if input.visible and input.is_visible_in_tree() and input.editable:
-			var rect := input.get_global_rect()
+			var rect := _control_visible_rect(input)
 			if rect.size.x > 0.0 and rect.size.y > 0.0:
 				var path := str(_root.get_path_to(input))
+				var top_control := _top_control_at_point(rect.get_center())
 				controls.append({
 					"type": "line_edit",
 					"path": path,
 					"text": str(input.text),
 					"placeholder": str(input.placeholder_text),
 					"focused": path == _focused_control_path,
+					"enabled": input.editable,
+					"blocked_reason": "" if input.editable else "control_not_editable",
+					"layer": _layer_name_for_control(input),
+					"topmost": top_control == input,
 					"x": rect.position.x,
 					"y": rect.position.y,
 					"width": rect.size.x,
@@ -614,8 +838,146 @@ func _collect_control_diagnostics(node: Node, controls: Array[Dictionary]) -> vo
 	for child: Node in node.get_children():
 		_collect_control_diagnostics(child, controls)
 
-func _button_visual_rect(button: Button) -> Rect2:
-	return button.get_global_rect()
+func _control_visible_rect(control: Control) -> Rect2:
+	if control == null or not control.visible or not control.is_visible_in_tree():
+		return Rect2()
+	var rect := control.get_global_rect()
+	var cursor := control.get_parent()
+	while cursor != null:
+		if cursor is Control:
+			var parent_control := cursor as Control
+			if parent_control is ScrollContainer or parent_control.clip_contents:
+				rect = rect.intersection(parent_control.get_global_rect())
+				if rect.size.x <= 0.0 or rect.size.y <= 0.0:
+					return Rect2()
+		if cursor == _root:
+			break
+		cursor = cursor.get_parent()
+	return rect
+
+func _top_control_at_point(point: Vector2) -> Control:
+	if not is_open():
+		return null
+	var layer := top_layer_name()
+	match layer:
+		"modal":
+			return _find_top_control_at_point(_modal_layer, point)
+		"arena_fullscreen":
+			return _find_top_control_at_point(_arena_fullscreen_layer, point)
+		"menu":
+			return _find_top_control_at_point(_menu_layer, point)
+		_:
+			return null
+
+func _find_top_control_at_point(node: Node, point: Vector2) -> Control:
+	if node == null:
+		return null
+	for index in range(node.get_child_count() - 1, -1, -1):
+		var child := node.get_child(index)
+		var found := _find_top_control_at_point(child, point)
+		if found != null:
+			return found
+	if node is Button:
+		var button := node as Button
+		if button.visible and button.is_visible_in_tree() and _control_visible_rect(button).has_point(point):
+			return button
+	elif node is LineEdit:
+		var input := node as LineEdit
+		if input.visible and input.is_visible_in_tree() and _control_visible_rect(input).has_point(point):
+			return input
+	return null
+
+func _find_visible_button_by_action(node: Node, action_id: String, point: Vector2) -> Button:
+	if node == null:
+		return null
+	for index in range(node.get_child_count() - 1, -1, -1):
+		var child := node.get_child(index)
+		var found := _find_visible_button_by_action(child, action_id, point)
+		if found != null:
+			return found
+	if node is Button:
+		var button := node as Button
+		if not button.visible or not button.is_visible_in_tree():
+			return null
+		if str(button.get_meta("action_id", "")).strip_edges() != action_id:
+			return null
+		if not _control_visible_rect(button).has_point(point):
+			return null
+		if _top_control_at_point(point) != button:
+			return null
+		return button
+	return null
+
+func _layer_name_for_control(control: Control) -> String:
+	if control == null:
+		return "none"
+	if _is_descendant_of(control, _modal_layer):
+		return "modal"
+	if _is_descendant_of(control, _arena_fullscreen_layer):
+		return "arena_fullscreen"
+	if _is_descendant_of(control, _menu_layer):
+		return "menu"
+	return "none"
+
+func _is_descendant_of(node: Node, ancestor: Node) -> bool:
+	if node == null or ancestor == null:
+		return false
+	var cursor := node
+	while cursor != null:
+		if cursor == ancestor:
+			return true
+		cursor = cursor.get_parent()
+	return false
+
+func _disabled_reason_for_button(button: Button) -> String:
+	if _route_phase in ["opening", "refreshing"]:
+		return "route_not_ready"
+	if _route_phase in ["mutating", "critical"]:
+		return "critical_action_in_progress"
+	var reason := str(button.get_meta("disabled_reason", "")).strip_edges()
+	if reason != "":
+		return reason
+	return "control_disabled"
+
+func _record_ignored_input(host: Node, reason: String) -> void:
+	var normalized := reason.strip_edges()
+	if normalized == "":
+		normalized = "input_ignored"
+	_last_ignored_input_reason = normalized
+	if _detail_label != null and normalized in [
+		"route_not_ready",
+		"control_disabled",
+		"critical_action_in_progress",
+		"required_update",
+		"shop_product_unavailable",
+		"shop_reward_already_claimed",
+	]:
+		match normalized:
+			"route_not_ready":
+				_detail_label.text = "Ainda sincronizando com o servidor. Aguarde a tela ficar pronta."
+			"required_update":
+				_detail_label.text = "Update obrigatorio antes de executar esta acao."
+			"shop_product_unavailable", "shop_reward_already_claimed":
+				if _detail_label.text.strip_edges() == "":
+					_detail_label.text = "A Loja esta pronta, mas esta acao nao pode ser concluida neste estado."
+			_:
+				_detail_label.text = "Comando indisponivel agora."
+	_record_input("ignored", normalized, "")
+	_publish_diagnostics(host)
+
+func _route_uses_arena_fullscreen(route_id: String) -> bool:
+	var normalized := AppShellRouteContractScript.normalize(route_id)
+	return normalized == AppShellRouteContractScript.ROUTE_ARENA_ACTIVE or normalized == AppShellRouteContractScript.ROUTE_ARENA_REPLAY
+
+func _show_arena_fullscreen_layer(visible: bool) -> void:
+	if _arena_fullscreen_layer == null or not is_instance_valid(_arena_fullscreen_layer):
+		return
+	_arena_fullscreen_layer.visible = visible
+	_arena_fullscreen_layer.mouse_filter = Control.MOUSE_FILTER_STOP if visible else Control.MOUSE_FILTER_IGNORE
+	if visible:
+		_arena_fullscreen_layer.move_to_front()
+		if _modal_layer != null and is_instance_valid(_modal_layer):
+			_modal_layer.move_to_front()
 
 func _persist_text_input(host: Node, input: LineEdit) -> void:
 	if host == null or input == null:
@@ -673,6 +1035,10 @@ func _restore_host_targets(host: Node) -> void:
 func _prepare_host_for_route(host: Node, route_id: String) -> void:
 	_cancel_confirmation(host, false)
 	_focused_control_path = ""
+	_last_ignored_input_reason = ""
+	if host.has_method("_clear_shell_overlay_busy_except_route"):
+		host.call("_clear_shell_overlay_busy_except_route", route_id)
+	_apply_route_layer(route_id)
 	if route_id != AppShellRouteContractScript.ROUTE_ARENA_ACTIVE:
 		host.set_meta("arena_active_preparation_open", false)
 	if route_id != AppShellRouteContractScript.ROUTE_BATTLE_ENTRY:
@@ -709,6 +1075,20 @@ func _prepare_host_for_route(host: Node, route_id: String) -> void:
 	_back_button.disabled = _close_blocked(host)
 	_close_button.disabled = _close_blocked(host)
 	_sync_confirmation_panel()
+
+func _apply_route_layer(route_id: String) -> void:
+	if _panel == null or not is_instance_valid(_panel):
+		return
+	var use_arena_layer := _route_uses_arena_fullscreen(route_id)
+	var target_parent: Node = _arena_fullscreen_layer if use_arena_layer else _menu_layer
+	if target_parent != null and is_instance_valid(target_parent) and _panel.get_parent() != target_parent:
+		_panel.get_parent().remove_child(_panel)
+		target_parent.add_child(_panel)
+	_panel.name = "ModeShellArenaFullscreenPanel" if use_arena_layer else "ModeShellMenuPanel"
+	_show_arena_fullscreen_layer(use_arena_layer)
+	if _menu_layer != null and is_instance_valid(_menu_layer):
+		_menu_layer.visible = not use_arena_layer
+		_menu_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func _set_bosque_paused(host: Node, paused: bool) -> void:
 	var screen := host.get("_mode_shell_active_screen") as Control
@@ -755,6 +1135,13 @@ func _sync_confirmation_panel() -> void:
 	if _confirm_panel == null or not is_instance_valid(_confirm_panel):
 		return
 	var pending := _pending_confirm_action != ""
+	if _modal_layer != null and is_instance_valid(_modal_layer):
+		_modal_layer.visible = pending
+		_modal_layer.mouse_filter = Control.MOUSE_FILTER_STOP if pending else Control.MOUSE_FILTER_IGNORE
+		if pending:
+			_modal_layer.move_to_front()
+	if _modal_backdrop != null and is_instance_valid(_modal_backdrop):
+		_modal_backdrop.visible = pending
 	_confirm_panel.visible = pending
 	if pending:
 		_confirm_panel.move_to_front()

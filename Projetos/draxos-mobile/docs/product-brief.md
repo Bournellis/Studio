@@ -1,6 +1,6 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-06-09`
+- Ultima atualizacao: `2026-06-10`
 - Status: `VIVO`
 
 ---
@@ -17,13 +17,13 @@ DraxosMobile e um jogo mobile-first de progressao persistente construido sobre c
 
 O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
 
-A etapa operacional publicada e `Bosque Arena Abandon Recovery Authority v1`: release root `internal-alpha/v0-bosque-arena-abandon-recovery-authority-v1-20260610-a252241`, evidencia `https://b149da8f.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, versao `0.0.22-alpha.0`, version code `22`, minimum supported version code `13`. O pacote mantem o Bosque vivo e visivel atras de Arena PVE, Refugio/Base, Loja, Social e Perfil em overlay, pausa input/coleta/movimento enquanto menus estao abertos, preserva retorno via shell/`Fechar`/`Voltar`/Esc sem rebootstrap e prova a interacao real no Web publicado por smoke de clique/tecla, incluindo Social typing/actions, Shop cancel/confirm e Arena retomar/abandonar. Bosque Overlay Menu Action Authority v1, Bosque Overlay Navigation Hotfix v1, Bosque Diegetic Launcher Foundation v1, Bosque Bootstrap Authority v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1 e todos os pacotes anteriores ficam preservados como historico.
+A etapa operacional publicada e `Bosque Overlay Layer And Readiness Authority v1`: release root `internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c`, evidencia `https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, versao `0.0.23-alpha.0`, version code `23`, minimum supported version code `13`. O pacote mantem o Bosque vivo e visivel atras de Arena PVE, Refugio/Base, Loja, Social e Perfil em overlay, pausa input/coleta/movimento enquanto menus estao abertos, renderiza Arena active/replay em camada fullscreen acima do painel, usa modal global para confirmacoes, expõe estados de prontidao de rota e prova a interacao real no Web publicado por smoke de clique/tecla, incluindo Social typing/actions, Shop cancel/confirm e Arena retomar/abandonar. Bosque Arena Abandon Recovery Authority v1, Bosque Overlay Menu Action Authority v1, Bosque Overlay Navigation Hotfix v1, Bosque Diegetic Launcher Foundation v1, Bosque Bootstrap Authority v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1 e todos os pacotes anteriores ficam preservados como historico.
 
 A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`. Bosque/Openworld e slice integrado de Internal Alpha para validar movimento, coleta, persistencia, cache e fronteira controlada com Arena/Basebuilder; nao e autorizacao para expansao ampla de mundo, economia, conteudo, armas/spells, PVP, visual final ou mutacoes remotas.
 
 ## Foco Atual
 
-Playtest humano inicial do pacote anterior, Bosque Bootstrap Authority v1, foi reportado OK por Fabio em 2026-06-09: tudo testado ate aquele momento parecia funcionar. O pacote atual publicado agora precisa de playtest humano focado no overlay persistente: prompts/landmarks do Bosque, abertura de Arena/Base/Shop/Social/Profile, Social digitavel, Shop confirmavel, Arena retomar/abandonar e retorno via `Fechar`, `Voltar` e Esc sem rebootstrap. Bugs futuros voltam ao fluxo normal se aparecerem.
+Playtest humano inicial do pacote anterior, Bosque Bootstrap Authority v1, foi reportado OK por Fabio em 2026-06-09: tudo testado ate aquele momento parecia funcionar. O pacote atual publicado agora precisa de playtest humano focado no overlay persistente: prompts/landmarks do Bosque, Arena fullscreen acima do menu sem corte lateral, modal global/topmost, prontidao honesta de menus com servidor, Social digitavel, Shop confirmavel, Arena retomar/abandonar e retorno via `Fechar`, `Voltar` e Esc sem rebootstrap. Bugs futuros voltam ao fluxo normal se aparecerem.
 
 Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final, expansao ampla de Openworld ou mutacoes remotas sem decisao propria. Se aparecer bug novo, tratar como bugfix estreito a partir do pacote atual.
 
@@ -33,7 +33,7 @@ A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo de
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Bosque Durable Bau Mochila v1, Bosque Fogueira Potion Crafting v1, Bosque World Hub Domain Separation v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque Persistence Rebase v1, Bosque Feel & Spawn Authority v1, Bosque Resume Exit Lifecycle v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1, Bosque Bootstrap Authority v1, Bosque Overlay Navigation Hotfix v1, Bosque Overlay Menu Action Authority v1 e Bosque Arena Abandon Recovery Authority v1 e que Refugio, Arena PVE/Preparacao, Resultado, Social, Loja e Bosque devem permanecer coerentes antes de abrir novo backend, schema, tuning, economia ou conteudo.
+First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Bosque Durable Bau Mochila v1, Bosque Fogueira Potion Crafting v1, Bosque World Hub Domain Separation v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque Persistence Rebase v1, Bosque Feel & Spawn Authority v1, Bosque Resume Exit Lifecycle v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1, Bosque Bootstrap Authority v1, Bosque Overlay Navigation Hotfix v1, Bosque Overlay Menu Action Authority v1 e Bosque Arena Abandon Recovery Authority v1 ficam preservados; Bosque Overlay Layer And Readiness Authority v1 e o pacote atual que deve manter Refugio, Arena PVE/Preparacao, Resultado, Social, Loja e Bosque coerentes antes de abrir novo backend, schema, tuning, economia ou conteudo.
 
 Ao abrir o pacote de Arena PVE inicial, devem ser avaliados juntos:
 
@@ -67,7 +67,7 @@ Terminologia implementada preservada como substancia/mock: Instrumento Ritual, S
 
 Ordem recomendada agora:
 
-1. Playtestar o pacote publicado `Bosque Arena Abandon Recovery Authority v1` em Web/APK, incluindo Social typing/actions, Shop cancel/confirm e Arena retomar/abandonar.
+1. Playtestar o pacote publicado `Bosque Overlay Layer And Readiness Authority v1` em Web/APK, incluindo Arena fullscreen sem corte lateral, modal global/topmost, menu readiness, Social typing/actions, Shop cancel/confirm e Arena retomar/abandonar.
 2. Tratar bugs futuros por bugfix estreito se aparecerem.
 3. Retomar Arena PVE tutorial/primeiras arenas, labs e tuning apenas quando essa decisao existir.
 4. Base/preparacao como suporte da Arena PVE.

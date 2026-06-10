@@ -1,6 +1,38 @@
 extends "res://modes/boot/boot_runtime_surface_api.gd"
 
 # Busy state, status feedback, social auto-sync, and precondition guards.
+func _shell_overlay_set_route_phase(phase: String, route_id: String = "", reason: String = "") -> void:
+	if _mode_shell_overlay_controller != null and _mode_shell_overlay_controller.is_open():
+		_mode_shell_overlay_controller.set_route_phase(self, phase, route_id, reason)
+
+func _clear_shell_overlay_busy_except_route(route_id: String) -> void:
+	var keep_scope := _shell_overlay_scope_for_route(route_id)
+	var cleared := false
+	for scope: String in _operation_state.busy_scopes():
+		if scope == OperationStateScript.DEFAULT_SCOPE or scope == keep_scope:
+			continue
+		_operation_state.invalidate_scope(scope)
+		cleared = true
+	if cleared:
+		_is_busy = _operation_state.any_busy()
+
+func _shell_overlay_scope_for_route(route_id: String) -> String:
+	match AppShellRouteContractScript.normalize(route_id):
+		ROUTE_ACCOUNT:
+			return _surface_scope_id(SessionStore.SURFACE_ACCOUNT)
+		SCREEN_BASE, ROUTE_ARENA_LOADOUT:
+			return _surface_scope_id(SessionStore.SURFACE_BASE)
+		SCREEN_SOCIAL:
+			return _surface_scope_id(SessionStore.SURFACE_SOCIAL)
+		SCREEN_COMPETITION:
+			return _surface_scope_id(SessionStore.SURFACE_COMPETITION)
+		SCREEN_SHOP:
+			return _surface_scope_id(SessionStore.SURFACE_MONETIZATION)
+		ROUTE_ARENA_SELECTION, ROUTE_ARENA_ACTIVE, ROUTE_ARENA_REPLAY, ROUTE_ARENA_BUFF_CHOICE, ROUTE_ARENA_SUMMARY:
+			return _surface_scope_id(SessionStore.SURFACE_ARENA)
+		_:
+			return ""
+
 func _set_busy(is_busy: bool, message: String) -> void:
 	if is_busy:
 		_operation_state.begin_busy(_active_action_scope, _active_action_id)
@@ -146,8 +178,17 @@ func _sync_buttons() -> void:
 		if not is_instance_valid(button):
 			continue
 		var force_disabled := bool(button.get_meta("force_disabled", false))
+		if not force_disabled:
+			button.set_meta("disabled_reason", "")
+		button.set_meta("soft_block_reason", "")
 		button.disabled = force_disabled or _action_scope_busy(action_id) or (_replay_running and not _action_allowed_during_replay(action_id))
-		button.disabled = button.disabled or (_update_gate_blocks_action(action_id) and not _arena_abandon_can_run_locally(action_id))
+		var update_blocks := _update_gate_blocks_action(action_id) and not _arena_abandon_can_run_locally(action_id)
+		if update_blocks:
+			button.set_meta("disabled_reason", "required_update")
+			if _shell_overlay_is_open():
+				button.set_meta("soft_block_reason", "required_update")
+			else:
+				button.disabled = true
 		if force_disabled and str(button.get_meta("disabled_reason", "")).strip_edges() != "":
 			button.tooltip_text = str(button.get_meta("disabled_reason", ""))
 		if action_id == ACTION_SKIP_REPLAY:
@@ -161,11 +202,24 @@ func _sync_buttons() -> void:
 		elif AppShellActionContractScript.is_shop_purchase(action_id):
 			var product := _shop_product_by_id(AppShellActionContractScript.action_value(action_id))
 			if not product.is_empty():
-				button.disabled = button.disabled or not bool(product.get("can_purchase", true))
+				if not bool(product.get("can_purchase", true)):
+					var product_reason := _shop_locked_reason_text(str(product.get("locked_reason", "")))
+					button.tooltip_text = product_reason
+					if _shell_overlay_is_open():
+						button.set_meta("soft_block_reason", "shop_product_unavailable")
+					else:
+						button.set_meta("disabled_reason", "shop_product_unavailable")
+						button.disabled = true
 		elif AppShellActionContractScript.is_claim_reward(action_id):
 			var reward := _shop_reward_by_id(AppShellActionContractScript.action_value(action_id))
 			if not reward.is_empty():
-				button.disabled = button.disabled or bool(reward.get("claimed", false))
+				if bool(reward.get("claimed", false)):
+					button.tooltip_text = "Recompensa ja resgatada."
+					if _shell_overlay_is_open():
+						button.set_meta("soft_block_reason", "shop_reward_already_claimed")
+					else:
+						button.set_meta("disabled_reason", "shop_reward_already_claimed")
+						button.disabled = true
 		if action_id == AppShellActionContractScript.ACTION_SHOW_LATEST_BATTLE:
 			if button.name == "RefugeContextCta" and SessionStore.has_unseen_battle_result():
 				button.text = "Ver recompensa"
@@ -215,6 +269,7 @@ func _begin_surface_refresh(surface: String, endpoint: String, message: String, 
 	if _shell_overlay_is_open():
 		token["shell_overlay_epoch"] = _shell_overlay_epoch()
 		token["shell_overlay_route"] = _shell_overlay_current_route()
+		_shell_overlay_set_route_phase("refreshing", _shell_overlay_current_route(), "Sincronizando com o servidor...")
 	_status_label.text = message
 	_detail_label.text = "Atualizando com o servidor..." if rendered_from_cache else "Aguardando resposta do servidor..."
 	_error_label.text = ""
@@ -255,6 +310,8 @@ func _finish_surface_refresh(surface: String, token: Dictionary, result: Diction
 	_detail_label.text = message
 	_sync_immersive_feedback()
 	_sync_buttons()
+	if _shell_overlay_is_open():
+		_shell_overlay_set_route_phase("ready", _shell_overlay_current_route(), message)
 	return true
 
 func _fail_surface_refresh(surface: String, token: Dictionary, result: Dictionary) -> bool:
@@ -270,6 +327,8 @@ func _fail_surface_refresh(surface: String, token: Dictionary, result: Dictionar
 	_is_busy = _operation_state.any_busy()
 	_sync_immersive_feedback()
 	_sync_buttons()
+	if _shell_overlay_is_open():
+		_shell_overlay_set_route_phase("ready", _shell_overlay_current_route(), "Servidor nao respondeu. Acoes disponiveis usam o estado local/cache.")
 	return true
 
 func _surface_token_for_session(token: Dictionary) -> Dictionary:
@@ -311,6 +370,8 @@ func _ignore_stale_surface_refresh(surface: String, token: Dictionary, message: 
 	_is_busy = _operation_state.any_busy()
 	_sync_immersive_feedback()
 	_sync_buttons()
+	if _shell_overlay_is_open():
+		_shell_overlay_set_route_phase("ready", _shell_overlay_current_route(), message)
 	return true
 
 func _clear_shell_overlay_transient_busy() -> void:
