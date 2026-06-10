@@ -463,6 +463,7 @@ func _spawn_runtime() -> void:
 	hud.resume_requested.connect(func() -> void:
 		_set_menu_open(false)
 	)
+	hud.rematch_requested.connect(restart_match)
 	hud.main_menu_requested.connect(_return_to_main_menu)
 	hud.skin_tone_previous_requested.connect(func() -> void:
 		_cycle_skin_tone(-1)
@@ -653,7 +654,9 @@ func _get_player_kick_direction() -> Vector3:
 
 func _build_hud_snapshot() -> Dictionary:
 	var ball_distance := 0.0
+	var ball_relative := Vector3.ZERO
 	if player != null and ball != null:
+		ball_relative = ball.global_position - player.global_position
 		ball_distance = Vector3(player.global_position.x, 0.0, player.global_position.z).distance_to(Vector3(ball.global_position.x, 0.0, ball.global_position.z))
 	return {
 		"status": MODE_NAME,
@@ -661,6 +664,12 @@ func _build_hud_snapshot() -> Dictionary:
 		"bot_score": bot_score,
 		"goal_limit": GOAL_LIMIT,
 		"ball_distance": ball_distance,
+		"ball_relative_x": ball_relative.x,
+		"ball_relative_z": ball_relative.z,
+		"player_kit_code": _get_kit_code(selected_appearance.country_kit_id),
+		"bot_kit_code": _get_kit_code(bot_appearance.country_kit_id),
+		"player_kit_color": AvatarCatalogScript.get_kit_primary_color(selected_appearance.country_kit_id),
+		"bot_kit_color": AvatarCatalogScript.get_kit_primary_color(bot_appearance.country_kit_id),
 		"ball_control": player_ball_control_state,
 		"ball_control_strength": player_ball_control_strength,
 		"boost_fraction": player.get_boost_stamina_fraction() if player != null else 0.0,
@@ -670,6 +679,23 @@ func _build_hud_snapshot() -> Dictionary:
 		"countdown": kickoff_countdown_remaining,
 		"hint": "Comecar inicia | WASD move | Shift boost | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | paredes/teto rebatem | R restart | Esc menu"
 	}
+
+func _get_kit_code(country_kit_id: StringName) -> String:
+	match country_kit_id:
+		&"brazil":
+			return "BRA"
+		&"argentina":
+			return "ARG"
+		&"france":
+			return "FRA"
+		&"japan":
+			return "JPN"
+		&"portugal":
+			return "POR"
+		&"germany":
+			return "GER"
+		_:
+			return "KIT"
 
 func _update_stadium_scoreboards() -> void:
 	for side_name in ["North", "South"]:

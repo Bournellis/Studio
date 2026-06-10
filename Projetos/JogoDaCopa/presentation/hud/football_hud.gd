@@ -5,6 +5,7 @@ signal resume_requested()
 signal main_menu_requested()
 signal sensitivity_changed(value: float)
 signal start_requested()
+signal rematch_requested()
 signal skin_tone_previous_requested()
 signal skin_tone_next_requested()
 signal country_kit_previous_requested()
@@ -18,11 +19,19 @@ var control_label: Label
 var boost_bar: ProgressBar
 var hint_label: Label
 var event_label: Label
+var ball_indicator: PanelContainer
+var ball_indicator_label: Label
+var player_kit_swatch: ColorRect
+var bot_kit_swatch: ColorRect
 var crosshair_root: Control
 var crosshair_lines: Array[ColorRect] = []
 var pulse_overlay: ColorRect
 var intro_panel: PanelContainer
 var pause_menu_panel: PanelContainer
+var result_panel: PanelContainer
+var result_title_label: Label
+var result_score_label: Label
+var result_detail_label: Label
 var sensitivity_label: Label
 var sensitivity_slider: HSlider
 var skin_tone_label: Label
@@ -56,11 +65,13 @@ func _process(delta: float) -> void:
 
 func update_snapshot(snapshot: Dictionary) -> void:
 	status_label.text = str(snapshot.get("status", "Futebol 1x1"))
-	score_label.text = "Player %d  -  %d Bot" % [
+	score_label.text = "%s %d   %d %s" % [
+		str(snapshot.get("player_kit_code", "BRA")),
 		int(snapshot.get("player_score", 0)),
-		int(snapshot.get("bot_score", 0))
+		int(snapshot.get("bot_score", 0)),
+		str(snapshot.get("bot_kit_code", "FRA"))
 	]
-	clock_label.text = "Ate %d gols | Bola %.1fm" % [
+	clock_label.text = "PRIMEIRO A %d | BOLA %.1fm" % [
 		int(snapshot.get("goal_limit", 3)),
 		float(snapshot.get("ball_distance", 0.0))
 	]
@@ -79,6 +90,16 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	if boost_bar != null:
 		boost_bar.value = boost_fraction * 100.0
 		boost_bar.modulate = Color(0.35, 0.9, 1.0, 1.0) if boost_active else Color(0.9, 1.0, 0.92, 0.92)
+	if player_kit_swatch != null:
+		player_kit_swatch.color = snapshot.get("player_kit_color", Color(1.0, 0.86, 0.12, 1.0))
+	if bot_kit_swatch != null:
+		bot_kit_swatch.color = snapshot.get("bot_kit_color", Color(0.06, 0.16, 0.56, 1.0))
+	if result_score_label != null:
+		result_score_label.text = "%d - %d" % [
+			int(snapshot.get("player_score", 0)),
+			int(snapshot.get("bot_score", 0))
+		]
+	_update_ball_indicator(snapshot)
 	hint_label.text = str(snapshot.get("hint", "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"))
 
 func show_kick(strong: bool, connected: bool, assist_strength: float = 0.0) -> void:
@@ -111,6 +132,12 @@ func show_match_end(player_won: bool) -> void:
 	last_event = &"match_end"
 	goal_feedback_time = 1.5
 	_set_event_message("CAMPEAO" if player_won else "DERROTA", 1.6)
+	if result_panel != null:
+		result_panel.visible = true
+	if result_title_label != null:
+		result_title_label.text = "VITORIA" if player_won else "DERROTA"
+	if result_detail_label != null:
+		result_detail_label.text = "Ta pronto para a revanche." if player_won else "A final pede revanche."
 
 func show_countdown(message: String, duration: float = 0.32) -> void:
 	last_event = &"countdown"
@@ -127,6 +154,8 @@ func reset_feedback() -> void:
 	if event_label != null:
 		event_label.text = ""
 		event_label.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	if result_panel != null:
+		result_panel.visible = false
 	_refresh_crosshair()
 	_refresh_overlay()
 
@@ -153,6 +182,18 @@ func set_avatar_selection_labels(skin_label: String, kit_label: String) -> void:
 	if country_kit_label != null:
 		country_kit_label.text = "Camisa: %s" % kit_label
 
+func debug_has_broadcast_scoreboard() -> bool:
+	return player_kit_swatch != null and bot_kit_swatch != null and score_label != null
+
+func debug_is_result_panel_visible() -> bool:
+	return result_panel != null and result_panel.visible
+
+func debug_get_result_title() -> String:
+	return result_title_label.text if result_title_label != null else ""
+
+func debug_is_ball_indicator_visible() -> bool:
+	return ball_indicator != null and ball_indicator.visible
+
 func _build_ui() -> void:
 	var root := Control.new()
 	root.name = "HudRoot"
@@ -172,31 +213,58 @@ func _build_ui() -> void:
 	panel.name = "ScorePanel"
 	_ignore_mouse(panel)
 	panel.position = Vector2(18.0, 18.0)
-	panel.custom_minimum_size = Vector2(430.0, 166.0)
+	panel.custom_minimum_size = Vector2(468.0, 154.0)
+	panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.015, 0.035, 0.045, 0.86), Color(0.1, 0.85, 0.72, 0.8), 2))
 	root.add_child(panel)
 
 	var box := VBoxContainer.new()
 	box.name = "ScoreBox"
 	_ignore_mouse(box)
-	box.add_theme_constant_override("separation", 5)
+	box.add_theme_constant_override("separation", 6)
 	panel.add_child(box)
 
 	status_label = Label.new()
 	status_label.name = "StatusLabel"
-	status_label.text = "Futebol 1x1"
+	status_label.text = "FUTEBOL 1x1"
+	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	status_label.add_theme_font_size_override("font_size", 13)
 	_ignore_mouse(status_label)
 	box.add_child(status_label)
 
+	var score_row := HBoxContainer.new()
+	score_row.name = "BroadcastScoreRow"
+	score_row.add_theme_constant_override("separation", 10)
+	_ignore_mouse(score_row)
+	box.add_child(score_row)
+
+	player_kit_swatch = ColorRect.new()
+	player_kit_swatch.name = "PlayerKitSwatch"
+	player_kit_swatch.custom_minimum_size = Vector2(42.0, 28.0)
+	player_kit_swatch.color = Color(1.0, 0.86, 0.12, 1.0)
+	_ignore_mouse(player_kit_swatch)
+	score_row.add_child(player_kit_swatch)
+
 	score_label = Label.new()
 	score_label.name = "ScoreLabel"
-	score_label.text = "Player 0  -  0 Bot"
-	score_label.add_theme_font_size_override("font_size", 24)
+	score_label.text = "BRA 0   0 FRA"
+	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	score_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	score_label.add_theme_font_size_override("font_size", 30)
 	_ignore_mouse(score_label)
-	box.add_child(score_label)
+	score_row.add_child(score_label)
+
+	bot_kit_swatch = ColorRect.new()
+	bot_kit_swatch.name = "BotKitSwatch"
+	bot_kit_swatch.custom_minimum_size = Vector2(42.0, 28.0)
+	bot_kit_swatch.color = Color(0.06, 0.16, 0.56, 1.0)
+	_ignore_mouse(bot_kit_swatch)
+	score_row.add_child(bot_kit_swatch)
 
 	clock_label = Label.new()
 	clock_label.name = "ClockLabel"
-	clock_label.text = "Ate 3 gols"
+	clock_label.text = "PRIMEIRO A 3"
+	clock_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	clock_label.add_theme_font_size_override("font_size", 13)
 	_ignore_mouse(clock_label)
 	box.add_child(clock_label)
 
@@ -220,7 +288,7 @@ func _build_ui() -> void:
 	boost_bar.max_value = 100.0
 	boost_bar.value = 100.0
 	boost_bar.show_percentage = false
-	boost_bar.custom_minimum_size = Vector2(0.0, 10.0)
+	boost_bar.custom_minimum_size = Vector2(0.0, 12.0)
 	_ignore_mouse(boost_bar)
 	box.add_child(boost_bar)
 
@@ -232,7 +300,9 @@ func _build_ui() -> void:
 	root.add_child(hint_label)
 
 	_build_crosshair(root)
+	_build_ball_indicator(root)
 	_build_event_label(root)
+	_build_result_panel(root)
 	_build_pause_menu(root)
 	_build_intro_panel(root)
 
@@ -273,6 +343,108 @@ func _build_event_label(root: Control) -> void:
 	event_label.add_theme_font_size_override("font_size", 28)
 	event_label.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	root.add_child(event_label)
+
+func _build_ball_indicator(root: Control) -> void:
+	ball_indicator = PanelContainer.new()
+	ball_indicator.name = "BallOffscreenIndicator"
+	_ignore_mouse(ball_indicator)
+	ball_indicator.position = Vector2(18.0, 190.0)
+	ball_indicator.custom_minimum_size = Vector2(168.0, 34.0)
+	ball_indicator.visible = false
+	ball_indicator.add_theme_stylebox_override("panel", _build_panel_style(Color(0.02, 0.07, 0.08, 0.78), Color(0.92, 0.78, 0.16, 0.9), 1))
+	root.add_child(ball_indicator)
+
+	ball_indicator_label = Label.new()
+	ball_indicator_label.name = "BallIndicatorLabel"
+	ball_indicator_label.text = "BOLA"
+	ball_indicator_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	ball_indicator_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	ball_indicator_label.add_theme_font_size_override("font_size", 13)
+	_ignore_mouse(ball_indicator_label)
+	ball_indicator.add_child(ball_indicator_label)
+
+func _build_result_panel(root: Control) -> void:
+	var result_center := CenterContainer.new()
+	result_center.name = "ResultCenter"
+	result_center.process_mode = Node.PROCESS_MODE_ALWAYS
+	result_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	result_center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.add_child(result_center)
+
+	result_panel = PanelContainer.new()
+	result_panel.name = "ResultPanel"
+	result_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+	result_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	result_panel.custom_minimum_size = Vector2(430.0, 238.0)
+	result_panel.visible = false
+	result_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.015, 0.035, 0.045, 0.92), Color(1.0, 0.78, 0.16, 0.92), 2))
+	result_center.add_child(result_panel)
+
+	var margin := MarginContainer.new()
+	margin.name = "ResultMargin"
+	margin.add_theme_constant_override("margin_left", 22)
+	margin.add_theme_constant_override("margin_top", 18)
+	margin.add_theme_constant_override("margin_right", 22)
+	margin.add_theme_constant_override("margin_bottom", 18)
+	result_panel.add_child(margin)
+
+	var box := VBoxContainer.new()
+	box.name = "ResultBox"
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_theme_constant_override("separation", 12)
+	margin.add_child(box)
+
+	result_title_label = Label.new()
+	result_title_label.name = "ResultTitle"
+	result_title_label.text = "RESULTADO"
+	result_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	result_title_label.add_theme_font_size_override("font_size", 30)
+	_ignore_mouse(result_title_label)
+	box.add_child(result_title_label)
+
+	result_score_label = Label.new()
+	result_score_label.name = "ResultScore"
+	result_score_label.text = "0 - 0"
+	result_score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	result_score_label.add_theme_font_size_override("font_size", 22)
+	_ignore_mouse(result_score_label)
+	box.add_child(result_score_label)
+
+	result_detail_label = Label.new()
+	result_detail_label.name = "ResultDetail"
+	result_detail_label.text = "Revanche pronta."
+	result_detail_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	result_detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_ignore_mouse(result_detail_label)
+	box.add_child(result_detail_label)
+
+	var buttons := HBoxContainer.new()
+	buttons.name = "ResultButtons"
+	buttons.add_theme_constant_override("separation", 10)
+	buttons.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(buttons)
+
+	var rematch_button := Button.new()
+	rematch_button.name = "RematchButton"
+	rematch_button.text = "Revanche"
+	rematch_button.custom_minimum_size = Vector2(180.0, 42.0)
+	rematch_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rematch_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	rematch_button.pressed.connect(func() -> void:
+		rematch_requested.emit()
+	)
+	buttons.add_child(rematch_button)
+
+	var menu_button := Button.new()
+	menu_button.name = "ResultMenuButton"
+	menu_button.text = "Menu"
+	menu_button.custom_minimum_size = Vector2(180.0, 42.0)
+	menu_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	menu_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	menu_button.pressed.connect(func() -> void:
+		main_menu_requested.emit()
+	)
+	buttons.add_child(menu_button)
 
 func _build_pause_menu(root: Control) -> void:
 	var pause_center := CenterContainer.new()
@@ -496,6 +668,21 @@ func _build_intro_panel(root: Control) -> void:
 func _ignore_mouse(control: Control) -> void:
 	control.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
+func _build_panel_style(fill_color: Color, border_color: Color, border_width: int) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = fill_color
+	style.border_color = border_color
+	style.set_border_width_all(border_width)
+	style.corner_radius_top_left = 6
+	style.corner_radius_top_right = 6
+	style.corner_radius_bottom_left = 6
+	style.corner_radius_bottom_right = 6
+	style.content_margin_left = 12
+	style.content_margin_top = 10
+	style.content_margin_right = 12
+	style.content_margin_bottom = 10
+	return style
+
 func _on_sensitivity_slider_changed(value: float) -> void:
 	_update_sensitivity_label(value)
 	sensitivity_changed.emit(value)
@@ -544,6 +731,19 @@ func _refresh_event_label() -> void:
 func _set_event_message(message: String, duration: float) -> void:
 	event_label.text = message
 	event_message_time = maxf(0.05, duration)
+
+func _update_ball_indicator(snapshot: Dictionary) -> void:
+	if ball_indicator == null or ball_indicator_label == null:
+		return
+	var ball_distance := float(snapshot.get("ball_distance", 0.0))
+	var relative_x := float(snapshot.get("ball_relative_x", 0.0))
+	var relative_z := float(snapshot.get("ball_relative_z", 0.0))
+	ball_indicator.visible = ball_distance > 18.0
+	if not ball_indicator.visible:
+		return
+	var horizontal := "E" if relative_x < -2.0 else ("D" if relative_x > 2.0 else "")
+	var depth := "FRENTE" if relative_z < 0.0 else "TRAS"
+	ball_indicator_label.text = "BOLA %s %s %.0fm" % [horizontal, depth, ball_distance]
 
 func _get_control_label(control_state: StringName) -> String:
 	if control_state == &"contact":
