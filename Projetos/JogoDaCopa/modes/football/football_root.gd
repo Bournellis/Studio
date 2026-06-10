@@ -69,11 +69,17 @@ const GOAL_RESET_DELAY: float = 1.25
 const KICKOFF_COUNTDOWN_DURATION: float = 3.15
 const GOAL_SLOWMO_DURATION: float = 0.4
 const GOAL_SLOWMO_SCALE: float = 0.38
+const MATCH_MODE_GOALS: StringName = &"goals"
+const MATCH_MODE_TIMER: StringName = &"timer"
+const MATCH_DURATION_SECONDS: float = 180.0
+const DOUBLE_GOAL_WINDOW_SECONDS: float = 30.0
 const RENDER_GLOW_ENABLED: bool = true
 const RENDER_SSAO_ENABLED: bool = true
 const RENDER_FOG_ENABLED: bool = true
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
+const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
 const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
+const MATCH_MODE_IDS: Array = [&"timer", &"goals"]
 
 var player
 var player_avatar
@@ -100,6 +106,11 @@ var last_kick_assist_strength: float = 0.0
 var last_goal_player_scored: bool = false
 var kickoff_owner: StringName = &"player"
 var bot_difficulty_id: StringName = &"normal"
+var match_mode_id: StringName = MATCH_MODE_TIMER
+var match_time_remaining: float = MATCH_DURATION_SECONDS
+var golden_goal_active: bool = false
+var last_thirty_announced: bool = false
+var last_goal_value: int = 1
 var player_super_meter: float = 0.0
 var bot_super_meter: float = 0.0
 var player_super_used_this_kickoff: bool = false
@@ -142,6 +153,9 @@ func _physics_process(delta: float) -> void:
 		return
 	if match_over:
 		return
+	_update_match_clock(delta)
+	if match_over:
+		return
 	_update_player_ball_control(delta)
 	_process_player_ball_contact()
 	_process_arcade_action_contacts()
@@ -165,6 +179,9 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("restart_round"):
 		restart_match()
 		get_viewport().set_input_as_handled()
+	if event.is_action_pressed("arcade_emote"):
+		_trigger_arcade_emote(true)
+		get_viewport().set_input_as_handled()
 
 func restart_match() -> void:
 	_set_intro_open(false)
@@ -175,6 +192,10 @@ func restart_match() -> void:
 	goal_reset_timer = 0.0
 	last_goal_player_scored = false
 	kickoff_owner = &"player"
+	match_time_remaining = MATCH_DURATION_SECONDS
+	golden_goal_active = false
+	last_thirty_announced = false
+	last_goal_value = 1
 	player_super_meter = 0.0
 	bot_super_meter = 0.0
 	player_super_used_this_kickoff = false
@@ -288,6 +309,11 @@ func set_bot_difficulty(next_difficulty_id: StringName) -> void:
 		bot.set_difficulty(bot_difficulty_id)
 		bot_difficulty_id = bot.debug_get_difficulty_id()
 
+func set_match_mode(next_match_mode_id: StringName) -> void:
+	match_mode_id = _sanitize_match_mode(next_match_mode_id)
+	if match_mode_id == MATCH_MODE_TIMER and match_time_remaining <= 0.0 and not golden_goal_active:
+		match_time_remaining = MATCH_DURATION_SECONDS
+
 func debug_get_kickoff_owner() -> StringName:
 	return kickoff_owner
 
@@ -308,6 +334,28 @@ func debug_get_bot_score() -> int:
 
 func debug_get_goal_limit() -> int:
 	return GOAL_LIMIT
+
+func debug_get_match_mode() -> StringName:
+	return match_mode_id
+
+func debug_set_match_mode(next_match_mode_id: StringName) -> void:
+	set_match_mode(next_match_mode_id)
+
+func debug_get_match_time_remaining() -> float:
+	return match_time_remaining
+
+func debug_set_match_time_remaining(next_time_remaining: float) -> void:
+	match_time_remaining = maxf(0.0, next_time_remaining)
+	last_thirty_announced = match_time_remaining <= DOUBLE_GOAL_WINDOW_SECONDS
+
+func debug_update_match_clock(delta: float) -> void:
+	_update_match_clock(delta)
+
+func debug_is_golden_goal_active() -> bool:
+	return golden_goal_active
+
+func debug_get_last_goal_value() -> int:
+	return last_goal_value
 
 func debug_is_match_over() -> bool:
 	return match_over
@@ -352,6 +400,9 @@ func debug_force_ball_position(next_ball_position: Vector3) -> void:
 func debug_set_score(next_player_score: int, next_bot_score: int) -> void:
 	player_score = maxi(0, next_player_score)
 	bot_score = maxi(0, next_bot_score)
+
+func debug_trigger_arcade_emote(player_triggered: bool = true) -> void:
+	_trigger_arcade_emote(player_triggered)
 
 func debug_get_arena_config() -> Dictionary:
 	return {
@@ -601,6 +652,8 @@ func _apply_main_menu_settings() -> void:
 		return
 	if tree.root.has_meta(BOT_DIFFICULTY_META_KEY):
 		set_bot_difficulty(StringName(str(tree.root.get_meta(BOT_DIFFICULTY_META_KEY))))
+	if tree.root.has_meta(MATCH_MODE_META_KEY):
+		set_match_mode(StringName(str(tree.root.get_meta(MATCH_MODE_META_KEY))))
 
 func _restart_play(after_goal: bool) -> void:
 	phase_label = &"kickoff" if not after_goal else &"reset"
@@ -885,9 +938,20 @@ func _process_goal_detection() -> void:
 
 func _register_goal(player_scored: bool) -> void:
 	last_goal_player_scored = player_scored
-	var score_result: Dictionary = FootballMatchRulesScript.apply_goal_score(player_score, bot_score, player_scored, GOAL_LIMIT)
+	var score_result: Dictionary = FootballMatchRulesScript.apply_goal_score_for_mode(
+		player_score,
+		bot_score,
+		player_scored,
+		GOAL_LIMIT,
+		match_mode_id,
+		match_time_remaining,
+		DOUBLE_GOAL_WINDOW_SECONDS,
+		golden_goal_active
+	)
 	player_score = int(score_result.get("player_score", player_score))
 	bot_score = int(score_result.get("bot_score", bot_score))
+	last_goal_value = int(score_result.get("goal_value", 1))
+	var double_goal := bool(score_result.get("double_goal", false))
 	phase_label = &"goal"
 	goal_reset_timer = GOAL_RESET_DELAY
 	bot.set_celebrating(true)
@@ -896,7 +960,7 @@ func _register_goal(player_scored: bool) -> void:
 	else:
 		_add_player_super(SUPER_GOAL_SUFFERED_GAIN)
 	if hud != null:
-		hud.show_goal(player_scored)
+		hud.show_goal(player_scored, last_goal_value, double_goal)
 	if player_scored and player_avatar != null:
 		player_avatar.play_celebrate()
 	elif not player_scored and bot_avatar != null:
@@ -905,16 +969,10 @@ func _register_goal(player_scored: bool) -> void:
 		var goal_z := GOAL_LINE_NORTH if player_scored else GOAL_LINE_SOUTH
 		feedback.play_football_goal(Vector3(0.0, 1.0, goal_z), player_scored)
 	_trigger_goal_gamefeel()
+	if not player_scored:
+		_trigger_arcade_emote(false)
 	if bool(score_result.get("match_over", false)):
-		match_over = true
-		goal_reset_timer = 0.0
-		phase_label = &"match_end"
-		var player_won := bool(score_result.get("player_won", false))
-		if hud != null:
-			hud.show_match_end(player_won)
-		if feedback != null:
-			feedback.play_round_end(player_won)
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		_finish_match(bool(score_result.get("player_won", false)))
 
 func _add_player_super(amount: float) -> void:
 	player_super_meter = clampf(player_super_meter + amount, 0.0, SUPER_METER_MAX)
@@ -930,6 +988,58 @@ func _can_bot_use_super() -> bool:
 
 func _get_bot_super_gain_multiplier() -> float:
 	return SUPER_BOT_HARD_GAIN_MULTIPLIER if bot_difficulty_id == &"hard" else 1.0
+
+func _update_match_clock(delta: float) -> void:
+	if match_mode_id != MATCH_MODE_TIMER or golden_goal_active or match_over:
+		return
+	var previous_time := match_time_remaining
+	match_time_remaining = maxf(0.0, match_time_remaining - delta)
+	if previous_time > DOUBLE_GOAL_WINDOW_SECONDS and match_time_remaining <= DOUBLE_GOAL_WINDOW_SECONDS and match_time_remaining > 0.0:
+		last_thirty_announced = true
+		if hud != null:
+			hud.show_announcement("ULTIMO MINUTO!", 0.9, &"last_minute")
+	var timer_result: Dictionary = FootballMatchRulesScript.resolve_timer_state(player_score, bot_score, match_time_remaining, match_mode_id, golden_goal_active)
+	if bool(timer_result.get("golden_goal_active", false)) and not golden_goal_active:
+		golden_goal_active = true
+		phase_label = &"golden_goal"
+		if hud != null:
+			hud.show_announcement("GOLDEN GOAL!", 1.05, &"golden_goal")
+		return
+	if bool(timer_result.get("match_over", false)):
+		_finish_match(bool(timer_result.get("player_won", false)))
+
+func _finish_match(player_won: bool) -> void:
+	match_over = true
+	goal_reset_timer = 0.0
+	phase_label = &"match_end"
+	if bot != null:
+		bot.set_celebrating(true)
+	if player_won and player_avatar != null:
+		player_avatar.play_celebrate()
+	elif not player_won and bot_avatar != null:
+		bot_avatar.play_celebrate()
+	if hud != null:
+		hud.show_match_end(player_won)
+	if feedback != null:
+		feedback.play_round_end(player_won)
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+
+func _trigger_arcade_emote(player_triggered: bool) -> void:
+	if goal_reset_timer <= 0.0 and not match_over:
+		return
+	var actor_position := Vector3.ZERO
+	if player_triggered:
+		if player_avatar != null:
+			player_avatar.play_celebrate()
+		actor_position = player.global_position if player != null else Vector3.ZERO
+	else:
+		if bot_avatar != null:
+			bot_avatar.play_celebrate()
+		actor_position = bot.global_position if bot != null else Vector3.ZERO
+	if hud != null:
+		hud.show_announcement("QUE FESTA!" if player_triggered else "O BOT PROVOCA!", 0.75, &"emote")
+	if feedback != null and feedback.has_method("play_arcade_confetti"):
+		feedback.play_arcade_confetti(actor_position, player_triggered)
 
 func _can_reach_ball(origin: Vector3, direction: Vector3) -> bool:
 	var assist: Dictionary = FootballMatchRulesScript.get_kick_assist(
@@ -981,6 +1091,9 @@ func _build_hud_snapshot() -> Dictionary:
 		"player_score": player_score,
 		"bot_score": bot_score,
 		"goal_limit": GOAL_LIMIT,
+		"match_mode": match_mode_id,
+		"match_time_remaining": match_time_remaining,
+		"golden_goal_active": golden_goal_active,
 		"ball_distance": ball_distance,
 		"ball_relative_x": ball_relative_local.x,
 		"ball_relative_z": ball_relative_local.z,
@@ -1000,7 +1113,7 @@ func _build_hud_snapshot() -> Dictionary:
 		"kickoff_owner": kickoff_owner,
 		"phase": phase_label,
 		"countdown": kickoff_countdown_remaining,
-		"hint": "Comecar inicia | WASD move | Shift boost | E/Ctrl dash | Mouse gira jogador/camera | LMB segura/carrega | RMB forte/SUPER | Space jump | R restart | Esc menu" if intro_open else "WASD move | Shift boost | E/Ctrl dash | LMB segura/carrega | RMB forte/SUPER | Space jump/flip | paredes/teto rebatem | R restart | Esc menu"
+		"hint": "Comecar inicia | WASD move | Shift boost | E/Ctrl dash | Mouse gira jogador/camera | LMB segura/carrega | RMB forte/SUPER | Space jump | T emote pos-gol | R restart | Esc menu" if intro_open else "WASD move | Shift boost | E/Ctrl dash | LMB segura/carrega | RMB forte/SUPER | Space jump/flip | T emote pos-gol | paredes/teto rebatem | R restart | Esc menu"
 	}
 
 func _advance_kickoff_owner() -> void:
@@ -1041,6 +1154,9 @@ func _get_kit_code(country_kit_id: StringName) -> String:
 func _sanitize_bot_difficulty(next_difficulty_id: StringName) -> StringName:
 	return next_difficulty_id if BOT_DIFFICULTY_IDS.has(next_difficulty_id) else &"normal"
 
+func _sanitize_match_mode(next_match_mode_id: StringName) -> StringName:
+	return next_match_mode_id if MATCH_MODE_IDS.has(next_match_mode_id) else MATCH_MODE_TIMER
+
 func _update_stadium_scoreboards() -> void:
 	var player_kit_code := _get_kit_code(selected_appearance.country_kit_id)
 	var bot_kit_code := _get_kit_code(bot_appearance.country_kit_id)
@@ -1065,6 +1181,8 @@ func _get_stadium_scoreboard_phase_label(side_name: String) -> Label:
 func _get_stadium_scoreboard_phase_text() -> String:
 	if match_over:
 		return "FIM DE JOGO"
+	if golden_goal_active:
+		return "GOLDEN GOAL"
 	if phase_label == &"goal":
 		return "GOL!"
 	if phase_label == &"intro":

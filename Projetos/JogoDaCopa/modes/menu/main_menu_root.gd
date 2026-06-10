@@ -8,11 +8,17 @@ const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
 const MENU_PANEL_SIZE: Vector2 = Vector2(560.0, 640.0)
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
+const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
 const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 const BOT_DIFFICULTY_LABELS: Dictionary = {
 	&"easy": "Bot facil",
 	&"normal": "Bot normal",
 	&"hard": "Bot dificil"
+}
+const MATCH_MODE_IDS: Array = [&"timer", &"goals"]
+const MATCH_MODE_LABELS: Dictionary = {
+	&"timer": "3 minutos",
+	&"goals": "3 gols"
 }
 
 var football_button: Button
@@ -26,6 +32,7 @@ var preview_ball: MeshInstance3D
 var skin_label: Label
 var kit_label: Label
 var difficulty_label: Label
+var match_mode_label: Label
 var skin_swatch: ColorRect
 var kit_swatch: ColorRect
 var volume_slider: HSlider
@@ -35,6 +42,7 @@ var preview_time: float = 0.0
 var selected_skin_tone_id: StringName = AvatarCatalogScript.DEFAULT_SKIN_TONE_ID
 var selected_country_kit_id: StringName = AvatarCatalogScript.DEFAULT_COUNTRY_KIT_ID
 var selected_bot_difficulty_id: StringName = &"normal"
+var selected_match_mode_id: StringName = &"timer"
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -72,8 +80,14 @@ func debug_get_selected_kit_id() -> StringName:
 func debug_get_selected_bot_difficulty_id() -> StringName:
 	return selected_bot_difficulty_id
 
+func debug_get_selected_match_mode_id() -> StringName:
+	return selected_match_mode_id
+
 func debug_cycle_bot_difficulty(step: int = 1) -> void:
 	_cycle_bot_difficulty(step)
+
+func debug_cycle_match_mode(step: int = 1) -> void:
+	_cycle_match_mode(step)
 
 func debug_get_quality_text() -> String:
 	if quality_option == null:
@@ -336,6 +350,22 @@ func _build_selector_rows(parent: VBoxContainer) -> void:
 		_cycle_bot_difficulty(1)
 	))
 
+	var match_mode_row := HBoxContainer.new()
+	match_mode_row.name = "MatchModeRow"
+	match_mode_row.add_theme_constant_override("separation", 8)
+	parent.add_child(match_mode_row)
+
+	var match_mode_swatch := _build_swatch("MatchModeSwatch", Color(0.34, 0.88, 1.0, 1.0))
+	match_mode_row.add_child(match_mode_swatch)
+	match_mode_row.add_child(_build_cycle_button("MatchModePreviousButton", "<", func() -> void:
+		_cycle_match_mode(-1)
+	))
+	match_mode_label = _build_row_label("MatchModeLabel", _get_match_mode_label(selected_match_mode_id))
+	match_mode_row.add_child(match_mode_label)
+	match_mode_row.add_child(_build_cycle_button("MatchModeNextButton", ">", func() -> void:
+		_cycle_match_mode(1)
+	))
+
 func _build_settings_rows(parent: VBoxContainer) -> void:
 	var volume_row := HBoxContainer.new()
 	volume_row.name = "VolumeRow"
@@ -457,8 +487,23 @@ func _cycle_bot_difficulty(step: int) -> void:
 		difficulty_label.text = _get_bot_difficulty_label(selected_bot_difficulty_id)
 	status_label.text = "Dificuldade: %s" % _get_bot_difficulty_label(selected_bot_difficulty_id)
 
+func _cycle_match_mode(step: int) -> void:
+	var index := MATCH_MODE_IDS.find(selected_match_mode_id)
+	if index < 0:
+		index = 0
+	index = (index + step) % MATCH_MODE_IDS.size()
+	if index < 0:
+		index += MATCH_MODE_IDS.size()
+	selected_match_mode_id = StringName(MATCH_MODE_IDS[index])
+	if match_mode_label != null:
+		match_mode_label.text = _get_match_mode_label(selected_match_mode_id)
+	status_label.text = "Modo: %s" % _get_match_mode_label(selected_match_mode_id)
+
 func _get_bot_difficulty_label(difficulty_id: StringName) -> String:
 	return str(BOT_DIFFICULTY_LABELS.get(difficulty_id, "Bot normal"))
+
+func _get_match_mode_label(match_mode_id: StringName) -> String:
+	return str(MATCH_MODE_LABELS.get(match_mode_id, "3 minutos"))
 
 func _on_volume_changed(value: float) -> void:
 	var master_bus := AudioServer.get_bus_index("Master")
@@ -469,4 +514,5 @@ func _on_volume_changed(value: float) -> void:
 func _load_mode(scene_path: String) -> void:
 	status_label.text = "Carregando..."
 	get_tree().root.set_meta(BOT_DIFFICULTY_META_KEY, selected_bot_difficulty_id)
+	get_tree().root.set_meta(MATCH_MODE_META_KEY, selected_match_mode_id)
 	get_tree().change_scene_to_file(scene_path)

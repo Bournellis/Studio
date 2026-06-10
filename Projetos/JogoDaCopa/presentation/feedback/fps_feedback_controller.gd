@@ -37,6 +37,7 @@ var football_kick_count: int = 0
 var football_goal_count: int = 0
 var boost_trail_count: int = 0
 var skid_dust_count: int = 0
+var confetti_count: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -154,6 +155,15 @@ func play_football_goal(goal_position: Vector3, player_scored: bool) -> void:
 	_spawn_light(goal_position + Vector3.UP * 1.2, color, 6.0, 8.0, 0.52)
 	_spawn_tone(goal_position, 980.0 if player_scored else 220.0, 0.16, -7.5)
 
+func play_arcade_confetti(effect_position: Vector3, player_colored: bool) -> void:
+	last_event = &"arcade_confetti"
+	confetti_count += 1
+	var primary := FOOTBALL_GOAL_COLOR if player_colored else BOT_COLOR
+	_spawn_particle_burst(effect_position + Vector3.UP * 1.35, primary, 48, 0.5, 3.8)
+	_spawn_particle_burst(effect_position + Vector3.UP * 1.55, Color(0.34, 0.88, 1.0, 1.0), 28, 0.44, 3.0)
+	_spawn_light(effect_position + Vector3.UP * 1.25, primary, 3.4, 4.4, 0.34)
+	_spawn_tone(effect_position, 1120.0 if player_colored else 260.0, 0.09, -10.0)
+
 func play_boost_trail(_player_position: Vector3, _direction: Vector3) -> void:
 	boost_trail_count += 1
 
@@ -220,6 +230,9 @@ func debug_get_boost_trail_count() -> int:
 
 func debug_get_skid_dust_count() -> int:
 	return skid_dust_count
+
+func debug_get_confetti_count() -> int:
+	return confetti_count
 
 func debug_make_synthetic_stream(frequency: float, duration: float) -> AudioStreamWAV:
 	return _build_tone_stream(frequency, duration)

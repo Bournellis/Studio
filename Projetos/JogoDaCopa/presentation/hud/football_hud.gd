@@ -42,6 +42,8 @@ var strong_kick_feedback_time: float = 0.0
 var whiff_feedback_time: float = 0.0
 var goal_feedback_time: float = 0.0
 var event_message_time: float = 0.0
+var event_message_duration: float = 0.0
+var event_message_queue: Array[Dictionary] = []
 var last_event: StringName = &""
 var kick_count: int = 0
 var whiff_count: int = 0
@@ -59,6 +61,9 @@ func _process(delta: float) -> void:
 	whiff_feedback_time = maxf(0.0, whiff_feedback_time - delta)
 	goal_feedback_time = maxf(0.0, goal_feedback_time - delta)
 	event_message_time = maxf(0.0, event_message_time - delta)
+	if event_message_time <= 0.0 and not event_message_queue.is_empty():
+		var next_message: Dictionary = event_message_queue.pop_front()
+		_start_event_message(str(next_message.get("message", "")), float(next_message.get("duration", 0.4)))
 	_refresh_crosshair()
 	_refresh_overlay()
 	_refresh_event_label()
@@ -71,10 +76,21 @@ func update_snapshot(snapshot: Dictionary) -> void:
 		int(snapshot.get("bot_score", 0)),
 		str(snapshot.get("bot_kit_code", "FRA"))
 	]
-	clock_label.text = "PRIMEIRO A %d | BOLA %.1fm" % [
-		int(snapshot.get("goal_limit", 3)),
-		float(snapshot.get("ball_distance", 0.0))
-	]
+	var match_mode := StringName(str(snapshot.get("match_mode", "goals")))
+	var golden_goal := bool(snapshot.get("golden_goal_active", false))
+	var time_remaining := float(snapshot.get("match_time_remaining", 0.0))
+	if match_mode == &"timer":
+		clock_label.text = "%s | BOLA %.1fm" % [
+			"GOLDEN GOAL" if golden_goal else _format_match_time(time_remaining),
+			float(snapshot.get("ball_distance", 0.0))
+		]
+		clock_label.modulate = Color(1.0, 0.82, 0.16, 1.0) if golden_goal or (time_remaining > 0.0 and time_remaining <= 30.0) else Color(1.0, 1.0, 1.0, 1.0)
+	else:
+		clock_label.text = "PRIMEIRO A %d | BOLA %.1fm" % [
+			int(snapshot.get("goal_limit", 3)),
+			float(snapshot.get("ball_distance", 0.0))
+		]
+		clock_label.modulate = Color(1.0, 1.0, 1.0, 1.0)
 	var bot_state := str(snapshot.get("bot_state", "kickoff"))
 	var phase := str(snapshot.get("phase", "kickoff"))
 	var kickoff_owner := str(snapshot.get("kickoff_owner", "player"))
@@ -130,12 +146,16 @@ func show_kick(strong: bool, connected: bool, assist_strength: float = 0.0) -> v
 	whiff_feedback_time = 0.16
 	_set_event_message("SEM CONTATO", 0.28)
 
-func show_goal(player_scored: bool) -> void:
-	last_event = &"goal"
+func show_goal(player_scored: bool, goal_value: int = 1, double_goal: bool = false) -> void:
+	last_event = &"double_goal" if double_goal else &"goal"
 	last_player_scored = player_scored
 	goal_count += 1
 	goal_feedback_time = 1.1
-	_set_event_message("GOOOOL PLAYER" if player_scored else "GOL DO BOT", 1.1)
+	var scorer := "PLAYER" if player_scored else "BOT"
+	var message := "VALE 2! GOOOOL %s" % scorer if double_goal else ("GOOOOL %s" % scorer if player_scored else "GOL DO BOT")
+	if goal_value > 1 and not double_goal:
+		message = "%dx! %s" % [goal_value, message]
+	_set_event_message(message, 1.1)
 
 func show_match_end(player_won: bool) -> void:
 	last_event = &"match_end"
@@ -152,12 +172,18 @@ func show_countdown(message: String, duration: float = 0.32) -> void:
 	last_event = &"countdown"
 	_set_event_message(message, duration)
 
+func show_announcement(message: String, duration: float = 0.8, event_id: StringName = &"announcement") -> void:
+	last_event = event_id
+	_set_event_message(message, duration)
+
 func reset_feedback() -> void:
 	kick_feedback_time = 0.0
 	strong_kick_feedback_time = 0.0
 	whiff_feedback_time = 0.0
 	goal_feedback_time = 0.0
 	event_message_time = 0.0
+	event_message_duration = 0.0
+	event_message_queue.clear()
 	last_event = &""
 	last_kick_assist_strength = 0.0
 	if event_label != null:
@@ -205,6 +231,12 @@ func debug_is_ball_indicator_visible() -> bool:
 
 func debug_get_ball_indicator_text() -> String:
 	return ball_indicator_label.text if ball_indicator_label != null else ""
+
+func debug_get_event_text() -> String:
+	return event_label.text if event_label != null else ""
+
+func debug_get_clock_text() -> String:
+	return clock_label.text if clock_label != null else ""
 
 func _build_ui() -> void:
 	var root := Control.new()
@@ -348,11 +380,12 @@ func _build_event_label(root: Control) -> void:
 	event_label.name = "FootballEventLabel"
 	_ignore_mouse(event_label)
 	event_label.set_anchors_preset(Control.PRESET_CENTER)
-	event_label.position = Vector2(-220.0, 54.0)
-	event_label.size = Vector2(440.0, 42.0)
+	event_label.position = Vector2(-340.0, 42.0)
+	event_label.size = Vector2(680.0, 72.0)
 	event_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	event_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	event_label.add_theme_font_size_override("font_size", 28)
+	event_label.add_theme_font_size_override("font_size", 46)
+	event_label.pivot_offset = Vector2(340.0, 36.0)
 	event_label.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	root.add_child(event_label)
 
@@ -568,7 +601,7 @@ func _build_intro_panel(root: Control) -> void:
 
 	var summary := Label.new()
 	summary.name = "IntroSummary"
-	summary.text = "Futebol 1x1 em terceira pessoa. Primeiro a 3 gols vence."
+	summary.text = "Futebol 1x1 em terceira pessoa. Timer de 3 minutos por padrao; 3 gols segue no menu."
 	summary.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	summary.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -577,7 +610,7 @@ func _build_intro_panel(root: Control) -> void:
 
 	var hotkeys := Label.new()
 	hotkeys.name = "HotkeysLabel"
-	hotkeys.text = "WASD - mover\nShift - boost de velocidade com stamina\nMouse - girar jogador/camera\nEspaco - pular\nLMB - chute\nRMB - chute forte alto\nR - reiniciar partida\nEsc - menu de sensibilidade"
+	hotkeys.text = "WASD - mover\nShift - boost de velocidade com stamina\nE/Ctrl - dash\nMouse - girar jogador/camera\nEspaco - pular/flip\nLMB - segurar e chutar\nRMB - chute forte/SUPER\nT - emote pos-gol\nR - reiniciar partida\nEsc - menu de sensibilidade"
 	hotkeys.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hotkeys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hotkeys.add_theme_font_size_override("font_size", 15)
@@ -738,11 +771,29 @@ func _refresh_event_label() -> void:
 	if event_label == null:
 		return
 	var alpha := clampf(event_message_time / 0.25, 0.0, 1.0) if event_message_time > 0.0 else 0.0
+	var progress := 1.0 - clampf(event_message_time / maxf(0.01, event_message_duration), 0.0, 1.0)
+	var squash := sin(progress * PI) * 0.18
+	event_label.scale = Vector2(1.0 + squash, 1.0 - squash * 0.42)
 	event_label.modulate = Color(1.0, 1.0, 1.0, alpha)
 
 func _set_event_message(message: String, duration: float) -> void:
+	if event_message_time > 0.0:
+		if event_message_queue.size() >= 5:
+			event_message_queue.pop_front()
+		event_message_queue.append({"message": message, "duration": duration})
+		return
+	_start_event_message(message, duration)
+
+func _start_event_message(message: String, duration: float) -> void:
 	event_label.text = message
-	event_message_time = maxf(0.05, duration)
+	event_message_duration = maxf(0.05, duration)
+	event_message_time = event_message_duration
+
+func _format_match_time(time_seconds: float) -> String:
+	var seconds := maxi(0, int(ceil(time_seconds)))
+	var minutes: int = int(seconds / 60)
+	var remainder: int = seconds % 60
+	return "%02d:%02d" % [minutes, remainder]
 
 func _update_ball_indicator(snapshot: Dictionary) -> void:
 	if ball_indicator == null or ball_indicator_label == null:

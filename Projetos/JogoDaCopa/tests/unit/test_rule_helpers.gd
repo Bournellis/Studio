@@ -66,3 +66,37 @@ func test_football_match_rules_goal_and_score_contract() -> void:
 	assert_eq(score.get("bot_score", 0), 1)
 	assert_true(bool(score.get("match_over", false)))
 	assert_true(bool(score.get("player_won", false)))
+
+func test_football_match_rules_goal_mode_stays_first_to_three() -> void:
+	var score: Dictionary = FootballMatchRulesScript.apply_goal_score_for_mode(2, 1, true, 3, &"goals", 12.0, 30.0, false)
+
+	assert_eq(score.get("player_score", 0), 3)
+	assert_eq(score.get("bot_score", 0), 1)
+	assert_eq(score.get("goal_value", 0), 1)
+	assert_false(bool(score.get("double_goal", true)))
+	assert_true(bool(score.get("match_over", false)))
+	assert_true(bool(score.get("player_won", false)))
+
+func test_football_match_rules_timer_double_goal_only_in_final_window() -> void:
+	var early: Dictionary = FootballMatchRulesScript.apply_goal_score_for_mode(0, 0, true, 3, &"timer", 31.0, 30.0, false)
+	var late: Dictionary = FootballMatchRulesScript.apply_goal_score_for_mode(0, 0, true, 3, &"timer", 30.0, 30.0, false)
+	var goals_mode: Dictionary = FootballMatchRulesScript.apply_goal_score_for_mode(0, 0, true, 3, &"goals", 12.0, 30.0, false)
+
+	assert_eq(early.get("goal_value", 0), 1)
+	assert_false(bool(early.get("double_goal", true)))
+	assert_eq(late.get("goal_value", 0), 2)
+	assert_true(bool(late.get("double_goal", false)))
+	assert_eq(late.get("player_score", 0), 2)
+	assert_eq(goals_mode.get("goal_value", 0), 1)
+
+func test_football_match_rules_timer_tie_enters_golden_goal() -> void:
+	var timer_state: Dictionary = FootballMatchRulesScript.resolve_timer_state(2, 2, 0.0, &"timer", false)
+	assert_false(bool(timer_state.get("match_over", true)))
+	assert_true(bool(timer_state.get("golden_goal_active", false)))
+	assert_eq(timer_state.get("event", &"none"), &"golden_goal")
+
+	var golden_goal: Dictionary = FootballMatchRulesScript.apply_goal_score_for_mode(2, 2, false, 3, &"timer", 0.0, 30.0, true)
+	assert_eq(golden_goal.get("player_score", 0), 2)
+	assert_eq(golden_goal.get("bot_score", 0), 3)
+	assert_true(bool(golden_goal.get("match_over", false)))
+	assert_false(bool(golden_goal.get("player_won", true)))

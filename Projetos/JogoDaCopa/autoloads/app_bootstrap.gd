@@ -8,6 +8,7 @@ const ACTIONS: Dictionary[String, Array] = {
 	"jump": [{"kind": "key", "code": KEY_SPACE}],
 	"boost": [{"kind": "key", "code": KEY_SHIFT}],
 	"arcade_dash": [{"kind": "key", "code": KEY_E}, {"kind": "key", "code": KEY_CTRL}],
+	"arcade_emote": [{"kind": "key", "code": KEY_T}],
 	"shoot": [{"kind": "mouse", "code": MOUSE_BUTTON_LEFT}],
 	"alt_fire": [{"kind": "mouse", "code": MOUSE_BUTTON_RIGHT}],
 	"restart_round": [{"kind": "key", "code": KEY_R}],

@@ -1,5 +1,8 @@
 extends RefCounted
 
+const MATCH_MODE_GOALS: StringName = &"goals"
+const MATCH_MODE_TIMER: StringName = &"timer"
+
 static func can_reach_ball(
 	origin: Vector3,
 	direction: Vector3,
@@ -151,6 +154,70 @@ static func apply_goal_score(player_score: int, bot_score: int, player_scored: b
 		"bot_score": next_bot_score,
 		"match_over": player_won or bot_won,
 		"player_won": player_won
+	}
+
+static func apply_goal_score_for_mode(
+	player_score: int,
+	bot_score: int,
+	player_scored: bool,
+	goal_limit: int,
+	match_mode: StringName,
+	time_remaining: float,
+	double_goal_window: float,
+	golden_goal_active: bool
+) -> Dictionary:
+	var goal_value := get_goal_value(match_mode, time_remaining, double_goal_window, golden_goal_active)
+	if match_mode == MATCH_MODE_GOALS:
+		var goal_score := apply_goal_score(player_score, bot_score, player_scored, goal_limit)
+		goal_score["goal_value"] = 1
+		goal_score["double_goal"] = false
+		goal_score["golden_goal"] = false
+		return goal_score
+
+	var next_player_score := player_score
+	var next_bot_score := bot_score
+	if player_scored:
+		next_player_score += goal_value
+	else:
+		next_bot_score += goal_value
+	var player_won := player_scored if golden_goal_active else false
+	return {
+		"player_score": next_player_score,
+		"bot_score": next_bot_score,
+		"match_over": golden_goal_active,
+		"player_won": player_won,
+		"goal_value": goal_value,
+		"double_goal": goal_value == 2,
+		"golden_goal": golden_goal_active
+	}
+
+static func get_goal_value(match_mode: StringName, time_remaining: float, double_goal_window: float, golden_goal_active: bool) -> int:
+	if match_mode != MATCH_MODE_TIMER or golden_goal_active:
+		return 1
+	if time_remaining > 0.0 and time_remaining <= double_goal_window:
+		return 2
+	return 1
+
+static func resolve_timer_state(player_score: int, bot_score: int, time_remaining: float, match_mode: StringName, golden_goal_active: bool) -> Dictionary:
+	if match_mode != MATCH_MODE_TIMER or golden_goal_active or time_remaining > 0.0:
+		return {
+			"match_over": false,
+			"golden_goal_active": golden_goal_active,
+			"player_won": false,
+			"event": &"none"
+		}
+	if player_score == bot_score:
+		return {
+			"match_over": false,
+			"golden_goal_active": true,
+			"player_won": false,
+			"event": &"golden_goal"
+		}
+	return {
+		"match_over": true,
+		"golden_goal_active": false,
+		"player_won": player_score > bot_score,
+		"event": &"timer_end"
 	}
 
 static func _flatten_normalized(vector: Vector3) -> Vector3:
