@@ -1,15 +1,15 @@
 {
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
-  "latest_version": "0.0.19-alpha.0",
-  "latest_version_code": 19,
+  "latest_version": "0.0.20-alpha.0",
+  "latest_version_code": 20,
   "minimum_supported_version": "0.0.13-alpha.0",
   "minimum_supported_version_code": 13,
   "released_at": "2026-06-09T22:09:57Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Bosque Overlay Interaction Authority v1 publicado na URL principal de Internal Alpha.",
+    "Bosque Overlay Menu Action Authority v1 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
     "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
     "Voltar, Fechar e Esc/Web usam a mesma autoridade de fechamento do overlay e devolvem input ao mesmo node do Bosque sem rebootstrap.",
@@ -23,20 +23,20 @@
     "Menu usa busy por escopo para nao congelar acoes independentes durante requisicoes pendentes.",
     "Fogueira Estavel I so libera receitas apos ACK de structures.fogueira_estavel_1.",
     "Portal/Web rodam no Cloudflare Pages; downloads usam login alpha e URLs assinadas temporarias.",
-    "Manifesto recomenda build 0.0.19-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+    "Manifesto recomenda build 0.0.20-alpha.0 e mantem build minima 0.0.13-alpha.0.",
     "Progression Lab usa save separado e nao pontua ranking."
   ],
   "artifacts": {
     "android": {
       "label": "Android APK",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      "sha256": "acffb52c8ff149b215e86de0e713603018b97ec6b9cd06cea530caa58b1e1f7c",
+      "sha256": "1f3aa89eebdf6296dca222f3d0f128feb532dd26a315245d5cbc4dc9c39f0da2",
       "auth_required": true
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      "sha256": "72110533a1096a39b53efe55129f066032dc43ad58e5b6e5cbca27556756a34b",
+      "sha256": "024d402d8355bea0d92b7b8b77de7c7a30cdda16724064fe92872cc35c2a9920",
       "auth_required": true
     },
     "web": {
