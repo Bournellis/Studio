@@ -398,6 +398,7 @@ func _ensure_web_overlay_input_bridge() -> void:
 				callGodotPayload({
 					type: 'button',
 					path: control.path,
+					action_id: control.action_id || '',
 					x: point.x,
 					y: point.y,
 					text: control.text || ''
@@ -503,8 +504,15 @@ func _handle_web_overlay_input_command(args: Array) -> void:
 					float(payload.get("x", -100000.0)),
 					float(payload.get("y", -100000.0))
 				)
+				var button_action := str(payload.get("action_id", "")).strip_edges()
 				if _mode_shell_overlay_controller.request_button(self, str(payload.get("path", "")), point):
 					call_deferred("_publish_web_diagnostics_state")
+				elif button_action == "overlay_confirm":
+					if _mode_shell_overlay_controller.request_confirm_modal(self):
+						call_deferred("_publish_web_diagnostics_state")
+				elif button_action == "overlay_confirm_cancel":
+					if _mode_shell_overlay_controller.request_cancel_modal(self):
+						call_deferred("_publish_web_diagnostics_state")
 			"focus":
 				var focus_point := Vector2(
 					float(payload.get("x", -100000.0)),

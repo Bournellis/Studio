@@ -336,6 +336,17 @@ func request_confirmation(host: Node, action_id: String, message: String) -> boo
 	_publish_diagnostics(host)
 	return true
 
+func request_confirm_modal(host: Node) -> bool:
+	if not is_open() or not confirmation_pending():
+		return false
+	_confirm_pending_action(host)
+	return true
+
+func request_cancel_modal(host: Node) -> bool:
+	if not is_open():
+		return false
+	return _cancel_confirmation(host, true)
+
 func request_button(host: Node, relative_path: String, point: Vector2) -> bool:
 	if not is_open() or relative_path.strip_edges() == "":
 		return false
@@ -777,6 +788,7 @@ func _collect_control_diagnostics(node: Node, controls: Array[Dictionary]) -> vo
 					"focused": path == _focused_control_path,
 					"enabled": not button.disabled,
 					"blocked_reason": "" if not button.disabled else _disabled_reason_for_button(button),
+					"soft_block_reason": str(button.get_meta("soft_block_reason", "")).strip_edges() if not button.disabled else "",
 					"layer": _layer_name_for_control(button),
 					"topmost": top_control == button,
 					"x": rect.position.x,
@@ -880,8 +892,24 @@ func _record_ignored_input(host: Node, reason: String) -> void:
 	if normalized == "":
 		normalized = "input_ignored"
 	_last_ignored_input_reason = normalized
-	if _detail_label != null and normalized in ["route_not_ready", "control_disabled", "critical_action_in_progress"]:
-		_detail_label.text = "Ainda sincronizando com o servidor. Aguarde a tela ficar pronta." if normalized == "route_not_ready" else "Comando indisponivel agora."
+	if _detail_label != null and normalized in [
+		"route_not_ready",
+		"control_disabled",
+		"critical_action_in_progress",
+		"required_update",
+		"shop_product_unavailable",
+		"shop_reward_already_claimed",
+	]:
+		match normalized:
+			"route_not_ready":
+				_detail_label.text = "Ainda sincronizando com o servidor. Aguarde a tela ficar pronta."
+			"required_update":
+				_detail_label.text = "Update obrigatorio antes de executar esta acao."
+			"shop_product_unavailable", "shop_reward_already_claimed":
+				if _detail_label.text.strip_edges() == "":
+					_detail_label.text = "A Loja esta pronta, mas esta acao nao pode ser concluida neste estado."
+			_:
+				_detail_label.text = "Comando indisponivel agora."
 	_record_input("ignored", normalized, "")
 	_publish_diagnostics(host)
 

@@ -3,18 +3,60 @@ extends "res://modes/boot/boot_runtime_navigation_controller.gd"
 # Action dispatch bridge preserving host.call action methods and telemetry payloads.
 func _trigger_action(action_id: String, confirm_message: String = "") -> void:
 	var route := AppShellActionRouterScript.route_action(action_id, _action_context())
+	var action := str(route.get("action_id", action_id))
 	if _action_scope_is_busy(str(route.get("scope_id", OperationStateScript.DEFAULT_SCOPE))):
 		if _shell_overlay_is_open():
 			_shell_overlay_record_ignored_input("route_not_ready")
 		return
+	var overlay_business_block := _shell_overlay_business_block_for_action(action)
+	if not overlay_business_block.is_empty():
+		_error_label.text = str(overlay_business_block.get("message", "Comando indisponivel agora."))
+		_detail_label.text = str(overlay_business_block.get("detail", "A tela esta pronta, mas esta acao nao pode ser concluida neste estado."))
+		_shell_overlay_record_ignored_input(str(overlay_business_block.get("reason", "action_unavailable")))
+		_sync_immersive_feedback()
+		_sync_buttons()
+		return
 	if confirm_message != "":
-		if _shell_overlay_is_open() and _mode_shell_overlay_controller.request_confirmation(self, action_id, confirm_message):
+		if _shell_overlay_is_open() and _mode_shell_overlay_controller.request_confirmation(self, action, confirm_message):
 			return
-		_pending_confirmation_action = action_id
+		_pending_confirmation_action = action
 		_confirm_dialog.dialog_text = confirm_message
 		_confirm_dialog.popup_centered()
 		return
-	await _execute_action(action_id)
+	await _execute_action(action)
+
+func _shell_overlay_business_block_for_action(action_id: String) -> Dictionary:
+	if not _shell_overlay_is_open():
+		return {}
+	if AppShellActionContractScript.is_shop_purchase(action_id):
+		var product_id := AppShellActionContractScript.action_value(action_id)
+		var product := _shop_product_by_id(product_id)
+		if product.is_empty() or bool(product.get("can_purchase", true)):
+			return {}
+		var label := str(product.get("label", product_id)).strip_edges()
+		if label == "":
+			label = product_id
+		var locked_reason := str(product.get("locked_reason", "")).strip_edges()
+		var reason_text := _shop_locked_reason_text(locked_reason)
+		return {
+			"reason": "shop_product_unavailable",
+			"message": "%s indisponivel: %s." % [label, reason_text],
+			"detail": "A Loja esta pronta, mas este produto nao pode ser usado no estado atual do save.",
+		}
+	if AppShellActionContractScript.is_claim_reward(action_id):
+		var reward_id := AppShellActionContractScript.action_value(action_id)
+		var reward := _shop_reward_by_id(reward_id)
+		if reward.is_empty() or not bool(reward.get("claimed", false)):
+			return {}
+		var reward_label := str(reward.get("label", reward_id)).strip_edges()
+		if reward_label == "":
+			reward_label = reward_id
+		return {
+			"reason": "shop_reward_already_claimed",
+			"message": "%s ja foi resgatada neste periodo." % reward_label,
+			"detail": "Sincronize a Loja se achar que o servidor deveria liberar essa recompensa.",
+		}
+	return {}
 
 func _trigger_shell_overlay_action(action_id: String) -> void:
 	if not _open_shell_overlay_action(action_id):

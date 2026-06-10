@@ -465,11 +465,20 @@ function findControl(state, predicate) {
 	return controls.find(predicate) || null;
 }
 
-function findButton(state, text) {
-	const control = findControl(state, (item) => String(item.type || '') === 'button' && String(item.text || '') === text);
-	if (control) return control;
+function findButton(state, text, expectedActionId = '') {
+	const controls = Array.isArray(state.state?.overlayControls) ? state.state.overlayControls : [];
 	const buttons = Array.isArray(state.state?.overlayButtons) ? state.state.overlayButtons : [];
-	return buttons.find((button) => String(button.text || '') === text) || null;
+	let matches = [
+		...controls.filter((item) => String(item.type || '') === 'button' && String(item.text || '') === text),
+		...buttons.filter((button) => String(button.text || '') === text),
+	];
+	if (expectedActionId) {
+		matches = matches.filter((button) => String(button.action_id || '') === expectedActionId);
+	}
+	return matches.find((button) => visibleButton(state, button)) ||
+		matches.find((button) => button.topmost === true) ||
+		matches[0] ||
+		null;
 }
 
 function findLineEdit(state, placeholder) {
@@ -479,11 +488,11 @@ function findLineEdit(state, placeholder) {
 	});
 }
 
-async function clickOverlayButton(client, label, text, expectedAction = '') {
+async function clickOverlayButton(client, label, text, expectedAction = '', expectedButtonActionId = '') {
 	let beforeState = await readState(client);
 	let candidate = null;
 	for (let attempt = 0; attempt < 18; attempt += 1) {
-		candidate = findButton(beforeState, text);
+		candidate = findButton(beforeState, text, expectedButtonActionId);
 		if (candidate && visibleButton(beforeState, candidate)) {
 			break;
 		}
@@ -512,7 +521,7 @@ async function clickOverlayButton(client, label, text, expectedAction = '') {
 			String(state.state?.pendingConfirmation?.action_id || '') === String(candidate.action_id || '');
 		const confirmCancelMatched = Number(state.state?.overlayInput?.sequence || 0) > beforeOverlaySequence &&
 			String(state.state?.overlayInput?.last?.type || '') === 'confirm_cancel' &&
-			text === 'Voltar' &&
+			(text === 'Voltar' || expectedButtonActionId === 'overlay_confirm_cancel') &&
 			state.state?.pendingConfirmation?.pending === false;
 		const actionMatched = expectedAction &&
 			Number(state.state?.actionInput?.sequence || 0) > beforeActionSequence &&
@@ -698,7 +707,7 @@ try {
 			const confirmOpen = await waitFor(client, (state) => {
 				return state.state?.pendingConfirmation?.pending === true;
 			}, `${testCase.label}: confirmation opens`);
-			await clickOverlayButton(client, testCase.label, 'Voltar', '');
+			await clickOverlayButton(client, testCase.label, 'Voltar', '', 'overlay_confirm_cancel');
 			await waitFor(client, (state) => {
 				return state.state?.pendingConfirmation?.pending === false;
 			}, `${testCase.label}: confirmation cancels`);
