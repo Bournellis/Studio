@@ -106,6 +106,13 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 Then rerun validation.
 
+## Current Automated Suite
+
+- `tests/unit/test_bootstrap.gd` remains the broad integration regression for menu, arena, football, bot, combat, HUD and feedback behavior.
+- `tests/unit/test_rule_helpers.gd` covers pure helper contracts for extracted arena combat math, football match rules and bot helper calculations.
+
+Future tracks should keep moving pure helper coverage into focused files while preserving integrated scene tests for accepted player-facing behavior.
+
 ## Failure Policy
 
 - Do not continue to the next refactor phase with failing automated validation.
