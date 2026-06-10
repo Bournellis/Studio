@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_03E_TOON_LOOK_EXPERIMENT_V1_COMPLETE`
+- Marker: `JOGO_DA_COPA_TRACK_02CBIS_02DBIS_REAL_ASSETS_V1_IN_PROGRESS`
 - Baseline: `Copa Arena Futebol`, 1x1 vs bot em terceira pessoa, arena noturna de vidro, bola com trail/fireball/squash, dash/slide/stun/flip, chute carregado/SUPER, boost/jump pads/rampas, timer 3min default com golden goal/vale-2, modo `3 gols` preservado, HUD/menu arcade e toon toggle OFF. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: playtest humano arcade + decisao 02C-bis/02D-bis com assets baixados manualmente por Fabio.
+- Proximo passo: implementar e validar 02C-bis personagem real + 02D-bis audio real em worktree dedicada.
 
 ## draxos-roguelike-cardgame
 
