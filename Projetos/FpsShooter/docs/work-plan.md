@@ -1,13 +1,13 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-10`
-- Status: `FPS_PLAYGROUND_TRACK_05_FOUNDATION_HARDENING_REFACTOR_COMPLETE`
+- Status: `FPS_PLAYGROUND_TRACK_06A_AVATAR_VISUAL_FOUNDATION_COMPLETE`
 
 ## North Star
 
 Create a small first-person playground tech probe that proves Godot 4.6.2 can support satisfying PC editor-first first-person 3D game modes for the studio.
 
-The project started as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Track 04A turns the project into `FPS Playground` by adding a container-centered main menu and the first alternate first-person mode: `Futebol` 1x1 against a bot, now with a paused how-to intro and fully closed goal interiors. Track 05 hardens the project so both accepted modes can grow from a cleaner professional foundation. Void/fall pressure is reserved for future dedicated maps.
+The project started as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Track 04A turns the project into `FPS Playground` by adding a container-centered main menu and the first alternate first-person mode: `Futebol` 1x1 against a bot, now with a paused how-to intro and fully closed goal interiors. Track 05 hardens the project so both accepted modes can grow from a cleaner professional foundation. Track 06A starts the character visual foundation with procedural avatars, skin tones and country-inspired football kits. Void/fall pressure is reserved for future dedicated maps.
 
 ## Track 00 - Project Bootstrap
 
@@ -252,6 +252,34 @@ Future candidate scope:
 - choose a gameplay growth track now that the foundation is clean;
 - recommended candidates are football feel/possession tuning, arena content/map expansion, or another small FPS Playground mode;
 - keep export/publication as a separate readiness track.
+
+## Track 06 - Avatar And Presentation Growth
+
+Goal: make `FPS Playground` characters more readable and extensible while preserving editor-first prototype speed.
+
+Status: active; Track 06A is complete.
+
+## Track 06A - Avatar Visual Foundation V1
+
+Goal: give `Futebol` the first procedural humanoid avatar foundation.
+
+Status: complete.
+
+Delivered:
+
+- runtime low-poly humanoid avatar using primitive meshes;
+- selectable skin tone;
+- selectable country-inspired shirt kit;
+- basic procedural states for idle, move, jump, fall, kick, strong kick, celebrate and hit;
+- player and bot avatar integration in Futebol;
+- intro-panel customization controls;
+- no final imported assets, official licensed branding, persistence, export, multiplayer or backend;
+- automated coverage for avatar construction, appearance selection, Futebol scene integration and kick/goal animation hooks.
+
+Future candidate scope:
+
+- run editor playtest focused on first-person avatar readability and football animation feel;
+- decide whether the next gameplay track should tune football possession/ball feel, improve avatar presentation, or return to Arena Shooter content.
 
 ## Deferred
 

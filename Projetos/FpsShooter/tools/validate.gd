@@ -93,6 +93,9 @@ func _check_core_project_contract() -> void:
 	_check_resource("res://modes/football/football_field_builder.gd")
 	_check_resource("res://modes/shared/runtime_primitive_factory.gd")
 	_check_resource("res://gameplay/arena/arena_combat_rules.gd")
+	_check_resource("res://gameplay/avatar/avatar_appearance.gd")
+	_check_resource("res://gameplay/avatar/avatar_catalog.gd")
+	_check_resource("res://gameplay/avatar/player_avatar_3d.gd")
 	_check_resource("res://gameplay/combat/combatant_3d.gd")
 	_check_resource("res://gameplay/player/fps_player_controller.gd")
 	_check_resource("res://gameplay/bot/basic_duel_bot.gd")
@@ -123,6 +126,7 @@ func _check_documentation_contract() -> void:
 	_check_resource("res://docs/validation-profiles.md")
 	_check_resource("res://docs/publication-readiness.md")
 	_check_resource("res://docs/codebase-audit-track05.md")
+	_check_resource("res://docs/avatar-visual-contract.md")
 
 func _check_generated_scenes() -> void:
 	var menu_scene := load("res://modes/menu/main_menu.tscn") as PackedScene

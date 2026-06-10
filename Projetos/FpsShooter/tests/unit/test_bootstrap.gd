@@ -6,6 +6,8 @@ const PlayerScript = preload("res://gameplay/player/fps_player_controller.gd")
 const FeedbackScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 const FootballBallScript = preload("res://gameplay/football/football_ball.gd")
 const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
+const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
+const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 
 const EXPECTED_ACTIONS: PackedStringArray = [
 	"move_forward",
@@ -70,7 +72,9 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_not_null(football.get_node_or_null("NorthGoalPostL"))
 	assert_not_null(football.get_node_or_null("SouthGoalPostR"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player"))
+	assert_not_null(football.get_node_or_null("RuntimeRoot/Player/PlayerAvatar"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballBot"))
+	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballBot/BotAvatar"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Ball"))
 	assert_not_null(football.get_node_or_null("FootballHud"))
 	assert_not_null(football.get_node_or_null("FeedbackController"))
@@ -79,12 +83,45 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_eq(football.debug_get_bot_score(), 0)
 	assert_true(football.debug_get_ball().get_script() == FootballBallScript)
 	assert_true(football.debug_get_bot().get_script() == FootballBotScript)
+	assert_true(football.debug_get_player_avatar().get_script() == PlayerAvatarScript)
+	assert_true(football.debug_get_bot_avatar().get_script() == PlayerAvatarScript)
+	assert_eq(football.debug_get_player_avatar().debug_get_country_kit_id(), &"brazil")
+	assert_eq(football.debug_get_bot_avatar().debug_get_country_kit_id(), &"france")
 	assert_true(football.debug_is_intro_open())
 	assert_true(get_tree().paused)
 	var football_hud = football.get_node("FootballHud")
 	assert_true(football_hud.intro_panel.visible)
 	assert_not_null(football_hud.get_node_or_null("HudRoot/IntroCenter/IntroPanel"))
 	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/StartButton"))
+	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/AvatarSelectionBox/SkinToneRow/SkinPreviousButton"))
+	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/AvatarSelectionBox/SkinToneRow/SkinNextButton"))
+	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/AvatarSelectionBox/CountryKitRow/KitPreviousButton"))
+	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/AvatarSelectionBox/CountryKitRow/KitNextButton"))
+	assert_no_new_orphans()
+
+func test_football_intro_cycles_avatar_skin_and_country_kit() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	var avatar = football.debug_get_player_avatar()
+	var hud = football.get_node("FootballHud")
+	assert_eq(football.debug_get_selected_skin_tone_id(), &"tan")
+	assert_eq(football.debug_get_selected_country_kit_id(), &"brazil")
+	assert_eq(avatar.debug_get_part_albedo_color(&"torso"), AvatarCatalogScript.get_kit_primary_color(&"brazil"))
+
+	football.debug_cycle_skin_tone(1)
+	football.debug_cycle_country_kit(1)
+
+	assert_eq(football.debug_get_selected_skin_tone_id(), &"brown")
+	assert_eq(football.debug_get_selected_country_kit_id(), &"argentina")
+	assert_eq(avatar.debug_get_skin_tone_id(), &"brown")
+	assert_eq(avatar.debug_get_country_kit_id(), &"argentina")
+	assert_eq(avatar.debug_get_part_albedo_color(&"head"), AvatarCatalogScript.get_skin_color(&"brown"))
+	assert_eq(avatar.debug_get_part_albedo_color(&"torso"), AvatarCatalogScript.get_kit_primary_color(&"argentina"))
+	assert_true(hud.skin_tone_label.text.contains("Pele morena"))
+	assert_true(hud.country_kit_label.text.contains("Argentina"))
 	assert_no_new_orphans()
 
 func test_football_player_kick_moves_ball_without_weapon_damage() -> void:
@@ -106,6 +143,7 @@ func test_football_player_kick_moves_ball_without_weapon_damage() -> void:
 	assert_eq(ball.debug_get_kick_count(), before_kicks + 1)
 	assert_almost_eq(ball.debug_get_last_kick_force(), 15.0, 0.01)
 	assert_eq(hud.last_event, &"kick")
+	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"kick")
 	assert_eq(feedback.last_event, &"football_kick")
 	assert_eq(football.debug_get_bot().health, 100.0)
 	assert_no_new_orphans()
@@ -126,6 +164,7 @@ func test_football_strong_kick_uses_stronger_force() -> void:
 
 	assert_almost_eq(ball.debug_get_last_kick_force(), 23.0, 0.01)
 	assert_eq(hud.last_event, &"strong_kick")
+	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"strong_kick")
 	assert_gt(ball.linear_velocity.length(), 0.1)
 	assert_no_new_orphans()
 
@@ -145,6 +184,7 @@ func test_football_goal_updates_score_and_match_ends_at_three() -> void:
 	assert_eq(football.debug_get_bot_score(), 0)
 	assert_true(football.debug_is_match_over())
 	assert_eq(football.get_node("FootballHud").last_event, &"match_end")
+	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"celebrate")
 	assert_no_new_orphans()
 
 func test_football_bot_kick_request_moves_ball() -> void:
@@ -162,6 +202,7 @@ func test_football_bot_kick_request_moves_ball() -> void:
 
 	assert_eq(ball.debug_get_kick_count(), 1)
 	assert_almost_eq(ball.debug_get_last_kick_force(), 11.0, 0.01)
+	assert_eq(football.debug_get_bot_avatar().debug_get_animation_state(), &"kick")
 	assert_gt(ball.linear_velocity.length(), 0.1)
 	assert_no_new_orphans()
 

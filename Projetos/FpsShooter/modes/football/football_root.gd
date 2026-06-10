@@ -8,6 +8,9 @@ const FootballHudScript = preload("res://presentation/hud/football_hud.gd")
 const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 const FootballFieldBuilderScript = preload("res://modes/football/football_field_builder.gd")
 const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
+const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
+const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
+const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const MODE_NAME: String = "Futebol 1x1"
@@ -38,10 +41,14 @@ const PLAYER_TOUCH_COOLDOWN: float = 0.18
 const GOAL_RESET_DELAY: float = 1.25
 
 var player
+var player_avatar
 var bot
+var bot_avatar
 var ball
 var hud
 var feedback
+var selected_appearance: FpsAvatarAppearance = AvatarCatalogScript.get_default_appearance()
+var bot_appearance: FpsAvatarAppearance = AvatarAppearanceScript.new(&"brown", &"france")
 var player_score: int = 0
 var bot_score: int = 0
 var match_over: bool = false
@@ -76,6 +83,7 @@ func _physics_process(delta: float) -> void:
 		return
 	_process_player_ball_contact()
 	_process_goal_detection()
+	_update_avatar_states()
 
 func _input(event: InputEvent) -> void:
 	if intro_open:
@@ -112,8 +120,14 @@ func restart_match() -> void:
 func debug_get_player():
 	return player
 
+func debug_get_player_avatar():
+	return player_avatar
+
 func debug_get_bot():
 	return bot
+
+func debug_get_bot_avatar():
+	return bot_avatar
 
 func debug_get_ball():
 	return ball
@@ -135,6 +149,18 @@ func debug_is_intro_open() -> bool:
 
 func debug_start_match() -> void:
 	_start_match()
+
+func debug_cycle_skin_tone(step: int = 1) -> void:
+	_cycle_skin_tone(step)
+
+func debug_cycle_country_kit(step: int = 1) -> void:
+	_cycle_country_kit(step)
+
+func debug_get_selected_skin_tone_id() -> StringName:
+	return selected_appearance.skin_tone_id
+
+func debug_get_selected_country_kit_id() -> StringName:
+	return selected_appearance.country_kit_id
 
 func debug_force_ball_position(next_ball_position: Vector3) -> void:
 	if ball == null:
@@ -205,6 +231,16 @@ func _spawn_runtime() -> void:
 	runtime_root.add_child(player)
 	player.shoot_requested.connect(_on_player_kick_requested)
 	player.alt_fire_requested.connect(_on_player_strong_kick_requested)
+	player.damaged.connect(func(_amount: float, _remaining_health: float) -> void:
+		if player_avatar != null:
+			player_avatar.play_hit()
+	)
+
+	player_avatar = PlayerAvatarScript.new()
+	player_avatar.name = "PlayerAvatar"
+	player_avatar.local_first_person = true
+	player.add_child(player_avatar)
+	player_avatar.apply_appearance(selected_appearance)
 
 	ball = FootballBallScript.new()
 	ball.name = "Ball"
@@ -219,6 +255,15 @@ func _spawn_runtime() -> void:
 	runtime_root.add_child(bot)
 	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH))
 	bot.kick_requested.connect(_on_bot_kick_requested)
+	bot.damaged.connect(func(_amount: float, _remaining_health: float) -> void:
+		if bot_avatar != null:
+			bot_avatar.play_hit()
+	)
+
+	bot_avatar = PlayerAvatarScript.new()
+	bot_avatar.name = "BotAvatar"
+	bot.add_child(bot_avatar)
+	bot_avatar.apply_appearance(bot_appearance)
 
 	feedback = FeedbackControllerScript.new()
 	feedback.name = "FeedbackController"
@@ -233,7 +278,20 @@ func _spawn_runtime() -> void:
 		_set_menu_open(false)
 	)
 	hud.main_menu_requested.connect(_return_to_main_menu)
+	hud.skin_tone_previous_requested.connect(func() -> void:
+		_cycle_skin_tone(-1)
+	)
+	hud.skin_tone_next_requested.connect(func() -> void:
+		_cycle_skin_tone(1)
+	)
+	hud.country_kit_previous_requested.connect(func() -> void:
+		_cycle_country_kit(-1)
+	)
+	hud.country_kit_next_requested.connect(func() -> void:
+		_cycle_country_kit(1)
+	)
 	hud.set_sensitivity_value(player.mouse_sensitivity)
+	_update_avatar_selection_labels()
 
 func _restart_play(after_goal: bool) -> void:
 	phase_label = &"kickoff" if not after_goal else &"reset"
@@ -262,6 +320,8 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 	if match_over or intro_open or menu_open or goal_reset_timer > 0.0:
 		return
 	var connected := _can_reach_ball(origin, direction)
+	if player_avatar != null:
+		player_avatar.play_kick(strong)
 	if hud != null:
 		hud.show_kick(strong, connected)
 	if not connected:
@@ -277,6 +337,8 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 	var to_ball: Vector3 = ball.global_position - origin
 	if to_ball.length() > bot.kick_range + 0.55:
 		return
+	if bot_avatar != null:
+		bot_avatar.play_kick(false)
 	ball.kick(direction, force, lift)
 	if feedback != null:
 		feedback.play_football_kick(ball.global_position, direction, false)
@@ -314,6 +376,10 @@ func _register_goal(player_scored: bool) -> void:
 	bot.set_celebrating(true)
 	if hud != null:
 		hud.show_goal(player_scored)
+	if player_scored and player_avatar != null:
+		player_avatar.play_celebrate()
+	elif not player_scored and bot_avatar != null:
+		bot_avatar.play_celebrate()
 	if feedback != null:
 		var goal_z := GOAL_LINE_NORTH if player_scored else GOAL_LINE_SOUTH
 		feedback.play_football_goal(Vector3(0.0, 1.0, goal_z), player_scored)
@@ -402,3 +468,32 @@ func _on_sensitivity_changed(value: float) -> void:
 		player.set_mouse_sensitivity(value)
 	if hud != null:
 		hud.set_sensitivity_value(player.mouse_sensitivity)
+
+func _cycle_skin_tone(step: int) -> void:
+	selected_appearance.skin_tone_id = AvatarCatalogScript.get_next_skin_tone_id(selected_appearance.skin_tone_id, step)
+	_apply_selected_player_appearance()
+
+func _cycle_country_kit(step: int) -> void:
+	selected_appearance.country_kit_id = AvatarCatalogScript.get_next_country_kit_id(selected_appearance.country_kit_id, step)
+	_apply_selected_player_appearance()
+
+func _apply_selected_player_appearance() -> void:
+	if player_avatar != null:
+		player_avatar.apply_appearance(selected_appearance)
+	_update_avatar_selection_labels()
+
+func _update_avatar_selection_labels() -> void:
+	if hud == null:
+		return
+	hud.set_avatar_selection_labels(
+		AvatarCatalogScript.get_skin_label(selected_appearance.skin_tone_id),
+		AvatarCatalogScript.get_country_kit_label(selected_appearance.country_kit_id)
+	)
+
+func _update_avatar_states() -> void:
+	if player_avatar != null and player != null:
+		var player_flat_speed := Vector3(player.velocity.x, 0.0, player.velocity.z).length()
+		player_avatar.set_move_state(player_flat_speed, player.is_on_floor(), player.velocity.y)
+	if bot_avatar != null and bot != null:
+		var bot_flat_speed := Vector3(bot.velocity.x, 0.0, bot.velocity.z).length()
+		bot_avatar.set_move_state(bot_flat_speed, bot.is_on_floor(), bot.velocity.y)

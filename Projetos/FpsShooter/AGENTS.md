@@ -74,6 +74,7 @@ Initial boundaries:
 - `gameplay/combat/`: health, damage, knockback and shared combat body behavior.
 - `gameplay/player/`: FPS movement, camera, aiming, rifle shooting and alt-fire requests.
 - `gameplay/bot/`: basic bot movement and shooting behavior.
+- `gameplay/avatar/`: runtime procedural avatar visuals, appearance catalog and presentation-only animation.
 - `gameplay/football/`: football ball and football bot behavior.
 - `modes/menu/`: FPS Playground mode selection.
 - `modes/arena/`: mode assembly, arena geometry, round state and hit resolution.
@@ -89,6 +90,10 @@ Track 05 target additions:
 - `modes/shared/`: shared runtime primitive creation and mode utilities.
 - `gameplay/arena/`: arena rule helpers when extracted from the mode root.
 - `tests/unit/test_rule_helpers.gd`: focused pure-helper coverage alongside the broader integration regression.
+
+Track 06A target addition:
+
+- `gameplay/avatar/`: primitive humanoid construction, skin/kit appearance data and lightweight visual animation.
 
 ## Reuse Rule
 
