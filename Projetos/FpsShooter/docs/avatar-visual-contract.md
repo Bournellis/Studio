@@ -28,7 +28,7 @@ This contract covers procedural humanoid visuals, appearance selection and basic
 - Character creator persistence.
 - Networked cosmetic sync.
 - Facial animation, inverse kinematics or complex skeletal animation.
-- Third-person camera conversion.
+- Additional camera work beyond the Track 06B Futebol chase-camera conversion.
 
 ## Appearance Contract
 
@@ -76,7 +76,7 @@ The avatar system must expose readable procedural states:
 
 The animation is presentation only. It must not drive movement, kick physics, goal detection, player collision, bot logic or ball authority.
 
-The local first-person player avatar must not block the camera or make aiming unreadable. Hiding or lowering head geometry for the local avatar is allowed.
+Track 06A allowed the local first-person player avatar to hide head/neck geometry. Track 06B changes `Futebol` to third-person, so the football local avatar should remain visible there while any future Arena Shooter avatar adoption must still protect first-person readability.
 
 ## Mode Integration Contract
 

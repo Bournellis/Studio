@@ -13,7 +13,7 @@ Current identity:
 - first-person playground tech probe;
 - PC Windows editor-first;
 - local `Arena Shooter` 1x1 mode against a bot;
-- local `Futebol` 1x1 first-person football mode against a bot;
+- local `Futebol` 1x1 third-person football mode against a bot;
 - traditional FPS baseline remains preserved as one mode;
 - future additions may include additional projectile types, stronger effects, jump pads, suspended platforms, void/fall rules and deeper movement-combat play;
 - no Ricochet-style contract is active unless Fabio explicitly reopens that direction.
@@ -79,6 +79,7 @@ Initial boundaries:
 - `modes/menu/`: FPS Playground mode selection.
 - `modes/arena/`: mode assembly, arena geometry, round state and hit resolution.
 - `modes/football/`: football field assembly, score state, goal resolution and kick handling.
+- `presentation/camera/`: mode-specific presentation cameras.
 - `presentation/hud/`: player-facing HUD.
 - `tools/`: scene generation and validation.
 - `tests/`: GUT coverage for bootstrap, input, scene assembly and combat primitives.
@@ -94,6 +95,10 @@ Track 05 target additions:
 Track 06A target addition:
 
 - `gameplay/avatar/`: primitive humanoid construction, skin/kit appearance data and lightweight visual animation.
+
+Track 06B target addition:
+
+- `presentation/camera/`: football-only third-person chase camera; `Arena Shooter` remains first-person.
 
 ## Reuse Rule
 

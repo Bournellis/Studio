@@ -1,14 +1,14 @@
 # FPS Playground Architecture Overview
 
 - Last updated: `2026-06-10`
-- Status: `TRACK_05_COMPLETE`
+- Status: `TRACK_06B_COMPLETE`
 
 ## Current Shape
 
-`FPS Playground` is a Godot 4.6.2 PC Windows editor-first project with two playable first-person modes:
+`FPS Playground` is a Godot 4.6.2 PC Windows editor-first project with two playable local 3D modes:
 
 - `Arena Shooter`: a local 1x1 arena duel against a bot.
-- `Futebol`: a local 1x1 first-person football match against a bot.
+- `Futebol`: a local 1x1 third-person football match against a bot.
 
 The project started as a fast tech probe. Track 05 keeps the accepted gameplay but hardens the structure so future modes, maps and systems can grow without turning each root scene into a large custom application.
 
@@ -18,7 +18,7 @@ The project started as a fast tech probe. Track 05 keeps the accepted gameplay b
 |---|---|---|---|
 | Foundation | `autoloads/`, `modes/shared/`, shared constants/helpers | Input setup, shared mode contracts, primitive runtime helpers, validation support. | Mode-specific scoring, combat or bot decision rules. |
 | Gameplay | `gameplay/` | Player controller, combat body, bot behavior, football ball/bot, rule helpers. | HUD layout, scene generation, portfolio docs. |
-| Presentation | `presentation/` | HUD, crosshair, overlays, synthetic audio, runtime effects. | Combat decisions, scoring authority, bot route choices. |
+| Presentation | `presentation/` | HUD, crosshair, overlays, synthetic audio, runtime effects and mode-specific presentation cameras. | Combat decisions, scoring authority, bot route choices. |
 | Composition | `modes/` | Mode scene assembly, layout spawning, signal wiring, restart/pause/menu flow. | Reusable low-level math/rules that can be tested separately. |
 | Tools | `tools/`, `tests/` | Scene generation, validation profiles, GUT suite and test helpers. | Runtime gameplay behavior outside debug hooks. |
 
@@ -53,6 +53,7 @@ Track 05 first code extraction:
 - `modes/football/football_field_builder.gd` owns static football pitch, goal, wall and stadium-band construction.
 - `gameplay/arena/arena_combat_rules.gd` owns small arena combat calculations that do not need scene authority, such as visual muzzle origin, projectile direction and pickup respawn choice.
 - `gameplay/football/football_match_rules.gd` owns football reach checks, kick direction math, player ball contact, goal detection and score/match-end calculation.
+- `presentation/camera/football_chase_camera.gd` owns Futebol's third-person camera placement and ball-biased focus.
 
 Track 05 should not move toward:
 
@@ -67,7 +68,8 @@ Track 05 should not move toward:
 |---|---|---|
 | `modes/arena/arena_root.gd` | Map, pickups, jump pads, projectile resolution, HUD snapshot and round state live together. | Keep as arena authority; extract primitive/layout helpers and isolated rule math. |
 | `gameplay/bot/basic_duel_bot.gd` | State machine, route scoring, visibility, aiming, jump and dodge logic live together. | Keep as controller; extract visibility, aim or route helpers only where tests protect behavior. |
-| `modes/football/football_root.gd` | Field construction, scoring, input mapping and menu flow live together. | Keep as match authority; extract field builder and match/kick rules. |
+| `modes/football/football_root.gd` | Scoring, input mapping, camera wiring and menu flow live together. | Keep as match authority; extract field builder, match/kick rules and presentation cameras. |
+| `presentation/camera/*` | New small owner for mode-specific presentation cameras. | Keep cameras presentation-only; no scoring, physics or bot authority. |
 | `presentation/hud/*` | HUD construction and state transitions are manually built at runtime. | Preserve runtime construction; make snapshot keys stable and documented. |
 | `tests/unit/test_bootstrap.gd` | Covers every domain in one long script. | Split into mode, arena, bot, football and feedback files with shared helpers. |
 

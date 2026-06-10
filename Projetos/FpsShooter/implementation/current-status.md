@@ -4,7 +4,7 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS Playground tech probe`
-- Active stage: `Track 06A - Avatar Visual Foundation V1`
+- Active stage: `Track 06B - Third-Person Football Camera V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -18,8 +18,8 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - PC Windows editor-first.
 - `FPS Playground` main menu with selectable modes.
 - `Arena Shooter`: traditional FPS baseline in a local 1x1 arena against a bot.
-- `Futebol`: first-person 1x1 football mode against a bot, no weapons, match to 3 goals.
-- `Futebol` now includes runtime primitive humanoid avatars for player and bot, skin tone selection and country-inspired shirt/kit selection in the intro panel.
+- `Futebol`: third-person 1x1 football mode against a bot, no weapons, match to 3 goals.
+- `Futebol` includes a Rocket League-inspired chase camera, visible local player avatar, runtime primitive humanoid avatars for player and bot, skin tone selection and country-inspired shirt/kit selection in the intro panel.
 - Player movement, mouse look, jump, hitscan shot and combat-readable knockback.
 - Secondary `Plasma Bolt` alt-fire on RMB with visible slow projectile, crosshair-aligned damage, stronger knockback and cooldown.
 - Runtime pickups: elevated health shard and overcharge.
@@ -31,16 +31,16 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - `Duel Pit V2` arena layout with protected spawns, low/high cover, side platforms, ramps, high platforms, jump pads, elevated pickups, route/landing markers and high-platform soft cover, without void/fall zones in the current map.
 - Void/fall pressure is reserved for future dedicated maps.
 - HUD, round state and bidirectional feel/feedback.
-- Futebol mode reuses the FPS controller and sensitivity flow, starts with a paused `Como Jogar` / `Comecar` intro panel, turns LMB/RMB into kick/strong kick, uses a loose arcade `RigidBody3D` ball, primitive festive stadium visuals, fully closed goal interiors, simple football bot attack/defend behavior, score HUD and goal feedback.
+- Futebol mode reuses the FPS controller and sensitivity flow, starts with a paused `Como Jogar` / `Comecar` intro panel, uses a football-only third-person chase camera, turns LMB/RMB into body-forward kick/strong kick, uses a loose arcade `RigidBody3D` ball, primitive festive stadium visuals, fully closed goal interiors, simple football bot attack/defend behavior, score HUD and goal feedback.
 - No export, Web, mobile, multiplayer or online/backend scope.
 
 ## Active Goal
 
-`Track 06A - Avatar Visual Foundation V1` is complete. `Futebol` now has visible procedural humanoid avatars for player and bot, skin tone selection, country-inspired shirt kits and basic presentation-only animation states.
+`Track 06B - Third-Person Football Camera V1` is complete. `Futebol` now uses a third-person chase camera, keeps the local player avatar visible and resolves kicks from player body direction instead of invisible FPS camera pitch.
 
 ## Current Gate
 
-Ready for editor playtest focused on first-person avatar readability, kit/skin selection, kick/goal animation readability and whether the new character layer improves the football duel feel.
+Ready for editor playtest focused on third-person football readability: chase camera framing, visible local avatar, body-forward kick feel, kit/skin selection and whether the Rocket League-style view improves the 1x1 duel.
 
 ## Validation Snapshot
 
@@ -219,6 +219,15 @@ Track 06A Avatar Visual Foundation V1:
 - selection is memory-only and presentation-only; it does not affect movement, ball physics, scoring, damage or persistence;
 - validation passed `57/57` GUT tests with `444` asserts during implementation.
 
+Track 06B Third-Person Football Camera V1:
+
+- `Futebol` now uses a football-only third-person chase camera under `presentation/camera/`;
+- `RuntimeRoot/FootballChaseCamera` is current in `Futebol`, while the reused player FPS camera remains inactive for that mode;
+- local player avatar is visible in the football view instead of using first-person head/neck hiding;
+- LMB/RMB kicks use player body-forward direction, removing dependency on hidden FPS pitch;
+- intro and HUD hints now describe third-person player/camera rotation;
+- final validation passed `58/58` GUT tests with `455` asserts before closeout.
+
 ## Read Next
 
 1. `AGENTS.md`
@@ -241,3 +250,4 @@ Track 06A Avatar Visual Foundation V1:
 18. `implementation/tracks/track-04a-fps-playground-football-v1/current-status.md`
 19. `implementation/tracks/track-05-foundation-hardening-refactor-v1/current-status.md`
 20. `implementation/tracks/track-06a-avatar-visual-foundation-v1/current-status.md`
+21. `implementation/tracks/track-06b-third-person-football-camera-v1/current-status.md`

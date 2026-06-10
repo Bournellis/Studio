@@ -1,7 +1,7 @@
 # FPS Playground Documentation Index
 
 - Last updated: `2026-06-10`
-- Status: `TRACK_06A_COMPLETE`
+- Status: `TRACK_06B_COMPLETE`
 
 ## Purpose
 
@@ -70,7 +70,7 @@ Track history lives in `implementation/tracks/`. Completed tracks are historical
 
 Latest gameplay track:
 
-- `implementation/tracks/track-06a-avatar-visual-foundation-v1/current-status.md`
+- `implementation/tracks/track-06b-third-person-football-camera-v1/current-status.md`
 
 ## Source Boundaries
 
@@ -86,7 +86,8 @@ Latest gameplay track:
 | `modes/arena/` | Arena mode composition, map assembly and round authority. |
 | `modes/football/` | Football mode composition, field assembly and match authority. |
 | `modes/shared/` | Shared mode contracts, primitive builders and mode utilities. |
-| `presentation/` | HUD and runtime feedback/audio. |
+| `presentation/camera/` | Mode-specific presentation cameras, currently the Futebol chase camera. |
+| `presentation/` | HUD, runtime feedback/audio and presentation helpers. |
 | `tools/` | Scene generation, validation and local automation. |
 | `tests/` | GUT coverage and helpers. |
 

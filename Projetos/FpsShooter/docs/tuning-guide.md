@@ -1,7 +1,7 @@
 # FPS Playground Tuning Guide
 
 - Last updated: `2026-06-10`
-- Status: `TRACK_05_COMPLETE`
+- Status: `TRACK_06B_COMPLETE`
 
 ## Purpose
 
@@ -23,6 +23,7 @@ During foundation refactors, move or group values only when behavior remains ide
 | Football kicks and scoring | `modes/football/football_root.gd` with `gameplay/football/football_match_rules.gd` for pure match math | kick reach, force, lift, contact radius, goal limit. |
 | Football ball | `gameplay/football/football_ball.gd` | velocity clamp, reset behavior, physics tuning. |
 | Football bot | `gameplay/football/football_bot.gd` | attack/defend movement and kick behavior. |
+| Football camera | `presentation/camera/football_chase_camera.gd` | follow distance, height, look-ahead, ball focus and smoothing. |
 | Feedback | `presentation/feedback/fps_feedback_controller.gd` | effect colors, lifetimes, audio tones. |
 
 ## Target Direction
@@ -67,9 +68,10 @@ Arena Shooter:
 
 Futebol:
 
-- first-person arcade football;
+- third-person arcade football;
+- chase camera follows behind the player and lightly biases focus toward the ball;
 - loose ball physics;
-- LMB kick and RMB strong kick;
+- LMB kick and RMB strong kick use body-forward direction;
 - match to 3 goals;
 - goals are safe and closed;
 - bot attacks and defends simply.

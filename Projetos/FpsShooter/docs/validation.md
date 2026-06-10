@@ -26,11 +26,12 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `57/57`;
-- `444` asserts;
+- GUT `58/58`;
+- `455` asserts;
 - Track 04A validates menu boot and mode routes, centered menu container hierarchy, generated menu/arena/football scenes, paused football intro panel, football goal safety floors and side walls, football player kick and strong kick, no weapon damage in football, football goal scoring/match end, bot kick handoff, arena pause menu return button and the full previous arena shooter regression suite.
 - Track 05 final validation is `51/51` and `386` asserts after helper-rule test split.
 - Track 06A validates avatar catalog defaults, runtime avatar body parts, material/appearance updates, first-person head hiding, Futebol player/bot avatar spawning, intro selection controls, selection cycling and kick/goal animation hooks.
+- Track 06B validates the Futebol third-person chase camera, inactive FPS camera in football, visible local avatar, follow-behind placement and body-forward kick behavior.
 - Track 05 baseline before refactor was `42/42` and `355` asserts after the one-time fresh worktree editor import.
 
 ## Manual Smoke
@@ -42,7 +43,7 @@ Expected menu flow:
 - Play opens the `FPS Playground` main menu;
 - the menu is centered and readable in the first viewport, with the mode buttons grouped in the center panel;
 - `Arena Shooter` loads the accepted duel arena;
-- `Futebol` loads the first-person football mode;
+- `Futebol` loads the third-person football mode;
 - `Sair` exits when running from editor/player;
 - `Esc` inside a mode opens pause;
 - `Menu inicial` returns to the menu from both modes.
@@ -106,10 +107,12 @@ Expected Futebol:
 - the intro panel shows player skin tone and shirt/country kit selectors;
 - changing skin tone and shirt kit updates the player avatar before starting the match;
 - pressing `Comecar` starts the match and captures mouse for gameplay;
-- first-person camera/mouse look and `WASD` movement work;
+- third-person chase camera follows behind the player and keeps the local avatar visible;
+- mouse rotates the player/camera relationship and `WASD` movement works;
 - `Space` jumps;
 - LMB kicks the ball when it is in reach;
 - RMB performs a stronger kick with more force/lift;
+- kicks travel from the player's body-forward direction, not from an invisible first-person pitch;
 - missing the ball gives a subtle `SEM CONTATO` HUD cue and no weapon damage occurs;
 - the bot chases, attacks and defends the ball;
 - the ball feels loose/arcade and can be moved by player/bot kicks;

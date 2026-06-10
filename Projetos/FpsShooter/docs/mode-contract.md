@@ -1,11 +1,11 @@
 # FPS Playground Mode Contract
 
 - Last updated: `2026-06-10`
-- Status: `TRACK_05_COMPLETE`
+- Status: `TRACK_06B_COMPLETE`
 
 ## Purpose
 
-This contract defines how playable modes should be assembled and operated in `FPS Playground`. It applies to `Arena Shooter`, `Futebol` and future local first-person modes.
+This contract defines how playable modes should be assembled and operated in `FPS Playground`. It applies to `Arena Shooter`, `Futebol` and future local 3D modes.
 
 ## Required Responsibilities
 
@@ -26,6 +26,7 @@ Every mode root should delegate:
 - reusable gameplay math to `gameplay/`;
 - visual/audio effects to `presentation/feedback/`;
 - HUD rendering to `presentation/hud/`;
+- presentation-only camera logic to `presentation/camera/`;
 - tests to domain-specific test files.
 
 ## Standard Runtime Phases
@@ -49,6 +50,8 @@ The player controller can be reused by modes, but the meaning of fire requests i
 - In `Futebol`, `shoot_requested` means kick and `alt_fire_requested` means strong kick.
 
 Modes must not let football kicks apply weapon damage.
+
+`Futebol` currently reuses the FPS controller for movement/input but owns kick direction in the mode root so kicks follow the visible body-forward direction in third person.
 
 ## HUD Snapshot Contract
 

@@ -4,6 +4,7 @@ const BootstrapSceneGeneratorScript = preload("res://tools/bootstrap_scene_gener
 const CombatantScript = preload("res://gameplay/combat/combatant_3d.gd")
 const PlayerScript = preload("res://gameplay/player/fps_player_controller.gd")
 const FeedbackScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
+const FootballChaseCameraScript = preload("res://presentation/camera/football_chase_camera.gd")
 const FootballBallScript = preload("res://gameplay/football/football_ball.gd")
 const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
@@ -73,6 +74,7 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_not_null(football.get_node_or_null("SouthGoalPostR"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player/PlayerAvatar"))
+	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballChaseCamera"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballBot"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballBot/BotAvatar"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Ball"))
@@ -85,6 +87,10 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_true(football.debug_get_bot().get_script() == FootballBotScript)
 	assert_true(football.debug_get_player_avatar().get_script() == PlayerAvatarScript)
 	assert_true(football.debug_get_bot_avatar().get_script() == PlayerAvatarScript)
+	assert_true(football.debug_get_chase_camera().get_script() == FootballChaseCameraScript)
+	assert_true(football.debug_get_chase_camera().debug_get_camera().current)
+	assert_false(football.debug_get_player().get_camera().current)
+	assert_false(football.debug_get_player_avatar().local_first_person)
 	assert_eq(football.debug_get_player_avatar().debug_get_country_kit_id(), &"brazil")
 	assert_eq(football.debug_get_bot_avatar().debug_get_country_kit_id(), &"france")
 	assert_true(football.debug_is_intro_open())
@@ -97,6 +103,29 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/AvatarSelectionBox/SkinToneRow/SkinNextButton"))
 	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/AvatarSelectionBox/CountryKitRow/KitPreviousButton"))
 	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/AvatarSelectionBox/CountryKitRow/KitNextButton"))
+	assert_no_new_orphans()
+
+func test_football_chase_camera_tracks_behind_player() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var ball = football.debug_get_ball()
+	var chase_camera = football.debug_get_chase_camera()
+	player.global_position = Vector3(0.0, 0.05, 10.0)
+	player.rotation = Vector3.ZERO
+	football.debug_force_ball_position(Vector3(0.0, 0.58, 0.0))
+	chase_camera.snap_to_target()
+
+	assert_true(chase_camera.debug_is_configured())
+	assert_true(chase_camera.debug_get_camera().current)
+	assert_gt(chase_camera.global_position.z, player.global_position.z + 5.0)
+	assert_gt(chase_camera.global_position.y, player.global_position.y + 2.5)
+	assert_lt(chase_camera.debug_get_focus_position().distance_to(ball.global_position + Vector3.UP * 0.45), 12.0)
 	assert_no_new_orphans()
 
 func test_football_intro_cycles_avatar_skin_and_country_kit() -> void:
@@ -136,7 +165,7 @@ func test_football_player_kick_moves_ball_without_weapon_damage() -> void:
 	var ball = football.debug_get_ball()
 	var hud = football.get_node("FootballHud")
 	var feedback = football.get_node("FeedbackController")
-	football.debug_force_ball_position(player.get_shot_origin() + player.get_shot_direction() * 1.45 + Vector3.DOWN * 0.82)
+	football.debug_force_ball_position(football.debug_get_player_kick_origin() + football.debug_get_player_kick_direction() * 1.45 + Vector3.DOWN * 0.34)
 	var before_kicks: int = ball.debug_get_kick_count()
 	football._on_player_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 99.0, 99.0)
 
@@ -159,7 +188,7 @@ func test_football_strong_kick_uses_stronger_force() -> void:
 	var player = football.debug_get_player()
 	var ball = football.debug_get_ball()
 	var hud = football.get_node("FootballHud")
-	football.debug_force_ball_position(player.get_shot_origin() + player.get_shot_direction() * 1.45 + Vector3.DOWN * 0.82)
+	football.debug_force_ball_position(football.debug_get_player_kick_origin() + football.debug_get_player_kick_direction() * 1.45 + Vector3.DOWN * 0.34)
 	football._on_player_strong_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 0.0, 0.0, 0.0, 0.0, false)
 
 	assert_almost_eq(ball.debug_get_last_kick_force(), 23.0, 0.01)

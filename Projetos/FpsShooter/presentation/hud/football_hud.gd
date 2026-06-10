@@ -64,7 +64,7 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	var bot_state := str(snapshot.get("bot_state", "kickoff"))
 	var phase := str(snapshot.get("phase", "kickoff"))
 	flow_label.text = "Futebol: %s | Bot: %s" % [phase, bot_state]
-	hint_label.text = str(snapshot.get("hint", "WASD move | Mouse look | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"))
+	hint_label.text = str(snapshot.get("hint", "WASD move | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"))
 
 func show_kick(strong: bool, connected: bool) -> void:
 	if connected:
@@ -187,7 +187,7 @@ func _build_ui() -> void:
 	hint_label = Label.new()
 	hint_label.name = "HintLabel"
 	hint_label.position = Vector2(18.0, 152.0)
-	hint_label.text = "Click captures mouse | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"
+	hint_label.text = "Click captura mouse | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"
 	_ignore_mouse(hint_label)
 	root.add_child(hint_label)
 
@@ -344,7 +344,7 @@ func _build_intro_panel(root: Control) -> void:
 
 	var summary := Label.new()
 	summary.name = "IntroSummary"
-	summary.text = "Futebol 1x1 em primeira pessoa. Primeiro a 3 gols vence."
+	summary.text = "Futebol 1x1 em terceira pessoa. Primeiro a 3 gols vence."
 	summary.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	summary.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -353,7 +353,7 @@ func _build_intro_panel(root: Control) -> void:
 
 	var hotkeys := Label.new()
 	hotkeys.name = "HotkeysLabel"
-	hotkeys.text = "WASD - mover\nMouse - olhar\nEspaco - pular\nLMB - chute\nRMB - chute forte\nR - reiniciar partida\nEsc - menu de sensibilidade"
+	hotkeys.text = "WASD - mover\nMouse - girar jogador/camera\nEspaco - pular\nLMB - chute\nRMB - chute forte\nR - reiniciar partida\nEsc - menu de sensibilidade"
 	hotkeys.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hotkeys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hotkeys.add_theme_font_size_override("font_size", 15)

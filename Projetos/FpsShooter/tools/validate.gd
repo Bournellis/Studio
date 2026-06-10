@@ -106,6 +106,7 @@ func _check_core_project_contract() -> void:
 	_check_resource("res://gameplay/football/football_match_rules.gd")
 	_check_resource("res://presentation/hud/arena_hud.gd")
 	_check_resource("res://presentation/hud/football_hud.gd")
+	_check_resource("res://presentation/camera/football_chase_camera.gd")
 	_check_resource("res://presentation/feedback/fps_feedback_controller.gd")
 	_check_resource("res://tools/bootstrap_scene_generator.gd")
 	_check_resource("res://addons/gut/plugin.cfg")

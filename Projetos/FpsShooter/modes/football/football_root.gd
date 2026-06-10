@@ -6,6 +6,7 @@ const FootballBallScript = preload("res://gameplay/football/football_ball.gd")
 const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
 const FootballHudScript = preload("res://presentation/hud/football_hud.gd")
 const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
+const FootballChaseCameraScript = preload("res://presentation/camera/football_chase_camera.gd")
 const FootballFieldBuilderScript = preload("res://modes/football/football_field_builder.gd")
 const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
@@ -42,6 +43,7 @@ const GOAL_RESET_DELAY: float = 1.25
 
 var player
 var player_avatar
+var chase_camera
 var bot
 var bot_avatar
 var ball
@@ -122,6 +124,21 @@ func debug_get_player():
 
 func debug_get_player_avatar():
 	return player_avatar
+
+func debug_get_chase_camera():
+	return chase_camera
+
+func debug_get_camera_focus_position() -> Vector3:
+	return chase_camera.debug_get_focus_position() if chase_camera != null else Vector3.ZERO
+
+func debug_get_camera_desired_position() -> Vector3:
+	return chase_camera.debug_get_desired_position() if chase_camera != null else Vector3.ZERO
+
+func debug_get_player_kick_origin() -> Vector3:
+	return _get_player_kick_origin()
+
+func debug_get_player_kick_direction() -> Vector3:
+	return _get_player_kick_direction()
 
 func debug_get_bot():
 	return bot
@@ -238,7 +255,7 @@ func _spawn_runtime() -> void:
 
 	player_avatar = PlayerAvatarScript.new()
 	player_avatar.name = "PlayerAvatar"
-	player_avatar.local_first_person = true
+	player_avatar.local_first_person = false
 	player.add_child(player_avatar)
 	player_avatar.apply_appearance(selected_appearance)
 
@@ -247,6 +264,14 @@ func _spawn_runtime() -> void:
 	ball.position = BALL_SPAWN
 	runtime_root.add_child(ball)
 	ball.configure(BALL_SPAWN)
+
+	var first_person_camera: Camera3D = player.get_camera() as Camera3D
+	if first_person_camera != null:
+		first_person_camera.current = false
+	chase_camera = FootballChaseCameraScript.new()
+	chase_camera.name = "FootballChaseCamera"
+	runtime_root.add_child(chase_camera)
+	chase_camera.configure(player, ball)
 
 	bot = FootballBotScript.new()
 	bot.name = "FootballBot"
@@ -303,6 +328,8 @@ func _restart_play(after_goal: bool) -> void:
 	bot.rotation.y = PI
 	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH))
 	ball.configure(BALL_SPAWN)
+	if chase_camera != null:
+		chase_camera.snap_to_target()
 	player_touch_cooldown_remaining = 0.0
 	if match_over:
 		bot.set_celebrating(true)
@@ -310,11 +337,11 @@ func _restart_play(after_goal: bool) -> void:
 		bot.set_celebrating(false)
 	phase_label = &"play"
 
-func _on_player_kick_requested(origin: Vector3, direction: Vector3, _damage: float, _knockback: float) -> void:
-	_try_player_kick(origin, direction, PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, false)
+func _on_player_kick_requested(_origin: Vector3, _direction: Vector3, _damage: float, _knockback: float) -> void:
+	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, false)
 
-func _on_player_strong_kick_requested(origin: Vector3, direction: Vector3, _damage: float, _knockback: float, _speed: float, _radius: float, _overcharged: bool) -> void:
-	_try_player_kick(origin, direction, PLAYER_STRONG_KICK_FORCE, PLAYER_STRONG_KICK_LIFT, true)
+func _on_player_strong_kick_requested(_origin: Vector3, _direction: Vector3, _damage: float, _knockback: float, _speed: float, _radius: float, _overcharged: bool) -> void:
+	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_STRONG_KICK_FORCE, PLAYER_STRONG_KICK_LIFT, true)
 
 func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: float, strong: bool) -> void:
 	if match_over or intro_open or menu_open or goal_reset_timer > 0.0:
@@ -400,6 +427,18 @@ func _can_reach_ball(origin: Vector3, direction: Vector3) -> bool:
 func _build_kick_direction(origin: Vector3, direction: Vector3) -> Vector3:
 	return FootballMatchRulesScript.build_kick_direction(origin, direction, ball.global_position, -player.global_transform.basis.z)
 
+func _get_player_kick_origin() -> Vector3:
+	return player.global_position + Vector3.UP * 0.92 if player != null else Vector3.UP * 0.92
+
+func _get_player_kick_direction() -> Vector3:
+	if player == null:
+		return Vector3.FORWARD
+	var forward: Vector3 = -player.global_transform.basis.z
+	forward.y = 0.0
+	if forward.length_squared() <= 0.0001:
+		return Vector3.FORWARD
+	return forward.normalized()
+
 func _build_hud_snapshot() -> Dictionary:
 	var ball_distance := 0.0
 	if player != null and ball != null:
@@ -412,7 +451,7 @@ func _build_hud_snapshot() -> Dictionary:
 		"ball_distance": ball_distance,
 		"bot_state": bot.debug_get_state() if bot != null else "none",
 		"phase": phase_label,
-		"hint": "Comecar inicia | WASD move | Mouse look | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Mouse look | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"
+		"hint": "Comecar inicia | WASD move | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"
 	}
 
 func _start_match() -> void:

@@ -6,7 +6,7 @@ Current goal:
 
 - prove simple 3D first-person loops in the editor;
 - preserve the local 1x1 arena shooter against a bot;
-- add alternate first-person modes that reuse controller/feedback lessons;
+- add alternate 3D modes that reuse controller/feedback lessons;
 - use only a light Draxos visual theme, without inheriting gameplay systems from other Draxos projects.
 
 ## Current Slice
@@ -17,9 +17,9 @@ Current goal:
 - Arena Shooter: mouse look, WASD movement, jump, hitscan rifle, RMB Plasma Bolt, overcharge consumption and combat-readable knockback output.
 - Arena: `Duel Pit V2`, runtime Health Shard and Overcharge pickups with respawn timers, jump pads and no void/fall zones.
 - Bot duelista V1+: line-of-sight gated shots, short tell, deterministic aim error, strafe/reposition, vertical awareness, pickup awareness and nearby plasma dodge.
-- Futebol: first-person 1x1 against a bot, no weapons, LMB kick, RMB strong kick, arcade loose ball physics and match to 3 goals.
+- Futebol: third-person 1x1 against a bot, no weapons, visible local avatar, chase camera, LMB kick, RMB strong kick, arcade loose ball physics and match to 3 goals.
 - HUD/feedback: arena health/combat feedback plus football score/kick/goal feedback, synthetic audio and runtime primitive effects.
-- Track 05 is complete: documentation, validation, runtime helpers, mode boundaries, bot contracts and tests are hardened while accepted gameplay is preserved.
+- Track 06B is complete: Futebol now uses a third-person chase camera while Arena Shooter preserves the first-person baseline.
 
 ## Documentation
 

@@ -1,13 +1,13 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-10`
-- Status: `FPS_PLAYGROUND_TRACK_06A_AVATAR_VISUAL_FOUNDATION_COMPLETE`
+- Status: `FPS_PLAYGROUND_TRACK_06B_THIRD_PERSON_FOOTBALL_CAMERA_COMPLETE`
 
 ## North Star
 
 Create a small first-person playground tech probe that proves Godot 4.6.2 can support satisfying PC editor-first first-person 3D game modes for the studio.
 
-The project started as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Track 04A turns the project into `FPS Playground` by adding a container-centered main menu and the first alternate first-person mode: `Futebol` 1x1 against a bot, now with a paused how-to intro and fully closed goal interiors. Track 05 hardens the project so both accepted modes can grow from a cleaner professional foundation. Track 06A starts the character visual foundation with procedural avatars, skin tones and country-inspired football kits. Void/fall pressure is reserved for future dedicated maps.
+The project started as a traditional FPS. Track 02A adds the first special projectile and micro-objectives. Track 03A turns that accepted duel loop into the first no-void vertical arena with jump pads and elevated objectives. Track 03B tunes that arena flow so high routes, pickups and bot intent are easier to read. Track 04A turns the project into `FPS Playground` by adding a container-centered main menu and the first alternate mode: `Futebol` 1x1 against a bot, now with a paused how-to intro and fully closed goal interiors. Track 05 hardens the project so both accepted modes can grow from a cleaner professional foundation. Track 06A starts the character visual foundation with procedural avatars, skin tones and country-inspired football kits. Track 06B converts `Futebol` to a third-person chase camera while preserving the Arena Shooter first-person baseline. Void/fall pressure is reserved for future dedicated maps.
 
 ## Track 00 - Project Bootstrap
 
@@ -191,7 +191,7 @@ Future candidate scope:
 
 ## Track 04 - FPS Playground Modes
 
-Goal: preserve the accepted FPS arena loop while opening the project to alternate first-person prototypes.
+Goal: preserve the accepted FPS arena loop while opening the project to alternate 3D prototypes.
 
 Status: active; Track 04A is complete.
 
@@ -206,7 +206,7 @@ Delivered:
 - project display name changed to `FPS Playground`, with folder name `FpsShooter` preserved;
 - generated container-centered main menu scene with `Arena Shooter`, `Futebol` and `Sair`;
 - `Arena Shooter` remains intact and can return to the main menu from pause;
-- `Futebol` mode in first person, 1x1 against a bot, no weapons, score to 3 goals;
+- `Futebol` mode originally shipped in first person, 1x1 against a bot, no weapons, score to 3 goals;
 - paused `Como Jogar` / `Comecar` intro before football gameplay and mouse capture;
 - LMB kick and RMB strong kick reuse the existing FPS input/camera flow without applying damage;
 - arcade loose `RigidBody3D` football with velocity clamps and reset safeguards;
@@ -257,7 +257,7 @@ Future candidate scope:
 
 Goal: make `FPS Playground` characters more readable and extensible while preserving editor-first prototype speed.
 
-Status: active; Track 06A is complete.
+Status: active; Track 06A and Track 06B are complete.
 
 ## Track 06A - Avatar Visual Foundation V1
 
@@ -278,8 +278,29 @@ Delivered:
 
 Future candidate scope:
 
-- run editor playtest focused on first-person avatar readability and football animation feel;
-- decide whether the next gameplay track should tune football possession/ball feel, improve avatar presentation, or return to Arena Shooter content.
+- Track 06B converts `Futebol` to third-person, so future avatar work should assume the local player is visible;
+- decide whether the next gameplay track should tune football possession/ball feel, improve authored character quality, or return to Arena Shooter content.
+
+## Track 06B - Third-Person Football Camera V1
+
+Goal: convert `Futebol` to a third-person chase-camera mode inspired by Rocket League.
+
+Status: complete.
+
+Delivered:
+
+- football-only `FootballChaseCamera` under `presentation/camera/`;
+- current third-person camera in `Futebol` while `Arena Shooter` keeps the first-person camera baseline;
+- local player avatar visible in football;
+- LMB/RMB kicks resolved from body-forward direction instead of hidden first-person camera pitch;
+- intro and HUD hints updated for third-person camera/player rotation;
+- automated coverage for camera spawn/current state, follow-behind placement, avatar visibility and preserved football kick behavior.
+
+Future candidate scope:
+
+- editor smoke on camera distance/height and ball focus;
+- tune football possession, kick assist and body contact now that the local character is visible;
+- replace primitive avatar quality through an authored/AI-assisted asset pipeline when selected as a dedicated art track.
 
 ## Deferred
 
