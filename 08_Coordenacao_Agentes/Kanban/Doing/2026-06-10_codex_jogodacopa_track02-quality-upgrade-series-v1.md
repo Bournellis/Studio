@@ -10,7 +10,7 @@
 - branch: `codex/jogodacopa/track02-quality-upgrade-series-v1`
 - worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track02-quality-upgrade-series-v1`
 - started_at: `2026-06-10`
-- current_track: `02C Ball & Character Assets V1`
+- current_track: `02D VFX & Game Feel V1`
 
 ## Execution Registration
 
@@ -23,6 +23,7 @@
 
 - `2026-06-10` - `02A Render & Lighting Foundation V1` complete. `tools/validate.gd` PASS (24 tests, 219 asserts). Performance sample Windows/Forward+ after warmup: average `143.9fps`, min warmed instant `63.6fps`, `0/360` frames below 60. Status file: `Projetos/JogoDaCopa/implementation/tracks/track-02a-render-lighting-foundation-v1/current-status.md`.
 - `2026-06-10` - `02B Pitch & Arena Material Pass V1` complete. `tools/validate.gd` PASS (24 tests, 230 asserts). Status file: `Projetos/JogoDaCopa/implementation/tracks/track-02b-pitch-arena-material-pass-v1/current-status.md`.
+- `2026-06-10` - `02C Ball & Character Assets V1` complete. Asset import spike PASS for `assets/football/football_ball_panels.gdshader`; `tools/validate.gd` PASS (24 tests, 240 asserts). Licenses recorded in `Projetos/JogoDaCopa/docs/asset-licenses.md`. Status file: `Projetos/JogoDaCopa/implementation/tracks/track-02c-ball-character-assets-v1/current-status.md`.
 
 ## Goal
 
@@ -66,12 +67,12 @@ Resumo por track (detalhes e criterios de aceite no plano):
 
 ## Acceptance Criteria
 
-- [ ] Tracks implementadas em ordem 02A -> 02B -> 02C -> 02D -> 02E -> 02F -> 02G, um commit logico por track. (`02A`, `02B` complete)
-- [ ] `tools/validate.gd` PASS apos cada track (nao apenas no final). (`02A`, `02B` PASS)
+- [ ] Tracks implementadas em ordem 02A -> 02B -> 02C -> 02D -> 02E -> 02F -> 02G, um commit logico por track. (`02A`, `02B`, `02C` complete)
+- [ ] `tools/validate.gd` PASS apos cada track (nao apenas no final). (`02A`, `02B`, `02C` PASS)
 - [ ] Contratos preservados: avatar API, regras de gol com altura, feel de chute/boost cobertos por testes existentes.
-- [ ] Track 02C: spike de import de 1 asset antes de comprometer a track; licencas em `docs/asset-licenses.md`.
+- [x] Track 02C: spike de import de 1 asset antes de comprometer a track; licencas em `docs/asset-licenses.md`.
 - [ ] 60fps no editor com glow+SSAO+particulas (medir apos 02A e 02D; reduzir custo se cair). (`02A` sample above 60 after warmup)
-- [ ] Cada track concluida ganha `implementation/tracks/track-02x-*/current-status.md` no padrao das tracks 01A-01C. (`02A`, `02B` created)
+- [ ] Cada track concluida ganha `implementation/tracks/track-02x-*/current-status.md` no padrao das tracks 01A-01C. (`02A`, `02B`, `02C` created)
 - [ ] Docs e este card atualizados no final; card movido para Done.
 - [ ] Se a thread atingir limite antes de 02G, registrar Handoff com a proxima track exata e estado.
 

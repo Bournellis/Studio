@@ -1,6 +1,8 @@
 class_name FootballBall3D
 extends RigidBody3D
 
+const BallPanelShader = preload("res://assets/football/football_ball_panels.gdshader")
+
 @export var ball_radius: float = 0.48
 @export var max_horizontal_speed: float = 34.0
 @export var max_vertical_speed: float = 18.0
@@ -16,6 +18,9 @@ var last_kick_force: float = 0.0
 var kick_count: int = 0
 var dribble_control_count: int = 0
 var reset_count: int = 0
+var ball_mesh_instance: MeshInstance3D
+var trail_particles: GPUParticles3D
+var squash_timer: float = 0.0
 
 func _ready() -> void:
 	mass = 0.74
@@ -31,6 +36,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_apply_ground_roll_drag(delta)
 	_clamp_velocity()
+	_update_visual_asset(delta)
 	if global_position.y < anti_stuck_height:
 		reset_to_center()
 
@@ -48,6 +54,7 @@ func kick(direction: Vector3, force: float, lift: float = 0.0) -> void:
 	angular_velocity += Vector3(-flat.z, 0.0, flat.x).normalized() * clampf(force * 0.18, 0.0, 8.0)
 	last_kick_force = force
 	kick_count += 1
+	squash_timer = 0.18
 	_clamp_velocity()
 
 func apply_dribble_control(direction: Vector3, target_speed: float, blend: float) -> void:
@@ -67,6 +74,9 @@ func reset_to_center() -> void:
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 	sleeping = false
+	squash_timer = 0.0
+	if ball_mesh_instance != null:
+		ball_mesh_instance.scale = Vector3.ONE
 	reset_count += 1
 
 func debug_get_last_kick_force() -> float:
@@ -86,6 +96,15 @@ func debug_is_ground_rolling() -> bool:
 
 func debug_apply_ground_roll_drag(delta: float) -> void:
 	_apply_ground_roll_drag(delta)
+
+func debug_has_panel_asset_material() -> bool:
+	return ball_mesh_instance != null and ball_mesh_instance.material_override is ShaderMaterial
+
+func debug_has_speed_trail() -> bool:
+	return trail_particles != null
+
+func debug_get_ball_mesh_scale() -> Vector3:
+	return ball_mesh_instance.scale if ball_mesh_instance != null else Vector3.ONE
 
 func _clamp_velocity() -> void:
 	var flat := Vector3(linear_velocity.x, 0.0, linear_velocity.z)
@@ -125,20 +144,51 @@ func _ensure_ball_nodes() -> void:
 		var mesh := SphereMesh.new()
 		mesh.radius = ball_radius
 		mesh.height = ball_radius * 2.0
-		mesh.radial_segments = 24
-		mesh.rings = 12
+		mesh.radial_segments = 40
+		mesh.rings = 20
 		mesh_instance.mesh = mesh
 		mesh_instance.material_override = _build_ball_material()
 		add_child(mesh_instance)
+	ball_mesh_instance = get_node_or_null("BallMesh") as MeshInstance3D
 
-func _build_ball_material() -> StandardMaterial3D:
-	var material := StandardMaterial3D.new()
-	material.albedo_color = Color(0.96, 0.97, 0.92, 1.0)
-	material.roughness = 0.48
-	material.emission_enabled = true
-	material.emission = Color(0.28, 0.62, 1.0, 1.0)
-	material.emission_energy_multiplier = 0.08
+	if get_node_or_null("BallSpeedTrail") == null:
+		trail_particles = GPUParticles3D.new()
+		trail_particles.name = "BallSpeedTrail"
+		trail_particles.amount = 42
+		trail_particles.lifetime = 0.28
+		trail_particles.emitting = false
+		trail_particles.local_coords = false
+		trail_particles.explosiveness = 0.0
+		trail_particles.randomness = 0.35
+		var trail_mesh := SphereMesh.new()
+		trail_mesh.radius = 0.045
+		trail_mesh.height = 0.09
+		trail_mesh.radial_segments = 8
+		trail_mesh.rings = 4
+		trail_particles.draw_pass_1 = trail_mesh
+		var process_material := ParticleProcessMaterial.new()
+		process_material.gravity = Vector3.ZERO
+		process_material.initial_velocity_min = 0.05
+		process_material.initial_velocity_max = 0.25
+		process_material.scale_min = 0.18
+		process_material.scale_max = 0.54
+		trail_particles.process_material = process_material
+		add_child(trail_particles)
+	trail_particles = get_node_or_null("BallSpeedTrail") as GPUParticles3D
+
+func _build_ball_material() -> ShaderMaterial:
+	var material := ShaderMaterial.new()
+	material.shader = BallPanelShader
 	return material
+
+func _update_visual_asset(delta: float) -> void:
+	if trail_particles != null:
+		trail_particles.emitting = linear_velocity.length() > 10.5
+	if ball_mesh_instance == null:
+		return
+	squash_timer = maxf(0.0, squash_timer - delta)
+	var squash_strength := clampf(squash_timer / 0.18, 0.0, 1.0) * clampf(linear_velocity.length() / 24.0, 0.0, 1.0)
+	ball_mesh_instance.scale = Vector3(1.0 + squash_strength * 0.08, 1.0 - squash_strength * 0.13, 1.0 + squash_strength * 0.08)
 
 func _build_physics_material() -> PhysicsMaterial:
 	var material := PhysicsMaterial.new()
