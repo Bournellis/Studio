@@ -354,12 +354,26 @@ func request_button(host: Node, relative_path: String, point: Vector2) -> bool:
 	var button := node as Button
 	if button == null or not is_instance_valid(button):
 		return false
+	return _request_button_control(host, button, relative_path.strip_edges(), point)
+
+func request_button_by_action(host: Node, action_id: String, point: Vector2) -> bool:
+	if not is_open() or action_id.strip_edges() == "":
+		return false
+	var button := _find_visible_button_by_action(_root, action_id.strip_edges(), point)
+	if button == null:
+		return false
+	return _request_button_control(host, button, str(_root.get_path_to(button)), point)
+
+func _request_button_control(host: Node, button: Button, relative_path: String, point: Vector2) -> bool:
 	if not button.visible or not button.is_visible_in_tree():
 		_record_ignored_input(host, "control_not_visible")
 		return false
-	var rect := button.get_global_rect()
+	var rect := _control_visible_rect(button)
 	if rect.size.x > 0.0 and rect.size.y > 0.0 and not rect.has_point(point):
 		_record_ignored_input(host, "point_outside_control")
+		return false
+	if rect.size.x <= 0.0 or rect.size.y <= 0.0:
+		_record_ignored_input(host, "control_not_visible")
 		return false
 	var top_control := _top_control_at_point(point)
 	if top_control != button:
@@ -385,9 +399,12 @@ func request_focus(host: Node, relative_path: String, point: Vector2) -> bool:
 	if not input.visible or not input.is_visible_in_tree() or not input.editable:
 		_record_ignored_input(host, "control_not_editable")
 		return false
-	var rect := input.get_global_rect()
+	var rect := _control_visible_rect(input)
 	if rect.size.x > 0.0 and rect.size.y > 0.0 and not rect.has_point(point):
 		_record_ignored_input(host, "point_outside_control")
+		return false
+	if rect.size.x <= 0.0 or rect.size.y <= 0.0:
+		_record_ignored_input(host, "control_not_visible")
 		return false
 	var top_control := _top_control_at_point(point)
 	if top_control != input:
@@ -753,7 +770,7 @@ func _collect_button_diagnostics(node: Node, buttons: Array[Dictionary]) -> void
 	if node is Button:
 		var button := node as Button
 		if button.visible and button.is_visible_in_tree() and not button.disabled:
-			var rect := _button_visual_rect(button)
+			var rect := _control_visible_rect(button)
 			if rect.size.x > 0.0 and rect.size.y > 0.0:
 				var top_control := _top_control_at_point(rect.get_center())
 				buttons.append({
@@ -776,7 +793,7 @@ func _collect_control_diagnostics(node: Node, controls: Array[Dictionary]) -> vo
 	if node is Button:
 		var button := node as Button
 		if button.visible and button.is_visible_in_tree():
-			var rect := button.get_global_rect()
+			var rect := _control_visible_rect(button)
 			if rect.size.x > 0.0 and rect.size.y > 0.0:
 				var path := str(_root.get_path_to(button))
 				var top_control := _top_control_at_point(rect.get_center())
@@ -799,7 +816,7 @@ func _collect_control_diagnostics(node: Node, controls: Array[Dictionary]) -> vo
 	elif node is LineEdit:
 		var input := node as LineEdit
 		if input.visible and input.is_visible_in_tree() and input.editable:
-			var rect := input.get_global_rect()
+			var rect := _control_visible_rect(input)
 			if rect.size.x > 0.0 and rect.size.y > 0.0:
 				var path := str(_root.get_path_to(input))
 				var top_control := _top_control_at_point(rect.get_center())
@@ -821,8 +838,22 @@ func _collect_control_diagnostics(node: Node, controls: Array[Dictionary]) -> vo
 	for child: Node in node.get_children():
 		_collect_control_diagnostics(child, controls)
 
-func _button_visual_rect(button: Button) -> Rect2:
-	return button.get_global_rect()
+func _control_visible_rect(control: Control) -> Rect2:
+	if control == null or not control.visible or not control.is_visible_in_tree():
+		return Rect2()
+	var rect := control.get_global_rect()
+	var cursor := control.get_parent()
+	while cursor != null:
+		if cursor is Control:
+			var parent_control := cursor as Control
+			if parent_control is ScrollContainer or parent_control.clip_contents:
+				rect = rect.intersection(parent_control.get_global_rect())
+				if rect.size.x <= 0.0 or rect.size.y <= 0.0:
+					return Rect2()
+		if cursor == _root:
+			break
+		cursor = cursor.get_parent()
+	return rect
 
 func _top_control_at_point(point: Vector2) -> Control:
 	if not is_open():
@@ -848,12 +879,33 @@ func _find_top_control_at_point(node: Node, point: Vector2) -> Control:
 			return found
 	if node is Button:
 		var button := node as Button
-		if button.visible and button.is_visible_in_tree() and button.get_global_rect().has_point(point):
+		if button.visible and button.is_visible_in_tree() and _control_visible_rect(button).has_point(point):
 			return button
 	elif node is LineEdit:
 		var input := node as LineEdit
-		if input.visible and input.is_visible_in_tree() and input.get_global_rect().has_point(point):
+		if input.visible and input.is_visible_in_tree() and _control_visible_rect(input).has_point(point):
 			return input
+	return null
+
+func _find_visible_button_by_action(node: Node, action_id: String, point: Vector2) -> Button:
+	if node == null:
+		return null
+	for index in range(node.get_child_count() - 1, -1, -1):
+		var child := node.get_child(index)
+		var found := _find_visible_button_by_action(child, action_id, point)
+		if found != null:
+			return found
+	if node is Button:
+		var button := node as Button
+		if not button.visible or not button.is_visible_in_tree():
+			return null
+		if str(button.get_meta("action_id", "")).strip_edges() != action_id:
+			return null
+		if not _control_visible_rect(button).has_point(point):
+			return null
+		if _top_control_at_point(point) != button:
+			return null
+		return button
 	return null
 
 func _layer_name_for_control(control: Control) -> String:

@@ -507,6 +507,8 @@ func _handle_web_overlay_input_command(args: Array) -> void:
 				var button_action := str(payload.get("action_id", "")).strip_edges()
 				if _mode_shell_overlay_controller.request_button(self, str(payload.get("path", "")), point):
 					call_deferred("_publish_web_diagnostics_state")
+				elif button_action != "" and _mode_shell_overlay_controller.request_button_by_action(self, button_action, point):
+					call_deferred("_publish_web_diagnostics_state")
 				elif button_action == "overlay_confirm":
 					if _mode_shell_overlay_controller.request_confirm_modal(self):
 						call_deferred("_publish_web_diagnostics_state")

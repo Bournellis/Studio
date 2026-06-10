@@ -98,6 +98,7 @@ $chromeArgs = @(
     "--no-first-run",
     "--no-default-browser-check",
     "--disable-extensions",
+    "--force-device-scale-factor=1",
     "--remote-debugging-port=$port",
     "--user-data-dir=$profileDir",
     "--window-size=1280,720",
@@ -614,6 +615,14 @@ try {
 	await client.send('Network.enable');
 	await client.send('Network.setCacheDisabled', { cacheDisabled: true });
 	await client.send('Page.enable');
+	await client.send('Emulation.setDeviceMetricsOverride', {
+		width: 1280,
+		height: 720,
+		deviceScaleFactor: 1,
+		mobile: false,
+		screenWidth: 1280,
+		screenHeight: 720,
+	});
 
 	for (const testCase of cases) {
 		await client.send('Page.navigate', { url: smokeUrl(testCase.smoke, testCase.label) });

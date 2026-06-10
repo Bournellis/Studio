@@ -3146,13 +3146,25 @@ func _send_overlay_web_button_command(boot: Node, button: Button) -> void:
 	assert_not_null(overlay)
 	if overlay == null:
 		return
-	var center := button.get_global_rect().get_center()
+	var command := {}
+	for _attempt in range(8):
+		command = _overlay_visible_control_payload(
+			boot,
+			str(overlay.get_path_to(button)),
+			str(button.text),
+			button.get_global_rect()
+		)
+		if bool(command.get("matched", false)):
+			break
+		boot._mode_shell_overlay_controller.request_scroll(boot, 420.0)
+		await wait_process_frames(1)
 	boot.call("_handle_web_overlay_input_command", [JSON.stringify({
 		"type": "button",
-		"path": str(overlay.get_path_to(button)),
-		"x": center.x,
-		"y": center.y,
+		"path": str(command.get("path", str(overlay.get_path_to(button)))),
+		"x": float(command.get("x", 0.0)),
+		"y": float(command.get("y", 0.0)),
 		"text": str(button.text),
+		"action_id": str(button.get_meta("action_id", "")),
 	})])
 	await wait_process_frames(2)
 
@@ -3164,12 +3176,23 @@ func _send_overlay_web_focus_command(boot: Node, input: LineEdit) -> void:
 	assert_not_null(overlay)
 	if overlay == null:
 		return
-	var center := input.get_global_rect().get_center()
+	var command := {}
+	for _attempt in range(8):
+		command = _overlay_visible_control_payload(
+			boot,
+			str(overlay.get_path_to(input)),
+			str(input.placeholder_text),
+			input.get_global_rect()
+		)
+		if bool(command.get("matched", false)):
+			break
+		boot._mode_shell_overlay_controller.request_scroll(boot, 420.0)
+		await wait_process_frames(1)
 	boot.call("_handle_web_overlay_input_command", [JSON.stringify({
 		"type": "focus",
-		"path": str(overlay.get_path_to(input)),
-		"x": center.x,
-		"y": center.y,
+		"path": str(command.get("path", str(overlay.get_path_to(input)))),
+		"x": float(command.get("x", 0.0)),
+		"y": float(command.get("y", 0.0)),
 		"text": str(input.text),
 	})])
 	await wait_process_frames(2)
@@ -3189,6 +3212,36 @@ func _send_overlay_web_text_command(boot: Node, input: LineEdit, text: String, r
 		"replace": replace_existing,
 	})])
 	await wait_process_frames(2)
+
+func _overlay_visible_control_payload(boot: Node, relative_path: String, label: String, fallback_rect: Rect2) -> Dictionary:
+	if boot != null and boot.get("_mode_shell_overlay_controller") != null:
+		var controls: Array = boot._mode_shell_overlay_controller.control_diagnostics()
+		for item: Variant in controls:
+			var control := item as Dictionary
+			if str(control.get("path", "")) == relative_path:
+				return _overlay_control_command_payload(control, relative_path, fallback_rect)
+		for item: Variant in controls:
+			var control := item as Dictionary
+			if str(control.get("text", "")) == label or str(control.get("placeholder", "")) == label:
+				return _overlay_control_command_payload(control, relative_path, fallback_rect)
+	var fallback_center := fallback_rect.get_center()
+	return {
+		"path": relative_path,
+		"x": fallback_center.x,
+		"y": fallback_center.y,
+		"matched": false,
+	}
+
+func _overlay_control_command_payload(control: Dictionary, fallback_path: String, fallback_rect: Rect2) -> Dictionary:
+	var fallback_center := fallback_rect.get_center()
+	var width := float(control.get("width", 0.0))
+	var height := float(control.get("height", 0.0))
+	return {
+		"path": str(control.get("path", fallback_path)),
+		"x": float(control.get("x", fallback_center.x)) + width * 0.5,
+		"y": float(control.get("y", fallback_center.y)) + height * 0.5,
+		"matched": true,
+	}
 
 func _overlay_control_diagnostics_has_line_edit(boot: Node, expected_text: String) -> bool:
 	if boot == null or boot.get("_mode_shell_overlay_controller") == null:
