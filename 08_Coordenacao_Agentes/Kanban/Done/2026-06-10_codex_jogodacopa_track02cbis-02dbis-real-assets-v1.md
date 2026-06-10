@@ -4,7 +4,7 @@
 
 - id: `2026-06-10_codex_jogodacopa_track02cbis-02dbis-real-assets-v1`
 - owner: `Codex`
-- status: `Doing`
+- status: `Done`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track02cbis-02dbis-real-assets-v1`
@@ -61,16 +61,22 @@ Implementar `Track 02C-bis - Real Character V1` e `Track 02D-bis - Real Audio V1
 
 ## Acceptance Criteria
 
-- [ ] Assets reais registrados em `main` antes da worktree de implementacao.
-- [ ] Spike de import PASS antes da integracao de personagem.
-- [ ] Avatar usa modelo Superhero skinned real, skeleton >= 60 bones e `AnimationTree` com clipes reais do UAL.
-- [ ] Contratos `apply_appearance`, `set_move_state`, `play_kick`, `play_celebrate` preservados.
-- [ ] Track 03 integra os clipes mapeados para dash/slide/stun/SUPER/emote.
-- [ ] Audio sintetico do feedback controller substituido por SFX reais com pooling de `AudioStreamPlayer`.
-- [ ] Loop de estadio e buses `Master/SFX/UI/Ambience` com sliders no menu.
-- [ ] Licencas dos packs novos registradas em `docs/asset-licenses.md`.
-- [ ] `tools/validate.gd` PASS e docs/status atualizados.
+- [x] Assets reais registrados em `main` antes da worktree de implementacao.
+- [x] Spike de import PASS antes da integracao de personagem.
+- [x] Avatar usa modelo Superhero skinned real, skeleton >= 60 bones e `AnimationTree` com clipes reais do UAL.
+- [x] Contratos `apply_appearance`, `set_move_state`, `play_kick`, `play_celebrate` preservados.
+- [x] Track 03 integra os clipes mapeados para dash/slide/stun/SUPER/emote.
+- [x] Audio sintetico do feedback controller substituido por SFX reais com pooling de `AudioStreamPlayer`.
+- [x] Loop de estadio e buses `Master/SFX/UI/Ambience` com sliders no menu.
+- [x] Licencas dos packs novos registradas em `docs/asset-licenses.md`.
+- [x] `tools/validate.gd` PASS e docs/status atualizados.
 
-## Next Handoff Point
+## Delivery
 
-Se o retarget/import dos assets falhar ou a performance cair abaixo de 60fps, commitar o estado validado, criar handoff em `08_Coordenacao_Agentes/Handoffs/` com evidencias exatas e nao deixar `main` suja.
+- Asset registration commit on `main`: `95805d2 chore(jogodacopa): register real asset packs`.
+- Track 02C-bis implementation commit: `03a22f5 feat(jogodacopa): add real character avatars`.
+- Track 02D-bis implementation commit: `656a5ee feat(jogodacopa): add real audio feedback`.
+- `tools/real_asset_import_spike.gd` PASS: Quaternius male/female + UAL loaded, 65-bone skeletons, 45 imported animation clips.
+- `tools/validate.gd` PASS after 02D-bis: 48 tests, 459 asserts.
+- Performance sample after 02D-bis: average `145.4fps`, min warmed instant `124.0fps`, `0/360` frames below 60.
+- Next handoff: playtest humano completo - visual arcade + personagem real + audio real.

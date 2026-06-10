@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK_03E_TOON_LOOK_EXPERIMENT_V1_COMPLETE`
+- Status: `JOGO_DA_COPA_TRACK_02CBIS_02DBIS_REAL_ASSETS_V1_COMPLETE`
 - Product/module name: `Copa Arena Futebol`
 - Current surface: TPS football minigames.
 
@@ -18,20 +18,22 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 01C reworked the arena presentation: roofed/closed goal boxes, height-aware goal scoring, readable glass frames, field markings, stadium seating, country-inspired banners, scoreboards and light rigs.
 - Track 02 Quality Upgrade V1 completed the visual/game-feel/product pass: render lighting, shader pitch/arena, authored CC0 ball/avatar assets, VFX/game feel, HUD/menu polish, bot/match-flow upgrade and product identity/export smoke.
 - Track 02H Quality Hotfix V1 resolved review blockers: selected-kit stadium scoreboards, player-local ball indicator, persistent boost/skid emitters, main-menu bot difficulty, removed decorative avatar rig, ball trail hysteresis and cached scoreboard labels.
+- Track 02C-bis/02D-bis Real Assets V1 replaced the avatar proxy with real Quaternius skinned humanoids/UAL animation clips and replaced synthetic feedback with real Kenney/Pixabay SFX, jingles and stadium ambience.
 - Track 03 Arcade V1 completed the arcade pass: dash/slide/stun/flip, charged kick, SUPER/fireball, boost pads, jump pads, ramps, timer/golden goal/vale-2, emote/confetti and toon experiment toggle OFF by default.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Human arcade playtest for `Copa Arena Futebol`, following `docs/arcade-upgrade-plan.md` and the Track 03 status files.
+Human full-playable playtest for `Copa Arena Futebol`, following `docs/arcade-upgrade-plan.md`, `implementation/tracks/track-02cbis-real-character-v1/current-status.md` and `implementation/tracks/track-02dbis-real-audio-v1/current-status.md`.
 
 Focus:
 
 - Playtest dash/slide/flip, charged kick, SUPER/fireball and boost/jump pad readability.
+- Check real character readability in player/bot silhouettes, kits, hit/slide/push/kick/celebrate states.
+- Check real audio mix for kick/bounce/glass/countdown/goal/crowd/menu, including ambience ducking in intro/pause.
 - Decide whether the timer default, golden goal and vale-2 should stay as-is.
 - Compare toon screenshots ON/OFF and decide if the experiment remains enabled as an option.
-- Decide 02C-bis/02D-bis only after Fabio manually downloads the chosen character/audio assets.
 
 ## Out Of Scope
 
