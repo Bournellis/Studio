@@ -46,6 +46,12 @@ Track 05 should move toward:
 - Validation profiles that make failures easier to read.
 - Tests split by domain instead of one large bootstrap file.
 
+Track 05 first code extraction:
+
+- `modes/shared/runtime_primitive_factory.gd` owns common runtime box collision/mesh/material creation for mode layouts.
+- `modes/arena/arena_duel_pit_layout_builder.gd` owns static `Duel Pit V2` geometry, route markers and jump-pad node construction.
+- `modes/football/football_field_builder.gd` owns static football pitch, goal, wall and stadium-band construction.
+
 Track 05 should not move toward:
 
 - A heavy inheritance framework.

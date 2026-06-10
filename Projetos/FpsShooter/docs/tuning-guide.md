@@ -33,6 +33,7 @@ Track 05 may introduce:
 - grouped dictionaries for mode layout values;
 - rule helpers that receive tuning values as parameters;
 - tests that assert tuning-sensitive behavior.
+- shared primitive builders that preserve per-mode material roughness/emission while removing construction duplication.
 
 Track 05 should avoid:
 

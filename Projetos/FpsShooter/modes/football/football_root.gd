@@ -6,6 +6,7 @@ const FootballBallScript = preload("res://gameplay/football/football_ball.gd")
 const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
 const FootballHudScript = preload("res://presentation/hud/football_hud.gd")
 const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
+const FootballFieldBuilderScript = preload("res://modes/football/football_field_builder.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const MODE_NAME: String = "Futebol 1x1"
@@ -174,55 +175,18 @@ func _configure_world() -> void:
 	_build_football_pitch()
 
 func _build_football_pitch() -> void:
-	_add_box("FootballPitch", Vector3(0.0, -0.5, 0.0), Vector3(FIELD_WIDTH, 1.0, FIELD_LENGTH), Color(0.08, 0.34, 0.16, 1.0))
-	_add_visual_box("CenterLine", Vector3(0.0, 0.035, 0.0), Vector3(FIELD_WIDTH - 1.5, 0.05, 0.14), Color(0.92, 0.96, 0.86, 1.0))
-	_add_visual_box("MidStripe", Vector3(0.0, 0.032, 0.0), Vector3(0.14, 0.05, FIELD_LENGTH - 2.0), Color(0.12, 0.42, 0.19, 1.0))
-	_add_visual_box("NorthGoalBox", Vector3(0.0, 0.04, -17.7), Vector3(10.8, 0.05, 0.16), Color(0.92, 0.96, 0.86, 1.0))
-	_add_visual_box("SouthGoalBox", Vector3(0.0, 0.04, 17.7), Vector3(10.8, 0.05, 0.16), Color(0.92, 0.96, 0.86, 1.0))
-	_add_visual_box("NorthGoalMouth", Vector3(0.0, 0.05, GOAL_LINE_NORTH + 0.45), Vector3(GOAL_HALF_WIDTH * 2.0, 0.08, 0.32), Color(1.0, 0.88, 0.24, 1.0))
-	_add_visual_box("SouthGoalMouth", Vector3(0.0, 0.05, GOAL_LINE_SOUTH - 0.45), Vector3(GOAL_HALF_WIDTH * 2.0, 0.08, 0.32), Color(1.0, 0.88, 0.24, 1.0))
-	_add_box("NorthGoalFloor", Vector3(0.0, -0.5, GOAL_LINE_NORTH - 1.35), Vector3(GOAL_HALF_WIDTH * 2.4, 1.0, 2.9), Color(0.07, 0.28, 0.14, 1.0))
-	_add_box("SouthGoalFloor", Vector3(0.0, -0.5, GOAL_LINE_SOUTH + 1.35), Vector3(GOAL_HALF_WIDTH * 2.4, 1.0, 2.9), Color(0.07, 0.28, 0.14, 1.0))
-	_add_goal_side_walls("North", GOAL_LINE_NORTH - 1.35)
-	_add_goal_side_walls("South", GOAL_LINE_SOUTH + 1.35)
-
-	_add_box("WestWall", Vector3(-FIELD_HALF_WIDTH, WALL_HEIGHT * 0.5, 0.0), Vector3(WALL_THICKNESS, WALL_HEIGHT, FIELD_LENGTH), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("EastWall", Vector3(FIELD_HALF_WIDTH, WALL_HEIGHT * 0.5, 0.0), Vector3(WALL_THICKNESS, WALL_HEIGHT, FIELD_LENGTH), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("NorthWallLeft", Vector3(-10.2, WALL_HEIGHT * 0.5, GOAL_LINE_NORTH), Vector3(11.6, WALL_HEIGHT, WALL_THICKNESS), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("NorthWallRight", Vector3(10.2, WALL_HEIGHT * 0.5, GOAL_LINE_NORTH), Vector3(11.6, WALL_HEIGHT, WALL_THICKNESS), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("SouthWallLeft", Vector3(-10.2, WALL_HEIGHT * 0.5, GOAL_LINE_SOUTH), Vector3(11.6, WALL_HEIGHT, WALL_THICKNESS), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("SouthWallRight", Vector3(10.2, WALL_HEIGHT * 0.5, GOAL_LINE_SOUTH), Vector3(11.6, WALL_HEIGHT, WALL_THICKNESS), Color(0.12, 0.16, 0.18, 1.0))
-	_add_box("NorthBackStop", Vector3(0.0, 1.1, GOAL_LINE_NORTH - 2.2), Vector3(10.5, 2.2, 0.45), Color(0.18, 0.2, 0.24, 1.0))
-	_add_box("SouthBackStop", Vector3(0.0, 1.1, GOAL_LINE_SOUTH + 2.2), Vector3(10.5, 2.2, 0.45), Color(0.18, 0.2, 0.24, 1.0))
-	_add_goal_frame("North", GOAL_LINE_NORTH - 0.22, -1.0)
-	_add_goal_frame("South", GOAL_LINE_SOUTH + 0.22, 1.0)
-	_add_stadium_bands()
-
-func _add_goal_side_walls(prefix: String, goal_center_z: float) -> void:
-	var side_wall_color := Color(0.14, 0.17, 0.2, 1.0)
-	var side_size := Vector3(GOAL_SIDE_WALL_THICKNESS, WALL_HEIGHT, GOAL_CLOSED_DEPTH)
-	_add_box("%sGoalSideWallL" % prefix, Vector3(-GOAL_SIDE_WALL_X, WALL_HEIGHT * 0.5, goal_center_z), side_size, side_wall_color)
-	_add_box("%sGoalSideWallR" % prefix, Vector3(GOAL_SIDE_WALL_X, WALL_HEIGHT * 0.5, goal_center_z), side_size, side_wall_color)
-
-func _add_goal_frame(prefix: String, goal_z: float, side: float) -> void:
-	var post_color := Color(0.95, 0.95, 0.9, 1.0)
-	_add_box("%sGoalPostL" % prefix, Vector3(-GOAL_HALF_WIDTH, 1.15, goal_z), Vector3(0.28, 2.3, 0.28), post_color)
-	_add_box("%sGoalPostR" % prefix, Vector3(GOAL_HALF_WIDTH, 1.15, goal_z), Vector3(0.28, 2.3, 0.28), post_color)
-	_add_box("%sGoalCrossbar" % prefix, Vector3(0.0, 2.28, goal_z), Vector3(GOAL_HALF_WIDTH * 2.0 + 0.28, 0.28, 0.28), post_color)
-	_add_visual_box("%sNetTint" % prefix, Vector3(0.0, 1.1, goal_z + side * 0.62), Vector3(GOAL_HALF_WIDTH * 2.0, 2.1, 0.12), Color(0.22, 0.68, 0.92, 0.72))
-
-func _add_stadium_bands() -> void:
-	var band_colors: Array[Color] = [
-		Color(0.9, 0.06, 0.06, 1.0),
-		Color(0.95, 0.82, 0.08, 1.0),
-		Color(0.08, 0.52, 0.18, 1.0),
-		Color(0.14, 0.42, 0.88, 1.0)
-	]
-	for index in range(8):
-		var x := -14.0 + float(index) * 4.0
-		var color := band_colors[index % band_colors.size()]
-		_add_visual_box("NorthCrowdBand%d" % index, Vector3(x, 2.8, GOAL_LINE_NORTH - 2.8), Vector3(2.4, 1.2, 0.18), color)
-		_add_visual_box("SouthCrowdBand%d" % index, Vector3(x, 2.8, GOAL_LINE_SOUTH + 2.8), Vector3(2.4, 1.2, 0.18), color)
+	FootballFieldBuilderScript.build(self, {
+		"field_width": FIELD_WIDTH,
+		"field_length": FIELD_LENGTH,
+		"wall_height": WALL_HEIGHT,
+		"wall_thickness": WALL_THICKNESS,
+		"goal_half_width": GOAL_HALF_WIDTH,
+		"goal_side_wall_x": GOAL_SIDE_WALL_X,
+		"goal_side_wall_thickness": GOAL_SIDE_WALL_THICKNESS,
+		"goal_closed_depth": GOAL_CLOSED_DEPTH,
+		"goal_line_north": GOAL_LINE_NORTH,
+		"goal_line_south": GOAL_LINE_SOUTH,
+	})
 
 func _spawn_runtime() -> void:
 	var runtime_root := Node3D.new()
@@ -457,45 +421,3 @@ func _on_sensitivity_changed(value: float) -> void:
 		player.set_mouse_sensitivity(value)
 	if hud != null:
 		hud.set_sensitivity_value(player.mouse_sensitivity)
-
-func _add_box(node_name: String, node_position: Vector3, node_size: Vector3, color: Color) -> StaticBody3D:
-	var body := StaticBody3D.new()
-	body.name = node_name
-	add_child(body)
-	body.global_position = node_position
-
-	var mesh_instance := MeshInstance3D.new()
-	mesh_instance.name = "%sMesh" % node_name
-	var mesh := BoxMesh.new()
-	mesh.size = node_size
-	mesh_instance.mesh = mesh
-	mesh_instance.material_override = _build_material(color, 0.08)
-	body.add_child(mesh_instance)
-
-	var collider := CollisionShape3D.new()
-	collider.name = "%sCollision" % node_name
-	var shape := BoxShape3D.new()
-	shape.size = node_size
-	collider.shape = shape
-	body.add_child(collider)
-	return body
-
-func _add_visual_box(node_name: String, node_position: Vector3, node_size: Vector3, color: Color) -> MeshInstance3D:
-	var mesh_instance := MeshInstance3D.new()
-	mesh_instance.name = node_name
-	var mesh := BoxMesh.new()
-	mesh.size = node_size
-	mesh_instance.mesh = mesh
-	mesh_instance.material_override = _build_material(color, 0.55)
-	add_child(mesh_instance)
-	mesh_instance.global_position = node_position
-	return mesh_instance
-
-func _build_material(color: Color, emission_energy: float) -> StandardMaterial3D:
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	material.roughness = 0.72
-	material.emission_enabled = true
-	material.emission = color
-	material.emission_energy_multiplier = emission_energy
-	return material
