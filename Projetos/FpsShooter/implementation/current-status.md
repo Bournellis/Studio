@@ -4,7 +4,7 @@
 - Project: `FpsShooter`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS 3D tech probe`
-- Active stage: `Track 03A - Vertical Arena No Void Hotfix V1`
+- Active stage: `Track 03B - Arena Flow & Route Tuning V1`
 - Active stage status: `COMPLETE`
 
 ## Current Truth
@@ -26,18 +26,18 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - Bot pressure tuning: ready shots interrupt pickup routes and health pickup is a survival/rotation choice instead of the default concern.
 - Bot simple jump support for raised reposition goals and low navigation blockers.
 - Bot awareness for jump-pad routes and elevated reposition goals.
-- `Duel Pit V2` arena layout with protected spawns, low/high cover, side platforms, ramps, high platforms, jump pads and elevated pickups, without void/fall zones in the current map.
+- `Duel Pit V2` arena layout with protected spawns, low/high cover, side platforms, ramps, high platforms, jump pads, elevated pickups, route/landing markers and high-platform soft cover, without void/fall zones in the current map.
 - Void/fall pressure is reserved for future dedicated maps.
 - HUD, round state and bidirectional feel/feedback.
 - No export, Web, mobile, multiplayer or online/backend scope.
 
 ## Active Goal
 
-`Track 03A - Vertical Arena No Void Hotfix V1` is complete. The current duel loop keeps the accepted vertical arena contract with jump pads, high pickups/platforms and bot vertical routing, while removing void/fall pressure from `Duel Pit V2`.
+`Track 03B - Arena Flow & Route Tuning V1` is complete. The current duel loop keeps the accepted no-void vertical arena contract and improves high-objective readability, jump-pad route reading, bot route variety and discrete HUD playtest intent.
 
 ## Current Gate
 
-Closed for Track 03A No Void Hotfix. Run the 5-minute editor smoke focused on `Duel Pit V2`, jump pad readability, elevated pickups, bot use of vertical routes, knockback readability without void hazards and whether the expanded arena still preserves the accepted duel feel.
+Closed for Track 03B Arena Flow & Route Tuning. Run the 5-minute editor smoke focused on `Duel Pit V2`, jump pad readability, elevated pickups requiring micro-commit, high-platform cover risk/reward, bot route alternation, knockback readability without void hazards and whether the accepted duel feel is preserved.
 
 ## Validation Snapshot
 
@@ -153,6 +153,18 @@ Track 03A Vertical Arena No Void Hotfix V1:
 - void/fall pressure remains a future-map candidate instead of part of the current duel pit baseline;
 - validation passes `33/33` GUT tests with `279` asserts.
 
+Track 03B Arena Flow & Route Tuning V1:
+
+- Health Shard moved to `Vector3(-7.6, 3.55, -8.6)` with `10s` respawn;
+- Overcharge moved to `Vector3(7.6, 3.55, 8.6)` with `14s` respawn;
+- jump pads still land near, not directly on, the elevated pickups, requiring a small post-launch commitment;
+- runtime cyan/green/purple route markers now identify pad approach, landing zones and high objectives;
+- high platforms gained light cover for short duels without becoming bunkers;
+- bot route tuning adds vertical route cooldown, objective route interval, route labels and score/debug helpers;
+- ready shot pressure remains above health/overcharge routes, while health/overcharge routes still happen when justified;
+- HUD shows a compact bot flow line with state, route, LOS and last pad cue for playtest readability;
+- validation passes `36/36` GUT tests with `297` asserts.
+
 ## Read Next
 
 1. `AGENTS.md`
@@ -168,3 +180,4 @@ Track 03A Vertical Arena No Void Hotfix V1:
 11. `implementation/tracks/track-02a-bot-pressure-jump-hotfix-v1/current-status.md`
 12. `implementation/tracks/track-02a-plasma-damage-hotfix-v1/current-status.md`
 13. `implementation/tracks/track-03a-vertical-arena-fall-pressure-v1/current-status.md`
+14. `implementation/tracks/track-03b-arena-flow-route-tuning-v1/current-status.md`

@@ -34,7 +34,7 @@ const STATE_DEAD: StringName = &"dead"
 @export var target_upper_visibility_height: float = 1.18
 @export var target_center_visibility_height: float = 0.82
 @export var target_lower_visibility_height: float = 0.42
-@export var low_health_pickup_threshold: float = 0.48
+@export var low_health_pickup_threshold: float = 0.42
 @export var critical_health_pickup_threshold: float = 0.22
 @export var pickup_interest_distance: float = 17.0
 @export var overcharge_interest_distance: float = 14.0
@@ -48,12 +48,18 @@ const STATE_DEAD: StringName = &"dead"
 @export var jump_height_goal_distance: float = 4.8
 @export var jump_probe_distance: float = 0.78
 @export var jump_pad_route_distance: float = 3.2
+@export var vertical_route_cooldown: float = 2.8
+@export var high_route_score_bonus: float = 1.1
+@export var recent_high_route_penalty: float = 3.2
+@export var objective_route_min_interval: float = 1.4
 
 var target
 var shoot_cooldown_remaining: float = 0.0
 var vertical_velocity: float = 0.0
 var launch_boost_velocity: Vector3 = Vector3.ZERO
 var jump_cooldown_remaining: float = 0.0
+var vertical_route_cooldown_remaining: float = 0.0
+var objective_route_cooldown_remaining: float = 0.0
 var jump_count: int = 0
 var jump_pad_launch_count: int = 0
 var shot_tell_remaining: float = 0.0
@@ -84,6 +90,9 @@ var projectile_threat_velocity: Vector3 = Vector3.ZERO
 var overcharge_shots_remaining: int = 0
 var jump_pad_routes: Array[Dictionary] = []
 var last_navigation_target: Vector3 = Vector3.ZERO
+var last_route_label: StringName = &"idle"
+var last_reposition_score: float = 0.0
+var last_reposition_is_high_route: bool = false
 
 func _ready() -> void:
 	super._ready()
@@ -101,6 +110,8 @@ func configure(next_target) -> void:
 	vertical_velocity = 0.0
 	launch_boost_velocity = Vector3.ZERO
 	jump_cooldown_remaining = 0.0
+	vertical_route_cooldown_remaining = 0.0
+	objective_route_cooldown_remaining = 0.0
 	jump_count = 0
 	jump_pad_launch_count = 0
 	reaction_remaining = reaction_time
@@ -115,6 +126,9 @@ func configure(next_target) -> void:
 	projectile_threat_active = false
 	overcharge_shots_remaining = 0
 	last_navigation_target = global_position
+	last_route_label = &"engage"
+	last_reposition_score = 0.0
+	last_reposition_is_high_route = false
 	_cancel_windup(STATE_ENGAGE)
 
 func set_reposition_points(points: Array[Vector3]) -> void:
@@ -182,6 +196,15 @@ func debug_get_jump_pad_launch_count() -> int:
 func debug_get_jump_pad_route_count() -> int:
 	return jump_pad_routes.size()
 
+func debug_get_route_label() -> StringName:
+	return last_route_label
+
+func debug_get_last_reposition_score() -> float:
+	return last_reposition_score
+
+func debug_is_high_route_active() -> bool:
+	return current_state == STATE_REPOSITION and last_reposition_is_high_route
+
 func debug_get_last_navigation_target() -> Vector3:
 	return last_navigation_target
 
@@ -191,6 +214,8 @@ func apply_jump_pad_launch(launch_velocity: Vector3) -> void:
 	vertical_velocity = maxf(vertical_velocity, launch_velocity.y)
 	launch_boost_velocity = Vector3(launch_velocity.x, 0.0, launch_velocity.z)
 	jump_cooldown_remaining = jump_cooldown
+	vertical_route_cooldown_remaining = maxf(vertical_route_cooldown_remaining, vertical_route_cooldown * 0.65)
+	last_route_label = &"jump_pad"
 	jump_pad_launch_count += 1
 
 func clear_movement_impulses() -> void:
@@ -209,6 +234,8 @@ func _physics_process(delta: float) -> void:
 
 	shoot_cooldown_remaining = maxf(0.0, shoot_cooldown_remaining - delta)
 	jump_cooldown_remaining = maxf(0.0, jump_cooldown_remaining - delta)
+	vertical_route_cooldown_remaining = maxf(0.0, vertical_route_cooldown_remaining - delta)
+	objective_route_cooldown_remaining = maxf(0.0, objective_route_cooldown_remaining - delta)
 	reposition_cooldown_remaining = maxf(0.0, reposition_cooldown_remaining - delta)
 	state_time_remaining = maxf(0.0, state_time_remaining - delta)
 	reaction_remaining = maxf(0.0, reaction_remaining - delta)
@@ -347,21 +374,29 @@ func _start_reposition() -> void:
 	_choose_reposition_destination()
 	_set_state(STATE_REPOSITION, maxf(0.8, preferred_distance / maxf(0.1, move_speed)))
 
-func _start_reposition_to(destination: Vector3) -> void:
+func _start_reposition_to(destination: Vector3, route_label: StringName = &"objective") -> void:
 	reposition_destination = _clamp_arena_point(destination)
+	last_route_label = route_label
+	last_reposition_score = 0.0
+	last_reposition_is_high_route = _is_high_route_point(reposition_destination)
+	if last_reposition_is_high_route:
+		vertical_route_cooldown_remaining = vertical_route_cooldown
+	if route_label == &"health" or route_label == &"overcharge":
+		objective_route_cooldown_remaining = objective_route_min_interval
 	_set_state(STATE_REPOSITION, maxf(0.8, global_position.distance_to(reposition_destination) / maxf(0.1, move_speed)))
 
 func _try_start_pickup_reposition() -> bool:
 	if current_state == STATE_REPOSITION or current_state == STATE_WINDUP:
 		return false
 	if health_pickup_available and _should_seek_health_pickup():
-		if _flat_distance_to(health_pickup_position) <= pickup_interest_distance:
-			_start_reposition_to(health_pickup_position)
+		var can_take_health_route := objective_route_cooldown_remaining <= 0.0 or health_fraction() <= critical_health_pickup_threshold
+		if can_take_health_route and _flat_distance_to(health_pickup_position) <= pickup_interest_distance:
+			_start_reposition_to(health_pickup_position, &"health")
 			return true
 	var can_contest_overcharge := not last_has_line_of_sight or shoot_cooldown_remaining > shoot_cooldown * 0.45
-	if overcharge_pickup_available and not has_overcharge_charge() and can_contest_overcharge:
+	if overcharge_pickup_available and not has_overcharge_charge() and can_contest_overcharge and objective_route_cooldown_remaining <= 0.0:
 		if _flat_distance_to(overcharge_pickup_position) <= overcharge_interest_distance:
-			_start_reposition_to(overcharge_pickup_position)
+			_start_reposition_to(overcharge_pickup_position, &"overcharge")
 			return true
 	return false
 
@@ -500,6 +535,8 @@ func _choose_reposition_destination() -> void:
 		candidate_points = _fallback_reposition_points()
 	var best_score := -1000000.0
 	var best_point := global_position
+	var best_label: StringName = &"ground"
+	var best_is_high := false
 	for index in range(candidate_points.size()):
 		var point := _clamp_arena_point(candidate_points[index])
 		var target_distance := point.distance_to(_get_target_position())
@@ -507,12 +544,23 @@ func _choose_reposition_destination() -> void:
 		var travel_score := global_position.distance_to(point) * 0.12
 		var cycle_score := 0.01 * float((index + reposition_cycle_index) % maxi(1, candidate_points.size()))
 		var height_score := clampf(point.y - global_position.y, 0.0, 4.0) * 0.42
-		var score := distance_score + travel_score + cycle_score + height_score
+		var is_high := _is_high_route_point(point)
+		var route_score := high_route_score_bonus if is_high else 0.0
+		if is_high and vertical_route_cooldown_remaining > 0.0:
+			route_score -= recent_high_route_penalty
+		var score := distance_score + travel_score + cycle_score + height_score + route_score
 		if score > best_score:
 			best_score = score
 			best_point = point
+			best_label = _classify_route_point(point)
+			best_is_high = is_high
 	reposition_cycle_index += 1
 	reposition_destination = best_point
+	last_route_label = best_label
+	last_reposition_score = best_score
+	last_reposition_is_high_route = best_is_high
+	if last_reposition_is_high_route:
+		vertical_route_cooldown_remaining = vertical_route_cooldown
 
 func _fallback_reposition_points() -> Array[Vector3]:
 	return [
@@ -606,6 +654,18 @@ func _resolve_navigation_target(destination: Vector3) -> Vector3:
 	if _flat_distance_to(best_pad) > jump_pad_route_distance:
 		return best_pad
 	return destination
+
+func _is_high_route_point(point: Vector3) -> bool:
+	return point.y > 2.0
+
+func _classify_route_point(point: Vector3) -> StringName:
+	if _is_high_route_point(point):
+		return &"high"
+	if absf(point.x) > arena_half_extent * 0.78:
+		return &"flank"
+	if absf(point.x) < 4.5 and absf(point.z) < 7.2:
+		return &"center"
+	return &"ground"
 
 func _should_jump_toward_height_goal() -> bool:
 	if current_state != STATE_REPOSITION:

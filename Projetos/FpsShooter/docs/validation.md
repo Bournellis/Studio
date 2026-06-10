@@ -21,9 +21,9 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `33/33`;
-- `279` asserts;
-- Track 03A no-void hotfix validates feedback controller, player hit/miss, combatant impulse/lift/clamp/decay, player hit knockback, bot hit knockback, bot miss without knockback, map structure, protected spawn sightline, route markers, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()`, synthetic audio stream creation, RMB plasma input, Plasma Bolt spawn/hit/knockback, offset-muzzle crosshair hits, pickups, overcharge, bot pickup priority, ready-shot-over-health pressure, pickup-route interruption, bot simple jump, bot plasma dodge awareness, `Duel Pit V2` high platforms, jump-pad launch, absent void wells and bot jump-pad route awareness.
+- GUT `36/36`;
+- `297` asserts;
+- Track 03B route tuning validates feedback controller, player hit/miss, combatant impulse/lift/clamp/decay, player hit knockback, bot hit knockback, bot miss without knockback, map structure, protected spawn sightline, route markers, high-platform cover, pickup-to-jump-target spacing, bot reposition points, bot line of sight, vertical target exposure over low cover, tall blocker denial, bot windup, bot hit/miss, strafe/reposition, windup cancellation, restart cleanup, immediate `force_fire()`, synthetic audio stream creation, RMB plasma input, Plasma Bolt spawn/hit/knockback, offset-muzzle crosshair hits, pickups, overcharge, bot pickup priority, ready-shot-over-health pressure, pickup-route interruption, overcharge contest when shot pressure is unavailable, vertical-route cooldown, compact HUD bot flow line, bot simple jump, bot plasma dodge awareness, `Duel Pit V2` high platforms, jump-pad launch, absent void wells and bot jump-pad route awareness.
 
 ## Manual Smoke
 
@@ -51,6 +51,10 @@ Expected:
 - player can walk onto/down the ramp/platform primitives without getting stuck in ordinary movement;
 - bot moves, strafes and repositions instead of only walking straight;
 - health and overcharge pickups are visible on elevated platforms;
+- health and overcharge pickups are close to, but not directly on, the jump pad landing target;
+- player needs a small post-launch commitment to collect the high pickup instead of receiving it automatically;
+- route markers make pad approach, landing zones and high objectives readable at a glance;
+- high platforms have enough light cover for a short duel, but do not become sealed bunkers;
 - jump pads launch the player toward the high platform objectives with visible cyan feedback;
 - jump pads can also launch the bot without trapping it in launch loops;
 - moving around the lower floor and side routes does not trigger void/fall damage or recovery in the current map;
@@ -61,6 +65,8 @@ Expected:
 - the bot interrupts a health route when line of sight, range, cooldown and reaction are ready again;
 - the bot can make simple jumps toward raised map pieces or low blockers without constant jump spam;
 - the bot can route toward high objectives through jump pads without falling into a void-avoidance loop;
+- the bot alternates between low route, center pressure and high objective more clearly instead of repeating jump-pad routes immediately;
+- the HUD bot flow line helps read bot state, route and line of sight without becoming a heavy debug panel;
 - the bot reacts to nearby visible Plasma Bolt pressure with a dodge vector;
 - cover can break bot line of sight, preventing normal bot damage through obstacles;
 - low cover can hide the body center while the bot still recognizes player camera/head exposure above it;

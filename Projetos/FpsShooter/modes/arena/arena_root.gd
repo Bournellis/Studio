@@ -21,10 +21,10 @@ const BOT_SHOT_KNOCKBACK_LIFT: float = 1.12
 const PLASMA_BOLT_TTL: float = 2.45
 const PICKUP_RADIUS: float = 1.05
 const HEALTH_PICKUP_AMOUNT: float = 28.0
-const HEALTH_PICKUP_RESPAWN: float = 8.0
-const OVERCHARGE_PICKUP_RESPAWN: float = 12.0
-const HEALTH_PICKUP_POSITION: Vector3 = Vector3(-9.6, 3.55, -8.6)
-const OVERCHARGE_PICKUP_POSITION: Vector3 = Vector3(9.6, 3.55, 8.6)
+const HEALTH_PICKUP_RESPAWN: float = 10.0
+const OVERCHARGE_PICKUP_RESPAWN: float = 14.0
+const HEALTH_PICKUP_POSITION: Vector3 = Vector3(-7.6, 3.55, -8.6)
+const OVERCHARGE_PICKUP_POSITION: Vector3 = Vector3(7.6, 3.55, 8.6)
 const JUMP_PAD_RADIUS: float = 1.25
 const JUMP_PAD_COOLDOWN: float = 0.64
 const JUMP_PAD_VERTICAL_SPEED: float = 8.4
@@ -47,9 +47,9 @@ const BOT_REPOSITION_POINTS: Array[Vector3] = [
 	Vector3(-2.2, 0.05, 2.4),
 	Vector3(2.2, 0.05, -2.4),
 	Vector3(-9.6, 3.05, -8.6),
-	Vector3(-6.0, 3.05, -8.6),
+	Vector3(-7.6, 3.05, -8.6),
 	Vector3(9.6, 3.05, 8.6),
-	Vector3(6.0, 3.05, 8.6),
+	Vector3(7.6, 3.05, 8.6),
 	WEST_JUMP_PAD_POSITION,
 	EAST_JUMP_PAD_POSITION
 ]
@@ -66,6 +66,8 @@ var pickup_root: Node3D
 var active_projectiles: Array[Dictionary] = []
 var pickups: Dictionary = {}
 var jump_pads: Array[Dictionary] = []
+var flow_marker_count: int = 0
+var high_platform_cover_count: int = 0
 var jump_pad_trigger_count: int = 0
 var last_jump_pad_id: StringName = &""
 
@@ -164,6 +166,19 @@ func debug_get_jump_pad_trigger_count() -> int:
 func debug_get_last_jump_pad_id() -> StringName:
 	return last_jump_pad_id
 
+func debug_get_flow_marker_count() -> int:
+	return flow_marker_count
+
+func debug_has_high_platform_cover() -> bool:
+	return high_platform_cover_count >= 2
+
+func debug_get_pickup_jump_target_distance(pickup_kind: StringName) -> float:
+	var pickup_position := debug_get_pickup_position(pickup_kind)
+	var target_position := WEST_JUMP_PAD_TARGET if pickup_kind == &"health" else EAST_JUMP_PAD_TARGET
+	pickup_position.y = 0.0
+	target_position.y = 0.0
+	return pickup_position.distance_to(target_position)
+
 func debug_get_pickup_position(pickup_kind: StringName) -> Vector3:
 	var entry: Dictionary = pickups.get(pickup_kind, {})
 	return entry.get("position", Vector3.ZERO)
@@ -214,6 +229,8 @@ func _configure_world() -> void:
 
 func _build_duel_pit_layout() -> void:
 	jump_pads.clear()
+	flow_marker_count = 0
+	high_platform_cover_count = 0
 
 	_add_box("ArenaFloor", Vector3(0.0, -0.5, 0.0), FLOOR_SIZE, Color(0.13, 0.17, 0.23, 1.0))
 	var half := FLOOR_SIZE.x * 0.5
@@ -224,6 +241,8 @@ func _build_duel_pit_layout() -> void:
 	_add_visual_box("CenterLaneMark", Vector3(0.0, 0.025, 0.0), Vector3(1.1, 0.05, 24.0), Color(0.18, 0.52, 0.62, 1.0))
 	_add_visual_box("EastRouteMark", Vector3(8.8, 0.026, 0.0), Vector3(0.8, 0.05, 20.0), Color(0.38, 0.25, 0.58, 1.0))
 	_add_visual_box("WestRouteMark", Vector3(-8.8, 0.026, 0.0), Vector3(0.8, 0.05, 20.0), Color(0.38, 0.25, 0.58, 1.0))
+	_add_flow_marker("WestPadApproachMark", Vector3(-10.8, 0.032, -2.2), Vector3(1.35, 0.05, 3.6), Color(0.08, 0.74, 0.9, 1.0))
+	_add_flow_marker("EastPadApproachMark", Vector3(10.8, 0.032, 2.2), Vector3(1.35, 0.05, 3.6), Color(0.08, 0.74, 0.9, 1.0))
 
 	_add_box("MidBlocker", Vector3(0.0, 1.6, 0.0), Vector3(3.2, 3.2, 3.2), Color(0.19, 0.25, 0.32, 1.0))
 	_add_box("HighCoverA", Vector3(-5.0, 1.6, -0.8), Vector3(1.4, 3.2, 3.8), Color(0.24, 0.3, 0.38, 1.0))
@@ -242,8 +261,16 @@ func _build_duel_pit_layout() -> void:
 	_add_box("EastRamp", Vector3(9.6, 0.52, -2.9), Vector3(4.4, 0.32, 4.8), Color(0.22, 0.38, 0.44, 1.0), Vector3(12.0, 0.0, 0.0))
 	_add_box("WestHighPlatform", Vector3(-8.0, 2.78, -8.6), Vector3(6.8, 0.58, 4.2), Color(0.16, 0.3, 0.39, 1.0))
 	_add_box("EastHighPlatform", Vector3(8.0, 2.78, 8.6), Vector3(6.8, 0.58, 4.2), Color(0.16, 0.3, 0.39, 1.0))
+	_add_high_platform_cover("WestHighSoftCover", Vector3(-9.25, 3.48, -7.15), Vector3(2.2, 0.82, 0.34), Color(0.18, 0.34, 0.42, 1.0))
+	_add_high_platform_cover("WestHighAngleCover", Vector3(-5.25, 3.52, -9.55), Vector3(0.36, 0.95, 1.7), Color(0.18, 0.34, 0.42, 1.0))
+	_add_high_platform_cover("EastHighSoftCover", Vector3(9.25, 3.48, 7.15), Vector3(2.2, 0.82, 0.34), Color(0.18, 0.34, 0.42, 1.0))
+	_add_high_platform_cover("EastHighAngleCover", Vector3(5.25, 3.52, 9.55), Vector3(0.36, 0.95, 1.7), Color(0.18, 0.34, 0.42, 1.0))
 	_add_visual_box("WestHighGuardMark", Vector3(-8.0, 3.12, -10.6), Vector3(6.2, 0.08, 0.18), Color(0.18, 0.72, 0.86, 1.0))
 	_add_visual_box("EastHighGuardMark", Vector3(8.0, 3.12, 10.6), Vector3(6.2, 0.08, 0.18), Color(0.18, 0.72, 0.86, 1.0))
+	_add_flow_marker("WestLandingZoneMark", WEST_JUMP_PAD_TARGET + Vector3(0.0, 0.08, 0.0), Vector3(2.3, 0.06, 1.65), Color(0.12, 0.82, 0.96, 1.0))
+	_add_flow_marker("EastLandingZoneMark", EAST_JUMP_PAD_TARGET + Vector3(0.0, 0.08, 0.0), Vector3(2.3, 0.06, 1.65), Color(0.12, 0.82, 0.96, 1.0))
+	_add_flow_marker("HealthObjectivePadMark", Vector3(HEALTH_PICKUP_POSITION.x, 3.14, HEALTH_PICKUP_POSITION.z), Vector3(1.35, 0.06, 1.35), Color(0.32, 1.0, 0.48, 1.0))
+	_add_flow_marker("OverchargeObjectivePadMark", Vector3(OVERCHARGE_PICKUP_POSITION.x, 3.14, OVERCHARGE_PICKUP_POSITION.z), Vector3(1.35, 0.06, 1.35), Color(0.72, 0.42, 1.0, 1.0))
 	_add_jump_pad(&"west_pad", "WestJumpPad", WEST_JUMP_PAD_POSITION, WEST_JUMP_PAD_TARGET)
 	_add_jump_pad(&"east_pad", "EastJumpPad", EAST_JUMP_PAD_POSITION, EAST_JUMP_PAD_TARGET)
 
@@ -587,7 +614,11 @@ func _build_hud_snapshot() -> Dictionary:
 		"health_pickup_respawn": _get_pickup_respawn_remaining(&"health"),
 		"overcharge_pickup_available": debug_is_pickup_available(&"overcharge"),
 		"overcharge_pickup_respawn": _get_pickup_respawn_remaining(&"overcharge"),
-		"hint": "Click captures mouse | WASD move | Mouse look | LMB rifle | RMB plasma | Pads launch | High pickups | R restart | Esc menu"
+		"bot_state": &"none" if bot == null else bot.debug_get_state(),
+		"bot_route_label": &"none" if bot == null else bot.debug_get_route_label(),
+		"bot_has_line_of_sight": false if bot == null else bot.debug_has_line_of_sight(),
+		"last_jump_pad_id": last_jump_pad_id,
+		"hint": "Click captures mouse | WASD move | LMB rifle | RMB plasma | Pads launch | High pickups | Bot route | R restart | Esc"
 	}
 
 func _build_pickups() -> void:
@@ -882,6 +913,14 @@ func _add_jump_pad(pad_id: StringName, pad_name: String, pad_position: Vector3, 
 		"player_cooldown": 0.0,
 		"bot_cooldown": 0.0,
 	})
+
+func _add_flow_marker(node_name: String, marker_position: Vector3, marker_size: Vector3, color: Color, marker_rotation_degrees: Vector3 = Vector3.ZERO) -> MeshInstance3D:
+	flow_marker_count += 1
+	return _add_visual_box(node_name, marker_position, marker_size, color, marker_rotation_degrees)
+
+func _add_high_platform_cover(node_name: String, cover_position: Vector3, cover_size: Vector3, color: Color) -> StaticBody3D:
+	high_platform_cover_count += 1
+	return _add_box(node_name, cover_position, cover_size, color)
 
 func _add_box(node_name: String, box_position: Vector3, box_size: Vector3, color: Color, box_rotation_degrees: Vector3 = Vector3.ZERO) -> StaticBody3D:
 	var body := StaticBody3D.new()
