@@ -6,6 +6,8 @@ func _trigger_action(action_id: String, confirm_message: String = "") -> void:
 	if _action_scope_is_busy(str(route.get("scope_id", OperationStateScript.DEFAULT_SCOPE))):
 		return
 	if confirm_message != "":
+		if _shell_overlay_is_open() and _mode_shell_overlay_controller.request_confirmation(self, action_id, confirm_message):
+			return
 		_pending_confirmation_action = action_id
 		_confirm_dialog.dialog_text = confirm_message
 		_confirm_dialog.popup_centered()

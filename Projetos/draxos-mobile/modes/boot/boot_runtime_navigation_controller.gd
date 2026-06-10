@@ -193,11 +193,15 @@ func _publish_web_diagnostics_state() -> void:
 		return
 	var overlay_panel := {}
 	var overlay_buttons: Array[Dictionary] = []
+	var overlay_controls: Array[Dictionary] = []
 	var overlay_input := {}
+	var pending_confirmation := {}
 	if _shell_overlay_is_open():
 		overlay_panel = _mode_shell_overlay_controller.panel_diagnostics()
 		overlay_buttons = _mode_shell_overlay_controller.button_diagnostics()
+		overlay_controls = _mode_shell_overlay_controller.control_diagnostics()
 		overlay_input = _mode_shell_overlay_controller.input_diagnostics()
+		pending_confirmation = _mode_shell_overlay_controller.confirmation_diagnostics()
 	var payload := {
 		"project": ProjectInfoScript.PROJECT_NAME,
 		"releaseChannel": ProjectInfoScript.RELEASE_CHANNEL,
@@ -214,7 +218,10 @@ func _publish_web_diagnostics_state() -> void:
 		"overlayEpoch": _shell_overlay_epoch(),
 		"overlayPanel": overlay_panel,
 		"overlayButtons": overlay_buttons,
+		"overlayControls": overlay_controls,
 		"overlayInput": overlay_input,
+		"focusedControl": str(overlay_input.get("focused_control", "")),
+		"pendingConfirmation": pending_confirmation,
 		"actionInput": {
 			"sequence": _web_action_sequence,
 			"last": _web_last_action.duplicate(true),
@@ -275,6 +282,27 @@ func _ensure_web_overlay_input_bridge() -> void:
 			}
 			return null;
 		}
+		function overlayControlAt(state, point) {
+			const controls = Array.isArray(state.overlayControls) ? state.overlayControls : [];
+			for (let index = controls.length - 1; index >= 0; index -= 1) {
+				const control = controls[index];
+				if (rectContains(control, point)) return control;
+			}
+			const button = overlayButtonAt(state, point);
+			if (button) {
+				return {
+					type: 'button',
+					path: button.path,
+					text: button.text || '',
+					action_id: button.action_id || '',
+					x: button.x,
+					y: button.y,
+					width: button.width,
+					height: button.height
+				};
+			}
+			return null;
+		}
 		function overlayChromeMetrics() {
 			const canvas = document.querySelector('canvas');
 			if (!canvas) return null;
@@ -308,16 +336,28 @@ func _ensure_web_overlay_input_bridge() -> void:
 			if (!state.overlayOpen) return;
 			const point = canvasPoint(event, state);
 			if (!point) return;
-			const button = overlayButtonAt(state, point);
-			if (button && button.path) {
+			const control = overlayControlAt(state, point);
+			if (control && control.path && control.type === 'button') {
 				event.preventDefault();
 				event.stopPropagation();
 				callGodotPayload({
 					type: 'button',
-					path: button.path,
+					path: control.path,
 					x: point.x,
 					y: point.y,
-					text: button.text || ''
+					text: control.text || ''
+				});
+				return;
+			}
+			if (control && control.path && control.type === 'line_edit') {
+				event.preventDefault();
+				event.stopPropagation();
+				callGodotPayload({
+					type: 'focus',
+					path: control.path,
+					x: point.x,
+					y: point.y,
+					text: control.text || ''
 				});
 				return;
 			}
@@ -354,10 +394,38 @@ func _ensure_web_overlay_input_bridge() -> void:
 		window.addEventListener('keydown', function(event) {
 			const state = overlayState();
 			if (!state.overlayOpen) return;
-			if (event.key !== 'Escape' && event.code !== 'Escape') return;
-			event.preventDefault();
-			event.stopPropagation();
-			callGodot('escape');
+			const focusedPath = String(state.focusedControl || state.overlayInput?.focused_control || '');
+			if (event.key === 'Escape' || event.code === 'Escape') {
+				event.preventDefault();
+				event.stopPropagation();
+				callGodot('escape');
+				return;
+			}
+			if (!focusedPath) return;
+			if (event.ctrlKey || event.metaKey || event.altKey) return;
+			if (event.key === 'Backspace') {
+				event.preventDefault();
+				event.stopPropagation();
+				callGodotPayload({
+					type: 'backspace',
+					path: focusedPath
+				});
+				return;
+			}
+			if (event.key === 'Enter') {
+				event.preventDefault();
+				event.stopPropagation();
+				return;
+			}
+			if (typeof event.key === 'string' && event.key.length === 1) {
+				event.preventDefault();
+				event.stopPropagation();
+				callGodotPayload({
+					type: 'text',
+					path: focusedPath,
+					text: event.key
+				});
+			}
 		}, true);
 	})();""", true)
 	_web_overlay_input_bridge_bound = true
@@ -381,6 +449,24 @@ func _handle_web_overlay_input_command(args: Array) -> void:
 				)
 				if _mode_shell_overlay_controller.request_button(self, str(payload.get("path", "")), point):
 					call_deferred("_publish_web_diagnostics_state")
+			"focus":
+				var focus_point := Vector2(
+					float(payload.get("x", -100000.0)),
+					float(payload.get("y", -100000.0))
+				)
+				if _mode_shell_overlay_controller.request_focus(self, str(payload.get("path", "")), focus_point):
+					call_deferred("_publish_web_diagnostics_state")
+			"text":
+				if _mode_shell_overlay_controller.request_text_input(
+					self,
+					str(payload.get("path", "")),
+					str(payload.get("text", "")),
+					bool(payload.get("replace", false))
+				):
+					call_deferred("_publish_web_diagnostics_state")
+			"backspace":
+				if _mode_shell_overlay_controller.request_text_backspace(self, str(payload.get("path", ""))):
+					call_deferred("_publish_web_diagnostics_state")
 			"wheel":
 				if _mode_shell_overlay_controller.request_scroll(self, float(payload.get("deltaY", 0.0))):
 					call_deferred("_publish_web_diagnostics_state")
@@ -398,6 +484,12 @@ func _handle_web_overlay_input_command(args: Array) -> void:
 
 func _focus_web_canvas_for_shell_input() -> void:
 	if not (_shell_overlay_is_open() or _current_screen == ROUTE_MODE_SHELL):
+		return
+	if _shell_overlay_is_open() \
+			and (
+				_mode_shell_overlay_controller.focused_control_path() != "" \
+				or _mode_shell_overlay_controller.confirmation_pending()
+			):
 		return
 	JavaScriptBridge.eval("""(function(){
 		const canvas = document.querySelector('canvas');
@@ -425,6 +517,8 @@ func _apply_web_smoke_overlay_request() -> void:
 		return
 	var request := str(JavaScriptBridge.eval("(new URLSearchParams(window.location.search).get('draxos_smoke') || '')", true)).strip_edges()
 	var route_id := ""
+	var seed_arena_active := false
+	var seed_required_update := false
 	match request:
 		"overlay-account":
 			route_id = AppShellRouteContractScript.ROUTE_ACCOUNT
@@ -432,12 +526,26 @@ func _apply_web_smoke_overlay_request() -> void:
 			route_id = AppShellRouteContractScript.ROUTE_BASE
 		"overlay-shop":
 			route_id = AppShellRouteContractScript.ROUTE_SHOP
+		"overlay-shop-confirm":
+			route_id = AppShellRouteContractScript.ROUTE_SHOP
+			seed_required_update = true
 		"overlay-social":
 			route_id = AppShellRouteContractScript.ROUTE_SOCIAL
+		"overlay-social-form":
+			route_id = AppShellRouteContractScript.ROUTE_SOCIAL
+			seed_required_update = true
 		"overlay-arena":
 			route_id = AppShellRouteContractScript.ROUTE_ARENA_SELECTION
+		"overlay-arena-active":
+			route_id = AppShellRouteContractScript.ROUTE_ARENA_SELECTION
+			seed_arena_active = true
+			seed_required_update = true
 		_:
 			return
+	if seed_arena_active:
+		_seed_web_smoke_arena_active_attempt()
+	if seed_required_update:
+		_seed_web_smoke_required_update_gate()
 	_web_smoke_overlay_request_applied = true
 	call_deferred("_open_web_smoke_overlay_route", route_id)
 
@@ -446,3 +554,44 @@ func _open_web_smoke_overlay_route(route_id: String) -> void:
 		return
 	_open_mode_shell(ModeShellRegistryScript.MODE_OPENWORLD)
 	_show_overlay_screen(route_id, false)
+
+func _seed_web_smoke_required_update_gate() -> void:
+	_update_gate = {
+		"block_online": true,
+		"summary": "Update obrigatorio antes de usar recursos online.",
+		"detail": "Smoke Web bloqueou mutacoes remotas para validar clique real sem alterar servidor.",
+		"minimum_supported_version": "0.0.99-alpha.0",
+		"minimum_supported_version_code": 99,
+	}
+
+func _seed_web_smoke_arena_active_attempt() -> void:
+	SessionStore.access_token = "web-smoke-token"
+	SessionStore.expires_at = int(Time.get_unix_time_from_system()) + 3600
+	SessionStore.player = {"id": "web-smoke-player", "level": 8, "power": 120, "username": "web_smoke"}
+	SessionStore.resources = {"almas": 100, "energia": 200, "sangue": 8, "cristais": 5, "ossos": 3, "diamante": 160}
+	SessionStore.build = {"weapon_id": "varinha_cinzas"}
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"arenas": [
+			{
+				"id": "arena_cinzas_curta",
+				"display_name": "Arena Curta Das Cinzas",
+				"duel_count": 3,
+				"unlocked": true,
+				"difficulties": [{"difficulty_id": "s1_d00_intro", "max_steps": 3, "unlocked": true}],
+			},
+		],
+		"active_attempt": {
+			"attempt_id": "attempt-web-smoke-active",
+			"arena_id": "arena_cinzas_curta",
+			"status": "active",
+			"current_step_index": 1,
+			"duel_count": 3,
+			"duels_won": 1,
+			"locked_loadout_hash": "sha256:web-smoke",
+			"loadout_summary": {"label": "Varinha de Cinzas, smoke Web"},
+			"next_enemy": {"display_name": "Aprendiz das Cinzas"},
+			"temporary_buffs": [],
+			"buff_offer": {},
+		},
+	}
