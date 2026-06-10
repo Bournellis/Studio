@@ -1,11 +1,11 @@
 class_name FootballChaseCamera
 extends Node3D
 
-@export var follow_distance: float = 7.4
-@export var follow_height: float = 3.15
-@export var look_ahead_distance: float = 2.35
-@export var ball_focus_weight: float = 0.28
-@export var far_ball_focus_weight: float = 0.44
+@export var follow_distance: float = 8.4
+@export var follow_height: float = 3.55
+@export var look_ahead_distance: float = 3.1
+@export var ball_focus_weight: float = 0.08
+@export var far_ball_focus_weight: float = 0.1
 @export var far_ball_focus_distance: float = 15.0
 @export var position_smoothing: float = 10.0
 
@@ -94,7 +94,7 @@ func _ensure_camera() -> void:
 		return
 	camera = Camera3D.new()
 	camera.name = "Camera3D"
-	camera.fov = 78.0
+	camera.fov = 82.0
 	camera.near = 0.04
 	camera.far = 220.0
 	add_child(camera)

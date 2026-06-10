@@ -22,6 +22,12 @@ const DEFAULT_MOUSE_SENSITIVITY: float = 0.0018
 @export var alt_fire_radius: float = 0.34
 @export var overcharge_damage_multiplier: float = 1.35
 @export var overcharge_knockback_multiplier: float = 1.25
+@export var boost_speed_multiplier: float = 1.52
+@export var boost_stamina_max: float = 100.0
+@export var boost_stamina_deplete_per_second: float = 38.0
+@export var boost_stamina_recharge_per_second: float = 26.0
+@export var boost_recharge_delay: float = 0.45
+@export var boost_min_stamina_to_start: float = 8.0
 
 var head: Node3D
 var camera: Camera3D
@@ -32,6 +38,9 @@ var jump_pad_launch_count: int = 0
 var shot_cooldown_remaining: float = 0.0
 var alt_fire_cooldown_remaining: float = 0.0
 var overcharge_shots_remaining: int = 0
+var boost_stamina: float = 100.0
+var boost_recharge_delay_remaining: float = 0.0
+var boost_active: bool = false
 
 func _ready() -> void:
 	super._ready()
@@ -47,6 +56,9 @@ func configure_for_round() -> void:
 	shot_cooldown_remaining = 0.0
 	alt_fire_cooldown_remaining = 0.0
 	overcharge_shots_remaining = 0
+	boost_stamina = boost_stamina_max
+	boost_recharge_delay_remaining = 0.0
+	boost_active = false
 	pitch = 0.0
 	if head != null:
 		head.rotation.x = pitch
@@ -129,6 +141,14 @@ func get_alt_fire_cooldown_fraction() -> float:
 		return 0.0
 	return clampf(alt_fire_cooldown_remaining / alt_fire_cooldown, 0.0, 1.0)
 
+func get_boost_stamina_fraction() -> float:
+	if boost_stamina_max <= 0.0:
+		return 0.0
+	return clampf(boost_stamina / boost_stamina_max, 0.0, 1.0)
+
+func is_boosting() -> bool:
+	return boost_active
+
 func apply_jump_pad_launch(launch_velocity: Vector3) -> void:
 	if is_dead:
 		return
@@ -147,6 +167,13 @@ func debug_get_vertical_velocity() -> float:
 
 func debug_get_jump_pad_launch_count() -> int:
 	return jump_pad_launch_count
+
+func debug_get_boost_stamina() -> float:
+	return boost_stamina
+
+func debug_set_boost_stamina(next_stamina: float) -> void:
+	boost_stamina = clampf(next_stamina, 0.0, boost_stamina_max)
+	boost_recharge_delay_remaining = 0.0
 
 func _handle_shooting() -> void:
 	if Input.is_action_just_pressed("shoot"):
@@ -184,7 +211,10 @@ func _handle_movement(delta: float) -> void:
 	if direction.length_squared() > 0.0001:
 		direction = direction.normalized()
 
-	var horizontal_velocity := direction * move_speed
+	_update_boost(delta, direction.length_squared() > 0.0001)
+
+	var speed_multiplier := boost_speed_multiplier if boost_active else 1.0
+	var horizontal_velocity := direction * move_speed * speed_multiplier
 	if not is_on_floor():
 		var previous_horizontal := Vector3(velocity.x, 0.0, velocity.z)
 		horizontal_velocity = previous_horizontal.lerp(horizontal_velocity, clampf(air_control, 0.0, 1.0))
@@ -198,6 +228,21 @@ func _consume_launch_boost(delta: float) -> Vector3:
 	var current := launch_boost_velocity
 	launch_boost_velocity = launch_boost_velocity.move_toward(Vector3.ZERO, 5.8 * delta)
 	return current
+
+func _update_boost(delta: float, has_movement_input: bool) -> void:
+	var wants_boost := Input.is_action_pressed("boost") and has_movement_input
+	var has_enough_to_start := boost_active or boost_stamina >= boost_min_stamina_to_start
+	boost_active = wants_boost and has_enough_to_start and boost_stamina > 0.0
+	if boost_active:
+		boost_stamina = maxf(0.0, boost_stamina - boost_stamina_deplete_per_second * delta)
+		boost_recharge_delay_remaining = boost_recharge_delay
+		if boost_stamina <= 0.0:
+			boost_active = false
+		return
+
+	boost_recharge_delay_remaining = maxf(0.0, boost_recharge_delay_remaining - delta)
+	if boost_recharge_delay_remaining <= 0.0:
+		boost_stamina = minf(boost_stamina_max, boost_stamina + boost_stamina_recharge_per_second * delta)
 
 func _ensure_camera_nodes() -> void:
 	head = get_node_or_null("Head") as Node3D

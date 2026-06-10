@@ -18,7 +18,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Open `Projetos/JogoDaCopa/project.godot` in Godot 4.6.2.
 - Press Play.
 - Launch `Futebol 1x1`.
-- Confirm intro/how-to, avatar selection, third-person camera, movement, jump, LMB kick, RMB strong kick, possession/dribble nudges, bot, score to 3, restart with `R`, pause menu and return to menu.
+- Confirm intro/how-to, avatar selection, third-person camera, movement, jump, `Shift` boost/stamina, LMB kick, RMB strong kick, loose ball without possession lock, wall/ceiling rebounds, bot, score to 3, restart with `R`, pause menu and return to menu.
 
 ## Known Noise
 

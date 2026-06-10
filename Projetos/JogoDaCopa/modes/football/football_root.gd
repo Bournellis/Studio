@@ -16,34 +16,31 @@ const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const MODE_NAME: String = "Futebol 1x1"
 const GOAL_LIMIT: int = 3
-const FIELD_WIDTH: float = 32.0
-const FIELD_LENGTH: float = 44.0
+const FIELD_WIDTH: float = 38.0
+const FIELD_LENGTH: float = 54.0
 const FIELD_HALF_WIDTH: float = FIELD_WIDTH * 0.5
 const FIELD_HALF_LENGTH: float = FIELD_LENGTH * 0.5
-const WALL_HEIGHT: float = 2.4
+const WALL_HEIGHT: float = 7.2
+const CEILING_HEIGHT: float = 8.8
 const WALL_THICKNESS: float = 0.8
-const GOAL_HALF_WIDTH: float = 4.1
-const GOAL_SIDE_WALL_X: float = GOAL_HALF_WIDTH + 0.62
+const GOAL_HALF_WIDTH: float = 5.4
+const GOAL_SIDE_WALL_X: float = GOAL_HALF_WIDTH + 0.72
 const GOAL_SIDE_WALL_THICKNESS: float = 0.55
-const GOAL_CLOSED_DEPTH: float = 2.9
+const GOAL_CLOSED_DEPTH: float = 3.8
 const GOAL_LINE_NORTH: float = -FIELD_HALF_LENGTH
 const GOAL_LINE_SOUTH: float = FIELD_HALF_LENGTH
-const PLAYER_SPAWN: Vector3 = Vector3(0.0, 0.05, 14.2)
-const BOT_SPAWN: Vector3 = Vector3(0.0, 0.05, -14.2)
-const BALL_SPAWN: Vector3 = Vector3(0.0, 0.58, 0.0)
-const PLAYER_KICK_REACH: float = 2.25
-const PLAYER_KICK_ASSIST_RADIUS: float = 2.85
-const PLAYER_TOUCH_RADIUS: float = 1.22
-const PLAYER_TOUCH_FORCE: float = 3.7
-const PLAYER_POSSESSION_RADIUS: float = 1.72
-const PLAYER_BALL_REACH_RADIUS: float = 2.72
-const PLAYER_DRIBBLE_MIN_SPEED: float = 3.2
-const PLAYER_DRIBBLE_MAX_SPEED: float = 11.5
-const PLAYER_DRIBBLE_SPEED_FACTOR: float = 0.92
-const PLAYER_KICK_FORCE: float = 15.0
-const PLAYER_STRONG_KICK_FORCE: float = 23.0
-const PLAYER_KICK_LIFT: float = 1.0
-const PLAYER_STRONG_KICK_LIFT: float = 2.35
+const PLAYER_SPAWN: Vector3 = Vector3(0.0, 0.05, 18.0)
+const BOT_SPAWN: Vector3 = Vector3(0.0, 0.05, -18.0)
+const BALL_SPAWN: Vector3 = Vector3(0.0, 0.68, 0.0)
+const PLAYER_KICK_REACH: float = 2.2
+const PLAYER_KICK_ASSIST_RADIUS: float = 2.38
+const PLAYER_TOUCH_RADIUS: float = 1.42
+const PLAYER_TOUCH_FORCE: float = 5.2
+const PLAYER_NEAR_BALL_RADIUS: float = 2.5
+const PLAYER_KICK_FORCE: float = 18.5
+const PLAYER_STRONG_KICK_FORCE: float = 29.0
+const PLAYER_KICK_LIFT: float = 1.8
+const PLAYER_STRONG_KICK_LIFT: float = 4.1
 const PLAYER_TOUCH_COOLDOWN: float = 0.18
 const GOAL_RESET_DELAY: float = 1.25
 
@@ -159,6 +156,9 @@ func debug_get_player_ball_control_strength() -> float:
 func debug_get_last_kick_assist_strength() -> float:
 	return last_kick_assist_strength
 
+func debug_get_player_boost_fraction() -> float:
+	return player.get_boost_stamina_fraction() if player != null else 0.0
+
 func debug_update_player_ball_control(delta: float = 0.1) -> void:
 	_update_player_ball_control(delta)
 
@@ -215,6 +215,15 @@ func debug_set_score(next_player_score: int, next_bot_score: int) -> void:
 	player_score = maxi(0, next_player_score)
 	bot_score = maxi(0, next_bot_score)
 
+func debug_get_arena_config() -> Dictionary:
+	return {
+		"field_width": FIELD_WIDTH,
+		"field_length": FIELD_LENGTH,
+		"wall_height": WALL_HEIGHT,
+		"ceiling_height": CEILING_HEIGHT,
+		"goal_half_width": GOAL_HALF_WIDTH
+	}
+
 func _configure_world() -> void:
 	var environment := WorldEnvironment.new()
 	environment.name = "WorldEnvironment"
@@ -248,6 +257,7 @@ func _build_football_pitch() -> void:
 		"field_width": FIELD_WIDTH,
 		"field_length": FIELD_LENGTH,
 		"wall_height": WALL_HEIGHT,
+		"ceiling_height": CEILING_HEIGHT,
 		"wall_thickness": WALL_THICKNESS,
 		"goal_half_width": GOAL_HALF_WIDTH,
 		"goal_side_wall_x": GOAL_SIDE_WALL_X,
@@ -267,8 +277,11 @@ func _spawn_runtime() -> void:
 	player.position = PLAYER_SPAWN
 	player.rotation.y = 0.0
 	player.move_speed = 8.8
-	player.jump_velocity = 5.8
-	player.air_control = 0.78
+	player.jump_velocity = 6.15
+	player.air_control = 0.82
+	player.boost_speed_multiplier = 1.56
+	player.boost_stamina_deplete_per_second = 39.0
+	player.boost_stamina_recharge_per_second = 25.0
 	player.shot_cooldown = 0.2
 	player.alt_fire_cooldown = 0.88
 	runtime_root.add_child(player)
@@ -304,7 +317,7 @@ func _spawn_runtime() -> void:
 	bot.position = BOT_SPAWN
 	bot.rotation.y = PI
 	runtime_root.add_child(bot)
-	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH))
+	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH), FIELD_HALF_WIDTH, FIELD_HALF_LENGTH)
 	bot.kick_requested.connect(_on_bot_kick_requested)
 	bot.damaged.connect(func(_amount: float, _remaining_health: float) -> void:
 		if bot_avatar != null:
@@ -352,7 +365,7 @@ func _restart_play(after_goal: bool) -> void:
 	player.clear_movement_impulses()
 	bot.global_position = BOT_SPAWN
 	bot.rotation.y = PI
-	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH))
+	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH), FIELD_HALF_WIDTH, FIELD_HALF_LENGTH)
 	ball.configure(BALL_SPAWN)
 	if chase_camera != null:
 		chase_camera.snap_to_target()
@@ -400,7 +413,7 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 	if feedback != null:
 		feedback.play_football_kick(ball.global_position, direction, false)
 
-func _update_player_ball_control(delta: float) -> void:
+func _update_player_ball_control(_delta: float) -> void:
 	if player == null or ball == null:
 		player_ball_control_state = &"free"
 		player_ball_control_strength = 0.0
@@ -410,20 +423,11 @@ func _update_player_ball_control(delta: float) -> void:
 		_get_player_kick_direction(),
 		player.velocity,
 		ball.global_position,
-		PLAYER_POSSESSION_RADIUS,
-		PLAYER_BALL_REACH_RADIUS
+		PLAYER_TOUCH_RADIUS,
+		PLAYER_NEAR_BALL_RADIUS
 	)
 	player_ball_control_state = state.get("state", &"free")
 	player_ball_control_strength = float(state.get("strength", 0.0))
-	if player_ball_control_state != &"possession":
-		return
-	var flat_speed := Vector3(player.velocity.x, 0.0, player.velocity.z).length()
-	if flat_speed < 0.35:
-		return
-	var control_direction: Vector3 = state.get("direction", _get_player_kick_direction())
-	var target_speed := clampf(flat_speed * PLAYER_DRIBBLE_SPEED_FACTOR, PLAYER_DRIBBLE_MIN_SPEED, PLAYER_DRIBBLE_MAX_SPEED)
-	var blend := clampf(delta * (4.2 + player_ball_control_strength * 5.2), 0.0, 0.58)
-	ball.apply_dribble_control(control_direction, target_speed, blend)
 
 func _process_player_ball_contact() -> void:
 	if player_touch_cooldown_remaining > 0.0:
@@ -438,7 +442,9 @@ func _process_player_ball_contact() -> void:
 	if not bool(contact.get("connected", false)):
 		return
 	var contact_direction: Vector3 = contact.get("direction", Vector3.ZERO)
-	ball.kick(contact_direction, PLAYER_TOUCH_FORCE, 0.12)
+	var boost_multiplier := 1.35 if player.is_boosting() else 1.0
+	var contact_lift := 0.42 if player.is_boosting() else 0.18
+	ball.kick(contact_direction, PLAYER_TOUCH_FORCE * boost_multiplier, contact_lift)
 	player_touch_cooldown_remaining = PLAYER_TOUCH_COOLDOWN
 
 func _process_goal_detection() -> void:
@@ -525,9 +531,11 @@ func _build_hud_snapshot() -> Dictionary:
 		"ball_distance": ball_distance,
 		"ball_control": player_ball_control_state,
 		"ball_control_strength": player_ball_control_strength,
+		"boost_fraction": player.get_boost_stamina_fraction() if player != null else 0.0,
+		"boost_active": player.is_boosting() if player != null else false,
 		"bot_state": bot.debug_get_state() if bot != null else "none",
 		"phase": phase_label,
-		"hint": "Comecar inicia | WASD move | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"
+		"hint": "Comecar inicia | WASD move | Shift boost | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | paredes/teto rebatem | R restart | Esc menu"
 	}
 
 func _start_match() -> void:

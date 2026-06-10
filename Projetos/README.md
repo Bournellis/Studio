@@ -47,8 +47,8 @@ This directory contains active, conceptual and paused projects for the studio.
   - Allowed work: historical/contextual consultation or explicit resume request only while the temporary JogoDaCopa focus is active.
   - Current next step: resume in a few days when the temporary JogoDaCopa focus ends; editor regression playtest focused on Arena Shooter remains preserved.
 
-- `JogoDaCopa/`: independent PC Windows editor-first Godot 4.6.2 football/minigames project. Created by splitting the accepted football branch out of the former FPS Playground; the initial playable mode is `Futebol`: 1x1 against a bot, no weapons, paused `Como Jogar`/`Comecar` intro, LMB kick, RMB strong kick, arcade loose `RigidBody3D` ball, festive primitive stadium, fully closed goal interiors, score to 3 goals, football HUD and kick/goal feedback, runtime primitive humanoid avatars for player/bot, memory-only skin tone selection, country-inspired shirt kit selection, basic procedural animation states, third-person chase camera with visible local avatar/body-forward kicks, lightweight close possession, dribble nudges, near-front kick assist, dynamic ball focus and improved bot attack approach behind the ball.
-  - Priority/status: `P2_IMPLEMENTACAO - FOCO_TEMPORARIO_UNICO - JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE`
+- `JogoDaCopa/`: independent PC Windows editor-first Godot 4.6.2 football/minigames project. Created by splitting the accepted football branch out of the former FPS Playground; the current playable mode is `Futebol`: 1x1 against a bot, no weapons, paused `Como Jogar`/`Comecar` intro, LMB kick, RMB strong high kick, loose arcade `RigidBody3D` ball without possession lock, tighter kick assist, larger 38x54 field, larger/deeper goals, high glass walls, roof collision, festive primitive stadium, score to 3 goals, `Shift` speed boost with stamina HUD, football HUD and kick/goal feedback, runtime primitive humanoid avatars for player/bot, memory-only skin tone selection, country-inspired shirt kit selection, basic procedural animation states, third-person chase camera with visible local avatar/body-forward kicks and subtle ball focus.
+  - Priority/status: `P2_IMPLEMENTACAO - FOCO_TEMPORARIO_UNICO - JOGO_DA_COPA_ARCADE_ARENA_BOOST_V1_COMPLETE`
   - Local agent guide: `JogoDaCopa/AGENTS.md`
   - Operational status: `JogoDaCopa/implementation/current-status.md`
   - Work plan: `JogoDaCopa/docs/work-plan.md`
@@ -56,7 +56,7 @@ This directory contains active, conceptual and paused projects for the studio.
   - Validation reference: `JogoDaCopa/docs/validation.md`
   - Validation command: `JogoDaCopa/tools/validate.gd`
   - Allowed work: code, design, validation, editor playtest and local documentation.
-  - Current next step: immediate studio focus on Futebol editor playtest and selection of the next minigame/gameplay track.
+  - Current next step: immediate studio focus on Futebol closed-arcade editor playtest and selection of the next gameplay track.
 
 ## Implementacao Pausada Temporariamente - Arena PVE Inicial
 

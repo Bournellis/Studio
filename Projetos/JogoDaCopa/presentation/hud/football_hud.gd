@@ -15,6 +15,7 @@ var score_label: Label
 var clock_label: Label
 var flow_label: Label
 var control_label: Label
+var boost_bar: ProgressBar
 var hint_label: Label
 var event_label: Label
 var crosshair_root: Control
@@ -68,8 +69,17 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	flow_label.text = "Futebol: %s | Bot: %s" % [phase, bot_state]
 	var control_state := StringName(str(snapshot.get("ball_control", "free")))
 	var control_strength := float(snapshot.get("ball_control_strength", 0.0))
-	control_label.text = "Controle: %s %.0f%%" % [_get_control_label(control_state), control_strength * 100.0]
-	hint_label.text = str(snapshot.get("hint", "WASD move | Mouse gira jogador/camera | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"))
+	var boost_fraction := float(snapshot.get("boost_fraction", 1.0))
+	var boost_active := bool(snapshot.get("boost_active", false))
+	control_label.text = "Bola: %s %.0f%% | Boost %s" % [
+		_get_control_label(control_state),
+		control_strength * 100.0,
+		"ATIVO" if boost_active else "%.0f%%" % [boost_fraction * 100.0]
+	]
+	if boost_bar != null:
+		boost_bar.value = boost_fraction * 100.0
+		boost_bar.modulate = Color(0.35, 0.9, 1.0, 1.0) if boost_active else Color(0.9, 1.0, 0.92, 0.92)
+	hint_label.text = str(snapshot.get("hint", "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"))
 
 func show_kick(strong: bool, connected: bool, assist_strength: float = 0.0) -> void:
 	last_kick_assist_strength = assist_strength
@@ -158,7 +168,7 @@ func _build_ui() -> void:
 	panel.name = "ScorePanel"
 	_ignore_mouse(panel)
 	panel.position = Vector2(18.0, 18.0)
-	panel.custom_minimum_size = Vector2(390.0, 146.0)
+	panel.custom_minimum_size = Vector2(430.0, 166.0)
 	root.add_child(panel)
 
 	var box := VBoxContainer.new()
@@ -196,9 +206,19 @@ func _build_ui() -> void:
 	control_label = Label.new()
 	control_label.name = "ControlLabel"
 	control_label.add_theme_font_size_override("font_size", 12)
-	control_label.text = "Controle: solta 0%"
+	control_label.text = "Bola: solta 0% | Boost 100%"
 	_ignore_mouse(control_label)
 	box.add_child(control_label)
+
+	boost_bar = ProgressBar.new()
+	boost_bar.name = "BoostBar"
+	boost_bar.min_value = 0.0
+	boost_bar.max_value = 100.0
+	boost_bar.value = 100.0
+	boost_bar.show_percentage = false
+	boost_bar.custom_minimum_size = Vector2(0.0, 10.0)
+	_ignore_mouse(boost_bar)
+	box.add_child(boost_bar)
 
 	hint_label = Label.new()
 	hint_label.name = "HintLabel"
@@ -369,7 +389,7 @@ func _build_intro_panel(root: Control) -> void:
 
 	var hotkeys := Label.new()
 	hotkeys.name = "HotkeysLabel"
-	hotkeys.text = "WASD - mover\nMouse - girar jogador/camera\nEspaco - pular\nLMB - chute\nRMB - chute forte\nR - reiniciar partida\nEsc - menu de sensibilidade"
+	hotkeys.text = "WASD - mover\nShift - boost de velocidade com stamina\nMouse - girar jogador/camera\nEspaco - pular\nLMB - chute\nRMB - chute forte alto\nR - reiniciar partida\nEsc - menu de sensibilidade"
 	hotkeys.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hotkeys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hotkeys.add_theme_font_size_override("font_size", 15)
@@ -522,8 +542,8 @@ func _set_event_message(message: String, duration: float) -> void:
 	event_message_time = maxf(0.05, duration)
 
 func _get_control_label(control_state: StringName) -> String:
-	if control_state == &"possession":
-		return "posse"
+	if control_state == &"contact":
+		return "contato"
 	if control_state == &"reachable":
 		return "alcance"
 	return "solta"

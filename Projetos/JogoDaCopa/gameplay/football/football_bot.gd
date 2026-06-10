@@ -28,6 +28,8 @@ const STATE_CELEBRATE: StringName = &"celebrate"
 var ball
 var own_goal_position: Vector3 = Vector3(0.0, 0.0, -19.0)
 var opponent_goal_position: Vector3 = Vector3(0.0, 0.0, 19.0)
+var field_half_width: float = 19.0
+var field_half_length: float = 27.0
 var current_state: StringName = STATE_KICKOFF
 var kick_cooldown_remaining: float = 0.0
 var windup_remaining: float = 0.0
@@ -44,10 +46,12 @@ func _ready() -> void:
 	super._ready()
 	configure_combatant(&"football_bot", 100.0, Color(0.94, 0.2, 0.16, 1.0))
 
-func configure(next_ball: Node3D, next_own_goal_position: Vector3, next_opponent_goal_position: Vector3) -> void:
+func configure(next_ball: Node3D, next_own_goal_position: Vector3, next_opponent_goal_position: Vector3, next_field_half_width: float = 19.0, next_field_half_length: float = 27.0) -> void:
 	ball = next_ball
 	own_goal_position = next_own_goal_position
 	opponent_goal_position = next_opponent_goal_position
+	field_half_width = next_field_half_width
+	field_half_length = next_field_half_length
 	current_state = STATE_CHASE_BALL
 	kick_cooldown_remaining = 0.0
 	windup_remaining = 0.0
@@ -189,8 +193,8 @@ func _build_ball_approach_target(goal_position: Vector3, offset_distance: float)
 	if ball_to_goal.length_squared() <= 0.0001:
 		ball_to_goal = Vector3.FORWARD
 	var target := ball_position - ball_to_goal.normalized() * maxf(0.0, offset_distance)
-	target.x = clampf(target.x, -14.0, 14.0)
-	target.z = clampf(target.z, -20.5, 20.5)
+	target.x = clampf(target.x, -field_half_width + 1.6, field_half_width - 1.6)
+	target.z = clampf(target.z, -field_half_length + 1.8, field_half_length - 1.8)
 	return target
 
 func _apply_aim_error(direction: Vector3) -> Vector3:

@@ -6,7 +6,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional temporario unico: `Projetos/JogoDaCopa/` (`JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE`; PC Windows editor-first futebol/minigames independente; proximo passo: playtest humano do Futebol em terceira pessoa e planejamento da proxima track)
+- Foco operacional temporario unico: `Projetos/JogoDaCopa/` (`JOGO_DA_COPA_ARCADE_ARENA_BOOST_V1_COMPLETE`; PC Windows editor-first futebol/minigames independente; proximo passo: playtest humano do Futebol como arena arcade fechada e planejamento da proxima track)
 - Pausados temporariamente por poucos dias: `Projetos/draxos-roguelike-cardgame/`, `Projetos/draxos-mobile/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Projetos pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -49,13 +49,13 @@
 
 ## JogoDaCopa
 
-- Status: **P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO - JOGO_DA_COPA_PROJECT_SPLIT_FOUNDATION_COMPLETE**
+- Status: **P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO - JOGO_DA_COPA_ARCADE_ARENA_BOOST_V1_COMPLETE**
 - Fase: `Implementacao - Football Minigames Tech Probe`
 - Local: `Projetos/JogoDaCopa/`
-- Baseline atual: projeto oficial implementavel separado do antigo `FPS Playground` para futebol e minigames de copa em Godot 4.6.2, PC Windows editor-first. A baseline inicial preserva o modo `Futebol`: 1x1 contra bot em terceira pessoa, sem armas, inicia pausado em `Como Jogar`/`Comecar`, LMB chute, RMB chute forte, bola `RigidBody3D` arcade solta, campo festivo por primitivas, gols fechados com piso e paredes laterais internas, gols ate 3, bot que ataca/defende, score HUD, feedback/audio sintetico de chute/gol, retorno ao menu pelo pause, avatares humanoides procedurais por primitivas para player/bot, selecao em memoria de pele/camisa inspirada em paises, animacoes basicas, camera third-person estilo Rocket League com avatar local visivel e chute por direcao corporal.
+- Baseline atual: projeto oficial implementavel separado do antigo `FPS Playground` para futebol e minigames de copa em Godot 4.6.2, PC Windows editor-first. A baseline atual preserva o modo `Futebol`: 1x1 contra bot em terceira pessoa, sem armas, inicia pausado em `Como Jogar`/`Comecar`, LMB chute, RMB chute forte alto, bola `RigidBody3D` arcade solta sem possession lock, campo 38x54, gols maiores/profundos, paredes altas de vidro, teto com colisao, estadio festivo por primitivas, gols ate 3, boost em `Shift` com stamina no HUD, bot que ataca/defende dentro do campo maior, score HUD, feedback/audio sintetico de chute/gol, retorno ao menu pelo pause, avatares humanoides procedurais por primitivas para player/bot, selecao em memoria de pele/camisa inspirada em paises, animacoes basicas e camera third-person com foco de bola sutil.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
 - Restricao operacional: tech probe independente para minigames de futebol; nao herdar sistemas de gameplay/economia/progressao/backend dos projetos Draxos. Sem armas/FPS shooter, export/Web/mobile, multiplayer, matchmaking ou economia ate track explicita.
-- Proximo passo: foco imediato do estudio em `Futebol`, playtest humano no editor e escolha da proxima track de minigame/gameplay.
+- Proximo passo: foco imediato do estudio em playtest humano do `Futebol` arcade fechado e escolha da proxima track de gameplay.
 
 ## rpg-isometrico
 

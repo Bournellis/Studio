@@ -5,7 +5,7 @@
 ## Ownership
 
 - `modes/menu/`: project entry and football minigame launch.
-- `modes/football/`: field assembly, score state, goal detection, possession, kicks and match lifecycle.
+- `modes/football/`: field assembly, score state, goal detection, loose-ball contact, kicks, boost snapshot and match lifecycle.
 - `modes/shared/`: runtime primitive creation.
 - `gameplay/avatar/`: procedural humanoid avatars, skin tones and country-inspired kits.
 - `gameplay/combat/`: reused character body, health and knockback base.

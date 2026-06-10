@@ -13,6 +13,7 @@ const EXPECTED_ACTIONS: PackedStringArray = [
 	"move_left",
 	"move_right",
 	"jump",
+	"boost",
 	"shoot",
 	"alt_fire",
 	"restart_round",
@@ -26,6 +27,8 @@ func before_all() -> void:
 func after_each() -> void:
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	for action_name: String in EXPECTED_ACTIONS:
+		Input.action_release(action_name)
 
 func test_input_actions_are_bootstrapped() -> void:
 	for action_name: String in EXPECTED_ACTIONS:
@@ -59,6 +62,11 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_not_null(football.get_node_or_null("FootballPitch"))
 	assert_not_null(football.get_node_or_null("NorthGoalSideWallL"))
 	assert_not_null(football.get_node_or_null("SouthGoalSideWallR"))
+	assert_not_null(football.get_node_or_null("WestGlassWall"))
+	assert_not_null(football.get_node_or_null("EastGlassWall"))
+	assert_not_null(football.get_node_or_null("ArenaGlassCeiling"))
+	assert_not_null(football.get_node_or_null("NorthBackGlass"))
+	assert_not_null(football.get_node_or_null("SouthBackGlass"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player/PlayerAvatar"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballChaseCamera"))
@@ -86,9 +94,15 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_true(football_hud.intro_panel.visible)
 	assert_not_null(football_hud.get_node_or_null("HudRoot/IntroCenter/IntroPanel"))
 	assert_not_null(football_hud.get_node_or_null("HudRoot/ScorePanel/ScoreBox/ControlLabel"))
+	assert_not_null(football_hud.get_node_or_null("HudRoot/ScorePanel/ScoreBox/BoostBar"))
+	var arena_config: Dictionary = football.debug_get_arena_config()
+	assert_gt(float(arena_config.get("field_width", 0.0)), 32.0)
+	assert_gt(float(arena_config.get("wall_height", 0.0)), 6.0)
+	assert_gt(float(arena_config.get("goal_half_width", 0.0)), 5.0)
+	assert_gt(football.debug_get_ball().physics_material_override.bounce, 0.5)
 	assert_no_new_orphans()
 
-func test_football_chase_camera_increases_ball_focus_when_ball_is_far() -> void:
+func test_football_chase_camera_keeps_ball_focus_subtle_when_far() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
 	add_child_autofree(football)
@@ -108,6 +122,7 @@ func test_football_chase_camera_increases_ball_focus_when_ball_is_far() -> void:
 	var far_weight: float = chase_camera.debug_get_ball_focus_weight()
 
 	assert_gt(far_weight, close_weight)
+	assert_true(far_weight <= 0.11)
 	assert_no_new_orphans()
 
 func test_football_intro_cycles_avatar_skin_and_country_kit() -> void:
@@ -133,7 +148,7 @@ func test_football_intro_cycles_avatar_skin_and_country_kit() -> void:
 	assert_true(hud.country_kit_label.text.contains("Argentina"))
 	assert_no_new_orphans()
 
-func test_football_player_dribble_control_nudges_near_ball_without_kick() -> void:
+func test_football_player_near_ball_stays_loose_without_dribble_lock() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
 	add_child_autofree(football)
@@ -153,9 +168,29 @@ func test_football_player_dribble_control_nudges_near_ball_without_kick() -> voi
 	football.debug_update_player_ball_control(0.1)
 
 	assert_eq(ball.debug_get_kick_count(), before_kicks)
-	assert_gt(ball.debug_get_dribble_control_count(), before_dribbles)
-	assert_eq(football.debug_get_player_ball_control_state(), &"possession")
-	assert_lt(ball.linear_velocity.z, -0.1)
+	assert_eq(ball.debug_get_dribble_control_count(), before_dribbles)
+	assert_eq(football.debug_get_player_ball_control_state(), &"contact")
+	assert_almost_eq(ball.linear_velocity.length(), 0.0, 0.001)
+	assert_no_new_orphans()
+
+func test_football_player_boost_spends_stamina() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var before_stamina: float = player.debug_get_boost_stamina()
+	Input.action_press("move_forward")
+	Input.action_press("boost")
+	await get_tree().physics_frame
+	Input.action_release("move_forward")
+	Input.action_release("boost")
+
+	assert_lt(player.debug_get_boost_stamina(), before_stamina)
+	assert_lt(football.debug_get_player_boost_fraction(), 1.0)
 	assert_no_new_orphans()
 
 func test_football_player_kick_assist_connects_near_front_side_ball() -> void:
@@ -172,7 +207,7 @@ func test_football_player_kick_assist_connects_near_front_side_ball() -> void:
 	player.rotation = Vector3.ZERO
 	var origin: Vector3 = football.debug_get_player_kick_origin()
 	var direction: Vector3 = football.debug_get_player_kick_direction()
-	football.debug_force_ball_position(origin + direction * 2.35 + Vector3.RIGHT * 1.34 + Vector3.DOWN * 0.34)
+	football.debug_force_ball_position(origin + direction * 2.05 + Vector3.RIGHT * 1.05 + Vector3.DOWN * 0.34)
 
 	var before_kicks: int = ball.debug_get_kick_count()
 	football._on_player_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 99.0, 99.0)
@@ -196,7 +231,7 @@ func test_football_strong_kick_uses_stronger_force() -> void:
 	football.debug_force_ball_position(football.debug_get_player_kick_origin() + football.debug_get_player_kick_direction() * 1.45 + Vector3.DOWN * 0.34)
 	football._on_player_strong_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 0.0, 0.0, 0.0, 0.0, false)
 
-	assert_almost_eq(ball.debug_get_last_kick_force(), 23.0, 0.01)
+	assert_almost_eq(ball.debug_get_last_kick_force(), 29.0, 0.01)
 	assert_eq(hud.last_event, &"strong_kick")
 	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"strong_kick")
 	assert_gt(ball.linear_velocity.length(), 0.1)
@@ -227,7 +262,7 @@ func test_football_goal_updates_score_and_match_ends_at_three() -> void:
 	await get_tree().physics_frame
 
 	football.debug_set_score(2, 0)
-	football.debug_force_ball_position(Vector3(0.0, 0.58, -22.35))
+	football.debug_force_ball_position(Vector3(0.0, 0.68, -27.35))
 	football._process_goal_detection()
 
 	assert_eq(football.debug_get_player_score(), 3)

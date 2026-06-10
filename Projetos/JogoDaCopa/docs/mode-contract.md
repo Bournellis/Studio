@@ -12,9 +12,12 @@
 
 - Root: `res://modes/football/football_root.gd`.
 - Owns player, bot, ball, field, score, goals, intro/how-to panel and HUD snapshot.
-- Player movement/input is reused from the old FPS controller, but football root owns kick direction, possession and assist.
+- Player movement/input is reused from the old FPS controller, but football root owns kick direction, loose-ball contact and kick assist.
 - LMB means kick.
 - RMB means strong kick.
+- `Shift` means temporary speed boost that spends stamina and then recharges.
+- The ball must remain physically loose: no possession lock or automatic dribble steering.
+- The arena is closed with high glass walls and roof collision so the ball can rebound from walls and ceiling.
 - Match ends at 3 goals.
 
 ## Reset

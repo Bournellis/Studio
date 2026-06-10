@@ -2,9 +2,11 @@ class_name FootballBall3D
 extends RigidBody3D
 
 @export var ball_radius: float = 0.48
-@export var max_horizontal_speed: float = 26.0
-@export var max_vertical_speed: float = 9.0
+@export var max_horizontal_speed: float = 34.0
+@export var max_vertical_speed: float = 15.5
 @export var anti_stuck_height: float = -3.0
+@export var floor_wall_bounce: float = 0.72
+@export var surface_friction: float = 0.22
 
 var spawn_position: Vector3 = Vector3(0.0, 0.58, 0.0)
 var last_kick_force: float = 0.0
@@ -13,9 +15,11 @@ var dribble_control_count: int = 0
 var reset_count: int = 0
 
 func _ready() -> void:
+	mass = 0.74
 	gravity_scale = 1.0
-	linear_damp = 0.55
-	angular_damp = 0.72
+	linear_damp = 0.18
+	angular_damp = 0.34
+	physics_material_override = _build_physics_material()
 	contact_monitor = true
 	max_contacts_reported = 8
 	can_sleep = false
@@ -35,6 +39,7 @@ func kick(direction: Vector3, force: float, lift: float = 0.0) -> void:
 	if flat.length_squared() <= 0.0001:
 		flat = Vector3.FORWARD
 	var impulse := flat.normalized() * maxf(0.0, force) + Vector3.UP * maxf(0.0, lift)
+	sleeping = false
 	linear_velocity += impulse
 	angular_velocity += Vector3(-flat.z, 0.0, flat.x).normalized() * clampf(force * 0.18, 0.0, 8.0)
 	last_kick_force = force
@@ -110,4 +115,10 @@ func _build_ball_material() -> StandardMaterial3D:
 	material.emission_enabled = true
 	material.emission = Color(0.28, 0.62, 1.0, 1.0)
 	material.emission_energy_multiplier = 0.08
+	return material
+
+func _build_physics_material() -> PhysicsMaterial:
+	var material := PhysicsMaterial.new()
+	material.friction = clampf(surface_friction, 0.0, 1.0)
+	material.bounce = clampf(floor_wall_bounce, 0.0, 1.0)
 	return material

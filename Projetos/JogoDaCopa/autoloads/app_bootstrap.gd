@@ -6,6 +6,7 @@ const ACTIONS: Dictionary[String, Array] = {
 	"move_left": [{"kind": "key", "code": KEY_A}],
 	"move_right": [{"kind": "key", "code": KEY_D}],
 	"jump": [{"kind": "key", "code": KEY_SPACE}],
+	"boost": [{"kind": "key", "code": KEY_SHIFT}],
 	"shoot": [{"kind": "mouse", "code": MOUSE_BUTTON_LEFT}],
 	"alt_fire": [{"kind": "mouse", "code": MOUSE_BUTTON_RIGHT}],
 	"restart_round": [{"kind": "key", "code": KEY_R}],

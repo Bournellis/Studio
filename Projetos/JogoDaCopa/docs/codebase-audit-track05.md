@@ -13,4 +13,4 @@ The Track 05 hardening work remains useful as historical context, but `JogoDaCop
 
 - Scene generation is deterministic.
 - Validation is local and fast.
-- Football rules, avatar behavior, camera focus and possession/kick assist have focused coverage.
+- Historical note: Football rules, avatar behavior, camera focus and the earlier possession/kick assist pass had focused coverage before the later arcade arena direction removed possession lock.

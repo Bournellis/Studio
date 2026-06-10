@@ -17,7 +17,7 @@ static func can_reach_ball(
 	if projected < -0.15 or projected > kick_reach + 0.85:
 		return false
 	var closest := origin + shot_direction * projected
-	return closest.distance_to(ball_position) <= ball_radius + 0.75
+	return closest.distance_to(ball_position) <= ball_radius + 0.45
 
 static func get_kick_assist(
 	origin: Vector3,
@@ -42,7 +42,7 @@ static func get_kick_assist(
 	var projected := clampf(flat_delta.dot(flat_direction), 0.0, assist_radius)
 	var closest := flat_direction * projected
 	var side_distance := closest.distance_to(flat_delta)
-	var side_limit := ball_radius + 1.05
+	var side_limit := ball_radius + 0.72
 	if side_distance > side_limit:
 		return {"connected": false, "assist_strength": 0.0}
 	var distance_strength := 1.0 - clampf((distance - kick_reach) / maxf(0.01, assist_radius - kick_reach), 0.0, 1.0)
@@ -67,7 +67,7 @@ static func build_kick_direction(
 		flat_camera.y = 0.0
 	var blended := flat_camera.normalized()
 	if flat_to_ball.length_squared() > 0.0001:
-		blended = (blended * 0.82 + flat_to_ball.normalized() * 0.18).normalized()
+		blended = (blended * 0.92 + flat_to_ball.normalized() * 0.08).normalized()
 	return blended
 
 static func get_player_contact_kick(
@@ -91,9 +91,9 @@ static func get_player_contact_kick(
 static func get_player_possession_state(
 	player_position: Vector3,
 	player_forward: Vector3,
-	player_velocity: Vector3,
+	_player_velocity: Vector3,
 	ball_position: Vector3,
-	possession_radius: float,
+	contact_radius: float,
 	reach_radius: float
 ) -> Dictionary:
 	var flat_forward := _flatten_normalized(player_forward)
@@ -104,25 +104,22 @@ static func get_player_possession_state(
 	var distance := flat_delta.length()
 	if distance <= 0.0001:
 		return {
-			"state": &"possession",
+			"state": &"contact",
 			"strength": 1.0,
 			"direction": flat_forward
 		}
 	var ball_direction := flat_delta.normalized()
 	var forward_dot := ball_direction.dot(flat_forward)
-	var reachable := distance <= reach_radius and forward_dot >= -0.2
-	var possessed := distance <= possession_radius and forward_dot >= 0.02
+	var reachable := distance <= reach_radius and forward_dot >= -0.12
+	var touching := distance <= contact_radius
 	var state: StringName = &"free"
-	if possessed:
-		state = &"possession"
+	if touching:
+		state = &"contact"
 	elif reachable:
 		state = &"reachable"
-	var flat_velocity := _flatten_normalized(player_velocity)
 	var dribble_direction := flat_forward
-	if flat_velocity.length_squared() > 0.0001:
-		dribble_direction = (flat_forward * 0.68 + flat_velocity * 0.32).normalized()
-	var proximity_strength := 1.0 - clampf(distance / maxf(0.01, possession_radius), 0.0, 1.0)
-	var facing_strength := clampf((forward_dot + 0.18) / 1.18, 0.0, 1.0)
+	var proximity_strength := 1.0 - clampf(distance / maxf(0.01, reach_radius), 0.0, 1.0)
+	var facing_strength := clampf((forward_dot + 0.12) / 1.12, 0.0, 1.0)
 	return {
 		"state": state,
 		"strength": clampf(proximity_strength * 0.62 + facing_strength * 0.38, 0.0, 1.0),
