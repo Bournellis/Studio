@@ -239,19 +239,22 @@ function Build-Manifest {
     return [ordered]@{
         schema_version = "internal_alpha_manifest_v1"
         channel = "internal_alpha"
-        latest_version = "0.0.22-alpha.0"
-        latest_version_code = 22
+        latest_version = "0.0.23-alpha.0"
+        latest_version_code = 23
         minimum_supported_version = "0.0.13-alpha.0"
         minimum_supported_version_code = 13
         released_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         requires_save_reset = $false
         portal_url = $PortalUrl
         notes = @(
-            "Bosque Arena Abandon Recovery Authority v1 publicado na URL principal de Internal Alpha.",
+            "Bosque Overlay Layer And Readiness Authority v1 publicado na URL principal de Internal Alpha.",
             "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
             "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
             "Voltar, Fechar e Esc/Web usam a mesma autoridade de fechamento do overlay e devolvem input ao mesmo node do Bosque sem rebootstrap.",
-            "Arena abandonar/encerrar agora valida liberacao real da tentativa antes de declarar sucesso e cobre tentativa antiga local sem ID remoto valido.",
+            "Arena active/replay agora usa camada fullscreen acima do painel do menu, sem corte lateral do duelo.",
+            "Confirmacoes de Arena, Loja e fluxos futuros usam modal global acima de menu e Arena.",
+            "Menus com refresh de servidor mostram estado de sincronizacao antes de aceitar comandos dependentes da resposta.",
+            "Arena abandonar/encerrar valida liberacao real da tentativa antes de declarar sucesso e cobre tentativa antiga local sem ID remoto valido.",
             "Social, Loja e Arena usam controles interativos no overlay com foco, texto, confirmacao e botoes embutidos validados no Web/canvas.",
             "Menus abertos pelo Bosque usam rota de overlay sem acao mutante fantasma.",
             "Refresh read-only nao bloqueia fechamento; respostas tardias sao ignoradas quando o overlay fecha ou muda de rota.",
@@ -263,7 +266,7 @@ function Build-Manifest {
             "Menu usa busy por escopo para nao congelar acoes independentes durante requisicoes pendentes.",
             "Fogueira Estavel I so libera receitas apos ACK de structures.fogueira_estavel_1.",
             $(if ($PublicDownloads) { "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage." } else { "Portal/Web rodam no Cloudflare Pages; downloads usam login alpha e URLs assinadas temporarias." }),
-            "Manifesto recomenda build 0.0.22-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+            "Manifesto recomenda build 0.0.23-alpha.0 e mantem build minima 0.0.13-alpha.0.",
             "Progression Lab usa save separado e nao pontua ranking."
         )
         artifacts = [ordered]@{
@@ -495,8 +498,8 @@ if ($ShouldPackage -or $IsRemoteMutation) {
         -IndexPath $webIndex `
         -ReleaseRoot $ReleaseRoot `
         -StorageBaseUrl $storageBaseUrl `
-        -AppVersion "0.0.22-alpha.0" `
-        -AppVersionCode 22
+        -AppVersion "0.0.23-alpha.0" `
+        -AppVersionCode 23
 }
 
 $androidRecord = Artifact-Record -Path $androidApk -Label "Android APK" -Url $androidUrl -ExpectedMinimumBytes 1000000
@@ -551,8 +554,8 @@ $plan = [ordered]@{
     }
     app = [ordered]@{
         channel = "internal_alpha"
-        version = "0.0.22-alpha.0"
-        version_code = 22
+        version = "0.0.23-alpha.0"
+        version_code = 23
         requires_save_reset = $false
     }
     artifacts = $artifactRecords
@@ -731,8 +734,8 @@ if ($Mode -eq "FullPublish") {
 $report = [ordered]@{
     schema_version = "internal_alpha_publication_v2"
     channel = "internal_alpha"
-    app_version = "0.0.22-alpha.0"
-    app_version_code = 22
+    app_version = "0.0.23-alpha.0"
+    app_version_code = 23
     mode = $Mode
     generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     bucket = $BucketName

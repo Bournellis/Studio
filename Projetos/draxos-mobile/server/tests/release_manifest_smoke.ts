@@ -28,7 +28,7 @@ assertEq(
 );
 assertEq(
   stringField(manifest, "latest_version"),
-  "0.0.22-alpha.0",
+  "0.0.23-alpha.0",
   "release manifest should expose the current alpha version",
 );
 assertEq(

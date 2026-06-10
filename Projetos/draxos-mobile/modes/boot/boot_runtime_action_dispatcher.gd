@@ -4,6 +4,8 @@ extends "res://modes/boot/boot_runtime_navigation_controller.gd"
 func _trigger_action(action_id: String, confirm_message: String = "") -> void:
 	var route := AppShellActionRouterScript.route_action(action_id, _action_context())
 	if _action_scope_is_busy(str(route.get("scope_id", OperationStateScript.DEFAULT_SCOPE))):
+		if _shell_overlay_is_open():
+			_shell_overlay_record_ignored_input("route_not_ready")
 		return
 	if confirm_message != "":
 		if _shell_overlay_is_open() and _mode_shell_overlay_controller.request_confirmation(self, action_id, confirm_message):
@@ -47,6 +49,8 @@ func _execute_action(action_id: String) -> void:
 	var endpoint := str(route.get("mutation_endpoint", "")).strip_edges()
 	var allow_local_arena_abandon := _arena_abandon_can_run_locally(action)
 	if _action_scope_is_busy(scope):
+		if _shell_overlay_is_open():
+			_shell_overlay_record_ignored_input("route_not_ready")
 		return
 	_record_web_action_input(action)
 	_active_action_id = action
@@ -54,6 +58,8 @@ func _execute_action(action_id: String) -> void:
 	if endpoint != "" and _shell_overlay_is_open():
 		_shell_overlay_close_lock_action_id = action
 	_error_label.text = ""
+	if endpoint != "" and _shell_overlay_is_open():
+		_shell_overlay_set_route_phase("critical", _shell_overlay_current_route(), "Acao critica em andamento...")
 	var action_started_ms := int(Time.get_ticks_msec())
 	_emit_client_event("action_start", _as_dictionary(route.get("payload", _action_payload(action))))
 	if bool(route.get("blocked_by_update", false)) and not allow_local_arena_abandon:
@@ -242,6 +248,12 @@ func _execute_action(action_id: String) -> void:
 	_active_action_scope = OperationStateScript.DEFAULT_SCOPE
 	if _shell_overlay_close_lock_action_id == action:
 		_shell_overlay_close_lock_action_id = ""
+	if endpoint != "":
+		_operation_state.clear_busy(scope)
+		_is_busy = _operation_state.any_busy()
+	if _shell_overlay_is_open():
+		_shell_overlay_set_route_phase("ready", _shell_overlay_current_route(), "")
+	_sync_buttons()
 
 func _record_web_action_input(action_id: String) -> void:
 	_web_action_sequence += 1

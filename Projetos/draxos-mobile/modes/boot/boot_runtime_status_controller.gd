@@ -1,6 +1,38 @@
 extends "res://modes/boot/boot_runtime_surface_api.gd"
 
 # Busy state, status feedback, social auto-sync, and precondition guards.
+func _shell_overlay_set_route_phase(phase: String, route_id: String = "", reason: String = "") -> void:
+	if _mode_shell_overlay_controller != null and _mode_shell_overlay_controller.is_open():
+		_mode_shell_overlay_controller.set_route_phase(self, phase, route_id, reason)
+
+func _clear_shell_overlay_busy_except_route(route_id: String) -> void:
+	var keep_scope := _shell_overlay_scope_for_route(route_id)
+	var cleared := false
+	for scope: String in _operation_state.busy_scopes():
+		if scope == OperationStateScript.DEFAULT_SCOPE or scope == keep_scope:
+			continue
+		_operation_state.invalidate_scope(scope)
+		cleared = true
+	if cleared:
+		_is_busy = _operation_state.any_busy()
+
+func _shell_overlay_scope_for_route(route_id: String) -> String:
+	match AppShellRouteContractScript.normalize(route_id):
+		ROUTE_ACCOUNT:
+			return _surface_scope_id(SessionStore.SURFACE_ACCOUNT)
+		SCREEN_BASE, ROUTE_ARENA_LOADOUT:
+			return _surface_scope_id(SessionStore.SURFACE_BASE)
+		SCREEN_SOCIAL:
+			return _surface_scope_id(SessionStore.SURFACE_SOCIAL)
+		SCREEN_COMPETITION:
+			return _surface_scope_id(SessionStore.SURFACE_COMPETITION)
+		SCREEN_SHOP:
+			return _surface_scope_id(SessionStore.SURFACE_MONETIZATION)
+		ROUTE_ARENA_SELECTION, ROUTE_ARENA_ACTIVE, ROUTE_ARENA_REPLAY, ROUTE_ARENA_BUFF_CHOICE, ROUTE_ARENA_SUMMARY:
+			return _surface_scope_id(SessionStore.SURFACE_ARENA)
+		_:
+			return ""
+
 func _set_busy(is_busy: bool, message: String) -> void:
 	if is_busy:
 		_operation_state.begin_busy(_active_action_scope, _active_action_id)
@@ -215,6 +247,7 @@ func _begin_surface_refresh(surface: String, endpoint: String, message: String, 
 	if _shell_overlay_is_open():
 		token["shell_overlay_epoch"] = _shell_overlay_epoch()
 		token["shell_overlay_route"] = _shell_overlay_current_route()
+		_shell_overlay_set_route_phase("refreshing", _shell_overlay_current_route(), "Sincronizando com o servidor...")
 	_status_label.text = message
 	_detail_label.text = "Atualizando com o servidor..." if rendered_from_cache else "Aguardando resposta do servidor..."
 	_error_label.text = ""
@@ -255,6 +288,8 @@ func _finish_surface_refresh(surface: String, token: Dictionary, result: Diction
 	_detail_label.text = message
 	_sync_immersive_feedback()
 	_sync_buttons()
+	if _shell_overlay_is_open():
+		_shell_overlay_set_route_phase("ready", _shell_overlay_current_route(), message)
 	return true
 
 func _fail_surface_refresh(surface: String, token: Dictionary, result: Dictionary) -> bool:
@@ -270,6 +305,8 @@ func _fail_surface_refresh(surface: String, token: Dictionary, result: Dictionar
 	_is_busy = _operation_state.any_busy()
 	_sync_immersive_feedback()
 	_sync_buttons()
+	if _shell_overlay_is_open():
+		_shell_overlay_set_route_phase("ready", _shell_overlay_current_route(), "Servidor nao respondeu. Acoes disponiveis usam o estado local/cache.")
 	return true
 
 func _surface_token_for_session(token: Dictionary) -> Dictionary:
@@ -311,6 +348,8 @@ func _ignore_stale_surface_refresh(surface: String, token: Dictionary, message: 
 	_is_busy = _operation_state.any_busy()
 	_sync_immersive_feedback()
 	_sync_buttons()
+	if _shell_overlay_is_open():
+		_shell_overlay_set_route_phase("ready", _shell_overlay_current_route(), message)
 	return true
 
 func _clear_shell_overlay_transient_busy() -> void:
