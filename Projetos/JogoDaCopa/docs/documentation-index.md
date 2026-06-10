@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK_01C_ARENA_STADIUM_VISUAL_REWORK_COMPLETE`
+- Status: `JOGO_DA_COPA_TRACK_02_QUALITY_UPGRADE_V1_COMPLETE`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -11,8 +11,9 @@
 3. `architecture-overview.md`
 4. `work-plan.md`
 5. `quality-upgrade-plan.md`
-5. `mode-contract.md`
-6. `validation.md`
+6. `code-review-track02-series-v1.md`
+7. `mode-contract.md`
+8. `validation.md`
 
 ## References
 
@@ -21,6 +22,7 @@
 - `tuning-guide.md`
 - `validation-profiles.md`
 - `publication-readiness.md`
+- `code-review-track02-series-v1.md`
 - `codebase-audit-track05.md`
 - `reuse-map.md`
 
