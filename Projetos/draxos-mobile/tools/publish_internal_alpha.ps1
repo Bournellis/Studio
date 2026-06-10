@@ -650,16 +650,14 @@ if ($ShouldUpload -and -not $SkipUpload) {
         $contentType = Content-TypeFor -Path $file.FullName
         [void](Invoke-SupabaseOptional -Arguments @(
             "storage", "rm",
-            "--project-ref",
-            $projectRef,
+            "--linked",
             "--experimental",
             "--yes",
             $destination
         ))
         Invoke-Supabase -Arguments @(
             "storage", "cp",
-            "--project-ref",
-            $projectRef,
+            "--linked",
             "--experimental",
             $sourcePath,
             $destination,
