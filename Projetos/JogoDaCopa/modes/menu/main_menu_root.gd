@@ -6,7 +6,14 @@ const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
-const MENU_PANEL_SIZE: Vector2 = Vector2(560.0, 590.0)
+const MENU_PANEL_SIZE: Vector2 = Vector2(560.0, 640.0)
+const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
+const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
+const BOT_DIFFICULTY_LABELS: Dictionary = {
+	&"easy": "Bot facil",
+	&"normal": "Bot normal",
+	&"hard": "Bot dificil"
+}
 
 var football_button: Button
 var quit_button: Button
@@ -18,6 +25,7 @@ var preview_avatar
 var preview_ball: MeshInstance3D
 var skin_label: Label
 var kit_label: Label
+var difficulty_label: Label
 var skin_swatch: ColorRect
 var kit_swatch: ColorRect
 var volume_slider: HSlider
@@ -26,6 +34,7 @@ var quality_option: OptionButton
 var preview_time: float = 0.0
 var selected_skin_tone_id: StringName = AvatarCatalogScript.DEFAULT_SKIN_TONE_ID
 var selected_country_kit_id: StringName = AvatarCatalogScript.DEFAULT_COUNTRY_KIT_ID
+var selected_bot_difficulty_id: StringName = &"normal"
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -59,6 +68,12 @@ func debug_has_arena_preview() -> bool:
 
 func debug_get_selected_kit_id() -> StringName:
 	return selected_country_kit_id
+
+func debug_get_selected_bot_difficulty_id() -> StringName:
+	return selected_bot_difficulty_id
+
+func debug_cycle_bot_difficulty(step: int = 1) -> void:
+	_cycle_bot_difficulty(step)
 
 func debug_get_quality_text() -> String:
 	if quality_option == null:
@@ -305,6 +320,22 @@ func _build_selector_rows(parent: VBoxContainer) -> void:
 		_update_preview_selection()
 	))
 
+	var difficulty_row := HBoxContainer.new()
+	difficulty_row.name = "BotDifficultyRow"
+	difficulty_row.add_theme_constant_override("separation", 8)
+	parent.add_child(difficulty_row)
+
+	var difficulty_swatch := _build_swatch("BotDifficultySwatch", Color(1.0, 0.58, 0.22, 1.0))
+	difficulty_row.add_child(difficulty_swatch)
+	difficulty_row.add_child(_build_cycle_button("BotDifficultyPreviousButton", "<", func() -> void:
+		_cycle_bot_difficulty(-1)
+	))
+	difficulty_label = _build_row_label("BotDifficultyLabel", _get_bot_difficulty_label(selected_bot_difficulty_id))
+	difficulty_row.add_child(difficulty_label)
+	difficulty_row.add_child(_build_cycle_button("BotDifficultyNextButton", ">", func() -> void:
+		_cycle_bot_difficulty(1)
+	))
+
 func _build_settings_rows(parent: VBoxContainer) -> void:
 	var volume_row := HBoxContainer.new()
 	volume_row.name = "VolumeRow"
@@ -414,6 +445,21 @@ func _update_preview_selection() -> void:
 	if kit_swatch != null:
 		kit_swatch.color = AvatarCatalogScript.get_kit_primary_color(selected_country_kit_id)
 
+func _cycle_bot_difficulty(step: int) -> void:
+	var index := BOT_DIFFICULTY_IDS.find(selected_bot_difficulty_id)
+	if index < 0:
+		index = 1
+	index = (index + step) % BOT_DIFFICULTY_IDS.size()
+	if index < 0:
+		index += BOT_DIFFICULTY_IDS.size()
+	selected_bot_difficulty_id = StringName(BOT_DIFFICULTY_IDS[index])
+	if difficulty_label != null:
+		difficulty_label.text = _get_bot_difficulty_label(selected_bot_difficulty_id)
+	status_label.text = "Dificuldade: %s" % _get_bot_difficulty_label(selected_bot_difficulty_id)
+
+func _get_bot_difficulty_label(difficulty_id: StringName) -> String:
+	return str(BOT_DIFFICULTY_LABELS.get(difficulty_id, "Bot normal"))
+
 func _on_volume_changed(value: float) -> void:
 	var master_bus := AudioServer.get_bus_index("Master")
 	if master_bus >= 0:
@@ -422,4 +468,5 @@ func _on_volume_changed(value: float) -> void:
 
 func _load_mode(scene_path: String) -> void:
 	status_label.text = "Carregando..."
+	get_tree().root.set_meta(BOT_DIFFICULTY_META_KEY, selected_bot_difficulty_id)
 	get_tree().change_scene_to_file(scene_path)

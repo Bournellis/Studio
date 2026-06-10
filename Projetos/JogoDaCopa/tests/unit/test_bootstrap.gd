@@ -6,6 +6,7 @@ const FootballBallScript = preload("res://gameplay/football/football_ball.gd")
 const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
+const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 
 const EXPECTED_ACTIONS: PackedStringArray = [
 	"move_forward",
@@ -27,6 +28,8 @@ func before_all() -> void:
 func after_each() -> void:
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	if get_tree().root.has_meta(BOT_DIFFICULTY_META_KEY):
+		get_tree().root.remove_meta(BOT_DIFFICULTY_META_KEY)
 	for action_name: String in EXPECTED_ACTIONS:
 		Input.action_release(action_name)
 
@@ -46,6 +49,9 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_eq(menu.debug_get_mode_path(&"arena"), "")
 	assert_true(menu.debug_has_arena_preview())
 	assert_eq(menu.debug_get_selected_kit_id(), &"brazil")
+	assert_eq(menu.debug_get_selected_bot_difficulty_id(), &"normal")
+	menu.debug_cycle_bot_difficulty(1)
+	assert_eq(menu.debug_get_selected_bot_difficulty_id(), &"hard")
 	assert_eq(menu.debug_get_quality_text(), "Alta")
 	assert_not_null(menu.get_node_or_null("ArenaPreviewViewport"))
 	assert_not_null(menu.get_node_or_null("ArenaPreview"))
@@ -53,11 +59,12 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/ArenaButton"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/SkinPreviewRow"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/KitPreviewRow"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/BotDifficultyRow"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/VolumeRow/VolumeSlider"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/QualityRow/QualityOption"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/QuitButton"))
 	var menu_panel := menu.get_node("MenuCenter/MenuPanel") as PanelContainer
-	assert_eq(menu_panel.custom_minimum_size, Vector2(560.0, 590.0))
+	assert_eq(menu_panel.custom_minimum_size, Vector2(560.0, 640.0))
 	assert_no_new_orphans()
 
 func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
@@ -131,11 +138,13 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_eq(football.debug_get_goal_limit(), 3)
 	assert_eq(football.debug_get_player_score(), 0)
 	assert_eq(football.debug_get_bot_score(), 0)
-	assert_true(football.debug_get_stadium_scoreboard_text("North").contains("0 - 0"))
+	assert_eq(football.debug_get_stadium_scoreboard_text("North"), "BRA 0 - 0 FRA")
+	football.debug_cycle_country_kit(1)
 	football.debug_set_score(2, 1)
 	football._process(0.0)
-	assert_true(football.debug_get_stadium_scoreboard_text("North").contains("2 - 1"))
+	assert_eq(football.debug_get_stadium_scoreboard_text("North"), "ARG 2 - 1 FRA")
 	football.debug_set_score(0, 0)
+	football.debug_cycle_country_kit(-1)
 	football._process(0.0)
 	assert_true(football.debug_get_ball().get_script() == FootballBallScript)
 	assert_not_null(load("res://assets/football/football_ball_panels.gdshader"))
@@ -144,8 +153,9 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_true(football.debug_get_bot().get_script() == FootballBotScript)
 	assert_true(football.debug_get_player_avatar().get_script() == PlayerAvatarScript)
 	assert_true(football.debug_get_bot_avatar().get_script() == PlayerAvatarScript)
-	assert_true(football.debug_get_player_avatar().debug_has_asset_skeleton())
-	assert_true(football.debug_get_player_avatar().debug_has_animation_tree())
+	assert_null(football.debug_get_player_avatar().get_node_or_null("AvatarParts/CopaAssetSkeleton"))
+	assert_null(football.debug_get_player_avatar().get_node_or_null("AvatarParts/AssetAnimationTree"))
+	assert_true(football.debug_get_player_avatar().debug_has_persistent_vfx())
 	assert_true(football.debug_get_chase_camera().get_script() == FootballChaseCameraScript)
 	assert_true(football.debug_get_chase_camera().debug_get_camera().current)
 	assert_false(football.debug_get_player().get_camera().current)
@@ -195,6 +205,29 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 		assert_gt(glass_material.emission_energy_multiplier, 0.5)
 	assert_gt(football.debug_get_ball().physics_material_override.bounce, 0.8)
 	assert_gt(football.debug_get_ball().physics_material_override.friction, 0.3)
+	assert_no_new_orphans()
+
+func test_football_ball_indicator_uses_player_local_basis() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	var player = football.debug_get_player()
+	var hud = football.get_node("FootballHud")
+	player.global_position = Vector3.ZERO
+	player.rotation.y = PI * 0.5
+	await get_tree().process_frame
+
+	var forward: Vector3 = -player.global_transform.basis.z
+	football.debug_force_ball_position(player.global_position + forward * 24.0 + Vector3.UP * 0.63)
+	hud.update_snapshot(football.debug_build_hud_snapshot())
+	assert_true(hud.debug_get_ball_indicator_text().contains("FRENTE"))
+
+	var right: Vector3 = player.global_transform.basis.x
+	football.debug_force_ball_position(player.global_position + right * 24.0 + Vector3.UP * 0.63)
+	hud.update_snapshot(football.debug_build_hud_snapshot())
+	assert_true(hud.debug_get_ball_indicator_text().contains("D"))
 	assert_no_new_orphans()
 
 func test_football_chase_camera_keeps_ball_focus_subtle_when_far() -> void:
@@ -405,7 +438,7 @@ func test_football_bot_uses_prediction_difficulty_and_boost() -> void:
 
 	var bot = football.debug_get_bot()
 	var ball = football.debug_get_ball()
-	football.debug_set_bot_difficulty(&"hard")
+	football.set_bot_difficulty(&"hard")
 	football.debug_force_ball_position(Vector3(0.0, 0.58, 0.0))
 	ball.linear_velocity = Vector3(8.0, 0.0, 0.0)
 	bot._physics_process(0.1)
@@ -415,6 +448,21 @@ func test_football_bot_uses_prediction_difficulty_and_boost() -> void:
 	assert_lt(bot.debug_get_aim_error_radius(), 0.2)
 	assert_gt(bot.debug_get_last_predicted_ball_position().x, ball.global_position.x)
 	assert_true(bot.debug_is_boosting())
+	assert_no_new_orphans()
+
+func test_football_uses_main_menu_bot_difficulty_in_hud() -> void:
+	get_tree().root.set_meta(BOT_DIFFICULTY_META_KEY, &"hard")
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	var hud = football.get_node("FootballHud")
+	hud.update_snapshot(football.debug_build_hud_snapshot())
+
+	assert_eq(football.debug_get_bot_difficulty_id(), &"hard")
+	assert_eq(football.debug_get_bot().debug_get_difficulty_id(), &"hard")
+	assert_true(hud.flow_label.text.contains("Bot hard"))
 	assert_no_new_orphans()
 
 func test_football_kickoff_alternates_after_goal_reset() -> void:
@@ -466,13 +514,16 @@ func test_football_feedback_exposes_boost_and_skid_vfx() -> void:
 	add_child_autofree(football)
 	await get_tree().process_frame
 
+	var avatar = football.debug_get_player_avatar()
 	var feedback = football.debug_get_feedback()
-	feedback.play_boost_trail(Vector3.ZERO, Vector3.FORWARD)
-	feedback.play_skid_dust(Vector3.ZERO)
+	assert_true(avatar.debug_has_persistent_vfx())
 
-	assert_eq(feedback.debug_get_boost_trail_count(), 1)
-	assert_eq(feedback.debug_get_skid_dust_count(), 1)
-	assert_gt(feedback.debug_active_effect_count(), 0)
+	avatar.set_boost_trail_active(true)
+	avatar.set_skid_dust_active(true)
+
+	assert_true(avatar.debug_is_boost_trail_emitting())
+	assert_true(avatar.debug_is_skid_dust_emitting())
+	assert_eq(feedback.debug_active_effect_count(), 0)
 	assert_no_new_orphans()
 
 func test_football_bot_kick_request_moves_ball() -> void:

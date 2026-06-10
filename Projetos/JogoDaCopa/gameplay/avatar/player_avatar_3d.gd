@@ -16,10 +16,8 @@ var stride_time: float = 0.0
 var last_move_speed: float = 0.0
 var last_grounded: bool = true
 var last_vertical_velocity: float = 0.0
-var asset_skeleton: Skeleton3D
-var asset_animation_player: AnimationPlayer
-var asset_animation_tree: AnimationTree
-var current_asset_clip: StringName = &"idle"
+var boost_trail_particles: GPUParticles3D
+var skid_dust_particles: GPUParticles3D
 
 func _ready() -> void:
 	_build_avatar()
@@ -86,6 +84,14 @@ func play_hit() -> void:
 	animation_timer = 0.22
 	_apply_animation()
 
+func set_boost_trail_active(is_active: bool) -> void:
+	if boost_trail_particles != null:
+		boost_trail_particles.emitting = is_active
+
+func set_skid_dust_active(is_active: bool) -> void:
+	if skid_dust_particles != null:
+		skid_dust_particles.emitting = is_active
+
 func debug_get_part_count() -> int:
 	return part_meshes.size()
 
@@ -116,14 +122,14 @@ func debug_get_part_albedo_color(part_id: StringName) -> Color:
 		return Color.TRANSPARENT
 	return material.albedo_color
 
-func debug_has_asset_skeleton() -> bool:
-	return asset_skeleton != null and asset_skeleton.get_bone_count() >= 6
+func debug_has_persistent_vfx() -> bool:
+	return boost_trail_particles != null and skid_dust_particles != null
 
-func debug_has_animation_tree() -> bool:
-	return asset_animation_tree != null and asset_animation_tree.active
+func debug_is_boost_trail_emitting() -> bool:
+	return boost_trail_particles != null and boost_trail_particles.emitting
 
-func debug_get_current_asset_clip() -> StringName:
-	return current_asset_clip
+func debug_is_skid_dust_emitting() -> bool:
+	return skid_dust_particles != null and skid_dust_particles.emitting
 
 func _build_avatar() -> void:
 	if part_root != null:
@@ -142,7 +148,7 @@ func _build_avatar() -> void:
 	_add_limb(&"right", Vector3(0.47, 1.22, 0.0), 0.10)
 	_add_leg(&"left", Vector3(-0.19, 0.42, 0.0))
 	_add_leg(&"right", Vector3(0.19, 0.42, 0.0))
-	_build_asset_animation_rig()
+	_build_persistent_vfx()
 	_apply_first_person_visibility()
 
 func _add_limb(side_id: StringName, pivot_position: Vector3, side_bias: float) -> void:
@@ -258,81 +264,69 @@ func _apply_animation() -> void:
 		_rotate_pivot(&"left_arm", Vector3(0.42, 0.0, -0.18))
 		_rotate_pivot(&"right_arm", Vector3(0.42, 0.0, 0.18))
 		part_root.rotation.x = 0.08
-	_sync_asset_animation_tree()
 
-func _build_asset_animation_rig() -> void:
-	if asset_skeleton != null:
-		return
-	asset_skeleton = Skeleton3D.new()
-	asset_skeleton.name = "CopaAssetSkeleton"
-	part_root.add_child(asset_skeleton)
-	_add_asset_bone("root", -1, Vector3(0.0, 0.0, 0.0))
-	_add_asset_bone("hips", 0, Vector3(0.0, 0.55, 0.0))
-	_add_asset_bone("spine", 1, Vector3(0.0, 1.05, 0.0))
-	_add_asset_bone("head", 2, Vector3(0.0, 1.6, 0.0))
-	_add_asset_bone("left_leg", 1, Vector3(-0.2, 0.15, 0.0))
-	_add_asset_bone("right_leg", 1, Vector3(0.2, 0.15, 0.0))
-	_add_asset_bone("left_arm", 2, Vector3(-0.52, 1.18, 0.0))
-	_add_asset_bone("right_arm", 2, Vector3(0.52, 1.18, 0.0))
+func _build_persistent_vfx() -> void:
+	if boost_trail_particles == null:
+		boost_trail_particles = _create_persistent_particles(
+			"BoostTrailParticles",
+			Vector3(0.0, 0.32, 0.58),
+			Color(0.3, 0.92, 1.0, 1.0),
+			54,
+			0.26,
+			Vector3(0.0, 0.05, 1.0),
+			1.25,
+			0.04
+		)
+		part_root.add_child(boost_trail_particles)
+	if skid_dust_particles == null:
+		skid_dust_particles = _create_persistent_particles(
+			"SkidDustParticles",
+			Vector3(0.0, 0.08, 0.02),
+			Color(0.72, 0.84, 0.68, 0.82),
+			28,
+			0.28,
+			Vector3(0.0, 0.7, 0.12),
+			0.75,
+			0.055
+		)
+		part_root.add_child(skid_dust_particles)
 
-	asset_animation_player = AnimationPlayer.new()
-	asset_animation_player.name = "AssetAnimationPlayer"
-	part_root.add_child(asset_animation_player)
-	var library := AnimationLibrary.new()
-	library.add_animation("idle", _create_marker_animation(1.0, true))
-	library.add_animation("run", _create_marker_animation(0.7, true))
-	library.add_animation("kick", _create_marker_animation(0.34, false))
-	library.add_animation("celebrate", _create_marker_animation(1.25, true))
-	asset_animation_player.add_animation_library("", library)
+func _create_persistent_particles(node_name: String, local_position: Vector3, color: Color, amount: int, lifetime: float, direction: Vector3, speed: float, radius: float) -> GPUParticles3D:
+	var particles := GPUParticles3D.new()
+	particles.name = node_name
+	particles.position = local_position
+	particles.amount = amount
+	particles.lifetime = lifetime
+	particles.emitting = false
+	particles.local_coords = true
+	particles.explosiveness = 0.0
+	particles.randomness = 0.48
+	var process_material := ParticleProcessMaterial.new()
+	process_material.gravity = Vector3(0.0, -1.6, 0.0)
+	process_material.direction = direction.normalized() if direction.length_squared() > 0.0001 else Vector3.UP
+	process_material.initial_velocity_min = speed * 0.35
+	process_material.initial_velocity_max = speed
+	process_material.spread = 42.0
+	process_material.scale_min = 0.18
+	process_material.scale_max = 0.5
+	particles.process_material = process_material
+	var mesh := SphereMesh.new()
+	mesh.radius = radius
+	mesh.height = radius * 2.0
+	mesh.radial_segments = 8
+	mesh.rings = 4
+	mesh.material = _build_vfx_material(color)
+	particles.draw_pass_1 = mesh
+	return particles
 
-	asset_animation_tree = AnimationTree.new()
-	asset_animation_tree.name = "AssetAnimationTree"
-	asset_animation_tree.anim_player = NodePath("../AssetAnimationPlayer")
-	var state_machine := AnimationNodeStateMachine.new()
-	for clip_name in ["idle", "run", "kick", "celebrate"]:
-		var clip := AnimationNodeAnimation.new()
-		clip.animation = clip_name
-		state_machine.add_node(clip_name, clip)
-	asset_animation_tree.tree_root = state_machine
-	part_root.add_child(asset_animation_tree)
-	asset_animation_tree.active = true
-	_sync_asset_animation_tree()
-
-func _add_asset_bone(bone_name: String, parent_index: int, origin: Vector3) -> void:
-	var bone_index := asset_skeleton.get_bone_count()
-	asset_skeleton.add_bone(bone_name)
-	if parent_index >= 0:
-		asset_skeleton.set_bone_parent(bone_index, parent_index)
-	asset_skeleton.set_bone_rest(bone_index, Transform3D(Basis.IDENTITY, origin))
-
-func _create_marker_animation(length: float, loops: bool) -> Animation:
-	var animation := Animation.new()
-	animation.length = length
-	animation.loop_mode = Animation.LOOP_LINEAR if loops else Animation.LOOP_NONE
-	return animation
-
-func _sync_asset_animation_tree() -> void:
-	if asset_animation_player == null:
-		return
-	var clip_name := _get_asset_clip_for_state()
-	if current_asset_clip == clip_name and asset_animation_player.current_animation == str(clip_name):
-		return
-	current_asset_clip = clip_name
-	if asset_animation_player.has_animation(str(clip_name)):
-		asset_animation_player.play(str(clip_name))
-	if asset_animation_tree != null:
-		var playback = asset_animation_tree.get("parameters/playback")
-		if playback != null and playback.has_method("travel"):
-			playback.travel(str(clip_name))
-
-func _get_asset_clip_for_state() -> StringName:
-	if animation_state == &"move":
-		return &"run"
-	if animation_state == &"kick" or animation_state == &"strong_kick":
-		return &"kick"
-	if animation_state == &"celebrate":
-		return &"celebrate"
-	return &"idle"
+func _build_vfx_material(color: Color) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.emission_enabled = true
+	material.emission = color
+	material.emission_energy_multiplier = 1.35
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	return material
 
 func _reset_pose() -> void:
 	part_root.position = Vector3.ZERO

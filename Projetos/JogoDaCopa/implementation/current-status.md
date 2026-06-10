@@ -5,11 +5,11 @@
 - Product/module name: `Copa Arena Futebol`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames`
-- Active stage: `Track 02 - Quality Upgrade Series V1 (02A-02G)`
+- Active stage: `Track 02H - Quality Hotfix V1`
 - Active stage status: `COMPLETE`
-- Status marker: `JOGO_DA_COPA_TRACK_02_QUALITY_UPGRADE_V1_COMPLETE`
+- Status marker: `JOGO_DA_COPA_TRACK_02H_QUALITY_HOTFIX_V1_COMPLETE`
 - Approved plan: `docs/quality-upgrade-plan.md` (2026-06-10, hybrid visual path; authored-asset track 02C explicitly approved)
-- Completed Kanban card: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track02-quality-upgrade-series-v1.md`
+- Completed Kanban card: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track02h-quality-hotfix-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -24,22 +24,23 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Main menu launches `Copa Arena Futebol` / `Futebol 1x1`.
 - Third-person 1x1 football against a bot.
 - Match to 3 goals.
-- Hybrid Track 02 presentation: procedural night stadium/arena/VFX plus in-repo authored CC0 ball/avatar/branding assets.
+- Hybrid Track 02 presentation: procedural night stadium/arena/VFX plus in-repo authored CC0 ball/branding assets and procedural avatar proxy.
 - Night `WorldEnvironment` with ACES tonemap, glow, SSAO, fog, procedural sky and stadium spot/key lights.
 - Shader pitch with field markings, grid nets, animated crowd bands, country-inspired banners and live stadium scoreboards.
 - Closed glass arena with larger field, roof collision, framed glass walls, roofed goals and height-aware goal scoring.
-- Loose arcade `RigidBody3D` ball with football-panel shader, trail, squash on kick, higher bounce and extra ground-roll grip.
-- Visible third-person humanoid avatars preserving `apply_appearance`, `set_move_state`, `play_kick` and `play_celebrate`.
+- Loose arcade `RigidBody3D` ball with football-panel shader, hysteresis trail, squash on kick, higher bounce and extra ground-roll grip.
+- Visible third-person humanoid procedural avatars preserving `apply_appearance`, `set_move_state`, `play_kick` and `play_celebrate`; decorative unskinned rig removed until 02C-bis real asset integration.
 - Skin tone and country-inspired shirt selection.
-- Kickoff countdown, input lock, goal slow-mo, camera shake, boost FOV, kick/goal/boost/skid particles and synthetic in-engine feedback.
+- Kickoff countdown, input lock, goal slow-mo, camera shake, boost FOV, transient kick/goal bursts, persistent boost/skid particles and synthetic in-engine feedback.
 - Broadcast-style HUD, offscreen ball indicator, result/rematch panel and polished 3D menu with avatar preview.
-- Football bot with prediction, positioned defense, boost, `easy`/`normal`/`hard` presets and alternating kickoff.
+- Football bot with prediction, positioned defense, boost, main-menu selectable `easy`/`normal`/`hard` presets and alternating kickoff.
+- Track 02H review fixes: stadium scoreboards use selected kit codes, offscreen ball indicator uses player-local basis, scoreboards cache label references, bot difficulty has non-debug API and HUD visibility.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
 - No FPS arena, no weapons, no Web/mobile, no multiplayer/backend.
 
 ## Current Gate
 
-Ready for human playtest focused on `Copa Arena Futebol`: menu-to-match presentation, roofed goal closure, no high-shot ghost goals, glass arena readability, night stadium atmosphere, ball ground grip versus air speed, LMB/RMB shot readability, boost stamina/VFX, bot difficulty/positioning, kickoff alternation, result/rematch flow and Windows debug export launch.
+Ready for human playtest focused on `Copa Arena Futebol`: menu-to-match presentation, roofed goal closure, no high-shot ghost goals, glass arena readability, night stadium atmosphere, ball ground grip versus air speed, LMB/RMB shot readability, boost stamina/VFX, bot difficulty/positioning, kickoff alternation, result/rematch flow and Windows debug export launch. Fabio also needs to decide whether to manually download CC0 assets for 02C-bis character and 02D-bis audio.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -51,7 +52,7 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest result: PASS, 28 tests, 279 asserts.
+Latest result: PASS, 30 tests, 289 asserts.
 
 Export smoke command:
 
@@ -73,6 +74,6 @@ Manual smoke lives in `docs/validation.md`.
 6. `docs/work-plan.md`
 7. `docs/mode-contract.md`
 8. `docs/validation.md`
-9. `implementation/tracks/track-02g-product-identity-v1/current-status.md`
-10. `implementation/tracks/track-02f-bot-match-flow-v1/current-status.md`
-11. `implementation/tracks/track-02e-hud-menu-polish-v1/current-status.md`
+9. `implementation/tracks/track-02h-quality-hotfix-v1/current-status.md`
+10. `implementation/tracks/track-02g-product-identity-v1/current-status.md`
+11. `implementation/tracks/track-02f-bot-match-flow-v1/current-status.md`

@@ -21,6 +21,7 @@ var reset_count: int = 0
 var ball_mesh_instance: MeshInstance3D
 var trail_particles: GPUParticles3D
 var squash_timer: float = 0.0
+var speed_trail_active: bool = false
 
 func _ready() -> void:
 	mass = 0.74
@@ -75,6 +76,9 @@ func reset_to_center() -> void:
 	angular_velocity = Vector3.ZERO
 	sleeping = false
 	squash_timer = 0.0
+	speed_trail_active = false
+	if trail_particles != null:
+		trail_particles.emitting = false
 	if ball_mesh_instance != null:
 		ball_mesh_instance.scale = Vector3.ONE
 	reset_count += 1
@@ -102,6 +106,9 @@ func debug_has_panel_asset_material() -> bool:
 
 func debug_has_speed_trail() -> bool:
 	return trail_particles != null
+
+func debug_is_speed_trail_emitting() -> bool:
+	return trail_particles != null and trail_particles.emitting
 
 func debug_get_ball_mesh_scale() -> Vector3:
 	return ball_mesh_instance.scale if ball_mesh_instance != null else Vector3.ONE
@@ -183,7 +190,12 @@ func _build_ball_material() -> ShaderMaterial:
 
 func _update_visual_asset(delta: float) -> void:
 	if trail_particles != null:
-		trail_particles.emitting = linear_velocity.length() > 10.5
+		var ball_speed := linear_velocity.length()
+		if ball_speed > 10.5:
+			speed_trail_active = true
+		elif ball_speed < 9.0:
+			speed_trail_active = false
+		trail_particles.emitting = speed_trail_active
 	if ball_mesh_instance == null:
 		return
 	squash_timer = maxf(0.0, squash_timer - delta)

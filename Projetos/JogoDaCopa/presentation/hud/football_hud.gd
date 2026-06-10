@@ -196,6 +196,9 @@ func debug_get_result_title() -> String:
 func debug_is_ball_indicator_visible() -> bool:
 	return ball_indicator != null and ball_indicator.visible
 
+func debug_get_ball_indicator_text() -> String:
+	return ball_indicator_label.text if ball_indicator_label != null else ""
+
 func _build_ui() -> void:
 	var root := Control.new()
 	root.name = "HudRoot"

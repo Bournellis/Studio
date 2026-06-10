@@ -14,7 +14,15 @@
 - `2026-06-10` - `Track 02E HUD & Menu Polish V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02E_HUD_MENU_POLISH_V1_COMPLETE`). `tools/validate.gd` PASS (26 tests, 267 asserts).
 - `2026-06-10` - `Track 02F Bot & Match Flow V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02F_BOT_MATCH_FLOW_V1_COMPLETE`). `tools/validate.gd` PASS (28 tests, 279 asserts).
 - `2026-06-10` - `Track 02G Product Identity V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02G_PRODUCT_IDENTITY_V1_COMPLETE`; series marker `JOGO_DA_COPA_TRACK_02_QUALITY_UPGRADE_V1_COMPLETE`). `tools/validate.gd` PASS (28 tests, 279 asserts). Windows debug export smoke PASS, exit code `0`, generated `builds/windows/CopaArenaFutebol.exe`.
-- Series complete; next step is human editor/debug-export playtest.
+- `2026-06-10` - `Track 02H Quality Hotfix V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02H_QUALITY_HOTFIX_V1_COMPLETE`). Review fixes M1/M2/M3/M5 and H1 mitigation applied; cheap L2/L4 also applied. `tools/validate.gd` PASS (30 tests, 289 asserts).
+- Series complete after review hotfix; next step is human editor/debug-export playtest plus Fabio decision on 02C-bis character and 02D-bis audio using manually downloaded CC0 assets.
+
+## Review Hotfix Notes
+
+- H1 mitigation removed the decorative `CopaAssetSkeleton`/`AssetAnimationPlayer`/`AssetAnimationTree` path and its behavior-only tests because it did not provide real skinned character animation.
+- Boost trail and skid dust now use persistent emitters on the player avatar; goal/kick bursts remain transient because they are rare events.
+- 02C-bis remains the intended real character track after Fabio manually downloads a CC0 character pack such as Kenney Animated Characters 3 or Quaternius Universal Base Characters into `assets/characters/`.
+- 02D-bis remains the intended real audio track after Fabio manually downloads CC0 SFX/audio packs.
 
 ## 1. Analise do Estado Atual
 

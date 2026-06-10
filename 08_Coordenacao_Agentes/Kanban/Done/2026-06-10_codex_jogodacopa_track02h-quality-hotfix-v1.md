@@ -4,7 +4,7 @@
 
 - id: `2026-06-10_jogodacopa-track02h-quality-hotfix-v1`
 - owner: `Codex`
-- status: `Doing`
+- status: `Done`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track02h-quality-hotfix-v1`
@@ -16,6 +16,12 @@
 - Intended files: `Projetos/JogoDaCopa/modes/football/football_root.gd`, `Projetos/JogoDaCopa/presentation/hud/football_hud.gd`, `Projetos/JogoDaCopa/presentation/feedback/fps_feedback_controller.gd`, `Projetos/JogoDaCopa/gameplay/avatar/player_avatar_3d.gd`, `Projetos/JogoDaCopa/gameplay/football/football_ball.gd`, `Projetos/JogoDaCopa/modes/menu/main_menu_root.gd`, `Projetos/JogoDaCopa/tests/`, `Projetos/JogoDaCopa/docs/`, `Projetos/JogoDaCopa/implementation/`, `08_Coordenacao_Agentes/Estado_Atual.md`, this card.
 - Validation plan: run `Projetos/JogoDaCopa/tools/validate.gd`, `git diff --check` and `git status --short` before merge/handoff.
 - Next handoff point: after hotfix validation and merge back to `main`; if blocked, document exact failing issue here.
+
+## Progress Log
+
+- `2026-06-10` - Hotfix implemented: M1/M2/M3/M5, H1 mitigation, optional L2/L4.
+- `2026-06-10` - One-time headless editor import run after initial validation stopped before GUT with `GutUtils` not imported.
+- `2026-06-10` - `tools/validate.gd` PASS: 30 tests, 289 asserts. Known noise: GUT UID/text-path warnings.
 
 ## Goal
 
@@ -54,16 +60,16 @@ Corrigir as ressalvas tecnicas da revisao da Track 02 antes do playtest humano p
 
 ## Acceptance Criteria
 
-- [ ] M1, M2, M3, M5 and H1 mitigation implemented.
-- [ ] Optional L2/L4 applied only if low risk.
-- [ ] GUT coverage added/updated for M1, M2 and M5.
-- [ ] `Projetos/JogoDaCopa/tools/validate.gd` PASS.
-- [ ] Status docs updated with next step: human editor playtest plus Fabio decision on 02C-bis character and 02D-bis audio assets.
-- [ ] Card moved to Done after merge with validation record.
+- [x] M1, M2, M3, M5 and H1 mitigation implemented.
+- [x] Optional L2/L4 applied only if low risk.
+- [x] GUT coverage added/updated for M1, M2 and M5.
+- [x] `Projetos/JogoDaCopa/tools/validate.gd` PASS.
+- [x] Status docs updated with next step: human editor playtest plus Fabio decision on 02C-bis character and 02D-bis audio assets.
+- [x] Card moved to Done with validation record.
 
 ## Handoff Needed
 
-`No`
+`Yes - to Usuario`
 
 ## Notes
 

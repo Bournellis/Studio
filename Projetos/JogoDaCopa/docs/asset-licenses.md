@@ -10,7 +10,7 @@
 | Asset | Path | Author | License | Notes |
 |---|---|---|---|---|
 | Procedural football panel shader | `assets/football/football_ball_panels.gdshader` | Codex for JogoDaCopa | `CC0-1.0` | Loaded by `FootballBall3D`; gives the ball a football-panel visual without binary texture/model dependency. |
-| Copa low-poly avatar rig profile | `gameplay/avatar/player_avatar_3d.gd` runtime `CopaAssetSkeleton`, `AssetAnimationPlayer`, `AssetAnimationTree` | Codex for JogoDaCopa | `CC0-1.0` | Internal authored rig/animation layer preserving `apply_appearance`, `set_move_state`, `play_kick` and `play_celebrate`. |
+| Procedural avatar proxy and persistent VFX emitters | `gameplay/avatar/player_avatar_3d.gd` runtime box/sphere meshes and `GPUParticles3D` emitters | Codex for JogoDaCopa | `CC0-1.0` | Track 02H removed the decorative unskinned `CopaAssetSkeleton`/`AnimationTree`; real character asset integration is deferred to 02C-bis after manual CC0 download. |
 
 ### Asset Import Spike
 

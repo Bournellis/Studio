@@ -50,6 +50,8 @@ const GOAL_SLOWMO_SCALE: float = 0.38
 const RENDER_GLOW_ENABLED: bool = true
 const RENDER_SSAO_ENABLED: bool = true
 const RENDER_FOG_ENABLED: bool = true
+const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
+const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 
 var player
 var player_avatar
@@ -78,11 +80,12 @@ var bot_difficulty_id: StringName = &"normal"
 var kickoff_countdown_remaining: float = 0.0
 var countdown_last_number: int = 0
 var goal_slowmo_remaining: float = 0.0
-var boost_fx_cooldown: float = 0.0
-var skid_fx_cooldown: float = 0.0
+var stadium_scoreboard_score_labels: Dictionary = {}
+var stadium_scoreboard_phase_labels: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_apply_main_menu_settings()
 	_configure_world()
 	_spawn_runtime()
 	_restart_play(false)
@@ -205,7 +208,10 @@ func debug_get_bot_difficulty_id() -> StringName:
 	return bot_difficulty_id
 
 func debug_set_bot_difficulty(next_difficulty_id: StringName) -> void:
-	bot_difficulty_id = next_difficulty_id
+	set_bot_difficulty(next_difficulty_id)
+
+func set_bot_difficulty(next_difficulty_id: StringName) -> void:
+	bot_difficulty_id = _sanitize_bot_difficulty(next_difficulty_id)
 	if bot != null:
 		bot.set_difficulty(bot_difficulty_id)
 		bot_difficulty_id = bot.debug_get_difficulty_id()
@@ -499,6 +505,13 @@ func _spawn_runtime() -> void:
 	hud.set_sensitivity_value(player.mouse_sensitivity)
 	_update_avatar_selection_labels()
 
+func _apply_main_menu_settings() -> void:
+	var tree := get_tree()
+	if tree == null or tree.root == null:
+		return
+	if tree.root.has_meta(BOT_DIFFICULTY_META_KEY):
+		set_bot_difficulty(StringName(str(tree.root.get_meta(BOT_DIFFICULTY_META_KEY))))
+
 func _restart_play(after_goal: bool) -> void:
 	phase_label = &"kickoff" if not after_goal else &"reset"
 	Engine.time_scale = 1.0
@@ -677,8 +690,10 @@ func _get_player_kick_direction() -> Vector3:
 func _build_hud_snapshot() -> Dictionary:
 	var ball_distance := 0.0
 	var ball_relative := Vector3.ZERO
+	var ball_relative_local := Vector3.ZERO
 	if player != null and ball != null:
 		ball_relative = ball.global_position - player.global_position
+		ball_relative_local = player.global_transform.basis.inverse() * ball_relative
 		ball_distance = Vector3(player.global_position.x, 0.0, player.global_position.z).distance_to(Vector3(ball.global_position.x, 0.0, ball.global_position.z))
 	return {
 		"status": MODE_NAME,
@@ -686,8 +701,8 @@ func _build_hud_snapshot() -> Dictionary:
 		"bot_score": bot_score,
 		"goal_limit": GOAL_LIMIT,
 		"ball_distance": ball_distance,
-		"ball_relative_x": ball_relative.x,
-		"ball_relative_z": ball_relative.z,
+		"ball_relative_x": ball_relative_local.x,
+		"ball_relative_z": ball_relative_local.z,
 		"player_kit_code": _get_kit_code(selected_appearance.country_kit_id),
 		"bot_kit_code": _get_kit_code(bot_appearance.country_kit_id),
 		"player_kit_color": AvatarCatalogScript.get_kit_primary_color(selected_appearance.country_kit_id),
@@ -739,20 +754,29 @@ func _get_kit_code(country_kit_id: StringName) -> String:
 		_:
 			return "KIT"
 
+func _sanitize_bot_difficulty(next_difficulty_id: StringName) -> StringName:
+	return next_difficulty_id if BOT_DIFFICULTY_IDS.has(next_difficulty_id) else &"normal"
+
 func _update_stadium_scoreboards() -> void:
+	var player_kit_code := _get_kit_code(selected_appearance.country_kit_id)
+	var bot_kit_code := _get_kit_code(bot_appearance.country_kit_id)
 	for side_name in ["North", "South"]:
 		var score_label := _get_stadium_scoreboard_score_label(side_name)
 		if score_label != null:
-			score_label.text = "BRA %d - %d FRA" % [player_score, bot_score]
+			score_label.text = "%s %d - %d %s" % [player_kit_code, player_score, bot_score, bot_kit_code]
 		var phase_label_node := _get_stadium_scoreboard_phase_label(side_name)
 		if phase_label_node != null:
 			phase_label_node.text = _get_stadium_scoreboard_phase_text()
 
 func _get_stadium_scoreboard_score_label(side_name: String) -> Label:
-	return get_node_or_null("WorldCupScoreboard%sViewport/ScoreRoot/ScoreLabel" % side_name) as Label
+	if not stadium_scoreboard_score_labels.has(side_name):
+		stadium_scoreboard_score_labels[side_name] = get_node_or_null("WorldCupScoreboard%sViewport/ScoreRoot/ScoreLabel" % side_name)
+	return stadium_scoreboard_score_labels.get(side_name) as Label
 
 func _get_stadium_scoreboard_phase_label(side_name: String) -> Label:
-	return get_node_or_null("WorldCupScoreboard%sViewport/ScoreRoot/PhaseLabel" % side_name) as Label
+	if not stadium_scoreboard_phase_labels.has(side_name):
+		stadium_scoreboard_phase_labels[side_name] = get_node_or_null("WorldCupScoreboard%sViewport/ScoreRoot/PhaseLabel" % side_name)
+	return stadium_scoreboard_phase_labels.get(side_name) as Label
 
 func _get_stadium_scoreboard_phase_text() -> String:
 	if match_over:
@@ -788,6 +812,8 @@ func _update_kickoff_countdown(delta: float) -> void:
 		hud.show_countdown("VAI!", 0.48)
 
 func _set_round_input_locked(is_locked: bool) -> void:
+	if is_locked:
+		_set_player_persistent_vfx(false, false)
 	if player != null and player.has_method("set_input_locked"):
 		player.set_input_locked(is_locked)
 	if bot != null:
@@ -801,22 +827,24 @@ func _set_round_input_locked(is_locked: bool) -> void:
 			ball.linear_velocity = Vector3.ZERO
 			ball.angular_velocity = Vector3.ZERO
 
-func _update_player_presentation_fx(delta: float) -> void:
-	boost_fx_cooldown = maxf(0.0, boost_fx_cooldown - delta)
-	skid_fx_cooldown = maxf(0.0, skid_fx_cooldown - delta)
+func _update_player_presentation_fx(_delta: float) -> void:
 	var boost_fraction := 0.0
+	var boost_active := false
 	if player != null and player.is_boosting():
 		boost_fraction = 1.0
-		if feedback != null and boost_fx_cooldown <= 0.0:
-			feedback.play_boost_trail(player.global_position, -player.global_transform.basis.z)
-			boost_fx_cooldown = 0.08
+		boost_active = true
 	if chase_camera != null:
 		chase_camera.set_boost_fov_fraction(boost_fraction)
+	var skid_active := false
 	if player != null and player.is_on_floor():
 		var flat_speed := Vector3(player.velocity.x, 0.0, player.velocity.z).length()
-		if flat_speed > 7.2 and not player.is_boosting() and feedback != null and skid_fx_cooldown <= 0.0:
-			feedback.play_skid_dust(player.global_position)
-			skid_fx_cooldown = 0.18
+		skid_active = flat_speed > 7.2 and not boost_active
+	_set_player_persistent_vfx(boost_active, skid_active)
+
+func _set_player_persistent_vfx(boost_active: bool, skid_active: bool) -> void:
+	if player_avatar != null:
+		player_avatar.set_boost_trail_active(boost_active)
+		player_avatar.set_skid_dust_active(skid_active)
 
 func _trigger_goal_gamefeel() -> void:
 	goal_slowmo_remaining = GOAL_SLOWMO_DURATION
@@ -844,6 +872,7 @@ func _set_intro_open(is_open: bool) -> void:
 	intro_open = is_open
 	if intro_open:
 		menu_open = false
+		_set_player_persistent_vfx(false, false)
 		phase_label = &"intro"
 		get_tree().paused = true
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -861,6 +890,8 @@ func _set_menu_open(is_open: bool) -> void:
 	if intro_open and is_open:
 		return
 	menu_open = is_open
+	if menu_open:
+		_set_player_persistent_vfx(false, false)
 	get_tree().paused = menu_open
 	if hud != null:
 		hud.set_pause_menu_visible(menu_open, player.mouse_sensitivity)

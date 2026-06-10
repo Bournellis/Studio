@@ -154,15 +154,11 @@ func play_football_goal(goal_position: Vector3, player_scored: bool) -> void:
 	_spawn_light(goal_position + Vector3.UP * 1.2, color, 6.0, 8.0, 0.52)
 	_spawn_tone(goal_position, 980.0 if player_scored else 220.0, 0.16, -7.5)
 
-func play_boost_trail(player_position: Vector3, direction: Vector3) -> void:
+func play_boost_trail(_player_position: Vector3, _direction: Vector3) -> void:
 	boost_trail_count += 1
-	var trail_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector3.BACK
-	var color := Color(0.3, 0.92, 1.0, 1.0)
-	_spawn_particle_burst(player_position - trail_direction * 0.55 + Vector3.UP * 0.25, color, 10, 0.18, 1.3)
 
-func play_skid_dust(player_position: Vector3) -> void:
+func play_skid_dust(_player_position: Vector3) -> void:
 	skid_dust_count += 1
-	_spawn_particle_burst(player_position + Vector3.UP * 0.08, Color(0.72, 0.84, 0.68, 0.82), 8, 0.22, 0.8)
 
 func play_bot_tell(origin: Vector3, target_position: Vector3, duration: float) -> void:
 	last_event = &"bot_tell"

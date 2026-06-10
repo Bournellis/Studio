@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK_02_QUALITY_UPGRADE_V1_COMPLETE`
+- Status: `JOGO_DA_COPA_TRACK_02H_QUALITY_HOTFIX_V1_COMPLETE`
 - Product/module name: `Copa Arena Futebol`
 - Current surface: TPS football minigames.
 
@@ -17,12 +17,13 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 01B tuned the active arena feel: more ground grip while preserving air speed, higher bounce, 20% narrower and 50% taller goals, slightly stronger LMB kick and a clearer lifted RMB shot.
 - Track 01C reworked the arena presentation: roofed/closed goal boxes, height-aware goal scoring, readable glass frames, field markings, stadium seating, country-inspired banners, scoreboards and light rigs.
 - Track 02 Quality Upgrade V1 completed the visual/game-feel/product pass: render lighting, shader pitch/arena, authored CC0 ball/avatar assets, VFX/game feel, HUD/menu polish, bot/match-flow upgrade and product identity/export smoke.
+- Track 02H Quality Hotfix V1 resolved review blockers: selected-kit stadium scoreboards, player-local ball indicator, persistent boost/skid emitters, main-menu bot difficulty, removed decorative avatar rig, ball trail hysteresis and cached scoreboard labels.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Track
 
-Human playtest and tuning pass for `Copa Arena Futebol`.
+Human playtest and asset decision pass for `Copa Arena Futebol`.
 
 Focus:
 
@@ -31,6 +32,7 @@ Focus:
 - Check readability of glass arena, roofed goals, height-aware scoring and stadium lighting.
 - Compare ball ground grip versus air speed, LMB/RMB shot readability and boost stamina/VFX.
 - Test bot `easy`/`normal`/`hard`, prediction, defense and alternating kickoff.
+- Decide whether Fabio will manually download CC0 packs for 02C-bis character and 02D-bis audio.
 - Record any tuning deltas before selecting the next implementation track.
 
 ## Out Of Scope
