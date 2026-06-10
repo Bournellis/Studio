@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK_02H_QUALITY_HOTFIX_V1_COMPLETE`
+- Status: `JOGO_DA_COPA_TRACK_03_ARCADE_SERIES_V1_REGISTERED`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -11,9 +11,10 @@
 3. `architecture-overview.md`
 4. `work-plan.md`
 5. `quality-upgrade-plan.md`
-6. `code-review-track02-series-v1.md`
-7. `mode-contract.md`
-8. `validation.md`
+6. `arcade-upgrade-plan.md`
+7. `code-review-track02-series-v1.md`
+8. `mode-contract.md`
+9. `validation.md`
 
 ## References
 
@@ -23,6 +24,7 @@
 - `validation-profiles.md`
 - `publication-readiness.md`
 - `code-review-track02-series-v1.md`
+- `arcade-upgrade-plan.md`
 - `codebase-audit-track05.md`
 - `reuse-map.md`
 

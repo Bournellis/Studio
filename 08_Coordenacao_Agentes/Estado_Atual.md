@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_02H_QUALITY_HOTFIX_V1_COMPLETE`
+- Marker: `JOGO_DA_COPA_TRACK_03_ARCADE_SERIES_V1_REGISTERED`
 - Baseline: `Copa Arena Futebol`, modo `Futebol` 1x1 vs bot em terceira pessoa, arena noturna de vidro, pitch em shader, placares vivos por kit selecionado, bola com trail/squash, avatares procedurais sem rig morto, VFX persistente de boost/freada, HUD/menu com dificuldade do bot, resultado/rematch. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: playtest humano no editor + decisao de Fabio sobre 02C-bis personagem e 02D-bis audio com assets baixados manualmente.
+- Proximo passo: implementar Serie Track 03 Arcade V1 (`03A -> 03C -> 03B -> 03D -> 03E`) em `D:\Estudio-worktrees\JogoDaCopa--codex--track03-arcade-series-v1`.
 
 ## draxos-roguelike-cardgame
 

@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK_02H_QUALITY_HOTFIX_V1_COMPLETE`
+- Status: `JOGO_DA_COPA_TRACK_03_ARCADE_SERIES_V1_REGISTERED`
 - Product/module name: `Copa Arena Futebol`
 - Current surface: TPS football minigames.
 
@@ -23,17 +23,16 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 
 ## Recommended Next Track
 
-Human playtest and asset decision pass for `Copa Arena Futebol`.
+Serie Track 03 Arcade V1 for `Copa Arena Futebol`, following `docs/arcade-upgrade-plan.md`.
 
 Focus:
 
-- Launch the Windows debug export and editor scene.
-- Verify menu -> match -> result -> rematch flow.
-- Check readability of glass arena, roofed goals, height-aware scoring and stadium lighting.
-- Compare ball ground grip versus air speed, LMB/RMB shot readability and boost stamina/VFX.
-- Test bot `easy`/`normal`/`hard`, prediction, defense and alternating kickoff.
-- Decide whether Fabio will manually download CC0 packs for 02C-bis character and 02D-bis audio.
-- Record any tuning deltas before selecting the next implementation track.
+- Implement `03A -> 03C -> 03B -> 03D -> 03E` in one dedicated worktree.
+- Preserve Track 02 feel contracts, especially tap LMB/RMB force/lift regressions.
+- Keep bot parity in the same track for dash/flip/stun, super/carga and boost-pad collection.
+- Route all new ball impulse through `FootballBall3D.kick()` and keep base ball physics untouched.
+- Keep `RENDER_TOON_ENABLED` default OFF and generate ON/OFF screenshots for Fabio decision.
+- After the series, return to human arcade playtest plus 02C-bis/02D-bis asset decisions.
 
 ## Out Of Scope
 
