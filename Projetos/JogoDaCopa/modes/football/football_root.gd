@@ -626,6 +626,7 @@ func _spawn_runtime() -> void:
 
 	bot_avatar = PlayerAvatarScript.new()
 	bot_avatar.name = "BotAvatar"
+	bot_avatar.set_character_variant(&"female")
 	bot.add_child(bot_avatar)
 	bot_avatar.apply_appearance(bot_appearance)
 
@@ -833,6 +834,10 @@ func _process_arcade_dash_contact(actor: Node3D, target: Node3D, actor_is_player
 			_apply_arcade_knockback_and_stun(target, dash_direction, ARCADE_SLIDE_KNOCKBACK_FORCE, ARCADE_SLIDE_STUN_DURATION)
 		return true
 	if body_close:
+		if actor_is_player and player_avatar != null and player_avatar.has_method("play_push"):
+			player_avatar.play_push()
+		elif not actor_is_player and bot_avatar != null and bot_avatar.has_method("play_push"):
+			bot_avatar.play_push()
 		_apply_arcade_knockback(target, dash_direction, ARCADE_SHOULDER_KNOCKBACK_FORCE)
 		_apply_arcade_knockback(actor, -dash_direction, ARCADE_SHOULDER_KNOCKBACK_FORCE * 0.72)
 		return true
@@ -854,6 +859,10 @@ func _apply_arcade_knockback_and_stun(target: Node, direction: Vector3, force: f
 	_apply_arcade_knockback(target, direction, force)
 	if target.has_method("apply_arcade_stun"):
 		target.apply_arcade_stun(stun_duration)
+	if target == player and player_avatar != null:
+		player_avatar.play_hit()
+	elif target == bot and bot_avatar != null:
+		bot_avatar.play_hit()
 
 func _apply_arcade_knockback(target: Node, direction: Vector3, force: float) -> void:
 	if target.has_method("apply_knockback"):

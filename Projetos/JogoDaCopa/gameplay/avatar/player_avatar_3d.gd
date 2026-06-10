@@ -4,15 +4,68 @@ extends Node3D
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 
+const MALE_MODEL_PATH: String = "res://assets/characters/quaternius_ubc/base/Superhero_Male_FullBody.gltf"
+const FEMALE_MODEL_PATH: String = "res://assets/characters/quaternius_ubc/base/Superhero_Female_FullBody.gltf"
+const UAL_ANIMATION_LIBRARY_PATH: String = "res://assets/characters/quaternius_ubc/animations/UAL1_Standard.glb"
+const REAL_MODEL_SCALE: Vector3 = Vector3(0.92, 0.92, 0.92)
+const SPRINT_SPEED_THRESHOLD: float = 9.8
+const DEFAULT_STATE: StringName = &"idle"
+const KICK_ANIMATION_NAME: StringName = &"JogoDaCopa_Kick"
+
+const ANIMATION_BY_STATE: Dictionary = {
+	&"idle": &"Idle",
+	&"move": &"Jog_Fwd",
+	&"sprint": &"Sprint",
+	&"jump": &"Jump_Start",
+	&"fall": &"Jump",
+	&"land": &"Jump_Land",
+	&"kick": KICK_ANIMATION_NAME,
+	&"strong_kick": KICK_ANIMATION_NAME,
+	&"celebrate": &"Dance",
+	&"emote": &"Idle_Talking",
+	&"hit": &"Hit_Chest",
+	&"slide": &"Roll",
+	&"flip": &"Roll",
+	&"push": &"Push",
+}
+
+const LOGICAL_PARTS: Array[StringName] = [
+	&"head",
+	&"neck",
+	&"left_hand",
+	&"right_hand",
+	&"torso",
+	&"chest_stripe",
+	&"left_upper_arm",
+	&"right_upper_arm",
+	&"left_lower_arm",
+	&"right_lower_arm",
+	&"shorts",
+	&"left_upper_leg",
+	&"right_upper_leg",
+	&"left_lower_leg",
+	&"right_lower_leg",
+	&"left_foot",
+	&"right_foot",
+]
+
 @export var local_first_person: bool = false
+@export var character_variant: StringName = &"male"
 
 var appearance = AvatarCatalogScript.get_default_appearance()
 var part_root: Node3D
+var model_instance: Node3D
+var skeleton: Skeleton3D
+var animation_player: AnimationPlayer
+var animation_tree: AnimationTree
+var state_machine: AnimationNodeStateMachine
+var state_playback: AnimationNodeStateMachinePlayback
+var body_mesh: MeshInstance3D
+var real_meshes: Array[MeshInstance3D] = []
 var part_meshes: Dictionary = {}
-var part_pivots: Dictionary = {}
-var animation_state: StringName = &"idle"
+var logical_part_colors: Dictionary = {}
+var animation_state: StringName = DEFAULT_STATE
 var animation_timer: float = 0.0
-var stride_time: float = 0.0
 var last_move_speed: float = 0.0
 var last_grounded: bool = true
 var last_vertical_velocity: float = 0.0
@@ -20,18 +73,37 @@ var boost_trail_particles: GPUParticles3D
 var skid_dust_particles: GPUParticles3D
 var toon_render_enabled: bool = false
 var toon_outline_material: StandardMaterial3D
+var loaded_animation_names: Array[StringName] = []
 
 func _ready() -> void:
 	_build_avatar()
 	apply_appearance(appearance)
 
 func _process(delta: float) -> void:
-	stride_time += delta * (2.4 + minf(last_move_speed, 9.0) * 0.24)
 	if animation_timer > 0.0:
 		animation_timer = maxf(0.0, animation_timer - delta)
 		if animation_timer <= 0.0:
 			_update_state_from_motion()
-	_apply_animation()
+
+func set_character_variant(next_variant: StringName) -> void:
+	character_variant = &"female" if next_variant == &"female" else &"male"
+	if part_root == null:
+		return
+	part_root.queue_free()
+	part_root = null
+	model_instance = null
+	skeleton = null
+	animation_player = null
+	animation_tree = null
+	state_machine = null
+	state_playback = null
+	body_mesh = null
+	real_meshes.clear()
+	part_meshes.clear()
+	boost_trail_particles = null
+	skid_dust_particles = null
+	_build_avatar()
+	apply_appearance(appearance)
 
 func apply_appearance(next_appearance) -> void:
 	if next_appearance == null:
@@ -45,23 +117,24 @@ func apply_appearance(next_appearance) -> void:
 	var shirt_secondary: Color = AvatarCatalogScript.get_kit_secondary_color(appearance.country_kit_id)
 	var shorts_color: Color = AvatarCatalogScript.get_kit_shorts_color(appearance.country_kit_id)
 	var socks_color: Color = AvatarCatalogScript.get_kit_socks_color(appearance.country_kit_id)
-	_set_part_material(&"head", skin_color, 0.06)
-	_set_part_material(&"neck", skin_color, 0.06)
-	_set_part_material(&"left_hand", skin_color, 0.06)
-	_set_part_material(&"right_hand", skin_color, 0.06)
-	_set_part_material(&"torso", shirt_primary, 0.11)
-	_set_part_material(&"chest_stripe", shirt_secondary, 0.18)
-	_set_part_material(&"left_upper_arm", shirt_primary, 0.10)
-	_set_part_material(&"right_upper_arm", shirt_primary, 0.10)
-	_set_part_material(&"left_lower_arm", skin_color, 0.06)
-	_set_part_material(&"right_lower_arm", skin_color, 0.06)
-	_set_part_material(&"shorts", shorts_color, 0.10)
-	_set_part_material(&"left_upper_leg", shorts_color, 0.08)
-	_set_part_material(&"right_upper_leg", shorts_color, 0.08)
-	_set_part_material(&"left_lower_leg", socks_color, 0.08)
-	_set_part_material(&"right_lower_leg", socks_color, 0.08)
-	_set_part_material(&"left_foot", Color(0.04, 0.045, 0.05, 1.0), 0.04)
-	_set_part_material(&"right_foot", Color(0.04, 0.045, 0.05, 1.0), 0.04)
+	logical_part_colors[&"head"] = skin_color
+	logical_part_colors[&"neck"] = skin_color
+	logical_part_colors[&"left_hand"] = skin_color
+	logical_part_colors[&"right_hand"] = skin_color
+	logical_part_colors[&"torso"] = shirt_primary
+	logical_part_colors[&"chest_stripe"] = shirt_secondary
+	logical_part_colors[&"left_upper_arm"] = shirt_primary
+	logical_part_colors[&"right_upper_arm"] = shirt_primary
+	logical_part_colors[&"left_lower_arm"] = skin_color
+	logical_part_colors[&"right_lower_arm"] = skin_color
+	logical_part_colors[&"shorts"] = shorts_color
+	logical_part_colors[&"left_upper_leg"] = shorts_color
+	logical_part_colors[&"right_upper_leg"] = shorts_color
+	logical_part_colors[&"left_lower_leg"] = socks_color
+	logical_part_colors[&"right_lower_leg"] = socks_color
+	logical_part_colors[&"left_foot"] = Color(0.04, 0.045, 0.05, 1.0)
+	logical_part_colors[&"right_foot"] = Color(0.04, 0.045, 0.05, 1.0)
+	_apply_real_materials(skin_color, shirt_primary, shirt_secondary)
 	_sync_toon_outline_nodes()
 
 func set_toon_render_enabled(is_enabled: bool) -> void:
@@ -79,29 +152,32 @@ func set_move_state(move_speed: float, grounded: bool, vertical_velocity: float 
 	_update_state_from_motion()
 
 func play_kick(strong: bool = false) -> void:
-	animation_state = &"strong_kick" if strong else &"kick"
-	animation_timer = 0.34 if strong else 0.26
-	_apply_animation()
+	animation_timer = 0.34 if strong else 0.28
+	_travel_state(&"strong_kick" if strong else &"kick")
 
 func play_celebrate() -> void:
-	animation_state = &"celebrate"
 	animation_timer = 1.25
-	_apply_animation()
+	_travel_state(&"celebrate")
+
+func play_emote() -> void:
+	animation_timer = 1.0
+	_travel_state(&"emote")
 
 func play_hit() -> void:
-	animation_state = &"hit"
-	animation_timer = 0.22
-	_apply_animation()
+	animation_timer = 0.34
+	_travel_state(&"hit")
 
 func play_slide() -> void:
-	animation_state = &"slide"
-	animation_timer = 0.28
-	_apply_animation()
+	animation_timer = 0.38
+	_travel_state(&"slide")
 
 func play_flip() -> void:
-	animation_state = &"flip"
-	animation_timer = 0.32
-	_apply_animation()
+	animation_timer = 0.42
+	_travel_state(&"flip")
+
+func play_push() -> void:
+	animation_timer = 0.55
+	_travel_state(&"push")
 
 func set_boost_trail_active(is_active: bool) -> void:
 	if boost_trail_particles != null:
@@ -133,13 +209,7 @@ func debug_get_shirt_primary_color() -> Color:
 	return AvatarCatalogScript.get_kit_primary_color(appearance.country_kit_id)
 
 func debug_get_part_albedo_color(part_id: StringName) -> Color:
-	var mesh_instance := part_meshes.get(part_id) as MeshInstance3D
-	if mesh_instance == null:
-		return Color.TRANSPARENT
-	var material := mesh_instance.material_override as StandardMaterial3D
-	if material == null:
-		return Color.TRANSPARENT
-	return material.albedo_color
+	return logical_part_colors.get(part_id, Color.TRANSPARENT)
 
 func debug_has_persistent_vfx() -> bool:
 	return boost_trail_particles != null and skid_dust_particles != null
@@ -155,13 +225,29 @@ func debug_is_toon_render_enabled() -> bool:
 
 func debug_get_toon_outline_count() -> int:
 	var count := 0
-	for part_id: StringName in part_meshes.keys():
-		var mesh_instance := part_meshes.get(part_id) as MeshInstance3D
-		if mesh_instance != null:
-			var outline := mesh_instance.get_node_or_null("ToonOutline") as MeshInstance3D
-			if outline != null and outline.visible:
-				count += 1
+	for mesh_instance in real_meshes:
+		var outline := mesh_instance.get_node_or_null("ToonOutline") as MeshInstance3D
+		if outline != null and outline.visible:
+			count += 1
 	return count
+
+func debug_has_real_model() -> bool:
+	return model_instance != null and skeleton != null
+
+func debug_get_real_skeleton_bone_count() -> int:
+	return skeleton.get_bone_count() if skeleton != null else 0
+
+func debug_has_animation_tree() -> bool:
+	return animation_tree != null and animation_tree.active
+
+func debug_get_animation_count() -> int:
+	return loaded_animation_names.size()
+
+func debug_has_animation(animation_name: StringName) -> bool:
+	return loaded_animation_names.has(animation_name)
+
+func debug_get_character_variant() -> StringName:
+	return character_variant
 
 func _build_avatar() -> void:
 	if part_root != null:
@@ -169,100 +255,140 @@ func _build_avatar() -> void:
 	part_root = Node3D.new()
 	part_root.name = "AvatarParts"
 	add_child(part_root)
-
-	_add_box_part(&"torso", part_root, Vector3(0.0, 1.00, 0.0), Vector3(0.72, 0.72, 0.36))
-	_add_box_part(&"chest_stripe", part_root, Vector3(0.0, 1.08, -0.19), Vector3(0.62, 0.18, 0.025))
-	_add_box_part(&"shorts", part_root, Vector3(0.0, 0.55, 0.0), Vector3(0.62, 0.28, 0.34))
-	_add_box_part(&"neck", part_root, Vector3(0.0, 1.39, 0.0), Vector3(0.22, 0.16, 0.20))
-	_add_sphere_part(&"head", part_root, Vector3(0.0, 1.63, 0.0), 0.25)
-
-	_add_limb(&"left", Vector3(-0.47, 1.22, 0.0), -0.10)
-	_add_limb(&"right", Vector3(0.47, 1.22, 0.0), 0.10)
-	_add_leg(&"left", Vector3(-0.19, 0.42, 0.0))
-	_add_leg(&"right", Vector3(0.19, 0.42, 0.0))
+	_instantiate_real_model()
+	_build_animation_player()
+	_build_animation_tree()
+	_build_logical_part_map()
 	_build_persistent_vfx()
 	_apply_first_person_visibility()
+	_travel_state(DEFAULT_STATE)
 
-func _add_limb(side_id: StringName, pivot_position: Vector3, side_bias: float) -> void:
-	var pivot := Node3D.new()
-	pivot.name = "%sArmPivot" % str(side_id).capitalize()
-	pivot.position = pivot_position
-	part_root.add_child(pivot)
-	part_pivots[StringName("%s_arm" % side_id)] = pivot
-	_add_box_part(StringName("%s_upper_arm" % side_id), pivot, Vector3(side_bias, -0.22, 0.0), Vector3(0.18, 0.44, 0.18))
-	_add_box_part(StringName("%s_lower_arm" % side_id), pivot, Vector3(side_bias, -0.58, 0.0), Vector3(0.16, 0.34, 0.16))
-	_add_box_part(StringName("%s_hand" % side_id), pivot, Vector3(side_bias, -0.82, -0.01), Vector3(0.18, 0.14, 0.18))
-
-func _add_leg(side_id: StringName, pivot_position: Vector3) -> void:
-	var pivot := Node3D.new()
-	pivot.name = "%sLegPivot" % str(side_id).capitalize()
-	pivot.position = pivot_position
-	part_root.add_child(pivot)
-	part_pivots[StringName("%s_leg" % side_id)] = pivot
-	_add_box_part(StringName("%s_upper_leg" % side_id), pivot, Vector3(0.0, -0.20, 0.0), Vector3(0.22, 0.42, 0.22))
-	_add_box_part(StringName("%s_lower_leg" % side_id), pivot, Vector3(0.0, -0.58, 0.0), Vector3(0.19, 0.36, 0.19))
-	_add_box_part(StringName("%s_foot" % side_id), pivot, Vector3(0.0, -0.84, -0.08), Vector3(0.22, 0.13, 0.34))
-
-func _add_box_part(part_id: StringName, parent: Node, part_position: Vector3, box_size: Vector3) -> MeshInstance3D:
-	var mesh_instance := MeshInstance3D.new()
-	mesh_instance.name = _part_node_name(part_id)
-	mesh_instance.position = part_position
-	var mesh := BoxMesh.new()
-	mesh.size = box_size
-	mesh_instance.mesh = mesh
-	parent.add_child(mesh_instance)
-	part_meshes[part_id] = mesh_instance
-	return mesh_instance
-
-func _add_sphere_part(part_id: StringName, parent: Node, part_position: Vector3, radius: float) -> MeshInstance3D:
-	var mesh_instance := MeshInstance3D.new()
-	mesh_instance.name = _part_node_name(part_id)
-	mesh_instance.position = part_position
-	var mesh := SphereMesh.new()
-	mesh.radius = radius
-	mesh.height = radius * 1.45
-	mesh.radial_segments = 12
-	mesh.rings = 6
-	mesh_instance.mesh = mesh
-	parent.add_child(mesh_instance)
-	part_meshes[part_id] = mesh_instance
-	return mesh_instance
-
-func _set_part_material(part_id: StringName, color: Color, emission_energy: float) -> void:
-	var mesh_instance := part_meshes.get(part_id) as MeshInstance3D
-	if mesh_instance == null:
+func _instantiate_real_model() -> void:
+	var model_path := FEMALE_MODEL_PATH if character_variant == &"female" else MALE_MODEL_PATH
+	var packed_scene := load(model_path)
+	if packed_scene == null or not (packed_scene is PackedScene):
+		push_error("Failed to load real avatar model: %s" % model_path)
 		return
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	material.roughness = 0.78
-	material.emission_enabled = true
-	material.emission = color
-	material.emission_energy_multiplier = emission_energy
-	if toon_render_enabled:
-		material.albedo_color = _quantize_toon_color(color)
-		material.emission = material.albedo_color
-		material.emission_energy_multiplier = maxf(emission_energy, 0.16)
-		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mesh_instance.material_override = material
+	model_instance = (packed_scene as PackedScene).instantiate() as Node3D
+	if model_instance == null:
+		push_error("Failed to instantiate real avatar model: %s" % model_path)
+		return
+	model_instance.name = "RealCharacterModel"
+	model_instance.scale = REAL_MODEL_SCALE
+	part_root.add_child(model_instance)
+	skeleton = model_instance.get_node_or_null("Armature/Skeleton3D") as Skeleton3D
+	if skeleton == null:
+		push_error("Real avatar model has no Skeleton3D: %s" % model_path)
+		return
+	real_meshes.clear()
+	_collect_meshes(model_instance, real_meshes)
+	for mesh_instance in real_meshes:
+		if str(mesh_instance.name).to_lower().contains("superhero"):
+			body_mesh = mesh_instance
+		mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+
+func _build_animation_player() -> void:
+	if model_instance == null:
+		return
+	var animation_scene := load(UAL_ANIMATION_LIBRARY_PATH)
+	if animation_scene == null or not (animation_scene is PackedScene):
+		push_error("Failed to load UAL animation library: %s" % UAL_ANIMATION_LIBRARY_PATH)
+		return
+	var animation_instance := (animation_scene as PackedScene).instantiate()
+	var source_player := _find_animation_player(animation_instance)
+	if source_player == null:
+		push_error("UAL animation library has no AnimationPlayer")
+		animation_instance.free()
+		return
+	animation_player = AnimationPlayer.new()
+	animation_player.name = "RealAnimationPlayer"
+	animation_player.root_node = NodePath("..")
+	model_instance.add_child(animation_player)
+	var library := AnimationLibrary.new()
+	for animation_name in source_player.get_animation_list():
+		var animation: Animation = source_player.get_animation(animation_name)
+		if animation == null:
+			continue
+		library.add_animation(animation_name, animation.duplicate(true))
+		loaded_animation_names.append(StringName(animation_name))
+	library.add_animation(KICK_ANIMATION_NAME, _build_authorial_kick_animation())
+	loaded_animation_names.append(KICK_ANIMATION_NAME)
+	animation_player.add_animation_library("", library)
+	animation_instance.free()
+
+func _build_animation_tree() -> void:
+	if model_instance == null or animation_player == null:
+		return
+	animation_tree = AnimationTree.new()
+	animation_tree.name = "RealAnimationTree"
+	animation_tree.anim_player = NodePath("../RealAnimationPlayer")
+	state_machine = AnimationNodeStateMachine.new()
+	var state_names: Array[StringName] = []
+	for state: StringName in ANIMATION_BY_STATE.keys():
+		var animation_name: StringName = ANIMATION_BY_STATE[state]
+		if not loaded_animation_names.has(animation_name):
+			continue
+		var animation_node := AnimationNodeAnimation.new()
+		animation_node.animation = animation_name
+		state_machine.add_node(str(state), animation_node)
+		state_names.append(state)
+	for from_state in state_names:
+		for to_state in state_names:
+			if from_state == to_state:
+				continue
+			var transition := AnimationNodeStateMachineTransition.new()
+			transition.xfade_time = 0.08
+			state_machine.add_transition(str(from_state), str(to_state), transition)
+	animation_tree.tree_root = state_machine
+	model_instance.add_child(animation_tree)
+	animation_tree.active = true
+	state_playback = animation_tree.get("parameters/playback") as AnimationNodeStateMachinePlayback
+
+func _build_logical_part_map() -> void:
+	part_meshes.clear()
+	for part_id in LOGICAL_PARTS:
+		part_meshes[part_id] = body_mesh
+
+func _apply_real_materials(skin_color: Color, shirt_primary: Color, shirt_secondary: Color) -> void:
+	for mesh_instance in real_meshes:
+		if str(mesh_instance.name).to_lower().contains("eye"):
+			mesh_instance.material_override = _build_character_material(Color(0.94, 0.96, 1.0, 1.0), Color(0.18, 0.28, 0.36, 1.0), 0.08)
+		elif str(mesh_instance.name).to_lower().contains("eyebrow"):
+			mesh_instance.material_override = _build_character_material(shirt_secondary.darkened(0.38), shirt_secondary, 0.05)
+		else:
+			var blended := shirt_primary.lerp(skin_color, 0.22)
+			mesh_instance.material_override = _build_character_material(blended, shirt_secondary, 0.11)
 
 func _sync_toon_outline_nodes() -> void:
-	for part_id: StringName in part_meshes.keys():
-		var mesh_instance := part_meshes.get(part_id) as MeshInstance3D
-		if mesh_instance == null:
-			continue
+	for mesh_instance in real_meshes:
 		var outline := mesh_instance.get_node_or_null("ToonOutline") as MeshInstance3D
 		if outline == null and toon_render_enabled:
 			outline = MeshInstance3D.new()
 			outline.name = "ToonOutline"
 			outline.mesh = mesh_instance.mesh
-			outline.scale = Vector3.ONE * 1.065
+			outline.skeleton = mesh_instance.skeleton
+			outline.skin = mesh_instance.skin
+			outline.scale = Vector3.ONE * 1.025
 			outline.material_override = _get_toon_outline_material()
 			outline.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			mesh_instance.add_child(outline)
 		if outline != null:
 			outline.visible = toon_render_enabled
 			outline.mesh = mesh_instance.mesh
+			outline.skeleton = mesh_instance.skeleton
+			outline.skin = mesh_instance.skin
 			outline.material_override = _get_toon_outline_material()
+
+func _build_character_material(color: Color, emission: Color, emission_energy: float) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = _quantize_toon_color(color) if toon_render_enabled else color
+	material.roughness = 0.78
+	material.emission_enabled = true
+	material.emission = material.albedo_color if toon_render_enabled else emission
+	material.emission_energy_multiplier = maxf(emission_energy, 0.16) if toon_render_enabled else emission_energy
+	if toon_render_enabled:
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	return material
 
 func _get_toon_outline_material() -> StandardMaterial3D:
 	if toon_outline_material != null:
@@ -284,75 +410,79 @@ func _quantize_toon_color(color: Color) -> Color:
 func _apply_first_person_visibility() -> void:
 	if not local_first_person:
 		return
-	var head_mesh := part_meshes.get(&"head") as MeshInstance3D
-	if head_mesh != null:
-		head_mesh.visible = false
-	var neck_mesh := part_meshes.get(&"neck") as MeshInstance3D
-	if neck_mesh != null:
-		neck_mesh.visible = false
+	for mesh_instance in real_meshes:
+		mesh_instance.visible = false
 
 func _update_state_from_motion() -> void:
 	if not last_grounded:
-		animation_state = &"jump" if last_vertical_velocity > 0.0 else &"fall"
+		_travel_state(&"jump" if last_vertical_velocity > 0.0 else &"fall")
+	elif last_move_speed > SPRINT_SPEED_THRESHOLD:
+		_travel_state(&"sprint")
 	elif last_move_speed > 0.55:
-		animation_state = &"move"
+		_travel_state(&"move")
 	else:
-		animation_state = &"idle"
+		_travel_state(&"idle")
 
-func _apply_animation() -> void:
-	if part_root == null:
-		return
-	var move_swing := sin(stride_time * TAU) * clampf(last_move_speed / 8.0, 0.0, 1.0)
-	var arm_swing := move_swing * 0.46
-	var leg_swing := move_swing * 0.54
-	_reset_pose()
+func _travel_state(next_state: StringName) -> void:
+	animation_state = next_state
+	var animation_name: StringName = ANIMATION_BY_STATE.get(next_state, &"Idle")
+	if state_playback != null and state_machine != null and state_machine.has_node(str(next_state)):
+		state_playback.travel(str(next_state))
+	elif animation_player != null and loaded_animation_names.has(animation_name):
+		animation_player.play(animation_name)
 
-	if animation_state == &"move":
-		_rotate_pivot(&"left_arm", Vector3(arm_swing, 0.0, -0.08))
-		_rotate_pivot(&"right_arm", Vector3(-arm_swing, 0.0, 0.08))
-		_rotate_pivot(&"left_leg", Vector3(-leg_swing, 0.0, 0.0))
-		_rotate_pivot(&"right_leg", Vector3(leg_swing, 0.0, 0.0))
-	elif animation_state == &"jump":
-		_rotate_pivot(&"left_arm", Vector3(-0.38, 0.0, -0.28))
-		_rotate_pivot(&"right_arm", Vector3(-0.38, 0.0, 0.28))
-		_rotate_pivot(&"left_leg", Vector3(0.24, 0.0, 0.0))
-		_rotate_pivot(&"right_leg", Vector3(-0.22, 0.0, 0.0))
-	elif animation_state == &"fall":
-		_rotate_pivot(&"left_arm", Vector3(0.26, 0.0, -0.18))
-		_rotate_pivot(&"right_arm", Vector3(0.26, 0.0, 0.18))
-		_rotate_pivot(&"left_leg", Vector3(-0.12, 0.0, 0.0))
-		_rotate_pivot(&"right_leg", Vector3(-0.12, 0.0, 0.0))
-	elif animation_state == &"kick" or animation_state == &"strong_kick":
-		var strength := 1.0 if animation_state == &"kick" else 1.35
-		_rotate_pivot(&"right_leg", Vector3(-0.92 * strength, 0.0, 0.02))
-		_rotate_pivot(&"left_leg", Vector3(0.18, 0.0, -0.02))
-		_rotate_pivot(&"left_arm", Vector3(0.32, 0.0, -0.24))
-		_rotate_pivot(&"right_arm", Vector3(-0.26, 0.0, 0.24))
-	elif animation_state == &"celebrate":
-		var wave := sin(stride_time * TAU * 0.7) * 0.18
-		_rotate_pivot(&"left_arm", Vector3(-1.24 + wave, 0.0, -0.34))
-		_rotate_pivot(&"right_arm", Vector3(-1.24 - wave, 0.0, 0.34))
-		part_root.position.y = 0.04 + absf(wave) * 0.08
-	elif animation_state == &"hit":
-		_rotate_pivot(&"left_arm", Vector3(0.42, 0.0, -0.18))
-		_rotate_pivot(&"right_arm", Vector3(0.42, 0.0, 0.18))
-		part_root.rotation.x = 0.08
-	elif animation_state == &"slide":
-		_rotate_pivot(&"left_arm", Vector3(0.52, 0.0, -0.16))
-		_rotate_pivot(&"right_arm", Vector3(0.52, 0.0, 0.16))
-		_rotate_pivot(&"left_leg", Vector3(-0.42, 0.0, -0.08))
-		_rotate_pivot(&"right_leg", Vector3(0.7, 0.0, 0.08))
-		part_root.rotation.x = 0.22
-		part_root.position.y = -0.08
-	elif animation_state == &"flip":
-		var spin := sin(stride_time * TAU * 1.2) * 0.24
-		_rotate_pivot(&"left_arm", Vector3(-0.72, 0.0, -0.36))
-		_rotate_pivot(&"right_arm", Vector3(-0.72, 0.0, 0.36))
-		_rotate_pivot(&"left_leg", Vector3(0.44, 0.0, -0.08))
-		_rotate_pivot(&"right_leg", Vector3(-0.44, 0.0, 0.08))
-		part_root.rotation.x = -0.28 + spin
+func _build_authorial_kick_animation() -> Animation:
+	var animation := Animation.new()
+	animation.length = 0.32
+	animation.loop_mode = Animation.LOOP_NONE
+	_add_rotation_track(animation, "spine_02", [
+		Vector3.ZERO,
+		Vector3(0.08, -0.16, 0.0),
+		Vector3(-0.14, 0.22, 0.0),
+		Vector3.ZERO,
+	])
+	_add_rotation_track(animation, "thigh_r", [
+		Vector3.ZERO,
+		Vector3(0.74, 0.0, 0.08),
+		Vector3(-1.08, 0.0, -0.06),
+		Vector3.ZERO,
+	])
+	_add_rotation_track(animation, "calf_r", [
+		Vector3.ZERO,
+		Vector3(-0.58, 0.0, 0.0),
+		Vector3(0.28, 0.0, 0.0),
+		Vector3.ZERO,
+	])
+	_add_rotation_track(animation, "foot_r", [
+		Vector3.ZERO,
+		Vector3(0.18, 0.0, 0.0),
+		Vector3(-0.34, 0.0, 0.0),
+		Vector3.ZERO,
+	])
+	_add_rotation_track(animation, "upperarm_l", [
+		Vector3.ZERO,
+		Vector3(-0.18, 0.0, -0.32),
+		Vector3(0.28, 0.0, -0.16),
+		Vector3.ZERO,
+	])
+	_add_rotation_track(animation, "upperarm_r", [
+		Vector3.ZERO,
+		Vector3(0.22, 0.0, 0.26),
+		Vector3(-0.18, 0.0, 0.18),
+		Vector3.ZERO,
+	])
+	return animation
+
+func _add_rotation_track(animation: Animation, bone_name: String, rotations: Array[Vector3]) -> void:
+	var track_index := animation.add_track(Animation.TYPE_ROTATION_3D)
+	animation.track_set_path(track_index, NodePath("Armature/Skeleton3D:%s" % bone_name))
+	var times: Array[float] = [0.0, 0.11, 0.22, 0.32]
+	for index in range(mini(rotations.size(), times.size())):
+		animation.rotation_track_insert_key(track_index, times[index], Quaternion.from_euler(rotations[index]))
 
 func _build_persistent_vfx() -> void:
+	if part_root == null:
+		return
 	if boost_trail_particles == null:
 		boost_trail_particles = _create_persistent_particles(
 			"BoostTrailParticles",
@@ -415,22 +545,17 @@ func _build_vfx_material(color: Color) -> StandardMaterial3D:
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	return material
 
-func _reset_pose() -> void:
-	part_root.position = Vector3.ZERO
-	part_root.rotation = Vector3.ZERO
-	for pivot_id: StringName in part_pivots.keys():
-		var pivot := part_pivots.get(pivot_id) as Node3D
-		if pivot != null:
-			pivot.rotation = Vector3.ZERO
+func _collect_meshes(node: Node, output: Array[MeshInstance3D]) -> void:
+	if node is MeshInstance3D:
+		output.append(node)
+	for child in node.get_children():
+		_collect_meshes(child, output)
 
-func _rotate_pivot(pivot_id: StringName, radians_rotation: Vector3) -> void:
-	var pivot := part_pivots.get(pivot_id) as Node3D
-	if pivot == null:
-		return
-	pivot.rotation = radians_rotation
-
-func _part_node_name(part_id: StringName) -> String:
-	var chunks := str(part_id).split("_", false)
-	for index: int in range(chunks.size()):
-		chunks[index] = chunks[index].capitalize()
-	return "".join(chunks)
+func _find_animation_player(node: Node) -> AnimationPlayer:
+	if node is AnimationPlayer:
+		return node
+	for child in node.get_children():
+		var found := _find_animation_player(child)
+		if found != null:
+			return found
+	return null

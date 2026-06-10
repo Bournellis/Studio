@@ -26,8 +26,15 @@ func test_avatar_instantiates_expected_runtime_parts() -> void:
 	assert_true(avatar.debug_has_part(&"left_hand"))
 	assert_true(avatar.debug_has_part(&"right_foot"))
 	assert_not_null(avatar.get_node_or_null("AvatarParts"))
-	assert_null(avatar.get_node_or_null("AvatarParts/CopaAssetSkeleton"))
-	assert_null(avatar.get_node_or_null("AvatarParts/AssetAnimationTree"))
+	assert_not_null(avatar.get_node_or_null("AvatarParts/RealCharacterModel"))
+	assert_true(avatar.debug_has_real_model())
+	assert_gte(avatar.debug_get_real_skeleton_bone_count(), 60)
+	assert_true(avatar.debug_has_animation_tree())
+	assert_gte(avatar.debug_get_animation_count(), 45)
+	assert_true(avatar.debug_has_animation(&"Idle"))
+	assert_true(avatar.debug_has_animation(&"Jog_Fwd"))
+	assert_true(avatar.debug_has_animation(&"Roll"))
+	assert_true(avatar.debug_has_animation(&"JogoDaCopa_Kick"))
 	assert_true(avatar.debug_has_persistent_vfx())
 	assert_no_new_orphans()
 
@@ -55,6 +62,8 @@ func test_avatar_animation_states_are_presentation_only() -> void:
 	assert_eq(avatar.debug_get_animation_state(), &"idle")
 	avatar.set_move_state(4.0, true, 0.0)
 	assert_eq(avatar.debug_get_animation_state(), &"move")
+	avatar.set_move_state(11.0, true, 0.0)
+	assert_eq(avatar.debug_get_animation_state(), &"sprint")
 	avatar.set_move_state(1.0, false, 3.0)
 	assert_eq(avatar.debug_get_animation_state(), &"jump")
 	avatar.set_move_state(1.0, false, -2.0)
@@ -72,6 +81,10 @@ func test_avatar_animation_states_are_presentation_only() -> void:
 	assert_eq(avatar.debug_get_animation_state(), &"slide")
 	avatar.play_flip()
 	assert_eq(avatar.debug_get_animation_state(), &"flip")
+	avatar.play_push()
+	assert_eq(avatar.debug_get_animation_state(), &"push")
+	avatar.play_emote()
+	assert_eq(avatar.debug_get_animation_state(), &"emote")
 	assert_no_new_orphans()
 
 func test_local_first_person_avatar_hides_head_and_neck() -> void:
@@ -80,8 +93,27 @@ func test_local_first_person_avatar_hides_head_and_neck() -> void:
 	add_child_autofree(avatar)
 	await get_tree().process_frame
 
-	var head := avatar.get_node("AvatarParts/Head") as MeshInstance3D
-	var neck := avatar.get_node("AvatarParts/Neck") as MeshInstance3D
-	assert_false(head.visible)
-	assert_false(neck.visible)
+	var meshes: Array[MeshInstance3D] = []
+	_collect_meshes(avatar.get_node("AvatarParts/RealCharacterModel"), meshes)
+	assert_gt(meshes.size(), 0)
+	for mesh_instance in meshes:
+		assert_false(mesh_instance.visible)
 	assert_no_new_orphans()
+
+func test_bot_variant_can_use_female_model() -> void:
+	var avatar = PlayerAvatarScript.new()
+	avatar.set_character_variant(&"female")
+	add_child_autofree(avatar)
+	await get_tree().process_frame
+
+	assert_eq(avatar.debug_get_character_variant(), &"female")
+	assert_true(avatar.debug_has_real_model())
+	assert_gte(avatar.debug_get_real_skeleton_bone_count(), 60)
+	assert_true(avatar.debug_has_animation_tree())
+	assert_no_new_orphans()
+
+func _collect_meshes(node: Node, output: Array[MeshInstance3D]) -> void:
+	if node is MeshInstance3D:
+		output.append(node)
+	for child in node.get_children():
+		_collect_meshes(child, output)
