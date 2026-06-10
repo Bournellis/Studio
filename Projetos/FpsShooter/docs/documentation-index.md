@@ -1,7 +1,7 @@
 # FPS Playground Documentation Index
 
 - Last updated: `2026-06-10`
-- Status: `TRACK_06A_ACTIVE`
+- Status: `TRACK_06A_COMPLETE`
 
 ## Purpose
 
@@ -68,7 +68,7 @@ For tuning work:
 
 Track history lives in `implementation/tracks/`. Completed tracks are historical baselines, not active instructions, unless current status explicitly points to them.
 
-Current gameplay track:
+Latest gameplay track:
 
 - `implementation/tracks/track-06a-avatar-visual-foundation-v1/current-status.md`
 

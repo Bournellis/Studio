@@ -5,7 +5,7 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS Playground tech probe`
 - Active stage: `Track 06A - Avatar Visual Foundation V1`
-- Active stage status: `ACTIVE`
+- Active stage status: `COMPLETE`
 
 ## Current Truth
 
@@ -19,6 +19,7 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 - `FPS Playground` main menu with selectable modes.
 - `Arena Shooter`: traditional FPS baseline in a local 1x1 arena against a bot.
 - `Futebol`: first-person 1x1 football mode against a bot, no weapons, match to 3 goals.
+- `Futebol` now includes runtime primitive humanoid avatars for player and bot, skin tone selection and country-inspired shirt/kit selection in the intro panel.
 - Player movement, mouse look, jump, hitscan shot and combat-readable knockback.
 - Secondary `Plasma Bolt` alt-fire on RMB with visible slow projectile, crosshair-aligned damage, stronger knockback and cooldown.
 - Runtime pickups: elevated health shard and overcharge.
@@ -35,11 +36,11 @@ The project is a tech probe independent from Draxos Roguelike Cardgame, DraxosMo
 
 ## Active Goal
 
-`Track 06A - Avatar Visual Foundation V1` is active. The current objective is to add a procedural runtime avatar foundation to `Futebol`: visible primitive humanoids for player/bot, skin tone selection, country-inspired shirt kits and basic presentation-only animation states.
+`Track 06A - Avatar Visual Foundation V1` is complete. `Futebol` now has visible procedural humanoid avatars for player and bot, skin tone selection, country-inspired shirt kits and basic presentation-only animation states.
 
 ## Current Gate
 
-Implement Track 06A in a dedicated worktree, keep Arena Shooter behavior preserved and validate that Futebol remains playable while gaining avatar customization/animation.
+Ready for editor playtest focused on first-person avatar readability, kit/skin selection, kick/goal animation readability and whether the new character layer improves the football duel feel.
 
 ## Validation Snapshot
 
@@ -206,6 +207,17 @@ Track 05 Foundation Hardening & Refactor V1:
 - tests are split into broad integration regression plus focused helper coverage;
 - final validation passes `51/51` GUT tests with `386` asserts;
 - gameplay changes remained out of scope except for behavior-preserving refactor fixes.
+
+Track 06A Avatar Visual Foundation V1:
+
+- runtime procedural humanoid avatar system added under `gameplay/avatar/`;
+- avatar catalog exposes 4 skin tones and 6 country-inspired football kits without official logos/licensed shirt replicas;
+- local first-person player avatar hides head/neck so the camera stays readable;
+- bot avatar uses a contrasting default kit;
+- Futebol intro panel now has skin tone and shirt/kit previous/next controls;
+- player and bot kicks trigger procedural kick states, and goals trigger celebration states;
+- selection is memory-only and presentation-only; it does not affect movement, ball physics, scoring, damage or persistence;
+- validation passed `57/57` GUT tests with `444` asserts during implementation.
 
 ## Read Next
 

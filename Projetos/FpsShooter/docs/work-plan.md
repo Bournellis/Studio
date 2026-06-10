@@ -1,7 +1,7 @@
 # FpsShooter Work Plan
 
 - Last updated: `2026-06-10`
-- Status: `FPS_PLAYGROUND_TRACK_06A_AVATAR_VISUAL_FOUNDATION_ACTIVE`
+- Status: `FPS_PLAYGROUND_TRACK_06A_AVATAR_VISUAL_FOUNDATION_COMPLETE`
 
 ## North Star
 
@@ -257,15 +257,15 @@ Future candidate scope:
 
 Goal: make `FPS Playground` characters more readable and extensible while preserving editor-first prototype speed.
 
-Status: active; Track 06A is in progress.
+Status: active; Track 06A is complete.
 
 ## Track 06A - Avatar Visual Foundation V1
 
 Goal: give `Futebol` the first procedural humanoid avatar foundation.
 
-Status: active.
+Status: complete.
 
-Planned:
+Delivered:
 
 - runtime low-poly humanoid avatar using primitive meshes;
 - selectable skin tone;
@@ -273,7 +273,13 @@ Planned:
 - basic procedural states for idle, move, jump, fall, kick, strong kick, celebrate and hit;
 - player and bot avatar integration in Futebol;
 - intro-panel customization controls;
-- no final imported assets, official licensed branding, persistence, export, multiplayer or backend.
+- no final imported assets, official licensed branding, persistence, export, multiplayer or backend;
+- automated coverage for avatar construction, appearance selection, Futebol scene integration and kick/goal animation hooks.
+
+Future candidate scope:
+
+- run editor playtest focused on first-person avatar readability and football animation feel;
+- decide whether the next gameplay track should tune football possession/ball feel, improve avatar presentation, or return to Arena Shooter content.
 
 ## Deferred
 

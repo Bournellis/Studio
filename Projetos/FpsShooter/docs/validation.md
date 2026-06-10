@@ -26,10 +26,11 @@ When working from a dedicated worktree, run with that worktree path.
 
 Latest automated baseline:
 
-- GUT `51/51`;
-- `386` asserts;
+- GUT `57/57`;
+- `444` asserts;
 - Track 04A validates menu boot and mode routes, centered menu container hierarchy, generated menu/arena/football scenes, paused football intro panel, football goal safety floors and side walls, football player kick and strong kick, no weapon damage in football, football goal scoring/match end, bot kick handoff, arena pause menu return button and the full previous arena shooter regression suite.
 - Track 05 final validation is `51/51` and `386` asserts after helper-rule test split.
+- Track 06A validates avatar catalog defaults, runtime avatar body parts, material/appearance updates, first-person head hiding, Futebol player/bot avatar spawning, intro selection controls, selection cycling and kick/goal animation hooks.
 - Track 05 baseline before refactor was `42/42` and `355` asserts after the one-time fresh worktree editor import.
 
 ## Manual Smoke
@@ -102,6 +103,8 @@ Expected Arena Shooter:
 Expected Futebol:
 
 - the mode starts paused on `Como Jogar` with hotkeys/basic rules;
+- the intro panel shows player skin tone and shirt/country kit selectors;
+- changing skin tone and shirt kit updates the player avatar before starting the match;
 - pressing `Comecar` starts the match and captures mouse for gameplay;
 - first-person camera/mouse look and `WASD` movement work;
 - `Space` jumps;
@@ -112,6 +115,8 @@ Expected Futebol:
 - the ball feels loose/arcade and can be moved by player/bot kicks;
 - entering either goal mouth does not drop the player or ball out of the map, including the lateral interior sides of the goal;
 - scoring in the opponent goal updates the scoreboard and shows goal feedback;
+- player and bot avatars visibly kick during kick events;
+- the scoring side performs a short celebration after goal feedback;
 - match ends at 3 goals with clear win/loss feedback;
 - `R` restarts the match;
 - `Esc` opens the pause menu and sensitivity still works.
