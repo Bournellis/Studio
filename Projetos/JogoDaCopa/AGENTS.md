@@ -14,7 +14,7 @@ Current identity:
 - current mode: third-person `Futebol` 1x1 against a bot;
 - no weapons, no shooter combat loop and no FPS arena scope;
 - match to 3 goals;
-- runtime primitive stadium, avatars and feedback;
+- runtime primitive Copa-style stadium, roofed goals, avatars and feedback;
 - PC Windows editor-first only.
 
 ## Multi-Agent And Git Rule

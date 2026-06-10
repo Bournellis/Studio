@@ -56,9 +56,10 @@ func test_football_match_rules_exposes_loose_ball_pressure_state() -> void:
 	assert_almost_eq(direction.length(), 1.0, 0.001)
 
 func test_football_match_rules_goal_and_score_contract() -> void:
-	assert_eq(FootballMatchRulesScript.detect_goal(Vector3(0.0, 0.68, -27.2), 4.32, -27.0, 27.0), 1)
-	assert_eq(FootballMatchRulesScript.detect_goal(Vector3(0.0, 0.68, 27.2), 4.32, -27.0, 27.0), -1)
-	assert_eq(FootballMatchRulesScript.detect_goal(Vector3(4.7, 0.68, -27.2), 4.32, -27.0, 27.0), 0)
+	assert_eq(FootballMatchRulesScript.detect_goal(Vector3(0.0, 0.68, -27.2), 4.32, -27.0, 27.0, 3.45), 1)
+	assert_eq(FootballMatchRulesScript.detect_goal(Vector3(0.0, 0.68, 27.2), 4.32, -27.0, 27.0, 3.45), -1)
+	assert_eq(FootballMatchRulesScript.detect_goal(Vector3(4.7, 0.68, -27.2), 4.32, -27.0, 27.0, 3.45), 0)
+	assert_eq(FootballMatchRulesScript.detect_goal(Vector3(0.0, 3.9, -27.2), 4.32, -27.0, 27.0, 3.45), 0)
 
 	var score: Dictionary = FootballMatchRulesScript.apply_goal_score(2, 1, true, 3)
 	assert_eq(score.get("player_score", 0), 3)

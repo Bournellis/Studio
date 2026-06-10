@@ -7,7 +7,7 @@ This file governs agent behavior for the `D:\Estudio` workspace.
 - `08_Coordenacao_Agentes/Prioridades_Estudio.md` is the portfolio source of truth for focus, priority, project status, and allowed work.
 - `08_Coordenacao_Agentes/Painel_Visual_Estudio.html` is the human-facing local dashboard for the same portfolio state.
 - `canon/` is the shared source of truth for established product identity, lore context, gameplay contracts, progression, shared architecture, mode standard, and platform strategy.
-- `Projetos/JogoDaCopa/` is the temporary sole implementation focus for the studio. It is a PC Windows editor-first football minigames project in Godot 4.6.2. Current stage: `JOGO_DA_COPA_BALL_GOAL_KICK_TUNING_V1_COMPLETE`; next step is editor playtest of the tuned Futebol ball/goal/kick feel and planning the next football gameplay track.
+- `Projetos/JogoDaCopa/` is the temporary sole implementation focus for the studio. It is a PC Windows editor-first football minigames project in Godot 4.6.2. Current stage: `JOGO_DA_COPA_TRACK_01C_ARENA_STADIUM_VISUAL_REWORK_COMPLETE`; next step is editor playtest of the roofed-goal glass arena, Copa stadium presentation and tuned Futebol ball/goal/kick feel.
 - `Projetos/draxos-roguelike-cardgame/` is temporarily paused for a few days while the studio focuses on JogoDaCopa. Preserve its P0 baseline and only consult or resume it when the user explicitly asks.
 - `Projetos/draxos-mobile/` is temporarily paused for a few days while the studio focuses on JogoDaCopa. Current preserved operational stage: `BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`; only consult or resume it when the user explicitly asks.
 - `Projetos/FpsPlayground/` is temporarily paused for a few days while the studio focuses on JogoDaCopa. It preserves the Arena Shooter baseline from the former FpsShooter/FPS Playground work; only consult or resume it when the user explicitly asks.
@@ -134,7 +134,7 @@ Implementacoes Godot vivem sob `Projetos/`.
 
 Projetos Godot ativos durante o foco temporario:
 
-- `Projetos/JogoDaCopa/` - P2 tech probe, PC Windows editor-first futebol/minigames 3D em Godot 4.6.2 (`JOGO_DA_COPA_BALL_GOAL_KICK_TUNING_V1_COMPLETE`; proximo passo e playtest humano do modo `Futebol`, agora com bola solta, mais grip no chao, quique maior, gols mais estreitos/altos, boost e rebote em paredes/teto, sem export/Web/mobile/multiplayer)
+- `Projetos/JogoDaCopa/` - P2 tech probe, PC Windows editor-first futebol/minigames 3D em Godot 4.6.2 (`JOGO_DA_COPA_TRACK_01C_ARENA_STADIUM_VISUAL_REWORK_COMPLETE`; proximo passo e playtest humano do modo `Futebol`, agora com gols fechados por teto de vidro, arena de vidro com molduras, estadio festivo de Copa, bola solta, mais grip no chao, quique maior, boost e rebote em paredes/teto/gol, sem export/Web/mobile/multiplayer)
 
 Projetos Godot pausados temporariamente:
 

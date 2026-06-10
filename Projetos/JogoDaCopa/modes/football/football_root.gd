@@ -451,7 +451,7 @@ func _process_player_ball_contact() -> void:
 	player_touch_cooldown_remaining = PLAYER_TOUCH_COOLDOWN
 
 func _process_goal_detection() -> void:
-	var goal_side := FootballMatchRulesScript.detect_goal(ball.global_position, GOAL_HALF_WIDTH, GOAL_LINE_NORTH, GOAL_LINE_SOUTH)
+	var goal_side := FootballMatchRulesScript.detect_goal(ball.global_position, GOAL_HALF_WIDTH, GOAL_LINE_NORTH, GOAL_LINE_SOUTH, GOAL_HEIGHT)
 	if goal_side == 1:
 		_register_goal(true)
 	elif goal_side == -1:

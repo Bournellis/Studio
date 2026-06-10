@@ -126,8 +126,10 @@ static func get_player_possession_state(
 		"direction": dribble_direction
 	}
 
-static func detect_goal(ball_position: Vector3, goal_half_width: float, north_goal_line: float, south_goal_line: float) -> int:
+static func detect_goal(ball_position: Vector3, goal_half_width: float, north_goal_line: float, south_goal_line: float, goal_height: float = 999.0) -> int:
 	if absf(ball_position.x) > goal_half_width:
+		return 0
+	if ball_position.y > goal_height:
 		return 0
 	if ball_position.z <= north_goal_line:
 		return 1

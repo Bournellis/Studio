@@ -9,9 +9,9 @@ It starts from the accepted football prototype extracted from the former `FpsSho
 - Main menu with `Futebol 1x1`.
 - Third-person chase camera inspired by Rocket League.
 - 1x1 football against a bot, match to 3 goals.
-- Runtime primitive stadium with closed goals.
+- Runtime primitive Copa-style stadium with roofed/closed goals, glass frames, banners and light rigs.
 - Loose arcade `RigidBody3D` ball.
-- Lightweight possession, dribble nudges and near-front kick assist.
+- Loose-ball contact and near-front kick assist without possession lock.
 - Skin tone and country-inspired shirt selection.
 - Procedural primitive avatars with basic animation states.
 - Football HUD, kick/goal feedback and GUT validation.
