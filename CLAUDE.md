@@ -35,4 +35,10 @@ Use Fast Lane por padrao. Escale para a leitura completa somente quando a tarefa
 - Nao importe mecanicas entre projetos sem documento local adotando a regra.
 - Nao use historico como canon atual.
 
-## Desambiguacao R
+## Desambiguacao Rapida
+
+Roteie pelo dominio do pedido: roguelike/ship hub/run map/almas -> `draxos-roguelike-cardgame`; mobile/PVP assincrono/autobattler/Supabase/base manager -> `draxos-mobile`; futebol/copa/bola/gols -> `JogoDaCopa`; FPS/arena 1x1/hitscan -> `FpsPlayground`. `Draxos` sozinho nao seleciona projeto. Em duvida, decida pela tabela de `Prioridades_Estudio.md`.
+
+## Estado Operacional
+
+`08_Coordenacao_Agentes/Estado_Atual.md` e o snapshot vivo do estudio. Atualize apenas quando uma tarefa mudar status observavel, track ativa, baseline ou proximo passo - e atualize somente la (mais a tabela de `Prioridades_Estudio.md` quando foco ou prioridade mudar). Historia de pacotes e validacoes pertence aos arquivos de historico do projeto, nunca a snapshots.
