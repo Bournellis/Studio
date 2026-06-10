@@ -40,6 +40,7 @@ var feedback
 var player_score: int = 0
 var bot_score: int = 0
 var match_over: bool = false
+var intro_open: bool = false
 var menu_open: bool = false
 var phase_label: StringName = &"kickoff"
 var goal_reset_timer: float = 0.0
@@ -51,14 +52,14 @@ func _ready() -> void:
 	_configure_world()
 	_spawn_runtime()
 	_restart_play(false)
-	_capture_mouse_if_playing()
+	_set_intro_open(true)
 
 func _process(_delta: float) -> void:
 	if hud != null:
 		hud.update_snapshot(_build_hud_snapshot())
 
 func _physics_process(delta: float) -> void:
-	if menu_open:
+	if intro_open or menu_open:
 		return
 	player_touch_cooldown_remaining = maxf(0.0, player_touch_cooldown_remaining - delta)
 	if goal_reset_timer > 0.0:
@@ -72,6 +73,8 @@ func _physics_process(delta: float) -> void:
 	_process_goal_detection()
 
 func _input(event: InputEvent) -> void:
+	if intro_open:
+		return
 	if event.is_action_pressed("ui_back"):
 		_set_menu_open(not menu_open)
 		get_viewport().set_input_as_handled()
@@ -87,6 +90,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 func restart_match() -> void:
+	_set_intro_open(false)
 	_set_menu_open(false)
 	player_score = 0
 	bot_score = 0
@@ -120,6 +124,12 @@ func debug_get_goal_limit() -> int:
 
 func debug_is_match_over() -> bool:
 	return match_over
+
+func debug_is_intro_open() -> bool:
+	return intro_open
+
+func debug_start_match() -> void:
+	_start_match()
 
 func debug_force_ball_position(next_ball_position: Vector3) -> void:
 	if ball == null:
@@ -168,6 +178,8 @@ func _build_football_pitch() -> void:
 	_add_visual_box("SouthGoalBox", Vector3(0.0, 0.04, 17.7), Vector3(10.8, 0.05, 0.16), Color(0.92, 0.96, 0.86, 1.0))
 	_add_visual_box("NorthGoalMouth", Vector3(0.0, 0.05, GOAL_LINE_NORTH + 0.45), Vector3(GOAL_HALF_WIDTH * 2.0, 0.08, 0.32), Color(1.0, 0.88, 0.24, 1.0))
 	_add_visual_box("SouthGoalMouth", Vector3(0.0, 0.05, GOAL_LINE_SOUTH - 0.45), Vector3(GOAL_HALF_WIDTH * 2.0, 0.08, 0.32), Color(1.0, 0.88, 0.24, 1.0))
+	_add_box("NorthGoalFloor", Vector3(0.0, -0.5, GOAL_LINE_NORTH - 1.35), Vector3(GOAL_HALF_WIDTH * 2.4, 1.0, 2.9), Color(0.07, 0.28, 0.14, 1.0))
+	_add_box("SouthGoalFloor", Vector3(0.0, -0.5, GOAL_LINE_SOUTH + 1.35), Vector3(GOAL_HALF_WIDTH * 2.4, 1.0, 2.9), Color(0.07, 0.28, 0.14, 1.0))
 
 	_add_box("WestWall", Vector3(-FIELD_HALF_WIDTH, WALL_HEIGHT * 0.5, 0.0), Vector3(WALL_THICKNESS, WALL_HEIGHT, FIELD_LENGTH), Color(0.12, 0.16, 0.18, 1.0))
 	_add_box("EastWall", Vector3(FIELD_HALF_WIDTH, WALL_HEIGHT * 0.5, 0.0), Vector3(WALL_THICKNESS, WALL_HEIGHT, FIELD_LENGTH), Color(0.12, 0.16, 0.18, 1.0))
@@ -240,6 +252,7 @@ func _spawn_runtime() -> void:
 	hud.name = "FootballHud"
 	add_child(hud)
 	hud.sensitivity_changed.connect(_on_sensitivity_changed)
+	hud.start_requested.connect(_start_match)
 	hud.resume_requested.connect(func() -> void:
 		_set_menu_open(false)
 	)
@@ -270,7 +283,7 @@ func _on_player_strong_kick_requested(origin: Vector3, direction: Vector3, _dama
 	_try_player_kick(origin, direction, PLAYER_STRONG_KICK_FORCE, PLAYER_STRONG_KICK_LIFT, true)
 
 func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: float, strong: bool) -> void:
-	if match_over or menu_open or goal_reset_timer > 0.0:
+	if match_over or intro_open or menu_open or goal_reset_timer > 0.0:
 		return
 	var connected := _can_reach_ball(origin, direction)
 	if hud != null:
@@ -283,7 +296,7 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 		feedback.play_football_kick(ball.global_position, kick_direction, strong)
 
 func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, lift: float) -> void:
-	if match_over or goal_reset_timer > 0.0:
+	if match_over or intro_open or goal_reset_timer > 0.0:
 		return
 	var to_ball: Vector3 = ball.global_position - origin
 	if to_ball.length() > bot.kick_range + 0.55:
@@ -377,10 +390,35 @@ func _build_hud_snapshot() -> Dictionary:
 		"ball_distance": ball_distance,
 		"bot_state": bot.debug_get_state() if bot != null else "none",
 		"phase": phase_label,
-		"hint": "WASD move | Mouse look | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"
+		"hint": "Comecar inicia | WASD move | Mouse look | LMB chute | RMB chute forte | Space jump | R restart | Esc menu" if intro_open else "WASD move | Mouse look | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"
 	}
 
+func _start_match() -> void:
+	_set_intro_open(false)
+	if hud != null:
+		hud.reset_feedback()
+	_capture_mouse_if_playing()
+
+func _set_intro_open(is_open: bool) -> void:
+	intro_open = is_open
+	if intro_open:
+		menu_open = false
+		phase_label = &"intro"
+		get_tree().paused = true
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		if hud != null:
+			hud.set_pause_menu_visible(false, player.mouse_sensitivity)
+			hud.set_intro_visible(true)
+		return
+	get_tree().paused = false
+	if phase_label == &"intro":
+		phase_label = &"play"
+	if hud != null:
+		hud.set_intro_visible(false)
+
 func _set_menu_open(is_open: bool) -> void:
+	if intro_open and is_open:
+		return
 	menu_open = is_open
 	get_tree().paused = menu_open
 	if hud != null:
@@ -391,6 +429,7 @@ func _set_menu_open(is_open: bool) -> void:
 		_capture_mouse_if_playing()
 
 func _return_to_main_menu() -> void:
+	intro_open = false
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	get_tree().change_scene_to_file(MENU_SCENE_PATH)
@@ -398,7 +437,7 @@ func _return_to_main_menu() -> void:
 func _capture_mouse_if_playing() -> void:
 	if DisplayServer.get_name().to_lower().contains("headless"):
 		return
-	if menu_open or match_over:
+	if intro_open or menu_open or match_over:
 		return
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 

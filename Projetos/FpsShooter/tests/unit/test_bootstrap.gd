@@ -44,6 +44,11 @@ func test_main_menu_scene_boots_with_mode_buttons() -> void:
 	assert_not_null(menu.get_node_or_null("MenuBox/ArenaButton"))
 	assert_not_null(menu.get_node_or_null("MenuBox/FootballButton"))
 	assert_not_null(menu.get_node_or_null("MenuBox/QuitButton"))
+	var menu_box := menu.get_node("MenuBox") as Control
+	assert_almost_eq(menu_box.anchor_left, 0.5, 0.001)
+	assert_almost_eq(menu_box.anchor_top, 0.5, 0.001)
+	assert_almost_eq(menu_box.offset_left, -220.0, 0.001)
+	assert_almost_eq(menu_box.offset_top, -176.0, 0.001)
 	assert_no_new_orphans()
 
 func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
@@ -52,11 +57,12 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	var football := football_scene.instantiate()
 	add_child_autofree(football)
 	await get_tree().process_frame
-	await get_tree().physics_frame
 
 	assert_not_null(football.get_node_or_null("WorldEnvironment"))
 	assert_not_null(football.get_node_or_null("StadiumKeyLight"))
 	assert_not_null(football.get_node_or_null("FootballPitch"))
+	assert_not_null(football.get_node_or_null("NorthGoalFloor"))
+	assert_not_null(football.get_node_or_null("SouthGoalFloor"))
 	assert_not_null(football.get_node_or_null("NorthGoalPostL"))
 	assert_not_null(football.get_node_or_null("SouthGoalPostR"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player"))
@@ -69,6 +75,11 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_eq(football.debug_get_bot_score(), 0)
 	assert_true(football.debug_get_ball().get_script() == FootballBallScript)
 	assert_true(football.debug_get_bot().get_script() == FootballBotScript)
+	assert_true(football.debug_is_intro_open())
+	assert_true(get_tree().paused)
+	var football_hud = football.get_node("FootballHud")
+	assert_true(football_hud.intro_panel.visible)
+	assert_not_null(football_hud.intro_panel.get_node_or_null("IntroMargin/IntroBox/StartButton"))
 	assert_no_new_orphans()
 
 func test_football_player_kick_moves_ball_without_weapon_damage() -> void:
@@ -76,6 +87,7 @@ func test_football_player_kick_moves_ball_without_weapon_damage() -> void:
 	var football := football_scene.instantiate()
 	add_child_autofree(football)
 	await get_tree().process_frame
+	football.debug_start_match()
 	await get_tree().physics_frame
 
 	var player = football.debug_get_player()
@@ -98,6 +110,7 @@ func test_football_strong_kick_uses_stronger_force() -> void:
 	var football := football_scene.instantiate()
 	add_child_autofree(football)
 	await get_tree().process_frame
+	football.debug_start_match()
 	await get_tree().physics_frame
 
 	var player = football.debug_get_player()
@@ -116,6 +129,7 @@ func test_football_goal_updates_score_and_match_ends_at_three() -> void:
 	var football := football_scene.instantiate()
 	add_child_autofree(football)
 	await get_tree().process_frame
+	football.debug_start_match()
 	await get_tree().physics_frame
 
 	football.debug_set_score(2, 0)
@@ -133,6 +147,7 @@ func test_football_bot_kick_request_moves_ball() -> void:
 	var football := football_scene.instantiate()
 	add_child_autofree(football)
 	await get_tree().process_frame
+	football.debug_start_match()
 	await get_tree().physics_frame
 
 	var bot = football.debug_get_bot()

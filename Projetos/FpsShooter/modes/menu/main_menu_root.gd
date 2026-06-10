@@ -3,6 +3,7 @@ extends Control
 
 const ARENA_SCENE_PATH: String = "res://modes/arena/arena.tscn"
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
+const MENU_BOX_SIZE: Vector2 = Vector2(440.0, 352.0)
 
 var arena_button: Button
 var football_button: Button
@@ -54,9 +55,15 @@ func _build_ui() -> void:
 
 	var center := VBoxContainer.new()
 	center.name = "MenuBox"
-	center.set_anchors_preset(Control.PRESET_CENTER)
-	center.position = Vector2(-210.0, -168.0)
-	center.custom_minimum_size = Vector2(420.0, 336.0)
+	center.anchor_left = 0.5
+	center.anchor_top = 0.5
+	center.anchor_right = 0.5
+	center.anchor_bottom = 0.5
+	center.offset_left = -MENU_BOX_SIZE.x * 0.5
+	center.offset_top = -MENU_BOX_SIZE.y * 0.5
+	center.offset_right = MENU_BOX_SIZE.x * 0.5
+	center.offset_bottom = MENU_BOX_SIZE.y * 0.5
+	center.custom_minimum_size = MENU_BOX_SIZE
 	center.add_theme_constant_override("separation", 14)
 	add_child(center)
 

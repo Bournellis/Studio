@@ -4,6 +4,7 @@ extends CanvasLayer
 signal resume_requested()
 signal main_menu_requested()
 signal sensitivity_changed(value: float)
+signal start_requested()
 
 var status_label: Label
 var score_label: Label
@@ -14,6 +15,7 @@ var event_label: Label
 var crosshair_root: Control
 var crosshair_lines: Array[ColorRect] = []
 var pulse_overlay: ColorRect
+var intro_panel: PanelContainer
 var pause_menu_panel: PanelContainer
 var sensitivity_label: Label
 var sensitivity_slider: HSlider
@@ -105,6 +107,11 @@ func set_pause_menu_visible(menu_is_open: bool, sensitivity_value: float) -> voi
 	pause_menu_panel.visible = menu_is_open
 	set_sensitivity_value(sensitivity_value)
 
+func set_intro_visible(intro_is_visible: bool) -> void:
+	if intro_panel == null:
+		return
+	intro_panel.visible = intro_is_visible
+
 func set_sensitivity_value(value: float) -> void:
 	if sensitivity_slider == null:
 		return
@@ -175,6 +182,7 @@ func _build_ui() -> void:
 	_build_crosshair(root)
 	_build_event_label(root)
 	_build_pause_menu(root)
+	_build_intro_panel(root)
 
 func _build_crosshair(root: Control) -> void:
 	crosshair_root = Control.new()
@@ -278,6 +286,70 @@ func _build_pause_menu(root: Control) -> void:
 		main_menu_requested.emit()
 	)
 	box.add_child(menu_button)
+
+func _build_intro_panel(root: Control) -> void:
+	intro_panel = PanelContainer.new()
+	intro_panel.name = "IntroPanel"
+	intro_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+	intro_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	intro_panel.custom_minimum_size = Vector2(520.0, 390.0)
+	intro_panel.anchor_left = 0.5
+	intro_panel.anchor_top = 0.5
+	intro_panel.anchor_right = 0.5
+	intro_panel.anchor_bottom = 0.5
+	intro_panel.offset_left = -260.0
+	intro_panel.offset_top = -195.0
+	intro_panel.offset_right = 260.0
+	intro_panel.offset_bottom = 195.0
+	root.add_child(intro_panel)
+
+	var margin := MarginContainer.new()
+	margin.name = "IntroMargin"
+	margin.add_theme_constant_override("margin_left", 22)
+	margin.add_theme_constant_override("margin_top", 20)
+	margin.add_theme_constant_override("margin_right", 22)
+	margin.add_theme_constant_override("margin_bottom", 20)
+	intro_panel.add_child(margin)
+
+	var box := VBoxContainer.new()
+	box.name = "IntroBox"
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_theme_constant_override("separation", 12)
+	margin.add_child(box)
+
+	var title := Label.new()
+	title.name = "IntroTitle"
+	title.text = "Como Jogar"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 28)
+	_ignore_mouse(title)
+	box.add_child(title)
+
+	var summary := Label.new()
+	summary.name = "IntroSummary"
+	summary.text = "Futebol 1x1 em primeira pessoa. Primeiro a 3 gols vence."
+	summary.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_ignore_mouse(summary)
+	box.add_child(summary)
+
+	var hotkeys := Label.new()
+	hotkeys.name = "HotkeysLabel"
+	hotkeys.text = "WASD - mover\nMouse - olhar\nEspaco - pular\nLMB - chute\nRMB - chute forte\nR - reiniciar partida\nEsc - menu de sensibilidade"
+	hotkeys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hotkeys.add_theme_font_size_override("font_size", 15)
+	_ignore_mouse(hotkeys)
+	box.add_child(hotkeys)
+
+	var start_button := Button.new()
+	start_button.name = "StartButton"
+	start_button.text = "Começar"
+	start_button.custom_minimum_size = Vector2(320.0, 46.0)
+	start_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	start_button.pressed.connect(func() -> void:
+		start_requested.emit()
+	)
+	box.add_child(start_button)
 
 func _ignore_mouse(control: Control) -> void:
 	control.mouse_filter = Control.MOUSE_FILTER_IGNORE
