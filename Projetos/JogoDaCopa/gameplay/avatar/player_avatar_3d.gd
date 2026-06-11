@@ -16,6 +16,9 @@ const EYE_TINT: Color = Color(0.94, 0.96, 1.0, 1.0)
 const EYEBROW_TINT: Color = Color(0.075, 0.055, 0.04, 1.0)
 const HAIR_EMISSION_TINT: Color = Color(0.08, 0.06, 0.045, 1.0)
 const ROOT_MOTION_BONE: StringName = &"root"
+const MODEL_FORWARD_COMPENSATION_YAW: float = PI
+const MOVEMENT_FACING_SPEED_THRESHOLD: float = 0.5
+const MOVEMENT_FACING_LERP_SPEED: float = 10.0
 
 const ANIMATION_BY_STATE: Dictionary = {
 	&"idle": &"Idle",
@@ -84,6 +87,7 @@ var model_instance_spawn_position: Vector3 = Vector3.ZERO
 var model_instance_spawn_rotation: Vector3 = Vector3.ZERO
 var skeleton_spawn_position: Vector3 = Vector3.ZERO
 var skeleton_spawn_rotation: Vector3 = Vector3.ZERO
+var movement_facing_enabled: bool = false
 
 func _ready() -> void:
 	_build_avatar()
@@ -162,6 +166,19 @@ func set_move_state(move_speed: float, grounded: bool, vertical_velocity: float 
 	if animation_timer > 0.0:
 		return
 	_update_state_from_motion()
+
+func set_movement_facing_enabled(is_enabled: bool) -> void:
+	movement_facing_enabled = is_enabled
+
+func update_visual_movement_facing(horizontal_velocity: Vector3, logical_parent_yaw: float, delta: float) -> void:
+	if not movement_facing_enabled or part_root == null:
+		return
+	var flat_velocity := Vector3(horizontal_velocity.x, 0.0, horizontal_velocity.z)
+	if flat_velocity.length() <= MOVEMENT_FACING_SPEED_THRESHOLD:
+		return
+	var target_world_yaw := atan2(-flat_velocity.x, -flat_velocity.z)
+	var target_local_yaw := wrapf(target_world_yaw - logical_parent_yaw, -PI, PI)
+	part_root.rotation.y = lerp_angle(part_root.rotation.y, target_local_yaw, clampf(MOVEMENT_FACING_LERP_SPEED * delta, 0.0, 1.0))
 
 func play_kick(strong: bool = false) -> void:
 	animation_timer = 0.34 if strong else 0.28
@@ -276,6 +293,17 @@ func debug_get_skeleton_local_position() -> Vector3:
 func debug_get_skeleton_local_rotation() -> Vector3:
 	return skeleton.rotation if skeleton != null else Vector3.ZERO
 
+func debug_get_visual_heading_yaw() -> float:
+	return part_root.rotation.y if part_root != null else 0.0
+
+func debug_get_model_forward_compensation_yaw() -> float:
+	return model_instance_spawn_rotation.y
+
+func debug_get_model_front_direction() -> Vector3:
+	if model_instance == null:
+		return Vector3.FORWARD
+	return model_instance.global_transform.basis.z.normalized()
+
 func debug_get_bone_pose_rotation_y(bone_name: StringName) -> float:
 	if skeleton == null:
 		return 0.0
@@ -353,6 +381,7 @@ func _instantiate_real_model() -> void:
 		_report_real_avatar_fallback("Failed to instantiate real avatar model: %s" % model_path)
 		return
 	model_instance.name = "RealCharacterModel"
+	model_instance.rotation.y = MODEL_FORWARD_COMPENSATION_YAW
 	model_instance.scale = REAL_MODEL_SCALE
 	part_root.add_child(model_instance)
 	model_instance_spawn_position = model_instance.position

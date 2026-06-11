@@ -487,6 +487,56 @@ func test_football_ball_indicator_uses_player_local_basis() -> void:
 	assert_true(hud.debug_get_ball_indicator_text().contains("D"))
 	assert_no_new_orphans()
 
+func test_football_player_avatar_visual_heading_tracks_movement_without_changing_logical_yaw() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var avatar = football.debug_get_player_avatar()
+	player.rotation.y = 1.1
+	player.velocity = Vector3(6.0, 0.0, 0.0)
+	football._update_avatar_states(0.5)
+
+	assert_almost_eq(player.rotation.y, 1.1, 0.001)
+	assert_true(_track03l_visual_yaw_faces_direction(player.rotation.y + avatar.debug_get_visual_heading_yaw(), Vector3.RIGHT))
+
+	player.velocity = Vector3(0.0, 0.0, -6.0)
+	football._update_avatar_states(0.5)
+	assert_true(_track03l_visual_yaw_faces_direction(player.rotation.y + avatar.debug_get_visual_heading_yaw(), Vector3.FORWARD))
+
+	var held_heading: float = avatar.debug_get_visual_heading_yaw()
+	player.velocity = Vector3.ZERO
+	football._update_avatar_states(0.5)
+	assert_almost_eq(avatar.debug_get_visual_heading_yaw(), held_heading, 0.001)
+	assert_no_new_orphans()
+
+func test_football_player_avatar_base_model_shows_back_to_chase_camera_after_forward_move() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var avatar = football.debug_get_player_avatar()
+	player.rotation.y = 0.0
+	player.velocity = Vector3(0.0, 0.0, -6.0)
+	football._update_avatar_states(0.5)
+	player.velocity = Vector3.ZERO
+	football._update_avatar_states(0.5)
+	avatar.set_move_state(0.0, true, 0.0)
+
+	assert_almost_eq(absf(wrapf(avatar.debug_get_model_forward_compensation_yaw(), -PI, PI)), PI, 0.01)
+	assert_eq(avatar.debug_get_animation_state(), &"idle")
+	assert_gt(avatar.debug_get_model_front_direction().dot(Vector3.FORWARD), cos(deg_to_rad(15.0)))
+	assert_gt((-avatar.debug_get_model_front_direction()).dot(Vector3.BACK), cos(deg_to_rad(15.0)))
+	assert_no_new_orphans()
+
 func test_football_chase_camera_keeps_ball_focus_subtle_when_far() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
@@ -1416,3 +1466,8 @@ func _track03l_ball_stayed_inside_case(position: Vector3, case: Dictionary) -> b
 			return position.z >= float(case.get("limit", -INF))
 		_:
 			return false
+
+func _track03l_visual_yaw_faces_direction(yaw: float, expected_direction: Vector3) -> bool:
+	var visual_forward := Vector3(-sin(yaw), 0.0, -cos(yaw)).normalized()
+	var expected := Vector3(expected_direction.x, 0.0, expected_direction.z).normalized()
+	return visual_forward.dot(expected) >= cos(deg_to_rad(15.0))

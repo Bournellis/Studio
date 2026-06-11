@@ -148,7 +148,9 @@ func test_real_avatar_strips_root_motion_and_does_not_accumulate_drift() -> void
 	assert_true(_animation_has_non_uniform_bone_keys(animation_player, &"Jog_Fwd", &"pelvis"))
 
 	var model_spawn_position := avatar.debug_get_model_instance_local_position()
+	var model_spawn_rotation := avatar.debug_get_model_instance_local_rotation()
 	var skeleton_spawn_position := avatar.debug_get_skeleton_local_position()
+	var skeleton_spawn_rotation := avatar.debug_get_skeleton_local_rotation()
 	var actions: Array[StringName] = [
 		&"slide",
 		&"kick",
@@ -176,7 +178,7 @@ func test_real_avatar_strips_root_motion_and_does_not_accumulate_drift() -> void
 		await get_tree().process_frame
 		avatar._process(0.5)
 		await get_tree().process_frame
-		_assert_avatar_has_no_animation_drift(avatar, model_spawn_position, skeleton_spawn_position)
+		_assert_avatar_has_no_animation_drift(avatar, model_spawn_position, model_spawn_rotation, skeleton_spawn_position, skeleton_spawn_rotation)
 	assert_no_new_orphans()
 
 func test_local_first_person_avatar_hides_head_and_neck() -> void:
@@ -275,8 +277,8 @@ func _animation_key_values_are_different(first_value: Variant, next_value: Varia
 		return first_rotation.get_euler().distance_to(next_rotation.get_euler()) > 0.001
 	return first_value != next_value
 
-func _assert_avatar_has_no_animation_drift(avatar, model_spawn_position: Vector3, skeleton_spawn_position: Vector3) -> void:
+func _assert_avatar_has_no_animation_drift(avatar, model_spawn_position: Vector3, model_spawn_rotation: Vector3, skeleton_spawn_position: Vector3, skeleton_spawn_rotation: Vector3) -> void:
 	assert_lt(avatar.debug_get_model_instance_local_position().distance_to(model_spawn_position), 0.05)
 	assert_lt(avatar.debug_get_skeleton_local_position().distance_to(skeleton_spawn_position), 0.05)
-	assert_almost_eq(avatar.debug_get_model_instance_local_rotation().y, 0.0, 0.01)
-	assert_almost_eq(avatar.debug_get_skeleton_local_rotation().y, 0.0, 0.01)
+	assert_almost_eq(avatar.debug_get_model_instance_local_rotation().y, model_spawn_rotation.y, 0.01)
+	assert_almost_eq(avatar.debug_get_skeleton_local_rotation().y, skeleton_spawn_rotation.y, 0.01)
