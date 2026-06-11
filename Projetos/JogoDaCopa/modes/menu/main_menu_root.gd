@@ -4,6 +4,7 @@ extends Control
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
+const RenderProfileScript = preload("res://autoloads/render_profile.gd")
 
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
 const MENU_PANEL_MIN_SIZE: Vector2 = Vector2(500.0, 0.0)
@@ -22,6 +23,13 @@ const MENU_UI_AUDIO_PATHS: Dictionary = {
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
 const TOON_RENDER_META_KEY: String = "jogodacopa_toon_render"
+const CAPTURE_SCENE_META_KEY: String = "jogodacopa_capture_scene"
+const CAPTURE_QUERY_KEY: String = "jdc_capture"
+const CAPTURE_SCENE_MENU: StringName = &"menu"
+const CAPTURE_SCENE_KICKOFF: StringName = &"kickoff"
+const CAPTURE_SCENE_GOAL: StringName = &"goal"
+const CAPTURE_SCENE_RESULT: StringName = &"result"
+const CAPTURE_SCENE_PLAY: StringName = &"play"
 const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 const BOT_DIFFICULTY_LABELS: Dictionary = {
 	&"easy": "Bot facil",
@@ -73,6 +81,7 @@ var selected_toon_render_enabled: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	RenderProfileScript.report_runtime_profile_once("MainMenuRoot")
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	_sync_root_rect_to_viewport()
@@ -87,6 +96,7 @@ func _ready() -> void:
 	_update_preview_selection()
 	_focus_initial_control()
 	call_deferred("_play_fade_from_black")
+	call_deferred("_try_load_web_capture_scene")
 
 func _process(delta: float) -> void:
 	preview_time += delta
@@ -161,6 +171,12 @@ func debug_has_audio_buses() -> bool:
 		and AudioServer.get_bus_index(str(BUS_UI)) >= 0
 		and AudioServer.get_bus_index(str(BUS_AMBIENCE)) >= 0
 	)
+
+func debug_get_render_profile_id() -> StringName:
+	return RenderProfileScript.get_active_profile_id()
+
+func debug_get_preview_viewport_size() -> Vector2i:
+	return preview_viewport.size if preview_viewport != null else Vector2i.ZERO
 
 func debug_get_ui_audio_pool_size() -> int:
 	return ui_audio_pool.size()
@@ -298,7 +314,7 @@ func _build_ui() -> void:
 func _build_arena_preview() -> void:
 	preview_viewport = SubViewport.new()
 	preview_viewport.name = "ArenaPreviewViewport"
-	preview_viewport.size = Vector2i(1280, 720)
+	preview_viewport.size = RenderProfileScript.get_menu_preview_viewport_size()
 	preview_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	add_child(preview_viewport)
 
@@ -315,11 +331,12 @@ func _build_arena_preview() -> void:
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.34, 0.46, 0.6, 1.0)
 	env.ambient_light_energy = 0.76
-	env.glow_enabled = true
-	env.glow_intensity = 0.4
-	env.glow_strength = 0.9
+	var render_settings := RenderProfileScript.get_environment_settings()
+	env.glow_enabled = bool(render_settings["glow_enabled"])
+	env.glow_intensity = float(render_settings["glow_intensity"])
+	env.glow_strength = float(render_settings["glow_strength"])
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
-	env.tonemap_exposure = 1.22
+	env.tonemap_exposure = RenderProfileScript.get_menu_preview_tonemap_exposure()
 	environment.environment = env
 	world.add_child(environment)
 
@@ -368,7 +385,7 @@ func _build_arena_preview() -> void:
 	ball_mesh.radial_segments = 24
 	ball_mesh.rings = 12
 	preview_ball.mesh = ball_mesh
-	preview_ball.material_override = _build_material(Color(0.95, 0.97, 0.92, 1.0), 0.2, Color(0.2, 0.9, 1.0, 1.0), 0.18)
+	preview_ball.material_override = _build_material(Color(0.95, 0.97, 0.92, 1.0), 0.2, Color(0.2, 0.9, 1.0, 1.0), 0.18, RenderProfileScript.ROLE_SCOREBOARD)
 	preview_root.add_child(preview_ball)
 
 	preview_camera = Camera3D.new()
@@ -387,7 +404,7 @@ func _build_preview_pitch(parent: Node3D) -> void:
 	var mesh := BoxMesh.new()
 	mesh.size = Vector3(14.0, 0.1, 20.0)
 	pitch.mesh = mesh
-	pitch.material_override = _build_material(Color(0.02, 0.42, 0.16, 1.0), 0.82, Color(0.0, 0.18, 0.08, 1.0), 0.05)
+	pitch.material_override = _build_material(Color(0.02, 0.42, 0.16, 1.0), 0.82, Color(0.0, 0.18, 0.08, 1.0), 0.05, RenderProfileScript.ROLE_SHADER_PITCH)
 	parent.add_child(pitch)
 
 	for index in range(5):
@@ -397,7 +414,7 @@ func _build_preview_pitch(parent: Node3D) -> void:
 		var stripe_mesh := BoxMesh.new()
 		stripe_mesh.size = Vector3(14.2, 0.035, 0.08)
 		line.mesh = stripe_mesh
-		line.material_override = _build_material(Color(0.86, 0.96, 0.82, 1.0), 0.74, Color(0.5, 1.0, 0.7, 1.0), 0.08)
+		line.material_override = _build_material(Color(0.86, 0.96, 0.82, 1.0), 0.74, Color(0.5, 1.0, 0.7, 1.0), 0.08, RenderProfileScript.ROLE_SHADER_PITCH)
 		parent.add_child(line)
 
 func _build_preview_goal(parent: Node3D, z_position: float) -> void:
@@ -409,7 +426,7 @@ func _build_preview_goal(parent: Node3D, z_position: float) -> void:
 		var post_mesh := BoxMesh.new()
 		post_mesh.size = Vector3(0.12, 2.2, 0.12)
 		post.mesh = post_mesh
-		post.material_override = _build_material(frame_color, 0.28, frame_color, 1.6)
+		post.material_override = _build_material(frame_color, 0.28, frame_color, 1.6, RenderProfileScript.ROLE_NEON)
 		parent.add_child(post)
 	var crossbar := MeshInstance3D.new()
 	crossbar.name = "PreviewGoalCrossbar"
@@ -417,7 +434,7 @@ func _build_preview_goal(parent: Node3D, z_position: float) -> void:
 	var crossbar_mesh := BoxMesh.new()
 	crossbar_mesh.size = Vector3(4.55, 0.12, 0.12)
 	crossbar.mesh = crossbar_mesh
-	crossbar.material_override = _build_material(frame_color, 0.28, frame_color, 1.6)
+	crossbar.material_override = _build_material(frame_color, 0.28, frame_color, 1.6, RenderProfileScript.ROLE_NEON)
 	parent.add_child(crossbar)
 
 func _update_preview_camera_pose(time_seconds: float) -> void:
@@ -662,13 +679,13 @@ func _build_panel_style(fill_color: Color, border_color: Color, border_width: in
 	style.content_margin_bottom = 24
 	return style
 
-func _build_material(color: Color, roughness: float, emission: Color, emission_energy: float) -> StandardMaterial3D:
+func _build_material(color: Color, roughness: float, emission: Color, emission_energy: float, render_profile_role: StringName = &"default") -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
 	material.roughness = roughness
 	material.emission_enabled = true
 	material.emission = emission
-	material.emission_energy_multiplier = emission_energy
+	material.emission_energy_multiplier = RenderProfileScript.adjust_emission_energy(emission_energy, render_profile_role)
 	return material
 
 func _update_preview_selection() -> void:
@@ -794,6 +811,46 @@ func _play_ui_sound(audio_key: StringName) -> void:
 
 func _load_mode(scene_path: String) -> void:
 	call_deferred("_load_mode_async", scene_path)
+
+func _try_load_web_capture_scene() -> void:
+	var capture_scene_id := _get_web_capture_scene_id()
+	if capture_scene_id == &"":
+		return
+	if capture_scene_id == CAPTURE_SCENE_MENU:
+		return
+	if not _is_capture_scene_supported(capture_scene_id):
+		push_error("Unsupported JogoDaCopa web capture scene: %s" % str(capture_scene_id))
+		return
+	get_tree().root.set_meta(CAPTURE_SCENE_META_KEY, capture_scene_id)
+	selected_bot_difficulty_id = &"normal"
+	selected_match_mode_id = &"goals"
+	selected_toon_render_enabled = false
+	_load_mode(FOOTBALL_SCENE_PATH)
+
+func _get_web_capture_scene_id() -> StringName:
+	if not OS.has_feature("web"):
+		return &""
+	var query_string := str(JavaScriptBridge.eval("window.location.search", true))
+	if query_string.is_empty() or query_string == "null":
+		return &""
+	if query_string.begins_with("?"):
+		query_string = query_string.substr(1)
+	for query_pair in query_string.split("&", false):
+		var key := query_pair.get_slice("=", 0).uri_decode()
+		if key != CAPTURE_QUERY_KEY:
+			continue
+		var value := query_pair.get_slice("=", 1).uri_decode().strip_edges().to_lower()
+		return StringName(value)
+	return &""
+
+func _is_capture_scene_supported(capture_scene_id: StringName) -> bool:
+	return (
+		capture_scene_id == CAPTURE_SCENE_MENU
+		or capture_scene_id == CAPTURE_SCENE_KICKOFF
+		or capture_scene_id == CAPTURE_SCENE_GOAL
+		or capture_scene_id == CAPTURE_SCENE_RESULT
+		or capture_scene_id == CAPTURE_SCENE_PLAY
+	)
 
 func _load_mode_async(scene_path: String) -> void:
 	status_label.text = "Carregando..."

@@ -20,6 +20,7 @@ boot_splash/bg_color=Color(0.0235294, 0.0784314, 0.121569, 1)
 [autoload]
 
 AppBootstrap="*res://autoloads/app_bootstrap.gd"
+RenderProfile="*res://autoloads/render_profile.gd"
 
 [audio]
 

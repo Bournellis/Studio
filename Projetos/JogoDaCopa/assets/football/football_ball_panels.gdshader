@@ -8,6 +8,7 @@ uniform vec3 fireball_color = vec3(1.0, 0.34, 0.05);
 uniform float seam_width = 0.055;
 uniform float fireball_intensity = 0.0;
 uniform float toon_intensity = 0.0;
+uniform float render_emission_scale = 1.0;
 
 void fragment() {
 	vec2 uv = UV;
@@ -20,6 +21,6 @@ void fragment() {
 	vec3 albedo = mix(mix(base, fireball_color, fireball_intensity * 0.14), seam_color, clamp(seam, 0.0, 1.0));
 	vec3 toon_albedo = floor(albedo * 3.0 + 0.5) / 3.0;
 	ALBEDO = mix(albedo, toon_albedo, toon_intensity);
-	EMISSION = accent_color * accent * 0.045 + fireball_color * fireball_intensity * 1.65;
+	EMISSION = (accent_color * accent * 0.045 + fireball_color * fireball_intensity * 1.65) * render_emission_scale;
 	ROUGHNESS = mix(0.44, 0.78, toon_intensity);
 }

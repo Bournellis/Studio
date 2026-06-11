@@ -1,5 +1,7 @@
-class_name FpsCombatant3D
+﻿class_name FpsCombatant3D
 extends CharacterBody3D
+
+const RenderProfileScript = preload("res://autoloads/render_profile.gd")
 
 signal damaged(amount: float, remaining_health: float)
 signal healed(amount: float, current_health: float)
@@ -179,5 +181,5 @@ func _build_material(color: Color) -> StandardMaterial3D:
 	material.roughness = 0.72
 	material.emission_enabled = true
 	material.emission = color
-	material.emission_energy_multiplier = 0.18
+	material.emission_energy_multiplier = RenderProfileScript.adjust_emission_energy(0.18, RenderProfileScript.ROLE_CHARACTER)
 	return material

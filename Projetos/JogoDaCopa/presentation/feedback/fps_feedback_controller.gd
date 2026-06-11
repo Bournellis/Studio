@@ -1,5 +1,7 @@
-class_name FpsFeedbackController
+﻿class_name FpsFeedbackController
 extends Node3D
+
+const RenderProfileScript = preload("res://autoloads/render_profile.gd")
 
 const SAMPLE_RATE: int = 22050
 const BUS_SFX: StringName = &"SFX"
@@ -367,7 +369,7 @@ func _spawn_light(effect_position: Vector3, color: Color, energy: float, radius:
 func _spawn_particle_burst(effect_position: Vector3, color: Color, amount: int, lifetime: float, speed: float) -> void:
 	var particles := GPUParticles3D.new()
 	particles.name = "FeedbackParticles"
-	particles.amount = amount
+	particles.amount = RenderProfileScript.adjust_particle_amount(amount)
 	particles.lifetime = lifetime
 	particles.one_shot = true
 	particles.explosiveness = 1.0
@@ -522,7 +524,7 @@ func _build_material(color: Color, unshaded: bool) -> StandardMaterial3D:
 	material.albedo_color = color
 	material.emission_enabled = true
 	material.emission = color
-	material.emission_energy_multiplier = 1.8
+	material.emission_energy_multiplier = RenderProfileScript.adjust_emission_energy(1.8, RenderProfileScript.ROLE_PARTICLE)
 	material.roughness = 0.35
 	if unshaded:
 		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED

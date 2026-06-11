@@ -12,6 +12,7 @@ const FootballMatchRulesScript = preload("res://gameplay/football/football_match
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
+const RenderProfileScript = preload("res://autoloads/render_profile.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const MODE_NAME: String = "Copa Arena Futebol"
@@ -83,6 +84,13 @@ const RENDER_TOON_ENABLED: bool = false
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
 const TOON_RENDER_META_KEY: String = "jogodacopa_toon_render"
+const CAPTURE_SCENE_META_KEY: String = "jogodacopa_capture_scene"
+const CAPTURE_SCENE_KICKOFF: StringName = &"kickoff"
+const CAPTURE_SCENE_GOAL: StringName = &"goal"
+const CAPTURE_SCENE_RESULT: StringName = &"result"
+const CAPTURE_SCENE_PLAY: StringName = &"play"
+const CAPTURE_KICKOFF_COUNTDOWN_SECONDS: float = 2.8
+const CAPTURE_GOAL_HOLD_SECONDS: float = 30.0
 const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 const MATCH_MODE_IDS: Array = [&"timer", &"goals"]
 const SCREEN_TRANSITION_SECONDS: float = 0.25
@@ -141,6 +149,7 @@ func _ready() -> void:
 	_spawn_runtime()
 	_restart_play(false)
 	_set_intro_open(true)
+	call_deferred("_apply_capture_scene_from_meta")
 
 func _process(_delta: float) -> void:
 	if hud != null:
@@ -317,6 +326,12 @@ func debug_build_hud_snapshot() -> Dictionary:
 func debug_get_match_stats_summary() -> Dictionary:
 	return FootballMatchRulesScript.build_match_stats_summary(match_stats)
 
+func debug_get_render_profile_id() -> StringName:
+	return RenderProfileScript.get_active_profile_id()
+
+func debug_get_render_environment_settings() -> Dictionary:
+	return RenderProfileScript.get_environment_settings()
+
 func debug_get_escape_target() -> StringName:
 	return _get_escape_target()
 
@@ -491,7 +506,82 @@ func debug_get_stadium_scoreboard_text(side_name: String = "North") -> String:
 	var label := _get_stadium_scoreboard_score_label(side_name)
 	return label.text if label != null else ""
 
+func _apply_capture_scene_from_meta() -> void:
+	var tree := get_tree()
+	if tree == null or tree.root == null or not tree.root.has_meta(CAPTURE_SCENE_META_KEY):
+		return
+	var capture_scene_id := StringName(str(tree.root.get_meta(CAPTURE_SCENE_META_KEY)))
+	tree.root.remove_meta(CAPTURE_SCENE_META_KEY)
+	if not _is_capture_scene_supported(capture_scene_id):
+		push_error("Unsupported JogoDaCopa capture scene in FootballRoot: %s" % str(capture_scene_id))
+		return
+	match capture_scene_id:
+		CAPTURE_SCENE_KICKOFF:
+			_apply_kickoff_capture_scene()
+		CAPTURE_SCENE_GOAL:
+			_apply_goal_capture_scene()
+		CAPTURE_SCENE_RESULT:
+			_apply_result_capture_scene()
+		CAPTURE_SCENE_PLAY:
+			_apply_play_capture_scene()
+
+func _is_capture_scene_supported(capture_scene_id: StringName) -> bool:
+	return (
+		capture_scene_id == CAPTURE_SCENE_KICKOFF
+		or capture_scene_id == CAPTURE_SCENE_GOAL
+		or capture_scene_id == CAPTURE_SCENE_RESULT
+		or capture_scene_id == CAPTURE_SCENE_PLAY
+	)
+
+func _prepare_capture_scene() -> void:
+	set_bot_difficulty(&"normal")
+	set_match_mode(MATCH_MODE_GOALS)
+	set_toon_render_enabled(false)
+	_set_intro_open(false)
+	_set_menu_open(false)
+	if hud != null:
+		hud.reset_feedback()
+
+func _apply_kickoff_capture_scene() -> void:
+	_prepare_capture_scene()
+	debug_start_match_with_countdown()
+	kickoff_countdown_remaining = CAPTURE_KICKOFF_COUNTDOWN_SECONDS
+	countdown_last_number = 3
+
+func _apply_goal_capture_scene() -> void:
+	_prepare_capture_scene()
+	debug_start_match()
+	_notify_ball_touched_by(&"player")
+	debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_NORTH - 0.35))
+	_process_goal_detection()
+	goal_slowmo_remaining = 0.0
+	Engine.time_scale = 1.0
+	if hud != null and hud.has_method("_set_fade_alpha_immediate"):
+		hud.call("_set_fade_alpha_immediate", 0.0)
+	goal_reset_timer = CAPTURE_GOAL_HOLD_SECONDS
+
+func _apply_result_capture_scene() -> void:
+	_prepare_capture_scene()
+	debug_start_match()
+	_record_goal_stat(true, 1)
+	_record_goal_stat(false, 1)
+	_record_goal_stat(true, 1)
+	_notify_ball_touched_by(&"player")
+	_notify_ball_touched_by(&"bot")
+	_notify_ball_touched_by(&"player")
+	_record_shot_stat(&"player", true)
+	_record_shot_stat(&"player", false)
+	_record_shot_stat(&"bot", false)
+	debug_set_score(2, 1)
+	debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_NORTH - 0.35))
+	_process_goal_detection()
+
+func _apply_play_capture_scene() -> void:
+	_prepare_capture_scene()
+	debug_start_match()
+
 func _configure_world() -> void:
+	RenderProfileScript.report_runtime_profile_once("FootballRoot")
 	var environment := WorldEnvironment.new()
 	environment.name = "WorldEnvironment"
 	environment.environment = _build_night_environment()
@@ -501,6 +591,7 @@ func _configure_world() -> void:
 	_build_football_pitch()
 
 func _build_night_environment() -> Environment:
+	var render_settings := RenderProfileScript.get_environment_settings()
 	var env := Environment.new()
 	var sky_material := ProceduralSkyMaterial.new()
 	sky_material.sky_top_color = Color(0.004, 0.01, 0.04, 1.0)
@@ -521,17 +612,17 @@ func _build_night_environment() -> Environment:
 
 	env.background_mode = Environment.BG_SKY
 	env.sky = sky
-	env.background_energy_multiplier = 0.82
-	env.background_intensity = 0.72
+	env.background_energy_multiplier = float(render_settings["background_energy_multiplier"])
+	env.background_intensity = float(render_settings["background_intensity"])
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 	env.ambient_light_color = Color(0.44, 0.58, 0.72, 1.0)
-	env.ambient_light_energy = 0.34
-	env.ambient_light_sky_contribution = 0.74
+	env.ambient_light_energy = float(render_settings["ambient_light_energy"])
+	env.ambient_light_sky_contribution = float(render_settings["ambient_light_sky_contribution"])
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
-	env.tonemap_exposure = 1.08
-	env.tonemap_white = 1.72
+	env.tonemap_exposure = float(render_settings["tonemap_exposure"])
+	env.tonemap_white = float(render_settings["tonemap_white"])
 
-	env.glow_enabled = RENDER_GLOW_ENABLED
+	env.glow_enabled = bool(render_settings["glow_enabled"])
 	env.set("glow_levels/1", false)
 	env.set("glow_levels/2", true)
 	env.set("glow_levels/3", true)
@@ -540,30 +631,30 @@ func _build_night_environment() -> Environment:
 	env.set("glow_levels/6", false)
 	env.set("glow_levels/7", false)
 	env.glow_normalized = true
-	env.glow_intensity = 0.42
-	env.glow_strength = 0.92
-	env.glow_bloom = 0.28
-	env.glow_hdr_threshold = 0.86
-	env.glow_hdr_scale = 1.65
-	env.glow_hdr_luminance_cap = 9.0
+	env.glow_intensity = float(render_settings["glow_intensity"])
+	env.glow_strength = float(render_settings["glow_strength"])
+	env.glow_bloom = float(render_settings["glow_bloom"])
+	env.glow_hdr_threshold = float(render_settings["glow_hdr_threshold"])
+	env.glow_hdr_scale = float(render_settings["glow_hdr_scale"])
+	env.glow_hdr_luminance_cap = float(render_settings["glow_hdr_luminance_cap"])
 
-	env.ssao_enabled = RENDER_SSAO_ENABLED
-	env.ssao_radius = 2.6
-	env.ssao_intensity = 0.52
-	env.ssao_power = 1.22
-	env.ssao_detail = 0.38
-	env.ssao_sharpness = 0.48
-	env.ssao_light_affect = 0.18
+	env.ssao_enabled = bool(render_settings["ssao_enabled"])
+	env.ssao_radius = float(render_settings["ssao_radius"])
+	env.ssao_intensity = float(render_settings["ssao_intensity"])
+	env.ssao_power = float(render_settings["ssao_power"])
+	env.ssao_detail = float(render_settings["ssao_detail"])
+	env.ssao_sharpness = float(render_settings["ssao_sharpness"])
+	env.ssao_light_affect = float(render_settings["ssao_light_affect"])
 
-	env.fog_enabled = RENDER_FOG_ENABLED
+	env.fog_enabled = bool(render_settings["fog_enabled"])
 	env.fog_light_color = Color(0.12, 0.22, 0.36, 1.0)
-	env.fog_light_energy = 0.28
-	env.fog_density = 0.014
-	env.fog_aerial_perspective = 0.34
-	env.fog_sky_affect = 0.24
-	env.fog_depth_begin = 30.0
-	env.fog_depth_end = 110.0
-	env.fog_depth_curve = 1.1
+	env.fog_light_energy = float(render_settings["fog_light_energy"])
+	env.fog_density = float(render_settings["fog_density"])
+	env.fog_aerial_perspective = float(render_settings["fog_aerial_perspective"])
+	env.fog_sky_affect = float(render_settings["fog_sky_affect"])
+	env.fog_depth_begin = float(render_settings["fog_depth_begin"])
+	env.fog_depth_end = float(render_settings["fog_depth_end"])
+	env.fog_depth_curve = float(render_settings["fog_depth_curve"])
 	return env
 
 func _build_star_cover_texture() -> Texture2D:
@@ -1542,7 +1633,7 @@ func _build_kickoff_marker(parent: Node3D) -> void:
 	material.albedo_color = Color(0.1, 0.86, 1.0, 0.48)
 	material.emission_enabled = true
 	material.emission = Color(0.15, 0.9, 1.0, 1.0)
-	material.emission_energy_multiplier = 1.65
+	material.emission_energy_multiplier = RenderProfileScript.adjust_emission_energy(1.65, RenderProfileScript.ROLE_NEON)
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	kickoff_marker.material_override = material
 	kickoff_marker.visible = false
