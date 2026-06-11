@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_04B3_KICK_ARMS_POLISH_V1_COMPLETE`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque, gols altos, personagem/audio real, uniforme procedural por regioes, cabelo real anexado ao Head, toon sem duplicata T-pose, chute autoral abaixo do quadril com bracos polidos, bola com CCD/trail/fireball/squash, dash com curva, pulo vertical puro sem input, chute carregado/SUPER sem gasto em whiff, boost/jump pads, timer 3min/golden goal/vale-2, HUD/menu com clique real, bot defensivo/aereo, camera/reset protegidos, facing visual e preview sem tela preta. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
+- Marker: `JOGO_DA_COPA_TRACK_04D_MATCH_COMPLETENESS_V1_READY_FOR_REVIEW`
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque, personagem/audio real, uniforme procedural, chute autoral polido, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, bot defensivo/aereo, camera/reset protegidos, pause real, resultado rico com estatisticas, fades curtos, ESC/foco/restart consistentes e hero shot do menu. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`; depois abrir 04C/04D conforme rota pre-release aprovada.
+- Proximo passo: review Claude + aprovacao visual Fabio da branch 04D; 04C segue paralela; sem merge/push nesta thread.
 
 ## draxos-roguelike-cardgame
 
