@@ -3,6 +3,8 @@ extends "res://addons/gut/test.gd"
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
+const KICK_UPPERARM_MAX_ABDUCTION_DEGREES := 25.0
+const KICK_POSE_SAMPLE_TIMES := [0.0, 0.045, 0.09, 0.135, 0.18, 0.225, 0.27, 0.315, 0.36]
 
 func test_avatar_catalog_exposes_default_and_multiple_choices() -> void:
 	var appearance = AvatarCatalogScript.get_default_appearance()
@@ -303,6 +305,37 @@ func test_authorial_kick_keeps_right_foot_below_pelvis() -> void:
 		assert_lt(foot_position.y, pelvis_position.y, "Right foot should remain below pelvis during JogoDaCopa_Kick at %.2fs" % sample_time)
 	assert_no_new_orphans()
 
+func test_authorial_kick_keeps_hands_below_head_and_upperarms_close() -> void:
+	var avatar = PlayerAvatarScript.new()
+	add_child_autofree(avatar)
+	await get_tree().process_frame
+
+	var animation_player := avatar.get_node_or_null("AvatarParts/RealCharacterModel/RealAnimationPlayer") as AnimationPlayer
+	var animation_tree := avatar.get_node_or_null("AvatarParts/RealCharacterModel/RealAnimationTree") as AnimationTree
+	var skeleton := avatar.get_node_or_null("AvatarParts/RealCharacterModel/Armature/Skeleton3D") as Skeleton3D
+	assert_not_null(animation_player)
+	assert_not_null(animation_tree)
+	assert_not_null(skeleton)
+	if animation_player == null or animation_tree == null or skeleton == null:
+		return
+
+	animation_tree.active = false
+	animation_player.play(&"JogoDaCopa_Kick")
+	for sample_time in KICK_POSE_SAMPLE_TIMES:
+		animation_player.seek(sample_time, true)
+		await get_tree().process_frame
+		skeleton.force_update_all_bone_transforms()
+		var head_position := _get_bone_position_in_avatar_space(avatar, skeleton, &"Head")
+		var hand_l_position := _get_bone_position_in_avatar_space(avatar, skeleton, &"hand_l")
+		var hand_r_position := _get_bone_position_in_avatar_space(avatar, skeleton, &"hand_r")
+		assert_lt(hand_l_position.y, head_position.y, "Left hand should stay below head during JogoDaCopa_Kick at %.3fs" % sample_time)
+		assert_lt(hand_r_position.y, head_position.y, "Right hand should stay below head during JogoDaCopa_Kick at %.3fs" % sample_time)
+		var left_abduction := _get_upperarm_abduction_degrees(avatar, skeleton, &"upperarm_l", &"lowerarm_l")
+		var right_abduction := _get_upperarm_abduction_degrees(avatar, skeleton, &"upperarm_r", &"lowerarm_r")
+		assert_lte(left_abduction, KICK_UPPERARM_MAX_ABDUCTION_DEGREES, "Left upperarm abduction %.2f should stay <= %.2f degrees at %.3fs" % [left_abduction, KICK_UPPERARM_MAX_ABDUCTION_DEGREES, sample_time])
+		assert_lte(right_abduction, KICK_UPPERARM_MAX_ABDUCTION_DEGREES, "Right upperarm abduction %.2f should stay <= %.2f degrees at %.3fs" % [right_abduction, KICK_UPPERARM_MAX_ABDUCTION_DEGREES, sample_time])
+	assert_no_new_orphans()
+
 func test_local_first_person_avatar_hides_head_and_neck() -> void:
 	var avatar = PlayerAvatarScript.new()
 	avatar.local_first_person = true
@@ -362,12 +395,30 @@ func _play_avatar_debug_action(avatar, action: StringName) -> void:
 			avatar.set_move_state(0.0, true, 0.0)
 
 func _get_bone_position_in_avatar_space(avatar: Node3D, skeleton: Skeleton3D, bone_name: StringName) -> Vector3:
-	var bone_index := skeleton.find_bone(str(bone_name))
+	var bone_index := _find_bone_case_insensitive(skeleton, bone_name)
 	assert_gte(bone_index, 0, "Missing avatar bone: %s" % bone_name)
 	if bone_index < 0:
 		return Vector3.ZERO
 	var bone_global_transform := skeleton.global_transform * skeleton.get_bone_global_pose(bone_index)
 	return avatar.to_local(bone_global_transform.origin)
+
+func _find_bone_case_insensitive(skeleton: Skeleton3D, bone_name: StringName) -> int:
+	var exact_index := skeleton.find_bone(str(bone_name))
+	if exact_index >= 0:
+		return exact_index
+	var target_name := str(bone_name).to_lower()
+	for bone_index in range(skeleton.get_bone_count()):
+		if str(skeleton.get_bone_name(bone_index)).to_lower() == target_name:
+			return bone_index
+	return -1
+
+func _get_upperarm_abduction_degrees(avatar: Node3D, skeleton: Skeleton3D, upperarm_name: StringName, lowerarm_name: StringName) -> float:
+	var shoulder_position := _get_bone_position_in_avatar_space(avatar, skeleton, upperarm_name)
+	var elbow_position := _get_bone_position_in_avatar_space(avatar, skeleton, lowerarm_name)
+	var upperarm_vector := elbow_position - shoulder_position
+	if upperarm_vector.length() <= 0.001:
+		return 0.0
+	return rad_to_deg(upperarm_vector.normalized().angle_to(Vector3.DOWN))
 
 func _simulate_avatar_visual_facing(avatar, horizontal_velocity: Vector3, frame_count: int, logical_yaw: float = 0.0, delta: float = 1.0 / 60.0) -> void:
 	for _frame_index in range(frame_count):
