@@ -19,4 +19,14 @@
 
 ## Verdict
 
-**Arena: aprovada. Facing: aprovacao condicionada a evidencia complementar.** Necessaria mini-track 03L.1 (captura + teste, SEM tocar gameplay): teste de facing automatizado, sequencia de corrida em 4 frames, frame de costas, rebote no antigo vao, e o playtest-report do protocolo. Depois disso: playtest de confirmacao geral de Fabio e decisao das portas.
+**Arena: aprovada. Facing: aprovacao condicionada a evidencia complementar.** Necessaria mini-track 03L.1 (captura + teste, SEM tocar gameplay).
+
+## Adendo 03L.1 - Facing Evidence (2026-06-11): FACING APROVADO
+
+- Teste automatizado novo: `test_avatar_visual_movement_facing_tracks_velocity_axes_and_stopped_forward_pose` (eixos +X/-Z e pose parada).
+- Sequencia de 4 frames da corrida em curva ANALISADA POR CLAUDE: o corpo vira progressivamente acompanhando a trajetoria (perfil -> transicao -> perfil oposto -> costas/lateral), com passada de corrida viva em todos os frames; em nenhum momento o personagem corre "olhando para a camera".
+- Frame parado pos-movimento: personagem claramente DE COSTAS para a camera, de frente para o gol - criterio de orientacao base atendido.
+- Rebote no antigo vao e playtest-report (`docs/playtest-reports/track-03l-arena.md`) entregues.
+- **Nota estetica N2 (nao bloqueia, validar no playtest)**: nos frames, o torso do personagem le como "sem camisa" - o tint de kit sobre a textura parece fraco demais para comunicar o uniforme do pais. Candidata a proxima leva de polish (reforcar saturacao/peso do tint na regiao de roupa do traje).
+
+**Veredito final da 03L + 03L.1: APROVADA INTEGRALMENTE.** Fila de bugs conhecidos: VAZIA (exceto L1 da defesa aerea, registrado). Proximo: playtest de confirmacao geral de Fabio -> decisao das portas (docs/next-series-options.md) + Track 03J (Quality Gates no AGENTS) quando quiser.

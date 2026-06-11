@@ -43,6 +43,7 @@ Nascidas de falhas reais: 2 quebras consecutivas de UI invisiveis a testes de pr
 - `git clean` e PROIBIDO em qualquer fase. Arquivos untracked no worktree principal pertencem a Fabio/Claude: nunca deletar; docs untracked de Claude em `docs/` devem ser COMMITADOS no commit de registro da track corrente.
 - Operador humano: aguardar 15-30s apos o relatorio final antes de fechar a janela/processo.
 - Antes de iniciar track nova: worktree sujo ou git inoperante => PARAR e registrar handoff. Verificacao/recuperacao pos-thread e papel de Claude.
+- Worktree NOVA: rodar import headless do editor (`--headless --editor --quit`) UMA VEZ antes de validar ou julgar erros de runtime. Erros `No loader found` / fallbacks de asset em worktree recem-criada sao quase sempre cache de import ausente (`.godot/` local), nao bug do jogo (licao da godot-debugger-bugs-v1, 2026-06-11).
 
 #### Permanentes do projeto (promovidos das regras de serie)
 
