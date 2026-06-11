@@ -171,7 +171,7 @@ func _physics_process(delta: float) -> void:
 	_process_arcade_action_contacts()
 	_update_arcade_field(delta)
 	_process_goal_detection()
-	_update_avatar_states()
+	_update_avatar_states(delta)
 
 func _input(event: InputEvent) -> void:
 	if intro_open:
@@ -458,8 +458,14 @@ func debug_get_arena_config() -> Dictionary:
 		"field_length": FIELD_LENGTH,
 		"wall_height": WALL_HEIGHT,
 		"ceiling_height": CEILING_HEIGHT,
+		"wall_thickness": WALL_THICKNESS,
 		"goal_half_width": GOAL_HALF_WIDTH,
-		"goal_height": GOAL_HEIGHT
+		"goal_height": GOAL_HEIGHT,
+		"goal_side_wall_x": GOAL_SIDE_WALL_X,
+		"goal_side_wall_thickness": GOAL_SIDE_WALL_THICKNESS,
+		"goal_closed_depth": GOAL_CLOSED_DEPTH,
+		"goal_line_north": GOAL_LINE_NORTH,
+		"goal_line_south": GOAL_LINE_SOUTH
 	}
 
 func debug_get_stadium_scoreboard_text(side_name: String = "North") -> String:
@@ -621,6 +627,7 @@ func _spawn_runtime() -> void:
 	player_avatar = PlayerAvatarScript.new()
 	player_avatar.name = "PlayerAvatar"
 	player_avatar.local_first_person = false
+	player_avatar.set_movement_facing_enabled(true)
 	player.add_child(player_avatar)
 	player_avatar.apply_appearance(selected_appearance)
 
@@ -1504,9 +1511,11 @@ func _update_avatar_selection_labels() -> void:
 		AvatarCatalogScript.get_country_kit_label(selected_appearance.country_kit_id)
 	)
 
-func _update_avatar_states() -> void:
+func _update_avatar_states(delta: float) -> void:
 	if player_avatar != null and player != null:
-		var player_flat_speed := Vector3(player.velocity.x, 0.0, player.velocity.z).length()
+		var player_flat_velocity := Vector3(player.velocity.x, 0.0, player.velocity.z)
+		var player_flat_speed := player_flat_velocity.length()
+		player_avatar.update_visual_movement_facing(player_flat_velocity, player.rotation.y, delta)
 		player_avatar.set_move_state(player_flat_speed, player.is_on_floor(), player.velocity.y)
 	if bot_avatar != null and bot != null:
 		var bot_flat_speed := Vector3(bot.velocity.x, 0.0, bot.velocity.z).length()

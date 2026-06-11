@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_03K_ANIMATION_POSE_RESTORE_V2_COMPLETE`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena noturna de vidro, personagem real skinned/audio real, bola com trail/fireball/squash, dash/slide/stun/flip, chute carregado/SUPER sem gasto em whiff, boost/jump pads/rampas, timer 3min default com golden goal/vale-2, HUD/menu arcade com clique real em 3 resolucoes, bot defensivo/aereo, camera/reset de kickoff protegidos, avatar real com root track removido sem tocar pelvis para restaurar pose/animacao e drift coberto por teste. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
+- Marker: `JOGO_DA_COPA_TRACK_03L_ARENA_SEAL_FACING_V2_COMPLETE`
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena noturna de vidro estanque ate o teto, gols com painel frontal alto, quina simples sem rodape/rampas, personagem real skinned/audio real, bola com CCD/trail/fireball/squash, dash/slide/stun/flip, chute carregado/SUPER sem gasto em whiff, boost/jump pads, timer 3min default com golden goal/vale-2, HUD/menu arcade com clique real em 3 resolucoes, bot defensivo/aereo, camera/reset de kickoff protegidos, avatar real com root track removido e facing visual por movimento. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: playtest de confirmacao de animacao por Fabio - o juiz final de pose e vida da animacao e o olho humano.
+- Proximo passo: playtest de confirmacao geral por Fabio - arena sem fuga, gol alto rebatendo, quina simples e facing visual do player.
 
 ## draxos-roguelike-cardgame
 
