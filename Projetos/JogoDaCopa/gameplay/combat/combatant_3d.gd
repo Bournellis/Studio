@@ -26,6 +26,7 @@ var last_knockback_impulse: Vector3 = Vector3.ZERO
 var knockback_event_count: int = 0
 var damage_flash_time: float = 0.0
 var damage_flash_duration: float = 0.14
+var visual_body_visible: bool = true
 
 func _ready() -> void:
 	_ensure_body_nodes()
@@ -114,6 +115,16 @@ func debug_get_knockback_event_count() -> int:
 func debug_get_knockback_horizontal_speed() -> float:
 	return Vector3(knockback_velocity.x, 0.0, knockback_velocity.z).length()
 
+func set_combatant_body_visible(is_visible: bool) -> void:
+	visual_body_visible = is_visible
+	var mesh_instance := get_node_or_null("MeshInstance3D") as MeshInstance3D
+	if mesh_instance != null:
+		mesh_instance.visible = visual_body_visible
+
+func debug_is_combatant_body_visible() -> bool:
+	var mesh_instance := get_node_or_null("MeshInstance3D") as MeshInstance3D
+	return mesh_instance != null and mesh_instance.visible
+
 func _clamp_knockback_velocity(next_velocity: Vector3) -> Vector3:
 	var flat := Vector3(next_velocity.x, 0.0, next_velocity.z)
 	if flat.length() > knockback_max_horizontal_speed:
@@ -144,6 +155,7 @@ func _ensure_body_nodes() -> void:
 		mesh_instance.mesh = mesh
 		mesh_instance.position = Vector3(0.0, BODY_CENTER_Y, 0.0)
 		mesh_instance.material_override = _build_material(body_color)
+		mesh_instance.visible = visual_body_visible
 		add_child(mesh_instance)
 
 func _update_visual_state() -> void:
@@ -159,6 +171,7 @@ func _update_visual_state() -> void:
 	elif health_fraction() < 0.35:
 		color = body_color.lerp(Color(1.0, 0.22, 0.16, 1.0), 0.55)
 	mesh_instance.material_override = _build_material(color)
+	mesh_instance.visible = visual_body_visible
 
 func _build_material(color: Color) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()

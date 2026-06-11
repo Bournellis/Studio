@@ -11,9 +11,11 @@ const REAL_MODEL_SCALE: Vector3 = Vector3(0.92, 0.92, 0.92)
 const SPRINT_SPEED_THRESHOLD: float = 9.8
 const DEFAULT_STATE: StringName = &"idle"
 const KICK_ANIMATION_NAME: StringName = &"JogoDaCopa_Kick"
+const RESET_ANIMATION_NAME: StringName = &"RESET"
 const EYE_TINT: Color = Color(0.94, 0.96, 1.0, 1.0)
 const EYEBROW_TINT: Color = Color(0.075, 0.055, 0.04, 1.0)
 const HAIR_EMISSION_TINT: Color = Color(0.08, 0.06, 0.045, 1.0)
+const ROOT_MOTION_BONES: Array[StringName] = [&"root", &"pelvis"]
 
 const ANIMATION_BY_STATE: Dictionary = {
 	&"idle": &"Idle",
@@ -77,6 +79,12 @@ var skid_dust_particles: GPUParticles3D
 var toon_render_enabled: bool = false
 var toon_outline_material: StandardMaterial3D
 var loaded_animation_names: Array[StringName] = []
+var real_model_fallback_reason: String = ""
+var model_instance_spawn_position: Vector3 = Vector3.ZERO
+var model_instance_spawn_rotation: Vector3 = Vector3.ZERO
+var skeleton_spawn_position: Vector3 = Vector3.ZERO
+var skeleton_spawn_rotation: Vector3 = Vector3.ZERO
+var root_motion_lock_queued: bool = false
 
 func _ready() -> void:
 	_build_avatar()
@@ -87,6 +95,7 @@ func _process(delta: float) -> void:
 		animation_timer = maxf(0.0, animation_timer - delta)
 		if animation_timer <= 0.0:
 			_update_state_from_motion()
+	_queue_root_motion_lock()
 
 func set_character_variant(next_variant: StringName) -> void:
 	character_variant = &"female" if next_variant == &"female" else &"male"
@@ -103,6 +112,8 @@ func set_character_variant(next_variant: StringName) -> void:
 	body_mesh = null
 	real_meshes.clear()
 	part_meshes.clear()
+	loaded_animation_names.clear()
+	real_model_fallback_reason = ""
 	boost_trail_particles = null
 	skid_dust_particles = null
 	_build_avatar()
@@ -156,31 +167,31 @@ func set_move_state(move_speed: float, grounded: bool, vertical_velocity: float 
 
 func play_kick(strong: bool = false) -> void:
 	animation_timer = 0.34 if strong else 0.28
-	_travel_state(&"strong_kick" if strong else &"kick")
+	_travel_state(&"strong_kick" if strong else &"kick", true)
 
 func play_celebrate() -> void:
 	animation_timer = 1.25
-	_travel_state(&"celebrate")
+	_travel_state(&"celebrate", true)
 
 func play_emote() -> void:
 	animation_timer = 1.0
-	_travel_state(&"emote")
+	_travel_state(&"emote", true)
 
 func play_hit() -> void:
 	animation_timer = 0.34
-	_travel_state(&"hit")
+	_travel_state(&"hit", true)
 
 func play_slide() -> void:
 	animation_timer = 0.38
-	_travel_state(&"slide")
+	_travel_state(&"slide", true)
 
 func play_flip() -> void:
 	animation_timer = 0.42
-	_travel_state(&"flip")
+	_travel_state(&"flip", true)
 
 func play_push() -> void:
 	animation_timer = 0.55
-	_travel_state(&"push")
+	_travel_state(&"push", true)
 
 func set_boost_trail_active(is_active: bool) -> void:
 	if boost_trail_particles != null:
@@ -235,7 +246,7 @@ func debug_get_toon_outline_count() -> int:
 	return count
 
 func debug_has_real_model() -> bool:
-	return model_instance != null and skeleton != null
+	return model_instance != null and skeleton != null and body_mesh != null and not real_meshes.is_empty()
 
 func debug_get_real_skeleton_bone_count() -> int:
 	return skeleton.get_bone_count() if skeleton != null else 0
@@ -251,6 +262,64 @@ func debug_has_animation(animation_name: StringName) -> bool:
 
 func debug_get_character_variant() -> StringName:
 	return character_variant
+
+func debug_get_real_model_fallback_reason() -> String:
+	return real_model_fallback_reason
+
+func debug_get_model_instance_local_position() -> Vector3:
+	return model_instance.position if model_instance != null else Vector3.ZERO
+
+func debug_get_model_instance_local_rotation() -> Vector3:
+	return model_instance.rotation if model_instance != null else Vector3.ZERO
+
+func debug_get_skeleton_local_position() -> Vector3:
+	return skeleton.position if skeleton != null else Vector3.ZERO
+
+func debug_get_skeleton_local_rotation() -> Vector3:
+	return skeleton.rotation if skeleton != null else Vector3.ZERO
+
+func debug_get_bone_pose_rotation_y(bone_name: StringName) -> float:
+	if skeleton == null:
+		return 0.0
+	var bone_index := skeleton.find_bone(str(bone_name))
+	if bone_index < 0:
+		return 0.0
+	return skeleton.get_bone_pose_rotation(bone_index).get_euler().y
+
+func debug_get_bone_pose_position(bone_name: StringName) -> Vector3:
+	if skeleton == null:
+		return Vector3.ZERO
+	var bone_index := skeleton.find_bone(str(bone_name))
+	if bone_index < 0:
+		return Vector3.ZERO
+	return skeleton.get_bone_pose_position(bone_index)
+
+func debug_animation_has_stripped_root_motion(animation_name: StringName) -> bool:
+	if animation_player == null or not loaded_animation_names.has(animation_name):
+		return false
+	var animation := animation_player.get_animation(animation_name)
+	if animation == null:
+		return false
+	for track_index in range(animation.get_track_count()):
+		var bone_name := _get_root_motion_bone_from_path(animation.track_get_path(track_index))
+		if not ROOT_MOTION_BONES.has(bone_name):
+			continue
+		var track_type := animation.track_get_type(track_index)
+		for key_index in range(animation.track_get_key_count(track_index)):
+			var key_value: Variant = animation.track_get_key_value(track_index, key_index)
+			if track_type == Animation.TYPE_POSITION_3D and key_value is Vector3:
+				var position: Vector3 = key_value
+				if absf(position.x) > 0.001 or absf(position.z) > 0.001:
+					return false
+			elif track_type == Animation.TYPE_ROTATION_3D and key_value is Quaternion:
+				var key_rotation: Quaternion = key_value
+				var rotation := key_rotation.get_euler()
+				if absf(rotation.y) > 0.001:
+					return false
+	return true
+
+func debug_reset_real_model_pose() -> void:
+	_reset_real_model_pose()
 
 func debug_get_textured_surface_count() -> int:
 	var count := 0
@@ -275,6 +344,8 @@ func debug_get_textured_surface_override_count() -> int:
 func _build_avatar() -> void:
 	if part_root != null:
 		return
+	loaded_animation_names.clear()
+	real_model_fallback_reason = ""
 	part_root = Node3D.new()
 	part_root.name = "AvatarParts"
 	add_child(part_root)
@@ -284,43 +355,53 @@ func _build_avatar() -> void:
 	_build_logical_part_map()
 	_build_persistent_vfx()
 	_apply_first_person_visibility()
-	_travel_state(DEFAULT_STATE)
+	_travel_state(DEFAULT_STATE, true)
 
 func _instantiate_real_model() -> void:
 	var model_path := FEMALE_MODEL_PATH if character_variant == &"female" else MALE_MODEL_PATH
 	var packed_scene := load(model_path)
 	if packed_scene == null or not (packed_scene is PackedScene):
-		push_error("Failed to load real avatar model: %s" % model_path)
+		_report_real_avatar_fallback("Failed to load real avatar model: %s" % model_path)
 		return
 	model_instance = (packed_scene as PackedScene).instantiate() as Node3D
 	if model_instance == null:
-		push_error("Failed to instantiate real avatar model: %s" % model_path)
+		_report_real_avatar_fallback("Failed to instantiate real avatar model: %s" % model_path)
 		return
 	model_instance.name = "RealCharacterModel"
 	model_instance.scale = REAL_MODEL_SCALE
 	part_root.add_child(model_instance)
+	model_instance_spawn_position = model_instance.position
+	model_instance_spawn_rotation = model_instance.rotation
 	skeleton = model_instance.get_node_or_null("Armature/Skeleton3D") as Skeleton3D
 	if skeleton == null:
-		push_error("Real avatar model has no Skeleton3D: %s" % model_path)
+		_report_real_avatar_fallback("Real avatar model has no Skeleton3D: %s" % model_path)
 		return
+	skeleton_spawn_position = skeleton.position
+	skeleton_spawn_rotation = skeleton.rotation
 	real_meshes.clear()
 	_collect_meshes(model_instance, real_meshes)
+	if real_meshes.is_empty():
+		_report_real_avatar_fallback("Real avatar model has no MeshInstance3D nodes: %s" % model_path)
+		return
 	for mesh_instance in real_meshes:
 		if str(mesh_instance.name).to_lower().contains("superhero"):
 			body_mesh = mesh_instance
 		mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+	if body_mesh == null:
+		_report_real_avatar_fallback("Real avatar model has no body mesh containing 'superhero': %s" % model_path)
 
 func _build_animation_player() -> void:
 	if model_instance == null:
+		_report_real_avatar_fallback("Skipped animation build because real model instance is missing.")
 		return
 	var animation_scene := load(UAL_ANIMATION_LIBRARY_PATH)
 	if animation_scene == null or not (animation_scene is PackedScene):
-		push_error("Failed to load UAL animation library: %s" % UAL_ANIMATION_LIBRARY_PATH)
+		_report_real_avatar_fallback("Failed to load UAL animation library: %s" % UAL_ANIMATION_LIBRARY_PATH)
 		return
 	var animation_instance := (animation_scene as PackedScene).instantiate()
 	var source_player := _find_animation_player(animation_instance)
 	if source_player == null:
-		push_error("UAL animation library has no AnimationPlayer")
+		_report_real_avatar_fallback("UAL animation library has no AnimationPlayer")
 		animation_instance.free()
 		return
 	animation_player = AnimationPlayer.new()
@@ -331,16 +412,24 @@ func _build_animation_player() -> void:
 	for animation_name in source_player.get_animation_list():
 		var animation: Animation = source_player.get_animation(animation_name)
 		if animation == null:
+			_report_real_avatar_fallback("UAL animation is null: %s" % animation_name)
 			continue
-		library.add_animation(animation_name, animation.duplicate(true))
+		var copied_animation := animation.duplicate(true) as Animation
+		_strip_root_motion(copied_animation)
+		library.add_animation(animation_name, copied_animation)
 		loaded_animation_names.append(StringName(animation_name))
+	if loaded_animation_names.is_empty():
+		_report_real_avatar_fallback("UAL animation library copied zero animations: %s" % UAL_ANIMATION_LIBRARY_PATH)
 	library.add_animation(KICK_ANIMATION_NAME, _build_authorial_kick_animation())
 	loaded_animation_names.append(KICK_ANIMATION_NAME)
+	library.add_animation(RESET_ANIMATION_NAME, _build_reset_animation())
+	loaded_animation_names.append(RESET_ANIMATION_NAME)
 	animation_player.add_animation_library("", library)
 	animation_instance.free()
 
 func _build_animation_tree() -> void:
 	if model_instance == null or animation_player == null:
+		_report_real_avatar_fallback("Skipped animation tree because model or animation player is missing.")
 		return
 	animation_tree = AnimationTree.new()
 	animation_tree.name = "RealAnimationTree"
@@ -350,6 +439,7 @@ func _build_animation_tree() -> void:
 	for state: StringName in ANIMATION_BY_STATE.keys():
 		var animation_name: StringName = ANIMATION_BY_STATE[state]
 		if not loaded_animation_names.has(animation_name):
+			_report_real_avatar_fallback("Animation state '%s' missing clip '%s'." % [state, animation_name])
 			continue
 		var animation_node := AnimationNodeAnimation.new()
 		animation_node.animation = animation_name
@@ -366,6 +456,8 @@ func _build_animation_tree() -> void:
 	model_instance.add_child(animation_tree)
 	animation_tree.active = true
 	state_playback = animation_tree.get("parameters/playback") as AnimationNodeStateMachinePlayback
+	if state_playback == null or state_names.is_empty():
+		_report_real_avatar_fallback("AnimationTree playback/state list was not created.")
 
 func _build_logical_part_map() -> void:
 	part_meshes.clear()
@@ -492,13 +584,98 @@ func _update_state_from_motion() -> void:
 	else:
 		_travel_state(&"idle")
 
-func _travel_state(next_state: StringName) -> void:
+func _travel_state(next_state: StringName, force: bool = false) -> void:
+	if not force and animation_state == next_state:
+		return
 	animation_state = next_state
+	_reset_real_model_pose()
 	var animation_name: StringName = ANIMATION_BY_STATE.get(next_state, &"Idle")
 	if state_playback != null and state_machine != null and state_machine.has_node(str(next_state)):
 		state_playback.travel(str(next_state))
 	elif animation_player != null and loaded_animation_names.has(animation_name):
 		animation_player.play(animation_name)
+
+func _strip_root_motion(animation: Animation) -> void:
+	if animation == null:
+		return
+	for track_index in range(animation.get_track_count()):
+		var bone_name := _get_root_motion_bone_from_path(animation.track_get_path(track_index))
+		if not ROOT_MOTION_BONES.has(bone_name):
+			continue
+		var track_type := animation.track_get_type(track_index)
+		for key_index in range(animation.track_get_key_count(track_index)):
+			var key_value: Variant = animation.track_get_key_value(track_index, key_index)
+			if track_type == Animation.TYPE_POSITION_3D and key_value is Vector3:
+				var position: Vector3 = key_value
+				position.x = 0.0
+				position.z = 0.0
+				animation.track_set_key_value(track_index, key_index, position)
+			elif track_type == Animation.TYPE_ROTATION_3D and key_value is Quaternion:
+				var key_rotation: Quaternion = key_value
+				var rotation: Vector3 = key_rotation.get_euler()
+				rotation.y = 0.0
+				animation.track_set_key_value(track_index, key_index, Quaternion.from_euler(rotation))
+
+func _get_root_motion_bone_from_path(track_path: NodePath) -> StringName:
+	var path_text := str(track_path)
+	var separator_index := path_text.rfind(":")
+	if separator_index < 0:
+		return &""
+	return StringName(path_text.substr(separator_index + 1).to_lower())
+
+func _build_reset_animation() -> Animation:
+	var animation := Animation.new()
+	animation.length = 0.001
+	animation.loop_mode = Animation.LOOP_NONE
+	for bone_name in ROOT_MOTION_BONES:
+		var position_track := animation.add_track(Animation.TYPE_POSITION_3D)
+		animation.track_set_path(position_track, NodePath("Armature/Skeleton3D:%s" % bone_name))
+		animation.position_track_insert_key(position_track, 0.0, Vector3.ZERO)
+		var rotation_track := animation.add_track(Animation.TYPE_ROTATION_3D)
+		animation.track_set_path(rotation_track, NodePath("Armature/Skeleton3D:%s" % bone_name))
+		animation.rotation_track_insert_key(rotation_track, 0.0, Quaternion.IDENTITY)
+	return animation
+
+func _reset_real_model_pose() -> void:
+	if model_instance != null:
+		model_instance.position = model_instance_spawn_position
+		model_instance.rotation = model_instance_spawn_rotation
+		model_instance.scale = REAL_MODEL_SCALE
+	if skeleton != null:
+		skeleton.position = skeleton_spawn_position
+		skeleton.rotation = skeleton_spawn_rotation
+		skeleton.reset_bone_poses()
+	_enforce_root_motion_lock()
+	_queue_root_motion_lock()
+
+func _queue_root_motion_lock() -> void:
+	if root_motion_lock_queued:
+		return
+	root_motion_lock_queued = true
+	call_deferred("_apply_root_motion_lock_deferred")
+
+func _apply_root_motion_lock_deferred() -> void:
+	root_motion_lock_queued = false
+	_enforce_root_motion_lock()
+
+func _enforce_root_motion_lock() -> void:
+	if skeleton == null:
+		return
+	for bone_name in ROOT_MOTION_BONES:
+		var bone_index := skeleton.find_bone(str(bone_name))
+		if bone_index < 0:
+			continue
+		var position: Vector3 = skeleton.get_bone_pose_position(bone_index)
+		position.x = 0.0
+		position.z = 0.0
+		skeleton.set_bone_pose_position(bone_index, position)
+		var rotation: Vector3 = skeleton.get_bone_pose_rotation(bone_index).get_euler()
+		rotation.y = 0.0
+		skeleton.set_bone_pose_rotation(bone_index, Quaternion.from_euler(rotation))
+
+func _report_real_avatar_fallback(reason: String) -> void:
+	real_model_fallback_reason = reason
+	push_error("Real avatar fallback on %s variant=%s: %s" % [name, character_variant, reason])
 
 func _build_authorial_kick_animation() -> Animation:
 	var animation := Animation.new()

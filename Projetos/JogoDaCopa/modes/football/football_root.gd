@@ -666,6 +666,7 @@ func _spawn_runtime() -> void:
 	bot_avatar.set_character_variant(&"female")
 	bot.add_child(bot_avatar)
 	bot_avatar.apply_appearance(bot_appearance)
+	bot.set_combatant_body_visible(false)
 
 	feedback = FeedbackControllerScript.new()
 	feedback.name = "FeedbackController"
