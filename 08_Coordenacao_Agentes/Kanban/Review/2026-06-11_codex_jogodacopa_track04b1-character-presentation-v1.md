@@ -10,4 +10,8 @@
 - Area proibida por paralelismo 04B2: controller/root/HUD/menu e qualquer arquivo fora da area permitida.
 - Docs base lidos: `08_Coordenacao_Agentes/Prioridades_Estudio.md`, `AGENTS.md`, `Projetos/README.md`, `08_Coordenacao_Agentes/Estado_Atual.md`, `Projetos/JogoDaCopa/AGENTS.md`, `Projetos/JogoDaCopa/implementation/current-status.md`, `Projetos/JogoDaCopa/docs/release-plan.md`.
 - Plano de validacao: import headless inicial da worktree; testes unitarios de avatar; `tools/validate.gd`; `git diff --check`; evidencias visuais com screenshots e playtest-report.
-- Proximo handoff: mover para Review/Done conforme ritual local, registrar doc da track e handoff para review de Claude com `WORKTREE_VERIFIED`, sem merge em main e sem `git clean`.
+- Resultado: `WORKTREE_VERIFIED_FOR_CLAUDE_REVIEW`.
+- Validacao: PASS, `68/68` tests, `838` asserts.
+- Evidencias: `Projetos/JogoDaCopa/docs/screenshots/track-04b1-character-presentation-v1/`.
+- Handoff: `08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`.
+- Proximo handoff: review de Claude, sem merge em main e sem `git clean`.
