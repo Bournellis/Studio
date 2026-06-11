@@ -991,32 +991,25 @@ func _build_authorial_kick_animation() -> Animation:
 		Vector3(-0.04, 0.08, 0.0),
 	])
 	_add_rotation_track(animation, "thigh_r", [
-		Vector3.ZERO,
-		Vector3(0.18, 0.0, 0.04),
-		Vector3(deg_to_rad(-35.0), 0.0, 0.07),
-		Vector3(deg_to_rad(45.0), 0.0, -0.04),
-		Vector3(deg_to_rad(18.0), 0.0, -0.02),
+		Vector3(deg_to_rad(45.0), 0.0, 0.04),
+		Vector3(deg_to_rad(75.0), 0.0, 0.05),
+		Vector3(deg_to_rad(45.0), 0.0, 0.04),
+		Vector3(deg_to_rad(60.0), 0.0, -0.04),
+		Vector3(deg_to_rad(45.0), 0.0, -0.02),
 	])
 	_add_rotation_track(animation, "calf_r", [
-		Vector3.ZERO,
-		Vector3(deg_to_rad(-35.0), 0.0, 0.0),
 		Vector3(deg_to_rad(80.0), 0.0, 0.0),
-		Vector3(deg_to_rad(-6.0), 0.0, 0.0),
-		Vector3(deg_to_rad(-18.0), 0.0, 0.0),
+		Vector3(deg_to_rad(80.0), 0.0, 0.0),
+		Vector3(deg_to_rad(80.0), 0.0, 0.0),
+		Vector3(deg_to_rad(80.0), 0.0, 0.0),
+		Vector3(deg_to_rad(80.0), 0.0, 0.0),
 	])
 	_add_rotation_track(animation, "foot_r", [
-		Vector3.ZERO,
-		Vector3(0.10, 0.0, 0.0),
-		Vector3(0.18, 0.0, 0.0),
-		Vector3(deg_to_rad(-12.0), 0.0, 0.0),
-		Vector3(deg_to_rad(-6.0), 0.0, 0.0),
-	])
-	_add_position_track(animation, "foot_r", [
-		Vector3(0.0, -1.34, 0.0),
-		Vector3(0.0, -0.86, 0.0),
-		Vector3(0.0, -1.68, 0.0),
-		Vector3(0.0, -0.86, 0.0),
-		Vector3(0.0, -0.86, 0.0),
+		Vector3(deg_to_rad(-8.0), 0.0, 0.0),
+		Vector3(deg_to_rad(12.0), 0.0, 0.0),
+		Vector3(deg_to_rad(-24.0), 0.0, 0.0),
+		Vector3(deg_to_rad(-30.0), 0.0, 0.0),
+		Vector3(deg_to_rad(-8.0), 0.0, 0.0),
 	])
 	_add_rotation_track(animation, "upperarm_l", [
 		Vector3.ZERO,
@@ -1040,13 +1033,6 @@ func _add_rotation_track(animation: Animation, bone_name: String, rotations: Arr
 	animation.track_set_interpolation_type(track_index, Animation.INTERPOLATION_CUBIC)
 	for index in range(mini(rotations.size(), KICK_TIMES.size())):
 		animation.rotation_track_insert_key(track_index, KICK_TIMES[index], Quaternion.from_euler(rotations[index]))
-
-func _add_position_track(animation: Animation, bone_name: String, positions: Array[Vector3]) -> void:
-	var track_index := animation.add_track(Animation.TYPE_POSITION_3D)
-	animation.track_set_path(track_index, NodePath("Armature/Skeleton3D:%s" % bone_name))
-	animation.track_set_interpolation_type(track_index, Animation.INTERPOLATION_CUBIC)
-	for index in range(mini(positions.size(), KICK_TIMES.size())):
-		animation.position_track_insert_key(track_index, KICK_TIMES[index], positions[index])
 
 func _build_persistent_vfx() -> void:
 	if part_root == null:
