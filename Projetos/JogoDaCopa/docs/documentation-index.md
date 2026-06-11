@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK_03J_PROCESS_GIT_POLICY_V1`
+- Status: `JOGO_DA_COPA_TRACK_03J_PROCESS_GIT_POLICY_V1_COMPLETE`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
