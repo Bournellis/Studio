@@ -1,5 +1,7 @@
 # Decisao: Backup Remoto No GitHub E Fluxo Com GitHub Desktop
 
+> Historico: esta decisao foi substituida pela politica vigente em `2026-06-11_estudio_git_remote_github_desktop.md`. A regra atual e: agentes fazem git LOCAL apenas; `push`, `fetch` e `pull` sao exclusivos de Fabio via GitHub Desktop.
+
 ## Metadata
 
 - data: `2026-06-11`
@@ -13,10 +15,12 @@ O estudio existia somente em `D:\` (937 commits sem remote) - risco existencial 
 
 ## Decision
 
+Registro historico original, nao vigente para agentes apos `2026-06-11_estudio_git_remote_github_desktop.md`:
+
 - Remote oficial: `origin` = `https://github.com/Bournellis/Studio.git` (privado).
 - Fluxo de versionamento do Fabio: GitHub Desktop como painel de revisao, fetch e push.
 - Autenticacao: Git Credential Manager com login via navegador (sem senha de conta, sem PAT manual).
-- Rotina: apos merge em `main`, `git push origin main` (agente executor) ou botao `Push origin` do Desktop (Fabio). Zerar commits pendentes ao encerrar o dia.
+- Rotina historica original: apos merge em `main`, `git push origin main` (agente executor) ou botao `Push origin` do Desktop (Fabio). Substituida pela regra vigente: agentes nao executam rede; Fabio faz `Push origin` pelo GitHub Desktop.
 - Commits continuam sendo feitos por quem executa a task; o Desktop nao e usado para commit/stage/discard durante tasks de agentes (regra do escritor unico).
 
 ## Alternatives Considered

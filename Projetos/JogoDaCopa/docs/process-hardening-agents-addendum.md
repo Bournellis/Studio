@@ -1,8 +1,8 @@
-# Process Hardening - Adendo para o AGENTS.md local (proposto)
+# Process Hardening - Adendo para o AGENTS.md local (aplicado)
 
 - Date: `2026-06-11` (recriado apos perda de untracked em fechamento de thread; conteudo original + secao Gameplay Evidence)
-- Author: Claude (consolidando as licoes operacionais da sessao de 2026-06-10/11, aprovacao de Fabio pendente)
-- Aplicacao: o texto da secao abaixo deve ser inserido no `Projetos/JogoDaCopa/AGENTS.md` (apos a secao "Validation") por uma track curta do Codex (Track 03J), junto com o registro desta decisao.
+- Author: Claude (consolidando as licoes operacionais da sessao de 2026-06-10/11); politica de rede revisada por decisao de Fabio em 2026-06-11.
+- Aplicacao: o texto da secao abaixo foi inserido no `Projetos/JogoDaCopa/AGENTS.md` (apos a secao "Validation") pela Track 03J, junto com o registro da decisao vigente de git local vs rede.
 
 ## Origem das regras (contexto, nao entra no AGENTS)
 
@@ -10,7 +10,7 @@ Nascidas de falhas reais: 2 quebras consecutivas de UI invisiveis a testes de pr
 
 ---
 
-## TEXTO PROPOSTO PARA O AGENTS.md (inserir como secao "Quality Gates")
+## TEXTO APLICADO NO AGENTS.md (secao "Quality Gates")
 
 ### Quality Gates
 
@@ -48,11 +48,13 @@ Nascidas de falhas reais: 2 quebras consecutivas de UI invisiveis a testes de pr
 #### Remote GitHub & Push (analise Claude/Codex 2026-06-11; decisao de Fabio)
 
 - Remote: `origin = https://github.com/Bournellis/Studio.git` (monorepo do estudio). E o UNICO backup contra perda de disco - e o historico local ja sofreu 8 incidentes de corrupcao em 2 dias.
-- **Push e parte do ritual de fechamento**: toda track, apos merge em main e antes do `WORKTREE_VERIFIED`, executa `git fetch origin` + `git push origin main`. O remoto nunca fica mais de 1 track atras. (Push "no fim do dia" e insuficiente no ritmo atual de ~10 tracks/dia.)
-- Se `git fetch` revelar divergencia (origin/main com commits que main local nao tem): PARAR, nao fazer pull/rebase automatico, registrar handoff para decisao humana.
-- Branches de track NAO sao pushadas por padrao (vida curta). Excecao: branch parada em review pre-merge que va pernoitar -> push como backup (`git push origin <branch>`), deletada do remoto apos merge.
-- **GitHub Desktop**: uso LIVRE para leitura (diff, historico, fetch). Acoes de escrita (commit/discard/push manual) APENAS com zero agentes ativos e main limpo. `Discard changes` do Desktop equivale ao git clean PROIBIDO: nunca usar com trabalho de agente em andamento - o restore cirurgico e papel de Claude.
-- Sem credenciais/tokens em arquivos do repo; autenticacao via Git Credential Manager ja instalado.
+- **REVISADO 2026-06-11 (decisao de Fabio apos falha pratica)**: agentes NAO executam operacoes de REDE no git (`push`/`fetch`/`pull`) - o Git Credential Manager abre prompt interativo de login que trava o agente. Toda sincronizacao com origin e feita por FABIO via **GitHub Desktop** ("Fetch origin" / "Push origin").
+- Divisao definitiva: **Codex/Claude = git LOCAL** (commit, merge, branch, worktree, restore); **Fabio/GitHub Desktop = REDE** (push, fetch, pull).
+- Ritual de fechamento de track: apos merge em main + verificacoes, o relatorio final do Codex termina com a linha `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin` antes do `WORKTREE_VERIFIED`. Fabio pusha apos cada track (ou no minimo a cada rodada de merges). O remoto nunca fica mais de 1 rodada atras.
+- Se o Desktop mostrar divergencia (pull necessario / historico diferente): NAO resolver pelo Desktop - avisar Claude para diagnostico antes de qualquer pull/rebase.
+- Branches de track nao sao pushadas por padrao. Excecao: branch em review pre-merge que va pernoitar -> Fabio pusha pelo Desktop como backup.
+- Demais usos do GitHub Desktop: leitura LIVRE (diff, historico). `Discard changes` equivale ao git clean PROIBIDO com agente ativo - restore cirurgico e papel de Claude.
+- Sem credenciais/tokens em arquivos do repo, em prompts ou em logs.
 
 #### Permanentes do projeto (promovidos das regras de serie)
 
@@ -64,13 +66,13 @@ Nascidas de falhas reais: 2 quebras consecutivas de UI invisiveis a testes de pr
 
 ---
 
-## Mini-prompt para aplicar (Track 03J)
+## Mini-prompt aplicado (Track 03J)
 
 ```
-Workspace: D:\Estudio. Projeto: Projetos/JogoDaCopa. Voce controla o git.
-Track 03J - Process Hardening V1 (docs-only).
-1. Card em Kanban/Doing; worktree/branch padrao (track03j-process-hardening-v1).
-2. Leia docs/process-hardening-agents-addendum.md e insira a secao "Quality Gates" (texto integral) no Projetos/JogoDaCopa/AGENTS.md apos a secao Validation, seguindo o protocolo de edicao de AGENTS.md.
-3. Registre a decisao em 08_Coordenacao_Agentes/Decisoes/2026-06-11_jogodacopa_quality_gates.md (template Decisao).
-4. Commite TODOS os docs untracked de Claude em Projetos/JogoDaCopa/docs/. Atualize docs/documentation-index.md. validate PASS, merge, card Done, prune, WORKTREE_VERIFIED.
+Workspace: D:\Estudio. Projeto: Projetos/JogoDaCopa. Voce controla o git LOCAL (NUNCA push/fetch/pull).
+Track 03J - Process & Git Policy V1 (docs-only).
+1. Card em Kanban/Doing; worktree/branch padrao (track03j-process-git-policy-v1).
+2. Leia docs/process-hardening-agents-addendum.md e insira a secao "Quality Gates" (texto integral, incluindo Remote GitHub & Push) no Projetos/JogoDaCopa/AGENTS.md apos a secao Validation, seguindo o protocolo de edicao de AGENTS.md.
+3. Registre a decisao vigente em 08_Coordenacao_Agentes/Decisoes/2026-06-11_estudio_git_remote_github_desktop.md.
+4. Commite docs untracked de Claude em Projetos/JogoDaCopa/docs/, se existirem. Atualize docs/documentation-index.md. validate PASS, merge local, card Done, prune, status limpo, PUSH PENDENTE e WORKTREE_VERIFIED.
 ```
