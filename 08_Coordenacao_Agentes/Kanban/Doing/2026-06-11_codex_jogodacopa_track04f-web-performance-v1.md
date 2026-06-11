@@ -61,3 +61,13 @@ Reduzir a trava longa ao apertar Play no Web e estabilizar quedas drasticas de F
 ## Proximo Handoff
 
 Parar na branch com handoff para review pre-merge da Claude, incluindo before/after completo, status limpo e `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+
+## Resultado
+
+- Status: `READY_FOR_CLAUDE_REVIEW_PRE_MERGE`.
+- Handoff: `08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`.
+- Relatorio: `Projetos/JogoDaCopa/docs/playtest-reports/track-04f-web-performance.md`.
+- Validate final: PASS, `86` tests, `1264` asserts, build gzip gate `30.29 MiB / 50.00 MiB`.
+- Export Web final: PASS.
+- Smoothness Chrome pos-warmup 120s: PASS, p99 `7.1ms`, max `62.5ms`, zero hitch `>100ms`.
+- Residual para review: primeiro render/upload WebGL ainda fica em `~16.8s-18.1s`, mas com loading/progresso visivel.

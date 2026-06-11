@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_04F_WEB_RC_NEXT`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos e Track 04E mergeada com export Web single-threaded, `RenderProfile` Compatibility e capturas noturnas corrigidas. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
+- Marker: `JOGO_DA_COPA_TRACK_04F_WEB_PERFORMANCE_REVIEW`
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos, Web single-threaded com `RenderProfile` Compatibility e Track 04F pronta para review pre-merge: loading com progresso, PCK `26.41 MiB`, smoothness pos-warmup PASS e residual de primeiro render WebGL documentado. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: iniciar `Track 04F - Web RC`; `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
+- Proximo passo: review pre-merge da Claude para `Track 04F - Web Performance & Load V1`; decidir se residual WebGL exige Track 04F.1; `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
 
 ## draxos-roguelike-cardgame
 
