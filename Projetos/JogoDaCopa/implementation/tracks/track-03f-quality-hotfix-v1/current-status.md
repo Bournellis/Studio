@@ -28,6 +28,13 @@ Consolidar fixes dos reviews das series Track 03 e 02C-bis/02D-bis, registrar tu
 - Distincao por regiao de roupa, como camisa vs shorts/meias via texture mask custom, fica como melhoria futura.
 - Os numeros de performance da serie Track 03 (`1097-1275fps`) foram medidos sem rasterizacao representativa registrada e nao sao baseline. A baseline valida deve vir de janela real 1920x1080 com vsync off.
 
+## Playtest Tuning
+
+- Fabio nao forneceu notas objetivas de playtest nesta thread alem do placeholder da tarefa.
+- Nenhum ajuste de constante, clipe, toggle, stun, dash, audio ou dificuldade foi aplicado na Fase 3.
+- O toon permanece como experimento em toggle OFF por padrao ate decisao humana explicita.
+- Contratos de tap LMB/RMB, fisica base da bola e paridade de bot permanecem inalterados.
+
 ## Validation Log
 
 - `tools/validate.gd`: PASS, 50 tests, 466 asserts.
@@ -36,5 +43,4 @@ Consolidar fixes dos reviews das series Track 03 e 02C-bis/02D-bis, registrar tu
 
 ## Remaining
 
-- Fase 3: registrar ausencia ou aplicacao de notas objetivas de playtest.
 - Fase 4: rodar performance sample com metodologia registrada, atualizar planos/status, mover card para Done, mergear em `main`, prune e checagem pos-merge no worktree principal.
