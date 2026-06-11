@@ -2,6 +2,7 @@ class_name FootballBall3D
 extends RigidBody3D
 
 const BallPanelShader = preload("res://assets/football/football_ball_panels.gdshader")
+const RenderProfileScript = preload("res://autoloads/render_profile.gd")
 const FIREBALL_ON_SPEED: float = 24.0
 const FIREBALL_OFF_SPEED: float = 21.0
 
@@ -209,7 +210,7 @@ func _ensure_ball_nodes() -> void:
 	if get_node_or_null("BallSpeedTrail") == null:
 		trail_particles = GPUParticles3D.new()
 		trail_particles.name = "BallSpeedTrail"
-		trail_particles.amount = 42
+		trail_particles.amount = RenderProfileScript.adjust_particle_amount(42)
 		trail_particles.lifetime = 0.28
 		trail_particles.emitting = false
 		trail_particles.local_coords = false
@@ -234,7 +235,7 @@ func _ensure_ball_nodes() -> void:
 	if get_node_or_null("BallFireTrail") == null:
 		fireball_particles = GPUParticles3D.new()
 		fireball_particles.name = "BallFireTrail"
-		fireball_particles.amount = 56
+		fireball_particles.amount = RenderProfileScript.adjust_particle_amount(56)
 		fireball_particles.lifetime = 0.22
 		fireball_particles.emitting = false
 		fireball_particles.local_coords = false
@@ -260,6 +261,7 @@ func _ensure_ball_nodes() -> void:
 func _build_ball_material() -> ShaderMaterial:
 	var material := ShaderMaterial.new()
 	material.shader = BallPanelShader
+	material.set_shader_parameter("render_emission_scale", RenderProfileScript.get_emission_multiplier(RenderProfileScript.ROLE_PARTICLE))
 	return material
 
 func _update_visual_asset(delta: float) -> void:
@@ -321,7 +323,7 @@ func _build_fireball_particle_material() -> StandardMaterial3D:
 	material.albedo_color = Color(1.0, 0.36, 0.08, 0.82)
 	material.emission_enabled = true
 	material.emission = Color(1.0, 0.28, 0.04, 1.0)
-	material.emission_energy_multiplier = 1.8
+	material.emission_energy_multiplier = RenderProfileScript.adjust_emission_energy(1.8, RenderProfileScript.ROLE_PARTICLE)
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	return material
 

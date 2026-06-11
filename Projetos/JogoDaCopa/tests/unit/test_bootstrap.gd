@@ -11,6 +11,10 @@ const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
 const TOON_RENDER_META_KEY: String = "jogodacopa_toon_render"
+const CAPTURE_SCENE_META_KEY: String = "jogodacopa_capture_scene"
+const TRACK04E_CAPTURE_CAMERA_NAME: String = "Track04ECaptureCamera"
+const TRACK04E_CAPTURE_CAMERA_FOV: float = 50.0
+const TRACK04E_NIGHT_SKY_MAX_LUMA_255: float = 90.0
 
 const EXPECTED_ACTIONS: PackedStringArray = [
 	"move_forward",
@@ -53,6 +57,8 @@ func after_each() -> void:
 		get_tree().root.remove_meta(MATCH_MODE_META_KEY)
 	if get_tree().root.has_meta(TOON_RENDER_META_KEY):
 		get_tree().root.remove_meta(TOON_RENDER_META_KEY)
+	if get_tree().root.has_meta(CAPTURE_SCENE_META_KEY):
+		get_tree().root.remove_meta(CAPTURE_SCENE_META_KEY)
 	for action_name: String in EXPECTED_ACTIONS:
 		Input.action_release(action_name)
 
@@ -582,6 +588,34 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 		assert_gt(glass_material.emission_energy_multiplier, 0.5)
 	assert_gt(football.debug_get_ball().physics_material_override.bounce, 0.8)
 	assert_gt(football.debug_get_ball().physics_material_override.friction, 0.3)
+	assert_no_new_orphans()
+
+func test_football_capture_mode_uses_night_evidence_camera() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	assert_not_null(football_scene)
+	get_tree().root.set_meta(CAPTURE_SCENE_META_KEY, &"kickoff")
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+	var world_environment := football.get_node_or_null("WorldEnvironment") as WorldEnvironment
+	assert_not_null(world_environment)
+	var environment := world_environment.environment
+	assert_not_null(environment)
+	assert_eq(environment.tonemap_mode, Environment.TONE_MAPPER_ACES)
+	assert_eq(environment.background_mode, Environment.BG_SKY)
+	assert_not_null(environment.sky)
+	assert_not_null(environment.sky.sky_material)
+	var sky_material := environment.sky.sky_material as ProceduralSkyMaterial
+	assert_not_null(sky_material)
+	assert_lt(_color_luma_255(sky_material.sky_top_color), TRACK04E_NIGHT_SKY_MAX_LUMA_255)
+
+	var capture_camera := football.get_node_or_null(TRACK04E_CAPTURE_CAMERA_NAME) as Camera3D
+	assert_not_null(capture_camera)
+	assert_true(capture_camera.current)
+	assert_almost_eq(capture_camera.fov, TRACK04E_CAPTURE_CAMERA_FOV, 0.001)
+	assert_false(football.debug_get_chase_camera().debug_get_camera().current)
 	assert_no_new_orphans()
 
 func test_football_arena_raycast_seal_closes_upper_perimeter_and_goal_faces() -> void:
@@ -1803,6 +1837,9 @@ func _format_arena_leak_samples(leak_report: Dictionary) -> String:
 
 func _flat_xz_distance(a: Vector3, b: Vector3) -> float:
 	return Vector2(a.x, a.z).distance_to(Vector2(b.x, b.z))
+
+func _color_luma_255(color: Color) -> float:
+	return ((0.2126 * color.r) + (0.7152 * color.g) + (0.0722 * color.b)) * 255.0
 
 func _wait_until_character_lands(character: CharacterBody3D, max_frames: int = 180) -> void:
 	var saw_airborne := false

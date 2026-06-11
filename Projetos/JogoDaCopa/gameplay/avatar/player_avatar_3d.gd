@@ -4,6 +4,7 @@ extends Node3D
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const AvatarUniformShader = preload("res://gameplay/avatar/avatar_uniform.gdshader")
+const RenderProfileScript = preload("res://autoloads/render_profile.gd")
 
 const MALE_MODEL_PATH: String = "res://assets/characters/quaternius_ubc/base/Superhero_Male_FullBody.gltf"
 const FEMALE_MODEL_PATH: String = "res://assets/characters/quaternius_ubc/base/Superhero_Female_FullBody.gltf"
@@ -637,7 +638,8 @@ func _tint_character_material(material: StandardMaterial3D, tint: Color, emissio
 	material.albedo_color = _quantize_toon_color(_multiply_color(material.albedo_color, tint)) if toon_render_enabled else _multiply_color(material.albedo_color, tint)
 	material.emission_enabled = true
 	material.emission = material.albedo_color if toon_render_enabled else emission
-	material.emission_energy_multiplier = maxf(emission_energy, 0.16) if toon_render_enabled else emission_energy
+	var profiled_energy := RenderProfileScript.adjust_emission_energy(emission_energy, RenderProfileScript.ROLE_CHARACTER)
+	material.emission_energy_multiplier = maxf(profiled_energy, 0.16) if toon_render_enabled else profiled_energy
 	if toon_render_enabled:
 		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_set_material_next_pass(material)
@@ -670,7 +672,8 @@ func _build_character_material(color: Color, emission: Color, emission_energy: f
 	material.roughness = 0.78
 	material.emission_enabled = true
 	material.emission = material.albedo_color if toon_render_enabled else emission
-	material.emission_energy_multiplier = maxf(emission_energy, 0.16) if toon_render_enabled else emission_energy
+	var profiled_energy := RenderProfileScript.adjust_emission_energy(emission_energy, RenderProfileScript.ROLE_CHARACTER)
+	material.emission_energy_multiplier = maxf(profiled_energy, 0.16) if toon_render_enabled else profiled_energy
 	if toon_render_enabled:
 		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_set_material_next_pass(material)
@@ -1080,7 +1083,7 @@ func _create_persistent_particles(node_name: String, local_position: Vector3, co
 	var particles := GPUParticles3D.new()
 	particles.name = node_name
 	particles.position = local_position
-	particles.amount = amount
+	particles.amount = RenderProfileScript.adjust_particle_amount(amount)
 	particles.lifetime = lifetime
 	particles.emitting = false
 	particles.local_coords = true
@@ -1109,7 +1112,7 @@ func _build_vfx_material(color: Color) -> StandardMaterial3D:
 	material.albedo_color = color
 	material.emission_enabled = true
 	material.emission = color
-	material.emission_energy_multiplier = 1.35
+	material.emission_energy_multiplier = RenderProfileScript.adjust_emission_energy(1.35, RenderProfileScript.ROLE_PARTICLE)
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	return material
 

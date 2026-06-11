@@ -2,11 +2,13 @@ class_name FootballFieldBuilder
 extends RefCounted
 
 const RuntimePrimitiveFactoryScript = preload("res://modes/shared/runtime_primitive_factory.gd")
+const RenderProfileScript = preload("res://autoloads/render_profile.gd")
 const DEFAULT_PLAYER_KIT_COLOR := Color(0.98, 0.82, 0.06, 1.0)
 const DEFAULT_BOT_KIT_COLOR := Color(0.14, 0.42, 0.9, 1.0)
 const DEFAULT_COUNTRY_NAMES := ["BRASIL", "FRANCA", "ARGENTINA", "ALEMANHA", "ESPANHA", "INGLATERRA", "PORTUGAL", "JAPAO"]
 
 static func build(parent: Node3D, config: Dictionary) -> void:
+	RenderProfileScript.report_runtime_profile_once("FootballFieldBuilder")
 	var field_width: float = float(config.get("field_width", 32.0))
 	var field_length: float = float(config.get("field_length", 44.0))
 	var field_half_width: float = field_width * 0.5
@@ -515,7 +517,7 @@ static func _add_decor_box(parent: Node3D, node_name: String, node_position: Vec
 	return mesh
 
 static func _add_neon_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, color: Color, node_rotation_degrees: Vector3 = Vector3.ZERO, emission_energy: float = 2.0, roughness: float = 0.24) -> MeshInstance3D:
-	return RuntimePrimitiveFactoryScript.add_visual_box(parent, node_name, node_position, node_size, color, node_rotation_degrees, emission_energy, roughness, 0.08, 0.42, 0.38)
+	return RuntimePrimitiveFactoryScript.add_visual_box(parent, node_name, node_position, node_size, color, node_rotation_degrees, emission_energy, roughness, 0.08, 0.42, 0.38, RenderProfileScript.ROLE_NEON)
 
 static func _add_net_panel(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3) -> MeshInstance3D:
 	var mesh := _add_visual_box(parent, node_name, node_position, node_size, Color(0.22, 0.68, 0.92, 0.58))
@@ -545,7 +547,7 @@ static func _add_light_halo(parent: Node3D, node_name: String, halo_position: Ve
 static func _add_live_scoreboard(parent: Node3D, side_name: String, node_position: Vector3, node_size: Vector3) -> void:
 	var viewport := SubViewport.new()
 	viewport.name = "WorldCupScoreboard%sViewport" % side_name
-	viewport.size = Vector2i(1024, 384)
+	viewport.size = RenderProfileScript.get_scoreboard_viewport_size()
 	viewport.transparent_bg = false
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	parent.add_child(viewport)
@@ -598,7 +600,7 @@ static func _add_live_scoreboard(parent: Node3D, side_name: String, node_positio
 	material.albedo_texture = viewport.get_texture()
 	material.emission_enabled = true
 	material.emission_texture = viewport.get_texture()
-	material.emission_energy_multiplier = 1.25
+	material.emission_energy_multiplier = RenderProfileScript.adjust_emission_energy(1.25, RenderProfileScript.ROLE_SCOREBOARD)
 	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	material.cull_mode = BaseMaterial3D.CULL_DISABLED
 	display.material_override = material
@@ -615,6 +617,7 @@ uniform vec3 grass_dark = vec3(0.045, 0.24, 0.105);
 uniform vec3 grass_light = vec3(0.075, 0.36, 0.16);
 uniform vec3 line_color = vec3(0.92, 0.98, 0.86);
 uniform vec3 gold_color = vec3(1.0, 0.82, 0.18);
+uniform float render_emission_scale = 1.0;
 varying vec3 local_pos;
 
 void vertex() {
@@ -661,7 +664,7 @@ void fragment() {
 	vec3 color = mix(grass, line_color, clamp(line_mask, 0.0, 1.0));
 	color = mix(color, gold_color, clamp(max(spot_mask, mouth_mask), 0.0, 1.0));
 	ALBEDO = color;
-	EMISSION = color * (0.04 + line_mask * 0.08 + mouth_mask * 0.12);
+	EMISSION = color * (0.04 + line_mask * 0.08 + mouth_mask * 0.12) * render_emission_scale;
 	ROUGHNESS = 0.88;
 }
 """
@@ -669,6 +672,7 @@ void fragment() {
 	material.shader = shader
 	material.set_shader_parameter("pitch_size", Vector2(field_width, field_length))
 	material.set_shader_parameter("goal_half_width", goal_half_width)
+	material.set_shader_parameter("render_emission_scale", RenderProfileScript.get_emission_multiplier(RenderProfileScript.ROLE_SHADER_PITCH))
 	return material
 
 static func _build_net_material() -> ShaderMaterial:
@@ -680,19 +684,21 @@ render_mode blend_mix, cull_disabled, depth_prepass_alpha;
 uniform vec3 net_color = vec3(0.38, 0.86, 1.0);
 uniform float grid_density = 10.0;
 uniform float line_width = 0.055;
+uniform float render_emission_scale = 1.0;
 
 void fragment() {
 	vec2 grid = abs(fract(UV * grid_density - 0.5) - 0.5) / fwidth(UV * grid_density);
 	float line = 1.0 - min(min(grid.x, grid.y), 1.0);
 	float alpha = mix(0.16, 0.74, smoothstep(1.0 - line_width, 1.0, line));
 	ALBEDO = net_color;
-	EMISSION = net_color * smoothstep(0.55, 1.0, line) * 0.85;
+	EMISSION = net_color * smoothstep(0.55, 1.0, line) * 0.85 * render_emission_scale;
 	ALPHA = alpha;
 	ROUGHNESS = 0.18;
 }
 """
 	var material := ShaderMaterial.new()
 	material.shader = shader
+	material.set_shader_parameter("render_emission_scale", RenderProfileScript.get_emission_multiplier(RenderProfileScript.ROLE_SHADER_NET))
 	return material
 
 static func _build_crowd_material(base_color: Color, alternate_color: Color, wave_phase: float) -> ShaderMaterial:
@@ -705,6 +711,7 @@ uniform vec3 base_color = vec3(0.9, 0.1, 0.1);
 uniform vec3 alternate_color = vec3(0.1, 0.4, 0.9);
 uniform float crowd_excitement = 0.0;
 uniform float wave_phase = 0.0;
+uniform float render_emission_scale = 1.0;
 varying vec3 local_pos;
 
 float hash(vec2 p) {
@@ -727,7 +734,7 @@ void fragment() {
 	seat_color *= 0.68 + h * 0.42;
 	seat_color = mix(seat_color, vec3(1.0), step(0.84, h) * (0.28 + crowd_excitement * 0.18));
 	ALBEDO = seat_color;
-	EMISSION = seat_color * (0.14 + crowd_excitement * 0.28);
+	EMISSION = seat_color * (0.14 + crowd_excitement * 0.28) * render_emission_scale;
 	ROUGHNESS = 0.64;
 }
 """
@@ -737,6 +744,7 @@ void fragment() {
 	material.set_shader_parameter("alternate_color", Vector3(alternate_color.r, alternate_color.g, alternate_color.b))
 	material.set_shader_parameter("wave_phase", wave_phase)
 	material.set_shader_parameter("crowd_excitement", 0.0)
+	material.set_shader_parameter("render_emission_scale", RenderProfileScript.get_emission_multiplier(RenderProfileScript.ROLE_SHADER_CROWD))
 	return material
 
 static func _build_flag_material(base_color: Color, accent_color: Color, wave_phase: float) -> ShaderMaterial:
@@ -748,6 +756,7 @@ render_mode unshaded, cull_disabled;
 uniform vec3 base_color = vec3(0.9, 0.1, 0.1);
 uniform vec3 accent_color = vec3(1.0, 0.9, 0.1);
 uniform float wave_phase = 0.0;
+uniform float render_emission_scale = 1.0;
 
 void vertex() {
 	float free_edge = clamp(UV.x, 0.0, 1.0);
@@ -759,7 +768,7 @@ void fragment() {
 	vec3 flag_color = mix(base_color, accent_color, stripe);
 	flag_color = mix(flag_color, vec3(1.0), step(0.86, UV.x) * 0.08);
 	ALBEDO = flag_color;
-	EMISSION = flag_color * 0.18;
+	EMISSION = flag_color * 0.18 * render_emission_scale;
 }
 """
 	var material := ShaderMaterial.new()
@@ -767,6 +776,7 @@ void fragment() {
 	material.set_shader_parameter("base_color", Vector3(base_color.r, base_color.g, base_color.b))
 	material.set_shader_parameter("accent_color", Vector3(accent_color.r, accent_color.g, accent_color.b))
 	material.set_shader_parameter("wave_phase", wave_phase)
+	material.set_shader_parameter("render_emission_scale", RenderProfileScript.get_emission_multiplier(RenderProfileScript.ROLE_SHADER_FLAG))
 	return material
 
 static func _build_halo_material(halo_color: Color) -> ShaderMaterial:
@@ -776,19 +786,21 @@ shader_type spatial;
 render_mode unshaded, blend_add, cull_disabled;
 
 uniform vec3 halo_color = vec3(1.0, 0.86, 0.58);
+uniform float render_emission_scale = 1.0;
 
 void fragment() {
 	vec2 p = UV * 2.0 - vec2(1.0);
 	float radius = dot(p, p);
 	float halo = 1.0 - smoothstep(0.08, 1.0, radius);
 	ALBEDO = halo_color;
-	EMISSION = halo_color * halo * 1.35;
+	EMISSION = halo_color * halo * 1.35 * render_emission_scale;
 	ALPHA = halo * 0.22;
 }
 """
 	var material := ShaderMaterial.new()
 	material.shader = shader
 	material.set_shader_parameter("halo_color", Vector3(halo_color.r, halo_color.g, halo_color.b))
+	material.set_shader_parameter("render_emission_scale", RenderProfileScript.get_emission_multiplier(RenderProfileScript.ROLE_SHADER_HALO))
 	return material
 
 static func _apply_crowd_excitement_to_node(node: Node, crowd_excitement: float) -> void:

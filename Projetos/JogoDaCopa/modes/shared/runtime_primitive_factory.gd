@@ -1,6 +1,8 @@
 class_name RuntimePrimitiveFactory
 extends RefCounted
 
+const RenderProfileScript = preload("res://autoloads/render_profile.gd")
+
 static func add_static_box(
 	parent: Node,
 	node_name: String,
@@ -16,7 +18,8 @@ static func add_static_box(
 	physics_bounce: float = 0.0,
 	metallic: float = 0.0,
 	rim_strength: float = 0.0,
-	clearcoat_strength: float = 0.0
+	clearcoat_strength: float = 0.0,
+	render_profile_role: StringName = &"default"
 ) -> StaticBody3D:
 	var body := StaticBody3D.new()
 	body.name = node_name
@@ -37,7 +40,7 @@ static func add_static_box(
 	var mesh := BoxMesh.new()
 	mesh.size = box_size
 	mesh_instance.mesh = mesh
-	mesh_instance.material_override = build_material(color, emission_energy, roughness, false, metallic, rim_strength, clearcoat_strength)
+	mesh_instance.material_override = build_material(color, emission_energy, roughness, false, metallic, rim_strength, clearcoat_strength, render_profile_role)
 	body.add_child(mesh_instance)
 	return body
 
@@ -52,7 +55,8 @@ static func add_visual_box(
 	roughness: float = 0.84,
 	metallic: float = 0.0,
 	rim_strength: float = 0.0,
-	clearcoat_strength: float = 0.0
+	clearcoat_strength: float = 0.0,
+	render_profile_role: StringName = &"default"
 ) -> MeshInstance3D:
 	var mesh_instance := MeshInstance3D.new()
 	mesh_instance.name = node_name
@@ -61,7 +65,7 @@ static func add_visual_box(
 	var mesh := BoxMesh.new()
 	mesh.size = box_size
 	mesh_instance.mesh = mesh
-	mesh_instance.material_override = build_material(color, emission_energy, roughness, false, metallic, rim_strength, clearcoat_strength)
+	mesh_instance.material_override = build_material(color, emission_energy, roughness, false, metallic, rim_strength, clearcoat_strength, render_profile_role)
 	parent.add_child(mesh_instance)
 	return mesh_instance
 
@@ -72,7 +76,8 @@ static func build_material(
 	unshaded: bool = false,
 	metallic: float = 0.0,
 	rim_strength: float = 0.0,
-	clearcoat_strength: float = 0.0
+	clearcoat_strength: float = 0.0,
+	render_profile_role: StringName = &"default"
 ) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
@@ -81,7 +86,7 @@ static func build_material(
 	material.metallic_specular = 0.55
 	material.emission_enabled = true
 	material.emission = color
-	material.emission_energy_multiplier = emission_energy
+	material.emission_energy_multiplier = RenderProfileScript.adjust_emission_energy(emission_energy, render_profile_role)
 	if rim_strength > 0.0:
 		material.rim_enabled = true
 		material.rim = clampf(rim_strength, 0.0, 1.0)
@@ -102,7 +107,7 @@ static func build_glass_material(
 	emission_energy: float = 0.72,
 	roughness: float = 0.1
 ) -> StandardMaterial3D:
-	var material := build_material(color, emission_energy, roughness, false, 0.0, 0.7, 0.82)
+	var material := build_material(color, emission_energy, roughness, false, 0.0, 0.7, 0.82, RenderProfileScript.ROLE_GLASS)
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	material.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_ALWAYS
 	material.cull_mode = BaseMaterial3D.CULL_DISABLED
