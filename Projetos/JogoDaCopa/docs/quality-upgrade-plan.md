@@ -18,7 +18,8 @@
 - `2026-06-10` - `Track 02C-bis Real Character V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02CBIS_REAL_CHARACTER_V1_COMPLETE`). Quaternius UBC/UAL real humanoid models and 45 real animation clips integrated. `tools/validate.gd` PASS (47 tests, 443 asserts). Performance sample: average `146.1fps`, min warmed instant `107.4fps`, `0/360` frames below 60.
 - `2026-06-10` - `Track 02D-bis Real Audio V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02DBIS_REAL_AUDIO_V1_COMPLETE`; combined marker `JOGO_DA_COPA_TRACK_02CBIS_02DBIS_REAL_ASSETS_V1_COMPLETE`). Kenney/Pixabay real SFX, jingles, ambience buses and menu sliders integrated. `tools/validate.gd` PASS (48 tests, 459 asserts). Performance sample: average `145.4fps`, min warmed instant `124.0fps`, `0/360` frames below 60.
 - `2026-06-10` - `Track 03F Quality Hotfix V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_03F_QUALITY_HOTFIX_V1_COMPLETE`). Review fixes for super whiff, avatar PBR tint, performance methodology and source integrity check applied. `tools/validate.gd` PASS (50 tests, 466 asserts). Performance sample windowed 1920x1080/vsync off: average `730.8fps`, min warmed instant `488.8fps`, `0/360` frames below 60.
-- Series complete after real asset replacement and consolidated hotfix; next step is confirmation playtest of the hotfix plus next-series decision with Claude.
+- `2026-06-10` - `Track 03H Avatar Parity & Animation Drift Fix V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_03H_AVATAR_PARITY_DRIFT_V1_COMPLETE`). Bot primitive body hidden for real-avatar parity, scene-level player/bot real model assertions added, permanent fallback logs added, UAL root motion stripped/reset/locked. `tools/validate.gd` PASS (57 tests, 724 asserts).
+- Series complete after real asset replacement and consolidated avatar hotfixes; next step is confirmation playtest of avatar/bot plus next-series decision.
 
 ## Review Hotfix Notes
 

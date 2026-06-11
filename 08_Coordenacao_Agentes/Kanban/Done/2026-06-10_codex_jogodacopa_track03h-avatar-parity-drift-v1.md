@@ -4,7 +4,7 @@
 
 - id: `2026-06-10_codex_jogodacopa_track03h-avatar-parity-drift-v1`
 - owner: `Codex`
-- status: `Doing`
+- status: `Done`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track03h-avatar-parity-drift-v1`
@@ -43,17 +43,17 @@ Corrigir os dois bugs de playtest do avatar real da 02C-bis: bot deve renderizar
 
 ## Acceptance Criteria
 
-- [ ] Pre-condicao confirmada: Track 03G mergeada em `main` e card em `Done`.
-- [ ] Bot e player em `football.tscn` retornam `debug_has_real_model() == true`.
-- [ ] Bot e player em `football.tscn` retornam `debug_get_animation_count() >= 40`.
-- [ ] Qualquer fallback de modelo real emite `push_error`/log permanente com causa.
-- [ ] Root motion horizontal e rotacao Y de root/hips sao removidos ao copiar clipes reais.
-- [ ] Troca de estados de animacao reseta pose/local transform sem drift cumulativo.
-- [ ] Teste de drift cobre ~20 acoes alternadas e mantem rotacao Y/local position dentro da tolerancia.
-- [ ] `validate.gd` PASS.
-- [ ] Causa raiz dos dois bugs documentada na track.
-- [ ] `quality-upgrade-plan.md`, `implementation/current-status.md` e `Estado_Atual.md` atualizados no fechamento.
-- [ ] Worktree principal verificada pos-merge com `WORKTREE_VERIFIED`.
+- [x] Pre-condicao confirmada: Track 03G mergeada em `main` e card em `Done`.
+- [x] Bot e player em `football.tscn` retornam `debug_has_real_model() == true`.
+- [x] Bot e player em `football.tscn` retornam `debug_get_animation_count() >= 40`.
+- [x] Qualquer fallback de modelo real emite `push_error`/log permanente com causa.
+- [x] Root motion horizontal e rotacao Y de root/hips sao removidos ao copiar clipes reais.
+- [x] Troca de estados de animacao reseta pose/local transform sem drift cumulativo.
+- [x] Teste de drift cobre ~20 acoes alternadas e mantem rotacao Y/local position dentro da tolerancia.
+- [x] `validate.gd` PASS.
+- [x] Causa raiz dos dois bugs documentada na track.
+- [x] `quality-upgrade-plan.md`, `implementation/current-status.md` e `Estado_Atual.md` atualizados no fechamento.
+- [x] Worktree principal verificada pos-merge com `WORKTREE_VERIFIED`.
 
 ## Handoff Needed
 
@@ -62,3 +62,5 @@ Corrigir os dois bugs de playtest do avatar real da 02C-bis: bot deve renderizar
 ## Notes
 
 Docs lidos na Fase 1: `Projetos/JogoDaCopa/AGENTS.md`, `implementation/current-status.md`, `docs/code-review-track02cbis-02dbis-v1.md`, `implementation/tracks/track-02cbis-real-character-v1/current-status.md`, `docs/quality-upgrade-plan.md`, alem do gate de portfolio (`Prioridades_Estudio.md`, `Projetos/README.md`, `Estado_Atual.md`).
+
+Validation: `tools/validate.gd` PASS, 57 tests, 724 asserts, source integrity 26 `.gd/.gdshader` files.

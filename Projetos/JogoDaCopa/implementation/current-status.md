@@ -5,11 +5,11 @@
 - Product/module name: `Copa Arena Futebol`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames`
-- Active stage: `Track 03G - Playtest Findings V1`
+- Active stage: `Track 03H - Avatar Parity & Animation Drift Fix V1`
 - Active stage status: `COMPLETE`
-- Status marker: `JOGO_DA_COPA_TRACK_03G_PLAYTEST_FINDINGS_V1_COMPLETE`
-- Approved plan: `docs/arcade-upgrade-plan.md` (2026-06-10, 03G playtest findings complete)
-- Completed Kanban card: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track03g-playtest-findings-v1.md`
+- Status marker: `JOGO_DA_COPA_TRACK_03H_AVATAR_PARITY_DRIFT_V1_COMPLETE`
+- Approved plan: `docs/quality-upgrade-plan.md` (2026-06-10, 03H avatar parity/drift complete)
+- Completed Kanban card: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track03h-avatar-parity-drift-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -38,6 +38,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Track 03 Arcade V1: dash/slide/stun/flip, charged kick, SUPER shot, fireball, boost pads, jump pads, ramps, timer/golden goal/vale-2/emote and toon experiment toggle default OFF.
 - Track 03F Quality Hotfix V1: SUPER whiffs do not spend bar/quota, real avatar tint preserves PBR textures, perf sample records representative window metadata and validation catches truncated `.gd`/`.gdshader` sources.
 - Track 03G Playtest Findings V1: menu responsivo, aparencia somente na intro pre-kickoff, dash player/bot `20.75` por `0.28s`, bot com hold defensivo no kickoff do player e defesa aerea, camera com raycast clamp/spawn seguro no kickoff do bot, reset seguro da bola e marcador/anunciador de kickoff.
+- Track 03H Avatar Parity & Animation Drift Fix V1: bot e player usam modelo real na cena montada, corpo primitivo do combatant fica oculto em ambos, falhas de modelo real emitem `push_error`, clipes UAL tem root motion horizontal/yaw removido e a pose e travada contra drift.
 - Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
 - Toon experiment screenshots live in `docs/screenshots/track-03e-toon/`.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
@@ -45,7 +46,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-Ready for confirmation playtest focused on the 6 Track 03G fixes.
+Ready for confirmation playtest focused on avatar/bot parity and animation drift, followed by next-series decision.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -57,7 +58,7 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest result: PASS, 56 tests, 505 asserts, including source integrity check for 26 `.gd/.gdshader` files outside `addons/`.
+Latest result: PASS, 57 tests, 724 asserts, including source integrity check for 26 `.gd/.gdshader` files outside `addons/`.
 
 Latest performance sample: windowed 1920x1080, vsync off, display `Windows`, average `719.3fps`, min warmed instant `462.3fps`, `0/360` frames below 60.
 
@@ -87,3 +88,4 @@ Manual smoke lives in `docs/validation.md`.
 12. `implementation/tracks/track-03e-toon-look-experiment-v1/current-status.md`
 13. `implementation/tracks/track-03f-quality-hotfix-v1/current-status.md`
 14. `implementation/tracks/track-03g-playtest-findings-v1/current-status.md`
+15. `implementation/tracks/track-03h-avatar-parity-drift-v1/current-status.md`

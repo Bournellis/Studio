@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_03G_PLAYTEST_FINDINGS_V1_COMPLETE`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot em terceira pessoa, arena noturna de vidro, personagem real skinned com tint preservando PBR, audio real, bola com trail/fireball/squash, dash/slide/stun/flip tunado, chute carregado/SUPER sem gasto em whiff, boost/jump pads/rampas, timer 3min default com golden goal/vale-2, modo `3 gols` preservado, HUD/menu arcade responsivo, aparencia somente na intro, bot defensivo/aereo, camera/reset de kickoff protegidos, toon toggle OFF e validacao com integridade de fontes. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
+- Marker: `JOGO_DA_COPA_TRACK_03H_AVATAR_PARITY_DRIFT_V1_COMPLETE`
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot em terceira pessoa, arena noturna de vidro, personagem real skinned com tint preservando PBR, audio real, bola com trail/fireball/squash, dash/slide/stun/flip tunado, chute carregado/SUPER sem gasto em whiff, boost/jump pads/rampas, timer 3min default com golden goal/vale-2, modo `3 gols` preservado, HUD/menu arcade responsivo, aparencia somente na intro, bot defensivo/aereo, camera/reset de kickoff protegidos, avatar real com paridade player/bot e trava contra drift de animacao, toon toggle OFF e validacao com integridade de fontes. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: playtest de confirmacao dos 6 fixes da Track 03G.
+- Proximo passo: playtest de confirmacao avatar/bot + decisao da proxima serie.
 
 ## draxos-roguelike-cardgame
 
