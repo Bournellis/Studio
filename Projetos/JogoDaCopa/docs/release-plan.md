@@ -32,7 +32,33 @@ Lista de playtest de Fabio (7 itens) mapeada em 2 tracks paralelas disjuntas:
 - Item 1: fundo preto da tela inicial - investigar camera do preview pos-03L (provavelmente dentro do vidro que agora sobe ate o teto); recompor enquadramento; teste anti-tela-preta (luminancia media do screenshot > threshold).
 - Item 7 (registrado): modos de jogo aguardam SESSAO DE DESIGN de Fabio antes de qualquer implementacao - Fase 2 suspensa ate la.
 
-## Fase 0 - Web Foundation (apos a 0R; 2 tracks em paralelo)
+## ROTA FINAL PRE-RELEASE (decisao de Fabio 2026-06-11: modos ficam para POS-publicacao)
+
+Sequencia: `04C (estadio) ║ 04D (modo completo)` em paralelo -> `04E (web spike)` -> `04F (web RC)` -> `04G (publicacao)`. A Fase 2 original (Copa & Modos) sera planejada em sessao de design com Fabio APOS o lancamento.
+
+**Track 04C - Stadium Visual Upgrade V1** (thread 1; AREA: field_builder, shaders de arena, shader de regiao do avatar, testes proprios - NAO toca football_root/HUD/menu)
+- Arquibancadas com profundidade real (mais aneis/camadas, recuo por nivel, mureta).
+- Torcida VIVA: celulas com onda senoidal mais rica, variacao de cor por bloco de torcida (cores dos dois kits da partida), REACAO A GOL (pulo/onda na arquibancada via uniform de excitement que o builder expoe).
+- Teloes maiores e legiveis; bandeiroes/banners com nomes dos paises; mastros com bandeiras; refletores com halo/billboard sutil.
+- Horizonte: silhueta de skyline/montanhas atras do vidro (low-poly, barata) para o ceu nao terminar em vazio.
+- Suavizacao opcional das bordas de regiao do uniforme (follow-up registrado).
+- BUDGET WEB: tudo pensado para Compatibility (sem luzes novas com sombra; instancing onde possivel); perf sample obrigatorio.
+
+**Track 04D - Match Completeness V1** (thread 2; AREA: football_root fluxo, HUD, menu, camera, testes proprios - NAO toca field_builder/shaders/avatar)
+- Pause menu completo (Continuar/Reiniciar/Opcoes de audio/Sair ao menu) com teste de clique real.
+- Tela de resultado rica: placar final, estatisticas da partida (gols por periodo, chutes, posse aproximada por toques, supers usados), Rematch/Menu.
+- Transicoes suaves entre telas (fade curto menu->intro->partida->resultado).
+- Hero shot do menu: preview com personagem UNIFORMIZADO, enquadramento de heroi, luz dedicada (follow-up registrado).
+- Pontas soltas do fluxo: foco inicial correto em cada tela, ESC consistente, restart limpo em qualquer fase.
+- REGIME DE UI completo (cliques reais em todos os paineis, 3 resolucoes, screenshots, pre-merge).
+
+**Track 04E - Web Export Spike & Render Profile** (sequencial, apos merges de 04C/04D)
+- Como na Fase 0 original: export web do jogo completo, inventario de divergencias do Compatibility, RenderProfile por plataforma, gate permanente de build web + screenshot web por track.
+
+**Track 04F - Web Release Candidate** -> **Track 04G - Publicacao (itch.io + pagina)**
+- Como nas Tracks 04J/04K originais do plano (otimizacao, QA cross-browser, capsulas, upload com COOP/COEP, changelog).
+
+## Fase 0 - Web Foundation (texto original de referencia)
 
 **Track 04A - Web Export Spike & Render Profile** (thread Codex 1)
 - Exportar o jogo ATUAL para Web (preset Web, templates 4.6.2), rodar em Chrome e Firefox local.

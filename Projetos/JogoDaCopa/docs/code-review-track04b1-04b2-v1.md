@@ -28,3 +28,10 @@ Nenhum arquivo em comum entre os diffs das duas branches (verificado por stat). 
 **Ambas APROVADAS para merge.** Ordem: 04B2 primeiro (sem assets/shader novos), 04B1 em seguida (rebase/merge trivial por disjuncao). Apos os merges: rodada de manutencao do git (mini-prompt ja entregue: tmp_obj, gc, .gitignore builds/, prune) e ENTAO playtest de Fabio com tudo integrado - uniformes no jogo real, dash novo, pulos, result panel.
 
 Follow-ups registrados para a proxima rodada: hero shot do menu (preview com uniforme + luz + enquadramento), suavizacao opcional de bordas de regiao, sessao de design dos modos (item 7 de Fabio, pendente).
+
+## Adendo - Track 04B3 Kick Arms Polish V1 (review pre-merge 2026-06-11): APROVADA
+
+- Escopo minimo respeitado: 1 commit de codigo, apenas keyframes de braco do `JogoDaCopa_Kick` (+34 linhas no avatar) + teste de guarda `test_authorial_kick_keeps_hands_below_head_and_upperarms_close` (+53).
+- Keyframes verificados: variacoes sutis (+-2 a 18 graus) em torno da pose de bracos baixos; pernas/tronco/timing intocados.
+- Evidencia visual analisada (8 frames, lateral + frontal): bracos junto ao corpo no apice do chute, punhos na altura do quadril, contra-balanco discreto e atletico - o "moinho de vento" foi eliminado; vista frontal confirma zero abertura lateral.
+- Fabio aprovou visualmente a 04B3; liberada para merge local. Apos o merge: PUSH PENDENTE via GitHub Desktop.
