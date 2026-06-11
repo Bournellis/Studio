@@ -4,7 +4,7 @@
 
 - id: `2026-06-10_codex_jogodacopa_track03g-playtest-findings-v1`
 - owner: `Codex`
-- status: `Doing`
+- status: `Done`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track03g-playtest-findings-v1`
@@ -47,16 +47,16 @@ Corrigir os 6 achados do primeiro playtest humano completo de Fabio para `Copa A
 
 ## Acceptance Criteria
 
-- [ ] Menu principal responsivo em 1920x1080, 1366x768 e 1280x720, com controles visiveis e clicaveis.
-- [ ] Selecao de pele/camisa/aparencia existe somente no painel de intro antes do kickoff e persiste entre rematches da mesma sessao.
-- [ ] Dash do player e bot usa `ARCADE_DASH_SPEED` ~19.0 e `ARCADE_DASH_DURATION` ~0.28, mantendo custo/cooldown, com pico >= 1.5x corrida com boost.
-- [ ] Bot segura postura defensiva antes do primeiro toque em kickoff do player e reage a lob RMB/aerial defense com modulacao de dificuldade.
-- [ ] Camera nao nasce nem atravessa geometria do gol no countdown com kickoff do bot.
-- [ ] Causa raiz do reset visual/fisico da bola documentada e corrigida.
-- [ ] `validate.gd` PASS com integrity check.
-- [ ] Performance sample registrado na metodologia documentada.
-- [ ] `Estado_Atual.md`, plano arcade e status da track atualizados no fechamento.
-- [ ] Worktree principal verificada pos-merge com `WORKTREE_VERIFIED`.
+- [x] Menu principal responsivo em 1920x1080, 1366x768 e 1280x720, com controles visiveis e clicaveis.
+- [x] Selecao de pele/camisa/aparencia existe somente no painel de intro antes do kickoff e persiste entre rematches da mesma sessao.
+- [x] Dash do player e bot usa `ARCADE_DASH_SPEED` ~19.0 e `ARCADE_DASH_DURATION` ~0.28, mantendo custo/cooldown, com pico >= 1.5x corrida com boost.
+- [x] Bot segura postura defensiva antes do primeiro toque em kickoff do player e reage a lob RMB/aerial defense com modulacao de dificuldade.
+- [x] Camera nao nasce nem atravessa geometria do gol no countdown com kickoff do bot.
+- [x] Causa raiz do reset visual/fisico da bola documentada e corrigida.
+- [x] `validate.gd` PASS com integrity check.
+- [x] Performance sample registrado na metodologia documentada.
+- [x] `Estado_Atual.md`, plano arcade e status da track atualizados no fechamento.
+- [x] Worktree principal verificada pos-merge com `WORKTREE_VERIFIED`.
 
 ## Handoff Needed
 
