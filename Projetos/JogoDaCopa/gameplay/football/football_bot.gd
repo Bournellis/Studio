@@ -12,11 +12,18 @@ const STATE_DEFEND_GOAL: StringName = &"defend_goal"
 const STATE_KICK_WINDUP: StringName = &"kick_windup"
 const STATE_RECOVER: StringName = &"recover"
 const STATE_CELEBRATE: StringName = &"celebrate"
-const ARCADE_DASH_SPEED: float = 13.4
-const ARCADE_DASH_DURATION: float = 0.22
+const ARCADE_DASH_SPEED: float = 20.75
+const ARCADE_DASH_DURATION: float = 0.28
 const ARCADE_DASH_BASE_COOLDOWN: float = 1.65
 const ARCADE_FLIP_VERTICAL_VELOCITY: float = 4.1
 const ARCADE_FLIP_HORIZONTAL_SPEED: float = 6.8
+const AERIAL_DEFENSE_BALL_HEIGHT: float = 2.0
+const AERIAL_DEFENSE_MIN_THREAT_SPEED: float = 4.0
+const AERIAL_DEFENSE_GOAL_LINE_OFFSET: float = 1.35
+const AERIAL_DEFENSE_INTERCEPT_RADIUS: float = 4.8
+const AERIAL_DEFENSE_EASY_DELAY: float = 0.5
+const AERIAL_DEFENSE_NORMAL_DELAY: float = 0.18
+const AERIAL_DEFENSE_HARD_DELAY: float = 0.03
 
 @export var move_speed: float = 8.2
 @export var turn_speed: float = 9.0
@@ -68,6 +75,10 @@ var windup_is_defensive: bool = false
 var difficulty_id: StringName = &"normal"
 var boost_pad_targets: Array[Node3D] = []
 var boost_pad_collect_count: int = 0
+var kickoff_hold_active: bool = false
+var kickoff_hold_target: Vector3 = Vector3.ZERO
+var aerial_defense_tracking: bool = false
+var aerial_defense_delay_remaining: float = 0.0
 
 func _ready() -> void:
 	super._ready()
@@ -101,6 +112,10 @@ func configure(next_ball: Node3D, next_own_goal_position: Vector3, next_opponent
 	last_move_target = global_position
 	last_approach_label = &"kickoff"
 	boost_pad_collect_count = 0
+	kickoff_hold_active = false
+	kickoff_hold_target = Vector3.ZERO
+	aerial_defense_tracking = false
+	aerial_defense_delay_remaining = 0.0
 	clear_movement_impulses()
 
 func set_boost_pad_targets(next_targets: Array[Node3D]) -> void:
@@ -108,6 +123,8 @@ func set_boost_pad_targets(next_targets: Array[Node3D]) -> void:
 
 func set_difficulty(next_difficulty_id: StringName) -> void:
 	difficulty_id = next_difficulty_id
+	aerial_defense_tracking = false
+	aerial_defense_delay_remaining = 0.0
 	match difficulty_id:
 		&"easy":
 			move_speed = 6.7
@@ -146,6 +163,23 @@ func set_celebrating(is_celebrating: bool) -> void:
 	velocity = Vector3.ZERO
 	windup_remaining = 0.0
 	windup_is_defensive = false
+
+func start_kickoff_defense_hold(defense_target: Vector3) -> void:
+	kickoff_hold_active = true
+	kickoff_hold_target = defense_target
+	current_state = STATE_DEFEND_GOAL
+	last_move_target = kickoff_hold_target
+	last_approach_label = &"kickoff_hold"
+	velocity = Vector3.ZERO
+	windup_remaining = 0.0
+	windup_is_defensive = false
+
+func release_kickoff_defense_hold() -> void:
+	if not kickoff_hold_active:
+		return
+	kickoff_hold_active = false
+	current_state = STATE_CHASE_BALL
+	last_approach_label = &"kickoff_released"
 
 func clear_movement_impulses() -> void:
 	velocity = Vector3.ZERO
@@ -219,6 +253,12 @@ func debug_get_arcade_dash_direction() -> Vector3:
 func debug_get_aim_error_radius() -> float:
 	return aim_error_radius
 
+func debug_is_kickoff_hold_active() -> bool:
+	return kickoff_hold_active
+
+func debug_get_aerial_defense_delay_remaining() -> float:
+	return aerial_defense_delay_remaining
+
 func _physics_process(delta: float) -> void:
 	if ball == null or current_state == STATE_CELEBRATE:
 		velocity = Vector3.ZERO
@@ -237,11 +277,19 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector3(stun_knockback.x, stun_knockback.y, stun_knockback.z)
 		move_and_slide()
 		return
+	if kickoff_hold_active:
+		current_state = STATE_DEFEND_GOAL
+		last_move_target = kickoff_hold_target
+		last_approach_label = &"kickoff_hold"
+		velocity = Vector3(0.0, vertical_velocity, 0.0)
+		move_and_slide()
+		_face_ball(delta)
+		return
 
 	if current_state == STATE_KICK_WINDUP:
 		_handle_windup(delta)
 	else:
-		_handle_ball_state()
+		_handle_ball_state(delta)
 		_move_toward_target(delta)
 
 	move_and_slide()
@@ -251,7 +299,9 @@ func _physics_process(delta: float) -> void:
 		arcade_flip_available = true
 	_face_ball(delta)
 
-func _handle_ball_state() -> void:
+func _handle_ball_state(delta: float) -> void:
+	if _handle_aerial_goal_defense(delta):
+		return
 	var ball_position := _get_predicted_ball_position()
 	var distance_to_ball: float = _flat_distance(global_position, ball_position)
 	if _flat_distance(global_position, ball.global_position) <= kick_range and kick_cooldown_remaining <= 0.0:
@@ -342,6 +392,86 @@ func _build_defend_target(ball_position: Vector3) -> Vector3:
 	target.x = clampf(target.x, -field_half_width + 1.8, field_half_width - 1.8)
 	target.z = clampf(target.z, -field_half_length + 1.8, field_half_length - 1.8)
 	return target
+
+func _handle_aerial_goal_defense(delta: float) -> bool:
+	if not _is_aerial_goal_threat():
+		aerial_defense_tracking = false
+		aerial_defense_delay_remaining = 0.0
+		return false
+	if not aerial_defense_tracking:
+		aerial_defense_tracking = true
+		aerial_defense_delay_remaining = _get_aerial_defense_reaction_delay()
+	aerial_defense_delay_remaining = maxf(0.0, aerial_defense_delay_remaining - delta)
+	if aerial_defense_delay_remaining > 0.0:
+		current_state = STATE_DEFEND_GOAL
+		last_move_target = global_position
+		last_approach_label = &"aerial_delay"
+		velocity = Vector3(0.0, vertical_velocity, 0.0)
+		return true
+	if _can_reach_aerial_threat_by_running():
+		return false
+	current_state = STATE_DEFEND_GOAL
+	last_move_target = _build_aerial_goal_line_target()
+	last_approach_label = &"aerial_goal_defense"
+	_try_aerial_intercept()
+	return true
+
+func _is_aerial_goal_threat() -> bool:
+	if ball == null or ball.global_position.y <= AERIAL_DEFENSE_BALL_HEIGHT:
+		return false
+	var flat_velocity := Vector3(ball.linear_velocity.x, 0.0, ball.linear_velocity.z)
+	if flat_velocity.length_squared() <= 0.0001:
+		return false
+	var ball_to_goal: Vector3 = own_goal_position - ball.global_position
+	ball_to_goal.y = 0.0
+	if ball_to_goal.length_squared() <= 0.0001:
+		return false
+	var threat_speed := flat_velocity.dot(ball_to_goal.normalized())
+	return threat_speed >= AERIAL_DEFENSE_MIN_THREAT_SPEED
+
+func _can_reach_aerial_threat_by_running() -> bool:
+	var time_to_goal := _estimate_ball_time_to_goal_line()
+	if time_to_goal <= 0.0:
+		return false
+	var run_speed := move_speed * (boost_speed_multiplier if bot_boost_enabled else 1.0)
+	var time_to_ball := _flat_distance(global_position, ball.global_position) / maxf(0.01, run_speed)
+	return time_to_ball <= time_to_goal * 0.82 and ball.global_position.y <= AERIAL_DEFENSE_BALL_HEIGHT + 0.65
+
+func _build_aerial_goal_line_target() -> Vector3:
+	var target_z := own_goal_position.z + (AERIAL_DEFENSE_GOAL_LINE_OFFSET if own_goal_position.z < 0.0 else -AERIAL_DEFENSE_GOAL_LINE_OFFSET)
+	var time_to_goal := maxf(0.0, _estimate_ball_time_to_goal_line())
+	var predicted_x: float = ball.global_position.x + ball.linear_velocity.x * minf(time_to_goal, 1.25)
+	return Vector3(
+		clampf(predicted_x, -field_half_width + 1.8, field_half_width - 1.8),
+		global_position.y,
+		clampf(target_z, -field_half_length + 1.2, field_half_length - 1.2)
+	)
+
+func _estimate_ball_time_to_goal_line() -> float:
+	if ball == null:
+		return -1.0
+	var velocity_z: float = ball.linear_velocity.z
+	if absf(velocity_z) <= 0.001:
+		return -1.0
+	var time_to_goal: float = (own_goal_position.z - ball.global_position.z) / velocity_z
+	return time_to_goal if time_to_goal > 0.0 else -1.0
+
+func _get_aerial_defense_reaction_delay() -> float:
+	match difficulty_id:
+		&"easy":
+			return AERIAL_DEFENSE_EASY_DELAY
+		&"hard":
+			return AERIAL_DEFENSE_HARD_DELAY
+		_:
+			return AERIAL_DEFENSE_NORMAL_DELAY
+
+func _try_aerial_intercept() -> void:
+	if _flat_distance(global_position, last_move_target) > AERIAL_DEFENSE_INTERCEPT_RADIUS:
+		return
+	if is_on_floor():
+		_try_jump()
+	else:
+		_try_arcade_flip()
 
 func _build_ball_approach_target(goal_position: Vector3, offset_distance: float, ball_position: Vector3) -> Vector3:
 	var ball_to_goal: Vector3 = goal_position - ball_position

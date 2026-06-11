@@ -33,6 +33,9 @@ const GOAL_LINE_SOUTH: float = FIELD_HALF_LENGTH
 const PLAYER_SPAWN: Vector3 = Vector3(0.0, 0.05, 18.0)
 const BOT_SPAWN: Vector3 = Vector3(0.0, 0.05, -18.0)
 const BALL_SPAWN: Vector3 = Vector3(0.0, 0.68, 0.0)
+const BOT_KICKOFF_PLAYER_SAFE_Z_OFFSET: float = 10.5
+const PLAYER_KICKOFF_BOT_DEFENSE_RATIO: float = 0.65
+const KICKOFF_MARKER_RADIUS: float = 1.55
 const PLAYER_KICK_REACH: float = 2.2
 const PLAYER_KICK_ASSIST_RADIUS: float = 2.38
 const PLAYER_TOUCH_RADIUS: float = 1.42
@@ -121,6 +124,8 @@ var player_super_used_this_kickoff: bool = false
 var bot_super_used_this_kickoff: bool = false
 var boost_pad_areas: Array[Area3D] = []
 var jump_pad_areas: Array[Area3D] = []
+var kickoff_marker: MeshInstance3D
+var player_kickoff_waiting_for_touch: bool = false
 var kickoff_countdown_remaining: float = 0.0
 var countdown_last_number: int = 0
 var goal_slowmo_remaining: float = 0.0
@@ -302,6 +307,12 @@ func debug_build_hud_snapshot() -> Dictionary:
 func debug_get_bot():
 	return bot
 
+func debug_is_bot_kickoff_hold_active() -> bool:
+	return bot.debug_is_kickoff_hold_active() if bot != null and bot.has_method("debug_is_kickoff_hold_active") else false
+
+func debug_get_bot_last_approach_label() -> StringName:
+	return bot.debug_get_last_approach_label() if bot != null else &"none"
+
 func debug_get_bot_difficulty_id() -> StringName:
 	return bot_difficulty_id
 
@@ -334,6 +345,22 @@ func debug_get_bot_avatar():
 
 func debug_get_ball():
 	return ball
+
+func debug_is_kickoff_marker_visible() -> bool:
+	return kickoff_marker != null and kickoff_marker.visible
+
+func debug_get_kickoff_marker_position() -> Vector3:
+	return kickoff_marker.global_position if kickoff_marker != null else Vector3.ZERO
+
+func debug_is_camera_inside_goal_shell() -> bool:
+	if chase_camera == null:
+		return false
+	var camera_position: Vector3 = chase_camera.global_position
+	var inside_goal_width := absf(camera_position.x) <= GOAL_SIDE_WALL_X
+	var inside_goal_height := camera_position.y >= -0.1 and camera_position.y <= GOAL_HEIGHT + 0.8
+	var inside_north_shell := camera_position.z <= GOAL_LINE_NORTH + 0.1 and camera_position.z >= GOAL_LINE_NORTH - GOAL_CLOSED_DEPTH - 0.4
+	var inside_south_shell := camera_position.z >= GOAL_LINE_SOUTH - 0.1 and camera_position.z <= GOAL_LINE_SOUTH + GOAL_CLOSED_DEPTH + 0.4
+	return inside_goal_width and inside_goal_height and (inside_north_shell or inside_south_shell)
 
 func debug_get_player_score() -> int:
 	return player_score
@@ -381,6 +408,7 @@ func debug_is_intro_open() -> bool:
 func debug_start_match() -> void:
 	_start_match()
 	debug_finish_kickoff_countdown()
+	debug_release_bot_kickoff_hold()
 
 func debug_start_match_with_countdown() -> void:
 	_start_match()
@@ -392,6 +420,11 @@ func debug_finish_kickoff_countdown() -> void:
 	if not match_over:
 		phase_label = &"play"
 	Engine.time_scale = 1.0
+
+func debug_release_bot_kickoff_hold() -> void:
+	player_kickoff_waiting_for_touch = false
+	if bot != null and bot.has_method("release_kickoff_defense_hold"):
+		bot.release_kickoff_defense_hold()
 
 func debug_cycle_skin_tone(step: int = 1) -> void:
 	_cycle_skin_tone(step)
@@ -597,6 +630,7 @@ func _spawn_runtime() -> void:
 	runtime_root.add_child(ball)
 	ball.configure(BALL_SPAWN)
 	ball.body_entered.connect(_on_ball_body_entered)
+	_build_kickoff_marker(runtime_root)
 
 	var first_person_camera: Camera3D = player.get_camera() as Camera3D
 	if first_person_camera != null:
@@ -683,6 +717,7 @@ func _restart_play(after_goal: bool) -> void:
 	bot_super_used_this_kickoff = false
 	if after_goal:
 		_advance_kickoff_owner()
+	var ball_spawn := _get_ball_spawn_for_kickoff()
 	player.global_position = _get_player_spawn_for_kickoff()
 	player.rotation = Vector3.ZERO
 	player.configure_for_round()
@@ -691,7 +726,11 @@ func _restart_play(after_goal: bool) -> void:
 	bot.rotation.y = PI
 	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH), FIELD_HALF_WIDTH, FIELD_HALF_LENGTH)
 	bot.set_difficulty(bot_difficulty_id)
-	ball.configure(_get_ball_spawn_for_kickoff())
+	player_kickoff_waiting_for_touch = kickoff_owner == &"player" and not match_over
+	if player_kickoff_waiting_for_touch and bot.has_method("start_kickoff_defense_hold"):
+		bot.start_kickoff_defense_hold(_get_player_kickoff_bot_defense_position(ball_spawn))
+	ball.teleport_to_spawn(ball_spawn)
+	_update_kickoff_marker(ball_spawn, true)
 	if chase_camera != null:
 		chase_camera.snap_to_target()
 	player_touch_cooldown_remaining = 0.0
@@ -736,6 +775,7 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 	if not connected:
 		return
 	var kick_direction := _build_kick_direction(origin, direction)
+	_notify_player_touched_ball()
 	ball.kick(kick_direction, force, lift)
 	if super_shot:
 		player_super_meter = 0.0
@@ -763,6 +803,7 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 		bot_super_used_this_kickoff = true
 		applied_force = SUPER_SHOT_FORCE
 		applied_lift = SUPER_SHOT_LIFT
+	_notify_any_ball_touched()
 	ball.kick(direction, applied_force, applied_lift)
 	if not bot_super:
 		_add_bot_super(SUPER_TOUCH_GAIN)
@@ -802,6 +843,7 @@ func _process_player_ball_contact() -> void:
 	var contact_direction: Vector3 = contact.get("direction", Vector3.ZERO)
 	var boost_multiplier := 1.35 if player.is_boosting() else 1.0
 	var contact_lift := 0.42 if player.is_boosting() else 0.18
+	_notify_player_touched_ball()
 	ball.kick(contact_direction, PLAYER_TOUCH_FORCE * boost_multiplier, contact_lift)
 	_add_player_super(SUPER_TOUCH_GAIN)
 	player_touch_cooldown_remaining = PLAYER_TOUCH_COOLDOWN
@@ -839,6 +881,10 @@ func _process_arcade_dash_contact(actor: Node3D, target: Node3D, actor_is_player
 	if not ball_close and not body_close:
 		return false
 	if ball_close:
+		if actor_is_player:
+			_notify_player_touched_ball()
+		else:
+			_notify_any_ball_touched()
 		ball.kick(dash_direction, ARCADE_SLIDE_BALL_FORCE, ARCADE_SLIDE_BALL_LIFT)
 		if actor_is_player:
 			_add_player_super(SUPER_TOUCH_GAIN)
@@ -1170,18 +1216,22 @@ func _advance_kickoff_owner() -> void:
 
 func _get_player_spawn_for_kickoff() -> Vector3:
 	if kickoff_owner == &"bot":
-		return Vector3(0.0, PLAYER_SPAWN.y, FIELD_HALF_LENGTH - 6.0)
+		return Vector3(0.0, PLAYER_SPAWN.y, FIELD_HALF_LENGTH - BOT_KICKOFF_PLAYER_SAFE_Z_OFFSET)
 	return PLAYER_SPAWN
 
 func _get_bot_spawn_for_kickoff() -> Vector3:
 	if kickoff_owner == &"bot":
 		return Vector3(0.0, BOT_SPAWN.y, -FIELD_HALF_LENGTH + 9.0)
-	return BOT_SPAWN
+	return _get_player_kickoff_bot_defense_position(_get_ball_spawn_for_kickoff())
 
 func _get_ball_spawn_for_kickoff() -> Vector3:
 	if kickoff_owner == &"bot":
 		return Vector3(0.0, BALL_SPAWN.y, -9.0)
 	return Vector3(0.0, BALL_SPAWN.y, 9.0)
+
+func _get_player_kickoff_bot_defense_position(ball_spawn: Vector3) -> Vector3:
+	var own_goal := Vector3(0.0, BOT_SPAWN.y, GOAL_LINE_NORTH)
+	return ball_spawn.lerp(own_goal, PLAYER_KICKOFF_BOT_DEFENSE_RATIO)
 
 func _get_kit_code(country_kit_id: StringName) -> String:
 	match country_kit_id:
@@ -1246,6 +1296,7 @@ func _start_kickoff_countdown() -> void:
 	phase_label = &"kickoff"
 	_set_round_input_locked(true)
 	if hud != null:
+		hud.show_announcement("SAIDA PLAYER" if kickoff_owner == &"player" else "SAIDA BOT", 0.68, &"kickoff_owner")
 		hud.show_countdown("3", 0.45)
 	if feedback != null:
 		feedback.play_countdown_tick(false)
@@ -1373,6 +1424,42 @@ func _return_to_main_menu() -> void:
 	Engine.time_scale = 1.0
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	get_tree().change_scene_to_file(MENU_SCENE_PATH)
+
+func _build_kickoff_marker(parent: Node3D) -> void:
+	kickoff_marker = MeshInstance3D.new()
+	kickoff_marker.name = "KickoffMarker"
+	var marker_mesh := CylinderMesh.new()
+	marker_mesh.top_radius = KICKOFF_MARKER_RADIUS
+	marker_mesh.bottom_radius = KICKOFF_MARKER_RADIUS
+	marker_mesh.height = 0.035
+	marker_mesh.radial_segments = 48
+	kickoff_marker.mesh = marker_mesh
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color(0.1, 0.86, 1.0, 0.48)
+	material.emission_enabled = true
+	material.emission = Color(0.15, 0.9, 1.0, 1.0)
+	material.emission_energy_multiplier = 1.65
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	kickoff_marker.material_override = material
+	kickoff_marker.visible = false
+	parent.add_child(kickoff_marker)
+
+func _update_kickoff_marker(ball_spawn: Vector3, is_visible: bool) -> void:
+	if kickoff_marker == null:
+		return
+	kickoff_marker.global_position = Vector3(ball_spawn.x, 0.045, ball_spawn.z)
+	kickoff_marker.visible = is_visible
+
+func _notify_player_touched_ball() -> void:
+	if player_kickoff_waiting_for_touch:
+		player_kickoff_waiting_for_touch = false
+		if bot != null and bot.has_method("release_kickoff_defense_hold"):
+			bot.release_kickoff_defense_hold()
+	_notify_any_ball_touched()
+
+func _notify_any_ball_touched() -> void:
+	if kickoff_marker != null:
+		kickoff_marker.visible = false
 
 func _capture_mouse_if_playing() -> void:
 	if DisplayServer.get_name().to_lower().contains("headless"):

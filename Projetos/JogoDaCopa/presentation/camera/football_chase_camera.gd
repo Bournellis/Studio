@@ -8,6 +8,8 @@ extends Node3D
 @export var far_ball_focus_weight: float = 0.1
 @export var far_ball_focus_distance: float = 15.0
 @export var position_smoothing: float = 10.0
+@export var collision_margin: float = 0.34
+@export var collision_mask: int = 0xFFFFFFFF
 
 var target: Node3D
 var ball: Node3D
@@ -95,6 +97,7 @@ func _update_camera(delta: float, snap: bool) -> void:
 		last_ball_focus_weight = 0.0
 
 	var desired := target.global_position - forward * follow_distance + Vector3.UP * follow_height
+	desired = _get_collision_clamped_position(focus, desired)
 	last_focus_position = focus
 	last_desired_position = desired
 
@@ -136,6 +139,28 @@ func _get_target_forward() -> Vector3:
 	if forward.length_squared() <= 0.0001:
 		return Vector3.FORWARD
 	return forward.normalized()
+
+func _get_collision_clamped_position(focus: Vector3, desired: Vector3) -> Vector3:
+	if not is_inside_tree() or get_world_3d() == null:
+		return desired
+	if focus.distance_squared_to(desired) <= 0.0001:
+		return desired
+	var query := PhysicsRayQueryParameters3D.create(focus, desired)
+	query.collision_mask = collision_mask
+	query.hit_from_inside = true
+	query.hit_back_faces = true
+	var excluded: Array[RID] = []
+	if target != null and target is CollisionObject3D:
+		excluded.append((target as CollisionObject3D).get_rid())
+	if ball != null and ball is CollisionObject3D:
+		excluded.append((ball as CollisionObject3D).get_rid())
+	query.exclude = excluded
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.is_empty():
+		return desired
+	var hit_position: Vector3 = hit.get("position", desired)
+	var hit_normal: Vector3 = hit.get("normal", (focus - desired).normalized())
+	return hit_position + hit_normal.normalized() * collision_margin
 
 func _ensure_camera() -> void:
 	camera = get_node_or_null("Camera3D") as Camera3D
