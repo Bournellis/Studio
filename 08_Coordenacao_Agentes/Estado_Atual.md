@@ -16,7 +16,7 @@
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
 - Marker: `JOGO_DA_COPA_TRACK_03I_MENU_INTERACTION_FIX_V1_COMPLETE`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot em terceira pessoa, arena noturna de vidro, personagem real skinned com tint preservando PBR, audio real, bola com trail/fireball/squash, dash/slide/stun/flip tunado, chute carregado/SUPER sem gasto em whiff, boost/jump pads/rampas, timer 3min default com golden goal/vale-2, modo `3 gols` preservado, HUD/menu arcade responsivo e menu principal validado por clique real em 3 resolucoes, aparencia somente na intro, bot defensivo/aereo, camera/reset de kickoff protegidos, avatar real com paridade player/bot e trava contra drift de animacao, toon toggle OFF e validacao com integridade de fontes. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena noturna de vidro, personagem real skinned com tint PBR preservado, audio real, bola com trail/fireball/squash, dash/slide/stun/flip tunado, chute carregado/SUPER sem gasto em whiff, boost/jump pads/rampas, timer 3min default com golden goal/vale-2, modo `3 gols` preservado, HUD/menu arcade responsivo e menu principal validado por clique real em 3 resolucoes, aparencia somente na intro, bot defensivo/aereo, camera/reset de kickoff protegidos, avatar real com paridade player/bot e trava contra drift, toon toggle OFF e validacao com integridade de fontes. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
 - Proximo passo: inspecao humana do menu nas screenshots/execucao local e playtest de confirmacao menu + avatar/bot antes da decisao da proxima serie.
 
