@@ -32,6 +32,8 @@ Then serve `builds/web/` over local HTTP, boot `index.html` in Chrome, verify th
 
 The Web preset is intentionally single-threaded for maximum host/browser compatibility: thread support OFF, no SharedArrayBuffer requirement and no COOP/COEP headers.
 
+For night game-scene evidence, the capture script must verify the mounted scene uses the approved night environment (`WorldEnvironment`, ACES tonemap, `BG_SKY`, dark `ProceduralSkyMaterial`) and must sample the rendered sky region. The gate fails when captured sky-region luma is `>= 90.0` on a 0-255 scale. This check is permanent for desktop/Web capture parity from Track 04E onward.
+
 ## Known Noise
 
 GUT UID/text-path warnings can appear after fresh worktree imports. They are accepted when tests pass.

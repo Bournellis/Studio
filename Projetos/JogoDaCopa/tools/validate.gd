@@ -4,6 +4,9 @@ const BootstrapSceneGeneratorScript = preload("res://tools/bootstrap_scene_gener
 const PROFILE_FULL: String = "full"
 const PROFILE_QUICK: String = "quick"
 const PROFILE_STRUCTURE: String = "structure"
+const UTF8_BOM_BYTE_0: int = 0xEF
+const UTF8_BOM_BYTE_1: int = 0xBB
+const UTF8_BOM_BYTE_2: int = 0xBF
 
 var _failures: Array[String] = []
 var _profile: String = PROFILE_FULL
@@ -142,6 +145,9 @@ func _check_script_and_shader_integrity() -> void:
 	_collect_integrity_files("res://", files)
 	var checked_count := 0
 	for path in files:
+		if _source_has_utf8_bom(path):
+			_failures.append("Source file has UTF-8 BOM: %s" % path)
+			continue
 		var resource := load(path)
 		if resource == null:
 			_failures.append("Failed to load source resource: %s" % path)
@@ -154,6 +160,21 @@ func _check_script_and_shader_integrity() -> void:
 			continue
 		checked_count += 1
 	print("[validate] source integrity checked: %d .gd/.gdshader files" % checked_count)
+
+func _source_has_utf8_bom(path: String) -> bool:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		_failures.append("Failed to open source file for BOM check: %s" % path)
+		return false
+	if file.get_length() < 3:
+		return false
+	var prefix := file.get_buffer(3)
+	return (
+		prefix.size() == 3
+		and int(prefix[0]) == UTF8_BOM_BYTE_0
+		and int(prefix[1]) == UTF8_BOM_BYTE_1
+		and int(prefix[2]) == UTF8_BOM_BYTE_2
+	)
 
 func _collect_integrity_files(directory_path: String, output: Array[String]) -> void:
 	var directory := DirAccess.open(directory_path)

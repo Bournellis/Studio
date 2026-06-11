@@ -1,4 +1,4 @@
-﻿class_name FootballFieldBuilder
+class_name FootballFieldBuilder
 extends RefCounted
 
 const RuntimePrimitiveFactoryScript = preload("res://modes/shared/runtime_primitive_factory.gd")

@@ -85,12 +85,43 @@ const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
 const TOON_RENDER_META_KEY: String = "jogodacopa_toon_render"
 const CAPTURE_SCENE_META_KEY: String = "jogodacopa_capture_scene"
+const RESULT_SUPPRESS_TRANSITION_PULSE_KEY: String = "suppress_transition_pulse"
 const CAPTURE_SCENE_KICKOFF: StringName = &"kickoff"
 const CAPTURE_SCENE_GOAL: StringName = &"goal"
 const CAPTURE_SCENE_RESULT: StringName = &"result"
 const CAPTURE_SCENE_PLAY: StringName = &"play"
 const CAPTURE_KICKOFF_COUNTDOWN_SECONDS: float = 2.8
 const CAPTURE_GOAL_HOLD_SECONDS: float = 30.0
+const CAPTURE_CAMERA_NAME: String = "Track04ECaptureCamera"
+const CAPTURE_CAMERA_FOV: float = 50.0
+const CAPTURE_CAMERA_NEAR: float = 0.04
+const CAPTURE_CAMERA_FAR: float = 220.0
+const CAPTURE_CAMERA_KICKOFF_POSITION: Vector3 = Vector3(29.0, 13.2, 34.0)
+const CAPTURE_CAMERA_KICKOFF_TARGET: Vector3 = Vector3(0.0, 1.9, 1.5)
+const CAPTURE_CAMERA_GOAL_POSITION: Vector3 = Vector3(-29.0, 13.2, -34.0)
+const CAPTURE_CAMERA_GOAL_TARGET: Vector3 = Vector3(0.0, 1.9, -1.5)
+const CAPTURE_CAMERA_RESULT_POSITION: Vector3 = Vector3(-31.0, 13.4, 31.0)
+const CAPTURE_CAMERA_RESULT_TARGET: Vector3 = Vector3(0.0, 2.0, -2.0)
+const CAPTURE_CAMERA_PLAY_POSITION: Vector3 = Vector3(29.0, 13.2, 34.0)
+const CAPTURE_CAMERA_PLAY_TARGET: Vector3 = Vector3(0.0, 1.9, 1.5)
+const CAPTURE_CAMERA_POSES: Dictionary = {
+	CAPTURE_SCENE_KICKOFF: {
+		"position": CAPTURE_CAMERA_KICKOFF_POSITION,
+		"target": CAPTURE_CAMERA_KICKOFF_TARGET,
+	},
+	CAPTURE_SCENE_GOAL: {
+		"position": CAPTURE_CAMERA_GOAL_POSITION,
+		"target": CAPTURE_CAMERA_GOAL_TARGET,
+	},
+	CAPTURE_SCENE_RESULT: {
+		"position": CAPTURE_CAMERA_RESULT_POSITION,
+		"target": CAPTURE_CAMERA_RESULT_TARGET,
+	},
+	CAPTURE_SCENE_PLAY: {
+		"position": CAPTURE_CAMERA_PLAY_POSITION,
+		"target": CAPTURE_CAMERA_PLAY_TARGET,
+	},
+}
 const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 const MATCH_MODE_IDS: Array = [&"timer", &"goals"]
 const SCREEN_TRANSITION_SECONDS: float = 0.25
@@ -141,6 +172,7 @@ var goal_slowmo_remaining: float = 0.0
 var stadium_scoreboard_score_labels: Dictionary = {}
 var stadium_scoreboard_phase_labels: Dictionary = {}
 var match_stats: Dictionary = FootballMatchRulesScript.build_empty_match_stats()
+var capture_scene_active: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -515,6 +547,7 @@ func _apply_capture_scene_from_meta() -> void:
 	if not _is_capture_scene_supported(capture_scene_id):
 		push_error("Unsupported JogoDaCopa capture scene in FootballRoot: %s" % str(capture_scene_id))
 		return
+	capture_scene_active = true
 	match capture_scene_id:
 		CAPTURE_SCENE_KICKOFF:
 			_apply_kickoff_capture_scene()
@@ -524,6 +557,8 @@ func _apply_capture_scene_from_meta() -> void:
 			_apply_result_capture_scene()
 		CAPTURE_SCENE_PLAY:
 			_apply_play_capture_scene()
+	_clear_capture_fade()
+	_apply_evidence_capture_camera(capture_scene_id)
 
 func _is_capture_scene_supported(capture_scene_id: StringName) -> bool:
 	return (
@@ -579,6 +614,39 @@ func _apply_result_capture_scene() -> void:
 func _apply_play_capture_scene() -> void:
 	_prepare_capture_scene()
 	debug_start_match()
+
+func _apply_evidence_capture_camera(capture_scene_id: StringName) -> void:
+	if not CAPTURE_CAMERA_POSES.has(capture_scene_id):
+		push_error("Missing Track04E capture camera pose for scene: %s" % str(capture_scene_id))
+		return
+	var pose: Dictionary = CAPTURE_CAMERA_POSES[capture_scene_id]
+	var camera := get_node_or_null(CAPTURE_CAMERA_NAME) as Camera3D
+	if camera == null:
+		camera = Camera3D.new()
+		camera.name = CAPTURE_CAMERA_NAME
+		add_child(camera)
+	var gameplay_camera: Camera3D = null
+	if chase_camera != null and chase_camera.has_method("debug_get_camera"):
+		gameplay_camera = chase_camera.call("debug_get_camera") as Camera3D
+	if gameplay_camera != null:
+		gameplay_camera.current = false
+	camera.fov = CAPTURE_CAMERA_FOV
+	camera.near = CAPTURE_CAMERA_NEAR
+	camera.far = CAPTURE_CAMERA_FAR
+	camera.global_position = pose["position"]
+	camera.look_at(pose["target"], Vector3.UP)
+	camera.current = true
+	print("[jdc_capture] scene=%s camera=%s fov=%.1f pos=%s target=%s" % [
+		str(capture_scene_id),
+		CAPTURE_CAMERA_NAME,
+		camera.fov,
+		str(camera.global_position),
+		str(pose["target"]),
+	])
+
+func _clear_capture_fade() -> void:
+	if hud != null and hud.has_method("_set_fade_alpha_immediate"):
+		hud.call("_set_fade_alpha_immediate", 0.0)
 
 func _configure_world() -> void:
 	RenderProfileScript.report_runtime_profile_once("FootballRoot")
@@ -1239,7 +1307,10 @@ func _finish_match(player_won: bool) -> void:
 	elif not player_won and bot_avatar != null:
 		bot_avatar.play_celebrate()
 	if hud != null:
-		hud.show_match_end(player_won, _build_result_snapshot())
+		var result_snapshot := _build_result_snapshot()
+		if capture_scene_active:
+			result_snapshot[RESULT_SUPPRESS_TRANSITION_PULSE_KEY] = true
+		hud.show_match_end(player_won, result_snapshot)
 	if feedback != null:
 		feedback.play_round_end(player_won)
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

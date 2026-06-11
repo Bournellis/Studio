@@ -1,4 +1,4 @@
-﻿class_name FpsFeedbackController
+class_name FpsFeedbackController
 extends Node3D
 
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")

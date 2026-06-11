@@ -1,4 +1,4 @@
-﻿class_name FootballBall3D
+class_name FootballBall3D
 extends RigidBody3D
 
 const BallPanelShader = preload("res://assets/football/football_ball_panels.gdshader")

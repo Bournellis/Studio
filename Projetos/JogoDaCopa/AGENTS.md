@@ -83,6 +83,8 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 Serve `builds/web/` over local HTTP, boot it in Chrome, and save at least one Web screenshot in the track evidence folder before handoff. The Web preset is intentionally single-threaded: thread support OFF, no SharedArrayBuffer requirement and no COOP/COEP header dependency.
 
+For night game-scene evidence, the capture path must also assert the mounted `WorldEnvironment` contract (`ACES`, `BG_SKY`, dark `ProceduralSkyMaterial`) and sample the rendered sky region. The gate fails if the captured sky-region luma is `>= 90.0` on a 0-255 scale.
+
 Before handoff, also run:
 
 ```powershell
@@ -103,7 +105,7 @@ git status --short
 - Toda track com efeito visivel em jogo (arena, avatar, animacao, VFX, HUD, camera) encerra com FASE DE EVIDENCIA: o Codex roda o jogo na maquina real (janela, nao headless) via script de captura (padrao `tools/capture_*`), simulando os inputs relevantes, e salva:
   - Screenshots padronizados em `docs/screenshots/<track>/`: menu, kickoff, SEQUENCIA de corrida (4 frames consecutivos, ~0.15s entre eles, mostrando facing e animacao), momento do chute, gol com VFX, e 4 angulos da arena (frontal do gol, lateral, alto diagonal, interior do gol) - mais capturas especificas do escopo da track.
   - Relatorio em `docs/playtest-reports/<track>.md`: o que foi executado (cena, duracao, inputs), checklist objetivo passa/falha do que da para julgar por imagem, e observacoes.
-- A partir da Track 04E, todo fechamento de track tambem inclui build Web completo, boot smoke em Chrome local e screenshot Web. Mudancas de plataforma/render exigem relatorio de paridade desktop vs Web.
+- A partir da Track 04E, todo fechamento de track tambem inclui build Web completo, boot smoke em Chrome local e screenshot Web. Mudancas de plataforma/render exigem relatorio de paridade desktop vs Web. Evidencias noturnas de cenas de jogo devem passar pelo gate de luminancia do ceu (`< 90.0`, escala 0-255) alem dos asserts de `WorldEnvironment`; captura lavada e falha de gate.
 - Papeis: Codex captura e relata (nao julga estetica); Claude analisa as imagens no code review; Fabio da o veredito subjetivo final (feel, vida, beleza).
 - Sequencias de frames sao obrigatorias para mudancas de animacao/movimento - frame unico nao evidencia movimento.
 

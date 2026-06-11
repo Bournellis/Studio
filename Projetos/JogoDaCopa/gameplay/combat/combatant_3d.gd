@@ -1,4 +1,4 @@
-﻿class_name FpsCombatant3D
+class_name FpsCombatant3D
 extends CharacterBody3D
 
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")

@@ -1,4 +1,4 @@
-﻿class_name RuntimePrimitiveFactory
+class_name RuntimePrimitiveFactory
 extends RefCounted
 
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")

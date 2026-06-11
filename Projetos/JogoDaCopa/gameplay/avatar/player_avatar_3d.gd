@@ -1,4 +1,4 @@
-﻿class_name PlayerAvatar3D
+class_name PlayerAvatar3D
 extends Node3D
 
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")

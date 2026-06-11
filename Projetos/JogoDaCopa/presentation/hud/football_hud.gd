@@ -17,6 +17,7 @@ const BUS_MASTER: StringName = &"Master"
 const BUS_SFX: StringName = &"SFX"
 const BUS_UI: StringName = &"UI"
 const BUS_AMBIENCE: StringName = &"Ambience"
+const RESULT_SUPPRESS_TRANSITION_PULSE_KEY: String = "suppress_transition_pulse"
 
 var status_label: Label
 var score_label: Label
@@ -196,7 +197,8 @@ func show_match_end(player_won: bool, result_snapshot: Dictionary = {}) -> void:
 	goal_feedback_time = 1.5
 	_set_event_message("CAMPEAO" if player_won else "DERROTA", 1.6)
 	_apply_result_snapshot(player_won, result_snapshot)
-	play_transition_pulse()
+	if not bool(result_snapshot.get(RESULT_SUPPRESS_TRANSITION_PULSE_KEY, false)):
+		play_transition_pulse()
 
 func _apply_result_snapshot(player_won: bool, result_snapshot: Dictionary) -> void:
 	if result_panel != null:
