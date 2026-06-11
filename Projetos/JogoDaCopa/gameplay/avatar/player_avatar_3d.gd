@@ -15,7 +15,7 @@ const RESET_ANIMATION_NAME: StringName = &"RESET"
 const EYE_TINT: Color = Color(0.94, 0.96, 1.0, 1.0)
 const EYEBROW_TINT: Color = Color(0.075, 0.055, 0.04, 1.0)
 const HAIR_EMISSION_TINT: Color = Color(0.08, 0.06, 0.045, 1.0)
-const ROOT_MOTION_BONES: Array[StringName] = [&"root", &"pelvis"]
+const ROOT_MOTION_BONE: StringName = &"root"
 
 const ANIMATION_BY_STATE: Dictionary = {
 	&"idle": &"Idle",
@@ -84,7 +84,6 @@ var model_instance_spawn_position: Vector3 = Vector3.ZERO
 var model_instance_spawn_rotation: Vector3 = Vector3.ZERO
 var skeleton_spawn_position: Vector3 = Vector3.ZERO
 var skeleton_spawn_rotation: Vector3 = Vector3.ZERO
-var root_motion_lock_queued: bool = false
 
 func _ready() -> void:
 	_build_avatar()
@@ -95,7 +94,6 @@ func _process(delta: float) -> void:
 		animation_timer = maxf(0.0, animation_timer - delta)
 		if animation_timer <= 0.0:
 			_update_state_from_motion()
-	_queue_root_motion_lock()
 
 func set_character_variant(next_variant: StringName) -> void:
 	character_variant = &"female" if next_variant == &"female" else &"male"
@@ -301,21 +299,8 @@ func debug_animation_has_stripped_root_motion(animation_name: StringName) -> boo
 	if animation == null:
 		return false
 	for track_index in range(animation.get_track_count()):
-		var bone_name := _get_root_motion_bone_from_path(animation.track_get_path(track_index))
-		if not ROOT_MOTION_BONES.has(bone_name):
-			continue
-		var track_type := animation.track_get_type(track_index)
-		for key_index in range(animation.track_get_key_count(track_index)):
-			var key_value: Variant = animation.track_get_key_value(track_index, key_index)
-			if track_type == Animation.TYPE_POSITION_3D and key_value is Vector3:
-				var position: Vector3 = key_value
-				if absf(position.x) > 0.001 or absf(position.z) > 0.001:
-					return false
-			elif track_type == Animation.TYPE_ROTATION_3D and key_value is Quaternion:
-				var key_rotation: Quaternion = key_value
-				var rotation := key_rotation.get_euler()
-				if absf(rotation.y) > 0.001:
-					return false
+		if _get_animation_bone_from_path(animation.track_get_path(track_index)) == ROOT_MOTION_BONE:
+			return false
 	return true
 
 func debug_reset_real_model_pose() -> void:
@@ -415,7 +400,7 @@ func _build_animation_player() -> void:
 			_report_real_avatar_fallback("UAL animation is null: %s" % animation_name)
 			continue
 		var copied_animation := animation.duplicate(true) as Animation
-		_strip_root_motion(copied_animation)
+		_remove_root_motion_tracks(copied_animation)
 		library.add_animation(animation_name, copied_animation)
 		loaded_animation_names.append(StringName(animation_name))
 	if loaded_animation_names.is_empty():
@@ -595,28 +580,14 @@ func _travel_state(next_state: StringName, force: bool = false) -> void:
 	elif animation_player != null and loaded_animation_names.has(animation_name):
 		animation_player.play(animation_name)
 
-func _strip_root_motion(animation: Animation) -> void:
+func _remove_root_motion_tracks(animation: Animation) -> void:
 	if animation == null:
 		return
-	for track_index in range(animation.get_track_count()):
-		var bone_name := _get_root_motion_bone_from_path(animation.track_get_path(track_index))
-		if not ROOT_MOTION_BONES.has(bone_name):
-			continue
-		var track_type := animation.track_get_type(track_index)
-		for key_index in range(animation.track_get_key_count(track_index)):
-			var key_value: Variant = animation.track_get_key_value(track_index, key_index)
-			if track_type == Animation.TYPE_POSITION_3D and key_value is Vector3:
-				var position: Vector3 = key_value
-				position.x = 0.0
-				position.z = 0.0
-				animation.track_set_key_value(track_index, key_index, position)
-			elif track_type == Animation.TYPE_ROTATION_3D and key_value is Quaternion:
-				var key_rotation: Quaternion = key_value
-				var rotation: Vector3 = key_rotation.get_euler()
-				rotation.y = 0.0
-				animation.track_set_key_value(track_index, key_index, Quaternion.from_euler(rotation))
+	for track_index in range(animation.get_track_count() - 1, -1, -1):
+		if _get_animation_bone_from_path(animation.track_get_path(track_index)) == ROOT_MOTION_BONE:
+			animation.remove_track(track_index)
 
-func _get_root_motion_bone_from_path(track_path: NodePath) -> StringName:
+func _get_animation_bone_from_path(track_path: NodePath) -> StringName:
 	var path_text := str(track_path)
 	var separator_index := path_text.rfind(":")
 	if separator_index < 0:
@@ -627,13 +598,6 @@ func _build_reset_animation() -> Animation:
 	var animation := Animation.new()
 	animation.length = 0.001
 	animation.loop_mode = Animation.LOOP_NONE
-	for bone_name in ROOT_MOTION_BONES:
-		var position_track := animation.add_track(Animation.TYPE_POSITION_3D)
-		animation.track_set_path(position_track, NodePath("Armature/Skeleton3D:%s" % bone_name))
-		animation.position_track_insert_key(position_track, 0.0, Vector3.ZERO)
-		var rotation_track := animation.add_track(Animation.TYPE_ROTATION_3D)
-		animation.track_set_path(rotation_track, NodePath("Armature/Skeleton3D:%s" % bone_name))
-		animation.rotation_track_insert_key(rotation_track, 0.0, Quaternion.IDENTITY)
 	return animation
 
 func _reset_real_model_pose() -> void:
@@ -645,33 +609,6 @@ func _reset_real_model_pose() -> void:
 		skeleton.position = skeleton_spawn_position
 		skeleton.rotation = skeleton_spawn_rotation
 		skeleton.reset_bone_poses()
-	_enforce_root_motion_lock()
-	_queue_root_motion_lock()
-
-func _queue_root_motion_lock() -> void:
-	if root_motion_lock_queued:
-		return
-	root_motion_lock_queued = true
-	call_deferred("_apply_root_motion_lock_deferred")
-
-func _apply_root_motion_lock_deferred() -> void:
-	root_motion_lock_queued = false
-	_enforce_root_motion_lock()
-
-func _enforce_root_motion_lock() -> void:
-	if skeleton == null:
-		return
-	for bone_name in ROOT_MOTION_BONES:
-		var bone_index := skeleton.find_bone(str(bone_name))
-		if bone_index < 0:
-			continue
-		var position: Vector3 = skeleton.get_bone_pose_position(bone_index)
-		position.x = 0.0
-		position.z = 0.0
-		skeleton.set_bone_pose_position(bone_index, position)
-		var rotation: Vector3 = skeleton.get_bone_pose_rotation(bone_index).get_euler()
-		rotation.y = 0.0
-		skeleton.set_bone_pose_rotation(bone_index, Quaternion.from_euler(rotation))
 
 func _report_real_avatar_fallback(reason: String) -> void:
 	real_model_fallback_reason = reason
