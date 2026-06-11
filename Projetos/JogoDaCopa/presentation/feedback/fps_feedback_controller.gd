@@ -2,6 +2,7 @@ class_name FpsFeedbackController
 extends Node3D
 
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
+const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 
 const SAMPLE_RATE: int = 22050
 const BUS_SFX: StringName = &"SFX"
@@ -76,10 +77,18 @@ var synthetic_whistle_count: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	var feedback_begin := PerfProbeScript.begin(self, "feedback.ready")
 	_ensure_audio_buses()
+	var stage_begin := PerfProbeScript.begin(self, "feedback.audio_load")
 	_load_real_audio_streams()
+	PerfProbeScript.end(self, "feedback.audio_load", stage_begin, "streams=%d" % real_audio_streams.size())
+	stage_begin = PerfProbeScript.begin(self, "feedback.audio_pools")
 	_build_audio_pools()
+	PerfProbeScript.end(self, "feedback.audio_pools", stage_begin, "sfx_pool=%d ui_pool=%d" % [sfx_pool.size(), ui_pool.size()])
+	stage_begin = PerfProbeScript.begin(self, "feedback.ambience")
 	_start_ambience_loop()
+	PerfProbeScript.end(self, "feedback.ambience", stage_begin, "playing=%s" % str(debug_is_ambience_playing()))
+	PerfProbeScript.end(self, "feedback.ready", feedback_begin)
 
 func _process(delta: float) -> void:
 	_update_ambience(delta)
@@ -174,6 +183,7 @@ func play_fall_penalty(effect_position: Vector3, for_player: bool) -> void:
 	_spawn_tone(effect_position, 120.0 if for_player else 170.0, 0.12, -8.8)
 
 func play_football_kick(ball_position: Vector3, direction: Vector3, strong: bool) -> void:
+	PerfProbeScript.mark(self, "event.kick_vfx", "strong=%s" % str(strong))
 	last_event = &"football_strong_kick" if strong else &"football_kick"
 	football_kick_count += 1
 	var kick_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector3.FORWARD
@@ -186,6 +196,7 @@ func play_football_kick(ball_position: Vector3, direction: Vector3, strong: bool
 	_play_sfx_3d(&"kick_strong" if strong else &"kick", ball_position, -7.5 if strong else -10.5, 0.96 if strong else 1.04)
 
 func play_football_goal(goal_position: Vector3, player_scored: bool) -> void:
+	PerfProbeScript.mark(self, "event.goal_vfx", "player_scored=%s" % str(player_scored))
 	last_event = &"football_goal"
 	football_goal_count += 1
 	var color := FOOTBALL_GOAL_COLOR if player_scored else DAMAGE_COLOR
@@ -198,6 +209,7 @@ func play_football_goal(goal_position: Vector3, player_scored: bool) -> void:
 	ambience_goal_boost_remaining = 2.6
 
 func play_arcade_confetti(effect_position: Vector3, player_colored: bool) -> void:
+	PerfProbeScript.mark(self, "event.confetti_vfx", "player_colored=%s" % str(player_colored))
 	last_event = &"arcade_confetti"
 	confetti_count += 1
 	var primary := FOOTBALL_GOAL_COLOR if player_colored else BOT_COLOR
