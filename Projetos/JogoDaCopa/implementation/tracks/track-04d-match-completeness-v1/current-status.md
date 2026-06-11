@@ -3,8 +3,9 @@
 - Date: `2026-06-11`
 - Branch: `codex/jogodacopa/track04d-match-completeness-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track04d-match-completeness-v1`
-- Status: `READY_FOR_REVIEW - validate PASS, awaiting Claude review + Fabio visual approval`
+- Status: `COMPLETE - approved by review and merged to main`
 - Source: Fabio direct task from `docs/release-plan.md` final pre-release route
+- Review: `docs/code-review-track04c-04d-v1.md`
 
 ## Objective
 
@@ -69,8 +70,8 @@ Capture tool:
 
 - No gameplay rule changes to tap/RMB, score resolution, timer/golden goal, bot policy or arena physics.
 - Did not touch `field_builder/**`, shaders or avatar files reserved for the parallel 04C thread.
-- No push/fetch/pull and no merge to `main`.
+- No push/fetch/pull. Local merge to `main` completed after review approval.
 
 ## Handoff
 
-Branch is ready for Claude review and Fabio visual approval. Keep branch stopped pre-merge until both review gates pass. `WORKTREE_VERIFIED`.
+Claude review approved Track 04D in `docs/code-review-track04c-04d-v1.md`, and the branch was merged locally to `main`. The 04D worktree is eligible for prune. `WORKTREE_VERIFIED`.

@@ -5,11 +5,11 @@
 - To: `Claude review + Fabio visual approval`
 - Branch: `codex/jogodacopa/track04d-match-completeness-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track04d-match-completeness-v1`
-- Status: `READY_FOR_REVIEW - not merged`
+- Status: `COMPLETE - approved by review and merged to main`
 
 ## Request
 
-Review the match-completeness branch before web publish. Fabio's decision was to complete the current mode with product details before publication.
+Review approved the match-completeness branch before web publish. Fabio's decision was to complete the current mode with product details before publication.
 
 ## Changed Surface
 
@@ -37,6 +37,7 @@ Review the match-completeness branch before web publish. Fabio's decision was to
 
 - Track doc: `Projetos/JogoDaCopa/implementation/tracks/track-04d-match-completeness-v1/current-status.md`
 - Playtest report: `Projetos/JogoDaCopa/docs/playtest-reports/track-04d-match-completeness-v1.md`
+- Review: `Projetos/JogoDaCopa/docs/code-review-track04c-04d-v1.md`
 - Screenshots: `Projetos/JogoDaCopa/docs/screenshots/track-04d-match-completeness-v1/`
 
 ## Validation
@@ -51,10 +52,10 @@ Review the match-completeness branch before web publish. Fabio's decision was to
 ## Boundaries Confirmed
 
 - No push/fetch/pull.
-- No merge to `main`.
+- Local merge to `main` completed after review approval.
 - No `git clean`.
 - Did not touch 04C parallel files: `field_builder/**`, shaders, avatar implementation.
 
 ## Next Step
 
-Claude review and Fabio visual approval. If approved, merge locally in a separate review/merge step; then Fabio handles any remote backup through the agreed local-only workflow. `WORKTREE_VERIFIED`.
+Track 04D is merged locally. Next sequence from the review doc is Track 04C merge/reconciliation, then Fabio handles any remote backup through the agreed local-only workflow. `WORKTREE_VERIFIED`.

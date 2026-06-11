@@ -5,7 +5,7 @@
 - Branch: `codex/jogodacopa/track04d-match-completeness-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track04d-match-completeness-v1`
 - Projeto: `Projetos/JogoDaCopa`
-- Status: `REVIEW - validate PASS, aguardando Claude + Fabio visual`
+- Status: `DONE - aprovado pelo review e mergeado em main`
 - Objetivo: completar o fluxo do modo atual antes do web publish com pause real, resultado rico, transicoes curtas, hero shot do menu e consistencia de ESC/foco/restart.
 - Pre-condicao verificada: `main` limpa em `b715f743`, 04B3 marcada como aprovada e mergeada, 04C rodando em worktree paralela `D:\Estudio-worktrees\JogoDaCopa--codex--track04c-stadium-visual-v1`.
 - Arquivos pretendidos: `modes/football/football_root.gd`, `modes/menu/main_menu_root.gd`, `presentation/hud/football_hud.gd`, `presentation/camera/**`, `gameplay/football/football_match_rules.gd`, testes proprios e docs/evidencias proprias da track.
@@ -13,6 +13,7 @@
 - Docs lidos: `Prioridades_Estudio.md`, `Projetos/README.md`, `Estado_Atual.md`, `AGENTS.md` raiz, `Projetos/JogoDaCopa/AGENTS.md`, `implementation/current-status.md`, `docs/release-plan.md`.
 - Validacao planejada: import headless inicial da worktree nova, testes GUT/validate, testes de clique real nas resolucoes 1920x1080, 1366x768 e 1280x720, capturas de pause/resultado/hero/fade, `git diff --check`, `git status --short`, doc da track e handoff para review de Claude + aprovacao visual de Fabio.
 - Handoff esperado: branch parada em review pre-merge, sem merge em main e com `WORKTREE_VERIFIED`.
+- Fechamento: review aprovado em `Projetos/JogoDaCopa/docs/code-review-track04c-04d-v1.md`; merge local em `main`; worktree 04D pronta para prune.
 
 ## Resultado
 
@@ -28,6 +29,7 @@
 - Playtest: `Projetos/JogoDaCopa/docs/playtest-reports/track-04d-match-completeness-v1.md`
 - Screenshots: `Projetos/JogoDaCopa/docs/screenshots/track-04d-match-completeness-v1/`
 - Handoff: `08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`
+- Review: `Projetos/JogoDaCopa/docs/code-review-track04c-04d-v1.md`
 
 ## Validacao
 
@@ -35,4 +37,4 @@
 - Source integrity: PASS, `30` `.gd/.gdshader`.
 - `tools/check_doc_drift.ps1`: PASS.
 - `git diff --check`: PASS.
-- `WORKTREE_VERIFIED`: sim, branch pronta para review pre-merge.
+- `WORKTREE_VERIFIED`: sim, merge local concluido em `main`; sem push/fetch/pull e sem `git clean`.
