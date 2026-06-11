@@ -12,8 +12,17 @@ const STATE_DEFEND_GOAL: StringName = &"defend_goal"
 const STATE_KICK_WINDUP: StringName = &"kick_windup"
 const STATE_RECOVER: StringName = &"recover"
 const STATE_CELEBRATE: StringName = &"celebrate"
-const ARCADE_DASH_SPEED: float = 20.75
 const ARCADE_DASH_DURATION: float = 0.28
+const ARCADE_DASH_DISTANCE: float = 5.3
+const ARCADE_DASH_PEAK_TIME: float = 0.06
+const ARCADE_DASH_START_SPEED_RATIO: float = 0.42
+const ARCADE_DASH_END_SPEED_RATIO: float = 0.18
+const ARCADE_DASH_PROFILE_AREA: float = (
+	ARCADE_DASH_PEAK_TIME * ((ARCADE_DASH_START_SPEED_RATIO + 1.0) * 0.5)
+	+ (ARCADE_DASH_DURATION - ARCADE_DASH_PEAK_TIME) * ((1.0 + ARCADE_DASH_END_SPEED_RATIO) * 0.5)
+)
+const ARCADE_DASH_PEAK_SPEED: float = ARCADE_DASH_DISTANCE / ARCADE_DASH_PROFILE_AREA
+const ARCADE_DASH_SPEED: float = ARCADE_DASH_PEAK_SPEED
 const ARCADE_DASH_BASE_COOLDOWN: float = 1.65
 const ARCADE_FLIP_VERTICAL_VELOCITY: float = 4.1
 const ARCADE_FLIP_HORIZONTAL_SPEED: float = 6.8
@@ -249,6 +258,33 @@ func debug_get_arcade_stun_remaining() -> float:
 
 func debug_get_arcade_dash_direction() -> Vector3:
 	return arcade_dash_direction
+
+func debug_get_arcade_flip_boost_velocity() -> Vector3:
+	return arcade_flip_boost_velocity
+
+func debug_get_arcade_dash_distance() -> float:
+	return ARCADE_DASH_DISTANCE
+
+func debug_get_arcade_dash_peak_speed() -> float:
+	return ARCADE_DASH_PEAK_SPEED
+
+func debug_get_arcade_dash_speed_at(time_seconds: float) -> float:
+	return _get_arcade_dash_speed_at(time_seconds)
+
+func debug_get_arcade_dash_average_speed_for_frame(delta: float) -> float:
+	var active_delta := clampf(delta, 0.0, ARCADE_DASH_DURATION)
+	if active_delta <= 0.0:
+		return 0.0
+	return _get_arcade_dash_distance_between(0.0, active_delta) / active_delta
+
+func debug_force_arcade_flip_available(is_available: bool) -> void:
+	arcade_flip_available = is_available
+
+func debug_request_arcade_flip(direction: Vector3 = Vector3.ZERO) -> bool:
+	if not arcade_flip_available:
+		return false
+	_start_arcade_flip(direction)
+	return true
 
 func debug_get_aim_error_radius() -> float:
 	return aim_error_radius
@@ -553,21 +589,28 @@ func _start_arcade_dash(direction: Vector3) -> bool:
 func _consume_arcade_dash(delta: float) -> Vector3:
 	if arcade_dash_remaining <= 0.0:
 		return Vector3.ZERO
-	arcade_dash_remaining = maxf(0.0, arcade_dash_remaining - delta)
-	return arcade_dash_direction * ARCADE_DASH_SPEED
+	var elapsed := ARCADE_DASH_DURATION - arcade_dash_remaining
+	var active_delta := minf(maxf(delta, 0.0), arcade_dash_remaining)
+	arcade_dash_remaining = maxf(0.0, arcade_dash_remaining - active_delta)
+	if delta <= 0.0 or active_delta <= 0.0:
+		return Vector3.ZERO
+	var dash_distance := _get_arcade_dash_distance_between(elapsed, elapsed + active_delta)
+	return arcade_dash_direction * (dash_distance / delta)
 
 func _try_arcade_flip() -> void:
 	if is_on_floor() or not arcade_flip_available:
 		return
 	var direction: Vector3 = ball.global_position - global_position
 	direction.y = 0.0
-	if direction.length_squared() <= 0.0001:
-		direction = -global_transform.basis.z
+	_start_arcade_flip(direction)
+
+func _start_arcade_flip(direction: Vector3) -> void:
 	vertical_velocity = maxf(vertical_velocity, ARCADE_FLIP_VERTICAL_VELOCITY)
-	arcade_flip_boost_velocity = direction.normalized() * ARCADE_FLIP_HORIZONTAL_SPEED
+	var flip_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector3.ZERO
+	arcade_flip_boost_velocity = flip_direction * ARCADE_FLIP_HORIZONTAL_SPEED
 	arcade_flip_available = false
 	arcade_flip_count += 1
-	arcade_flip_started.emit(direction.normalized())
+	arcade_flip_started.emit(flip_direction)
 
 func _consume_arcade_flip_boost(delta: float) -> Vector3:
 	var current: Vector3 = arcade_flip_boost_velocity
@@ -603,6 +646,35 @@ func _apply_gravity(delta: float) -> void:
 		vertical_velocity -= gravity * delta
 	elif vertical_velocity < 0.0:
 		vertical_velocity = -0.1
+
+func _get_arcade_dash_distance_between(start_time: float, end_time: float) -> float:
+	var start_distance := _get_arcade_dash_integrated_distance(start_time)
+	var end_distance := _get_arcade_dash_integrated_distance(end_time)
+	return maxf(0.0, end_distance - start_distance)
+
+func _get_arcade_dash_integrated_distance(time_seconds: float) -> float:
+	var time := clampf(time_seconds, 0.0, ARCADE_DASH_DURATION)
+	if time <= ARCADE_DASH_PEAK_TIME:
+		var u := time / maxf(0.001, ARCADE_DASH_PEAK_TIME)
+		var eased_area := pow(u, 3.0) - 0.5 * pow(u, 4.0)
+		var ratio_area := ARCADE_DASH_START_SPEED_RATIO * time + (1.0 - ARCADE_DASH_START_SPEED_RATIO) * ARCADE_DASH_PEAK_TIME * eased_area
+		return ratio_area * ARCADE_DASH_PEAK_SPEED
+	var ramp_ratio_area := ARCADE_DASH_PEAK_TIME * ((ARCADE_DASH_START_SPEED_RATIO + 1.0) * 0.5)
+	var decay_duration := ARCADE_DASH_DURATION - ARCADE_DASH_PEAK_TIME
+	var decay_time := time - ARCADE_DASH_PEAK_TIME
+	var decay_u := decay_time / maxf(0.001, decay_duration)
+	var decay_eased_area := pow(decay_u, 3.0) - 0.5 * pow(decay_u, 4.0)
+	var decay_ratio_area := decay_time + (ARCADE_DASH_END_SPEED_RATIO - 1.0) * decay_duration * decay_eased_area
+	return (ramp_ratio_area + decay_ratio_area) * ARCADE_DASH_PEAK_SPEED
+
+func _get_arcade_dash_speed_at(time_seconds: float) -> float:
+	var time := clampf(time_seconds, 0.0, ARCADE_DASH_DURATION)
+	if time <= ARCADE_DASH_PEAK_TIME:
+		var ramp_u := time / maxf(0.001, ARCADE_DASH_PEAK_TIME)
+		return ARCADE_DASH_PEAK_SPEED * lerpf(ARCADE_DASH_START_SPEED_RATIO, 1.0, smoothstep(0.0, 1.0, ramp_u))
+	var decay_duration := ARCADE_DASH_DURATION - ARCADE_DASH_PEAK_TIME
+	var decay_u := (time - ARCADE_DASH_PEAK_TIME) / maxf(0.001, decay_duration)
+	return ARCADE_DASH_PEAK_SPEED * lerpf(1.0, ARCADE_DASH_END_SPEED_RATIO, smoothstep(0.0, 1.0, decay_u))
 
 func _face_ball(delta: float) -> void:
 	var target: Vector3 = ball.global_position

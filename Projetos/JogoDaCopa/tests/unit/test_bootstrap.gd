@@ -34,6 +34,10 @@ const TRACK03I_REAL_CLICK_VIEWPORTS: Array[Vector2i] = [
 ]
 const TRACK03L_SEAL_GRID_STEP: float = 0.25
 const TRACK03L_MAX_TUNNELING_SPEED: float = 34.0
+const TRACK04B2_DASH_BASELINE_DISTANCE: float = 5.3
+const TRACK04B2_DASH_DISTANCE_TOLERANCE: float = TRACK04B2_DASH_BASELINE_DISTANCE * 0.05
+const TRACK04B2_STATIONARY_JUMP_MAX_XZ_DRIFT: float = 0.05
+const TRACK04B2_MENU_MIN_AVERAGE_LUMINANCE: float = 0.025
 
 func before_all() -> void:
 	var result: Dictionary = BootstrapSceneGeneratorScript.new().generate_all()
@@ -127,6 +131,65 @@ func test_main_menu_real_mouse_clicks_reach_interactive_controls() -> void:
 		await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "AmbienceVolumeRow/AmbienceVolumeSlider", "Volume ambiente %s" % context)
 	assert_no_new_orphans()
 
+func test_main_menu_preview_capture_is_not_black_at_desktop_and_720p() -> void:
+	for viewport_size: Vector2i in [Vector2i(1920, 1080), Vector2i(1280, 720)]:
+		var menu := await _spawn_main_menu_for_real_click_test(viewport_size)
+		for _frame in range(8):
+			menu._process(1.0 / 60.0)
+			await get_tree().process_frame
+		var luminance: float = menu.debug_get_preview_average_luminance(24)
+		assert_gt(
+			luminance,
+			TRACK04B2_MENU_MIN_AVERAGE_LUMINANCE,
+			"Menu preview luminance %.4f below anti-black threshold at %sx%s" % [luminance, viewport_size.x, viewport_size.y]
+		)
+	assert_no_new_orphans()
+
+func test_football_interactive_panels_accept_real_mouse_clicks() -> void:
+	for viewport_size: Vector2i in TRACK03I_REAL_CLICK_VIEWPORTS:
+		var football := await _spawn_football_for_real_click_test(viewport_size)
+		var hud = football.get_node("FootballHud")
+		var context := "%sx%s" % [viewport_size.x, viewport_size.y]
+
+		var intro_path := "HudRoot/IntroCenter/IntroPanel/IntroMargin/IntroBox/"
+		_disconnect_button_pressed_callbacks(hud.get_node(intro_path + "StartButton") as Button)
+		await _assert_real_button_click_emits_pressed(hud, intro_path + "AvatarSelectionBox/SkinToneRow/SkinPreviousButton", "Intro pele anterior %s" % context)
+		await _assert_real_button_click_emits_pressed(hud, intro_path + "AvatarSelectionBox/SkinToneRow/SkinNextButton", "Intro pele proxima %s" % context)
+		await _assert_real_button_click_emits_pressed(hud, intro_path + "AvatarSelectionBox/CountryKitRow/KitPreviousButton", "Intro camisa anterior %s" % context)
+		await _assert_real_button_click_emits_pressed(hud, intro_path + "AvatarSelectionBox/CountryKitRow/KitNextButton", "Intro camisa proxima %s" % context)
+		await _assert_real_button_click_emits_pressed(hud, intro_path + "StartButton", "Intro comecar %s" % context)
+
+		football.debug_start_match()
+		football.debug_finish_kickoff_countdown()
+		await get_tree().process_frame
+		football._set_menu_open(true)
+		await get_tree().process_frame
+		assert_eq(Input.get_mouse_mode(), Input.MOUSE_MODE_VISIBLE)
+		var pause_path := "HudRoot/PauseMenuCenter/PauseMenuPanel/PauseMenuMargin/PauseMenuBox/"
+		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "ResumeButton") as Button)
+		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "MainMenuButton") as Button)
+		await _assert_real_slider_click_emits_value_changed(hud, pause_path + "SensitivitySlider", "Pause sensibilidade %s" % context)
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "ResumeButton", "Pause retomar %s" % context)
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "MainMenuButton", "Pause menu %s" % context)
+
+		football._set_menu_open(false)
+		football.debug_set_match_mode(&"goals")
+		football.debug_set_score(2, 0)
+		football.debug_force_ball_position(Vector3(0.0, 0.68, -27.35))
+		football._process_goal_detection()
+		await get_tree().process_frame
+
+		assert_true(football.debug_is_match_over())
+		assert_true(football.debug_is_player_input_locked())
+		assert_eq(Input.get_mouse_mode(), Input.MOUSE_MODE_VISIBLE)
+		assert_eq(hud.debug_get_focused_control_name(), "RematchButton")
+		var result_path := "HudRoot/ResultCenter/ResultPanel/ResultMargin/ResultBox/ResultButtons/"
+		_disconnect_button_pressed_callbacks(hud.get_node(result_path + "RematchButton") as Button)
+		_disconnect_button_pressed_callbacks(hud.get_node(result_path + "ResultMenuButton") as Button)
+		await _assert_real_button_click_emits_pressed(hud, result_path + "RematchButton", "Resultado revanche %s" % context)
+		await _assert_real_button_click_emits_pressed(hud, result_path + "ResultMenuButton", "Resultado menu %s" % context)
+	assert_no_new_orphans()
+
 func _spawn_main_menu_for_real_click_test(viewport_size: Vector2i) -> Control:
 	var test_viewport := SubViewport.new()
 	test_viewport.set_size(viewport_size)
@@ -140,6 +203,19 @@ func _spawn_main_menu_for_real_click_test(viewport_size: Vector2i) -> Control:
 	await get_tree().process_frame
 	return menu
 
+func _spawn_football_for_real_click_test(viewport_size: Vector2i) -> Node3D:
+	var test_viewport := SubViewport.new()
+	test_viewport.set_size(viewport_size)
+	add_child_autofree(test_viewport)
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	assert_not_null(football_scene)
+	var football := football_scene.instantiate() as Node3D
+	assert_not_null(football)
+	test_viewport.add_child(football)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	return football
+
 func _disconnect_button_pressed_callbacks(button: Button) -> void:
 	assert_not_null(button)
 	for connection: Dictionary in button.pressed.get_connections():
@@ -147,8 +223,8 @@ func _disconnect_button_pressed_callbacks(button: Button) -> void:
 			var callable: Callable = connection["callable"]
 			button.pressed.disconnect(callable)
 
-func _assert_real_button_click_emits_pressed(menu: Control, node_path: String, control_label: String) -> void:
-	var button := menu.get_node(node_path) as Button
+func _assert_real_button_click_emits_pressed(root: Node, node_path: String, control_label: String) -> void:
+	var button := root.get_node(node_path) as Button
 	assert_not_null(button, "%s button missing at %s" % [control_label, node_path])
 	var fired := [0]
 	button.pressed.connect(func() -> void:
@@ -161,8 +237,8 @@ func _assert_real_button_click_emits_pressed(menu: Control, node_path: String, c
 		"%s did not emit pressed after real viewport click. %s" % [control_label, _format_click_report(click_report)]
 	)
 
-func _assert_real_slider_click_emits_value_changed(menu: Control, node_path: String, control_label: String) -> void:
-	var slider := menu.get_node(node_path) as HSlider
+func _assert_real_slider_click_emits_value_changed(root: Node, node_path: String, control_label: String) -> void:
+	var slider := root.get_node(node_path) as HSlider
 	assert_not_null(slider, "%s slider missing at %s" % [control_label, node_path])
 	var fired := [0]
 	slider.value_changed.connect(func(_value: float) -> void:
@@ -1002,6 +1078,44 @@ func test_football_arcade_dash_peak_is_at_least_one_and_half_boost_run_speed() -
 	assert_gt(FootballBotScript.ARCADE_DASH_SPEED, boosted_bot_speed)
 	assert_almost_eq(PlayerControllerScript.ARCADE_DASH_DURATION, 0.28, 0.001)
 	assert_almost_eq(FootballBotScript.ARCADE_DASH_DURATION, 0.28, 0.001)
+	assert_almost_eq(player.debug_get_arcade_dash_distance(), TRACK04B2_DASH_BASELINE_DISTANCE, TRACK04B2_DASH_DISTANCE_TOLERANCE)
+	assert_almost_eq(bot.debug_get_arcade_dash_distance(), player.debug_get_arcade_dash_distance(), 0.001)
+	assert_almost_eq(bot.debug_get_arcade_dash_peak_speed(), player.debug_get_arcade_dash_peak_speed(), 0.001)
+	assert_no_new_orphans()
+
+func test_football_arcade_dash_curve_accelerates_and_preserves_total_distance() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var bot = football.debug_get_bot()
+	player.global_position = Vector3.ZERO
+	player.rotation = Vector3.ZERO
+	player.velocity = Vector3.ZERO
+	player.clear_movement_impulses()
+	player.debug_set_boost_stamina(100.0)
+	var first_frame_speed: float = player.debug_get_arcade_dash_average_speed_for_frame(1.0 / 60.0)
+	var peak_speed: float = player.debug_get_arcade_dash_peak_speed()
+	var start_position: Vector3 = player.global_position
+
+	assert_true(player.request_arcade_dash(Vector3.RIGHT))
+	var max_observed_speed := 0.0
+	for _frame in range(40):
+		await get_tree().physics_frame
+		var flat_speed := Vector2(player.velocity.x, player.velocity.z).length()
+		max_observed_speed = maxf(max_observed_speed, flat_speed)
+		if not player.is_arcade_dashing():
+			break
+
+	var traveled := _flat_xz_distance(start_position, player.global_position)
+	assert_lt(first_frame_speed, peak_speed)
+	assert_gt(max_observed_speed, first_frame_speed)
+	assert_almost_eq(traveled, TRACK04B2_DASH_BASELINE_DISTANCE, TRACK04B2_DASH_DISTANCE_TOLERANCE)
+	assert_lt(bot.debug_get_arcade_dash_average_speed_for_frame(1.0 / 60.0), bot.debug_get_arcade_dash_peak_speed())
 	assert_no_new_orphans()
 
 func test_football_arcade_flip_consumes_once_and_resets_for_floor() -> void:
@@ -1024,6 +1138,91 @@ func test_football_arcade_flip_consumes_once_and_resets_for_floor() -> void:
 	player.debug_reset_arcade_flip_for_floor()
 	assert_true(player.debug_is_arcade_flip_available())
 	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"flip")
+	assert_no_new_orphans()
+
+func test_football_stationary_jump_and_double_flip_stay_vertical() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	player.global_position = Vector3(2.0, 0.08, 2.0)
+	player.rotation = Vector3.ZERO
+	player.clear_movement_impulses()
+	Input.action_press("jump")
+	await get_tree().physics_frame
+	Input.action_release("jump")
+	var jump_start := Vector3(2.0, 0.08, 2.0)
+	await _wait_until_character_lands(player)
+
+	assert_lte(_flat_xz_distance(jump_start, player.global_position), TRACK04B2_STATIONARY_JUMP_MAX_XZ_DRIFT)
+
+	player.global_position = Vector3(4.0, 2.2, 4.0)
+	player.velocity = Vector3.ZERO
+	player.clear_movement_impulses()
+	player.debug_force_arcade_flip_available(true)
+	for _frame in range(6):
+		await get_tree().physics_frame
+		if not player.is_on_floor():
+			break
+	var flip_start: Vector3 = player.global_position
+	assert_true(player.request_arcade_flip())
+	assert_almost_eq(Vector2(player.debug_get_launch_boost_velocity().x, player.debug_get_launch_boost_velocity().z).length(), 0.0, 0.001)
+	await _wait_until_character_lands(player)
+
+	assert_lte(_flat_xz_distance(flip_start, player.global_position), TRACK04B2_STATIONARY_JUMP_MAX_XZ_DRIFT)
+	assert_no_new_orphans()
+
+func test_football_jump_with_forward_input_moves_forward() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	player.global_position = Vector3(0.0, 0.08, 4.0)
+	player.rotation = Vector3.ZERO
+	player.clear_movement_impulses()
+	var start_position: Vector3 = player.global_position
+	Input.action_press("move_forward")
+	Input.action_press("jump")
+	await get_tree().physics_frame
+	Input.action_release("jump")
+	await _wait_until_character_lands(player)
+	Input.action_release("move_forward")
+
+	assert_lt(player.global_position.z, start_position.z - 0.4)
+	assert_lt(absf(player.global_position.x - start_position.x), 0.12)
+	assert_no_new_orphans()
+
+func test_football_bot_flip_uses_vertical_only_without_target_direction() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var bot = football.debug_get_bot()
+	bot.velocity = Vector3.ZERO
+	bot.clear_movement_impulses()
+	bot.debug_force_arcade_flip_available(true)
+	assert_true(bot.debug_request_arcade_flip(Vector3.ZERO))
+
+	assert_gt(bot.debug_get_vertical_velocity(), 0.0)
+	assert_almost_eq(Vector2(bot.debug_get_arcade_flip_boost_velocity().x, bot.debug_get_arcade_flip_boost_velocity().z).length(), 0.0, 0.001)
+
+	bot.velocity = Vector3.ZERO
+	bot.clear_movement_impulses()
+	bot.debug_force_arcade_flip_available(true)
+	assert_true(bot.debug_request_arcade_flip(Vector3.FORWARD))
+
+	assert_lt(bot.debug_get_arcade_flip_boost_velocity().z, -1.0)
 	assert_no_new_orphans()
 
 func test_football_bot_uses_arcade_dash_for_defense() -> void:
@@ -1425,6 +1624,20 @@ func _record_track03l_arena_ray(leaks: Dictionary, space_state: PhysicsDirectSpa
 func _format_arena_leak_samples(leak_report: Dictionary) -> String:
 	var samples := leak_report.get("samples", PackedStringArray()) as PackedStringArray
 	return "count=%d; %s" % [int(leak_report.get("count", 0)), " | ".join(samples)]
+
+func _flat_xz_distance(a: Vector3, b: Vector3) -> float:
+	return Vector2(a.x, a.z).distance_to(Vector2(b.x, b.z))
+
+func _wait_until_character_lands(character: CharacterBody3D, max_frames: int = 180) -> void:
+	var saw_airborne := false
+	for _frame in range(max_frames):
+		await get_tree().physics_frame
+		if character == null:
+			return
+		if not character.is_on_floor():
+			saw_airborne = true
+		elif saw_airborne:
+			return
 
 func _sample_track03l_range(min_value: float, max_value: float, step: float) -> Array[float]:
 	var values: Array[float] = []

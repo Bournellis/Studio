@@ -10,8 +10,17 @@ signal charged_shoot_requested(origin: Vector3, direction: Vector3, charge_fract
 const MIN_MOUSE_SENSITIVITY: float = 0.0008
 const MAX_MOUSE_SENSITIVITY: float = 0.0032
 const DEFAULT_MOUSE_SENSITIVITY: float = 0.0018
-const ARCADE_DASH_SPEED: float = 20.75
 const ARCADE_DASH_DURATION: float = 0.28
+const ARCADE_DASH_DISTANCE: float = 5.3
+const ARCADE_DASH_PEAK_TIME: float = 0.06
+const ARCADE_DASH_START_SPEED_RATIO: float = 0.42
+const ARCADE_DASH_END_SPEED_RATIO: float = 0.18
+const ARCADE_DASH_PROFILE_AREA: float = (
+	ARCADE_DASH_PEAK_TIME * ((ARCADE_DASH_START_SPEED_RATIO + 1.0) * 0.5)
+	+ (ARCADE_DASH_DURATION - ARCADE_DASH_PEAK_TIME) * ((1.0 + ARCADE_DASH_END_SPEED_RATIO) * 0.5)
+)
+const ARCADE_DASH_PEAK_SPEED: float = ARCADE_DASH_DISTANCE / ARCADE_DASH_PROFILE_AREA
+const ARCADE_DASH_SPEED: float = ARCADE_DASH_PEAK_SPEED
 const ARCADE_DASH_COOLDOWN: float = 1.6
 const ARCADE_DASH_STAMINA_COST: float = 20.0
 const ARCADE_FLIP_VERTICAL_VELOCITY: float = 4.4
@@ -230,13 +239,12 @@ func request_arcade_flip(override_direction: Vector3 = Vector3.ZERO) -> bool:
 	var direction := _flatten_direction(override_direction)
 	if direction.length_squared() <= 0.0001:
 		direction = _get_desired_move_direction()
-	if direction.length_squared() <= 0.0001:
-		direction = _get_forward_direction()
 	vertical_velocity = maxf(vertical_velocity, ARCADE_FLIP_VERTICAL_VELOCITY)
-	launch_boost_velocity = direction.normalized() * ARCADE_FLIP_HORIZONTAL_SPEED
+	var flip_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector3.ZERO
+	launch_boost_velocity = flip_direction * ARCADE_FLIP_HORIZONTAL_SPEED
 	arcade_flip_available = false
 	arcade_flip_count += 1
-	arcade_flip_started.emit(direction.normalized())
+	arcade_flip_started.emit(flip_direction)
 	return true
 
 func apply_arcade_stun(duration: float) -> void:
@@ -335,11 +343,32 @@ func debug_get_arcade_dash_count() -> int:
 func debug_get_arcade_flip_count() -> int:
 	return arcade_flip_count
 
+func debug_get_launch_boost_velocity() -> Vector3:
+	return launch_boost_velocity
+
+func debug_get_arcade_dash_distance() -> float:
+	return ARCADE_DASH_DISTANCE
+
+func debug_get_arcade_dash_peak_speed() -> float:
+	return ARCADE_DASH_PEAK_SPEED
+
+func debug_get_arcade_dash_speed_at(time_seconds: float) -> float:
+	return _get_arcade_dash_speed_at(time_seconds)
+
+func debug_get_arcade_dash_average_speed_for_frame(delta: float) -> float:
+	var active_delta := clampf(delta, 0.0, ARCADE_DASH_DURATION)
+	if active_delta <= 0.0:
+		return 0.0
+	return _get_arcade_dash_distance_between(0.0, active_delta) / active_delta
+
 func debug_is_arcade_flip_available() -> bool:
 	return arcade_flip_available
 
 func debug_get_arcade_stun_remaining() -> float:
 	return arcade_stun_remaining
+
+func debug_is_input_locked() -> bool:
+	return input_locked
 
 func debug_set_shoot_charge_time(next_time: float) -> void:
 	shoot_charge_active = true
@@ -410,8 +439,13 @@ func _handle_movement(delta: float) -> void:
 func _consume_arcade_dash(delta: float) -> Vector3:
 	if arcade_dash_remaining <= 0.0:
 		return Vector3.ZERO
-	arcade_dash_remaining = maxf(0.0, arcade_dash_remaining - delta)
-	return arcade_dash_direction * ARCADE_DASH_SPEED
+	var elapsed := ARCADE_DASH_DURATION - arcade_dash_remaining
+	var active_delta := minf(maxf(delta, 0.0), arcade_dash_remaining)
+	arcade_dash_remaining = maxf(0.0, arcade_dash_remaining - active_delta)
+	if delta <= 0.0 or active_delta <= 0.0:
+		return Vector3.ZERO
+	var dash_distance := _get_arcade_dash_distance_between(elapsed, elapsed + active_delta)
+	return arcade_dash_direction * (dash_distance / delta)
 
 func _consume_launch_boost(delta: float) -> Vector3:
 	var current := launch_boost_velocity
@@ -450,6 +484,35 @@ func _get_forward_direction() -> Vector3:
 func _flatten_direction(direction: Vector3) -> Vector3:
 	var flat := Vector3(direction.x, 0.0, direction.z)
 	return flat.normalized() if flat.length_squared() > 0.0001 else Vector3.ZERO
+
+func _get_arcade_dash_distance_between(start_time: float, end_time: float) -> float:
+	var start_distance := _get_arcade_dash_integrated_distance(start_time)
+	var end_distance := _get_arcade_dash_integrated_distance(end_time)
+	return maxf(0.0, end_distance - start_distance)
+
+func _get_arcade_dash_integrated_distance(time_seconds: float) -> float:
+	var time := clampf(time_seconds, 0.0, ARCADE_DASH_DURATION)
+	if time <= ARCADE_DASH_PEAK_TIME:
+		var u := time / maxf(0.001, ARCADE_DASH_PEAK_TIME)
+		var eased_area := pow(u, 3.0) - 0.5 * pow(u, 4.0)
+		var ratio_area := ARCADE_DASH_START_SPEED_RATIO * time + (1.0 - ARCADE_DASH_START_SPEED_RATIO) * ARCADE_DASH_PEAK_TIME * eased_area
+		return ratio_area * ARCADE_DASH_PEAK_SPEED
+	var ramp_ratio_area := ARCADE_DASH_PEAK_TIME * ((ARCADE_DASH_START_SPEED_RATIO + 1.0) * 0.5)
+	var decay_duration := ARCADE_DASH_DURATION - ARCADE_DASH_PEAK_TIME
+	var decay_time := time - ARCADE_DASH_PEAK_TIME
+	var decay_u := decay_time / maxf(0.001, decay_duration)
+	var decay_eased_area := pow(decay_u, 3.0) - 0.5 * pow(decay_u, 4.0)
+	var decay_ratio_area := decay_time + (ARCADE_DASH_END_SPEED_RATIO - 1.0) * decay_duration * decay_eased_area
+	return (ramp_ratio_area + decay_ratio_area) * ARCADE_DASH_PEAK_SPEED
+
+func _get_arcade_dash_speed_at(time_seconds: float) -> float:
+	var time := clampf(time_seconds, 0.0, ARCADE_DASH_DURATION)
+	if time <= ARCADE_DASH_PEAK_TIME:
+		var ramp_u := time / maxf(0.001, ARCADE_DASH_PEAK_TIME)
+		return ARCADE_DASH_PEAK_SPEED * lerpf(ARCADE_DASH_START_SPEED_RATIO, 1.0, smoothstep(0.0, 1.0, ramp_u))
+	var decay_duration := ARCADE_DASH_DURATION - ARCADE_DASH_PEAK_TIME
+	var decay_u := (time - ARCADE_DASH_PEAK_TIME) / maxf(0.001, decay_duration)
+	return ARCADE_DASH_PEAK_SPEED * lerpf(1.0, ARCADE_DASH_END_SPEED_RATIO, smoothstep(0.0, 1.0, decay_u))
 
 func _ensure_camera_nodes() -> void:
 	head = get_node_or_null("Head") as Node3D

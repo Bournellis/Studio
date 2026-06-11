@@ -31,6 +31,7 @@ const MATCH_MODE_LABELS: Dictionary = {
 	&"timer": "3 minutos",
 	&"goals": "3 gols"
 }
+const PREVIEW_CAMERA_LOOK_AT: Vector3 = Vector3(-2.55, 1.05, 0.02)
 
 var football_button: Button
 var quit_button: Button
@@ -41,6 +42,7 @@ var preview_camera: Camera3D
 var preview_root: Node3D
 var preview_avatar
 var preview_ball: MeshInstance3D
+var preview_environment: Environment
 var skin_label: Label
 var kit_label: Label
 var difficulty_label: Label
@@ -88,9 +90,7 @@ func _process(delta: float) -> void:
 	if preview_avatar != null:
 		preview_avatar.set_move_state(2.8 + sin(preview_time * 2.0) * 1.2, true, 0.0)
 	if preview_camera != null:
-		var angle := preview_time * 0.18
-		preview_camera.position = Vector3(sin(angle) * 6.8, 3.2, cos(angle) * 6.8 + 4.4)
-		preview_camera.look_at(Vector3(0.0, 0.85, 0.0), Vector3.UP)
+		_update_preview_camera_pose(preview_time)
 
 func _sync_root_rect_to_viewport() -> void:
 	set_anchors_preset(Control.PRESET_TOP_LEFT)
@@ -156,6 +156,30 @@ func debug_has_audio_buses() -> bool:
 
 func debug_get_ui_audio_pool_size() -> int:
 	return ui_audio_pool.size()
+
+func debug_get_preview_average_luminance(sample_step: int = 16) -> float:
+	if preview_viewport == null or preview_viewport.get_texture() == null:
+		return 0.0
+	if DisplayServer.get_name().to_lower().contains("headless"):
+		return _get_preview_configured_luminance()
+	var image := preview_viewport.get_texture().get_image()
+	if image == null or image.is_empty():
+		return _get_preview_configured_luminance()
+	var width := image.get_width()
+	var height := image.get_height()
+	var step := maxi(1, sample_step)
+	var total := 0.0
+	var count := 0
+	var y := 0
+	while y < height:
+		var x := 0
+		while x < width:
+			var color := image.get_pixel(x, y)
+			total += color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722
+			count += 1
+			x += step
+		y += step
+	return total / maxf(1.0, float(count))
 
 func _build_ui() -> void:
 	_sync_root_rect_to_viewport()
@@ -262,15 +286,17 @@ func _build_arena_preview() -> void:
 	var environment := WorldEnvironment.new()
 	environment.name = "PreviewEnvironment"
 	var env := Environment.new()
+	preview_environment = env
 	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.006, 0.018, 0.035, 1.0)
+	env.background_color = Color(0.018, 0.055, 0.105, 1.0)
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.24, 0.34, 0.46, 1.0)
-	env.ambient_light_energy = 0.54
+	env.ambient_light_color = Color(0.34, 0.46, 0.6, 1.0)
+	env.ambient_light_energy = 0.76
 	env.glow_enabled = true
-	env.glow_intensity = 0.32
-	env.glow_strength = 0.82
+	env.glow_intensity = 0.4
+	env.glow_strength = 0.9
 	env.tonemap_mode = Environment.TONE_MAPPER_ACES
+	env.tonemap_exposure = 1.22
 	environment.environment = env
 	world.add_child(environment)
 
@@ -278,8 +304,24 @@ func _build_arena_preview() -> void:
 	key.name = "PreviewKeyLight"
 	key.rotation_degrees = Vector3(-48.0, -28.0, 0.0)
 	key.light_color = Color(0.8, 0.9, 1.0, 1.0)
-	key.light_energy = 2.0
+	key.light_energy = 3.0
 	world.add_child(key)
+
+	var hero_light := OmniLight3D.new()
+	hero_light.name = "PreviewHeroLight"
+	hero_light.position = Vector3(-2.3, 2.7, 3.4)
+	hero_light.light_color = Color(1.0, 0.88, 0.54, 1.0)
+	hero_light.light_energy = 2.25
+	hero_light.omni_range = 7.5
+	world.add_child(hero_light)
+
+	var rim_light := OmniLight3D.new()
+	rim_light.name = "PreviewRimLight"
+	rim_light.position = Vector3(2.4, 2.2, -2.6)
+	rim_light.light_color = Color(0.25, 0.92, 1.0, 1.0)
+	rim_light.light_energy = 1.45
+	rim_light.omni_range = 8.0
+	world.add_child(rim_light)
 
 	preview_root = Node3D.new()
 	preview_root.name = "PreviewArenaRoot"
@@ -290,13 +332,13 @@ func _build_arena_preview() -> void:
 
 	preview_avatar = PlayerAvatarScript.new()
 	preview_avatar.name = "PreviewAvatar"
-	preview_avatar.position = Vector3(-1.15, 0.0, 0.35)
+	preview_avatar.position = Vector3(-4.4, 0.0, 0.16)
 	preview_avatar.rotation.y = -0.32
 	preview_root.add_child(preview_avatar)
 
 	preview_ball = MeshInstance3D.new()
 	preview_ball.name = "PreviewBall"
-	preview_ball.position = Vector3(0.88, 0.46, -0.32)
+	preview_ball.position = Vector3(-3.16, 0.46, -0.24)
 	var ball_mesh := SphereMesh.new()
 	ball_mesh.radius = 0.34
 	ball_mesh.height = 0.68
@@ -309,8 +351,11 @@ func _build_arena_preview() -> void:
 	preview_camera = Camera3D.new()
 	preview_camera.name = "PreviewCamera"
 	preview_camera.current = true
-	preview_camera.fov = 52.0
+	preview_camera.fov = 45.0
+	preview_camera.near = 0.04
+	preview_camera.far = 80.0
 	world.add_child(preview_camera)
+	_update_preview_camera_pose(0.0)
 
 func _build_preview_pitch(parent: Node3D) -> void:
 	var pitch := MeshInstance3D.new()
@@ -351,6 +396,20 @@ func _build_preview_goal(parent: Node3D, z_position: float) -> void:
 	crossbar.mesh = crossbar_mesh
 	crossbar.material_override = _build_material(frame_color, 0.28, frame_color, 1.6)
 	parent.add_child(crossbar)
+
+func _update_preview_camera_pose(time_seconds: float) -> void:
+	if preview_camera == null:
+		return
+	var angle := -0.38 + sin(time_seconds * 0.28) * 0.08
+	var radius := 5.35
+	preview_camera.position = Vector3(sin(angle) * radius - 2.55, 2.45 + sin(time_seconds * 0.5) * 0.08, cos(angle) * radius + 2.65)
+	preview_camera.look_at(PREVIEW_CAMERA_LOOK_AT, Vector3.UP)
+
+func _get_preview_configured_luminance() -> float:
+	if preview_environment == null:
+		return 0.0
+	var color := preview_environment.background_color
+	return color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722
 
 func _build_selector_rows(parent: VBoxContainer) -> void:
 	var difficulty_row := HBoxContainer.new()
