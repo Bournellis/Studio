@@ -1,6 +1,7 @@
 extends "res://addons/gut/test.gd"
 
 const BootstrapSceneGeneratorScript = preload("res://tools/bootstrap_scene_generator.gd")
+const PlayerControllerScript = preload("res://gameplay/player/fps_player_controller.gd")
 const FootballChaseCameraScript = preload("res://presentation/camera/football_chase_camera.gd")
 const FootballBallScript = preload("res://gameplay/football/football_ball.gd")
 const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
@@ -56,10 +57,15 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_eq(menu.debug_get_mode_path(&"football"), "res://modes/football/football.tscn")
 	assert_eq(menu.debug_get_mode_path(&"arena"), "")
 	assert_true(menu.debug_has_arena_preview())
-	assert_eq(menu.debug_get_selected_kit_id(), &"brazil")
 	assert_eq(menu.debug_get_selected_bot_difficulty_id(), &"normal")
 	assert_eq(menu.debug_get_selected_match_mode_id(), &"timer")
 	assert_false(menu.debug_is_toon_render_enabled())
+	assert_false(menu.debug_has_main_menu_appearance_selection())
+	assert_true(menu.debug_main_controls_fit_viewports([
+		Vector2(1920.0, 1080.0),
+		Vector2(1366.0, 768.0),
+		Vector2(1280.0, 720.0)
+	]))
 	assert_true(menu.debug_has_audio_buses())
 	assert_eq(menu.debug_get_ui_audio_pool_size(), 5)
 	menu.debug_cycle_bot_difficulty(1)
@@ -69,21 +75,22 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_eq(menu.debug_get_quality_text(), "Alta")
 	assert_not_null(menu.get_node_or_null("ArenaPreviewViewport"))
 	assert_not_null(menu.get_node_or_null("ArenaPreview"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/FootballButton"))
-	assert_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/ArenaButton"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/SkinPreviewRow"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/KitPreviewRow"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/BotDifficultyRow"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/MatchModeRow"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/VolumeRow/VolumeSlider"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/SfxVolumeRow/SfxVolumeSlider"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/UiVolumeRow/UiVolumeSlider"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/AmbienceVolumeRow/AmbienceVolumeSlider"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/QualityRow/QualityOption"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/ToonRenderRow/ToonRenderToggle"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/QuitButton"))
-	var menu_panel := menu.get_node("MenuCenter/MenuPanel") as PanelContainer
-	assert_eq(menu_panel.custom_minimum_size, Vector2(560.0, 720.0))
+	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/FootballButton"))
+	assert_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/ArenaButton"))
+	assert_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/SkinPreviewRow"))
+	assert_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/KitPreviewRow"))
+	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/BotDifficultyRow"))
+	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/MatchModeRow"))
+	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/VolumeRow/VolumeSlider"))
+	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/SfxVolumeRow/SfxVolumeSlider"))
+	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/UiVolumeRow/UiVolumeSlider"))
+	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/AmbienceVolumeRow/AmbienceVolumeSlider"))
+	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/QualityRow/QualityOption"))
+	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/ToonRenderRow/ToonRenderToggle"))
+	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/QuitButton"))
+	var menu_panel := menu.get_node("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel") as PanelContainer
+	assert_eq(menu_panel.custom_minimum_size, Vector2(500.0, 0.0))
+	assert_true(menu.debug_get_menu_required_size().y <= 684.0)
 	assert_no_new_orphans()
 
 func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
@@ -308,6 +315,23 @@ func test_football_intro_cycles_avatar_skin_and_country_kit() -> void:
 	assert_eq(avatar.debug_get_country_kit_id(), &"argentina")
 	assert_true(hud.skin_tone_label.text.contains("Pele morena"))
 	assert_true(hud.country_kit_label.text.contains("Argentina"))
+	assert_no_new_orphans()
+
+func test_football_intro_avatar_selection_persists_between_session_rematches() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	football.debug_cycle_skin_tone(1)
+	football.debug_cycle_country_kit(1)
+	football.restart_match()
+	await get_tree().process_frame
+
+	assert_eq(football.debug_get_selected_skin_tone_id(), &"brown")
+	assert_eq(football.debug_get_selected_country_kit_id(), &"argentina")
+	assert_eq(football.debug_get_player_avatar().debug_get_skin_tone_id(), &"brown")
+	assert_eq(football.debug_get_player_avatar().debug_get_country_kit_id(), &"argentina")
 	assert_no_new_orphans()
 
 func test_football_player_near_ball_stays_loose_without_dribble_lock() -> void:
@@ -696,6 +720,24 @@ func test_football_arcade_dash_spends_stamina_and_slides_ball_with_stun() -> voi
 	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"slide")
 	assert_no_new_orphans()
 
+func test_football_arcade_dash_peak_is_at_least_one_and_half_boost_run_speed() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	var player = football.debug_get_player()
+	var bot = football.debug_get_bot()
+	var boosted_player_speed: float = player.move_speed * player.boost_speed_multiplier
+	var boosted_bot_speed: float = bot.move_speed * bot.boost_speed_multiplier
+
+	assert_true(PlayerControllerScript.ARCADE_DASH_SPEED >= boosted_player_speed * 1.5)
+	assert_true(FootballBotScript.ARCADE_DASH_SPEED >= boosted_player_speed * 1.5)
+	assert_gt(FootballBotScript.ARCADE_DASH_SPEED, boosted_bot_speed)
+	assert_almost_eq(PlayerControllerScript.ARCADE_DASH_DURATION, 0.28, 0.001)
+	assert_almost_eq(FootballBotScript.ARCADE_DASH_DURATION, 0.28, 0.001)
+	assert_no_new_orphans()
+
 func test_football_arcade_flip_consumes_once_and_resets_for_floor() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
@@ -738,6 +780,64 @@ func test_football_bot_uses_arcade_dash_for_defense() -> void:
 	assert_eq(football.debug_get_bot_avatar().debug_get_animation_state(), &"slide")
 	assert_no_new_orphans()
 
+func test_football_player_kickoff_bot_holds_defensive_line_until_first_touch() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match_with_countdown()
+	football.debug_finish_kickoff_countdown()
+	await get_tree().physics_frame
+
+	var bot = football.debug_get_bot()
+	var ball = football.debug_get_ball()
+	var hold_position: Vector3 = bot.global_position
+
+	assert_eq(football.debug_get_kickoff_owner(), &"player")
+	assert_true(football.debug_is_bot_kickoff_hold_active())
+	assert_eq(football.debug_get_bot_last_approach_label(), &"kickoff_hold")
+	assert_lt(bot.global_position.z, ball.global_position.z)
+	assert_gt(bot.global_position.z, -27.0)
+	bot._physics_process(0.3)
+	assert_almost_eq(bot.global_position.z, hold_position.z, 0.05)
+
+	football.debug_force_ball_position(football.debug_get_player_kick_origin() + football.debug_get_player_kick_direction() * 1.45 + Vector3.DOWN * 0.34)
+	football._on_player_strong_kick_requested(football.debug_get_player().get_shot_origin(), football.debug_get_player().get_shot_direction(), 0.0, 0.0, 0.0, 0.0, false)
+
+	assert_false(football.debug_is_bot_kickoff_hold_active())
+	assert_eq(football.debug_get_bot_last_approach_label(), &"kickoff_released")
+	assert_gt(ball.linear_velocity.length(), 0.1)
+	assert_no_new_orphans()
+
+func test_football_bot_aerial_goal_defense_uses_difficulty_delay_and_jump() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var bot = football.debug_get_bot()
+	var ball = football.debug_get_ball()
+	football.set_bot_difficulty(&"easy")
+	bot.global_position = Vector3(0.0, 0.05, -25.6)
+	football.debug_force_ball_position(Vector3(0.0, 3.2, -5.0))
+	ball.linear_velocity = Vector3(0.0, 3.5, -18.0)
+	bot._physics_process(0.1)
+
+	assert_eq(bot.debug_get_last_approach_label(), &"aerial_delay")
+	assert_gt(bot.debug_get_aerial_defense_delay_remaining(), 0.2)
+
+	football.set_bot_difficulty(&"hard")
+	football.debug_force_ball_position(Vector3(0.0, 3.2, -5.0))
+	ball.linear_velocity = Vector3(0.0, 3.5, -18.0)
+	bot.global_position = Vector3(0.0, 0.05, -25.6)
+	bot._physics_process(0.1)
+
+	assert_eq(bot.debug_get_last_approach_label(), &"aerial_goal_defense")
+	assert_gt(bot.debug_get_vertical_velocity(), 0.0)
+	assert_no_new_orphans()
+
 func test_football_uses_main_menu_bot_difficulty_in_hud() -> void:
 	get_tree().root.set_meta(BOT_DIFFICULTY_META_KEY, &"hard")
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
@@ -769,6 +869,41 @@ func test_football_kickoff_alternates_after_goal_reset() -> void:
 	assert_eq(football.debug_get_kickoff_owner(), &"bot")
 	assert_lt(football.debug_get_ball().global_position.z, 0.0)
 	assert_true(football.debug_is_kickoff_locked())
+	assert_no_new_orphans()
+
+func test_football_bot_kickoff_camera_starts_outside_goal_shell() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	football.debug_set_kickoff_owner(&"bot")
+	football._restart_play(false)
+	football.debug_start_match_with_countdown()
+	await get_tree().physics_frame
+
+	assert_eq(football.debug_get_kickoff_owner(), &"bot")
+	assert_false(football.debug_is_camera_inside_goal_shell())
+	assert_true(football.debug_is_kickoff_locked())
+	assert_no_new_orphans()
+
+func test_football_kickoff_marker_tracks_ball_spawn_and_safe_reset_unfreezes() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	var ball = football.debug_get_ball()
+	football.debug_set_kickoff_owner(&"bot")
+	football._restart_play(false)
+
+	assert_true(football.debug_is_kickoff_marker_visible())
+	assert_almost_eq(football.debug_get_kickoff_marker_position().z, -9.0, 0.01)
+	assert_almost_eq(ball.global_position.z, -9.0, 0.01)
+	assert_almost_eq(ball.linear_velocity.length(), 0.0, 0.001)
+	assert_almost_eq(ball.angular_velocity.length(), 0.0, 0.001)
+	await get_tree().process_frame
+	assert_false(ball.freeze)
 	assert_no_new_orphans()
 
 func test_football_goal_updates_score_and_match_ends_at_three() -> void:

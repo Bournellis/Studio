@@ -10,8 +10,8 @@ signal charged_shoot_requested(origin: Vector3, direction: Vector3, charge_fract
 const MIN_MOUSE_SENSITIVITY: float = 0.0008
 const MAX_MOUSE_SENSITIVITY: float = 0.0032
 const DEFAULT_MOUSE_SENSITIVITY: float = 0.0018
-const ARCADE_DASH_SPEED: float = 14.0
-const ARCADE_DASH_DURATION: float = 0.22
+const ARCADE_DASH_SPEED: float = 20.75
+const ARCADE_DASH_DURATION: float = 0.28
 const ARCADE_DASH_COOLDOWN: float = 1.6
 const ARCADE_DASH_STAMINA_COST: float = 20.0
 const ARCADE_FLIP_VERTICAL_VELOCITY: float = 4.4

@@ -6,7 +6,8 @@ const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
-const MENU_PANEL_SIZE: Vector2 = Vector2(560.0, 720.0)
+const MENU_PANEL_MIN_SIZE: Vector2 = Vector2(500.0, 0.0)
+const MENU_SAFE_MARGIN: int = 18
 const BUS_MASTER: StringName = &"Master"
 const BUS_SFX: StringName = &"SFX"
 const BUS_UI: StringName = &"UI"
@@ -35,6 +36,8 @@ const MATCH_MODE_LABELS: Dictionary = {
 var football_button: Button
 var quit_button: Button
 var status_label: Label
+var menu_panel: PanelContainer
+var menu_scroll: ScrollContainer
 var preview_viewport: SubViewport
 var preview_camera: Camera3D
 var preview_root: Node3D
@@ -109,6 +112,24 @@ func debug_get_selected_match_mode_id() -> StringName:
 func debug_is_toon_render_enabled() -> bool:
 	return selected_toon_render_enabled
 
+func debug_has_main_menu_appearance_selection() -> bool:
+	return (
+		get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/SkinPreviewRow") != null
+		or get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/KitPreviewRow") != null
+	)
+
+func debug_main_controls_fit_viewports(viewport_sizes: Array) -> bool:
+	var required_size := _get_menu_required_size()
+	for viewport_value: Variant in viewport_sizes:
+		var viewport_size: Vector2 = viewport_value
+		var safe_size := viewport_size - Vector2(MENU_SAFE_MARGIN * 2, MENU_SAFE_MARGIN * 2)
+		if required_size.x > safe_size.x or required_size.y > safe_size.y:
+			return false
+	return true
+
+func debug_get_menu_required_size() -> Vector2:
+	return _get_menu_required_size()
+
 func debug_cycle_bot_difficulty(step: int = 1) -> void:
 	_cycle_bot_difficulty(step)
 
@@ -152,15 +173,34 @@ func _build_ui() -> void:
 	shade.color = Color(0.0, 0.015, 0.025, 0.34)
 	add_child(shade)
 
+	var safe_area := MarginContainer.new()
+	safe_area.name = "MenuSafeArea"
+	safe_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	safe_area.set_anchors_preset(Control.PRESET_FULL_RECT)
+	safe_area.add_theme_constant_override("margin_left", MENU_SAFE_MARGIN)
+	safe_area.add_theme_constant_override("margin_top", MENU_SAFE_MARGIN)
+	safe_area.add_theme_constant_override("margin_right", MENU_SAFE_MARGIN)
+	safe_area.add_theme_constant_override("margin_bottom", MENU_SAFE_MARGIN)
+	add_child(safe_area)
+
+	menu_scroll = ScrollContainer.new()
+	menu_scroll.name = "MenuScroll"
+	menu_scroll.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	menu_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	menu_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	menu_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	safe_area.add_child(menu_scroll)
+
 	var menu_center := CenterContainer.new()
 	menu_center.name = "MenuCenter"
 	menu_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	menu_center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(menu_center)
+	menu_center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	menu_center.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	menu_scroll.add_child(menu_center)
 
-	var menu_panel := PanelContainer.new()
+	menu_panel = PanelContainer.new()
 	menu_panel.name = "MenuPanel"
-	menu_panel.custom_minimum_size = MENU_PANEL_SIZE
+	menu_panel.custom_minimum_size = MENU_PANEL_MIN_SIZE
 	menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	menu_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.012, 0.03, 0.04, 0.88), Color(1.0, 0.78, 0.16, 0.9), 2))
 	menu_center.add_child(menu_panel)
@@ -336,42 +376,6 @@ func _build_preview_goal(parent: Node3D, z_position: float) -> void:
 	parent.add_child(crossbar)
 
 func _build_selector_rows(parent: VBoxContainer) -> void:
-	var skin_row := HBoxContainer.new()
-	skin_row.name = "SkinPreviewRow"
-	skin_row.add_theme_constant_override("separation", 8)
-	parent.add_child(skin_row)
-
-	skin_swatch = _build_swatch("SkinPreviewSwatch", Color(0.77, 0.50, 0.32, 1.0))
-	skin_row.add_child(skin_swatch)
-	skin_row.add_child(_build_cycle_button("SkinPreviousButton", "<", func() -> void:
-		selected_skin_tone_id = AvatarCatalogScript.get_next_skin_tone_id(selected_skin_tone_id, -1)
-		_update_preview_selection()
-	))
-	skin_label = _build_row_label("SkinPreviewLabel", "Pele bronze")
-	skin_row.add_child(skin_label)
-	skin_row.add_child(_build_cycle_button("SkinNextButton", ">", func() -> void:
-		selected_skin_tone_id = AvatarCatalogScript.get_next_skin_tone_id(selected_skin_tone_id, 1)
-		_update_preview_selection()
-	))
-
-	var kit_row := HBoxContainer.new()
-	kit_row.name = "KitPreviewRow"
-	kit_row.add_theme_constant_override("separation", 8)
-	parent.add_child(kit_row)
-
-	kit_swatch = _build_swatch("KitPreviewSwatch", Color(1.0, 0.86, 0.12, 1.0))
-	kit_row.add_child(kit_swatch)
-	kit_row.add_child(_build_cycle_button("KitPreviousButton", "<", func() -> void:
-		selected_country_kit_id = AvatarCatalogScript.get_next_country_kit_id(selected_country_kit_id, -1)
-		_update_preview_selection()
-	))
-	kit_label = _build_row_label("KitPreviewLabel", "Brasil inspirado")
-	kit_row.add_child(kit_label)
-	kit_row.add_child(_build_cycle_button("KitNextButton", ">", func() -> void:
-		selected_country_kit_id = AvatarCatalogScript.get_next_country_kit_id(selected_country_kit_id, 1)
-		_update_preview_selection()
-	))
-
 	var difficulty_row := HBoxContainer.new()
 	difficulty_row.name = "BotDifficultyRow"
 	difficulty_row.add_theme_constant_override("separation", 8)
@@ -659,3 +663,9 @@ func _load_mode(scene_path: String) -> void:
 	get_tree().root.set_meta(MATCH_MODE_META_KEY, selected_match_mode_id)
 	get_tree().root.set_meta(TOON_RENDER_META_KEY, selected_toon_render_enabled)
 	get_tree().change_scene_to_file(scene_path)
+
+func _get_menu_required_size() -> Vector2:
+	if menu_panel == null:
+		return MENU_PANEL_MIN_SIZE
+	var panel_size := menu_panel.get_combined_minimum_size()
+	return Vector2(maxf(panel_size.x, MENU_PANEL_MIN_SIZE.x), maxf(panel_size.y, MENU_PANEL_MIN_SIZE.y))

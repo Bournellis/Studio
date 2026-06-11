@@ -50,6 +50,10 @@ func _physics_process(delta: float) -> void:
 
 func configure(next_spawn_position: Vector3) -> void:
 	spawn_position = next_spawn_position
+	teleport_to_spawn(next_spawn_position)
+
+func teleport_to_spawn(next_spawn_position: Vector3) -> void:
+	spawn_position = next_spawn_position
 	reset_to_center()
 
 func set_toon_render_enabled(is_enabled: bool) -> void:
@@ -83,10 +87,16 @@ func apply_dribble_control(direction: Vector3, target_speed: float, blend: float
 	_clamp_velocity()
 
 func reset_to_center() -> void:
-	global_position = spawn_position
+	freeze = true
+	var next_transform := Transform3D(Basis(), spawn_position)
+	global_transform = next_transform
+	if is_inside_tree():
+		PhysicsServer3D.body_set_state(get_rid(), PhysicsServer3D.BODY_STATE_TRANSFORM, next_transform)
+		PhysicsServer3D.body_set_state(get_rid(), PhysicsServer3D.BODY_STATE_LINEAR_VELOCITY, Vector3.ZERO)
+		PhysicsServer3D.body_set_state(get_rid(), PhysicsServer3D.BODY_STATE_ANGULAR_VELOCITY, Vector3.ZERO)
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
-	sleeping = false
+	sleeping = true
 	squash_timer = 0.0
 	speed_trail_active = false
 	fireball_active = false
@@ -98,6 +108,11 @@ func reset_to_center() -> void:
 	if ball_mesh_instance != null:
 		ball_mesh_instance.scale = Vector3.ONE
 	reset_count += 1
+	call_deferred("_finish_safe_reset")
+
+func _finish_safe_reset() -> void:
+	freeze = false
+	sleeping = false
 
 func debug_get_last_kick_force() -> float:
 	return last_kick_force
