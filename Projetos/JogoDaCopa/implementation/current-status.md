@@ -5,11 +5,11 @@
 - Product/module name: `Copa Arena Futebol`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames`
-- Active stage: `Track 02C-bis/02D-bis - Real Assets V1`
+- Active stage: `Track 03F - Quality Hotfix V1`
 - Active stage status: `COMPLETE`
-- Status marker: `JOGO_DA_COPA_TRACK_02CBIS_02DBIS_REAL_ASSETS_V1_COMPLETE`
-- Approved plan: `docs/quality-upgrade-plan.md` (2026-06-10, 02C-bis/02D-bis real assets complete after manual asset download)
-- Completed Kanban card: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track02cbis-02dbis-real-assets-v1.md`
+- Status marker: `JOGO_DA_COPA_TRACK_03F_QUALITY_HOTFIX_V1_COMPLETE`
+- Approved plan: `docs/quality-upgrade-plan.md` (2026-06-10, 03F hotfix complete after review consolidation)
+- Completed Kanban card: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track03f-quality-hotfix-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -36,6 +36,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Football bot with prediction, positioned defense, boost, main-menu selectable `easy`/`normal`/`hard` presets and alternating kickoff.
 - Track 02H review fixes: stadium scoreboards use selected kit codes, offscreen ball indicator uses player-local basis, scoreboards cache label references, bot difficulty has non-debug API and HUD visibility.
 - Track 03 Arcade V1: dash/slide/stun/flip, charged kick, SUPER shot, fireball, boost pads, jump pads, ramps, timer/golden goal/vale-2/emote and toon experiment toggle default OFF.
+- Track 03F Quality Hotfix V1: SUPER whiffs do not spend bar/quota, real avatar tint preserves PBR textures, perf sample records representative window metadata and validation catches truncated `.gd`/`.gdshader` sources.
 - Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
 - Toon experiment screenshots live in `docs/screenshots/track-03e-toon/`.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
@@ -43,7 +44,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-Ready for full human playtest focused on the combined playable: Track 03 arcade mechanics plus 02C-bis real character readability and 02D-bis real audio mix.
+Ready for confirmation playtest focused on the Track 03F hotfix plus next-series decision with Claude.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -55,9 +56,9 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest result: PASS, 48 tests, 459 asserts.
+Latest result: PASS, 50 tests, 466 asserts, including source integrity check for 26 `.gd/.gdshader` files outside `addons/`.
 
-Latest performance sample: average `145.4fps`, min warmed instant `124.0fps`, `0/360` frames below 60.
+Latest performance sample: windowed 1920x1080, vsync off, display `Windows`, average `730.8fps`, min warmed instant `488.8fps`, `0/360` frames below 60.
 
 Export smoke command:
 
@@ -83,3 +84,4 @@ Manual smoke lives in `docs/validation.md`.
 10. `implementation/tracks/track-02cbis-real-character-v1/current-status.md`
 11. `implementation/tracks/track-02dbis-real-audio-v1/current-status.md`
 12. `implementation/tracks/track-03e-toon-look-experiment-v1/current-status.md`
+13. `implementation/tracks/track-03f-quality-hotfix-v1/current-status.md`

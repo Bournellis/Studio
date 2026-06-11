@@ -3,7 +3,7 @@
 - Date: `2026-06-10`
 - Branch: `codex/jogodacopa/track03f-quality-hotfix-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track03f-quality-hotfix-v1`
-- Status: `IN_PROGRESS`
+- Status: `COMPLETE`
 - Source reviews: `docs/code-review-track03-series-v1.md`, `docs/code-review-track02cbis-02dbis-v1.md`
 
 ## Goal
@@ -39,8 +39,11 @@ Consolidar fixes dos reviews das series Track 03 e 02C-bis/02D-bis, registrar tu
 
 - `tools/validate.gd`: PASS, 50 tests, 466 asserts.
 - Source integrity: PASS, 26 `.gd/.gdshader` files loaded outside `addons/`.
+- Performance sample: PASS, windowed 1920x1080, vsync off, display `Windows`, average `730.8fps`, min warmed instant `488.8fps`, `0/360` frames below 60.
 - Known validation noise: GUT UID/text-path warnings ao carregar testes.
 
-## Remaining
+## Delivery
 
-- Fase 4: rodar performance sample com metodologia registrada, atualizar planos/status, mover card para Done, mergear em `main`, prune e checagem pos-merge no worktree principal.
+- Review fix commit: `6c6bf73 fix(jogodacopa): apply track 03f review hotfixes`.
+- Playtest tuning record commit: `8e35a62 docs(jogodacopa): record track 03f playtest tuning status`.
+- Next step: playtest de confirmacao do hotfix + decisao da proxima serie com Claude.

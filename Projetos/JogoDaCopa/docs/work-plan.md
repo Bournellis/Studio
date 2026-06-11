@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK_02CBIS_02DBIS_REAL_ASSETS_V1_COMPLETE`
+- Status: `JOGO_DA_COPA_TRACK_03F_QUALITY_HOTFIX_V1_COMPLETE`
 - Product/module name: `Copa Arena Futebol`
 - Current surface: TPS football minigames.
 
@@ -20,15 +20,18 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 02H Quality Hotfix V1 resolved review blockers: selected-kit stadium scoreboards, player-local ball indicator, persistent boost/skid emitters, main-menu bot difficulty, removed decorative avatar rig, ball trail hysteresis and cached scoreboard labels.
 - Track 02C-bis/02D-bis Real Assets V1 replaced the avatar proxy with real Quaternius skinned humanoids/UAL animation clips and replaced synthetic feedback with real Kenney/Pixabay SFX, jingles and stadium ambience.
 - Track 03 Arcade V1 completed the arcade pass: dash/slide/stun/flip, charged kick, SUPER/fireball, boost pads, jump pads, ramps, timer/golden goal/vale-2, emote/confetti and toon experiment toggle OFF by default.
+- Track 03F Quality Hotfix V1 fixed SUPER whiff consumption, preserved Quaternius PBR textures under kit tint, documented representative perf methodology and added source integrity validation.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Human full-playable playtest for `Copa Arena Futebol`, following `docs/arcade-upgrade-plan.md`, `implementation/tracks/track-02cbis-real-character-v1/current-status.md` and `implementation/tracks/track-02dbis-real-audio-v1/current-status.md`.
+Human confirmation playtest for `Copa Arena Futebol` hotfix, then decide the next series with Claude.
 
 Focus:
 
+- Confirm SUPER whiff no longer spends the bar or kickoff quota.
+- Confirm avatar tint preserves enough texture/PBR readability in play.
 - Playtest dash/slide/flip, charged kick, SUPER/fireball and boost/jump pad readability.
 - Check real character readability in player/bot silhouettes, kits, hit/slide/push/kick/celebrate states.
 - Check real audio mix for kick/bounce/glass/countdown/goal/crowd/menu, including ambience ducking in intro/pause.

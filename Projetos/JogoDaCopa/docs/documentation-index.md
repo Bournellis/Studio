@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK_03F_QUALITY_HOTFIX_V1_REGISTERED`
+- Status: `JOGO_DA_COPA_TRACK_03F_QUALITY_HOTFIX_V1_COMPLETE`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
