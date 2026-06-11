@@ -182,7 +182,7 @@ func _input(event: InputEvent) -> void:
 		return
 	if menu_open:
 		return
-	if event is InputEventMouseButton and event.is_pressed() and Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
+	if not match_over and event is InputEventMouseButton and event.is_pressed() and Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
 		_capture_mouse_if_playing()
 		get_viewport().set_input_as_handled()
 		return
@@ -402,6 +402,9 @@ func debug_get_last_goal_value() -> int:
 func debug_is_match_over() -> bool:
 	return match_over
 
+func debug_is_player_input_locked() -> bool:
+	return player.debug_is_input_locked() if player != null and player.has_method("debug_is_input_locked") else false
+
 func debug_is_intro_open() -> bool:
 	return intro_open
 
@@ -614,6 +617,8 @@ func _spawn_runtime() -> void:
 	player.arcade_dash_started.connect(func(_direction: Vector3) -> void:
 		if player_avatar != null:
 			player_avatar.play_slide()
+		if chase_camera != null and chase_camera.has_method("play_dash_fov_kick"):
+			chase_camera.play_dash_fov_kick(0.5, 0.22)
 	)
 	player.arcade_flip_started.connect(func(_direction: Vector3) -> void:
 		if player_avatar != null:
@@ -1115,6 +1120,7 @@ func _finish_match(player_won: bool) -> void:
 	match_over = true
 	goal_reset_timer = 0.0
 	phase_label = &"match_end"
+	_set_round_input_locked(true)
 	if bot != null:
 		bot.set_celebrating(true)
 	if player_won and player_avatar != null:

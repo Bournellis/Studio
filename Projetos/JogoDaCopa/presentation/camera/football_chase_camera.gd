@@ -21,6 +21,9 @@ var shake_time: float = 0.0
 var shake_duration: float = 0.0
 var shake_intensity: float = 0.0
 var boost_fov_fraction: float = 0.0
+var dash_fov_time: float = 0.0
+var dash_fov_duration: float = 0.0
+var dash_fov_fraction: float = 0.0
 var goal_focus_time: float = 0.0
 var goal_focus_duration: float = 0.0
 
@@ -59,6 +62,9 @@ func debug_get_ball_focus_weight() -> float:
 func debug_get_boost_fov_fraction() -> float:
 	return boost_fov_fraction
 
+func debug_get_dash_fov_fraction() -> float:
+	return _get_dash_fov_fraction()
+
 func debug_is_goal_focus_active() -> bool:
 	return goal_focus_time > 0.0
 
@@ -72,6 +78,11 @@ func play_shake(intensity: float, duration: float) -> void:
 
 func set_boost_fov_fraction(next_fraction: float) -> void:
 	boost_fov_fraction = clampf(next_fraction, 0.0, 1.0)
+
+func play_dash_fov_kick(fraction: float = 0.5, duration: float = 0.22) -> void:
+	dash_fov_fraction = clampf(fraction, 0.0, 1.0)
+	dash_fov_duration = maxf(0.01, duration)
+	dash_fov_time = maxf(dash_fov_time, dash_fov_duration)
 
 func focus_goal(duration: float = 0.4) -> void:
 	goal_focus_duration = maxf(0.01, duration)
@@ -116,7 +127,8 @@ func _update_camera_fx(delta: float) -> void:
 		return
 	var base_fov := 82.0
 	var goal_focus_boost := 3.5 if goal_focus_time > 0.0 else 0.0
-	camera.fov = lerpf(base_fov, 89.0, boost_fov_fraction) + goal_focus_boost
+	var effective_fov_fraction := maxf(boost_fov_fraction, _get_dash_fov_fraction())
+	camera.fov = lerpf(base_fov, 89.0, effective_fov_fraction) + goal_focus_boost
 	if shake_time > 0.0:
 		shake_time = maxf(0.0, shake_time - delta)
 		var shake_alpha := shake_time / maxf(0.01, shake_duration)
@@ -129,7 +141,14 @@ func _update_camera_fx(delta: float) -> void:
 	else:
 		shake_intensity = 0.0
 		camera.position = Vector3.ZERO
+	dash_fov_time = maxf(0.0, dash_fov_time - delta)
 	goal_focus_time = maxf(0.0, goal_focus_time - delta)
+
+func _get_dash_fov_fraction() -> float:
+	if dash_fov_time <= 0.0 or dash_fov_duration <= 0.0:
+		return 0.0
+	var alpha := dash_fov_time / dash_fov_duration
+	return dash_fov_fraction * smoothstep(0.0, 1.0, alpha)
 
 func _get_target_forward() -> Vector3:
 	if target == null:

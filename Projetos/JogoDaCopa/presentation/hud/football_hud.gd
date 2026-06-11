@@ -32,10 +32,15 @@ var result_panel: PanelContainer
 var result_title_label: Label
 var result_score_label: Label
 var result_detail_label: Label
+var result_rematch_button: Button
+var result_menu_button: Button
 var sensitivity_label: Label
 var sensitivity_slider: HSlider
+var pause_resume_button: Button
+var pause_menu_button: Button
 var skin_tone_label: Label
 var country_kit_label: Label
+var intro_start_button: Button
 
 var kick_feedback_time: float = 0.0
 var strong_kick_feedback_time: float = 0.0
@@ -163,6 +168,8 @@ func show_match_end(player_won: bool) -> void:
 	_set_event_message("CAMPEAO" if player_won else "DERROTA", 1.6)
 	if result_panel != null:
 		result_panel.visible = true
+	if result_rematch_button != null:
+		result_rematch_button.grab_focus()
 	if result_title_label != null:
 		result_title_label.text = "VITORIA" if player_won else "DERROTA"
 	if result_detail_label != null:
@@ -199,11 +206,15 @@ func set_pause_menu_visible(menu_is_open: bool, sensitivity_value: float) -> voi
 		return
 	pause_menu_panel.visible = menu_is_open
 	set_sensitivity_value(sensitivity_value)
+	if menu_is_open and pause_resume_button != null:
+		pause_resume_button.grab_focus()
 
 func set_intro_visible(intro_is_visible: bool) -> void:
 	if intro_panel == null:
 		return
 	intro_panel.visible = intro_is_visible
+	if intro_is_visible and intro_start_button != null:
+		intro_start_button.grab_focus()
 
 func set_sensitivity_value(value: float) -> void:
 	if sensitivity_slider == null:
@@ -237,6 +248,10 @@ func debug_get_event_text() -> String:
 
 func debug_get_clock_text() -> String:
 	return clock_label.text if clock_label != null else ""
+
+func debug_get_focused_control_name() -> String:
+	var focused := get_viewport().gui_get_focus_owner()
+	return focused.name if focused != null else ""
 
 func _build_ui() -> void:
 	var root := Control.new()
@@ -469,27 +484,27 @@ func _build_result_panel(root: Control) -> void:
 	buttons.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(buttons)
 
-	var rematch_button := Button.new()
-	rematch_button.name = "RematchButton"
-	rematch_button.text = "Revanche"
-	rematch_button.custom_minimum_size = Vector2(180.0, 42.0)
-	rematch_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	rematch_button.mouse_filter = Control.MOUSE_FILTER_STOP
-	rematch_button.pressed.connect(func() -> void:
+	result_rematch_button = Button.new()
+	result_rematch_button.name = "RematchButton"
+	result_rematch_button.text = "Revanche"
+	result_rematch_button.custom_minimum_size = Vector2(180.0, 42.0)
+	result_rematch_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	result_rematch_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	result_rematch_button.pressed.connect(func() -> void:
 		rematch_requested.emit()
 	)
-	buttons.add_child(rematch_button)
+	buttons.add_child(result_rematch_button)
 
-	var menu_button := Button.new()
-	menu_button.name = "ResultMenuButton"
-	menu_button.text = "Menu"
-	menu_button.custom_minimum_size = Vector2(180.0, 42.0)
-	menu_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	menu_button.mouse_filter = Control.MOUSE_FILTER_STOP
-	menu_button.pressed.connect(func() -> void:
+	result_menu_button = Button.new()
+	result_menu_button.name = "ResultMenuButton"
+	result_menu_button.text = "Menu"
+	result_menu_button.custom_minimum_size = Vector2(180.0, 42.0)
+	result_menu_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	result_menu_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	result_menu_button.pressed.connect(func() -> void:
 		main_menu_requested.emit()
 	)
-	buttons.add_child(menu_button)
+	buttons.add_child(result_menu_button)
 
 func _build_pause_menu(root: Control) -> void:
 	var pause_center := CenterContainer.new()
@@ -543,23 +558,23 @@ func _build_pause_menu(root: Control) -> void:
 	sensitivity_slider.value_changed.connect(_on_sensitivity_slider_changed)
 	box.add_child(sensitivity_slider)
 
-	var resume_button := Button.new()
-	resume_button.name = "ResumeButton"
-	resume_button.text = "Retomar"
-	resume_button.mouse_filter = Control.MOUSE_FILTER_STOP
-	resume_button.pressed.connect(func() -> void:
+	pause_resume_button = Button.new()
+	pause_resume_button.name = "ResumeButton"
+	pause_resume_button.text = "Retomar"
+	pause_resume_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	pause_resume_button.pressed.connect(func() -> void:
 		resume_requested.emit()
 	)
-	box.add_child(resume_button)
+	box.add_child(pause_resume_button)
 
-	var menu_button := Button.new()
-	menu_button.name = "MainMenuButton"
-	menu_button.text = "Menu inicial"
-	menu_button.mouse_filter = Control.MOUSE_FILTER_STOP
-	menu_button.pressed.connect(func() -> void:
+	pause_menu_button = Button.new()
+	pause_menu_button.name = "MainMenuButton"
+	pause_menu_button.text = "Menu inicial"
+	pause_menu_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	pause_menu_button.pressed.connect(func() -> void:
 		main_menu_requested.emit()
 	)
-	box.add_child(menu_button)
+	box.add_child(pause_menu_button)
 
 func _build_intro_panel(root: Control) -> void:
 	var intro_center := CenterContainer.new()
@@ -699,16 +714,16 @@ func _build_intro_panel(root: Control) -> void:
 	)
 	kit_row.add_child(kit_next)
 
-	var start_button := Button.new()
-	start_button.name = "StartButton"
-	start_button.text = "Comecar"
-	start_button.custom_minimum_size = Vector2(320.0, 46.0)
-	start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	start_button.mouse_filter = Control.MOUSE_FILTER_STOP
-	start_button.pressed.connect(func() -> void:
+	intro_start_button = Button.new()
+	intro_start_button.name = "StartButton"
+	intro_start_button.text = "Comecar"
+	intro_start_button.custom_minimum_size = Vector2(320.0, 46.0)
+	intro_start_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	intro_start_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	intro_start_button.pressed.connect(func() -> void:
 		start_requested.emit()
 	)
-	box.add_child(start_button)
+	box.add_child(intro_start_button)
 
 func _ignore_mouse(control: Control) -> void:
 	control.mouse_filter = Control.MOUSE_FILTER_IGNORE
