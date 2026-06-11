@@ -11,8 +11,7 @@
 - Approved plan: Fabio direct tasks `Track 04B1 - Character Presentation & Animation V1` and `Track 04B2 - Feel & UI Fixes V1` (2026-06-11)
 - Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`
 - Review: `docs/code-review-track04b1-04b2-v1.md`
-- Completed Kanban card: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`
-- Pending maintenance: move 04B1 card from Review to Done after post-merge validation.
+- Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -67,7 +66,7 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest result before integrated post-merge maintenance: PASS for Track 04B2 full validation, 70 tests, 930 asserts; Track 04B1 branch validation passed with 68 tests, 838 asserts. Integrated main validation pending.
+Latest result: PASS for integrated Track 04B1 + 04B2 main validation, 74 tests, 995 asserts, including source integrity check for 29 `.gd/.gdshader` files outside `addons/`.
 
 Latest performance sample: windowed 1920x1080, vsync off, display `Windows`, average `719.3fps`, min warmed instant `462.3fps`, `0/360` frames below 60.
 

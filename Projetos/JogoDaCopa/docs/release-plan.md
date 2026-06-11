@@ -14,6 +14,12 @@
 
 Lista de playtest de Fabio (7 itens) mapeada em 2 tracks paralelas disjuntas:
 
+### Progress
+
+- Track 04B1 - Character Presentation & Animation: `COMPLETE` (Claude pre-merge review aprovado, screenshots aprovados por Fabio, mergeado em `main`, validacao integrada PASS).
+- Track 04B2 - Feel & UI Fixes: `COMPLETE` (Claude pre-merge review aprovado, screenshots aprovados por Fabio, mergeado em `main`, validacao integrada PASS).
+- Proximo passo operacional: manutencao git e playtest integrado de Fabio.
+
 **Track 04B1 - Character Presentation & Animation** (thread 1: avatar/shaders/testes de avatar)
 - Item 3 (spec de Fabio: personagem com CAMISA, SHORTS, PELE, CABELO, CHUTEIRA e MEIA): uniforme com separacao real das 6 regioes - camisa/shorts/meia/chuteira/pele via region mask por bone weights (vertex colors em runtime) + shader de uniforme (pele com tom correto so na regiao de pele; a textura base do UBC Standard e corpo sem roupa - o uniforme e nosso, procedural); CABELO via assets reais do pack (`quaternius_ubc/hair/`, variante Rigged to Head Bone, 8 penteados) anexado ao bone Head, com selecao de penteado + cor de cabelo na intro junto de pele/kit; bot com penteado proprio.
 - Item 2: toon outline quebrado (segundo corpo em T-pose) - trocar inverted-hull por next_pass com grow (acompanha skinning).
