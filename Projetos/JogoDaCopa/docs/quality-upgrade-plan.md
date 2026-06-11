@@ -17,7 +17,8 @@
 - `2026-06-10` - `Track 02H Quality Hotfix V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02H_QUALITY_HOTFIX_V1_COMPLETE`). Review fixes M1/M2/M3/M5 and H1 mitigation applied; cheap L2/L4 also applied. `tools/validate.gd` PASS (30 tests, 289 asserts).
 - `2026-06-10` - `Track 02C-bis Real Character V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02CBIS_REAL_CHARACTER_V1_COMPLETE`). Quaternius UBC/UAL real humanoid models and 45 real animation clips integrated. `tools/validate.gd` PASS (47 tests, 443 asserts). Performance sample: average `146.1fps`, min warmed instant `107.4fps`, `0/360` frames below 60.
 - `2026-06-10` - `Track 02D-bis Real Audio V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_02DBIS_REAL_AUDIO_V1_COMPLETE`; combined marker `JOGO_DA_COPA_TRACK_02CBIS_02DBIS_REAL_ASSETS_V1_COMPLETE`). Kenney/Pixabay real SFX, jingles, ambience buses and menu sliders integrated. `tools/validate.gd` PASS (48 tests, 459 asserts). Performance sample: average `145.4fps`, min warmed instant `124.0fps`, `0/360` frames below 60.
-- Series complete after real asset replacement; next step is full human playtest of arcade mechanics, real characters and real audio.
+- `2026-06-10` - `Track 03F Quality Hotfix V1`: `COMPLETE` (`JOGO_DA_COPA_TRACK_03F_QUALITY_HOTFIX_V1_COMPLETE`). Review fixes for super whiff, avatar PBR tint, performance methodology and source integrity check applied. `tools/validate.gd` PASS (50 tests, 466 asserts). Performance sample windowed 1920x1080/vsync off: average `730.8fps`, min warmed instant `488.8fps`, `0/360` frames below 60.
+- Series complete after real asset replacement and consolidated hotfix; next step is confirmation playtest of the hotfix plus next-series decision with Claude.
 
 ## Review Hotfix Notes
 

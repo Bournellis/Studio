@@ -11,6 +11,9 @@ const REAL_MODEL_SCALE: Vector3 = Vector3(0.92, 0.92, 0.92)
 const SPRINT_SPEED_THRESHOLD: float = 9.8
 const DEFAULT_STATE: StringName = &"idle"
 const KICK_ANIMATION_NAME: StringName = &"JogoDaCopa_Kick"
+const EYE_TINT: Color = Color(0.94, 0.96, 1.0, 1.0)
+const EYEBROW_TINT: Color = Color(0.075, 0.055, 0.04, 1.0)
+const HAIR_EMISSION_TINT: Color = Color(0.08, 0.06, 0.045, 1.0)
 
 const ANIMATION_BY_STATE: Dictionary = {
 	&"idle": &"Idle",
@@ -249,6 +252,26 @@ func debug_has_animation(animation_name: StringName) -> bool:
 func debug_get_character_variant() -> StringName:
 	return character_variant
 
+func debug_get_textured_surface_count() -> int:
+	var count := 0
+	for mesh_instance in real_meshes:
+		count += _count_textured_surfaces(mesh_instance)
+	return count
+
+func debug_get_textured_surface_override_count() -> int:
+	var count := 0
+	for mesh_instance in real_meshes:
+		if mesh_instance.mesh == null:
+			continue
+		for surface_index in range(mesh_instance.mesh.get_surface_count()):
+			var source_material := mesh_instance.mesh.surface_get_material(surface_index) as StandardMaterial3D
+			if source_material == null or source_material.albedo_texture == null:
+				continue
+			var override_material := mesh_instance.get_surface_override_material(surface_index) as StandardMaterial3D
+			if override_material != null and override_material.albedo_texture != null:
+				count += 1
+	return count
+
 func _build_avatar() -> void:
 	if part_root != null:
 		return
@@ -351,13 +374,41 @@ func _build_logical_part_map() -> void:
 
 func _apply_real_materials(skin_color: Color, shirt_primary: Color, shirt_secondary: Color) -> void:
 	for mesh_instance in real_meshes:
-		if str(mesh_instance.name).to_lower().contains("eye"):
-			mesh_instance.material_override = _build_character_material(Color(0.94, 0.96, 1.0, 1.0), Color(0.18, 0.28, 0.36, 1.0), 0.08)
-		elif str(mesh_instance.name).to_lower().contains("eyebrow"):
-			mesh_instance.material_override = _build_character_material(shirt_secondary.darkened(0.38), shirt_secondary, 0.05)
+		mesh_instance.material_override = null
+		var mesh_name := str(mesh_instance.name).to_lower()
+		var tint := shirt_primary.lerp(skin_color, 0.22)
+		var emission := shirt_secondary
+		var emission_energy := 0.11
+		if mesh_name.contains("eyebrow"):
+			tint = EYEBROW_TINT
+			emission = HAIR_EMISSION_TINT
+			emission_energy = 0.04
+		elif mesh_name.contains("eye"):
+			tint = EYE_TINT
+			emission = Color(0.18, 0.28, 0.36, 1.0)
+			emission_energy = 0.08
+		_apply_surface_material_tint(mesh_instance, tint, emission, emission_energy)
+
+func _apply_surface_material_tint(mesh_instance: MeshInstance3D, tint: Color, emission: Color, emission_energy: float) -> void:
+	if mesh_instance.mesh == null:
+		return
+	for surface_index in range(mesh_instance.mesh.get_surface_count()):
+		var source_material := mesh_instance.mesh.surface_get_material(surface_index) as StandardMaterial3D
+		var material: StandardMaterial3D
+		if source_material != null:
+			material = source_material.duplicate(true) as StandardMaterial3D
 		else:
-			var blended := shirt_primary.lerp(skin_color, 0.22)
-			mesh_instance.material_override = _build_character_material(blended, shirt_secondary, 0.11)
+			material = _build_character_material(Color.WHITE, emission, emission_energy)
+		_tint_character_material(material, tint, emission, emission_energy)
+		mesh_instance.set_surface_override_material(surface_index, material)
+
+func _tint_character_material(material: StandardMaterial3D, tint: Color, emission: Color, emission_energy: float) -> void:
+	material.albedo_color = _quantize_toon_color(_multiply_color(material.albedo_color, tint)) if toon_render_enabled else _multiply_color(material.albedo_color, tint)
+	material.emission_enabled = true
+	material.emission = material.albedo_color if toon_render_enabled else emission
+	material.emission_energy_multiplier = maxf(emission_energy, 0.16) if toon_render_enabled else emission_energy
+	if toon_render_enabled:
+		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 
 func _sync_toon_outline_nodes() -> void:
 	for mesh_instance in real_meshes:
@@ -406,6 +457,24 @@ func _quantize_toon_color(color: Color) -> Color:
 		floorf(color.b * 3.0 + 0.5) / 3.0,
 		color.a
 	)
+
+func _multiply_color(base: Color, tint: Color) -> Color:
+	return Color(
+		clampf(base.r * tint.r, 0.0, 1.0),
+		clampf(base.g * tint.g, 0.0, 1.0),
+		clampf(base.b * tint.b, 0.0, 1.0),
+		base.a * tint.a
+	)
+
+func _count_textured_surfaces(mesh_instance: MeshInstance3D) -> int:
+	if mesh_instance.mesh == null:
+		return 0
+	var count := 0
+	for surface_index in range(mesh_instance.mesh.get_surface_count()):
+		var source_material := mesh_instance.mesh.surface_get_material(surface_index) as StandardMaterial3D
+		if source_material != null and source_material.albedo_texture != null:
+			count += 1
+	return count
 
 func _apply_first_person_visibility() -> void:
 	if not local_first_person:

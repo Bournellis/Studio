@@ -53,6 +53,18 @@ func test_avatar_appearance_updates_skin_and_shirt_materials() -> void:
 	assert_eq(avatar.debug_get_part_albedo_color(&"chest_stripe"), AvatarCatalogScript.get_kit_secondary_color(&"france"))
 	assert_no_new_orphans()
 
+func test_real_avatar_material_tint_preserves_pbr_textures() -> void:
+	var avatar = PlayerAvatarScript.new()
+	add_child_autofree(avatar)
+	await get_tree().process_frame
+
+	var next_appearance = AvatarAppearanceScript.new(&"tan", &"brazil")
+	avatar.apply_appearance(next_appearance)
+
+	assert_gt(avatar.debug_get_textured_surface_count(), 0)
+	assert_eq(avatar.debug_get_textured_surface_override_count(), avatar.debug_get_textured_surface_count())
+	assert_no_new_orphans()
+
 func test_avatar_animation_states_are_presentation_only() -> void:
 	var avatar = PlayerAvatarScript.new()
 	add_child_autofree(avatar)

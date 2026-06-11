@@ -38,6 +38,7 @@ func _run_validation() -> int:
 	if _profile == PROFILE_FULL:
 		_check_documentation_contract()
 	_check_generated_scenes()
+	_check_script_and_shader_integrity()
 
 	if _failures.is_empty():
 		if _profile == PROFILE_STRUCTURE:
@@ -132,6 +133,45 @@ func _check_generated_scenes() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	if football_scene == null:
 		_failures.append("Generated football scene did not load.")
+
+func _check_script_and_shader_integrity() -> void:
+	var files: Array[String] = []
+	_collect_integrity_files("res://", files)
+	var checked_count := 0
+	for path in files:
+		var resource := load(path)
+		if resource == null:
+			_failures.append("Failed to load source resource: %s" % path)
+			continue
+		if path.ends_with(".gd") and not (resource is Script):
+			_failures.append("Expected script resource: %s" % path)
+			continue
+		if path.ends_with(".gdshader") and not (resource is Shader):
+			_failures.append("Expected shader resource: %s" % path)
+			continue
+		checked_count += 1
+	print("[validate] source integrity checked: %d .gd/.gdshader files" % checked_count)
+
+func _collect_integrity_files(directory_path: String, output: Array[String]) -> void:
+	var directory := DirAccess.open(directory_path)
+	if directory == null:
+		_failures.append("Failed to open source directory: %s" % directory_path)
+		return
+	directory.list_dir_begin()
+	while true:
+		var entry := directory.get_next()
+		if entry.is_empty():
+			break
+		if entry.begins_with("."):
+			continue
+		var path := directory_path.path_join(entry)
+		if directory.current_is_dir():
+			if path == "res://addons":
+				continue
+			_collect_integrity_files(path, output)
+		elif path.ends_with(".gd") or path.ends_with(".gdshader"):
+			output.append(path)
+	directory.list_dir_end()
 
 func _check_project_setting(key: String, expected: Variant) -> void:
 	var actual: Variant = ProjectSettings.get_setting(key)

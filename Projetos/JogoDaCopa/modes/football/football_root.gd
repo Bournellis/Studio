@@ -720,8 +720,6 @@ func _on_player_charged_kick_requested(_origin: Vector3, _direction: Vector3, ch
 
 func _on_player_strong_kick_requested(_origin: Vector3, _direction: Vector3, _damage: float, _knockback: float, _speed: float, _radius: float, _overcharged: bool) -> void:
 	if _can_player_use_super():
-		player_super_meter = 0.0
-		player_super_used_this_kickoff = true
 		_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), SUPER_SHOT_FORCE, SUPER_SHOT_LIFT, true, true)
 		return
 	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_STRONG_KICK_FORCE, PLAYER_STRONG_KICK_LIFT, true)
@@ -739,7 +737,10 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 		return
 	var kick_direction := _build_kick_direction(origin, direction)
 	ball.kick(kick_direction, force, lift)
-	if not super_shot:
+	if super_shot:
+		player_super_meter = 0.0
+		player_super_used_this_kickoff = true
+	else:
 		_add_player_super(SUPER_TOUCH_GAIN)
 	if feedback != null:
 		feedback.play_football_kick(ball.global_position, kick_direction, strong)

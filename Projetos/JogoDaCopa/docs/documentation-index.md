@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK_03F_QUALITY_HOTFIX_V1_REGISTERED`
+- Status: `JOGO_DA_COPA_TRACK_03F_QUALITY_HOTFIX_V1_COMPLETE`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -28,6 +28,7 @@
 - `code-review-track02-series-v1.md`
 - `code-review-track03-series-v1.md`
 - `code-review-track02cbis-02dbis-v1.md`
+- `../implementation/tracks/track-03f-quality-hotfix-v1/current-status.md`
 - `arcade-upgrade-plan.md`
 - `codebase-audit-track05.md`
 - `reuse-map.md`
