@@ -5,10 +5,12 @@ const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const AvatarUniformShader = preload("res://gameplay/avatar/avatar_uniform.gdshader")
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
+const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 
 const MALE_MODEL_PATH: String = "res://assets/characters/quaternius_ubc/base/Superhero_Male_FullBody.gltf"
 const FEMALE_MODEL_PATH: String = "res://assets/characters/quaternius_ubc/base/Superhero_Female_FullBody.gltf"
 const UAL_ANIMATION_LIBRARY_PATH: String = "res://assets/characters/quaternius_ubc/animations/UAL1_Standard.glb"
+const RUNTIME_ANIMATION_LIBRARY_PATH: String = "res://assets/characters/quaternius_ubc/animations/jdc_runtime_animation_library.res"
 const REAL_MODEL_SCALE: Vector3 = Vector3(0.92, 0.92, 0.92)
 const SPRINT_SPEED_THRESHOLD: float = 9.8
 const DEFAULT_STATE: StringName = &"idle"
@@ -70,6 +72,11 @@ const LOGICAL_PARTS: Array[StringName] = [
 	&"right_foot",
 	&"hair",
 ]
+
+static var _runtime_animation_library_cache: AnimationLibrary
+static var _runtime_animation_names_cache: Array[StringName] = []
+static var _body_region_mesh_cache: Dictionary = {}
+static var _body_region_counts_cache: Dictionary = {}
 
 @export var local_first_person: bool = false
 @export var character_variant: StringName = &"male"
@@ -447,18 +454,28 @@ func debug_get_textured_surface_override_count() -> int:
 func _build_avatar() -> void:
 	if part_root != null:
 		return
+	var avatar_begin := PerfProbeScript.begin(self, "avatar.total", "node=%s variant=%s" % [name, str(character_variant)])
 	loaded_animation_names.clear()
 	real_model_fallback_reason = ""
 	part_root = Node3D.new()
 	part_root.name = "AvatarParts"
 	add_child(part_root)
+	var stage_begin := PerfProbeScript.begin(self, "avatar.instantiate_model", "node=%s variant=%s" % [name, str(character_variant)])
 	_instantiate_real_model()
+	PerfProbeScript.end(self, "avatar.instantiate_model", stage_begin, "node=%s meshes=%d fallback=%s" % [name, real_meshes.size(), real_model_fallback_reason])
+	stage_begin = PerfProbeScript.begin(self, "avatar.animations", "node=%s" % name)
 	_build_animation_player()
+	PerfProbeScript.end(self, "avatar.animations", stage_begin, "node=%s clips=%d" % [name, loaded_animation_names.size()])
+	stage_begin = PerfProbeScript.begin(self, "avatar.animation_tree", "node=%s" % name)
 	_build_animation_tree()
+	PerfProbeScript.end(self, "avatar.animation_tree", stage_begin, "node=%s" % name)
 	_build_logical_part_map()
+	stage_begin = PerfProbeScript.begin(self, "avatar.persistent_vfx", "node=%s" % name)
 	_build_persistent_vfx()
+	PerfProbeScript.end(self, "avatar.persistent_vfx", stage_begin, "node=%s" % name)
 	_apply_first_person_visibility()
 	_travel_state(DEFAULT_STATE, true)
+	PerfProbeScript.end(self, "avatar.total", avatar_begin, "node=%s variant=%s" % [name, str(character_variant)])
 
 func _instantiate_real_model() -> void:
 	var model_path := FEMALE_MODEL_PATH if character_variant == &"female" else MALE_MODEL_PATH
@@ -500,6 +517,22 @@ func _build_animation_player() -> void:
 	if model_instance == null:
 		_report_real_avatar_fallback("Skipped animation build because real model instance is missing.")
 		return
+	animation_player = AnimationPlayer.new()
+	animation_player.name = "RealAnimationPlayer"
+	animation_player.root_node = NodePath("..")
+	model_instance.add_child(animation_player)
+	if _runtime_animation_library_cache != null:
+		animation_player.add_animation_library("", _runtime_animation_library_cache.duplicate(true))
+		loaded_animation_names = _runtime_animation_names_cache.duplicate()
+		return
+	if ResourceLoader.exists(RUNTIME_ANIMATION_LIBRARY_PATH):
+		var runtime_library := load(RUNTIME_ANIMATION_LIBRARY_PATH) as AnimationLibrary
+		if runtime_library != null:
+			animation_player.add_animation_library("", runtime_library.duplicate(true))
+			loaded_animation_names = _get_animation_names_from_library(runtime_library)
+			_runtime_animation_library_cache = runtime_library.duplicate(true)
+			_runtime_animation_names_cache = loaded_animation_names.duplicate()
+			return
 	var animation_scene := load(UAL_ANIMATION_LIBRARY_PATH)
 	if animation_scene == null or not (animation_scene is PackedScene):
 		_report_real_avatar_fallback("Failed to load UAL animation library: %s" % UAL_ANIMATION_LIBRARY_PATH)
@@ -510,10 +543,6 @@ func _build_animation_player() -> void:
 		_report_real_avatar_fallback("UAL animation library has no AnimationPlayer")
 		animation_instance.free()
 		return
-	animation_player = AnimationPlayer.new()
-	animation_player.name = "RealAnimationPlayer"
-	animation_player.root_node = NodePath("..")
-	model_instance.add_child(animation_player)
 	var library := AnimationLibrary.new()
 	for animation_name in source_player.get_animation_list():
 		var animation: Animation = source_player.get_animation(animation_name)
@@ -530,8 +559,18 @@ func _build_animation_player() -> void:
 	loaded_animation_names.append(KICK_ANIMATION_NAME)
 	library.add_animation(RESET_ANIMATION_NAME, _build_reset_animation())
 	loaded_animation_names.append(RESET_ANIMATION_NAME)
+	_runtime_animation_library_cache = library.duplicate(true)
+	_runtime_animation_names_cache = loaded_animation_names.duplicate()
 	animation_player.add_animation_library("", library)
 	animation_instance.free()
+
+func _get_animation_names_from_library(library: AnimationLibrary) -> Array[StringName]:
+	var names: Array[StringName] = []
+	if library == null:
+		return names
+	for animation_name in library.get_animation_list():
+		names.append(StringName(animation_name))
+	return names
 
 func _build_animation_tree() -> void:
 	if model_instance == null or animation_player == null:
@@ -695,9 +734,20 @@ func _get_toon_outline_material() -> StandardMaterial3D:
 func _rebuild_body_mesh_with_uniform_regions() -> void:
 	if body_mesh == null or body_mesh.mesh == null:
 		return
+	var stage_begin := PerfProbeScript.begin(self, "avatar.region_mask", "node=%s" % name)
 	var source_mesh := body_mesh.mesh as ArrayMesh
 	if source_mesh == null:
 		_report_real_avatar_fallback("Body mesh is not an ArrayMesh; uniform region mask skipped.")
+		PerfProbeScript.end(self, "avatar.region_mask", stage_begin, "node=%s skipped=not_array_mesh" % name)
+		return
+	var cache_key := str(character_variant)
+	if _body_region_mesh_cache.has(cache_key):
+		body_mesh.mesh = _body_region_mesh_cache[cache_key] as Mesh
+		body_region_vertex_counts = (_body_region_counts_cache.get(cache_key, {}) as Dictionary).duplicate()
+		var cached_vertex_count := 0
+		for cached_region_id in body_region_vertex_counts.keys():
+			cached_vertex_count += int(body_region_vertex_counts[cached_region_id])
+		PerfProbeScript.end(self, "avatar.region_mask", stage_begin, "node=%s vertices=%d cached=true" % [name, cached_vertex_count])
 		return
 	var rebuilt_mesh := ArrayMesh.new()
 	body_region_vertex_counts.clear()
@@ -720,6 +770,12 @@ func _rebuild_body_mesh_with_uniform_regions() -> void:
 		if rebuilt_mesh.get_surface_count() > surface_index:
 			rebuilt_mesh.surface_set_material(surface_index, source_mesh.surface_get_material(surface_index))
 	body_mesh.mesh = rebuilt_mesh
+	var vertex_count := 0
+	for region_id in body_region_vertex_counts.keys():
+		vertex_count += int(body_region_vertex_counts[region_id])
+	_body_region_mesh_cache[cache_key] = rebuilt_mesh
+	_body_region_counts_cache[cache_key] = body_region_vertex_counts.duplicate()
+	PerfProbeScript.end(self, "avatar.region_mask", stage_begin, "node=%s vertices=%d surfaces=%d" % [name, vertex_count, rebuilt_mesh.get_surface_count()])
 
 func _get_dominant_bone_index(arrays: Array, vertex_index: int) -> int:
 	if arrays.size() <= Mesh.ARRAY_WEIGHTS or arrays[Mesh.ARRAY_BONES] == null or arrays[Mesh.ARRAY_WEIGHTS] == null:

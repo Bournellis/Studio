@@ -5,6 +5,7 @@ const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
+const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
 const MENU_PANEL_MIN_SIZE: Vector2 = Vector2(500.0, 0.0)
@@ -81,6 +82,8 @@ var selected_toon_render_enabled: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	PerfProbeScript.ensure_enabled(self, "menu")
+	PerfProbeScript.mark(self, "menu.ready.begin")
 	RenderProfileScript.report_runtime_profile_once("MainMenuRoot")
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -97,8 +100,11 @@ func _ready() -> void:
 	_focus_initial_control()
 	call_deferred("_play_fade_from_black")
 	call_deferred("_try_load_web_capture_scene")
+	PerfProbeScript.mark(self, "menu.ready.end")
 
 func _process(delta: float) -> void:
+	if RenderProfileScript.is_web_platform():
+		return
 	preview_time += delta
 	if preview_root != null:
 		preview_root.rotation.y = sin(preview_time * 0.45) * 0.08
@@ -288,6 +294,7 @@ func _build_ui() -> void:
 	football_button = _build_button("FootballButton", "Jogar Futebol 1x1")
 	football_button.pressed.connect(func() -> void:
 		_play_ui_sound(&"ui_confirmation")
+		PerfProbeScript.mark(self, "menu.play_pressed", "scene=%s" % FOOTBALL_SCENE_PATH)
 		_load_mode(FOOTBALL_SCENE_PATH)
 	)
 	center.add_child(football_button)
@@ -315,7 +322,7 @@ func _build_arena_preview() -> void:
 	preview_viewport = SubViewport.new()
 	preview_viewport.name = "ArenaPreviewViewport"
 	preview_viewport.size = RenderProfileScript.get_menu_preview_viewport_size()
-	preview_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	preview_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE if RenderProfileScript.is_web_platform() else SubViewport.UPDATE_ALWAYS
 	add_child(preview_viewport)
 
 	var world := Node3D.new()
@@ -692,6 +699,7 @@ func _update_preview_selection() -> void:
 	var appearance = AvatarAppearanceScript.new(selected_skin_tone_id, selected_country_kit_id)
 	if preview_avatar != null:
 		preview_avatar.apply_appearance(appearance)
+	_request_preview_viewport_update()
 	if skin_label != null:
 		skin_label.text = AvatarCatalogScript.get_skin_label(selected_skin_tone_id)
 	if kit_label != null:
@@ -700,6 +708,11 @@ func _update_preview_selection() -> void:
 		skin_swatch.color = AvatarCatalogScript.get_skin_color(selected_skin_tone_id)
 	if kit_swatch != null:
 		kit_swatch.color = AvatarCatalogScript.get_kit_primary_color(selected_country_kit_id)
+
+func _request_preview_viewport_update() -> void:
+	if preview_viewport == null or not RenderProfileScript.is_web_platform():
+		return
+	preview_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 
 func _cycle_bot_difficulty(step: int) -> void:
 	var index := BOT_DIFFICULTY_IDS.find(selected_bot_difficulty_id)
@@ -828,6 +841,9 @@ func _try_load_web_capture_scene() -> void:
 	_load_mode(FOOTBALL_SCENE_PATH)
 
 func _get_web_capture_scene_id() -> StringName:
+	var command_line_capture := _get_capture_scene_id_from_args()
+	if command_line_capture != &"":
+		return command_line_capture
 	if not OS.has_feature("web"):
 		return &""
 	var query_string := str(JavaScriptBridge.eval("window.location.search", true))
@@ -843,6 +859,22 @@ func _get_web_capture_scene_id() -> StringName:
 		return StringName(value)
 	return &""
 
+func _get_capture_scene_id_from_args() -> StringName:
+	for arg in _collect_command_line_args():
+		var normalized := arg.strip_edges()
+		var lowered := normalized.to_lower()
+		if lowered.begins_with("--jdc_capture=") or lowered.begins_with("--jdc-capture="):
+			return StringName(normalized.get_slice("=", 1).strip_edges().to_lower())
+	return &""
+
+func _collect_command_line_args() -> Array[String]:
+	var args: Array[String] = []
+	for arg in OS.get_cmdline_args():
+		args.append(str(arg))
+	for arg in OS.get_cmdline_user_args():
+		args.append(str(arg))
+	return args
+
 func _is_capture_scene_supported(capture_scene_id: StringName) -> bool:
 	return (
 		capture_scene_id == CAPTURE_SCENE_MENU
@@ -853,12 +885,15 @@ func _is_capture_scene_supported(capture_scene_id: StringName) -> bool:
 	)
 
 func _load_mode_async(scene_path: String) -> void:
+	var load_begin := PerfProbeScript.begin(self, "menu.load_mode", "scene=%s" % scene_path)
 	status_label.text = "Carregando..."
 	get_tree().root.set_meta(BOT_DIFFICULTY_META_KEY, selected_bot_difficulty_id)
 	get_tree().root.set_meta(MATCH_MODE_META_KEY, selected_match_mode_id)
 	get_tree().root.set_meta(TOON_RENDER_META_KEY, selected_toon_render_enabled)
 	_play_fade_to_black()
 	await get_tree().create_timer(MENU_TRANSITION_SECONDS, true, false, true).timeout
+	PerfProbeScript.end(self, "menu.load_mode.fade_wait", load_begin, "scene=%s" % scene_path)
+	PerfProbeScript.mark(self, "menu.change_scene.begin", "scene=%s" % scene_path)
 	get_tree().change_scene_to_file(scene_path)
 
 func _get_menu_required_size() -> Vector2:

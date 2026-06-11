@@ -3,12 +3,14 @@ extends RefCounted
 
 const RuntimePrimitiveFactoryScript = preload("res://modes/shared/runtime_primitive_factory.gd")
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
+const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 const DEFAULT_PLAYER_KIT_COLOR := Color(0.98, 0.82, 0.06, 1.0)
 const DEFAULT_BOT_KIT_COLOR := Color(0.14, 0.42, 0.9, 1.0)
 const DEFAULT_COUNTRY_NAMES := ["BRASIL", "FRANCA", "ARGENTINA", "ALEMANHA", "ESPANHA", "INGLATERRA", "PORTUGAL", "JAPAO"]
 
 static func build(parent: Node3D, config: Dictionary) -> void:
 	RenderProfileScript.report_runtime_profile_once("FootballFieldBuilder")
+	var build_begin := PerfProbeScript.begin(parent, "field_builder.total")
 	var field_width: float = float(config.get("field_width", 32.0))
 	var field_length: float = float(config.get("field_length", 44.0))
 	var field_half_width: float = field_width * 0.5
@@ -27,12 +29,23 @@ static func build(parent: Node3D, config: Dictionary) -> void:
 	var bot_kit_color := _get_color_config(config, "bot_kit_color", DEFAULT_BOT_KIT_COLOR)
 	var country_names := _get_country_names_config(config)
 
+	var stage_begin := PerfProbeScript.begin(parent, "field_builder.pitch")
 	_add_pitch(parent, field_width, field_length, goal_half_width)
+	PerfProbeScript.end(parent, "field_builder.pitch", stage_begin)
+	stage_begin = PerfProbeScript.begin(parent, "field_builder.goal_shells")
 	_add_goal_shell(parent, "North", goal_line_north, -1.0, goal_half_width, goal_height, goal_side_wall_x, goal_side_wall_thickness, goal_closed_depth, ceiling_height, wall_thickness)
 	_add_goal_shell(parent, "South", goal_line_south, 1.0, goal_half_width, goal_height, goal_side_wall_x, goal_side_wall_thickness, goal_closed_depth, ceiling_height, wall_thickness)
+	PerfProbeScript.end(parent, "field_builder.goal_shells", stage_begin)
+	stage_begin = PerfProbeScript.begin(parent, "field_builder.arena_glass")
 	_add_arena_glass(parent, field_width, field_length, field_half_width, wall_height, ceiling_height, wall_thickness, goal_side_wall_x, goal_closed_depth, goal_line_north, goal_line_south)
+	PerfProbeScript.end(parent, "field_builder.arena_glass", stage_begin)
+	stage_begin = PerfProbeScript.begin(parent, "field_builder.stadium_shell")
 	_add_stadium_shell(parent, field_width, field_length, field_half_width, goal_closed_depth, goal_line_north, goal_line_south, player_kit_color, bot_kit_color, country_names, config)
+	PerfProbeScript.end(parent, "field_builder.stadium_shell", stage_begin)
+	stage_begin = PerfProbeScript.begin(parent, "field_builder.arcade_field")
 	_add_arcade_field(parent, field_half_width, field_half_length, goal_line_north, goal_line_south)
+	PerfProbeScript.end(parent, "field_builder.arcade_field", stage_begin)
+	PerfProbeScript.end(parent, "field_builder.total", build_begin)
 
 static func set_crowd_excitement(parent: Node, crowd_excitement: float) -> void:
 	var clamped_excitement := clampf(crowd_excitement, 0.0, 1.0)
@@ -170,12 +183,20 @@ static func _add_glass_frames(parent: Node3D, field_width: float, field_half_wid
 		_add_neon_box(parent, "ArenaRoofRib%d" % index, Vector3(x, ceiling_height + 0.16, 0.0), Vector3(0.16, 0.18, total_length), Color(0.62, 0.88, 1.0, 0.62), Vector3.ZERO, 1.45)
 
 static func _add_stadium_shell(parent: Node3D, field_width: float, field_length: float, field_half_width: float, goal_closed_depth: float, goal_line_north: float, goal_line_south: float, player_kit_color: Color, bot_kit_color: Color, country_names: Array[String], config: Dictionary) -> void:
+	var stage_begin := PerfProbeScript.begin(parent, "field_builder.stands")
 	_add_stadium_seating(parent, field_width, field_length, field_half_width, goal_closed_depth, goal_line_north, goal_line_south, player_kit_color, bot_kit_color, config)
+	PerfProbeScript.end(parent, "field_builder.stands", stage_begin)
+	stage_begin = PerfProbeScript.begin(parent, "field_builder.banners")
 	_add_country_banners(parent, field_width, goal_closed_depth, goal_line_north, goal_line_south, country_names)
 	_add_flag_masts(parent, field_width, goal_closed_depth, goal_line_north, goal_line_south, player_kit_color, bot_kit_color, country_names)
+	PerfProbeScript.end(parent, "field_builder.banners", stage_begin)
+	stage_begin = PerfProbeScript.begin(parent, "field_builder.scoreboards")
 	_add_scoreboards(parent, field_width, goal_closed_depth, goal_line_north, goal_line_south)
+	PerfProbeScript.end(parent, "field_builder.scoreboards", stage_begin)
+	stage_begin = PerfProbeScript.begin(parent, "field_builder.skyline_lights")
 	_add_skyline(parent, field_width, field_length, field_half_width, goal_closed_depth, goal_line_north, goal_line_south)
 	_add_light_rigs(parent, field_half_width, goal_line_north, goal_line_south)
+	PerfProbeScript.end(parent, "field_builder.skyline_lights", stage_begin)
 
 static func _add_arcade_field(parent: Node3D, field_half_width: float, field_half_length: float, goal_line_north: float, goal_line_south: float) -> void:
 	_add_boost_pads(parent, field_half_width, field_half_length)
@@ -549,7 +570,7 @@ static func _add_live_scoreboard(parent: Node3D, side_name: String, node_positio
 	viewport.name = "WorldCupScoreboard%sViewport" % side_name
 	viewport.size = RenderProfileScript.get_scoreboard_viewport_size()
 	viewport.transparent_bg = false
-	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	viewport.render_target_update_mode = SubViewport.UPDATE_ONCE if RenderProfileScript.is_web_platform() else SubViewport.UPDATE_ALWAYS
 	parent.add_child(viewport)
 
 	var root := Control.new()

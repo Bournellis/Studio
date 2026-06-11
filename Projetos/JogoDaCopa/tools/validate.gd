@@ -7,6 +7,7 @@ const PROFILE_STRUCTURE: String = "structure"
 const UTF8_BOM_BYTE_0: int = 0xEF
 const UTF8_BOM_BYTE_1: int = 0xBB
 const UTF8_BOM_BYTE_2: int = 0xBF
+const WEB_BUILD_GZIP_TRANSFER_LIMIT_BYTES: int = 50 * 1024 * 1024
 
 var _failures: Array[String] = []
 var _profile: String = PROFILE_FULL
@@ -114,6 +115,7 @@ func _check_core_project_contract() -> void:
 	_check_resource("res://addons/gut/plugin.cfg")
 	_check_resource("res://.gutconfig.json")
 	_check_web_export_contract()
+	_check_web_build_size_gate()
 
 func _check_documentation_contract() -> void:
 	_check_resource("res://README.md")
@@ -226,6 +228,52 @@ func _check_web_export_contract() -> void:
 	for fragment: String in required_fragments:
 		if not text.contains(fragment):
 			_failures.append("Web export contract missing: %s" % fragment)
+
+func _check_web_build_size_gate() -> void:
+	if not FileAccess.file_exists("res://builds/web/index.wasm") or not FileAccess.file_exists("res://builds/web/index.pck"):
+		print("[validate] web build size gate skipped: builds/web/index.wasm or index.pck not present")
+		return
+	var exported_files: PackedStringArray = []
+	_collect_web_build_files("res://builds/web", exported_files)
+	var raw_total := 0
+	var gzip_total := 0
+	for path: String in exported_files:
+		var bytes := FileAccess.get_file_as_bytes(path)
+		raw_total += bytes.size()
+		gzip_total += bytes.compress(FileAccess.COMPRESSION_GZIP).size()
+	print("[validate] web build gzip transfer size: %s / %s raw=%s files=%d" % [
+		_format_mib(gzip_total),
+		_format_mib(WEB_BUILD_GZIP_TRANSFER_LIMIT_BYTES),
+		_format_mib(raw_total),
+		exported_files.size(),
+	])
+	if gzip_total > WEB_BUILD_GZIP_TRANSFER_LIMIT_BYTES:
+		_failures.append("Web build gzip transfer exceeds %s: %s" % [
+			_format_mib(WEB_BUILD_GZIP_TRANSFER_LIMIT_BYTES),
+			_format_mib(gzip_total),
+		])
+
+func _collect_web_build_files(directory_path: String, output: PackedStringArray) -> void:
+	var directory := DirAccess.open(directory_path)
+	if directory == null:
+		_failures.append("Failed to open Web build directory: %s" % directory_path)
+		return
+	directory.list_dir_begin()
+	while true:
+		var entry := directory.get_next()
+		if entry.is_empty():
+			break
+		if entry.begins_with("."):
+			continue
+		var path := directory_path.path_join(entry)
+		if directory.current_is_dir():
+			_collect_web_build_files(path, output)
+		elif not path.ends_with(".import"):
+			output.append(path)
+	directory.list_dir_end()
+
+func _format_mib(byte_count: int) -> String:
+	return "%.2f MiB" % (float(byte_count) / 1048576.0)
 
 func _run_gut() -> int:
 	var gut_config_script: Script = load("res://addons/gut/gut_config.gd")

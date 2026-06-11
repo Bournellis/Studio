@@ -1,0 +1,3667 @@
+{
+  "label": "baseline-web-headful-hitches-120s",
+  "route": "/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+  "targetUrl": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+  "durationMs": 130000,
+  "headless": false,
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "frameStats": {
+    "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "timeOrigin": 1781213876328.1,
+    "frameCount": 14721,
+    "p50": 6.900000000008731,
+    "p95": 7,
+    "p99": 7.100000000005821,
+    "max": 16446.8,
+    "hitches": [
+      {
+        "t": 19108.8,
+        "wallTimeMs": 1781213895436.9001,
+        "dt": 16446.8,
+        "nearestEvent": {
+          "wallTimeMs": 1781213895471.153,
+          "stage": "perf_scenario.step",
+          "dtMs": 15648.4,
+          "detail": "action=normal_kick",
+          "text": "[JDC_PERF] abs_ms=16469.800 dt_ms=15648.400 stage=perf_scenario.step detail=action=normal_kick",
+          "distanceMs": 34.2529296875
+        }
+      },
+      {
+        "t": 25776.5,
+        "wallTimeMs": 1781213902104.6,
+        "dt": 6667.700000000001,
+        "nearestEvent": {
+          "wallTimeMs": 1781213907168.491,
+          "stage": "event.bot_kick_request",
+          "dtMs": 27345.6,
+          "detail": "",
+          "text": "[JDC_PERF] abs_ms=28167.000 dt_ms=27345.600 stage=event.bot_kick_request detail=",
+          "distanceMs": 5063.890869140625
+        }
+      },
+      {
+        "t": 28033.7,
+        "wallTimeMs": 1781213904361.8,
+        "dt": 2257.2000000000007,
+        "nearestEvent": {
+          "wallTimeMs": 1781213907168.491,
+          "stage": "event.bot_kick_request",
+          "dtMs": 27345.6,
+          "detail": "",
+          "text": "[JDC_PERF] abs_ms=28167.000 dt_ms=27345.600 stage=event.bot_kick_request detail=",
+          "distanceMs": 2806.69091796875
+        }
+      },
+      {
+        "t": 35638.9,
+        "wallTimeMs": 1781213911967,
+        "dt": 1569.5,
+        "nearestEvent": {
+          "wallTimeMs": 1781213910398.393,
+          "stage": "event.goal_vfx",
+          "dtMs": 30575.6,
+          "detail": "player_scored=true",
+          "text": "[JDC_PERF] abs_ms=31397.000 dt_ms=30575.600 stage=event.goal_vfx detail=player_scored=true",
+          "distanceMs": 1568.60693359375
+        }
+      },
+      {
+        "t": 31874.5,
+        "wallTimeMs": 1781213908202.6,
+        "dt": 1034.7999999999993,
+        "nearestEvent": {
+          "wallTimeMs": 1781213908863.378,
+          "stage": "perf_scenario.step",
+          "dtMs": 29040.5,
+          "detail": "action=super_fireball",
+          "text": "[JDC_PERF] abs_ms=29861.900 dt_ms=29040.500 stage=perf_scenario.step detail=action=super_fireball",
+          "distanceMs": 660.77783203125
+        }
+      },
+      {
+        "t": 32694.1,
+        "wallTimeMs": 1781213909022.2002,
+        "dt": 159.6999999999971,
+        "nearestEvent": {
+          "wallTimeMs": 1781213908863.941,
+          "stage": "event.kick_vfx",
+          "dtMs": 29041.2,
+          "detail": "strong=true",
+          "text": "[JDC_PERF] abs_ms=29862.600 dt_ms=29041.200 stage=event.kick_vfx detail=strong=true",
+          "distanceMs": 158.25927734375
+        }
+      },
+      {
+        "t": 37528.2,
+        "wallTimeMs": 1781213913856.3,
+        "dt": 132,
+        "nearestEvent": {
+          "wallTimeMs": 1781213913724.709,
+          "stage": "event.restart_play",
+          "dtMs": 33901.8,
+          "detail": "after_goal=true",
+          "text": "[JDC_PERF] abs_ms=34723.200 dt_ms=33901.800 stage=event.restart_play detail=after_goal=true",
+          "distanceMs": 131.591064453125
+        }
+      },
+      {
+        "t": 59329.9,
+        "wallTimeMs": 1781213935658,
+        "dt": 55.5,
+        "nearestEvent": {
+          "wallTimeMs": 1781213935608.345,
+          "stage": "event.result",
+          "dtMs": 55785.5,
+          "detail": "player_won=true",
+          "text": "[JDC_PERF] abs_ms=56606.900 dt_ms=55785.500 stage=event.result detail=player_won=true",
+          "distanceMs": 49.655029296875
+        }
+      }
+    ]
+  },
+  "perfEvents": [
+    {
+      "wallTimeMs": 1781213879822.977,
+      "stage": "session.enabled",
+      "dtMs": 0.1,
+      "detail": "label=menu display=web web=true",
+      "text": "[JDC_PERF] abs_ms=821.500 dt_ms=0.100 stage=session.enabled detail=label=menu display=web web=true"
+    },
+    {
+      "wallTimeMs": 1781213879823.246,
+      "stage": "menu.ready.begin",
+      "dtMs": 0.5,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=821.900 dt_ms=0.500 stage=menu.ready.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213879843.143,
+      "stage": "avatar.total.begin",
+      "dtMs": 20.2,
+      "detail": "node=PreviewAvatar variant=male",
+      "text": "[JDC_PERF] abs_ms=841.600 dt_ms=20.200 stage=avatar.total.begin detail=node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213879843.624,
+      "stage": "avatar.instantiate_model.begin",
+      "dtMs": 20.7,
+      "detail": "node=PreviewAvatar variant=male",
+      "text": "[JDC_PERF] abs_ms=842.100 dt_ms=20.700 stage=avatar.instantiate_model.begin detail=node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213880259.513,
+      "stage": "avatar.region_mask.begin",
+      "dtMs": 436.6,
+      "detail": "node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=1258.000 dt_ms=436.600 stage=avatar.region_mask.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880298.266,
+      "stage": "avatar.region_mask.end",
+      "dtMs": 475.3,
+      "detail": "duration_ms=38.700 node=PreviewAvatar vertices=7281 surfaces=1",
+      "text": "[JDC_PERF] abs_ms=1296.700 dt_ms=475.300 stage=avatar.region_mask.end detail=duration_ms=38.700 node=PreviewAvatar vertices=7281 surfaces=1"
+    },
+    {
+      "wallTimeMs": 1781213880299.094,
+      "stage": "avatar.instantiate_model.end",
+      "dtMs": 476.2,
+      "detail": "duration_ms=455.500 node=PreviewAvatar meshes=3 fallback=",
+      "text": "[JDC_PERF] abs_ms=1297.600 dt_ms=476.200 stage=avatar.instantiate_model.end detail=duration_ms=455.500 node=PreviewAvatar meshes=3 fallback="
+    },
+    {
+      "wallTimeMs": 1781213880301.301,
+      "stage": "avatar.animations.begin",
+      "dtMs": 478.5,
+      "detail": "node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=1299.900 dt_ms=478.500 stage=avatar.animations.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880344.245,
+      "stage": "avatar.animations.end",
+      "dtMs": 521.2,
+      "detail": "duration_ms=42.700 node=PreviewAvatar clips=47",
+      "text": "[JDC_PERF] abs_ms=1342.600 dt_ms=521.200 stage=avatar.animations.end detail=duration_ms=42.700 node=PreviewAvatar clips=47"
+    },
+    {
+      "wallTimeMs": 1781213880344.906,
+      "stage": "avatar.animation_tree.begin",
+      "dtMs": 522,
+      "detail": "node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=1343.400 dt_ms=522.000 stage=avatar.animation_tree.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880348.327,
+      "stage": "avatar.animation_tree.end",
+      "dtMs": 525.3,
+      "detail": "duration_ms=3.200 node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=1346.700 dt_ms=525.300 stage=avatar.animation_tree.end detail=duration_ms=3.200 node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880348.681,
+      "stage": "avatar.persistent_vfx.begin",
+      "dtMs": 525.9,
+      "detail": "node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=1347.300 dt_ms=525.900 stage=avatar.persistent_vfx.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880359.15,
+      "stage": "avatar.persistent_vfx.end",
+      "dtMs": 536.2,
+      "detail": "duration_ms=10.400 node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=1357.600 dt_ms=536.200 stage=avatar.persistent_vfx.end detail=duration_ms=10.400 node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880359.862,
+      "stage": "avatar.total.end",
+      "dtMs": 536.9,
+      "detail": "duration_ms=516.800 node=PreviewAvatar variant=male",
+      "text": "[JDC_PERF] abs_ms=1358.300 dt_ms=536.900 stage=avatar.total.end detail=duration_ms=516.800 node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213880575.281,
+      "stage": "menu.ready.end",
+      "dtMs": 752.4,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1573.800 dt_ms=752.400 stage=menu.ready.end detail="
+    },
+    {
+      "wallTimeMs": 1781213880585.174,
+      "stage": "menu.load_mode.begin",
+      "dtMs": 762.4,
+      "detail": "scene=res://modes/football/football.tscn",
+      "text": "[JDC_PERF] abs_ms=1583.800 dt_ms=762.400 stage=menu.load_mode.begin detail=scene=res://modes/football/football.tscn"
+    },
+    {
+      "wallTimeMs": 1781213880590.395,
+      "stage": "menu.load_mode.fade_wait.end",
+      "dtMs": 767.5,
+      "detail": "duration_ms=5.200 scene=res://modes/football/football.tscn",
+      "text": "[JDC_PERF] abs_ms=1588.900 dt_ms=767.500 stage=menu.load_mode.fade_wait.end detail=duration_ms=5.200 scene=res://modes/football/football.tscn"
+    },
+    {
+      "wallTimeMs": 1781213880590.624,
+      "stage": "menu.change_scene.begin",
+      "dtMs": 767.9,
+      "detail": "scene=res://modes/football/football.tscn",
+      "text": "[JDC_PERF] abs_ms=1589.300 dt_ms=767.900 stage=menu.change_scene.begin detail=scene=res://modes/football/football.tscn"
+    },
+    {
+      "wallTimeMs": 1781213880689.818,
+      "stage": "football.ready.begin",
+      "dtMs": 866.9,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1688.300 dt_ms=866.900 stage=football.ready.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880690.027,
+      "stage": "football.configure_world.begin",
+      "dtMs": 867.2,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1688.600 dt_ms=867.200 stage=football.configure_world.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880691.15,
+      "stage": "football.world_environment.begin",
+      "dtMs": 868.4,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1689.800 dt_ms=868.400 stage=football.world_environment.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880693.746,
+      "stage": "football.world_environment.end",
+      "dtMs": 870.9,
+      "detail": "duration_ms=2.500",
+      "text": "[JDC_PERF] abs_ms=1692.300 dt_ms=870.900 stage=football.world_environment.end detail=duration_ms=2.500"
+    },
+    {
+      "wallTimeMs": 1781213880693.943,
+      "stage": "football.key_light.begin",
+      "dtMs": 871.2,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1692.600 dt_ms=871.200 stage=football.key_light.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880694.139,
+      "stage": "football.key_light.end",
+      "dtMs": 871.4,
+      "detail": "duration_ms=0.200",
+      "text": "[JDC_PERF] abs_ms=1692.800 dt_ms=871.400 stage=football.key_light.end detail=duration_ms=0.200"
+    },
+    {
+      "wallTimeMs": 1781213880694.298,
+      "stage": "football.field_builder.begin",
+      "dtMs": 871.5,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1692.900 dt_ms=871.500 stage=football.field_builder.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880696.82,
+      "stage": "field_builder.total.begin",
+      "dtMs": 874.1,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1695.500 dt_ms=874.100 stage=field_builder.total.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880697.252,
+      "stage": "field_builder.pitch.begin",
+      "dtMs": 874.5,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1695.900 dt_ms=874.500 stage=field_builder.pitch.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880700.972,
+      "stage": "field_builder.pitch.end",
+      "dtMs": 878.1,
+      "detail": "duration_ms=3.600",
+      "text": "[JDC_PERF] abs_ms=1699.500 dt_ms=878.100 stage=field_builder.pitch.end detail=duration_ms=3.600"
+    },
+    {
+      "wallTimeMs": 1781213880701.184,
+      "stage": "field_builder.goal_shells.begin",
+      "dtMs": 878.5,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1699.900 dt_ms=878.500 stage=field_builder.goal_shells.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880709.068,
+      "stage": "field_builder.goal_shells.end",
+      "dtMs": 886.2,
+      "detail": "duration_ms=7.700",
+      "text": "[JDC_PERF] abs_ms=1707.600 dt_ms=886.200 stage=field_builder.goal_shells.end detail=duration_ms=7.700"
+    },
+    {
+      "wallTimeMs": 1781213880709.292,
+      "stage": "field_builder.arena_glass.begin",
+      "dtMs": 886.5,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1707.900 dt_ms=886.500 stage=field_builder.arena_glass.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880715.116,
+      "stage": "field_builder.arena_glass.end",
+      "dtMs": 892.3,
+      "detail": "duration_ms=5.700",
+      "text": "[JDC_PERF] abs_ms=1713.700 dt_ms=892.300 stage=field_builder.arena_glass.end detail=duration_ms=5.700"
+    },
+    {
+      "wallTimeMs": 1781213880715.319,
+      "stage": "field_builder.stadium_shell.begin",
+      "dtMs": 892.6,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1714.000 dt_ms=892.600 stage=field_builder.stadium_shell.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880715.502,
+      "stage": "field_builder.stands.begin",
+      "dtMs": 892.7,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1714.100 dt_ms=892.700 stage=field_builder.stands.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880769.979,
+      "stage": "field_builder.stands.end",
+      "dtMs": 947.1,
+      "detail": "duration_ms=54.400",
+      "text": "[JDC_PERF] abs_ms=1768.500 dt_ms=947.100 stage=field_builder.stands.end detail=duration_ms=54.400"
+    },
+    {
+      "wallTimeMs": 1781213880770.219,
+      "stage": "field_builder.banners.begin",
+      "dtMs": 947.5,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1768.900 dt_ms=947.500 stage=field_builder.banners.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880777.911,
+      "stage": "field_builder.banners.end",
+      "dtMs": 955,
+      "detail": "duration_ms=7.500",
+      "text": "[JDC_PERF] abs_ms=1776.400 dt_ms=955.000 stage=field_builder.banners.end detail=duration_ms=7.500"
+    },
+    {
+      "wallTimeMs": 1781213880778.179,
+      "stage": "field_builder.scoreboards.begin",
+      "dtMs": 955.4,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1776.800 dt_ms=955.400 stage=field_builder.scoreboards.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880786.743,
+      "stage": "field_builder.scoreboards.end",
+      "dtMs": 963.9,
+      "detail": "duration_ms=8.400",
+      "text": "[JDC_PERF] abs_ms=1785.300 dt_ms=963.900 stage=field_builder.scoreboards.end detail=duration_ms=8.400"
+    },
+    {
+      "wallTimeMs": 1781213880787.021,
+      "stage": "field_builder.skyline_lights.begin",
+      "dtMs": 964.2,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1785.600 dt_ms=964.200 stage=field_builder.skyline_lights.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880790.785,
+      "stage": "field_builder.skyline_lights.end",
+      "dtMs": 967.9,
+      "detail": "duration_ms=3.700",
+      "text": "[JDC_PERF] abs_ms=1789.300 dt_ms=967.900 stage=field_builder.skyline_lights.end detail=duration_ms=3.700"
+    },
+    {
+      "wallTimeMs": 1781213880791.062,
+      "stage": "field_builder.stadium_shell.end",
+      "dtMs": 968.3,
+      "detail": "duration_ms=75.700",
+      "text": "[JDC_PERF] abs_ms=1789.700 dt_ms=968.300 stage=field_builder.stadium_shell.end detail=duration_ms=75.700"
+    },
+    {
+      "wallTimeMs": 1781213880791.203,
+      "stage": "field_builder.arcade_field.begin",
+      "dtMs": 968.4,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1789.800 dt_ms=968.400 stage=field_builder.arcade_field.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880793.457,
+      "stage": "field_builder.arcade_field.end",
+      "dtMs": 970.4,
+      "detail": "duration_ms=2.000",
+      "text": "[JDC_PERF] abs_ms=1791.800 dt_ms=970.400 stage=field_builder.arcade_field.end detail=duration_ms=2.000"
+    },
+    {
+      "wallTimeMs": 1781213880793.679,
+      "stage": "field_builder.total.end",
+      "dtMs": 970.9,
+      "detail": "duration_ms=96.800",
+      "text": "[JDC_PERF] abs_ms=1792.300 dt_ms=970.900 stage=field_builder.total.end detail=duration_ms=96.800"
+    },
+    {
+      "wallTimeMs": 1781213880793.803,
+      "stage": "football.field_builder.end",
+      "dtMs": 971.1,
+      "detail": "duration_ms=99.600",
+      "text": "[JDC_PERF] abs_ms=1792.500 dt_ms=971.100 stage=football.field_builder.end detail=duration_ms=99.600"
+    },
+    {
+      "wallTimeMs": 1781213880793.949,
+      "stage": "football.configure_world.end",
+      "dtMs": 971.2,
+      "detail": "duration_ms=104.000",
+      "text": "[JDC_PERF] abs_ms=1792.600 dt_ms=971.200 stage=football.configure_world.end detail=duration_ms=104.000"
+    },
+    {
+      "wallTimeMs": 1781213880794.296,
+      "stage": "football.spawn_runtime.begin",
+      "dtMs": 971.5,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1792.900 dt_ms=971.500 stage=football.spawn_runtime.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880794.441,
+      "stage": "football.player_controller.begin",
+      "dtMs": 971.7,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1793.100 dt_ms=971.700 stage=football.player_controller.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880795.38,
+      "stage": "football.player_controller.end",
+      "dtMs": 972.6,
+      "detail": "duration_ms=0.900",
+      "text": "[JDC_PERF] abs_ms=1794.000 dt_ms=972.600 stage=football.player_controller.end detail=duration_ms=0.900"
+    },
+    {
+      "wallTimeMs": 1781213880795.559,
+      "stage": "football.player_avatar.begin",
+      "dtMs": 972.8,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1794.200 dt_ms=972.800 stage=football.player_avatar.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880795.767,
+      "stage": "avatar.total.begin",
+      "dtMs": 973,
+      "detail": "node=PlayerAvatar variant=male",
+      "text": "[JDC_PERF] abs_ms=1794.400 dt_ms=973.000 stage=avatar.total.begin detail=node=PlayerAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213880795.93,
+      "stage": "avatar.instantiate_model.begin",
+      "dtMs": 973.2,
+      "detail": "node=PlayerAvatar variant=male",
+      "text": "[JDC_PERF] abs_ms=1794.600 dt_ms=973.200 stage=avatar.instantiate_model.begin detail=node=PlayerAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213881166.205,
+      "stage": "avatar.region_mask.begin",
+      "dtMs": 1343.3,
+      "detail": "node=PlayerAvatar",
+      "text": "[JDC_PERF] abs_ms=2164.700 dt_ms=1343.300 stage=avatar.region_mask.begin detail=node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881187.31,
+      "stage": "avatar.region_mask.end",
+      "dtMs": 1364.4,
+      "detail": "duration_ms=21.100 node=PlayerAvatar vertices=7281 surfaces=1",
+      "text": "[JDC_PERF] abs_ms=2185.800 dt_ms=1364.400 stage=avatar.region_mask.end detail=duration_ms=21.100 node=PlayerAvatar vertices=7281 surfaces=1"
+    },
+    {
+      "wallTimeMs": 1781213881194.654,
+      "stage": "avatar.instantiate_model.end",
+      "dtMs": 1371.8,
+      "detail": "duration_ms=398.600 node=PlayerAvatar meshes=3 fallback=",
+      "text": "[JDC_PERF] abs_ms=2193.200 dt_ms=1371.800 stage=avatar.instantiate_model.end detail=duration_ms=398.600 node=PlayerAvatar meshes=3 fallback="
+    },
+    {
+      "wallTimeMs": 1781213881195.025,
+      "stage": "avatar.animations.begin",
+      "dtMs": 1372.2,
+      "detail": "node=PlayerAvatar",
+      "text": "[JDC_PERF] abs_ms=2193.600 dt_ms=1372.200 stage=avatar.animations.begin detail=node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881225.333,
+      "stage": "avatar.animations.end",
+      "dtMs": 1402.5,
+      "detail": "duration_ms=30.300 node=PlayerAvatar clips=47",
+      "text": "[JDC_PERF] abs_ms=2223.900 dt_ms=1402.500 stage=avatar.animations.end detail=duration_ms=30.300 node=PlayerAvatar clips=47"
+    },
+    {
+      "wallTimeMs": 1781213881225.682,
+      "stage": "avatar.animation_tree.begin",
+      "dtMs": 1402.8,
+      "detail": "node=PlayerAvatar",
+      "text": "[JDC_PERF] abs_ms=2224.200 dt_ms=1402.800 stage=avatar.animation_tree.begin detail=node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881226.681,
+      "stage": "avatar.animation_tree.end",
+      "dtMs": 1403.8,
+      "detail": "duration_ms=1.000 node=PlayerAvatar",
+      "text": "[JDC_PERF] abs_ms=2225.200 dt_ms=1403.800 stage=avatar.animation_tree.end detail=duration_ms=1.000 node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881226.939,
+      "stage": "avatar.persistent_vfx.begin",
+      "dtMs": 1404.1,
+      "detail": "node=PlayerAvatar",
+      "text": "[JDC_PERF] abs_ms=2225.500 dt_ms=1404.100 stage=avatar.persistent_vfx.begin detail=node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881230.244,
+      "stage": "avatar.persistent_vfx.end",
+      "dtMs": 1407.4,
+      "detail": "duration_ms=3.300 node=PlayerAvatar",
+      "text": "[JDC_PERF] abs_ms=2228.800 dt_ms=1407.400 stage=avatar.persistent_vfx.end detail=duration_ms=3.300 node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881230.468,
+      "stage": "avatar.total.end",
+      "dtMs": 1407.7,
+      "detail": "duration_ms=434.700 node=PlayerAvatar variant=male",
+      "text": "[JDC_PERF] abs_ms=2229.100 dt_ms=1407.700 stage=avatar.total.end detail=duration_ms=434.700 node=PlayerAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213881398.329,
+      "stage": "football.player_avatar.end",
+      "dtMs": 1575.5,
+      "detail": "duration_ms=602.700",
+      "text": "[JDC_PERF] abs_ms=2396.900 dt_ms=1575.500 stage=football.player_avatar.end detail=duration_ms=602.700"
+    },
+    {
+      "wallTimeMs": 1781213881398.524,
+      "stage": "football.ball.begin",
+      "dtMs": 1575.8,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=2397.200 dt_ms=1575.800 stage=football.ball.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881400.738,
+      "stage": "football.ball.end",
+      "dtMs": 1578,
+      "detail": "duration_ms=2.200",
+      "text": "[JDC_PERF] abs_ms=2399.400 dt_ms=1578.000 stage=football.ball.end detail=duration_ms=2.200"
+    },
+    {
+      "wallTimeMs": 1781213881400.915,
+      "stage": "football.camera.begin",
+      "dtMs": 1578.1,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=2399.500 dt_ms=1578.100 stage=football.camera.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881401.616,
+      "stage": "football.camera.end",
+      "dtMs": 1578.9,
+      "detail": "duration_ms=0.800",
+      "text": "[JDC_PERF] abs_ms=2400.300 dt_ms=1578.900 stage=football.camera.end detail=duration_ms=0.800"
+    },
+    {
+      "wallTimeMs": 1781213881401.812,
+      "stage": "football.bot_controller.begin",
+      "dtMs": 1579,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=2400.400 dt_ms=1579.000 stage=football.bot_controller.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881402.321,
+      "stage": "football.bot_controller.end",
+      "dtMs": 1579.6,
+      "detail": "duration_ms=0.500",
+      "text": "[JDC_PERF] abs_ms=2401.000 dt_ms=1579.600 stage=football.bot_controller.end detail=duration_ms=0.500"
+    },
+    {
+      "wallTimeMs": 1781213881402.446,
+      "stage": "football.bot_avatar.begin",
+      "dtMs": 1579.7,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=2401.100 dt_ms=1579.700 stage=football.bot_avatar.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881402.606,
+      "stage": "avatar.total.begin",
+      "dtMs": 1579.8,
+      "detail": "node=BotAvatar variant=female",
+      "text": "[JDC_PERF] abs_ms=2401.200 dt_ms=1579.800 stage=avatar.total.begin detail=node=BotAvatar variant=female"
+    },
+    {
+      "wallTimeMs": 1781213881402.784,
+      "stage": "avatar.instantiate_model.begin",
+      "dtMs": 1580,
+      "detail": "node=BotAvatar variant=female",
+      "text": "[JDC_PERF] abs_ms=2401.400 dt_ms=1580.000 stage=avatar.instantiate_model.begin detail=node=BotAvatar variant=female"
+    },
+    {
+      "wallTimeMs": 1781213881772.585,
+      "stage": "avatar.region_mask.begin",
+      "dtMs": 1949.7,
+      "detail": "node=BotAvatar",
+      "text": "[JDC_PERF] abs_ms=2771.100 dt_ms=1949.700 stage=avatar.region_mask.begin detail=node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881793.546,
+      "stage": "avatar.region_mask.end",
+      "dtMs": 1970.7,
+      "detail": "duration_ms=21.000 node=BotAvatar vertices=7376 surfaces=1",
+      "text": "[JDC_PERF] abs_ms=2792.100 dt_ms=1970.700 stage=avatar.region_mask.end detail=duration_ms=21.000 node=BotAvatar vertices=7376 surfaces=1"
+    },
+    {
+      "wallTimeMs": 1781213881793.857,
+      "stage": "avatar.instantiate_model.end",
+      "dtMs": 1971.1,
+      "detail": "duration_ms=391.100 node=BotAvatar meshes=3 fallback=",
+      "text": "[JDC_PERF] abs_ms=2792.500 dt_ms=1971.100 stage=avatar.instantiate_model.end detail=duration_ms=391.100 node=BotAvatar meshes=3 fallback="
+    },
+    {
+      "wallTimeMs": 1781213881794.087,
+      "stage": "avatar.animations.begin",
+      "dtMs": 1971.3,
+      "detail": "node=BotAvatar",
+      "text": "[JDC_PERF] abs_ms=2792.700 dt_ms=1971.300 stage=avatar.animations.begin detail=node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881822.262,
+      "stage": "avatar.animations.end",
+      "dtMs": 1999.4,
+      "detail": "duration_ms=28.100 node=BotAvatar clips=47",
+      "text": "[JDC_PERF] abs_ms=2820.800 dt_ms=1999.400 stage=avatar.animations.end detail=duration_ms=28.100 node=BotAvatar clips=47"
+    },
+    {
+      "wallTimeMs": 1781213881822.49,
+      "stage": "avatar.animation_tree.begin",
+      "dtMs": 1999.7,
+      "detail": "node=BotAvatar",
+      "text": "[JDC_PERF] abs_ms=2821.100 dt_ms=1999.700 stage=avatar.animation_tree.begin detail=node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881823.258,
+      "stage": "avatar.animation_tree.end",
+      "dtMs": 2000.4,
+      "detail": "duration_ms=0.700 node=BotAvatar",
+      "text": "[JDC_PERF] abs_ms=2821.800 dt_ms=2000.400 stage=avatar.animation_tree.end detail=duration_ms=0.700 node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881823.433,
+      "stage": "avatar.persistent_vfx.begin",
+      "dtMs": 2000.7,
+      "detail": "node=BotAvatar",
+      "text": "[JDC_PERF] abs_ms=2822.100 dt_ms=2000.700 stage=avatar.persistent_vfx.begin detail=node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881823.902,
+      "stage": "avatar.persistent_vfx.end",
+      "dtMs": 2001.1,
+      "detail": "duration_ms=0.400 node=BotAvatar",
+      "text": "[JDC_PERF] abs_ms=2822.500 dt_ms=2001.100 stage=avatar.persistent_vfx.end detail=duration_ms=0.400 node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881824.163,
+      "stage": "avatar.total.end",
+      "dtMs": 2001.3,
+      "detail": "duration_ms=421.500 node=BotAvatar variant=female",
+      "text": "[JDC_PERF] abs_ms=2822.700 dt_ms=2001.300 stage=avatar.total.end detail=duration_ms=421.500 node=BotAvatar variant=female"
+    },
+    {
+      "wallTimeMs": 1781213881990.162,
+      "stage": "football.bot_avatar.end",
+      "dtMs": 2167.4,
+      "detail": "duration_ms=587.700",
+      "text": "[JDC_PERF] abs_ms=2988.800 dt_ms=2167.400 stage=football.bot_avatar.end detail=duration_ms=587.700"
+    },
+    {
+      "wallTimeMs": 1781213881990.372,
+      "stage": "football.feedback_audio.begin",
+      "dtMs": 2167.6,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=2989.000 dt_ms=2167.600 stage=football.feedback_audio.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881990.681,
+      "stage": "feedback.ready.begin",
+      "dtMs": 2167.8,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=2989.200 dt_ms=2167.800 stage=feedback.ready.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881990.991,
+      "stage": "feedback.audio_load.begin",
+      "dtMs": 2168.2,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=2989.600 dt_ms=2168.200 stage=feedback.audio_load.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881999.335,
+      "stage": "feedback.audio_load.end",
+      "dtMs": 2176.5,
+      "detail": "duration_ms=8.300 streams=12",
+      "text": "[JDC_PERF] abs_ms=2997.900 dt_ms=2176.500 stage=feedback.audio_load.end detail=duration_ms=8.300 streams=12"
+    },
+    {
+      "wallTimeMs": 1781213881999.532,
+      "stage": "feedback.audio_pools.begin",
+      "dtMs": 2176.8,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=2998.200 dt_ms=2176.800 stage=feedback.audio_pools.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882000.204,
+      "stage": "feedback.audio_pools.end",
+      "dtMs": 2177.5,
+      "detail": "duration_ms=0.800 sfx_pool=14 ui_pool=8",
+      "text": "[JDC_PERF] abs_ms=2998.900 dt_ms=2177.500 stage=feedback.audio_pools.end detail=duration_ms=0.800 sfx_pool=14 ui_pool=8"
+    },
+    {
+      "wallTimeMs": 1781213882000.358,
+      "stage": "feedback.ambience.begin",
+      "dtMs": 2177.6,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=2999.000 dt_ms=2177.600 stage=feedback.ambience.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882232.155,
+      "stage": "feedback.ambience.end",
+      "dtMs": 2409.3,
+      "detail": "duration_ms=231.700 playing=true",
+      "text": "[JDC_PERF] abs_ms=3230.700 dt_ms=2409.300 stage=feedback.ambience.end detail=duration_ms=231.700 playing=true"
+    },
+    {
+      "wallTimeMs": 1781213882232.378,
+      "stage": "feedback.ready.end",
+      "dtMs": 2409.6,
+      "detail": "duration_ms=241.900",
+      "text": "[JDC_PERF] abs_ms=3231.000 dt_ms=2409.600 stage=feedback.ready.end detail=duration_ms=241.900"
+    },
+    {
+      "wallTimeMs": 1781213882232.538,
+      "stage": "football.feedback_audio.end",
+      "dtMs": 2409.8,
+      "detail": "duration_ms=242.200",
+      "text": "[JDC_PERF] abs_ms=3231.200 dt_ms=2409.800 stage=football.feedback_audio.end detail=duration_ms=242.200"
+    },
+    {
+      "wallTimeMs": 1781213882232.656,
+      "stage": "football.hud.begin",
+      "dtMs": 2409.9,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=3231.300 dt_ms=2409.900 stage=football.hud.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882259.34,
+      "stage": "football.hud.end",
+      "dtMs": 2436.5,
+      "detail": "duration_ms=26.600",
+      "text": "[JDC_PERF] abs_ms=3257.900 dt_ms=2436.500 stage=football.hud.end detail=duration_ms=26.600"
+    },
+    {
+      "wallTimeMs": 1781213882259.646,
+      "stage": "football.collect_arcade_nodes.begin",
+      "dtMs": 2436.8,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=3258.200 dt_ms=2436.800 stage=football.collect_arcade_nodes.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882260.001,
+      "stage": "football.collect_arcade_nodes.end",
+      "dtMs": 2437.2,
+      "detail": "duration_ms=0.400 boost=8 jump=2",
+      "text": "[JDC_PERF] abs_ms=3258.600 dt_ms=2437.200 stage=football.collect_arcade_nodes.end detail=duration_ms=0.400 boost=8 jump=2"
+    },
+    {
+      "wallTimeMs": 1781213882260.261,
+      "stage": "football.apply_toon.begin",
+      "dtMs": 2437.4,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=3258.800 dt_ms=2437.400 stage=football.apply_toon.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882261.562,
+      "stage": "football.apply_toon.end",
+      "dtMs": 2438.6,
+      "detail": "duration_ms=1.100",
+      "text": "[JDC_PERF] abs_ms=3260.000 dt_ms=2438.600 stage=football.apply_toon.end detail=duration_ms=1.100"
+    },
+    {
+      "wallTimeMs": 1781213882261.766,
+      "stage": "football.spawn_runtime.end",
+      "dtMs": 2439,
+      "detail": "duration_ms=1467.500",
+      "text": "[JDC_PERF] abs_ms=3260.400 dt_ms=2439.000 stage=football.spawn_runtime.end detail=duration_ms=1467.500"
+    },
+    {
+      "wallTimeMs": 1781213882262.063,
+      "stage": "football.restart_play_initial.begin",
+      "dtMs": 2439.1,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=3260.500 dt_ms=2439.100 stage=football.restart_play_initial.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882262.376,
+      "stage": "event.restart_play",
+      "dtMs": 2439.5,
+      "detail": "after_goal=false",
+      "text": "[JDC_PERF] abs_ms=3260.900 dt_ms=2439.500 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781213882269.172,
+      "stage": "football.restart_play_initial.end",
+      "dtMs": 2446.3,
+      "detail": "duration_ms=7.200",
+      "text": "[JDC_PERF] abs_ms=3267.700 dt_ms=2446.300 stage=football.restart_play_initial.end detail=duration_ms=7.200"
+    },
+    {
+      "wallTimeMs": 1781213882269.722,
+      "stage": "football.ready.end",
+      "dtMs": 2447,
+      "detail": "duration_ms=1580.100",
+      "text": "[JDC_PERF] abs_ms=3268.400 dt_ms=2447.000 stage=football.ready.end detail=duration_ms=1580.100"
+    },
+    {
+      "wallTimeMs": 1781213882306.379,
+      "stage": "event.pause_menu",
+      "dtMs": 2483.6,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=3305.000 dt_ms=2483.600 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213882306.905,
+      "stage": "event.match_start",
+      "dtMs": 2484.1,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=3305.500 dt_ms=2484.100 stage=event.match_start detail="
+    },
+    {
+      "wallTimeMs": 1781213882308.332,
+      "stage": "perf_scenario.start",
+      "dtMs": 2485.6,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=3307.000 dt_ms=2485.600 stage=perf_scenario.start detail="
+    },
+    {
+      "wallTimeMs": 1781213882308.852,
+      "stage": "football.first_frame",
+      "dtMs": 2486.1,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=3307.500 dt_ms=2486.100 stage=football.first_frame detail="
+    },
+    {
+      "wallTimeMs": 1781213895471.153,
+      "stage": "perf_scenario.step",
+      "dtMs": 15648.4,
+      "detail": "action=normal_kick",
+      "text": "[JDC_PERF] abs_ms=16469.800 dt_ms=15648.400 stage=perf_scenario.step detail=action=normal_kick"
+    },
+    {
+      "wallTimeMs": 1781213895471.346,
+      "stage": "event.pause_menu",
+      "dtMs": 15648.5,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=16469.900 dt_ms=15648.500 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213895471.568,
+      "stage": "event.player_kick_request",
+      "dtMs": 15648.8,
+      "detail": "strong=false super=false",
+      "text": "[JDC_PERF] abs_ms=16470.200 dt_ms=15648.800 stage=event.player_kick_request detail=strong=false super=false"
+    },
+    {
+      "wallTimeMs": 1781213895472.095,
+      "stage": "event.kick_vfx",
+      "dtMs": 15649.2,
+      "detail": "strong=false",
+      "text": "[JDC_PERF] abs_ms=16470.600 dt_ms=15649.200 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213907168.491,
+      "stage": "event.bot_kick_request",
+      "dtMs": 27345.6,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=28167.000 dt_ms=27345.600 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781213907168.791,
+      "stage": "event.kick_vfx",
+      "dtMs": 27346,
+      "detail": "strong=false",
+      "text": "[JDC_PERF] abs_ms=28167.400 dt_ms=27346.000 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213908863.378,
+      "stage": "perf_scenario.step",
+      "dtMs": 29040.5,
+      "detail": "action=super_fireball",
+      "text": "[JDC_PERF] abs_ms=29861.900 dt_ms=29040.500 stage=perf_scenario.step detail=action=super_fireball"
+    },
+    {
+      "wallTimeMs": 1781213908863.677,
+      "stage": "event.player_kick_request",
+      "dtMs": 29040.9,
+      "detail": "strong=true super=true",
+      "text": "[JDC_PERF] abs_ms=29862.300 dt_ms=29040.900 stage=event.player_kick_request detail=strong=true super=true"
+    },
+    {
+      "wallTimeMs": 1781213908863.941,
+      "stage": "event.kick_vfx",
+      "dtMs": 29041.2,
+      "detail": "strong=true",
+      "text": "[JDC_PERF] abs_ms=29862.600 dt_ms=29041.200 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781213910397.951,
+      "stage": "event.goal_detected",
+      "dtMs": 30575.1,
+      "detail": "side=north player_scored=true",
+      "text": "[JDC_PERF] abs_ms=31396.500 dt_ms=30575.100 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213910398.393,
+      "stage": "event.goal_vfx",
+      "dtMs": 30575.6,
+      "detail": "player_scored=true",
+      "text": "[JDC_PERF] abs_ms=31397.000 dt_ms=30575.600 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213913724.709,
+      "stage": "event.restart_play",
+      "dtMs": 33901.8,
+      "detail": "after_goal=true",
+      "text": "[JDC_PERF] abs_ms=34723.200 dt_ms=33901.800 stage=event.restart_play detail=after_goal=true"
+    },
+    {
+      "wallTimeMs": 1781213914954.069,
+      "stage": "perf_scenario.step",
+      "dtMs": 35131.1,
+      "detail": "action=jump_pad",
+      "text": "[JDC_PERF] abs_ms=35952.500 dt_ms=35131.100 stage=perf_scenario.step detail=action=jump_pad"
+    },
+    {
+      "wallTimeMs": 1781213917815.809,
+      "stage": "event.bot_kick_request",
+      "dtMs": 37993,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=38814.400 dt_ms=37993.000 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781213917816.189,
+      "stage": "event.kick_vfx",
+      "dtMs": 37993.4,
+      "detail": "strong=false",
+      "text": "[JDC_PERF] abs_ms=38814.800 dt_ms=37993.400 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213918954.765,
+      "stage": "perf_scenario.step",
+      "dtMs": 39131.9,
+      "detail": "action=goal",
+      "text": "[JDC_PERF] abs_ms=39953.300 dt_ms=39131.900 stage=perf_scenario.step detail=action=goal"
+    },
+    {
+      "wallTimeMs": 1781213918954.992,
+      "stage": "event.goal_detected",
+      "dtMs": 39132.2,
+      "detail": "side=north player_scored=true",
+      "text": "[JDC_PERF] abs_ms=39953.600 dt_ms=39132.200 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213918955.234,
+      "stage": "event.goal_vfx",
+      "dtMs": 39132.5,
+      "detail": "player_scored=true",
+      "text": "[JDC_PERF] abs_ms=39953.900 dt_ms=39132.500 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213920850.755,
+      "stage": "event.restart_play",
+      "dtMs": 41027.9,
+      "detail": "after_goal=true",
+      "text": "[JDC_PERF] abs_ms=41849.300 dt_ms=41027.900 stage=event.restart_play detail=after_goal=true"
+    },
+    {
+      "wallTimeMs": 1781213923601.491,
+      "stage": "perf_scenario.step",
+      "dtMs": 43778.7,
+      "detail": "action=pause_open",
+      "text": "[JDC_PERF] abs_ms=44600.100 dt_ms=43778.700 stage=perf_scenario.step detail=action=pause_open"
+    },
+    {
+      "wallTimeMs": 1781213923601.684,
+      "stage": "event.pause_menu",
+      "dtMs": 43778.9,
+      "detail": "open=true",
+      "text": "[JDC_PERF] abs_ms=44600.300 dt_ms=43778.900 stage=event.pause_menu detail=open=true"
+    },
+    {
+      "wallTimeMs": 1781213927601.906,
+      "stage": "perf_scenario.step",
+      "dtMs": 47779,
+      "detail": "action=pause_close",
+      "text": "[JDC_PERF] abs_ms=48600.400 dt_ms=47779.000 stage=perf_scenario.step detail=action=pause_close"
+    },
+    {
+      "wallTimeMs": 1781213927602.194,
+      "stage": "event.pause_menu",
+      "dtMs": 47779.4,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=48600.800 dt_ms=47779.400 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213931602.609,
+      "stage": "perf_scenario.step",
+      "dtMs": 51779.8,
+      "detail": "action=confetti",
+      "text": "[JDC_PERF] abs_ms=52601.200 dt_ms=51779.800 stage=perf_scenario.step detail=action=confetti"
+    },
+    {
+      "wallTimeMs": 1781213931602.824,
+      "stage": "event.arcade_emote",
+      "dtMs": 51780,
+      "detail": "player=true",
+      "text": "[JDC_PERF] abs_ms=52601.400 dt_ms=51780.000 stage=event.arcade_emote detail=player=true"
+    },
+    {
+      "wallTimeMs": 1781213935603.621,
+      "stage": "perf_scenario.step",
+      "dtMs": 55780.7,
+      "detail": "action=result",
+      "text": "[JDC_PERF] abs_ms=56602.100 dt_ms=55780.700 stage=perf_scenario.step detail=action=result"
+    },
+    {
+      "wallTimeMs": 1781213935603.981,
+      "stage": "event.pause_menu",
+      "dtMs": 55781.2,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=56602.600 dt_ms=55781.200 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213935604.315,
+      "stage": "event.goal_detected",
+      "dtMs": 55781.5,
+      "detail": "side=north player_scored=true",
+      "text": "[JDC_PERF] abs_ms=56602.900 dt_ms=55781.500 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213935604.565,
+      "stage": "event.goal_vfx",
+      "dtMs": 55781.8,
+      "detail": "player_scored=true",
+      "text": "[JDC_PERF] abs_ms=56603.200 dt_ms=55781.800 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213935608.345,
+      "stage": "event.result",
+      "dtMs": 55785.5,
+      "detail": "player_won=true",
+      "text": "[JDC_PERF] abs_ms=56606.900 dt_ms=55785.500 stage=event.result detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781213940235.533,
+      "stage": "perf_scenario.step",
+      "dtMs": 60412.7,
+      "detail": "action=restart",
+      "text": "[JDC_PERF] abs_ms=61234.100 dt_ms=60412.700 stage=perf_scenario.step detail=action=restart"
+    },
+    {
+      "wallTimeMs": 1781213940235.813,
+      "stage": "event.pause_menu",
+      "dtMs": 60413.1,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=61234.500 dt_ms=60413.100 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213940236.04,
+      "stage": "event.restart_play",
+      "dtMs": 60413.3,
+      "detail": "after_goal=false",
+      "text": "[JDC_PERF] abs_ms=61234.700 dt_ms=60413.300 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781213944236.139,
+      "stage": "perf_scenario.step",
+      "dtMs": 64413.3,
+      "detail": "action=coast index=9",
+      "text": "[JDC_PERF] abs_ms=65234.700 dt_ms=64413.300 stage=perf_scenario.step detail=action=coast index=9"
+    },
+    {
+      "wallTimeMs": 1781213948236.628,
+      "stage": "perf_scenario.step",
+      "dtMs": 68413.7,
+      "detail": "action=coast index=10",
+      "text": "[JDC_PERF] abs_ms=69235.100 dt_ms=68413.700 stage=perf_scenario.step detail=action=coast index=10"
+    },
+    {
+      "wallTimeMs": 1781213952237.245,
+      "stage": "perf_scenario.step",
+      "dtMs": 72414.3,
+      "detail": "action=coast index=11",
+      "text": "[JDC_PERF] abs_ms=73235.700 dt_ms=72414.300 stage=perf_scenario.step detail=action=coast index=11"
+    },
+    {
+      "wallTimeMs": 1781213956237.813,
+      "stage": "perf_scenario.step",
+      "dtMs": 76415,
+      "detail": "action=normal_kick",
+      "text": "[JDC_PERF] abs_ms=77236.400 dt_ms=76415.000 stage=perf_scenario.step detail=action=normal_kick"
+    },
+    {
+      "wallTimeMs": 1781213956238.049,
+      "stage": "event.pause_menu",
+      "dtMs": 76415.3,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=77236.700 dt_ms=76415.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213956238.283,
+      "stage": "event.player_kick_request",
+      "dtMs": 76415.5,
+      "detail": "strong=false super=false",
+      "text": "[JDC_PERF] abs_ms=77236.900 dt_ms=76415.500 stage=event.player_kick_request detail=strong=false super=false"
+    },
+    {
+      "wallTimeMs": 1781213956238.601,
+      "stage": "event.kick_vfx",
+      "dtMs": 76415.8,
+      "detail": "strong=false",
+      "text": "[JDC_PERF] abs_ms=77237.200 dt_ms=76415.800 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213959280.183,
+      "stage": "event.bot_kick_request",
+      "dtMs": 79457.4,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=80278.800 dt_ms=79457.400 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781213959280.492,
+      "stage": "event.kick_vfx",
+      "dtMs": 79457.7,
+      "detail": "strong=false",
+      "text": "[JDC_PERF] abs_ms=80279.100 dt_ms=79457.700 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213960238.401,
+      "stage": "perf_scenario.step",
+      "dtMs": 80415.6,
+      "detail": "action=super_fireball",
+      "text": "[JDC_PERF] abs_ms=81237.000 dt_ms=80415.600 stage=perf_scenario.step detail=action=super_fireball"
+    },
+    {
+      "wallTimeMs": 1781213960238.698,
+      "stage": "event.player_kick_request",
+      "dtMs": 80415.9,
+      "detail": "strong=true super=true",
+      "text": "[JDC_PERF] abs_ms=81237.300 dt_ms=80415.900 stage=event.player_kick_request detail=strong=true super=true"
+    },
+    {
+      "wallTimeMs": 1781213960238.966,
+      "stage": "event.kick_vfx",
+      "dtMs": 80416.2,
+      "detail": "strong=true",
+      "text": "[JDC_PERF] abs_ms=81237.600 dt_ms=80416.200 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781213961745.666,
+      "stage": "event.goal_detected",
+      "dtMs": 81922.8,
+      "detail": "side=north player_scored=true",
+      "text": "[JDC_PERF] abs_ms=82744.200 dt_ms=81922.800 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213961745.984,
+      "stage": "event.goal_vfx",
+      "dtMs": 81923.2,
+      "detail": "player_scored=true",
+      "text": "[JDC_PERF] abs_ms=82744.600 dt_ms=81923.200 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213963645.957,
+      "stage": "event.restart_play",
+      "dtMs": 83823.1,
+      "detail": "after_goal=true",
+      "text": "[JDC_PERF] abs_ms=84644.500 dt_ms=83823.100 stage=event.restart_play detail=after_goal=true"
+    },
+    {
+      "wallTimeMs": 1781213964882.974,
+      "stage": "perf_scenario.step",
+      "dtMs": 85060.2,
+      "detail": "action=jump_pad",
+      "text": "[JDC_PERF] abs_ms=85881.600 dt_ms=85060.200 stage=perf_scenario.step detail=action=jump_pad"
+    },
+    {
+      "wallTimeMs": 1781213967725.817,
+      "stage": "event.bot_kick_request",
+      "dtMs": 87903,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=88724.400 dt_ms=87903.000 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781213967726.139,
+      "stage": "event.kick_vfx",
+      "dtMs": 87903.4,
+      "detail": "strong=false",
+      "text": "[JDC_PERF] abs_ms=88724.800 dt_ms=87903.400 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213968879.039,
+      "stage": "perf_scenario.step",
+      "dtMs": 89056.2,
+      "detail": "action=goal",
+      "text": "[JDC_PERF] abs_ms=89877.600 dt_ms=89056.200 stage=perf_scenario.step detail=action=goal"
+    },
+    {
+      "wallTimeMs": 1781213968879.261,
+      "stage": "event.goal_detected",
+      "dtMs": 89056.5,
+      "detail": "side=north player_scored=true",
+      "text": "[JDC_PERF] abs_ms=89877.900 dt_ms=89056.500 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213968879.59,
+      "stage": "event.goal_vfx",
+      "dtMs": 89056.8,
+      "detail": "player_scored=true",
+      "text": "[JDC_PERF] abs_ms=89878.200 dt_ms=89056.800 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213970774.623,
+      "stage": "event.restart_play",
+      "dtMs": 90951.7,
+      "detail": "after_goal=true",
+      "text": "[JDC_PERF] abs_ms=91773.100 dt_ms=90951.700 stage=event.restart_play detail=after_goal=true"
+    },
+    {
+      "wallTimeMs": 1781213973518.088,
+      "stage": "perf_scenario.step",
+      "dtMs": 93695.3,
+      "detail": "action=pause_open",
+      "text": "[JDC_PERF] abs_ms=94516.700 dt_ms=93695.300 stage=perf_scenario.step detail=action=pause_open"
+    },
+    {
+      "wallTimeMs": 1781213973518.388,
+      "stage": "event.pause_menu",
+      "dtMs": 93695.6,
+      "detail": "open=true",
+      "text": "[JDC_PERF] abs_ms=94517.000 dt_ms=93695.600 stage=event.pause_menu detail=open=true"
+    },
+    {
+      "wallTimeMs": 1781213977518.79,
+      "stage": "perf_scenario.step",
+      "dtMs": 97695.8,
+      "detail": "action=pause_close",
+      "text": "[JDC_PERF] abs_ms=98517.200 dt_ms=97695.800 stage=perf_scenario.step detail=action=pause_close"
+    },
+    {
+      "wallTimeMs": 1781213977519.199,
+      "stage": "event.pause_menu",
+      "dtMs": 97696.3,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=98517.700 dt_ms=97696.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213981519.23,
+      "stage": "perf_scenario.step",
+      "dtMs": 101696.4,
+      "detail": "action=confetti",
+      "text": "[JDC_PERF] abs_ms=102517.800 dt_ms=101696.400 stage=perf_scenario.step detail=action=confetti"
+    },
+    {
+      "wallTimeMs": 1781213981519.439,
+      "stage": "event.arcade_emote",
+      "dtMs": 101696.7,
+      "detail": "player=true",
+      "text": "[JDC_PERF] abs_ms=102518.100 dt_ms=101696.700 stage=event.arcade_emote detail=player=true"
+    },
+    {
+      "wallTimeMs": 1781213985519.855,
+      "stage": "perf_scenario.step",
+      "dtMs": 105697,
+      "detail": "action=result",
+      "text": "[JDC_PERF] abs_ms=106518.400 dt_ms=105697.000 stage=perf_scenario.step detail=action=result"
+    },
+    {
+      "wallTimeMs": 1781213985520.13,
+      "stage": "event.pause_menu",
+      "dtMs": 105697.3,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=106518.700 dt_ms=105697.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213985520.496,
+      "stage": "event.goal_detected",
+      "dtMs": 105697.7,
+      "detail": "side=north player_scored=true",
+      "text": "[JDC_PERF] abs_ms=106519.100 dt_ms=105697.700 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213985520.797,
+      "stage": "event.goal_vfx",
+      "dtMs": 105698,
+      "detail": "player_scored=true",
+      "text": "[JDC_PERF] abs_ms=106519.400 dt_ms=105698.000 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213985524.624,
+      "stage": "event.result",
+      "dtMs": 105701.9,
+      "detail": "player_won=true",
+      "text": "[JDC_PERF] abs_ms=106523.300 dt_ms=105701.900 stage=event.result detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781213990159.64,
+      "stage": "perf_scenario.step",
+      "dtMs": 110336.8,
+      "detail": "action=restart",
+      "text": "[JDC_PERF] abs_ms=111158.200 dt_ms=110336.800 stage=perf_scenario.step detail=action=restart"
+    },
+    {
+      "wallTimeMs": 1781213990159.971,
+      "stage": "event.pause_menu",
+      "dtMs": 110337.2,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=111158.600 dt_ms=110337.200 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213990160.215,
+      "stage": "event.restart_play",
+      "dtMs": 110337.5,
+      "detail": "after_goal=false",
+      "text": "[JDC_PERF] abs_ms=111158.900 dt_ms=110337.500 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781213994160.47,
+      "stage": "perf_scenario.step",
+      "dtMs": 114337.7,
+      "detail": "action=coast index=9",
+      "text": "[JDC_PERF] abs_ms=115159.100 dt_ms=114337.700 stage=perf_scenario.step detail=action=coast index=9"
+    },
+    {
+      "wallTimeMs": 1781213998160.935,
+      "stage": "perf_scenario.step",
+      "dtMs": 118338.1,
+      "detail": "action=coast index=10",
+      "text": "[JDC_PERF] abs_ms=119159.500 dt_ms=118338.100 stage=perf_scenario.step detail=action=coast index=10"
+    },
+    {
+      "wallTimeMs": 1781214002161.444,
+      "stage": "perf_scenario.step",
+      "dtMs": 122338.7,
+      "detail": "action=coast index=11",
+      "text": "[JDC_PERF] abs_ms=123160.100 dt_ms=122338.700 stage=perf_scenario.step detail=action=coast index=11"
+    },
+    {
+      "wallTimeMs": 1781214006161.983,
+      "stage": "perf_scenario.step",
+      "dtMs": 126339.1,
+      "detail": "action=normal_kick",
+      "text": "[JDC_PERF] abs_ms=127160.500 dt_ms=126339.100 stage=perf_scenario.step detail=action=normal_kick"
+    },
+    {
+      "wallTimeMs": 1781214006162.181,
+      "stage": "event.pause_menu",
+      "dtMs": 126339.4,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=127160.800 dt_ms=126339.400 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781214006162.382,
+      "stage": "event.player_kick_request",
+      "dtMs": 126339.6,
+      "detail": "strong=false super=false",
+      "text": "[JDC_PERF] abs_ms=127161.000 dt_ms=126339.600 stage=event.player_kick_request detail=strong=false super=false"
+    },
+    {
+      "wallTimeMs": 1781214006162.669,
+      "stage": "event.kick_vfx",
+      "dtMs": 126339.9,
+      "detail": "strong=false",
+      "text": "[JDC_PERF] abs_ms=127161.300 dt_ms=126339.900 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781214009217.947,
+      "stage": "event.bot_kick_request",
+      "dtMs": 129395.1,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=130216.500 dt_ms=129395.100 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781214009218.348,
+      "stage": "event.kick_vfx",
+      "dtMs": 129395.5,
+      "detail": "strong=false",
+      "text": "[JDC_PERF] abs_ms=130216.900 dt_ms=129395.500 stage=event.kick_vfx detail=strong=false"
+    }
+  ],
+  "consoleLines": [
+    {
+      "wallTimeMs": 1781213879048.383,
+      "type": "log",
+      "text": "Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org"
+    },
+    {
+      "wallTimeMs": 1781213879541.229,
+      "type": "log",
+      "text": "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL"
+    },
+    {
+      "wallTimeMs": 1781213879708.479,
+      "type": "log",
+      "text": "Build configuration: Emscripten 4.0.20, single-threaded, no GDExtension support."
+    },
+    {
+      "wallTimeMs": 1781213879819.899,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781213879820.114,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879820.279,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781213879820.39,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879820.553,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781213879820.74,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879820.969,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781213879821.115,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879821.296,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781213879821.457,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879821.6,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781213879821.745,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879822.977,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=821.500 dt_ms=0.100 stage=session.enabled detail=label=menu display=web web=true"
+    },
+    {
+      "wallTimeMs": 1781213879823.246,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=821.900 dt_ms=0.500 stage=menu.ready.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213879823.548,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781213879823.729,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879823.904,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781213879824.052,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879824.236,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781213879824.431,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879824.64,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781213879824.794,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879824.914,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781213879825.017,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879825.122,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781213879825.224,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213879843.143,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=841.600 dt_ms=20.200 stage=avatar.total.begin detail=node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213879843.624,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=842.100 dt_ms=20.700 stage=avatar.instantiate_model.begin detail=node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213880259.513,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1258.000 dt_ms=436.600 stage=avatar.region_mask.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880298.266,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1296.700 dt_ms=475.300 stage=avatar.region_mask.end detail=duration_ms=38.700 node=PreviewAvatar vertices=7281 surfaces=1"
+    },
+    {
+      "wallTimeMs": 1781213880299.094,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1297.600 dt_ms=476.200 stage=avatar.instantiate_model.end detail=duration_ms=455.500 node=PreviewAvatar meshes=3 fallback="
+    },
+    {
+      "wallTimeMs": 1781213880301.301,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1299.900 dt_ms=478.500 stage=avatar.animations.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880344.245,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1342.600 dt_ms=521.200 stage=avatar.animations.end detail=duration_ms=42.700 node=PreviewAvatar clips=47"
+    },
+    {
+      "wallTimeMs": 1781213880344.906,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1343.400 dt_ms=522.000 stage=avatar.animation_tree.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880348.327,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1346.700 dt_ms=525.300 stage=avatar.animation_tree.end detail=duration_ms=3.200 node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880348.681,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1347.300 dt_ms=525.900 stage=avatar.persistent_vfx.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880359.15,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1357.600 dt_ms=536.200 stage=avatar.persistent_vfx.end detail=duration_ms=10.400 node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781213880359.862,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1358.300 dt_ms=536.900 stage=avatar.total.end detail=duration_ms=516.800 node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213880575.281,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1573.800 dt_ms=752.400 stage=menu.ready.end detail="
+    },
+    {
+      "wallTimeMs": 1781213880585.174,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1583.800 dt_ms=762.400 stage=menu.load_mode.begin detail=scene=res://modes/football/football.tscn"
+    },
+    {
+      "wallTimeMs": 1781213880590.395,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1588.900 dt_ms=767.500 stage=menu.load_mode.fade_wait.end detail=duration_ms=5.200 scene=res://modes/football/football.tscn"
+    },
+    {
+      "wallTimeMs": 1781213880590.624,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1589.300 dt_ms=767.900 stage=menu.change_scene.begin detail=scene=res://modes/football/football.tscn"
+    },
+    {
+      "wallTimeMs": 1781213880689.818,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1688.300 dt_ms=866.900 stage=football.ready.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880690.027,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1688.600 dt_ms=867.200 stage=football.configure_world.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880690.164,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781213880690.274,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880690.361,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781213880690.437,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880690.513,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781213880690.587,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880690.662,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781213880690.735,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880690.817,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781213880690.889,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880690.966,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781213880691.038,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880691.15,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1689.800 dt_ms=868.400 stage=football.world_environment.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880693.746,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1692.300 dt_ms=870.900 stage=football.world_environment.end detail=duration_ms=2.500"
+    },
+    {
+      "wallTimeMs": 1781213880693.943,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1692.600 dt_ms=871.200 stage=football.key_light.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880694.139,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1692.800 dt_ms=871.400 stage=football.key_light.end detail=duration_ms=0.200"
+    },
+    {
+      "wallTimeMs": 1781213880694.298,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1692.900 dt_ms=871.500 stage=football.field_builder.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880694.456,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781213880694.567,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880694.673,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781213880694.768,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880694.872,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781213880694.985,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880695.105,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781213880695.205,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880696.249,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781213880696.405,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880696.536,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781213880696.64,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781213880696.82,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1695.500 dt_ms=874.100 stage=field_builder.total.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880697.252,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1695.900 dt_ms=874.500 stage=field_builder.pitch.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880700.972,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1699.500 dt_ms=878.100 stage=field_builder.pitch.end detail=duration_ms=3.600"
+    },
+    {
+      "wallTimeMs": 1781213880701.184,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1699.900 dt_ms=878.500 stage=field_builder.goal_shells.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880709.068,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1707.600 dt_ms=886.200 stage=field_builder.goal_shells.end detail=duration_ms=7.700"
+    },
+    {
+      "wallTimeMs": 1781213880709.292,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1707.900 dt_ms=886.500 stage=field_builder.arena_glass.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880715.116,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1713.700 dt_ms=892.300 stage=field_builder.arena_glass.end detail=duration_ms=5.700"
+    },
+    {
+      "wallTimeMs": 1781213880715.319,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1714.000 dt_ms=892.600 stage=field_builder.stadium_shell.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880715.502,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1714.100 dt_ms=892.700 stage=field_builder.stands.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880769.979,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1768.500 dt_ms=947.100 stage=field_builder.stands.end detail=duration_ms=54.400"
+    },
+    {
+      "wallTimeMs": 1781213880770.219,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1768.900 dt_ms=947.500 stage=field_builder.banners.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880777.911,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1776.400 dt_ms=955.000 stage=field_builder.banners.end detail=duration_ms=7.500"
+    },
+    {
+      "wallTimeMs": 1781213880778.179,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1776.800 dt_ms=955.400 stage=field_builder.scoreboards.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880786.743,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1785.300 dt_ms=963.900 stage=field_builder.scoreboards.end detail=duration_ms=8.400"
+    },
+    {
+      "wallTimeMs": 1781213880787.021,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1785.600 dt_ms=964.200 stage=field_builder.skyline_lights.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880790.785,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1789.300 dt_ms=967.900 stage=field_builder.skyline_lights.end detail=duration_ms=3.700"
+    },
+    {
+      "wallTimeMs": 1781213880791.062,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1789.700 dt_ms=968.300 stage=field_builder.stadium_shell.end detail=duration_ms=75.700"
+    },
+    {
+      "wallTimeMs": 1781213880791.203,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1789.800 dt_ms=968.400 stage=field_builder.arcade_field.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880793.457,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1791.800 dt_ms=970.400 stage=field_builder.arcade_field.end detail=duration_ms=2.000"
+    },
+    {
+      "wallTimeMs": 1781213880793.679,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1792.300 dt_ms=970.900 stage=field_builder.total.end detail=duration_ms=96.800"
+    },
+    {
+      "wallTimeMs": 1781213880793.803,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1792.500 dt_ms=971.100 stage=football.field_builder.end detail=duration_ms=99.600"
+    },
+    {
+      "wallTimeMs": 1781213880793.949,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1792.600 dt_ms=971.200 stage=football.configure_world.end detail=duration_ms=104.000"
+    },
+    {
+      "wallTimeMs": 1781213880794.296,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1792.900 dt_ms=971.500 stage=football.spawn_runtime.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880794.441,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1793.100 dt_ms=971.700 stage=football.player_controller.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880795.38,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1794.000 dt_ms=972.600 stage=football.player_controller.end detail=duration_ms=0.900"
+    },
+    {
+      "wallTimeMs": 1781213880795.559,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1794.200 dt_ms=972.800 stage=football.player_avatar.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213880795.767,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1794.400 dt_ms=973.000 stage=avatar.total.begin detail=node=PlayerAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213880795.93,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1794.600 dt_ms=973.200 stage=avatar.instantiate_model.begin detail=node=PlayerAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213881166.205,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2164.700 dt_ms=1343.300 stage=avatar.region_mask.begin detail=node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881187.31,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2185.800 dt_ms=1364.400 stage=avatar.region_mask.end detail=duration_ms=21.100 node=PlayerAvatar vertices=7281 surfaces=1"
+    },
+    {
+      "wallTimeMs": 1781213881194.654,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2193.200 dt_ms=1371.800 stage=avatar.instantiate_model.end detail=duration_ms=398.600 node=PlayerAvatar meshes=3 fallback="
+    },
+    {
+      "wallTimeMs": 1781213881195.025,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2193.600 dt_ms=1372.200 stage=avatar.animations.begin detail=node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881225.333,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2223.900 dt_ms=1402.500 stage=avatar.animations.end detail=duration_ms=30.300 node=PlayerAvatar clips=47"
+    },
+    {
+      "wallTimeMs": 1781213881225.682,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2224.200 dt_ms=1402.800 stage=avatar.animation_tree.begin detail=node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881226.681,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2225.200 dt_ms=1403.800 stage=avatar.animation_tree.end detail=duration_ms=1.000 node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881226.939,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2225.500 dt_ms=1404.100 stage=avatar.persistent_vfx.begin detail=node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881230.244,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2228.800 dt_ms=1407.400 stage=avatar.persistent_vfx.end detail=duration_ms=3.300 node=PlayerAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881230.468,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2229.100 dt_ms=1407.700 stage=avatar.total.end detail=duration_ms=434.700 node=PlayerAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781213881398.329,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2396.900 dt_ms=1575.500 stage=football.player_avatar.end detail=duration_ms=602.700"
+    },
+    {
+      "wallTimeMs": 1781213881398.524,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2397.200 dt_ms=1575.800 stage=football.ball.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881400.738,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2399.400 dt_ms=1578.000 stage=football.ball.end detail=duration_ms=2.200"
+    },
+    {
+      "wallTimeMs": 1781213881400.915,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2399.500 dt_ms=1578.100 stage=football.camera.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881401.616,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2400.300 dt_ms=1578.900 stage=football.camera.end detail=duration_ms=0.800"
+    },
+    {
+      "wallTimeMs": 1781213881401.812,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2400.400 dt_ms=1579.000 stage=football.bot_controller.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881402.321,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2401.000 dt_ms=1579.600 stage=football.bot_controller.end detail=duration_ms=0.500"
+    },
+    {
+      "wallTimeMs": 1781213881402.446,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2401.100 dt_ms=1579.700 stage=football.bot_avatar.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881402.606,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2401.200 dt_ms=1579.800 stage=avatar.total.begin detail=node=BotAvatar variant=female"
+    },
+    {
+      "wallTimeMs": 1781213881402.784,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2401.400 dt_ms=1580.000 stage=avatar.instantiate_model.begin detail=node=BotAvatar variant=female"
+    },
+    {
+      "wallTimeMs": 1781213881772.585,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2771.100 dt_ms=1949.700 stage=avatar.region_mask.begin detail=node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881793.546,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2792.100 dt_ms=1970.700 stage=avatar.region_mask.end detail=duration_ms=21.000 node=BotAvatar vertices=7376 surfaces=1"
+    },
+    {
+      "wallTimeMs": 1781213881793.857,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2792.500 dt_ms=1971.100 stage=avatar.instantiate_model.end detail=duration_ms=391.100 node=BotAvatar meshes=3 fallback="
+    },
+    {
+      "wallTimeMs": 1781213881794.087,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2792.700 dt_ms=1971.300 stage=avatar.animations.begin detail=node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881822.262,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2820.800 dt_ms=1999.400 stage=avatar.animations.end detail=duration_ms=28.100 node=BotAvatar clips=47"
+    },
+    {
+      "wallTimeMs": 1781213881822.49,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2821.100 dt_ms=1999.700 stage=avatar.animation_tree.begin detail=node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881823.258,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2821.800 dt_ms=2000.400 stage=avatar.animation_tree.end detail=duration_ms=0.700 node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881823.433,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2822.100 dt_ms=2000.700 stage=avatar.persistent_vfx.begin detail=node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881823.902,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2822.500 dt_ms=2001.100 stage=avatar.persistent_vfx.end detail=duration_ms=0.400 node=BotAvatar"
+    },
+    {
+      "wallTimeMs": 1781213881824.163,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2822.700 dt_ms=2001.300 stage=avatar.total.end detail=duration_ms=421.500 node=BotAvatar variant=female"
+    },
+    {
+      "wallTimeMs": 1781213881990.162,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2988.800 dt_ms=2167.400 stage=football.bot_avatar.end detail=duration_ms=587.700"
+    },
+    {
+      "wallTimeMs": 1781213881990.372,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2989.000 dt_ms=2167.600 stage=football.feedback_audio.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881990.681,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2989.200 dt_ms=2167.800 stage=feedback.ready.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881990.991,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2989.600 dt_ms=2168.200 stage=feedback.audio_load.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213881999.335,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2997.900 dt_ms=2176.500 stage=feedback.audio_load.end detail=duration_ms=8.300 streams=12"
+    },
+    {
+      "wallTimeMs": 1781213881999.532,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2998.200 dt_ms=2176.800 stage=feedback.audio_pools.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882000.204,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2998.900 dt_ms=2177.500 stage=feedback.audio_pools.end detail=duration_ms=0.800 sfx_pool=14 ui_pool=8"
+    },
+    {
+      "wallTimeMs": 1781213882000.358,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2999.000 dt_ms=2177.600 stage=feedback.ambience.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882232.155,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3230.700 dt_ms=2409.300 stage=feedback.ambience.end detail=duration_ms=231.700 playing=true"
+    },
+    {
+      "wallTimeMs": 1781213882232.378,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3231.000 dt_ms=2409.600 stage=feedback.ready.end detail=duration_ms=241.900"
+    },
+    {
+      "wallTimeMs": 1781213882232.538,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3231.200 dt_ms=2409.800 stage=football.feedback_audio.end detail=duration_ms=242.200"
+    },
+    {
+      "wallTimeMs": 1781213882232.656,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3231.300 dt_ms=2409.900 stage=football.hud.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882259.34,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3257.900 dt_ms=2436.500 stage=football.hud.end detail=duration_ms=26.600"
+    },
+    {
+      "wallTimeMs": 1781213882259.646,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3258.200 dt_ms=2436.800 stage=football.collect_arcade_nodes.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882260.001,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3258.600 dt_ms=2437.200 stage=football.collect_arcade_nodes.end detail=duration_ms=0.400 boost=8 jump=2"
+    },
+    {
+      "wallTimeMs": 1781213882260.261,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3258.800 dt_ms=2437.400 stage=football.apply_toon.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882261.562,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3260.000 dt_ms=2438.600 stage=football.apply_toon.end detail=duration_ms=1.100"
+    },
+    {
+      "wallTimeMs": 1781213882261.766,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3260.400 dt_ms=2439.000 stage=football.spawn_runtime.end detail=duration_ms=1467.500"
+    },
+    {
+      "wallTimeMs": 1781213882262.063,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3260.500 dt_ms=2439.100 stage=football.restart_play_initial.begin detail="
+    },
+    {
+      "wallTimeMs": 1781213882262.376,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3260.900 dt_ms=2439.500 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781213882269.172,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3267.700 dt_ms=2446.300 stage=football.restart_play_initial.end detail=duration_ms=7.200"
+    },
+    {
+      "wallTimeMs": 1781213882269.722,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3268.400 dt_ms=2447.000 stage=football.ready.end detail=duration_ms=1580.100"
+    },
+    {
+      "wallTimeMs": 1781213882306.379,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3305.000 dt_ms=2483.600 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213882306.905,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3305.500 dt_ms=2484.100 stage=event.match_start detail="
+    },
+    {
+      "wallTimeMs": 1781213882308.332,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3307.000 dt_ms=2485.600 stage=perf_scenario.start detail="
+    },
+    {
+      "wallTimeMs": 1781213882308.729,
+      "type": "log",
+      "text": "[jdc_capture] scene=play camera=Track04ECaptureCamera fov=50.0 pos=(29.0, 13.2, 34.0) target=(0.0, 1.9, 1.5)"
+    },
+    {
+      "wallTimeMs": 1781213882308.852,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=3307.500 dt_ms=2486.100 stage=football.first_frame detail="
+    },
+    {
+      "wallTimeMs": 1781213895471.153,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=16469.800 dt_ms=15648.400 stage=perf_scenario.step detail=action=normal_kick"
+    },
+    {
+      "wallTimeMs": 1781213895471.346,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=16469.900 dt_ms=15648.500 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213895471.568,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=16470.200 dt_ms=15648.800 stage=event.player_kick_request detail=strong=false super=false"
+    },
+    {
+      "wallTimeMs": 1781213895472.095,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=16470.600 dt_ms=15649.200 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213902110.824,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213902110.998,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213902111.044,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213902111.079,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213904645.181,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213905160.385,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213905693.086,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213906235.961,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213906772.132,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213907139.749,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213907168.491,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=28167.000 dt_ms=27345.600 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781213907168.791,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=28167.400 dt_ms=27346.000 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213908205.647,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213908664.944,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213908863.378,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=29861.900 dt_ms=29040.500 stage=perf_scenario.step detail=action=super_fireball"
+    },
+    {
+      "wallTimeMs": 1781213908863.677,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=29862.300 dt_ms=29040.900 stage=event.player_kick_request detail=strong=true super=true"
+    },
+    {
+      "wallTimeMs": 1781213908863.941,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=29862.600 dt_ms=29041.200 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781213909028.791,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213910344.105,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213910397.951,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=31396.500 dt_ms=30575.100 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213910398.393,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=31397.000 dt_ms=30575.600 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213911968.898,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213911969.017,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213911995.886,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213912409.577,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213912794.009,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213913009.149,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213913175.105,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213913341.918,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213913508.67,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213913695.88,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213913724.709,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=34723.200 dt_ms=33901.800 stage=event.restart_play detail=after_goal=true"
+    },
+    {
+      "wallTimeMs": 1781213913857.205,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213913865.389,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213913890.335,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213914904.709,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213914954.069,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=35952.500 dt_ms=35131.100 stage=perf_scenario.step detail=action=jump_pad"
+    },
+    {
+      "wallTimeMs": 1781213914962.375,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213915904.988,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213916907.499,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213916907.632,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213917656.372,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213917815.809,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=38814.400 dt_ms=37993.000 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781213917816.189,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=38814.800 dt_ms=37993.400 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213917823.325,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213918384.29,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213918406.131,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213918954.765,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=39953.300 dt_ms=39131.900 stage=perf_scenario.step detail=action=goal"
+    },
+    {
+      "wallTimeMs": 1781213918954.992,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=39953.600 dt_ms=39132.200 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213918955.234,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=39953.900 dt_ms=39132.500 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213918968.971,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213918969.163,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213920850.755,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=41849.300 dt_ms=41027.900 stage=event.restart_play detail=after_goal=true"
+    },
+    {
+      "wallTimeMs": 1781213920858.574,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213920877.412,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213921023.551,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213922024.221,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213923024.017,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213923601.491,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=44600.100 dt_ms=43778.700 stage=perf_scenario.step detail=action=pause_open"
+    },
+    {
+      "wallTimeMs": 1781213923601.684,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=44600.300 dt_ms=43778.900 stage=event.pause_menu detail=open=true"
+    },
+    {
+      "wallTimeMs": 1781213927601.906,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=48600.400 dt_ms=47779.000 stage=perf_scenario.step detail=action=pause_close"
+    },
+    {
+      "wallTimeMs": 1781213927602.194,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=48600.800 dt_ms=47779.400 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213928026.262,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213928026.4,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213931602.609,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=52601.200 dt_ms=51779.800 stage=perf_scenario.step detail=action=confetti"
+    },
+    {
+      "wallTimeMs": 1781213931602.824,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=52601.400 dt_ms=51780.000 stage=event.arcade_emote detail=player=true"
+    },
+    {
+      "wallTimeMs": 1781213935603.621,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=56602.100 dt_ms=55780.700 stage=perf_scenario.step detail=action=result"
+    },
+    {
+      "wallTimeMs": 1781213935603.981,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=56602.600 dt_ms=55781.200 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213935604.315,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=56602.900 dt_ms=55781.500 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213935604.565,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=56603.200 dt_ms=55781.800 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213935608.345,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=56606.900 dt_ms=55785.500 stage=event.result detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781213935660.287,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213935660.411,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213935660.451,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213940235.533,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=61234.100 dt_ms=60412.700 stage=perf_scenario.step detail=action=restart"
+    },
+    {
+      "wallTimeMs": 1781213940235.813,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=61234.500 dt_ms=60413.100 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213940236.04,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=61234.700 dt_ms=60413.300 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781213940243.823,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213944236.139,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=65234.700 dt_ms=64413.300 stage=perf_scenario.step detail=action=coast index=9"
+    },
+    {
+      "wallTimeMs": 1781213948236.628,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=69235.100 dt_ms=68413.700 stage=perf_scenario.step detail=action=coast index=10"
+    },
+    {
+      "wallTimeMs": 1781213952237.245,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=73235.700 dt_ms=72414.300 stage=perf_scenario.step detail=action=coast index=11"
+    },
+    {
+      "wallTimeMs": 1781213956237.813,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=77236.400 dt_ms=76415.000 stage=perf_scenario.step detail=action=normal_kick"
+    },
+    {
+      "wallTimeMs": 1781213956238.049,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=77236.700 dt_ms=76415.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213956238.283,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=77236.900 dt_ms=76415.500 stage=event.player_kick_request detail=strong=false super=false"
+    },
+    {
+      "wallTimeMs": 1781213956238.601,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=77237.200 dt_ms=76415.800 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213956246.369,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213956764.826,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213957301.189,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213957834.553,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213958369.598,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213958904.001,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213959251.169,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213959280.183,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=80278.800 dt_ms=79457.400 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781213959280.492,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=80279.100 dt_ms=79457.700 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213959287.421,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213959918.313,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213960238.401,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=81237.000 dt_ms=80415.600 stage=perf_scenario.step detail=action=super_fireball"
+    },
+    {
+      "wallTimeMs": 1781213960238.698,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=81237.300 dt_ms=80415.900 stage=event.player_kick_request detail=strong=true super=true"
+    },
+    {
+      "wallTimeMs": 1781213960238.966,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=81237.600 dt_ms=80416.200 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781213960246.484,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213961682.799,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213961745.666,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=82744.200 dt_ms=81922.800 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213961745.984,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=82744.600 dt_ms=81923.200 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213961757.581,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213961757.712,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213961917.306,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213962320.396,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213962722.8,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213962938.452,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213963104.969,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213963271.453,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213963438.951,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213963618.276,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213963645.957,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=84644.500 dt_ms=83823.100 stage=event.restart_play detail=after_goal=true"
+    },
+    {
+      "wallTimeMs": 1781213963653.654,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213963667.075,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213963819.049,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213964820.224,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213964882.974,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=85881.600 dt_ms=85060.200 stage=perf_scenario.step detail=action=jump_pad"
+    },
+    {
+      "wallTimeMs": 1781213964890.147,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213965814.845,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213966816.146,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213966816.28,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213967566.023,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213967725.817,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=88724.400 dt_ms=87903.000 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781213967726.139,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=88724.800 dt_ms=87903.400 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781213967733.181,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213968301.793,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213968316.122,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213968879.039,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=89877.600 dt_ms=89056.200 stage=perf_scenario.step detail=action=goal"
+    },
+    {
+      "wallTimeMs": 1781213968879.261,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=89877.900 dt_ms=89056.500 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213968879.59,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=89878.200 dt_ms=89056.800 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213968890.559,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213968890.686,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213970774.623,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=91773.100 dt_ms=90951.700 stage=event.restart_play detail=after_goal=true"
+    },
+    {
+      "wallTimeMs": 1781213970781.671,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213970801.688,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213970947.311,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213971947.52,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213972948.009,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213973518.088,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=94516.700 dt_ms=93695.300 stage=perf_scenario.step detail=action=pause_open"
+    },
+    {
+      "wallTimeMs": 1781213973518.388,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=94517.000 dt_ms=93695.600 stage=event.pause_menu detail=open=true"
+    },
+    {
+      "wallTimeMs": 1781213977518.79,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=98517.200 dt_ms=97695.800 stage=perf_scenario.step detail=action=pause_close"
+    },
+    {
+      "wallTimeMs": 1781213977519.199,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=98517.700 dt_ms=97696.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213977950.483,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213977950.637,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213977950.712,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213978399.804,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213978851.68,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213979302.799,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213979754.127,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213980198.853,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213980651.427,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213981101.897,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213981519.23,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=102517.800 dt_ms=101696.400 stage=perf_scenario.step detail=action=confetti"
+    },
+    {
+      "wallTimeMs": 1781213981519.439,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=102518.100 dt_ms=101696.700 stage=event.arcade_emote detail=player=true"
+    },
+    {
+      "wallTimeMs": 1781213981553.386,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213982004.604,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213982448.885,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213982901.831,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213983352.221,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213983803.836,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213984254.979,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213984699.41,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213985150.922,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213985519.855,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=106518.400 dt_ms=105697.000 stage=perf_scenario.step detail=action=result"
+    },
+    {
+      "wallTimeMs": 1781213985520.13,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=106518.700 dt_ms=105697.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213985520.496,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=106519.100 dt_ms=105697.700 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213985520.797,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=106519.400 dt_ms=105698.000 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781213985524.624,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=106523.300 dt_ms=105701.900 stage=event.result detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781213985532.569,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213985532.718,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213985532.761,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213990159.64,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=111158.200 dt_ms=110336.800 stage=perf_scenario.step detail=action=restart"
+    },
+    {
+      "wallTimeMs": 1781213990159.971,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=111158.600 dt_ms=110337.200 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781213990160.215,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=111158.900 dt_ms=110337.500 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781213990167.303,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781213994160.47,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=115159.100 dt_ms=114337.700 stage=perf_scenario.step detail=action=coast index=9"
+    },
+    {
+      "wallTimeMs": 1781213998160.935,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=119159.500 dt_ms=118338.100 stage=perf_scenario.step detail=action=coast index=10"
+    },
+    {
+      "wallTimeMs": 1781214002161.444,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=123160.100 dt_ms=122338.700 stage=perf_scenario.step detail=action=coast index=11"
+    },
+    {
+      "wallTimeMs": 1781214006161.983,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=127160.500 dt_ms=126339.100 stage=perf_scenario.step detail=action=normal_kick"
+    },
+    {
+      "wallTimeMs": 1781214006162.181,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=127160.800 dt_ms=126339.400 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781214006162.382,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=127161.000 dt_ms=126339.600 stage=event.player_kick_request detail=strong=false super=false"
+    },
+    {
+      "wallTimeMs": 1781214006162.669,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=127161.300 dt_ms=126339.900 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781214006169.753,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781214006695.851,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781214007230.237,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781214007765.66,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781214008300.144,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781214008842.271,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781214009189.173,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    },
+    {
+      "wallTimeMs": 1781214009217.947,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=130216.500 dt_ms=129395.100 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781214009218.348,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=130216.900 dt_ms=129395.500 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781214009225.749,
+      "type": "error",
+      "text": "Error: Failed to create PositionWorklet.\n    at http://127.0.0.1:8066/index.js:1:153669"
+    }
+  ],
+  "pageErrors": [
+    {
+      "exceptionId": 1,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+        "objectId": "-8986559984632578102.2.5",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "4"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "WrongDocumentError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "The root document of this element is not valid for pointer lock."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    },
+    {
+      "exceptionId": 2,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "AbortError: Unable to load a worklet's module.",
+        "objectId": "-8986559984632578102.2.6",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "AbortError: Unable to load a worklet's module.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "20"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "AbortError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "Unable to load a worklet's module."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    },
+    {
+      "exceptionId": 3,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+        "objectId": "-8986559984632578102.2.7",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "4"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "WrongDocumentError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "The root document of this element is not valid for pointer lock."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    },
+    {
+      "exceptionId": 4,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+        "objectId": "-8986559984632578102.2.47",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "4"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "WrongDocumentError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "The root document of this element is not valid for pointer lock."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    },
+    {
+      "exceptionId": 5,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+        "objectId": "-8986559984632578102.2.53",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "4"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "WrongDocumentError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "The root document of this element is not valid for pointer lock."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    },
+    {
+      "exceptionId": 6,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+        "objectId": "-8986559984632578102.2.55",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "4"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "WrongDocumentError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "The root document of this element is not valid for pointer lock."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    },
+    {
+      "exceptionId": 7,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+        "objectId": "-8986559984632578102.2.57",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "4"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "WrongDocumentError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "The root document of this element is not valid for pointer lock."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    },
+    {
+      "exceptionId": 8,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+        "objectId": "-8986559984632578102.2.97",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "4"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "WrongDocumentError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "The root document of this element is not valid for pointer lock."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    },
+    {
+      "exceptionId": 9,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+        "objectId": "-8986559984632578102.2.120",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "4"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "WrongDocumentError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "The root document of this element is not valid for pointer lock."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    },
+    {
+      "exceptionId": 10,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+        "objectId": "-8986559984632578102.2.122",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "4"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "WrongDocumentError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "The root document of this element is not valid for pointer lock."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    },
+    {
+      "exceptionId": 11,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 0,
+      "scriptId": "1",
+      "url": "http://127.0.0.1:8066/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+        "objectId": "-8986559984632578102.2.124",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "WrongDocumentError: The root document of this element is not valid for pointer lock.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "4"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "WrongDocumentError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "The root document of this element is not valid for pointer lock."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    }
+  ],
+  "screenshotPath": "D:\\Estudio-worktrees\\jogodacopa-track04f\\Projetos\\JogoDaCopa\\docs\\playtest-reports\\track-04f-data\\baseline-web-headful-hitches-120s.png"
+}
