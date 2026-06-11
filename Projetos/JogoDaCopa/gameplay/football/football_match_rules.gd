@@ -2,6 +2,13 @@ extends RefCounted
 
 const MATCH_MODE_GOALS: StringName = &"goals"
 const MATCH_MODE_TIMER: StringName = &"timer"
+const TEAM_PLAYER: StringName = &"player"
+const TEAM_BOT: StringName = &"bot"
+const TEAM_NONE: StringName = &"none"
+const PERIOD_FIRST_HALF: StringName = &"first_half"
+const PERIOD_SECOND_HALF: StringName = &"second_half"
+const PERIOD_GOLDEN_GOAL: StringName = &"golden_goal"
+const PERIOD_REGULAR: StringName = &"regular"
 
 static func can_reach_ball(
 	origin: Vector3,
@@ -220,8 +227,139 @@ static func resolve_timer_state(player_score: int, bot_score: int, time_remainin
 		"event": &"timer_end"
 	}
 
+static func build_empty_match_stats() -> Dictionary:
+	return {
+		"player_goals_first_half": 0,
+		"bot_goals_first_half": 0,
+		"player_goals_second_half": 0,
+		"bot_goals_second_half": 0,
+		"player_goals_golden_goal": 0,
+		"bot_goals_golden_goal": 0,
+		"player_goals_regular": 0,
+		"bot_goals_regular": 0,
+		"player_goals_total": 0,
+		"bot_goals_total": 0,
+		"player_shots": 0,
+		"bot_shots": 0,
+		"player_supers": 0,
+		"bot_supers": 0,
+		"player_touches": 0,
+		"bot_touches": 0,
+		"current_touch_team": TEAM_NONE,
+		"current_touch_streak": 0,
+		"longest_touch_team": TEAM_NONE,
+		"longest_touch_streak": 0
+	}
+
+static func get_match_period(match_mode: StringName, time_remaining: float, match_duration: float, golden_goal_active: bool) -> StringName:
+	if golden_goal_active:
+		return PERIOD_GOLDEN_GOAL
+	if match_mode != MATCH_MODE_TIMER:
+		return PERIOD_REGULAR
+	var safe_duration := maxf(1.0, match_duration)
+	var elapsed := clampf(safe_duration - maxf(0.0, time_remaining), 0.0, safe_duration)
+	return PERIOD_FIRST_HALF if elapsed < safe_duration * 0.5 else PERIOD_SECOND_HALF
+
+static func record_goal_stat(
+	stats: Dictionary,
+	player_scored: bool,
+	goal_value: int,
+	match_mode: StringName,
+	time_remaining: float,
+	match_duration: float,
+	golden_goal_active: bool
+) -> Dictionary:
+	var next_stats := _duplicate_match_stats(stats)
+	var prefix := "player" if player_scored else "bot"
+	var period := get_match_period(match_mode, time_remaining, match_duration, golden_goal_active)
+	var scored_value := maxi(1, goal_value)
+	var period_key := "%s_goals_%s" % [prefix, str(period)]
+	var total_key := "%s_goals_total" % prefix
+	next_stats[period_key] = int(next_stats.get(period_key, 0)) + scored_value
+	next_stats[total_key] = int(next_stats.get(total_key, 0)) + scored_value
+	return next_stats
+
+static func record_shot_stat(stats: Dictionary, team: StringName, super_used: bool) -> Dictionary:
+	var normalized_team := _normalize_team(team)
+	if normalized_team == TEAM_NONE:
+		return _duplicate_match_stats(stats)
+	var next_stats := _duplicate_match_stats(stats)
+	var prefix := _team_prefix(normalized_team)
+	next_stats["%s_shots" % prefix] = int(next_stats.get("%s_shots" % prefix, 0)) + 1
+	if super_used:
+		next_stats["%s_supers" % prefix] = int(next_stats.get("%s_supers" % prefix, 0)) + 1
+	return next_stats
+
+static func record_touch_stat(stats: Dictionary, team: StringName) -> Dictionary:
+	var normalized_team := _normalize_team(team)
+	if normalized_team == TEAM_NONE:
+		return _duplicate_match_stats(stats)
+	var next_stats := _duplicate_match_stats(stats)
+	var prefix := _team_prefix(normalized_team)
+	next_stats["%s_touches" % prefix] = int(next_stats.get("%s_touches" % prefix, 0)) + 1
+	var current_team := StringName(str(next_stats.get("current_touch_team", TEAM_NONE)))
+	var next_streak := 1
+	if current_team == normalized_team:
+		next_streak = int(next_stats.get("current_touch_streak", 0)) + 1
+	next_stats["current_touch_team"] = normalized_team
+	next_stats["current_touch_streak"] = next_streak
+	if next_streak > int(next_stats.get("longest_touch_streak", 0)):
+		next_stats["longest_touch_streak"] = next_streak
+		next_stats["longest_touch_team"] = normalized_team
+	return next_stats
+
+static func build_match_stats_summary(stats: Dictionary) -> Dictionary:
+	var safe_stats := _duplicate_match_stats(stats)
+	var player_touches := int(safe_stats.get("player_touches", 0))
+	var bot_touches := int(safe_stats.get("bot_touches", 0))
+	var total_touches := player_touches + bot_touches
+	var player_possession := 50
+	if total_touches > 0:
+		player_possession = int(round(float(player_touches) * 100.0 / float(total_touches)))
+	var bot_possession := 100 - player_possession
+	return {
+		"player_goals_first_half": int(safe_stats.get("player_goals_first_half", 0)),
+		"bot_goals_first_half": int(safe_stats.get("bot_goals_first_half", 0)),
+		"player_goals_second_half": int(safe_stats.get("player_goals_second_half", 0)),
+		"bot_goals_second_half": int(safe_stats.get("bot_goals_second_half", 0)),
+		"player_goals_golden_goal": int(safe_stats.get("player_goals_golden_goal", 0)),
+		"bot_goals_golden_goal": int(safe_stats.get("bot_goals_golden_goal", 0)),
+		"player_goals_regular": int(safe_stats.get("player_goals_regular", 0)),
+		"bot_goals_regular": int(safe_stats.get("bot_goals_regular", 0)),
+		"player_goals_total": int(safe_stats.get("player_goals_total", 0)),
+		"bot_goals_total": int(safe_stats.get("bot_goals_total", 0)),
+		"player_shots": int(safe_stats.get("player_shots", 0)),
+		"bot_shots": int(safe_stats.get("bot_shots", 0)),
+		"total_shots": int(safe_stats.get("player_shots", 0)) + int(safe_stats.get("bot_shots", 0)),
+		"player_supers": int(safe_stats.get("player_supers", 0)),
+		"bot_supers": int(safe_stats.get("bot_supers", 0)),
+		"player_touches": player_touches,
+		"bot_touches": bot_touches,
+		"total_touches": total_touches,
+		"player_possession_percent": player_possession,
+		"bot_possession_percent": bot_possession,
+		"longest_touch_team": StringName(str(safe_stats.get("longest_touch_team", TEAM_NONE))),
+		"longest_touch_streak": int(safe_stats.get("longest_touch_streak", 0))
+	}
+
 static func _flatten_normalized(vector: Vector3) -> Vector3:
 	var flat := Vector3(vector.x, 0.0, vector.z)
 	if flat.length_squared() <= 0.0001:
 		return Vector3.ZERO
 	return flat.normalized()
+
+static func _duplicate_match_stats(stats: Dictionary) -> Dictionary:
+	var next_stats := build_empty_match_stats()
+	for key in stats.keys():
+		next_stats[key] = stats[key]
+	return next_stats
+
+static func _normalize_team(team: StringName) -> StringName:
+	if team == TEAM_PLAYER:
+		return TEAM_PLAYER
+	if team == TEAM_BOT:
+		return TEAM_BOT
+	return TEAM_NONE
+
+static func _team_prefix(team: StringName) -> String:
+	return "bot" if team == TEAM_BOT else "player"

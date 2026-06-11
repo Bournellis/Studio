@@ -2,6 +2,7 @@ class_name FootballHud
 extends CanvasLayer
 
 signal resume_requested()
+signal restart_requested()
 signal main_menu_requested()
 signal sensitivity_changed(value: float)
 signal start_requested()
@@ -10,6 +11,12 @@ signal skin_tone_previous_requested()
 signal skin_tone_next_requested()
 signal country_kit_previous_requested()
 signal country_kit_next_requested()
+
+const FADE_DURATION_SECONDS: float = 0.25
+const BUS_MASTER: StringName = &"Master"
+const BUS_SFX: StringName = &"SFX"
+const BUS_UI: StringName = &"UI"
+const BUS_AMBIENCE: StringName = &"Ambience"
 
 var status_label: Label
 var score_label: Label
@@ -32,15 +39,27 @@ var result_panel: PanelContainer
 var result_title_label: Label
 var result_score_label: Label
 var result_detail_label: Label
+var result_stats_label: Label
+var result_player_kit_swatch: ColorRect
+var result_bot_kit_swatch: ColorRect
+var result_player_kit_label: Label
+var result_bot_kit_label: Label
 var result_rematch_button: Button
 var result_menu_button: Button
 var sensitivity_label: Label
 var sensitivity_slider: HSlider
 var pause_resume_button: Button
+var pause_restart_button: Button
 var pause_menu_button: Button
+var pause_volume_slider: HSlider
+var pause_sfx_volume_slider: HSlider
+var pause_ui_volume_slider: HSlider
+var pause_ambience_volume_slider: HSlider
 var skin_tone_label: Label
 var country_kit_label: Label
 var intro_start_button: Button
+var fade_overlay: ColorRect
+var fade_tween: Tween
 
 var kick_feedback_time: float = 0.0
 var strong_kick_feedback_time: float = 0.0
@@ -58,7 +77,9 @@ var last_kick_assist_strength: float = 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_ensure_audio_buses()
 	_build_ui()
+	call_deferred("play_fade_from_black")
 
 func _process(delta: float) -> void:
 	kick_feedback_time = maxf(0.0, kick_feedback_time - delta)
@@ -129,6 +150,14 @@ func update_snapshot(snapshot: Dictionary) -> void:
 			int(snapshot.get("player_score", 0)),
 			int(snapshot.get("bot_score", 0))
 		]
+	if result_player_kit_swatch != null:
+		result_player_kit_swatch.color = snapshot.get("player_kit_color", Color(1.0, 0.86, 0.12, 1.0))
+	if result_bot_kit_swatch != null:
+		result_bot_kit_swatch.color = snapshot.get("bot_kit_color", Color(0.06, 0.16, 0.56, 1.0))
+	if result_player_kit_label != null:
+		result_player_kit_label.text = str(snapshot.get("player_kit_code", "BRA"))
+	if result_bot_kit_label != null:
+		result_bot_kit_label.text = str(snapshot.get("bot_kit_code", "FRA"))
 	_update_ball_indicator(snapshot)
 	hint_label.text = str(snapshot.get("hint", "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"))
 
@@ -162,18 +191,37 @@ func show_goal(player_scored: bool, goal_value: int = 1, double_goal: bool = fal
 		message = "%dx! %s" % [goal_value, message]
 	_set_event_message(message, 1.1)
 
-func show_match_end(player_won: bool) -> void:
+func show_match_end(player_won: bool, result_snapshot: Dictionary = {}) -> void:
 	last_event = &"match_end"
 	goal_feedback_time = 1.5
 	_set_event_message("CAMPEAO" if player_won else "DERROTA", 1.6)
+	_apply_result_snapshot(player_won, result_snapshot)
+	play_transition_pulse()
+
+func _apply_result_snapshot(player_won: bool, result_snapshot: Dictionary) -> void:
 	if result_panel != null:
 		result_panel.visible = true
 	if result_rematch_button != null:
 		result_rematch_button.grab_focus()
 	if result_title_label != null:
 		result_title_label.text = "VITORIA" if player_won else "DERROTA"
+	if result_score_label != null:
+		result_score_label.text = "%d - %d" % [
+			int(result_snapshot.get("player_score", 0)),
+			int(result_snapshot.get("bot_score", 0))
+		]
 	if result_detail_label != null:
-		result_detail_label.text = "Ta pronto para a revanche." if player_won else "A final pede revanche."
+		result_detail_label.text = "Fim de jogo. Rematch rapido ou volta para ajustar a final." if player_won else "Fim de jogo. A revanche fica pronta sem reiniciar o app."
+	if result_player_kit_swatch != null:
+		result_player_kit_swatch.color = result_snapshot.get("player_kit_color", Color(1.0, 0.86, 0.12, 1.0))
+	if result_bot_kit_swatch != null:
+		result_bot_kit_swatch.color = result_snapshot.get("bot_kit_color", Color(0.06, 0.16, 0.56, 1.0))
+	if result_player_kit_label != null:
+		result_player_kit_label.text = str(result_snapshot.get("player_kit_code", "BRA"))
+	if result_bot_kit_label != null:
+		result_bot_kit_label.text = str(result_snapshot.get("bot_kit_code", "FRA"))
+	if result_stats_label != null:
+		result_stats_label.text = str(result_snapshot.get("stats_text", "Estatisticas indisponiveis."))
 
 func show_countdown(message: String, duration: float = 0.32) -> void:
 	last_event = &"countdown"
@@ -201,11 +249,11 @@ func reset_feedback() -> void:
 	_refresh_crosshair()
 	_refresh_overlay()
 
-func set_pause_menu_visible(menu_is_open: bool, sensitivity_value: float) -> void:
+func set_pause_menu_visible(menu_is_open: bool, _sensitivity_value: float = 0.0) -> void:
 	if pause_menu_panel == null:
 		return
 	pause_menu_panel.visible = menu_is_open
-	set_sensitivity_value(sensitivity_value)
+	_sync_pause_volume_sliders()
 	if menu_is_open and pause_resume_button != null:
 		pause_resume_button.grab_focus()
 
@@ -236,6 +284,15 @@ func debug_is_result_panel_visible() -> bool:
 
 func debug_get_result_title() -> String:
 	return result_title_label.text if result_title_label != null else ""
+
+func debug_get_result_stats_text() -> String:
+	return result_stats_label.text if result_stats_label != null else ""
+
+func debug_is_pause_menu_visible() -> bool:
+	return pause_menu_panel != null and pause_menu_panel.visible
+
+func debug_get_fade_alpha() -> float:
+	return fade_overlay.color.a if fade_overlay != null else 0.0
 
 func debug_is_ball_indicator_visible() -> bool:
 	return ball_indicator != null and ball_indicator.visible
@@ -364,6 +421,7 @@ func _build_ui() -> void:
 	_build_result_panel(root)
 	_build_pause_menu(root)
 	_build_intro_panel(root)
+	_build_fade_overlay(root)
 
 func _build_crosshair(root: Control) -> void:
 	crosshair_root = Control.new()
@@ -435,7 +493,7 @@ func _build_result_panel(root: Control) -> void:
 	result_panel.name = "ResultPanel"
 	result_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	result_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	result_panel.custom_minimum_size = Vector2(430.0, 238.0)
+	result_panel.custom_minimum_size = Vector2(660.0, 420.0)
 	result_panel.visible = false
 	result_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.015, 0.035, 0.045, 0.92), Color(1.0, 0.78, 0.16, 0.92), 2))
 	result_center.add_child(result_panel)
@@ -451,24 +509,72 @@ func _build_result_panel(root: Control) -> void:
 	var box := VBoxContainer.new()
 	box.name = "ResultBox"
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	box.add_theme_constant_override("separation", 12)
+	box.add_theme_constant_override("separation", 10)
 	margin.add_child(box)
 
 	result_title_label = Label.new()
 	result_title_label.name = "ResultTitle"
 	result_title_label.text = "RESULTADO"
 	result_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	result_title_label.add_theme_font_size_override("font_size", 30)
+	result_title_label.add_theme_font_size_override("font_size", 24)
 	_ignore_mouse(result_title_label)
 	box.add_child(result_title_label)
+
+	var score_strip := HBoxContainer.new()
+	score_strip.name = "ResultScoreStrip"
+	score_strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	score_strip.add_theme_constant_override("separation", 14)
+	box.add_child(score_strip)
+
+	var player_flag := VBoxContainer.new()
+	player_flag.name = "ResultPlayerFlag"
+	player_flag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	score_strip.add_child(player_flag)
+
+	result_player_kit_swatch = ColorRect.new()
+	result_player_kit_swatch.name = "ResultPlayerKitSwatch"
+	result_player_kit_swatch.custom_minimum_size = Vector2(92.0, 52.0)
+	result_player_kit_swatch.color = Color(1.0, 0.86, 0.12, 1.0)
+	_ignore_mouse(result_player_kit_swatch)
+	player_flag.add_child(result_player_kit_swatch)
+
+	result_player_kit_label = Label.new()
+	result_player_kit_label.name = "ResultPlayerKitLabel"
+	result_player_kit_label.text = "BRA"
+	result_player_kit_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	result_player_kit_label.add_theme_font_size_override("font_size", 16)
+	_ignore_mouse(result_player_kit_label)
+	player_flag.add_child(result_player_kit_label)
 
 	result_score_label = Label.new()
 	result_score_label.name = "ResultScore"
 	result_score_label.text = "0 - 0"
 	result_score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	result_score_label.add_theme_font_size_override("font_size", 22)
+	result_score_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	result_score_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	result_score_label.add_theme_font_size_override("font_size", 54)
 	_ignore_mouse(result_score_label)
-	box.add_child(result_score_label)
+	score_strip.add_child(result_score_label)
+
+	var bot_flag := VBoxContainer.new()
+	bot_flag.name = "ResultBotFlag"
+	bot_flag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	score_strip.add_child(bot_flag)
+
+	result_bot_kit_swatch = ColorRect.new()
+	result_bot_kit_swatch.name = "ResultBotKitSwatch"
+	result_bot_kit_swatch.custom_minimum_size = Vector2(92.0, 52.0)
+	result_bot_kit_swatch.color = Color(0.06, 0.16, 0.56, 1.0)
+	_ignore_mouse(result_bot_kit_swatch)
+	bot_flag.add_child(result_bot_kit_swatch)
+
+	result_bot_kit_label = Label.new()
+	result_bot_kit_label.name = "ResultBotKitLabel"
+	result_bot_kit_label.text = "FRA"
+	result_bot_kit_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	result_bot_kit_label.add_theme_font_size_override("font_size", 16)
+	_ignore_mouse(result_bot_kit_label)
+	bot_flag.add_child(result_bot_kit_label)
 
 	result_detail_label = Label.new()
 	result_detail_label.name = "ResultDetail"
@@ -478,6 +584,15 @@ func _build_result_panel(root: Control) -> void:
 	_ignore_mouse(result_detail_label)
 	box.add_child(result_detail_label)
 
+	result_stats_label = Label.new()
+	result_stats_label.name = "ResultStats"
+	result_stats_label.text = "Estatisticas da partida."
+	result_stats_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	result_stats_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	result_stats_label.add_theme_font_size_override("font_size", 15)
+	_ignore_mouse(result_stats_label)
+	box.add_child(result_stats_label)
+
 	var buttons := HBoxContainer.new()
 	buttons.name = "ResultButtons"
 	buttons.add_theme_constant_override("separation", 10)
@@ -486,7 +601,7 @@ func _build_result_panel(root: Control) -> void:
 
 	result_rematch_button = Button.new()
 	result_rematch_button.name = "RematchButton"
-	result_rematch_button.text = "Revanche"
+	result_rematch_button.text = "Rematch"
 	result_rematch_button.custom_minimum_size = Vector2(180.0, 42.0)
 	result_rematch_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	result_rematch_button.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -497,7 +612,7 @@ func _build_result_panel(root: Control) -> void:
 
 	result_menu_button = Button.new()
 	result_menu_button.name = "ResultMenuButton"
-	result_menu_button.text = "Menu"
+	result_menu_button.text = "Sair ao menu"
 	result_menu_button.custom_minimum_size = Vector2(180.0, 42.0)
 	result_menu_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	result_menu_button.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -518,8 +633,9 @@ func _build_pause_menu(root: Control) -> void:
 	pause_menu_panel.name = "PauseMenuPanel"
 	pause_menu_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	pause_menu_panel.custom_minimum_size = Vector2(390.0, 232.0)
+	pause_menu_panel.custom_minimum_size = Vector2(460.0, 382.0)
 	pause_menu_panel.visible = false
+	pause_menu_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.012, 0.03, 0.04, 0.94), Color(0.12, 0.88, 1.0, 0.9), 2))
 	pause_center.add_child(pause_menu_panel)
 
 	var margin := MarginContainer.new()
@@ -538,43 +654,124 @@ func _build_pause_menu(root: Control) -> void:
 
 	var title := Label.new()
 	title.name = "PauseTitle"
-	title.text = "Futebol"
+	title.text = "Partida pausada"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 22)
 	_ignore_mouse(title)
 	box.add_child(title)
 
-	sensitivity_label = Label.new()
-	sensitivity_label.name = "SensitivityLabel"
-	_ignore_mouse(sensitivity_label)
-	box.add_child(sensitivity_label)
-
-	sensitivity_slider = HSlider.new()
-	sensitivity_slider.name = "SensitivitySlider"
-	sensitivity_slider.mouse_filter = Control.MOUSE_FILTER_STOP
-	sensitivity_slider.min_value = 0.0008
-	sensitivity_slider.max_value = 0.0032
-	sensitivity_slider.step = 0.0001
-	sensitivity_slider.value_changed.connect(_on_sensitivity_slider_changed)
-	box.add_child(sensitivity_slider)
-
 	pause_resume_button = Button.new()
 	pause_resume_button.name = "ResumeButton"
-	pause_resume_button.text = "Retomar"
+	pause_resume_button.text = "Continuar"
+	pause_resume_button.custom_minimum_size = Vector2(0.0, 42.0)
 	pause_resume_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	pause_resume_button.pressed.connect(func() -> void:
 		resume_requested.emit()
 	)
 	box.add_child(pause_resume_button)
 
+	pause_restart_button = Button.new()
+	pause_restart_button.name = "RestartMatchButton"
+	pause_restart_button.text = "Reiniciar partida"
+	pause_restart_button.custom_minimum_size = Vector2(0.0, 42.0)
+	pause_restart_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	pause_restart_button.pressed.connect(func() -> void:
+		restart_requested.emit()
+	)
+	box.add_child(pause_restart_button)
+
+	var volume_title := Label.new()
+	volume_title.name = "PauseVolumeTitle"
+	volume_title.text = "Volume"
+	volume_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	volume_title.add_theme_font_size_override("font_size", 16)
+	_ignore_mouse(volume_title)
+	box.add_child(volume_title)
+
+	pause_volume_slider = _build_pause_volume_row(box, "VolumeRow", "VolumeLabel", "Master", "VolumeSlider", BUS_MASTER)
+	pause_sfx_volume_slider = _build_pause_volume_row(box, "SfxVolumeRow", "SfxVolumeLabel", "SFX", "SfxVolumeSlider", BUS_SFX)
+	pause_ui_volume_slider = _build_pause_volume_row(box, "UiVolumeRow", "UiVolumeLabel", "UI", "UiVolumeSlider", BUS_UI)
+	pause_ambience_volume_slider = _build_pause_volume_row(box, "AmbienceVolumeRow", "AmbienceVolumeLabel", "Ambiente", "AmbienceVolumeSlider", BUS_AMBIENCE)
+
 	pause_menu_button = Button.new()
 	pause_menu_button.name = "MainMenuButton"
-	pause_menu_button.text = "Menu inicial"
+	pause_menu_button.text = "Sair ao menu"
+	pause_menu_button.custom_minimum_size = Vector2(0.0, 42.0)
 	pause_menu_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	pause_menu_button.pressed.connect(func() -> void:
 		main_menu_requested.emit()
 	)
 	box.add_child(pause_menu_button)
+
+func _build_pause_volume_row(parent: VBoxContainer, row_name: String, label_name: String, label: String, slider_name: String, bus_name: StringName) -> HSlider:
+	var row := HBoxContainer.new()
+	row.name = row_name
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_theme_constant_override("separation", 8)
+	parent.add_child(row)
+
+	var row_label := Label.new()
+	row_label.name = label_name
+	row_label.text = label
+	row_label.custom_minimum_size.x = 96.0
+	row_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_ignore_mouse(row_label)
+	row.add_child(row_label)
+
+	var slider := HSlider.new()
+	slider.name = slider_name
+	slider.min_value = 0.0
+	slider.max_value = 1.0
+	slider.step = 0.05
+	slider.value = _get_bus_volume_linear(bus_name)
+	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	slider.mouse_filter = Control.MOUSE_FILTER_STOP
+	slider.value_changed.connect(func(value: float) -> void:
+		_set_bus_volume(bus_name, value)
+	)
+	row.add_child(slider)
+	return slider
+
+func _sync_pause_volume_sliders() -> void:
+	if pause_volume_slider != null:
+		pause_volume_slider.set_value_no_signal(_get_bus_volume_linear(BUS_MASTER))
+	if pause_sfx_volume_slider != null:
+		pause_sfx_volume_slider.set_value_no_signal(_get_bus_volume_linear(BUS_SFX))
+	if pause_ui_volume_slider != null:
+		pause_ui_volume_slider.set_value_no_signal(_get_bus_volume_linear(BUS_UI))
+	if pause_ambience_volume_slider != null:
+		pause_ambience_volume_slider.set_value_no_signal(_get_bus_volume_linear(BUS_AMBIENCE))
+
+func _ensure_audio_buses() -> void:
+	_ensure_audio_bus(BUS_SFX)
+	_ensure_audio_bus(BUS_UI)
+	_ensure_audio_bus(BUS_AMBIENCE)
+
+func _ensure_audio_bus(bus_name: StringName) -> void:
+	if AudioServer.get_bus_index(str(bus_name)) >= 0:
+		return
+	AudioServer.add_bus(AudioServer.get_bus_count())
+	var bus_index := AudioServer.get_bus_count() - 1
+	AudioServer.set_bus_name(bus_index, str(bus_name))
+	AudioServer.set_bus_send(bus_index, "Master")
+
+func _get_bus_volume_linear(bus_name: StringName) -> float:
+	_ensure_audio_bus(bus_name)
+	var bus_index := AudioServer.get_bus_index(str(bus_name))
+	if bus_index < 0:
+		return 1.0
+	if AudioServer.is_bus_mute(bus_index):
+		return 0.0
+	return clampf(db_to_linear(AudioServer.get_bus_volume_db(bus_index)), 0.0, 1.0)
+
+func _set_bus_volume(bus_name: StringName, value: float) -> void:
+	_ensure_audio_bus(bus_name)
+	var bus_index := AudioServer.get_bus_index(str(bus_name))
+	if bus_index < 0:
+		return
+	var clamped_value := clampf(value, 0.0, 1.0)
+	AudioServer.set_bus_mute(bus_index, clamped_value <= 0.001)
+	AudioServer.set_bus_volume_db(bus_index, -80.0 if clamped_value <= 0.001 else linear_to_db(clamped_value))
 
 func _build_intro_panel(root: Control) -> void:
 	var intro_center := CenterContainer.new()
@@ -724,6 +921,74 @@ func _build_intro_panel(root: Control) -> void:
 		start_requested.emit()
 	)
 	box.add_child(intro_start_button)
+
+func _build_fade_overlay(root: Control) -> void:
+	fade_overlay = ColorRect.new()
+	fade_overlay.name = "FadeOverlay"
+	fade_overlay.process_mode = Node.PROCESS_MODE_ALWAYS
+	fade_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade_overlay.color = Color(0.0, 0.0, 0.0, 1.0)
+	fade_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	root.add_child(fade_overlay)
+
+func play_fade_from_black(duration: float = FADE_DURATION_SECONDS) -> void:
+	if _is_headless_display():
+		_set_fade_alpha_immediate(0.0)
+		return
+	_play_fade_to_alpha(0.0, duration)
+
+func play_fade_to_black(duration: float = FADE_DURATION_SECONDS) -> void:
+	if _is_headless_display():
+		_set_fade_alpha_immediate(1.0)
+		return
+	_play_fade_to_alpha(1.0, duration)
+
+func play_transition_pulse(duration: float = FADE_DURATION_SECONDS) -> void:
+	if _is_headless_display():
+		return
+	call_deferred("_play_transition_pulse_async", duration)
+
+func _play_transition_pulse_async(duration: float) -> void:
+	await _fade_to_alpha_async(1.0, duration * 0.5)
+	await _fade_to_alpha_async(0.0, duration * 0.5)
+
+func _play_fade_to_alpha(target_alpha: float, duration: float) -> void:
+	call_deferred("_fade_to_alpha_async", target_alpha, duration)
+
+func _fade_to_alpha_async(target_alpha: float, duration: float) -> void:
+	if fade_overlay == null:
+		return
+	if fade_tween != null:
+		fade_tween.kill()
+	fade_overlay.visible = true
+	fade_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	var start_color := fade_overlay.color
+	start_color.a = clampf(start_color.a, 0.0, 1.0)
+	fade_overlay.color = start_color
+	fade_tween = create_tween()
+	fade_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	fade_tween.tween_property(fade_overlay, "color:a", clampf(target_alpha, 0.0, 1.0), maxf(0.01, duration))
+	await fade_tween.finished
+	if fade_overlay == null:
+		return
+	if target_alpha <= 0.001:
+		fade_overlay.visible = false
+		fade_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	else:
+		fade_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+
+func _set_fade_alpha_immediate(target_alpha: float) -> void:
+	if fade_overlay == null:
+		return
+	if fade_tween != null:
+		fade_tween.kill()
+		fade_tween = null
+	fade_overlay.color = Color(0.0, 0.0, 0.0, clampf(target_alpha, 0.0, 1.0))
+	fade_overlay.visible = target_alpha > 0.001
+	fade_overlay.mouse_filter = Control.MOUSE_FILTER_STOP if fade_overlay.visible else Control.MOUSE_FILTER_IGNORE
+
+func _is_headless_display() -> bool:
+	return DisplayServer.get_name().to_lower().contains("headless")
 
 func _ignore_mouse(control: Control) -> void:
 	control.mouse_filter = Control.MOUSE_FILTER_IGNORE

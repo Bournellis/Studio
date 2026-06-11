@@ -100,3 +100,28 @@ func test_football_match_rules_timer_tie_enters_golden_goal() -> void:
 	assert_eq(golden_goal.get("bot_score", 0), 3)
 	assert_true(bool(golden_goal.get("match_over", false)))
 	assert_false(bool(golden_goal.get("player_won", true)))
+
+func test_football_match_rules_collects_match_stats_as_pure_data() -> void:
+	var stats: Dictionary = FootballMatchRulesScript.build_empty_match_stats()
+	stats = FootballMatchRulesScript.record_touch_stat(stats, &"player")
+	stats = FootballMatchRulesScript.record_touch_stat(stats, &"player")
+	stats = FootballMatchRulesScript.record_touch_stat(stats, &"bot")
+	stats = FootballMatchRulesScript.record_touch_stat(stats, &"bot")
+	stats = FootballMatchRulesScript.record_touch_stat(stats, &"bot")
+	stats = FootballMatchRulesScript.record_shot_stat(stats, &"player", true)
+	stats = FootballMatchRulesScript.record_shot_stat(stats, &"bot", false)
+	stats = FootballMatchRulesScript.record_goal_stat(stats, true, 1, &"timer", 140.0, 180.0, false)
+	stats = FootballMatchRulesScript.record_goal_stat(stats, false, 2, &"timer", 25.0, 180.0, false)
+	stats = FootballMatchRulesScript.record_goal_stat(stats, true, 1, &"timer", 0.0, 180.0, true)
+
+	var summary: Dictionary = FootballMatchRulesScript.build_match_stats_summary(stats)
+
+	assert_eq(summary.get("player_goals_first_half", -1), 1)
+	assert_eq(summary.get("bot_goals_second_half", -1), 2)
+	assert_eq(summary.get("player_goals_golden_goal", -1), 1)
+	assert_eq(summary.get("total_shots", -1), 2)
+	assert_eq(summary.get("player_supers", -1), 1)
+	assert_eq(summary.get("player_possession_percent", -1), 40)
+	assert_eq(summary.get("bot_possession_percent", -1), 60)
+	assert_eq(summary.get("longest_touch_team", &"none"), &"bot")
+	assert_eq(summary.get("longest_touch_streak", -1), 3)
