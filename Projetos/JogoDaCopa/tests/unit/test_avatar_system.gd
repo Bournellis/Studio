@@ -99,6 +99,47 @@ func test_avatar_animation_states_are_presentation_only() -> void:
 	assert_eq(avatar.debug_get_animation_state(), &"emote")
 	assert_no_new_orphans()
 
+func test_real_avatar_strips_root_motion_and_does_not_accumulate_drift() -> void:
+	var avatar = PlayerAvatarScript.new()
+	add_child_autofree(avatar)
+	await get_tree().process_frame
+
+	assert_true(avatar.debug_has_animation(&"RESET"))
+	for animation_name in [&"Idle", &"Jog_Fwd", &"Sprint", &"Roll", &"Hit_Chest", &"Push", &"Jump_Start", &"Jump", &"Jump_Land", &"Dance", &"Idle_Talking"]:
+		assert_true(avatar.debug_animation_has_stripped_root_motion(animation_name), "Root motion should be stripped for %s" % animation_name)
+
+	var model_spawn_position := avatar.debug_get_model_instance_local_position()
+	var skeleton_spawn_position := avatar.debug_get_skeleton_local_position()
+	var actions: Array[StringName] = [
+		&"slide",
+		&"kick",
+		&"hit",
+		&"idle",
+		&"strong_kick",
+		&"push",
+		&"flip",
+		&"move",
+		&"slide",
+		&"kick",
+		&"hit",
+		&"idle",
+		&"emote",
+		&"celebrate",
+		&"flip",
+		&"push",
+		&"kick",
+		&"slide",
+		&"hit",
+		&"idle",
+	]
+	for action in actions:
+		_play_avatar_debug_action(avatar, action)
+		await get_tree().process_frame
+		avatar._process(0.5)
+		await get_tree().process_frame
+		_assert_avatar_has_no_animation_drift(avatar, model_spawn_position, skeleton_spawn_position)
+	assert_no_new_orphans()
+
 func test_local_first_person_avatar_hides_head_and_neck() -> void:
 	var avatar = PlayerAvatarScript.new()
 	avatar.local_first_person = true
@@ -129,3 +170,40 @@ func _collect_meshes(node: Node, output: Array[MeshInstance3D]) -> void:
 		output.append(node)
 	for child in node.get_children():
 		_collect_meshes(child, output)
+
+func _play_avatar_debug_action(avatar, action: StringName) -> void:
+	match action:
+		&"slide":
+			avatar.play_slide()
+		&"kick":
+			avatar.play_kick(false)
+		&"strong_kick":
+			avatar.play_kick(true)
+		&"hit":
+			avatar.play_hit()
+		&"push":
+			avatar.play_push()
+		&"flip":
+			avatar.play_flip()
+		&"emote":
+			avatar.play_emote()
+		&"celebrate":
+			avatar.play_celebrate()
+		&"move":
+			avatar.set_move_state(5.0, true, 0.0)
+		_:
+			avatar.set_move_state(0.0, true, 0.0)
+
+func _assert_avatar_has_no_animation_drift(avatar, model_spawn_position: Vector3, skeleton_spawn_position: Vector3) -> void:
+	assert_lt(avatar.debug_get_model_instance_local_position().distance_to(model_spawn_position), 0.05)
+	assert_lt(avatar.debug_get_skeleton_local_position().distance_to(skeleton_spawn_position), 0.05)
+	assert_almost_eq(avatar.debug_get_model_instance_local_rotation().y, 0.0, 0.01)
+	assert_almost_eq(avatar.debug_get_skeleton_local_rotation().y, 0.0, 0.01)
+	var root_position: Vector3 = avatar.debug_get_bone_pose_position(&"root")
+	var pelvis_position: Vector3 = avatar.debug_get_bone_pose_position(&"pelvis")
+	assert_almost_eq(root_position.x, 0.0, 0.05)
+	assert_almost_eq(root_position.z, 0.0, 0.05)
+	assert_almost_eq(pelvis_position.x, 0.0, 0.05)
+	assert_almost_eq(pelvis_position.z, 0.0, 0.05)
+	assert_almost_eq(avatar.debug_get_bone_pose_rotation_y(&"root"), 0.0, 0.01)
+	assert_almost_eq(avatar.debug_get_bone_pose_rotation_y(&"pelvis"), 0.0, 0.01)

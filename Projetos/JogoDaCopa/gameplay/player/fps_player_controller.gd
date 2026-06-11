@@ -468,6 +468,4 @@ func _ensure_camera_nodes() -> void:
 		head.add_child(camera)
 	camera.current = true
 
-	var body_mesh := get_node_or_null("MeshInstance3D") as MeshInstance3D
-	if body_mesh != null:
-		body_mesh.visible = false
+	set_combatant_body_visible(false)
