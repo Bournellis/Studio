@@ -5,11 +5,11 @@
 - Product/module name: `Copa Arena Futebol`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames`
-- Active stage: `Track 03L.1 - Facing Evidence V1`
-- Active stage status: `COMPLETE`
-- Status marker: `JOGO_DA_COPA_TRACK_03L1_FACING_EVIDENCE_V1_COMPLETE`
-- Approved plan: Fabio direct task `Track 03L.1 - Facing Evidence V1` (2026-06-11)
-- Completed Kanban card: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track03l1-facing-evidence-v1.md`
+- Active stage: `Track 04B2 - Feel & UI Fixes V1`
+- Active stage status: `WORKTREE_VERIFIED - pending Claude review`
+- Status marker: `JOGO_DA_COPA_TRACK_04B2_FEEL_UI_FIXES_V1_WORKTREE_VERIFIED`
+- Approved plan: Fabio direct task `Track 04B2 - Feel & UI Fixes V1` (2026-06-11)
+- Handoff: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -43,6 +43,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Track 03K Animation Pose Restore V2: o strip manual de keyframes da 03H foi substituido por remocao completa das tracks do bone `root` nos clipes UAL; `pelvis` e demais bones permanecem originais, restaurando pose em pe e vida da animacao enquanto o drift de mundo segue coberto por teste.
 - Track 03L Arena Seal & Character Facing V2: arena estanque com vidros ate o teto, painel frontal alto sobre os gols, rodape/rampas 03B removidos, CCD da bola ativo e avatar visual do player girando pela direcao de movimento sem alterar camera/mira/chute.
 - Track 03L.1 Facing Evidence V1: lacunas do review da Claude fechadas com teste automatizado de facing no avatar, capturas de corrida em curva/parada/rebote alto e `docs/playtest-reports/track-03l-arena.md`.
+- Track 04B2 Feel & UI Fixes V1: dash player/bot agora usa curva integrada com aceleracao e distancia `5.3m`; pulo/flip sem input direcional fica vertical puro; result panel libera mouse, trava input e foca Revanche; intro/pause/result tem clique real em 3 resolucoes; preview do menu ganhou camera/luz de heroi e teste anti-tela-preta.
 - Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
 - Toon experiment screenshots live in `docs/screenshots/track-03e-toon/`.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
@@ -50,7 +51,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-Ready for Fabio general confirmation playtest focused on arena sealing, goal high panel, no-ramp corner feel and player visual facing. Automated tests cover raycast sealing, 34 m/s tunneling, kick direction regression and objective avatar heading at football/avatar levels; Track 03L.1 screenshots cover curve-facing, stopped-forward back view and old-gap rebound. Final feel remains a human-eye gate.
+Ready for Claude review of Track 04B2 in branch `codex/jogodacopa/track04b2-feel-ui-fixes-v1`. Do not merge to `main` until review passes. After review, Fabio confirmation playtest should focus on dash body feel, stationary vs moving jump, result panel clickability and menu preview framing. Final feel remains a human-eye gate.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -62,7 +63,7 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest result: PASS for Track 03L.1 full validation, 64 tests, 773 asserts, including source integrity check for 28 `.gd/.gdshader` files outside `addons/`.
+Latest result: PASS for Track 04B2 full validation, 70 tests, 930 asserts, including source integrity check for 28 `.gd/.gdshader` files outside `addons/`.
 
 Latest performance sample: windowed 1920x1080, vsync off, display `Windows`, average `719.3fps`, min warmed instant `462.3fps`, `0/360` frames below 60.
 
@@ -97,3 +98,4 @@ Manual smoke lives in `docs/validation.md`.
 17. `implementation/tracks/track-03k-animation-pose-restore-v2/current-status.md`
 18. `implementation/tracks/track-03l-arena-seal-facing-v2/current-status.md`
 19. `implementation/tracks/track-03l1-facing-evidence-v1/current-status.md`
+20. `implementation/tracks/track-04b2-feel-ui-fixes-v1/current-status.md`

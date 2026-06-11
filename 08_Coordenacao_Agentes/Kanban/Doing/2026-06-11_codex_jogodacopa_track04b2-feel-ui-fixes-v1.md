@@ -6,7 +6,7 @@
 - Branch: `codex/jogodacopa/track04b2-feel-ui-fixes-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track04b2-feel-ui-fixes-v1`
 - Base: `main` em `8d4bcaa` (`docs(jogodacopa): preserve claude release planning notes`)
-- Status: DOING
+- Status: `WORKTREE_VERIFIED - aguardando review Claude`
 
 ## Objetivo
 
@@ -44,3 +44,12 @@ Fora de escopo: `gameplay/avatar/**`, shaders de avatar, merge em `main`, public
 ## Proximo Handoff
 
 Fechar na branch com `validate PASS`, doc de track/playtest-report e handoff para review de Claude marcado como `WORKTREE_VERIFIED`, sem merge em main.
+
+## Fechamento Codex
+
+- Implementacao concluida na branch, sem merge em `main`.
+- Evidencias salvas em `Projetos/JogoDaCopa/docs/screenshots/track-04b2-feel-ui-fixes-v1/`.
+- Playtest report: `Projetos/JogoDaCopa/docs/playtest-reports/track-04b2-feel-ui-fixes-v1.md`.
+- Track doc: `Projetos/JogoDaCopa/implementation/tracks/track-04b2-feel-ui-fixes-v1/current-status.md`.
+- Handoff: `08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`.
+- Validacao: `tools/validate.gd` PASS, `70/70` tests, `930` asserts.
