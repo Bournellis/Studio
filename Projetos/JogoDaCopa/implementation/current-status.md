@@ -4,13 +4,13 @@
 - Project: `JogoDaCopa`
 - Product/module name: `Copa Arena Futebol`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active surface: `PC Windows editor-first TPS football minigames`
-- Active stage: `Track 04C - Stadium Visual Upgrade V1`
-- Active stage status: `COMPLETE - approved by review and merged to main after 04D`
-- Status marker: `JOGO_DA_COPA_TRACK_04C_STADIUM_VISUAL_V1_MERGED_AFTER_04D`
-- Approved plan: Fabio direct task `Track 04C - Stadium Visual Upgrade V1` (2026-06-11)
-- Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`
-- Review: `docs/code-review-track04b1-04b2-v1.md`, `docs/code-review-track04c-04d-v1.md`
+- Active surface: `PC Windows editor-first TPS football minigames + single-threaded Web export gate`
+- Active stage: `Track 04E - Web Export Spike & Render Profile V1`
+- Active stage status: `BRANCH REVIEW - awaiting Claude pre-merge review and Fabio visual parity verdict`
+- Status marker: `JOGO_DA_COPA_TRACK_04E_WEB_SPIKE_V1_BRANCH_REVIEW`
+- Approved plan: Fabio direct task `Track 04E - Web Export Spike & Render Profile V1` (2026-06-11)
+- Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`
+- Review: `docs/code-review-track04b1-04b2-v1.md`, `docs/code-review-track04c-04d-v1.md`, Track 04E review pending
 - Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
@@ -50,14 +50,15 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Track 04B3 Kick Arms Polish V1: aprovado e mergeado; retunou somente os bracos do `JogoDaCopa_Kick`, mantendo pernas/tronco/timing aprovados; maos ficam abaixo da cabeca e upperarms ficam `<= 25 deg` de abducao nas amostras do clipe.
 - Track 04D Match Completeness V1: aprovado pelo review e mergeado em main; pause real com restart/volumes/menu, resultado rico com estatisticas puras, fades curtos, ESC/foco/restart consistentes e hero shot do menu em 1080p/720p.
 - Track 04C Stadium Visual Upgrade V1: aprovado pelo review e mergeado em main apos a 04D; arquibancadas profundas, torcida com cores dos dois kits e `crowd_excitement`, teloes maiores, bandeiroes, mastros animados, halos emissive e skyline low-poly sem novas luzes com sombra.
+- Track 04E Web Export Spike & Render Profile V1: em review pre-merge; preset Web single-threaded exporta o jogo completo para `builds/web/`, `RenderProfile` central preserva desktop Forward+ e aplica fallbacks Compatibility no Web, e evidencias desktop vs Chrome local estao em `docs/playtest-reports/track-04e-web-spike.md`.
 - Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
 - Toon experiment screenshots live in `docs/screenshots/track-03e-toon/`.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
-- No FPS arena, no weapons, no Web/mobile, no multiplayer/backend.
+- No FPS arena, no weapons, no mobile, no multiplayer/backend.
 
 ## Current Gate
 
-Tracks 04D and 04C passed review and were merged locally to `main`. The 04C merge preserved both independent `test_bootstrap.gd` test blocks. No push/fetch/pull occurred; `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
+Track 04E is stopped on branch `codex/jogodacopa/track04e-web-spike-v1` for mandatory Claude pre-merge review because platform/render changes affect the whole project. No push/fetch/pull occurred; `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin after review/merge.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -69,9 +70,9 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest merged result: PASS for integrated Track 04D + 04C validation, 81 tests, 1216 asserts, including source integrity check for 30 `.gd/.gdshader` files outside `addons/`.
+Latest branch result: PASS for Track 04E validation, 85 tests, 1250 asserts, including source integrity check for 33 `.gd/.gdshader` files outside `addons/`.
 
-Latest performance samples remain above budget: Track 04D main windowed 1920x1080 average `719.3fps`; Track 04C stadium windowed 1920x1080 average `728.8fps`, min warmed instant `452.3fps`, `0/360` frames below 60.
+Latest performance samples remain above budget: Track 04E desktop Forward+ windowed 1920x1080/vsync off average `738.1fps`, min warmed instant `451.3fps`, `0/360` frames below 60. Chrome Web smoke at 1920x1080 had no page errors, no unexpected console errors, `crossOriginIsolated=false`, `SharedArrayBuffer=false`, rAF sample average `102.0fps`, p95 `8.1ms`.
 
 Export smoke command:
 
@@ -80,6 +81,14 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 ```
 
 Latest result: PASS, exit code `0`.
+
+Web export smoke command:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . --export-release "Web" "builds/web/index.html"
+```
+
+Latest Track 04E result: PASS, exit code `0`, single-threaded `GODOT_THREADS_ENABLED=false`.
 
 Manual smoke lives in `docs/validation.md`.
 
@@ -108,3 +117,4 @@ Manual smoke lives in `docs/validation.md`.
 21. `implementation/tracks/track-04b2-feel-ui-fixes-v1/current-status.md`
 22. `implementation/tracks/track-04b3-kick-arms-polish-v1/current-status.md`
 23. `implementation/tracks/track-04d-match-completeness-v1/current-status.md`
+24. `implementation/tracks/track-04e-web-spike-v1/current-status.md`

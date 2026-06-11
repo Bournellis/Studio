@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_04C_STADIUM_VISUAL_V1_MERGED_AFTER_04D`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, uniforme procedural, chute autoral polido, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, bot defensivo/aereo, camera/reset protegidos, pause real, resultado rico com estatisticas, fades curtos, ESC/foco/restart consistentes e hero shot do menu. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
+- Marker: `JOGO_DA_COPA_TRACK_04E_WEB_SPIKE_V1_BRANCH_REVIEW`
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos e Track 04E em review com export Web single-threaded + `RenderProfile` Compatibility. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin; depois Track 04E web spike/publicacao.
+- Proximo passo: review pre-merge obrigatorio da Claude para Track 04E e veredito visual de Fabio; depois merge local e `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
 
 ## draxos-roguelike-cardgame
 

@@ -6,7 +6,7 @@
 - Branch: `codex/jogodacopa/track04e-web-spike-v1`
 - Worktree: `D:\Estudio-worktrees\jogodacopa-track04e`
 - Base: `main` local em `72c22d1a`
-- Status: `DOING`
+- Status: `REVIEW`
 
 ## Objetivo
 
@@ -60,6 +60,22 @@ Executar o spike Web do jogo completo com export single-threaded, criar `RenderP
 ## Handoff Point
 
 Parar na branch em Review com handoff completo para review pre-merge da Claude, porque a mudanca de plataforma/render afeta o projeto inteiro.
+
+## Resultado
+
+- `RenderProfile` central criado como autoload, com desktop Forward+ preservado e Web Compatibility single-threaded com fallbacks nomeados.
+- Preset Web exporta o jogo completo para `builds/web/` com thread support OFF, extensions OFF, `GODOT_THREADS_ENABLED=false`, sem SharedArrayBuffer e sem COOP/COEP.
+- Chrome local boot smoke PASS: canvas 1920x1080, `crossOriginIsolated=false`, `SharedArrayBuffer=false`, sem page errors e sem console errors inesperados.
+- Evidencias desktop vs Web: `Projetos/JogoDaCopa/docs/playtest-reports/track-04e-web-spike.md`.
+- Validacao: `tools/validate.gd` PASS, 85 tests, 1250 asserts, source integrity 33 `.gd/.gdshader`.
+- Perf desktop padrao: average `738.1fps`, min warmed instant `451.3fps`, `0/360` frames abaixo de 60.
+- Web rAF sample: average `102.0fps`, p95 `8.1ms`; houve pico isolado de `552.3ms`, sem travar o boot/capturas.
+- Gate permanente registrado em `Projetos/JogoDaCopa/AGENTS.md` e `Projetos/JogoDaCopa/docs/validation.md`.
+
+## Review Necessario
+
+- Claude: review pre-merge obrigatorio da mudanca de plataforma/render.
+- Fabio: veredito visual de paridade desktop vs Web pelo relatorio e screenshots.
 
 ## Observacoes Iniciais
 
