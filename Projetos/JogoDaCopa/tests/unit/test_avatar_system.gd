@@ -99,6 +99,40 @@ func test_avatar_animation_states_are_presentation_only() -> void:
 	assert_eq(avatar.debug_get_animation_state(), &"emote")
 	assert_no_new_orphans()
 
+func test_real_avatar_idle_pose_stays_upright_after_one_full_loop() -> void:
+	var avatar = PlayerAvatarScript.new()
+	add_child_autofree(avatar)
+	await get_tree().process_frame
+
+	assert_true(avatar.debug_has_animation(&"Idle"))
+	var animation_player := avatar.get_node_or_null("AvatarParts/RealCharacterModel/RealAnimationPlayer") as AnimationPlayer
+	var skeleton := avatar.get_node_or_null("AvatarParts/RealCharacterModel/Armature/Skeleton3D") as Skeleton3D
+	assert_not_null(animation_player)
+	assert_not_null(skeleton)
+	if animation_player == null or skeleton == null:
+		return
+
+	avatar.set_move_state(0.0, true, 0.0)
+	await get_tree().process_frame
+	var idle_animation := animation_player.get_animation(&"Idle")
+	assert_not_null(idle_animation)
+	if idle_animation == null:
+		return
+	await get_tree().create_timer(idle_animation.length + 0.05).timeout
+	await get_tree().process_frame
+	skeleton.force_update_all_bone_transforms()
+
+	var head_position := _get_bone_position_in_avatar_space(avatar, skeleton, &"spine_03")
+	var pelvis_position := _get_bone_position_in_avatar_space(avatar, skeleton, &"pelvis")
+	assert_gt(head_position.y, pelvis_position.y)
+	assert_gt(pelvis_position.y, 0.5)
+	for bone_name in [&"spine_03", &"pelvis", &"hand_l", &"hand_r", &"foot_l", &"foot_r"]:
+		var bone_position := _get_bone_position_in_avatar_space(avatar, skeleton, bone_name)
+		assert_gte(bone_position.y, -0.05, "%s should not be below the avatar base" % bone_name)
+	var skeleton_up := skeleton.global_transform.basis.y.normalized()
+	assert_gt(skeleton_up.dot(Vector3.UP), cos(deg_to_rad(15.0)))
+	assert_no_new_orphans()
+
 func test_real_avatar_strips_root_motion_and_does_not_accumulate_drift() -> void:
 	var avatar = PlayerAvatarScript.new()
 	add_child_autofree(avatar)
@@ -106,7 +140,12 @@ func test_real_avatar_strips_root_motion_and_does_not_accumulate_drift() -> void
 
 	assert_true(avatar.debug_has_animation(&"RESET"))
 	for animation_name in [&"Idle", &"Jog_Fwd", &"Sprint", &"Roll", &"Hit_Chest", &"Push", &"Jump_Start", &"Jump", &"Jump_Land", &"Dance", &"Idle_Talking"]:
-		assert_true(avatar.debug_animation_has_stripped_root_motion(animation_name), "Root motion should be stripped for %s" % animation_name)
+		assert_true(avatar.debug_animation_has_stripped_root_motion(animation_name), "Root bone tracks should be removed for %s" % animation_name)
+	var animation_player := avatar.get_node_or_null("AvatarParts/RealCharacterModel/RealAnimationPlayer") as AnimationPlayer
+	assert_not_null(animation_player)
+	if animation_player == null:
+		return
+	assert_true(_animation_has_non_uniform_bone_keys(animation_player, &"Jog_Fwd", &"pelvis"))
 
 	var model_spawn_position := avatar.debug_get_model_instance_local_position()
 	var skeleton_spawn_position := avatar.debug_get_skeleton_local_position()
@@ -194,16 +233,50 @@ func _play_avatar_debug_action(avatar, action: StringName) -> void:
 		_:
 			avatar.set_move_state(0.0, true, 0.0)
 
+func _get_bone_position_in_avatar_space(avatar: Node3D, skeleton: Skeleton3D, bone_name: StringName) -> Vector3:
+	var bone_index := skeleton.find_bone(str(bone_name))
+	assert_gte(bone_index, 0, "Missing avatar bone: %s" % bone_name)
+	if bone_index < 0:
+		return Vector3.ZERO
+	var bone_global_transform := skeleton.global_transform * skeleton.get_bone_global_pose(bone_index)
+	return avatar.to_local(bone_global_transform.origin)
+
+func _animation_has_non_uniform_bone_keys(animation_player: AnimationPlayer, animation_name: StringName, bone_name: StringName) -> bool:
+	var animation := animation_player.get_animation(animation_name)
+	if animation == null:
+		return false
+	for track_index in range(animation.get_track_count()):
+		if _get_bone_name_from_track_path(animation.track_get_path(track_index)) != bone_name:
+			continue
+		if animation.track_get_key_count(track_index) < 2:
+			continue
+		var first_value: Variant = animation.track_get_key_value(track_index, 0)
+		for key_index in range(1, animation.track_get_key_count(track_index)):
+			var next_value: Variant = animation.track_get_key_value(track_index, key_index)
+			if _animation_key_values_are_different(first_value, next_value):
+				return true
+	return false
+
+func _get_bone_name_from_track_path(track_path: NodePath) -> StringName:
+	var path_text := str(track_path)
+	var separator_index := path_text.rfind(":")
+	if separator_index < 0:
+		return &""
+	return StringName(path_text.substr(separator_index + 1).to_lower())
+
+func _animation_key_values_are_different(first_value: Variant, next_value: Variant) -> bool:
+	if first_value is Vector3 and next_value is Vector3:
+		var first_vector: Vector3 = first_value
+		var next_vector: Vector3 = next_value
+		return first_vector.distance_to(next_vector) > 0.001
+	if first_value is Quaternion and next_value is Quaternion:
+		var first_rotation: Quaternion = first_value
+		var next_rotation: Quaternion = next_value
+		return first_rotation.get_euler().distance_to(next_rotation.get_euler()) > 0.001
+	return first_value != next_value
+
 func _assert_avatar_has_no_animation_drift(avatar, model_spawn_position: Vector3, skeleton_spawn_position: Vector3) -> void:
 	assert_lt(avatar.debug_get_model_instance_local_position().distance_to(model_spawn_position), 0.05)
 	assert_lt(avatar.debug_get_skeleton_local_position().distance_to(skeleton_spawn_position), 0.05)
 	assert_almost_eq(avatar.debug_get_model_instance_local_rotation().y, 0.0, 0.01)
 	assert_almost_eq(avatar.debug_get_skeleton_local_rotation().y, 0.0, 0.01)
-	var root_position: Vector3 = avatar.debug_get_bone_pose_position(&"root")
-	var pelvis_position: Vector3 = avatar.debug_get_bone_pose_position(&"pelvis")
-	assert_almost_eq(root_position.x, 0.0, 0.05)
-	assert_almost_eq(root_position.z, 0.0, 0.05)
-	assert_almost_eq(pelvis_position.x, 0.0, 0.05)
-	assert_almost_eq(pelvis_position.z, 0.0, 0.05)
-	assert_almost_eq(avatar.debug_get_bone_pose_rotation_y(&"root"), 0.0, 0.01)
-	assert_almost_eq(avatar.debug_get_bone_pose_rotation_y(&"pelvis"), 0.0, 0.01)
