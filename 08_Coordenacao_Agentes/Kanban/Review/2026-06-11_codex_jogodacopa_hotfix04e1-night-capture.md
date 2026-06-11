@@ -5,7 +5,7 @@
 - Projeto: `Projetos/JogoDaCopa/`
 - Branch: `codex/jogodacopa/track04e-web-spike-v1`
 - Worktree: `D:\Estudio-worktrees\jogodacopa-track04e`
-- Status: `DOING`
+- Status: `REVIEW`
 
 ## Motivo
 
@@ -53,3 +53,25 @@ Review pre-merge da Claude em `Projetos/JogoDaCopa/docs/code-review-track04e-web
 ## Handoff Point
 
 Parar na mesma branch em Review com handoff atualizado para novo review pre-merge da Claude e veredito visual de Fabio.
+
+## Resultado
+
+- Teste/captura vermelho confirmado antes do fix: environment correto, mas screenshot lavada com sky-region luma `180.2` contra gate `< 90`.
+- Causa raiz documentada: captura usava `FootballChaseCamera` de gameplay (FOV 82) e amostrava vidro/teto/fog claro em vez do ceu noturno.
+- Fix aplicado com camera de evidencia `Track04ECaptureCamera`, asserts de `WorldEnvironment` e gate de luminancia no capture script.
+- Recapturas desktop/Web refeitas para menu hero, kickoff, goal, result e play.
+- Source integrity passou a rejeitar UTF-8 BOM; BOM removido dos cinco arquivos citados e de `presentation/feedback/fps_feedback_controller.gd`, encontrado pelo novo gate.
+- Gate permanente atualizado em `Projetos/JogoDaCopa/AGENTS.md` e `Projetos/JogoDaCopa/docs/validation.md`.
+
+## Validacao Final
+
+- `tools/validate.gd`: PASS, 86 testes, 1264 asserts.
+- Desktop perf: PASS, media `600.2fps`, minimo aquecido `374.1fps`, `0/360` abaixo de 60.
+- Web export: PASS, exit code `0`, single-threaded.
+- Chrome smoke: PASS, canvas `1920x1080`, screenshot CDP `1345589` bytes.
+- Luma desktop kickoff/goal/result/play: `60.2`, `64.0`, `75.8`, `60.2`.
+- Luma Web kickoff/goal/result/play: `10.9`, `29.5`, `6.4`, `10.9`.
+
+## Review Pedido
+
+Claude deve revisar novamente antes do merge. Fabio deve dar o veredito visual de paridade desktop vs Web a partir de `Projetos/JogoDaCopa/docs/playtest-reports/track-04e-web-spike.md`.
