@@ -5,6 +5,7 @@ const PlayerControllerScript = preload("res://gameplay/player/fps_player_control
 const FootballChaseCameraScript = preload("res://presentation/camera/football_chase_camera.gd")
 const FootballBallScript = preload("res://gameplay/football/football_ball.gd")
 const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
+const FootballFieldBuilderScript = preload("res://modes/football/football_field_builder.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
@@ -145,6 +146,81 @@ func test_main_menu_preview_capture_is_not_black_at_desktop_and_720p() -> void:
 			TRACK04B2_MENU_MIN_AVERAGE_LUMINANCE,
 			"Menu preview luminance %.4f below anti-black threshold at %sx%s" % [luminance, viewport_size.x, viewport_size.y]
 		)
+	assert_no_new_orphans()
+
+func test_field_builder_stadium_visual_upgrade_is_config_driven() -> void:
+	var stadium := Node3D.new()
+	add_child_autofree(stadium)
+	var player_color := Color(1.0, 0.16, 0.08, 1.0)
+	var bot_color := Color(0.05, 0.72, 1.0, 1.0)
+
+	FootballFieldBuilderScript.build(stadium, {
+		"field_width": 32.0,
+		"field_length": 44.0,
+		"goal_closed_depth": 2.9,
+		"stadium_tier_count": 4,
+		"crowd_blocks_per_goal_side": 8,
+		"crowd_blocks_per_lateral_side": 5,
+		"player_kit_color": player_color,
+		"bot_kit_color": bot_color,
+		"country_names": ["BRASIL", "FRANCA", "ARGENTINA", "JAPAO"],
+	})
+	await get_tree().process_frame
+
+	assert_not_null(stadium.get_node_or_null("NorthStandTier3"))
+	assert_not_null(stadium.get_node_or_null("SouthStandTier3"))
+	assert_not_null(stadium.get_node_or_null("EastStandTier3"))
+	assert_not_null(stadium.get_node_or_null("NorthStandFrontWall"))
+	assert_not_null(stadium.get_node_or_null("WestStandCorridorT2I1"))
+	assert_not_null(stadium.get_node_or_null("NorthFlagMast0Flag"))
+	assert_true((stadium.get_node("NorthFlagMast0Flag") as MeshInstance3D).material_override is ShaderMaterial)
+	assert_not_null(stadium.get_node_or_null("NorthSkylineRing1Block6"))
+	assert_not_null(stadium.get_node_or_null("EastSkylineBlock4"))
+	assert_not_null(stadium.get_node_or_null("StadiumLightHaloNW"))
+	assert_not_null(stadium.get_node_or_null("WorldCupScoreboardNorthViewport"))
+	var scoreboard_viewport := stadium.get_node("WorldCupScoreboardNorthViewport") as SubViewport
+	assert_eq(scoreboard_viewport.size, Vector2i(1024, 384))
+
+	var crowd := stadium.get_node("NorthCrowdTier2Band0") as MeshInstance3D
+	assert_not_null(crowd)
+	var crowd_material := crowd.material_override as ShaderMaterial
+	assert_not_null(crowd_material)
+	var base_value: Vector3 = crowd_material.get_shader_parameter("base_color")
+	var alternate_value: Vector3 = crowd_material.get_shader_parameter("alternate_color")
+	assert_almost_eq(base_value.x, player_color.r, 0.001)
+	assert_almost_eq(base_value.y, player_color.g, 0.001)
+	assert_almost_eq(alternate_value.z, bot_color.b, 0.001)
+	assert_almost_eq(float(crowd_material.get_shader_parameter("crowd_excitement")), 0.0, 0.001)
+
+	for child in stadium.get_children():
+		if child is Light3D:
+			assert_false((child as Light3D).shadow_enabled, "Stadium visual upgrade must not add shadow-casting lights: %s" % child.name)
+	assert_no_new_orphans()
+
+func test_field_builder_crowd_excitement_clamps_and_updates_materials() -> void:
+	var stadium := Node3D.new()
+	add_child_autofree(stadium)
+	FootballFieldBuilderScript.build(stadium, {
+		"stadium_tier_count": 3,
+		"crowd_blocks_per_goal_side": 8,
+		"crowd_blocks_per_lateral_side": 5,
+		"player_kit_color": Color(0.95, 0.8, 0.06, 1.0),
+		"bot_kit_color": Color(0.1, 0.35, 0.95, 1.0),
+	})
+	await get_tree().process_frame
+
+	FootballFieldBuilderScript.set_crowd_excitement(stadium, 1.4)
+	assert_almost_eq(float(stadium.get_meta("crowd_excitement")), 1.0, 0.001)
+	for node_name in ["NorthCrowdBand0", "SouthCrowdTier2Band3", "EastCrowdTier1Band2"]:
+		var crowd := stadium.get_node(node_name) as MeshInstance3D
+		var material := crowd.material_override as ShaderMaterial
+		assert_almost_eq(float(material.get_shader_parameter("crowd_excitement")), 1.0, 0.001, "%s should receive max goal excitement" % node_name)
+
+	FootballFieldBuilderScript.set_crowd_excitement(stadium, -0.5)
+	assert_almost_eq(float(stadium.get_meta("crowd_excitement")), 0.0, 0.001)
+	var crowd := stadium.get_node("NorthCrowdBand0") as MeshInstance3D
+	var material := crowd.material_override as ShaderMaterial
+	assert_almost_eq(float(material.get_shader_parameter("crowd_excitement")), 0.0, 0.001)
 	assert_no_new_orphans()
 
 func test_football_interactive_panels_accept_real_mouse_clicks() -> void:
