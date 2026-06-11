@@ -99,6 +99,27 @@ func test_avatar_animation_states_are_presentation_only() -> void:
 	assert_eq(avatar.debug_get_animation_state(), &"emote")
 	assert_no_new_orphans()
 
+func test_avatar_visual_movement_facing_tracks_velocity_axes_and_stopped_forward_pose() -> void:
+	var avatar = PlayerAvatarScript.new()
+	add_child_autofree(avatar)
+	await get_tree().process_frame
+
+	avatar.set_movement_facing_enabled(true)
+	_simulate_avatar_visual_facing(avatar, Vector3.RIGHT * 7.0, 24)
+	await get_tree().process_frame
+	_assert_avatar_visual_front_within_degrees(avatar, Vector3.RIGHT, 15.0, "+X movement should turn the visual avatar toward +X")
+
+	_simulate_avatar_visual_facing(avatar, Vector3.FORWARD * 7.0, 24)
+	await get_tree().process_frame
+	_assert_avatar_visual_front_within_degrees(avatar, Vector3.FORWARD, 15.0, "-Z movement should turn the visual avatar toward field forward")
+
+	_simulate_avatar_visual_facing(avatar, Vector3.ZERO, 12)
+	await get_tree().process_frame
+	var stopped_front := _get_avatar_visual_front_flat(avatar)
+	assert_gt(stopped_front.dot(Vector3.FORWARD), cos(deg_to_rad(15.0)), "Stopped avatar should keep facing field forward after moving forward")
+	assert_lt(stopped_front.dot(Vector3.BACK), 0.0, "Stopped avatar must not face behind the logical parent")
+	assert_no_new_orphans()
+
 func test_real_avatar_idle_pose_stays_upright_after_one_full_loop() -> void:
 	var avatar = PlayerAvatarScript.new()
 	add_child_autofree(avatar)
@@ -242,6 +263,24 @@ func _get_bone_position_in_avatar_space(avatar: Node3D, skeleton: Skeleton3D, bo
 		return Vector3.ZERO
 	var bone_global_transform := skeleton.global_transform * skeleton.get_bone_global_pose(bone_index)
 	return avatar.to_local(bone_global_transform.origin)
+
+func _simulate_avatar_visual_facing(avatar, horizontal_velocity: Vector3, frame_count: int, logical_yaw: float = 0.0, delta: float = 1.0 / 60.0) -> void:
+	for _frame_index in range(frame_count):
+		avatar.update_visual_movement_facing(horizontal_velocity, logical_yaw, delta)
+
+func _assert_avatar_visual_front_within_degrees(avatar, expected_direction: Vector3, max_degrees: float, message: String) -> void:
+	var visual_front := _get_avatar_visual_front_flat(avatar)
+	var expected_front := Vector3(expected_direction.x, 0.0, expected_direction.z).normalized()
+	var angle_degrees := rad_to_deg(visual_front.angle_to(expected_front))
+	assert_lt(angle_degrees, max_degrees, "%s. Angle was %.2f degrees" % [message, angle_degrees])
+
+func _get_avatar_visual_front_flat(avatar) -> Vector3:
+	var visual_front: Vector3 = avatar.debug_get_model_front_direction()
+	visual_front.y = 0.0
+	assert_gt(visual_front.length(), 0.001, "Visual front direction should be non-zero")
+	if visual_front.length() <= 0.001:
+		return Vector3.FORWARD
+	return visual_front.normalized()
 
 func _animation_has_non_uniform_bone_keys(animation_player: AnimationPlayer, animation_name: StringName, bone_name: StringName) -> bool:
 	var animation := animation_player.get_animation(animation_name)
