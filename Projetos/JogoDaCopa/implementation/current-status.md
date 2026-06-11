@@ -6,10 +6,12 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames`
 - Active stage: `Track 04B2 - Feel & UI Fixes V1`
-- Active stage status: `WORKTREE_VERIFIED - pending Claude review`
-- Status marker: `JOGO_DA_COPA_TRACK_04B2_FEEL_UI_FIXES_V1_WORKTREE_VERIFIED`
+- Active stage status: `COMPLETE - approved review and merged to main`
+- Status marker: `JOGO_DA_COPA_TRACK_04B2_FEEL_UI_FIXES_V1_COMPLETE`
 - Approved plan: Fabio direct task `Track 04B2 - Feel & UI Fixes V1` (2026-06-11)
 - Handoff: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`
+- Review: `docs/code-review-track04b1-04b2-v1.md`
+- Completed Kanban card: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -51,7 +53,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-Ready for Claude review of Track 04B2 in branch `codex/jogodacopa/track04b2-feel-ui-fixes-v1`. Do not merge to `main` until review passes. After review, Fabio confirmation playtest should focus on dash body feel, stationary vs moving jump, result panel clickability and menu preview framing. Final feel remains a human-eye gate.
+Track 04B2 passed Claude pre-merge review and Fabio screenshot review, then merged to `main`. Next operational gate is the remaining approved Track 04B1 integration, followed by the combined Fabio playtest with uniforms, dash feel, vertical jumps, result panel clickability and menu preview framing.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 

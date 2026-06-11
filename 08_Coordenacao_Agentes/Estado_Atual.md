@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_04B2_FEEL_UI_FIXES_V1_WORKTREE_VERIFIED`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque, gols altos, personagem/audio real, bola com CCD/trail/fireball/squash, dash/slide/stun/flip, chute carregado/SUPER sem gasto em whiff, boost/jump pads, timer 3min/golden goal/vale-2, HUD/menu com clique real, bot defensivo/aereo, camera/reset protegidos e facing visual por movimento; 04B2 em branch corrigiu dash com curva, pulo vertical puro, result panel clicavel e preview sem tela preta. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
+- Marker: `JOGO_DA_COPA_TRACK_04B2_FEEL_UI_FIXES_V1_COMPLETE`
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque, gols altos, personagem/audio real, bola com CCD/trail/fireball/squash, dash com curva, pulo vertical puro sem input, chute carregado/SUPER sem gasto em whiff, boost/jump pads, timer 3min/golden goal/vale-2, HUD/menu com clique real, bot defensivo/aereo, camera/reset protegidos, facing visual e preview sem tela preta. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Claude review da branch `codex/jogodacopa/track04b2-feel-ui-fixes-v1`; depois playtest Fabio focado em dash, pulo parado/movendo, result panel e preview do menu.
+- Proximo passo: integrar a Track 04B1 aprovada e depois fazer playtest Fabio combinado com uniformes, dash, pulos, result panel e preview do menu.
 
 ## draxos-roguelike-cardgame
 

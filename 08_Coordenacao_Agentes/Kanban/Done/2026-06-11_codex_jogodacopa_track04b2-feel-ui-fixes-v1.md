@@ -6,7 +6,7 @@
 - Branch: `codex/jogodacopa/track04b2-feel-ui-fixes-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track04b2-feel-ui-fixes-v1`
 - Base: `main` em `8d4bcaa` (`docs(jogodacopa): preserve claude release planning notes`)
-- Status: `WORKTREE_VERIFIED - aguardando review Claude`
+- Status: `DONE - review aprovado e mergeado em main`
 
 ## Objetivo
 
@@ -53,3 +53,10 @@ Fechar na branch com `validate PASS`, doc de track/playtest-report e handoff par
 - Track doc: `Projetos/JogoDaCopa/implementation/tracks/track-04b2-feel-ui-fixes-v1/current-status.md`.
 - Handoff: `08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`.
 - Validacao: `tools/validate.gd` PASS, `70/70` tests, `930` asserts.
+
+## Fechamento Pos-Merge
+
+- Review pre-merge aprovado por Claude: `Projetos/JogoDaCopa/docs/code-review-track04b1-04b2-v1.md`.
+- Screenshots aprovados por Fabio.
+- Merge em `main`: `merge(jogodacopa): integrate track04b2 feel ui fixes`.
+- Validacao preservada: `tools/validate.gd` PASS, `70/70` tests, `930` asserts; `git diff --check` PASS; source integrity PASS.

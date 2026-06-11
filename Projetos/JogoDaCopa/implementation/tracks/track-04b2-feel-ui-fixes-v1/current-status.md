@@ -3,7 +3,7 @@
 - Date: `2026-06-11`
 - Branch: `codex/jogodacopa/track04b2-feel-ui-fixes-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track04b2-feel-ui-fixes-v1`
-- Status: `WORKTREE_VERIFIED`
+- Status: `COMPLETE - approved and merged to main`
 - Source: Fabio direct task after Track 04B1 debugger/release planning merge to `main`
 
 ## Scope
@@ -79,4 +79,4 @@ Screenshots:
 
 ## Handoff
 
-Ready for Claude review in this branch only. Do not merge to `main` until review is complete.
+Claude pre-merge review approved the branch in `docs/code-review-track04b1-04b2-v1.md`, Fabio approved the screenshots, and the track was merged to `main`. The Kanban card is closed in `08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`.
