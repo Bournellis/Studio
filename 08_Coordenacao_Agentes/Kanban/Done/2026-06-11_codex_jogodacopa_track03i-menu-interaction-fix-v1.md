@@ -56,8 +56,17 @@ Fase 2 reproduzida: todos os controles clicaveis falham porque `MainMenuRoot` es
 - [x] Fase 2: teste vermelho de clique real criado, executado e marcado `pending()` para commit.
 - [x] Fase 3: menu simplificado e teste verde nas tres resolucoes.
 - [x] Fase 4: regra permanente de UI documentada e screenshots gerados.
-- [ ] Fase 5: validacao, status, merge, card Done, prune e `WORKTREE_VERIFIED`.
+- [x] Fase 5: validacao, status, merge, card Done, prune e `WORKTREE_VERIFIED`.
+
+## Fechamento
+
+- Teste vermelho reproduziu a falha antes do fix: todos os controles falhavam porque `MainMenuRoot` tinha rect `0x0`, `MenuSafeArea` altura `36.0`, `MenuScroll` altura `0.0` e `gui_get_hovered_control()` retornava `<none>`.
+- Fix aplicado por simplificacao: sem `ScrollContainer`/safe area custom, raiz sincronizada ao viewport, preview/shade com `IGNORE`, containers nativos para centralizacao.
+- Teste de clique real ativo em `1920x1080`, `1366x768` e `1280x720`.
+- Screenshots gerados em `Projetos/JogoDaCopa/docs/screenshots/track-03i-menu/`.
+- GUT direto: PASS, `58/58` tests, `829` asserts.
+- `tools/validate.gd`: PASS, integridade de `27` fontes, `58/58` tests, `829` asserts.
 
 ## Proximo Handoff
 
-Fechar coordenacao: atualizar snapshots, mover card para Done, mergear em `main`, podar worktree e executar o check final `WORKTREE_VERIFIED`.
+Fabio deve aguardar 15-30s apos a conclusao da thread antes de fechar a janela; em seguida, fazer inspecao humana do menu e playtest de confirmacao.
