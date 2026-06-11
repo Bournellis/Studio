@@ -5,13 +5,13 @@
 - Product/module name: `Copa Arena Futebol`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + single-threaded Web export gate`
-- Active stage: `Track 04F - Web RC`
-- Active stage status: `READY_FOR_CLAUDE_REVIEW_PRE_MERGE - measured and implemented Web performance pass; first WebGL render/upload residual remains for review decision`
-- Status marker: `JOGO_DA_COPA_TRACK_04F_WEB_PERFORMANCE_REVIEW`
-- Approved plan: Fabio direct task `Track 04F - Web Performance & Load V1` (2026-06-11)
+- Active stage: `Track 04F.2 - WebGL First-Render Stall`
+- Active stage status: `NEXT_READY - Track 04F approved by Claude and merged locally; residual first WebGL render/upload stall is the next scoped follow-up`
+- Status marker: `JOGO_DA_COPA_TRACK_04F2_WEBGL_FIRST_RENDER_STALL_NEXT`
+- Approved plan: Fabio direct task `Track 04F - Web Performance & Load V1` (2026-06-11), Claude review approved merge and promoted residual to `Track 04F.2 - WebGL First-Render Stall`
 - Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`
-- Review: `docs/code-review-track04b1-04b2-v1.md`, `docs/code-review-track04c-04d-v1.md`, `docs/code-review-track04e-web-spike-v1.md`, `docs/playtest-reports/track-04f-web-performance.md`
-- Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_hotfix04e1-night-capture.md`
+- Review: `docs/code-review-track04b1-04b2-v1.md`, `docs/code-review-track04c-04d-v1.md`, `docs/code-review-track04e-web-spike-v1.md`, `docs/playtest-reports/track-04f-web-performance.md`, `docs/code-review-track04f-web-performance-v1.md`
+- Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_hotfix04e1-night-capture.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -51,7 +51,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Track 04D Match Completeness V1: aprovado pelo review e mergeado em main; pause real com restart/volumes/menu, resultado rico com estatisticas puras, fades curtos, ESC/foco/restart consistentes e hero shot do menu em 1080p/720p.
 - Track 04C Stadium Visual Upgrade V1: aprovado pelo review e mergeado em main apos a 04D; arquibancadas profundas, torcida com cores dos dois kits e `crowd_excitement`, teloes maiores, bandeiroes, mastros animados, halos emissive e skyline low-poly sem novas luzes com sombra.
 - Track 04E Web Export Spike & Render Profile V1 + Hotfix 04E.1: aprovado pela Claude e mergeado em main; preset Web single-threaded exporta o jogo completo para `builds/web/`, `RenderProfile` central preserva desktop Forward+ e aplica fallbacks Compatibility no Web, e o hotfix corrigiu o caminho de captura lavada usando camera de evidencia noturna com gate de luminancia `< 90`.
-- Track 04F Web Performance & Load V1: branch pronta para review pre-merge da Claude; load Web instrumentado, loading com progresso visivel, animacoes UAL processadas em `.res`, cache de avatar/region mask, SubViewports Web on-change, PCK `26.41 MiB`, smoothness pos-warmup PASS; residual de primeiro render/upload WebGL `~16.8s-18.1s` documentado.
+- Track 04F Web Performance & Load V1: aprovado pela Claude e mergeado localmente em main; load Web instrumentado, loading com progresso visivel, animacoes UAL processadas em `.res`, cache de avatar/region mask, SubViewports Web on-change, PCK `26.41 MiB`, smoothness pos-warmup PASS; residual de primeiro render/upload WebGL `~16.8s-18.1s` promovido para `Track 04F.2 - WebGL First-Render Stall`.
 - Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
 - Toon experiment screenshots live in `docs/screenshots/track-03e-toon/`.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
@@ -59,7 +59,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-Track 04F is ready for Claude pre-merge review on branch `codex/jogodacopa/track04f-web-performance-v1`. The Web freeze is no longer silent because loading/progress is visible, build gzip gate passes, and post-warmup smoothness passes; Claude/Fabio must decide whether the remaining first WebGL render/upload stall requires Track 04F.1 before merge. No push/fetch/pull occurred; `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
+Track 04F was approved by Claude and merged locally into `main`. The Web freeze is no longer silent because loading/progress is visible, the build gzip gate passes, and post-warmup smoothness passes. Next step: `Track 04F.2 - WebGL First-Render Stall`, focused only on the remaining first WebGL render/upload stall. No push/fetch/pull occurred; `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -71,7 +71,7 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest branch result: PASS for Track 04F final validation, 86 tests, 1264 asserts, including Web gzip transfer gate `30.29 MiB / 50.00 MiB`, source integrity check for 35 `.gd/.gdshader` files outside `addons/` and UTF-8 BOM rejection.
+Latest integrated main result: PASS after Track 04F merge, 86 tests, 1264 asserts, including Web gzip transfer gate `30.29 MiB / 50.00 MiB`, source integrity check for 35 `.gd/.gdshader` files outside `addons/` and UTF-8 BOM rejection.
 
 Latest performance samples: Track 04F Chrome Web pos-warmup 120s at 1920x1080 reached p50 `6.9ms`, p95 `7.0ms`, p99 `7.1ms`, max `62.5ms`, `0` hitches above `100ms`. Load path improved avatar stages but still has first WebGL render/upload residual documented in `docs/playtest-reports/track-04f-web-performance.md`.
 
@@ -89,7 +89,7 @@ Web export smoke command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . --export-release "Web" "builds/web/index.html"
 ```
 
-Latest Track 04F branch result: PASS, exit code `0`, single-threaded `GODOT_THREADS_ENABLED=false`.
+Latest integrated main result: PASS, exit code `0`, single-threaded `GODOT_THREADS_ENABLED=false`.
 
 Manual smoke lives in `docs/validation.md`.
 

@@ -58,16 +58,18 @@ Reduzir a trava longa ao apertar Play no Web e estabilizar quedas drasticas de F
 - Smoke Chrome local, capturas noturnas e captura F1 da chase camera em gameplay web.
 - `git diff --check`, `git status --short`, `WORKTREE_VERIFIED`.
 
-## Proximo Handoff
+## Fechamento
 
-Parar na branch com handoff para review pre-merge da Claude, incluindo before/after completo, status limpo e `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+Claude aprovou o review pre-merge em `Projetos/JogoDaCopa/docs/code-review-track04f-web-performance-v1.md`. A branch foi mergeada localmente em `main` no commit `9366f072`; o residual de primeiro render/upload WebGL foi promovido para `Track 04F.2 - WebGL First-Render Stall`. `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
 
 ## Resultado
 
-- Status: `READY_FOR_CLAUDE_REVIEW_PRE_MERGE`.
+- Status: `DONE_LOCAL_MERGED`.
+- Review: `Projetos/JogoDaCopa/docs/code-review-track04f-web-performance-v1.md`.
+- Merge: `9366f072` (`merge(jogodacopa): track04f web performance`).
 - Handoff: `08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`.
 - Relatorio: `Projetos/JogoDaCopa/docs/playtest-reports/track-04f-web-performance.md`.
-- Validate final: PASS, `86` tests, `1264` asserts, build gzip gate `30.29 MiB / 50.00 MiB`.
-- Export Web final: PASS.
+- Validate integrado pos-merge: PASS, `86` tests, `1264` asserts, build gzip gate `30.29 MiB / 50.00 MiB`.
+- Export Web integrado pos-merge: PASS.
 - Smoothness Chrome pos-warmup 120s: PASS, p99 `7.1ms`, max `62.5ms`, zero hitch `>100ms`.
 - Residual para review: primeiro render/upload WebGL ainda fica em `~16.8s-18.1s`, mas com loading/progresso visivel.
