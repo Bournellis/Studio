@@ -6,6 +6,7 @@
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--godot-debugger-bugs-v1`
 - Projeto: `Projetos/JogoDaCopa`
 - Objetivo: rodar o jogo no Godot, analisar bugs exibidos no debugger/console e corrigir os problemas encontrados.
+- Status: `DONE`
 
 ## Contexto lido
 
@@ -29,4 +30,7 @@
 
 ## Handoff
 
-- Deixar branch/worktree prontas para revisao, sem merge para `main`.
+- Claude review aprovado.
+- Merge para `main` autorizado por Fabio.
+- Runtime debugger limpo apos import local do Godot na worktree.
+- Validacao completa PASS: `64/64` testes, `773` asserts.
