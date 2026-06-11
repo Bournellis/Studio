@@ -1012,18 +1012,32 @@ func _build_authorial_kick_animation() -> Animation:
 		Vector3(deg_to_rad(-8.0), 0.0, 0.0),
 	])
 	_add_rotation_track(animation, "upperarm_l", [
-		Vector3.ZERO,
-		Vector3(-0.10, 0.0, -0.14),
-		Vector3(-0.26, 0.0, -0.28),
-		Vector3(0.22, 0.0, -0.18),
-		Vector3(0.12, 0.0, -0.08),
+		Vector3(deg_to_rad(-70.0), deg_to_rad(-6.0), deg_to_rad(-2.0)),
+		Vector3(deg_to_rad(-72.0), deg_to_rad(-12.0), deg_to_rad(-4.0)),
+		Vector3(deg_to_rad(-74.0), deg_to_rad(-18.0), deg_to_rad(-5.0)),
+		Vector3(deg_to_rad(-68.0), deg_to_rad(6.0), deg_to_rad(-3.0)),
+		Vector3(deg_to_rad(-70.0), deg_to_rad(2.0), deg_to_rad(-2.0)),
 	])
 	_add_rotation_track(animation, "upperarm_r", [
-		Vector3.ZERO,
-		Vector3(0.12, 0.0, 0.10),
-		Vector3(0.26, 0.0, 0.24),
-		Vector3(-0.14, 0.0, 0.16),
-		Vector3(-0.08, 0.0, 0.08),
+		Vector3(deg_to_rad(-76.0), deg_to_rad(4.0), deg_to_rad(2.0)),
+		Vector3(deg_to_rad(-76.0), deg_to_rad(8.0), deg_to_rad(3.0)),
+		Vector3(deg_to_rad(-76.0), deg_to_rad(10.0), deg_to_rad(4.0)),
+		Vector3(deg_to_rad(-78.0), deg_to_rad(-8.0), deg_to_rad(3.0)),
+		Vector3(deg_to_rad(-76.0), deg_to_rad(-2.0), deg_to_rad(2.0)),
+	])
+	_add_rotation_track(animation, "lowerarm_l", [
+		Vector3(deg_to_rad(-10.0), deg_to_rad(2.0), 0.0),
+		Vector3(deg_to_rad(-14.0), deg_to_rad(2.0), 0.0),
+		Vector3(deg_to_rad(-16.0), deg_to_rad(2.0), 0.0),
+		Vector3(deg_to_rad(-12.0), deg_to_rad(-1.0), 0.0),
+		Vector3(deg_to_rad(-10.0), 0.0, 0.0),
+	])
+	_add_rotation_track(animation, "lowerarm_r", [
+		Vector3(deg_to_rad(10.0), deg_to_rad(-2.0), 0.0),
+		Vector3(deg_to_rad(12.0), deg_to_rad(-2.0), 0.0),
+		Vector3(deg_to_rad(14.0), deg_to_rad(-2.0), 0.0),
+		Vector3(deg_to_rad(12.0), deg_to_rad(1.0), 0.0),
+		Vector3(deg_to_rad(10.0), 0.0, 0.0),
 	])
 	return animation
 
