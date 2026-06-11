@@ -38,6 +38,7 @@ func _ready() -> void:
 	physics_material_override = _build_physics_material()
 	contact_monitor = true
 	max_contacts_reported = 8
+	continuous_cd = true
 	can_sleep = false
 	_ensure_ball_nodes()
 

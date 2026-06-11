@@ -458,8 +458,14 @@ func debug_get_arena_config() -> Dictionary:
 		"field_length": FIELD_LENGTH,
 		"wall_height": WALL_HEIGHT,
 		"ceiling_height": CEILING_HEIGHT,
+		"wall_thickness": WALL_THICKNESS,
 		"goal_half_width": GOAL_HALF_WIDTH,
-		"goal_height": GOAL_HEIGHT
+		"goal_height": GOAL_HEIGHT,
+		"goal_side_wall_x": GOAL_SIDE_WALL_X,
+		"goal_side_wall_thickness": GOAL_SIDE_WALL_THICKNESS,
+		"goal_closed_depth": GOAL_CLOSED_DEPTH,
+		"goal_line_north": GOAL_LINE_NORTH,
+		"goal_line_south": GOAL_LINE_SOUTH
 	}
 
 func debug_get_stadium_scoreboard_text(side_name: String = "North") -> String:

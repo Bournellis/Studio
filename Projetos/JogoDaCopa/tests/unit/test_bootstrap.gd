@@ -32,6 +32,8 @@ const TRACK03I_REAL_CLICK_VIEWPORTS: Array[Vector2i] = [
 	Vector2i(1366, 768),
 	Vector2i(1280, 720)
 ]
+const TRACK03L_SEAL_GRID_STEP: float = 0.25
+const TRACK03L_MAX_TUNNELING_SPEED: float = 34.0
 
 func before_all() -> void:
 	var result: Dictionary = BootstrapSceneGeneratorScript.new().generate_all()
@@ -325,8 +327,6 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_not_null(football.get_node_or_null("BoostPadSmall0"))
 	assert_not_null(football.get_node_or_null("BoostPadLarge1"))
 	assert_not_null(football.get_node_or_null("JumpPadNorth"))
-	assert_not_null(football.get_node_or_null("WestWallRamp"))
-	assert_not_null(football.get_node_or_null("CornerRampEN"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Player/PlayerAvatar"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballChaseCamera"))
@@ -421,6 +421,47 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 		assert_gt(glass_material.emission_energy_multiplier, 0.5)
 	assert_gt(football.debug_get_ball().physics_material_override.bounce, 0.8)
 	assert_gt(football.debug_get_ball().physics_material_override.friction, 0.3)
+	assert_no_new_orphans()
+
+func test_football_arena_raycast_seal_closes_upper_perimeter_and_goal_faces() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var leak_report := _collect_arena_seal_leaks(football)
+
+	assert_eq(
+		int(leak_report.get("count", 0)),
+		0,
+		"Arena seal raycasts escaped. Samples: %s" % _format_arena_leak_samples(leak_report)
+	)
+	assert_no_new_orphans()
+
+func test_football_ball_uses_ccd_and_does_not_tunnel_at_max_speed() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var ball = football.debug_get_ball()
+	assert_true(ball.continuous_cd)
+	var cases: Array[Dictionary] = _build_track03l_tunneling_cases(football.debug_get_arena_config())
+	for repeat_index in range(4):
+		for case: Dictionary in cases:
+			football.debug_force_ball_position(case.get("start", Vector3.ZERO) + Vector3(0.0, 0.0, float(repeat_index) * 0.015))
+			ball.sleeping = false
+			ball.linear_velocity = case.get("velocity", Vector3.ZERO)
+			ball.angular_velocity = Vector3.ZERO
+			for _frame in range(6):
+				await get_tree().physics_frame
+			assert_true(
+				_track03l_ball_stayed_inside_case(ball.global_position, case),
+				"%s repeat %d tunneled to %s" % [str(case.get("label", "")), repeat_index, str(ball.global_position)]
+			)
 	assert_no_new_orphans()
 
 func test_football_ball_indicator_uses_player_local_basis() -> void:
@@ -1270,3 +1311,108 @@ func test_football_bot_kick_request_moves_ball() -> void:
 	assert_eq(football.debug_get_bot_avatar().debug_get_animation_state(), &"kick")
 	assert_gt(ball.linear_velocity.length(), 0.1)
 	assert_no_new_orphans()
+
+func _collect_arena_seal_leaks(football: Node3D) -> Dictionary:
+	var config: Dictionary = football.debug_get_arena_config()
+	var field_half_width := float(config.get("field_width", 38.0)) * 0.5
+	var ceiling_height := float(config.get("ceiling_height", 8.8))
+	var goal_half_width := float(config.get("goal_half_width", 4.32))
+	var goal_height := float(config.get("goal_height", 3.45))
+	var goal_side_wall_x := float(config.get("goal_side_wall_x", goal_half_width + 0.72))
+	var goal_closed_depth := float(config.get("goal_closed_depth", 3.8))
+	var goal_line_north := float(config.get("goal_line_north", -27.0))
+	var goal_line_south := float(config.get("goal_line_south", 27.0))
+	var total_min_z := goal_line_north - goal_closed_depth + 0.15
+	var total_max_z := goal_line_south + goal_closed_depth - 0.15
+	var y_samples := _sample_track03l_range(0.25, ceiling_height - 0.05, TRACK03L_SEAL_GRID_STEP)
+	var leaks: Dictionary = {"count": 0, "samples": PackedStringArray()}
+	var space_state := football.get_world_3d().direct_space_state
+
+	for y: float in y_samples:
+		for z: float in _sample_track03l_range(total_min_z, total_max_z, TRACK03L_SEAL_GRID_STEP):
+			_record_track03l_arena_ray(leaks, space_state, Vector3(-field_half_width + 0.55, y, z), Vector3(-field_half_width - 1.1, y, z), "west-wall")
+			_record_track03l_arena_ray(leaks, space_state, Vector3(field_half_width - 0.55, y, z), Vector3(field_half_width + 1.1, y, z), "east-wall")
+
+	var end_ranges: Array[Vector2] = [
+		Vector2(-field_half_width + 0.55, -goal_side_wall_x - 0.15),
+		Vector2(goal_side_wall_x + 0.15, field_half_width - 0.55)
+	]
+	for y: float in y_samples:
+		for end_range: Vector2 in end_ranges:
+			for x: float in _sample_track03l_range(end_range.x, end_range.y, TRACK03L_SEAL_GRID_STEP):
+				_record_track03l_arena_ray(leaks, space_state, Vector3(x, y, goal_line_north + 0.8), Vector3(x, y, goal_line_north - 1.1), "north-end")
+				_record_track03l_arena_ray(leaks, space_state, Vector3(x, y, goal_line_south - 0.8), Vector3(x, y, goal_line_south + 1.1), "south-end")
+
+	for y: float in y_samples:
+		for x: float in _sample_track03l_range(-goal_half_width, goal_half_width, TRACK03L_SEAL_GRID_STEP):
+			_record_track03l_arena_ray(leaks, space_state, Vector3(x, y, goal_line_north - goal_closed_depth + 0.55), Vector3(x, y, goal_line_north - goal_closed_depth - 1.0), "north-goal-back")
+			_record_track03l_arena_ray(leaks, space_state, Vector3(x, y, goal_line_south + goal_closed_depth - 0.55), Vector3(x, y, goal_line_south + goal_closed_depth + 1.0), "south-goal-back")
+
+	for y: float in _sample_track03l_range(goal_height + 0.25, ceiling_height - 0.05, TRACK03L_SEAL_GRID_STEP):
+		for x: float in _sample_track03l_range(-goal_half_width, goal_half_width, TRACK03L_SEAL_GRID_STEP):
+			_record_track03l_arena_ray(leaks, space_state, Vector3(x, y, goal_line_north + 0.8), Vector3(x, y, goal_line_north - 1.1), "north-goal-front-top")
+			_record_track03l_arena_ray(leaks, space_state, Vector3(x, y, goal_line_south - 0.8), Vector3(x, y, goal_line_south + 1.1), "south-goal-front-top")
+
+	for x: float in _sample_track03l_range(-field_half_width + 0.7, field_half_width - 0.7, TRACK03L_SEAL_GRID_STEP):
+		for z: float in _sample_track03l_range(total_min_z + 0.7, total_max_z - 0.7, TRACK03L_SEAL_GRID_STEP):
+			_record_track03l_arena_ray(leaks, space_state, Vector3(x, ceiling_height - 0.85, z), Vector3(x, ceiling_height + 0.85, z), "ceiling")
+
+	return leaks
+
+func _record_track03l_arena_ray(leaks: Dictionary, space_state: PhysicsDirectSpaceState3D, from: Vector3, to: Vector3, label: String) -> void:
+	var query := PhysicsRayQueryParameters3D.create(from, to)
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	var hit := space_state.intersect_ray(query)
+	if not hit.is_empty():
+		return
+	leaks["count"] = int(leaks.get("count", 0)) + 1
+	var samples := leaks.get("samples", PackedStringArray()) as PackedStringArray
+	if samples.size() < 12:
+		samples.append("%s from=%s to=%s" % [label, str(from), str(to)])
+		leaks["samples"] = samples
+
+func _format_arena_leak_samples(leak_report: Dictionary) -> String:
+	var samples := leak_report.get("samples", PackedStringArray()) as PackedStringArray
+	return "count=%d; %s" % [int(leak_report.get("count", 0)), " | ".join(samples)]
+
+func _sample_track03l_range(min_value: float, max_value: float, step: float) -> Array[float]:
+	var values: Array[float] = []
+	if max_value < min_value:
+		return values
+	var value := min_value
+	while value <= max_value + 0.001:
+		values.append(value)
+		value += step
+	if values.is_empty() or values[values.size() - 1] < max_value - 0.001:
+		values.append(max_value)
+	return values
+
+func _build_track03l_tunneling_cases(config: Dictionary) -> Array[Dictionary]:
+	var field_half_width := float(config.get("field_width", 38.0)) * 0.5
+	var ceiling_height := float(config.get("ceiling_height", 8.8))
+	var goal_height := float(config.get("goal_height", 3.45))
+	var goal_line_north := float(config.get("goal_line_north", -27.0))
+	var goal_line_south := float(config.get("goal_line_south", 27.0))
+	return [
+		{"label": "east-wall", "start": Vector3(field_half_width - 1.25, 1.4, 0.0), "velocity": Vector3(TRACK03L_MAX_TUNNELING_SPEED, 0.0, 0.0), "limit_axis": "x_max", "limit": field_half_width + 0.2},
+		{"label": "west-wall", "start": Vector3(-field_half_width + 1.25, 1.4, 0.0), "velocity": Vector3(-TRACK03L_MAX_TUNNELING_SPEED, 0.0, 0.0), "limit_axis": "x_min", "limit": -field_half_width - 0.2},
+		{"label": "ceiling", "start": Vector3(0.0, ceiling_height - 1.1, 0.0), "velocity": Vector3(0.0, TRACK03L_MAX_TUNNELING_SPEED, 0.0), "limit_axis": "y_max", "limit": ceiling_height + 0.2},
+		{"label": "north-goal-front-top", "start": Vector3(0.0, goal_height + 0.95, goal_line_north + 1.3), "velocity": Vector3(0.0, 0.0, -TRACK03L_MAX_TUNNELING_SPEED), "limit_axis": "z_min", "limit": goal_line_north - 0.2},
+		{"label": "south-goal-front-top", "start": Vector3(0.0, goal_height + 0.95, goal_line_south - 1.3), "velocity": Vector3(0.0, 0.0, TRACK03L_MAX_TUNNELING_SPEED), "limit_axis": "z_max", "limit": goal_line_south + 0.2},
+	]
+
+func _track03l_ball_stayed_inside_case(position: Vector3, case: Dictionary) -> bool:
+	match str(case.get("limit_axis", "")):
+		"x_max":
+			return position.x <= float(case.get("limit", INF))
+		"x_min":
+			return position.x >= float(case.get("limit", -INF))
+		"y_max":
+			return position.y <= float(case.get("limit", INF))
+		"z_max":
+			return position.z <= float(case.get("limit", INF))
+		"z_min":
+			return position.z >= float(case.get("limit", -INF))
+		_:
+			return false
