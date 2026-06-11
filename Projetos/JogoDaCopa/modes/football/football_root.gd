@@ -85,6 +85,7 @@ const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
 const TOON_RENDER_META_KEY: String = "jogodacopa_toon_render"
 const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 const MATCH_MODE_IDS: Array = [&"timer", &"goals"]
+const SCREEN_TRANSITION_SECONDS: float = 0.25
 
 var player
 var player_avatar
@@ -131,6 +132,7 @@ var countdown_last_number: int = 0
 var goal_slowmo_remaining: float = 0.0
 var stadium_scoreboard_score_labels: Dictionary = {}
 var stadium_scoreboard_phase_labels: Dictionary = {}
+var match_stats: Dictionary = FootballMatchRulesScript.build_empty_match_stats()
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -174,10 +176,17 @@ func _physics_process(delta: float) -> void:
 	_update_avatar_states(delta)
 
 func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_back"):
+		if _get_escape_target() == &"menu":
+			_return_to_main_menu()
+		else:
+			_set_menu_open(not menu_open)
+		get_viewport().set_input_as_handled()
+		return
 	if intro_open:
 		return
-	if event.is_action_pressed("ui_back"):
-		_set_menu_open(not menu_open)
+	if event.is_action_pressed("restart_round"):
+		restart_match()
 		get_viewport().set_input_as_handled()
 		return
 	if menu_open:
@@ -186,12 +195,12 @@ func _input(event: InputEvent) -> void:
 		_capture_mouse_if_playing()
 		get_viewport().set_input_as_handled()
 		return
-	if event.is_action_pressed("restart_round"):
-		restart_match()
-		get_viewport().set_input_as_handled()
 	if event.is_action_pressed("arcade_emote"):
 		_trigger_arcade_emote(true)
 		get_viewport().set_input_as_handled()
+
+func _get_escape_target() -> StringName:
+	return &"menu" if intro_open or match_over else &"pause"
 
 func restart_match() -> void:
 	_set_intro_open(false)
@@ -210,6 +219,7 @@ func restart_match() -> void:
 	bot_super_meter = 0.0
 	player_super_used_this_kickoff = false
 	bot_super_used_this_kickoff = false
+	match_stats = FootballMatchRulesScript.build_empty_match_stats()
 	_reset_arcade_field()
 	_restart_play(false)
 	if hud != null:
@@ -303,6 +313,12 @@ func debug_is_boost_pad_active(index: int) -> bool:
 
 func debug_build_hud_snapshot() -> Dictionary:
 	return _build_hud_snapshot()
+
+func debug_get_match_stats_summary() -> Dictionary:
+	return FootballMatchRulesScript.build_match_stats_summary(match_stats)
+
+func debug_get_escape_target() -> StringName:
+	return _get_escape_target()
 
 func debug_get_bot():
 	return bot
@@ -692,6 +708,7 @@ func _spawn_runtime() -> void:
 	hud.resume_requested.connect(func() -> void:
 		_set_menu_open(false)
 	)
+	hud.restart_requested.connect(restart_match)
 	hud.rematch_requested.connect(restart_match)
 	hud.main_menu_requested.connect(_return_to_main_menu)
 	hud.skin_tone_previous_requested.connect(func() -> void:
@@ -790,6 +807,7 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 	var kick_direction := _build_kick_direction(origin, direction)
 	_notify_player_touched_ball()
 	ball.kick(kick_direction, force, lift)
+	_record_shot_stat(&"player", super_shot)
 	if super_shot:
 		player_super_meter = 0.0
 		player_super_used_this_kickoff = true
@@ -816,8 +834,9 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 		bot_super_used_this_kickoff = true
 		applied_force = SUPER_SHOT_FORCE
 		applied_lift = SUPER_SHOT_LIFT
-	_notify_any_ball_touched()
+	_notify_ball_touched_by(&"bot")
 	ball.kick(direction, applied_force, applied_lift)
+	_record_shot_stat(&"bot", bot_super)
 	if not bot_super:
 		_add_bot_super(SUPER_TOUCH_GAIN)
 	if feedback != null:
@@ -897,7 +916,7 @@ func _process_arcade_dash_contact(actor: Node3D, target: Node3D, actor_is_player
 		if actor_is_player:
 			_notify_player_touched_ball()
 		else:
-			_notify_any_ball_touched()
+			_notify_ball_touched_by(&"bot")
 		ball.kick(dash_direction, ARCADE_SLIDE_BALL_FORCE, ARCADE_SLIDE_BALL_LIFT)
 		if actor_is_player:
 			_add_player_super(SUPER_TOUCH_GAIN)
@@ -1059,6 +1078,7 @@ func _register_goal(player_scored: bool) -> void:
 	player_score = int(score_result.get("player_score", player_score))
 	bot_score = int(score_result.get("bot_score", bot_score))
 	last_goal_value = int(score_result.get("goal_value", 1))
+	_record_goal_stat(player_scored, last_goal_value)
 	var double_goal := bool(score_result.get("double_goal", false))
 	phase_label = &"goal"
 	goal_reset_timer = GOAL_RESET_DELAY
@@ -1128,7 +1148,7 @@ func _finish_match(player_won: bool) -> void:
 	elif not player_won and bot_avatar != null:
 		bot_avatar.play_celebrate()
 	if hud != null:
-		hud.show_match_end(player_won)
+		hud.show_match_end(player_won, _build_result_snapshot())
 	if feedback != null:
 		feedback.play_round_end(player_won)
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -1224,6 +1244,68 @@ func _build_hud_snapshot() -> Dictionary:
 		"countdown": kickoff_countdown_remaining,
 		"hint": "Comecar inicia | WASD move | Shift boost | E/Ctrl dash | Mouse gira jogador/camera | LMB segura/carrega | RMB forte/SUPER | Space jump | T emote pos-gol | R restart | Esc menu" if intro_open else "WASD move | Shift boost | E/Ctrl dash | LMB segura/carrega | RMB forte/SUPER | Space jump/flip | T emote pos-gol | paredes/teto rebatem | R restart | Esc menu"
 	}
+
+func _build_result_snapshot() -> Dictionary:
+	var summary := FootballMatchRulesScript.build_match_stats_summary(match_stats)
+	var player_code := _get_kit_code(selected_appearance.country_kit_id)
+	var bot_code := _get_kit_code(bot_appearance.country_kit_id)
+	return {
+		"player_score": player_score,
+		"bot_score": bot_score,
+		"player_kit_code": player_code,
+		"bot_kit_code": bot_code,
+		"player_kit_color": AvatarCatalogScript.get_kit_primary_color(selected_appearance.country_kit_id),
+		"bot_kit_color": AvatarCatalogScript.get_kit_primary_color(bot_appearance.country_kit_id),
+		"stats_text": _format_result_stats(summary, player_code, bot_code)
+	}
+
+func _format_result_stats(summary: Dictionary, player_code: String, bot_code: String) -> String:
+	var period_line := "Gols por periodo: 1T %s %d-%d %s | 2T %s %d-%d %s" % [
+		player_code,
+		int(summary.get("player_goals_first_half", 0)),
+		int(summary.get("bot_goals_first_half", 0)),
+		bot_code,
+		player_code,
+		int(summary.get("player_goals_second_half", 0)),
+		int(summary.get("bot_goals_second_half", 0)),
+		bot_code
+	]
+	if int(summary.get("player_goals_golden_goal", 0)) + int(summary.get("bot_goals_golden_goal", 0)) > 0:
+		period_line += " | GG %s %d-%d %s" % [
+			player_code,
+			int(summary.get("player_goals_golden_goal", 0)),
+			int(summary.get("bot_goals_golden_goal", 0)),
+			bot_code
+		]
+	if int(summary.get("player_goals_regular", 0)) + int(summary.get("bot_goals_regular", 0)) > 0:
+		period_line += " | Unico %s %d-%d %s" % [
+			player_code,
+			int(summary.get("player_goals_regular", 0)),
+			int(summary.get("bot_goals_regular", 0)),
+			bot_code
+		]
+	var longest_team := StringName(str(summary.get("longest_touch_team", &"none")))
+	var longest_label := player_code if longest_team == &"player" else (bot_code if longest_team == &"bot" else "-")
+	return "%s\nChutes: %d total (%s %d / %s %d)\nPosse por toques: %s %d%% / %s %d%% (%d-%d toques)\nSUPERS usados: %s %d / %s %d\nMaior sequencia de toques: %s %d" % [
+		period_line,
+		int(summary.get("total_shots", 0)),
+		player_code,
+		int(summary.get("player_shots", 0)),
+		bot_code,
+		int(summary.get("bot_shots", 0)),
+		player_code,
+		int(summary.get("player_possession_percent", 50)),
+		bot_code,
+		int(summary.get("bot_possession_percent", 50)),
+		int(summary.get("player_touches", 0)),
+		int(summary.get("bot_touches", 0)),
+		player_code,
+		int(summary.get("player_supers", 0)),
+		bot_code,
+		int(summary.get("bot_supers", 0)),
+		longest_label,
+		int(summary.get("longest_touch_streak", 0))
+	]
 
 func _advance_kickoff_owner() -> void:
 	kickoff_owner = &"bot" if kickoff_owner == &"player" else &"player"
@@ -1388,6 +1470,8 @@ func _update_goal_slowmo(delta: float) -> void:
 		Engine.time_scale = 1.0
 
 func _start_match() -> void:
+	if hud != null:
+		hud.play_transition_pulse(SCREEN_TRANSITION_SECONDS)
 	_set_intro_open(false)
 	if hud != null:
 		hud.reset_feedback()
@@ -1405,7 +1489,7 @@ func _set_intro_open(is_open: bool) -> void:
 		if feedback != null:
 			feedback.set_ambience_ducked(true)
 		if hud != null:
-			hud.set_pause_menu_visible(false, player.mouse_sensitivity)
+			hud.set_pause_menu_visible(false)
 			hud.set_intro_visible(true)
 		return
 	get_tree().paused = false
@@ -1424,7 +1508,7 @@ func _set_menu_open(is_open: bool) -> void:
 		_set_player_persistent_vfx(false, false)
 	get_tree().paused = menu_open
 	if hud != null:
-		hud.set_pause_menu_visible(menu_open, player.mouse_sensitivity)
+		hud.set_pause_menu_visible(menu_open)
 	if feedback != null:
 		feedback.set_ambience_ducked(menu_open)
 	if menu_open:
@@ -1433,6 +1517,12 @@ func _set_menu_open(is_open: bool) -> void:
 		_capture_mouse_if_playing()
 
 func _return_to_main_menu() -> void:
+	call_deferred("_return_to_main_menu_async")
+
+func _return_to_main_menu_async() -> void:
+	if hud != null:
+		hud.play_fade_to_black(SCREEN_TRANSITION_SECONDS)
+	await get_tree().create_timer(SCREEN_TRANSITION_SECONDS, true, false, true).timeout
 	intro_open = false
 	get_tree().paused = false
 	Engine.time_scale = 1.0
@@ -1469,11 +1559,30 @@ func _notify_player_touched_ball() -> void:
 		player_kickoff_waiting_for_touch = false
 		if bot != null and bot.has_method("release_kickoff_defense_hold"):
 			bot.release_kickoff_defense_hold()
-	_notify_any_ball_touched()
+	_notify_ball_touched_by(&"player")
 
 func _notify_any_ball_touched() -> void:
+	_notify_ball_touched_by(&"none")
+
+func _notify_ball_touched_by(team: StringName) -> void:
+	if team == &"player" or team == &"bot":
+		match_stats = FootballMatchRulesScript.record_touch_stat(match_stats, team)
 	if kickoff_marker != null:
 		kickoff_marker.visible = false
+
+func _record_shot_stat(team: StringName, super_used: bool) -> void:
+	match_stats = FootballMatchRulesScript.record_shot_stat(match_stats, team, super_used)
+
+func _record_goal_stat(player_scored: bool, goal_value: int) -> void:
+	match_stats = FootballMatchRulesScript.record_goal_stat(
+		match_stats,
+		player_scored,
+		goal_value,
+		match_mode_id,
+		match_time_remaining,
+		MATCH_DURATION_SECONDS,
+		golden_goal_active
+	)
 
 func _capture_mouse_if_playing() -> void:
 	if DisplayServer.get_name().to_lower().contains("headless"):

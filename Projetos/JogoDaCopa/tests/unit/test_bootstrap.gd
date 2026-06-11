@@ -88,6 +88,8 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_eq(menu.debug_get_quality_text(), "Alta")
 	assert_not_null(menu.get_node_or_null("ArenaPreviewViewport"))
 	assert_not_null(menu.get_node_or_null("ArenaPreview"))
+	assert_true(menu.debug_preview_uses_hero_shot())
+	assert_eq(menu.get_viewport().gui_get_focus_owner().name, "FootballButton")
 	assert_null(menu.get_node_or_null("MenuSafeArea"))
 	assert_null(menu.get_node_or_null("MenuCenter/MenuScroll"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/FootballButton"))
@@ -164,12 +166,19 @@ func test_football_interactive_panels_accept_real_mouse_clicks() -> void:
 		await get_tree().process_frame
 		football._set_menu_open(true)
 		await get_tree().process_frame
+		assert_true(get_tree().paused)
 		assert_eq(Input.get_mouse_mode(), Input.MOUSE_MODE_VISIBLE)
+		assert_eq(hud.debug_get_focused_control_name(), "ResumeButton")
 		var pause_path := "HudRoot/PauseMenuCenter/PauseMenuPanel/PauseMenuMargin/PauseMenuBox/"
 		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "ResumeButton") as Button)
+		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "RestartMatchButton") as Button)
 		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "MainMenuButton") as Button)
-		await _assert_real_slider_click_emits_value_changed(hud, pause_path + "SensitivitySlider", "Pause sensibilidade %s" % context)
-		await _assert_real_button_click_emits_pressed(hud, pause_path + "ResumeButton", "Pause retomar %s" % context)
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "ResumeButton", "Pause continuar %s" % context)
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "RestartMatchButton", "Pause reiniciar %s" % context)
+		await _assert_real_slider_click_emits_value_changed(hud, pause_path + "VolumeRow/VolumeSlider", "Pause volume master %s" % context)
+		await _assert_real_slider_click_emits_value_changed(hud, pause_path + "SfxVolumeRow/SfxVolumeSlider", "Pause volume SFX %s" % context)
+		await _assert_real_slider_click_emits_value_changed(hud, pause_path + "UiVolumeRow/UiVolumeSlider", "Pause volume UI %s" % context)
+		await _assert_real_slider_click_emits_value_changed(hud, pause_path + "AmbienceVolumeRow/AmbienceVolumeSlider", "Pause volume ambiente %s" % context)
 		await _assert_real_button_click_emits_pressed(hud, pause_path + "MainMenuButton", "Pause menu %s" % context)
 
 		football._set_menu_open(false)
@@ -1391,6 +1400,9 @@ func test_football_goal_updates_score_and_match_ends_at_three() -> void:
 	var football_hud = football.get_node("FootballHud")
 	assert_true(football_hud.debug_is_result_panel_visible())
 	assert_eq(football_hud.debug_get_result_title(), "VITORIA")
+	assert_true(football_hud.debug_get_result_stats_text().contains("Gols por periodo"))
+	assert_true(football_hud.debug_get_result_stats_text().contains("Chutes"))
+	assert_true(football_hud.debug_get_result_stats_text().contains("Posse por toques"))
 	assert_not_null(football_hud.get_node_or_null("HudRoot/ResultCenter/ResultPanel/ResultMargin/ResultBox/ResultButtons/RematchButton"))
 	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"celebrate")
 	assert_true(football.debug_is_goal_slowmo_active())
@@ -1443,6 +1455,94 @@ func test_football_timer_mode_goal_counts_double_in_final_30_seconds() -> void:
 	assert_false(football.debug_is_match_over())
 	assert_eq((football.get_node("FootballHud") as FootballHud).last_event, &"double_goal")
 	assert_true((football.get_node("FootballHud") as FootballHud).debug_get_event_text().contains("VALE 2"))
+	assert_no_new_orphans()
+
+func test_football_root_collects_match_stats_for_result_screen() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_set_match_mode(&"goals")
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	football._notify_ball_touched_by(&"player")
+	football._notify_ball_touched_by(&"player")
+	football._notify_ball_touched_by(&"bot")
+	football._record_shot_stat(&"player", true)
+	football._record_shot_stat(&"bot", false)
+	football.debug_set_score(2, 0)
+	football.debug_force_ball_position(Vector3(0.0, 0.68, -27.35))
+	football._process_goal_detection()
+	var summary: Dictionary = football.debug_get_match_stats_summary()
+	var stats_text := (football.get_node("FootballHud") as FootballHud).debug_get_result_stats_text()
+
+	assert_eq(summary.get("player_touches", -1), 2)
+	assert_eq(summary.get("bot_touches", -1), 1)
+	assert_eq(summary.get("player_shots", -1), 1)
+	assert_eq(summary.get("bot_shots", -1), 1)
+	assert_eq(summary.get("player_supers", -1), 1)
+	assert_eq(summary.get("longest_touch_team", &"none"), &"player")
+	assert_true(stats_text.contains("SUPERS usados"))
+	assert_true(stats_text.contains("Maior sequencia"))
+	assert_no_new_orphans()
+
+func test_football_escape_targets_intro_pause_and_result_menu() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	assert_eq(football.debug_get_escape_target(), &"menu")
+	football.debug_start_match()
+	await get_tree().physics_frame
+	assert_eq(football.debug_get_escape_target(), &"pause")
+	football.debug_set_match_mode(&"goals")
+	football.debug_set_score(2, 0)
+	football.debug_force_ball_position(Vector3(0.0, 0.68, -27.35))
+	football._process_goal_detection()
+
+	assert_true(football.debug_is_match_over())
+	assert_eq(football.debug_get_escape_target(), &"menu")
+	assert_no_new_orphans()
+
+func test_football_restart_cleans_countdown_golden_goal_and_slowmo() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	football.debug_start_match_with_countdown()
+	assert_true(football.debug_is_kickoff_locked())
+	football.restart_match()
+	assert_eq(football.debug_get_player_score(), 0)
+	assert_eq(football.debug_get_bot_score(), 0)
+	assert_false(football.debug_is_golden_goal_active())
+	assert_false(football.debug_is_goal_slowmo_active())
+	assert_true(football.debug_is_kickoff_locked())
+
+	football.debug_set_match_mode(&"timer")
+	football.debug_start_match()
+	football.debug_set_score(1, 1)
+	football.debug_set_match_time_remaining(0.05)
+	football._physics_process(0.1)
+	assert_true(football.debug_is_golden_goal_active())
+	football.restart_match()
+	assert_false(football.debug_is_golden_goal_active())
+	assert_eq(Engine.time_scale, 1.0)
+
+	football.debug_start_match()
+	football.debug_set_match_mode(&"goals")
+	football.debug_set_score(0, 0)
+	football.debug_force_ball_position(Vector3(0.0, 0.68, -27.35))
+	football._process_goal_detection()
+	assert_true(football.debug_is_goal_slowmo_active())
+	football.restart_match()
+
+	assert_false(football.debug_is_goal_slowmo_active())
+	assert_eq(Engine.time_scale, 1.0)
+	assert_eq(football.debug_get_player_score(), 0)
+	assert_eq(football.debug_get_bot_score(), 0)
 	assert_no_new_orphans()
 
 func test_football_arcade_emote_only_triggers_after_goal() -> void:

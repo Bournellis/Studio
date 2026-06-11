@@ -7,6 +7,8 @@ const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
 const MENU_PANEL_MIN_SIZE: Vector2 = Vector2(500.0, 0.0)
+const MENU_PANEL_SIDE_MARGIN: float = 48.0
+const MENU_PANEL_MIN_TOP_MARGIN: float = 24.0
 const BUS_MASTER: StringName = &"Master"
 const BUS_SFX: StringName = &"SFX"
 const BUS_UI: StringName = &"UI"
@@ -31,7 +33,8 @@ const MATCH_MODE_LABELS: Dictionary = {
 	&"timer": "3 minutos",
 	&"goals": "3 gols"
 }
-const PREVIEW_CAMERA_LOOK_AT: Vector3 = Vector3(-2.55, 1.05, 0.02)
+const PREVIEW_CAMERA_LOOK_AT: Vector3 = Vector3(-3.08, 1.32, 0.0)
+const MENU_TRANSITION_SECONDS: float = 0.25
 
 var football_button: Button
 var quit_button: Button
@@ -55,6 +58,8 @@ var ui_volume_slider: HSlider
 var ambience_volume_slider: HSlider
 var quality_option: OptionButton
 var toon_check_button: CheckButton
+var fade_overlay: ColorRect
+var fade_tween: Tween
 var ui_audio_streams: Dictionary = {}
 var ui_audio_pool: Array[AudioStreamPlayer] = []
 var ui_audio_pool_cursor: int = 0
@@ -80,6 +85,8 @@ func _ready() -> void:
 	_sync_root_rect_to_viewport()
 	_apply_initial_audio_mix()
 	_update_preview_selection()
+	_focus_initial_control()
+	call_deferred("_play_fade_from_black")
 
 func _process(delta: float) -> void:
 	preview_time += delta
@@ -96,6 +103,7 @@ func _sync_root_rect_to_viewport() -> void:
 	set_anchors_preset(Control.PRESET_TOP_LEFT)
 	position = Vector2.ZERO
 	size = get_viewport_rect().size
+	_position_menu_panel()
 
 func debug_get_mode_path(mode_id: StringName) -> String:
 	match mode_id:
@@ -181,6 +189,17 @@ func debug_get_preview_average_luminance(sample_step: int = 16) -> float:
 		y += step
 	return total / maxf(1.0, float(count))
 
+func debug_preview_uses_hero_shot() -> bool:
+	if preview_camera == null or preview_avatar == null or preview_root == null:
+		return false
+	var hero_light := preview_viewport.get_node_or_null("PreviewWorld/PreviewHeroLight") as OmniLight3D
+	var distance_to_avatar := preview_camera.global_position.distance_to(preview_avatar.global_position)
+	var camera_is_low := preview_camera.global_position.y < PREVIEW_CAMERA_LOOK_AT.y
+	var kit_matches := true
+	if preview_avatar.has_method("debug_get_country_kit_id"):
+		kit_matches = preview_avatar.debug_get_country_kit_id() == selected_country_kit_id
+	return hero_light != null and camera_is_low and distance_to_avatar <= 6.2 and kit_matches
+
 func _build_ui() -> void:
 	_sync_root_rect_to_viewport()
 	mouse_filter = Control.MOUSE_FILTER_PASS
@@ -203,7 +222,7 @@ func _build_ui() -> void:
 	shade.color = Color(0.0, 0.015, 0.025, 0.34)
 	add_child(shade)
 
-	var menu_center := CenterContainer.new()
+	var menu_center := Control.new()
 	menu_center.name = "MenuCenter"
 	menu_center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	menu_center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -272,6 +291,10 @@ func _build_ui() -> void:
 	footer.add_theme_font_size_override("font_size", 12)
 	center.add_child(footer)
 
+	_position_menu_panel()
+	call_deferred("_position_menu_panel")
+	_build_menu_fade_overlay()
+
 func _build_arena_preview() -> void:
 	preview_viewport = SubViewport.new()
 	preview_viewport.name = "ArenaPreviewViewport"
@@ -332,13 +355,13 @@ func _build_arena_preview() -> void:
 
 	preview_avatar = PlayerAvatarScript.new()
 	preview_avatar.name = "PreviewAvatar"
-	preview_avatar.position = Vector3(-4.4, 0.0, 0.16)
-	preview_avatar.rotation.y = -0.32
+	preview_avatar.position = Vector3(-4.15, 0.0, 0.08)
+	preview_avatar.rotation.y = -0.22
 	preview_root.add_child(preview_avatar)
 
 	preview_ball = MeshInstance3D.new()
 	preview_ball.name = "PreviewBall"
-	preview_ball.position = Vector3(-3.16, 0.46, -0.24)
+	preview_ball.position = Vector3(-3.08, 0.46, -0.34)
 	var ball_mesh := SphereMesh.new()
 	ball_mesh.radius = 0.34
 	ball_mesh.height = 0.68
@@ -351,7 +374,7 @@ func _build_arena_preview() -> void:
 	preview_camera = Camera3D.new()
 	preview_camera.name = "PreviewCamera"
 	preview_camera.current = true
-	preview_camera.fov = 45.0
+	preview_camera.fov = 38.0
 	preview_camera.near = 0.04
 	preview_camera.far = 80.0
 	world.add_child(preview_camera)
@@ -400,9 +423,9 @@ func _build_preview_goal(parent: Node3D, z_position: float) -> void:
 func _update_preview_camera_pose(time_seconds: float) -> void:
 	if preview_camera == null:
 		return
-	var angle := -0.38 + sin(time_seconds * 0.28) * 0.08
-	var radius := 5.35
-	preview_camera.position = Vector3(sin(angle) * radius - 2.55, 2.45 + sin(time_seconds * 0.5) * 0.08, cos(angle) * radius + 2.65)
+	var angle := -0.34 + sin(time_seconds * 0.28) * 0.06
+	var radius := 4.2
+	preview_camera.position = Vector3(sin(angle) * radius - 2.85, 0.92 + sin(time_seconds * 0.5) * 0.05, cos(angle) * radius + 2.05)
 	preview_camera.look_at(PREVIEW_CAMERA_LOOK_AT, Vector3.UP)
 
 func _get_preview_configured_luminance() -> float:
@@ -547,6 +570,82 @@ func _build_swatch(node_name: String, color: Color) -> ColorRect:
 	swatch.color = color
 	swatch.custom_minimum_size = Vector2(36.0, 28.0)
 	return swatch
+
+func _focus_initial_control() -> void:
+	if football_button != null:
+		football_button.grab_focus()
+
+func _position_menu_panel() -> void:
+	if menu_panel == null:
+		return
+	var viewport_size := get_viewport_rect().size
+	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
+		return
+	var required_size := _get_menu_required_size()
+	var panel_width := minf(required_size.x, maxf(360.0, viewport_size.x - MENU_PANEL_SIDE_MARGIN * 2.0))
+	var panel_height := minf(required_size.y, maxf(0.0, viewport_size.y - MENU_PANEL_MIN_TOP_MARGIN * 2.0))
+	var panel_x := (viewport_size.x - panel_width) * 0.5
+	if viewport_size.x >= 980.0:
+		var preferred_x := viewport_size.x - panel_width - MENU_PANEL_SIDE_MARGIN
+		var hero_clearance := minf(viewport_size.x * 0.46, 720.0)
+		var right_limit := maxf(MENU_PANEL_SIDE_MARGIN, viewport_size.x - panel_width - MENU_PANEL_SIDE_MARGIN * 0.5)
+		panel_x = clampf(preferred_x, hero_clearance, right_limit)
+	var panel_y := maxf(MENU_PANEL_MIN_TOP_MARGIN, (viewport_size.y - panel_height) * 0.5)
+	menu_panel.position = Vector2(panel_x, panel_y)
+	menu_panel.size = Vector2(panel_width, panel_height)
+
+func _build_menu_fade_overlay() -> void:
+	fade_overlay = ColorRect.new()
+	fade_overlay.name = "MenuFadeOverlay"
+	fade_overlay.process_mode = Node.PROCESS_MODE_ALWAYS
+	fade_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	fade_overlay.color = Color(0.0, 0.0, 0.0, 1.0)
+	fade_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(fade_overlay)
+
+func _play_fade_from_black() -> void:
+	if _is_headless_display():
+		_set_fade_alpha_immediate(0.0)
+		return
+	call_deferred("_fade_to_alpha_async", 0.0, MENU_TRANSITION_SECONDS)
+
+func _play_fade_to_black() -> void:
+	if _is_headless_display():
+		_set_fade_alpha_immediate(1.0)
+		return
+	call_deferred("_fade_to_alpha_async", 1.0, MENU_TRANSITION_SECONDS)
+
+func _fade_to_alpha_async(target_alpha: float, duration: float) -> void:
+	if fade_overlay == null:
+		return
+	if fade_tween != null:
+		fade_tween.kill()
+	fade_overlay.visible = true
+	fade_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	fade_tween = create_tween()
+	fade_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	fade_tween.tween_property(fade_overlay, "color:a", clampf(target_alpha, 0.0, 1.0), maxf(0.01, duration))
+	await fade_tween.finished
+	if fade_overlay == null:
+		return
+	if target_alpha <= 0.001:
+		fade_overlay.visible = false
+		fade_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	else:
+		fade_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+
+func _set_fade_alpha_immediate(target_alpha: float) -> void:
+	if fade_overlay == null:
+		return
+	if fade_tween != null:
+		fade_tween.kill()
+		fade_tween = null
+	fade_overlay.color = Color(0.0, 0.0, 0.0, clampf(target_alpha, 0.0, 1.0))
+	fade_overlay.visible = target_alpha > 0.001
+	fade_overlay.mouse_filter = Control.MOUSE_FILTER_STOP if fade_overlay.visible else Control.MOUSE_FILTER_IGNORE
+
+func _is_headless_display() -> bool:
+	return DisplayServer.get_name().to_lower().contains("headless")
 
 func _build_panel_style(fill_color: Color, border_color: Color, border_width: int) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
@@ -694,10 +793,15 @@ func _play_ui_sound(audio_key: StringName) -> void:
 	player.play()
 
 func _load_mode(scene_path: String) -> void:
+	call_deferred("_load_mode_async", scene_path)
+
+func _load_mode_async(scene_path: String) -> void:
 	status_label.text = "Carregando..."
 	get_tree().root.set_meta(BOT_DIFFICULTY_META_KEY, selected_bot_difficulty_id)
 	get_tree().root.set_meta(MATCH_MODE_META_KEY, selected_match_mode_id)
 	get_tree().root.set_meta(TOON_RENDER_META_KEY, selected_toon_render_enabled)
+	_play_fade_to_black()
+	await get_tree().create_timer(MENU_TRANSITION_SECONDS, true, false, true).timeout
 	get_tree().change_scene_to_file(scene_path)
 
 func _get_menu_required_size() -> Vector2:
