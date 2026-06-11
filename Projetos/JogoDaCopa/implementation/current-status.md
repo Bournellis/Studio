@@ -5,13 +5,13 @@
 - Product/module name: `Copa Arena Futebol`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + single-threaded Web export gate`
-- Active stage: `Track 04E - Web Export Spike & Render Profile V1`
-- Active stage status: `BRANCH REVIEW - Hotfix 04E.1 ready for Claude pre-merge review and Fabio visual parity verdict`
-- Status marker: `JOGO_DA_COPA_TRACK_04E1_NIGHT_CAPTURE_HOTFIX_BRANCH_REVIEW`
+- Active stage: `Track 04F - Web RC`
+- Active stage status: `NEXT - ready to start Web release candidate pass`
+- Status marker: `JOGO_DA_COPA_TRACK_04F_WEB_RC_NEXT`
 - Approved plan: Fabio direct task `Track 04E - Web Export Spike & Render Profile V1` (2026-06-11)
 - Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`
 - Review: `docs/code-review-track04b1-04b2-v1.md`, `docs/code-review-track04c-04d-v1.md`, `docs/code-review-track04e-web-spike-v1.md`
-- Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`
+- Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_hotfix04e1-night-capture.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -50,7 +50,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Track 04B3 Kick Arms Polish V1: aprovado e mergeado; retunou somente os bracos do `JogoDaCopa_Kick`, mantendo pernas/tronco/timing aprovados; maos ficam abaixo da cabeca e upperarms ficam `<= 25 deg` de abducao nas amostras do clipe.
 - Track 04D Match Completeness V1: aprovado pelo review e mergeado em main; pause real com restart/volumes/menu, resultado rico com estatisticas puras, fades curtos, ESC/foco/restart consistentes e hero shot do menu em 1080p/720p.
 - Track 04C Stadium Visual Upgrade V1: aprovado pelo review e mergeado em main apos a 04D; arquibancadas profundas, torcida com cores dos dois kits e `crowd_excitement`, teloes maiores, bandeiroes, mastros animados, halos emissive e skyline low-poly sem novas luzes com sombra.
-- Track 04E Web Export Spike & Render Profile V1 + Hotfix 04E.1: em review pre-merge; preset Web single-threaded exporta o jogo completo para `builds/web/`, `RenderProfile` central preserva desktop Forward+ e aplica fallbacks Compatibility no Web, e o hotfix corrigiu o caminho de captura lavada usando camera de evidencia noturna com gate de luminancia `< 90`.
+- Track 04E Web Export Spike & Render Profile V1 + Hotfix 04E.1: aprovado pela Claude e mergeado em main; preset Web single-threaded exporta o jogo completo para `builds/web/`, `RenderProfile` central preserva desktop Forward+ e aplica fallbacks Compatibility no Web, e o hotfix corrigiu o caminho de captura lavada usando camera de evidencia noturna com gate de luminancia `< 90`.
 - Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
 - Toon experiment screenshots live in `docs/screenshots/track-03e-toon/`.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
@@ -58,7 +58,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-Track 04E + Hotfix 04E.1 is stopped on branch `codex/jogodacopa/track04e-web-spike-v1` for mandatory Claude pre-merge review because platform/render and evidence-capture changes affect the whole project. No push/fetch/pull occurred; `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin after review/merge.
+Track 04E + Hotfix 04E.1 is merged locally into main after Claude approval. Next step is `Track 04F - Web RC`, focusing on release-candidate Web validation and player-view parity follow-ups from the review. No push/fetch/pull occurred; `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -70,7 +70,7 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest branch result: PASS for Track 04E.1 validation, 86 tests, 1264 asserts, including source integrity check for 33 `.gd/.gdshader` files outside `addons/` and UTF-8 BOM rejection.
+Latest integrated main result: PASS for Track 04E.1 merge validation, 86 tests, 1264 asserts, including source integrity check for 33 `.gd/.gdshader` files outside `addons/` and UTF-8 BOM rejection.
 
 Latest performance samples remain above budget: Track 04E.1 desktop Forward+ windowed 1920x1080/vsync off average `600.2fps`, min warmed instant `374.1fps`, `0/360` frames below 60. Chrome Web smoke at 1920x1080 passed with final CDP screenshot `1345589` bytes; Web rAF sample average `142.3fps`, p95 `7.0ms`.
 

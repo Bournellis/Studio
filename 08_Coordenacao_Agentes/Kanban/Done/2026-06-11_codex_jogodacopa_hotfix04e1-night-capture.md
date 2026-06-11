@@ -5,7 +5,7 @@
 - Projeto: `Projetos/JogoDaCopa/`
 - Branch: `codex/jogodacopa/track04e-web-spike-v1`
 - Worktree: `D:\Estudio-worktrees\jogodacopa-track04e`
-- Status: `REVIEW`
+- Status: `DONE`
 
 ## Motivo
 
@@ -74,4 +74,4 @@ Parar na mesma branch em Review com handoff atualizado para novo review pre-merg
 
 ## Review Pedido
 
-Claude deve revisar novamente antes do merge. Fabio deve dar o veredito visual de paridade desktop vs Web a partir de `Projetos/JogoDaCopa/docs/playtest-reports/track-04e-web-spike.md`.
+Claude revisou novamente e aprovou a Track 04E + Hotfix 04E.1 em `Projetos/JogoDaCopa/docs/code-review-track04e-web-spike-v1.md`. Merge local em main concluido; Fabio segue com push via GitHub Desktop.

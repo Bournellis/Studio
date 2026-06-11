@@ -6,7 +6,7 @@
 - Branch: `codex/jogodacopa/track04e-web-spike-v1`
 - Worktree: `D:\Estudio-worktrees\jogodacopa-track04e`
 - Base: `main` local em `72c22d1a`
-- Status: `REVIEW`
+- Status: `DONE`
 
 ## Objetivo
 
@@ -74,11 +74,18 @@ Parar na branch em Review com handoff completo para review pre-merge da Claude, 
 
 ## Review Necessario
 
-- Claude: review pre-merge obrigatorio da mudanca de plataforma/render.
-- Fabio: veredito visual de paridade desktop vs Web pelo relatorio e screenshots.
+- Claude: review pre-merge aprovado em `Projetos/JogoDaCopa/docs/code-review-track04e-web-spike-v1.md` apos Hotfix 04E.1.
+- Fabio: paridade visual segue registrada para decisao de polish da Track 04F Web RC.
 
 ## Observacoes Iniciais
 
 - `git status --short` em `D:\Estudio` estava limpo antes da worktree.
 - Nao havia docs untracked da Claude em main para incluir no commit de registro.
 - Operacoes remotas seguem proibidas para agentes; `PUSH PENDENTE` fica com Fabio via GitHub Desktop.
+
+## Fechamento
+
+- Review aprovado pela Claude em 2026-06-11.
+- Merge local em main concluido.
+- Hotfix 04E.1 integrado: camera de evidencia noturna, gate de luminancia `< 90`, BOM rejection e recapturas desktop/Web.
+- Proximo passo operacional: `Track 04F - Web RC`.

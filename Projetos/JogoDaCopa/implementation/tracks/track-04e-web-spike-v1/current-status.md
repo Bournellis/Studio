@@ -1,9 +1,9 @@
 # Track 04E - Web Export Spike & Render Profile V1
 
-- Status marker: `JOGO_DA_COPA_TRACK_04E1_NIGHT_CAPTURE_HOTFIX_BRANCH_REVIEW`
+- Status marker: `JOGO_DA_COPA_TRACK_04E_WEB_SPIKE_MERGED`
 - Branch: `codex/jogodacopa/track04e-web-spike-v1`
 - Worktree: `D:\Estudio-worktrees\jogodacopa-track04e`
-- Status: `BRANCH_REVIEW_AFTER_HOTFIX_04E1`
+- Status: `MERGED_MAIN`
 - Date: `2026-06-11`
 
 ## Objective
@@ -55,4 +55,4 @@ Chrome Web smoke: PASS, canvas 1920x1080, final CDP screenshot `1345589` bytes, 
 
 ## Handoff
 
-Stop on branch for mandatory Claude pre-merge review after Hotfix 04E.1. Fabio should decide visual parity from the recaptured desktop vs Web evidence before merge. No push/fetch/pull was performed by Codex.
+Claude approved Track 04E + Hotfix 04E.1 in `docs/code-review-track04e-web-spike-v1.md`, and the branch was merged locally into main. Next project step: `Track 04F - Web RC`. No push/fetch/pull was performed by Codex.
