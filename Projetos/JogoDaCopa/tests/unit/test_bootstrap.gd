@@ -498,6 +498,26 @@ func test_football_super_shot_is_once_per_kickoff() -> void:
 	assert_almost_eq(ball.linear_velocity.y, 7.2, 0.01)
 	assert_no_new_orphans()
 
+func test_football_super_whiff_does_not_consume_meter_or_kickoff_use() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var ball = football.debug_get_ball()
+	football.debug_set_player_super_meter(100.0)
+	football.debug_force_ball_position(football.debug_get_player_kick_origin() + football.debug_get_player_kick_direction() * 24.0 + Vector3.DOWN * 0.34)
+	var before_kicks: int = ball.debug_get_kick_count()
+	football._on_player_strong_kick_requested(player.get_shot_origin(), player.get_shot_direction(), 0.0, 0.0, 0.0, 0.0, false)
+
+	assert_eq(ball.debug_get_kick_count(), before_kicks)
+	assert_almost_eq(football.debug_get_player_super_meter(), 100.0, 0.01)
+	assert_false(football.debug_player_super_used_this_kickoff())
+	assert_no_new_orphans()
+
 func test_football_ball_fireball_uses_speed_hysteresis() -> void:
 	var ball = FootballBallScript.new()
 	add_child_autofree(ball)

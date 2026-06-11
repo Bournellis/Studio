@@ -28,6 +28,7 @@
 - `code-review-track02-series-v1.md`
 - `code-review-track03-series-v1.md`
 - `code-review-track02cbis-02dbis-v1.md`
+- `../implementation/tracks/track-03f-quality-hotfix-v1/current-status.md`
 - `arcade-upgrade-plan.md`
 - `codebase-audit-track05.md`
 - `reuse-map.md`
