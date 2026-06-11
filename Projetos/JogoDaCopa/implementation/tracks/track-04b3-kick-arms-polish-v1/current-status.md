@@ -3,7 +3,7 @@
 - Date: `2026-06-11`
 - Branch: `codex/jogodacopa/track04b3-kick-arms-polish-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track04b3-kick-arms-polish-v1`
-- Status: `READY_FOR_CLAUDE_REVIEW - not merged`
+- Status: `COMPLETE - approved and merged to main`
 - Source: Fabio playtest verdict after Track 04B1 + 04B2 integration
 
 ## Objective
@@ -70,4 +70,4 @@ Rendered frames:
 
 ## Handoff
 
-Stop on this branch for Claude review and Fabio visual approval. Do not merge until the visual verdict accepts the new kick arm silhouette.
+Claude review and Fabio visual approval accepted the new kick arm silhouette. The branch was merged locally into `main`; network push remains Fabio/GitHub Desktop only.

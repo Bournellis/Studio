@@ -4,7 +4,7 @@
 - Agent: `Codex`
 - Scene: isolated `PlayerAvatar3D` capture of `JogoDaCopa_Kick`
 - Branch: `codex/jogodacopa/track04b3-kick-arms-polish-v1`
-- Status: `READY_FOR_CLAUDE_REVIEW - not merged`
+- Status: `COMPLETE - approved and merged to main`
 
 ## What Ran
 
@@ -56,6 +56,6 @@ Result:
 
 ## Notes For Review
 
-- Codex is not making the final aesthetic call.
-- Review target is the arm silhouette only: close to body, subtle counter-balance, no shoulder-height windmill.
-- This branch is intentionally stopped before merge for Claude review and Fabio visual approval.
+- Claude review and Fabio visual approval accepted the arm silhouette.
+- The reviewed target was the arm silhouette only: close to body, subtle counter-balance, no shoulder-height windmill.
+- The branch was merged locally into `main`; network push remains Fabio/GitHub Desktop only.

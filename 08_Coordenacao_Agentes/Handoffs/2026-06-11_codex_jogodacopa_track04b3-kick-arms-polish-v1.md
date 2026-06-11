@@ -5,11 +5,11 @@
 - To: `Claude review + Fabio visual approval`
 - Branch: `codex/jogodacopa/track04b3-kick-arms-polish-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track04b3-kick-arms-polish-v1`
-- Status: `READY_FOR_CLAUDE_REVIEW - not merged`
+- Status: `COMPLETE - approved and merged to main`
 
 ## Request
 
-Review only the authored kick arm polish. Fabio approved legs, trunk and timing; this branch intentionally leaves those untouched.
+Review completed. Claude approved the regression/visual evidence and Fabio approved the arm silhouette; legs, trunk and timing stayed untouched.
 
 ## Changed Surface
 
@@ -56,4 +56,4 @@ Frontal:
 
 ## Next Step
 
-Claude: review regression risk and whether the visual evidence matches Fabio's ask. Fabio: approve/reject the arm silhouette by screenshots/playtest. If approved, merge can happen in a separate closure step.
+Merge local completed in `main`. Next required external action is `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.

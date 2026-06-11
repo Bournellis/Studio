@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK_04B3_KICK_ARMS_POLISH_V1_READY_FOR_REVIEW`
+- Status: `JOGO_DA_COPA_TRACK_04B3_KICK_ARMS_POLISH_V1_COMPLETE`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 

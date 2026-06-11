@@ -34,4 +34,4 @@ Follow-ups registrados para a proxima rodada: hero shot do menu (preview com uni
 - Escopo minimo respeitado: 1 commit de codigo, apenas keyframes de braco do `JogoDaCopa_Kick` (+34 linhas no avatar) + teste de guarda `test_authorial_kick_keeps_hands_below_head_and_upperarms_close` (+53).
 - Keyframes verificados: variacoes sutis (+-2 a 18 graus) em torno da pose de bracos baixos; pernas/tronco/timing intocados.
 - Evidencia visual analisada (8 frames, lateral + frontal): bracos junto ao corpo no apice do chute, punhos na altura do quadril, contra-balanco discreto e atletico - o "moinho de vento" foi eliminado; vista frontal confirma zero abertura lateral.
-- Fabio aprovou visualmente a 04B3; liberada para merge local. Apos o merge: PUSH PENDENTE via GitHub Desktop.
+- Fabio aprovou visualmente a 04B3; merge local concluido. PUSH PENDENTE via GitHub Desktop.

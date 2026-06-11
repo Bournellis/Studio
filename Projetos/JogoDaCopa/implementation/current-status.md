@@ -6,13 +6,12 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames`
 - Active stage: `Track 04B3 - Kick Arms Polish V1`
-- Active stage status: `READY_FOR_CLAUDE_REVIEW - branch only, not merged`
-- Status marker: `JOGO_DA_COPA_TRACK_04B3_KICK_ARMS_POLISH_V1_READY_FOR_REVIEW`
+- Active stage status: `COMPLETE - approved and merged to main`
+- Status marker: `JOGO_DA_COPA_TRACK_04B3_KICK_ARMS_POLISH_V1_COMPLETE`
 - Approved plan: Fabio direct task `Track 04B3 - Kick Arms Polish V1` (2026-06-11)
 - Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`
 - Review: `docs/code-review-track04b1-04b2-v1.md`
-- Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`
-- Active Kanban card: `../../08_Coordenacao_Agentes/Kanban/Doing/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`
+- Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -48,7 +47,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Track 03L.1 Facing Evidence V1: lacunas do review da Claude fechadas com teste automatizado de facing no avatar, capturas de corrida em curva/parada/rebote alto e `docs/playtest-reports/track-03l-arena.md`.
 - Track 04B2 Feel & UI Fixes V1: dash player/bot agora usa curva integrada com aceleracao e distancia `5.3m`; pulo/flip sem input direcional fica vertical puro; result panel libera mouse, trava input e foca Revanche; intro/pause/result tem clique real em 3 resolucoes; preview do menu ganhou camera/luz de heroi e teste anti-tela-preta.
 - Track 04B1 Character Presentation & Animation V1: uniforme procedural por regioes no mesh skinned, cabelo real anexado ao bone `Head`, toon por material `next_pass` sem duplicata T-pose e chute autoral `0.36s` com pe abaixo do quadril.
-- Track 04B3 Kick Arms Polish V1: branch pre-merge retunou somente os bracos do `JogoDaCopa_Kick`, mantendo pernas/tronco/timing aprovados; maos ficam abaixo da cabeca e upperarms ficam `<= 25 deg` de abducao nas amostras do clipe.
+- Track 04B3 Kick Arms Polish V1: aprovado e mergeado; retunou somente os bracos do `JogoDaCopa_Kick`, mantendo pernas/tronco/timing aprovados; maos ficam abaixo da cabeca e upperarms ficam `<= 25 deg` de abducao nas amostras do clipe.
 - Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
 - Toon experiment screenshots live in `docs/screenshots/track-03e-toon/`.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
@@ -56,7 +55,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-Track 04B3 is stopped on branch for Claude review and Fabio visual approval. Do not merge until the new kick arm silhouette is accepted.
+Track 04B3 passed Claude review and Fabio visual approval, then merged locally to `main`. Next external action is `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`; next implementation route starts with 04C stadium visual upgrade and 04D match completeness in parallel after Fabio opens the next tracks.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -68,7 +67,7 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest branch result: PASS for Track 04B3 validation, 75 tests, 1098 asserts, including source integrity check for 29 `.gd/.gdshader` files outside `addons/`.
+Latest merged result: PASS for Track 04B3 validation, 75 tests, 1098 asserts, including source integrity check for 29 `.gd/.gdshader` files outside `addons/`.
 
 Latest performance sample: windowed 1920x1080, vsync off, display `Windows`, average `719.3fps`, min warmed instant `462.3fps`, `0/360` frames below 60.
 
