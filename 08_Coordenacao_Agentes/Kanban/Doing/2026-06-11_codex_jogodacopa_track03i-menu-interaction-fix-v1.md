@@ -18,8 +18,8 @@ Track aberta porque o menu principal ficou inutilizavel apos a 03G: nenhum contr
 
 ## Arquivos Pretendidos
 
-- `Projetos/JogoDaCopa/tests/test_bootstrap.gd`
-- `Projetos/JogoDaCopa/scenes/main_menu.tscn` ou gerador correspondente em `Projetos/JogoDaCopa/tools/`
+- `Projetos/JogoDaCopa/tests/unit/test_bootstrap.gd`
+- `Projetos/JogoDaCopa/modes/menu/main_menu_root.gd`
 - `Projetos/JogoDaCopa/docs/architecture-overview.md`
 - `Projetos/JogoDaCopa/docs/screenshots/track-03i-menu/`
 - `Projetos/JogoDaCopa/implementation/current-status.md`
@@ -54,10 +54,10 @@ Fase 2 reproduzida: todos os controles clicaveis falham porque `MainMenuRoot` es
 
 - [x] Fase 1: main limpo, worktree/branch criadas, card Doing registrado.
 - [x] Fase 2: teste vermelho de clique real criado, executado e marcado `pending()` para commit.
-- [ ] Fase 3: menu simplificado e teste verde nas tres resolucoes.
-- [ ] Fase 4: regra permanente de UI documentada e screenshots gerados.
+- [x] Fase 3: menu simplificado e teste verde nas tres resolucoes.
+- [x] Fase 4: regra permanente de UI documentada e screenshots gerados.
 - [ ] Fase 5: validacao, status, merge, card Done, prune e `WORKTREE_VERIFIED`.
 
 ## Proximo Handoff
 
-Se a Fase 2 passar no codigo atual, parar a track e registrar handoff pedindo mais dados de Fabio sobre resolucao, foco, pause ou ambiente especifico. Se falhar, seguir para a correcao por simplificacao.
+Fechar coordenacao: atualizar snapshots, mover card para Done, mergear em `main`, podar worktree e executar o check final `WORKTREE_VERIFIED`.

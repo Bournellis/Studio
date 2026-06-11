@@ -25,8 +25,13 @@ const EXPECTED_ACTIONS: PackedStringArray = [
 	"restart_round",
 	"ui_back"
 ]
-const TRACK03I_REAL_CLICK_TEST_PENDING: bool = true
+const TRACK03I_REAL_CLICK_TEST_PENDING: bool = false
 const TRACK03I_RED_REPRODUCTION_NOTE: String = "Track 03I red reproduced: MainMenuRoot has a 0x0 hit-test rect, leaving MenuSafeArea/MenuScroll collapsed and all real viewport clicks blocked."
+const TRACK03I_REAL_CLICK_VIEWPORTS: Array[Vector2i] = [
+	Vector2i(1920, 1080),
+	Vector2i(1366, 768),
+	Vector2i(1280, 720)
+]
 
 func before_all() -> void:
 	var result: Dictionary = BootstrapSceneGeneratorScript.new().generate_all()
@@ -77,20 +82,22 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_eq(menu.debug_get_quality_text(), "Alta")
 	assert_not_null(menu.get_node_or_null("ArenaPreviewViewport"))
 	assert_not_null(menu.get_node_or_null("ArenaPreview"))
-	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/FootballButton"))
-	assert_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/ArenaButton"))
-	assert_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/SkinPreviewRow"))
-	assert_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/KitPreviewRow"))
-	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/BotDifficultyRow"))
-	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/MatchModeRow"))
-	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/VolumeRow/VolumeSlider"))
-	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/SfxVolumeRow/SfxVolumeSlider"))
-	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/UiVolumeRow/UiVolumeSlider"))
-	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/AmbienceVolumeRow/AmbienceVolumeSlider"))
-	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/QualityRow/QualityOption"))
-	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/ToonRenderRow/ToonRenderToggle"))
-	assert_not_null(menu.get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/QuitButton"))
-	var menu_panel := menu.get_node("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel") as PanelContainer
+	assert_null(menu.get_node_or_null("MenuSafeArea"))
+	assert_null(menu.get_node_or_null("MenuCenter/MenuScroll"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/FootballButton"))
+	assert_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/ArenaButton"))
+	assert_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/SkinPreviewRow"))
+	assert_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/KitPreviewRow"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/BotDifficultyRow"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/MatchModeRow"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/VolumeRow/VolumeSlider"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/SfxVolumeRow/SfxVolumeSlider"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/UiVolumeRow/UiVolumeSlider"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/AmbienceVolumeRow/AmbienceVolumeSlider"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/QualityRow/QualityOption"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/ToonRenderRow/ToonRenderToggle"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/QuitButton"))
+	var menu_panel := menu.get_node("MenuCenter/MenuPanel") as PanelContainer
 	assert_eq(menu_panel.custom_minimum_size, Vector2(500.0, 0.0))
 	assert_true(menu.debug_get_menu_required_size().y <= 684.0)
 	assert_no_new_orphans()
@@ -99,21 +106,23 @@ func test_main_menu_real_mouse_clicks_reach_interactive_controls() -> void:
 	if TRACK03I_REAL_CLICK_TEST_PENDING:
 		pending(TRACK03I_RED_REPRODUCTION_NOTE)
 		return
-	var menu := await _spawn_main_menu_for_real_click_test(Vector2i(1920, 1080))
-	var menu_box_path := "MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/"
-	_disconnect_button_pressed_callbacks(menu.get_node(menu_box_path + "FootballButton") as Button)
-	_disconnect_button_pressed_callbacks(menu.get_node(menu_box_path + "QuitButton") as Button)
+	for viewport_size: Vector2i in TRACK03I_REAL_CLICK_VIEWPORTS:
+		var menu := await _spawn_main_menu_for_real_click_test(viewport_size)
+		var menu_box_path := "MenuCenter/MenuPanel/MenuBox/"
+		var context := "%sx%s" % [viewport_size.x, viewport_size.y]
+		_disconnect_button_pressed_callbacks(menu.get_node(menu_box_path + "FootballButton") as Button)
+		_disconnect_button_pressed_callbacks(menu.get_node(menu_box_path + "QuitButton") as Button)
 
-	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "FootballButton", "Futebol")
-	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "QuitButton", "Quit")
-	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "BotDifficultyRow/BotDifficultyPreviousButton", "Dificuldade anterior")
-	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "BotDifficultyRow/BotDifficultyNextButton", "Dificuldade proxima")
-	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "MatchModeRow/MatchModePreviousButton", "Modo anterior")
-	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "MatchModeRow/MatchModeNextButton", "Modo proximo")
-	await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "VolumeRow/VolumeSlider", "Volume master")
-	await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "SfxVolumeRow/SfxVolumeSlider", "Volume SFX")
-	await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "UiVolumeRow/UiVolumeSlider", "Volume UI")
-	await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "AmbienceVolumeRow/AmbienceVolumeSlider", "Volume ambiente")
+		await _assert_real_button_click_emits_pressed(menu, menu_box_path + "FootballButton", "Futebol %s" % context)
+		await _assert_real_button_click_emits_pressed(menu, menu_box_path + "QuitButton", "Quit %s" % context)
+		await _assert_real_button_click_emits_pressed(menu, menu_box_path + "BotDifficultyRow/BotDifficultyPreviousButton", "Dificuldade anterior %s" % context)
+		await _assert_real_button_click_emits_pressed(menu, menu_box_path + "BotDifficultyRow/BotDifficultyNextButton", "Dificuldade proxima %s" % context)
+		await _assert_real_button_click_emits_pressed(menu, menu_box_path + "MatchModeRow/MatchModePreviousButton", "Modo anterior %s" % context)
+		await _assert_real_button_click_emits_pressed(menu, menu_box_path + "MatchModeRow/MatchModeNextButton", "Modo proximo %s" % context)
+		await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "VolumeRow/VolumeSlider", "Volume master %s" % context)
+		await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "SfxVolumeRow/SfxVolumeSlider", "Volume SFX %s" % context)
+		await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "UiVolumeRow/UiVolumeSlider", "Volume UI %s" % context)
+		await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "AmbienceVolumeRow/AmbienceVolumeSlider", "Volume ambiente %s" % context)
 	assert_no_new_orphans()
 
 func _spawn_main_menu_for_real_click_test(viewport_size: Vector2i) -> Control:

@@ -7,7 +7,6 @@ const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
 const MENU_PANEL_MIN_SIZE: Vector2 = Vector2(500.0, 0.0)
-const MENU_SAFE_MARGIN: int = 18
 const BUS_MASTER: StringName = &"Master"
 const BUS_SFX: StringName = &"SFX"
 const BUS_UI: StringName = &"UI"
@@ -37,7 +36,6 @@ var football_button: Button
 var quit_button: Button
 var status_label: Label
 var menu_panel: PanelContainer
-var menu_scroll: ScrollContainer
 var preview_viewport: SubViewport
 var preview_camera: Camera3D
 var preview_root: Node3D
@@ -70,10 +68,14 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = false
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	_sync_root_rect_to_viewport()
+	if not get_viewport().size_changed.is_connected(_sync_root_rect_to_viewport):
+		get_viewport().size_changed.connect(_sync_root_rect_to_viewport)
 	_ensure_audio_buses()
 	_load_ui_audio_streams()
 	_build_ui_audio_pool()
 	_build_ui()
+	_sync_root_rect_to_viewport()
 	_apply_initial_audio_mix()
 	_update_preview_selection()
 
@@ -89,6 +91,11 @@ func _process(delta: float) -> void:
 		var angle := preview_time * 0.18
 		preview_camera.position = Vector3(sin(angle) * 6.8, 3.2, cos(angle) * 6.8 + 4.4)
 		preview_camera.look_at(Vector3(0.0, 0.85, 0.0), Vector3.UP)
+
+func _sync_root_rect_to_viewport() -> void:
+	set_anchors_preset(Control.PRESET_TOP_LEFT)
+	position = Vector2.ZERO
+	size = get_viewport_rect().size
 
 func debug_get_mode_path(mode_id: StringName) -> String:
 	match mode_id:
@@ -114,16 +121,15 @@ func debug_is_toon_render_enabled() -> bool:
 
 func debug_has_main_menu_appearance_selection() -> bool:
 	return (
-		get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/SkinPreviewRow") != null
-		or get_node_or_null("MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/KitPreviewRow") != null
+		get_node_or_null("MenuCenter/MenuPanel/MenuBox/SkinPreviewRow") != null
+		or get_node_or_null("MenuCenter/MenuPanel/MenuBox/KitPreviewRow") != null
 	)
 
 func debug_main_controls_fit_viewports(viewport_sizes: Array) -> bool:
 	var required_size := _get_menu_required_size()
 	for viewport_value: Variant in viewport_sizes:
 		var viewport_size: Vector2 = viewport_value
-		var safe_size := viewport_size - Vector2(MENU_SAFE_MARGIN * 2, MENU_SAFE_MARGIN * 2)
-		if required_size.x > safe_size.x or required_size.y > safe_size.y:
+		if required_size.x > viewport_size.x or required_size.y > viewport_size.y:
 			return false
 	return true
 
@@ -152,8 +158,8 @@ func debug_get_ui_audio_pool_size() -> int:
 	return ui_audio_pool.size()
 
 func _build_ui() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
-	mouse_filter = Control.MOUSE_FILTER_STOP
+	_sync_root_rect_to_viewport()
+	mouse_filter = Control.MOUSE_FILTER_PASS
 
 	_build_arena_preview()
 
@@ -173,54 +179,25 @@ func _build_ui() -> void:
 	shade.color = Color(0.0, 0.015, 0.025, 0.34)
 	add_child(shade)
 
-	var safe_area := MarginContainer.new()
-	safe_area.name = "MenuSafeArea"
-	safe_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	safe_area.set_anchors_preset(Control.PRESET_FULL_RECT)
-	safe_area.add_theme_constant_override("margin_left", MENU_SAFE_MARGIN)
-	safe_area.add_theme_constant_override("margin_top", MENU_SAFE_MARGIN)
-	safe_area.add_theme_constant_override("margin_right", MENU_SAFE_MARGIN)
-	safe_area.add_theme_constant_override("margin_bottom", MENU_SAFE_MARGIN)
-	add_child(safe_area)
-
-	menu_scroll = ScrollContainer.new()
-	menu_scroll.name = "MenuScroll"
-	menu_scroll.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	menu_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	menu_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	menu_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	safe_area.add_child(menu_scroll)
-
 	var menu_center := CenterContainer.new()
 	menu_center.name = "MenuCenter"
-	menu_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	menu_center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	menu_center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	menu_center.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	menu_scroll.add_child(menu_center)
+	add_child(menu_center)
 
 	menu_panel = PanelContainer.new()
 	menu_panel.name = "MenuPanel"
 	menu_panel.custom_minimum_size = MENU_PANEL_MIN_SIZE
-	menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	menu_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.012, 0.03, 0.04, 0.88), Color(1.0, 0.78, 0.16, 0.9), 2))
 	menu_center.add_child(menu_panel)
 
-	var margin := MarginContainer.new()
-	margin.name = "MenuMargin"
-	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margin.add_theme_constant_override("margin_left", 28)
-	margin.add_theme_constant_override("margin_top", 24)
-	margin.add_theme_constant_override("margin_right", 28)
-	margin.add_theme_constant_override("margin_bottom", 24)
-	menu_panel.add_child(margin)
-
 	var center := VBoxContainer.new()
 	center.name = "MenuBox"
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	center.add_theme_constant_override("separation", 12)
-	margin.add_child(center)
+	menu_panel.add_child(center)
 
 	var title := Label.new()
 	title.name = "TitleLabel"
@@ -521,10 +498,10 @@ func _build_panel_style(fill_color: Color, border_color: Color, border_width: in
 	style.corner_radius_top_right = 6
 	style.corner_radius_bottom_left = 6
 	style.corner_radius_bottom_right = 6
-	style.content_margin_left = 12
-	style.content_margin_top = 10
-	style.content_margin_right = 12
-	style.content_margin_bottom = 10
+	style.content_margin_left = 28
+	style.content_margin_top = 24
+	style.content_margin_right = 28
+	style.content_margin_bottom = 24
 	return style
 
 func _build_material(color: Color, roughness: float, emission: Color, emission_energy: float) -> StandardMaterial3D:

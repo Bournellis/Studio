@@ -21,6 +21,12 @@
 
 FPS arena/shooter work is not part of this project. It lives in `../FpsPlayground`.
 
+## UI Interaction Rule
+
+Any change to an interactive UI, menu or HUD must include a real click test injected through the target viewport. The test must push `InputEventMouseButton` press and release events at the global center of every interactive control changed on that screen, assert the corresponding signal, and cover `1920x1080`, `1366x768` and `1280x720`.
+
+Presence, visibility or layout-fit tests are not evidence that UI is functional. They can stay as supporting checks, but acceptance for interactive UI requires the real viewport click path.
+
 ## Arena Composition
 
 `FootballFieldBuilder` owns the procedural stadium pass for now:
