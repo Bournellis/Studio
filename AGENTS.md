@@ -41,6 +41,8 @@ Rules:
 - Before touching shared files (`AGENTS.md`, `canon/`, `08_Coordenacao_Agentes/`, `Projetos/README.md`) run `git status --short`, `git worktree list`, and read the current coordination docs.
 - At the start of work, register branch, worktree, objective, intended files, base docs read, validation plan and next handoff point in `08_Coordenacao_Agentes/Kanban/Doing/` or `08_Coordenacao_Agentes/Handoffs/`.
 - Commit by logical stage: documentation, contract, backend, client, validation, publication and coordination updates should not be mixed into one mega commit.
+- Remote backup: `origin` = `https://github.com/Bournellis/Studio.git` (private GitHub repository). After merging to main, run `git push origin main` so the backup stays current; Fabio may also push via GitHub Desktop.
+- Single writer rule: while an agent task is committing in the main tree, do not commit/stage/discard from GitHub Desktop or an IDE in that tree. See `07_Aprendizados/2026-06-11_git-escritor-unico.md`.
 - Keep the worktree clean at handoff whenever possible. If not clean, list every remaining changed file and why it remains changed.
 
 ## Portfolio Gate

@@ -21,6 +21,7 @@ This README intentionally carries no project status, package names, version code
 - `migration/`: historical cutover archive, parity notes and relocation records.
 - `builds/`: generated build outputs and other disposable packages.
 - `tools/`: studio-level scripts (doc drift check).
+- Remote backup: private GitHub repository `Bournellis/Studio` (`origin`); push routine in `AGENTS.md`.
 
 ## Standard Read Order
 
