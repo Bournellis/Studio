@@ -25,6 +25,8 @@ const EXPECTED_ACTIONS: PackedStringArray = [
 	"restart_round",
 	"ui_back"
 ]
+const TRACK03I_REAL_CLICK_TEST_PENDING: bool = true
+const TRACK03I_RED_REPRODUCTION_NOTE: String = "Track 03I red reproduced: MainMenuRoot has a 0x0 hit-test rect, leaving MenuSafeArea/MenuScroll collapsed and all real viewport clicks blocked."
 
 func before_all() -> void:
 	var result: Dictionary = BootstrapSceneGeneratorScript.new().generate_all()
@@ -92,6 +94,162 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_eq(menu_panel.custom_minimum_size, Vector2(500.0, 0.0))
 	assert_true(menu.debug_get_menu_required_size().y <= 684.0)
 	assert_no_new_orphans()
+
+func test_main_menu_real_mouse_clicks_reach_interactive_controls() -> void:
+	if TRACK03I_REAL_CLICK_TEST_PENDING:
+		pending(TRACK03I_RED_REPRODUCTION_NOTE)
+		return
+	var menu := await _spawn_main_menu_for_real_click_test(Vector2i(1920, 1080))
+	var menu_box_path := "MenuSafeArea/MenuScroll/MenuCenter/MenuPanel/MenuMargin/MenuBox/"
+	_disconnect_button_pressed_callbacks(menu.get_node(menu_box_path + "FootballButton") as Button)
+	_disconnect_button_pressed_callbacks(menu.get_node(menu_box_path + "QuitButton") as Button)
+
+	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "FootballButton", "Futebol")
+	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "QuitButton", "Quit")
+	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "BotDifficultyRow/BotDifficultyPreviousButton", "Dificuldade anterior")
+	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "BotDifficultyRow/BotDifficultyNextButton", "Dificuldade proxima")
+	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "MatchModeRow/MatchModePreviousButton", "Modo anterior")
+	await _assert_real_button_click_emits_pressed(menu, menu_box_path + "MatchModeRow/MatchModeNextButton", "Modo proximo")
+	await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "VolumeRow/VolumeSlider", "Volume master")
+	await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "SfxVolumeRow/SfxVolumeSlider", "Volume SFX")
+	await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "UiVolumeRow/UiVolumeSlider", "Volume UI")
+	await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "AmbienceVolumeRow/AmbienceVolumeSlider", "Volume ambiente")
+	assert_no_new_orphans()
+
+func _spawn_main_menu_for_real_click_test(viewport_size: Vector2i) -> Control:
+	var test_viewport := SubViewport.new()
+	test_viewport.set_size(viewport_size)
+	add_child_autofree(test_viewport)
+	var menu_scene := load("res://modes/menu/main_menu.tscn") as PackedScene
+	assert_not_null(menu_scene)
+	var menu := menu_scene.instantiate() as Control
+	assert_not_null(menu)
+	test_viewport.add_child(menu)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	return menu
+
+func _disconnect_button_pressed_callbacks(button: Button) -> void:
+	assert_not_null(button)
+	for connection: Dictionary in button.pressed.get_connections():
+		if connection.has("callable"):
+			var callable: Callable = connection["callable"]
+			button.pressed.disconnect(callable)
+
+func _assert_real_button_click_emits_pressed(menu: Control, node_path: String, control_label: String) -> void:
+	var button := menu.get_node(node_path) as Button
+	assert_not_null(button, "%s button missing at %s" % [control_label, node_path])
+	var fired := [0]
+	button.pressed.connect(func() -> void:
+		fired[0] = int(fired[0]) + 1
+	)
+	var click_report := await _push_real_mouse_click_at_control(button)
+	assert_gt(
+		int(fired[0]),
+		0,
+		"%s did not emit pressed after real viewport click. %s" % [control_label, _format_click_report(click_report)]
+	)
+
+func _assert_real_slider_click_emits_value_changed(menu: Control, node_path: String, control_label: String) -> void:
+	var slider := menu.get_node(node_path) as HSlider
+	assert_not_null(slider, "%s slider missing at %s" % [control_label, node_path])
+	var fired := [0]
+	slider.value_changed.connect(func(_value: float) -> void:
+		fired[0] = int(fired[0]) + 1
+	)
+	var click_report := await _push_real_mouse_click_at_control(slider)
+	assert_gt(
+		int(fired[0]),
+		0,
+		"%s did not emit value_changed after real viewport click. %s" % [control_label, _format_click_report(click_report)]
+	)
+
+func _push_real_mouse_click_at_control(control: Control) -> Dictionary:
+	assert_not_null(control)
+	var viewport := control.get_viewport()
+	var global_rect := control.get_global_rect()
+	var center := global_rect.position + global_rect.size * 0.5
+	var motion := InputEventMouseMotion.new()
+	motion.position = center
+	motion.global_position = center
+	viewport.push_input(motion, true)
+	Input.flush_buffered_events()
+	await get_tree().process_frame
+	var hovered_before := viewport.gui_get_hovered_control()
+
+	var press := InputEventMouseButton.new()
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.position = center
+	press.global_position = center
+	press.pressed = true
+	press.button_mask = MOUSE_BUTTON_MASK_LEFT
+	viewport.push_input(press, true)
+	Input.flush_buffered_events()
+	await get_tree().process_frame
+
+	var release := InputEventMouseButton.new()
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.position = center
+	release.global_position = center
+	release.pressed = false
+	release.button_mask = 0
+	viewport.push_input(release, true)
+	Input.flush_buffered_events()
+	await get_tree().process_frame
+	var hovered_after := viewport.gui_get_hovered_control()
+
+	return {
+		"target": control,
+		"center": center,
+		"rect": global_rect,
+		"hovered_before": hovered_before,
+		"hovered_after": hovered_after
+	}
+
+func _format_click_report(report: Dictionary) -> String:
+	var target := report.get("target") as Control
+	var hovered_before := report.get("hovered_before") as Control
+	var hovered_after := report.get("hovered_after") as Control
+	return "target=%s center=%s rect=%s hovered_before=%s hovered_after=%s ancestors=%s" % [
+		_describe_control(target),
+		str(report.get("center", Vector2.ZERO)),
+		str(report.get("rect", Rect2())),
+		_describe_control(hovered_before),
+		_describe_control(hovered_after),
+		_describe_control_ancestors(target)
+	]
+
+func _describe_control(control: Control) -> String:
+	if control == null:
+		return "<none>"
+	var disabled_text := "false"
+	if control is BaseButton:
+		disabled_text = str((control as BaseButton).disabled)
+	return "%s class=%s mouse_filter=%d visible=%s disabled=%s" % [
+		str(control.get_path()),
+		control.get_class(),
+		control.mouse_filter,
+		str(control.visible),
+		disabled_text
+	]
+
+func _describe_control_ancestors(control: Control) -> String:
+	if control == null:
+		return "<none>"
+	var parts: PackedStringArray = []
+	var current: Node = control
+	while current != null:
+		if current is Control:
+			var current_control := current as Control
+			parts.append("%s class=%s filter=%d rect=%s visible=%s" % [
+				current_control.name,
+				current_control.get_class(),
+				current_control.mouse_filter,
+				str(current_control.get_global_rect()),
+				str(current_control.visible)
+			])
+		current = current.get_parent()
+	return " <- ".join(parts)
 
 func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene

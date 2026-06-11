@@ -48,12 +48,12 @@ Track aberta porque o menu principal ficou inutilizavel apos a 03G: nenhum contr
 
 ## Causa Raiz
 
-Pendente da Fase 2: deve registrar qual node bloqueia/intercepta o clique e por que.
+Fase 2 reproduzida: todos os controles clicaveis falham porque `MainMenuRoot` esta com rect de hit-test `0x0`. Isso colapsa `MenuSafeArea` para altura `36.0` e `MenuScroll` para altura `0.0`; os botoes/sliders existem e tem rect visual, mas ficam fora da area valida dos ancestrais e `gui_get_hovered_control()` retorna `<none>`.
 
 ## Progresso
 
 - [x] Fase 1: main limpo, worktree/branch criadas, card Doing registrado.
-- [ ] Fase 2: teste vermelho de clique real criado e executado.
+- [x] Fase 2: teste vermelho de clique real criado, executado e marcado `pending()` para commit.
 - [ ] Fase 3: menu simplificado e teste verde nas tres resolucoes.
 - [ ] Fase 4: regra permanente de UI documentada e screenshots gerados.
 - [ ] Fase 5: validacao, status, merge, card Done, prune e `WORKTREE_VERIFIED`.
