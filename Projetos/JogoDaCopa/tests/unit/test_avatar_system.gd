@@ -11,18 +11,24 @@ func test_avatar_catalog_exposes_default_and_multiple_choices() -> void:
 	assert_eq(appearance.country_kit_id, &"brazil")
 	assert_gte(AvatarCatalogScript.get_skin_tone_count(), 4)
 	assert_gte(AvatarCatalogScript.get_country_kit_count(), 6)
+	assert_gte(AvatarCatalogScript.get_hair_style_count(), 6)
+	assert_gte(AvatarCatalogScript.get_hair_color_count(), 5)
 	assert_eq(AvatarCatalogScript.get_next_skin_tone_id(&"dark"), &"light")
 	assert_eq(AvatarCatalogScript.get_next_country_kit_id(&"germany"), &"brazil")
+	assert_eq(AvatarCatalogScript.get_next_hair_style_id(&"beard"), &"simple_parted")
+	assert_eq(AvatarCatalogScript.get_next_hair_color_id(&"red"), &"black")
 	assert_false(AvatarCatalogScript.get_country_kit_label(&"brazil").is_empty())
+	assert_false(AvatarCatalogScript.get_hair_style_path(&"simple_parted").is_empty())
 
 func test_avatar_instantiates_expected_runtime_parts() -> void:
 	var avatar = PlayerAvatarScript.new()
 	add_child_autofree(avatar)
 	await get_tree().process_frame
 
-	assert_eq(avatar.debug_get_part_count(), 17)
+	assert_eq(avatar.debug_get_part_count(), 18)
 	assert_true(avatar.debug_has_part(&"head"))
 	assert_true(avatar.debug_has_part(&"torso"))
+	assert_true(avatar.debug_has_part(&"hair"))
 	assert_true(avatar.debug_has_part(&"left_hand"))
 	assert_true(avatar.debug_has_part(&"right_foot"))
 	assert_not_null(avatar.get_node_or_null("AvatarParts"))
@@ -36,6 +42,10 @@ func test_avatar_instantiates_expected_runtime_parts() -> void:
 	assert_true(avatar.debug_has_animation(&"Roll"))
 	assert_true(avatar.debug_has_animation(&"JogoDaCopa_Kick"))
 	assert_true(avatar.debug_has_persistent_vfx())
+	assert_true(avatar.debug_has_hair_attachment())
+	assert_eq(avatar.debug_get_hair_style_id(), AvatarCatalogScript.DEFAULT_HAIR_STYLE_ID)
+	assert_eq(avatar.debug_get_hair_color_id(), AvatarCatalogScript.DEFAULT_HAIR_COLOR_ID)
+	assert_gt(avatar.debug_get_hair_mesh_count(), 0)
 	assert_no_new_orphans()
 
 func test_avatar_appearance_updates_skin_and_shirt_materials() -> void:
@@ -51,6 +61,46 @@ func test_avatar_appearance_updates_skin_and_shirt_materials() -> void:
 	assert_eq(avatar.debug_get_part_albedo_color(&"head"), AvatarCatalogScript.get_skin_color(&"dark"))
 	assert_eq(avatar.debug_get_part_albedo_color(&"torso"), AvatarCatalogScript.get_kit_primary_color(&"france"))
 	assert_eq(avatar.debug_get_part_albedo_color(&"chest_stripe"), AvatarCatalogScript.get_kit_secondary_color(&"france"))
+	assert_no_new_orphans()
+
+func test_avatar_uniform_regions_are_encoded_in_vertex_colors_and_shader_uniforms() -> void:
+	var avatar = PlayerAvatarScript.new()
+	add_child_autofree(avatar)
+	await get_tree().process_frame
+
+	var next_appearance = AvatarAppearanceScript.new(&"dark", &"france", &"long", &"blonde")
+	avatar.apply_appearance(next_appearance)
+
+	for part_id in [&"head", &"torso", &"shorts", &"left_lower_leg", &"right_foot"]:
+		var region_id: int = avatar.debug_get_region_id_for_part(part_id)
+		var region_color: Color = avatar.debug_find_body_vertex_color_for_region(region_id)
+		assert_gt(avatar.debug_get_region_vertex_count(region_id), 0, "%s should have body vertices in its uniform region" % part_id)
+		assert_almost_eq(region_color.r, float(region_id) / 8.0, 0.004, "%s should encode its region id in vertex color R" % part_id)
+
+	assert_eq(avatar.debug_get_body_uniform_shader_color(&"skin_color"), AvatarCatalogScript.get_skin_color(&"dark"))
+	assert_eq(avatar.debug_get_body_uniform_shader_color(&"shirt_primary"), AvatarCatalogScript.get_kit_primary_color(&"france"))
+	assert_eq(avatar.debug_get_body_uniform_shader_color(&"shorts_color"), AvatarCatalogScript.get_kit_shorts_color(&"france"))
+	assert_eq(avatar.debug_get_body_uniform_shader_color(&"sock_color"), AvatarCatalogScript.get_kit_socks_color(&"france"))
+	assert_eq(avatar.debug_get_body_uniform_shader_color(&"boot_color"), avatar.debug_get_part_albedo_color(&"right_foot"))
+	assert_eq(avatar.debug_get_hair_style_id(), &"long")
+	assert_eq(avatar.debug_get_hair_color_id(), &"blonde")
+	assert_no_new_orphans()
+
+func test_avatar_skin_and_kit_changes_do_not_cross_region_uniforms() -> void:
+	var avatar = PlayerAvatarScript.new()
+	add_child_autofree(avatar)
+	await get_tree().process_frame
+
+	avatar.apply_appearance(AvatarAppearanceScript.new(&"light", &"brazil"))
+	var original_skin := avatar.debug_get_body_uniform_shader_color(&"skin_color")
+	avatar.apply_appearance(AvatarAppearanceScript.new(&"light", &"argentina"))
+	assert_eq(avatar.debug_get_body_uniform_shader_color(&"skin_color"), original_skin)
+	assert_eq(avatar.debug_get_body_uniform_shader_color(&"shirt_primary"), AvatarCatalogScript.get_kit_primary_color(&"argentina"))
+
+	var original_shirt := avatar.debug_get_body_uniform_shader_color(&"shirt_primary")
+	avatar.apply_appearance(AvatarAppearanceScript.new(&"dark", &"argentina"))
+	assert_eq(avatar.debug_get_body_uniform_shader_color(&"shirt_primary"), original_shirt)
+	assert_eq(avatar.debug_get_body_uniform_shader_color(&"skin_color"), AvatarCatalogScript.get_skin_color(&"dark"))
 	assert_no_new_orphans()
 
 func test_real_avatar_material_tint_preserves_pbr_textures() -> void:
@@ -202,6 +252,57 @@ func test_real_avatar_strips_root_motion_and_does_not_accumulate_drift() -> void
 		_assert_avatar_has_no_animation_drift(avatar, model_spawn_position, model_spawn_rotation, skeleton_spawn_position, skeleton_spawn_rotation)
 	assert_no_new_orphans()
 
+func test_avatar_toon_uses_material_next_pass_without_duplicate_t_pose_mesh() -> void:
+	var avatar = PlayerAvatarScript.new()
+	add_child_autofree(avatar)
+	await get_tree().process_frame
+
+	avatar.set_move_state(11.0, true, 0.0)
+	await get_tree().process_frame
+	avatar.set_toon_render_enabled(true)
+	await get_tree().process_frame
+
+	assert_true(avatar.debug_is_toon_render_enabled())
+	assert_gt(avatar.debug_get_toon_outline_count(), 0)
+	assert_eq(avatar.debug_get_toon_outline_mesh_node_count(), 0)
+	assert_eq(avatar.debug_get_body_uniform_shader_float(&"toon_intensity"), 1.0)
+
+	avatar.set_toon_render_enabled(false)
+	assert_eq(avatar.debug_get_toon_outline_count(), 0)
+	assert_eq(avatar.debug_get_body_uniform_shader_float(&"toon_intensity"), 0.0)
+	assert_no_new_orphans()
+
+func test_authorial_kick_keeps_right_foot_below_pelvis() -> void:
+	var avatar = PlayerAvatarScript.new()
+	add_child_autofree(avatar)
+	await get_tree().process_frame
+
+	var animation_player := avatar.get_node_or_null("AvatarParts/RealCharacterModel/RealAnimationPlayer") as AnimationPlayer
+	var animation_tree := avatar.get_node_or_null("AvatarParts/RealCharacterModel/RealAnimationTree") as AnimationTree
+	var skeleton := avatar.get_node_or_null("AvatarParts/RealCharacterModel/Armature/Skeleton3D") as Skeleton3D
+	assert_not_null(animation_player)
+	assert_not_null(animation_tree)
+	assert_not_null(skeleton)
+	if animation_player == null or animation_tree == null or skeleton == null:
+		return
+
+	var kick_animation := animation_player.get_animation(&"JogoDaCopa_Kick")
+	assert_not_null(kick_animation)
+	if kick_animation == null:
+		return
+	assert_almost_eq(kick_animation.length, 0.36, 0.001)
+
+	animation_tree.active = false
+	animation_player.play(&"JogoDaCopa_Kick")
+	for sample_time in [0.0, 0.09, 0.18, 0.27, 0.36]:
+		animation_player.seek(sample_time, true)
+		await get_tree().process_frame
+		skeleton.force_update_all_bone_transforms()
+		var foot_position := _get_bone_position_in_avatar_space(avatar, skeleton, &"foot_r")
+		var pelvis_position := _get_bone_position_in_avatar_space(avatar, skeleton, &"pelvis")
+		assert_lt(foot_position.y, pelvis_position.y, "Right foot should remain below pelvis during JogoDaCopa_Kick at %.2fs" % sample_time)
+	assert_no_new_orphans()
+
 func test_local_first_person_avatar_hides_head_and_neck() -> void:
 	var avatar = PlayerAvatarScript.new()
 	avatar.local_first_person = true
@@ -220,11 +321,15 @@ func test_bot_variant_can_use_female_model() -> void:
 	avatar.set_character_variant(&"female")
 	add_child_autofree(avatar)
 	await get_tree().process_frame
+	avatar.apply_appearance(AvatarAppearanceScript.new(&"brown", &"france"))
 
 	assert_eq(avatar.debug_get_character_variant(), &"female")
 	assert_true(avatar.debug_has_real_model())
 	assert_gte(avatar.debug_get_real_skeleton_bone_count(), 60)
 	assert_true(avatar.debug_has_animation_tree())
+	assert_eq(avatar.debug_get_hair_style_id(), AvatarCatalogScript.BOT_HAIR_STYLE_ID)
+	assert_eq(avatar.debug_get_hair_color_id(), AvatarCatalogScript.BOT_HAIR_COLOR_ID)
+	assert_gt(avatar.debug_get_hair_mesh_count(), 0)
 	assert_no_new_orphans()
 
 func _collect_meshes(node: Node, output: Array[MeshInstance3D]) -> void:

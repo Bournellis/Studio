@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_04B2_FEEL_UI_FIXES_V1_COMPLETE`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque, gols altos, personagem/audio real, bola com CCD/trail/fireball/squash, dash com curva, pulo vertical puro sem input, chute carregado/SUPER sem gasto em whiff, boost/jump pads, timer 3min/golden goal/vale-2, HUD/menu com clique real, bot defensivo/aereo, camera/reset protegidos, facing visual e preview sem tela preta. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
+- Marker: `JOGO_DA_COPA_TRACK_04B1_04B2_QUALITY_FIRST_INTEGRATED_COMPLETE`
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque, gols altos, personagem/audio real, uniforme procedural por regioes, cabelo real anexado ao Head, toon sem duplicata T-pose, chute autoral abaixo do quadril, bola com CCD/trail/fireball/squash, dash com curva, pulo vertical puro sem input, chute carregado/SUPER sem gasto em whiff, boost/jump pads, timer 3min/golden goal/vale-2, HUD/menu com clique real, bot defensivo/aereo, camera/reset protegidos, facing visual e preview sem tela preta. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: integrar a Track 04B1 aprovada e depois fazer playtest Fabio combinado com uniformes, dash, pulos, result panel e preview do menu.
+- Proximo passo: manutencao git + playtest integrado de Fabio com uniformes, dash, pulos, result panel e preview do menu.
 
 ## draxos-roguelike-cardgame
 

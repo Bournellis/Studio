@@ -3,6 +3,7 @@ extends Node3D
 
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
+const AvatarUniformShader = preload("res://gameplay/avatar/avatar_uniform.gdshader")
 
 const MALE_MODEL_PATH: String = "res://assets/characters/quaternius_ubc/base/Superhero_Male_FullBody.gltf"
 const FEMALE_MODEL_PATH: String = "res://assets/characters/quaternius_ubc/base/Superhero_Female_FullBody.gltf"
@@ -15,10 +16,21 @@ const RESET_ANIMATION_NAME: StringName = &"RESET"
 const EYE_TINT: Color = Color(0.94, 0.96, 1.0, 1.0)
 const EYEBROW_TINT: Color = Color(0.075, 0.055, 0.04, 1.0)
 const HAIR_EMISSION_TINT: Color = Color(0.08, 0.06, 0.045, 1.0)
+const DEFAULT_BOOT_COLOR: Color = Color(0.04, 0.045, 0.05, 1.0)
 const ROOT_MOTION_BONE: StringName = &"root"
 const MODEL_FORWARD_COMPENSATION_YAW: float = PI
 const MOVEMENT_FACING_SPEED_THRESHOLD: float = 0.5
 const MOVEMENT_FACING_LERP_SPEED: float = 10.0
+const REGION_COLOR_SCALE: float = 1.0 / 8.0
+const REGION_UNKNOWN: int = 0
+const REGION_SKIN: int = 1
+const REGION_SHIRT: int = 2
+const REGION_SHORTS: int = 3
+const REGION_SOCK: int = 4
+const REGION_BOOT: int = 5
+const HEAD_BONE_NAME: StringName = &"Head"
+const HAIR_ATTACHMENT_NAME: StringName = &"HairAttachment"
+const KICK_TIMES: Array[float] = [0.0, 0.09, 0.18, 0.27, 0.36]
 
 const ANIMATION_BY_STATE: Dictionary = {
 	&"idle": &"Idle",
@@ -55,6 +67,7 @@ const LOGICAL_PARTS: Array[StringName] = [
 	&"right_lower_leg",
 	&"left_foot",
 	&"right_foot",
+	&"hair",
 ]
 
 @export var local_first_person: bool = false
@@ -81,6 +94,11 @@ var boost_trail_particles: GPUParticles3D
 var skid_dust_particles: GPUParticles3D
 var toon_render_enabled: bool = false
 var toon_outline_material: StandardMaterial3D
+var hair_attachment: BoneAttachment3D
+var hair_meshes: Array[MeshInstance3D] = []
+var active_hair_style_id: StringName = &""
+var active_hair_color_id: StringName = &""
+var body_region_vertex_counts: Dictionary = {}
 var loaded_animation_names: Array[StringName] = []
 var real_model_fallback_reason: String = ""
 var model_instance_spawn_position: Vector3 = Vector3.ZERO
@@ -112,6 +130,11 @@ func set_character_variant(next_variant: StringName) -> void:
 	state_machine = null
 	state_playback = null
 	body_mesh = null
+	hair_attachment = null
+	hair_meshes.clear()
+	active_hair_style_id = &""
+	active_hair_color_id = &""
+	body_region_vertex_counts.clear()
 	real_meshes.clear()
 	part_meshes.clear()
 	loaded_animation_names.clear()
@@ -133,6 +156,9 @@ func apply_appearance(next_appearance) -> void:
 	var shirt_secondary: Color = AvatarCatalogScript.get_kit_secondary_color(appearance.country_kit_id)
 	var shorts_color: Color = AvatarCatalogScript.get_kit_shorts_color(appearance.country_kit_id)
 	var socks_color: Color = AvatarCatalogScript.get_kit_socks_color(appearance.country_kit_id)
+	var hair_style_id := _resolve_hair_style_id(appearance.hair_style_id)
+	var hair_color_id := _resolve_hair_color_id(appearance.hair_color_id)
+	var hair_color: Color = AvatarCatalogScript.get_hair_color_value(hair_color_id)
 	logical_part_colors[&"head"] = skin_color
 	logical_part_colors[&"neck"] = skin_color
 	logical_part_colors[&"left_hand"] = skin_color
@@ -148,16 +174,18 @@ func apply_appearance(next_appearance) -> void:
 	logical_part_colors[&"right_upper_leg"] = shorts_color
 	logical_part_colors[&"left_lower_leg"] = socks_color
 	logical_part_colors[&"right_lower_leg"] = socks_color
-	logical_part_colors[&"left_foot"] = Color(0.04, 0.045, 0.05, 1.0)
-	logical_part_colors[&"right_foot"] = Color(0.04, 0.045, 0.05, 1.0)
-	_apply_real_materials(skin_color, shirt_primary, shirt_secondary)
-	_sync_toon_outline_nodes()
+	logical_part_colors[&"left_foot"] = DEFAULT_BOOT_COLOR
+	logical_part_colors[&"right_foot"] = DEFAULT_BOOT_COLOR
+	logical_part_colors[&"hair"] = hair_color
+	_apply_real_materials(skin_color, shirt_primary, shirt_secondary, shorts_color, socks_color, DEFAULT_BOOT_COLOR)
+	_sync_hair_attachment(hair_style_id, hair_color_id, hair_color)
+	_sync_toon_outline_passes()
 
 func set_toon_render_enabled(is_enabled: bool) -> void:
 	toon_render_enabled = is_enabled
 	if part_root != null:
 		apply_appearance(appearance)
-		_sync_toon_outline_nodes()
+		_sync_toon_outline_passes()
 
 func set_move_state(move_speed: float, grounded: bool, vertical_velocity: float = 0.0) -> void:
 	last_move_speed = move_speed
@@ -181,7 +209,7 @@ func update_visual_movement_facing(horizontal_velocity: Vector3, logical_parent_
 	part_root.rotation.y = lerp_angle(part_root.rotation.y, target_local_yaw, clampf(MOVEMENT_FACING_LERP_SPEED * delta, 0.0, 1.0))
 
 func play_kick(strong: bool = false) -> void:
-	animation_timer = 0.34 if strong else 0.28
+	animation_timer = 0.38 if strong else 0.35
 	_travel_state(&"strong_kick" if strong else &"kick", true)
 
 func play_celebrate() -> void:
@@ -231,6 +259,12 @@ func debug_get_skin_tone_id() -> StringName:
 func debug_get_country_kit_id() -> StringName:
 	return appearance.country_kit_id
 
+func debug_get_hair_style_id() -> StringName:
+	return active_hair_style_id
+
+func debug_get_hair_color_id() -> StringName:
+	return active_hair_color_id
+
 func debug_get_skin_color() -> Color:
 	return AvatarCatalogScript.get_skin_color(appearance.skin_tone_id)
 
@@ -239,6 +273,48 @@ func debug_get_shirt_primary_color() -> Color:
 
 func debug_get_part_albedo_color(part_id: StringName) -> Color:
 	return logical_part_colors.get(part_id, Color.TRANSPARENT)
+
+func debug_get_region_id_for_part(part_id: StringName) -> int:
+	return _get_uniform_region_id_for_part(part_id)
+
+func debug_get_region_vertex_count(region_id: int) -> int:
+	return int(body_region_vertex_counts.get(region_id, 0))
+
+func debug_find_body_vertex_color_for_region(region_id: int) -> Color:
+	if body_mesh == null or body_mesh.mesh == null:
+		return Color.TRANSPARENT
+	var mesh := body_mesh.mesh as ArrayMesh
+	if mesh == null:
+		return Color.TRANSPARENT
+	for surface_index in range(mesh.get_surface_count()):
+		var arrays := mesh.surface_get_arrays(surface_index)
+		if arrays.size() <= Mesh.ARRAY_COLOR:
+			continue
+		var colors := arrays[Mesh.ARRAY_COLOR] as PackedColorArray
+		for color in colors:
+			if _decode_region_color(color) == region_id:
+				return color
+	return Color.TRANSPARENT
+
+func debug_get_body_uniform_shader_color(parameter_name: StringName) -> Color:
+	var material := _get_body_uniform_material(0)
+	if material == null:
+		return Color.TRANSPARENT
+	var value: Variant = material.get_shader_parameter(str(parameter_name))
+	return value if value is Color else Color.TRANSPARENT
+
+func debug_get_body_uniform_shader_float(parameter_name: StringName) -> float:
+	var material := _get_body_uniform_material(0)
+	if material == null:
+		return 0.0
+	var value: Variant = material.get_shader_parameter(str(parameter_name))
+	return float(value) if value is float else 0.0
+
+func debug_has_hair_attachment() -> bool:
+	return hair_attachment != null and hair_attachment.bone_name == HEAD_BONE_NAME
+
+func debug_get_hair_mesh_count() -> int:
+	return hair_meshes.size()
 
 func debug_has_persistent_vfx() -> bool:
 	return boost_trail_particles != null and skid_dust_particles != null
@@ -255,8 +331,18 @@ func debug_is_toon_render_enabled() -> bool:
 func debug_get_toon_outline_count() -> int:
 	var count := 0
 	for mesh_instance in real_meshes:
-		var outline := mesh_instance.get_node_or_null("ToonOutline") as MeshInstance3D
-		if outline != null and outline.visible:
+		count += _count_mesh_material_next_passes(mesh_instance)
+	for mesh_instance in hair_meshes:
+		count += _count_mesh_material_next_passes(mesh_instance)
+	return count
+
+func debug_get_toon_outline_mesh_node_count() -> int:
+	var count := 0
+	for mesh_instance in real_meshes:
+		if mesh_instance.get_node_or_null("ToonOutline") != null:
+			count += 1
+	for mesh_instance in hair_meshes:
+		if mesh_instance.get_node_or_null("ToonOutline") != null:
 			count += 1
 	return count
 
@@ -350,7 +436,10 @@ func debug_get_textured_surface_override_count() -> int:
 			if source_material == null or source_material.albedo_texture == null:
 				continue
 			var override_material := mesh_instance.get_surface_override_material(surface_index) as StandardMaterial3D
+			var shader_override := mesh_instance.get_surface_override_material(surface_index) as ShaderMaterial
 			if override_material != null and override_material.albedo_texture != null:
+				count += 1
+			elif shader_override != null and shader_override.get_shader_parameter("skin_texture") != null:
 				count += 1
 	return count
 
@@ -403,6 +492,8 @@ func _instantiate_real_model() -> void:
 		mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	if body_mesh == null:
 		_report_real_avatar_fallback("Real avatar model has no body mesh containing 'superhero': %s" % model_path)
+	else:
+		_rebuild_body_mesh_with_uniform_regions()
 
 func _build_animation_player() -> void:
 	if model_instance == null:
@@ -464,7 +555,7 @@ func _build_animation_tree() -> void:
 			if from_state == to_state:
 				continue
 			var transition := AnimationNodeStateMachineTransition.new()
-			transition.xfade_time = 0.08
+			transition.xfade_time = _get_transition_blend_time(from_state, to_state)
 			state_machine.add_transition(str(from_state), str(to_state), transition)
 	animation_tree.tree_root = state_machine
 	model_instance.add_child(animation_tree)
@@ -473,16 +564,30 @@ func _build_animation_tree() -> void:
 	if state_playback == null or state_names.is_empty():
 		_report_real_avatar_fallback("AnimationTree playback/state list was not created.")
 
+func _get_transition_blend_time(from_state: StringName, to_state: StringName) -> float:
+	if to_state == &"kick" or to_state == &"strong_kick":
+		return 0.06
+	if from_state == &"kick" or from_state == &"strong_kick":
+		return 0.11
+	if to_state == &"hit" or from_state == &"hit":
+		return 0.10
+	if to_state == &"slide" or from_state == &"slide" or to_state == &"flip" or from_state == &"flip":
+		return 0.10
+	return 0.08
+
 func _build_logical_part_map() -> void:
 	part_meshes.clear()
 	for part_id in LOGICAL_PARTS:
 		part_meshes[part_id] = body_mesh
 
-func _apply_real_materials(skin_color: Color, shirt_primary: Color, shirt_secondary: Color) -> void:
+func _apply_real_materials(skin_color: Color, shirt_primary: Color, shirt_secondary: Color, shorts_color: Color, socks_color: Color, boot_color: Color) -> void:
 	for mesh_instance in real_meshes:
+		if mesh_instance == body_mesh:
+			_apply_body_uniform_materials(skin_color, shirt_primary, shirt_secondary, shorts_color, socks_color, boot_color)
+			continue
 		mesh_instance.material_override = null
 		var mesh_name := str(mesh_instance.name).to_lower()
-		var tint := shirt_primary.lerp(skin_color, 0.22)
+		var tint := skin_color
 		var emission := shirt_secondary
 		var emission_energy := 0.11
 		if mesh_name.contains("eyebrow"):
@@ -494,6 +599,26 @@ func _apply_real_materials(skin_color: Color, shirt_primary: Color, shirt_second
 			emission = Color(0.18, 0.28, 0.36, 1.0)
 			emission_energy = 0.08
 		_apply_surface_material_tint(mesh_instance, tint, emission, emission_energy)
+
+func _apply_body_uniform_materials(skin_color: Color, shirt_primary: Color, shirt_secondary: Color, shorts_color: Color, socks_color: Color, boot_color: Color) -> void:
+	if body_mesh == null or body_mesh.mesh == null:
+		return
+	body_mesh.material_override = null
+	for surface_index in range(body_mesh.mesh.get_surface_count()):
+		var source_material := body_mesh.mesh.surface_get_material(surface_index) as StandardMaterial3D
+		var material := ShaderMaterial.new()
+		material.shader = AvatarUniformShader
+		material.set_shader_parameter("skin_color", skin_color)
+		material.set_shader_parameter("shirt_primary", shirt_primary)
+		material.set_shader_parameter("shirt_secondary", shirt_secondary)
+		material.set_shader_parameter("shorts_color", shorts_color)
+		material.set_shader_parameter("sock_color", socks_color)
+		material.set_shader_parameter("boot_color", boot_color)
+		material.set_shader_parameter("toon_intensity", 1.0 if toon_render_enabled else 0.0)
+		if source_material != null and source_material.albedo_texture != null:
+			material.set_shader_parameter("skin_texture", source_material.albedo_texture)
+		_set_material_next_pass(material)
+		body_mesh.set_surface_override_material(surface_index, material)
 
 func _apply_surface_material_tint(mesh_instance: MeshInstance3D, tint: Color, emission: Color, emission_energy: float) -> void:
 	if mesh_instance.mesh == null:
@@ -515,26 +640,29 @@ func _tint_character_material(material: StandardMaterial3D, tint: Color, emissio
 	material.emission_energy_multiplier = maxf(emission_energy, 0.16) if toon_render_enabled else emission_energy
 	if toon_render_enabled:
 		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_set_material_next_pass(material)
 
-func _sync_toon_outline_nodes() -> void:
+func _sync_toon_outline_passes() -> void:
 	for mesh_instance in real_meshes:
-		var outline := mesh_instance.get_node_or_null("ToonOutline") as MeshInstance3D
-		if outline == null and toon_render_enabled:
-			outline = MeshInstance3D.new()
-			outline.name = "ToonOutline"
-			outline.mesh = mesh_instance.mesh
-			outline.skeleton = mesh_instance.skeleton
-			outline.skin = mesh_instance.skin
-			outline.scale = Vector3.ONE * 1.025
-			outline.material_override = _get_toon_outline_material()
-			outline.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			mesh_instance.add_child(outline)
-		if outline != null:
-			outline.visible = toon_render_enabled
-			outline.mesh = mesh_instance.mesh
-			outline.skeleton = mesh_instance.skeleton
-			outline.skin = mesh_instance.skin
-			outline.material_override = _get_toon_outline_material()
+		_sync_mesh_material_next_passes(mesh_instance)
+	for mesh_instance in hair_meshes:
+		_sync_mesh_material_next_passes(mesh_instance)
+
+func _sync_mesh_material_next_passes(mesh_instance: MeshInstance3D) -> void:
+	if mesh_instance == null or mesh_instance.mesh == null:
+		return
+	var override := mesh_instance.material_override
+	if override != null:
+		_set_material_next_pass(override)
+	for surface_index in range(mesh_instance.mesh.get_surface_count()):
+		var material := mesh_instance.get_surface_override_material(surface_index)
+		if material != null:
+			_set_material_next_pass(material)
+
+func _set_material_next_pass(material: Material) -> void:
+	if material == null:
+		return
+	material.next_pass = _get_toon_outline_material() if toon_render_enabled else null
 
 func _build_character_material(color: Color, emission: Color, emission_energy: float) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
@@ -545,6 +673,7 @@ func _build_character_material(color: Color, emission: Color, emission_energy: f
 	material.emission_energy_multiplier = maxf(emission_energy, 0.16) if toon_render_enabled else emission_energy
 	if toon_render_enabled:
 		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	_set_material_next_pass(material)
 	return material
 
 func _get_toon_outline_material() -> StandardMaterial3D:
@@ -554,7 +683,130 @@ func _get_toon_outline_material() -> StandardMaterial3D:
 	toon_outline_material.albedo_color = Color(0.012, 0.016, 0.022, 1.0)
 	toon_outline_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	toon_outline_material.cull_mode = BaseMaterial3D.CULL_FRONT
+	if _object_has_property(toon_outline_material, "grow_enabled"):
+		toon_outline_material.set("grow_enabled", true)
+	if _object_has_property(toon_outline_material, "grow_amount"):
+		toon_outline_material.set("grow_amount", 0.018)
 	return toon_outline_material
+
+func _rebuild_body_mesh_with_uniform_regions() -> void:
+	if body_mesh == null or body_mesh.mesh == null:
+		return
+	var source_mesh := body_mesh.mesh as ArrayMesh
+	if source_mesh == null:
+		_report_real_avatar_fallback("Body mesh is not an ArrayMesh; uniform region mask skipped.")
+		return
+	var rebuilt_mesh := ArrayMesh.new()
+	body_region_vertex_counts.clear()
+	for surface_index in range(source_mesh.get_surface_count()):
+		var arrays := source_mesh.surface_get_arrays(surface_index)
+		if arrays.size() <= Mesh.ARRAY_VERTEX:
+			continue
+		var vertices := arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array
+		var colors := PackedColorArray()
+		colors.resize(vertices.size())
+		for vertex_index in range(vertices.size()):
+			var bone_index := _get_dominant_bone_index(arrays, vertex_index)
+			var bone_name := _get_mesh_bone_name(body_mesh, bone_index)
+			var region_id := _get_uniform_region_id_for_bone(bone_name)
+			colors[vertex_index] = _encode_region_color(region_id)
+			body_region_vertex_counts[region_id] = int(body_region_vertex_counts.get(region_id, 0)) + 1
+		arrays[Mesh.ARRAY_COLOR] = colors
+		var surface_format := source_mesh.surface_get_format(surface_index) | Mesh.ARRAY_FORMAT_COLOR
+		rebuilt_mesh.add_surface_from_arrays(source_mesh.surface_get_primitive_type(surface_index), arrays, [], {}, surface_format)
+		if rebuilt_mesh.get_surface_count() > surface_index:
+			rebuilt_mesh.surface_set_material(surface_index, source_mesh.surface_get_material(surface_index))
+	body_mesh.mesh = rebuilt_mesh
+
+func _get_dominant_bone_index(arrays: Array, vertex_index: int) -> int:
+	if arrays.size() <= Mesh.ARRAY_WEIGHTS or arrays[Mesh.ARRAY_BONES] == null or arrays[Mesh.ARRAY_WEIGHTS] == null:
+		return -1
+	var bones = arrays[Mesh.ARRAY_BONES]
+	var weights = arrays[Mesh.ARRAY_WEIGHTS]
+	var base_index := vertex_index * 4
+	var best_bone := -1
+	var best_weight := -1.0
+	for influence_index in range(4):
+		var array_index := base_index + influence_index
+		if array_index >= bones.size() or array_index >= weights.size():
+			continue
+		var weight := float(weights[array_index])
+		if weight > best_weight:
+			best_weight = weight
+			best_bone = int(bones[array_index])
+	return best_bone
+
+func _get_mesh_bone_name(mesh_instance: MeshInstance3D, bone_index: int) -> StringName:
+	if bone_index < 0:
+		return &""
+	if mesh_instance.skin != null and bone_index < mesh_instance.skin.get_bind_count():
+		var bind_name := str(mesh_instance.skin.get_bind_name(bone_index))
+		if not bind_name.is_empty():
+			return StringName(bind_name.to_lower())
+	if skeleton != null and bone_index < skeleton.get_bone_count():
+		return StringName(str(skeleton.get_bone_name(bone_index)).to_lower())
+	return &""
+
+func _get_uniform_region_id_for_bone(bone_name: StringName) -> int:
+	var lower_name := str(bone_name).to_lower()
+	if lower_name == "head" or lower_name.begins_with("neck") or lower_name.begins_with("lowerarm_") or lower_name.begins_with("hand_") or _is_finger_bone_name(lower_name):
+		return REGION_SKIN
+	if lower_name.begins_with("spine_") or lower_name.begins_with("clavicle_") or lower_name.begins_with("upperarm_"):
+		return REGION_SHIRT
+	if lower_name == "pelvis" or lower_name.begins_with("thigh_"):
+		return REGION_SHORTS
+	if lower_name.begins_with("calf_"):
+		return REGION_SOCK
+	if lower_name.begins_with("foot_") or lower_name.begins_with("ball_"):
+		return REGION_BOOT
+	return REGION_SHIRT
+
+func _is_finger_bone_name(lower_name: String) -> bool:
+	return lower_name.begins_with("index_") or lower_name.begins_with("middle_") or lower_name.begins_with("ring_") or lower_name.begins_with("pinky_") or lower_name.begins_with("thumb_")
+
+func _get_uniform_region_id_for_part(part_id: StringName) -> int:
+	match part_id:
+		&"head", &"neck", &"left_hand", &"right_hand", &"left_lower_arm", &"right_lower_arm":
+			return REGION_SKIN
+		&"torso", &"chest_stripe", &"left_upper_arm", &"right_upper_arm":
+			return REGION_SHIRT
+		&"shorts", &"left_upper_leg", &"right_upper_leg":
+			return REGION_SHORTS
+		&"left_lower_leg", &"right_lower_leg":
+			return REGION_SOCK
+		&"left_foot", &"right_foot":
+			return REGION_BOOT
+		_:
+			return REGION_UNKNOWN
+
+func _encode_region_color(region_id: int) -> Color:
+	return Color(float(region_id) * REGION_COLOR_SCALE, 0.0, 0.0, 1.0)
+
+func _decode_region_color(color: Color) -> int:
+	return int(round(color.r / REGION_COLOR_SCALE))
+
+func _get_body_uniform_material(surface_index: int) -> ShaderMaterial:
+	if body_mesh == null:
+		return null
+	return body_mesh.get_surface_override_material(surface_index) as ShaderMaterial
+
+func _count_mesh_material_next_passes(mesh_instance: MeshInstance3D) -> int:
+	if mesh_instance == null or mesh_instance.mesh == null:
+		return 0
+	var count := 0
+	if mesh_instance.material_override != null and mesh_instance.material_override.next_pass != null:
+		count += 1
+	for surface_index in range(mesh_instance.mesh.get_surface_count()):
+		var material := mesh_instance.get_surface_override_material(surface_index)
+		if material != null and material.next_pass != null:
+			count += 1
+	return count
+
+func _object_has_property(object: Object, property_name: String) -> bool:
+	for property in object.get_property_list():
+		if str(property.get("name", "")) == property_name:
+			return true
+	return false
 
 func _quantize_toon_color(color: Color) -> Color:
 	return Color(
@@ -582,10 +834,94 @@ func _count_textured_surfaces(mesh_instance: MeshInstance3D) -> int:
 			count += 1
 	return count
 
+func _resolve_hair_style_id(requested_hair_style_id: StringName) -> StringName:
+	if requested_hair_style_id != &"":
+		return requested_hair_style_id
+	return AvatarCatalogScript.BOT_HAIR_STYLE_ID if character_variant == &"female" else AvatarCatalogScript.DEFAULT_HAIR_STYLE_ID
+
+func _resolve_hair_color_id(requested_hair_color_id: StringName) -> StringName:
+	if requested_hair_color_id != &"":
+		return requested_hair_color_id
+	return AvatarCatalogScript.BOT_HAIR_COLOR_ID if character_variant == &"female" else AvatarCatalogScript.DEFAULT_HAIR_COLOR_ID
+
+func _sync_hair_attachment(hair_style_id: StringName, hair_color_id: StringName, hair_color: Color) -> void:
+	if skeleton == null:
+		return
+	if hair_attachment != null and active_hair_style_id == hair_style_id and active_hair_color_id == hair_color_id and not hair_meshes.is_empty():
+		_apply_hair_materials(hair_color)
+		_sync_toon_outline_passes()
+		return
+	_clear_hair_meshes()
+	if hair_attachment == null:
+		hair_attachment = BoneAttachment3D.new()
+		hair_attachment.name = HAIR_ATTACHMENT_NAME
+		hair_attachment.bone_name = HEAD_BONE_NAME
+		skeleton.add_child(hair_attachment)
+	var hair_path := AvatarCatalogScript.get_hair_style_path(hair_style_id)
+	var packed_scene := load(hair_path) as PackedScene
+	if packed_scene == null:
+		_report_real_avatar_fallback("Failed to load hair style '%s': %s" % [hair_style_id, hair_path])
+		return
+	var source_root := packed_scene.instantiate()
+	var source_meshes: Array[MeshInstance3D] = []
+	_collect_meshes(source_root, source_meshes)
+	var source_skeleton := _find_skeleton(source_root)
+	for source_mesh in source_meshes:
+		var hair_mesh := MeshInstance3D.new()
+		hair_mesh.name = "Hair_%s" % source_mesh.name
+		hair_mesh.mesh = source_mesh.mesh
+		hair_mesh.transform = _get_hair_head_local_transform(source_skeleton, source_mesh)
+		hair_mesh.visible = not local_first_person
+		hair_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		hair_attachment.add_child(hair_mesh)
+		hair_meshes.append(hair_mesh)
+	source_root.free()
+	active_hair_style_id = hair_style_id
+	active_hair_color_id = hair_color_id
+	_apply_hair_materials(hair_color)
+	_sync_toon_outline_passes()
+
+func _clear_hair_meshes() -> void:
+	for hair_mesh in hair_meshes:
+		if is_instance_valid(hair_mesh):
+			if hair_mesh.mesh != null:
+				for surface_index in range(hair_mesh.mesh.get_surface_count()):
+					hair_mesh.set_surface_override_material(surface_index, null)
+			hair_mesh.material_override = null
+			hair_mesh.mesh = null
+			if hair_mesh.get_parent() != null:
+				hair_mesh.get_parent().remove_child(hair_mesh)
+			hair_mesh.free()
+	hair_meshes.clear()
+
+func _get_hair_head_local_transform(source_skeleton: Skeleton3D, source_mesh: MeshInstance3D) -> Transform3D:
+	if source_skeleton == null:
+		return source_mesh.transform
+	var head_index := source_skeleton.find_bone(str(HEAD_BONE_NAME))
+	if head_index < 0:
+		return source_mesh.transform
+	return source_skeleton.get_bone_global_rest(head_index).affine_inverse() * source_mesh.transform
+
+func _apply_hair_materials(hair_color: Color) -> void:
+	for hair_mesh in hair_meshes:
+		if not is_instance_valid(hair_mesh) or hair_mesh.mesh == null:
+			continue
+		for surface_index in range(hair_mesh.mesh.get_surface_count()):
+			var source_material := hair_mesh.mesh.surface_get_material(surface_index) as StandardMaterial3D
+			var material: StandardMaterial3D
+			if source_material != null:
+				material = source_material.duplicate(true) as StandardMaterial3D
+			else:
+				material = _build_character_material(Color.WHITE, hair_color, 0.08)
+			_tint_character_material(material, hair_color, hair_color, 0.08)
+			hair_mesh.set_surface_override_material(surface_index, material)
+
 func _apply_first_person_visibility() -> void:
 	if not local_first_person:
 		return
 	for mesh_instance in real_meshes:
+		mesh_instance.visible = false
+	for mesh_instance in hair_meshes:
 		mesh_instance.visible = false
 
 func _update_state_from_motion() -> void:
@@ -645,52 +981,58 @@ func _report_real_avatar_fallback(reason: String) -> void:
 
 func _build_authorial_kick_animation() -> Animation:
 	var animation := Animation.new()
-	animation.length = 0.32
+	animation.length = 0.36
 	animation.loop_mode = Animation.LOOP_NONE
 	_add_rotation_track(animation, "spine_02", [
 		Vector3.ZERO,
-		Vector3(0.08, -0.16, 0.0),
-		Vector3(-0.14, 0.22, 0.0),
-		Vector3.ZERO,
+		Vector3(0.04, -0.08, 0.0),
+		Vector3(0.10, -0.18, 0.0),
+		Vector3(-0.12, 0.18, 0.0),
+		Vector3(-0.04, 0.08, 0.0),
 	])
 	_add_rotation_track(animation, "thigh_r", [
-		Vector3.ZERO,
-		Vector3(0.74, 0.0, 0.08),
-		Vector3(-1.08, 0.0, -0.06),
-		Vector3.ZERO,
+		Vector3(deg_to_rad(45.0), 0.0, 0.04),
+		Vector3(deg_to_rad(75.0), 0.0, 0.05),
+		Vector3(deg_to_rad(45.0), 0.0, 0.04),
+		Vector3(deg_to_rad(60.0), 0.0, -0.04),
+		Vector3(deg_to_rad(45.0), 0.0, -0.02),
 	])
 	_add_rotation_track(animation, "calf_r", [
-		Vector3.ZERO,
-		Vector3(-0.58, 0.0, 0.0),
-		Vector3(0.28, 0.0, 0.0),
-		Vector3.ZERO,
+		Vector3(deg_to_rad(80.0), 0.0, 0.0),
+		Vector3(deg_to_rad(80.0), 0.0, 0.0),
+		Vector3(deg_to_rad(80.0), 0.0, 0.0),
+		Vector3(deg_to_rad(80.0), 0.0, 0.0),
+		Vector3(deg_to_rad(80.0), 0.0, 0.0),
 	])
 	_add_rotation_track(animation, "foot_r", [
-		Vector3.ZERO,
-		Vector3(0.18, 0.0, 0.0),
-		Vector3(-0.34, 0.0, 0.0),
-		Vector3.ZERO,
+		Vector3(deg_to_rad(-8.0), 0.0, 0.0),
+		Vector3(deg_to_rad(12.0), 0.0, 0.0),
+		Vector3(deg_to_rad(-24.0), 0.0, 0.0),
+		Vector3(deg_to_rad(-30.0), 0.0, 0.0),
+		Vector3(deg_to_rad(-8.0), 0.0, 0.0),
 	])
 	_add_rotation_track(animation, "upperarm_l", [
 		Vector3.ZERO,
-		Vector3(-0.18, 0.0, -0.32),
-		Vector3(0.28, 0.0, -0.16),
-		Vector3.ZERO,
+		Vector3(-0.10, 0.0, -0.14),
+		Vector3(-0.26, 0.0, -0.28),
+		Vector3(0.22, 0.0, -0.18),
+		Vector3(0.12, 0.0, -0.08),
 	])
 	_add_rotation_track(animation, "upperarm_r", [
 		Vector3.ZERO,
-		Vector3(0.22, 0.0, 0.26),
-		Vector3(-0.18, 0.0, 0.18),
-		Vector3.ZERO,
+		Vector3(0.12, 0.0, 0.10),
+		Vector3(0.26, 0.0, 0.24),
+		Vector3(-0.14, 0.0, 0.16),
+		Vector3(-0.08, 0.0, 0.08),
 	])
 	return animation
 
 func _add_rotation_track(animation: Animation, bone_name: String, rotations: Array[Vector3]) -> void:
 	var track_index := animation.add_track(Animation.TYPE_ROTATION_3D)
 	animation.track_set_path(track_index, NodePath("Armature/Skeleton3D:%s" % bone_name))
-	var times: Array[float] = [0.0, 0.11, 0.22, 0.32]
-	for index in range(mini(rotations.size(), times.size())):
-		animation.rotation_track_insert_key(track_index, times[index], Quaternion.from_euler(rotations[index]))
+	animation.track_set_interpolation_type(track_index, Animation.INTERPOLATION_CUBIC)
+	for index in range(mini(rotations.size(), KICK_TIMES.size())):
+		animation.rotation_track_insert_key(track_index, KICK_TIMES[index], Quaternion.from_euler(rotations[index]))
 
 func _build_persistent_vfx() -> void:
 	if part_root == null:
@@ -768,6 +1110,15 @@ func _find_animation_player(node: Node) -> AnimationPlayer:
 		return node
 	for child in node.get_children():
 		var found := _find_animation_player(child)
+		if found != null:
+			return found
+	return null
+
+func _find_skeleton(node: Node) -> Skeleton3D:
+	if node is Skeleton3D:
+		return node
+	for child in node.get_children():
+		var found := _find_skeleton(child)
 		if found != null:
 			return found
 	return null

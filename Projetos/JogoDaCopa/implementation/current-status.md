@@ -5,13 +5,14 @@
 - Product/module name: `Copa Arena Futebol`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames`
-- Active stage: `Track 04B2 - Feel & UI Fixes V1`
-- Active stage status: `COMPLETE - approved review and merged to main`
-- Status marker: `JOGO_DA_COPA_TRACK_04B2_FEEL_UI_FIXES_V1_COMPLETE`
-- Approved plan: Fabio direct task `Track 04B2 - Feel & UI Fixes V1` (2026-06-11)
-- Handoff: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`
+- Active stage: `Track 04B1 + 04B2 - Quality First Integration`
+- Active stage status: `COMPLETE - approved reviews and merged to main`
+- Status marker: `JOGO_DA_COPA_TRACK_04B1_04B2_QUALITY_FIRST_INTEGRATED_COMPLETE`
+- Approved plan: Fabio direct tasks `Track 04B1 - Character Presentation & Animation V1` and `Track 04B2 - Feel & UI Fixes V1` (2026-06-11)
+- Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`
 - Review: `docs/code-review-track04b1-04b2-v1.md`
 - Completed Kanban card: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`
+- Pending maintenance: move 04B1 card from Review to Done after post-merge validation.
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
 ## Current Truth
@@ -46,6 +47,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Track 03L Arena Seal & Character Facing V2: arena estanque com vidros ate o teto, painel frontal alto sobre os gols, rodape/rampas 03B removidos, CCD da bola ativo e avatar visual do player girando pela direcao de movimento sem alterar camera/mira/chute.
 - Track 03L.1 Facing Evidence V1: lacunas do review da Claude fechadas com teste automatizado de facing no avatar, capturas de corrida em curva/parada/rebote alto e `docs/playtest-reports/track-03l-arena.md`.
 - Track 04B2 Feel & UI Fixes V1: dash player/bot agora usa curva integrada com aceleracao e distancia `5.3m`; pulo/flip sem input direcional fica vertical puro; result panel libera mouse, trava input e foca Revanche; intro/pause/result tem clique real em 3 resolucoes; preview do menu ganhou camera/luz de heroi e teste anti-tela-preta.
+- Track 04B1 Character Presentation & Animation V1: uniforme procedural por regioes no mesh skinned, cabelo real anexado ao bone `Head`, toon por material `next_pass` sem duplicata T-pose e chute autoral `0.36s` com pe abaixo do quadril.
 - Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
 - Toon experiment screenshots live in `docs/screenshots/track-03e-toon/`.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
@@ -53,7 +55,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-Track 04B2 passed Claude pre-merge review and Fabio screenshot review, then merged to `main`. Next operational gate is the remaining approved Track 04B1 integration, followed by the combined Fabio playtest with uniforms, dash feel, vertical jumps, result panel clickability and menu preview framing.
+Tracks 04B1 and 04B2 passed Claude pre-merge review and Fabio screenshot review, then merged to `main`. Next operational gate is post-merge git maintenance plus Fabio integrated playtest with uniforms, hair, toon, kick amplitude, dash feel, vertical jumps, result panel clickability and menu preview framing.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -65,7 +67,7 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest result: PASS for Track 04B2 full validation, 70 tests, 930 asserts, including source integrity check for 28 `.gd/.gdshader` files outside `addons/`.
+Latest result before integrated post-merge maintenance: PASS for Track 04B2 full validation, 70 tests, 930 asserts; Track 04B1 branch validation passed with 68 tests, 838 asserts. Integrated main validation pending.
 
 Latest performance sample: windowed 1920x1080, vsync off, display `Windows`, average `719.3fps`, min warmed instant `462.3fps`, `0/360` frames below 60.
 
@@ -100,4 +102,5 @@ Manual smoke lives in `docs/validation.md`.
 17. `implementation/tracks/track-03k-animation-pose-restore-v2/current-status.md`
 18. `implementation/tracks/track-03l-arena-seal-facing-v2/current-status.md`
 19. `implementation/tracks/track-03l1-facing-evidence-v1/current-status.md`
-20. `implementation/tracks/track-04b2-feel-ui-fixes-v1/current-status.md`
+20. `implementation/tracks/track-04b1-character-presentation-v1/current-status.md`
+21. `implementation/tracks/track-04b2-feel-ui-fixes-v1/current-status.md`
