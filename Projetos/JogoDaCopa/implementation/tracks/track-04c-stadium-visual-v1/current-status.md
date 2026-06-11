@@ -3,12 +3,12 @@
 - Data: 2026-06-11
 - Branch local: `codex/JogoDaCopa/track04c-stadium-visual-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track04c-stadium-visual-v1`
-- Status: `READY_FOR_REVIEW`
+- Status: `MERGED_TO_MAIN`
 - Base: `main` em `b715f743` (`docs(jogodacopa): close track04b3 after merge`)
 
 ## Objetivo
 
-Upgrade visual do estadio antes do web publish, mantendo modos para pos-lancamento. Esta track fecha na branch para review de Claude e aprovacao visual de Fabio; nao houve merge em `main`.
+Upgrade visual do estadio antes do web publish, mantendo modos para pos-lancamento. A track foi aprovada em review e mergeada localmente em `main` depois da 04D.
 
 ## Implementado
 
@@ -53,6 +53,7 @@ O shader `gameplay/avatar/avatar_uniform.gdshader` recebeu um teste local de ble
 - `tools/validate.gd --profile=structure`: PASS.
 - `tools/validate.gd`: PASS, 77 testes, 1128 asserts.
 - `tools/performance_sample.gd --label=track04c-stadium-visual-v1`: PASS, media 728.8fps, minimo aquecido 452.3fps, 0/360 frames abaixo de 60fps, windowed 1920x1080.
+- Validacao integrada pos-merge em `main`: PASS, 81 testes, 1216 asserts, source integrity 30 `.gd/.gdshader`.
 - `git diff --check`: PASS.
 
 ## Arquivos Tocadas Pela Track
@@ -67,8 +68,8 @@ O shader `gameplay/avatar/avatar_uniform.gdshader` recebeu um teste local de ble
 
 ## Worktree
 
-`WORKTREE_VERIFIED`: branch local pronta para review, sem merge em `main`, sem `push`/`fetch`/`pull` e sem `git clean`.
+`WORKTREE_VERIFIED`: sim, merge local concluido em `main`; sem `push`/`fetch`/`pull` e sem `git clean`.
 
 ## Proximo Passo
 
-Claude deve revisar a branch e Fabio deve aprovar visualmente as evidencias antes de qualquer merge/publicacao. Depois da aprovacao, a integracao do root para passar cores reais e disparar `crowd_excitement` deve ser feita em uma thread propria ou na consolidacao com 04D.
+`PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin. Depois, seguir para Track 04E web spike/publicacao; a integracao do root para passar cores reais e disparar `crowd_excitement` deve entrar em uma proxima thread que toque o root.

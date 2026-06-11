@@ -5,11 +5,11 @@
 - Branch local: `codex/JogoDaCopa/track04c-stadium-visual-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track04c-stadium-visual-v1`
 - Base: `main` em `b715f743`
-- Status: `READY_FOR_REVIEW`
+- Status: `MERGED_TO_MAIN`
 
 ## Entrega
 
-Stadium Visual Upgrade V1 implementado na branch local, sem merge em `main` e sem operacoes remotas. A track segue para review de Claude e aprovacao visual de Fabio antes de qualquer publicacao web.
+Stadium Visual Upgrade V1 implementado na branch local, aprovado em review e mergeado localmente em `main` depois da 04D. Nao houve operacoes remotas; push fica pendente para Fabio via GitHub Desktop.
 
 ## Arquivos Principais
 
@@ -51,4 +51,12 @@ Claude revisa a branch. Fabio aprova ou pede ajuste visual pelas evidencias. Dep
 
 ## Worktree
 
-`WORKTREE_VERIFIED`: branch local pronta para review, sem merge em `main`, sem `push`/`fetch`/`pull` e sem `git clean`.
+`WORKTREE_VERIFIED`: sim, merge local concluido em `main`; sem `push`/`fetch`/`pull` e sem `git clean`.
+
+## Fechamento Pos-Review
+
+- Review aprovado em `Projetos/JogoDaCopa/docs/code-review-track04c-04d-v1.md`.
+- Merge local em `main` concluido apos a 04D.
+- `tests/unit/test_bootstrap.gd` manteve os blocos independentes de teste da 04C e da 04D.
+- Validacao integrada pos-merge: PASS, 81 testes, 1216 asserts.
+- `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.

@@ -6,7 +6,7 @@
 - Branch: `codex/JogoDaCopa/track04c-stadium-visual-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track04c-stadium-visual-v1`
 - Base: `main` em `b715f743` (`docs(jogodacopa): close track04b3 after merge`)
-- Status: `READY_FOR_REVIEW` na branch local; sem merge em `main`
+- Status: `DONE - aprovado pelo review e mergeado em main`
 
 ## Objetivo
 
@@ -46,7 +46,7 @@ Fora de escopo durante a implementacao: `football_root`, HUD, menu, fluxo de par
 
 ## Proximo Handoff
 
-Fechar na branch com `validate PASS`, doc da track, playtest-report, evidencias e handoff para review de Claude + aprovacao visual de Fabio. Nao mergear em `main`.
+Review aprovado em `Projetos/JogoDaCopa/docs/code-review-track04c-04d-v1.md`; merge local em `main` concluido apos a 04D. Push fica pendente para Fabio via GitHub Desktop.
 
 ## Fechamento Codex
 
@@ -59,4 +59,14 @@ Fechar na branch com `validate PASS`, doc da track, playtest-report, evidencias 
 - Perf sample windowed 1080p PASS: media 728.8fps, minimo aquecido 452.3fps, 0/360 frames abaixo de 60fps.
 - Evidencias em `Projetos/JogoDaCopa/docs/screenshots/track-04c-stadium-visual-v1/`.
 - Handoff criado para review de Claude + aprovacao visual de Fabio.
-- `WORKTREE_VERIFIED`: branch local pronta, sem merge, sem remoto e sem `git clean`.
+- Review aprovado e merge local em `main` concluido apos a 04D.
+
+## Resultado Pos-Merge
+
+- Merge local em `main` concluido depois da 04D.
+- `tests/unit/test_bootstrap.gd` preserva os testes da 04C e da 04D.
+- Validacao integrada: PASS, 81 testes, 1216 asserts, source integrity 30 `.gd/.gdshader`.
+- `git diff --check`: PASS.
+- `tools/check_doc_drift.ps1`: PASS.
+- `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
+- `WORKTREE_VERIFIED`: sim, merge local concluido em `main`; sem `push`/`fetch`/`pull` e sem `git clean`.
