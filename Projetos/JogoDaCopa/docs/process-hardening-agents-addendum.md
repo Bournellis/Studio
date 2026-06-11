@@ -45,6 +45,15 @@ Nascidas de falhas reais: 2 quebras consecutivas de UI invisiveis a testes de pr
 - Antes de iniciar track nova: worktree sujo ou git inoperante => PARAR e registrar handoff. Verificacao/recuperacao pos-thread e papel de Claude.
 - Worktree NOVA: rodar import headless do editor (`--headless --editor --quit`) UMA VEZ antes de validar ou julgar erros de runtime. Erros `No loader found` / fallbacks de asset em worktree recem-criada sao quase sempre cache de import ausente (`.godot/` local), nao bug do jogo (licao da godot-debugger-bugs-v1, 2026-06-11).
 
+#### Remote GitHub & Push (analise Claude/Codex 2026-06-11; decisao de Fabio)
+
+- Remote: `origin = https://github.com/Bournellis/Studio.git` (monorepo do estudio). E o UNICO backup contra perda de disco - e o historico local ja sofreu 8 incidentes de corrupcao em 2 dias.
+- **Push e parte do ritual de fechamento**: toda track, apos merge em main e antes do `WORKTREE_VERIFIED`, executa `git fetch origin` + `git push origin main`. O remoto nunca fica mais de 1 track atras. (Push "no fim do dia" e insuficiente no ritmo atual de ~10 tracks/dia.)
+- Se `git fetch` revelar divergencia (origin/main com commits que main local nao tem): PARAR, nao fazer pull/rebase automatico, registrar handoff para decisao humana.
+- Branches de track NAO sao pushadas por padrao (vida curta). Excecao: branch parada em review pre-merge que va pernoitar -> push como backup (`git push origin <branch>`), deletada do remoto apos merge.
+- **GitHub Desktop**: uso LIVRE para leitura (diff, historico, fetch). Acoes de escrita (commit/discard/push manual) APENAS com zero agentes ativos e main limpo. `Discard changes` do Desktop equivale ao git clean PROIBIDO: nunca usar com trabalho de agente em andamento - o restore cirurgico e papel de Claude.
+- Sem credenciais/tokens em arquivos do repo; autenticacao via Git Credential Manager ja instalado.
+
 #### Permanentes do projeto (promovidos das regras de serie)
 
 - Paridade de bot: toda acao nova do player tem uso/resposta equivalente do bot na mesma track.
