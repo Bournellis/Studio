@@ -77,6 +77,12 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_eq(menu.debug_get_mode_path(&"football"), "res://modes/football/football.tscn")
 	assert_eq(menu.debug_get_mode_path(&"arena"), "")
 	assert_true(menu.debug_has_arena_preview())
+	var footer_label := menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/FooterLabel") as Label
+	assert_not_null(footer_label)
+	if footer_label != null:
+		assert_true(footer_label.text.contains("Copa Arena Futebol v1.0.1+"))
+		assert_false(footer_label.text.contains("PC Windows editor-first"))
+		assert_eq(footer_label.text, menu.debug_get_visible_version_text())
 	assert_eq(menu.debug_get_selected_bot_difficulty_id(), &"normal")
 	assert_eq(menu.debug_get_selected_match_mode_id(), &"timer")
 	assert_false(menu.debug_is_toon_render_enabled())
@@ -550,6 +556,10 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	var football_hud = football.get_node("FootballHud")
 	assert_true(football_hud.intro_panel.visible)
 	assert_true(football_hud.debug_has_broadcast_scoreboard())
+	assert_true(football.debug_get_hud_snapshot_interval_seconds() > 0.0)
+	assert_true(football.debug_get_hud_snapshot_interval_seconds() <= 0.1)
+	assert_true(football.debug_get_stadium_scoreboard_interval_seconds() > 0.0)
+	assert_true(football.debug_get_stadium_scoreboard_interval_seconds() <= 0.1)
 	assert_not_null(football_hud.get_node_or_null("HudRoot/IntroCenter/IntroPanel"))
 	assert_not_null(football_hud.get_node_or_null("HudRoot/ScorePanel/ScoreBox/ControlLabel"))
 	assert_not_null(football_hud.get_node_or_null("HudRoot/ScorePanel/ScoreBox/BoostBar"))

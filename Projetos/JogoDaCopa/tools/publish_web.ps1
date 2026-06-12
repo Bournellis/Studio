@@ -13,6 +13,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $PagesAssetLimitBytes = 25 * 1024 * 1024
+$VisibleVersion = "v1.0.1"
 
 function Write-TextUtf8NoBom {
     param([string]$Path, [string]$Text)
@@ -116,6 +117,25 @@ window.JDC_WEB_RELEASE = Object.freeze({
         $html = $diagnostics + $html
     }
     Write-TextUtf8NoBom -Path $IndexPath -Text $html
+}
+
+function Write-ReleaseInfoResource {
+    param(
+        [string]$Root,
+        [string]$VersionedReleaseRoot,
+        [string]$Version
+    )
+    $releaseInfoPath = Join-Path $Root "build\release_info.json"
+    $releaseInfo = [ordered]@{
+        schema_version = "jogodacopa_release_info_v1"
+        version = $Version
+        short_hash = Get-GitShortSha -Root $Root
+        git_sha = Get-GitFullSha -Root $Root
+        release_root = $VersionedReleaseRoot
+        generated_at_utc = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+    }
+    Write-TextUtf8NoBom -Path $releaseInfoPath -Text (($releaseInfo | ConvertTo-Json -Depth 4) + [Environment]::NewLine)
+    return $releaseInfoPath
 }
 
 function Invoke-NodeBrotli {
@@ -437,7 +457,14 @@ if ($Mode -eq "Plan") {
 }
 
 $ReleaseRoot = Assert-VersionedReleaseRoot -Root $ReleaseRoot
-$package = New-Package -Root $ProjectDir -VersionedReleaseRoot $ReleaseRoot -GodotPath $GodotExe -DoExport (-not $SkipExport.IsPresent)
+$releaseInfoPath = Write-ReleaseInfoResource -Root $ProjectDir -VersionedReleaseRoot $ReleaseRoot -Version $VisibleVersion
+try {
+    $package = New-Package -Root $ProjectDir -VersionedReleaseRoot $ReleaseRoot -GodotPath $GodotExe -DoExport (-not $SkipExport.IsPresent)
+} finally {
+    if (Test-Path -LiteralPath $releaseInfoPath -PathType Leaf) {
+        Remove-Item -LiteralPath $releaseInfoPath -Force
+    }
+}
 
 $evidenceDir = Join-Path $ProjectDir "docs\playtest-reports\track-05-data"
 New-Item -ItemType Directory -Force -Path $evidenceDir | Out-Null

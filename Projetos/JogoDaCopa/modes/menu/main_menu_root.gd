@@ -42,6 +42,8 @@ const MATCH_MODE_LABELS: Dictionary = {
 	&"timer": "3 minutos",
 	&"goals": "3 gols"
 }
+const VISIBLE_VERSION: String = "v1.0.1"
+const RELEASE_INFO_PATH: String = "res://build/release_info.json"
 const PREVIEW_CAMERA_LOOK_AT: Vector3 = Vector3(-3.08, 1.32, 0.0)
 const MENU_TRANSITION_SECONDS: float = 0.25
 
@@ -130,6 +132,9 @@ func debug_get_mode_path(mode_id: StringName) -> String:
 
 func debug_has_arena_preview() -> bool:
 	return preview_viewport != null and preview_camera != null and preview_avatar != null
+
+func debug_get_visible_version_text() -> String:
+	return _build_visible_version_text()
 
 func debug_get_selected_kit_id() -> StringName:
 	return selected_country_kit_id
@@ -308,7 +313,7 @@ func _build_ui() -> void:
 
 	var footer := Label.new()
 	footer.name = "FooterLabel"
-	footer.text = "PC Windows editor-first | sem logos oficiais"
+	footer.text = _build_visible_version_text()
 	footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	footer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	footer.add_theme_font_size_override("font_size", 12)
@@ -317,6 +322,27 @@ func _build_ui() -> void:
 	_position_menu_panel()
 	call_deferred("_position_menu_panel")
 	_build_menu_fade_overlay()
+
+func _build_visible_version_text() -> String:
+	var release_info := _load_release_info()
+	var version := str(release_info.get("version", VISIBLE_VERSION)).strip_edges()
+	var short_hash := str(release_info.get("short_hash", "local")).strip_edges()
+	if version.is_empty():
+		version = VISIBLE_VERSION
+	if short_hash.is_empty():
+		short_hash = "local"
+	return "Copa Arena Futebol %s+%s | sem logos oficiais" % [version, short_hash]
+
+func _load_release_info() -> Dictionary:
+	if not FileAccess.file_exists(RELEASE_INFO_PATH):
+		return {}
+	var file := FileAccess.open(RELEASE_INFO_PATH, FileAccess.READ)
+	if file == null:
+		return {}
+	var parsed = JSON.parse_string(file.get_as_text())
+	if parsed is Dictionary:
+		return parsed
+	return {}
 
 func _build_arena_preview() -> void:
 	preview_viewport = SubViewport.new()

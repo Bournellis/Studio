@@ -96,33 +96,33 @@ func _process(delta: float) -> void:
 	_refresh_event_label()
 
 func update_snapshot(snapshot: Dictionary) -> void:
-	status_label.text = str(snapshot.get("status", "Futebol 1x1"))
-	score_label.text = "%s %d   %d %s" % [
+	_set_label_text_if_changed(status_label, str(snapshot.get("status", "Futebol 1x1")))
+	_set_label_text_if_changed(score_label, "%s %d   %d %s" % [
 		str(snapshot.get("player_kit_code", "BRA")),
 		int(snapshot.get("player_score", 0)),
 		int(snapshot.get("bot_score", 0)),
 		str(snapshot.get("bot_kit_code", "FRA"))
-	]
+	])
 	var match_mode := StringName(str(snapshot.get("match_mode", "goals")))
 	var golden_goal := bool(snapshot.get("golden_goal_active", false))
 	var time_remaining := float(snapshot.get("match_time_remaining", 0.0))
 	if match_mode == &"timer":
-		clock_label.text = "%s | BOLA %.1fm" % [
+		_set_label_text_if_changed(clock_label, "%s | BOLA %.1fm" % [
 			"GOLDEN GOAL" if golden_goal else _format_match_time(time_remaining),
 			float(snapshot.get("ball_distance", 0.0))
-		]
+		])
 		clock_label.modulate = Color(1.0, 0.82, 0.16, 1.0) if golden_goal or (time_remaining > 0.0 and time_remaining <= 30.0) else Color(1.0, 1.0, 1.0, 1.0)
 	else:
-		clock_label.text = "PRIMEIRO A %d | BOLA %.1fm" % [
+		_set_label_text_if_changed(clock_label, "PRIMEIRO A %d | BOLA %.1fm" % [
 			int(snapshot.get("goal_limit", 3)),
 			float(snapshot.get("ball_distance", 0.0))
-		]
+		])
 		clock_label.modulate = Color(1.0, 1.0, 1.0, 1.0)
 	var bot_state := str(snapshot.get("bot_state", "kickoff"))
 	var phase := str(snapshot.get("phase", "kickoff"))
 	var kickoff_owner := str(snapshot.get("kickoff_owner", "player"))
 	var bot_difficulty := str(snapshot.get("bot_difficulty", "normal"))
-	flow_label.text = "Futebol: %s | Saida: %s | Bot %s: %s" % [phase, kickoff_owner, bot_difficulty, bot_state]
+	_set_label_text_if_changed(flow_label, "Futebol: %s | Saida: %s | Bot %s: %s" % [phase, kickoff_owner, bot_difficulty, bot_state])
 	var control_state := StringName(str(snapshot.get("ball_control", "free")))
 	var control_strength := float(snapshot.get("ball_control_strength", 0.0))
 	var boost_fraction := float(snapshot.get("boost_fraction", 1.0))
@@ -131,36 +131,46 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	var dash_label := "pronto" if dash_cooldown_fraction <= 0.0 else "%.0f%%" % [(1.0 - dash_cooldown_fraction) * 100.0]
 	var charge_fraction := float(snapshot.get("shoot_charge_fraction", 0.0))
 	var super_fraction := float(snapshot.get("player_super_fraction", 0.0))
-	control_label.text = "Bola: %s %.0f%% | Boost %s | Dash %s | Carga %.0f%% | SUPER %.0f%%" % [
+	_set_label_text_if_changed(control_label, "Bola: %s %.0f%% | Boost %s | Dash %s | Carga %.0f%% | SUPER %.0f%%" % [
 		_get_control_label(control_state),
 		control_strength * 100.0,
 		"ATIVO" if boost_active else "%.0f%%" % [boost_fraction * 100.0],
 		dash_label,
 		charge_fraction * 100.0,
 		super_fraction * 100.0
-	]
+	])
 	if boost_bar != null:
-		boost_bar.value = boost_fraction * 100.0
+		_set_progress_bar_value_if_changed(boost_bar, boost_fraction * 100.0)
 		boost_bar.modulate = Color(0.35, 0.9, 1.0, 1.0) if boost_active else Color(0.9, 1.0, 0.92, 0.92)
 	if player_kit_swatch != null:
 		player_kit_swatch.color = snapshot.get("player_kit_color", Color(1.0, 0.86, 0.12, 1.0))
 	if bot_kit_swatch != null:
 		bot_kit_swatch.color = snapshot.get("bot_kit_color", Color(0.06, 0.16, 0.56, 1.0))
 	if result_score_label != null:
-		result_score_label.text = "%d - %d" % [
+		_set_label_text_if_changed(result_score_label, "%d - %d" % [
 			int(snapshot.get("player_score", 0)),
 			int(snapshot.get("bot_score", 0))
-		]
+		])
 	if result_player_kit_swatch != null:
 		result_player_kit_swatch.color = snapshot.get("player_kit_color", Color(1.0, 0.86, 0.12, 1.0))
 	if result_bot_kit_swatch != null:
 		result_bot_kit_swatch.color = snapshot.get("bot_kit_color", Color(0.06, 0.16, 0.56, 1.0))
 	if result_player_kit_label != null:
-		result_player_kit_label.text = str(snapshot.get("player_kit_code", "BRA"))
+		_set_label_text_if_changed(result_player_kit_label, str(snapshot.get("player_kit_code", "BRA")))
 	if result_bot_kit_label != null:
-		result_bot_kit_label.text = str(snapshot.get("bot_kit_code", "FRA"))
+		_set_label_text_if_changed(result_bot_kit_label, str(snapshot.get("bot_kit_code", "FRA")))
 	_update_ball_indicator(snapshot)
-	hint_label.text = str(snapshot.get("hint", "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"))
+	_set_label_text_if_changed(hint_label, str(snapshot.get("hint", "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | R restart | Esc menu")))
+
+func _set_label_text_if_changed(label: Label, next_text: String) -> void:
+	if label == null or label.text == next_text:
+		return
+	label.text = next_text
+
+func _set_progress_bar_value_if_changed(progress_bar: ProgressBar, next_value: float) -> void:
+	if progress_bar == null or is_equal_approx(progress_bar.value, next_value):
+		return
+	progress_bar.value = next_value
 
 func show_kick(strong: bool, connected: bool, assist_strength: float = 0.0) -> void:
 	last_kick_assist_strength = assist_strength
@@ -1088,7 +1098,7 @@ func _update_ball_indicator(snapshot: Dictionary) -> void:
 		return
 	var horizontal := "E" if relative_x < -2.0 else ("D" if relative_x > 2.0 else "")
 	var depth := "FRENTE" if relative_z < 0.0 else "TRAS"
-	ball_indicator_label.text = "BOLA %s %s %.0fm" % [horizontal, depth, ball_distance]
+	_set_label_text_if_changed(ball_indicator_label, "BOLA %s %s %.0fm" % [horizontal, depth, ball_distance])
 
 func _get_control_label(control_state: StringName) -> String:
 	if control_state == &"contact":
