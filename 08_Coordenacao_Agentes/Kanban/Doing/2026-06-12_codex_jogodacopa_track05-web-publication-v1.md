@@ -4,7 +4,7 @@
 
 - id: `2026-06-12_jogodacopa-track05-web-publication-v1`
 - owner: `Codex`
-- status: `Backlog`
+- status: `Doing`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track05-web-publication-v1`
@@ -13,6 +13,16 @@
 ## Goal
 
 Publicar `Copa Arena Futebol` como build web publica no Cloudflare Pages (projeto `copa-arena-futebol`, sem Access), com URL estavel compartilhavel, smoke remoto na URL publicada e historico de release iniciado. Autorizacao de publicacao remota: `Decisoes/2026-06-12_jogodacopa_publicacao-web-cloudflare.md`.
+
+## Start Registration
+
+- Started at: `2026-06-12`
+- Agent/worktree: `Codex` / `D:\Estudio-worktrees\JogoDaCopa--codex--track05-web-publication-v1`
+- Branch: `codex/jogodacopa/track05-web-publication-v1`
+- Base docs read: `Prioridades_Estudio.md`, `Estado_Atual.md`, `Projetos/README.md`, workspace `AGENTS.md`, local `Projetos/JogoDaCopa/AGENTS.md`, local `implementation/current-status.md`, this card, publication decision, `docs/publication-readiness.md`
+- Intended files: Web export preset/build metadata, `tools/publish_web.ps1`, `tools/track04f_chrome_probe.mjs`, Track 05 docs/evidence, release history, publication readiness, project/studio status snapshots, Kanban/handoff records
+- Validation plan: Godot import cache, `tools/validate.gd` full PASS, Web release export, local/package hash checks, Wrangler Pages publication with `-ConfirmRemoteMutation`, remote Chrome smoke JSON+screenshot, doc drift check
+- Next handoff point: Claude review before merge
 
 ## Technical Scope (em ordem)
 
