@@ -4,7 +4,7 @@
 
 - id: `2026-06-12_jogodacopa-track05-web-publication-v1`
 - owner: `Codex`
-- status: `Review`
+- status: `Done`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track05-web-publication-v1`
@@ -56,7 +56,7 @@ Publicar `Copa Arena Futebol` como build web publica no Cloudflare Pages (projet
 - [x] `docs/release-history.md` criado com o release v1 e a limitacao conhecida documentada.
 - [x] `tools/validate.gd` full PASS; zero regressao GUT; nenhuma mudanca de gameplay/feel.
 - [x] Handoff de review para Claude ANTES do merge; commits por estagio logico (05A-05D); verificacao pos-commit `git diff --name-status HEAD~1..HEAD` em cada um.
-- [ ] Fechamento declara `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- [x] Fechamento declara `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## Handoff Needed
 
@@ -69,7 +69,13 @@ Publicar `Copa Arena Futebol` como build web publica no Cloudflare Pages (projet
 - Release root: `web/v1-copa-arena-futebol-20260612-31e23ea3`.
 - Remote smoke: `docs/playtest-reports/track-05-data/05c-remote-menu-smoke.json` + `.png`, PASS, page errors `0`, runtime console errors `0`.
 - Validation: `tools/validate.gd` PASS, 86 tests, 1264 asserts.
-- Merge status: pending Claude review; not moved to Done yet.
+- Code review: approved by Claude in `Projetos/JogoDaCopa/docs/code-review-track05-web-publication-v1.md`.
+- Merge status: merged locally into `main`; card moved to `Done`; remote push remains pending Fabio via GitHub Desktop.
+
+## Closeout
+
+- Integrated main validation: `tools/validate.gd` PASS, 86 tests, 1264 asserts, Web gzip transfer `30.29 MiB / 50.00 MiB`.
+- `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## Notes
 
