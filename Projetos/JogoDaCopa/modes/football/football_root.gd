@@ -127,6 +127,10 @@ const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 const MATCH_MODE_IDS: Array = [&"timer", &"goals"]
 const SCREEN_TRANSITION_SECONDS: float = 0.25
 const PERF_SCENARIO_STEP_INTERVAL: float = 4.0
+const WEB_RENDER_WARMUP_ENABLED: bool = true
+const WEB_RENDER_WARMUP_CHUNK_SIZE: int = 1
+const WEB_RENDER_WARMUP_DEFER_DECORATIVE: bool = true
+const WEB_RENDER_WARMUP_CORE_GLASS_NODES: int = 2
 
 var player
 var player_avatar
@@ -224,14 +228,15 @@ func _ready_web_async() -> void:
 	stage_begin = PerfProbeScript.begin(self, "football.spawn_runtime")
 	_spawn_runtime()
 	PerfProbeScript.end(self, "football.spawn_runtime", stage_begin)
-	_set_web_loading_progress("Preparando partida", 0.82)
-	await get_tree().process_frame
+	if WEB_RENDER_WARMUP_ENABLED:
+		_set_web_loading_progress("Aquecendo render", 0.52)
+		await _warmup_web_first_render()
+	_set_web_loading_progress("Preparando partida", 0.92)
 	stage_begin = PerfProbeScript.begin(self, "football.restart_play_initial")
 	_restart_play(false)
 	PerfProbeScript.end(self, "football.restart_play_initial", stage_begin)
 	_set_intro_open(true)
 	_set_web_loading_progress("Entrando em campo", 1.0)
-	await get_tree().process_frame
 	call_deferred("_apply_capture_scene_from_meta")
 	call_deferred("_mark_first_runtime_frame")
 	PerfProbeScript.end(self, "football.ready", ready_begin)
@@ -348,12 +353,146 @@ func _set_web_loading_progress(label_text: String, progress_value: float) -> voi
 
 func _hide_web_loading_overlay() -> void:
 	web_loading_active = false
+	PerfProbeScript.mark(self, "loading.overlay_hidden")
 	if web_loading_overlay == null:
 		return
 	web_loading_overlay.queue_free()
 	web_loading_overlay = null
 	web_loading_label = null
 	web_loading_bar = null
+
+func _warmup_web_first_render() -> void:
+	if not RenderProfileScript.is_web_platform():
+		return
+	var warmup_begin := PerfProbeScript.begin(self, "web_warmup.first_render")
+	var buckets := _collect_web_warmup_buckets()
+	var total_nodes := 0
+	for category in buckets.keys():
+		total_nodes += (buckets[category] as Array).size()
+	if total_nodes <= 0:
+		PerfProbeScript.end(self, "web_warmup.first_render", warmup_begin, "nodes=0")
+		return
+	var state := {
+		"revealed": 0,
+		"total": total_nodes,
+	}
+	PerfProbeScript.mark(self, "web_warmup.hidden", "nodes=%d categories=%d" % [total_nodes, buckets.size()])
+	await get_tree().process_frame
+	await _reveal_web_warmup_categories(buckets, ["campo", "bola"], "campo", state)
+	await _reveal_web_warmup_categories(buckets, ["avatares"], "avatares", state)
+	await _reveal_web_warmup_categories(buckets, ["vidro"], "vidro", state, true, WEB_RENDER_WARMUP_CORE_GLASS_NODES)
+	PerfProbeScript.mark(self, "web_warmup.core.end", "shown=%d/%d" % [int(state["revealed"]), total_nodes])
+	if WEB_RENDER_WARMUP_DEFER_DECORATIVE:
+		call_deferred("_finish_web_deferred_render_warmup", buckets, state)
+		PerfProbeScript.end(self, "web_warmup.first_render", warmup_begin, "core_nodes=%d total_nodes=%d deferred=true" % [int(state["revealed"]), total_nodes])
+		return
+	await _reveal_web_warmup_categories(buckets, ["vidro"], "vidro", state)
+	await _reveal_web_warmup_categories(buckets, ["estandes"], "estandes", state)
+	await _reveal_web_warmup_categories(buckets, ["torcida"], "torcida", state)
+	await _reveal_web_warmup_categories(buckets, ["banners"], "banners", state)
+	await _reveal_web_warmup_categories(buckets, ["neon", "placares"], "neon/placares", state)
+	await _reveal_web_warmup_categories(buckets, ["vfx", "outros"], "restante", state)
+	PerfProbeScript.end(self, "web_warmup.first_render", warmup_begin, "nodes=%d" % total_nodes)
+
+func _finish_web_deferred_render_warmup(buckets: Dictionary, state: Dictionary) -> void:
+	if not RenderProfileScript.is_web_platform():
+		return
+	var warmup_begin := PerfProbeScript.begin(self, "web_warmup.deferred_render")
+	await _reveal_web_warmup_categories(buckets, ["vidro"], "vidro", state, false)
+	await _reveal_web_warmup_categories(buckets, ["estandes"], "estandes", state, false)
+	await _reveal_web_warmup_categories(buckets, ["torcida"], "torcida", state, false)
+	await _reveal_web_warmup_categories(buckets, ["banners"], "banners", state, false)
+	await _reveal_web_warmup_categories(buckets, ["neon", "placares"], "neon/placares", state, false)
+	await _reveal_web_warmup_categories(buckets, ["vfx", "outros"], "restante", state, false)
+	PerfProbeScript.end(self, "web_warmup.deferred_render", warmup_begin, "shown=%d/%d" % [int(state["revealed"]), int(state["total"])])
+
+func _collect_web_warmup_buckets() -> Dictionary:
+	var buckets := {}
+	_collect_web_warmup_buckets_from_node(self, buckets)
+	return buckets
+
+func _collect_web_warmup_buckets_from_node(node: Node, buckets: Dictionary) -> void:
+	if node is GeometryInstance3D:
+		var geometry_instance := node as GeometryInstance3D
+		if geometry_instance.visible:
+			var category := _classify_material_probe_node(geometry_instance)
+			if not buckets.has(category):
+				buckets[category] = []
+			(buckets[category] as Array).append(geometry_instance)
+			geometry_instance.visible = false
+	for child in node.get_children():
+		_collect_web_warmup_buckets_from_node(child, buckets)
+
+func _reveal_web_warmup_categories(buckets: Dictionary, categories: Array, label: String, state: Dictionary, update_loading_progress: bool = true, limit_nodes: int = -1) -> void:
+	var nodes: Array = []
+	if limit_nodes > 0 and categories.size() == 1 and buckets.has(categories[0]):
+		var category_key = categories[0]
+		var source_nodes := buckets[category_key] as Array
+		var selected_count = mini(limit_nodes, source_nodes.size())
+		for index in range(selected_count):
+			nodes.append(source_nodes[index])
+		var remaining_nodes: Array = []
+		for index in range(selected_count, source_nodes.size()):
+			remaining_nodes.append(source_nodes[index])
+		buckets[category_key] = remaining_nodes
+	else:
+		for category in categories:
+			if buckets.has(category):
+				nodes.append_array(buckets[category] as Array)
+	if nodes.is_empty():
+		return
+	var total := int(state["total"])
+	for chunk_start in range(0, nodes.size(), WEB_RENDER_WARMUP_CHUNK_SIZE):
+		var chunk_end := mini(nodes.size(), chunk_start + WEB_RENDER_WARMUP_CHUNK_SIZE)
+		for index in range(chunk_start, chunk_end):
+			var geometry_instance := nodes[index] as GeometryInstance3D
+			if geometry_instance != null:
+				geometry_instance.visible = true
+		state["revealed"] = int(state["revealed"]) + (chunk_end - chunk_start)
+		if update_loading_progress:
+			var progress := lerpf(0.52, 0.88, float(state["revealed"]) / float(total))
+			_set_web_loading_progress("Aquecendo render: %s" % label, progress)
+		PerfProbeScript.mark(
+			self,
+			"web_warmup.chunk",
+			"label=%s shown=%d/%d total=%d nodes=%s" % [label, chunk_end, nodes.size(), int(state["revealed"]), _format_warmup_node_names(nodes, chunk_start, chunk_end)]
+		)
+		await get_tree().process_frame
+
+func _format_warmup_node_names(nodes: Array, chunk_start: int, chunk_end: int) -> String:
+	var names: Array[String] = []
+	for index in range(chunk_start, chunk_end):
+		var node := nodes[index] as Node
+		if node != null:
+			names.append(node.name)
+	return ",".join(names)
+
+func _classify_material_probe_node(geometry_instance: GeometryInstance3D) -> String:
+	if geometry_instance.has_meta("material_probe_category"):
+		return str(geometry_instance.get_meta("material_probe_category"))
+	var node_name := geometry_instance.name.to_lower()
+	var path_text := str(geometry_instance.get_path()).to_lower()
+	if path_text.contains("playeravatar") or path_text.contains("botavatar"):
+		return "avatares"
+	if path_text.contains("feedback") or node_name.contains("trail") or node_name.contains("burst") or node_name.contains("fireball") or node_name.contains("boostpad") or node_name.contains("jumppad"):
+		return "vfx"
+	if geometry_instance.is_in_group("football_crowd") or node_name.contains("crowd"):
+		return "torcida"
+	if node_name.contains("stand") or node_name.contains("corridor") or node_name.contains("skyline"):
+		return "estandes"
+	if node_name.contains("banner") or node_name.contains("flag") or node_name.contains("mast"):
+		return "banners"
+	if node_name.contains("glass") or node_name.contains("net"):
+		return "vidro"
+	if node_name.contains("scoreboard") or path_text.contains("scoreboard"):
+		return "placares"
+	if node_name.contains("frame") or node_name.contains("post") or node_name.contains("rail") or node_name.contains("rib") or node_name.contains("bar") or node_name.contains("halo") or node_name.contains("marker"):
+		return "neon"
+	if node_name.contains("pitch") or node_name.contains("line") or node_name.contains("stripe") or node_name.contains("spot") or node_name.contains("mouth"):
+		return "campo"
+	if node_name.contains("ball"):
+		return "bola"
+	return "outros"
 
 func _get_escape_target() -> StringName:
 	return &"menu" if intro_open or match_over else &"pause"
