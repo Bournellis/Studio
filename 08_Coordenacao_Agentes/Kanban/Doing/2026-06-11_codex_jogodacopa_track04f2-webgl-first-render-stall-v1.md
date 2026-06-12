@@ -4,7 +4,7 @@
 
 - id: `2026-06-11_jogodacopa-track04f2-webgl-first-render-stall-v1`
 - owner: `Codex`
-- status: `Backlog`
+- status: `Doing`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track04f2-webgl-first-render-stall-v1`
@@ -60,3 +60,13 @@ Eliminar o stall unico de primeiro render/upload WebGL que mantem `Play -> parti
 - Fonte autoritativa do diagnostico e da metodologia: `docs/code-review-track04f-web-performance-v1.md`.
 - O shader cache do Chrome torna a SEGUNDA visita rapida; a meta desta track e a PRIMEIRA impressao, que e a que conta na publicacao.
 - Hipoteses ja descartadas por medicao na 04F (nao reinvestigar sem novo sinal): audio, animacao, region mask, SubViewport, glow on/off.
+
+## Codex Start
+
+- Started: `2026-06-12`
+- Worktree verified at start: `D:\Estudio-worktrees\JogoDaCopa--codex--track04f2-webgl-first-render-stall-v1`
+- Branch: `codex/jogodacopa/track04f2-webgl-first-render-stall-v1`
+- Base docs read: `Prioridades_Estudio.md`, root `AGENTS.md`, `Projetos/README.md`, `Estado_Atual.md`, project `AGENTS.md`, `implementation/current-status.md`, `docs/code-review-track04f-web-performance-v1.md`, `docs/playtest-reports/track-04f-web-performance.md`, this card.
+- Intended files: probe/material-count instrumentation, football field/root render path, track evidence/report, project status and handoff.
+- Validation plan: headless editor import once, Web export as needed for probes, Chrome first-visit probes with shader cache cleared, 120s smoothness smoke, `validate.gd` full, Web export, `git diff --check`, clean status.
+- Next handoff point: Claude pre-merge review after local evidence/docs commit.

@@ -1029,6 +1029,7 @@ func _spawn_runtime() -> void:
 	stage_begin = PerfProbeScript.begin(self, "football.apply_toon")
 	_apply_toon_rendering()
 	PerfProbeScript.end(self, "football.apply_toon", stage_begin)
+	PerfProbeScript.log_material_counts(self, self)
 
 func _apply_main_menu_settings() -> void:
 	var tree := get_tree()
