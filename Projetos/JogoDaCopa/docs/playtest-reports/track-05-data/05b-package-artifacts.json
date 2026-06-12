@@ -1,0 +1,67 @@
+{
+    "schema_version":  "jogodacopa_web_publication_package_v1",
+    "generated_at":  "2026-06-12T03:45:48Z",
+    "project":  "JogoDaCopa",
+    "product_name":  "Copa Arena Futebol",
+    "cloudflare_pages_project":  "copa-arena-futebol",
+    "release_root":  "web/v1-copa-arena-futebol-20260612-b0bf6766",
+    "pages_asset_limit_bytes":  26214400,
+    "package_strategy":  "index.pck and index.wasm are stored Brotli-compressed under original file names and served with Content-Encoding: br",
+    "source_dir":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web",
+    "pages_dir":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260612-b0bf6766\\pages",
+    "zip_path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260612-b0bf6766\\copa-arena-futebol-pages.zip",
+    "export_log":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web-publication\\last-web-export.log",
+    "raw_artifacts":  [
+                          {
+                              "label":  "raw index.html",
+                              "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web\\index.html",
+                              "bytes":  5450,
+                              "sha256":  "05219d2b278b3a3251ef3d7bc1e9676b263f2dfee6c119d9d519f1f3336cb01c"
+                          },
+                          {
+                              "label":  "raw index.pck",
+                              "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web\\index.pck",
+                              "bytes":  27708956,
+                              "sha256":  "c769157c3256e87d19ead54637f8d327e5504f5e1b217aaf5a8c52a5e0ddd371"
+                          },
+                          {
+                              "label":  "raw index.wasm",
+                              "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web\\index.wasm",
+                              "bytes":  37695054,
+                              "sha256":  "cca8bc7c462d348aaa3f318aecf3281d99bf219e182256412711b24f0d086d80"
+                          }
+                      ],
+    "package_artifacts":  [
+                              {
+                                  "label":  "pages index.html",
+                                  "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260612-b0bf6766\\pages\\index.html",
+                                  "bytes":  5701,
+                                  "sha256":  "da266ff2a5a0c79725e5ee07edfe46692e63d677db831bbf43da19547afa6f5f"
+                              },
+                              {
+                                  "label":  "pages index.pck brotli",
+                                  "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260612-b0bf6766\\pages\\index.pck",
+                                  "bytes":  20570491,
+                                  "sha256":  "e146368591bf34821d23b8c5e0398b0562fad9b84d7958459d1b6c796ae75ec3"
+                              },
+                              {
+                                  "label":  "pages index.wasm brotli",
+                                  "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260612-b0bf6766\\pages\\index.wasm",
+                                  "bytes":  6608968,
+                                  "sha256":  "6903dbdda02519655d94ef7fc0eb18e31336ac11b0f93a1abe696a654d2cf30f"
+                              },
+                              {
+                                  "label":  "pages _headers",
+                                  "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260612-b0bf6766\\pages\\_headers",
+                                  "bytes":  394,
+                                  "sha256":  "9c350676e1fdc1f68bc27c91170b529161b7b3fc08889814d0643304ed0aaca0"
+                              },
+                              {
+                                  "label":  "pages zip",
+                                  "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260612-b0bf6766\\copa-arena-futebol-pages.zip",
+                                  "bytes":  27311751,
+                                  "sha256":  "20fe5d10c835de312cb6e97b26865342cbbca693e5575a01705c186e89e64732"
+                              }
+                          ],
+    "package_report":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260612-b0bf6766\\package-report.json"
+}

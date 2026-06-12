@@ -29,3 +29,18 @@
 - 05B: create `tools/publish_web.ps1` with `Plan`, `Package` and `FullPublish`, including the Brotli Pages package.
 - 05C: create/use project `copa-arena-futebol`, deploy with `-ConfirmRemoteMutation`, run remote smoke JSON+screenshot.
 - 05D: update release history/readiness/status docs and handoff to Claude before merge.
+
+## 05B Publish Script
+
+- Added `tools/publish_web.ps1`.
+- `Mode Plan` default generates a local plan only and does not export, package, deploy or verify remote state.
+- `Mode Package` requires a versioned `ReleaseRoot`, exports Web release locally, writes a Cloudflare Pages folder and zip, stores `index.pck`/`index.wasm` Brotli-compressed under their original names, and verifies every uploaded file is `< 25 MiB`.
+- `Mode FullPublish` requires `-ConfirmRemoteMutation`, creates the Pages project if missing, treats an existing Pages project as idempotent, and deploys with Wrangler using branch `main`.
+- Package HTML injects `window.JDC_WEB_RELEASE` so remote smoke can assert the deployed `releaseRoot`.
+- Local package evidence: `docs/playtest-reports/track-05-data/05b-package-artifacts.json`.
+- Package root tested: `web/v1-copa-arena-futebol-20260612-b0bf6766`.
+- Pages package artifacts:
+  - `index.html`: `5701` bytes, SHA256 `da266ff2a5a0c79725e5ee07edfe46692e63d677db831bbf43da19547afa6f5f`
+  - `index.pck` Brotli: `20570491` bytes, SHA256 `e146368591bf34821d23b8c5e0398b0562fad9b84d7958459d1b6c796ae75ec3`
+  - `index.wasm` Brotli: `6608968` bytes, SHA256 `6903dbdda02519655d94ef7fc0eb18e31336ac11b0f93a1abe696a654d2cf30f`
+  - `copa-arena-futebol-pages.zip`: `27311751` bytes, SHA256 `20fe5d10c835de312cb6e97b26865342cbbca693e5575a01705c186e89e64732`
