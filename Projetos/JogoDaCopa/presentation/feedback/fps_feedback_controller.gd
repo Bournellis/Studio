@@ -15,6 +15,7 @@ const MAX_RETIRED_PARTICLE_EFFECTS: int = 256
 const MAX_RETIRED_VISUAL_EFFECTS: int = 256
 const MAX_RETIRED_WEB_SPHERES: int = 192
 const MAX_RETIRED_WEB_LIGHTS: int = 96
+const WEB_AUDIO_UNLOCK_POLL_MSEC: int = 500
 const WEB_FEEDBACK_QUERY_KEY: String = "jdc_web_feedback"
 const WEB_DEFAULT_FEEDBACK_EFFECTS: Array = ["whistle", "confetti", "kick", "countdown", "jump_pad", "result"]
 const AMBIENCE_PLAY_DB: float = -14.0
@@ -91,6 +92,9 @@ var synthetic_whistle_count: int = 0
 var web_feedback_filter_loaded: bool = false
 var web_feedback_allow_all: bool = true
 var web_feedback_enabled: Dictionary = {}
+var web_audio_locked_logged: bool = false
+var web_audio_unlocked: bool = false
+var web_audio_next_unlock_poll_msec: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -513,6 +517,22 @@ func _enable_default_web_feedback_effects() -> void:
 	for effect in WEB_DEFAULT_FEEDBACK_EFFECTS:
 		web_feedback_enabled[str(effect)] = true
 
+func _can_play_web_audio(force_poll: bool = false) -> bool:
+	if not RenderProfileScript.is_web_platform():
+		return true
+	if web_audio_unlocked:
+		return true
+	var now_msec := Time.get_ticks_msec()
+	if not force_poll and now_msec < web_audio_next_unlock_poll_msec:
+		return false
+	web_audio_next_unlock_poll_msec = now_msec + WEB_AUDIO_UNLOCK_POLL_MSEC
+	var state := str(JavaScriptBridge.eval("navigator.userActivation && navigator.userActivation.hasBeenActive ? '1' : '0'", true))
+	web_audio_unlocked = state == "1"
+	if not web_audio_unlocked and not web_audio_locked_logged:
+		web_audio_locked_logged = true
+		PerfProbeScript.mark(self, "feedback.web_audio_locked", "waiting_for_browser_user_activation=true")
+	return web_audio_unlocked
+
 func _spawn_beam(start_position: Vector3, end_position: Vector3, color: Color, thickness: float, lifetime: float) -> void:
 	var delta := end_position - start_position
 	if delta.length_squared() <= 0.0001:
@@ -748,7 +768,8 @@ func _start_ambience_loop() -> void:
 	ambience_player.stream = stream
 	ambience_player.volume_db = AMBIENCE_MENU_DB
 	add_child(ambience_player)
-	ambience_player.play()
+	if _can_play_web_audio(true):
+		ambience_player.play()
 
 func _enable_stream_loop(stream: AudioStream) -> void:
 	for property: Dictionary in stream.get_property_list():
@@ -765,6 +786,8 @@ func _update_ambience(delta: float) -> void:
 		target_volume = AMBIENCE_GOAL_DB
 	ambience_player.volume_db = lerpf(ambience_player.volume_db, target_volume, clampf(delta * AMBIENCE_FADE_SPEED, 0.0, 1.0))
 	if not ambience_player.playing and ambience_player.stream != null:
+		if not _can_play_web_audio():
+			return
 		ambience_player.play()
 
 func _play_sfx_3d(audio_key: StringName, effect_position: Vector3, volume_db: float = -10.0, pitch_scale: float = 1.0) -> bool:
@@ -791,6 +814,9 @@ func _play_sfx_3d(audio_key: StringName, effect_position: Vector3, volume_db: fl
 
 func _play_sfx_ui(audio_key: StringName, volume_db: float = -10.0, pitch_scale: float = 1.0, bus_name: StringName = BUS_UI) -> bool:
 	var profile_begin := PerfProbeScript.begin(self, "feedback.play_sfx_ui", "key=%s bus=%s" % [str(audio_key), str(bus_name)])
+	if not _can_play_web_audio(true):
+		PerfProbeScript.end(self, "feedback.play_sfx_ui", profile_begin, "played=false web_audio_locked=true")
+		return false
 	var stream := real_audio_streams.get(audio_key) as AudioStream
 	if stream == null or ui_pool.is_empty():
 		PerfProbeScript.end(self, "feedback.play_sfx_ui", profile_begin, "played=false")
