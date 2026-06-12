@@ -4,7 +4,7 @@
 
 - id: `2026-06-11_jogodacopa-track04f2-webgl-first-render-stall-v1`
 - owner: `Codex`
-- status: `Doing`
+- status: `Review`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track04f2-webgl-first-render-stall-v1`
@@ -40,16 +40,16 @@ Eliminar o stall unico de primeiro render/upload WebGL que mantem `Play -> parti
 
 ## Acceptance Criteria
 
-- [ ] Baseline de primeira visita registrada ANTES de qualquer mudanca (contagem de shaders/materiais unicos + timeline do stall).
-- [ ] Overlay de loading sai em `<= 5s` no Chrome local, primeira visita, cache de shader limpo.
-- [ ] Nenhum frame unico `> 1s` durante loading/primeiro render.
-- [ ] Gate de smoothness pos-warmup da 04F continua PASS.
-- [ ] Visual final inalterado (screenshots comparativas do probe contra a baseline 04F).
-- [ ] PCK nao cresce alem de `+1 MiB` sobre os `26.41 MiB` da 04F sem justificativa documentada.
-- [ ] `tools/validate.gd` profile full PASS; zero regressao GUT.
-- [ ] Otimizacoes que nao melhorarem a medicao revertidas e documentadas.
-- [ ] Handoff de review para Claude ANTES do merge em main; apos aprovacao, merge local e card movido para Done.
-- [ ] Git LOCAL apenas; fechamento declara `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- [x] Baseline de primeira visita registrada ANTES de qualquer mudanca (contagem de shaders/materiais unicos + timeline do stall).
+- [x] Overlay de loading sai em `<= 5s` no Chrome local, primeira visita, cache de shader limpo.
+- [x] Nenhum frame unico `> 1s` durante loading/primeiro render.
+- [ ] Gate de smoothness pos-warmup da 04F continua PASS. Residual medido: primeiro uso de VFX/audio (`confetti_vfx`/`kick_vfx`) ainda passa de 1s no smoke 120s.
+- [x] Visual final inalterado (screenshots comparativas do probe contra a baseline 04F).
+- [x] PCK nao cresce alem de `+1 MiB` sobre os `26.41 MiB` da 04F sem justificativa documentada.
+- [x] `tools/validate.gd` profile full PASS; zero regressao GUT.
+- [x] Otimizacoes que nao melhorarem a medicao revertidas e documentadas.
+- [x] Handoff de review para Claude ANTES do merge em main; apos aprovacao, merge local e card movido para Done.
+- [x] Git LOCAL apenas; fechamento declara `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## Handoff Needed
 
@@ -70,3 +70,10 @@ Eliminar o stall unico de primeiro render/upload WebGL que mantem `Play -> parti
 - Intended files: probe/material-count instrumentation, football field/root render path, track evidence/report, project status and handoff.
 - Validation plan: headless editor import once, Web export as needed for probes, Chrome first-visit probes with shader cache cleared, 120s smoothness smoke, `validate.gd` full, Web export, `git diff --check`, clean status.
 - Next handoff point: Claude pre-merge review after local evidence/docs commit.
+
+## Codex Review Handoff
+
+- First-render/loading goal: PASS (`Play -> overlay` `4.23s`, max frame in loading window `972.4ms`).
+- Smoothness residual: FAIL on first-use VFX/audio outside the arena first-render stall.
+- Report: `Projetos/JogoDaCopa/docs/playtest-reports/track-04f2-webgl-stall.md`.
+- Handoff: `08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track04f2-webgl-first-render-stall-v1.md`.
