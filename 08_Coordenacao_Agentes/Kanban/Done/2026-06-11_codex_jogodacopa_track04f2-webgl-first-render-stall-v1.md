@@ -4,7 +4,7 @@
 
 - id: `2026-06-11_jogodacopa-track04f2-webgl-first-render-stall-v1`
 - owner: `Codex`
-- status: `Review`
+- status: `Done`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track04f2-webgl-first-render-stall-v1`

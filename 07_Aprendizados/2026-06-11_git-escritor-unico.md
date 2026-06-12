@@ -24,6 +24,10 @@ Durante a configuracao do remote, tres falhas atingiram o repositorio principal:
 
 O mesmo filesystem tambem mente na LEITURA: arquivos que cresceram em commits recentes do host podem aparecer truncados na visao do agente remoto, fazendo `git status` listar modificacoes que nao existem (conteudo igual a um prefixo exato do blob do HEAD, as vezes cortado no meio de uma palavra). Antes de concluir que um handoff ficou sujo ou de commitar qualquer coisa nesse estado, confirme com `cmp <(git show HEAD:arquivo | head -c TAMANHO_TRABALHO) arquivo`: prefixo exato = ilusao da montagem, arvore real limpa. Nunca faca `git add` de arquivos nesse estado.
 
+## Adendo 2: Indice Do Repo Proibido Para Agentes Remotos
+
+Quando agentes commitam via indice externo (`GIT_INDEX_FILE`), o indice proprio do repo fica obsoleto. Um `git add arquivo && git commit` posterior usando o indice do repo gera um commit cujo tree e o indice obsoleto inteiro + o arquivo - revertendo silenciosamente commits recentes de outros caminhos. Regras: agente remoto so commita com `GIT_INDEX_FILE` novo (`git read-tree HEAD` + add explicito); e TODO commit deve ser verificado com `git diff --name-status HEAD~1..HEAD` - se aparecer caminho que voce nao pretendia mudar, o commit esta contaminado e deve ser corrigido antes de prosseguir.
+
 ## Beneficio
 
 Evita perda de staging, commits com blobs corrompidos e loops de autenticacao que mascaram erro de configuracao.

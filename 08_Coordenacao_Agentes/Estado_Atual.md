@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_04F2_WEBGL_FIRST_RENDER_STALL_NEXT`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos, Web single-threaded com `RenderProfile` Compatibility e Track 04F aprovada/mergeada localmente: loading com progresso, PCK `26.41 MiB`, smoothness pos-warmup PASS e residual de primeiro render WebGL aberto como 04F.2. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
+- Marker: `JOGO_DA_COPA_TRACK_04F2_WEBGL_FIRST_RENDER_STALL_V1_COMPLETE`
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos, Web single-threaded com `RenderProfile` Compatibility e Track 04F/04F.2 aprovadas/mergeadas localmente: primeiro render Web `19.5s -> 4.23s` (materiais `467 -> 79`), loading com progresso, PCK `26.41 MiB`, smoothness pos-warmup PASS e residual de primeiro render WebGL aberto como 04F.2. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: executar `Track 04F.2 - WebGL First-Render Stall`; card: `Kanban/Backlog/2026-06-11_codex_jogodacopa_track04f2-webgl-first-render-stall-v1.md`.
+- Proximo passo: decidir `Track 04F.3 - VFX/Audio First-Use Warmup` (residual de smoothness da 04F.2) com Fabio; `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
 
 ## draxos-roguelike-cardgame
 
