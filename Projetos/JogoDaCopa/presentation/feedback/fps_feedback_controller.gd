@@ -15,6 +15,8 @@ const MAX_RETIRED_PARTICLE_EFFECTS: int = 256
 const MAX_RETIRED_VISUAL_EFFECTS: int = 256
 const MAX_RETIRED_WEB_SPHERES: int = 192
 const MAX_RETIRED_WEB_LIGHTS: int = 96
+const WEB_FEEDBACK_QUERY_KEY: String = "jdc_web_feedback"
+const WEB_DEFAULT_FEEDBACK_EFFECTS: Array = ["whistle", "confetti", "kick", "countdown", "jump_pad", "result"]
 const AMBIENCE_PLAY_DB: float = -14.0
 const AMBIENCE_MENU_DB: float = -24.0
 const AMBIENCE_GOAL_DB: float = -8.5
@@ -86,6 +88,9 @@ var ambience_ducked: bool = false
 var ambience_goal_boost_remaining: float = 0.0
 var last_audio_event: StringName = &""
 var synthetic_whistle_count: int = 0
+var web_feedback_filter_loaded: bool = false
+var web_feedback_allow_all: bool = true
+var web_feedback_enabled: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -190,6 +195,14 @@ func play_jump_pad(pad_position: Vector3, launch_velocity: Vector3) -> void:
 	last_event = &"jump_pad"
 	jump_pad_count += 1
 	if RenderProfileScript.is_web_platform():
+		PerfProbeScript.mark(self, "event.jump_pad_vfx")
+		if not _is_web_feedback_enabled(&"jump_pad"):
+			return
+		var launch_direction_web := launch_velocity.normalized() if launch_velocity.length_squared() > 0.0001 else Vector3.UP
+		_spawn_sphere(pad_position + Vector3.UP * 0.16, 0.3, JUMP_PAD_COLOR, 0.14, true)
+		_spawn_sphere(pad_position + launch_direction_web * 0.72 + Vector3.UP * 0.38, 0.14, JUMP_PAD_COLOR, 0.12, true)
+		_spawn_light(pad_position + Vector3.UP * 0.25, JUMP_PAD_COLOR, 2.2, 2.7, 0.12)
+		_play_sfx_ui(&"ui_confirmation", -12.0, 1.08, BUS_SFX)
 		return
 	var launch_direction := launch_velocity.normalized() if launch_velocity.length_squared() > 0.0001 else Vector3.UP
 	_spawn_beam(pad_position + Vector3.UP * 0.1, pad_position + launch_direction * 1.8 + Vector3.UP * 0.75, JUMP_PAD_COLOR, 0.052, 0.16)
@@ -210,6 +223,15 @@ func play_football_kick(ball_position: Vector3, direction: Vector3, strong: bool
 	last_event = &"football_strong_kick" if strong else &"football_kick"
 	football_kick_count += 1
 	if RenderProfileScript.is_web_platform():
+		if not _is_web_feedback_enabled(&"kick"):
+			return
+		var kick_direction_web := direction.normalized() if direction.length_squared() > 0.0001 else Vector3.FORWARD
+		var color_web := FOOTBALL_STRONG_COLOR if strong else FOOTBALL_COLOR
+		_spawn_sphere(ball_position, 0.22 if strong else 0.17, color_web, 0.12, true)
+		_spawn_sphere(ball_position + kick_direction_web * (0.52 if strong else 0.34) + Vector3.UP * 0.12, 0.11 if strong else 0.08, color_web, 0.1, true)
+		_spawn_particle_burst(ball_position, color_web, 10 if strong else 6, 0.16 if strong else 0.11, 0.9 if strong else 0.6)
+		_spawn_light(ball_position + Vector3.UP * 0.28, color_web, 2.0 if strong else 1.3, 2.2, 0.1)
+		_play_sfx_ui(&"kick_strong" if strong else &"kick", -10.0 if strong else -13.0, 0.96 if strong else 1.04, BUS_SFX)
 		return
 	var kick_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector3.FORWARD
 	var color := FOOTBALL_STRONG_COLOR if strong else FOOTBALL_COLOR
@@ -226,6 +248,14 @@ func play_football_goal(goal_position: Vector3, player_scored: bool) -> void:
 	football_goal_count += 1
 	var color := FOOTBALL_GOAL_COLOR if player_scored else DAMAGE_COLOR
 	if RenderProfileScript.is_web_platform():
+		if not _is_web_feedback_enabled(&"goal"):
+			return
+		_spawn_sphere(goal_position + Vector3.UP * 0.72, 0.48, color, 0.26, true)
+		_spawn_particle_burst(goal_position + Vector3.UP * 1.0, color, 12, 0.22, 1.4)
+		_spawn_light(goal_position + Vector3.UP * 1.1, color, 3.4, 5.0, 0.22)
+		_play_sfx_ui(&"goal_jingle", -8.5, 1.0, BUS_UI)
+		_play_sfx_ui(&"crowd_goal", -13.5, 1.0, BUS_AMBIENCE)
+		ambience_goal_boost_remaining = 1.4
 		return
 	_spawn_sphere(goal_position + Vector3.UP * 0.7, 0.72, color, 0.42, true)
 	_spawn_particle_burst(goal_position + Vector3.UP * 1.0, color, 96, 0.7, 5.8)
@@ -240,6 +270,13 @@ func play_arcade_confetti(effect_position: Vector3, player_colored: bool) -> voi
 	last_event = &"arcade_confetti"
 	confetti_count += 1
 	if RenderProfileScript.is_web_platform():
+		if not _is_web_feedback_enabled(&"confetti"):
+			return
+		var primary_web := FOOTBALL_GOAL_COLOR if player_colored else BOT_COLOR
+		_spawn_particle_burst(effect_position + Vector3.UP * 1.25, primary_web, 18, 0.24, 1.5)
+		_spawn_particle_burst(effect_position + Vector3.UP * 1.45, Color(0.34, 0.88, 1.0, 1.0), 10, 0.2, 1.0)
+		_spawn_light(effect_position + Vector3.UP * 1.2, primary_web, 2.4, 3.2, 0.2)
+		_play_sfx_ui(&"ui_confirmation", -12.0, 1.12 if player_colored else 0.82, BUS_SFX)
 		return
 	var primary := FOOTBALL_GOAL_COLOR if player_colored else BOT_COLOR
 	_spawn_particle_burst(effect_position + Vector3.UP * 1.35, primary, 48, 0.5, 3.8)
@@ -297,7 +334,14 @@ func play_round_end(player_won: bool) -> void:
 	last_event = &"round_end"
 	round_end_count += 1
 	if RenderProfileScript.is_web_platform():
-		PerfProbeScript.end(self, "feedback.round_end", profile_begin, "web_effects_disabled=true")
+		if not _is_web_feedback_enabled(&"result"):
+			PerfProbeScript.end(self, "feedback.round_end", profile_begin, "web_effects_disabled=true")
+			return
+		var color_web := HIT_COLOR if player_won else DAMAGE_COLOR
+		_spawn_sphere(Vector3(0.0, 2.8, 0.0), 0.42, color_web, 0.22, true)
+		_spawn_light(Vector3(0.0, 3.6, 0.0), color_web, 2.5, 8.0, 0.28)
+		_play_sfx_ui(&"win_jingle" if player_won else &"loss_jingle", -9.0, 1.0, BUS_UI)
+		PerfProbeScript.end(self, "feedback.round_end", profile_begin, "web_effects_enabled=true")
 		return
 	var color := HIT_COLOR if player_won else DAMAGE_COLOR
 	_spawn_light(Vector3(0.0, 4.0, 0.0), color, 4.0, 12.0, 0.7)
@@ -311,7 +355,11 @@ func play_ball_glass(ball_position: Vector3) -> void:
 	_play_sfx_3d(&"ball_glass", ball_position, -9.0, 1.0)
 
 func play_countdown_tick(is_final: bool = false) -> void:
+	PerfProbeScript.mark(self, "event.countdown_tick", "is_final=%s" % str(is_final))
 	if RenderProfileScript.is_web_platform():
+		if not _is_web_feedback_enabled(&"countdown"):
+			return
+		_play_sfx_ui(&"ui_confirmation" if is_final else &"ui_click", -10.5 if is_final else -14.0, 1.0 if is_final else 1.08, BUS_UI)
 		return
 	_play_sfx_ui(&"ui_confirmation" if is_final else &"ui_click", -8.0 if is_final else -13.0, 1.0, BUS_UI)
 
@@ -322,7 +370,13 @@ func play_ui_back() -> void:
 	_play_sfx_ui(&"ui_back", -11.0, 1.0, BUS_UI)
 
 func play_referee_whistle(effect_position: Vector3 = Vector3.ZERO) -> void:
+	PerfProbeScript.mark(self, "event.whistle")
 	if RenderProfileScript.is_web_platform():
+		if not _is_web_feedback_enabled(&"whistle"):
+			return
+		synthetic_whistle_count += 1
+		_play_sfx_ui(&"ui_confirmation", -8.5, 1.45, BUS_UI)
+		last_audio_event = &"synthetic_whistle"
 		return
 	synthetic_whistle_count += 1
 	last_audio_event = &"synthetic_whistle"
@@ -417,6 +471,47 @@ func debug_get_last_audio_event() -> StringName:
 
 func debug_get_synthetic_whistle_count() -> int:
 	return synthetic_whistle_count
+
+func _is_web_feedback_enabled(effect_key: StringName) -> bool:
+	if not RenderProfileScript.is_web_platform():
+		return true
+	_load_web_feedback_filter()
+	if web_feedback_allow_all:
+		return true
+	return web_feedback_enabled.has(str(effect_key))
+
+func _load_web_feedback_filter() -> void:
+	if web_feedback_filter_loaded:
+		return
+	web_feedback_filter_loaded = true
+	web_feedback_enabled.clear()
+	web_feedback_allow_all = false
+	var query_value := ""
+	if RenderProfileScript.is_web_platform():
+		var script := "(new URLSearchParams(window.location.search)).get('%s') || ''" % WEB_FEEDBACK_QUERY_KEY
+		query_value = str(JavaScriptBridge.eval(script, true)).strip_edges().to_lower()
+	if query_value.is_empty():
+		_enable_default_web_feedback_effects()
+		PerfProbeScript.mark(self, "web_feedback.filter", "mode=default effects=%s" % ",".join(WEB_DEFAULT_FEEDBACK_EFFECTS))
+		return
+	if query_value == "all":
+		web_feedback_allow_all = true
+		PerfProbeScript.mark(self, "web_feedback.filter", "mode=all")
+		return
+	if query_value == "none":
+		web_feedback_allow_all = false
+		PerfProbeScript.mark(self, "web_feedback.filter", "mode=none")
+		return
+	web_feedback_allow_all = false
+	for part in query_value.split(",", false):
+		var effect := part.strip_edges()
+		if not effect.is_empty():
+			web_feedback_enabled[effect] = true
+	PerfProbeScript.mark(self, "web_feedback.filter", "mode=list effects=%s" % query_value)
+
+func _enable_default_web_feedback_effects() -> void:
+	for effect in WEB_DEFAULT_FEEDBACK_EFFECTS:
+		web_feedback_enabled[str(effect)] = true
 
 func _spawn_beam(start_position: Vector3, end_position: Vector3, color: Color, thickness: float, lifetime: float) -> void:
 	var delta := end_position - start_position
