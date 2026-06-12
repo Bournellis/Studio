@@ -1,0 +1,36 @@
+{
+    "schema_version":  "jogodacopa_web_release_artifacts_v1",
+    "generated_at":  "2026-06-12T03:25:34Z",
+    "export_mode":  "release",
+    "product_name":  "Copa Arena Futebol",
+    "html_title":  "Copa Arena Futebol",
+    "web_preset":  "Web",
+    "output_dir":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web",
+    "zip_path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\packages\\copa-arena-futebol-web-release.zip",
+    "artifacts":  [
+                      {
+                          "label":  "index.html",
+                          "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web\\index.html",
+                          "bytes":  5450,
+                          "sha256":  "05219d2b278b3a3251ef3d7bc1e9676b263f2dfee6c119d9d519f1f3336cb01c"
+                      },
+                      {
+                          "label":  "index.pck",
+                          "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web\\index.pck",
+                          "bytes":  27708956,
+                          "sha256":  "4252509c6ff058e0a0a863daa9e348df84e320b4887f6eac91aad99d81a987fe"
+                      },
+                      {
+                          "label":  "index.wasm",
+                          "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\web\\index.wasm",
+                          "bytes":  37695054,
+                          "sha256":  "cca8bc7c462d348aaa3f318aecf3281d99bf219e182256412711b24f0d086d80"
+                      },
+                      {
+                          "label":  "web zip",
+                          "path":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--track05-web-publication-v1\\Projetos\\JogoDaCopa\\builds\\packages\\copa-arena-futebol-web-release.zip",
+                          "bytes":  31769419,
+                          "sha256":  "5f5923a9add22105036067dd043fee4804d371134ac44f9966f5826fbc4d4bf0"
+                      }
+                  ]
+}

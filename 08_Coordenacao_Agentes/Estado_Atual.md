@@ -1,6 +1,6 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-06-11`
+- Ultima atualizacao: `2026-06-12`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 - Regra de tamanho: maximo ~12 linhas por projeto. Historia de pacotes/validacoes vai para os arquivos de historico do projeto (`implementation/tracks/`, `docs/release-history.md`, Kanban Done), nunca para este snapshot.
@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_04F2_WEBGL_FIRST_RENDER_STALL_V1_COMPLETE`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos, Web single-threaded com `RenderProfile` Compatibility e Track 04F/04F.2 aprovadas/mergeadas localmente: primeiro render Web `19.5s -> 4.23s` (materiais `467 -> 79`), loading com progresso, PCK `26.43 MiB`, smoothness curto PASS e residual de VFX/audio first-use promovido a 04F.3. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
+- Marker: `JOGO_DA_COPA_TRACK_05_WEB_PUBLICATION_V1_REVIEW`
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos e Web V1 publico em Cloudflare Pages: `https://copa-arena-futebol.pages.dev/`. Track 05 publicou `web/v1-copa-arena-futebol-20260612-31e23ea3` com smoke remoto PASS sem erros de runtime; limitacao conhecida: hitch unico de primeiro uso de VFX/audio por sessao. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md` e `Projetos/JogoDaCopa/docs/release-history.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: executar `Track 05 - Web Publication V1` (Cloudflare Pages publico); card: `Kanban/Backlog/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`. Track 04F.3 adiada por decisao (`Decisoes/2026-06-12_jogodacopa_publicacao-web-cloudflare.md`).
+- Proximo passo: Claude revisar `Track 05 - Web Publication V1`; card em `Kanban/Review/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`. Apos aprovacao: merge local, card em Done e `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## draxos-roguelike-cardgame
 

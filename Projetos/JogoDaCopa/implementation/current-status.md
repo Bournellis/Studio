@@ -4,12 +4,12 @@
 - Project: `JogoDaCopa`
 - Product/module name: `Copa Arena Futebol`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active surface: `PC Windows editor-first TPS football minigames + single-threaded Web export gate`
-- Active stage: `Track 04F.3 decision - VFX/Audio first-use residual`
-- Active stage status: `AWAITING_DECISION - Track 04F.2 approved by Claude and merged locally; first-render stall resolved (19.5s -> 4.23s); VFX/audio first-use residual promoted to Track 04F.3`
-- Status marker: `JOGO_DA_COPA_TRACK_04F2_WEBGL_FIRST_RENDER_STALL_V1_COMPLETE`
-- Approved plan: Fabio direct task `Track 04F - Web Performance & Load V1` (2026-06-11), Claude review approved merge and promoted residual to `Track 04F.2 - WebGL First-Render Stall`
-- Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`
+- Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web V1`
+- Active stage: `Track 05 - Web Publication V1`
+- Active stage status: `AWAITING_CLAUDE_REVIEW - Cloudflare Pages publication completed at copa-arena-futebol; remote smoke PASS; merge is gated on Claude review`
+- Status marker: `JOGO_DA_COPA_TRACK_05_WEB_PUBLICATION_V1_REVIEW`
+- Approved plan: Fabio direct task `Track 05 - Web Publication V1` (2026-06-12), remote publication authorized by `../../08_Coordenacao_Agentes/Decisoes/2026-06-12_jogodacopa_publicacao-web-cloudflare.md`
+- Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`
 - Review: `docs/code-review-track04f2-webgl-first-render-stall-v1.md`, `docs/playtest-reports/track-04f2-webgl-stall.md`, `docs/code-review-track04b1-04b2-v1.md`, `docs/code-review-track04c-04d-v1.md`, `docs/code-review-track04e-web-spike-v1.md`, `docs/playtest-reports/track-04f-web-performance.md`, `docs/code-review-track04f-web-performance-v1.md`
 - Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_hotfix04e1-night-capture.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
@@ -52,6 +52,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Track 04C Stadium Visual Upgrade V1: aprovado pelo review e mergeado em main apos a 04D; arquibancadas profundas, torcida com cores dos dois kits e `crowd_excitement`, teloes maiores, bandeiroes, mastros animados, halos emissive e skyline low-poly sem novas luzes com sombra.
 - Track 04E Web Export Spike & Render Profile V1 + Hotfix 04E.1: aprovado pela Claude e mergeado em main; preset Web single-threaded exporta o jogo completo para `builds/web/`, `RenderProfile` central preserva desktop Forward+ e aplica fallbacks Compatibility no Web, e o hotfix corrigiu o caminho de captura lavada usando camera de evidencia noturna com gate de luminancia `< 90`.
 - Track 04F Web Performance & Load V1: aprovado pela Claude e mergeado localmente em main; load Web instrumentado, loading com progresso visivel, animacoes UAL processadas em `.res`, cache de avatar/region mask, SubViewports Web on-change, PCK `26.41 MiB`, smoothness pos-warmup PASS; residual de primeiro render/upload WebGL `~16.8s-18.1s` promovido para `Track 04F.2 - WebGL First-Render Stall`.
+- Track 05 Web Publication V1: publicado em Cloudflare Pages publico no projeto `copa-arena-futebol`, URL estavel `https://copa-arena-futebol.pages.dev/`, release root `web/v1-copa-arena-futebol-20260612-31e23ea3`, script `tools/publish_web.ps1` com `Plan`/`Package`/`FullPublish`, pacote Brotli para assets maiores que `25 MiB` e smoke remoto PASS sem erros de runtime.
 - Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
 - Toon experiment screenshots live in `docs/screenshots/track-03e-toon/`.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
@@ -59,7 +60,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-Track 04F was approved by Claude and merged locally into `main`. The Web freeze is no longer silent because loading/progress is visible, the build gzip gate passes, and post-warmup smoothness passes. Next step: `Track 04F.2 - WebGL First-Render Stall`, focused only on the remaining first WebGL render/upload stall. No push/fetch/pull occurred; `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
+Track 05 published Web V1 publicly on Cloudflare Pages and is awaiting Claude review before local merge. Stable URL: `https://copa-arena-futebol.pages.dev/`. Review card: `../../08_Coordenacao_Agentes/Kanban/Review/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`. Handoff: `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`. No push/fetch/pull occurred.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -71,9 +72,9 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest integrated main result: PASS after Track 04F merge, 86 tests, 1264 asserts, including Web gzip transfer gate `30.29 MiB / 50.00 MiB`, source integrity check for 35 `.gd/.gdshader` files outside `addons/` and UTF-8 BOM rejection.
+Latest branch result: PASS during Track 05 review prep, 86 tests, 1264 asserts, including Web gzip transfer gate `30.30 MiB / 50.00 MiB`, source integrity check for 35 `.gd/.gdshader` files outside `addons/` and UTF-8 BOM rejection.
 
-Latest performance samples: Track 04F Chrome Web pos-warmup 120s at 1920x1080 reached p50 `6.9ms`, p95 `7.0ms`, p99 `7.1ms`, max `62.5ms`, `0` hitches above `100ms`. Load path improved avatar stages but still has first WebGL render/upload residual documented in `docs/playtest-reports/track-04f-web-performance.md`.
+Latest remote Web smoke: `docs/playtest-reports/track-05-data/05c-remote-menu-smoke.json` at `https://7a19a00f.copa-arena-futebol.pages.dev`, release root matched, `menu.ready.end` observed, page errors `0`, runtime console errors `0`, p50 `6.9ms`, p95 `7.0ms`, p99 `7.1ms`, max `3299.1ms`, hitch count `1`.
 
 Export smoke command:
 
@@ -99,23 +100,25 @@ Manual smoke lives in `docs/validation.md`.
 2. `docs/quality-upgrade-plan.md`
 3. `docs/arcade-upgrade-plan.md`
 4. `docs/publication-readiness.md`
-5. `docs/documentation-index.md`
-6. `docs/architecture-overview.md`
-7. `docs/work-plan.md`
-8. `docs/mode-contract.md`
-9. `docs/validation.md`
-10. `implementation/tracks/track-02cbis-real-character-v1/current-status.md`
-11. `implementation/tracks/track-02dbis-real-audio-v1/current-status.md`
-12. `implementation/tracks/track-03e-toon-look-experiment-v1/current-status.md`
-13. `implementation/tracks/track-03f-quality-hotfix-v1/current-status.md`
-14. `implementation/tracks/track-03g-playtest-findings-v1/current-status.md`
-15. `implementation/tracks/track-03h-avatar-parity-drift-v1/current-status.md`
-16. `implementation/tracks/track-03i-menu-interaction-fix-v1/current-status.md`
-17. `implementation/tracks/track-03k-animation-pose-restore-v2/current-status.md`
-18. `implementation/tracks/track-03l-arena-seal-facing-v2/current-status.md`
-19. `implementation/tracks/track-03l1-facing-evidence-v1/current-status.md`
-20. `implementation/tracks/track-04b1-character-presentation-v1/current-status.md`
-21. `implementation/tracks/track-04b2-feel-ui-fixes-v1/current-status.md`
-22. `implementation/tracks/track-04b3-kick-arms-polish-v1/current-status.md`
-23. `implementation/tracks/track-04d-match-completeness-v1/current-status.md`
-24. `implementation/tracks/track-04e-web-spike-v1/current-status.md`
+5. `docs/release-history.md`
+6. `docs/documentation-index.md`
+7. `docs/architecture-overview.md`
+8. `docs/work-plan.md`
+9. `docs/mode-contract.md`
+10. `docs/validation.md`
+11. `implementation/tracks/track-05-web-publication/current-status.md`
+12. `implementation/tracks/track-02cbis-real-character-v1/current-status.md`
+13. `implementation/tracks/track-02dbis-real-audio-v1/current-status.md`
+14. `implementation/tracks/track-03e-toon-look-experiment-v1/current-status.md`
+15. `implementation/tracks/track-03f-quality-hotfix-v1/current-status.md`
+16. `implementation/tracks/track-03g-playtest-findings-v1/current-status.md`
+17. `implementation/tracks/track-03h-avatar-parity-drift-v1/current-status.md`
+18. `implementation/tracks/track-03i-menu-interaction-fix-v1/current-status.md`
+19. `implementation/tracks/track-03k-animation-pose-restore-v2/current-status.md`
+20. `implementation/tracks/track-03l-arena-seal-facing-v2/current-status.md`
+21. `implementation/tracks/track-03l1-facing-evidence-v1/current-status.md`
+22. `implementation/tracks/track-04b1-character-presentation-v1/current-status.md`
+23. `implementation/tracks/track-04b2-feel-ui-fixes-v1/current-status.md`
+24. `implementation/tracks/track-04b3-kick-arms-polish-v1/current-status.md`
+25. `implementation/tracks/track-04d-match-completeness-v1/current-status.md`
+26. `implementation/tracks/track-04e-web-spike-v1/current-status.md`
