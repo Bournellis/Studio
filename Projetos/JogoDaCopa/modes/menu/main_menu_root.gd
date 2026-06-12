@@ -16,6 +16,7 @@ const BUS_SFX: StringName = &"SFX"
 const BUS_UI: StringName = &"UI"
 const BUS_AMBIENCE: StringName = &"Ambience"
 const UI_AUDIO_POOL_SIZE: int = 5
+const WEB_AUDIO_UNLOCK_POLL_MSEC: int = 500
 const MENU_UI_AUDIO_PATHS: Dictionary = {
 	&"ui_click": "res://assets/audio/kenney_sfx/click_001.ogg",
 	&"ui_confirmation": "res://assets/audio/kenney_sfx/confirmation_001.ogg",
@@ -74,6 +75,9 @@ var fade_tween: Tween
 var ui_audio_streams: Dictionary = {}
 var ui_audio_pool: Array[AudioStreamPlayer] = []
 var ui_audio_pool_cursor: int = 0
+var web_audio_locked_logged: bool = false
+var web_audio_unlocked: bool = false
+var web_audio_next_unlock_poll_msec: int = 0
 
 var preview_time: float = 0.0
 var selected_skin_tone_id: StringName = AvatarCatalogScript.DEFAULT_SKIN_TONE_ID
@@ -94,7 +98,8 @@ func _ready() -> void:
 		get_viewport().size_changed.connect(_sync_root_rect_to_viewport)
 	_ensure_audio_buses()
 	_load_ui_audio_streams()
-	_build_ui_audio_pool()
+	if not RenderProfileScript.is_web_platform():
+		_build_ui_audio_pool()
 	_build_ui()
 	_sync_root_rect_to_viewport()
 	_apply_initial_audio_mix()
@@ -829,6 +834,8 @@ func _load_ui_audio_streams() -> void:
 		ui_audio_streams[audio_key] = stream
 
 func _build_ui_audio_pool() -> void:
+	if not ui_audio_pool.is_empty():
+		return
 	for index in range(UI_AUDIO_POOL_SIZE):
 		var player := AudioStreamPlayer.new()
 		player.name = "MenuUiAudioPlayer%d" % index
@@ -836,7 +843,27 @@ func _build_ui_audio_pool() -> void:
 		add_child(player)
 		ui_audio_pool.append(player)
 
+func _can_play_web_audio(force_poll: bool = false) -> bool:
+	if not RenderProfileScript.is_web_platform():
+		return true
+	if web_audio_unlocked:
+		return true
+	var now_msec := Time.get_ticks_msec()
+	if not force_poll and now_msec < web_audio_next_unlock_poll_msec:
+		return false
+	web_audio_next_unlock_poll_msec = now_msec + WEB_AUDIO_UNLOCK_POLL_MSEC
+	var state := str(JavaScriptBridge.eval("navigator.userActivation && navigator.userActivation.hasBeenActive ? '1' : '0'", true))
+	web_audio_unlocked = state == "1"
+	if not web_audio_unlocked and not web_audio_locked_logged:
+		web_audio_locked_logged = true
+		PerfProbeScript.mark(self, "menu.web_audio_locked", "waiting_for_browser_user_activation=true")
+	return web_audio_unlocked
+
 func _play_ui_sound(audio_key: StringName) -> void:
+	if not _can_play_web_audio(true):
+		return
+	if ui_audio_pool.is_empty():
+		_build_ui_audio_pool()
 	var stream := ui_audio_streams.get(audio_key) as AudioStream
 	if stream == null or ui_audio_pool.is_empty():
 		return
