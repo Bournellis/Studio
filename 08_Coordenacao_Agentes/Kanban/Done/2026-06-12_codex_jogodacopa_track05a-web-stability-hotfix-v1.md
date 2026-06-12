@@ -43,3 +43,11 @@
 - Validacao: `validate.gd --profile=full` PASS (86/86), export Web PASS, smoke local 5 min PASS, smoke remoto 5 min PASS.
 - Evidencia principal: `Projetos/JogoDaCopa/docs/playtest-reports/track-05a-web-stability.md`, `track-05a-data/05a-local-stability-gate-5min-pass.json`, `track-05a-data/05a-remote-stability-gate-5min-pass.json`.
 - Handoff: revisar antes de merge; `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+
+## Closeout
+
+- Review Claude: aprovado em `Projetos/JogoDaCopa/docs/code-review-track05a-web-stability-v1.md`.
+- Merge local em `main`: `ea1f0df0`.
+- Validacao integrada pos-merge: `tools/validate.gd --profile=full` PASS, 86 testes, 1272 asserts.
+- Proximo passo: retest humano da `v1.0.1+a850045a` publica nas maquinas do relato; se ainda oscilar, abrir `Track 05B` com o plano B do review.
+- `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
