@@ -14,6 +14,11 @@ const chromePath = args.get("chrome");
 const webDir = path.resolve(args.get("web-dir") || "builds/web");
 const outDir = path.resolve(args.get("out-dir") || "docs/playtest-reports/track-04f-data");
 const route = args.get("route") || "/index.html?jdc_capture=play&jdc_perf=1";
+const remoteUrl = (args.get("url") || args.get("remote-url") || "").trim();
+const usingRemoteUrl = remoteUrl.length > 0;
+const expectedReleaseRoot = args.get("expected-release-root") || "";
+const expectedStage = args.get("expected-stage") || "";
+const failOnRuntimeErrors = args.get("fail-on-runtime-errors") === "1";
 const durationMs = Number(args.get("duration-ms") || "20000");
 const httpPort = Number(args.get("http-port") || "8064");
 const cdpPort = Number(args.get("cdp-port") || "9223");
@@ -34,7 +39,7 @@ const keyAfter = args.get("key-after") || "Enter";
 if (!chromePath || !existsSync(chromePath)) {
   throw new Error(`Chrome executable not found: ${chromePath}`);
 }
-if (!existsSync(webDir)) {
+if (!usingRemoteUrl && !existsSync(webDir)) {
   throw new Error(`Web export directory not found: ${webDir}`);
 }
 mkdirSync(outDir, { recursive: true });
@@ -193,8 +198,11 @@ async function dispatchKey(client, key) {
   });
 }
 
-const server = createServer(serveFile);
-await new Promise((resolve) => server.listen(httpPort, "127.0.0.1", resolve));
+let server = null;
+if (!usingRemoteUrl) {
+  server = createServer(serveFile);
+  await new Promise((resolve) => server.listen(httpPort, "127.0.0.1", resolve));
+}
 
 const userDataDir = path.join(outDir, `.chrome-profile-${label}`);
 mkdirSync(userDataDir, { recursive: true });
@@ -261,7 +269,7 @@ try {
 `;
   await client.send("Page.addScriptToEvaluateOnNewDocument", { source: frameCollector });
 
-  const targetUrl = `http://127.0.0.1:${httpPort}${route}`;
+  const targetUrl = usingRemoteUrl ? remoteUrl : `http://127.0.0.1:${httpPort}${route}`;
   await client.send("Page.navigate", { url: targetUrl });
   await delay(500);
   await client.send("Runtime.evaluate", {
@@ -338,6 +346,31 @@ try {
     ...hitch,
     nearestEvent: nearestEvent(hitch.wallTimeMs, perfEvents),
   }));
+  const releaseResult = await client.send("Runtime.evaluate", {
+    expression: "(() => window.JDC_WEB_RELEASE || null)()",
+    returnByValue: true,
+  });
+  const releaseInfo = releaseResult.result.value || null;
+  const consoleWarnings = consoleLines.filter((line) => {
+    if (line.type !== "error") return false;
+    return line.text.startsWith("WARNING:") || line.text.trimStart().startsWith("at: push_warning");
+  });
+  const consoleErrorLines = consoleLines.filter((line) => {
+    if (line.type !== "error" && line.type !== "assert") return false;
+    if (line.text.startsWith("WARNING:")) return false;
+    if (line.text.trimStart().startsWith("at: push_warning")) return false;
+    return true;
+  });
+  const expectedStageSeen = expectedStage === "" || perfEvents.some((event) => event.stage === expectedStage);
+  const assertions = {
+    expectedReleaseRoot,
+    actualReleaseRoot: releaseInfo?.releaseRoot || "",
+    releaseRootMatches: expectedReleaseRoot === "" || releaseInfo?.releaseRoot === expectedReleaseRoot,
+    expectedStage,
+    expectedStageSeen,
+    noPageErrors: pageErrors.length === 0,
+    noConsoleErrors: consoleErrorLines.length === 0,
+  };
 
   if (!screenshotPath) {
     const screenshot = await client.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
@@ -355,7 +388,11 @@ try {
     frameStats,
     perfEvents,
     consoleLines,
+    consoleWarnings,
+    consoleErrorLines,
     pageErrors,
+    releaseInfo,
+    assertions,
     screenshotPath,
   };
   const jsonPath = path.join(outDir, `${label}.json`);
@@ -370,10 +407,25 @@ try {
     hitchCount: frameStats.hitches.length,
     screenshotPath,
     jsonPath,
+    actualReleaseRoot: assertions.actualReleaseRoot,
+    releaseRootMatches: assertions.releaseRootMatches,
+    expectedStage,
+    expectedStageSeen,
     pageErrors: pageErrors.length,
+    consoleErrorCount: consoleErrorLines.length,
+    consoleWarningCount: consoleWarnings.length,
   }, null, 2));
+  if (!assertions.releaseRootMatches) {
+    throw new Error(`Release root mismatch. Expected ${expectedReleaseRoot}, got ${assertions.actualReleaseRoot}`);
+  }
+  if (!assertions.expectedStageSeen) {
+    throw new Error(`Expected perf stage was not seen: ${expectedStage}`);
+  }
+  if (failOnRuntimeErrors && (!assertions.noPageErrors || !assertions.noConsoleErrors)) {
+    throw new Error(`Remote runtime errors detected. pageErrors=${pageErrors.length}, consoleErrors=${consoleErrorLines.length}`);
+  }
 } finally {
   if (client) client.close();
   chrome.kill();
-  server.close();
+  if (server) server.close();
 }

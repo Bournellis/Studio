@@ -24,12 +24,6 @@
   - `index.pck`: `27708956 -> 20569022` bytes
   - `index.wasm`: `37695054 -> 6608968` bytes
 
-## Remaining Work
-
-- 05B: create `tools/publish_web.ps1` with `Plan`, `Package` and `FullPublish`, including the Brotli Pages package.
-- 05C: create/use project `copa-arena-futebol`, deploy with `-ConfirmRemoteMutation`, run remote smoke JSON+screenshot.
-- 05D: update release history/readiness/status docs and handoff to Claude before merge.
-
 ## 05B Publish Script
 
 - Added `tools/publish_web.ps1`.
@@ -44,3 +38,20 @@
   - `index.pck` Brotli: `20570491` bytes, SHA256 `e146368591bf34821d23b8c5e0398b0562fad9b84d7958459d1b6c796ae75ec3`
   - `index.wasm` Brotli: `6608968` bytes, SHA256 `6903dbdda02519655d94ef7fc0eb18e31336ac11b0f93a1abe696a654d2cf30f`
   - `copa-arena-futebol-pages.zip`: `27311751` bytes, SHA256 `20fe5d10c835de312cb6e97b26865342cbbca693e5575a01705c186e89e64732`
+
+## 05C Cloudflare Pages Publication
+
+- Remote mutation confirmed with `-ConfirmRemoteMutation`; Wrangler auth was already valid for `bournellis@gmail.com`.
+- Cloudflare Pages project: `copa-arena-futebol`, public, no Cloudflare Access detected in smoke.
+- Published release root: `web/v1-copa-arena-futebol-20260612-31e23ea3`.
+- Preview URL: `https://7a19a00f.copa-arena-futebol.pages.dev`.
+- Stable URL: `https://copa-arena-futebol.pages.dev/`.
+- Publication evidence: `docs/playtest-reports/track-05-data/05c-publication-report.json`.
+- Remote smoke evidence: `docs/playtest-reports/track-05-data/05c-remote-menu-smoke.json` and `docs/playtest-reports/track-05-data/05c-remote-menu-smoke.png`.
+- Remote smoke passed for `menu.ready.end`; release root matched; page errors `0`; runtime console errors `0`.
+- Smoke frame stats: `3928` frames, p50 `6.9ms`, p95 `7.0ms`, p99 `7.1ms`, max `3299.1ms`, hitch count `1`.
+- Console warnings were expected Godot `push_warning` compatibility notices for Web render/audio/save constraints.
+
+## Remaining Work
+
+- 05D: update release history/readiness/status docs and handoff to Claude before merge.
