@@ -88,6 +88,190 @@ static func end(context: Object, stage: String, begin_usec: int, detail: String 
 		suffix += " %s" % detail
 	mark(context, "%s.end" % stage, suffix)
 
+static func log_material_counts(context: Object, scene_root: Node) -> void:
+	if not is_enabled(context) or scene_root == null:
+		return
+	var stats_by_category := {}
+	_collect_material_counts(scene_root, stats_by_category)
+	var category_names := stats_by_category.keys()
+	category_names.sort()
+	var total_material_ids := {}
+	var total_variant_keys := {}
+	var total_meshes := 0
+	var total_surfaces := 0
+	var total_refs := 0
+	var total_standard := 0
+	var total_shader := 0
+	for category_name in category_names:
+		var stats: Dictionary = stats_by_category[category_name]
+		var material_ids: Dictionary = stats["material_ids"]
+		var variant_keys: Dictionary = stats["variant_keys"]
+		total_meshes += int(stats["meshes"])
+		total_surfaces += int(stats["surfaces"])
+		total_refs += int(stats["refs"])
+		total_standard += int(stats["standard"])
+		total_shader += int(stats["shader"])
+		for material_id in material_ids.keys():
+			total_material_ids[material_id] = true
+		for variant_key in variant_keys.keys():
+			total_variant_keys[variant_key] = true
+		mark(
+			context,
+			"material_counts.category",
+			"category=%s meshes=%d surfaces=%d material_refs=%d unique_materials=%d standard_refs=%d shader_refs=%d variants=%d" % [
+				str(category_name),
+				int(stats["meshes"]),
+				int(stats["surfaces"]),
+				int(stats["refs"]),
+				material_ids.size(),
+				int(stats["standard"]),
+				int(stats["shader"]),
+				variant_keys.size(),
+			]
+		)
+	mark(
+		context,
+		"material_counts.summary",
+		"categories=%d meshes=%d surfaces=%d material_refs=%d unique_materials=%d standard_refs=%d shader_refs=%d variants=%d" % [
+			category_names.size(),
+			total_meshes,
+			total_surfaces,
+			total_refs,
+			total_material_ids.size(),
+			total_standard,
+			total_shader,
+			total_variant_keys.size(),
+		]
+	)
+
+static func _collect_material_counts(node: Node, stats_by_category: Dictionary) -> void:
+	if node is MeshInstance3D:
+		var mesh_instance := node as MeshInstance3D
+		var stats := _get_material_count_stats(stats_by_category, _classify_material_node(mesh_instance))
+		stats["meshes"] = int(stats["meshes"]) + 1
+		var materials := _get_effective_mesh_materials(mesh_instance)
+		stats["surfaces"] = int(stats["surfaces"]) + materials.size()
+		for material in materials:
+			_record_material(stats, material)
+	elif node is MultiMeshInstance3D:
+		var multimesh_instance := node as MultiMeshInstance3D
+		var stats := _get_material_count_stats(stats_by_category, _classify_material_node(multimesh_instance))
+		stats["meshes"] = int(stats["meshes"]) + 1
+		var materials := _get_effective_multimesh_materials(multimesh_instance)
+		stats["surfaces"] = int(stats["surfaces"]) + materials.size()
+		for material in materials:
+			_record_material(stats, material)
+	for child in node.get_children():
+		_collect_material_counts(child, stats_by_category)
+
+static func _get_effective_mesh_materials(mesh_instance: MeshInstance3D) -> Array[Material]:
+	var materials: Array[Material] = []
+	if mesh_instance.material_override != null:
+		materials.append(mesh_instance.material_override)
+		return materials
+	if mesh_instance.mesh == null:
+		return materials
+	for surface_index in range(mesh_instance.mesh.get_surface_count()):
+		var material := mesh_instance.get_surface_override_material(surface_index)
+		if material == null:
+			material = mesh_instance.mesh.surface_get_material(surface_index)
+		if material != null:
+			materials.append(material)
+	return materials
+
+static func _get_effective_multimesh_materials(multimesh_instance: MultiMeshInstance3D) -> Array[Material]:
+	var materials: Array[Material] = []
+	if multimesh_instance.material_override != null:
+		materials.append(multimesh_instance.material_override)
+		return materials
+	if multimesh_instance.multimesh == null or multimesh_instance.multimesh.mesh == null:
+		return materials
+	var mesh := multimesh_instance.multimesh.mesh
+	for surface_index in range(mesh.get_surface_count()):
+		var material := mesh.surface_get_material(surface_index)
+		if material != null:
+			materials.append(material)
+	return materials
+
+static func _record_material(stats: Dictionary, material: Material) -> void:
+	stats["refs"] = int(stats["refs"]) + 1
+	(stats["material_ids"] as Dictionary)[material.get_instance_id()] = true
+	(stats["variant_keys"] as Dictionary)[_get_material_variant_key(material)] = true
+	if material is ShaderMaterial:
+		stats["shader"] = int(stats["shader"]) + 1
+	elif material is StandardMaterial3D:
+		stats["standard"] = int(stats["standard"]) + 1
+
+static func _get_material_count_stats(stats_by_category: Dictionary, category: String) -> Dictionary:
+	if not stats_by_category.has(category):
+		stats_by_category[category] = {
+			"meshes": 0,
+			"surfaces": 0,
+			"refs": 0,
+			"standard": 0,
+			"shader": 0,
+			"material_ids": {},
+			"variant_keys": {},
+		}
+	return stats_by_category[category]
+
+static func _classify_material_node(geometry_instance: GeometryInstance3D) -> String:
+	if geometry_instance.has_meta("material_probe_category"):
+		return str(geometry_instance.get_meta("material_probe_category"))
+	var node_name := geometry_instance.name.to_lower()
+	var path_text := str(geometry_instance.get_path()).to_lower()
+	if path_text.contains("playeravatar") or path_text.contains("botavatar"):
+		return "avatares"
+	if path_text.contains("feedback") or node_name.contains("trail") or node_name.contains("burst") or node_name.contains("fireball") or node_name.contains("boostpad") or node_name.contains("jumppad"):
+		return "vfx"
+	if geometry_instance.is_in_group("football_crowd") or node_name.contains("crowd"):
+		return "torcida"
+	if node_name.contains("stand") or node_name.contains("corridor") or node_name.contains("skyline"):
+		return "estandes"
+	if node_name.contains("banner") or node_name.contains("flag") or node_name.contains("mast"):
+		return "banners"
+	if node_name.contains("glass") or node_name.contains("net"):
+		return "vidro"
+	if node_name.contains("scoreboard") or path_text.contains("scoreboard"):
+		return "placares"
+	if node_name.contains("frame") or node_name.contains("post") or node_name.contains("rail") or node_name.contains("rib") or node_name.contains("bar") or node_name.contains("halo") or node_name.contains("marker"):
+		return "neon"
+	if node_name.contains("pitch") or node_name.contains("line") or node_name.contains("stripe") or node_name.contains("spot") or node_name.contains("mouth"):
+		return "campo"
+	if node_name.contains("ball"):
+		return "bola"
+	return "outros"
+
+static func _get_material_variant_key(material: Material) -> String:
+	if material is ShaderMaterial:
+		var shader_material := material as ShaderMaterial
+		var shader := shader_material.shader
+		var shader_hash := "none"
+		var uniform_names: Array[String] = []
+		if shader != null:
+			shader_hash = str(hash(shader.code))
+			for uniform_data in shader.get_shader_uniform_list():
+				uniform_names.append(str(uniform_data.get("name", "")))
+			uniform_names.sort()
+		return "ShaderMaterial|shader=%s|uniforms=%s" % [shader_hash, ",".join(uniform_names)]
+	if material is StandardMaterial3D:
+		var standard := material as StandardMaterial3D
+		return "StandardMaterial3D|shade=%d|trans=%d|depth=%d|cull=%d|emission=%s|rim=%s|clearcoat=%s|metallic=%.2f|rough=%.2f|albedo_tex=%s|emission_tex=%s|normal_tex=%s" % [
+			int(standard.shading_mode),
+			int(standard.transparency),
+			int(standard.depth_draw_mode),
+			int(standard.cull_mode),
+			str(standard.emission_enabled),
+			str(standard.rim_enabled),
+			str(standard.clearcoat_enabled),
+			standard.metallic,
+			standard.roughness,
+			str(standard.albedo_texture != null),
+			str(standard.emission_texture != null),
+			str(standard.normal_texture != null),
+		]
+	return material.get_class()
+
 static func _get_root(context: Object) -> Node:
 	if context == null:
 		return null

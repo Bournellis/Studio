@@ -3,6 +3,10 @@ extends RefCounted
 
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
 
+static var _standard_material_cache: Dictionary = {}
+static var _glass_material_cache: Dictionary = {}
+static var _box_mesh_cache: Dictionary = {}
+
 static func add_static_box(
 	parent: Node,
 	node_name: String,
@@ -37,9 +41,7 @@ static func add_static_box(
 
 	var mesh_instance := MeshInstance3D.new()
 	mesh_instance.name = mesh_name
-	var mesh := BoxMesh.new()
-	mesh.size = box_size
-	mesh_instance.mesh = mesh
+	mesh_instance.mesh = _get_box_mesh(box_size)
 	mesh_instance.material_override = build_material(color, emission_energy, roughness, false, metallic, rim_strength, clearcoat_strength, render_profile_role)
 	body.add_child(mesh_instance)
 	return body
@@ -62,12 +64,19 @@ static func add_visual_box(
 	mesh_instance.name = node_name
 	mesh_instance.position = box_position
 	mesh_instance.rotation_degrees = box_rotation_degrees
-	var mesh := BoxMesh.new()
-	mesh.size = box_size
-	mesh_instance.mesh = mesh
+	mesh_instance.mesh = _get_box_mesh(box_size)
 	mesh_instance.material_override = build_material(color, emission_energy, roughness, false, metallic, rim_strength, clearcoat_strength, render_profile_role)
 	parent.add_child(mesh_instance)
 	return mesh_instance
+
+static func _get_box_mesh(box_size: Vector3) -> BoxMesh:
+	var cache_key := _vector3_key(box_size)
+	if _box_mesh_cache.has(cache_key):
+		return _box_mesh_cache[cache_key]
+	var mesh := BoxMesh.new()
+	mesh.size = box_size
+	_box_mesh_cache[cache_key] = mesh
+	return mesh
 
 static func build_material(
 	color: Color,
@@ -79,6 +88,9 @@ static func build_material(
 	clearcoat_strength: float = 0.0,
 	render_profile_role: StringName = &"default"
 ) -> StandardMaterial3D:
+	var cache_key := _build_material_cache_key(color, emission_energy, roughness, unshaded, metallic, rim_strength, clearcoat_strength, render_profile_role)
+	if _standard_material_cache.has(cache_key):
+		return _standard_material_cache[cache_key]
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
 	material.roughness = roughness
@@ -100,6 +112,7 @@ static func build_material(
 	if color.a < 0.99:
 		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		material.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_ALWAYS
+	_standard_material_cache[cache_key] = material
 	return material
 
 static func build_glass_material(
@@ -107,10 +120,14 @@ static func build_glass_material(
 	emission_energy: float = 0.72,
 	roughness: float = 0.1
 ) -> StandardMaterial3D:
-	var material := build_material(color, emission_energy, roughness, false, 0.0, 0.7, 0.82, RenderProfileScript.ROLE_GLASS)
+	var cache_key := _build_material_cache_key(color, emission_energy, roughness, false, 0.0, 0.7, 0.82, RenderProfileScript.ROLE_GLASS) + "|glass"
+	if _glass_material_cache.has(cache_key):
+		return _glass_material_cache[cache_key]
+	var material := build_material(color, emission_energy, roughness, false, 0.0, 0.7, 0.82, RenderProfileScript.ROLE_GLASS).duplicate(true) as StandardMaterial3D
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	material.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_ALWAYS
 	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	_glass_material_cache[cache_key] = material
 	return material
 
 static func build_physics_material(friction: float = 0.82, bounce: float = 0.0) -> PhysicsMaterial:
@@ -118,3 +135,31 @@ static func build_physics_material(friction: float = 0.82, bounce: float = 0.0) 
 	material.friction = clampf(friction, 0.0, 1.0)
 	material.bounce = clampf(bounce, 0.0, 1.0)
 	return material
+
+static func _build_material_cache_key(
+	color: Color,
+	emission_energy: float,
+	roughness: float,
+	unshaded: bool,
+	metallic: float,
+	rim_strength: float,
+	clearcoat_strength: float,
+	render_profile_role: StringName
+) -> String:
+	return "%s|e=%.4f|r=%.4f|u=%s|m=%.4f|rim=%.4f|coat=%.4f|profile=%s|role=%s" % [
+		_color_key(color),
+		emission_energy,
+		roughness,
+		str(unshaded),
+		metallic,
+		rim_strength,
+		clearcoat_strength,
+		str(RenderProfileScript.get_active_profile_id()),
+		str(render_profile_role),
+	]
+
+static func _color_key(color: Color) -> String:
+	return "%.4f,%.4f,%.4f,%.4f" % [color.r, color.g, color.b, color.a]
+
+static func _vector3_key(value: Vector3) -> String:
+	return "%.4f,%.4f,%.4f" % [value.x, value.y, value.z]

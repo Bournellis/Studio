@@ -191,8 +191,8 @@ func test_field_builder_stadium_visual_upgrade_is_config_driven() -> void:
 	assert_not_null(crowd)
 	var crowd_material := crowd.material_override as ShaderMaterial
 	assert_not_null(crowd_material)
-	var base_value: Vector3 = crowd_material.get_shader_parameter("base_color")
-	var alternate_value: Vector3 = crowd_material.get_shader_parameter("alternate_color")
+	var base_value: Vector3 = crowd.get_instance_shader_parameter("base_color")
+	var alternate_value: Vector3 = crowd.get_instance_shader_parameter("alternate_color")
 	assert_almost_eq(base_value.x, player_color.r, 0.001)
 	assert_almost_eq(base_value.y, player_color.g, 0.001)
 	assert_almost_eq(alternate_value.z, bot_color.b, 0.001)
