@@ -18,7 +18,7 @@
 - Marker: `JOGO_DA_COPA_TRACK_04F2_WEBGL_FIRST_RENDER_STALL_V1_COMPLETE`
 - Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos, Web single-threaded com `RenderProfile` Compatibility e Track 04F/04F.2 aprovadas/mergeadas localmente: primeiro render Web `19.5s -> 4.23s` (materiais `467 -> 79`), loading com progresso, PCK `26.43 MiB`, smoothness curto PASS e residual de VFX/audio first-use promovido a 04F.3. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: decidir `Track 04F.3 - VFX/Audio First-Use Warmup` (residual de smoothness da 04F.2) com Fabio; `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
+- Proximo passo: executar `Track 05 - Web Publication V1` (Cloudflare Pages publico); card: `Kanban/Backlog/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`. Track 04F.3 adiada por decisao (`Decisoes/2026-06-12_jogodacopa_publicacao-web-cloudflare.md`).
 
 ## draxos-roguelike-cardgame
 
