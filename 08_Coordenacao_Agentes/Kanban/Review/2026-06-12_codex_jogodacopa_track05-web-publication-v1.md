@@ -4,7 +4,7 @@
 
 - id: `2026-06-12_jogodacopa-track05-web-publication-v1`
 - owner: `Codex`
-- status: `Doing`
+- status: `Review`
 - projeto: `JogoDaCopa`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - branch: `codex/jogodacopa/track05-web-publication-v1`
@@ -49,18 +49,27 @@ Publicar `Copa Arena Futebol` como build web publica no Cloudflare Pages (projet
 
 ## Acceptance Criteria
 
-- [ ] Export Web release com identidade correta; hashes registrados.
-- [ ] `publish_web.ps1` safe-by-default (`Plan`/`Package` sem rede; `FullPublish` so com `-ConfirmRemoteMutation`).
-- [ ] URL publica do Cloudflare Pages carregando o jogo em primeira visita sem erros de runtime (smoke remoto com evidencia JSON+screenshot).
-- [ ] Sem Cloudflare Access na URL publica; nenhum secret em repo/logs/docs.
-- [ ] `docs/release-history.md` criado com o release v1 e a limitacao conhecida documentada.
-- [ ] `tools/validate.gd` full PASS; zero regressao GUT; nenhuma mudanca de gameplay/feel.
-- [ ] Handoff de review para Claude ANTES do merge; commits por estagio logico (05A-05D); verificacao pos-commit `git diff --name-status HEAD~1..HEAD` em cada um.
+- [x] Export Web release com identidade correta; hashes registrados.
+- [x] `publish_web.ps1` safe-by-default (`Plan`/`Package` sem rede; `FullPublish` so com `-ConfirmRemoteMutation`).
+- [x] URL publica do Cloudflare Pages carregando o jogo em primeira visita sem erros de runtime (smoke remoto com evidencia JSON+screenshot).
+- [x] Sem Cloudflare Access na URL publica; nenhum secret em repo/logs/docs.
+- [x] `docs/release-history.md` criado com o release v1 e a limitacao conhecida documentada.
+- [x] `tools/validate.gd` full PASS; zero regressao GUT; nenhuma mudanca de gameplay/feel.
+- [x] Handoff de review para Claude ANTES do merge; commits por estagio logico (05A-05D); verificacao pos-commit `git diff --name-status HEAD~1..HEAD` em cada um.
 - [ ] Fechamento declara `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## Handoff Needed
 
 `Yes` - review Claude (gate de merge) + teste humano do Fabio na URL publica (primeiro acesso real, mobile browser dele incluido se quiser - sem suporte oficial, apenas observacao).
+
+## Review State
+
+- Public stable URL: `https://copa-arena-futebol.pages.dev/`.
+- Published preview URL: `https://7a19a00f.copa-arena-futebol.pages.dev`.
+- Release root: `web/v1-copa-arena-futebol-20260612-31e23ea3`.
+- Remote smoke: `docs/playtest-reports/track-05-data/05c-remote-menu-smoke.json` + `.png`, PASS, page errors `0`, runtime console errors `0`.
+- Validation: `tools/validate.gd` PASS, 86 tests, 1264 asserts.
+- Merge status: pending Claude review; not moved to Done yet.
 
 ## Notes
 
