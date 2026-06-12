@@ -626,14 +626,15 @@ func _load_real_audio_streams() -> void:
 		real_audio_streams[audio_key] = stream
 
 func _build_audio_pools() -> void:
-	for index in range(SFX_POOL_SIZE):
-		var player := AudioStreamPlayer3D.new()
-		player.name = "SfxPoolPlayer%d" % index
-		player.bus = BUS_SFX
-		player.unit_size = 9.0
-		player.max_distance = 38.0
-		add_child(player)
-		sfx_pool.append(player)
+	if not RenderProfileScript.is_web_platform():
+		for index in range(SFX_POOL_SIZE):
+			var player := AudioStreamPlayer3D.new()
+			player.name = "SfxPoolPlayer%d" % index
+			player.bus = BUS_SFX
+			player.unit_size = 9.0
+			player.max_distance = 38.0
+			add_child(player)
+			sfx_pool.append(player)
 	for index in range(UI_POOL_SIZE):
 		var player := AudioStreamPlayer.new()
 		player.name = "UiPoolPlayer%d" % index
@@ -673,6 +674,9 @@ func _update_ambience(delta: float) -> void:
 
 func _play_sfx_3d(audio_key: StringName, effect_position: Vector3, volume_db: float = -10.0, pitch_scale: float = 1.0) -> bool:
 	var profile_begin := PerfProbeScript.begin(self, "feedback.play_sfx_3d", "key=%s" % str(audio_key))
+	if RenderProfileScript.is_web_platform():
+		PerfProbeScript.end(self, "feedback.play_sfx_3d", profile_begin, "played=false web_3d_audio_disabled=true")
+		return false
 	var stream := real_audio_streams.get(audio_key) as AudioStream
 	if stream == null or sfx_pool.is_empty():
 		PerfProbeScript.end(self, "feedback.play_sfx_3d", profile_begin, "played=false")
@@ -709,6 +713,8 @@ func _play_sfx_ui(audio_key: StringName, volume_db: float = -10.0, pitch_scale: 
 	return true
 
 func _spawn_synthetic_tone(effect_position: Vector3, frequency: float, duration: float, volume_db: float) -> void:
+	if RenderProfileScript.is_web_platform():
+		return
 	var player := AudioStreamPlayer3D.new()
 	player.name = "FeedbackTone"
 	player.stream = _build_tone_stream(frequency, duration)
