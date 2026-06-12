@@ -19,6 +19,8 @@ const BUS_UI: StringName = &"UI"
 const BUS_AMBIENCE: StringName = &"Ambience"
 const RESULT_SUPPRESS_TRANSITION_PULSE_KEY: String = "suppress_transition_pulse"
 
+const RenderProfileScript = preload("res://autoloads/render_profile.gd")
+
 var status_label: Label
 var score_label: Label
 var clock_label: Label
@@ -207,33 +209,33 @@ func show_match_end(player_won: bool, result_snapshot: Dictionary = {}) -> void:
 	goal_feedback_time = 1.5
 	_set_event_message("CAMPEAO" if player_won else "DERROTA", 1.6)
 	_apply_result_snapshot(player_won, result_snapshot)
-	if not bool(result_snapshot.get(RESULT_SUPPRESS_TRANSITION_PULSE_KEY, false)):
+	if not RenderProfileScript.is_web_platform() and not bool(result_snapshot.get(RESULT_SUPPRESS_TRANSITION_PULSE_KEY, false)):
 		play_transition_pulse()
 
 func _apply_result_snapshot(player_won: bool, result_snapshot: Dictionary) -> void:
 	if result_panel != null:
 		result_panel.visible = true
-	if result_rematch_button != null:
+	if result_rematch_button != null and not RenderProfileScript.is_web_platform():
 		result_rematch_button.grab_focus()
 	if result_title_label != null:
-		result_title_label.text = "VITORIA" if player_won else "DERROTA"
+		_set_label_text_if_changed(result_title_label, "VITORIA" if player_won else "DERROTA")
 	if result_score_label != null:
-		result_score_label.text = "%d - %d" % [
+		_set_label_text_if_changed(result_score_label, "%d - %d" % [
 			int(result_snapshot.get("player_score", 0)),
 			int(result_snapshot.get("bot_score", 0))
-		]
+		])
 	if result_detail_label != null:
-		result_detail_label.text = "Fim de jogo. Rematch rapido ou volta para ajustar a final." if player_won else "Fim de jogo. A revanche fica pronta sem reiniciar o app."
+		_set_label_text_if_changed(result_detail_label, "Fim de jogo. Rematch rapido ou volta para ajustar a final." if player_won else "Fim de jogo. A revanche fica pronta sem reiniciar o app.")
 	if result_player_kit_swatch != null:
 		result_player_kit_swatch.color = result_snapshot.get("player_kit_color", Color(1.0, 0.86, 0.12, 1.0))
 	if result_bot_kit_swatch != null:
 		result_bot_kit_swatch.color = result_snapshot.get("bot_kit_color", Color(0.06, 0.16, 0.56, 1.0))
 	if result_player_kit_label != null:
-		result_player_kit_label.text = str(result_snapshot.get("player_kit_code", "BRA"))
+		_set_label_text_if_changed(result_player_kit_label, str(result_snapshot.get("player_kit_code", "BRA")))
 	if result_bot_kit_label != null:
-		result_bot_kit_label.text = str(result_snapshot.get("bot_kit_code", "FRA"))
+		_set_label_text_if_changed(result_bot_kit_label, str(result_snapshot.get("bot_kit_code", "FRA")))
 	if result_stats_label != null:
-		result_stats_label.text = str(result_snapshot.get("stats_text", "Estatisticas indisponiveis."))
+		_set_label_text_if_changed(result_stats_label, str(result_snapshot.get("stats_text", "Estatisticas indisponiveis.")))
 
 func show_countdown(message: String, duration: float = 0.32) -> void:
 	last_event = &"countdown"
@@ -1048,10 +1050,13 @@ func _refresh_crosshair() -> void:
 		pulse = 0.04
 	for line: ColorRect in crosshair_lines:
 		line.color = color
-	crosshair_root.scale = Vector2.ONE * (1.0 + pulse)
+	crosshair_root.scale = Vector2.ONE if RenderProfileScript.is_web_platform() else Vector2.ONE * (1.0 + pulse)
 
 func _refresh_overlay() -> void:
 	if pulse_overlay == null:
+		return
+	if RenderProfileScript.is_web_platform():
+		pulse_overlay.color = Color(0.0, 0.0, 0.0, 0.0)
 		return
 	var color := Color(0.0, 0.0, 0.0, 0.0)
 	if goal_feedback_time > 0.0:
@@ -1065,7 +1070,7 @@ func _refresh_event_label() -> void:
 	var alpha := clampf(event_message_time / 0.25, 0.0, 1.0) if event_message_time > 0.0 else 0.0
 	var progress := 1.0 - clampf(event_message_time / maxf(0.01, event_message_duration), 0.0, 1.0)
 	var squash := sin(progress * PI) * 0.18
-	event_label.scale = Vector2(1.0 + squash, 1.0 - squash * 0.42)
+	event_label.scale = Vector2.ONE if RenderProfileScript.is_web_platform() else Vector2(1.0 + squash, 1.0 - squash * 0.42)
 	event_label.modulate = Color(1.0, 1.0, 1.0, alpha)
 
 func _set_event_message(message: String, duration: float) -> void:

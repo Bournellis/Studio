@@ -1,0 +1,3853 @@
+{
+  "label": "05b-local-first-minute-gate-pass19",
+  "route": "/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1",
+  "targetUrl": "http://127.0.0.1:8090/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1&jdc_perf_stability=0&jdc_perf_detail=0",
+  "durationMs": 80000,
+  "headless": true,
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "frameStats": {
+    "url": "http://127.0.0.1:8090/index.html?jdc_capture=play&jdc_perf=1&jdc_perf_scenario=1&jdc_perf_stability=0&jdc_perf_detail=0",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/149.0.0.0 Safari/537.36",
+    "timeOrigin": 1781279461607.7,
+    "frameCount": 9914,
+    "fpsBuckets": [
+      {
+        "t": 1000,
+        "count": 32
+      },
+      {
+        "t": 2000,
+        "count": 4
+      },
+      {
+        "t": 3000,
+        "count": 2
+      },
+      {
+        "t": 12000,
+        "count": 8
+      },
+      {
+        "t": 13000,
+        "count": 6
+      },
+      {
+        "t": 15000,
+        "count": 67
+      },
+      {
+        "t": 16000,
+        "count": 143
+      },
+      {
+        "t": 17000,
+        "count": 144
+      },
+      {
+        "t": 18000,
+        "count": 144
+      },
+      {
+        "t": 19000,
+        "count": 144
+      },
+      {
+        "t": 20000,
+        "count": 144
+      },
+      {
+        "t": 21000,
+        "count": 144
+      },
+      {
+        "t": 22000,
+        "count": 144
+      },
+      {
+        "t": 23000,
+        "count": 144
+      },
+      {
+        "t": 24000,
+        "count": 144
+      },
+      {
+        "t": 25000,
+        "count": 144
+      },
+      {
+        "t": 26000,
+        "count": 144
+      },
+      {
+        "t": 27000,
+        "count": 144
+      },
+      {
+        "t": 28000,
+        "count": 144
+      },
+      {
+        "t": 29000,
+        "count": 144
+      },
+      {
+        "t": 30000,
+        "count": 143
+      },
+      {
+        "t": 31000,
+        "count": 144
+      },
+      {
+        "t": 32000,
+        "count": 144
+      },
+      {
+        "t": 33000,
+        "count": 144
+      },
+      {
+        "t": 34000,
+        "count": 144
+      },
+      {
+        "t": 35000,
+        "count": 144
+      },
+      {
+        "t": 36000,
+        "count": 144
+      },
+      {
+        "t": 37000,
+        "count": 144
+      },
+      {
+        "t": 38000,
+        "count": 144
+      },
+      {
+        "t": 39000,
+        "count": 144
+      },
+      {
+        "t": 40000,
+        "count": 144
+      },
+      {
+        "t": 41000,
+        "count": 144
+      },
+      {
+        "t": 42000,
+        "count": 144
+      },
+      {
+        "t": 43000,
+        "count": 144
+      },
+      {
+        "t": 44000,
+        "count": 144
+      },
+      {
+        "t": 45000,
+        "count": 144
+      },
+      {
+        "t": 46000,
+        "count": 144
+      },
+      {
+        "t": 47000,
+        "count": 144
+      },
+      {
+        "t": 48000,
+        "count": 144
+      },
+      {
+        "t": 49000,
+        "count": 144
+      },
+      {
+        "t": 50000,
+        "count": 144
+      },
+      {
+        "t": 51000,
+        "count": 144
+      },
+      {
+        "t": 52000,
+        "count": 144
+      },
+      {
+        "t": 53000,
+        "count": 144
+      },
+      {
+        "t": 54000,
+        "count": 144
+      },
+      {
+        "t": 55000,
+        "count": 144
+      },
+      {
+        "t": 56000,
+        "count": 144
+      },
+      {
+        "t": 57000,
+        "count": 144
+      },
+      {
+        "t": 58000,
+        "count": 144
+      },
+      {
+        "t": 59000,
+        "count": 144
+      },
+      {
+        "t": 60000,
+        "count": 144
+      },
+      {
+        "t": 61000,
+        "count": 144
+      },
+      {
+        "t": 62000,
+        "count": 144
+      },
+      {
+        "t": 63000,
+        "count": 144
+      },
+      {
+        "t": 64000,
+        "count": 144
+      },
+      {
+        "t": 65000,
+        "count": 144
+      },
+      {
+        "t": 66000,
+        "count": 144
+      },
+      {
+        "t": 67000,
+        "count": 144
+      },
+      {
+        "t": 68000,
+        "count": 144
+      },
+      {
+        "t": 69000,
+        "count": 144
+      },
+      {
+        "t": 70000,
+        "count": 144
+      },
+      {
+        "t": 71000,
+        "count": 144
+      },
+      {
+        "t": 72000,
+        "count": 144
+      },
+      {
+        "t": 73000,
+        "count": 144
+      },
+      {
+        "t": 74000,
+        "count": 144
+      },
+      {
+        "t": 75000,
+        "count": 144
+      },
+      {
+        "t": 76000,
+        "count": 144
+      },
+      {
+        "t": 77000,
+        "count": 144
+      },
+      {
+        "t": 78000,
+        "count": 143
+      },
+      {
+        "t": 79000,
+        "count": 144
+      },
+      {
+        "t": 80000,
+        "count": 144
+      },
+      {
+        "t": 81000,
+        "count": 144
+      },
+      {
+        "t": 82000,
+        "count": 144
+      },
+      {
+        "t": 83000,
+        "count": 144
+      },
+      {
+        "t": 84000,
+        "count": 6
+      }
+    ],
+    "p50": 6.900000000008731,
+    "p95": 7,
+    "p99": 7.100000000002183,
+    "max": 9119.4,
+    "hitches": [
+      {
+        "t": 12754.3,
+        "wallTimeMs": 1781279474362,
+        "dt": 9119.4,
+        "nearestEvent": {
+          "wallTimeMs": 1781279474372.823,
+          "stage": "web_warmup.settle.sample",
+          "dtMs": 9918.1,
+          "detail": "frame=1 stable=0 frame_ms=8424.000 object_count=3189 node_count=756 resource_count=74 render_objects=958",
+          "text": "[JDC_PERF] abs_ms=10732.500 dt_ms=9918.100 stage=web_warmup.settle.sample detail=frame=1 stable=0 frame_ms=8424.000 object_count=3189 node_count=756 resource_count=74 render_objects=958",
+          "distanceMs": 10.822998046875
+        }
+      },
+      {
+        "t": 15469.9,
+        "wallTimeMs": 1781279477077.5999,
+        "dt": 2132.199999999999,
+        "nearestEvent": {
+          "wallTimeMs": 1781279477080.144,
+          "stage": "web_warmup.first_use_feedback.step",
+          "dtMs": 12625.4,
+          "detail": "kick",
+          "text": "[JDC_PERF] abs_ms=13439.800 dt_ms=12625.400 stage=web_warmup.first_use_feedback.step detail=kick",
+          "distanceMs": 2.544189453125
+        }
+      },
+      {
+        "t": 3537.6,
+        "wallTimeMs": 1781279465145.3,
+        "dt": 1514,
+        "nearestEvent": {
+          "wallTimeMs": 1781279465206.332,
+          "stage": "loading.progress",
+          "dtMs": 751.5,
+          "detail": "label=Carregando jogadores value=0.36",
+          "text": "[JDC_PERF] abs_ms=1565.900 dt_ms=751.500 stage=loading.progress detail=label=Carregando jogadores value=0.36",
+          "distanceMs": 61.031982421875
+        }
+      },
+      {
+        "t": 13337.7,
+        "wallTimeMs": 1781279474945.4,
+        "dt": 145.90000000000146,
+        "nearestEvent": {
+          "wallTimeMs": 1781279474949.309,
+          "stage": "web_warmup.first_use_frame",
+          "dtMs": 10494.6,
+          "detail": "label=gameplay_strong_kick frame=3/3",
+          "text": "[JDC_PERF] abs_ms=11309.000 dt_ms=10494.600 stage=web_warmup.first_use_frame detail=label=gameplay_strong_kick frame=3/3",
+          "distanceMs": 3.9091796875
+        }
+      },
+      {
+        "t": 13184.8,
+        "wallTimeMs": 1781279474792.5,
+        "dt": 131.89999999999964,
+        "nearestEvent": {
+          "wallTimeMs": 1781279474801.116,
+          "stage": "web_warmup.first_use_feedback.step",
+          "dtMs": 10346.2,
+          "detail": "gameplay_strong_kick",
+          "text": "[JDC_PERF] abs_ms=11160.600 dt_ms=10346.200 stage=web_warmup.first_use_feedback.step detail=gameplay_strong_kick",
+          "distanceMs": 8.615966796875
+        }
+      },
+      {
+        "t": 3634.9,
+        "wallTimeMs": 1781279465242.5999,
+        "dt": 97.30000000000018,
+        "nearestEvent": {
+          "wallTimeMs": 1781279465206.332,
+          "stage": "loading.progress",
+          "dtMs": 751.5,
+          "detail": "label=Carregando jogadores value=0.36",
+          "text": "[JDC_PERF] abs_ms=1565.900 dt_ms=751.500 stage=loading.progress detail=label=Carregando jogadores value=0.36",
+          "distanceMs": 36.267822265625
+        }
+      },
+      {
+        "t": 15594.9,
+        "wallTimeMs": 1781279477202.5999,
+        "dt": 76.39999999999964,
+        "nearestEvent": {
+          "wallTimeMs": 1781279477205.935,
+          "stage": "web_warmup.first_use_frame",
+          "dtMs": 12751.2,
+          "detail": "label=result_flow frame=2/3",
+          "text": "[JDC_PERF] abs_ms=13565.600 dt_ms=12751.200 stage=web_warmup.first_use_frame detail=label=result_flow frame=2/3",
+          "distanceMs": 3.335205078125
+        }
+      },
+      {
+        "t": 12809.9,
+        "wallTimeMs": 1781279474417.5999,
+        "dt": 55.600000000000364,
+        "nearestEvent": {
+          "wallTimeMs": 1781279474440.058,
+          "stage": "web_warmup.settle.sample",
+          "dtMs": 9985.3,
+          "detail": "frame=2 stable=0 frame_ms=67.300 object_count=3190 node_count=756 resource_count=74 render_objects=958",
+          "text": "[JDC_PERF] abs_ms=10799.700 dt_ms=9985.300 stage=web_warmup.settle.sample detail=frame=2 stable=0 frame_ms=67.300 object_count=3190 node_count=756 resource_count=74 render_objects=958",
+          "distanceMs": 22.458251953125
+        }
+      }
+    ]
+  },
+  "firstMinute": {
+    "enabled": true,
+    "passed": true,
+    "startStage": "event.visible_match_start",
+    "startWallTimeMs": 1781279478127.5,
+    "durationMs": 60000,
+    "thresholdMs": 100,
+    "hitchCount": 0,
+    "hitches": []
+  },
+  "eventHitches": [
+    {
+      "stage": "event.restart_play",
+      "detail": "after_goal=false",
+      "wallTimeMs": 1781279474668.821,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 2,
+      "maxHitchMs": 145.90000000000146,
+      "hitches": [
+        {
+          "t": 13337.7,
+          "wallTimeMs": 1781279474945.4,
+          "dt": 145.90000000000146,
+          "nearestEvent": {
+            "wallTimeMs": 1781279474949.309,
+            "stage": "web_warmup.first_use_frame",
+            "dtMs": 10494.6,
+            "detail": "label=gameplay_strong_kick frame=3/3",
+            "text": "[JDC_PERF] abs_ms=11309.000 dt_ms=10494.600 stage=web_warmup.first_use_frame detail=label=gameplay_strong_kick frame=3/3",
+            "distanceMs": 3.9091796875
+          }
+        },
+        {
+          "t": 13184.8,
+          "wallTimeMs": 1781279474792.5,
+          "dt": 131.89999999999964,
+          "nearestEvent": {
+            "wallTimeMs": 1781279474801.116,
+            "stage": "web_warmup.first_use_feedback.step",
+            "dtMs": 10346.2,
+            "detail": "gameplay_strong_kick",
+            "text": "[JDC_PERF] abs_ms=11160.600 dt_ms=10346.200 stage=web_warmup.first_use_feedback.step detail=gameplay_strong_kick",
+            "distanceMs": 8.615966796875
+          }
+        }
+      ]
+    },
+    {
+      "stage": "event.player_kick_request",
+      "detail": "strong=true super=false",
+      "wallTimeMs": 1781279474801.546,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 1,
+      "maxHitchMs": 145.90000000000146,
+      "hitches": [
+        {
+          "t": 13337.7,
+          "wallTimeMs": 1781279474945.4,
+          "dt": 145.90000000000146,
+          "nearestEvent": {
+            "wallTimeMs": 1781279474949.309,
+            "stage": "web_warmup.first_use_frame",
+            "dtMs": 10494.6,
+            "detail": "label=gameplay_strong_kick frame=3/3",
+            "text": "[JDC_PERF] abs_ms=11309.000 dt_ms=10494.600 stage=web_warmup.first_use_frame detail=label=gameplay_strong_kick frame=3/3",
+            "distanceMs": 3.9091796875
+          }
+        }
+      ]
+    },
+    {
+      "stage": "event.kick_vfx",
+      "detail": "strong=true",
+      "wallTimeMs": 1781279474801.932,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 1,
+      "maxHitchMs": 145.90000000000146,
+      "hitches": [
+        {
+          "t": 13337.7,
+          "wallTimeMs": 1781279474945.4,
+          "dt": 145.90000000000146,
+          "nearestEvent": {
+            "wallTimeMs": 1781279474949.309,
+            "stage": "web_warmup.first_use_frame",
+            "dtMs": 10494.6,
+            "detail": "label=gameplay_strong_kick frame=3/3",
+            "text": "[JDC_PERF] abs_ms=11309.000 dt_ms=10494.600 stage=web_warmup.first_use_frame detail=label=gameplay_strong_kick frame=3/3",
+            "distanceMs": 3.9091796875
+          }
+        }
+      ]
+    },
+    {
+      "stage": "event.kick_vfx",
+      "detail": "strong=true",
+      "wallTimeMs": 1781279477080.366,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.goal_vfx",
+      "detail": "player_scored=true",
+      "wallTimeMs": 1781279477088.617,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.goal_vfx",
+      "detail": "player_scored=false",
+      "wallTimeMs": 1781279477088.9,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.confetti_vfx",
+      "detail": "player_colored=true",
+      "wallTimeMs": 1781279477089.157,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.confetti_vfx",
+      "detail": "player_colored=false",
+      "wallTimeMs": 1781279477089.394,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.round_end",
+      "detail": "player_won=true",
+      "wallTimeMs": 1781279477127.336,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.result",
+      "detail": "player_won=true",
+      "wallTimeMs": 1781279477127.66,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.round_end",
+      "detail": "player_won=true",
+      "wallTimeMs": 1781279477128.045,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.restart_play",
+      "detail": "after_goal=false",
+      "wallTimeMs": 1781279478009.293,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.restart_play",
+      "detail": "after_goal=false",
+      "wallTimeMs": 1781279478023.107,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=strong_kick",
+      "wallTimeMs": 1781279480071.833,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.player_kick_request",
+      "detail": "strong=true super=false",
+      "wallTimeMs": 1781279480072.299,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.kick_vfx",
+      "detail": "strong=true",
+      "wallTimeMs": 1781279480072.586,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.kick_vfx",
+      "detail": "strong=false",
+      "wallTimeMs": 1781279481273.704,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=bot_goal_confetti",
+      "wallTimeMs": 1781279484072.357,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.goal_detected",
+      "detail": "side=south player_scored=false",
+      "wallTimeMs": 1781279484072.591,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.goal_vfx",
+      "detail": "player_scored=false",
+      "wallTimeMs": 1781279484072.828,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.confetti_vfx",
+      "detail": "player_colored=false",
+      "wallTimeMs": 1781279484073.337,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.restart_play",
+      "detail": "after_goal=true",
+      "wallTimeMs": 1781279485322.196,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=super_fireball",
+      "wallTimeMs": 1781279488072.878,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.player_kick_request",
+      "detail": "strong=true super=true",
+      "wallTimeMs": 1781279488073.146,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.kick_vfx",
+      "detail": "strong=true",
+      "wallTimeMs": 1781279488073.442,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.kick_vfx",
+      "detail": "strong=false",
+      "wallTimeMs": 1781279489753.979,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=jump_pad",
+      "wallTimeMs": 1781279492073.545,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.kick_vfx",
+      "detail": "strong=false",
+      "wallTimeMs": 1781279495956.416,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=result",
+      "wallTimeMs": 1781279496074.363,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.goal_detected",
+      "detail": "side=north player_scored=true",
+      "wallTimeMs": 1781279496074.527,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.goal_vfx",
+      "detail": "player_scored=true",
+      "wallTimeMs": 1781279496074.752,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.result",
+      "detail": "player_won=true",
+      "wallTimeMs": 1781279496075.101,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.round_end",
+      "detail": "player_won=true",
+      "wallTimeMs": 1781279496075.592,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=rematch",
+      "wallTimeMs": 1781279500074.412,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.rematch",
+      "detail": "",
+      "wallTimeMs": 1781279500074.824,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "event.restart_play",
+      "detail": "after_goal=false",
+      "wallTimeMs": 1781279500075.316,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=coast index=6",
+      "wallTimeMs": 1781279504074.996,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=coast index=7",
+      "wallTimeMs": 1781279508075.519,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=coast index=8",
+      "wallTimeMs": 1781279512076.06,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=coast index=9",
+      "wallTimeMs": 1781279516076.736,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=coast index=10",
+      "wallTimeMs": 1781279520077.224,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=coast index=11",
+      "wallTimeMs": 1781279524077.86,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=coast index=12",
+      "wallTimeMs": 1781279528078.463,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=coast index=13",
+      "wallTimeMs": 1781279532079.001,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=coast index=14",
+      "wallTimeMs": 1781279536079.576,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=coast index=15",
+      "wallTimeMs": 1781279540080.207,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    },
+    {
+      "stage": "perf_scenario.step",
+      "detail": "action=coast index=16",
+      "wallTimeMs": 1781279544080.712,
+      "windowMs": 2000,
+      "thresholdMs": 100,
+      "hitchCount": 0,
+      "maxHitchMs": 0,
+      "hitches": []
+    }
+  ],
+  "perfEvents": [
+    {
+      "wallTimeMs": 1781279464455.214,
+      "stage": "session.enabled",
+      "dtMs": 0.2,
+      "detail": "label=menu display=web web=true",
+      "text": "[JDC_PERF] abs_ms=814.600 dt_ms=0.200 stage=session.enabled detail=label=menu display=web web=true"
+    },
+    {
+      "wallTimeMs": 1781279465074.101,
+      "stage": "football.ready.begin",
+      "dtMs": 619.2,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1433.600 dt_ms=619.200 stage=football.ready.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279465074.391,
+      "stage": "loading.progress",
+      "dtMs": 619.6,
+      "detail": "label=Preparando arena value=0.08",
+      "text": "[JDC_PERF] abs_ms=1434.000 dt_ms=619.600 stage=loading.progress detail=label=Preparando arena value=0.08"
+    },
+    {
+      "wallTimeMs": 1781279465206.332,
+      "stage": "loading.progress",
+      "dtMs": 751.5,
+      "detail": "label=Carregando jogadores value=0.36",
+      "text": "[JDC_PERF] abs_ms=1565.900 dt_ms=751.500 stage=loading.progress detail=label=Carregando jogadores value=0.36"
+    },
+    {
+      "wallTimeMs": 1781279465945.694,
+      "stage": "loading.progress",
+      "dtMs": 1490.9,
+      "detail": "label=Aquecendo render value=0.52",
+      "text": "[JDC_PERF] abs_ms=2305.300 dt_ms=1490.900 stage=loading.progress detail=label=Aquecendo render value=0.52"
+    },
+    {
+      "wallTimeMs": 1781279465945.973,
+      "stage": "web_warmup.first_render.begin",
+      "dtMs": 1491.2,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=2305.600 dt_ms=1491.200 stage=web_warmup.first_render.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279465948.029,
+      "stage": "web_warmup.visible",
+      "dtMs": 1493.3,
+      "detail": "nodes=498 categories=11",
+      "text": "[JDC_PERF] abs_ms=2307.700 dt_ms=1493.300 stage=web_warmup.visible detail=nodes=498 categories=11"
+    },
+    {
+      "wallTimeMs": 1781279465948.195,
+      "stage": "loading.progress",
+      "dtMs": 1493.4,
+      "detail": "label=Aquecendo render: arena completa value=0.88",
+      "text": "[JDC_PERF] abs_ms=2307.800 dt_ms=1493.400 stage=loading.progress detail=label=Aquecendo render: arena completa value=0.88"
+    },
+    {
+      "wallTimeMs": 1781279465948.362,
+      "stage": "web_warmup.settle.begin",
+      "dtMs": 1493.7,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=2308.100 dt_ms=1493.700 stage=web_warmup.settle.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279474372.823,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 9918.1,
+      "detail": "frame=1 stable=0 frame_ms=8424.000 object_count=3189 node_count=756 resource_count=74 render_objects=958",
+      "text": "[JDC_PERF] abs_ms=10732.500 dt_ms=9918.100 stage=web_warmup.settle.sample detail=frame=1 stable=0 frame_ms=8424.000 object_count=3189 node_count=756 resource_count=74 render_objects=958"
+    },
+    {
+      "wallTimeMs": 1781279474440.058,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 9985.3,
+      "detail": "frame=2 stable=0 frame_ms=67.300 object_count=3190 node_count=756 resource_count=74 render_objects=958",
+      "text": "[JDC_PERF] abs_ms=10799.700 dt_ms=9985.300 stage=web_warmup.settle.sample detail=frame=2 stable=0 frame_ms=67.300 object_count=3190 node_count=756 resource_count=74 render_objects=958"
+    },
+    {
+      "wallTimeMs": 1781279474457.19,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 10002.4,
+      "detail": "frame=3 stable=0 frame_ms=17.000 object_count=3189 node_count=756 resource_count=74 render_objects=957",
+      "text": "[JDC_PERF] abs_ms=10816.800 dt_ms=10002.400 stage=web_warmup.settle.sample detail=frame=3 stable=0 frame_ms=17.000 object_count=3189 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474481.535,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 10026.7,
+      "detail": "frame=4 stable=0 frame_ms=24.300 object_count=3188 node_count=756 resource_count=74 render_objects=957",
+      "text": "[JDC_PERF] abs_ms=10841.100 dt_ms=10026.700 stage=web_warmup.settle.sample detail=frame=4 stable=0 frame_ms=24.300 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474520.28,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 10065.4,
+      "detail": "frame=5 stable=0 frame_ms=38.700 object_count=3188 node_count=756 resource_count=74 render_objects=957",
+      "text": "[JDC_PERF] abs_ms=10879.800 dt_ms=10065.400 stage=web_warmup.settle.sample detail=frame=5 stable=0 frame_ms=38.700 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474553.251,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 10098.4,
+      "detail": "frame=6 stable=0 frame_ms=33.100 object_count=3188 node_count=756 resource_count=74 render_objects=957",
+      "text": "[JDC_PERF] abs_ms=10912.800 dt_ms=10098.400 stage=web_warmup.settle.sample detail=frame=6 stable=0 frame_ms=33.100 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474581.959,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 10127.2,
+      "detail": "frame=7 stable=1 frame_ms=28.700 object_count=3188 node_count=756 resource_count=74 render_objects=957",
+      "text": "[JDC_PERF] abs_ms=10941.600 dt_ms=10127.200 stage=web_warmup.settle.sample detail=frame=7 stable=1 frame_ms=28.700 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474613.471,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 10158.7,
+      "detail": "frame=8 stable=2 frame_ms=31.500 object_count=3188 node_count=756 resource_count=74 render_objects=957",
+      "text": "[JDC_PERF] abs_ms=10973.100 dt_ms=10158.700 stage=web_warmup.settle.sample detail=frame=8 stable=2 frame_ms=31.500 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474645.873,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 10191,
+      "detail": "frame=9 stable=3 frame_ms=32.200 object_count=3188 node_count=756 resource_count=74 render_objects=957",
+      "text": "[JDC_PERF] abs_ms=11005.400 dt_ms=10191.000 stage=web_warmup.settle.sample detail=frame=9 stable=3 frame_ms=32.200 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474661.778,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 10206.9,
+      "detail": "frame=10 stable=4 frame_ms=16.000 object_count=3188 node_count=756 resource_count=74 render_objects=957",
+      "text": "[JDC_PERF] abs_ms=11021.300 dt_ms=10206.900 stage=web_warmup.settle.sample detail=frame=10 stable=4 frame_ms=16.000 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474667.171,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 10212.3,
+      "detail": "frame=11 stable=5 frame_ms=5.500 object_count=3188 node_count=756 resource_count=74 render_objects=957",
+      "text": "[JDC_PERF] abs_ms=11026.700 dt_ms=10212.300 stage=web_warmup.settle.sample detail=frame=11 stable=5 frame_ms=5.500 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474667.454,
+      "stage": "web_warmup.settle.end",
+      "dtMs": 10212.7,
+      "detail": "duration_ms=8719.000 stable_frames=5 frames=11",
+      "text": "[JDC_PERF] abs_ms=11027.100 dt_ms=10212.700 stage=web_warmup.settle.end detail=duration_ms=8719.000 stable_frames=5 frames=11"
+    },
+    {
+      "wallTimeMs": 1781279474667.653,
+      "stage": "web_warmup.core.end",
+      "dtMs": 10212.9,
+      "detail": "shown=498/498",
+      "text": "[JDC_PERF] abs_ms=11027.300 dt_ms=10212.900 stage=web_warmup.core.end detail=shown=498/498"
+    },
+    {
+      "wallTimeMs": 1781279474667.954,
+      "stage": "web_warmup.first_render.end",
+      "dtMs": 10213.2,
+      "detail": "duration_ms=8722.000 nodes=498",
+      "text": "[JDC_PERF] abs_ms=11027.600 dt_ms=10213.200 stage=web_warmup.first_render.end detail=duration_ms=8722.000 nodes=498"
+    },
+    {
+      "wallTimeMs": 1781279474668.319,
+      "stage": "loading.progress",
+      "dtMs": 10213.4,
+      "detail": "label=Preparando partida value=0.90",
+      "text": "[JDC_PERF] abs_ms=11027.800 dt_ms=10213.400 stage=loading.progress detail=label=Preparando partida value=0.90"
+    },
+    {
+      "wallTimeMs": 1781279474668.627,
+      "stage": "football.restart_play_initial.begin",
+      "dtMs": 10213.8,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=11028.200 dt_ms=10213.800 stage=football.restart_play_initial.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279474668.821,
+      "stage": "event.restart_play",
+      "dtMs": 10214.1,
+      "detail": "after_goal=false",
+      "text": "[JDC_PERF] abs_ms=11028.500 dt_ms=10214.100 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781279474669.354,
+      "stage": "football.restart_play_initial.end",
+      "dtMs": 10214.6,
+      "detail": "duration_ms=0.800",
+      "text": "[JDC_PERF] abs_ms=11029.000 dt_ms=10214.600 stage=football.restart_play_initial.end detail=duration_ms=0.800"
+    },
+    {
+      "wallTimeMs": 1781279474669.545,
+      "stage": "loading.progress",
+      "dtMs": 10214.8,
+      "detail": "label=Aquecendo efeitos value=0.92",
+      "text": "[JDC_PERF] abs_ms=11029.200 dt_ms=10214.800 stage=loading.progress detail=label=Aquecendo efeitos value=0.92"
+    },
+    {
+      "wallTimeMs": 1781279474669.746,
+      "stage": "web_warmup.first_use_feedback.begin",
+      "dtMs": 10215,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=11029.400 dt_ms=10215.000 stage=web_warmup.first_use_feedback.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279474669.976,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 10215.2,
+      "detail": "label=position frame=1/1",
+      "text": "[JDC_PERF] abs_ms=11029.600 dt_ms=10215.200 stage=web_warmup.first_use_frame detail=label=position frame=1/1"
+    },
+    {
+      "wallTimeMs": 1781279474801.116,
+      "stage": "web_warmup.first_use_feedback.step",
+      "dtMs": 10346.2,
+      "detail": "gameplay_strong_kick",
+      "text": "[JDC_PERF] abs_ms=11160.600 dt_ms=10346.200 stage=web_warmup.first_use_feedback.step detail=gameplay_strong_kick"
+    },
+    {
+      "wallTimeMs": 1781279474801.546,
+      "stage": "event.player_kick_request",
+      "dtMs": 10346.8,
+      "detail": "strong=true super=false",
+      "text": "[JDC_PERF] abs_ms=11161.200 dt_ms=10346.800 stage=event.player_kick_request detail=strong=true super=false"
+    },
+    {
+      "wallTimeMs": 1781279474801.932,
+      "stage": "event.kick_vfx",
+      "dtMs": 10347.2,
+      "detail": "strong=true",
+      "text": "[JDC_PERF] abs_ms=11161.600 dt_ms=10347.200 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781279474802.117,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 10347.4,
+      "detail": "label=gameplay_strong_kick frame=1/3",
+      "text": "[JDC_PERF] abs_ms=11161.800 dt_ms=10347.400 stage=web_warmup.first_use_frame detail=label=gameplay_strong_kick frame=1/3"
+    },
+    {
+      "wallTimeMs": 1781279474806.753,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 10352,
+      "detail": "label=gameplay_strong_kick frame=2/3",
+      "text": "[JDC_PERF] abs_ms=11166.400 dt_ms=10352.000 stage=web_warmup.first_use_frame detail=label=gameplay_strong_kick frame=2/3"
+    },
+    {
+      "wallTimeMs": 1781279474949.309,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 10494.6,
+      "detail": "label=gameplay_strong_kick frame=3/3",
+      "text": "[JDC_PERF] abs_ms=11309.000 dt_ms=10494.600 stage=web_warmup.first_use_frame detail=label=gameplay_strong_kick frame=3/3"
+    },
+    {
+      "wallTimeMs": 1781279477080.144,
+      "stage": "web_warmup.first_use_feedback.step",
+      "dtMs": 12625.4,
+      "detail": "kick",
+      "text": "[JDC_PERF] abs_ms=13439.800 dt_ms=12625.400 stage=web_warmup.first_use_feedback.step detail=kick"
+    },
+    {
+      "wallTimeMs": 1781279477080.366,
+      "stage": "event.kick_vfx",
+      "dtMs": 12625.6,
+      "detail": "strong=true",
+      "text": "[JDC_PERF] abs_ms=13440.000 dt_ms=12625.600 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781279477080.601,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 12625.9,
+      "detail": "label=kick frame=1/1",
+      "text": "[JDC_PERF] abs_ms=13440.300 dt_ms=12625.900 stage=web_warmup.first_use_frame detail=label=kick frame=1/1"
+    },
+    {
+      "wallTimeMs": 1781279477088.404,
+      "stage": "web_warmup.first_use_feedback.step",
+      "dtMs": 12633.6,
+      "detail": "goal_player",
+      "text": "[JDC_PERF] abs_ms=13448.000 dt_ms=12633.600 stage=web_warmup.first_use_feedback.step detail=goal_player"
+    },
+    {
+      "wallTimeMs": 1781279477088.617,
+      "stage": "event.goal_vfx",
+      "dtMs": 12633.8,
+      "detail": "player_scored=true",
+      "text": "[JDC_PERF] abs_ms=13448.200 dt_ms=12633.800 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781279477088.762,
+      "stage": "web_warmup.first_use_feedback.step",
+      "dtMs": 12634,
+      "detail": "goal_bot",
+      "text": "[JDC_PERF] abs_ms=13448.400 dt_ms=12634.000 stage=web_warmup.first_use_feedback.step detail=goal_bot"
+    },
+    {
+      "wallTimeMs": 1781279477088.9,
+      "stage": "event.goal_vfx",
+      "dtMs": 12634.2,
+      "detail": "player_scored=false",
+      "text": "[JDC_PERF] abs_ms=13448.600 dt_ms=12634.200 stage=event.goal_vfx detail=player_scored=false"
+    },
+    {
+      "wallTimeMs": 1781279477089.02,
+      "stage": "web_warmup.first_use_feedback.step",
+      "dtMs": 12634.3,
+      "detail": "confetti_player",
+      "text": "[JDC_PERF] abs_ms=13448.700 dt_ms=12634.300 stage=web_warmup.first_use_feedback.step detail=confetti_player"
+    },
+    {
+      "wallTimeMs": 1781279477089.157,
+      "stage": "event.confetti_vfx",
+      "dtMs": 12634.5,
+      "detail": "player_colored=true",
+      "text": "[JDC_PERF] abs_ms=13448.900 dt_ms=12634.500 stage=event.confetti_vfx detail=player_colored=true"
+    },
+    {
+      "wallTimeMs": 1781279477089.271,
+      "stage": "web_warmup.first_use_feedback.step",
+      "dtMs": 12634.6,
+      "detail": "confetti_bot",
+      "text": "[JDC_PERF] abs_ms=13449.000 dt_ms=12634.600 stage=web_warmup.first_use_feedback.step detail=confetti_bot"
+    },
+    {
+      "wallTimeMs": 1781279477089.394,
+      "stage": "event.confetti_vfx",
+      "dtMs": 12634.7,
+      "detail": "player_colored=false",
+      "text": "[JDC_PERF] abs_ms=13449.100 dt_ms=12634.700 stage=event.confetti_vfx detail=player_colored=false"
+    },
+    {
+      "wallTimeMs": 1781279477089.538,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 12634.8,
+      "detail": "label=goal_confetti_batch frame=1/3",
+      "text": "[JDC_PERF] abs_ms=13449.200 dt_ms=12634.800 stage=web_warmup.first_use_frame detail=label=goal_confetti_batch frame=1/3"
+    },
+    {
+      "wallTimeMs": 1781279477093.233,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 12638.5,
+      "detail": "label=goal_confetti_batch frame=2/3",
+      "text": "[JDC_PERF] abs_ms=13452.900 dt_ms=12638.500 stage=web_warmup.first_use_frame detail=label=goal_confetti_batch frame=2/3"
+    },
+    {
+      "wallTimeMs": 1781279477100.354,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 12645.6,
+      "detail": "label=goal_confetti_batch frame=3/3",
+      "text": "[JDC_PERF] abs_ms=13460.000 dt_ms=12645.600 stage=web_warmup.first_use_frame detail=label=goal_confetti_batch frame=3/3"
+    },
+    {
+      "wallTimeMs": 1781279477105.749,
+      "stage": "web_warmup.first_use_feedback.step",
+      "dtMs": 12651,
+      "detail": "hud_goal_messages",
+      "text": "[JDC_PERF] abs_ms=13465.400 dt_ms=12651.000 stage=web_warmup.first_use_feedback.step detail=hud_goal_messages"
+    },
+    {
+      "wallTimeMs": 1781279477106.01,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 12651.2,
+      "detail": "label=hud_goal_messages frame=1/3",
+      "text": "[JDC_PERF] abs_ms=13465.600 dt_ms=12651.200 stage=web_warmup.first_use_frame detail=label=hud_goal_messages frame=1/3"
+    },
+    {
+      "wallTimeMs": 1781279477112.937,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 12658.1,
+      "detail": "label=hud_goal_messages frame=2/3",
+      "text": "[JDC_PERF] abs_ms=13472.500 dt_ms=12658.100 stage=web_warmup.first_use_frame detail=label=hud_goal_messages frame=2/3"
+    },
+    {
+      "wallTimeMs": 1781279477119.635,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 12664.9,
+      "detail": "label=hud_goal_messages frame=3/3",
+      "text": "[JDC_PERF] abs_ms=13479.300 dt_ms=12664.900 stage=web_warmup.first_use_frame detail=label=hud_goal_messages frame=3/3"
+    },
+    {
+      "wallTimeMs": 1781279477126.56,
+      "stage": "web_warmup.first_use_feedback.step",
+      "dtMs": 12671.8,
+      "detail": "fireball",
+      "text": "[JDC_PERF] abs_ms=13486.200 dt_ms=12671.800 stage=web_warmup.first_use_feedback.step detail=fireball"
+    },
+    {
+      "wallTimeMs": 1781279477126.858,
+      "stage": "event.fireball_vfx",
+      "dtMs": 12672.1,
+      "detail": "speed=38.50 first=true",
+      "text": "[JDC_PERF] abs_ms=13486.500 dt_ms=12672.100 stage=event.fireball_vfx detail=speed=38.50 first=true"
+    },
+    {
+      "wallTimeMs": 1781279477127.138,
+      "stage": "web_warmup.first_use_feedback.step",
+      "dtMs": 12672.4,
+      "detail": "round_end",
+      "text": "[JDC_PERF] abs_ms=13486.800 dt_ms=12672.400 stage=web_warmup.first_use_feedback.step detail=round_end"
+    },
+    {
+      "wallTimeMs": 1781279477127.336,
+      "stage": "event.round_end",
+      "dtMs": 12672.6,
+      "detail": "player_won=true",
+      "text": "[JDC_PERF] abs_ms=13487.000 dt_ms=12672.600 stage=event.round_end detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781279477127.507,
+      "stage": "web_warmup.first_use_feedback.step",
+      "dtMs": 12672.7,
+      "detail": "result_flow",
+      "text": "[JDC_PERF] abs_ms=13487.100 dt_ms=12672.700 stage=web_warmup.first_use_feedback.step detail=result_flow"
+    },
+    {
+      "wallTimeMs": 1781279477127.66,
+      "stage": "event.result",
+      "dtMs": 12673,
+      "detail": "player_won=true",
+      "text": "[JDC_PERF] abs_ms=13487.400 dt_ms=12673.000 stage=event.result detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781279477128.045,
+      "stage": "event.round_end",
+      "dtMs": 12673.3,
+      "detail": "player_won=true",
+      "text": "[JDC_PERF] abs_ms=13487.700 dt_ms=12673.300 stage=event.round_end detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781279477128.242,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 12673.5,
+      "detail": "label=result_flow frame=1/3",
+      "text": "[JDC_PERF] abs_ms=13487.900 dt_ms=12673.500 stage=web_warmup.first_use_frame detail=label=result_flow frame=1/3"
+    },
+    {
+      "wallTimeMs": 1781279477205.935,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 12751.2,
+      "detail": "label=result_flow frame=2/3",
+      "text": "[JDC_PERF] abs_ms=13565.600 dt_ms=12751.200 stage=web_warmup.first_use_frame detail=label=result_flow frame=2/3"
+    },
+    {
+      "wallTimeMs": 1781279477210.902,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 12756.2,
+      "detail": "label=result_flow frame=3/3",
+      "text": "[JDC_PERF] abs_ms=13570.600 dt_ms=12756.200 stage=web_warmup.first_use_frame detail=label=result_flow frame=3/3"
+    },
+    {
+      "wallTimeMs": 1781279478008.923,
+      "stage": "event.pause_menu",
+      "dtMs": 13554.1,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=14368.500 dt_ms=13554.100 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781279478009.293,
+      "stage": "event.restart_play",
+      "dtMs": 13554.6,
+      "detail": "after_goal=false",
+      "text": "[JDC_PERF] abs_ms=14369.000 dt_ms=13554.600 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781279478009.711,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 13555,
+      "detail": "label=restart_after_result frame=1/1",
+      "text": "[JDC_PERF] abs_ms=14369.400 dt_ms=13555.000 stage=web_warmup.first_use_frame detail=label=restart_after_result frame=1/1"
+    },
+    {
+      "wallTimeMs": 1781279478015.714,
+      "stage": "web_warmup.first_use_frame",
+      "dtMs": 13561,
+      "detail": "label=clear_effects frame=1/1",
+      "text": "[JDC_PERF] abs_ms=14375.400 dt_ms=13561.000 stage=web_warmup.first_use_frame detail=label=clear_effects frame=1/1"
+    },
+    {
+      "wallTimeMs": 1781279478022.565,
+      "stage": "web_warmup.first_use_feedback.end",
+      "dtMs": 13567.8,
+      "detail": "duration_ms=3352.700",
+      "text": "[JDC_PERF] abs_ms=14382.200 dt_ms=13567.800 stage=web_warmup.first_use_feedback.end detail=duration_ms=3352.700"
+    },
+    {
+      "wallTimeMs": 1781279478022.903,
+      "stage": "football.restart_play_after_warmup.begin",
+      "dtMs": 13568.1,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=14382.500 dt_ms=13568.100 stage=football.restart_play_after_warmup.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279478023.107,
+      "stage": "event.restart_play",
+      "dtMs": 13568.4,
+      "detail": "after_goal=false",
+      "text": "[JDC_PERF] abs_ms=14382.800 dt_ms=13568.400 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781279478023.561,
+      "stage": "football.restart_play_after_warmup.end",
+      "dtMs": 13568.8,
+      "detail": "duration_ms=0.800",
+      "text": "[JDC_PERF] abs_ms=14383.200 dt_ms=13568.800 stage=football.restart_play_after_warmup.end detail=duration_ms=0.800"
+    },
+    {
+      "wallTimeMs": 1781279478023.748,
+      "stage": "loading.progress",
+      "dtMs": 13569,
+      "detail": "label=Estabilizando quadros value=0.97",
+      "text": "[JDC_PERF] abs_ms=14383.400 dt_ms=13569.000 stage=loading.progress detail=label=Estabilizando quadros value=0.97"
+    },
+    {
+      "wallTimeMs": 1781279478023.932,
+      "stage": "web_warmup.settle.begin",
+      "dtMs": 13569.2,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=14383.600 dt_ms=13569.200 stage=web_warmup.settle.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279478029.693,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13574.8,
+      "detail": "frame=1 stable=0 frame_ms=5.400 object_count=3189 node_count=756 resource_count=74 render_objects=633",
+      "text": "[JDC_PERF] abs_ms=14389.200 dt_ms=13574.800 stage=web_warmup.settle.sample detail=frame=1 stable=0 frame_ms=5.400 object_count=3189 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478036.431,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13581.6,
+      "detail": "frame=2 stable=0 frame_ms=6.700 object_count=3190 node_count=756 resource_count=74 render_objects=633",
+      "text": "[JDC_PERF] abs_ms=14396.000 dt_ms=13581.600 stage=web_warmup.settle.sample detail=frame=2 stable=0 frame_ms=6.700 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478043.297,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13588.5,
+      "detail": "frame=3 stable=1 frame_ms=6.900 object_count=3190 node_count=756 resource_count=74 render_objects=633",
+      "text": "[JDC_PERF] abs_ms=14402.900 dt_ms=13588.500 stage=web_warmup.settle.sample detail=frame=3 stable=1 frame_ms=6.900 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478050.713,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13595.8,
+      "detail": "frame=4 stable=2 frame_ms=7.300 object_count=3190 node_count=756 resource_count=74 render_objects=633",
+      "text": "[JDC_PERF] abs_ms=14410.200 dt_ms=13595.800 stage=web_warmup.settle.sample detail=frame=4 stable=2 frame_ms=7.300 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478057.221,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13602.4,
+      "detail": "frame=5 stable=3 frame_ms=6.700 object_count=3190 node_count=756 resource_count=74 render_objects=633",
+      "text": "[JDC_PERF] abs_ms=14416.800 dt_ms=13602.400 stage=web_warmup.settle.sample detail=frame=5 stable=3 frame_ms=6.700 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478064.335,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13609.5,
+      "detail": "frame=6 stable=4 frame_ms=7.100 object_count=3190 node_count=756 resource_count=74 render_objects=633",
+      "text": "[JDC_PERF] abs_ms=14423.900 dt_ms=13609.500 stage=web_warmup.settle.sample detail=frame=6 stable=4 frame_ms=7.100 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478071.146,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13616.3,
+      "detail": "frame=7 stable=5 frame_ms=6.700 object_count=3190 node_count=756 resource_count=74 render_objects=633",
+      "text": "[JDC_PERF] abs_ms=14430.700 dt_ms=13616.300 stage=web_warmup.settle.sample detail=frame=7 stable=5 frame_ms=6.700 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478071.386,
+      "stage": "web_warmup.settle.end",
+      "dtMs": 13616.6,
+      "detail": "duration_ms=47.400 stable_frames=5 frames=7",
+      "text": "[JDC_PERF] abs_ms=14431.000 dt_ms=13616.600 stage=web_warmup.settle.end detail=duration_ms=47.400 stable_frames=5 frames=7"
+    },
+    {
+      "wallTimeMs": 1781279478071.871,
+      "stage": "loading.progress",
+      "dtMs": 13617.1,
+      "detail": "label=Entrando em campo value=1.00",
+      "text": "[JDC_PERF] abs_ms=14431.500 dt_ms=13617.100 stage=loading.progress detail=label=Entrando em campo value=1.00"
+    },
+    {
+      "wallTimeMs": 1781279478073.027,
+      "stage": "event.pause_menu",
+      "dtMs": 13618.2,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=14432.600 dt_ms=13618.200 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781279478073.274,
+      "stage": "event.match_start",
+      "dtMs": 13618.5,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=14432.900 dt_ms=13618.500 stage=event.match_start detail="
+    },
+    {
+      "wallTimeMs": 1781279478073.514,
+      "stage": "perf_scenario.start",
+      "dtMs": 13618.8,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=14433.200 dt_ms=13618.800 stage=perf_scenario.start detail="
+    },
+    {
+      "wallTimeMs": 1781279478073.944,
+      "stage": "football.ready.end",
+      "dtMs": 13619.3,
+      "detail": "duration_ms=13000.100",
+      "text": "[JDC_PERF] abs_ms=14433.700 dt_ms=13619.300 stage=football.ready.end detail=duration_ms=13000.100"
+    },
+    {
+      "wallTimeMs": 1781279478074.077,
+      "stage": "loading.gameplay_released",
+      "dtMs": 13619.3,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=14433.700 dt_ms=13619.300 stage=loading.gameplay_released detail="
+    },
+    {
+      "wallTimeMs": 1781279478074.223,
+      "stage": "web_warmup.settle.begin",
+      "dtMs": 13619.5,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=14433.900 dt_ms=13619.500 stage=web_warmup.settle.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279478087.053,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13632.3,
+      "detail": "frame=1 stable=0 frame_ms=12.500 object_count=3194 node_count=757 resource_count=74 render_objects=863",
+      "text": "[JDC_PERF] abs_ms=14446.700 dt_ms=13632.300 stage=web_warmup.settle.sample detail=frame=1 stable=0 frame_ms=12.500 object_count=3194 node_count=757 resource_count=74 render_objects=863"
+    },
+    {
+      "wallTimeMs": 1781279478091.881,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13637.1,
+      "detail": "frame=2 stable=0 frame_ms=5.000 object_count=3195 node_count=757 resource_count=74 render_objects=793",
+      "text": "[JDC_PERF] abs_ms=14451.500 dt_ms=13637.100 stage=web_warmup.settle.sample detail=frame=2 stable=0 frame_ms=5.000 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478098.836,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13644.1,
+      "detail": "frame=3 stable=1 frame_ms=6.900 object_count=3195 node_count=757 resource_count=74 render_objects=793",
+      "text": "[JDC_PERF] abs_ms=14458.500 dt_ms=13644.100 stage=web_warmup.settle.sample detail=frame=3 stable=1 frame_ms=6.900 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478106.264,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13651.5,
+      "detail": "frame=4 stable=2 frame_ms=7.400 object_count=3195 node_count=757 resource_count=74 render_objects=793",
+      "text": "[JDC_PERF] abs_ms=14465.900 dt_ms=13651.500 stage=web_warmup.settle.sample detail=frame=4 stable=2 frame_ms=7.400 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478112.811,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13658,
+      "detail": "frame=5 stable=3 frame_ms=6.500 object_count=3195 node_count=757 resource_count=74 render_objects=793",
+      "text": "[JDC_PERF] abs_ms=14472.400 dt_ms=13658.000 stage=web_warmup.settle.sample detail=frame=5 stable=3 frame_ms=6.500 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478120.275,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13665.5,
+      "detail": "frame=6 stable=4 frame_ms=7.500 object_count=3195 node_count=757 resource_count=74 render_objects=793",
+      "text": "[JDC_PERF] abs_ms=14479.900 dt_ms=13665.500 stage=web_warmup.settle.sample detail=frame=6 stable=4 frame_ms=7.500 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478126.797,
+      "stage": "web_warmup.settle.sample",
+      "dtMs": 13672,
+      "detail": "frame=7 stable=5 frame_ms=6.400 object_count=3195 node_count=757 resource_count=74 render_objects=793",
+      "text": "[JDC_PERF] abs_ms=14486.400 dt_ms=13672.000 stage=web_warmup.settle.sample detail=frame=7 stable=5 frame_ms=6.400 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478127.068,
+      "stage": "web_warmup.settle.end",
+      "dtMs": 13672.3,
+      "detail": "duration_ms=52.800 stable_frames=5 frames=7",
+      "text": "[JDC_PERF] abs_ms=14486.700 dt_ms=13672.300 stage=web_warmup.settle.end detail=duration_ms=52.800 stable_frames=5 frames=7"
+    },
+    {
+      "wallTimeMs": 1781279478127.306,
+      "stage": "loading.overlay_hidden",
+      "dtMs": 13672.5,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=14486.900 dt_ms=13672.500 stage=loading.overlay_hidden detail="
+    },
+    {
+      "wallTimeMs": 1781279478127.5,
+      "stage": "event.visible_match_start",
+      "dtMs": 13672.8,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=14487.200 dt_ms=13672.800 stage=event.visible_match_start detail="
+    },
+    {
+      "wallTimeMs": 1781279480071.833,
+      "stage": "perf_scenario.step",
+      "dtMs": 15617,
+      "detail": "action=strong_kick",
+      "text": "[JDC_PERF] abs_ms=16431.400 dt_ms=15617.000 stage=perf_scenario.step detail=action=strong_kick"
+    },
+    {
+      "wallTimeMs": 1781279480072.082,
+      "stage": "event.pause_menu",
+      "dtMs": 15617.3,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=16431.700 dt_ms=15617.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781279480072.299,
+      "stage": "event.player_kick_request",
+      "dtMs": 15617.6,
+      "detail": "strong=true super=false",
+      "text": "[JDC_PERF] abs_ms=16432.000 dt_ms=15617.600 stage=event.player_kick_request detail=strong=true super=false"
+    },
+    {
+      "wallTimeMs": 1781279480072.586,
+      "stage": "event.kick_vfx",
+      "dtMs": 15617.8,
+      "detail": "strong=true",
+      "text": "[JDC_PERF] abs_ms=16432.200 dt_ms=15617.800 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781279481273.382,
+      "stage": "event.bot_kick_request",
+      "dtMs": 16818.5,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=17632.900 dt_ms=16818.500 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781279481273.704,
+      "stage": "event.kick_vfx",
+      "dtMs": 16818.9,
+      "detail": "strong=false",
+      "text": "[JDC_PERF] abs_ms=17633.300 dt_ms=16818.900 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781279481287.184,
+      "stage": "event.fireball_vfx",
+      "dtMs": 16832.4,
+      "detail": "speed=24.53 first=false",
+      "text": "[JDC_PERF] abs_ms=17646.800 dt_ms=16832.400 stage=event.fireball_vfx detail=speed=24.53 first=false"
+    },
+    {
+      "wallTimeMs": 1781279484072.357,
+      "stage": "perf_scenario.step",
+      "dtMs": 19617.5,
+      "detail": "action=bot_goal_confetti",
+      "text": "[JDC_PERF] abs_ms=20431.900 dt_ms=19617.500 stage=perf_scenario.step detail=action=bot_goal_confetti"
+    },
+    {
+      "wallTimeMs": 1781279484072.591,
+      "stage": "event.goal_detected",
+      "dtMs": 19617.9,
+      "detail": "side=south player_scored=false",
+      "text": "[JDC_PERF] abs_ms=20432.300 dt_ms=19617.900 stage=event.goal_detected detail=side=south player_scored=false"
+    },
+    {
+      "wallTimeMs": 1781279484072.828,
+      "stage": "event.goal_vfx",
+      "dtMs": 19618.1,
+      "detail": "player_scored=false",
+      "text": "[JDC_PERF] abs_ms=20432.500 dt_ms=19618.100 stage=event.goal_vfx detail=player_scored=false"
+    },
+    {
+      "wallTimeMs": 1781279484073.009,
+      "stage": "event.goal_gamefeel",
+      "dtMs": 19618.2,
+      "detail": "web_slowmo_disabled=true",
+      "text": "[JDC_PERF] abs_ms=20432.600 dt_ms=19618.200 stage=event.goal_gamefeel detail=web_slowmo_disabled=true"
+    },
+    {
+      "wallTimeMs": 1781279484073.163,
+      "stage": "event.arcade_emote",
+      "dtMs": 19618.5,
+      "detail": "player=false",
+      "text": "[JDC_PERF] abs_ms=20432.900 dt_ms=19618.500 stage=event.arcade_emote detail=player=false"
+    },
+    {
+      "wallTimeMs": 1781279484073.337,
+      "stage": "event.confetti_vfx",
+      "dtMs": 19618.6,
+      "detail": "player_colored=false",
+      "text": "[JDC_PERF] abs_ms=20433.000 dt_ms=19618.600 stage=event.confetti_vfx detail=player_colored=false"
+    },
+    {
+      "wallTimeMs": 1781279485322.196,
+      "stage": "event.restart_play",
+      "dtMs": 20867.4,
+      "detail": "after_goal=true",
+      "text": "[JDC_PERF] abs_ms=21681.800 dt_ms=20867.400 stage=event.restart_play detail=after_goal=true"
+    },
+    {
+      "wallTimeMs": 1781279488072.878,
+      "stage": "perf_scenario.step",
+      "dtMs": 23618.1,
+      "detail": "action=super_fireball",
+      "text": "[JDC_PERF] abs_ms=24432.500 dt_ms=23618.100 stage=perf_scenario.step detail=action=super_fireball"
+    },
+    {
+      "wallTimeMs": 1781279488073.146,
+      "stage": "event.player_kick_request",
+      "dtMs": 23618.4,
+      "detail": "strong=true super=true",
+      "text": "[JDC_PERF] abs_ms=24432.800 dt_ms=23618.400 stage=event.player_kick_request detail=strong=true super=true"
+    },
+    {
+      "wallTimeMs": 1781279488073.442,
+      "stage": "event.kick_vfx",
+      "dtMs": 23618.7,
+      "detail": "strong=true",
+      "text": "[JDC_PERF] abs_ms=24433.100 dt_ms=23618.700 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781279488086.791,
+      "stage": "event.fireball_vfx",
+      "dtMs": 23632,
+      "detail": "speed=35.28 first=false",
+      "text": "[JDC_PERF] abs_ms=24446.400 dt_ms=23632.000 stage=event.fireball_vfx detail=speed=35.28 first=false"
+    },
+    {
+      "wallTimeMs": 1781279489753.643,
+      "stage": "event.bot_kick_request",
+      "dtMs": 25298.9,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=26113.300 dt_ms=25298.900 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781279489753.979,
+      "stage": "event.kick_vfx",
+      "dtMs": 25299.2,
+      "detail": "strong=false",
+      "text": "[JDC_PERF] abs_ms=26113.600 dt_ms=25299.200 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781279492073.545,
+      "stage": "perf_scenario.step",
+      "dtMs": 27618.7,
+      "detail": "action=jump_pad",
+      "text": "[JDC_PERF] abs_ms=28433.100 dt_ms=27618.700 stage=perf_scenario.step detail=action=jump_pad"
+    },
+    {
+      "wallTimeMs": 1781279495004.516,
+      "stage": "event.bot_kick_request",
+      "dtMs": 30549.6,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=31364.000 dt_ms=30549.600 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781279495956.098,
+      "stage": "event.bot_kick_request",
+      "dtMs": 31501.2,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=32315.600 dt_ms=31501.200 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781279495956.416,
+      "stage": "event.kick_vfx",
+      "dtMs": 31501.6,
+      "detail": "strong=false",
+      "text": "[JDC_PERF] abs_ms=32316.000 dt_ms=31501.600 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781279496074.125,
+      "stage": "event.pause_menu",
+      "dtMs": 31619.3,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=32433.700 dt_ms=31619.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781279496074.363,
+      "stage": "perf_scenario.step",
+      "dtMs": 31619.7,
+      "detail": "action=result",
+      "text": "[JDC_PERF] abs_ms=32434.100 dt_ms=31619.700 stage=perf_scenario.step detail=action=result"
+    },
+    {
+      "wallTimeMs": 1781279496074.527,
+      "stage": "event.goal_detected",
+      "dtMs": 31619.8,
+      "detail": "side=north player_scored=true",
+      "text": "[JDC_PERF] abs_ms=32434.200 dt_ms=31619.800 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781279496074.752,
+      "stage": "event.goal_vfx",
+      "dtMs": 31620,
+      "detail": "player_scored=true",
+      "text": "[JDC_PERF] abs_ms=32434.400 dt_ms=31620.000 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781279496074.921,
+      "stage": "event.goal_gamefeel",
+      "dtMs": 31620.2,
+      "detail": "web_slowmo_disabled=true",
+      "text": "[JDC_PERF] abs_ms=32434.600 dt_ms=31620.200 stage=event.goal_gamefeel detail=web_slowmo_disabled=true"
+    },
+    {
+      "wallTimeMs": 1781279496075.101,
+      "stage": "event.result",
+      "dtMs": 31620.3,
+      "detail": "player_won=true",
+      "text": "[JDC_PERF] abs_ms=32434.700 dt_ms=31620.300 stage=event.result detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781279496075.592,
+      "stage": "event.round_end",
+      "dtMs": 31620.8,
+      "detail": "player_won=true",
+      "text": "[JDC_PERF] abs_ms=32435.200 dt_ms=31620.800 stage=event.round_end detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781279500074.412,
+      "stage": "perf_scenario.step",
+      "dtMs": 35619.6,
+      "detail": "action=rematch",
+      "text": "[JDC_PERF] abs_ms=36434.000 dt_ms=35619.600 stage=perf_scenario.step detail=action=rematch"
+    },
+    {
+      "wallTimeMs": 1781279500074.824,
+      "stage": "event.rematch",
+      "dtMs": 35620,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=36434.400 dt_ms=35620.000 stage=event.rematch detail="
+    },
+    {
+      "wallTimeMs": 1781279500075.018,
+      "stage": "event.pause_menu",
+      "dtMs": 35620.3,
+      "detail": "open=false",
+      "text": "[JDC_PERF] abs_ms=36434.700 dt_ms=35620.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781279500075.316,
+      "stage": "event.restart_play",
+      "dtMs": 35620.6,
+      "detail": "after_goal=false",
+      "text": "[JDC_PERF] abs_ms=36435.000 dt_ms=35620.600 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781279504074.996,
+      "stage": "perf_scenario.step",
+      "dtMs": 39620.1,
+      "detail": "action=coast index=6",
+      "text": "[JDC_PERF] abs_ms=40434.500 dt_ms=39620.100 stage=perf_scenario.step detail=action=coast index=6"
+    },
+    {
+      "wallTimeMs": 1781279508075.519,
+      "stage": "perf_scenario.step",
+      "dtMs": 43620.7,
+      "detail": "action=coast index=7",
+      "text": "[JDC_PERF] abs_ms=44435.100 dt_ms=43620.700 stage=perf_scenario.step detail=action=coast index=7"
+    },
+    {
+      "wallTimeMs": 1781279512076.06,
+      "stage": "perf_scenario.step",
+      "dtMs": 47621.2,
+      "detail": "action=coast index=8",
+      "text": "[JDC_PERF] abs_ms=48435.600 dt_ms=47621.200 stage=perf_scenario.step detail=action=coast index=8"
+    },
+    {
+      "wallTimeMs": 1781279516076.736,
+      "stage": "perf_scenario.step",
+      "dtMs": 51621.9,
+      "detail": "action=coast index=9",
+      "text": "[JDC_PERF] abs_ms=52436.300 dt_ms=51621.900 stage=perf_scenario.step detail=action=coast index=9"
+    },
+    {
+      "wallTimeMs": 1781279520077.224,
+      "stage": "perf_scenario.step",
+      "dtMs": 55622.4,
+      "detail": "action=coast index=10",
+      "text": "[JDC_PERF] abs_ms=56436.800 dt_ms=55622.400 stage=perf_scenario.step detail=action=coast index=10"
+    },
+    {
+      "wallTimeMs": 1781279524077.86,
+      "stage": "perf_scenario.step",
+      "dtMs": 59623.1,
+      "detail": "action=coast index=11",
+      "text": "[JDC_PERF] abs_ms=60437.500 dt_ms=59623.100 stage=perf_scenario.step detail=action=coast index=11"
+    },
+    {
+      "wallTimeMs": 1781279528078.463,
+      "stage": "perf_scenario.step",
+      "dtMs": 63623.7,
+      "detail": "action=coast index=12",
+      "text": "[JDC_PERF] abs_ms=64438.100 dt_ms=63623.700 stage=perf_scenario.step detail=action=coast index=12"
+    },
+    {
+      "wallTimeMs": 1781279532079.001,
+      "stage": "perf_scenario.step",
+      "dtMs": 67624.2,
+      "detail": "action=coast index=13",
+      "text": "[JDC_PERF] abs_ms=68438.600 dt_ms=67624.200 stage=perf_scenario.step detail=action=coast index=13"
+    },
+    {
+      "wallTimeMs": 1781279536079.576,
+      "stage": "perf_scenario.step",
+      "dtMs": 71624.8,
+      "detail": "action=coast index=14",
+      "text": "[JDC_PERF] abs_ms=72439.200 dt_ms=71624.800 stage=perf_scenario.step detail=action=coast index=14"
+    },
+    {
+      "wallTimeMs": 1781279540080.207,
+      "stage": "perf_scenario.step",
+      "dtMs": 75625.3,
+      "detail": "action=coast index=15",
+      "text": "[JDC_PERF] abs_ms=76439.700 dt_ms=75625.300 stage=perf_scenario.step detail=action=coast index=15"
+    },
+    {
+      "wallTimeMs": 1781279544080.712,
+      "stage": "perf_scenario.step",
+      "dtMs": 79625.9,
+      "detail": "action=coast index=16",
+      "text": "[JDC_PERF] abs_ms=80440.300 dt_ms=79625.900 stage=perf_scenario.step detail=action=coast index=16"
+    }
+  ],
+  "stability": {
+    "browserSamples": [
+      {
+        "t": 1769.0999999977648,
+        "wallTimeMs": 1781279463376.8,
+        "usedJSHeapSize": 736832,
+        "totalJSHeapSize": 1317884,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 3548.599999997765,
+        "wallTimeMs": 1781279465156.3,
+        "usedJSHeapSize": 169661361,
+        "totalJSHeapSize": 173260133,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 12817,
+        "wallTimeMs": 1781279474424.7,
+        "usedJSHeapSize": 233021748,
+        "totalJSHeapSize": 238897268,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 15477.199999999255,
+        "wallTimeMs": 1781279477084.9,
+        "usedJSHeapSize": 234487346,
+        "totalJSHeapSize": 240237306,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 15773.39999999851,
+        "wallTimeMs": 1781279477381.0999,
+        "usedJSHeapSize": 232473256,
+        "totalJSHeapSize": 236257508,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 16772.199999999255,
+        "wallTimeMs": 1781279478379.9,
+        "usedJSHeapSize": 233612508,
+        "totalJSHeapSize": 236519652,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 17772.39999999851,
+        "wallTimeMs": 1781279479380.0999,
+        "usedJSHeapSize": 221295956,
+        "totalJSHeapSize": 226118536,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 18774.599999997765,
+        "wallTimeMs": 1781279480382.3,
+        "usedJSHeapSize": 222144845,
+        "totalJSHeapSize": 226118557,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 19772.699999999255,
+        "wallTimeMs": 1781279481380.4,
+        "usedJSHeapSize": 223005121,
+        "totalJSHeapSize": 226380701,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 20772.699999999255,
+        "wallTimeMs": 1781279482380.4,
+        "usedJSHeapSize": 223795725,
+        "totalJSHeapSize": 226380701,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 21772.89999999851,
+        "wallTimeMs": 1781279483380.5999,
+        "usedJSHeapSize": 224612109,
+        "totalJSHeapSize": 226380701,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 22773.199999999255,
+        "wallTimeMs": 1781279484380.9,
+        "usedJSHeapSize": 225427777,
+        "totalJSHeapSize": 227167133,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 23773.199999999255,
+        "wallTimeMs": 1781279485380.9,
+        "usedJSHeapSize": 226267549,
+        "totalJSHeapSize": 227953565,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 24773.39999999851,
+        "wallTimeMs": 1781279486381.0999,
+        "usedJSHeapSize": 227052417,
+        "totalJSHeapSize": 228739997,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 25773.5,
+        "wallTimeMs": 1781279487381.2,
+        "usedJSHeapSize": 227823773,
+        "totalJSHeapSize": 229526429,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 26774.099999997765,
+        "wallTimeMs": 1781279488381.8,
+        "usedJSHeapSize": 101874349,
+        "totalJSHeapSize": 103150493,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 27773.699999999255,
+        "wallTimeMs": 1781279489381.4,
+        "usedJSHeapSize": 102069141,
+        "totalJSHeapSize": 105247645,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 28773.800000000745,
+        "wallTimeMs": 1781279490381.5,
+        "usedJSHeapSize": 101617285,
+        "totalJSHeapSize": 105771933,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 29775.300000000745,
+        "wallTimeMs": 1781279491383,
+        "usedJSHeapSize": 102429985,
+        "totalJSHeapSize": 105771933,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 30774.199999999255,
+        "wallTimeMs": 1781279492381.9,
+        "usedJSHeapSize": 102164629,
+        "totalJSHeapSize": 103936925,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 31774.199999999255,
+        "wallTimeMs": 1781279493381.9,
+        "usedJSHeapSize": 102479381,
+        "totalJSHeapSize": 104985501,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 32774.39999999851,
+        "wallTimeMs": 1781279494382.0999,
+        "usedJSHeapSize": 100809424,
+        "totalJSHeapSize": 101577608,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 33775.300000000745,
+        "wallTimeMs": 1781279495383,
+        "usedJSHeapSize": 100852917,
+        "totalJSHeapSize": 102888349,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 34776.599999997765,
+        "wallTimeMs": 1781279496384.3,
+        "usedJSHeapSize": 101695041,
+        "totalJSHeapSize": 103674781,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 35775,
+        "wallTimeMs": 1781279497382.7,
+        "usedJSHeapSize": 101073085,
+        "totalJSHeapSize": 102364061,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 36775.099999997765,
+        "wallTimeMs": 1781279498382.8,
+        "usedJSHeapSize": 101291929,
+        "totalJSHeapSize": 102101917,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 37775.300000000745,
+        "wallTimeMs": 1781279499383,
+        "usedJSHeapSize": 101426861,
+        "totalJSHeapSize": 102101917,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 38775.300000000745,
+        "wallTimeMs": 1781279500383,
+        "usedJSHeapSize": 101536937,
+        "totalJSHeapSize": 102626205,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 39775.5,
+        "wallTimeMs": 1781279501383.2,
+        "usedJSHeapSize": 101652649,
+        "totalJSHeapSize": 102888349,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 40771.699999999255,
+        "wallTimeMs": 1781279502379.4,
+        "usedJSHeapSize": 101860529,
+        "totalJSHeapSize": 103936925,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 41775.699999999255,
+        "wallTimeMs": 1781279503383.4,
+        "usedJSHeapSize": 101993145,
+        "totalJSHeapSize": 103150493,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 42775.89999999851,
+        "wallTimeMs": 1781279504383.5999,
+        "usedJSHeapSize": 102141593,
+        "totalJSHeapSize": 103150493,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 43776,
+        "wallTimeMs": 1781279505383.7,
+        "usedJSHeapSize": 101567661,
+        "totalJSHeapSize": 102626205,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 44776.099999997765,
+        "wallTimeMs": 1781279506383.8,
+        "usedJSHeapSize": 101678973,
+        "totalJSHeapSize": 102626205,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 45776.39999999851,
+        "wallTimeMs": 1781279507384.0999,
+        "usedJSHeapSize": 101784689,
+        "totalJSHeapSize": 102626205,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 46776.39999999851,
+        "wallTimeMs": 1781279508384.0999,
+        "usedJSHeapSize": 102002861,
+        "totalJSHeapSize": 103936925,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 47776.699999999255,
+        "wallTimeMs": 1781279509384.4,
+        "usedJSHeapSize": 102140421,
+        "totalJSHeapSize": 103674781,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 48770.599999997765,
+        "wallTimeMs": 1781279510378.3,
+        "usedJSHeapSize": 102225009,
+        "totalJSHeapSize": 103150493,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 49770.800000000745,
+        "wallTimeMs": 1781279511378.5,
+        "usedJSHeapSize": 102335117,
+        "totalJSHeapSize": 103150493,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 50770.599999997765,
+        "wallTimeMs": 1781279512378.3,
+        "usedJSHeapSize": 102452233,
+        "totalJSHeapSize": 103150493,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 51770.699999999255,
+        "wallTimeMs": 1781279513378.4,
+        "usedJSHeapSize": 102562553,
+        "totalJSHeapSize": 103412637,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 52770.89999999851,
+        "wallTimeMs": 1781279514378.5999,
+        "usedJSHeapSize": 102657009,
+        "totalJSHeapSize": 103674781,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 53771.099999997765,
+        "wallTimeMs": 1781279515378.8,
+        "usedJSHeapSize": 102700449,
+        "totalJSHeapSize": 103412637,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 54771.39999999851,
+        "wallTimeMs": 1781279516379.0999,
+        "usedJSHeapSize": 102716037,
+        "totalJSHeapSize": 104723357,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 55771.099999997765,
+        "wallTimeMs": 1781279517378.8,
+        "usedJSHeapSize": 102737085,
+        "totalJSHeapSize": 104199069,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 56771.5,
+        "wallTimeMs": 1781279518379.2,
+        "usedJSHeapSize": 102746565,
+        "totalJSHeapSize": 103936925,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 57771.699999999255,
+        "wallTimeMs": 1781279519379.4,
+        "usedJSHeapSize": 102763133,
+        "totalJSHeapSize": 103674781,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 58772.199999999255,
+        "wallTimeMs": 1781279520379.9,
+        "usedJSHeapSize": 102989577,
+        "totalJSHeapSize": 103936925,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 59772.099999997765,
+        "wallTimeMs": 1781279521379.8,
+        "usedJSHeapSize": 103079369,
+        "totalJSHeapSize": 103936925,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 60772.099999997765,
+        "wallTimeMs": 1781279522379.8,
+        "usedJSHeapSize": 103067077,
+        "totalJSHeapSize": 104723357,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 61772.199999999255,
+        "wallTimeMs": 1781279523379.9,
+        "usedJSHeapSize": 103218981,
+        "totalJSHeapSize": 104723357,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 62772.5,
+        "wallTimeMs": 1781279524380.2,
+        "usedJSHeapSize": 103307001,
+        "totalJSHeapSize": 103936925,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 63772.599999997765,
+        "wallTimeMs": 1781279525380.3,
+        "usedJSHeapSize": 103303697,
+        "totalJSHeapSize": 104461213,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 64772.89999999851,
+        "wallTimeMs": 1781279526380.5999,
+        "usedJSHeapSize": 103969833,
+        "totalJSHeapSize": 105247645,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 65772.69999999925,
+        "wallTimeMs": 1781279527380.4,
+        "usedJSHeapSize": 103960857,
+        "totalJSHeapSize": 104985501,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 66775.09999999776,
+        "wallTimeMs": 1781279528382.8,
+        "usedJSHeapSize": 103981597,
+        "totalJSHeapSize": 104985501,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 67772.89999999851,
+        "wallTimeMs": 1781279529380.5999,
+        "usedJSHeapSize": 103985805,
+        "totalJSHeapSize": 106034077,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 68773.19999999925,
+        "wallTimeMs": 1781279530380.9,
+        "usedJSHeapSize": 104001113,
+        "totalJSHeapSize": 105247645,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 69773.19999999925,
+        "wallTimeMs": 1781279531380.9,
+        "usedJSHeapSize": 104001521,
+        "totalJSHeapSize": 104723357,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 70773.69999999925,
+        "wallTimeMs": 1781279532381.4,
+        "usedJSHeapSize": 104018897,
+        "totalJSHeapSize": 104723357,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 71774,
+        "wallTimeMs": 1781279533381.7,
+        "usedJSHeapSize": 104021641,
+        "totalJSHeapSize": 104723357,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 72774.19999999925,
+        "wallTimeMs": 1781279534381.9,
+        "usedJSHeapSize": 104037953,
+        "totalJSHeapSize": 104461213,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 73773.69999999925,
+        "wallTimeMs": 1781279535381.4,
+        "usedJSHeapSize": 104057681,
+        "totalJSHeapSize": 104985501,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 74774.30000000075,
+        "wallTimeMs": 1781279536382,
+        "usedJSHeapSize": 104080613,
+        "totalJSHeapSize": 106296221,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 75774.09999999776,
+        "wallTimeMs": 1781279537381.8,
+        "usedJSHeapSize": 104745973,
+        "totalJSHeapSize": 107082653,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 76774.09999999776,
+        "wallTimeMs": 1781279538381.8,
+        "usedJSHeapSize": 104746641,
+        "totalJSHeapSize": 106034077,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 77774.5,
+        "wallTimeMs": 1781279539382.2,
+        "usedJSHeapSize": 104756273,
+        "totalJSHeapSize": 105771933,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 78774.30000000075,
+        "wallTimeMs": 1781279540382,
+        "usedJSHeapSize": 104763621,
+        "totalJSHeapSize": 105771933,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 79774.39999999851,
+        "wallTimeMs": 1781279541382.0999,
+        "usedJSHeapSize": 104764497,
+        "totalJSHeapSize": 105509789,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 80775.09999999776,
+        "wallTimeMs": 1781279542382.8,
+        "usedJSHeapSize": 104763233,
+        "totalJSHeapSize": 105509789,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 81774.80000000075,
+        "wallTimeMs": 1781279543382.5,
+        "usedJSHeapSize": 104774069,
+        "totalJSHeapSize": 105509789,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 82775,
+        "wallTimeMs": 1781279544382.7,
+        "usedJSHeapSize": 104781929,
+        "totalJSHeapSize": 106296221,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 83775.5,
+        "wallTimeMs": 1781279545383.2,
+        "usedJSHeapSize": 104785809,
+        "totalJSHeapSize": 106296221,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      }
+    ],
+    "godotSamples": [],
+    "gate": {
+      "enabled": false,
+      "warmupMs": 60000,
+      "sampleIntervalMs": 1000,
+      "checks": [
+        {
+          "name": "js_wasm_heap_growth",
+          "passed": true,
+          "baselineBytes": 103067077,
+          "finalBytes": 104785809,
+          "maxBytes": 104785809,
+          "growthRatio": 0.016675858577031345,
+          "peakGrowthRatio": 0.016675858577031345,
+          "limit": 0.1,
+          "sampleCount": 24
+        },
+        {
+          "name": "godot_counter_stability",
+          "passed": false,
+          "reason": "insufficient Godot stability samples after warmup",
+          "sampleCount": 0,
+          "checks": []
+        },
+        {
+          "name": "five_second_average_fps",
+          "passed": true,
+          "minAverageFps": 116.4,
+          "limit": 30,
+          "windowCount": 21,
+          "worstWindow": {
+            "startMs": 80000,
+            "endMs": 85000,
+            "averageFps": 116.4,
+            "frames": 582
+          }
+        }
+      ],
+      "passed": false
+    }
+  },
+  "consoleLines": [
+    {
+      "wallTimeMs": 1781279463691.02,
+      "type": "log",
+      "text": "Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org"
+    },
+    {
+      "wallTimeMs": 1781279464189.48,
+      "type": "log",
+      "text": "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL"
+    },
+    {
+      "wallTimeMs": 1781279464352.1,
+      "type": "log",
+      "text": "Build configuration: Emscripten 4.0.20, single-threaded, no GDExtension support."
+    },
+    {
+      "wallTimeMs": 1781279464451.598,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781279464451.792,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464452.024,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781279464452.212,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464452.438,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781279464452.626,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464452.841,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781279464453.045,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464453.249,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781279464453.445,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464453.633,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781279464453.803,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464455.214,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=814.600 dt_ms=0.200 stage=session.enabled detail=label=menu display=web web=true"
+    },
+    {
+      "wallTimeMs": 1781279464455.552,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781279464455.687,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464455.798,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781279464455.897,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464456.011,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781279464456.112,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464456.23,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781279464456.327,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464456.425,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781279464456.519,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464456.695,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781279464456.794,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465074.101,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1433.600 dt_ms=619.200 stage=football.ready.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279465074.391,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1434.000 dt_ms=619.600 stage=loading.progress detail=label=Preparando arena value=0.08"
+    },
+    {
+      "wallTimeMs": 1781279465157.615,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781279465157.761,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465157.854,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781279465157.933,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465158.06,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781279465158.189,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465158.307,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781279465158.385,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465158.472,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781279465158.544,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465158.623,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781279465158.695,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465161.365,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781279465161.533,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465161.648,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781279465161.744,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465161.859,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781279465161.968,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465162.071,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781279465162.164,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465162.262,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781279465162.357,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465162.454,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781279465162.549,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465206.332,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1565.900 dt_ms=751.500 stage=loading.progress detail=label=Carregando jogadores value=0.36"
+    },
+    {
+      "wallTimeMs": 1781279465945.694,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2305.300 dt_ms=1490.900 stage=loading.progress detail=label=Aquecendo render value=0.52"
+    },
+    {
+      "wallTimeMs": 1781279465945.973,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2305.600 dt_ms=1491.200 stage=web_warmup.first_render.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279465948.029,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2307.700 dt_ms=1493.300 stage=web_warmup.visible detail=nodes=498 categories=11"
+    },
+    {
+      "wallTimeMs": 1781279465948.195,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2307.800 dt_ms=1493.400 stage=loading.progress detail=label=Aquecendo render: arena completa value=0.88"
+    },
+    {
+      "wallTimeMs": 1781279465948.362,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=2308.100 dt_ms=1493.700 stage=web_warmup.settle.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279474372.823,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=10732.500 dt_ms=9918.100 stage=web_warmup.settle.sample detail=frame=1 stable=0 frame_ms=8424.000 object_count=3189 node_count=756 resource_count=74 render_objects=958"
+    },
+    {
+      "wallTimeMs": 1781279474440.058,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=10799.700 dt_ms=9985.300 stage=web_warmup.settle.sample detail=frame=2 stable=0 frame_ms=67.300 object_count=3190 node_count=756 resource_count=74 render_objects=958"
+    },
+    {
+      "wallTimeMs": 1781279474457.19,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=10816.800 dt_ms=10002.400 stage=web_warmup.settle.sample detail=frame=3 stable=0 frame_ms=17.000 object_count=3189 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474481.535,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=10841.100 dt_ms=10026.700 stage=web_warmup.settle.sample detail=frame=4 stable=0 frame_ms=24.300 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474520.28,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=10879.800 dt_ms=10065.400 stage=web_warmup.settle.sample detail=frame=5 stable=0 frame_ms=38.700 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474553.251,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=10912.800 dt_ms=10098.400 stage=web_warmup.settle.sample detail=frame=6 stable=0 frame_ms=33.100 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474581.959,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=10941.600 dt_ms=10127.200 stage=web_warmup.settle.sample detail=frame=7 stable=1 frame_ms=28.700 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474613.471,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=10973.100 dt_ms=10158.700 stage=web_warmup.settle.sample detail=frame=8 stable=2 frame_ms=31.500 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474645.873,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11005.400 dt_ms=10191.000 stage=web_warmup.settle.sample detail=frame=9 stable=3 frame_ms=32.200 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474661.778,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11021.300 dt_ms=10206.900 stage=web_warmup.settle.sample detail=frame=10 stable=4 frame_ms=16.000 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474667.171,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11026.700 dt_ms=10212.300 stage=web_warmup.settle.sample detail=frame=11 stable=5 frame_ms=5.500 object_count=3188 node_count=756 resource_count=74 render_objects=957"
+    },
+    {
+      "wallTimeMs": 1781279474667.454,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11027.100 dt_ms=10212.700 stage=web_warmup.settle.end detail=duration_ms=8719.000 stable_frames=5 frames=11"
+    },
+    {
+      "wallTimeMs": 1781279474667.653,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11027.300 dt_ms=10212.900 stage=web_warmup.core.end detail=shown=498/498"
+    },
+    {
+      "wallTimeMs": 1781279474667.954,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11027.600 dt_ms=10213.200 stage=web_warmup.first_render.end detail=duration_ms=8722.000 nodes=498"
+    },
+    {
+      "wallTimeMs": 1781279474668.319,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11027.800 dt_ms=10213.400 stage=loading.progress detail=label=Preparando partida value=0.90"
+    },
+    {
+      "wallTimeMs": 1781279474668.627,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11028.200 dt_ms=10213.800 stage=football.restart_play_initial.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279474668.821,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11028.500 dt_ms=10214.100 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781279474669.354,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11029.000 dt_ms=10214.600 stage=football.restart_play_initial.end detail=duration_ms=0.800"
+    },
+    {
+      "wallTimeMs": 1781279474669.545,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11029.200 dt_ms=10214.800 stage=loading.progress detail=label=Aquecendo efeitos value=0.92"
+    },
+    {
+      "wallTimeMs": 1781279474669.746,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11029.400 dt_ms=10215.000 stage=web_warmup.first_use_feedback.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279474669.976,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11029.600 dt_ms=10215.200 stage=web_warmup.first_use_frame detail=label=position frame=1/1"
+    },
+    {
+      "wallTimeMs": 1781279474801.116,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11160.600 dt_ms=10346.200 stage=web_warmup.first_use_feedback.step detail=gameplay_strong_kick"
+    },
+    {
+      "wallTimeMs": 1781279474801.546,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11161.200 dt_ms=10346.800 stage=event.player_kick_request detail=strong=true super=false"
+    },
+    {
+      "wallTimeMs": 1781279474801.932,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11161.600 dt_ms=10347.200 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781279474802.117,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11161.800 dt_ms=10347.400 stage=web_warmup.first_use_frame detail=label=gameplay_strong_kick frame=1/3"
+    },
+    {
+      "wallTimeMs": 1781279474806.753,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11166.400 dt_ms=10352.000 stage=web_warmup.first_use_frame detail=label=gameplay_strong_kick frame=2/3"
+    },
+    {
+      "wallTimeMs": 1781279474949.309,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=11309.000 dt_ms=10494.600 stage=web_warmup.first_use_frame detail=label=gameplay_strong_kick frame=3/3"
+    },
+    {
+      "wallTimeMs": 1781279477080.144,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13439.800 dt_ms=12625.400 stage=web_warmup.first_use_feedback.step detail=kick"
+    },
+    {
+      "wallTimeMs": 1781279477080.366,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13440.000 dt_ms=12625.600 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781279477080.601,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13440.300 dt_ms=12625.900 stage=web_warmup.first_use_frame detail=label=kick frame=1/1"
+    },
+    {
+      "wallTimeMs": 1781279477088.404,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13448.000 dt_ms=12633.600 stage=web_warmup.first_use_feedback.step detail=goal_player"
+    },
+    {
+      "wallTimeMs": 1781279477088.617,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13448.200 dt_ms=12633.800 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781279477088.762,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13448.400 dt_ms=12634.000 stage=web_warmup.first_use_feedback.step detail=goal_bot"
+    },
+    {
+      "wallTimeMs": 1781279477088.9,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13448.600 dt_ms=12634.200 stage=event.goal_vfx detail=player_scored=false"
+    },
+    {
+      "wallTimeMs": 1781279477089.02,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13448.700 dt_ms=12634.300 stage=web_warmup.first_use_feedback.step detail=confetti_player"
+    },
+    {
+      "wallTimeMs": 1781279477089.157,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13448.900 dt_ms=12634.500 stage=event.confetti_vfx detail=player_colored=true"
+    },
+    {
+      "wallTimeMs": 1781279477089.271,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13449.000 dt_ms=12634.600 stage=web_warmup.first_use_feedback.step detail=confetti_bot"
+    },
+    {
+      "wallTimeMs": 1781279477089.394,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13449.100 dt_ms=12634.700 stage=event.confetti_vfx detail=player_colored=false"
+    },
+    {
+      "wallTimeMs": 1781279477089.538,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13449.200 dt_ms=12634.800 stage=web_warmup.first_use_frame detail=label=goal_confetti_batch frame=1/3"
+    },
+    {
+      "wallTimeMs": 1781279477093.233,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13452.900 dt_ms=12638.500 stage=web_warmup.first_use_frame detail=label=goal_confetti_batch frame=2/3"
+    },
+    {
+      "wallTimeMs": 1781279477100.354,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13460.000 dt_ms=12645.600 stage=web_warmup.first_use_frame detail=label=goal_confetti_batch frame=3/3"
+    },
+    {
+      "wallTimeMs": 1781279477105.749,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13465.400 dt_ms=12651.000 stage=web_warmup.first_use_feedback.step detail=hud_goal_messages"
+    },
+    {
+      "wallTimeMs": 1781279477106.01,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13465.600 dt_ms=12651.200 stage=web_warmup.first_use_frame detail=label=hud_goal_messages frame=1/3"
+    },
+    {
+      "wallTimeMs": 1781279477112.937,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13472.500 dt_ms=12658.100 stage=web_warmup.first_use_frame detail=label=hud_goal_messages frame=2/3"
+    },
+    {
+      "wallTimeMs": 1781279477119.635,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13479.300 dt_ms=12664.900 stage=web_warmup.first_use_frame detail=label=hud_goal_messages frame=3/3"
+    },
+    {
+      "wallTimeMs": 1781279477126.56,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13486.200 dt_ms=12671.800 stage=web_warmup.first_use_feedback.step detail=fireball"
+    },
+    {
+      "wallTimeMs": 1781279477126.858,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13486.500 dt_ms=12672.100 stage=event.fireball_vfx detail=speed=38.50 first=true"
+    },
+    {
+      "wallTimeMs": 1781279477127.138,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13486.800 dt_ms=12672.400 stage=web_warmup.first_use_feedback.step detail=round_end"
+    },
+    {
+      "wallTimeMs": 1781279477127.336,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13487.000 dt_ms=12672.600 stage=event.round_end detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781279477127.507,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13487.100 dt_ms=12672.700 stage=web_warmup.first_use_feedback.step detail=result_flow"
+    },
+    {
+      "wallTimeMs": 1781279477127.66,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13487.400 dt_ms=12673.000 stage=event.result detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781279477128.045,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13487.700 dt_ms=12673.300 stage=event.round_end detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781279477128.242,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13487.900 dt_ms=12673.500 stage=web_warmup.first_use_frame detail=label=result_flow frame=1/3"
+    },
+    {
+      "wallTimeMs": 1781279477205.935,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13565.600 dt_ms=12751.200 stage=web_warmup.first_use_frame detail=label=result_flow frame=2/3"
+    },
+    {
+      "wallTimeMs": 1781279477210.902,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=13570.600 dt_ms=12756.200 stage=web_warmup.first_use_frame detail=label=result_flow frame=3/3"
+    },
+    {
+      "wallTimeMs": 1781279478008.923,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14368.500 dt_ms=13554.100 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781279478009.293,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14369.000 dt_ms=13554.600 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781279478009.711,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14369.400 dt_ms=13555.000 stage=web_warmup.first_use_frame detail=label=restart_after_result frame=1/1"
+    },
+    {
+      "wallTimeMs": 1781279478015.714,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14375.400 dt_ms=13561.000 stage=web_warmup.first_use_frame detail=label=clear_effects frame=1/1"
+    },
+    {
+      "wallTimeMs": 1781279478022.565,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14382.200 dt_ms=13567.800 stage=web_warmup.first_use_feedback.end detail=duration_ms=3352.700"
+    },
+    {
+      "wallTimeMs": 1781279478022.903,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14382.500 dt_ms=13568.100 stage=football.restart_play_after_warmup.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279478023.107,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14382.800 dt_ms=13568.400 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781279478023.561,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14383.200 dt_ms=13568.800 stage=football.restart_play_after_warmup.end detail=duration_ms=0.800"
+    },
+    {
+      "wallTimeMs": 1781279478023.748,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14383.400 dt_ms=13569.000 stage=loading.progress detail=label=Estabilizando quadros value=0.97"
+    },
+    {
+      "wallTimeMs": 1781279478023.932,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14383.600 dt_ms=13569.200 stage=web_warmup.settle.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279478029.693,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14389.200 dt_ms=13574.800 stage=web_warmup.settle.sample detail=frame=1 stable=0 frame_ms=5.400 object_count=3189 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478036.431,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14396.000 dt_ms=13581.600 stage=web_warmup.settle.sample detail=frame=2 stable=0 frame_ms=6.700 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478043.297,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14402.900 dt_ms=13588.500 stage=web_warmup.settle.sample detail=frame=3 stable=1 frame_ms=6.900 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478050.713,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14410.200 dt_ms=13595.800 stage=web_warmup.settle.sample detail=frame=4 stable=2 frame_ms=7.300 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478057.221,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14416.800 dt_ms=13602.400 stage=web_warmup.settle.sample detail=frame=5 stable=3 frame_ms=6.700 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478064.335,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14423.900 dt_ms=13609.500 stage=web_warmup.settle.sample detail=frame=6 stable=4 frame_ms=7.100 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478071.146,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14430.700 dt_ms=13616.300 stage=web_warmup.settle.sample detail=frame=7 stable=5 frame_ms=6.700 object_count=3190 node_count=756 resource_count=74 render_objects=633"
+    },
+    {
+      "wallTimeMs": 1781279478071.386,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14431.000 dt_ms=13616.600 stage=web_warmup.settle.end detail=duration_ms=47.400 stable_frames=5 frames=7"
+    },
+    {
+      "wallTimeMs": 1781279478071.871,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14431.500 dt_ms=13617.100 stage=loading.progress detail=label=Entrando em campo value=1.00"
+    },
+    {
+      "wallTimeMs": 1781279478073.027,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14432.600 dt_ms=13618.200 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781279478073.274,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14432.900 dt_ms=13618.500 stage=event.match_start detail="
+    },
+    {
+      "wallTimeMs": 1781279478073.514,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14433.200 dt_ms=13618.800 stage=perf_scenario.start detail="
+    },
+    {
+      "wallTimeMs": 1781279478073.787,
+      "type": "log",
+      "text": "[jdc_capture] scene=play camera=Track04ECaptureCamera fov=50.0 pos=(29.0, 13.2, 34.0) target=(0.0, 1.9, 1.5)"
+    },
+    {
+      "wallTimeMs": 1781279478073.944,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14433.700 dt_ms=13619.300 stage=football.ready.end detail=duration_ms=13000.100"
+    },
+    {
+      "wallTimeMs": 1781279478074.077,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14433.700 dt_ms=13619.300 stage=loading.gameplay_released detail="
+    },
+    {
+      "wallTimeMs": 1781279478074.223,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14433.900 dt_ms=13619.500 stage=web_warmup.settle.begin detail="
+    },
+    {
+      "wallTimeMs": 1781279478087.053,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14446.700 dt_ms=13632.300 stage=web_warmup.settle.sample detail=frame=1 stable=0 frame_ms=12.500 object_count=3194 node_count=757 resource_count=74 render_objects=863"
+    },
+    {
+      "wallTimeMs": 1781279478091.881,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14451.500 dt_ms=13637.100 stage=web_warmup.settle.sample detail=frame=2 stable=0 frame_ms=5.000 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478098.836,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14458.500 dt_ms=13644.100 stage=web_warmup.settle.sample detail=frame=3 stable=1 frame_ms=6.900 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478106.264,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14465.900 dt_ms=13651.500 stage=web_warmup.settle.sample detail=frame=4 stable=2 frame_ms=7.400 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478112.811,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14472.400 dt_ms=13658.000 stage=web_warmup.settle.sample detail=frame=5 stable=3 frame_ms=6.500 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478120.275,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14479.900 dt_ms=13665.500 stage=web_warmup.settle.sample detail=frame=6 stable=4 frame_ms=7.500 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478126.797,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14486.400 dt_ms=13672.000 stage=web_warmup.settle.sample detail=frame=7 stable=5 frame_ms=6.400 object_count=3195 node_count=757 resource_count=74 render_objects=793"
+    },
+    {
+      "wallTimeMs": 1781279478127.068,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14486.700 dt_ms=13672.300 stage=web_warmup.settle.end detail=duration_ms=52.800 stable_frames=5 frames=7"
+    },
+    {
+      "wallTimeMs": 1781279478127.306,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14486.900 dt_ms=13672.500 stage=loading.overlay_hidden detail="
+    },
+    {
+      "wallTimeMs": 1781279478127.5,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=14487.200 dt_ms=13672.800 stage=event.visible_match_start detail="
+    },
+    {
+      "wallTimeMs": 1781279480071.833,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=16431.400 dt_ms=15617.000 stage=perf_scenario.step detail=action=strong_kick"
+    },
+    {
+      "wallTimeMs": 1781279480072.082,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=16431.700 dt_ms=15617.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781279480072.299,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=16432.000 dt_ms=15617.600 stage=event.player_kick_request detail=strong=true super=false"
+    },
+    {
+      "wallTimeMs": 1781279480072.586,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=16432.200 dt_ms=15617.800 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781279481273.382,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=17632.900 dt_ms=16818.500 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781279481273.704,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=17633.300 dt_ms=16818.900 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781279481287.184,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=17646.800 dt_ms=16832.400 stage=event.fireball_vfx detail=speed=24.53 first=false"
+    },
+    {
+      "wallTimeMs": 1781279484072.357,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=20431.900 dt_ms=19617.500 stage=perf_scenario.step detail=action=bot_goal_confetti"
+    },
+    {
+      "wallTimeMs": 1781279484072.591,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=20432.300 dt_ms=19617.900 stage=event.goal_detected detail=side=south player_scored=false"
+    },
+    {
+      "wallTimeMs": 1781279484072.828,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=20432.500 dt_ms=19618.100 stage=event.goal_vfx detail=player_scored=false"
+    },
+    {
+      "wallTimeMs": 1781279484073.009,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=20432.600 dt_ms=19618.200 stage=event.goal_gamefeel detail=web_slowmo_disabled=true"
+    },
+    {
+      "wallTimeMs": 1781279484073.163,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=20432.900 dt_ms=19618.500 stage=event.arcade_emote detail=player=false"
+    },
+    {
+      "wallTimeMs": 1781279484073.337,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=20433.000 dt_ms=19618.600 stage=event.confetti_vfx detail=player_colored=false"
+    },
+    {
+      "wallTimeMs": 1781279485322.196,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=21681.800 dt_ms=20867.400 stage=event.restart_play detail=after_goal=true"
+    },
+    {
+      "wallTimeMs": 1781279488072.878,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=24432.500 dt_ms=23618.100 stage=perf_scenario.step detail=action=super_fireball"
+    },
+    {
+      "wallTimeMs": 1781279488073.146,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=24432.800 dt_ms=23618.400 stage=event.player_kick_request detail=strong=true super=true"
+    },
+    {
+      "wallTimeMs": 1781279488073.442,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=24433.100 dt_ms=23618.700 stage=event.kick_vfx detail=strong=true"
+    },
+    {
+      "wallTimeMs": 1781279488086.791,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=24446.400 dt_ms=23632.000 stage=event.fireball_vfx detail=speed=35.28 first=false"
+    },
+    {
+      "wallTimeMs": 1781279489753.643,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=26113.300 dt_ms=25298.900 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781279489753.979,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=26113.600 dt_ms=25299.200 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781279492073.545,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=28433.100 dt_ms=27618.700 stage=perf_scenario.step detail=action=jump_pad"
+    },
+    {
+      "wallTimeMs": 1781279495004.516,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=31364.000 dt_ms=30549.600 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781279495956.098,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=32315.600 dt_ms=31501.200 stage=event.bot_kick_request detail="
+    },
+    {
+      "wallTimeMs": 1781279495956.416,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=32316.000 dt_ms=31501.600 stage=event.kick_vfx detail=strong=false"
+    },
+    {
+      "wallTimeMs": 1781279496074.125,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=32433.700 dt_ms=31619.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781279496074.363,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=32434.100 dt_ms=31619.700 stage=perf_scenario.step detail=action=result"
+    },
+    {
+      "wallTimeMs": 1781279496074.527,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=32434.200 dt_ms=31619.800 stage=event.goal_detected detail=side=north player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781279496074.752,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=32434.400 dt_ms=31620.000 stage=event.goal_vfx detail=player_scored=true"
+    },
+    {
+      "wallTimeMs": 1781279496074.921,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=32434.600 dt_ms=31620.200 stage=event.goal_gamefeel detail=web_slowmo_disabled=true"
+    },
+    {
+      "wallTimeMs": 1781279496075.101,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=32434.700 dt_ms=31620.300 stage=event.result detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781279496075.592,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=32435.200 dt_ms=31620.800 stage=event.round_end detail=player_won=true"
+    },
+    {
+      "wallTimeMs": 1781279500074.412,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=36434.000 dt_ms=35619.600 stage=perf_scenario.step detail=action=rematch"
+    },
+    {
+      "wallTimeMs": 1781279500074.824,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=36434.400 dt_ms=35620.000 stage=event.rematch detail="
+    },
+    {
+      "wallTimeMs": 1781279500075.018,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=36434.700 dt_ms=35620.300 stage=event.pause_menu detail=open=false"
+    },
+    {
+      "wallTimeMs": 1781279500075.316,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=36435.000 dt_ms=35620.600 stage=event.restart_play detail=after_goal=false"
+    },
+    {
+      "wallTimeMs": 1781279504074.996,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=40434.500 dt_ms=39620.100 stage=perf_scenario.step detail=action=coast index=6"
+    },
+    {
+      "wallTimeMs": 1781279508075.519,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=44435.100 dt_ms=43620.700 stage=perf_scenario.step detail=action=coast index=7"
+    },
+    {
+      "wallTimeMs": 1781279512076.06,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=48435.600 dt_ms=47621.200 stage=perf_scenario.step detail=action=coast index=8"
+    },
+    {
+      "wallTimeMs": 1781279516076.736,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=52436.300 dt_ms=51621.900 stage=perf_scenario.step detail=action=coast index=9"
+    },
+    {
+      "wallTimeMs": 1781279520077.224,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=56436.800 dt_ms=55622.400 stage=perf_scenario.step detail=action=coast index=10"
+    },
+    {
+      "wallTimeMs": 1781279524077.86,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=60437.500 dt_ms=59623.100 stage=perf_scenario.step detail=action=coast index=11"
+    },
+    {
+      "wallTimeMs": 1781279528078.463,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=64438.100 dt_ms=63623.700 stage=perf_scenario.step detail=action=coast index=12"
+    },
+    {
+      "wallTimeMs": 1781279532079.001,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=68438.600 dt_ms=67624.200 stage=perf_scenario.step detail=action=coast index=13"
+    },
+    {
+      "wallTimeMs": 1781279536079.576,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=72439.200 dt_ms=71624.800 stage=perf_scenario.step detail=action=coast index=14"
+    },
+    {
+      "wallTimeMs": 1781279540080.207,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=76439.700 dt_ms=75625.300 stage=perf_scenario.step detail=action=coast index=15"
+    },
+    {
+      "wallTimeMs": 1781279544080.712,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=80440.300 dt_ms=79625.900 stage=perf_scenario.step detail=action=coast index=16"
+    }
+  ],
+  "consoleWarnings": [
+    {
+      "wallTimeMs": 1781279464451.598,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781279464451.792,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464452.024,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781279464452.212,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464452.438,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781279464452.626,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464452.841,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781279464453.045,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464453.249,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781279464453.445,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464453.633,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781279464453.803,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464455.552,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781279464455.687,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464455.798,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781279464455.897,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464456.011,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781279464456.112,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464456.23,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781279464456.327,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464456.425,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781279464456.519,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279464456.695,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781279464456.794,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465157.615,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781279465157.761,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465157.854,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781279465157.933,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465158.06,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781279465158.189,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465158.307,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781279465158.385,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465158.472,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781279465158.544,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465158.623,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballRoot: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781279465158.695,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465161.365,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781279465161.533,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465161.648,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781279465161.744,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465161.859,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781279465161.968,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465162.071,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781279465162.164,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465162.262,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781279465162.357,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781279465162.454,
+      "type": "error",
+      "text": "WARNING: RenderProfile FootballFieldBuilder: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781279465162.549,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    }
+  ],
+  "consoleErrorLines": [],
+  "pageErrors": [],
+  "releaseInfo": null,
+  "assertions": {
+    "expectedReleaseRoot": "",
+    "actualReleaseRoot": "",
+    "releaseRootMatches": true,
+    "expectedStage": "event.rematch",
+    "expectedStageSeen": true,
+    "noPageErrors": true,
+    "noConsoleErrors": true
+  },
+  "screenshotPath": "D:\\Estudio-worktrees\\jogodacopa-track05b\\Projetos\\JogoDaCopa\\docs\\playtest-reports\\track-05b-data\\05b-local-first-minute-gate-pass19.png"
+}

@@ -3,6 +3,7 @@ extends RigidBody3D
 
 const BallPanelShader = preload("res://assets/football/football_ball_panels.gdshader")
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
+const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 const FIREBALL_ON_SPEED: float = 24.0
 const FIREBALL_OFF_SPEED: float = 21.0
 
@@ -28,6 +29,7 @@ var fireball_particles: GPUParticles3D
 var squash_timer: float = 0.0
 var speed_trail_active: bool = false
 var fireball_active: bool = false
+var fireball_seen_active_once: bool = false
 var toon_render_enabled: bool = false
 var toon_outline_material: StandardMaterial3D
 
@@ -265,6 +267,7 @@ func _build_ball_material() -> ShaderMaterial:
 	return material
 
 func _update_visual_asset(delta: float) -> void:
+	var was_fireball_active := fireball_active
 	if trail_particles != null:
 		var ball_speed := linear_velocity.length()
 		if ball_speed > 10.5:
@@ -276,6 +279,9 @@ func _update_visual_asset(delta: float) -> void:
 			fireball_active = true
 		elif ball_speed < FIREBALL_OFF_SPEED:
 			fireball_active = false
+		if fireball_active and not was_fireball_active:
+			PerfProbeScript.mark(self, "event.fireball_vfx", "speed=%.2f first=%s" % [ball_speed, str(not fireball_seen_active_once)])
+			fireball_seen_active_once = true
 	if fireball_particles != null:
 		fireball_particles.emitting = fireball_active
 	_update_fireball_material()
