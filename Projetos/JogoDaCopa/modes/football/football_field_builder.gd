@@ -8,6 +8,11 @@ const DEFAULT_PLAYER_KIT_COLOR := Color(0.98, 0.82, 0.06, 1.0)
 const DEFAULT_BOT_KIT_COLOR := Color(0.14, 0.42, 0.9, 1.0)
 const DEFAULT_COUNTRY_NAMES := ["BRASIL", "FRANCA", "ARGENTINA", "ALEMANHA", "ESPANHA", "INGLATERRA", "PORTUGAL", "JAPAO"]
 
+static var _net_material: ShaderMaterial
+static var _crowd_material: ShaderMaterial
+static var _flag_material: ShaderMaterial
+static var _halo_material_cache: Dictionary = {}
+
 static func build(parent: Node3D, config: Dictionary) -> void:
 	RenderProfileScript.report_runtime_profile_once("FootballFieldBuilder")
 	var build_begin := PerfProbeScript.begin(parent, "field_builder.total")
@@ -400,6 +405,9 @@ static func _add_flag_mast(parent: Node3D, node_name: String, center: Vector3, b
 	mesh.size = Vector2(2.2, 1.08)
 	flag.mesh = mesh
 	flag.material_override = _build_flag_material(base_color, accent_color, wave_phase)
+	flag.set_instance_shader_parameter("base_color", Vector3(base_color.r, base_color.g, base_color.b))
+	flag.set_instance_shader_parameter("accent_color", Vector3(accent_color.r, accent_color.g, accent_color.b))
+	flag.set_instance_shader_parameter("wave_phase", wave_phase)
 	flag.set_meta("country_name", country_name)
 	flag.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent.add_child(flag)
@@ -548,6 +556,9 @@ static func _add_net_panel(parent: Node3D, node_name: String, node_position: Vec
 static func _add_crowd_tile(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, base_color: Color, alternate_color: Color, wave_phase: float) -> MeshInstance3D:
 	var mesh := _add_decor_box(parent, node_name, node_position, node_size, base_color)
 	mesh.material_override = _build_crowd_material(base_color, alternate_color, wave_phase)
+	mesh.set_instance_shader_parameter("base_color", Vector3(base_color.r, base_color.g, base_color.b))
+	mesh.set_instance_shader_parameter("alternate_color", Vector3(alternate_color.r, alternate_color.g, alternate_color.b))
+	mesh.set_instance_shader_parameter("wave_phase", wave_phase)
 	mesh.add_to_group("football_crowd")
 	mesh.set_meta("football_crowd_material", true)
 	return mesh
@@ -697,6 +708,8 @@ void fragment() {
 	return material
 
 static func _build_net_material() -> ShaderMaterial:
+	if _net_material != null:
+		return _net_material
 	var shader := Shader.new()
 	shader.code = """
 shader_type spatial;
@@ -720,18 +733,21 @@ void fragment() {
 	var material := ShaderMaterial.new()
 	material.shader = shader
 	material.set_shader_parameter("render_emission_scale", RenderProfileScript.get_emission_multiplier(RenderProfileScript.ROLE_SHADER_NET))
+	_net_material = material
 	return material
 
 static func _build_crowd_material(base_color: Color, alternate_color: Color, wave_phase: float) -> ShaderMaterial:
+	if _crowd_material != null:
+		return _crowd_material
 	var shader := Shader.new()
 	shader.code = """
 shader_type spatial;
 render_mode diffuse_burley, specular_schlick_ggx;
 
-uniform vec3 base_color = vec3(0.9, 0.1, 0.1);
-uniform vec3 alternate_color = vec3(0.1, 0.4, 0.9);
+instance uniform vec3 base_color = vec3(0.9, 0.1, 0.1);
+instance uniform vec3 alternate_color = vec3(0.1, 0.4, 0.9);
 uniform float crowd_excitement = 0.0;
-uniform float wave_phase = 0.0;
+instance uniform float wave_phase = 0.0;
 uniform float render_emission_scale = 1.0;
 varying vec3 local_pos;
 
@@ -761,22 +777,22 @@ void fragment() {
 """
 	var material := ShaderMaterial.new()
 	material.shader = shader
-	material.set_shader_parameter("base_color", Vector3(base_color.r, base_color.g, base_color.b))
-	material.set_shader_parameter("alternate_color", Vector3(alternate_color.r, alternate_color.g, alternate_color.b))
-	material.set_shader_parameter("wave_phase", wave_phase)
 	material.set_shader_parameter("crowd_excitement", 0.0)
 	material.set_shader_parameter("render_emission_scale", RenderProfileScript.get_emission_multiplier(RenderProfileScript.ROLE_SHADER_CROWD))
+	_crowd_material = material
 	return material
 
 static func _build_flag_material(base_color: Color, accent_color: Color, wave_phase: float) -> ShaderMaterial:
+	if _flag_material != null:
+		return _flag_material
 	var shader := Shader.new()
 	shader.code = """
 shader_type spatial;
 render_mode unshaded, cull_disabled;
 
-uniform vec3 base_color = vec3(0.9, 0.1, 0.1);
-uniform vec3 accent_color = vec3(1.0, 0.9, 0.1);
-uniform float wave_phase = 0.0;
+instance uniform vec3 base_color = vec3(0.9, 0.1, 0.1);
+instance uniform vec3 accent_color = vec3(1.0, 0.9, 0.1);
+instance uniform float wave_phase = 0.0;
 uniform float render_emission_scale = 1.0;
 
 void vertex() {
@@ -794,13 +810,14 @@ void fragment() {
 """
 	var material := ShaderMaterial.new()
 	material.shader = shader
-	material.set_shader_parameter("base_color", Vector3(base_color.r, base_color.g, base_color.b))
-	material.set_shader_parameter("accent_color", Vector3(accent_color.r, accent_color.g, accent_color.b))
-	material.set_shader_parameter("wave_phase", wave_phase)
 	material.set_shader_parameter("render_emission_scale", RenderProfileScript.get_emission_multiplier(RenderProfileScript.ROLE_SHADER_FLAG))
+	_flag_material = material
 	return material
 
 static func _build_halo_material(halo_color: Color) -> ShaderMaterial:
+	var cache_key := _color_key(halo_color)
+	if _halo_material_cache.has(cache_key):
+		return _halo_material_cache[cache_key]
 	var shader := Shader.new()
 	shader.code = """
 shader_type spatial;
@@ -822,16 +839,21 @@ void fragment() {
 	material.shader = shader
 	material.set_shader_parameter("halo_color", Vector3(halo_color.r, halo_color.g, halo_color.b))
 	material.set_shader_parameter("render_emission_scale", RenderProfileScript.get_emission_multiplier(RenderProfileScript.ROLE_SHADER_HALO))
+	_halo_material_cache[cache_key] = material
 	return material
 
 static func _apply_crowd_excitement_to_node(node: Node, crowd_excitement: float) -> void:
-	if node is MeshInstance3D and node.has_meta("football_crowd_material"):
-		var mesh := node as MeshInstance3D
-		var material := mesh.material_override as ShaderMaterial
+	if node.has_meta("football_crowd_material"):
+		var material: ShaderMaterial
+		if node is MeshInstance3D:
+			material = (node as MeshInstance3D).material_override as ShaderMaterial
 		if material != null:
 			material.set_shader_parameter("crowd_excitement", crowd_excitement)
 	for child in node.get_children():
 		_apply_crowd_excitement_to_node(child, crowd_excitement)
+
+static func _color_key(color: Color) -> String:
+	return "%.4f,%.4f,%.4f,%.4f" % [color.r, color.g, color.b, color.a]
 
 static func _get_color_config(config: Dictionary, key: String, fallback: Color) -> Color:
 	var value: Variant = config.get(key, fallback)
