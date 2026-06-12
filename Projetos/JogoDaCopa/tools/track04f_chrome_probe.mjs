@@ -28,8 +28,10 @@ const minFiveSecondAverageFps = Number(args.get("min-5s-avg-fps") || "30");
 const firstMinuteGate = args.get("first-minute-gate") === "1";
 const firstMinuteDurationMs = Number(args.get("first-minute-duration-ms") || "60000");
 const firstMinuteHitchThresholdMs = Number(args.get("first-minute-hitch-threshold-ms") || "100");
-const firstMinuteStartStage = args.get("first-minute-start-stage") || "event.match_start";
+const firstMinuteStartStage = args.get("first-minute-start-stage") || "event.visible_match_start";
 const eventHitchWindowMs = Number(args.get("event-hitch-window-ms") || "2000");
+const godotStabilitySamplesEnabled = args.get("godot-stability-samples") !== "0";
+const godotDetailEnabled = args.get("godot-detail") !== "0";
 const httpPort = Number(args.get("http-port") || "8064");
 const cdpPort = Number(args.get("cdp-port") || "9223");
 const label = args.get("label") || "chrome-probe";
@@ -186,6 +188,12 @@ function nearestEvent(hitchWallTimeMs, events) {
     }
   }
   return best ? { ...best, distanceMs: bestDistance } : null;
+}
+
+function withQueryParam(urlText, key, value) {
+  const url = new URL(urlText);
+  url.searchParams.set(key, value);
+  return url.toString();
 }
 
 function findFirstEvent(events, stage) {
@@ -588,7 +596,13 @@ const frameCollector = `
   await client.send("Page.addScriptToEvaluateOnNewDocument", { source: frameCollector });
   await client.send("Page.addScriptToEvaluateOnNewDocument", { source: stabilityCollector });
 
-  const targetUrl = usingRemoteUrl ? remoteUrl : `http://127.0.0.1:${httpPort}${route}`;
+  let targetUrl = usingRemoteUrl ? remoteUrl : `http://127.0.0.1:${httpPort}${route}`;
+  if (!godotStabilitySamplesEnabled) {
+    targetUrl = withQueryParam(targetUrl, "jdc_perf_stability", "0");
+  }
+  if (!godotDetailEnabled) {
+    targetUrl = withQueryParam(targetUrl, "jdc_perf_detail", "0");
+  }
   await client.send("Page.navigate", { url: targetUrl });
   await delay(500);
   await client.send("Runtime.evaluate", {

@@ -10,6 +10,11 @@ const BUS_UI: StringName = &"UI"
 const BUS_AMBIENCE: StringName = &"Ambience"
 const SFX_POOL_SIZE: int = 14
 const UI_POOL_SIZE: int = 8
+const MAX_EFFECT_FREES_PER_FRAME: int = 3
+const MAX_RETIRED_PARTICLE_EFFECTS: int = 256
+const MAX_RETIRED_VISUAL_EFFECTS: int = 256
+const MAX_RETIRED_WEB_SPHERES: int = 192
+const MAX_RETIRED_WEB_LIGHTS: int = 96
 const AMBIENCE_PLAY_DB: float = -14.0
 const AMBIENCE_MENU_DB: float = -24.0
 const AMBIENCE_GOAL_DB: float = -8.5
@@ -43,6 +48,13 @@ const FOOTBALL_STRONG_COLOR: Color = Color(0.34, 0.88, 1.0, 1.0)
 const FOOTBALL_GOAL_COLOR: Color = Color(1.0, 0.86, 0.22, 1.0)
 
 var active_effects: Array[Dictionary] = []
+var pending_effect_frees: Array[Node] = []
+var retired_particle_effects: Array[Node] = []
+var retired_visual_effects: Array[Node] = []
+var retired_web_spheres: Array[MeshInstance3D] = []
+var retired_web_lights: Array[OmniLight3D] = []
+var web_sphere_mesh: SphereMesh
+var web_material_cache: Dictionary = {}
 var last_event: StringName = &""
 var player_shot_count: int = 0
 var hit_count: int = 0
@@ -92,15 +104,24 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_update_ambience(delta)
+	var free_budget := MAX_EFFECT_FREES_PER_FRAME
+	while free_budget > 0 and not pending_effect_frees.is_empty():
+		var pending_node: Node = pending_effect_frees.pop_back() as Node
+		if is_instance_valid(pending_node):
+			_retire_effect_node(pending_node)
+			free_budget -= 1
 	for index in range(active_effects.size() - 1, -1, -1):
-		var entry := active_effects[index]
+		var entry: Dictionary = active_effects[index]
 		entry["time"] = float(entry["time"]) - delta
 		active_effects[index] = entry
 		if float(entry["time"]) > 0.0:
 			continue
 		var effect_node: Node = entry["node"]
-		if is_instance_valid(effect_node):
-			effect_node.queue_free()
+		if free_budget > 0 and is_instance_valid(effect_node):
+			_retire_effect_node(effect_node)
+			free_budget -= 1
+		elif effect_node != null:
+			pending_effect_frees.append(effect_node)
 		active_effects.remove_at(index)
 
 func play_player_shot(origin: Vector3, direction: Vector3) -> void:
@@ -168,6 +189,8 @@ func play_pickup(pickup_position: Vector3, pickup_kind: StringName) -> void:
 func play_jump_pad(pad_position: Vector3, launch_velocity: Vector3) -> void:
 	last_event = &"jump_pad"
 	jump_pad_count += 1
+	if RenderProfileScript.is_web_platform():
+		return
 	var launch_direction := launch_velocity.normalized() if launch_velocity.length_squared() > 0.0001 else Vector3.UP
 	_spawn_beam(pad_position + Vector3.UP * 0.1, pad_position + launch_direction * 1.8 + Vector3.UP * 0.75, JUMP_PAD_COLOR, 0.052, 0.16)
 	_spawn_sphere(pad_position + Vector3.UP * 0.16, 0.34, JUMP_PAD_COLOR, 0.18, true)
@@ -186,6 +209,8 @@ func play_football_kick(ball_position: Vector3, direction: Vector3, strong: bool
 	PerfProbeScript.mark(self, "event.kick_vfx", "strong=%s" % str(strong))
 	last_event = &"football_strong_kick" if strong else &"football_kick"
 	football_kick_count += 1
+	if RenderProfileScript.is_web_platform():
+		return
 	var kick_direction := direction.normalized() if direction.length_squared() > 0.0001 else Vector3.FORWARD
 	var color := FOOTBALL_STRONG_COLOR if strong else FOOTBALL_COLOR
 	var reach := 1.4 if strong else 0.9
@@ -200,6 +225,8 @@ func play_football_goal(goal_position: Vector3, player_scored: bool) -> void:
 	last_event = &"football_goal"
 	football_goal_count += 1
 	var color := FOOTBALL_GOAL_COLOR if player_scored else DAMAGE_COLOR
+	if RenderProfileScript.is_web_platform():
+		return
 	_spawn_sphere(goal_position + Vector3.UP * 0.7, 0.72, color, 0.42, true)
 	_spawn_particle_burst(goal_position + Vector3.UP * 1.0, color, 96, 0.7, 5.8)
 	_spawn_particle_burst(goal_position + Vector3.UP * 1.35, Color(0.34, 0.88, 1.0, 1.0), 44, 0.55, 4.0)
@@ -212,6 +239,8 @@ func play_arcade_confetti(effect_position: Vector3, player_colored: bool) -> voi
 	PerfProbeScript.mark(self, "event.confetti_vfx", "player_colored=%s" % str(player_colored))
 	last_event = &"arcade_confetti"
 	confetti_count += 1
+	if RenderProfileScript.is_web_platform():
+		return
 	var primary := FOOTBALL_GOAL_COLOR if player_colored else BOT_COLOR
 	_spawn_particle_burst(effect_position + Vector3.UP * 1.35, primary, 48, 0.5, 3.8)
 	_spawn_particle_burst(effect_position + Vector3.UP * 1.55, Color(0.34, 0.88, 1.0, 1.0), 28, 0.44, 3.0)
@@ -263,11 +292,17 @@ func play_knockback(body_position: Vector3, direction: Vector3, force: float, fr
 	_spawn_tone(start_position, 135.0 if from_player else 105.0, 0.055, -14.5)
 
 func play_round_end(player_won: bool) -> void:
+	var profile_begin := PerfProbeScript.begin(self, "feedback.round_end", "player_won=%s" % str(player_won))
+	PerfProbeScript.mark(self, "event.round_end", "player_won=%s" % str(player_won))
 	last_event = &"round_end"
 	round_end_count += 1
+	if RenderProfileScript.is_web_platform():
+		PerfProbeScript.end(self, "feedback.round_end", profile_begin, "web_effects_disabled=true")
+		return
 	var color := HIT_COLOR if player_won else DAMAGE_COLOR
 	_spawn_light(Vector3(0.0, 4.0, 0.0), color, 4.0, 12.0, 0.7)
 	_play_sfx_ui(&"win_jingle" if player_won else &"loss_jingle", -6.5, 1.0, BUS_UI)
+	PerfProbeScript.end(self, "feedback.round_end", profile_begin)
 
 func play_ball_bounce(ball_position: Vector3, strong: bool = false) -> void:
 	_play_sfx_3d(&"ball_bounce", ball_position, -13.0 if not strong else -10.5, 0.92 if strong else 1.08)
@@ -276,6 +311,8 @@ func play_ball_glass(ball_position: Vector3) -> void:
 	_play_sfx_3d(&"ball_glass", ball_position, -9.0, 1.0)
 
 func play_countdown_tick(is_final: bool = false) -> void:
+	if RenderProfileScript.is_web_platform():
+		return
 	_play_sfx_ui(&"ui_confirmation" if is_final else &"ui_click", -8.0 if is_final else -13.0, 1.0, BUS_UI)
 
 func play_ui_click() -> void:
@@ -285,6 +322,8 @@ func play_ui_back() -> void:
 	_play_sfx_ui(&"ui_back", -11.0, 1.0, BUS_UI)
 
 func play_referee_whistle(effect_position: Vector3 = Vector3.ZERO) -> void:
+	if RenderProfileScript.is_web_platform():
+		return
 	synthetic_whistle_count += 1
 	last_audio_event = &"synthetic_whistle"
 	_spawn_synthetic_tone(effect_position, 1580.0, 0.13, -8.5)
@@ -296,11 +335,58 @@ func clear_effects() -> void:
 	for entry: Dictionary in active_effects:
 		var effect_node: Node = entry["node"]
 		if is_instance_valid(effect_node):
-			effect_node.queue_free()
+			_retire_effect_node(effect_node)
 	active_effects.clear()
+	for pending_node: Node in pending_effect_frees:
+		if is_instance_valid(pending_node):
+			_retire_effect_node(pending_node)
+	pending_effect_frees.clear()
 
 func debug_active_effect_count() -> int:
-	return active_effects.size()
+	return active_effects.size() + pending_effect_frees.size()
+
+func _retire_effect_node(effect_node: Node) -> void:
+	if not is_instance_valid(effect_node):
+		return
+	var web_pool_kind := str(effect_node.get_meta("web_pool_kind", ""))
+	if web_pool_kind == "sphere" and effect_node is MeshInstance3D:
+		var sphere := effect_node as MeshInstance3D
+		sphere.visible = false
+		retired_web_spheres.append(sphere)
+		if retired_web_spheres.size() > MAX_RETIRED_WEB_SPHERES:
+			var oldest_sphere: MeshInstance3D = retired_web_spheres.pop_front() as MeshInstance3D
+			if is_instance_valid(oldest_sphere):
+				oldest_sphere.queue_free()
+		return
+	if web_pool_kind == "light" and effect_node is OmniLight3D:
+		var pooled_light := effect_node as OmniLight3D
+		pooled_light.visible = false
+		retired_web_lights.append(pooled_light)
+		if retired_web_lights.size() > MAX_RETIRED_WEB_LIGHTS:
+			var oldest_light: OmniLight3D = retired_web_lights.pop_front() as OmniLight3D
+			if is_instance_valid(oldest_light):
+				oldest_light.queue_free()
+		return
+	if effect_node is GPUParticles3D:
+		var particles := effect_node as GPUParticles3D
+		particles.emitting = false
+		particles.visible = false
+		retired_particle_effects.append(particles)
+		if retired_particle_effects.size() > MAX_RETIRED_PARTICLE_EFFECTS:
+			var oldest: GPUParticles3D = retired_particle_effects.pop_front() as GPUParticles3D
+			if is_instance_valid(oldest):
+				oldest.queue_free()
+		return
+	if effect_node is VisualInstance3D or effect_node is Light3D:
+		var visual_node := effect_node as Node3D
+		visual_node.visible = false
+		retired_visual_effects.append(visual_node)
+		if retired_visual_effects.size() > MAX_RETIRED_VISUAL_EFFECTS:
+			var oldest_visual: Node3D = retired_visual_effects.pop_front() as Node3D
+			if is_instance_valid(oldest_visual):
+				oldest_visual.queue_free()
+		return
+	effect_node.queue_free()
 
 func debug_get_boost_trail_count() -> int:
 	return boost_trail_count
@@ -355,6 +441,9 @@ func _spawn_beam(start_position: Vector3, end_position: Vector3, color: Color, t
 	_track_effect(pivot, lifetime)
 
 func _spawn_sphere(effect_position: Vector3, radius: float, color: Color, lifetime: float, unshaded: bool) -> void:
+	if RenderProfileScript.is_web_platform():
+		_spawn_web_sphere(effect_position, radius, color, lifetime, unshaded)
+		return
 	var mesh_instance := MeshInstance3D.new()
 	mesh_instance.name = "FeedbackSphere"
 	var mesh := SphereMesh.new()
@@ -369,6 +458,9 @@ func _spawn_sphere(effect_position: Vector3, radius: float, color: Color, lifeti
 	_track_effect(mesh_instance, lifetime)
 
 func _spawn_light(effect_position: Vector3, color: Color, energy: float, radius: float, lifetime: float) -> void:
+	if RenderProfileScript.is_web_platform():
+		_spawn_web_light(effect_position, color, energy, radius, lifetime)
+		return
 	var light := OmniLight3D.new()
 	light.name = "FeedbackLight"
 	light.light_color = color
@@ -379,6 +471,24 @@ func _spawn_light(effect_position: Vector3, color: Color, energy: float, radius:
 	_track_effect(light, lifetime)
 
 func _spawn_particle_burst(effect_position: Vector3, color: Color, amount: int, lifetime: float, speed: float) -> void:
+	var profile_begin := PerfProbeScript.begin(
+		self,
+		"feedback.spawn_particle_burst",
+		"amount=%d lifetime=%.2f speed=%.2f" % [amount, lifetime, speed]
+	)
+	if RenderProfileScript.is_web_platform():
+		var marker_count := _spawn_web_burst_markers(effect_position, color, amount, lifetime, speed)
+		PerfProbeScript.end(
+			self,
+			"feedback.spawn_particle_burst",
+			profile_begin,
+			"web_markers=%d resource_count=%d video_mem=%d" % [
+				marker_count,
+				int(Performance.get_monitor(Performance.OBJECT_RESOURCE_COUNT)),
+				int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED))
+			]
+		)
+		return
 	var particles := GPUParticles3D.new()
 	particles.name = "FeedbackParticles"
 	particles.amount = RenderProfileScript.adjust_particle_amount(amount)
@@ -407,6 +517,85 @@ func _spawn_particle_burst(effect_position: Vector3, color: Color, amount: int, 
 	add_child(particles)
 	particles.global_position = effect_position
 	_track_effect(particles, lifetime + 0.18)
+	PerfProbeScript.end(
+		self,
+		"feedback.spawn_particle_burst",
+		profile_begin,
+		"adjusted_amount=%d resource_count=%d video_mem=%d" % [
+			particles.amount,
+			int(Performance.get_monitor(Performance.OBJECT_RESOURCE_COUNT)),
+			int(Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED))
+		]
+	)
+
+func _spawn_web_burst_markers(effect_position: Vector3, color: Color, amount: int, lifetime: float, speed: float) -> int:
+	var marker_count := 3 if amount >= 44 else 2
+	var radius := 0.09 if amount >= 44 else 0.06
+	var spread := clampf(speed * 0.08, 0.08, 0.42)
+	for index in range(marker_count):
+		var angle := TAU * float(index) / float(marker_count)
+		var offset := Vector3(cos(angle) * spread, 0.05 + float(index) * 0.035, sin(angle) * spread)
+		_spawn_sphere(effect_position + offset, radius, color, maxf(0.28, lifetime * 0.45), true)
+	return marker_count
+
+func _spawn_web_sphere(effect_position: Vector3, radius: float, color: Color, lifetime: float, unshaded: bool) -> void:
+	var mesh_instance := _acquire_web_sphere()
+	mesh_instance.visible = true
+	mesh_instance.mesh = _get_web_sphere_mesh()
+	mesh_instance.material_override = _get_cached_material(color, unshaded)
+	mesh_instance.scale = Vector3.ONE * radius
+	mesh_instance.global_position = effect_position
+	_track_effect(mesh_instance, lifetime)
+
+func _spawn_web_light(effect_position: Vector3, color: Color, energy: float, radius: float, lifetime: float) -> void:
+	var light := _acquire_web_light()
+	light.visible = true
+	light.light_color = color
+	light.light_energy = energy
+	light.omni_range = radius
+	light.global_position = effect_position
+	_track_effect(light, lifetime)
+
+func _acquire_web_sphere() -> MeshInstance3D:
+	while not retired_web_spheres.is_empty():
+		var candidate: MeshInstance3D = retired_web_spheres.pop_back() as MeshInstance3D
+		if is_instance_valid(candidate):
+			return candidate
+	var mesh_instance := MeshInstance3D.new()
+	mesh_instance.name = "FeedbackSphereWeb"
+	mesh_instance.mesh = _get_web_sphere_mesh()
+	mesh_instance.set_meta("web_pool_kind", "sphere")
+	add_child(mesh_instance)
+	return mesh_instance
+
+func _acquire_web_light() -> OmniLight3D:
+	while not retired_web_lights.is_empty():
+		var candidate: OmniLight3D = retired_web_lights.pop_back() as OmniLight3D
+		if is_instance_valid(candidate):
+			return candidate
+	var light := OmniLight3D.new()
+	light.name = "FeedbackLightWeb"
+	light.set_meta("web_pool_kind", "light")
+	add_child(light)
+	return light
+
+func _get_web_sphere_mesh() -> SphereMesh:
+	if web_sphere_mesh == null:
+		web_sphere_mesh = SphereMesh.new()
+		web_sphere_mesh.radius = 1.0
+		web_sphere_mesh.height = 2.0
+		web_sphere_mesh.radial_segments = 12
+		web_sphere_mesh.rings = 6
+	return web_sphere_mesh
+
+func _get_cached_material(color: Color, unshaded: bool) -> StandardMaterial3D:
+	var cache_key := "%s:%s" % [color.to_html(true), str(unshaded)]
+	var cached := web_material_cache.get(cache_key) as StandardMaterial3D
+	if cached != null:
+		return cached
+	var material := _build_material(color, unshaded)
+	web_material_cache[cache_key] = material
+	return material
 
 func _spawn_tone(effect_position: Vector3, frequency: float, duration: float, volume_db: float) -> void:
 	if _play_sfx_3d(&"ui_click", effect_position, volume_db):
@@ -483,8 +672,10 @@ func _update_ambience(delta: float) -> void:
 		ambience_player.play()
 
 func _play_sfx_3d(audio_key: StringName, effect_position: Vector3, volume_db: float = -10.0, pitch_scale: float = 1.0) -> bool:
+	var profile_begin := PerfProbeScript.begin(self, "feedback.play_sfx_3d", "key=%s" % str(audio_key))
 	var stream := real_audio_streams.get(audio_key) as AudioStream
 	if stream == null or sfx_pool.is_empty():
+		PerfProbeScript.end(self, "feedback.play_sfx_3d", profile_begin, "played=false")
 		return false
 	var player := sfx_pool[sfx_pool_cursor]
 	sfx_pool_cursor = (sfx_pool_cursor + 1) % sfx_pool.size()
@@ -496,11 +687,14 @@ func _play_sfx_3d(audio_key: StringName, effect_position: Vector3, volume_db: fl
 	player.global_position = effect_position
 	player.play()
 	last_audio_event = audio_key
+	PerfProbeScript.end(self, "feedback.play_sfx_3d", profile_begin, "played=true bus=%s" % str(player.bus))
 	return true
 
 func _play_sfx_ui(audio_key: StringName, volume_db: float = -10.0, pitch_scale: float = 1.0, bus_name: StringName = BUS_UI) -> bool:
+	var profile_begin := PerfProbeScript.begin(self, "feedback.play_sfx_ui", "key=%s bus=%s" % [str(audio_key), str(bus_name)])
 	var stream := real_audio_streams.get(audio_key) as AudioStream
 	if stream == null or ui_pool.is_empty():
+		PerfProbeScript.end(self, "feedback.play_sfx_ui", profile_begin, "played=false")
 		return false
 	var player := ui_pool[ui_pool_cursor]
 	ui_pool_cursor = (ui_pool_cursor + 1) % ui_pool.size()
@@ -511,6 +705,7 @@ func _play_sfx_ui(audio_key: StringName, volume_db: float = -10.0, pitch_scale: 
 	player.pitch_scale = pitch_scale
 	player.play()
 	last_audio_event = audio_key
+	PerfProbeScript.end(self, "feedback.play_sfx_ui", profile_begin, "played=true bus=%s" % str(player.bus))
 	return true
 
 func _spawn_synthetic_tone(effect_position: Vector3, frequency: float, duration: float, volume_db: float) -> void:

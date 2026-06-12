@@ -8,6 +8,8 @@ const SESSION_LABEL_META_KEY: String = "jdc_perf_session_label"
 const QUERY_ENABLE_KEY: String = "jdc_perf"
 const QUERY_SCENARIO_KEY: String = "jdc_perf_scenario"
 const QUERY_QUIT_AFTER_KEY: String = "jdc_perf_quit_after"
+const QUERY_STABILITY_KEY: String = "jdc_perf_stability"
+const QUERY_DETAIL_KEY: String = "jdc_perf_detail"
 const PREFIX: String = "[JDC_PERF]"
 
 static func ensure_enabled(context: Object, label: String = "runtime") -> bool:
@@ -47,6 +49,11 @@ static func is_scenario_enabled(context: Object) -> bool:
 	ensure_enabled(root)
 	return _is_truthy_meta(root, SCENARIO_META_KEY)
 
+static func is_stability_enabled(context: Object) -> bool:
+	if OS.has_feature("web") and _has_web_query(QUERY_STABILITY_KEY):
+		return _has_truthy_web_query(QUERY_STABILITY_KEY)
+	return true
+
 static func get_elapsed_seconds(context: Object) -> float:
 	var root := _get_root(context)
 	if root == null or not root.has_meta(START_USEC_META_KEY):
@@ -66,6 +73,8 @@ static func mark(context: Object, stage: String, detail: String = "") -> void:
 	if root == null:
 		return
 	if not _is_truthy_meta(root, ENABLE_META_KEY):
+		return
+	if not _should_emit_stage(stage):
 		return
 	var now_usec := Time.get_ticks_usec()
 	var start_usec := int(root.get_meta(START_USEC_META_KEY, now_usec))
@@ -211,6 +220,25 @@ static func _format_sample_value(value: Variant) -> String:
 	if value is float:
 		return "%.3f" % float(value)
 	return str(value).replace(" ", "_")
+
+static func _should_emit_stage(stage: String) -> bool:
+	if _is_detail_enabled():
+		return true
+	return (
+		stage == "session.enabled"
+		or stage.begins_with("event.")
+		or stage.begins_with("perf_scenario.")
+		or stage.begins_with("stability.")
+		or stage.begins_with("loading.")
+		or stage.begins_with("web_warmup.")
+		or stage.begins_with("football.ready")
+		or stage.begins_with("football.restart_play")
+	)
+
+static func _is_detail_enabled() -> bool:
+	if OS.has_feature("web") and _has_web_query(QUERY_DETAIL_KEY):
+		return _has_truthy_web_query(QUERY_DETAIL_KEY)
+	return true
 
 static func _collect_material_counts(node: Node, stats_by_category: Dictionary) -> void:
 	if node is MeshInstance3D:
@@ -411,6 +439,20 @@ static func _has_truthy_web_query(key: String) -> bool:
 			continue
 		var value := query_pair.get_slice("=", 1).uri_decode()
 		return value.is_empty() or _is_truthy_text(value)
+	return false
+
+static func _has_web_query(key: String) -> bool:
+	if not OS.has_feature("web"):
+		return false
+	var query_string := str(JavaScriptBridge.eval("window.location.search", true))
+	if query_string.is_empty() or query_string == "null":
+		return false
+	if query_string.begins_with("?"):
+		query_string = query_string.substr(1)
+	for query_pair in query_string.split("&", false):
+		var query_key := query_pair.get_slice("=", 0).uri_decode()
+		if query_key == key:
+			return true
 	return false
 
 static func _get_float_web_query(key: String, fallback: float) -> float:
