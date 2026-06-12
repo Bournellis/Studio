@@ -1,0 +1,37 @@
+# Track 05A - Web Stability Hotfix V1
+
+- Projeto: `Projetos/JogoDaCopa/`
+- Agente: Codex
+- Branch: `codex/jogodacopa/track05a-web-stability-v1`
+- Worktree: `D:\Estudio-worktrees\jogodacopa-track05a`
+- Base local: `main` em `3ec98bbe77af12bc9729565553ae560241bb0e6d`
+- Prioridade: urgente, hotfix de producao Web
+- Objetivo: reproduzir os ciclos de travamento continuo no Web publicado/local, instrumentar memoria por pelo menos 5 minutos de partida continua, documentar causa raiz antes do fix, corrigir o vazamento confirmado, adicionar gate permanente de estabilidade Web e republicar o hotfix autorizado.
+- Escopo previsto:
+  - `Projetos/JogoDaCopa/tools/track04f_chrome_probe.mjs`
+  - `Projetos/JogoDaCopa/**/jdc_perf_probe.gd`
+  - arquivos de gameplay/VFX/audio/material cache relacionados a causa raiz confirmada
+  - `Projetos/JogoDaCopa/tools/validate.gd` e testes se necessario
+  - `Projetos/JogoDaCopa/docs/playtest-reports/track-05a-web-stability.md`
+  - `Projetos/JogoDaCopa/docs/release-history.md`
+  - `Projetos/JogoDaCopa/implementation/current-status.md`
+  - `08_Coordenacao_Agentes/Estado_Atual.md`
+- Docs base lidos:
+  - `08_Coordenacao_Agentes/Prioridades_Estudio.md`
+  - `AGENTS.md`
+  - `Projetos/README.md`
+  - `08_Coordenacao_Agentes/Estado_Atual.md`
+  - `Projetos/JogoDaCopa/AGENTS.md`
+  - `Projetos/JogoDaCopa/implementation/current-status.md`
+- Validacao planejada:
+  - import headless do editor 1x na worktree nova
+  - baseline Web local/remote com probe de 5 minutos antes do fix
+  - causa raiz escrita no relatorio antes da correcao
+  - `validate.gd` completo PASS
+  - export Web release PASS
+  - smoke Chrome local com gate de estabilidade de 5 minutos PASS
+  - publish Web com `tools/publish_web.ps1 FullPublish -ConfirmRemoteMutation`
+  - smoke remoto em `https://copa-arena-futebol.pages.dev/` com gate de estabilidade de 5 minutos PASS
+  - `git diff --check`, `git status --short`, `WORKTREE_VERIFIED`
+- Handoff: parar na branch limpa para review pre-merge da Claude; declarar `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- Observacao inicial: main local estava limpo antes da worktree; nenhum doc untracked de Claude apareceu em `git status --short` no momento da abertura.
