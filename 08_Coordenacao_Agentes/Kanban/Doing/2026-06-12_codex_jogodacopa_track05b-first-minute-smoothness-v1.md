@@ -39,3 +39,12 @@
 - Parar na branch para review pre-merge da Claude.
 - Fechamento esperado: `git status --short`, `git diff --check`, `WORKTREE_VERIFIED`.
 - Rede git proibida; `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+
+## Resultado Para Review
+
+- Branch implementada e publicada como `web/v1-copa-arena-futebol-20260612-ad82384b` / `v1.0.2+ad82384b`.
+- RED confirmado: primeiro minuto falhava com `18` hitches `>100ms` e max frame `2194.8ms`.
+- Final local/remoto: primeiro minuto com todos os primeiros usos provocados PASS, `0` hitches `>100ms`, runtime errors `0`.
+- Estabilidade 5min local/remota PASS; luminancia PASS; `validate.gd` full PASS; export Web PASS.
+- Residual de decisao: loading local primeira visita ficou em `~13.5s-13.7s`, acima do teto solicitado `<=8s`; remoto ficou `~5.3s`.
+- Handoff de review: `08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b-first-minute-smoothness-v1.md`.

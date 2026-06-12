@@ -4,13 +4,13 @@
 - Project: `JogoDaCopa`
 - Product/module name: `Copa Arena Futebol`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web v1.0.1`
-- Active stage: `Track 05A - Web Stability Hotfix V1`
-- Active stage status: `MERGED_TO_MAIN - Claude review approved; production hotfix v1.0.1 is published; integrated main validation PASS; next gate is human retest on the affected machines`
-- Status marker: `JOGO_DA_COPA_TRACK_05A_WEB_STABILITY_HOTFIX_V1_MERGED`
-- Approved plan: Fabio direct urgent task `Track 05A - Web Stability Hotfix V1` (2026-06-12), remote publication authorized by `../../08_Coordenacao_Agentes/Decisoes/2026-06-12_jogodacopa_publicacao-web-cloudflare.md`
-- Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md`
-- Review: `docs/code-review-track04f2-webgl-first-render-stall-v1.md`, `docs/playtest-reports/track-04f2-webgl-stall.md`, `docs/code-review-track04b1-04b2-v1.md`, `docs/code-review-track04c-04d-v1.md`, `docs/code-review-track04e-web-spike-v1.md`, `docs/playtest-reports/track-04f-web-performance.md`, `docs/code-review-track04f-web-performance-v1.md`, `docs/playtest-reports/track-05a-web-stability.md`, `docs/code-review-track05a-web-stability-v1.md`
+- Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web v1.0.2`
+- Active stage: `Track 05B - First-Minute Smoothness V1`
+- Active stage status: `AWAITING_CLAUDE_PRE_MERGE_REVIEW - production v1.0.2 published; first-minute and stability gates PASS local/remote; local first-visit loading remains above the requested 8s ceiling`
+- Status marker: `JOGO_DA_COPA_TRACK_05B_FIRST_MINUTE_SMOOTHNESS_V1_REVIEW`
+- Approved plan: Fabio direct urgent task `Track 05B - First-Minute Smoothness V1` (2026-06-12), remote publication authorized by `../../08_Coordenacao_Agentes/Decisoes/2026-06-12_jogodacopa_publicacao-web-cloudflare.md`
+- Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b-first-minute-smoothness-v1.md`
+- Review: `docs/code-review-track04f2-webgl-first-render-stall-v1.md`, `docs/playtest-reports/track-04f2-webgl-stall.md`, `docs/code-review-track04b1-04b2-v1.md`, `docs/code-review-track04c-04d-v1.md`, `docs/code-review-track04e-web-spike-v1.md`, `docs/playtest-reports/track-04f-web-performance.md`, `docs/code-review-track04f-web-performance-v1.md`, `docs/playtest-reports/track-05a-web-stability.md`, `docs/code-review-track05a-web-stability-v1.md`, `docs/playtest-reports/track-05b-first-minute-smoothness.md`
 - Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_hotfix04e1-night-capture.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md`
 - Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
 
@@ -54,6 +54,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Track 04F Web Performance & Load V1: aprovado pela Claude e mergeado localmente em main; load Web instrumentado, loading com progresso visivel, animacoes UAL processadas em `.res`, cache de avatar/region mask, SubViewports Web on-change, PCK `26.41 MiB`, smoothness pos-warmup PASS; residual de primeiro render/upload WebGL `~16.8s-18.1s` promovido para `Track 04F.2 - WebGL First-Render Stall`.
 - Track 05 Web Publication V1: publicado em Cloudflare Pages publico no projeto `copa-arena-futebol`, URL estavel `https://copa-arena-futebol.pages.dev/`, release root `web/v1-copa-arena-futebol-20260612-31e23ea3`, script `tools/publish_web.ps1` com `Plan`/`Package`/`FullPublish`, pacote Brotli para assets maiores que `25 MiB` e smoke remoto PASS sem erros de runtime.
 - Track 05A Web Stability Hotfix V1: publicado em Cloudflare Pages publico como `web/v1-copa-arena-futebol-20260612-a850045a` / `v1.0.1+a850045a`; reduz churn por frame de HUD/placares, adiciona gate Chrome 5 min de estabilidade, exibe versao/hash no rodape do menu e validou local/remoto com heap retido < 10%, nodes/caches estaveis e runtime errors `0`.
+- Track 05B First-Minute Smoothness V1: publicado em Cloudflare Pages publico como `web/v1-copa-arena-futebol-20260612-ad82384b` / `v1.0.2+ad82384b`; completa warmup antes do overlay, aquece primeiros usos dentro do frustum, corta feedback transiente Web e `AudioStreamPlayer3D`; primeiro minuto local/remoto com todos os primeiros usos provocados teve `0` hitches `>100ms` e runtime errors `0`; local primeira visita ainda carrega em `~13.5s-13.7s`.
 - Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
 - Toon experiment screenshots live in `docs/screenshots/track-03e-toon/`.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
@@ -61,7 +62,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-Track 05A Web Stability Hotfix V1 is approved by Claude, merged locally into `main` and published publicly on Cloudflare Pages. Stable URL: `https://copa-arena-futebol.pages.dev/`. Done card: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md`. Handoff: `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md`. Next step: human retest of `v1.0.1+a850045a`; if it still oscillates, open Track 05B using the code review plan B. No push/fetch/pull occurred.
+Track 05B First-Minute Smoothness V1 is implemented on branch `codex/jogodacopa/track05b-first-minute-v1`, published publicly on Cloudflare Pages as `v1.0.2+ad82384b`, and awaiting Claude pre-merge review. Stable URL: `https://copa-arena-futebol.pages.dev/`. Handoff: `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b-first-minute-smoothness-v1.md`. Next step: Claude review and decision on accepting the local first-visit loading cost (`~13.5s-13.7s` vs requested `<=8s`). No push/fetch/pull occurred.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -73,9 +74,9 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest integrated main result: PASS after Track 05A merge, 86 tests, 1272 asserts, including Web gzip transfer gate `30.29 MiB / 50.00 MiB`, source integrity check for 35 `.gd/.gdshader` files outside `addons/` and UTF-8 BOM rejection.
+Latest branch result: PASS after Track 05B, 86 tests, 1272 asserts, including Web gzip transfer gate `30.32 MiB / 50.00 MiB`, source integrity check for 35 `.gd/.gdshader` files outside `addons/` and UTF-8 BOM rejection.
 
-Latest remote Web smoke: `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json` at `https://copa-arena-futebol.pages.dev/`, release root `web/v1-copa-arena-futebol-20260612-a850045a` matched, page errors `0`, runtime console errors `0`, retained heap growth `3.77%`, `object_node_count 766 -> 766`, p95 `7.0ms`, p99 `13.8ms`, worst 5s FPS `126.0`.
+Latest remote Web smoke: `docs/playtest-reports/track-05b-data/05b-remote-first-minute-gate.json` and `docs/playtest-reports/track-05b-data/05b-remote-stability-5min.json` at `https://copa-arena-futebol.pages.dev/`, release root `web/v1-copa-arena-futebol-20260612-ad82384b` matched, page errors `0`, runtime console errors `0`, first-minute hitches `0`, stability gate PASS.
 
 Export smoke command:
 
@@ -91,7 +92,7 @@ Web export smoke command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . --export-release "Web" "builds/web/index.html"
 ```
 
-Latest integrated main result: PASS, exit code `0`, single-threaded `GODOT_THREADS_ENABLED=false`.
+Latest branch result: PASS, exit code `0`, single-threaded `GODOT_THREADS_ENABLED=false`.
 
 Manual smoke lives in `docs/validation.md`.
 

@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_05A_WEB_STABILITY_HOTFIX_V1_MERGED`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos e Web publico em Cloudflare Pages: `https://copa-arena-futebol.pages.dev/`. Track 05A publicou `web/v1-copa-arena-futebol-20260612-a850045a` (`v1.0.1+a850045a`) com gate remoto de estabilidade 5 min PASS; heap retido `+3.77%`, nodes/caches estaveis e runtime errors `0`. Detalhes em `Projetos/JogoDaCopa/docs/release-history.md` e `Projetos/JogoDaCopa/docs/playtest-reports/track-05a-web-stability.md`.
+- Marker: `JOGO_DA_COPA_TRACK_05B_FIRST_MINUTE_SMOOTHNESS_V1_REVIEW`
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real no desktop, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos e Web publico em Cloudflare Pages: `https://copa-arena-futebol.pages.dev/`. Track 05B publicou `web/v1-copa-arena-futebol-20260612-ad82384b` (`v1.0.2+ad82384b`) com primeiro minuto e estabilidade 5 min PASS local/remoto, runtime errors `0`; local primeira visita medido `~13.5s-13.7s` acima do teto `8s`. Detalhes em `Projetos/JogoDaCopa/docs/release-history.md` e `Projetos/JogoDaCopa/docs/playtest-reports/track-05b-first-minute-smoothness.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: retest humano da `v1.0.1+a850045a` publica por Fabio e tester externo nas maquinas do relato; se ainda oscilar, abrir `Track 05B` com o plano B do review (`jdc_stats`, churn-zero de snapshot e investigacao browser/audio/energia). `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- Proximo passo: review pre-merge da Claude na branch `codex/jogodacopa/track05b-first-minute-v1`; decidir se aceita o loading local acima do teto ou abre follow-up. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## draxos-roguelike-cardgame
 
