@@ -5,7 +5,7 @@
 - Branch: `codex/jogodacopa/track05b1-sensory-feedback-v1`
 - Worktree: `D:\Estudio-worktrees\jogodacopa-track05b1`
 - Projeto: `Projetos/JogoDaCopa/`
-- Status: `READY_FOR_CLAUDE_REVIEW_PRE_MERGE`
+- Status: `MERGED_LOCAL_AFTER_CLAUDE_APPROVAL`
 
 ## Escopo
 
@@ -45,8 +45,11 @@ Fabio decidiu devolver ao Web os efeitos sensoriais cortados na 05B sem reabrir 
 - Loading local primeira visita ficou em `~17.8s-18.3s`, acima do teto `8s`; registrado para decisao de Fabio.
 - Durante smoke remoto, uma falha de heap no gate 5min foi atribuida ao proprio probe acumulando `47.546` objetos de frame; a instrumentacao foi limitada em gates longos e o pass2 ficou verde.
 
-## Proximo Passo
+## Fechamento Pos-Review
 
-Claude deve revisar pre-merge esta branch. Se aprovada, merge local em `main` e fechamento de coordenacao.
+- Review Claude aprovado: `Projetos/JogoDaCopa/docs/code-review-track05b1-sensory-feedback-v1.md`.
+- Merge local em `main`: `f759dd34`.
+- Validate integrado pos-merge: PASS, 86 testes, 1272 asserts.
+- Proximo passo: retest humano `v1.0.3`; follow-ups O1/O2 apenas se necessario.
 
 `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.

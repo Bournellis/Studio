@@ -55,7 +55,10 @@
 
 ## Handoff
 
-- Parado na branch para review pre-merge da Claude.
+- Review pre-merge da Claude aprovado: `Projetos/JogoDaCopa/docs/code-review-track05b1-sensory-feedback-v1.md`.
+- Merge local em `main`: `f759dd34`.
+- Validate integrado pos-merge: PASS, 86 testes, 1272 asserts, Web gzip `30.29 MiB / 50.00 MiB`.
+- Proximo passo: retest humano `v1.0.3`; follow-ups O1/O2 apenas se necessario.
 - Handoff: `08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b1-sensory-feedback-v1.md`.
 - Fechamento esperado executado: `git status --short`, `git diff --check`, `WORKTREE_VERIFIED`.
 - Rede git proibida; `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
