@@ -31,6 +31,8 @@ const firstMinuteHitchThresholdMs = Number(args.get("first-minute-hitch-threshol
 const firstMinuteStartStage = args.get("first-minute-start-stage") || "event.visible_match_start";
 const eventHitchWindowMs = Number(args.get("event-hitch-window-ms") || "2000");
 const eventHitchPreWindowMs = Number(args.get("event-hitch-pre-window-ms") || "250");
+const defaultFrameStorageLimit = stabilityGate && !firstMinuteGate ? "1200" : "0";
+const frameStorageLimit = Math.max(0, Math.floor(Number(args.get("frame-storage-limit") || defaultFrameStorageLimit)));
 const webFeedback = (args.get("web-feedback") || "").trim();
 const godotStabilitySamplesEnabled = args.get("godot-stability-samples") !== "0";
 const godotDetailEnabled = args.get("godot-detail") !== "0";
@@ -521,6 +523,7 @@ const frameCollector = `
 (() => {
   if (window.__jdcFrameCollectorInstalled) return;
   window.__jdcFrameCollectorInstalled = true;
+  const frameStorageLimit = ${Number.isFinite(frameStorageLimit) ? frameStorageLimit : 0};
   window.__jdcFrameStats = { frameCount: 0, dts: [], frames: [], hitches: [], fpsBuckets: {} };
   window.__jdcFrameStart = performance.now();
   let last = performance.now();
@@ -531,6 +534,9 @@ const frameCollector = `
     stats.frameCount += 1;
     stats.dts.push(dt);
     stats.frames.push({ t: now, wallTimeMs: performance.timeOrigin + now, dt });
+    if (frameStorageLimit > 0 && stats.frames.length > frameStorageLimit + 200) {
+      stats.frames.splice(0, stats.frames.length - frameStorageLimit);
+    }
     const bucketStart = Math.floor(now / 1000) * 1000;
     stats.fpsBuckets[bucketStart] = (stats.fpsBuckets[bucketStart] || 0) + 1;
     if (dt > 50) {
