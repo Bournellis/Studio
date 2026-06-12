@@ -750,6 +750,12 @@ func _build_audio_pools() -> void:
 			player.max_distance = 38.0
 			add_child(player)
 			sfx_pool.append(player)
+		_build_ui_audio_pool()
+		return
+
+func _build_ui_audio_pool() -> void:
+	if not ui_pool.is_empty():
+		return
 	for index in range(UI_POOL_SIZE):
 		var player := AudioStreamPlayer.new()
 		player.name = "UiPoolPlayer%d" % index
@@ -758,6 +764,8 @@ func _build_audio_pools() -> void:
 		ui_pool.append(player)
 
 func _start_ambience_loop() -> void:
+	if RenderProfileScript.is_web_platform() and not _can_play_web_audio(true):
+		return
 	var stream := real_audio_streams.get(&"stadium_loop") as AudioStream
 	if stream == null:
 		return
@@ -779,6 +787,9 @@ func _enable_stream_loop(stream: AudioStream) -> void:
 
 func _update_ambience(delta: float) -> void:
 	if ambience_player == null:
+		if RenderProfileScript.is_web_platform() and _can_play_web_audio():
+			_build_ui_audio_pool()
+			_start_ambience_loop()
 		return
 	ambience_goal_boost_remaining = maxf(0.0, ambience_goal_boost_remaining - delta)
 	var target_volume := AMBIENCE_MENU_DB if ambience_ducked else AMBIENCE_PLAY_DB
@@ -817,6 +828,8 @@ func _play_sfx_ui(audio_key: StringName, volume_db: float = -10.0, pitch_scale: 
 	if not _can_play_web_audio(true):
 		PerfProbeScript.end(self, "feedback.play_sfx_ui", profile_begin, "played=false web_audio_locked=true")
 		return false
+	if ui_pool.is_empty():
+		_build_ui_audio_pool()
 	var stream := real_audio_streams.get(audio_key) as AudioStream
 	if stream == null or ui_pool.is_empty():
 		PerfProbeScript.end(self, "feedback.play_sfx_ui", profile_begin, "played=false")
