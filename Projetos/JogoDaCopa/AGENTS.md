@@ -114,6 +114,12 @@ git status --short
 - Correcao de bug de playtest comeca REPRODUZINDO o bug em teste (vermelho) antes do fix, quando a natureza permitir. Se o teste passar no codigo supostamente quebrado, PARAR e registrar handoff pedindo mais dados.
 - Causa raiz documentada no doc da track e obrigatoria; "corrigido" sem causa identificada nao fecha track.
 
+### Iteracao De Gates De Performance Web
+
+- Em loops de performance Web, iterar com gate curto representativo (`60s` ou a menor janela que reproduza o problema).
+- Gates longos (`5min+`, remoto longo, publicacao) rodam apenas na validacao final ou quando o gate curto ja esta verde.
+- A cada 10 iteracoes sem verde, PARAR e registrar checkpoint com hipoteses testadas, melhor numero obtido, proxima hipotese e pedido de alinhamento humano antes de seguir.
+
 ### Falha silenciosa proibida
 
 - Todo caminho de fallback (load de asset, build de rig, recurso opcional) DEVE logar erro permanente via `push_error`/`push_warning`. Fallback que degrada visual/comportamento sem log e defeito, mesmo que o jogo rode.

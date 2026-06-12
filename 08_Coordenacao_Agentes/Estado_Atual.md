@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_05B_FIRST_MINUTE_SMOOTHNESS_V1_REVIEW`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real no desktop, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos e Web publico em Cloudflare Pages: `https://copa-arena-futebol.pages.dev/`. Track 05B publicou `web/v1-copa-arena-futebol-20260612-ad82384b` (`v1.0.2+ad82384b`) com primeiro minuto e estabilidade 5 min PASS local/remoto, runtime errors `0`; local primeira visita medido `~13.5s-13.7s` acima do teto `8s`. Detalhes em `Projetos/JogoDaCopa/docs/release-history.md` e `Projetos/JogoDaCopa/docs/playtest-reports/track-05b-first-minute-smoothness.md`.
+- Marker: `JOGO_DA_COPA_TRACK_05B_FIRST_MINUTE_SMOOTHNESS_V1_MERGED`
+- Baseline: `Copa Arena Futebol` Web publico em Cloudflare Pages (`v1.0.2+ad82384b`, `web/v1-copa-arena-futebol-20260612-ad82384b`). Track 05B foi aprovada por Claude e mergeada localmente em `main`; primeiro minuto e estabilidade 5 min PASS local/remoto, runtime errors `0`; local primeira visita `~13.5s-13.7s` acima do teto `8s`. Detalhes em `Projetos/JogoDaCopa/docs/release-history.md`, `Projetos/JogoDaCopa/docs/playtest-reports/track-05b-first-minute-smoothness.md` e `Projetos/JogoDaCopa/docs/code-review-track05b-first-minute-v1.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: review pre-merge da Claude na branch `codex/jogodacopa/track05b-first-minute-v1`; decidir se aceita o loading local acima do teto ou abre follow-up. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- Proximo passo: `Track 05B.1 - Sensory Feedback Re-Introduction`: reintroduzir feedback transiente Web efeito a efeito com gate curto `60s`, gates longos apenas na validacao final e checkpoint obrigatorio a cada 10 iteracoes sem verde. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## draxos-roguelike-cardgame
 

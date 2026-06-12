@@ -48,3 +48,12 @@
 - Estabilidade 5min local/remota PASS; luminancia PASS; `validate.gd` full PASS; export Web PASS.
 - Residual de decisao: loading local primeira visita ficou em `~13.5s-13.7s`, acima do teto solicitado `<=8s`; remoto ficou `~5.3s`.
 - Handoff de review: `08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b-first-minute-smoothness-v1.md`.
+
+## Fechamento Pos-Review
+
+- Review Claude aprovado: `Projetos/JogoDaCopa/docs/code-review-track05b-first-minute-v1.md`.
+- Merge local em `main`: `ad59c550`.
+- Validate integrado pos-merge: PASS, `86` testes, `1272` asserts, Web gzip `30.29 MiB / 50.00 MiB`.
+- Fabio decidiu abrir `Track 05B.1 - Sensory Feedback Re-Introduction` para reintroduzir efeitos Web um por vez.
+- Regra de processo promovida para `Projetos/JogoDaCopa/AGENTS.md`: gate curto `60s`, gates longos apenas na validacao final e checkpoint a cada 10 iteracoes sem verde.
+- `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.

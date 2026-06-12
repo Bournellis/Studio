@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK_05B_FIRST_MINUTE_SMOOTHNESS_V1_REVIEW`
+- Status: `JOGO_DA_COPA_TRACK_05B_FIRST_MINUTE_SMOOTHNESS_V1_MERGED`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -11,18 +11,19 @@
 3. `../implementation/tracks/track-05-web-publication/current-status.md`
 4. `release-history.md`
 5. `playtest-reports/track-05b-first-minute-smoothness.md`
-6. `publication-readiness.md`
-7. `process-hardening-agents-addendum.md`
-8. `architecture-overview.md`
-9. `work-plan.md`
-10. `quality-upgrade-plan.md`
-11. `arcade-upgrade-plan.md`
-12. `code-review-track04b1-04b2-v1.md`
-13. `code-review-track03-series-v1.md`
-14. `code-review-track02cbis-02dbis-v1.md`
-15. `code-review-track02-series-v1.md`
-16. `mode-contract.md`
-17. `validation.md`
+6. `code-review-track05b-first-minute-v1.md`
+7. `publication-readiness.md`
+8. `process-hardening-agents-addendum.md`
+9. `architecture-overview.md`
+10. `work-plan.md`
+11. `quality-upgrade-plan.md`
+12. `arcade-upgrade-plan.md`
+13. `code-review-track04b1-04b2-v1.md`
+14. `code-review-track03-series-v1.md`
+15. `code-review-track02cbis-02dbis-v1.md`
+16. `code-review-track02-series-v1.md`
+17. `mode-contract.md`
+18. `validation.md`
 
 ## References
 
@@ -33,6 +34,7 @@
 - `publication-readiness.md`
 - `release-history.md`
 - `playtest-reports/track-05b-first-minute-smoothness.md`
+- `code-review-track05b-first-minute-v1.md`
 - `process-hardening-agents-addendum.md`
 - `code-review-track02-series-v1.md`
 - `code-review-track03-series-v1.md`

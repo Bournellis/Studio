@@ -84,7 +84,7 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 
 ## Limitacoes Conhecidas
 
-- A Track 05B removeu o hitch visivel de primeiro uso no primeiro minuto publicado, mas fez isso cortando feedback transiente de VFX/audio no perfil Web. Reintroduzir esses efeitos exige follow-up com budget por efeito.
-- Loading remoto de producao ficou abaixo de `8s`, mas loading local primeira visita medido em `~13.5s-13.7s` continua acima do teto solicitado e precisa de decisao Fabio/review.
+- A Track 05B removeu o hitch visivel de primeiro uso no primeiro minuto publicado, mas fez isso cortando feedback transiente de VFX/audio no perfil Web. Fabio aprovou o follow-up `Track 05B.1` para reintroduzir esses efeitos um por vez com budget por efeito.
+- Loading remoto de producao ficou abaixo de `8s`, mas loading local primeira visita medido em `~13.5s-13.7s` continua acima do teto solicitado e fica registrado para acompanhamento em follow-up.
 - Web V1 e publicacao jogavel em navegador desktop; mobile browser pode ser observado manualmente, mas nao e superficie oficialmente suportada nesta release.
 - Kits e branding sao genericos/inspirados; nao ha logos oficiais FIFA, Copa, federacoes ou clubes.
