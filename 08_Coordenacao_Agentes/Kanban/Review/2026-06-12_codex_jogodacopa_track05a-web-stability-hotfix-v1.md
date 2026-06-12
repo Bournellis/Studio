@@ -35,3 +35,11 @@
   - `git diff --check`, `git status --short`, `WORKTREE_VERIFIED`
 - Handoff: parar na branch limpa para review pre-merge da Claude; declarar `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 - Observacao inicial: main local estava limpo antes da worktree; nenhum doc untracked de Claude apareceu em `git status --short` no momento da abertura.
+
+## Resultado Para Review
+
+- Hotfix local commitado em `a850045a`: instrumentacao de estabilidade, causa raiz documentada, throttling de HUD/placares, gate Chrome 5 min e rodape `v1.0.1+hash`.
+- Publicado em Cloudflare Pages com release root `web/v1-copa-arena-futebol-20260612-a850045a`; URL publica validada com cache-buster em `https://copa-arena-futebol.pages.dev/`.
+- Validacao: `validate.gd --profile=full` PASS (86/86), export Web PASS, smoke local 5 min PASS, smoke remoto 5 min PASS.
+- Evidencia principal: `Projetos/JogoDaCopa/docs/playtest-reports/track-05a-web-stability.md`, `track-05a-data/05a-local-stability-gate-5min-pass.json`, `track-05a-data/05a-remote-stability-gate-5min-pass.json`.
+- Handoff: revisar antes de merge; `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.

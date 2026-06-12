@@ -100,6 +100,24 @@ Artefato: `docs/playtest-reports/track-05a-data/05a-local-stability-gate-5min-pa
 | Contadores Godot | PASS, `object_node_count 766 -> 766`, `static_cache_total_entries 144 -> 144` |
 | FPS 5s | PASS, pior janela `139.6 FPS` |
 
+## Validacao remota pos-publicacao
+
+Artefatos:
+
+- `docs/playtest-reports/track-05a-data/05a-remote-release-root-check-cachebuster.json`
+- `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json`
+
+| Gate | Resultado |
+| --- | --- |
+| Release root publico | PASS, `web/v1-copa-arena-futebol-20260612-a850045a` |
+| Smoke Chrome remoto 5 min | PASS |
+| Runtime errors | `pageErrors=0`, `consoleErrorCount=0` |
+| Frames | `frameCount=41875`, `p95=7.0ms`, `p99=13.8ms` |
+| Heap JS+WASM retido | `123561512 -> 128219597 bytes`, crescimento `3.77%` |
+| Heap peak diagnostico | `176492473 bytes`, pico `42.84%` antes de GC |
+| Contadores Godot | PASS, `object_node_count 766 -> 766`, `static_cache_total_entries 144 -> 144` |
+| FPS 5s | PASS, pior janela `126.0 FPS` |
+
 Comando local esperado:
 
 ```powershell

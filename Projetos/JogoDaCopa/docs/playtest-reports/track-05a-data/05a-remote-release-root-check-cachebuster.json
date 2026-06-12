@@ -1,0 +1,676 @@
+{
+  "label": "05a-remote-release-root-check-cachebuster",
+  "route": "/index.html?jdc_capture=play&jdc_perf=1",
+  "targetUrl": "https://copa-arena-futebol.pages.dev/index.html?jdc_capture=menu&jdc_perf=1&t=a850045a",
+  "durationMs": 12000,
+  "headless": false,
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "frameStats": {
+    "url": "https://copa-arena-futebol.pages.dev/?jdc_capture=menu&jdc_perf=1&t=a850045a",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36",
+    "timeOrigin": 1781243416567,
+    "frameCount": 1407,
+    "fpsBuckets": [
+      {
+        "t": 3000,
+        "count": 127
+      },
+      {
+        "t": 4000,
+        "count": 102
+      },
+      {
+        "t": 8000,
+        "count": 136
+      },
+      {
+        "t": 9000,
+        "count": 144
+      },
+      {
+        "t": 10000,
+        "count": 144
+      },
+      {
+        "t": 11000,
+        "count": 144
+      },
+      {
+        "t": 12000,
+        "count": 144
+      },
+      {
+        "t": 13000,
+        "count": 144
+      },
+      {
+        "t": 14000,
+        "count": 144
+      },
+      {
+        "t": 15000,
+        "count": 144
+      },
+      {
+        "t": 16000,
+        "count": 34
+      }
+    ],
+    "p50": 6.900000000001455,
+    "p95": 7,
+    "p99": 7.100000000000364,
+    "max": 3354.6000000000004,
+    "hitches": [
+      {
+        "t": 8057,
+        "wallTimeMs": 1781243424624,
+        "dt": 3354.6000000000004,
+        "nearestEvent": {
+          "wallTimeMs": 1781243422487.001,
+          "stage": "menu.ready.end",
+          "dtMs": 406.6,
+          "detail": "",
+          "text": "[JDC_PERF] abs_ms=1213.700 dt_ms=406.600 stage=menu.ready.end detail=",
+          "distanceMs": 2136.9990234375
+        }
+      },
+      {
+        "t": 3105.2,
+        "wallTimeMs": 1781243419672.2,
+        "dt": 1145.3999999955295,
+        "nearestEvent": {
+          "wallTimeMs": 1781243422080.589,
+          "stage": "session.enabled",
+          "dtMs": 0.2,
+          "detail": "label=menu display=web web=true",
+          "text": "[JDC_PERF] abs_ms=807.300 dt_ms=0.200 stage=session.enabled detail=label=menu display=web web=true",
+          "distanceMs": 2408.38916015625
+        }
+      }
+    ]
+  },
+  "perfEvents": [
+    {
+      "wallTimeMs": 1781243422080.589,
+      "stage": "session.enabled",
+      "dtMs": 0.2,
+      "detail": "label=menu display=web web=true",
+      "text": "[JDC_PERF] abs_ms=807.300 dt_ms=0.200 stage=session.enabled detail=label=menu display=web web=true"
+    },
+    {
+      "wallTimeMs": 1781243422080.866,
+      "stage": "menu.ready.begin",
+      "dtMs": 0.6,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=807.700 dt_ms=0.600 stage=menu.ready.begin detail="
+    },
+    {
+      "wallTimeMs": 1781243422097.237,
+      "stage": "avatar.total.begin",
+      "dtMs": 16.8,
+      "detail": "node=PreviewAvatar variant=male",
+      "text": "[JDC_PERF] abs_ms=823.900 dt_ms=16.800 stage=avatar.total.begin detail=node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781243422097.569,
+      "stage": "avatar.instantiate_model.begin",
+      "dtMs": 17.2,
+      "detail": "node=PreviewAvatar variant=male",
+      "text": "[JDC_PERF] abs_ms=824.300 dt_ms=17.200 stage=avatar.instantiate_model.begin detail=node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781243422249.889,
+      "stage": "avatar.region_mask.begin",
+      "dtMs": 169.5,
+      "detail": "node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=976.600 dt_ms=169.500 stage=avatar.region_mask.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422288.643,
+      "stage": "avatar.region_mask.end",
+      "dtMs": 208.2,
+      "detail": "duration_ms=38.500 node=PreviewAvatar vertices=7281 surfaces=1",
+      "text": "[JDC_PERF] abs_ms=1015.300 dt_ms=208.200 stage=avatar.region_mask.end detail=duration_ms=38.500 node=PreviewAvatar vertices=7281 surfaces=1"
+    },
+    {
+      "wallTimeMs": 1781243422291.046,
+      "stage": "avatar.instantiate_model.end",
+      "dtMs": 210.7,
+      "detail": "duration_ms=193.500 node=PreviewAvatar meshes=3 fallback=",
+      "text": "[JDC_PERF] abs_ms=1017.800 dt_ms=210.700 stage=avatar.instantiate_model.end detail=duration_ms=193.500 node=PreviewAvatar meshes=3 fallback="
+    },
+    {
+      "wallTimeMs": 1781243422291.281,
+      "stage": "avatar.animations.begin",
+      "dtMs": 211,
+      "detail": "node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=1018.100 dt_ms=211.000 stage=avatar.animations.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422334.105,
+      "stage": "avatar.animations.end",
+      "dtMs": 253.8,
+      "detail": "duration_ms=42.700 node=PreviewAvatar clips=47",
+      "text": "[JDC_PERF] abs_ms=1060.900 dt_ms=253.800 stage=avatar.animations.end detail=duration_ms=42.700 node=PreviewAvatar clips=47"
+    },
+    {
+      "wallTimeMs": 1781243422334.49,
+      "stage": "avatar.animation_tree.begin",
+      "dtMs": 254.1,
+      "detail": "node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=1061.200 dt_ms=254.100 stage=avatar.animation_tree.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422337.149,
+      "stage": "avatar.animation_tree.end",
+      "dtMs": 256.7,
+      "detail": "duration_ms=2.600 node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=1063.800 dt_ms=256.700 stage=avatar.animation_tree.end detail=duration_ms=2.600 node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422337.455,
+      "stage": "avatar.persistent_vfx.begin",
+      "dtMs": 257.1,
+      "detail": "node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=1064.200 dt_ms=257.100 stage=avatar.persistent_vfx.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422348.762,
+      "stage": "avatar.persistent_vfx.end",
+      "dtMs": 268.4,
+      "detail": "duration_ms=11.300 node=PreviewAvatar",
+      "text": "[JDC_PERF] abs_ms=1075.500 dt_ms=268.400 stage=avatar.persistent_vfx.end detail=duration_ms=11.300 node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422349.379,
+      "stage": "avatar.total.end",
+      "dtMs": 269,
+      "detail": "duration_ms=252.300 node=PreviewAvatar variant=male",
+      "text": "[JDC_PERF] abs_ms=1076.100 dt_ms=269.000 stage=avatar.total.end detail=duration_ms=252.300 node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781243422487.001,
+      "stage": "menu.ready.end",
+      "dtMs": 406.6,
+      "detail": "",
+      "text": "[JDC_PERF] abs_ms=1213.700 dt_ms=406.600 stage=menu.ready.end detail="
+    }
+  ],
+  "stability": {
+    "browserSamples": [
+      {
+        "t": 1959.8999999985099,
+        "wallTimeMs": 1781243418526.9,
+        "usedJSHeapSize": 736908,
+        "totalJSHeapSize": 1317884,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 4112.60000000149,
+        "wallTimeMs": 1781243420679.6,
+        "usedJSHeapSize": 81621392,
+        "totalJSHeapSize": 83995904,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 8064.5,
+        "wallTimeMs": 1781243424631.5,
+        "usedJSHeapSize": 68617658,
+        "totalJSHeapSize": 71697330,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 9112.20000000298,
+        "wallTimeMs": 1781243425679.2,
+        "usedJSHeapSize": 69223977,
+        "totalJSHeapSize": 72238053,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 10111.80000000447,
+        "wallTimeMs": 1781243426678.9,
+        "usedJSHeapSize": 69628677,
+        "totalJSHeapSize": 72762341,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 11112.20000000298,
+        "wallTimeMs": 1781243427679.2,
+        "usedJSHeapSize": 64785327,
+        "totalJSHeapSize": 69750467,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 12112.20000000298,
+        "wallTimeMs": 1781243428679.2,
+        "usedJSHeapSize": 65168263,
+        "totalJSHeapSize": 69750503,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 13111.89999999851,
+        "wallTimeMs": 1781243429678.9,
+        "usedJSHeapSize": 65523879,
+        "totalJSHeapSize": 69750503,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 14112.10000000149,
+        "wallTimeMs": 1781243430679.1,
+        "usedJSHeapSize": 65872439,
+        "totalJSHeapSize": 69750503,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 15112,
+        "wallTimeMs": 1781243431679,
+        "usedJSHeapSize": 66204595,
+        "totalJSHeapSize": 69750503,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      },
+      {
+        "t": 16112,
+        "wallTimeMs": 1781243432679,
+        "usedJSHeapSize": 66543619,
+        "totalJSHeapSize": 69750503,
+        "jsHeapSizeLimit": 4395630592,
+        "wasmHeapBytes": null
+      }
+    ],
+    "godotSamples": [],
+    "gate": {
+      "enabled": false,
+      "warmupMs": 60000,
+      "sampleIntervalMs": 1000,
+      "checks": [
+        {
+          "name": "js_wasm_heap_growth",
+          "passed": false,
+          "reason": "insufficient heap samples after warmup",
+          "sampleCount": 0
+        },
+        {
+          "name": "godot_counter_stability",
+          "passed": false,
+          "reason": "insufficient Godot stability samples after warmup",
+          "sampleCount": 0,
+          "checks": []
+        },
+        {
+          "name": "five_second_average_fps",
+          "passed": false,
+          "reason": "insufficient FPS buckets after warmup",
+          "minAverageFps": 0,
+          "limit": 30,
+          "windowCount": 0
+        }
+      ],
+      "passed": false
+    }
+  },
+  "consoleLines": [
+    {
+      "wallTimeMs": 1781243421325.404,
+      "type": "log",
+      "text": "Godot Engine v4.6.2.stable.official.71f334935 - https://godotengine.org"
+    },
+    {
+      "wallTimeMs": 1781243421808.499,
+      "type": "log",
+      "text": "OpenGL API OpenGL ES 3.0 (WebGL 2.0 (OpenGL ES 3.0 Chromium)) - Compatibility - Using Device: WebKit - WebKit WebGL"
+    },
+    {
+      "wallTimeMs": 1781243421978.5,
+      "type": "log",
+      "text": "Build configuration: Emscripten 4.0.20, single-threaded, no GDExtension support."
+    },
+    {
+      "wallTimeMs": 1781243422078.092,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781243422078.287,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422078.441,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781243422078.547,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422078.662,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781243422078.762,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422078.881,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781243422078.985,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422079.104,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781243422079.214,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422079.314,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781243422079.409,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422080.589,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=807.300 dt_ms=0.200 stage=session.enabled detail=label=menu display=web web=true"
+    },
+    {
+      "wallTimeMs": 1781243422080.866,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=807.700 dt_ms=0.600 stage=menu.ready.begin detail="
+    },
+    {
+      "wallTimeMs": 1781243422081.144,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781243422081.279,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422081.395,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781243422081.494,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422081.607,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781243422081.706,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422081.823,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781243422081.924,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422082.026,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781243422082.123,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422082.302,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781243422082.422,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422097.237,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=823.900 dt_ms=16.800 stage=avatar.total.begin detail=node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781243422097.569,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=824.300 dt_ms=17.200 stage=avatar.instantiate_model.begin detail=node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781243422249.889,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=976.600 dt_ms=169.500 stage=avatar.region_mask.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422288.643,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1015.300 dt_ms=208.200 stage=avatar.region_mask.end detail=duration_ms=38.500 node=PreviewAvatar vertices=7281 surfaces=1"
+    },
+    {
+      "wallTimeMs": 1781243422291.046,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1017.800 dt_ms=210.700 stage=avatar.instantiate_model.end detail=duration_ms=193.500 node=PreviewAvatar meshes=3 fallback="
+    },
+    {
+      "wallTimeMs": 1781243422291.281,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1018.100 dt_ms=211.000 stage=avatar.animations.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422334.105,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1060.900 dt_ms=253.800 stage=avatar.animations.end detail=duration_ms=42.700 node=PreviewAvatar clips=47"
+    },
+    {
+      "wallTimeMs": 1781243422334.49,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1061.200 dt_ms=254.100 stage=avatar.animation_tree.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422337.149,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1063.800 dt_ms=256.700 stage=avatar.animation_tree.end detail=duration_ms=2.600 node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422337.455,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1064.200 dt_ms=257.100 stage=avatar.persistent_vfx.begin detail=node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422348.762,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1075.500 dt_ms=268.400 stage=avatar.persistent_vfx.end detail=duration_ms=11.300 node=PreviewAvatar"
+    },
+    {
+      "wallTimeMs": 1781243422349.379,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1076.100 dt_ms=269.000 stage=avatar.total.end detail=duration_ms=252.300 node=PreviewAvatar variant=male"
+    },
+    {
+      "wallTimeMs": 1781243422487.001,
+      "type": "log",
+      "text": "[JDC_PERF] abs_ms=1213.700 dt_ms=406.600 stage=menu.ready.end detail="
+    }
+  ],
+  "consoleWarnings": [
+    {
+      "wallTimeMs": 1781243422078.092,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781243422078.287,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422078.441,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781243422078.547,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422078.662,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781243422078.762,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422078.881,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781243422078.985,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422079.104,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781243422079.214,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422079.314,
+      "type": "error",
+      "text": "WARNING: RenderProfile RenderProfile: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781243422079.409,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422081.144,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO."
+    },
+    {
+      "wallTimeMs": 1781243422081.279,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422081.395,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Glow/bloom is compensated with stronger emissive material and shader multipliers."
+    },
+    {
+      "wallTimeMs": 1781243422081.494,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422081.607,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Scoreboard and menu SubViewports use lower fixed sizes on Web."
+    },
+    {
+      "wallTimeMs": 1781243422081.706,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422081.823,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Particles keep the same gameplay triggers but use reduced amounts on Web."
+    },
+    {
+      "wallTimeMs": 1781243422081.924,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422082.026,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: Audio starts only after the first browser user interaction."
+    },
+    {
+      "wallTimeMs": 1781243422082.123,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    },
+    {
+      "wallTimeMs": 1781243422082.302,
+      "type": "error",
+      "text": "WARNING: RenderProfile MainMenuRoot: user:// save data maps to browser IndexedDB."
+    },
+    {
+      "wallTimeMs": 1781243422082.422,
+      "type": "error",
+      "text": "   at: push_warning (core/variant/variant_utility.cpp:1034)"
+    }
+  ],
+  "consoleErrorLines": [],
+  "pageErrors": [],
+  "releaseInfo": {
+    "releaseRoot": "web/v1-copa-arena-futebol-20260612-a850045a",
+    "projectName": "copa-arena-futebol",
+    "generatedAt": "2026-06-12T05:48:35Z",
+    "packageStrategy": "cloudflare_pages_brotli_assets"
+  },
+  "assertions": {
+    "expectedReleaseRoot": "web/v1-copa-arena-futebol-20260612-a850045a",
+    "actualReleaseRoot": "web/v1-copa-arena-futebol-20260612-a850045a",
+    "releaseRootMatches": true,
+    "expectedStage": "",
+    "expectedStageSeen": true,
+    "noPageErrors": true,
+    "noConsoleErrors": true
+  },
+  "screenshotPath": "D:\\Estudio-worktrees\\jogodacopa-track05a\\Projetos\\JogoDaCopa\\docs\\playtest-reports\\track-05a-data\\05a-remote-release-root-check-cachebuster.png"
+}

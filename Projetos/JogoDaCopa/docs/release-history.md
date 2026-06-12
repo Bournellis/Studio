@@ -6,7 +6,22 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 
 | Data | Release | Canal | URL | Release root | Evidencia |
 | --- | --- | --- | --- | --- | --- |
+| 2026-06-12 | Web Stability Hotfix V1 (`v1.0.1+a850045a`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-a850045a` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json` |
 | 2026-06-12 | Web Publication V1 | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-31e23ea3` | `docs/playtest-reports/track-05-data/05c-publication-report.json` |
+
+## 2026-06-12 - Web Stability Hotfix V1
+
+- Projeto Cloudflare Pages: `copa-arena-futebol`.
+- Preview publicado: `https://a8305492.copa-arena-futebol.pages.dev`.
+- URL estavel validada: `https://copa-arena-futebol.pages.dev/`.
+- Publicacao remota executada por `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260612-a850045a -ConfirmRemoteMutation`.
+- Hotfix: reduz churn por frame no Web ao atualizar HUD/placares em cadencia de 0.1s com flush imediato em mudancas de estado, evita reatribuicao de labels iguais, remove pointer-lock do modo de captura/probe e adiciona gate Chrome de estabilidade de 5 minutos.
+- Suporte externo: rodape do menu exibe `Copa Arena Futebol v1.0.1+a850045a | sem logos oficiais`.
+- Causa raiz e baseline: `docs/playtest-reports/track-05a-web-stability.md`.
+- Smoke local oficial: `docs/playtest-reports/track-05a-data/05a-local-stability-gate-5min-pass.json`.
+- Smoke remoto oficial: `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json`.
+- Smoke remoto: release root conferiu com cache-buster, page errors `0`, runtime console errors `0`, heap retido `+3.77%`, `object_node_count 766 -> 766`, pior janela 5s `126.0 FPS`.
+- `tools/validate.gd --profile=full`: PASS, 86 testes, 1272 asserts.
 
 ## 2026-06-12 - Web Publication V1
 
@@ -20,7 +35,17 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 - Smoke remoto: release root conferiu, `menu.ready.end` observado, page errors `0`, runtime console errors `0`.
 - `tools/validate.gd`: PASS, 86 testes, 1264 asserts, Web gzip transfer `30.30 MiB / 50.00 MiB`.
 
-## Hashes
+## Hashes - Web Stability Hotfix V1
+
+| Artefato | Bytes | SHA256 |
+| --- | ---: | --- |
+| `pages/index.html` | 5701 | `658af55aea1ac9ffc571e873e3aca1c47f1c8986f52f9f3544890059cbc8892c` |
+| `pages/index.pck` Brotli | 20584773 | `935d9a2402474ed6f7d6e7e9fd3e72e982826829c0d749e92cebbd4c2eb288b7` |
+| `pages/index.wasm` Brotli | 6608968 | `6903dbdda02519655d94ef7fc0eb18e31336ac11b0f93a1abe696a654d2cf30f` |
+| `pages/_headers` | 394 | `9c350676e1fdc1f68bc27c91170b529161b7b3fc08889814d0643304ed0aaca0` |
+| `copa-arena-futebol-pages.zip` | 27325962 | `670611a6d8866ad8a52e3b4aff26bb474a4fd02d267fae7b62912df79096fe16` |
+
+## Hashes - Web Publication V1
 
 | Artefato | Bytes | SHA256 |
 | --- | ---: | --- |
