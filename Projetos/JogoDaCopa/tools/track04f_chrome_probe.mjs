@@ -30,6 +30,10 @@ const firstMinuteDurationMs = Number(args.get("first-minute-duration-ms") || "60
 const firstMinuteHitchThresholdMs = Number(args.get("first-minute-hitch-threshold-ms") || "100");
 const firstMinuteStartStage = args.get("first-minute-start-stage") || "event.visible_match_start";
 const eventHitchWindowMs = Number(args.get("event-hitch-window-ms") || "2000");
+const eventHitchPreWindowMs = Number(args.get("event-hitch-pre-window-ms") || "250");
+const defaultFrameStorageLimit = stabilityGate && !firstMinuteGate ? "1200" : "0";
+const frameStorageLimit = Math.max(0, Math.floor(Number(args.get("frame-storage-limit") || defaultFrameStorageLimit)));
+const webFeedback = (args.get("web-feedback") || "").trim();
 const godotStabilitySamplesEnabled = args.get("godot-stability-samples") !== "0";
 const godotDetailEnabled = args.get("godot-detail") !== "0";
 const httpPort = Number(args.get("http-port") || "8064");
@@ -228,10 +232,13 @@ function buildFirstMinuteReport(frameStats, events) {
 function isInterestingEventStage(stage) {
   return stage === "perf_scenario.step"
     || stage === "event.player_kick_request"
+    || stage === "event.whistle"
+    || stage === "event.countdown_tick"
     || stage === "event.kick_vfx"
     || stage === "event.goal_detected"
     || stage === "event.goal_vfx"
     || stage === "event.confetti_vfx"
+    || stage === "event.jump_pad_vfx"
     || stage === "event.result"
     || stage === "event.round_end"
     || stage === "event.rematch"
@@ -243,17 +250,24 @@ function buildEventHitchReport(frameStats, events) {
     .filter((event) => isInterestingEventStage(event.stage))
     .sort((a, b) => a.wallTimeMs - b.wallTimeMs);
   return interestingEvents.map((event) => {
+    const windowStartMs = event.wallTimeMs - eventHitchPreWindowMs;
     const windowEndMs = event.wallTimeMs + eventHitchWindowMs;
+    const frames = (frameStats.frames || [])
+      .filter((frame) => frame.wallTimeMs >= windowStartMs && frame.wallTimeMs <= windowEndMs)
+      .sort((a, b) => b.dt - a.dt);
     const hitches = (frameStats.hitches || [])
       .filter((hitch) => hitch.dt > firstMinuteHitchThresholdMs)
-      .filter((hitch) => hitch.wallTimeMs >= event.wallTimeMs && hitch.wallTimeMs <= windowEndMs)
+      .filter((hitch) => hitch.wallTimeMs >= windowStartMs && hitch.wallTimeMs <= windowEndMs)
       .sort((a, b) => b.dt - a.dt);
     return {
       stage: event.stage,
       detail: event.detail,
       wallTimeMs: event.wallTimeMs,
       windowMs: eventHitchWindowMs,
+      preWindowMs: eventHitchPreWindowMs,
       thresholdMs: firstMinuteHitchThresholdMs,
+      frameCount: frames.length,
+      maxFrameMs: frames.length ? frames[0].dt : 0,
       hitchCount: hitches.length,
       maxHitchMs: hitches.length ? hitches[0].dt : 0,
       hitches,
@@ -509,15 +523,20 @@ const frameCollector = `
 (() => {
   if (window.__jdcFrameCollectorInstalled) return;
   window.__jdcFrameCollectorInstalled = true;
-  window.__jdcFrameStats = { frameCount: 0, dts: [], hitches: [], fpsBuckets: {} };
+  const frameStorageLimit = ${Number.isFinite(frameStorageLimit) ? frameStorageLimit : 0};
+  window.__jdcFrameStats = { frameCount: 0, dts: [], frames: [], hitches: [], fpsBuckets: {} };
   window.__jdcFrameStart = performance.now();
   let last = performance.now();
   function tick(now) {
     const dt = now - last;
     last = now;
-    const stats = window.__jdcFrameStats || (window.__jdcFrameStats = { frameCount: 0, dts: [], hitches: [], fpsBuckets: {} });
+    const stats = window.__jdcFrameStats || (window.__jdcFrameStats = { frameCount: 0, dts: [], frames: [], hitches: [], fpsBuckets: {} });
     stats.frameCount += 1;
     stats.dts.push(dt);
+    stats.frames.push({ t: now, wallTimeMs: performance.timeOrigin + now, dt });
+    if (frameStorageLimit > 0 && stats.frames.length > frameStorageLimit + 200) {
+      stats.frames.splice(0, stats.frames.length - frameStorageLimit);
+    }
     const bucketStart = Math.floor(now / 1000) * 1000;
     stats.fpsBuckets[bucketStart] = (stats.fpsBuckets[bucketStart] || 0) + 1;
     if (dt > 50) {
@@ -603,6 +622,9 @@ const frameCollector = `
   if (!godotDetailEnabled) {
     targetUrl = withQueryParam(targetUrl, "jdc_perf_detail", "0");
   }
+  if (webFeedback.length > 0) {
+    targetUrl = withQueryParam(targetUrl, "jdc_web_feedback", webFeedback);
+  }
   await client.send("Page.navigate", { url: targetUrl });
   await delay(500);
   await client.send("Runtime.evaluate", {
@@ -626,7 +648,7 @@ const frameCollector = `
     await client.send("Runtime.evaluate", {
       expression: `
 (() => {
-  window.__jdcFrameStats = { frameCount: 0, dts: [], hitches: [], fpsBuckets: {} };
+  window.__jdcFrameStats = { frameCount: 0, dts: [], frames: [], hitches: [], fpsBuckets: {} };
   window.__jdcFrameStart = performance.now();
   return true;
 })()
@@ -654,7 +676,7 @@ const frameCollector = `
   const result = await client.send("Runtime.evaluate", {
     expression: `
 (() => {
-  const stats = window.__jdcFrameStats || { frameCount: 0, dts: [], hitches: [], fpsBuckets: {} };
+  const stats = window.__jdcFrameStats || { frameCount: 0, dts: [], frames: [], hitches: [], fpsBuckets: {} };
   const timeOrigin = performance.timeOrigin;
   const dts = (stats.dts || []).filter((dt) => Number.isFinite(dt) && dt >= 0);
   const sorted = [...dts].sort((a, b) => a - b);
@@ -677,6 +699,7 @@ const frameCollector = `
     p95: pct(95),
     p99: pct(99),
     max: sorted.length ? sorted[sorted.length - 1] : 0,
+    frames: (stats.frames || []).map((frame) => ({ t: frame.t, wallTimeMs: frame.wallTimeMs || (timeOrigin + frame.t), dt: frame.dt })),
     hitches: (stats.hitches || []).map((hitch) => ({ t: hitch.t, wallTimeMs: hitch.wallTimeMs || (timeOrigin + hitch.t), dt: hitch.dt })).sort((a, b) => b.dt - a.dt).slice(0, 50),
   };
 })()
@@ -745,6 +768,7 @@ const frameCollector = `
   const output = {
     label,
     route,
+    webFeedback,
     targetUrl,
     durationMs,
     headless,
@@ -788,6 +812,7 @@ const frameCollector = `
     firstMinuteGate,
     firstMinutePassed: firstMinute.passed,
     firstMinuteHitches: firstMinute.hitchCount,
+    webFeedback,
   }, null, 2));
   if (!assertions.releaseRootMatches) {
     throw new Error(`Release root mismatch. Expected ${expectedReleaseRoot}, got ${assertions.actualReleaseRoot}`);

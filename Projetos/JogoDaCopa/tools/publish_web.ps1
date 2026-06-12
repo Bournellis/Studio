@@ -13,7 +13,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $PagesAssetLimitBytes = 25 * 1024 * 1024
-$VisibleVersion = "v1.0.2"
+$VisibleVersion = "v1.0.3"
 
 function Write-TextUtf8NoBom {
     param([string]$Path, [string]$Text)

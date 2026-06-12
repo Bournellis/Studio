@@ -138,7 +138,10 @@ const WEB_LOADING_SETTLE_REQUIRED_FRAMES: int = 5
 const WEB_LOADING_SETTLE_MAX_FRAMES: int = 120
 const WEB_LOADING_SETTLE_FRAME_MS: float = 33.0
 const WEB_FIRST_USE_WARMUP_FRAMES: int = 1
+const WEB_REAL_JUMP_PAD_WARMUP_FRAMES: int = 120
 const WEB_FIRST_USE_DECAY_SECONDS: float = 0.8
+const WEB_FEEDBACK_QUERY_KEY: String = "jdc_web_feedback"
+const WEB_DEFAULT_FEEDBACK_EFFECTS: Array = ["whistle", "confetti", "kick", "countdown", "jump_pad", "result"]
 const PERF_SCENARIO_INITIAL_DELAY: float = 2.0
 
 var player
@@ -199,6 +202,9 @@ var perf_scenario_step: int = -1
 var perf_stability_sample_elapsed: float = 0.0
 var hud_snapshot_elapsed: float = HUD_SNAPSHOT_INTERVAL_SECONDS
 var stadium_scoreboard_elapsed: float = STADIUM_SCOREBOARD_INTERVAL_SECONDS
+var web_feedback_scenario_filter_loaded: bool = false
+var web_feedback_scenario_allow_all: bool = true
+var web_feedback_scenario_enabled: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -324,7 +330,7 @@ func _input(event: InputEvent) -> void:
 	if menu_open:
 		return
 	if not match_over and event is InputEventMouseButton and event.is_pressed() and Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
-		_capture_mouse_if_playing()
+		_capture_mouse_if_playing(true)
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("arcade_emote"):
@@ -424,11 +430,16 @@ func _warmup_web_first_use_feedback() -> void:
 		await _wait_web_first_use_frames("gameplay_strong_kick", WEB_FIRST_USE_WARMUP_FRAMES + 2)
 		debug_force_ball_position(warmup_position)
 	if feedback != null:
+		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "whistle_countdown")
+		feedback.play_countdown_tick(false)
+		feedback.play_countdown_tick(true)
+		feedback.play_referee_whistle(warmup_position)
+		await _wait_web_first_use_frames("whistle_countdown", WEB_FIRST_USE_WARMUP_FRAMES + 2)
 		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "kick")
 		feedback.play_football_kick(warmup_position, warmup_direction, true)
 		feedback.play_ball_bounce(warmup_position, true)
 		feedback.play_ball_glass(warmup_position)
-		await _wait_web_first_use_frames("kick")
+		await _wait_web_first_use_frames("kick", WEB_FIRST_USE_WARMUP_FRAMES + 2)
 		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "goal_player")
 		feedback.play_football_goal(warmup_position + Vector3(0.0, 0.0, 3.5), true)
 		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "goal_bot")
@@ -439,6 +450,21 @@ func _warmup_web_first_use_feedback() -> void:
 		feedback.play_arcade_confetti(warmup_position + Vector3(0.0, 0.0, -1.75), false)
 		feedback.play_jump_pad(warmup_position + Vector3(2.5, 0.0, 0.0), JUMP_PAD_LAUNCH_VELOCITY)
 		await _wait_web_first_use_frames("goal_confetti_batch", WEB_FIRST_USE_WARMUP_FRAMES + 2)
+		if player != null and not jump_pad_areas.is_empty():
+			PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "actual_jump_pad")
+			player.global_position = jump_pad_areas[0].global_position
+			if chase_camera != null:
+				chase_camera.snap_to_target()
+			_update_arcade_field(0.1)
+			await _wait_web_first_use_frames("actual_jump_pad", WEB_REAL_JUMP_PAD_WARMUP_FRAMES)
+		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "actual_goal_confetti")
+		debug_set_score(0, 0)
+		debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_SOUTH + 0.35))
+		_process_goal_detection()
+		await _wait_web_first_use_frames("actual_goal_confetti", WEB_FIRST_USE_WARMUP_FRAMES + 2)
+		restart_match(false)
+		debug_force_ball_position(warmup_position)
+		await _wait_web_first_use_frames("restart_after_actual_goal")
 	if hud != null:
 		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "hud_goal_messages")
 		hud.show_goal(true)
@@ -2250,39 +2276,115 @@ func _update_perf_scenario(delta: float) -> void:
 func _run_perf_scenario_step(step_index: int) -> void:
 	match step_index:
 		0:
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=strong_kick")
+			if not _is_perf_feedback_step_enabled(&"whistle"):
+				PerfProbeScript.mark(self, "perf_scenario.step", "action=whistle skipped=true")
+				return
 			_set_menu_open(false)
 			debug_finish_kickoff_countdown()
-			debug_force_ball_position(player.global_position + (-player.global_transform.basis.z * 1.2) + Vector3.UP * 0.55)
-			_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, true)
+			PerfProbeScript.mark(self, "perf_scenario.step", "action=whistle")
+			if feedback != null:
+				feedback.play_referee_whistle(ball.global_position if ball != null else Vector3.ZERO)
 		1:
+			if not _is_perf_feedback_step_enabled(&"confetti"):
+				PerfProbeScript.mark(self, "perf_scenario.step", "action=bot_goal_confetti skipped=true")
+				return
 			PerfProbeScript.mark(self, "perf_scenario.step", "action=bot_goal_confetti")
 			debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_SOUTH + 0.35))
 			_process_goal_detection()
 		2:
+			if not _is_perf_feedback_step_enabled(&"kick"):
+				PerfProbeScript.mark(self, "perf_scenario.step", "action=strong_kick skipped=true")
+				return
+			PerfProbeScript.mark(self, "perf_scenario.step", "action=strong_kick")
+			debug_finish_kickoff_countdown()
+			debug_force_ball_position(player.global_position + (-player.global_transform.basis.z * 1.2) + Vector3.UP * 0.55)
+			_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, true)
+		3:
+			if not _is_perf_feedback_step_enabled(&"countdown"):
+				PerfProbeScript.mark(self, "perf_scenario.step", "action=countdown skipped=true")
+				return
+			PerfProbeScript.mark(self, "perf_scenario.step", "action=countdown")
+			if hud != null:
+				hud.show_countdown("2", 0.35)
+			if feedback != null:
+				feedback.play_countdown_tick(false)
+		4:
+			if not _is_perf_feedback_step_enabled(&"kick"):
+				PerfProbeScript.mark(self, "perf_scenario.step", "action=super_fireball skipped=true")
+				return
 			PerfProbeScript.mark(self, "perf_scenario.step", "action=super_fireball")
 			debug_finish_kickoff_countdown()
 			debug_set_player_super_meter(SUPER_METER_MAX)
 			debug_force_ball_position(player.global_position + (-player.global_transform.basis.z * 1.0) + Vector3.UP * 0.55)
 			_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), SUPER_SHOT_FORCE, SUPER_SHOT_LIFT, true, true)
-		3:
+		5:
+			if not _is_perf_feedback_step_enabled(&"jump_pad"):
+				PerfProbeScript.mark(self, "perf_scenario.step", "action=jump_pad skipped=true")
+				return
 			PerfProbeScript.mark(self, "perf_scenario.step", "action=jump_pad")
 			if not jump_pad_areas.is_empty() and player != null:
 				player.global_position = jump_pad_areas[0].global_position
 				_update_arcade_field(0.1)
-		4:
+		6:
+			if not _is_perf_feedback_step_enabled(&"result"):
+				PerfProbeScript.mark(self, "perf_scenario.step", "action=result skipped=true")
+				return
 			_set_menu_open(false)
 			PerfProbeScript.mark(self, "perf_scenario.step", "action=result")
 			debug_set_score(2, 0)
 			debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_NORTH - 0.35))
 			_process_goal_detection()
-		5:
+		7:
+			if not _is_perf_feedback_step_enabled(&"result"):
+				PerfProbeScript.mark(self, "perf_scenario.step", "action=rematch skipped=true")
+				return
 			PerfProbeScript.mark(self, "perf_scenario.step", "action=rematch")
 			PerfProbeScript.mark(self, "event.rematch")
 			restart_match()
 			debug_finish_kickoff_countdown()
 		_:
 			PerfProbeScript.mark(self, "perf_scenario.step", "action=coast index=%d" % step_index)
+
+func _is_perf_feedback_step_enabled(effect_key: StringName) -> bool:
+	if not RenderProfileScript.is_web_platform():
+		return true
+	_load_perf_feedback_scenario_filter()
+	if web_feedback_scenario_allow_all:
+		return true
+	return web_feedback_scenario_enabled.has(str(effect_key))
+
+func _load_perf_feedback_scenario_filter() -> void:
+	if web_feedback_scenario_filter_loaded:
+		return
+	web_feedback_scenario_filter_loaded = true
+	web_feedback_scenario_enabled.clear()
+	web_feedback_scenario_allow_all = false
+	var query_value := ""
+	if RenderProfileScript.is_web_platform():
+		var script := "(new URLSearchParams(window.location.search)).get('%s') || ''" % WEB_FEEDBACK_QUERY_KEY
+		query_value = str(JavaScriptBridge.eval(script, true)).strip_edges().to_lower()
+	if query_value.is_empty():
+		_enable_default_perf_feedback_steps()
+		PerfProbeScript.mark(self, "perf_scenario.feedback_filter", "mode=default effects=%s" % ",".join(WEB_DEFAULT_FEEDBACK_EFFECTS))
+		return
+	if query_value == "all":
+		web_feedback_scenario_allow_all = true
+		PerfProbeScript.mark(self, "perf_scenario.feedback_filter", "mode=all")
+		return
+	if query_value == "none":
+		web_feedback_scenario_allow_all = false
+		PerfProbeScript.mark(self, "perf_scenario.feedback_filter", "mode=none")
+		return
+	web_feedback_scenario_allow_all = false
+	for part in query_value.split(",", false):
+		var effect := part.strip_edges()
+		if not effect.is_empty():
+			web_feedback_scenario_enabled[effect] = true
+	PerfProbeScript.mark(self, "perf_scenario.feedback_filter", "mode=list effects=%s" % query_value)
+
+func _enable_default_perf_feedback_steps() -> void:
+	for effect in WEB_DEFAULT_FEEDBACK_EFFECTS:
+		web_feedback_scenario_enabled[str(effect)] = true
 
 func _build_kickoff_marker(parent: Node3D) -> void:
 	kickoff_marker = MeshInstance3D.new()
@@ -2339,8 +2441,10 @@ func _record_goal_stat(player_scored: bool, goal_value: int) -> void:
 		golden_goal_active
 	)
 
-func _capture_mouse_if_playing() -> void:
+func _capture_mouse_if_playing(allow_web_capture: bool = false) -> void:
 	if DisplayServer.get_name().to_lower().contains("headless"):
+		return
+	if RenderProfileScript.is_web_platform() and not allow_web_capture:
 		return
 	if capture_scene_active:
 		return

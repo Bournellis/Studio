@@ -6,9 +6,26 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 
 | Data | Release | Canal | URL | Release root | Evidencia |
 | --- | --- | --- | --- | --- | --- |
+| 2026-06-12 | Sensory Feedback Re-Introduction V1 (`v1.0.3+ef9c5baa`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-ef9c5baa` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05b1-data/05b1-remote-first-minute-gate-final-ef9c5baa.json` + `docs/playtest-reports/track-05b1-data/05b1-remote-stability-5min-final-ef9c5baa-pass2.json` |
 | 2026-06-12 | First-Minute Smoothness V1 (`v1.0.2+ad82384b`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-ad82384b` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05b-data/05b-remote-first-minute-gate.json` + `docs/playtest-reports/track-05b-data/05b-remote-stability-5min.json` |
 | 2026-06-12 | Web Stability Hotfix V1 (`v1.0.1+a850045a`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-a850045a` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json` |
 | 2026-06-12 | Web Publication V1 | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-31e23ea3` | `docs/playtest-reports/track-05-data/05c-publication-report.json` |
+
+## 2026-06-12 - Sensory Feedback Re-Introduction V1
+
+- Projeto Cloudflare Pages: `copa-arena-futebol`.
+- Preview publicado: `https://f66e2003.copa-arena-futebol.pages.dev`.
+- URL estavel validada: `https://copa-arena-futebol.pages.dev/`.
+- Publicacao remota executada por `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260612-ef9c5baa -ConfirmRemoteMutation`.
+- Release publicado como `v1.0.3+ef9c5baa`.
+- Mudanca: reintroduz no Web default APITO, `CONFETTI de gol`, VFX/audio 2D de chute, countdown tick, jump pad e result/rematch, com warmup real dentro do frustum atras do overlay.
+- Audio Web: sem `AudioStreamPlayer3D`; players 2D de menu e partida sao criados/tocados apenas apos ativacao do navegador para evitar `PositionWorklet`.
+- Relatorio completo e tabela efeito/custo/status: `docs/playtest-reports/track-05b1-sensory-feedback.md`.
+- Smoke local oficial: `docs/playtest-reports/track-05b1-data/05b1-local-final-first-minute-after-menu-audio-defer.json` e `docs/playtest-reports/track-05b1-data/05b1-local-final-stability-5min.json`.
+- Smoke remoto oficial: `docs/playtest-reports/track-05b1-data/05b1-remote-first-minute-gate-final-ef9c5baa.json` e `docs/playtest-reports/track-05b1-data/05b1-remote-stability-5min-final-ef9c5baa-pass2.json`.
+- Smoke remoto: release root conferiu, `event.rematch` observado, page errors `0`, runtime console errors `0`, primeiro minuto `0` hitches `>100ms`, estabilidade 5min PASS.
+- Loading local primeira visita medido em `~17.8s-18.3s`, acima do teto `8s`; registrado para decisao de Fabio.
+- `tools/validate.gd --profile=full`: PASS, 86 testes, 1272 asserts, Web gzip transfer `30.32 MiB / 50.00 MiB`.
 
 ## 2026-06-12 - First-Minute Smoothness V1
 
@@ -51,6 +68,16 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 - Smoke remoto: release root conferiu, `menu.ready.end` observado, page errors `0`, runtime console errors `0`.
 - `tools/validate.gd`: PASS, 86 testes, 1264 asserts, Web gzip transfer `30.30 MiB / 50.00 MiB`.
 
+## Hashes - Sensory Feedback Re-Introduction V1
+
+| Artefato | Bytes | SHA256 |
+| --- | ---: | --- |
+| `pages/index.html` | 5701 | `ace3cf0a5ac559a7d01a940b1a0d4f3efd5aee73cc8e12669a4607b319f489e6` |
+| `pages/index.pck` Brotli | 20587717 | `05043661b06699c96ba97feeec026a4a7a1e56aa7ef984d9eda8edeaa2f27b56` |
+| `pages/index.wasm` Brotli | 6608968 | `6903dbdda02519655d94ef7fc0eb18e31336ac11b0f93a1abe696a654d2cf30f` |
+| `pages/_headers` | 394 | `9c350676e1fdc1f68bc27c91170b529161b7b3fc08889814d0643304ed0aaca0` |
+| `copa-arena-futebol-pages.zip` | 27328981 | `cf6734b6c1d98b20cc14ae234a6d0c8cb182c82ec3701b95bf1b5f2d0abe7e81` |
+
 ## Hashes - First-Minute Smoothness V1
 
 | Artefato | Bytes | SHA256 |
@@ -84,7 +111,8 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 
 ## Limitacoes Conhecidas
 
-- A Track 05B removeu o hitch visivel de primeiro uso no primeiro minuto publicado, mas fez isso cortando feedback transiente de VFX/audio no perfil Web. Fabio aprovou o follow-up `Track 05B.1` para reintroduzir esses efeitos um por vez com budget por efeito.
-- Loading remoto de producao ficou abaixo de `8s`, mas loading local primeira visita medido em `~13.5s-13.7s` continua acima do teto solicitado e fica registrado para acompanhamento em follow-up.
+- A Track 05B.1 reintroduziu os feedbacks transientes Web-safe no default publico, mas manteve o pacote pesado completo de `goal` fora do default; o `CONFETTI de gol` esta ativo.
+- Audio Web automatizado fica silencioso ate ativacao do navegador para evitar `PositionWorklet`; sessoes humanas desbloqueiam os players 2D ao clicar no menu.
+- Loading remoto de producao ficou abaixo de `8s` na 05B, mas a 05B.1 mediu loading local primeira visita em `~17.8s-18.3s`, acima do teto solicitado, por causa do warmup real dos efeitos reintroduzidos.
 - Web V1 e publicacao jogavel em navegador desktop; mobile browser pode ser observado manualmente, mas nao e superficie oficialmente suportada nesta release.
 - Kits e branding sao genericos/inspirados; nao ha logos oficiais FIFA, Copa, federacoes ou clubes.
