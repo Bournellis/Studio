@@ -20,6 +20,10 @@ Durante a configuracao do remote, tres falhas atingiram o repositorio principal:
 - Agentes em ambiente remoto/sandbox devem verificar integridade apos commit (blobs sem bytes NUL) e preferir indice externo (`GIT_INDEX_FILE` fora da arvore montada) quando o filesystem for suspeito.
 - Reparo padrao: remover `index.lock` orfao; se o index corromper, `rm .git/index && git reset` reconstroi a partir do HEAD sem tocar nos arquivos de trabalho.
 
+## Adendo: Falso Sujo Em Sessao Remota
+
+O mesmo filesystem tambem mente na LEITURA: arquivos que cresceram em commits recentes do host podem aparecer truncados na visao do agente remoto, fazendo `git status` listar modificacoes que nao existem (conteudo igual a um prefixo exato do blob do HEAD, as vezes cortado no meio de uma palavra). Antes de concluir que um handoff ficou sujo ou de commitar qualquer coisa nesse estado, confirme com `cmp <(git show HEAD:arquivo | head -c TAMANHO_TRABALHO) arquivo`: prefixo exato = ilusao da montagem, arvore real limpa. Nunca faca `git add` de arquivos nesse estado.
+
 ## Beneficio
 
 Evita perda de staging, commits com blobs corrompidos e loops de autenticacao que mascaram erro de configuracao.
