@@ -2094,48 +2094,40 @@ func _update_perf_scenario(delta: float) -> void:
 	if next_step == perf_scenario_step:
 		return
 	perf_scenario_step = next_step
-	_run_perf_scenario_step(next_step % 12)
+	_run_perf_scenario_step(next_step)
 
 func _run_perf_scenario_step(step_index: int) -> void:
 	match step_index:
 		0:
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=normal_kick")
+			PerfProbeScript.mark(self, "perf_scenario.step", "action=strong_kick")
 			_set_menu_open(false)
 			debug_finish_kickoff_countdown()
 			debug_force_ball_position(player.global_position + (-player.global_transform.basis.z * 1.2) + Vector3.UP * 0.55)
-			_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, false)
+			_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_STRONG_KICK_FORCE, PLAYER_STRONG_KICK_LIFT, true)
 		1:
+			PerfProbeScript.mark(self, "perf_scenario.step", "action=bot_goal_confetti")
+			debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_SOUTH + 0.35))
+			_process_goal_detection()
+		2:
 			PerfProbeScript.mark(self, "perf_scenario.step", "action=super_fireball")
 			debug_finish_kickoff_countdown()
 			debug_set_player_super_meter(SUPER_METER_MAX)
 			debug_force_ball_position(player.global_position + (-player.global_transform.basis.z * 1.0) + Vector3.UP * 0.55)
 			_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), SUPER_SHOT_FORCE, SUPER_SHOT_LIFT, true, true)
-		2:
+		3:
 			PerfProbeScript.mark(self, "perf_scenario.step", "action=jump_pad")
 			if not jump_pad_areas.is_empty() and player != null:
 				player.global_position = jump_pad_areas[0].global_position
 				_update_arcade_field(0.1)
-		3:
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=goal")
-			debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_NORTH - 0.35))
-			_process_goal_detection()
 		4:
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=pause_open")
-			_set_menu_open(true)
-		5:
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=pause_close")
 			_set_menu_open(false)
-		6:
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=confetti")
-			_trigger_arcade_emote(true)
-		7:
 			PerfProbeScript.mark(self, "perf_scenario.step", "action=result")
-			_set_menu_open(false)
 			debug_set_score(2, 0)
 			debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_NORTH - 0.35))
 			_process_goal_detection()
-		8:
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=restart")
+		5:
+			PerfProbeScript.mark(self, "perf_scenario.step", "action=rematch")
+			PerfProbeScript.mark(self, "event.rematch")
 			restart_match()
 			debug_finish_kickoff_countdown()
 		_:

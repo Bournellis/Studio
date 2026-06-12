@@ -25,6 +25,11 @@ const stabilityGate = args.get("stability-gate") === "1";
 const stabilityWarmupMs = Number(args.get("stability-warmup-ms") || "60000");
 const maxHeapGrowthRatio = Number(args.get("max-heap-growth-ratio") || "0.10");
 const minFiveSecondAverageFps = Number(args.get("min-5s-avg-fps") || "30");
+const firstMinuteGate = args.get("first-minute-gate") === "1";
+const firstMinuteDurationMs = Number(args.get("first-minute-duration-ms") || "60000");
+const firstMinuteHitchThresholdMs = Number(args.get("first-minute-hitch-threshold-ms") || "100");
+const firstMinuteStartStage = args.get("first-minute-start-stage") || "event.match_start";
+const eventHitchWindowMs = Number(args.get("event-hitch-window-ms") || "2000");
 const httpPort = Number(args.get("http-port") || "8064");
 const cdpPort = Number(args.get("cdp-port") || "9223");
 const label = args.get("label") || "chrome-probe";
@@ -181,6 +186,71 @@ function nearestEvent(hitchWallTimeMs, events) {
     }
   }
   return best ? { ...best, distanceMs: bestDistance } : null;
+}
+
+function findFirstEvent(events, stage) {
+  return events.find((event) => event.stage === stage) || null;
+}
+
+function buildFirstMinuteReport(frameStats, events) {
+  const startEvent = findFirstEvent(events, firstMinuteStartStage) || findFirstEvent(events, "loading.overlay_hidden") || events[0] || null;
+  const startWallTimeMs = startEvent?.wallTimeMs || 0;
+  const endWallTimeMs = startWallTimeMs + firstMinuteDurationMs;
+  const hitches = (frameStats.hitches || [])
+    .filter((hitch) => hitch.dt > firstMinuteHitchThresholdMs)
+    .filter((hitch) => startWallTimeMs <= 0 || (hitch.wallTimeMs >= startWallTimeMs && hitch.wallTimeMs <= endWallTimeMs))
+    .sort((a, b) => b.dt - a.dt)
+    .map((hitch) => ({
+      ...hitch,
+      elapsedFromStartMs: startWallTimeMs > 0 ? hitch.wallTimeMs - startWallTimeMs : null,
+      nearestEvent: nearestEvent(hitch.wallTimeMs, events),
+    }));
+  return {
+    enabled: firstMinuteGate,
+    passed: hitches.length === 0,
+    startStage: startEvent?.stage || "",
+    startWallTimeMs,
+    durationMs: firstMinuteDurationMs,
+    thresholdMs: firstMinuteHitchThresholdMs,
+    hitchCount: hitches.length,
+    hitches,
+  };
+}
+
+function isInterestingEventStage(stage) {
+  return stage === "perf_scenario.step"
+    || stage === "event.player_kick_request"
+    || stage === "event.kick_vfx"
+    || stage === "event.goal_detected"
+    || stage === "event.goal_vfx"
+    || stage === "event.confetti_vfx"
+    || stage === "event.result"
+    || stage === "event.round_end"
+    || stage === "event.rematch"
+    || stage === "event.restart_play";
+}
+
+function buildEventHitchReport(frameStats, events) {
+  const interestingEvents = events
+    .filter((event) => isInterestingEventStage(event.stage))
+    .sort((a, b) => a.wallTimeMs - b.wallTimeMs);
+  return interestingEvents.map((event) => {
+    const windowEndMs = event.wallTimeMs + eventHitchWindowMs;
+    const hitches = (frameStats.hitches || [])
+      .filter((hitch) => hitch.dt > firstMinuteHitchThresholdMs)
+      .filter((hitch) => hitch.wallTimeMs >= event.wallTimeMs && hitch.wallTimeMs <= windowEndMs)
+      .sort((a, b) => b.dt - a.dt);
+    return {
+      stage: event.stage,
+      detail: event.detail,
+      wallTimeMs: event.wallTimeMs,
+      windowMs: eventHitchWindowMs,
+      thresholdMs: firstMinuteHitchThresholdMs,
+      hitchCount: hitches.length,
+      maxHitchMs: hitches.length ? hitches[0].dt : 0,
+      hitches,
+    };
+  });
 }
 
 async function waitForPerfStage(events, stage, timeoutMs) {
@@ -445,7 +515,6 @@ const frameCollector = `
     if (dt > 50) {
       stats.hitches.push({ t: now, wallTimeMs: performance.timeOrigin + now, dt });
       stats.hitches.sort((a, b) => b.dt - a.dt);
-      if (stats.hitches.length > 50) stats.hitches.length = 50;
     }
     requestAnimationFrame(tick);
   }
@@ -605,6 +674,8 @@ const frameCollector = `
     ...hitch,
     nearestEvent: nearestEvent(hitch.wallTimeMs, perfEvents),
   }));
+  const firstMinute = buildFirstMinuteReport(frameStats, perfEvents);
+  const eventHitches = buildEventHitchReport(frameStats, perfEvents);
   const stabilitySamplesResult = await client.send("Runtime.evaluate", {
     expression: `
 (() => {
@@ -665,6 +736,8 @@ const frameCollector = `
     headless,
     viewport: { width: viewportWidth, height: viewportHeight },
     frameStats,
+    firstMinute,
+    eventHitches,
     perfEvents,
     stability,
     consoleLines,
@@ -698,6 +771,9 @@ const frameCollector = `
     godotStabilitySamples: godotStabilitySamples.length,
     stabilityGate,
     stabilityPassed: stability.gate.passed,
+    firstMinuteGate,
+    firstMinutePassed: firstMinute.passed,
+    firstMinuteHitches: firstMinute.hitchCount,
   }, null, 2));
   if (!assertions.releaseRootMatches) {
     throw new Error(`Release root mismatch. Expected ${expectedReleaseRoot}, got ${assertions.actualReleaseRoot}`);
@@ -710,6 +786,9 @@ const frameCollector = `
   }
   if (stabilityGate && !stability.gate.passed) {
     throw new Error(`Stability gate failed: ${JSON.stringify(stability.gate.checks)}`);
+  }
+  if (firstMinuteGate && !firstMinute.passed) {
+    throw new Error(`First-minute gate failed: ${JSON.stringify(firstMinute.hitches)}`);
   }
 } finally {
   if (client) client.close();
