@@ -144,6 +144,74 @@ static func log_material_counts(context: Object, scene_root: Node) -> void:
 		]
 	)
 
+static func log_stability_sample(context: Object, scene_root: Node, extra_counts: Dictionary = {}) -> void:
+	if not is_enabled(context) or scene_root == null:
+		return
+	var counts := _collect_stability_counts(scene_root)
+	for key in extra_counts.keys():
+		counts[str(key)] = extra_counts[key]
+	var keys := counts.keys()
+	keys.sort()
+	var parts: Array[String] = []
+	for key in keys:
+		parts.append("%s=%s" % [str(key), _format_sample_value(counts[key])])
+	mark(context, "stability.sample", " ".join(parts))
+
+static func _collect_stability_counts(scene_root: Node) -> Dictionary:
+	var scene_counts := {
+		"live_particle_nodes": 0,
+		"live_emitting_particles": 0,
+		"live_transient_nodes": 0,
+		"live_feedback_nodes": 0,
+	}
+	_collect_scene_stability_counts(scene_root, scene_counts)
+	return {
+		"elapsed_s": get_elapsed_seconds(scene_root),
+		"fps": Performance.get_monitor(Performance.TIME_FPS),
+		"memory_static": Performance.get_monitor(Performance.MEMORY_STATIC),
+		"object_count": Performance.get_monitor(Performance.OBJECT_COUNT),
+		"object_resource_count": Performance.get_monitor(Performance.OBJECT_RESOURCE_COUNT),
+		"object_node_count": Performance.get_monitor(Performance.OBJECT_NODE_COUNT),
+		"object_orphan_node_count": Performance.get_monitor(Performance.OBJECT_ORPHAN_NODE_COUNT),
+		"render_total_objects": Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME),
+		"render_video_mem_used": Performance.get_monitor(Performance.RENDER_VIDEO_MEM_USED),
+		"render_texture_mem_used": Performance.get_monitor(Performance.RENDER_TEXTURE_MEM_USED),
+		"live_particle_nodes": scene_counts["live_particle_nodes"],
+		"live_emitting_particles": scene_counts["live_emitting_particles"],
+		"live_transient_nodes": scene_counts["live_transient_nodes"],
+		"live_feedback_nodes": scene_counts["live_feedback_nodes"],
+	}
+
+static func _collect_scene_stability_counts(node: Node, counts: Dictionary) -> void:
+	if node is GPUParticles3D or node is CPUParticles3D:
+		counts["live_particle_nodes"] = int(counts["live_particle_nodes"]) + 1
+		if bool(node.get("emitting")):
+			counts["live_emitting_particles"] = int(counts["live_emitting_particles"]) + 1
+	if _is_transient_probe_node(node):
+		counts["live_transient_nodes"] = int(counts["live_transient_nodes"]) + 1
+	if str(node.name).begins_with("Feedback"):
+		counts["live_feedback_nodes"] = int(counts["live_feedback_nodes"]) + 1
+	for child in node.get_children():
+		_collect_scene_stability_counts(child, counts)
+
+static func _is_transient_probe_node(node: Node) -> bool:
+	var node_name := str(node.name).to_lower()
+	return (
+		node_name.begins_with("feedback")
+		or node_name.contains("burst")
+		or node_name.contains("trail")
+		or node_name.contains("confetti")
+		or node_name.contains("tone")
+		or node_name.contains("particles")
+	)
+
+static func _format_sample_value(value: Variant) -> String:
+	if value is bool:
+		return "1" if bool(value) else "0"
+	if value is float:
+		return "%.3f" % float(value)
+	return str(value).replace(" ", "_")
+
 static func _collect_material_counts(node: Node, stats_by_category: Dictionary) -> void:
 	if node is MeshInstance3D:
 		var mesh_instance := node as MeshInstance3D

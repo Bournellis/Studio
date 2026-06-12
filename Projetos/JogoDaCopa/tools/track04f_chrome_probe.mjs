@@ -20,6 +20,11 @@ const expectedReleaseRoot = args.get("expected-release-root") || "";
 const expectedStage = args.get("expected-stage") || "";
 const failOnRuntimeErrors = args.get("fail-on-runtime-errors") === "1";
 const durationMs = Number(args.get("duration-ms") || "20000");
+const sampleIntervalMs = Number(args.get("sample-interval-ms") || "1000");
+const stabilityGate = args.get("stability-gate") === "1";
+const stabilityWarmupMs = Number(args.get("stability-warmup-ms") || "60000");
+const maxHeapGrowthRatio = Number(args.get("max-heap-growth-ratio") || "0.10");
+const minFiveSecondAverageFps = Number(args.get("min-5s-avg-fps") || "30");
 const httpPort = Number(args.get("http-port") || "8064");
 const cdpPort = Number(args.get("cdp-port") || "9223");
 const label = args.get("label") || "chrome-probe";
@@ -145,11 +150,24 @@ function percentile(sorted, p) {
 }
 
 function parsePerfLine(text, wallTimeMs) {
-  if (!text.includes("[JDC_PERF]")) return null;
-  const stage = /stage=([^ ]+)/.exec(text)?.[1] || "";
-  const dt = Number(/dt_ms=([0-9.]+)/.exec(text)?.[1] || "NaN");
-  const detail = /detail=(.*)$/.exec(text)?.[1] || "";
-  return { wallTimeMs, stage, dtMs: Number.isFinite(dt) ? dt : null, detail, text };
+	if (!text.includes("[JDC_PERF]")) return null;
+	const stage = /stage=([^ ]+)/.exec(text)?.[1] || "";
+	const dt = Number(/dt_ms=([0-9.]+)/.exec(text)?.[1] || "NaN");
+	const detail = /detail=(.*)$/.exec(text)?.[1] || "";
+	return { wallTimeMs, stage, dtMs: Number.isFinite(dt) ? dt : null, detail, text };
+}
+
+function parsePerfDetail(detail) {
+	const values = {};
+	for (const part of String(detail || "").split(/\s+/)) {
+		if (!part.includes("=")) continue;
+		const index = part.indexOf("=");
+		const key = part.slice(0, index);
+		const rawValue = part.slice(index + 1);
+		const numeric = Number(rawValue);
+		values[key] = Number.isFinite(numeric) ? numeric : rawValue;
+	}
+	return values;
 }
 
 function nearestEvent(hitchWallTimeMs, events) {
@@ -166,12 +184,170 @@ function nearestEvent(hitchWallTimeMs, events) {
 }
 
 async function waitForPerfStage(events, stage, timeoutMs) {
-  const start = Date.now();
+	const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     if (events.some((event) => event.stage === stage)) return true;
     await delay(50);
   }
-  return false;
+	return false;
+}
+
+function buildGodotStabilitySamples(perfEvents) {
+	return perfEvents
+		.filter((event) => event.stage === "stability.sample")
+		.map((event) => ({
+			wallTimeMs: event.wallTimeMs,
+			dtMs: event.dtMs,
+			...parsePerfDetail(event.detail),
+		}));
+}
+
+function getNumericSampleValue(sample, key) {
+	const value = sample?.[key];
+	return Number.isFinite(value) ? value : null;
+}
+
+function buildHeapGate(samples, warmupMs, maxGrowthRatio) {
+	const usable = samples
+		.map((sample) => ({
+			...sample,
+			totalHeapBytes: Number(sample.usedJSHeapSize || 0) + Number(sample.wasmHeapBytes || 0),
+		}))
+		.filter((sample) => sample.t >= warmupMs && sample.totalHeapBytes > 0);
+	if (usable.length < 2) {
+		return {
+			name: "js_wasm_heap_growth",
+			passed: false,
+			reason: "insufficient heap samples after warmup",
+			sampleCount: usable.length,
+		};
+	}
+	const baseline = usable[0].totalHeapBytes;
+	const final = usable[usable.length - 1].totalHeapBytes;
+	const max = Math.max(...usable.map((sample) => sample.totalHeapBytes));
+	const finalGrowthRatio = baseline > 0 ? (final - baseline) / baseline : Infinity;
+	const peakGrowthRatio = baseline > 0 ? (max - baseline) / baseline : Infinity;
+	return {
+		name: "js_wasm_heap_growth",
+		passed: finalGrowthRatio <= maxGrowthRatio,
+		baselineBytes: baseline,
+		finalBytes: final,
+		maxBytes: max,
+		growthRatio: finalGrowthRatio,
+		peakGrowthRatio,
+		limit: maxGrowthRatio,
+		sampleCount: usable.length,
+	};
+}
+
+function buildCounterGate(samples, warmupMs) {
+	const keys = [
+		{ key: "object_node_count", tolerance: 8, mode: "absolute" },
+		{ key: "object_count", tolerance: 16, mode: "absolute" },
+		{ key: "static_cache_total_entries", tolerance: 0, mode: "absolute" },
+		{ key: "runtime_standard_material_cache", tolerance: 0, mode: "absolute" },
+		{ key: "runtime_glass_material_cache", tolerance: 0, mode: "absolute" },
+		{ key: "runtime_box_mesh_cache", tolerance: 0, mode: "absolute" },
+		{ key: "field_halo_material_cache", tolerance: 0, mode: "absolute" },
+		{ key: "render_video_mem_used", tolerance: 0.1, mode: "ratio" },
+	];
+	const usable = samples.filter((sample) => Number(sample.elapsed_s || 0) * 1000 >= warmupMs);
+	if (usable.length < 2) {
+		return {
+			name: "godot_counter_stability",
+			passed: false,
+			reason: "insufficient Godot stability samples after warmup",
+			sampleCount: usable.length,
+			checks: [],
+		};
+	}
+	const checks = [];
+	for (const entry of keys) {
+		const withKey = usable.filter((sample) => getNumericSampleValue(sample, entry.key) !== null);
+		if (withKey.length < 2) {
+			checks.push({ key: entry.key, passed: false, reason: "missing samples" });
+			continue;
+		}
+		const baseline = getNumericSampleValue(withKey[0], entry.key);
+		const final = getNumericSampleValue(withKey[withKey.length - 1], entry.key);
+		const max = Math.max(...withKey.map((sample) => getNumericSampleValue(sample, entry.key)));
+		let passed = true;
+		let limit;
+		if (entry.mode === "ratio") {
+			limit = baseline * (1 + entry.tolerance) + 1024 * 1024;
+			passed = final <= limit;
+		} else {
+			limit = baseline + entry.tolerance;
+			passed = final <= limit;
+		}
+		checks.push({ key: entry.key, passed, baseline, final, max, limit, sampleCount: withKey.length });
+	}
+	return {
+		name: "godot_counter_stability",
+		passed: checks.every((check) => check.passed),
+		sampleCount: usable.length,
+		checks,
+	};
+}
+
+function buildFiveSecondFpsGate(frameStats, warmupMs, minAverageFps) {
+	const buckets = Array.isArray(frameStats?.fpsBuckets) ? frameStats.fpsBuckets : [];
+	const usable = buckets
+		.filter((bucket) => Number.isFinite(bucket.t) && Number.isFinite(bucket.count) && bucket.t >= warmupMs)
+		.sort((a, b) => a.t - b.t);
+	if (usable.length < 2) {
+		return {
+			name: "five_second_average_fps",
+			passed: false,
+			reason: "insufficient FPS buckets after warmup",
+			minAverageFps: 0,
+			limit: minAverageFps,
+			windowCount: 0,
+		};
+	}
+	const countByBucket = new Map(usable.map((bucket) => [bucket.t, bucket.count]));
+	const firstWindowStart = Math.ceil(warmupMs / 1000) * 1000;
+	const lastT = usable[usable.length - 1].t + 1000;
+	let minAverage = Infinity;
+	let worstWindow = null;
+	let windowCount = 0;
+	for (let start = firstWindowStart; start + 5000 <= lastT; start += 1000) {
+		const end = start + 5000;
+		let framesInWindow = 0;
+		for (let bucketStart = start; bucketStart < end; bucketStart += 1000) {
+			framesInWindow += Number(countByBucket.get(bucketStart) || 0);
+		}
+		const averageFps = framesInWindow / 5;
+		windowCount += 1;
+		if (averageFps < minAverage) {
+			minAverage = averageFps;
+			worstWindow = { startMs: start, endMs: end, averageFps, frames: framesInWindow };
+		}
+	}
+	if (!Number.isFinite(minAverage)) minAverage = 0;
+	return {
+		name: "five_second_average_fps",
+		passed: minAverage >= minAverageFps,
+		minAverageFps: minAverage,
+		limit: minAverageFps,
+		windowCount,
+		worstWindow,
+	};
+}
+
+function buildStabilityGate({ frameStats, browserSamples, godotSamples }) {
+	const checks = [
+		buildHeapGate(browserSamples, stabilityWarmupMs, maxHeapGrowthRatio),
+		buildCounterGate(godotSamples, stabilityWarmupMs),
+		buildFiveSecondFpsGate(frameStats, stabilityWarmupMs, minFiveSecondAverageFps),
+	];
+	return {
+		enabled: stabilityGate,
+		warmupMs: stabilityWarmupMs,
+		sampleIntervalMs,
+		checks,
+		passed: checks.every((check) => check.passed),
+	};
 }
 
 async function dispatchKey(client, key) {
@@ -251,29 +427,107 @@ try {
     mobile: false,
   });
 
-  const frameCollector = `
+const frameCollector = `
 (() => {
   if (window.__jdcFrameCollectorInstalled) return;
   window.__jdcFrameCollectorInstalled = true;
-  window.__jdcFrames = [];
+  window.__jdcFrameStats = { frameCount: 0, dts: [], hitches: [], fpsBuckets: {} };
   window.__jdcFrameStart = performance.now();
   let last = performance.now();
   function tick(now) {
     const dt = now - last;
     last = now;
-    window.__jdcFrames.push({ t: now, dt });
+    const stats = window.__jdcFrameStats || (window.__jdcFrameStats = { frameCount: 0, dts: [], hitches: [], fpsBuckets: {} });
+    stats.frameCount += 1;
+    stats.dts.push(dt);
+    const bucketStart = Math.floor(now / 1000) * 1000;
+    stats.fpsBuckets[bucketStart] = (stats.fpsBuckets[bucketStart] || 0) + 1;
+    if (dt > 50) {
+      stats.hitches.push({ t: now, wallTimeMs: performance.timeOrigin + now, dt });
+      stats.hitches.sort((a, b) => b.dt - a.dt);
+      if (stats.hitches.length > 50) stats.hitches.length = 50;
+    }
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
 })()
 `;
+  const stabilityCollector = `
+(() => {
+  if (window.__jdcStabilityCollectorInstalled) return;
+  window.__jdcStabilityCollectorInstalled = true;
+  window.__jdcStabilitySamples = [];
+  if (!window.__jdcWasmMemoryHookInstalled && window.WebAssembly && WebAssembly.Memory) {
+    window.__jdcWasmMemoryHookInstalled = true;
+    window.__jdcWasmMemories = [];
+    const OriginalWasmMemory = WebAssembly.Memory;
+    try {
+      WebAssembly.Memory = new Proxy(OriginalWasmMemory, {
+        construct(target, args) {
+          const memory = Reflect.construct(target, args);
+          window.__jdcWasmMemories.push(memory);
+          return memory;
+        },
+      });
+    } catch {
+      window.__jdcWasmMemoryHookInstalled = false;
+    }
+  }
+  const findWasmHeapBytes = () => {
+    const memories = window.__jdcWasmMemories || [];
+    let largestMemoryBytes = null;
+    for (const memory of memories) {
+      if (memory && memory.buffer && Number.isFinite(memory.buffer.byteLength)) {
+        largestMemoryBytes = Math.max(largestMemoryBytes || 0, memory.buffer.byteLength);
+      }
+    }
+    if (largestMemoryBytes !== null) return largestMemoryBytes;
+    const directCandidates = [
+      window.Module,
+      window.GodotModule,
+      window.GodotRuntime,
+      window.Engine,
+      window.engine,
+    ];
+    for (const candidate of directCandidates) {
+      if (candidate && candidate.HEAP8 && candidate.HEAP8.buffer) return candidate.HEAP8.buffer.byteLength;
+      if (candidate && candidate.Module && candidate.Module.HEAP8 && candidate.Module.HEAP8.buffer) return candidate.Module.HEAP8.buffer.byteLength;
+    }
+    for (const key of Object.keys(window)) {
+      const value = window[key];
+      if (!value || typeof value !== "object") continue;
+      if (value.HEAP8 && value.HEAP8.buffer) return value.HEAP8.buffer.byteLength;
+      if (value.asm && value.asm.memory && value.asm.memory.buffer) return value.asm.memory.buffer.byteLength;
+    }
+    return null;
+  };
+  const sample = () => {
+    const memory = performance.memory || {};
+    window.__jdcStabilitySamples.push({
+      t: performance.now(),
+      wallTimeMs: performance.timeOrigin + performance.now(),
+      usedJSHeapSize: Number.isFinite(memory.usedJSHeapSize) ? memory.usedJSHeapSize : null,
+      totalJSHeapSize: Number.isFinite(memory.totalJSHeapSize) ? memory.totalJSHeapSize : null,
+      jsHeapSizeLimit: Number.isFinite(memory.jsHeapSizeLimit) ? memory.jsHeapSizeLimit : null,
+      wasmHeapBytes: findWasmHeapBytes(),
+    });
+  };
+  sample();
+  window.__jdcStabilityInterval = setInterval(sample, ${Math.max(250, sampleIntervalMs)});
+})()
+`;
   await client.send("Page.addScriptToEvaluateOnNewDocument", { source: frameCollector });
+  await client.send("Page.addScriptToEvaluateOnNewDocument", { source: stabilityCollector });
 
   const targetUrl = usingRemoteUrl ? remoteUrl : `http://127.0.0.1:${httpPort}${route}`;
   await client.send("Page.navigate", { url: targetUrl });
   await delay(500);
   await client.send("Runtime.evaluate", {
     expression: frameCollector,
+    awaitPromise: false,
+  });
+  await client.send("Runtime.evaluate", {
+    expression: stabilityCollector,
     awaitPromise: false,
   });
 
@@ -289,7 +543,7 @@ try {
     await client.send("Runtime.evaluate", {
       expression: `
 (() => {
-  window.__jdcFrames = [];
+  window.__jdcFrameStats = { frameCount: 0, dts: [], hitches: [], fpsBuckets: {} };
   window.__jdcFrameStart = performance.now();
   return true;
 })()
@@ -317,10 +571,14 @@ try {
   const result = await client.send("Runtime.evaluate", {
     expression: `
 (() => {
-  const frames = window.__jdcFrames || [];
+  const stats = window.__jdcFrameStats || { frameCount: 0, dts: [], hitches: [], fpsBuckets: {} };
   const timeOrigin = performance.timeOrigin;
-  const dts = frames.map((f) => f.dt).filter((dt) => Number.isFinite(dt) && dt >= 0);
+  const dts = (stats.dts || []).filter((dt) => Number.isFinite(dt) && dt >= 0);
   const sorted = [...dts].sort((a, b) => a - b);
+  const fpsBuckets = Object.entries(stats.fpsBuckets || {})
+    .map(([t, count]) => ({ t: Number(t), count: Number(count) }))
+    .filter((bucket) => Number.isFinite(bucket.t) && Number.isFinite(bucket.count))
+    .sort((a, b) => a.t - b.t);
   const pct = (p) => {
     if (!sorted.length) return 0;
     const index = Math.min(sorted.length - 1, Math.max(0, Math.ceil((p / 100) * sorted.length) - 1));
@@ -330,12 +588,13 @@ try {
     url: location.href,
     userAgent: navigator.userAgent,
     timeOrigin,
-    frameCount: frames.length,
+    frameCount: Number(stats.frameCount || 0),
+    fpsBuckets,
     p50: pct(50),
     p95: pct(95),
     p99: pct(99),
     max: sorted.length ? sorted[sorted.length - 1] : 0,
-    hitches: frames.filter((f) => f.dt > 50).map((f) => ({ t: f.t, wallTimeMs: timeOrigin + f.t, dt: f.dt })).sort((a, b) => b.dt - a.dt).slice(0, 50),
+    hitches: (stats.hitches || []).map((hitch) => ({ t: hitch.t, wallTimeMs: hitch.wallTimeMs || (timeOrigin + hitch.t), dt: hitch.dt })).sort((a, b) => b.dt - a.dt).slice(0, 50),
   };
 })()
 `,
@@ -346,6 +605,26 @@ try {
     ...hitch,
     nearestEvent: nearestEvent(hitch.wallTimeMs, perfEvents),
   }));
+  const stabilitySamplesResult = await client.send("Runtime.evaluate", {
+    expression: `
+(() => {
+  if (window.__jdcStabilityInterval) clearInterval(window.__jdcStabilityInterval);
+  return window.__jdcStabilitySamples || [];
+})()
+`,
+    returnByValue: true,
+  });
+  const browserStabilitySamples = stabilitySamplesResult.result.value || [];
+  const godotStabilitySamples = buildGodotStabilitySamples(perfEvents);
+  const stability = {
+    browserSamples: browserStabilitySamples,
+    godotSamples: godotStabilitySamples,
+    gate: buildStabilityGate({
+      frameStats,
+      browserSamples: browserStabilitySamples,
+      godotSamples: godotStabilitySamples,
+    }),
+  };
   const releaseResult = await client.send("Runtime.evaluate", {
     expression: "(() => window.JDC_WEB_RELEASE || null)()",
     returnByValue: true,
@@ -387,6 +666,7 @@ try {
     viewport: { width: viewportWidth, height: viewportHeight },
     frameStats,
     perfEvents,
+    stability,
     consoleLines,
     consoleWarnings,
     consoleErrorLines,
@@ -414,6 +694,10 @@ try {
     pageErrors: pageErrors.length,
     consoleErrorCount: consoleErrorLines.length,
     consoleWarningCount: consoleWarnings.length,
+    browserStabilitySamples: browserStabilitySamples.length,
+    godotStabilitySamples: godotStabilitySamples.length,
+    stabilityGate,
+    stabilityPassed: stability.gate.passed,
   }, null, 2));
   if (!assertions.releaseRootMatches) {
     throw new Error(`Release root mismatch. Expected ${expectedReleaseRoot}, got ${assertions.actualReleaseRoot}`);
@@ -423,6 +707,9 @@ try {
   }
   if (failOnRuntimeErrors && (!assertions.noPageErrors || !assertions.noConsoleErrors)) {
     throw new Error(`Remote runtime errors detected. pageErrors=${pageErrors.length}, consoleErrors=${consoleErrorLines.length}`);
+  }
+  if (stabilityGate && !stability.gate.passed) {
+    throw new Error(`Stability gate failed: ${JSON.stringify(stability.gate.checks)}`);
   }
 } finally {
   if (client) client.close();

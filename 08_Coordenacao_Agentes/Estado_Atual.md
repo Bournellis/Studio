@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_05_WEB_PUBLICATION_V1_REVIEW`
-- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos e Web V1 publico em Cloudflare Pages: `https://copa-arena-futebol.pages.dev/`. Track 05 publicou `web/v1-copa-arena-futebol-20260612-31e23ea3` com smoke remoto PASS sem erros de runtime; limitacao conhecida: hitch unico de primeiro uso de VFX/audio por sessao. Detalhes em `Projetos/JogoDaCopa/implementation/current-status.md` e `Projetos/JogoDaCopa/docs/release-history.md`.
+- Marker: `JOGO_DA_COPA_TRACK_05A_WEB_STABILITY_HOTFIX_V1_REVIEW`
+- Baseline: `Copa Arena Futebol`, 1x1 vs bot TPS, arena de vidro estanque com estadio visual 04C, personagem/audio real, bola com CCD/trail/fireball/squash, dash/flip/SUPER/boost/jump pads, timer/golden goal/vale-2, pause/resultado completos e Web publico em Cloudflare Pages: `https://copa-arena-futebol.pages.dev/`. Track 05A publicou `web/v1-copa-arena-futebol-20260612-a850045a` (`v1.0.1+a850045a`) com gate remoto de estabilidade 5 min PASS; heap retido `+3.77%`, nodes/caches estaveis e runtime errors `0`. Detalhes em `Projetos/JogoDaCopa/docs/release-history.md` e `Projetos/JogoDaCopa/docs/playtest-reports/track-05a-web-stability.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Claude revisar `Track 05 - Web Publication V1`; card em `Kanban/Review/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`. Apos aprovacao: merge local, card em Done e `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- Proximo passo: Claude revisar `Track 05A - Web Stability Hotfix V1`; card em `Kanban/Review/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md`. Apos aprovacao: merge local, card em Done e `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## draxos-roguelike-cardgame
 

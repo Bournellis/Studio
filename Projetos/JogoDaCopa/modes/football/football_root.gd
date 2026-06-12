@@ -127,6 +127,9 @@ const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 const MATCH_MODE_IDS: Array = [&"timer", &"goals"]
 const SCREEN_TRANSITION_SECONDS: float = 0.25
 const PERF_SCENARIO_STEP_INTERVAL: float = 4.0
+const PERF_STABILITY_SAMPLE_INTERVAL_SECONDS: float = 1.0
+const HUD_SNAPSHOT_INTERVAL_SECONDS: float = 0.1
+const STADIUM_SCOREBOARD_INTERVAL_SECONDS: float = 0.1
 const WEB_RENDER_WARMUP_ENABLED: bool = true
 const WEB_RENDER_WARMUP_CHUNK_SIZE: int = 1
 const WEB_RENDER_WARMUP_DEFER_DECORATIVE: bool = true
@@ -187,6 +190,9 @@ var capture_scene_active: bool = false
 var perf_scenario_active: bool = false
 var perf_scenario_elapsed: float = 0.0
 var perf_scenario_step: int = -1
+var perf_stability_sample_elapsed: float = 0.0
+var hud_snapshot_elapsed: float = HUD_SNAPSHOT_INTERVAL_SECONDS
+var stadium_scoreboard_elapsed: float = STADIUM_SCOREBOARD_INTERVAL_SECONDS
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -248,9 +254,10 @@ func _process(_delta: float) -> void:
 		return
 	if perf_scenario_active:
 		_update_perf_scenario(_delta)
-	if hud != null:
-		hud.update_snapshot(_build_hud_snapshot())
-	_update_stadium_scoreboards()
+	if PerfProbeScript.is_enabled(self):
+		_update_perf_stability_sampling(_delta)
+	_update_hud_snapshot(_delta)
+	_update_stadium_scoreboards(_delta)
 	_update_goal_slowmo(_delta)
 
 func _physics_process(delta: float) -> void:
@@ -521,6 +528,7 @@ func restart_match() -> void:
 		hud.reset_feedback()
 	if feedback != null:
 		feedback.clear_effects()
+	_request_hud_and_scoreboard_refresh()
 	_capture_mouse_if_playing()
 
 func debug_get_player():
@@ -609,6 +617,12 @@ func debug_is_boost_pad_active(index: int) -> bool:
 func debug_build_hud_snapshot() -> Dictionary:
 	return _build_hud_snapshot()
 
+func debug_get_hud_snapshot_interval_seconds() -> float:
+	return HUD_SNAPSHOT_INTERVAL_SECONDS
+
+func debug_get_stadium_scoreboard_interval_seconds() -> float:
+	return STADIUM_SCOREBOARD_INTERVAL_SECONDS
+
 func debug_get_match_stats_summary() -> Dictionary:
 	return FootballMatchRulesScript.build_match_stats_summary(match_stats)
 
@@ -641,11 +655,13 @@ func set_bot_difficulty(next_difficulty_id: StringName) -> void:
 	if bot != null:
 		bot.set_difficulty(bot_difficulty_id)
 		bot_difficulty_id = bot.debug_get_difficulty_id()
+	_request_hud_and_scoreboard_refresh()
 
 func set_match_mode(next_match_mode_id: StringName) -> void:
 	match_mode_id = _sanitize_match_mode(next_match_mode_id)
 	if match_mode_id == MATCH_MODE_TIMER and match_time_remaining <= 0.0 and not golden_goal_active:
 		match_time_remaining = MATCH_DURATION_SECONDS
+	_request_hud_and_scoreboard_refresh()
 
 func set_toon_render_enabled(is_enabled: bool) -> void:
 	toon_render_enabled = is_enabled
@@ -706,6 +722,7 @@ func debug_get_match_time_remaining() -> float:
 func debug_set_match_time_remaining(next_time_remaining: float) -> void:
 	match_time_remaining = maxf(0.0, next_time_remaining)
 	last_thirty_announced = match_time_remaining <= DOUBLE_GOAL_WINDOW_SECONDS
+	_request_hud_and_scoreboard_refresh()
 
 func debug_update_match_clock(delta: float) -> void:
 	_update_match_clock(delta)
@@ -740,6 +757,7 @@ func debug_finish_kickoff_countdown() -> void:
 	if not match_over:
 		phase_label = &"play"
 	Engine.time_scale = 1.0
+	_request_hud_and_scoreboard_refresh()
 
 func debug_release_bot_kickoff_hold() -> void:
 	player_kickoff_waiting_for_touch = false
@@ -768,6 +786,7 @@ func debug_force_ball_position(next_ball_position: Vector3) -> void:
 func debug_set_score(next_player_score: int, next_bot_score: int) -> void:
 	player_score = maxi(0, next_player_score)
 	bot_score = maxi(0, next_bot_score)
+	_request_hud_and_scoreboard_refresh()
 
 func debug_trigger_arcade_emote(player_triggered: bool = true) -> void:
 	_trigger_arcade_emote(player_triggered)
@@ -1525,6 +1544,7 @@ func _register_goal(player_scored: bool) -> void:
 	player_score = int(score_result.get("player_score", player_score))
 	bot_score = int(score_result.get("bot_score", bot_score))
 	last_goal_value = int(score_result.get("goal_value", 1))
+	_request_hud_and_scoreboard_refresh()
 	_record_goal_stat(player_scored, last_goal_value)
 	var double_goal := bool(score_result.get("double_goal", false))
 	phase_label = &"goal"
@@ -1697,6 +1717,19 @@ func _build_hud_snapshot() -> Dictionary:
 		"hint": "Comecar inicia | WASD move | Shift boost | E/Ctrl dash | Mouse gira jogador/camera | LMB segura/carrega | RMB forte/SUPER | Space jump | T emote pos-gol | R restart | Esc menu" if intro_open else "WASD move | Shift boost | E/Ctrl dash | LMB segura/carrega | RMB forte/SUPER | Space jump/flip | T emote pos-gol | paredes/teto rebatem | R restart | Esc menu"
 	}
 
+func _update_hud_snapshot(delta: float) -> void:
+	if hud == null:
+		return
+	hud_snapshot_elapsed += delta
+	if hud_snapshot_elapsed < HUD_SNAPSHOT_INTERVAL_SECONDS:
+		return
+	hud_snapshot_elapsed = 0.0
+	hud.update_snapshot(_build_hud_snapshot())
+
+func _request_hud_and_scoreboard_refresh() -> void:
+	hud_snapshot_elapsed = HUD_SNAPSHOT_INTERVAL_SECONDS
+	stadium_scoreboard_elapsed = STADIUM_SCOREBOARD_INTERVAL_SECONDS
+
 func _build_result_snapshot() -> Dictionary:
 	var summary := FootballMatchRulesScript.build_match_stats_summary(match_stats)
 	var player_code := _get_kit_code(selected_appearance.country_kit_id)
@@ -1804,7 +1837,11 @@ func _sanitize_bot_difficulty(next_difficulty_id: StringName) -> StringName:
 func _sanitize_match_mode(next_match_mode_id: StringName) -> StringName:
 	return next_match_mode_id if MATCH_MODE_IDS.has(next_match_mode_id) else MATCH_MODE_TIMER
 
-func _update_stadium_scoreboards() -> void:
+func _update_stadium_scoreboards(delta: float) -> void:
+	stadium_scoreboard_elapsed += delta
+	if stadium_scoreboard_elapsed < STADIUM_SCOREBOARD_INTERVAL_SECONDS:
+		return
+	stadium_scoreboard_elapsed = 0.0
 	var player_kit_code := _get_kit_code(selected_appearance.country_kit_id)
 	var bot_kit_code := _get_kit_code(bot_appearance.country_kit_id)
 	for side_name in ["North", "South"]:
@@ -1864,6 +1901,7 @@ func _start_kickoff_countdown() -> void:
 	kickoff_countdown_remaining = KICKOFF_COUNTDOWN_DURATION
 	countdown_last_number = 0
 	phase_label = &"kickoff"
+	_request_hud_and_scoreboard_refresh()
 	_set_round_input_locked(true)
 	if hud != null:
 		hud.show_announcement("SAIDA PLAYER" if kickoff_owner == &"player" else "SAIDA BOT", 0.68, &"kickoff_owner")
@@ -1885,6 +1923,7 @@ func _update_kickoff_countdown(delta: float) -> void:
 		return
 	_set_round_input_locked(false)
 	phase_label = &"play"
+	_request_hud_and_scoreboard_refresh()
 	if hud != null:
 		hud.show_countdown("VAI!", 0.48)
 	if feedback != null:
@@ -1966,6 +2005,7 @@ func _set_intro_open(is_open: bool) -> void:
 		if hud != null:
 			hud.set_pause_menu_visible(false)
 			hud.set_intro_visible(true)
+		_request_hud_and_scoreboard_refresh()
 		return
 	get_tree().paused = false
 	if feedback != null:
@@ -1974,6 +2014,7 @@ func _set_intro_open(is_open: bool) -> void:
 		phase_label = &"play"
 	if hud != null:
 		hud.set_intro_visible(false)
+	_request_hud_and_scoreboard_refresh()
 
 func _set_menu_open(is_open: bool) -> void:
 	if intro_open and is_open:
@@ -1991,6 +2032,7 @@ func _set_menu_open(is_open: bool) -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	else:
 		_capture_mouse_if_playing()
+	_request_hud_and_scoreboard_refresh()
 
 func _return_to_main_menu() -> void:
 	PerfProbeScript.mark(self, "event.return_to_main_menu")
@@ -2021,6 +2063,24 @@ func _maybe_quit_after_perf_duration() -> void:
 		return
 	PerfProbeScript.mark(self, "session.quit_after", "seconds=%.2f" % quit_after)
 	get_tree().quit()
+
+func _update_perf_stability_sampling(delta: float) -> void:
+	perf_stability_sample_elapsed += delta
+	if perf_stability_sample_elapsed < PERF_STABILITY_SAMPLE_INTERVAL_SECONDS:
+		return
+	perf_stability_sample_elapsed = 0.0
+	PerfProbeScript.log_stability_sample(self, self, _build_perf_stability_extra_counts())
+
+func _build_perf_stability_extra_counts() -> Dictionary:
+	var counts := FootballFieldBuilderScript.debug_get_static_cache_counts()
+	counts["boost_pad_areas"] = boost_pad_areas.size()
+	counts["jump_pad_areas"] = jump_pad_areas.size()
+	counts["stadium_scoreboard_viewports"] = stadium_scoreboard_viewports.size()
+	counts["perf_scenario_step"] = perf_scenario_step
+	counts["match_over"] = 1 if match_over else 0
+	counts["goal_reset_active"] = 1 if goal_reset_timer > 0.0 else 0
+	counts["feedback_active_effects"] = feedback.debug_active_effect_count() if feedback != null else 0
+	return counts
 
 func _start_perf_scenario() -> void:
 	perf_scenario_active = true
@@ -2139,6 +2199,8 @@ func _record_goal_stat(player_scored: bool, goal_value: int) -> void:
 func _capture_mouse_if_playing() -> void:
 	if DisplayServer.get_name().to_lower().contains("headless"):
 		return
+	if capture_scene_active:
+		return
 	if intro_open or menu_open or match_over:
 		return
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -2161,6 +2223,7 @@ func _apply_selected_player_appearance() -> void:
 	if player_avatar != null:
 		player_avatar.apply_appearance(selected_appearance)
 	_update_avatar_selection_labels()
+	_request_hud_and_scoreboard_refresh()
 
 func _apply_toon_rendering() -> void:
 	if player_avatar != null and player_avatar.has_method("set_toon_render_enabled"):

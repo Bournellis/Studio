@@ -7,6 +7,13 @@ static var _standard_material_cache: Dictionary = {}
 static var _glass_material_cache: Dictionary = {}
 static var _box_mesh_cache: Dictionary = {}
 
+static func debug_get_cache_counts() -> Dictionary:
+	return {
+		"runtime_standard_material_cache": _standard_material_cache.size(),
+		"runtime_glass_material_cache": _glass_material_cache.size(),
+		"runtime_box_mesh_cache": _box_mesh_cache.size(),
+	}
+
 static func add_static_box(
 	parent: Node,
 	node_name: String,

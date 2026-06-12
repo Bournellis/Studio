@@ -13,6 +13,18 @@ static var _crowd_material: ShaderMaterial
 static var _flag_material: ShaderMaterial
 static var _halo_material_cache: Dictionary = {}
 
+static func debug_get_static_cache_counts() -> Dictionary:
+	var counts := RuntimePrimitiveFactoryScript.debug_get_cache_counts()
+	counts["field_net_material_cache"] = 1 if _net_material != null else 0
+	counts["field_crowd_material_cache"] = 1 if _crowd_material != null else 0
+	counts["field_flag_material_cache"] = 1 if _flag_material != null else 0
+	counts["field_halo_material_cache"] = _halo_material_cache.size()
+	var total := 0
+	for cache_key in counts.keys():
+		total += int(counts[cache_key])
+	counts["static_cache_total_entries"] = total
+	return counts
+
 static func build(parent: Node3D, config: Dictionary) -> void:
 	RenderProfileScript.report_runtime_profile_once("FootballFieldBuilder")
 	var build_begin := PerfProbeScript.begin(parent, "field_builder.total")
