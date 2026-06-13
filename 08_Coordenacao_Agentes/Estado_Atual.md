@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_06B_ESC_MENU_V1_READY_FOR_REVIEW_LOCAL`
-- Baseline: `Copa Arena Futebol` Web publico segue em Cloudflare Pages (`v1.0.3+ef9c5baa`, `web/v1-copa-arena-futebol-20260612-ef9c5baa`). Track 06A foi aprovada/mergeada localmente em `main`; Track 06B esta pronta para review pre-merge no branch `codex/jogodacopa/track06b-esc-menu-v1`: ESC menu completo, `GameSettings`, qualidade `Alta`/`Leve`, testes de clique real em 1920/1366/1280, capturas e validate/export/Web boot PASS.
+- Marker: `JOGO_DA_COPA_TRACK_06B_ESC_MENU_V1_MERGED`
+- Baseline: `Copa Arena Futebol` Web publico segue em Cloudflare Pages (`v1.0.3+ef9c5baa`, `web/v1-copa-arena-futebol-20260612-ef9c5baa`). Track 06B foi aprovada por Claude/Fabio e mergeada localmente em `main` (`0935529d`): ESC menu completo, `GameSettings`, qualidade `Alta`/`Leve`, testes de clique real em 1920/1366/1280, capturas e validate/export/Web boot PASS.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: review de Fabio/Claude da Track 06B e, se aprovado, merge local em `main`; publicacao Web continua adiada para 06E. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- Proximo passo: Fabio baixar Kenney Fonts em `Projetos/JogoDaCopa/assets/fonts/kenney/`; depois iniciar 06C/06D em paralelo. Publicacao Web continua adiada para 06E. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## draxos-roguelike-cardgame
 

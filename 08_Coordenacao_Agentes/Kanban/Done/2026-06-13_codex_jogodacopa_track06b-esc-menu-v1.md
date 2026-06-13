@@ -2,10 +2,11 @@
 
 ## Status
 
-- Estado: READY_FOR_REVIEW_PRE_MERGE
+- Estado: DONE_MERGED_LOCAL
 - Branch: `codex/jogodacopa/track06b-esc-menu-v1`
 - Worktree: `D:\Estudio-worktrees\jogodacopa-track06b`
 - Base: `main` apos merge local da Track 06A (`b585b5d2`, fechamento `4f18f2fa`)
+- Merge local em main: `0935529d`
 - Push remoto: PENDENTE Fabio via GitHub Desktop
 
 ## Objetivo
@@ -62,6 +63,7 @@ Parar antes de merge/publicacao, deixando branch local validada, evidencia regis
 - Validate completo: PASS, 95 testes, 1512 asserts, Web gzip `30.34 MiB / 50.00 MiB`.
 - Export Web: PASS, `builds/web/index.html`.
 - Boot Web local: PASS no navegador em `1280x720`; canvas carregou a tela inicial sem tela preta. Logs mostraram apenas warnings conhecidos do `RenderProfile`.
+- Review Claude: `Projetos/JogoDaCopa/docs/code-review-track06b-esc-menu-v1.md`, veredito `APROVADO no code review`.
 
 ## Handoff
 

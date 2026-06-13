@@ -2,11 +2,12 @@
 
 - Data: `2026-06-13`
 - Agente: Codex
-- Status: `READY_FOR_REVIEW_PRE_MERGE`
+- Status: `MERGED_LOCAL`
 - Branch: `codex/jogodacopa/track06b-esc-menu-v1`
 - Worktree: `D:\Estudio-worktrees\jogodacopa-track06b`
 - Base: `main` apos merge local da Track 06A (`b585b5d2`) e fechamento (`4f18f2fa`)
-- Merge/publicacao: NAO realizados por regra do prompt; parar antes de merge.
+- Merge local: `0935529d` em `main`
+- Publicacao: NAO realizada; segue adiada para Track 06E.
 
 ## Escopo Fechado
 
@@ -39,6 +40,7 @@
 - Boot Web local: PASS em navegador local `1280x720`; tela inicial renderizada em canvas, sem tela preta. Console exibiu apenas warnings conhecidos do `RenderProfile`.
 - Testes de clique real: `tests/unit/test_pause_menu.gd` cobre menu principal e ESC completo em `1920x1080`, `1366x768` e `1280x720`.
 - Capturas: 12 PNGs em `Projetos/JogoDaCopa/docs/screenshots/track-06b/` para Controles/Audio/Video/Sensibilidade nas 3 resolucoes.
+- Review Claude: `Projetos/JogoDaCopa/docs/code-review-track06b-esc-menu-v1.md`, veredito `APROVADO no code review`.
 
 Comando principal:
 
@@ -54,7 +56,6 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 ## Pendencias Intencionais
 
-- Review visual/subjetivo de Fabio e/ou Claude.
-- Merge local em `main` somente apos aprovacao.
 - Publicacao Web continua adiada para Track 06E.
+- Pre-requisito para 06C/06D: Fabio baixar Kenney Fonts em `Projetos/JogoDaCopa/assets/fonts/kenney/`.
 - `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
