@@ -18,6 +18,18 @@ const BUS_SFX: StringName = &"SFX"
 const BUS_UI: StringName = &"UI"
 const BUS_AMBIENCE: StringName = &"Ambience"
 const RESULT_SUPPRESS_TRANSITION_PULSE_KEY: String = "suppress_transition_pulse"
+const CONTROL_HINTS: Array[Dictionary] = [
+	{"action": "Mover", "input": "WASD"},
+	{"action": "Boost", "input": "Shift"},
+	{"action": "Dash", "input": "E / Ctrl"},
+	{"action": "Girar jogador/camera", "input": "Mouse"},
+	{"action": "Chute carregado", "input": "LMB segurar"},
+	{"action": "Chute forte / SUPER", "input": "RMB"},
+	{"action": "Pular / flip", "input": "Space"},
+	{"action": "Emote pos-gol", "input": "T"},
+	{"action": "Reiniciar", "input": "R"},
+	{"action": "Menu", "input": "Esc"},
+]
 
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
 
@@ -27,14 +39,11 @@ var clock_label: Label
 var flow_label: Label
 var control_label: Label
 var boost_bar: ProgressBar
-var hint_label: Label
 var event_label: Label
 var ball_indicator: PanelContainer
 var ball_indicator_label: Label
 var player_kit_swatch: ColorRect
 var bot_kit_swatch: ColorRect
-var crosshair_root: Control
-var crosshair_lines: Array[ColorRect] = []
 var pulse_overlay: ColorRect
 var intro_panel: PanelContainer
 var pause_menu_panel: PanelContainer
@@ -93,7 +102,6 @@ func _process(delta: float) -> void:
 	if event_message_time <= 0.0 and not event_message_queue.is_empty():
 		var next_message: Dictionary = event_message_queue.pop_front()
 		_start_event_message(str(next_message.get("message", "")), float(next_message.get("duration", 0.4)))
-	_refresh_crosshair()
 	_refresh_overlay()
 	_refresh_event_label()
 
@@ -162,7 +170,9 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	if result_bot_kit_label != null:
 		_set_label_text_if_changed(result_bot_kit_label, str(snapshot.get("bot_kit_code", "FRA")))
 	_update_ball_indicator(snapshot)
-	_set_label_text_if_changed(hint_label, str(snapshot.get("hint", "WASD move | Shift boost | LMB chute | RMB chute forte | Space jump | R restart | Esc menu")))
+
+static func get_control_hints() -> Array[Dictionary]:
+	return CONTROL_HINTS.duplicate(true)
 
 func _set_label_text_if_changed(label: Label, next_text: String) -> void:
 	if label == null or label.text == next_text:
@@ -260,7 +270,6 @@ func reset_feedback() -> void:
 		event_label.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	if result_panel != null:
 		result_panel.visible = false
-	_refresh_crosshair()
 	_refresh_overlay()
 
 func set_pause_menu_visible(menu_is_open: bool, _sensitivity_value: float = 0.0) -> void:
@@ -422,45 +431,12 @@ func _build_ui() -> void:
 	_ignore_mouse(boost_bar)
 	box.add_child(boost_bar)
 
-	hint_label = Label.new()
-	hint_label.name = "HintLabel"
-	hint_label.position = Vector2(18.0, 174.0)
-	hint_label.text = "Click captura mouse | LMB chute | RMB chute forte | Space jump | R restart | Esc menu"
-	_ignore_mouse(hint_label)
-	root.add_child(hint_label)
-
-	_build_crosshair(root)
 	_build_ball_indicator(root)
 	_build_event_label(root)
 	_build_result_panel(root)
 	_build_pause_menu(root)
 	_build_intro_panel(root)
 	_build_fade_overlay(root)
-
-func _build_crosshair(root: Control) -> void:
-	crosshair_root = Control.new()
-	crosshair_root.name = "FootballCrosshair"
-	_ignore_mouse(crosshair_root)
-	crosshair_root.set_anchors_preset(Control.PRESET_CENTER)
-	crosshair_root.position = Vector2(-42.0, -42.0)
-	crosshair_root.custom_minimum_size = Vector2(84.0, 84.0)
-	crosshair_root.pivot_offset = Vector2(42.0, 42.0)
-	root.add_child(crosshair_root)
-
-	_add_crosshair_line("Top", Vector2(40.0, 12.0), Vector2(4.0, 19.0))
-	_add_crosshair_line("Bottom", Vector2(40.0, 53.0), Vector2(4.0, 19.0))
-	_add_crosshair_line("Left", Vector2(12.0, 40.0), Vector2(19.0, 4.0))
-	_add_crosshair_line("Right", Vector2(53.0, 40.0), Vector2(19.0, 4.0))
-
-func _add_crosshair_line(node_name: String, line_position: Vector2, line_size: Vector2) -> void:
-	var line := ColorRect.new()
-	line.name = node_name
-	_ignore_mouse(line)
-	line.position = line_position
-	line.size = line_size
-	line.color = Color(0.88, 1.0, 0.9, 0.88)
-	crosshair_root.add_child(line)
-	crosshair_lines.append(line)
 
 func _build_event_label(root: Control) -> void:
 	event_label = Label.new()
@@ -1030,27 +1006,6 @@ func _update_sensitivity_label(value: float) -> void:
 	if sensitivity_label == null:
 		return
 	sensitivity_label.text = "Sensibilidade: %.1f" % [value * 1000.0]
-
-func _refresh_crosshair() -> void:
-	if crosshair_root == null:
-		return
-	var color := Color(0.88, 1.0, 0.9, 0.88)
-	var pulse := 0.0
-	if goal_feedback_time > 0.0:
-		color = Color(1.0, 0.88, 0.22, 1.0) if last_player_scored else Color(1.0, 0.32, 0.22, 1.0)
-		pulse = 0.2
-	elif strong_kick_feedback_time > 0.0:
-		color = Color(0.34, 0.88, 1.0, 1.0)
-		pulse = 0.14
-	elif kick_feedback_time > 0.0:
-		color = Color(0.36, 1.0, 0.58, 1.0)
-		pulse = 0.09
-	elif whiff_feedback_time > 0.0:
-		color = Color(0.68, 0.78, 0.84, 0.72)
-		pulse = 0.04
-	for line: ColorRect in crosshair_lines:
-		line.color = color
-	crosshair_root.scale = Vector2.ONE if RenderProfileScript.is_web_platform() else Vector2.ONE * (1.0 + pulse)
 
 func _refresh_overlay() -> void:
 	if pulse_overlay == null:

@@ -206,6 +206,15 @@ func set_move_state(move_speed: float, grounded: bool, vertical_velocity: float 
 func set_movement_facing_enabled(is_enabled: bool) -> void:
 	movement_facing_enabled = is_enabled
 
+func snap_visual_facing_direction(world_direction: Vector3, logical_parent_yaw: float = 0.0) -> void:
+	if part_root == null:
+		return
+	var flat_direction := Vector3(world_direction.x, 0.0, world_direction.z)
+	if flat_direction.length() <= 0.001:
+		return
+	var target_world_yaw := atan2(-flat_direction.x, -flat_direction.z)
+	part_root.rotation.y = wrapf(target_world_yaw - logical_parent_yaw, -PI, PI)
+
 func update_visual_movement_facing(horizontal_velocity: Vector3, logical_parent_yaw: float, delta: float) -> void:
 	if not movement_facing_enabled or part_root == null:
 		return
