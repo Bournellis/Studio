@@ -45,6 +45,15 @@ Fechar a fase pre-merge da Track 06E com bump visivel para `v1.1.0`, changelog d
 - Gate de luminancia noturna `< 90` PASS.
 - `git diff --check` e `git status --short`.
 
+## Execucao Pos-Merge
+
+- Merge local em `main`: PASS, commit `ea15d5dd`.
+- `tools/validate.gd` pos-merge: PASS, `101` testes / `1735` asserts.
+- Publicacao `v1.1.0+ea15d5dd`: executada e depois bloqueada pelo gate remoto.
+- Primeiro minuto remoto: PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
+- Estabilidade remota 5min: FAIL, `pageErrors=2`, heap JS/WASM `+19.43%` contra limite `<10%`.
+- Rollback: PASS, URL estavel voltou para `v1.0.3+ef9c5baa` / `web/v1-copa-arena-futebol-20260612-ef9c5baa`.
+
 ## Proximo Handoff
 
-Parar na branch apos os gates locais e registrar handoff para review da Claude e OK do Fabio antes de qualquer merge ou publicacao.
+Investigar a falha remota antes de qualquer nova publicacao ou retest humano de `v1.1.0`. Handoff: `08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0-rollback.md`.

@@ -6,7 +6,7 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 
 | Data | Release | Canal | URL | Release root | Evidencia |
 | --- | --- | --- | --- | --- | --- |
-| 2026-06-13 | Match Polish & Broadcast Identity V1 (`v1.1.0`) | Local pre-merge; publicacao pendente da FASE 6 | `https://copa-arena-futebol.pages.dev/` (baseline publica anterior ate publicar) | Pendente; baseline anterior `web/v1-copa-arena-futebol-20260612-ef9c5baa` | Handoff 06E pendente + gates locais da FASE 3 |
+| 2026-06-13 | Match Polish & Broadcast Identity V1 (`v1.1.0`) | Tentativa Cloudflare Pages bloqueada; rollback executado | `https://copa-arena-futebol.pages.dev/` (servindo `v1.0.3+ef9c5baa` apos rollback) | Tentado `web/v1-copa-arena-futebol-20260613-ea15d5dd`; rollback `web/v1-copa-arena-futebol-20260612-ef9c5baa` | `docs/playtest-reports/track-06e-data/06e-publication-report.json` + `06e-remote-first-minute-ea15d5dd.json` + `06e-remote-stability-5min-ea15d5dd.json` + `06e-rollback-release-root-ef9c5baa.json` |
 | 2026-06-12 | Sensory Feedback Re-Introduction V1 (`v1.0.3+ef9c5baa`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-ef9c5baa` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05b1-data/05b1-remote-first-minute-gate-final-ef9c5baa.json` + `docs/playtest-reports/track-05b1-data/05b1-remote-stability-5min-final-ef9c5baa-pass2.json` |
 | 2026-06-12 | First-Minute Smoothness V1 (`v1.0.2+ad82384b`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-ad82384b` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05b-data/05b-remote-first-minute-gate.json` + `docs/playtest-reports/track-05b-data/05b-remote-stability-5min.json` |
 | 2026-06-12 | Web Stability Hotfix V1 (`v1.0.1+a850045a`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-a850045a` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json` |
@@ -14,11 +14,17 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 
 ## 2026-06-13 - Match Polish & Broadcast Identity V1
 
-- Release alvo: `v1.1.0`.
-- Baseline publica anterior: `v1.0.3+ef9c5baa` em `web/v1-copa-arena-futebol-20260612-ef9c5baa`.
+- Release alvo: `v1.1.0`; nao aceito em publico nesta tentativa.
+- Baseline publica preservada apos rollback: `v1.0.3+ef9c5baa` em `web/v1-copa-arena-futebol-20260612-ef9c5baa`.
 - Serie 06 resumida: 06A corrigiu inicio de partida (countdown unico, facing inicial/pos-gol e HUD sem hints/crosshair); 06B adicionou menu ESC completo com settings persistentes; 06C elevou o menu principal para identidade broadcast com fontes Kenney e CTA dominante; 06D aplicou scorebug/HUD broadcast, relogio, badges, STAMINA/SUPER e anuncios visuais.
-- Escopo da 06E: somente bump de versao, changelog, evidencia local pre-merge e preparacao para publicacao unica apos OK de Claude/Fabio.
-- Publicacao remota e gates longos ainda nao executados nesta entrada; seguem para FASE 6/7 apos aprovacao pre-merge.
+- Escopo da 06E: somente bump de versao, changelog, evidencia e publicacao; sem mudanca de gameplay.
+- Merge local em `main`: `ea15d5dd` (`merge(jogodacopa): track06e release v1.1.0`); `tools/validate.gd` pos-merge PASS com `101` testes / `1735` asserts.
+- Publicacao 06E executada por `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260613-ea15d5dd -ConfirmRemoteMutation`; preview `https://2a0a362c.copa-arena-futebol.pages.dev`.
+- Gate remoto primeiro minuto PASS: release root conferiu, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
+- Gate remoto estabilidade 5min FAIL: release root conferiu, `pageErrors=2` (`AbortError: Unable to load a worklet's module.`), `consoleErrorCount=0`, heap JS/WASM `44,640,329 -> 53,313,183` bytes (`+19.43%`, limite `<10%`); nodes/caches/render video memory estaveis e pior janela 5s `123 FPS`.
+- Rollback executado imediatamente por `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260612-ef9c5baa -ConfirmRemoteMutation` a partir do commit `ef9c5baa`; preview `https://88e414d3.copa-arena-futebol.pages.dev`.
+- Verificacao pos-rollback contra `https://copa-arena-futebol.pages.dev/`: release root `web/v1-copa-arena-futebol-20260612-ef9c5baa` conferiu, `pageErrors=0`, `consoleErrorCount=0`.
+- Proximo passo: investigar a falha remota da 06E antes de nova tentativa; nao abrir retest humano de `v1.1.0`.
 
 ## 2026-06-12 - Sensory Feedback Re-Introduction V1
 
