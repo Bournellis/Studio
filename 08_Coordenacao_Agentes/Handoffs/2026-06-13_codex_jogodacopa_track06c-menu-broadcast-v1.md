@@ -1,52 +1,43 @@
-# Handoff: JogoDaCopa Track 06C - Menu Broadcast V1 bloqueada por Kenney Fonts
+# Handoff - JogoDaCopa Track 06C - Menu Broadcast V1
 
-## Metadata
+Data: 2026-06-13
+Agente: Codex
+Branch: `codex/jogodacopa/track06c-menu-broadcast-v1`
+Worktree: `D:\Estudio-worktrees\jogodacopa-track06c`
+Base: `c894dc0d chore(jogodacopa): add kenney cc0 fonts (serie 06 broadcast prereq)`
 
-- from: `Codex`
-- to: `Fabio`
-- date: `2026-06-13`
-- projeto: `JogoDaCopa`
-- prioridade_portfolio: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- branch: `nao criada - bloqueio em pre-requisito`
-- worktree: `nao criada - planejada D:\Estudio-worktrees\jogodacopa-track06c`
+## Objetivo
 
-## Contexto
+Implementar o visual broadcast do menu principal usando fontes Kenney locais, preservando os caminhos existentes de testes e sem tocar HUD, autoloads, `project.godot`, `test_bootstrap` ou `presentation/hud/*`.
 
-A Track 06C foi solicitada para transformar o menu principal em um match card de transmissao de Copa, em paralelo com a 06D e com area exclusiva em `modes/menu/*`, `tests/unit/test_menu_visual.gd`, `docs/asset-licenses.md` e `docs/screenshots/track-06c/`.
+## Alteracoes
 
-O prompt define como pre-requisito bloqueante a presenca das Kenney Fonts em `Projetos/JogoDaCopa/assets/fonts/kenney/`, com download manual por Fabio. O pre-requisito nao esta atendido; portanto a implementacao foi parada antes de criar branch/worktree.
+- `Projetos/JogoDaCopa/modes/menu/main_menu_root.gd`: card broadcast responsivo com header, hero shot, CTA alto, seletores de bot/modo/skin/camisa, sliders de audio/video e fonte Kenney carregada localmente.
+- `Projetos/JogoDaCopa/tests/unit/test_menu_visual.gd`: cobertura dos viewports 1920x1080, 1280x720 e 960x540, caminhos legados, fonte broadcast, ciclos de aparencia e interacoes reais.
+- `Projetos/JogoDaCopa/docs/asset-licenses.md`: registro local da familia Kenney Fonts CC0 1.0 para a Track 06C.
+- `Projetos/JogoDaCopa/docs/screenshots/track-06c/`: evidencias PNG/JSON do menu em desktop e Web boot.
 
-## Current State
+## Evidencias
 
-- `main` contem a Track 06B mergeada: `5f947f2f close jogodacopa track06b after merge` e `0935529d merge(jogodacopa): track06b esc menu v1`.
-- `D:\Estudio\Projetos\JogoDaCopa\assets\fonts\kenney\` nao existe.
-- Busca em `Projetos/JogoDaCopa/assets` encontrou Kenney em audio/personagens, mas nenhum arquivo de fonte (`.ttf`, `.otf`, `.woff`, `.woff2`) e nenhuma pasta `assets/fonts/kenney`.
-- Nenhuma branch, worktree ou arquivo de implementacao da 06C foi criado.
+- `docs/screenshots/track-06c/menu-broadcast-web-1920x1080.png`
+- `docs/screenshots/track-06c/menu-broadcast-web-1366x768.png`
+- `docs/screenshots/track-06c/menu-broadcast-web-1280x720.png`
+- `docs/screenshots/track-06c/06c-web-menu-boot.png`
+- `docs/screenshots/track-06c/06c-web-menu-boot.json`
 
-## Changed Files
+## Validacao
 
-- `08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06c-menu-broadcast-v1.md`
+- Godot import headless na worktree: OK.
+- GUT focado `test_menu_visual.gd`: OK, suite completa carregada pela config, `98/98`, `1699` asserts.
+- `tools/validate.gd`: OK, `98/98`, `1699` asserts, `[validate] success`.
+- Export Web release: OK.
+- Chrome Web boot smoke: OK, stage `menu.ready.end` visto, `pageErrors=0`, `consoleErrorCount=0`.
+- `git diff --check`: OK.
 
-## Decisions Made
+Avisos conhecidos: warnings de UID/text path do GUT durante import/test/export; sem falha de validacao.
 
-- `stop_on_missing_kenney_fonts`: cumprir o bloqueio do prompt e aguardar Fabio baixar as fontes.
-- `no_worktree_created`: evitar abrir `D:\Estudio-worktrees\jogodacopa-track06c` enquanto a track nao pode iniciar.
+## Handoff
 
-## Open Questions
+Parar pre-merge. Revisar visualmente os screenshots e, se aprovado, Fabio pode mergear a branch via fluxo local/GitHub Desktop.
 
-- Fabio pode baixar Kenney Fonts (CC0) e colocar os arquivos em `Projetos/JogoDaCopa/assets/fonts/kenney/`?
-- Preferencia confirmada para as candidatas do plano: Kenney Future / Future Narrow para titulo e numeros.
-
-## Recommended Next Step
-
-1. Fabio baixar Kenney Fonts manualmente.
-2. Colocar as fontes em `Projetos/JogoDaCopa/assets/fonts/kenney/`.
-3. Retomar a Track 06C com branch `codex/jogodacopa/track06c-menu-broadcast-v1` e worktree `D:\Estudio-worktrees\jogodacopa-track06c`.
-
-## Validation
-
-- `git status --short`: limpo antes do handoff.
-- `git worktree list`: main em `D:\Estudio`; worktrees antigas 04F2 preservadas, nenhuma 06C.
-- `git log --oneline main | Select-String -Pattern '06b'`: confirmou 06B em `main`.
-- `Get-ChildItem -Force 'D:\Estudio\Projetos\JogoDaCopa\assets\fonts\kenney'`: falhou porque o caminho nao existe.
-- `rg --files 'D:\Estudio\Projetos\JogoDaCopa\assets' | Select-String -Pattern 'kenney|font|\.ttf$|\.otf$|\.woff$|\.woff2$'`: sem fontes; apenas assets Kenney de audio/personagens.
+PUSH PENDENTE: Fabio - GitHub Desktop - Push origin
