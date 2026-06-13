@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_06C_MENU_BROADCAST_V1_MERGED`
-- Baseline: `Copa Arena Futebol` Web publico segue em Cloudflare Pages (`v1.0.3+ef9c5baa`, `web/v1-copa-arena-futebol-20260612-ef9c5baa`). Track 06C foi aprovada por Claude/Fabio e mergeada localmente em `main` (`c14bf5a5`): menu principal broadcast, fontes Kenney locais, seletores de pele/kit, clique real em 1920/1366/1280, capturas e validate/export/Web boot PASS.
+- Marker: `JOGO_DA_COPA_TRACK_06D_HUD_BROADCAST_V1_MERGED`
+- Baseline: `Copa Arena Futebol` Web publico segue em Cloudflare Pages (`v1.0.3+ef9c5baa`, `web/v1-copa-arena-futebol-20260612-ef9c5baa`). Track 06D foi aprovada por Claude/Fabio e mergeada localmente em `main` (`d7d207ea`): HUD/scorebug broadcast limpo, luma noturna `< 90`, capturas 1920/1366/1280 e validate/export/Web boot PASS.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: manter 06D em branch/worktree separada ate merge proprio; publicacao Web continua adiada para 06E. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- Proximo passo: Track 06E com bump `v1.1.0`, publicacao Web unica e gates longos de reteste. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## draxos-roguelike-cardgame
 

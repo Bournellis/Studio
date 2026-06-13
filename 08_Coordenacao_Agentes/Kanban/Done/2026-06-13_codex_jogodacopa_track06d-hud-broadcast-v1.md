@@ -4,7 +4,8 @@
 
 - Branch: `codex/jogodacopa/track06d-hud-broadcast-v1`
 - Worktree: `D:\Estudio-worktrees\jogodacopa-track06d`
-- Status: `READY_FOR_REVIEW_PRE_MERGE`
+- Status: `DONE_MERGED_LOCAL`
+- Merge local: `d7d207ea merge(jogodacopa): track06d hud broadcast`
 - Objetivo: aplicar pele broadcast ao HUD de partida sem alterar gameplay nem contratos do menu ESC.
 - Arquivos pretendidos: `Projetos/JogoDaCopa/presentation/hud/*`, `Projetos/JogoDaCopa/tests/unit/test_hud_visual.gd`, `Projetos/JogoDaCopa/docs/screenshots/track-06d/`.
 
@@ -23,12 +24,15 @@
 ## Plano De Validacao
 
 - Import headless executado na worktree.
-- `tests/unit/test_hud_visual.gd` + `tests/unit/test_pause_menu.gd` PASS, suite completa pela config: 98/98 testes, 1538 asserts.
-- `validate.gd` full PASS: 98/98 testes, 1538 asserts.
-- Capturas finais HUD em 1920x1080, 1280x720 e 960x540.
+- `tests/unit/test_hud_visual.gd` + `tests/unit/test_pause_menu.gd` PASS, suite completa pela config: 98/98 testes, 1548 asserts.
+- `validate.gd` full PASS: 98/98 testes, 1548 asserts.
+- Capturas finais HUD por estado em 1920x1080, 1366x768 e 1280x720.
+- Gate de luma noturna PASS: ceu `58.5-75.1`, todos `< 90.0`.
 - Export Web release PASS e boot Chrome/local sem `pageErrors`.
 - `git diff --check` PASS.
 
 ## Handoff
 
-- Parar pre-merge com commit local e handoff em `08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06d-hud-broadcast-v1.md`.
+- Aprovado por Claude/Fabio e mergeado localmente em `main`.
+- Handoff: `08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06d-hud-broadcast-v1.md`.
+- PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.
