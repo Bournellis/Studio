@@ -4,7 +4,8 @@
 
 - Branch: `codex/jogodacopa/track06c-menu-broadcast-v1`
 - Worktree: `D:\Estudio-worktrees\jogodacopa-track06c`
-- Status: `READY_FOR_REVIEW_PRE_MERGE`
+- Status: `DONE_MERGED_LOCAL`
+- Merge local: `c14bf5a5 merge(jogodacopa): track06c menu broadcast`
 - Objetivo: transformar o menu principal em card de transmissao pre-jogo usando as fontes Kenney locais.
 - Arquivos pretendidos: `Projetos/JogoDaCopa/modes/menu/*`, `Projetos/JogoDaCopa/tests/unit/test_menu_visual.gd`, `Projetos/JogoDaCopa/docs/asset-licenses.md`, `Projetos/JogoDaCopa/docs/screenshots/track-06c/`.
 
@@ -29,4 +30,6 @@
 
 ## Handoff
 
-- Parar pre-merge com commit local e handoff em `08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06c-menu-broadcast-v1.md`.
+- Aprovado por Claude/Fabio e mergeado localmente em `main`.
+- Handoff: `08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06c-menu-broadcast-v1.md`.
+- PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.
