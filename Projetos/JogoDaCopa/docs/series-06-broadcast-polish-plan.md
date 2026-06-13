@@ -20,6 +20,15 @@ Baixar **Kenney Fonts** (kenney.nl/assets/kenney-fonts, CC0) e colocar em `asset
 4. **Remover o crosshair** (pedido de Fabio): o marcador de mira sai do HUD. A mira FUNCIONAL continua sendo o centro da camera + kick assist (zero mudanca de gameplay); apenas o desenho some, como em Rocket League. Teste: HUD montado nao contem o nodo de crosshair. Nota registrada: se a sensacao de mira piorar no playtest sem o marcador, reavaliar com um indicador sutil so durante carregamento de chute (decisao reversivel barata).
 - Area: football_root/avatar (spawn), football_hud (hints/crosshair). Validate + build web + luminancia.
 
+Resultado 06A (Codex, `2026-06-13`):
+
+- Causa raiz do countdown duplo: `_ready_sync()` e `_ready_web_async()` chamavam `_restart_play(false)` no boot/warmup enquanto `intro_open == false`; isso iniciava o countdown antes do jogador apertar `Comecar`, e `_start_match()` iniciava outro countdown. O teste vermelho mediu `2` disparos no kickoff inicial e `1` no pos-gol antes do fix.
+- Fix: boot e warmup agora usam `_restart_play(false, false)`, deixando `_start_match()` como unico disparo do countdown inicial; resets pos-gol continuam disparando countdown uma vez.
+- Facing: o reset de kickoff aplica snap visual imediato para player e bot olharem para o oponente sem alterar yaw logico, camera, mira, kick assist, chute ou fisica.
+- HUD: `HintLabel` e `FootballCrosshair` sairam da tela de jogo; a tabela de comandos ficou em `FootballHud.CONTROL_HINTS`/`get_control_hints()` para a Track 06B consumir no ESC.
+- Nota reversivel mantida: se o playtest sentir falta de mira visual, reavaliar indicador sutil apenas durante carregamento de chute.
+- Evidencia: `docs/playtest-reports/track-06a-match-start-fixes.md`, `docs/screenshots/track-06a/`, `docs/playtest-reports/track-06a-data/06a-web-boot.*`.
+
 ## Track 06B - ESC Menu Completo V1 (sequencial, apos 06A)
 
 Estrutura do ESC (pause):

@@ -186,6 +186,7 @@ var kickoff_marker: MeshInstance3D
 var player_kickoff_waiting_for_touch: bool = false
 var kickoff_countdown_remaining: float = 0.0
 var countdown_last_number: int = 0
+var debug_kickoff_countdown_start_count: int = 0
 var goal_slowmo_remaining: float = 0.0
 var stadium_scoreboard_score_labels: Dictionary = {}
 var stadium_scoreboard_phase_labels: Dictionary = {}
@@ -226,7 +227,7 @@ func _ready_sync() -> void:
 	_spawn_runtime()
 	PerfProbeScript.end(self, "football.spawn_runtime", stage_begin)
 	stage_begin = PerfProbeScript.begin(self, "football.restart_play_initial")
-	_restart_play(false)
+	_restart_play(false, false)
 	PerfProbeScript.end(self, "football.restart_play_initial", stage_begin)
 	_set_intro_open(true)
 	call_deferred("_apply_capture_scene_from_meta")
@@ -251,13 +252,13 @@ func _ready_web_async() -> void:
 		await _warmup_web_first_render()
 	_set_web_loading_progress("Preparando partida", 0.90)
 	stage_begin = PerfProbeScript.begin(self, "football.restart_play_initial")
-	_restart_play(false)
+	_restart_play(false, false)
 	PerfProbeScript.end(self, "football.restart_play_initial", stage_begin)
 	if WEB_RENDER_WARMUP_ENABLED:
 		_set_web_loading_progress("Aquecendo efeitos", 0.92)
 		await _warmup_web_first_use_feedback()
 		stage_begin = PerfProbeScript.begin(self, "football.restart_play_after_warmup")
-		_restart_play(false)
+		_restart_play(false, false)
 		PerfProbeScript.end(self, "football.restart_play_after_warmup", stage_begin)
 		_set_web_loading_progress("Estabilizando quadros", 0.97)
 		await _wait_for_web_loading_settled()
@@ -754,6 +755,12 @@ func debug_is_kickoff_locked() -> bool:
 
 func debug_get_kickoff_countdown_remaining() -> float:
 	return kickoff_countdown_remaining
+
+func debug_get_kickoff_countdown_start_count() -> int:
+	return debug_kickoff_countdown_start_count
+
+func debug_reset_kickoff_countdown_start_count() -> void:
+	debug_kickoff_countdown_start_count = 0
 
 func debug_is_goal_slowmo_active() -> bool:
 	return goal_slowmo_remaining > 0.0
@@ -1367,7 +1374,7 @@ func _apply_main_menu_settings() -> void:
 	if tree.root.has_meta(TOON_RENDER_META_KEY):
 		set_toon_render_enabled(bool(tree.root.get_meta(TOON_RENDER_META_KEY)))
 
-func _restart_play(after_goal: bool) -> void:
+func _restart_play(after_goal: bool, start_countdown: bool = true) -> void:
 	PerfProbeScript.mark(self, "event.restart_play", "after_goal=%s" % str(after_goal))
 	phase_label = &"kickoff" if not after_goal else &"reset"
 	Engine.time_scale = 1.0
@@ -1385,6 +1392,7 @@ func _restart_play(after_goal: bool) -> void:
 	bot.rotation.y = PI
 	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH), FIELD_HALF_WIDTH, FIELD_HALF_LENGTH)
 	bot.set_difficulty(bot_difficulty_id)
+	_snap_kickoff_avatar_facing()
 	player_kickoff_waiting_for_touch = kickoff_owner == &"player" and not match_over
 	if player_kickoff_waiting_for_touch and bot.has_method("start_kickoff_defense_hold"):
 		bot.start_kickoff_defense_hold(_get_player_kickoff_bot_defense_position(ball_spawn))
@@ -1402,7 +1410,7 @@ func _restart_play(after_goal: bool) -> void:
 		bot.set_celebrating(true)
 	else:
 		bot.set_celebrating(false)
-	if not intro_open:
+	if start_countdown and not intro_open:
 		_start_kickoff_countdown()
 	else:
 		phase_label = &"play"
@@ -1884,7 +1892,6 @@ func _build_hud_snapshot() -> Dictionary:
 		"kickoff_owner": kickoff_owner,
 		"phase": phase_label,
 		"countdown": kickoff_countdown_remaining,
-		"hint": "Comecar inicia | WASD move | Shift boost | E/Ctrl dash | Mouse gira jogador/camera | LMB segura/carrega | RMB forte/SUPER | Space jump | T emote pos-gol | R restart | Esc menu" if intro_open else "WASD move | Shift boost | E/Ctrl dash | LMB segura/carrega | RMB forte/SUPER | Space jump/flip | T emote pos-gol | paredes/teto rebatem | R restart | Esc menu"
 	}
 
 func _update_hud_snapshot(delta: float) -> void:
@@ -1984,6 +1991,12 @@ func _get_player_kickoff_bot_defense_position(ball_spawn: Vector3) -> Vector3:
 	var own_goal := Vector3(0.0, BOT_SPAWN.y, GOAL_LINE_NORTH)
 	return ball_spawn.lerp(own_goal, PLAYER_KICKOFF_BOT_DEFENSE_RATIO)
 
+func _snap_kickoff_avatar_facing() -> void:
+	if player != null and bot != null and player_avatar != null and player_avatar.has_method("snap_visual_facing_direction"):
+		player_avatar.snap_visual_facing_direction(bot.global_position - player.global_position, player.rotation.y)
+	if player != null and bot != null and bot_avatar != null and bot_avatar.has_method("snap_visual_facing_direction"):
+		bot_avatar.snap_visual_facing_direction(player.global_position - bot.global_position, bot.rotation.y)
+
 func _get_kit_code(country_kit_id: StringName) -> String:
 	match country_kit_id:
 		&"brazil":
@@ -2068,6 +2081,7 @@ func _get_stadium_scoreboard_phase_text() -> String:
 	return "AO VIVO"
 
 func _start_kickoff_countdown() -> void:
+	debug_kickoff_countdown_start_count += 1
 	kickoff_countdown_remaining = KICKOFF_COUNTDOWN_DURATION
 	countdown_last_number = 0
 	phase_label = &"kickoff"
