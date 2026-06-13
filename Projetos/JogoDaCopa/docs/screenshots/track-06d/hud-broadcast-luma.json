@@ -1,0 +1,74 @@
+[
+	{
+		"file": "hud-broadcast-kickoff-1920x1080.png",
+		"luma": 58.5,
+		"resolution": "1920x1080",
+		"shot": "kickoff"
+	},
+	{
+		"file": "hud-broadcast-goal-1920x1080.png",
+		"luma": 61.0,
+		"resolution": "1920x1080",
+		"shot": "goal"
+	},
+	{
+		"file": "hud-broadcast-super-1920x1080.png",
+		"luma": 58.5,
+		"resolution": "1920x1080",
+		"shot": "super"
+	},
+	{
+		"file": "hud-broadcast-result-1920x1080.png",
+		"luma": 75.1,
+		"resolution": "1920x1080",
+		"shot": "result"
+	},
+	{
+		"file": "hud-broadcast-kickoff-1366x768.png",
+		"luma": 60.5,
+		"resolution": "1366x768",
+		"shot": "kickoff"
+	},
+	{
+		"file": "hud-broadcast-goal-1366x768.png",
+		"luma": 61.7,
+		"resolution": "1366x768",
+		"shot": "goal"
+	},
+	{
+		"file": "hud-broadcast-super-1366x768.png",
+		"luma": 60.5,
+		"resolution": "1366x768",
+		"shot": "super"
+	},
+	{
+		"file": "hud-broadcast-result-1366x768.png",
+		"luma": 74.9,
+		"resolution": "1366x768",
+		"shot": "result"
+	},
+	{
+		"file": "hud-broadcast-kickoff-1280x720.png",
+		"luma": 59.7,
+		"resolution": "1280x720",
+		"shot": "kickoff"
+	},
+	{
+		"file": "hud-broadcast-goal-1280x720.png",
+		"luma": 61.2,
+		"resolution": "1280x720",
+		"shot": "goal"
+	},
+	{
+		"file": "hud-broadcast-super-1280x720.png",
+		"luma": 59.7,
+		"resolution": "1280x720",
+		"shot": "super"
+	},
+	{
+		"file": "hud-broadcast-result-1280x720.png",
+		"luma": 71.7,
+		"resolution": "1280x720",
+		"shot": "result"
+	}
+]

@@ -92,6 +92,7 @@ var fade_overlay: ColorRect
 var fade_tween: Tween
 var broadcast_font: FontFile
 var broadcast_narrow_font: FontFile
+var telemetry_visible: bool = false
 
 var kick_feedback_time: float = 0.0
 var strong_kick_feedback_time: float = 0.0
@@ -397,9 +398,19 @@ func debug_get_event_text() -> String:
 func debug_get_clock_text() -> String:
 	return clock_label.text if clock_label != null else ""
 
+func debug_set_telemetry_visible(show_telemetry: bool) -> void:
+	telemetry_visible = show_telemetry
+	_sync_telemetry_visibility()
+
 func debug_get_focused_control_name() -> String:
 	var focused := get_viewport().gui_get_focus_owner()
 	return focused.name if focused != null else ""
+
+func _sync_telemetry_visibility() -> void:
+	if flow_label != null:
+		flow_label.visible = telemetry_visible
+	if control_label != null:
+		control_label.visible = telemetry_visible
 
 func _build_ui() -> void:
 	var root := Control.new()
@@ -495,6 +506,7 @@ func _build_ui() -> void:
 	flow_label.add_theme_color_override("font_color", Color(0.78, 0.9, 0.92, 1.0))
 	_apply_broadcast_font(flow_label, 11, true)
 	flow_label.text = "Futebol: kickoff | Bot: kickoff"
+	flow_label.visible = telemetry_visible
 	_ignore_mouse(flow_label)
 	box.add_child(flow_label)
 
@@ -503,6 +515,7 @@ func _build_ui() -> void:
 	control_label.add_theme_color_override("font_color", Color(0.86, 0.96, 0.92, 1.0))
 	_apply_broadcast_font(control_label, 11, true)
 	control_label.text = "Bola: solta 0% | Boost 100%"
+	control_label.visible = telemetry_visible
 	_ignore_mouse(control_label)
 	box.add_child(control_label)
 

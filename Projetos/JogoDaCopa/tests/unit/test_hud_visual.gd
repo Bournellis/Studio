@@ -15,12 +15,26 @@ func test_broadcast_scorebug_states_and_super_meter() -> void:
 	assert_not_null(hud.get_node_or_null("HudRoot/ScorePanel/ScoreBox/StateBadgeLabel"))
 	assert_not_null(hud.get_node_or_null("HudRoot/ScorePanel/ScoreBox/BoostBar"))
 	assert_not_null(hud.get_node_or_null("HudRoot/ScorePanel/ScoreBox/SuperMeterRow/SuperBar"))
+	var flow_label := hud.get_node("HudRoot/ScorePanel/ScoreBox/FlowLabel") as Label
+	var control_label := hud.get_node("HudRoot/ScorePanel/ScoreBox/ControlLabel") as Label
+	assert_false(flow_label.visible)
+	assert_false(control_label.visible)
+	hud.debug_set_telemetry_visible(true)
+	assert_true(flow_label.visible)
+	assert_true(control_label.visible)
+	hud.debug_set_telemetry_visible(false)
+	assert_false(flow_label.visible)
+	assert_false(control_label.visible)
 
 	hud.update_snapshot(_build_snapshot({
 		"match_mode": "goals",
 		"boost_fraction": 0.66,
 		"player_super_fraction": 0.5,
 	}))
+	assert_false(flow_label.visible)
+	assert_false(control_label.visible)
+	assert_ne(flow_label.text, "")
+	assert_ne(control_label.text, "")
 	assert_eq(hud.debug_get_state_badge_text(), "3 GOLS")
 	assert_almost_eq(hud.debug_get_super_bar_value(), 50.0, 0.001)
 	assert_false(hud.debug_is_super_ready_visible())
