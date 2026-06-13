@@ -1,6 +1,6 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-06-12`
+- Ultima atualizacao: `2026-06-13`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 - Regra de tamanho: maximo ~12 linhas por projeto. Historia de pacotes/validacoes vai para os arquivos de historico do projeto (`implementation/tracks/`, `docs/release-history.md`, Kanban Done), nunca para este snapshot.
@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_05B1_SENSORY_FEEDBACK_V1_MERGED`
-- Baseline: `Copa Arena Futebol` Web publico em Cloudflare Pages (`v1.0.3+ef9c5baa`, `web/v1-copa-arena-futebol-20260612-ef9c5baa`). Track 05B.1 foi aprovada por Claude e mergeada localmente em `main`; primeiro minuto + estabilidade 5 min local/remoto PASS, runtime errors `0`; frente Web estavel salvo follow-ups O1/O2 do review. Detalhes em `Projetos/JogoDaCopa/docs/release-history.md`, `Projetos/JogoDaCopa/docs/playtest-reports/track-05b1-sensory-feedback.md` e `Projetos/JogoDaCopa/docs/code-review-track05b1-sensory-feedback-v1.md`.
+- Marker: `JOGO_DA_COPA_TRACK_06A_MATCH_START_FIXES_V1_MERGED`
+- Baseline: `Copa Arena Futebol` Web publico segue em Cloudflare Pages (`v1.0.3+ef9c5baa`, `web/v1-copa-arena-futebol-20260612-ef9c5baa`). Track 06A foi aprovada por Claude/Fabio e mergeada localmente em `main`: countdown inicial unico, facing de kickoff/pos-gol corrigido, HUD em jogo sem hints/crosshair, validate/export/Web boot/capturas PASS. Detalhes em `Projetos/JogoDaCopa/docs/playtest-reports/track-06a-match-start-fixes.md` e `Projetos/JogoDaCopa/docs/code-review-track06a-match-start-fixes-v1.md`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: retest humano `v1.0.3` (Fabio + tester externo); abrir follow-up apenas se O1 pacote completo de gol ou O2 teto/loading forem necessarios. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- Proximo passo: iniciar Track 06B - ESC Menu Completo V1 a partir de `main` com a 06A mergeada. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## draxos-roguelike-cardgame
 

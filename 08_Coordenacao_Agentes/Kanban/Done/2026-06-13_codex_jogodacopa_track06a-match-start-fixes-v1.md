@@ -46,3 +46,15 @@
 - Parar pre-merge em branch para review da Claude e aprovacao visual de Fabio.
 - Registrar handoff em `08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06a-match-start-fixes-v1.md`.
 - Nao fazer push/fetch/pull; rede git permanece exclusiva do Fabio via GitHub Desktop.
+
+## Resultado
+
+- Aprovado em code review pela Claude e aprovado visualmente por Fabio.
+- Merge local em `main`: `b585b5d2`.
+- Countdown inicial corrigido para um unico disparo; pos-gol permanece um disparo.
+- Facing inicial e pos-gol corrigido para player e bot olhando para o oponente.
+- HUD em jogo sem `HintLabel` e sem `FootballCrosshair`; comandos preservados em `FootballHud.CONTROL_HINTS`.
+- Evidencia: `Projetos/JogoDaCopa/docs/playtest-reports/track-06a-match-start-fixes.md`, `Projetos/JogoDaCopa/docs/screenshots/track-06a/`, `Projetos/JogoDaCopa/docs/playtest-reports/track-06a-data/`.
+- Validate integrado pos-merge: PASS, `91` testes / `1298` asserts; export Web e boot Chrome local PASS na branch pre-merge.
+- Proximo passo: Track 06B - ESC Menu Completo V1.
+- Rede git proibida; `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
