@@ -5,6 +5,8 @@ signal resume_requested()
 signal restart_requested()
 signal main_menu_requested()
 signal sensitivity_changed(value: float)
+signal quality_changed(quality_id: StringName)
+signal fullscreen_changed(enabled: bool)
 signal start_requested()
 signal rematch_requested()
 signal skin_tone_previous_requested()
@@ -32,6 +34,7 @@ const CONTROL_HINTS: Array[Dictionary] = [
 ]
 
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
+const GameSettingsScript = preload("res://autoloads/game_settings.gd")
 
 var status_label: Label
 var score_label: Label
@@ -67,6 +70,15 @@ var pause_volume_slider: HSlider
 var pause_sfx_volume_slider: HSlider
 var pause_ui_volume_slider: HSlider
 var pause_ambience_volume_slider: HSlider
+var pause_section_buttons: Dictionary = {}
+var pause_controls_section: Control
+var pause_audio_title: Label
+var pause_video_section: Control
+var pause_sensitivity_section: Control
+var pause_fullscreen_toggle: CheckButton
+var pause_quality_option: OptionButton
+var pause_quality_notice_label: Label
+var pause_section_id: StringName = &"audio"
 var skin_tone_label: Label
 var country_kit_label: Label
 var intro_start_button: Button
@@ -272,12 +284,13 @@ func reset_feedback() -> void:
 		result_panel.visible = false
 	_refresh_overlay()
 
-func set_pause_menu_visible(menu_is_open: bool, _sensitivity_value: float = 0.0) -> void:
+func set_pause_menu_visible(menu_is_open: bool, sensitivity_value: float = 0.0) -> void:
 	if pause_menu_panel == null:
 		return
 	pause_menu_panel.visible = menu_is_open
-	_sync_pause_volume_sliders()
+	_sync_pause_settings_controls(sensitivity_value)
 	if menu_is_open and pause_resume_button != null:
+		_set_pause_section(&"audio")
 		pause_resume_button.grab_focus()
 
 func set_intro_visible(intro_is_visible: bool) -> void:
@@ -313,6 +326,12 @@ func debug_get_result_stats_text() -> String:
 
 func debug_is_pause_menu_visible() -> bool:
 	return pause_menu_panel != null and pause_menu_panel.visible
+
+func debug_show_pause_section(section_id: StringName) -> void:
+	_set_pause_section(section_id)
+
+func debug_get_pause_section_id() -> StringName:
+	return pause_section_id
 
 func debug_get_fade_alpha() -> float:
 	return fade_overlay.color.a if fade_overlay != null else 0.0
@@ -623,7 +642,7 @@ func _build_pause_menu(root: Control) -> void:
 	pause_menu_panel.name = "PauseMenuPanel"
 	pause_menu_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	pause_menu_panel.custom_minimum_size = Vector2(460.0, 382.0)
+	pause_menu_panel.custom_minimum_size = Vector2(680.0, 560.0)
 	pause_menu_panel.visible = false
 	pause_menu_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.012, 0.03, 0.04, 0.94), Color(0.12, 0.88, 1.0, 0.9), 2))
 	pause_center.add_child(pause_menu_panel)
@@ -639,7 +658,7 @@ func _build_pause_menu(root: Control) -> void:
 	var box := VBoxContainer.new()
 	box.name = "PauseMenuBox"
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	box.add_theme_constant_override("separation", 12)
+	box.add_theme_constant_override("separation", 10)
 	margin.add_child(box)
 
 	var title := Label.new()
@@ -670,18 +689,22 @@ func _build_pause_menu(root: Control) -> void:
 	)
 	box.add_child(pause_restart_button)
 
-	var volume_title := Label.new()
-	volume_title.name = "PauseVolumeTitle"
-	volume_title.text = "Volume"
-	volume_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	volume_title.add_theme_font_size_override("font_size", 16)
-	_ignore_mouse(volume_title)
-	box.add_child(volume_title)
+	_build_pause_tab_bar(box)
+	pause_controls_section = _build_pause_controls_section(box)
 
+	pause_audio_title = Label.new()
+	pause_audio_title.name = "PauseVolumeTitle"
+	pause_audio_title.text = "Audio"
+	pause_audio_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	pause_audio_title.add_theme_font_size_override("font_size", 16)
+	_ignore_mouse(pause_audio_title)
+	box.add_child(pause_audio_title)
 	pause_volume_slider = _build_pause_volume_row(box, "VolumeRow", "VolumeLabel", "Master", "VolumeSlider", BUS_MASTER)
 	pause_sfx_volume_slider = _build_pause_volume_row(box, "SfxVolumeRow", "SfxVolumeLabel", "SFX", "SfxVolumeSlider", BUS_SFX)
 	pause_ui_volume_slider = _build_pause_volume_row(box, "UiVolumeRow", "UiVolumeLabel", "UI", "UiVolumeSlider", BUS_UI)
 	pause_ambience_volume_slider = _build_pause_volume_row(box, "AmbienceVolumeRow", "AmbienceVolumeLabel", "Ambiente", "AmbienceVolumeSlider", BUS_AMBIENCE)
+	pause_video_section = _build_pause_video_section(box)
+	pause_sensitivity_section = _build_pause_sensitivity_section(box)
 
 	pause_menu_button = Button.new()
 	pause_menu_button.name = "MainMenuButton"
@@ -692,6 +715,171 @@ func _build_pause_menu(root: Control) -> void:
 		main_menu_requested.emit()
 	)
 	box.add_child(pause_menu_button)
+	_set_pause_section(&"audio")
+
+func _build_pause_tab_bar(parent: VBoxContainer) -> void:
+	var tab_bar := HBoxContainer.new()
+	tab_bar.name = "PauseSectionTabs"
+	tab_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	tab_bar.add_theme_constant_override("separation", 8)
+	parent.add_child(tab_bar)
+	pause_section_buttons.clear()
+	tab_bar.add_child(_build_pause_tab_button(&"controls", "Controles"))
+	tab_bar.add_child(_build_pause_tab_button(&"audio", "Audio"))
+	tab_bar.add_child(_build_pause_tab_button(&"video", "Video"))
+	tab_bar.add_child(_build_pause_tab_button(&"sensitivity", "Sensibilidade"))
+
+func _build_pause_tab_button(section_id: StringName, label: String) -> Button:
+	var button := Button.new()
+	button.name = "%sTabButton" % label.replace(" ", "")
+	button.text = label
+	button.toggle_mode = true
+	button.custom_minimum_size = Vector2(0.0, 34.0)
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	button.mouse_filter = Control.MOUSE_FILTER_STOP
+	button.pressed.connect(func() -> void:
+		_set_pause_section(section_id)
+	)
+	pause_section_buttons[section_id] = button
+	return button
+
+func _build_pause_controls_section(parent: VBoxContainer) -> VBoxContainer:
+	var section := VBoxContainer.new()
+	section.name = "ControlsSection"
+	section.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	section.add_theme_constant_override("separation", 6)
+	parent.add_child(section)
+
+	var table := GridContainer.new()
+	table.name = "ControlsTable"
+	table.columns = 2
+	table.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	table.add_theme_constant_override("h_separation", 18)
+	table.add_theme_constant_override("v_separation", 5)
+	section.add_child(table)
+
+	for hint: Dictionary in CONTROL_HINTS:
+		var action_label := Label.new()
+		action_label.name = "ActionLabel"
+		action_label.text = str(hint.get("action", ""))
+		action_label.add_theme_font_size_override("font_size", 13)
+		action_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_ignore_mouse(action_label)
+		table.add_child(action_label)
+
+		var input_label := Label.new()
+		input_label.name = "InputLabel"
+		input_label.text = str(hint.get("input", ""))
+		input_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		input_label.add_theme_font_size_override("font_size", 13)
+		input_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_ignore_mouse(input_label)
+		table.add_child(input_label)
+	return section
+
+func _build_pause_video_section(parent: VBoxContainer) -> VBoxContainer:
+	var section := VBoxContainer.new()
+	section.name = "VideoSection"
+	section.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	section.add_theme_constant_override("separation", 8)
+	parent.add_child(section)
+
+	var title := Label.new()
+	title.name = "VideoTitle"
+	title.text = "Video"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 16)
+	_ignore_mouse(title)
+	section.add_child(title)
+
+	var fullscreen_row := HBoxContainer.new()
+	fullscreen_row.name = "FullscreenRow"
+	fullscreen_row.add_theme_constant_override("separation", 8)
+	section.add_child(fullscreen_row)
+
+	var fullscreen_label := Label.new()
+	fullscreen_label.name = "FullscreenLabel"
+	fullscreen_label.text = "Tela cheia"
+	fullscreen_label.custom_minimum_size.x = 116.0
+	fullscreen_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_ignore_mouse(fullscreen_label)
+	fullscreen_row.add_child(fullscreen_label)
+
+	pause_fullscreen_toggle = CheckButton.new()
+	pause_fullscreen_toggle.name = "FullscreenToggle"
+	pause_fullscreen_toggle.text = "Ativar"
+	pause_fullscreen_toggle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	pause_fullscreen_toggle.toggled.connect(_on_pause_fullscreen_toggled)
+	fullscreen_row.add_child(pause_fullscreen_toggle)
+
+	var quality_row := HBoxContainer.new()
+	quality_row.name = "QualityRow"
+	quality_row.add_theme_constant_override("separation", 8)
+	section.add_child(quality_row)
+
+	var quality_label := Label.new()
+	quality_label.name = "QualityLabel"
+	quality_label.text = "Qualidade"
+	quality_label.custom_minimum_size.x = 116.0
+	quality_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_ignore_mouse(quality_label)
+	quality_row.add_child(quality_label)
+
+	pause_quality_option = OptionButton.new()
+	pause_quality_option.name = "QualityOption"
+	pause_quality_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	pause_quality_option.add_item("Alta")
+	pause_quality_option.add_item("Leve")
+	pause_quality_option.item_selected.connect(_on_pause_quality_selected)
+	quality_row.add_child(pause_quality_option)
+
+	pause_quality_notice_label = Label.new()
+	pause_quality_notice_label.name = "QualityNoticeLabel"
+	pause_quality_notice_label.text = "Ambiente e placares atualizam agora; materiais novos entram no proximo carregamento."
+	pause_quality_notice_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	pause_quality_notice_label.add_theme_font_size_override("font_size", 12)
+	_ignore_mouse(pause_quality_notice_label)
+	section.add_child(pause_quality_notice_label)
+	return section
+
+func _build_pause_sensitivity_section(parent: VBoxContainer) -> VBoxContainer:
+	var section := VBoxContainer.new()
+	section.name = "SensitivitySection"
+	section.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	section.add_theme_constant_override("separation", 8)
+	parent.add_child(section)
+
+	var title := Label.new()
+	title.name = "SensitivityTitle"
+	title.text = "Sensibilidade"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 16)
+	_ignore_mouse(title)
+	section.add_child(title)
+
+	var row := HBoxContainer.new()
+	row.name = "SensitivityRow"
+	row.add_theme_constant_override("separation", 8)
+	section.add_child(row)
+
+	sensitivity_label = Label.new()
+	sensitivity_label.name = "SensitivityLabel"
+	sensitivity_label.custom_minimum_size.x = 142.0
+	sensitivity_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_ignore_mouse(sensitivity_label)
+	row.add_child(sensitivity_label)
+
+	sensitivity_slider = HSlider.new()
+	sensitivity_slider.name = "SensitivitySlider"
+	sensitivity_slider.min_value = 0.0008
+	sensitivity_slider.max_value = 0.0032
+	sensitivity_slider.step = 0.0001
+	sensitivity_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sensitivity_slider.mouse_filter = Control.MOUSE_FILTER_STOP
+	sensitivity_slider.value_changed.connect(_on_sensitivity_slider_changed)
+	row.add_child(sensitivity_slider)
+	_update_sensitivity_label(sensitivity_slider.value)
+	return section
 
 func _build_pause_volume_row(parent: VBoxContainer, row_name: String, label_name: String, label: String, slider_name: String, bus_name: StringName) -> HSlider:
 	var row := HBoxContainer.new()
@@ -713,24 +901,93 @@ func _build_pause_volume_row(parent: VBoxContainer, row_name: String, label_name
 	slider.min_value = 0.0
 	slider.max_value = 1.0
 	slider.step = 0.05
-	slider.value = _get_bus_volume_linear(bus_name)
+	slider.value = _get_pause_volume(bus_name)
 	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	slider.mouse_filter = Control.MOUSE_FILTER_STOP
 	slider.value_changed.connect(func(value: float) -> void:
-		_set_bus_volume(bus_name, value)
+		_set_pause_volume(bus_name, value)
 	)
 	row.add_child(slider)
 	return slider
 
-func _sync_pause_volume_sliders() -> void:
+func _sync_pause_settings_controls(sensitivity_value: float = 0.0) -> void:
 	if pause_volume_slider != null:
-		pause_volume_slider.set_value_no_signal(_get_bus_volume_linear(BUS_MASTER))
+		pause_volume_slider.set_value_no_signal(_get_pause_volume(BUS_MASTER))
 	if pause_sfx_volume_slider != null:
-		pause_sfx_volume_slider.set_value_no_signal(_get_bus_volume_linear(BUS_SFX))
+		pause_sfx_volume_slider.set_value_no_signal(_get_pause_volume(BUS_SFX))
 	if pause_ui_volume_slider != null:
-		pause_ui_volume_slider.set_value_no_signal(_get_bus_volume_linear(BUS_UI))
+		pause_ui_volume_slider.set_value_no_signal(_get_pause_volume(BUS_UI))
 	if pause_ambience_volume_slider != null:
-		pause_ambience_volume_slider.set_value_no_signal(_get_bus_volume_linear(BUS_AMBIENCE))
+		pause_ambience_volume_slider.set_value_no_signal(_get_pause_volume(BUS_AMBIENCE))
+	var settings = _get_game_settings()
+	if pause_fullscreen_toggle != null:
+		pause_fullscreen_toggle.set_pressed_no_signal(settings.get_fullscreen_enabled() if settings != null else DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN)
+	if pause_quality_option != null:
+		_select_pause_quality_option(settings.get_quality_id() if settings != null else RenderProfileScript.get_quality_id())
+	var next_sensitivity := sensitivity_value
+	if next_sensitivity <= 0.0 and settings != null:
+		next_sensitivity = settings.get_mouse_sensitivity()
+	if next_sensitivity > 0.0:
+		set_sensitivity_value(next_sensitivity)
+
+func _set_pause_section(section_id: StringName) -> void:
+	var normalized := section_id
+	if not [&"controls", &"audio", &"video", &"sensitivity"].has(normalized):
+		normalized = &"audio"
+	pause_section_id = normalized
+	if pause_controls_section != null:
+		pause_controls_section.visible = normalized == &"controls"
+	var audio_visible := normalized == &"audio"
+	if pause_audio_title != null:
+		pause_audio_title.visible = audio_visible
+	for control in [pause_volume_slider, pause_sfx_volume_slider, pause_ui_volume_slider, pause_ambience_volume_slider]:
+		if control != null and control.get_parent() != null:
+			control.get_parent().visible = audio_visible
+	if pause_video_section != null:
+		pause_video_section.visible = normalized == &"video"
+	if pause_sensitivity_section != null:
+		pause_sensitivity_section.visible = normalized == &"sensitivity"
+	for key in pause_section_buttons.keys():
+		var button := pause_section_buttons[key] as Button
+		if button != null:
+			button.set_pressed_no_signal(StringName(key) == normalized)
+
+func _get_pause_volume(bus_name: StringName) -> float:
+	var settings = _get_game_settings()
+	if settings != null:
+		return settings.get_volume(bus_name)
+	return _get_bus_volume_linear(bus_name)
+
+func _set_pause_volume(bus_name: StringName, value: float) -> void:
+	var settings = _get_game_settings()
+	if settings != null:
+		settings.set_volume(bus_name, value)
+		return
+	_set_bus_volume(bus_name, value)
+
+func _on_pause_fullscreen_toggled(enabled: bool) -> void:
+	var settings = _get_game_settings()
+	if settings != null:
+		settings.set_fullscreen_enabled(enabled, true, true)
+	fullscreen_changed.emit(enabled)
+
+func _on_pause_quality_selected(index: int) -> void:
+	var quality_id := RenderProfileScript.QUALITY_LIGHT if index == 1 else RenderProfileScript.QUALITY_HIGH
+	var settings = _get_game_settings()
+	if settings != null:
+		settings.set_quality_id(quality_id)
+	else:
+		RenderProfileScript.set_quality_id(quality_id)
+	_select_pause_quality_option(quality_id)
+	quality_changed.emit(quality_id)
+
+func _select_pause_quality_option(quality_id: StringName) -> void:
+	if pause_quality_option == null:
+		return
+	pause_quality_option.select(1 if RenderProfileScript.normalize_quality_id(quality_id) == RenderProfileScript.QUALITY_LIGHT else 0)
+
+func _get_game_settings():
+	return get_node_or_null("/root/GameSettings")
 
 func _ensure_audio_buses() -> void:
 	_ensure_audio_bus(BUS_SFX)
@@ -1000,6 +1257,9 @@ func _build_panel_style(fill_color: Color, border_color: Color, border_width: in
 
 func _on_sensitivity_slider_changed(value: float) -> void:
 	_update_sensitivity_label(value)
+	var settings = _get_game_settings()
+	if settings != null:
+		settings.set_mouse_sensitivity(value)
 	sensitivity_changed.emit(value)
 
 func _update_sensitivity_label(value: float) -> void:
