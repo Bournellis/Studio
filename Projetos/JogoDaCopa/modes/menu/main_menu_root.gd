@@ -9,9 +9,12 @@ const GameSettingsScript = preload("res://autoloads/game_settings.gd")
 const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
+const BROADCAST_FONT_PATH: String = "res://assets/fonts/kenney/Kenney Future.ttf"
+const BROADCAST_NARROW_FONT_PATH: String = "res://assets/fonts/kenney/Kenney Future Narrow.ttf"
+const BROADCAST_MONO_FONT_PATH: String = "res://assets/fonts/kenney/Kenney Mini Square Mono.ttf"
 const MENU_PANEL_MIN_SIZE: Vector2 = Vector2(500.0, 0.0)
 const MENU_PANEL_SIDE_MARGIN: float = 48.0
-const MENU_PANEL_MIN_TOP_MARGIN: float = 24.0
+const MENU_PANEL_MIN_TOP_MARGIN: float = 18.0
 const BUS_MASTER: StringName = &"Master"
 const BUS_SFX: StringName = &"SFX"
 const BUS_UI: StringName = &"UI"
@@ -79,6 +82,11 @@ var ui_audio_pool_cursor: int = 0
 var web_audio_locked_logged: bool = false
 var web_audio_unlocked: bool = false
 var web_audio_next_unlock_poll_msec: int = 0
+var broadcast_font: FontFile
+var broadcast_narrow_font: FontFile
+var broadcast_mono_font: FontFile
+var kit_secondary_swatch: ColorRect
+var kit_shorts_swatch: ColorRect
 
 var preview_time: float = 0.0
 var selected_skin_tone_id: StringName = AvatarCatalogScript.DEFAULT_SKIN_TONE_ID
@@ -101,6 +109,7 @@ func _ready() -> void:
 	_load_ui_audio_streams()
 	if not RenderProfileScript.is_web_platform():
 		_build_ui_audio_pool()
+	_load_broadcast_fonts()
 	_build_ui()
 	_sync_root_rect_to_viewport()
 	_apply_initial_audio_mix()
@@ -146,6 +155,9 @@ func debug_get_visible_version_text() -> String:
 func debug_get_selected_kit_id() -> StringName:
 	return selected_country_kit_id
 
+func debug_get_selected_skin_tone_id() -> StringName:
+	return selected_skin_tone_id
+
 func debug_get_selected_bot_difficulty_id() -> StringName:
 	return selected_bot_difficulty_id
 
@@ -177,6 +189,28 @@ func debug_cycle_bot_difficulty(step: int = 1) -> void:
 
 func debug_cycle_match_mode(step: int = 1) -> void:
 	_cycle_match_mode(step)
+
+func debug_cycle_skin_tone(step: int = 1) -> void:
+	_cycle_skin_tone(step)
+
+func debug_cycle_country_kit(step: int = 1) -> void:
+	_cycle_country_kit(step)
+
+func debug_has_broadcast_match_card() -> bool:
+	return (
+		get_node_or_null("MenuCenter/MenuPanel/MenuBox/BroadcastHeader") != null
+		and get_node_or_null("MenuCenter/MenuPanel/MenuBox/MatchSectionLabel") != null
+		and get_node_or_null("MenuCenter/MenuPanel/MenuBox/AppearanceSectionLabel") != null
+		and get_node_or_null("MenuCenter/MenuPanel/MenuBox/AudioVideoSectionLabel") != null
+	)
+
+func debug_has_broadcast_font_loaded() -> bool:
+	return broadcast_font != null and broadcast_narrow_font != null and broadcast_mono_font != null
+
+func debug_get_primary_cta_min_height() -> float:
+	if football_button == null:
+		return 0.0
+	return football_button.custom_minimum_size.y
 
 func debug_get_quality_text() -> String:
 	if quality_option == null:
@@ -269,41 +303,20 @@ func _build_ui() -> void:
 	menu_panel = PanelContainer.new()
 	menu_panel.name = "MenuPanel"
 	menu_panel.custom_minimum_size = MENU_PANEL_MIN_SIZE
-	menu_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.012, 0.03, 0.04, 0.88), Color(1.0, 0.78, 0.16, 0.9), 2))
+	menu_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.006, 0.026, 0.035, 0.93), Color(1.0, 0.78, 0.16, 0.95), 2))
 	menu_center.add_child(menu_panel)
 
 	var center := VBoxContainer.new()
 	center.name = "MenuBox"
 	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	center.add_theme_constant_override("separation", 12)
+	center.add_theme_constant_override("separation", 2)
 	menu_panel.add_child(center)
 
-	var title := Label.new()
-	title.name = "TitleLabel"
-	title.text = "Copa Arena Futebol"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title.add_theme_font_size_override("font_size", 44)
-	center.add_child(title)
-
-	var subtitle := Label.new()
-	subtitle.name = "SubtitleLabel"
-	subtitle.text = "Futebol arcade em arena de vidro"
-	subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	subtitle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	subtitle.add_theme_font_size_override("font_size", 16)
-	center.add_child(subtitle)
-
-	status_label = Label.new()
-	status_label.name = "StatusLabel"
-	status_label.text = "Noite de final - primeiro a 3 gols"
-	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	status_label.add_theme_font_size_override("font_size", 14)
-	center.add_child(status_label)
+	_build_broadcast_header(center)
 
 	_build_selector_rows(center)
+	_build_appearance_rows(center)
 	_build_settings_rows(center)
 
 	football_button = _build_button("FootballButton", "Jogar Futebol 1x1")
@@ -326,7 +339,7 @@ func _build_ui() -> void:
 	footer.text = _build_visible_version_text()
 	footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	footer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	footer.add_theme_font_size_override("font_size", 12)
+	_apply_broadcast_font(footer, 10, true)
 	center.add_child(footer)
 
 	_position_menu_panel()
@@ -353,6 +366,80 @@ func _load_release_info() -> Dictionary:
 	if parsed is Dictionary:
 		return parsed
 	return {}
+
+func _load_broadcast_fonts() -> void:
+	broadcast_font = load(BROADCAST_FONT_PATH) as FontFile
+	if broadcast_font == null:
+		push_error("Missing required menu broadcast font: %s" % BROADCAST_FONT_PATH)
+	broadcast_narrow_font = load(BROADCAST_NARROW_FONT_PATH) as FontFile
+	if broadcast_narrow_font == null:
+		push_warning("Missing menu broadcast narrow font: %s" % BROADCAST_NARROW_FONT_PATH)
+	broadcast_mono_font = load(BROADCAST_MONO_FONT_PATH) as FontFile
+	if broadcast_mono_font == null:
+		push_error("Missing required menu broadcast mono font: %s" % BROADCAST_MONO_FONT_PATH)
+
+func _build_broadcast_header(parent: VBoxContainer) -> void:
+	var header := VBoxContainer.new()
+	header.name = "BroadcastHeader"
+	header.custom_minimum_size = Vector2(0.0, 50.0)
+	header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_theme_constant_override("separation", 3)
+	parent.add_child(header)
+
+	var gradient_band := TextureRect.new()
+	gradient_band.name = "CupGradientBand"
+	gradient_band.custom_minimum_size = Vector2(0.0, 7.0)
+	gradient_band.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	gradient_band.texture = _build_cup_gradient_texture()
+	gradient_band.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	gradient_band.stretch_mode = TextureRect.STRETCH_SCALE
+	header.add_child(gradient_band)
+
+	var title := Label.new()
+	title.name = "TitleLabel"
+	title.text = "Copa Arena Futebol"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.add_theme_color_override("font_color", Color(1.0, 0.93, 0.72, 1.0))
+	_apply_broadcast_font(title, 29, false)
+	header.add_child(title)
+
+	var match_line := Label.new()
+	match_line.name = "BroadcastMatchLine"
+	match_line.text = "FINAL 1x1  |  ARENA DE VIDRO"
+	match_line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	match_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	match_line.add_theme_color_override("font_color", Color(0.78, 0.94, 1.0, 1.0))
+	_apply_broadcast_mono_font(match_line, 11)
+	header.add_child(match_line)
+
+	var gold_line := ColorRect.new()
+	gold_line.name = "GoldDetailLine"
+	gold_line.custom_minimum_size = Vector2(0.0, 2.0)
+	gold_line.color = Color(1.0, 0.78, 0.16, 1.0)
+	gold_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(gold_line)
+
+	status_label = Label.new()
+	status_label.name = "StatusLabel"
+	status_label.text = "Noite de final - primeiro a 3 gols"
+	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	status_label.add_theme_color_override("font_color", Color(0.84, 0.92, 0.92, 1.0))
+	_apply_broadcast_font(status_label, 11, true)
+	header.add_child(status_label)
+
+func _build_cup_gradient_texture() -> GradientTexture2D:
+	var gradient := Gradient.new()
+	gradient.set_color(0, Color(0.02, 0.42, 0.18, 1.0))
+	gradient.set_color(1, Color(0.02, 0.16, 0.62, 1.0))
+	gradient.add_point(0.52, Color(0.88, 0.08, 0.12, 1.0))
+	var texture := GradientTexture2D.new()
+	texture.gradient = gradient
+	texture.fill = GradientTexture2D.FILL_LINEAR
+	texture.fill_from = Vector2.ZERO
+	texture.fill_to = Vector2.RIGHT
+	return texture
 
 func _build_arena_preview() -> void:
 	preview_viewport = SubViewport.new()
@@ -495,9 +582,12 @@ func _get_preview_configured_luminance() -> float:
 	return color.r * 0.2126 + color.g * 0.7152 + color.b * 0.0722
 
 func _build_selector_rows(parent: VBoxContainer) -> void:
+	parent.add_child(_build_section_label("MatchSectionLabel", "TRANSMISSAO DA PARTIDA"))
+
 	var difficulty_row := HBoxContainer.new()
 	difficulty_row.name = "BotDifficultyRow"
-	difficulty_row.add_theme_constant_override("separation", 8)
+	difficulty_row.add_theme_constant_override("separation", 6)
+	difficulty_row.custom_minimum_size.y = 24.0
 	parent.add_child(difficulty_row)
 
 	var difficulty_swatch := _build_swatch("BotDifficultySwatch", Color(1.0, 0.58, 0.22, 1.0))
@@ -513,7 +603,8 @@ func _build_selector_rows(parent: VBoxContainer) -> void:
 
 	var match_mode_row := HBoxContainer.new()
 	match_mode_row.name = "MatchModeRow"
-	match_mode_row.add_theme_constant_override("separation", 8)
+	match_mode_row.add_theme_constant_override("separation", 6)
+	match_mode_row.custom_minimum_size.y = 24.0
 	parent.add_child(match_mode_row)
 
 	var match_mode_swatch := _build_swatch("MatchModeSwatch", Color(0.34, 0.88, 1.0, 1.0))
@@ -527,7 +618,55 @@ func _build_selector_rows(parent: VBoxContainer) -> void:
 		_cycle_match_mode(1)
 	))
 
+func _build_appearance_rows(parent: VBoxContainer) -> void:
+	parent.add_child(_build_section_label("AppearanceSectionLabel", "UNIFORME DO PLAYER"))
+
+	var skin_row := HBoxContainer.new()
+	skin_row.name = "BroadcastSkinToneRow"
+	skin_row.add_theme_constant_override("separation", 6)
+	skin_row.custom_minimum_size.y = 24.0
+	parent.add_child(skin_row)
+
+	skin_swatch = _build_swatch("BroadcastSkinSwatch", AvatarCatalogScript.get_skin_color(selected_skin_tone_id))
+	skin_row.add_child(skin_swatch)
+	skin_row.add_child(_build_cycle_button("SkinTonePreviousButton", "<", func() -> void:
+		_cycle_skin_tone(-1)
+	))
+	skin_label = _build_row_label("BroadcastSkinToneLabel", AvatarCatalogScript.get_skin_label(selected_skin_tone_id))
+	skin_row.add_child(skin_label)
+	skin_row.add_child(_build_cycle_button("SkinToneNextButton", ">", func() -> void:
+		_cycle_skin_tone(1)
+	))
+
+	var kit_row := HBoxContainer.new()
+	kit_row.name = "BroadcastCountryKitRow"
+	kit_row.add_theme_constant_override("separation", 6)
+	kit_row.custom_minimum_size.y = 24.0
+	parent.add_child(kit_row)
+
+	var kit_flag := HBoxContainer.new()
+	kit_flag.name = "BroadcastKitFlag"
+	kit_flag.custom_minimum_size = Vector2(52.0, 22.0)
+	kit_flag.add_theme_constant_override("separation", 2)
+	kit_row.add_child(kit_flag)
+	kit_swatch = _build_swatch("BroadcastKitPrimarySwatch", AvatarCatalogScript.get_kit_primary_color(selected_country_kit_id))
+	kit_secondary_swatch = _build_swatch("BroadcastKitSecondarySwatch", AvatarCatalogScript.get_kit_secondary_color(selected_country_kit_id))
+	kit_shorts_swatch = _build_swatch("BroadcastKitShortsSwatch", AvatarCatalogScript.get_kit_shorts_color(selected_country_kit_id))
+	kit_flag.add_child(kit_swatch)
+	kit_flag.add_child(kit_secondary_swatch)
+	kit_flag.add_child(kit_shorts_swatch)
+	kit_row.add_child(_build_cycle_button("CountryKitPreviousButton", "<", func() -> void:
+		_cycle_country_kit(-1)
+	))
+	kit_label = _build_row_label("BroadcastCountryKitLabel", AvatarCatalogScript.get_country_kit_label(selected_country_kit_id))
+	kit_row.add_child(kit_label)
+	kit_row.add_child(_build_cycle_button("CountryKitNextButton", ">", func() -> void:
+		_cycle_country_kit(1)
+	))
+
 func _build_settings_rows(parent: VBoxContainer) -> void:
+	parent.add_child(_build_section_label("AudioVideoSectionLabel", "CONTROLE DA TRANSMISSAO"))
+
 	var settings = _get_game_settings()
 	volume_slider = _build_volume_row(parent, "VolumeRow", "VolumeLabel", "Master", "VolumeSlider", _on_volume_changed, settings.get_volume(BUS_MASTER) if settings != null else 0.82)
 	sfx_volume_slider = _build_volume_row(parent, "SfxVolumeRow", "SfxVolumeLabel", "SFX", "SfxVolumeSlider", _on_sfx_volume_changed, settings.get_volume(BUS_SFX) if settings != null else 0.86)
@@ -536,16 +675,19 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
 
 	var quality_row := HBoxContainer.new()
 	quality_row.name = "QualityRow"
-	quality_row.add_theme_constant_override("separation", 8)
+	quality_row.add_theme_constant_override("separation", 6)
+	quality_row.custom_minimum_size.y = 24.0
 	parent.add_child(quality_row)
 
 	var quality_label := _build_row_label("QualityLabel", "Qualidade")
-	quality_label.custom_minimum_size.x = 96.0
+	quality_label.custom_minimum_size.x = 88.0
 	quality_row.add_child(quality_label)
 
 	quality_option = OptionButton.new()
 	quality_option.name = "QualityOption"
+	quality_option.custom_minimum_size = Vector2(0.0, 24.0)
 	quality_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_apply_broadcast_font(quality_option, 11, true)
 	quality_option.add_item("Alta")
 	quality_option.add_item("Leve")
 	_select_quality_option(settings.get_quality_id() if settings != null else RenderProfileScript.QUALITY_HIGH)
@@ -554,18 +696,21 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
 
 	var toon_row := HBoxContainer.new()
 	toon_row.name = "ToonRenderRow"
-	toon_row.add_theme_constant_override("separation", 8)
+	toon_row.add_theme_constant_override("separation", 6)
+	toon_row.custom_minimum_size.y = 24.0
 	parent.add_child(toon_row)
 
 	var toon_label := _build_row_label("ToonRenderLabel", "Toon")
-	toon_label.custom_minimum_size.x = 96.0
+	toon_label.custom_minimum_size.x = 88.0
 	toon_row.add_child(toon_label)
 
 	toon_check_button = CheckButton.new()
 	toon_check_button.name = "ToonRenderToggle"
 	toon_check_button.text = "Experimento"
+	toon_check_button.custom_minimum_size = Vector2(0.0, 24.0)
 	toon_check_button.button_pressed = selected_toon_render_enabled
 	toon_check_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_apply_broadcast_font(toon_check_button, 11, true)
 	toon_check_button.toggled.connect(func(is_pressed: bool) -> void:
 		_play_ui_sound(&"ui_click")
 		selected_toon_render_enabled = is_pressed
@@ -576,11 +721,12 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
 func _build_volume_row(parent: VBoxContainer, row_name: String, label_name: String, label: String, slider_name: String, callback: Callable, default_value: float) -> HSlider:
 	var volume_row := HBoxContainer.new()
 	volume_row.name = row_name
-	volume_row.add_theme_constant_override("separation", 8)
+	volume_row.add_theme_constant_override("separation", 6)
+	volume_row.custom_minimum_size.y = 24.0
 	parent.add_child(volume_row)
 
 	var volume_label := _build_row_label(label_name, label)
-	volume_label.custom_minimum_size.x = 96.0
+	volume_label.custom_minimum_size.x = 88.0
 	volume_row.add_child(volume_label)
 
 	var slider := HSlider.new()
@@ -598,16 +744,24 @@ func _build_button(node_name: String, label: String) -> Button:
 	var button := Button.new()
 	button.name = node_name
 	button.text = label
-	button.custom_minimum_size = Vector2(320.0, 46.0)
+	button.custom_minimum_size = Vector2(320.0, 52.0 if node_name == "FootballButton" else 34.0)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.focus_mode = Control.FOCUS_ALL
+	if node_name == "FootballButton":
+		button.add_theme_font_size_override("font_size", 20)
+		_apply_button_style(button, Color(0.02, 0.48, 0.20, 1.0), Color(1.0, 0.78, 0.16, 1.0), Color(0.04, 0.64, 0.26, 1.0))
+	else:
+		_apply_broadcast_font(button, 12, true)
+		_apply_button_style(button, Color(0.02, 0.08, 0.11, 1.0), Color(0.28, 0.74, 0.78, 0.75), Color(0.04, 0.14, 0.18, 1.0))
 	return button
 
 func _build_cycle_button(node_name: String, label: String, callback: Callable) -> Button:
 	var button := Button.new()
 	button.name = node_name
 	button.text = label
-	button.custom_minimum_size = Vector2(42.0, 34.0)
+	button.custom_minimum_size = Vector2(32.0, 24.0)
+	button.add_theme_font_size_override("font_size", 13)
+	_apply_button_style(button, Color(0.035, 0.11, 0.14, 1.0), Color(1.0, 0.78, 0.16, 0.8), Color(0.08, 0.20, 0.22, 1.0))
 	button.pressed.connect(func() -> void:
 		_play_ui_sound(&"ui_click")
 		callback.call()
@@ -620,14 +774,27 @@ func _build_row_label(node_name: String, label: String) -> Label:
 	row_label.text = label
 	row_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	row_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row_label.add_theme_color_override("font_color", Color(0.86, 0.94, 0.95, 1.0))
+	_apply_broadcast_font(row_label, 11, true)
 	return row_label
 
 func _build_swatch(node_name: String, color: Color) -> ColorRect:
 	var swatch := ColorRect.new()
 	swatch.name = node_name
 	swatch.color = color
-	swatch.custom_minimum_size = Vector2(36.0, 28.0)
+	swatch.custom_minimum_size = Vector2(18.0, 24.0)
 	return swatch
+
+func _build_section_label(node_name: String, text: String) -> Label:
+	var label := Label.new()
+	label.name = node_name
+	label.text = text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	label.custom_minimum_size = Vector2(0.0, 12.0)
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.16, 1.0))
+	_apply_broadcast_font(label, 10, true)
+	return label
 
 func _focus_initial_control() -> void:
 	if football_button != null:
@@ -714,11 +881,44 @@ func _build_panel_style(fill_color: Color, border_color: Color, border_width: in
 	style.corner_radius_top_right = 6
 	style.corner_radius_bottom_left = 6
 	style.corner_radius_bottom_right = 6
-	style.content_margin_left = 28
-	style.content_margin_top = 24
-	style.content_margin_right = 28
-	style.content_margin_bottom = 24
+	style.content_margin_left = 22
+	style.content_margin_top = 10
+	style.content_margin_right = 22
+	style.content_margin_bottom = 10
 	return style
+
+func _build_compact_style(fill_color: Color, border_color: Color, border_width: int, radius: int = 5) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = fill_color
+	style.border_color = border_color
+	style.set_border_width_all(border_width)
+	style.corner_radius_top_left = radius
+	style.corner_radius_top_right = radius
+	style.corner_radius_bottom_left = radius
+	style.corner_radius_bottom_right = radius
+	style.content_margin_left = 8
+	style.content_margin_top = 4
+	style.content_margin_right = 8
+	style.content_margin_bottom = 4
+	return style
+
+func _apply_button_style(button: Button, normal_color: Color, border_color: Color, hover_color: Color) -> void:
+	button.add_theme_stylebox_override("normal", _build_compact_style(normal_color, border_color, 1))
+	button.add_theme_stylebox_override("hover", _build_compact_style(hover_color, border_color, 1))
+	button.add_theme_stylebox_override("pressed", _build_compact_style(hover_color.darkened(0.12), border_color, 1))
+	button.add_theme_stylebox_override("focus", _build_compact_style(Color(0.0, 0.0, 0.0, 0.0), Color(1.0, 0.94, 0.62, 1.0), 2))
+	button.add_theme_color_override("font_color", Color(0.94, 0.99, 0.96, 1.0))
+
+func _apply_broadcast_font(control: Control, font_size: int, use_narrow: bool) -> void:
+	var font := broadcast_narrow_font if use_narrow and broadcast_narrow_font != null else broadcast_font
+	if font != null:
+		control.add_theme_font_override("font", font)
+	control.add_theme_font_size_override("font_size", font_size)
+
+func _apply_broadcast_mono_font(control: Control, font_size: int) -> void:
+	if broadcast_mono_font != null:
+		control.add_theme_font_override("font", broadcast_mono_font)
+	control.add_theme_font_size_override("font_size", font_size)
 
 func _build_material(color: Color, roughness: float, emission: Color, emission_energy: float, render_profile_role: StringName = &"default") -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
@@ -742,6 +942,10 @@ func _update_preview_selection() -> void:
 		skin_swatch.color = AvatarCatalogScript.get_skin_color(selected_skin_tone_id)
 	if kit_swatch != null:
 		kit_swatch.color = AvatarCatalogScript.get_kit_primary_color(selected_country_kit_id)
+	if kit_secondary_swatch != null:
+		kit_secondary_swatch.color = AvatarCatalogScript.get_kit_secondary_color(selected_country_kit_id)
+	if kit_shorts_swatch != null:
+		kit_shorts_swatch.color = AvatarCatalogScript.get_kit_shorts_color(selected_country_kit_id)
 
 func _request_preview_viewport_update() -> void:
 	if preview_viewport == null or not RenderProfileScript.is_web_platform():
@@ -771,6 +975,16 @@ func _cycle_match_mode(step: int) -> void:
 	if match_mode_label != null:
 		match_mode_label.text = _get_match_mode_label(selected_match_mode_id)
 	status_label.text = "Modo: %s" % _get_match_mode_label(selected_match_mode_id)
+
+func _cycle_skin_tone(step: int) -> void:
+	selected_skin_tone_id = AvatarCatalogScript.get_next_skin_tone_id(selected_skin_tone_id, step)
+	_update_preview_selection()
+	status_label.text = "Pele do hero shot: %s" % AvatarCatalogScript.get_skin_label(selected_skin_tone_id)
+
+func _cycle_country_kit(step: int) -> void:
+	selected_country_kit_id = AvatarCatalogScript.get_next_country_kit_id(selected_country_kit_id, step)
+	_update_preview_selection()
+	status_label.text = "Kit do hero shot: %s" % AvatarCatalogScript.get_country_kit_label(selected_country_kit_id)
 
 func _get_bot_difficulty_label(difficulty_id: StringName) -> String:
 	return str(BOT_DIFFICULTY_LABELS.get(difficulty_id, "Bot normal"))
