@@ -3,6 +3,8 @@ extends Node
 
 const PROFILE_DESKTOP: StringName = &"desktop"
 const PROFILE_WEB: StringName = &"web"
+const QUALITY_HIGH: StringName = &"alta"
+const QUALITY_LIGHT: StringName = &"leve"
 const ROLE_DEFAULT: StringName = &"default"
 const ROLE_NEON: StringName = &"neon"
 const ROLE_GLASS: StringName = &"glass"
@@ -108,6 +110,7 @@ const WEB_MENU_PREVIEW_VIEWPORT_SIZE: Vector2i = Vector2i(960, 540)
 const WEB_MENU_PREVIEW_TONEMAP_EXPOSURE: float = 1.24
 
 static var _reported_contexts: Dictionary = {}
+static var _quality_id: StringName = QUALITY_HIGH
 
 func _ready() -> void:
 	report_runtime_profile_once("RenderProfile")
@@ -118,8 +121,30 @@ static func is_web_platform() -> bool:
 static func select_profile_for_platform(is_web: bool) -> StringName:
 	return PROFILE_WEB if is_web else PROFILE_DESKTOP
 
+static func normalize_quality_id(quality_id: StringName) -> StringName:
+	var value := str(quality_id).strip_edges().to_lower()
+	match value:
+		"leve", "light", "performance", "perf", "web":
+			return QUALITY_LIGHT
+		_:
+			return QUALITY_HIGH
+
+static func set_quality_id(quality_id: StringName) -> void:
+	_quality_id = normalize_quality_id(quality_id)
+
+static func get_quality_id() -> StringName:
+	return _quality_id
+
+static func get_quality_label(quality_id: StringName = &"") -> String:
+	return "Leve" if normalize_quality_id(_quality_id if quality_id == &"" else quality_id) == QUALITY_LIGHT else "Alta"
+
+static func get_profile_id_for_quality(quality_id: StringName, is_web: bool) -> StringName:
+	if normalize_quality_id(quality_id) == QUALITY_LIGHT:
+		return PROFILE_WEB
+	return select_profile_for_platform(is_web)
+
 static func get_active_profile_id() -> StringName:
-	return select_profile_for_platform(is_web_platform())
+	return get_profile_id_for_quality(_quality_id, is_web_platform())
 
 static func get_renderer_label(profile_id: StringName = &"") -> String:
 	return WEB_RENDERER_LABEL if _resolve_profile_id(profile_id) == PROFILE_WEB else DESKTOP_RENDERER_LABEL
@@ -176,6 +201,7 @@ static func get_runtime_contract(profile_id: StringName = &"") -> Dictionary:
 	var resolved := _resolve_profile_id(profile_id)
 	return {
 		"profile": resolved,
+		"quality": get_quality_label(),
 		"renderer": get_renderer_label(resolved),
 		"thread_support_enabled": false if resolved == PROFILE_WEB else true,
 		"extension_support_enabled": false if resolved == PROFILE_WEB else true,
@@ -210,6 +236,7 @@ static func get_known_fallbacks(profile_id: StringName = &"") -> PackedStringArr
 		"SSAO is disabled under Compatibility and replaced by lower ambient/skylight fake AO.",
 		"Glow/bloom is compensated with stronger emissive material and shader multipliers.",
 		"Scoreboard and menu SubViewports use lower fixed sizes on Web.",
+		"Quality Leve uses the Web profile fallback constants on desktop and Web.",
 		"Particles keep the same gameplay triggers but use reduced amounts on Web.",
 		"Audio starts only after the first browser user interaction.",
 		"user:// save data maps to browser IndexedDB.",

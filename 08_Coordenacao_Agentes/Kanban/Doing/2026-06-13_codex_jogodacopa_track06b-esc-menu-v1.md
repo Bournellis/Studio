@@ -2,7 +2,7 @@
 
 ## Status
 
-- Estado: DOING
+- Estado: READY_FOR_REVIEW_PRE_MERGE
 - Branch: `codex/jogodacopa/track06b-esc-menu-v1`
 - Worktree: `D:\Estudio-worktrees\jogodacopa-track06b`
 - Base: `main` apos merge local da Track 06A (`b585b5d2`, fechamento `4f18f2fa`)
@@ -53,3 +53,16 @@ Implementar o menu ESC completo de partida com persistencia de configuracoes, co
 ## Ponto De Handoff
 
 Parar antes de merge/publicacao, deixando branch local validada, evidencia registrada, handoff completo e declaracao `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+
+## Evidencia Final
+
+- Implementacao: ESC menu completo com abas Controles/Audio/Video/Sensibilidade, persistencia via `GameSettings`, fullscreen, qualidade `Alta`/`Leve`, volumes e sensibilidade.
+- Testes de clique real: `tests/unit/test_pause_menu.gd` cobre menu principal e ESC em `1920x1080`, `1366x768` e `1280x720`.
+- Capturas: `Projetos/JogoDaCopa/docs/screenshots/track-06b/` contem 12 PNGs das abas do ESC nas 3 resolucoes.
+- Validate completo: PASS, 95 testes, 1512 asserts, Web gzip `30.34 MiB / 50.00 MiB`.
+- Export Web: PASS, `builds/web/index.html`.
+- Boot Web local: PASS no navegador em `1280x720`; canvas carregou a tela inicial sem tela preta. Logs mostraram apenas warnings conhecidos do `RenderProfile`.
+
+## Handoff
+
+`08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06b-esc-menu-v1.md`

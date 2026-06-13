@@ -13,6 +13,7 @@ const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
+const GameSettingsScript = preload("res://autoloads/game_settings.gd")
 const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
@@ -188,6 +189,7 @@ var kickoff_countdown_remaining: float = 0.0
 var countdown_last_number: int = 0
 var debug_kickoff_countdown_start_count: int = 0
 var goal_slowmo_remaining: float = 0.0
+var world_environment: WorldEnvironment
 var stadium_scoreboard_score_labels: Dictionary = {}
 var stadium_scoreboard_phase_labels: Dictionary = {}
 var stadium_scoreboard_viewports: Dictionary = {}
@@ -220,6 +222,7 @@ func _ready() -> void:
 func _ready_sync() -> void:
 	var ready_begin := PerfProbeScript.begin(self, "football.ready")
 	_apply_main_menu_settings()
+	_connect_game_settings_signals()
 	var stage_begin := PerfProbeScript.begin(self, "football.configure_world")
 	_configure_world()
 	PerfProbeScript.end(self, "football.configure_world", stage_begin)
@@ -237,6 +240,7 @@ func _ready_sync() -> void:
 func _ready_web_async() -> void:
 	var ready_begin := PerfProbeScript.begin(self, "football.ready")
 	_apply_main_menu_settings()
+	_connect_game_settings_signals()
 	_set_web_loading_progress("Preparando arena", 0.08)
 	await get_tree().process_frame
 	var stage_begin := PerfProbeScript.begin(self, "football.configure_world")
@@ -1103,6 +1107,7 @@ func _configure_world() -> void:
 	var environment := WorldEnvironment.new()
 	environment.name = "WorldEnvironment"
 	environment.environment = _build_night_environment()
+	world_environment = environment
 	add_child(environment)
 	PerfProbeScript.end(self, "football.world_environment", stage_begin)
 
@@ -1242,6 +1247,9 @@ func _spawn_runtime() -> void:
 	player.shot_cooldown = 0.2
 	player.alt_fire_cooldown = 0.88
 	runtime_root.add_child(player)
+	var settings = _get_game_settings()
+	if settings != null:
+		player.set_mouse_sensitivity(settings.get_mouse_sensitivity())
 	player.shoot_requested.connect(_on_player_kick_requested)
 	player.charged_shoot_requested.connect(_on_player_charged_kick_requested)
 	player.alt_fire_requested.connect(_on_player_strong_kick_requested)
@@ -1333,6 +1341,7 @@ func _spawn_runtime() -> void:
 	hud.name = "FootballHud"
 	add_child(hud)
 	hud.sensitivity_changed.connect(_on_sensitivity_changed)
+	hud.quality_changed.connect(_on_pause_quality_changed)
 	hud.start_requested.connect(_start_match)
 	hud.resume_requested.connect(func() -> void:
 		_set_menu_open(false)
@@ -1373,6 +1382,38 @@ func _apply_main_menu_settings() -> void:
 		set_match_mode(StringName(str(tree.root.get_meta(MATCH_MODE_META_KEY))))
 	if tree.root.has_meta(TOON_RENDER_META_KEY):
 		set_toon_render_enabled(bool(tree.root.get_meta(TOON_RENDER_META_KEY)))
+
+func _get_game_settings():
+	return get_node_or_null("/root/GameSettings")
+
+func _connect_game_settings_signals() -> void:
+	var settings = _get_game_settings()
+	if settings == null:
+		return
+	if not settings.quality_changed.is_connected(_on_settings_quality_changed):
+		settings.quality_changed.connect(_on_settings_quality_changed)
+
+func _on_settings_quality_changed(_quality_id: StringName) -> void:
+	_refresh_render_profile_runtime()
+
+func _on_pause_quality_changed(_quality_id: StringName) -> void:
+	if _get_game_settings() == null:
+		_refresh_render_profile_runtime()
+
+func _refresh_render_profile_runtime() -> void:
+	if world_environment != null:
+		world_environment.environment = _build_night_environment()
+	_resize_scoreboard_viewports_for_render_profile()
+	_request_hud_and_scoreboard_refresh()
+
+func _resize_scoreboard_viewports_for_render_profile() -> void:
+	var target_size := RenderProfileScript.get_scoreboard_viewport_size()
+	for side_name in ["North", "South"]:
+		var viewport := _get_stadium_scoreboard_viewport(side_name)
+		if viewport == null:
+			continue
+		viewport.size = target_size
+		viewport.render_target_update_mode = SubViewport.UPDATE_ONCE if RenderProfileScript.is_web_platform() else SubViewport.UPDATE_ALWAYS
 
 func _restart_play(after_goal: bool, start_countdown: bool = true) -> void:
 	PerfProbeScript.mark(self, "event.restart_play", "after_goal=%s" % str(after_goal))
@@ -2214,7 +2255,7 @@ func _set_menu_open(is_open: bool) -> void:
 		_set_player_persistent_vfx(false, false)
 	get_tree().paused = menu_open
 	if hud != null:
-		hud.set_pause_menu_visible(menu_open)
+		hud.set_pause_menu_visible(menu_open, player.mouse_sensitivity if player != null else 0.0)
 	if feedback != null:
 		feedback.set_ambience_ducked(menu_open)
 	if menu_open:
@@ -2469,6 +2510,9 @@ func _capture_mouse_if_playing(allow_web_capture: bool = false) -> void:
 func _on_sensitivity_changed(value: float) -> void:
 	if player != null:
 		player.set_mouse_sensitivity(value)
+	var settings = _get_game_settings()
+	if settings != null and player != null:
+		settings.set_mouse_sensitivity(player.mouse_sensitivity)
 	if hud != null:
 		hud.set_sensitivity_value(player.mouse_sensitivity)
 

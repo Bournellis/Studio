@@ -5,6 +5,7 @@ const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
+const GameSettingsScript = preload("res://autoloads/game_settings.gd")
 const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 
 const FOOTBALL_SCENE_PATH: String = "res://modes/football/football.tscn"
@@ -103,6 +104,7 @@ func _ready() -> void:
 	_build_ui()
 	_sync_root_rect_to_viewport()
 	_apply_initial_audio_mix()
+	_connect_game_settings_signals()
 	_update_preview_selection()
 	_focus_initial_control()
 	call_deferred("_play_fade_from_black")
@@ -180,6 +182,9 @@ func debug_get_quality_text() -> String:
 	if quality_option == null:
 		return ""
 	return quality_option.get_item_text(quality_option.selected)
+
+func debug_select_quality(index: int) -> void:
+	_on_quality_selected(index)
 
 func debug_has_audio_buses() -> bool:
 	return (
@@ -523,10 +528,11 @@ func _build_selector_rows(parent: VBoxContainer) -> void:
 	))
 
 func _build_settings_rows(parent: VBoxContainer) -> void:
-	volume_slider = _build_volume_row(parent, "VolumeRow", "VolumeLabel", "Master", "VolumeSlider", _on_volume_changed, 0.82)
-	sfx_volume_slider = _build_volume_row(parent, "SfxVolumeRow", "SfxVolumeLabel", "SFX", "SfxVolumeSlider", _on_sfx_volume_changed, 0.86)
-	ui_volume_slider = _build_volume_row(parent, "UiVolumeRow", "UiVolumeLabel", "UI", "UiVolumeSlider", _on_ui_volume_changed, 0.9)
-	ambience_volume_slider = _build_volume_row(parent, "AmbienceVolumeRow", "AmbienceVolumeLabel", "Ambiente", "AmbienceVolumeSlider", _on_ambience_volume_changed, 0.78)
+	var settings = _get_game_settings()
+	volume_slider = _build_volume_row(parent, "VolumeRow", "VolumeLabel", "Master", "VolumeSlider", _on_volume_changed, settings.get_volume(BUS_MASTER) if settings != null else 0.82)
+	sfx_volume_slider = _build_volume_row(parent, "SfxVolumeRow", "SfxVolumeLabel", "SFX", "SfxVolumeSlider", _on_sfx_volume_changed, settings.get_volume(BUS_SFX) if settings != null else 0.86)
+	ui_volume_slider = _build_volume_row(parent, "UiVolumeRow", "UiVolumeLabel", "UI", "UiVolumeSlider", _on_ui_volume_changed, settings.get_volume(BUS_UI) if settings != null else 0.9)
+	ambience_volume_slider = _build_volume_row(parent, "AmbienceVolumeRow", "AmbienceVolumeLabel", "Ambiente", "AmbienceVolumeSlider", _on_ambience_volume_changed, settings.get_volume(BUS_AMBIENCE) if settings != null else 0.78)
 
 	var quality_row := HBoxContainer.new()
 	quality_row.name = "QualityRow"
@@ -541,12 +547,9 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
 	quality_option.name = "QualityOption"
 	quality_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	quality_option.add_item("Alta")
-	quality_option.add_item("Performance")
-	quality_option.select(0)
-	quality_option.item_selected.connect(func(index: int) -> void:
-		_play_ui_sound(&"ui_click")
-		status_label.text = "Qualidade: %s" % quality_option.get_item_text(index)
-	)
+	quality_option.add_item("Leve")
+	_select_quality_option(settings.get_quality_id() if settings != null else RenderProfileScript.QUALITY_HIGH)
+	quality_option.item_selected.connect(_on_quality_selected)
 	quality_row.add_child(quality_option)
 
 	var toon_row := HBoxContainer.new()
@@ -776,10 +779,14 @@ func _get_match_mode_label(match_mode_id: StringName) -> String:
 	return str(MATCH_MODE_LABELS.get(match_mode_id, "3 minutos"))
 
 func _on_volume_changed(value: float) -> void:
-	_set_bus_volume(BUS_MASTER, value)
+	_apply_volume_setting(BUS_MASTER, value)
 	status_label.text = "Volume: %.0f%%" % [value * 100.0]
 
 func _apply_initial_audio_mix() -> void:
+	var settings = _get_game_settings()
+	if settings != null:
+		settings.apply_audio_settings()
+		return
 	if volume_slider != null:
 		_set_bus_volume(BUS_MASTER, volume_slider.value)
 	if sfx_volume_slider != null:
@@ -790,16 +797,70 @@ func _apply_initial_audio_mix() -> void:
 		_set_bus_volume(BUS_AMBIENCE, ambience_volume_slider.value)
 
 func _on_sfx_volume_changed(value: float) -> void:
-	_set_bus_volume(BUS_SFX, value)
+	_apply_volume_setting(BUS_SFX, value)
 	status_label.text = "SFX: %.0f%%" % [value * 100.0]
 
 func _on_ui_volume_changed(value: float) -> void:
-	_set_bus_volume(BUS_UI, value)
+	_apply_volume_setting(BUS_UI, value)
 	status_label.text = "UI: %.0f%%" % [value * 100.0]
 
 func _on_ambience_volume_changed(value: float) -> void:
-	_set_bus_volume(BUS_AMBIENCE, value)
+	_apply_volume_setting(BUS_AMBIENCE, value)
 	status_label.text = "Ambiente: %.0f%%" % [value * 100.0]
+
+func _on_quality_selected(index: int) -> void:
+	var settings = _get_game_settings()
+	var quality_id := _quality_id_for_option_index(index)
+	if settings != null:
+		settings.set_quality_id(quality_id)
+	else:
+		RenderProfileScript.set_quality_id(quality_id)
+	_select_quality_option(quality_id)
+	_apply_render_profile_to_menu_preview()
+	_play_ui_sound(&"ui_click")
+	if status_label != null:
+		status_label.text = "Qualidade: %s" % RenderProfileScript.get_quality_label(quality_id)
+
+func _on_settings_quality_changed(quality_id: StringName) -> void:
+	_select_quality_option(quality_id)
+	_apply_render_profile_to_menu_preview()
+
+func _apply_volume_setting(bus_name: StringName, value: float) -> void:
+	var settings = _get_game_settings()
+	if settings != null:
+		settings.set_volume(bus_name, value)
+		return
+	_set_bus_volume(bus_name, value)
+
+func _get_game_settings():
+	return get_node_or_null("/root/GameSettings")
+
+func _connect_game_settings_signals() -> void:
+	var settings = _get_game_settings()
+	if settings == null:
+		return
+	if not settings.quality_changed.is_connected(_on_settings_quality_changed):
+		settings.quality_changed.connect(_on_settings_quality_changed)
+
+func _quality_id_for_option_index(index: int) -> StringName:
+	return RenderProfileScript.QUALITY_LIGHT if index == 1 else RenderProfileScript.QUALITY_HIGH
+
+func _select_quality_option(quality_id: StringName) -> void:
+	if quality_option == null:
+		return
+	quality_option.select(1 if RenderProfileScript.normalize_quality_id(quality_id) == RenderProfileScript.QUALITY_LIGHT else 0)
+
+func _apply_render_profile_to_menu_preview() -> void:
+	var render_settings := RenderProfileScript.get_environment_settings()
+	if preview_viewport != null:
+		preview_viewport.size = RenderProfileScript.get_menu_preview_viewport_size()
+		preview_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE if RenderProfileScript.is_web_platform() else SubViewport.UPDATE_ALWAYS
+	if preview_environment != null:
+		preview_environment.glow_enabled = bool(render_settings["glow_enabled"])
+		preview_environment.glow_intensity = float(render_settings["glow_intensity"])
+		preview_environment.glow_strength = float(render_settings["glow_strength"])
+		preview_environment.tonemap_exposure = RenderProfileScript.get_menu_preview_tonemap_exposure()
+	_request_preview_viewport_update()
 
 func _set_bus_volume(bus_name: StringName, value: float) -> void:
 	_ensure_audio_bus(bus_name)

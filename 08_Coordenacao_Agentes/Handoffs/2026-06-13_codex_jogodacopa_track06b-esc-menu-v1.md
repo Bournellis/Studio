@@ -2,43 +2,59 @@
 
 - Data: `2026-06-13`
 - Agente: Codex
-- Status: `BLOQUEADO - pre-requisito 06A nao mergeado em main`
-- Branch planejada: `codex/jogodacopa/track06b-esc-menu-v1` (nao criada)
-- Worktree planejado: `D:\Estudio-worktrees\jogodacopa-track06b` (nao criado)
+- Status: `READY_FOR_REVIEW_PRE_MERGE`
+- Branch: `codex/jogodacopa/track06b-esc-menu-v1`
+- Worktree: `D:\Estudio-worktrees\jogodacopa-track06b`
+- Base: `main` apos merge local da Track 06A (`b585b5d2`) e fechamento (`4f18f2fa`)
+- Merge/publicacao: NAO realizados por regra do prompt; parar antes de merge.
 
-## Motivo Do Bloqueio
+## Escopo Fechado
 
-O prompt da Track 06B declara como bloqueante que a Track 06A esteja mergeada em `main` antes do inicio. A checagem local confirmou que o commit final da 06A (`83233058`) ainda nao e ancestral de `main`.
+- `GameSettings` autoload com persistencia em `user://jogodacopa_settings.cfg` para volumes, fullscreen, qualidade e sensibilidade.
+- Menu ESC completo com abas `Controles`, `Audio`, `Video` e `Sensibilidade`.
+- `RenderProfile` ganhou contrato de qualidade `Alta`/`Leve`; `Leve` usa o perfil Web/fallbacks em desktop e Web.
+- Menu principal e HUD sincronizam valores salvos; mudancas de qualidade atualizam ambiente, placares/SubViewports e menu imediatamente quando seguro.
+- Sensibilidade do mouse passa a persistir e ser aplicada no jogador ao spawn.
+- Aviso no menu de video deixa claro que materiais/caches pesados mudam no proximo carregamento.
 
-Comandos/estado observado:
+## Arquivos Principais
 
-- `git log --oneline -8` em `D:\Estudio`: `main` esta em `e5186ec9 register jogodacopa track06a doing`, seguido por `c1308926 docs(jogodacopa): registrar plano da serie 06 broadcast polish (v1.1.0)`.
-- `git merge-base --is-ancestor 83233058 main`: resultado `track06a-commit-not-in-main`.
-- `git worktree list`: a 06A ainda existe em `D:\Estudio-worktrees\jogodacopa-track06a` na branch `codex/jogodacopa/track06a-match-start-fixes-v1`.
+- `Projetos/JogoDaCopa/autoloads/game_settings.gd`
+- `Projetos/JogoDaCopa/autoloads/render_profile.gd`
+- `Projetos/JogoDaCopa/project.godot`
+- `Projetos/JogoDaCopa/modes/menu/main_menu_root.gd`
+- `Projetos/JogoDaCopa/modes/football/football_root.gd`
+- `Projetos/JogoDaCopa/presentation/hud/football_hud.gd`
+- `Projetos/JogoDaCopa/tests/unit/test_game_settings.gd`
+- `Projetos/JogoDaCopa/tests/unit/test_pause_menu.gd`
+- `Projetos/JogoDaCopa/tools/capture_track06b_esc_menu.gd`
+- `Projetos/JogoDaCopa/docs/screenshots/track-06b/`
 
-## Estado Sujo Encontrado Antes Do Inicio
+## Evidencias
 
-`git status --short` em `D:\Estudio` ja indicava um arquivo nao rastreado antes de qualquer implementacao da 06B:
+- Validate completo: PASS, `95` testes, `1512` asserts.
+- Web gzip gate: PASS, `30.34 MiB / 50.00 MiB`.
+- Source integrity: PASS, `41` arquivos `.gd/.gdshader`.
+- Export Web: PASS, `builds/web/index.html`.
+- Boot Web local: PASS em navegador local `1280x720`; tela inicial renderizada em canvas, sem tela preta. Console exibiu apenas warnings conhecidos do `RenderProfile`.
+- Testes de clique real: `tests/unit/test_pause_menu.gd` cobre menu principal e ESC completo em `1920x1080`, `1366x768` e `1280x720`.
+- Capturas: 12 PNGs em `Projetos/JogoDaCopa/docs/screenshots/track-06b/` para Controles/Audio/Video/Sensibilidade nas 3 resolucoes.
 
-- `?? Projetos/JogoDaCopa/docs/code-review-track06a-match-start-fixes-v1.md`
+Comando principal:
 
-O arquivo foi lido apenas para contexto e nao foi stageado, alterado nem descartado. Ele registra `APROVADO no code review` pela Claude para a 06A, mas tambem afirma que ainda falta o veredito visual subjetivo do Fabio antes do merge.
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
+```
 
-## Trabalho Realizado
+Comando de export:
 
-- Lido o prompt anexado da Track 06B.
-- Reaberta a skill `estudio-workspace`.
-- Lidos os documentos de roteamento obrigatorios: `Prioridades_Estudio.md`, `AGENTS.md`, `Projetos/README.md`, `Estado_Atual.md`.
-- Verificado que `JogoDaCopa` segue como foco operacional temporario unico.
-- Verificado que nao ha locks orfaos retornados pela checagem local.
-- Nenhuma branch/worktree 06B foi criada.
-- Nenhum arquivo de codigo do projeto foi alterado.
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . --export-release "Web" "builds/web/index.html"
+```
 
-## Proximo Passo Necessario
+## Pendencias Intencionais
 
-1. Fabio dar OK visual da Track 06A.
-2. Executar a Fase 9 da 06A: merge em `main`, mover card para Done, atualizar `Projetos/JogoDaCopa/implementation/current-status.md` e `08_Coordenacao_Agentes/Estado_Atual.md`, incluindo o review 06A ainda nao rastreado conforme apropriado.
-3. Com `main` limpo e contendo a 06A, reiniciar a Track 06B a partir do prompt.
-
-PUSH PENDENTE: Fabio - GitHub Desktop - Push origin
-
+- Review visual/subjetivo de Fabio e/ou Claude.
+- Merge local em `main` somente apos aprovacao.
+- Publicacao Web continua adiada para Track 06E.
+- `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
