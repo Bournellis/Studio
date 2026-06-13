@@ -20,6 +20,8 @@ const BUS_SFX: StringName = &"SFX"
 const BUS_UI: StringName = &"UI"
 const BUS_AMBIENCE: StringName = &"Ambience"
 const RESULT_SUPPRESS_TRANSITION_PULSE_KEY: String = "suppress_transition_pulse"
+const BROADCAST_FONT_PATH: String = "res://assets/fonts/kenney/Kenney Future.ttf"
+const BROADCAST_NARROW_FONT_PATH: String = "res://assets/fonts/kenney/Kenney Future Narrow.ttf"
 const CONTROL_HINTS: Array[Dictionary] = [
 	{"action": "Mover", "input": "WASD"},
 	{"action": "Boost", "input": "Shift"},
@@ -39,10 +41,14 @@ const GameSettingsScript = preload("res://autoloads/game_settings.gd")
 var status_label: Label
 var score_label: Label
 var clock_label: Label
+var state_badge_label: Label
 var flow_label: Label
 var control_label: Label
 var boost_bar: ProgressBar
+var super_bar: ProgressBar
+var super_ready_badge: Label
 var event_label: Label
+var score_panel: PanelContainer
 var ball_indicator: PanelContainer
 var ball_indicator_label: Label
 var player_kit_swatch: ColorRect
@@ -84,11 +90,16 @@ var country_kit_label: Label
 var intro_start_button: Button
 var fade_overlay: ColorRect
 var fade_tween: Tween
+var broadcast_font: FontFile
+var broadcast_narrow_font: FontFile
+var telemetry_visible: bool = false
 
 var kick_feedback_time: float = 0.0
 var strong_kick_feedback_time: float = 0.0
 var whiff_feedback_time: float = 0.0
 var goal_feedback_time: float = 0.0
+var countdown_feedback_time: float = 0.0
+var scorebug_pulse_time: float = 0.0
 var event_message_time: float = 0.0
 var event_message_duration: float = 0.0
 var event_message_queue: Array[Dictionary] = []
@@ -102,6 +113,7 @@ var last_kick_assist_strength: float = 0.0
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_ensure_audio_buses()
+	_load_broadcast_fonts()
 	_build_ui()
 	call_deferred("play_fade_from_black")
 
@@ -110,12 +122,15 @@ func _process(delta: float) -> void:
 	strong_kick_feedback_time = maxf(0.0, strong_kick_feedback_time - delta)
 	whiff_feedback_time = maxf(0.0, whiff_feedback_time - delta)
 	goal_feedback_time = maxf(0.0, goal_feedback_time - delta)
+	countdown_feedback_time = maxf(0.0, countdown_feedback_time - delta)
+	scorebug_pulse_time = maxf(0.0, scorebug_pulse_time - delta)
 	event_message_time = maxf(0.0, event_message_time - delta)
 	if event_message_time <= 0.0 and not event_message_queue.is_empty():
 		var next_message: Dictionary = event_message_queue.pop_front()
 		_start_event_message(str(next_message.get("message", "")), float(next_message.get("duration", 0.4)))
 	_refresh_overlay()
 	_refresh_event_label()
+	_refresh_scorebug_pulse()
 
 func update_snapshot(snapshot: Dictionary) -> void:
 	_set_label_text_if_changed(status_label, str(snapshot.get("status", "Futebol 1x1")))
@@ -140,6 +155,7 @@ func update_snapshot(snapshot: Dictionary) -> void:
 			float(snapshot.get("ball_distance", 0.0))
 		])
 		clock_label.modulate = Color(1.0, 1.0, 1.0, 1.0)
+	_update_state_badge(match_mode, golden_goal, time_remaining)
 	var bot_state := str(snapshot.get("bot_state", "kickoff"))
 	var phase := str(snapshot.get("phase", "kickoff"))
 	var kickoff_owner := str(snapshot.get("kickoff_owner", "player"))
@@ -164,6 +180,11 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	if boost_bar != null:
 		_set_progress_bar_value_if_changed(boost_bar, boost_fraction * 100.0)
 		boost_bar.modulate = Color(0.35, 0.9, 1.0, 1.0) if boost_active else Color(0.9, 1.0, 0.92, 0.92)
+	if super_bar != null:
+		_set_progress_bar_value_if_changed(super_bar, super_fraction * 100.0)
+		super_bar.modulate = Color(1.0, 0.78, 0.16, 1.0) if super_fraction >= 0.999 else Color(0.72, 0.86, 1.0, 0.9)
+	if super_ready_badge != null:
+		super_ready_badge.visible = super_fraction >= 0.999
 	if player_kit_swatch != null:
 		player_kit_swatch.color = snapshot.get("player_kit_color", Color(1.0, 0.86, 0.12, 1.0))
 	if bot_kit_swatch != null:
@@ -220,6 +241,7 @@ func show_goal(player_scored: bool, goal_value: int = 1, double_goal: bool = fal
 	last_player_scored = player_scored
 	goal_count += 1
 	goal_feedback_time = 1.1
+	scorebug_pulse_time = 1.1
 	var scorer := "PLAYER" if player_scored else "BOT"
 	var message := "VALE 2! GOOOOL %s" % scorer if double_goal else ("GOOOOL %s" % scorer if player_scored else "GOL DO BOT")
 	if goal_value > 1 and not double_goal:
@@ -261,6 +283,8 @@ func _apply_result_snapshot(player_won: bool, result_snapshot: Dictionary) -> vo
 
 func show_countdown(message: String, duration: float = 0.32) -> void:
 	last_event = &"countdown"
+	countdown_feedback_time = maxf(countdown_feedback_time, duration)
+	scorebug_pulse_time = maxf(scorebug_pulse_time, duration)
 	_set_event_message(message, duration)
 
 func show_announcement(message: String, duration: float = 0.8, event_id: StringName = &"announcement") -> void:
@@ -272,6 +296,8 @@ func reset_feedback() -> void:
 	strong_kick_feedback_time = 0.0
 	whiff_feedback_time = 0.0
 	goal_feedback_time = 0.0
+	countdown_feedback_time = 0.0
+	scorebug_pulse_time = 0.0
 	event_message_time = 0.0
 	event_message_duration = 0.0
 	event_message_queue.clear()
@@ -282,6 +308,8 @@ func reset_feedback() -> void:
 		event_label.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	if result_panel != null:
 		result_panel.visible = false
+	if score_panel != null:
+		score_panel.scale = Vector2.ONE
 	_refresh_overlay()
 
 func set_pause_menu_visible(menu_is_open: bool, sensitivity_value: float = 0.0) -> void:
@@ -314,6 +342,28 @@ func set_avatar_selection_labels(skin_label: String, kit_label: String) -> void:
 
 func debug_has_broadcast_scoreboard() -> bool:
 	return player_kit_swatch != null and bot_kit_swatch != null and score_label != null
+
+func debug_has_broadcast_scorebug_v1() -> bool:
+	return (
+		debug_has_broadcast_scoreboard()
+		and state_badge_label != null
+		and boost_bar != null
+		and super_bar != null
+		and super_ready_badge != null
+		and broadcast_font != null
+	)
+
+func debug_get_state_badge_text() -> String:
+	return state_badge_label.text if state_badge_label != null else ""
+
+func debug_get_super_bar_value() -> float:
+	return super_bar.value if super_bar != null else 0.0
+
+func debug_is_super_ready_visible() -> bool:
+	return super_ready_badge != null and super_ready_badge.visible
+
+func debug_get_scorebug_scale() -> Vector2:
+	return score_panel.scale if score_panel != null else Vector2.ONE
 
 func debug_is_result_panel_visible() -> bool:
 	return result_panel != null and result_panel.visible
@@ -348,9 +398,19 @@ func debug_get_event_text() -> String:
 func debug_get_clock_text() -> String:
 	return clock_label.text if clock_label != null else ""
 
+func debug_set_telemetry_visible(show_telemetry: bool) -> void:
+	telemetry_visible = show_telemetry
+	_sync_telemetry_visibility()
+
 func debug_get_focused_control_name() -> String:
 	var focused := get_viewport().gui_get_focus_owner()
 	return focused.name if focused != null else ""
+
+func _sync_telemetry_visibility() -> void:
+	if flow_label != null:
+		flow_label.visible = telemetry_visible
+	if control_label != null:
+		control_label.visible = telemetry_visible
 
 func _build_ui() -> void:
 	var root := Control.new()
@@ -367,25 +427,27 @@ func _build_ui() -> void:
 	pulse_overlay.color = Color(0.0, 0.0, 0.0, 0.0)
 	root.add_child(pulse_overlay)
 
-	var panel := PanelContainer.new()
-	panel.name = "ScorePanel"
-	_ignore_mouse(panel)
-	panel.position = Vector2(18.0, 18.0)
-	panel.custom_minimum_size = Vector2(468.0, 154.0)
-	panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.015, 0.035, 0.045, 0.86), Color(0.1, 0.85, 0.72, 0.8), 2))
-	root.add_child(panel)
+	score_panel = PanelContainer.new()
+	score_panel.name = "ScorePanel"
+	_ignore_mouse(score_panel)
+	score_panel.position = Vector2(18.0, 18.0)
+	score_panel.custom_minimum_size = Vector2(500.0, 186.0)
+	score_panel.pivot_offset = Vector2(250.0, 18.0)
+	score_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.006, 0.026, 0.035, 0.9), Color(1.0, 0.78, 0.16, 0.95), 2))
+	root.add_child(score_panel)
 
 	var box := VBoxContainer.new()
 	box.name = "ScoreBox"
 	_ignore_mouse(box)
-	box.add_theme_constant_override("separation", 6)
-	panel.add_child(box)
+	box.add_theme_constant_override("separation", 4)
+	score_panel.add_child(box)
 
 	status_label = Label.new()
 	status_label.name = "StatusLabel"
 	status_label.text = "FUTEBOL 1x1"
 	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	status_label.add_theme_font_size_override("font_size", 13)
+	status_label.add_theme_color_override("font_color", Color(0.78, 0.94, 1.0, 1.0))
+	_apply_broadcast_font(status_label, 12, true)
 	_ignore_mouse(status_label)
 	box.add_child(status_label)
 
@@ -407,7 +469,8 @@ func _build_ui() -> void:
 	score_label.text = "BRA 0   0 FRA"
 	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	score_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	score_label.add_theme_font_size_override("font_size", 30)
+	score_label.add_theme_color_override("font_color", Color(1.0, 0.93, 0.72, 1.0))
+	_apply_broadcast_font(score_label, 32, false)
 	_ignore_mouse(score_label)
 	score_row.add_child(score_label)
 
@@ -422,23 +485,47 @@ func _build_ui() -> void:
 	clock_label.name = "ClockLabel"
 	clock_label.text = "PRIMEIRO A 3"
 	clock_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	clock_label.add_theme_font_size_override("font_size", 13)
+	_apply_broadcast_font(clock_label, 12, true)
 	_ignore_mouse(clock_label)
 	box.add_child(clock_label)
 
+	state_badge_label = Label.new()
+	state_badge_label.name = "StateBadgeLabel"
+	state_badge_label.text = "3 GOLS"
+	state_badge_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	state_badge_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	state_badge_label.custom_minimum_size = Vector2(0.0, 20.0)
+	state_badge_label.add_theme_color_override("font_color", Color(0.02, 0.03, 0.04, 1.0))
+	state_badge_label.add_theme_stylebox_override("normal", _build_badge_style(Color(1.0, 0.78, 0.16, 0.95), Color(1.0, 0.94, 0.62, 1.0)))
+	_apply_broadcast_font(state_badge_label, 11, true)
+	_ignore_mouse(state_badge_label)
+	box.add_child(state_badge_label)
+
 	flow_label = Label.new()
 	flow_label.name = "FlowLabel"
-	flow_label.add_theme_font_size_override("font_size", 12)
+	flow_label.add_theme_color_override("font_color", Color(0.78, 0.9, 0.92, 1.0))
+	_apply_broadcast_font(flow_label, 11, true)
 	flow_label.text = "Futebol: kickoff | Bot: kickoff"
+	flow_label.visible = telemetry_visible
 	_ignore_mouse(flow_label)
 	box.add_child(flow_label)
 
 	control_label = Label.new()
 	control_label.name = "ControlLabel"
-	control_label.add_theme_font_size_override("font_size", 12)
+	control_label.add_theme_color_override("font_color", Color(0.86, 0.96, 0.92, 1.0))
+	_apply_broadcast_font(control_label, 11, true)
 	control_label.text = "Bola: solta 0% | Boost 100%"
+	control_label.visible = telemetry_visible
 	_ignore_mouse(control_label)
 	box.add_child(control_label)
+
+	var stamina_label := Label.new()
+	stamina_label.name = "StaminaLabel"
+	stamina_label.text = "STAMINA"
+	stamina_label.add_theme_color_override("font_color", Color(0.35, 0.9, 1.0, 1.0))
+	_apply_broadcast_font(stamina_label, 10, true)
+	_ignore_mouse(stamina_label)
+	box.add_child(stamina_label)
 
 	boost_bar = ProgressBar.new()
 	boost_bar.name = "BoostBar"
@@ -449,6 +536,44 @@ func _build_ui() -> void:
 	boost_bar.custom_minimum_size = Vector2(0.0, 12.0)
 	_ignore_mouse(boost_bar)
 	box.add_child(boost_bar)
+
+	var super_row := HBoxContainer.new()
+	super_row.name = "SuperMeterRow"
+	super_row.add_theme_constant_override("separation", 8)
+	_ignore_mouse(super_row)
+	box.add_child(super_row)
+
+	var super_label := Label.new()
+	super_label.name = "SuperLabel"
+	super_label.text = "SUPER"
+	super_label.custom_minimum_size = Vector2(58.0, 18.0)
+	super_label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.16, 1.0))
+	_apply_broadcast_font(super_label, 10, true)
+	_ignore_mouse(super_label)
+	super_row.add_child(super_label)
+
+	super_bar = ProgressBar.new()
+	super_bar.name = "SuperBar"
+	super_bar.min_value = 0.0
+	super_bar.max_value = 100.0
+	super_bar.value = 0.0
+	super_bar.show_percentage = false
+	super_bar.custom_minimum_size = Vector2(0.0, 12.0)
+	super_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_ignore_mouse(super_bar)
+	super_row.add_child(super_bar)
+
+	super_ready_badge = Label.new()
+	super_ready_badge.name = "SuperReadyBadge"
+	super_ready_badge.text = "PRONTO"
+	super_ready_badge.visible = false
+	super_ready_badge.custom_minimum_size = Vector2(70.0, 18.0)
+	super_ready_badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	super_ready_badge.add_theme_color_override("font_color", Color(0.02, 0.03, 0.04, 1.0))
+	super_ready_badge.add_theme_stylebox_override("normal", _build_badge_style(Color(1.0, 0.78, 0.16, 0.95), Color(1.0, 0.94, 0.62, 1.0)))
+	_apply_broadcast_font(super_ready_badge, 10, true)
+	_ignore_mouse(super_ready_badge)
+	super_row.add_child(super_ready_badge)
 
 	_build_ball_indicator(root)
 	_build_event_label(root)
@@ -466,7 +591,9 @@ func _build_event_label(root: Control) -> void:
 	event_label.size = Vector2(680.0, 72.0)
 	event_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	event_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	event_label.add_theme_font_size_override("font_size", 46)
+	event_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.88))
+	event_label.add_theme_constant_override("outline_size", 8)
+	_apply_broadcast_font(event_label, 48, false)
 	event_label.pivot_offset = Vector2(340.0, 36.0)
 	event_label.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	root.add_child(event_label)
@@ -1237,6 +1364,20 @@ func _set_fade_alpha_immediate(target_alpha: float) -> void:
 func _is_headless_display() -> bool:
 	return DisplayServer.get_name().to_lower().contains("headless")
 
+func _load_broadcast_fonts() -> void:
+	broadcast_font = load(BROADCAST_FONT_PATH) as FontFile
+	if broadcast_font == null:
+		push_error("Missing required HUD broadcast font: %s" % BROADCAST_FONT_PATH)
+	broadcast_narrow_font = load(BROADCAST_NARROW_FONT_PATH) as FontFile
+	if broadcast_narrow_font == null:
+		push_warning("Missing HUD broadcast narrow font: %s" % BROADCAST_NARROW_FONT_PATH)
+
+func _apply_broadcast_font(control: Control, font_size: int, use_narrow: bool) -> void:
+	var font := broadcast_narrow_font if use_narrow and broadcast_narrow_font != null else broadcast_font
+	if font != null:
+		control.add_theme_font_override("font", font)
+	control.add_theme_font_size_override("font_size", font_size)
+
 func _ignore_mouse(control: Control) -> void:
 	control.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
@@ -1253,6 +1394,21 @@ func _build_panel_style(fill_color: Color, border_color: Color, border_width: in
 	style.content_margin_top = 10
 	style.content_margin_right = 12
 	style.content_margin_bottom = 10
+	return style
+
+func _build_badge_style(fill_color: Color, border_color: Color) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = fill_color
+	style.border_color = border_color
+	style.set_border_width_all(1)
+	style.corner_radius_top_left = 4
+	style.corner_radius_top_right = 4
+	style.corner_radius_bottom_left = 4
+	style.corner_radius_bottom_right = 4
+	style.content_margin_left = 8
+	style.content_margin_top = 2
+	style.content_margin_right = 8
+	style.content_margin_bottom = 2
 	return style
 
 func _on_sensitivity_slider_changed(value: float) -> void:
@@ -1279,14 +1435,50 @@ func _refresh_overlay() -> void:
 		color = Color(1.0, 0.82, 0.12, alpha) if last_player_scored else Color(1.0, 0.12, 0.08, alpha)
 	pulse_overlay.color = color
 
+func _refresh_scorebug_pulse() -> void:
+	if score_panel == null:
+		return
+	if RenderProfileScript.is_web_platform():
+		score_panel.scale = Vector2.ONE
+		return
+	var envelope := clampf(scorebug_pulse_time / 1.1, 0.0, 1.0)
+	var pulse := absf(sin(scorebug_pulse_time * 12.0)) * 0.055 * envelope
+	score_panel.scale = Vector2.ONE + Vector2(pulse, pulse)
+
 func _refresh_event_label() -> void:
 	if event_label == null:
 		return
 	var alpha := clampf(event_message_time / 0.25, 0.0, 1.0) if event_message_time > 0.0 else 0.0
 	var progress := 1.0 - clampf(event_message_time / maxf(0.01, event_message_duration), 0.0, 1.0)
-	var squash := sin(progress * PI) * 0.18
+	var punch_multiplier := 1.55 if last_event == &"countdown" or countdown_feedback_time > 0.0 else 1.0
+	var squash := sin(progress * PI) * 0.18 * punch_multiplier
 	event_label.scale = Vector2.ONE if RenderProfileScript.is_web_platform() else Vector2(1.0 + squash, 1.0 - squash * 0.42)
-	event_label.modulate = Color(1.0, 1.0, 1.0, alpha)
+	var color := Color(1.0, 1.0, 1.0, alpha)
+	if last_event == &"countdown":
+		color = Color(1.0, 0.78, 0.16, alpha)
+	elif last_event == &"double_goal" or last_event == &"goal":
+		color = Color(1.0, 0.88, 0.18, alpha) if last_player_scored else Color(1.0, 0.24, 0.18, alpha)
+	elif last_event == &"golden_goal" or last_event == &"last_minute":
+		color = Color(0.35, 0.9, 1.0, alpha)
+	event_label.modulate = color
+
+func _update_state_badge(match_mode: StringName, golden_goal: bool, time_remaining: float) -> void:
+	if state_badge_label == null:
+		return
+	var badge_text := "3 GOLS"
+	var fill_color := Color(0.35, 0.9, 1.0, 0.95)
+	if match_mode == &"timer":
+		if golden_goal:
+			badge_text = "GOLDEN GOAL"
+			fill_color = Color(1.0, 0.78, 0.16, 0.95)
+		elif time_remaining > 0.0 and time_remaining <= 30.0:
+			badge_text = "VALE 2"
+			fill_color = Color(1.0, 0.24, 0.18, 0.95)
+		else:
+			badge_text = "TIMER"
+			fill_color = Color(0.35, 0.9, 1.0, 0.95)
+	_set_label_text_if_changed(state_badge_label, badge_text)
+	state_badge_label.add_theme_stylebox_override("normal", _build_badge_style(fill_color, fill_color.lightened(0.2)))
 
 func _set_event_message(message: String, duration: float) -> void:
 	if event_message_time > 0.0:
