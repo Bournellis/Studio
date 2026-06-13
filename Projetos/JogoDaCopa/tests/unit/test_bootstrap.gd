@@ -80,7 +80,7 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	var footer_label := menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/FooterLabel") as Label
 	assert_not_null(footer_label)
 	if footer_label != null:
-		assert_true(footer_label.text.contains("Copa Arena Futebol v1.0.1+"))
+		assert_true(footer_label.text.contains("Copa Arena Futebol v1.1.0+"))
 		assert_false(footer_label.text.contains("PC Windows editor-first"))
 		assert_eq(footer_label.text, menu.debug_get_visible_version_text())
 	assert_eq(menu.debug_get_selected_bot_difficulty_id(), &"normal")

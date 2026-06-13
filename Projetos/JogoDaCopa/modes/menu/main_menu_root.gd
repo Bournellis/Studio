@@ -47,7 +47,7 @@ const MATCH_MODE_LABELS: Dictionary = {
 	&"timer": "3 minutos",
 	&"goals": "3 gols"
 }
-const VISIBLE_VERSION: String = "v1.0.1"
+const VISIBLE_VERSION: String = "v1.1.0"
 const RELEASE_INFO_PATH: String = "res://build/release_info.json"
 const PREVIEW_CAMERA_LOOK_AT: Vector3 = Vector3(-3.08, 1.32, 0.0)
 const MENU_TRANSITION_SECONDS: float = 0.25
