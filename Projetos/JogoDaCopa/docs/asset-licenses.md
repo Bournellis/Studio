@@ -1,7 +1,7 @@
 # JogoDaCopa - Asset Licenses
 
-- Last updated: `2026-06-10`
-- Scope: assets introduced or approved for `Track 02 Quality Upgrade V1`, including 02C-bis and 02D-bis real asset replacements.
+- Last updated: `2026-06-13`
+- Scope: assets introduced or approved for `Track 02 Quality Upgrade V1`, including 02C-bis and 02D-bis real asset replacements, plus Series 06 broadcast UI fonts.
 
 ## Track 02C - Ball & Character Assets V1
 
@@ -51,6 +51,12 @@
 |---|---|---|---|---|
 | Copa Arena Futebol icon | `assets/branding/copa_arena_icon.svg` | Codex for JogoDaCopa | `CC0-1.0` | Generic football/arena mark; no official logos or federation marks. |
 | Copa Arena Futebol splash | `assets/branding/copa_arena_splash.png` | Codex for JogoDaCopa | `CC0-1.0` | Generated in-repo from authored vector-style composition for Godot boot splash PNG requirement. |
+
+## Track 06C - Broadcast Menu Fonts V1
+
+| Asset Pack | Path | Author / Source | License | Runtime Use |
+|---|---|---|---|---|
+| Kenney Fonts subset | `assets/fonts/kenney/` | Kenney | `CC0 1.0 Universal` | Broadcast-style menu title, section labels and controls. |
 
 ## License Rule
 
