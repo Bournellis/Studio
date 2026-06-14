@@ -3,6 +3,7 @@ extends RefCounted
 
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
+const OverlayLayerStateScript := preload("res://modes/boot/ui/overlay_layer_state.gd")
 const ProjectInfoScript := preload("res://core/project_info.gd")
 
 const _OVERLAY_ACTION_ROUTES := {
@@ -44,6 +45,7 @@ var _pending_confirm_action := ""
 var _pending_confirm_message := ""
 var _route_phase := "ready"
 var _last_ignored_input_reason := ""
+var _layer_state := OverlayLayerStateScript.new()
 
 func is_open() -> bool:
 	return _root != null and is_instance_valid(_root)
@@ -144,6 +146,7 @@ func request_close(host: Node) -> bool:
 	_confirm_label = null
 	_confirm_button = null
 	_cancel_confirm_button = null
+	_layer_state.clear()
 	_focused_control_path = ""
 	_route_phase = "ready"
 	_last_ignored_input_reason = ""
@@ -176,6 +179,7 @@ func force_close(host: Node) -> void:
 	_confirm_label = null
 	_confirm_button = null
 	_cancel_confirm_button = null
+	_layer_state.clear()
 	_focused_control_path = ""
 	_route_phase = "ready"
 	_last_ignored_input_reason = ""
@@ -185,55 +189,18 @@ func force_close(host: Node) -> void:
 
 func fullscreen_parent() -> Control:
 	if is_open():
-		_show_arena_fullscreen_layer(true)
+		_layer_state.show_arena_fullscreen_layer(true)
 		return _arena_fullscreen_layer
 	return null
 
 func panel_diagnostics() -> Dictionary:
-	if not is_open() or _panel == null or not is_instance_valid(_panel):
-		return {}
-	var rect := _panel.get_global_rect()
-	return {
-		"x": rect.position.x,
-		"y": rect.position.y,
-		"width": rect.size.x,
-		"height": rect.size.y,
-		"layer": _layer_name_for_control(_panel),
-		"fullscreen": _route_uses_arena_fullscreen(_current_route),
-	}
+	return _layer_state.panel_diagnostics(_current_route)
 
 func arena_fullscreen_diagnostics() -> Dictionary:
-	if not is_open() or _arena_fullscreen_layer == null or not is_instance_valid(_arena_fullscreen_layer):
-		return {}
-	var rect := _arena_fullscreen_layer.get_global_rect()
-	return {
-		"visible": _arena_fullscreen_layer.visible,
-		"x": rect.position.x,
-		"y": rect.position.y,
-		"width": rect.size.x,
-		"height": rect.size.y,
-		"children": _arena_fullscreen_layer.get_child_count(),
-	}
+	return _layer_state.arena_fullscreen_diagnostics()
 
 func modal_diagnostics() -> Dictionary:
-	if not is_open() or _modal_layer == null or not is_instance_valid(_modal_layer):
-		return {}
-	var rect := _modal_layer.get_global_rect()
-	var confirm_rect := Rect2()
-	if _confirm_panel != null and is_instance_valid(_confirm_panel):
-		confirm_rect = _confirm_panel.get_global_rect()
-	return {
-		"visible": _modal_layer.visible,
-		"x": rect.position.x,
-		"y": rect.position.y,
-		"width": rect.size.x,
-		"height": rect.size.y,
-		"confirm_x": confirm_rect.position.x,
-		"confirm_y": confirm_rect.position.y,
-		"confirm_width": confirm_rect.size.x,
-		"confirm_height": confirm_rect.size.y,
-		"topmost": top_layer_name() == "modal",
-	}
+	return _layer_state.modal_diagnostics(confirmation_pending())
 
 func route_phase() -> String:
 	return _route_phase
@@ -245,13 +212,7 @@ func last_ignored_input_reason() -> String:
 	return _last_ignored_input_reason
 
 func top_layer_name() -> String:
-	if confirmation_pending():
-		return "modal"
-	if _arena_fullscreen_layer != null and is_instance_valid(_arena_fullscreen_layer) and _arena_fullscreen_layer.visible:
-		return "arena_fullscreen"
-	if is_open():
-		return "menu"
-	return "none"
+	return _layer_state.top_layer_name(confirmation_pending(), is_open())
 
 func set_route_phase(host: Node, phase: String, route_id: String = "", reason: String = "") -> void:
 	if not is_open():
@@ -486,14 +447,7 @@ func sync_layout(host: Node) -> void:
 	var compact: bool = bool(host.get("_compact_layout")) or viewport_size.x <= 820.0
 	var safe_margin: float = 12.0 if compact else 24.0
 	var panel_width := viewport_size.x - safe_margin * 2.0
-	if _menu_layer != null and is_instance_valid(_menu_layer):
-		_menu_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	if _arena_fullscreen_layer != null and is_instance_valid(_arena_fullscreen_layer):
-		_arena_fullscreen_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	if _modal_layer != null and is_instance_valid(_modal_layer):
-		_modal_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	if _modal_backdrop != null and is_instance_valid(_modal_backdrop):
-		_modal_backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_layer_state.sync_layer_rects()
 	if _route_uses_arena_fullscreen(_current_route):
 		_panel.anchor_left = 0.0
 		_panel.anchor_top = 0.0
@@ -763,6 +717,7 @@ func _build_overlay(host: Node) -> void:
 	_content_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_content_body.add_theme_constant_override("separation", 10)
 	_content_scroll.add_child(_content_body)
+	_layer_state.bind(_root, _menu_layer, _arena_fullscreen_layer, _modal_layer, _modal_backdrop, _panel, _confirm_panel)
 
 func _collect_button_diagnostics(node: Node, buttons: Array[Dictionary]) -> void:
 	if node == null:
@@ -839,53 +794,10 @@ func _collect_control_diagnostics(node: Node, controls: Array[Dictionary]) -> vo
 		_collect_control_diagnostics(child, controls)
 
 func _control_visible_rect(control: Control) -> Rect2:
-	if control == null or not control.visible or not control.is_visible_in_tree():
-		return Rect2()
-	var rect := control.get_global_rect()
-	var cursor := control.get_parent()
-	while cursor != null:
-		if cursor is Control:
-			var parent_control := cursor as Control
-			if parent_control is ScrollContainer or parent_control.clip_contents:
-				rect = rect.intersection(parent_control.get_global_rect())
-				if rect.size.x <= 0.0 or rect.size.y <= 0.0:
-					return Rect2()
-		if cursor == _root:
-			break
-		cursor = cursor.get_parent()
-	return rect
+	return _layer_state.control_visible_rect(control)
 
 func _top_control_at_point(point: Vector2) -> Control:
-	if not is_open():
-		return null
-	var layer := top_layer_name()
-	match layer:
-		"modal":
-			return _find_top_control_at_point(_modal_layer, point)
-		"arena_fullscreen":
-			return _find_top_control_at_point(_arena_fullscreen_layer, point)
-		"menu":
-			return _find_top_control_at_point(_menu_layer, point)
-		_:
-			return null
-
-func _find_top_control_at_point(node: Node, point: Vector2) -> Control:
-	if node == null:
-		return null
-	for index in range(node.get_child_count() - 1, -1, -1):
-		var child := node.get_child(index)
-		var found := _find_top_control_at_point(child, point)
-		if found != null:
-			return found
-	if node is Button:
-		var button := node as Button
-		if button.visible and button.is_visible_in_tree() and _control_visible_rect(button).has_point(point):
-			return button
-	elif node is LineEdit:
-		var input := node as LineEdit
-		if input.visible and input.is_visible_in_tree() and _control_visible_rect(input).has_point(point):
-			return input
-	return null
+	return _layer_state.top_control_at_point(point, confirmation_pending(), is_open())
 
 func _find_visible_button_by_action(node: Node, action_id: String, point: Vector2) -> Button:
 	if node == null:
@@ -909,25 +821,7 @@ func _find_visible_button_by_action(node: Node, action_id: String, point: Vector
 	return null
 
 func _layer_name_for_control(control: Control) -> String:
-	if control == null:
-		return "none"
-	if _is_descendant_of(control, _modal_layer):
-		return "modal"
-	if _is_descendant_of(control, _arena_fullscreen_layer):
-		return "arena_fullscreen"
-	if _is_descendant_of(control, _menu_layer):
-		return "menu"
-	return "none"
-
-func _is_descendant_of(node: Node, ancestor: Node) -> bool:
-	if node == null or ancestor == null:
-		return false
-	var cursor := node
-	while cursor != null:
-		if cursor == ancestor:
-			return true
-		cursor = cursor.get_parent()
-	return false
+	return _layer_state.layer_name_for_control(control)
 
 func _disabled_reason_for_button(button: Button) -> String:
 	if _route_phase in ["opening", "refreshing"]:
@@ -966,18 +860,10 @@ func _record_ignored_input(host: Node, reason: String) -> void:
 	_publish_diagnostics(host)
 
 func _route_uses_arena_fullscreen(route_id: String) -> bool:
-	var normalized := AppShellRouteContractScript.normalize(route_id)
-	return normalized == AppShellRouteContractScript.ROUTE_ARENA_ACTIVE or normalized == AppShellRouteContractScript.ROUTE_ARENA_REPLAY
+	return _layer_state.route_uses_arena_fullscreen(route_id)
 
 func _show_arena_fullscreen_layer(visible: bool) -> void:
-	if _arena_fullscreen_layer == null or not is_instance_valid(_arena_fullscreen_layer):
-		return
-	_arena_fullscreen_layer.visible = visible
-	_arena_fullscreen_layer.mouse_filter = Control.MOUSE_FILTER_STOP if visible else Control.MOUSE_FILTER_IGNORE
-	if visible:
-		_arena_fullscreen_layer.move_to_front()
-		if _modal_layer != null and is_instance_valid(_modal_layer):
-			_modal_layer.move_to_front()
+	_layer_state.show_arena_fullscreen_layer(visible)
 
 func _persist_text_input(host: Node, input: LineEdit) -> void:
 	if host == null or input == null:
@@ -1077,18 +963,7 @@ func _prepare_host_for_route(host: Node, route_id: String) -> void:
 	_sync_confirmation_panel()
 
 func _apply_route_layer(route_id: String) -> void:
-	if _panel == null or not is_instance_valid(_panel):
-		return
-	var use_arena_layer := _route_uses_arena_fullscreen(route_id)
-	var target_parent: Node = _arena_fullscreen_layer if use_arena_layer else _menu_layer
-	if target_parent != null and is_instance_valid(target_parent) and _panel.get_parent() != target_parent:
-		_panel.get_parent().remove_child(_panel)
-		target_parent.add_child(_panel)
-	_panel.name = "ModeShellArenaFullscreenPanel" if use_arena_layer else "ModeShellMenuPanel"
-	_show_arena_fullscreen_layer(use_arena_layer)
-	if _menu_layer != null and is_instance_valid(_menu_layer):
-		_menu_layer.visible = not use_arena_layer
-		_menu_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_layer_state.apply_route_layer(route_id)
 
 func _set_bosque_paused(host: Node, paused: bool) -> void:
 	var screen := host.get("_mode_shell_active_screen") as Control
@@ -1135,16 +1010,7 @@ func _sync_confirmation_panel() -> void:
 	if _confirm_panel == null or not is_instance_valid(_confirm_panel):
 		return
 	var pending := _pending_confirm_action != ""
-	if _modal_layer != null and is_instance_valid(_modal_layer):
-		_modal_layer.visible = pending
-		_modal_layer.mouse_filter = Control.MOUSE_FILTER_STOP if pending else Control.MOUSE_FILTER_IGNORE
-		if pending:
-			_modal_layer.move_to_front()
-	if _modal_backdrop != null and is_instance_valid(_modal_backdrop):
-		_modal_backdrop.visible = pending
-	_confirm_panel.visible = pending
-	if pending:
-		_confirm_panel.move_to_front()
+	_layer_state.sync_modal_visibility(pending)
 	if _confirm_label != null:
 		_confirm_label.text = _pending_confirm_message if pending else ""
 	if _confirm_button != null:
