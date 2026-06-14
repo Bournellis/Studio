@@ -28,9 +28,9 @@ O mesmo filesystem tambem mente na LEITURA: arquivos que cresceram em commits re
 
 Quando agentes commitam via indice externo (`GIT_INDEX_FILE`), o indice proprio do repo fica obsoleto. Um `git add arquivo && git commit` posterior usando o indice do repo gera um commit cujo tree e o indice obsoleto inteiro + o arquivo - revertendo silenciosamente commits recentes de outros caminhos. Regras: agente remoto so commita com `GIT_INDEX_FILE` novo (`git read-tree HEAD` + add explicito); e TODO commit deve ser verificado com `git diff --name-status HEAD~1..HEAD` - se aparecer caminho que voce nao pretendia mudar, o commit esta contaminado e deve ser corrigido antes de prosseguir.
 
-## Adendo 3: Push Sem Login Interativo
+## Adendo 3: Rede Git Remota Exclusiva De Fabio
 
-Quando Fabio pedir explicitamente push por agente, nunca usar `git push` puro. Definir `GCM_INTERACTIVE=Never` e `GIT_TERMINAL_PROMPT=0` antes de `git push origin <branch>`. Se o Git Credential Manager nao tiver credencial disponivel para o Git do agente, o comando deve falhar limpo; nao abrir browser, nao iniciar `gh auth login`, nao usar PAT. O GitHub Desktop logado nao expoe um comando CLI de push; se o push nao interativo falhar, o fallback e Fabio clicar `Push origin` no Desktop.
+O teste de 2026-06-14 confirmou que `git push` com `GCM_INTERACTIVE=Never` e `GIT_TERMINAL_PROMPT=0` falha limpo quando o Git do agente nao tem credencial, sem abrir browser. A decisao final foi manter rede Git remota exclusiva de Fabio: agentes nao executam `git push`, `git fetch`, `git pull`, `gh auth login` nem PAT/token setup. O GitHub Desktop logado nao expoe comando CLI de push; fechamento de agente declara `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## Beneficio
 

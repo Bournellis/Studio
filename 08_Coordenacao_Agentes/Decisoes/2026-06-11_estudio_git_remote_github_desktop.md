@@ -1,6 +1,6 @@
 # Decisao: Git Local Para Agentes E Rede Pelo GitHub Desktop
 
-> Status: substituida parcialmente em `2026-06-14` por `2026-06-14_estudio_git_push_nao_interativo_agentes.md`. Esta decisao permanece como historico da falha original; a regra vigente permite push por agente somente quando Fabio pedir explicitamente e somente com guardas nao interativos.
+> Status: reafirmada em `2026-06-14` por `2026-06-14_estudio_git_remote_exclusivo_fabio.md`. Esta decisao permanece como historico da falha original; a regra vigente e rede Git remota exclusiva de Fabio via GitHub Desktop.
 
 ## Metadata
 

@@ -1,4 +1,6 @@
-# Decisao: Push Git Nao Interativo Para Agentes
+# Decisao Historica: Teste De Push Git Nao Interativo Para Agentes
+
+> Status: superseded no mesmo dia por `2026-06-14_estudio_git_remote_exclusivo_fabio.md`. Este arquivo fica como registro dos testes; a regra vigente nao permite push por agente.
 
 ## Metadata
 
@@ -9,7 +11,7 @@
 
 ## Contexto
 
-Fabio pediu reavaliacao do fluxo de push porque algumas tentativas do agente abriram janela/login do Git Credential Manager, enquanto outras pareciam funcionar quando o GitHub Desktop estava logado. O objetivo e permitir push por agente quando Fabio autorizar, sem abrir navegador, sem login interativo e sem PAT em prompts, logs ou arquivos.
+Fabio pediu reavaliacao do fluxo de push porque algumas tentativas do agente abriram janela/login do Git Credential Manager, enquanto outras pareciam funcionar quando o GitHub Desktop estava logado. O objetivo era descobrir se existia um caminho confiavel para push por agente sem abrir navegador, sem login interativo e sem PAT em prompts, logs ou arquivos.
 
 Testes em `D:\Estudio` em 2026-06-14:
 
@@ -21,19 +23,10 @@ Testes em `D:\Estudio` em 2026-06-14:
 
 ## Decision
 
-- Regra padrao continua: agentes fazem git local; Fabio usa GitHub Desktop para revisar e clicar `Push origin`.
-- Excecao: quando Fabio pedir explicitamente para o agente fazer push, o agente pode tentar somente o caminho nao interativo abaixo:
-
-```powershell
-$env:GCM_INTERACTIVE = 'Never'
-$env:GIT_TERMINAL_PROMPT = '0'
-git push origin <branch>
-```
-
-- Para diagnostico, usar o mesmo ambiente com `git push --dry-run origin <branch>` antes do push real.
-- Se o comando falhar por credencial ausente, permissao, divergencia remota ou qualquer pedido de autenticacao, o agente para e declara `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
-- Nunca usar `git push` sem essas variaveis, nunca iniciar `gh auth login`, nunca aceitar fluxo de login no navegador e nunca criar/colar PAT.
-- O agente pode abrir o repositorio no GitHub Desktop com `github open D:\Estudio`, mas nao pode automatizar o botao `Push origin`; esse clique e humano.
+- Teste concluido: o caminho nao interativo falha limpo neste Windows, mas nao fornece credencial para o agente.
+- Decisao final posterior: manter rede Git remota somente com Fabio pelo GitHub Desktop.
+- Agentes nao devem executar `git push`, `git fetch`, `git pull`, `gh auth login`, browser login flows nem PAT/token setup para sincronizacao remota.
+- O fechamento de trabalho deve declarar `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## Alternatives Considered
 
@@ -44,8 +37,8 @@ git push origin <branch>
 
 ## Impact
 
-O agente tem um caminho testavel e seguro: tenta push sem prompt quando Fabio autorizar; se nao houver credencial compartilhada com o Git do Windows, falha limpo sem abrir navegador. O GitHub Desktop continua sendo o fallback oficial e visual.
+O teste confirmou que o Desktop logado nao equivale a credencial de push disponivel para o agente. Para reduzir risco e ambiguidade operacional, Fabio fica como unico executor de `push`, `fetch` e `pull`.
 
 ## Review When
 
-Revisar se `gh` for instalado e autenticado sem browser interativo, se o GitHub Desktop expuser comando oficial de push, ou se Fabio decidir provisionar credencial nao interativa segura fora do repositorio.
+Revisar somente se Fabio decidir mudar a politica de rede Git remota, instalar um fluxo oficial nao interativo e registrar nova decisao.

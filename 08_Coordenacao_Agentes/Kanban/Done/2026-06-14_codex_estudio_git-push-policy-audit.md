@@ -23,18 +23,11 @@ Reavaliar como agentes devem fazer push para `origin` sem abrir login no navegad
 - Confirmado que `desktop-askpass-trampoline.exe` exige `DESKTOP_PORT`, helper interno do Desktop.
 - Registrada nova decisao em `Decisoes/2026-06-14_estudio_git_push_nao_interativo_agentes.md`.
 - Atualizados `AGENTS.md` e `07_Aprendizados/2026-06-11_git-escritor-unico.md`.
+- Decisao final do Fabio apos auditoria: manter rede Git remota exclusiva do Fabio via GitHub Desktop. Registrado em `Decisoes/2026-06-14_estudio_git_remote_exclusivo_fabio.md`.
 
 ## Final Rule
 
-Agente so tenta push quando Fabio pedir explicitamente, usando guardas nao interativos:
-
-```powershell
-$env:GCM_INTERACTIVE = 'Never'
-$env:GIT_TERMINAL_PROMPT = '0'
-git push origin <branch>
-```
-
-Se falhar por credencial/permissao/divergencia/autenticacao, parar e declarar `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+Agente nao executa `git push`, `git fetch`, `git pull`, `gh auth login`, browser login flow nem PAT/token setup. Toda sincronizacao remota e feita por Fabio no GitHub Desktop. Fechamentos declaram `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## Validation
 
