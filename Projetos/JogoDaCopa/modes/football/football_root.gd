@@ -1530,6 +1530,8 @@ func _process_player_ball_contact() -> void:
 func _on_ball_body_entered(body: Node) -> void:
 	if feedback == null or ball == null or ball_contact_audio_cooldown_remaining > 0.0:
 		return
+	if RenderProfileScript.is_web_platform():
+		return
 	var ball_speed: float = ball.linear_velocity.length()
 	if ball_speed < 2.0:
 		return

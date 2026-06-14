@@ -283,10 +283,7 @@ func play_arcade_confetti(effect_position: Vector3, player_colored: bool) -> voi
 		if not _is_web_feedback_enabled(&"confetti"):
 			return
 		var primary_web := FOOTBALL_GOAL_COLOR if player_colored else BOT_COLOR
-		_spawn_particle_burst(effect_position + Vector3.UP * 1.25, primary_web, 18, 0.24, 1.5)
-		_spawn_particle_burst(effect_position + Vector3.UP * 1.45, Color(0.34, 0.88, 1.0, 1.0), 10, 0.2, 1.0)
-		_spawn_light(effect_position + Vector3.UP * 1.2, primary_web, 2.4, 3.2, 0.2)
-		_play_sfx_ui(&"ui_confirmation", -12.0, 1.12 if player_colored else 0.82, BUS_SFX)
+		_spawn_sphere(effect_position + Vector3.UP * 1.35, 0.2, primary_web, 0.24, true)
 		return
 	var primary := FOOTBALL_GOAL_COLOR if player_colored else BOT_COLOR
 	_spawn_particle_burst(effect_position + Vector3.UP * 1.35, primary, 48, 0.5, 3.8)
@@ -816,10 +813,9 @@ func _update_ambience(delta: float) -> void:
 		ambience_player.play()
 
 func _play_sfx_3d(audio_key: StringName, effect_position: Vector3, volume_db: float = -10.0, pitch_scale: float = 1.0) -> bool:
-	var profile_begin := PerfProbeScript.begin(self, "feedback.play_sfx_3d", "key=%s" % str(audio_key))
 	if RenderProfileScript.is_web_platform():
-		PerfProbeScript.end(self, "feedback.play_sfx_3d", profile_begin, "played=false web_3d_audio_disabled=true")
 		return false
+	var profile_begin := PerfProbeScript.begin(self, "feedback.play_sfx_3d", "key=%s" % str(audio_key))
 	var stream := real_audio_streams.get(audio_key) as AudioStream
 	if stream == null or sfx_pool.is_empty():
 		PerfProbeScript.end(self, "feedback.play_sfx_3d", profile_begin, "played=false")
@@ -838,8 +834,10 @@ func _play_sfx_3d(audio_key: StringName, effect_position: Vector3, volume_db: fl
 	return true
 
 func _play_sfx_ui(audio_key: StringName, volume_db: float = -10.0, pitch_scale: float = 1.0, bus_name: StringName = BUS_UI) -> bool:
+	if RenderProfileScript.is_web_platform() and not _can_play_web_audio(false):
+		return false
 	var profile_begin := PerfProbeScript.begin(self, "feedback.play_sfx_ui", "key=%s bus=%s" % [str(audio_key), str(bus_name)])
-	if not _can_play_web_audio(true):
+	if not _can_play_web_audio(false):
 		PerfProbeScript.end(self, "feedback.play_sfx_ui", profile_begin, "played=false web_audio_locked=true")
 		return false
 	_ensure_real_audio_streams_loaded()
