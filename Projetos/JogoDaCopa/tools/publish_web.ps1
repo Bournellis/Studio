@@ -119,6 +119,52 @@ window.JDC_WEB_RELEASE = Object.freeze({
     Write-TextUtf8NoBom -Path $IndexPath -Text $html
 }
 
+function Write-WebAudioWorkletFallback {
+    param([string]$IndexPath)
+    if (-not (Test-Path -LiteralPath $IndexPath -PathType Leaf)) {
+        throw "Web index is missing for audio worklet fallback: $IndexPath"
+    }
+    $html = Get-Content -LiteralPath $IndexPath -Raw
+    $fallback = @"
+<script id="jdc-audio-worklet-fallback">
+(function () {
+	'use strict';
+	var constructors = [window.AudioContext, window.webkitAudioContext];
+	for (var index = 0; index < constructors.length; index += 1) {
+		var ctor = constructors[index];
+		if (!ctor || !ctor.prototype) {
+			continue;
+		}
+		try {
+			Object.defineProperty(ctor.prototype, 'audioWorklet', {
+				configurable: true,
+				get: function () {
+					return undefined;
+				}
+			});
+		} catch (_err) {
+			// Some browsers lock this property. In that case Godot keeps its native path.
+		}
+	}
+}());
+</script>
+"@
+    if ($html.Contains('id="jdc-audio-worklet-fallback"')) {
+        $html = [regex]::Replace(
+            $html,
+            '(?s)<script id="jdc-audio-worklet-fallback">.*?</script>',
+            $fallback
+        )
+    } elseif ($html.Contains('<script src="index.js"></script>')) {
+        $html = $html.Replace('<script src="index.js"></script>', "$fallback`n`t`t<script src=""index.js""></script>")
+    } elseif ($html.Contains("</head>")) {
+        $html = $html.Replace("</head>", "$fallback`n`t</head>")
+    } else {
+        $html = $fallback + $html
+    }
+    Write-TextUtf8NoBom -Path $IndexPath -Text $html
+}
+
 function Write-ReleaseInfoResource {
     param(
         [string]$Root,
@@ -232,6 +278,14 @@ function Copy-WebPackage {
 /index.js
   Cache-Control: no-store
 
+/index.audio.worklet.js
+  Content-Type: application/javascript
+  Cache-Control: no-store
+
+/index.audio.position.worklet.js
+  Content-Type: application/javascript
+  Cache-Control: no-store
+
 /index.pck
   Content-Encoding: br
   Content-Type: application/octet-stream
@@ -286,6 +340,7 @@ function New-Package {
 
     $sourceDir = Join-Path $Root "builds\web"
     Copy-WebPackage -SourceDir $sourceDir -DestinationDir $pagesDir
+    Write-WebAudioWorkletFallback -IndexPath (Join-Path $pagesDir "index.html")
     Write-WebReleaseDiagnostics `
         -IndexPath (Join-Path $pagesDir "index.html") `
         -VersionedReleaseRoot $VersionedReleaseRoot `
@@ -306,6 +361,8 @@ function New-Package {
     )
     $packageRecords = @(
         (Get-ArtifactRecord -Path (Join-Path $pagesDir "index.html") -Label "pages index.html"),
+        (Get-ArtifactRecord -Path (Join-Path $pagesDir "index.audio.worklet.js") -Label "pages index.audio.worklet.js"),
+        (Get-ArtifactRecord -Path (Join-Path $pagesDir "index.audio.position.worklet.js") -Label "pages index.audio.position.worklet.js"),
         (Get-ArtifactRecord -Path (Join-Path $pagesDir "index.pck") -Label "pages index.pck brotli"),
         (Get-ArtifactRecord -Path (Join-Path $pagesDir "index.wasm") -Label "pages index.wasm brotli"),
         (Get-ArtifactRecord -Path (Join-Path $pagesDir "_headers") -Label "pages _headers"),
