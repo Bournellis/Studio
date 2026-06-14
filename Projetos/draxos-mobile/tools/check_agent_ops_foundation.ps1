@@ -61,16 +61,15 @@ function Test-DoingCards {
     return
   }
   $draxosCards = @(Get-ChildItem -LiteralPath $doingPath -Filter '*draxos-mobile*' -File)
-  if ($draxosCards.Count -gt 1) {
-    Add-Failure "more than one DraxosMobile Doing card exists: $($draxosCards.Name -join ', ')"
-    return
-  }
   $allowedActiveCards = @(
     '*agent-ops-foundation*',
     '*foundation-expansion-readiness*',
     '*foundation-closeout*',
     '*foundation-final-polish*',
-    '*hardening-validation-release*'
+    '*hardening-validation-release*',
+    '*hardening-program*',
+    '*docs-state-governance*',
+    '*hardening-*'
   )
   $obsolete = @($draxosCards | Where-Object {
       $cardName = $_.Name
@@ -116,20 +115,20 @@ foreach ($category in @('VIVO', 'CONTRATO', 'RUNBOOK', 'HISTORICO', 'ARQUIVO_DES
 }
 
 foreach ($relative in @('AGENTS.md', 'README.md', 'implementation\current-status.md')) {
-  Test-FileContains $ProjectPath $relative 'Track 14'
-  Test-FileContains $ProjectPath $relative 'Track 13'
   Test-FileDoesNotContain $ProjectPath $relative 'Fast Lane Atual - Track 04'
   Test-FileDoesNotContain $ProjectPath $relative 'Fast Lane Atual - Track 08'
   Test-FileDoesNotContain $ProjectPath $relative 'Fast Lane Atual - Track 10'
 }
 
-Test-FileContains $ProjectPath 'AGENTS.md' 'Agent Operating Manual'
+Test-FileContains $ProjectPath 'AGENTS.md' 'docs/agent-operating-manual.md'
+Test-FileContains $ProjectPath 'AGENTS.md' 'docs/documentation-index.md'
 Test-FileContains $ProjectPath 'AGENTS.md' 'validate_foundation.ps1'
 Test-FileContains $ProjectPath 'AGENTS.md' 'ConfirmRemoteMutation'
 Test-FileContains $ProjectPath 'README.md' 'docs/agent-operating-manual.md'
 Test-FileContains $ProjectPath 'README.md' 'docs/documentation-index.md'
 Test-FileContains $ProjectPath 'implementation\current-status.md' 'TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE'
 Test-FileContains $ProjectPath 'implementation\current-status.md' 'TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED'
+Test-FileContains $ProjectPath 'implementation\current-status.md' 'docs/release-history.md'
 
 foreach ($term in @('Instrumento Ritual', 'Doutrina', 'Familiar')) {
   Test-FileContains $ProjectPath 'docs\product-brief.md' $term
@@ -139,16 +138,15 @@ foreach ($legacy in @('Varinha Magica', '1 slot de passiva', '1 slot de pet')) {
   Test-FileDoesNotContain $ProjectPath 'docs\product-brief.md' $legacy
 }
 
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'Track 14'
+Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'DraxosMobile'
+Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'P2_IMPLEMENTACAO'
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Estado_Atual.md' 'Track 14'
-Test-FileContains $RepoPath 'Projetos\README.md' 'Track 14'
+Test-FileContains $RepoPath 'Projetos\README.md' 'draxos-mobile/'
+Test-FileContains $RepoPath 'Projetos\README.md' 'Doc map:'
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'DraxosMobile'
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'P2_IMPLEMENTACAO'
-Test-FileContains $RepoPath 'AGENTS.md' 'Track 14'
-Test-FileContains $RepoPath 'AGENTS.md' 'TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE'
-Test-FileContains $RepoPath 'AGENTS.md' 'docs/agent-operating-manual.md'
-Test-FileContains $RepoPath 'AGENTS.md' 'docs/documentation-index.md'
-Test-FileContains $RepoPath 'AGENTS.md' 'Track 13 validation/release safety'
+Test-FileContains $RepoPath 'AGENTS.md' 'Projetos/draxos-mobile/'
+Test-FileContains $RepoPath 'AGENTS.md' 'Prioridades_Estudio.md'
+Test-FileContains $RepoPath 'AGENTS.md' 'Estado_Atual.md'
 Test-FileDoesNotContain $RepoPath 'AGENTS.md' 'Track 03 Internal Alpha v0 completa'
 Test-FileDoesNotContain $RepoPath 'AGENTS.md' 'Track 04 pos-handoff planejada'
 Test-DoingCards

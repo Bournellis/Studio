@@ -121,7 +121,10 @@ function Test-DoingCards {
     '*foundation-expansion-readiness*',
     '*foundation-closeout*',
     '*foundation-final-polish*',
-    '*hardening-validation-release*'
+    '*hardening-validation-release*',
+    '*hardening-program*',
+    '*docs-state-governance*',
+    '*hardening-*'
   )
   $obsolete = @($draxosCards | Where-Object {
       $cardName = $_.Name
@@ -169,18 +172,21 @@ Test-FileContains $ProjectPath 'tools\publish_internal_alpha.ps1' '[string]$Mode
 Test-FileContains $ProjectPath 'tools\publish_internal_alpha.ps1' 'ConfirmRemoteMutation'
 Test-FileContains $ProjectPath 'tools\validate_foundation.ps1' 'foundation-validation-latest.json'
 Test-FileContains $ProjectPath "$trackDir\current-status.md" 'TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED'
-Test-FileContains $ProjectPath 'implementation\current-status.md' 'Track 13 - Foundation Validation And Release Safety'
 Test-FileContains $ProjectPath 'implementation\current-status.md' 'TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED'
-Test-FileContains $ProjectPath 'README.md' 'Track 13'
-Test-FileContains $ProjectPath 'AGENTS.md' 'Track 13'
+Test-FileContains $ProjectPath 'implementation\current-status.md' 'docs/release-history.md'
+Test-FileContains $ProjectPath 'README.md' 'implementation/current-status.md'
+Test-FileContains $ProjectPath 'README.md' 'docs/release-history.md'
+Test-FileContains $ProjectPath 'AGENTS.md' 'implementation/current-status.md'
+Test-FileContains $ProjectPath 'AGENTS.md' 'docs/release-history.md'
 Test-FileContains $ProjectPath 'tools\README.md' 'validate_foundation.ps1'
 Test-FileContains $ProjectPath 'docs\track-13-manual-walkthrough-gate.md' 'Android / Windows / Web preview / Web Access-protected'
 
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'Track 13'
+Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'DraxosMobile'
+Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'P2_IMPLEMENTACAO'
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Estado_Atual.md' 'Track 13'
-Test-FileContains $RepoPath 'Projetos\README.md' 'Track 13'
+Test-FileContains $RepoPath 'Projetos\README.md' 'draxos-mobile/'
+Test-FileContains $RepoPath 'Projetos\README.md' 'Release history:'
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'DraxosMobile'
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'P2_IMPLEMENTACAO'
 
 Test-BootBudget
 

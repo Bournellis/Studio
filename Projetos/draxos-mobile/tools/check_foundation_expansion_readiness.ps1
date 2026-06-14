@@ -488,80 +488,66 @@ function Test-ClientSecretsAbsent {
 }
 
 function Test-LiveDocReleaseRootFreshness {
-  $readmePath = Join-Path $ProjectPath 'README.md'
-  if (-not (Test-Path -LiteralPath $readmePath -PathType Leaf)) {
-    Add-Failure 'README.md missing for live-doc release root guard'
+  $currentStatusPath = Join-Path $ProjectPath 'implementation\current-status.md'
+  $releaseHistoryPath = Join-Path $ProjectPath 'docs\release-history.md'
+  if (-not (Test-Path -LiteralPath $currentStatusPath -PathType Leaf)) {
+    Add-Failure 'implementation/current-status.md missing for live-doc release root guard'
     return
   }
-  $readmeText = Get-Content -LiteralPath $readmePath -Raw
-  $currentRootMatch = [regex]::Match($readmeText, 'Current release root: `([^`]+)`')
-  $currentPreviewMatch = [regex]::Match($readmeText, 'Current verified preview: `([^`]+)`')
-  if (-not $currentRootMatch.Success) {
-    Add-Failure 'README.md does not declare Current release root'
-  }
-  if (-not $currentPreviewMatch.Success) {
-    Add-Failure 'README.md does not declare Current verified preview'
-  }
-  if (-not $currentRootMatch.Success -or -not $currentPreviewMatch.Success) {
+  if (-not (Test-Path -LiteralPath $releaseHistoryPath -PathType Leaf)) {
+    Add-Failure 'docs/release-history.md missing for live-doc release root guard'
     return
   }
 
+  $currentStatusText = Get-Content -LiteralPath $currentStatusPath -Raw
+  $currentPackageMatch = [regex]::Match($currentStatusText, 'Latest published remote package: `([^`]+)`')
+  $currentRootMatch = [regex]::Match($currentStatusText, 'Release root: `([^`]+)`')
+  $currentPreviewMatch = [regex]::Match($currentStatusText, 'Deployment evidence: `(https://[^`]+)`')
+  if (-not $currentPackageMatch.Success) {
+    Add-Failure 'implementation/current-status.md does not declare latest published remote package'
+  }
+  if (-not $currentRootMatch.Success) {
+    Add-Failure 'implementation/current-status.md does not declare Release root'
+  }
+  if (-not $currentPreviewMatch.Success) {
+    Add-Failure 'implementation/current-status.md does not declare Deployment evidence preview'
+  }
+  if (-not $currentPackageMatch.Success -or -not $currentRootMatch.Success -or -not $currentPreviewMatch.Success) {
+    return
+  }
+
+  $currentPackage = $currentPackageMatch.Groups[1].Value
   $currentRoot = $currentRootMatch.Groups[1].Value
   $currentPreview = $currentPreviewMatch.Groups[1].Value
+  Add-Ok "live-doc current package detected: $currentPackage"
   Add-Ok "live-doc current release root detected: $currentRoot"
   Add-Ok "live-doc current preview detected: $currentPreview"
 
-  $previousStationRoot = 'internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c'
-  $previousStationPreview = 'https://08d00f24.draxos-mobile-internal-alpha.pages.dev'
-  $durableRoot = 'internal-alpha/v0-bosque-durable-bau-mochila-v1-20260606-6e7ca6b'
-  $durablePreview = 'https://39198a35.draxos-mobile-internal-alpha.pages.dev'
-  $previousArenaMenuRoot = 'internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68'
-  $previousArenaMenuPreview = 'https://fdf44707.draxos-mobile-internal-alpha.pages.dev'
-  $previousOpenworldPolicyRoot = 'internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22'
-  $previousOpenworldPolicyPreview = 'https://fa84e109.draxos-mobile-internal-alpha.pages.dev'
-  $previousBosqueSyncRoot = 'internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95'
-  $previousBosqueSyncPreview = 'https://60e2d4be.draxos-mobile-internal-alpha.pages.dev'
-  $previousVisibleRoot = 'internal-alpha/v0-arena-bosque-visible-v2-20260605-01d80d5'
-  $previousVisiblePreview = 'https://7b9c8f38.draxos-mobile-internal-alpha.pages.dev'
-  $previousVisibilityHotfixRoot = 'internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f'
-  $previousVisibilityHotfixPreview = 'https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev'
-  $previousSeasonRoot = 'internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32'
-  $previousSeasonPreview = 'https://d7333659.draxos-mobile-internal-alpha.pages.dev'
-  $previousHotfixRoot = 'internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174'
-  $previousHotfixPreview = 'https://0536635b.draxos-mobile-internal-alpha.pages.dev'
-  $previousArenaRoot = 'internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a'
-  $previousArenaPreview = 'https://2c020d09.draxos-mobile-internal-alpha.pages.dev'
-  $previousContentRoot = 'internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45'
-  $previousContentPreview = 'https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev'
-  $previousOpenworldRoot = 'internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8'
-  $previousOpenworldPreview = 'https://aeec7403.draxos-mobile-internal-alpha.pages.dev'
   $hardeningRoot = 'internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4'
   $hardeningPreview = 'https://ca946749.draxos-mobile-internal-alpha.pages.dev'
-  $lineageRoots = @(
-    $previousStationRoot,
-    $previousStationPreview,
-    $durableRoot,
-    $durablePreview,
-    $previousArenaMenuRoot,
-    $previousArenaMenuPreview,
-    $previousOpenworldPolicyRoot,
-    $previousOpenworldPolicyPreview,
-    $previousBosqueSyncRoot,
-    $previousBosqueSyncPreview,
-    $previousVisibleRoot,
-    $previousVisiblePreview,
-    $hardeningRoot,
-    $hardeningPreview
-  )
+
   foreach ($check in @(
-    @{ Path = 'AGENTS.md'; Needles = @('latest remote Internal Alpha', $currentRoot, $currentPreview, 'Bosque Fogueira Potion Crafting v1 remains the previous station-craft package', $previousStationRoot, $previousStationPreview, 'Arena PVE Menu Flow Simplification v1', 'Bosque Offline-First Checkpoint v1', 'Bosque Sync Responsiveness v1', 'Arena/Bosque Visible V2') },
-    @{ Path = 'README.md'; Needles = @(('Current release root: `' + $currentRoot + '`'), ('Current verified preview: `' + $currentPreview + '`')) + $lineageRoots },
-    @{ Path = 'implementation\current-status.md'; Needles = @('Latest published remote package:', $currentRoot, $currentPreview, 'Previous hardening baseline: `Foundation Hardening V2`') + $lineageRoots },
-    @{ Path = 'docs\agent-operating-manual.md'; Needles = @('latest remote Internal Alpha publication', $currentRoot, $currentPreview, 'Bosque Fogueira Potion Crafting v1 remains the previous station-craft package', $previousStationRoot, $previousStationPreview, 'Arena PVE Menu Flow Simplification v1 remains the previous Arena menu package', $previousArenaMenuRoot, $previousArenaMenuPreview, 'Bosque Offline-First Checkpoint v1 remains the previous Openworld policy package', $previousOpenworldPolicyRoot, $previousOpenworldPolicyPreview, 'Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline', $hardeningRoot, $hardeningPreview) },
-    @{ Path = 'docs\foundation-hardening-v2-readiness-report.md'; Needles = @('Status: `HISTORICO_BASELINE`', $hardeningRoot, $hardeningPreview, 'not the latest remote Internal Alpha package') }
+    @{ Path = 'implementation\current-status.md'; Needles = @('Latest published remote package:', $currentPackage, $currentRoot, $currentPreview, 'docs/release-history.md') },
+    @{ Path = 'docs\release-history.md'; Needles = @('single historical record', $currentPackage, $currentRoot, $currentPreview, $hardeningRoot, $hardeningPreview) },
+    @{ Path = 'docs\foundation-hardening-v2-readiness-report.md'; Needles = @('Status:', 'HISTORICO_BASELINE', $hardeningRoot, $hardeningPreview, 'not the latest remote Internal Alpha package') },
+    @{ Path = 'AGENTS.md'; Needles = @('implementation/current-status.md', 'docs/release-history.md') },
+    @{ Path = 'README.md'; Needles = @('implementation/current-status.md', 'docs/release-history.md') },
+    @{ Path = 'docs\agent-operating-manual.md'; Needles = @('implementation/current-status.md', 'docs/release-history.md') },
+    @{ Path = 'docs\documentation-index.md'; Needles = @('implementation/current-status.md', 'docs/release-history.md') }
   )) {
     foreach ($needle in $check.Needles) {
       Test-FileContains $check.Path $needle
+    }
+  }
+
+  foreach ($pointerDoc in @(
+    'AGENTS.md',
+    'README.md',
+    'docs\agent-operating-manual.md',
+    'docs\documentation-index.md'
+  )) {
+    foreach ($needle in @($currentPackage, $currentRoot, $currentPreview)) {
+      Test-FileNotContains $pointerDoc $needle 'pointer doc must not duplicate current operational state'
     }
   }
 }
