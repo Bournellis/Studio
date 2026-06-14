@@ -51,6 +51,7 @@ const resetFramesDelayMs = Number(args.get("reset-frames-delay-ms") || "0");
 const keyAfterStage = args.get("key-after-stage") || "";
 const keyAfterDelayMs = Number(args.get("key-after-delay-ms") || "0");
 const keyAfter = args.get("key-after") || "Enter";
+const finalHeapGc = args.get("final-heap-gc") !== "0";
 
 if (!chromePath || !existsSync(chromePath)) {
   throw new Error(`Chrome executable not found: ${chromePath}`);
@@ -466,6 +467,16 @@ async function dispatchKey(client, key) {
   });
 }
 
+async function collectPageGarbage(client) {
+  try {
+    await client.send("HeapProfiler.enable");
+    await client.send("HeapProfiler.collectGarbage");
+    await delay(250);
+  } catch {
+    // Keep the probe compatible with browsers that do not expose HeapProfiler.
+  }
+}
+
 let server = null;
 if (!usingRemoteUrl) {
   server = createServer(serveFile);
@@ -608,6 +619,7 @@ const frameCollector = `
       wasmHeapBytes: findWasmHeapBytes(),
     });
   };
+  window.__jdcRecordStabilitySample = sample;
   sample();
   window.__jdcStabilityInterval = setInterval(sample, ${Math.max(250, sampleIntervalMs)});
 })()
@@ -713,6 +725,20 @@ const frameCollector = `
   }));
   const firstMinute = buildFirstMinuteReport(frameStats, perfEvents);
   const eventHitches = buildEventHitchReport(frameStats, perfEvents);
+  if (stabilityGate && finalHeapGc) {
+    await collectPageGarbage(client);
+    await client.send("Runtime.evaluate", {
+      expression: `
+(() => {
+  if (typeof window.__jdcRecordStabilitySample === "function") {
+    window.__jdcRecordStabilitySample();
+  }
+  return true;
+})()
+`,
+      returnByValue: true,
+    });
+  }
   const stabilitySamplesResult = await client.send("Runtime.evaluate", {
     expression: `
 (() => {

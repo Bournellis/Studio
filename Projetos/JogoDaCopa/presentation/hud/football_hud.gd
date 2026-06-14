@@ -112,7 +112,8 @@ var last_kick_assist_strength: float = 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	_ensure_audio_buses()
+	if not RenderProfileScript.is_web_platform():
+		_ensure_audio_buses()
 	_load_broadcast_fonts()
 	_build_ui()
 	call_deferred("play_fade_from_black")
@@ -1088,9 +1089,9 @@ func _get_pause_volume(bus_name: StringName) -> float:
 func _set_pause_volume(bus_name: StringName, value: float) -> void:
 	var settings = _get_game_settings()
 	if settings != null:
-		settings.set_volume(bus_name, value)
+		settings.set_volume(bus_name, value, true, true)
 		return
-	_set_bus_volume(bus_name, value)
+	_set_bus_volume(bus_name, value, true)
 
 func _on_pause_fullscreen_toggled(enabled: bool) -> void:
 	var settings = _get_game_settings()
@@ -1130,6 +1131,8 @@ func _ensure_audio_bus(bus_name: StringName) -> void:
 	AudioServer.set_bus_send(bus_index, "Master")
 
 func _get_bus_volume_linear(bus_name: StringName) -> float:
+	if RenderProfileScript.is_web_platform():
+		return 1.0
 	_ensure_audio_bus(bus_name)
 	var bus_index := AudioServer.get_bus_index(str(bus_name))
 	if bus_index < 0:
@@ -1138,7 +1141,9 @@ func _get_bus_volume_linear(bus_name: StringName) -> float:
 		return 0.0
 	return clampf(db_to_linear(AudioServer.get_bus_volume_db(bus_index)), 0.0, 1.0)
 
-func _set_bus_volume(bus_name: StringName, value: float) -> void:
+func _set_bus_volume(bus_name: StringName, value: float, from_user_gesture: bool = false) -> void:
+	if RenderProfileScript.is_web_platform() and not from_user_gesture:
+		return
 	_ensure_audio_bus(bus_name)
 	var bus_index := AudioServer.get_bus_index(str(bus_name))
 	if bus_index < 0:

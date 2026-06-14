@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_06E_REMOTE_GATE_FAILED_ROLLED_BACK`
-- Baseline: `Copa Arena Futebol` Web publico voltou para Cloudflare Pages (`v1.0.3+ef9c5baa`, `web/v1-copa-arena-futebol-20260612-ef9c5baa`). Track 06E foi mergeada localmente em `main` (`ea15d5dd`) e validou `101/1735`, mas a publicacao `v1.1.0` falhou no gate remoto 5min (`pageErrors=2`, heap `+19.43%`) e foi revertida.
+- Marker: `JOGO_DA_COPA_TRACK_06F_WEB_AUDIO_STABILITY_REVIEW_READY`
+- Baseline: `Copa Arena Futebol` Web publico segue em Cloudflare Pages (`v1.0.3+ef9c5baa`, `web/v1-copa-arena-futebol-20260612-ef9c5baa`). A 06F esta validada localmente em branch: corrige page errors de audio Web e ajusta o gate para heap retido pos-GC; primeiro minuto e stability 5min locais PASS.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: investigar a falha remota da 06E antes de nova publicacao; nao rodar retest humano de `v1.1.0` ainda. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- Proximo passo: review Claude/Fabio da 06F antes de merge local e nova tentativa controlada de publicar `v1.1.0`. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## draxos-roguelike-cardgame
 
