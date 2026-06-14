@@ -95,13 +95,19 @@ var web_feedback_enabled: Dictionary = {}
 var web_audio_locked_logged: bool = false
 var web_audio_unlocked: bool = false
 var web_audio_next_unlock_poll_msec: int = 0
+var web_audio_stream_load_deferred_logged: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	var feedback_begin := PerfProbeScript.begin(self, "feedback.ready")
 	_ensure_audio_buses()
 	var stage_begin := PerfProbeScript.begin(self, "feedback.audio_load")
-	_load_real_audio_streams()
+	if RenderProfileScript.is_web_platform():
+		if not web_audio_stream_load_deferred_logged:
+			web_audio_stream_load_deferred_logged = true
+			PerfProbeScript.mark(self, "feedback.web_audio_streams_deferred", "waiting_for_browser_user_activation=true")
+	else:
+		_load_real_audio_streams()
 	PerfProbeScript.end(self, "feedback.audio_load", stage_begin, "streams=%d" % real_audio_streams.size())
 	stage_begin = PerfProbeScript.begin(self, "feedback.audio_pools")
 	_build_audio_pools()
@@ -740,6 +746,13 @@ func _load_real_audio_streams() -> void:
 			continue
 		real_audio_streams[audio_key] = stream
 
+func _ensure_real_audio_streams_loaded() -> void:
+	if real_audio_streams.size() >= REAL_AUDIO_PATHS.size():
+		return
+	var stage_begin := PerfProbeScript.begin(self, "feedback.audio_load_lazy")
+	_load_real_audio_streams()
+	PerfProbeScript.end(self, "feedback.audio_load_lazy", stage_begin, "streams=%d" % real_audio_streams.size())
+
 func _build_audio_pools() -> void:
 	if not RenderProfileScript.is_web_platform():
 		for index in range(SFX_POOL_SIZE):
@@ -766,6 +779,7 @@ func _build_ui_audio_pool() -> void:
 func _start_ambience_loop() -> void:
 	if RenderProfileScript.is_web_platform() and not _can_play_web_audio(true):
 		return
+	_ensure_real_audio_streams_loaded()
 	var stream := real_audio_streams.get(&"stadium_loop") as AudioStream
 	if stream == null:
 		return
@@ -828,6 +842,7 @@ func _play_sfx_ui(audio_key: StringName, volume_db: float = -10.0, pitch_scale: 
 	if not _can_play_web_audio(true):
 		PerfProbeScript.end(self, "feedback.play_sfx_ui", profile_begin, "played=false web_audio_locked=true")
 		return false
+	_ensure_real_audio_streams_loaded()
 	if ui_pool.is_empty():
 		_build_ui_audio_pool()
 	var stream := real_audio_streams.get(audio_key) as AudioStream
