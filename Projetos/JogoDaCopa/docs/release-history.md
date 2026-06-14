@@ -6,12 +6,30 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 
 | Data | Release | Canal | URL | Release root | Evidencia |
 | --- | --- | --- | --- | --- | --- |
+| 2026-06-14 | Visual Polish & Web-Safe Broadcast Pass (`v1.2.0+138cf4f7`) | Tentativa Cloudflare Pages com rollback | `https://copa-arena-futebol.pages.dev/` voltou para `v1.1.0+be453dc3` | Tentativa `web/v1-copa-arena-futebol-20260614-138cf4f7`; rollback `web/v1-copa-arena-futebol-20260613-be453dc3` | `docs/playtest-reports/track-07-data/07-publication-report.json` + `docs/playtest-reports/track-07-data/07-remote-menu-user-url-138cf4f7.json` + `docs/playtest-reports/track-07-data/07-remote-first-minute-138cf4f7.json` + `docs/playtest-reports/track-07-data/07-remote-stability-5min-138cf4f7.json` + `docs/playtest-reports/track-07-data/07-rollback-release-root-be453dc3.json` |
 | 2026-06-13 | Countdown Direto & Restart Confirmado V1 (`v1.1.0+be453dc3`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260613-be453dc3` | `docs/playtest-reports/track-06e-data/06e-publication-report.json` + `docs/playtest-reports/track-06g-data/06g-remote-first-minute-be453dc3.json` + `docs/playtest-reports/track-06g-data/06g-remote-stability-5min-be453dc3.json` + `docs/playtest-reports/track-06g-data/06g-remote-night-luma-gate-be453dc3.json` + `docs/playtest-reports/track-06g-data/06g-remote-menu-user-url-be453dc3.png` |
 | 2026-06-13 | Match Polish & Broadcast Identity V1 (`v1.1.0+22850c06`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260613-22850c06` | `docs/playtest-reports/track-06e-data/06e-publication-report.json` + `docs/playtest-reports/track-06f-data/06f-remote-first-minute-22850c06.json` + `docs/playtest-reports/track-06f-data/06f-remote-stability-5min-22850c06.json` + `docs/playtest-reports/track-06f-data/06f-remote-night-luma-gate-22850c06.json` + `docs/playtest-reports/track-06f-data/06f-remote-menu-footer-22850c06.png` |
 | 2026-06-12 | Sensory Feedback Re-Introduction V1 (`v1.0.3+ef9c5baa`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-ef9c5baa` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05b1-data/05b1-remote-first-minute-gate-final-ef9c5baa.json` + `docs/playtest-reports/track-05b1-data/05b1-remote-stability-5min-final-ef9c5baa-pass2.json` |
 | 2026-06-12 | First-Minute Smoothness V1 (`v1.0.2+ad82384b`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-ad82384b` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05b-data/05b-remote-first-minute-gate.json` + `docs/playtest-reports/track-05b-data/05b-remote-stability-5min.json` |
 | 2026-06-12 | Web Stability Hotfix V1 (`v1.0.1+a850045a`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-a850045a` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json` |
 | 2026-06-12 | Web Publication V1 | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-31e23ea3` | `docs/playtest-reports/track-05-data/05c-publication-report.json` |
+
+## 2026-06-14 - Visual Polish & Web-Safe Broadcast Pass V1 - Tentativa Bloqueada
+
+- Candidato local: `v1.2.0+138cf4f7`, mergeado em `main` como `138cf4f7`.
+- Release root tentado: `web/v1-copa-arena-futebol-20260614-138cf4f7`.
+- Preview do deploy tentado: `https://09258c86.copa-arena-futebol.pages.dev`.
+- Escopo: polish visual Web-safe em pitch, vidro, bloom, bola, sombras, HUD/scorebug, menu hero e momentos broadcast; sem mudanca de gameplay.
+- Hotfix de publicacao incluido: export Web passa a forcar fallback de Web Audio worklet no `index.js`, removendo o erro de `audioWorklet.addModule` visto na tentativa intermediaria.
+- `tools/validate.gd` final antes da publicacao: PASS com `103` testes / `1844` asserts.
+- Publicacao tentada por `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260614-138cf4f7 -ConfirmRemoteMutation`; projeto Cloudflare Pages `copa-arena-futebol`.
+- Sanity menu remoto: PASS na URL publica, release root conferiu, `pageErrors=0`, `consoleErrorCount=0`.
+- Gate remoto primeiro minuto: PASS, release root conferiu, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
+- Gate remoto estabilidade 5min: FAIL por heap JS/WASM retido `44,636,600 -> 49,252,604` bytes (`+10.34%`, limite `<10%`); pico `52,517,169` bytes (`+17.65%`).
+- Demais checks da estabilidade: PASS em `object_node_count 817 -> 817`, `object_count 3327 -> 3327`, caches estaveis, `render_video_mem_used 242,157,894 -> 242,157,894` e pior janela 5s `120.8 FPS`.
+- Erros remotos no gate que falhou: `pageErrors=0`, `consoleErrorCount=0`.
+- Rollback executado imediatamente para `web/v1-copa-arena-futebol-20260613-be453dc3`; URL estavel confirmada novamente com esse release root em `docs/playtest-reports/track-07-data/07-rollback-release-root-be453dc3.json`.
+- Resultado: `v1.2.0` nao esta publicado; URL publica segue em `v1.1.0+be453dc3`. Proximo passo tecnico e reduzir/investigar heap retido antes de republicar.
 
 ## 2026-06-13 - Countdown Direto & Restart Confirmado V1
 

@@ -5,7 +5,7 @@
 - Branch: `codex/jogodacopa/track07-visual-polish-web-safe`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track07-visual-polish-web-safe`
 - Base: `main` em `b2bb7a7a`
-- Status: `EM_ANDAMENTO`
+- Status: `BLOQUEADO_REMOTE_GATE_ROLLBACK_EXECUTADO`
 
 ## Objetivo
 
@@ -53,4 +53,4 @@ Executar uma track visual grande para melhorar leitura e impacto do `Copa Arena 
 
 ## Handoff
 
-Encerrar com merge local em `main`, publicacao Cloudflare Pages se gates locais passarem, docs atualizados, card movido para Done e `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+Track 07 foi mergeada localmente em `main` como `138cf4f7` e a publicacao tentativa `v1.2.0+138cf4f7` passou menu/primeiro minuto remotos, mas falhou estabilidade 5min por heap JS/WASM `+10.34%` contra limite `<10%`. Rollback remoto executado para `v1.1.0+be453dc3`; proximo passo e hotfix de heap antes de nova publicacao.

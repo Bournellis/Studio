@@ -1,6 +1,6 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-06-13`
+- Ultima atualizacao: `2026-06-14`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 - Regra de tamanho: maximo ~12 linhas por projeto. Historia de pacotes/validacoes vai para os arquivos de historico do projeto (`implementation/tracks/`, `docs/release-history.md`, Kanban Done), nunca para este snapshot.
@@ -15,10 +15,11 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_V1_1_0_PUBLICADO_RETEST_HUMANO_PENDENTE`
-- Baseline: `Copa Arena Futebol` Web publico atualizado em Cloudflare Pages para `v1.1.0+be453dc3` (`web/v1-copa-arena-futebol-20260613-be453dc3`) na URL `https://copa-arena-futebol.pages.dev/`; gates remotos 06G PASS.
+- Marker: `JOGO_DA_COPA_TRACK07_REMOTE_STABILITY_BLOCKED_ROLLBACK_DONE`
+- Baseline: `Copa Arena Futebol` Web publico permanece em `v1.1.0+be453dc3` (`web/v1-copa-arena-futebol-20260613-be453dc3`) na URL `https://copa-arena-futebol.pages.dev/`; rollback confirmado apos tentativa Track 07.
+- Candidato local: Track 07 `v1.2.0+138cf4f7` mergeado em `main`, menu remoto e primeiro minuto PASS, mas estabilidade 5min FAIL por heap JS/WASM `+10.34%` contra limite `<10%`.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: retest humano do Fabio + tester externo na URL publica `v1.1.0` (menu broadcast, ESC completo, countdown direto, restart confirmado, HUD scorebug, primeiro minuto). `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- Proximo passo: investigar/reduzir heap retido da Track 07 antes de nova publicacao; retest humano da `v1.2.0` fica bloqueado. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## draxos-roguelike-cardgame
 

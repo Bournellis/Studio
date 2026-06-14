@@ -13,7 +13,7 @@ Executar uma track visual grande sem pesar o Web: reduzir estouro de brilho/neon
 - Bola: shader dos paineis mais claro e sombra discreta de leitura no piso.
 - HUD: scorebug mais compacto, aviso de gol com punch, painel de resultado menor e pausa/restart com confirmacao mais clara.
 - Menu: preview 3D reposicionado como hero shot, avatar/bola mais presentes, luzes menos agressivas e versao publica promovida para `v1.2.0`.
-- Publicacao: `tools/publish_web.ps1` passa a escrever evidencias em `docs/playtest-reports/track-07-data/` e injeta `v1.2.0+<hash>`.
+- Publicacao: `tools/publish_web.ps1` passa a escrever evidencias em `docs/playtest-reports/track-07-data/`, injeta `v1.2.0+<hash>` e aplica patch de fallback Web Audio no export `index.js`.
 
 ## Gates Locais
 
@@ -31,6 +31,10 @@ Executar uma track visual grande sem pesar o Web: reduzir estouro de brilho/neon
 - Partida: `track07-kickoff-*`, `track07-goal-*`, `track07-play-*`, `track07-result-*`.
 - Pausa/restart: `track07-pause-controls-*`, `track07-pause-restart-confirm-*`.
 
-## Handoff Humano
+## Resultado De Publicacao
 
-Depois da publicacao, Fabio + tester externo devem retestar na URL publica: menu hero, leitura da bola, HUD scorebug, gol, resultado, menu ESC completo e primeiro minuto.
+- Candidato `v1.2.0+138cf4f7` mergeado localmente em `main`.
+- Menu remoto da URL publica: PASS, root `web/v1-copa-arena-futebol-20260614-138cf4f7`, `pageErrors=0`, `consoleErrorCount=0`.
+- Primeiro minuto remoto: PASS, root correto, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
+- Estabilidade remota 5min: FAIL por heap JS/WASM retido `+10.34%` contra limite `<10%`; contadores Godot, caches, memoria de video e FPS passaram.
+- Rollback executado para `v1.1.0+be453dc3`; a URL publica nao deve ser retestada como `v1.2.0` ate um hotfix de heap passar o gate remoto.

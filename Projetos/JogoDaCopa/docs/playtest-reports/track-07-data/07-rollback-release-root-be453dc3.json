@@ -1,0 +1,10 @@
+{
+  "schema_version": "jogodacopa_track07_rollback_check_v1",
+  "checked_at": "2026-06-14",
+  "stable_url": "https://copa-arena-futebol.pages.dev/",
+  "release_root": "web/v1-copa-arena-futebol-20260613-be453dc3",
+  "rollback_preview_url": "https://46eaf36e.copa-arena-futebol.pages.dev",
+  "rollback_command": "tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260613-be453dc3 -ConfirmRemoteMutation",
+  "check_method": "HTML fetch against stable URL with cache bust",
+  "result": "PASS"
+}
