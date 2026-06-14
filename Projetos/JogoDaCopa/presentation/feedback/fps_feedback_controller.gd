@@ -254,9 +254,9 @@ func play_football_goal(goal_position: Vector3, player_scored: bool) -> void:
 	if RenderProfileScript.is_web_platform():
 		if not _is_web_feedback_enabled(&"goal"):
 			return
-		_spawn_sphere(goal_position + Vector3.UP * 0.72, 0.48, color, 0.26, true)
+		_spawn_sphere(goal_position + Vector3.UP * 0.72, 0.54, color, 0.28, true)
 		_spawn_particle_burst(goal_position + Vector3.UP * 1.0, color, 12, 0.22, 1.4)
-		_spawn_light(goal_position + Vector3.UP * 1.1, color, 3.4, 5.0, 0.22)
+		_spawn_light(goal_position + Vector3.UP * 1.1, color, 2.7, 5.0, 0.24)
 		_play_sfx_ui(&"goal_jingle", -8.5, 1.0, BUS_UI)
 		_play_sfx_ui(&"crowd_goal", -13.5, 1.0, BUS_AMBIENCE)
 		ambience_goal_boost_remaining = 1.4
@@ -342,8 +342,8 @@ func play_round_end(player_won: bool) -> void:
 			PerfProbeScript.end(self, "feedback.round_end", profile_begin, "web_effects_disabled=true")
 			return
 		var color_web := HIT_COLOR if player_won else DAMAGE_COLOR
-		_spawn_sphere(Vector3(0.0, 2.8, 0.0), 0.42, color_web, 0.22, true)
-		_spawn_light(Vector3(0.0, 3.6, 0.0), color_web, 2.5, 8.0, 0.28)
+		_spawn_sphere(Vector3(0.0, 2.8, 0.0), 0.52, color_web, 0.28, true)
+		_spawn_light(Vector3(0.0, 3.6, 0.0), color_web, 2.2, 8.0, 0.3)
 		_play_sfx_ui(&"win_jingle" if player_won else &"loss_jingle", -9.0, 1.0, BUS_UI)
 		PerfProbeScript.end(self, "feedback.round_end", profile_begin, "web_effects_enabled=true")
 		return

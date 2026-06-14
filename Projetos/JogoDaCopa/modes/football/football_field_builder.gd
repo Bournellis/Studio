@@ -7,6 +7,9 @@ const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 const DEFAULT_PLAYER_KIT_COLOR := Color(0.98, 0.82, 0.06, 1.0)
 const DEFAULT_BOT_KIT_COLOR := Color(0.14, 0.42, 0.9, 1.0)
 const DEFAULT_COUNTRY_NAMES := ["BRASIL", "FRANCA", "ARGENTINA", "ALEMANHA", "ESPANHA", "INGLATERRA", "PORTUGAL", "JAPAO"]
+const GLASS_TINT := Color(0.22, 0.72, 0.92, 1.0)
+const GLASS_EMISSION_ENERGY: float = 0.34
+const FRAME_EMISSION_ENERGY: float = 1.2
 
 static var _net_material: ShaderMaterial
 static var _crowd_material: ShaderMaterial
@@ -72,7 +75,7 @@ static func set_crowd_excitement(parent: Node, crowd_excitement: float) -> void:
 	_apply_crowd_excitement_to_node(parent, clamped_excitement)
 
 static func _add_pitch(parent: Node3D, field_width: float, field_length: float, goal_half_width: float) -> void:
-	var pitch := _add_box(parent, "FootballPitch", Vector3(0.0, -0.5, 0.0), Vector3(field_width, 1.0, field_length), Color(0.07, 0.32, 0.15, 1.0), 0.96, 0.18)
+	var pitch := _add_box(parent, "FootballPitch", Vector3(0.0, -0.5, 0.0), Vector3(field_width, 1.0, field_length), Color(0.045, 0.28, 0.12, 1.0), 0.68, 0.22)
 	var pitch_mesh := pitch.get_node_or_null("FootballPitchMesh") as MeshInstance3D
 	if pitch_mesh != null:
 		pitch_mesh.material_override = _build_pitch_material(field_width, field_length, goal_half_width)
@@ -115,7 +118,7 @@ static func _add_goal_shell(parent: Node3D, prefix: String, goal_line: float, si
 	_add_goal_front_top_panel(parent, prefix, goal_line, goal_half_width, goal_height, goal_side_wall_x, side_wall_thickness, ceiling_height, wall_thickness)
 
 static func _add_goal_side_walls(parent: Node3D, prefix: String, goal_center_z: float, goal_side_wall_x: float, side_wall_thickness: float, goal_closed_depth: float, ceiling_height: float) -> void:
-	var side_wall_color := Color(0.34, 0.86, 1.0, 0.36)
+	var side_wall_color := Color(0.2, 0.64, 0.86, 0.3)
 	var side_size := Vector3(side_wall_thickness, ceiling_height, goal_closed_depth)
 	_add_box(parent, "%sGoalSideWallL" % prefix, Vector3(-goal_side_wall_x, ceiling_height * 0.5, goal_center_z), side_size, side_wall_color, 0.18, 0.72)
 	_add_box(parent, "%sGoalSideWallR" % prefix, Vector3(goal_side_wall_x, ceiling_height * 0.5, goal_center_z), side_size, side_wall_color, 0.18, 0.72)
@@ -125,24 +128,24 @@ static func _add_goal_roof(parent: Node3D, prefix: String, goal_center_z: float,
 	var roof_width := goal_half_width * 2.45
 	_add_glass_box(parent, "%sGoalRoofGlass" % prefix, Vector3(0.0, roof_y, goal_center_z), Vector3(roof_width, 0.34, goal_closed_depth), 0.34)
 	_add_visual_box(parent, "%sGoalRoofTint" % prefix, Vector3(0.0, roof_y + 0.025, goal_center_z), Vector3(goal_half_width * 2.05, 0.05, goal_closed_depth * 0.88), Color(0.22, 0.68, 0.92, 0.34))
-	_add_box(parent, "%sGoalRoofFrontFrame" % prefix, Vector3(0.0, roof_y + 0.08, goal_line + side * 0.08), Vector3(roof_width + 0.22, 0.24, 0.22), Color(0.9, 0.98, 1.0, 1.0), 0.72, 0.0, 2.4, 0.24, 0.12, 0.45, 0.55)
-	_add_box(parent, "%sGoalRoofBackFrame" % prefix, Vector3(0.0, roof_y + 0.08, goal_line + side * goal_closed_depth), Vector3(roof_width + 0.22, 0.24, 0.22), Color(0.9, 0.98, 1.0, 1.0), 0.72, 0.0, 2.4, 0.24, 0.12, 0.45, 0.55)
-	_add_box(parent, "%sGoalRoofLeftRib" % prefix, Vector3(-roof_width * 0.5, roof_y + 0.08, goal_center_z), Vector3(0.22, 0.24, goal_closed_depth), Color(0.9, 0.98, 1.0, 1.0), 0.72, 0.0, 2.2, 0.24, 0.12, 0.42, 0.5)
-	_add_box(parent, "%sGoalRoofRightRib" % prefix, Vector3(roof_width * 0.5, roof_y + 0.08, goal_center_z), Vector3(0.22, 0.24, goal_closed_depth), Color(0.9, 0.98, 1.0, 1.0), 0.72, 0.0, 2.2, 0.24, 0.12, 0.42, 0.5)
+	_add_box(parent, "%sGoalRoofFrontFrame" % prefix, Vector3(0.0, roof_y + 0.08, goal_line + side * 0.08), Vector3(roof_width + 0.22, 0.24, 0.22), Color(0.78, 0.94, 1.0, 1.0), 0.62, 0.0, 1.35, 0.3, 0.08, 0.36, 0.42)
+	_add_box(parent, "%sGoalRoofBackFrame" % prefix, Vector3(0.0, roof_y + 0.08, goal_line + side * goal_closed_depth), Vector3(roof_width + 0.22, 0.24, 0.22), Color(0.78, 0.94, 1.0, 1.0), 0.62, 0.0, 1.35, 0.3, 0.08, 0.36, 0.42)
+	_add_box(parent, "%sGoalRoofLeftRib" % prefix, Vector3(-roof_width * 0.5, roof_y + 0.08, goal_center_z), Vector3(0.22, 0.24, goal_closed_depth), Color(0.78, 0.94, 1.0, 1.0), 0.62, 0.0, 1.22, 0.3, 0.08, 0.34, 0.4)
+	_add_box(parent, "%sGoalRoofRightRib" % prefix, Vector3(roof_width * 0.5, roof_y + 0.08, goal_center_z), Vector3(0.22, 0.24, goal_closed_depth), Color(0.78, 0.94, 1.0, 1.0), 0.62, 0.0, 1.22, 0.3, 0.08, 0.34, 0.4)
 
 static func _add_goal_frame(parent: Node3D, prefix: String, goal_z: float, side: float, goal_half_width: float, goal_height: float, goal_closed_depth: float) -> void:
-	var post_color := Color(0.94, 0.98, 1.0, 1.0)
+	var post_color := Color(0.84, 0.96, 1.0, 1.0)
 	var post_size := Vector3(0.28, goal_height, 0.28)
 	var post_center_y := goal_height * 0.5
 	var back_z := goal_z + side * (goal_closed_depth - 0.22)
-	_add_box(parent, "%sGoalPostL" % prefix, Vector3(-goal_half_width, post_center_y, goal_z), post_size, post_color, 0.72, 0.0, 2.25, 0.22, 0.1, 0.4, 0.52)
-	_add_box(parent, "%sGoalPostR" % prefix, Vector3(goal_half_width, post_center_y, goal_z), post_size, post_color, 0.72, 0.0, 2.25, 0.22, 0.1, 0.4, 0.52)
-	_add_box(parent, "%sGoalCrossbar" % prefix, Vector3(0.0, goal_height, goal_z), Vector3(goal_half_width * 2.0 + 0.28, 0.28, 0.28), post_color, 0.72, 0.0, 2.35, 0.22, 0.1, 0.4, 0.52)
-	_add_box(parent, "%sGoalBackPostL" % prefix, Vector3(-goal_half_width, post_center_y, back_z), post_size, post_color, 0.72, 0.0, 2.05, 0.24, 0.08, 0.35, 0.48)
-	_add_box(parent, "%sGoalBackPostR" % prefix, Vector3(goal_half_width, post_center_y, back_z), post_size, post_color, 0.72, 0.0, 2.05, 0.24, 0.08, 0.35, 0.48)
-	_add_box(parent, "%sGoalBackTopBar" % prefix, Vector3(0.0, goal_height, back_z), Vector3(goal_half_width * 2.0 + 0.28, 0.28, 0.28), post_color, 0.72, 0.0, 2.05, 0.24, 0.08, 0.35, 0.48)
-	_add_box(parent, "%sGoalTopRailL" % prefix, Vector3(-goal_half_width, goal_height, goal_z + side * goal_closed_depth * 0.5), Vector3(0.24, 0.24, goal_closed_depth), post_color, 0.72, 0.0, 2.0, 0.24, 0.08, 0.35, 0.48)
-	_add_box(parent, "%sGoalTopRailR" % prefix, Vector3(goal_half_width, goal_height, goal_z + side * goal_closed_depth * 0.5), Vector3(0.24, 0.24, goal_closed_depth), post_color, 0.72, 0.0, 2.0, 0.24, 0.08, 0.35, 0.48)
+	_add_box(parent, "%sGoalPostL" % prefix, Vector3(-goal_half_width, post_center_y, goal_z), post_size, post_color, 0.72, 0.0, 1.38, 0.26, 0.08, 0.34, 0.42)
+	_add_box(parent, "%sGoalPostR" % prefix, Vector3(goal_half_width, post_center_y, goal_z), post_size, post_color, 0.72, 0.0, 1.38, 0.26, 0.08, 0.34, 0.42)
+	_add_box(parent, "%sGoalCrossbar" % prefix, Vector3(0.0, goal_height, goal_z), Vector3(goal_half_width * 2.0 + 0.28, 0.28, 0.28), post_color, 0.72, 0.0, 1.42, 0.26, 0.08, 0.34, 0.42)
+	_add_box(parent, "%sGoalBackPostL" % prefix, Vector3(-goal_half_width, post_center_y, back_z), post_size, post_color, 0.72, 0.0, 1.2, 0.28, 0.06, 0.3, 0.38)
+	_add_box(parent, "%sGoalBackPostR" % prefix, Vector3(goal_half_width, post_center_y, back_z), post_size, post_color, 0.72, 0.0, 1.2, 0.28, 0.06, 0.3, 0.38)
+	_add_box(parent, "%sGoalBackTopBar" % prefix, Vector3(0.0, goal_height, back_z), Vector3(goal_half_width * 2.0 + 0.28, 0.28, 0.28), post_color, 0.72, 0.0, 1.2, 0.28, 0.06, 0.3, 0.38)
+	_add_box(parent, "%sGoalTopRailL" % prefix, Vector3(-goal_half_width, goal_height, goal_z + side * goal_closed_depth * 0.5), Vector3(0.24, 0.24, goal_closed_depth), post_color, 0.72, 0.0, 1.12, 0.28, 0.06, 0.3, 0.38)
+	_add_box(parent, "%sGoalTopRailR" % prefix, Vector3(goal_half_width, goal_height, goal_z + side * goal_closed_depth * 0.5), Vector3(0.24, 0.24, goal_closed_depth), post_color, 0.72, 0.0, 1.12, 0.28, 0.06, 0.3, 0.38)
 	_add_net_panel(parent, "%sNetTint" % prefix, Vector3(0.0, goal_height * 0.5, goal_z + side * 0.62), Vector3(goal_half_width * 2.0, goal_height * 0.92, 0.12))
 
 static func _add_goal_front_top_panel(parent: Node3D, prefix: String, goal_line: float, goal_half_width: float, goal_height: float, goal_side_wall_x: float, side_wall_thickness: float, ceiling_height: float, wall_thickness: float) -> void:
@@ -151,11 +154,11 @@ static func _add_goal_front_top_panel(parent: Node3D, prefix: String, goal_line:
 	var panel_center_y := bottom_y + panel_height * 0.5
 	var panel_width := maxf(goal_half_width * 2.0, goal_side_wall_x * 2.0 - side_wall_thickness)
 	_add_glass_box(parent, "%sGoalFrontTopGlass" % prefix, Vector3(0.0, panel_center_y, goal_line), Vector3(panel_width, panel_height, wall_thickness), 0.38)
-	var frame_color := Color(0.9, 0.98, 1.0, 1.0)
-	_add_neon_box(parent, "%sGoalFrontTopFrame" % prefix, Vector3(0.0, ceiling_height + 0.08, goal_line), Vector3(panel_width + 0.22, 0.22, 0.24), frame_color, Vector3.ZERO, 2.25)
-	_add_neon_box(parent, "%sGoalFrontBottomFrame" % prefix, Vector3(0.0, bottom_y, goal_line), Vector3(panel_width + 0.22, 0.18, 0.22), frame_color, Vector3.ZERO, 1.85)
-	_add_neon_box(parent, "%sGoalFrontLeftFrame" % prefix, Vector3(-panel_width * 0.5, panel_center_y, goal_line), Vector3(0.2, panel_height, 0.22), frame_color, Vector3.ZERO, 1.9)
-	_add_neon_box(parent, "%sGoalFrontRightFrame" % prefix, Vector3(panel_width * 0.5, panel_center_y, goal_line), Vector3(0.2, panel_height, 0.22), frame_color, Vector3.ZERO, 1.9)
+	var frame_color := Color(0.78, 0.94, 1.0, 1.0)
+	_add_neon_box(parent, "%sGoalFrontTopFrame" % prefix, Vector3(0.0, ceiling_height + 0.08, goal_line), Vector3(panel_width + 0.22, 0.22, 0.24), frame_color, Vector3.ZERO, 1.28)
+	_add_neon_box(parent, "%sGoalFrontBottomFrame" % prefix, Vector3(0.0, bottom_y, goal_line), Vector3(panel_width + 0.22, 0.18, 0.22), frame_color, Vector3.ZERO, 1.05)
+	_add_neon_box(parent, "%sGoalFrontLeftFrame" % prefix, Vector3(-panel_width * 0.5, panel_center_y, goal_line), Vector3(0.2, panel_height, 0.22), frame_color, Vector3.ZERO, 1.08)
+	_add_neon_box(parent, "%sGoalFrontRightFrame" % prefix, Vector3(panel_width * 0.5, panel_center_y, goal_line), Vector3(0.2, panel_height, 0.22), frame_color, Vector3.ZERO, 1.08)
 
 static func _add_arena_glass(parent: Node3D, field_width: float, field_length: float, field_half_width: float, wall_height: float, ceiling_height: float, wall_thickness: float, goal_side_wall_x: float, goal_closed_depth: float, goal_line_north: float, goal_line_south: float) -> void:
 	var total_length := field_length + goal_closed_depth * 2.0
@@ -172,32 +175,32 @@ static func _add_arena_glass(parent: Node3D, field_width: float, field_length: f
 	_add_glass_frames(parent, field_width, field_half_width, total_length, glass_height, ceiling_height, goal_line_north, goal_line_south, end_wall_center_x, end_wall_span, wall_thickness)
 
 static func _add_glass_frames(parent: Node3D, field_width: float, field_half_width: float, total_length: float, glass_height: float, ceiling_height: float, goal_line_north: float, goal_line_south: float, end_wall_center_x: float, end_wall_span: float, wall_thickness: float) -> void:
-	var frame_color := Color(0.78, 0.96, 1.0, 0.96)
-	_add_neon_box(parent, "WestGlassFrameTop", Vector3(-field_half_width, glass_height + 0.08, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, 2.15)
-	_add_neon_box(parent, "EastGlassFrameTop", Vector3(field_half_width, glass_height + 0.08, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, 2.15)
-	_add_neon_box(parent, "WestGlassFrameMid", Vector3(-field_half_width, glass_height * 0.52, 0.0), Vector3(0.18, 0.16, total_length), Color(0.62, 0.88, 1.0, 0.72), Vector3.ZERO, 1.55)
-	_add_neon_box(parent, "EastGlassFrameMid", Vector3(field_half_width, glass_height * 0.52, 0.0), Vector3(0.18, 0.16, total_length), Color(0.62, 0.88, 1.0, 0.72), Vector3.ZERO, 1.55)
+	var frame_color := Color(0.62, 0.86, 0.96, 0.88)
+	_add_neon_box(parent, "WestGlassFrameTop", Vector3(-field_half_width, glass_height + 0.08, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, FRAME_EMISSION_ENERGY)
+	_add_neon_box(parent, "EastGlassFrameTop", Vector3(field_half_width, glass_height + 0.08, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, FRAME_EMISSION_ENERGY)
+	_add_neon_box(parent, "WestGlassFrameMid", Vector3(-field_half_width, glass_height * 0.52, 0.0), Vector3(0.18, 0.16, total_length), Color(0.42, 0.7, 0.86, 0.56), Vector3.ZERO, 0.78)
+	_add_neon_box(parent, "EastGlassFrameMid", Vector3(field_half_width, glass_height * 0.52, 0.0), Vector3(0.18, 0.16, total_length), Color(0.42, 0.7, 0.86, 0.56), Vector3.ZERO, 0.78)
 	for index in range(8):
 		var z := -total_length * 0.5 + total_length * float(index) / 7.0
-		_add_neon_box(parent, "WestGlassFramePost%d" % index, Vector3(-field_half_width, glass_height * 0.5, z), Vector3(0.24, glass_height + 0.25, 0.2), frame_color, Vector3.ZERO, 2.0)
-		_add_neon_box(parent, "EastGlassFramePost%d" % index, Vector3(field_half_width, glass_height * 0.5, z), Vector3(0.24, glass_height + 0.25, 0.2), frame_color, Vector3.ZERO, 2.0)
+		_add_neon_box(parent, "WestGlassFramePost%d" % index, Vector3(-field_half_width, glass_height * 0.5, z), Vector3(0.24, glass_height + 0.25, 0.2), frame_color, Vector3.ZERO, 1.05)
+		_add_neon_box(parent, "EastGlassFramePost%d" % index, Vector3(field_half_width, glass_height * 0.5, z), Vector3(0.24, glass_height + 0.25, 0.2), frame_color, Vector3.ZERO, 1.05)
 	for side_name in ["North", "South"]:
 		var z_line := goal_line_north if side_name == "North" else goal_line_south
-		_add_neon_box(parent, "%sGlassFrameTopLeft" % side_name, Vector3(-end_wall_center_x, glass_height + 0.08, z_line), Vector3(end_wall_span, 0.22, 0.24), frame_color, Vector3.ZERO, 2.0)
-		_add_neon_box(parent, "%sGlassFrameTopRight" % side_name, Vector3(end_wall_center_x, glass_height + 0.08, z_line), Vector3(end_wall_span, 0.22, 0.24), frame_color, Vector3.ZERO, 2.0)
-		_add_neon_box(parent, "%sGlassFrameMidLeft" % side_name, Vector3(-end_wall_center_x, glass_height * 0.52, z_line), Vector3(end_wall_span, 0.16, 0.18), Color(0.62, 0.88, 1.0, 0.72), Vector3.ZERO, 1.5)
-		_add_neon_box(parent, "%sGlassFrameMidRight" % side_name, Vector3(end_wall_center_x, glass_height * 0.52, z_line), Vector3(end_wall_span, 0.16, 0.18), Color(0.62, 0.88, 1.0, 0.72), Vector3.ZERO, 1.5)
-	_add_neon_box(parent, "ArenaCornerPostNW", Vector3(-field_half_width, glass_height * 0.5, goal_line_north), Vector3(0.34, glass_height + 0.35, 0.34), frame_color, Vector3.ZERO, 2.2)
-	_add_neon_box(parent, "ArenaCornerPostNE", Vector3(field_half_width, glass_height * 0.5, goal_line_north), Vector3(0.34, glass_height + 0.35, 0.34), frame_color, Vector3.ZERO, 2.2)
-	_add_neon_box(parent, "ArenaCornerPostSW", Vector3(-field_half_width, glass_height * 0.5, goal_line_south), Vector3(0.34, glass_height + 0.35, 0.34), frame_color, Vector3.ZERO, 2.2)
-	_add_neon_box(parent, "ArenaCornerPostSE", Vector3(field_half_width, glass_height * 0.5, goal_line_south), Vector3(0.34, glass_height + 0.35, 0.34), frame_color, Vector3.ZERO, 2.2)
-	_add_neon_box(parent, "ArenaRoofFrameNorth", Vector3(0.0, ceiling_height + 0.18, -total_length * 0.5), Vector3(field_width, 0.22, 0.24), frame_color, Vector3.ZERO, 2.25)
-	_add_neon_box(parent, "ArenaRoofFrameSouth", Vector3(0.0, ceiling_height + 0.18, total_length * 0.5), Vector3(field_width, 0.22, 0.24), frame_color, Vector3.ZERO, 2.25)
-	_add_neon_box(parent, "ArenaRoofFrameWest", Vector3(-field_half_width, ceiling_height + 0.18, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, 2.25)
-	_add_neon_box(parent, "ArenaRoofFrameEast", Vector3(field_half_width, ceiling_height + 0.18, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, 2.25)
+		_add_neon_box(parent, "%sGlassFrameTopLeft" % side_name, Vector3(-end_wall_center_x, glass_height + 0.08, z_line), Vector3(end_wall_span, 0.22, 0.24), frame_color, Vector3.ZERO, 1.02)
+		_add_neon_box(parent, "%sGlassFrameTopRight" % side_name, Vector3(end_wall_center_x, glass_height + 0.08, z_line), Vector3(end_wall_span, 0.22, 0.24), frame_color, Vector3.ZERO, 1.02)
+		_add_neon_box(parent, "%sGlassFrameMidLeft" % side_name, Vector3(-end_wall_center_x, glass_height * 0.52, z_line), Vector3(end_wall_span, 0.16, 0.18), Color(0.42, 0.7, 0.86, 0.56), Vector3.ZERO, 0.76)
+		_add_neon_box(parent, "%sGlassFrameMidRight" % side_name, Vector3(end_wall_center_x, glass_height * 0.52, z_line), Vector3(end_wall_span, 0.16, 0.18), Color(0.42, 0.7, 0.86, 0.56), Vector3.ZERO, 0.76)
+	_add_neon_box(parent, "ArenaCornerPostNW", Vector3(-field_half_width, glass_height * 0.5, goal_line_north), Vector3(0.34, glass_height + 0.35, 0.34), frame_color, Vector3.ZERO, 1.16)
+	_add_neon_box(parent, "ArenaCornerPostNE", Vector3(field_half_width, glass_height * 0.5, goal_line_north), Vector3(0.34, glass_height + 0.35, 0.34), frame_color, Vector3.ZERO, 1.16)
+	_add_neon_box(parent, "ArenaCornerPostSW", Vector3(-field_half_width, glass_height * 0.5, goal_line_south), Vector3(0.34, glass_height + 0.35, 0.34), frame_color, Vector3.ZERO, 1.16)
+	_add_neon_box(parent, "ArenaCornerPostSE", Vector3(field_half_width, glass_height * 0.5, goal_line_south), Vector3(0.34, glass_height + 0.35, 0.34), frame_color, Vector3.ZERO, 1.16)
+	_add_neon_box(parent, "ArenaRoofFrameNorth", Vector3(0.0, ceiling_height + 0.18, -total_length * 0.5), Vector3(field_width, 0.22, 0.24), frame_color, Vector3.ZERO, 1.12)
+	_add_neon_box(parent, "ArenaRoofFrameSouth", Vector3(0.0, ceiling_height + 0.18, total_length * 0.5), Vector3(field_width, 0.22, 0.24), frame_color, Vector3.ZERO, 1.12)
+	_add_neon_box(parent, "ArenaRoofFrameWest", Vector3(-field_half_width, ceiling_height + 0.18, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, 1.12)
+	_add_neon_box(parent, "ArenaRoofFrameEast", Vector3(field_half_width, ceiling_height + 0.18, 0.0), Vector3(0.24, 0.22, total_length), frame_color, Vector3.ZERO, 1.12)
 	for index in range(5):
 		var x := -field_half_width + field_width * (float(index) + 1.0) / 6.0
-		_add_neon_box(parent, "ArenaRoofRib%d" % index, Vector3(x, ceiling_height + 0.16, 0.0), Vector3(0.16, 0.18, total_length), Color(0.62, 0.88, 1.0, 0.62), Vector3.ZERO, 1.45)
+		_add_neon_box(parent, "ArenaRoofRib%d" % index, Vector3(x, ceiling_height + 0.16, 0.0), Vector3(0.16, 0.18, total_length), Color(0.42, 0.7, 0.86, 0.48), Vector3.ZERO, 0.72)
 
 static func _add_stadium_shell(parent: Node3D, field_width: float, field_length: float, field_half_width: float, goal_closed_depth: float, goal_line_north: float, goal_line_south: float, player_kit_color: Color, bot_kit_color: Color, country_names: Array[String], config: Dictionary) -> void:
 	var stage_begin := PerfProbeScript.begin(parent, "field_builder.stands")
@@ -525,8 +528,8 @@ static func _add_box(
 		clearcoat_strength
 	)
 
-static func _add_glass_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, alpha: float = 0.34) -> StaticBody3D:
-	var glass_color := Color(0.34, 0.86, 1.0, alpha)
+static func _add_glass_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, alpha: float = 0.3) -> StaticBody3D:
+	var glass_color := Color(GLASS_TINT.r, GLASS_TINT.g, GLASS_TINT.b, alpha)
 	var body := RuntimePrimitiveFactoryScript.add_static_box(
 		parent,
 		node_name,
@@ -534,8 +537,8 @@ static func _add_glass_box(parent: Node3D, node_name: String, node_position: Vec
 		node_size,
 		glass_color,
 		Vector3.ZERO,
-		0.68,
-		0.1,
+		GLASS_EMISSION_ENERGY,
+		0.18,
 		"%sMesh" % node_name,
 		"%sCollision" % node_name,
 		0.08,
@@ -546,7 +549,7 @@ static func _add_glass_box(parent: Node3D, node_name: String, node_position: Vec
 	)
 	var mesh := body.get_node_or_null("%sMesh" % node_name) as MeshInstance3D
 	if mesh != null:
-		mesh.material_override = RuntimePrimitiveFactoryScript.build_glass_material(glass_color, 0.68, 0.1)
+		mesh.material_override = RuntimePrimitiveFactoryScript.build_glass_material(glass_color, GLASS_EMISSION_ENERGY, 0.18)
 	return body
 
 static func _add_visual_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, color: Color, node_rotation_degrees: Vector3 = Vector3.ZERO) -> MeshInstance3D:
@@ -557,8 +560,8 @@ static func _add_decor_box(parent: Node3D, node_name: String, node_position: Vec
 	mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	return mesh
 
-static func _add_neon_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, color: Color, node_rotation_degrees: Vector3 = Vector3.ZERO, emission_energy: float = 2.0, roughness: float = 0.24) -> MeshInstance3D:
-	return RuntimePrimitiveFactoryScript.add_visual_box(parent, node_name, node_position, node_size, color, node_rotation_degrees, emission_energy, roughness, 0.08, 0.42, 0.38, RenderProfileScript.ROLE_NEON)
+static func _add_neon_box(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3, color: Color, node_rotation_degrees: Vector3 = Vector3.ZERO, emission_energy: float = FRAME_EMISSION_ENERGY, roughness: float = 0.32) -> MeshInstance3D:
+	return RuntimePrimitiveFactoryScript.add_visual_box(parent, node_name, node_position, node_size, color, node_rotation_degrees, emission_energy, roughness, 0.04, 0.28, 0.28, RenderProfileScript.ROLE_NEON)
 
 static func _add_net_panel(parent: Node3D, node_name: String, node_position: Vector3, node_size: Vector3) -> MeshInstance3D:
 	var mesh := _add_visual_box(parent, node_name, node_position, node_size, Color(0.22, 0.68, 0.92, 0.58))
@@ -657,8 +660,8 @@ render_mode diffuse_burley, specular_schlick_ggx;
 
 uniform vec2 pitch_size = vec2(38.0, 54.0);
 uniform float goal_half_width = 4.32;
-uniform vec3 grass_dark = vec3(0.045, 0.24, 0.105);
-uniform vec3 grass_light = vec3(0.075, 0.36, 0.16);
+uniform vec3 grass_dark = vec3(0.03, 0.22, 0.105);
+uniform vec3 grass_light = vec3(0.055, 0.34, 0.16);
 uniform vec3 line_color = vec3(0.92, 0.98, 0.86);
 uniform vec3 gold_color = vec3(1.0, 0.82, 0.18);
 uniform float render_emission_scale = 1.0;
@@ -684,7 +687,7 @@ void fragment() {
 	vec2 p = vec2(local_pos.x, local_pos.z);
 	float stripe_width = pitch_size.y / 9.0;
 	float stripe = step(0.5, fract((p.y + pitch_size.y * 0.5) / stripe_width));
-	float mowing_noise = sin(p.x * 3.7 + p.y * 0.41) * sin(p.y * 2.9) * 0.025;
+	float mowing_noise = sin(p.x * 3.7 + p.y * 0.41) * sin(p.y * 2.9) * 0.018;
 	vec3 grass = mix(grass_dark, grass_light, stripe) + vec3(mowing_noise);
 
 	float half_width = pitch_size.x * 0.5;
@@ -705,10 +708,12 @@ void fragment() {
 	spot_mask = max(spot_mask, 1.0 - smoothstep(0.12, 0.2, length(p - vec2(0.0, half_length - 4.2))));
 	float mouth_mask = max(stroke(p.y + half_length - 0.45, 0.16), stroke(p.y - half_length + 0.45, 0.16)) * (1.0 - smoothstep(goal_half_width, goal_half_width + 0.08, abs(p.x)));
 
+	float center_vignette = smoothstep(0.15, 0.95, length(vec2(p.x / half_width, p.y / half_length)));
+	grass *= mix(1.05, 0.82, center_vignette);
 	vec3 color = mix(grass, line_color, clamp(line_mask, 0.0, 1.0));
 	color = mix(color, gold_color, clamp(max(spot_mask, mouth_mask), 0.0, 1.0));
 	ALBEDO = color;
-	EMISSION = color * (0.04 + line_mask * 0.08 + mouth_mask * 0.12) * render_emission_scale;
+	EMISSION = color * (0.025 + line_mask * 0.055 + mouth_mask * 0.095) * render_emission_scale;
 	ROUGHNESS = 0.88;
 }
 """

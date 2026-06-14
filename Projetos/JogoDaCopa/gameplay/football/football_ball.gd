@@ -24,6 +24,7 @@ var dribble_control_count: int = 0
 var reset_count: int = 0
 var ball_mesh_instance: MeshInstance3D
 var toon_outline_mesh_instance: MeshInstance3D
+var readability_shadow_instance: MeshInstance3D
 var trail_particles: GPUParticles3D
 var fireball_particles: GPUParticles3D
 var squash_timer: float = 0.0
@@ -207,6 +208,7 @@ func _ensure_ball_nodes() -> void:
 		mesh_instance.material_override = _build_ball_material()
 		add_child(mesh_instance)
 	ball_mesh_instance = get_node_or_null("BallMesh") as MeshInstance3D
+	_ensure_readability_shadow()
 	_sync_toon_outline_node()
 
 	if get_node_or_null("BallSpeedTrail") == null:
@@ -287,6 +289,7 @@ func _update_visual_asset(delta: float) -> void:
 	_update_fireball_material()
 	if ball_mesh_instance == null:
 		return
+	_update_readability_shadow()
 	squash_timer = maxf(0.0, squash_timer - delta)
 	var squash_strength := clampf(squash_timer / 0.18, 0.0, 1.0) * clampf(linear_velocity.length() / 24.0, 0.0, 1.0)
 	ball_mesh_instance.scale = Vector3(1.0 + squash_strength * 0.08, 1.0 - squash_strength * 0.13, 1.0 + squash_strength * 0.08)
@@ -314,6 +317,39 @@ func _sync_toon_outline_node() -> void:
 		toon_outline_mesh_instance.visible = toon_render_enabled
 		toon_outline_mesh_instance.mesh = ball_mesh_instance.mesh
 		toon_outline_mesh_instance.material_override = _get_toon_outline_material()
+
+func _ensure_readability_shadow() -> void:
+	readability_shadow_instance = get_node_or_null("BallReadabilityShadow") as MeshInstance3D
+	if readability_shadow_instance != null:
+		return
+	readability_shadow_instance = MeshInstance3D.new()
+	readability_shadow_instance.name = "BallReadabilityShadow"
+	readability_shadow_instance.top_level = true
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = ball_radius * 0.95
+	mesh.bottom_radius = ball_radius * 1.18
+	mesh.height = 0.018
+	mesh.radial_segments = 32
+	readability_shadow_instance.mesh = mesh
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color(0.0, 0.015, 0.02, 0.48)
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	readability_shadow_instance.material_override = material
+	readability_shadow_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(readability_shadow_instance)
+	_update_readability_shadow()
+
+func _update_readability_shadow() -> void:
+	if readability_shadow_instance == null:
+		return
+	var height_factor := clampf((global_position.y - 0.08) / 3.2, 0.0, 1.0)
+	var shadow_scale := lerpf(1.0, 1.55, height_factor)
+	readability_shadow_instance.global_position = Vector3(global_position.x, 0.035, global_position.z)
+	readability_shadow_instance.global_rotation = Vector3.ZERO
+	readability_shadow_instance.scale = Vector3(shadow_scale, 1.0, shadow_scale)
+	readability_shadow_instance.visible = is_inside_tree()
 
 func _get_toon_outline_material() -> StandardMaterial3D:
 	if toon_outline_material != null:

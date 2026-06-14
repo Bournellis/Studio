@@ -13,7 +13,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $PagesAssetLimitBytes = 25 * 1024 * 1024
-$VisibleVersion = "v1.1.0"
+$VisibleVersion = "v1.2.0"
 
 function Write-TextUtf8NoBom {
     param([string]$Path, [string]$Text)
@@ -466,9 +466,9 @@ try {
     }
 }
 
-$evidenceDir = Join-Path $ProjectDir "docs\playtest-reports\track-06e-data"
+$evidenceDir = Join-Path $ProjectDir "docs\playtest-reports\track-07-data"
 New-Item -ItemType Directory -Force -Path $evidenceDir | Out-Null
-$evidenceName = if ($Mode -eq "FullPublish") { "06e-publication-report.json" } else { "06e-package-artifacts.json" }
+$evidenceName = if ($Mode -eq "FullPublish") { "07-publication-report.json" } else { "07-package-artifacts.json" }
 $evidencePath = Join-Path $evidenceDir $evidenceName
 
 if ($Mode -eq "Package") {
@@ -487,7 +487,7 @@ $deployResult = Deploy-Pages `
     -Name $ProjectName `
     -DeployBranch $Branch `
     -CommitHash $fullSha `
-    -Message "JogoDaCopa Track 06E Release v1.1.0 $ReleaseRoot"
+    -Message "JogoDaCopa Track 07 Visual Polish v1.2.0 $ReleaseRoot"
 
 $publication = [ordered]@{
     schema_version = "jogodacopa_web_publication_v1"

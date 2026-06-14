@@ -243,13 +243,13 @@ func show_goal(player_scored: bool, goal_value: int = 1, double_goal: bool = fal
 	last_event = &"double_goal" if double_goal else &"goal"
 	last_player_scored = player_scored
 	goal_count += 1
-	goal_feedback_time = 1.1
-	scorebug_pulse_time = 1.1
+	goal_feedback_time = 1.25
+	scorebug_pulse_time = 1.0
 	var scorer := "PLAYER" if player_scored else "BOT"
-	var message := "VALE 2! GOOOOL %s" % scorer if double_goal else ("GOOOOL %s" % scorer if player_scored else "GOL DO BOT")
+	var message := "VALE 2! GOOOOL %s" % scorer if double_goal else ("GOOOOL! %s" % scorer if player_scored else "GOL DO BOT")
 	if goal_value > 1 and not double_goal:
 		message = "%dx! %s" % [goal_value, message]
-	_set_event_message(message, 1.1)
+	_set_event_message(message, 1.25)
 
 func show_match_end(player_won: bool, result_snapshot: Dictionary = {}) -> void:
 	last_event = &"match_end"
@@ -437,16 +437,16 @@ func _build_ui() -> void:
 	score_panel = PanelContainer.new()
 	score_panel.name = "ScorePanel"
 	_ignore_mouse(score_panel)
-	score_panel.position = Vector2(18.0, 18.0)
-	score_panel.custom_minimum_size = Vector2(500.0, 186.0)
-	score_panel.pivot_offset = Vector2(250.0, 18.0)
-	score_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.006, 0.026, 0.035, 0.9), Color(1.0, 0.78, 0.16, 0.95), 2))
+	score_panel.position = Vector2(14.0, 14.0)
+	score_panel.custom_minimum_size = Vector2(408.0, 150.0)
+	score_panel.pivot_offset = Vector2(204.0, 14.0)
+	score_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.006, 0.026, 0.035, 0.82), Color(1.0, 0.78, 0.16, 0.88), 2))
 	root.add_child(score_panel)
 
 	var box := VBoxContainer.new()
 	box.name = "ScoreBox"
 	_ignore_mouse(box)
-	box.add_theme_constant_override("separation", 4)
+	box.add_theme_constant_override("separation", 2)
 	score_panel.add_child(box)
 
 	status_label = Label.new()
@@ -454,19 +454,19 @@ func _build_ui() -> void:
 	status_label.text = "FUTEBOL 1x1"
 	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status_label.add_theme_color_override("font_color", Color(0.78, 0.94, 1.0, 1.0))
-	_apply_broadcast_font(status_label, 12, true)
+	_apply_broadcast_font(status_label, 10, true)
 	_ignore_mouse(status_label)
 	box.add_child(status_label)
 
 	var score_row := HBoxContainer.new()
 	score_row.name = "BroadcastScoreRow"
-	score_row.add_theme_constant_override("separation", 10)
+	score_row.add_theme_constant_override("separation", 7)
 	_ignore_mouse(score_row)
 	box.add_child(score_row)
 
 	player_kit_swatch = ColorRect.new()
 	player_kit_swatch.name = "PlayerKitSwatch"
-	player_kit_swatch.custom_minimum_size = Vector2(42.0, 28.0)
+	player_kit_swatch.custom_minimum_size = Vector2(34.0, 24.0)
 	player_kit_swatch.color = Color(1.0, 0.86, 0.12, 1.0)
 	_ignore_mouse(player_kit_swatch)
 	score_row.add_child(player_kit_swatch)
@@ -477,13 +477,13 @@ func _build_ui() -> void:
 	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	score_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	score_label.add_theme_color_override("font_color", Color(1.0, 0.93, 0.72, 1.0))
-	_apply_broadcast_font(score_label, 32, false)
+	_apply_broadcast_font(score_label, 28, false)
 	_ignore_mouse(score_label)
 	score_row.add_child(score_label)
 
 	bot_kit_swatch = ColorRect.new()
 	bot_kit_swatch.name = "BotKitSwatch"
-	bot_kit_swatch.custom_minimum_size = Vector2(42.0, 28.0)
+	bot_kit_swatch.custom_minimum_size = Vector2(34.0, 24.0)
 	bot_kit_swatch.color = Color(0.06, 0.16, 0.56, 1.0)
 	_ignore_mouse(bot_kit_swatch)
 	score_row.add_child(bot_kit_swatch)
@@ -492,7 +492,7 @@ func _build_ui() -> void:
 	clock_label.name = "ClockLabel"
 	clock_label.text = "PRIMEIRO A 3"
 	clock_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_apply_broadcast_font(clock_label, 12, true)
+	_apply_broadcast_font(clock_label, 10, true)
 	_ignore_mouse(clock_label)
 	box.add_child(clock_label)
 
@@ -501,10 +501,10 @@ func _build_ui() -> void:
 	state_badge_label.text = "3 GOLS"
 	state_badge_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	state_badge_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	state_badge_label.custom_minimum_size = Vector2(0.0, 20.0)
+	state_badge_label.custom_minimum_size = Vector2(0.0, 18.0)
 	state_badge_label.add_theme_color_override("font_color", Color(0.02, 0.03, 0.04, 1.0))
 	state_badge_label.add_theme_stylebox_override("normal", _build_badge_style(Color(1.0, 0.78, 0.16, 0.95), Color(1.0, 0.94, 0.62, 1.0)))
-	_apply_broadcast_font(state_badge_label, 11, true)
+	_apply_broadcast_font(state_badge_label, 10, true)
 	_ignore_mouse(state_badge_label)
 	box.add_child(state_badge_label)
 
@@ -530,7 +530,7 @@ func _build_ui() -> void:
 	stamina_label.name = "StaminaLabel"
 	stamina_label.text = "STAMINA"
 	stamina_label.add_theme_color_override("font_color", Color(0.35, 0.9, 1.0, 1.0))
-	_apply_broadcast_font(stamina_label, 10, true)
+	_apply_broadcast_font(stamina_label, 9, true)
 	_ignore_mouse(stamina_label)
 	box.add_child(stamina_label)
 
@@ -540,22 +540,22 @@ func _build_ui() -> void:
 	boost_bar.max_value = 100.0
 	boost_bar.value = 100.0
 	boost_bar.show_percentage = false
-	boost_bar.custom_minimum_size = Vector2(0.0, 12.0)
+	boost_bar.custom_minimum_size = Vector2(0.0, 9.0)
 	_ignore_mouse(boost_bar)
 	box.add_child(boost_bar)
 
 	var super_row := HBoxContainer.new()
 	super_row.name = "SuperMeterRow"
-	super_row.add_theme_constant_override("separation", 8)
+	super_row.add_theme_constant_override("separation", 6)
 	_ignore_mouse(super_row)
 	box.add_child(super_row)
 
 	var super_label := Label.new()
 	super_label.name = "SuperLabel"
 	super_label.text = "SUPER"
-	super_label.custom_minimum_size = Vector2(58.0, 18.0)
+	super_label.custom_minimum_size = Vector2(48.0, 16.0)
 	super_label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.16, 1.0))
-	_apply_broadcast_font(super_label, 10, true)
+	_apply_broadcast_font(super_label, 9, true)
 	_ignore_mouse(super_label)
 	super_row.add_child(super_label)
 
@@ -565,20 +565,20 @@ func _build_ui() -> void:
 	super_bar.max_value = 100.0
 	super_bar.value = 0.0
 	super_bar.show_percentage = false
-	super_bar.custom_minimum_size = Vector2(0.0, 12.0)
+	super_bar.custom_minimum_size = Vector2(0.0, 9.0)
 	super_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_ignore_mouse(super_bar)
 	super_row.add_child(super_bar)
 
 	super_ready_badge = Label.new()
 	super_ready_badge.name = "SuperReadyBadge"
-	super_ready_badge.text = "PRONTO"
+	super_ready_badge.text = "ON"
 	super_ready_badge.visible = false
-	super_ready_badge.custom_minimum_size = Vector2(70.0, 18.0)
+	super_ready_badge.custom_minimum_size = Vector2(38.0, 16.0)
 	super_ready_badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	super_ready_badge.add_theme_color_override("font_color", Color(0.02, 0.03, 0.04, 1.0))
 	super_ready_badge.add_theme_stylebox_override("normal", _build_badge_style(Color(1.0, 0.78, 0.16, 0.95), Color(1.0, 0.94, 0.62, 1.0)))
-	_apply_broadcast_font(super_ready_badge, 10, true)
+	_apply_broadcast_font(super_ready_badge, 9, true)
 	_ignore_mouse(super_ready_badge)
 	super_row.add_child(super_ready_badge)
 
@@ -594,7 +594,7 @@ func _build_event_label(root: Control) -> void:
 	event_label.name = "FootballEventLabel"
 	_ignore_mouse(event_label)
 	event_label.set_anchors_preset(Control.PRESET_CENTER)
-	event_label.position = Vector2(-340.0, 42.0)
+	event_label.position = Vector2(-340.0, 52.0)
 	event_label.size = Vector2(680.0, 72.0)
 	event_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	event_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -609,8 +609,8 @@ func _build_ball_indicator(root: Control) -> void:
 	ball_indicator = PanelContainer.new()
 	ball_indicator.name = "BallOffscreenIndicator"
 	_ignore_mouse(ball_indicator)
-	ball_indicator.position = Vector2(18.0, 190.0)
-	ball_indicator.custom_minimum_size = Vector2(168.0, 34.0)
+	ball_indicator.position = Vector2(14.0, 166.0)
+	ball_indicator.custom_minimum_size = Vector2(150.0, 32.0)
 	ball_indicator.visible = false
 	ball_indicator.add_theme_stylebox_override("panel", _build_panel_style(Color(0.02, 0.07, 0.08, 0.78), Color(0.92, 0.78, 0.16, 0.9), 1))
 	root.add_child(ball_indicator)
@@ -636,7 +636,7 @@ func _build_result_panel(root: Control) -> void:
 	result_panel.name = "ResultPanel"
 	result_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	result_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	result_panel.custom_minimum_size = Vector2(660.0, 420.0)
+	result_panel.custom_minimum_size = Vector2(680.0, 430.0)
 	result_panel.visible = false
 	result_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.015, 0.035, 0.045, 0.92), Color(1.0, 0.78, 0.16, 0.92), 2))
 	result_center.add_child(result_panel)
@@ -659,7 +659,8 @@ func _build_result_panel(root: Control) -> void:
 	result_title_label.name = "ResultTitle"
 	result_title_label.text = "RESULTADO"
 	result_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	result_title_label.add_theme_font_size_override("font_size", 24)
+	result_title_label.add_theme_font_size_override("font_size", 28)
+	result_title_label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.22, 1.0))
 	_ignore_mouse(result_title_label)
 	box.add_child(result_title_label)
 
@@ -695,7 +696,8 @@ func _build_result_panel(root: Control) -> void:
 	result_score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	result_score_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	result_score_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	result_score_label.add_theme_font_size_override("font_size", 54)
+	result_score_label.add_theme_font_size_override("font_size", 64)
+	result_score_label.add_theme_color_override("font_color", Color(1.0, 0.96, 0.86, 1.0))
 	_ignore_mouse(result_score_label)
 	score_strip.add_child(result_score_label)
 
@@ -744,10 +746,12 @@ func _build_result_panel(root: Control) -> void:
 
 	result_rematch_button = Button.new()
 	result_rematch_button.name = "RematchButton"
-	result_rematch_button.text = "Rematch"
+	result_rematch_button.text = "Revanche"
 	result_rematch_button.custom_minimum_size = Vector2(180.0, 42.0)
 	result_rematch_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	result_rematch_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	result_rematch_button.add_theme_stylebox_override("normal", _build_button_style(Color(0.02, 0.48, 0.2, 1.0), Color(1.0, 0.78, 0.16, 1.0), 2))
+	result_rematch_button.add_theme_stylebox_override("hover", _build_button_style(Color(0.04, 0.62, 0.27, 1.0), Color(1.0, 0.92, 0.5, 1.0), 2))
 	result_rematch_button.pressed.connect(func() -> void:
 		rematch_requested.emit()
 	)
@@ -759,6 +763,8 @@ func _build_result_panel(root: Control) -> void:
 	result_menu_button.custom_minimum_size = Vector2(180.0, 42.0)
 	result_menu_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	result_menu_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	result_menu_button.add_theme_stylebox_override("normal", _build_button_style(Color(0.04, 0.07, 0.08, 0.96), Color(0.24, 0.72, 0.86, 0.9), 1))
+	result_menu_button.add_theme_stylebox_override("hover", _build_button_style(Color(0.07, 0.12, 0.14, 0.98), Color(0.34, 0.88, 1.0, 1.0), 1))
 	result_menu_button.pressed.connect(func() -> void:
 		main_menu_requested.emit()
 	)
@@ -776,7 +782,7 @@ func _build_pause_menu(root: Control) -> void:
 	pause_menu_panel.name = "PauseMenuPanel"
 	pause_menu_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	pause_menu_panel.custom_minimum_size = Vector2(680.0, 560.0)
+	pause_menu_panel.custom_minimum_size = Vector2(660.0, 540.0)
 	pause_menu_panel.visible = false
 	pause_menu_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.012, 0.03, 0.04, 0.94), Color(0.12, 0.88, 1.0, 0.9), 2))
 	pause_center.add_child(pause_menu_panel)
@@ -841,9 +847,11 @@ func _build_pause_menu(root: Control) -> void:
 
 	pause_restart_confirm_button = Button.new()
 	pause_restart_confirm_button.name = "ConfirmRestartButton"
-	pause_restart_confirm_button.text = "Confirmar reinicio"
-	pause_restart_confirm_button.custom_minimum_size = Vector2(190.0, 34.0)
+	pause_restart_confirm_button.text = "Confirmar"
+	pause_restart_confirm_button.custom_minimum_size = Vector2(150.0, 34.0)
 	pause_restart_confirm_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	pause_restart_confirm_button.add_theme_stylebox_override("normal", _build_button_style(Color(0.56, 0.1, 0.08, 1.0), Color(1.0, 0.62, 0.42, 1.0), 2))
+	pause_restart_confirm_button.add_theme_stylebox_override("hover", _build_button_style(Color(0.74, 0.14, 0.1, 1.0), Color(1.0, 0.78, 0.48, 1.0), 2))
 	pause_restart_confirm_button.pressed.connect(func() -> void:
 		_set_restart_confirmation_visible(false)
 		restart_requested.emit()
@@ -1253,7 +1261,7 @@ func _build_intro_panel(root: Control) -> void:
 
 	var hotkeys := Label.new()
 	hotkeys.name = "HotkeysLabel"
-	hotkeys.text = "WASD - mover\nShift - boost de velocidade com stamina\nE/Ctrl - dash\nMouse - girar jogador/camera\nEspaco - pular/flip\nLMB - segurar e chutar\nRMB - chute forte/SUPER\nT - emote pos-gol\nR - reiniciar partida\nEsc - menu de sensibilidade"
+	hotkeys.text = "WASD - mover\nShift - boost de velocidade com stamina\nE/Ctrl - dash\nMouse - girar jogador/camera\nEspaco - pular/flip\nLMB - segurar e chutar\nRMB - chute forte/SUPER\nT - emote pos-gol\nEsc - pausa, audio, video e reinicio confirmado"
 	hotkeys.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hotkeys.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hotkeys.add_theme_font_size_override("font_size", 15)
@@ -1468,6 +1476,21 @@ func _build_badge_style(fill_color: Color, border_color: Color) -> StyleBoxFlat:
 	style.content_margin_bottom = 2
 	return style
 
+func _build_button_style(fill_color: Color, border_color: Color, border_width: int) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = fill_color
+	style.border_color = border_color
+	style.set_border_width_all(border_width)
+	style.corner_radius_top_left = 5
+	style.corner_radius_top_right = 5
+	style.corner_radius_bottom_left = 5
+	style.corner_radius_bottom_right = 5
+	style.content_margin_left = 10
+	style.content_margin_top = 6
+	style.content_margin_right = 10
+	style.content_margin_bottom = 6
+	return style
+
 func _on_sensitivity_slider_changed(value: float) -> void:
 	_update_sensitivity_label(value)
 	var settings = _get_game_settings()
@@ -1507,7 +1530,7 @@ func _refresh_event_label() -> void:
 		return
 	var alpha := clampf(event_message_time / 0.25, 0.0, 1.0) if event_message_time > 0.0 else 0.0
 	var progress := 1.0 - clampf(event_message_time / maxf(0.01, event_message_duration), 0.0, 1.0)
-	var punch_multiplier := 1.55 if last_event == &"countdown" or countdown_feedback_time > 0.0 else 1.0
+	var punch_multiplier := 1.55 if last_event == &"countdown" or countdown_feedback_time > 0.0 else (1.22 if last_event == &"goal" or last_event == &"double_goal" else 1.0)
 	var squash := sin(progress * PI) * 0.18 * punch_multiplier
 	event_label.scale = Vector2.ONE if RenderProfileScript.is_web_platform() else Vector2(1.0 + squash, 1.0 - squash * 0.42)
 	var color := Color(1.0, 1.0, 1.0, alpha)

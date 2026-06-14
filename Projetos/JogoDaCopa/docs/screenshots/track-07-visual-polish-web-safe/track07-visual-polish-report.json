@@ -1,0 +1,128 @@
+[
+	{
+		"average_luma": 0.181,
+		"file": "track07-menu-hero-1920x1080.png",
+		"resolution": "1920x1080",
+		"shot": "menu"
+	},
+	{
+		"file": "track07-kickoff-1920x1080.png",
+		"resolution": "1920x1080",
+		"shot": "kickoff",
+		"sky_luma_255": 52.4
+	},
+	{
+		"file": "track07-goal-1920x1080.png",
+		"resolution": "1920x1080",
+		"shot": "goal",
+		"sky_luma_255": 59.8
+	},
+	{
+		"file": "track07-result-1920x1080.png",
+		"resolution": "1920x1080",
+		"shot": "result",
+		"sky_luma_255": 71.6
+	},
+	{
+		"file": "track07-play-1920x1080.png",
+		"resolution": "1920x1080",
+		"shot": "play",
+		"sky_luma_255": 52.4
+	},
+	{
+		"average_luma": 0.409,
+		"file": "track07-pause-controls-1920x1080.png",
+		"resolution": "1920x1080",
+		"shot": "pause-controls"
+	},
+	{
+		"average_luma": 0.408,
+		"file": "track07-pause-restart-confirm-1920x1080.png",
+		"resolution": "1920x1080",
+		"shot": "pause-restart-confirm"
+	},
+	{
+		"average_luma": 0.182,
+		"file": "track07-menu-hero-1366x768.png",
+		"resolution": "1366x768",
+		"shot": "menu"
+	},
+	{
+		"file": "track07-kickoff-1366x768.png",
+		"resolution": "1366x768",
+		"shot": "kickoff",
+		"sky_luma_255": 53.9
+	},
+	{
+		"file": "track07-goal-1366x768.png",
+		"resolution": "1366x768",
+		"shot": "goal",
+		"sky_luma_255": 62.1
+	},
+	{
+		"file": "track07-result-1366x768.png",
+		"resolution": "1366x768",
+		"shot": "result",
+		"sky_luma_255": 71.1
+	},
+	{
+		"file": "track07-play-1366x768.png",
+		"resolution": "1366x768",
+		"shot": "play",
+		"sky_luma_255": 53.9
+	},
+	{
+		"average_luma": 0.339,
+		"file": "track07-pause-controls-1366x768.png",
+		"resolution": "1366x768",
+		"shot": "pause-controls"
+	},
+	{
+		"average_luma": 0.329,
+		"file": "track07-pause-restart-confirm-1366x768.png",
+		"resolution": "1366x768",
+		"shot": "pause-restart-confirm"
+	},
+	{
+		"average_luma": 0.171,
+		"file": "track07-menu-hero-1280x720.png",
+		"resolution": "1280x720",
+		"shot": "menu"
+	},
+	{
+		"file": "track07-kickoff-1280x720.png",
+		"resolution": "1280x720",
+		"shot": "kickoff",
+		"sky_luma_255": 53.0
+	},
+	{
+		"file": "track07-goal-1280x720.png",
+		"resolution": "1280x720",
+		"shot": "goal",
+		"sky_luma_255": 61.6
+	},
+	{
+		"file": "track07-result-1280x720.png",
+		"resolution": "1280x720",
+		"shot": "result",
+		"sky_luma_255": 66.7
+	},
+	{
+		"file": "track07-play-1280x720.png",
+		"resolution": "1280x720",
+		"shot": "play",
+		"sky_luma_255": 53.0
+	},
+	{
+		"average_luma": 0.312,
+		"file": "track07-pause-controls-1280x720.png",
+		"resolution": "1280x720",
+		"shot": "pause-controls"
+	},
+	{
+		"average_luma": 0.321,
+		"file": "track07-pause-restart-confirm-1280x720.png",
+		"resolution": "1280x720",
+		"shot": "pause-restart-confirm"
+	}
+]

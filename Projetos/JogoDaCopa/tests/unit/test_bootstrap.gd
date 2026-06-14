@@ -79,7 +79,7 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	var footer_label := menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/FooterLabel") as Label
 	assert_not_null(footer_label)
 	if footer_label != null:
-		assert_true(footer_label.text.contains("Copa Arena Futebol v1.1.0+"))
+		assert_true(footer_label.text.contains("Copa Arena Futebol v1.2.0+"))
 		assert_false(footer_label.text.contains("PC Windows editor-first"))
 		assert_eq(footer_label.text, menu.debug_get_visible_version_text())
 	assert_eq(menu.debug_get_selected_bot_difficulty_id(), &"normal")
@@ -595,14 +595,16 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_not_null(frame_material)
 	if frame_material != null:
 		assert_true(frame_material.emission_enabled)
-		assert_gt(frame_material.emission_energy_multiplier, 1.5)
+		assert_gt(frame_material.emission_energy_multiplier, 1.0)
+		assert_lt(frame_material.emission_energy_multiplier, 1.5)
 	var glass_mesh := football.get_node("WestGlassWall/WestGlassWallMesh") as MeshInstance3D
 	var glass_material := glass_mesh.material_override as StandardMaterial3D
 	assert_not_null(glass_material)
 	if glass_material != null:
 		assert_true(glass_material.rim_enabled)
 		assert_true(glass_material.clearcoat_enabled)
-		assert_gt(glass_material.emission_energy_multiplier, 0.5)
+		assert_gt(glass_material.emission_energy_multiplier, 0.25)
+		assert_lt(glass_material.emission_energy_multiplier, 0.5)
 	assert_gt(football.debug_get_ball().physics_material_override.bounce, 0.8)
 	assert_gt(football.debug_get_ball().physics_material_override.friction, 0.3)
 	assert_no_new_orphans()

@@ -1,11 +1,11 @@
 shader_type spatial;
 render_mode diffuse_burley, specular_schlick_ggx;
 
-uniform vec3 panel_color = vec3(0.96, 0.97, 0.92);
-uniform vec3 seam_color = vec3(0.03, 0.035, 0.04);
-uniform vec3 accent_color = vec3(0.12, 0.42, 0.95);
+uniform vec3 panel_color = vec3(1.0, 0.995, 0.94);
+uniform vec3 seam_color = vec3(0.012, 0.016, 0.02);
+uniform vec3 accent_color = vec3(0.04, 0.22, 0.72);
 uniform vec3 fireball_color = vec3(1.0, 0.34, 0.05);
-uniform float seam_width = 0.055;
+uniform float seam_width = 0.066;
 uniform float fireball_intensity = 0.0;
 uniform float toon_intensity = 0.0;
 uniform float render_emission_scale = 1.0;
@@ -21,6 +21,6 @@ void fragment() {
 	vec3 albedo = mix(mix(base, fireball_color, fireball_intensity * 0.14), seam_color, clamp(seam, 0.0, 1.0));
 	vec3 toon_albedo = floor(albedo * 3.0 + 0.5) / 3.0;
 	ALBEDO = mix(albedo, toon_albedo, toon_intensity);
-	EMISSION = (accent_color * accent * 0.045 + fireball_color * fireball_intensity * 1.65) * render_emission_scale;
+	EMISSION = (accent_color * accent * 0.07 + panel_color * 0.015 + fireball_color * fireball_intensity * 1.55) * render_emission_scale;
 	ROUGHNESS = mix(0.44, 0.78, toon_intensity);
 }
