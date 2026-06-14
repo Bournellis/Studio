@@ -15,10 +15,10 @@
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK_06F_WEB_AUDIO_STABILITY_REVIEW_READY`
-- Baseline: `Copa Arena Futebol` Web publico segue em Cloudflare Pages (`v1.0.3+ef9c5baa`, `web/v1-copa-arena-futebol-20260612-ef9c5baa`). A 06F esta validada localmente em branch: corrige page errors de audio Web e ajusta o gate para heap retido pos-GC; primeiro minuto e stability 5min locais PASS.
+- Marker: `JOGO_DA_COPA_V1_1_0_PUBLICADO_RETEST_HUMANO_PENDENTE`
+- Baseline: `Copa Arena Futebol` Web publico atualizado em Cloudflare Pages para `v1.1.0+22850c06` (`web/v1-copa-arena-futebol-20260613-22850c06`) na URL `https://copa-arena-futebol.pages.dev/`; gates remotos 06F PASS.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: review Claude/Fabio da 06F antes de merge local e nova tentativa controlada de publicar `v1.1.0`. `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- Proximo passo: retest humano do Fabio + tester externo na URL publica `v1.1.0` (menu broadcast, ESC completo, HUD scorebug, primeiro minuto). `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## draxos-roguelike-cardgame
 
