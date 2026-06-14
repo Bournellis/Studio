@@ -10,7 +10,6 @@ const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
-const TOON_RENDER_META_KEY: String = "jogodacopa_toon_render"
 const CAPTURE_SCENE_META_KEY: String = "jogodacopa_capture_scene"
 const TRACK04E_CAPTURE_CAMERA_NAME: String = "Track04ECaptureCamera"
 const TRACK04E_CAPTURE_CAMERA_FOV: float = 50.0
@@ -54,8 +53,6 @@ func after_each() -> void:
 		get_tree().root.remove_meta(BOT_DIFFICULTY_META_KEY)
 	if get_tree().root.has_meta(MATCH_MODE_META_KEY):
 		get_tree().root.remove_meta(MATCH_MODE_META_KEY)
-	if get_tree().root.has_meta(TOON_RENDER_META_KEY):
-		get_tree().root.remove_meta(TOON_RENDER_META_KEY)
 	if get_tree().root.has_meta(CAPTURE_SCENE_META_KEY):
 		get_tree().root.remove_meta(CAPTURE_SCENE_META_KEY)
 	for action_name: String in EXPECTED_ACTIONS:
@@ -79,12 +76,21 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	var footer_label := menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/FooterLabel") as Label
 	assert_not_null(footer_label)
 	if footer_label != null:
-		assert_true(footer_label.text.contains("Copa Arena Futebol v1.2.0+"))
+		assert_true(footer_label.text.contains("Super Campeão v1.2.1+"))
+		assert_false(footer_label.text.contains("Copa Arena Futebol"))
 		assert_false(footer_label.text.contains("PC Windows editor-first"))
 		assert_eq(footer_label.text, menu.debug_get_visible_version_text())
+	var title_label := menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/BroadcastHeader/TitleLabel") as Label
+	assert_not_null(title_label)
+	if title_label != null:
+		assert_eq(title_label.text, "Super Campeão")
+	assert_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/BroadcastHeader/BroadcastMatchLine"))
+	var status_label := menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/BroadcastHeader/StatusLabel") as Label
+	assert_not_null(status_label)
+	if status_label != null:
+		assert_eq(status_label.text, "Bot normal - 3 minutos")
 	assert_eq(menu.debug_get_selected_bot_difficulty_id(), &"normal")
 	assert_eq(menu.debug_get_selected_match_mode_id(), &"timer")
-	assert_false(menu.debug_is_toon_render_enabled())
 	assert_false(menu.debug_has_main_menu_appearance_selection())
 	assert_true(menu.debug_main_controls_fit_viewports([
 		Vector2(1920.0, 1080.0),
@@ -97,11 +103,17 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_eq(menu.debug_get_selected_bot_difficulty_id(), &"hard")
 	menu.debug_cycle_match_mode(1)
 	assert_eq(menu.debug_get_selected_match_mode_id(), &"goals")
+	if status_label != null:
+		assert_eq(status_label.text, "Bot dificil - 3 gols")
 	assert_eq(menu.debug_get_quality_text(), "Alta")
 	assert_not_null(menu.get_node_or_null("ArenaPreviewViewport"))
 	assert_not_null(menu.get_node_or_null("ArenaPreview"))
 	assert_true(menu.debug_preview_uses_hero_shot())
 	assert_eq(menu.get_viewport().gui_get_focus_owner().name, "FootballButton")
+	var football_button := menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/FootballButton") as Button
+	assert_not_null(football_button)
+	if football_button != null:
+		assert_eq(football_button.text, "Jogar")
 	assert_null(menu.get_node_or_null("MenuSafeArea"))
 	assert_null(menu.get_node_or_null("MenuCenter/MenuScroll"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/FootballButton"))
@@ -115,7 +127,8 @@ func test_main_menu_scene_boots_with_football_button_only() -> void:
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/UiVolumeRow/UiVolumeSlider"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/AmbienceVolumeRow/AmbienceVolumeSlider"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/QualityRow/QualityOption"))
-	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/ToonRenderRow/ToonRenderToggle"))
+	assert_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/ToonRenderRow"))
+	assert_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/ToonRenderToggle"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuBox/QuitButton"))
 	var menu_panel := menu.get_node("MenuCenter/MenuPanel") as PanelContainer
 	assert_eq(menu_panel.custom_minimum_size, Vector2(500.0, 0.0))
@@ -157,6 +170,24 @@ func test_main_menu_preview_capture_is_not_black_at_desktop_and_720p() -> void:
 			TRACK04B2_MENU_MIN_AVERAGE_LUMINANCE,
 			"Menu preview luminance %.4f below anti-black threshold at %sx%s" % [luminance, viewport_size.x, viewport_size.y]
 		)
+	assert_no_new_orphans()
+
+func test_web_loading_overlay_keeps_public_label_fixed() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+
+	football._build_web_loading_overlay()
+	football._set_web_loading_progress("Preparando arena", 0.42)
+
+	var loading_label := football.get_node_or_null("WebLoadingOverlay/LoadingPanel/LoadingLabel") as Label
+	var loading_bar := football.get_node_or_null("WebLoadingOverlay/LoadingPanel/LoadingProgress") as ProgressBar
+	assert_not_null(loading_label)
+	assert_not_null(loading_bar)
+	if loading_label != null:
+		assert_eq(loading_label.text, "Super Campeão")
+	if loading_bar != null:
+		assert_almost_eq(loading_bar.value, 0.42, 0.001)
 	assert_no_new_orphans()
 
 func test_field_builder_stadium_visual_upgrade_is_config_driven() -> void:
@@ -242,10 +273,8 @@ func test_football_interactive_panels_accept_real_mouse_clicks() -> void:
 
 		var intro_path := "HudRoot/IntroCenter/IntroPanel/IntroMargin/IntroBox/"
 		_disconnect_button_pressed_callbacks(hud.get_node(intro_path + "StartButton") as Button)
-		await _assert_real_button_click_emits_pressed(hud, intro_path + "AvatarSelectionBox/SkinToneRow/SkinPreviousButton", "Intro pele anterior %s" % context)
-		await _assert_real_button_click_emits_pressed(hud, intro_path + "AvatarSelectionBox/SkinToneRow/SkinNextButton", "Intro pele proxima %s" % context)
-		await _assert_real_button_click_emits_pressed(hud, intro_path + "AvatarSelectionBox/CountryKitRow/KitPreviousButton", "Intro camisa anterior %s" % context)
-		await _assert_real_button_click_emits_pressed(hud, intro_path + "AvatarSelectionBox/CountryKitRow/KitNextButton", "Intro camisa proxima %s" % context)
+		assert_null(hud.get_node_or_null(intro_path + "IntroSummary"))
+		assert_null(hud.get_node_or_null(intro_path + "AvatarSelectionBox"))
 		await _assert_real_button_click_emits_pressed(hud, intro_path + "StartButton", "Intro comecar %s" % context)
 
 		football.debug_start_match()
@@ -517,7 +546,8 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_not_null(football.get_node_or_null("FeedbackController"))
 	assert_eq(football.debug_get_goal_limit(), 3)
 	assert_eq(football.debug_get_match_mode(), &"timer")
-	assert_false(football.debug_is_toon_render_enabled())
+	assert_false(football.has_method("debug_is_toon_render_enabled"))
+	assert_false(football.has_method("debug_set_toon_render_enabled"))
 	assert_almost_eq(football.debug_get_match_time_remaining(), 180.0, 0.01)
 	assert_eq(football.debug_get_player_score(), 0)
 	assert_eq(football.debug_get_bot_score(), 0)
@@ -534,8 +564,9 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_true(football.debug_get_ball().debug_has_panel_asset_material())
 	assert_true(football.debug_get_ball().debug_has_speed_trail())
 	assert_true(football.debug_get_ball().debug_has_fireball_particles())
-	assert_false(football.debug_get_ball().debug_is_toon_render_enabled())
-	assert_false(football.debug_get_ball().debug_has_toon_outline())
+	assert_false(football.debug_get_ball().has_method("debug_is_toon_render_enabled"))
+	assert_false(football.debug_get_ball().has_method("debug_has_toon_outline"))
+	assert_null(football.debug_get_ball().get_node_or_null("BallMesh/BallToonOutline"))
 	assert_true(football.debug_get_bot().get_script() == FootballBotScript)
 	var player_avatar = football.debug_get_player_avatar()
 	var bot_avatar = football.debug_get_bot_avatar()
@@ -550,8 +581,8 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_null(player_avatar.get_node_or_null("AvatarParts/CopaAssetSkeleton"))
 	assert_null(player_avatar.get_node_or_null("AvatarParts/AssetAnimationTree"))
 	assert_true(player_avatar.debug_has_persistent_vfx())
-	assert_false(player_avatar.debug_is_toon_render_enabled())
-	assert_eq(player_avatar.debug_get_toon_outline_count(), 0)
+	assert_false(player_avatar.has_method("debug_is_toon_render_enabled"))
+	assert_false(player_avatar.has_method("debug_get_toon_outline_count"))
 	assert_true(football.debug_get_chase_camera().get_script() == FootballChaseCameraScript)
 	assert_true(football.debug_get_chase_camera().debug_get_camera().current)
 	assert_false(football.debug_get_player().get_camera().current)
@@ -562,6 +593,8 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_true(get_tree().paused)
 	var football_hud = football.get_node("FootballHud")
 	assert_true(football_hud.intro_panel.visible)
+	assert_null(football_hud.get_node_or_null("HudRoot/IntroCenter/IntroPanel/IntroMargin/IntroBox/IntroSummary"))
+	assert_null(football_hud.get_node_or_null("HudRoot/IntroCenter/IntroPanel/IntroMargin/IntroBox/AvatarSelectionBox"))
 	assert_true(football_hud.debug_has_broadcast_scoreboard())
 	assert_true(football.debug_get_hud_snapshot_interval_seconds() > 0.0)
 	assert_true(football.debug_get_hud_snapshot_interval_seconds() <= 0.1)
@@ -793,8 +826,7 @@ func test_football_intro_cycles_avatar_skin_and_country_kit() -> void:
 	assert_eq(football.debug_get_selected_country_kit_id(), &"argentina")
 	assert_eq(avatar.debug_get_skin_tone_id(), &"brown")
 	assert_eq(avatar.debug_get_country_kit_id(), &"argentina")
-	assert_true(hud.skin_tone_label.text.contains("Pele morena"))
-	assert_true(hud.country_kit_label.text.contains("Argentina"))
+	assert_null(hud.get_node_or_null("HudRoot/IntroCenter/IntroPanel/IntroMargin/IntroBox/AvatarSelectionBox"))
 	assert_no_new_orphans()
 
 func test_football_intro_avatar_selection_persists_between_session_rematches() -> void:
@@ -1695,7 +1727,7 @@ func test_football_arcade_emote_only_triggers_after_goal() -> void:
 	assert_eq(football.debug_get_player_avatar().debug_get_animation_state(), &"celebrate")
 	assert_no_new_orphans()
 
-func test_football_toon_render_toggle_is_off_by_default_and_isolated() -> void:
+func test_toon_render_feature_is_removed_from_runtime() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
 	add_child_autofree(football)
@@ -1705,27 +1737,16 @@ func test_football_toon_render_toggle_is_off_by_default_and_isolated() -> void:
 	var bot_avatar = football.debug_get_bot_avatar()
 	var ball = football.debug_get_ball()
 
-	assert_false(football.debug_is_toon_render_enabled())
-	assert_eq(player_avatar.debug_get_toon_outline_count(), 0)
-	assert_eq(bot_avatar.debug_get_toon_outline_count(), 0)
-	assert_false(ball.debug_has_toon_outline())
-
-	football.debug_set_toon_render_enabled(true)
-
-	assert_true(football.debug_is_toon_render_enabled())
-	assert_true(player_avatar.debug_is_toon_render_enabled())
-	assert_true(bot_avatar.debug_is_toon_render_enabled())
-	assert_true(ball.debug_is_toon_render_enabled())
-	assert_gt(player_avatar.debug_get_toon_outline_count(), 0)
-	assert_gt(bot_avatar.debug_get_toon_outline_count(), 0)
-	assert_true(ball.debug_has_toon_outline())
-
-	football.debug_set_toon_render_enabled(false)
-
-	assert_false(player_avatar.debug_is_toon_render_enabled())
-	assert_false(ball.debug_is_toon_render_enabled())
-	assert_eq(player_avatar.debug_get_toon_outline_count(), 0)
-	assert_false(ball.debug_has_toon_outline())
+	assert_false(football.has_method("debug_is_toon_render_enabled"))
+	assert_false(football.has_method("debug_set_toon_render_enabled"))
+	assert_false(player_avatar.has_method("set_toon_render_enabled"))
+	assert_false(player_avatar.has_method("debug_is_toon_render_enabled"))
+	assert_false(player_avatar.has_method("debug_get_toon_outline_count"))
+	assert_false(bot_avatar.has_method("set_toon_render_enabled"))
+	assert_false(ball.has_method("set_toon_render_enabled"))
+	assert_false(ball.has_method("debug_is_toon_render_enabled"))
+	assert_false(ball.has_method("debug_has_toon_outline"))
+	assert_null(ball.get_node_or_null("BallMesh/BallToonOutline"))
 	assert_no_new_orphans()
 
 func test_football_feedback_exposes_boost_and_skid_vfx() -> void:

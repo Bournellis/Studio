@@ -8,17 +8,12 @@ uniform vec4 shirt_secondary : source_color = vec4(0.06, 0.52, 0.22, 1.0);
 uniform vec4 shorts_color : source_color = vec4(0.05, 0.20, 0.70, 1.0);
 uniform vec4 sock_color : source_color = vec4(0.96, 0.96, 0.92, 1.0);
 uniform vec4 boot_color : source_color = vec4(0.04, 0.045, 0.05, 1.0);
-uniform float toon_intensity = 0.0;
 
 const float REGION_SKIN = 1.0;
 const float REGION_SHIRT = 2.0;
 const float REGION_SHORTS = 3.0;
 const float REGION_SOCK = 4.0;
 const float REGION_BOOT = 5.0;
-
-vec3 quantize_toon(vec3 color) {
-	return floor(color * 3.0 + 0.5) / 3.0;
-}
 
 void fragment() {
 	float region = floor(COLOR.r * 8.0 + 0.5);
@@ -40,7 +35,7 @@ void fragment() {
 		albedo = boot_color.rgb;
 	}
 
-	ALBEDO = mix(albedo, quantize_toon(albedo), toon_intensity);
-	ROUGHNESS = mix(0.62, 0.82, toon_intensity);
+	ALBEDO = albedo;
+	ROUGHNESS = 0.62;
 	METALLIC = 0.0;
 }

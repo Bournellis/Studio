@@ -26,7 +26,19 @@ func test_broadcast_menu_card_uses_kenney_font_and_preserves_paths() -> void:
 	assert_gte(menu.debug_get_primary_cta_min_height(), 42.0)
 
 	var menu_box_path := "MenuCenter/MenuPanel/MenuBox/"
-	assert_not_null(menu.get_node_or_null(menu_box_path + "BroadcastHeader/TitleLabel"))
+	var title_label := menu.get_node_or_null(menu_box_path + "BroadcastHeader/TitleLabel") as Label
+	assert_not_null(title_label)
+	if title_label != null:
+		assert_eq(title_label.text, "Super Campeão")
+	assert_null(menu.get_node_or_null(menu_box_path + "BroadcastHeader/BroadcastMatchLine"))
+	var status_label := menu.get_node_or_null(menu_box_path + "BroadcastHeader/StatusLabel") as Label
+	assert_not_null(status_label)
+	if status_label != null:
+		assert_eq(status_label.text, "Bot normal - 3 minutos")
+	var football_button := menu.get_node_or_null(menu_box_path + "FootballButton") as Button
+	assert_not_null(football_button)
+	if football_button != null:
+		assert_eq(football_button.text, "Jogar")
 	assert_not_null(menu.get_node_or_null(menu_box_path + "MatchSectionLabel"))
 	assert_not_null(menu.get_node_or_null(menu_box_path + "AppearanceSectionLabel"))
 	assert_not_null(menu.get_node_or_null(menu_box_path + "AudioVideoSectionLabel"))
@@ -36,7 +48,12 @@ func test_broadcast_menu_card_uses_kenney_font_and_preserves_paths() -> void:
 	assert_not_null(menu.get_node_or_null(menu_box_path + "BroadcastCountryKitRow"))
 	assert_not_null(menu.get_node_or_null(menu_box_path + "VolumeRow/VolumeSlider"))
 	assert_not_null(menu.get_node_or_null(menu_box_path + "QualityRow/QualityOption"))
-	assert_not_null(menu.get_node_or_null(menu_box_path + "ToonRenderRow/ToonRenderToggle"))
+	assert_null(menu.get_node_or_null(menu_box_path + "ToonRenderRow"))
+	assert_null(menu.get_node_or_null(menu_box_path + "ToonRenderToggle"))
+	var kit_label := menu.get_node_or_null(menu_box_path + "BroadcastCountryKitRow/BroadcastCountryKitLabel") as Label
+	assert_not_null(kit_label)
+	if kit_label != null:
+		assert_false(kit_label.text.contains("inspirado"))
 	assert_null(menu.get_node_or_null(menu_box_path + "SkinPreviewRow"))
 	assert_null(menu.get_node_or_null(menu_box_path + "KitPreviewRow"))
 	assert_no_new_orphans()
@@ -77,7 +94,6 @@ func test_broadcast_menu_controls_accept_real_mouse_clicks() -> void:
 		await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "SfxVolumeRow/SfxVolumeSlider", "Volume SFX %s" % context)
 		await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "UiVolumeRow/UiVolumeSlider", "Volume UI %s" % context)
 		await _assert_real_slider_click_emits_value_changed(menu, menu_box_path + "AmbienceVolumeRow/AmbienceVolumeSlider", "Volume ambiente %s" % context)
-		await _assert_real_toggle_click_emits_toggled(menu, menu_box_path + "ToonRenderRow/ToonRenderToggle", "Toon %s" % context)
 		var popup := await _assert_real_option_button_opens(menu.get_node(menu_box_path + "QualityRow/QualityOption") as OptionButton, "Qualidade %s" % context)
 		popup.hide()
 		_reset_runtime_settings()

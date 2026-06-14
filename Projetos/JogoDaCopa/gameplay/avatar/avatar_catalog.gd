@@ -20,7 +20,7 @@ const SKIN_TONES: Array[Dictionary] = [
 const COUNTRY_KITS: Array[Dictionary] = [
 	{
 		"id": &"brazil",
-		"label": "Brasil inspirado",
+		"label": "Brasil",
 		"shirt_primary": Color(1.0, 0.86, 0.12, 1.0),
 		"shirt_secondary": Color(0.06, 0.52, 0.22, 1.0),
 		"shorts": Color(0.05, 0.20, 0.70, 1.0),
@@ -28,7 +28,7 @@ const COUNTRY_KITS: Array[Dictionary] = [
 	},
 	{
 		"id": &"argentina",
-		"label": "Argentina inspirado",
+		"label": "Argentina",
 		"shirt_primary": Color(0.82, 0.94, 1.0, 1.0),
 		"shirt_secondary": Color(0.25, 0.66, 0.95, 1.0),
 		"shorts": Color(0.08, 0.12, 0.18, 1.0),
@@ -36,7 +36,7 @@ const COUNTRY_KITS: Array[Dictionary] = [
 	},
 	{
 		"id": &"france",
-		"label": "Franca inspirado",
+		"label": "Franca",
 		"shirt_primary": Color(0.06, 0.16, 0.56, 1.0),
 		"shirt_secondary": Color(0.94, 0.96, 1.0, 1.0),
 		"shorts": Color(0.90, 0.08, 0.12, 1.0),
@@ -44,7 +44,7 @@ const COUNTRY_KITS: Array[Dictionary] = [
 	},
 	{
 		"id": &"japan",
-		"label": "Japao inspirado",
+		"label": "Japao",
 		"shirt_primary": Color(0.98, 0.98, 0.95, 1.0),
 		"shirt_secondary": Color(0.05, 0.18, 0.76, 1.0),
 		"shorts": Color(0.05, 0.08, 0.18, 1.0),
@@ -52,7 +52,7 @@ const COUNTRY_KITS: Array[Dictionary] = [
 	},
 	{
 		"id": &"portugal",
-		"label": "Portugal inspirado",
+		"label": "Portugal",
 		"shirt_primary": Color(0.72, 0.04, 0.08, 1.0),
 		"shirt_secondary": Color(0.05, 0.44, 0.18, 1.0),
 		"shorts": Color(0.12, 0.34, 0.14, 1.0),
@@ -60,7 +60,7 @@ const COUNTRY_KITS: Array[Dictionary] = [
 	},
 	{
 		"id": &"germany",
-		"label": "Alemanha inspirado",
+		"label": "Alemanha",
 		"shirt_primary": Color(0.96, 0.94, 0.88, 1.0),
 		"shirt_secondary": Color(0.08, 0.08, 0.08, 1.0),
 		"shorts": Color(0.10, 0.10, 0.12, 1.0),

@@ -17,7 +17,7 @@ const GameSettingsScript = preload("res://autoloads/game_settings.gd")
 const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
-const MODE_NAME: String = "Copa Arena Futebol"
+const MODE_NAME: String = "Super Campeão"
 const GOAL_LIMIT: int = 3
 const FIELD_WIDTH: float = 38.0
 const FIELD_LENGTH: float = 54.0
@@ -82,10 +82,8 @@ const DOUBLE_GOAL_WINDOW_SECONDS: float = 30.0
 const RENDER_GLOW_ENABLED: bool = true
 const RENDER_SSAO_ENABLED: bool = true
 const RENDER_FOG_ENABLED: bool = true
-const RENDER_TOON_ENABLED: bool = false
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
-const TOON_RENDER_META_KEY: String = "jogodacopa_toon_render"
 const CAPTURE_SCENE_META_KEY: String = "jogodacopa_capture_scene"
 const RESULT_SUPPRESS_TRANSITION_PULSE_KEY: String = "suppress_transition_pulse"
 const CAPTURE_SCENE_KICKOFF: StringName = &"kickoff"
@@ -172,7 +170,6 @@ var last_goal_player_scored: bool = false
 var kickoff_owner: StringName = &"player"
 var bot_difficulty_id: StringName = &"normal"
 var match_mode_id: StringName = MATCH_MODE_TIMER
-var toon_render_enabled: bool = RENDER_TOON_ENABLED
 var match_time_remaining: float = MATCH_DURATION_SECONDS
 var golden_goal_active: bool = false
 var last_thirty_announced: bool = false
@@ -346,7 +343,7 @@ func _build_web_loading_overlay() -> void:
 	var shade := ColorRect.new()
 	shade.name = "Shade"
 	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	shade.color = Color(0.0, 0.0, 0.0, 0.86)
+	shade.color = Color(0.0, 0.0, 0.0, 1.0)
 	web_loading_overlay.add_child(shade)
 	var panel := VBoxContainer.new()
 	panel.name = "LoadingPanel"
@@ -362,7 +359,7 @@ func _build_web_loading_overlay() -> void:
 	web_loading_overlay.add_child(panel)
 	web_loading_label = Label.new()
 	web_loading_label.name = "LoadingLabel"
-	web_loading_label.text = "Carregando partida"
+	web_loading_label.text = MODE_NAME
 	web_loading_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	web_loading_label.add_theme_font_size_override("font_size", 24)
 	panel.add_child(web_loading_label)
@@ -377,7 +374,7 @@ func _build_web_loading_overlay() -> void:
 func _set_web_loading_progress(label_text: String, progress_value: float) -> void:
 	PerfProbeScript.mark(self, "loading.progress", "label=%s value=%.2f" % [label_text, progress_value])
 	if web_loading_label != null:
-		web_loading_label.text = label_text
+		web_loading_label.text = MODE_NAME
 	if web_loading_bar != null:
 		web_loading_bar.value = clampf(progress_value, 0.0, 1.0)
 
@@ -840,10 +837,6 @@ func set_match_mode(next_match_mode_id: StringName) -> void:
 		match_time_remaining = MATCH_DURATION_SECONDS
 	_request_hud_and_scoreboard_refresh()
 
-func set_toon_render_enabled(is_enabled: bool) -> void:
-	toon_render_enabled = is_enabled
-	_apply_toon_rendering()
-
 func debug_get_kickoff_owner() -> StringName:
 	return kickoff_owner
 
@@ -883,12 +876,6 @@ func debug_get_goal_limit() -> int:
 
 func debug_get_match_mode() -> StringName:
 	return match_mode_id
-
-func debug_is_toon_render_enabled() -> bool:
-	return toon_render_enabled
-
-func debug_set_toon_render_enabled(is_enabled: bool) -> void:
-	set_toon_render_enabled(is_enabled)
 
 func debug_set_match_mode(next_match_mode_id: StringName) -> void:
 	set_match_mode(next_match_mode_id)
@@ -1021,7 +1008,6 @@ func _is_capture_scene_supported(capture_scene_id: StringName) -> bool:
 func _prepare_capture_scene() -> void:
 	set_bot_difficulty(&"normal")
 	set_match_mode(MATCH_MODE_GOALS)
-	set_toon_render_enabled(false)
 	_set_intro_open(false)
 	_set_menu_open(false)
 	if hud != null:
@@ -1348,27 +1334,11 @@ func _spawn_runtime() -> void:
 	hud.restart_requested.connect(restart_match)
 	hud.rematch_requested.connect(restart_match)
 	hud.main_menu_requested.connect(_return_to_main_menu)
-	hud.skin_tone_previous_requested.connect(func() -> void:
-		_cycle_skin_tone(-1)
-	)
-	hud.skin_tone_next_requested.connect(func() -> void:
-		_cycle_skin_tone(1)
-	)
-	hud.country_kit_previous_requested.connect(func() -> void:
-		_cycle_country_kit(-1)
-	)
-	hud.country_kit_next_requested.connect(func() -> void:
-		_cycle_country_kit(1)
-	)
 	hud.set_sensitivity_value(player.mouse_sensitivity)
-	_update_avatar_selection_labels()
 	PerfProbeScript.end(self, "football.hud", stage_begin)
 	stage_begin = PerfProbeScript.begin(self, "football.collect_arcade_nodes")
 	_collect_arcade_field_nodes()
 	PerfProbeScript.end(self, "football.collect_arcade_nodes", stage_begin, "boost=%d jump=%d" % [boost_pad_areas.size(), jump_pad_areas.size()])
-	stage_begin = PerfProbeScript.begin(self, "football.apply_toon")
-	_apply_toon_rendering()
-	PerfProbeScript.end(self, "football.apply_toon", stage_begin)
 	PerfProbeScript.log_material_counts(self, self)
 
 func _apply_main_menu_settings() -> void:
@@ -1379,8 +1349,6 @@ func _apply_main_menu_settings() -> void:
 		set_bot_difficulty(StringName(str(tree.root.get_meta(BOT_DIFFICULTY_META_KEY))))
 	if tree.root.has_meta(MATCH_MODE_META_KEY):
 		set_match_mode(StringName(str(tree.root.get_meta(MATCH_MODE_META_KEY))))
-	if tree.root.has_meta(TOON_RENDER_META_KEY):
-		set_toon_render_enabled(bool(tree.root.get_meta(TOON_RENDER_META_KEY)))
 
 func _get_game_settings():
 	return get_node_or_null("/root/GameSettings")
@@ -2526,24 +2494,7 @@ func _cycle_country_kit(step: int) -> void:
 func _apply_selected_player_appearance() -> void:
 	if player_avatar != null:
 		player_avatar.apply_appearance(selected_appearance)
-	_update_avatar_selection_labels()
 	_request_hud_and_scoreboard_refresh()
-
-func _apply_toon_rendering() -> void:
-	if player_avatar != null and player_avatar.has_method("set_toon_render_enabled"):
-		player_avatar.set_toon_render_enabled(toon_render_enabled)
-	if bot_avatar != null and bot_avatar.has_method("set_toon_render_enabled"):
-		bot_avatar.set_toon_render_enabled(toon_render_enabled)
-	if ball != null and ball.has_method("set_toon_render_enabled"):
-		ball.set_toon_render_enabled(toon_render_enabled)
-
-func _update_avatar_selection_labels() -> void:
-	if hud == null:
-		return
-	hud.set_avatar_selection_labels(
-		AvatarCatalogScript.get_skin_label(selected_appearance.skin_tone_id),
-		AvatarCatalogScript.get_country_kit_label(selected_appearance.country_kit_id)
-	)
 
 func _update_avatar_states(delta: float) -> void:
 	if player_avatar != null and player != null:
