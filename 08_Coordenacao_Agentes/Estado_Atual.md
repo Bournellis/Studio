@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`v1.2.0` publicado; Track 08 local bloqueada por gate remoto) + `Projetos/draxos-mobile/` (retomado 2026-06-14 - programa de hardening)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`v1.2.0` publicado; Track 08 local bloqueada por gate remoto) + `Projetos/draxos-mobile/` (hardening integrado localmente; aguardando prova humana Arena PVE)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -32,13 +32,13 @@
 
 ## DraxosMobile
 
-- Status: `P2_IMPLEMENTACAO` - RETOMADO em 2026-06-14 (programa de hardening pos-analise de arquitetura)
+- Status: `P2_IMPLEMENTACAO` - hardening integrado localmente em 2026-06-14 (pos-analise de arquitetura)
 - Marker: `BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
 - Pacote publicado (baseline preservado): `Bosque Overlay Layer And Readiness Authority v1` (2026-06-10), Web/APK `0.0.23-alpha.0` / vc `23`. Historico: `Projetos/draxos-mobile/docs/release-history.md`.
-- Programa de hardening (lanes Codex em worktree): Onda 1 paralela - A backend-mirror-dedup, B overlay-shell-hardening, C openworld-bridge-decomp, D architecture-doc-refresh; Onda 2 - E openworld-persistence-consolidation, F arena-pve-lab-modeling (gated por decisao).
+- Programa de hardening: branch `codex/draxos-mobile/hardening-integration` consolida backend mirror guard, overlay shell state, Openworld persistence bridge, arquitetura e gate de prova Arena PVE; sem publicacao remota.
 - Guardrails preservados: Track 13 release safety, Track 14 agent ops; fundacao server-authoritative/idempotencia/RLS NAO deve ser refatorada.
 - Restricao operacional: ver `Projetos/draxos-mobile/AGENTS.md` (Hard Stops); secrets nunca no cliente; publicacao remota exige `-ConfirmRemoteMutation`; sem tuning numerico/PVP/economia/visual final sem decisao.
-- Proximo passo: rodar Onda 1 em paralelo (worktrees); manter pacote publicado como baseline ate nova publicacao decidida.
+- Proximo passo: Fabio revisar a branch integrada e executar a prova humana focada de Arena PVE em `Projetos/draxos-mobile/docs/arena-pve-product-proof.md`; escolher o proximo pacote so depois da prova.
 
 ## FpsPlayground
 
