@@ -255,6 +255,11 @@ func _apply_bus_volume(bus_name: StringName, value: float) -> void:
 func _uses_validation_defaults() -> bool:
 	if _config_path != CONFIG_PATH:
 		return false
+	var main_loop: Object = Engine.get_main_loop()
+	if main_loop != null:
+		var main_loop_script: Script = main_loop.get_script() as Script
+		if main_loop_script != null and str(main_loop_script.resource_path).contains("tools/validate.gd"):
+			return true
 	for arg: String in _collect_command_line_args():
 		if arg.contains("tools/validate.gd") or arg.contains("addons/gut"):
 			return true
