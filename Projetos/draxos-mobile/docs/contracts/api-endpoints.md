@@ -1,7 +1,7 @@
 # API Endpoints Contract
 
 - Ultima atualizacao: `2026-06-10`
-- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; `release/*` esta alinhado ao manifest remoto de Bosque Overlay Layer And Readiness Authority v1 (`0.0.23-alpha.0`, code `23`, minimo `0.0.13-alpha.0`, code `13`).
+- Status: contrato com `account/*`, `battle/*`, `base/*`, `build/*`, `crafting/*`, `social/*`, `competition/*`, `monetization/*`, `telemetry/*`, `progression-lab/*`, `release/*`, `content/*`, `arena/pve/*`, `modes/*` e `lab-runner/*` implementados local/remoto; estado operacional de `release/*` vive em `../../implementation/current-status.md` e `../release-history.md`.
 
 Este documento descreve a interface logica entre cliente Godot e Supabase Edge Functions. A implementacao fisica pode organizar funcoes em subpastas, mas os nomes logicos abaixo devem permanecer estaveis para o cliente.
 
@@ -533,48 +533,41 @@ Response:
 
 Retorna o manifest publico de updates da Internal Alpha v0.
 
-Status: **contrato vivo; fallback estatico e override remoto alinhados ao pacote publicado atual Bosque Overlay Layer And Readiness Authority v1**.
+Status: **contrato vivo; fallback estatico e override remoto devem alinhar com o pacote publicado atual registrado em `../../implementation/current-status.md`**.
 
 Scope: `release`.
 
 Auth: nao exige JWT. Pode receber `apikey` publica quando chamado pelo cliente Godot ou smokes.
 
-Response:
+Response schema example, not current operational state:
 
 ```json
 {
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
-  "latest_version": "0.0.23-alpha.0",
-  "latest_version_code": 23,
-  "minimum_supported_version": "0.0.13-alpha.0",
-  "minimum_supported_version_code": 13,
-  "released_at": "2026-06-10T00:00:00Z",
+  "latest_version": "0.0.x-alpha.0",
+  "latest_version_code": 0,
+  "minimum_supported_version": "0.0.y-alpha.0",
+  "minimum_supported_version_code": 0,
+  "released_at": "2026-01-01T00:00:00Z",
   "requires_save_reset": false,
-  "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
+  "portal_url": "https://example.invalid/",
   "notes": [
-    "Bosque Overlay Layer And Readiness Authority v1 publicado na URL principal de Internal Alpha.",
-    "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
-    "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
-    "Voltar, Fechar e Esc/Web usam a mesma autoridade de fechamento do overlay e devolvem input ao mesmo node do Bosque sem rebootstrap.",
-    "Menus abertos pelo Bosque usam rota de overlay sem acao mutante fantasma.",
-    "Arena active/replay agora usa camada fullscreen acima do painel do menu, sem corte lateral do duelo.",
-    "Confirmacoes de Arena, Loja e fluxos futuros usam modal global acima de menu e Arena.",
-    "Menus com refresh de servidor mostram estado de sincronizacao antes de aceitar comandos dependentes da resposta.",
-    "Refresh read-only nao bloqueia fechamento; respostas tardias sao ignoradas quando o overlay fecha ou muda de rota.",
-    "Arena PVE roda dentro do overlay e bloqueia fechamento apenas durante replay ou mutacao critica explicita.",
-    "Social, Loja e Arena usam controles interativos no overlay com foco, texto, confirmacao, retomada e abandono validados no Web/canvas.",
-    "Manifesto recomenda build 0.0.23-alpha.0 e mantem build minima 0.0.13-alpha.0."
+    "Resumo curto da publicacao atual.",
+    "Notas de compatibilidade e gates de update."
   ],
   "artifacts": {
-    "android": { "label": "Android APK", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android", "sha256": "986bff2ac180de883f5dfa97078e0a3ff31e2c0d4de139b8863c18e1d37507ab", "auth_required": true },
-    "pc_windows": { "label": "PC Windows ZIP", "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows", "sha256": "4659da781b027dcb1c9f1b5d6ec32e56630eac14160413a35cb75a90c2e8c0dc", "auth_required": true },
-    "web": { "label": "Web", "url": "https://draxos-mobile-internal-alpha.pages.dev/web/index.html" }
+    "android": { "label": "Android APK", "url": "https://example.invalid/download.apk", "sha256": "<sha256>", "auth_required": true },
+    "pc_windows": { "label": "PC Windows ZIP", "url": "https://example.invalid/download.zip", "sha256": "<sha256>", "auth_required": true },
+    "web": { "label": "Web", "url": "https://example.invalid/web/index.html" }
   }
 }
 ```
 
-Os links Android/PC acima sao os artefatos default configurados no backend da funcao de release. Nao derivar novos hashes ou URLs do nome do pacote sem nova publicacao de artefatos.
+Os links Android/PC do manifest real sao os artefatos default configurados no
+backend da funcao de release. Nao derivar novos hashes ou URLs do nome do pacote
+sem nova publicacao de artefatos. Para os valores atuais, leia
+`../../implementation/current-status.md` e `../release-history.md`.
 
 Regras do cliente:
 

@@ -75,6 +75,27 @@ expansoes de produto.
 - `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`
 - `validate_foundation.ps1 -Profile ModePlatform -NoProjectWrites`
 
+## Validation Result
+
+- `git diff --check`: PASS
+- `tools/check_doc_drift.ps1`: PASS
+- `tools/sync_backend_mirror.ps1 -Check`: PASS
+- `validate_foundation.ps1 -Profile DocsOnly -NoProjectWrites`: PASS
+- `validate_foundation.ps1 -Profile ServerQuick -NoProjectWrites`: PASS
+- `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: PASS after one-time Godot `--import` for the integration worktree cache
+- `validate_foundation.ps1 -Profile ModePlatform -NoProjectWrites`: PASS
+- `validate_foundation.ps1 -Profile ReleaseDryRun -NoProjectWrites`: PASS
+
+## Result
+
+- `coord-docs`: single operational state source enforced in docs and guards.
+- `backend-schema`: deterministic `server -> supabase` mirror check/sync tooling added.
+- `client-shell`: overlay layer state split behind the existing facade.
+- `openworld`: persistence state split behind the existing bridge facade.
+- `architecture-contract-refresh`: architecture doc compacted around current authority boundaries.
+- `arena-pve-proof`: human playtest proof gate documented before tuning/expansion.
+- `validation-release`: release dry run remains local-only; no remote mutation or publication was run.
+
 ## Remote Mutation / Publication
 
 - remote mutation/publication run: `no`
@@ -83,7 +104,7 @@ expansoes de produto.
 
 ## Handoff Point
 
-Handoff seguro quando as lanes estiverem integradas localmente, os gates
-disponiveis passarem e Fabio tiver um roteiro claro para playtest humano da Arena
-PVE. Fechamento deve declarar `PUSH PENDENTE: Fabio - GitHub Desktop - Push
-origin`.
+Integrated local branch ready for Fabio review. Next safe owner: Fabio for
+human Arena PVE product proof and GitHub Desktop push after review.
+
+`PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.

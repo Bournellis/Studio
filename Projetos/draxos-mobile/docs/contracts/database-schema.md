@@ -3,7 +3,9 @@
 - Ultima atualizacao: `2026-06-07`
 - Status: contrato logico com migrations MVP, battle, base, social, matchmaking, ranking, monetizacao, rewards, telemetria client, `save_type`, reset separado por save, Progression Lab, auth email/senha, manifest/update, Track 16 de comportamento/crafting/consumiveis, Fogueira como estacao de crafting, e Foundation Expansion Readiness com `account_profiles`, `game_saves`, `ruleset_registry`, `admin_audit_log`, idempotencia v1, metadata de ruleset e dominios criticos promovidos para RPCs transacionais v1. Arena PVE v1 acrescenta schema implementado para tentativa, duelos, buffs, progresso, first clears e perfis DB-side de recompensa.
 
-Este documento define o schema esperado. A fonte tecnica viva do runtime local e `../../supabase/migrations/`; `../../server/schema/migrations/` permanece como espelho backend durante o alpha local.
+Este documento define o schema esperado. A fonte autoral de migrations e
+`../../server/schema/migrations/`; `../../supabase/migrations/` permanece como
+mirror de execucao local da Supabase CLI durante o alpha local.
 
 Migrations atuais:
 

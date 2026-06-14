@@ -1,6 +1,6 @@
 # server/schema/
 
-Migrations SQL do Supabase/Postgres para o DraxosMobile.
+Fonte autoral das migrations SQL do Supabase/Postgres para o DraxosMobile.
 
 ## MVP
 
@@ -9,6 +9,15 @@ Migrations SQL do Supabase/Postgres para o DraxosMobile.
 - Mutacoes autoritativas devem ser feitas por Edge Functions com service role.
 
 ## Validacao Esperada
+
+Antes de validar backend, confira o mirror runtime:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ..\..\tools\sync_backend_mirror.ps1 -ProjectDir ..\.. -Check
+```
+
+Se houver drift revisado, aplique `server/schema/migrations -> supabase/migrations`
+com `-Apply`.
 
 Quando Docker e Supabase CLI estiverem disponiveis:
 
