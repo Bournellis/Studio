@@ -126,15 +126,18 @@ function Write-WebAudioWorkletFallback {
         throw "Web index.js is missing for audio worklet fallback: $indexJsPath"
     }
     $script = Get-Content -LiteralPath $indexJsPath -Raw
+    $workletDetectBefore = 'function _godot_audio_has_worklet(){return GodotAudio.ctx&&GodotAudio.ctx.audioWorklet?1:0}'
+    $workletDetectAfter = 'function _godot_audio_has_worklet(){return 0}'
     $positionInitBefore = 'const path=GodotConfig.locate_file("godot.audio.position.worklet.js");GodotAudio.audioPositionWorkletPromise=ctx.audioWorklet.addModule(path);return ctx.destination.channelCount'
     $positionInitAfter = 'const path=GodotConfig.locate_file("godot.audio.position.worklet.js");GodotAudio.audioPositionWorkletAvailable=false;GodotAudio.audioPositionWorkletPromise=ctx.audioWorklet?ctx.audioWorklet.addModule(path).then(function(){GodotAudio.audioPositionWorkletAvailable=true}).catch(function(){GodotAudio.audioPositionWorkletAvailable=false}):Promise.resolve();return ctx.destination.channelCount'
     $connectBefore = 'async connectPositionWorklet(start){await GodotAudio.audioPositionWorkletPromise;if(this.isCanceled){return}this._source.connect(this.getPositionWorklet());if(start){this.start()}}'
     $connectAfter = 'async connectPositionWorklet(start){await GodotAudio.audioPositionWorkletPromise;if(this.isCanceled){return}if(!GodotAudio.audioPositionWorkletAvailable){if(start){this.start()}return}this._source.connect(this.getPositionWorklet());if(start){this.start()}}'
-    foreach ($needle in @($positionInitBefore, $connectBefore)) {
+    foreach ($needle in @($workletDetectBefore, $positionInitBefore, $connectBefore)) {
         if (-not $script.Contains($needle)) {
             throw "Godot Web index.js did not match expected audio worklet template fragment: $needle"
         }
     }
+    $script = $script.Replace($workletDetectBefore, $workletDetectAfter)
     $script = $script.Replace($positionInitBefore, $positionInitAfter)
     $script = $script.Replace($connectBefore, $connectAfter)
     Write-TextUtf8NoBom -Path $indexJsPath -Text $script
@@ -498,9 +501,9 @@ try {
     }
 }
 
-$evidenceDir = Join-Path $ProjectDir "docs\playtest-reports\track-07b-data"
+$evidenceDir = Join-Path $ProjectDir "docs\playtest-reports\track-07c-data"
 New-Item -ItemType Directory -Force -Path $evidenceDir | Out-Null
-$evidenceName = if ($Mode -eq "FullPublish") { "07b-publication-report.json" } else { "07b-package-artifacts.json" }
+$evidenceName = if ($Mode -eq "FullPublish") { "07c-publication-report.json" } else { "07c-package-artifacts.json" }
 $evidencePath = Join-Path $evidenceDir $evidenceName
 
 if ($Mode -eq "Package") {
