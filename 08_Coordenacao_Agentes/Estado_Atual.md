@@ -7,19 +7,19 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`v1.2.0` publicado; Track 08 local bloqueada por gate remoto) + `Projetos/draxos-mobile/` (hardening integrado; Arena core precisa UX fix e nao esta provado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1` publicado; aguardando retest humano) + `Projetos/draxos-mobile/` (hardening integrado; Arena core precisa UX fix e nao esta provado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK08_MERGED_REMOTE_ROLLBACK`
-- Marker: `JOGO_DA_COPA_TRACK08_SUPER_CAMPEAO_UI_MERGED_REMOTE_ROLLBACK`
-- Baseline: `Copa Arena Futebol` Web publico em `v1.2.0+fa82cb7d` (`web/v1-copa-arena-futebol-20260614-fa82cb7d`) na URL `https://copa-arena-futebol.pages.dev/`; gates remotos 07C PASS.
-- Publicacao: Track 08 `Super Campeao v1.2.1+2f537628` foi mergeada localmente e publicada em tentativa, mas primeiro minuto remoto falhou (`1` hitch `333.5ms` perto de `ball_glass`); rollback remoto confirmado para 07C.
+- Status: `P2_IMPLEMENTACAO - TRACK08A_PUBLICADO_AGUARDANDO_RETEST`
+- Marker: `JOGO_DA_COPA_SUPER_CAMPEAO_V1_2_1_PUBLICADO_RETEST`
+- Baseline: `Super Campeao` Web publico em `v1.2.1+6ef3074c` (`web/v1-copa-arena-futebol-20260614-6ef3074c`) na URL `https://copa-arena-futebol.pages.dev/`; gates remotos 08A PASS.
+- Publicacao: Track 08A corrigiu o hitch Web de feedback de gol sem mudar gameplay; menu, primeiro minuto, estabilidade 5min e luma remotos passaram.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: hotfix/diagnostico tecnico do hitch remoto da Track 08 antes de republicar; sem retest humano de `v1.2.1` ate os gates passarem.
+- Proximo passo: retest humano do Fabio + tester externo na URL publica, cobrindo loading/menu, ESC, HUD/scorebug e primeiro minuto.
 
 ## draxos-roguelike-cardgame
 

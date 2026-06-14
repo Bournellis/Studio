@@ -60,6 +60,16 @@ Diagnose and eliminate the remote first-minute hitch observed after publishing T
 - Local 5-minute stability probe after lightweight Web confetti: PASS (`stabilityPassed=true`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`).
 - Evidence: `Projetos/JogoDaCopa/docs/playtest-reports/track-08a-data/`.
 
+## Remote Publication
+
+- Published final root: `web/v1-copa-arena-futebol-20260614-6ef3074c`.
+- Public URL: `https://copa-arena-futebol.pages.dev/`.
+- Visible footer confirmed by screenshot: `Super Campeao v1.2.1+6ef3074c`.
+- Remote menu: PASS (`pageErrors=0`, `consoleErrorCount=0`, release root matched).
+- Remote first minute: PASS (`firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`, release root matched).
+- Remote stability 5 min: PASS (`stabilityPassed=true`, heap retained `+7.34%`, counters/caches stable, `pageErrors=0`, `consoleErrorCount=0`).
+- Remote night luma: PASS (`luma_0_255=6.525 < 90`).
+
 ## Next Handoff Point
 
-- Handoff if the hitch cannot be reproduced/mitigated locally after focused iterations, or if any remote gate fails after rollback.
+- Handoff to human retest: Fabio + external tester should retest the public `Super Campeao v1.2.1+6ef3074c` URL.

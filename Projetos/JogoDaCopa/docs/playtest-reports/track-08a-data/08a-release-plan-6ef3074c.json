@@ -1,0 +1,16 @@
+{
+    "schema_version":  "jogodacopa_web_publication_plan_v1",
+    "generated_at":  "2026-06-14T10:11:50Z",
+    "mode":  "Plan",
+    "project_dir":  "D:\\Estudio\\Projetos\\JogoDaCopa",
+    "cloudflare_pages_project":  "copa-arena-futebol",
+    "production_branch":  "main",
+    "remote_mutation":  false,
+    "suggested_release_root":  "web/v1-copa-arena-futebol-20260614-6ef3074c",
+    "pages_asset_limit_bytes":  26214400,
+    "package_strategy":  "Package mode exports Web release, Brotli-compresses index.pck and index.wasm in-place for Pages, writes _headers, verifies every uploaded file is \u003c 25 MiB.",
+    "next_commands":  [
+                          ".\\tools\\publish_web.ps1 -Mode Package -ReleaseRoot web/v1-copa-arena-futebol-20260614-6ef3074c",
+                          ".\\tools\\publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260614-6ef3074c -ConfirmRemoteMutation"
+                      ]
+}

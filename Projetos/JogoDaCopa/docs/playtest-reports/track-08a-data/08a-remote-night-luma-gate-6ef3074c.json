@@ -1,0 +1,16 @@
+{
+    "schema_version":  "jogodacopa_track08a_luma_gate_v1",
+    "label":  "08a-remote-night-luma-gate-6ef3074c",
+    "source_screenshot":  "D:\\Estudio\\Projetos\\JogoDaCopa\\docs\\playtest-reports\\track-08a-data\\08a-remote-stability-5min-6ef3074c.png",
+    "sample_region":  {
+                          "x_start_ratio":  0.62,
+                          "x_end_ratio":  0.96,
+                          "y_start_ratio":  0.04,
+                          "y_end_ratio":  0.28,
+                          "step_px":  6,
+                          "sample_count":  4796
+                      },
+    "threshold_luma_0_255":  90,
+    "luma_0_255":  6.525,
+    "passed":  true
+}

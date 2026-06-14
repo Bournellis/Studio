@@ -4,7 +4,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 ## Foco Atual
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`v1.2.0` publicado; Track 08 local bloqueada por gate remoto) + `Projetos/draxos-mobile/` (hardening integrado localmente; Arena core precisa UX fix e nao esta provado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1` publicado; aguardando retest humano) + `Projetos/draxos-mobile/` (hardening integrado localmente; Arena core precisa UX fix e nao esta provado)
 - Pausa temporaria por poucos dias: `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -13,7 +13,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 | Prioridade | Projeto | Caminho | Status | Trabalho permitido | Proximo passo |
 |---|---|---|---|---|---|
-| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | `v1.2.0+fa82cb7d` segue publicado; Track 08 `v1.2.1+2f537628` mergeada localmente, publicacao revertida por hitch remoto no primeiro minuto; proximo passo e hotfix/diagnostico antes de republicar |
+| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | `Super Campeao v1.2.1+6ef3074c` publicado em Cloudflare Pages; gates remotos 08A PASS; proximo passo e retest humano Fabio + tester externo |
 | Pausa | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
 | Ativo | DraxosMobile | `Projetos/draxos-mobile/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest, documentacao local e infraestrutura | Hardening integrado localmente; Arena core: `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN`; proximo passo e rodada conjunta de higiene documental e hardening tecnico pass 2 antes de pacote UX da Arena |
 | Pausa | FpsPlayground | `Projetos/FpsPlayground/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
