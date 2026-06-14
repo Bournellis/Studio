@@ -4,8 +4,8 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 ## Foco Atual
 
-- Foco operacional temporario unico: `Projetos/JogoDaCopa/` (`v1.2.0` publicado; aguardando retest humano)
-- Pausa temporaria por poucos dias: `Projetos/draxos-roguelike-cardgame/`, `Projetos/draxos-mobile/`, `Projetos/FpsPlayground/`
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`v1.2.0` publicado; aguardando retest humano) + `Projetos/draxos-mobile/` (retomado 2026-06-14 - programa de hardening)
+- Pausa temporaria por poucos dias: `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -15,7 +15,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 |---|---|---|---|---|---|
 | P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | `v1.2.0+fa82cb7d` publicado; Track 07C passou menu, primeiro minuto, estabilidade 5min e luma remotos; proximo passo e retest humano |
 | Pausa | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
-| Pausa | DraxosMobile | `Projetos/draxos-mobile/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
+| Ativo | DraxosMobile | `Projetos/draxos-mobile/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest, documentacao local e infraestrutura (programa de hardening) | Programa de hardening pos-analise 2026-06-14. Onda 1 paralela: A backend-mirror-dedup, B overlay-shell-hardening, C openworld-bridge-decomp, D architecture-doc-refresh. Onda 2: E openworld-persistence-consolidation, F arena-pve-lab-modeling (gated) |
 | Pausa | FpsPlayground | `Projetos/FpsPlayground/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
 | Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - |
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado |
@@ -37,8 +37,8 @@ Baselines, markers e detalhes por projeto vivem em `Estado_Atual.md` e no `imple
 ## Regras Para Agentes
 
 - Leia este arquivo antes de escolher projeto alvo.
-- Enquanto o foco temporario do JogoDaCopa estiver ativo, se o pedido nao citar projeto, assuma `Projetos/JogoDaCopa/`.
-- Enquanto o foco temporario do JogoDaCopa estiver ativo, ignore os projetos `PAUSADO_TEMPORARIO` por padrao, salvo pedido explicito de retomada ou consulta historica.
+- Se o pedido nao citar projeto nem dominio claro, confirme o alvo entre os focos ativos (`JogoDaCopa`, `draxos-mobile`) antes de agir.
+- Ignore os projetos `PAUSADO_TEMPORARIO`/`PAUSADO_INDEFINIDO` por padrao, salvo pedido explicito de retomada ou consulta historica.
 - Nao mova mecanicas, decisoes ou escopo entre projetos sem documento local adotando a regra.
 - Em `_conceitos/mobile-universe/`, apenas leitura e referencia de design - o projeto ativo e `draxos-mobile/`.
 - Em RPG Isometrico e RPG Turnos, nao implemente nem expanda escopo sem pedido explicito do usuario.
