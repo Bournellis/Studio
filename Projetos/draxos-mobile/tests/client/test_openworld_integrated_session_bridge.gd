@@ -2,6 +2,7 @@ extends GutTest
 
 const BridgeScript := preload("res://modes/openworld/openworld_integrated_session_bridge.gd")
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
+const PersistenceState := preload("res://modes/openworld/openworld_persistence_state.gd")
 
 class FakeSessionStore:
 	extends Node
@@ -398,6 +399,41 @@ func test_durable_campfire_alias_survives_upgrade_only_snapshot() -> void:
 	assert_true(bool(model.structures.get("fogueira_estavel_1", false)))
 	assert_true(bool(Dictionary(store.openworld_durable_progress_snapshot().get("upgrades", {})).get("fogueira_estavel_1", false)))
 	assert_true(bool(Dictionary(store.openworld_durable_progress_snapshot().get("structures", {})).get("fogueira_estavel_1", false)))
+
+func test_persistence_state_helper_normalizes_durable_progress_and_pending_ops() -> void:
+	var now_unix := int(Time.get_unix_time_from_system())
+	var progress := PersistenceState.normalize_durable_progress({
+		"pocket": {"ossos_preview": 2, "galho": -1},
+		"upgrades": {"fogueira_estavel_1": true},
+	}, {"snapshot_revision": 12}, "normal")
+	assert_eq(str(progress.get("schema_version", "")), "openworld_forest_progress_v2")
+	assert_eq(int(Dictionary(progress.get("pocket", {})).get("resto_ritual", 0)), 2)
+	assert_true(bool(Dictionary(progress.get("upgrades", {})).get("fogueira_estavel_1", false)))
+	assert_true(bool(Dictionary(progress.get("structures", {})).get("fogueira_estavel_1", false)))
+	assert_eq(int(progress.get("progress_revision", 0)), 12)
+
+	var cache := PersistenceState.pending_ops_cache_payload(
+		"normal",
+		"session-helper",
+		now_unix - 60,
+		now_unix + 60,
+		3,
+		[
+			{"op_id": "owop_valid", "type": "deposit_all"},
+			{"op_id": "invalid", "type": "craft_recipe"},
+		]
+	)
+	var operations := PersistenceState.pending_ops_from_cache(
+		cache,
+		"normal",
+		"session-helper",
+		now_unix,
+		7200,
+		60
+	)
+	assert_eq(operations.size(), 1)
+	assert_eq(str(Dictionary(operations[0]).get("op_id", "")), "owop_valid")
+	assert_false(PersistenceState.pending_ops_cache_matches_context(cache, "progression_lab", "session-helper"))
 
 func test_campfire_craft_checkpoint_uses_explicit_pending_status() -> void:
 	var model = ModelScript.new()

@@ -4,6 +4,7 @@ extends Node
 signal state_changed
 
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
+const PersistenceState := preload("res://modes/openworld/openworld_persistence_state.gd")
 
 const CHECKPOINT_RETRY_SECONDS := 1.25
 const MAX_CHECKPOINT_RETRY_BACKOFF_SECONDS := 8.0
@@ -11,9 +12,8 @@ const MAX_LOCAL_SESSION_CACHE_SECONDS := 7200
 const LOCAL_SESSION_CACHE_GRACE_SECONDS := 60
 const ACTION_SCOPE_TEMPLATE := "mode:openworld:%s"
 const SOURCE_ID := "open_mode_shell:openworld"
-const LOCAL_STATE_SCHEMA := "openworld_forest_local_checkpoint_v1"
+const LOCAL_STATE_SCHEMA := PersistenceState.LOCAL_STATE_SCHEMA
 const PENDING_OPS_SCHEMA := "openworld_pending_ops_cache_v1"
-const DURABLE_PROGRESS_SCHEMA := "openworld_forest_progress_v2"
 const SESSION_PREVIEW := "preview"
 const SESSION_STARTING := "starting"
 const SESSION_SYNCED := "synced"
@@ -908,22 +908,26 @@ func _pending_ops_cache_snapshot() -> Dictionary:
 
 func _load_pending_ops_cache_for_session(session_id: String) -> Array[Dictionary]:
 	var cache := _pending_ops_cache_snapshot()
-	if cache.is_empty():
-		return []
-	if str(cache.get("schema_version", "")) != PENDING_OPS_SCHEMA:
-		return []
-	if str(cache.get("save_type", _active_save_type())) != _active_save_type():
-		return []
-	if str(cache.get("session_id", "")).strip_edges() != session_id.strip_edges():
-		return []
-	if str(cache.get("ruleset_id", "")) != ModelScript.RULESET_ID:
-		return []
-	if int(cache.get("ruleset_version", 0)) != ModelScript.RULESET_VERSION:
-		return []
-	if not _local_session_cache_is_live(cache):
+	var operations := PersistenceState.pending_ops_from_cache(
+		cache,
+		_active_save_type(),
+		session_id,
+		int(Time.get_unix_time_from_system()),
+		MAX_LOCAL_SESSION_CACHE_SECONDS,
+		LOCAL_SESSION_CACHE_GRACE_SECONDS
+	)
+	if operations.is_empty() and PersistenceState.pending_ops_cache_matches_context(
+		cache,
+		_active_save_type(),
+		session_id
+	) and not PersistenceState.local_session_cache_is_live(
+		cache,
+		int(Time.get_unix_time_from_system()),
+		MAX_LOCAL_SESSION_CACHE_SECONDS,
+		LOCAL_SESSION_CACHE_GRACE_SECONDS
+	):
 		_clear_pending_ops_cache()
-		return []
-	return _operation_array(cache.get("operations", []))
+	return operations
 
 func _remember_pending_ops_cache() -> void:
 	if session_store == null or not session_store.has_method("remember_openworld_pending_ops_state"):
@@ -931,36 +935,21 @@ func _remember_pending_ops_cache() -> void:
 	if _pending_operations.is_empty():
 		session_store.call("clear_openworld_pending_ops_state")
 		return
-	session_store.call("remember_openworld_pending_ops_state", {
-		"schema_version": PENDING_OPS_SCHEMA,
-		"save_type": _active_save_type(),
-		"session_id": _server_session_id,
-		"started_at": _server_started_at_unix,
-		"expires_at": _server_expires_at_unix,
-		"ruleset_id": ModelScript.RULESET_ID,
-		"ruleset_version": ModelScript.RULESET_VERSION,
-		"client_sequence": _client_sequence,
-		"operations": _pending_operations.duplicate(true),
-		"updated_at_unix": Time.get_unix_time_from_system(),
-	})
+	session_store.call("remember_openworld_pending_ops_state", PersistenceState.pending_ops_cache_payload(
+		_active_save_type(),
+		_server_session_id,
+		_server_started_at_unix,
+		_server_expires_at_unix,
+		_client_sequence,
+		_pending_operations
+	))
 
 func _clear_pending_ops_cache() -> void:
 	if session_store != null and session_store.has_method("clear_openworld_pending_ops_state"):
 		session_store.call("clear_openworld_pending_ops_state")
 
 func _operation_array(value: Variant) -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	var source := _as_array(value)
-	for operation_variant: Variant in source:
-		var operation := _as_dictionary(operation_variant)
-		if operation.is_empty():
-			continue
-		var op_id := str(operation.get("op_id", "")).strip_edges()
-		var op_type := str(operation.get("type", "")).strip_edges()
-		if not op_id.begins_with("owop_") or op_type == "":
-			continue
-		result.append(operation.duplicate(true))
-	return result
+	return PersistenceState.operation_array(value)
 
 func _load_durable_progress_preview() -> bool:
 	var progress := _durable_progress_cache_snapshot()
@@ -1005,67 +994,16 @@ func _remember_durable_progress(source: Dictionary, metadata: Dictionary = {}) -
 	return true
 
 func _durable_source_from_snapshot(snapshot_payload: Dictionary) -> Dictionary:
-	var durable_progress := _as_dictionary(snapshot_payload.get("durable_progress", {}))
-	if not durable_progress.is_empty():
-		return durable_progress
-	if snapshot_payload.has("pocket") or snapshot_payload.has("chest") or snapshot_payload.has("upgrades") or snapshot_payload.has("structures") or snapshot_payload.has("node_state"):
-		return snapshot_payload
-	var durable_base := _as_dictionary(snapshot_payload.get("durable_base", {}))
-	return durable_base
+	return PersistenceState.durable_source_from_snapshot(snapshot_payload)
 
 func _normalize_durable_progress(source: Dictionary, metadata: Dictionary = {}) -> Dictionary:
-	if source.is_empty() and metadata.is_empty():
-		return {}
-	var upgrades := _true_dictionary(source.get("upgrades", {}))
-	var structures := _true_dictionary(source.get("structures", {}))
-	if bool(upgrades.get("fogueira_estavel_1", false)):
-		structures["fogueira_estavel_1"] = true
-	if bool(structures.get("fogueira_estavel_1", false)):
-		upgrades["fogueira_estavel_1"] = true
-	var progress := {
-		"schema_version": DURABLE_PROGRESS_SCHEMA,
-		"save_type": str(source.get("save_type", metadata.get("save_type", _active_save_type()))),
-		"ruleset_id": str(source.get("ruleset_id", metadata.get("ruleset_id", ModelScript.RULESET_ID))),
-		"ruleset_version": int(source.get("ruleset_version", metadata.get("ruleset_version", ModelScript.RULESET_VERSION))),
-		"pocket": _positive_int_dictionary(source.get("pocket", {})),
-		"chest": _positive_int_dictionary(source.get("chest", {})),
-		"upgrades": upgrades,
-		"structures": structures,
-		"guidance": _as_dictionary(source.get("guidance", metadata.get("guidance", {}))).duplicate(true),
-		"node_state": _as_dictionary(source.get("node_state", metadata.get("node_state", {}))).duplicate(true),
-		"reward_ledger": _as_dictionary(source.get("reward_ledger", metadata.get("reward_ledger", {}))).duplicate(true),
-		"applied_ops": _as_dictionary(source.get("applied_ops", metadata.get("applied_ops", {}))).duplicate(true),
-		"last_checkpoint_session_id": str(source.get("last_checkpoint_session_id", metadata.get("last_checkpoint_session_id", ""))),
-		"last_completed_session_id": str(source.get("last_completed_session_id", metadata.get("last_completed_session_id", ""))),
-		"progress_revision": int(source.get("progress_revision", metadata.get("progress_revision", metadata.get("snapshot_revision", 0)))),
-		"updated_at_unix": int(source.get("updated_at_unix", Time.get_unix_time_from_system())),
-	}
-	return progress
+	return PersistenceState.normalize_durable_progress(source, metadata, _active_save_type())
 
 func _durable_progress_matches_context(progress: Dictionary) -> bool:
-	if str(progress.get("save_type", _active_save_type())) != _active_save_type():
-		return false
-	if str(progress.get("ruleset_id", ModelScript.RULESET_ID)) != ModelScript.RULESET_ID:
-		return false
-	if int(progress.get("ruleset_version", ModelScript.RULESET_VERSION)) != ModelScript.RULESET_VERSION:
-		return false
-	return true
+	return PersistenceState.durable_progress_matches_context(progress, _active_save_type())
 
 func _durable_progress_patch(progress: Dictionary) -> Dictionary:
-	if progress.is_empty():
-		return {}
-	if not _durable_progress_matches_context(progress):
-		return {}
-	return {
-		"ruleset_id": ModelScript.RULESET_ID,
-		"ruleset_version": ModelScript.RULESET_VERSION,
-		"pocket": _positive_int_dictionary(progress.get("pocket", {})),
-		"chest": _positive_int_dictionary(progress.get("chest", {})),
-		"upgrades": _true_dictionary(progress.get("upgrades", {})),
-		"structures": _true_dictionary(progress.get("structures", {})),
-		"guidance": _as_dictionary(progress.get("guidance", {})).duplicate(true),
-		"node_state": _as_dictionary(progress.get("node_state", {})).duplicate(true),
-	}
+	return PersistenceState.durable_progress_patch(progress, _active_save_type())
 
 func _load_local_checkpoint_state() -> bool:
 	if session_store == null:
@@ -1129,26 +1067,22 @@ func _save_local_checkpoint_state(reward_pending := false) -> void:
 			"last_checkpoint_session_id": _server_session_id,
 			"snapshot_revision": _snapshot_revision,
 		})
-	_remember_active_session_cache({
-		"schema_version": LOCAL_STATE_SCHEMA,
-		"save_type": _active_save_type(),
-		"session_id": _server_session_id,
-		"started_at": _server_started_at_unix,
-		"expires_at": _server_expires_at_unix,
-		"ruleset_id": ModelScript.RULESET_ID,
-		"ruleset_version": ModelScript.RULESET_VERSION,
-		"snapshot_revision": _snapshot_revision,
-		"accepted_checkpoint_id": _accepted_checkpoint_id,
-		"client_sequence": _client_sequence,
-		"checkpoint_dirty": _checkpoint_dirty,
-		"checkpoint_in_flight": _checkpoint_in_flight,
-		"last_checkpoint_subject": _last_checkpoint_subject,
-		"reward_pending": reward_pending,
-		"pending_collected_nodes": _pending_collected_nodes.duplicate(true),
-		"pending_operations": _pending_operations.duplicate(true),
-		"snapshot_payload": snapshot_payload,
-		"updated_at_unix": Time.get_unix_time_from_system(),
-	})
+	_remember_active_session_cache(PersistenceState.active_session_cache_payload(
+		_active_save_type(),
+		_server_session_id,
+		_server_started_at_unix,
+		_server_expires_at_unix,
+		_snapshot_revision,
+		_accepted_checkpoint_id,
+		_client_sequence,
+		_checkpoint_dirty,
+		_checkpoint_in_flight,
+		_last_checkpoint_subject,
+		reward_pending,
+		_pending_collected_nodes,
+		_pending_operations,
+		snapshot_payload
+	))
 	_remember_pending_ops_cache()
 
 func _clear_local_checkpoint_state() -> void:
@@ -1238,14 +1172,12 @@ func _session_from_body_by_id(body: Dictionary, session_id: String) -> Dictionar
 	return {}
 
 func _local_session_cache_is_live(local_state: Dictionary) -> bool:
-	var now_unix := int(Time.get_unix_time_from_system())
-	var expires_at := _timestamp_to_unix(local_state.get("expires_at", 0))
-	if expires_at <= 0 or expires_at <= now_unix:
-		return false
-	var started_at := _timestamp_to_unix(local_state.get("started_at", 0))
-	if started_at > 0 and now_unix - started_at > MAX_LOCAL_SESSION_CACHE_SECONDS + LOCAL_SESSION_CACHE_GRACE_SECONDS:
-		return false
-	return true
+	return PersistenceState.local_session_cache_is_live(
+		local_state,
+		int(Time.get_unix_time_from_system()),
+		MAX_LOCAL_SESSION_CACHE_SECONDS,
+		LOCAL_SESSION_CACHE_GRACE_SECONDS
+	)
 
 func _session_is_live(session: Dictionary, now_unix: int) -> bool:
 	if str(session.get("status", "")) != "started":
@@ -1289,25 +1221,7 @@ func _legacy_collected_nodes_from_snapshot(snapshot_payload: Dictionary) -> Dict
 	return _true_dictionary(snapshot_payload.get("collected_nodes", {}))
 
 func _timestamp_to_unix(value: Variant) -> int:
-	if value is int:
-		return int(value)
-	if value is float:
-		return int(value)
-	var text := str(value).strip_edges()
-	if text == "" or text == "<null>":
-		return 0
-	if text.is_valid_int():
-		return int(text)
-	var clean := text.replace("Z", "")
-	var plus_index := clean.find("+", 19)
-	if plus_index >= 0:
-		clean = clean.substr(0, plus_index)
-	var minus_index := clean.find("-", 19)
-	if minus_index >= 0:
-		clean = clean.substr(0, minus_index)
-	if clean.length() > 19:
-		clean = clean.substr(0, 19)
-	return int(Time.get_unix_time_from_datetime_string(clean))
+	return PersistenceState.timestamp_to_unix(value)
 
 
 func _remember_runtime_context(session_seconds: float, position_payload: Dictionary) -> void:
@@ -1496,22 +1410,10 @@ func _inventory_count(inventory: Dictionary) -> int:
 	return total
 
 func _positive_int_dictionary(value: Variant) -> Dictionary:
-	var source := _as_dictionary(value)
-	var result: Dictionary = {}
-	for key: String in source.keys():
-		var clean_key := ModelScript.canonical_item_id(str(key))
-		var amount := maxi(0, int(source.get(key, 0)))
-		if amount > 0:
-			result[clean_key] = int(result.get(clean_key, 0)) + amount
-	return result
+	return PersistenceState.positive_int_dictionary(value)
 
 func _true_dictionary(value: Variant) -> Dictionary:
-	var source := _as_dictionary(value)
-	var result: Dictionary = {}
-	for key: String in source.keys():
-		if bool(source.get(key, false)):
-			result[key] = true
-	return result
+	return PersistenceState.true_dictionary(value)
 
 func _as_array(value: Variant) -> Array:
 	return value if value is Array else []
