@@ -14,7 +14,7 @@ func test_desktop_render_profile_preserves_forward_plus_values() -> void:
 	assert_true(bool(settings["ssao_enabled"]))
 	assert_true(bool(settings["fog_enabled"]))
 	assert_false(bool(settings["fake_ao_enabled"]))
-	assert_almost_eq(float(settings["glow_intensity"]), 0.42, 0.001)
+	assert_almost_eq(float(settings["glow_intensity"]), 0.34, 0.001)
 	assert_almost_eq(float(settings["ssao_radius"]), 2.6, 0.001)
 	assert_almost_eq(RenderProfileScript.adjust_emission_energy(1.8, RenderProfileScript.ROLE_NEON, RenderProfileScript.PROFILE_DESKTOP), 1.8, 0.001)
 	assert_eq(RenderProfileScript.adjust_particle_amount(56, RenderProfileScript.PROFILE_DESKTOP), 56)

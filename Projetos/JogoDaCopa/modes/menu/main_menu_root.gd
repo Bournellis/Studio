@@ -47,9 +47,9 @@ const MATCH_MODE_LABELS: Dictionary = {
 	&"timer": "3 minutos",
 	&"goals": "3 gols"
 }
-const VISIBLE_VERSION: String = "v1.1.0"
+const VISIBLE_VERSION: String = "v1.2.0"
 const RELEASE_INFO_PATH: String = "res://build/release_info.json"
-const PREVIEW_CAMERA_LOOK_AT: Vector3 = Vector3(-3.08, 1.32, 0.0)
+const PREVIEW_CAMERA_LOOK_AT: Vector3 = Vector3(-3.2, 1.28, -0.18)
 const MENU_TRANSITION_SECONDS: float = 0.25
 
 var football_button: Button
@@ -291,7 +291,7 @@ func _build_ui() -> void:
 	shade.name = "PreviewShade"
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	shade.color = Color(0.0, 0.015, 0.025, 0.34)
+	shade.color = Color(0.0, 0.015, 0.025, 0.24)
 	add_child(shade)
 
 	var menu_center := Control.new()
@@ -458,10 +458,10 @@ func _build_arena_preview() -> void:
 	var env := Environment.new()
 	preview_environment = env
 	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color(0.018, 0.055, 0.105, 1.0)
+	env.background_color = Color(0.012, 0.04, 0.08, 1.0)
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.34, 0.46, 0.6, 1.0)
-	env.ambient_light_energy = 0.76
+	env.ambient_light_color = Color(0.28, 0.4, 0.54, 1.0)
+	env.ambient_light_energy = 0.68
 	var render_settings := RenderProfileScript.get_environment_settings()
 	env.glow_enabled = bool(render_settings["glow_enabled"])
 	env.glow_intensity = float(render_settings["glow_intensity"])
@@ -475,22 +475,22 @@ func _build_arena_preview() -> void:
 	key.name = "PreviewKeyLight"
 	key.rotation_degrees = Vector3(-48.0, -28.0, 0.0)
 	key.light_color = Color(0.8, 0.9, 1.0, 1.0)
-	key.light_energy = 3.0
+	key.light_energy = 2.55
 	world.add_child(key)
 
 	var hero_light := OmniLight3D.new()
 	hero_light.name = "PreviewHeroLight"
-	hero_light.position = Vector3(-2.3, 2.7, 3.4)
+	hero_light.position = Vector3(-2.7, 2.35, 2.55)
 	hero_light.light_color = Color(1.0, 0.88, 0.54, 1.0)
-	hero_light.light_energy = 2.25
+	hero_light.light_energy = 2.7
 	hero_light.omni_range = 7.5
 	world.add_child(hero_light)
 
 	var rim_light := OmniLight3D.new()
 	rim_light.name = "PreviewRimLight"
-	rim_light.position = Vector3(2.4, 2.2, -2.6)
+	rim_light.position = Vector3(1.8, 2.05, -2.45)
 	rim_light.light_color = Color(0.25, 0.92, 1.0, 1.0)
-	rim_light.light_energy = 1.45
+	rim_light.light_energy = 1.05
 	rim_light.omni_range = 8.0
 	world.add_child(rim_light)
 
@@ -503,26 +503,26 @@ func _build_arena_preview() -> void:
 
 	preview_avatar = PlayerAvatarScript.new()
 	preview_avatar.name = "PreviewAvatar"
-	preview_avatar.position = Vector3(-4.15, 0.0, 0.08)
-	preview_avatar.rotation.y = -0.22
+	preview_avatar.position = Vector3(-4.05, 0.0, -0.02)
+	preview_avatar.rotation.y = -0.42
 	preview_root.add_child(preview_avatar)
 
 	preview_ball = MeshInstance3D.new()
 	preview_ball.name = "PreviewBall"
-	preview_ball.position = Vector3(-3.08, 0.46, -0.34)
+	preview_ball.position = Vector3(-3.08, 0.48, -0.74)
 	var ball_mesh := SphereMesh.new()
 	ball_mesh.radius = 0.34
 	ball_mesh.height = 0.68
 	ball_mesh.radial_segments = 24
 	ball_mesh.rings = 12
 	preview_ball.mesh = ball_mesh
-	preview_ball.material_override = _build_material(Color(0.95, 0.97, 0.92, 1.0), 0.2, Color(0.2, 0.9, 1.0, 1.0), 0.18, RenderProfileScript.ROLE_SCOREBOARD)
+	preview_ball.material_override = _build_material(Color(1.0, 0.99, 0.9, 1.0), 0.28, Color(0.08, 0.28, 0.72, 1.0), 0.1, RenderProfileScript.ROLE_SCOREBOARD)
 	preview_root.add_child(preview_ball)
 
 	preview_camera = Camera3D.new()
 	preview_camera.name = "PreviewCamera"
 	preview_camera.current = true
-	preview_camera.fov = 38.0
+	preview_camera.fov = 34.0
 	preview_camera.near = 0.04
 	preview_camera.far = 80.0
 	world.add_child(preview_camera)
@@ -535,7 +535,7 @@ func _build_preview_pitch(parent: Node3D) -> void:
 	var mesh := BoxMesh.new()
 	mesh.size = Vector3(14.0, 0.1, 20.0)
 	pitch.mesh = mesh
-	pitch.material_override = _build_material(Color(0.02, 0.42, 0.16, 1.0), 0.82, Color(0.0, 0.18, 0.08, 1.0), 0.05, RenderProfileScript.ROLE_SHADER_PITCH)
+	pitch.material_override = _build_material(Color(0.025, 0.34, 0.14, 1.0), 0.86, Color(0.0, 0.12, 0.06, 1.0), 0.035, RenderProfileScript.ROLE_SHADER_PITCH)
 	parent.add_child(pitch)
 
 	for index in range(5):
@@ -545,7 +545,7 @@ func _build_preview_pitch(parent: Node3D) -> void:
 		var stripe_mesh := BoxMesh.new()
 		stripe_mesh.size = Vector3(14.2, 0.035, 0.08)
 		line.mesh = stripe_mesh
-		line.material_override = _build_material(Color(0.86, 0.96, 0.82, 1.0), 0.74, Color(0.5, 1.0, 0.7, 1.0), 0.08, RenderProfileScript.ROLE_SHADER_PITCH)
+		line.material_override = _build_material(Color(0.82, 0.94, 0.78, 1.0), 0.78, Color(0.38, 0.72, 0.48, 1.0), 0.045, RenderProfileScript.ROLE_SHADER_PITCH)
 		parent.add_child(line)
 
 func _build_preview_goal(parent: Node3D, z_position: float) -> void:
@@ -571,9 +571,9 @@ func _build_preview_goal(parent: Node3D, z_position: float) -> void:
 func _update_preview_camera_pose(time_seconds: float) -> void:
 	if preview_camera == null:
 		return
-	var angle := -0.34 + sin(time_seconds * 0.28) * 0.06
-	var radius := 4.2
-	preview_camera.position = Vector3(sin(angle) * radius - 2.85, 0.92 + sin(time_seconds * 0.5) * 0.05, cos(angle) * radius + 2.05)
+	var angle := -0.48 + sin(time_seconds * 0.28) * 0.045
+	var radius := 3.75
+	preview_camera.position = Vector3(sin(angle) * radius - 2.58, 0.82 + sin(time_seconds * 0.5) * 0.04, cos(angle) * radius + 1.72)
 	preview_camera.look_at(PREVIEW_CAMERA_LOOK_AT, Vector3.UP)
 
 func _get_preview_configured_luminance() -> float:
