@@ -1,0 +1,93 @@
+{
+    "schema_version":  "jogodacopa_web_publication_v1",
+    "generated_at":  "2026-06-14T09:15:04Z",
+    "cloudflare_pages_project":  "copa-arena-futebol",
+    "project_created":  false,
+    "branch":  "main",
+    "release_root":  "web/v1-copa-arena-futebol-20260614-2f537628",
+    "commit_hash":  "2f53762898f1d50c019cd8b68d6471c84db802c8",
+    "package":  {
+                    "schema_version":  "jogodacopa_web_publication_package_v1",
+                    "generated_at":  "2026-06-14T09:14:35Z",
+                    "project":  "JogoDaCopa",
+                    "product_name":  "Super CampeÃ£o",
+                    "cloudflare_pages_project":  "copa-arena-futebol",
+                    "release_root":  "web/v1-copa-arena-futebol-20260614-2f537628",
+                    "pages_asset_limit_bytes":  26214400,
+                    "package_strategy":  "index.pck and index.wasm are stored Brotli-compressed under original file names and served with Content-Encoding: br",
+                    "source_dir":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web",
+                    "pages_dir":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260614-2f537628\\pages",
+                    "zip_path":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260614-2f537628\\copa-arena-futebol-pages.zip",
+                    "export_log":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web-publication\\last-web-export.log",
+                    "raw_artifacts":  [
+                                          {
+                                              "label":  "raw index.html",
+                                              "path":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web\\index.html",
+                                              "bytes":  5446,
+                                              "sha256":  "ef2a07eab3902566182e60a91e64ae244d3eff2a5204b0f3ce29bbc1f1c052de"
+                                          },
+                                          {
+                                              "label":  "raw index.pck",
+                                              "path":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web\\index.pck",
+                                              "bytes":  27949384,
+                                              "sha256":  "65f2d7825d64f808c0840b495049fd103c80f0046305d1686fc390689175089e"
+                                          },
+                                          {
+                                              "label":  "raw index.wasm",
+                                              "path":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web\\index.wasm",
+                                              "bytes":  37695054,
+                                              "sha256":  "cca8bc7c462d348aaa3f318aecf3281d99bf219e182256412711b24f0d086d80"
+                                          }
+                                      ],
+                    "package_artifacts":  [
+                                              {
+                                                  "label":  "pages index.html",
+                                                  "path":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260614-2f537628\\pages\\index.html",
+                                                  "bytes":  5699,
+                                                  "sha256":  "bbe2df5fca748cf8dc04c22b8e0230d811e9c7fa9d3f801bc492287811e18ca7"
+                                              },
+                                              {
+                                                  "label":  "pages index.audio.worklet.js",
+                                                  "path":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260614-2f537628\\pages\\index.audio.worklet.js",
+                                                  "bytes":  7298,
+                                                  "sha256":  "5b476a9c9ce642c0ee4256436d1bc31d9c38f868aca0f9a8e2a57c18d2dec2a3"
+                                              },
+                                              {
+                                                  "label":  "pages index.audio.position.worklet.js",
+                                                  "path":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260614-2f537628\\pages\\index.audio.position.worklet.js",
+                                                  "bytes":  2973,
+                                                  "sha256":  "be33985bc7160d6bf9646f259cd86b259cd67b02ccb297ee5c44f8ac84327bc8"
+                                              },
+                                              {
+                                                  "label":  "pages index.pck brotli",
+                                                  "path":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260614-2f537628\\pages\\index.pck",
+                                                  "bytes":  20791335,
+                                                  "sha256":  "b9a261e8ad9a2ce56013dbf1d44843b03a0d03de91f68bb585f6cc6b88dd86c2"
+                                              },
+                                              {
+                                                  "label":  "pages index.wasm brotli",
+                                                  "path":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260614-2f537628\\pages\\index.wasm",
+                                                  "bytes":  6608968,
+                                                  "sha256":  "6903dbdda02519655d94ef7fc0eb18e31336ac11b0f93a1abe696a654d2cf30f"
+                                              },
+                                              {
+                                                  "label":  "pages _headers",
+                                                  "path":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260614-2f537628\\pages\\_headers",
+                                                  "bytes":  583,
+                                                  "sha256":  "0b6a6a5d3d8376c65189b41ee6d050e13af601b6798e695d7577396266a7638f"
+                                              },
+                                              {
+                                                  "label":  "pages zip",
+                                                  "path":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260614-2f537628\\copa-arena-futebol-pages.zip",
+                                                  "bytes":  27591716,
+                                                  "sha256":  "e02ea2e187edc030eaa5789b64fe9a4227564cb76815b462007a4fccf7399d00"
+                                              }
+                                          ],
+                    "package_report":  "D:\\Estudio\\Projetos\\JogoDaCopa\\builds\\web-publication\\web_v1-copa-arena-futebol-20260614-2f537628\\package-report.json"
+                },
+    "deployment_url":  "https://d5ec3dbf.copa-arena-futebol.pages.dev",
+    "deployment_urls":  [
+                            "https://d5ec3dbf.copa-arena-futebol.pages.dev"
+                        ],
+    "wrangler_deploy_output":  "⛅️ wrangler 4.100.0\r\n────────────────────\r\nnode.exe : \u001b[33m▲ \u001b[43;33m[\u001b[43;30mWARNING\u001b[43;33m]\u001b[0m \u001b[1mWarning: Your working directory is a git repo and has \r\nuncommitted changes\u001b[0m\r\nAt C:\\Program Files\\nodejs\\npx.ps1:29 char:3\r\n+   \u0026 $NODE_EXE $NPX_CLI_JS $args\r\n+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (\u001b[33m▲ \u001b[43;33m...ted changes\u001b[0m:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\n\r\n  To silence this warning, pass in --commit-dirty=true\r\n\r\n\r\nUploading... (6/9)\r\nUploading... (7/9)\r\nUploading... (8/9)\r\nUploading... (9/9)\r\n✨ Success! Uploaded 3 files (6 already uploaded) (7.89 sec)\r\n\r\n✨ Uploading _headers\r\n🌎 Deploying...\r\n✨ Deployment complete! Take a peek over at https://d5ec3dbf.copa-arena-futebol.pages.dev"
+}

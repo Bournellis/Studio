@@ -2,12 +2,12 @@
 
 - Last updated: `2026-06-14`
 - Project: `JogoDaCopa`
-- Product/module name: `Copa Arena Futebol`
+- Product/module name: `Super Campeao` (local candidate); public URL currently still serves `Copa Arena Futebol` 07C after rollback
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web v1.2.0`
-- Active stage: `Track 07C - Web Audio Safe Hotfix`
-- Active stage status: `PUBLICADO_AGUARDANDO_RETEST_HUMANO - Track 07C is merged locally as v1.2.0+fa82cb7d and public URL passed menu, first-minute, stability 5min and night-luma gates`
-- Status marker: `JOGO_DA_COPA_TRACK07C_V1_2_0_PUBLICADO_RETEST_HUMANO`
+- Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web v1.2.0 rollback baseline`
+- Active stage: `Track 08 - Super Campeao Rebrand & UI Cleanup`
+- Active stage status: `MERGEADO_LOCALMENTE_PUBLICACAO_REVERTIDA - Track 08 is merged locally as v1.2.1+2f537628, but remote first-minute gate failed with one ball_glass hitch; public URL was rolled back to v1.2.0+fa82cb7d`
+- Status marker: `JOGO_DA_COPA_TRACK08_SUPER_CAMPEAO_UI_MERGED_REMOTE_ROLLBACK`
 - Approved plan: Track 07 applies a visual/readability/broadcast polish pass without gameplay changes and must remain Web-safe before publication.
 - Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b-first-minute-smoothness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b1-sensory-feedback-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06a-match-start-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06b-esc-menu-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06c-menu-broadcast-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06d-hud-broadcast-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0-rollback.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06f-web-audio-stability-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_v1-1-0-publicado-retest.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06g-countdown-restart-flow-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07-visual-polish-web-safe-rollback.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07b-web-heap-margin-hotfix-rollback.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07c-web-audio-safe-publicado-retest.md`
 - Review: `docs/code-review-track04f2-webgl-first-render-stall-v1.md`, `docs/playtest-reports/track-04f2-webgl-stall.md`, `docs/code-review-track04b1-04b2-v1.md`, `docs/code-review-track04c-04d-v1.md`, `docs/code-review-track04e-web-spike-v1.md`, `docs/playtest-reports/track-04f-web-performance.md`, `docs/code-review-track04f-web-performance-v1.md`, `docs/playtest-reports/track-05a-web-stability.md`, `docs/code-review-track05a-web-stability-v1.md`, `docs/playtest-reports/track-05b-first-minute-smoothness.md`, `docs/code-review-track05b-first-minute-v1.md`, `docs/playtest-reports/track-05b1-sensory-feedback.md`, `docs/code-review-track05b1-sensory-feedback-v1.md`, `docs/playtest-reports/track-06a-match-start-fixes.md`, `docs/code-review-track06a-match-start-fixes-v1.md`, `docs/code-review-track06b-esc-menu-v1.md`, `docs/code-review-track06c-menu-broadcast-v1.md`, `docs/code-review-track06d-hud-broadcast-v1.md`, `docs/code-review-track06e-release-v1-1-0.md`, `docs/code-review-track06f-web-audio-stability-v1.md`, `docs/playtest-reports/track-06f-web-audio-stability.md`, `docs/playtest-reports/track-06g-countdown-restart-flow.md`, `docs/playtest-reports/track-07c-web-audio-safe-hotfix.md`
@@ -16,14 +16,14 @@
 
 ## Current Truth
 
-`JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent Copa-inspired football minigame direction. The first playable product surface is now named `Copa Arena Futebol`.
+`JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent Copa-inspired football minigame direction. The first playable product surface is being rebranded from `Copa Arena Futebol` to `Super Campeao`; local `main` contains the rebrand, while the public URL currently remains on the 07C rollback baseline.
 
 The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Scope
 
 - PC Windows editor-first.
-- Main menu launches `Copa Arena Futebol` / `Futebol 1x1`.
+- Main menu launches `Super Campeao` locally; public rollback baseline still serves the 07C `Copa Arena Futebol` menu until the Track 08 hitch is fixed and republished.
 - Third-person 1x1 football against a bot.
 - Default match mode is 3-minute timer; `3 gols` mode remains selectable and unchanged.
 - Hybrid Track 02 presentation: procedural night stadium/arena/VFX plus in-repo authored CC0 ball/branding assets, real Quaternius humanoid avatars and real Kenney/Pixabay audio.
@@ -37,7 +37,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Broadcast-style HUD, offscreen ball indicator, result/rematch panel and polished 3D menu with avatar preview.
 - Football bot with prediction, positioned defense, boost, main-menu selectable `easy`/`normal`/`hard` presets and alternating kickoff.
 - Track 02H review fixes: stadium scoreboards use selected kit codes, offscreen ball indicator uses player-local basis, scoreboards cache label references, bot difficulty has non-debug API and HUD visibility.
-- Track 03 Arcade V1: dash/slide/stun/flip, charged kick, SUPER shot, fireball, boost pads, jump pads, ramps, timer/golden goal/vale-2/emote and toon experiment toggle default OFF.
+- Track 03 Arcade V1: dash/slide/stun/flip, charged kick, SUPER shot, fireball, boost pads, jump pads, ramps, timer/golden goal/vale-2 and emote.
 - Track 03F Quality Hotfix V1: SUPER whiffs do not spend bar/quota, real avatar tint preserves PBR textures, perf sample records representative window metadata and validation catches truncated `.gd`/`.gdshader` sources.
 - Track 03G Playtest Findings V1: menu responsivo, aparencia somente na intro pre-kickoff, dash player/bot `20.75` por `0.28s`, bot com hold defensivo no kickoff do player e defesa aerea, camera com raycast clamp/spawn seguro no kickoff do bot, reset seguro da bola e marcador/anunciador de kickoff.
 - Track 03H Avatar Parity & Animation Drift Fix V1: bot e player usam modelo real na cena montada, corpo primitivo do combatant fica oculto em ambos, falhas de modelo real emitem `push_error`, clipes UAL tem root motion horizontal/yaw removido e a pose e travada contra drift.
@@ -46,7 +46,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Track 03L Arena Seal & Character Facing V2: arena estanque com vidros ate o teto, painel frontal alto sobre os gols, rodape/rampas 03B removidos, CCD da bola ativo e avatar visual do player girando pela direcao de movimento sem alterar camera/mira/chute.
 - Track 03L.1 Facing Evidence V1: lacunas do review da Claude fechadas com teste automatizado de facing no avatar, capturas de corrida em curva/parada/rebote alto e `docs/playtest-reports/track-03l-arena.md`.
 - Track 04B2 Feel & UI Fixes V1: dash player/bot agora usa curva integrada com aceleracao e distancia `5.3m`; pulo/flip sem input direcional fica vertical puro; result panel libera mouse, trava input e foca Revanche; intro/pause/result tem clique real em 3 resolucoes; preview do menu ganhou camera/luz de heroi e teste anti-tela-preta.
-- Track 04B1 Character Presentation & Animation V1: uniforme procedural por regioes no mesh skinned, cabelo real anexado ao bone `Head`, toon por material `next_pass` sem duplicata T-pose e chute autoral `0.36s` com pe abaixo do quadril.
+- Track 04B1 Character Presentation & Animation V1: uniforme procedural por regioes no mesh skinned, cabelo real anexado ao bone `Head` e chute autoral `0.36s` com pe abaixo do quadril.
 - Track 04B3 Kick Arms Polish V1: aprovado e mergeado; retunou somente os bracos do `JogoDaCopa_Kick`, mantendo pernas/tronco/timing aprovados; maos ficam abaixo da cabeca e upperarms ficam `<= 25 deg` de abducao nas amostras do clipe.
 - Track 04D Match Completeness V1: aprovado pelo review e mergeado em main; pause real com restart/volumes/menu, resultado rico com estatisticas puras, fades curtos, ESC/foco/restart consistentes e hero shot do menu em 1080p/720p.
 - Track 04C Stadium Visual Upgrade V1: aprovado pelo review e mergeado em main apos a 04D; arquibancadas profundas, torcida com cores dos dois kits e `crowd_excitement`, teloes maiores, bandeiroes, mastros animados, halos emissive e skyline low-poly sem novas luzes com sombra.
@@ -66,14 +66,14 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Track 07 Visual Polish & Web-Safe Broadcast Pass: mergeado localmente em `main` como `138cf4f7` (`v1.2.0+138cf4f7`) com visual polish, scorebug/HUD/menu mais legiveis e patch de export Web Audio; validate final PASS `103/1844`, menu remoto PASS e primeiro minuto remoto PASS (`firstMinuteHitches=0`, erros `0`), mas estabilidade remota 5min FAIL por heap JS/WASM `44,636,600 -> 49,252,604` bytes (`+10.34%`, limite `<10%`); counters Godot, caches, video memory e FPS PASS; rollback executado para `v1.1.0+be453dc3`.
 - Track 07B Web Heap Margin Hotfix: mergeado localmente em `main` como `6de8d6b7` (`v1.2.0+6de8d6b7`) para recuperar heap sem mudar gameplay; gates locais PASS, estabilidade local 5min `+5.77%`; publicacao remota tentada, mas menu remoto FAIL com `pageErrors=1` / `AbortError: Unable to load a worklet's module.`; rollback executado para `v1.1.0+be453dc3`.
 - Track 07C Web Audio Safe Hotfix: mergeado localmente em `main` como `fa82cb7d` e publicado como `v1.2.0+fa82cb7d`; restaura `_godot_audio_has_worklet(){return 0}` no pacote Web, preserva fallback tolerante para position worklet e adia streams reais de audio no Web ate ativacao do navegador; validate `103/1844`, menu remoto PASS, primeiro minuto remoto PASS (`firstMinuteHitches=0`), estabilidade remota 5min PASS (heap `+7.71%`, counters/caches estaveis, pior janela 5s `130.2 FPS`) e luma remota `6.69 < 90`.
+- Track 08 Super Campeao Rebrand & UI Cleanup: mergeado localmente em `main` como `2f537628`; rebrand local para `Super Campeao`, novo splash, menu principal/intro limpos e Toon removido do runtime/UI/testes ativos; validate `104/1825`, export Web e probes locais PASS, publicacao remota tentada como `v1.2.1+2f537628`, mas primeiro minuto remoto FAIL com `firstMinuteHitches=1` (`333.5ms`, evento proximo `ball_glass`), entao rollback foi executado para `v1.2.0+fa82cb7d`.
 - Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
-- Toon experiment screenshots live in `docs/screenshots/track-03e-toon/`.
 - Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
 - No FPS arena, no weapons, no mobile, no multiplayer/backend.
 
 ## Current Gate
 
-`v1.2.0+fa82cb7d` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260614-fa82cb7d`. Track 07C passed remote menu, first-minute, stability 5min and night-luma gates. Next gate is human retest by Fabio + external tester on the public URL.
+`v1.2.0+fa82cb7d` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260614-fa82cb7d`. Track 08 is merged locally but not public because the `v1.2.1+2f537628` remote first-minute gate failed with one `ball_glass` hitch. Next gate is a technical hotfix/diagnosis before republishing Track 08; no human retest is requested for `v1.2.1` yet.
 
 This project remains the studio's temporary sole active implementation focus. Other active projects are paused for a few days unless the user explicitly resumes them.
 
@@ -85,9 +85,9 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest Track 07C final result: PASS, 103 tests, 1844 asserts, including source integrity check and UTF-8 BOM rejection.
+Latest Track 08 local result: PASS, 104 tests, 1825 asserts, including source integrity check and UTF-8 BOM rejection.
 
-Latest Web remote smoke: 07C menu `docs/playtest-reports/track-07c-data/07c-remote-menu-user-url-fa82cb7d.json` PASS operacional (`pageErrors=0`, `consoleErrorCount=0`, root `fa82cb7d`); 07C first-minute `docs/playtest-reports/track-07c-data/07c-remote-first-minute-fa82cb7d.json` PASS (`firstMinuteHitches=0`); 07C stability `docs/playtest-reports/track-07c-data/07c-remote-stability-5min-fa82cb7d.json` PASS (heap retido `+7.71%`, counters estaveis, pior janela 5s `130.2 FPS`); luma `docs/playtest-reports/track-07c-data/07c-remote-night-luma-gate-fa82cb7d.json` PASS (`6.69 < 90`).
+Latest Web remote smoke: Track 08 menu `docs/playtest-reports/track-08-data/08-remote-menu-2f537628.json` PASS (`pageErrors=0`, `consoleErrorCount=0`, root `2f537628`); Track 08 first-minute `docs/playtest-reports/track-08-data/08-remote-first-minute-2f537628.json` FAIL (`firstMinuteHitches=1`, hitch `333.5ms`, near `ball_glass`); rollback confirmation `docs/playtest-reports/track-08-data/08-rollback-confirm-fa82cb7d.json` PASS and public URL is back on `fa82cb7d`.
 
 Export smoke command:
 

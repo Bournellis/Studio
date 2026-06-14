@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK_08_SUPER_CAMPEAO_UI_IN_PROGRESS`
+- Status: `JOGO_DA_COPA_TRACK08_SUPER_CAMPEAO_UI_MERGED_REMOTE_ROLLBACK`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -21,13 +21,13 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 02C-bis/02D-bis Real Assets V1 replaced the avatar proxy with real Quaternius skinned humanoids/UAL animation clips and replaced synthetic feedback with real Kenney/Pixabay SFX, jingles and stadium ambience.
 - Track 03 Arcade V1 completed the arcade pass: dash/slide/stun/flip, charged kick, SUPER/fireball, boost pads, jump pads, ramps, timer/golden goal/vale-2 and emote/confetti.
 - Track 03F Quality Hotfix V1 fixed SUPER whiff consumption, preserved Quaternius PBR textures under kit tint, documented representative perf methodology and added source integrity validation.
-- Track 08 Super Campeao UI removes the old Toon experiment from active runtime/UI and rebrands the public game surface to `Super Campeao`.
+- Track 08 Super Campeao UI removes the old Toon experiment from active runtime/UI and rebrands the local game surface to `Super Campeao`; public publication was rolled back after a first-minute remote hitch.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Human confirmation playtest for `Super Campeao` Track 08 after public publication.
+Technical hotfix/diagnosis for the Track 08 remote first-minute hitch near `ball_glass`, then republish and only request human retest after gates pass.
 
 Focus:
 

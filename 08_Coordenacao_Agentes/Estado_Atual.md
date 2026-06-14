@@ -7,19 +7,19 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`v1.2.0` publicado; aguardando retest humano) + `Projetos/draxos-mobile/` (retomado 2026-06-14 - programa de hardening)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`v1.2.0` publicado; Track 08 local bloqueada por gate remoto) + `Projetos/draxos-mobile/` (retomado 2026-06-14 - programa de hardening)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - AGUARDANDO_RETEST_HUMANO`
-- Marker: `JOGO_DA_COPA_TRACK07C_V1_2_0_PUBLICADO_RETEST_HUMANO`
+- Status: `P2_IMPLEMENTACAO - TRACK08_MERGED_REMOTE_ROLLBACK`
+- Marker: `JOGO_DA_COPA_TRACK08_SUPER_CAMPEAO_UI_MERGED_REMOTE_ROLLBACK`
 - Baseline: `Copa Arena Futebol` Web publico em `v1.2.0+fa82cb7d` (`web/v1-copa-arena-futebol-20260614-fa82cb7d`) na URL `https://copa-arena-futebol.pages.dev/`; gates remotos 07C PASS.
-- Publicacao: Track 07C manteve visual polish, restaurou fallback Web Audio seguro e passou menu/primeiro minuto/estabilidade 5min/luma remotos; sem mudanca de gameplay.
+- Publicacao: Track 08 `Super Campeao v1.2.1+2f537628` foi mergeada localmente e publicada em tentativa, mas primeiro minuto remoto falhou (`1` hitch `333.5ms` perto de `ball_glass`); rollback remoto confirmado para 07C.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: retest humano do Fabio + tester externo na URL publica; depois decidir ajustes ou encerramento da serie `v1.2.0`.
+- Proximo passo: hotfix/diagnostico tecnico do hitch remoto da Track 08 antes de republicar; sem retest humano de `v1.2.1` ate os gates passarem.
 
 ## draxos-roguelike-cardgame
 
