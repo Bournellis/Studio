@@ -43,4 +43,11 @@ O patch final de export Web Audio da Track 07 resolveu os erros remotos, mas for
 
 ## Handoff
 
-Fechar com merge local em `main`, publicacao apenas se gates remotos passarem, docs/status atualizados e `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+Status em 2026-06-14:
+
+- Merge local em `main`: `6de8d6b7`.
+- Publicacao candidata: `web/v1-copa-arena-futebol-20260614-6de8d6b7`.
+- Gate remoto menu 30s: FAIL, `pageErrors=1`, `consoleErrorCount=0`, `menu.ready.end` visto, release root conferiu.
+- Erro: `AbortError: Unable to load a worklet's module.`
+- Rollback remoto executado para `web/v1-copa-arena-futebol-20260613-be453dc3`; URL publica confirmada nesse root.
+- Nao mover para Done; proxima track deve corrigir o fallback Web Audio antes de nova publicacao.

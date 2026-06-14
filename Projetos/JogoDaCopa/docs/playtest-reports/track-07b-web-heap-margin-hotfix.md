@@ -27,6 +27,24 @@ Recuperar margem real no gate remoto de heap JS/WASM da Track 07 sem mudar gamep
 - `docs/playtest-reports/track-07b-data/07b-local-first-minute.json`
 - `docs/playtest-reports/track-07b-data/07b-local-stability-5min-margin.json`
 
-## Proximo Gate
+## Tentativa Remota
 
-Commitar a hotfix, mergear em `main`, regenerar o pacote com o hash definitivo, publicar via `tools/publish_web.ps1 -Mode FullPublish -ConfirmRemoteMutation` e repetir menu remoto, primeiro minuto remoto, estabilidade remota 5min e luminancia noturna. Se qualquer gate remoto falhar, rollback imediato para `v1.1.0+be453dc3`.
+| Gate | Resultado |
+| --- | --- |
+| Publicacao candidata | Executada por `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260614-6de8d6b7 -ConfirmRemoteMutation` |
+| URL publica | `https://copa-arena-futebol.pages.dev/` serviu `web/v1-copa-arena-futebol-20260614-6de8d6b7` antes do gate |
+| Menu remoto 30s | FAIL: `pageErrors=1`, `consoleErrorCount=0`, `menu.ready.end` visto, release root conferiu |
+| Erro remoto | `AbortError: Unable to load a worklet's module.` |
+| Rollback | Executado imediatamente para `web/v1-copa-arena-futebol-20260613-be453dc3`; URL publica confirmada novamente nesse root |
+
+## Evidencias Remotas
+
+- `docs/playtest-reports/track-07b-data/07b-package-artifacts.json`
+- `docs/playtest-reports/track-07b-data/07b-publication-report.json`
+- `docs/playtest-reports/track-07b-data/07b-remote-menu-user-url-6de8d6b7.json`
+- `docs/playtest-reports/track-07b-data/07b-remote-menu-user-url-6de8d6b7.png`
+- `docs/playtest-reports/track-07b-data/07b-rollback-publication-report-be453dc3.json`
+
+## Resultado
+
+Track 07B nao pode ser publicada como `v1.2.0`. A tentativa recuperou margem local de heap, mas reabrir o AudioWorklet global causou erro remoto de modulo worklet no menu publico. A baseline publica segue `v1.1.0+be453dc3`; a proxima correcao deve manter o fallback Web Audio seguro ou tratar explicitamente a falha de `audioWorklet.addModule()` antes de repetir a publicacao.

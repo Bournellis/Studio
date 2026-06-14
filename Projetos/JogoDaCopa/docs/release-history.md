@@ -6,6 +6,7 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 
 | Data | Release | Canal | URL | Release root | Evidencia |
 | --- | --- | --- | --- | --- | --- |
+| 2026-06-14 | Web Heap Margin Hotfix 07B (`v1.2.0+6de8d6b7`) | Tentativa Cloudflare Pages com rollback | `https://copa-arena-futebol.pages.dev/` voltou para `v1.1.0+be453dc3` | Tentativa `web/v1-copa-arena-futebol-20260614-6de8d6b7`; rollback `web/v1-copa-arena-futebol-20260613-be453dc3` | `docs/playtest-reports/track-07b-data/07b-publication-report.json` + `docs/playtest-reports/track-07b-data/07b-remote-menu-user-url-6de8d6b7.json` + `docs/playtest-reports/track-07b-data/07b-rollback-publication-report-be453dc3.json` |
 | 2026-06-14 | Visual Polish & Web-Safe Broadcast Pass (`v1.2.0+138cf4f7`) | Tentativa Cloudflare Pages com rollback | `https://copa-arena-futebol.pages.dev/` voltou para `v1.1.0+be453dc3` | Tentativa `web/v1-copa-arena-futebol-20260614-138cf4f7`; rollback `web/v1-copa-arena-futebol-20260613-be453dc3` | `docs/playtest-reports/track-07-data/07-publication-report.json` + `docs/playtest-reports/track-07-data/07-remote-menu-user-url-138cf4f7.json` + `docs/playtest-reports/track-07-data/07-remote-first-minute-138cf4f7.json` + `docs/playtest-reports/track-07-data/07-remote-stability-5min-138cf4f7.json` + `docs/playtest-reports/track-07-data/07-rollback-release-root-be453dc3.json` |
 | 2026-06-13 | Countdown Direto & Restart Confirmado V1 (`v1.1.0+be453dc3`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260613-be453dc3` | `docs/playtest-reports/track-06e-data/06e-publication-report.json` + `docs/playtest-reports/track-06g-data/06g-remote-first-minute-be453dc3.json` + `docs/playtest-reports/track-06g-data/06g-remote-stability-5min-be453dc3.json` + `docs/playtest-reports/track-06g-data/06g-remote-night-luma-gate-be453dc3.json` + `docs/playtest-reports/track-06g-data/06g-remote-menu-user-url-be453dc3.png` |
 | 2026-06-13 | Match Polish & Broadcast Identity V1 (`v1.1.0+22850c06`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260613-22850c06` | `docs/playtest-reports/track-06e-data/06e-publication-report.json` + `docs/playtest-reports/track-06f-data/06f-remote-first-minute-22850c06.json` + `docs/playtest-reports/track-06f-data/06f-remote-stability-5min-22850c06.json` + `docs/playtest-reports/track-06f-data/06f-remote-night-luma-gate-22850c06.json` + `docs/playtest-reports/track-06f-data/06f-remote-menu-footer-22850c06.png` |
@@ -30,6 +31,20 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 - Erros remotos no gate que falhou: `pageErrors=0`, `consoleErrorCount=0`.
 - Rollback executado imediatamente para `web/v1-copa-arena-futebol-20260613-be453dc3`; URL estavel confirmada novamente com esse release root em `docs/playtest-reports/track-07-data/07-rollback-release-root-be453dc3.json`.
 - Resultado: `v1.2.0` nao esta publicado; URL publica segue em `v1.1.0+be453dc3`. Proximo passo tecnico e reduzir/investigar heap retido antes de republicar.
+
+## 2026-06-14 - Web Heap Margin Hotfix 07B - Tentativa Bloqueada
+
+- Candidato local: `v1.2.0+6de8d6b7`, mergeado em `main` como `6de8d6b7`.
+- Release root tentado: `web/v1-copa-arena-futebol-20260614-6de8d6b7`.
+- Preview do deploy tentado: `https://24520c20.copa-arena-futebol.pages.dev`.
+- Escopo: recuperar margem de heap sem gameplay, preservando AudioWorklet global, removendo sombra extra da bola no Web e reduzindo pequenas alocacoes do HUD.
+- Gates locais: `tools/validate.gd` PASS `103` testes / `1844` asserts; menu local PASS; primeiro minuto local PASS; estabilidade local 5min PASS com heap `+5.77%`.
+- Publicacao tentada por `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260614-6de8d6b7 -ConfirmRemoteMutation`; projeto Cloudflare Pages `copa-arena-futebol`.
+- Sanity da URL publica antes do gate: `https://copa-arena-futebol.pages.dev/` serviu `web/v1-copa-arena-futebol-20260614-6de8d6b7`.
+- Gate remoto menu 30s: FAIL, release root conferiu e `menu.ready.end` foi visto, mas `pageErrors=1`.
+- Erro remoto: `AbortError: Unable to load a worklet's module.`; `consoleErrorCount=0`.
+- Rollback executado imediatamente para `web/v1-copa-arena-futebol-20260613-be453dc3`; evidencia em `docs/playtest-reports/track-07b-data/07b-rollback-publication-report-be453dc3.json` e URL estavel confirmada novamente com esse release root.
+- Resultado: `v1.2.0+6de8d6b7` nao esta publicado; URL publica segue em `v1.1.0+be453dc3`. Proximo passo tecnico e uma nova hotfix que mantenha fallback Web Audio seguro antes de repetir a publicacao.
 
 ## 2026-06-13 - Countdown Direto & Restart Confirmado V1
 
