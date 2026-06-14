@@ -1,583 +1,231 @@
 # DraxosMobile - Architecture
 
-- Ultima atualizacao: `2026-05-27`
+- Status: `VIVO`
+- Last updated: `2026-06-14`
+- Scope: runtime architecture, authority boundaries and stabilization guardrails.
 
----
+This document explains how the current DraxosMobile foundation is meant to be
+worked on. It does not carry the current package name, release root, preview URL
+or version codes. Operational state lives in `implementation/current-status.md`;
+package lineage lives in `docs/release-history.md`.
+
+## Product Shape
+
+DraxosMobile is a PVE Arena-first async autobattler with Refugio/Base,
+server-authoritative progression, social systems and later PVP. The current
+Openworld/Bosque slice is an Internal Alpha mode and launcher/shell integration,
+not approval for broad continuous-open-world expansion.
+
+Current hardening work must stabilize the foundation before new expansion:
+
+- no new PVP, economy, weapons, spells, potions, final visuals or broad
+  Openworld content without explicit decision;
+- no refactor that weakens RLS, idempotency, ledger, auth verification or
+  account/save authority;
+- no remote mutation or publication from validation commands.
 
 ## Stack
 
-| Camada | Tecnologia |
-|---|---|
-| Client | Godot `4.6.2-stable` (GDScript) |
-| Backend | Supabase Auth, Postgres, Edge Functions, Realtime |
-| Comunicacao | REST via HTTPRequest do Godot |
-| Autenticacao | JWT Supabase, Auth anonimo para guest/local, email/senha para Internal Alpha v0, Google OAuth2 futuro |
-| Testes client | GUT `9.6.0` |
-| Testes server | Deno/TypeScript tests para Edge Functions |
-
----
-
-## Estrategia De Backend E Plano De Saida
-
-Decisao para Internal Alpha v0:
-
-- usar Supabase remoto Free agora;
-- manter Postgres como centro autoritativo de dados;
-- manter Edge Functions como camada HTTP server-authoritative;
-- configurar ambiente remoto no cliente por `BackendConfig`, env vars e project settings publicos;
-- bloquear chaves com aparencia de service role/secret no cliente Godot;
-- preservar um plano de saida para Backend Proprio + Postgres.
-
-Justificativa:
-
-- DraxosMobile e PvE/PVP assincrono, nao multiplayer realtime com jogadores na mesma partida.
-- O jogo precisa mais de transacoes, ledger, auditoria, recursos, saves, base, loja e ranking do que de salas, lobbies ou tick de partida.
-- Social existe, mas e assincrono ou semi-assincrono: direct, chat de guilda, ajuda, guilda, contribuicoes e possivel transferencia de recursos.
-- Postgres combina melhor com economia, historico, idempotencia e consistencia forte.
-
-Alternativas avaliadas:
-
-| Opcao | Papel |
-|---|---|
-| Supabase | Escolha atual para alpha: acelera Auth, Postgres, Edge Functions, Storage e migrations locais/remotas. |
-| Backend Proprio + Postgres | Alvo de longo prazo se o jogo crescer: API propria, Postgres gerenciado, jobs, observabilidade, backups e painel admin. |
-| Nakama | Alternativa futura se o produto passar a depender fortemente de realtime, matchmaking, presenca, lobbies, torneios ou social competitivo pronto. Nao e o alvo principal atual. |
-
-Regras anti-lock-in:
-
-- O Godot deve falar com endpoints logicos do projeto, nao com detalhes internos de tabelas ou vendor.
-- `online/supabase_client.gd` deve receber configuracao de backend sem conhecer secrets.
-- Contratos HTTP devem permanecer estaveis: `account`, `battle`, `base`, `social`, `competition`, `monetization`, `telemetry`.
-- Edge Functions devem concentrar adaptadores de plataforma, chamando logica de dominio portavel sempre que possivel.
-- Regras economicas devem gerar ledger exportavel.
-- IDs internos de conta/save/player devem pertencer ao jogo; `auth.users.id` ou equivalente do fornecedor e detalhe de auth.
-- Schema SQL, migrations e seeds devem ficar versionados.
-- Storage de builds/manifests pode mudar de fornecedor sem alterar gameplay.
-
-### Limite De Escopo De Servicos - Track 05
-
-Cada Edge Function HTTP deve declarar escopo antes de evoluir:
-
-- `save-scoped`: `account`, `battle`, `base`, `competition`,
-  `monetization` e `progression-lab` quando resolvem o save ativo por
-  `x-draxos-save-type`.
-- `account-scoped`: `social`, porque usa identidade social canonica da conta e
-  apenas valida o save ativo para marcar/limitar o Lab.
-- `release`: `release` e `healthcheck`, sem estado de gameplay.
-- `telemetry`: `telemetry`, sem autoridade economica, ranking ou recompensa.
-- `admin-internal`: administracao interna auditavel, `service_role`-only, sem
-  painel publico e sem segredo no cliente/export.
-
-Novos endpoints devem declarar escopo no contrato de API antes de codigo,
-smoke ou migration. Foundation Expansion Readiness/Closeout antecipa
-`account_profiles` + `game_saves`; `players.save_type` permanece apenas como
-compatibilidade historica alpha.
-
-Plano de saida para Backend Proprio + Postgres:
-
-1. Congelar contratos HTTP atuais.
-2. Exportar schema/dados do Postgres.
-3. Criar API propria com os mesmos endpoints logicos.
-4. Migrar a logica das Edge Functions para modulos de dominio no backend proprio.
-5. Manter cliente Godot apontando para uma `base_url` diferente.
-6. Migrar Auth com fluxo controlado de conta/email, preservando `account_id` interno do jogo.
-7. Validar ledger, ranking, saves e historico de batalha antes de desligar Supabase.
-
-Nakama deve ser reavaliado somente se pelo menos uma destas premissas mudar:
-
-- jogadores precisam ficar juntos em partidas conectadas;
-- matchmaking/lobbies se tornam centrais;
-- presenca online vira sistema principal;
-- chat/guilda/leaderboards prontos passam a valer mais do que controle total de economia e dados relacionais;
-- a equipe prefere operar um game backend pronto em vez de manter API propria.
-
----
-
-## Status Tecnico Atual
-
-- `T00-P01` completo: projeto Godot, boot scene, `ProjectInfo`, validate e GUT.
-- `T00-P02A` completo: migration MVP, tabelas iniciais, RLS base, seed tecnico e healthcheck standalone.
-- `T00-P02B` completo: layout oficial `supabase/`, Docker Desktop, Deno via `npx`, `supabase db reset` e healthcheck pelo gateway local.
-- `T00-P03` completo: autoloads `UiTokens`, `AssetIds`, `ContentLibrary`, `.gutconfig.json` e validate integrado.
-- `T00-P04` completo: fixtures `MVP_ONLY`, JSONs de conteudo e catalogo gerado.
-- `T00-P05` completo: conta guest MVP, convite `ALPHA-TEST`, `account/guest`, `account/state`, RPC idempotente e bloqueio de escrita direta do cliente.
-- `T00-P06` completo: cliente Godot com `SessionStore`, `SupabaseClient`, Auth anonimo, `account/guest`, `account/state`, cache local nao autoritativo e erro offline controlado.
-- `T00-P07` completo: `battle/request`, `battle/latest`, RPC `request_mvp_battle`, log `battle_log_v1`, recompensa `MVP_ONLY` e idempotencia server-side.
-- `T00-P08` completo: replay placeholder no Godot para `battle_log_v1`, timeline ordenada por `t`/`seq`, skip e tolerancia a eventos desconhecidos.
-- `T00-P10` completo e rework 2026-05-25 aplicado: `FIRST_SLICE_SIM` server-authoritative com Instrumentos Rituais, Doutrinas, Familiares, DoTs, status, resistencias, summons, anti-stall, bots de variacao, smoke runtime Supabase e replay rico no cliente.
-- `T00-P11` completo e refinado em `T03-P05`/`T03-P08`: Base Manager v0 server-authoritative com `base/state`, `base/collect`, `base/upgrade`, estruturas permanentes, fila de construcao, fila dupla via loja alpha, coleta offline, ledger, idempotencia e payload de apresentacao com custo/tempo/producao/bloqueio por predio.
-- `T00-P12` completo: Social/Competicao v0 server-authoritative com `social/state`, guilda alpha, chat de guilda por polling, matchmaking preview com fallback de bot e ranking de season sem bots.
-- `T00-P13` completo e refinado em `T03-P08`: Monetizacao v0 server-authoritative com Battle Pass, redeems diarios de Diamante, recompensas diarias/semanais, claims free/premium, produtos alpha por Diamante, fila dupla, ledger, idempotencia e export smoke Android/PC/Web.
-- `Track 01` completo: hardening do alpha PC local com fluxo de primeira sessao mais claro, estados ocupados/erros offline/pre-condicoes visiveis, reset seguro de sessao local, telemetria client nao autoritativa e smoke do loop alpha.
-- `Track 03` completa ate T03-P18: Supabase remoto Free para alpha, `BackendConfig` no Godot, env vars seguras, `.env` reais ignorados, smokes remotos, `players.save_type`, header `x-draxos-save-type`, dois saves server-backed no Supabase local/remoto, reset separado por save, Progression Lab aplicado server-authoritative no save `progression_lab`, Base Manager jogavel, Social basico jogavel, Competicao com pontos/top 10/posicao do jogador, Loja proof-of-concept, auth email/senha, manifest/version gate, exports Android/PC/Web, Portal/Web no Cloudflare Pages e Backend Proprio + Postgres como plano de saida preferido. A decisao antiga da Track 04 foi superseded pela Foundation Expansion Readiness/Closeout: `account_profiles` + `game_saves` agora sao a autoridade fundacional, `players.save_type` e compatibilidade alpha, e endpoints/state carregam contexto explicito de account/save/ruleset. Nakama fica apenas como alternativa futura se realtime/social competitivo virar pilar.
-
----
-
-## Contratos
-
-Antes de criar codigo ou migrations, consulte:
-
-- `contracts/api-endpoints.md`
-- `contracts/battle-event-log.md`
-- `contracts/database-schema.md`
-- `contracts/content-definitions.md`
-- `reuse-map.md`
-- `internal-alpha-v0.md`
-- `internal-alpha-v0-design-lock.md`
-
-`server/functions/` e `server/schema/migrations/` sao a fonte autoral organizada
-do backend. `supabase/functions/` e `supabase/migrations/` sao o mirror de
-execucao local da Supabase CLI. Use `tools/sync_backend_mirror.ps1 -Check` para
-detectar drift e `-Apply` para sincronizar `server -> supabase` sem mudar
-contratos de runtime.
-
-Deno e Supabase CLI sao validados via `npx -y deno` e `npx -y supabase` nesta maquina.
-
-Runtime local validado:
-
-- Studio: `http://127.0.0.1:54323`
-- Project URL: `http://127.0.0.1:54321`
-- Database: `postgresql://postgres:postgres@127.0.0.1:54322/postgres`
-- Edge Functions: `http://127.0.0.1:54321/functions/v1`
-
----
-
-## Fundacao Client Godot
-
-Autoloads atuais:
-
-| Autoload | Arquivo | Responsabilidade |
+| Layer | Technology | Notes |
 |---|---|---|
-| `UiTokens` | `core/ui_tokens.gd` | Cores, estilos e tokens semanticos de UI |
-| `AssetIds` | `core/asset_ids.gd` | Manifesto de ids visuais e fallback enquanto assets nao existem |
-| `ContentLibrary` | `data/content_library.gd` | Gerar/carregar catalogo de conteudo e expor consultas por collection/id |
-| `SessionStore` | `online/session_store.gd` | Token/cache local nao autoritativo, validacao de expiracao, snapshot de estado recebido do servidor e save ativo `normal`/`progression_lab` |
-| `SupabaseClient` | `online/supabase_client.gd` | HTTPRequest para Auth, Edge Functions locais/remotas, save ativo e manifest de updates |
+| Client | Godot `4.6.2-stable` / GDScript | UI, input, replay presentation and local non-authoritative cache. |
+| Backend | Supabase Auth, Postgres, Edge Functions | Current alpha runtime and server-authoritative mutation layer. |
+| Transport | REST through Godot `HTTPRequest` | Client sends intent; server returns authoritative state/logs. |
+| Client tests | GUT `9.6.0` plus Godot smoke scripts | Responsive, shell, mode and replay regressions. |
+| Server tests | Deno/TypeScript | Edge Function contracts, schema mirrors, labs and remote read-only smokes. |
 
-Classes utilitarias:
+## Authority Model
 
-| Classe | Arquivo | Responsabilidade |
+The client never owns durable gameplay results. It may preview local UI state,
+cache server snapshots and animate battle logs, but durable state is owned by
+server functions and Postgres.
+
+| Domain | Authority | Client role |
 |---|---|---|
-| `BackendConfig` | `online/backend_config.gd` | Resolver ambiente `local`/`internal_alpha_v0`, URL, publishable key, env vars e validacao contra secrets no cliente |
-| `BattleLogPresenter` | `ui/battle_log_presenter.gd` | Ordenar e formatar eventos `battle_log_v1` sem calcular gameplay |
-| `BattleVisualMockup` | `ui/battle_visual_mockup.gd` | Apresentar `battle_log_v1` como HUD visual reutilizavel para Batalha e Battle Lab, usando placeholders nativos e asset hooks futuros sem calcular gameplay |
-| `BattleStage2D` | `ui/battle_stage_2d.gd` | Palco procedural lateral com personagens parados, slots front/middle/back, efeitos temporarios e tooltips |
-| `BattleActorMarker` | `ui/battle_actor_marker.gd` | Silhueta procedural de combatente, barras e pulse de feedback |
-| `BattleSymbolIcon` | `ui/battle_symbol_icon.gd` | Icone procedural para evento, status, cooldown, Familiar e summon |
+| Account identity | Supabase Auth + `account_profiles` | Hold token and request account state. |
+| Save/progression | `game_saves` and server functions | Select active save and display snapshots. |
+| Battle/Arena result | Edge Functions + simulator + Postgres | Request duel, animate `battle_log_v1`, never recompute rewards. |
+| Economy/ledger | Postgres transactions through Edge Functions | Send intent only. |
+| Base production | Server-calculated on reconnect/collect | Display state and pending timers. |
+| Social/guild/chat | Account-scoped server functions | Submit messages/actions, display sanitized state. |
+| Openworld/Bosque | Local feel + server checkpoint/complete/reward authority | Preview movement and queued ops; save through accepted checkpoints. |
+| Labs | Offline/report evidence | Inform tuning decisions; never become runtime authority. |
 
-Regras:
+Non-negotiable invariants:
 
-- Autoloads nao possuem autoridade economica ou de batalha.
-- `ContentLibrary` pode gerar catalogo local para UI, fixtures e testes.
-- `SessionStore` nao possui metodos para mutar recursos/progressao; apenas aplica snapshots recebidos do servidor.
+- `account_profiles` remains account authority.
+- `game_saves` remains save/progression authority.
+- `players.save_type` remains compatibility only.
+- Mutations that can change durable gameplay state require idempotent
+  `request_id/request_hash` behavior where the contract says so.
+- Economic rewards must pass through ledger/resource transaction paths.
+- Service-role access stays inside Edge Functions/server operations, never in
+  client/export/portal files.
 
----
+## Backend Layout And Mirror Policy
 
-## Pipeline De Conteudo
+`server/` and `supabase/` are intentionally mirrored during the alpha:
 
 ```text
-data/definitions/*.json
-  -> tools/content_generator.gd
-  -> data/generated/draxos_mobile_catalog.tres
-  -> ContentLibrary
-  -> UI/tests/client
+server/functions/              authoring mirror for Edge Functions
+supabase/functions/            Supabase runtime mirror
+server/schema/migrations/      authoring mirror for SQL migrations
+supabase/migrations/           Supabase CLI runtime mirror
 ```
 
-Arquivos esperados:
+The mirror must remain byte-identical for comparable paths. The desired
+hardening direction is:
 
-- `spells.json`
-- `pets.json`
-- `passives.json`
-- `weapons.json`
-- `base_structures.json`
-- `bot_builds.json`
-- `power_bands.json`
-- `battle_fixtures.json`
-- `rewards.json`
+1. edit the authoring side;
+2. sync/generate the runtime mirror deterministically;
+3. validate directory equality before any server gate;
+4. never hand-edit one side without immediately syncing and proving equality.
 
-Fixtures `MVP_ONLY` provam arquitetura, nao balanceamento final.
+`validate_foundation.ps1 -Profile ServerQuick` already compares the mirrors and
+checks both Deno function trees. New tooling may add a safer explicit sync step,
+but must not change runtime behavior.
+Use `tools/sync_backend_mirror.ps1 -Check` to detect drift and `-Apply` to
+synchronize `server -> supabase` without changing runtime contracts.
 
----
+## Edge Function Boundaries
 
-## Politica De Reuso
+Endpoint groups declare scope before implementation:
 
-Referencia viva: `reuse-map.md`.
-
-- Reutilizar diretamente: configuracao GUT, padrao de validate, centralizacao de tokens e asset ids.
-- Adaptar: content generation multi-arquivo, ContentLibrary e padroes de session/cache local.
-- Vetar: BattleEngines, card/deck/mana/run map, campanha action, saves autoritativos e regras de gameplay de outros projetos.
-
----
-
-## Plataformas E Exports
-
-| Plataforma | Export Godot | Notas |
+| Scope | Examples | Authority |
 |---|---|---|
-| Android | Android APK | App nativo, unico canal mobile |
-| PC Windows/Linux | Executavel nativo | `.zip` |
-| PC Browser | HTML5/WebAssembly | Godot web export |
-| Mobile browser | - | Fora do escopo |
-| iOS | - | Futuro |
+| `save-scoped` | `account`, `battle`, `base`, `build`, `crafting`, `arena/pve`, `competition`, `monetization`, `progression-lab` | Resolve account/save on server and mutate only through contracts. |
+| `account-scoped` | `social` | Use account identity and validate save where needed. |
+| `release` | `release`, manifest/download endpoints | No gameplay authority; publication still requires explicit user approval. |
+| `telemetry` | `telemetry/client-event` | Append-only diagnostic data; no reward/progression mutation. |
+| `admin-internal` | internal ops only | Service-role-only and not exposed as player-facing client authority. |
 
-Input adaptado por plataforma: `InputEventScreenTouch` para Android e `InputEventMouseButton` para PC/browser.
+## Client Shell
 
-Presets alpha em `export_presets.cfg`:
+The Godot boot/runtime shell is the app surface, not a temporary boot script. It
+owns route rendering, action dispatch, online state, surface refresh, labs entry
+and overlay/modal coordination.
 
-- `Android Alpha`
-- `PC Windows Alpha`
-- `PC Browser Alpha`
+Important shell contracts:
 
-`tools/smoke_exports.gd` valida a existencia dos tres presets, plataformas,
-paths de saida e exclusao de ferramentas dev (`dev/**`, `tools/battle_lab/**`,
-`docs/battle-lab/**`, `.battle_lab_scratch/**`) sem exigir templates de export
-instalados.
+- `SessionStore` stores only non-authoritative snapshots and local cache.
+- `SupabaseClient` is the HTTP adapter and never contains secrets.
+- Surface presenters render UI and must not mutate durable state directly.
+- Flow/action modules send intentions to server functions.
+- Overlay shell must preserve layer order, focus, route readiness and real Web
+  input behavior for Social, Shop and Arena.
+- Responsive and mode visual smokes protect Android portrait and PC browser
+  layouts.
 
-Track 03 adiciona manifest remoto para updates internos. Na Internal Alpha v0, o manifest vive em `GET /release/manifest`, uma Edge Function publica sem secrets. A URL padrao e derivada do Supabase URL (`<supabase_url>/functions/v1/release/manifest`) e pode ser sobrescrita por `DRAXOS_MOBILE_UPDATE_MANIFEST_URL` ou project setting.
+Hotspot hardening priority:
 
-O manifest contem:
+1. split overlay layer/focus/modal/readiness responsibilities behind the current
+   facade;
+2. split large tests by surface when practical;
+3. preserve real interaction smokes for every bug class found by human playtest.
 
-- `schema_version`;
-- canal (`internal_alpha`);
-- `latest_version`;
-- `latest_version_code`;
-- `minimum_supported_version`;
-- `minimum_supported_version_code`;
-- links de artefatos Android/PC/Web;
-- `sha256` para artefatos baixaveis quando aplicavel;
-- release notes curtas.
+## Arena PVE Architecture
 
-O cliente pode continuar rodando se houver update recomendado. Se a versao atual ficar abaixo de `minimum_supported_version`, o cliente deve bloquear acoes online e orientar update.
+Arena PVE is the first approved core. Its runtime contract is in
+`docs/pve-arena-v1.md`; the original direction is in
+`docs/pve-arena-initial-direction.md`.
 
----
+Key runtime rules:
 
-## Arquitetura De Conta
+- tutorial is one duel;
+- first real arena is a three-duel run;
+- loadout is locked at attempt start;
+- HP resets to full before each duel;
+- temporary stat buffs are chosen between victories;
+- defeat or abandon ends the attempt according to the server contract;
+- `/arena/pve/claim` remains summary/ack and must not mutate economy;
+- reward/progression is applied by the authoritative duel/attempt flow.
 
-Fluxo completo do primeiro slice:
+Labs currently provide technical evidence for Arena S1, but human playtest must
+decide whether the loop is clear, paced and satisfying before any broad tuning
+or content expansion.
 
-```text
-Boot
-  -> Tem token salvo?
-       -> Sim: validar token e entrar
-       -> Nao: tela de entrada
-            -> Jogar como guest com codigo de convite
-            -> Login email/senha
-            -> Google Sign-In
-```
+## Openworld/Bosque Architecture
 
-Guest pode migrar para conta registrada sem perder progresso.
+Bosque is an active Internal Alpha slice through the mode platform. It validates
+movement feel, collection, local/offline-first preview, launcher integration and
+checkpoint/reward boundaries.
 
-MVP tecnico implementa apenas guest com codigo de convite.
+Bosque must not silently become a broader Openworld product. Expansion such as
+map growth, combat, quests, NPCs, new economy or new reward bridges requires a
+separate decision pack and validation plan.
 
-Internal Alpha v0 usa email/senha como caminho principal. Email confirmation fica desligado no projeto alpha para reduzir atrito entre dois testadores, mas o servidor ainda precisa validar convite/flag alpha antes de criar ou liberar save.
+Current persistence principles:
 
-### Modelo De Saves Da Internal Alpha v0
+- local movement/collection can feel immediate;
+- durable progress, completion, caps, reward and ledger belong to the server;
+- checkpoints with ACK are the normal integrated save path;
+- pending local operations must be recoverable and visible;
+- completion/reward depends on accepted checkpoint state.
 
-Cada conta alpha possui dois saves logicos:
+Hotspot hardening priority:
 
-- `normal`: progresso real do teste fechado.
-- `progression_lab`: estado custom criado pelo Progression Lab.
+1. split session lifecycle from persistence/checkpoint concerns;
+2. isolate pending ops and durable progress cache behavior;
+3. make stale checkpoint/resume/abandon cases testable;
+4. keep the public bridge facade stable while extracting helpers.
 
-Regras:
+## Mode Platform
 
-- Reset separado por save.
-- UI sempre mostra o save ativo.
-- Endpoints autoritativos devem resolver o save ativo no servidor; o cliente nao envia deltas finais.
-- Ranking, social e loja do save normal nao podem ser contaminados pelo `progression_lab`.
-- Implementacao inicial pode adaptar o schema atual de `players` para `save_type`, mas a direcao de longo prazo e separar conta de jogo e saves para permitir novos modos/fases sem acoplar tudo a uma linha de player.
+Official modes are governed by `docs/minigames/mode-catalog.md` and
+`docs/contracts/minigame-platform-v1.md`.
 
-Implementado localmente ate `T03-P08`:
+| Mode | Current status | Boundary |
+|---|---|---|
+| `basebuilder` | active | Refugio/Base and permanent progression structures. |
+| `autobattler` | active | Arena PVE first core. |
+| `openworld` | active in Internal Alpha | Bosque slice only; no broad expansion by default. |
+| `towerdefense` | planned disabled | Hidden until decision pack + contracts + rewards. |
+| `cardgame` | planned disabled | Hidden; no mechanical inheritance from other Draxos projects. |
 
-- `players.save_type` aceita `normal` e `progression_lab`.
-- A unicidade de jogador passa a ser `auth_user_id + save_type`.
-- Edge Functions resolvem o player pelo header `x-draxos-save-type`; sem header, usam `normal`.
-- Ranking retorna exclusao explicita para `progression_lab`.
-- `POST /account/saves/reset` reconstrui apenas o save ativo no servidor, mantendo o outro save intacto.
-- `POST /progression-lab/apply` aplica um healthy save versionado no save `progression_lab`, sem aceitar o save `normal`.
-- `GET /base/state` entrega metadados de apresentacao server-side para Base jogavel: descricao, beneficio, custo, duracao, status, bloqueio e remaining time.
-- Social usa identidade de conta no runtime: `normal` e o social canonico quando existir, `progression_lab` recebe marcador `lab`, amigos retornam username enriquecido, guilda permite criar/entrar/ver membros e chat de guilda tem polling + rate limit.
-- Competicao usa `battle/request` `FIRST_SLICE_SIM` para pontuar o save `normal` no servidor, retorna top 10 + posicao do jogador e mantem bots e `progression_lab` fora da tabela `ranking`.
-- Loja usa `monetization/state`/`alpha-purchase` para redeems diarios de Diamante, produtos por Diamante, Battle Pass premium, fila dupla, pacotes e status de compra por save.
+No new mode becomes player-facing by adding JSON alone. It needs design
+approval, server registry, ruleset, disable/rollback path, tests, telemetry,
+reward bridge rules when relevant and human approval.
 
-Decisao superseded pela Foundation Expansion Readiness/Closeout:
-`account_profiles` + `game_saves` sao criados no bootstrap e carregam
-`state_version`, `season_context` e metadata de ruleset. `players.save_type`
-continua legivel para compatibilidade alpha e payloads antigos, mas nao deve ser
-usado como nova fonte primaria de account/save.
+## Release And Validation Boundaries
 
-Modelo escolhido em `DMOB-D042`:
+Validation profiles are coordinated by `tools/validate_foundation.ps1`.
 
-1. Cliente cria uma sessao via Supabase Auth anonimo nativo.
-2. Cliente chama `POST /account/guest` com `Authorization: Bearer <anonymous_jwt>`, `invite_code` e `request_id`.
-3. Edge Function valida convite e cria `players`, `resources` e `builds` usando service role.
-4. Progresso guest fica vinculado a `players.auth_user_id`.
-5. Conversao futura para conta registrada preserva `players.id`.
-
-Implementado em `T00-P05`:
-
-- `POST /account/guest`: valida JWT anonimo, `invite_code` e `request_id`, chama RPC `create_guest_account` e retorna player/resources/build inicial.
-- `GET /account/state`: recupera player/resources/build e `last_battle_id` para a sessao autenticada.
-- `create_guest_account`: RPC `SECURITY DEFINER` com execute restrito a `service_role`, seed `ALPHA-TEST` e idempotencia por `idempotency_keys`.
-
-Implementado em `T00-P06`:
-
-- `SupabaseClient`: chama `POST /auth/v1/signup`, `POST /functions/v1/account/guest` e `GET /functions/v1/account/state`.
-- `SessionStore`: persiste token/cache local em `user://session_cache.json`, valida expiracao e guarda estado apenas como snapshot.
-- Boot scene: botao `Entrar como guest` executa o fluxo real e mostra erro controlado quando rede ou Supabase local estao indisponiveis.
-
----
-
-## Arquitetura De Batalha
-
-O cliente Godot nunca simula batalha.
-
-```text
-Cliente
-  -> POST /battle/request
-Servidor
-  -> seleciona oponente
-  -> simula batalha completa
-  -> grava resultado e recompensa
-  -> retorna battle_log_v1
-Cliente
-  -> anima log recebido
-```
-
-Desconexao durante batalha nao altera resultado, porque o resultado ja foi gravado antes do cliente animar.
-
-Contrato do log: `contracts/battle-event-log.md`.
-
-MVP tecnico implementado em `T00-P07`:
-
-- `POST /battle/request`: cria batalha contra `mvp_training_bot`, grava resultado e aplica recompensa fixture.
-- `GET /battle/latest`: retorna o ultimo log gravado, sem reaplicar recompensa.
-- `request_mvp_battle`: RPC transacional com `idempotency_keys`, `battles` e `resource_transactions`.
-- Recompensa fixture atual: `xp +5`, `ossos +1`, aplicada uma unica vez por `request_id`.
-
-MVP client implementado em `T00-P08`:
-
-- `Solicitar batalha`: envia intencao para `battle/request` e recebe `battle_log_v1`.
-- `Ver resultado`: busca `battle/latest` ou pula o replay atual.
-- Replay rico T00-P10: lista eventos ordenados por `t`/`seq`; DoTs, status, barreiras, resistencias, summons, Familiares, cooldowns, cura e anti-stall possuem linhas dedicadas; eventos desconhecidos continuam virando fallback.
-- Battle Visual Mockup 2026-05-26: a tela Batalha e o Battle Lab usam o mesmo controle visual para personagens placeholder, ataque basico, spells, buffs, dano, efeitos, icons, summons, Familiar, HP/Mana/Barreira, resultado e timeline a partir do mesmo log.
-- Battle Stage 2D 2026-05-26: o mockup agora inclui palco procedural estilo luta lateral, com player na esquerda, oponente na direita, objetos em slots front/middle/back, numeros flutuantes, projeteis simples, flashes e tooltips sem assets importados.
-- Cliente nao recalcula dano, HP, vencedor, XP, Ossos ou recompensa.
-
----
-
-## Dados Autoritativos No Servidor
-
-| Dado | Onde vive |
+| Profile | Use |
 |---|---|
-| Recursos | Postgres, mutado so por Edge Functions |
-| Level, XP e build | Postgres |
-| Resultado de batalhas e ranking | Postgres, calculado no servidor |
-| Dados de guilda e social | Postgres |
-| Battle Pass, claims e compras alpha | Postgres |
-| Pool de oponentes | Postgres |
-| Preferencias de UI e cache visual | Local, sem impacto em progressao |
-| Producao da base | Calculada no servidor na reconexao |
+| `DocsOnly` | Documentation/state/tooling sanity; no publication. |
+| `ServerQuick` | Mirrors, Deno checks/tests and backend contract guards. |
+| `ClientQuick` | GUT/client, responsive and shell/layout smokes. |
+| `ModePlatform` | Mode registry and Bosque/Openworld platform guards. |
+| `ReleaseDryRun` | Local release safety planning only. |
+| `RemoteReadOnly` | Read-only verification of expected remote artifacts. |
 
-RLS deve impedir acesso indevido. Mutacoes economicas devem usar idempotencia e ledger.
+`FullPublish` is disabled in validation. Upload, deploy, manifest mutation,
+`supabase db push`, secrets or Cloudflare/Supabase mutation require explicit
+approval and the publication scripts with `-ConfirmRemoteMutation`.
 
-Regra resolvida em `DMOB-D043`: cliente nao recebe policies de insert/update/delete para estado autoritativo no MVP. Escritas em `players`, `resources`, `builds`, `battles`, `idempotency_keys` e `resource_transactions` passam por Edge Functions com service role.
+## Stabilization Order
 
----
+1. Fix docs/state governance and make `DocsOnly` reflect the single source of
+   operational state.
+2. Add deterministic mirror sync/check tooling without changing backend
+   behavior.
+3. Decompose overlay shell and Openworld bridge hotspots behind compatible
+   facades.
+4. Update architecture/contracts so agents read the current system rather than
+   historical release logs.
+5. Run Arena PVE product proof before opening tuning or expansion.
 
-## Matchmaking E Ranking
+## Backend Exit Strategy
 
-MVP tecnico usa bot fixture `mvp_training_bot`.
+Supabase remains the alpha runtime because it accelerates Auth, Postgres, Edge
+Functions, Storage and migrations. The exit strategy is still Backend Proprio +
+Postgres if scale or operational needs justify it:
 
-Primeiro slice completo:
+1. freeze HTTP contracts;
+2. export schema/data;
+3. port domain logic behind the same logical endpoints;
+4. preserve account/save IDs, ledger and battle history;
+5. validate parity before moving the client `base_url`.
 
-- Calcula poder do solicitante no servidor.
-- Filtra pool por faixa de poder e diferenca percentual.
-- Expande tolerancia por tempo de busca: 10% nos primeiros 5s, 20% ate 15s e 35% depois disso.
-- Sorteia oponente real ou bot simulado quando nao houver jogador compativel.
-- Bots simulados nao aparecem em ranking.
-- Ranking usa pontos de arena por season e snapshot no encerramento.
-
-Formula alpha de poder apos balance v1: `(Level x 42) + (ArmaLevel x 30) + (SpellLevelsTotal x 35) + (PetLevel x 30, se Familiar equipado) + (PassiveLevel x 22, se Doutrina equipada) + (WeaponQualityTier x 30)`.
-
-Formula inicial de ranking:
-
-- Vitoria base: `+20` pontos.
-- Derrota base: `-10` pontos.
-- Ajuste por diferenca de poder, limitado pela tolerancia maxima de matchmaking.
-- Vitoria contra mais forte pode chegar a `+30`; vitoria contra mais fraco pode cair ate `+12`.
-- Derrota contra mais forte pode cair ate `-5`; derrota contra mais fraco pode chegar a `-15`.
-- Bots ficam fora do ranking no alpha.
-- Pontos nao ficam abaixo de 0.
-- Encerramento de season gera snapshot de ranking.
-
-## Social, Guilda E Chat
-
-Social do primeiro slice usa polling simples, Postgres + RLS e Edge Functions para mutacoes.
-
-Regras de guilda:
-
-- Guilda desbloqueia no level 10.
-- Guilda tem level 1-10 e capacidade de 10 a 50 membros.
-- Jogador participa de 1 guilda por vez.
-- Sair de guilda aplica cooldown de 24h.
-- Contribuicoes e ajudas sao server-authoritative, idempotentes e registradas em ledger quando alteram recurso ou progresso.
-
-Regras de ajuda:
-
-- Jogador pode enviar ate 30 ajudas por dia.
-- Cada construcao pessoal pode receber ate 10 ajudas.
-- Cada ajuda reduz 1,5% do tempo restante da construcao, max 15%.
-- Ajuda e unica por `helper_id + construction_job_id`.
-
-Politica de chat v0:
-
-- Canais: guilda e direct entre amigos.
-- Chat global interno fica fora do primeiro slice.
-- Polling simples no alpha; Realtime fica para evolucao futura.
-- Retencao padrao: 30 dias para mensagens de guilda e direct.
-- Mensagem apagada usa soft delete: conteudo deixa de aparecer para usuarios, mas metadados minimos ficam para auditoria.
-- Usuario pode bloquear outro usuario; bloqueio oculta direct e impede novas mensagens diretas.
-- Denuncia cria registro de moderacao para revisao manual no alpha.
-- Filtro automatico v0: limite de tamanho, rate limit por usuario/canal e bloqueio de mensagens vazias ou repetidas.
-- Dados de chat nao concedem progresso economico direto.
-
-Implementacao local `T03-P06`:
-
-- `GET /social/state` retorna `identity.scope = account`, `viewer_badge`, `player`, `active_player`, amigos, membros e mensagens enriquecidos com username.
-- `POST /social/friends/add` adiciona amizade aceita por username.
-- `POST /social/guild/create` cria guilda, owner, estruturas e canal.
-- `POST /social/guild/join` entra em guilda por nome.
-- `POST /social/chat/send` envia mensagem de guilda, exige guilda e aplica rate limit simples.
-- A aba Social do Hub expoe campos de username/guilda/chat, tooltips, painéis de identidade, amigos, guilda, membros, estruturas e mensagens recentes.
-
-## Monetizacao E Recompensas Alpha
-
-Monetizacao do alpha e funcional para validar fluxo e contrato, mas nao usa gateway real de pagamento.
-
-Sistemas implementados em `T00-P13` e refinados em `T03-P08`:
-
-- Battle Pass ativo `bp_s1_01` com trilhas free e premium.
-- Progresso em `battle_pass_progress`, criado sob demanda.
-- Rewards diarias e semanais no Edge Function `monetization`.
-- Claims em `reward_claims`, unicos por periodo.
-- Compras alpha em `alpha_purchases`, idempotentes por `request_id`.
-- Produtos alpha: redeems diarios de Diamante, premium pass, fila dupla de construcao, pacote pequeno de Energia e pacote medio de recursos.
-- `shop_summary` e `alpha_products` enriquecidos para UI: custo, ganho, efeito, `can_purchase`, `already_redeemed`/`already_owned` e periodo de reset.
-- A Base consulta `alpha_double_construction_queue` em `alpha_purchases` para liberar 2 slots de construcao no save.
-
-Regras:
-
-- Cliente envia apenas intencao (`reward_id` ou `product_id`), nunca delta final.
-- Toda mutacao economica passa por `resource_transactions`.
-- Premium required e periodo de claim sao validados no servidor.
-- Repetir o mesmo `request_id` retorna o mesmo payload; repetir reward no mesmo periodo com novo request nao duplica recurso.
-- Redeems diarios sao por produto/save e resetam a meia-noite `America/Sao_Paulo`.
-
-## Telemetria E Simulacoes
-
-O primeiro slice deve coletar telemetria minima de combate e matchmaking para balanceamento.
-
-Fontes:
-
-- `server`: batalha real, matchmaking, recompensa e snapshot de build.
-- `client`: sessao, entrada/saida de telas, erros controlados e replay assistido/pulado.
-- `simulation_job`: batalhas bot-vs-bot para medir duracao, win rate por archetype, escalada de poder e frequencia de anti-stall.
-
-Eventos minimos:
-
-- `battle_requested`
-- `match_selected`
-- `battle_simulated`
-- `reward_applied`
-- `build_snapshot`
-- `bot_balance_simulated`
-- `screen_opened`
-- `action_start`
-- `action_success`
-- `action_failure`
-- `replay_start`
-- `replay_skip`
-- `replay_end`
-- `network_failure`
-
-Regras:
-
-- Bot-vs-bot nao concede recompensa nem altera ranking.
-- Dados de combate para balanceamento ficam no servidor; o cliente recebe apenas o log visual necessario.
-- Payloads de telemetria devem usar `schema_version` para permitir evolucao durante o alpha.
-- `POST /telemetry/client-event` aceita apenas `telemetry_client_v1`, grava `source = client`, usa `session_id` local persistido e nao altera estado autoritativo.
-
----
-
-## Politica Offline
-
-| Situacao | Comportamento |
-|---|---|
-| Sem internet | Estado cacheado exibido, batalha e chat desabilitados |
-| Producao da base offline | Servidor calcula delta na reconexao |
-| Desconexao durante batalha | Cliente busca log gravado |
-| Coleta offline | Servidor acumula respeitando armazenamento |
-
----
-
-## Anti-Cheat
-
-| Vetor | Mitigacao |
-|---|---|
-| Forjar resultado | Batalha 100% servidor |
-| Injetar recursos | Edge Functions validam toda mutacao |
-| Escolher oponente facil | Servidor controla matchmaking |
-| Farm abusivo | Rate limiting no endpoint de batalha |
-| Acesso a dados alheios | RLS do Supabase |
-| Duplicar recompensa | Idempotencia por `request_id` e ledger |
-| Duplicar reward diario/semanal | `reward_claims` unico por periodo |
-| Forjar compra alpha | Produto validado no servidor e registrado em `alpha_purchases` |
-| Engenharia reversa do oponente | Log retorna eventos animaveis, nao build completa |
-
----
-
-## Estrutura De Pastas - Codigo
-
-```text
-draxos-mobile/
-|-- supabase/
-|   |-- config.toml
-|   |-- migrations/
-|   `-- functions/
-|       |-- account/
-|       |-- base/
-|       |-- battle/
-|       |-- competition/
-|       |-- healthcheck/
-|       |-- monetization/
-|       |-- social/
-|       |-- telemetry/
-|       `-- _shared/
-|-- server/
-|   |-- schema/
-|   `-- functions/
-|-- core/
-|-- data/
-|   |-- definitions/
-|   |-- generated/
-|   `-- resources/
-|-- modes/
-|-- ui/
-|-- social/
-|-- tools/
-`-- tests/
-```
-
----
-
-## Pendencias Arquiteturais
-
-Pendencias vivas:
-
-- Nenhuma pendencia arquitetural bloqueante para o MVP tecnico atual.
-
-Pendencias operacionais resolvidas em 2026-05-19:
-
-- Layout Supabase CLI (`DMOB-D040`): `supabase/`.
-- Ambiente local (`DMOB-D041`): Docker Desktop + Supabase CLI via `npx` + Deno via `npx`.
-- Modelo de conta guest (`DMOB-D042`): Supabase Auth anonimo nativo + Edge Function com convite.
-- Escrita SQL service-role-only (`DMOB-D043`): sem write policies client-side para estado autoritativo no MVP.
+Nakama should only be reconsidered if realtime matchmaking, lobbies, presence or
+ready-made social/competitive systems become a central product need.
