@@ -107,8 +107,8 @@ func _ready() -> void:
 		get_viewport().size_changed.connect(_sync_root_rect_to_viewport)
 	if not RenderProfileScript.is_web_platform():
 		_ensure_audio_buses()
-	_load_ui_audio_streams()
 	if not RenderProfileScript.is_web_platform():
+		_load_ui_audio_streams()
 		_build_ui_audio_pool()
 	_load_broadcast_fonts()
 	_build_ui()
@@ -1145,6 +1145,8 @@ func _play_ui_sound(audio_key: StringName) -> void:
 	var settings = _get_game_settings()
 	if settings != null:
 		settings.apply_audio_settings(true)
+	if ui_audio_streams.is_empty():
+		_load_ui_audio_streams()
 	if ui_audio_pool.is_empty():
 		_build_ui_audio_pool()
 	var stream := ui_audio_streams.get(audio_key) as AudioStream
