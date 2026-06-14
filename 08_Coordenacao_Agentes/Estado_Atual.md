@@ -7,19 +7,19 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional temporario unico: `Projetos/JogoDaCopa/` (Track 07B Web Audio blocker)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`v1.2.0` publicado; aguardando retest humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`, `Projetos/draxos-mobile/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
-- Marker: `JOGO_DA_COPA_TRACK07B_REMOTE_MENU_WORKLET_BLOCKED_ROLLBACK_DONE`
-- Baseline: `Copa Arena Futebol` Web publico permanece em `v1.1.0+be453dc3` (`web/v1-copa-arena-futebol-20260613-be453dc3`) na URL `https://copa-arena-futebol.pages.dev/`; rollback confirmado apos tentativa Track 07B.
-- Candidato local: Track 07 `v1.2.0+138cf4f7` e Track 07B `v1.2.0+6de8d6b7` mergeados em `main`, mas nao publicados; 07 falhou heap remoto e 07B falhou menu remoto com `AbortError` de AudioWorklet.
+- Status: `P2_IMPLEMENTACAO - AGUARDANDO_RETEST_HUMANO`
+- Marker: `JOGO_DA_COPA_TRACK07C_V1_2_0_PUBLICADO_RETEST_HUMANO`
+- Baseline: `Copa Arena Futebol` Web publico em `v1.2.0+fa82cb7d` (`web/v1-copa-arena-futebol-20260614-fa82cb7d`) na URL `https://copa-arena-futebol.pages.dev/`; gates remotos 07C PASS.
+- Publicacao: Track 07C manteve visual polish, restaurou fallback Web Audio seguro e passou menu/primeiro minuto/estabilidade 5min/luma remotos; sem mudanca de gameplay.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: nova hotfix Web Audio-safe antes de qualquer publicacao/retest humano de `v1.2.0`; nao fazer push do `main` enquanto a serie bloqueada nao for decidida.
+- Proximo passo: retest humano do Fabio + tester externo na URL publica; depois decidir ajustes ou encerramento da serie `v1.2.0`.
 
 ## draxos-roguelike-cardgame
 

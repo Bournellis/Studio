@@ -42,7 +42,7 @@ A Track 07B reabriu o AudioWorklet global e recuperou heap local, mas falhou no 
 
 ## Handoff
 
-Track pronta para merge local em `main`.
+Track concluida e publicada.
 
 Resultados locais:
 
@@ -53,4 +53,19 @@ Resultados locais:
 - Primeiro minuto local: PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
 - Estabilidade local 5min: PASS, heap retido `44,467,395 -> 48,295,305` bytes (`+8.61%`, limite `<10%`), counters/caches estaveis.
 
-Proximo passo: merge em `main`, novo pacote com hash do merge, publicacao remota permitida somente via `tools/publish_web.ps1 -Mode FullPublish -ConfirmRemoteMutation`, e gates remotos. Se falhar remoto, rollback imediato para `web/v1-copa-arena-futebol-20260613-be453dc3`.
+Resultado de merge/publicacao:
+
+- Merge local em `main`: `fa82cb7d`.
+- Release publicado: `v1.2.0+fa82cb7d`.
+- URL publica: `https://copa-arena-futebol.pages.dev/`.
+- Release root: `web/v1-copa-arena-futebol-20260614-fa82cb7d`.
+- Publicacao remota via `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260614-fa82cb7d -ConfirmRemoteMutation`.
+
+Gates remotos:
+
+- Menu remoto: PASS operacional, `pageErrors=0`, `consoleErrorCount=0`, `menu.ready.end` visto, release root conferiu, rodape `v1.2.0+fa82cb7d`.
+- Primeiro minuto remoto: PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
+- Estabilidade remota 5min: PASS, heap retido `44,847,036 -> 48,303,228` bytes (`+7.71%`, limite `<10%`), counters/caches estaveis, pior janela 5s `130.2 FPS`.
+- Luminancia remota: PASS, `luma_0_255=6.69 < 90`.
+
+Proximo passo: retest humano do Fabio + tester externo na URL publica.

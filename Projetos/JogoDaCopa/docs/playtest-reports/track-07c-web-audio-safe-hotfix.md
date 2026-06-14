@@ -43,12 +43,21 @@ Nota: o JSON do sanity de menu sem `--first-minute-gate` ou `--stability-gate` a
 ## Evidencias
 
 - `docs/playtest-reports/track-07c-data/07c-package-artifacts.json`
+- `docs/playtest-reports/track-07c-data/07c-publication-report.json`
 - `docs/playtest-reports/track-07c-data/07c-local-menu-audio-safe.json`
 - `docs/playtest-reports/track-07c-data/07c-local-menu-audio-safe.png`
 - `docs/playtest-reports/track-07c-data/07c-local-first-minute.json`
 - `docs/playtest-reports/track-07c-data/07c-local-first-minute.png`
 - `docs/playtest-reports/track-07c-data/07c-local-stability-5min.json`
 - `docs/playtest-reports/track-07c-data/07c-local-stability-5min.png`
+- `docs/playtest-reports/track-07c-data/07c-remote-menu-user-url-fa82cb7d.json`
+- `docs/playtest-reports/track-07c-data/07c-remote-menu-user-url-fa82cb7d.png`
+- `docs/playtest-reports/track-07c-data/07c-remote-first-minute-fa82cb7d.json`
+- `docs/playtest-reports/track-07c-data/07c-remote-first-minute-fa82cb7d.png`
+- `docs/playtest-reports/track-07c-data/07c-remote-stability-5min-fa82cb7d.json`
+- `docs/playtest-reports/track-07c-data/07c-remote-stability-5min-fa82cb7d.png`
+- `docs/playtest-reports/track-07c-data/07c-remote-night-evidence-fa82cb7d.png`
+- `docs/playtest-reports/track-07c-data/07c-remote-night-luma-gate-fa82cb7d.json`
 
 ## Observacao De Audio Web
 
@@ -63,6 +72,19 @@ Isso confirma que o caminho Web sem interacao do usuario nao aloca os 12 streams
 
 ## Proximo Passo
 
-Merge local em `main`, novo pacote baseado no commit de merge, publicacao via `tools/publish_web.ps1 -Mode FullPublish -ConfirmRemoteMutation` e repeticao dos gates remotos contra `https://copa-arena-futebol.pages.dev/`.
+Merge local em `main` concluido como `fa82cb7d`.
 
-Se qualquer gate remoto falhar apos a publicacao, rollback imediato para `web/v1-copa-arena-futebol-20260613-be453dc3`.
+Publicacao remota concluida por `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260614-fa82cb7d -ConfirmRemoteMutation`.
+
+## Gates Remotos
+
+| Gate | Resultado |
+| --- | --- |
+| Menu Web remoto 30s | PASS operacional: `pageErrors=0`, `consoleErrorCount=0`, `menu.ready.end` visto, release root conferiu, rodape `v1.2.0+fa82cb7d` |
+| Primeiro minuto Web remoto | PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`, release root conferiu |
+| Estabilidade Web remota 5min | PASS, heap retido `44,847,036 -> 48,303,228` bytes (`+7.71%`, limite `<10%`), counters/caches estaveis, pior janela 5s `130.2 FPS` |
+| Luminancia noturna remota | PASS, `luma_0_255=6.69 < 90` |
+
+## Handoff
+
+Proximo passo: retest humano do Fabio + tester externo na URL publica `https://copa-arena-futebol.pages.dev/`, cobrindo menu broadcast, ESC completo, HUD scorebug, primeiro minuto e sensacao geral do visual polish `v1.2.0`.
