@@ -612,7 +612,7 @@ function Assert-BaselineDriftAbsent {
         @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("Foundation Hardening V2", "Track 13", "Track 14", "Track 18", "implementation/current-status.md", "docs/release-history.md") },
         @{ Base = $ProjectPath; Path = "docs\documentation-index.md"; Needles = @("track-18-pve-arena-initial", "track-21-arena-loop-unlock-friction", "Arena PVE") },
         @{ Base = $ProjectPath; Path = "docs\pve-arena-initial-direction.md"; Needles = @("PVE_ARENA_INITIAL_DIRECTION_APPROVED", "Arena PVE", "PVP continua no plano") },
-        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("DraxosMobile", "P2_IMPLEMENTACAO", "programa de hardening", "Projetos/draxos-mobile/docs/release-history.md") },
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("DraxosMobile", "P2_IMPLEMENTACAO", "hardening integrado localmente", "Projetos/draxos-mobile/docs/release-history.md") },
         @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("DraxosMobile", "Track 13 release safety", "Track 14 agent ops") },
         @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("draxos-mobile/", "Release history:", "Doc map:") }
     )
