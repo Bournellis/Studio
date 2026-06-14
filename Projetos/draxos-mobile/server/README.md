@@ -1,6 +1,6 @@
 # server/
 
-Backend do DraxosMobile. Contem espelho organizado do schema Postgres e das Edge Functions.
+Backend do DraxosMobile. Contem a fonte organizada do schema Postgres e das Edge Functions.
 
 - `schema/` - migrations SQL e definicao de tabelas.
 - `functions/` - Edge Functions TypeScript/Deno para batalha, conta, base e social.
@@ -10,6 +10,23 @@ Backend do DraxosMobile. Contem espelho organizado do schema Postgres e das Edge
 Todo estado autoritativo do jogo passa por aqui. O cliente Godot nunca altera recursos diretamente.
 
 Fonte de execucao local da Supabase CLI: `../supabase/`.
+
+## Mirror Supabase
+
+Durante o hardening backend, `functions/` e `schema/migrations/` sao a fonte
+autoral. Os caminhos `../supabase/functions/` e `../supabase/migrations/` sao
+o mirror usado pelo runtime local da Supabase CLI.
+
+Use o guard deterministico antes de validar ou commitar backend:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ..\tools\sync_backend_mirror.ps1 -ProjectDir .. -Check
+powershell -NoProfile -ExecutionPolicy Bypass -File ..\tools\sync_backend_mirror.ps1 -ProjectDir .. -Apply
+```
+
+`-Check` e o default e nao escreve. `-Apply` copia `server -> supabase` e remove
+somente extras dentro dos caminhos de mirror esperados, depois de validar paths
+absolutos dentro do projeto.
 
 ## MVP Atual
 

@@ -125,7 +125,11 @@ Antes de criar codigo ou migrations, consulte:
 - `internal-alpha-v0.md`
 - `internal-alpha-v0-design-lock.md`
 
-`supabase/` e a fonte de execucao local da Supabase CLI. `server/schema/` e `server/functions/` permanecem como espelho organizado do backend durante o alpha local.
+`server/functions/` e `server/schema/migrations/` sao a fonte autoral organizada
+do backend. `supabase/functions/` e `supabase/migrations/` sao o mirror de
+execucao local da Supabase CLI. Use `tools/sync_backend_mirror.ps1 -Check` para
+detectar drift e `-Apply` para sincronizar `server -> supabase` sem mudar
+contratos de runtime.
 
 Deno e Supabase CLI sao validados via `npx -y deno` e `npx -y supabase` nesta maquina.
 

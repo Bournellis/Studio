@@ -33,7 +33,7 @@ each kind of refactor.
 |---|---|---|
 | Docs, coordination or live-status sync | `coord-docs` | `git diff --check`; `DocsOnly`; targeted drift checks. |
 | Account/save/idempotency/RLS | `session-data` | `ServerQuick`; account/save contract tests; `DatabaseLocal` when local Supabase is available. |
-| Edge Function or schema mirror | `backend-schema` | `ServerQuick`; Deno check/test for both `server/functions` and `supabase/functions`; mirror check. |
+| Edge Function or schema mirror | `backend-schema` | `sync_backend_mirror.ps1 -Check`; `ServerQuick`; Deno check/test for both `server/functions` and `supabase/functions`. |
 | Client shell, routing, `SessionStore`, `SupabaseClient` | `client-shell` | Godot validate, GUT client, `ClientQuick`, route/back focused smoke. |
 | Bosque/Openworld bridge, checkpoints or launcher routing | `openworld-platform` | `ClientQuick`, `smoke_openworld_forest.gd`, `smoke_modes_visual_layout.gd`, targeted `test_openworld_*`. |
 | Mode platform or official mode boundary | `platform-v1` | `ModePlatform`; mode contract tests; no playable promotion for disabled modes. |
@@ -51,6 +51,14 @@ each kind of refactor.
    contracts.
 4. Split UI and labs only with visual or report parity.
 5. Update live docs only when observable status changes.
+
+## Backend Mirror Guard
+
+For backend-schema work, `server/functions` and `server/schema/migrations` are
+the authoring source. `supabase/functions` and `supabase/migrations` are the
+Supabase CLI runtime mirror. Use `tools/sync_backend_mirror.ps1 -Check` for
+read-only drift detection and `-Apply` only after reviewing the planned
+`server -> supabase` sync.
 
 ## Current Package Guard
 
