@@ -5,6 +5,7 @@ signal state_changed
 
 const ModelScript := preload("res://modes/openworld/openworld_forest_model.gd")
 const PersistenceState := preload("res://modes/openworld/openworld_persistence_state.gd")
+const RewardSummary := preload("res://modes/openworld/openworld_reward_summary.gd")
 
 const CHECKPOINT_RETRY_SECONDS := 1.25
 const MAX_CHECKPOINT_RETRY_BACKOFF_SECONDS := 8.0
@@ -320,27 +321,27 @@ func complete_session(result_payload: Dictionary) -> Dictionary:
 		_checkpoint_retry_scheduled = false
 		_pending_collected_nodes = {}
 		_pending_operations = []
-		var reward_summary := _reward_summary(body, reward)
+		var reward_summary := RewardSummary.summary(body, reward, model, _last_session_seconds)
 		last_result_text = reward_summary
 		_set_model_message(reward_summary)
 		_server_synced = true
 		_clear_local_checkpoint_state()
 		_emit_client_telemetry("mode_session_completed", {
 			"result": "ok",
-			"reward_status": _reward_status(body, reward),
-			"period_key": _period_key(body, reward),
+			"reward_status": RewardSummary.status(body, reward),
+			"period_key": RewardSummary.period_key(body, reward),
 		})
-		if _is_cap_zero_completion(body, reward):
+		if RewardSummary.is_cap_zero_completion(body, reward):
 			_emit_client_telemetry("mode_cap_zero_completed", {
 				"result": "ok",
 				"reward_status": "cap_zero",
-				"period_key": _period_key(body, reward),
+				"period_key": RewardSummary.period_key(body, reward),
 			})
 		else:
 			_emit_client_telemetry("mode_reward_applied", {
 				"result": "ok",
-				"reward_status": _reward_status(body, reward),
-				"period_key": _period_key(body, reward),
+				"reward_status": RewardSummary.status(body, reward),
+				"period_key": RewardSummary.period_key(body, reward),
 			})
 	else:
 		_server_synced = false
@@ -1330,66 +1331,6 @@ func _runtime_mutation_block_result(action: String) -> Dictionary:
 			"message": reason,
 		},
 	}
-
-func _reward_summary(body: Dictionary, reward: Dictionary) -> String:
-	var reward_text := ""
-	if _is_cap_zero_completion(body, reward):
-		reward_text = "Limite diario atingido; sem recompensa nova."
-	else:
-		var delta := _as_dictionary(reward.get("resource_delta", body.get("resource_delta", {})))
-		if delta.is_empty():
-			reward_text = "Nenhuma recompensa nova."
-		else:
-			reward_text = "Recompensa aplicada: %s." % _resource_delta_text(delta)
-	if model != null and model.has_method("visit_summary_text"):
-		return str(model.call("visit_summary_text", _completion_seconds(body), reward_text))
-	return "Visita encerrada. %s" % reward_text
-
-func _resource_delta_text(delta: Dictionary) -> String:
-	var keys := PackedStringArray()
-	for key: String in delta.keys():
-		keys.append(key)
-	keys.sort()
-	var parts := PackedStringArray()
-	for key: String in keys:
-		var amount := int(delta.get(key, 0))
-		if amount != 0:
-			parts.append("%s %+d" % [_reward_resource_display_name(key), amount])
-	return ", ".join(parts) if not parts.is_empty() else "sem alteracao"
-
-func _completion_seconds(body: Dictionary) -> float:
-	var session := _as_dictionary(body.get("session", {}))
-	if session.has("session_seconds"):
-		return float(session.get("session_seconds", 0.0))
-	return float(_last_session_seconds)
-
-func _reward_resource_display_name(resource_id: String) -> String:
-	match resource_id:
-		"wood":
-			return "Madeira"
-		"herb":
-			return "Ervas"
-		"stone":
-			return "Pedras"
-		"essence":
-			return "Essencia"
-		"ashes":
-			return "Cinzas"
-		"bone":
-			return "Ossos"
-		"bone_dust":
-			return "Po de Osso"
-		_:
-			return resource_id
-
-func _is_cap_zero_completion(body: Dictionary, reward: Dictionary) -> bool:
-	return bool(body.get("cap_zero", reward.get("cap_zero", false))) or _reward_status(body, reward) == "cap_zero"
-
-func _reward_status(body: Dictionary, reward: Dictionary) -> String:
-	return str(body.get("reward_status", reward.get("reward_status", "applied")))
-
-func _period_key(body: Dictionary, reward: Dictionary) -> String:
-	return str(body.get("period_key", reward.get("period_key", "")))
 
 func _response_body(result: Dictionary) -> Dictionary:
 	return _as_dictionary(result.get("body", result))

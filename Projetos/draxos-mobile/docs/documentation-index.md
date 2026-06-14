@@ -1,7 +1,7 @@
 # DraxosMobile - Documentation Index
 
 - Status: `VIVO`
-- Last updated: `2026-06-09`
+- Last updated: `2026-06-14`
 - Purpose: classify project documents so agents know what to trust, what to update and what to treat as history.
 
 ## Categories
@@ -40,21 +40,22 @@
 | `docs/product-vision.md` | `VIVO` | Local long-term product canon until promoted to shared canon. |
 | `docs/pve-arena-initial-direction.md` | `VIVO` | Current early-game direction: Arena PVE first, PVP later, no combat cooldown, locked loadout, temporary stat buffs and duel-list scaling. |
 | `docs/pve-arena-v1.md` | `VIVO` | Implemented local Track 18 Arena PVE contract for arenas, enemies, temporary buffs, rewards, endpoints, schema and lab modeling. |
-| `docs/arena-pve-season1-loop-v1.md` | `VIVO` | Preserved Arena PVE Season 1 Loop v1 delivery: grouped arena/difficulty selection, S1 progress/reward preview, contextual summary and active buff recovery hardening. |
-| `docs/arena-pve-menu-flow-simplification-v1.md` | `VIVO` | Preserved Arena PVE menu-flow simplification package: selection hierarchy, CTA ordering, Preparacao placement and active/buff menu ordering without content/tuning expansion. |
+| `docs/arena-pve-season1-loop-v1.md` | `HISTORICO` | Preserved Arena PVE Season 1 Loop v1 delivery: grouped arena/difficulty selection, S1 progress/reward preview, contextual summary and active buff recovery hardening. |
+| `docs/arena-pve-menu-flow-simplification-v1.md` | `HISTORICO` | Preserved Arena PVE menu-flow simplification package: selection hierarchy, CTA ordering, Preparacao placement and active/buff menu ordering without content/tuning expansion. |
+| `docs/arena-pve-product-proof.md` | `VIVO` | Current proof/verdict guardrail for Arena PVE: `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN`, blocking tuning or expansion until UX/readability/recovery is proven. |
 | `data/definitions/pve_arena_difficulties.json` | `CONTRATO` | Track 20 Season 1 Arena tier matrix: arena/difficulty ids, recommended level/power, enemy sequence, reward profile and clear-rate target. |
 | `data/definitions/season_1_progression_targets.json` | `CONTRATO` | Track 20 Season 1 XP/milestone target contract; declares `arena_tuning_power_v1` as PVE tuning metadata only. |
 | `docs/foundation-app-v0-audit.md` | `HISTORICO` | Closed audit compass: real foundation, current mock, live-product gaps and post-login loop focus preserved as context. |
 | `docs/foundation-expansion-readiness.md` | `RUNBOOK` | Active expansion-readiness gate: lanes, ownership, contract-first requirements, account/save, ruleset and admin checks. |
-| `docs/foundation-loop-audit.md` | `VIVO` | Executed audit of the historical post-login app-shell loop ergonomics; records Foundation Loop UX Pass 01 as an accepted Internal Alpha UX baseline before Arena PVE became the product loop. |
+| `docs/foundation-loop-audit.md` | `HISTORICO` | Executed audit of the historical post-login app-shell loop ergonomics; records Foundation Loop UX Pass 01 as an accepted Internal Alpha UX baseline before Arena PVE became the product loop. |
 | `docs/foundation-responsive-layout-contract.md` | `CONTRATO` | Responsive guardrail for Entry Labs, Refugio and Battle safe frames across Android portrait and Web/Desktop viewports. |
 | `docs/visual-direction-v1.md` | `VIVO` | Current client visual direction for the Foundation Loop and Social Basico build; defines surface accents, component rules and non-goals. |
-| `docs/battle-presentation-v1.md` | `VIVO` | Current Battle Presentation v1 package: client-only readability pass for running battle, summary and current-battle logs. |
-| `docs/battle-drama-v1-1.md` | `VIVO` | Follow-up client-only battle drama/readability pass for visible Web difference after Battle Presentation v1. |
-| `docs/battle-preparation-complete-v1.md` | `VIVO` | Current Battle Preparation Complete v1 package: real Arena PVE preparation/loadout editor, `POST /build/equip`, enriched build state and published Internal Alpha release snapshot. |
+| `docs/battle-presentation-v1.md` | `HISTORICO` | Published Battle Presentation v1 package: client-only readability pass for running battle, summary and current-battle logs. |
+| `docs/battle-drama-v1-1.md` | `HISTORICO` | Published follow-up client-only battle drama/readability pass for visible Web difference after Battle Presentation v1. |
+| `docs/battle-preparation-complete-v1.md` | `HISTORICO` | Published Battle Preparation Complete v1 package: real Arena PVE preparation/loadout editor, `POST /build/equip`, enriched build state and Internal Alpha release snapshot. |
 | `docs/behavior-potion-crafting-v1.md` | `VIVO` | Current technical reference for behavior/potion/crafting systems now present in the alpha baseline: whole-number Ossos, Po de Osso, Fogueira station crafting, simple potions, potion slot and behavior controls. |
-| `docs/progression-clarity-v1.md` | `VIVO` | Published Progression Clarity v1 package: client-only readability for level, power, rewards, next unlocks and next objective. |
-| `docs/first-session-clarity-v1.md` | `VIVO` | Published First Session Clarity v1 package: client-only first-session guidance for Refugio, Arena PVE preparation and battle summary. |
+| `docs/progression-clarity-v1.md` | `HISTORICO` | Published Progression Clarity v1 package: client-only readability for level, power, rewards, next unlocks and next objective. |
+| `docs/first-session-clarity-v1.md` | `HISTORICO` | Published First Session Clarity v1 package: client-only first-session guidance for Refugio, Arena PVE preparation and battle summary. |
 | `docs/minigames/mode-catalog.md` | `VIVO` | Official V1 catalog for Basebuilder, Autobattler, Towerdefense, Cardgame and Openworld. |
 | `docs/minigames/basebuilder.md` | `VIVO` | Basebuilder mode doc and descriptor pointer for current Refugio/Base ownership. |
 | `docs/minigames/autobattler.md` | `VIVO` | Autobattler mode doc and descriptor pointer for current Arena PVE ownership. |
@@ -71,7 +72,8 @@
 | `docs/battle-preparation-v1.md` | `HISTORICO` | Previous client-first preparation readability package over existing behavior endpoints. |
 | `docs/product-brief.md` | `VIVO` | Short product/slice summary. |
 | `docs/game-design-document.md` | `VIVO` | Implementation reference and mock/substance context; not the current expansion target. |
-| `docs/design-pending.md` | `VIVO` | Only live register of unresolved design decisions. |
+| `docs/design-pending.md` | `VIVO` | Only live register of unresolved design decisions: `ABERTO`, `CALIBRAR` and `ADIADO`. |
+| `docs/design-resolved-archive.md` | `HISTORICO` | Resolved design-decision archive moved out of the live pending register for traceability. |
 | `docs/character-systems-rework.md` | `HISTORICO` | Character taxonomy implemented as current mock/substance; not a priority until Foundation Audit promotes character work. |
 | `docs/economy/README.md` | `HISTORICO` | Economy model and calibratable alpha values preserved as context; not a current tuning target. |
 | `docs/progression-lab/README.md` | `RUNBOOK` | Progression Lab workflow vivo for review/tuning evidence; reports in dated subdocs can remain historical. |
@@ -177,4 +179,4 @@
 - Product-facing language should use Instrumento Ritual, Doutrina and Familiar.
 - Potion/crafting/behavior systems exist in the current alpha baseline. `pocao_vida`, `pocao_foco` and `pocao_resguardo` are the approved simple potions; any additional potions, custom thresholds, spell priorities or enemy-specific behavior require another explicit package decision.
 - Technical field names such as `weapon`, `passive`, `pet`, `WeaponQualityTier`, `PassiveLevelsTotal` and `PetLevel` may remain only where they describe existing schema, telemetry or legacy compatibility.
-- New pending design questions must go to `docs/design-pending.md`, not historical track docs.
+- New pending design questions must go to `docs/design-pending.md`, not historical track docs; resolved rows move to `docs/design-resolved-archive.md` after the target doc is updated.

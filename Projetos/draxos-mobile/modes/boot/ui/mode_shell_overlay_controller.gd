@@ -3,6 +3,7 @@ extends RefCounted
 
 const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_action_contract.gd")
 const AppShellRouteContractScript := preload("res://modes/boot/ui/app_shell_route_contract.gd")
+const OverlayHostContractScript := preload("res://modes/boot/ui/mode_shell_overlay_host_contract.gd")
 const OverlayLayerStateScript := preload("res://modes/boot/ui/overlay_layer_state.gd")
 const ProjectInfoScript := preload("res://core/project_info.gd")
 
@@ -81,22 +82,21 @@ func show_screen(host: Node, route_id: String, push_history: bool = true) -> voi
 	_current_route = target
 	set_route_phase(host, "opening", target)
 	_prepare_host_for_route(host, target)
-	host.call("_render_route_contents", target)
-	host.call("_sync_status_from_session")
+	OverlayHostContractScript.render_route_contents(host, target)
+	OverlayHostContractScript.sync_status_from_session(host)
 	if _route_phase == "opening":
 		set_route_phase(host, "ready", target)
 	_publish_diagnostics(host)
-	var context := _as_dictionary(host.call("_action_context"))
-	host.call("_emit_client_event", "screen_opened", {
+	var context := OverlayHostContractScript.action_context(host)
+	OverlayHostContractScript.emit_client_event(host, "screen_opened", {
 		"screen": target,
 		"host_screen": AppShellRouteContractScript.ROUTE_MODE_SHELL,
 		"overlay": true,
 		"has_account": bool(context.get("has_account", false)),
 		"offline": bool(context.get("offline", false)),
 	})
-	host.call("_sync_social_auto_sync_for_route")
-	if host.has_method("_publish_web_diagnostics_state"):
-		host.call_deferred("_publish_web_diagnostics_state")
+	OverlayHostContractScript.sync_social_auto_sync_for_route(host)
+	OverlayHostContractScript.publish_web_diagnostics_deferred(host)
 
 func go_back(host: Node) -> bool:
 	return request_back(host)
@@ -126,9 +126,8 @@ func request_close(host: Node) -> bool:
 	if _close_blocked(host):
 		_show_blocked_message(host)
 		return false
-	host.call("_clear_battle_fullscreen_overlay")
-	if host.has_method("_clear_shell_overlay_transient_busy"):
-		host.call("_clear_shell_overlay_transient_busy")
+	OverlayHostContractScript.clear_battle_fullscreen_overlay(host)
+	OverlayHostContractScript.clear_shell_overlay_transient_busy(host)
 	_cancel_confirmation(host, false)
 	_restore_host_targets(host)
 	_set_bosque_paused(host, false)
@@ -152,16 +151,15 @@ func request_close(host: Node) -> bool:
 	_last_ignored_input_reason = ""
 	_current_route = ""
 	_history.clear()
-	host.call("_sync_status_from_session")
+	OverlayHostContractScript.sync_status_from_session(host)
 	_publish_diagnostics(host)
 	return true
 
 func force_close(host: Node) -> void:
 	if not is_open():
 		return
-	host.call("_clear_battle_fullscreen_overlay")
-	if host.has_method("_clear_shell_overlay_transient_busy"):
-		host.call("_clear_shell_overlay_transient_busy")
+	OverlayHostContractScript.clear_battle_fullscreen_overlay(host)
+	OverlayHostContractScript.clear_shell_overlay_transient_busy(host)
 	_cancel_confirmation(host, false)
 	_restore_host_targets(host)
 	_set_bosque_paused(host, false)
@@ -594,8 +592,7 @@ func _build_overlay(host: Node) -> void:
 	_back_button.pressed.connect(func() -> void:
 		request_back(host)
 	)
-	if host.has_method("_prepare_touch_button"):
-		host.call("_prepare_touch_button", _back_button)
+	OverlayHostContractScript.prepare_touch_button(host, _back_button)
 	_back_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	header.add_child(_back_button)
 
@@ -614,8 +611,7 @@ func _build_overlay(host: Node) -> void:
 	_close_button.pressed.connect(func() -> void:
 		request_close(host)
 	)
-	if host.has_method("_prepare_touch_button"):
-		host.call("_prepare_touch_button", _close_button)
+	OverlayHostContractScript.prepare_touch_button(host, _close_button)
 	_close_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	header.add_child(_close_button)
 
@@ -671,10 +667,8 @@ func _build_overlay(host: Node) -> void:
 	_confirm_button.pressed.connect(func() -> void:
 		_confirm_pending_action(host)
 	)
-	if host.has_method("_prepare_touch_button"):
-		host.call("_prepare_touch_button", _confirm_button)
-	if host.has_method("_apply_action_button_style"):
-		host.call("_apply_action_button_style", _confirm_button, "confirm_overlay")
+	OverlayHostContractScript.prepare_touch_button(host, _confirm_button)
+	OverlayHostContractScript.apply_action_button_style(host, _confirm_button, "confirm_overlay")
 	_confirm_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	confirm_actions.add_child(_confirm_button)
 
@@ -686,10 +680,8 @@ func _build_overlay(host: Node) -> void:
 	_cancel_confirm_button.pressed.connect(func() -> void:
 		_cancel_confirmation(host, true)
 	)
-	if host.has_method("_prepare_touch_button"):
-		host.call("_prepare_touch_button", _cancel_confirm_button)
-	if host.has_method("_apply_action_button_style"):
-		host.call("_apply_action_button_style", _cancel_confirm_button, "cancel_overlay")
+	OverlayHostContractScript.prepare_touch_button(host, _cancel_confirm_button)
+	OverlayHostContractScript.apply_action_button_style(host, _cancel_confirm_button, "cancel_overlay")
 	_cancel_confirm_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	confirm_actions.add_child(_cancel_confirm_button)
 
@@ -922,14 +914,13 @@ func _prepare_host_for_route(host: Node, route_id: String) -> void:
 	_cancel_confirmation(host, false)
 	_focused_control_path = ""
 	_last_ignored_input_reason = ""
-	if host.has_method("_clear_shell_overlay_busy_except_route"):
-		host.call("_clear_shell_overlay_busy_except_route", route_id)
+	OverlayHostContractScript.clear_shell_overlay_busy_except_route(host, route_id)
 	_apply_route_layer(route_id)
 	if route_id != AppShellRouteContractScript.ROUTE_ARENA_ACTIVE:
 		host.set_meta("arena_active_preparation_open", false)
 	if route_id != AppShellRouteContractScript.ROUTE_BATTLE_ENTRY:
 		host.set("_battle_request_splash_active", false)
-	host.call("_apply_orientation_for_route", AppShellRouteContractScript.ROUTE_MODE_SHELL)
+	OverlayHostContractScript.apply_orientation_for_mode_shell(host, AppShellRouteContractScript.ROUTE_MODE_SHELL)
 	(host.get("_action_buttons") as Dictionary).clear()
 	host.set("_current_action_grid", null)
 	host.set("_timeline_label", null)
@@ -951,10 +942,10 @@ func _prepare_host_for_route(host: Node, route_id: String) -> void:
 	host.set("_immersive_detail_label", null)
 	host.set("_immersive_error_label", null)
 	host.set("_battle_visual", null)
-	host.call("_clear_battle_fullscreen_overlay")
+	OverlayHostContractScript.clear_battle_fullscreen_overlay(host)
 	host.get("_battle_replay_presenter").clear()
 	_error_label.text = ""
-	host.call("_clear_content_body")
+	OverlayHostContractScript.clear_content_body(host)
 	_content_scroll.scroll_vertical = 0
 	_content_title.text = AppShellRouteContractScript.title_for(route_id)
 	_back_button.visible = true
@@ -980,7 +971,7 @@ func _show_blocked_message(host: Node) -> void:
 	if bool(host.get("_replay_running")):
 		message = "Replay em andamento; use Pular replay ou aguarde concluir."
 	_detail_label.text = message
-	host.call("_sync_buttons")
+	OverlayHostContractScript.sync_buttons(host)
 
 func _confirm_pending_action(host: Node) -> void:
 	if _pending_confirm_action == "":
@@ -990,7 +981,7 @@ func _confirm_pending_action(host: Node) -> void:
 	_pending_confirm_message = ""
 	_sync_confirmation_panel()
 	_record_input("confirm_accept", action_id, str(_root.get_path_to(_confirm_button)) if _confirm_button != null else "")
-	host.call("_on_confirmation_confirmed")
+	OverlayHostContractScript.on_confirmation_confirmed(host)
 	_publish_diagnostics(host)
 
 func _cancel_confirmation(host: Node, record_input: bool) -> bool:
@@ -1092,13 +1083,7 @@ func _handle_chrome_point(host: Node, position: Vector2) -> bool:
 	return false
 
 func _publish_diagnostics(host: Node) -> void:
-	if host != null and host.has_method("_publish_web_diagnostics_state"):
-		host.call("_publish_web_diagnostics_state")
-
-func _as_dictionary(value: Variant) -> Dictionary:
-	if value is Dictionary:
-		return Dictionary(value)
-	return {}
+	OverlayHostContractScript.publish_web_diagnostics(host)
 
 func _route_for_action(action_id: String) -> String:
 	return str(_OVERLAY_ACTION_ROUTES.get(action_id.strip_edges(), "")).strip_edges()
