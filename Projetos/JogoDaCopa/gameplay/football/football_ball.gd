@@ -319,6 +319,8 @@ func _sync_toon_outline_node() -> void:
 		toon_outline_mesh_instance.material_override = _get_toon_outline_material()
 
 func _ensure_readability_shadow() -> void:
+	if RenderProfileScript.is_web_platform():
+		return
 	readability_shadow_instance = get_node_or_null("BallReadabilityShadow") as MeshInstance3D
 	if readability_shadow_instance != null:
 		return

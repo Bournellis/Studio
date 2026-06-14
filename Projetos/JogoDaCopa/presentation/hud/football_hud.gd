@@ -95,6 +95,9 @@ var fade_tween: Tween
 var broadcast_font: FontFile
 var broadcast_narrow_font: FontFile
 var telemetry_visible: bool = false
+var is_web_runtime: bool = false
+var state_badge_styles: Dictionary = {}
+var state_badge_style_key: StringName = &""
 
 var kick_feedback_time: float = 0.0
 var strong_kick_feedback_time: float = 0.0
@@ -114,7 +117,8 @@ var last_kick_assist_strength: float = 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	if not RenderProfileScript.is_web_platform():
+	is_web_runtime = RenderProfileScript.is_web_platform()
+	if not is_web_runtime:
 		_ensure_audio_buses()
 	_load_broadcast_fonts()
 	_build_ui()
@@ -256,13 +260,13 @@ func show_match_end(player_won: bool, result_snapshot: Dictionary = {}) -> void:
 	goal_feedback_time = 1.5
 	_set_event_message("CAMPEAO" if player_won else "DERROTA", 1.6)
 	_apply_result_snapshot(player_won, result_snapshot)
-	if not RenderProfileScript.is_web_platform() and not bool(result_snapshot.get(RESULT_SUPPRESS_TRANSITION_PULSE_KEY, false)):
+	if not is_web_runtime and not bool(result_snapshot.get(RESULT_SUPPRESS_TRANSITION_PULSE_KEY, false)):
 		play_transition_pulse()
 
 func _apply_result_snapshot(player_won: bool, result_snapshot: Dictionary) -> void:
 	if result_panel != null:
 		result_panel.visible = true
-	if result_rematch_button != null and not RenderProfileScript.is_web_platform():
+	if result_rematch_button != null and not is_web_runtime:
 		result_rematch_button.grab_focus()
 	if result_title_label != null:
 		_set_label_text_if_changed(result_title_label, "VITORIA" if player_won else "DERROTA")
@@ -1191,7 +1195,7 @@ func _ensure_audio_bus(bus_name: StringName) -> void:
 	AudioServer.set_bus_send(bus_index, "Master")
 
 func _get_bus_volume_linear(bus_name: StringName) -> float:
-	if RenderProfileScript.is_web_platform():
+	if is_web_runtime:
 		return 1.0
 	_ensure_audio_bus(bus_name)
 	var bus_index := AudioServer.get_bus_index(str(bus_name))
@@ -1202,7 +1206,7 @@ func _get_bus_volume_linear(bus_name: StringName) -> float:
 	return clampf(db_to_linear(AudioServer.get_bus_volume_db(bus_index)), 0.0, 1.0)
 
 func _set_bus_volume(bus_name: StringName, value: float, from_user_gesture: bool = false) -> void:
-	if RenderProfileScript.is_web_platform() and not from_user_gesture:
+	if is_web_runtime and not from_user_gesture:
 		return
 	_ensure_audio_bus(bus_name)
 	var bus_index := AudioServer.get_bus_index(str(bus_name))
@@ -1506,7 +1510,7 @@ func _update_sensitivity_label(value: float) -> void:
 func _refresh_overlay() -> void:
 	if pulse_overlay == null:
 		return
-	if RenderProfileScript.is_web_platform():
+	if is_web_runtime:
 		pulse_overlay.color = Color(0.0, 0.0, 0.0, 0.0)
 		return
 	var color := Color(0.0, 0.0, 0.0, 0.0)
@@ -1518,7 +1522,7 @@ func _refresh_overlay() -> void:
 func _refresh_scorebug_pulse() -> void:
 	if score_panel == null:
 		return
-	if RenderProfileScript.is_web_platform():
+	if is_web_runtime:
 		score_panel.scale = Vector2.ONE
 		return
 	var envelope := clampf(scorebug_pulse_time / 1.1, 0.0, 1.0)
@@ -1532,7 +1536,7 @@ func _refresh_event_label() -> void:
 	var progress := 1.0 - clampf(event_message_time / maxf(0.01, event_message_duration), 0.0, 1.0)
 	var punch_multiplier := 1.55 if last_event == &"countdown" or countdown_feedback_time > 0.0 else (1.22 if last_event == &"goal" or last_event == &"double_goal" else 1.0)
 	var squash := sin(progress * PI) * 0.18 * punch_multiplier
-	event_label.scale = Vector2.ONE if RenderProfileScript.is_web_platform() else Vector2(1.0 + squash, 1.0 - squash * 0.42)
+	event_label.scale = Vector2.ONE if is_web_runtime else Vector2(1.0 + squash, 1.0 - squash * 0.42)
 	var color := Color(1.0, 1.0, 1.0, alpha)
 	if last_event == &"countdown":
 		color = Color(1.0, 0.78, 0.16, alpha)
@@ -1547,18 +1551,29 @@ func _update_state_badge(match_mode: StringName, golden_goal: bool, time_remaini
 		return
 	var badge_text := "3 GOLS"
 	var fill_color := Color(0.35, 0.9, 1.0, 0.95)
+	var next_style_key: StringName = &"goals"
 	if match_mode == &"timer":
 		if golden_goal:
 			badge_text = "GOLDEN GOAL"
 			fill_color = Color(1.0, 0.78, 0.16, 0.95)
+			next_style_key = &"golden_goal"
 		elif time_remaining > 0.0 and time_remaining <= 30.0:
 			badge_text = "VALE 2"
 			fill_color = Color(1.0, 0.24, 0.18, 0.95)
+			next_style_key = &"last_minute"
 		else:
 			badge_text = "TIMER"
 			fill_color = Color(0.35, 0.9, 1.0, 0.95)
+			next_style_key = &"timer"
 	_set_label_text_if_changed(state_badge_label, badge_text)
-	state_badge_label.add_theme_stylebox_override("normal", _build_badge_style(fill_color, fill_color.lightened(0.2)))
+	if state_badge_style_key != next_style_key:
+		state_badge_label.add_theme_stylebox_override("normal", _get_cached_badge_style(next_style_key, fill_color))
+		state_badge_style_key = next_style_key
+
+func _get_cached_badge_style(style_key: StringName, fill_color: Color) -> StyleBoxFlat:
+	if not state_badge_styles.has(style_key):
+		state_badge_styles[style_key] = _build_badge_style(fill_color, fill_color.lightened(0.2))
+	return state_badge_styles[style_key] as StyleBoxFlat
 
 func _set_event_message(message: String, duration: float) -> void:
 	if event_message_time > 0.0:
