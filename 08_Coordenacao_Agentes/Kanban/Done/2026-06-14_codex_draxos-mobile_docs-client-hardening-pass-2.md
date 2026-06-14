@@ -62,10 +62,11 @@ Consolidar higiene documental e segundo passe de hardening tecnico sem abrir pro
 - `Projetos/draxos-mobile/tests/client/test_boot_mobile_ui.gd`
 - `Projetos/draxos-mobile/tests/client/test_overlay_layer_state.gd`
 - `Projetos/draxos-mobile/modes/boot/ui/mode_shell_overlay_controller.gd`
-- `Projetos/draxos-mobile/modes/boot/ui/mode_shell_overlay_layer_state.gd`
-- `Projetos/draxos-mobile/modes/boot/openworld_integrated_session_bridge.gd`
-- `Projetos/draxos-mobile/modes/boot/openworld_persistence_state.gd`
-- `08_Coordenacao_Agentes/Kanban/Doing/2026-06-14_codex_draxos-mobile_docs-client-hardening-pass-2.md`
+- `Projetos/draxos-mobile/modes/boot/ui/mode_shell_overlay_host_contract.gd`
+- `Projetos/draxos-mobile/modes/openworld/openworld_integrated_session_bridge.gd`
+- `Projetos/draxos-mobile/modes/openworld/openworld_reward_summary.gd`
+- `Projetos/draxos-mobile/tests/client/test_openworld_reward_summary.gd`
+- `08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_draxos-mobile_docs-client-hardening-pass-2.md`
 - `08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_draxos-mobile_docs-client-hardening-pass-2.md`
 
 ## Validation Plan
@@ -85,3 +86,29 @@ Consolidar higiene documental e segundo passe de hardening tecnico sem abrir pro
 ## Handoff Point
 
 Fechar com commits separados por coordenacao inicial, docs, client hardening e coordenacao final; depois merge local no `main`. Fabio faz o push pelo GitHub Desktop.
+
+## Resultado
+
+- `design-pending.md` ficou com 22 entradas vivas (`ABERTO`, `CALIBRAR`, `ADIADO`); 60 `RESOLVIDO` foram preservadas em `docs/design-resolved-archive.md`.
+- `documentation-index.md` passou a classificar pacotes publicados como historico quando apropriado e incluiu `docs/arena-pve-product-proof.md` como guardrail vivo.
+- `test_boot_mobile_ui.gd` foi reduzido em 131 linhas; os testes puros de layer foram movidos para `test_overlay_layer_state.gd`.
+- `mode_shell_overlay_controller.gd` centraliza chamadas privadas do host em `mode_shell_overlay_host_contract.gd`.
+- `openworld_integrated_session_bridge.gd` removeu summary/status/perodo de recompensa para `openworld_reward_summary.gd` com testes focados.
+
+## Commits
+
+- `a3a4552a` `docs(draxos-mobile): start docs client hardening pass 2`
+- `1acbb6f8` `docs(draxos-mobile): archive resolved design decisions`
+- `0a4c3cd1` `refactor(draxos-mobile): isolate overlay shell contracts`
+- `5386522a` `refactor(draxos-mobile): extract openworld reward summary helper`
+
+## Validacao
+
+- `git diff --check`: `PASS`
+- `tools/check_doc_drift.ps1`: `PASS`
+- `validate_foundation.ps1 -Profile DocsOnly -NoProjectWrites`: `PASS`
+- `Godot --headless --path . -s res://tools/validate.gd`: `PASS` (`285/285`)
+- `GUT client` standalone: `PASS` (`285/285`)
+- `validate_foundation.ps1 -Profile ClientQuick -NoProjectWrites`: `PASS`
+
+Observacao: uma primeira tentativa de GUT em paralelo com `validate.gd` falhou em 1 teste de navegacao por disputa de ambiente compartilhado; a repeticao standalone passou `285/285` e o `ClientQuick` final tambem passou.

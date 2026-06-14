@@ -43,8 +43,13 @@
 
 ## Current Gate
 
-The next operational step is a joint documentation hygiene and client hardening
-pass. The next product package, when explicitly opened, must focus Arena
+The joint documentation hygiene and client hardening pass 2 was completed
+locally on `2026-06-14`, with no remote mutation or publication. It archived
+resolved design decisions out of the live pending register, reduced
+client-shell test concentration, centralized overlay host call contracts and
+split Openworld reward summary formatting out of the integrated bridge.
+
+The next product package, when explicitly opened, must focus Arena
 UX/readability/recovery: make the tutorial -> first real arena -> buffs ->
 summary -> abandon/resume path understandable without agent explanation.
 
