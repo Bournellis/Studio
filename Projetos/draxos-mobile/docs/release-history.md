@@ -1,6 +1,9 @@
 # DraxosMobile - Release History (Internal Alpha)
 
-This file is the single historical record of published Internal Alpha packages. Snapshots (`implementation/current-status.md`, `Estado_Atual.md`, `AGENTS.md`) must cite only the current package and point here for everything older.
+This file is the single historical record of published Internal Alpha packages.
+Operational snapshots may point here for package lineage; pointer docs such as
+`AGENTS.md` must not duplicate package names, release roots, URLs or version
+codes.
 
 ## Stable Endpoints
 
@@ -51,4 +54,3 @@ Earlier packages (pre-2026-06-01) are recorded in `implementation/tracks/` and K
 
 - Track 13 - Foundation Validation And Release Safety (delivered 2026-05-28).
 - Track 14 - Agent Operations Foundation (`TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`).
-- 

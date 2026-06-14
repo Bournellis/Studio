@@ -554,96 +554,67 @@ function Assert-CorsAllowedOrigins {
 }
 
 function Assert-LiveDocsReleaseRootFreshness {
+    $currentPackage = "Bosque Overlay Layer And Readiness Authority v1"
     $currentRoot = "internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c"
     $currentPreview = "https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev"
-    $previousAbandonRoot = "internal-alpha/v0-bosque-arena-abandon-recovery-authority-v1-20260610-a252241"
-    $previousAbandonPreview = "https://b149da8f.draxos-mobile-internal-alpha.pages.dev"
-    $previousInteractiveControlsRoot = "internal-alpha/v0-bosque-overlay-interactive-controls-authority-v1-20260609-d3be1fb"
-    $previousInteractiveControlsPreview = "https://9461e4be.draxos-mobile-internal-alpha.pages.dev"
-    $previousMenuActionRoot = "internal-alpha/v0-bosque-overlay-menu-action-authority-v1-20260609-aa9402d"
-    $previousMenuActionPreview = "https://5f04e6ae.draxos-mobile-internal-alpha.pages.dev"
-    $previousOverlayNavRoot = "internal-alpha/v0-bosque-overlay-navigation-hotfix-v1-20260609-9b93e5d"
-    $previousOverlayNavPreview = "https://92cc0579.draxos-mobile-internal-alpha.pages.dev"
-    $previousBootstrapRoot = "internal-alpha/v0-bosque-bootstrap-authority-v1-20260609-ba99e70"
-    $previousBootstrapPreview = "https://0123894f.draxos-mobile-internal-alpha.pages.dev"
-    $previousArenaBonusRoot = "internal-alpha/v0-arena-pve-bonus-visual-v1-20260608-e281d63"
-    $previousArenaBonusPreview = "https://6c8bf8e1.draxos-mobile-internal-alpha.pages.dev"
-    $previousBosqueRoot = "internal-alpha/v0-bosque-node-cooldown-ack-v1-20260608-626b4ad"
-    $previousBosquePreview = "https://5cce952e.draxos-mobile-internal-alpha.pages.dev"
-    $previousResumeRoot = "internal-alpha/v0-bosque-resume-exit-lifecycle-v1-20260608-9a0f7c0"
-    $previousResumePreview = "https://39128c59.draxos-mobile-internal-alpha.pages.dev"
-    $previousFeelRoot = "internal-alpha/v0-bosque-feel-spawn-authority-v1-20260608-70b79c3"
-    $previousFeelPreview = "https://16ac3cb7.draxos-mobile-internal-alpha.pages.dev"
-    $previousPersistenceRoot = "internal-alpha/v0-bosque-persistence-rebase-v1-20260608-bc23f74"
-    $previousPersistencePreview = "https://0c0a8dcf.draxos-mobile-internal-alpha.pages.dev"
-    $previousSessionRoot = "internal-alpha/v0-bosque-session-lifecycle-structures-hotfix-v1-20260607-c953b51"
-    $previousSessionPreview = "https://8ecac093.draxos-mobile-internal-alpha.pages.dev"
-    $previousWorldRoot = "internal-alpha/v0-bosque-world-hub-domain-separation-v1-20260606-81ecf05"
-    $previousWorldPreview = "https://d1872010.draxos-mobile-internal-alpha.pages.dev"
-    $previousStationRoot = "internal-alpha/v0-bosque-fogueira-potion-crafting-v1-20260606-cad6d2c"
-    $previousStationPreview = "https://08d00f24.draxos-mobile-internal-alpha.pages.dev"
-    $previousDurableRoot = "internal-alpha/v0-bosque-durable-bau-mochila-v1-20260606-6e7ca6b"
-    $previousDurablePreview = "https://39198a35.draxos-mobile-internal-alpha.pages.dev"
-    $previousMenuRoot = "internal-alpha/v0-arena-pve-menu-flow-simplification-v1-20260606-5d03a68"
-    $previousMenuPreview = "https://fdf44707.draxos-mobile-internal-alpha.pages.dev"
-    $previousCheckpointRoot = "internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22"
-    $previousCheckpointPreview = "https://fa84e109.draxos-mobile-internal-alpha.pages.dev"
-    $previousSyncRoot = "internal-alpha/v0-bosque-sync-responsiveness-v1-20260605-a5f8c95"
-    $previousSyncPreview = "https://60e2d4be.draxos-mobile-internal-alpha.pages.dev"
-    $previousVisibleRoot = "internal-alpha/v0-arena-bosque-visible-v2-20260605-01d80d5"
-    $previousVisiblePreview = "https://7b9c8f38.draxos-mobile-internal-alpha.pages.dev"
-    $previousRegressionRoot = "internal-alpha/v0-arena-bosque-regression-hotfix-20260605-a16ca4f"
-    $previousRegressionPreview = "https://bbd81ec5.draxos-mobile-internal-alpha.pages.dev"
-    $previousSeasonRoot = "internal-alpha/v0-arena-pve-season1-loop-v1-20260605-c8baf32"
-    $previousSeasonPreview = "https://d7333659.draxos-mobile-internal-alpha.pages.dev"
-    $previousHotfixRoot = "internal-alpha/v0-arena-duel-flow-hotfix-20260605-7ce5174"
-    $previousHotfixPreview = "https://0536635b.draxos-mobile-internal-alpha.pages.dev"
-    $previousArenaRoot = "internal-alpha/v0-arena-pve-first-real-run-20260605-b69108a"
-    $previousArenaPreview = "https://2c020d09.draxos-mobile-internal-alpha.pages.dev"
-    $previousContentRoot = "internal-alpha/v0-bosque-v3-ux-feel-20260605-782dc45"
-    $previousContentPreview = "https://dcf6eb15.draxos-mobile-internal-alpha.pages.dev"
-    $previousOpenworldRoot = "internal-alpha/v0-openworld-main-menu-sync-20260604-bc36cd8"
-    $previousOpenworldPreview = "https://aeec7403.draxos-mobile-internal-alpha.pages.dev"
+    $currentVersion = "0.0.23-alpha.0"
+    $currentVersionCode = "23"
+    $minimumVersionCode = "13"
     $hardeningRoot = "internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4"
     $hardeningPreview = "https://ca946749.draxos-mobile-internal-alpha.pages.dev"
+
     foreach ($entry in @(
-        @{ Base = $ProjectPath; Path = "AGENTS.md"; Needles = @("Bosque Overlay Layer And Readiness Authority v1 is the latest remote Internal Alpha publication", $currentRoot, $currentPreview, "Bosque Arena Abandon Recovery Authority v1 remains the previous Arena abandon recovery package", $previousAbandonRoot, $previousAbandonPreview, "Bosque Overlay Interactive Controls Authority v1 remains the previous interactive-controls package", $previousInteractiveControlsRoot, $previousInteractiveControlsPreview, "Bosque Overlay Menu Action Authority v1 remains the previous internal-menu-button package", $previousMenuActionRoot, $previousMenuActionPreview, "Bosque Overlay Navigation Hotfix v1 remains the previous interaction hotfix package", $previousOverlayNavRoot, $previousOverlayNavPreview, "Bosque Bootstrap Authority v1 remains the previous bootstrap package", "Arena PVE Bonus Visual v1 remains the previous Arena package", $previousArenaBonusRoot, $previousArenaBonusPreview, "Bosque Node Cooldown ACK v1 remains the previous Bosque package", $previousBosqueRoot, $previousBosquePreview, "Bosque Resume Exit Lifecycle v1 remains the previous resume/exit package", $previousResumeRoot, $previousResumePreview, "Bosque Feel & Spawn Authority v1 remains the previous feel/spawn package", $previousFeelRoot, $previousFeelPreview, "Bosque Persistence Rebase v1 remains the previous persistence/operations package", $previousPersistenceRoot, $previousPersistencePreview, "Bosque Durable Bau Mochila v1", "Arena PVE Menu Flow Simplification v1", "Bosque Offline-First Checkpoint v1", "Arena/Bosque Visible V2", "Arena/Bosque Regression Hotfix") },
-        @{ Base = $ProjectPath; Path = "README.md"; Needles = @("Current release root:", $currentRoot, "Current verified preview:", $currentPreview, "Previous Arena abandon recovery release root:", $previousAbandonRoot, "Previous Arena abandon recovery verified preview:", $previousAbandonPreview, "Previous interactive-controls release root:", $previousInteractiveControlsRoot, "Previous interactive-controls verified preview:", $previousInteractiveControlsPreview, "Previous internal-menu-button release root:", $previousMenuActionRoot, "Previous internal-menu-button verified preview:", $previousMenuActionPreview, "Previous Bosque release root:", $previousBosqueRoot, "Previous Bosque verified preview:", $previousBosquePreview, "Previous resume/exit release root:", $previousResumeRoot, "Previous resume/exit verified preview:", $previousResumePreview, "Previous feel/spawn release root:", $previousFeelRoot, "Previous feel/spawn verified preview:", $previousFeelPreview, "Previous persistence release root:", $previousPersistenceRoot, "Previous persistence verified preview:", $previousPersistencePreview, "Previous session-lifecycle release root:", $previousSessionRoot, "Previous session-lifecycle verified preview:", $previousSessionPreview, "Previous local/account domain release root:", $previousWorldRoot, "Previous local/account domain verified preview:", $previousWorldPreview, "Previous station-craft release root:", $previousStationRoot, "Previous station-craft verified preview:", $previousStationPreview, "Previous durable Openworld release root:", $previousDurableRoot, "Previous durable Openworld verified preview:", $previousDurablePreview, "Previous Arena menu release root:", $previousMenuRoot, "Previous Arena menu verified preview:", $previousMenuPreview, "Previous Openworld policy release root:", $previousCheckpointRoot, "Previous Openworld policy verified preview:", $previousCheckpointPreview, "Previous Bosque sync release root:", $previousSyncRoot, "Previous Bosque sync verified preview:", $previousSyncPreview, "Previous visible release root:", $previousVisibleRoot, "Previous visible verified preview:", $previousVisiblePreview, "Previous hardening release root:", $hardeningRoot, "Previous hardening verified preview:", $hardeningPreview) },
-        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Latest published remote package:", "Bosque Overlay Layer And Readiness Authority v1", $currentRoot, $currentPreview, "Previous Arena abandon recovery package:", "Bosque Arena Abandon Recovery Authority v1", $previousAbandonRoot, $previousAbandonPreview, "Previous interactive-controls package:", "Bosque Overlay Interactive Controls Authority v1", $previousInteractiveControlsRoot, $previousInteractiveControlsPreview, "Previous internal-menu-button package:", "Bosque Overlay Menu Action Authority v1", $previousMenuActionRoot, $previousMenuActionPreview, "Previous interaction hotfix package:", "Bosque Overlay Navigation Hotfix v1", $previousOverlayNavRoot, $previousOverlayNavPreview, "Previous bootstrap package:", "Bosque Bootstrap Authority v1", $previousBootstrapRoot, $previousBootstrapPreview, "Previous Arena package:", "Arena PVE Bonus Visual v1", $previousArenaBonusRoot, $previousArenaBonusPreview, "Previous Bosque package:", "Bosque Node Cooldown ACK v1", $previousBosqueRoot, $previousBosquePreview, "Previous resume/exit package:", "Bosque Resume Exit Lifecycle v1", $previousResumeRoot, $previousResumePreview, "Previous feel/spawn package:", "Bosque Feel & Spawn Authority v1", $previousFeelRoot, $previousFeelPreview, "Previous persistence/operations package:", "Bosque Persistence Rebase v1", $previousPersistenceRoot, $previousPersistencePreview, "Previous session-lifecycle package:", "Bosque Session Lifecycle & Durable Structures Hotfix v1", $previousSessionRoot, $previousSessionPreview, "Previous local/account domain package:", "Bosque World Hub Domain Separation v1", $previousWorldRoot, $previousWorldPreview, "Previous station-craft package:", "Bosque Fogueira Potion Crafting v1", $previousStationRoot, $previousStationPreview, "Previous durable Openworld package:", "Bosque Durable Bau Mochila v1", $previousDurableRoot, $previousDurablePreview, "Previous Arena menu package:", "Arena PVE Menu Flow Simplification v1", $previousMenuRoot, $previousMenuPreview, "Previous Openworld/Bosque policy package:", "Bosque Offline-First Checkpoint v1", $previousCheckpointRoot, $previousCheckpointPreview, "Previous Bosque sync package:", "Bosque Sync Responsiveness v1", $previousSyncRoot, $previousSyncPreview, "Previous visible package:", "Arena/Bosque Visible V2", $previousVisibleRoot, $previousVisiblePreview, "Previous hardening baseline:", "Foundation Hardening V2", $hardeningRoot, $hardeningPreview) },
-        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("Bosque Overlay Layer And Readiness Authority v1 is the latest remote Internal Alpha publication", $currentRoot, $currentPreview, "Bosque Arena Abandon Recovery Authority v1 remains the previous Arena abandon recovery package", $previousAbandonRoot, $previousAbandonPreview, "Bosque Overlay Interactive Controls Authority v1 remains the previous interactive-controls package", $previousInteractiveControlsRoot, $previousInteractiveControlsPreview, "Bosque Overlay Menu Action Authority v1 remains the previous internal-menu-button package", $previousMenuActionRoot, $previousMenuActionPreview, "Bosque Overlay Navigation Hotfix v1 remains the previous interaction hotfix package", $previousOverlayNavRoot, $previousOverlayNavPreview, "Bosque Bootstrap Authority v1 remains the previous bootstrap package", $previousBootstrapRoot, $previousBootstrapPreview, "Arena PVE Bonus Visual v1 remains the previous Arena package", $previousArenaBonusRoot, $previousArenaBonusPreview, "Bosque Node Cooldown ACK v1 remains the previous Bosque package", $previousBosqueRoot, $previousBosquePreview, "Bosque Resume Exit Lifecycle v1 remains the previous resume/exit package", $previousResumeRoot, $previousResumePreview, "Bosque Feel & Spawn Authority v1 remains the previous feel/spawn package", $previousFeelRoot, $previousFeelPreview, "Bosque Persistence Rebase v1 remains the previous persistence/operations package", $previousPersistenceRoot, $previousPersistencePreview, "Bosque Session Lifecycle & Durable Structures Hotfix v1 remains the previous session lifecycle package", $previousSessionRoot, $previousSessionPreview, "Bosque World Hub Domain Separation v1 remains the previous local/account domain package", $previousWorldRoot, $previousWorldPreview, "Bosque Fogueira Potion Crafting v1 remains the previous station-craft package", $previousStationRoot, $previousStationPreview, "Bosque Durable Bau Mochila v1 remains the previous durable Openworld progress package", $previousDurableRoot, $previousDurablePreview, "Arena PVE Menu Flow Simplification v1 remains the previous Arena menu package", $previousMenuRoot, $previousMenuPreview, "Bosque Offline-First Checkpoint v1 remains the previous Openworld policy package", "Bosque Sync Responsiveness v1 remains the previous Bosque sync package", "Arena/Bosque Visible V2", "Arena/Bosque Regression Hotfix", "Arena PVE Season 1 Loop v1", "Foundation Hardening V2 remains the previous hardening/live-doc enforcement baseline") },
-        @{ Base = $ProjectPath; Path = "docs\foundation-hardening-v2-readiness-report.md"; Needles = @("Status:", "HISTORICO_BASELINE", $hardeningRoot, $hardeningPreview, "not the latest remote Internal Alpha package") },
-        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA", $currentRoot, $currentPreview, "Bosque Arena Abandon Recovery Authority v1 preservado como pacote anterior de recuperacao de abandono", "Bosque Overlay Interactive Controls Authority v1 preservado como pacote anterior de controles interativos", "Bosque Overlay Menu Action Authority v1 preservado como pacote anterior de botoes internos", "Bosque Overlay Navigation Hotfix v1 preservado como hotfix de interacao anterior", "Arena PVE Bonus Visual v1 preservado como pacote Arena anterior", "Bosque Node Cooldown ACK v1 preservado como pacote Bosque anterior", "Track 13 release safety", "Track 14 agent ops") },
-        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA", $currentRoot, $currentPreview, "Bosque Arena Abandon Recovery Authority v1 segue preservado como pacote anterior de recuperacao de abandono", "Bosque Overlay Interactive Controls Authority v1 segue preservado como pacote anterior de controles interativos", "Bosque Overlay Menu Action Authority v1 segue preservado como pacote anterior de botoes internos", "Bosque Overlay Navigation Hotfix v1 segue preservado como hotfix de interacao anterior", "Arena PVE Bonus Visual v1 segue preservado como pacote Arena anterior", "Bosque Node Cooldown ACK v1 segue preservado como pacote Bosque anterior", "Bosque Resume Exit Lifecycle v1", "Bosque Feel & Spawn Authority v1", "Bosque Persistence Rebase v1", $previousVisibleRoot, $previousVisiblePreview, "FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA", $hardeningRoot, $hardeningPreview) },
-        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("Current published package:", "Bosque Overlay Layer And Readiness Authority v1", $currentRoot, $currentPreview, "Previous Arena abandon recovery package:", $previousAbandonRoot, $previousAbandonPreview, "Previous interactive-controls package:", $previousInteractiveControlsRoot, $previousInteractiveControlsPreview, "Previous internal-menu-button package:", $previousMenuActionRoot, $previousMenuActionPreview, "Previous interaction hotfix package:", $previousOverlayNavRoot, $previousOverlayNavPreview, "Previous bootstrap package:", $previousBootstrapRoot, $previousBootstrapPreview, "Previous Arena package:", $previousArenaBonusRoot, $previousArenaBonusPreview, "Previous Bosque package:", $previousBosqueRoot, $previousBosquePreview, "Previous resume/exit package:", $previousResumeRoot, $previousResumePreview, "Previous feel/spawn package:", $previousFeelRoot, $previousFeelPreview, "Previous persistence/operations package:", $previousPersistenceRoot, $previousPersistencePreview) }
+        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Latest published remote package:", $currentPackage, $currentRoot, $currentPreview, $currentVersion, 'Version code: `23`', 'Minimum supported: `13`', "docs/release-history.md") },
+        @{ Base = $ProjectPath; Path = "docs\release-history.md"; Needles = @("single historical record", $currentPackage, $currentRoot, $currentPreview, $currentVersion, 'vc `23`', 'Minimum supported version code: `13`', $hardeningRoot, $hardeningPreview) },
+        @{ Base = $ProjectPath; Path = "docs\foundation-hardening-v2-readiness-report.md"; Needles = @("Status:", "HISTORICO_BASELINE", $hardeningRoot, $hardeningPreview, "not the latest remote Internal Alpha package") }
     )) {
         foreach ($needle in $entry.Needles) {
             Assert-RelativeFileContains -BasePath $entry.Base -RelativePath $entry.Path -Needle $needle
         }
     }
 
-    $readme = Get-Content -LiteralPath (Join-Path $ProjectPath "README.md") -Raw
-    foreach ($staleLinePattern in @(
-        'Latest verified preview:\s*`',
-        'Latest release root:\s*`',
-        'Latest APK:\s*`',
-        'Latest PC ZIP:\s*`',
-        'Foundation Hardening V2 is the latest remote Internal Alpha publication'
+    $filesWithoutOperationalState = @(
+        "AGENTS.md",
+        "README.md",
+        "docs\agent-operating-manual.md",
+        "docs\documentation-index.md",
+        "docs\design-pending.md",
+        "docs\product-vision.md",
+        "docs\product-brief.md",
+        "docs\pve-arena-v1.md",
+        "docs\hardening-program.md",
+        "docs\multi-agent-workflow.md",
+        "docs\minigames\openworld.md",
+        "docs\contracts\api-endpoints.md",
+        "docs\contracts\update-manifest.md"
+    )
+    foreach ($relative in $filesWithoutOperationalState) {
+        foreach ($needle in @($currentPackage, $currentRoot, $currentPreview, $currentVersion, 'version code `23`', 'minimum supported version code `13`')) {
+            Assert-RelativeFileDoesNotContain -BasePath $ProjectPath -RelativePath $relative -Needle $needle
+        }
+    }
+
+    foreach ($entry in @(
+        @{ Base = $ProjectPath; Path = "AGENTS.md"; Needles = @("implementation/current-status.md", "docs/release-history.md", "This file carries no package names, URLs or version codes") },
+        @{ Base = $ProjectPath; Path = "README.md"; Needles = @("implementation/current-status.md", "docs/release-history.md") },
+        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("implementation/current-status.md", "docs/release-history.md") },
+        @{ Base = $ProjectPath; Path = "docs\documentation-index.md"; Needles = @("implementation/current-status.md", "docs/release-history.md") }
     )) {
-        if ([regex]::IsMatch($readme, $staleLinePattern)) {
-            throw "README.md has a stale latest release line matching: $staleLinePattern"
+        foreach ($needle in $entry.Needles) {
+            Assert-RelativeFileContains -BasePath $entry.Base -RelativePath $entry.Path -Needle $needle
         }
     }
 }
 
 function Assert-BaselineDriftAbsent {
     $requiredMarkers = @(
-        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Foundation Hardening V2", "TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE", "Track 18 - PVE Arena Initial", "Track 13 - Foundation Validation And Release Safety") },
-        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA", "Track 13", "Track 14", "Track 18") },
+        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED", "TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE", "docs/pve-arena-v1.md", "docs/release-history.md") },
+        @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("Foundation Hardening V2", "Track 13", "Track 14", "Track 18", "implementation/current-status.md", "docs/release-history.md") },
         @{ Base = $ProjectPath; Path = "docs\documentation-index.md"; Needles = @("track-18-pve-arena-initial", "track-21-arena-loop-unlock-friction", "Arena PVE") },
         @{ Base = $ProjectPath; Path = "docs\pve-arena-initial-direction.md"; Needles = @("PVE_ARENA_INITIAL_DIRECTION_APPROVED", "Arena PVE", "PVP continua no plano") },
-        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("DraxosMobile", "P2_IMPLEMENTACAO", "Track 13 release safety", "Track 14 agent ops") },
-        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("DraxosMobile", "FOUNDATION_HARDENING_V2_PUBLISHED_INTERNAL_ALPHA", "Track 13 release safety", "Track 14 agent ops") },
-        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("draxos-mobile/", "Track 13 release safety", "Track 14 agent ops", "Foundation Hardening V2") }
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("DraxosMobile", "P2_IMPLEMENTACAO", "programa de hardening", "Projetos/draxos-mobile/docs/release-history.md") },
+        @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("DraxosMobile", "Track 13 release safety", "Track 14 agent ops") },
+        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("draxos-mobile/", "Release history:", "Doc map:") }
     )
     foreach ($entry in $requiredMarkers) {
         foreach ($needle in $entry.Needles) {

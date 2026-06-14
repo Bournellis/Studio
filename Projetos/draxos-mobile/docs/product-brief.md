@@ -1,39 +1,72 @@
 # DraxosMobile - Product Brief
 
-- Ultima atualizacao: `2026-06-10`
+- Ultima atualizacao: `2026-06-14`
 - Status: `VIVO`
 
 ---
 
 ## Leitura Atual
 
-DraxosMobile e um jogo mobile-first de progressao persistente construido sobre cinco modos oficiais:
+DraxosMobile e um jogo mobile-first de progressao persistente construido sobre
+cinco modos oficiais:
 
 - `Basebuilder`: Refugio/Base atuais.
 - `Autobattler`: Arena PVE atual e futuro PVP async dentro do mesmo modo.
 - `Openworld`: primeiro slice `forest`, com entrada direta player-facing `Bosque`.
 - `Towerdefense`: planned/disabled e oculto ao player ate contrato proprio.
-- `Cardgame`: planned/disabled e oculto ao player, sem relacao mecanica com `draxos-roguelike-cardgame`.
+- `Cardgame`: planned/disabled e oculto ao player, sem relacao mecanica com
+  `draxos-roguelike-cardgame`.
 
-O projeto atual deve ser lido como uma base implementada para refinamento. Ele nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada de balanceamento.
+O projeto atual deve ser lido como uma base implementada para refinamento. Ele
+nao e produto final, nao e uma trilha de expansao de conteudo e nao e uma rodada
+de balanceamento.
 
-A etapa operacional publicada e `Bosque Overlay Layer And Readiness Authority v1`: release root `internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c`, evidencia `https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev`, portal oficial `https://draxos-mobile-internal-alpha.pages.dev/`, Web direto `https://draxos-mobile-internal-alpha.pages.dev/web/index.html`, versao `0.0.23-alpha.0`, version code `23`, minimum supported version code `13`. O pacote mantem o Bosque vivo e visivel atras de Arena PVE, Refugio/Base, Loja, Social e Perfil em overlay, pausa input/coleta/movimento enquanto menus estao abertos, renderiza Arena active/replay em camada fullscreen acima do painel, usa modal global para confirmacoes, expõe estados de prontidao de rota e prova a interacao real no Web publicado por smoke de clique/tecla, incluindo Social typing/actions, Shop cancel/confirm e Arena retomar/abandonar. Bosque Arena Abandon Recovery Authority v1, Bosque Overlay Menu Action Authority v1, Bosque Overlay Navigation Hotfix v1, Bosque Diegetic Launcher Foundation v1, Bosque Bootstrap Authority v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1 e todos os pacotes anteriores ficam preservados como historico.
+A etapa operacional publicada, release root, preview, URLs, versoes, hashes e
+proximo gate vivem em `../implementation/current-status.md`. A linhagem de
+pacotes e endpoints estaveis vive em `release-history.md`. Este brief nao lista
+estado operacional atual.
 
-A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena PVE e o primeiro core de produto dentro do modo `Autobattler`. Bosque/Openworld e slice integrado de Internal Alpha para validar movimento, coleta, persistencia, cache e fronteira controlada com Arena/Basebuilder; nao e autorizacao para expansao ampla de mundo, economia, conteudo, armas/spells, PVP, visual final ou mutacoes remotas.
+A direcao viva de produto continua `PVE_ARENA_INITIAL_DIRECTION_APPROVED`: Arena
+PVE e o primeiro core de produto dentro do modo `Autobattler`. Bosque/Openworld
+e slice integrado de Internal Alpha para validar movimento, coleta,
+persistencia, cache e fronteira controlada com Arena/Basebuilder; nao e
+autorizacao para expansao ampla de mundo, economia, conteudo, armas/spells, PVP,
+visual final ou mutacoes remotas.
 
 ## Foco Atual
 
-Playtest humano inicial do pacote anterior, Bosque Bootstrap Authority v1, foi reportado OK por Fabio em 2026-06-09: tudo testado ate aquele momento parecia funcionar. O pacote atual publicado agora precisa de playtest humano focado no overlay persistente: prompts/landmarks do Bosque, Arena fullscreen acima do menu sem corte lateral, modal global/topmost, prontidao honesta de menus com servidor, Social digitavel, Shop confirmavel, Arena retomar/abandonar e retorno via `Fechar`, `Voltar` e Esc sem rebootstrap. Bugs futuros voltam ao fluxo normal se aparecerem.
+O pacote publicado atual precisa do playtest humano focado descrito em
+`../implementation/current-status.md`. Bugs futuros voltam ao fluxo normal se
+aparecerem.
 
-Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final, expansao ampla de Openworld ou mutacoes remotas sem decisao propria. Se aparecer bug novo, tratar como bugfix estreito a partir do pacote atual.
+Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual
+final, expansao ampla de Openworld ou mutacoes remotas sem decisao propria. Se
+aparecer bug novo, tratar como bugfix estreito a partir da baseline publicada
+descrita no status.
 
-O foco de fundacao anterior foi fechado: Foundation Closeout entregou account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish, Hardening Platform V1 e Foundation Hardening V2 ficam como baselines tecnicas/historicas preservadas.
+O foco de fundacao anterior foi fechado: Foundation Closeout entregou
+account/save, ruleset registry, idempotencia v1, admin minimo, API versioning e
+mutacoes transacionais; Lab Track 16 Alignment atualizou Battle Lab/Progression
+Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish,
+Hardening Platform V1 e Foundation Hardening V2 ficam como baselines
+tecnicas/historicas preservadas.
 
-A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo deve comecar por Arena PVE, nao por PVP-first. O pacote contratual/data-driven inicial vive em `docs/pve-arena-v1.md` e promove os arquivos `data/definitions/pve_arenas.json`, `pve_arena_difficulties.json`, `pve_enemies.json`, `arena_buffs.json` e `arena_rewards.json` como fonte autorada para a proxima implementacao. O loop interno pos-login aceito continua como fundacao historica de app:
+A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo
+deve comecar por Arena PVE, nao por PVP-first. O pacote contratual/data-driven
+inicial vive em `docs/pve-arena-v1.md` e promove os arquivos
+`data/definitions/pve_arenas.json`, `pve_arena_difficulties.json`,
+`pve_enemies.json`, `arena_buffs.json` e `arena_rewards.json` como fonte
+autorada para a proxima implementacao. O loop interno pos-login aceito continua
+como fundacao historica de app:
 
 `Base -> coletar recursos -> evoluir base -> batalhar -> receber recompensas -> verificar base novamente`
 
-First Session Clarity v1 e a baseline historica de clareza da primeira sessao. A leitura viva apos o main menu refactor, Technical Hardening, Bosque v3 UX/Feel, Arena PVE First Real Run + Update Recovery, Arena Duel Flow Hotfix, Arena PVE Season 1 Loop v1, Arena/Bosque Regression Hotfix, Bosque Sync Responsiveness v1, Bosque Offline-First Checkpoint v1, Bosque Durable Bau Mochila v1, Bosque Fogueira Potion Crafting v1, Bosque World Hub Domain Separation v1, Bosque Session Lifecycle & Durable Structures Hotfix v1, Bosque Persistence Rebase v1, Bosque Feel & Spawn Authority v1, Bosque Resume Exit Lifecycle v1, Bosque Node Cooldown ACK v1, Arena PVE Bonus Visual v1, Bosque Bootstrap Authority v1, Bosque Overlay Navigation Hotfix v1, Bosque Overlay Menu Action Authority v1 e Bosque Arena Abandon Recovery Authority v1 ficam preservados; Bosque Overlay Layer And Readiness Authority v1 e o pacote atual que deve manter Refugio, Arena PVE/Preparacao, Resultado, Social, Loja e Bosque coerentes antes de abrir novo backend, schema, tuning, economia ou conteudo.
+First Session Clarity v1 e a baseline historica de clareza da primeira sessao.
+A linhagem operacional posterior fica preservada em `release-history.md`; este
+brief nao lista pacotes, release roots, previews ou version codes. A leitura
+viva continua: manter Refugio, Arena PVE/Preparacao, Resultado, Social, Loja e
+Bosque coerentes antes de abrir novo backend, schema, tuning, economia ou
+conteudo.
 
 Ao abrir o pacote de Arena PVE inicial, devem ser avaliados juntos:
 
@@ -55,19 +88,26 @@ Contrato v1 fechado para proxima implementacao:
 - cap inicial de 6 duelos;
 - primeira lista de inimigos/arquetipos PVE;
 - buffs temporarios apenas de stat;
-- recompensa inicial calibravel por primeira clear, conclusao, recorde, repeticao reduzida e limites diarios/semanais.
+- recompensa inicial calibravel por primeira clear, conclusao, recorde,
+  repeticao reduzida e limites diarios/semanais.
 
 ## O Que Existe Como Substancia/Mock
 
-Armas, spells, nomes, tema, imagens, apresentacao atual de batalha, economia, Battle Pass, Diamante, loja, bots, rankings e valores de progressao existem para dar substancia ao jogo e impedir que o app pareca vazio.
+Armas, spells, nomes, tema, imagens, apresentacao atual de batalha, economia,
+Battle Pass, Diamante, loja, bots, rankings e valores de progressao existem para
+dar substancia ao jogo e impedir que o app pareca vazio.
 
-Esses elementos nao devem ser tratados como decisao final de design nesta etapa. A Arena PVE inicial promove apenas a estrutura de early game e o tuning integrado necessario para que o jogador consiga vencer duelos, ganhar recursos, melhorar base/build e tentar dificuldade maior.
+Esses elementos nao devem ser tratados como decisao final de design nesta etapa.
+A Arena PVE inicial promove apenas a estrutura de early game e o tuning integrado
+necessario para que o jogador consiga vencer duelos, ganhar recursos, melhorar
+base/build e tentar dificuldade maior.
 
-Terminologia implementada preservada como substancia/mock: Instrumento Ritual, Spell, Doutrina e Familiar.
+Terminologia implementada preservada como substancia/mock: Instrumento Ritual,
+Spell, Doutrina e Familiar.
 
 Ordem recomendada agora:
 
-1. Playtestar o pacote publicado `Bosque Overlay Layer And Readiness Authority v1` em Web/APK, incluindo Arena fullscreen sem corte lateral, modal global/topmost, menu readiness, Social typing/actions, Shop cancel/confirm e Arena retomar/abandonar.
+1. Playtestar o pacote publicado atual descrito em `../implementation/current-status.md`.
 2. Tratar bugs futuros por bugfix estreito se aparecerem.
 3. Retomar Arena PVE tutorial/primeiras arenas, labs e tuning apenas quando essa decisao existir.
 4. Base/preparacao como suporte da Arena PVE.
@@ -100,7 +140,11 @@ A base tecnica ja contem:
 - release manifest, build channel e runbooks de publicacao segura;
 - validacao local por `validate_foundation.ps1`.
 
-Behavior/potion/crafting esta registrado em `behavior-potion-crafting-v1.md` como base tecnica viva: Ossos inteiros, Po de Osso, Fogueira como estacao, tres pocoes simples, slot de pocao e comportamento simples de habilidade/pocao. Ele nao libera tuning, economia, novas pocoes ou comportamento avancado sem novo pacote explicito.
+Behavior/potion/crafting esta registrado em `behavior-potion-crafting-v1.md`
+como base tecnica viva: Ossos inteiros, Po de Osso, Fogueira como estacao, tres
+pocoes simples, slot de pocao e comportamento simples de habilidade/pocao. Ele
+nao libera tuning, economia, novas pocoes ou comportamento avancado sem novo
+pacote explicito.
 
 ## Decisoes Que Permanecem Reais
 
@@ -118,7 +162,8 @@ Behavior/potion/crafting esta registrado em `behavior-potion-crafting-v1.md` com
 ## Documentos Vivos
 
 - `foundation-app-v0-audit.md` - bussola historica preservada da Foundation Audit aceita.
-- `implementation/current-status.md` - snapshot vivo da etapa operacional, proximo passo e limites atuais.
+- `../implementation/current-status.md` - snapshot vivo da etapa operacional, proximo passo e limites atuais.
+- `release-history.md` - historico de pacotes, endpoints estaveis e downloads.
 - `pve-arena-initial-direction.md` - direcao viva do early game por Arena PVE.
 - `pve-arena-v1.md` - contrato inicial de Arena PVE para dados, endpoints, schema e labs.
 - `first-session-clarity-v1.md` - pacote publicado de clareza da primeira sessao.
