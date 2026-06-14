@@ -72,7 +72,7 @@ const JUMP_PAD_COOLDOWN_SECONDS: float = 0.75
 const JUMP_PAD_LAUNCH_VELOCITY: Vector3 = Vector3(0.0, 9.2, 0.0)
 const PLAYER_TOUCH_COOLDOWN: float = 0.18
 const GOAL_RESET_DELAY: float = 1.25
-const KICKOFF_COUNTDOWN_DURATION: float = 3.15
+const KICKOFF_COUNTDOWN_DURATION: float = 3.0
 const GOAL_SLOWMO_DURATION: float = 0.4
 const GOAL_SLOWMO_SCALE: float = 0.38
 const MATCH_MODE_GOALS: StringName = &"goals"
@@ -327,10 +327,6 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if intro_open:
-		return
-	if event.is_action_pressed("restart_round"):
-		restart_match()
-		get_viewport().set_input_as_handled()
 		return
 	if menu_open:
 		return
@@ -759,6 +755,9 @@ func debug_is_kickoff_locked() -> bool:
 
 func debug_get_kickoff_countdown_remaining() -> float:
 	return kickoff_countdown_remaining
+
+func debug_get_kickoff_countdown_last_number() -> int:
+	return countdown_last_number
 
 func debug_get_kickoff_countdown_start_count() -> int:
 	return debug_kickoff_countdown_start_count
@@ -2124,7 +2123,7 @@ func _get_stadium_scoreboard_phase_text() -> String:
 func _start_kickoff_countdown() -> void:
 	debug_kickoff_countdown_start_count += 1
 	kickoff_countdown_remaining = KICKOFF_COUNTDOWN_DURATION
-	countdown_last_number = 0
+	countdown_last_number = int(ceilf(KICKOFF_COUNTDOWN_DURATION))
 	phase_label = &"kickoff"
 	_request_hud_and_scoreboard_refresh()
 	_set_round_input_locked(true)

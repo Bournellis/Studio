@@ -23,5 +23,5 @@
 
 ## Reset
 
-- `R` restarts the match.
+- Restart is available only through the pause menu confirmation.
 - Pause menu can return to the main menu.

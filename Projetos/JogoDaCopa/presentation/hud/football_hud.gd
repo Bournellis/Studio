@@ -31,7 +31,6 @@ const CONTROL_HINTS: Array[Dictionary] = [
 	{"action": "Chute forte / SUPER", "input": "RMB"},
 	{"action": "Pular / flip", "input": "Space"},
 	{"action": "Emote pos-gol", "input": "T"},
-	{"action": "Reiniciar", "input": "R"},
 	{"action": "Menu", "input": "Esc"},
 ]
 
@@ -71,6 +70,9 @@ var sensitivity_label: Label
 var sensitivity_slider: HSlider
 var pause_resume_button: Button
 var pause_restart_button: Button
+var pause_restart_confirm_box: HBoxContainer
+var pause_restart_confirm_button: Button
+var pause_restart_cancel_button: Button
 var pause_menu_button: Button
 var pause_volume_slider: HSlider
 var pause_sfx_volume_slider: HSlider
@@ -317,6 +319,7 @@ func set_pause_menu_visible(menu_is_open: bool, sensitivity_value: float = 0.0) 
 	if pause_menu_panel == null:
 		return
 	pause_menu_panel.visible = menu_is_open
+	_set_restart_confirmation_visible(false)
 	_sync_pause_settings_controls(sensitivity_value)
 	if menu_is_open and pause_resume_button != null:
 		_set_pause_section(&"audio")
@@ -377,6 +380,9 @@ func debug_get_result_stats_text() -> String:
 
 func debug_is_pause_menu_visible() -> bool:
 	return pause_menu_panel != null and pause_menu_panel.visible
+
+func debug_is_restart_confirmation_visible() -> bool:
+	return pause_restart_confirm_box != null and pause_restart_confirm_box.visible
 
 func debug_show_pause_section(section_id: StringName) -> void:
 	_set_pause_section(section_id)
@@ -809,13 +815,52 @@ func _build_pause_menu(root: Control) -> void:
 
 	pause_restart_button = Button.new()
 	pause_restart_button.name = "RestartMatchButton"
-	pause_restart_button.text = "Reiniciar partida"
+	pause_restart_button.text = "Reiniciar partida..."
 	pause_restart_button.custom_minimum_size = Vector2(0.0, 42.0)
 	pause_restart_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	pause_restart_button.pressed.connect(func() -> void:
-		restart_requested.emit()
+		_set_restart_confirmation_visible(true)
 	)
 	box.add_child(pause_restart_button)
+
+	pause_restart_confirm_box = HBoxContainer.new()
+	pause_restart_confirm_box.name = "RestartConfirmBox"
+	pause_restart_confirm_box.visible = false
+	pause_restart_confirm_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	pause_restart_confirm_box.add_theme_constant_override("separation", 8)
+	box.add_child(pause_restart_confirm_box)
+
+	var restart_confirm_label := Label.new()
+	restart_confirm_label.name = "RestartConfirmLabel"
+	restart_confirm_label.text = "Reiniciar a partida?"
+	restart_confirm_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	restart_confirm_label.add_theme_font_size_override("font_size", 14)
+	restart_confirm_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_ignore_mouse(restart_confirm_label)
+	pause_restart_confirm_box.add_child(restart_confirm_label)
+
+	pause_restart_confirm_button = Button.new()
+	pause_restart_confirm_button.name = "ConfirmRestartButton"
+	pause_restart_confirm_button.text = "Confirmar reinicio"
+	pause_restart_confirm_button.custom_minimum_size = Vector2(190.0, 34.0)
+	pause_restart_confirm_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	pause_restart_confirm_button.pressed.connect(func() -> void:
+		_set_restart_confirmation_visible(false)
+		restart_requested.emit()
+	)
+	pause_restart_confirm_box.add_child(pause_restart_confirm_button)
+
+	pause_restart_cancel_button = Button.new()
+	pause_restart_cancel_button.name = "CancelRestartButton"
+	pause_restart_cancel_button.text = "Cancelar"
+	pause_restart_cancel_button.custom_minimum_size = Vector2(120.0, 34.0)
+	pause_restart_cancel_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	pause_restart_cancel_button.pressed.connect(func() -> void:
+		_set_restart_confirmation_visible(false)
+		if pause_restart_button != null:
+			pause_restart_button.grab_focus()
+	)
+	pause_restart_confirm_box.add_child(pause_restart_cancel_button)
 
 	_build_pause_tab_bar(box)
 	pause_controls_section = _build_pause_controls_section(box)
@@ -844,6 +889,13 @@ func _build_pause_menu(root: Control) -> void:
 	)
 	box.add_child(pause_menu_button)
 	_set_pause_section(&"audio")
+
+func _set_restart_confirmation_visible(is_visible: bool) -> void:
+	if pause_restart_confirm_box == null:
+		return
+	pause_restart_confirm_box.visible = is_visible
+	if is_visible and pause_restart_confirm_button != null:
+		pause_restart_confirm_button.grab_focus()
 
 func _build_pause_tab_bar(parent: VBoxContainer) -> void:
 	var tab_bar := HBoxContainer.new()

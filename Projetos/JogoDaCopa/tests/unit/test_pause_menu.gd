@@ -30,6 +30,33 @@ func test_main_menu_quality_dropdown_accepts_real_mouse_clicks_and_changes_profi
 		_reset_runtime_settings()
 	assert_no_new_orphans()
 
+func test_pause_restart_requires_confirmation_before_signal() -> void:
+	var hud := FootballHud.new()
+	add_child_autofree(hud)
+	await get_tree().process_frame
+	hud.set_pause_menu_visible(true)
+
+	var restart_events := [0]
+	hud.restart_requested.connect(func() -> void:
+		restart_events[0] = int(restart_events[0]) + 1
+	)
+	var pause_path := "HudRoot/PauseMenuCenter/PauseMenuPanel/PauseMenuMargin/PauseMenuBox/"
+	var restart_button := hud.get_node(pause_path + "RestartMatchButton") as Button
+	var confirm_button := hud.get_node(pause_path + "RestartConfirmBox/ConfirmRestartButton") as Button
+	var cancel_button := hud.get_node(pause_path + "RestartConfirmBox/CancelRestartButton") as Button
+
+	restart_button.pressed.emit()
+	assert_true(hud.debug_is_restart_confirmation_visible())
+	assert_eq(int(restart_events[0]), 0)
+	cancel_button.pressed.emit()
+	assert_false(hud.debug_is_restart_confirmation_visible())
+	assert_eq(int(restart_events[0]), 0)
+	restart_button.pressed.emit()
+	confirm_button.pressed.emit()
+	assert_false(hud.debug_is_restart_confirmation_visible())
+	assert_eq(int(restart_events[0]), 1)
+	assert_no_new_orphans()
+
 func test_pause_menu_full_controls_accept_real_mouse_clicks() -> void:
 	for viewport_size: Vector2i in REAL_CLICK_VIEWPORTS:
 		var football := await _spawn_football(viewport_size)
@@ -49,12 +76,20 @@ func test_pause_menu_full_controls_accept_real_mouse_clicks() -> void:
 		assert_eq(hud.debug_get_pause_section_id(), &"audio")
 
 		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "ResumeButton") as Button)
-		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "RestartMatchButton") as Button)
 		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "MainMenuButton") as Button)
 		_disconnect_signal_callbacks((hud.get_node(pause_path + "VideoSection/FullscreenRow/FullscreenToggle") as CheckButton).toggled)
 
 		await _assert_real_button_click_emits_pressed(hud, pause_path + "ResumeButton", "Pause continuar %s" % context)
 		await _assert_real_button_click_emits_pressed(hud, pause_path + "RestartMatchButton", "Pause reiniciar %s" % context)
+		assert_true(hud.debug_is_restart_confirmation_visible())
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "RestartConfirmBox/CancelRestartButton", "Pause cancelar reinicio %s" % context)
+		assert_false(hud.debug_is_restart_confirmation_visible())
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "RestartMatchButton", "Pause reiniciar confirmar %s" % context)
+		assert_true(hud.debug_is_restart_confirmation_visible())
+		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "RestartConfirmBox/ConfirmRestartButton") as Button)
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "RestartConfirmBox/ConfirmRestartButton", "Pause confirmar reinicio %s" % context)
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "RestartConfirmBox/CancelRestartButton", "Pause fechar confirmacao reinicio %s" % context)
+		assert_false(hud.debug_is_restart_confirmation_visible())
 		await _assert_real_button_click_emits_pressed(hud, pause_path + "PauseSectionTabs/AudioTabButton", "Pause aba audio %s" % context)
 		await _assert_real_slider_click_emits_value_changed(hud, pause_path + "VolumeRow/VolumeSlider", "Pause volume master %s" % context)
 		await _assert_real_slider_click_emits_value_changed(hud, pause_path + "SfxVolumeRow/SfxVolumeSlider", "Pause volume SFX %s" % context)

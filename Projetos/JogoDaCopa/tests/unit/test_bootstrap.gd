@@ -27,7 +27,6 @@ const EXPECTED_ACTIONS: PackedStringArray = [
 	"arcade_emote",
 	"shoot",
 	"alt_fire",
-	"restart_round",
 	"ui_back"
 ]
 const TRACK03I_REAL_CLICK_TEST_PENDING: bool = false
@@ -259,10 +258,18 @@ func test_football_interactive_panels_accept_real_mouse_clicks() -> void:
 		assert_eq(hud.debug_get_focused_control_name(), "ResumeButton")
 		var pause_path := "HudRoot/PauseMenuCenter/PauseMenuPanel/PauseMenuMargin/PauseMenuBox/"
 		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "ResumeButton") as Button)
-		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "RestartMatchButton") as Button)
 		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "MainMenuButton") as Button)
 		await _assert_real_button_click_emits_pressed(hud, pause_path + "ResumeButton", "Pause continuar %s" % context)
 		await _assert_real_button_click_emits_pressed(hud, pause_path + "RestartMatchButton", "Pause reiniciar %s" % context)
+		assert_true(hud.debug_is_restart_confirmation_visible())
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "RestartConfirmBox/CancelRestartButton", "Pause cancelar reinicio %s" % context)
+		assert_false(hud.debug_is_restart_confirmation_visible())
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "RestartMatchButton", "Pause reiniciar confirmar %s" % context)
+		assert_true(hud.debug_is_restart_confirmation_visible())
+		_disconnect_button_pressed_callbacks(hud.get_node(pause_path + "RestartConfirmBox/ConfirmRestartButton") as Button)
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "RestartConfirmBox/ConfirmRestartButton", "Pause confirmar reinicio %s" % context)
+		await _assert_real_button_click_emits_pressed(hud, pause_path + "RestartConfirmBox/CancelRestartButton", "Pause fechar confirmacao reinicio %s" % context)
+		assert_false(hud.debug_is_restart_confirmation_visible())
 		await _assert_real_slider_click_emits_value_changed(hud, pause_path + "VolumeRow/VolumeSlider", "Pause volume master %s" % context)
 		await _assert_real_slider_click_emits_value_changed(hud, pause_path + "SfxVolumeRow/SfxVolumeSlider", "Pause volume SFX %s" % context)
 		await _assert_real_slider_click_emits_value_changed(hud, pause_path + "UiVolumeRow/UiVolumeSlider", "Pause volume UI %s" % context)
