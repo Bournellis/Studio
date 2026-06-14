@@ -14,6 +14,22 @@ func test_initial_kickoff_starts_countdown_once() -> void:
 	assert_eq(football.debug_get_kickoff_countdown_start_count(), 1)
 	assert_no_new_orphans()
 
+func test_initial_kickoff_countdown_is_direct_three_two_one() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+
+	football.debug_start_match_with_countdown()
+	assert_eq(football.debug_get_kickoff_countdown_last_number(), 3)
+	football._physics_process(0.05)
+	assert_eq(football.debug_get_kickoff_countdown_last_number(), 3)
+	football._physics_process(1.0)
+	assert_eq(football.debug_get_kickoff_countdown_last_number(), 2)
+	football._physics_process(1.0)
+	assert_eq(football.debug_get_kickoff_countdown_last_number(), 1)
+	assert_no_new_orphans()
+
 func test_initial_kickoff_avatar_visuals_face_opponents() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
@@ -69,6 +85,7 @@ func test_hud_omits_in_game_hints_and_crosshair_but_keeps_controls_data() -> voi
 	assert_true(_control_hints_include(control_hints, "Mover", "WASD"))
 	assert_true(_control_hints_include(control_hints, "Chute forte / SUPER", "RMB"))
 	assert_true(_control_hints_include(control_hints, "Menu", "Esc"))
+	assert_false(_control_hints_include(control_hints, "Reiniciar", "R"))
 	assert_no_new_orphans()
 
 func _assert_avatar_faces_opponent(avatar, owner: Node3D, opponent: Node3D, label: String) -> void:

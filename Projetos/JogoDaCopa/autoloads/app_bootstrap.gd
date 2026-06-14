@@ -11,7 +11,6 @@ const ACTIONS: Dictionary[String, Array] = {
 	"arcade_emote": [{"kind": "key", "code": KEY_T}],
 	"shoot": [{"kind": "mouse", "code": MOUSE_BUTTON_LEFT}],
 	"alt_fire": [{"kind": "mouse", "code": MOUSE_BUTTON_RIGHT}],
-	"restart_round": [{"kind": "key", "code": KEY_R}],
 	"ui_back": [{"kind": "key", "code": KEY_ESCAPE}]
 }
 
