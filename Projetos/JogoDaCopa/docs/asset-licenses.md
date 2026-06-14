@@ -1,7 +1,7 @@
 # JogoDaCopa - Asset Licenses
 
-- Last updated: `2026-06-13`
-- Scope: assets introduced or approved for `Track 02 Quality Upgrade V1`, including 02C-bis and 02D-bis real asset replacements, plus Series 06 broadcast UI fonts.
+- Last updated: `2026-06-14`
+- Scope: assets introduced or approved for `Track 02 Quality Upgrade V1`, including 02C-bis and 02D-bis real asset replacements, Series 06 broadcast UI fonts, and Track 08 Super Campeao branding.
 
 ## Track 02C - Ball & Character Assets V1
 
@@ -51,6 +51,14 @@
 |---|---|---|---|---|
 | Copa Arena Futebol icon | `assets/branding/copa_arena_icon.svg` | Codex for JogoDaCopa | `CC0-1.0` | Generic football/arena mark; no official logos or federation marks. |
 | Copa Arena Futebol splash | `assets/branding/copa_arena_splash.png` | Codex for JogoDaCopa | `CC0-1.0` | Generated in-repo from authored vector-style composition for Godot boot splash PNG requirement. |
+
+## Track 08 - Super Campeao Rebrand V1
+
+### In-Repo Authored Assets
+
+| Asset | Path | Author | License | Notes |
+|---|---|---|---|---|
+| Super Campeao splash | `assets/branding/super_campeao_splash.png` | Codex for JogoDaCopa | `CC0-1.0` | Lightweight stadium/pitch composition for Godot boot splash; only visible text is `Super Campeao`; no official logos or federation marks. |
 
 ## Track 06C - Broadcast Menu Fonts V1
 

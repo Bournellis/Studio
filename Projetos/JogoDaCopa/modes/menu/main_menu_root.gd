@@ -28,7 +28,6 @@ const MENU_UI_AUDIO_PATHS: Dictionary = {
 }
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
-const TOON_RENDER_META_KEY: String = "jogodacopa_toon_render"
 const CAPTURE_SCENE_META_KEY: String = "jogodacopa_capture_scene"
 const CAPTURE_QUERY_KEY: String = "jdc_capture"
 const CAPTURE_SCENE_MENU: StringName = &"menu"
@@ -47,7 +46,8 @@ const MATCH_MODE_LABELS: Dictionary = {
 	&"timer": "3 minutos",
 	&"goals": "3 gols"
 }
-const VISIBLE_VERSION: String = "v1.2.0"
+const APP_TITLE: String = "Super Campeão"
+const VISIBLE_VERSION: String = "v1.2.1"
 const RELEASE_INFO_PATH: String = "res://build/release_info.json"
 const PREVIEW_CAMERA_LOOK_AT: Vector3 = Vector3(-3.2, 1.28, -0.18)
 const MENU_TRANSITION_SECONDS: float = 0.25
@@ -73,7 +73,6 @@ var sfx_volume_slider: HSlider
 var ui_volume_slider: HSlider
 var ambience_volume_slider: HSlider
 var quality_option: OptionButton
-var toon_check_button: CheckButton
 var fade_overlay: ColorRect
 var fade_tween: Tween
 var ui_audio_streams: Dictionary = {}
@@ -93,7 +92,6 @@ var selected_skin_tone_id: StringName = AvatarCatalogScript.DEFAULT_SKIN_TONE_ID
 var selected_country_kit_id: StringName = AvatarCatalogScript.DEFAULT_COUNTRY_KIT_ID
 var selected_bot_difficulty_id: StringName = &"normal"
 var selected_match_mode_id: StringName = &"timer"
-var selected_toon_render_enabled: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -164,9 +162,6 @@ func debug_get_selected_bot_difficulty_id() -> StringName:
 
 func debug_get_selected_match_mode_id() -> StringName:
 	return selected_match_mode_id
-
-func debug_is_toon_render_enabled() -> bool:
-	return selected_toon_render_enabled
 
 func debug_has_main_menu_appearance_selection() -> bool:
 	return (
@@ -320,7 +315,7 @@ func _build_ui() -> void:
 	_build_appearance_rows(center)
 	_build_settings_rows(center)
 
-	football_button = _build_button("FootballButton", "Jogar Futebol 1x1")
+	football_button = _build_button("FootballButton", "Jogar")
 	football_button.pressed.connect(func() -> void:
 		_play_ui_sound(&"ui_confirmation")
 		PerfProbeScript.mark(self, "menu.play_pressed", "scene=%s" % FOOTBALL_SCENE_PATH)
@@ -355,7 +350,7 @@ func _build_visible_version_text() -> String:
 		version = VISIBLE_VERSION
 	if short_hash.is_empty():
 		short_hash = "local"
-	return "Copa Arena Futebol %s+%s | sem logos oficiais" % [version, short_hash]
+	return "%s %s+%s" % [APP_TITLE, version, short_hash]
 
 func _load_release_info() -> Dictionary:
 	if not FileAccess.file_exists(RELEASE_INFO_PATH):
@@ -398,21 +393,12 @@ func _build_broadcast_header(parent: VBoxContainer) -> void:
 
 	var title := Label.new()
 	title.name = "TitleLabel"
-	title.text = "Copa Arena Futebol"
+	title.text = APP_TITLE
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.add_theme_color_override("font_color", Color(1.0, 0.93, 0.72, 1.0))
 	_apply_broadcast_font(title, 29, false)
 	header.add_child(title)
-
-	var match_line := Label.new()
-	match_line.name = "BroadcastMatchLine"
-	match_line.text = "FINAL 1x1  |  ARENA DE VIDRO"
-	match_line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	match_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	match_line.add_theme_color_override("font_color", Color(0.78, 0.94, 1.0, 1.0))
-	_apply_broadcast_mono_font(match_line, 11)
-	header.add_child(match_line)
 
 	var gold_line := ColorRect.new()
 	gold_line.name = "GoldDetailLine"
@@ -423,7 +409,7 @@ func _build_broadcast_header(parent: VBoxContainer) -> void:
 
 	status_label = Label.new()
 	status_label.name = "StatusLabel"
-	status_label.text = "Noite de final - primeiro a 3 gols"
+	status_label.text = _get_match_summary_text()
 	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	status_label.add_theme_color_override("font_color", Color(0.84, 0.92, 0.92, 1.0))
@@ -695,30 +681,6 @@ func _build_settings_rows(parent: VBoxContainer) -> void:
 	quality_option.item_selected.connect(_on_quality_selected)
 	quality_row.add_child(quality_option)
 
-	var toon_row := HBoxContainer.new()
-	toon_row.name = "ToonRenderRow"
-	toon_row.add_theme_constant_override("separation", 6)
-	toon_row.custom_minimum_size.y = 24.0
-	parent.add_child(toon_row)
-
-	var toon_label := _build_row_label("ToonRenderLabel", "Toon")
-	toon_label.custom_minimum_size.x = 88.0
-	toon_row.add_child(toon_label)
-
-	toon_check_button = CheckButton.new()
-	toon_check_button.name = "ToonRenderToggle"
-	toon_check_button.text = "Experimento"
-	toon_check_button.custom_minimum_size = Vector2(0.0, 24.0)
-	toon_check_button.button_pressed = selected_toon_render_enabled
-	toon_check_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_apply_broadcast_font(toon_check_button, 11, true)
-	toon_check_button.toggled.connect(func(is_pressed: bool) -> void:
-		_play_ui_sound(&"ui_click")
-		selected_toon_render_enabled = is_pressed
-		status_label.text = "Toon: %s" % ("ON" if selected_toon_render_enabled else "OFF")
-	)
-	toon_row.add_child(toon_check_button)
-
 func _build_volume_row(parent: VBoxContainer, row_name: String, label_name: String, label: String, slider_name: String, callback: Callable, default_value: float) -> HSlider:
 	var volume_row := HBoxContainer.new()
 	volume_row.name = row_name
@@ -963,7 +925,7 @@ func _cycle_bot_difficulty(step: int) -> void:
 	selected_bot_difficulty_id = StringName(BOT_DIFFICULTY_IDS[index])
 	if difficulty_label != null:
 		difficulty_label.text = _get_bot_difficulty_label(selected_bot_difficulty_id)
-	status_label.text = "Dificuldade: %s" % _get_bot_difficulty_label(selected_bot_difficulty_id)
+	_update_match_status_summary()
 
 func _cycle_match_mode(step: int) -> void:
 	var index := MATCH_MODE_IDS.find(selected_match_mode_id)
@@ -975,23 +937,31 @@ func _cycle_match_mode(step: int) -> void:
 	selected_match_mode_id = StringName(MATCH_MODE_IDS[index])
 	if match_mode_label != null:
 		match_mode_label.text = _get_match_mode_label(selected_match_mode_id)
-	status_label.text = "Modo: %s" % _get_match_mode_label(selected_match_mode_id)
+	_update_match_status_summary()
 
 func _cycle_skin_tone(step: int) -> void:
 	selected_skin_tone_id = AvatarCatalogScript.get_next_skin_tone_id(selected_skin_tone_id, step)
 	_update_preview_selection()
-	status_label.text = "Pele do hero shot: %s" % AvatarCatalogScript.get_skin_label(selected_skin_tone_id)
 
 func _cycle_country_kit(step: int) -> void:
 	selected_country_kit_id = AvatarCatalogScript.get_next_country_kit_id(selected_country_kit_id, step)
 	_update_preview_selection()
-	status_label.text = "Kit do hero shot: %s" % AvatarCatalogScript.get_country_kit_label(selected_country_kit_id)
 
 func _get_bot_difficulty_label(difficulty_id: StringName) -> String:
 	return str(BOT_DIFFICULTY_LABELS.get(difficulty_id, "Bot normal"))
 
 func _get_match_mode_label(match_mode_id: StringName) -> String:
 	return str(MATCH_MODE_LABELS.get(match_mode_id, "3 minutos"))
+
+func _get_match_summary_text() -> String:
+	return "%s - %s" % [
+		_get_bot_difficulty_label(selected_bot_difficulty_id),
+		_get_match_mode_label(selected_match_mode_id)
+	]
+
+func _update_match_status_summary() -> void:
+	if status_label != null:
+		status_label.text = _get_match_summary_text()
 
 func _on_volume_changed(value: float) -> void:
 	_apply_volume_setting(BUS_MASTER, value)
@@ -1175,7 +1145,6 @@ func _try_load_web_capture_scene() -> void:
 	get_tree().root.set_meta(CAPTURE_SCENE_META_KEY, capture_scene_id)
 	selected_bot_difficulty_id = &"normal"
 	selected_match_mode_id = &"goals"
-	selected_toon_render_enabled = false
 	_load_mode(FOOTBALL_SCENE_PATH)
 
 func _get_web_capture_scene_id() -> StringName:
@@ -1224,10 +1193,9 @@ func _is_capture_scene_supported(capture_scene_id: StringName) -> bool:
 
 func _load_mode_async(scene_path: String) -> void:
 	var load_begin := PerfProbeScript.begin(self, "menu.load_mode", "scene=%s" % scene_path)
-	status_label.text = "Carregando..."
+	_update_match_status_summary()
 	get_tree().root.set_meta(BOT_DIFFICULTY_META_KEY, selected_bot_difficulty_id)
 	get_tree().root.set_meta(MATCH_MODE_META_KEY, selected_match_mode_id)
-	get_tree().root.set_meta(TOON_RENDER_META_KEY, selected_toon_render_enabled)
 	_play_fade_to_black()
 	await get_tree().create_timer(MENU_TRANSITION_SECONDS, true, false, true).timeout
 	PerfProbeScript.end(self, "menu.load_mode.fade_wait", load_begin, "scene=%s" % scene_path)

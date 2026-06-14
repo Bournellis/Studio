@@ -254,24 +254,21 @@ func test_real_avatar_strips_root_motion_and_does_not_accumulate_drift() -> void
 		_assert_avatar_has_no_animation_drift(avatar, model_spawn_position, model_spawn_rotation, skeleton_spawn_position, skeleton_spawn_rotation)
 	assert_no_new_orphans()
 
-func test_avatar_toon_uses_material_next_pass_without_duplicate_t_pose_mesh() -> void:
+func test_avatar_toon_runtime_api_and_shader_parameter_are_removed() -> void:
 	var avatar = PlayerAvatarScript.new()
 	add_child_autofree(avatar)
 	await get_tree().process_frame
 
 	avatar.set_move_state(11.0, true, 0.0)
 	await get_tree().process_frame
-	avatar.set_toon_render_enabled(true)
-	await get_tree().process_frame
 
-	assert_true(avatar.debug_is_toon_render_enabled())
-	assert_gt(avatar.debug_get_toon_outline_count(), 0)
-	assert_eq(avatar.debug_get_toon_outline_mesh_node_count(), 0)
-	assert_eq(avatar.debug_get_body_uniform_shader_float(&"toon_intensity"), 1.0)
-
-	avatar.set_toon_render_enabled(false)
-	assert_eq(avatar.debug_get_toon_outline_count(), 0)
-	assert_eq(avatar.debug_get_body_uniform_shader_float(&"toon_intensity"), 0.0)
+	var shader := load("res://gameplay/avatar/avatar_uniform.gdshader") as Shader
+	assert_not_null(shader)
+	assert_false(avatar.has_method("set_toon_render_enabled"))
+	assert_false(avatar.has_method("debug_is_toon_render_enabled"))
+	assert_false(avatar.has_method("debug_get_toon_outline_count"))
+	if shader != null:
+		assert_false(shader.code.contains("toon_intensity"))
 	assert_no_new_orphans()
 
 func test_authorial_kick_keeps_right_foot_below_pelvis() -> void:

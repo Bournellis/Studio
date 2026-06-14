@@ -13,7 +13,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $PagesAssetLimitBytes = 25 * 1024 * 1024
-$VisibleVersion = "v1.2.0"
+$VisibleVersion = "v1.2.1"
 
 function Write-TextUtf8NoBom {
     param([string]$Path, [string]$Text)
@@ -350,7 +350,7 @@ function New-Package {
         schema_version = "jogodacopa_web_publication_package_v1"
         generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         project = "JogoDaCopa"
-        product_name = "Copa Arena Futebol"
+        product_name = "Super Campeão"
         cloudflare_pages_project = $ProjectName
         release_root = $VersionedReleaseRoot
         pages_asset_limit_bytes = $script:PagesAssetLimitBytes
@@ -522,7 +522,7 @@ $deployResult = Deploy-Pages `
     -Name $ProjectName `
     -DeployBranch $Branch `
     -CommitHash $fullSha `
-    -Message "JogoDaCopa Track 07 Visual Polish v1.2.0 $ReleaseRoot"
+    -Message "JogoDaCopa Track 08 Super Campeao v1.2.1 $ReleaseRoot"
 
 $publication = [ordered]@{
     schema_version = "jogodacopa_web_publication_v1"

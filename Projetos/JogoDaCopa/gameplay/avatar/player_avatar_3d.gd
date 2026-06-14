@@ -100,8 +100,6 @@ var last_grounded: bool = true
 var last_vertical_velocity: float = 0.0
 var boost_trail_particles: GPUParticles3D
 var skid_dust_particles: GPUParticles3D
-var toon_render_enabled: bool = false
-var toon_outline_material: StandardMaterial3D
 var hair_attachment: BoneAttachment3D
 var hair_meshes: Array[MeshInstance3D] = []
 var active_hair_style_id: StringName = &""
@@ -187,13 +185,6 @@ func apply_appearance(next_appearance) -> void:
 	logical_part_colors[&"hair"] = hair_color
 	_apply_real_materials(skin_color, shirt_primary, shirt_secondary, shorts_color, socks_color, DEFAULT_BOOT_COLOR)
 	_sync_hair_attachment(hair_style_id, hair_color_id, hair_color)
-	_sync_toon_outline_passes()
-
-func set_toon_render_enabled(is_enabled: bool) -> void:
-	toon_render_enabled = is_enabled
-	if part_root != null:
-		apply_appearance(appearance)
-		_sync_toon_outline_passes()
 
 func set_move_state(move_speed: float, grounded: bool, vertical_velocity: float = 0.0) -> void:
 	last_move_speed = move_speed
@@ -320,13 +311,6 @@ func debug_get_body_uniform_shader_color(parameter_name: StringName) -> Color:
 	var value: Variant = material.get_shader_parameter(str(parameter_name))
 	return value if value is Color else Color.TRANSPARENT
 
-func debug_get_body_uniform_shader_float(parameter_name: StringName) -> float:
-	var material := _get_body_uniform_material(0)
-	if material == null:
-		return 0.0
-	var value: Variant = material.get_shader_parameter(str(parameter_name))
-	return float(value) if value is float else 0.0
-
 func debug_has_hair_attachment() -> bool:
 	return hair_attachment != null and hair_attachment.bone_name == HEAD_BONE_NAME
 
@@ -341,27 +325,6 @@ func debug_is_boost_trail_emitting() -> bool:
 
 func debug_is_skid_dust_emitting() -> bool:
 	return skid_dust_particles != null and skid_dust_particles.emitting
-
-func debug_is_toon_render_enabled() -> bool:
-	return toon_render_enabled
-
-func debug_get_toon_outline_count() -> int:
-	var count := 0
-	for mesh_instance in real_meshes:
-		count += _count_mesh_material_next_passes(mesh_instance)
-	for mesh_instance in hair_meshes:
-		count += _count_mesh_material_next_passes(mesh_instance)
-	return count
-
-func debug_get_toon_outline_mesh_node_count() -> int:
-	var count := 0
-	for mesh_instance in real_meshes:
-		if mesh_instance.get_node_or_null("ToonOutline") != null:
-			count += 1
-	for mesh_instance in hair_meshes:
-		if mesh_instance.get_node_or_null("ToonOutline") != null:
-			count += 1
-	return count
 
 func debug_has_real_model() -> bool:
 	return model_instance != null and skeleton != null and body_mesh != null and not real_meshes.is_empty()
@@ -663,10 +626,8 @@ func _apply_body_uniform_materials(skin_color: Color, shirt_primary: Color, shir
 		material.set_shader_parameter("shorts_color", shorts_color)
 		material.set_shader_parameter("sock_color", socks_color)
 		material.set_shader_parameter("boot_color", boot_color)
-		material.set_shader_parameter("toon_intensity", 1.0 if toon_render_enabled else 0.0)
 		if source_material != null and source_material.albedo_texture != null:
 			material.set_shader_parameter("skin_texture", source_material.albedo_texture)
-		_set_material_next_pass(material)
 		body_mesh.set_surface_override_material(surface_index, material)
 
 func _apply_surface_material_tint(mesh_instance: MeshInstance3D, tint: Color, emission: Color, emission_energy: float) -> void:
@@ -683,62 +644,21 @@ func _apply_surface_material_tint(mesh_instance: MeshInstance3D, tint: Color, em
 		mesh_instance.set_surface_override_material(surface_index, material)
 
 func _tint_character_material(material: StandardMaterial3D, tint: Color, emission: Color, emission_energy: float) -> void:
-	material.albedo_color = _quantize_toon_color(_multiply_color(material.albedo_color, tint)) if toon_render_enabled else _multiply_color(material.albedo_color, tint)
+	material.albedo_color = _multiply_color(material.albedo_color, tint)
 	material.emission_enabled = true
-	material.emission = material.albedo_color if toon_render_enabled else emission
+	material.emission = emission
 	var profiled_energy := RenderProfileScript.adjust_emission_energy(emission_energy, RenderProfileScript.ROLE_CHARACTER)
-	material.emission_energy_multiplier = maxf(profiled_energy, 0.16) if toon_render_enabled else profiled_energy
-	if toon_render_enabled:
-		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	_set_material_next_pass(material)
-
-func _sync_toon_outline_passes() -> void:
-	for mesh_instance in real_meshes:
-		_sync_mesh_material_next_passes(mesh_instance)
-	for mesh_instance in hair_meshes:
-		_sync_mesh_material_next_passes(mesh_instance)
-
-func _sync_mesh_material_next_passes(mesh_instance: MeshInstance3D) -> void:
-	if mesh_instance == null or mesh_instance.mesh == null:
-		return
-	var override := mesh_instance.material_override
-	if override != null:
-		_set_material_next_pass(override)
-	for surface_index in range(mesh_instance.mesh.get_surface_count()):
-		var material := mesh_instance.get_surface_override_material(surface_index)
-		if material != null:
-			_set_material_next_pass(material)
-
-func _set_material_next_pass(material: Material) -> void:
-	if material == null:
-		return
-	material.next_pass = _get_toon_outline_material() if toon_render_enabled else null
+	material.emission_energy_multiplier = profiled_energy
 
 func _build_character_material(color: Color, emission: Color, emission_energy: float) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
-	material.albedo_color = _quantize_toon_color(color) if toon_render_enabled else color
+	material.albedo_color = color
 	material.roughness = 0.78
 	material.emission_enabled = true
-	material.emission = material.albedo_color if toon_render_enabled else emission
+	material.emission = emission
 	var profiled_energy := RenderProfileScript.adjust_emission_energy(emission_energy, RenderProfileScript.ROLE_CHARACTER)
-	material.emission_energy_multiplier = maxf(profiled_energy, 0.16) if toon_render_enabled else profiled_energy
-	if toon_render_enabled:
-		material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	_set_material_next_pass(material)
+	material.emission_energy_multiplier = profiled_energy
 	return material
-
-func _get_toon_outline_material() -> StandardMaterial3D:
-	if toon_outline_material != null:
-		return toon_outline_material
-	toon_outline_material = StandardMaterial3D.new()
-	toon_outline_material.albedo_color = Color(0.012, 0.016, 0.022, 1.0)
-	toon_outline_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	toon_outline_material.cull_mode = BaseMaterial3D.CULL_FRONT
-	if _object_has_property(toon_outline_material, "grow_enabled"):
-		toon_outline_material.set("grow_enabled", true)
-	if _object_has_property(toon_outline_material, "grow_amount"):
-		toon_outline_material.set("grow_amount", 0.018)
-	return toon_outline_material
 
 func _rebuild_body_mesh_with_uniform_regions() -> void:
 	if body_mesh == null or body_mesh.mesh == null:
@@ -858,32 +778,6 @@ func _get_body_uniform_material(surface_index: int) -> ShaderMaterial:
 		return null
 	return body_mesh.get_surface_override_material(surface_index) as ShaderMaterial
 
-func _count_mesh_material_next_passes(mesh_instance: MeshInstance3D) -> int:
-	if mesh_instance == null or mesh_instance.mesh == null:
-		return 0
-	var count := 0
-	if mesh_instance.material_override != null and mesh_instance.material_override.next_pass != null:
-		count += 1
-	for surface_index in range(mesh_instance.mesh.get_surface_count()):
-		var material := mesh_instance.get_surface_override_material(surface_index)
-		if material != null and material.next_pass != null:
-			count += 1
-	return count
-
-func _object_has_property(object: Object, property_name: String) -> bool:
-	for property in object.get_property_list():
-		if str(property.get("name", "")) == property_name:
-			return true
-	return false
-
-func _quantize_toon_color(color: Color) -> Color:
-	return Color(
-		floorf(color.r * 3.0 + 0.5) / 3.0,
-		floorf(color.g * 3.0 + 0.5) / 3.0,
-		floorf(color.b * 3.0 + 0.5) / 3.0,
-		color.a
-	)
-
 func _multiply_color(base: Color, tint: Color) -> Color:
 	return Color(
 		clampf(base.r * tint.r, 0.0, 1.0),
@@ -917,7 +811,6 @@ func _sync_hair_attachment(hair_style_id: StringName, hair_color_id: StringName,
 		return
 	if hair_attachment != null and active_hair_style_id == hair_style_id and active_hair_color_id == hair_color_id and not hair_meshes.is_empty():
 		_apply_hair_materials(hair_color)
-		_sync_toon_outline_passes()
 		return
 	_clear_hair_meshes()
 	if hair_attachment == null:
@@ -947,7 +840,6 @@ func _sync_hair_attachment(hair_style_id: StringName, hair_color_id: StringName,
 	active_hair_style_id = hair_style_id
 	active_hair_color_id = hair_color_id
 	_apply_hair_materials(hair_color)
-	_sync_toon_outline_passes()
 
 func _clear_hair_meshes() -> void:
 	for hair_mesh in hair_meshes:
