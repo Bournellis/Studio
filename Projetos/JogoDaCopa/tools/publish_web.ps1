@@ -120,49 +120,27 @@ window.JDC_WEB_RELEASE = Object.freeze({
 }
 
 function Write-WebAudioWorkletFallback {
-    param([string]$IndexPath)
-    if (-not (Test-Path -LiteralPath $IndexPath -PathType Leaf)) {
-        throw "Web index is missing for audio worklet fallback: $IndexPath"
+    param([string]$PagesDir)
+    $indexJsPath = Join-Path $PagesDir "index.js"
+    if (-not (Test-Path -LiteralPath $indexJsPath -PathType Leaf)) {
+        throw "Web index.js is missing for audio worklet fallback: $indexJsPath"
     }
-    $html = Get-Content -LiteralPath $IndexPath -Raw
-    $fallback = @"
-<script id="jdc-audio-worklet-fallback">
-(function () {
-	'use strict';
-	var constructors = [window.AudioContext, window.webkitAudioContext];
-	for (var index = 0; index < constructors.length; index += 1) {
-		var ctor = constructors[index];
-		if (!ctor || !ctor.prototype) {
-			continue;
-		}
-		try {
-			Object.defineProperty(ctor.prototype, 'audioWorklet', {
-				configurable: true,
-				get: function () {
-					return undefined;
-				}
-			});
-		} catch (_err) {
-			// Some browsers lock this property. In that case Godot keeps its native path.
-		}
-	}
-}());
-</script>
-"@
-    if ($html.Contains('id="jdc-audio-worklet-fallback"')) {
-        $html = [regex]::Replace(
-            $html,
-            '(?s)<script id="jdc-audio-worklet-fallback">.*?</script>',
-            $fallback
-        )
-    } elseif ($html.Contains('<script src="index.js"></script>')) {
-        $html = $html.Replace('<script src="index.js"></script>', "$fallback`n`t`t<script src=""index.js""></script>")
-    } elseif ($html.Contains("</head>")) {
-        $html = $html.Replace("</head>", "$fallback`n`t</head>")
-    } else {
-        $html = $fallback + $html
+    $script = Get-Content -LiteralPath $indexJsPath -Raw
+    $hasWorkletBefore = 'function _godot_audio_has_worklet(){return GodotAudio.ctx&&GodotAudio.ctx.audioWorklet?1:0}'
+    $hasWorkletAfter = 'function _godot_audio_has_worklet(){return 0}'
+    $positionInitBefore = 'const path=GodotConfig.locate_file("godot.audio.position.worklet.js");GodotAudio.audioPositionWorkletPromise=ctx.audioWorklet.addModule(path);return ctx.destination.channelCount'
+    $positionInitAfter = 'const path=GodotConfig.locate_file("godot.audio.position.worklet.js");GodotAudio.audioPositionWorkletAvailable=false;GodotAudio.audioPositionWorkletPromise=ctx.audioWorklet?ctx.audioWorklet.addModule(path).then(function(){GodotAudio.audioPositionWorkletAvailable=true}).catch(function(){GodotAudio.audioPositionWorkletAvailable=false}):Promise.resolve();return ctx.destination.channelCount'
+    $connectBefore = 'async connectPositionWorklet(start){await GodotAudio.audioPositionWorkletPromise;if(this.isCanceled){return}this._source.connect(this.getPositionWorklet());if(start){this.start()}}'
+    $connectAfter = 'async connectPositionWorklet(start){await GodotAudio.audioPositionWorkletPromise;if(this.isCanceled){return}if(!GodotAudio.audioPositionWorkletAvailable){if(start){this.start()}return}this._source.connect(this.getPositionWorklet());if(start){this.start()}}'
+    foreach ($needle in @($hasWorkletBefore, $positionInitBefore, $connectBefore)) {
+        if (-not $script.Contains($needle)) {
+            throw "Godot Web index.js did not match expected audio worklet template fragment: $needle"
+        }
     }
-    Write-TextUtf8NoBom -Path $IndexPath -Text $html
+    $script = $script.Replace($hasWorkletBefore, $hasWorkletAfter)
+    $script = $script.Replace($positionInitBefore, $positionInitAfter)
+    $script = $script.Replace($connectBefore, $connectAfter)
+    Write-TextUtf8NoBom -Path $indexJsPath -Text $script
 }
 
 function Write-ReleaseInfoResource {
@@ -340,7 +318,7 @@ function New-Package {
 
     $sourceDir = Join-Path $Root "builds\web"
     Copy-WebPackage -SourceDir $sourceDir -DestinationDir $pagesDir
-    Write-WebAudioWorkletFallback -IndexPath (Join-Path $pagesDir "index.html")
+    Write-WebAudioWorkletFallback -PagesDir $pagesDir
     Write-WebReleaseDiagnostics `
         -IndexPath (Join-Path $pagesDir "index.html") `
         -VersionedReleaseRoot $VersionedReleaseRoot `
