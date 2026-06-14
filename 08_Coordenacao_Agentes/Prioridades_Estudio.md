@@ -13,7 +13,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 | Prioridade | Projeto | Caminho | Status | Trabalho permitido | Proximo passo |
 |---|---|---|---|---|---|
-| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | 06E mergeada localmente; publicacao `v1.1.0` bloqueada por gate remoto e rollback para `v1.0.3+ef9c5baa`; investigar antes de retry |
+| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | 06F validada localmente em branch; review Claude/Fabio antes de merge e nova tentativa de publicar `v1.1.0`; publico segue `v1.0.3+ef9c5baa` |
 | Pausa | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
 | Pausa | DraxosMobile | `Projetos/draxos-mobile/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
 | Pausa | FpsPlayground | `Projetos/FpsPlayground/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |

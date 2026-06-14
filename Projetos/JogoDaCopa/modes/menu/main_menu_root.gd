@@ -105,7 +105,8 @@ func _ready() -> void:
 	_sync_root_rect_to_viewport()
 	if not get_viewport().size_changed.is_connected(_sync_root_rect_to_viewport):
 		get_viewport().size_changed.connect(_sync_root_rect_to_viewport)
-	_ensure_audio_buses()
+	if not RenderProfileScript.is_web_platform():
+		_ensure_audio_buses()
 	_load_ui_audio_streams()
 	if not RenderProfileScript.is_web_platform():
 		_build_ui_audio_pool()
@@ -999,7 +1000,9 @@ func _on_volume_changed(value: float) -> void:
 func _apply_initial_audio_mix() -> void:
 	var settings = _get_game_settings()
 	if settings != null:
-		settings.apply_audio_settings()
+		settings.apply_audio_settings(false)
+		return
+	if RenderProfileScript.is_web_platform():
 		return
 	if volume_slider != null:
 		_set_bus_volume(BUS_MASTER, volume_slider.value)
@@ -1042,9 +1045,9 @@ func _on_settings_quality_changed(quality_id: StringName) -> void:
 func _apply_volume_setting(bus_name: StringName, value: float) -> void:
 	var settings = _get_game_settings()
 	if settings != null:
-		settings.set_volume(bus_name, value)
+		settings.set_volume(bus_name, value, true, true)
 		return
-	_set_bus_volume(bus_name, value)
+	_set_bus_volume(bus_name, value, true)
 
 func _get_game_settings():
 	return get_node_or_null("/root/GameSettings")
@@ -1076,7 +1079,9 @@ func _apply_render_profile_to_menu_preview() -> void:
 		preview_environment.tonemap_exposure = RenderProfileScript.get_menu_preview_tonemap_exposure()
 	_request_preview_viewport_update()
 
-func _set_bus_volume(bus_name: StringName, value: float) -> void:
+func _set_bus_volume(bus_name: StringName, value: float, from_user_gesture: bool = false) -> void:
+	if RenderProfileScript.is_web_platform() and not _can_play_web_audio(from_user_gesture):
+		return
 	_ensure_audio_bus(bus_name)
 	var bus_index := AudioServer.get_bus_index(str(bus_name))
 	if bus_index < 0:
@@ -1137,6 +1142,9 @@ func _can_play_web_audio(force_poll: bool = false) -> bool:
 func _play_ui_sound(audio_key: StringName) -> void:
 	if not _can_play_web_audio(true):
 		return
+	var settings = _get_game_settings()
+	if settings != null:
+		settings.apply_audio_settings(true)
 	if ui_audio_pool.is_empty():
 		_build_ui_audio_pool()
 	var stream := ui_audio_streams.get(audio_key) as AudioStream

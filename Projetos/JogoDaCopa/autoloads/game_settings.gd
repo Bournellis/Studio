@@ -26,18 +26,20 @@ const DEFAULT_QUALITY_ID: StringName = RenderProfileScript.QUALITY_HIGH
 const DEFAULT_MOUSE_SENSITIVITY: float = 0.0018
 const MIN_MOUSE_SENSITIVITY: float = 0.0008
 const MAX_MOUSE_SENSITIVITY: float = 0.0032
+const WEB_AUDIO_UNLOCK_POLL_MSEC: int = 500
 
 var _config_path: String = CONFIG_PATH
 var _volumes: Dictionary = {}
 var _fullscreen_enabled: bool = DEFAULT_FULLSCREEN_ENABLED
 var _quality_id: StringName = DEFAULT_QUALITY_ID
 var _mouse_sensitivity: float = DEFAULT_MOUSE_SENSITIVITY
+var _web_audio_unlocked: bool = false
+var _web_audio_next_unlock_poll_msec: int = 0
 
 func _init() -> void:
 	_apply_default_values()
 
 func _ready() -> void:
-	_ensure_audio_buses()
 	if _uses_validation_defaults():
 		reset_to_defaults(false, true)
 		return
@@ -93,14 +95,17 @@ func save_settings() -> bool:
 	return true
 
 func apply_all(from_user_gesture: bool = false) -> void:
-	apply_audio_settings()
+	apply_audio_settings(from_user_gesture)
 	apply_quality_settings()
 	apply_fullscreen_setting(from_user_gesture)
 
-func apply_audio_settings() -> void:
+func apply_audio_settings(from_user_gesture: bool = false) -> bool:
+	if not _can_touch_audio_server(from_user_gesture):
+		return false
 	_ensure_audio_buses()
 	for bus_name: StringName in AUDIO_BUSES:
 		_apply_bus_volume(bus_name, get_volume(bus_name))
+	return true
 
 func apply_quality_settings() -> void:
 	RenderProfileScript.set_quality_id(_quality_id)
@@ -117,13 +122,15 @@ func apply_fullscreen_setting(from_user_gesture: bool = false) -> void:
 func get_volume(bus_name: StringName) -> float:
 	return clampf(float(_volumes.get(_normalize_bus_name(bus_name), _get_default_volume(bus_name))), 0.0, 1.0)
 
-func set_volume(bus_name: StringName, value: float, save_to_disk: bool = true) -> void:
+func set_volume(bus_name: StringName, value: float, save_to_disk: bool = true, from_user_gesture: bool = false) -> void:
 	var normalized_bus := _normalize_bus_name(bus_name)
 	var clamped_value := clampf(value, 0.0, 1.0)
 	if is_equal_approx(get_volume(normalized_bus), clamped_value):
+		if from_user_gesture:
+			apply_audio_settings(true)
 		return
 	_volumes[normalized_bus] = clamped_value
-	_apply_bus_volume(normalized_bus, clamped_value)
+	apply_audio_settings(from_user_gesture)
 	if save_to_disk:
 		save_settings()
 	volume_changed.emit(normalized_bus, clamped_value)
@@ -206,6 +213,21 @@ func _normalize_bus_name(bus_name: StringName) -> StringName:
 			return BUS_AMBIENCE
 		_:
 			return bus_name
+
+func _can_touch_audio_server(from_user_gesture: bool = false) -> bool:
+	if not RenderProfileScript.is_web_platform():
+		return true
+	if _web_audio_unlocked:
+		return true
+	if not from_user_gesture:
+		return false
+	var now_msec := Time.get_ticks_msec()
+	if now_msec < _web_audio_next_unlock_poll_msec:
+		return false
+	_web_audio_next_unlock_poll_msec = now_msec + WEB_AUDIO_UNLOCK_POLL_MSEC
+	var state := str(JavaScriptBridge.eval("navigator.userActivation && navigator.userActivation.hasBeenActive ? '1' : '0'", true))
+	_web_audio_unlocked = state == "1"
+	return _web_audio_unlocked
 
 func _ensure_audio_buses() -> void:
 	for bus_name: StringName in AUDIO_BUSES:
