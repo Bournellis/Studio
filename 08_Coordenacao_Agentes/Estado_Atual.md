@@ -16,9 +16,9 @@
 
 - Status: `P2_IMPLEMENTACAO - FOCO TEMPORARIO UNICO`
 - Marker: `JOGO_DA_COPA_V1_1_0_PUBLICADO_RETEST_HUMANO_PENDENTE`
-- Baseline: `Copa Arena Futebol` Web publico atualizado em Cloudflare Pages para `v1.1.0+22850c06` (`web/v1-copa-arena-futebol-20260613-22850c06`) na URL `https://copa-arena-futebol.pages.dev/`; gates remotos 06F PASS.
+- Baseline: `Copa Arena Futebol` Web publico atualizado em Cloudflare Pages para `v1.1.0+be453dc3` (`web/v1-copa-arena-futebol-20260613-be453dc3`) na URL `https://copa-arena-futebol.pages.dev/`; gates remotos 06G PASS.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: retest humano do Fabio + tester externo na URL publica `v1.1.0` (menu broadcast, ESC completo, HUD scorebug, primeiro minuto). `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- Proximo passo: retest humano do Fabio + tester externo na URL publica `v1.1.0` (menu broadcast, ESC completo, countdown direto, restart confirmado, HUD scorebug, primeiro minuto). `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
 
 ## draxos-roguelike-cardgame
 

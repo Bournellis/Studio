@@ -6,7 +6,7 @@
 - Branch: `codex/JogoDaCopa/track06g-countdown-restart-flow-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track06g-countdown-restart-flow-v1`
 - Base: `main` em `4902ff95`
-- Status: `DOING`
+- Status: `DONE`
 
 ## Objetivo
 
@@ -32,4 +32,11 @@ Fazer duas correcoes cirurgicas pos-publicacao:
 
 ## Handoff
 
-Fechar com commit local, merge em `main`, publicacao Cloudflare e `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+Fechado em `main` com merge `dff246ac` e hotfix/publicacao final `be453dc3`.
+
+- Release publico: `v1.1.0+be453dc3`
+- Release root: `web/v1-copa-arena-futebol-20260613-be453dc3`
+- URL: `https://copa-arena-futebol.pages.dev/`
+- Gates remotos finais: primeiro minuto PASS, estabilidade 5min PASS, menu URL real PASS, luminancia noturna PASS.
+- Proximo passo: retest humano Fabio + tester externo.
+- `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`

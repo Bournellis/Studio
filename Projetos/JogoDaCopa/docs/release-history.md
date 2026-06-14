@@ -6,11 +6,27 @@ Historico de publicacoes do produto `Copa Arena Futebol`.
 
 | Data | Release | Canal | URL | Release root | Evidencia |
 | --- | --- | --- | --- | --- | --- |
+| 2026-06-13 | Countdown Direto & Restart Confirmado V1 (`v1.1.0+be453dc3`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260613-be453dc3` | `docs/playtest-reports/track-06e-data/06e-publication-report.json` + `docs/playtest-reports/track-06g-data/06g-remote-first-minute-be453dc3.json` + `docs/playtest-reports/track-06g-data/06g-remote-stability-5min-be453dc3.json` + `docs/playtest-reports/track-06g-data/06g-remote-night-luma-gate-be453dc3.json` + `docs/playtest-reports/track-06g-data/06g-remote-menu-user-url-be453dc3.png` |
 | 2026-06-13 | Match Polish & Broadcast Identity V1 (`v1.1.0+22850c06`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260613-22850c06` | `docs/playtest-reports/track-06e-data/06e-publication-report.json` + `docs/playtest-reports/track-06f-data/06f-remote-first-minute-22850c06.json` + `docs/playtest-reports/track-06f-data/06f-remote-stability-5min-22850c06.json` + `docs/playtest-reports/track-06f-data/06f-remote-night-luma-gate-22850c06.json` + `docs/playtest-reports/track-06f-data/06f-remote-menu-footer-22850c06.png` |
 | 2026-06-12 | Sensory Feedback Re-Introduction V1 (`v1.0.3+ef9c5baa`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-ef9c5baa` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05b1-data/05b1-remote-first-minute-gate-final-ef9c5baa.json` + `docs/playtest-reports/track-05b1-data/05b1-remote-stability-5min-final-ef9c5baa-pass2.json` |
 | 2026-06-12 | First-Minute Smoothness V1 (`v1.0.2+ad82384b`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-ad82384b` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05b-data/05b-remote-first-minute-gate.json` + `docs/playtest-reports/track-05b-data/05b-remote-stability-5min.json` |
 | 2026-06-12 | Web Stability Hotfix V1 (`v1.0.1+a850045a`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-a850045a` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json` |
 | 2026-06-12 | Web Publication V1 | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-31e23ea3` | `docs/playtest-reports/track-05-data/05c-publication-report.json` |
+
+## 2026-06-13 - Countdown Direto & Restart Confirmado V1
+
+- Release publicado: `v1.1.0+be453dc3` em `https://copa-arena-futebol.pages.dev/`.
+- Release root publico: `web/v1-copa-arena-futebol-20260613-be453dc3`.
+- Preview do deploy: `https://d9b1e3e1.copa-arena-futebol.pages.dev`.
+- Mudanca cirurgica: countdown de kickoff agora e direto `3 -> 2 -> 1 -> VAI!`; restart direto por `R` foi removido e reinicio passa pelo menu ESC com confirmacao.
+- Hotfix durante a publicacao: o primeiro root `dff246ac` foi substituido por `be453dc3` para adiar o carregamento de streams de UI do menu Web ate a ativacao do navegador; a URL publica de usuario ficou limpa sem erros de runtime.
+- `tools/validate.gd` final: PASS com `103` testes / `1842` asserts.
+- Publicacao final: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260613-be453dc3 -ConfirmRemoteMutation`; projeto Cloudflare Pages `copa-arena-futebol`.
+- Gate remoto primeiro minuto: PASS, release root conferiu, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
+- Gate remoto estabilidade 5min: PASS, release root conferiu, `pageErrors=0`, `consoleErrorCount=0`, heap retido `44,903,273 -> 48,959,558` bytes (`+9.03%`, limite `<10%`), `object_node_count 816 -> 816`, caches estaveis e pior janela 5s `121.4 FPS`.
+- Gate remoto de luminancia: PASS, `luma_0_255=17.413 < 90` na captura `06g-remote-night-evidence-be453dc3.png`.
+- Sanity do menu publico: `docs/playtest-reports/track-06g-data/06g-remote-menu-user-url-be453dc3.json` PASS na URL `https://copa-arena-futebol.pages.dev/`, `pageErrors=0`, `consoleErrorCount=0`, root `be453dc3`.
+- Proximo passo: retest humano do Fabio + tester externo na URL publica, cobrindo menu broadcast, ESC completo, HUD scorebug, countdown direto, restart confirmado e primeiro minuto.
 
 ## 2026-06-13 - Match Polish & Broadcast Identity V1
 

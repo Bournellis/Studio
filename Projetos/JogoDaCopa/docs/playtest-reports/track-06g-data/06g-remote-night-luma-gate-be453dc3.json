@@ -1,0 +1,11 @@
+﻿{
+    "schema_version":  "jogodacopa_luminance_gate_v1",
+    "image":  "D:\\Estudio\\Projetos\\JogoDaCopa\\docs\\playtest-reports\\track-06g-data\\06g-remote-night-evidence-be453dc3.png",
+    "release_root":  "web/v1-copa-arena-futebol-20260613-be453dc3",
+    "hash":  "be453dc3",
+    "average_luminance":  17.413,
+    "threshold":  90,
+    "passed":  true,
+    "samples":  14400,
+    "generated_at":  "2026-06-14T03:06:56Z"
+}
