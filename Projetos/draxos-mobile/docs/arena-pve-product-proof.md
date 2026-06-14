@@ -100,6 +100,19 @@ After playtest, choose exactly one next product direction:
 Do not choose broad Openworld, PVP, new economy or content expansion from this
 proof unless Fabio makes a separate explicit decision.
 
+## Recorded Result - 2026-06-14
+
+Fabio recorded a combined result:
+
+- `ARENA_CORE_NEEDS_UX_FIX`
+- `ARENA_CORE_NOT_PROVEN`
+
+Interpret this as: the Arena PVE first direction remains valid, but the current
+core loop is not proven enough for tuning or expansion. Next product work must
+focus UX/readability/recovery of the Arena path before any numeric tuning,
+economy changes, content expansion, PVP, broad Openworld work or visual-final
+pass.
+
 ## Lab Follow-Up
 
 Only after a human result exists:

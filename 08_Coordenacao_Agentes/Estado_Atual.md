@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`v1.2.0` publicado; Track 08 local bloqueada por gate remoto) + `Projetos/draxos-mobile/` (hardening integrado localmente; aguardando prova humana Arena PVE)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`v1.2.0` publicado; Track 08 local bloqueada por gate remoto) + `Projetos/draxos-mobile/` (hardening integrado; Arena core precisa UX fix e nao esta provado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -36,9 +36,10 @@
 - Marker: `BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
 - Pacote publicado (baseline preservado): `Bosque Overlay Layer And Readiness Authority v1` (2026-06-10), Web/APK `0.0.23-alpha.0` / vc `23`. Historico: `Projetos/draxos-mobile/docs/release-history.md`.
 - Programa de hardening: branch `codex/draxos-mobile/hardening-integration` consolida backend mirror guard, overlay shell state, Openworld persistence bridge, arquitetura e gate de prova Arena PVE; sem publicacao remota.
+- Resultado de produto Arena PVE: `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN`; decisao em `08_Coordenacao_Agentes/Decisoes/2026-06-14_draxos-mobile_arena-core-ux-fix-not-proven.md`.
 - Guardrails preservados: Track 13 release safety, Track 14 agent ops; fundacao server-authoritative/idempotencia/RLS NAO deve ser refatorada.
 - Restricao operacional: ver `Projetos/draxos-mobile/AGENTS.md` (Hard Stops); secrets nunca no cliente; publicacao remota exige `-ConfirmRemoteMutation`; sem tuning numerico/PVP/economia/visual final sem decisao.
-- Proximo passo: Fabio revisar a branch integrada e executar a prova humana focada de Arena PVE em `Projetos/draxos-mobile/docs/arena-pve-product-proof.md`; escolher o proximo pacote so depois da prova.
+- Proximo passo: planejar rodada conjunta de higiene documental e hardening tecnico pass 2; qualquer pacote de produto seguinte deve focar UX/readability/recovery da Arena, sem tuning/expansao.
 
 ## FpsPlayground
 

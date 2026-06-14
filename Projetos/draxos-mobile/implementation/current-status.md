@@ -1,6 +1,6 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-06-10`
+- Last updated: `2026-06-14`
 - Project: `draxos-mobile`
 - Portfolio status: see `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Active surface: `Internal Alpha`
@@ -23,6 +23,7 @@
 
 - Operational package: Bosque Overlay Layer And Readiness Authority v1 is current.
 - Product direction: Arena PVE remains the first approved core, governed by `docs/pve-arena-initial-direction.md` and `docs/pve-arena-v1.md`.
+- Arena proof result: Fabio recorded `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN` on `2026-06-14`; Arena direction remains, but the core is not approved for tuning or expansion yet.
 - Bosque/Openworld: approved integrated Internal Alpha slice, not approval for broad continuous-open-world expansion.
 - Do not open tuning, PVP, economy, content, weapons, spells, potions, final visuals, remote mutation or a new package without an explicit decision.
 
@@ -42,13 +43,16 @@
 
 ## Current Gate
 
-The next operational step is focused human playtest of the published `Bosque Overlay Layer And Readiness Authority v1` Web/APK package: Bosque landmarks open Arena/Base/Shop/Social/Profile through shell actions, Social fields preserve typing through refresh, Shop confirmations cancel/confirm in the global modal, Arena resume/abandon stays in the overlay, a new Arena opens fullscreen above the menu without right-side clipping, `Fechar`/`Voltar`/Esc return to the Bosque, server-backed menus show `refreshing -> ready` honestly, pending Bosque state remains honest on menu exit, and no Tower/Card/dev-tool launcher entries appear.
+The next operational step is a joint documentation hygiene and client hardening
+pass. The next product package, when explicitly opened, must focus Arena
+UX/readability/recovery: make the tutorial -> first real arena -> buffs ->
+summary -> abandon/resume path understandable without agent explanation.
 
 Open decision focus:
 
-1. After the focused playtest, choose any next package explicitly: bugfix, launcher polish, Arena PVE follow-up, focused Openworld/Bosque tuning, or another scoped hardening/product step.
-2. Preserve active Bosque runtime as local/offline-first feel plus server-owned checkpoint, completion, reward, caps, ledger and audit authority.
-3. Keep Arena regressions in future manual smoke lists: Preparacao visible before start/in active attempts/buff choice, selected victory buff returns to `Resolver duelo`, temporary bonus stats visible in the next fight/replay.
+1. Preserve active Bosque runtime as local/offline-first feel plus server-owned checkpoint, completion, reward, caps, ledger and audit authority.
+2. Keep Arena regressions in future manual smoke lists: Preparacao visible before start/in active attempts/buff choice, selected victory buff returns to `Resolver duelo`, temporary bonus stats visible in the next fight/replay.
+3. Do not open numeric tuning, economy/content expansion, PVP or broad Openworld work until Arena core exits the `NOT_PROVEN` state.
 
 ## Live Boundaries
 
