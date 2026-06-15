@@ -1,4 +1,4 @@
-# DraxosMobile Doing - docs-stabilization
+# DraxosMobile Done - docs-stabilization
 
 ## Metadata
 
@@ -16,6 +16,28 @@
 Executar uma rodada documental completa para alinhar indice, runbooks,
 historico, docs de modos e labs ao gate atual de prova humana da Arena PVE,
 sem alterar runtime, publicacao ou estado remoto.
+
+## Resultado
+
+Rodada documental concluida sem mudanca de runtime, build, publicacao ou estado
+remoto.
+
+Entregas:
+
+- `autobattler.md` deixou de apontar pacote antigo de Bosque como atual e agora
+  depende do gate vivo de prova da Arena.
+- `openworld-decision-pack.md` passou a tratar publicacoes antigas como
+  linhagem historica e nao como estado operacional atual.
+- `product-vision.md`, `design-pending.md` e `game-design-document.md`
+  reforcam que tuning, economia, PVP, conteudo, visual final e expansao
+  Openworld dependem do veredito humano da Arena.
+- `documentation-index.md` passou a cobrir todos os `.md` sob `docs/`,
+  incluindo contratos, runbooks, relatorios historicos e labs.
+- `internal-alpha-release-plan.md` recebeu aviso historico apontando o fluxo
+  atual para `release-ops-checklist.md`, `current-status.md` e
+  `release-history.md`.
+- Battle Lab, Progression Lab e `lab-heuristics.md` passaram a explicitar o
+  follow-up pos-prova da Arena antes de tuning.
 
 ## Latest Context
 
@@ -80,6 +102,13 @@ sem alterar runtime, publicacao ou estado remoto.
 - `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -Profile DocsOnly -NoProjectWrites`
 - targeted `rg` drift checks for stale package/current-stage wording.
 
+## Validation Result
+
+- `git diff --check`: PASS
+- `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_doc_drift.ps1`: PASS
+- `powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -Profile DocsOnly -NoProjectWrites`: PASS
+- targeted stale-doc checks: PASS
+
 ## Remote Mutation / Publication
 
 - remote mutation/publication run: `no`
@@ -87,6 +116,13 @@ sem alterar runtime, publicacao ou estado remoto.
 
 ## Handoff Point
 
-Fechar com commits locais separados por bloco documental, mover este card para
-Done com validacoes e declarar `PUSH PENDENTE: Fabio - GitHub Desktop - Push
-origin`.
+Commits locais:
+
+- `89832138` - `docs(draxos-mobile): register docs stabilization work`
+- `fd5679cd` - `docs(draxos-mobile): align docs with arena proof gate`
+
+Proximo passo seguro: Fabio/tester concluir a prova humana da Arena e registrar
+o veredito antes de tuning, economia, PVP, conteudo novo, visual final ou
+expansao Openworld.
+
+PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.
