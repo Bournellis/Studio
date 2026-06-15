@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09B_LOCAL_VALIDADO`
+- Status: `JOGO_DA_COPA_TRACK09C_LOCAL_VALIDADO`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -19,6 +19,8 @@
 
 ## Latest Evidence
 
+- Track 09C local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09c-runtime-spawner-v1.md`
+- Track 09C local Web evidence: `playtest-reports/track-09c-data/`
 - Track 09B local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09b-web-loading-controller-v1.md`
 - Track 09B local Web evidence: `playtest-reports/track-09b-data/`
 - Track 09A public evidence: `playtest-reports/track-09a-data/`
@@ -32,6 +34,7 @@
 - `validation-profiles.md`
 - `publication-readiness.md`
 - `release-history.md`
+- `playtest-reports/track-09c-data/`
 - `playtest-reports/track-09b-data/`
 - `playtest-reports/track-09a-data/`
 - `playtest-reports/track-08a-data/`
