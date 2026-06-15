@@ -28,16 +28,21 @@ var miss_feedback_time: float = 0.0
 var damage_feedback_time: float = 0.0
 var kill_feedback_time: float = 0.0
 var plasma_feedback_time: float = 0.0
+var bot_tell_feedback_time: float = 0.0
 var event_message_time: float = 0.0
+var event_message_color: Color = Color.WHITE
 var last_feedback: StringName = &""
 var hit_confirm_count: int = 0
 var miss_count: int = 0
 var player_damage_count: int = 0
 var alt_fire_count: int = 0
+var plasma_hit_count: int = 0
+var bot_tell_count: int = 0
 var pickup_count: int = 0
 var jump_pad_count: int = 0
 var fall_penalty_count: int = 0
 var last_damage_amount: float = 0.0
+var last_plasma_hit_overcharged: bool = false
 var last_round_end_player_won: bool = false
 var last_bot_flow_text: String = ""
 
@@ -52,6 +57,7 @@ func _process(delta: float) -> void:
 	damage_feedback_time = maxf(0.0, damage_feedback_time - delta)
 	kill_feedback_time = maxf(0.0, kill_feedback_time - delta)
 	plasma_feedback_time = maxf(0.0, plasma_feedback_time - delta)
+	bot_tell_feedback_time = maxf(0.0, bot_tell_feedback_time - delta)
 	event_message_time = maxf(0.0, event_message_time - delta)
 	_refresh_crosshair()
 	_refresh_damage_overlay()
@@ -86,7 +92,22 @@ func show_player_alt_fire(overcharged: bool) -> void:
 	plasma_feedback_time = 0.18
 	shot_feedback_time = 0.08
 	if overcharged:
-		_set_event_message("OVERCHARGED PLASMA", 0.42)
+		_set_event_message("OVERCHARGED PLASMA", 0.42, Color(0.9, 0.62, 1.0, 1.0))
+
+func show_plasma_hit(overcharged: bool, killed: bool) -> void:
+	last_feedback = &"plasma_kill" if killed else (&"overcharge_hit" if overcharged else &"plasma_hit")
+	hit_confirm_count += 1
+	plasma_hit_count += 1
+	last_plasma_hit_overcharged = overcharged
+	hit_feedback_time = 0.22
+	plasma_feedback_time = 0.34 if overcharged else 0.24
+	if killed:
+		kill_feedback_time = 0.9
+		_set_event_message("BOT DOWN", 0.9, Color(1.0, 0.92, 0.28, 1.0))
+	elif overcharged:
+		_set_event_message("OVERCHARGE HIT", 0.58, Color(0.9, 0.62, 1.0, 1.0))
+	else:
+		_set_event_message("PLASMA HIT", 0.42, Color(0.48, 1.0, 1.0, 1.0))
 
 func show_hit_confirm(killed: bool) -> void:
 	last_feedback = &"kill" if killed else &"hit"
@@ -94,7 +115,7 @@ func show_hit_confirm(killed: bool) -> void:
 	hit_feedback_time = 0.2
 	if killed:
 		kill_feedback_time = 0.9
-		_set_event_message("BOT DOWN", 0.9)
+		_set_event_message("BOT DOWN", 0.9, Color(1.0, 0.92, 0.28, 1.0))
 
 func show_miss() -> void:
 	last_feedback = &"miss"
@@ -106,32 +127,40 @@ func show_player_damage(amount: float, remaining_fraction: float) -> void:
 	player_damage_count += 1
 	last_damage_amount = amount
 	damage_feedback_time = clampf(0.18 + (1.0 - remaining_fraction) * 0.18, 0.18, 0.38)
-	_set_event_message("-%.0f" % amount, 0.34)
+	_set_event_message("UNDER FIRE -%.0f" % amount, 0.38, Color(1.0, 0.28, 0.18, 1.0))
+
+func show_bot_tell(duration: float) -> void:
+	last_feedback = &"bot_tell"
+	bot_tell_count += 1
+	bot_tell_feedback_time = maxf(0.12, duration)
+	_set_event_message("BOT FIRING", maxf(0.22, duration), Color(1.0, 0.72, 0.22, 1.0))
 
 func show_pickup(pickup_kind: StringName) -> void:
 	last_feedback = &"pickup"
 	pickup_count += 1
 	var message := "HEALTH +%.0f" % 28.0 if pickup_kind == &"health" else "OVERCHARGE READY"
-	_set_event_message(message, 0.58)
+	var color := Color(0.46, 1.0, 0.58, 1.0) if pickup_kind == &"health" else Color(0.9, 0.62, 1.0, 1.0)
+	_set_event_message(message, 0.58, color)
 
 func show_jump_pad() -> void:
 	last_feedback = &"jump_pad"
 	jump_pad_count += 1
 	plasma_feedback_time = 0.16
-	_set_event_message("JUMP PAD", 0.42)
+	_set_event_message("JUMP PAD", 0.42, Color(0.35, 0.92, 1.0, 1.0))
 
 func show_fall_penalty(amount: float, for_player: bool) -> void:
 	last_feedback = &"fall"
 	fall_penalty_count += 1
 	damage_feedback_time = 0.32 if for_player else damage_feedback_time
 	var message := "VOID -%.0f" % amount if for_player else "BOT VOID"
-	_set_event_message(message, 0.68)
+	_set_event_message(message, 0.68, Color(1.0, 0.22, 0.36, 1.0))
 
 func show_round_end(player_won: bool) -> void:
 	last_feedback = &"round_end"
 	last_round_end_player_won = player_won
 	kill_feedback_time = 1.0
-	_set_event_message("VITORIA" if player_won else "DERROTA", 1.6)
+	var color := Color(0.52, 1.0, 0.58, 1.0) if player_won else Color(1.0, 0.28, 0.18, 1.0)
+	_set_event_message("VITORIA" if player_won else "DERROTA", 1.6, color)
 
 func reset_feedback() -> void:
 	shot_feedback_time = 0.0
@@ -140,7 +169,9 @@ func reset_feedback() -> void:
 	damage_feedback_time = 0.0
 	kill_feedback_time = 0.0
 	plasma_feedback_time = 0.0
+	bot_tell_feedback_time = 0.0
 	event_message_time = 0.0
+	event_message_color = Color.WHITE
 	last_feedback = &""
 	if event_label != null:
 		event_label.text = ""
@@ -424,6 +455,9 @@ func _refresh_crosshair() -> void:
 	elif plasma_feedback_time > 0.0:
 		color = Color(0.78, 0.46, 1.0, 1.0)
 		pulse = 0.12
+	elif bot_tell_feedback_time > 0.0:
+		color = Color(1.0, 0.72, 0.22, 1.0)
+		pulse = 0.1
 	elif shot_feedback_time > 0.0:
 		color = Color(0.28, 0.92, 1.0, 1.0)
 		pulse = 0.08
@@ -454,8 +488,9 @@ func _refresh_event_label() -> void:
 	if event_label == null:
 		return
 	var alpha := clampf(event_message_time / 0.25, 0.0, 1.0) if event_message_time > 0.0 else 0.0
-	event_label.modulate = Color(1.0, 1.0, 1.0, alpha)
+	event_label.modulate = Color(event_message_color.r, event_message_color.g, event_message_color.b, alpha)
 
-func _set_event_message(message: String, duration: float) -> void:
+func _set_event_message(message: String, duration: float, color: Color = Color.WHITE) -> void:
 	event_label.text = message
+	event_message_color = color
 	event_message_time = maxf(0.05, duration)

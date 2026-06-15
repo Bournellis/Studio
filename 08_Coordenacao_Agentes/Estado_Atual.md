@@ -7,8 +7,8 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado; gates remotos 09F PASS no rerun; retest humano pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana)
-- Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado; gates remotos 09F PASS no rerun; retest humano pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 03 arena tactical context proof pronta para smoke humano)
+- Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -43,11 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `PAUSADO_TEMPORARIO`
-- Marker: `FPS_PLAYGROUND_PROJECT_SPLIT_FOUNDATION_COMPLETE`
-- Baseline: laboratorio FPS separado do antigo `FpsShooter` em 2026-06-10; preserva `Arena Shooter`/`Duel Pit V2` com rifle hitscan, Plasma Bolt, jump pads e bot vertical-aware. Detalhes em `Projetos/FpsPlayground/implementation/current-status.md`.
-- Trabalho permitido: consulta historica; retomada apenas com pedido explicito.
-- Proximo passo: ao retomar, regressao/playtest humano de `Arena Shooter`.
+- Status: `P2_IMPLEMENTACAO - TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_READY_FOR_SMOKE`
+- Baseline: Track 03 adicionou catalogo de arenas, `Relay Foundry V1`, selecao no menu e prova automatica de contexto tatico multi-arena.
+- Validacao: `tools/validate.gd` PASS `20/20`, `175 asserts`; warnings GUT UID/text-path conhecidos.
+- Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
+- Proximo passo: Fabio/tester fazer smoke humano em `Duel Pit V2` e `Relay Foundry V1`; depois escolher tuning fino ou proxima experiencia FPS.
 
 ## rpg-isometrico
 

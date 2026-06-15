@@ -2,7 +2,10 @@ extends "res://addons/gut/test.gd"
 
 const BootstrapSceneGeneratorScript = preload("res://tools/bootstrap_scene_generator.gd")
 const PlayerScript = preload("res://gameplay/player/fps_player_controller.gd")
+const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FeedbackScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
+const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
+const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 
 const EXPECTED_ACTIONS: PackedStringArray = [
 	"move_forward",
@@ -29,7 +32,7 @@ func test_input_actions_are_bootstrapped() -> void:
 		assert_true(InputMap.has_action(action_name), "Missing input action %s" % action_name)
 		assert_gt(InputMap.action_get_events(action_name).size(), 0, "Input action %s has no binding" % action_name)
 
-func test_main_menu_scene_boots_with_arena_button_only() -> void:
+func test_main_menu_scene_boots_with_arena_selection_buttons() -> void:
 	var menu_scene := load("res://modes/menu/main_menu.tscn") as PackedScene
 	assert_not_null(menu_scene)
 	var menu := menu_scene.instantiate()
@@ -37,15 +40,19 @@ func test_main_menu_scene_boots_with_arena_button_only() -> void:
 	await get_tree().process_frame
 
 	assert_eq(menu.debug_get_mode_path(&"arena"), "res://modes/arena/arena.tscn")
+	assert_eq(menu.debug_get_mode_path(&"relay_foundry"), "res://modes/arena/arena.tscn")
+	assert_eq(menu.debug_get_layout_id(&"arena"), &"duel_pit_v2")
+	assert_eq(menu.debug_get_layout_id(&"relay_foundry"), &"relay_foundry_v1")
 	assert_eq(menu.debug_get_mode_path(&"football"), "")
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/ArenaButton"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/RelayFoundryButton"))
 	assert_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/FootballButton"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/QuitButton"))
 	var menu_center := menu.get_node("MenuCenter") as CenterContainer
 	var menu_panel := menu.get_node("MenuCenter/MenuPanel") as PanelContainer
 	assert_almost_eq(menu_center.anchor_left, 0.0, 0.001)
 	assert_almost_eq(menu_center.anchor_right, 1.0, 0.001)
-	assert_eq(menu_panel.custom_minimum_size, Vector2(500.0, 330.0))
+	assert_eq(menu_panel.custom_minimum_size, Vector2(540.0, 390.0))
 	assert_no_new_orphans()
 
 func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
@@ -69,6 +76,12 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Projectiles"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/HealthShard"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/Overcharge"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/HealthShard/ReadabilityHalo"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/HealthShard/ReadabilityBeacon"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/Overcharge/ReadabilityHalo"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/Overcharge/ReadabilityBeacon"))
+	assert_not_null(arena.get_node_or_null("WestJumpPad/LaunchDirectionCue"))
+	assert_not_null(arena.get_node_or_null("EastJumpPad/LaunchDirectionCue"))
 	assert_not_null(arena.get_node_or_null("ArenaHud"))
 	assert_not_null(arena.get_node_or_null("FeedbackController"))
 
@@ -80,12 +93,14 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_almost_eq((player.get_node("Head/Camera3D") as Camera3D).fov, 86.0, 0.01)
 	assert_eq(bot.debug_get_state(), &"reposition")
 	assert_true(bot.debug_get_target() == player)
-	assert_gt(bot.debug_get_reposition_point_count(), 0)
+	assert_eq(bot.debug_get_tactical_context_label(), &"duel_pit_v2")
+	assert_gt(bot.debug_get_tactical_point_count(), 0)
 
 	var hud_root := arena.get_node("ArenaHud/HudRoot") as Control
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/PlayerLabel"))
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/CombatLoopLabel"))
 	assert_not_null(hud_root.get_node_or_null("Crosshair/HitMarker"))
+	assert_not_null(hud_root.get_node_or_null("CombatEventLabel"))
 	assert_not_null(hud_root.get_node_or_null("PauseMenuPanel/PauseMenuMargin/PauseMenuBox/SensitivitySlider"))
 	assert_no_new_orphans()
 
@@ -98,9 +113,68 @@ func test_duel_pit_layout_exposes_route_markers_and_bot_points() -> void:
 
 	var points: Array[Vector3] = arena.debug_get_bot_reposition_points()
 	assert_eq(points.size(), 18)
-	assert_not_null(arena.get_node_or_null("RuntimeRoot/BotRepositionPoints/BotRepositionPoint17"))
+	var tactical_root := arena.get_node_or_null("RuntimeRoot/BotTacticalPoints")
+	assert_not_null(tactical_root)
+	assert_true(tactical_root.get_child_count() >= 18)
+	assert_eq(arena.debug_get_bot_tactical_point_count(), 20)
+	var roles: Array[StringName] = arena.debug_get_bot_tactical_roles()
+	assert_true(roles.has(BotTacticalContextScript.ROLE_PRESSURE))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_HEALTH))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_OVERCHARGE))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY))
 	assert_gt(arena.debug_get_flow_marker_count(), 5)
 	assert_true(arena.debug_has_high_platform_cover())
+	assert_no_new_orphans()
+
+func test_relay_foundry_layout_exposes_distinct_route_markers_and_bot_points() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	arena.set_arena_layout(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	assert_eq(arena.debug_get_active_layout_id(), &"relay_foundry_v1")
+	assert_eq(arena.debug_get_active_layout_name(), "Relay Foundry V1")
+	assert_not_null(arena.get_node_or_null("RelayFoundryFloor"))
+	assert_not_null(arena.get_node_or_null("RelayCore"))
+	assert_not_null(arena.get_node_or_null("WestRelayJumpPad"))
+	assert_not_null(arena.get_node_or_null("EastForgeJumpPad"))
+	assert_null(arena.get_node_or_null("MidBlocker"))
+	assert_eq(arena.debug_get_jump_pad_count(), 2)
+	assert_eq(arena.debug_get_bot_reposition_points().size(), 20)
+	assert_eq(arena.debug_get_bot_tactical_point_count(), 22)
+	assert_gt(arena.debug_get_flow_marker_count(), 5)
+	assert_true(arena.debug_has_high_platform_cover())
+
+	var bot = arena.debug_get_bot()
+	assert_eq(bot.debug_get_tactical_context_label(), &"relay_foundry_v1")
+	assert_eq(bot.debug_get_jump_pad_route_count(), 2)
+	var roles: Array[StringName] = arena.debug_get_bot_tactical_roles()
+	assert_true(roles.has(BotTacticalContextScript.ROLE_PRESSURE))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_COVER))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_FLANK))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_RETREAT))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_HEALTH))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_OVERCHARGE))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY))
+	assert_no_new_orphans()
+
+func test_bot_prioritizes_health_tactical_route_when_critical() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	bot.take_damage(84.0)
+	arena.debug_force_pickup_available(&"health", true)
+	bot._choose_reposition_destination()
+
+	assert_eq(bot.debug_get_decision_reason(), BotTacticalContextScript.ROLE_HEALTH)
+	assert_eq(bot.debug_get_route_label(), &"health")
+	assert_gt(bot.debug_get_recent_route_count(), 0)
 	assert_no_new_orphans()
 
 func test_player_shot_ray_damages_bot_when_aimed_at_body() -> void:
@@ -123,6 +197,29 @@ func test_player_shot_ray_damages_bot_when_aimed_at_body() -> void:
 
 	assert_lt(bot.health, before)
 	assert_eq(feedback.last_event, &"hit")
+	assert_no_new_orphans()
+
+func test_hud_tracks_combat_readability_events() -> void:
+	var hud = ArenaHudScript.new()
+	add_child_autofree(hud)
+	await get_tree().process_frame
+
+	hud.show_bot_tell(0.24)
+	assert_eq(hud.last_feedback, &"bot_tell")
+	assert_eq(hud.bot_tell_count, 1)
+	assert_gt(hud.bot_tell_feedback_time, 0.0)
+	assert_eq(hud.event_label.text, "BOT FIRING")
+
+	hud.show_plasma_hit(true, false)
+	assert_eq(hud.last_feedback, &"overcharge_hit")
+	assert_eq(hud.plasma_hit_count, 1)
+	assert_true(hud.last_plasma_hit_overcharged)
+	assert_eq(hud.event_label.text, "OVERCHARGE HIT")
+
+	hud.show_player_damage(9.0, 0.82)
+	assert_eq(hud.last_feedback, &"player_damage")
+	assert_eq(hud.player_damage_count, 1)
+	assert_eq(hud.event_label.text, "UNDER FIRE -9")
 	assert_no_new_orphans()
 
 func test_player_alt_fire_spawns_visible_plasma_projectile() -> void:
@@ -190,5 +287,11 @@ func test_feedback_controller_builds_synthetic_audio_stream() -> void:
 	feedback.play_player_shot(Vector3.ZERO, Vector3.FORWARD)
 	assert_eq(feedback.last_event, &"player_shot")
 	assert_gt(feedback.debug_active_effect_count(), 0)
+	feedback.play_bot_tell(Vector3.ZERO, Vector3.FORWARD * 2.0, 0.2)
+	assert_eq(feedback.last_event, &"bot_tell")
+	assert_eq(feedback.bot_tell_count, 1)
+	feedback.play_plasma_hit(Vector3.FORWARD, true)
+	assert_eq(feedback.last_event, &"plasma_hit")
+	assert_eq(feedback.plasma_hit_count, 1)
 	assert_not_null(feedback.debug_make_synthetic_stream(440.0, 0.02))
 	assert_no_new_orphans()

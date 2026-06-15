@@ -1,10 +1,13 @@
 class_name FpsPlaygroundMainMenu
 extends Control
 
+const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
+
 const ARENA_SCENE_PATH: String = "res://modes/arena/arena.tscn"
-const MENU_PANEL_SIZE: Vector2 = Vector2(500.0, 330.0)
+const MENU_PANEL_SIZE: Vector2 = Vector2(540.0, 390.0)
 
 var arena_button: Button
+var relay_foundry_button: Button
 var quit_button: Button
 var status_label: Label
 
@@ -16,10 +19,19 @@ func _ready() -> void:
 
 func debug_get_mode_path(mode_id: StringName) -> String:
 	match mode_id:
-		&"arena":
+		&"arena", &"duel_pit", &"relay_foundry":
 			return ARENA_SCENE_PATH
 		_:
 			return ""
+
+func debug_get_layout_id(mode_id: StringName) -> StringName:
+	match mode_id:
+		&"arena", &"duel_pit":
+			return ArenaLayoutCatalogScript.DUEL_PIT_ID
+		&"relay_foundry":
+			return ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID
+		_:
+			return &""
 
 func _build_ui() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -105,11 +117,17 @@ func _build_ui() -> void:
 	status_label.add_theme_font_size_override("font_size", 14)
 	center.add_child(status_label)
 
-	arena_button = _build_button("ArenaButton", "Arena Shooter")
+	arena_button = _build_button("ArenaButton", "Arena Shooter - Duel Pit V2")
 	arena_button.pressed.connect(func() -> void:
-		_load_mode(ARENA_SCENE_PATH)
+		_load_arena_layout(ArenaLayoutCatalogScript.DUEL_PIT_ID)
 	)
 	center.add_child(arena_button)
+
+	relay_foundry_button = _build_button("RelayFoundryButton", "Arena Shooter - Relay Foundry V1")
+	relay_foundry_button.pressed.connect(func() -> void:
+		_load_arena_layout(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)
+	)
+	center.add_child(relay_foundry_button)
 
 	quit_button = _build_button("QuitButton", "Sair")
 	quit_button.pressed.connect(func() -> void:
@@ -137,3 +155,19 @@ func _build_button(node_name: String, label: String) -> Button:
 func _load_mode(scene_path: String) -> void:
 	status_label.text = "Carregando..."
 	get_tree().change_scene_to_file(scene_path)
+
+func _load_arena_layout(layout_id: StringName) -> void:
+	var packed_scene := load(ARENA_SCENE_PATH) as PackedScene
+	if packed_scene == null:
+		status_label.text = "Arena indisponivel"
+		return
+	status_label.text = "Carregando %s..." % ArenaLayoutCatalogScript.get_layout_display_name(layout_id)
+	var next_scene := packed_scene.instantiate()
+	if next_scene.has_method("set_arena_layout"):
+		next_scene.set_arena_layout(layout_id)
+	var tree := get_tree()
+	var current := tree.current_scene
+	tree.root.add_child(next_scene)
+	tree.current_scene = next_scene
+	if current != null:
+		current.queue_free()
