@@ -3,6 +3,7 @@ extends Node3D
 
 const FootballFieldBuilderScript = preload("res://modes/football/football_field_builder.gd")
 const FootballRuntimeSpawnerScript = preload("res://modes/football/football_runtime_spawner.gd")
+const FootballMatchFlowControllerScript = preload("res://modes/football/football_match_flow_controller.gd")
 const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
@@ -661,45 +662,7 @@ func _resize_scoreboard_viewports_for_render_profile() -> void:
 	FootballScoreboardControllerScript.resize_viewports(self, RenderProfileScript)
 
 func _restart_play(after_goal: bool, start_countdown: bool = true) -> void:
-	PerfProbeScript.mark(self, "event.restart_play", "after_goal=%s" % str(after_goal))
-	phase_label = &"kickoff" if not after_goal else &"reset"
-	Engine.time_scale = 1.0
-	goal_slowmo_remaining = 0.0
-	player_super_used_this_kickoff = false
-	bot_super_used_this_kickoff = false
-	if after_goal:
-		_advance_kickoff_owner()
-	var ball_spawn := _get_ball_spawn_for_kickoff()
-	player.global_position = _get_player_spawn_for_kickoff()
-	player.rotation = Vector3.ZERO
-	player.configure_for_round()
-	player.clear_movement_impulses()
-	bot.global_position = _get_bot_spawn_for_kickoff()
-	bot.rotation.y = PI
-	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH), FIELD_HALF_WIDTH, FIELD_HALF_LENGTH)
-	bot.set_difficulty(bot_difficulty_id)
-	_snap_kickoff_avatar_facing()
-	player_kickoff_waiting_for_touch = kickoff_owner == &"player" and not match_over
-	if player_kickoff_waiting_for_touch and bot.has_method("start_kickoff_defense_hold"):
-		bot.start_kickoff_defense_hold(_get_player_kickoff_bot_defense_position(ball_spawn))
-	ball.teleport_to_spawn(ball_spawn)
-	_update_kickoff_marker(ball_spawn, true)
-	if chase_camera != null:
-		chase_camera.snap_to_target()
-	player_touch_cooldown_remaining = 0.0
-	arcade_contact_cooldown_remaining = 0.0
-	ball_contact_audio_cooldown_remaining = 0.0
-	player_ball_control_state = &"free"
-	player_ball_control_strength = 0.0
-	last_kick_assist_strength = 0.0
-	if match_over:
-		bot.set_celebrating(true)
-	else:
-		bot.set_celebrating(false)
-	if start_countdown and not intro_open:
-		_start_kickoff_countdown()
-	else:
-		phase_label = &"play"
+	FootballMatchFlowControllerScript.restart_play(self, after_goal, start_countdown)
 
 func _on_player_kick_requested(_origin: Vector3, _direction: Vector3, _damage: float, _knockback: float) -> void:
 	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, false)
@@ -1257,34 +1220,6 @@ func _format_result_stats(summary: Dictionary, player_code: String, bot_code: St
 		int(summary.get("longest_touch_streak", 0))
 	]
 
-func _advance_kickoff_owner() -> void:
-	kickoff_owner = &"bot" if kickoff_owner == &"player" else &"player"
-
-func _get_player_spawn_for_kickoff() -> Vector3:
-	if kickoff_owner == &"bot":
-		return Vector3(0.0, PLAYER_SPAWN.y, FIELD_HALF_LENGTH - BOT_KICKOFF_PLAYER_SAFE_Z_OFFSET)
-	return PLAYER_SPAWN
-
-func _get_bot_spawn_for_kickoff() -> Vector3:
-	if kickoff_owner == &"bot":
-		return Vector3(0.0, BOT_SPAWN.y, -FIELD_HALF_LENGTH + 9.0)
-	return _get_player_kickoff_bot_defense_position(_get_ball_spawn_for_kickoff())
-
-func _get_ball_spawn_for_kickoff() -> Vector3:
-	if kickoff_owner == &"bot":
-		return Vector3(0.0, BALL_SPAWN.y, -9.0)
-	return Vector3(0.0, BALL_SPAWN.y, 9.0)
-
-func _get_player_kickoff_bot_defense_position(ball_spawn: Vector3) -> Vector3:
-	var own_goal := Vector3(0.0, BOT_SPAWN.y, GOAL_LINE_NORTH)
-	return ball_spawn.lerp(own_goal, PLAYER_KICKOFF_BOT_DEFENSE_RATIO)
-
-func _snap_kickoff_avatar_facing() -> void:
-	if player != null and bot != null and player_avatar != null and player_avatar.has_method("snap_visual_facing_direction"):
-		player_avatar.snap_visual_facing_direction(bot.global_position - player.global_position, player.rotation.y)
-	if player != null and bot != null and bot_avatar != null and bot_avatar.has_method("snap_visual_facing_direction"):
-		bot_avatar.snap_visual_facing_direction(player.global_position - bot.global_position, bot.rotation.y)
-
 func _get_kit_code(country_kit_id: StringName) -> String:
 	match country_kit_id:
 		&"brazil":
@@ -1327,54 +1262,13 @@ func _get_stadium_scoreboard_phase_text() -> String:
 	return FootballScoreboardControllerScript.get_phase_text(self)
 
 func _start_kickoff_countdown() -> void:
-	debug_kickoff_countdown_start_count += 1
-	kickoff_countdown_remaining = KICKOFF_COUNTDOWN_DURATION
-	countdown_last_number = int(ceilf(KICKOFF_COUNTDOWN_DURATION))
-	phase_label = &"kickoff"
-	_request_hud_and_scoreboard_refresh()
-	_set_round_input_locked(true)
-	if hud != null:
-		hud.show_announcement("SAIDA PLAYER" if kickoff_owner == &"player" else "SAIDA BOT", 0.68, &"kickoff_owner")
-		hud.show_countdown("3", 0.45)
-	if feedback != null:
-		feedback.play_countdown_tick(false)
-		feedback.set_ambience_ducked(false)
+	FootballMatchFlowControllerScript.start_kickoff_countdown(self)
 
 func _update_kickoff_countdown(delta: float) -> void:
-	kickoff_countdown_remaining = maxf(0.0, kickoff_countdown_remaining - delta)
-	var next_number := int(ceilf(kickoff_countdown_remaining))
-	if next_number > 0 and next_number != countdown_last_number:
-		countdown_last_number = next_number
-		if hud != null:
-			hud.show_countdown(str(next_number), 0.36)
-		if feedback != null:
-			feedback.play_countdown_tick(false)
-	if kickoff_countdown_remaining > 0.0:
-		return
-	_set_round_input_locked(false)
-	phase_label = &"play"
-	_request_hud_and_scoreboard_refresh()
-	if hud != null:
-		hud.show_countdown("VAI!", 0.48)
-	if feedback != null:
-		feedback.play_countdown_tick(true)
-		feedback.play_referee_whistle(ball.global_position if ball != null else Vector3.ZERO)
+	FootballMatchFlowControllerScript.update_kickoff_countdown(self, delta)
 
 func _set_round_input_locked(is_locked: bool) -> void:
-	if is_locked:
-		_set_player_persistent_vfx(false, false)
-	if player != null and player.has_method("set_input_locked"):
-		player.set_input_locked(is_locked)
-	if bot != null:
-		bot.set_physics_process(not is_locked)
-	if is_locked:
-		if player != null:
-			player.clear_movement_impulses()
-		if bot != null:
-			bot.velocity = Vector3.ZERO
-		if ball != null:
-			ball.linear_velocity = Vector3.ZERO
-			ball.angular_velocity = Vector3.ZERO
+	FootballMatchFlowControllerScript.set_round_input_locked(self, is_locked)
 
 func _update_player_presentation_fx(_delta: float) -> void:
 	var boost_fraction := 0.0
@@ -1504,26 +1398,16 @@ func _update_perf_scenario(delta: float) -> void:
 	FootballPerfScenarioScript.update(self, delta, PerfProbeScript, RenderProfileScript)
 
 func _update_kickoff_marker(ball_spawn: Vector3, is_visible: bool) -> void:
-	if kickoff_marker == null:
-		return
-	kickoff_marker.global_position = Vector3(ball_spawn.x, 0.045, ball_spawn.z)
-	kickoff_marker.visible = is_visible
+	FootballMatchFlowControllerScript.update_kickoff_marker(self, ball_spawn, is_visible)
 
 func _notify_player_touched_ball() -> void:
-	if player_kickoff_waiting_for_touch:
-		player_kickoff_waiting_for_touch = false
-		if bot != null and bot.has_method("release_kickoff_defense_hold"):
-			bot.release_kickoff_defense_hold()
-	_notify_ball_touched_by(&"player")
+	FootballMatchFlowControllerScript.notify_player_touched_ball(self)
 
 func _notify_any_ball_touched() -> void:
-	_notify_ball_touched_by(&"none")
+	FootballMatchFlowControllerScript.notify_any_ball_touched(self)
 
 func _notify_ball_touched_by(team: StringName) -> void:
-	if team == &"player" or team == &"bot":
-		match_stats = FootballMatchRulesScript.record_touch_stat(match_stats, team)
-	if kickoff_marker != null:
-		kickoff_marker.visible = false
+	FootballMatchFlowControllerScript.notify_ball_touched_by(self, team)
 
 func _record_shot_stat(team: StringName, super_used: bool) -> void:
 	match_stats = FootballMatchRulesScript.record_shot_stat(match_stats, team, super_used)
