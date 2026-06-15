@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 04B - Bot Pickup Commitment V1`
+- Active stage: `Track 05 - Quake Duel Route Control Bot V1`
 - Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK04B_BOT_PICKUP_COMMITMENT_READY_FOR_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK05_QUAKE_DUEL_ROUTE_CONTROL_BOT_READY_FOR_SMOKE`
 
 ## Current Truth
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke, with one follow-up issue: the bot sometimes ignored HP/boost pickups even when beside them.
+Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment, then Fabio reported the bot still prioritized fighting/strafe over route movement and failed the long jump pad.
 
 ## Track 01 Delivered
 
@@ -77,6 +77,25 @@ Delivered:
 
 ## Active Track
 
+`Track 05 - Quake Duel Route Control Bot V1`
+
+Goal:
+
+- Make movement objective, stack and item control govern bot movement.
+- Keep visible-target shooting active as a combat overlay instead of canceling routes.
+- Make jump pad routes committed through approach, flight and landing.
+
+Delivered:
+
+- Added `docs/bot-route-control.md` as the route-control contract.
+- Changed bot windup/shooting into a combat overlay that preserves item/jump routes.
+- Added health/overcharge scoring bias based on stack state.
+- Reduced default strafe/cover dominance in engage/cooldown flow.
+- Added jump pad flight and landing commitment state.
+- Added tests for healthy overcharge priority, shooting without canceling item route and jump pad landing commitment.
+
+## Previous Track
+
 `Track 04B - Bot Pickup Commitment V1`
 
 Goal:
@@ -118,10 +137,10 @@ Latest result:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 25/25, 211 asserts
+# PASS, GUT 28/28, 229 asserts
 ```
 
-Manual smoke lives in `docs/validation.md`; Track 04B smoke should focus on the bot taking nearby useful HP/boost pickups while still keeping combat pressure fair.
+Manual smoke lives in `docs/validation.md`; Track 05 smoke should focus on route-first movement, long jump pad completion, HP/boost priority by health state and shooting during movement without route cancellation.
 
 ## Read Next
 
@@ -136,3 +155,4 @@ Manual smoke lives in `docs/validation.md`; Track 04B smoke should focus on the 
 9. `implementation/tracks/track-03-arena-tactical-context-proof-v1/current-status.md`
 10. `implementation/tracks/track-04-arena-movement-flow-bot-navigation-v1/current-status.md`
 11. `implementation/tracks/track-04b-bot-pickup-commitment-v1/current-status.md`
+12. `implementation/tracks/track-05-quake-duel-route-control-bot-v1/current-status.md`

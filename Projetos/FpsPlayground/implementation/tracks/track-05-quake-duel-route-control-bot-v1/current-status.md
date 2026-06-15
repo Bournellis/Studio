@@ -1,6 +1,6 @@
 # Track 05 - Quake Duel Route Control Bot V1
 
-- Status: `DOING`
+- Status: `READY_FOR_HUMAN_SMOKE`
 - Started: `2026-06-15`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track05-quake-duel-route-control-bot-v1`
@@ -51,3 +51,27 @@ git diff --check
 .\tools\check_doc_drift.ps1
 git status --short
 ```
+
+## Delivered
+
+- Added `docs/bot-route-control.md` with the movement-objective/combat-overlay contract.
+- Converted visible-target shooting into an overlay so route movement can continue while firing.
+- Preserved item routes when a shot is fired instead of switching to cooldown/strafe.
+- Added healthy overcharge priority and stronger low-health health route bias.
+- Reduced cover/strafe dominance in the default engage/cooldown flow.
+- Added jump pad flight/landing commitment so long jump pad routes complete before generic strafe resumes.
+- Added debug hooks and focused tests for route-control behavior.
+
+## Validation
+
+- `tools/validate.gd`: PASS, GUT `28/28`, `229` asserts.
+- Added tests:
+  - `test_bot_prioritizes_overcharge_route_when_healthy_even_with_line_of_sight`
+  - `test_bot_combat_overlay_shoots_without_canceling_item_route`
+  - `test_bot_commits_to_jump_pad_landing_after_launch`
+
+## Handoff
+
+- Ready for Fabio smoke focused on Quake-style route control.
+- Smoke priorities: long jump pad completion, high-health overcharge priority, low-health health/reset priority and shooting during routes.
+- Push pending: Fabio via GitHub Desktop (`origin` remote is Fabio-only).

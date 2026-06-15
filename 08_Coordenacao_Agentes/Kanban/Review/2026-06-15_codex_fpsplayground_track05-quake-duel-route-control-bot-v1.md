@@ -6,7 +6,7 @@
 - Branch: `codex/fpsplayground/track05-quake-duel-route-control-bot-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track05-quake-duel-route-control-bot-v1`
 - Base: `codex/fpsplayground/track04b-bot-pickup-commitment-v1`
-- Status: `DOING`
+- Status: `READY_FOR_REVIEW`
 
 ## Objetivo
 
@@ -52,3 +52,17 @@ git status --short
 ## Handoff
 
 Fechar em Review com foco de smoke humano em item control, jump pad longo e combate durante rota.
+
+## Resultado
+
+- Bot agora trata movimento de mapa como camada principal.
+- Tiro visivel roda como overlay e nao cancela rotas de item/jump.
+- Vida alta passa a favorecer overcharge/boost de dano.
+- Vida baixa preserva prioridade de health/reset.
+- Jump pad longo recebe compromisso de flight/landing antes de voltar ao strafe.
+
+## Validacao Final
+
+- `tools/validate.gd`: PASS, GUT `28/28`, `229 asserts`.
+- `git diff --check`: PASS.
+- `tools/check_doc_drift.ps1`: PASS.
