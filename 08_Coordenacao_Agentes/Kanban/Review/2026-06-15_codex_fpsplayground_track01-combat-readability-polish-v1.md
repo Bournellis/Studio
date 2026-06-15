@@ -5,7 +5,7 @@
 - Branch: `codex/fpsplayground/track01-combat-readability-polish-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track01-combat-readability-polish-v1`
 - Project: `Projetos/FpsPlayground`
-- Status: `DOING`
+- Status: `READY_FOR_HUMAN_SMOKE`
 
 ## Objective
 
@@ -54,4 +54,17 @@ Resume `FpsPlayground` after accepted human Arena Shooter regression and improve
 
 ## Next Handoff Point
 
-After automated validation passes, hand off for human smoke focused on whether combat events are easier to understand.
+Human smoke focused on whether combat events are easier to understand.
+
+## Delivered
+
+- HUD event colors/messages for bot tell, player damage, Plasma hit and overcharge hit.
+- Health/overcharge pickup halos and beacons.
+- Jump pad launch direction cues.
+- Focused GUT coverage for readability nodes and HUD event contracts.
+
+## Validation
+
+- Baseline: after one-time fresh worktree import, `tools/validate.gd` PASS, GUT `14/14`, `95` asserts.
+- Final: `tools/validate.gd` PASS, GUT `15/15`, `118` asserts.
+- Known noise: GUT UID/text-path fallback warnings.

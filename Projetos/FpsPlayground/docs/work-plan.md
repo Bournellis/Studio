@@ -1,6 +1,6 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_DOING`
+- Status: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_READY_FOR_HUMAN_SMOKE`
 - Current surface: FPS arena lab.
 
 ## North Star
@@ -17,7 +17,7 @@ Keep `FpsPlayground` as a clean first-person gameplay laboratory for arena movem
 
 ## Active Track
 
-`Track 01 - Combat Readability Polish V1` is active after human Arena Shooter regression OK.
+`Track 01 - Combat Readability Polish V1` is ready for human smoke after automated validation.
 
 Goals:
 
@@ -26,6 +26,12 @@ Goals:
 - Improve Plasma Bolt trajectory, impact and overcharge distinction.
 - Improve bot shot tell readability.
 - Improve pickup and jump pad readability only where it supports combat decisions.
+
+Delivered:
+
+- HUD event colors and messages for bot tell, damage intake, Plasma hit and overcharge hit.
+- Pickup halos/beacons and jump pad launch direction cues.
+- Focused tests for scene readability nodes and HUD event contracts.
 
 Non-goals:
 

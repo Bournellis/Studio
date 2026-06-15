@@ -5,8 +5,8 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 01 - Combat Readability Polish V1`
-- Active stage status: `DOING`
-- Status marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_DOING`
+- Active stage status: `READY_FOR_HUMAN_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_READY_FOR_HUMAN_SMOKE`
 
 ## Current Truth
 
@@ -28,14 +28,23 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Automated baseline is green and human regression is accepted. Track 01 is active and must preserve the current `Duel Pit V2` combat contract while making combat events easier to read.
+Automated validation is green after Track 01 implementation. The next gate is human smoke focused on whether combat events are easier to read.
+
+## Track 01 Delivered
+
+- HUD event colors and messages for bot tell, player damage, Plasma hit and overcharge hit.
+- Dedicated HUD contract for Plasma hit/kill instead of using only generic hit confirm.
+- Readability beacons/halos for health and overcharge pickups.
+- Launch direction cues on both jump pads.
+- Focused GUT coverage for combat readability HUD events and scene nodes.
 
 ## Validation
 
-Primary command:
+Latest result:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
+# PASS, GUT 15/15, 118 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.

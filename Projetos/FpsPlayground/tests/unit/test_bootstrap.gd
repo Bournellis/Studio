@@ -2,6 +2,7 @@ extends "res://addons/gut/test.gd"
 
 const BootstrapSceneGeneratorScript = preload("res://tools/bootstrap_scene_generator.gd")
 const PlayerScript = preload("res://gameplay/player/fps_player_controller.gd")
+const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FeedbackScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 
 const EXPECTED_ACTIONS: PackedStringArray = [
@@ -69,6 +70,12 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Projectiles"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/HealthShard"))
 	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/Overcharge"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/HealthShard/ReadabilityHalo"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/HealthShard/ReadabilityBeacon"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/Overcharge/ReadabilityHalo"))
+	assert_not_null(arena.get_node_or_null("RuntimeRoot/Pickups/Overcharge/ReadabilityBeacon"))
+	assert_not_null(arena.get_node_or_null("WestJumpPad/LaunchDirectionCue"))
+	assert_not_null(arena.get_node_or_null("EastJumpPad/LaunchDirectionCue"))
 	assert_not_null(arena.get_node_or_null("ArenaHud"))
 	assert_not_null(arena.get_node_or_null("FeedbackController"))
 
@@ -86,6 +93,7 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/PlayerLabel"))
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/CombatLoopLabel"))
 	assert_not_null(hud_root.get_node_or_null("Crosshair/HitMarker"))
+	assert_not_null(hud_root.get_node_or_null("CombatEventLabel"))
 	assert_not_null(hud_root.get_node_or_null("PauseMenuPanel/PauseMenuMargin/PauseMenuBox/SensitivitySlider"))
 	assert_no_new_orphans()
 
@@ -123,6 +131,29 @@ func test_player_shot_ray_damages_bot_when_aimed_at_body() -> void:
 
 	assert_lt(bot.health, before)
 	assert_eq(feedback.last_event, &"hit")
+	assert_no_new_orphans()
+
+func test_hud_tracks_combat_readability_events() -> void:
+	var hud = ArenaHudScript.new()
+	add_child_autofree(hud)
+	await get_tree().process_frame
+
+	hud.show_bot_tell(0.24)
+	assert_eq(hud.last_feedback, &"bot_tell")
+	assert_eq(hud.bot_tell_count, 1)
+	assert_gt(hud.bot_tell_feedback_time, 0.0)
+	assert_eq(hud.event_label.text, "BOT FIRING")
+
+	hud.show_plasma_hit(true, false)
+	assert_eq(hud.last_feedback, &"overcharge_hit")
+	assert_eq(hud.plasma_hit_count, 1)
+	assert_true(hud.last_plasma_hit_overcharged)
+	assert_eq(hud.event_label.text, "OVERCHARGE HIT")
+
+	hud.show_player_damage(9.0, 0.82)
+	assert_eq(hud.last_feedback, &"player_damage")
+	assert_eq(hud.player_damage_count, 1)
+	assert_eq(hud.event_label.text, "UNDER FIRE -9")
 	assert_no_new_orphans()
 
 func test_player_alt_fire_spawns_visible_plasma_projectile() -> void:
@@ -190,5 +221,11 @@ func test_feedback_controller_builds_synthetic_audio_stream() -> void:
 	feedback.play_player_shot(Vector3.ZERO, Vector3.FORWARD)
 	assert_eq(feedback.last_event, &"player_shot")
 	assert_gt(feedback.debug_active_effect_count(), 0)
+	feedback.play_bot_tell(Vector3.ZERO, Vector3.FORWARD * 2.0, 0.2)
+	assert_eq(feedback.last_event, &"bot_tell")
+	assert_eq(feedback.bot_tell_count, 1)
+	feedback.play_plasma_hit(Vector3.FORWARD, true)
+	assert_eq(feedback.last_event, &"plasma_hit")
+	assert_eq(feedback.plasma_hit_count, 1)
 	assert_not_null(feedback.debug_make_synthetic_stream(440.0, 0.02))
 	assert_no_new_orphans()

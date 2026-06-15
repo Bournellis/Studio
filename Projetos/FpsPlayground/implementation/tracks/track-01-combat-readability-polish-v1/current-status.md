@@ -1,8 +1,8 @@
 # Track 01 - Combat Readability Polish V1
 
 - Created: `2026-06-15`
-- Status: `DOING`
-- Status marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_DOING`
+- Status: `READY_FOR_HUMAN_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_READY_FOR_HUMAN_SMOKE`
 - Branch: `codex/fpsplayground/track01-combat-readability-polish-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track01-combat-readability-polish-v1`
 
@@ -51,10 +51,19 @@ The track should help the player understand:
 - [x] Worktree and Kanban registered.
 - [x] Baseline validation run.
 - [x] Retomada/status documentation updated.
-- [ ] Feedback/HUD implementation.
-- [ ] Focused test coverage updated.
-- [ ] Final automated validation.
+- [x] Feedback/HUD implementation.
+- [x] Focused test coverage updated.
+- [x] Final automated validation.
 - [ ] Handoff for human combat readability smoke.
+
+## Delivered
+
+- Added HUD event coloring and explicit `BOT FIRING`, `UNDER FIRE`, `PLASMA HIT` and `OVERCHARGE HIT` readability messages.
+- Added dedicated HUD tracking for Plasma hits and bot shot tells.
+- Routed bot windup into HUD feedback.
+- Added health/overcharge pickup readability halos and beacons.
+- Added launch direction cues to jump pads.
+- Added tests for readability nodes and HUD/feedback event contracts.
 
 ## Validation
 
@@ -67,3 +76,8 @@ git status --short
 ```
 
 Manual smoke lives in `docs/validation.md`.
+
+Final automated result:
+
+- `tools/validate.gd`: PASS, GUT `15/15`, `118` asserts.
+- Known warning class remains limited to GUT UID/text-path fallback warnings.

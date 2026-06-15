@@ -103,6 +103,7 @@ static func _add_jump_pad(parent: Node3D, jump_pads: Array[Dictionary], pad_id: 
 	core_mesh.position = Vector3(0.0, 0.18, 0.0)
 	core_mesh.material_override = RuntimePrimitiveFactoryScript.build_material(Color(0.95, 0.95, 1.0, 1.0), 2.2, 0.84)
 	pad.add_child(core_mesh)
+	_add_jump_pad_launch_cue(pad, pad_position, target_position)
 
 	var light := OmniLight3D.new()
 	light.name = "JumpPadLight"
@@ -120,3 +121,20 @@ static func _add_jump_pad(parent: Node3D, jump_pads: Array[Dictionary], pad_id: 
 		"player_cooldown": 0.0,
 		"bot_cooldown": 0.0,
 	})
+
+static func _add_jump_pad_launch_cue(pad: Node3D, pad_position: Vector3, target_position: Vector3) -> void:
+	var flat_direction := target_position - pad_position
+	flat_direction.y = 0.0
+	if flat_direction.length_squared() <= 0.0001:
+		flat_direction = Vector3.FORWARD
+	flat_direction = flat_direction.normalized()
+
+	var cue := MeshInstance3D.new()
+	cue.name = "LaunchDirectionCue"
+	var cue_mesh := BoxMesh.new()
+	cue_mesh.size = Vector3(0.28, 0.08, 1.45)
+	cue.mesh = cue_mesh
+	cue.position = flat_direction * 0.62 + Vector3.UP * 0.3
+	cue.rotation.y = atan2(flat_direction.x, flat_direction.z)
+	cue.material_override = RuntimePrimitiveFactoryScript.build_material(Color(0.82, 0.98, 1.0, 1.0), 2.4, 0.72, true)
+	pad.add_child(cue)

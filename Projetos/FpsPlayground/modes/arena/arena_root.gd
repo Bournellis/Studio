@@ -435,9 +435,9 @@ func _resolve_player_projectile_hit(entry: Dictionary, impact_position: Vector3,
 		collider.take_damage(damage, &"player")
 		if collider.has_method("apply_knockback"):
 			collider.apply_knockback(shot_direction, knockback, PLAYER_PLASMA_KNOCKBACK_LIFT)
+		var killed: bool = collider.get("is_dead") == true
 		if hud != null:
-			var killed: bool = collider.get("is_dead") == true
-			hud.show_hit_confirm(killed)
+			hud.show_plasma_hit(overcharged, killed)
 		if feedback != null:
 			feedback.play_plasma_hit(impact_position, overcharged)
 			var knockback_position := impact_position
@@ -515,6 +515,8 @@ func _on_player_damaged(amount: float, remaining_health: float) -> void:
 func _on_bot_shot_windup_started(origin: Vector3, target_position: Vector3, duration: float) -> void:
 	if round_ended or menu_open:
 		return
+	if hud != null:
+		hud.show_bot_tell(duration)
 	if feedback != null:
 		feedback.play_bot_tell(origin, target_position, duration)
 
@@ -622,6 +624,7 @@ func _create_pickup(pickup_kind: StringName, pickup_position: Vector3, color: Co
 		mesh_instance.mesh = mesh
 	mesh_instance.material_override = _build_pickup_material(color)
 	pickup.add_child(mesh_instance)
+	_add_pickup_readability_beacon(pickup, pickup_kind, color)
 
 	var light := OmniLight3D.new()
 	light.name = "PickupLight"
@@ -636,6 +639,28 @@ func _create_pickup(pickup_kind: StringName, pickup_position: Vector3, color: Co
 		"available": true,
 		"respawn_remaining": 0.0
 	}
+
+func _add_pickup_readability_beacon(pickup: Node3D, pickup_kind: StringName, color: Color) -> void:
+	var halo := MeshInstance3D.new()
+	halo.name = "ReadabilityHalo"
+	var halo_mesh := CylinderMesh.new()
+	halo_mesh.top_radius = 0.72 if pickup_kind == &"health" else 0.82
+	halo_mesh.bottom_radius = halo_mesh.top_radius
+	halo_mesh.height = 0.035
+	halo_mesh.radial_segments = 24
+	halo.mesh = halo_mesh
+	halo.position = Vector3(0.0, -0.32, 0.0)
+	halo.material_override = _build_pickup_material(Color(color.r, color.g, color.b, 0.82))
+	pickup.add_child(halo)
+
+	var beacon := MeshInstance3D.new()
+	beacon.name = "ReadabilityBeacon"
+	var beacon_mesh := BoxMesh.new()
+	beacon_mesh.size = Vector3(0.08, 1.15, 0.08)
+	beacon.mesh = beacon_mesh
+	beacon.position = Vector3(0.0, 0.85, 0.0)
+	beacon.material_override = _build_pickup_material(Color(color.r, color.g, color.b, 0.68))
+	pickup.add_child(beacon)
 
 func _process_pickups(delta: float) -> void:
 	for pickup_kind in pickups.keys():
