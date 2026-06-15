@@ -4,39 +4,25 @@ import { verifiedAuthContext } from "../_shared/auth_context.ts";
 const DEFAULT_MANIFEST: ReleaseManifest = {
   schema_version: "internal_alpha_manifest_v1",
   channel: "internal_alpha",
-  latest_version: "0.0.23-alpha.0",
-  latest_version_code: 23,
+  latest_version: "0.0.24-alpha.0",
+  latest_version_code: 24,
   minimum_supported_version: "0.0.13-alpha.0",
   minimum_supported_version_code: 13,
-  released_at: "2026-06-10T00:00:00Z",
+  released_at: "2026-06-15T06:36:35Z",
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/",
   notes: [
-    "Bosque Overlay Layer And Readiness Authority v1 publicado na URL principal de Internal Alpha.",
+    "Arena UX Readability Recovery v1 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto publicado.",
-    "Bosque permanece vivo e visivel enquanto Arena, Refugio/Base, Loja, Social e Perfil abrem como overlay.",
-    "Overlay usa stack unico com Voltar/Fechar, pausa input/coleta/movimento do Bosque e preserva o node existente.",
-    "Arena PVE roda dentro do overlay, incluindo replay, buff choice, summary e tentativa ativa preservada.",
-    "Voltar, Fechar e Esc/Web usam a mesma autoridade de fechamento do overlay.",
-    "Arena active/replay agora usa camada fullscreen acima do painel do menu, sem corte lateral do duelo.",
-    "Confirmacoes de Arena, Loja e fluxos futuros usam modal global acima de menu e Arena.",
-    "Menus com refresh de servidor mostram estado de sincronizacao antes de aceitar comandos dependentes da resposta.",
-    "Arena abandonar/encerrar valida liberacao real da tentativa antes de declarar sucesso e cobre tentativa antiga local sem ID remoto valido.",
-    "Social, Loja e Arena usam controles interativos no overlay com foco, texto, confirmacao, retomada e abandono validados no Web/canvas.",
-    "Menus abertos pelo Bosque usam rota de overlay sem acao mutante fantasma.",
-    "Refresh read-only nao bloqueia fechamento; respostas tardias sao ignoradas quando o overlay fecha ou muda de rota.",
-    "Fechar/Voltar bloqueia apenas durante mutacoes criticas da Arena ou replay em andamento.",
-    "Bosque integrado continua ocultando o viewport ate aplicar bootstrap remoto ou cache canonico, evitando flash de full spawn.",
-    "Arena PVE exporta HP/Mana iniciais buffados no log e o replay aplica battle_start/participants antes da primeira acao.",
-    "Manifesto recomenda build 0.0.23-alpha.0 e mantem build minima 0.0.13-alpha.0.",
-    "Coletas, deposito no Bau, craft local e orientacao so aparecem como salvos depois de ACK do servidor.",
-    "Nodes do Bosque mantem cooldown por item via node_state.next_spawn_at e descartam rejeicoes terminais de cooldown sem fila infinita.",
-    "Coleta ativa nao reinicia por movimento leve e ACKs de checkpoint nao fazem rollback visual da mesma sessao.",
-    "Menu usa busy por escopo para nao congelar acoes independentes durante requisicoes pendentes.",
-    "Fogueira Estavel I so libera station/receitas depois de checkpoint ACK com structures.fogueira_estavel_1 confirmado.",
-    "Coletas locais de Resto ritual e Po cinzento nao alteram Ossos ou Po de Osso globais.",
-    "Arena Preparacao aceita qualquer pocao simples disponivel sem regredir o slot unico por batalha.",
-    "Battle Lab e Progression Lab no Web usam lab-runner remoto com a mesma conta alpha Supabase do jogo.",
+    "Arena PVE mostra roteiro visivel: tutorial recomendado, primeira arena real, buffs temporarios, resumo e recuperacao.",
+    "CTA da Arena diferencia tutorial recomendado da primeira arena real de tres duelos.",
+    "Tentativa ativa mostra duelo atual, HP reset por duelo, proximo inimigo e buff temporario aplicado.",
+    "Escolha de buff explica que o bonus e temporario e vale para o proximo duelo, sem inventario ou save permanente.",
+    "Resumo final traduz a recompensa tecnica em leitura humana e aponta o proximo passo.",
+    "Abandonar e retomar explicam consequencia, confirmacao e ausencia de recompensa de conclusao.",
+    "A publicacao preserva backend, economia, tuning, conteudo, PVP e Openworld sem expansao.",
+    "Arena core ainda depende de prova humana antes de tuning ou expansao.",
+    "Manifesto recomenda build 0.0.24-alpha.0 e mantem build minima 0.0.13-alpha.0.",
     "Progression Lab usa save separado e nao pontua ranking.",
   ],
   artifacts: {
@@ -44,14 +30,14 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
       label: "Android APK",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      sha256: "986bff2ac180de883f5dfa97078e0a3ff31e2c0d4de139b8863c18e1d37507ab",
+      sha256: "664dd0d93891220fb1f03e77fb43c2f11fa41fa94c26590182c19d9f4d14b97a",
       auth_required: "true",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      sha256: "4659da781b027dcb1c9f1b5d6ec32e56630eac14160413a35cb75a90c2e8c0dc",
+      sha256: "9b0fc25e2ac9f770c74a033a7ad9e133ac76ea46f4e03d32763b37b0e57f69e6",
       auth_required: "true",
     },
     web: {
@@ -163,7 +149,7 @@ interface PlayerRow {
 }
 
 const DEFAULT_RELEASE_ROOT =
-  "internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c";
+  "internal-alpha/v0-arena-ux-readability-recovery-v1-20260615-52c870c7";
 
 Deno.serve(async (request: Request) => {
   return withCorsResponse(request, await handleCorsRequest(request));

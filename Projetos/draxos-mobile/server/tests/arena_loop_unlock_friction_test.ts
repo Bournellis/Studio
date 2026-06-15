@@ -115,7 +115,7 @@ Deno.test("client Arena loop removes loadout click and continues inside Arena", 
 
   assertIncludes(
     lifecycle,
-    'await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, "Arena iniciada. Loadout travado.")',
+    'await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, "Arena iniciada. Loadout travado; resolva o primeiro duelo.")',
   );
   assertIncludes(
     lifecycle,

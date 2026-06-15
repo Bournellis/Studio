@@ -4,7 +4,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 ## Foco Atual
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1` publicado; aguardando retest humano) + `Projetos/draxos-mobile/` (hardening integrado localmente; candidato Arena UX/readability/recovery validado; aguardando prova humana)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1` publicado; aguardando retest humano) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Arena UX/readability/recovery publicado Web/APK; aguardando prova humana)
 - Pausa temporaria por poucos dias: `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -15,7 +15,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 |---|---|---|---|---|---|
 | P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | `Super Campeao v1.2.1+6ef3074c` publicado em Cloudflare Pages; gates remotos 08A PASS; proximo passo e retest humano Fabio + tester externo |
 | Pausa | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
-| Ativo | DraxosMobile | `Projetos/draxos-mobile/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest, documentacao local e infraestrutura | Hardening integrado localmente preservado; candidato UX/readability/recovery da Arena validado em 2026-06-15, sem publicacao; proximo passo e prova humana do roteiro Arena antes de promocao oficial |
+| Ativo | DraxosMobile | `Projetos/draxos-mobile/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest, documentacao local e infraestrutura | Arena UX/readability/recovery publicado Web/APK `0.0.24-alpha.0` / vc `24`; proximo passo e prova humana do roteiro Arena antes de tuning, PVP, economia, conteudo ou expansao |
 | Pausa | FpsPlayground | `Projetos/FpsPlayground/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
 | Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - |
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado |

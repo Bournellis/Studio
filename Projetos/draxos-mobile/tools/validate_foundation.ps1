@@ -554,18 +554,18 @@ function Assert-CorsAllowedOrigins {
 }
 
 function Assert-LiveDocsReleaseRootFreshness {
-    $currentPackage = "Bosque Overlay Layer And Readiness Authority v1"
-    $currentRoot = "internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c"
-    $currentPreview = "https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev"
-    $currentVersion = "0.0.23-alpha.0"
-    $currentVersionCode = "23"
+    $currentPackage = "Arena UX Readability Recovery v1"
+    $currentRoot = "internal-alpha/v0-arena-ux-readability-recovery-v1-20260615-52c870c7"
+    $currentPreview = "https://101e1ff7.draxos-mobile-internal-alpha.pages.dev"
+    $currentVersion = "0.0.24-alpha.0"
+    $currentVersionCode = "24"
     $minimumVersionCode = "13"
     $hardeningRoot = "internal-alpha/v0-foundation-hardening-v2-hotfix2-20260601-58671a4"
     $hardeningPreview = "https://ca946749.draxos-mobile-internal-alpha.pages.dev"
 
     foreach ($entry in @(
-        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Latest published remote package:", $currentPackage, $currentRoot, $currentPreview, $currentVersion, 'Version code: `23`', 'Minimum supported: `13`', "docs/release-history.md") },
-        @{ Base = $ProjectPath; Path = "docs\release-history.md"; Needles = @("single historical record", $currentPackage, $currentRoot, $currentPreview, $currentVersion, 'vc `23`', 'Minimum supported version code: `13`', $hardeningRoot, $hardeningPreview) },
+        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Latest published remote package:", $currentPackage, $currentRoot, $currentPreview, $currentVersion, 'Version code: `24`', 'Minimum supported: `13`', "docs/release-history.md") },
+        @{ Base = $ProjectPath; Path = "docs\release-history.md"; Needles = @("single historical record", $currentPackage, $currentRoot, $currentPreview, $currentVersion, 'vc `24`', 'Minimum supported version code: `13`', $hardeningRoot, $hardeningPreview) },
         @{ Base = $ProjectPath; Path = "docs\foundation-hardening-v2-readiness-report.md"; Needles = @("Status:", "HISTORICO_BASELINE", $hardeningRoot, $hardeningPreview, "not the latest remote Internal Alpha package") }
     )) {
         foreach ($needle in $entry.Needles) {
@@ -589,7 +589,7 @@ function Assert-LiveDocsReleaseRootFreshness {
         "docs\contracts\update-manifest.md"
     )
     foreach ($relative in $filesWithoutOperationalState) {
-        foreach ($needle in @($currentPackage, $currentRoot, $currentPreview, $currentVersion, 'version code `23`', 'minimum supported version code `13`')) {
+        foreach ($needle in @($currentPackage, $currentRoot, $currentPreview, $currentVersion, 'version code `24`', 'minimum supported version code `13`')) {
             Assert-RelativeFileDoesNotContain -BasePath $ProjectPath -RelativePath $relative -Needle $needle
         }
     }
