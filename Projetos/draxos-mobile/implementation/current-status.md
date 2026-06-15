@@ -4,36 +4,36 @@
 - Project: `draxos-mobile`
 - Portfolio status: see `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Active surface: `Internal Alpha`
-- Active stage: `Bosque Overlay Layer And Readiness Authority v1`
-- Active stage status: `BOSQUE_OVERLAY_LAYER_READINESS_AUTHORITY_V1_PUBLISHED_INTERNAL_ALPHA`
-- Build channel: `internal_alpha` | Version: `0.0.23-alpha.0` | Version code: `23` | Minimum supported: `13`
+- Active stage: `Arena UX Readability Recovery v1`
+- Active stage status: `ARENA_UX_READABILITY_RECOVERY_V1_PUBLISHED_INTERNAL_ALPHA`
+- Build channel: `internal_alpha` | Version: `0.0.24-alpha.0` | Version code: `24` | Minimum supported: `13`
 - Package history, stable URLs and download endpoints: `../docs/release-history.md`
 
 ## Current Truth
 
-- Latest published remote package: `Bosque Overlay Layer And Readiness Authority v1`.
-- Release root: `internal-alpha/v0-bosque-overlay-layer-readiness-authority-v1-20260610-181861c` (from implementation commit `181861c`).
-- Deployment evidence: `https://a9e3b2f9.draxos-mobile-internal-alpha.pages.dev`.
-- The package keeps the Bosque alive, visible and input-paused behind Arena/Base/Shop/Social/Profile overlays, renders Arena active/replay fullscreen above the menu panel, moves confirmations to a global topmost modal, and exposes route readiness (`opening -> refreshing -> ready -> mutating -> critical`) so server-backed menus show synchronization before accepting dependent commands.
+- Latest published remote package: `Arena UX Readability Recovery v1`.
+- Release root: `internal-alpha/v0-arena-ux-readability-recovery-v1-20260615-52c870c7` (from implementation commit `52c870c7`).
+- Deployment evidence: `https://101e1ff7.draxos-mobile-internal-alpha.pages.dev`.
+- The package makes the Arena path readable: visible route guide, tutorial recommended CTA, first real Arena CTA, active attempt state, temporary buff explanation, reward summary copy and abandon/resume consequences.
 - Remote SQL already applied: `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`.
 - Remote functions: `release` redeployed for this package; `arena` remains on Arena PVE Bonus Visual v1; `modes` remains on the operations-v2 backend.
-- Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`. This package answers the two issues he reported afterwards: Arena/new duel appearing under the menu panel, and server-backed menus looking ready before accepting commands.
+- Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`. Bosque overlay/readiness remains preserved under this newer Arena UX package.
 
 ## Operational Vs Product Direction
 
-- Operational package: Bosque Overlay Layer And Readiness Authority v1 is current.
+- Operational package: Arena UX Readability Recovery v1 is current.
 - Product direction: Arena PVE remains the first approved core, governed by `docs/pve-arena-initial-direction.md` and `docs/pve-arena-v1.md`.
-- Arena proof result: Fabio recorded `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN` on `2026-06-14`; Arena direction remains, but the core is not approved for tuning or expansion yet.
+- Arena proof result: Fabio recorded `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN` on `2026-06-14`; this package was published by explicit user approval to support the proof, but the core is still not approved for tuning or expansion yet.
 - Bosque/Openworld: approved integrated Internal Alpha slice, not approval for broad continuous-open-world expansion.
 - Do not open tuning, PVP, economy, content, weapons, spells, potions, final visuals, remote mutation or a new package without an explicit decision.
 
 ## Current Package Evidence
 
-- Local and remote Web/canvas smokes passed for `Fechar`/`Voltar`/Esc, Social `LineEdit` typing, Shop confirm/cancel, Arena retomar/abandonar (`activeAttemptBlocksSelection=false`, `lastArenaOperation.phase=abandon_released`), Arena fullscreen topmost and modal topmost.
-- Direct preview Web launch smoke loaded the game, matched release root and reported no runtime errors; remote manifest/deploy validation passed.
+- ClientQuick, ServerQuick, ReleaseDryRun and RemoteReadOnly passed for this package.
+- Remote preview Web launch smoke loaded the game, matched release root and reported no runtime errors; manifest/deploy validation passed.
 - Anonymous canonical Portal/Web returns Cloudflare Access content; the hash preview is the automated Web evidence and the official URL should be tested with an authenticated Access session.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
-- Artifact SHA256 - APK: `986bff2ac180de883f5dfa97078e0a3ff31e2c0d4de139b8863c18e1d37507ab` | PC ZIP: `4659da781b027dcb1c9f1b5d6ec32e56630eac14160413a35cb75a90c2e8c0dc` | Web index: `0f6e3e655367df73f9a6d3ba2ee5a4e205b487bbda03a108ec9fc6db3a7bd73b`
+- Artifact SHA256 - APK: `664dd0d93891220fb1f03e77fb43c2f11fa41fa94c26590182c19d9f4d14b97a` | PC ZIP: `9b0fc25e2ac9f770c74a033a7ad9e133ac76ea46f4e03d32763b37b0e57f69e6` | Web index: `cca1cba35ec2b5c67de9497af40014d77e2d868a43b978acc301b3031ef9d985`
 
 ## Preserved Lineage And Guardrails
 
@@ -57,20 +57,18 @@ The documentation round on `2026-06-15` formalized the next package as
 `docs/arena-ux-proof-release-discipline-plan.md`: candidate first, automated
 validation, human proof, then verdict before any official package promotion.
 
-The local Arena UX/readability/recovery candidate was implemented and validated
-on `2026-06-15` in commit `52c870c7`, with no remote mutation or publication.
-It improves the visible route guide, tutorial/first-real-arena CTA labels,
-active attempt state, temporary buff explanation, reward summary copy,
-abandon/resume consequences and responsive smoke coverage. The next step is
-human proof using `docs/arena-pve-product-proof.md`; do not promote this as an
-official package or open tuning until Fabio records the verdict.
+The Arena UX/readability/recovery package was published on `2026-06-15` by
+explicit user approval after the local candidate from commit `52c870c7`.
+The next step is human proof using `docs/arena-pve-product-proof.md`; do not
+open tuning, economy, PVP, content expansion or broad Openworld work until
+Fabio records the verdict.
 
 Open decision focus:
 
 1. Preserve active Bosque runtime as local/offline-first feel plus server-owned checkpoint, completion, reward, caps, ledger and audit authority.
 2. Keep Arena regressions in future manual smoke lists: Preparacao visible before start/in active attempts/buff choice, selected victory buff returns to `Resolver duelo`, temporary bonus stats visible in the next fight/replay.
 3. Do not open numeric tuning, economy/content expansion, PVP or broad Openworld work until Arena core exits the `NOT_PROVEN` state.
-4. Do not use a new official package as the first proof step; run a validated candidate and human proof before promotion.
+4. Treat the current package as a technical publication for proof, not as product approval of the Arena core.
 
 ## Live Boundaries
 

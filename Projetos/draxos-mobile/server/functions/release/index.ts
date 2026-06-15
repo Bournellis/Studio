@@ -8,7 +8,7 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
   latest_version_code: 24,
   minimum_supported_version: "0.0.13-alpha.0",
   minimum_supported_version_code: 13,
-  released_at: "2026-06-15T00:00:00Z",
+  released_at: "2026-06-15T06:36:35Z",
   requires_save_reset: false,
   portal_url: "https://draxos-mobile-internal-alpha.pages.dev/",
   notes: [
@@ -30,14 +30,14 @@ const DEFAULT_MANIFEST: ReleaseManifest = {
       label: "Android APK",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      sha256: "986bff2ac180de883f5dfa97078e0a3ff31e2c0d4de139b8863c18e1d37507ab",
+      sha256: "664dd0d93891220fb1f03e77fb43c2f11fa41fa94c26590182c19d9f4d14b97a",
       auth_required: "true",
     },
     pc_windows: {
       label: "PC Windows ZIP",
       url:
         "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      sha256: "4659da781b027dcb1c9f1b5d6ec32e56630eac14160413a35cb75a90c2e8c0dc",
+      sha256: "9b0fc25e2ac9f770c74a033a7ad9e133ac76ea46f4e03d32763b37b0e57f69e6",
       auth_required: "true",
     },
     web: {
