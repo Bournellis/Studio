@@ -1,6 +1,6 @@
 # Track 03 - Arena Tactical Context Proof V1
 
-- Status: `IN_PROGRESS`
+- Status: `READY_FOR_HUMAN_SMOKE`
 - Started: `2026-06-15`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track03-arena-tactical-context-proof-v1`
@@ -15,13 +15,21 @@ The project should support at least two playable arena layouts that publish thei
 
 ## Planned Work
 
-1. Document the Track 03 scope, validation and tactical layout contract.
-2. Extract arena layout data into a small catalog.
-3. Preserve `Duel Pit V2` as the default layout.
-4. Add `Relay Foundry V1` as a second arena with distinct geometry and tactical routes.
-5. Add arena selection from the main menu.
-6. Add automated tests for multi-arena context and selection.
-7. Run validation and prepare human smoke instructions.
+1. Document the Track 03 scope, validation and tactical layout contract. DONE
+2. Extract arena layout data into a small catalog. DONE
+3. Preserve `Duel Pit V2` as the default layout. DONE
+4. Add `Relay Foundry V1` as a second arena with distinct geometry and tactical routes. DONE
+5. Add arena selection from the main menu. DONE
+6. Add automated tests for multi-arena context and selection. DONE
+7. Run validation and prepare human smoke instructions. DONE
+
+## Delivered
+
+- `ArenaLayoutCatalog` with `duel_pit_v2` and `relay_foundry_v1`.
+- `ArenaRelayFoundryLayoutBuilder` with distinct geometry, cover, platforms, pickups and jump pads.
+- `FpsArenaRoot` consuming active layout data for spawns, pickups, jump pads, tactical context and bot arena extent.
+- Main menu buttons for `Arena Shooter - Duel Pit V2` and `Arena Shooter - Relay Foundry V1`.
+- Tests covering menu selection, layout catalog distinction and runtime bot context in both arenas.
 
 ## Acceptance Criteria
 
@@ -46,8 +54,19 @@ The project should support at least two playable arena layouts that publish thei
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
+Latest result:
+
+```text
+PASS, GUT 20/20, 175 asserts
+```
+
 Manual smoke:
 
 - Launch `Arena Shooter - Duel Pit V2`.
 - Launch `Arena Shooter - Relay Foundry V1`.
 - In both arenas, verify bot pressure, non-repeating route movement, pickups, jump pads, restart with `R`, pause menu and return to menu.
+
+## Handoff
+
+- Human smoke pending.
+- Push pending: Fabio via GitHub Desktop (`origin` remote is Fabio-only).

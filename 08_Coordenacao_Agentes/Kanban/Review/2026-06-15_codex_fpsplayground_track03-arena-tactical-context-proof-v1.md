@@ -9,7 +9,9 @@
 - Arquivos pretendidos: docs/status, catalogo de arenas, builders de arena, `arena_root.gd`, menu, testes GUT e validacao.
 - Docs lidos: `Prioridades_Estudio.md`, `Estado_Atual.md`, `AGENTS.md`, `implementation/current-status.md`, `docs/work-plan.md`, `docs/bot-tactical-context.md`, `docs/validation.md`.
 - Plano de validacao: `tools/validate.gd`; smoke manual em `Duel Pit V2` e `Relay Foundry V1`; checar bot, pickups, jump pads, restart e retorno ao menu nas duas arenas.
-- Handoff previsto: mover para Review/Done apos validacao automatica, documentacao fechada e pendencia de push declarada para Fabio.
+- Status: `READY_FOR_HUMAN_SMOKE`
+- Validacao automatica: `tools/validate.gd` PASS `20/20`, `175 asserts`; warnings GUT UID/text-path conhecidos.
+- Handoff: Fabio/tester executar smoke humano em `Duel Pit V2` e `Relay Foundry V1`; push remoto pendente para Fabio via GitHub Desktop.
 
 ## Escopo
 
@@ -18,6 +20,13 @@
 - Adicionar `Relay Foundry V1` com geometria, rotas, pontos taticos, pickups e jump pads proprios.
 - Garantir que o bot receba contexto tatico da arena ativa.
 - Adicionar testes para duas arenas e para a selecao de layout.
+
+## Entregue
+
+- Catalogo `ArenaLayoutCatalog`.
+- Builder `ArenaRelayFoundryLayoutBuilder`.
+- Selecao de arena no menu.
+- Testes de catalogo, menu e runtime multi-arena.
 
 ## Fora De Escopo
 

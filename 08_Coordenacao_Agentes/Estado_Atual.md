@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 03 arena tactical context proof em execucao)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 03 arena tactical context proof pronta para smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_IN_PROGRESS`
-- Marker: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_IN_PROGRESS`
-- Baseline: Track 02 aprovada; Track 03 em execucao para provar catalogo de arenas, nova arena e bot lendo contexto tatico sem depender do Duel Pit.
-- Validacao base: `tools/validate.gd` PASS `18/18`, `135 asserts` na Track 02 aprovada; nova validacao sera registrada ao fechar Track 03.
+- Status: `P2_IMPLEMENTACAO - TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_READY_FOR_SMOKE`
+- Baseline: Track 03 adicionou catalogo de arenas, `Relay Foundry V1`, selecao no menu e prova automatica de contexto tatico multi-arena.
+- Validacao: `tools/validate.gd` PASS `20/20`, `175 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: implementar catalogo de layout, arena `Relay Foundry V1`, selecao de arena e testes multi-arena.
+- Proximo passo: Fabio/tester fazer smoke humano em `Duel Pit V2` e `Relay Foundry V1`; depois escolher tuning fino ou proxima experiencia FPS.
 
 ## rpg-isometrico
 

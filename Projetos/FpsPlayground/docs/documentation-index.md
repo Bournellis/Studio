@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_IN_PROGRESS`
+- Status: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_READY_FOR_SMOKE`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 

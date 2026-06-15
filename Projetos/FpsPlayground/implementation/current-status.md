@@ -5,8 +5,8 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 03 - Arena Tactical Context Proof V1`
-- Active stage status: `IN_PROGRESS`
-- Status marker: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_IN_PROGRESS`
+- Active stage status: `READY_FOR_HUMAN_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_READY_FOR_SMOKE`
 
 ## Current Truth
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement, arena-agnostic route context, pressure and fairness without new map or weapon scope.
+Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated and waiting for human smoke in both `Duel Pit V2` and `Relay Foundry V1`.
 
 ## Track 01 Delivered
 
@@ -66,13 +66,14 @@ Track 01 is approved. Track 02 is approved after human smoke focused on bot tact
 
 `Track 03 - Arena Tactical Context Proof V1`
 
-- Prove the Track 02 tactical context with more than one playable arena.
-- Extract arena layout data into a catalog/provider instead of keeping all Duel Pit assumptions in `arena_root.gd`.
-- Preserve `Duel Pit V2` as the default baseline.
-- Add `Relay Foundry V1`, a second arena with distinct shape, routes, pickups, jump pads and tactical points.
-- Add a simple arena selection path from the main menu.
-- Keep bot improvement focused on movement/context usage, not unfair aim/damage tuning.
-- Avoid new weapons, export, Web/mobile, multiplayer and backend.
+Delivered:
+
+- Extracted arena layout data into `ArenaLayoutCatalog`.
+- Preserved `Duel Pit V2` as the default baseline.
+- Added `Relay Foundry V1`, a second arena with distinct shape, routes, pickups, jump pads and tactical points.
+- Added main-menu selection for both arena layouts.
+- Kept bot improvement focused on movement/context usage, not unfair aim/damage tuning.
+- Added automated coverage for catalog, menu selection and runtime multi-arena bot context.
 
 ## Validation
 
@@ -80,10 +81,10 @@ Latest result:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 18/18, 135 asserts
+# PASS, GUT 20/20, 175 asserts
 ```
 
-Manual smoke lives in `docs/validation.md`.
+Manual smoke lives in `docs/validation.md`; Track 03 smoke is pending Fabio/tester.
 
 ## Read Next
 
