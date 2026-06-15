@@ -7,13 +7,16 @@ param(
     [ValidateSet("Plan", "Package", "FullPublish")]
     [string]$Mode = "Plan",
     [switch]$ConfirmRemoteMutation,
-    [switch]$SkipExport
+    [switch]$SkipExport,
+    [string]$VisibleVersion = "v1.2.1",
+    [string]$EvidenceSubdir = "track-current-publication-data",
+    [string]$EvidencePrefix = "publication",
+    [string]$DeployMessage = ""
 )
 
 $ErrorActionPreference = "Stop"
 
 $PagesAssetLimitBytes = 25 * 1024 * 1024
-$VisibleVersion = "v1.2.1"
 
 function Write-TextUtf8NoBom {
     param([string]$Path, [string]$Text)
@@ -475,12 +478,15 @@ if ($Mode -eq "Plan") {
         cloudflare_pages_project = $ProjectName
         production_branch = $Branch
         remote_mutation = $false
+        visible_version = $VisibleVersion
+        evidence_subdir = $EvidenceSubdir
+        evidence_prefix = $EvidencePrefix
         suggested_release_root = $suggestedReleaseRoot
         pages_asset_limit_bytes = $PagesAssetLimitBytes
         package_strategy = "Package mode exports Web release, Brotli-compresses index.pck and index.wasm in-place for Pages, writes _headers, verifies every uploaded file is < 25 MiB."
         next_commands = @(
-            ".\tools\publish_web.ps1 -Mode Package -ReleaseRoot $suggestedReleaseRoot",
-            ".\tools\publish_web.ps1 -Mode FullPublish -ReleaseRoot $suggestedReleaseRoot -ConfirmRemoteMutation"
+            ".\tools\publish_web.ps1 -Mode Package -ReleaseRoot $suggestedReleaseRoot -VisibleVersion $VisibleVersion -EvidenceSubdir $EvidenceSubdir -EvidencePrefix $EvidencePrefix",
+            ".\tools\publish_web.ps1 -Mode FullPublish -ReleaseRoot $suggestedReleaseRoot -VisibleVersion $VisibleVersion -EvidenceSubdir $EvidenceSubdir -EvidencePrefix $EvidencePrefix -ConfirmRemoteMutation"
         )
     }
     $planPath = Join-Path $buildRoot "release-plan.json"
@@ -492,6 +498,9 @@ if ($Mode -eq "Plan") {
 }
 
 $ReleaseRoot = Assert-VersionedReleaseRoot -Root $ReleaseRoot
+if ([string]::IsNullOrWhiteSpace($DeployMessage)) {
+    $DeployMessage = "JogoDaCopa $VisibleVersion $ReleaseRoot"
+}
 $releaseInfoPath = Write-ReleaseInfoResource -Root $ProjectDir -VersionedReleaseRoot $ReleaseRoot -Version $VisibleVersion
 try {
     $package = New-Package -Root $ProjectDir -VersionedReleaseRoot $ReleaseRoot -GodotPath $GodotExe -DoExport (-not $SkipExport.IsPresent)
@@ -501,9 +510,9 @@ try {
     }
 }
 
-$evidenceDir = Join-Path $ProjectDir "docs\playtest-reports\track-07c-data"
+$evidenceDir = Join-Path $ProjectDir ("docs\playtest-reports\" + $EvidenceSubdir)
 New-Item -ItemType Directory -Force -Path $evidenceDir | Out-Null
-$evidenceName = if ($Mode -eq "FullPublish") { "07c-publication-report.json" } else { "07c-package-artifacts.json" }
+$evidenceName = if ($Mode -eq "FullPublish") { "$EvidencePrefix-publication-report-$shortSha.json" } else { "$EvidencePrefix-package-artifacts-$shortSha.json" }
 $evidencePath = Join-Path $evidenceDir $evidenceName
 
 if ($Mode -eq "Package") {
@@ -522,7 +531,7 @@ $deployResult = Deploy-Pages `
     -Name $ProjectName `
     -DeployBranch $Branch `
     -CommitHash $fullSha `
-    -Message "JogoDaCopa Track 08 Super Campeao v1.2.1 $ReleaseRoot"
+    -Message $DeployMessage
 
 $publication = [ordered]@{
     schema_version = "jogodacopa_web_publication_v1"
