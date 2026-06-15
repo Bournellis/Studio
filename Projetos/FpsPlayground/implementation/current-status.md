@@ -5,8 +5,8 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 02 - Bot Tactical Movement V1`
-- Active stage status: `IN_PROGRESS`
-- Status marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_IN_PROGRESS`
+- Active stage status: `READY_FOR_HUMAN_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_READY_FOR_HUMAN_SMOKE`
 
 ## Current Truth
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. Track 02 is active and focuses on bot tactical movement, arena-agnostic route context, pressure and fairness without new map or weapon scope.
+Track 01 is approved. Track 02 is implemented and ready for human smoke focused on bot tactical movement, arena-agnostic route context, pressure and fairness without new map or weapon scope.
 
 ## Track 01 Delivered
 
@@ -48,13 +48,22 @@ Track 01 is approved. Track 02 is active and focuses on bot tactical movement, a
 - Preserve current `Duel Pit V2` layout and weapon kit.
 - Avoid new weapons, new map, export, Web/mobile, multiplayer and backend.
 
+## Track 02 Delivered
+
+- Added `BotTacticalContext` so arenas publish tactical points and jump pad routes to the bot.
+- Replaced the one-arena reposition list in bot behavior with scored tactical roles.
+- Added route roles for pressure, flank, cover, retreat, health, overcharge, high ground and jump pad flow.
+- Added recent route memory/anti-repeat scoring and stronger stuck recovery through tactical reselection.
+- Tuned bot reaction/cooldown/aim conservatively while preserving shot windup readability.
+- Added focused tests for tactical context filtering, alternate arena context, health priority and Duel Pit role exposure.
+
 ## Validation
 
 Latest result:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 15/15, 118 asserts
+# PASS, GUT 18/18, 135 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.

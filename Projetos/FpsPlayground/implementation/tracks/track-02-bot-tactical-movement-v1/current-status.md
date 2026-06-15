@@ -1,8 +1,8 @@
 # Track 02 - Bot Tactical Movement V1
 
 - Created: `2026-06-15`
-- Status: `IN_PROGRESS`
-- Status marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_IN_PROGRESS`
+- Status: `READY_FOR_HUMAN_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_READY_FOR_HUMAN_SMOKE`
 - Branch: `codex/fpsplayground/track02-bot-tactical-movement-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track02-bot-tactical-movement-v1`
 
@@ -33,12 +33,21 @@ The bot should not be trapped in a single `Duel Pit V2` point model. Arenas shou
 ## Phase Checklist
 
 - [x] Worktree and Kanban registered.
-- [ ] Documentation baseline committed.
-- [ ] Tactical context implementation.
-- [ ] Movement/scoring implementation.
-- [ ] Focused tests updated.
-- [ ] Final automated validation.
-- [ ] Handoff for human bot movement smoke.
+- [x] Documentation baseline committed.
+- [x] Tactical context implementation.
+- [x] Movement/scoring implementation.
+- [x] Focused tests updated.
+- [x] Final automated validation.
+- [x] Handoff for human bot movement smoke.
+
+## Delivered
+
+- Added `gameplay/bot/bot_tactical_context.gd`.
+- `Duel Pit V2` now publishes bot tactical roles and jump pad routes from the arena layer.
+- `BasicDuelBot` consumes tactical context, scores roles and remembers recent routes.
+- Bot now has stronger movement intent around pressure, flanks, cover, retreat, health, overcharge and high ground.
+- Conservative pressure tuning: lower reaction/cooldown and smaller deterministic aim error while preserving shot tell.
+- Tests cover Duel Pit roles, critical health route priority and an alternate context with no Duel Pit points.
 
 ## Validation
 
@@ -49,3 +58,14 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 git diff --check
 git status --short
 ```
+
+Final automated result:
+
+- `tools/validate.gd`: PASS, GUT `18/18`, `135` asserts.
+- `git diff --check`: PASS.
+- `tools/check_doc_drift.ps1`: PASS.
+- Known warning class remains limited to GUT UID/text-path fallback warnings.
+
+## Human Smoke Pending
+
+Fabio should run the Track 02 smoke in `docs/validation.md` and judge whether the bot movement is harder, fair and less tied to the current arena model.

@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 02 bot tactical movement em execucao)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 02 bot tactical movement pronta para smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK02_BOT_TACTICAL_MOVEMENT_IN_PROGRESS`
-- Marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_IN_PROGRESS`
-- Baseline: Track 01 aprovada; `Arena Shooter`/`Duel Pit V2` com rifle, Plasma Bolt, pickups, jump pads e readability refinada.
-- Track 02: criar contexto tatico arena-agnostico e melhorar movimento/pressao/fairness do bot sem novo mapa, nova arma, export, Web/mobile ou multiplayer/backend.
+- Status: `P2_IMPLEMENTACAO - TRACK02_BOT_TACTICAL_MOVEMENT_READY_FOR_HUMAN_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_READY_FOR_HUMAN_SMOKE`
+- Baseline: Track 02 adicionou contexto tatico arena-agnostico, scoring de rotas, anti-repeat, cura/overcharge/high route e tuning conservador do bot.
+- Validacao: `tools/validate.gd` PASS `18/18`, `135` asserts; `git diff --check` PASS; `tools/check_doc_drift.ps1` PASS.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: implementar e validar Track 02 em worktree dedicado.
+- Proximo passo: Fabio executar smoke humano de bot movement em `docs/validation.md`.
 
 ## rpg-isometrico
 

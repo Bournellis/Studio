@@ -1,6 +1,6 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_IN_PROGRESS`
+- Status: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_READY_FOR_HUMAN_SMOKE`
 - Current surface: FPS arena lab.
 
 ## North Star
@@ -17,7 +17,7 @@ Keep `FpsPlayground` as a clean first-person gameplay laboratory for arena movem
 
 ## Active Track
 
-`Track 02 - Bot Tactical Movement V1` is active.
+`Track 02 - Bot Tactical Movement V1` is ready for human smoke after automated validation.
 
 Goals:
 
@@ -26,6 +26,14 @@ Goals:
 - Let arenas declare tactical affordances: pressure, flank, cover, retreat, health, overcharge, high ground and jump pad routes.
 - Improve bot route scoring, anti-repeat behavior, stuck recovery and objective pressure.
 - Preserve readable shot windup and fair reaction windows.
+
+Delivered:
+
+- Bot tactical context helper and Duel Pit V2 tactical provider.
+- Tactical route scoring for pressure, flank, cover, retreat, health, overcharge, high ground and jump pad routes.
+- Anti-repeat route memory and objective route holding for critical health/vertical pressure.
+- Conservative bot pressure tuning through cooldown/reaction/aim values.
+- Focused automated tests for alternate arena context and critical health route priority.
 
 Delivered before this track:
 
@@ -39,7 +47,7 @@ Non-goals:
 - No football/TPS scope.
 - No impossible instant-shot bot behavior.
 
-## Recommended Next Track After Track 02
+## Recommended Next Track After Track 02 Smoke
 
 Choose between:
 
