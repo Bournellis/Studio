@@ -6,16 +6,11 @@ const BotController = preload("res://gameplay/bot/basic_duel_bot.gd")
 const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 const ArenaDuelPitLayoutBuilderScript = preload("res://modes/arena/arena_duel_pit_layout_builder.gd")
+const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
-const MAP_NAME: String = "Duel Pit V2"
-const FLOOR_SIZE: Vector3 = Vector3(30.0, 1.0, 30.0)
-const WALL_HEIGHT: float = 3.6
-const WALL_THICKNESS: float = 0.8
-const PLAYER_SPAWN: Vector3 = Vector3(-10.8, 0.05, 8.6)
-const BOT_SPAWN: Vector3 = Vector3(10.8, 0.05, -8.6)
 const PLAYER_VISUAL_MUZZLE_RIGHT_OFFSET: float = 0.34
 const PLAYER_VISUAL_MUZZLE_DOWN_OFFSET: float = 0.24
 const PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET: float = 0.82
@@ -27,21 +22,15 @@ const PICKUP_RADIUS: float = 1.05
 const HEALTH_PICKUP_AMOUNT: float = 28.0
 const HEALTH_PICKUP_RESPAWN: float = 10.0
 const OVERCHARGE_PICKUP_RESPAWN: float = 14.0
-const HEALTH_PICKUP_POSITION: Vector3 = Vector3(-7.6, 3.55, -8.6)
-const OVERCHARGE_PICKUP_POSITION: Vector3 = Vector3(7.6, 3.55, 8.6)
 const JUMP_PAD_RADIUS: float = 1.25
 const JUMP_PAD_COOLDOWN: float = 0.64
 const JUMP_PAD_VERTICAL_SPEED: float = 8.4
 const JUMP_PAD_FORWARD_SPEED: float = 5.8
-const WEST_JUMP_PAD_POSITION: Vector3 = Vector3(-10.8, 0.08, -4.4)
-const WEST_JUMP_PAD_TARGET: Vector3 = Vector3(-9.6, 3.05, -8.6)
-const EAST_JUMP_PAD_POSITION: Vector3 = Vector3(10.8, 0.08, 4.4)
-const EAST_JUMP_PAD_TARGET: Vector3 = Vector3(9.6, 3.05, 8.6)
 var player
 var bot
 var hud
 var feedback
-var round_status: String = MAP_NAME
+var round_status: String = ""
 var round_ended: bool = false
 var menu_open: bool = false
 var projectile_root: Node3D
@@ -53,9 +42,21 @@ var flow_marker_count: int = 0
 var high_platform_cover_count: int = 0
 var jump_pad_trigger_count: int = 0
 var last_jump_pad_id: StringName = &""
+var active_layout_id: StringName = ArenaLayoutCatalogScript.get_default_layout_id()
+var active_layout: Dictionary = {}
+var map_name: String = "Duel Pit V2"
+var floor_size: Vector3 = Vector3(30.0, 1.0, 30.0)
+var wall_height: float = 3.6
+var wall_thickness: float = 0.8
+var player_spawn: Vector3 = Vector3(-10.8, 0.05, 8.6)
+var bot_spawn: Vector3 = Vector3(10.8, 0.05, -8.6)
+var health_pickup_position: Vector3 = Vector3(-7.6, 3.55, -8.6)
+var overcharge_pickup_position: Vector3 = Vector3(7.6, 3.55, 8.6)
+var bot_arena_half_extent: float = 11.2
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_prepare_active_layout()
 	_configure_world()
 	_spawn_runtime()
 	_capture_mouse_if_playing()
@@ -87,15 +88,19 @@ func _input(event: InputEvent) -> void:
 		restart_round()
 		get_viewport().set_input_as_handled()
 
+func set_arena_layout(layout_id: StringName) -> void:
+	active_layout_id = ArenaLayoutCatalogScript.normalize_layout_id(layout_id)
+
 func restart_round() -> void:
 	_set_menu_open(false)
-	round_status = MAP_NAME
+	round_status = map_name
 	round_ended = false
-	player.global_position = PLAYER_SPAWN
+	player.global_position = player_spawn
 	player.rotation = Vector3.ZERO
 	player.configure_for_round()
-	bot.global_position = BOT_SPAWN
+	bot.global_position = bot_spawn
 	bot.rotation = Vector3.ZERO
+	bot.arena_half_extent = bot_arena_half_extent
 	bot.configure(player)
 	if hud != null:
 		hud.reset_feedback()
@@ -117,23 +122,32 @@ func debug_get_player_visual_muzzle_origin(origin: Vector3, direction: Vector3) 
 	return _get_player_visual_muzzle_origin(origin, direction)
 
 func debug_get_player_spawn() -> Vector3:
-	return PLAYER_SPAWN
+	return player_spawn
 
 func debug_get_bot_spawn() -> Vector3:
-	return BOT_SPAWN
+	return bot_spawn
+
+func debug_get_active_layout_id() -> StringName:
+	return active_layout_id
+
+func debug_get_active_layout_name() -> String:
+	return map_name
+
+func debug_get_available_layout_ids() -> Array[StringName]:
+	return ArenaLayoutCatalogScript.get_layout_ids()
 
 func debug_get_bot_reposition_points() -> Array[Vector3]:
 	var points: Array[Vector3] = []
-	for point: Dictionary in _get_duel_pit_tactical_points(false):
+	for point: Dictionary in _get_active_tactical_points(false):
 		points.append(point.get("position", Vector3.ZERO))
 	return points
 
 func debug_get_bot_tactical_point_count() -> int:
-	return _get_duel_pit_tactical_points(true).size()
+	return _get_active_tactical_points(true).size()
 
 func debug_get_bot_tactical_roles() -> Array[StringName]:
 	var roles: Array[StringName] = []
-	for point: Dictionary in _get_duel_pit_tactical_points(true):
+	for point: Dictionary in _get_active_tactical_points(true):
 		var role: StringName = point.get("role", &"")
 		if not roles.has(role):
 			roles.append(role)
@@ -171,7 +185,7 @@ func debug_has_high_platform_cover() -> bool:
 
 func debug_get_pickup_jump_target_distance(pickup_kind: StringName) -> float:
 	var pickup_position := debug_get_pickup_position(pickup_kind)
-	var target_position := WEST_JUMP_PAD_TARGET if pickup_kind == &"health" else EAST_JUMP_PAD_TARGET
+	var target_position := _get_nearest_jump_pad_target(pickup_position)
 	pickup_position.y = 0.0
 	target_position.y = 0.0
 	return pickup_position.distance_to(target_position)
@@ -195,6 +209,21 @@ func debug_force_pickup_available(pickup_kind: StringName, available: bool) -> v
 		node.visible = available
 	pickups[pickup_kind] = entry
 	_update_bot_awareness()
+
+func _prepare_active_layout() -> void:
+	active_layout_id = ArenaLayoutCatalogScript.normalize_layout_id(active_layout_id)
+	active_layout = ArenaLayoutCatalogScript.build_layout_spec(active_layout_id)
+	active_layout_id = active_layout.get("id", active_layout_id)
+	map_name = String(active_layout.get("map_name", "Arena Shooter"))
+	round_status = map_name
+	floor_size = active_layout.get("floor_size", floor_size)
+	wall_height = float(active_layout.get("wall_height", wall_height))
+	wall_thickness = float(active_layout.get("wall_thickness", wall_thickness))
+	player_spawn = active_layout.get("player_spawn", player_spawn)
+	bot_spawn = active_layout.get("bot_spawn", bot_spawn)
+	health_pickup_position = active_layout.get("health_pickup_position", health_pickup_position)
+	overcharge_pickup_position = active_layout.get("overcharge_pickup_position", overcharge_pickup_position)
+	bot_arena_half_extent = float(active_layout.get("bot_arena_half_extent", bot_arena_half_extent))
 
 func _configure_world() -> void:
 	var environment := WorldEnvironment.new()
@@ -222,23 +251,18 @@ func _configure_world() -> void:
 	fill_light.omni_range = 32.0
 	add_child(fill_light)
 
-	_build_duel_pit_layout()
+	_build_active_layout()
 
-func _build_duel_pit_layout() -> void:
+func _build_active_layout() -> void:
 	jump_pads.clear()
 	flow_marker_count = 0
 	high_platform_cover_count = 0
-	var layout_result: Dictionary = ArenaDuelPitLayoutBuilderScript.build(self, {
-		"floor_size": FLOOR_SIZE,
-		"wall_height": WALL_HEIGHT,
-		"wall_thickness": WALL_THICKNESS,
-		"west_jump_pad_position": WEST_JUMP_PAD_POSITION,
-		"west_jump_pad_target": WEST_JUMP_PAD_TARGET,
-		"east_jump_pad_position": EAST_JUMP_PAD_POSITION,
-		"east_jump_pad_target": EAST_JUMP_PAD_TARGET,
-		"health_pickup_position": HEALTH_PICKUP_POSITION,
-		"overcharge_pickup_position": OVERCHARGE_PICKUP_POSITION,
-	})
+	var layout_result: Dictionary = {}
+	match active_layout.get("builder", active_layout_id):
+		ArenaLayoutCatalogScript.DUEL_PIT_ID:
+			layout_result = ArenaDuelPitLayoutBuilderScript.build(self, active_layout)
+		_:
+			layout_result = ArenaDuelPitLayoutBuilderScript.build(self, active_layout)
 	for pad: Dictionary in layout_result.get("jump_pads", []):
 		jump_pads.append(pad)
 	flow_marker_count = int(layout_result.get("flow_marker_count", 0))
@@ -251,14 +275,15 @@ func _spawn_runtime() -> void:
 
 	player = PlayerController.new()
 	player.name = "Player"
-	player.position = PLAYER_SPAWN
+	player.position = player_spawn
 	runtime_root.add_child(player)
 	player.shoot_requested.connect(_on_player_shot)
 	player.alt_fire_requested.connect(_on_player_alt_fire)
 
 	bot = BotController.new()
 	bot.name = "Bot"
-	bot.position = BOT_SPAWN
+	bot.position = bot_spawn
+	bot.arena_half_extent = bot_arena_half_extent
 	runtime_root.add_child(bot)
 	bot.set_tactical_context(_create_bot_tactical_context(runtime_root))
 	bot.configure(player)
@@ -591,8 +616,8 @@ func _build_hud_snapshot() -> Dictionary:
 
 func _build_pickups() -> void:
 	pickups.clear()
-	_create_pickup(&"health", HEALTH_PICKUP_POSITION, Color(0.38, 1.0, 0.52, 1.0))
-	_create_pickup(&"overcharge", OVERCHARGE_PICKUP_POSITION, Color(0.78, 0.46, 1.0, 1.0))
+	_create_pickup(&"health", health_pickup_position, Color(0.38, 1.0, 0.52, 1.0))
+	_create_pickup(&"overcharge", overcharge_pickup_position, Color(0.78, 0.46, 1.0, 1.0))
 
 func _create_pickup(pickup_kind: StringName, pickup_position: Vector3, color: Color) -> void:
 	if pickup_root == null:
@@ -827,6 +852,10 @@ func _get_nearest_player_projectile_to_bot() -> Dictionary:
 
 func _get_jump_pad_routes() -> Array[Dictionary]:
 	var routes: Array[Dictionary] = []
+	for route: Dictionary in active_layout.get("jump_pad_routes", []):
+		routes.append(route.duplicate(true))
+	if not routes.is_empty():
+		return routes
 	for pad: Dictionary in jump_pads:
 		var pad_id: StringName = pad.get("id", &"")
 		routes.append(BotTacticalContextScript.make_jump_pad_route(
@@ -836,6 +865,21 @@ func _get_jump_pad_routes() -> Array[Dictionary]:
 			[BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, BotTacticalContextScript.ROLE_HIGH_GROUND]
 		))
 	return routes
+
+func _get_nearest_jump_pad_target(reference_position: Vector3) -> Vector3:
+	var best_target := reference_position
+	var best_distance := 1000000.0
+	for route: Dictionary in _get_jump_pad_routes():
+		var target_position: Vector3 = route.get("target", reference_position)
+		var flat_reference := reference_position
+		var flat_target := target_position
+		flat_reference.y = 0.0
+		flat_target.y = 0.0
+		var distance := flat_reference.distance_to(flat_target)
+		if distance < best_distance:
+			best_distance = distance
+			best_target = target_position
+	return best_target
 
 func _get_player_visual_muzzle_origin(origin: Vector3, direction: Vector3) -> Vector3:
 	var shot_direction := direction.normalized()
@@ -863,7 +907,7 @@ func _create_bot_tactical_context(parent: Node3D) -> Dictionary:
 	var marker_root := Node3D.new()
 	marker_root.name = "BotTacticalPoints"
 	parent.add_child(marker_root)
-	var points := _get_duel_pit_tactical_points(true)
+	var points := _get_active_tactical_points(true)
 	for index in range(points.size()):
 		var entry: Dictionary = points[index]
 		var point: Vector3 = entry.get("position", Vector3.ZERO)
@@ -876,42 +920,25 @@ func _create_bot_tactical_context(parent: Node3D) -> Dictionary:
 
 func _get_bot_tactical_context() -> Dictionary:
 	return BotTacticalContextScript.make_context(
-		&"duel_pit_v2",
-		_get_duel_pit_tactical_points(true),
+		active_layout_id,
+		_get_active_tactical_points(true),
 		_get_jump_pad_routes()
 	)
 
-func _get_duel_pit_tactical_points(include_objectives: bool) -> Array:
-	var points: Array = [
-		BotTacticalContextScript.make_point(Vector3(-11.2, 0.05, 7.8), BotTacticalContextScript.ROLE_FLANK, 1.05, &"west_deep_flank"),
-		BotTacticalContextScript.make_point(Vector3(-10.8, 0.05, -7.2), BotTacticalContextScript.ROLE_RETREAT, 1.1, &"west_back_retreat"),
-		BotTacticalContextScript.make_point(Vector3(-6.4, 0.05, 0.0), BotTacticalContextScript.ROLE_COVER, 1.0, &"west_mid_cover"),
-		BotTacticalContextScript.make_point(Vector3(-3.8, 0.05, 5.4), BotTacticalContextScript.ROLE_PRESSURE, 1.1, &"west_pressure"),
-		BotTacticalContextScript.make_point(Vector3(-1.8, 0.05, -6.8), BotTacticalContextScript.ROLE_FLANK, 1.05, &"west_low_flank"),
-		BotTacticalContextScript.make_point(Vector3(1.8, 0.05, 6.8), BotTacticalContextScript.ROLE_FLANK, 1.05, &"east_low_flank"),
-		BotTacticalContextScript.make_point(Vector3(3.8, 0.05, -5.4), BotTacticalContextScript.ROLE_PRESSURE, 1.1, &"east_pressure"),
-		BotTacticalContextScript.make_point(Vector3(6.4, 0.05, 0.0), BotTacticalContextScript.ROLE_COVER, 1.0, &"east_mid_cover"),
-		BotTacticalContextScript.make_point(Vector3(10.8, 0.05, 7.2), BotTacticalContextScript.ROLE_RETREAT, 1.1, &"east_back_retreat"),
-		BotTacticalContextScript.make_point(Vector3(11.2, 0.05, -7.8), BotTacticalContextScript.ROLE_FLANK, 1.05, &"east_deep_flank"),
-		BotTacticalContextScript.make_point(Vector3(-2.2, 0.05, 2.4), BotTacticalContextScript.ROLE_PRESSURE, 1.18, &"center_pressure_west"),
-		BotTacticalContextScript.make_point(Vector3(2.2, 0.05, -2.4), BotTacticalContextScript.ROLE_PRESSURE, 1.18, &"center_pressure_east"),
-		BotTacticalContextScript.make_point(Vector3(-9.6, 3.05, -8.6), BotTacticalContextScript.ROLE_JUMP_PAD_LANDING, 1.22, &"west_high_landing"),
-		BotTacticalContextScript.make_point(Vector3(-7.6, 3.05, -8.6), BotTacticalContextScript.ROLE_HIGH_GROUND, 1.35, &"west_high_objective"),
-		BotTacticalContextScript.make_point(Vector3(9.6, 3.05, 8.6), BotTacticalContextScript.ROLE_JUMP_PAD_LANDING, 1.22, &"east_high_landing"),
-		BotTacticalContextScript.make_point(Vector3(7.6, 3.05, 8.6), BotTacticalContextScript.ROLE_HIGH_GROUND, 1.35, &"east_high_objective"),
-		BotTacticalContextScript.make_point(WEST_JUMP_PAD_POSITION, BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, 1.18, &"west_jump_pad"),
-		BotTacticalContextScript.make_point(EAST_JUMP_PAD_POSITION, BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, 1.18, &"east_jump_pad")
-	]
+func _get_active_tactical_points(include_objectives: bool) -> Array:
+	var points: Array = []
+	for point: Dictionary in active_layout.get("tactical_points", []):
+		points.append(point.duplicate(true))
 	if include_objectives:
 		points.append(BotTacticalContextScript.make_point(
-			HEALTH_PICKUP_POSITION,
+			health_pickup_position,
 			BotTacticalContextScript.ROLE_HEALTH,
 			1.45,
 			&"health_objective",
 			debug_is_pickup_available(&"health")
 		))
 		points.append(BotTacticalContextScript.make_point(
-			OVERCHARGE_PICKUP_POSITION,
+			overcharge_pickup_position,
 			BotTacticalContextScript.ROLE_OVERCHARGE,
 			1.28,
 			&"overcharge_objective",
