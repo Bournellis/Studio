@@ -5,6 +5,7 @@ const BotAimModelScript = preload("res://gameplay/bot/bot_aim_model.gd")
 const BotScript = preload("res://gameplay/bot/basic_duel_bot.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_points.gd")
+const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 
 class MockVisibilityTarget:
 	extends Node3D
@@ -84,6 +85,32 @@ func test_bot_tactical_context_filters_unavailable_points_by_role() -> void:
 
 	assert_eq(BotTacticalContextScript.get_points(context).size(), 2)
 	assert_eq(BotTacticalContextScript.points_for_role(context, BotTacticalContextScript.ROLE_HEALTH).size(), 1)
+
+func test_arena_layout_catalog_exposes_distinct_tactical_contexts() -> void:
+	var layout_ids := ArenaLayoutCatalogScript.get_layout_ids()
+	assert_eq(layout_ids.size(), 2)
+	assert_true(layout_ids.has(ArenaLayoutCatalogScript.DUEL_PIT_ID))
+	assert_true(layout_ids.has(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID))
+
+	var duel_pit := ArenaLayoutCatalogScript.build_layout_spec(ArenaLayoutCatalogScript.DUEL_PIT_ID)
+	var relay_foundry := ArenaLayoutCatalogScript.build_layout_spec(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)
+	assert_eq(duel_pit.get("id", &""), &"duel_pit_v2")
+	assert_eq(relay_foundry.get("id", &""), &"relay_foundry_v1")
+	assert_false(duel_pit.get("player_spawn", Vector3.ZERO) == relay_foundry.get("player_spawn", Vector3.ZERO))
+	assert_false(duel_pit.get("bot_spawn", Vector3.ZERO) == relay_foundry.get("bot_spawn", Vector3.ZERO))
+	assert_gt((duel_pit.get("tactical_points", []) as Array).size(), 10)
+	assert_gt((relay_foundry.get("tactical_points", []) as Array).size(), 10)
+	assert_eq((duel_pit.get("jump_pad_routes", []) as Array).size(), 2)
+	assert_eq((relay_foundry.get("jump_pad_routes", []) as Array).size(), 2)
+
+	var relay_roles: Array[StringName] = []
+	for point: Dictionary in relay_foundry.get("tactical_points", []):
+		var role: StringName = point.get("role", &"")
+		if not relay_roles.has(role):
+			relay_roles.append(role)
+	assert_true(relay_roles.has(BotTacticalContextScript.ROLE_PRESSURE))
+	assert_true(relay_roles.has(BotTacticalContextScript.ROLE_HIGH_GROUND))
+	assert_true(relay_roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY))
 
 func test_bot_scores_alternate_tactical_context_without_duel_pit_points() -> void:
 	var bot = BotScript.new()

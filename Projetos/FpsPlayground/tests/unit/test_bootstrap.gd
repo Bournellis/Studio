@@ -5,6 +5,7 @@ const PlayerScript = preload("res://gameplay/player/fps_player_controller.gd")
 const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FeedbackScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
+const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 
 const EXPECTED_ACTIONS: PackedStringArray = [
 	"move_forward",
@@ -123,6 +124,40 @@ func test_duel_pit_layout_exposes_route_markers_and_bot_points() -> void:
 	assert_true(roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY))
 	assert_gt(arena.debug_get_flow_marker_count(), 5)
 	assert_true(arena.debug_has_high_platform_cover())
+	assert_no_new_orphans()
+
+func test_relay_foundry_layout_exposes_distinct_route_markers_and_bot_points() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	arena.set_arena_layout(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	assert_eq(arena.debug_get_active_layout_id(), &"relay_foundry_v1")
+	assert_eq(arena.debug_get_active_layout_name(), "Relay Foundry V1")
+	assert_not_null(arena.get_node_or_null("RelayFoundryFloor"))
+	assert_not_null(arena.get_node_or_null("RelayCore"))
+	assert_not_null(arena.get_node_or_null("WestRelayJumpPad"))
+	assert_not_null(arena.get_node_or_null("EastForgeJumpPad"))
+	assert_null(arena.get_node_or_null("MidBlocker"))
+	assert_eq(arena.debug_get_jump_pad_count(), 2)
+	assert_eq(arena.debug_get_bot_reposition_points().size(), 20)
+	assert_eq(arena.debug_get_bot_tactical_point_count(), 22)
+	assert_gt(arena.debug_get_flow_marker_count(), 5)
+	assert_true(arena.debug_has_high_platform_cover())
+
+	var bot = arena.debug_get_bot()
+	assert_eq(bot.debug_get_tactical_context_label(), &"relay_foundry_v1")
+	assert_eq(bot.debug_get_jump_pad_route_count(), 2)
+	var roles: Array[StringName] = arena.debug_get_bot_tactical_roles()
+	assert_true(roles.has(BotTacticalContextScript.ROLE_PRESSURE))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_COVER))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_FLANK))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_RETREAT))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_HEALTH))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_OVERCHARGE))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY))
 	assert_no_new_orphans()
 
 func test_bot_prioritizes_health_tactical_route_when_critical() -> void:
