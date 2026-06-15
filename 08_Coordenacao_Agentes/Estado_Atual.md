@@ -7,19 +7,19 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09D local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09C_LOCAL_VALIDADO`
-- Marker: `JOGO_DA_COPA_TRACK09C_LOCAL_VALIDADO`
+- Status: `P2_IMPLEMENTACAO - TRACK09D_LOCAL_VALIDADO`
+- Marker: `JOGO_DA_COPA_TRACK09D_LOCAL_VALIDADO`
 - Baseline publico: `Super Campeao v1.2.1+ff9cb389` (`web/v1-copa-arena-futebol-20260615-ff9cb389`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09A PASS e retest humano aceito.
-- Refator atual: Track 09C extraiu spawn/wiring runtime para `football_runtime_spawner.gd`; `FootballRoot` medido nesta base `1739 -> 1588`; validate/export/Web boot local PASS.
+- Refator atual: Track 09D extraiu reset/kickoff/countdown/input lock para `football_match_flow_controller.gd`; `FootballRoot` medido nesta base `1588 -> 1472`; validate/export/Web boot local PASS.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: decidir publish da 09C ou continuar a proxima reducao estreita do `FootballRoot`.
+- Proximo passo: decidir publish da 09D ou continuar a proxima reducao estreita do `FootballRoot`.
 
 ## draxos-roguelike-cardgame
 

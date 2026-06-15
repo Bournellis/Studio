@@ -13,6 +13,7 @@
   - `football_perf_scenario.gd`: perf probe scenario steps, feedback filtering and stability sample extras.
   - `football_web_loading_controller.gd`: Web loading overlay, first-render warmup, first-use feedback warmup and loading settle probes.
   - `football_runtime_spawner.gd`: runtime node construction and signal wiring for player, bot, ball, kickoff marker, chase camera, HUD and feedback.
+  - `football_match_flow_controller.gd`: kickoff/reset/countdown match flow, round input lock, kickoff marker visibility and first-touch release for bot defensive hold.
 - `modes/shared/`: runtime primitive creation.
 - `gameplay/avatar/`: procedural humanoid avatars, skin tones and country-inspired kits.
 - `gameplay/combat/`: reused character body, health and knockback base.
