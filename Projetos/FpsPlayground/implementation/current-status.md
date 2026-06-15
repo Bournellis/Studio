@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 02 - Bot Duel Tuning V1`
-- Active stage status: `PLANNED`
-- Status marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_APPROVED`
+- Active stage: `Track 02 - Bot Tactical Movement V1`
+- Active stage status: `IN_PROGRESS`
+- Status marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_IN_PROGRESS`
 
 ## Current Truth
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. The next recommended gate is `Track 02 - Bot Duel Tuning V1`, focused on bot pressure, fairness and route variety without new map or weapon scope.
+Track 01 is approved. Track 02 is active and focuses on bot tactical movement, arena-agnostic route context, pressure and fairness without new map or weapon scope.
 
 ## Track 01 Delivered
 
@@ -38,13 +38,13 @@ Track 01 is approved. The next recommended gate is `Track 02 - Bot Duel Tuning V
 - Launch direction cues on both jump pads.
 - Focused GUT coverage for combat readability HUD events and scene nodes.
 
-## Recommended Next Track
+## Active Track
 
-`Track 02 - Bot Duel Tuning V1`
+`Track 02 - Bot Tactical Movement V1`
 
-- Tune bot pressure windows after the readability pass.
-- Adjust aim fairness, windup timing, cooldown and reaction feel.
-- Review route selection between direct pressure, health, overcharge and jump pads.
+- Introduce a tactical context so arenas publish bot affordances instead of hardcoded one-arena reposition lists.
+- Improve route selection between pressure, flank, cover, high ground, health, overcharge and jump pad routes.
+- Improve bot pressure through movement quality first, then conservative aim/reaction tuning.
 - Preserve current `Duel Pit V2` layout and weapon kit.
 - Avoid new weapons, new map, export, Web/mobile, multiplayer and backend.
 
@@ -67,5 +67,5 @@ Manual smoke lives in `docs/validation.md`.
 4. `docs/work-plan.md`
 5. `docs/mode-contract.md`
 6. `docs/validation.md`
-7. `implementation/tracks/track-00-project-split-foundation-v1/current-status.md`
-8. `implementation/tracks/track-01-combat-readability-polish-v1/current-status.md`
+7. `docs/bot-tactical-context.md`
+8. `implementation/tracks/track-02-bot-tactical-movement-v1/current-status.md`

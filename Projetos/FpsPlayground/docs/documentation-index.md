@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_READY_FOR_HUMAN_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_IN_PROGRESS`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -16,12 +16,14 @@
 ## References
 
 - `bot-contract.md`
+- `bot-tactical-context.md`
 - `tuning-guide.md`
 - `validation-profiles.md`
 - `publication-readiness.md`
 - `codebase-audit-track05.md`
 - `reuse-map.md`
 - `../implementation/tracks/track-01-combat-readability-polish-v1/current-status.md`
+- `../implementation/tracks/track-02-bot-tactical-movement-v1/current-status.md`
 
 ## Split Note
 

@@ -1,6 +1,6 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_READY_FOR_HUMAN_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_IN_PROGRESS`
 - Current surface: FPS arena lab.
 
 ## North Star
@@ -17,36 +17,34 @@ Keep `FpsPlayground` as a clean first-person gameplay laboratory for arena movem
 
 ## Active Track
 
-`Track 01 - Combat Readability Polish V1` is ready for human smoke after automated validation.
+`Track 02 - Bot Tactical Movement V1` is active.
 
 Goals:
 
-- Improve player rifle hit confirmation and impact readability.
-- Improve player damage intake readability.
-- Improve Plasma Bolt trajectory, impact and overcharge distinction.
-- Improve bot shot tell readability.
-- Improve pickup and jump pad readability only where it supports combat decisions.
+- Make the bot harder primarily through better movement and route decisions, not raw aimbot tuning.
+- Replace one-arena reposition assumptions with an arena-provided tactical context.
+- Let arenas declare tactical affordances: pressure, flank, cover, retreat, health, overcharge, high ground and jump pad routes.
+- Improve bot route scoring, anti-repeat behavior, stuck recovery and objective pressure.
+- Preserve readable shot windup and fair reaction windows.
 
-Delivered:
+Delivered before this track:
 
-- HUD event colors and messages for bot tell, damage intake, Plasma hit and overcharge hit.
-- Pickup halos/beacons and jump pad launch direction cues.
-- Focused tests for scene readability nodes and HUD event contracts.
+- Track 01 approved combat readability: bot tell, damage intake, Plasma hit/overcharge, pickups and jump pad cues.
 
 Non-goals:
 
 - No new weapon.
 - No new map/layout.
-- No broad damage/health/speed retuning.
 - No export, Web/mobile, multiplayer or backend.
 - No football/TPS scope.
+- No impossible instant-shot bot behavior.
 
-## Recommended Next Track After Track 01
+## Recommended Next Track After Track 02
 
 Choose between:
 
-- deeper FPS bot/combat tuning;
-- new arena map/layout;
+- human playtest-driven combat number tuning;
+- new arena map/layout using the tactical context;
 - projectile/weapon experiment;
 - export-readiness pass for the FPS lab.
 

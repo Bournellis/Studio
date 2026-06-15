@@ -33,6 +33,18 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm kill/win/loss state remains understandable after the feedback pass.
 - Confirm `R`, pause and return to menu still work.
 
+## Track 02 Bot Tactical Movement Smoke
+
+- Confirm the bot can kill a passive player without needing unfair instant aim.
+- Confirm the bot pressures when it has line of sight and the player is exposed.
+- Confirm the bot does not repeat the same route forever.
+- Confirm the bot seeks health when critically damaged and the pickup is available.
+- Confirm the bot contests overcharge when it is safe and useful.
+- Confirm the bot uses jump pad/high routes when vertical route scoring is valuable.
+- Confirm the bot recovers from blocked movement or poor route choices.
+- Confirm bot shot windup remains readable before damage is resolved.
+- Confirm changing tactical points in the arena context does not leave the bot with no valid route.
+
 ## Known Noise
 
 GUT UID/text-path warnings can appear after fresh worktree imports. They are accepted when tests pass.
