@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09G_LOCAL_VALIDADO`
+- Status: `JOGO_DA_COPA_TRACK09G_PUBLICATION_ROLLED_BACK`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -29,13 +29,13 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09D Football Match Flow Controller V1 extracted kickoff/reset/countdown/input lock flow into `football_match_flow_controller.gd`; local validate, Web export and Web boot smoke passed.
 - Track 09E Football Match Presentation Controller V1 extracted HUD/result presentation snapshots into `football_match_presentation_controller.gd`; local validate, Web export and Web boot smoke passed.
 - Track 09F Football Arcade Field Controller V1 extracted boost pad and jump pad field orchestration into `football_arcade_field_controller.gd`; published `Super Campeao v1.2.1+a75cfe57` after local validate/export and remote menu, first-minute, stability rerun and night luma gates passed; human retest was approved by Fabio.
-- Track 09G Football Match Resolution Controller V1 extracted match restart, goal reset, goal detection side effects, scoring orchestration, timer/golden goal, match finish and shot/goal stats into `football_match_resolution_controller.gd`; local validate, Web export, gzip gate and Web boot smoke passed; public baseline remains 09F.
+- Track 09G Football Match Resolution Controller V1 extracted match restart, goal reset, goal detection side effects, scoring orchestration, timer/golden goal, match finish and shot/goal stats into `football_match_resolution_controller.gd`; local validate, Web export, gzip gate and Web boot smoke passed; publication attempt passed menu and first-minute gates but failed remote 5-minute stability twice on JS/WASM heap (`+15.42%` and `+15.35%`), then rolled back to 09F.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Review/decide the Track 09G local reduction, then either publish it after remote gates or plan the next narrow FootballRoot reduction. The public baseline remains `Super Campeao v1.2.1+a75cfe57` until a publication track is explicitly approved.
+Investigate the Track 09G remote heap regression before any new `FootballRoot` reduction or republication. The public baseline remains `Super Campeao v1.2.1+a75cfe57`; 09G stays local-only until its 5-minute remote stability gate is green.
 
 Focus:
 
