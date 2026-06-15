@@ -112,6 +112,30 @@ func test_arena_layout_catalog_exposes_distinct_tactical_contexts() -> void:
 	assert_true(relay_roles.has(BotTacticalContextScript.ROLE_HIGH_GROUND))
 	assert_true(relay_roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY))
 
+func test_arena_layout_catalog_exposes_staged_vertical_route_contracts() -> void:
+	for layout_id: StringName in ArenaLayoutCatalogScript.get_layout_ids():
+		var spec := ArenaLayoutCatalogScript.build_layout_spec(layout_id)
+		var points: Array = spec.get("tactical_points", [])
+		for route: Dictionary in spec.get("jump_pad_routes", []):
+			var route_id: StringName = route.get("id", &"")
+			var route_position: Vector3 = route.get("position", Vector3.ZERO)
+			var route_target: Vector3 = route.get("target", Vector3.ZERO)
+			assert_ne(route_id, &"", "Jump pad route must have a stable route id.")
+			assert_gt(_flat_distance_between(route_position, route_target), 4.0, "Jump pad route %s needs useful flat travel distance." % String(route_id))
+			assert_true(_layout_has_role_for_route(points, route_id, BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY), "Route %s needs jump pad entry point." % String(route_id))
+			assert_true(_layout_has_role_for_route(points, route_id, BotTacticalContextScript.ROLE_JUMP_PAD_LANDING), "Route %s needs landing point." % String(route_id))
+			assert_true(_layout_has_role_for_route(points, route_id, BotTacticalContextScript.ROLE_HIGH_GROUND), "Route %s needs high-ground continuation." % String(route_id))
+
+func test_relay_foundry_jump_pads_are_not_glued_to_high_platforms() -> void:
+	var relay_foundry := ArenaLayoutCatalogScript.build_layout_spec(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)
+	var routes: Array = relay_foundry.get("jump_pad_routes", [])
+	assert_eq(routes.size(), 2)
+	for route: Dictionary in routes:
+		var route_position: Vector3 = route.get("position", Vector3.ZERO)
+		var route_target: Vector3 = route.get("target", Vector3.ZERO)
+		assert_gt(_flat_distance_between(route_position, route_target), 10.0)
+		assert_gt(absf(route_position.z - route_target.z), 9.5)
+
 func test_bot_scores_alternate_tactical_context_without_duel_pit_points() -> void:
 	var bot = BotScript.new()
 	var target := MockBotTarget.new()
@@ -132,3 +156,34 @@ func test_bot_scores_alternate_tactical_context_without_duel_pit_points() -> voi
 	assert_eq(bot.debug_get_decision_reason(), BotTacticalContextScript.ROLE_HIGH_GROUND)
 	assert_eq(bot.debug_get_route_label(), &"high")
 	assert_gt(bot.debug_get_recent_route_count(), 0)
+
+func test_bot_keeps_jump_pad_as_navigation_target_until_vertical_launch() -> void:
+	var bot = BotScript.new()
+	var target := MockBotTarget.new()
+	add_child_autofree(bot)
+	add_child_autofree(target)
+	bot.global_position = Vector3(4.8, 0.05, 0.1)
+	target.global_position = Vector3(0.0, 0.05, -8.0)
+	bot.configure(target)
+	bot.set_tactical_context(BotTacticalContextScript.make_context(&"test_arena", [
+		BotTacticalContextScript.make_point(Vector3(5.0, 0.08, 0.0), BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, 1.0, &"test_pad"),
+		BotTacticalContextScript.make_point(Vector3(5.0, 3.05, 6.0), BotTacticalContextScript.ROLE_JUMP_PAD_LANDING, 1.0, &"test_pad"),
+		BotTacticalContextScript.make_point(Vector3(5.0, 3.05, 7.2), BotTacticalContextScript.ROLE_HIGH_GROUND, 1.0, &"test_pad")
+	], [
+		BotTacticalContextScript.make_jump_pad_route(&"test_pad", Vector3(5.0, 0.08, 0.0), Vector3(5.0, 3.05, 6.0))
+	]))
+
+	var navigation_target: Vector3 = bot._resolve_navigation_target(Vector3(5.0, 3.05, 7.2))
+
+	assert_almost_eq(navigation_target.distance_to(Vector3(5.0, 0.08, 0.0)), 0.0, 0.001)
+
+func _layout_has_role_for_route(points: Array, route_id: StringName, role: StringName) -> bool:
+	for point: Dictionary in points:
+		if point.get("route", &"") == route_id and point.get("role", &"") == role:
+			return true
+	return false
+
+func _flat_distance_between(first_point: Vector3, second_point: Vector3) -> float:
+	var delta := first_point - second_point
+	delta.y = 0.0
+	return delta.length()

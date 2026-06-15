@@ -43,6 +43,26 @@ The bot scores available tactical points against its live duel state:
 
 The bot must prefer movement quality before raw aim buffs.
 
+## Track 04 Movement Route Contract
+
+Track 04 adds a stronger interpretation layer on top of tactical points.
+
+The bot should not treat every tactical point as directly walkable. Vertical goals need staged navigation:
+
+1. `jump_pad_entry`: move toward a safe floor approach point.
+2. jump pad trigger: enter the pad radius intentionally.
+3. `jump_pad_landing`: allow the launch to land before choosing a new high objective.
+4. `high_ground`: move along the elevated route only after reaching the route.
+
+Rules:
+
+- From the floor, high-ground destinations are not direct movement targets when their route has a jump pad entry.
+- If a route has a jump pad entry and landing, the bot should navigate to the entry/trigger before the high point.
+- A bot jump should be used for short obstacle recovery only when forward and overhead clearance are reasonable.
+- Repeated collisions on the same vertical route should temporarily blacklist that route.
+- Stuck recovery should pick a different movement route, not retry the same blocked high destination immediately.
+- Arena authors should use route labels consistently so the bot can infer movement chains without map-specific code.
+
 ## Track 02 Acceptance
 
 - The bot no longer depends on a hardcoded `BOT_REPOSITION_POINTS` list inside combat behavior.

@@ -1,6 +1,6 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
 - Current surface: FPS arena lab.
 
 ## North Star
@@ -47,7 +47,7 @@ Non-goals:
 - No football/TPS scope.
 - No impossible instant-shot bot behavior.
 
-## Active Track
+## Previous Track
 
 `Track 03 - Arena Tactical Context Proof V1` is locally validated and ready for human smoke.
 
@@ -82,11 +82,51 @@ Non-goals:
 - No final art pass.
 - No broad refactor outside arena layout/context boundaries.
 
-## Recommended Next Track After Track 03 Smoke
+## Active Track
+
+`Track 04 - Arena Movement Flow And Bot Navigation V1` is locally validated and ready for human smoke.
+
+Human smoke from Track 03 accepted the improved bot aim direction, but rejected the movement feel:
+
+- the bot appears to treat map geometry like jump pad routes;
+- the bot can get stuck against ceilings and walls;
+- `Relay Foundry V1` jump pads are too close to high platforms;
+- platform placement does not support a good movement rhythm.
+
+Goals:
+
+- Rebuild arena layouts around continuous player movement.
+- Make jump pads readable connectors with clear approach and landing space.
+- Keep high platforms useful without making them collision traps.
+- Make bot movement route-based instead of destination-only.
+- Add validation for movement clearance and staged vertical routing.
+
+Delivered:
+
+- `Relay Foundry V1` rebuilt with more generous arena flow and less cramped jump pad/platform placement.
+- Vertical route labels now connect jump pad entry, landing and high-ground continuation.
+- Bot navigation now keeps jump pads as low-ground navigation targets until launch/vertical transition happens.
+- Bot jump recovery now checks overhead clearance and can temporarily penalize blocked routes.
+- Validation covers layout route contracts, Relay jump pad spacing and bot staged vertical navigation.
+
+Delivered before this track:
+
+- Track 01 approved combat readability.
+- Track 02 approved bot tactical movement in the accepted baseline.
+- Track 03 delivered multi-arena catalog and selection, but exposed movement-flow failures in smoke.
+
+Non-goals:
+
+- No new weapon.
+- No raw aim/damage tuning spike.
+- No export, Web/mobile, multiplayer or backend.
+- No final art pass.
+
+## Recommended Next Track After Track 04 Smoke
 
 Choose between:
 
-- human playtest-driven combat number tuning;
+- human playtest-driven combat number tuning after movement is accepted;
 - projectile/weapon experiment;
 - export-readiness pass for the FPS lab.
 
