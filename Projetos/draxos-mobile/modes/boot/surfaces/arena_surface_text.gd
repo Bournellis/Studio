@@ -71,6 +71,32 @@ static func active_buff_summary_text(attempt: Dictionary) -> String:
 		parts.append("%s (%s)" % [label, buff_effect_text(buff)])
 	return ", ".join(parts)
 
+static func arena_path_guide_lines(progress: Dictionary, recommended_arena: Dictionary, recommended_difficulty: Dictionary) -> PackedStringArray:
+	var tutorial_done := bool(progress.get("tutorial_completed", false))
+	var recommendation := short_arena_label(recommended_arena)
+	var difficulty := difficulty_label(recommended_difficulty)
+	var lines := PackedStringArray()
+	if tutorial_done:
+		if recommendation == "" or recommendation == "Nao definido":
+			lines.append("Tutorial concluido. Escolha a primeira arena real liberada para repetir o loop.")
+		else:
+			lines.append("Tutorial concluido. Proximo alvo: %s (%s)." % [recommendation, difficulty])
+	else:
+		lines.append("Comece pelo tutorial de 1 duelo. Depois do resumo, a primeira arena real de 3 duelos vira o recomendado.")
+	lines.append("Dentro da tentativa: resolver duelo -> escolher 1 buff temporario -> resolver o proximo duelo.")
+	lines.append("Abandonar encerra sem recompensa de conclusao; Retomar recupera uma tentativa aberta.")
+	return lines
+
+static func recommended_action_label(arena: Dictionary, difficulty: Dictionary, progress: Dictionary) -> String:
+	var arena_id := str(arena.get("id", "")).strip_edges()
+	if arena_id == "arena_tutorial_cinzas" and not bool(progress.get("tutorial_completed", false)):
+		return "Iniciar tutorial recomendado"
+	if arena_id == "arena_cinzas_curta" and bool(progress.get("tutorial_completed", false)):
+		var steps := int(difficulty.get("max_steps", arena.get("duel_count", arena.get("max_steps", 3))))
+		if steps == 3:
+			return "Iniciar primeira arena real"
+	return "Iniciar desafio recomendado"
+
 static func buff_label_text(choice: Dictionary) -> String:
 	for key in ["display_name", "label", "name", "title"]:
 		var label := str(choice.get(key, "")).strip_edges()
@@ -184,12 +210,25 @@ static func next_enemy_label(attempt: Dictionary) -> String:
 static func summary_text(attempt: Dictionary, summary: Dictionary) -> String:
 	var duels_won := int(summary.get("duels_won", attempt.get("duels_won", 0)))
 	var duels_total := maxi(1, int(attempt.get("duel_count", attempt.get("duels_total", summary.get("duels_total", 1)))))
-	return "Estado: %s\nDuelos vencidos: %d/%d\nRecompensa: %s\nProximo passo: veja a recomendacao da Temporada 1 antes de continuar." % [
-		friendly_attempt_state(str(attempt.get("status", summary.get("status", "completed")))),
+	var state := str(attempt.get("status", summary.get("status", "completed")))
+	return "Resultado: %s\nDuelos vencidos: %d/%d\nRecompensa: %s\nProgresso: a Temporada 1 sera atualizada ao continuar.\nProximo passo: veja a recomendacao da Temporada 1 antes de continuar." % [
+		friendly_attempt_state(state),
 		clampi(duels_won, 0, duels_total),
 		duels_total,
-		str(summary.get("reward_label", "recompensa da Arena PVE")),
+		summary_reward_text(summary, state),
 	]
+
+static func summary_reward_text(summary: Dictionary, state: String = "") -> String:
+	var reward_label := str(summary.get("reward_label", "")).strip_edges()
+	if reward_label == "COMPLETION_REWARD_APPLIED_ON_DUEL_CLEAR":
+		return "recompensa de conclusao ja aplicada no ultimo duelo"
+	if bool(summary.get("reward_already_applied", false)):
+		return reward_label if reward_label != "" else "recompensa ja aplicada pelo servidor"
+	if state == "abandoned" or str(summary.get("status", "")).strip_edges() == "abandoned":
+		return "nenhuma recompensa de conclusao"
+	if reward_label != "":
+		return reward_label
+	return "recompensa da Arena PVE"
 
 static func arena_button_label(arena: Dictionary, difficulty: Dictionary = {}) -> String:
 	var tier := difficulty if not difficulty.is_empty() else arena

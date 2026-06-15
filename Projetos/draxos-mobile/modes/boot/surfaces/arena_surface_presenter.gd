@@ -5,7 +5,7 @@ const AppShellActionContractScript := preload("res://modes/boot/ui/app_shell_act
 const PreparationPresenterScript := preload("res://modes/boot/surfaces/hub_surface_preparation_presenter.gd")
 const ArenaSurfaceTextScript := preload("res://modes/boot/surfaces/arena_surface_text.gd")
 
-const ABANDON_CONFIRM_MESSAGE := "Encerrar esta tentativa da Arena? Nenhuma recompensa de conclusao sera concedida e a Arena volta para a selecao."
+const ABANDON_CONFIRM_MESSAGE := "Encerrar esta tentativa da Arena? Nenhuma recompensa de conclusao sera concedida; depois disso voce podera iniciar outra tentativa."
 const STALE_ABANDON_CONFIRM_MESSAGE := "Limpar esta tentativa antiga da Arena? Isto apenas libera o estado local; nenhuma recompensa sera concedida."
 const UUID_HEX_CHARS := "0123456789abcdefABCDEF"
 
@@ -18,12 +18,13 @@ func render_selection(host: Node) -> void:
 		_add_arena_preparation_control(host, true)
 		_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 		return
-	_call_host(host, "_add_body_text", ["Escolha uma Arena PVE. O loadout trava ao iniciar; buffs e comportamento ficam entre vitorias."])
+	_call_host(host, "_add_body_text", ["Arena PVE e o loop principal atual: comece pelo tutorial, siga para a primeira arena real de 3 duelos e use buffs temporarios entre vitorias."])
 	if _has_remote_arena_state(arena):
 		var arenas := _as_array(arena.get("arenas", []))
 		var progress := _as_dictionary(arena.get("progress", {}))
 		var recommended_action_id := _recommended_start_action_id(arenas)
 		_render_season_progress_panel(host, arenas, progress)
+		_render_arena_path_guide(host, arenas, progress)
 		_render_recommended_arena(host, arenas)
 		_add_arena_preparation_control(host, false)
 		_render_available_arenas(host, arenas, recommended_action_id)
@@ -51,10 +52,14 @@ func render_active(host: Node) -> void:
 		_render_active_attempt_recovery(host, attempt)
 		_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
 		return
-	_call_host(host, "_add_body_text", ["Tentativa em andamento. Cada duelo comeca com HP cheio."])
+	var has_pending_buff := not _pending_buff_choices(attempt).is_empty()
+	var body_text := "Tentativa aguardando buff. Escolha 1 opcao temporaria para liberar o proximo duelo."
+	if not has_pending_buff:
+		body_text = "Tentativa em andamento. Resolva o duelo atual; cada duelo comeca com HP cheio."
+	_call_host(host, "_add_body_text", [body_text])
 	_add_duel_progress_rail(host, attempt)
 	_add_attempt_summary_panel(host, attempt)
-	if not _pending_buff_choices(attempt).is_empty():
+	if has_pending_buff:
 		_call_host(host, "_add_action_button", ["Escolher buff", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT])
 	else:
 		_call_host(host, "_add_action_button", ["Resolver duelo", AppShellActionContractScript.ACTION_ARENA_RESOLVE_DUEL])
@@ -66,7 +71,7 @@ func render_active(host: Node) -> void:
 func render_buff_choice(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
 	var choices := _pending_buff_choices(attempt)
-	_call_host(host, "_add_body_text", ["Escolha 1 buff temporario para os proximos duelos desta tentativa."])
+	_call_host(host, "_add_body_text", ["Escolha 1 buff temporario. Ele aplica no proximo duelo, acumula com buffs ativos e some ao encerrar a tentativa."])
 	if choices.is_empty():
 		_call_host(host, "_add_output_label", ["Nenhum buff pendente. Volte para a tentativa ativa."])
 		_call_host(host, "_add_action_button", ["Retomar tentativa", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT])
@@ -114,7 +119,7 @@ func _render_recommended_arena(host: Node, arenas: Array) -> void:
 	var difficulty_id := str(difficulty.get("difficulty_id", difficulty.get("id", ""))).strip_edges()
 	if arena_id == "":
 		return
-	var label := "Iniciar desafio recomendado"
+	var label := _recommended_action_label(arena, difficulty)
 	var action_id := AppShellActionContractScript.arena_start_action(arena_id, difficulty_id)
 	var panel := _arena_panel(host, "ArenaRecommendedCard", "bg_panel_alt", "accent_battle")
 	var stack := _arena_panel_stack(panel, 7)
@@ -132,6 +137,17 @@ func _render_recommended_arena(host: Node, arenas: Array) -> void:
 		_reward_preview_text(_as_dictionary(difficulty.get("reward_preview", arena.get("reward_preview", {})))),
 	], 12, "text_secondary"))
 	stack.add_child(_arena_action_button(host, label, action_id, false, "", true))
+	_call_host(host, "_add_content_control", [panel])
+
+func _render_arena_path_guide(host: Node, arenas: Array, progress: Dictionary) -> void:
+	if arenas.is_empty():
+		return
+	var recommendation := _recommended_arena_option(arenas)
+	var panel := _arena_panel(host, "ArenaPathGuidePanel", "bg_panel", "border_default")
+	var stack := _arena_panel_stack(panel, 7)
+	stack.add_child(_arena_label("Roteiro da prova", 14, "text_primary"))
+	for line: String in ArenaSurfaceTextScript.arena_path_guide_lines(progress, _as_dictionary(recommendation.get("arena", {})), _as_dictionary(recommendation.get("difficulty", {}))):
+		stack.add_child(_arena_label(line, 12, "text_secondary"))
 	_call_host(host, "_add_content_control", [panel])
 
 func _render_season_progress_panel(host: Node, arenas: Array, progress: Dictionary) -> void:
@@ -231,6 +247,7 @@ func _render_active_attempt_recovery(host: Node, attempt: Dictionary) -> void:
 		stack.add_child(_arena_label("Esta tentativa ficou aberta antes do update ou esta sem proximo passo valido. Encerre a tentativa antiga para liberar uma nova run.", 12, "text_secondary"))
 	else:
 		stack.add_child(_arena_label("Retome esta tentativa antes de iniciar outra Arena. O loadout segue travado ate encerrar.", 12, "text_secondary"))
+		stack.add_child(_arena_label("Abandonar encerra sem recompensa de conclusao; retomar preserva o estado da tentativa.", 12, "text_secondary"))
 	stack.add_child(_arena_label("Estado: %s | %s" % [status, _duel_progress_short_text(attempt)], 12, "text_secondary"))
 	if needs_recovery:
 		stack.add_child(_arena_action_button(host, "Encerrar tentativa antiga", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, false, "", true, STALE_ABANDON_CONFIRM_MESSAGE))
@@ -460,13 +477,23 @@ func _add_attempt_summary_panel(host: Node, attempt: Dictionary) -> void:
 	var duels_won := int(attempt.get("duels_won", attempt.get("current_step_index", 0)))
 	var next_duel := int(attempt.get("duel_index", duels_won)) + 1
 	var duels_total := maxi(1, int(attempt.get("duel_count", attempt.get("duels_total", 1))))
-	stack.add_child(_arena_label("Proximo duelo", 14, "text_primary"))
-	stack.add_child(_arena_label("Duelo atual: %d/%d" % [clampi(next_duel, 1, duels_total), duels_total], 12, "text_secondary"))
+	var pending_buff_count := _pending_buff_choices(attempt).size()
+	stack.add_child(_arena_label("Estado da tentativa", 14, "text_primary"))
+	if pending_buff_count > 0:
+		stack.add_child(_arena_label("Agora: escolha 1 buff temporario antes do duelo %d/%d." % [clampi(next_duel, 1, duels_total), duels_total], 12, "text_secondary"))
+	else:
+		stack.add_child(_arena_label("Agora: resolver duelo %d/%d." % [clampi(next_duel, 1, duels_total), duels_total], 12, "text_secondary"))
 	stack.add_child(_arena_label("Proximo inimigo: %s" % _next_enemy_label(attempt), 12, "text_secondary"))
 	stack.add_child(_arena_label("Estado: %s | Buffs ativos: %s" % [
 		_friendly_attempt_state(_attempt_state(attempt)),
 		ArenaSurfaceTextScript.active_buff_summary_text(attempt),
 	], 12, "text_secondary"))
+	var active_buffs_text := ArenaSurfaceTextScript.active_buff_summary_text(attempt)
+	if active_buffs_text != "nenhum":
+		stack.add_child(_arena_label("Buff aplicado ao proximo duelo: %s" % active_buffs_text, 12, "text_secondary"))
+	stack.add_child(_arena_label("HP: sempre cheio no inicio de cada duelo.", 12, "text_secondary"))
+	if pending_buff_count == 0 and duels_won < duels_total - 1:
+		stack.add_child(_arena_label("Ao vencer: escolha 1 buff temporario antes do proximo duelo.", 12, "text_secondary"))
 	stack.add_child(_arena_label("Comportamento: ajustavel entre duelos", 12, "text_secondary"))
 	stack.add_child(_arena_label("Loadout travado. Pocao tambem pode ser ajustada antes do duelo.", 12, "text_secondary"))
 	_call_host(host, "_add_content_control", [panel])
@@ -592,6 +619,7 @@ func _buff_choice_card(host: Node, choice: Dictionary, index: int, buff_id: Stri
 		label = buff_id
 	stack.add_child(_arena_label(label, 13, "text_primary"))
 	stack.add_child(_arena_label(_buff_effect_text(choice), 12, "text_secondary"))
+	stack.add_child(_arena_label("Aplica no proximo duelo; nao entra no inventario nem no save permanente.", 11, "text_secondary"))
 	stack.add_child(_arena_label("Temporario: dura ate encerrar esta tentativa.", 11, "text_secondary"))
 	stack.add_child(_arena_action_button(host, "Escolher", AppShellActionContractScript.arena_choose_buff_action(buff_id), false, "", true))
 	return card
@@ -628,6 +656,9 @@ func _short_arena_label(arena: Dictionary) -> String:
 
 func _difficulty_label(difficulty: Dictionary) -> String:
 	return ArenaSurfaceTextScript.difficulty_label(difficulty)
+
+func _recommended_action_label(arena: Dictionary, difficulty: Dictionary) -> String:
+	return ArenaSurfaceTextScript.recommended_action_label(arena, difficulty, _as_dictionary(SessionStore.arena_snapshot().get("progress", {})))
 
 func _difficulty_meta_text(difficulty: Dictionary) -> String:
 	return ArenaSurfaceTextScript.difficulty_meta_text(difficulty)
