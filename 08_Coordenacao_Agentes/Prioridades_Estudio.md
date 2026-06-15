@@ -4,7 +4,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 ## Foco Atual
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado; gates remotos 09F PASS no rerun; retest humano pendente) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 03 arena tactical context proof pronta para smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; proxima reducao planejada como Track 09G) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 03 arena tactical context proof pronta para smoke humano)
 - Pausa temporaria por poucos dias: `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -13,7 +13,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 | Prioridade | Projeto | Caminho | Status | Trabalho permitido | Proximo passo |
 |---|---|---|---|---|---|
-| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | `Super Campeao v1.2.1+a75cfe57` publicado em Cloudflare Pages; gates remotos 09F PASS no rerun; retest humano pendente antes da proxima reducao |
+| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | `Super Campeao v1.2.1+a75cfe57` publicado em Cloudflare Pages e aprovado; proxima reducao: Track 09G `Football Match Resolution Controller V1` |
 | Pausa | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
 | Ativo | DraxosMobile | `Projetos/draxos-mobile/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest, documentacao local e infraestrutura | Arena UX/readability/recovery publicado Web/APK `0.0.24-alpha.0` / vc `24`; proximo passo e prova humana do roteiro Arena antes de tuning, PVP, economia, conteudo ou expansao |
 | Ativo | FpsPlayground | `Projetos/FpsPlayground/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | Track 03 local validada; Fabio/tester fazer smoke em `Duel Pit V2` e `Relay Foundry V1` antes de tuning fino |
