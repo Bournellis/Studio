@@ -6,6 +6,7 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 
 | Data | Release | Canal | URL | Release root | Evidencia |
 | --- | --- | --- | --- | --- | --- |
+| 2026-06-15 | FootballRoot Extraction V1 (`v1.2.1+ff9cb389`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260615-ff9cb389` | `docs/playtest-reports/track-09a-data/09a-publication-report-ff9cb389.json` + `docs/playtest-reports/track-09a-data/09a-remote-menu-ff9cb389.json` + `docs/playtest-reports/track-09a-data/09a-remote-first-minute-ff9cb389.json` + `docs/playtest-reports/track-09a-data/09a-remote-stability-5min-ff9cb389.json` + `docs/playtest-reports/track-09a-data/09a-remote-night-luma-gate-ff9cb389.json` |
 | 2026-06-14 | Super Campeao Rebrand & UI Cleanup Hotfix 08A (`v1.2.1+6ef3074c`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260614-6ef3074c` | `docs/playtest-reports/track-08a-data/08a-publication-report-6ef3074c.json` + `docs/playtest-reports/track-08a-data/08a-remote-menu-6ef3074c.json` + `docs/playtest-reports/track-08a-data/08a-remote-first-minute-6ef3074c.json` + `docs/playtest-reports/track-08a-data/08a-remote-stability-5min-6ef3074c.json` + `docs/playtest-reports/track-08a-data/08a-remote-night-luma-gate-6ef3074c.json` |
 | 2026-06-14 | Super Campeao Rebrand & UI Cleanup (`v1.2.1+2f537628`) | Tentativa Cloudflare Pages com rollback | `https://copa-arena-futebol.pages.dev/` voltou para `v1.2.0+fa82cb7d` | Tentativa `web/v1-copa-arena-futebol-20260614-2f537628`; rollback `web/v1-copa-arena-futebol-20260614-fa82cb7d` | `docs/playtest-reports/track-08-data/08-publication-report-2f537628.json` + `docs/playtest-reports/track-08-data/08-remote-menu-2f537628.json` + `docs/playtest-reports/track-08-data/08-remote-first-minute-2f537628.json` + `docs/playtest-reports/track-08-data/08-rollback-publication-report-fa82cb7d.json` + `docs/playtest-reports/track-08-data/08-rollback-confirm-fa82cb7d.json` |
 | 2026-06-14 | Visual Polish & Web Audio Safe Hotfix 07C (`v1.2.0+fa82cb7d`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260614-fa82cb7d` | `docs/playtest-reports/track-07c-data/07c-publication-report.json` + `docs/playtest-reports/track-07c-data/07c-remote-menu-user-url-fa82cb7d.json` + `docs/playtest-reports/track-07c-data/07c-remote-first-minute-fa82cb7d.json` + `docs/playtest-reports/track-07c-data/07c-remote-stability-5min-fa82cb7d.json` + `docs/playtest-reports/track-07c-data/07c-remote-night-luma-gate-fa82cb7d.json` |
@@ -17,6 +18,21 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 | 2026-06-12 | First-Minute Smoothness V1 (`v1.0.2+ad82384b`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-ad82384b` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05b-data/05b-remote-first-minute-gate.json` + `docs/playtest-reports/track-05b-data/05b-remote-stability-5min.json` |
 | 2026-06-12 | Web Stability Hotfix V1 (`v1.0.1+a850045a`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-a850045a` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json` |
 | 2026-06-12 | Web Publication V1 | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-31e23ea3` | `docs/playtest-reports/track-05-data/05c-publication-report.json` |
+
+## 2026-06-15 - FootballRoot Extraction V1
+
+- Release publicado: `v1.2.1+ff9cb389` em `https://copa-arena-futebol.pages.dev/`.
+- Release root publico: `web/v1-copa-arena-futebol-20260615-ff9cb389`.
+- Preview do deploy final: `https://17ea99ce.copa-arena-futebol.pages.dev`.
+- Escopo: refator tecnico sem gameplay, asset ou regra; extrai ambiente noturno, capture director, placares do estadio e perf scenario para helpers dedicados; `FootballRoot` caiu de `2280` para `1862` linhas.
+- Gates locais Track 09A: import headless PASS; `tools/validate.gd` PASS com `104` testes / `1825` asserts; export Web PASS; Web gzip `30.58 MiB / 50.00 MiB`.
+- Publicacao final: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260615-ff9cb389 -VisibleVersion v1.2.1 -EvidenceSubdir track-09a-data -EvidencePrefix 09a -DeployMessage "JogoDaCopa Track 09A Super Campeao v1.2.1 web/v1-copa-arena-futebol-20260615-ff9cb389" -ConfirmRemoteMutation -SkipExport`; projeto Cloudflare Pages `copa-arena-futebol`.
+- Sanity menu remoto: PASS, release root conferiu, `menu.ready.end` visto, `pageErrors=0`, `consoleErrorCount=0`.
+- Gate remoto primeiro minuto: PASS, release root conferiu, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
+- Gate remoto estabilidade 5min: PASS, release root conferiu, `pageErrors=0`, `consoleErrorCount=0`, heap retido `44,357,844 -> 48,072,785` bytes (`+8.37%`, limite `<10%`), pico `50,323,943` bytes.
+- Demais checks da estabilidade: PASS em `object_node_count 797 -> 797`, `object_count 3270 -> 3270`, caches estaveis, `render_video_mem_used 244,147,262 -> 244,147,262` e pior janela 5s `116.8 FPS`.
+- Gate remoto de luminancia: PASS, `luma_0_255=6.525 < 90` na captura `09a-remote-stability-5min-ff9cb389.png`.
+- Proximo passo: retest humano do Fabio + tester externo na URL publica, cobrindo `Super Campeao`, loading/menu, menu ESC, HUD/scorebug e primeiro minuto.
 
 ## 2026-06-14 - Super Campeao Rebrand & UI Cleanup Hotfix 08A
 
