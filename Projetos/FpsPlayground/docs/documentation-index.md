@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_READY_FOR_HUMAN_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_APPROVED`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 

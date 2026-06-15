@@ -1,6 +1,6 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_READY_FOR_HUMAN_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_APPROVED`
 - Current surface: FPS arena lab.
 
 ## North Star
@@ -17,7 +17,7 @@ Keep `FpsPlayground` as a clean first-person gameplay laboratory for arena movem
 
 ## Active Track
 
-`Track 02 - Bot Tactical Movement V1` is ready for human smoke after automated validation.
+`Track 02 - Bot Tactical Movement V1` is approved after automated validation and Fabio smoke.
 
 Goals:
 
@@ -51,8 +51,8 @@ Non-goals:
 
 Choose between:
 
+- new arena map/layout using the tactical context contract;
 - human playtest-driven combat number tuning;
-- new arena map/layout using the tactical context;
 - projectile/weapon experiment;
 - export-readiness pass for the FPS lab.
 

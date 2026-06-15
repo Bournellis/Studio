@@ -5,8 +5,8 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 02 - Bot Tactical Movement V1`
-- Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_READY_FOR_HUMAN_SMOKE`
+- Active stage status: `APPROVED`
+- Status marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_APPROVED`
 
 ## Current Truth
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. Track 02 is implemented and ready for human smoke focused on bot tactical movement, arena-agnostic route context, pressure and fairness without new map or weapon scope.
+Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement, arena-agnostic route context, pressure and fairness without new map or weapon scope.
 
 ## Track 01 Delivered
 
@@ -56,6 +56,11 @@ Track 01 is approved. Track 02 is implemented and ready for human smoke focused 
 - Added recent route memory/anti-repeat scoring and stronger stuck recovery through tactical reselection.
 - Tuned bot reaction/cooldown/aim conservatively while preserving shot windup readability.
 - Added focused tests for tactical context filtering, alternate arena context, health priority and Duel Pit role exposure.
+
+## Human Approval
+
+- Fabio approved the Track 02 bot smoke on 2026-06-15.
+- Next recommendation: choose between a new arena that proves the tactical context contract, or a narrow playtest tuning pass on movement/aim numbers.
 
 ## Validation
 

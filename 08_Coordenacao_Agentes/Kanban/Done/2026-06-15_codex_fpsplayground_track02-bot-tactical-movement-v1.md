@@ -51,4 +51,6 @@ Mover para Review/Done apos validacao automatizada e registrar smoke humano de b
 - `git diff --check`: PASS.
 - `tools/check_doc_drift.ps1`: PASS.
 - Handoff: Fabio executar smoke humano de bot movement em `Projetos/FpsPlayground/docs/validation.md`.
+- Smoke humano: APROVADO por Fabio em 2026-06-15.
+- Proxima recomendacao: nova arena consumindo o contexto tatico ou tuning fino por playtest.
 - PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.

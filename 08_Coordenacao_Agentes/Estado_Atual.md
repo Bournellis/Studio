@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 02 bot tactical movement pronta para smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 02 bot tactical movement aprovada)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK02_BOT_TACTICAL_MOVEMENT_READY_FOR_HUMAN_SMOKE`
-- Marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_READY_FOR_HUMAN_SMOKE`
+- Status: `P2_IMPLEMENTACAO - TRACK02_BOT_TACTICAL_MOVEMENT_APPROVED`
+- Marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_APPROVED`
 - Baseline: Track 02 adicionou contexto tatico arena-agnostico, scoring de rotas, anti-repeat, cura/overcharge/high route e tuning conservador do bot.
-- Validacao: `tools/validate.gd` PASS `18/18`, `135` asserts; `git diff --check` PASS; `tools/check_doc_drift.ps1` PASS.
+- Validacao: `tools/validate.gd` PASS `18/18`, `135` asserts; smoke humano do bot aprovado por Fabio em 2026-06-15.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio executar smoke humano de bot movement em `docs/validation.md`.
+- Proximo passo: escolher entre nova arena usando contexto tatico ou tuning fino por playtest.
 
 ## rpg-isometrico
 

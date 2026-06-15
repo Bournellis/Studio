@@ -1,8 +1,8 @@
 # Track 02 - Bot Tactical Movement V1
 
 - Created: `2026-06-15`
-- Status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED`
+- Status marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_APPROVED`
 - Branch: `codex/fpsplayground/track02-bot-tactical-movement-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track02-bot-tactical-movement-v1`
 
@@ -66,6 +66,8 @@ Final automated result:
 - `tools/check_doc_drift.ps1`: PASS.
 - Known warning class remains limited to GUT UID/text-path fallback warnings.
 
-## Human Smoke Pending
+## Human Approval
 
-Fabio should run the Track 02 smoke in `docs/validation.md` and judge whether the bot movement is harder, fair and less tied to the current arena model.
+- Fabio approved the Track 02 bot smoke on 2026-06-15.
+- Result: bot movement quality is accepted for this track.
+- Next recommendation: create a new arena that consumes the tactical context contract, or run a narrow tuning pass from additional playtest notes.
