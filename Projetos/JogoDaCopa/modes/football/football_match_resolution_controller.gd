@@ -117,21 +117,15 @@ static func update_match_clock(root: Node, delta: float) -> void:
 		root.last_thirty_announced = true
 		if root.hud != null:
 			root.hud.show_announcement("ULTIMO MINUTO!", 0.9, &"last_minute")
-	var timer_result: Dictionary = FootballMatchRulesScript.resolve_timer_state(
-		root.player_score,
-		root.bot_score,
-		root.match_time_remaining,
-		root.match_mode_id,
-		root.golden_goal_active
-	)
-	if bool(timer_result.get("golden_goal_active", false)) and not root.golden_goal_active:
+	if root.match_time_remaining > 0.0:
+		return
+	if root.player_score == root.bot_score:
 		root.golden_goal_active = true
 		root.phase_label = &"golden_goal"
 		if root.hud != null:
 			root.hud.show_announcement("GOLDEN GOAL!", 1.05, &"golden_goal")
 		return
-	if bool(timer_result.get("match_over", false)):
-		finish_match(root, bool(timer_result.get("player_won", false)))
+	finish_match(root, root.player_score > root.bot_score)
 
 
 static func finish_match(root: Node, player_won: bool) -> void:
