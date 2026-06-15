@@ -19,6 +19,7 @@ const FootballWorldEnvironmentScript = preload("res://modes/football/football_wo
 const FootballCaptureDirectorScript = preload("res://modes/football/football_capture_director.gd")
 const FootballScoreboardControllerScript = preload("res://modes/football/football_scoreboard_controller.gd")
 const FootballPerfScenarioScript = preload("res://modes/football/football_perf_scenario.gd")
+const FootballWebLoadingControllerScript = preload("res://modes/football/football_web_loading_controller.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const MODE_NAME: String = "Super Campeão"
@@ -90,16 +91,6 @@ const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 const MATCH_MODE_IDS: Array = [&"timer", &"goals"]
 const SCREEN_TRANSITION_SECONDS: float = 0.25
 const HUD_SNAPSHOT_INTERVAL_SECONDS: float = 0.1
-const WEB_RENDER_WARMUP_ENABLED: bool = true
-const WEB_RENDER_WARMUP_CHUNK_SIZE: int = 1024
-const WEB_RENDER_WARMUP_DEFER_DECORATIVE: bool = false
-const WEB_RENDER_WARMUP_CORE_GLASS_NODES: int = 2
-const WEB_LOADING_SETTLE_REQUIRED_FRAMES: int = 5
-const WEB_LOADING_SETTLE_MAX_FRAMES: int = 120
-const WEB_LOADING_SETTLE_FRAME_MS: float = 33.0
-const WEB_FIRST_USE_WARMUP_FRAMES: int = 1
-const WEB_REAL_JUMP_PAD_WARMUP_FRAMES: int = 120
-const WEB_FIRST_USE_DECAY_SECONDS: float = 0.8
 
 var player
 var player_avatar
@@ -169,7 +160,7 @@ func _ready() -> void:
 	PerfProbeScript.ensure_enabled(self, "football")
 	if RenderProfileScript.is_web_platform():
 		web_loading_active = true
-		_build_web_loading_overlay()
+		FootballWebLoadingControllerScript.build_overlay(self, MODE_NAME)
 		call_deferred("_ready_web_async")
 		return
 	_ready_sync()
@@ -196,39 +187,39 @@ func _ready_web_async() -> void:
 	var ready_begin := PerfProbeScript.begin(self, "football.ready")
 	_apply_main_menu_settings()
 	_connect_game_settings_signals()
-	_set_web_loading_progress("Preparando arena", 0.08)
+	FootballWebLoadingControllerScript.set_progress(self, PerfProbeScript, MODE_NAME, "Preparando arena", 0.08)
 	await get_tree().process_frame
 	var stage_begin := PerfProbeScript.begin(self, "football.configure_world")
 	_configure_world()
 	PerfProbeScript.end(self, "football.configure_world", stage_begin)
-	_set_web_loading_progress("Carregando jogadores", 0.36)
+	FootballWebLoadingControllerScript.set_progress(self, PerfProbeScript, MODE_NAME, "Carregando jogadores", 0.36)
 	await get_tree().process_frame
 	stage_begin = PerfProbeScript.begin(self, "football.spawn_runtime")
 	_spawn_runtime()
 	PerfProbeScript.end(self, "football.spawn_runtime", stage_begin)
-	if WEB_RENDER_WARMUP_ENABLED:
-		_set_web_loading_progress("Aquecendo render", 0.52)
-		await _warmup_web_first_render()
-	_set_web_loading_progress("Preparando partida", 0.90)
+	if FootballWebLoadingControllerScript.RENDER_WARMUP_ENABLED:
+		FootballWebLoadingControllerScript.set_progress(self, PerfProbeScript, MODE_NAME, "Aquecendo render", 0.52)
+		await FootballWebLoadingControllerScript.warmup_first_render(self, RenderProfileScript, PerfProbeScript, FootballFieldBuilderScript, MODE_NAME)
+	FootballWebLoadingControllerScript.set_progress(self, PerfProbeScript, MODE_NAME, "Preparando partida", 0.90)
 	stage_begin = PerfProbeScript.begin(self, "football.restart_play_initial")
 	_restart_play(false, false)
 	PerfProbeScript.end(self, "football.restart_play_initial", stage_begin)
-	if WEB_RENDER_WARMUP_ENABLED:
-		_set_web_loading_progress("Aquecendo efeitos", 0.92)
-		await _warmup_web_first_use_feedback()
+	if FootballWebLoadingControllerScript.RENDER_WARMUP_ENABLED:
+		FootballWebLoadingControllerScript.set_progress(self, PerfProbeScript, MODE_NAME, "Aquecendo efeitos", 0.92)
+		await FootballWebLoadingControllerScript.warmup_first_use_feedback(self, RenderProfileScript, PerfProbeScript)
 		stage_begin = PerfProbeScript.begin(self, "football.restart_play_after_warmup")
 		_restart_play(false, false)
 		PerfProbeScript.end(self, "football.restart_play_after_warmup", stage_begin)
-		_set_web_loading_progress("Estabilizando quadros", 0.97)
-		await _wait_for_web_loading_settled()
+		FootballWebLoadingControllerScript.set_progress(self, PerfProbeScript, MODE_NAME, "Estabilizando quadros", 0.97)
+		await FootballWebLoadingControllerScript.wait_until_settled(self, PerfProbeScript, FootballFieldBuilderScript)
 	_set_intro_open(true)
-	_set_web_loading_progress("Entrando em campo", 1.0)
+	FootballWebLoadingControllerScript.set_progress(self, PerfProbeScript, MODE_NAME, "Entrando em campo", 1.0)
 	_apply_capture_scene_from_meta()
 	call_deferred("_mark_first_runtime_frame")
 	PerfProbeScript.end(self, "football.ready", ready_begin)
-	_release_web_gameplay_under_loading_overlay()
-	await _wait_for_web_loading_settled()
-	_hide_web_loading_overlay()
+	FootballWebLoadingControllerScript.release_gameplay_under_overlay(self, PerfProbeScript)
+	await FootballWebLoadingControllerScript.wait_until_settled(self, PerfProbeScript, FootballFieldBuilderScript)
+	FootballWebLoadingControllerScript.hide_overlay(self, PerfProbeScript)
 
 func _process(_delta: float) -> void:
 	_maybe_quit_after_perf_duration()
@@ -292,336 +283,6 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("arcade_emote"):
 		_trigger_arcade_emote(true)
 		get_viewport().set_input_as_handled()
-
-func _build_web_loading_overlay() -> void:
-	web_loading_overlay = CanvasLayer.new()
-	web_loading_overlay.name = "WebLoadingOverlay"
-	web_loading_overlay.layer = 128
-	add_child(web_loading_overlay)
-	var shade := ColorRect.new()
-	shade.name = "Shade"
-	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	shade.color = Color(0.0, 0.0, 0.0, 1.0)
-	web_loading_overlay.add_child(shade)
-	var panel := VBoxContainer.new()
-	panel.name = "LoadingPanel"
-	panel.anchor_left = 0.5
-	panel.anchor_top = 0.5
-	panel.anchor_right = 0.5
-	panel.anchor_bottom = 0.5
-	panel.offset_left = -260.0
-	panel.offset_top = -54.0
-	panel.offset_right = 260.0
-	panel.offset_bottom = 54.0
-	panel.add_theme_constant_override("separation", 16)
-	web_loading_overlay.add_child(panel)
-	web_loading_label = Label.new()
-	web_loading_label.name = "LoadingLabel"
-	web_loading_label.text = MODE_NAME
-	web_loading_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	web_loading_label.add_theme_font_size_override("font_size", 24)
-	panel.add_child(web_loading_label)
-	web_loading_bar = ProgressBar.new()
-	web_loading_bar.name = "LoadingProgress"
-	web_loading_bar.min_value = 0.0
-	web_loading_bar.max_value = 1.0
-	web_loading_bar.value = 0.0
-	web_loading_bar.custom_minimum_size = Vector2(520.0, 18.0)
-	panel.add_child(web_loading_bar)
-
-func _set_web_loading_progress(label_text: String, progress_value: float) -> void:
-	PerfProbeScript.mark(self, "loading.progress", "label=%s value=%.2f" % [label_text, progress_value])
-	if web_loading_label != null:
-		web_loading_label.text = MODE_NAME
-	if web_loading_bar != null:
-		web_loading_bar.value = clampf(progress_value, 0.0, 1.0)
-
-func _hide_web_loading_overlay() -> void:
-	web_loading_active = false
-	PerfProbeScript.mark(self, "loading.overlay_hidden")
-	PerfProbeScript.mark(self, "event.visible_match_start")
-	if web_loading_overlay == null:
-		return
-	web_loading_overlay.queue_free()
-	web_loading_overlay = null
-	web_loading_label = null
-	web_loading_bar = null
-
-func _release_web_gameplay_under_loading_overlay() -> void:
-	web_loading_active = false
-	PerfProbeScript.mark(self, "loading.gameplay_released")
-
-func _warmup_web_first_render() -> void:
-	if not RenderProfileScript.is_web_platform():
-		return
-	var warmup_begin := PerfProbeScript.begin(self, "web_warmup.first_render")
-	var buckets := _collect_web_warmup_buckets(false)
-	var total_nodes := 0
-	for category in buckets.keys():
-		total_nodes += (buckets[category] as Array).size()
-	if total_nodes <= 0:
-		PerfProbeScript.end(self, "web_warmup.first_render", warmup_begin, "nodes=0")
-		return
-	PerfProbeScript.mark(self, "web_warmup.visible", "nodes=%d categories=%d" % [total_nodes, buckets.size()])
-	_set_web_loading_progress("Aquecendo render: arena completa", 0.88)
-	await _wait_for_web_loading_settled()
-	PerfProbeScript.mark(self, "web_warmup.core.end", "shown=%d/%d" % [total_nodes, total_nodes])
-	PerfProbeScript.end(self, "web_warmup.first_render", warmup_begin, "nodes=%d" % total_nodes)
-
-func _warmup_web_first_use_feedback() -> void:
-	if not RenderProfileScript.is_web_platform():
-		return
-	var warmup_begin := PerfProbeScript.begin(self, "web_warmup.first_use_feedback")
-	var previous_audio_volumes := _set_web_warmup_audio_volume(-80.0)
-	var warmup_position := Vector3(0.0, 0.72, 1.25)
-	var warmup_direction := Vector3(0.0, 0.0, -1.0)
-	if ball != null:
-		debug_force_ball_position(warmup_position)
-	await _wait_web_first_use_frames("position")
-	if player != null and ball != null:
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "gameplay_strong_kick")
-		debug_finish_kickoff_countdown()
-		debug_force_ball_position(player.global_position + (-player.global_transform.basis.z * 1.2) + Vector3.UP * 0.55)
-		_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, true)
-		await _wait_web_first_use_frames("gameplay_strong_kick", WEB_FIRST_USE_WARMUP_FRAMES + 2)
-		debug_force_ball_position(warmup_position)
-	if feedback != null:
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "whistle_countdown")
-		feedback.play_countdown_tick(false)
-		feedback.play_countdown_tick(true)
-		feedback.play_referee_whistle(warmup_position)
-		await _wait_web_first_use_frames("whistle_countdown", WEB_FIRST_USE_WARMUP_FRAMES + 2)
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "kick")
-		feedback.play_football_kick(warmup_position, warmup_direction, true)
-		feedback.play_ball_bounce(warmup_position, true)
-		feedback.play_ball_glass(warmup_position)
-		await _wait_web_first_use_frames("kick", WEB_FIRST_USE_WARMUP_FRAMES + 2)
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "goal_player")
-		feedback.play_football_goal(warmup_position + Vector3(0.0, 0.0, 3.5), true)
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "goal_bot")
-		feedback.play_football_goal(warmup_position + Vector3(0.0, 0.0, -3.5), false)
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "confetti_player")
-		feedback.play_arcade_confetti(warmup_position + Vector3(0.0, 0.0, 1.75), true)
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "confetti_bot")
-		feedback.play_arcade_confetti(warmup_position + Vector3(0.0, 0.0, -1.75), false)
-		feedback.play_jump_pad(warmup_position + Vector3(2.5, 0.0, 0.0), JUMP_PAD_LAUNCH_VELOCITY)
-		await _wait_web_first_use_frames("goal_confetti_batch", WEB_FIRST_USE_WARMUP_FRAMES + 2)
-		if player != null and not jump_pad_areas.is_empty():
-			PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "actual_jump_pad")
-			player.global_position = jump_pad_areas[0].global_position
-			if chase_camera != null:
-				chase_camera.snap_to_target()
-			_update_arcade_field(0.1)
-			await _wait_web_first_use_frames("actual_jump_pad", WEB_REAL_JUMP_PAD_WARMUP_FRAMES)
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "actual_goal_confetti")
-		debug_set_score(0, 0)
-		debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_SOUTH + 0.35))
-		_process_goal_detection()
-		await _wait_web_first_use_frames("actual_goal_confetti", WEB_FIRST_USE_WARMUP_FRAMES + 2)
-		restart_match(false)
-		debug_force_ball_position(warmup_position)
-		await _wait_web_first_use_frames("restart_after_actual_goal")
-	if hud != null:
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "hud_goal_messages")
-		hud.show_goal(true)
-		hud.show_goal(false)
-		await _wait_web_first_use_frames("hud_goal_messages", WEB_FIRST_USE_WARMUP_FRAMES + 2)
-	if ball != null:
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "fireball")
-		debug_force_ball_position(warmup_position)
-		ball.linear_velocity = warmup_direction * SUPER_SHOT_FORCE
-		if ball.has_method("debug_update_visual_asset"):
-			ball.debug_update_visual_asset(0.016)
-	if feedback != null:
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "round_end")
-		feedback.play_round_end(true)
-		PerfProbeScript.mark(self, "web_warmup.first_use_feedback.step", "result_flow")
-		_finish_match(true)
-		await _wait_web_first_use_frames("result_flow", WEB_FIRST_USE_WARMUP_FRAMES + 2)
-	await get_tree().create_timer(WEB_FIRST_USE_DECAY_SECONDS, false).timeout
-	if ball != null:
-		ball.linear_velocity = Vector3.ZERO
-		ball.angular_velocity = Vector3.ZERO
-		if ball.has_method("debug_update_visual_asset"):
-			ball.debug_update_visual_asset(0.016)
-	restart_match(false)
-	await _wait_web_first_use_frames("restart_after_result")
-	if feedback != null:
-		feedback.clear_effects()
-		await _wait_web_first_use_frames("clear_effects")
-	_restore_web_warmup_audio_volume(previous_audio_volumes)
-	PerfProbeScript.end(self, "web_warmup.first_use_feedback", warmup_begin)
-
-func _wait_web_first_use_frames(label: String, frame_count: int = WEB_FIRST_USE_WARMUP_FRAMES) -> void:
-	for frame_index in range(maxi(1, frame_count)):
-		PerfProbeScript.mark(self, "web_warmup.first_use_frame", "label=%s frame=%d/%d" % [label, frame_index + 1, frame_count])
-		await get_tree().process_frame
-
-func _set_web_warmup_audio_volume(volume_db: float) -> Dictionary:
-	var previous_volumes := {}
-	for bus_name in ["SFX", "UI", "Ambience"]:
-		var bus_index := AudioServer.get_bus_index(bus_name)
-		if bus_index < 0:
-			continue
-		previous_volumes[bus_name] = AudioServer.get_bus_volume_db(bus_index)
-		AudioServer.set_bus_volume_db(bus_index, volume_db)
-	return previous_volumes
-
-func _restore_web_warmup_audio_volume(previous_volumes: Dictionary) -> void:
-	for bus_name in previous_volumes.keys():
-		var bus_index := AudioServer.get_bus_index(str(bus_name))
-		if bus_index < 0:
-			continue
-		AudioServer.set_bus_volume_db(bus_index, float(previous_volumes[bus_name]))
-
-func _wait_for_web_loading_settled() -> void:
-	var settle_begin := PerfProbeScript.begin(self, "web_warmup.settle")
-	var stable_frames := 0
-	var previous_signature := _get_web_loading_settle_signature()
-	var previous_ticks := Time.get_ticks_usec()
-	for frame_index in range(WEB_LOADING_SETTLE_MAX_FRAMES):
-		await get_tree().process_frame
-		var current_ticks := Time.get_ticks_usec()
-		var frame_ms := float(current_ticks - previous_ticks) / 1000.0
-		previous_ticks = current_ticks
-		var current_signature := _get_web_loading_settle_signature()
-		var signature_stable := current_signature == previous_signature
-		if signature_stable and frame_ms < WEB_LOADING_SETTLE_FRAME_MS:
-			stable_frames += 1
-		else:
-			stable_frames = 0
-		previous_signature = current_signature
-		PerfProbeScript.mark(
-			self,
-			"web_warmup.settle.sample",
-			"frame=%d stable=%d frame_ms=%.3f object_count=%d node_count=%d resource_count=%d render_objects=%d" % [
-				frame_index + 1,
-				stable_frames,
-				frame_ms,
-				int(current_signature["object_count"]),
-				int(current_signature["object_node_count"]),
-				int(current_signature["object_resource_count"]),
-				int(current_signature["render_total_objects"])
-			]
-		)
-		if stable_frames >= WEB_LOADING_SETTLE_REQUIRED_FRAMES:
-			PerfProbeScript.end(self, "web_warmup.settle", settle_begin, "stable_frames=%d frames=%d" % [stable_frames, frame_index + 1])
-			return
-	PerfProbeScript.end(self, "web_warmup.settle", settle_begin, "stable_frames=%d timeout_frames=%d" % [stable_frames, WEB_LOADING_SETTLE_MAX_FRAMES])
-
-func _get_web_loading_settle_signature() -> Dictionary:
-	var field_counts := FootballFieldBuilderScript.debug_get_static_cache_counts()
-	return {
-		"object_count": int(Performance.get_monitor(Performance.OBJECT_COUNT)),
-		"object_node_count": int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT)),
-		"object_resource_count": int(Performance.get_monitor(Performance.OBJECT_RESOURCE_COUNT)),
-		"render_total_objects": int(Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME)),
-		"field_crowd_material_cache": int(field_counts.get("field_crowd_material_cache", 0)),
-		"field_flag_material_cache": int(field_counts.get("field_flag_material_cache", 0)),
-		"field_halo_material_cache": int(field_counts.get("field_halo_material_cache", 0)),
-		"field_net_material_cache": int(field_counts.get("field_net_material_cache", 0)),
-	}
-
-func _finish_web_deferred_render_warmup(buckets: Dictionary, state: Dictionary) -> void:
-	if not RenderProfileScript.is_web_platform():
-		return
-	var warmup_begin := PerfProbeScript.begin(self, "web_warmup.deferred_render")
-	await _reveal_web_warmup_categories(buckets, ["vidro"], "vidro", state, false)
-	await _reveal_web_warmup_categories(buckets, ["estandes"], "estandes", state, false)
-	await _reveal_web_warmup_categories(buckets, ["torcida"], "torcida", state, false)
-	await _reveal_web_warmup_categories(buckets, ["banners"], "banners", state, false)
-	await _reveal_web_warmup_categories(buckets, ["neon", "placares"], "neon/placares", state, false)
-	await _reveal_web_warmup_categories(buckets, ["vfx", "outros"], "restante", state, false)
-	PerfProbeScript.end(self, "web_warmup.deferred_render", warmup_begin, "shown=%d/%d" % [int(state["revealed"]), int(state["total"])])
-
-func _collect_web_warmup_buckets(hide_nodes: bool = true) -> Dictionary:
-	var buckets := {}
-	_collect_web_warmup_buckets_from_node(self, buckets, hide_nodes)
-	return buckets
-
-func _collect_web_warmup_buckets_from_node(node: Node, buckets: Dictionary, hide_nodes: bool = true) -> void:
-	if node is GeometryInstance3D:
-		var geometry_instance := node as GeometryInstance3D
-		if geometry_instance.visible:
-			var category := _classify_material_probe_node(geometry_instance)
-			if not buckets.has(category):
-				buckets[category] = []
-			(buckets[category] as Array).append(geometry_instance)
-			if hide_nodes:
-				geometry_instance.visible = false
-	for child in node.get_children():
-		_collect_web_warmup_buckets_from_node(child, buckets, hide_nodes)
-
-func _reveal_web_warmup_categories(buckets: Dictionary, categories: Array, label: String, state: Dictionary, update_loading_progress: bool = true, limit_nodes: int = -1) -> void:
-	var nodes: Array = []
-	if limit_nodes > 0 and categories.size() == 1 and buckets.has(categories[0]):
-		var category_key = categories[0]
-		var source_nodes := buckets[category_key] as Array
-		var selected_count = mini(limit_nodes, source_nodes.size())
-		for index in range(selected_count):
-			nodes.append(source_nodes[index])
-		var remaining_nodes: Array = []
-		for index in range(selected_count, source_nodes.size()):
-			remaining_nodes.append(source_nodes[index])
-		buckets[category_key] = remaining_nodes
-	else:
-		for category in categories:
-			if buckets.has(category):
-				nodes.append_array(buckets[category] as Array)
-	if nodes.is_empty():
-		return
-	var total := int(state["total"])
-	for chunk_start in range(0, nodes.size(), WEB_RENDER_WARMUP_CHUNK_SIZE):
-		var chunk_end := mini(nodes.size(), chunk_start + WEB_RENDER_WARMUP_CHUNK_SIZE)
-		for index in range(chunk_start, chunk_end):
-			var geometry_instance := nodes[index] as GeometryInstance3D
-			if geometry_instance != null:
-				geometry_instance.visible = true
-		state["revealed"] = int(state["revealed"]) + (chunk_end - chunk_start)
-		if update_loading_progress:
-			var progress := lerpf(0.52, 0.88, float(state["revealed"]) / float(total))
-			_set_web_loading_progress("Aquecendo render: %s" % label, progress)
-		PerfProbeScript.mark(
-			self,
-			"web_warmup.chunk",
-			"label=%s shown=%d/%d total=%d nodes=%s" % [label, chunk_end, nodes.size(), int(state["revealed"]), _format_warmup_node_names(nodes, chunk_start, chunk_end)]
-		)
-		await get_tree().process_frame
-
-func _format_warmup_node_names(nodes: Array, chunk_start: int, chunk_end: int) -> String:
-	var names: Array[String] = []
-	for index in range(chunk_start, chunk_end):
-		var node := nodes[index] as Node
-		if node != null:
-			names.append(node.name)
-	return ",".join(names)
-
-func _classify_material_probe_node(geometry_instance: GeometryInstance3D) -> String:
-	if geometry_instance.has_meta("material_probe_category"):
-		return str(geometry_instance.get_meta("material_probe_category"))
-	var node_name := geometry_instance.name.to_lower()
-	var path_text := str(geometry_instance.get_path()).to_lower()
-	if path_text.contains("playeravatar") or path_text.contains("botavatar"):
-		return "avatares"
-	if path_text.contains("feedback") or node_name.contains("trail") or node_name.contains("burst") or node_name.contains("fireball") or node_name.contains("boostpad") or node_name.contains("jumppad"):
-		return "vfx"
-	if geometry_instance.is_in_group("football_crowd") or node_name.contains("crowd"):
-		return "torcida"
-	if node_name.contains("stand") or node_name.contains("corridor") or node_name.contains("skyline"):
-		return "estandes"
-	if node_name.contains("banner") or node_name.contains("flag") or node_name.contains("mast"):
-		return "banners"
-	if node_name.contains("glass") or node_name.contains("net"):
-		return "vidro"
-	if node_name.contains("scoreboard") or path_text.contains("scoreboard"):
-		return "placares"
-	if node_name.contains("frame") or node_name.contains("post") or node_name.contains("rail") or node_name.contains("rib") or node_name.contains("bar") or node_name.contains("halo") or node_name.contains("marker"):
-		return "neon"
-	if node_name.contains("pitch") or node_name.contains("line") or node_name.contains("stripe") or node_name.contains("spot") or node_name.contains("mouth"):
-		return "campo"
-	if node_name.contains("ball"):
-		return "bola"
-	return "outros"
 
 func _get_escape_target() -> StringName:
 	return &"menu" if intro_open or match_over else &"pause"

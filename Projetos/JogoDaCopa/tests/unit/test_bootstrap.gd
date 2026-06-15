@@ -6,6 +6,7 @@ const FootballChaseCameraScript = preload("res://presentation/camera/football_ch
 const FootballBallScript = preload("res://gameplay/football/football_ball.gd")
 const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
 const FootballFieldBuilderScript = preload("res://modes/football/football_field_builder.gd")
+const FootballWebLoadingControllerScript = preload("res://modes/football/football_web_loading_controller.gd")
 const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
@@ -177,8 +178,8 @@ func test_web_loading_overlay_keeps_public_label_fixed() -> void:
 	var football := football_scene.instantiate()
 	add_child_autofree(football)
 
-	football._build_web_loading_overlay()
-	football._set_web_loading_progress("Preparando arena", 0.42)
+	FootballWebLoadingControllerScript.build_overlay(football, football.MODE_NAME)
+	FootballWebLoadingControllerScript.set_progress(football, football.PerfProbeScript, football.MODE_NAME, "Preparando arena", 0.42)
 
 	var loading_label := football.get_node_or_null("WebLoadingOverlay/LoadingPanel/LoadingLabel") as Label
 	var loading_bar := football.get_node_or_null("WebLoadingOverlay/LoadingPanel/LoadingProgress") as ProgressBar
