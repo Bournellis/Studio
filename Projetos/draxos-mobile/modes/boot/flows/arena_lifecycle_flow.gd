@@ -227,7 +227,7 @@ func choose_buff(host: Node, buff_id: String) -> void:
 		str(mutation.get("request_hash", ""))
 	)
 	result = ArenaDevFixtureProviderScript.choose_buff_fallback_result(result, attempt, normalized_buff, SessionStore)
-	await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, "Buff aplicado.")
+	await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, "Buff aplicado. Proximo duelo liberado.")
 
 func abandon_attempt(host: Node) -> void:
 	if not bool(host.call("_require_account", "Entre antes de encerrar tentativa da Arena.")):
@@ -277,7 +277,7 @@ func abandon_attempt(host: Node) -> void:
 		return
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
 	host.call("_set_busy", false, "Tentativa encerrada. Arena liberada.")
-	host.call("_show_notice", "Tentativa encerrada. Voce ja pode iniciar uma nova Arena.")
+	host.call("_show_notice", "Tentativa encerrada sem recompensa de conclusao. Voce ja pode iniciar uma nova Arena.")
 	_record_arena_operation(host, "abandon_released", {
 		"attempt_id": attempt_id,
 		"ok": true,
@@ -310,7 +310,7 @@ func claim_summary(host: Node) -> void:
 	if not await _complete_arena_mutation(host, mutation, result, "", "Resumo confirmado."):
 		return
 	host.call("_show_screen", AppShellRouteContractScript.ROUTE_ARENA_SELECTION, false)
-	host.call("_set_busy", false, "Arena atualizada. Proximo desafio pronto.")
+	host.call("_set_busy", false, "Arena atualizada. Veja o proximo desafio recomendado.")
 
 func play_arena_replay(host: Node, battle_log: Dictionary, rewards: Dictionary) -> void:
 	if str(battle_log.get("schema_version", "")) != "battle_log_v1":
@@ -383,7 +383,7 @@ func _start_attempt(host: Node, arena_id: String, difficulty_id: String, difficu
 		str(mutation.get("request_hash", ""))
 	)
 	result = ArenaDevFixtureProviderScript.start_attempt_fallback_result(result, arena_id, difficulty_id, difficulty_tier, SessionStore)
-	await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, "Arena iniciada. Loadout travado.")
+	await _complete_arena_mutation(host, mutation, result, AppShellRouteContractScript.ROUTE_ARENA_ACTIVE, "Arena iniciada. Loadout travado; resolva o primeiro duelo.")
 
 func _complete_arena_mutation(host: Node, mutation: Dictionary, result: Dictionary, route_after_success: String, success_text: String) -> bool:
 	if not bool(result.get("ok", false)):
