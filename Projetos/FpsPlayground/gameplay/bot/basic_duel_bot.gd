@@ -8,6 +8,7 @@ signal shot_resolution_requested(origin: Vector3, direction: Vector3, damage: fl
 
 const BotAimModelScript = preload("res://gameplay/bot/bot_aim_model.gd")
 const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_points.gd")
+const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 
 const STATE_IDLE: StringName = &"idle"
 const STATE_ENGAGE: StringName = &"engage"
@@ -22,11 +23,11 @@ const STATE_DEAD: StringName = &"dead"
 @export var shoot_range: float = 18.0
 @export var shoot_damage: float = 9.0
 @export var shoot_knockback: float = 3.6
-@export var shoot_cooldown: float = 0.82
+@export var shoot_cooldown: float = 0.76
 @export var shot_tell_duration: float = 0.18
-@export var reaction_time: float = 0.2
-@export var aim_error_radius: float = 0.48
-@export var close_range_aim_error_radius: float = 0.16
+@export var reaction_time: float = 0.18
+@export var aim_error_radius: float = 0.42
+@export var close_range_aim_error_radius: float = 0.14
 @export var strafe_duration: float = 0.72
 @export var reposition_interval: float = 2.25
 @export var reposition_arrival_distance: float = 1.05
@@ -55,6 +56,11 @@ const STATE_DEAD: StringName = &"dead"
 @export var high_route_score_bonus: float = 1.1
 @export var recent_high_route_penalty: float = 3.2
 @export var objective_route_min_interval: float = 1.4
+@export var route_repeat_penalty: float = 2.6
+@export var pressure_route_bonus: float = 2.2
+@export var retreat_route_bonus: float = 3.4
+@export var cover_route_bonus: float = 1.8
+@export var flank_route_bonus: float = 1.35
 
 var target
 var shoot_cooldown_remaining: float = 0.0
@@ -73,6 +79,9 @@ var reaction_remaining: float = 0.0
 var reposition_cooldown_remaining: float = 0.0
 var strafe_direction: float = 1.0
 var reposition_points: Array[Vector3] = []
+var tactical_points: Array[Dictionary] = []
+var tactical_context_label: StringName = &"legacy"
+var recent_route_keys: Array[StringName] = []
 var reposition_destination: Vector3 = Vector3.ZERO
 var reposition_cycle_index: int = 0
 var aim_cycle_index: int = 0
@@ -94,6 +103,7 @@ var overcharge_shots_remaining: int = 0
 var jump_pad_routes: Array[Dictionary] = []
 var last_navigation_target: Vector3 = Vector3.ZERO
 var last_route_label: StringName = &"idle"
+var last_decision_reason: StringName = &"idle"
 var last_reposition_score: float = 0.0
 var last_reposition_is_high_route: bool = false
 
@@ -130,12 +140,25 @@ func configure(next_target) -> void:
 	overcharge_shots_remaining = 0
 	last_navigation_target = global_position
 	last_route_label = &"engage"
+	last_decision_reason = &"engage"
 	last_reposition_score = 0.0
 	last_reposition_is_high_route = false
+	recent_route_keys.clear()
 	_cancel_windup(STATE_ENGAGE)
 
 func set_reposition_points(points: Array[Vector3]) -> void:
 	reposition_points = points.duplicate()
+
+func set_tactical_context(context: Dictionary) -> void:
+	tactical_context_label = context.get("label", &"arena")
+	tactical_points = BotTacticalContextScript.get_points(context)
+	var context_jump_routes := BotTacticalContextScript.get_jump_pad_routes(context)
+	jump_pad_routes = context_jump_routes
+	reposition_points.clear()
+	for entry: Dictionary in tactical_points:
+		var role: StringName = entry.get("role", BotTacticalContextScript.ROLE_FALLBACK)
+		if BotTacticalContextScript.is_reposition_role(role):
+			reposition_points.append(entry.get("position", Vector3.ZERO))
 
 func set_jump_pad_routes(routes: Array[Dictionary]) -> void:
 	jump_pad_routes = routes.duplicate(true)
@@ -201,6 +224,18 @@ func debug_get_jump_pad_route_count() -> int:
 
 func debug_get_route_label() -> StringName:
 	return last_route_label
+
+func debug_get_decision_reason() -> StringName:
+	return last_decision_reason
+
+func debug_get_tactical_context_label() -> StringName:
+	return tactical_context_label
+
+func debug_get_tactical_point_count() -> int:
+	return tactical_points.size()
+
+func debug_get_recent_route_count() -> int:
+	return recent_route_keys.size()
 
 func debug_get_last_reposition_score() -> float:
 	return last_reposition_score
@@ -307,7 +342,7 @@ func _handle_strafe() -> Vector3:
 	return _strafe_movement()
 
 func _handle_reposition() -> Vector3:
-	if _can_start_windup():
+	if not _should_hold_current_route() and _can_start_windup():
 		_start_windup()
 		return Vector3.ZERO
 	if _distance_to_reposition_destination() <= reposition_arrival_distance:
@@ -380,12 +415,14 @@ func _start_reposition() -> void:
 func _start_reposition_to(destination: Vector3, route_label: StringName = &"objective") -> void:
 	reposition_destination = _clamp_arena_point(destination)
 	last_route_label = route_label
+	last_decision_reason = route_label
 	last_reposition_score = 0.0
 	last_reposition_is_high_route = _is_high_route_point(reposition_destination)
 	if last_reposition_is_high_route:
 		vertical_route_cooldown_remaining = vertical_route_cooldown
 	if route_label == &"health" or route_label == &"overcharge":
 		objective_route_cooldown_remaining = objective_route_min_interval
+	_remember_route_key(route_label)
 	_set_state(STATE_REPOSITION, maxf(0.8, global_position.distance_to(reposition_destination) / maxf(0.1, move_speed)))
 
 func _try_start_pickup_reposition() -> bool:
@@ -394,12 +431,12 @@ func _try_start_pickup_reposition() -> bool:
 	if health_pickup_available and _should_seek_health_pickup():
 		var can_take_health_route := objective_route_cooldown_remaining <= 0.0 or health_fraction() <= critical_health_pickup_threshold
 		if can_take_health_route and _flat_distance_to(health_pickup_position) <= pickup_interest_distance:
-			_start_reposition_to(health_pickup_position, &"health")
+			_start_reposition_to(_select_tactical_objective_destination(BotTacticalContextScript.ROLE_HEALTH, health_pickup_position), &"health")
 			return true
 	var can_contest_overcharge := not last_has_line_of_sight or shoot_cooldown_remaining > shoot_cooldown * 0.45
 	if overcharge_pickup_available and not has_overcharge_charge() and can_contest_overcharge and objective_route_cooldown_remaining <= 0.0:
 		if _flat_distance_to(overcharge_pickup_position) <= overcharge_interest_distance:
-			_start_reposition_to(overcharge_pickup_position, &"overcharge")
+			_start_reposition_to(_select_tactical_objective_destination(BotTacticalContextScript.ROLE_OVERCHARGE, overcharge_pickup_position), &"overcharge")
 			return true
 	return false
 
@@ -511,37 +548,219 @@ func _aim_pattern(index: int) -> Vector2:
 	return BotAimModelScript.pattern_for_index(index)
 
 func _choose_reposition_destination() -> void:
-	var candidate_points := reposition_points
-	if candidate_points.is_empty():
-		candidate_points = _fallback_reposition_points()
+	var candidate_entries := _get_reposition_candidate_entries()
 	var best_score := -1000000.0
 	var best_point := global_position
-	var best_label: StringName = &"ground"
+	var best_label: StringName = &"fallback"
+	var best_reason: StringName = &"fallback"
+	var best_route_key: StringName = &"fallback"
 	var best_is_high := false
-	for index in range(candidate_points.size()):
-		var point := _clamp_arena_point(candidate_points[index])
-		var target_distance := point.distance_to(_get_target_position())
-		var distance_score := -absf(target_distance - preferred_distance)
-		var travel_score := global_position.distance_to(point) * 0.12
-		var cycle_score := 0.01 * float((index + reposition_cycle_index) % maxi(1, candidate_points.size()))
-		var height_score := clampf(point.y - global_position.y, 0.0, 4.0) * 0.42
-		var is_high := _is_high_route_point(point)
-		var route_score := high_route_score_bonus if is_high else 0.0
-		if is_high and vertical_route_cooldown_remaining > 0.0:
-			route_score -= recent_high_route_penalty
-		var score := distance_score + travel_score + cycle_score + height_score + route_score
+	for index in range(candidate_entries.size()):
+		var entry: Dictionary = candidate_entries[index]
+		var point: Vector3 = _clamp_arena_point(entry.get("position", global_position))
+		var role: StringName = entry.get("role", _classify_route_point(point))
+		var route_key: StringName = entry.get("route", role)
+		var is_high := _is_high_route_point(point) or role == BotTacticalContextScript.ROLE_HIGH_GROUND or role == BotTacticalContextScript.ROLE_JUMP_PAD_LANDING
+		var score := _score_tactical_point(entry, index, candidate_entries.size())
 		if score > best_score:
 			best_score = score
 			best_point = point
-			best_label = _classify_route_point(point)
+			best_label = _label_for_tactical_role(role, point)
+			best_reason = role
+			best_route_key = route_key
 			best_is_high = is_high
 	reposition_cycle_index += 1
 	reposition_destination = best_point
 	last_route_label = best_label
+	last_decision_reason = best_reason
 	last_reposition_score = best_score
 	last_reposition_is_high_route = best_is_high
+	_remember_route_key(best_route_key)
 	if last_reposition_is_high_route:
 		vertical_route_cooldown_remaining = vertical_route_cooldown
+
+func _get_reposition_candidate_entries() -> Array[Dictionary]:
+	var entries: Array[Dictionary] = []
+	for entry: Dictionary in tactical_points:
+		var role: StringName = entry.get("role", BotTacticalContextScript.ROLE_FALLBACK)
+		if not BotTacticalContextScript.is_reposition_role(role):
+			continue
+		if not bool(entry.get("available", true)):
+			continue
+		entries.append(entry.duplicate(true))
+	if not entries.is_empty():
+		return entries
+	for point: Vector3 in reposition_points:
+		var role := _classify_route_point(point)
+		entries.append(BotTacticalContextScript.make_point(point, role, 1.0, role))
+	if not entries.is_empty():
+		return entries
+	for point: Vector3 in _fallback_reposition_points():
+		entries.append(BotTacticalContextScript.make_point(point, BotTacticalContextScript.ROLE_FALLBACK, 1.0, &"fallback"))
+	return entries
+
+func _score_tactical_point(entry: Dictionary, index: int, total_count: int) -> float:
+	var point: Vector3 = _clamp_arena_point(entry.get("position", global_position))
+	var role: StringName = entry.get("role", BotTacticalContextScript.ROLE_FALLBACK)
+	var route_key: StringName = entry.get("route", role)
+	var target_distance := _flat_distance_between(point, _get_target_position())
+	var travel_distance := _flat_distance_to(point)
+	var weight := float(entry.get("weight", 1.0))
+	var distance_score := -absf(target_distance - preferred_distance) * 0.48
+	var travel_score := -travel_distance * 0.07
+	var cycle_score := 0.04 * float((index + reposition_cycle_index) % maxi(1, total_count))
+	var height_score := clampf(point.y - global_position.y, -1.0, 4.0) * 0.34
+	var score := distance_score + travel_score + cycle_score + height_score
+	score += _score_tactical_role(role, point, target_distance, travel_distance)
+	score -= _recent_route_penalty(route_key, point)
+	return score * maxf(0.2, weight)
+
+func _score_tactical_role(role: StringName, point: Vector3, target_distance: float, travel_distance: float) -> float:
+	var health_ratio := health_fraction()
+	var target_health := _target_health_fraction()
+	var pressure_ready := last_has_line_of_sight and shoot_cooldown_remaining <= shoot_cooldown * 0.48
+	match role:
+		BotTacticalContextScript.ROLE_HEALTH:
+			if health_ratio <= critical_health_pickup_threshold:
+				return 9.0
+			if health_ratio <= low_health_pickup_threshold:
+				return 5.0
+			return -7.0
+		BotTacticalContextScript.ROLE_OVERCHARGE:
+			if has_overcharge_charge():
+				return -5.0
+			var score := 1.2
+			if not last_has_line_of_sight:
+				score += 2.6
+			if shoot_cooldown_remaining > shoot_cooldown * 0.45:
+				score += 1.4
+			if health_ratio <= low_health_pickup_threshold:
+				score -= 1.5
+			return score
+		BotTacticalContextScript.ROLE_RETREAT:
+			var score := 0.4
+			if health_ratio <= critical_health_pickup_threshold:
+				score += retreat_route_bonus + 2.2
+			elif health_ratio <= low_health_pickup_threshold:
+				score += retreat_route_bonus
+			if _distance_to_target() < preferred_distance * 0.65:
+				score += 2.0
+			if last_has_line_of_sight and shoot_cooldown_remaining > shoot_cooldown * 0.55:
+				score += 0.8
+			return score
+		BotTacticalContextScript.ROLE_COVER:
+			var score := cover_route_bonus
+			if not last_has_line_of_sight:
+				score += 1.4
+			if shoot_cooldown_remaining > shoot_cooldown * 0.45:
+				score += 0.9
+			if health_ratio <= low_health_pickup_threshold:
+				score += 1.4
+			return score
+		BotTacticalContextScript.ROLE_FLANK:
+			var score := flank_route_bonus
+			if not last_has_line_of_sight:
+				score += 1.8
+			if target_distance <= shoot_range:
+				score += 0.65
+			if pressure_ready:
+				score += 0.45
+			return score
+		BotTacticalContextScript.ROLE_PRESSURE:
+			var score := pressure_route_bonus
+			if last_has_line_of_sight:
+				score += 1.5
+			if target_distance <= shoot_range:
+				score += 0.9
+			if target_health <= 0.42:
+				score += 1.3
+			if health_ratio <= low_health_pickup_threshold:
+				score -= 2.0
+			if travel_distance > shoot_range:
+				score -= 1.0
+			return score
+		BotTacticalContextScript.ROLE_HIGH_GROUND, BotTacticalContextScript.ROLE_JUMP_PAD_LANDING:
+			var score := high_route_score_bonus + 1.2
+			if not last_has_line_of_sight:
+				score += 2.4
+			if target_distance <= shoot_range:
+				score += 0.8
+			if vertical_route_cooldown_remaining > 0.0:
+				score -= recent_high_route_penalty
+			return score
+		BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY:
+			var score := 0.75
+			if vertical_route_cooldown_remaining <= 0.0:
+				score += 1.8
+			if not last_has_line_of_sight:
+				score += 1.4
+			return score
+		_:
+			return 0.0
+
+func _label_for_tactical_role(role: StringName, point: Vector3) -> StringName:
+	match role:
+		BotTacticalContextScript.ROLE_PRESSURE:
+			return &"pressure"
+		BotTacticalContextScript.ROLE_FLANK:
+			return &"flank"
+		BotTacticalContextScript.ROLE_COVER:
+			return &"cover"
+		BotTacticalContextScript.ROLE_RETREAT:
+			return &"retreat"
+		BotTacticalContextScript.ROLE_HEALTH:
+			return &"health"
+		BotTacticalContextScript.ROLE_OVERCHARGE:
+			return &"overcharge"
+		BotTacticalContextScript.ROLE_HIGH_GROUND, BotTacticalContextScript.ROLE_JUMP_PAD_LANDING:
+			return &"high"
+		BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY:
+			return &"jump_pad"
+		_:
+			return _classify_route_point(point)
+
+func _recent_route_penalty(route_key: StringName, point: Vector3) -> float:
+	var penalty := 0.0
+	for index in range(recent_route_keys.size()):
+		if recent_route_keys[index] == route_key:
+			var recency := float(recent_route_keys.size() - index)
+			penalty += route_repeat_penalty * recency / maxf(1.0, float(recent_route_keys.size()))
+	if _flat_distance_to(point) <= reposition_arrival_distance * 1.35:
+		penalty += route_repeat_penalty * 0.6
+	return penalty
+
+func _remember_route_key(route_key: StringName) -> void:
+	if route_key == &"":
+		return
+	recent_route_keys.append(route_key)
+	while recent_route_keys.size() > 4:
+		recent_route_keys.remove_at(0)
+
+func _select_tactical_objective_destination(role: StringName, fallback_position: Vector3) -> Vector3:
+	var best_position := fallback_position
+	var best_score := -1000000.0
+	for index in range(tactical_points.size()):
+		var entry: Dictionary = tactical_points[index]
+		if entry.get("role", BotTacticalContextScript.ROLE_FALLBACK) != role:
+			continue
+		if not bool(entry.get("available", true)):
+			continue
+		var score := _score_tactical_point(entry, index, tactical_points.size())
+		if score > best_score:
+			best_score = score
+			best_position = entry.get("position", fallback_position)
+	return best_position
+
+func _should_hold_current_route() -> bool:
+	if current_state != STATE_REPOSITION:
+		return false
+	if last_route_label == &"health" and health_fraction() <= low_health_pickup_threshold:
+		return true
+	if last_route_label == &"overcharge" and not has_overcharge_charge():
+		return not last_has_line_of_sight or shoot_cooldown_remaining > shoot_cooldown * 0.35
+	if last_route_label == &"jump_pad" or last_route_label == &"high":
+		return not last_has_line_of_sight and _distance_to_reposition_destination() > reposition_arrival_distance * 1.5
+	return false
 
 func _fallback_reposition_points() -> Array[Vector3]:
 	return [
@@ -578,6 +797,12 @@ func _distance_management_movement() -> Vector3:
 	if distance <= 0.05:
 		return Vector3.ZERO
 	var forward := to_target.normalized()
+	if health_fraction() <= critical_health_pickup_threshold and distance < preferred_distance * 1.35:
+		return -forward
+	if health_fraction() <= low_health_pickup_threshold and shoot_cooldown_remaining > shoot_cooldown * 0.5 and distance < preferred_distance:
+		return -forward
+	if has_overcharge_charge() and last_has_line_of_sight and distance > preferred_distance * 0.78:
+		return forward
 	if distance > preferred_distance + 1.25:
 		return forward
 	if distance < preferred_distance * 0.68:
@@ -776,6 +1001,20 @@ func _flat_distance_to(point: Vector3) -> float:
 	var delta := point - global_position
 	delta.y = 0.0
 	return delta.length()
+
+func _flat_distance_between(first_point: Vector3, second_point: Vector3) -> float:
+	var delta := first_point - second_point
+	delta.y = 0.0
+	return delta.length()
+
+func _target_health_fraction() -> float:
+	if target == null:
+		return 1.0
+	if target.has_method("health_fraction"):
+		return target.health_fraction()
+	if target.get("max_health") != null:
+		return float(target.get("health")) / maxf(1.0, float(target.get("max_health")))
+	return 1.0
 
 func _clamp_arena_point(point: Vector3) -> Vector3:
 	return Vector3(

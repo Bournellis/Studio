@@ -7,6 +7,7 @@ const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 const ArenaDuelPitLayoutBuilderScript = preload("res://modes/arena/arena_duel_pit_layout_builder.gd")
 const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
+const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const MAP_NAME: String = "Duel Pit V2"
@@ -36,27 +37,6 @@ const WEST_JUMP_PAD_POSITION: Vector3 = Vector3(-10.8, 0.08, -4.4)
 const WEST_JUMP_PAD_TARGET: Vector3 = Vector3(-9.6, 3.05, -8.6)
 const EAST_JUMP_PAD_POSITION: Vector3 = Vector3(10.8, 0.08, 4.4)
 const EAST_JUMP_PAD_TARGET: Vector3 = Vector3(9.6, 3.05, 8.6)
-const BOT_REPOSITION_POINTS: Array[Vector3] = [
-	Vector3(-11.2, 0.05, 7.8),
-	Vector3(-10.8, 0.05, -7.2),
-	Vector3(-6.4, 0.05, 0.0),
-	Vector3(-3.8, 0.05, 5.4),
-	Vector3(-1.8, 0.05, -6.8),
-	Vector3(1.8, 0.05, 6.8),
-	Vector3(3.8, 0.05, -5.4),
-	Vector3(6.4, 0.05, 0.0),
-	Vector3(10.8, 0.05, 7.2),
-	Vector3(11.2, 0.05, -7.8),
-	Vector3(-2.2, 0.05, 2.4),
-	Vector3(2.2, 0.05, -2.4),
-	Vector3(-9.6, 3.05, -8.6),
-	Vector3(-7.6, 3.05, -8.6),
-	Vector3(9.6, 3.05, 8.6),
-	Vector3(7.6, 3.05, 8.6),
-	WEST_JUMP_PAD_POSITION,
-	EAST_JUMP_PAD_POSITION
-]
-
 var player
 var bot
 var hud
@@ -143,7 +123,21 @@ func debug_get_bot_spawn() -> Vector3:
 	return BOT_SPAWN
 
 func debug_get_bot_reposition_points() -> Array[Vector3]:
-	return BOT_REPOSITION_POINTS.duplicate()
+	var points: Array[Vector3] = []
+	for point: Dictionary in _get_duel_pit_tactical_points(false):
+		points.append(point.get("position", Vector3.ZERO))
+	return points
+
+func debug_get_bot_tactical_point_count() -> int:
+	return _get_duel_pit_tactical_points(true).size()
+
+func debug_get_bot_tactical_roles() -> Array[StringName]:
+	var roles: Array[StringName] = []
+	for point: Dictionary in _get_duel_pit_tactical_points(true):
+		var role: StringName = point.get("role", &"")
+		if not roles.has(role):
+			roles.append(role)
+	return roles
 
 func debug_get_active_projectile_count() -> int:
 	return active_projectiles.size()
@@ -266,8 +260,7 @@ func _spawn_runtime() -> void:
 	bot.name = "Bot"
 	bot.position = BOT_SPAWN
 	runtime_root.add_child(bot)
-	bot.set_reposition_points(_create_bot_reposition_points(runtime_root))
-	bot.set_jump_pad_routes(_get_jump_pad_routes())
+	bot.set_tactical_context(_create_bot_tactical_context(runtime_root))
 	bot.configure(player)
 	bot.shot_windup_started.connect(_on_bot_shot_windup_started)
 	bot.shot_feedback_requested.connect(_on_bot_shot_feedback_requested)
@@ -796,7 +789,7 @@ func _get_pickup_respawn_remaining(pickup_kind: StringName) -> float:
 func _update_bot_awareness() -> void:
 	if bot == null:
 		return
-	bot.set_jump_pad_routes(_get_jump_pad_routes())
+	bot.set_tactical_context(_get_bot_tactical_context())
 	bot.set_pickup_awareness(
 		debug_get_pickup_position(&"health"),
 		debug_is_pickup_available(&"health"),
@@ -835,11 +828,13 @@ func _get_nearest_player_projectile_to_bot() -> Dictionary:
 func _get_jump_pad_routes() -> Array[Dictionary]:
 	var routes: Array[Dictionary] = []
 	for pad: Dictionary in jump_pads:
-		routes.append({
-			"id": pad.get("id", &""),
-			"position": pad.get("position", Vector3.ZERO),
-			"target": pad.get("target", Vector3.ZERO)
-		})
+		var pad_id: StringName = pad.get("id", &"")
+		routes.append(BotTacticalContextScript.make_jump_pad_route(
+			pad_id,
+			pad.get("position", Vector3.ZERO),
+			pad.get("target", Vector3.ZERO),
+			[BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, BotTacticalContextScript.ROLE_HIGH_GROUND]
+		))
 	return routes
 
 func _get_player_visual_muzzle_origin(origin: Vector3, direction: Vector3) -> Vector3:
@@ -864,18 +859,64 @@ func _get_player_visual_muzzle_origin(origin: Vector3, direction: Vector3) -> Ve
 		PLAYER_VISUAL_MUZZLE_FORWARD_OFFSET
 	)
 
-func _create_bot_reposition_points(parent: Node3D) -> Array[Vector3]:
+func _create_bot_tactical_context(parent: Node3D) -> Dictionary:
 	var marker_root := Node3D.new()
-	marker_root.name = "BotRepositionPoints"
+	marker_root.name = "BotTacticalPoints"
 	parent.add_child(marker_root)
-	var points: Array[Vector3] = []
-	for index in range(BOT_REPOSITION_POINTS.size()):
-		var point := BOT_REPOSITION_POINTS[index]
-		points.append(point)
+	var points := _get_duel_pit_tactical_points(true)
+	for index in range(points.size()):
+		var entry: Dictionary = points[index]
+		var point: Vector3 = entry.get("position", Vector3.ZERO)
+		var role: StringName = entry.get("role", BotTacticalContextScript.ROLE_FALLBACK)
 		var marker := Marker3D.new()
-		marker.name = "BotRepositionPoint%02d" % index
+		marker.name = "BotTacticalPoint%02d_%s" % [index, String(role)]
 		marker.position = point
 		marker_root.add_child(marker)
+	return _get_bot_tactical_context()
+
+func _get_bot_tactical_context() -> Dictionary:
+	return BotTacticalContextScript.make_context(
+		&"duel_pit_v2",
+		_get_duel_pit_tactical_points(true),
+		_get_jump_pad_routes()
+	)
+
+func _get_duel_pit_tactical_points(include_objectives: bool) -> Array:
+	var points: Array = [
+		BotTacticalContextScript.make_point(Vector3(-11.2, 0.05, 7.8), BotTacticalContextScript.ROLE_FLANK, 1.05, &"west_deep_flank"),
+		BotTacticalContextScript.make_point(Vector3(-10.8, 0.05, -7.2), BotTacticalContextScript.ROLE_RETREAT, 1.1, &"west_back_retreat"),
+		BotTacticalContextScript.make_point(Vector3(-6.4, 0.05, 0.0), BotTacticalContextScript.ROLE_COVER, 1.0, &"west_mid_cover"),
+		BotTacticalContextScript.make_point(Vector3(-3.8, 0.05, 5.4), BotTacticalContextScript.ROLE_PRESSURE, 1.1, &"west_pressure"),
+		BotTacticalContextScript.make_point(Vector3(-1.8, 0.05, -6.8), BotTacticalContextScript.ROLE_FLANK, 1.05, &"west_low_flank"),
+		BotTacticalContextScript.make_point(Vector3(1.8, 0.05, 6.8), BotTacticalContextScript.ROLE_FLANK, 1.05, &"east_low_flank"),
+		BotTacticalContextScript.make_point(Vector3(3.8, 0.05, -5.4), BotTacticalContextScript.ROLE_PRESSURE, 1.1, &"east_pressure"),
+		BotTacticalContextScript.make_point(Vector3(6.4, 0.05, 0.0), BotTacticalContextScript.ROLE_COVER, 1.0, &"east_mid_cover"),
+		BotTacticalContextScript.make_point(Vector3(10.8, 0.05, 7.2), BotTacticalContextScript.ROLE_RETREAT, 1.1, &"east_back_retreat"),
+		BotTacticalContextScript.make_point(Vector3(11.2, 0.05, -7.8), BotTacticalContextScript.ROLE_FLANK, 1.05, &"east_deep_flank"),
+		BotTacticalContextScript.make_point(Vector3(-2.2, 0.05, 2.4), BotTacticalContextScript.ROLE_PRESSURE, 1.18, &"center_pressure_west"),
+		BotTacticalContextScript.make_point(Vector3(2.2, 0.05, -2.4), BotTacticalContextScript.ROLE_PRESSURE, 1.18, &"center_pressure_east"),
+		BotTacticalContextScript.make_point(Vector3(-9.6, 3.05, -8.6), BotTacticalContextScript.ROLE_JUMP_PAD_LANDING, 1.22, &"west_high_landing"),
+		BotTacticalContextScript.make_point(Vector3(-7.6, 3.05, -8.6), BotTacticalContextScript.ROLE_HIGH_GROUND, 1.35, &"west_high_objective"),
+		BotTacticalContextScript.make_point(Vector3(9.6, 3.05, 8.6), BotTacticalContextScript.ROLE_JUMP_PAD_LANDING, 1.22, &"east_high_landing"),
+		BotTacticalContextScript.make_point(Vector3(7.6, 3.05, 8.6), BotTacticalContextScript.ROLE_HIGH_GROUND, 1.35, &"east_high_objective"),
+		BotTacticalContextScript.make_point(WEST_JUMP_PAD_POSITION, BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, 1.18, &"west_jump_pad"),
+		BotTacticalContextScript.make_point(EAST_JUMP_PAD_POSITION, BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, 1.18, &"east_jump_pad")
+	]
+	if include_objectives:
+		points.append(BotTacticalContextScript.make_point(
+			HEALTH_PICKUP_POSITION,
+			BotTacticalContextScript.ROLE_HEALTH,
+			1.45,
+			&"health_objective",
+			debug_is_pickup_available(&"health")
+		))
+		points.append(BotTacticalContextScript.make_point(
+			OVERCHARGE_PICKUP_POSITION,
+			BotTacticalContextScript.ROLE_OVERCHARGE,
+			1.28,
+			&"overcharge_objective",
+			debug_is_pickup_available(&"overcharge")
+		))
 	return points
 
 func _build_plasma_material(overcharged: bool) -> StandardMaterial3D:
