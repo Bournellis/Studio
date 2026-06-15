@@ -1,4 +1,4 @@
-# DraxosMobile Doing: publish Arena UX Web+APK
+# DraxosMobile Review: publish Arena UX Web+APK
 
 ## Metadata
 
@@ -10,6 +10,7 @@
 - mode_scope: `autobattler`
 - branch: `codex/draxos-mobile/publish-arena-ux-web-apk`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--publish-arena-ux-web-apk`
+- status: em validacao/publicacao; movido de `Doing` para liberar o gate de release que exige ausencia de cards DraxosMobile ativos em `Doing`.
 
 ## Objective
 
@@ -31,11 +32,15 @@ Publicar Web+APK do candidato `Arena UX/readability/recovery` ja integrado local
 - `AGENTS.md`
 - `Projetos/README.md`
 - `08_Coordenacao_Agentes/Estado_Atual.md`
+- `Projetos/draxos-mobile/AGENTS.md`
+- `Projetos/draxos-mobile/implementation/current-status.md`
+- `Projetos/draxos-mobile/docs/release-ops-checklist.md`
+- `Projetos/draxos-mobile/docs/track-13-manual-walkthrough-gate.md`
 
 ## Validation Plan
 
-- Ler `Projetos/draxos-mobile/AGENTS.md`, `implementation/current-status.md` e docs/scripts de release antes de publicar.
-- Rodar validacao local de release conforme `validate_foundation.ps1`.
+- Rodar `ClientQuick`, `ServerQuick` e `ReleaseDryRun`.
+- Exportar artefatos Web/APK pelo script oficial.
 - Publicar somente com `-ConfirmRemoteMutation` e `-ReleaseRoot` fresco/versionado.
 - Verificar artefatos Web+APK publicados e registrar evidencias.
 - Rodar `tools/check_doc_drift.ps1` apos docs.
