@@ -157,6 +157,26 @@ func test_bot_scores_alternate_tactical_context_without_duel_pit_points() -> voi
 	assert_eq(bot.debug_get_route_label(), &"high")
 	assert_gt(bot.debug_get_recent_route_count(), 0)
 
+func test_bot_keeps_jump_pad_as_navigation_target_until_vertical_launch() -> void:
+	var bot = BotScript.new()
+	var target := MockBotTarget.new()
+	add_child_autofree(bot)
+	add_child_autofree(target)
+	bot.global_position = Vector3(4.8, 0.05, 0.1)
+	target.global_position = Vector3(0.0, 0.05, -8.0)
+	bot.configure(target)
+	bot.set_tactical_context(BotTacticalContextScript.make_context(&"test_arena", [
+		BotTacticalContextScript.make_point(Vector3(5.0, 0.08, 0.0), BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, 1.0, &"test_pad"),
+		BotTacticalContextScript.make_point(Vector3(5.0, 3.05, 6.0), BotTacticalContextScript.ROLE_JUMP_PAD_LANDING, 1.0, &"test_pad"),
+		BotTacticalContextScript.make_point(Vector3(5.0, 3.05, 7.2), BotTacticalContextScript.ROLE_HIGH_GROUND, 1.0, &"test_pad")
+	], [
+		BotTacticalContextScript.make_jump_pad_route(&"test_pad", Vector3(5.0, 0.08, 0.0), Vector3(5.0, 3.05, 6.0))
+	]))
+
+	var navigation_target: Vector3 = bot._resolve_navigation_target(Vector3(5.0, 3.05, 7.2))
+
+	assert_almost_eq(navigation_target.distance_to(Vector3(5.0, 0.08, 0.0)), 0.0, 0.001)
+
 func _layout_has_role_for_route(points: Array, route_id: StringName, role: StringName) -> bool:
 	for point: Dictionary in points:
 		if point.get("route", &"") == route_id and point.get("role", &"") == role:

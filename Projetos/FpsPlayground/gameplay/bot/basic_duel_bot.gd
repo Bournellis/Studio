@@ -52,7 +52,10 @@ const STATE_DEAD: StringName = &"dead"
 @export var jump_height_goal_distance: float = 4.8
 @export var jump_probe_distance: float = 0.78
 @export var jump_pad_route_distance: float = 3.2
+@export var vertical_route_low_height_tolerance: float = 1.15
+@export var jump_overhead_clearance: float = 1.35
 @export var vertical_route_cooldown: float = 2.8
+@export var blocked_route_cooldown: float = 2.6
 @export var high_route_score_bonus: float = 1.1
 @export var recent_high_route_penalty: float = 3.2
 @export var objective_route_min_interval: float = 1.4
@@ -101,8 +104,10 @@ var projectile_threat_position: Vector3 = Vector3.ZERO
 var projectile_threat_velocity: Vector3 = Vector3.ZERO
 var overcharge_shots_remaining: int = 0
 var jump_pad_routes: Array[Dictionary] = []
+var blocked_route_timers: Dictionary = {}
 var last_navigation_target: Vector3 = Vector3.ZERO
 var last_route_label: StringName = &"idle"
+var active_route_key: StringName = &"idle"
 var last_decision_reason: StringName = &"idle"
 var last_reposition_score: float = 0.0
 var last_reposition_is_high_route: bool = false
@@ -140,10 +145,12 @@ func configure(next_target) -> void:
 	overcharge_shots_remaining = 0
 	last_navigation_target = global_position
 	last_route_label = &"engage"
+	active_route_key = &"engage"
 	last_decision_reason = &"engage"
 	last_reposition_score = 0.0
 	last_reposition_is_high_route = false
 	recent_route_keys.clear()
+	blocked_route_timers.clear()
 	_cancel_windup(STATE_ENGAGE)
 
 func set_reposition_points(points: Array[Vector3]) -> void:
@@ -246,6 +253,12 @@ func debug_is_high_route_active() -> bool:
 func debug_get_last_navigation_target() -> Vector3:
 	return last_navigation_target
 
+func debug_get_active_route_key() -> StringName:
+	return active_route_key
+
+func debug_get_blocked_route_count() -> int:
+	return blocked_route_timers.size()
+
 func apply_jump_pad_launch(launch_velocity: Vector3) -> void:
 	if is_dead:
 		return
@@ -275,6 +288,7 @@ func _physics_process(delta: float) -> void:
 	vertical_route_cooldown_remaining = maxf(0.0, vertical_route_cooldown_remaining - delta)
 	objective_route_cooldown_remaining = maxf(0.0, objective_route_cooldown_remaining - delta)
 	reposition_cooldown_remaining = maxf(0.0, reposition_cooldown_remaining - delta)
+	_update_blocked_route_timers(delta)
 	state_time_remaining = maxf(0.0, state_time_remaining - delta)
 	reaction_remaining = maxf(0.0, reaction_remaining - delta)
 	_apply_gravity(delta)
@@ -415,6 +429,7 @@ func _start_reposition() -> void:
 func _start_reposition_to(destination: Vector3, route_label: StringName = &"objective") -> void:
 	reposition_destination = _clamp_arena_point(destination)
 	last_route_label = route_label
+	active_route_key = route_label
 	last_decision_reason = route_label
 	last_reposition_score = 0.0
 	last_reposition_is_high_route = _is_high_route_point(reposition_destination)
@@ -572,6 +587,7 @@ func _choose_reposition_destination() -> void:
 	reposition_cycle_index += 1
 	reposition_destination = best_point
 	last_route_label = best_label
+	active_route_key = best_route_key
 	last_decision_reason = best_reason
 	last_reposition_score = best_score
 	last_reposition_is_high_route = best_is_high
@@ -721,6 +737,8 @@ func _label_for_tactical_role(role: StringName, point: Vector3) -> StringName:
 
 func _recent_route_penalty(route_key: StringName, point: Vector3) -> float:
 	var penalty := 0.0
+	if _is_route_temporarily_blocked(route_key):
+		penalty += route_repeat_penalty * 5.0
 	for index in range(recent_route_keys.size()):
 		if recent_route_keys[index] == route_key:
 			var recency := float(recent_route_keys.size() - index)
@@ -843,23 +861,33 @@ func _maybe_jump_for_navigation(desired_move: Vector3) -> void:
 func _resolve_navigation_target(destination: Vector3) -> Vector3:
 	if destination.y <= global_position.y + jump_height_goal_threshold:
 		return destination
-	if jump_pad_routes.is_empty():
+	var best_route := _select_jump_pad_route_for_destination(destination)
+	if best_route.is_empty():
 		return destination
+	var best_pad: Vector3 = best_route.get("position", destination)
+	var best_target: Vector3 = best_route.get("target", destination)
+	if global_position.y < best_target.y - vertical_route_low_height_tolerance:
+		return best_pad
+	if _flat_distance_to(best_target) > jump_pad_route_distance and destination.y > global_position.y + jump_height_goal_threshold:
+		return best_target
+	return destination
+
+func _select_jump_pad_route_for_destination(destination: Vector3) -> Dictionary:
+	if jump_pad_routes.is_empty():
+		return {}
 	var best_route: Dictionary = {}
 	var best_score := 1000000.0
 	for route: Dictionary in jump_pad_routes:
 		var pad_position: Vector3 = route.get("position", Vector3.ZERO)
 		var target_position: Vector3 = route.get("target", pad_position)
+		var route_id: StringName = route.get("id", &"")
 		var target_score := target_position.distance_to(destination) + global_position.distance_to(pad_position) * 0.22
+		if _is_route_temporarily_blocked(route_id):
+			target_score += 1000.0
 		if target_score < best_score:
 			best_score = target_score
 			best_route = route
-	if best_route.is_empty():
-		return destination
-	var best_pad: Vector3 = best_route.get("position", destination)
-	if _flat_distance_to(best_pad) > jump_pad_route_distance:
-		return best_pad
-	return destination
+	return best_route
 
 func _is_high_route_point(point: Vector3) -> bool:
 	return point.y > 2.0
@@ -876,6 +904,8 @@ func _classify_route_point(point: Vector3) -> StringName:
 func _should_jump_toward_height_goal() -> bool:
 	if current_state != STATE_REPOSITION:
 		return false
+	if _destination_requires_jump_pad_route(reposition_destination):
+		return false
 	var height_delta := reposition_destination.y - global_position.y
 	if height_delta < jump_height_goal_threshold:
 		return false
@@ -884,6 +914,8 @@ func _should_jump_toward_height_goal() -> bool:
 	return flat_delta.length() <= jump_height_goal_distance
 
 func _should_jump_over_low_obstacle(flat_direction: Vector3) -> bool:
+	if not _has_jump_overhead_clearance(flat_direction):
+		return false
 	var low_origin := global_position + Vector3.UP * 0.36
 	var low_result := _raycast_navigation_probe(low_origin, low_origin + flat_direction * jump_probe_distance)
 	if low_result.is_empty():
@@ -896,6 +928,24 @@ func _should_jump_over_low_obstacle(flat_direction: Vector3) -> bool:
 	if high_result.is_empty():
 		return true
 	return high_result.get("collider", null) == target
+
+func _destination_requires_jump_pad_route(destination: Vector3) -> bool:
+	if destination.y <= global_position.y + jump_height_goal_threshold:
+		return false
+	var route := _select_jump_pad_route_for_destination(destination)
+	if route.is_empty():
+		return false
+	var target_position: Vector3 = route.get("target", destination)
+	return global_position.y < target_position.y - vertical_route_low_height_tolerance
+
+func _has_jump_overhead_clearance(flat_direction: Vector3) -> bool:
+	var head_origin := global_position + Vector3.UP * 1.05
+	var head_top := head_origin + Vector3.UP * jump_overhead_clearance
+	var vertical_result := _raycast_navigation_probe(head_origin, head_top)
+	if not vertical_result.is_empty() and vertical_result.get("collider", null) != target:
+		return false
+	var forward_result := _raycast_navigation_probe(head_top, head_top + flat_direction * jump_probe_distance)
+	return forward_result.is_empty() or forward_result.get("collider", null) == target
 
 func _has_jump_ground_contact() -> bool:
 	if is_on_floor():
@@ -970,6 +1020,7 @@ func _update_stuck_state(delta: float, before_position: Vector3) -> void:
 		return
 	stuck_time = 0.0
 	strafe_direction *= -1.0
+	_block_current_route()
 	if current_state == STATE_REPOSITION:
 		_choose_reposition_destination()
 	else:
@@ -1006,6 +1057,32 @@ func _flat_distance_between(first_point: Vector3, second_point: Vector3) -> floa
 	var delta := first_point - second_point
 	delta.y = 0.0
 	return delta.length()
+
+func _block_current_route() -> void:
+	var route_key := active_route_key
+	if route_key == &"":
+		route_key = last_route_label
+	if route_key == &"":
+		return
+	blocked_route_timers[route_key] = blocked_route_cooldown
+
+func _is_route_temporarily_blocked(route_key: StringName) -> bool:
+	if route_key == &"":
+		return false
+	return blocked_route_timers.has(route_key) and float(blocked_route_timers.get(route_key, 0.0)) > 0.0
+
+func _update_blocked_route_timers(delta: float) -> void:
+	if blocked_route_timers.is_empty():
+		return
+	var expired_keys: Array[StringName] = []
+	for route_key in blocked_route_timers.keys():
+		var remaining := maxf(0.0, float(blocked_route_timers.get(route_key, 0.0)) - delta)
+		if remaining <= 0.0:
+			expired_keys.append(route_key)
+		else:
+			blocked_route_timers[route_key] = remaining
+	for route_key: StringName in expired_keys:
+		blocked_route_timers.erase(route_key)
 
 func _target_health_fraction() -> float:
 	if target == null:
