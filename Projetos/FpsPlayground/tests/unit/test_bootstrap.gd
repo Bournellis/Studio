@@ -31,7 +31,7 @@ func test_input_actions_are_bootstrapped() -> void:
 		assert_true(InputMap.has_action(action_name), "Missing input action %s" % action_name)
 		assert_gt(InputMap.action_get_events(action_name).size(), 0, "Input action %s has no binding" % action_name)
 
-func test_main_menu_scene_boots_with_arena_button_only() -> void:
+func test_main_menu_scene_boots_with_arena_selection_buttons() -> void:
 	var menu_scene := load("res://modes/menu/main_menu.tscn") as PackedScene
 	assert_not_null(menu_scene)
 	var menu := menu_scene.instantiate()
@@ -39,15 +39,19 @@ func test_main_menu_scene_boots_with_arena_button_only() -> void:
 	await get_tree().process_frame
 
 	assert_eq(menu.debug_get_mode_path(&"arena"), "res://modes/arena/arena.tscn")
+	assert_eq(menu.debug_get_mode_path(&"relay_foundry"), "res://modes/arena/arena.tscn")
+	assert_eq(menu.debug_get_layout_id(&"arena"), &"duel_pit_v2")
+	assert_eq(menu.debug_get_layout_id(&"relay_foundry"), &"relay_foundry_v1")
 	assert_eq(menu.debug_get_mode_path(&"football"), "")
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/ArenaButton"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/RelayFoundryButton"))
 	assert_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/FootballButton"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/QuitButton"))
 	var menu_center := menu.get_node("MenuCenter") as CenterContainer
 	var menu_panel := menu.get_node("MenuCenter/MenuPanel") as PanelContainer
 	assert_almost_eq(menu_center.anchor_left, 0.0, 0.001)
 	assert_almost_eq(menu_center.anchor_right, 1.0, 0.001)
-	assert_eq(menu_panel.custom_minimum_size, Vector2(500.0, 330.0))
+	assert_eq(menu_panel.custom_minimum_size, Vector2(540.0, 390.0))
 	assert_no_new_orphans()
 
 func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
