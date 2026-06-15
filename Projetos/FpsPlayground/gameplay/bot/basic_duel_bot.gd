@@ -55,6 +55,9 @@ const STATE_DEAD: StringName = &"dead"
 @export var jump_height_goal_distance: float = 4.8
 @export var jump_probe_distance: float = 0.78
 @export var jump_pad_route_distance: float = 3.2
+@export var jump_pad_flight_commit_time: float = 1.85
+@export var jump_pad_landing_recovery_time: float = 0.55
+@export var jump_pad_landing_commit_distance: float = 2.6
 @export var vertical_route_low_height_tolerance: float = 1.15
 @export var jump_overhead_clearance: float = 1.35
 @export var vertical_route_cooldown: float = 2.8
@@ -67,6 +70,8 @@ const STATE_DEAD: StringName = &"dead"
 @export var retreat_route_bonus: float = 3.4
 @export var cover_route_bonus: float = 1.8
 @export var flank_route_bonus: float = 1.35
+@export var healthy_overcharge_priority_threshold: float = 0.7
+@export var route_shot_speed_multiplier: float = 0.92
 
 var target
 var shoot_cooldown_remaining: float = 0.0
@@ -109,6 +114,9 @@ var overcharge_shots_remaining: int = 0
 var jump_pad_routes: Array[Dictionary] = []
 var blocked_route_timers: Dictionary = {}
 var last_navigation_target: Vector3 = Vector3.ZERO
+var jump_pad_landing_target: Vector3 = Vector3.ZERO
+var jump_pad_flight_commit_remaining: float = 0.0
+var jump_pad_landing_recovery_remaining: float = 0.0
 var last_route_label: StringName = &"idle"
 var active_route_key: StringName = &"idle"
 var last_decision_reason: StringName = &"idle"
@@ -147,6 +155,9 @@ func configure(next_target) -> void:
 	projectile_threat_active = false
 	overcharge_shots_remaining = 0
 	last_navigation_target = global_position
+	jump_pad_landing_target = Vector3.ZERO
+	jump_pad_flight_commit_remaining = 0.0
+	jump_pad_landing_recovery_remaining = 0.0
 	last_route_label = &"engage"
 	active_route_key = &"engage"
 	last_decision_reason = &"engage"
@@ -256,6 +267,15 @@ func debug_is_high_route_active() -> bool:
 func debug_get_last_navigation_target() -> Vector3:
 	return last_navigation_target
 
+func debug_get_jump_pad_landing_target() -> Vector3:
+	return jump_pad_landing_target
+
+func debug_is_jump_pad_commitment_active() -> bool:
+	return _is_jump_pad_commitment_active()
+
+func debug_is_combat_overlay_active() -> bool:
+	return is_telegraphing
+
 func debug_get_active_route_key() -> StringName:
 	return active_route_key
 
@@ -269,7 +289,13 @@ func apply_jump_pad_launch(launch_velocity: Vector3) -> void:
 	launch_boost_velocity = Vector3(launch_velocity.x, 0.0, launch_velocity.z)
 	jump_cooldown_remaining = jump_cooldown
 	vertical_route_cooldown_remaining = maxf(vertical_route_cooldown_remaining, vertical_route_cooldown * 0.65)
+	jump_pad_landing_target = _select_jump_pad_landing_target(reposition_destination, launch_velocity)
+	jump_pad_flight_commit_remaining = jump_pad_flight_commit_time
+	jump_pad_landing_recovery_remaining = 0.0
 	last_route_label = &"jump_pad"
+	active_route_key = &"jump_pad"
+	last_decision_reason = &"jump_pad"
+	_set_state(STATE_REPOSITION, maxf(state_time_remaining, jump_pad_flight_commit_time + jump_pad_landing_recovery_time))
 	jump_pad_launch_count += 1
 
 func clear_movement_impulses() -> void:
@@ -291,6 +317,8 @@ func _physics_process(delta: float) -> void:
 	vertical_route_cooldown_remaining = maxf(0.0, vertical_route_cooldown_remaining - delta)
 	objective_route_cooldown_remaining = maxf(0.0, objective_route_cooldown_remaining - delta)
 	reposition_cooldown_remaining = maxf(0.0, reposition_cooldown_remaining - delta)
+	jump_pad_flight_commit_remaining = maxf(0.0, jump_pad_flight_commit_remaining - delta)
+	jump_pad_landing_recovery_remaining = maxf(0.0, jump_pad_landing_recovery_remaining - delta)
 	_update_blocked_route_timers(delta)
 	state_time_remaining = maxf(0.0, state_time_remaining - delta)
 	reaction_remaining = maxf(0.0, reaction_remaining - delta)
@@ -299,11 +327,13 @@ func _physics_process(delta: float) -> void:
 	var before_position := global_position
 	last_has_line_of_sight = _refresh_target_visibility()
 	last_desired_move = _handle_duel_state(delta)
+	_update_combat_overlay(delta)
 	last_desired_move = _apply_projectile_dodge(last_desired_move)
 	_maybe_jump_for_navigation(last_desired_move)
 	velocity = _build_velocity(last_desired_move, delta)
 	move_and_slide()
 	_update_grounded_vertical_velocity()
+	_update_jump_pad_commitment_after_move()
 	_update_stuck_state(delta, before_position)
 
 func _handle_duel_state(delta: float) -> Vector3:
@@ -328,30 +358,29 @@ func _handle_duel_state(delta: float) -> Vector3:
 			return _handle_engage()
 
 func _handle_engage() -> Vector3:
+	_maybe_start_combat_overlay()
 	if not last_has_line_of_sight:
 		if _try_start_pickup_reposition():
 			return _movement_toward_reposition()
 		_start_reposition()
 		return _movement_toward_reposition()
-	if _can_start_windup():
-		_start_windup()
-		return Vector3.ZERO
 	if _try_start_pickup_reposition():
 		return _movement_toward_reposition()
+	if _should_prioritize_map_route():
+		_start_reposition()
+		return _movement_toward_reposition()
 	if reposition_cooldown_remaining <= 0.0:
-		_start_strafe()
-		return _strafe_movement()
+		_start_reposition()
+		return _movement_toward_reposition()
 	return _distance_management_movement()
 
 func _handle_strafe() -> Vector3:
+	_maybe_start_combat_overlay()
 	if not last_has_line_of_sight:
 		if _try_start_pickup_reposition():
 			return _movement_toward_reposition()
 		_start_reposition()
 		return _movement_toward_reposition()
-	if _can_start_windup():
-		_start_windup()
-		return Vector3.ZERO
 	if _try_start_pickup_reposition():
 		return _movement_toward_reposition()
 	if state_time_remaining <= 0.0:
@@ -359,17 +388,15 @@ func _handle_strafe() -> Vector3:
 	return _strafe_movement()
 
 func _handle_reposition() -> Vector3:
-	if not _should_hold_current_route() and _can_start_windup():
-		_start_windup()
-		return Vector3.ZERO
-	if _distance_to_reposition_destination() <= reposition_arrival_distance:
+	_maybe_start_combat_overlay()
+	if _distance_to_reposition_destination() <= reposition_arrival_distance and not _is_jump_pad_commitment_active():
 		reposition_cooldown_remaining = reposition_interval
-		_start_strafe()
-		return _strafe_movement()
-	if state_time_remaining <= 0.0:
+		_set_state(STATE_ENGAGE)
+		return _distance_management_movement()
+	if state_time_remaining <= 0.0 and not _should_hold_current_route():
 		reposition_cooldown_remaining = reposition_interval * 0.55
-		_start_strafe()
-		return _strafe_movement()
+		_set_state(STATE_ENGAGE)
+		return _distance_management_movement()
 	return _movement_toward_reposition()
 
 func _handle_windup(delta: float) -> Vector3:
@@ -392,16 +419,28 @@ func _handle_windup(delta: float) -> Vector3:
 	return _strafe_movement() * 0.18
 
 func _handle_cooldown() -> Vector3:
+	_maybe_start_combat_overlay()
 	if _try_start_pickup_reposition():
 		return _movement_toward_reposition()
 	if state_time_remaining <= 0.0:
 		if not last_has_line_of_sight:
 			_start_reposition()
 			return _movement_toward_reposition()
-		_start_strafe()
-	return _strafe_movement()
+		_set_state(STATE_ENGAGE)
+	return _distance_management_movement()
+
+func _should_prioritize_map_route() -> bool:
+	if _is_jump_pad_commitment_active():
+		return true
+	if health_pickup_available and health_fraction() <= low_health_pickup_threshold:
+		return true
+	if overcharge_pickup_available and _should_seek_overcharge_pickup():
+		return true
+	return reposition_cooldown_remaining <= 0.0 and not is_telegraphing
 
 func _can_start_windup() -> bool:
+	if is_telegraphing:
+		return false
 	if shoot_cooldown_remaining > 0.0:
 		return false
 	if reaction_remaining > 0.0:
@@ -412,14 +451,36 @@ func _can_start_windup() -> bool:
 		return false
 	return last_has_line_of_sight
 
+func _maybe_start_combat_overlay() -> void:
+	if _can_start_windup():
+		_start_windup()
+
 func _start_windup() -> void:
 	is_telegraphing = true
 	shot_tell_remaining = shot_tell_duration
 	windup_line_of_sight_grace_remaining = lost_line_of_sight_grace
 	last_aim_position = _build_aim_position(last_visible_target_position)
 	pending_shot_direction = (last_aim_position - _get_shot_origin()).normalized()
-	_set_state(STATE_WINDUP, shot_tell_duration)
+	if current_state == STATE_IDLE:
+		_set_state(STATE_ENGAGE)
 	shot_windup_started.emit(_get_shot_origin(), last_aim_position, shot_tell_duration)
+
+func _update_combat_overlay(delta: float) -> void:
+	if not is_telegraphing:
+		return
+	if target == null or target.is_dead:
+		_cancel_windup(current_state)
+		return
+	if last_has_line_of_sight:
+		windup_line_of_sight_grace_remaining = lost_line_of_sight_grace
+	else:
+		windup_line_of_sight_grace_remaining -= delta
+		if windup_line_of_sight_grace_remaining <= 0.0:
+			_cancel_windup(current_state)
+			return
+	shot_tell_remaining = maxf(0.0, shot_tell_remaining - delta)
+	if shot_tell_remaining <= 0.0:
+		_fire_requested_shot()
 
 func _start_strafe() -> void:
 	strafe_direction *= -1.0
@@ -459,8 +520,7 @@ func _try_start_pickup_reposition() -> bool:
 		if can_take_health_route and _flat_distance_to(health_pickup_position) <= pickup_interest_distance:
 			_start_reposition_to(_select_tactical_objective_destination(BotTacticalContextScript.ROLE_HEALTH, health_pickup_position), &"health")
 			return true
-	var can_contest_overcharge := not last_has_line_of_sight or shoot_cooldown_remaining > shoot_cooldown * 0.45
-	if overcharge_pickup_available and not has_overcharge_charge() and can_contest_overcharge and objective_route_cooldown_remaining <= 0.0:
+	if overcharge_pickup_available and _should_seek_overcharge_pickup() and objective_route_cooldown_remaining <= 0.0:
 		if _flat_distance_to(overcharge_pickup_position) <= overcharge_interest_distance:
 			_start_reposition_to(_select_tactical_objective_destination(BotTacticalContextScript.ROLE_OVERCHARGE, overcharge_pickup_position), &"overcharge")
 			return true
@@ -478,19 +538,25 @@ func _should_commit_nearby_overcharge_pickup() -> bool:
 
 func _should_seek_health_pickup() -> bool:
 	var health_ratio := health_fraction()
-	if health_ratio > low_health_pickup_threshold:
-		return false
-	if _can_start_windup():
+	if health_ratio > low_health_pickup_threshold and _flat_distance_to(health_pickup_position) > pickup_interest_distance * 0.55:
 		return false
 	var target_in_pressure_range := last_has_line_of_sight and _distance_to_target() <= shoot_range
 	if health_ratio <= critical_health_pickup_threshold:
 		return true
 	return not target_in_pressure_range or shoot_cooldown_remaining > shoot_cooldown * 0.45 or reaction_remaining > 0.0 or current_state == STATE_COOLDOWN
 
+func _should_seek_overcharge_pickup() -> bool:
+	if has_overcharge_charge():
+		return false
+	if health_fraction() >= healthy_overcharge_priority_threshold:
+		return true
+	return not last_has_line_of_sight or shoot_cooldown_remaining > shoot_cooldown * 0.45
+
 func _fire_requested_shot() -> void:
 	if target == null or target.is_dead:
 		_cancel_windup(STATE_IDLE)
 		return
+	var preserve_route_state := current_state == STATE_REPOSITION or current_state == STATE_STRAFE
 	var origin := _get_shot_origin()
 	var direction := pending_shot_direction
 	if direction.length_squared() <= 0.0001:
@@ -499,7 +565,10 @@ func _fire_requested_shot() -> void:
 	shot_tell_remaining = 0.0
 	shoot_cooldown_remaining = shoot_cooldown
 	reaction_remaining = reaction_time
-	_set_state(STATE_COOLDOWN, reaction_time)
+	if preserve_route_state:
+		state_time_remaining = maxf(state_time_remaining, reaction_time)
+	else:
+		_set_state(STATE_COOLDOWN, reaction_time)
 	var was_overcharged := _consume_overcharge()
 	var damage := shoot_damage * (overcharge_damage_multiplier if was_overcharged else 1.0)
 	var knockback := shoot_knockback * (overcharge_knockback_multiplier if was_overcharged else 1.0)
@@ -659,20 +728,24 @@ func _score_tactical_role(role: StringName, point: Vector3, target_distance: flo
 	match role:
 		BotTacticalContextScript.ROLE_HEALTH:
 			if health_ratio <= critical_health_pickup_threshold:
-				return 9.0
+				return 10.0
 			if health_ratio <= low_health_pickup_threshold:
-				return 5.0
-			return -7.0
+				return 7.0
+			if health_ratio < useful_health_pickup_threshold and travel_distance <= pickup_interest_distance * 0.55:
+				return 2.4
+			return -5.5
 		BotTacticalContextScript.ROLE_OVERCHARGE:
 			if has_overcharge_charge():
 				return -5.0
 			var score := 1.2
+			if health_ratio >= healthy_overcharge_priority_threshold:
+				score += 4.2
+			elif health_ratio <= low_health_pickup_threshold:
+				score -= 2.6
 			if not last_has_line_of_sight:
 				score += 2.6
 			if shoot_cooldown_remaining > shoot_cooldown * 0.45:
 				score += 1.4
-			if health_ratio <= low_health_pickup_threshold:
-				score -= 1.5
 			return score
 		BotTacticalContextScript.ROLE_RETREAT:
 			var score := 0.4
@@ -686,11 +759,11 @@ func _score_tactical_role(role: StringName, point: Vector3, target_distance: flo
 				score += 0.8
 			return score
 		BotTacticalContextScript.ROLE_COVER:
-			var score := cover_route_bonus
+			var score := cover_route_bonus * 0.72
 			if not last_has_line_of_sight:
-				score += 1.4
-			if shoot_cooldown_remaining > shoot_cooldown * 0.45:
 				score += 0.9
+			if shoot_cooldown_remaining > shoot_cooldown * 0.45:
+				score += 0.55
 			if health_ratio <= low_health_pickup_threshold:
 				score += 1.4
 			return score
@@ -726,9 +799,9 @@ func _score_tactical_role(role: StringName, point: Vector3, target_distance: flo
 				score -= recent_high_route_penalty
 			return score
 		BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY:
-			var score := 0.75
+			var score := 1.35
 			if vertical_route_cooldown_remaining <= 0.0:
-				score += 1.8
+				score += 2.25
 			if not last_has_line_of_sight:
 				score += 1.4
 			return score
@@ -804,9 +877,9 @@ func _should_hold_current_route() -> bool:
 			return false
 		if _flat_distance_to(overcharge_pickup_position) <= nearby_overcharge_commit_distance * 1.2:
 			return true
-		return not last_has_line_of_sight or shoot_cooldown_remaining > shoot_cooldown * 0.35
+		return _should_seek_overcharge_pickup()
 	if last_route_label == &"jump_pad" or last_route_label == &"high":
-		return not last_has_line_of_sight and _distance_to_reposition_destination() > reposition_arrival_distance * 1.5
+		return _is_jump_pad_commitment_active() or _distance_to_reposition_destination() > reposition_arrival_distance * 1.5
 	return false
 
 func _fallback_reposition_points() -> Array[Vector3]:
@@ -820,12 +893,22 @@ func _fallback_reposition_points() -> Array[Vector3]:
 	]
 
 func _movement_toward_reposition() -> Vector3:
+	if _is_jump_pad_commitment_active():
+		last_navigation_target = jump_pad_landing_target
+		var to_landing := jump_pad_landing_target - global_position
+		to_landing.y = 0.0
+		if to_landing.length_squared() <= 0.0001:
+			return Vector3.ZERO
+		return to_landing.normalized()
 	last_navigation_target = _resolve_navigation_target(reposition_destination)
 	var to_destination := last_navigation_target - global_position
 	to_destination.y = 0.0
 	if to_destination.length_squared() <= 0.0001:
 		return _distance_management_movement()
-	return (to_destination.normalized() + _distance_management_movement() * 0.3).normalized()
+	var route_weight := 0.16
+	if last_route_label == &"health" or last_route_label == &"overcharge" or last_route_label == &"jump_pad" or last_route_label == &"high":
+		route_weight = 0.0
+	return (to_destination.normalized() + _distance_management_movement() * route_weight).normalized()
 
 func _strafe_movement() -> Vector3:
 	var to_target := _flat_to_target()
@@ -866,6 +949,8 @@ func _build_velocity(desired_move: Vector3, delta: float) -> Vector3:
 		speed_multiplier = 1.05
 	elif current_state == STATE_WINDUP:
 		speed_multiplier = 0.45
+	if is_telegraphing and current_state != STATE_WINDUP:
+		speed_multiplier = minf(speed_multiplier, route_shot_speed_multiplier)
 	var launch_boost := _consume_launch_boost(delta)
 	return horizontal * move_speed * speed_multiplier + Vector3(knockback.x, vertical_velocity + knockback.y, knockback.z) + launch_boost
 
@@ -876,6 +961,8 @@ func _consume_launch_boost(delta: float) -> Vector3:
 
 func _maybe_jump_for_navigation(desired_move: Vector3) -> void:
 	if jump_cooldown_remaining > 0.0:
+		return
+	if _is_jump_pad_flight_active():
 		return
 	if not _has_jump_ground_contact():
 		return
@@ -900,6 +987,33 @@ func _resolve_navigation_target(destination: Vector3) -> Vector3:
 	if _flat_distance_to(best_target) > jump_pad_route_distance and destination.y > global_position.y + jump_height_goal_threshold:
 		return best_target
 	return destination
+
+func _select_jump_pad_landing_target(destination: Vector3, launch_velocity: Vector3) -> Vector3:
+	var route := _select_jump_pad_route_for_destination(destination)
+	if not route.is_empty():
+		return route.get("target", destination)
+	var horizontal_launch := Vector3(launch_velocity.x, 0.0, launch_velocity.z)
+	if horizontal_launch.length_squared() <= 0.0001:
+		horizontal_launch = Vector3.FORWARD
+	var fallback := global_position + horizontal_launch.normalized() * jump_pad_route_distance
+	fallback.y = global_position.y
+	return fallback
+
+func _is_jump_pad_commitment_active() -> bool:
+	return jump_pad_flight_commit_remaining > 0.0 or jump_pad_landing_recovery_remaining > 0.0
+
+func _is_jump_pad_flight_active() -> bool:
+	return jump_pad_flight_commit_remaining > 0.0
+
+func _update_jump_pad_commitment_after_move() -> void:
+	if jump_pad_flight_commit_remaining <= 0.0:
+		return
+	if not _has_jump_ground_contact():
+		return
+	if _flat_distance_to(jump_pad_landing_target) > jump_pad_landing_commit_distance:
+		return
+	jump_pad_flight_commit_remaining = 0.0
+	jump_pad_landing_recovery_remaining = jump_pad_landing_recovery_time
 
 func _select_jump_pad_route_for_destination(destination: Vector3) -> Dictionary:
 	if jump_pad_routes.is_empty():
@@ -996,6 +1110,8 @@ func _trigger_jump() -> void:
 	jump_count += 1
 
 func _apply_projectile_dodge(desired_move: Vector3) -> Vector3:
+	if _is_jump_pad_flight_active():
+		return desired_move
 	var dodge := _projectile_dodge_movement()
 	if dodge.length_squared() <= 0.0001:
 		return desired_move
