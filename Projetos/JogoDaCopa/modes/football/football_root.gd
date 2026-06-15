@@ -5,6 +5,7 @@ const FootballFieldBuilderScript = preload("res://modes/football/football_field_
 const FootballRuntimeSpawnerScript = preload("res://modes/football/football_runtime_spawner.gd")
 const FootballMatchFlowControllerScript = preload("res://modes/football/football_match_flow_controller.gd")
 const FootballMatchPresentationControllerScript = preload("res://modes/football/football_match_presentation_controller.gd")
+const FootballArcadeFieldControllerScript = preload("res://modes/football/football_arcade_field_controller.gd")
 const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
@@ -856,96 +857,28 @@ func _apply_arcade_knockback(target: Node, direction: Vector3, force: float) -> 
 		target.apply_knockback(direction, force, 1.05)
 
 func _collect_arcade_field_nodes() -> void:
-	boost_pad_areas.clear()
-	for node: Node in get_tree().get_nodes_in_group("football_boost_pad"):
-		if node is Area3D:
-			var boost_pad := node as Area3D
-			boost_pad_areas.append(boost_pad)
-			_set_boost_pad_active(boost_pad, true)
-			boost_pad.set_meta("respawn_remaining", 0.0)
-	jump_pad_areas.clear()
-	for node: Node in get_tree().get_nodes_in_group("football_jump_pad"):
-		if node is Area3D:
-			var jump_pad := node as Area3D
-			jump_pad_areas.append(jump_pad)
-			jump_pad.set_meta("cooldown_remaining", 0.0)
-	if bot != null and bot.has_method("set_boost_pad_targets"):
-		var bot_pad_targets: Array[Node3D] = []
-		for pad: Area3D in boost_pad_areas:
-			bot_pad_targets.append(pad)
-		bot.set_boost_pad_targets(bot_pad_targets)
+	FootballArcadeFieldControllerScript.collect_nodes(self)
 
 func _reset_arcade_field() -> void:
-	for pad: Area3D in boost_pad_areas:
-		_set_boost_pad_active(pad, true)
-		pad.set_meta("respawn_remaining", 0.0)
-	for jump_pad: Area3D in jump_pad_areas:
-		jump_pad.set_meta("cooldown_remaining", 0.0)
+	FootballArcadeFieldControllerScript.reset(self)
 
 func _update_arcade_field(delta: float) -> void:
-	_update_boost_pads(delta)
-	_update_jump_pads(delta)
+	FootballArcadeFieldControllerScript.update(self, delta)
 
 func _update_boost_pads(delta: float) -> void:
-	if boost_pad_areas.is_empty():
-		return
-	for pad: Area3D in boost_pad_areas:
-		if pad == null:
-			continue
-		if not _is_boost_pad_active(pad):
-			var respawn_remaining := maxf(0.0, float(pad.get_meta("respawn_remaining", 0.0)) - delta)
-			pad.set_meta("respawn_remaining", respawn_remaining)
-			if respawn_remaining <= 0.0:
-				_set_boost_pad_active(pad, true)
-			continue
-		if player != null and _flat_distance(player.global_position, pad.global_position) <= BOOST_PAD_COLLECT_RADIUS:
-			_collect_boost_pad(pad, true)
-		elif bot != null and _flat_distance(bot.global_position, pad.global_position) <= BOOST_PAD_COLLECT_RADIUS:
-			_collect_boost_pad(pad, false)
+	FootballArcadeFieldControllerScript.update_boost_pads(self, delta)
 
 func _collect_boost_pad(pad: Area3D, collected_by_player: bool) -> void:
-	var full_pad := str(pad.get_meta("pad_type", "small")) == "large"
-	if collected_by_player and player != null:
-		if full_pad and player.has_method("refill_boost_stamina"):
-			player.refill_boost_stamina()
-		elif player.has_method("add_boost_stamina"):
-			player.add_boost_stamina(BOOST_PAD_SMALL_STAMINA)
-	elif not collected_by_player and bot != null and bot.has_method("notify_boost_pad_collected"):
-		bot.notify_boost_pad_collected(full_pad)
-	_set_boost_pad_active(pad, false)
-	pad.set_meta("respawn_remaining", BOOST_PAD_RESPAWN_SECONDS)
-	if feedback != null:
-		feedback.play_pickup(pad.global_position, &"boost")
+	FootballArcadeFieldControllerScript.collect_boost_pad(self, pad, collected_by_player)
 
 func _is_boost_pad_active(pad: Area3D) -> bool:
-	return bool(pad.get_meta("active", true))
+	return FootballArcadeFieldControllerScript.is_boost_pad_active(pad)
 
 func _set_boost_pad_active(pad: Area3D, is_active: bool) -> void:
-	pad.set_meta("active", is_active)
-	for child: Node in pad.get_children():
-		if child is MeshInstance3D:
-			(child as MeshInstance3D).visible = is_active
+	FootballArcadeFieldControllerScript.set_boost_pad_active(pad, is_active)
 
 func _update_jump_pads(delta: float) -> void:
-	if jump_pad_areas.is_empty():
-		return
-	for jump_pad: Area3D in jump_pad_areas:
-		if jump_pad == null:
-			continue
-		var cooldown_remaining := maxf(0.0, float(jump_pad.get_meta("cooldown_remaining", 0.0)) - delta)
-		jump_pad.set_meta("cooldown_remaining", cooldown_remaining)
-		if cooldown_remaining > 0.0:
-			continue
-		if player != null and _flat_distance(player.global_position, jump_pad.global_position) <= JUMP_PAD_COLLECT_RADIUS:
-			player.apply_jump_pad_launch(JUMP_PAD_LAUNCH_VELOCITY)
-			jump_pad.set_meta("cooldown_remaining", JUMP_PAD_COOLDOWN_SECONDS)
-			if feedback != null:
-				feedback.play_jump_pad(jump_pad.global_position, JUMP_PAD_LAUNCH_VELOCITY)
-		elif bot != null and _flat_distance(bot.global_position, jump_pad.global_position) <= JUMP_PAD_COLLECT_RADIUS:
-			bot.apply_jump_pad_launch(JUMP_PAD_LAUNCH_VELOCITY)
-			jump_pad.set_meta("cooldown_remaining", JUMP_PAD_COOLDOWN_SECONDS)
-			if feedback != null:
-				feedback.play_jump_pad(jump_pad.global_position, JUMP_PAD_LAUNCH_VELOCITY)
+	FootballArcadeFieldControllerScript.update_jump_pads(self, delta)
 
 func _process_goal_detection() -> void:
 	var goal_side := FootballMatchRulesScript.detect_goal(ball.global_position, GOAL_HALF_WIDTH, GOAL_LINE_NORTH, GOAL_LINE_SOUTH, GOAL_HEIGHT)
