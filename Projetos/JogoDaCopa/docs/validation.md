@@ -13,12 +13,24 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd -- --profile=structure
 ```
 
+Studio docs drift check:
+
+```powershell
+D:\Estudio\tools\check_doc_drift.ps1
+```
+
 ## Manual Smoke
 
 - Open `Projetos/JogoDaCopa/project.godot` in Godot 4.6.2.
 - Press Play.
-- Launch `Futebol 1x1`.
-- Confirm intro/how-to, avatar selection, direct `3, 2, 1, VAI!` kickoff countdown, third-person camera, movement, jump, `Shift` boost/stamina, LMB kick, RMB strong lifted kick, loose ball without possession lock, stronger ground grip while rolling, preserved speed in the air, higher bounce, narrower/taller roofed goals, no high-shot ghost goals above the crossbar, wall/ceiling/goal-roof rebounds, readable glass frames, Copa-style stadium seating/banners/lights, bot, score to 3, restart only through pause menu confirmation, pause menu and return to menu.
+- Launch `Super Campeao` / `Futebol 1x1`.
+- Confirm loading, main menu, version footer, avatar/kit/bot difficulty/match-mode selection and start button.
+- Confirm direct `3, 2, 1, VAI!` kickoff countdown, third-person camera, movement, jump, `Shift` boost/stamina, LMB kick, RMB strong lifted kick, dash/flip, charged kick, SUPER/fireball, boost pads and jump pads.
+- Confirm loose ball without possession lock, stronger ground grip while rolling, preserved air speed, higher bounce, narrower/taller roofed goals, no high-shot ghost goals above the crossbar, wall/ceiling/goal-roof rebounds and readable glass frames.
+- Confirm Copa-style stadium seating/banners/lights, real player/bot avatars, bot behavior, broadcast HUD/scorebug, offscreen ball indicator and goal/result presentation.
+- In default `3 minutos` mode, confirm clock countdown, final-30s double-goal behavior, golden goal on tied timer end, and match result.
+- In optional `3 gols` mode, confirm match ends when either side reaches 3 goals.
+- Confirm menu ESC, settings, restart only through pause menu confirmation, pause/resume and return to menu.
 
 ## Web Export Gate
 

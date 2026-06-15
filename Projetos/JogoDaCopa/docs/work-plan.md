@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK08_SUPER_CAMPEAO_UI_MERGED_REMOTE_ROLLBACK`
+- Status: `JOGO_DA_COPA_SUPER_CAMPEAO_V1_2_1_PUBLICADO_RETEST`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -21,27 +21,30 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 02C-bis/02D-bis Real Assets V1 replaced the avatar proxy with real Quaternius skinned humanoids/UAL animation clips and replaced synthetic feedback with real Kenney/Pixabay SFX, jingles and stadium ambience.
 - Track 03 Arcade V1 completed the arcade pass: dash/slide/stun/flip, charged kick, SUPER/fireball, boost pads, jump pads, ramps, timer/golden goal/vale-2 and emote/confetti.
 - Track 03F Quality Hotfix V1 fixed SUPER whiff consumption, preserved Quaternius PBR textures under kit tint, documented representative perf methodology and added source integrity validation.
-- Track 08 Super Campeao UI removes the old Toon experiment from active runtime/UI and rebrands the local game surface to `Super Campeao`; public publication was rolled back after a first-minute remote hitch.
+- Track 08 Super Campeao UI removed the old Toon experiment from active runtime/UI and rebranded the local game surface to `Super Campeao`; the first publication attempt was rolled back after a first-minute remote hitch.
+- Track 08A Ball Glass Hitch Hotfix republished `Super Campeao v1.2.1+6ef3074c`; remote menu, first minute, 5-minute stability and night luma gates passed.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Technical hotfix/diagnosis for the Track 08 remote first-minute hitch near `ball_glass`, then republish and only request human retest after gates pass.
+Human retest for the public `Super Campeao v1.2.1+6ef3074c` URL before opening new feature or polish tracks.
 
 Focus:
 
+- Confirm loading, menu, visible footer, public version and first transition into match.
+- Confirm menu ESC, settings, restart confirmation and return-to-menu flow.
+- Confirm default timer mode, golden goal behavior and optional `3 gols` mode.
 - Confirm SUPER whiff no longer spends the bar or kickoff quota.
 - Confirm avatar tint preserves enough texture/PBR readability in play.
 - Playtest dash/slide/flip, charged kick, SUPER/fireball and boost/jump pad readability.
 - Check real character readability in player/bot silhouettes, kits, hit/slide/push/kick/celebrate states.
 - Check real audio mix for kick/bounce/glass/countdown/goal/crowd/menu, including ambience ducking in intro/pause.
-- Decide whether the timer default, golden goal and vale-2 should stay as-is.
-- Confirm rebrand visibility, menu cleanup, loading label, intro cleanup and first-minute Web stability.
+- Confirm rebrand visibility, menu cleanup, loading label, intro cleanup, HUD/scorebug readability and first-minute Web stability.
 
 ## Out Of Scope
 
 - FPS arena/shooter mechanics.
 - Weapons.
-- Multiplayer/backend/Web/mobile.
+- Multiplayer, backend, official mobile browser support or new platform expansion beyond the current PC/Web surface.
 - Official FIFA, World Cup, federation or club branding.

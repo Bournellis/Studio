@@ -11,15 +11,18 @@
 ## Futebol 1x1
 
 - Root: `res://modes/football/football_root.gd`.
-- Owns player, bot, ball, field, score, roofed goals, intro/how-to panel and HUD snapshot.
+- Owns player, bot, ball, field, score, roofed goals, kickoff countdown, pause/result flow and HUD snapshot.
 - Player movement/input is reused from the old FPS controller, but football root owns kick direction, loose-ball contact and kick assist.
 - LMB means kick, with modest lift and stronger direct push.
 - RMB means strong kick, with a clear lifted pop shot.
 - `Shift` means temporary speed boost that spends stamina and then recharges.
+- Dash/slide/stun/flip, charged kick, SUPER/fireball, boost pads, jump pads and emote are football arcade mechanics owned by this mode.
 - The ball must remain physically loose: no possession lock or automatic dribble steering.
 - The arena is closed with high glass walls, roof collision and taller/narrower roofed goals so the ball can rebound from walls, ceiling and goal caps without leaving the play space.
 - Goals only count when the ball crosses inside width and under the goal height.
-- Match ends at 3 goals.
+- Default match mode is `3 minutos`.
+- In timer mode, goals in the final 30 seconds count double, a tied match enters golden goal, and the next golden-goal score ends the match.
+- `3 gols` mode remains selectable and ends when either side reaches 3 goals.
 
 ## Reset
 

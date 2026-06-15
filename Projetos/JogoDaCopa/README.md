@@ -1,20 +1,26 @@
-# Jogo Da Copa
+# JogoDaCopa
 
-`JogoDaCopa` is the studio's PC Windows editor-first third-person football minigame project.
+`JogoDaCopa` is the studio's PC Windows editor-first third-person football minigame project. Its first public playable surface is `Super Campeao`.
 
 It starts from the accepted football prototype extracted from the former `FpsShooter` project. The FPS arena lab now lives in `../FpsPlayground`.
 
 ## Current Content
 
-- Main menu with `Futebol 1x1`.
+- Main menu launching `Super Campeao` / `Futebol 1x1`.
 - Third-person chase camera inspired by Rocket League.
-- 1x1 football against a bot, match to 3 goals.
-- Runtime primitive Copa-style stadium with roofed/closed goals, glass frames, banners and light rigs.
+- 1x1 football against a bot.
+- Default 3-minute match timer with golden goal on draw; `3 gols` remains selectable.
+- Copa-style stadium with roofed/closed goals, glass frames, banners, crowd bands and light rigs.
 - Loose arcade `RigidBody3D` ball.
 - Loose-ball contact and near-front kick assist without possession lock.
 - Skin tone and country-inspired shirt selection.
-- Procedural primitive avatars with basic animation states.
-- Football HUD, kick/goal feedback and GUT validation.
+- Real Quaternius skinned humanoid avatars with UAL clips and authored kick/celebration hooks.
+- Broadcast-style football HUD, kick/goal feedback, pause/settings flow and GUT validation.
+- Single-threaded Web export/publication gate for the public browser build.
+
+## Current State
+
+Operational status, current public baseline and next step live in `implementation/current-status.md`. Publication history and release roots live in `docs/release-history.md`.
 
 ## Run
 

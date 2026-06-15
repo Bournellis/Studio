@@ -50,4 +50,6 @@ Status em 2026-06-14:
 - Gate remoto menu 30s: FAIL, `pageErrors=1`, `consoleErrorCount=0`, `menu.ready.end` visto, release root conferiu.
 - Erro: `AbortError: Unable to load a worklet's module.`
 - Rollback remoto executado para `web/v1-copa-arena-futebol-20260613-be453dc3`; URL publica confirmada nesse root.
-- Nao mover para Done; proxima track deve corrigir o fallback Web Audio antes de nova publicacao.
+- Encerramento administrativo em 2026-06-15: este card foi movido para Done como `SUPERADO`, nao como publicacao bem-sucedida.
+- A correcao pendente foi resolvida pela Track 07C (`v1.2.0+fa82cb7d`) e depois pelo baseline atual Track 08A (`Super Campeao v1.2.1+6ef3074c`).
+- Nao resta acao pendente neste card; o proximo passo operacional atual e retest humano do baseline publico 08A.

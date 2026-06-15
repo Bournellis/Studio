@@ -45,7 +45,7 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 - Sanity menu remoto: PASS, release root conferiu, rodape exibiu `Super Campeao v1.2.1+2f537628`, `menu.ready.end` visto, `pageErrors=0`, `consoleErrorCount=0`.
 - Gate remoto primeiro minuto: FAIL, release root conferiu e nao houve erro de pagina/console, mas `firstMinuteHitches=1`; hitch `dt=333.5ms` aos `11909.82ms` apos `event.visible_match_start`, evento mais proximo `feedback.play_sfx_3d.begin key=ball_glass`.
 - Rollback executado imediatamente para `web/v1-copa-arena-futebol-20260614-fa82cb7d`; URL estavel confirmada novamente com esse release root em `docs/playtest-reports/track-08-data/08-rollback-confirm-fa82cb7d.json`.
-- Resultado: `v1.2.1+2f537628` nao esta publicado; URL publica segue em `v1.2.0+fa82cb7d`. Proximo passo tecnico e investigar/corrigir o hitch remoto de `ball_glass` antes de nova publicacao.
+- Resultado historico: `v1.2.1+2f537628` nao ficou publicado; a investigacao/correcao do hitch remoto de `ball_glass` foi concluida na Track 08A, que republicou `v1.2.1+6ef3074c`.
 
 ## 2026-06-14 - Visual Polish & Web Audio Safe Hotfix 07C
 
@@ -78,7 +78,7 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 - Demais checks da estabilidade: PASS em `object_node_count 817 -> 817`, `object_count 3327 -> 3327`, caches estaveis, `render_video_mem_used 242,157,894 -> 242,157,894` e pior janela 5s `120.8 FPS`.
 - Erros remotos no gate que falhou: `pageErrors=0`, `consoleErrorCount=0`.
 - Rollback executado imediatamente para `web/v1-copa-arena-futebol-20260613-be453dc3`; URL estavel confirmada novamente com esse release root em `docs/playtest-reports/track-07-data/07-rollback-release-root-be453dc3.json`.
-- Resultado: `v1.2.0` nao esta publicado; URL publica segue em `v1.1.0+be453dc3`. Proximo passo tecnico e reduzir/investigar heap retido antes de republicar.
+- Resultado historico: `v1.2.0+138cf4f7` nao ficou publicado; a reducao/investigacao de heap seguiu nas tracks 07B e 07C, com publicacao bem-sucedida em `v1.2.0+fa82cb7d`.
 
 ## 2026-06-14 - Web Heap Margin Hotfix 07B - Tentativa Bloqueada
 
@@ -92,7 +92,7 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 - Gate remoto menu 30s: FAIL, release root conferiu e `menu.ready.end` foi visto, mas `pageErrors=1`.
 - Erro remoto: `AbortError: Unable to load a worklet's module.`; `consoleErrorCount=0`.
 - Rollback executado imediatamente para `web/v1-copa-arena-futebol-20260613-be453dc3`; evidencia em `docs/playtest-reports/track-07b-data/07b-rollback-publication-report-be453dc3.json` e URL estavel confirmada novamente com esse release root.
-- Resultado: `v1.2.0+6de8d6b7` nao esta publicado; URL publica segue em `v1.1.0+be453dc3`. Proximo passo tecnico e uma nova hotfix que mantenha fallback Web Audio seguro antes de repetir a publicacao.
+- Resultado historico: `v1.2.0+6de8d6b7` nao ficou publicado; a correcao de fallback Web Audio foi concluida na Track 07C, que republicou `v1.2.0+fa82cb7d`.
 
 ## 2026-06-13 - Countdown Direto & Restart Confirmado V1
 

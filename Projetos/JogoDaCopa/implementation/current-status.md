@@ -1,14 +1,14 @@
 # JogoDaCopa - Current Status
 
-- Last updated: `2026-06-14`
+- Last updated: `2026-06-15`
 - Project: `JogoDaCopa`
 - Product/module name: `Super Campeao`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web v1.2.1 Super Campeao baseline`
-- Active stage: `Track 08A - Super Campeao Rebrand & UI Cleanup Hotfix`
-- Active stage status: `PUBLICADO_AGUARDANDO_RETEST_HUMANO - Track 08A republished Super Campeao as v1.2.1+6ef3074c and all remote gates passed`
+- Active stage: `Track 08A baseline + Documentacao Limpeza V1`
+- Active stage status: `PUBLICADO_AGUARDANDO_RETEST_HUMANO - Track 08A republished Super Campeao as v1.2.1+6ef3074c, all remote gates passed, and local entry docs are aligned to that baseline`
 - Status marker: `JOGO_DA_COPA_SUPER_CAMPEAO_V1_2_1_PUBLICADO_RETEST`
-- Approved plan: Track 08 rebrands the public game to `Super Campeao`, cleans UI text/options and keeps gameplay unchanged; Track 08A fixes the Web goal-feedback hitch without gameplay changes.
+- Approved plan: Track 08 rebrands the public game to `Super Campeao`, cleans UI text/options and keeps gameplay unchanged; Track 08A fixes the Web goal-feedback hitch without gameplay changes; Documentacao Limpeza V1 aligns local entry docs without gameplay, asset or publication changes.
 - Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b-first-minute-smoothness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b1-sensory-feedback-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06a-match-start-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06b-esc-menu-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06c-menu-broadcast-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06d-hud-broadcast-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0-rollback.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06f-web-audio-stability-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_v1-1-0-publicado-retest.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06g-countdown-restart-flow-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07-visual-polish-web-safe-rollback.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07b-web-heap-margin-hotfix-rollback.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07c-web-audio-safe-publicado-retest.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track08-super-campeao-ui-rollback.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track08a-super-campeao-publicado-retest.md`
 - Review: `docs/code-review-track04f2-webgl-first-render-stall-v1.md`, `docs/playtest-reports/track-04f2-webgl-stall.md`, `docs/code-review-track04b1-04b2-v1.md`, `docs/code-review-track04c-04d-v1.md`, `docs/code-review-track04e-web-spike-v1.md`, `docs/playtest-reports/track-04f-web-performance.md`, `docs/code-review-track04f-web-performance-v1.md`, `docs/playtest-reports/track-05a-web-stability.md`, `docs/code-review-track05a-web-stability-v1.md`, `docs/playtest-reports/track-05b-first-minute-smoothness.md`, `docs/code-review-track05b-first-minute-v1.md`, `docs/playtest-reports/track-05b1-sensory-feedback.md`, `docs/code-review-track05b1-sensory-feedback-v1.md`, `docs/playtest-reports/track-06a-match-start-fixes.md`, `docs/code-review-track06a-match-start-fixes-v1.md`, `docs/code-review-track06b-esc-menu-v1.md`, `docs/code-review-track06c-menu-broadcast-v1.md`, `docs/code-review-track06d-hud-broadcast-v1.md`, `docs/code-review-track06e-release-v1-1-0.md`, `docs/code-review-track06f-web-audio-stability-v1.md`, `docs/playtest-reports/track-06f-web-audio-stability.md`, `docs/playtest-reports/track-06g-countdown-restart-flow.md`, `docs/playtest-reports/track-07c-web-audio-safe-hotfix.md`
 - Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_hotfix04e1-night-capture.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05b-first-minute-smoothness-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05b1-sensory-feedback-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06a-match-start-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06b-esc-menu-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06c-menu-broadcast-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06d-hud-broadcast-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06f-web-audio-stability-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06g-countdown-restart-flow-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_jogodacopa_track07c-web-audio-safe-hotfix.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_jogodacopa_track08a-ball-glass-hitch-hotfix.md`
@@ -88,6 +88,8 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 Latest Track 08A result: PASS, 104 tests, 1825 asserts, including source integrity check and UTF-8 BOM rejection.
 
+Latest Documentacao Limpeza V1 result: import headless PASS; Web export PASS; `tools/validate.gd` PASS, 104 tests, 1825 asserts, Web gzip transfer `30.57 MiB / 50.00 MiB`; studio doc drift PASS.
+
 Latest Web remote smoke: Track 08A menu `docs/playtest-reports/track-08a-data/08a-remote-menu-6ef3074c.json` PASS (`pageErrors=0`, `consoleErrorCount=0`, root `6ef3074c`); first minute `docs/playtest-reports/track-08a-data/08a-remote-first-minute-6ef3074c.json` PASS (`firstMinuteHitches=0`); stability 5min `docs/playtest-reports/track-08a-data/08a-remote-stability-5min-6ef3074c.json` PASS; night luma `docs/playtest-reports/track-08a-data/08a-remote-night-luma-gate-6ef3074c.json` PASS (`6.525 < 90`).
 
 Export smoke command:
@@ -111,28 +113,12 @@ Manual smoke lives in `docs/validation.md`.
 ## Read Next
 
 1. `AGENTS.md`
-2. `docs/quality-upgrade-plan.md`
-3. `docs/arcade-upgrade-plan.md`
+2. `docs/documentation-index.md`
+3. `docs/release-history.md`
 4. `docs/publication-readiness.md`
-5. `docs/release-history.md`
-6. `docs/documentation-index.md`
-7. `docs/architecture-overview.md`
-8. `docs/work-plan.md`
-9. `docs/mode-contract.md`
-10. `docs/validation.md`
-11. `implementation/tracks/track-05-web-publication/current-status.md`
-12. `implementation/tracks/track-02cbis-real-character-v1/current-status.md`
-13. `implementation/tracks/track-02dbis-real-audio-v1/current-status.md`
-14. `implementation/tracks/track-03e-toon-look-experiment-v1/current-status.md`
-15. `implementation/tracks/track-03f-quality-hotfix-v1/current-status.md`
-16. `implementation/tracks/track-03g-playtest-findings-v1/current-status.md`
-17. `implementation/tracks/track-03h-avatar-parity-drift-v1/current-status.md`
-18. `implementation/tracks/track-03i-menu-interaction-fix-v1/current-status.md`
-19. `implementation/tracks/track-03k-animation-pose-restore-v2/current-status.md`
-20. `implementation/tracks/track-03l-arena-seal-facing-v2/current-status.md`
-21. `implementation/tracks/track-03l1-facing-evidence-v1/current-status.md`
-22. `implementation/tracks/track-04b1-character-presentation-v1/current-status.md`
-23. `implementation/tracks/track-04b2-feel-ui-fixes-v1/current-status.md`
-24. `implementation/tracks/track-04b3-kick-arms-polish-v1/current-status.md`
-25. `implementation/tracks/track-04d-match-completeness-v1/current-status.md`
-26. `implementation/tracks/track-04e-web-spike-v1/current-status.md`
+5. `docs/architecture-overview.md`
+6. `docs/work-plan.md`
+7. `docs/mode-contract.md`
+8. `docs/validation.md`
+9. `docs/asset-licenses.md`
+10. Historical track docs only when investigating a specific regression or design decision.
