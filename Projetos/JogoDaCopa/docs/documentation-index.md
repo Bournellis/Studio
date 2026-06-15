@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09G_LOCAL_VALIDADO`
+- Status: `JOGO_DA_COPA_TRACK09G_PUBLICATION_ROLLED_BACK`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -19,8 +19,9 @@
 
 ## Latest Evidence
 
+- Track 09G publication attempt and rollback: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09g-publication-v1.md`
+- Track 09G publication/rollback evidence: `playtest-reports/track-09g-data/`
 - Track 09G local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09g-match-resolution-controller-v1.md`
-- Track 09G local Web evidence: `playtest-reports/track-09g-data/`
 - Track 09F publication closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-publication-v1.md`
 - Track 09F public evidence: `playtest-reports/track-09f-data/`
 - Track 09F local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-arcade-field-controller-v1.md`
