@@ -2,7 +2,7 @@
 
 - Data: `2026-06-15`
 - Agente: `Codex`
-- Status: `PLANEJADO`
+- Status: `LOCAL_VALIDADO`
 - Baseline publico aprovado: `Super Campeao v1.2.1+a75cfe57`
 
 ## Objetivo
@@ -93,3 +93,25 @@ O helper pode receber o `root` como contexto nesta etapa para minimizar risco. U
 - Build Web continua exportando e inicializando.
 - Nenhuma mudanca intencional percebida pelo jogador.
 - Documentacao registra linhas antes/depois, validacoes e qualquer risco residual.
+
+## Resultado
+
+- Criado `modes/football/football_match_resolution_controller.gd`.
+- `FootballRoot` manteve fachadas publicas/testaveis e delega restart, modo de partida, goal reset, deteccao/registro de gol, timer/golden goal, fim de partida e stats de chute/gol.
+- `FootballRoot`: `1295 -> 1178` linhas nesta base.
+- Novo helper: `174` linhas.
+- Sem mudanca intencional de gameplay, input, bot, fisica, scoring, tuning, assets, HUD visual ou publicacao.
+
+## Validacao Executada
+
+- Import Godot headless: PASS.
+- `tools/validate.gd`: PASS, `104` testes, `1826` asserts, `55` fontes `.gd/.gdshader` verificadas.
+- Web export release: PASS.
+- `tools/validate.gd` com build Web presente: PASS, Web gzip `30.60 MiB / 50.00 MiB`, raw `63.06 MiB`, `9` arquivos.
+- Chrome boot local: PASS, `event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
+- Evidencia: `docs/playtest-reports/track-09g-data/09g-local-web-boot.json` e `.png`.
+
+## Risco Residual
+
+- A 09G mexe em fluxo central de partida, mas ficou coberta pelos testes existentes de gol, placar, timer, golden goal, vale-2, restart, result screen, stats e kickoff pos-gol.
+- Publicacao remota nao foi executada nesta track; a baseline publica aprovada continua `Super Campeao v1.2.1+a75cfe57`.

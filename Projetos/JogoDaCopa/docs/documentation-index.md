@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09F_PUBLICADO_RETEST_PENDENTE`
+- Status: `JOGO_DA_COPA_TRACK09G_LOCAL_VALIDADO`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -19,6 +19,8 @@
 
 ## Latest Evidence
 
+- Track 09G local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09g-match-resolution-controller-v1.md`
+- Track 09G local Web evidence: `playtest-reports/track-09g-data/`
 - Track 09F publication closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-publication-v1.md`
 - Track 09F public evidence: `playtest-reports/track-09f-data/`
 - Track 09F local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-arcade-field-controller-v1.md`
@@ -41,6 +43,7 @@
 - `validation-profiles.md`
 - `publication-readiness.md`
 - `release-history.md`
+- `playtest-reports/track-09g-data/`
 - `playtest-reports/track-09f-data/`
 - `playtest-reports/track-09e-data/`
 - `playtest-reports/track-09c-data/`

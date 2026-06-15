@@ -5,6 +5,7 @@ const FootballFieldBuilderScript = preload("res://modes/football/football_field_
 const FootballRuntimeSpawnerScript = preload("res://modes/football/football_runtime_spawner.gd")
 const FootballMatchFlowControllerScript = preload("res://modes/football/football_match_flow_controller.gd")
 const FootballMatchPresentationControllerScript = preload("res://modes/football/football_match_presentation_controller.gd")
+const FootballMatchResolutionControllerScript = preload("res://modes/football/football_match_resolution_controller.gd")
 const FootballArcadeFieldControllerScript = preload("res://modes/football/football_arcade_field_controller.gd")
 const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
@@ -241,10 +242,7 @@ func _physics_process(delta: float) -> void:
 	player_touch_cooldown_remaining = maxf(0.0, player_touch_cooldown_remaining - delta)
 	arcade_contact_cooldown_remaining = maxf(0.0, arcade_contact_cooldown_remaining - delta)
 	ball_contact_audio_cooldown_remaining = maxf(0.0, ball_contact_audio_cooldown_remaining - delta)
-	if goal_reset_timer > 0.0:
-		goal_reset_timer = maxf(0.0, goal_reset_timer - delta)
-		if goal_reset_timer <= 0.0 and not match_over:
-			_restart_play(true)
+	if FootballMatchResolutionControllerScript.update_goal_reset(self, delta):
 		return
 	if match_over:
 		return
@@ -284,32 +282,7 @@ func _get_escape_target() -> StringName:
 	return &"menu" if intro_open or match_over else &"pause"
 
 func restart_match(capture_mouse: bool = true) -> void:
-	_set_intro_open(false)
-	_set_menu_open(false)
-	player_score = 0
-	bot_score = 0
-	match_over = false
-	goal_reset_timer = 0.0
-	last_goal_player_scored = false
-	kickoff_owner = &"player"
-	match_time_remaining = MATCH_DURATION_SECONDS
-	golden_goal_active = false
-	last_thirty_announced = false
-	last_goal_value = 1
-	player_super_meter = 0.0
-	bot_super_meter = 0.0
-	player_super_used_this_kickoff = false
-	bot_super_used_this_kickoff = false
-	match_stats = FootballMatchRulesScript.build_empty_match_stats()
-	_reset_arcade_field()
-	_restart_play(false)
-	if hud != null:
-		hud.reset_feedback()
-	if feedback != null:
-		feedback.clear_effects()
-	_request_hud_and_scoreboard_refresh()
-	if capture_mouse:
-		_capture_mouse_if_playing()
+	FootballMatchResolutionControllerScript.restart_match(self, capture_mouse)
 
 func debug_get_player():
 	return player
@@ -447,10 +420,7 @@ func set_bot_difficulty(next_difficulty_id: StringName) -> void:
 	_request_hud_and_scoreboard_refresh()
 
 func set_match_mode(next_match_mode_id: StringName) -> void:
-	match_mode_id = _sanitize_match_mode(next_match_mode_id)
-	if match_mode_id == MATCH_MODE_TIMER and match_time_remaining <= 0.0 and not golden_goal_active:
-		match_time_remaining = MATCH_DURATION_SECONDS
-	_request_hud_and_scoreboard_refresh()
+	FootballMatchResolutionControllerScript.set_match_mode(self, next_match_mode_id)
 
 func debug_get_kickoff_owner() -> StringName:
 	return kickoff_owner
@@ -881,53 +851,10 @@ func _update_jump_pads(delta: float) -> void:
 	FootballArcadeFieldControllerScript.update_jump_pads(self, delta)
 
 func _process_goal_detection() -> void:
-	var goal_side := FootballMatchRulesScript.detect_goal(ball.global_position, GOAL_HALF_WIDTH, GOAL_LINE_NORTH, GOAL_LINE_SOUTH, GOAL_HEIGHT)
-	if goal_side == 1:
-		PerfProbeScript.mark(self, "event.goal_detected", "side=north player_scored=true")
-		_register_goal(true)
-	elif goal_side == -1:
-		PerfProbeScript.mark(self, "event.goal_detected", "side=south player_scored=false")
-		_register_goal(false)
+	FootballMatchResolutionControllerScript.process_goal_detection(self)
 
 func _register_goal(player_scored: bool) -> void:
-	last_goal_player_scored = player_scored
-	var score_result: Dictionary = FootballMatchRulesScript.apply_goal_score_for_mode(
-		player_score,
-		bot_score,
-		player_scored,
-		GOAL_LIMIT,
-		match_mode_id,
-		match_time_remaining,
-		DOUBLE_GOAL_WINDOW_SECONDS,
-		golden_goal_active
-	)
-	player_score = int(score_result.get("player_score", player_score))
-	bot_score = int(score_result.get("bot_score", bot_score))
-	last_goal_value = int(score_result.get("goal_value", 1))
-	_request_hud_and_scoreboard_refresh()
-	_record_goal_stat(player_scored, last_goal_value)
-	var double_goal := bool(score_result.get("double_goal", false))
-	phase_label = &"goal"
-	goal_reset_timer = GOAL_RESET_DELAY
-	bot.set_celebrating(true)
-	if player_scored:
-		_add_bot_super(SUPER_GOAL_SUFFERED_GAIN)
-	else:
-		_add_player_super(SUPER_GOAL_SUFFERED_GAIN)
-	if hud != null:
-		hud.show_goal(player_scored, last_goal_value, double_goal)
-	if player_scored and player_avatar != null and not RenderProfileScript.is_web_platform():
-		player_avatar.play_celebrate()
-	elif not player_scored and bot_avatar != null and not RenderProfileScript.is_web_platform():
-		bot_avatar.play_celebrate()
-	if feedback != null:
-		var goal_z := GOAL_LINE_NORTH if player_scored else GOAL_LINE_SOUTH
-		feedback.play_football_goal(Vector3(0.0, 1.0, goal_z), player_scored)
-	_trigger_goal_gamefeel()
-	if not player_scored:
-		_trigger_arcade_emote(false)
-	if bool(score_result.get("match_over", false)):
-		_finish_match(bool(score_result.get("player_won", false)))
+	FootballMatchResolutionControllerScript.register_goal(self, player_scored)
 
 func _add_player_super(amount: float) -> void:
 	player_super_meter = clampf(player_super_meter + amount, 0.0, SUPER_METER_MAX)
@@ -945,46 +872,10 @@ func _get_bot_super_gain_multiplier() -> float:
 	return SUPER_BOT_HARD_GAIN_MULTIPLIER if bot_difficulty_id == &"hard" else 1.0
 
 func _update_match_clock(delta: float) -> void:
-	if match_mode_id != MATCH_MODE_TIMER or golden_goal_active or match_over:
-		return
-	var previous_time := match_time_remaining
-	match_time_remaining = maxf(0.0, match_time_remaining - delta)
-	if previous_time > DOUBLE_GOAL_WINDOW_SECONDS and match_time_remaining <= DOUBLE_GOAL_WINDOW_SECONDS and match_time_remaining > 0.0:
-		last_thirty_announced = true
-		if hud != null:
-			hud.show_announcement("ULTIMO MINUTO!", 0.9, &"last_minute")
-	var timer_result: Dictionary = FootballMatchRulesScript.resolve_timer_state(player_score, bot_score, match_time_remaining, match_mode_id, golden_goal_active)
-	if bool(timer_result.get("golden_goal_active", false)) and not golden_goal_active:
-		golden_goal_active = true
-		phase_label = &"golden_goal"
-		if hud != null:
-			hud.show_announcement("GOLDEN GOAL!", 1.05, &"golden_goal")
-		return
-	if bool(timer_result.get("match_over", false)):
-		_finish_match(bool(timer_result.get("player_won", false)))
+	FootballMatchResolutionControllerScript.update_match_clock(self, delta)
 
 func _finish_match(player_won: bool) -> void:
-	var profile_begin := PerfProbeScript.begin(self, "football.finish_match", "player_won=%s" % str(player_won))
-	PerfProbeScript.mark(self, "event.result", "player_won=%s" % str(player_won))
-	match_over = true
-	goal_reset_timer = 0.0
-	phase_label = &"match_end"
-	_set_round_input_locked(true)
-	if bot != null:
-		bot.set_celebrating(true)
-	if player_won and player_avatar != null and not RenderProfileScript.is_web_platform():
-		player_avatar.play_celebrate()
-	elif not player_won and bot_avatar != null and not RenderProfileScript.is_web_platform():
-		bot_avatar.play_celebrate()
-	if hud != null:
-		var result_snapshot := _build_result_snapshot()
-		if capture_scene_active:
-			result_snapshot[RESULT_SUPPRESS_TRANSITION_PULSE_KEY] = true
-		hud.show_match_end(player_won, result_snapshot)
-	if feedback != null:
-		feedback.play_round_end(player_won)
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	PerfProbeScript.end(self, "football.finish_match", profile_begin)
+	FootballMatchResolutionControllerScript.finish_match(self, player_won)
 
 func _trigger_arcade_emote(player_triggered: bool) -> void:
 	PerfProbeScript.mark(self, "event.arcade_emote", "player=%s" % str(player_triggered))
@@ -1233,18 +1124,10 @@ func _notify_ball_touched_by(team: StringName) -> void:
 	FootballMatchFlowControllerScript.notify_ball_touched_by(self, team)
 
 func _record_shot_stat(team: StringName, super_used: bool) -> void:
-	match_stats = FootballMatchRulesScript.record_shot_stat(match_stats, team, super_used)
+	FootballMatchResolutionControllerScript.record_shot_stat(self, team, super_used)
 
 func _record_goal_stat(player_scored: bool, goal_value: int) -> void:
-	match_stats = FootballMatchRulesScript.record_goal_stat(
-		match_stats,
-		player_scored,
-		goal_value,
-		match_mode_id,
-		match_time_remaining,
-		MATCH_DURATION_SECONDS,
-		golden_goal_active
-	)
+	FootballMatchResolutionControllerScript.record_goal_stat(self, player_scored, goal_value)
 
 func _capture_mouse_if_playing(allow_web_capture: bool = false) -> void:
 	if DisplayServer.get_name().to_lower().contains("headless"):

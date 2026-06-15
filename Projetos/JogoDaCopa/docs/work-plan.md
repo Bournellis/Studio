@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09F_PUBLICADO_APROVADO`
+- Status: `JOGO_DA_COPA_TRACK09G_LOCAL_VALIDADO`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -29,12 +29,13 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09D Football Match Flow Controller V1 extracted kickoff/reset/countdown/input lock flow into `football_match_flow_controller.gd`; local validate, Web export and Web boot smoke passed.
 - Track 09E Football Match Presentation Controller V1 extracted HUD/result presentation snapshots into `football_match_presentation_controller.gd`; local validate, Web export and Web boot smoke passed.
 - Track 09F Football Arcade Field Controller V1 extracted boost pad and jump pad field orchestration into `football_arcade_field_controller.gd`; published `Super Campeao v1.2.1+a75cfe57` after local validate/export and remote menu, first-minute, stability rerun and night luma gates passed; human retest was approved by Fabio.
+- Track 09G Football Match Resolution Controller V1 extracted match restart, goal reset, goal detection side effects, scoring orchestration, timer/golden goal, match finish and shot/goal stats into `football_match_resolution_controller.gd`; local validate, Web export, gzip gate and Web boot smoke passed; public baseline remains 09F.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Execute Track 09G `Football Match Resolution Controller V1`: continue the FootballRoot reduction series by extracting match-resolution orchestration while keeping gameplay, physics, input, bot decisions, tuning and assets unchanged.
+Review/decide the Track 09G local reduction, then either publish it after remote gates or plan the next narrow FootballRoot reduction. The public baseline remains `Super Campeao v1.2.1+a75cfe57` until a publication track is explicitly approved.
 
 Focus:
 
@@ -42,14 +43,14 @@ Focus:
 - Preserve existing GUT coverage and add/retarget focused tests when moving public helper contracts.
 - Keep Web validation in the loop: `tools/validate.gd`, Web export, gzip gate, local Web boot smoke for loading-sensitive changes and remote 5-minute stability before publication.
 
-## Planned Track 09G - Football Match Resolution Controller V1
+## Completed Track 09G - Football Match Resolution Controller V1
 
-- Extract goal detection orchestration, goal registration side effects, match timer/golden goal transitions, match finish and restart state reset from `football_root.gd` into `modes/football/football_match_resolution_controller.gd`.
+- Extracted goal detection orchestration, goal registration side effects, match timer/golden goal transitions, match finish and restart state reset from `football_root.gd` into `modes/football/football_match_resolution_controller.gd`.
 - Keep `gameplay/football/football_match_rules.gd` as the pure rules owner for score math, goal detection and timer resolution.
 - Keep `football_match_presentation_controller.gd` as the HUD/result snapshot owner.
 - Keep `football_match_flow_controller.gd` as the kickoff/countdown/input-lock/reset-position owner.
 - Keep `FootballRoot` as the compatibility facade for debug/test APIs and existing internal call sites.
-- Target reduction: remove another focused orchestration block from `FootballRoot` after measuring pre/post line count; no gameplay or public UX delta intended.
+- Measured reduction: `FootballRoot` `1295 -> 1178` lines; no gameplay or public UX delta intended.
 
 ## Out Of Scope
 
