@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09G_PUBLICATION_ROLLED_BACK`
+- Status: `JOGO_DA_COPA_TRACK09H_WEB_HEAP_HOTFIX_LOCAL_VALIDATED`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -30,12 +30,13 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09E Football Match Presentation Controller V1 extracted HUD/result presentation snapshots into `football_match_presentation_controller.gd`; local validate, Web export and Web boot smoke passed.
 - Track 09F Football Arcade Field Controller V1 extracted boost pad and jump pad field orchestration into `football_arcade_field_controller.gd`; published `Super Campeao v1.2.1+a75cfe57` after local validate/export and remote menu, first-minute, stability rerun and night luma gates passed; human retest was approved by Fabio.
 - Track 09G Football Match Resolution Controller V1 extracted match restart, goal reset, goal detection side effects, scoring orchestration, timer/golden goal, match finish and shot/goal stats into `football_match_resolution_controller.gd`; local validate, Web export, gzip gate and Web boot smoke passed; publication attempt passed menu and first-minute gates but failed remote 5-minute stability twice on JS/WASM heap (`+15.42%` and `+15.35%`), then rolled back to 09F.
+- Track 09H Web Heap Hotfix V1 removed a per-frame `Dictionary` allocation from the timer clock path in `football_match_resolution_controller.gd`; local validate/export passed and local Chrome stability 5min passed with heap final `+6.81%`, but remote publication/retest is still pending.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Investigate the Track 09G remote heap regression before any new `FootballRoot` reduction or republication. The public baseline remains `Super Campeao v1.2.1+a75cfe57`; 09G stays local-only until its 5-minute remote stability gate is green.
+Publish/retest a Track 09H candidate before any new `FootballRoot` reduction. The public baseline remains `Super Campeao v1.2.1+a75cfe57`; 09H is local validated and needs menu remoto, primeiro minuto remoto, estabilidade remota 5min and luma remota before it can become the public baseline.
 
 Focus:
 
@@ -51,6 +52,15 @@ Focus:
 - Keep `football_match_flow_controller.gd` as the kickoff/countdown/input-lock/reset-position owner.
 - Keep `FootballRoot` as the compatibility facade for debug/test APIs and existing internal call sites.
 - Measured reduction: `FootballRoot` `1295 -> 1178` lines; no gameplay or public UX delta intended.
+
+## Completed Track 09H - Web Heap Hotfix V1
+
+- Paused further `FootballRoot` reduction to investigate the 09G remote heap failure.
+- Removed the per-frame timer-state `Dictionary` allocation from `FootballMatchResolutionController.update_match_clock()`.
+- Kept the same timer behavior: time remaining returns early, tie activates `golden_goal`, non-tie ends the match with `player_score > bot_score`.
+- `FootballRoot` stayed at `1178` lines; `football_match_resolution_controller.gd` changed from `174` to `168` lines.
+- Local gates passed, including Chrome 5min stability with heap final `+6.81%` under the `10%` limit.
+- Remote publication/retest was not executed in this track.
 
 ## Out Of Scope
 

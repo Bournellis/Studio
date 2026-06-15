@@ -1,6 +1,6 @@
 # JogoDaCopa Publication Readiness
 
-Current state: `Super Campeao v1.2.1+a75cfe57` is published publicly on Cloudflare Pages and approved by Fabio. Track 09G was published as a candidate, passed remote menu and first-minute gates, failed the remote 5-minute stability gate twice on JS/WASM heap growth, and was rolled back to this 09F baseline.
+Current state: `Super Campeao v1.2.1+a75cfe57` is published publicly on Cloudflare Pages and approved by Fabio. Track 09G was published as a candidate, passed remote menu and first-minute gates, failed the remote 5-minute stability gate twice on JS/WASM heap growth, and was rolled back to this 09F baseline. Track 09H is local validated as a heap-margin hotfix, but has not been published/retested remotely yet.
 
 ## Product Identity
 
@@ -62,9 +62,21 @@ Current state: `Super Campeao v1.2.1+a75cfe57` is published publicly on Cloudfla
 - Rollback: restored `web/v1-copa-arena-futebol-20260615-a75cfe57`; stable URL confirmation PASS in `docs/playtest-reports/track-09g-data/09g-rollback-confirm-a75cfe57.json`.
 - Result: 09G did not remain public; investigate heap before republication or further reduction.
 
+## Track 09H Local Heap Hotfix - 2026-06-15
+
+- Candidate status: local validated only; no Cloudflare Pages mutation executed.
+- Change: removed per-frame `Dictionary` allocation from `FootballMatchResolutionController.update_match_clock()`.
+- `tools/validate.gd`: PASS, `104` tests, `1826` asserts.
+- Web export: PASS, single-threaded `GODOT_THREADS_ENABLED=false`.
+- Web gzip gate: PASS, `30.60 MiB / 50.00 MiB`.
+- Local Chrome short stability 120s: PASS, `firstMinuteHitches=0`, page errors `0`, runtime console errors `0`, heap final `+0.26%`.
+- Local Chrome stability 5min: PASS, heap final `+6.81%` under the `<10%` gate, Godot counters/caches stable, worst 5s window `140.2 FPS`.
+- Evidence: `docs/playtest-reports/track-09h-web-heap-hotfix.md` and `docs/playtest-reports/track-09h-data/`.
+- Next publication gate: publish/retest 09H candidate with remote menu, first minute, 5-minute stability and night luma before making it public baseline.
+
 ## Known Limitations
 
-- Track 09G is local validated but not publishable until the 5-minute remote stability gate passes.
+- Track 09H is local validated but not publishable until its own 5-minute remote stability gate passes.
 - Web heap margin is green on rerun but tight; keep the 5-minute stability gate mandatory for every release and treat near-threshold attempts as audit signals.
 - Desktop browser is the official Web V1 surface; mobile browser can be observed manually, but is not an official support target in this release.
 - Country kits and branding are generic/inspired; no official FIFA, World Cup, federation or club logos are included.
