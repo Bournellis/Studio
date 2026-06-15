@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 04 - Arena Movement Flow And Bot Navigation V1`
+- Active stage: `Track 04B - Bot Pickup Commitment V1`
 - Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK04B_BOT_PICKUP_COMMITMENT_READY_FOR_SMOKE`
 
 ## Current Truth
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated, but human smoke found that bot aim improved while map movement flow and bot navigation quality are not good enough.
+Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke, with one follow-up issue: the bot sometimes ignored HP/boost pickups even when beside them.
 
 ## Track 01 Delivered
 
@@ -77,6 +77,23 @@ Delivered:
 
 ## Active Track
 
+`Track 04B - Bot Pickup Commitment V1`
+
+Goal:
+
+- Make the bot commit to useful nearby HP/boost pickups without becoming a passive distant-item collector.
+- Preserve distant pickup contesting as tactical, not automatic.
+
+Delivered:
+
+- Added local pickup commitment thresholds for nearby health and overcharge.
+- Let nearby useful pickups interrupt engage/strafe/cooldown decisions.
+- Kept windup shots readable and distant item routes conservative.
+- Added route-hold logic so the bot does not abandon a nearby pickup immediately after choosing it.
+- Added tests for damaged nearby health pickup and nearby overcharge pickup even with line of sight.
+
+## Previous Track
+
 `Track 04 - Arena Movement Flow And Bot Navigation V1`
 
 Goal:
@@ -101,10 +118,10 @@ Latest result:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 23/23, 201 asserts
+# PASS, GUT 25/25, 211 asserts
 ```
 
-Manual smoke lives in `docs/validation.md`; Track 04 smoke should focus on player movement feel, jump pad approach/landing and bot movement safety.
+Manual smoke lives in `docs/validation.md`; Track 04B smoke should focus on the bot taking nearby useful HP/boost pickups while still keeping combat pressure fair.
 
 ## Read Next
 
@@ -118,3 +135,4 @@ Manual smoke lives in `docs/validation.md`; Track 04 smoke should focus on playe
 8. `implementation/tracks/track-02-bot-tactical-movement-v1/current-status.md`
 9. `implementation/tracks/track-03-arena-tactical-context-proof-v1/current-status.md`
 10. `implementation/tracks/track-04-arena-movement-flow-bot-navigation-v1/current-status.md`
+11. `implementation/tracks/track-04b-bot-pickup-commitment-v1/current-status.md`

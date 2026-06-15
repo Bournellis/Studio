@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; Track 09G local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 04 arena movement flow and bot navigation pronta para smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; Track 09G local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 04B bot pickup commitment pronta para smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
-- Marker: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
-- Baseline: Track 04 reconstruiu `Relay Foundry`, adicionou contratos de rota vertical e bot passou a mirar pads/entradas antes de destinos altos.
-- Validacao: `tools/validate.gd` PASS `23/23`, `201 asserts`; warnings GUT UID/text-path conhecidos.
+- Status: `P2_IMPLEMENTACAO - TRACK04B_BOT_PICKUP_COMMITMENT_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK04B_BOT_PICKUP_COMMITMENT_READY_FOR_SMOKE`
+- Baseline: Track 04 mapa aprovado; Track 04B adicionou commitment local para bot pegar HP/boost proximo sem virar coletor passivo distante.
+- Validacao: `tools/validate.gd` PASS `25/25`, `211 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester fazer smoke humano focado em feeling de movimentacao, jump pads e bot preso.
+- Proximo passo: Fabio/tester fazer smoke humano focado em bot pegando HP/boost proximo.
 
 ## rpg-isometrico
 
