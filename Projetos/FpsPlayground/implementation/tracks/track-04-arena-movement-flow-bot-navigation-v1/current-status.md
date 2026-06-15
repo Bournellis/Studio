@@ -88,6 +88,7 @@ Final automated result:
 
 ## Handoff
 
-- Human smoke pending.
-- Focus: player flow, jump pad approach/landing readability and bot wall/ceiling stuck behavior.
+- Human smoke result: Fabio approved the map and reported that the bot is better.
+- Follow-up found: bot sometimes ignored HP/boost pickups even when beside them.
+- Follow-up track: `Track 04B - Bot Pickup Commitment V1`.
 - Push pending: Fabio via GitHub Desktop (`origin` remote is Fabio-only).

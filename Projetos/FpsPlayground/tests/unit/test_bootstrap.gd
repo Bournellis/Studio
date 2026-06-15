@@ -177,6 +177,128 @@ func test_bot_prioritizes_health_tactical_route_when_critical() -> void:
 	assert_gt(bot.debug_get_recent_route_count(), 0)
 	assert_no_new_orphans()
 
+func test_bot_commits_to_nearby_health_pickup_when_damaged() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	var health_position: Vector3 = arena.debug_get_pickup_position(&"health")
+	bot.take_damage(25.0)
+	bot.global_position = health_position + Vector3(1.1, -health_position.y + 0.05, 0.0)
+	bot.last_has_line_of_sight = true
+	bot.shoot_cooldown_remaining = 0.0
+	bot._set_state(&"engage")
+	arena.debug_force_pickup_available(&"health", true)
+
+	assert_true(bot._try_start_pickup_reposition())
+	assert_eq(bot.debug_get_route_label(), &"health")
+	assert_eq(bot.debug_get_reposition_destination(), health_position)
+	assert_true(bot._should_hold_current_route())
+	assert_no_new_orphans()
+
+func test_bot_commits_to_nearby_overcharge_pickup_even_with_line_of_sight() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	var overcharge_position: Vector3 = arena.debug_get_pickup_position(&"overcharge")
+	bot.global_position = overcharge_position + Vector3(-1.2, -overcharge_position.y + 0.05, 0.0)
+	bot.last_has_line_of_sight = true
+	bot.shoot_cooldown_remaining = 0.0
+	bot._set_state(&"engage")
+	arena.debug_force_pickup_available(&"overcharge", true)
+
+	assert_true(bot._try_start_pickup_reposition())
+	assert_eq(bot.debug_get_route_label(), &"overcharge")
+	assert_eq(bot.debug_get_reposition_destination(), overcharge_position)
+	assert_true(bot._should_hold_current_route())
+	assert_no_new_orphans()
+
+func test_bot_prioritizes_overcharge_route_when_healthy_even_with_line_of_sight() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	var overcharge_position: Vector3 = arena.debug_get_pickup_position(&"overcharge")
+	bot.global_position = Vector3(overcharge_position.x - 5.2, 0.05, overcharge_position.z - 1.4)
+	bot.last_has_line_of_sight = true
+	bot.shoot_cooldown_remaining = 0.0
+	bot.reaction_remaining = 0.0
+	bot._set_state(&"engage")
+	arena.debug_force_pickup_available(&"overcharge", true)
+
+	assert_true(bot._try_start_pickup_reposition())
+	assert_eq(bot.debug_get_route_label(), &"overcharge")
+	assert_true(bot._should_hold_current_route())
+	assert_no_new_orphans()
+
+func test_bot_combat_overlay_shoots_without_canceling_item_route() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var overcharge_position: Vector3 = arena.debug_get_pickup_position(&"overcharge")
+	player.global_position = Vector3(0.0, 0.05, 0.0)
+	bot.global_position = Vector3(overcharge_position.x - 5.2, 0.05, overcharge_position.z - 1.4)
+	bot._start_reposition_to(overcharge_position, &"overcharge")
+	bot.last_has_line_of_sight = true
+	bot.last_visible_target_position = player.get_body_center()
+	bot.shoot_cooldown_remaining = 0.0
+	bot.reaction_remaining = 0.0
+
+	var movement: Vector3 = bot._handle_reposition()
+	assert_eq(bot.debug_get_state(), &"reposition")
+	assert_eq(bot.debug_get_route_label(), &"overcharge")
+	assert_true(bot.debug_is_combat_overlay_active())
+	assert_gt(movement.length(), 0.0)
+
+	bot._update_combat_overlay(bot.shot_tell_duration + 0.01)
+	assert_eq(bot.debug_get_state(), &"reposition")
+	assert_eq(bot.debug_get_route_label(), &"overcharge")
+	assert_gt(bot.shoot_cooldown_remaining, 0.0)
+	assert_no_new_orphans()
+
+func test_bot_commits_to_jump_pad_landing_after_launch() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	arena.set_arena_layout(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	var pad_position: Vector3 = arena.debug_get_jump_pad_position(1)
+	var pad_target: Vector3 = arena.debug_get_jump_pad_target(1)
+	var overcharge_position: Vector3 = arena.debug_get_pickup_position(&"overcharge")
+	bot.global_position = pad_position
+	bot._start_reposition_to(overcharge_position, &"overcharge")
+	bot.apply_jump_pad_launch(Vector3(4.0, 6.2, 4.0))
+
+	assert_eq(bot.debug_get_state(), &"reposition")
+	assert_true(bot.debug_is_jump_pad_commitment_active())
+	assert_eq(bot.debug_get_jump_pad_landing_target(), pad_target)
+	assert_eq(bot.debug_get_route_label(), &"jump_pad")
+
+	bot.global_position = pad_position + Vector3(0.0, 1.5, 0.0)
+	var movement: Vector3 = bot._movement_toward_reposition()
+	var expected: Vector3 = pad_target - bot.global_position
+	expected.y = 0.0
+	assert_gt(movement.dot(expected.normalized()), 0.82)
+	assert_no_new_orphans()
+
 func test_player_shot_ray_damages_bot_when_aimed_at_body() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	var arena := arena_scene.instantiate()

@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; Track 09G local validada, publicacao bloqueada e revertida por heap remoto) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 04 arena movement flow and bot navigation pronta para smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; Track 09G local validada, publicacao bloqueada e revertida por heap remoto) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 05 Quake duel route control bot pronta para smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
-- Marker: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
-- Baseline: Track 04 reconstruiu `Relay Foundry`, adicionou contratos de rota vertical e bot passou a mirar pads/entradas antes de destinos altos.
-- Validacao: `tools/validate.gd` PASS `23/23`, `201 asserts`; warnings GUT UID/text-path conhecidos.
+- Status: `P2_IMPLEMENTACAO - TRACK05_QUAKE_DUEL_ROUTE_CONTROL_BOT_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK05_QUAKE_DUEL_ROUTE_CONTROL_BOT_READY_FOR_SMOKE`
+- Baseline: Track 05 mudou o bot para rota de mapa + tiro em overlay, com bias de HP/boost por vida e compromisso de landing no jump pad longo.
+- Validacao: `tools/validate.gd` PASS `28/28`, `229 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester fazer smoke humano focado em feeling de movimentacao, jump pads e bot preso.
+- Proximo passo: Fabio/tester fazer smoke humano focado em rota, jump pad longo e prioridades HP/boost.
 
 ## rpg-isometrico
 

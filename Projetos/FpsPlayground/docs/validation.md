@@ -6,10 +6,10 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest Track 04 local result:
+Latest Track 05 local result:
 
 ```text
-PASS, GUT 23/23, 201 asserts
+PASS, GUT 28/28, 229 asserts
 ```
 
 Profiles:
@@ -73,6 +73,24 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - In both arenas, confirm the bot uses staged vertical routes instead of jumping at high destinations from the floor.
 - In both arenas, confirm bot pressure still feels fair: better movement, not instant/unreadable aim.
 - Confirm pickups still create movement reasons and do not sit inside blocked/snappy geometry.
+- Confirm restart with `R`, pause menu and return to menu still work.
+
+## Track 04B Bot Pickup Commitment Smoke
+
+- Damage the bot moderately, stand near a visible health pickup and confirm the bot commits to collecting it instead of ignoring it.
+- Leave the bot without overcharge, stand near the overcharge pickup and confirm the bot commits to collecting it even when it has line of sight.
+- Confirm the bot does not abandon all combat pressure for distant pickups.
+- Confirm pickup commitment does not make windup shots unreadable or instant.
+- Confirm restart with `R`, pause menu and return to menu still work.
+
+## Track 05 Quake Duel Route Control Bot Smoke
+
+- In `Relay Foundry V1`, watch the bot use the long jump pad and confirm it completes the landing instead of strafing away mid-air.
+- With bot health high, confirm it favors the overcharge/damage boost route instead of only strafing or cover-peeking.
+- With bot health low, confirm it favors health/reset routes over forcing bad fights.
+- Confirm the bot still shoots when it has a visible target, but the shot does not cancel the map route.
+- Confirm strafe/cover still exists as local fight correction, not the dominant behavior every time the bot sees the player.
+- Confirm bot shot windup remains readable and fair.
 - Confirm restart with `R`, pause menu and return to menu still work.
 
 ## Known Noise
