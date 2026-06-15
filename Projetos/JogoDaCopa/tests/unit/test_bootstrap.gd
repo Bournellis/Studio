@@ -543,6 +543,7 @@ func test_football_scene_boots_with_player_bot_ball_goals_and_hud() -> void:
 	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballBot"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/FootballBot/BotAvatar"))
 	assert_not_null(football.get_node_or_null("RuntimeRoot/Ball"))
+	assert_not_null(football.get_node_or_null("RuntimeRoot/KickoffMarker"))
 	assert_not_null(football.get_node_or_null("FootballHud"))
 	assert_not_null(football.get_node_or_null("FeedbackController"))
 	assert_eq(football.debug_get_goal_limit(), 3)

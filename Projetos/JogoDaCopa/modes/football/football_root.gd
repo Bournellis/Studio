@@ -1,19 +1,12 @@
 class_name FootballRoot
 extends Node3D
 
-const PlayerController = preload("res://gameplay/player/fps_player_controller.gd")
-const FootballBallScript = preload("res://gameplay/football/football_ball.gd")
-const FootballBotScript = preload("res://gameplay/football/football_bot.gd")
-const FootballHudScript = preload("res://presentation/hud/football_hud.gd")
-const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
-const FootballChaseCameraScript = preload("res://presentation/camera/football_chase_camera.gd")
 const FootballFieldBuilderScript = preload("res://modes/football/football_field_builder.gd")
+const FootballRuntimeSpawnerScript = preload("res://modes/football/football_runtime_spawner.gd")
 const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
-const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
-const GameSettingsScript = preload("res://autoloads/game_settings.gd")
 const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 const FootballWorldEnvironmentScript = preload("res://modes/football/football_world_environment.gd")
 const FootballCaptureDirectorScript = preload("res://modes/football/football_capture_director.gd")
@@ -630,132 +623,7 @@ func _build_football_pitch() -> void:
 	})
 
 func _spawn_runtime() -> void:
-	var runtime_root := Node3D.new()
-	runtime_root.name = "RuntimeRoot"
-	add_child(runtime_root)
-
-	var stage_begin := PerfProbeScript.begin(self, "football.player_controller")
-	player = PlayerController.new()
-	player.name = "Player"
-	player.position = PLAYER_SPAWN
-	player.rotation.y = 0.0
-	player.move_speed = 8.8
-	player.jump_velocity = 6.15
-	player.air_control = 0.82
-	player.boost_speed_multiplier = 1.56
-	player.boost_stamina_deplete_per_second = 39.0
-	player.boost_stamina_recharge_per_second = 25.0
-	player.shot_cooldown = 0.2
-	player.alt_fire_cooldown = 0.88
-	runtime_root.add_child(player)
-	var settings = _get_game_settings()
-	if settings != null:
-		player.set_mouse_sensitivity(settings.get_mouse_sensitivity())
-	player.shoot_requested.connect(_on_player_kick_requested)
-	player.charged_shoot_requested.connect(_on_player_charged_kick_requested)
-	player.alt_fire_requested.connect(_on_player_strong_kick_requested)
-	player.arcade_dash_started.connect(func(_direction: Vector3) -> void:
-		if player_avatar != null:
-			player_avatar.play_slide()
-		if chase_camera != null and chase_camera.has_method("play_dash_fov_kick"):
-			chase_camera.play_dash_fov_kick(0.5, 0.22)
-	)
-	player.arcade_flip_started.connect(func(_direction: Vector3) -> void:
-		if player_avatar != null:
-			player_avatar.play_flip()
-	)
-	player.damaged.connect(func(_amount: float, _remaining_health: float) -> void:
-		if player_avatar != null:
-			player_avatar.play_hit()
-	)
-	PerfProbeScript.end(self, "football.player_controller", stage_begin)
-
-	stage_begin = PerfProbeScript.begin(self, "football.player_avatar")
-	player_avatar = PlayerAvatarScript.new()
-	player_avatar.name = "PlayerAvatar"
-	player_avatar.local_first_person = false
-	player_avatar.set_movement_facing_enabled(true)
-	player.add_child(player_avatar)
-	player_avatar.apply_appearance(selected_appearance)
-	PerfProbeScript.end(self, "football.player_avatar", stage_begin)
-
-	stage_begin = PerfProbeScript.begin(self, "football.ball")
-	ball = FootballBallScript.new()
-	ball.name = "Ball"
-	ball.position = BALL_SPAWN
-	runtime_root.add_child(ball)
-	ball.configure(BALL_SPAWN)
-	ball.body_entered.connect(_on_ball_body_entered)
-	_build_kickoff_marker(runtime_root)
-	PerfProbeScript.end(self, "football.ball", stage_begin)
-
-	stage_begin = PerfProbeScript.begin(self, "football.camera")
-	var first_person_camera: Camera3D = player.get_camera() as Camera3D
-	if first_person_camera != null:
-		first_person_camera.current = false
-	chase_camera = FootballChaseCameraScript.new()
-	chase_camera.name = "FootballChaseCamera"
-	runtime_root.add_child(chase_camera)
-	chase_camera.configure(player, ball)
-	PerfProbeScript.end(self, "football.camera", stage_begin)
-
-	stage_begin = PerfProbeScript.begin(self, "football.bot_controller")
-	bot = FootballBotScript.new()
-	bot.name = "FootballBot"
-	bot.position = BOT_SPAWN
-	bot.rotation.y = PI
-	runtime_root.add_child(bot)
-	bot.configure(ball, Vector3(0.0, 0.0, GOAL_LINE_NORTH), Vector3(0.0, 0.0, GOAL_LINE_SOUTH), FIELD_HALF_WIDTH, FIELD_HALF_LENGTH)
-	bot.set_difficulty(bot_difficulty_id)
-	bot.kick_requested.connect(_on_bot_kick_requested)
-	bot.arcade_dash_started.connect(func(_direction: Vector3) -> void:
-		if bot_avatar != null:
-			bot_avatar.play_slide()
-	)
-	bot.arcade_flip_started.connect(func(_direction: Vector3) -> void:
-		if bot_avatar != null:
-			bot_avatar.play_flip()
-	)
-	bot.damaged.connect(func(_amount: float, _remaining_health: float) -> void:
-		if bot_avatar != null:
-			bot_avatar.play_hit()
-	)
-	PerfProbeScript.end(self, "football.bot_controller", stage_begin)
-
-	stage_begin = PerfProbeScript.begin(self, "football.bot_avatar")
-	bot_avatar = PlayerAvatarScript.new()
-	bot_avatar.name = "BotAvatar"
-	bot_avatar.set_character_variant(&"female")
-	bot.add_child(bot_avatar)
-	bot_avatar.apply_appearance(bot_appearance)
-	bot.set_combatant_body_visible(false)
-	PerfProbeScript.end(self, "football.bot_avatar", stage_begin)
-
-	stage_begin = PerfProbeScript.begin(self, "football.feedback_audio")
-	feedback = FeedbackControllerScript.new()
-	feedback.name = "FeedbackController"
-	add_child(feedback)
-	PerfProbeScript.end(self, "football.feedback_audio", stage_begin)
-
-	stage_begin = PerfProbeScript.begin(self, "football.hud")
-	hud = FootballHudScript.new()
-	hud.name = "FootballHud"
-	add_child(hud)
-	hud.sensitivity_changed.connect(_on_sensitivity_changed)
-	hud.quality_changed.connect(_on_pause_quality_changed)
-	hud.start_requested.connect(_start_match)
-	hud.resume_requested.connect(func() -> void:
-		_set_menu_open(false)
-	)
-	hud.restart_requested.connect(restart_match)
-	hud.rematch_requested.connect(restart_match)
-	hud.main_menu_requested.connect(_return_to_main_menu)
-	hud.set_sensitivity_value(player.mouse_sensitivity)
-	PerfProbeScript.end(self, "football.hud", stage_begin)
-	stage_begin = PerfProbeScript.begin(self, "football.collect_arcade_nodes")
-	_collect_arcade_field_nodes()
-	PerfProbeScript.end(self, "football.collect_arcade_nodes", stage_begin, "boost=%d jump=%d" % [boost_pad_areas.size(), jump_pad_areas.size()])
-	PerfProbeScript.log_material_counts(self, self)
+	FootballRuntimeSpawnerScript.spawn(self, RenderProfileScript, PerfProbeScript)
 
 func _apply_main_menu_settings() -> void:
 	var tree := get_tree()
@@ -1634,25 +1502,6 @@ func _start_perf_scenario() -> void:
 
 func _update_perf_scenario(delta: float) -> void:
 	FootballPerfScenarioScript.update(self, delta, PerfProbeScript, RenderProfileScript)
-
-func _build_kickoff_marker(parent: Node3D) -> void:
-	kickoff_marker = MeshInstance3D.new()
-	kickoff_marker.name = "KickoffMarker"
-	var marker_mesh := CylinderMesh.new()
-	marker_mesh.top_radius = KICKOFF_MARKER_RADIUS
-	marker_mesh.bottom_radius = KICKOFF_MARKER_RADIUS
-	marker_mesh.height = 0.035
-	marker_mesh.radial_segments = 48
-	kickoff_marker.mesh = marker_mesh
-	var material := StandardMaterial3D.new()
-	material.albedo_color = Color(0.1, 0.86, 1.0, 0.48)
-	material.emission_enabled = true
-	material.emission = Color(0.15, 0.9, 1.0, 1.0)
-	material.emission_energy_multiplier = RenderProfileScript.adjust_emission_energy(1.65, RenderProfileScript.ROLE_NEON)
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	kickoff_marker.material_override = material
-	kickoff_marker.visible = false
-	parent.add_child(kickoff_marker)
 
 func _update_kickoff_marker(ball_spawn: Vector3, is_visible: bool) -> void:
 	if kickoff_marker == null:
