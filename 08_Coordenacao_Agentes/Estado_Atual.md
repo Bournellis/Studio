@@ -7,8 +7,8 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana)
-- Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Arena Shooter regression OK; Track 01 em andamento)
+- Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
@@ -43,11 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `PAUSADO_TEMPORARIO`
-- Marker: `FPS_PLAYGROUND_PROJECT_SPLIT_FOUNDATION_COMPLETE`
-- Baseline: laboratorio FPS separado do antigo `FpsShooter` em 2026-06-10; preserva `Arena Shooter`/`Duel Pit V2` com rifle hitscan, Plasma Bolt, jump pads e bot vertical-aware. Detalhes em `Projetos/FpsPlayground/implementation/current-status.md`.
-- Trabalho permitido: consulta historica; retomada apenas com pedido explicito.
-- Proximo passo: ao retomar, regressao/playtest humano de `Arena Shooter`.
+- Status: `P2_IMPLEMENTACAO - TRACK01_COMBAT_READABILITY_POLISH_DOING`
+- Marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_DOING`
+- Baseline: laboratorio FPS separado do antigo `FpsShooter`; `Arena Shooter`/`Duel Pit V2` regression humano OK; `tools/validate.gd` baseline PASS `14/14`.
+- Track ativa: `Track 01 - Combat Readability Polish V1` para melhorar leitura de tiro, dano recebido, Plasma Bolt, bot tell, pickups e jump pads sem novo mapa/arma/export.
+- Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
+- Proximo passo: concluir Track 01 e entregar smoke humano de leitura de combate.
 
 ## rpg-isometrico
 

@@ -1,6 +1,6 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_PROJECT_SPLIT_FOUNDATION_COMPLETE`
+- Status: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_DOING`
 - Current surface: FPS arena lab.
 
 ## North Star
@@ -15,9 +15,29 @@ Keep `FpsPlayground` as a clean first-person gameplay laboratory for arena movem
 - Validation now targets FPS resources and arena tests only.
 - Football/TPS scope moved to `../JogoDaCopa`.
 
-## Recommended Next Track
+## Active Track
 
-Run a short editor regression on Arena Shooter after the split. Then choose between:
+`Track 01 - Combat Readability Polish V1` is active after human Arena Shooter regression OK.
+
+Goals:
+
+- Improve player rifle hit confirmation and impact readability.
+- Improve player damage intake readability.
+- Improve Plasma Bolt trajectory, impact and overcharge distinction.
+- Improve bot shot tell readability.
+- Improve pickup and jump pad readability only where it supports combat decisions.
+
+Non-goals:
+
+- No new weapon.
+- No new map/layout.
+- No broad damage/health/speed retuning.
+- No export, Web/mobile, multiplayer or backend.
+- No football/TPS scope.
+
+## Recommended Next Track After Track 01
+
+Choose between:
 
 - deeper FPS bot/combat tuning;
 - new arena map/layout;

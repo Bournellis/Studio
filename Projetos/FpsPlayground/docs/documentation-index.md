@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_PROJECT_SPLIT_FOUNDATION_COMPLETE`
+- Status: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_DOING`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -21,6 +21,7 @@
 - `publication-readiness.md`
 - `codebase-audit-track05.md`
 - `reuse-map.md`
+- `../implementation/tracks/track-01-combat-readability-polish-v1/current-status.md`
 
 ## Split Note
 
