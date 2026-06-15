@@ -4,6 +4,7 @@ extends Node3D
 const FootballFieldBuilderScript = preload("res://modes/football/football_field_builder.gd")
 const FootballRuntimeSpawnerScript = preload("res://modes/football/football_runtime_spawner.gd")
 const FootballMatchFlowControllerScript = preload("res://modes/football/football_match_flow_controller.gd")
+const FootballMatchPresentationControllerScript = preload("res://modes/football/football_match_presentation_controller.gd")
 const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
 const AvatarCatalogScript = preload("res://gameplay/avatar/avatar_catalog.gd")
@@ -1109,133 +1110,22 @@ func _get_player_kick_direction() -> Vector3:
 	return forward.normalized()
 
 func _build_hud_snapshot() -> Dictionary:
-	var ball_distance := 0.0
-	var ball_relative := Vector3.ZERO
-	var ball_relative_local := Vector3.ZERO
-	if player != null and ball != null:
-		ball_relative = ball.global_position - player.global_position
-		ball_relative_local = player.global_transform.basis.inverse() * ball_relative
-		ball_distance = Vector3(player.global_position.x, 0.0, player.global_position.z).distance_to(Vector3(ball.global_position.x, 0.0, ball.global_position.z))
-	return {
-		"status": MODE_NAME,
-		"player_score": player_score,
-		"bot_score": bot_score,
-		"goal_limit": GOAL_LIMIT,
-		"match_mode": match_mode_id,
-		"match_time_remaining": match_time_remaining,
-		"golden_goal_active": golden_goal_active,
-		"ball_distance": ball_distance,
-		"ball_relative_x": ball_relative_local.x,
-		"ball_relative_z": ball_relative_local.z,
-		"player_kit_code": _get_kit_code(selected_appearance.country_kit_id),
-		"bot_kit_code": _get_kit_code(bot_appearance.country_kit_id),
-		"player_kit_color": AvatarCatalogScript.get_kit_primary_color(selected_appearance.country_kit_id),
-		"bot_kit_color": AvatarCatalogScript.get_kit_primary_color(bot_appearance.country_kit_id),
-		"ball_control": player_ball_control_state,
-		"ball_control_strength": player_ball_control_strength,
-		"boost_fraction": player.get_boost_stamina_fraction() if player != null else 0.0,
-		"boost_active": player.is_boosting() if player != null else false,
-		"dash_cooldown_fraction": player.get_arcade_dash_cooldown_fraction() if player != null and player.has_method("get_arcade_dash_cooldown_fraction") else 0.0,
-		"shoot_charge_fraction": player.get_shoot_charge_fraction() if player != null and player.has_method("get_shoot_charge_fraction") else 0.0,
-		"player_super_fraction": player_super_meter / SUPER_METER_MAX,
-		"bot_state": bot.debug_get_state() if bot != null else "none",
-		"bot_difficulty": bot_difficulty_id,
-		"kickoff_owner": kickoff_owner,
-		"phase": phase_label,
-		"countdown": kickoff_countdown_remaining,
-	}
+	return FootballMatchPresentationControllerScript.build_hud_snapshot(self, MODE_NAME, AvatarCatalogScript)
 
 func _update_hud_snapshot(delta: float) -> void:
-	if hud == null:
-		return
-	hud_snapshot_elapsed += delta
-	if hud_snapshot_elapsed < HUD_SNAPSHOT_INTERVAL_SECONDS:
-		return
-	hud_snapshot_elapsed = 0.0
-	hud.update_snapshot(_build_hud_snapshot())
+	FootballMatchPresentationControllerScript.update_hud_snapshot(self, delta, MODE_NAME, AvatarCatalogScript)
 
 func _request_hud_and_scoreboard_refresh() -> void:
-	hud_snapshot_elapsed = HUD_SNAPSHOT_INTERVAL_SECONDS
-	stadium_scoreboard_elapsed = FootballScoreboardControllerScript.UPDATE_INTERVAL_SECONDS
+	FootballMatchPresentationControllerScript.request_hud_and_scoreboard_refresh(self, FootballScoreboardControllerScript.UPDATE_INTERVAL_SECONDS)
 
 func _build_result_snapshot() -> Dictionary:
-	var summary := FootballMatchRulesScript.build_match_stats_summary(match_stats)
-	var player_code := _get_kit_code(selected_appearance.country_kit_id)
-	var bot_code := _get_kit_code(bot_appearance.country_kit_id)
-	return {
-		"player_score": player_score,
-		"bot_score": bot_score,
-		"player_kit_code": player_code,
-		"bot_kit_code": bot_code,
-		"player_kit_color": AvatarCatalogScript.get_kit_primary_color(selected_appearance.country_kit_id),
-		"bot_kit_color": AvatarCatalogScript.get_kit_primary_color(bot_appearance.country_kit_id),
-		"stats_text": _format_result_stats(summary, player_code, bot_code)
-	}
+	return FootballMatchPresentationControllerScript.build_result_snapshot(self, AvatarCatalogScript)
 
 func _format_result_stats(summary: Dictionary, player_code: String, bot_code: String) -> String:
-	var period_line := "Gols por periodo: 1T %s %d-%d %s | 2T %s %d-%d %s" % [
-		player_code,
-		int(summary.get("player_goals_first_half", 0)),
-		int(summary.get("bot_goals_first_half", 0)),
-		bot_code,
-		player_code,
-		int(summary.get("player_goals_second_half", 0)),
-		int(summary.get("bot_goals_second_half", 0)),
-		bot_code
-	]
-	if int(summary.get("player_goals_golden_goal", 0)) + int(summary.get("bot_goals_golden_goal", 0)) > 0:
-		period_line += " | GG %s %d-%d %s" % [
-			player_code,
-			int(summary.get("player_goals_golden_goal", 0)),
-			int(summary.get("bot_goals_golden_goal", 0)),
-			bot_code
-		]
-	if int(summary.get("player_goals_regular", 0)) + int(summary.get("bot_goals_regular", 0)) > 0:
-		period_line += " | Unico %s %d-%d %s" % [
-			player_code,
-			int(summary.get("player_goals_regular", 0)),
-			int(summary.get("bot_goals_regular", 0)),
-			bot_code
-		]
-	var longest_team := StringName(str(summary.get("longest_touch_team", &"none")))
-	var longest_label := player_code if longest_team == &"player" else (bot_code if longest_team == &"bot" else "-")
-	return "%s\nChutes: %d total (%s %d / %s %d)\nPosse por toques: %s %d%% / %s %d%% (%d-%d toques)\nSUPERS usados: %s %d / %s %d\nMaior sequencia de toques: %s %d" % [
-		period_line,
-		int(summary.get("total_shots", 0)),
-		player_code,
-		int(summary.get("player_shots", 0)),
-		bot_code,
-		int(summary.get("bot_shots", 0)),
-		player_code,
-		int(summary.get("player_possession_percent", 50)),
-		bot_code,
-		int(summary.get("bot_possession_percent", 50)),
-		int(summary.get("player_touches", 0)),
-		int(summary.get("bot_touches", 0)),
-		player_code,
-		int(summary.get("player_supers", 0)),
-		bot_code,
-		int(summary.get("bot_supers", 0)),
-		longest_label,
-		int(summary.get("longest_touch_streak", 0))
-	]
+	return FootballMatchPresentationControllerScript.format_result_stats(summary, player_code, bot_code)
 
 func _get_kit_code(country_kit_id: StringName) -> String:
-	match country_kit_id:
-		&"brazil":
-			return "BRA"
-		&"argentina":
-			return "ARG"
-		&"france":
-			return "FRA"
-		&"japan":
-			return "JPN"
-		&"portugal":
-			return "POR"
-		&"germany":
-			return "GER"
-		_:
-			return "KIT"
+	return FootballMatchPresentationControllerScript.get_kit_code(country_kit_id)
 
 func _sanitize_bot_difficulty(next_difficulty_id: StringName) -> StringName:
 	return next_difficulty_id if BOT_DIFFICULTY_IDS.has(next_difficulty_id) else &"normal"
