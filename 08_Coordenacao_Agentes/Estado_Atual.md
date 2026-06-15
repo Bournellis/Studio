@@ -7,19 +7,19 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; proxima reducao planejada como Track 09G) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 03 arena tactical context proof pronta para smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; Track 09G local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 03 arena tactical context proof pronta para smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09F_PUBLICADO_APROVADO`
-- Marker: `JOGO_DA_COPA_TRACK09F_PUBLICADO_APROVADO`
+- Status: `P2_IMPLEMENTACAO - TRACK09G_LOCAL_VALIDADO`
+- Marker: `JOGO_DA_COPA_TRACK09G_LOCAL_VALIDADO`
 - Baseline publico: `Super Campeao v1.2.1+a75cfe57` (`web/v1-copa-arena-futebol-20260615-a75cfe57`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09F PASS no rerun e retest humano aprovado por Fabio.
-- Refator atual: Track 09F extraiu boost pads e jump pads para `football_arcade_field_controller.gd`; `FootballRoot` medido nesta base `1362 -> 1295`; publicacao cumulativa 09A->09F validada.
+- Refator atual: Track 09G extraiu resolucao de partida para `football_match_resolution_controller.gd`; `FootballRoot` medido nesta base `1295 -> 1178`; validacao local/Web PASS, sem publicacao remota.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: executar Track 09G `Football Match Resolution Controller V1`, extraindo a orquestracao de gols, placar, timer/golden goal e fim de partida do `FootballRoot`.
+- Proximo passo: review/decidir publish da 09G ou planejar a proxima reducao estreita do `FootballRoot`.
 
 ## draxos-roguelike-cardgame
 

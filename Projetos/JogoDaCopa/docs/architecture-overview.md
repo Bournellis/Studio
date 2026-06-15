@@ -16,6 +16,7 @@
   - `football_match_flow_controller.gd`: kickoff/reset/countdown match flow, round input lock, kickoff marker visibility and first-touch release for bot defensive hold.
   - `football_match_presentation_controller.gd`: HUD/result snapshots, HUD/scoreboard refresh cadence, result statistics text and short kit codes.
   - `football_arcade_field_controller.gd`: boost pad and jump pad node collection, reset, cooldown/respawn updates, pickup effects and bot boost target wiring.
+  - `football_match_resolution_controller.gd`: match restart state, goal reset timer, goal detection side effects, scoring orchestration, timer/golden goal transitions, match finish and shot/goal statistics.
 - `modes/shared/`: runtime primitive creation.
 - `gameplay/avatar/`: procedural humanoid avatars, skin tones and country-inspired kits.
 - `gameplay/combat/`: reused character body, health and knockback base.
