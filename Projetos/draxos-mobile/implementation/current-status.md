@@ -57,6 +57,14 @@ The documentation round on `2026-06-15` formalized the next package as
 `docs/arena-ux-proof-release-discipline-plan.md`: candidate first, automated
 validation, human proof, then verdict before any official package promotion.
 
+The local Arena UX/readability/recovery candidate was implemented and validated
+on `2026-06-15` in commit `52c870c7`, with no remote mutation or publication.
+It improves the visible route guide, tutorial/first-real-arena CTA labels,
+active attempt state, temporary buff explanation, reward summary copy,
+abandon/resume consequences and responsive smoke coverage. The next step is
+human proof using `docs/arena-pve-product-proof.md`; do not promote this as an
+official package or open tuning until Fabio records the verdict.
+
 Open decision focus:
 
 1. Preserve active Bosque runtime as local/offline-first feel plus server-owned checkpoint, completion, reward, caps, ledger and audit authority.
