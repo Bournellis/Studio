@@ -42,6 +42,9 @@ const STATE_DEAD: StringName = &"dead"
 @export var critical_health_pickup_threshold: float = 0.22
 @export var pickup_interest_distance: float = 17.0
 @export var overcharge_interest_distance: float = 14.0
+@export var nearby_health_commit_distance: float = 2.4
+@export var nearby_overcharge_commit_distance: float = 2.6
+@export var useful_health_pickup_threshold: float = 0.98
 @export var overcharge_damage_multiplier: float = 1.25
 @export var overcharge_knockback_multiplier: float = 1.18
 @export var projectile_dodge_radius: float = 3.2
@@ -441,7 +444,15 @@ func _start_reposition_to(destination: Vector3, route_label: StringName = &"obje
 	_set_state(STATE_REPOSITION, maxf(0.8, global_position.distance_to(reposition_destination) / maxf(0.1, move_speed)))
 
 func _try_start_pickup_reposition() -> bool:
-	if current_state == STATE_REPOSITION or current_state == STATE_WINDUP:
+	if current_state == STATE_WINDUP:
+		return false
+	if health_pickup_available and _should_commit_nearby_health_pickup():
+		_start_reposition_to(health_pickup_position, &"health")
+		return true
+	if overcharge_pickup_available and _should_commit_nearby_overcharge_pickup():
+		_start_reposition_to(overcharge_pickup_position, &"overcharge")
+		return true
+	if current_state == STATE_REPOSITION:
 		return false
 	if health_pickup_available and _should_seek_health_pickup():
 		var can_take_health_route := objective_route_cooldown_remaining <= 0.0 or health_fraction() <= critical_health_pickup_threshold
@@ -454,6 +465,16 @@ func _try_start_pickup_reposition() -> bool:
 			_start_reposition_to(_select_tactical_objective_destination(BotTacticalContextScript.ROLE_OVERCHARGE, overcharge_pickup_position), &"overcharge")
 			return true
 	return false
+
+func _should_commit_nearby_health_pickup() -> bool:
+	if health_fraction() >= useful_health_pickup_threshold:
+		return false
+	return _flat_distance_to(health_pickup_position) <= nearby_health_commit_distance
+
+func _should_commit_nearby_overcharge_pickup() -> bool:
+	if has_overcharge_charge():
+		return false
+	return _flat_distance_to(overcharge_pickup_position) <= nearby_overcharge_commit_distance
 
 func _should_seek_health_pickup() -> bool:
 	var health_ratio := health_fraction()
@@ -772,9 +793,17 @@ func _select_tactical_objective_destination(role: StringName, fallback_position:
 func _should_hold_current_route() -> bool:
 	if current_state != STATE_REPOSITION:
 		return false
-	if last_route_label == &"health" and health_fraction() <= low_health_pickup_threshold:
-		return true
-	if last_route_label == &"overcharge" and not has_overcharge_charge():
+	if last_route_label == &"health":
+		if not health_pickup_available:
+			return false
+		if health_fraction() < useful_health_pickup_threshold and _flat_distance_to(health_pickup_position) <= nearby_health_commit_distance * 1.2:
+			return true
+		return health_fraction() <= low_health_pickup_threshold
+	if last_route_label == &"overcharge":
+		if not overcharge_pickup_available or has_overcharge_charge():
+			return false
+		if _flat_distance_to(overcharge_pickup_position) <= nearby_overcharge_commit_distance * 1.2:
+			return true
 		return not last_has_line_of_sight or shoot_cooldown_remaining > shoot_cooldown * 0.35
 	if last_route_label == &"jump_pad" or last_route_label == &"high":
 		return not last_has_line_of_sight and _distance_to_reposition_destination() > reposition_arrival_distance * 1.5
