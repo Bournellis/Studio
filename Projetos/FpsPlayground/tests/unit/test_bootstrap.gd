@@ -4,6 +4,7 @@ const BootstrapSceneGeneratorScript = preload("res://tools/bootstrap_scene_gener
 const PlayerScript = preload("res://gameplay/player/fps_player_controller.gd")
 const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FeedbackScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
+const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 
 const EXPECTED_ACTIONS: PackedStringArray = [
 	"move_forward",
@@ -87,7 +88,8 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_almost_eq((player.get_node("Head/Camera3D") as Camera3D).fov, 86.0, 0.01)
 	assert_eq(bot.debug_get_state(), &"reposition")
 	assert_true(bot.debug_get_target() == player)
-	assert_gt(bot.debug_get_reposition_point_count(), 0)
+	assert_eq(bot.debug_get_tactical_context_label(), &"duel_pit_v2")
+	assert_gt(bot.debug_get_tactical_point_count(), 0)
 
 	var hud_root := arena.get_node("ArenaHud/HudRoot") as Control
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/PlayerLabel"))
@@ -106,9 +108,34 @@ func test_duel_pit_layout_exposes_route_markers_and_bot_points() -> void:
 
 	var points: Array[Vector3] = arena.debug_get_bot_reposition_points()
 	assert_eq(points.size(), 18)
-	assert_not_null(arena.get_node_or_null("RuntimeRoot/BotRepositionPoints/BotRepositionPoint17"))
+	var tactical_root := arena.get_node_or_null("RuntimeRoot/BotTacticalPoints")
+	assert_not_null(tactical_root)
+	assert_true(tactical_root.get_child_count() >= 18)
+	assert_eq(arena.debug_get_bot_tactical_point_count(), 20)
+	var roles: Array[StringName] = arena.debug_get_bot_tactical_roles()
+	assert_true(roles.has(BotTacticalContextScript.ROLE_PRESSURE))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_HEALTH))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_OVERCHARGE))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY))
 	assert_gt(arena.debug_get_flow_marker_count(), 5)
 	assert_true(arena.debug_has_high_platform_cover())
+	assert_no_new_orphans()
+
+func test_bot_prioritizes_health_tactical_route_when_critical() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var bot = arena.debug_get_bot()
+	bot.take_damage(84.0)
+	arena.debug_force_pickup_available(&"health", true)
+	bot._choose_reposition_destination()
+
+	assert_eq(bot.debug_get_decision_reason(), BotTacticalContextScript.ROLE_HEALTH)
+	assert_eq(bot.debug_get_route_label(), &"health")
+	assert_gt(bot.debug_get_recent_route_count(), 0)
 	assert_no_new_orphans()
 
 func test_player_shot_ray_damages_bot_when_aimed_at_body() -> void:
