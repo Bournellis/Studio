@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_DOING`
+- Status: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 

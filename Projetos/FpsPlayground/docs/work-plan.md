@@ -1,6 +1,6 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_DOING`
+- Status: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
 - Current surface: FPS arena lab.
 
 ## North Star
@@ -84,7 +84,7 @@ Non-goals:
 
 ## Active Track
 
-`Track 04 - Arena Movement Flow And Bot Navigation V1` is active.
+`Track 04 - Arena Movement Flow And Bot Navigation V1` is locally validated and ready for human smoke.
 
 Human smoke from Track 03 accepted the improved bot aim direction, but rejected the movement feel:
 
@@ -100,6 +100,14 @@ Goals:
 - Keep high platforms useful without making them collision traps.
 - Make bot movement route-based instead of destination-only.
 - Add validation for movement clearance and staged vertical routing.
+
+Delivered:
+
+- `Relay Foundry V1` rebuilt with more generous arena flow and less cramped jump pad/platform placement.
+- Vertical route labels now connect jump pad entry, landing and high-ground continuation.
+- Bot navigation now keeps jump pads as low-ground navigation targets until launch/vertical transition happens.
+- Bot jump recovery now checks overhead clearance and can temporarily penalize blocked routes.
+- Validation covers layout route contracts, Relay jump pad spacing and bot staged vertical navigation.
 
 Delivered before this track:
 

@@ -5,8 +5,8 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 04 - Arena Movement Flow And Bot Navigation V1`
-- Active stage status: `DOING`
-- Status marker: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_DOING`
+- Active stage status: `READY_FOR_HUMAN_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
 
 ## Current Truth
 
@@ -86,13 +86,22 @@ Goal:
 - Make the bot navigate through staged movement routes instead of raw vertical destinations.
 - Add validation coverage for layout clearance and jump pad route contracts.
 
+Delivered:
+
+- Added movement-flow route contracts for jump pad entry, landing and high-ground continuation.
+- Rebuilt `Relay Foundry V1` with wider footprint, clearer ground loop, separated jump pad approaches and less cramped high-platform placement.
+- Normalized vertical route labels so jump pad entries, landings and high objectives share route ids.
+- Updated `BasicDuelBot` so high destinations resolve through staged jump pad navigation while the bot is still on low ground.
+- Added overhead jump clearance and temporary blocked-route penalties for stuck recovery.
+- Added tests for staged vertical route contracts, Relay jump pad spacing and bot jump pad navigation target selection.
+
 ## Validation
 
 Latest result:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 20/20, 175 asserts
+# PASS, GUT 23/23, 201 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`; Track 04 smoke should focus on player movement feel, jump pad approach/landing and bot movement safety.

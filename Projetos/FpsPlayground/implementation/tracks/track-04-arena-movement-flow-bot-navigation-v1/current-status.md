@@ -1,6 +1,6 @@
 # Track 04 - Arena Movement Flow And Bot Navigation V1
 
-- Status: `DOING`
+- Status: `READY_FOR_HUMAN_SMOKE`
 - Started: `2026-06-15`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track04-arena-movement-flow-bot-navigation-v1`
@@ -64,6 +64,15 @@ Rebuild arena movement flow and bot navigation around arena-shooter principles:
 - Automated validation passes and includes movement-flow coverage.
 - Manual smoke checklist explicitly covers player movement feel and bot movement quality.
 
+## Delivered
+
+- Added movement-flow route contract coverage for all active layouts.
+- Rebuilt `Relay Foundry V1` with a larger footprint, longer jump pad arcs, clearer approaches and less cramped high-platform geometry.
+- Kept `Duel Pit V2` inside the new vertical route label contract.
+- Updated bot vertical navigation to route through jump pad entries/targets before high-ground destinations.
+- Added overhead clearance checks for bot jumps and temporary blocked-route penalties after stuck recovery.
+- Added focused tests for Relay spacing and bot staged jump pad target selection.
+
 ## Validation Plan
 
 ```powershell
@@ -71,3 +80,14 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 git diff --check
 git status --short
 ```
+
+Final automated result:
+
+- `tools/validate.gd`: PASS, GUT `23/23`, `201` asserts.
+- Known warning class remains limited to GUT UID/text-path fallback warnings.
+
+## Handoff
+
+- Human smoke pending.
+- Focus: player flow, jump pad approach/landing readability and bot wall/ceiling stuck behavior.
+- Push pending: Fabio via GitHub Desktop (`origin` remote is Fabio-only).

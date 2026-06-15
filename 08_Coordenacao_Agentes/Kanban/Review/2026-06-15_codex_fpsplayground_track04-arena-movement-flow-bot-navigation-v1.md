@@ -5,7 +5,7 @@
 - Projeto: `Projetos/FpsPlayground/`
 - Branch: `codex/fpsplayground/track04-arena-movement-flow-bot-navigation-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track04-arena-movement-flow-bot-navigation-v1`
-- Status: `DOING`
+- Status: `REVIEW`
 
 ## Objetivo
 
@@ -56,10 +56,16 @@ git status --short
 
 ## Proximo Handoff
 
-Track pronta para smoke humano quando:
+Track pronta para smoke humano:
 
-- validacao local passar;
-- docs de smoke forem atualizadas;
-- bot nao escolher ponto alto direto a partir do chao quando a rota exige jump pad/rampa;
-- `Relay Foundry` tiver fluxo reconstruido com jump pads legiveis e plataformas menos coladas;
-- `Duel Pit` permanecer jogavel dentro do novo contrato de movimento.
+- `tools/validate.gd` PASS `23/23`, `201 asserts`;
+- docs de smoke atualizadas;
+- bot nao escolhe ponto alto direto a partir do chao quando a rota exige jump pad;
+- `Relay Foundry` teve fluxo reconstruido com jump pads afastados das plataformas;
+- `Duel Pit` permanece jogavel dentro do novo contrato de movimento.
+
+## Handoff
+
+- Fabio/tester fazer smoke humano em `Duel Pit V2` e `Relay Foundry V1`.
+- Foco: feeling de movimentacao, approach/landing dos jump pads e bot preso em teto/parede.
+- PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.

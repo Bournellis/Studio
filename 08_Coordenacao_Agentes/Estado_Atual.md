@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado; gates remotos 09F PASS no rerun; retest humano pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 04 arena movement flow and bot navigation em execucao)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado; gates remotos 09F PASS no rerun; retest humano pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 04 arena movement flow and bot navigation pronta para smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_DOING`
-- Marker: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_DOING`
-- Baseline: Track 03 adicionou catalogo multi-arena, mas smoke humano aprovou a mira e reprovou feeling de mapa/movimento do bot.
-- Track ativa: Track 04 reconstruir fluxo das arenas e navegacao do bot por rotas/affordances de movimento.
+- Status: `P2_IMPLEMENTACAO - TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
+- Baseline: Track 04 reconstruiu `Relay Foundry`, adicionou contratos de rota vertical e bot passou a mirar pads/entradas antes de destinos altos.
+- Validacao: `tools/validate.gd` PASS `23/23`, `201 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Codex executar Track 04 em worktree dedicado e entregar para smoke humano focado em movimentacao.
+- Proximo passo: Fabio/tester fazer smoke humano focado em feeling de movimentacao, jump pads e bot preso.
 
 ## rpg-isometrico
 
