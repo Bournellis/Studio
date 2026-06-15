@@ -43,16 +43,16 @@ A etapa operacional atual, pacote remoto, release root, evidencia, URLs, versoes
 e proximo gate vivem em `../implementation/current-status.md`. Historico de
 pacotes vive em `release-history.md`.
 
-O pacote publicado atual mantem o Bosque integrado aos overlays existentes e
-precisa do playtest humano focado descrito em
-`../implementation/current-status.md`. Bugs futuros voltam ao fluxo normal se
+O pacote publicado atual preserva a integracao do Bosque, mas o gate vivo e a
+prova humana da Arena descrita em `../implementation/current-status.md` e
+`arena-pve-product-proof.md`. Bugs futuros voltam ao fluxo normal se
 aparecerem.
 
 A direcao viva de produto continua Arena PVE first, registrada em `docs/pve-arena-initial-direction.md`. Bosque/Openworld e slice integrado de Internal Alpha para validar movimento, coleta, cache, persistencia e fronteira controlada com Arena/Basebuilder; nao e expansao de mundo continuo aprovada nem autorizacao para abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final ou mutacoes remotas.
 
 Foco atual:
 
-`status operacional publicado -> candidato Arena UX/readability/recovery -> validacao automatica -> prova humana -> nova decisao explicita`
+`status operacional publicado -> prova humana da Arena -> veredito -> UX-only, tuning/labs ou nova decisao explicita`
 
 Foundation Loop UX Pass 01 foi aceito como baseline historico do app-shell, nao
 como loop de produto atual. Foundation Closeout, Labs atualizados, Foundation

@@ -83,6 +83,23 @@ PVE inicial, nao como autorizacao de tuning.
   bots ou economia sem pacote explicito, comparacao before/after e aprovacao
   humana.
 
+## Post-Proof Tuning Gate
+
+Labs so viram entrada de tuning depois que `docs/arena-pve-product-proof.md`
+registrar `ARENA_CORE_READY_FOR_TUNING`.
+
+Enquanto o veredito permanecer `ARENA_CORE_NEEDS_UX_FIX` ou
+`ARENA_CORE_NOT_PROVEN`, os labs podem apoiar diagnostico e reproducao de
+problemas, mas nao devem propor promocao de numeros para runtime. Uma rodada
+pos-prova precisa registrar:
+
+- veredito humano usado como entrada;
+- run oficial ou scratch claramente marcada;
+- hipoteses pequenas por familia de variaveis;
+- comparacao before/after;
+- decisao explicita antes de tocar ruleset, rewards, power runtime, economia,
+  bots ou thresholds.
+
 ## Battle Lab Heuristics
 
 Modelo atual: `draxos_mobile_battle_lab_v4_source_identity`.

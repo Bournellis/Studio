@@ -4,6 +4,11 @@
 - Fase: `T03-P12+ - Internal Alpha Release Candidate`
 - Objetivo: soltar Android, PC e Web juntos para Fabio + 1 tester, usando Supabase remoto real, conta email/senha, portal unlisted e manifest de update.
 
+> Arquivo historico da Internal Alpha v0. Para release/publicacao atual, use
+> `release-ops-checklist.md`, `../implementation/current-status.md` e
+> `release-history.md`. Este plano nao define pacote atual, version code, URL
+> vigente nem proximo passo operacional.
+
 ## Decisoes Travadas
 
 | Area | Decisao |
