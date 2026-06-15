@@ -45,6 +45,17 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm bot shot windup remains readable before damage is resolved.
 - Confirm changing tactical points in the arena context does not leave the bot with no valid route.
 
+## Track 03 Arena Tactical Context Smoke
+
+- Launch `Arena Shooter - Duel Pit V2` from the menu and confirm the accepted baseline still works.
+- Launch `Arena Shooter - Relay Foundry V1` from the menu and confirm the match starts in the new arena.
+- In both arenas, confirm player and bot spawns are readable and not blocked by geometry.
+- In both arenas, confirm health and overcharge pickups are reachable and still trigger feedback.
+- In both arenas, confirm jump pads launch toward their intended route targets.
+- In both arenas, confirm the bot pressures, flanks or retreats through arena-specific routes instead of freezing in place.
+- In both arenas, confirm the bot does not repeat one route forever during a passive-player smoke.
+- In both arenas, confirm restart with `R`, pause menu and return to menu still work.
+
 ## Known Noise
 
 GUT UID/text-path warnings can appear after fresh worktree imports. They are accepted when tests pass.

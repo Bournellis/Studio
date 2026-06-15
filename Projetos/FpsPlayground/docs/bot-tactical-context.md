@@ -1,6 +1,8 @@
 # FpsPlayground Bot Tactical Context
 
-Track 02 moves the Arena Shooter bot from a single-arena reposition list toward an arena-provided tactical context.
+Track 02 moved the Arena Shooter bot from a single-arena reposition list toward an arena-provided tactical context.
+
+Track 03 proves the contract with multiple playable arena layouts.
 
 ## Goal
 
@@ -24,6 +26,8 @@ Each arena can also publish jump pad routes with:
 - `target`
 - optional `roles`
 
+Track 03 layouts are catalog-driven. The arena root loads the active layout, asks its builder to create geometry, and passes the active layout's tactical points and jump pad routes to the bot.
+
 ## Bot Contract
 
 The bot scores available tactical points against its live duel state:
@@ -45,3 +49,11 @@ The bot must prefer movement quality before raw aim buffs.
 - `Duel Pit V2` publishes tactical roles for its existing geometry.
 - Unit tests can build an alternate tactical context and verify bot choices without creating a new arena.
 - Human smoke confirms pressure, vertical routes, objective choices and anti-repeat movement.
+
+## Track 03 Acceptance
+
+- `Duel Pit V2` and `Relay Foundry V1` publish distinct context labels.
+- Both arenas expose tactical roles through the same data contract.
+- The bot receives the active context after spawn and restart.
+- Jump pad routes come from the active arena rather than one hardcoded Duel Pit list.
+- Human smoke confirms that bot movement remains useful in both arenas.

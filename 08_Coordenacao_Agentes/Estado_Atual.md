@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 02 bot tactical movement aprovada)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 03 arena tactical context proof em execucao)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK02_BOT_TACTICAL_MOVEMENT_APPROVED`
-- Marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_APPROVED`
-- Baseline: Track 02 adicionou contexto tatico arena-agnostico, scoring de rotas, anti-repeat, cura/overcharge/high route e tuning conservador do bot.
-- Validacao: `tools/validate.gd` PASS `18/18`, `135` asserts; smoke humano do bot aprovado por Fabio em 2026-06-15.
+- Status: `P2_IMPLEMENTACAO - TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_IN_PROGRESS`
+- Marker: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_IN_PROGRESS`
+- Baseline: Track 02 aprovada; Track 03 em execucao para provar catalogo de arenas, nova arena e bot lendo contexto tatico sem depender do Duel Pit.
+- Validacao base: `tools/validate.gd` PASS `18/18`, `135 asserts` na Track 02 aprovada; nova validacao sera registrada ao fechar Track 03.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: escolher entre nova arena usando contexto tatico ou tuning fino por playtest.
+- Proximo passo: implementar catalogo de layout, arena `Relay Foundry V1`, selecao de arena e testes multi-arena.
 
 ## rpg-isometrico
 

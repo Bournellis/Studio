@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 02 - Bot Tactical Movement V1`
-- Active stage status: `APPROVED`
-- Status marker: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_APPROVED`
+- Active stage: `Track 03 - Arena Tactical Context Proof V1`
+- Active stage status: `IN_PROGRESS`
+- Status marker: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_IN_PROGRESS`
 
 ## Current Truth
 
@@ -38,7 +38,7 @@ Track 01 is approved. Track 02 is approved after human smoke focused on bot tact
 - Launch direction cues on both jump pads.
 - Focused GUT coverage for combat readability HUD events and scene nodes.
 
-## Active Track
+## Previous Track
 
 `Track 02 - Bot Tactical Movement V1`
 
@@ -60,7 +60,19 @@ Track 01 is approved. Track 02 is approved after human smoke focused on bot tact
 ## Human Approval
 
 - Fabio approved the Track 02 bot smoke on 2026-06-15.
-- Next recommendation: choose between a new arena that proves the tactical context contract, or a narrow playtest tuning pass on movement/aim numbers.
+- Fabio approved executing Track 03 on 2026-06-15.
+
+## Active Track
+
+`Track 03 - Arena Tactical Context Proof V1`
+
+- Prove the Track 02 tactical context with more than one playable arena.
+- Extract arena layout data into a catalog/provider instead of keeping all Duel Pit assumptions in `arena_root.gd`.
+- Preserve `Duel Pit V2` as the default baseline.
+- Add `Relay Foundry V1`, a second arena with distinct shape, routes, pickups, jump pads and tactical points.
+- Add a simple arena selection path from the main menu.
+- Keep bot improvement focused on movement/context usage, not unfair aim/damage tuning.
+- Avoid new weapons, export, Web/mobile, multiplayer and backend.
 
 ## Validation
 
@@ -83,3 +95,4 @@ Manual smoke lives in `docs/validation.md`.
 6. `docs/validation.md`
 7. `docs/bot-tactical-context.md`
 8. `implementation/tracks/track-02-bot-tactical-movement-v1/current-status.md`
+9. `implementation/tracks/track-03-arena-tactical-context-proof-v1/current-status.md`

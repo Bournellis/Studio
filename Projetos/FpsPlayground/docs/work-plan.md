@@ -1,6 +1,6 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK02_BOT_TACTICAL_MOVEMENT_APPROVED`
+- Status: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_IN_PROGRESS`
 - Current surface: FPS arena lab.
 
 ## North Star
@@ -15,7 +15,7 @@ Keep `FpsPlayground` as a clean first-person gameplay laboratory for arena movem
 - Validation now targets FPS resources and arena tests only.
 - Football/TPS scope moved to `../JogoDaCopa`.
 
-## Active Track
+## Previous Track
 
 `Track 02 - Bot Tactical Movement V1` is approved after automated validation and Fabio smoke.
 
@@ -47,11 +47,36 @@ Non-goals:
 - No football/TPS scope.
 - No impossible instant-shot bot behavior.
 
-## Recommended Next Track After Track 02 Smoke
+## Active Track
+
+`Track 03 - Arena Tactical Context Proof V1` is in execution.
+
+Goals:
+
+- Prove that bot tactical movement is arena-agnostic in playable content, not only in unit tests.
+- Move layout-specific data into a catalog/provider that can describe multiple arenas.
+- Keep `Duel Pit V2` as the default known-good baseline.
+- Add `Relay Foundry V1`, a second arena with different footprint, route graph, high ground, pickups and jump pad flow.
+- Let the main menu launch either arena.
+- Add automated coverage that checks both arenas publish tactical points, roles and route labels to the bot.
+
+Delivered before this track:
+
+- Track 01 approved combat readability: bot tell, damage intake, Plasma hit/overcharge, pickups and jump pad cues.
+- Track 02 approved bot tactical movement: arena tactical context, route scoring, anti-repeat, objective routing and conservative pressure tuning.
+
+Non-goals:
+
+- No new weapon.
+- No raw aimbot difficulty spike.
+- No export, Web/mobile, multiplayer or backend.
+- No final art pass.
+- No broad refactor outside arena layout/context boundaries.
+
+## Recommended Next Track After Track 03 Smoke
 
 Choose between:
 
-- new arena map/layout using the tactical context contract;
 - human playtest-driven combat number tuning;
 - projectile/weapon experiment;
 - export-readiness pass for the FPS lab.
