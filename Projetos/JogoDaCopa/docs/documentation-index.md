@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK_05B_FIRST_MINUTE_SMOOTHNESS_V1_MERGED`
+- Status: `JOGO_DA_COPA_SUPER_CAMPEAO_V1_2_1_PUBLICADO_RETEST`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -8,22 +8,20 @@
 
 1. `../AGENTS.md`
 2. `../implementation/current-status.md`
-3. `../implementation/tracks/track-05-web-publication/current-status.md`
-4. `release-history.md`
-5. `playtest-reports/track-05b-first-minute-smoothness.md`
-6. `code-review-track05b-first-minute-v1.md`
-7. `publication-readiness.md`
-8. `process-hardening-agents-addendum.md`
-9. `architecture-overview.md`
-10. `work-plan.md`
-11. `quality-upgrade-plan.md`
-12. `arcade-upgrade-plan.md`
-13. `code-review-track04b1-04b2-v1.md`
-14. `code-review-track03-series-v1.md`
-15. `code-review-track02cbis-02dbis-v1.md`
-16. `code-review-track02-series-v1.md`
-17. `mode-contract.md`
-18. `validation.md`
+3. `release-history.md`
+4. `publication-readiness.md`
+5. `architecture-overview.md`
+6. `work-plan.md`
+7. `mode-contract.md`
+8. `validation.md`
+9. `asset-licenses.md`
+10. `process-hardening-agents-addendum.md`
+
+## Latest Evidence
+
+- Track 08A closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_jogodacopa_track08a-ball-glass-hitch-hotfix.md`
+- Track 08A remote evidence: `playtest-reports/track-08a-data/`
+- Current public release summary: `release-history.md`
 
 ## References
 
@@ -33,6 +31,7 @@
 - `validation-profiles.md`
 - `publication-readiness.md`
 - `release-history.md`
+- `playtest-reports/track-08a-data/`
 - `playtest-reports/track-05b-first-minute-smoothness.md`
 - `code-review-track05b-first-minute-v1.md`
 - `process-hardening-agents-addendum.md`
