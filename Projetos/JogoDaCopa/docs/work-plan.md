@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_SUPER_CAMPEAO_V1_2_1_PUBLICADO_RETEST`
+- Status: `JOGO_DA_COPA_TRACK09B_LOCAL_VALIDADO`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -23,24 +23,20 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 03F Quality Hotfix V1 fixed SUPER whiff consumption, preserved Quaternius PBR textures under kit tint, documented representative perf methodology and added source integrity validation.
 - Track 08 Super Campeao UI removed the old Toon experiment from active runtime/UI and rebranded the local game surface to `Super Campeao`; the first publication attempt was rolled back after a first-minute remote hitch.
 - Track 08A Ball Glass Hitch Hotfix republished `Super Campeao v1.2.1+6ef3074c`; remote menu, first minute, 5-minute stability and night luma gates passed.
+- Track 09A FootballRoot Extraction published `Super Campeao v1.2.1+ff9cb389`; remote gates passed and human retest was accepted by Fabio.
+- Track 09B FootballRoot Web Loading Controller V1 extracted the Web loading/warmup flow into `football_web_loading_controller.gd`; local validate, Web export and Web boot smoke passed.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Human retest for the public `Super Campeao v1.2.1+6ef3074c` URL before opening new feature or polish tracks.
+Continue the FootballRoot reduction series with another narrow extraction, using the public `Super Campeao v1.2.1+ff9cb389` as the stable gameplay baseline and keeping Web gates green.
 
 Focus:
 
-- Confirm loading, menu, visible footer, public version and first transition into match.
-- Confirm menu ESC, settings, restart confirmation and return-to-menu flow.
-- Confirm default timer mode, golden goal behavior and optional `3 gols` mode.
-- Confirm SUPER whiff no longer spends the bar or kickoff quota.
-- Confirm avatar tint preserves enough texture/PBR readability in play.
-- Playtest dash/slide/flip, charged kick, SUPER/fireball and boost/jump pad readability.
-- Check real character readability in player/bot silhouettes, kits, hit/slide/push/kick/celebrate states.
-- Check real audio mix for kick/bounce/glass/countdown/goal/crowd/menu, including ambience ducking in intro/pause.
-- Confirm rebrand visibility, menu cleanup, loading label, intro cleanup, HUD/scorebug readability and first-minute Web stability.
+- Prefer orchestration slices that do not alter gameplay, physics, input, bot decisions or assets.
+- Preserve existing GUT coverage and add/retarget focused tests when moving public helper contracts.
+- Keep Web validation in the loop: `tools/validate.gd`, Web export, gzip gate and at least a local Web boot smoke for loading-sensitive changes.
 
 ## Out Of Scope
 

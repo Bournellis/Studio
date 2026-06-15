@@ -7,20 +7,19 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; aguardando retest humano) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09B local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09A_PUBLICADO_AGUARDANDO_RETEST`
-- Marker: `JOGO_DA_COPA_TRACK09A_PUBLICADO_RETEST`
-- Baseline: `Super Campeao` Web publico em `v1.2.1+ff9cb389` (`web/v1-copa-arena-futebol-20260615-ff9cb389`) na URL `https://copa-arena-futebol.pages.dev/`; gates remotos 09A PASS.
-- Publicacao: Track 09A publicou o refator tecnico de `FootballRoot` sem mudar gameplay; menu, primeiro minuto, estabilidade 5min e luma remotos passaram.
-- Refator: helpers extraidos de `FootballRoot` (`2280 -> 1862` linhas) com validate/export/Web gzip PASS.
+- Status: `P2_IMPLEMENTACAO - TRACK09B_LOCAL_VALIDADO`
+- Marker: `JOGO_DA_COPA_TRACK09B_LOCAL_VALIDADO`
+- Baseline publico: `Super Campeao v1.2.1+ff9cb389` (`web/v1-copa-arena-futebol-20260615-ff9cb389`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09A PASS e retest humano aceito.
+- Refator atual: Track 09B extraiu loading/warmup Web para `football_web_loading_controller.gd`; `FootballRoot` medido nesta base `2078 -> 1739`; validate/export/Web boot local PASS.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: retest humano do Fabio + tester externo na URL publica, cobrindo loading/menu, ESC, HUD/scorebug e primeiro minuto.
+- Proximo passo: decidir publish da 09B ou continuar a proxima reducao estreita do `FootballRoot`.
 
 ## draxos-roguelike-cardgame
 
