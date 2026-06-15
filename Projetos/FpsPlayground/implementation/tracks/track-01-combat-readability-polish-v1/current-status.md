@@ -1,8 +1,8 @@
 # Track 01 - Combat Readability Polish V1
 
 - Created: `2026-06-15`
-- Status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED`
+- Status marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_APPROVED`
 - Branch: `codex/fpsplayground/track01-combat-readability-polish-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track01-combat-readability-polish-v1`
 
@@ -54,7 +54,7 @@ The track should help the player understand:
 - [x] Feedback/HUD implementation.
 - [x] Focused test coverage updated.
 - [x] Final automated validation.
-- [ ] Handoff for human combat readability smoke.
+- [x] Handoff for human combat readability smoke.
 
 ## Delivered
 
@@ -81,3 +81,8 @@ Final automated result:
 
 - `tools/validate.gd`: PASS, GUT `15/15`, `118` asserts.
 - Known warning class remains limited to GUT UID/text-path fallback warnings.
+
+## Human Approval
+
+- Fabio approved the Track 01 smoke on 2026-06-15.
+- Next recommendation: `Track 02 - Bot Duel Tuning V1`.

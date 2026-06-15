@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 01 - Combat Readability Polish V1`
-- Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_READY_FOR_HUMAN_SMOKE`
+- Active stage: `Track 02 - Bot Duel Tuning V1`
+- Active stage status: `PLANNED`
+- Status marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_APPROVED`
 
 ## Current Truth
 
@@ -14,7 +14,7 @@
 
 The football work moved to `Projetos/JogoDaCopa`.
 
-Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15. Track 01 resumes the project to polish combat readability without expanding gameplay scope.
+Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15. Track 01 polished combat readability and was approved by Fabio after smoke.
 
 ## Current Scope
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Automated validation is green after Track 01 implementation. The next gate is human smoke focused on whether combat events are easier to read.
+Track 01 is approved. The next recommended gate is `Track 02 - Bot Duel Tuning V1`, focused on bot pressure, fairness and route variety without new map or weapon scope.
 
 ## Track 01 Delivered
 
@@ -37,6 +37,16 @@ Automated validation is green after Track 01 implementation. The next gate is hu
 - Readability beacons/halos for health and overcharge pickups.
 - Launch direction cues on both jump pads.
 - Focused GUT coverage for combat readability HUD events and scene nodes.
+
+## Recommended Next Track
+
+`Track 02 - Bot Duel Tuning V1`
+
+- Tune bot pressure windows after the readability pass.
+- Adjust aim fairness, windup timing, cooldown and reaction feel.
+- Review route selection between direct pressure, health, overcharge and jump pads.
+- Preserve current `Duel Pit V2` layout and weapon kit.
+- Avoid new weapons, new map, export, Web/mobile, multiplayer and backend.
 
 ## Validation
 

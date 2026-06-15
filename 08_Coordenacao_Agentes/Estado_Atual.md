@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 01 pronta para smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09C local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 01 aprovada; proxima etapa Track 02)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK01_COMBAT_READABILITY_POLISH_READY_FOR_HUMAN_SMOKE`
-- Marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_READY_FOR_HUMAN_SMOKE`
+- Status: `P2_IMPLEMENTACAO - TRACK01_COMBAT_READABILITY_POLISH_APPROVED`
+- Marker: `FPS_PLAYGROUND_TRACK01_COMBAT_READABILITY_POLISH_APPROVED`
 - Baseline: laboratorio FPS separado do antigo `FpsShooter`; `Arena Shooter`/`Duel Pit V2` regression humano OK.
-- Track 01: HUD/feedback de bot tell, dano recebido, Plasma hit/overcharge, pickups e jump pads refinados; `tools/validate.gd` PASS `15/15`.
+- Track 01: HUD/feedback de bot tell, dano recebido, Plasma hit/overcharge, pickups e jump pads refinados; `tools/validate.gd` PASS `15/15`; smoke humano aprovado.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester executar smoke humano de leitura de combate em `Projetos/FpsPlayground/docs/validation.md`.
+- Proximo passo: planejar `Track 02 - Bot Duel Tuning V1` para ajustar pressao/fairness/rotas do bot sem novo mapa/arma.
 
 ## rpg-isometrico
 

@@ -5,7 +5,7 @@
 - Branch: `codex/fpsplayground/track01-combat-readability-polish-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track01-combat-readability-polish-v1`
 - Project: `Projetos/FpsPlayground`
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `DONE`
 
 ## Objective
 
@@ -54,7 +54,7 @@ Resume `FpsPlayground` after accepted human Arena Shooter regression and improve
 
 ## Next Handoff Point
 
-Human smoke focused on whether combat events are easier to understand.
+Track approved by Fabio on 2026-06-15. Next recommended track: `Track 02 - Bot Duel Tuning V1`.
 
 ## Delivered
 
@@ -68,3 +68,8 @@ Human smoke focused on whether combat events are easier to understand.
 - Baseline: after one-time fresh worktree import, `tools/validate.gd` PASS, GUT `14/14`, `95` asserts.
 - Final: `tools/validate.gd` PASS, GUT `15/15`, `118` asserts.
 - Known noise: GUT UID/text-path fallback warnings.
+
+## Human Approval
+
+- Fabio approved the smoke on 2026-06-15.
+- Track 01 closed in Kanban Done.
