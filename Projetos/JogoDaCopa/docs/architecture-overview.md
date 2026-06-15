@@ -15,6 +15,7 @@
   - `football_runtime_spawner.gd`: runtime node construction and signal wiring for player, bot, ball, kickoff marker, chase camera, HUD and feedback.
   - `football_match_flow_controller.gd`: kickoff/reset/countdown match flow, round input lock, kickoff marker visibility and first-touch release for bot defensive hold.
   - `football_match_presentation_controller.gd`: HUD/result snapshots, HUD/scoreboard refresh cadence, result statistics text and short kit codes.
+  - `football_arcade_field_controller.gd`: boost pad and jump pad node collection, reset, cooldown/respawn updates, pickup effects and bot boost target wiring.
 - `modes/shared/`: runtime primitive creation.
 - `gameplay/avatar/`: procedural humanoid avatars, skin tones and country-inspired kits.
 - `gameplay/combat/`: reused character body, health and knockback base.

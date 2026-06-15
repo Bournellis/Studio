@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09E_LOCAL_VALIDADO`
+- Status: `JOGO_DA_COPA_TRACK09F_LOCAL_VALIDADO`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -28,12 +28,13 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09C FootballRoot Runtime Spawner V1 extracted runtime node creation/wiring into `football_runtime_spawner.gd`; local validate, Web export and Web boot smoke passed.
 - Track 09D Football Match Flow Controller V1 extracted kickoff/reset/countdown/input lock flow into `football_match_flow_controller.gd`; local validate, Web export and Web boot smoke passed.
 - Track 09E Football Match Presentation Controller V1 extracted HUD/result presentation snapshots into `football_match_presentation_controller.gd`; local validate, Web export and Web boot smoke passed.
+- Track 09F Football Arcade Field Controller V1 extracted boost pad and jump pad field orchestration into `football_arcade_field_controller.gd`; local validate, Web export and Web boot smoke passed.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Decide whether to publish Track 09E or continue the FootballRoot reduction series with another narrow extraction, using the public `Super Campeao v1.2.1+ff9cb389` as the stable gameplay baseline and keeping Web gates green.
+Decide whether to publish Track 09F or continue the FootballRoot reduction series with another narrow extraction, using the public `Super Campeao v1.2.1+ff9cb389` as the stable gameplay baseline and keeping Web gates green.
 
 Focus:
 
