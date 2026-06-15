@@ -1,6 +1,6 @@
 # DraxosMobile - Release Ops Checklist
 
-- Data: `2026-06-01`
+- Data: `2026-06-15`
 - Track: `Track 13 - Foundation Validation And Release Safety` + `Track 17 - Foundation Expansion Readiness` + `Foundation Final Polish` + `Foundation Hardening V2 release-ops-keystore`
 - Status: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED` / `FOUNDATION_FINAL_POLISH_DELIVERED`
 - Escopo: readiness operacional de release para Android, PC e Web, com safety por default e sem publicar build nova.
@@ -43,7 +43,7 @@ Flags antigas (`-SkipUpload`, `-UseManifestSecret`, `-SkipManifestSecret`) sem `
 
 ## Default Test Publication Policy
 
-Track 13 itself remains non-publishing by default. After Track 13, user-approved product packages that need human testing on Android, Windows or Web should treat Internal Alpha publication as the default completion step once local validation passes.
+Track 13 itself remains non-publishing by default. After Track 13, user-approved product packages that need human testing on Android, Windows or Web should treat Internal Alpha publication as the default completion step once local validation passes. For packages that exist to prove product clarity, use the Product Preview Human Gate below before promoting the candidate as an official package result.
 
 - If the user asks to execute a visible package, test it in the published app, or review it in Web/APK/PC, plan export, package, Storage upload and Cloudflare Pages deploy unless the user explicitly says local-only.
 - Remote mutation still requires current-task approval plus `-ConfirmRemoteMutation`; never infer approval for schema, Edge Function, migration or secret changes from a client-only publication request.
@@ -58,6 +58,34 @@ Track 13 itself remains non-publishing by default. After Track 13, user-approved
   playtest contract.
 - Before reporting publication success, verify the deployed `/web/index.html` references the versioned asset root and that the shell `index.pck` size matches the remote `Content-Length`.
 - Before reporting Web launch success, run `tools/smoke_web_launch_remote.ps1` against the hash preview returned by Cloudflare Pages. Use `-NoProjectWrites` for read-only validation jobs and `-KeepDiagnostics` when the screenshot/logs must be retained outside the project. If the stable production domain is protected by Cloudflare Access, anonymous Access is expected there and does not replace the preview launch smoke.
+
+## Product Preview Human Gate
+
+For product packages that exist to prove a user-facing loop, do not promote the
+package to an official Internal Alpha result before a human proof pass records a
+verdict. Automated gates prove safety; they do not prove product clarity.
+
+Default flow:
+
+```text
+candidate -> automated validation -> human proof -> verdict -> official package or rework
+```
+
+Rules:
+
+- Candidate validation can use local builds, a local Web export, PC/Android
+  artifacts or a hash preview, depending on the package.
+- Any remote preview, upload, manifest deploy, Cloudflare deploy or Supabase
+  mutation still requires explicit approval and the normal remote-mutation
+  safeguards.
+- A hash preview is technical evidence for playtest; it is not the official
+  user-facing package unless Fabio approves promotion.
+- If human proof finds basic UX bugs, group fixes back into the candidate when
+  practical instead of publishing a sequence of micro-hotfix packages.
+- Release history should only record a package as successful after Fabio
+  approves the official package path.
+- For Arena PVE proof work, use `docs/arena-pve-product-proof.md` and
+  `docs/arena-ux-proof-release-discipline-plan.md`.
 
 ## Inventario Atual
 

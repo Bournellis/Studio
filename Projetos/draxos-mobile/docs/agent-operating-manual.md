@@ -2,7 +2,7 @@
 
 - Status: `VIVO`
 - Owner: project agents
-- Last updated: `2026-06-09`
+- Last updated: `2026-06-15`
 - Applies to: `Projetos/draxos-mobile/`
 
 This manual explains how agents should operate DraxosMobile without reopening old work, drifting from Foundation Audit or mutating remote infrastructure by accident.
@@ -20,10 +20,12 @@ Read live docs in this order:
 7. `docs/foundation-responsive-layout-contract.md` - required when touching Entry, Refugio, Battle or visual/layout code.
 8. `docs/product-vision.md` - local long-term product canon.
 9. `docs/pve-arena-initial-direction.md` - approved early-game direction.
-10. `docs/game-design-document.md` - implementation reference and mock/substance context.
-11. `docs/design-pending.md` - only live register of unresolved design decisions.
-12. `docs/multi-agent-workflow.md` - required when coordinating parallel hardening lanes or mode work.
-13. `docs/hardening-program.md` - required for long-term refactor/hardening gates across active lanes.
+10. `docs/arena-pve-product-proof.md` - current Arena proof/verdict guardrail.
+11. `docs/arena-ux-proof-release-discipline-plan.md` - next Arena UX proof execution and anti-micro-release plan.
+12. `docs/game-design-document.md` - implementation reference and mock/substance context.
+13. `docs/design-pending.md` - only live register of unresolved design decisions.
+14. `docs/multi-agent-workflow.md` - required when coordinating parallel hardening lanes or mode work.
+15. `docs/hardening-program.md` - required for long-term refactor/hardening gates across active lanes.
 
 If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
 
@@ -31,7 +33,7 @@ If a historical track conflicts with these docs, the live docs win. If local pro
 
 This manual carries no operational state. The active stage, published package, build versions, evidence and next step live in `implementation/current-status.md`. The full package lineage (release roots, previews, version codes, stable URLs) lives in `docs/release-history.md`.
 
-The project is a base implemented for refinement: server-authoritative foundation, Arena PVE as the first approved product core, and Bosque/Openworld as an integrated Internal Alpha slice (not approval for broad expansion). Human playtest of each published package is the default gate before choosing the next package; future bugs return to the normal bugfix flow.
+The project is a base implemented for refinement: server-authoritative foundation, Arena PVE as the first approved product core, and Bosque/Openworld as an integrated Internal Alpha slice (not approval for broad expansion). Human playtest of each published package is the default gate before choosing the next package. For product-proof packages such as the next Arena UX/readability/recovery pass, use a candidate first, then automated validation, human proof and explicit verdict before official package promotion.
 
 Historical app-shell loop baseline from Foundation Loop UX Pass 01, preserved for context but not the current product reading:
 
@@ -121,14 +123,14 @@ For Foundation Audit, the expected DraxosMobile Doing card must state the branch
 | Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md`, `docs/foundation-loop-audit.md` |
 | Multi-agent hardening | `AGENTS.md`, this manual, `docs/multi-agent-workflow.md`, `docs/documentation-index.md`, `docs/foundation-hardening-v2-readiness-report.md` |
 | Long-term refactor/hardening | `AGENTS.md`, this manual, `docs/hardening-program.md`, `docs/multi-agent-workflow.md`, touched lane contracts |
-| Product/design | `docs/product-vision.md`, `docs/pve-arena-initial-direction.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
+| Product/design | `docs/product-vision.md`, `docs/pve-arena-initial-direction.md`, `docs/arena-pve-product-proof.md`, `docs/arena-ux-proof-release-discipline-plan.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
 | Backend/contracts | `docs/architecture.md`, `docs/contracts/`, `server/schema/`, `server/functions/`, `supabase/` mirrors |
 | Foundation expansion/final polish | `docs/foundation-expansion-readiness.md`, `docs/contracts/account-save.md`, `docs/contracts/ruleset-registry.md`, `docs/contracts/admin-ops.md`, `docs/contracts/minigame-integration.md` |
 | Crafting/potions/behavior | `docs/behavior-potion-crafting-v1.md`, `docs/contracts/api-endpoints.md`, `docs/contracts/database-schema.md`, `docs/contracts/content-definitions.md`, `docs/contracts/battle-event-log.md` |
 | Godot client | `AGENTS.md`, `modes/boot/surfaces/README.md`, relevant tests, relevant flow/presenter |
 | Entry/Refugio/Battle layout | `docs/foundation-responsive-layout-contract.md`, `tools/smoke_responsive_layout.gd`, relevant UI tests |
-| Release/publication | `docs/release-ops-checklist.md`, Track 13 release safety contract, `tools/README.md` |
-| Manual QA | `docs/track-13-manual-walkthrough-gate.md`, `docs/internal-alpha-v0-handoff.md` |
+| Release/publication | `docs/release-ops-checklist.md`, Track 13 release safety contract, `tools/README.md`; for Arena proof packages also `docs/arena-ux-proof-release-discipline-plan.md` |
+| Manual QA | `docs/track-13-manual-walkthrough-gate.md`, `docs/internal-alpha-v0-handoff.md`; for Arena proof also `docs/arena-pve-product-proof.md` |
 
 ## Validation By Task
 

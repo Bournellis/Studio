@@ -1,7 +1,7 @@
 # DraxosMobile - Documentation Index
 
 - Status: `VIVO`
-- Last updated: `2026-06-14`
+- Last updated: `2026-06-15`
 - Purpose: classify project documents so agents know what to trust, what to update and what to treat as history.
 
 ## Categories
@@ -43,6 +43,7 @@
 | `docs/arena-pve-season1-loop-v1.md` | `HISTORICO` | Preserved Arena PVE Season 1 Loop v1 delivery: grouped arena/difficulty selection, S1 progress/reward preview, contextual summary and active buff recovery hardening. |
 | `docs/arena-pve-menu-flow-simplification-v1.md` | `HISTORICO` | Preserved Arena PVE menu-flow simplification package: selection hierarchy, CTA ordering, Preparacao placement and active/buff menu ordering without content/tuning expansion. |
 | `docs/arena-pve-product-proof.md` | `VIVO` | Current proof/verdict guardrail for Arena PVE: `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN`, blocking tuning or expansion until UX/readability/recovery is proven. |
+| `docs/arena-ux-proof-release-discipline-plan.md` | `RUNBOOK` | Next Arena UX/readability/recovery execution plan and anti-micro-release gate before official package promotion. |
 | `data/definitions/pve_arena_difficulties.json` | `CONTRATO` | Track 20 Season 1 Arena tier matrix: arena/difficulty ids, recommended level/power, enemy sequence, reward profile and clear-rate target. |
 | `data/definitions/season_1_progression_targets.json` | `CONTRATO` | Track 20 Season 1 XP/milestone target contract; declares `arena_tuning_power_v1` as PVE tuning metadata only. |
 | `docs/foundation-app-v0-audit.md` | `HISTORICO` | Closed audit compass: real foundation, current mock, live-product gaps and post-login loop focus preserved as context. |

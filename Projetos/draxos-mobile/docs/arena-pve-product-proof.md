@@ -1,7 +1,7 @@
 # DraxosMobile - Arena PVE Product Proof
 
 - Status: `VIVO`
-- Last updated: `2026-06-14`
+- Last updated: `2026-06-15`
 - Scope: human playtest protocol and product decision gate for Arena PVE.
 
 This document defines how DraxosMobile proves the Arena PVE core before opening
@@ -32,6 +32,22 @@ Before running this proof:
 - Social/Shop/Bosque overlay bugs are not blocking Arena access;
 - `DocsOnly`, `ClientQuick` and relevant Arena server tests are either green or
   their failures are explicitly unrelated to the test.
+
+## Proof Discipline
+
+This proof must run on a candidate, not after blindly promoting a new official
+package. The intended loop is:
+
+`candidate -> automated validation -> human proof -> verdict -> official package or rework`
+
+If the candidate needs a remote preview, that preview is still a remote
+mutation and requires explicit approval plus release safety guardrails. A local
+candidate or preview URL does not authorize manifest deployment, new official
+package status, tuning or expansion by itself.
+
+If the proof finds basic route, focus, modal, back/Esc, abandon/resume,
+summary, buff or layout issues, fix them in the same candidate when practical
+before asking Fabio to approve an official package.
 
 ## Human Playtest Script
 
@@ -79,6 +95,8 @@ Record each item as `PASS`, `ISSUE` or `BLOCKED`.
 ## Evidence To Capture
 
 - build/channel and package pointer from `implementation/current-status.md`;
+- candidate type: local build, Web preview, Android APK or PC build;
+- candidate commit and validation summary;
 - tester name or role;
 - platform: Web authenticated, Android APK or PC build;
 - save type;

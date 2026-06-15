@@ -1,6 +1,6 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-06-14`
+- Last updated: `2026-06-15`
 - Project: `draxos-mobile`
 - Portfolio status: see `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Active surface: `Internal Alpha`
@@ -53,11 +53,16 @@ The next product package, when explicitly opened, must focus Arena
 UX/readability/recovery: make the tutorial -> first real arena -> buffs ->
 summary -> abandon/resume path understandable without agent explanation.
 
+The documentation round on `2026-06-15` formalized the next package as
+`docs/arena-ux-proof-release-discipline-plan.md`: candidate first, automated
+validation, human proof, then verdict before any official package promotion.
+
 Open decision focus:
 
 1. Preserve active Bosque runtime as local/offline-first feel plus server-owned checkpoint, completion, reward, caps, ledger and audit authority.
 2. Keep Arena regressions in future manual smoke lists: Preparacao visible before start/in active attempts/buff choice, selected victory buff returns to `Resolver duelo`, temporary bonus stats visible in the next fight/replay.
 3. Do not open numeric tuning, economy/content expansion, PVP or broad Openworld work until Arena core exits the `NOT_PROVEN` state.
+4. Do not use a new official package as the first proof step; run a validated candidate and human proof before promotion.
 
 ## Live Boundaries
 
@@ -79,5 +84,6 @@ For docs-only changes: `git diff --check`, targeted `rg` drift checks, `validate
 3. `docs/documentation-index.md`
 4. `docs/multi-agent-workflow.md`
 5. `docs/pve-arena-initial-direction.md`
-6. `docs/product-vision.md`
-7. `docs/design-pending.md`
+6. `docs/arena-ux-proof-release-discipline-plan.md`
+7. `docs/product-vision.md`
+8. `docs/design-pending.md`

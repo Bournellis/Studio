@@ -1,6 +1,6 @@
 ﻿# DraxosMobile - Design Pending
 
-- Ultima atualizacao: `2026-06-14`
+- Ultima atualizacao: `2026-06-15`
 - Status: registro vivo de pendencias de design abertas, calibraveis e adiadas
 - Escopo: DraxosMobile, pendencias de design vivas, Arena PVE inicial,
   Bosque/Openworld como slice Internal Alpha, Foundation Hardening V2 como
@@ -52,7 +52,7 @@ A direcao viva de produto continua Arena PVE first, registrada em `docs/pve-aren
 
 Foco atual:
 
-`status operacional publicado -> playtest humano focado -> bugfix estreito se necessario -> nova decisao explicita`
+`status operacional publicado -> candidato Arena UX/readability/recovery -> validacao automatica -> prova humana -> nova decisao explicita`
 
 Foundation Loop UX Pass 01 foi aceito como baseline historico do app-shell, nao
 como loop de produto atual. Foundation Closeout, Labs atualizados, Foundation
@@ -87,7 +87,7 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 | DMOB-D070 | Cardgame | POS_SLICE | Qual contrato proprio do Cardgame mobile sem herdar mecanicas do projeto Steam? | Sem contrato, o modo permanece planned/disabled no registry tecnico e oculto ao player; decision pack v1 fixa a regra de nao-heranca mecanica. | `docs/minigames/cardgame-decision-pack.md` | ABERTO | - |
 | DMOB-D071 | Openworld continuo | POS_SLICE | Como o Openworld evolui de Bosque para mundo continuo, incluindo mapa, risco, combate e fronteira com Basebuilder? | Playtest aprovou o slice Bosque como modo ativo Internal Alpha; expansao de mundo continuo continua bloqueada sem novo decision pack. | `docs/minigames/openworld-decision-pack.md` | ABERTO | - |
 | DMOB-D073 | Openworld conflito minimo | POS_SLICE | Existe evidencia suficiente para testar um pacote minimo com monstros, NPCs e quests dentro do Openworld sem virar campanha, MMO, economia paralela ou substituto da Arena PVE? | Sem decisao, combate/quests podem contaminar o Bosque relaxante, quebrar fronteiras com Arena/Basebuilder ou criar expectativas de Openworld completo. | `docs/minigames/openworld-decision-pack.md` | ABERTO | - |
-| DMOB-D082 | Prova Arena PVE | OPERACIONAL | Fabio registrou resultado combinado: `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN`. A direcao Arena PVE first permanece, mas o core atual nao esta aprovado para tuning, economia, conteudo, PVP, Openworld amplo ou visual final. | Sem registrar esse resultado, agentes poderiam interpretar a prova como autorizacao para calibrar numeros ou expandir produto antes de resolver clareza/UX/recovery da Arena. | `docs/arena-pve-product-proof.md` | ABERTO | 2026-06-14 |
+| DMOB-D082 | Prova Arena PVE | OPERACIONAL | Fabio registrou resultado combinado: `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN`. A proxima rodada precisa executar UX/readability/recovery e nova prova humana antes de escolher outro veredito. | Sem manter este gate aberto, agentes podem interpretar a prova como autorizacao para calibrar numeros ou expandir produto antes de resolver clareza/UX/recovery da Arena. | `docs/arena-pve-product-proof.md` | ABERTO | - |
 | DMOB-D006 | XP Livre | PLAYTEST_ALPHA | Quais sao os valores de XP por tipo/level de construcao e por quest? | Baseline calibravel criado no simulador economico; valores finais dependem de iteracao com dados. | `docs/economy/README.md` | CALIBRAR | - |
 | DMOB-D007 | Energia | PLAYTEST_ALPHA | Qual curva de Energia e esperada para jogador free, battle pass e gasto com Diamante? | Baseline calibravel criado no simulador economico; valores finais dependem de iteracao com dados. | `docs/economy/README.md` | CALIBRAR | - |
 | DMOB-D029 | Poder | CALIBRAVEL_ALPHA | Quais pesos finais da formula de poder apos incluir summons e todos os upgrades? | Source Identity Balance v2 usa pesos alpha `level=42`, `instrument=28`, `spell=40`, `familiar=34`, `doutrina=22`, `quality=30`; aliases tecnicos antigos `weapon/pet/passive` podem existir no simulador. Manter calibravel ate playtest manual confirmar matchmaking. | `game-design-document.md` | CALIBRAR | - |
