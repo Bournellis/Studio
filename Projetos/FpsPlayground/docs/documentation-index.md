@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_DOING`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -26,6 +26,7 @@
 - `../implementation/tracks/track-01-combat-readability-polish-v1/current-status.md`
 - `../implementation/tracks/track-02-bot-tactical-movement-v1/current-status.md`
 - `../implementation/tracks/track-03-arena-tactical-context-proof-v1/current-status.md`
+- `../implementation/tracks/track-04-arena-movement-flow-bot-navigation-v1/current-status.md`
 
 ## Split Note
 

@@ -62,6 +62,19 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - In both arenas, confirm the bot does not repeat one route forever during a passive-player smoke.
 - In both arenas, confirm restart with `R`, pause menu and return to menu still work.
 
+## Track 04 Arena Movement Flow And Bot Navigation Smoke
+
+- Launch `Arena Shooter - Duel Pit V2` and run a full ground loop without stopping on geometry.
+- Launch `Arena Shooter - Relay Foundry V1` and run a full ground loop without stopping on geometry.
+- In both arenas, approach each jump pad from natural movement speed and confirm the pad is easy to enter.
+- In both arenas, confirm each jump pad landing has clear space and does not throw the player into cover, ceiling or platform edges.
+- In both arenas, confirm high platforms are reachable through readable routes instead of awkward edge jumps.
+- In both arenas, stand passive and watch the bot for repeated wall, ceiling or platform-edge collisions.
+- In both arenas, confirm the bot uses staged vertical routes instead of jumping at high destinations from the floor.
+- In both arenas, confirm bot pressure still feels fair: better movement, not instant/unreadable aim.
+- Confirm pickups still create movement reasons and do not sit inside blocked/snappy geometry.
+- Confirm restart with `R`, pause menu and return to menu still work.
+
 ## Known Noise
 
 GUT UID/text-path warnings can appear after fresh worktree imports. They are accepted when tests pass.

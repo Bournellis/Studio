@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado; gates remotos 09F PASS no rerun; retest humano pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 03 arena tactical context proof pronta para smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado; gates remotos 09F PASS no rerun; retest humano pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 04 arena movement flow and bot navigation em execucao)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_READY_FOR_SMOKE`
-- Marker: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_READY_FOR_SMOKE`
-- Baseline: Track 03 adicionou catalogo de arenas, `Relay Foundry V1`, selecao no menu e prova automatica de contexto tatico multi-arena.
-- Validacao: `tools/validate.gd` PASS `20/20`, `175 asserts`; warnings GUT UID/text-path conhecidos.
+- Status: `P2_IMPLEMENTACAO - TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_DOING`
+- Marker: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_DOING`
+- Baseline: Track 03 adicionou catalogo multi-arena, mas smoke humano aprovou a mira e reprovou feeling de mapa/movimento do bot.
+- Track ativa: Track 04 reconstruir fluxo das arenas e navegacao do bot por rotas/affordances de movimento.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester fazer smoke humano em `Duel Pit V2` e `Relay Foundry V1`; depois escolher tuning fino ou proxima experiencia FPS.
+- Proximo passo: Codex executar Track 04 em worktree dedicado e entregar para smoke humano focado em movimentacao.
 
 ## rpg-isometrico
 

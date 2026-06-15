@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 03 - Arena Tactical Context Proof V1`
-- Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK03_ARENA_TACTICAL_CONTEXT_PROOF_READY_FOR_SMOKE`
+- Active stage: `Track 04 - Arena Movement Flow And Bot Navigation V1`
+- Active stage status: `DOING`
+- Status marker: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_DOING`
 
 ## Current Truth
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated and waiting for human smoke in both `Duel Pit V2` and `Relay Foundry V1`.
+Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated, but human smoke found that bot aim improved while map movement flow and bot navigation quality are not good enough.
 
 ## Track 01 Delivered
 
@@ -62,7 +62,7 @@ Track 01 is approved. Track 02 is approved after human smoke focused on bot tact
 - Fabio approved the Track 02 bot smoke on 2026-06-15.
 - Fabio approved executing Track 03 on 2026-06-15.
 
-## Active Track
+## Previous Track
 
 `Track 03 - Arena Tactical Context Proof V1`
 
@@ -75,6 +75,17 @@ Delivered:
 - Kept bot improvement focused on movement/context usage, not unfair aim/damage tuning.
 - Added automated coverage for catalog, menu selection and runtime multi-arena bot context.
 
+## Active Track
+
+`Track 04 - Arena Movement Flow And Bot Navigation V1`
+
+Goal:
+
+- Rebuild arena movement flow around continuous 1x1 duel loops.
+- Reposition jump pads and high platforms so player movement feels readable.
+- Make the bot navigate through staged movement routes instead of raw vertical destinations.
+- Add validation coverage for layout clearance and jump pad route contracts.
+
 ## Validation
 
 Latest result:
@@ -84,7 +95,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 # PASS, GUT 20/20, 175 asserts
 ```
 
-Manual smoke lives in `docs/validation.md`; Track 03 smoke is pending Fabio/tester.
+Manual smoke lives in `docs/validation.md`; Track 04 smoke should focus on player movement feel, jump pad approach/landing and bot movement safety.
 
 ## Read Next
 
@@ -97,3 +108,4 @@ Manual smoke lives in `docs/validation.md`; Track 03 smoke is pending Fabio/test
 7. `docs/bot-tactical-context.md`
 8. `implementation/tracks/track-02-bot-tactical-movement-v1/current-status.md`
 9. `implementation/tracks/track-03-arena-tactical-context-proof-v1/current-status.md`
+10. `implementation/tracks/track-04-arena-movement-flow-bot-navigation-v1/current-status.md`
