@@ -15,6 +15,10 @@ const PlayerAvatarScript = preload("res://gameplay/avatar/player_avatar_3d.gd")
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
 const GameSettingsScript = preload("res://autoloads/game_settings.gd")
 const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
+const FootballWorldEnvironmentScript = preload("res://modes/football/football_world_environment.gd")
+const FootballCaptureDirectorScript = preload("res://modes/football/football_capture_director.gd")
+const FootballScoreboardControllerScript = preload("res://modes/football/football_scoreboard_controller.gd")
+const FootballPerfScenarioScript = preload("res://modes/football/football_perf_scenario.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const MODE_NAME: String = "Super Campeão"
@@ -79,56 +83,13 @@ const MATCH_MODE_GOALS: StringName = &"goals"
 const MATCH_MODE_TIMER: StringName = &"timer"
 const MATCH_DURATION_SECONDS: float = 180.0
 const DOUBLE_GOAL_WINDOW_SECONDS: float = 30.0
-const RENDER_GLOW_ENABLED: bool = true
-const RENDER_SSAO_ENABLED: bool = true
-const RENDER_FOG_ENABLED: bool = true
 const BOT_DIFFICULTY_META_KEY: String = "jogodacopa_bot_difficulty"
 const MATCH_MODE_META_KEY: String = "jogodacopa_match_mode"
-const CAPTURE_SCENE_META_KEY: String = "jogodacopa_capture_scene"
 const RESULT_SUPPRESS_TRANSITION_PULSE_KEY: String = "suppress_transition_pulse"
-const CAPTURE_SCENE_KICKOFF: StringName = &"kickoff"
-const CAPTURE_SCENE_GOAL: StringName = &"goal"
-const CAPTURE_SCENE_RESULT: StringName = &"result"
-const CAPTURE_SCENE_PLAY: StringName = &"play"
-const CAPTURE_KICKOFF_COUNTDOWN_SECONDS: float = 2.8
-const CAPTURE_GOAL_HOLD_SECONDS: float = 30.0
-const CAPTURE_CAMERA_NAME: String = "Track04ECaptureCamera"
-const CAPTURE_CAMERA_FOV: float = 50.0
-const CAPTURE_CAMERA_NEAR: float = 0.04
-const CAPTURE_CAMERA_FAR: float = 220.0
-const CAPTURE_CAMERA_KICKOFF_POSITION: Vector3 = Vector3(29.0, 13.2, 34.0)
-const CAPTURE_CAMERA_KICKOFF_TARGET: Vector3 = Vector3(0.0, 1.9, 1.5)
-const CAPTURE_CAMERA_GOAL_POSITION: Vector3 = Vector3(-29.0, 13.2, -34.0)
-const CAPTURE_CAMERA_GOAL_TARGET: Vector3 = Vector3(0.0, 1.9, -1.5)
-const CAPTURE_CAMERA_RESULT_POSITION: Vector3 = Vector3(-31.0, 13.4, 31.0)
-const CAPTURE_CAMERA_RESULT_TARGET: Vector3 = Vector3(0.0, 2.0, -2.0)
-const CAPTURE_CAMERA_PLAY_POSITION: Vector3 = Vector3(29.0, 13.2, 34.0)
-const CAPTURE_CAMERA_PLAY_TARGET: Vector3 = Vector3(0.0, 1.9, 1.5)
-const CAPTURE_CAMERA_POSES: Dictionary = {
-	CAPTURE_SCENE_KICKOFF: {
-		"position": CAPTURE_CAMERA_KICKOFF_POSITION,
-		"target": CAPTURE_CAMERA_KICKOFF_TARGET,
-	},
-	CAPTURE_SCENE_GOAL: {
-		"position": CAPTURE_CAMERA_GOAL_POSITION,
-		"target": CAPTURE_CAMERA_GOAL_TARGET,
-	},
-	CAPTURE_SCENE_RESULT: {
-		"position": CAPTURE_CAMERA_RESULT_POSITION,
-		"target": CAPTURE_CAMERA_RESULT_TARGET,
-	},
-	CAPTURE_SCENE_PLAY: {
-		"position": CAPTURE_CAMERA_PLAY_POSITION,
-		"target": CAPTURE_CAMERA_PLAY_TARGET,
-	},
-}
 const BOT_DIFFICULTY_IDS: Array = [&"easy", &"normal", &"hard"]
 const MATCH_MODE_IDS: Array = [&"timer", &"goals"]
 const SCREEN_TRANSITION_SECONDS: float = 0.25
-const PERF_SCENARIO_STEP_INTERVAL: float = 4.0
-const PERF_STABILITY_SAMPLE_INTERVAL_SECONDS: float = 1.0
 const HUD_SNAPSHOT_INTERVAL_SECONDS: float = 0.1
-const STADIUM_SCOREBOARD_INTERVAL_SECONDS: float = 0.1
 const WEB_RENDER_WARMUP_ENABLED: bool = true
 const WEB_RENDER_WARMUP_CHUNK_SIZE: int = 1024
 const WEB_RENDER_WARMUP_DEFER_DECORATIVE: bool = false
@@ -139,9 +100,6 @@ const WEB_LOADING_SETTLE_FRAME_MS: float = 33.0
 const WEB_FIRST_USE_WARMUP_FRAMES: int = 1
 const WEB_REAL_JUMP_PAD_WARMUP_FRAMES: int = 120
 const WEB_FIRST_USE_DECAY_SECONDS: float = 0.8
-const WEB_FEEDBACK_QUERY_KEY: String = "jdc_web_feedback"
-const WEB_DEFAULT_FEEDBACK_EFFECTS: Array = ["whistle", "confetti", "kick", "countdown", "jump_pad", "result"]
-const PERF_SCENARIO_INITIAL_DELAY: float = 2.0
 
 var player
 var player_avatar
@@ -201,7 +159,7 @@ var perf_scenario_elapsed: float = 0.0
 var perf_scenario_step: int = -1
 var perf_stability_sample_elapsed: float = 0.0
 var hud_snapshot_elapsed: float = HUD_SNAPSHOT_INTERVAL_SECONDS
-var stadium_scoreboard_elapsed: float = STADIUM_SCOREBOARD_INTERVAL_SECONDS
+var stadium_scoreboard_elapsed: float = FootballScoreboardControllerScript.UPDATE_INTERVAL_SECONDS
 var web_feedback_scenario_filter_loaded: bool = false
 var web_feedback_scenario_allow_all: bool = true
 var web_feedback_scenario_enabled: Dictionary = {}
@@ -795,7 +753,7 @@ func debug_get_hud_snapshot_interval_seconds() -> float:
 	return HUD_SNAPSHOT_INTERVAL_SECONDS
 
 func debug_get_stadium_scoreboard_interval_seconds() -> float:
-	return STADIUM_SCOREBOARD_INTERVAL_SECONDS
+	return FootballScoreboardControllerScript.UPDATE_INTERVAL_SECONDS
 
 func debug_get_match_stats_summary() -> Dictionary:
 	return FootballMatchRulesScript.build_match_stats_summary(match_stats)
@@ -976,226 +934,23 @@ func debug_get_stadium_scoreboard_text(side_name: String = "North") -> String:
 	return label.text if label != null else ""
 
 func _apply_capture_scene_from_meta() -> void:
-	var tree := get_tree()
-	if tree == null or tree.root == null or not tree.root.has_meta(CAPTURE_SCENE_META_KEY):
-		return
-	var capture_scene_id := StringName(str(tree.root.get_meta(CAPTURE_SCENE_META_KEY)))
-	tree.root.remove_meta(CAPTURE_SCENE_META_KEY)
-	if not _is_capture_scene_supported(capture_scene_id):
-		push_error("Unsupported JogoDaCopa capture scene in FootballRoot: %s" % str(capture_scene_id))
-		return
-	capture_scene_active = true
-	match capture_scene_id:
-		CAPTURE_SCENE_KICKOFF:
-			_apply_kickoff_capture_scene()
-		CAPTURE_SCENE_GOAL:
-			_apply_goal_capture_scene()
-		CAPTURE_SCENE_RESULT:
-			_apply_result_capture_scene()
-		CAPTURE_SCENE_PLAY:
-			_apply_play_capture_scene()
-	_clear_capture_fade()
-	_apply_evidence_capture_camera(capture_scene_id)
-
-func _is_capture_scene_supported(capture_scene_id: StringName) -> bool:
-	return (
-		capture_scene_id == CAPTURE_SCENE_KICKOFF
-		or capture_scene_id == CAPTURE_SCENE_GOAL
-		or capture_scene_id == CAPTURE_SCENE_RESULT
-		or capture_scene_id == CAPTURE_SCENE_PLAY
-	)
-
-func _prepare_capture_scene() -> void:
-	set_bot_difficulty(&"normal")
-	set_match_mode(MATCH_MODE_GOALS)
-	_set_intro_open(false)
-	_set_menu_open(false)
-	if hud != null:
-		hud.reset_feedback()
-
-func _apply_kickoff_capture_scene() -> void:
-	_prepare_capture_scene()
-	debug_start_match_with_countdown()
-	kickoff_countdown_remaining = CAPTURE_KICKOFF_COUNTDOWN_SECONDS
-	countdown_last_number = 3
-
-func _apply_goal_capture_scene() -> void:
-	_prepare_capture_scene()
-	debug_start_match()
-	_notify_ball_touched_by(&"player")
-	debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_NORTH - 0.35))
-	_process_goal_detection()
-	goal_slowmo_remaining = 0.0
-	Engine.time_scale = 1.0
-	if hud != null and hud.has_method("_set_fade_alpha_immediate"):
-		hud.call("_set_fade_alpha_immediate", 0.0)
-	goal_reset_timer = CAPTURE_GOAL_HOLD_SECONDS
-
-func _apply_result_capture_scene() -> void:
-	_prepare_capture_scene()
-	debug_start_match()
-	_record_goal_stat(true, 1)
-	_record_goal_stat(false, 1)
-	_record_goal_stat(true, 1)
-	_notify_ball_touched_by(&"player")
-	_notify_ball_touched_by(&"bot")
-	_notify_ball_touched_by(&"player")
-	_record_shot_stat(&"player", true)
-	_record_shot_stat(&"player", false)
-	_record_shot_stat(&"bot", false)
-	debug_set_score(2, 1)
-	debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_NORTH - 0.35))
-	_process_goal_detection()
-
-func _apply_play_capture_scene() -> void:
-	_prepare_capture_scene()
-	debug_start_match()
-	if PerfProbeScript.is_scenario_enabled(self):
-		_start_perf_scenario()
-
-func _apply_evidence_capture_camera(capture_scene_id: StringName) -> void:
-	if not CAPTURE_CAMERA_POSES.has(capture_scene_id):
-		push_error("Missing Track04E capture camera pose for scene: %s" % str(capture_scene_id))
-		return
-	var pose: Dictionary = CAPTURE_CAMERA_POSES[capture_scene_id]
-	var camera := get_node_or_null(CAPTURE_CAMERA_NAME) as Camera3D
-	if camera == null:
-		camera = Camera3D.new()
-		camera.name = CAPTURE_CAMERA_NAME
-		add_child(camera)
-	var gameplay_camera: Camera3D = null
-	if chase_camera != null and chase_camera.has_method("debug_get_camera"):
-		gameplay_camera = chase_camera.call("debug_get_camera") as Camera3D
-	if gameplay_camera != null:
-		gameplay_camera.current = false
-	camera.fov = CAPTURE_CAMERA_FOV
-	camera.near = CAPTURE_CAMERA_NEAR
-	camera.far = CAPTURE_CAMERA_FAR
-	camera.global_position = pose["position"]
-	camera.look_at(pose["target"], Vector3.UP)
-	camera.current = true
-	print("[jdc_capture] scene=%s camera=%s fov=%.1f pos=%s target=%s" % [
-		str(capture_scene_id),
-		CAPTURE_CAMERA_NAME,
-		camera.fov,
-		str(camera.global_position),
-		str(pose["target"]),
-	])
-
-func _clear_capture_fade() -> void:
-	if hud != null and hud.has_method("_set_fade_alpha_immediate"):
-		hud.call("_set_fade_alpha_immediate", 0.0)
+	FootballCaptureDirectorScript.apply_from_meta(self, get_tree())
 
 func _configure_world() -> void:
 	RenderProfileScript.report_runtime_profile_once("FootballRoot")
 	var stage_begin := PerfProbeScript.begin(self, "football.world_environment")
-	var environment := WorldEnvironment.new()
-	environment.name = "WorldEnvironment"
-	environment.environment = _build_night_environment()
-	world_environment = environment
-	add_child(environment)
+	world_environment = FootballWorldEnvironmentScript.add_world_environment(self, RenderProfileScript)
 	PerfProbeScript.end(self, "football.world_environment", stage_begin)
 
 	stage_begin = PerfProbeScript.begin(self, "football.key_light")
-	_add_stadium_key_light()
+	FootballWorldEnvironmentScript.add_stadium_key_light(self)
 	PerfProbeScript.end(self, "football.key_light", stage_begin)
 	stage_begin = PerfProbeScript.begin(self, "football.field_builder")
 	_build_football_pitch()
 	PerfProbeScript.end(self, "football.field_builder", stage_begin)
 
 func _build_night_environment() -> Environment:
-	var render_settings := RenderProfileScript.get_environment_settings()
-	var env := Environment.new()
-	var sky_material := ProceduralSkyMaterial.new()
-	sky_material.sky_top_color = Color(0.004, 0.01, 0.04, 1.0)
-	sky_material.sky_horizon_color = Color(0.02, 0.065, 0.14, 1.0)
-	sky_material.sky_curve = 0.18
-	sky_material.sky_energy_multiplier = 0.72
-	sky_material.ground_bottom_color = Color(0.012, 0.02, 0.028, 1.0)
-	sky_material.ground_horizon_color = Color(0.02, 0.05, 0.08, 1.0)
-	sky_material.ground_curve = 0.12
-	sky_material.ground_energy_multiplier = 0.36
-	sky_material.sun_angle_max = 1.0
-	sky_material.sun_curve = 0.04
-	sky_material.sky_cover = _build_star_cover_texture()
-	sky_material.sky_cover_modulate = Color(1.0, 1.0, 1.0, 0.18)
-
-	var sky := Sky.new()
-	sky.sky_material = sky_material
-
-	env.background_mode = Environment.BG_SKY
-	env.sky = sky
-	env.background_energy_multiplier = float(render_settings["background_energy_multiplier"])
-	env.background_intensity = float(render_settings["background_intensity"])
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_color = Color(0.44, 0.58, 0.72, 1.0)
-	env.ambient_light_energy = float(render_settings["ambient_light_energy"])
-	env.ambient_light_sky_contribution = float(render_settings["ambient_light_sky_contribution"])
-	env.tonemap_mode = Environment.TONE_MAPPER_ACES
-	env.tonemap_exposure = float(render_settings["tonemap_exposure"])
-	env.tonemap_white = float(render_settings["tonemap_white"])
-
-	env.glow_enabled = bool(render_settings["glow_enabled"])
-	env.set("glow_levels/1", false)
-	env.set("glow_levels/2", true)
-	env.set("glow_levels/3", true)
-	env.set("glow_levels/4", true)
-	env.set("glow_levels/5", false)
-	env.set("glow_levels/6", false)
-	env.set("glow_levels/7", false)
-	env.glow_normalized = true
-	env.glow_intensity = float(render_settings["glow_intensity"])
-	env.glow_strength = float(render_settings["glow_strength"])
-	env.glow_bloom = float(render_settings["glow_bloom"])
-	env.glow_hdr_threshold = float(render_settings["glow_hdr_threshold"])
-	env.glow_hdr_scale = float(render_settings["glow_hdr_scale"])
-	env.glow_hdr_luminance_cap = float(render_settings["glow_hdr_luminance_cap"])
-
-	env.ssao_enabled = bool(render_settings["ssao_enabled"])
-	env.ssao_radius = float(render_settings["ssao_radius"])
-	env.ssao_intensity = float(render_settings["ssao_intensity"])
-	env.ssao_power = float(render_settings["ssao_power"])
-	env.ssao_detail = float(render_settings["ssao_detail"])
-	env.ssao_sharpness = float(render_settings["ssao_sharpness"])
-	env.ssao_light_affect = float(render_settings["ssao_light_affect"])
-
-	env.fog_enabled = bool(render_settings["fog_enabled"])
-	env.fog_light_color = Color(0.12, 0.22, 0.36, 1.0)
-	env.fog_light_energy = float(render_settings["fog_light_energy"])
-	env.fog_density = float(render_settings["fog_density"])
-	env.fog_aerial_perspective = float(render_settings["fog_aerial_perspective"])
-	env.fog_sky_affect = float(render_settings["fog_sky_affect"])
-	env.fog_depth_begin = float(render_settings["fog_depth_begin"])
-	env.fog_depth_end = float(render_settings["fog_depth_end"])
-	env.fog_depth_curve = float(render_settings["fog_depth_curve"])
-	return env
-
-func _build_star_cover_texture() -> Texture2D:
-	var noise := FastNoiseLite.new()
-	noise.seed = 20260610
-	noise.frequency = 0.032
-	noise.fractal_octaves = 1
-	var texture := NoiseTexture2D.new()
-	texture.width = 512
-	texture.height = 256
-	texture.normalize = true
-	texture.noise = noise
-	return texture
-
-func _add_stadium_key_light() -> void:
-	var key_light := DirectionalLight3D.new()
-	key_light.name = "StadiumKeyLight"
-	key_light.rotation_degrees = Vector3(-56.0, -34.0, 0.0)
-	key_light.light_color = Color(0.74, 0.86, 1.0, 1.0)
-	key_light.light_energy = 1.85
-	key_light.light_indirect_energy = 0.44
-	key_light.light_specular = 0.64
-	key_light.shadow_enabled = true
-	key_light.directional_shadow_max_distance = 88.0
-	key_light.directional_shadow_fade_start = 0.74
-	key_light.shadow_bias = 0.045
-	key_light.shadow_normal_bias = 0.82
-	add_child(key_light)
+	return FootballWorldEnvironmentScript.build_night_environment(RenderProfileScript)
 
 func _build_football_pitch() -> void:
 	FootballFieldBuilderScript.build(self, {
@@ -1374,13 +1129,7 @@ func _refresh_render_profile_runtime() -> void:
 	_request_hud_and_scoreboard_refresh()
 
 func _resize_scoreboard_viewports_for_render_profile() -> void:
-	var target_size := RenderProfileScript.get_scoreboard_viewport_size()
-	for side_name in ["North", "South"]:
-		var viewport := _get_stadium_scoreboard_viewport(side_name)
-		if viewport == null:
-			continue
-		viewport.size = target_size
-		viewport.render_target_update_mode = SubViewport.UPDATE_ONCE if RenderProfileScript.is_web_platform() else SubViewport.UPDATE_ALWAYS
+	FootballScoreboardControllerScript.resize_viewports(self, RenderProfileScript)
 
 func _restart_play(after_goal: bool, start_countdown: bool = true) -> void:
 	PerfProbeScript.mark(self, "event.restart_play", "after_goal=%s" % str(after_goal))
@@ -1915,7 +1664,7 @@ func _update_hud_snapshot(delta: float) -> void:
 
 func _request_hud_and_scoreboard_refresh() -> void:
 	hud_snapshot_elapsed = HUD_SNAPSHOT_INTERVAL_SECONDS
-	stadium_scoreboard_elapsed = STADIUM_SCOREBOARD_INTERVAL_SECONDS
+	stadium_scoreboard_elapsed = FootballScoreboardControllerScript.UPDATE_INTERVAL_SECONDS
 
 func _build_result_snapshot() -> Dictionary:
 	var summary := FootballMatchRulesScript.build_match_stats_summary(match_stats)
@@ -2031,64 +1780,22 @@ func _sanitize_match_mode(next_match_mode_id: StringName) -> StringName:
 	return next_match_mode_id if MATCH_MODE_IDS.has(next_match_mode_id) else MATCH_MODE_TIMER
 
 func _update_stadium_scoreboards(delta: float) -> void:
-	stadium_scoreboard_elapsed += delta
-	if stadium_scoreboard_elapsed < STADIUM_SCOREBOARD_INTERVAL_SECONDS:
-		return
-	stadium_scoreboard_elapsed = 0.0
-	var player_kit_code := _get_kit_code(selected_appearance.country_kit_id)
-	var bot_kit_code := _get_kit_code(bot_appearance.country_kit_id)
-	for side_name in ["North", "South"]:
-		var content_changed := false
-		var score_label := _get_stadium_scoreboard_score_label(side_name)
-		if score_label != null:
-			var next_score_text := "%s %d - %d %s" % [player_kit_code, player_score, bot_score, bot_kit_code]
-			if score_label.text != next_score_text:
-				score_label.text = next_score_text
-				content_changed = true
-		var phase_label_node := _get_stadium_scoreboard_phase_label(side_name)
-		if phase_label_node != null:
-			var next_phase_text := _get_stadium_scoreboard_phase_text()
-			if phase_label_node.text != next_phase_text:
-				phase_label_node.text = next_phase_text
-				content_changed = true
-		if content_changed:
-			_request_stadium_scoreboard_update(side_name)
+	FootballScoreboardControllerScript.update(self, delta, RenderProfileScript)
 
 func _get_stadium_scoreboard_score_label(side_name: String) -> Label:
-	if not stadium_scoreboard_score_labels.has(side_name):
-		stadium_scoreboard_score_labels[side_name] = get_node_or_null("WorldCupScoreboard%sViewport/ScoreRoot/ScoreLabel" % side_name)
-	return stadium_scoreboard_score_labels.get(side_name) as Label
+	return FootballScoreboardControllerScript.get_score_label(self, side_name)
 
 func _get_stadium_scoreboard_phase_label(side_name: String) -> Label:
-	if not stadium_scoreboard_phase_labels.has(side_name):
-		stadium_scoreboard_phase_labels[side_name] = get_node_or_null("WorldCupScoreboard%sViewport/ScoreRoot/PhaseLabel" % side_name)
-	return stadium_scoreboard_phase_labels.get(side_name) as Label
+	return FootballScoreboardControllerScript.get_phase_label(self, side_name)
 
 func _get_stadium_scoreboard_viewport(side_name: String) -> SubViewport:
-	if not stadium_scoreboard_viewports.has(side_name):
-		stadium_scoreboard_viewports[side_name] = get_node_or_null("WorldCupScoreboard%sViewport" % side_name)
-	return stadium_scoreboard_viewports.get(side_name) as SubViewport
+	return FootballScoreboardControllerScript.get_viewport(self, side_name)
 
 func _request_stadium_scoreboard_update(side_name: String) -> void:
-	if not RenderProfileScript.is_web_platform():
-		return
-	var viewport := _get_stadium_scoreboard_viewport(side_name)
-	if viewport == null:
-		return
-	viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	FootballScoreboardControllerScript.request_update(self, side_name, RenderProfileScript)
 
 func _get_stadium_scoreboard_phase_text() -> String:
-	if match_over:
-		return "FIM DE JOGO"
-	if golden_goal_active:
-		return "GOLDEN GOAL"
-	if phase_label == &"goal":
-		return "GOL!"
-	if phase_label == &"intro":
-		return "FUTEBOL 1x1"
-	if phase_label == &"kickoff" or phase_label == &"reset":
-		return "SAIDA"
-	return "AO VIVO"
+	return FootballScoreboardControllerScript.get_phase_text(self)
 
 func _start_kickoff_countdown() -> void:
 	debug_kickoff_countdown_start_count += 1
@@ -2253,162 +1960,19 @@ func _mark_first_runtime_frame() -> void:
 	PerfProbeScript.mark(self, "football.first_frame")
 
 func _maybe_quit_after_perf_duration() -> void:
-	if not PerfProbeScript.is_enabled(self):
-		return
-	var quit_after := PerfProbeScript.get_quit_after_seconds(self)
-	if quit_after <= 0.0:
-		return
-	if PerfProbeScript.get_elapsed_seconds(self) < quit_after:
-		return
-	PerfProbeScript.mark(self, "session.quit_after", "seconds=%.2f" % quit_after)
-	get_tree().quit()
+	FootballPerfScenarioScript.maybe_quit_after_duration(self, PerfProbeScript)
 
 func _update_perf_stability_sampling(delta: float) -> void:
-	if not PerfProbeScript.is_stability_enabled(self):
-		return
-	perf_stability_sample_elapsed += delta
-	if perf_stability_sample_elapsed < PERF_STABILITY_SAMPLE_INTERVAL_SECONDS:
-		return
-	perf_stability_sample_elapsed = 0.0
-	PerfProbeScript.log_stability_sample(self, self, _build_perf_stability_extra_counts())
+	FootballPerfScenarioScript.update_stability_sampling(self, delta, PerfProbeScript, FootballFieldBuilderScript)
 
 func _build_perf_stability_extra_counts() -> Dictionary:
-	var counts := FootballFieldBuilderScript.debug_get_static_cache_counts()
-	counts["boost_pad_areas"] = boost_pad_areas.size()
-	counts["jump_pad_areas"] = jump_pad_areas.size()
-	counts["stadium_scoreboard_viewports"] = stadium_scoreboard_viewports.size()
-	counts["perf_scenario_step"] = perf_scenario_step
-	counts["match_over"] = 1 if match_over else 0
-	counts["goal_reset_active"] = 1 if goal_reset_timer > 0.0 else 0
-	counts["feedback_active_effects"] = feedback.debug_active_effect_count() if feedback != null else 0
-	return counts
+	return FootballPerfScenarioScript.build_stability_extra_counts(self, FootballFieldBuilderScript)
 
 func _start_perf_scenario() -> void:
-	perf_scenario_active = true
-	perf_scenario_elapsed = -PERF_SCENARIO_INITIAL_DELAY
-	perf_scenario_step = -1
-	PerfProbeScript.mark(self, "perf_scenario.start")
+	FootballPerfScenarioScript.start(self, PerfProbeScript)
 
 func _update_perf_scenario(delta: float) -> void:
-	perf_scenario_elapsed += delta
-	var next_step := int(floorf(perf_scenario_elapsed / PERF_SCENARIO_STEP_INTERVAL))
-	if next_step == perf_scenario_step:
-		return
-	perf_scenario_step = next_step
-	_run_perf_scenario_step(next_step)
-
-func _run_perf_scenario_step(step_index: int) -> void:
-	match step_index:
-		0:
-			if not _is_perf_feedback_step_enabled(&"whistle"):
-				PerfProbeScript.mark(self, "perf_scenario.step", "action=whistle skipped=true")
-				return
-			_set_menu_open(false)
-			debug_finish_kickoff_countdown()
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=whistle")
-			if feedback != null:
-				feedback.play_referee_whistle(ball.global_position if ball != null else Vector3.ZERO)
-		1:
-			if not _is_perf_feedback_step_enabled(&"confetti"):
-				PerfProbeScript.mark(self, "perf_scenario.step", "action=bot_goal_confetti skipped=true")
-				return
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=bot_goal_confetti")
-			debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_SOUTH + 0.35))
-			_process_goal_detection()
-		2:
-			if not _is_perf_feedback_step_enabled(&"kick"):
-				PerfProbeScript.mark(self, "perf_scenario.step", "action=strong_kick skipped=true")
-				return
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=strong_kick")
-			debug_finish_kickoff_countdown()
-			debug_force_ball_position(player.global_position + (-player.global_transform.basis.z * 1.2) + Vector3.UP * 0.55)
-			_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, true)
-		3:
-			if not _is_perf_feedback_step_enabled(&"countdown"):
-				PerfProbeScript.mark(self, "perf_scenario.step", "action=countdown skipped=true")
-				return
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=countdown")
-			if hud != null:
-				hud.show_countdown("2", 0.35)
-			if feedback != null:
-				feedback.play_countdown_tick(false)
-		4:
-			if not _is_perf_feedback_step_enabled(&"kick"):
-				PerfProbeScript.mark(self, "perf_scenario.step", "action=super_fireball skipped=true")
-				return
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=super_fireball")
-			debug_finish_kickoff_countdown()
-			debug_set_player_super_meter(SUPER_METER_MAX)
-			debug_force_ball_position(player.global_position + (-player.global_transform.basis.z * 1.0) + Vector3.UP * 0.55)
-			_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), SUPER_SHOT_FORCE, SUPER_SHOT_LIFT, true, true)
-		5:
-			if not _is_perf_feedback_step_enabled(&"jump_pad"):
-				PerfProbeScript.mark(self, "perf_scenario.step", "action=jump_pad skipped=true")
-				return
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=jump_pad")
-			if not jump_pad_areas.is_empty() and player != null:
-				player.global_position = jump_pad_areas[0].global_position
-				_update_arcade_field(0.1)
-		6:
-			if not _is_perf_feedback_step_enabled(&"result"):
-				PerfProbeScript.mark(self, "perf_scenario.step", "action=result skipped=true")
-				return
-			_set_menu_open(false)
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=result")
-			debug_set_score(2, 0)
-			debug_force_ball_position(Vector3(0.0, 0.68, GOAL_LINE_NORTH - 0.35))
-			_process_goal_detection()
-		7:
-			if not _is_perf_feedback_step_enabled(&"result"):
-				PerfProbeScript.mark(self, "perf_scenario.step", "action=rematch skipped=true")
-				return
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=rematch")
-			PerfProbeScript.mark(self, "event.rematch")
-			restart_match()
-			debug_finish_kickoff_countdown()
-		_:
-			PerfProbeScript.mark(self, "perf_scenario.step", "action=coast index=%d" % step_index)
-
-func _is_perf_feedback_step_enabled(effect_key: StringName) -> bool:
-	if not RenderProfileScript.is_web_platform():
-		return true
-	_load_perf_feedback_scenario_filter()
-	if web_feedback_scenario_allow_all:
-		return true
-	return web_feedback_scenario_enabled.has(str(effect_key))
-
-func _load_perf_feedback_scenario_filter() -> void:
-	if web_feedback_scenario_filter_loaded:
-		return
-	web_feedback_scenario_filter_loaded = true
-	web_feedback_scenario_enabled.clear()
-	web_feedback_scenario_allow_all = false
-	var query_value := ""
-	if RenderProfileScript.is_web_platform():
-		var script := "(new URLSearchParams(window.location.search)).get('%s') || ''" % WEB_FEEDBACK_QUERY_KEY
-		query_value = str(JavaScriptBridge.eval(script, true)).strip_edges().to_lower()
-	if query_value.is_empty():
-		_enable_default_perf_feedback_steps()
-		PerfProbeScript.mark(self, "perf_scenario.feedback_filter", "mode=default effects=%s" % ",".join(WEB_DEFAULT_FEEDBACK_EFFECTS))
-		return
-	if query_value == "all":
-		web_feedback_scenario_allow_all = true
-		PerfProbeScript.mark(self, "perf_scenario.feedback_filter", "mode=all")
-		return
-	if query_value == "none":
-		web_feedback_scenario_allow_all = false
-		PerfProbeScript.mark(self, "perf_scenario.feedback_filter", "mode=none")
-		return
-	web_feedback_scenario_allow_all = false
-	for part in query_value.split(",", false):
-		var effect := part.strip_edges()
-		if not effect.is_empty():
-			web_feedback_scenario_enabled[effect] = true
-	PerfProbeScript.mark(self, "perf_scenario.feedback_filter", "mode=list effects=%s" % query_value)
-
-func _enable_default_perf_feedback_steps() -> void:
-	for effect in WEB_DEFAULT_FEEDBACK_EFFECTS:
-		web_feedback_scenario_enabled[str(effect)] = true
+	FootballPerfScenarioScript.update(self, delta, PerfProbeScript, RenderProfileScript)
 
 func _build_kickoff_marker(parent: Node3D) -> void:
 	kickoff_marker = MeshInstance3D.new()

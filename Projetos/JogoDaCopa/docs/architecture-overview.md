@@ -5,7 +5,12 @@
 ## Ownership
 
 - `modes/menu/`: project entry and football minigame launch.
-- `modes/football/`: field assembly, stadium/arena primitive composition, score state, height-aware goal detection, loose-ball contact, kicks, boost snapshot and match lifecycle.
+- `modes/football/`: football mode orchestration, field assembly, stadium/arena primitive composition, score state, height-aware goal detection, loose-ball contact, kicks, boost snapshot and match lifecycle.
+  - `football_root.gd`: facade/orchestrator for scene lifecycle, runtime wiring, debug API and gameplay loop.
+  - `football_world_environment.gd`: night `WorldEnvironment` and stadium key light construction.
+  - `football_capture_director.gd`: capture-scene meta handling and evidence camera setup.
+  - `football_scoreboard_controller.gd`: stadium scoreboard label/viewport cache and update cadence.
+  - `football_perf_scenario.gd`: perf probe scenario steps, feedback filtering and stability sample extras.
 - `modes/shared/`: runtime primitive creation.
 - `gameplay/avatar/`: procedural humanoid avatars, skin tones and country-inspired kits.
 - `gameplay/combat/`: reused character body, health and knockback base.
