@@ -7,19 +7,20 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1` publicado; aguardando retest humano) + `Projetos/draxos-mobile/` (candidato local Arena UX/readability/recovery validado; aguardando prova humana)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1` publicado; Track 09A integrada localmente; aguardando retest humano) + `Projetos/draxos-mobile/` (candidato local Arena UX/readability/recovery validado; aguardando prova humana)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK08A_PUBLICADO_AGUARDANDO_RETEST`
-- Marker: `JOGO_DA_COPA_SUPER_CAMPEAO_V1_2_1_PUBLICADO_RETEST`
+- Status: `P2_IMPLEMENTACAO - TRACK09A_LOCAL_INTEGRADO_AGUARDANDO_RETEST`
+- Marker: `JOGO_DA_COPA_TRACK09A_LOCAL_INTEGRADO_RETEST_PUBLICO_PENDENTE`
 - Baseline: `Super Campeao` Web publico em `v1.2.1+6ef3074c` (`web/v1-copa-arena-futebol-20260614-6ef3074c`) na URL `https://copa-arena-futebol.pages.dev/`; gates remotos 08A PASS.
 - Publicacao: Track 08A corrigiu o hitch Web de feedback de gol sem mudar gameplay; menu, primeiro minuto, estabilidade 5min e luma remotos passaram.
+- Refator local: Track 09A extraiu helpers de `FootballRoot` (`2280 -> 1862` linhas) com validate/export/Web smoke PASS, sem mudanca de gameplay ou publicacao.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: retest humano do Fabio + tester externo na URL publica, cobrindo loading/menu, ESC, HUD/scorebug e primeiro minuto.
+- Proximo passo: retest humano do Fabio + tester externo na URL publica, cobrindo loading/menu, ESC, HUD/scorebug e primeiro minuto; depois decidir se a Track 09A segue para publicacao.
 
 ## draxos-roguelike-cardgame
 
