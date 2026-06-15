@@ -6,6 +6,7 @@ const BotController = preload("res://gameplay/bot/basic_duel_bot.gd")
 const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 const ArenaDuelPitLayoutBuilderScript = preload("res://modes/arena/arena_duel_pit_layout_builder.gd")
+const ArenaRelayFoundryLayoutBuilderScript = preload("res://modes/arena/arena_relay_foundry_layout_builder.gd")
 const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
@@ -261,6 +262,8 @@ func _build_active_layout() -> void:
 	match active_layout.get("builder", active_layout_id):
 		ArenaLayoutCatalogScript.DUEL_PIT_ID:
 			layout_result = ArenaDuelPitLayoutBuilderScript.build(self, active_layout)
+		ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID:
+			layout_result = ArenaRelayFoundryLayoutBuilderScript.build(self, active_layout)
 		_:
 			layout_result = ArenaDuelPitLayoutBuilderScript.build(self, active_layout)
 	for pad: Dictionary in layout_result.get("jump_pads", []):
