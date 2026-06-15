@@ -7,19 +7,19 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+ff9cb389` publicado; retest humano aceito; Track 09F local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado; gates remotos 09F PASS no rerun; retest humano pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`, `Projetos/FpsPlayground/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09F_LOCAL_VALIDADO`
-- Marker: `JOGO_DA_COPA_TRACK09F_LOCAL_VALIDADO`
-- Baseline publico: `Super Campeao v1.2.1+ff9cb389` (`web/v1-copa-arena-futebol-20260615-ff9cb389`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09A PASS e retest humano aceito.
-- Refator atual: Track 09F extraiu boost pads e jump pads para `football_arcade_field_controller.gd`; `FootballRoot` medido nesta base `1362 -> 1295`; validate/export/Web boot local PASS.
+- Status: `P2_IMPLEMENTACAO - TRACK09F_PUBLICADO_RETEST_PENDENTE`
+- Marker: `JOGO_DA_COPA_TRACK09F_PUBLICADO_RETEST_PENDENTE`
+- Baseline publico: `Super Campeao v1.2.1+a75cfe57` (`web/v1-copa-arena-futebol-20260615-a75cfe57`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09F PASS no rerun, retest humano pendente.
+- Refator atual: Track 09F extraiu boost pads e jump pads para `football_arcade_field_controller.gd`; `FootballRoot` medido nesta base `1362 -> 1295`; publicacao cumulativa 09A->09F validada.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: decidir publish da 09F ou continuar a proxima reducao estreita do `FootballRoot`.
+- Proximo passo: Fabio/tester retestar a URL publica 09F; depois escolher a proxima reducao estreita do `FootballRoot`.
 
 ## draxos-roguelike-cardgame
 

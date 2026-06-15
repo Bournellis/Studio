@@ -1,0 +1,16 @@
+﻿{
+    "schema_version":  "jogodacopa_track09f_luma_gate_v1",
+    "label":  "09f-remote-night-luma-gate-a75cfe57",
+    "source_screenshot":  "D:\\Estudio-worktrees\\JogoDaCopa--codex--publish-track09f\\Projetos\\JogoDaCopa\\docs\\playtest-reports\\track-09f-data\\09f-remote-stability-5min-rerun-a75cfe57.png",
+    "sample_region":  {
+                          "x_start_ratio":  0.62,
+                          "x_end_ratio":  0.96,
+                          "y_start_ratio":  0.04,
+                          "y_end_ratio":  0.28,
+                          "step_px":  6,
+                          "sample_count":  4796
+                      },
+    "threshold_luma_0_255":  90,
+    "luma_0_255":  6.501,
+    "passed":  true
+}

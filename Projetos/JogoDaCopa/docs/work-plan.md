@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09F_LOCAL_VALIDADO`
+- Status: `JOGO_DA_COPA_TRACK09F_PUBLICADO_RETEST_PENDENTE`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -28,19 +28,19 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09C FootballRoot Runtime Spawner V1 extracted runtime node creation/wiring into `football_runtime_spawner.gd`; local validate, Web export and Web boot smoke passed.
 - Track 09D Football Match Flow Controller V1 extracted kickoff/reset/countdown/input lock flow into `football_match_flow_controller.gd`; local validate, Web export and Web boot smoke passed.
 - Track 09E Football Match Presentation Controller V1 extracted HUD/result presentation snapshots into `football_match_presentation_controller.gd`; local validate, Web export and Web boot smoke passed.
-- Track 09F Football Arcade Field Controller V1 extracted boost pad and jump pad field orchestration into `football_arcade_field_controller.gd`; local validate, Web export and Web boot smoke passed.
+- Track 09F Football Arcade Field Controller V1 extracted boost pad and jump pad field orchestration into `football_arcade_field_controller.gd`; published `Super Campeao v1.2.1+a75cfe57` after local validate/export and remote menu, first-minute, stability rerun and night luma gates passed.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Decide whether to publish Track 09F or continue the FootballRoot reduction series with another narrow extraction, using the public `Super Campeao v1.2.1+ff9cb389` as the stable gameplay baseline and keeping Web gates green.
+Run human retest on public `Super Campeao v1.2.1+a75cfe57`; after acceptance, continue the FootballRoot reduction series with another narrow extraction and keep Web gates green.
 
 Focus:
 
 - Prefer orchestration slices that do not alter gameplay, physics, input, bot decisions or assets.
 - Preserve existing GUT coverage and add/retarget focused tests when moving public helper contracts.
-- Keep Web validation in the loop: `tools/validate.gd`, Web export, gzip gate and at least a local Web boot smoke for loading-sensitive changes.
+- Keep Web validation in the loop: `tools/validate.gd`, Web export, gzip gate, local Web boot smoke for loading-sensitive changes and remote 5-minute stability before publication.
 
 ## Out Of Scope
 

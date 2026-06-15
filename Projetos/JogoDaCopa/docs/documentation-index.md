@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09F_LOCAL_VALIDADO`
+- Status: `JOGO_DA_COPA_TRACK09F_PUBLICADO_RETEST_PENDENTE`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -19,8 +19,9 @@
 
 ## Latest Evidence
 
+- Track 09F publication closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-publication-v1.md`
+- Track 09F public evidence: `playtest-reports/track-09f-data/`
 - Track 09F local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-arcade-field-controller-v1.md`
-- Track 09F local Web evidence: `playtest-reports/track-09f-data/`
 - Track 09E local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09e-match-presentation-controller-v1.md`
 - Track 09E local Web evidence: `playtest-reports/track-09e-data/`
 - Track 09D local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09d-match-flow-controller-v1.md`
@@ -29,7 +30,7 @@
 - Track 09C local Web evidence: `playtest-reports/track-09c-data/`
 - Track 09B local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09b-web-loading-controller-v1.md`
 - Track 09B local Web evidence: `playtest-reports/track-09b-data/`
-- Track 09A public evidence: `playtest-reports/track-09a-data/`
+- Track 09A previous public evidence: `playtest-reports/track-09a-data/`
 - Current public release summary: `release-history.md`
 
 ## References
