@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 05 - Quake Duel Route Control Bot V1`
+- Active stage: `Track 05B - Long Jump Pad First Try V1`
 - Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK05_QUAKE_DUEL_ROUTE_CONTROL_BOT_READY_FOR_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK05B_LONG_JUMP_PAD_FIRST_TRY_READY_FOR_SMOKE`
 
 ## Current Truth
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment, then Fabio reported the bot still prioritized fighting/strafe over route movement and failed the long jump pad.
+Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment. Track 05 route-control bot was approved by Fabio overall; Track 05B fixes the remaining first-attempt long jump pad failure in `Relay Foundry V1`.
 
 ## Track 01 Delivered
 
@@ -75,7 +75,7 @@ Delivered:
 - Kept bot improvement focused on movement/context usage, not unfair aim/damage tuning.
 - Added automated coverage for catalog, menu selection and runtime multi-arena bot context.
 
-## Active Track
+## Previous Track
 
 `Track 05 - Quake Duel Route Control Bot V1`
 
@@ -93,6 +93,24 @@ Delivered:
 - Reduced default strafe/cover dominance in engage/cooldown flow.
 - Added jump pad flight and landing commitment state.
 - Added tests for healthy overcharge priority, shooting without canceling item route and jump pad landing commitment.
+
+## Active Track
+
+`Track 05B - Long Jump Pad First Try V1`
+
+Goal:
+
+- Make the `Relay Foundry V1` long jump pad reliable on the first attempt.
+- Preserve Track 05 route-first movement and combat overlay shooting.
+- Keep long pad feel controlled for the player.
+
+Delivered:
+
+- Changed jump pad launch to derive horizontal speed from route distance and actor trigger position.
+- Added a bot approach lock near jump pads so local dodge/strafe does not cut the entry angle.
+- Reduced bot air steering during committed jump pad flight.
+- Added automated coverage for route-distance launch and first-attempt long jump completion in `Relay Foundry V1`.
+- Updated validation and smoke documentation for first-trigger long pad checks.
 
 ## Previous Track
 
@@ -137,10 +155,10 @@ Latest result:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 28/28, 229 asserts
+# PASS, GUT 30/30, 238 asserts
 ```
 
-Manual smoke lives in `docs/validation.md`; Track 05 smoke should focus on route-first movement, long jump pad completion, HP/boost priority by health state and shooting during movement without route cancellation.
+Manual smoke lives in `docs/validation.md`; Track 05B smoke should focus on first-trigger long jump pad completion in `Relay Foundry V1`, player pad feel, HP/boost priorities and shooting during movement without route cancellation.
 
 ## Read Next
 
@@ -156,3 +174,4 @@ Manual smoke lives in `docs/validation.md`; Track 05 smoke should focus on route
 10. `implementation/tracks/track-04-arena-movement-flow-bot-navigation-v1/current-status.md`
 11. `implementation/tracks/track-04b-bot-pickup-commitment-v1/current-status.md`
 12. `implementation/tracks/track-05-quake-duel-route-control-bot-v1/current-status.md`
+13. `implementation/tracks/track-05b-long-jump-pad-first-try-v1/current-status.md`

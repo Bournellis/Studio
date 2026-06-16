@@ -1,6 +1,6 @@
 # Track 05B - Long Jump Pad First Try V1
 
-- Status: `IN_PROGRESS`
+- Status: `READY_FOR_HUMAN_SMOKE`
 - Started: `2026-06-15`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track05b-long-jump-pad-first-try-v1`
@@ -52,3 +52,28 @@ git diff --check
 powershell -ExecutionPolicy Bypass -File D:\Estudio\tools\check_doc_drift.ps1
 git status --short
 ```
+
+## Delivered
+
+- Jump pad launch now uses actor trigger position and route-distance speed calculation instead of one fixed horizontal speed.
+- Long routes are clamped to a controlled maximum so regular pads stay readable while `Relay Foundry V1` can clear its longer gap.
+- The bot locks its pad approach near the trigger and skips local projectile dodge while entering or flying committed jump pad routes.
+- Bot air steering is reduced during committed jump pad flight so the first launch is not invalidated by full-speed strafe.
+- Automated coverage now checks route-distance launch and first-attempt long jump pad completion in `Relay Foundry V1`.
+- Smoke documentation now includes first-trigger long pad checks for bot and player feel.
+
+## Validation
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
+# PASS, GUT 30/30, 238 asserts
+```
+
+Known GUT UID/text-path warnings can appear on fresh imports and are accepted when the suite passes.
+
+## Handoff
+
+- Ready for Fabio/tester smoke focused on the first long jump pad attempt in `Relay Foundry V1`.
+- Confirm the bot reaches the landing platform without needing to fall/reset and try the same pad a second time.
+- Confirm the player still feels controlled on long pads.
+- PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.

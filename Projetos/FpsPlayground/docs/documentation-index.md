@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK05_QUAKE_DUEL_ROUTE_CONTROL_BOT_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK05B_LONG_JUMP_PAD_FIRST_TRY_READY_FOR_SMOKE`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
