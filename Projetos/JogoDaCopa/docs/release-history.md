@@ -36,7 +36,7 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 - Demais checks da estabilidade: PASS em counters/caches Godot, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0` e pior janela 5s `129.8 FPS`.
 - Gate remoto de luminancia: PASS, `luma_0_255=6.525 < 90` na captura `09h-remote-stability-5min-4a323fab.png`.
 - Observacao: margem Web heap ficou verde, mas apertada; manter gate 5min obrigatorio em toda proxima publicacao.
-- Proximo passo: reteste humano do Fabio/tester na URL publica antes de nova reducao do `FootballRoot`.
+- Reteste humano: aprovado por Fabio/tester antes da Track 09I; proxima publicacao deve repetir os gates remoto 5min e reteste humano.
 
 ## 2026-06-15 - Football Match Resolution Controller 09G - Tentativa Bloqueada
 

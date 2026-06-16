@@ -1,6 +1,6 @@
 # JogoDaCopa Publication Readiness
 
-Current state: `Super Campeao v1.2.1+4a323fab` is published publicly on Cloudflare Pages. Track 09H is the current public baseline after passing remote menu, first-minute, 5-minute stability and night luma gates. Human retest by Fabio/tester is pending before the next reduction.
+Current state: `Super Campeao v1.2.1+4a323fab` is published publicly on Cloudflare Pages. Track 09H is the current public baseline after passing remote menu, first-minute, 5-minute stability, night luma and human retest gates. Track 09I is local-validated only and is not yet published.
 
 ## Product Identity
 
@@ -63,7 +63,7 @@ Current state: `Super Campeao v1.2.1+4a323fab` is published publicly on Cloudfla
 
 ## Track 09H Web Heap Hotfix - 2026-06-15
 
-- Candidate status: published as the current public baseline; human retest pending.
+- Candidate status: published as the current public baseline; human retest approved by Fabio/tester before Track 09I.
 - Change: removed per-frame `Dictionary` allocation from `FootballMatchResolutionController.update_match_clock()`.
 - `tools/validate.gd`: PASS, `104` tests, `1826` asserts.
 - Web export: PASS, single-threaded `GODOT_THREADS_ENABLED=false`.
@@ -75,11 +75,11 @@ Current state: `Super Campeao v1.2.1+4a323fab` is published publicly on Cloudfla
 - Remote stability 5min: PASS, heap final `+9.97%`, counters/caches stable, worst 5s window `129.8 FPS`.
 - Remote night luma: PASS, `6.525 < 90`.
 - Evidence: `docs/playtest-reports/track-09h-web-heap-hotfix.md` and `docs/playtest-reports/track-09h-data/`.
-- Next publication gate: human retest on the public URL before resuming reduction.
+- Publication follow-up: human retest on the public URL was approved before Track 09I; keep the same human gate for the next public release.
 
 ## Known Limitations
 
-- Track 09H is published and automated remote gates are green; human retest is still pending.
+- Track 09H is published and automated remote plus human gates are green; Track 09I remains local-only until an explicit publication step.
 - Web heap margin is green but tight (`+9.97%` against `<10%`); keep the 5-minute stability gate mandatory for every release and treat near-threshold attempts as audit signals.
 - Desktop browser is the official Web V1 surface; mobile browser can be observed manually, but is not an official support target in this release.
 - Country kits and branding are generic/inspired; no official FIFA, World Cup, federation or club logos are included.

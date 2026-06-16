@@ -1,25 +1,25 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-06-15`
+- Ultima atualizacao: `2026-06-16`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 - Regra de tamanho: maximo ~12 linhas por projeto. Historia de pacotes/validacoes vai para os arquivos de historico do projeto (`implementation/tracks/`, `docs/release-history.md`, Kanban Done), nunca para este snapshot.
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+4a323fab` publicado; gates remotos 09H PASS; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization planejada)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+4a323fab` publico aprovado; Track 09I local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization planejada)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09H_WEB_HEAP_HOTFIX_PUBLISHED_RETEST_PENDING`
-- Marker: `JOGO_DA_COPA_TRACK09H_WEB_HEAP_HOTFIX_PUBLISHED_RETEST_PENDING`
-- Baseline publico: `Super Campeao v1.2.1+4a323fab` (`web/v1-copa-arena-futebol-20260615-4a323fab`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09H PASS, reteste humano pendente.
-- Refator atual: Track 09G extraiu resolucao de partida; Track 09H removeu alocacao per-frame no clock do timer e publicou com estabilidade remota 5min PASS (`+9.97%`, limite `<10%`).
+- Status: `P2_IMPLEMENTACAO - TRACK09I_KICK_SUPER_CONTROLLER_LOCAL_VALIDATED`
+- Marker: `JOGO_DA_COPA_TRACK09I_KICK_SUPER_CONTROLLER_LOCAL_VALIDATED`
+- Baseline publico: `Super Campeao v1.2.1+4a323fab` (`web/v1-copa-arena-futebol-20260615-4a323fab`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09H PASS e reteste humano aprovado.
+- Refator atual: Track 09I extraiu kick/SUPER/bot kick routing para `football_kick_super_controller.gd`; `FootballRoot` `995 -> 943`; validate/export/Web boot local PASS.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester fazer reteste humano da 09H publica antes de qualquer nova reducao.
+- Proximo passo: Fabio fazer push via GitHub Desktop; depois decidir publicar 09I ou seguir Track 09J local de contato/posse de bola.
 
 ## draxos-roguelike-cardgame
 
