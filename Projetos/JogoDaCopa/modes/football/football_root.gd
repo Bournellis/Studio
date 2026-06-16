@@ -6,6 +6,7 @@ const FootballRuntimeSpawnerScript = preload("res://modes/football/football_runt
 const FootballMatchFlowControllerScript = preload("res://modes/football/football_match_flow_controller.gd")
 const FootballMatchPresentationControllerScript = preload("res://modes/football/football_match_presentation_controller.gd")
 const FootballMatchResolutionControllerScript = preload("res://modes/football/football_match_resolution_controller.gd")
+const FootballKickSuperControllerScript = preload("res://modes/football/football_kick_super_controller.gd")
 const FootballArcadeFieldControllerScript = preload("res://modes/football/football_arcade_field_controller.gd")
 const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
@@ -637,72 +638,19 @@ func _restart_play(after_goal: bool, start_countdown: bool = true) -> void:
 	FootballMatchFlowControllerScript.restart_play(self, after_goal, start_countdown)
 
 func _on_player_kick_requested(_origin: Vector3, _direction: Vector3, _damage: float, _knockback: float) -> void:
-	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_KICK_FORCE, PLAYER_KICK_LIFT, false)
+	FootballKickSuperControllerScript.on_player_kick_requested(self, _origin, _direction, _damage, _knockback)
 
 func _on_player_charged_kick_requested(_origin: Vector3, _direction: Vector3, charge_fraction: float, _held_seconds: float) -> void:
-	var clamped_charge := clampf(charge_fraction, 0.0, 1.0)
-	var force := PLAYER_KICK_FORCE * lerpf(1.0, CHARGED_KICK_FORCE_MULTIPLIER, clamped_charge)
-	var lift := PLAYER_KICK_LIFT + CHARGED_KICK_LIFT_BONUS * clamped_charge
-	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), force, lift, false)
+	FootballKickSuperControllerScript.on_player_charged_kick_requested(self, _origin, _direction, charge_fraction, _held_seconds)
 
 func _on_player_strong_kick_requested(_origin: Vector3, _direction: Vector3, _damage: float, _knockback: float, _speed: float, _radius: float, _overcharged: bool) -> void:
-	if _can_player_use_super():
-		_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), SUPER_SHOT_FORCE, SUPER_SHOT_LIFT, true, true)
-		return
-	_try_player_kick(_get_player_kick_origin(), _get_player_kick_direction(), PLAYER_STRONG_KICK_FORCE, PLAYER_STRONG_KICK_LIFT, true)
+	FootballKickSuperControllerScript.on_player_strong_kick_requested(self, _origin, _direction, _damage, _knockback, _speed, _radius, _overcharged)
 
 func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: float, strong: bool, super_shot: bool = false) -> void:
-	PerfProbeScript.mark(self, "event.player_kick_request", "strong=%s super=%s" % [str(strong), str(super_shot)])
-	if match_over or intro_open or menu_open or goal_reset_timer > 0.0 or kickoff_countdown_remaining > 0.0:
-		return
-	var connected := _can_reach_ball(origin, direction)
-	last_kick_assist_strength = _get_kick_assist_strength(origin, direction) if connected else 0.0
-	if player_avatar != null:
-		player_avatar.play_kick(strong)
-	if hud != null:
-		hud.show_kick(strong, connected, last_kick_assist_strength)
-	if not connected:
-		return
-	var kick_direction := _build_kick_direction(origin, direction)
-	_notify_player_touched_ball()
-	ball.kick(kick_direction, force, lift)
-	_record_shot_stat(&"player", super_shot)
-	if super_shot:
-		player_super_meter = 0.0
-		player_super_used_this_kickoff = true
-	else:
-		_add_player_super(SUPER_TOUCH_GAIN)
-	if feedback != null:
-		feedback.play_football_kick(ball.global_position, kick_direction, strong)
-	if chase_camera != null:
-		chase_camera.play_shake(0.2 if super_shot else (0.09 if strong else 0.045), 0.22 if super_shot else (0.18 if strong else 0.1))
+	FootballKickSuperControllerScript.try_player_kick(self, origin, direction, force, lift, strong, super_shot)
 
 func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, lift: float) -> void:
-	PerfProbeScript.mark(self, "event.bot_kick_request")
-	if match_over or intro_open or goal_reset_timer > 0.0 or kickoff_countdown_remaining > 0.0:
-		return
-	var to_ball: Vector3 = ball.global_position - origin
-	if to_ball.length() > bot.kick_range + 0.55:
-		return
-	if bot_avatar != null:
-		bot_avatar.play_kick(false)
-	var applied_force := force
-	var applied_lift := lift
-	var bot_super := _can_bot_use_super()
-	if bot_super:
-		bot_super_meter = 0.0
-		bot_super_used_this_kickoff = true
-		applied_force = SUPER_SHOT_FORCE
-		applied_lift = SUPER_SHOT_LIFT
-	_notify_ball_touched_by(&"bot")
-	ball.kick(direction, applied_force, applied_lift)
-	_record_shot_stat(&"bot", bot_super)
-	if not bot_super:
-		_add_bot_super(SUPER_TOUCH_GAIN)
-	if feedback != null:
-		feedback.play_football_kick(ball.global_position, direction, bot_super)
-	if chase_camera != null:
-		chase_camera.play_shake(0.16 if bot_super else 0.035, 0.2 if bot_super else 0.08)
+	FootballKickSuperControllerScript.on_bot_kick_requested(self, origin, direction, force, lift)
 
 func _update_player_ball_control(_delta: float) -> void:
 	if player == null or ball == null:
@@ -857,19 +805,19 @@ func _register_goal(player_scored: bool) -> void:
 	FootballMatchResolutionControllerScript.register_goal(self, player_scored)
 
 func _add_player_super(amount: float) -> void:
-	player_super_meter = clampf(player_super_meter + amount, 0.0, SUPER_METER_MAX)
+	FootballKickSuperControllerScript.add_player_super(self, amount)
 
 func _add_bot_super(amount: float) -> void:
-	bot_super_meter = clampf(bot_super_meter + amount * _get_bot_super_gain_multiplier(), 0.0, SUPER_METER_MAX)
+	FootballKickSuperControllerScript.add_bot_super(self, amount)
 
 func _can_player_use_super() -> bool:
-	return player_super_meter >= SUPER_METER_MAX and not player_super_used_this_kickoff
+	return FootballKickSuperControllerScript.can_player_use_super(self)
 
 func _can_bot_use_super() -> bool:
-	return bot_super_meter >= SUPER_METER_MAX and not bot_super_used_this_kickoff
+	return FootballKickSuperControllerScript.can_bot_use_super(self)
 
 func _get_bot_super_gain_multiplier() -> float:
-	return SUPER_BOT_HARD_GAIN_MULTIPLIER if bot_difficulty_id == &"hard" else 1.0
+	return FootballKickSuperControllerScript.get_bot_super_gain_multiplier(self)
 
 func _update_match_clock(delta: float) -> void:
 	FootballMatchResolutionControllerScript.update_match_clock(self, delta)
