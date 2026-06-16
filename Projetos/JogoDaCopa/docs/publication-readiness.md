@@ -1,6 +1,6 @@
 # JogoDaCopa Publication Readiness
 
-Current state: `Super Campeao v1.2.1+4a323fab` is published publicly on Cloudflare Pages. Track 09H is the current public baseline after passing remote menu, first-minute, 5-minute stability, night luma and human retest gates. Track 09I is local-validated only and is not yet published.
+Current state: `Super Campeao v1.2.1+7995b06c` is published publicly on Cloudflare Pages. Track 09I is the current public baseline after passing automated remote menu, first-minute, 5-minute stability and night luma gates. Human retest on the public 09I build is pending.
 
 ## Product Identity
 
@@ -13,20 +13,21 @@ Current state: `Super Campeao v1.2.1+4a323fab` is published publicly on Cloudfla
 - Windows preset: `Windows Desktop` in `export_presets.cfg`.
 - Web preset: `Web` in `export_presets.cfg`, single-threaded.
 
-## Current Web Publication - Track 09H - 2026-06-15
+## Current Web Publication - Track 09I - 2026-06-16
 
 - Cloudflare Pages project: `copa-arena-futebol`.
 - Public stable URL: `https://copa-arena-futebol.pages.dev/`.
-- Published preview URL: `https://7f8dcde1.copa-arena-futebol.pages.dev`.
-- Release root: `web/v1-copa-arena-futebol-20260615-4a323fab`.
-- Visible footer: `Super Campeao v1.2.1+4a323fab`.
+- Published preview URL: `https://76b6f219.copa-arena-futebol.pages.dev`.
+- Release root: `web/v1-copa-arena-futebol-20260616-7995b06c`.
+- Visible footer: `Super Campeao v1.2.1+7995b06c`.
 - Publication script: `tools/publish_web.ps1`.
-- Publication command: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260615-4a323fab -VisibleVersion v1.2.1 -EvidenceSubdir track-09h-data -EvidencePrefix 09h -DeployMessage "JogoDaCopa Track 09H Super Campeao v1.2.1 web/v1-copa-arena-futebol-20260615-4a323fab" -ConfirmRemoteMutation`.
-- Publication evidence: `docs/playtest-reports/track-09h-data/09h-publication-report-4a323fab.json`.
-- Remote menu evidence: `docs/playtest-reports/track-09h-data/09h-remote-menu-4a323fab.json` and `docs/playtest-reports/track-09h-data/09h-remote-menu-4a323fab.png`.
-- Remote first-minute evidence: `docs/playtest-reports/track-09h-data/09h-remote-first-minute-4a323fab.json` and `docs/playtest-reports/track-09h-data/09h-remote-first-minute-4a323fab.png`.
-- Remote 5-minute stability evidence: `docs/playtest-reports/track-09h-data/09h-remote-stability-5min-4a323fab.json` and `docs/playtest-reports/track-09h-data/09h-remote-stability-5min-4a323fab.png`.
-- Remote night luma evidence: `docs/playtest-reports/track-09h-data/09h-remote-night-luma-gate-4a323fab.json`.
+- Publication command: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260616-7995b06c -VisibleVersion v1.2.1 -EvidenceSubdir track-09i-data -EvidencePrefix 09i -DeployMessage "JogoDaCopa Track 09I Super Campeao v1.2.1 web/v1-copa-arena-futebol-20260616-7995b06c" -ConfirmRemoteMutation -SkipExport`.
+- Publication evidence: `docs/playtest-reports/track-09i-data/09i-publication-report-7995b06c.json`.
+- Package evidence: `docs/playtest-reports/track-09i-data/09i-package-artifacts-7995b06c.json`.
+- Remote menu evidence: `docs/playtest-reports/track-09i-data/09i-remote-menu-7995b06c.json` and `docs/playtest-reports/track-09i-data/09i-remote-menu-7995b06c.png`.
+- Remote first-minute evidence: `docs/playtest-reports/track-09i-data/09i-remote-first-minute-7995b06c.json` and `docs/playtest-reports/track-09i-data/09i-remote-first-minute-7995b06c.png`.
+- Remote 5-minute stability evidence: `docs/playtest-reports/track-09i-data/09i-remote-stability-5min-7995b06c.json` and `docs/playtest-reports/track-09i-data/09i-remote-stability-5min-7995b06c.png`.
+- Remote night luma evidence: `docs/playtest-reports/track-09i-data/09i-remote-night-luma-gate-7995b06c.json`.
 - No Cloudflare Access gate was observed; the public URL served the Godot app directly.
 
 ## Packaging
@@ -34,12 +35,12 @@ Current state: `Super Campeao v1.2.1+4a323fab` is published publicly on Cloudfla
 - Cloudflare Pages direct upload has a `25 MiB` per-file asset limit.
 - Raw `index.pck` and `index.wasm` exceed that limit, so the Pages package stores both files Brotli-compressed while preserving their public file names.
 - `_headers` serves `index.pck` and `index.wasm` with `Content-Encoding: br`.
-- Track 09H artifact sizes:
-  - raw `index.pck`: `27983140` bytes
+- Track 09I artifact sizes:
+  - raw `index.pck`: `27986352` bytes
   - raw `index.wasm`: `37695054` bytes
-  - packaged `index.pck`: `20826996` bytes, SHA256 `68d8c7f838ea40d4208f2801baa7a50f90d39091c58c955d5c924938613723c4`
+  - packaged `index.pck`: `20818039` bytes, SHA256 `4e83cdf88e7ed0648711329838292075d0dd8953cf3668c46bcf3aa2de61603b`
   - `index.wasm`: `6608968` bytes, SHA256 `6903dbdda02519655d94ef7fc0eb18e31336ac11b0f93a1abe696a654d2cf30f`
-  - Pages zip: `27620523` bytes, SHA256 `84a6fd8df3f7c655b976b5cf16cc95ea15b6b3771a43171513d229dffeed9511`
+  - Pages zip: `27618461` bytes, SHA256 `7ddd627c7d94a07443152d881d9877088b7af964071eef2831905bc7e9b6570c`
 
 ## Validation
 
@@ -47,7 +48,7 @@ Current state: `Super Campeao v1.2.1+4a323fab` is published publicly on Cloudfla
 - Web export: PASS, single-threaded `GODOT_THREADS_ENABLED=false`.
 - Remote menu: PASS, release root matched, `menu.ready.end` observed, page errors `0`, runtime console errors `0`.
 - Remote first minute: PASS, `firstMinuteHitches=0`, page errors `0`, runtime console errors `0`.
-- Remote stability 5 min: PASS, heap retained `43,664,158 -> 48,016,205` bytes (`+9.97%`) under the `<10%` gate, Godot object/node counters and caches stable, worst 5s window `129.8 FPS`.
+- Remote stability 5 min: PASS, heap retained `43,925,492 -> 48,010,927` bytes (`+9.30%`) under the `<10%` gate, Godot object/node counters and caches stable, worst 5s window `132.6 FPS`.
 - Remote night luma: PASS, `luma_0_255=6.525 < 90`.
 
 ## Track 09G Publication Attempt - 2026-06-15
@@ -63,7 +64,7 @@ Current state: `Super Campeao v1.2.1+4a323fab` is published publicly on Cloudfla
 
 ## Track 09H Web Heap Hotfix - 2026-06-15
 
-- Candidate status: published as the current public baseline; human retest approved by Fabio/tester before Track 09I.
+- Candidate status: previous public baseline; human retest approved by Fabio/tester before Track 09I.
 - Change: removed per-frame `Dictionary` allocation from `FootballMatchResolutionController.update_match_clock()`.
 - `tools/validate.gd`: PASS, `104` tests, `1826` asserts.
 - Web export: PASS, single-threaded `GODOT_THREADS_ENABLED=false`.
@@ -77,10 +78,24 @@ Current state: `Super Campeao v1.2.1+4a323fab` is published publicly on Cloudfla
 - Evidence: `docs/playtest-reports/track-09h-web-heap-hotfix.md` and `docs/playtest-reports/track-09h-data/`.
 - Publication follow-up: human retest on the public URL was approved before Track 09I; keep the same human gate for the next public release.
 
+## Track 09I Kick Super Controller Publication - 2026-06-16
+
+- Candidate status: published as the current public baseline; human retest on the public 09I build is pending.
+- Change: published the already validated extraction of player kick, charged/strong kick, SUPER spend/gain helpers and bot kick routing to `football_kick_super_controller.gd`.
+- `tools/validate.gd`: PASS, `104` tests, `1826` asserts.
+- Web export: PASS, single-threaded `GODOT_THREADS_ENABLED=false`.
+- Web gzip gate: PASS, `30.60 MiB / 50.00 MiB`.
+- Remote menu: PASS, release root matched, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote first minute: PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote stability 5min: PASS, heap final `+9.30%`, counters/caches stable, worst 5s window `132.6 FPS`.
+- Remote night luma: PASS, `6.525 < 90`.
+- Evidence: `docs/playtest-reports/track-09i-publication.md` and `docs/playtest-reports/track-09i-data/`.
+- Publication follow-up: Fabio/tester human retest on the public URL is required before opening the next reduction.
+
 ## Known Limitations
 
-- Track 09H is published and automated remote plus human gates are green; Track 09I remains local-only until an explicit publication step.
-- Web heap margin is green but tight (`+9.97%` against `<10%`); keep the 5-minute stability gate mandatory for every release and treat near-threshold attempts as audit signals.
+- Track 09I is published and automated remote gates are green; human retest is pending.
+- Web heap margin is green but tight (`+9.30%` against `<10%`); keep the 5-minute stability gate mandatory for every release and treat near-threshold attempts as audit signals.
 - Desktop browser is the official Web V1 surface; mobile browser can be observed manually, but is not an official support target in this release.
 - Country kits and branding are generic/inspired; no official FIFA, World Cup, federation or club logos are included.
 - No multiplayer, backend, analytics, custom domain, itch.io page or signed Windows release is included in this track.

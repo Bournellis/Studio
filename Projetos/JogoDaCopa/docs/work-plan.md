@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09I_KICK_SUPER_CONTROLLER_LOCAL_VALIDATED`
+- Status: `JOGO_DA_COPA_TRACK09I_PUBLICADO_RETEST_HUMANO_PENDENTE`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -31,13 +31,13 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09F Football Arcade Field Controller V1 extracted boost pad and jump pad field orchestration into `football_arcade_field_controller.gd`; published `Super Campeao v1.2.1+a75cfe57` after local validate/export and remote menu, first-minute, stability rerun and night luma gates passed; human retest was approved by Fabio.
 - Track 09G Football Match Resolution Controller V1 extracted match restart, goal reset, goal detection side effects, scoring orchestration, timer/golden goal, match finish and shot/goal stats into `football_match_resolution_controller.gd`; local validate, Web export, gzip gate and Web boot smoke passed; publication attempt passed menu and first-minute gates but failed remote 5-minute stability twice on JS/WASM heap (`+15.42%` and `+15.35%`), then rolled back to 09F.
 - Track 09H Web Heap Hotfix V1 removed a per-frame `Dictionary` allocation from the timer clock path in `football_match_resolution_controller.gd`; published `Super Campeao v1.2.1+4a323fab` after local validate/export, remote menu, first-minute, 5-minute stability and night luma gates passed.
-- Track 09I Kick Super Controller V1 extracted player kick requests, charged/strong kick routing, SUPER spend/gain helpers and bot kick routing into `football_kick_super_controller.gd`; `FootballRoot` in the current base fell from `995` to `943` lines; local validate, Web export, gzip gate and Web boot smoke passed.
+- Track 09I Kick Super Controller V1 extracted player kick requests, charged/strong kick routing, SUPER spend/gain helpers and bot kick routing into `football_kick_super_controller.gd`; `FootballRoot` in the current base fell from `995` to `943` lines; published `Super Campeao v1.2.1+7995b06c` after local validate/export, remote menu, first-minute, stability and night luma gates passed; human retest is pending.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Publish Track 09I only if the public build should receive this internal reduction now; otherwise continue with Track 09J as another local-only reduction. The current public baseline remains `Super Campeao v1.2.1+4a323fab`; Track 09I is local-validated and has no intended gameplay/UX delta.
+Fabio/tester should retest the public Track 09I build before any new reduction. After approval, open Track 09J as the next bounded `FootballRoot` reduction, likely around remaining ball-contact/possession surfaces that can be moved without gameplay, physics, input, bot, HUD or asset changes.
 
 Focus:
 
@@ -71,6 +71,9 @@ Focus:
 - Left loose-ball contact, dash/body contact, ball collision audio and `_physics_process` ordering in `FootballRoot` for a later bounded reduction.
 - Measured reduction in the current base: `FootballRoot` `995 -> 943` lines; new controller `76` lines.
 - Local gates passed: import headless, `tools/validate.gd`, Web export, gzip `30.60 MiB / 50.00 MiB`, Chrome local boot with `firstMinuteHitches=0`, `pageErrors=0` and `consoleErrorCount=0`.
+- Published as `Super Campeao v1.2.1+7995b06c` / `web/v1-copa-arena-futebol-20260616-7995b06c`.
+- Remote menu, first-minute, stability 5min and luma gates passed.
+- Human retest of the public 09I build is pending before Track 09J.
 
 ## Out Of Scope
 

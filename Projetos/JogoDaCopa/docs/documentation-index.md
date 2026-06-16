@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09I_KICK_SUPER_CONTROLLER_LOCAL_VALIDATED`
+- Status: `JOGO_DA_COPA_TRACK09I_PUBLICADO_RETEST_HUMANO_PENDENTE`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -19,8 +19,10 @@
 
 ## Latest Evidence
 
+- Track 09I publication closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-16_codex_jogodacopa_publish-track09i.md`
+- Track 09I publication report: `playtest-reports/track-09i-publication.md`
+- Track 09I publication evidence: `playtest-reports/track-09i-data/`
 - Track 09I local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-16_codex_jogodacopa_track09i-kick-super-controller-v1.md`
-- Track 09I local Web evidence: `playtest-reports/track-09i-data/`
 - Track 09H publication closure: `../../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09h-publication-v1.md`
 - Track 09H publication evidence: `playtest-reports/track-09h-data/`
 - Track 09G publication attempt and rollback: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09g-publication-v1.md`
@@ -48,6 +50,7 @@
 - `validation-profiles.md`
 - `publication-readiness.md`
 - `release-history.md`
+- `playtest-reports/track-09i-publication.md`
 - `playtest-reports/track-09i-data/`
 - `playtest-reports/track-09h-data/`
 - `playtest-reports/track-09g-data/`

@@ -7,19 +7,19 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+4a323fab` publico aprovado; Track 09I local validada) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization planejada)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization planejada)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09I_KICK_SUPER_CONTROLLER_LOCAL_VALIDATED`
-- Marker: `JOGO_DA_COPA_TRACK09I_KICK_SUPER_CONTROLLER_LOCAL_VALIDATED`
-- Baseline publico: `Super Campeao v1.2.1+4a323fab` (`web/v1-copa-arena-futebol-20260615-4a323fab`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09H PASS e reteste humano aprovado.
-- Refator atual: Track 09I extraiu kick/SUPER/bot kick routing para `football_kick_super_controller.gd`; `FootballRoot` `995 -> 943`; validate/export/Web boot local PASS.
+- Status: `P2_IMPLEMENTACAO - TRACK09I_PUBLICADO_RETEST_HUMANO_PENDENTE`
+- Marker: `JOGO_DA_COPA_TRACK09I_PUBLICADO_RETEST_HUMANO_PENDENTE`
+- Baseline publico: `Super Campeao v1.2.1+7995b06c` (`web/v1-copa-arena-futebol-20260616-7995b06c`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09I PASS.
+- Refator atual: Track 09I extraiu kick/SUPER/bot kick routing para `football_kick_super_controller.gd`; `FootballRoot` `995 -> 943`; publicado sem delta intencional de gameplay/UX.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio fazer push via GitHub Desktop; depois decidir publicar 09I ou seguir Track 09J local de contato/posse de bola.
+- Proximo passo: Fabio/tester fazer reteste humano da build publica 09I; apos aprovacao, abrir Track 09J local de contato/posse de bola.
 
 ## draxos-roguelike-cardgame
 
