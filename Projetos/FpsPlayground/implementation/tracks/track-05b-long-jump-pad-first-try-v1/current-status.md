@@ -1,6 +1,6 @@
 # Track 05B - Long Jump Pad First Try V1
 
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED`
 - Started: `2026-06-15`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track05b-long-jump-pad-first-try-v1`
@@ -73,7 +73,7 @@ Known GUT UID/text-path warnings can appear on fresh imports and are accepted wh
 
 ## Handoff
 
-- Ready for Fabio/tester smoke focused on the first long jump pad attempt in `Relay Foundry V1`.
-- Confirm the bot reaches the landing platform without needing to fall/reset and try the same pad a second time.
-- Confirm the player still feels controlled on long pads.
+- Fabio approved the bot after smoke on 2026-06-15.
+- The first long jump pad issue in `Relay Foundry V1` is considered resolved.
+- Next step is choosing Track 06 from the approved bot, map and movement baseline.
 - PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.

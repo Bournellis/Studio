@@ -2,7 +2,7 @@
 
 - Data: `2026-06-15`
 - Agente: Codex
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED`
 - Branch: `codex/fpsplayground/track05b-long-jump-pad-first-try-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track05b-long-jump-pad-first-try-v1`
 - Base: `main` em `4dbd5320` (`Merge FpsPlayground Track 05 quake duel route control bot`)
@@ -35,11 +35,11 @@ git status --short
 
 ## Review Humano
 
-- Em `Relay Foundry V1`, observar o bot entrando no jump pad longo pela primeira vez.
-- Confirmar que ele alcanca o landing sem cair/resetar/tentar de novo.
-- Confirmar que o player ainda usa os pads sem overlaunch ou snap estranho.
-- Confirmar que tiro em overlay continua funcionando sem cancelar rota.
+- Fabio aprovou o bot apos smoke em 2026-06-15.
+- O bot ficou bom.
+- O problema da primeira tentativa do jump pad longo no `Relay Foundry V1` e considerado resolvido.
 
 ## Handoff
 
+- Proximo passo: escolher Track 06 a partir da base aprovada de bot, mapa e movimentacao.
 - PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.

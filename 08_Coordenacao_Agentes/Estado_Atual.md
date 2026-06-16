@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; Track 09H hotfix de heap local validado, reteste remoto pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 05B long jump pad first try pronta para smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; Track 09H hotfix de heap local validado, reteste remoto pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 05B bot/jump pad aprovada; aguardando escolha da proxima track)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK05B_LONG_JUMP_PAD_FIRST_TRY_READY_FOR_SMOKE`
-- Marker: `FPS_PLAYGROUND_TRACK05B_LONG_JUMP_PAD_FIRST_TRY_READY_FOR_SMOKE`
-- Baseline: Track 05B corrige o primeiro uso do jump pad longo do `Relay Foundry V1` com launch por rota/ator, approach lock e air steer controlado, preservando route-control da Track 05.
+- Status: `P2_IMPLEMENTACAO - TRACK05B_LONG_JUMP_PAD_FIRST_TRY_APPROVED`
+- Marker: `FPS_PLAYGROUND_TRACK05B_LONG_JUMP_PAD_FIRST_TRY_APPROVED`
+- Baseline: Track 05B aprovada por Fabio; bot ficou bom e o jump pad longo do `Relay Foundry V1` esta confiavel com launch por rota/ator, approach lock e air steer controlado.
 - Validacao: `tools/validate.gd` PASS `30/30`, `238 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester fazer smoke humano focado no primeiro uso do jump pad longo no `Relay Foundry V1`, feeling do player nos pads e manutencao de tiro/rota.
+- Proximo passo: escolher a proxima track do FPS a partir da base aprovada de bot, mapa e movimentacao.
 
 ## rpg-isometrico
 

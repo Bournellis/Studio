@@ -5,8 +5,8 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 05B - Long Jump Pad First Try V1`
-- Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK05B_LONG_JUMP_PAD_FIRST_TRY_READY_FOR_SMOKE`
+- Active stage status: `APPROVED`
+- Status marker: `FPS_PLAYGROUND_TRACK05B_LONG_JUMP_PAD_FIRST_TRY_APPROVED`
 
 ## Current Truth
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment. Track 05 route-control bot was approved by Fabio overall; Track 05B fixes the remaining first-attempt long jump pad failure in `Relay Foundry V1`.
+Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment. Track 05 route-control bot was approved by Fabio overall. Track 05B was approved by Fabio after smoke: the bot is good and the remaining first-attempt long jump pad failure is resolved.
 
 ## Track 01 Delivered
 
@@ -158,7 +158,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 # PASS, GUT 30/30, 238 asserts
 ```
 
-Manual smoke lives in `docs/validation.md`; Track 05B smoke should focus on first-trigger long jump pad completion in `Relay Foundry V1`, player pad feel, HP/boost priorities and shooting during movement without route cancellation.
+Manual smoke lives in `docs/validation.md`; Track 05B was approved by Fabio after smoke. Next work should choose a Track 06 from the approved bot, map and movement baseline.
 
 ## Read Next
 
