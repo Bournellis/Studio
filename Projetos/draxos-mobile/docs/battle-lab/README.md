@@ -47,6 +47,20 @@ bots, economy, ruleset ou Edge Functions sem pacote explicito e comparacao
 before/after. No Web export, o runner remoto retorna scratch/custom replay em
 memoria para revisao interna e nao grava run oficial.
 
+## Arena Proof Follow-Up
+
+Depois que Fabio/tester registrar o veredito humano em
+`../arena-pve-product-proof.md`, a proxima rodada promovivel do Battle Lab deve
+partir desse resultado:
+
+- se Arena continuar `NOT_PROVEN`, nao abrir tuning; usar o lab apenas para
+  reproduzir problemas de leitura, duracao extrema ou anti-stall que apoiem uma
+  nova rodada UX-only;
+- se Arena virar `READY_FOR_TUNING`, gerar uma run oficial de sequencias reais
+  de Arena PVE antes de alterar qualquer numero;
+- comparar before/after por uma familia pequena de variaveis, mantendo rewards,
+  economia, power runtime e Edge Functions fora do escopo ate pacote explicito.
+
 ## Workflow
 
 1. Rodar o gerador:

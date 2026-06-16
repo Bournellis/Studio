@@ -51,6 +51,7 @@
 | `docs/foundation-loop-audit.md` | `HISTORICO` | Executed audit of the historical post-login app-shell loop ergonomics; records Foundation Loop UX Pass 01 as an accepted Internal Alpha UX baseline before Arena PVE became the product loop. |
 | `docs/foundation-responsive-layout-contract.md` | `CONTRATO` | Responsive guardrail for Entry Labs, Refugio and Battle safe frames across Android portrait and Web/Desktop viewports. |
 | `docs/visual-direction-v1.md` | `VIVO` | Current client visual direction for the Foundation Loop and Social Basico build; defines surface accents, component rules and non-goals. |
+| `docs/battle-visual-mockup.md` | `CONTRATO` | Battle log presentation/mockup contract for current Godot battle replay and Battle Lab visualization; not final visual direction. |
 | `docs/battle-presentation-v1.md` | `HISTORICO` | Published Battle Presentation v1 package: client-only readability pass for running battle, summary and current-battle logs. |
 | `docs/battle-drama-v1-1.md` | `HISTORICO` | Published follow-up client-only battle drama/readability pass for visible Web difference after Battle Presentation v1. |
 | `docs/battle-preparation-complete-v1.md` | `HISTORICO` | Published Battle Preparation Complete v1 package: real Arena PVE preparation/loadout editor, `POST /build/equip`, enriched build state and Internal Alpha release snapshot. |
@@ -79,6 +80,11 @@
 | `docs/economy/README.md` | `HISTORICO` | Economy model and calibratable alpha values preserved as context; not a current tuning target. |
 | `docs/progression-lab/README.md` | `RUNBOOK` | Progression Lab workflow vivo for review/tuning evidence; reports in dated subdocs can remain historical. |
 | `docs/battle-lab/README.md` | `RUNBOOK` | Battle Lab workflow vivo for combat evidence; dated runs are historical evidence. |
+| `docs/progression-lab/2026-05-27-t04-progression-economia.md` | `HISTORICO` | Technical Progression Lab reading from the old T04 economy pass; preserved evidence, not current tuning authority. |
+| `docs/progression-lab/2026-05-27-t05-progression-human-runbook.md` | `HISTORICO` | Previous Progression Lab human review runbook; useful context, superseded by Arena proof gating before tuning. |
+| `docs/progression-lab/runs/2026-05-31_s1_arena_baseline_v01/README.md` | `HISTORICO` | Archived S1 Arena baseline Progression Lab run; evidence for future comparison, not a live tuning decision. |
+| `docs/pre-implementation-decisions.md` | `HISTORICO` | Pre-implementation decision log; live open decisions belong in `docs/design-pending.md`. |
+| `docs/reuse-map.md` | `HISTORICO` | Early reuse/veto map across studio projects; current cross-project rules are governed by local live docs and root `AGENTS.md`. |
 
 ## Contracts
 
@@ -86,6 +92,11 @@
 |---|---|---|
 | `docs/contracts/` | `CONTRATO` | API, battle log, schema and content contracts. |
 | `docs/contracts/account-save.md` | `CONTRATO` | `account_profiles` + `game_saves` account/save authority and `players.save_type` compatibility boundary. |
+| `docs/contracts/api-endpoints.md` | `CONTRATO` | Logical Godot-to-Edge API surface for account, battle, base, build, crafting, social, competition, monetization, telemetry, release, Arena, modes and labs. |
+| `docs/contracts/battle-event-log.md` | `CONTRATO` | `battle_log_v1` replay/event contract used by client battle presentation and labs. |
+| `docs/contracts/content-definitions.md` | `CONTRATO` | Authored data/generated content contract for characters, items, potions, rulesets, Arena and mode definitions. |
+| `docs/contracts/database-schema.md` | `CONTRATO` | Logical schema contract for Supabase/Postgres tables, migrations, RLS, account/save, Arena, Openworld and mode platform state. |
+| `docs/contracts/update-manifest.md` | `CONTRATO` | `GET /release/manifest` update contract; current values and package state remain in status/history docs. |
 | `docs/contracts/ruleset-registry.md` | `CONTRATO` | Ruleset generated-as-authoring-source plus database publication registry contract. |
 | `docs/contracts/minigame-integration.md` | `CONTRATO` | Contract-first gate for official modes and future playable integrations. |
 | `docs/contracts/mode-integration.md` | `CONTRATO` | Compatibility pointer for Foundation Expansion Readiness gates; canonical content lives in minigame-integration. |
@@ -110,13 +121,24 @@
 | `tools/README.md` | `RUNBOOK` | Tool commands and local validation entrypoint. |
 | `tools/check_hardening_contracts.ps1` | `RUNBOOK` | Docs-safe hardening contract checker wired into `DocsOnly`. |
 | `docs/release-ops-checklist.md` | `RUNBOOK` | Safe release and publication procedure. |
+| `docs/dev-lab-workflow.md` | `RUNBOOK` | Dev Lab runner notes for Godot editor/PC/Web behavior and lab-runner fallback. |
 | `docs/ops/read-only-cli.md` | `RUNBOOK` | Ops CLI runbook for manifest/modes/status/audit/reward/session summaries without remote service role. |
 | `docs/ops/latency-baseline.md` | `RUNBOOK` | Read-only request/action/surface latency baseline workflow and artifact format. |
 | `docs/track-13-manual-walkthrough-gate.md` | `RUNBOOK` | Required Android/Windows/Web manual gate. |
-| `docs/internal-alpha-v0.md` | `RUNBOOK` | Internal Alpha v0 runbook. |
-| `docs/internal-alpha-v0-handoff.md` | `RUNBOOK` | Internal Alpha v0 handoff. |
+| `docs/internal-alpha-release-plan.md` | `HISTORICO` | Closed Internal Alpha v0 release plan; current release flow is `docs/release-ops-checklist.md`. |
+| `docs/internal-alpha-remote-setup.md` | `HISTORICO` | Closed remote setup record for Internal Alpha v0; read only for historical setup context. |
+| `docs/internal-alpha-static-hosting.md` | `RUNBOOK` | Static hosting rules for Portal/Web packages on Cloudflare Pages with large assets outside Pages. |
+| `docs/internal-alpha-site-protection-tutorial.md` | `RUNBOOK` | Tutorial for protecting alpha Portal/Web and downloads; operational reference, not current package state. |
+| `docs/supabase-remote-tutorial.md` | `RUNBOOK` | Fabio-facing Supabase remote setup tutorial; secrets stay local and ignored. |
+| `docs/internal-alpha-v0.md` | `HISTORICO` | Internal Alpha v0 runbook preserved as closed-package context. |
+| `docs/internal-alpha-v0-handoff.md` | `HISTORICO` | Internal Alpha v0 handoff preserved as closed-package context. |
+| `docs/internal-alpha-v0-design-lock.md` | `HISTORICO` | Internal Alpha v0 design lock; historical UX/product framing for the closed v0 package. |
+| `docs/internal-alpha-v0-export-report.md` | `HISTORICO` | Internal Alpha v0 export report with old artifact/version evidence. |
+| `docs/internal-alpha-v0-publication-report.md` | `HISTORICO` | Internal Alpha v0 publication report with old remote/storage evidence. |
+| `docs/internal-alpha-v0-qa-report.md` | `HISTORICO` | Internal Alpha v0 local QA report preserved as historical validation evidence. |
 | `docs/playtest-internal-alpha-v0.md` | `RUNBOOK` | Internal alpha checklist. |
 | `docs/playtest-alpha.md` | `RUNBOOK` | General alpha playtest checklist. |
+| `docs/track-11-manual-walkthrough.md` | `HISTORICO` | Previous manual walkthrough gate from Track 11; current manual QA should use Track 13 and Arena proof docs. |
 | `portal/internal-alpha/README.md` | `RUNBOOK` | Internal alpha portal operations. |
 | `../../08_Coordenacao_Agentes/Templates/DraxosMobile_Hardening_Doing_TEMPLATE.md` | `RUNBOOK` | Doing template for DraxosMobile hardening lanes and mode scopes. |
 | `../../08_Coordenacao_Agentes/Templates/DraxosMobile_Hardening_Handoff_TEMPLATE.md` | `RUNBOOK` | Handoff template for DraxosMobile hardening lanes and mode scopes. |

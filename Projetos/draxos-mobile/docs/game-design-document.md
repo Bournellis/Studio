@@ -4,6 +4,7 @@
 - Fonte historica completa: `../../_conceitos/mobile-universe/gdd.md`
 
 > Este documento e uma referencia condensada da implementacao existente. Depois da Foundation Final Polish, ele deve ser lido como contrato/contexto de substancia e mock implementado, nao como prioridade de expansao nem como design final.
+> Enquanto `DMOB-D082` mantiver Arena em `ARENA_CORE_NEEDS_UX_FIX` / `ARENA_CORE_NOT_PROVEN`, valores numericos, economia, PVP, conteudo novo, visual final e expansao Openworld neste GDD permanecem contexto; nao sao autorizacao de tuning ou implementacao.
 
 ## Leitura Apos Foundation Final Polish
 

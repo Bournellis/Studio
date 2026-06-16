@@ -11,9 +11,11 @@ This pack records the current decision boundary for Openworld after the Bosque
 playtest approval, technical hardening, Offline-First Checkpoint v1 release,
 Bosque Persistence Rebase v1, Bosque Bootstrap Authority v1 and Bosque
 Diegetic Launcher Foundation v1. The launcher foundation was implemented as a
-local hardening step and later published by DMOB-D077 as the current Internal
-Alpha package. It remains a narrow menu-entry layer for existing player-facing
-menus and does not expand Openworld gameplay.
+local hardening step and later published by DMOB-D077 as a previous Internal
+Alpha package. Current operational package, next step and evidence live in
+`../../implementation/current-status.md`; package lineage lives in
+`../release-history.md`. The launcher remains a narrow menu-entry layer for
+existing player-facing menus and does not expand Openworld gameplay.
 
 ## Decision Summary
 
@@ -28,10 +30,10 @@ permission for new content.
 No Openworld expansion is approved by this pack.
 
 Bosque Offline-First Checkpoint v1 was explicitly approved and published as a
-remote Internal Alpha mutation window: migration
-`202606060001_openworld_bosque_checkpoint_v1.sql`, release root
-`internal-alpha/v0-bosque-offline-first-checkpoint-v1-20260606-f649d22`,
-preview evidence `https://fa84e109.draxos-mobile-internal-alpha.pages.dev`.
+remote Internal Alpha mutation window. Migration and publication evidence are
+historical package lineage; use `../release-history.md` for release roots,
+preview evidence and package details instead of treating this decision pack as
+the current release source.
 
 Runtime/QoL exception approved on 2026-06-01: the Bosque runtime may migrate
 from a drawn `Control` world to a `Control` wrapper plus internal `Node2D`

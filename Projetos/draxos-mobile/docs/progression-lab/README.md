@@ -54,6 +54,20 @@ gap, mas nao alteram runtime, rewards, economia, power, bots, ruleset ou save
 normal sem pacote explicito e comparacao before/after. No Web export, o runner
 remoto retorna dados em memoria para revisao interna e nao aplica healthy save.
 
+## Arena Proof Follow-Up
+
+Depois que Fabio/tester registrar o veredito humano em
+`../arena-pve-product-proof.md`, a proxima rodada promovivel do Progression Lab
+deve responder somente ao resultado aprovado:
+
+- se Arena continuar `NOT_PROVEN`, nao calibrar economia; usar o lab para
+  localizar gargalos que possam estar impedindo entendimento do loop;
+- se Arena virar `READY_FOR_TUNING`, gerar uma run oficial focada em tutorial,
+  primeiras arenas, repeticao reduzida, poder esperado, base/upgrades e pressao
+  de pocoes antes de alterar rewards ou custos;
+- qualquer mudanca de XP, recursos, power, premium gap, bots, loja ou crafting
+  precisa de pacote separado com comparacao before/after.
+
 ## Perfis
 
 | Perfil | Descricao |

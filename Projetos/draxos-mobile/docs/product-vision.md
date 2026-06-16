@@ -57,7 +57,7 @@ Ordem de foco operacional:
 1. Playtestar o pacote publicado atual descrito em `../implementation/current-status.md`.
 2. Manter bugs futuros no fluxo normal de bugfix, sem reabrir regressao preventiva se nada novo aparecer.
 3. Nao abrir tuning amplo, PVP, economia, conteudo, novas armas/spells, visual final, mutacoes remotas ou expansao de Openworld antes de uma nova decisao propria.
-4. Depois do playtest do launcher, escolher explicitamente qualquer proximo pacote: bugfix, polish do launcher, Arena PVE, Openworld/Bosque estreito ou outro hardening.
+4. Depois da prova humana da Arena, registrar veredito explicito antes de escolher bugfix, UX-only, tuning/labs ou qualquer outro pacote.
 5. PVP assincrono posterior, social, competicao, Towerdefense e Cardgame somente quando seus contratos proprios existirem.
 
 ## Pilares
@@ -240,8 +240,8 @@ Esses itens podem virar projeto ou fase futura, mas nao devem ser tratados como 
 ## Gates De Proxima Decisao
 
 1. Rodar playtest humano do pacote publicado atual descrito em `../implementation/current-status.md`.
-2. Confirmar se bugs novos apareceram no launcher diegetico publicado; se aparecerem, tratar por bugfix estreito.
-3. Se o pacote escolhido for Arena PVE, confirmar que `docs/pve-arena-initial-direction.md` e `docs/pve-arena-v1.md` continuam suficientes para tutorial, primeiras arenas, inimigos, buffs, recovery e recompensas.
-4. Rodar Progression Lab e Battle Lab orientados a Arena PVE antes de mexer em valores calibraveis, se Arena PVE for o pacote escolhido.
-5. Implementar pacote pequeno de tuning/UX somente depois da decisao explicita do proximo pacote.
+2. Registrar o veredito em `arena-pve-product-proof.md`: `ARENA_CORE_READY_FOR_TUNING`, `ARENA_CORE_NEEDS_UX_FIX`, `ARENA_CORE_NOT_PROVEN` ou `BOSQUE_SHELL_DISTRACTS`.
+3. Se o veredito nao for `ARENA_CORE_READY_FOR_TUNING`, manter o proximo pacote em UX/readability/recovery ou bugfix estreito.
+4. Se o veredito for `ARENA_CORE_READY_FOR_TUNING`, confirmar que `docs/pve-arena-initial-direction.md` e `docs/pve-arena-v1.md` continuam suficientes para tutorial, primeiras arenas, inimigos, buffs, recovery e recompensas.
+5. Rodar Progression Lab e Battle Lab orientados a Arena PVE antes de mexer em valores calibraveis.
 6. Reintroduzir PVP como modo posterior/competitivo depois que o core PVE estiver claro.

@@ -32,10 +32,16 @@ reward path.
 
 ## Future Gate
 
-Future Autobattler work must wait for explicit package direction. Bosque
-Persistent Overlay Shell v1 is the current published Internal Alpha package,
-and the next operational step is focused human playtest of that overlay package.
-Future bugs return to the normal bugfix flow if they appear.
-Arena PVE remains the first product core, but tuning, new enemies, PVP,
-economy, content, visual-final work or remote mutations require an explicit
-next-package decision.
+Future Autobattler work must wait for the Arena proof gate recorded in
+`../arena-pve-product-proof.md` and the operational state in
+`../../implementation/current-status.md`.
+
+The active product question is whether Arena PVE is understandable and
+recoverable enough for a human tester without agent explanation. Until that
+verdict exits `ARENA_CORE_NEEDS_UX_FIX` / `ARENA_CORE_NOT_PROVEN`, Autobattler
+work is limited to UX/readability/recovery fixes for the Arena path and normal
+bugfixes.
+
+Arena PVE remains the first product core, but numeric tuning, new enemies, PVP,
+economy, content expansion, visual-final work, broad Openworld work or remote
+mutations require an explicit next-package decision.
