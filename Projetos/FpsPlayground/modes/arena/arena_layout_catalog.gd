@@ -5,12 +5,13 @@ const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_contex
 
 const DUEL_PIT_ID: StringName = &"duel_pit_v2"
 const RELAY_FOUNDRY_ID: StringName = &"relay_foundry_v1"
+const CROSSFIRE_CRUCIBLE_ID: StringName = &"crossfire_crucible_v1"
 
 static func get_default_layout_id() -> StringName:
 	return DUEL_PIT_ID
 
 static func get_layout_ids() -> Array[StringName]:
-	return [DUEL_PIT_ID, RELAY_FOUNDRY_ID]
+	return [DUEL_PIT_ID, RELAY_FOUNDRY_ID, CROSSFIRE_CRUCIBLE_ID]
 
 static func has_layout(layout_id: StringName) -> bool:
 	return get_layout_ids().has(layout_id)
@@ -30,6 +31,8 @@ static func build_layout_spec(layout_id: StringName) -> Dictionary:
 			return _build_duel_pit_spec()
 		RELAY_FOUNDRY_ID:
 			return _build_relay_foundry_spec()
+		CROSSFIRE_CRUCIBLE_ID:
+			return _build_crossfire_crucible_spec()
 		_:
 			return _build_duel_pit_spec()
 
@@ -163,4 +166,71 @@ static func _build_relay_foundry_tactical_points(west_jump_pad_position: Vector3
 		BotTacticalContextScript.make_point(Vector3(10.8, 3.05, 9.4), BotTacticalContextScript.ROLE_HIGH_GROUND, 1.38, east_route),
 		BotTacticalContextScript.make_point(Vector3(-15.2, 0.05, -11.6), BotTacticalContextScript.ROLE_RETREAT, 1.08, &"north_west_reset"),
 		BotTacticalContextScript.make_point(Vector3(15.2, 0.05, 11.6), BotTacticalContextScript.ROLE_RETREAT, 1.08, &"south_east_reset")
+	]
+
+static func _build_crossfire_crucible_spec() -> Dictionary:
+	var west_route: StringName = &"west_lift_pad"
+	var east_route: StringName = &"east_diagonal_pad"
+	var west_jump_pad_position := Vector3(-8.8, 0.08, 5.6)
+	var west_jump_pad_target := Vector3(-6.2, 3.05, -2.8)
+	var east_jump_pad_position := Vector3(8.8, 0.08, -5.8)
+	var east_jump_pad_target := Vector3(3.0, 3.05, 6.6)
+	var health_pickup_position := Vector3(-5.0, 3.55, -2.8)
+	var overcharge_pickup_position := Vector3(4.8, 3.55, 6.6)
+	return {
+		"id": CROSSFIRE_CRUCIBLE_ID,
+		"builder": CROSSFIRE_CRUCIBLE_ID,
+		"display_name": "Arena Shooter - Crossfire Crucible V1",
+		"map_name": "Crossfire Crucible V1",
+		"floor_size": Vector3(34.0, 1.0, 28.0),
+		"wall_height": 3.8,
+		"wall_thickness": 0.8,
+		"player_spawn": Vector3(-12.4, 0.05, 7.8),
+		"bot_spawn": Vector3(12.4, 0.05, -7.8),
+		"bot_arena_half_extent": 14.4,
+		"health_pickup_position": health_pickup_position,
+		"overcharge_pickup_position": overcharge_pickup_position,
+		"west_jump_pad_position": west_jump_pad_position,
+		"west_jump_pad_target": west_jump_pad_target,
+		"east_jump_pad_position": east_jump_pad_position,
+		"east_jump_pad_target": east_jump_pad_target,
+		"jump_pad_routes": [
+			BotTacticalContextScript.make_jump_pad_route(
+				west_route,
+				west_jump_pad_position,
+				west_jump_pad_target,
+				[BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, BotTacticalContextScript.ROLE_HIGH_GROUND, BotTacticalContextScript.ROLE_HEALTH]
+			),
+			BotTacticalContextScript.make_jump_pad_route(
+				east_route,
+				east_jump_pad_position,
+				east_jump_pad_target,
+				[BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, BotTacticalContextScript.ROLE_HIGH_GROUND, BotTacticalContextScript.ROLE_OVERCHARGE]
+			)
+		],
+		"tactical_points": _build_crossfire_crucible_tactical_points(west_jump_pad_position, east_jump_pad_position, west_jump_pad_target, east_jump_pad_target, west_route, east_route)
+	}
+
+static func _build_crossfire_crucible_tactical_points(west_jump_pad_position: Vector3, east_jump_pad_position: Vector3, west_jump_pad_target: Vector3, east_jump_pad_target: Vector3, west_route: StringName, east_route: StringName) -> Array:
+	return [
+		BotTacticalContextScript.make_point(Vector3(-12.4, 0.05, 7.8), BotTacticalContextScript.ROLE_RETREAT, 1.12, &"player_side_reset"),
+		BotTacticalContextScript.make_point(Vector3(12.4, 0.05, -7.8), BotTacticalContextScript.ROLE_RETREAT, 1.12, &"bot_side_reset"),
+		BotTacticalContextScript.make_point(Vector3(-8.6, 0.05, -0.4), BotTacticalContextScript.ROLE_COVER, 1.1, &"west_cross_cover"),
+		BotTacticalContextScript.make_point(Vector3(8.6, 0.05, 0.4), BotTacticalContextScript.ROLE_COVER, 1.1, &"east_cross_cover"),
+		BotTacticalContextScript.make_point(Vector3(-5.8, 0.05, -8.7), BotTacticalContextScript.ROLE_FLANK, 1.08, &"north_west_flank"),
+		BotTacticalContextScript.make_point(Vector3(5.8, 0.05, 8.7), BotTacticalContextScript.ROLE_FLANK, 1.08, &"south_east_flank"),
+		BotTacticalContextScript.make_point(Vector3(-1.7, 0.05, -6.8), BotTacticalContextScript.ROLE_PRESSURE, 1.16, &"north_pressure"),
+		BotTacticalContextScript.make_point(Vector3(1.7, 0.05, 6.8), BotTacticalContextScript.ROLE_PRESSURE, 1.16, &"south_pressure"),
+		BotTacticalContextScript.make_point(Vector3(-2.6, 0.05, 0.0), BotTacticalContextScript.ROLE_PRESSURE, 1.18, &"center_west_pressure"),
+		BotTacticalContextScript.make_point(Vector3(2.6, 0.05, 0.0), BotTacticalContextScript.ROLE_PRESSURE, 1.18, &"center_east_pressure"),
+		BotTacticalContextScript.make_point(Vector3(-12.0, 0.05, -5.2), BotTacticalContextScript.ROLE_FLANK, 1.05, &"west_wrap"),
+		BotTacticalContextScript.make_point(Vector3(12.0, 0.05, 5.2), BotTacticalContextScript.ROLE_FLANK, 1.05, &"east_wrap"),
+		BotTacticalContextScript.make_point(west_jump_pad_position, BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, 1.24, west_route),
+		BotTacticalContextScript.make_point(east_jump_pad_position, BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY, 1.24, east_route),
+		BotTacticalContextScript.make_point(west_jump_pad_target, BotTacticalContextScript.ROLE_JUMP_PAD_LANDING, 1.22, west_route),
+		BotTacticalContextScript.make_point(Vector3(-5.0, 3.05, -2.8), BotTacticalContextScript.ROLE_HIGH_GROUND, 1.36, west_route),
+		BotTacticalContextScript.make_point(east_jump_pad_target, BotTacticalContextScript.ROLE_JUMP_PAD_LANDING, 1.22, east_route),
+		BotTacticalContextScript.make_point(Vector3(4.8, 3.05, 6.6), BotTacticalContextScript.ROLE_HIGH_GROUND, 1.4, east_route),
+		BotTacticalContextScript.make_point(Vector3(-14.0, 0.05, 0.0), BotTacticalContextScript.ROLE_RETREAT, 1.08, &"west_reset"),
+		BotTacticalContextScript.make_point(Vector3(14.0, 0.05, 0.0), BotTacticalContextScript.ROLE_RETREAT, 1.08, &"east_reset")
 	]
