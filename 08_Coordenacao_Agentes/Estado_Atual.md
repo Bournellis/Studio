@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+4a323fab` publicado; gates remotos 09H PASS; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 05B bot/jump pad aprovada; aguardando escolha da proxima track)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+4a323fab` publicado; gates remotos 09H PASS; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization planejada)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK05B_LONG_JUMP_PAD_FIRST_TRY_APPROVED`
-- Marker: `FPS_PLAYGROUND_TRACK05B_LONG_JUMP_PAD_FIRST_TRY_APPROVED`
-- Baseline: Track 05B aprovada por Fabio; bot ficou bom e o jump pad longo do `Relay Foundry V1` esta confiavel com launch por rota/ator, approach lock e air steer controlado.
+- Status: `P2_IMPLEMENTACAO - TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_PLANNED`
+- Marker: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_PLANNED`
+- Baseline: Track 05B aprovada por Fabio; Track 06 esta planejada para criar terceira arena e provar generalizacao do bot sem codigo especifico por mapa.
 - Validacao: `tools/validate.gd` PASS `30/30`, `238 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: escolher a proxima track do FPS a partir da base aprovada de bot, mapa e movimentacao.
+- Proximo passo: executar Track 06 `Arena Variety And Bot Generalization V1`; depois seguir Track 07 match UX, Track 08 movement feel, Track 09 combat sandbox.
 
 ## rpg-isometrico
 

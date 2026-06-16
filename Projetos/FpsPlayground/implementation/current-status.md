@@ -1,12 +1,12 @@
 # FpsPlayground - Current Status
 
-- Last updated: `2026-06-15`
+- Last updated: `2026-06-16`
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 05B - Long Jump Pad First Try V1`
-- Active stage status: `APPROVED`
-- Status marker: `FPS_PLAYGROUND_TRACK05B_LONG_JUMP_PAD_FIRST_TRY_APPROVED`
+- Active stage: `Track 06 - Arena Variety And Bot Generalization V1`
+- Active stage status: `PLANNED_READY_FOR_EXECUTION`
+- Status marker: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_PLANNED`
 
 ## Current Truth
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment. Track 05 route-control bot was approved by Fabio overall. Track 05B was approved by Fabio after smoke: the bot is good and the remaining first-attempt long jump pad failure is resolved.
+Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment. Track 05 route-control bot was approved by Fabio overall. Track 05B was approved by Fabio after smoke: the bot is good and the remaining first-attempt long jump pad failure is resolved. Track 06 is planned next to prove arena variety and bot generalization.
 
 ## Track 01 Delivered
 
@@ -94,7 +94,7 @@ Delivered:
 - Added jump pad flight and landing commitment state.
 - Added tests for healthy overcharge priority, shooting without canceling item route and jump pad landing commitment.
 
-## Active Track
+## Previous Track
 
 `Track 05B - Long Jump Pad First Try V1`
 
@@ -111,6 +111,29 @@ Delivered:
 - Reduced bot air steering during committed jump pad flight.
 - Added automated coverage for route-distance launch and first-attempt long jump completion in `Relay Foundry V1`.
 - Updated validation and smoke documentation for first-trigger long pad checks.
+
+## Active Track
+
+`Track 06 - Arena Variety And Bot Generalization V1`
+
+Goal:
+
+- Add a third arena with a distinct movement rhythm.
+- Prove the approved bot behavior generalizes without map-specific bot code.
+- Preserve route-first movement, item priorities and reliable vertical connectors.
+
+Planned:
+
+- Recommended arena concept: `Crossfire Crucible V1`.
+- Build one compact crossfire arena with a low-ground loop, diagonal high route and separated item routes.
+- Add menu selection, layout catalog contract, tactical roles and validation coverage.
+- Keep combat mechanics, weapons, bot aim/damage and export scope unchanged.
+
+Next sequence:
+
+- Track 07 - Match Flow And Duel UX V1.
+- Track 08 - Player Movement Feel Polish V1.
+- Track 09 - Combat Sandbox Expansion V1.
 
 ## Previous Track
 
@@ -158,7 +181,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 # PASS, GUT 30/30, 238 asserts
 ```
 
-Manual smoke lives in `docs/validation.md`; Track 05B was approved by Fabio after smoke. Next work should choose a Track 06 from the approved bot, map and movement baseline.
+Manual smoke lives in `docs/validation.md`; Track 06 should focus on three-arena menu selection, new arena movement flow and bot generalization.
 
 ## Read Next
 
@@ -175,3 +198,4 @@ Manual smoke lives in `docs/validation.md`; Track 05B was approved by Fabio afte
 11. `implementation/tracks/track-04b-bot-pickup-commitment-v1/current-status.md`
 12. `implementation/tracks/track-05-quake-duel-route-control-bot-v1/current-status.md`
 13. `implementation/tracks/track-05b-long-jump-pad-first-try-v1/current-status.md`
+14. `implementation/tracks/track-06-arena-variety-bot-generalization-v1/current-status.md`

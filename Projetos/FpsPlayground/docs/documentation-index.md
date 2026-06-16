@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK05B_LONG_JUMP_PAD_FIRST_TRY_APPROVED`
+- Status: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_PLANNED`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -31,6 +31,7 @@
 - `../implementation/tracks/track-04b-bot-pickup-commitment-v1/current-status.md`
 - `../implementation/tracks/track-05-quake-duel-route-control-bot-v1/current-status.md`
 - `../implementation/tracks/track-05b-long-jump-pad-first-try-v1/current-status.md`
+- `../implementation/tracks/track-06-arena-variety-bot-generalization-v1/current-status.md`
 
 ## Split Note
 
