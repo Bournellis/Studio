@@ -113,6 +113,7 @@ $envValues = Read-DotEnv -Path $EnvFile
 $supabaseUrl = Env-Value $envValues @("DRAXOS_MOBILE_SUPABASE_URL", "SUPABASE_URL")
 $publishableKey = Env-Value $envValues @("DRAXOS_MOBILE_SUPABASE_PUBLISHABLE_KEY", "SUPABASE_PUBLISHABLE_KEY")
 $manifestUrl = Env-Value $envValues @("DRAXOS_MOBILE_UPDATE_MANIFEST_URL") "$supabaseUrl/functions/v1/release/manifest"
+$runtimeConfigUrl = Env-Value $envValues @("DRAXOS_MOBILE_RUNTIME_CONFIG_URL") "$supabaseUrl/functions/v1/release/config"
 $backendEnv = Env-Value $envValues @("DRAXOS_MOBILE_BACKEND_ENV") "internal_alpha_v0"
 $releaseKeystorePath = Env-Value $envValues @("DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_PATH", "DRAXOS_MOBILE_ANDROID_KEYSTORE_PATH", "GODOT_ANDROID_KEYSTORE_RELEASE_PATH")
 $releaseKeystoreUser = Env-Value $envValues @("DRAXOS_MOBILE_ANDROID_KEYSTORE_RELEASE_USER", "DRAXOS_MOBILE_ANDROID_KEYSTORE_ALIAS", "GODOT_ANDROID_KEYSTORE_RELEASE_USER")
@@ -150,6 +151,7 @@ func config() -> Dictionary:
 		"supabase_url": "$(Escape-GdString $supabaseUrl)",
 		"publishable_key": "$(Escape-GdString $publishableKey)",
 		"update_manifest_url": "$(Escape-GdString $manifestUrl)",
+		"runtime_config_url": "$(Escape-GdString $runtimeConfigUrl)",
 	}
 "@
 
@@ -201,8 +203,8 @@ try {
     $metadata = [ordered]@{
         schema_version = "internal_alpha_artifacts_v1"
         channel = "internal_alpha"
-        app_version = "0.0.25-alpha.0"
-        app_version_code = 25
+        app_version = "0.0.26-alpha.0"
+        app_version_code = 26
         generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         supabase_url = $supabaseUrl
         update_manifest_url = $manifestUrl
