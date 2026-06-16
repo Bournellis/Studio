@@ -1,27 +1,27 @@
 # DraxosMobile - Current Status
 
-- Last updated: `2026-06-15`
+- Last updated: `2026-06-16`
 - Project: `draxos-mobile`
 - Portfolio status: see `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Active surface: `Internal Alpha`
-- Active stage: `Arena UX Readability Recovery v1`
-- Active stage status: `ARENA_UX_READABILITY_RECOVERY_V1_PUBLISHED_INTERNAL_ALPHA`
-- Build channel: `internal_alpha` | Version: `0.0.24-alpha.0` | Version code: `24` | Minimum supported: `13`
+- Active stage: `Arena Runtime Config Sync Ready v3`
+- Active stage status: `ARENA_RUNTIME_CONFIG_SYNC_READY_V3_PUBLISHED_INTERNAL_ALPHA`
+- Build channel: `internal_alpha` | Version: `0.0.27-alpha.0` | Version code: `27` | Minimum supported: `13`
 - Package history, stable URLs and download endpoints: `../docs/release-history.md`
 
 ## Current Truth
 
-- Latest published remote package: `Arena UX Readability Recovery v1`.
-- Release root: `internal-alpha/v0-arena-ux-readability-recovery-v1-20260615-52c870c7` (from implementation commit `52c870c7`).
-- Deployment evidence: `https://101e1ff7.draxos-mobile-internal-alpha.pages.dev`.
-- The package makes the Arena path readable: visible route guide, tutorial recommended CTA, first real Arena CTA, active attempt state, temporary buff explanation, reward summary copy and abandon/resume consequences.
+- Latest published remote package: `Arena Runtime Config Sync Ready v3`.
+- Release root: `internal-alpha/v0-arena-runtime-config-sync-ready-v3-20260616-bc04e88a` (from implementation commit `bc04e88a`).
+- Deployment evidence: `https://a50d282b.draxos-mobile-internal-alpha.pages.dev`.
+- The package preserves the Arena UX/readability route and fixes the Web runtime_config recovery path: embedded internal_alpha config is used in Web, automatic runtime_config sync repaints the current route when it exits fallback, and required remote runtime_config overlay actions pass before retest.
 - Remote SQL already applied: `202606080001_openworld_bosque_persistence_rebase_v1.sql` and `202606080002_openworld_bosque_jsonb_object_length_hotfix_v1.sql`.
 - Remote functions: `release` redeployed for this package; `arena` remains on Arena PVE Bonus Visual v1; `modes` remains on the operations-v2 backend.
 - Initial human playtest of Bosque Bootstrap Authority v1 was reported OK by Fabio on `2026-06-09`. Bosque overlay/readiness remains preserved under this newer Arena UX package.
 
 ## Operational Vs Product Direction
 
-- Operational package: Arena UX Readability Recovery v1 is current.
+- Operational package: Arena Runtime Config Sync Ready v3 is current.
 - Product direction: Arena PVE remains the first approved core, governed by `docs/pve-arena-initial-direction.md` and `docs/pve-arena-v1.md`.
 - Arena proof result: Fabio recorded `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN` on `2026-06-14`; this package was published by explicit user approval to support the proof, but the core is still not approved for tuning or expansion yet.
 - Bosque/Openworld: approved integrated Internal Alpha slice, not approval for broad continuous-open-world expansion.
@@ -29,11 +29,12 @@
 
 ## Current Package Evidence
 
-- ClientQuick, ServerQuick, ReleaseDryRun and RemoteReadOnly passed for this package.
+- ClientQuick, ReleaseDryRun, RemoteReadOnly, Deno release checks and required remote runtime_config overlay actions passed for this package.
 - Remote preview Web launch smoke loaded the game, matched release root and reported no runtime errors; manifest/deploy validation passed.
+- `smoke_web_overlay_menu_actions.ps1 -RequireRemoteRuntimeConfig` passed against the preview and reported `fallback=false`, `allowsGameplayMutation=true`.
 - Anonymous canonical Portal/Web returns Cloudflare Access content; the hash preview is the automated Web evidence and the official URL should be tested with an authenticated Access session.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
-- Artifact SHA256 - APK: `664dd0d93891220fb1f03e77fb43c2f11fa41fa94c26590182c19d9f4d14b97a` | PC ZIP: `9b0fc25e2ac9f770c74a033a7ad9e133ac76ea46f4e03d32763b37b0e57f69e6` | Web index: `cca1cba35ec2b5c67de9497af40014d77e2d868a43b978acc301b3031ef9d985`
+- Artifact SHA256 - APK: `f759d99f113e004c4ba5e2f15d3597904cfd97c6a3277514b3c0ab1035cf3b04` | PC ZIP: `b37677c972c0c23302dab4658a2a5369f0d182f9abff064191058541f889705a` | Web index: `14197329480a197e21673ecce96e512ffff22faa6a79720c7c19c92f6ce11428`
 
 ## Preserved Lineage And Guardrails
 
@@ -57,8 +58,9 @@ The documentation round on `2026-06-15` formalized the next package as
 `docs/arena-ux-proof-release-discipline-plan.md`: candidate first, automated
 validation, human proof, then verdict before any official package promotion.
 
-The Arena UX/readability/recovery package was published on `2026-06-15` by
-explicit user approval after the local candidate from commit `52c870c7`.
+The Arena runtime_config recovery package was republished on `2026-06-16` by
+explicit user approval after v1/v2 were superseded by required remote smoke
+failures.
 The next step is human proof using `docs/arena-pve-product-proof.md`; do not
 open tuning, economy, PVP, content expansion or broad Openworld work until
 Fabio records the verdict.

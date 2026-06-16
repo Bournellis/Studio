@@ -1,39 +1,38 @@
 {
   "schema_version": "internal_alpha_manifest_v1",
   "channel": "internal_alpha",
-  "latest_version": "0.0.24-alpha.0",
-  "latest_version_code": 24,
+  "latest_version": "0.0.27-alpha.0",
+  "latest_version_code": 27,
   "minimum_supported_version": "0.0.13-alpha.0",
   "minimum_supported_version_code": 13,
-  "released_at": "2026-06-15T06:36:35Z",
+  "released_at": "2026-06-16T04:47:40Z",
   "requires_save_reset": false,
   "portal_url": "https://draxos-mobile-internal-alpha.pages.dev/",
   "notes": [
-    "Arena UX Readability Recovery v1 publicado na URL principal de Internal Alpha.",
+    "Arena Runtime Config Sync Ready v3 publicado na URL principal de Internal Alpha.",
     "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
-    "Arena PVE mostra roteiro visivel: tutorial recomendado, primeira arena real, buffs temporarios, resumo e recuperacao.",
-    "CTA da Arena diferencia tutorial recomendado da primeira arena real de tres duelos.",
-    "Tentativa ativa mostra duelo atual, HP reset por duelo, proximo inimigo e buff temporario aplicado.",
-    "Escolha de buff explica que o bonus e temporario e vale para o proximo duelo, sem inventario ou save permanente.",
-    "Resumo final traduz a recompensa tecnica em leitura humana e aponta o proximo passo.",
-    "Abandonar e retomar explicam consequencia, confirmacao e ausencia de recompensa de conclusao.",
+    "Arena PVE preserva roteiro visivel: tutorial recomendado, primeira arena real, buffs temporarios, resumo e recuperacao.",
+    "O cliente Web usa a configuracao internal_alpha embutida no export quando ela existe, mesmo se a feature tag alpha nao estiver disponivel no runtime.",
+    "A sincronizacao automatica de runtime_config repinta a rota atual quando sai de fallback antes dos cliques online.",
+    "Quando a configuracao remota cai em fallback, a Arena oferece Sincronizar configuracao antes de tentar Retomar, Resolver ou Abandonar novamente.",
+    "Smoke Web pode exigir runtime_config remoto antes de validar acoes online.",
     "A publicacao preserva backend, economia, tuning, conteudo, PVP e Openworld sem expansao.",
     "Arena core ainda depende de prova humana antes de tuning ou expansao.",
     "Portal/Web rodam no Cloudflare Pages; downloads usam login alpha e URLs assinadas temporarias.",
-    "Manifesto recomenda build 0.0.24-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+    "Manifesto recomenda build 0.0.27-alpha.0 e mantem build minima 0.0.13-alpha.0.",
     "Progression Lab usa save separado e nao pontua ranking."
   ],
   "artifacts": {
     "android": {
       "label": "Android APK",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=android",
-      "sha256": "664dd0d93891220fb1f03e77fb43c2f11fa41fa94c26590182c19d9f4d14b97a",
+      "sha256": "f759d99f113e004c4ba5e2f15d3597904cfd97c6a3277514b3c0ab1035cf3b04",
       "auth_required": true
     },
     "pc_windows": {
       "label": "PC Windows ZIP",
       "url": "https://armxgipvnbbshzqawklw.supabase.co/functions/v1/release/download?artifact=pc_windows",
-      "sha256": "9b0fc25e2ac9f770c74a033a7ad9e133ac76ea46f4e03d32763b37b0e57f69e6",
+      "sha256": "b37677c972c0c23302dab4658a2a5369f0d182f9abff064191058541f889705a",
       "auth_required": true
     },
     "web": {

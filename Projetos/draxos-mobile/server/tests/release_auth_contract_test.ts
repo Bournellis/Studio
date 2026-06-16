@@ -50,8 +50,8 @@ Deno.test("release manifest code fallback points at the current published packag
   for (const path of releaseSources) {
     const source = await Deno.readTextFile(path);
     assert(
-      source.includes("internal-alpha/v0-arena-ux-readability-recovery-v1-20260615-52c870c7"),
-      `${path} should fall back to Arena UX Readability Recovery v1, the current package root`,
+      source.includes("internal-alpha/v0-arena-runtime-config-sync-ready-v3-20260616-bc04e88a"),
+      `${path} should fall back to Arena Runtime Config Sync Ready v3, the current package root`,
     );
     assertEquals(
       source.includes("internal-alpha/v0-foundation-solidification-20260602-906101b"),
