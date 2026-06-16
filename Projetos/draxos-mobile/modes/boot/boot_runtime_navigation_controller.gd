@@ -272,12 +272,27 @@ func _publish_web_diagnostics_state() -> void:
 	_apply_web_smoke_overlay_request()
 
 func _web_runtime_config_diagnostics() -> Dictionary:
+	var normalized := RuntimeConfigScript.normalize(SessionStore.runtime_config)
+	var fallback_reason := _as_dictionary(normalized.get("fallback_reason", {}))
+	var backend_summary := SupabaseClient.backend_summary()
+	var client_diagnostics := SupabaseClient.diagnostics_snapshot()
+	var auth_diagnostics := _as_dictionary(client_diagnostics.get("auth", {}))
 	return {
 		"fallback": SessionStore.runtime_config_is_fallback(),
 		"allowsGameplayMutation": SessionStore.runtime_allows_gameplay_mutation(),
 		"blockReason": SessionStore.runtime_mutation_block_reason(),
-		"configVersion": str(RuntimeConfigScript.normalize(SessionStore.runtime_config).get("config_version", "")),
-		"configSource": str(RuntimeConfigScript.normalize(SessionStore.runtime_config).get("config_source", "")),
+		"configVersion": str(normalized.get("config_version", "")),
+		"configSource": str(normalized.get("config_source", "")),
+		"fallbackReason": fallback_reason,
+		"backend": {
+			"environment": str(backend_summary.get("environment", "")),
+			"source": str(backend_summary.get("source", "")),
+			"supabaseUrl": str(backend_summary.get("supabase_url", "")),
+			"runtimeConfigUrl": str(backend_summary.get("runtime_config_url", "")),
+			"configured": bool(backend_summary.get("configured", false)),
+			"errors": Array(backend_summary.get("errors", PackedStringArray())),
+			"publishableKeyConfigured": bool(auth_diagnostics.get("publishable_key_configured", false)),
+		},
 	}
 
 func _web_arena_diagnostics() -> Dictionary:

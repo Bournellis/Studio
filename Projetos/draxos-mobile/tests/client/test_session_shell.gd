@@ -618,6 +618,40 @@ func test_backend_config_supports_internal_alpha_without_service_role() -> void:
 		"res://online/internal_alpha_runtime_config.gd"
 	)
 
+func test_backend_config_embedded_internal_alpha_config_selects_remote_without_feature_tag() -> void:
+	var runtime_config := {
+		"backend_environment": BackendConfigScript.ENVIRONMENT_INTERNAL_ALPHA,
+		"supabase_url": "https://example.supabase.co",
+		"publishable_key": "sb_publishable_example",
+	}
+	assert_eq(
+		BackendConfigScript.default_environment_for_runtime_config(
+			BackendConfigScript.ENVIRONMENT_LOCAL,
+			runtime_config,
+			false,
+			false
+		),
+		BackendConfigScript.ENVIRONMENT_INTERNAL_ALPHA
+	)
+	assert_eq(
+		BackendConfigScript.default_environment_for_runtime_config(
+			BackendConfigScript.ENVIRONMENT_LOCAL,
+			runtime_config,
+			false,
+			true
+		),
+		BackendConfigScript.ENVIRONMENT_LOCAL
+	)
+	assert_eq(
+		BackendConfigScript.default_environment_for_runtime_config(
+			BackendConfigScript.ENVIRONMENT_LOCAL,
+			{},
+			false,
+			false
+		),
+		BackendConfigScript.ENVIRONMENT_LOCAL
+	)
+
 func test_backend_config_rejects_secret_like_client_key() -> void:
 	var config := BackendConfigScript.config_from_values(
 		BackendConfigScript.ENVIRONMENT_INTERNAL_ALPHA,

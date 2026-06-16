@@ -34,9 +34,12 @@ const INTERNAL_ALPHA_RUNTIME_CONFIG_PATH := "res://online/internal_alpha_runtime
 static func load_from_project_settings() -> Dictionary:
 	var runtime_config := _runtime_internal_alpha_config()
 	var configured_environment := _setting_string(SETTING_BACKEND_ENVIRONMENT, DEFAULT_BACKEND_ENVIRONMENT)
-	var default_environment := configured_environment
-	if OS.has_feature("alpha") and not OS.has_environment(ENV_BACKEND_ENVIRONMENT):
-		default_environment = str(runtime_config.get("backend_environment", ENVIRONMENT_INTERNAL_ALPHA))
+	var default_environment := default_environment_for_runtime_config(
+		configured_environment,
+		runtime_config,
+		OS.has_feature("alpha"),
+		OS.has_environment(ENV_BACKEND_ENVIRONMENT)
+	)
 	var environment := _env_string(ENV_BACKEND_ENVIRONMENT, default_environment)
 	var normalized_environment := normalize_environment(environment)
 
@@ -133,6 +136,11 @@ static func client_environment_variables() -> PackedStringArray:
 		ENV_RUNTIME_CONFIG_URL,
 	])
 
+static func default_environment_for_runtime_config(configured_environment: String, runtime_config: Dictionary, has_alpha_feature: bool, has_environment_override: bool) -> String:
+	if not has_environment_override and (has_alpha_feature or not runtime_config.is_empty()):
+		return str(runtime_config.get("backend_environment", ENVIRONMENT_INTERNAL_ALPHA))
+	return configured_environment
+
 static func _setting_string(key: String, fallback: String) -> String:
 	return str(ProjectSettings.get_setting(key, fallback)).strip_edges()
 
@@ -153,8 +161,6 @@ static func _looks_like_secret_key(key: String) -> bool:
 	)
 
 static func _runtime_internal_alpha_config() -> Dictionary:
-	if not OS.has_feature("alpha"):
-		return {}
 	if not ResourceLoader.exists(INTERNAL_ALPHA_RUNTIME_CONFIG_PATH):
 		return {}
 	var script_resource: Resource = load(INTERNAL_ALPHA_RUNTIME_CONFIG_PATH)
