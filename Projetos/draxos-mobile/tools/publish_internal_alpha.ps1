@@ -239,24 +239,25 @@ function Build-Manifest {
     return [ordered]@{
         schema_version = "internal_alpha_manifest_v1"
         channel = "internal_alpha"
-        latest_version = "0.0.26-alpha.0"
-        latest_version_code = 26
+        latest_version = "0.0.27-alpha.0"
+        latest_version_code = 27
         minimum_supported_version = "0.0.13-alpha.0"
         minimum_supported_version_code = 13
         released_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         requires_save_reset = $false
         portal_url = $PortalUrl
         notes = @(
-            "Arena Runtime Config Embedded Recovery v2 publicado na URL principal de Internal Alpha.",
+            "Arena Runtime Config Sync Ready v3 publicado na URL principal de Internal Alpha.",
             "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
             "Arena PVE preserva roteiro visivel: tutorial recomendado, primeira arena real, buffs temporarios, resumo e recuperacao.",
             "O cliente Web usa a configuracao internal_alpha embutida no export quando ela existe, mesmo se a feature tag alpha nao estiver disponivel no runtime.",
+            "A sincronizacao automatica de runtime_config repinta a rota atual quando sai de fallback antes dos cliques online.",
             "Quando a configuracao remota cai em fallback, a Arena oferece Sincronizar configuracao antes de tentar Retomar, Resolver ou Abandonar novamente.",
             "Smoke Web pode exigir runtime_config remoto antes de validar acoes online.",
             "A publicacao preserva backend, economia, tuning, conteudo, PVP e Openworld sem expansao.",
             "Arena core ainda depende de prova humana antes de tuning ou expansao.",
             $(if ($PublicDownloads) { "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage." } else { "Portal/Web rodam no Cloudflare Pages; downloads usam login alpha e URLs assinadas temporarias." }),
-            "Manifesto recomenda build 0.0.26-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+            "Manifesto recomenda build 0.0.27-alpha.0 e mantem build minima 0.0.13-alpha.0.",
             "Progression Lab usa save separado e nao pontua ranking."
         )
         artifacts = [ordered]@{
@@ -488,8 +489,8 @@ if ($ShouldPackage -or $IsRemoteMutation) {
         -IndexPath $webIndex `
         -ReleaseRoot $ReleaseRoot `
         -StorageBaseUrl $storageBaseUrl `
-        -AppVersion "0.0.26-alpha.0" `
-        -AppVersionCode 26
+        -AppVersion "0.0.27-alpha.0" `
+        -AppVersionCode 27
 }
 
 $androidRecord = Artifact-Record -Path $androidApk -Label "Android APK" -Url $androidUrl -ExpectedMinimumBytes 1000000
@@ -544,8 +545,8 @@ $plan = [ordered]@{
     }
     app = [ordered]@{
         channel = "internal_alpha"
-        version = "0.0.26-alpha.0"
-        version_code = 26
+        version = "0.0.27-alpha.0"
+        version_code = 27
         requires_save_reset = $false
     }
     artifacts = $artifactRecords
@@ -724,8 +725,8 @@ if ($Mode -eq "FullPublish") {
 $report = [ordered]@{
     schema_version = "internal_alpha_publication_v2"
     channel = "internal_alpha"
-    app_version = "0.0.26-alpha.0"
-    app_version_code = 26
+    app_version = "0.0.27-alpha.0"
+    app_version_code = 27
     mode = $Mode
     generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     bucket = $BucketName

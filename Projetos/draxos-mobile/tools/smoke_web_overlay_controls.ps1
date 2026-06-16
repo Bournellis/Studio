@@ -2,8 +2,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$WebUrl,
     [string]$ExpectedReleaseRoot = "",
-    [string]$ExpectedAppVersion = "0.0.26-alpha.0",
-    [int]$ExpectedAppVersionCode = 26,
+    [string]$ExpectedAppVersion = "0.0.27-alpha.0",
+    [int]$ExpectedAppVersionCode = 27,
     [string]$ChromePath = "",
     [int]$TimeoutSeconds = 90,
     [string]$DiagnosticsDir = "",

@@ -2,8 +2,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$WebUrl,
     [string]$ExpectedReleaseRoot = "",
-    [string]$ExpectedAppVersion = "0.0.26-alpha.0",
-    [int]$ExpectedAppVersionCode = 26,
+    [string]$ExpectedAppVersion = "0.0.27-alpha.0",
+    [int]$ExpectedAppVersionCode = 27,
     [string]$ChromePath = "",
     [int]$TimeoutSeconds = 90,
     [string]$DiagnosticsDir = "",
@@ -339,6 +339,21 @@ function assertRuntimeConfigReady(state, label) {
 	}
 }
 
+function runtimeConfigReady(state) {
+	if (!state?.state) {
+		return false;
+	}
+	const runtime = state.state.runtimeConfig || {};
+	return runtime.fallback !== true && runtime.allowsGameplayMutation === true;
+}
+
+async function waitForRequiredRuntimeConfig(client, label, currentState) {
+	if (!requireRemoteRuntimeConfig || runtimeConfigReady(currentState)) {
+		return { state: currentState, access: false };
+	}
+	return await waitFor(client, runtimeConfigReady, `${label}: runtime config ready`);
+}
+
 async function waitFor(client, predicate, label) {
 	const deadline = Date.now() + timeoutMs;
 	let lastState = null;
@@ -658,7 +673,13 @@ try {
 			break;
 		}
 		assertBuild(open.state, testCase.label);
-		assertRuntimeConfigReady(open.state, testCase.label);
+		const runtimeReady = await waitForRequiredRuntimeConfig(client, testCase.label, open.state);
+		if (runtimeReady.access) {
+			outcome = 'cloudflare_access_expected';
+			finalState = runtimeReady.state;
+			break;
+		}
+		assertRuntimeConfigReady(runtimeReady.state, testCase.label);
 		screenshots.push(await capture(client, `${testCase.label}-open`));
 
 		const click = await clickOverlayButton(client, testCase.label, testCase.button, testCase.action);
@@ -704,7 +725,13 @@ try {
 			break;
 		}
 		assertBuild(open.state, testCase.label);
-		assertRuntimeConfigReady(open.state, testCase.label);
+		const runtimeReady = await waitForRequiredRuntimeConfig(client, testCase.label, open.state);
+		if (runtimeReady.access) {
+			outcome = 'cloudflare_access_expected';
+			finalState = runtimeReady.state;
+			break;
+		}
+		assertRuntimeConfigReady(runtimeReady.state, testCase.label);
 		screenshots.push(await capture(client, `${testCase.label}-open`));
 
 		if (testCase.kind === 'social_text_action') {

@@ -30,6 +30,7 @@ func _fail_mutation(mutation: Dictionary, result: Dictionary) -> void:
 func check_runtime_config(host: Node, manual: bool = false) -> bool:
 	if manual:
 		host.call("_set_busy", true, "Sincronizando configuracao remota...")
+	var previous_fallback := SessionStore.runtime_config_is_fallback()
 	var config_result: Dictionary = await SupabaseClient.fetch_runtime_config()
 	var config_payload := _as_dictionary(config_result.get("runtime_config", {}))
 	if config_payload.is_empty():
@@ -48,6 +49,11 @@ func check_runtime_config(host: Node, manual: bool = false) -> bool:
 			_set_error_text(host, "")
 			host.call("_set_busy", false, "Configuracao remota sincronizada. Tente a acao da Arena novamente.")
 		host.call("_sync_status_from_session")
+	else:
+		if previous_fallback != fallback:
+			_refresh_runtime_config_dependent_route(host)
+		if host.has_method("_publish_web_diagnostics_state"):
+			host.call_deferred("_publish_web_diagnostics_state")
 	return not fallback
 
 func check_update_manifest(host: Node, manual: bool = false) -> void:
@@ -462,6 +468,18 @@ func _runtime_config_retry_detail(result: Dictionary) -> String:
 	if message != "":
 		return "A build nao conseguiu validar a configuracao remota: %s" % message
 	return "A build nao conseguiu validar a configuracao remota. Verifique conexao/Access e tente novamente."
+
+func _refresh_runtime_config_dependent_route(host: Node) -> void:
+	if not host.has_method("_show_screen"):
+		return
+	var route_id := ""
+	if host.has_method("_active_route_for_context"):
+		route_id = str(host.call("_active_route_for_context"))
+	if route_id == "":
+		route_id = str(host.get("_current_screen"))
+	if route_id != "":
+		host.call("_show_screen", route_id, false)
+	host.call("_sync_status_from_session")
 
 func _clear_screen_history(host: Node) -> void:
 	var history: Array = host.get("_screen_history")
