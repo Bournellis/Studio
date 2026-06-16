@@ -4,7 +4,7 @@
 - Agente: `Codex`
 - Branch: `codex/jogodacopa/track09h-web-heap-hotfix-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track09h-web-heap-hotfix-v1`
-- Status: `PUBLICADO_RETEST_HUMANO_PENDENTE`
+- Status: `PUBLICADO_RETEST_HUMANO_APROVADO`
 
 ## Objetivo
 
@@ -60,4 +60,4 @@ Investigar e corrigir de forma curta a falha de heap remoto observada na publica
 ## Risco Residual
 
 - A causa remota exata da 09G segue tratada como margem Web apertada, nao como vazamento comprovado de nodes/recursos Godot.
-- A 09H passou no limite remoto por margem estreita (`+9.97%` contra `<10%`); manter o gate 5min obrigatorio e aguardar reteste humano antes de retomar a reducao do `FootballRoot`.
+- A 09H passou no limite remoto por margem estreita (`+9.97%` contra `<10%`); o reteste humano foi aprovado antes da 09I, e o gate 5min segue obrigatorio para a proxima publicacao.
