@@ -54,6 +54,15 @@ A jump pad route has three stages:
 
 During flight, the bot should not apply generic strafe or distance-management movement. Its air control should point toward the jump pad target/landing.
 
+## Long Jump Pad Reliability
+
+Long jump pad routes must be reliable on the first attempt, not only after a failed landing realigns the bot. The route contract is:
+
+- the actor position at trigger time contributes to the launch direction;
+- horizontal launch speed is derived from route distance and landing height, with clamps to avoid exaggerated launches;
+- the bot locks its final approach to the pad entry instead of cutting across the pad edge;
+- first-attempt validation covers approach, trigger, flight and landing, not only the post-launch commitment state.
+
 ## Item Bias
 
 - High health: prefer overcharge/damage boost and high-ground pressure.
@@ -66,4 +75,5 @@ During flight, the bot should not apply generic strafe or distance-management mo
 - Bot can shoot while following a route.
 - Bot does not cancel a health or overcharge route just because it has line of sight.
 - Bot completes the long jump pad route before returning to strafe.
+- Bot completes `Relay Foundry V1` long jump pad routes on the first attempt from a natural approach.
 - Bot uses strafe/cover less as default behavior and more as local fight correction.

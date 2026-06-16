@@ -6,10 +6,10 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest Track 05 local result:
+Latest Track 05B local result:
 
 ```text
-PASS, GUT 28/28, 229 asserts
+PASS, GUT 30/30, 238 asserts
 ```
 
 Profiles:
@@ -91,6 +91,15 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm the bot still shoots when it has a visible target, but the shot does not cancel the map route.
 - Confirm strafe/cover still exists as local fight correction, not the dominant behavior every time the bot sees the player.
 - Confirm bot shot windup remains readable and fair.
+- Confirm restart with `R`, pause menu and return to menu still work.
+
+## Track 05B Long Jump Pad First Try Smoke
+
+- In `Relay Foundry V1`, watch the bot approach each long jump pad from ground movement and confirm the first trigger reaches the landing platform.
+- Confirm the bot does not need to fall, reset or trigger the same jump pad a second time before reaching the high route.
+- Confirm the bot enters the pad cleanly instead of cutting across the edge and launching from a poor angle.
+- Confirm the player can still use both long jump pads without feeling over-launched or snapped unnaturally.
+- Confirm combat overlay still works: the bot may shoot during the route, but it does not cancel the jump pad approach or flight.
 - Confirm restart with `R`, pause menu and return to menu still work.
 
 ## Known Noise

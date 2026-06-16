@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; Track 09H hotfix de heap local validado, reteste remoto pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 05 Quake duel route control bot pronta para smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; Track 09H hotfix de heap local validado, reteste remoto pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 05B long jump pad first try pronta para smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK05_QUAKE_DUEL_ROUTE_CONTROL_BOT_READY_FOR_SMOKE`
-- Marker: `FPS_PLAYGROUND_TRACK05_QUAKE_DUEL_ROUTE_CONTROL_BOT_READY_FOR_SMOKE`
-- Baseline: Track 05 mudou o bot para rota de mapa + tiro em overlay, com bias de HP/boost por vida e compromisso de landing no jump pad longo.
-- Validacao: `tools/validate.gd` PASS `28/28`, `229 asserts`; warnings GUT UID/text-path conhecidos.
+- Status: `P2_IMPLEMENTACAO - TRACK05B_LONG_JUMP_PAD_FIRST_TRY_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK05B_LONG_JUMP_PAD_FIRST_TRY_READY_FOR_SMOKE`
+- Baseline: Track 05B corrige o primeiro uso do jump pad longo do `Relay Foundry V1` com launch por rota/ator, approach lock e air steer controlado, preservando route-control da Track 05.
+- Validacao: `tools/validate.gd` PASS `30/30`, `238 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester fazer smoke humano focado em rota, jump pad longo e prioridades HP/boost.
+- Proximo passo: Fabio/tester fazer smoke humano focado no primeiro uso do jump pad longo no `Relay Foundry V1`, feeling do player nos pads e manutencao de tiro/rota.
 
 ## rpg-isometrico
 

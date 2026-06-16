@@ -58,6 +58,8 @@ const STATE_DEAD: StringName = &"dead"
 @export var jump_pad_flight_commit_time: float = 1.85
 @export var jump_pad_landing_recovery_time: float = 0.55
 @export var jump_pad_landing_commit_distance: float = 2.6
+@export var jump_pad_approach_lock_distance: float = 2.8
+@export var jump_pad_air_steer_speed_multiplier: float = 0.45
 @export var vertical_route_low_height_tolerance: float = 1.15
 @export var jump_overhead_clearance: float = 1.35
 @export var vertical_route_cooldown: float = 2.8
@@ -905,6 +907,8 @@ func _movement_toward_reposition() -> Vector3:
 	to_destination.y = 0.0
 	if to_destination.length_squared() <= 0.0001:
 		return _distance_management_movement()
+	if _is_jump_pad_approach_lock_active():
+		return to_destination.normalized()
 	var route_weight := 0.16
 	if last_route_label == &"health" or last_route_label == &"overcharge" or last_route_label == &"jump_pad" or last_route_label == &"high":
 		route_weight = 0.0
@@ -949,6 +953,8 @@ func _build_velocity(desired_move: Vector3, delta: float) -> Vector3:
 		speed_multiplier = 1.05
 	elif current_state == STATE_WINDUP:
 		speed_multiplier = 0.45
+	if _is_jump_pad_flight_active():
+		speed_multiplier = minf(speed_multiplier, jump_pad_air_steer_speed_multiplier)
 	if is_telegraphing and current_state != STATE_WINDUP:
 		speed_multiplier = minf(speed_multiplier, route_shot_speed_multiplier)
 	var launch_boost := _consume_launch_boost(delta)
@@ -1110,7 +1116,7 @@ func _trigger_jump() -> void:
 	jump_count += 1
 
 func _apply_projectile_dodge(desired_move: Vector3) -> Vector3:
-	if _is_jump_pad_flight_active():
+	if _is_jump_pad_flight_active() or _is_jump_pad_approach_lock_active():
 		return desired_move
 	var dodge := _projectile_dodge_movement()
 	if dodge.length_squared() <= 0.0001:
@@ -1142,6 +1148,15 @@ func _projectile_dodge_movement() -> Vector3:
 	if is_zero_approx(side):
 		side = strafe_direction
 	return lateral * side
+
+func _is_jump_pad_approach_lock_active() -> bool:
+	if current_state != STATE_REPOSITION:
+		return false
+	if _is_jump_pad_commitment_active():
+		return false
+	if not _destination_requires_jump_pad_route(reposition_destination):
+		return false
+	return _flat_distance_to(last_navigation_target) <= jump_pad_approach_lock_distance
 
 func _apply_gravity(delta: float) -> void:
 	var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
