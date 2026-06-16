@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_PLANNED`
+- Status: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_READY_FOR_SMOKE`
 - Current surface: FPS arena lab.
-- Current baseline: Track 05B approved by Fabio; bot and long jump pad reliability are accepted.
+- Current baseline: Track 06 locally validated; `Crossfire Crucible V1` is the third selectable arena and is awaiting human smoke.
 
 ## North Star
 
@@ -17,12 +17,15 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 - `Duel Pit V2` preserves the accepted baseline.
 - `Relay Foundry V1` proves a second arena with route-control bot support.
 - Track 05B is approved: bot movement is good and the long jump pad first-attempt failure is resolved.
-- Validation baseline: `tools/validate.gd` PASS `30/30`, `238 asserts`.
+- Track 06 is ready for smoke: `Crossfire Crucible V1` adds a compact crossfire arena and preserves bot generalization through layout contracts.
+- Validation baseline: `tools/validate.gd` PASS `32/32`, `289 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Planned Track Sequence
 
 ### 1. Track 06 - Arena Variety And Bot Generalization V1
+
+Status: locally validated, ready for human smoke.
 
 Goal:
 
@@ -112,7 +115,7 @@ It should be compact and distinct:
 - at least one vertical connector that differs from the long pads in `Relay Foundry V1`;
 - no dead-end pickup pockets.
 
-Track 06 should not add new combat mechanics. It should end when the third arena is selectable, validated and ready for human smoke.
+Track 06 did not add new combat mechanics. It is locally complete and should close after human smoke confirms the third arena feels good.
 
 ## Out Of Scope
 

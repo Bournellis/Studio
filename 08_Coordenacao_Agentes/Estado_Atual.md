@@ -1,13 +1,13 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-06-15`
+- Ultima atualizacao: `2026-06-16`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 - Regra de tamanho: maximo ~12 linhas por projeto. Historia de pacotes/validacoes vai para os arquivos de historico do projeto (`implementation/tracks/`, `docs/release-history.md`, Kanban Done), nunca para este snapshot.
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+4a323fab` publicado; gates remotos 09H PASS; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization planejada)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+4a323fab` publicado; gates remotos 09H PASS; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization validada localmente; aguardando smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_PLANNED`
-- Marker: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_PLANNED`
-- Baseline: Track 05B aprovada por Fabio; Track 06 esta planejada para criar terceira arena e provar generalizacao do bot sem codigo especifico por mapa.
-- Validacao: `tools/validate.gd` PASS `30/30`, `238 asserts`; warnings GUT UID/text-path conhecidos.
+- Status: `P2_IMPLEMENTACAO - TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_READY_FOR_SMOKE`
+- Baseline: Track 06 adicionou `Crossfire Crucible V1` como terceira arena selecionavel e provou contratos de bot/layout sem codigo especifico por mapa.
+- Validacao: `tools/validate.gd` PASS `32/32`, `289 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: executar Track 06 `Arena Variety And Bot Generalization V1`; depois seguir Track 07 match UX, Track 08 movement feel, Track 09 combat sandbox.
+- Proximo passo: Fabio/tester fazer smoke da Track 06; se aprovado, executar Track 07 match UX, Track 08 movement feel, Track 09 combat sandbox.
 
 ## rpg-isometrico
 

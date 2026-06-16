@@ -5,8 +5,8 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 06 - Arena Variety And Bot Generalization V1`
-- Active stage status: `PLANNED_READY_FOR_EXECUTION`
-- Status marker: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_PLANNED`
+- Active stage status: `READY_FOR_HUMAN_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_READY_FOR_SMOKE`
 
 ## Current Truth
 
@@ -20,7 +20,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 - PC Windows editor-first.
 - Main menu with `Arena Shooter`.
-- `Duel Pit V2` 1x1 arena against a bot.
+- `Duel Pit V2`, `Relay Foundry V1` and `Crossfire Crucible V1` 1x1 arenas against a bot.
 - Rifle hitscan, RMB Plasma Bolt, pickups, jump pads, high-route flow and knockback.
 - Vertical-aware bot with shot pressure, health/overcharge awareness, simple jump and plasma dodge.
 - Runtime primitive visuals/audio and GUT validation.
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment. Track 05 route-control bot was approved by Fabio overall. Track 05B was approved by Fabio after smoke: the bot is good and the remaining first-attempt long jump pad failure is resolved. Track 06 is planned next to prove arena variety and bot generalization.
+Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment. Track 05 route-control bot was approved by Fabio overall. Track 05B was approved by Fabio after smoke: the bot is good and the remaining first-attempt long jump pad failure is resolved. Track 06 is locally validated and ready for human smoke.
 
 ## Track 01 Delivered
 
@@ -122,12 +122,13 @@ Goal:
 - Prove the approved bot behavior generalizes without map-specific bot code.
 - Preserve route-first movement, item priorities and reliable vertical connectors.
 
-Planned:
+Delivered:
 
-- Recommended arena concept: `Crossfire Crucible V1`.
-- Build one compact crossfire arena with a low-ground loop, diagonal high route and separated item routes.
-- Add menu selection, layout catalog contract, tactical roles and validation coverage.
-- Keep combat mechanics, weapons, bot aim/damage and export scope unchanged.
+- Added `Crossfire Crucible V1`, a compact crossfire arena with distinct low-ground loop, diagonal high route, two jump pad rhythms and separated health/overcharge routes.
+- Added menu selection and layout catalog contract for the third arena.
+- Published tactical roles and jump pad routes for the new arena without adding map-specific bot code.
+- Added automated coverage for the menu, layout contract, required bot roles and distinct jump pad route lengths.
+- Kept combat mechanics, weapons, bot aim/damage and export scope unchanged.
 
 Next sequence:
 
@@ -178,10 +179,10 @@ Latest result:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 30/30, 238 asserts
+# PASS, GUT 32/32, 289 asserts
 ```
 
-Manual smoke lives in `docs/validation.md`; Track 06 should focus on three-arena menu selection, new arena movement flow and bot generalization.
+Manual smoke lives in `docs/validation.md`; Track 06 should focus on three-arena menu selection, `Crossfire Crucible V1` movement flow and bot generalization.
 
 ## Read Next
 

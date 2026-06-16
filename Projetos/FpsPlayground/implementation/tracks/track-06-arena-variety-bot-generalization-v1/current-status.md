@@ -1,10 +1,11 @@
 # Track 06 - Arena Variety And Bot Generalization V1
 
-- Status: `PLANNED_READY_FOR_EXECUTION`
+- Status: `READY_FOR_HUMAN_SMOKE`
 - Planned: `2026-06-16`
+- Implemented: `2026-06-16`
 - Owner: Codex
-- Recommended execution branch: `codex/fpsplayground/track06-arena-variety-bot-generalization-v1`
-- Recommended worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track06-arena-variety-bot-generalization-v1`
+- Execution branch: `codex/fpsplayground/track06-arena-variety-bot-generalization-v1`
+- Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track06-arena-variety-bot-generalization-v1`
 - Base: Track 05B approved by Fabio.
 
 ## Why This Track Comes Next
@@ -12,6 +13,34 @@
 Track 05B proved the current bot can feel good in the accepted arenas after route-control and long jump pad fixes. The next risk is generalization: the bot may still be too dependent on the current two arena shapes.
 
 Track 06 should create a third arena with a different rhythm and use it to prove the map contracts, route labels, jump pad physics and bot objective logic are reusable.
+
+## Delivered
+
+- Added `Crossfire Crucible V1` as the third selectable Arena Shooter layout.
+- Built a compact crossfire arena with a low-ground loop, diagonal high route, core sightline break, separated item routes and two distinct jump pad route lengths.
+- Published layout catalog, jump pad routes and tactical points for pressure, cover, flank, retreat, health, overcharge, jump pad entry, jump pad landing and high ground.
+- Reused the existing route-first bot movement and combat overlay behavior without adding map-specific bot conditionals.
+- Added menu, runtime and helper tests for three-arena selection, required tactical roles, context label delivery and jump pad route contracts.
+
+## Validation Result
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
+# PASS, GUT 32/32, 289 asserts
+```
+
+Known accepted noise: GUT UID/text-path warnings after fresh worktree import.
+
+## Human Smoke Handoff
+
+Track 06 is ready for Fabio/tester smoke. Focus the playtest on:
+
+- launching all three arenas from the menu;
+- running a full low-ground loop in `Crossfire Crucible V1`;
+- using both `Crossfire Crucible V1` jump pads from natural movement speed;
+- confirming health and overcharge pull different routes;
+- watching the bot rotate through the new arena without freezing, wall-rubbing or repeating one route forever;
+- confirming the bot keeps shooting as combat overlay without canceling movement objectives.
 
 ## Product Goal
 
@@ -159,9 +188,9 @@ Expected test additions:
 - Risk: jump pads can reintroduce first-use failures. Guardrail: any long or unusual connector needs first-attempt coverage.
 - Risk: the new arena becomes another version of `Relay Foundry V1`. Guardrail: choose a distinct route rhythm: compact crossfire, diagonal high pressure and separated item routes.
 
-## Handoff Criteria
+## Review Status
 
-Track 06 can move to Review when:
+Track 06 is in Review because:
 
 - the third arena is playable from the menu;
 - full validation passes;
