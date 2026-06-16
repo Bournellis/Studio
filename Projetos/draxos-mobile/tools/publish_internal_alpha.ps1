@@ -239,26 +239,23 @@ function Build-Manifest {
     return [ordered]@{
         schema_version = "internal_alpha_manifest_v1"
         channel = "internal_alpha"
-        latest_version = "0.0.24-alpha.0"
-        latest_version_code = 24
+        latest_version = "0.0.25-alpha.0"
+        latest_version_code = 25
         minimum_supported_version = "0.0.13-alpha.0"
         minimum_supported_version_code = 13
         released_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
         requires_save_reset = $false
         portal_url = $PortalUrl
         notes = @(
-            "Arena UX Readability Recovery v1 publicado na URL principal de Internal Alpha.",
+            "Arena Runtime Config Recovery Retest v1 publicado na URL principal de Internal Alpha.",
             "APK Android, PC ZIP e Web compartilham o mesmo backend remoto.",
-            "Arena PVE mostra roteiro visivel: tutorial recomendado, primeira arena real, buffs temporarios, resumo e recuperacao.",
-            "CTA da Arena diferencia tutorial recomendado da primeira arena real de tres duelos.",
-            "Tentativa ativa mostra duelo atual, HP reset por duelo, proximo inimigo e buff temporario aplicado.",
-            "Escolha de buff explica que o bonus e temporario e vale para o proximo duelo, sem inventario ou save permanente.",
-            "Resumo final traduz a recompensa tecnica em leitura humana e aponta o proximo passo.",
-            "Abandonar e retomar explicam consequencia, confirmacao e ausencia de recompensa de conclusao.",
+            "Arena PVE preserva roteiro visivel: tutorial recomendado, primeira arena real, buffs temporarios, resumo e recuperacao.",
+            "Quando a configuracao remota cai em fallback, a Arena oferece Sincronizar configuracao antes de tentar Retomar, Resolver ou Abandonar novamente.",
+            "Smoke Web pode exigir runtime_config remoto antes de validar acoes online.",
             "A publicacao preserva backend, economia, tuning, conteudo, PVP e Openworld sem expansao.",
             "Arena core ainda depende de prova humana antes de tuning ou expansao.",
             $(if ($PublicDownloads) { "Portal/Web rodam no Cloudflare Pages; downloads e assets grandes continuam no Supabase Storage." } else { "Portal/Web rodam no Cloudflare Pages; downloads usam login alpha e URLs assinadas temporarias." }),
-            "Manifesto recomenda build 0.0.24-alpha.0 e mantem build minima 0.0.13-alpha.0.",
+            "Manifesto recomenda build 0.0.25-alpha.0 e mantem build minima 0.0.13-alpha.0.",
             "Progression Lab usa save separado e nao pontua ranking."
         )
         artifacts = [ordered]@{
@@ -490,8 +487,8 @@ if ($ShouldPackage -or $IsRemoteMutation) {
         -IndexPath $webIndex `
         -ReleaseRoot $ReleaseRoot `
         -StorageBaseUrl $storageBaseUrl `
-        -AppVersion "0.0.24-alpha.0" `
-        -AppVersionCode 24
+        -AppVersion "0.0.25-alpha.0" `
+        -AppVersionCode 25
 }
 
 $androidRecord = Artifact-Record -Path $androidApk -Label "Android APK" -Url $androidUrl -ExpectedMinimumBytes 1000000
@@ -546,8 +543,8 @@ $plan = [ordered]@{
     }
     app = [ordered]@{
         channel = "internal_alpha"
-        version = "0.0.24-alpha.0"
-        version_code = 24
+        version = "0.0.25-alpha.0"
+        version_code = 25
         requires_save_reset = $false
     }
     artifacts = $artifactRecords
@@ -726,8 +723,8 @@ if ($Mode -eq "FullPublish") {
 $report = [ordered]@{
     schema_version = "internal_alpha_publication_v2"
     channel = "internal_alpha"
-    app_version = "0.0.24-alpha.0"
-    app_version_code = 24
+    app_version = "0.0.25-alpha.0"
+    app_version_code = 25
     mode = $Mode
     generated_at = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
     bucket = $BucketName
