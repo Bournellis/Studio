@@ -1,5 +1,7 @@
 extends "res://modes/boot/boot_runtime_flow_facade.gd"
 
+const RuntimeConfigScript := preload("res://online/runtime_config.gd")
+
 # Screen lifecycle, route normalization, history, and chrome visibility.
 func _show_screen(screen_id: String, push_history: bool = true) -> void:
 	screen_id = _normalize_route(screen_id)
@@ -257,6 +259,7 @@ func _publish_web_diagnostics_state() -> void:
 			"sequence": _web_action_sequence,
 			"last": _web_last_action.duplicate(true),
 		},
+		"runtimeConfig": _web_runtime_config_diagnostics(),
 		"arena": _web_arena_diagnostics(),
 		"lastArenaOperation": _arena_last_operation.duplicate(true),
 		"busy": _is_busy,
@@ -267,6 +270,15 @@ func _publish_web_diagnostics_state() -> void:
 	_ensure_web_overlay_input_bridge()
 	_focus_web_canvas_for_shell_input()
 	_apply_web_smoke_overlay_request()
+
+func _web_runtime_config_diagnostics() -> Dictionary:
+	return {
+		"fallback": SessionStore.runtime_config_is_fallback(),
+		"allowsGameplayMutation": SessionStore.runtime_allows_gameplay_mutation(),
+		"blockReason": SessionStore.runtime_mutation_block_reason(),
+		"configVersion": str(RuntimeConfigScript.normalize(SessionStore.runtime_config).get("config_version", "")),
+		"configSource": str(RuntimeConfigScript.normalize(SessionStore.runtime_config).get("config_source", "")),
+	}
 
 func _web_arena_diagnostics() -> Dictionary:
 	var attempt := SessionStore.active_arena_attempt()

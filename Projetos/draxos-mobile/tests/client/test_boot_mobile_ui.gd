@@ -180,6 +180,7 @@ func test_app_shell_action_contract_centralizes_online_gates_without_boot_ui() -
 	assert_true(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_SHOW_SHOP, required_update, false))
 	assert_true(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.shop_purchase_action("alpha_redeem_medium"), required_update, false))
 	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_CHECK_UPDATE, required_update, false))
+	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_SYNC_RUNTIME_CONFIG, required_update, false))
 	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_RESET_SESSION, required_update, false))
 	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_SELECT_SAVE_NORMAL, required_update, false))
 	assert_false(AppShellActionContractScript.update_gate_blocks_action(AppShellActionContractScript.ACTION_SELECT_SAVE_PROGRESSION_LAB, required_update, false))
@@ -205,6 +206,10 @@ func test_app_shell_action_contract_centralizes_online_gates_without_boot_ui() -
 	assert_eq(arena_abandon_route.get("category"), AppShellActionRouterScript.CATEGORY_ARENA)
 	assert_eq(arena_abandon_route.get("mutation_endpoint"), "arena/pve/abandon")
 	assert_true(bool(arena_abandon_route.get("requires_idempotent_retry", false)))
+	var runtime_config_route := AppShellActionRouterScript.route_action(AppShellActionContractScript.ACTION_SYNC_RUNTIME_CONFIG, {"save_type": "normal"})
+	assert_eq(runtime_config_route.get("category"), AppShellActionRouterScript.CATEGORY_SESSION)
+	assert_eq(runtime_config_route.get("mutation_endpoint"), "")
+	assert_false(bool(runtime_config_route.get("requires_idempotent_retry", true)))
 	assert_eq(AppShellActionContractScript.action_payload("show_shop", "shop", "normal", true, false), {
 		"action_id": "show_shop",
 		"screen": "shop",
@@ -783,6 +788,43 @@ func test_arena_selection_routes_active_attempt_before_new_start() -> void:
 	assert_true(_label_tree_contains(boot._content_body, "Tentativa ativa encontrada"))
 	assert_true(_label_tree_contains(boot._content_body, "Abandonar encerra sem recompensa de conclusao"))
 	assert_true(_label_tree_contains(boot._content_body, "duelos vencidos 1/3"))
+
+func test_arena_selection_exposes_runtime_config_recovery_when_remote_config_fallback_blocks_attempt() -> void:
+	var boot = BootScreenScript.new()
+	add_child_autofree(boot)
+	assert_true(SessionStore.apply_runtime_config({
+		"schema_version": "runtime_config_v1",
+		"channel": "internal_alpha",
+		"config_version": "client-fallback",
+		"fallback": true,
+		"features": {},
+		"client": {"offline_fallback_allowed": true},
+		"guardrails": {"read_only": true, "mutable_gameplay_state": false},
+	}))
+	SessionStore.arena_state = {
+		"schema_version": "pve_arena_state_v1",
+		"arenas": [],
+		"active_attempt": {
+			"attempt_id": "44444444-4444-4444-8444-444444444440",
+			"arena_id": "arena_cinzas_curta",
+			"status": "active",
+			"current_step_index": 1,
+			"duel_count": 3,
+			"duels_won": 1,
+			"locked_loadout_hash": "sha256:test",
+		},
+	}
+
+	boot._show_screen(AppShellRouteContractScript.ROUTE_ARENA_SELECTION)
+	await get_tree().process_frame
+
+	assert_not_null(_find_node_by_name(boot._content_body, "ArenaRuntimeConfigRecoveryPanel"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Sincronizar configuracao"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_SYNC_RUNTIME_CONFIG))
+	assert_true(_label_tree_contains(boot._content_body, "Configuracao remota indisponivel"))
+	assert_true(_label_tree_contains(boot._content_body, "Sincronize a configuracao"))
+	assert_not_null(_find_button_by_text(boot._content_body, "Retomar tentativa"))
+	assert_true(boot._action_buttons.has(AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT))
 
 func test_arena_selection_exposes_update_recovery_for_stuck_attempt() -> void:
 	var boot = BootScreenScript.new()

@@ -167,6 +167,8 @@ func _execute_action(action_id: String) -> void:
 				_open_create_account_dialog()
 			AppShellActionContractScript.ACTION_CHECK_UPDATE:
 				await _check_update_manifest(true)
+			AppShellActionContractScript.ACTION_SYNC_RUNTIME_CONFIG:
+				await _sync_runtime_config()
 			AppShellActionContractScript.ACTION_EMAIL_SIGN_UP:
 				await _email_sign_up()
 			AppShellActionContractScript.ACTION_EMAIL_SIGN_IN:

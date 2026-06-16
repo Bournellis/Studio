@@ -8,6 +8,7 @@ param(
     [int]$TimeoutSeconds = 90,
     [string]$DiagnosticsDir = "",
     [switch]$AllowCloudflareAccess,
+    [switch]$RequireRemoteRuntimeConfig,
     [switch]$NoProjectWrites,
     [switch]$KeepDiagnostics
 )
@@ -116,6 +117,7 @@ $previousEnv = @{
     DRAXOS_WEB_OVERLAY_ACTIONS_TIMEOUT_MS = [Environment]::GetEnvironmentVariable("DRAXOS_WEB_OVERLAY_ACTIONS_TIMEOUT_MS", "Process")
     DRAXOS_WEB_OVERLAY_ACTIONS_CDP_PORT = [Environment]::GetEnvironmentVariable("DRAXOS_WEB_OVERLAY_ACTIONS_CDP_PORT", "Process")
     DRAXOS_WEB_OVERLAY_ACTIONS_ALLOW_ACCESS = [Environment]::GetEnvironmentVariable("DRAXOS_WEB_OVERLAY_ACTIONS_ALLOW_ACCESS", "Process")
+    DRAXOS_WEB_OVERLAY_ACTIONS_REQUIRE_REMOTE_RUNTIME_CONFIG = [Environment]::GetEnvironmentVariable("DRAXOS_WEB_OVERLAY_ACTIONS_REQUIRE_REMOTE_RUNTIME_CONFIG", "Process")
 }
 
 try {
@@ -130,6 +132,7 @@ try {
     [Environment]::SetEnvironmentVariable("DRAXOS_WEB_OVERLAY_ACTIONS_TIMEOUT_MS", ([string]($TimeoutSeconds * 1000)), "Process")
     [Environment]::SetEnvironmentVariable("DRAXOS_WEB_OVERLAY_ACTIONS_CDP_PORT", ([string]$port), "Process")
     [Environment]::SetEnvironmentVariable("DRAXOS_WEB_OVERLAY_ACTIONS_ALLOW_ACCESS", ($(if ($AllowCloudflareAccess.IsPresent) { "1" } else { "0" })), "Process")
+    [Environment]::SetEnvironmentVariable("DRAXOS_WEB_OVERLAY_ACTIONS_REQUIRE_REMOTE_RUNTIME_CONFIG", ($(if ($RequireRemoteRuntimeConfig.IsPresent) { "1" } else { "0" })), "Process")
 
     $nodeScript = @'
 import fs from 'node:fs';
@@ -143,6 +146,7 @@ const diagnosticsDir = process.env.DRAXOS_WEB_OVERLAY_ACTIONS_DIAGNOSTICS_DIR;
 const timeoutMs = Number(process.env.DRAXOS_WEB_OVERLAY_ACTIONS_TIMEOUT_MS || '90000');
 const cdpPort = process.env.DRAXOS_WEB_OVERLAY_ACTIONS_CDP_PORT;
 const allowCloudflareAccess = process.env.DRAXOS_WEB_OVERLAY_ACTIONS_ALLOW_ACCESS === '1';
+const requireRemoteRuntimeConfig = process.env.DRAXOS_WEB_OVERLAY_ACTIONS_REQUIRE_REMOTE_RUNTIME_CONFIG === '1';
 const startedAt = Date.now();
 
 if (typeof WebSocket !== 'function') {
@@ -320,6 +324,19 @@ function assertBuild(state, label) {
 		throw new Error(`${label}: expected release root ${expectedReleaseRoot}, got ${releaseRoot || '<missing>'}.`);
 	}
 	return 'ok';
+}
+
+function assertRuntimeConfigReady(state, label) {
+	if (!requireRemoteRuntimeConfig) {
+		return;
+	}
+	const runtime = state?.state?.runtimeConfig || {};
+	if (runtime.fallback === true) {
+		throw new Error(`${label}: runtime config is fallback (${runtime.blockReason || 'no reason reported'}).`);
+	}
+	if (runtime.allowsGameplayMutation !== true) {
+		throw new Error(`${label}: runtime config does not allow gameplay mutation (${runtime.blockReason || 'no reason reported'}).`);
+	}
 }
 
 async function waitFor(client, predicate, label) {
@@ -641,6 +658,7 @@ try {
 			break;
 		}
 		assertBuild(open.state, testCase.label);
+		assertRuntimeConfigReady(open.state, testCase.label);
 		screenshots.push(await capture(client, `${testCase.label}-open`));
 
 		const click = await clickOverlayButton(client, testCase.label, testCase.button, testCase.action);
@@ -686,6 +704,7 @@ try {
 			break;
 		}
 		assertBuild(open.state, testCase.label);
+		assertRuntimeConfigReady(open.state, testCase.label);
 		screenshots.push(await capture(client, `${testCase.label}-open`));
 
 		if (testCase.kind === 'social_text_action') {
@@ -826,6 +845,7 @@ const summary = {
 	expected_app_version: expectedAppVersion,
 	expected_app_version_code: expectedAppVersionCode,
 	allow_cloudflare_access: allowCloudflareAccess,
+	require_remote_runtime_config: requireRemoteRuntimeConfig,
 	outcome,
 	failure_reason: failureReason,
 	elapsed_ms: Date.now() - startedAt,

@@ -27,12 +27,28 @@ func _complete_mutation(mutation: Dictionary, result: Dictionary) -> void:
 func _fail_mutation(mutation: Dictionary, result: Dictionary) -> void:
 	SessionStore.fail_pending_mutation(_request_id(mutation), result)
 
-func check_runtime_config(_host: Node) -> void:
+func check_runtime_config(host: Node, manual: bool = false) -> bool:
+	if manual:
+		host.call("_set_busy", true, "Sincronizando configuracao remota...")
 	var config_result: Dictionary = await SupabaseClient.fetch_runtime_config()
 	var config_payload := _as_dictionary(config_result.get("runtime_config", {}))
 	if config_payload.is_empty():
 		config_payload = _as_dictionary(config_result.get("body", {}))
 	SessionStore.apply_runtime_config(config_payload)
+	var fallback := SessionStore.runtime_config_is_fallback()
+	if manual:
+		var current_screen := str(host.get("_current_screen"))
+		if current_screen != "" and host.has_method("_show_screen"):
+			host.call("_show_screen", current_screen, false)
+		if fallback:
+			_set_error_text(host, SessionStore.runtime_mutation_block_reason())
+			host.call("_set_busy", false, "Configuracao remota ainda indisponivel.")
+			_set_detail_text(host, _runtime_config_retry_detail(config_result))
+		else:
+			_set_error_text(host, "")
+			host.call("_set_busy", false, "Configuracao remota sincronizada. Tente a acao da Arena novamente.")
+		host.call("_sync_status_from_session")
+	return not fallback
 
 func check_update_manifest(host: Node, manual: bool = false) -> void:
 	if manual:
@@ -438,6 +454,14 @@ func _set_detail_text(host: Node, text: String) -> void:
 	var label := host.get("_detail_label") as Label
 	if label != null:
 		label.text = text
+
+func _runtime_config_retry_detail(result: Dictionary) -> String:
+	var runtime_config := _as_dictionary(result.get("runtime_config", result.get("body", {})))
+	var reason := _as_dictionary(runtime_config.get("fallback_reason", {}))
+	var message := str(reason.get("message", "")).strip_edges()
+	if message != "":
+		return "A build nao conseguiu validar a configuracao remota: %s" % message
+	return "A build nao conseguiu validar a configuracao remota. Verifique conexao/Access e tente novamente."
 
 func _clear_screen_history(host: Node) -> void:
 	var history: Array = host.get("_screen_history")

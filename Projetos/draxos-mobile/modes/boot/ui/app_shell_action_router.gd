@@ -223,6 +223,7 @@ static func _is_session_action(action_id: String) -> bool:
 		AppShellActionContractScript.ACTION_ENTER_REFUGE,
 		AppShellActionContractScript.ACTION_OPEN_CREATE_ACCOUNT,
 		AppShellActionContractScript.ACTION_CHECK_UPDATE,
+		AppShellActionContractScript.ACTION_SYNC_RUNTIME_CONFIG,
 		AppShellActionContractScript.ACTION_EMAIL_SIGN_UP,
 		AppShellActionContractScript.ACTION_EMAIL_SIGN_IN,
 		AppShellActionContractScript.ACTION_REFRESH_SESSION,

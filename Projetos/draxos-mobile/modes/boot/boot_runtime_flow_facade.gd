@@ -4,6 +4,9 @@ extends "res://modes/boot/boot_runtime_labs_controller.gd"
 func _check_runtime_config() -> void:
 	await _account_session_flow.check_runtime_config(self)
 
+func _sync_runtime_config() -> void:
+	await _account_session_flow.check_runtime_config(self, true)
+
 func _check_update_manifest(manual: bool = false) -> void:
 	await _account_session_flow.check_update_manifest(self, manual)
 

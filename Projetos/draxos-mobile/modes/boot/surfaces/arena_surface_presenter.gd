@@ -17,6 +17,7 @@ func render_selection(host: Node) -> void:
 		_render_active_attempt_recovery(host, active_attempt)
 		_add_arena_preparation_control(host, true)
 		_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
+		_add_runtime_config_recovery_panel(host)
 		return
 	_call_host(host, "_add_body_text", ["Arena PVE e o loop principal atual: comece pelo tutorial, siga para a primeira arena real de 3 duelos e use buffs temporarios entre vitorias."])
 	if _has_remote_arena_state(arena):
@@ -32,6 +33,7 @@ func render_selection(host: Node) -> void:
 		_render_dev_fallback_arenas(host)
 		_add_arena_preparation_control(host, false)
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
+	_add_runtime_config_recovery_panel(host)
 
 func render_loading_selection(host: Node) -> void:
 	_call_host(host, "_add_body_text", ["Carregando Arena PVE. As opcoes aparecem assim que o save sincronizar."])
@@ -67,6 +69,7 @@ func render_active(host: Node) -> void:
 	_add_loadout_details_control(host, attempt)
 	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, ABANDON_CONFIRM_MESSAGE])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
+	_add_runtime_config_recovery_panel(host)
 
 func render_buff_choice(host: Node) -> void:
 	var attempt := SessionStore.active_arena_attempt()
@@ -77,10 +80,12 @@ func render_buff_choice(host: Node) -> void:
 		_call_host(host, "_add_action_button", ["Retomar tentativa", AppShellActionContractScript.ACTION_ARENA_RESUME_ATTEMPT])
 		_add_arena_preparation_control(host, true)
 		_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, ABANDON_CONFIRM_MESSAGE])
+		_add_runtime_config_recovery_panel(host)
 		return
 	_add_buff_choice_cards(host, choices)
 	_add_arena_preparation_control(host, true)
 	_call_host(host, "_add_action_button", ["Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, ABANDON_CONFIRM_MESSAGE])
+	_add_runtime_config_recovery_panel(host)
 
 func render_summary(host: Node) -> void:
 	var arena := SessionStore.arena_snapshot()
@@ -91,6 +96,7 @@ func render_summary(host: Node) -> void:
 	_render_summary_next_step(host)
 	_call_host(host, "_add_action_button", ["Continuar na Arena", AppShellActionContractScript.ACTION_ARENA_CLAIM_SUMMARY])
 	_call_host(host, "_add_action_button", ["Voltar ao Refugio", AppShellActionContractScript.ACTION_RETURN_REFUGE])
+	_add_runtime_config_recovery_panel(host)
 
 func render_replay(host: Node, overlay: Control, compact_layout: bool, battle_log: Dictionary, rewards: Dictionary) -> void:
 	var presenter = host.get("_battle_replay_presenter")
@@ -256,6 +262,16 @@ func _render_active_attempt_recovery(host: Node, attempt: Dictionary) -> void:
 		stack.add_child(_arena_action_button(host, "Abandonar tentativa", AppShellActionContractScript.ACTION_ARENA_ABANDON_ATTEMPT, false, "", false, ABANDON_CONFIRM_MESSAGE))
 	_call_host(host, "_add_content_control", [panel])
 	_add_duel_progress_rail(host, attempt)
+
+func _add_runtime_config_recovery_panel(host: Node) -> void:
+	if not SessionStore.runtime_config_is_fallback():
+		return
+	var panel := _arena_panel(host, "ArenaRuntimeConfigRecoveryPanel", "bg_panel_alt", "status_error")
+	var stack := _arena_panel_stack(panel, 5)
+	stack.add_child(_arena_label("Configuracao remota indisponivel", 14, "status_error"))
+	stack.add_child(_arena_label("Sincronize a configuracao e tente a acao da Arena novamente.", 12, "text_secondary"))
+	stack.add_child(_arena_action_button(host, "Sincronizar configuracao", AppShellActionContractScript.ACTION_SYNC_RUNTIME_CONFIG, false, "", true))
+	_call_host(host, "_add_content_control", [panel])
 
 func _add_arena_preparation_control(host: Node, behavior_only: bool) -> void:
 	var compact := bool(host.get("_compact_layout"))
