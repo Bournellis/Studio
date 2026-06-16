@@ -88,20 +88,27 @@ func test_bot_tactical_context_filters_unavailable_points_by_role() -> void:
 
 func test_arena_layout_catalog_exposes_distinct_tactical_contexts() -> void:
 	var layout_ids := ArenaLayoutCatalogScript.get_layout_ids()
-	assert_eq(layout_ids.size(), 2)
+	assert_eq(layout_ids.size(), 3)
 	assert_true(layout_ids.has(ArenaLayoutCatalogScript.DUEL_PIT_ID))
 	assert_true(layout_ids.has(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID))
+	assert_true(layout_ids.has(ArenaLayoutCatalogScript.CROSSFIRE_CRUCIBLE_ID))
 
 	var duel_pit := ArenaLayoutCatalogScript.build_layout_spec(ArenaLayoutCatalogScript.DUEL_PIT_ID)
 	var relay_foundry := ArenaLayoutCatalogScript.build_layout_spec(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)
+	var crossfire_crucible := ArenaLayoutCatalogScript.build_layout_spec(ArenaLayoutCatalogScript.CROSSFIRE_CRUCIBLE_ID)
 	assert_eq(duel_pit.get("id", &""), &"duel_pit_v2")
 	assert_eq(relay_foundry.get("id", &""), &"relay_foundry_v1")
+	assert_eq(crossfire_crucible.get("id", &""), &"crossfire_crucible_v1")
 	assert_false(duel_pit.get("player_spawn", Vector3.ZERO) == relay_foundry.get("player_spawn", Vector3.ZERO))
 	assert_false(duel_pit.get("bot_spawn", Vector3.ZERO) == relay_foundry.get("bot_spawn", Vector3.ZERO))
+	assert_false(crossfire_crucible.get("player_spawn", Vector3.ZERO) == relay_foundry.get("player_spawn", Vector3.ZERO))
+	assert_false(crossfire_crucible.get("bot_spawn", Vector3.ZERO) == relay_foundry.get("bot_spawn", Vector3.ZERO))
 	assert_gt((duel_pit.get("tactical_points", []) as Array).size(), 10)
 	assert_gt((relay_foundry.get("tactical_points", []) as Array).size(), 10)
+	assert_gt((crossfire_crucible.get("tactical_points", []) as Array).size(), 10)
 	assert_eq((duel_pit.get("jump_pad_routes", []) as Array).size(), 2)
 	assert_eq((relay_foundry.get("jump_pad_routes", []) as Array).size(), 2)
+	assert_eq((crossfire_crucible.get("jump_pad_routes", []) as Array).size(), 2)
 
 	var relay_roles: Array[StringName] = []
 	for point: Dictionary in relay_foundry.get("tactical_points", []):
@@ -111,6 +118,16 @@ func test_arena_layout_catalog_exposes_distinct_tactical_contexts() -> void:
 	assert_true(relay_roles.has(BotTacticalContextScript.ROLE_PRESSURE))
 	assert_true(relay_roles.has(BotTacticalContextScript.ROLE_HIGH_GROUND))
 	assert_true(relay_roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY))
+
+	var crossfire_roles: Array[StringName] = []
+	for point: Dictionary in crossfire_crucible.get("tactical_points", []):
+		var role: StringName = point.get("role", &"")
+		if not crossfire_roles.has(role):
+			crossfire_roles.append(role)
+	assert_true(crossfire_roles.has(BotTacticalContextScript.ROLE_PRESSURE))
+	assert_true(crossfire_roles.has(BotTacticalContextScript.ROLE_HIGH_GROUND))
+	assert_true(crossfire_roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY))
+	assert_true(crossfire_roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_LANDING))
 
 func test_arena_layout_catalog_exposes_staged_vertical_route_contracts() -> void:
 	for layout_id: StringName in ArenaLayoutCatalogScript.get_layout_ids():
@@ -135,6 +152,16 @@ func test_relay_foundry_jump_pads_are_not_glued_to_high_platforms() -> void:
 		var route_target: Vector3 = route.get("target", Vector3.ZERO)
 		assert_gt(_flat_distance_between(route_position, route_target), 10.0)
 		assert_gt(absf(route_position.z - route_target.z), 9.5)
+
+func test_crossfire_crucible_jump_pad_routes_have_distinct_lengths() -> void:
+	var crossfire_crucible := ArenaLayoutCatalogScript.build_layout_spec(ArenaLayoutCatalogScript.CROSSFIRE_CRUCIBLE_ID)
+	var routes: Array = crossfire_crucible.get("jump_pad_routes", [])
+	assert_eq(routes.size(), 2)
+	var first_distance := _flat_distance_between(routes[0].get("position", Vector3.ZERO), routes[0].get("target", Vector3.ZERO))
+	var second_distance := _flat_distance_between(routes[1].get("position", Vector3.ZERO), routes[1].get("target", Vector3.ZERO))
+	assert_gt(first_distance, 7.0)
+	assert_gt(second_distance, 11.0)
+	assert_gt(absf(first_distance - second_distance), 3.0)
 
 func test_bot_scores_alternate_tactical_context_without_duel_pit_points() -> void:
 	var bot = BotScript.new()

@@ -41,11 +41,14 @@ func test_main_menu_scene_boots_with_arena_selection_buttons() -> void:
 
 	assert_eq(menu.debug_get_mode_path(&"arena"), "res://modes/arena/arena.tscn")
 	assert_eq(menu.debug_get_mode_path(&"relay_foundry"), "res://modes/arena/arena.tscn")
+	assert_eq(menu.debug_get_mode_path(&"crossfire_crucible"), "res://modes/arena/arena.tscn")
 	assert_eq(menu.debug_get_layout_id(&"arena"), &"duel_pit_v2")
 	assert_eq(menu.debug_get_layout_id(&"relay_foundry"), &"relay_foundry_v1")
+	assert_eq(menu.debug_get_layout_id(&"crossfire_crucible"), &"crossfire_crucible_v1")
 	assert_eq(menu.debug_get_mode_path(&"football"), "")
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/ArenaButton"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/RelayFoundryButton"))
+	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/CrossfireCrucibleButton"))
 	assert_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/FootballButton"))
 	assert_not_null(menu.get_node_or_null("MenuCenter/MenuPanel/MenuMargin/MenuBox/QuitButton"))
 	var menu_center := menu.get_node("MenuCenter") as CenterContainer
@@ -158,6 +161,42 @@ func test_relay_foundry_layout_exposes_distinct_route_markers_and_bot_points() -
 	assert_true(roles.has(BotTacticalContextScript.ROLE_HEALTH))
 	assert_true(roles.has(BotTacticalContextScript.ROLE_OVERCHARGE))
 	assert_true(roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY))
+	assert_no_new_orphans()
+
+func test_crossfire_crucible_layout_exposes_distinct_route_markers_and_bot_points() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	arena.set_arena_layout(ArenaLayoutCatalogScript.CROSSFIRE_CRUCIBLE_ID)
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	assert_eq(arena.debug_get_active_layout_id(), &"crossfire_crucible_v1")
+	assert_eq(arena.debug_get_active_layout_name(), "Crossfire Crucible V1")
+	assert_not_null(arena.get_node_or_null("CrossfireCrucibleFloor"))
+	assert_not_null(arena.get_node_or_null("CrucibleCore"))
+	assert_not_null(arena.get_node_or_null("WestLiftJumpPad"))
+	assert_not_null(arena.get_node_or_null("EastDiagonalJumpPad"))
+	assert_null(arena.get_node_or_null("MidBlocker"))
+	assert_eq(arena.debug_get_jump_pad_count(), 2)
+	assert_eq(arena.debug_get_bot_reposition_points().size(), 20)
+	assert_eq(arena.debug_get_bot_tactical_point_count(), 22)
+	assert_gt(arena.debug_get_flow_marker_count(), 5)
+	assert_true(arena.debug_has_high_platform_cover())
+
+	var bot = arena.debug_get_bot()
+	assert_eq(bot.debug_get_tactical_context_label(), &"crossfire_crucible_v1")
+	assert_eq(bot.debug_get_jump_pad_route_count(), 2)
+	var roles: Array[StringName] = arena.debug_get_bot_tactical_roles()
+	assert_true(roles.has(BotTacticalContextScript.ROLE_PRESSURE))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_COVER))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_FLANK))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_RETREAT))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_HEALTH))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_OVERCHARGE))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_ENTRY))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_JUMP_PAD_LANDING))
+	assert_true(roles.has(BotTacticalContextScript.ROLE_HIGH_GROUND))
 	assert_no_new_orphans()
 
 func test_bot_prioritizes_health_tactical_route_when_critical() -> void:
