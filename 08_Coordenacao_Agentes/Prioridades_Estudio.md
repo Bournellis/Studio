@@ -4,7 +4,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 ## Foco Atual
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; Track 09H hotfix de heap local validado, reteste remoto pendente) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 05B bot/jump pad aprovada; aguardando escolha da proxima track)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+4a323fab` publicado; gates remotos 09H PASS; aguardando reteste humano) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 05B bot/jump pad aprovada; aguardando escolha da proxima track)
 - Pausa temporaria por poucos dias: `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -13,7 +13,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 | Prioridade | Projeto | Caminho | Status | Trabalho permitido | Proximo passo |
 |---|---|---|---|---|---|
-| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | `Super Campeao v1.2.1+a75cfe57` segue publicado/aprovado; Track 09H hotfix de heap local validado; proximo passo: publicar/retestar candidata 09H antes de nova reducao/publicacao |
+| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | `Super Campeao v1.2.1+4a323fab` publicado com gates remotos 09H PASS; proximo passo: reteste humano antes de nova reducao |
 | Pausa | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
 | Ativo | DraxosMobile | `Projetos/draxos-mobile/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest, documentacao local e infraestrutura | Arena UX/readability/recovery publicado Web/APK `0.0.24-alpha.0` / vc `24`; proximo passo e prova humana do roteiro Arena antes de tuning, PVP, economia, conteudo ou expansao |
 | Ativo | FpsPlayground | `Projetos/FpsPlayground/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | Escolher a proxima track do FPS a partir da base aprovada de bot, mapa e movimentacao |
