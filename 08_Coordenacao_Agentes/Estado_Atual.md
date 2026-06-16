@@ -7,19 +7,19 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+a75cfe57` publicado e aprovado; Track 09H hotfix de heap local validado, reteste remoto pendente) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 05 Quake duel route control bot pronta para smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+4a323fab` publicado; gates remotos 09H PASS; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena UX/readability/recovery publicado Web/APK; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 05 Quake duel route control bot pronta para smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09H_WEB_HEAP_HOTFIX_LOCAL_VALIDATED`
-- Marker: `JOGO_DA_COPA_TRACK09H_WEB_HEAP_HOTFIX_LOCAL_VALIDATED`
-- Baseline publico: `Super Campeao v1.2.1+a75cfe57` (`web/v1-copa-arena-futebol-20260615-a75cfe57`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09F PASS no rerun e retest humano aprovado por Fabio.
-- Refator atual: Track 09G extraiu resolucao de partida para `football_match_resolution_controller.gd`; Track 09H removeu alocacao per-frame no clock do timer e passou local Chrome 5min com heap `+6.81%`; remoto 09H ainda nao publicado/retestado.
+- Status: `P2_IMPLEMENTACAO - TRACK09H_WEB_HEAP_HOTFIX_PUBLISHED_RETEST_PENDING`
+- Marker: `JOGO_DA_COPA_TRACK09H_WEB_HEAP_HOTFIX_PUBLISHED_RETEST_PENDING`
+- Baseline publico: `Super Campeao v1.2.1+4a323fab` (`web/v1-copa-arena-futebol-20260615-4a323fab`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09H PASS, reteste humano pendente.
+- Refator atual: Track 09G extraiu resolucao de partida; Track 09H removeu alocacao per-frame no clock do timer e publicou com estabilidade remota 5min PASS (`+9.97%`, limite `<10%`).
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: publicar/retestar candidata 09H com menu remoto, primeiro minuto, estabilidade 5min e luma antes de qualquer nova reducao.
+- Proximo passo: Fabio/tester fazer reteste humano da 09H publica antes de qualquer nova reducao.
 
 ## draxos-roguelike-cardgame
 

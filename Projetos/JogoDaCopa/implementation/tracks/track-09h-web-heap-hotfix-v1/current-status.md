@@ -4,7 +4,7 @@
 - Agente: `Codex`
 - Branch: `codex/jogodacopa/track09h-web-heap-hotfix-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track09h-web-heap-hotfix-v1`
-- Status: `LOCAL_VALIDADO`
+- Status: `PUBLICADO_RETEST_HUMANO_PENDENTE`
 
 ## Objetivo
 
@@ -38,6 +38,11 @@ Investigar e corrigir de forma curta a falha de heap remoto observada na publica
 - `tools/validate.gd` com build Web presente: PASS, Web gzip `30.60 MiB / 50.00 MiB`, raw `63.06 MiB`, `9` arquivos.
 - Chrome local short stability 120s: PASS, `event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`, heap final `+0.26%` no gate oficial, counters/caches Godot estaveis.
 - Chrome local stability 5min: PASS, `pageErrors=0`, `consoleErrorCount=0`, heap final `+6.81%` contra limite `10%`, pico transitorio `+12.73%`, counters/caches Godot estaveis, pior janela 5s `140.2 FPS`.
+- Cloudflare Pages publicacao: PASS como `web/v1-copa-arena-futebol-20260615-4a323fab` / `Super Campeao v1.2.1+4a323fab`.
+- Chrome remoto menu: PASS, release root conferiu, `menu.ready.end`, `pageErrors=0`, `consoleErrorCount=0`.
+- Chrome remoto primeiro minuto: PASS, `event.visible_match_start`, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
+- Chrome remoto stability 5min: PASS, heap final `43,664,158 -> 48,016,205` bytes (`+9.97%`, limite `<10%`), pico `50,091,222` bytes (`+14.72%`), counters/caches Godot estaveis, pior janela 5s `129.8 FPS`.
+- Luma remota noturna: PASS, `6.525 < 90`.
 
 ## Evidencias
 
@@ -45,9 +50,14 @@ Investigar e corrigir de forma curta a falha de heap remoto observada na publica
 - `docs/playtest-reports/track-09h-data/09h-local-short-stability.png`
 - `docs/playtest-reports/track-09h-data/09h-local-stability-5min.json`
 - `docs/playtest-reports/track-09h-data/09h-local-stability-5min.png`
+- `docs/playtest-reports/track-09h-data/09h-publication-report-4a323fab.json`
+- `docs/playtest-reports/track-09h-data/09h-remote-menu-4a323fab.json`
+- `docs/playtest-reports/track-09h-data/09h-remote-first-minute-4a323fab.json`
+- `docs/playtest-reports/track-09h-data/09h-remote-stability-5min-4a323fab.json`
+- `docs/playtest-reports/track-09h-data/09h-remote-night-luma-gate-4a323fab.json`
 - `docs/playtest-reports/track-09h-web-heap-hotfix.md`
 
 ## Risco Residual
 
-- A causa remota exata nao pode ser provada sem publicar uma nova candidata, porque a falha original apareceu apenas no Cloudflare Pages.
-- A 09H recupera margem local e remove um churn por frame real, mas o proximo passo obrigatorio ainda e publicar/retestar uma candidata 09H com menu remoto, primeiro minuto remoto, estabilidade remota 5min e luma remota antes de retomar a reducao do `FootballRoot`.
+- A causa remota exata da 09G segue tratada como margem Web apertada, nao como vazamento comprovado de nodes/recursos Godot.
+- A 09H passou no limite remoto por margem estreita (`+9.97%` contra `<10%`); manter o gate 5min obrigatorio e aguardar reteste humano antes de retomar a reducao do `FootballRoot`.
