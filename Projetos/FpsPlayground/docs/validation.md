@@ -102,6 +102,17 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm combat overlay still works: the bot may shoot during the route, but it does not cancel the jump pad approach or flight.
 - Confirm restart with `R`, pause menu and return to menu still work.
 
+## Track 06 Arena Variety And Bot Generalization Smoke
+
+- Launch all three arenas from the menu and confirm each match starts with readable spawns.
+- In the new arena, run one full low-ground loop without catching on walls, cover, platform edges or pickups.
+- In the new arena, use every jump pad or vertical connector from natural movement speed and confirm first-use reliability.
+- Confirm health and overcharge sit on different route decisions instead of the same awkward pocket.
+- Stand passive and confirm the bot rotates through arena-specific routes without freezing, wall-rubbing or repeating one route forever.
+- Confirm the bot still shoots during movement without canceling its route objective.
+- Confirm `Duel Pit V2` and `Relay Foundry V1` still preserve their accepted movement and bot behavior.
+- Confirm restart with `R`, pause menu and return to menu still work.
+
 ## Known Noise
 
 GUT UID/text-path warnings can appear after fresh worktree imports. They are accepted when tests pass.

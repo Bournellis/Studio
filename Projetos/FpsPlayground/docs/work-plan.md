@@ -1,137 +1,123 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK04_ARENA_MOVEMENT_FLOW_BOT_NAVIGATION_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_PLANNED`
 - Current surface: FPS arena lab.
+- Current baseline: Track 05B approved by Fabio; bot and long jump pad reliability are accepted.
 
 ## North Star
 
 Keep `FpsPlayground` as a clean first-person gameplay laboratory for arena movement, shooting, projectiles, bots, maps and combat feel.
 
-## Complete Baseline
+The near-term direction is to prove a solid 1x1 arena foundation before adding more combat toys. Each track should isolate one kind of risk so playtest feedback remains understandable.
+
+## Approved Baseline
 
 - Project split from `FpsShooter` into `FpsPlayground`.
-- Menu launches only `Arena Shooter`.
-- Arena Shooter preserves the accepted `Duel Pit V2` baseline.
-- Validation now targets FPS resources and arena tests only.
-- Football/TPS scope moved to `../JogoDaCopa`.
+- Menu launches `Arena Shooter` layouts.
+- `Duel Pit V2` preserves the accepted baseline.
+- `Relay Foundry V1` proves a second arena with route-control bot support.
+- Track 05B is approved: bot movement is good and the long jump pad first-attempt failure is resolved.
+- Validation baseline: `tools/validate.gd` PASS `30/30`, `238 asserts`.
+- Football/TPS scope belongs to `../JogoDaCopa`.
 
-## Previous Track
+## Planned Track Sequence
 
-`Track 02 - Bot Tactical Movement V1` is approved after automated validation and Fabio smoke.
+### 1. Track 06 - Arena Variety And Bot Generalization V1
 
-Goals:
+Goal:
 
-- Make the bot harder primarily through better movement and route decisions, not raw aimbot tuning.
-- Replace one-arena reposition assumptions with an arena-provided tactical context.
-- Let arenas declare tactical affordances: pressure, flank, cover, retreat, health, overcharge, high ground and jump pad routes.
-- Improve bot route scoring, anti-repeat behavior, stuck recovery and objective pressure.
-- Preserve readable shot windup and fair reaction windows.
+- Add a third arena with a different movement rhythm.
+- Prove bot route-control generalizes beyond the current two arenas.
+- Preserve the approved bot behavior without map-specific code.
 
-Delivered:
+Why first:
 
-- Bot tactical context helper and Duel Pit V2 tactical provider.
-- Tactical route scoring for pressure, flank, cover, retreat, health, overcharge, high ground and jump pad routes.
-- Anti-repeat route memory and objective route holding for critical health/vertical pressure.
-- Conservative bot pressure tuning through cooldown/reaction/aim values.
-- Focused automated tests for alternate arena context and critical health route priority.
+- The bot finally feels good. The highest-value next proof is that it remains good when the arena changes.
+- A third arena will stress route contracts, item placement, vertical connectors and menu/runtime layout selection.
+- It gives future tuning a broader test surface before new weapons or match systems add more variables.
 
-Delivered before this track:
+Detailed plan:
 
-- Track 01 approved combat readability: bot tell, damage intake, Plasma hit/overcharge, pickups and jump pad cues.
+- `implementation/tracks/track-06-arena-variety-bot-generalization-v1/current-status.md`
 
-Non-goals:
+### 2. Track 07 - Match Flow And Duel UX V1
 
-- No new weapon.
-- No new map/layout.
-- No export, Web/mobile, multiplayer or backend.
-- No football/TPS scope.
-- No impossible instant-shot bot behavior.
+Goal:
 
-## Previous Track
+- Turn the arena lab into a cleaner repeatable duel experience: rounds, score, win/loss clarity, restart flow, result state and possibly match timer options.
 
-`Track 03 - Arena Tactical Context Proof V1` is locally validated and ready for human smoke.
+Why second:
 
-Goals:
+- After three arenas prove the movement/bot foundation, repeated playtests need better structure.
+- Better match UX makes feedback easier to gather because each smoke can start/end cleanly.
+- It improves the product feel without changing combat balance.
 
-- Prove that bot tactical movement is arena-agnostic in playable content, not only in unit tests.
-- Move layout-specific data into a catalog/provider that can describe multiple arenas.
-- Keep `Duel Pit V2` as the default known-good baseline.
-- Add `Relay Foundry V1`, a second arena with different footprint, route graph, high ground, pickups and jump pad flow.
-- Let the main menu launch either arena.
-- Add automated coverage that checks both arenas publish tactical points, roles and route labels to the bot.
+Expected scope:
 
-Delivered:
+- round/match state clarity;
+- score and result HUD;
+- restart/new match flow;
+- menu return and arena reselection polish;
+- validation for round state transitions.
 
-- `ArenaLayoutCatalog` moved layout data out of `arena_root.gd`.
-- `Duel Pit V2` remains the default baseline.
-- `Relay Foundry V1` adds a second arena with distinct geometry, high routes, pickups, jump pads and tactical points.
-- Main menu can launch either arena.
-- GUT covers menu selection, layout catalog distinction and runtime multi-arena bot context.
-- `tools/validate.gd` PASS `20/20`, `175 asserts`.
+### 3. Track 08 - Player Movement Feel Polish V1
 
-Delivered before this track:
+Goal:
 
-- Track 01 approved combat readability: bot tell, damage intake, Plasma hit/overcharge, pickups and jump pad cues.
-- Track 02 approved bot tactical movement: arena tactical context, route scoring, anti-repeat, objective routing and conservative pressure tuning.
+- Refine player movement feel across the approved arenas: acceleration, air control, landing recovery, jump pad feel, collision comfort and readable speed.
 
-Non-goals:
+Why third:
 
-- No new weapon.
-- No raw aimbot difficulty spike.
-- No export, Web/mobile, multiplayer or backend.
-- No final art pass.
-- No broad refactor outside arena layout/context boundaries.
+- Movement tuning should happen after arena variety exists, otherwise tuning can overfit one map.
+- This track can use three arenas as a movement test bench.
+- It improves the FPS "hand feel" before combat variety raises the intensity.
 
-## Active Track
+Expected scope:
 
-`Track 04 - Arena Movement Flow And Bot Navigation V1` is locally validated and ready for human smoke.
+- movement constants and air-control tuning;
+- jump pad/player landing feel;
+- collision and edge-catch polish;
+- movement smoke checklist across all arenas;
+- no new weapons or bot difficulty spike.
 
-Human smoke from Track 03 accepted the improved bot aim direction, but rejected the movement feel:
+### 4. Track 09 - Combat Sandbox Expansion V1
 
-- the bot appears to treat map geometry like jump pad routes;
-- the bot can get stuck against ceilings and walls;
-- `Relay Foundry V1` jump pads are too close to high platforms;
-- platform placement does not support a good movement rhythm.
+Goal:
 
-Goals:
+- Add one carefully scoped combat experiment after movement, bot and duel UX have stable coverage.
 
-- Rebuild arena layouts around continuous player movement.
-- Make jump pads readable connectors with clear approach and landing space.
-- Keep high platforms useful without making them collision traps.
-- Make bot movement route-based instead of destination-only.
-- Add validation for movement clearance and staged vertical routing.
+Why fourth:
 
-Delivered:
+- New combat tools are exciting, but they can hide whether problems come from map, bot, UX or player movement.
+- Waiting until Track 09 keeps the foundation readable.
+- The experiment can be evaluated across multiple arenas with a cleaner match loop.
 
-- `Relay Foundry V1` rebuilt with more generous arena flow and less cramped jump pad/platform placement.
-- Vertical route labels now connect jump pad entry, landing and high-ground continuation.
-- Bot navigation now keeps jump pads as low-ground navigation targets until launch/vertical transition happens.
-- Bot jump recovery now checks overhead clearance and can temporarily penalize blocked routes.
-- Validation covers layout route contracts, Relay jump pad spacing and bot staged vertical navigation.
+Expected scope:
 
-Delivered before this track:
+- one new weapon, projectile variant or pickup rule;
+- clear readability and counterplay contract;
+- tests for damage, feedback and cooldown/resource behavior;
+- no broad arsenal expansion in the same track.
 
-- Track 01 approved combat readability.
-- Track 02 approved bot tactical movement in the accepted baseline.
-- Track 03 delivered multi-arena catalog and selection, but exposed movement-flow failures in smoke.
+## Track 06 Execution Notes
 
-Non-goals:
+Recommended arena concept: `Crossfire Crucible V1`.
 
-- No new weapon.
-- No raw aim/damage tuning spike.
-- No export, Web/mobile, multiplayer or backend.
-- No final art pass.
+It should be compact and distinct:
 
-## Recommended Next Track After Track 04 Smoke
+- cross-shaped central fight pressure;
+- one fast low-ground loop;
+- one diagonal high route;
+- separated health and overcharge routes;
+- at least one vertical connector that differs from the long pads in `Relay Foundry V1`;
+- no dead-end pickup pockets.
 
-Choose between:
-
-- human playtest-driven combat number tuning after movement is accepted;
-- projectile/weapon experiment;
-- export-readiness pass for the FPS lab.
+Track 06 should not add new combat mechanics. It should end when the third arena is selectable, validated and ready for human smoke.
 
 ## Out Of Scope
 
 - Football minigames.
 - TPS camera/avatar football work.
 - Multiplayer/backend/export unless explicitly planned.
+- Final art pass.
+- Large combat sandbox expansion before Track 09.
