@@ -7,6 +7,7 @@ const ACTION_ENTER_GUEST := "enter_guest"
 const ACTION_ENTER_REFUGE := "enter_refuge"
 const ACTION_OPEN_CREATE_ACCOUNT := "open_create_account"
 const ACTION_CHECK_UPDATE := "check_update"
+const ACTION_SYNC_RUNTIME_CONFIG := "sync_runtime_config"
 const ACTION_EMAIL_SIGN_UP := "email_sign_up"
 const ACTION_EMAIL_SIGN_IN := "email_sign_in"
 const ACTION_REFRESH_SESSION := "refresh_session"
@@ -89,6 +90,7 @@ const ITEM_WARD_POTION := "pocao_resguardo"
 
 const _UPDATE_GATE_ALLOWED_ACTIONS := {
 	ACTION_CHECK_UPDATE: true,
+	ACTION_SYNC_RUNTIME_CONFIG: true,
 	ACTION_RESET_SESSION: true,
 	ACTION_SELECT_SAVE_NORMAL: true,
 	ACTION_SELECT_SAVE_PROGRESSION_LAB: true,

@@ -91,6 +91,14 @@ func test_action_router_wraps_contract_payload_and_update_gate() -> void:
 	assert_eq(update_route.get("category"), AppShellActionRouterScript.CATEGORY_SESSION)
 	assert_false(bool(update_route.get("blocked_by_update", true)))
 
+	var runtime_config_route := AppShellActionRouterScript.route_action(
+		AppShellActionContractScript.ACTION_SYNC_RUNTIME_CONFIG,
+		context
+	)
+	assert_eq(runtime_config_route.get("category"), AppShellActionRouterScript.CATEGORY_SESSION)
+	assert_eq(runtime_config_route.get("mutation_endpoint"), "")
+	assert_false(bool(runtime_config_route.get("blocked_by_update", true)))
+
 	var account_route := AppShellActionRouterScript.route_action(
 		AppShellActionContractScript.ACTION_SHOW_ACCOUNT,
 		context
