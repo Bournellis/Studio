@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization planejada)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization validada localmente; aguardando smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_PLANNED`
-- Marker: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_PLANNED`
-- Baseline: Track 05B aprovada por Fabio; Track 06 esta planejada para criar terceira arena e provar generalizacao do bot sem codigo especifico por mapa.
-- Validacao: `tools/validate.gd` PASS `30/30`, `238 asserts`; warnings GUT UID/text-path conhecidos.
+- Status: `P2_IMPLEMENTACAO - TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_READY_FOR_SMOKE`
+- Baseline: Track 06 adicionou `Crossfire Crucible V1` como terceira arena selecionavel e provou contratos de bot/layout sem codigo especifico por mapa.
+- Validacao: `tools/validate.gd` PASS `32/32`, `289 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: executar Track 06 `Arena Variety And Bot Generalization V1`; depois seguir Track 07 match UX, Track 08 movement feel, Track 09 combat sandbox.
+- Proximo passo: Fabio/tester fazer smoke da Track 06; se aprovado, executar Track 07 match UX, Track 08 movement feel, Track 09 combat sandbox.
 
 ## rpg-isometrico
 

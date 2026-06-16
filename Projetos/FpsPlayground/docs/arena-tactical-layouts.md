@@ -1,6 +1,6 @@
 # FpsPlayground Arena Tactical Layouts
 
-Track 03 introduces a small arena layout catalog so the Arena Shooter can host multiple layouts without teaching the bot about one specific map.
+Track 03 introduced a small arena layout catalog so the Arena Shooter can host multiple layouts without teaching the bot about one specific map. Track 06 extends that proof with a third arena that stresses different movement rhythm and route timing.
 
 ## Layout Contract
 
@@ -17,7 +17,7 @@ Each layout should provide:
 
 The arena root owns runtime spawning, pickups, jump pad physics and bot context delivery. Layout builders own geometry.
 
-## Initial Layouts
+## Current Layouts
 
 `Duel Pit V2`
 
@@ -30,6 +30,13 @@ The arena root owns runtime spawning, pickups, jump pad physics and bot context 
 - New Track 03 proof arena.
 - Asymmetric relay/foundry shape with offset cover, high catwalk routes and distinct pickup pressure.
 - Used to prove the bot can consume a different tactical context without map-specific behavior.
+
+`Crossfire Crucible V1`
+
+- Track 06 proof arena.
+- Compact cross-shaped fight space with a low-ground loop, diagonal high route, central sightline break and separated health/overcharge routes.
+- Uses one shorter lift pad and one longer diagonal pad to prove route contracts generalize beyond the previous two arenas.
+- Used to smoke-test bot route-first movement without adding map-specific behavior.
 
 ## Authoring Rules
 
@@ -72,3 +79,10 @@ Automated tests should protect these contracts:
 - Tests must assert that both active layouts publish different context labels.
 - Tests must assert that each layout publishes useful tactical roles.
 - Manual smoke must cover bot movement in both `Duel Pit V2` and `Relay Foundry V1`.
+
+## Track 06 Validation
+
+- Tests must assert that all three layouts are selectable and expose stable ids.
+- Tests must assert that `Crossfire Crucible V1` publishes pressure, cover, flank, retreat, health, overcharge, jump pad entry, jump pad landing and high-ground roles.
+- Tests must assert that the `Crossfire Crucible V1` jump pad routes are distinct enough to avoid copy/paste arena rhythm.
+- Manual smoke must cover movement and bot generalization in `Duel Pit V2`, `Relay Foundry V1` and `Crossfire Crucible V1`.

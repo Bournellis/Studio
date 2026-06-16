@@ -8,6 +8,7 @@ const MENU_PANEL_SIZE: Vector2 = Vector2(540.0, 390.0)
 
 var arena_button: Button
 var relay_foundry_button: Button
+var crossfire_crucible_button: Button
 var quit_button: Button
 var status_label: Label
 
@@ -19,7 +20,7 @@ func _ready() -> void:
 
 func debug_get_mode_path(mode_id: StringName) -> String:
 	match mode_id:
-		&"arena", &"duel_pit", &"relay_foundry":
+		&"arena", &"duel_pit", &"relay_foundry", &"crossfire_crucible":
 			return ARENA_SCENE_PATH
 		_:
 			return ""
@@ -30,6 +31,8 @@ func debug_get_layout_id(mode_id: StringName) -> StringName:
 			return ArenaLayoutCatalogScript.DUEL_PIT_ID
 		&"relay_foundry":
 			return ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID
+		&"crossfire_crucible":
+			return ArenaLayoutCatalogScript.CROSSFIRE_CRUCIBLE_ID
 		_:
 			return &""
 
@@ -128,6 +131,12 @@ func _build_ui() -> void:
 		_load_arena_layout(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)
 	)
 	center.add_child(relay_foundry_button)
+
+	crossfire_crucible_button = _build_button("CrossfireCrucibleButton", "Arena Shooter - Crossfire Crucible V1")
+	crossfire_crucible_button.pressed.connect(func() -> void:
+		_load_arena_layout(ArenaLayoutCatalogScript.CROSSFIRE_CRUCIBLE_ID)
+	)
+	center.add_child(crossfire_crucible_button)
 
 	quit_button = _build_button("QuitButton", "Sair")
 	quit_button.pressed.connect(func() -> void:
