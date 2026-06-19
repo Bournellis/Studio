@@ -305,24 +305,40 @@ function buildHeapGate(samples, warmupMs, maxGrowthRatio) {
 	const usable = samples
 		.map((sample) => ({
 			...sample,
-			totalHeapBytes: Number(sample.usedJSHeapSize || 0) + Number(sample.wasmHeapBytes || 0),
+			jsHeapBytes: Number(sample.usedJSHeapSize || 0),
+			legacyJsWasmHeapBytes: Number(sample.usedJSHeapSize || 0) + Number(sample.wasmHeapBytes || 0),
 		}))
-		.filter((sample) => sample.t >= warmupMs && sample.totalHeapBytes > 0);
+		.filter((sample) => sample.t >= warmupMs && sample.jsHeapBytes > 0);
+	const wasmSampleCount = samples
+		.filter((sample) => Number(sample.t || 0) >= warmupMs)
+		.filter((sample) => Number.isFinite(Number(sample.wasmHeapBytes)) && Number(sample.wasmHeapBytes) > 0)
+		.length;
 	if (usable.length < 2) {
 		return {
-			name: "js_wasm_heap_growth",
+			name: "js_heap_growth",
+			metric: "usedJSHeapSize",
+			legacyAlias: {
+				name: "js_wasm_heap_growth",
+				aliasOf: "js_heap_growth",
+				compatibility: "Legacy gate name retained for reports produced before Track 09M.",
+			},
 			passed: false,
 			reason: "insufficient heap samples after warmup",
 			sampleCount: usable.length,
+			wasmSampleCount,
 		};
 	}
-	const baseline = usable[0].totalHeapBytes;
-	const final = usable[usable.length - 1].totalHeapBytes;
-	const max = Math.max(...usable.map((sample) => sample.totalHeapBytes));
+	const baseline = usable[0].jsHeapBytes;
+	const final = usable[usable.length - 1].jsHeapBytes;
+	const max = Math.max(...usable.map((sample) => sample.jsHeapBytes));
 	const finalGrowthRatio = baseline > 0 ? (final - baseline) / baseline : Infinity;
 	const peakGrowthRatio = baseline > 0 ? (max - baseline) / baseline : Infinity;
+	const legacyBaseline = usable[0].legacyJsWasmHeapBytes;
+	const legacyFinal = usable[usable.length - 1].legacyJsWasmHeapBytes;
+	const legacyMax = Math.max(...usable.map((sample) => sample.legacyJsWasmHeapBytes));
 	return {
-		name: "js_wasm_heap_growth",
+		name: "js_heap_growth",
+		metric: "usedJSHeapSize",
 		passed: finalGrowthRatio <= maxGrowthRatio,
 		baselineBytes: baseline,
 		finalBytes: final,
@@ -331,11 +347,36 @@ function buildHeapGate(samples, warmupMs, maxGrowthRatio) {
 		peakGrowthRatio,
 		limit: maxGrowthRatio,
 		sampleCount: usable.length,
+		wasmSampleCount,
+		wasmDetected: wasmSampleCount > 0,
+		legacyAlias: {
+			name: "js_wasm_heap_growth",
+			aliasOf: "js_heap_growth",
+			compatibility: "Legacy gate name retained for reports produced before Track 09M.",
+			measurement: wasmSampleCount > 0 ? "usedJSHeapSize_plus_wasmHeapBytes" : "usedJSHeapSize_only_no_wasm_samples",
+			baselineBytes: legacyBaseline,
+			finalBytes: legacyFinal,
+			maxBytes: legacyMax,
+			growthRatio: legacyBaseline > 0 ? (legacyFinal - legacyBaseline) / legacyBaseline : Infinity,
+			peakGrowthRatio: legacyBaseline > 0 ? (legacyMax - legacyBaseline) / legacyBaseline : Infinity,
+		},
 	};
 }
 
 function readHeapMetric(sample, metric) {
 	if (!sample) return null;
+	if (metric === "js_heap_bytes") {
+		const value = sample.usedJSHeapSize;
+		return Number.isFinite(value) ? value : null;
+	}
+	if (metric === "total_js_heap_bytes") {
+		const value = sample.totalJSHeapSize;
+		return Number.isFinite(value) ? value : null;
+	}
+	if (metric === "wasm_heap_bytes") {
+		const value = sample.wasmHeapBytes;
+		return Number.isFinite(value) ? value : null;
+	}
 	if (metric === "js_wasm_heap_bytes") {
 		const used = Number(sample.usedJSHeapSize);
 		const wasm = Number(sample.wasmHeapBytes);
@@ -420,7 +461,7 @@ function buildHeapGcSummary(samples) {
 	const beforeFinalGc = [...samples]
 		.reverse()
 		.find((sample) => sample !== finalGcSample && Number(sample.t || 0) <= Number(finalGcSample.t || 0));
-	const metrics = ["js_wasm_heap_bytes", "usedJSHeapSize", "totalJSHeapSize", "wasmHeapBytes"];
+	const metrics = ["js_heap_bytes", "total_js_heap_bytes", "wasm_heap_bytes", "js_wasm_heap_bytes"];
 	const deltas = {};
 	for (const metric of metrics) {
 		const before = readHeapMetric(beforeFinalGc, metric);
@@ -444,7 +485,7 @@ function buildHeapGcSummary(samples) {
 
 function buildHeapDiagnostics(samples, warmupMs, durationMs) {
 	const sorted = [...samples].sort((a, b) => Number(a.t || 0) - Number(b.t || 0));
-	const metrics = ["js_wasm_heap_bytes", "usedJSHeapSize", "totalJSHeapSize", "wasmHeapBytes"];
+	const metrics = ["js_heap_bytes", "total_js_heap_bytes", "wasm_heap_bytes", "js_wasm_heap_bytes"];
 	const windows = [
 		{ name: "boot_0_60s", startMs: 0, endMs: 60000 },
 		{ name: "mid_60_180s", startMs: 60000, endMs: 180000 },
@@ -964,6 +1005,8 @@ const frameCollector = `
       stabilityGate,
       stabilityWarmupMs,
       maxHeapGrowthRatio,
+      heapGateMetric: "js_heap_growth",
+      legacyHeapGateMetric: "js_wasm_heap_growth",
       frameStorageLimit,
       godotStabilitySamplesEnabled,
       godotDetailEnabled,
