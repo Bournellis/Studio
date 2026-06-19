@@ -6,10 +6,10 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest Track 11 local result:
+Latest Track 12 local result:
 
 ```text
-PASS, GUT 49/49, 464 asserts
+PASS, GUT 52/52, 493 asserts
 ```
 
 Latest Track 11 human smoke:
@@ -163,6 +163,15 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Press `R` during active play and confirm `events.jsonl` shows `round_reset` with `reason=manual_restart` before the next `round_start`.
 - Confirm the data helps answer why a round was won without needing to watch the whole match again.
 - Confirm player movement, sensitivity, jump pads, maps, bot route-control, pickups and Track 10 weapon roles feel unchanged.
+
+## Track 12 Telemetry Readout Smoke
+
+- Run `res://tools/telemetry_readout.gd -- --latest` after a fresh arena session.
+- Run `res://tools/telemetry_readout.gd -- --session="<path>"` against the approved Track 11 smoke session.
+- Confirm the report shows integrity, lifecycle, rounds, combat, Plasma, pickups, bot, movement and alerts.
+- Confirm the report calls out useful balance watch items without requiring raw JSON inspection.
+- Confirm `--json` emits a structured readout for future automation.
+- Confirm no gameplay feel changed.
 
 ## Known Noise
 

@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09P publicada com gates remotos PASS; aguardando reteste humano; 09N segue fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 11 complete telemetry aprovada no smoke humano; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09P publicada com gates remotos PASS; aguardando reteste humano; 09N segue fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 12 telemetry readout pronta para smoke; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -44,13 +44,13 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK11_COMPLETE_TELEMETRY_HUMAN_APPROVED`
-- Marker: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_HUMAN_APPROVED`
-- Baseline: Track 11 aprovada no smoke humano; telemetry registra lifecycle, combate, pickups, bot, movimento, jump pads e restarts manuais sem mudar gameplay.
+- Status: `P2_IMPLEMENTACAO - TRACK12_TELEMETRY_READOUT_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK12_TELEMETRY_READOUT_READY_FOR_SMOKE`
+- Baseline: Track 12 adiciona readout local e baseline interpretativa para telemetria; nenhum gameplay foi alterado.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
-- Validacao: `tools/validate.gd` PASS `49/49`, `464 asserts`; warnings GUT UID/text-path conhecidos.
+- Validacao: `tools/validate.gd` PASS `52/52`, `493 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: escolher a proxima track usando a telemetria como evidencia; preservar movimento, jump pads, mapas e bot aprovados.
+- Proximo passo: smoke humano do readout contra sessoes reais de `user://telemetry`; preservar movimento, jump pads, mapas e bot aprovados.
 
 ## rpg-isometrico
 

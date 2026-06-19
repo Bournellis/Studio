@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_HUMAN_APPROVED`
+- Status: `FPS_PLAYGROUND_TRACK12_TELEMETRY_READOUT_READY_FOR_SMOKE`
 - Current surface: FPS arena lab.
-- Current baseline: Track 11 approved in human smoke; current player movement feel preserved.
+- Current baseline: Track 12 readout ready for human smoke; current player movement feel preserved.
 
 ## North Star
 
@@ -21,7 +21,8 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 - Track 09 adds Plasma Impact Blast V1 without movement, map or bot route-control changes.
 - Track 10 tunes weapon roles without movement, map or bot route-control changes.
 - Track 11 adds local duel telemetry without movement, map, weapon or bot route-control changes.
-- Validation baseline: `tools/validate.gd` PASS `49/49`, `464 asserts`.
+- Track 12 adds local telemetry readout and first balance baseline without gameplay changes.
+- Validation baseline: `tools/validate.gd` PASS `52/52`, `493 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Track Sequence
@@ -103,6 +104,21 @@ Delivered:
 - Hotfix V2 keeps the compact summary flushed with the event stream during interrupted or reset sessions.
 - Hotfix V3 labels active manual restarts as `round_reset reason=manual_restart`.
 - Automated schema, file-output, arena integration and Track 10 guardrail tests.
+
+### 6. Track 12 - Telemetry Readout And Balance Baseline V1
+
+Status: ready for human smoke.
+
+Goal:
+
+- Turn approved telemetry files into a compact local balance/readout report.
+
+Delivered:
+
+- `tools/telemetry_readout.gd` headless runner with `--latest`, `--session`, `--root` and `--json`.
+- `TelemetryReadoutAnalyzer` for integrity, lifecycle, combat, Plasma, pickups, bot, movement and alerts.
+- First balance baseline in `docs/balance-baseline.md`.
+- GUT coverage for healthy sessions, mismatched summaries, jump pad alerts and latest-session lookup.
 
 ## Out Of Scope
 
