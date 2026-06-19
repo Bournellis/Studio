@@ -7,6 +7,7 @@ const FootballMatchFlowControllerScript = preload("res://modes/football/football
 const FootballMatchPresentationControllerScript = preload("res://modes/football/football_match_presentation_controller.gd")
 const FootballMatchResolutionControllerScript = preload("res://modes/football/football_match_resolution_controller.gd")
 const FootballKickSuperControllerScript = preload("res://modes/football/football_kick_super_controller.gd")
+const FootballBallContactControllerScript = preload("res://modes/football/football_ball_contact_controller.gd")
 const FootballArcadeFieldControllerScript = preload("res://modes/football/football_arcade_field_controller.gd")
 const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
 const AvatarAppearanceScript = preload("res://gameplay/avatar/avatar_appearance.gd")
@@ -240,9 +241,7 @@ func _physics_process(delta: float) -> void:
 	if kickoff_countdown_remaining > 0.0:
 		_update_kickoff_countdown(delta)
 		return
-	player_touch_cooldown_remaining = maxf(0.0, player_touch_cooldown_remaining - delta)
-	arcade_contact_cooldown_remaining = maxf(0.0, arcade_contact_cooldown_remaining - delta)
-	ball_contact_audio_cooldown_remaining = maxf(0.0, ball_contact_audio_cooldown_remaining - delta)
+	FootballBallContactControllerScript.update_contact_cooldowns(self, delta)
 	if FootballMatchResolutionControllerScript.update_goal_reset(self, delta):
 		return
 	if match_over:
@@ -653,126 +652,16 @@ func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, l
 	FootballKickSuperControllerScript.on_bot_kick_requested(self, origin, direction, force, lift)
 
 func _update_player_ball_control(_delta: float) -> void:
-	if player == null or ball == null:
-		player_ball_control_state = &"free"
-		player_ball_control_strength = 0.0
-		return
-	var state: Dictionary = FootballMatchRulesScript.get_player_possession_state(
-		player.global_position,
-		_get_player_kick_direction(),
-		player.velocity,
-		ball.global_position,
-		PLAYER_TOUCH_RADIUS,
-		PLAYER_NEAR_BALL_RADIUS
-	)
-	player_ball_control_state = state.get("state", &"free")
-	player_ball_control_strength = float(state.get("strength", 0.0))
+	FootballBallContactControllerScript.update_player_ball_control(self, _delta)
 
 func _process_player_ball_contact() -> void:
-	if player_touch_cooldown_remaining > 0.0:
-		return
-	var contact: Dictionary = FootballMatchRulesScript.get_player_contact_kick(
-		player.global_position,
-		player.velocity,
-		ball.global_position,
-		PLAYER_TOUCH_RADIUS,
-		2.0
-	)
-	if not bool(contact.get("connected", false)):
-		return
-	var contact_direction: Vector3 = contact.get("direction", Vector3.ZERO)
-	var boost_multiplier := 1.35 if player.is_boosting() else 1.0
-	var contact_lift := 0.42 if player.is_boosting() else 0.18
-	_notify_player_touched_ball()
-	ball.kick(contact_direction, PLAYER_TOUCH_FORCE * boost_multiplier, contact_lift)
-	_add_player_super(SUPER_TOUCH_GAIN)
-	player_touch_cooldown_remaining = PLAYER_TOUCH_COOLDOWN
+	FootballBallContactControllerScript.process_player_ball_contact(self)
 
 func _on_ball_body_entered(body: Node) -> void:
-	if feedback == null or ball == null or ball_contact_audio_cooldown_remaining > 0.0:
-		return
-	if RenderProfileScript.is_web_platform():
-		return
-	var ball_speed: float = ball.linear_velocity.length()
-	if ball_speed < 2.0:
-		return
-	var body_name := str(body.name).to_lower()
-	if body_name.contains("glass") or body_name.contains("wall") or body_name.contains("goal"):
-		feedback.play_ball_glass(ball.global_position)
-	else:
-		feedback.play_ball_bounce(ball.global_position, ball_speed > 12.0)
-	ball_contact_audio_cooldown_remaining = 0.12
+	FootballBallContactControllerScript.on_ball_body_entered(self, body, RenderProfileScript)
 
 func _process_arcade_action_contacts() -> void:
-	if arcade_contact_cooldown_remaining > 0.0 or player == null or bot == null or ball == null:
-		return
-	var handled := false
-	if player.has_method("is_arcade_dashing") and player.is_arcade_dashing():
-		handled = _process_arcade_dash_contact(player, bot, true) or handled
-	if bot.has_method("debug_is_arcade_dashing") and bot.debug_is_arcade_dashing():
-		handled = _process_arcade_dash_contact(bot, player, false) or handled
-	if handled:
-		arcade_contact_cooldown_remaining = ARCADE_CONTACT_COOLDOWN
-
-func _process_arcade_dash_contact(actor: Node3D, target: Node3D, actor_is_player: bool) -> bool:
-	var actor_position: Vector3 = actor.global_position
-	var target_position: Vector3 = target.global_position
-	var dash_direction := _get_arcade_dash_direction(actor, actor_is_player)
-	var ball_close := _flat_distance(actor_position, ball.global_position) <= ARCADE_SLIDE_BALL_RADIUS
-	var body_close := _flat_distance(actor_position, target_position) <= ARCADE_BODY_CONTACT_RADIUS
-	if not ball_close and not body_close:
-		return false
-	if ball_close:
-		if actor_is_player:
-			_notify_player_touched_ball()
-		else:
-			_notify_ball_touched_by(&"bot")
-		ball.kick(dash_direction, ARCADE_SLIDE_BALL_FORCE, ARCADE_SLIDE_BALL_LIFT)
-		if actor_is_player:
-			_add_player_super(SUPER_TOUCH_GAIN)
-		else:
-			_add_bot_super(SUPER_TOUCH_GAIN)
-		if actor_is_player and player_avatar != null:
-			player_avatar.play_slide()
-		elif not actor_is_player and bot_avatar != null:
-			bot_avatar.play_slide()
-		if body_close:
-			_apply_arcade_knockback_and_stun(target, dash_direction, ARCADE_SLIDE_KNOCKBACK_FORCE, ARCADE_SLIDE_STUN_DURATION)
-		return true
-	if body_close:
-		if actor_is_player and player_avatar != null and player_avatar.has_method("play_push"):
-			player_avatar.play_push()
-		elif not actor_is_player and bot_avatar != null and bot_avatar.has_method("play_push"):
-			bot_avatar.play_push()
-		_apply_arcade_knockback(target, dash_direction, ARCADE_SHOULDER_KNOCKBACK_FORCE)
-		_apply_arcade_knockback(actor, -dash_direction, ARCADE_SHOULDER_KNOCKBACK_FORCE * 0.72)
-		return true
-	return false
-
-func _get_arcade_dash_direction(actor: Node3D, actor_is_player: bool) -> Vector3:
-	var direction := Vector3.ZERO
-	if actor_is_player and actor.has_method("get_arcade_dash_direction"):
-		direction = actor.get_arcade_dash_direction()
-	elif not actor_is_player and actor.has_method("debug_get_arcade_dash_direction"):
-		direction = actor.debug_get_arcade_dash_direction()
-	direction.y = 0.0
-	if direction.length_squared() <= 0.0001:
-		direction = -actor.global_transform.basis.z
-		direction.y = 0.0
-	return direction.normalized() if direction.length_squared() > 0.0001 else Vector3.FORWARD
-
-func _apply_arcade_knockback_and_stun(target: Node, direction: Vector3, force: float, stun_duration: float) -> void:
-	_apply_arcade_knockback(target, direction, force)
-	if target.has_method("apply_arcade_stun"):
-		target.apply_arcade_stun(stun_duration)
-	if target == player and player_avatar != null:
-		player_avatar.play_hit()
-	elif target == bot and bot_avatar != null:
-		bot_avatar.play_hit()
-
-func _apply_arcade_knockback(target: Node, direction: Vector3, force: float) -> void:
-	if target.has_method("apply_knockback"):
-		target.apply_knockback(direction, force, 1.05)
+	FootballBallContactControllerScript.process_arcade_action_contacts(self)
 
 func _collect_arcade_field_nodes() -> void:
 	FootballArcadeFieldControllerScript.collect_nodes(self)
@@ -1119,8 +1008,3 @@ func _update_avatar_states(delta: float) -> void:
 	if bot_avatar != null and bot != null:
 		var bot_flat_speed := Vector3(bot.velocity.x, 0.0, bot.velocity.z).length()
 		bot_avatar.set_move_state(bot_flat_speed, bot.is_on_floor(), bot.velocity.y)
-
-func _flat_distance(a: Vector3, b: Vector3) -> float:
-	a.y = 0.0
-	b.y = 0.0
-	return a.distance_to(b)
