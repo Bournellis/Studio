@@ -18,7 +18,7 @@ Alterar a sensibilidade padrao do mouse para `1.1` na escala exibida pelo HUD.
 
 ## Handoff
 
-Implementacao validada e pronta para merge local.
+Implementacao validada e merge local concluido em `main`.
 
 - Validacao: `res://tools/validate.gd` PASS (`34/34`, `342 asserts`).
 - PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.
