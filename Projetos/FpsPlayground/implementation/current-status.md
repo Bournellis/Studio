@@ -4,15 +4,15 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 09 - Combat Sandbox Expansion V1`
+- Active stage: `Track 10 - Combat Balance And Weapon Roles V1`
 - Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK09_COMBAT_SANDBOX_READY_FOR_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK10_COMBAT_BALANCE_READY_FOR_SMOKE`
 
 ## Current Truth
 
 `FpsPlayground` owns the FPS arena work split from the former `FpsShooter`. Football/TPS work belongs to `Projetos/JogoDaCopa`.
 
-The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1 and the pre-Track-08 player movement feel preserved.
+The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning and the pre-Track-08 player movement feel preserved.
 
 ## Current Scope
 
@@ -27,17 +27,16 @@ The approved baseline has three selectable 1x1 arenas, route-first bot movement,
 
 ## Latest Track
 
-`Track 09 - Combat Sandbox Expansion V1`
+`Track 10 - Combat Balance And Weapon Roles V1`
 
 Delivered:
 
-- Added Plasma Impact Blast V1 for Plasma Bolt world impacts.
-- Kept direct plasma hits, rifle behavior, player movement, jump pads, maps and bot route-control unchanged.
-- Added HUD and feedback events for normal and overcharged blasts.
-- Added deterministic falloff/damage helpers.
-- Added automated coverage for direct hit preservation, partial blast damage, overcharge radius, no self-damage and old jump pad force.
+- Tuned direct Plasma to `24` damage so it is a committed high-impact shot, not a weaker alternate fire.
+- Tuned Plasma Blast to `46%` max and `22%` min damage fraction so splash remains pressure, not the best default shot.
+- Added weapon-role helpers and automated contracts for rifle DPS, Plasma commitment, blast value, overcharge and readable bot pressure.
+- Kept player movement, sensitivity, jump pads, arena geometry, bot route-control and pickup behavior unchanged.
 
-Human smoke should focus on combat feel, blast readability, overcharge blast value and no regression in the approved movement/bot/map feel.
+Human smoke should focus on rifle precision, direct Plasma commitment, Plasma Blast pressure value, overcharge value and no regression in the approved movement/bot/map feel.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -54,17 +53,18 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 07: match flow and duel UX - ready for smoke.
 - Track 08: player movement feel experiment - discarded before merge on `2026-06-19`; current feel preserved.
 - Track 09: combat sandbox expansion - ready for smoke.
+- Track 10: combat balance and weapon roles - ready for smoke.
 
 ## Next Sequence
 
 1. Preserve current player movement feel.
-2. Smoke Track 09 - Combat Sandbox Expansion V1 in editor.
+2. Smoke Track 10 - Combat Balance And Weapon Roles V1 in editor.
 
 ## Validation
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 39/39, 371 asserts
+# PASS, GUT 43/43, 396 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.
@@ -77,4 +77,4 @@ Manual smoke lives in `docs/validation.md`.
 4. `docs/mode-contract.md`
 5. `docs/validation.md`
 6. `docs/bot-route-control.md`
-7. `implementation/tracks/track-09-combat-sandbox-expansion-v1/current-status.md`
+7. `implementation/tracks/track-10-combat-balance-weapon-roles-v1/current-status.md`

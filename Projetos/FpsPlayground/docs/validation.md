@@ -6,10 +6,10 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest Track 09 local result:
+Latest Track 10 local result:
 
 ```text
-PASS, GUT 39/39, 371 asserts
+PASS, GUT 43/43, 396 asserts
 ```
 
 Profiles:
@@ -133,6 +133,16 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm the blast does not create player self-damage or rocket-jump behavior.
 - Confirm player movement, jump pads and all three arena routes feel unchanged.
 - Confirm bot remains route-first and does not gain unfair aim or reaction.
+- Confirm round flow, score, restart and pause-menu reset still work.
+
+## Track 10 Combat Balance And Weapon Roles Smoke
+
+- Confirm rifle remains the primary precision and finishing weapon.
+- Confirm direct Plasma feels stronger per hit than rifle, but slower and higher-commitment.
+- Confirm Plasma Blast pressures cover and near misses without becoming stronger than direct hits or rifle timing.
+- Confirm overcharge makes rifle/plasma meaningfully stronger without deciding every duel instantly.
+- Confirm bot shot pressure remains readable, fair and below player burst.
+- Confirm movement, sensitivity, jump pads, maps, bot route-control and pickups feel unchanged.
 - Confirm round flow, score, restart and pause-menu reset still work.
 
 ## Known Noise

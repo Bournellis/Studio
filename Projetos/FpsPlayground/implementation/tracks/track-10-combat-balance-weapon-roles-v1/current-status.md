@@ -1,6 +1,6 @@
 # Track 10 - Combat Balance And Weapon Roles V1
 
-- Status: `IN_PROGRESS`
+- Status: `READY_FOR_HUMAN_SMOKE`
 - Started: `2026-06-19`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track10-combat-balance-weapon-roles-v1`
@@ -11,12 +11,12 @@
 
 Consolidate combat balance after Plasma Impact Blast V1 so rifle, direct Plasma, Plasma Blast, overcharge and bot pressure have clear and testable roles.
 
-## Starting Values
+## Delivered Values
 
 - Player rifle: `22` damage, `0.18` cooldown.
-- Player Plasma direct: `16` damage, `0.9` cooldown.
+- Player Plasma direct: `24` damage, `0.9` cooldown.
 - Player overcharge: `x1.35` damage, `x1.25` knockback.
-- Plasma Blast: `1.65` radius, `62%` max damage fraction, `0.28` minimum damage fraction.
+- Plasma Blast: `1.65` radius, `46%` max damage fraction, `22%` minimum damage fraction.
 - Overcharged Plasma Blast: `2.25` radius.
 - Bot shot: `9` damage, `0.76` cooldown, `0.18` tell.
 - Bot overcharge: `x1.25` damage, `x1.18` knockback.
@@ -36,12 +36,13 @@ Consolidate combat balance after Plasma Impact Blast V1 so rifle, direct Plasma,
 - Do not change bot route-control movement, pickup priority or jump pad commitment.
 - Do not add new weapons, ammo, reloads, self-damage, rocket-jump behavior or UI-heavy systems.
 
-## Planned Delivery
+## Delivered
 
-- Add automated role contracts for rifle, Plasma direct, Plasma Blast, overcharge and bot shot pressure.
-- Apply conservative tuning only where the contracts expose unclear roles.
-- Preserve Track 09 blast readability while keeping direct hits more valuable than splash.
-- Update validation smoke notes and project snapshots.
+- Added automated role contracts for rifle, Plasma direct, Plasma Blast, overcharge and bot shot pressure.
+- Tuned direct Plasma to hit harder per shot while staying far below rifle sustained DPS.
+- Tuned Plasma Blast to remain pressure/near-miss value instead of replacing direct hits or rifle shots.
+- Kept bot shot pressure readable and below player burst values.
+- Preserved player movement constants, jump pads, maps, bot route-control and pickup behavior.
 
 ## Validation Plan
 
@@ -49,6 +50,12 @@ Consolidate combat balance after Plasma Impact Blast V1 so rifle, direct Plasma,
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path "D:\Estudio-worktrees\FpsPlayground--codex--track10-combat-balance-weapon-roles-v1\Projetos\FpsPlayground" -s res://tools/validate.gd
 git diff --check
 powershell -ExecutionPolicy Bypass -File D:\Estudio\tools\check_doc_drift.ps1
+```
+
+Latest automated result:
+
+```text
+PASS, GUT 43/43, 396 asserts
 ```
 
 ## Human Smoke
