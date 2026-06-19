@@ -5,7 +5,7 @@
 - Branch: `codex/jogodacopa/track07-visual-polish-web-safe`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track07-visual-polish-web-safe`
 - Base: `main` em `b2bb7a7a`
-- Status: `BLOQUEADO_REMOTE_GATE_ROLLBACK_EXECUTADO`
+- Status: `HISTORICO_ENCERRADO_ROLLBACK_EXECUTADO`
 
 ## Objetivo
 
@@ -54,3 +54,7 @@ Executar uma track visual grande para melhorar leitura e impacto do `Copa Arena 
 ## Handoff
 
 Track 07 foi mergeada localmente em `main` como `138cf4f7` e a publicacao tentativa `v1.2.0+138cf4f7` passou menu/primeiro minuto remotos, mas falhou estabilidade 5min por heap JS/WASM `+10.34%` contra limite `<10%`. Rollback remoto executado para `v1.1.0+be453dc3`; proximo passo e hotfix de heap antes de nova publicacao.
+
+## Fechamento Documental - 2026-06-19
+
+Card removido de `Review` como limpeza documental pos-Track 09O. A pendencia tecnica registrada aqui foi historicamente superada pelas hotfixes/publicacoes posteriores, e o estado vivo atual do JogoDaCopa esta em `Projetos/JogoDaCopa/implementation/current-status.md`, `Projetos/JogoDaCopa/docs/work-plan.md` e `Projetos/JogoDaCopa/docs/publication-readiness.md`.
