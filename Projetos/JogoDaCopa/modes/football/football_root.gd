@@ -17,6 +17,7 @@ const PerfProbeScript = preload("res://modes/shared/jdc_perf_probe.gd")
 const FootballWorldEnvironmentScript = preload("res://modes/football/football_world_environment.gd")
 const FootballCaptureDirectorScript = preload("res://modes/football/football_capture_director.gd")
 const FootballScoreboardControllerScript = preload("res://modes/football/football_scoreboard_controller.gd")
+const FootballRenderSettingsControllerScript = preload("res://modes/football/football_render_settings_controller.gd")
 const FootballPerfScenarioScript = preload("res://modes/football/football_perf_scenario.gd")
 const FootballWebLoadingControllerScript = preload("res://modes/football/football_web_loading_controller.gd")
 
@@ -167,8 +168,8 @@ func _ready() -> void:
 
 func _ready_sync() -> void:
 	var ready_begin := PerfProbeScript.begin(self, "football.ready")
-	_apply_main_menu_settings()
-	_connect_game_settings_signals()
+	FootballRenderSettingsControllerScript.apply_main_menu_settings(self)
+	FootballRenderSettingsControllerScript.connect_game_settings_signals(self, Callable(self, "_on_settings_quality_changed"))
 	var stage_begin := PerfProbeScript.begin(self, "football.configure_world")
 	_configure_world()
 	PerfProbeScript.end(self, "football.configure_world", stage_begin)
@@ -185,8 +186,8 @@ func _ready_sync() -> void:
 
 func _ready_web_async() -> void:
 	var ready_begin := PerfProbeScript.begin(self, "football.ready")
-	_apply_main_menu_settings()
-	_connect_game_settings_signals()
+	FootballRenderSettingsControllerScript.apply_main_menu_settings(self)
+	FootballRenderSettingsControllerScript.connect_game_settings_signals(self, Callable(self, "_on_settings_quality_changed"))
 	FootballWebLoadingControllerScript.set_progress(self, PerfProbeScript, MODE_NAME, "Preparando arena", 0.08)
 	await get_tree().process_frame
 	var stage_begin := PerfProbeScript.begin(self, "football.configure_world")
@@ -599,40 +600,17 @@ func _build_football_pitch() -> void:
 func _spawn_runtime() -> void:
 	FootballRuntimeSpawnerScript.spawn(self, RenderProfileScript, PerfProbeScript)
 
-func _apply_main_menu_settings() -> void:
-	var tree := get_tree()
-	if tree == null or tree.root == null:
-		return
-	if tree.root.has_meta(BOT_DIFFICULTY_META_KEY):
-		set_bot_difficulty(StringName(str(tree.root.get_meta(BOT_DIFFICULTY_META_KEY))))
-	if tree.root.has_meta(MATCH_MODE_META_KEY):
-		set_match_mode(StringName(str(tree.root.get_meta(MATCH_MODE_META_KEY))))
-
 func _get_game_settings():
-	return get_node_or_null("/root/GameSettings")
-
-func _connect_game_settings_signals() -> void:
-	var settings = _get_game_settings()
-	if settings == null:
-		return
-	if not settings.quality_changed.is_connected(_on_settings_quality_changed):
-		settings.quality_changed.connect(_on_settings_quality_changed)
+	return FootballRenderSettingsControllerScript.get_game_settings(self)
 
 func _on_settings_quality_changed(_quality_id: StringName) -> void:
-	_refresh_render_profile_runtime()
+	FootballRenderSettingsControllerScript.refresh_render_profile_runtime(self)
 
 func _on_pause_quality_changed(_quality_id: StringName) -> void:
-	if _get_game_settings() == null:
-		_refresh_render_profile_runtime()
+	FootballRenderSettingsControllerScript.on_pause_quality_changed(self, _quality_id)
 
 func _refresh_render_profile_runtime() -> void:
-	if world_environment != null:
-		world_environment.environment = _build_night_environment()
-	_resize_scoreboard_viewports_for_render_profile()
-	_request_hud_and_scoreboard_refresh()
-
-func _resize_scoreboard_viewports_for_render_profile() -> void:
-	FootballScoreboardControllerScript.resize_viewports(self, RenderProfileScript)
+	FootballRenderSettingsControllerScript.refresh_render_profile_runtime(self)
 
 func _restart_play(after_goal: bool, start_countdown: bool = true) -> void:
 	FootballMatchFlowControllerScript.restart_play(self, after_goal, start_countdown)
@@ -1047,13 +1025,7 @@ func _capture_mouse_if_playing(allow_web_capture: bool = false) -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _on_sensitivity_changed(value: float) -> void:
-	if player != null:
-		player.set_mouse_sensitivity(value)
-	var settings = _get_game_settings()
-	if settings != null and player != null:
-		settings.set_mouse_sensitivity(player.mouse_sensitivity)
-	if hud != null:
-		hud.set_sensitivity_value(player.mouse_sensitivity)
+	FootballRenderSettingsControllerScript.on_sensitivity_changed(self, value)
 
 func _cycle_skin_tone(step: int) -> void:
 	selected_appearance.skin_tone_id = AvatarCatalogScript.get_next_skin_tone_id(selected_appearance.skin_tone_id, step)

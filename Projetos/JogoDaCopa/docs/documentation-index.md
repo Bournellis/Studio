@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09M_WEB_HEAP_GATE_SEMANTICS_READY`
+- Status: `JOGO_DA_COPA_TRACK09N_RENDER_SETTINGS_CONTROLLER_LOCAL_READY`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -19,6 +19,9 @@
 
 ## Latest Evidence
 
+- Track 09N render settings controller closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-render-settings-controller-v1.md`
+- Track 09N render settings controller report: `playtest-reports/track-09n-render-settings-controller.md`
+- Track 09N evidence: `playtest-reports/track-09n-data/`
 - Track 09M heap gate semantics closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09m-web-heap-gate-semantics-v1.md`
 - Track 09M heap gate semantics report: `playtest-reports/track-09m-web-heap-gate-semantics.md`
 - Track 09M evidence: `playtest-reports/track-09m-data/`
@@ -64,6 +67,8 @@
 - `validation-profiles.md`
 - `publication-readiness.md`
 - `release-history.md`
+- `playtest-reports/track-09n-render-settings-controller.md`
+- `playtest-reports/track-09n-data/`
 - `playtest-reports/track-09m-web-heap-gate-semantics.md`
 - `playtest-reports/track-09m-data/`
 - `playtest-reports/track-09l-web-heap-instrumentation.md`

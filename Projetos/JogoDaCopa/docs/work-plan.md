@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09J_BALL_CONTACT_CONTROLLER_LOCAL_VALIDATED`
+- Status: `JOGO_DA_COPA_TRACK09N_RENDER_SETTINGS_CONTROLLER_LOCAL_READY`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -33,12 +33,16 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09H Web Heap Hotfix V1 removed a per-frame `Dictionary` allocation from the timer clock path in `football_match_resolution_controller.gd`; published `Super Campeao v1.2.1+4a323fab` after local validate/export, remote menu, first-minute, 5-minute stability and night luma gates passed.
 - Track 09I Kick Super Controller V1 extracted player kick requests, charged/strong kick routing, SUPER spend/gain helpers and bot kick routing into `football_kick_super_controller.gd`; `FootballRoot` in the current base fell from `995` to `943` lines; published `Super Campeao v1.2.1+7995b06c` after local validate/export, remote menu, first-minute, stability and night luma gates passed; human retest was approved by Fabio before Track 09J.
 - Track 09J Ball Contact Controller V1 extracted player ball-control state, passive player-ball contact, ball collision audio and arcade dash/body contact into `football_ball_contact_controller.gd`; `FootballRoot` in the current base fell from `943` to `832` lines; local validate/export/gzip/Web boot gates passed with no intended gameplay, input, bot, physics, scoring, HUD or asset change.
+- Track 09K Web Heap Hotfix V1 kept the hot contact path in `FootballRoot`, improved the signal locally but still failed the remote stability heap gate; production was restored to 09I.
+- Track 09L Web Heap Instrumentation V1 showed the Chrome gate is measuring exposed JS heap in available runs because `wasmHeapBytes` has no samples.
+- Track 09M Web Heap Gate Semantics V1 renamed the primary gate to `js_heap_growth` while preserving the legacy `js_wasm_heap_growth` alias; production remained 09I.
+- Track 09N Render Settings Controller V1 extracted render/settings orchestration into `football_render_settings_controller.gd`; `FootballRoot` in the current base fell from `1079` to `1051` lines; local validate/export/gzip/Web probe gates passed with no intended gameplay, input, bot, physics, scoring, HUD visual, asset or tuning change.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Track 09J is locally validated and merged-ready. Fabio should push via GitHub Desktop; after that, either open a short publication track for 09J with remote menu/first-minute/stability/luma gates, or continue local reduction with another bounded `FootballRoot` slice.
+Track 09N is locally validated and merge-ready. Fabio should push via GitHub Desktop after local merge; before any publication, run an A/B comparison against the approved public 09I baseline using the Track 09M `js_heap_growth` probe.
 
 Focus:
 
