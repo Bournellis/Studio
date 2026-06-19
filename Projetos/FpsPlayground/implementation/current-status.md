@@ -12,7 +12,7 @@
 
 `FpsPlayground` owns the FPS arena work split from the former `FpsShooter`. Football/TPS work belongs to `Projetos/JogoDaCopa`.
 
-The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes and a repeatable duel flow.
+The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow and the pre-Track-08 player movement feel preserved.
 
 ## Current Scope
 
@@ -40,6 +40,8 @@ Delivered:
 
 Human smoke should focus on score/result readability, `R` flow, pause/menu reset and no regression in the approved bot/map feel.
 
+Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
+
 ## Track History
 
 - Track 01: combat readability polish - approved.
@@ -50,12 +52,12 @@ Human smoke should focus on score/result readability, `R` flow, pause/menu reset
 - Track 05: Quake-style route-control bot - approved.
 - Track 05B: long jump pad first-try reliability - approved.
 - Track 06: arena variety and bot generalization - approved on `2026-06-19`.
+- Track 08: player movement feel experiment - discarded before merge on `2026-06-19`; current feel preserved.
 
 ## Next Sequence
 
-1. Fabio/tester smoke Track 07.
-2. If approved, execute Track 08 - Player Movement Feel Polish V1.
-3. Then execute Track 09 - Combat Sandbox Expansion V1.
+1. Preserve current player movement feel.
+2. Execute Track 09 - Combat Sandbox Expansion V1 without movement changes.
 
 ## Validation
 

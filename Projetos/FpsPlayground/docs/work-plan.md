@@ -2,7 +2,7 @@
 
 - Status: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_READY_FOR_SMOKE`
 - Current surface: FPS arena lab.
-- Current baseline: Track 07 implemented locally; human smoke pending.
+- Current baseline: Track 07 implemented locally; current player movement feel preserved.
 
 ## North Star
 
@@ -17,6 +17,7 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 - `Duel Pit V2`, `Relay Foundry V1` and `Crossfire Crucible V1` are the current arena set.
 - Bot movement is route-first, item-aware and committed through jump pad routes.
 - Track 07 adds repeatable duel state and HUD clarity without combat or map balance changes.
+- Track 08 movement feel experiment was discarded before merge; keep current movement feel for now.
 - Validation baseline: `tools/validate.gd` PASS `34/34`, `340 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
@@ -37,24 +38,23 @@ Delivered:
 
 ### 2. Track 08 - Player Movement Feel Polish V1
 
-Status: recommended next after Track 07 approval.
+Status: discarded before merge on `2026-06-19`.
 
 Goal:
 
 - Refine player acceleration, air control, landing recovery, jump pad feel, collision comfort and readable speed across all approved arenas.
 
-Why next:
+Decision:
 
-- Movement tuning now has three arenas and a clearer duel loop as a test bench.
-- It improves the FPS hand feel before combat variety adds more variables.
+- Do not execute for now. Fabio approved the previous/current player movement feel.
 
 ### 3. Track 09 - Combat Sandbox Expansion V1
 
-Status: planned after movement feel.
+Status: recommended next.
 
 Goal:
 
-- Add one carefully scoped combat experiment after movement, bot and duel UX have stable coverage.
+- Add one carefully scoped combat experiment while preserving the current player movement feel.
 
 Expected scope:
 
