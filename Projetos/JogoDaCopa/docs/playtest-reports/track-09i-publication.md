@@ -6,7 +6,7 @@
 - Public URL: `https://copa-arena-futebol.pages.dev/`
 - Preview URL: `https://76b6f219.copa-arena-futebol.pages.dev`
 - Release root: `web/v1-copa-arena-futebol-20260616-7995b06c`
-- Status: `AUTOMATED_REMOTE_GATES_PASS - HUMAN_RETEST_PENDING`
+- Status: `AUTOMATED_REMOTE_GATES_PASS - HUMAN_RETEST_APPROVED`
 
 ## Scope
 
@@ -54,6 +54,10 @@ Result: PASS. The stable URL served the expected release root after deployment.
 
 Track 09I is safe as the automated public baseline. The Web heap gate is green but still close enough to the threshold that every future public package must keep the 5-minute remote stability gate mandatory.
 
+## Human Retest
+
+Fabio confirmed the public 09I build was working before Track 09J execution.
+
 ## Next Gate
 
-Fabio/tester should retest the public 09I build. After approval, open Track 09J as the next local reduction.
+Track 09J was opened as the next local reduction.
