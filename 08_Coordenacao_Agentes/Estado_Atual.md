@@ -7,19 +7,19 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado e aprovado; Track 09J local validada) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 07 match flow/duel UX validada; aguardando smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado e aprovado; Track 09J bloqueada no heap remoto e rollback para 09I) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 07 match flow/duel UX validada; aguardando smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09J_BALL_CONTACT_CONTROLLER_LOCAL_VALIDATED`
-- Marker: `JOGO_DA_COPA_TRACK09J_BALL_CONTACT_CONTROLLER_LOCAL_VALIDATED`
-- Baseline publico: `Super Campeao v1.2.1+7995b06c` (`web/v1-copa-arena-futebol-20260616-7995b06c`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09I PASS e reteste humano aprovado.
-- Refator atual: Track 09J extraiu contato/posse de bola, audio de contato e contato arcade para `football_ball_contact_controller.gd`; `FootballRoot` `943 -> 832`; sem delta intencional de gameplay/UX.
+- Status: `P2_IMPLEMENTACAO - TRACK09J_PUBLICATION_BLOCKED_REMOTE_HEAP_ROLLBACK_09I`
+- Marker: `JOGO_DA_COPA_TRACK09J_PUBLICATION_ROLLBACK_HEAP_GATE`
+- Baseline publico: `Super Campeao v1.2.1+7995b06c` (`web/v1-copa-arena-futebol-20260616-7995b06c`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09I PASS, reteste humano aprovado e rollback 09J confirmado.
+- Refator atual: Track 09J extraiu contato/posse de bola, audio de contato e contato arcade para `football_ball_contact_controller.gd`; `FootballRoot` `943 -> 832`; publicacao 09J falhou heap remoto 5min duas vezes.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio fazer push via GitHub Desktop; se quiser levar a 09J ao publico, abrir track curta de publicacao com gates remotos.
+- Proximo passo: abrir track curta de investigacao/hotfix do heap remoto da 09J antes de republicar ou continuar nova reducao; Fabio faz push via GitHub Desktop quando quiser sincronizar.
 
 ## draxos-roguelike-cardgame
 

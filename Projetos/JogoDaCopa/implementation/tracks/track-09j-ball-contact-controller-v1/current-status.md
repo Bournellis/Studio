@@ -1,7 +1,7 @@
 # Track 09J - Ball Contact Controller V1
 
 - Date: `2026-06-19`
-- Status: `LOCAL_VALIDATED`
+- Status: `LOCAL_VALIDATED_PUBLICATION_BLOCKED_REMOTE_HEAP`
 - Branch: `codex/jogodacopa/track09j-ball-contact-controller-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track09j-ball-contact-controller-v1`
 
@@ -30,6 +30,16 @@ Reduce `FootballRoot` by extracting player ball-control/contact, ball collision 
 - Chrome local Web boot: PASS, `event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
 - Evidence: `docs/playtest-reports/track-09j-data/09j-local-web-boot.json`, `docs/playtest-reports/track-09j-data/09j-local-web-boot.png`.
 
+## Publication Attempt
+
+- Candidate deploy: `v1.2.1+4678fbea`, `web/v1-copa-arena-futebol-20260619-4678fbea`, `https://ff5e2d51.copa-arena-futebol.pages.dev`.
+- Remote menu: PASS, release root matched, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote first minute: PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote stability 5min: FAIL twice on JS/WASM heap growth (`+15.96%`, then `+15.22%`; gate limit `<10%`).
+- Godot counters/caches and FPS remained green in both stability runs.
+- Production rollback: restored approved 09I public baseline `v1.2.1+7995b06c`, `web/v1-copa-arena-futebol-20260616-7995b06c`.
+- Evidence: `docs/playtest-reports/track-09j-publication.md` and `docs/playtest-reports/track-09j-data/`.
+
 ## Next Step
 
-Merge locally into `main`; Fabio pushes via GitHub Desktop. If 09J should become public, open a short publication track with remote menu, first-minute, 5-minute stability and night luma gates.
+Open a focused remote heap investigation/hotfix before republication or further `FootballRoot` reduction. Fabio pushes local commits via GitHub Desktop when ready.

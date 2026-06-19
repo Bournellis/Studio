@@ -6,6 +6,7 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 
 | Data | Release | Canal | URL | Release root | Evidencia |
 | --- | --- | --- | --- | --- | --- |
+| 2026-06-19 | Ball Contact Controller 09J (`v1.2.1+4678fbea`) | Tentativa Cloudflare Pages com rollback | `https://copa-arena-futebol.pages.dev/` voltou para `v1.2.1+7995b06c` | Tentativa `web/v1-copa-arena-futebol-20260619-4678fbea`; rollback `web/v1-copa-arena-futebol-20260616-7995b06c` | `docs/playtest-reports/track-09j-data/09j-publication-report-4678fbea.json` + `docs/playtest-reports/track-09j-data/09j-remote-menu-4678fbea.json` + `docs/playtest-reports/track-09j-data/09j-remote-first-minute-4678fbea.json` + `docs/playtest-reports/track-09j-data/09j-remote-stability-5min-4678fbea.json` + `docs/playtest-reports/track-09j-data/09j-remote-stability-5min-rerun-4678fbea.json` + `docs/playtest-reports/track-09j-data/09j-rollback-to-09i-publication-report-7995b06c.json` + `docs/playtest-reports/track-09j-data/09j-rollback-remote-menu-7995b06c.json` |
 | 2026-06-16 | Kick Super Controller 09I (`v1.2.1+7995b06c`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260616-7995b06c` | `docs/playtest-reports/track-09i-data/09i-publication-report-7995b06c.json` + `docs/playtest-reports/track-09i-data/09i-remote-menu-7995b06c.json` + `docs/playtest-reports/track-09i-data/09i-remote-first-minute-7995b06c.json` + `docs/playtest-reports/track-09i-data/09i-remote-stability-5min-7995b06c.json` + `docs/playtest-reports/track-09i-data/09i-remote-night-luma-gate-7995b06c.json` |
 | 2026-06-15 | Web Heap Hotfix 09H (`v1.2.1+4a323fab`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260615-4a323fab` | `docs/playtest-reports/track-09h-data/09h-publication-report-4a323fab.json` + `docs/playtest-reports/track-09h-data/09h-remote-menu-4a323fab.json` + `docs/playtest-reports/track-09h-data/09h-remote-first-minute-4a323fab.json` + `docs/playtest-reports/track-09h-data/09h-remote-stability-5min-4a323fab.json` + `docs/playtest-reports/track-09h-data/09h-remote-night-luma-gate-4a323fab.json` |
 | 2026-06-15 | Football Match Resolution Controller 09G (`v1.2.1+d1784ff9`) | Tentativa Cloudflare Pages com rollback | `https://copa-arena-futebol.pages.dev/` voltou para `v1.2.1+a75cfe57` | Tentativa `web/v1-copa-arena-futebol-20260615-d1784ff9`; rollback `web/v1-copa-arena-futebol-20260615-a75cfe57` | `docs/playtest-reports/track-09g-data/09g-publication-report-d1784ff9.json` + `docs/playtest-reports/track-09g-data/09g-remote-menu-d1784ff9.json` + `docs/playtest-reports/track-09g-data/09g-remote-first-minute-d1784ff9.json` + `docs/playtest-reports/track-09g-data/09g-remote-stability-5min-d1784ff9.json` + `docs/playtest-reports/track-09g-data/09g-remote-stability-5min-rerun-d1784ff9.json` + `docs/playtest-reports/track-09g-data/09g-rollback-publication-report-a75cfe57.json` + `docs/playtest-reports/track-09g-data/09g-rollback-confirm-a75cfe57.json` |
@@ -23,6 +24,23 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 | 2026-06-12 | Web Stability Hotfix V1 (`v1.0.1+a850045a`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-a850045a` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json` |
 | 2026-06-12 | Web Publication V1 | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-31e23ea3` | `docs/playtest-reports/track-05-data/05c-publication-report.json` |
 
+## 2026-06-19 - Ball Contact Controller 09J - Tentativa Bloqueada
+
+- Candidato tentado: `v1.2.1+4678fbea`, mergeado localmente em `main` como `4678fbea`.
+- Release root tentado: `web/v1-copa-arena-futebol-20260619-4678fbea`.
+- Preview do deploy tentado: `https://ff5e2d51.copa-arena-futebol.pages.dev`.
+- Escopo: publicacao da reducao 09J, que extraiu estado de posse/contato de bola, contato passivo player-bola, audio de colisao da bola e contato arcade dash/body para `football_ball_contact_controller.gd`; `FootballRoot` caiu de `943` para `832` linhas, sem mudanca intencional de gameplay, input, bot, fisica, scoring, tuning, assets ou HUD.
+- Gates locais 09J: import headless PASS; `tools/validate.gd` PASS com `104` testes / `1826` asserts e `57` fontes; export Web PASS; Web gzip `30.60 MiB / 50.00 MiB`; Web boot local PASS com `firstMinuteHitches=0`.
+- Publicacao tentada por `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260619-4678fbea -VisibleVersion v1.2.1 -EvidenceSubdir track-09j-data -EvidencePrefix 09j -DeployMessage "JogoDaCopa Track 09J Super Campeao v1.2.1 web/v1-copa-arena-futebol-20260619-4678fbea" -ConfirmRemoteMutation -SkipExport`; projeto Cloudflare Pages `copa-arena-futebol`.
+- Sanity menu remoto: PASS, release root conferiu, `menu.ready.end` visto, `pageErrors=0`, `consoleErrorCount=0`.
+- Gate remoto primeiro minuto: PASS, release root conferiu, `event.visible_match_start` visto, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
+- Gate remoto estabilidade 5min: FAIL apenas em heap JS/WASM retido `43,740,045 -> 50,719,101` bytes (`+15.96%`, limite `<10%`), pico `64,046,786` bytes (`+46.43%`).
+- Rerun remoto estabilidade 5min: FAIL novamente apenas em heap JS/WASM retido `44,045,553 -> 50,751,097` bytes (`+15.22%`, limite `<10%`), pico `64,104,862` bytes (`+45.54%`).
+- Demais checks dos gates de estabilidade: PASS em `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`, counters/caches Godot estaveis e piores janelas 5s `136.6 FPS` / `119.8 FPS`.
+- Rollback: Cloudflare recusou apagar a deployment ativa de producao, entao a baseline 09I aprovada foi redeployada como producao em `web/v1-copa-arena-futebol-20260616-7995b06c`; preview de rollback `https://0bed6091.copa-arena-futebol.pages.dev`.
+- Confirmacao do rollback: `https://copa-arena-futebol.pages.dev/` voltou a servir `web/v1-copa-arena-futebol-20260616-7995b06c`, com `menu.ready.end`, `pageErrors=0`, `consoleErrorCount=0`.
+- Resultado historico: `v1.2.1+4678fbea` nao ficou como baseline publica; proxima etapa tecnica deve investigar/hotfixar heap remoto antes de republicar 09J ou continuar a reducao do `FootballRoot`.
+
 ## 2026-06-16 - Kick Super Controller 09I
 
 - Release publicado: `v1.2.1+7995b06c` em `https://copa-arena-futebol.pages.dev/`.
@@ -37,7 +55,8 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 - Demais checks da estabilidade: PASS em counters/caches Godot, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0` e pior janela 5s `132.6 FPS`.
 - Gate remoto de luminancia: PASS, `luma_0_255=6.525 < 90` na captura `09i-remote-stability-5min-7995b06c.png`.
 - Observacao: margem Web heap ficou verde, mas ainda apertada; manter gate 5min obrigatorio em toda proxima publicacao.
-- Proximo passo: Fabio/tester fazer reteste humano da URL publica 09I antes da Track 09J ou de qualquer nova reducao do `FootballRoot`.
+- Reteste humano: aprovado por Fabio/tester antes da Track 09J.
+- Observacao posterior: em 2026-06-19 a 09I foi restaurada como baseline publica apos a tentativa 09J falhar o gate remoto de heap.
 
 ## 2026-06-15 - Web Heap Hotfix 09H
 
