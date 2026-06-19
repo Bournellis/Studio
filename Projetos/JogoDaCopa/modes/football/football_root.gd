@@ -47,6 +47,7 @@ const PLAYER_KICK_REACH: float = 2.2
 const PLAYER_KICK_ASSIST_RADIUS: float = 2.38
 const PLAYER_TOUCH_RADIUS: float = 1.42
 const PLAYER_TOUCH_FORCE: float = 5.2
+const PLAYER_CONTACT_MINIMUM_TOUCH_SPEED: float = 2.0
 const PLAYER_NEAR_BALL_RADIUS: float = 2.5
 const ARCADE_SLIDE_BALL_RADIUS: float = 2.05
 const ARCADE_BODY_CONTACT_RADIUS: float = 1.35
@@ -241,7 +242,7 @@ func _physics_process(delta: float) -> void:
 	if kickoff_countdown_remaining > 0.0:
 		_update_kickoff_countdown(delta)
 		return
-	FootballBallContactControllerScript.update_contact_cooldowns(self, delta)
+	_update_contact_cooldowns(delta)
 	if FootballMatchResolutionControllerScript.update_goal_reset(self, delta):
 		return
 	if match_over:
@@ -249,9 +250,9 @@ func _physics_process(delta: float) -> void:
 	_update_match_clock(delta)
 	if match_over:
 		return
-	FootballBallContactControllerScript.update_player_ball_control(self, delta)
-	FootballBallContactControllerScript.process_player_ball_contact(self)
-	FootballBallContactControllerScript.process_arcade_action_contacts(self)
+	_update_player_ball_control(delta)
+	_process_player_ball_contact()
+	_process_arcade_action_contacts()
 	_update_arcade_field(delta)
 	_process_goal_detection()
 	_update_avatar_states(delta)
@@ -357,10 +358,10 @@ func debug_get_feedback():
 	return feedback
 
 func debug_update_player_ball_control(delta: float = 0.1) -> void:
-	FootballBallContactControllerScript.update_player_ball_control(self, delta)
+	_update_player_ball_control(delta)
 
 func debug_process_arcade_action_contacts() -> void:
-	FootballBallContactControllerScript.process_arcade_action_contacts(self)
+	_process_arcade_action_contacts()
 
 func debug_update_arcade_field(delta: float = 0.1) -> void:
 	_update_arcade_field(delta)
@@ -650,6 +651,83 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 
 func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, lift: float) -> void:
 	FootballKickSuperControllerScript.on_bot_kick_requested(self, origin, direction, force, lift)
+
+func _update_contact_cooldowns(delta: float) -> void:
+	player_touch_cooldown_remaining = maxf(0.0, player_touch_cooldown_remaining - delta)
+	arcade_contact_cooldown_remaining = maxf(0.0, arcade_contact_cooldown_remaining - delta)
+	ball_contact_audio_cooldown_remaining = maxf(0.0, ball_contact_audio_cooldown_remaining - delta)
+
+func _update_player_ball_control(_delta: float) -> void:
+	if player == null or ball == null:
+		player_ball_control_state = &"free"
+		player_ball_control_strength = 0.0
+		return
+	var flat_forward := _flatten_normalized(_get_player_kick_direction())
+	if flat_forward.length_squared() <= 0.0001:
+		flat_forward = Vector3.FORWARD
+	var player_center: Vector3 = player.global_position + Vector3.UP * 0.48
+	var ball_position: Vector3 = ball.global_position
+	var flat_delta := Vector3(ball_position.x - player_center.x, 0.0, ball_position.z - player_center.z)
+	var distance := flat_delta.length()
+	if distance <= 0.0001:
+		player_ball_control_state = &"contact"
+		player_ball_control_strength = 1.0
+		return
+	var ball_direction := flat_delta / distance
+	var forward_dot := ball_direction.dot(flat_forward)
+	var reachable: bool = distance <= PLAYER_NEAR_BALL_RADIUS and forward_dot >= -0.12
+	var touching: bool = distance <= PLAYER_TOUCH_RADIUS
+	if touching:
+		player_ball_control_state = &"contact"
+	elif reachable:
+		player_ball_control_state = &"reachable"
+	else:
+		player_ball_control_state = &"free"
+	var proximity_strength := 1.0 - clampf(distance / maxf(0.01, PLAYER_NEAR_BALL_RADIUS), 0.0, 1.0)
+	var facing_strength := clampf((forward_dot + 0.12) / 1.12, 0.0, 1.0)
+	player_ball_control_strength = clampf(proximity_strength * 0.62 + facing_strength * 0.38, 0.0, 1.0)
+
+func _process_player_ball_contact() -> void:
+	if player_touch_cooldown_remaining > 0.0:
+		return
+	var player_center: Vector3 = player.global_position + Vector3.UP * 0.5
+	var ball_position: Vector3 = ball.global_position
+	var delta := ball_position - player_center
+	var flat_delta := Vector3(delta.x, 0.0, delta.z)
+	var flat_delta_length_squared := flat_delta.length_squared()
+	if flat_delta_length_squared > PLAYER_TOUCH_RADIUS * PLAYER_TOUCH_RADIUS:
+		return
+	var player_velocity: Vector3 = player.velocity
+	var flat_velocity := Vector3(player_velocity.x, 0.0, player_velocity.z)
+	if flat_velocity.length_squared() < PLAYER_CONTACT_MINIMUM_TOUCH_SPEED * PLAYER_CONTACT_MINIMUM_TOUCH_SPEED:
+		return
+	var contact_direction_source := flat_velocity.normalized() * 0.6
+	if flat_delta_length_squared > 0.0001:
+		contact_direction_source += flat_delta.normalized()
+	var contact_direction := contact_direction_source.normalized()
+	if contact_direction.length_squared() <= 0.0001:
+		return
+	var boost_multiplier := 1.35 if player.is_boosting() else 1.0
+	var contact_lift := 0.42 if player.is_boosting() else 0.18
+	_notify_player_touched_ball()
+	ball.kick(contact_direction, PLAYER_TOUCH_FORCE * boost_multiplier, contact_lift)
+	_add_player_super(SUPER_TOUCH_GAIN)
+	player_touch_cooldown_remaining = PLAYER_TOUCH_COOLDOWN
+
+func _process_arcade_action_contacts() -> void:
+	if arcade_contact_cooldown_remaining > 0.0 or player == null or bot == null or ball == null:
+		return
+	var handled := false
+	if player.is_arcade_dashing():
+		handled = FootballBallContactControllerScript.process_arcade_dash_contact(self, player, bot, true, player.get_arcade_dash_direction()) or handled
+	if bot.debug_is_arcade_dashing():
+		handled = FootballBallContactControllerScript.process_arcade_dash_contact(self, bot, player, false, bot.debug_get_arcade_dash_direction()) or handled
+	if handled:
+		arcade_contact_cooldown_remaining = ARCADE_CONTACT_COOLDOWN
+
+func _flatten_normalized(value: Vector3) -> Vector3:
+	value.y = 0.0
+	return value.normalized() if value.length_squared() > 0.0001 else Vector3.ZERO
 
 func _on_ball_body_entered(body: Node) -> void:
 	FootballBallContactControllerScript.on_ball_body_entered(self, body, RenderProfileScript)
