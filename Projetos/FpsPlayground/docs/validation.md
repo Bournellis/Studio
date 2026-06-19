@@ -6,10 +6,10 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest Track 10 local result:
+Latest Track 11 local result:
 
 ```text
-PASS, GUT 43/43, 396 asserts
+PASS, GUT 47/47, 440 asserts
 ```
 
 Profiles:
@@ -144,6 +144,15 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm bot shot pressure remains readable, fair and below player burst.
 - Confirm movement, sensitivity, jump pads, maps, bot route-control and pickups feel unchanged.
 - Confirm round flow, score, restart and pause-menu reset still work.
+
+## Track 11 Complete Telemetry Smoke
+
+- Launch `Arena Shooter`, play at least one full round and close or restart the arena.
+- Confirm telemetry output is created under Godot `user://telemetry/<session_id>/`.
+- Open `events.jsonl` and confirm it includes session, round, combat, pickup, bot, movement and jump pad events.
+- Open `summary.json` and confirm it reports winner counts, damage by actor/source, weapon accuracy, Plasma contribution, pickup usage, bot route data and movement/jump pad metrics.
+- Confirm the data helps answer why a round was won without needing to watch the whole match again.
+- Confirm player movement, sensitivity, jump pads, maps, bot route-control, pickups and Track 10 weapon roles feel unchanged.
 
 ## Known Noise
 
