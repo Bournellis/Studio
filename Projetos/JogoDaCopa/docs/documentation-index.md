@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09J_PUBLICATION_ROLLBACK_HEAP_GATE`
+- Status: `JOGO_DA_COPA_TRACK09K_PUBLICATION_ROLLBACK_HEAP_GATE`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -19,6 +19,9 @@
 
 ## Latest Evidence
 
+- Track 09K heap hotfix closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09k-web-heap-hotfix-v1.md`
+- Track 09K heap hotfix report: `playtest-reports/track-09k-web-heap-hotfix.md`
+- Track 09K evidence: `playtest-reports/track-09k-data/`
 - Track 09J local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09j-ball-contact-controller-v1.md`
 - Track 09J local report: `playtest-reports/track-09j-ball-contact-controller-v1.md`
 - Track 09J publication attempt and rollback: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_publish-track09j.md`
@@ -56,6 +59,8 @@
 - `publication-readiness.md`
 - `release-history.md`
 - `playtest-reports/track-09i-publication.md`
+- `playtest-reports/track-09k-web-heap-hotfix.md`
+- `playtest-reports/track-09k-data/`
 - `playtest-reports/track-09j-publication.md`
 - `playtest-reports/track-09j-ball-contact-controller-v1.md`
 - `playtest-reports/track-09j-data/`
