@@ -19,6 +19,7 @@
   - `football_match_resolution_controller.gd`: match restart state, goal reset timer, goal detection side effects, scoring orchestration, timer/golden goal transitions, match finish and shot/goal statistics.
   - `football_kick_super_controller.gd`: player kick requests, charged/strong kick routing, SUPER spend/gain rules, bot kick routing and kick feedback side effects.
   - `football_render_settings_controller.gd`: main-menu settings bridge, `GameSettings` quality integration, runtime render-profile refresh, scoreboard viewport resize and pause-menu sensitivity sync.
+  - `football_session_ui_controller.gd`: intro/pause/menu session flow, ESC target routing, match start, main-menu return and mouse-capture policy.
 - `modes/shared/`: runtime primitive creation.
 - `gameplay/avatar/`: procedural humanoid avatars, skin tones and country-inspired kits.
 - `gameplay/combat/`: reused character body, health and knockback base.

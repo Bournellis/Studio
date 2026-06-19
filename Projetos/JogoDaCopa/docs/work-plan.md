@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09N_PUBLISHED_APPROVED_NEXT_REDUCTION_READY`
+- Status: `JOGO_DA_COPA_TRACK09P_LOCAL_VALIDATED_PUBLIC_BASELINE_09N`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -38,16 +38,19 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09M Web Heap Gate Semantics V1 renamed the primary gate to `js_heap_growth` while preserving the legacy `js_wasm_heap_growth` alias; production remained 09I.
 - Track 09N Render Settings Controller V1 extracted render/settings orchestration into `football_render_settings_controller.gd`; `FootballRoot` in the current approved public base fell from `1079` to `1051` lines; local validate/export/gzip/Web probe, pre-publication A/B, remote menu, first-minute, stability, luma and human retest gates passed.
 - Track 09O Documentation Rebaseline V1 cleaned the documentation map after 09N so living docs, historical plans and raw evidence no longer compete as sources of next-step truth.
+- Track 09P Football Session UI Controller V1 extracted intro/pause/menu session flow, ESC target routing, match start, main-menu return and mouse-capture policy into `football_session_ui_controller.gd`; `FootballRoot` in the local candidate fell from `1051` to `974` lines; local import, validate/export/gzip and 90s Chrome Web smoke passed. It is not published yet; 09N remains the approved public baseline.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Track 09N is the approved public baseline at `Super Campeao v1.2.1+5c6520ba`. The next technical step is a new local `FootballRoot` reduction starting from that approved baseline.
+Track 09N is the approved public baseline at `Super Campeao v1.2.1+5c6520ba`. Track 09P is the current local validated reduction candidate and should be published/tested before another reduction, unless Fabio explicitly chooses to pause for architecture review instead.
 
 Focus:
 
-- Prefer orchestration slices that do not alter gameplay, physics, input, bot decisions or assets.
+- Promote 09P through the normal publication gate before stacking more local changes.
+- Keep 09N as the public rollback baseline until 09P passes remote stability and human retest.
+- If another reduction is opened later, prefer orchestration slices that do not alter gameplay, physics, input, bot decisions or assets.
 - Preserve existing GUT coverage and add/retarget focused tests when moving public helper contracts.
 - Keep Web validation in the loop: `tools/validate.gd`, Web export, gzip gate, local Web boot smoke for loading-sensitive changes, remote 5-minute stability before publication and human retest after publication.
 
@@ -122,6 +125,15 @@ Focus:
 - Rebased the documentation map after 09N approval.
 - Marked old plans as historical, refreshed this work plan, compacted the status snapshot and updated bot/tuning contracts.
 - No code, export, package or publication change.
+
+## Completed Track 09P - Football Session UI Controller V1
+
+- Extracted session/UI orchestration from `football_root.gd` into `modes/football/football_session_ui_controller.gd`.
+- Moved `_input`, `_get_escape_target`, `_start_match`, `_set_intro_open`, `_set_menu_open`, `_return_to_main_menu`, `_return_to_main_menu_async` and `_capture_mouse_if_playing` bodies behind `FootballRoot` wrappers.
+- Preserved gameplay, physics, bot, ball, kick/SUPER, scoring, HUD visual, assets and tuning.
+- Measured reduction in the local candidate: `FootballRoot` `1051 -> 974` lines; new controller `119` lines.
+- Local gates passed: import headless, `tools/validate.gd`, Web export, gzip `30.60 MiB / 50.00 MiB`, Chrome local 90s Web smoke with `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0` and `js_heap_growth -1.26%`.
+- Not published yet; 09N remains the approved public baseline.
 
 ## Out Of Scope
 

@@ -55,6 +55,9 @@
 
 ## Track 09 Reduction And Heap Evidence
 
+- Track 09P session UI controller closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09p-session-ui-controller-v1.md`
+- Track 09P session UI controller report: `playtest-reports/track-09p-session-ui-controller.md`
+- Track 09P evidence: `playtest-reports/track-09p-data/`
 - Track 09M heap gate semantics closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09m-web-heap-gate-semantics-v1.md`
 - Track 09M heap gate semantics report: `playtest-reports/track-09m-web-heap-gate-semantics.md`
 - Track 09M evidence: `playtest-reports/track-09m-data/`
