@@ -11,6 +11,7 @@ const ArenaCrossfireCrucibleLayoutBuilderScript = preload("res://modes/arena/are
 const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
+const ArenaTelemetryRecorderScript = preload("res://gameplay/telemetry/arena_telemetry_recorder.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const PLAYER_VISUAL_MUZZLE_RIGHT_OFFSET: float = 0.34
@@ -34,6 +35,11 @@ const JUMP_PAD_RADIUS: float = 1.25
 const JUMP_PAD_COOLDOWN: float = 0.64
 const JUMP_PAD_VERTICAL_SPEED: float = 8.4
 const JUMP_PAD_FORWARD_SPEED: float = 5.8
+const TELEMETRY_SAMPLE_INTERVAL: float = 0.2
+const TELEMETRY_PICKUP_NEAR_DISTANCE: float = 2.4
+const TELEMETRY_PICKUP_CONTEST_DISTANCE: float = 4.0
+const TELEMETRY_PICKUP_EVENT_COOLDOWN: float = 1.0
+const TELEMETRY_JUMP_PAD_SUCCESS_DISTANCE: float = 3.2
 const SCORE_TO_WIN: int = 3
 const ROUND_STATE_PLAYING: StringName = &"playing"
 const ROUND_STATE_PLAYER_WIN: StringName = &"player_round_win"
@@ -74,12 +80,22 @@ var bot_spawn: Vector3 = Vector3(10.8, 0.05, -8.6)
 var health_pickup_position: Vector3 = Vector3(-7.6, 3.55, -8.6)
 var overcharge_pickup_position: Vector3 = Vector3(7.6, 3.55, 8.6)
 var bot_arena_half_extent: float = 11.2
+var telemetry
+var telemetry_sample_elapsed: float = 0.0
+var telemetry_round_started_msec: int = 0
+var telemetry_projectile_sequence: int = 0
+var telemetry_jump_pad_flights: Dictionary = {}
+var telemetry_pickup_event_cooldowns: Dictionary = {}
+var telemetry_last_bot_snapshot: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_prepare_active_layout()
 	_configure_world()
 	_spawn_runtime()
+	_initialize_telemetry()
+	_record_telemetry_arena_setup()
+	_record_telemetry_round_start(&"initial")
 	_capture_mouse_if_playing()
 
 func _process(_delta: float) -> void:
@@ -93,6 +109,16 @@ func _physics_process(delta: float) -> void:
 	_process_pickups(delta)
 	_process_jump_pads(delta)
 	_update_bot_awareness()
+	_update_telemetry_frame(delta)
+
+func _exit_tree() -> void:
+	if telemetry != null:
+		telemetry.finish_session({
+			"reason": "arena_exit",
+			"round_state": round_state,
+			"player_score": player_score,
+			"bot_score": bot_score
+		})
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_back"):
@@ -119,10 +145,19 @@ func restart_round() -> void:
 	_set_menu_open(false)
 	if round_ended:
 		round_index += 1
+		_record_telemetry_event(&"round_reset", {
+			"reason": "next_round",
+			"next_round_index": round_index
+		})
 	_start_round()
 
 func start_new_match() -> void:
 	_set_menu_open(false)
+	_record_telemetry_event(&"match_reset", {
+		"previous_player_score": player_score,
+		"previous_bot_score": bot_score,
+		"previous_round_index": round_index
+	})
 	player_score = 0
 	bot_score = 0
 	round_index = 1
@@ -149,6 +184,7 @@ func _start_round() -> void:
 	_reset_pickups()
 	_reset_vertical_hazards()
 	_update_bot_awareness()
+	_record_telemetry_round_start(&"round_start")
 	_capture_mouse_if_playing()
 
 func debug_get_player():
@@ -224,6 +260,21 @@ func debug_get_bot_tactical_roles() -> Array[StringName]:
 
 func debug_get_active_projectile_count() -> int:
 	return active_projectiles.size()
+
+func debug_get_telemetry_events() -> Array[Dictionary]:
+	if telemetry == null:
+		return []
+	return telemetry.get_events()
+
+func debug_get_telemetry_summary() -> Dictionary:
+	if telemetry == null:
+		return {}
+	return telemetry.get_summary()
+
+func debug_get_telemetry_output_paths() -> Dictionary:
+	if telemetry == null:
+		return {}
+	return telemetry.get_output_paths()
 
 func debug_get_plasma_blast_radius(overcharged: bool) -> float:
 	return PLASMA_OVERCHARGE_BLAST_RADIUS if overcharged else PLASMA_BLAST_RADIUS
@@ -408,6 +459,18 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 	var shot_direction := direction.normalized()
 	var shot_end := origin + shot_direction * 96.0
 	var visual_origin := _get_player_visual_muzzle_origin(origin, shot_direction)
+	var shot_id := _next_telemetry_id("player_rifle")
+	_record_telemetry_event(&"shot_fired", {
+		"shot_id": shot_id,
+		"actor": "player",
+		"weapon": "rifle",
+		"source": "player_rifle",
+		"overcharged": damage > player.shot_damage + 0.001,
+		"origin": origin,
+		"direction": shot_direction,
+		"damage": damage,
+		"knockback": knockback
+	})
 	if hud != null:
 		hud.show_player_shot()
 	if feedback != null:
@@ -417,6 +480,15 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 	query.exclude = [player.get_rid()]
 	var result := get_world_3d().direct_space_state.intersect_ray(query)
 	if result.is_empty():
+		_record_telemetry_event(&"shot_miss", {
+			"shot_id": shot_id,
+			"actor": "player",
+			"weapon": "rifle",
+			"source": "player_rifle",
+			"overcharged": damage > player.shot_damage + 0.001,
+			"impact_position": shot_end,
+			"distance": origin.distance_to(shot_end)
+		})
 		if hud != null:
 			hud.show_miss()
 		if feedback != null:
@@ -425,9 +497,38 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 	var impact_position: Vector3 = result.get("position", shot_end)
 	var collider: Object = result.get("collider", null)
 	if collider != null and collider.has_method("take_damage"):
+		var target_id := _get_combatant_id(collider)
 		collider.take_damage(damage, &"player")
 		if collider.has_method("apply_knockback"):
 			collider.apply_knockback(shot_direction, knockback, PLAYER_SHOT_KNOCKBACK_LIFT)
+		_record_telemetry_event(&"shot_hit", {
+			"shot_id": shot_id,
+			"actor": "player",
+			"target": target_id,
+			"weapon": "rifle",
+			"source": "player_rifle",
+			"overcharged": damage > player.shot_damage + 0.001,
+			"impact_position": impact_position,
+			"distance": origin.distance_to(impact_position)
+		})
+		_record_telemetry_event(&"damage_applied", {
+			"shot_id": shot_id,
+			"actor": "player",
+			"target": target_id,
+			"weapon": "rifle",
+			"source": "player_rifle",
+			"overcharged": damage > player.shot_damage + 0.001,
+			"damage": damage,
+			"target_health": float(collider.get("health")) if collider.get("health") != null else 0.0
+		})
+		_record_telemetry_event(&"knockback_applied", {
+			"shot_id": shot_id,
+			"actor": "player",
+			"target": target_id,
+			"weapon": "rifle",
+			"knockback": knockback,
+			"lift": PLAYER_SHOT_KNOCKBACK_LIFT
+		})
 		if hud != null:
 			var killed: bool = collider.get("is_dead") == true
 			hud.show_hit_confirm(killed)
@@ -438,6 +539,15 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 				knockback_position = collider.get_body_center()
 			feedback.play_knockback(knockback_position, shot_direction, knockback, true)
 		return
+	_record_telemetry_event(&"shot_miss", {
+		"shot_id": shot_id,
+		"actor": "player",
+		"weapon": "rifle",
+		"source": "player_rifle",
+		"overcharged": damage > player.shot_damage + 0.001,
+		"impact_position": impact_position,
+		"distance": origin.distance_to(impact_position)
+	})
 	if hud != null:
 		hud.show_miss()
 	if feedback != null:
@@ -452,13 +562,29 @@ func _on_player_alt_fire(origin: Vector3, direction: Vector3, damage: float, kno
 	var visual_origin := _get_player_visual_muzzle_origin(origin, shot_direction)
 	var aim_point := _resolve_player_aim_point(origin, shot_direction)
 	var projectile_direction := ArenaCombatRulesScript.build_projectile_direction(visual_origin, aim_point, shot_direction)
+	var projectile_id := _next_telemetry_id("player_plasma")
+	_record_telemetry_event(&"shot_fired", {
+		"shot_id": projectile_id,
+		"projectile_id": projectile_id,
+		"actor": "player",
+		"weapon": "plasma_direct",
+		"source": "player_plasma",
+		"overcharged": overcharged,
+		"origin": origin,
+		"visual_origin": visual_origin,
+		"direction": projectile_direction,
+		"damage": damage,
+		"knockback": knockback,
+		"speed": speed,
+		"radius": radius
+	})
 	if hud != null:
 		hud.show_player_alt_fire(overcharged)
 	if feedback != null:
 		feedback.play_plasma_shot(visual_origin, projectile_direction, overcharged)
-	_spawn_player_plasma_bolt(visual_origin, projectile_direction, damage, knockback, speed, radius, overcharged)
+	_spawn_player_plasma_bolt(visual_origin, projectile_direction, damage, knockback, speed, radius, overcharged, projectile_id)
 
-func _spawn_player_plasma_bolt(origin: Vector3, direction: Vector3, damage: float, knockback: float, speed: float, radius: float, overcharged: bool) -> void:
+func _spawn_player_plasma_bolt(origin: Vector3, direction: Vector3, damage: float, knockback: float, speed: float, radius: float, overcharged: bool, projectile_id: String = "") -> void:
 	if projectile_root == null:
 		return
 	var bolt := Node3D.new()
@@ -492,7 +618,23 @@ func _spawn_player_plasma_bolt(origin: Vector3, direction: Vector3, damage: floa
 		"radius": radius * (1.12 if overcharged else 1.0),
 		"ttl": PLASMA_BOLT_TTL,
 		"source": &"player",
-		"overcharged": overcharged
+		"overcharged": overcharged,
+		"projectile_id": projectile_id
+	})
+	_record_telemetry_event(&"plasma_spawned", {
+		"shot_id": projectile_id,
+		"projectile_id": projectile_id,
+		"actor": "player",
+		"weapon": "plasma_direct",
+		"source": "player_plasma",
+		"overcharged": overcharged,
+		"origin": origin,
+		"direction": direction,
+		"damage": damage,
+		"knockback": knockback,
+		"speed": speed,
+		"radius": radius,
+		"ttl": PLASMA_BOLT_TTL
 	})
 	_update_bot_awareness()
 
@@ -516,6 +658,23 @@ func _process_projectiles(delta: float) -> void:
 			continue
 		bolt.global_position = end_position
 		if ttl <= 0.0:
+			_record_telemetry_event(&"plasma_expired", {
+				"shot_id": String(entry.get("projectile_id", "")),
+				"projectile_id": String(entry.get("projectile_id", "")),
+				"actor": "player",
+				"weapon": "plasma_direct",
+				"source": "player_plasma",
+				"overcharged": bool(entry.get("overcharged", false)),
+				"impact_position": end_position
+			})
+			_record_telemetry_event(&"shot_miss", {
+				"shot_id": String(entry.get("projectile_id", "")),
+				"actor": "player",
+				"weapon": "plasma_direct",
+				"source": "player_plasma",
+				"overcharged": bool(entry.get("overcharged", false)),
+				"impact_position": end_position
+			})
 			if hud != null:
 				hud.show_miss()
 			if feedback != null:
@@ -530,12 +689,53 @@ func _resolve_player_projectile_hit(entry: Dictionary, impact_position: Vector3,
 	var velocity: Vector3 = entry.get("velocity", Vector3.FORWARD)
 	var shot_direction := velocity.normalized()
 	var overcharged := bool(entry.get("overcharged", false))
+	var projectile_id := String(entry.get("projectile_id", ""))
 	if collider != null and collider.has_method("take_damage"):
 		var damage := float(entry.get("damage", 0.0))
 		var knockback := float(entry.get("knockback", 0.0))
+		var target_id := _get_combatant_id(collider)
 		collider.take_damage(damage, &"player")
 		if collider.has_method("apply_knockback"):
 			collider.apply_knockback(shot_direction, knockback, PLAYER_PLASMA_KNOCKBACK_LIFT)
+		_record_telemetry_event(&"plasma_direct_hit", {
+			"shot_id": projectile_id,
+			"projectile_id": projectile_id,
+			"actor": "player",
+			"target": target_id,
+			"weapon": "plasma_direct",
+			"source": "player_plasma",
+			"overcharged": overcharged,
+			"impact_position": impact_position,
+			"damage": damage,
+			"knockback": knockback
+		})
+		_record_telemetry_event(&"shot_hit", {
+			"shot_id": projectile_id,
+			"actor": "player",
+			"target": target_id,
+			"weapon": "plasma_direct",
+			"source": "player_plasma",
+			"overcharged": overcharged,
+			"impact_position": impact_position
+		})
+		_record_telemetry_event(&"damage_applied", {
+			"shot_id": projectile_id,
+			"actor": "player",
+			"target": target_id,
+			"weapon": "plasma_direct",
+			"source": "player_plasma",
+			"overcharged": overcharged,
+			"damage": damage,
+			"target_health": float(collider.get("health")) if collider.get("health") != null else 0.0
+		})
+		_record_telemetry_event(&"knockback_applied", {
+			"shot_id": projectile_id,
+			"actor": "player",
+			"target": target_id,
+			"weapon": "plasma_direct",
+			"knockback": knockback,
+			"lift": PLAYER_PLASMA_KNOCKBACK_LIFT
+		})
 		var killed: bool = collider.get("is_dead") == true
 		if hud != null:
 			hud.show_plasma_hit(overcharged, killed)
@@ -546,17 +746,30 @@ func _resolve_player_projectile_hit(entry: Dictionary, impact_position: Vector3,
 				knockback_position = collider.get_body_center()
 			feedback.play_knockback(knockback_position, shot_direction, knockback, true)
 		return
+	_record_telemetry_event(&"plasma_world_impact", {
+		"shot_id": projectile_id,
+		"projectile_id": projectile_id,
+		"actor": "player",
+		"weapon": "plasma_direct",
+		"source": "player_plasma",
+		"overcharged": overcharged,
+		"impact_position": impact_position
+	})
 	_resolve_player_projectile_blast(entry, impact_position, shot_direction)
 
 func _resolve_player_projectile_blast(entry: Dictionary, impact_position: Vector3, shot_direction: Vector3) -> void:
 	var overcharged := bool(entry.get("overcharged", false))
+	var projectile_id := String(entry.get("projectile_id", ""))
 	var blast_radius := PLASMA_OVERCHARGE_BLAST_RADIUS if overcharged else PLASMA_BLAST_RADIUS
 	var damaged_target := false
 	var killed_target := false
+	var target_position := Vector3.ZERO
+	var falloff := 0.0
+	var blast_damage := 0.0
 	if bot != null and bot.get("is_dead") != true:
-		var target_position: Vector3 = bot.get_body_center()
+		target_position = bot.get_body_center()
 		var max_blast_damage := float(entry.get("damage", 0.0)) * PLASMA_BLAST_DAMAGE_FRACTION
-		var blast_damage := ArenaCombatRulesScript.calculate_blast_damage(
+		blast_damage = ArenaCombatRulesScript.calculate_blast_damage(
 			impact_position,
 			target_position,
 			blast_radius,
@@ -564,7 +777,7 @@ func _resolve_player_projectile_blast(entry: Dictionary, impact_position: Vector
 			PLASMA_BLAST_MIN_DAMAGE_FRACTION
 		)
 		if blast_damage > 0.0:
-			var falloff := ArenaCombatRulesScript.calculate_blast_falloff(impact_position, target_position, blast_radius)
+			falloff = ArenaCombatRulesScript.calculate_blast_falloff(impact_position, target_position, blast_radius)
 			var blast_direction := target_position - impact_position
 			if blast_direction.length_squared() <= 0.0001:
 				blast_direction = shot_direction
@@ -573,10 +786,67 @@ func _resolve_player_projectile_blast(entry: Dictionary, impact_position: Vector
 			if bot.has_method("apply_knockback"):
 				var blast_knockback := float(entry.get("knockback", 0.0)) * PLASMA_BLAST_KNOCKBACK_FRACTION * clampf(falloff, 0.35, 1.0)
 				bot.apply_knockback(blast_direction, blast_knockback, PLASMA_BLAST_KNOCKBACK_LIFT)
+				_record_telemetry_event(&"knockback_applied", {
+					"shot_id": projectile_id,
+					"actor": "player",
+					"target": "bot",
+					"weapon": "plasma_blast",
+					"knockback": blast_knockback,
+					"lift": PLASMA_BLAST_KNOCKBACK_LIFT,
+					"falloff": falloff
+				})
 			damaged_target = true
 			killed_target = bot.get("is_dead") == true
+			_record_telemetry_event(&"shot_hit", {
+				"shot_id": projectile_id,
+				"actor": "player",
+				"target": "bot",
+				"weapon": "plasma_blast",
+				"source": "player_plasma_blast",
+				"overcharged": overcharged,
+				"impact_position": impact_position,
+				"target_position": target_position,
+				"distance": impact_position.distance_to(target_position),
+				"falloff": falloff
+			})
+			_record_telemetry_event(&"damage_applied", {
+				"shot_id": projectile_id,
+				"actor": "player",
+				"target": "bot",
+				"weapon": "plasma_blast",
+				"source": "player_plasma_blast",
+				"overcharged": overcharged,
+				"damage": blast_damage,
+				"target_health": bot.health,
+				"falloff": falloff
+			})
 			if feedback != null:
 				feedback.play_knockback(target_position, blast_direction, float(entry.get("knockback", 0.0)) * PLASMA_BLAST_KNOCKBACK_FRACTION, true)
+	_record_telemetry_event(&"plasma_blast", {
+		"shot_id": projectile_id,
+		"projectile_id": projectile_id,
+		"actor": "player",
+		"target": "bot" if damaged_target else "",
+		"weapon": "plasma_blast",
+		"source": "player_plasma_blast",
+		"overcharged": overcharged,
+		"impact_position": impact_position,
+		"target_position": target_position,
+		"blast_radius": blast_radius,
+		"falloff": falloff,
+		"damage": blast_damage,
+		"damaged_target": damaged_target,
+		"killed_target": killed_target
+	})
+	if not damaged_target:
+		_record_telemetry_event(&"shot_miss", {
+			"shot_id": projectile_id,
+			"actor": "player",
+			"weapon": "plasma_blast",
+			"source": "player_plasma_blast",
+			"overcharged": overcharged,
+			"impact_position": impact_position
+		})
 	if hud != null:
 		if damaged_target:
 			hud.show_plasma_blast(overcharged, killed_target)
@@ -650,6 +920,17 @@ func _on_player_damaged(amount: float, remaining_health: float) -> void:
 func _on_bot_shot_windup_started(origin: Vector3, target_position: Vector3, duration: float) -> void:
 	if round_ended or menu_open:
 		return
+	_record_telemetry_event(&"bot_windup_started", {
+		"actor": "bot",
+		"weapon": "bot_shot",
+		"origin": origin,
+		"target_position": target_position,
+		"duration": duration,
+		"state": bot.debug_get_state() if bot != null else &"",
+		"route_label": bot.debug_get_route_label() if bot != null else &"",
+		"active_route_key": bot.debug_get_active_route_key() if bot != null else &"",
+		"decision_reason": bot.debug_get_decision_reason() if bot != null else &""
+	})
 	if hud != null:
 		hud.show_bot_tell(duration)
 	if feedback != null:
@@ -667,11 +948,44 @@ func _on_bot_shot_resolution_requested(origin: Vector3, direction: Vector3, dama
 	var shot_direction := direction.normalized()
 	if shot_direction.length_squared() <= 0.0001:
 		return
+	var shot_id := _next_telemetry_id("bot_shot")
+	var overcharged: bool = damage > bot.shoot_damage + 0.001
+	_record_telemetry_event(&"shot_fired", {
+		"shot_id": shot_id,
+		"actor": "bot",
+		"weapon": "bot_shot",
+		"source": "bot_shot",
+		"overcharged": overcharged,
+		"origin": origin,
+		"direction": shot_direction,
+		"damage": damage,
+		"knockback": knockback
+	})
+	_record_telemetry_event(&"bot_shot_resolved", {
+		"shot_id": shot_id,
+		"actor": "bot",
+		"weapon": "bot_shot",
+		"source": "bot_shot",
+		"overcharged": overcharged,
+		"origin": origin,
+		"direction": shot_direction,
+		"damage": damage,
+		"knockback": knockback
+	})
 	var shot_end := origin + shot_direction * maxf(1.0, bot.shoot_range)
 	var query := PhysicsRayQueryParameters3D.create(origin, shot_end)
 	query.exclude = [bot.get_rid()]
 	var result := get_world_3d().direct_space_state.intersect_ray(query)
 	if result.is_empty():
+		_record_telemetry_event(&"shot_miss", {
+			"shot_id": shot_id,
+			"actor": "bot",
+			"weapon": "bot_shot",
+			"source": "bot_shot",
+			"overcharged": overcharged,
+			"impact_position": shot_end,
+			"distance": origin.distance_to(shot_end)
+		})
 		if feedback != null:
 			feedback.play_bot_miss(origin, shot_end)
 		return
@@ -683,9 +997,46 @@ func _on_bot_shot_resolution_requested(origin: Vector3, direction: Vector3, dama
 			feedback.play_bot_shot(origin, impact_position)
 		player.take_damage(damage, &"bot")
 		player.apply_knockback(shot_direction, knockback, BOT_SHOT_KNOCKBACK_LIFT)
+		_record_telemetry_event(&"shot_hit", {
+			"shot_id": shot_id,
+			"actor": "bot",
+			"target": "player",
+			"weapon": "bot_shot",
+			"source": "bot_shot",
+			"overcharged": overcharged,
+			"impact_position": impact_position,
+			"distance": origin.distance_to(impact_position)
+		})
+		_record_telemetry_event(&"damage_applied", {
+			"shot_id": shot_id,
+			"actor": "bot",
+			"target": "player",
+			"weapon": "bot_shot",
+			"source": "bot_shot",
+			"overcharged": overcharged,
+			"damage": damage,
+			"target_health": player.health
+		})
+		_record_telemetry_event(&"knockback_applied", {
+			"shot_id": shot_id,
+			"actor": "bot",
+			"target": "player",
+			"weapon": "bot_shot",
+			"knockback": knockback,
+			"lift": BOT_SHOT_KNOCKBACK_LIFT
+		})
 		if feedback != null:
 			feedback.play_knockback(player.get_body_center(), shot_direction, knockback, false)
 		return
+	_record_telemetry_event(&"shot_miss", {
+		"shot_id": shot_id,
+		"actor": "bot",
+		"weapon": "bot_shot",
+		"source": "bot_shot",
+		"overcharged": overcharged,
+		"impact_position": impact_position,
+		"distance": origin.distance_to(impact_position)
+	})
 	if feedback != null:
 		feedback.play_bot_miss(origin, impact_position)
 
@@ -718,6 +1069,7 @@ func _finish_round(player_won: bool) -> void:
 	if feedback != null:
 		feedback.play_round_end(player_won)
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	_record_telemetry_round_end(last_round_winner)
 
 func _build_hud_snapshot() -> Dictionary:
 	return {
@@ -841,6 +1193,7 @@ func _add_pickup_readability_beacon(pickup: Node3D, pickup_kind: StringName, col
 	pickup.add_child(beacon)
 
 func _process_pickups(delta: float) -> void:
+	_update_telemetry_pickup_cooldowns(delta)
 	for pickup_kind in pickups.keys():
 		var entry: Dictionary = pickups[pickup_kind]
 		var pickup_node := entry.get("node", null) as Node3D
@@ -853,12 +1206,20 @@ func _process_pickups(delta: float) -> void:
 				entry["available"] = true
 				if pickup_node != null:
 					pickup_node.visible = true
+				_record_telemetry_event(&"pickup_respawned", {
+					"pickup_kind": pickup_kind,
+					"position": entry.get("position", Vector3.ZERO)
+				})
 			pickups[pickup_kind] = entry
 			continue
 		if player != null and _try_consume_pickup(pickup_kind, player):
 			continue
 		if bot != null:
-			_try_consume_pickup(pickup_kind, bot)
+			if _try_consume_pickup(pickup_kind, bot):
+				continue
+		_maybe_record_pickup_nearby_ignored(pickup_kind, player)
+		_maybe_record_pickup_nearby_ignored(pickup_kind, bot)
+		_maybe_record_pickup_contested(pickup_kind)
 
 func _process_jump_pads(delta: float) -> void:
 	for index in range(jump_pads.size()):
@@ -895,6 +1256,18 @@ func _try_trigger_jump_pad(pad: Dictionary, combatant, actor_id: StringName) -> 
 		hud.show_jump_pad()
 	if feedback != null:
 		feedback.play_jump_pad(pad_position, launch_velocity)
+	_record_telemetry_event(&"jump_pad_triggered", {
+		"actor": actor_id,
+		"pad_id": pad.get("id", &""),
+		"position": pad_position,
+		"target": pad.get("target", Vector3.ZERO),
+		"launch_velocity": launch_velocity
+	})
+	telemetry_jump_pad_flights[String(actor_id)] = {
+		"pad_id": String(pad.get("id", &"")),
+		"target": pad.get("target", Vector3.ZERO),
+		"started_at": Time.get_ticks_msec()
+	}
 	return true
 
 func _build_jump_pad_launch_velocity(pad: Dictionary) -> Vector3:
@@ -917,12 +1290,18 @@ func _try_consume_pickup(pickup_kind: StringName, combatant) -> bool:
 	var pickup_position: Vector3 = entry.get("position", Vector3.ZERO)
 	if combatant.get_body_center().distance_to(pickup_position) > PICKUP_RADIUS:
 		return false
+	var actor_id := _get_combatant_id(combatant)
+	var health_before := float(combatant.get("health")) if combatant.get("health") != null else 0.0
+	var max_health := float(combatant.get("max_health")) if combatant.get("max_health") != null else 1.0
+	var healing_applied := 0.0
+	var healing_wasted := 0.0
 	match pickup_kind:
 		&"health":
 			if not combatant.has_method("heal"):
 				return false
-			var applied: float = combatant.heal(HEALTH_PICKUP_AMOUNT)
-			if applied <= 0.0:
+			healing_applied = combatant.heal(HEALTH_PICKUP_AMOUNT)
+			healing_wasted = maxf(0.0, HEALTH_PICKUP_AMOUNT - healing_applied)
+			if healing_applied <= 0.0:
 				return false
 		&"overcharge":
 			if not combatant.has_method("grant_overcharge"):
@@ -937,6 +1316,17 @@ func _try_consume_pickup(pickup_kind: StringName, combatant) -> bool:
 		hud.show_pickup(pickup_kind)
 	if feedback != null:
 		feedback.play_pickup(pickup_position, pickup_kind)
+	_record_telemetry_event(&"pickup_collected", {
+		"actor": actor_id,
+		"pickup_kind": pickup_kind,
+		"position": pickup_position,
+		"health_before": health_before,
+		"health_after": float(combatant.get("health")) if combatant.get("health") != null else health_before,
+		"max_health": max_health,
+		"healing_applied": healing_applied,
+		"healing_wasted": healing_wasted,
+		"has_overcharge": combatant.has_method("has_overcharge_charge") and combatant.has_overcharge_charge()
+	})
 	_update_bot_awareness()
 	return true
 
@@ -1105,6 +1495,275 @@ func _get_active_tactical_points(include_objectives: bool) -> Array:
 			debug_is_pickup_available(&"overcharge")
 		))
 	return points
+
+func _initialize_telemetry() -> void:
+	telemetry = ArenaTelemetryRecorderScript.new()
+	var enable_file_output := not DisplayServer.get_name().to_lower().contains("headless")
+	telemetry.start_session(_build_telemetry_context({
+		"score_to_win": SCORE_TO_WIN,
+		"player_spawn": player_spawn,
+		"bot_spawn": bot_spawn
+	}), enable_file_output)
+
+func _record_telemetry_event(event_name: StringName, payload: Dictionary = {}) -> void:
+	if telemetry == null:
+		return
+	telemetry.update_context(_build_telemetry_context())
+	telemetry.record_event(event_name, payload)
+
+func _build_telemetry_context(extra: Dictionary = {}) -> Dictionary:
+	var context := {
+		"round_index": round_index,
+		"round_state": round_state,
+		"map_id": active_layout_id,
+		"map_name": map_name,
+		"player_score": player_score,
+		"bot_score": bot_score,
+		"score_to_win": SCORE_TO_WIN
+	}
+	for key in extra.keys():
+		context[key] = extra[key]
+	return context
+
+func _record_telemetry_arena_setup() -> void:
+	var pickup_specs: Array = []
+	for pickup_kind in pickups.keys():
+		pickup_specs.append({
+			"pickup_kind": pickup_kind,
+			"position": debug_get_pickup_position(pickup_kind),
+			"available": debug_is_pickup_available(pickup_kind)
+		})
+	var jump_pad_specs: Array = []
+	for pad: Dictionary in jump_pads:
+		jump_pad_specs.append({
+			"pad_id": pad.get("id", &""),
+			"position": pad.get("position", Vector3.ZERO),
+			"target": pad.get("target", Vector3.ZERO)
+		})
+	_record_telemetry_event(&"arena_setup", {
+		"floor_size": floor_size,
+		"player_spawn": player_spawn,
+		"bot_spawn": bot_spawn,
+		"pickup_count": pickup_specs.size(),
+		"pickups": pickup_specs,
+		"jump_pad_count": jump_pad_specs.size(),
+		"jump_pads": jump_pad_specs,
+		"tactical_point_count": debug_get_bot_tactical_point_count()
+	})
+	for pickup: Dictionary in pickup_specs:
+		_record_telemetry_event(&"pickup_spawned", pickup)
+
+func _record_telemetry_round_start(reason: StringName) -> void:
+	telemetry_round_started_msec = Time.get_ticks_msec()
+	telemetry_sample_elapsed = 0.0
+	telemetry_jump_pad_flights.clear()
+	telemetry_pickup_event_cooldowns.clear()
+	telemetry_last_bot_snapshot.clear()
+	_record_telemetry_event(&"round_start", {
+		"reason": reason,
+		"player_position": player.global_position if player != null else Vector3.ZERO,
+		"bot_position": bot.global_position if bot != null else Vector3.ZERO,
+		"player_health": player.health if player != null else 0.0,
+		"bot_health": bot.health if bot != null else 0.0
+	})
+	_record_telemetry_bot_snapshot()
+
+func _record_telemetry_round_end(winner: StringName) -> void:
+	var duration_msec: int = maxi(0, Time.get_ticks_msec() - telemetry_round_started_msec)
+	_record_telemetry_event(&"round_end", {
+		"winner": winner,
+		"duration_msec": duration_msec,
+		"player_score": player_score,
+		"bot_score": bot_score,
+		"match_winner": match_winner,
+		"round_state": round_state,
+		"player_health": player.health if player != null else 0.0,
+		"bot_health": bot.health if bot != null else 0.0,
+		"player_position": player.global_position if player != null else Vector3.ZERO,
+		"bot_position": bot.global_position if bot != null else Vector3.ZERO
+	})
+	if telemetry != null:
+		telemetry.flush_summary()
+
+func _update_telemetry_frame(delta: float) -> void:
+	if telemetry == null:
+		return
+	_record_telemetry_bot_snapshot()
+	_record_telemetry_jump_pad_landings()
+	telemetry_sample_elapsed += delta
+	if telemetry_sample_elapsed < TELEMETRY_SAMPLE_INTERVAL:
+		return
+	telemetry_sample_elapsed = 0.0
+	_record_telemetry_movement_sample()
+
+func _record_telemetry_movement_sample() -> void:
+	if player == null or bot == null:
+		return
+	var player_velocity: Vector3 = player.velocity
+	var bot_velocity: Vector3 = bot.velocity
+	var player_flat_speed := Vector3(player_velocity.x, 0.0, player_velocity.z).length()
+	var bot_flat_speed := Vector3(bot_velocity.x, 0.0, bot_velocity.z).length()
+	_record_telemetry_event(&"movement_sample", {
+		"player_position": player.global_position,
+		"bot_position": bot.global_position,
+		"player_health": player.health,
+		"bot_health": bot.health,
+		"distance_between": player.global_position.distance_to(bot.global_position),
+		"player_speed": player_flat_speed,
+		"bot_speed": bot_flat_speed,
+		"player_airborne": not player.is_on_floor(),
+		"bot_airborne": not bot.is_on_floor(),
+		"player_jump_count": player.debug_get_jump_pad_launch_count(),
+		"bot_jump_count": bot.debug_get_jump_count(),
+		"bot_jump_pad_launch_count": bot.debug_get_jump_pad_launch_count(),
+		"bot_state": bot.debug_get_state(),
+		"bot_route_label": bot.debug_get_route_label(),
+		"bot_active_route_key": bot.debug_get_active_route_key(),
+		"bot_decision_reason": bot.debug_get_decision_reason(),
+		"bot_has_line_of_sight": bool(bot.get("last_has_line_of_sight")),
+		"bot_combat_overlay": bot.debug_is_combat_overlay_active(),
+		"bot_jump_pad_commitment": bot.debug_is_jump_pad_commitment_active()
+	})
+
+func _record_telemetry_bot_snapshot() -> void:
+	if bot == null:
+		return
+	var snapshot := _build_bot_telemetry_snapshot()
+	if telemetry_last_bot_snapshot.is_empty():
+		telemetry_last_bot_snapshot = snapshot
+		_record_telemetry_event(&"bot_state_changed", snapshot)
+		_record_telemetry_event(&"bot_route_changed", snapshot)
+		return
+	if snapshot.get("state", "") != telemetry_last_bot_snapshot.get("state", ""):
+		_record_telemetry_event(&"bot_state_changed", snapshot)
+	if snapshot.get("route_label", "") != telemetry_last_bot_snapshot.get("route_label", "") or snapshot.get("active_route_key", "") != telemetry_last_bot_snapshot.get("active_route_key", ""):
+		_record_telemetry_event(&"bot_route_changed", snapshot)
+	if snapshot.get("decision_reason", "") != telemetry_last_bot_snapshot.get("decision_reason", ""):
+		_record_telemetry_event(&"bot_decision", snapshot)
+	telemetry_last_bot_snapshot = snapshot
+
+func _build_bot_telemetry_snapshot() -> Dictionary:
+	return {
+		"actor": "bot",
+		"state": bot.debug_get_state(),
+		"route_label": bot.debug_get_route_label(),
+		"active_route_key": bot.debug_get_active_route_key(),
+		"decision_reason": bot.debug_get_decision_reason(),
+		"has_line_of_sight": bool(bot.get("last_has_line_of_sight")),
+		"combat_overlay": bot.debug_is_combat_overlay_active(),
+		"jump_pad_commitment": bot.debug_is_jump_pad_commitment_active(),
+		"reposition_destination": bot.debug_get_reposition_destination(),
+		"last_navigation_target": bot.debug_get_last_navigation_target(),
+		"last_reposition_score": bot.debug_get_last_reposition_score(),
+		"health_fraction": bot.health_fraction()
+	}
+
+func _record_telemetry_jump_pad_landings() -> void:
+	for actor_id in telemetry_jump_pad_flights.keys():
+		var combatant = player if String(actor_id) == "player" else bot
+		if combatant == null:
+			continue
+		var flight: Dictionary = telemetry_jump_pad_flights[actor_id]
+		if Time.get_ticks_msec() - int(flight.get("started_at", 0)) < 160:
+			continue
+		if not combatant.is_on_floor():
+			continue
+		var target: Vector3 = flight.get("target", combatant.global_position)
+		var flat_distance := _flat_distance_between(combatant.global_position, target)
+		_record_telemetry_event(&"jump_pad_landing", {
+			"actor": actor_id,
+			"pad_id": flight.get("pad_id", ""),
+			"target": target,
+			"landing_position": combatant.global_position,
+			"flat_distance_to_target": flat_distance,
+			"success": flat_distance <= TELEMETRY_JUMP_PAD_SUCCESS_DISTANCE
+		})
+		telemetry_jump_pad_flights.erase(actor_id)
+
+func _update_telemetry_pickup_cooldowns(delta: float) -> void:
+	var expired_keys: Array = []
+	for key in telemetry_pickup_event_cooldowns.keys():
+		var remaining := maxf(0.0, float(telemetry_pickup_event_cooldowns.get(key, 0.0)) - delta)
+		if remaining <= 0.0:
+			expired_keys.append(key)
+		else:
+			telemetry_pickup_event_cooldowns[key] = remaining
+	for key in expired_keys:
+		telemetry_pickup_event_cooldowns.erase(key)
+
+func _maybe_record_pickup_nearby_ignored(pickup_kind: StringName, combatant) -> void:
+	if combatant == null or combatant.get("is_dead") == true:
+		return
+	if not pickups.has(pickup_kind):
+		return
+	var entry: Dictionary = pickups[pickup_kind]
+	if not bool(entry.get("available", false)):
+		return
+	var pickup_position: Vector3 = entry.get("position", Vector3.ZERO)
+	var distance: float = combatant.get_body_center().distance_to(pickup_position)
+	if distance > TELEMETRY_PICKUP_NEAR_DISTANCE:
+		return
+	var actor_id := _get_combatant_id(combatant)
+	var key := "%s:%s:ignored" % [actor_id, String(pickup_kind)]
+	if not _can_emit_pickup_attention_event(key):
+		return
+	var reason := "nearby_not_collected"
+	if pickup_kind == &"health" and combatant.has_method("health_fraction") and combatant.health_fraction() >= 0.98:
+		reason = "health_full"
+	elif pickup_kind == &"overcharge" and combatant.has_method("has_overcharge_charge") and combatant.has_overcharge_charge():
+		reason = "already_overcharged"
+	_record_telemetry_event(&"pickup_nearby_ignored", {
+		"actor": actor_id,
+		"pickup_kind": pickup_kind,
+		"position": pickup_position,
+		"distance": distance,
+		"reason": reason
+	})
+
+func _maybe_record_pickup_contested(pickup_kind: StringName) -> void:
+	if player == null or bot == null or not pickups.has(pickup_kind):
+		return
+	var entry: Dictionary = pickups[pickup_kind]
+	if not bool(entry.get("available", false)):
+		return
+	var pickup_position: Vector3 = entry.get("position", Vector3.ZERO)
+	var player_distance: float = player.get_body_center().distance_to(pickup_position)
+	var bot_distance: float = bot.get_body_center().distance_to(pickup_position)
+	if player_distance > TELEMETRY_PICKUP_CONTEST_DISTANCE or bot_distance > TELEMETRY_PICKUP_CONTEST_DISTANCE:
+		return
+	var key := "contest:%s" % String(pickup_kind)
+	if not _can_emit_pickup_attention_event(key):
+		return
+	_record_telemetry_event(&"pickup_contested", {
+		"pickup_kind": pickup_kind,
+		"position": pickup_position,
+		"player_distance": player_distance,
+		"bot_distance": bot_distance
+	})
+
+func _can_emit_pickup_attention_event(key: String) -> bool:
+	if float(telemetry_pickup_event_cooldowns.get(key, 0.0)) > 0.0:
+		return false
+	telemetry_pickup_event_cooldowns[key] = TELEMETRY_PICKUP_EVENT_COOLDOWN
+	return true
+
+func _next_telemetry_id(prefix: String) -> String:
+	telemetry_projectile_sequence += 1
+	return "%s_%04d" % [prefix, telemetry_projectile_sequence]
+
+func _get_combatant_id(combatant) -> String:
+	if combatant == player:
+		return "player"
+	if combatant == bot:
+		return "bot"
+	if combatant != null and combatant.get("combatant_id") != null:
+		return String(combatant.get("combatant_id"))
+	return "unknown"
+
+func _flat_distance_between(first_position: Vector3, second_position: Vector3) -> float:
+	var delta := first_position - second_position
+	delta.y = 0.0
+	return delta.length()
 
 func _build_plasma_material(overcharged: bool) -> StandardMaterial3D:
 	var color := Color(0.78, 0.46, 1.0, 1.0) if overcharged else Color(0.38, 0.98, 1.0, 1.0)
