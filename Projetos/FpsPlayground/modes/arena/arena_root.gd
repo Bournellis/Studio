@@ -28,8 +28,6 @@ const JUMP_PAD_RADIUS: float = 1.25
 const JUMP_PAD_COOLDOWN: float = 0.64
 const JUMP_PAD_VERTICAL_SPEED: float = 8.4
 const JUMP_PAD_FORWARD_SPEED: float = 5.8
-const JUMP_PAD_MAX_FORWARD_SPEED: float = 12.6
-const JUMP_PAD_ROUTE_SPEED_MARGIN: float = 1.08
 const SCORE_TO_WIN: int = 3
 const ROUND_STATE_PLAYING: StringName = &"playing"
 const ROUND_STATE_PLAYER_WIN: StringName = &"player_round_win"
@@ -837,7 +835,7 @@ func _try_trigger_jump_pad(pad: Dictionary, combatant, actor_id: StringName) -> 
 		return false
 	if combatant.global_position.y > pad_position.y + 1.1:
 		return false
-	var launch_velocity := _build_jump_pad_launch_velocity(pad, combatant.global_position)
+	var launch_velocity := _build_jump_pad_launch_velocity(pad)
 	if combatant.has_method("apply_jump_pad_launch"):
 		combatant.apply_jump_pad_launch(launch_velocity)
 	else:
@@ -850,34 +848,14 @@ func _try_trigger_jump_pad(pad: Dictionary, combatant, actor_id: StringName) -> 
 		feedback.play_jump_pad(pad_position, launch_velocity)
 	return true
 
-func _build_jump_pad_launch_velocity(pad: Dictionary, actor_position: Vector3) -> Vector3:
+func _build_jump_pad_launch_velocity(pad: Dictionary) -> Vector3:
 	var pad_position: Vector3 = pad.get("position", Vector3.ZERO)
 	var target_position: Vector3 = pad.get("target", pad_position + Vector3.FORWARD)
-	var launch_origin := actor_position
-	launch_origin.y = pad_position.y
-	var flat := target_position - launch_origin
+	var flat := target_position - pad_position
 	flat.y = 0.0
 	if flat.length_squared() <= 0.0001:
-		flat = target_position - pad_position
-		flat.y = 0.0
-	if flat.length_squared() <= 0.0001:
 		flat = Vector3.FORWARD
-	return flat.normalized() * _calculate_jump_pad_forward_speed(launch_origin, target_position) + Vector3.UP * JUMP_PAD_VERTICAL_SPEED
-
-func _calculate_jump_pad_forward_speed(launch_origin: Vector3, target_position: Vector3) -> float:
-	var flat_delta := target_position - launch_origin
-	flat_delta.y = 0.0
-	var flat_distance := flat_delta.length()
-	var height_delta := target_position.y - launch_origin.y
-	var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
-	var discriminant := JUMP_PAD_VERTICAL_SPEED * JUMP_PAD_VERTICAL_SPEED - 2.0 * gravity * height_delta
-	if discriminant <= 0.001 or gravity <= 0.001:
-		return JUMP_PAD_FORWARD_SPEED
-	var descending_time := (JUMP_PAD_VERTICAL_SPEED + sqrt(discriminant)) / gravity
-	if descending_time <= 0.001:
-		return JUMP_PAD_FORWARD_SPEED
-	var required_speed := flat_distance / descending_time * JUMP_PAD_ROUTE_SPEED_MARGIN
-	return clampf(required_speed, JUMP_PAD_FORWARD_SPEED, JUMP_PAD_MAX_FORWARD_SPEED)
+	return flat.normalized() * JUMP_PAD_FORWARD_SPEED + Vector3.UP * JUMP_PAD_VERTICAL_SPEED
 
 func _try_consume_pickup(pickup_kind: StringName, combatant) -> bool:
 	if not pickups.has(pickup_kind) or combatant == null:
