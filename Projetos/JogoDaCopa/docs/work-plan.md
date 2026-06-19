@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09N_RENDER_SETTINGS_CONTROLLER_LOCAL_READY`
+- Status: `JOGO_DA_COPA_TRACK09N_PUBLISHED_APPROVED_NEXT_REDUCTION_READY`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -32,23 +32,24 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09G Football Match Resolution Controller V1 extracted match restart, goal reset, goal detection side effects, scoring orchestration, timer/golden goal, match finish and shot/goal stats into `football_match_resolution_controller.gd`; local validate, Web export, gzip gate and Web boot smoke passed; publication attempt passed menu and first-minute gates but failed remote 5-minute stability twice on JS/WASM heap (`+15.42%` and `+15.35%`), then rolled back to 09F.
 - Track 09H Web Heap Hotfix V1 removed a per-frame `Dictionary` allocation from the timer clock path in `football_match_resolution_controller.gd`; published `Super Campeao v1.2.1+4a323fab` after local validate/export, remote menu, first-minute, 5-minute stability and night luma gates passed.
 - Track 09I Kick Super Controller V1 extracted player kick requests, charged/strong kick routing, SUPER spend/gain helpers and bot kick routing into `football_kick_super_controller.gd`; `FootballRoot` in the current base fell from `995` to `943` lines; published `Super Campeao v1.2.1+7995b06c` after local validate/export, remote menu, first-minute, stability and night luma gates passed; human retest was approved by Fabio before Track 09J.
-- Track 09J Ball Contact Controller V1 extracted player ball-control state, passive player-ball contact, ball collision audio and arcade dash/body contact into `football_ball_contact_controller.gd`; `FootballRoot` in the current base fell from `943` to `832` lines; local validate/export/gzip/Web boot gates passed with no intended gameplay, input, bot, physics, scoring, HUD or asset change.
+- Track 09J Ball Contact Controller V1 extracted player ball-control state, passive player-ball contact, ball collision audio and arcade dash/body contact into `football_ball_contact_controller.gd`; `FootballRoot` in that local candidate fell from `943` to `832` lines; local gates passed, but publication failed the remote 5-minute heap gate twice and production was restored to 09I.
 - Track 09K Web Heap Hotfix V1 kept the hot contact path in `FootballRoot`, improved the signal locally but still failed the remote stability heap gate; production was restored to 09I.
 - Track 09L Web Heap Instrumentation V1 showed the Chrome gate is measuring exposed JS heap in available runs because `wasmHeapBytes` has no samples.
 - Track 09M Web Heap Gate Semantics V1 renamed the primary gate to `js_heap_growth` while preserving the legacy `js_wasm_heap_growth` alias; production remained 09I.
-- Track 09N Render Settings Controller V1 extracted render/settings orchestration into `football_render_settings_controller.gd`; `FootballRoot` in the current base fell from `1079` to `1051` lines; local validate/export/gzip/Web probe gates passed with no intended gameplay, input, bot, physics, scoring, HUD visual, asset or tuning change.
+- Track 09N Render Settings Controller V1 extracted render/settings orchestration into `football_render_settings_controller.gd`; `FootballRoot` in the current approved public base fell from `1079` to `1051` lines; local validate/export/gzip/Web probe, pre-publication A/B, remote menu, first-minute, stability, luma and human retest gates passed.
+- Track 09O Documentation Rebaseline V1 cleaned the documentation map after 09N so living docs, historical plans and raw evidence no longer compete as sources of next-step truth.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Track 09N is locally validated and merge-ready. Fabio should push via GitHub Desktop after local merge; before any publication, run an A/B comparison against the approved public 09I baseline using the Track 09M `js_heap_growth` probe.
+Track 09N is the approved public baseline at `Super Campeao v1.2.1+5c6520ba`. The next technical step is a new local `FootballRoot` reduction starting from that approved baseline.
 
 Focus:
 
 - Prefer orchestration slices that do not alter gameplay, physics, input, bot decisions or assets.
 - Preserve existing GUT coverage and add/retarget focused tests when moving public helper contracts.
-- Keep Web validation in the loop: `tools/validate.gd`, Web export, gzip gate, local Web boot smoke for loading-sensitive changes and remote 5-minute stability before publication.
+- Keep Web validation in the loop: `tools/validate.gd`, Web export, gzip gate, local Web boot smoke for loading-sensitive changes, remote 5-minute stability before publication and human retest after publication.
 
 ## Completed Track 09G - Football Match Resolution Controller V1
 
@@ -87,7 +88,40 @@ Focus:
 - Preserved existing ordering in `_physics_process`: cooldowns, player control state, player contact, kick handling, arcade field, arcade action contacts and match-resolution update.
 - Measured reduction in the current base: `FootballRoot` `943 -> 832` lines; new controller `125` lines.
 - Local gates passed: import headless, `tools/validate.gd`, Web export, gzip `30.60 MiB / 50.00 MiB`, Chrome local boot with `event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0` and `firstMinuteHitches=0`.
-- No publication was performed in this track.
+- Publication was attempted later as `v1.2.1+4678fbea`, but the remote 5-minute heap gate failed twice and production was restored to 09I.
+
+## Completed Track 09K - Web Heap Hotfix V1
+
+- Removed avoidable `Dictionary` allocations from less frequent ball-contact paths while keeping the hot contact path in `FootballRoot`.
+- Preserved gameplay, input, bot, physics, scoring, HUD, tuning and assets.
+- Local gates passed and local 5-minute comparison improved slightly, but the remote 5-minute heap gate still failed.
+- Production was restored to the approved 09I baseline.
+
+## Completed Track 09L - Web Heap Instrumentation V1
+
+- Added heap debug summary output and final-GC/component/window diagnostics to the Chrome probe.
+- Confirmed available Chrome runs expose JS heap samples but not real WASM heap samples.
+- No publication and no gameplay/runtime change.
+
+## Completed Track 09M - Web Heap Gate Semantics V1
+
+- Renamed the primary stability metric to `js_heap_growth`.
+- Preserved `js_wasm_heap_growth` as a legacy alias for old evidence compatibility.
+- Confirmed remote 09I still passed under the renamed metric.
+
+## Completed Track 09N - Render Settings Controller V1
+
+- Extracted main-menu settings bridge, `GameSettings` quality integration, runtime render profile refresh, scoreboard viewport resize and pause-menu sensitivity sync into `modes/football/football_render_settings_controller.gd`.
+- Measured reduction in the approved public base: `FootballRoot` `1079 -> 1051` lines.
+- Local validation, Web export, gzip, local Web probe and pre-publication A/B passed.
+- Published as `Super Campeao v1.2.1+5c6520ba`; remote menu, first-minute, stability 5min, luma and human retest gates passed.
+- 09N is the current approved public baseline.
+
+## Completed Track 09O - Documentation Rebaseline V1
+
+- Rebased the documentation map after 09N approval.
+- Marked old plans as historical, refreshed this work plan, compacted the status snapshot and updated bot/tuning contracts.
+- No code, export, package or publication change.
 
 ## Out Of Scope
 

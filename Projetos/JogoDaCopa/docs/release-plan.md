@@ -1,5 +1,7 @@
 # JogoDaCopa - Release Plan: Road to Web (Serie Track 04)
 
+> Historical plan. This document records the Track 04 release strategy from 2026-06-11 and is not the current next-step source. For live status use `../implementation/current-status.md`, `work-plan.md`, `publication-readiness.md` and `release-history.md`.
+
 - Date: `2026-06-11`
 - Author: Claude (objetivo definido por Fabio)
 - **Objetivo**: publicar o Copa Arena Futebol como jogo COMPLETO e POLIDO em Web (itch.io e/ou site proprio), passando por: melhorias de gameplay, polimento, variedade de modos, menu/opcoes de verdade e robustez de app.

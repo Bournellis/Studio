@@ -37,7 +37,7 @@ Publicar a Track 09N como tentativa controlada de Cloudflare Pages, depois do A/
 
 ## Gate de decisao
 
-Se qualquer gate remoto falhar, restaurar producao para a 09I aprovada. Se todos passarem, registrar a 09N como baseline publicado aguardando reteste humano.
+Se qualquer gate remoto falhar, restaurar producao para a 09I aprovada. Se todos passarem, registrar a 09N como baseline publicada para reteste humano.
 
 ## Resultado
 
@@ -49,7 +49,7 @@ Se qualquer gate remoto falhar, restaurar producao para a 09I aprovada. Se todos
 - Primeiro minuto remoto: PASS, `event.visible_match_start`, `firstMinuteHitches=0`, page errors `0`, console errors `0`.
 - Estabilidade remota 5min: PASS, `js_heap_growth +0.41%`, pico `+6.05%`, `wasmSampleCount=0`.
 - Luma remota: PASS, `6.525 < 90`.
-- Decisao: sem rollback; Track 09N publicada com gates automaticos PASS e aguardando reteste humano.
+- Decisao: sem rollback; Track 09N publicada com gates automaticos PASS. Nota posterior: reteste humano aprovado em `2026-06-19_codex_jogodacopa_track09n-human-retest-approved-v1.md`.
 - Relatorio: `Projetos/JogoDaCopa/docs/playtest-reports/track-09n-publication.md`.
 - Evidencias: `Projetos/JogoDaCopa/docs/playtest-reports/track-09n-data/`.
 
