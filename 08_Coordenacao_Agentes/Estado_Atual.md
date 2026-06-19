@@ -7,20 +7,20 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+5c6520ba` publicado e aprovado; gates remotos 09N PASS; reteste humano aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 11 complete telemetry implementada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09P validada localmente; publico aprovado segue 09N `Super Campeao v1.2.1+5c6520ba`) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 11 complete telemetry implementada localmente; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09N_PUBLISHED_APPROVED`
-- Marker: `JOGO_DA_COPA_TRACK09N_PUBLISHED_APPROVED`
+- Status: `P2_IMPLEMENTACAO - TRACK09P_LOCAL_VALIDATED`
+- Marker: `JOGO_DA_COPA_TRACK09P_LOCAL_VALIDATED`
 - Baseline publico: `Super Campeao v1.2.1+5c6520ba` (`web/v1-copa-arena-futebol-20260619-5c6520ba`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09N PASS; reteste humano aprovado; 09I segue fallback historico aprovado.
 - Diagnostico atual: Track 09M renomeou o gate primario para `js_heap_growth`, preservou alias legado `js_wasm_heap_growth` e confirmou 09I remoto PASS (`+9.38%`, `wasmSampleCount=0`).
-- Publicacao atual: Track 09N extraiu render/settings para `football_render_settings_controller.gd`; `FootballRoot` `1079 -> 1051`; validate/export/A-B pre-publicacao PASS; menu/primeiro minuto/estabilidade 5min/luma remotos PASS (`js_heap_growth +0.41%`); reteste humano aprovado.
+- Implementacao local: Track 09P extraiu session/UI para `football_session_ui_controller.gd`; `FootballRoot` `1051 -> 974`; import/validate/export/gzip/Web smoke 90s PASS (`js_heap_growth -1.26%`); nao publicada.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: seguir proxima reducao local do `FootballRoot` a partir da 09N aprovada; Fabio faz push via GitHub Desktop quando quiser sincronizar.
+- Proximo passo: publicar/testar 09P antes de nova reducao, mantendo 09N como baseline publica ate gates remotos e reteste humano aprovarem 09P.
 
 ## draxos-roguelike-cardgame
 

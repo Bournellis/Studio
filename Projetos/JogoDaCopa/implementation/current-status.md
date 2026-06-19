@@ -6,15 +6,17 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
 - Public baseline: `Super Campeao v1.2.1+5c6520ba`
-- Active stage status: `PUBLISHED_APPROVED - menu/first-minute/stability/luma PASS; human retest approved`
-- Status marker: `JOGO_DA_COPA_TRACK09N_PUBLISHED_APPROVED`
-- Documentation baseline: `Track 09O Documentation Rebaseline V1`
+- Active stage status: `LOCAL_VALIDATED - Track 09P reduction candidate; publication pending`
+- Status marker: `JOGO_DA_COPA_TRACK09P_LOCAL_VALIDATED`
+- Documentation baseline: `Track 09P Session UI Controller V1`
 
 ## Current Truth
 
 `JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, published on Cloudflare Pages as `v1.2.1+5c6520ba`.
 
 Track 09N is the current approved public baseline. It extracted render/settings orchestration into `football_render_settings_controller.gd`, reduced `FootballRoot` from `1079` to `1051` lines, passed local validation, passed pre-publication A/B, passed remote menu/first-minute/stability/luma gates and passed human retest.
+
+Track 09P is the current local validated candidate. It extracted session/UI orchestration into `football_session_ui_controller.gd`, reduced `FootballRoot` from `1051` to `974` lines, passed local import, validate/export/gzip and 90s Chrome Web smoke. It is not published yet.
 
 Tracks 09J and 09K are not approved public baselines because their 2026-06-19 publication attempts failed the remote heap gate; production was restored to 09I before 09L/09M diagnostics. Track 09L/09M clarified that the active Chrome stability metric is exposed JS heap, now named `js_heap_growth`.
 
@@ -51,6 +53,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - `football_match_resolution_controller.gd`: restart state, goal reset timer, goal detection side effects, scoring, timer/golden goal, match finish and stats.
 - `football_kick_super_controller.gd`: player kick requests, charged/strong kick routing, SUPER spend/gain rules and bot kick routing.
 - `football_render_settings_controller.gd`: main-menu settings bridge, `GameSettings` quality integration, runtime render-profile refresh, scoreboard viewport resize and pause-menu sensitivity sync.
+- `football_session_ui_controller.gd`: intro/pause/menu session flow, ESC target routing, match start, main-menu return and mouse-capture policy.
 
 ## Current Gate
 
@@ -69,6 +72,14 @@ Latest approved publication:
 - Human retest: approved by Fabio/tester on 2026-06-19.
 
 Track 09I remains the historical approved fallback baseline.
+
+Latest local candidate:
+
+- Track 09P local validation: import headless PASS; `tools/validate.gd` PASS, `104/104` tests, `1826` asserts, `59` source files checked.
+- Web package/export: PASS.
+- Web gzip transfer: `30.60 MiB / 50.00 MiB`.
+- Local Chrome Web smoke 90s: PASS, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`, `js_heap_growth -1.26%`.
+- Publication status: not published; 09N remains the approved public baseline.
 
 ## Validation
 
@@ -91,7 +102,7 @@ D:\Estudio\tools\check_doc_drift.ps1
 git diff --check
 ```
 
-Latest code validation remains the Track 09N publication gate listed above. Track 09O is documentation-only and does not change code, scenes, assets, export or publication.
+Latest code validation is the Track 09P local candidate gate listed above. Track 09O was documentation-only and did not change code, scenes, assets, export or publication.
 
 ## Documentation Map
 
@@ -106,12 +117,9 @@ Latest code validation remains the Track 09N publication gate listed above. Trac
 
 ## Next Step
 
-Proceed with the next local `FootballRoot` reduction from the approved 09N baseline. Keep the slice conservative: no gameplay, physics, input, bot decision, HUD visual, asset or tuning change unless Fabio explicitly opens a tuning/design track.
+Publish/test Track 09P before another `FootballRoot` reduction, or stop for a fresh architecture review if the local candidate is not promoted. Keep any next slice conservative: no gameplay, physics, input, bot decision, HUD visual, asset or tuning change unless Fabio explicitly opens a tuning/design track.
 
-Required gates for the next reduction:
+Required gates before promoting Track 09P:
 
-- `tools/validate.gd`.
-- Web export and gzip gate.
-- Local Web smoke when loading/runtime-sensitive.
-- Remote 5-minute `js_heap_growth` gate before publication.
+- Remote 5-minute `js_heap_growth` gate in the publication flow.
 - Human retest after publication before promoting the build as product-approved.

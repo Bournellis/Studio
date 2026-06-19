@@ -18,6 +18,7 @@ const FootballWorldEnvironmentScript = preload("res://modes/football/football_wo
 const FootballCaptureDirectorScript = preload("res://modes/football/football_capture_director.gd")
 const FootballScoreboardControllerScript = preload("res://modes/football/football_scoreboard_controller.gd")
 const FootballRenderSettingsControllerScript = preload("res://modes/football/football_render_settings_controller.gd")
+const FootballSessionUiControllerScript = preload("res://modes/football/football_session_ui_controller.gd")
 const FootballPerfScenarioScript = preload("res://modes/football/football_perf_scenario.gd")
 const FootballWebLoadingControllerScript = preload("res://modes/football/football_web_loading_controller.gd")
 
@@ -259,29 +260,10 @@ func _physics_process(delta: float) -> void:
 	_update_avatar_states(delta)
 
 func _input(event: InputEvent) -> void:
-	if web_loading_active:
-		return
-	if event.is_action_pressed("ui_back"):
-		if _get_escape_target() == &"menu":
-			_return_to_main_menu()
-		else:
-			_set_menu_open(not menu_open)
-		get_viewport().set_input_as_handled()
-		return
-	if intro_open:
-		return
-	if menu_open:
-		return
-	if not match_over and event is InputEventMouseButton and event.is_pressed() and Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
-		_capture_mouse_if_playing(true)
-		get_viewport().set_input_as_handled()
-		return
-	if event.is_action_pressed("arcade_emote"):
-		_trigger_arcade_emote(true)
-		get_viewport().set_input_as_handled()
+	FootballSessionUiControllerScript.handle_input(self, event)
 
 func _get_escape_target() -> StringName:
-	return &"menu" if intro_open or match_over else &"pause"
+	return FootballSessionUiControllerScript.get_escape_target(self)
 
 func restart_match(capture_mouse: bool = true) -> void:
 	FootballMatchResolutionControllerScript.restart_match(self, capture_mouse)
@@ -910,70 +892,19 @@ func _update_goal_slowmo(delta: float) -> void:
 		Engine.time_scale = 1.0
 
 func _start_match() -> void:
-	PerfProbeScript.mark(self, "event.match_start")
-	if hud != null:
-		hud.play_transition_pulse(SCREEN_TRANSITION_SECONDS)
-	_set_intro_open(false)
-	if hud != null:
-		hud.reset_feedback()
-	_start_kickoff_countdown()
-	_capture_mouse_if_playing()
+	FootballSessionUiControllerScript.start_match(self)
 
 func _set_intro_open(is_open: bool) -> void:
-	intro_open = is_open
-	if intro_open:
-		menu_open = false
-		_set_player_persistent_vfx(false, false)
-		phase_label = &"intro"
-		get_tree().paused = true
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		if feedback != null:
-			feedback.set_ambience_ducked(true)
-		if hud != null:
-			hud.set_pause_menu_visible(false)
-			hud.set_intro_visible(true)
-		_request_hud_and_scoreboard_refresh()
-		return
-	get_tree().paused = false
-	if feedback != null:
-		feedback.set_ambience_ducked(false)
-	if phase_label == &"intro":
-		phase_label = &"play"
-	if hud != null:
-		hud.set_intro_visible(false)
-	_request_hud_and_scoreboard_refresh()
+	FootballSessionUiControllerScript.set_intro_open(self, is_open)
 
 func _set_menu_open(is_open: bool) -> void:
-	if intro_open and is_open:
-		return
-	PerfProbeScript.mark(self, "event.pause_menu", "open=%s" % str(is_open))
-	menu_open = is_open
-	if menu_open:
-		_set_player_persistent_vfx(false, false)
-	get_tree().paused = menu_open
-	if hud != null:
-		hud.set_pause_menu_visible(menu_open, player.mouse_sensitivity if player != null else 0.0)
-	if feedback != null:
-		feedback.set_ambience_ducked(menu_open)
-	if menu_open:
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	else:
-		_capture_mouse_if_playing()
-	_request_hud_and_scoreboard_refresh()
+	FootballSessionUiControllerScript.set_menu_open(self, is_open)
 
 func _return_to_main_menu() -> void:
-	PerfProbeScript.mark(self, "event.return_to_main_menu")
-	call_deferred("_return_to_main_menu_async")
+	FootballSessionUiControllerScript.return_to_main_menu(self)
 
 func _return_to_main_menu_async() -> void:
-	if hud != null:
-		hud.play_fade_to_black(SCREEN_TRANSITION_SECONDS)
-	await get_tree().create_timer(SCREEN_TRANSITION_SECONDS, true, false, true).timeout
-	intro_open = false
-	get_tree().paused = false
-	Engine.time_scale = 1.0
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	get_tree().change_scene_to_file(MENU_SCENE_PATH)
+	await FootballSessionUiControllerScript.return_to_main_menu_async(self)
 
 func _mark_first_runtime_frame() -> void:
 	if not is_inside_tree():
@@ -1014,15 +945,7 @@ func _record_goal_stat(player_scored: bool, goal_value: int) -> void:
 	FootballMatchResolutionControllerScript.record_goal_stat(self, player_scored, goal_value)
 
 func _capture_mouse_if_playing(allow_web_capture: bool = false) -> void:
-	if DisplayServer.get_name().to_lower().contains("headless"):
-		return
-	if RenderProfileScript.is_web_platform() and not allow_web_capture:
-		return
-	if capture_scene_active:
-		return
-	if intro_open or menu_open or match_over:
-		return
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	FootballSessionUiControllerScript.capture_mouse_if_playing(self, allow_web_capture)
 
 func _on_sensitivity_changed(value: float) -> void:
 	FootballRenderSettingsControllerScript.on_sensitivity_changed(self, value)
