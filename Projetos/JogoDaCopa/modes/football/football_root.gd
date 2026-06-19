@@ -249,9 +249,9 @@ func _physics_process(delta: float) -> void:
 	_update_match_clock(delta)
 	if match_over:
 		return
-	_update_player_ball_control(delta)
-	_process_player_ball_contact()
-	_process_arcade_action_contacts()
+	FootballBallContactControllerScript.update_player_ball_control(self, delta)
+	FootballBallContactControllerScript.process_player_ball_contact(self)
+	FootballBallContactControllerScript.process_arcade_action_contacts(self)
 	_update_arcade_field(delta)
 	_process_goal_detection()
 	_update_avatar_states(delta)
@@ -357,10 +357,10 @@ func debug_get_feedback():
 	return feedback
 
 func debug_update_player_ball_control(delta: float = 0.1) -> void:
-	_update_player_ball_control(delta)
+	FootballBallContactControllerScript.update_player_ball_control(self, delta)
 
 func debug_process_arcade_action_contacts() -> void:
-	_process_arcade_action_contacts()
+	FootballBallContactControllerScript.process_arcade_action_contacts(self)
 
 func debug_update_arcade_field(delta: float = 0.1) -> void:
 	_update_arcade_field(delta)
@@ -651,17 +651,8 @@ func _try_player_kick(origin: Vector3, direction: Vector3, force: float, lift: f
 func _on_bot_kick_requested(origin: Vector3, direction: Vector3, force: float, lift: float) -> void:
 	FootballKickSuperControllerScript.on_bot_kick_requested(self, origin, direction, force, lift)
 
-func _update_player_ball_control(_delta: float) -> void:
-	FootballBallContactControllerScript.update_player_ball_control(self, _delta)
-
-func _process_player_ball_contact() -> void:
-	FootballBallContactControllerScript.process_player_ball_contact(self)
-
 func _on_ball_body_entered(body: Node) -> void:
 	FootballBallContactControllerScript.on_ball_body_entered(self, body, RenderProfileScript)
-
-func _process_arcade_action_contacts() -> void:
-	FootballBallContactControllerScript.process_arcade_action_contacts(self)
 
 func _collect_arcade_field_nodes() -> void:
 	FootballArcadeFieldControllerScript.collect_nodes(self)

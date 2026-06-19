@@ -89,18 +89,18 @@ static func process_arcade_action_contacts(root: Node) -> void:
 	if root.arcade_contact_cooldown_remaining > 0.0 or root.player == null or root.bot == null or root.ball == null:
 		return
 	var handled := false
-	if root.player.has_method("is_arcade_dashing") and root.player.is_arcade_dashing():
-		handled = _process_arcade_dash_contact(root, root.player, root.bot, true) or handled
-	if root.bot.has_method("debug_is_arcade_dashing") and root.bot.debug_is_arcade_dashing():
-		handled = _process_arcade_dash_contact(root, root.bot, root.player, false) or handled
+	if root.player.is_arcade_dashing():
+		handled = _process_arcade_dash_contact(root, root.player, root.bot, true, root.player.get_arcade_dash_direction()) or handled
+	if root.bot.debug_is_arcade_dashing():
+		handled = _process_arcade_dash_contact(root, root.bot, root.player, false, root.bot.debug_get_arcade_dash_direction()) or handled
 	if handled:
 		root.arcade_contact_cooldown_remaining = root.ARCADE_CONTACT_COOLDOWN
 
 
-static func _process_arcade_dash_contact(root: Node, actor: Node3D, target: Node3D, actor_is_player: bool) -> bool:
+static func _process_arcade_dash_contact(root: Node, actor: Node3D, target: Node3D, actor_is_player: bool, dash_direction: Vector3) -> bool:
 	var actor_position: Vector3 = actor.global_position
 	var target_position: Vector3 = target.global_position
-	var dash_direction := _get_arcade_dash_direction(actor, actor_is_player)
+	dash_direction = _normalize_arcade_dash_direction(actor, dash_direction)
 	var ball_close: bool = _flat_distance(actor_position, root.ball.global_position) <= root.ARCADE_SLIDE_BALL_RADIUS
 	var body_close: bool = _flat_distance(actor_position, target_position) <= root.ARCADE_BODY_CONTACT_RADIUS
 	if not ball_close and not body_close:
@@ -133,12 +133,7 @@ static func _process_arcade_dash_contact(root: Node, actor: Node3D, target: Node
 	return false
 
 
-static func _get_arcade_dash_direction(actor: Node3D, actor_is_player: bool) -> Vector3:
-	var direction := Vector3.ZERO
-	if actor_is_player and actor.has_method("get_arcade_dash_direction"):
-		direction = actor.get_arcade_dash_direction()
-	elif not actor_is_player and actor.has_method("debug_get_arcade_dash_direction"):
-		direction = actor.debug_get_arcade_dash_direction()
+static func _normalize_arcade_dash_direction(actor: Node3D, direction: Vector3) -> Vector3:
 	direction.y = 0.0
 	if direction.length_squared() <= 0.0001:
 		direction = -actor.global_transform.basis.z
