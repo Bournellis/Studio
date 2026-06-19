@@ -1,7 +1,8 @@
 # Track 11 - Complete Telemetry V1
 
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `HUMAN_SMOKE_APPROVED`
 - Started: `2026-06-19`
+- Approved: `2026-06-19`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track11-complete-telemetry-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track11-complete-telemetry-v1`
@@ -65,7 +66,7 @@ PASS, GUT 49/49, 464 asserts
 
 ## Human Smoke
 
-- Launch `Arena Shooter` and play at least one full round.
-- Confirm telemetry files are created under Godot `user://telemetry/`.
-- Confirm files answer: what won the round, what dealt damage, which pickups were used, whether bot routes/jump pads worked and whether overcharge mattered.
-- Confirm no gameplay feel regression.
+- Approved session: `C:\Users\Fabio\AppData\Roaming\Godot\app_userdata\FpsPlayground\telemetry\arena_20260619_202922_2301377`.
+- `events.jsonl` and `summary.json` matched at `1344` events.
+- Covered round lifecycle, match reset, manual restart, combat, pickups, bot route events, movement samples and jump pad trigger/landing pairs.
+- Confirmed no gameplay feel regression.

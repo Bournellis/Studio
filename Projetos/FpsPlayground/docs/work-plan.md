@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_HUMAN_APPROVED`
 - Current surface: FPS arena lab.
-- Current baseline: Track 11 implemented locally; current player movement feel preserved.
+- Current baseline: Track 11 approved in human smoke; current player movement feel preserved.
 
 ## North Star
 
@@ -89,7 +89,7 @@ Delivered:
 
 ### 5. Track 11 - Complete Telemetry V1
 
-Status: ready for human smoke.
+Status: human smoke approved on `2026-06-19`.
 
 Goal:
 

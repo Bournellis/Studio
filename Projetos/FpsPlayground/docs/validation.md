@@ -12,6 +12,13 @@ Latest Track 11 local result:
 PASS, GUT 49/49, 464 asserts
 ```
 
+Latest Track 11 human smoke:
+
+```text
+PASS, telemetry session C:\Users\Fabio\AppData\Roaming\Godot\app_userdata\FpsPlayground\telemetry\arena_20260619_202922_2301377
+events.jsonl and summary.json matched at 1344 events
+```
+
 Profiles:
 
 ```powershell

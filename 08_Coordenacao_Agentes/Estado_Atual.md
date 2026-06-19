@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09P validada localmente; publico aprovado segue 09N `Super Campeao v1.2.1+5c6520ba`) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 11 complete telemetry implementada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09P validada localmente; publico aprovado segue 09N `Super Campeao v1.2.1+5c6520ba`) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 11 complete telemetry aprovada no smoke humano; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -44,13 +44,13 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK11_COMPLETE_TELEMETRY_READY_FOR_SMOKE`
-- Marker: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_READY_FOR_SMOKE`
-- Baseline: Track 11 implementada localmente; hotfix V3 marca restart manual ativo como `round_reset reason=manual_restart` sem mudar gameplay.
+- Status: `P2_IMPLEMENTACAO - TRACK11_COMPLETE_TELEMETRY_HUMAN_APPROVED`
+- Marker: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_HUMAN_APPROVED`
+- Baseline: Track 11 aprovada no smoke humano; telemetry registra lifecycle, combate, pickups, bot, movimento, jump pads e restarts manuais sem mudar gameplay.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
 - Validacao: `tools/validate.gd` PASS `49/49`, `464 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: smoke humano da Track 11 no editor, conferindo `user://telemetry/<session_id>/events.jsonl` e `summary.json` sem regressao no feel aprovado.
+- Proximo passo: escolher a proxima track usando a telemetria como evidencia; preservar movimento, jump pads, mapas e bot aprovados.
 
 ## rpg-isometrico
 

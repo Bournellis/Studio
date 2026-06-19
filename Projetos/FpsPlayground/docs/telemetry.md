@@ -1,6 +1,6 @@
 # FpsPlayground Telemetry
 
-- Status: Track 11 ready for human smoke.
+- Status: Track 11 approved in human smoke.
 - Storage: local Godot `user://telemetry/`.
 - Scope: Arena Shooter duel instrumentation only.
 - Implementation: `res://gameplay/telemetry/arena_telemetry_recorder.gd`.

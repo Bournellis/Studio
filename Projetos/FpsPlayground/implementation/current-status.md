@@ -5,8 +5,8 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 11 - Complete Telemetry V1`
-- Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_READY_FOR_SMOKE`
+- Active stage status: `HUMAN_SMOKE_APPROVED`
+- Status marker: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_HUMAN_APPROVED`
 
 ## Current Truth
 
@@ -40,7 +40,7 @@ Delivered:
 - Hotfix V3 marks active `R` restarts as `round_reset reason=manual_restart` before the next `round_start`.
 - Kept player movement, sensitivity, jump pads, arena geometry, bot route-control, pickup rules and weapon values unchanged.
 
-Human smoke should focus on confirming telemetry files are created, readable and useful for balance/bot/map decisions without any gameplay feel regression.
+Human smoke approved Track 11 telemetry: files are created, readable, synchronized and useful for balance, bot, map and combat decisions without gameplay feel regression.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -58,12 +58,12 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 08: player movement feel experiment - discarded before merge on `2026-06-19`; current feel preserved.
 - Track 09: combat sandbox expansion - ready for smoke.
 - Track 10: combat balance and weapon roles - ready for smoke.
-- Track 11: complete local telemetry - ready for smoke.
+- Track 11: complete local telemetry - approved on `2026-06-19`.
 
 ## Next Sequence
 
-1. Smoke Track 11 - Complete Telemetry V1 in editor.
-2. Preserve current player movement feel and use telemetry only as evidence for future tuning.
+1. Choose the next track using Track 11 telemetry as evidence.
+2. Preserve current player movement feel, jump pads, maps and bot route-control unless a new approved track says otherwise.
 
 ## Validation
 
