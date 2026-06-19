@@ -7,20 +7,20 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+5c6520ba` publicado; gates remotos 09N PASS; aguardando reteste humano; 09I preservada como fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 10 combat balance implementada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+5c6520ba` publicado e aprovado; gates remotos 09N PASS; reteste humano aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 10 combat balance implementada localmente; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09N_PUBLISHED_REMOTE_GATES_PASS_AWAITING_HUMAN_RETEST`
-- Marker: `JOGO_DA_COPA_TRACK09N_PUBLISHED_REMOTE_GATES_PASS`
-- Baseline publico: `Super Campeao v1.2.1+5c6520ba` (`web/v1-copa-arena-futebol-20260619-5c6520ba`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09N PASS; reteste humano pendente; 09I segue fallback aprovado.
+- Status: `P2_IMPLEMENTACAO - TRACK09N_PUBLISHED_APPROVED`
+- Marker: `JOGO_DA_COPA_TRACK09N_PUBLISHED_APPROVED`
+- Baseline publico: `Super Campeao v1.2.1+5c6520ba` (`web/v1-copa-arena-futebol-20260619-5c6520ba`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09N PASS; reteste humano aprovado; 09I segue fallback historico aprovado.
 - Diagnostico atual: Track 09M renomeou o gate primario para `js_heap_growth`, preservou alias legado `js_wasm_heap_growth` e confirmou 09I remoto PASS (`+9.38%`, `wasmSampleCount=0`).
-- Publicacao atual: Track 09N extraiu render/settings para `football_render_settings_controller.gd`; `FootballRoot` `1079 -> 1051`; validate/export/A-B pre-publicacao PASS; menu/primeiro minuto/estabilidade 5min/luma remotos PASS (`js_heap_growth +0.41%`).
+- Publicacao atual: Track 09N extraiu render/settings para `football_render_settings_controller.gd`; `FootballRoot` `1079 -> 1051`; validate/export/A-B pre-publicacao PASS; menu/primeiro minuto/estabilidade 5min/luma remotos PASS (`js_heap_growth +0.41%`); reteste humano aprovado.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester retestar a 09N publica; se aprovada, seguir proxima reducao local; Fabio faz push via GitHub Desktop quando quiser sincronizar.
+- Proximo passo: seguir proxima reducao local do `FootballRoot` a partir da 09N aprovada; Fabio faz push via GitHub Desktop quando quiser sincronizar.
 
 ## draxos-roguelike-cardgame
 

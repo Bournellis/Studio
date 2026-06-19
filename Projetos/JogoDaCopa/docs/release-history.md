@@ -38,7 +38,7 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 - Gate remoto primeiro minuto: PASS, release root conferiu, `event.visible_match_start` visto, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
 - Gate remoto estabilidade 5min: PASS em `js_heap_growth +0.41%` contra limite `+10%`, pico `+6.05%`, `total_js_heap_growth -5.52%`, `wasmSampleCount=0`.
 - Gate remoto de luminancia: PASS, `luma_0_255=6.525 < 90` na captura `09n-remote-stability-5min-5c6520ba.png`.
-- Reteste humano: pendente por Fabio/tester; 09I permanece fallback aprovado se o reteste humano encontrar bloqueador.
+- Reteste humano: aprovado por Fabio/tester em 2026-06-19; 09N ficou como baseline publico aprovado e 09I permanece fallback historico aprovado.
 
 ## 2026-06-19 - Web Heap Hotfix 09K - Tentativa Bloqueada
 

@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09N_PUBLISHED_REMOTE_GATES_PASS`
+- Status: `JOGO_DA_COPA_TRACK09N_PUBLISHED_APPROVED`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -20,6 +20,7 @@
 ## Latest Evidence
 
 - Track 09N publication closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-publication-v1.md`
+- Track 09N human retest approval closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-human-retest-approved-v1.md`
 - Track 09N publication report: `playtest-reports/track-09n-publication.md`
 - Track 09N publication evidence: `playtest-reports/track-09n-data/`
 - Track 09N prepublish A/B closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-prepublish-ab-v1.md`

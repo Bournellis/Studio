@@ -4,7 +4,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 ## Foco Atual
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+5c6520ba` publicado; gates remotos 09N PASS; aguardando reteste humano; 09I fallback aprovado) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 10 combat balance implementada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+5c6520ba` publicado e aprovado; gates remotos 09N PASS; reteste humano aprovado) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 10 combat balance implementada localmente; movimento atual preservado)
 - Pausa temporaria por poucos dias: `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -13,7 +13,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 | Prioridade | Projeto | Caminho | Status | Trabalho permitido | Proximo passo |
 |---|---|---|---|---|---|
-| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | Track 09N publicada com gates remotos PASS; proximo passo: reteste humano da build publica |
+| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | Track 09N publicada e aprovada; proximo passo: proxima reducao local do `FootballRoot` |
 | Pausa | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
 | Ativo | DraxosMobile | `Projetos/draxos-mobile/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest, documentacao local e infraestrutura | Arena Runtime Config Sync Ready v3 publicado Web/APK/PC `0.0.27-alpha.0` / vc `27`; proximo passo e prova humana do roteiro Arena antes de tuning, PVP, economia, conteudo ou expansao |
 | Ativo | FpsPlayground | `Projetos/FpsPlayground/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | Smoke humano da Track 10 combat balance; preservar feel atual do player |

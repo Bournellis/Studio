@@ -1,6 +1,6 @@
 # JogoDaCopa Publication Readiness
 
-Current state: `Super Campeao v1.2.1+5c6520ba` is published publicly on Cloudflare Pages. Track 09N is the current public automated baseline after passing remote menu, first-minute, 5-minute stability and night luma gates; human retest is pending. Track 09I remains the last human-approved fallback baseline.
+Current state: `Super Campeao v1.2.1+5c6520ba` is published publicly on Cloudflare Pages. Track 09N is the current approved public baseline after passing remote menu, first-minute, 5-minute stability, night luma and human retest gates. Track 09I remains the historical approved fallback baseline.
 
 ## Product Identity
 
@@ -29,6 +29,7 @@ Current state: `Super Campeao v1.2.1+5c6520ba` is published publicly on Cloudfla
 - Remote first-minute evidence: `docs/playtest-reports/track-09n-data/09n-remote-first-minute-5c6520ba.json` and `docs/playtest-reports/track-09n-data/09n-remote-first-minute-5c6520ba.png`.
 - Remote 5-minute stability evidence: `docs/playtest-reports/track-09n-data/09n-remote-stability-5min-5c6520ba.json` and `docs/playtest-reports/track-09n-data/09n-remote-stability-5min-5c6520ba.png`.
 - Remote night luma evidence: `docs/playtest-reports/track-09n-data/09n-remote-night-luma-gate-5c6520ba.json`.
+- Human retest: approved by Fabio/tester on 2026-06-19.
 - Fallback evidence: Track 09I evidence remains in `docs/playtest-reports/track-09i-data/`.
 - No Cloudflare Access gate was observed; the public URL served the Godot app directly.
 
@@ -55,7 +56,7 @@ Current state: `Super Campeao v1.2.1+5c6520ba` is published publicly on Cloudfla
 
 ## Track 09N Render Settings Controller Publication - 2026-06-19
 
-- Candidate status: current public automated baseline; human retest pending.
+- Candidate status: current approved public baseline.
 - Change: published the already validated extraction of render/settings orchestration to `football_render_settings_controller.gd`.
 - `tools/validate.gd`: PASS, `104` tests, `1826` asserts.
 - Web export/package: PASS, single-threaded `GODOT_THREADS_ENABLED=false`.
@@ -65,7 +66,7 @@ Current state: `Super Campeao v1.2.1+5c6520ba` is published publicly on Cloudfla
 - Remote stability 5min: PASS, `js_heap_growth +0.41%`, peak `+6.05%`, `wasmSampleCount=0`.
 - Remote night luma: PASS, `6.525 < 90`.
 - Evidence: `docs/playtest-reports/track-09n-publication.md` and `docs/playtest-reports/track-09n-data/`.
-- Publication follow-up: human retest on the public URL is pending; 09I remains the approved fallback.
+- Publication follow-up: human retest on the public URL was approved; 09I remains the historical approved fallback.
 
 ## Track 09J Publication Attempt - 2026-06-19
 
@@ -127,8 +128,8 @@ Current state: `Super Campeao v1.2.1+5c6520ba` is published publicly on Cloudfla
 
 ## Known Limitations
 
-- Track 09N is published and automated remote gates are green, but human retest is still pending.
-- Track 09I remains the last human-approved fallback baseline.
+- Track 09N is published, automated remote gates are green and human retest is approved.
+- Track 09I remains the historical approved fallback baseline.
 - Track 09J is locally validated and merged locally, but its 2026-06-19 publication attempt failed the remote JS/WASM heap gate twice and was rolled back to 09I.
 - Web heap margin is green on 09N (`+0.41%` against `<10%`) but has been volatile across recent attempts; keep the 5-minute stability gate mandatory for every release and treat near-threshold attempts as audit signals.
 - Desktop browser is the official Web V1 surface; mobile browser can be observed manually, but is not an official support target in this release.
