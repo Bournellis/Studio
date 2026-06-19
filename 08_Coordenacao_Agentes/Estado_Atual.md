@@ -7,19 +7,19 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado e aprovado; Tracks 09J/09K bloqueadas no heap remoto e rollback para 09I) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 07 match flow/duel UX validada; aguardando smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado e aprovado; Track 09L instrumentou o gate heap Web sem publicacao; producao segue 09I) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 07 match flow/duel UX validada; aguardando smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09K_PUBLICATION_BLOCKED_REMOTE_HEAP_ROLLBACK_09I`
-- Marker: `JOGO_DA_COPA_TRACK09K_PUBLICATION_ROLLBACK_HEAP_GATE`
+- Status: `P2_IMPLEMENTACAO - TRACK09L_WEB_HEAP_INSTRUMENTATION_READY`
+- Marker: `JOGO_DA_COPA_TRACK09L_WEB_HEAP_INSTRUMENTATION_READY`
 - Baseline publico: `Super Campeao v1.2.1+7995b06c` (`web/v1-copa-arena-futebol-20260616-7995b06c`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09I PASS, reteste humano aprovado e rollback 09K confirmado.
-- Refator atual: Track 09K tentou hotfixar heap da 09J; `FootballRoot` ficou `899` linhas, remoto menu/first-minute PASS, estabilidade 5min FAIL (`+14.35%`), rollback para 09I.
+- Diagnostico atual: Track 09L adicionou diagnostico heap Web; run remota 09I PASS (`+8.72%`) e mostrou `wasmHeapBytes` sem amostras, entao o gate historico mede heap JS exposto pelo Chrome nestas runs.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: abrir Track 09L de instrumentacao heap Web antes de republicar ou continuar nova reducao; Fabio faz push via GitHub Desktop quando quiser sincronizar.
+- Proximo passo: abrir Track 09M curta para refinar/renomear o gate `js_heap_growth` ou rodar A/B remoto com diagnosticos 09L antes de republicar ou continuar reducao; Fabio faz push via GitHub Desktop quando quiser sincronizar.
 
 ## draxos-roguelike-cardgame
 

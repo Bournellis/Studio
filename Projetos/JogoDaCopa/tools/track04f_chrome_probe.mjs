@@ -52,6 +52,7 @@ const keyAfterStage = args.get("key-after-stage") || "";
 const keyAfterDelayMs = Number(args.get("key-after-delay-ms") || "0");
 const keyAfter = args.get("key-after") || "Enter";
 const finalHeapGc = args.get("final-heap-gc") !== "0";
+const heapDebugSummary = args.get("heap-debug-summary") === "1";
 
 if (!chromePath || !existsSync(chromePath)) {
   throw new Error(`Chrome executable not found: ${chromePath}`);
@@ -333,6 +334,145 @@ function buildHeapGate(samples, warmupMs, maxGrowthRatio) {
 	};
 }
 
+function readHeapMetric(sample, metric) {
+	if (!sample) return null;
+	if (metric === "js_wasm_heap_bytes") {
+		const used = Number(sample.usedJSHeapSize);
+		const wasm = Number(sample.wasmHeapBytes);
+		if (!Number.isFinite(used) && !Number.isFinite(wasm)) return null;
+		return (Number.isFinite(used) ? used : 0) + (Number.isFinite(wasm) ? wasm : 0);
+	}
+	const value = sample[metric];
+	return Number.isFinite(value) ? value : null;
+}
+
+function buildHeapMetricSummary(samples, metric, warmupMs) {
+	const usable = samples
+		.filter((sample) => Number(sample.t || 0) >= warmupMs)
+		.map((sample) => ({ sample, value: readHeapMetric(sample, metric) }))
+		.filter((entry) => Number.isFinite(entry.value) && entry.value > 0);
+	if (usable.length < 2) {
+		return {
+			metric,
+			sampleCount: usable.length,
+			reason: "insufficient samples after warmup",
+		};
+	}
+	const baseline = usable[0];
+	const final = usable[usable.length - 1];
+	const max = usable.reduce((best, entry) => (entry.value > best.value ? entry : best), usable[0]);
+	const growthRatio = baseline.value > 0 ? (final.value - baseline.value) / baseline.value : Infinity;
+	const peakGrowthRatio = baseline.value > 0 ? (max.value - baseline.value) / baseline.value : Infinity;
+	return {
+		metric,
+		baselineBytes: baseline.value,
+		baselineT: baseline.sample.t,
+		finalBytes: final.value,
+		finalT: final.sample.t,
+		maxBytes: max.value,
+		maxT: max.sample.t,
+		growthBytes: final.value - baseline.value,
+		growthRatio,
+		peakGrowthRatio,
+		sampleCount: usable.length,
+	};
+}
+
+function buildHeapWindowSummary(samples, metric, window) {
+	const usable = samples
+		.filter((sample) => Number(sample.t || 0) >= window.startMs && Number(sample.t || 0) <= window.endMs)
+		.map((sample) => ({ sample, value: readHeapMetric(sample, metric) }))
+		.filter((entry) => Number.isFinite(entry.value) && entry.value > 0);
+	if (usable.length < 2) {
+		return {
+			metric,
+			window: window.name,
+			startMs: window.startMs,
+			endMs: window.endMs,
+			sampleCount: usable.length,
+			reason: "insufficient samples in window",
+		};
+	}
+	const baseline = usable[0];
+	const final = usable[usable.length - 1];
+	const max = usable.reduce((best, entry) => (entry.value > best.value ? entry : best), usable[0]);
+	return {
+		metric,
+		window: window.name,
+		startMs: window.startMs,
+		endMs: window.endMs,
+		baselineBytes: baseline.value,
+		baselineT: baseline.sample.t,
+		finalBytes: final.value,
+		finalT: final.sample.t,
+		maxBytes: max.value,
+		maxT: max.sample.t,
+		growthBytes: final.value - baseline.value,
+		growthRatio: baseline.value > 0 ? (final.value - baseline.value) / baseline.value : Infinity,
+		peakGrowthRatio: baseline.value > 0 ? (max.value - baseline.value) / baseline.value : Infinity,
+		sampleCount: usable.length,
+	};
+}
+
+function buildHeapGcSummary(samples) {
+	const finalGcSample = [...samples].reverse().find((sample) => sample.reason === "final_gc") || null;
+	if (!finalGcSample) return { enabled: finalHeapGc, finalGcSampleSeen: false };
+	const beforeFinalGc = [...samples]
+		.reverse()
+		.find((sample) => sample !== finalGcSample && Number(sample.t || 0) <= Number(finalGcSample.t || 0));
+	const metrics = ["js_wasm_heap_bytes", "usedJSHeapSize", "totalJSHeapSize", "wasmHeapBytes"];
+	const deltas = {};
+	for (const metric of metrics) {
+		const before = readHeapMetric(beforeFinalGc, metric);
+		const after = readHeapMetric(finalGcSample, metric);
+		deltas[metric] = {
+			beforeBytes: before,
+			afterBytes: after,
+			deltaBytes: Number.isFinite(before) && Number.isFinite(after) ? after - before : null,
+			deltaRatio: Number.isFinite(before) && before > 0 && Number.isFinite(after) ? (after - before) / before : null,
+		};
+	}
+	return {
+		enabled: finalHeapGc,
+		finalGcSampleSeen: true,
+		beforeReason: beforeFinalGc?.reason || "",
+		beforeT: beforeFinalGc?.t || null,
+		finalGcT: finalGcSample.t,
+		deltas,
+	};
+}
+
+function buildHeapDiagnostics(samples, warmupMs, durationMs) {
+	const sorted = [...samples].sort((a, b) => Number(a.t || 0) - Number(b.t || 0));
+	const metrics = ["js_wasm_heap_bytes", "usedJSHeapSize", "totalJSHeapSize", "wasmHeapBytes"];
+	const windows = [
+		{ name: "boot_0_60s", startMs: 0, endMs: 60000 },
+		{ name: "mid_60_180s", startMs: 60000, endMs: 180000 },
+		{ name: "late_180_300s", startMs: 180000, endMs: 300000 },
+		{ name: "gate_warmup_to_final", startMs: warmupMs, endMs: Math.max(durationMs + 5000, warmupMs) },
+	];
+	const components = {};
+	for (const metric of metrics) {
+		components[metric] = buildHeapMetricSummary(sorted, metric, warmupMs);
+	}
+	const windowSummaries = [];
+	for (const window of windows) {
+		for (const metric of metrics) {
+			windowSummaries.push(buildHeapWindowSummary(sorted, metric, window));
+		}
+	}
+	return {
+		sampleCount: sorted.length,
+		warmupMs,
+		durationMs,
+		firstSampleT: sorted[0]?.t || null,
+		lastSampleT: sorted[sorted.length - 1]?.t || null,
+		components,
+		windows: windowSummaries,
+		finalGc: buildHeapGcSummary(sorted),
+	};
+}
+
 function buildCounterGate(samples, warmupMs) {
 	const keys = [
 		{ key: "object_node_count", tolerance: 8, mode: "absolute" },
@@ -608,20 +748,27 @@ const frameCollector = `
     }
     return null;
   };
-  const sample = () => {
+  const sample = (reason = "interval") => {
     const memory = performance.memory || {};
+    const usedJSHeapSize = Number.isFinite(memory.usedJSHeapSize) ? memory.usedJSHeapSize : null;
+    const totalJSHeapSize = Number.isFinite(memory.totalJSHeapSize) ? memory.totalJSHeapSize : null;
+    const jsHeapSizeLimit = Number.isFinite(memory.jsHeapSizeLimit) ? memory.jsHeapSizeLimit : null;
+    const wasmHeapBytes = findWasmHeapBytes();
     window.__jdcStabilitySamples.push({
       t: performance.now(),
       wallTimeMs: performance.timeOrigin + performance.now(),
-      usedJSHeapSize: Number.isFinite(memory.usedJSHeapSize) ? memory.usedJSHeapSize : null,
-      totalJSHeapSize: Number.isFinite(memory.totalJSHeapSize) ? memory.totalJSHeapSize : null,
-      jsHeapSizeLimit: Number.isFinite(memory.jsHeapSizeLimit) ? memory.jsHeapSizeLimit : null,
-      wasmHeapBytes: findWasmHeapBytes(),
+      reason,
+      sampleIndex: window.__jdcStabilitySamples.length,
+      usedJSHeapSize,
+      totalJSHeapSize,
+      jsHeapSizeLimit,
+      wasmHeapBytes,
+      jsWasmHeapBytes: (Number.isFinite(usedJSHeapSize) ? usedJSHeapSize : 0) + (Number.isFinite(wasmHeapBytes) ? wasmHeapBytes : 0),
     });
   };
   window.__jdcRecordStabilitySample = sample;
-  sample();
-  window.__jdcStabilityInterval = setInterval(sample, ${Math.max(250, sampleIntervalMs)});
+  sample("initial");
+  window.__jdcStabilityInterval = setInterval(() => sample("interval"), ${Math.max(250, sampleIntervalMs)});
 })()
 `;
   await client.send("Page.addScriptToEvaluateOnNewDocument", { source: frameCollector });
@@ -731,7 +878,7 @@ const frameCollector = `
       expression: `
 (() => {
   if (typeof window.__jdcRecordStabilitySample === "function") {
-    window.__jdcRecordStabilitySample();
+    window.__jdcRecordStabilitySample("final_gc");
   }
   return true;
 })()
@@ -750,9 +897,11 @@ const frameCollector = `
   });
   const browserStabilitySamples = stabilitySamplesResult.result.value || [];
   const godotStabilitySamples = buildGodotStabilitySamples(perfEvents);
+  const heapDiagnostics = buildHeapDiagnostics(browserStabilitySamples, stabilityWarmupMs, durationMs);
   const stability = {
     browserSamples: browserStabilitySamples,
     godotSamples: godotStabilitySamples,
+    heapDiagnostics,
     gate: buildStabilityGate({
       frameStats,
       browserSamples: browserStabilitySamples,
@@ -810,6 +959,17 @@ const frameCollector = `
     pageErrors,
     releaseInfo,
     assertions,
+    probeConfig: {
+      sampleIntervalMs,
+      stabilityGate,
+      stabilityWarmupMs,
+      maxHeapGrowthRatio,
+      frameStorageLimit,
+      godotStabilitySamplesEnabled,
+      godotDetailEnabled,
+      finalHeapGc,
+      heapDebugSummary,
+    },
     screenshotPath,
   };
   const jsonPath = path.join(outDir, `${label}.json`);
@@ -833,6 +993,10 @@ const frameCollector = `
     consoleWarningCount: consoleWarnings.length,
     browserStabilitySamples: browserStabilitySamples.length,
     godotStabilitySamples: godotStabilitySamples.length,
+    heapDiagnostics: heapDebugSummary ? {
+      components: heapDiagnostics.components,
+      finalGc: heapDiagnostics.finalGc,
+    } : undefined,
     stabilityGate,
     stabilityPassed: stability.gate.passed,
     firstMinuteGate,
