@@ -1,6 +1,6 @@
 # Track 11 - Complete Telemetry V1
 
-- Status: `IN_PROGRESS`
+- Status: `READY_FOR_HUMAN_SMOKE`
 - Started: `2026-06-19`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track11-complete-telemetry-v1`
@@ -38,12 +38,26 @@ Add complete local duel telemetry so future balance, bot, map and combat-feel de
 - Do not alter bot route-control priorities.
 - Do not add external dependencies or remote sinks.
 
-## Validation Plan
+## Delivered
+
+- Added `ArenaTelemetryRecorder` with local JSONL event stream and compact JSON summary.
+- Instrumented arena setup, session, rounds, combat, Plasma lifecycle, pickups, bot state, movement samples and jump pad landings.
+- Added debug getters for automated tests and manual inspection.
+- Added schema/summary/file-output tests plus Track 10 gameplay guardrails.
+- Added validation guardrails for the telemetry script and documentation.
+
+## Validation
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path "D:\Estudio-worktrees\FpsPlayground--codex--track11-complete-telemetry-v1\Projetos\FpsPlayground" -s res://tools/validate.gd
 git diff --check
 powershell -ExecutionPolicy Bypass -File D:\Estudio\tools\check_doc_drift.ps1
+```
+
+Latest local result:
+
+```text
+PASS, GUT 47/47, 440 asserts
 ```
 
 ## Human Smoke

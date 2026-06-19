@@ -1,13 +1,16 @@
 # FpsPlayground Telemetry
 
-- Status: Track 11 planned/active.
+- Status: Track 11 ready for human smoke.
 - Storage: local Godot `user://telemetry/`.
 - Scope: Arena Shooter duel instrumentation only.
+- Implementation: `res://gameplay/telemetry/arena_telemetry_recorder.gd`.
 
 ## Output Files
 
 - `events.jsonl`: append-only event stream, one JSON object per line.
 - `summary.json`: compact session summary for quick playtest review.
+
+The runtime writes files under `user://telemetry/<session_id>/` when local output is enabled.
 
 ## Event Families
 
@@ -62,6 +65,15 @@ Bot events should also include:
 - Bot route usage and route diversity.
 - Jump pad triggers and landing success.
 - Movement samples, average distance between actors and airborne time.
+
+## Manual Review Questions
+
+- Who won each round and how long did it take?
+- Which actor and weapon dealt the most damage?
+- Did rifle, direct Plasma, Plasma Blast and overcharge contribute as intended?
+- Which pickups were collected, ignored nearby or contested?
+- Did the bot rotate routes, keep item priorities and complete jump pad routes?
+- Did movement samples show suspicious airborne time, stuck distance or failed jump pad landings?
 
 ## Non-Goals
 

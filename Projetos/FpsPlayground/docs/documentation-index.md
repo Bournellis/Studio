@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK10_COMBAT_BALANCE_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_READY_FOR_SMOKE`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -12,6 +12,7 @@
 4. `work-plan.md`
 5. `mode-contract.md`
 6. `validation.md`
+7. `telemetry.md`
 
 ## References
 
@@ -22,6 +23,7 @@
 - `tuning-guide.md`
 - `validation-profiles.md`
 - `publication-readiness.md`
+- `telemetry.md`
 - `codebase-audit-track05.md`
 - `reuse-map.md`
 - `../implementation/tracks/track-01-combat-readability-polish-v1/current-status.md`
@@ -35,6 +37,7 @@
 - `../implementation/tracks/track-07-match-flow-duel-ux-v1/current-status.md`
 - `../implementation/tracks/track-09-combat-sandbox-expansion-v1/current-status.md`
 - `../implementation/tracks/track-10-combat-balance-weapon-roles-v1/current-status.md`
+- `../implementation/tracks/track-11-complete-telemetry-v1/current-status.md`
 
 ## Split Note
 

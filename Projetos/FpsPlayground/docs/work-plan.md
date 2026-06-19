@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK10_COMBAT_BALANCE_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_READY_FOR_SMOKE`
 - Current surface: FPS arena lab.
-- Current baseline: Track 10 implemented locally; current player movement feel preserved.
+- Current baseline: Track 11 implemented locally; current player movement feel preserved.
 
 ## North Star
 
@@ -20,7 +20,8 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 - Track 08 movement feel experiment was discarded before merge; keep current movement feel for now.
 - Track 09 adds Plasma Impact Blast V1 without movement, map or bot route-control changes.
 - Track 10 tunes weapon roles without movement, map or bot route-control changes.
-- Validation baseline: `tools/validate.gd` PASS `43/43`, `396 asserts`.
+- Track 11 adds local duel telemetry without movement, map, weapon or bot route-control changes.
+- Validation baseline: `tools/validate.gd` PASS `47/47`, `440 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Track Sequence
@@ -85,6 +86,21 @@ Delivered:
 - Plasma Blast remains pressure/near-miss value at `46%` max damage and `22%` min damage fraction.
 - Bot shot pressure remains readable and below player burst.
 - Player movement, sensitivity, jump pads, maps, bot route-control and pickups are preserved.
+
+### 5. Track 11 - Complete Telemetry V1
+
+Status: ready for human smoke.
+
+Goal:
+
+- Add complete local evidence for duel balance, bot movement, map routes, pickups and combat outcomes.
+
+Delivered:
+
+- Local `events.jsonl` plus `summary.json` under Godot `user://telemetry/<session_id>/`.
+- Session, arena setup, round, combat, Plasma, pickup, bot, movement and jump pad events.
+- Summary metrics for winners, damage, weapon accuracy, Plasma, overcharge, pickups, bot routes and movement samples.
+- Automated schema, file-output, arena integration and Track 10 guardrail tests.
 
 ## Out Of Scope
 

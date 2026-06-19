@@ -4,15 +4,15 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 10 - Combat Balance And Weapon Roles V1`
+- Active stage: `Track 11 - Complete Telemetry V1`
 - Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK10_COMBAT_BALANCE_READY_FOR_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_READY_FOR_SMOKE`
 
 ## Current Truth
 
 `FpsPlayground` owns the FPS arena work split from the former `FpsShooter`. Football/TPS work belongs to `Projetos/JogoDaCopa`.
 
-The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning and the pre-Track-08 player movement feel preserved.
+The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning, local duel telemetry and the pre-Track-08 player movement feel preserved.
 
 ## Current Scope
 
@@ -22,21 +22,22 @@ The approved baseline has three selectable 1x1 arenas, route-first bot movement,
 - Rifle hitscan, RMB Plasma Bolt with world-impact blast, pickups, jump pads, high-route flow and knockback.
 - Bot with route-control movement, combat overlay shooting, item priorities and jump pad commitment.
 - Duel state: round index, player/bot score, first to 3, round result and match result.
+- Local telemetry: JSONL event stream and compact summary for rounds, combat, Plasma, pickups, bot state, movement samples and jump pad landings.
 - Runtime primitive visuals/audio and GUT validation.
 - No football, TPS minigames, export, Web/mobile, multiplayer/backend or progression.
 
 ## Latest Track
 
-`Track 10 - Combat Balance And Weapon Roles V1`
+`Track 11 - Complete Telemetry V1`
 
 Delivered:
 
-- Tuned direct Plasma to `24` damage so it is a committed high-impact shot, not a weaker alternate fire.
-- Tuned Plasma Blast to `46%` max and `22%` min damage fraction so splash remains pressure, not the best default shot.
-- Added weapon-role helpers and automated contracts for rifle DPS, Plasma commitment, blast value, overcharge and readable bot pressure.
-- Kept player movement, sensitivity, jump pads, arena geometry, bot route-control and pickup behavior unchanged.
+- Added local-only duel telemetry with `events.jsonl` and `summary.json`.
+- Instrumented session, arena setup, round lifecycle, shots, hits, misses, damage, knockback, Plasma lifecycle, pickups, bot state, movement samples and jump pad landings.
+- Added automated schema, summary, local-file and Track 10 gameplay guardrail tests.
+- Kept player movement, sensitivity, jump pads, arena geometry, bot route-control, pickup rules and weapon values unchanged.
 
-Human smoke should focus on rifle precision, direct Plasma commitment, Plasma Blast pressure value, overcharge value and no regression in the approved movement/bot/map feel.
+Human smoke should focus on confirming telemetry files are created, readable and useful for balance/bot/map decisions without any gameplay feel regression.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -54,17 +55,18 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 08: player movement feel experiment - discarded before merge on `2026-06-19`; current feel preserved.
 - Track 09: combat sandbox expansion - ready for smoke.
 - Track 10: combat balance and weapon roles - ready for smoke.
+- Track 11: complete local telemetry - ready for smoke.
 
 ## Next Sequence
 
-1. Preserve current player movement feel.
-2. Smoke Track 10 - Combat Balance And Weapon Roles V1 in editor.
+1. Smoke Track 11 - Complete Telemetry V1 in editor.
+2. Preserve current player movement feel and use telemetry only as evidence for future tuning.
 
 ## Validation
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 43/43, 396 asserts
+# PASS, GUT 47/47, 440 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.
@@ -77,4 +79,5 @@ Manual smoke lives in `docs/validation.md`.
 4. `docs/mode-contract.md`
 5. `docs/validation.md`
 6. `docs/bot-route-control.md`
-7. `implementation/tracks/track-10-combat-balance-weapon-roles-v1/current-status.md`
+7. `docs/telemetry.md`
+8. `implementation/tracks/track-11-complete-telemetry-v1/current-status.md`
