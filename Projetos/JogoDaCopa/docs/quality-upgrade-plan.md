@@ -1,5 +1,7 @@
 # JogoDaCopa - Analise e Plano de Upgrade de Qualidade (Serie Track 02)
 
+> Historical plan. This document records the Track 02 quality strategy and early review findings. It is preserved for context, not as the current next-step source. For live status use `../implementation/current-status.md`, `work-plan.md`, `publication-readiness.md` and `release-history.md`.
+
 - Date: `2026-06-10`
 - Author: Claude (analise solicitada por Fabio)
 - Decision baseline: caminho **hibrido** aprovado por Fabio (arena/VFX procedural + assets CC0 apenas para personagem animado e bola), escopo **plano completo** (visual + game feel + bot + menu + identidade).

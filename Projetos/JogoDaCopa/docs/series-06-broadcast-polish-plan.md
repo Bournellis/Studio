@@ -1,5 +1,7 @@
 # JogoDaCopa - Serie 06: Match Polish & Broadcast Identity (v1.1.0)
 
+> Historical plan. This document records the Series 06 broadcast polish strategy. It is preserved for context, not as the current next-step source. For live status use `../implementation/current-status.md`, `work-plan.md`, `publication-readiness.md` and `release-history.md`.
+
 - Date: `2026-06-12`
 - Author: Claude (decisoes de Fabio: visual Broadcast de Copa; ESC com tela cheia + volumes + qualidade real + sensibilidade; publicacao unica v1.1.0 ao final)
 - Baseline: v1.0.3 publicada e estavel (freezes residuais inconstantes aceitos por Fabio)

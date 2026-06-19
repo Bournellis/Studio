@@ -4,93 +4,71 @@
 - Project: `JogoDaCopa`
 - Product/module name: `Super Campeao`
 - Portfolio status: `P2_IMPLEMENTACAO`
-- Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web v1.2.1+5c6520ba Super Campeao approved baseline`
-- Active stage: `Track 09N Publication V1` (public Web release; automated remote gates passed)
+- Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
+- Public baseline: `Super Campeao v1.2.1+5c6520ba`
 - Active stage status: `PUBLISHED_APPROVED - menu/first-minute/stability/luma PASS; human retest approved`
 - Status marker: `JOGO_DA_COPA_TRACK09N_PUBLISHED_APPROVED`
-- Approved plan: Track 08 rebrands the public game to `Super Campeao`, cleans UI text/options and keeps gameplay unchanged; Track 08A fixes the Web goal-feedback hitch without gameplay changes; Documentacao Limpeza V1 aligns local entry docs; Track 09A extracts low-risk `FootballRoot` responsibilities; Track 09B moved Web loading/warmup orchestration into a helper; Track 09C moved runtime node spawn/wiring into a helper; Track 09D moved kickoff/reset/countdown match flow into a helper; Track 09E moved HUD/result presentation snapshots into a helper; Track 09F moved boost pad and jump pad field orchestration into a helper and became the approved public baseline; Track 09G moved match-resolution orchestration into a helper but failed remote heap on publication; Track 09H removed per-frame timer heap churn and was approved by human retest; Track 09I moved kick/SUPER orchestration into a helper, was published with automated remote gates green and approved by human retest; Track 09J moved ball contact/control orchestration into a helper, validated locally, passed remote menu/first-minute, failed remote stability heap twice and was rolled back to 09I; Track 09K attempted a focused heap hotfix, improved the signal slightly, still failed remote stability and restored production to 09I; Track 09L instrumented the Web heap probe and showed the current Chrome gate is measuring exposed JS heap, not real JS+WASM; Track 09M renamed the gate to `js_heap_growth` while preserving the legacy alias; Track 09N moved render/settings orchestration into a helper, passed local validation, cleared the pre-publication A/B comparison against 09I, was published with automated remote gates green and was approved by human retest.
-- Handoffs: `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b-first-minute-smoothness-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b1-sensory-feedback-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06a-match-start-fixes-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06b-esc-menu-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06c-menu-broadcast-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06d-hud-broadcast-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0-rollback.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06f-web-audio-stability-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_v1-1-0-publicado-retest.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06g-countdown-restart-flow-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07-visual-polish-web-safe-rollback.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07b-web-heap-margin-hotfix-rollback.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07c-web-audio-safe-publicado-retest.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track08-super-campeao-ui-rollback.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track08a-super-campeao-publicado-retest.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_footballroot-extraction-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09a-publicado-retest.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09b-web-loading-controller-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09c-runtime-spawner-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09d-match-flow-controller-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09e-match-presentation-controller-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09f-arcade-field-controller-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09f-publication-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09g-match-resolution-controller-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09g-publication-v1.md`, `../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09h-publication-v1.md`
-- Review: `docs/code-review-track04f2-webgl-first-render-stall-v1.md`, `docs/playtest-reports/track-04f2-webgl-stall.md`, `docs/code-review-track04b1-04b2-v1.md`, `docs/code-review-track04c-04d-v1.md`, `docs/code-review-track04e-web-spike-v1.md`, `docs/playtest-reports/track-04f-web-performance.md`, `docs/code-review-track04f-web-performance-v1.md`, `docs/playtest-reports/track-05a-web-stability.md`, `docs/code-review-track05a-web-stability-v1.md`, `docs/playtest-reports/track-05b-first-minute-smoothness.md`, `docs/code-review-track05b-first-minute-v1.md`, `docs/playtest-reports/track-05b1-sensory-feedback.md`, `docs/code-review-track05b1-sensory-feedback-v1.md`, `docs/playtest-reports/track-06a-match-start-fixes.md`, `docs/code-review-track06a-match-start-fixes-v1.md`, `docs/code-review-track06b-esc-menu-v1.md`, `docs/code-review-track06c-menu-broadcast-v1.md`, `docs/code-review-track06d-hud-broadcast-v1.md`, `docs/code-review-track06e-release-v1-1-0.md`, `docs/code-review-track06f-web-audio-stability-v1.md`, `docs/playtest-reports/track-06f-web-audio-stability.md`, `docs/playtest-reports/track-06g-countdown-restart-flow.md`, `docs/playtest-reports/track-07c-web-audio-safe-hotfix.md`
-- Completed Kanban cards: `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_hotfix04e1-night-capture.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05b-first-minute-smoothness-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05b1-sensory-feedback-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06a-match-start-fixes-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06b-esc-menu-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06c-menu-broadcast-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06d-hud-broadcast-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06f-web-audio-stability-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06g-countdown-restart-flow-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_jogodacopa_track07c-web-audio-safe-hotfix.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_jogodacopa_track08a-ball-glass-hitch-hotfix.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_footballroot-extraction-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09b-web-loading-controller-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09c-runtime-spawner-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09d-match-flow-controller-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09e-match-presentation-controller-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-arcade-field-controller-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-publication-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09g-match-resolution-controller-v1.md`, `../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09g-publication-v1.md`
-- Studio focus: `TEMPORARY_SOLE_ACTIVE_PROJECT`
+- Documentation baseline: `Track 09O Documentation Rebaseline V1`
 
 ## Current Truth
 
-`JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is now `Super Campeao`, published on Cloudflare Pages as `v1.2.1+5c6520ba` with automated remote gates passed and human retest approved. Tracks 09J and 09K are not approved as public Web baselines because their 2026-06-19 publication attempts failed the remote heap gate; production was restored to 09I before 09L/09M diagnostics. Track 09N resumed local reduction by extracting render/settings orchestration, passed local validation, cleared the pre-publication A/B comparison against 09I, published successfully and became the approved public baseline.
+`JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, published on Cloudflare Pages as `v1.2.1+5c6520ba`.
+
+Track 09N is the current approved public baseline. It extracted render/settings orchestration into `football_render_settings_controller.gd`, reduced `FootballRoot` from `1079` to `1051` lines, passed local validation, passed pre-publication A/B, passed remote menu/first-minute/stability/luma gates and passed human retest.
+
+Tracks 09J and 09K are not approved public baselines because their 2026-06-19 publication attempts failed the remote heap gate; production was restored to 09I before 09L/09M diagnostics. Track 09L/09M clarified that the active Chrome stability metric is exposed JS heap, now named `js_heap_growth`.
 
 The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Scope
 
-- PC Windows editor-first.
-- Main menu launches public `Super Campeao`; Cloudflare Pages stable URL serves `v1.2.1+5c6520ba`.
+- PC Windows editor-first plus Web export/publication gate.
+- Main menu launches public `Super Campeao`.
 - Third-person 1x1 football against a bot.
-- Default match mode is 3-minute timer; `3 gols` mode remains selectable and unchanged.
-- Hybrid Track 02 presentation: procedural night stadium/arena/VFX plus in-repo authored CC0 ball/branding assets, real Quaternius humanoid avatars and real Kenney/Pixabay audio.
-- Night `WorldEnvironment` with ACES tonemap, glow, SSAO, fog, procedural sky and stadium spot/key lights.
-- Shader pitch with field markings, grid nets, animated crowd bands, country-inspired banners and live stadium scoreboards.
+- Default match mode is `3 minutos`; `3 gols` mode remains selectable.
 - Closed glass arena with larger field, roof collision, framed glass walls, roofed goals and height-aware goal scoring.
 - Loose arcade `RigidBody3D` ball with football-panel shader, hysteresis trail, squash on kick, higher bounce and extra ground-roll grip.
-- Visible third-person real skinned humanoid avatars preserving `apply_appearance`, `set_move_state`, `play_kick` and `play_celebrate`; player uses male model and bot uses female model with UAL animation clips plus authored kick animation.
+- Visible third-person real skinned humanoid avatars, player male and bot female, with UAL animation clips plus authored kick animation.
 - Skin tone and country-inspired shirt selection.
 - Kickoff countdown, input lock, goal slow-mo, camera shake, boost FOV, transient kick/goal bursts, persistent boost/skid particles, real SFX/jingles/crowd ambience and synthetic referee whistle only.
 - Broadcast-style HUD, offscreen ball indicator, result/rematch panel and polished 3D menu with avatar preview.
 - Football bot with prediction, positioned defense, boost, main-menu selectable `easy`/`normal`/`hard` presets and alternating kickoff.
-- Track 02H review fixes: stadium scoreboards use selected kit codes, offscreen ball indicator uses player-local basis, scoreboards cache label references, bot difficulty has non-debug API and HUD visibility.
-- Track 03 Arcade V1: dash/slide/stun/flip, charged kick, SUPER shot, fireball, boost pads, jump pads, ramps, timer/golden goal/vale-2 and emote.
-- Track 03F Quality Hotfix V1: SUPER whiffs do not spend bar/quota, real avatar tint preserves PBR textures, perf sample records representative window metadata and validation catches truncated `.gd`/`.gdshader` sources.
-- Track 03G Playtest Findings V1: menu responsivo, aparencia somente na intro pre-kickoff, dash player/bot `20.75` por `0.28s`, bot com hold defensivo no kickoff do player e defesa aerea, camera com raycast clamp/spawn seguro no kickoff do bot, reset seguro da bola e marcador/anunciador de kickoff.
-- Track 03H Avatar Parity & Animation Drift Fix V1: bot e player usam modelo real na cena montada, corpo primitivo do combatant fica oculto em ambos, falhas de modelo real emitem `push_error`, clipes UAL tem root motion horizontal/yaw removido e a pose e travada contra drift.
-- Track 03I Menu Interaction Fix V1: menu principal voltou a receber clique real; `MainMenuRoot` agora sincroniza ao viewport, `MenuSafeArea`/`MenuScroll` foram removidos, e o teste de clique real cobre todos os controles interativos em `1920x1080`, `1366x768` e `1280x720`.
-- Track 03K Animation Pose Restore V2: o strip manual de keyframes da 03H foi substituido por remocao completa das tracks do bone `root` nos clipes UAL; `pelvis` e demais bones permanecem originais, restaurando pose em pe e vida da animacao enquanto o drift de mundo segue coberto por teste.
-- Track 03L Arena Seal & Character Facing V2: arena estanque com vidros ate o teto, painel frontal alto sobre os gols, rodape/rampas 03B removidos, CCD da bola ativo e avatar visual do player girando pela direcao de movimento sem alterar camera/mira/chute.
-- Track 03L.1 Facing Evidence V1: lacunas do review da Claude fechadas com teste automatizado de facing no avatar, capturas de corrida em curva/parada/rebote alto e `docs/playtest-reports/track-03l-arena.md`.
-- Track 04B2 Feel & UI Fixes V1: dash player/bot agora usa curva integrada com aceleracao e distancia `5.3m`; pulo/flip sem input direcional fica vertical puro; result panel libera mouse, trava input e foca Revanche; intro/pause/result tem clique real em 3 resolucoes; preview do menu ganhou camera/luz de heroi e teste anti-tela-preta.
-- Track 04B1 Character Presentation & Animation V1: uniforme procedural por regioes no mesh skinned, cabelo real anexado ao bone `Head` e chute autoral `0.36s` com pe abaixo do quadril.
-- Track 04B3 Kick Arms Polish V1: aprovado e mergeado; retunou somente os bracos do `JogoDaCopa_Kick`, mantendo pernas/tronco/timing aprovados; maos ficam abaixo da cabeca e upperarms ficam `<= 25 deg` de abducao nas amostras do clipe.
-- Track 04D Match Completeness V1: aprovado pelo review e mergeado em main; pause real com restart/volumes/menu, resultado rico com estatisticas puras, fades curtos, ESC/foco/restart consistentes e hero shot do menu em 1080p/720p.
-- Track 04C Stadium Visual Upgrade V1: aprovado pelo review e mergeado em main apos a 04D; arquibancadas profundas, torcida com cores dos dois kits e `crowd_excitement`, teloes maiores, bandeiroes, mastros animados, halos emissive e skyline low-poly sem novas luzes com sombra.
-- Track 04E Web Export Spike & Render Profile V1 + Hotfix 04E.1: aprovado pela Claude e mergeado em main; preset Web single-threaded exporta o jogo completo para `builds/web/`, `RenderProfile` central preserva desktop Forward+ e aplica fallbacks Compatibility no Web, e o hotfix corrigiu o caminho de captura lavada usando camera de evidencia noturna com gate de luminancia `< 90`.
-- Track 04F Web Performance & Load V1: aprovado pela Claude e mergeado localmente em main; load Web instrumentado, loading com progresso visivel, animacoes UAL processadas em `.res`, cache de avatar/region mask, SubViewports Web on-change, PCK `26.41 MiB`, smoothness pos-warmup PASS; residual de primeiro render/upload WebGL `~16.8s-18.1s` promovido para `Track 04F.2 - WebGL First-Render Stall`.
-- Track 05 Web Publication V1: publicado em Cloudflare Pages publico no projeto `copa-arena-futebol`, URL estavel `https://copa-arena-futebol.pages.dev/`, release root `web/v1-copa-arena-futebol-20260612-31e23ea3`, script `tools/publish_web.ps1` com `Plan`/`Package`/`FullPublish`, pacote Brotli para assets maiores que `25 MiB` e smoke remoto PASS sem erros de runtime.
-- Track 05A Web Stability Hotfix V1: publicado em Cloudflare Pages publico como `web/v1-copa-arena-futebol-20260612-a850045a` / `v1.0.1+a850045a`; reduz churn por frame de HUD/placares, adiciona gate Chrome 5 min de estabilidade, exibe versao/hash no rodape do menu e validou local/remoto com heap retido < 10%, nodes/caches estaveis e runtime errors `0`.
-- Track 05B First-Minute Smoothness V1: publicado em Cloudflare Pages publico como `web/v1-copa-arena-futebol-20260612-ad82384b` / `v1.0.2+ad82384b`; completa warmup antes do overlay, aquece primeiros usos dentro do frustum, corta feedback transiente Web e `AudioStreamPlayer3D`; primeiro minuto local/remoto com todos os primeiros usos provocados teve `0` hitches `>100ms` e runtime errors `0`; local primeira visita ainda carrega em `~13.5s-13.7s`.
-- Track 05B.1 Sensory Feedback Re-Introduction V1: aprovado por Claude e mergeado localmente em `main` como `f759dd34`; publicado em Cloudflare Pages publico como `web/v1-copa-arena-futebol-20260612-ef9c5baa` / `v1.0.3+ef9c5baa`; reintroduz APITO, `CONFETTI de gol`, VFX/audio 2D de chute, countdown, jump pad e result/rematch no Web default sem reabrir hitches `>100ms`; audio Web aguarda ativacao do navegador; local primeira visita `~17.8s-18.3s`.
-- Track 06A Match Start Fixes V1: aprovado por Claude/Fabio e mergeado localmente em `main` como `b585b5d2`; kickoff inicial dispara countdown uma unica vez, player/bot iniciam olhando para o oponente no kickoff inicial e pos-gol, HUD em jogo nao contem hints/crosshair e os comandos migraram para `FootballHud.CONTROL_HINTS`; validate/export/Web boot/capturas desktop PASS.
-- Track 06B ESC Menu Completo V1: aprovado por Claude/Fabio e mergeado localmente em `main` como `0935529d`; adiciona `GameSettings` persistente, menu ESC com abas Controles/Audio/Video/Sensibilidade, fullscreen, volumes, sensibilidade e qualidade `Alta`/`Leve` integrada ao `RenderProfile`; testes de clique real e capturas cobrem `1920x1080`, `1366x768` e `1280x720`; validate/export/Web boot PASS.
-- Track 06C Menu Broadcast V1: aprovado por Claude/Fabio e mergeado localmente em `main` como `c14bf5a5`; transforma o menu principal em card broadcast com fontes Kenney locais, header Copa, CTA dominante, hero shot preservado e seletores visuais de pele/kit; clique real e capturas cobrem `1920x1080`, `1366x768` e `1280x720`; validate/export/Web boot PASS.
-- Track 06D HUD Broadcast V1: aprovado por Claude/Fabio e mergeado localmente em `main` como `d7d207ea`; adiciona scorebug/HUD broadcast com placar, relogio, badges, STAMINA/SUPER, telemetria oculta por padrao, capturas noturnas `1920x1080`/`1366x768`/`1280x720` e luma de ceu `< 90`; validate/export/Web boot PASS.
-- Track 06E Release v1.1.0: aprovado no pre-merge, mergeado localmente em `main` como `ea15d5dd` e validado `101/1735`; publicacao `v1.1.0+ea15d5dd` foi tentada e primeiro minuto remoto PASS, mas estabilidade remota 5min falhou (`pageErrors=2`, heap `+19.43%`), entao a URL publica foi revertida para `v1.0.3+ef9c5baa`.
-- Track 06F Web Audio Stability V1: aprovado, mergeado em `main` como `22850c06` e publicado como `v1.1.0+22850c06`; `GameSettings`/menu/HUD deixam audio Web para ativacao do usuario, probe mede heap retido pos-GC, primeiro minuto remoto PASS (`0` hitches `>100ms`, `0` erros), stability 5min remoto PASS (heap retido `+1.14%`, nodes/caches estaveis, pior janela 5s `105.2 FPS`) e luma remota `10.3 < 90`.
-- Track 06G Countdown Direto E Restart Confirmado V1: aprovado por Fabio, mergeado em `main` como `dff246ac`, hotfixado para `be453dc3` e publicado como `v1.1.0+be453dc3`; countdown agora e `3 -> 2 -> 1 -> VAI!`, `R` nao reinicia mais, e reinicio exige confirmacao no menu ESC; validate `103/1842`, primeiro minuto remoto PASS, stability 5min remoto PASS (heap `+9.03%`, nodes/caches estaveis, pior janela 5s `121.4 FPS`), menu URL real PASS e luma remota `17.413 < 90`.
-- Track 07 Visual Polish & Web-Safe Broadcast Pass: mergeado localmente em `main` como `138cf4f7` (`v1.2.0+138cf4f7`) com visual polish, scorebug/HUD/menu mais legiveis e patch de export Web Audio; validate final PASS `103/1844`, menu remoto PASS e primeiro minuto remoto PASS (`firstMinuteHitches=0`, erros `0`), mas estabilidade remota 5min FAIL por heap JS/WASM `44,636,600 -> 49,252,604` bytes (`+10.34%`, limite `<10%`); counters Godot, caches, video memory e FPS PASS; rollback executado para `v1.1.0+be453dc3`.
-- Track 07B Web Heap Margin Hotfix: mergeado localmente em `main` como `6de8d6b7` (`v1.2.0+6de8d6b7`) para recuperar heap sem mudar gameplay; gates locais PASS, estabilidade local 5min `+5.77%`; publicacao remota tentada, mas menu remoto FAIL com `pageErrors=1` / `AbortError: Unable to load a worklet's module.`; rollback executado para `v1.1.0+be453dc3`.
-- Track 07C Web Audio Safe Hotfix: mergeado localmente em `main` como `fa82cb7d` e publicado como `v1.2.0+fa82cb7d`; restaura `_godot_audio_has_worklet(){return 0}` no pacote Web, preserva fallback tolerante para position worklet e adia streams reais de audio no Web ate ativacao do navegador; validate `103/1844`, menu remoto PASS, primeiro minuto remoto PASS (`firstMinuteHitches=0`), estabilidade remota 5min PASS (heap `+7.71%`, counters/caches estaveis, pior janela 5s `130.2 FPS`) e luma remota `6.69 < 90`.
-- Track 08 Super Campeao Rebrand & UI Cleanup: mergeado localmente em `main` como `2f537628`; rebrand local para `Super Campeao`, novo splash, menu principal/intro limpos e Toon removido do runtime/UI/testes ativos; validate `104/1825`, export Web e probes locais PASS, publicacao remota tentada como `v1.2.1+2f537628`, mas primeiro minuto remoto FAIL com `firstMinuteHitches=1` (`333.5ms`, evento proximo `ball_glass`), entao rollback foi executado para `v1.2.0+fa82cb7d`.
-- Track 08A Ball Glass Hitch Hotfix: mergeado em `main` como `16e2dd06` e publicado com root final `6ef3074c` apos `main` avancar por mudancas de outro projeto; remove trabalho Web morto de audio 3D/telemetria de audio bloqueado e reduz confetti Web de gol para marcador visual leve, sem mudar gameplay; `tools/validate.gd` PASS `104/1825`, primeiro minuto remoto PASS (`firstMinuteHitches=0`), estabilidade remota 5min PASS (heap retido `+7.34%`, counters/caches estaveis, pior janela 5s `133.4 FPS`) e luma remota `6.525 < 90`.
-- Track 09A FootballRoot Extraction V1: mergeado e publicado como `v1.2.1+ff9cb389`; extraiu ambiente noturno, capture director, placares do estadio e perf scenario para helpers dedicados; `FootballRoot` caiu de `2280` para `1862` linhas sem mudar gameplay; validate PASS `104/1825`; Web export PASS; Web gzip `30.58 MiB / 50.00 MiB`; menu remoto PASS; primeiro minuto remoto PASS (`firstMinuteHitches=0`); estabilidade remota 5min PASS (heap retido `+8.37%`, counters/caches estaveis, pior janela 5s `116.8 FPS`) e luma remota `6.525 < 90`.
-- Track 09B FootballRoot Web Loading Controller V1: validado localmente; extraiu overlay/loading Web, warmup de primeiro render, warmup de primeiros usos e settle probes para `football_web_loading_controller.gd`; `FootballRoot` medido nesta base caiu de `2078` para `1739` linhas; sem mudanca de gameplay/input/bot/fisica/assets; validate PASS `104/1825`; Web export PASS; Web gzip `30.58 MiB / 50.00 MiB`; Web boot local PASS com `event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`.
-- Track 09C FootballRoot Runtime Spawner V1: validado localmente; extraiu criacao/wiring de `RuntimeRoot`, player, bot, bola, kickoff marker, chase camera, HUD e feedback para `football_runtime_spawner.gd`; `FootballRoot` medido nesta base caiu de `1739` para `1588` linhas; sem mudanca de gameplay/input/bot/fisica/assets; validate PASS `104/1826`; Web export PASS; Web gzip `30.59 MiB / 50.00 MiB`; Web boot local PASS com `event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
-- Track 09D Football Match Flow Controller V1: validado localmente; extraiu reset/kickoff/countdown/input lock/touch kickoff para `football_match_flow_controller.gd`; `FootballRoot` medido nesta base caiu de `1588` para `1472` linhas; sem mudanca de gameplay/input/bot/fisica/scoring/assets; validate PASS `104/1826`; Web export PASS; Web gzip `30.60 MiB / 50.00 MiB`; Web boot local PASS com `event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
-- Track 09E Football Match Presentation Controller V1: validado localmente; extraiu snapshots de HUD/resultado, refresh HUD/scoreboard, formatacao de estatisticas e codigos de uniforme para `football_match_presentation_controller.gd`; `FootballRoot` medido nesta base caiu de `1472` para `1362` linhas; sem mudanca de gameplay/input/bot/fisica/scoring/assets; validate PASS `104/1826`; Web export PASS; Web gzip `30.59 MiB / 50.00 MiB`; Web boot local PASS com `event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
-- Track 09F Football Arcade Field Controller V1: publicado como `v1.2.1+a75cfe57`; extraiu coleta/reset/update de boost pads e jump pads para `football_arcade_field_controller.gd`; `FootballRoot` medido nesta base caiu de `1362` para `1295` linhas e a publicacao cumulativa 09A->09F levou o baseline publico de `1862` para `1295`; sem mudanca de gameplay/input/bot/fisica/scoring/tuning/assets; validate PASS `104/1826`; Web export PASS; Web gzip `30.59 MiB / 50.00 MiB`; menu/first-minute/stability rerun/luma remotos PASS.
-- Track 09G Football Match Resolution Controller V1: validado localmente; extraiu restart de partida, match mode, goal reset, deteccao/registro de gol, scoring side effects, timer/golden goal, fim de partida e stats de chute/gol para `football_match_resolution_controller.gd`; `FootballRoot` medido nesta base caiu de `1295` para `1178` linhas; sem mudanca de gameplay/input/bot/fisica/scoring/tuning/assets/HUD; validate PASS `104/1826`; Web export PASS; Web gzip `30.60 MiB / 50.00 MiB`; Web boot local PASS; publicacao remota tentada como `v1.2.1+d1784ff9`, mas estabilidade 5min falhou duas vezes em heap JS/WASM (`+15.42%` e `+15.35%`) e rollback foi executado para 09F.
-- Track 09H Web Heap Hotfix V1: publicado como `v1.2.1+4a323fab`; removeu alocacao per-frame de `Dictionary` do clock do timer em `football_match_resolution_controller.gd`; sem mudanca de gameplay/input/bot/fisica/scoring/tuning/assets/HUD; validate PASS `104/1826`; Web export PASS; Web gzip `30.60 MiB / 50.00 MiB`; Chrome local 5min PASS com heap `+6.81%`; menu remoto PASS; primeiro minuto remoto PASS (`firstMinuteHitches=0`); estabilidade remota 5min PASS (heap retido `+9.97%`, counters/caches estaveis, pior janela 5s `129.8 FPS`) e luma remota `6.525 < 90`; reteste humano aprovado antes da 09I.
-- Track 09I Kick Super Controller V1: publicado como `v1.2.1+7995b06c`; extraiu player kick, charged/strong kick, SUPER spend/gain e bot kick routing para `football_kick_super_controller.gd`; `FootballRoot` medido nesta base caiu de `995` para `943` linhas; sem mudanca de gameplay/input/bot/fisica/HUD/assets; import headless PASS; validate PASS `104/1826`; Web export PASS; Web gzip `30.60 MiB / 50.00 MiB`; menu/first-minute/stability/luma remotos PASS; reteste humano aprovado por Fabio antes da 09J.
-- Track 09J Ball Contact Controller V1: validado localmente; extraiu estado de posse/contato de bola do player, contato passivo com a bola, audio de colisao da bola e contato arcade dash/body para `football_ball_contact_controller.gd`; `FootballRoot` medido nesta base caiu de `943` para `832` linhas; sem mudanca de gameplay/input/bot/fisica/scoring/HUD/tuning/assets; import headless PASS; validate PASS `104/1826`; Web export PASS; Web gzip `30.60 MiB / 50.00 MiB`; Web boot local PASS; publicacao remota tentada como `v1.2.1+4678fbea`, mas estabilidade 5min falhou duas vezes em heap JS/WASM (`+15.96%` e `+15.22%`) e rollback foi executado para 09I.
-- Track 09K Web Heap Hotfix V1: validado localmente; removeu alocacoes `Dictionary` do caminho de posse/contato e manteve o caminho quente de contato no `FootballRoot`, deixando o controller com responsabilidades menos frequentes; `FootballRoot` ficou em `899` linhas, ainda abaixo da base 09I (`943`); validate PASS `104/1826`; Web export PASS; Web gzip `30.60 MiB / 50.00 MiB`; menu remoto PASS; primeiro minuto remoto PASS; estabilidade 5min remota FAIL em heap JS/WASM (`+14.35%`), counters/FPS PASS; rollback executado para 09I.
-- Track 09L Web Heap Instrumentation V1: validado localmente; adicionou `--heap-debug-summary=1` ao probe Chrome, `probeConfig`, diagnostico por componente/janela/final-GC e evidencias 09I/09J/09K/09L; sem mudanca de gameplay/input/bot/fisica/scoring/HUD/assets/publicacao; run remota 09I PASS com heap JS exposto `+8.72%`; `wasmHeapBytes` sem amostras em todas as runs analisadas, entao o gate atual deve ser tratado como `js_heap_growth` ate haver medicao real de WASM.
-- Track 09M Web Heap Gate Semantics V1: validado localmente; renomeou o check primario do probe para `js_heap_growth`, manteve `js_wasm_heap_growth` como `legacyAlias`, adicionou `heapGateMetric`/`legacyHeapGateMetric` ao `probeConfig` e padronizou diagnosticos `js_heap_bytes`/`total_js_heap_bytes`/`wasm_heap_bytes`; sem publicacao e sem mudanca de gameplay; run remota 09I PASS com `js_heap_growth +9.38%`, limite `10%`, `wasmSampleCount=0`.
-- Track 09N Render Settings Controller V1: publicado como `v1.2.1+5c6520ba`; extraiu ponte de settings do menu, `GameSettings`, refresh de render profile, resize dos SubViewports dos placares e sincronizacao de sensibilidade para `football_render_settings_controller.gd`; `FootballRoot` caiu de `1079` para `1051` linhas; sem mudanca de gameplay/input/bot/fisica/scoring/HUD visual/assets/tuning; validate/export/A-B pre-publicacao PASS; menu/primeiro minuto/estabilidade 5min/luma remotos PASS; reteste humano aprovado.
-- Bot parity covers arcade dash/flip/stun, SUPER usage and boost pad collection.
-- Windows export preset `Windows Desktop`; debug export smoke passed to `builds/windows/CopaArenaFutebol.exe`.
+- Arcade mechanics adopted locally: dash/slide/stun/flip, charged kick, SUPER shot/fireball, boost pads, jump pads, timer/golden goal/vale-2 and emote.
 - No FPS arena, no weapons, no mobile, no multiplayer/backend.
+
+## Current Architecture
+
+- `modes/football/football_root.gd`: facade/orchestrator for lifecycle, compatibility wrappers, debug/test APIs and gameplay loop ordering.
+- `football_world_environment.gd`: night world environment and stadium key light construction.
+- `football_capture_director.gd`: capture-scene meta handling and evidence camera setup.
+- `football_scoreboard_controller.gd`: stadium scoreboard label/viewport cache and update cadence.
+- `football_perf_scenario.gd`: perf probe scenario steps, feedback filtering and stability sample extras.
+- `football_web_loading_controller.gd`: Web loading overlay, first-render warmup, first-use feedback warmup and loading settle probes.
+- `football_runtime_spawner.gd`: runtime node construction and signal wiring.
+- `football_match_flow_controller.gd`: kickoff/reset/countdown/input lock/touch kickoff.
+- `football_match_presentation_controller.gd`: HUD/result snapshots, HUD/scoreboard refresh and result statistics text.
+- `football_arcade_field_controller.gd`: boost pad and jump pad node collection/reset/cooldown/respawn.
+- `football_match_resolution_controller.gd`: restart state, goal reset timer, goal detection side effects, scoring, timer/golden goal, match finish and stats.
+- `football_kick_super_controller.gd`: player kick requests, charged/strong kick routing, SUPER spend/gain rules and bot kick routing.
+- `football_render_settings_controller.gd`: main-menu settings bridge, `GameSettings` quality integration, runtime render-profile refresh, scoreboard viewport resize and pause-menu sensitivity sync.
 
 ## Current Gate
 
-`Super Campeao v1.2.1+5c6520ba` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260619-5c6520ba`. Track 09N remote menu, first minute, 5-minute stability and night luma gates passed; human retest is approved. Track 09I remains the historical approved fallback baseline.
+`Super Campeao v1.2.1+5c6520ba` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260619-5c6520ba`.
 
-This project remains one of the studio's active implementation focuses. Follow `08_Coordenacao_Agentes/Prioridades_Estudio.md` for other project focus and pause state.
+Latest approved publication:
+
+- Local validation: `tools/validate.gd` PASS, `104/104` tests, `1826` asserts, `58` source files checked.
+- Web package/export: PASS.
+- Web gzip transfer: `30.60 MiB / 50.00 MiB`.
+- Pre-publication A/B against 09I: PASS.
+- Remote menu: PASS.
+- Remote first minute: PASS, `firstMinuteHitches=0`.
+- Remote stability 5min: PASS, `js_heap_growth +0.41%`, peak `+6.05%`, `wasmSampleCount=0`.
+- Remote night luma: PASS, `6.525 < 90`.
+- Human retest: approved by Fabio/tester on 2026-06-19.
+
+Track 09I remains the historical approved fallback baseline.
 
 ## Validation
 
@@ -100,73 +78,40 @@ Primary command:
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest Track 08A result: PASS, 104 tests, 1825 asserts, including source integrity check and UTF-8 BOM rejection.
-
-Latest Documentacao Limpeza V1 result: import headless PASS; Web export PASS; `tools/validate.gd` PASS, 104 tests, 1825 asserts, Web gzip transfer `30.57 MiB / 50.00 MiB`; studio doc drift PASS.
-
-Latest Track 09A result: import headless PASS; Web export PASS; `tools/validate.gd` PASS, 104 tests, 1825 asserts, Web gzip transfer `30.58 MiB / 50.00 MiB`; `FootballRoot` line count `2280 -> 1862`; Cloudflare Pages publication PASS as `web/v1-copa-arena-futebol-20260615-ff9cb389`.
-
-Latest Track 09B result: `tools/validate.gd` PASS, 104 tests, 1825 asserts, 50 source files checked; Web export PASS; Web gzip transfer `30.58 MiB / 50.00 MiB`; `FootballRoot` line count in the Track 09B base `2078 -> 1739`; local Web boot smoke `docs/playtest-reports/track-09b-data/09b-local-web-boot.json` PASS (`event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`).
-
-Latest Track 09C result: import headless PASS; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 51 source files checked; Web export PASS; Web gzip transfer `30.59 MiB / 50.00 MiB`; `FootballRoot` line count in the Track 09C base `1739 -> 1588`; local Web boot smoke `docs/playtest-reports/track-09c-data/09c-local-web-boot.json` PASS (`event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`).
-
-Latest Track 09D result: import headless PASS; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 52 source files checked; Web export PASS; Web gzip transfer `30.60 MiB / 50.00 MiB`; `FootballRoot` line count in the Track 09D base `1588 -> 1472`; local Web boot smoke `docs/playtest-reports/track-09d-data/09d-local-web-boot.json` PASS (`event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`).
-
-Latest Track 09E result: import headless PASS; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 53 source files checked; Web export PASS; Web gzip transfer `30.59 MiB / 50.00 MiB`; `FootballRoot` line count in the Track 09E base `1472 -> 1362`; local Web boot smoke `docs/playtest-reports/track-09e-data/09e-local-web-boot.json` PASS (`event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`).
-
-Latest Track 09F result: import headless PASS after normal worktree reimport cycle; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 54 source files checked; Web export PASS; Web gzip transfer `30.59 MiB / 50.00 MiB`; `FootballRoot` line count in the Track 09F base `1362 -> 1295`; local Web boot smoke `docs/playtest-reports/track-09f-data/09f-local-web-boot.json` PASS (`event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`); Cloudflare Pages publication PASS as `web/v1-copa-arena-futebol-20260615-a75cfe57`.
-
-Latest Track 09G local result: import headless PASS; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 55 source files checked; Web export PASS; Web gzip transfer `30.60 MiB / 50.00 MiB`; `FootballRoot` line count in the Track 09G base `1295 -> 1178`; local Web boot smoke `docs/playtest-reports/track-09g-data/09g-local-web-boot.json` PASS (`event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`).
-
-Latest Web remote smoke: Track 09I candidate `docs/playtest-reports/track-09i-data/09i-remote-menu-7995b06c.json` PASS and `09i-remote-first-minute-7995b06c.json` PASS (`firstMinuteHitches=0`); `09i-remote-stability-5min-7995b06c.json` PASS with `js_wasm_heap_growth +9.30%`, counters/caches stable and worst 5s `132.6 FPS`; luma `09i-remote-night-luma-gate-7995b06c.json` PASS (`6.525 < 90`).
-
-Latest Track 09H result: import headless PASS; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 55 source files checked; Web export PASS; Web gzip transfer `30.60 MiB / 50.00 MiB`; publication PASS as `web/v1-copa-arena-futebol-20260615-4a323fab`; remote menu/first-minute/stability/luma PASS.
-
-Latest Track 09I result: import headless PASS; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 56 source files checked; Web export PASS; Web gzip transfer `30.60 MiB / 50.00 MiB`; Cloudflare Pages publication PASS as `web/v1-copa-arena-futebol-20260616-7995b06c`; remote menu/first-minute/stability/luma PASS; human retest approved; evidence in `docs/playtest-reports/track-09i-data/`.
-
-Latest Track 09J result: import headless PASS; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 57 source files checked; Web export PASS; Web gzip transfer `30.60 MiB / 50.00 MiB`; Chrome local Web boot PASS with `event.visible_match_start`, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`; `FootballRoot` line count `943 -> 832`; remote menu PASS; remote first minute PASS; remote stability 5min FAIL twice on JS/WASM heap (`+15.96%`, `+15.22%`); production restored to 09I and stable URL confirmation PASS; evidence in `docs/playtest-reports/track-09j-publication.md` and `docs/playtest-reports/track-09j-data/`.
-
-Latest Track 09K result: `tools/validate.gd` PASS, 104 tests, 1826 asserts, 57 source files checked; Web export PASS; Web gzip transfer `30.60 MiB / 50.00 MiB`; local 5min comparison showed approved 09I also fails this local heap gate (`+13.19%`) while 09K measured `+12.13%`; remote menu PASS; remote first minute PASS; remote stability 5min FAIL on JS/WASM heap (`+14.35%`), with Godot counters/caches and FPS PASS; production restored to 09I and stable URL confirmation PASS; evidence in `docs/playtest-reports/track-09k-web-heap-hotfix.md` and `docs/playtest-reports/track-09k-data/`.
-
-Latest Track 09L result: `node --check tools\track04f_chrome_probe.mjs` PASS; import headless PASS; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 57 source files checked; Web export PASS; local instrumented Chrome smoke PASS; remote non-mutating diagnostic against 09I PASS with release root match and exposed JS heap growth `+8.72%`; `wasmHeapBytes` had no samples, so the old `js_wasm_heap_growth` gate should be read as JS heap in these Chrome runs; evidence in `docs/playtest-reports/track-09l-web-heap-instrumentation.md` and `docs/playtest-reports/track-09l-data/`.
-
-Latest Track 09M result: `node --check Projetos\JogoDaCopa\tools\track04f_chrome_probe.mjs` PASS; import headless PASS; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 57 source files checked; Web export PASS; local Chrome smoke PASS with `js_heap_growth` primary and legacy alias present; remote 09I 5min PASS with release root match, `js_heap_growth +9.38%`, `wasmSampleCount=0`, page errors `0` and console errors `0`; evidence in `docs/playtest-reports/track-09m-web-heap-gate-semantics.md` and `docs/playtest-reports/track-09m-data/`.
-
-Latest Track 09N result: import headless PASS; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 58 source files checked; Web export PASS; Web gzip transfer `30.60 MiB / 50.00 MiB`; Chrome local Web probe 90s PASS with `event.visible_match_start`, page errors `0`, console errors `0`, first-minute hitches `0`, `js_heap_growth -7.48%` and `wasmSampleCount=0`; `FootballRoot` line count `1079 -> 1051`; evidence in `docs/playtest-reports/track-09n-render-settings-controller.md` and `docs/playtest-reports/track-09n-data/`.
-
-Latest Track 09N prepublish A/B result: 09I remote baseline PASS with release root match, `js_heap_growth -5.32%`, page errors `0`, console errors `0`, first-minute hitches `0`; 09N local candidate PASS with `js_heap_growth +9.25%`, page errors `0`, console errors `0`, first-minute hitches `0`, `wasmSampleCount=0`; candidate is below the `+10%` final gate but close enough to require full remote post-deploy gates after publication; evidence in `docs/playtest-reports/track-09n-prepublish-ab.md` and `docs/playtest-reports/track-09n-ab-data/`.
-
-Latest Track 09N publication result: merge local `5c6520ba`; `tools/validate.gd` PASS, 104 tests, 1826 asserts, 58 source files checked; Package PASS; Cloudflare Pages publication PASS as `web/v1-copa-arena-futebol-20260619-5c6520ba`; remote menu PASS; remote first minute PASS (`firstMinuteHitches=0`); remote stability 5min PASS with `js_heap_growth +0.41%`, peak `+6.05%`, `wasmSampleCount=0`; remote luma PASS `6.525 < 90`; human retest approved; evidence in `docs/playtest-reports/track-09n-publication.md` and `docs/playtest-reports/track-09n-data/`.
-
-Latest human retest: Track 09N public build approved by Fabio/tester after publication. Track 09I remains the historical approved fallback.
-
 Export smoke command:
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . --export-debug "Windows Desktop" "builds/windows/CopaArenaFutebol.exe"
 ```
 
-Latest result: PASS, exit code `0`.
-
-Web export smoke command:
+Docs-only validation:
 
 ```powershell
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . --export-release "Web" "builds/web/index.html"
+D:\Estudio\tools\check_doc_drift.ps1
+git diff --check
 ```
 
-Latest release result: PASS, exit code `0`, single-threaded `GODOT_THREADS_ENABLED=false`.
+Latest code validation remains the Track 09N publication gate listed above. Track 09O is documentation-only and does not change code, scenes, assets, export or publication.
 
-Manual smoke lives in `docs/validation.md`.
+## Documentation Map
 
-## Read Next
+- Start here: `docs/documentation-index.md`.
+- Living technical plan: `docs/work-plan.md`.
+- Current publication package: `docs/publication-readiness.md`.
+- Release history: `docs/release-history.md`.
+- Architecture: `docs/architecture-overview.md`.
+- Contracts: `docs/mode-contract.md`, `docs/bot-contract.md`, `docs/tuning-guide.md`.
+- Validation guide: `docs/validation.md`, `docs/validation-profiles.md`.
+- Evidence reports and raw JSON/PNG: `docs/playtest-reports/`.
 
-1. `AGENTS.md`
-2. `docs/documentation-index.md`
-3. `docs/release-history.md`
-4. `docs/publication-readiness.md`
-5. `docs/architecture-overview.md`
-6. `docs/work-plan.md`
-7. `docs/mode-contract.md`
-8. `docs/validation.md`
-9. `docs/asset-licenses.md`
-10. Historical track docs only when investigating a specific regression or design decision.
+## Next Step
+
+Proceed with the next local `FootballRoot` reduction from the approved 09N baseline. Keep the slice conservative: no gameplay, physics, input, bot decision, HUD visual, asset or tuning change unless Fabio explicitly opens a tuning/design track.
+
+Required gates for the next reduction:
+
+- `tools/validate.gd`.
+- Web export and gzip gate.
+- Local Web smoke when loading/runtime-sensitive.
+- Remote 5-minute `js_heap_growth` gate before publication.
+- Human retest after publication before promoting the build as product-approved.

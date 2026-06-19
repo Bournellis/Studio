@@ -1,5 +1,7 @@
 # JogoDaCopa - Opcoes da Proxima Serie (esboco para decisao)
 
+> Historical decision sketch. This document preserves the 2026-06-11 options considered after Track 03L. It is not the current next-step source. For live status use `../implementation/current-status.md`, `work-plan.md`, `publication-readiness.md` and `release-history.md`.
+
 - Date: `2026-06-11` (recriado apos perda de untracked em fechamento de thread; conteudo original preservado)
 - Author: Claude (para a sessao de decisao com Fabio, apos o playtest de confirmacao)
 - Baseline assumida: Track 03L (arena selada + facing) fechada e aprovada; jogo estavel sem divida tecnica relevante.

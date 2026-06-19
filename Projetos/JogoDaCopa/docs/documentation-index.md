@@ -1,6 +1,7 @@
 # JogoDaCopa Documentation Index
 
 - Status: `JOGO_DA_COPA_TRACK09N_PUBLISHED_APPROVED`
+- Documentation baseline: `TRACK09O_DOCUMENTATION_REBASELINE_V1`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -8,16 +9,39 @@
 
 1. `../AGENTS.md`
 2. `../implementation/current-status.md`
-3. `release-history.md`
+3. `work-plan.md`
 4. `publication-readiness.md`
-5. `architecture-overview.md`
-6. `work-plan.md`
+5. `release-history.md`
+6. `architecture-overview.md`
 7. `mode-contract.md`
-8. `validation.md`
-9. `asset-licenses.md`
-10. `process-hardening-agents-addendum.md`
+8. `bot-contract.md`
+9. `tuning-guide.md`
+10. `validation.md`
 
-## Latest Evidence
+## Living State
+
+- Documentation index: `documentation-index.md`
+- Project status snapshot: `../implementation/current-status.md`
+- Studio portfolio state: `../../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
+- Studio live snapshot: `../../../08_Coordenacao_Agentes/Estado_Atual.md`
+- Current technical plan: `work-plan.md`
+- Publication readiness: `publication-readiness.md`
+- Release history: `release-history.md`
+
+## Architecture And Contracts
+
+- Architecture overview: `architecture-overview.md`
+- Mode contract: `mode-contract.md`
+- Bot contract: `bot-contract.md`
+- Avatar visual contract: `avatar-visual-contract.md`
+- Tuning guide: `tuning-guide.md`
+- Asset licenses: `asset-licenses.md`
+- Validation guide: `validation.md`
+- Validation profiles: `validation-profiles.md`
+- Reuse map: `reuse-map.md`
+- Process hardening addendum: `process-hardening-agents-addendum.md`
+
+## Current Public Baseline Evidence
 
 - Track 09N publication closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-publication-v1.md`
 - Track 09N human retest approval closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-human-retest-approved-v1.md`
@@ -28,7 +52,9 @@
 - Track 09N prepublish A/B evidence: `playtest-reports/track-09n-ab-data/`
 - Track 09N render settings controller closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-render-settings-controller-v1.md`
 - Track 09N render settings controller report: `playtest-reports/track-09n-render-settings-controller.md`
-- Track 09N evidence: `playtest-reports/track-09n-data/`
+
+## Track 09 Reduction And Heap Evidence
+
 - Track 09M heap gate semantics closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09m-web-heap-gate-semantics-v1.md`
 - Track 09M heap gate semantics report: `playtest-reports/track-09m-web-heap-gate-semantics.md`
 - Track 09M evidence: `playtest-reports/track-09m-data/`
@@ -42,82 +68,59 @@
 - Track 09J local report: `playtest-reports/track-09j-ball-contact-controller-v1.md`
 - Track 09J publication attempt and rollback: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_publish-track09j.md`
 - Track 09J publication report: `playtest-reports/track-09j-publication.md`
-- Track 09J local Web evidence: `playtest-reports/track-09j-data/`
+- Track 09J evidence: `playtest-reports/track-09j-data/`
 - Track 09I publication closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-16_codex_jogodacopa_publish-track09i.md`
 - Track 09I publication report: `playtest-reports/track-09i-publication.md`
-- Track 09I publication evidence: `playtest-reports/track-09i-data/`
-- Track 09I local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-16_codex_jogodacopa_track09i-kick-super-controller-v1.md`
-- Track 09H publication closure: `../../../08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09h-publication-v1.md`
-- Track 09H publication evidence: `playtest-reports/track-09h-data/`
-- Track 09G publication attempt and rollback: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09g-publication-v1.md`
+- Track 09I evidence: `playtest-reports/track-09i-data/`
+- Track 09H publication and hotfix evidence: `playtest-reports/track-09h-web-heap-hotfix.md`, `playtest-reports/track-09h-data/`
 - Track 09G publication/rollback evidence: `playtest-reports/track-09g-data/`
-- Track 09G local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09g-match-resolution-controller-v1.md`
-- Track 09F publication closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-publication-v1.md`
 - Track 09F public evidence: `playtest-reports/track-09f-data/`
-- Track 09F local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-arcade-field-controller-v1.md`
-- Track 09E local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09e-match-presentation-controller-v1.md`
-- Track 09E local Web evidence: `playtest-reports/track-09e-data/`
-- Track 09D local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09d-match-flow-controller-v1.md`
-- Track 09D local Web evidence: `playtest-reports/track-09d-data/`
-- Track 09C local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09c-runtime-spawner-v1.md`
-- Track 09C local Web evidence: `playtest-reports/track-09c-data/`
-- Track 09B local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09b-web-loading-controller-v1.md`
-- Track 09B local Web evidence: `playtest-reports/track-09b-data/`
-- Track 09A previous public evidence: `playtest-reports/track-09a-data/`
-- Current public release summary: `release-history.md`
+- Track 09A through 09E evidence: `playtest-reports/track-09a-data/`, `playtest-reports/track-09b-data/`, `playtest-reports/track-09c-data/`, `playtest-reports/track-09d-data/`, `playtest-reports/track-09e-data/`
 
-## References
+## Track Documentation Convention
 
-- `avatar-visual-contract.md`
-- `bot-contract.md`
-- `tuning-guide.md`
-- `validation-profiles.md`
-- `publication-readiness.md`
-- `release-history.md`
-- `playtest-reports/track-09n-publication.md`
-- `playtest-reports/track-09n-render-settings-controller.md`
-- `playtest-reports/track-09n-data/`
-- `playtest-reports/track-09n-prepublish-ab.md`
-- `playtest-reports/track-09n-ab-data/`
-- `playtest-reports/track-09m-web-heap-gate-semantics.md`
-- `playtest-reports/track-09m-data/`
-- `playtest-reports/track-09l-web-heap-instrumentation.md`
-- `playtest-reports/track-09l-data/`
-- `playtest-reports/track-09i-publication.md`
-- `playtest-reports/track-09k-web-heap-hotfix.md`
-- `playtest-reports/track-09k-data/`
-- `playtest-reports/track-09j-publication.md`
-- `playtest-reports/track-09j-ball-contact-controller-v1.md`
-- `playtest-reports/track-09j-data/`
-- `playtest-reports/track-09i-data/`
-- `playtest-reports/track-09h-data/`
-- `playtest-reports/track-09g-data/`
-- `playtest-reports/track-09f-data/`
-- `playtest-reports/track-09e-data/`
-- `playtest-reports/track-09c-data/`
-- `playtest-reports/track-09b-data/`
-- `playtest-reports/track-09a-data/`
-- `playtest-reports/track-08a-data/`
-- `playtest-reports/track-05b-first-minute-smoothness.md`
-- `code-review-track05b-first-minute-v1.md`
-- `process-hardening-agents-addendum.md`
+Tracks 09A-09J have local implementation folders under `../implementation/tracks/`. Tracks 09K-09N were focused publication, hotfix, diagnostics, gate-semantics and publication-validation tracks; their authoritative records are the Kanban Done cards plus `docs/playtest-reports/` reports/evidence listed above. Do not infer missing implementation folders as missing status for 09K-09N.
+
+## Historical Plans
+
+These files are preserved for context. They are not current next-step sources.
+
+- `quality-upgrade-plan.md`
+- `arcade-upgrade-plan.md`
+- `next-series-options.md`
+- `release-plan.md`
+- `series-06-broadcast-polish-plan.md`
+- `codebase-audit-track05.md`
+
+## Historical Code Reviews
+
 - `code-review-track02-series-v1.md`
-- `code-review-track03-series-v1.md`
 - `code-review-track02cbis-02dbis-v1.md`
+- `code-review-track03-series-v1.md`
+- `code-review-track03f-hotfix-v1.md`
 - `code-review-track03g-03h-v1.md`
 - `code-review-track03i-menu-v1.md`
 - `code-review-track03k-pose-restore-v2.md`
 - `code-review-track03l-arena-seal-facing-v2.md`
 - `code-review-track04b1-04b2-v1.md`
-- `playtest-reports/track-04b3-kick-arms-polish-v1.md`
-- `../implementation/tracks/track-04b3-kick-arms-polish-v1/current-status.md`
-- `../implementation/tracks/track-05-web-publication/current-status.md`
-- `../implementation/tracks/track-03f-quality-hotfix-v1/current-status.md`
-- `arcade-upgrade-plan.md`
-- `codebase-audit-track05.md`
-- `next-series-options.md`
-- `release-plan.md`
-- `reuse-map.md`
+- `code-review-track04c-04d-v1.md`
+- `code-review-track04e-web-spike-v1.md`
+- `code-review-track04f-web-performance-v1.md`
+- `code-review-track04f2-webgl-first-render-stall-v1.md`
+- `code-review-track05-web-publication-v1.md`
+- `code-review-track05a-web-stability-v1.md`
+- `code-review-track05b-first-minute-v1.md`
+- `code-review-track05b1-sensory-feedback-v1.md`
+- `code-review-track06a-match-start-fixes-v1.md`
+- `code-review-track06b-esc-menu-v1.md`
+- `code-review-track06c-menu-broadcast-v1.md`
+- `code-review-track06d-hud-broadcast-v1.md`
+- `code-review-track06e-release-v1-1-0.md`
+- `code-review-track06f-web-audio-stability-v1.md`
+
+## Raw Evidence
+
+Raw evidence lives in `playtest-reports/` and `docs/screenshots/`. Keep JSON/PNG/log files in place; the summary trail should point to them instead of duplicating their contents in living status docs.
 
 ## Split Note
 

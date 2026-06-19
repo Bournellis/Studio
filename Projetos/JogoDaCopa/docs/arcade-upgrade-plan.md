@@ -1,5 +1,7 @@
 # JogoDaCopa - Plano Arcade (Serie Track 03)
 
+> Historical plan. This document records the Track 03 arcade strategy from 2026-06-10. Some "pending" notes were resolved by later tracks. For live status use `../implementation/current-status.md`, `work-plan.md`, `publication-readiness.md` and `release-history.md`.
+
 - Date: `2026-06-10`
 - Author: Claude (aprovado por Fabio)
 - Decisao: pacotes A (movimento), C (super shot), B (campo), D (tempero de partida) aprovados; E (toon look) aprovado como experimento atras de toggle. Power-ups classicos de campo ficam explicitamente fora (mudariam a identidade para party game; possivel modo separado futuro).
