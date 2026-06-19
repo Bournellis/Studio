@@ -1,11 +1,12 @@
 # FpsPlayground - Track 06 Arena Variety And Bot Generalization V1
 
 - Data: `2026-06-16`
+- Aprovado: `2026-06-19`
 - Agente: Codex
 - Branch: `codex/fpsplayground/track06-arena-variety-bot-generalization-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track06-arena-variety-bot-generalization-v1`
 - Base: `main` em `1b84126c` (`Merge FpsPlayground Track 06 plan sequence`)
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED_BY_FABIO`
 
 ## Objetivo
 
@@ -27,26 +28,8 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 # PASS, GUT 32/32, 289 asserts
 ```
 
-Validacoes finais:
-
-```powershell
-git diff --check
-# PASS
-powershell -ExecutionPolicy Bypass -File D:\Estudio\tools\check_doc_drift.ps1
-# PASS
-git status --short
-# somente alteracoes da Track 06 antes do commit de docs
-```
-
 ## Handoff
 
+Track 06 aprovada por Fabio em 2026-06-19. Proxima etapa planejada: Track 07 `Match Flow And Duel UX V1`.
+
 PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.
-
-Smoke humano recomendado:
-
-- abrir as tres arenas pelo menu;
-- correr o loop baixo completo da `Crossfire Crucible V1`;
-- usar os dois jump pads da nova arena em velocidade natural;
-- confirmar que vida e overcharge puxam decisoes de rota diferentes;
-- observar o bot rotacionando pelas rotas sem travar, bater parede ou repetir uma unica rota;
-- confirmar que o bot continua atirando como overlay de combate sem cancelar o objetivo de movimento.

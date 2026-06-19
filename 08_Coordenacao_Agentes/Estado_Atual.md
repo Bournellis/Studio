@@ -1,13 +1,13 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-06-16`
+- Ultima atualizacao: `2026-06-19`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 - Regra de tamanho: maximo ~12 linhas por projeto. Historia de pacotes/validacoes vai para os arquivos de historico do projeto (`implementation/tracks/`, `docs/release-history.md`, Kanban Done), nunca para este snapshot.
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization validada localmente; aguardando smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 aprovada; Track 07 match flow/duel UX planejada)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_READY_FOR_SMOKE`
-- Marker: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_READY_FOR_SMOKE`
-- Baseline: Track 06 adicionou `Crossfire Crucible V1` como terceira arena selecionavel e provou contratos de bot/layout sem codigo especifico por mapa.
+- Status: `P2_IMPLEMENTACAO - TRACK07_MATCH_FLOW_DUEL_UX_PLANNED`
+- Marker: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_PLANNED`
+- Baseline: Track 06 aprovada por Fabio em 2026-06-19; `Crossfire Crucible V1` e bot/layout generalization aceitos como base atual.
 - Validacao: `tools/validate.gd` PASS `32/32`, `289 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester fazer smoke da Track 06; se aprovado, executar Track 07 match UX, Track 08 movement feel, Track 09 combat sandbox.
+- Proximo passo: executar Track 07 `Match Flow And Duel UX V1`; depois seguir Track 08 movement feel e Track 09 combat sandbox.
 
 ## rpg-isometrico
 

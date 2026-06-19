@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_PLANNED`
 - Current surface: FPS arena lab.
-- Current baseline: Track 06 locally validated; `Crossfire Crucible V1` is the third selectable arena and is awaiting human smoke.
+- Current baseline: Track 06 approved by Fabio; `Crossfire Crucible V1` is accepted as the third selectable arena.
 
 ## North Star
 
@@ -17,7 +17,7 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 - `Duel Pit V2` preserves the accepted baseline.
 - `Relay Foundry V1` proves a second arena with route-control bot support.
 - Track 05B is approved: bot movement is good and the long jump pad first-attempt failure is resolved.
-- Track 06 is ready for smoke: `Crossfire Crucible V1` adds a compact crossfire arena and preserves bot generalization through layout contracts.
+- Track 06 is approved: `Crossfire Crucible V1` adds a compact crossfire arena and preserves bot generalization through layout contracts.
 - Validation baseline: `tools/validate.gd` PASS `32/32`, `289 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
@@ -25,7 +25,7 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 
 ### 1. Track 06 - Arena Variety And Bot Generalization V1
 
-Status: locally validated, ready for human smoke.
+Status: approved by Fabio on 2026-06-19.
 
 Goal:
 
@@ -45,6 +45,8 @@ Detailed plan:
 
 ### 2. Track 07 - Match Flow And Duel UX V1
 
+Status: planned, ready for execution.
+
 Goal:
 
 - Turn the arena lab into a cleaner repeatable duel experience: rounds, score, win/loss clarity, restart flow, result state and possibly match timer options.
@@ -62,6 +64,10 @@ Expected scope:
 - restart/new match flow;
 - menu return and arena reselection polish;
 - validation for round state transitions.
+
+Detailed plan:
+
+- `implementation/tracks/track-07-match-flow-duel-ux-v1/current-status.md`
 
 ### 3. Track 08 - Player Movement Feel Polish V1
 
@@ -115,7 +121,7 @@ It should be compact and distinct:
 - at least one vertical connector that differs from the long pads in `Relay Foundry V1`;
 - no dead-end pickup pockets.
 
-Track 06 did not add new combat mechanics. It is locally complete and should close after human smoke confirms the third arena feels good.
+Track 06 did not add new combat mechanics and was approved by Fabio. Track 07 should now improve repeatable duel flow before movement tuning or combat expansion.
 
 ## Out Of Scope
 
