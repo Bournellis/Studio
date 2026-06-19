@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 aprovada; Track 07 match flow/duel UX planejada)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 07 match flow/duel UX validada; aguardando smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,12 +43,12 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK07_MATCH_FLOW_DUEL_UX_PLANNED`
-- Marker: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_PLANNED`
-- Baseline: Track 06 aprovada por Fabio em 2026-06-19; `Crossfire Crucible V1` e bot/layout generalization aceitos como base atual.
-- Validacao: `tools/validate.gd` PASS `32/32`, `289 asserts`; warnings GUT UID/text-path conhecidos.
+- Status: `P2_IMPLEMENTACAO - TRACK07_MATCH_FLOW_DUEL_UX_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_READY_FOR_SMOKE`
+- Baseline: Track 07 implementada localmente; arena 1x1 agora tem score, rounds, first-to-3, resultado persistente e novo duelo.
+- Validacao: `tools/validate.gd` PASS `34/34`, `340 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: executar Track 07 `Match Flow And Duel UX V1`; depois seguir Track 08 movement feel e Track 09 combat sandbox.
+- Proximo passo: Fabio/tester fazer smoke humano da Track 07; se aprovada, executar Track 08 movement feel.
 
 ## rpg-isometrico
 

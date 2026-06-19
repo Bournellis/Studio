@@ -100,11 +100,77 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_gt(bot.debug_get_tactical_point_count(), 0)
 
 	var hud_root := arena.get_node("ArenaHud/HudRoot") as Control
+	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/ScoreLabel"))
+	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/RoundLabel"))
+	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/ResultLabel"))
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/PlayerLabel"))
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/CombatLoopLabel"))
 	assert_not_null(hud_root.get_node_or_null("Crosshair/HitMarker"))
 	assert_not_null(hud_root.get_node_or_null("CombatEventLabel"))
 	assert_not_null(hud_root.get_node_or_null("PauseMenuPanel/PauseMenuMargin/PauseMenuBox/SensitivitySlider"))
+	assert_not_null(hud_root.get_node_or_null("PauseMenuPanel/PauseMenuMargin/PauseMenuBox/NewMatchButton"))
+	assert_no_new_orphans()
+
+func test_arena_duel_state_scores_rounds_and_match_reset() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	assert_eq(arena.debug_get_round_state(), &"playing")
+	assert_eq(arena.debug_get_round_index(), 1)
+	assert_eq(arena.debug_get_player_score(), 0)
+	assert_eq(arena.debug_get_bot_score(), 0)
+	assert_eq(arena.debug_get_hud_snapshot().get("result_text", ""), "First to 3")
+
+	arena.debug_force_round_result(true)
+	assert_eq(arena.debug_get_round_state(), &"player_round_win")
+	assert_eq(arena.debug_get_last_round_winner(), &"player")
+	assert_eq(arena.debug_get_player_score(), 1)
+	assert_eq(arena.debug_get_bot_score(), 0)
+	arena.debug_force_round_result(true)
+	assert_eq(arena.debug_get_player_score(), 1)
+
+	arena.restart_round()
+	assert_eq(arena.debug_get_round_state(), &"playing")
+	assert_eq(arena.debug_get_round_index(), 2)
+	assert_eq(arena.debug_get_player_score(), 1)
+	assert_eq(arena.debug_get_bot_score(), 0)
+
+	while arena.debug_get_player_score() < arena.debug_get_score_to_win():
+		arena.debug_force_round_result(true)
+		if arena.debug_get_round_state() != &"match_over":
+			arena.restart_round()
+
+	assert_eq(arena.debug_get_round_state(), &"match_over")
+	assert_eq(arena.debug_get_match_winner(), &"player")
+	assert_eq(arena.debug_get_player_score(), arena.debug_get_score_to_win())
+	assert_true(str(arena.debug_get_hud_snapshot().get("hint", "")).contains("novo duelo"))
+
+	arena.restart_round()
+	assert_eq(arena.debug_get_round_state(), &"playing")
+	assert_eq(arena.debug_get_round_index(), 1)
+	assert_eq(arena.debug_get_player_score(), 0)
+	assert_eq(arena.debug_get_bot_score(), 0)
+	assert_eq(arena.debug_get_match_winner(), &"")
+	assert_no_new_orphans()
+
+func test_arena_duel_state_starts_clean_for_all_layouts() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	for layout_id: StringName in ArenaLayoutCatalogScript.get_layout_ids():
+		var arena := arena_scene.instantiate()
+		arena.set_arena_layout(layout_id)
+		add_child_autofree(arena)
+		await get_tree().process_frame
+		await get_tree().physics_frame
+
+		assert_eq(arena.debug_get_active_layout_id(), layout_id)
+		assert_eq(arena.debug_get_round_state(), &"playing")
+		assert_eq(arena.debug_get_round_index(), 1)
+		assert_eq(arena.debug_get_player_score(), 0)
+		assert_eq(arena.debug_get_bot_score(), 0)
+		assert_eq(arena.debug_get_hud_snapshot().get("score_to_win", 0), arena.debug_get_score_to_win())
 	assert_no_new_orphans()
 
 func test_duel_pit_layout_exposes_route_markers_and_bot_points() -> void:
@@ -438,6 +504,20 @@ func test_hud_tracks_combat_readability_events() -> void:
 	var hud = ArenaHudScript.new()
 	add_child_autofree(hud)
 	await get_tree().process_frame
+
+	hud.update_snapshot({
+		"map_name": "Duel Pit V2",
+		"round_index": 2,
+		"score_to_win": 3,
+		"player_score": 1,
+		"bot_score": 0,
+		"result_text": "Player venceu o round",
+		"hint": "R proximo round | Esc menu"
+	})
+	assert_eq(hud.score_label.text, "Score  Player 1  x  0 Bot")
+	assert_eq(hud.round_label.text, "Duel Pit V2 | Round 2 | First to 3")
+	assert_eq(hud.result_label.text, "Player venceu o round")
+	assert_eq(hud.hint_label.text, "R proximo round | Esc menu")
 
 	hud.show_bot_tell(0.24)
 	assert_eq(hud.last_feedback, &"bot_tell")

@@ -3,9 +3,13 @@ extends CanvasLayer
 
 signal resume_requested()
 signal main_menu_requested()
+signal new_match_requested()
 signal sensitivity_changed(value: float)
 
 var status_label: Label
+var score_label: Label
+var round_label: Label
+var result_label: Label
 var player_label: Label
 var bot_label: Label
 var combat_loop_label: Label
@@ -65,6 +69,7 @@ func _process(delta: float) -> void:
 
 func update_snapshot(snapshot: Dictionary) -> void:
 	status_label.text = str(snapshot.get("status", "FpsPlayground"))
+	_update_duel_labels(snapshot)
 	var player_health := float(snapshot.get("player_health", 0.0))
 	var player_max := float(snapshot.get("player_max_health", 1.0))
 	var bot_health := float(snapshot.get("bot_health", 0.0))
@@ -204,6 +209,18 @@ func _update_combat_loop_label(snapshot: Dictionary) -> void:
 		overcharge_pickup_text += " | Bot charged"
 	combat_loop_label.text = "%s | %s | %s | %s" % [plasma_text, overcharge_text, health_pickup_text, overcharge_pickup_text]
 
+func _update_duel_labels(snapshot: Dictionary) -> void:
+	if score_label == null or round_label == null or result_label == null:
+		return
+	var player_score := int(snapshot.get("player_score", 0))
+	var bot_score := int(snapshot.get("bot_score", 0))
+	var round_index := int(snapshot.get("round_index", 1))
+	var score_to_win := int(snapshot.get("score_to_win", 3))
+	var map_name := str(snapshot.get("map_name", "Arena Shooter"))
+	score_label.text = "Score  Player %d  x  %d Bot" % [player_score, bot_score]
+	round_label.text = "%s | Round %d | First to %d" % [map_name, round_index, score_to_win]
+	result_label.text = str(snapshot.get("result_text", "First to %d" % score_to_win))
+
 func _update_bot_flow_label(snapshot: Dictionary) -> void:
 	if bot_flow_label == null:
 		return
@@ -234,7 +251,7 @@ func _build_ui() -> void:
 	panel.name = "StatusPanel"
 	_ignore_mouse(panel)
 	panel.position = Vector2(18.0, 18.0)
-	panel.custom_minimum_size = Vector2(420.0, 168.0)
+	panel.custom_minimum_size = Vector2(448.0, 224.0)
 	root.add_child(panel)
 
 	var box := VBoxContainer.new()
@@ -248,6 +265,26 @@ func _build_ui() -> void:
 	_ignore_mouse(status_label)
 	status_label.text = "FpsPlayground"
 	box.add_child(status_label)
+
+	score_label = Label.new()
+	score_label.name = "ScoreLabel"
+	_ignore_mouse(score_label)
+	score_label.text = "Score  Player 0  x  0 Bot"
+	box.add_child(score_label)
+
+	round_label = Label.new()
+	round_label.name = "RoundLabel"
+	_ignore_mouse(round_label)
+	round_label.add_theme_font_size_override("font_size", 12)
+	round_label.text = "Duel Pit V2 | Round 1 | First to 3"
+	box.add_child(round_label)
+
+	result_label = Label.new()
+	result_label.name = "ResultLabel"
+	_ignore_mouse(result_label)
+	result_label.add_theme_font_size_override("font_size", 12)
+	result_label.text = "First to 3"
+	box.add_child(result_label)
 
 	player_label = Label.new()
 	player_label.name = "PlayerLabel"
@@ -284,7 +321,7 @@ func _build_ui() -> void:
 	hint_label = Label.new()
 	hint_label.name = "HintLabel"
 	_ignore_mouse(hint_label)
-	hint_label.position = Vector2(18.0, 182.0)
+	hint_label.position = Vector2(18.0, 242.0)
 	hint_label.text = "Click captures mouse | WASD move | Mouse look | LMB rifle | RMB plasma | Space jump | R restart | Esc menu"
 	root.add_child(hint_label)
 
@@ -372,9 +409,9 @@ func _build_pause_menu(root: Control) -> void:
 	pause_menu_panel.name = "PauseMenuPanel"
 	pause_menu_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	pause_menu_panel.custom_minimum_size = Vector2(380.0, 232.0)
+	pause_menu_panel.custom_minimum_size = Vector2(380.0, 284.0)
 	pause_menu_panel.set_anchors_preset(Control.PRESET_CENTER)
-	pause_menu_panel.position = Vector2(-190.0, -116.0)
+	pause_menu_panel.position = Vector2(-190.0, -142.0)
 	pause_menu_panel.visible = false
 	root.add_child(pause_menu_panel)
 
@@ -422,6 +459,15 @@ func _build_pause_menu(root: Control) -> void:
 		resume_requested.emit()
 	)
 	box.add_child(resume_button)
+
+	var new_match_button := Button.new()
+	new_match_button.name = "NewMatchButton"
+	new_match_button.text = "Novo duelo"
+	new_match_button.mouse_filter = Control.MOUSE_FILTER_STOP
+	new_match_button.pressed.connect(func() -> void:
+		new_match_requested.emit()
+	)
+	box.add_child(new_match_button)
 
 	var menu_button := Button.new()
 	menu_button.name = "MainMenuButton"
