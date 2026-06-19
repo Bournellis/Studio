@@ -47,6 +47,17 @@ func test_arena_pickup_respawn_uses_kind_contract() -> void:
 	assert_almost_eq(ArenaCombatRulesScript.get_pickup_respawn_duration(&"health", 10.0, 14.0), 10.0, 0.001)
 	assert_almost_eq(ArenaCombatRulesScript.get_pickup_respawn_duration(&"overcharge", 10.0, 14.0), 14.0, 0.001)
 
+func test_arena_plasma_blast_falloff_and_damage_contract() -> void:
+	var impact := Vector3.ZERO
+	var near_target := Vector3(0.0, 0.0, 0.5)
+	var edge_target := Vector3(0.0, 0.0, 2.0)
+	var outside_target := Vector3(0.0, 0.0, 2.2)
+
+	assert_almost_eq(ArenaCombatRulesScript.calculate_blast_falloff(impact, near_target, 2.0), 0.75, 0.001)
+	assert_almost_eq(ArenaCombatRulesScript.calculate_blast_falloff(impact, edge_target, 2.0), 0.0, 0.001)
+	assert_almost_eq(ArenaCombatRulesScript.calculate_blast_damage(impact, near_target, 2.0, 10.0, 0.35), 8.375, 0.001)
+	assert_almost_eq(ArenaCombatRulesScript.calculate_blast_damage(impact, outside_target, 2.0, 10.0, 0.35), 0.0, 0.001)
+
 func test_bot_aim_model_uses_deterministic_patterns() -> void:
 	assert_eq(BotAimModelScript.pattern_for_index(0), Vector2(0.12, 0.04))
 	assert_eq(BotAimModelScript.pattern_for_index(6), Vector2(0.12, 0.04))

@@ -35,3 +35,28 @@ static func get_pickup_respawn_duration(
 	overcharge_respawn: float
 ) -> float:
 	return health_respawn if pickup_kind == &"health" else overcharge_respawn
+
+static func calculate_blast_falloff(
+	impact_position: Vector3,
+	target_position: Vector3,
+	blast_radius: float
+) -> float:
+	var safe_radius := maxf(0.001, blast_radius)
+	var distance := impact_position.distance_to(target_position)
+	if distance > safe_radius:
+		return 0.0
+	return clampf(1.0 - distance / safe_radius, 0.0, 1.0)
+
+static func calculate_blast_damage(
+	impact_position: Vector3,
+	target_position: Vector3,
+	blast_radius: float,
+	max_damage: float,
+	min_damage_fraction: float
+) -> float:
+	var falloff := calculate_blast_falloff(impact_position, target_position, blast_radius)
+	if falloff <= 0.0:
+		return 0.0
+	var safe_minimum := clampf(min_damage_fraction, 0.0, 1.0)
+	var damage_fraction := lerpf(safe_minimum, 1.0, falloff)
+	return max_damage * damage_fraction
