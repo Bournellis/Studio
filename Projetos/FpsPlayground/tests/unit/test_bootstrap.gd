@@ -4,6 +4,7 @@ const BootstrapSceneGeneratorScript = preload("res://tools/bootstrap_scene_gener
 const PlayerScript = preload("res://gameplay/player/fps_player_controller.gd")
 const ArenaHudScript = preload("res://presentation/hud/arena_hud.gd")
 const FeedbackScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
+const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 
@@ -490,6 +491,73 @@ func test_player_shot_ray_damages_bot_when_aimed_at_body() -> void:
 
 	assert_lt(bot.health, before)
 	assert_eq(feedback.last_event, &"hit")
+	assert_no_new_orphans()
+
+func test_player_weapon_roles_keep_rifle_precision_and_plasma_commitment() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var rifle_rate: float = ArenaCombatRulesScript.calculate_sustained_damage_rate(player.shot_damage, player.shot_cooldown)
+	var plasma_rate: float = ArenaCombatRulesScript.calculate_sustained_damage_rate(player.alt_fire_damage, player.alt_fire_cooldown)
+
+	assert_gt(player.alt_fire_damage, player.shot_damage)
+	assert_gt(player.alt_fire_knockback, player.shot_knockback)
+	assert_gt(player.alt_fire_cooldown, player.shot_cooldown * 4.0)
+	assert_gt(rifle_rate, plasma_rate * 3.0)
+	assert_almost_eq(player.move_speed, 7.8, 0.001)
+	assert_almost_eq(player.jump_velocity, 5.6, 0.001)
+	assert_almost_eq(player.air_control, 0.72, 0.001)
+	assert_no_new_orphans()
+
+func test_plasma_blast_role_stays_partial_and_overcharge_extends_pressure() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var normal_direct: float = player.alt_fire_damage
+	var overcharged_direct: float = ArenaCombatRulesScript.calculate_overcharged_value(
+		normal_direct,
+		player.overcharge_damage_multiplier,
+		true
+	)
+	var normal_blast_max: float = normal_direct * arena.debug_get_plasma_blast_damage_fraction()
+	var overcharged_blast_max: float = overcharged_direct * arena.debug_get_plasma_blast_damage_fraction()
+
+	assert_lt(normal_blast_max, normal_direct)
+	assert_lt(normal_blast_max, player.shot_damage)
+	assert_lt(overcharged_blast_max, overcharged_direct)
+	assert_lt(overcharged_blast_max, player.shot_damage)
+	assert_gt(overcharged_blast_max, normal_blast_max)
+	assert_gt(arena.debug_get_plasma_blast_radius(true), arena.debug_get_plasma_blast_radius(false))
+	assert_lte(arena.debug_get_plasma_blast_min_damage_fraction(), 0.24)
+	assert_no_new_orphans()
+
+func test_bot_weapon_role_stays_readable_pressure_not_burst() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var bot_overcharge_damage: float = ArenaCombatRulesScript.calculate_overcharged_value(
+		bot.shoot_damage,
+		bot.overcharge_damage_multiplier,
+		true
+	)
+
+	assert_lt(bot.shoot_damage, player.shot_damage)
+	assert_lt(bot_overcharge_damage, player.alt_fire_damage)
+	assert_gte(bot.shot_tell_duration, 0.18)
+	assert_gt(bot.shoot_cooldown, player.shot_cooldown * 3.0)
 	assert_no_new_orphans()
 
 func test_hud_tracks_combat_readability_events() -> void:

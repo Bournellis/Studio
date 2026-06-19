@@ -36,6 +36,12 @@ static func get_pickup_respawn_duration(
 ) -> float:
 	return health_respawn if pickup_kind == &"health" else overcharge_respawn
 
+static func calculate_overcharged_value(base_value: float, multiplier: float, overcharged: bool) -> float:
+	return base_value * (multiplier if overcharged else 1.0)
+
+static func calculate_sustained_damage_rate(damage: float, cooldown: float) -> float:
+	return damage / maxf(0.001, cooldown)
+
 static func calculate_blast_falloff(
 	impact_position: Vector3,
 	target_position: Vector3,

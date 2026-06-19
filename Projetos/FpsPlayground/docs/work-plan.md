@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK09_COMBAT_SANDBOX_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK10_COMBAT_BALANCE_READY_FOR_SMOKE`
 - Current surface: FPS arena lab.
-- Current baseline: Track 09 implemented locally; current player movement feel preserved.
+- Current baseline: Track 10 implemented locally; current player movement feel preserved.
 
 ## North Star
 
@@ -19,7 +19,8 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 - Track 07 adds repeatable duel state and HUD clarity without combat or map balance changes.
 - Track 08 movement feel experiment was discarded before merge; keep current movement feel for now.
 - Track 09 adds Plasma Impact Blast V1 without movement, map or bot route-control changes.
-- Validation baseline: `tools/validate.gd` PASS `39/39`, `371 asserts`.
+- Track 10 tunes weapon roles without movement, map or bot route-control changes.
+- Validation baseline: `tools/validate.gd` PASS `43/43`, `396 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Track Sequence
@@ -68,6 +69,22 @@ Delivered:
 - Plasma Bolt world impacts create a readable partial blast.
 - Overcharged Plasma Bolt blast reaches farther and reads differently.
 - Direct plasma hits, rifle behavior, player movement, jump pads, maps and bot route-control are preserved.
+
+### 4. Track 10 - Combat Balance And Weapon Roles V1
+
+Status: ready for human smoke.
+
+Goal:
+
+- Consolidate clear weapon roles after Plasma Impact Blast V1.
+
+Delivered:
+
+- Rifle remains the precision and sustained DPS tool.
+- Direct Plasma is now a high-commitment impact shot at `24` damage.
+- Plasma Blast remains pressure/near-miss value at `46%` max damage and `22%` min damage fraction.
+- Bot shot pressure remains readable and below player burst.
+- Player movement, sensitivity, jump pads, maps, bot route-control and pickups are preserved.
 
 ## Out Of Scope
 

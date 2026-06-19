@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado e aprovado; Track 09N A/B pre-publicacao PASS sem publicacao; producao segue 09I) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 09 combat sandbox implementada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado e aprovado; Track 09N A/B pre-publicacao PASS sem publicacao; producao segue 09I) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 10 combat balance implementada localmente; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -44,13 +44,13 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK09_COMBAT_SANDBOX_READY_FOR_SMOKE`
-- Marker: `FPS_PLAYGROUND_TRACK09_COMBAT_SANDBOX_READY_FOR_SMOKE`
-- Baseline: Track 09 implementada localmente; Plasma Bolt agora tem world-impact blast parcial e legivel; direct hit/rifle preservados.
+- Status: `P2_IMPLEMENTACAO - TRACK10_COMBAT_BALANCE_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK10_COMBAT_BALANCE_READY_FOR_SMOKE`
+- Baseline: Track 10 implementada localmente; Plasma direto, Plasma Blast, overcharge e pressao do bot agora tem papeis testaveis.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
-- Validacao: `tools/validate.gd` PASS `39/39`, `371 asserts`; warnings GUT UID/text-path conhecidos.
+- Validacao: `tools/validate.gd` PASS `43/43`, `396 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: smoke humano da Track 09 no editor, focando blast readability e nenhuma regressao no feel aprovado.
+- Proximo passo: smoke humano da Track 10 no editor, focando papeis de arma e nenhuma regressao no feel aprovado.
 
 ## rpg-isometrico
 

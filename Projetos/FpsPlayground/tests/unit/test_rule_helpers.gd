@@ -47,6 +47,12 @@ func test_arena_pickup_respawn_uses_kind_contract() -> void:
 	assert_almost_eq(ArenaCombatRulesScript.get_pickup_respawn_duration(&"health", 10.0, 14.0), 10.0, 0.001)
 	assert_almost_eq(ArenaCombatRulesScript.get_pickup_respawn_duration(&"overcharge", 10.0, 14.0), 14.0, 0.001)
 
+func test_arena_weapon_role_helpers_calculate_overcharge_and_damage_rate() -> void:
+	assert_almost_eq(ArenaCombatRulesScript.calculate_overcharged_value(20.0, 1.35, false), 20.0, 0.001)
+	assert_almost_eq(ArenaCombatRulesScript.calculate_overcharged_value(20.0, 1.35, true), 27.0, 0.001)
+	assert_almost_eq(ArenaCombatRulesScript.calculate_sustained_damage_rate(22.0, 0.18), 122.222, 0.001)
+	assert_almost_eq(ArenaCombatRulesScript.calculate_sustained_damage_rate(24.0, 0.9), 26.667, 0.001)
+
 func test_arena_plasma_blast_falloff_and_damage_contract() -> void:
 	var impact := Vector3.ZERO
 	var near_target := Vector3(0.0, 0.0, 0.5)
