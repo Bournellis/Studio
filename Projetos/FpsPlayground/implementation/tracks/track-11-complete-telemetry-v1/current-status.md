@@ -46,6 +46,7 @@ Add complete local duel telemetry so future balance, bot, map and combat-feel de
 - Added schema/summary/file-output tests plus Track 10 gameplay guardrails.
 - Added validation guardrails for the telemetry script and documentation.
 - Hotfix V1: `plasma_blast` remains in Plasma/damage contribution metrics, but no longer creates invalid fired-weapon accuracy rows.
+- Hotfix V2: `summary.json` is flushed with each recorded event so interrupted or reset sessions remain reviewable.
 
 ## Validation
 
@@ -58,7 +59,7 @@ powershell -ExecutionPolicy Bypass -File D:\Estudio\tools\check_doc_drift.ps1
 Latest local result:
 
 ```text
-PASS, GUT 48/48, 449 asserts
+PASS, GUT 48/48, 456 asserts
 ```
 
 ## Human Smoke

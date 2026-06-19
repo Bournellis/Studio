@@ -11,6 +11,7 @@
 - `summary.json`: compact session summary for quick playtest review.
 
 The runtime writes files under `user://telemetry/<session_id>/` when local output is enabled.
+`summary.json` is flushed after each recorded event, so compact review data stays aligned with `events.jsonl` even if the session is closed or reset before a clean `session_end`.
 
 ## Event Families
 

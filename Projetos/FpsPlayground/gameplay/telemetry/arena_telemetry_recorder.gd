@@ -71,6 +71,7 @@ func record_event(event_name: StringName, payload: Dictionary = {}) -> Dictionar
 		_events.remove_at(0)
 	_apply_event_to_summary(event)
 	_write_event(event)
+	flush_summary()
 	return event
 
 func flush_summary() -> void:

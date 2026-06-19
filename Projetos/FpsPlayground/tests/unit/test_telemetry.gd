@@ -79,12 +79,24 @@ func test_telemetry_recorder_can_write_local_files() -> void:
 		"round_index": 1
 	}, true, output_dir)
 	recorder.record_event(&"round_start", {"reason": &"file_test"})
-	recorder.finish_session({"reason": &"unit_done"})
 
 	var paths: Dictionary = recorder.get_output_paths()
 	assert_true(bool(paths.get("file_output_enabled", false)))
 	assert_true(FileAccess.file_exists(str(paths.get("events_file", ""))))
 	assert_true(FileAccess.file_exists(str(paths.get("summary_file", ""))))
+	var parsed_before_finish: Variant = JSON.parse_string(FileAccess.get_file_as_string(str(paths.get("summary_file", ""))))
+	assert_true(parsed_before_finish is Dictionary)
+	var summary_before_finish: Dictionary = parsed_before_finish as Dictionary
+	assert_eq(int(summary_before_finish.get("events_recorded", 0)), 2)
+	assert_eq(int(summary_before_finish.get("event_counts", {}).get("session_start", 0)), 1)
+	assert_eq(int(summary_before_finish.get("event_counts", {}).get("round_start", 0)), 1)
+	assert_eq(int(summary_before_finish.get("event_counts", {}).get("session_end", 0)), 0)
+
+	recorder.finish_session({"reason": &"unit_done"})
+	var parsed_after_finish: Variant = JSON.parse_string(FileAccess.get_file_as_string(str(paths.get("summary_file", ""))))
+	assert_true(parsed_after_finish is Dictionary)
+	var summary_after_finish: Dictionary = parsed_after_finish as Dictionary
+	assert_eq(int(summary_after_finish.get("event_counts", {}).get("session_end", 0)), 1)
 	assert_no_new_orphans()
 
 func test_telemetry_recorder_keeps_plasma_blast_out_of_weapon_accuracy() -> void:
