@@ -5,18 +5,18 @@
 - Product/module name: `Super Campeao`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
-- Public baseline: `Super Campeao v1.2.1+5c6520ba`
-- Active stage status: `LOCAL_VALIDATED - Track 09P reduction candidate; publication pending`
-- Status marker: `JOGO_DA_COPA_TRACK09P_LOCAL_VALIDATED`
+- Public baseline: `Super Campeao v1.2.1+8863c5b9`
+- Active stage status: `PUBLISHED_REMOTE_GATES_PASS - Track 09P human retest pending`
+- Status marker: `JOGO_DA_COPA_TRACK09P_PUBLISHED_REMOTE_GATES_PASS`
 - Documentation baseline: `Track 09P Session UI Controller V1`
 
 ## Current Truth
 
-`JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, published on Cloudflare Pages as `v1.2.1+5c6520ba`.
+`JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, published on Cloudflare Pages as `v1.2.1+8863c5b9`.
 
-Track 09N is the current approved public baseline. It extracted render/settings orchestration into `football_render_settings_controller.gd`, reduced `FootballRoot` from `1079` to `1051` lines, passed local validation, passed pre-publication A/B, passed remote menu/first-minute/stability/luma gates and passed human retest.
+Track 09P is the current public build with automated remote gates green. It extracted session/UI orchestration into `football_session_ui_controller.gd`, reduced `FootballRoot` from `1051` to `974` lines, passed local import, validate/export/gzip, 90s Chrome Web smoke, remote menu, remote first-minute, remote 5-minute stability and remote luma gates. Human retest is pending.
 
-Track 09P is the current local validated candidate. It extracted session/UI orchestration into `football_session_ui_controller.gd`, reduced `FootballRoot` from `1051` to `974` lines, passed local import, validate/export/gzip and 90s Chrome Web smoke. It is not published yet.
+Track 09N remains the approved fallback baseline until 09P is human-approved. It extracted render/settings orchestration into `football_render_settings_controller.gd`, reduced `FootballRoot` from `1079` to `1051` lines, passed local validation, passed pre-publication A/B, passed remote menu/first-minute/stability/luma gates and passed human retest.
 
 Tracks 09J and 09K are not approved public baselines because their 2026-06-19 publication attempts failed the remote heap gate; production was restored to 09I before 09L/09M diagnostics. Track 09L/09M clarified that the active Chrome stability metric is exposed JS heap, now named `js_heap_growth`.
 
@@ -57,29 +57,20 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-`Super Campeao v1.2.1+5c6520ba` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260619-5c6520ba`.
+`Super Campeao v1.2.1+8863c5b9` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260619-8863c5b9`.
 
-Latest approved publication:
+Latest publication:
 
-- Local validation: `tools/validate.gd` PASS, `104/104` tests, `1826` asserts, `58` source files checked.
+- Local validation: `tools/validate.gd` PASS, `104/104` tests, `1826` asserts, `59` source files checked.
 - Web package/export: PASS.
 - Web gzip transfer: `30.60 MiB / 50.00 MiB`.
-- Pre-publication A/B against 09I: PASS.
 - Remote menu: PASS.
 - Remote first minute: PASS, `firstMinuteHitches=0`.
-- Remote stability 5min: PASS, `js_heap_growth +0.41%`, peak `+6.05%`, `wasmSampleCount=0`.
+- Remote stability 5min: PASS, `js_heap_growth +2.15%`, peak `+7.18%`, `wasmSampleCount=0`.
 - Remote night luma: PASS, `6.525 < 90`.
-- Human retest: approved by Fabio/tester on 2026-06-19.
+- Human retest: pending.
 
-Track 09I remains the historical approved fallback baseline.
-
-Latest local candidate:
-
-- Track 09P local validation: import headless PASS; `tools/validate.gd` PASS, `104/104` tests, `1826` asserts, `59` source files checked.
-- Web package/export: PASS.
-- Web gzip transfer: `30.60 MiB / 50.00 MiB`.
-- Local Chrome Web smoke 90s: PASS, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`, `js_heap_growth -1.26%`.
-- Publication status: not published; 09N remains the approved public baseline.
+Track 09N remains the approved fallback baseline. Track 09I remains the historical approved fallback behind 09N.
 
 ## Validation
 
@@ -102,7 +93,7 @@ D:\Estudio\tools\check_doc_drift.ps1
 git diff --check
 ```
 
-Latest code validation is the Track 09P local candidate gate listed above. Track 09O was documentation-only and did not change code, scenes, assets, export or publication.
+Latest code and publication validation is the Track 09P gate listed above. Track 09O was documentation-only and did not change code, scenes, assets, export or publication.
 
 ## Documentation Map
 
@@ -117,9 +108,4 @@ Latest code validation is the Track 09P local candidate gate listed above. Track
 
 ## Next Step
 
-Publish/test Track 09P before another `FootballRoot` reduction, or stop for a fresh architecture review if the local candidate is not promoted. Keep any next slice conservative: no gameplay, physics, input, bot decision, HUD visual, asset or tuning change unless Fabio explicitly opens a tuning/design track.
-
-Required gates before promoting Track 09P:
-
-- Remote 5-minute `js_heap_growth` gate in the publication flow.
-- Human retest after publication before promoting the build as product-approved.
+Run the human retest for Track 09P on the public URL before another `FootballRoot` reduction. If approved, mark 09P as the approved public baseline; if rejected, restore/publish 09N and register the blocker. Keep any next slice conservative: no gameplay, physics, input, bot decision, HUD visual, asset or tuning change unless Fabio explicitly opens a tuning/design track.

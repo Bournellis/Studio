@@ -7,20 +7,20 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09P validada localmente; publico aprovado segue 09N `Super Campeao v1.2.1+5c6520ba`) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 11 complete telemetry aprovada no smoke humano; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09P publicada com gates remotos PASS; aguardando reteste humano; 09N segue fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 11 complete telemetry aprovada no smoke humano; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09P_LOCAL_VALIDATED`
-- Marker: `JOGO_DA_COPA_TRACK09P_LOCAL_VALIDATED`
-- Baseline publico: `Super Campeao v1.2.1+5c6520ba` (`web/v1-copa-arena-futebol-20260619-5c6520ba`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09N PASS; reteste humano aprovado; 09I segue fallback historico aprovado.
+- Status: `P2_IMPLEMENTACAO - TRACK09P_PUBLISHED_REMOTE_GATES_PASS`
+- Marker: `JOGO_DA_COPA_TRACK09P_PUBLISHED_REMOTE_GATES_PASS`
+- Baseline publico: `Super Campeao v1.2.1+8863c5b9` (`web/v1-copa-arena-futebol-20260619-8863c5b9`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09P PASS; reteste humano pendente; 09N segue fallback aprovado.
 - Diagnostico atual: Track 09M renomeou o gate primario para `js_heap_growth`, preservou alias legado `js_wasm_heap_growth` e confirmou 09I remoto PASS (`+9.38%`, `wasmSampleCount=0`).
-- Implementacao local: Track 09P extraiu session/UI para `football_session_ui_controller.gd`; `FootballRoot` `1051 -> 974`; import/validate/export/gzip/Web smoke 90s PASS (`js_heap_growth -1.26%`); nao publicada.
+- Implementacao/publicacao: Track 09P extraiu session/UI para `football_session_ui_controller.gd`; `FootballRoot` `1051 -> 974`; import/validate/export/gzip/Web smoke 90s e gates remotos PASS (`js_heap_growth +2.15%` remoto).
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: publicar/testar 09P antes de nova reducao, mantendo 09N como baseline publica ate gates remotos e reteste humano aprovarem 09P.
+- Proximo passo: Fabio/tester fazer reteste humano da 09P publicada antes de nova reducao; se aprovado, promover 09P a baseline aprovada, senao restaurar 09N e registrar bloqueio.
 
 ## draxos-roguelike-cardgame
 
