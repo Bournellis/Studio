@@ -37,6 +37,7 @@ Delivered:
 - Added automated schema, summary, local-file and Track 10 gameplay guardrail tests.
 - Hotfix V1 keeps `plasma_blast` out of fired weapon accuracy while preserving Plasma and damage-source contribution metrics.
 - Hotfix V2 keeps `summary.json` synchronized with `events.jsonl` during interrupted or reset sessions.
+- Hotfix V3 marks active `R` restarts as `round_reset reason=manual_restart` before the next `round_start`.
 - Kept player movement, sensitivity, jump pads, arena geometry, bot route-control, pickup rules and weapon values unchanged.
 
 Human smoke should focus on confirming telemetry files are created, readable and useful for balance/bot/map decisions without any gameplay feel regression.
@@ -68,7 +69,7 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 48/48, 456 asserts
+# PASS, GUT 49/49, 464 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.

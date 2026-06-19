@@ -201,6 +201,35 @@ func test_arena_telemetry_records_round_combat_pickup_and_movement() -> void:
 	assert_false(bool(arena.debug_get_telemetry_output_paths().get("file_output_enabled", true)))
 	assert_no_new_orphans()
 
+func test_arena_telemetry_marks_manual_restart_before_round_start() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	arena.restart_round()
+	var events: Array[Dictionary] = arena.debug_get_telemetry_events()
+	var manual_reset_index: int = -1
+	var next_round_start_index: int = -1
+	for index in range(events.size()):
+		var event: Dictionary = events[index]
+		if String(event.get("event", "")) == "round_reset" and String(event.get("reason", "")) == "manual_restart":
+			manual_reset_index = index
+		elif manual_reset_index >= 0 and next_round_start_index == -1 and String(event.get("event", "")) == "round_start":
+			next_round_start_index = index
+
+	assert_gt(manual_reset_index, -1)
+	assert_gt(next_round_start_index, manual_reset_index)
+	var reset_event: Dictionary = events[manual_reset_index]
+	assert_eq(int(reset_event.get("round_index", 0)), 1)
+	assert_eq(int(reset_event.get("next_round_index", 0)), 1)
+	var summary: Dictionary = arena.debug_get_telemetry_summary()
+	assert_eq(int(summary.get("event_counts", {}).get("round_reset", 0)), 1)
+	assert_eq(int(summary.get("event_counts", {}).get("round_start", 0)), 2)
+	assert_eq(int(summary.get("rounds_started", 0)), 2)
+	assert_no_new_orphans()
+
 func test_arena_telemetry_preserves_track10_gameplay_values() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	var arena := arena_scene.instantiate()

@@ -149,6 +149,11 @@ func restart_round() -> void:
 			"reason": "next_round",
 			"next_round_index": round_index
 		})
+	else:
+		_record_telemetry_event(&"round_reset", {
+			"reason": "manual_restart",
+			"next_round_index": round_index
+		})
 	_start_round()
 
 func start_new_match() -> void:

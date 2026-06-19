@@ -35,6 +35,8 @@ Every event should include:
 - `map_id`
 - `map_name`
 
+`round_reset` uses `reason=next_round` after a finished round and `reason=manual_restart` when the player presses restart during active play.
+
 Combat events should also include:
 
 - `actor`
