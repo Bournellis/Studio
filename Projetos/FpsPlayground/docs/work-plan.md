@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK09_COMBAT_SANDBOX_READY_FOR_SMOKE`
 - Current surface: FPS arena lab.
-- Current baseline: Track 07 implemented locally; current player movement feel preserved.
+- Current baseline: Track 09 implemented locally; current player movement feel preserved.
 
 ## North Star
 
@@ -18,7 +18,8 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 - Bot movement is route-first, item-aware and committed through jump pad routes.
 - Track 07 adds repeatable duel state and HUD clarity without combat or map balance changes.
 - Track 08 movement feel experiment was discarded before merge; keep current movement feel for now.
-- Validation baseline: `tools/validate.gd` PASS `34/34`, `340 asserts`.
+- Track 09 adds Plasma Impact Blast V1 without movement, map or bot route-control changes.
+- Validation baseline: `tools/validate.gd` PASS `39/39`, `371 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Track Sequence
@@ -50,7 +51,7 @@ Decision:
 
 ### 3. Track 09 - Combat Sandbox Expansion V1
 
-Status: recommended next.
+Status: ready for human smoke.
 
 Goal:
 
@@ -61,6 +62,12 @@ Expected scope:
 - one new weapon, projectile variant or pickup rule;
 - clear readability and counterplay contract;
 - tests for damage, feedback and cooldown/resource behavior.
+
+Delivered:
+
+- Plasma Bolt world impacts create a readable partial blast.
+- Overcharged Plasma Bolt blast reaches farther and reads differently.
+- Direct plasma hits, rifle behavior, player movement, jump pads, maps and bot route-control are preserved.
 
 ## Out Of Scope
 

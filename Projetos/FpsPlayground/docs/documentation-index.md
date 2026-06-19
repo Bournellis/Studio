@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK09_COMBAT_SANDBOX_READY_FOR_SMOKE`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -33,6 +33,7 @@
 - `../implementation/tracks/track-05b-long-jump-pad-first-try-v1/current-status.md`
 - `../implementation/tracks/track-06-arena-variety-bot-generalization-v1/current-status.md`
 - `../implementation/tracks/track-07-match-flow-duel-ux-v1/current-status.md`
+- `../implementation/tracks/track-09-combat-sandbox-expansion-v1/current-status.md`
 
 ## Split Note
 

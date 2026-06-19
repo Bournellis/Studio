@@ -6,10 +6,10 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest Track 07 local result:
+Latest Track 09 local result:
 
 ```text
-PASS, GUT 34/34, 340 asserts
+PASS, GUT 39/39, 371 asserts
 ```
 
 Profiles:
@@ -124,6 +124,16 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Pause during active play, resume, then return to menu.
 - Return to menu after a match and select a different arena; confirm score does not leak.
 - Confirm bot movement/combat still feels like Track 06: route-first, item-aware and able to shoot as overlay.
+
+## Track 09 Combat Sandbox Smoke
+
+- Confirm rifle and direct Plasma Bolt still feel unchanged.
+- Fire Plasma Bolt into floor/walls near the bot and confirm a readable partial blast.
+- Confirm overcharged Plasma Bolt blast is more visible and stronger.
+- Confirm the blast does not create player self-damage or rocket-jump behavior.
+- Confirm player movement, jump pads and all three arena routes feel unchanged.
+- Confirm bot remains route-first and does not gain unfair aim or reaction.
+- Confirm round flow, score, restart and pause-menu reset still work.
 
 ## Known Noise
 

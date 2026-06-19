@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado e aprovado; Tracks 09J/09K bloqueadas no heap remoto e rollback para 09I) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (movimento atual preservado; Track 08 descartada antes de merge)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado e aprovado; Tracks 09J/09K bloqueadas no heap remoto e rollback para 09I) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 09 combat sandbox implementada localmente; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -43,13 +43,13 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK07_MATCH_FLOW_DUEL_UX_READY_FOR_SMOKE`
-- Marker: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_READY_FOR_SMOKE`
-- Baseline: Track 07 implementada localmente; arena 1x1 agora tem score, rounds, first-to-3, resultado persistente e novo duelo.
-- Decisao recente: Track 08 movement feel descartada antes de merge; manter feel atual do player por enquanto.
-- Validacao: `tools/validate.gd` PASS `34/34`, `340 asserts`; warnings GUT UID/text-path conhecidos.
+- Status: `P2_IMPLEMENTACAO - TRACK09_COMBAT_SANDBOX_READY_FOR_SMOKE`
+- Marker: `FPS_PLAYGROUND_TRACK09_COMBAT_SANDBOX_READY_FOR_SMOKE`
+- Baseline: Track 09 implementada localmente; Plasma Bolt agora tem world-impact blast parcial e legivel; direct hit/rifle preservados.
+- Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
+- Validacao: `tools/validate.gd` PASS `39/39`, `371 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: executar Track 09 combat sandbox sem mexer em movimento.
+- Proximo passo: smoke humano da Track 09 no editor, focando blast readability e nenhuma regressao no feel aprovado.
 
 ## rpg-isometrico
 

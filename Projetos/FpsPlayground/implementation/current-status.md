@@ -4,22 +4,22 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 07 - Match Flow And Duel UX V1`
+- Active stage: `Track 09 - Combat Sandbox Expansion V1`
 - Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_READY_FOR_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK09_COMBAT_SANDBOX_READY_FOR_SMOKE`
 
 ## Current Truth
 
 `FpsPlayground` owns the FPS arena work split from the former `FpsShooter`. Football/TPS work belongs to `Projetos/JogoDaCopa`.
 
-The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow and the pre-Track-08 player movement feel preserved.
+The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1 and the pre-Track-08 player movement feel preserved.
 
 ## Current Scope
 
 - PC Windows editor-first.
 - Main menu with `Arena Shooter`.
 - Arenas: `Duel Pit V2`, `Relay Foundry V1`, `Crossfire Crucible V1`.
-- Rifle hitscan, RMB Plasma Bolt, pickups, jump pads, high-route flow and knockback.
+- Rifle hitscan, RMB Plasma Bolt with world-impact blast, pickups, jump pads, high-route flow and knockback.
 - Bot with route-control movement, combat overlay shooting, item priorities and jump pad commitment.
 - Duel state: round index, player/bot score, first to 3, round result and match result.
 - Runtime primitive visuals/audio and GUT validation.
@@ -27,18 +27,17 @@ The approved baseline has three selectable 1x1 arenas, route-first bot movement,
 
 ## Latest Track
 
-`Track 07 - Match Flow And Duel UX V1`
+`Track 09 - Combat Sandbox Expansion V1`
 
 Delivered:
 
-- Added explicit duel state: `playing`, round win states and `match_over`.
-- Added player/bot score, round index, first-to-3 target and winner tracking.
-- Made `R` advance to next round after a result and start a fresh match after match over.
-- Added pause-menu `Novo duelo` reset.
-- Added persistent HUD score, round and result labels.
-- Added tests for score progression, duplicate round-end safety, match reset and clean starts across all arenas.
+- Added Plasma Impact Blast V1 for Plasma Bolt world impacts.
+- Kept direct plasma hits, rifle behavior, player movement, jump pads, maps and bot route-control unchanged.
+- Added HUD and feedback events for normal and overcharged blasts.
+- Added deterministic falloff/damage helpers.
+- Added automated coverage for direct hit preservation, partial blast damage, overcharge radius, no self-damage and old jump pad force.
 
-Human smoke should focus on score/result readability, `R` flow, pause/menu reset and no regression in the approved bot/map feel.
+Human smoke should focus on combat feel, blast readability, overcharge blast value and no regression in the approved movement/bot/map feel.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -52,18 +51,20 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 05: Quake-style route-control bot - approved.
 - Track 05B: long jump pad first-try reliability - approved.
 - Track 06: arena variety and bot generalization - approved on `2026-06-19`.
+- Track 07: match flow and duel UX - ready for smoke.
 - Track 08: player movement feel experiment - discarded before merge on `2026-06-19`; current feel preserved.
+- Track 09: combat sandbox expansion - ready for smoke.
 
 ## Next Sequence
 
 1. Preserve current player movement feel.
-2. Execute Track 09 - Combat Sandbox Expansion V1 without movement changes.
+2. Smoke Track 09 - Combat Sandbox Expansion V1 in editor.
 
 ## Validation
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 34/34, 340 asserts
+# PASS, GUT 39/39, 371 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.
@@ -76,4 +77,4 @@ Manual smoke lives in `docs/validation.md`.
 4. `docs/mode-contract.md`
 5. `docs/validation.md`
 6. `docs/bot-route-control.md`
-7. `implementation/tracks/track-07-match-flow-duel-ux-v1/current-status.md`
+7. `implementation/tracks/track-09-combat-sandbox-expansion-v1/current-status.md`

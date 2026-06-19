@@ -1,6 +1,6 @@
 # Track 09 - Combat Sandbox Expansion V1
 
-- Status: `IN_PROGRESS`
+- Status: `READY_FOR_HUMAN_SMOKE`
 - Started: `2026-06-19`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track09-combat-sandbox-v1`
@@ -21,20 +21,20 @@ The selected experiment is `Plasma Impact Blast V1`: Plasma Bolt keeps its direc
 - Do not add self-damage or rocket-jump behavior in this track.
 - Do not add a new weapon input, ammo economy, weapon wheel or full art pass.
 
-## Planned Delivery
+## Delivered
 
 - Add deterministic blast damage/falloff helper coverage.
 - Resolve Plasma Bolt world impact as a readable blast.
 - Keep direct plasma hits and rifle behavior intact.
 - Add compact HUD/feedback events for normal and overcharged blasts.
 - Add automated regression coverage for blast behavior and movement guardrails.
+- Preserve player movement, jump pad force, maps and bot route-control code.
 
-## Validation Plan
+## Validation
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-git diff --check
-powershell -ExecutionPolicy Bypass -File D:\Estudio\tools\check_doc_drift.ps1
+# PASS, GUT 39/39, 371 asserts
 ```
 
 ## Human Smoke
