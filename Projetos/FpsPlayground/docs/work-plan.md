@@ -21,7 +21,7 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 - Track 09 adds Plasma Impact Blast V1 without movement, map or bot route-control changes.
 - Track 10 tunes weapon roles without movement, map or bot route-control changes.
 - Track 11 adds local duel telemetry without movement, map, weapon or bot route-control changes.
-- Validation baseline: `tools/validate.gd` PASS `47/47`, `440 asserts`.
+- Validation baseline: `tools/validate.gd` PASS `48/48`, `449 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Track Sequence

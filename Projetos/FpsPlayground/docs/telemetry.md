@@ -58,8 +58,8 @@ Bot events should also include:
 
 - Rounds played, winner counts and average round duration.
 - Damage by source and actor.
-- Shots, hits, misses and accuracy by weapon.
-- Plasma direct vs blast contribution.
+- Shots, hits, misses and accuracy by fired weapon.
+- Plasma direct vs blast contribution, with blast pressure tracked under `plasma` and `damage_by_source` instead of weapon accuracy.
 - Overcharge pickups, consumed shots and useful overcharge damage.
 - Health pickups, effective healing and wasted healing.
 - Bot route usage and route diversity.

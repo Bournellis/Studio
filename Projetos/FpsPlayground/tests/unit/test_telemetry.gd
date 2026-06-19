@@ -87,6 +87,66 @@ func test_telemetry_recorder_can_write_local_files() -> void:
 	assert_true(FileAccess.file_exists(str(paths.get("summary_file", ""))))
 	assert_no_new_orphans()
 
+func test_telemetry_recorder_keeps_plasma_blast_out_of_weapon_accuracy() -> void:
+	var recorder = ArenaTelemetryRecorderScript.new()
+	recorder.start_session({
+		"session_id": "blast_metrics_session",
+		"map_id": &"relay_foundry_v1",
+		"map_name": "Relay Foundry V1",
+		"round_index": 1
+	}, false)
+	recorder.record_event(&"shot_fired", {
+		"actor": "player",
+		"weapon": "plasma_direct",
+		"overcharged": true
+	})
+	recorder.record_event(&"shot_hit", {
+		"actor": "player",
+		"target": "bot",
+		"weapon": "plasma_blast",
+		"source": "player_plasma_blast",
+		"overcharged": true
+	})
+	recorder.record_event(&"damage_applied", {
+		"actor": "player",
+		"target": "bot",
+		"weapon": "plasma_blast",
+		"source": "player_plasma_blast",
+		"damage": 12.0,
+		"overcharged": true
+	})
+	recorder.record_event(&"plasma_blast", {
+		"actor": "player",
+		"weapon": "plasma_blast",
+		"source": "player_plasma_blast",
+		"damaged_target": true
+	})
+	recorder.record_event(&"shot_miss", {
+		"actor": "player",
+		"weapon": "plasma_blast",
+		"source": "player_plasma_blast",
+		"overcharged": true
+	})
+	recorder.record_event(&"plasma_blast", {
+		"actor": "player",
+		"weapon": "plasma_blast",
+		"source": "player_plasma_blast",
+		"damaged_target": false
+	})
+
+	var summary: Dictionary = recorder.get_summary()
+	var shots: Dictionary = summary.get("shots_by_weapon", {})
+	var plasma: Dictionary = summary.get("plasma", {})
+	assert_true(shots.has("player:plasma_direct"))
+	assert_false(shots.has("player:plasma_blast"))
+	assert_eq(shots.get("player:plasma_direct", {}).get("fired", 0), 1)
+	assert_eq(plasma.get("blast_hits", 0), 1)
+	assert_eq(plasma.get("blast_misses", 0), 1)
+	assert_almost_eq(plasma.get("blast_damage", 0.0), 12.0, 0.001)
+	assert_almost_eq(summary.get("damage_by_source", {}).get("player_plasma_blast", 0.0), 12.0, 0.001)
+	assert_eq(summary.get("overcharge", {}).get("misses", 0), 1)
+	assert_no_new_orphans()
+
 func test_arena_telemetry_records_round_combat_pickup_and_movement() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	var arena := arena_scene.instantiate()

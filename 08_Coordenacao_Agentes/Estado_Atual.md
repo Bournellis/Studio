@@ -46,9 +46,9 @@
 
 - Status: `P2_IMPLEMENTACAO - TRACK11_COMPLETE_TELEMETRY_READY_FOR_SMOKE`
 - Marker: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_READY_FOR_SMOKE`
-- Baseline: Track 11 implementada localmente; telemetria local registra duelos, combate, Plasma, pickups, bot, movimento e jump pads sem mudar gameplay.
+- Baseline: Track 11 implementada localmente; hotfix V1 separou `plasma_blast` de acuracia de arma disparada sem mudar gameplay.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
-- Validacao: `tools/validate.gd` PASS `47/47`, `440 asserts`; warnings GUT UID/text-path conhecidos.
+- Validacao: `tools/validate.gd` PASS `48/48`, `449 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
 - Proximo passo: smoke humano da Track 11 no editor, conferindo `user://telemetry/<session_id>/events.jsonl` e `summary.json` sem regressao no feel aprovado.
 

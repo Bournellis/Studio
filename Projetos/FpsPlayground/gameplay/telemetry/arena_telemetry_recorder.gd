@@ -252,6 +252,8 @@ func _apply_round_end(event: Dictionary) -> void:
 	_summary["round_results"] = results
 
 func _apply_shot_fired(event: Dictionary) -> void:
+	if not _should_track_weapon_shot_stats(event):
+		return
 	var stats := _get_weapon_stats(event)
 	stats["fired"] = int(stats.get("fired", 0)) + 1
 	if bool(event.get("overcharged", false)):
@@ -259,14 +261,16 @@ func _apply_shot_fired(event: Dictionary) -> void:
 		overcharge["shots_consumed"] = int(overcharge.get("shots_consumed", 0)) + 1
 
 func _apply_shot_result(event: Dictionary, hit: bool) -> void:
-	var stats := _get_weapon_stats(event)
-	var key := "hits" if hit else "misses"
-	stats[key] = int(stats.get(key, 0)) + 1
 	if not hit and bool(event.get("overcharged", false)):
 		var overcharge := _get_nested_summary("overcharge")
 		overcharge["misses"] = int(overcharge.get("misses", 0)) + 1
-	var fired: int = maxi(1, int(stats.get("fired", 0)))
-	stats["accuracy"] = float(stats.get("hits", 0)) / float(fired)
+	if not _should_track_weapon_shot_stats(event):
+		return
+	var stats := _get_weapon_stats(event)
+	var key := "hits" if hit else "misses"
+	stats[key] = int(stats.get(key, 0)) + 1
+	var fired: int = int(stats.get("fired", 0))
+	stats["accuracy"] = float(stats.get("hits", 0)) / float(maxi(1, fired))
 
 func _apply_damage(event: Dictionary) -> void:
 	var damage := float(event.get("damage", 0.0))
@@ -274,8 +278,9 @@ func _apply_damage(event: Dictionary) -> void:
 	var source := String(event.get("source", String(event.get("weapon", "unknown"))))
 	_add_float_to_dictionary("damage_by_actor", actor, damage)
 	_add_float_to_dictionary("damage_by_source", source, damage)
-	var stats := _get_weapon_stats(event)
-	stats["damage"] = float(stats.get("damage", 0.0)) + damage
+	if _should_track_weapon_shot_stats(event):
+		var stats := _get_weapon_stats(event)
+		stats["damage"] = float(stats.get("damage", 0.0)) + damage
 	if bool(event.get("overcharged", false)):
 		var overcharge := _get_nested_summary("overcharge")
 		overcharge["useful_damage"] = float(overcharge.get("useful_damage", 0.0)) + damage
@@ -366,6 +371,10 @@ func _get_weapon_stats(event: Dictionary) -> Dictionary:
 		}
 		_summary["shots_by_weapon"] = root
 	return root[key]
+
+func _should_track_weapon_shot_stats(event: Dictionary) -> bool:
+	var weapon := String(event.get("weapon", ""))
+	return weapon != "plasma_blast"
 
 func _get_pickup_stats(pickup_kind: String) -> Dictionary:
 	var root: Dictionary = _summary.get("pickups", {})
