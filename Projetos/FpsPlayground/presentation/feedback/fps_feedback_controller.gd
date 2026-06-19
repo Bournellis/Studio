@@ -26,6 +26,7 @@ var knockback_count: int = 0
 var round_end_count: int = 0
 var plasma_shot_count: int = 0
 var plasma_hit_count: int = 0
+var plasma_blast_count: int = 0
 var plasma_miss_count: int = 0
 var pickup_count: int = 0
 var jump_pad_count: int = 0
@@ -70,6 +71,16 @@ func play_plasma_hit(impact_position: Vector3, overcharged: bool) -> void:
 	_spawn_sphere(impact_position, 0.36 if overcharged else 0.28, color, 0.18, true)
 	_spawn_light(impact_position, color, 3.7 if overcharged else 2.8, 3.2, 0.16)
 	_spawn_tone(impact_position, 760.0 if overcharged else 640.0, 0.09, -8.8)
+
+func play_plasma_blast(impact_position: Vector3, blast_radius: float, overcharged: bool, damaged_target: bool) -> void:
+	last_event = &"plasma_blast"
+	plasma_blast_count += 1
+	var color := OVERCHARGE_COLOR if overcharged else PLASMA_COLOR
+	var flash_radius := clampf(blast_radius * 0.32, 0.44, 0.84)
+	var halo_color := Color(color.r, color.g, color.b, 0.58 if damaged_target else 0.38)
+	_spawn_sphere(impact_position, flash_radius, halo_color, 0.2 if damaged_target else 0.14, true)
+	_spawn_light(impact_position, color, 4.8 if overcharged else 3.4, blast_radius * 2.1, 0.16)
+	_spawn_tone(impact_position, 520.0 if damaged_target else 360.0, 0.08, -10.5 if damaged_target else -14.0)
 
 func play_plasma_miss(impact_position: Vector3, overcharged: bool) -> void:
 	last_event = &"plasma_miss"

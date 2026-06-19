@@ -523,6 +523,11 @@ func test_hud_tracks_combat_readability_events() -> void:
 	assert_true(hud.last_plasma_hit_overcharged)
 	assert_eq(hud.event_label.text, "OVERCHARGE HIT")
 
+	hud.show_plasma_blast(false, false)
+	assert_eq(hud.last_feedback, &"plasma_blast")
+	assert_eq(hud.plasma_blast_count, 1)
+	assert_eq(hud.event_label.text, "PLASMA BLAST")
+
 	hud.show_player_damage(9.0, 0.82)
 	assert_eq(hud.last_feedback, &"player_damage")
 	assert_eq(hud.player_damage_count, 1)
@@ -549,6 +554,115 @@ func test_player_alt_fire_spawns_visible_plasma_projectile() -> void:
 	)
 
 	assert_eq(arena.debug_get_active_projectile_count(), before_count + 1)
+	assert_no_new_orphans()
+
+func test_player_plasma_direct_hit_keeps_direct_damage_contract() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var hud = arena.get_node("ArenaHud")
+	var feedback = arena.get_node("FeedbackController")
+	var before: float = bot.health
+	arena._resolve_player_projectile_hit({
+		"velocity": Vector3.FORWARD * player.alt_fire_speed,
+		"damage": player.alt_fire_damage,
+		"knockback": player.alt_fire_knockback,
+		"overcharged": false
+	}, bot.get_body_center(), bot)
+
+	assert_almost_eq(bot.health, before - player.alt_fire_damage, 0.001)
+	assert_eq(hud.last_feedback, &"plasma_hit")
+	assert_eq(hud.plasma_blast_count, 0)
+	assert_eq(feedback.last_event, &"plasma_hit")
+	assert_no_new_orphans()
+
+func test_player_plasma_world_impact_applies_partial_blast_damage_near_bot() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var hud = arena.get_node("ArenaHud")
+	var feedback = arena.get_node("FeedbackController")
+	var before: float = bot.health
+	var impact_position: Vector3 = bot.get_body_center() + Vector3(0.0, 0.0, 0.75)
+	arena._resolve_player_projectile_hit({
+		"velocity": Vector3.FORWARD * player.alt_fire_speed,
+		"damage": player.alt_fire_damage,
+		"knockback": player.alt_fire_knockback,
+		"overcharged": false
+	}, impact_position, null)
+
+	assert_lt(bot.health, before)
+	assert_gt(bot.health, before - player.alt_fire_damage)
+	assert_eq(hud.last_feedback, &"plasma_blast")
+	assert_eq(hud.plasma_blast_count, 1)
+	assert_eq(feedback.last_event, &"plasma_blast")
+	assert_eq(feedback.plasma_blast_count, 1)
+	assert_no_new_orphans()
+
+func test_player_overcharged_plasma_blast_reaches_farther_than_normal_blast() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var hud = arena.get_node("ArenaHud")
+	var before: float = bot.health
+	var impact_position: Vector3 = bot.get_body_center() + Vector3(1.9, 0.0, 0.0)
+	arena._resolve_player_projectile_hit({
+		"velocity": Vector3.FORWARD * player.alt_fire_speed,
+		"damage": player.alt_fire_damage,
+		"knockback": player.alt_fire_knockback,
+		"overcharged": false
+	}, impact_position, null)
+	assert_almost_eq(bot.health, before, 0.001)
+
+	arena._resolve_player_projectile_hit({
+		"velocity": Vector3.FORWARD * player.alt_fire_speed,
+		"damage": player.alt_fire_damage * player.overcharge_damage_multiplier,
+		"knockback": player.alt_fire_knockback * player.overcharge_knockback_multiplier,
+		"overcharged": true
+	}, impact_position, null)
+
+	assert_lt(bot.health, before)
+	assert_eq(hud.last_feedback, &"overcharge_blast")
+	assert_no_new_orphans()
+
+func test_player_plasma_blast_does_not_damage_player() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var player = arena.debug_get_player()
+	var bot = arena.debug_get_bot()
+	var feedback = arena.get_node("FeedbackController")
+	var before_player: float = player.health
+	var before_bot: float = bot.health
+	bot.global_position = player.global_position + Vector3(10.0, 0.0, 10.0)
+	arena._resolve_player_projectile_hit({
+		"velocity": Vector3.FORWARD * player.alt_fire_speed,
+		"damage": player.alt_fire_damage,
+		"knockback": player.alt_fire_knockback,
+		"overcharged": false
+	}, player.get_body_center(), null)
+
+	assert_almost_eq(player.health, before_player, 0.001)
+	assert_almost_eq(bot.health, before_bot, 0.001)
+	assert_eq(feedback.last_event, &"plasma_blast")
 	assert_no_new_orphans()
 
 func test_pickups_heal_player_and_grant_overcharge() -> void:
@@ -600,6 +714,9 @@ func test_feedback_controller_builds_synthetic_audio_stream() -> void:
 	feedback.play_plasma_hit(Vector3.FORWARD, true)
 	assert_eq(feedback.last_event, &"plasma_hit")
 	assert_eq(feedback.plasma_hit_count, 1)
+	feedback.play_plasma_blast(Vector3.FORWARD, 1.65, false, true)
+	assert_eq(feedback.last_event, &"plasma_blast")
+	assert_eq(feedback.plasma_blast_count, 1)
 	assert_not_null(feedback.debug_make_synthetic_stream(440.0, 0.02))
 	assert_no_new_orphans()
 

@@ -20,6 +20,12 @@ const PLAYER_SHOT_KNOCKBACK_LIFT: float = 1.75
 const PLAYER_PLASMA_KNOCKBACK_LIFT: float = 2.25
 const BOT_SHOT_KNOCKBACK_LIFT: float = 1.12
 const PLASMA_BOLT_TTL: float = 2.45
+const PLASMA_BLAST_RADIUS: float = 1.65
+const PLASMA_OVERCHARGE_BLAST_RADIUS: float = 2.25
+const PLASMA_BLAST_DAMAGE_FRACTION: float = 0.62
+const PLASMA_BLAST_MIN_DAMAGE_FRACTION: float = 0.28
+const PLASMA_BLAST_KNOCKBACK_FRACTION: float = 0.36
+const PLASMA_BLAST_KNOCKBACK_LIFT: float = 0.8
 const PICKUP_RADIUS: float = 1.05
 const HEALTH_PICKUP_AMOUNT: float = 28.0
 const HEALTH_PICKUP_RESPAWN: float = 10.0
@@ -531,10 +537,44 @@ func _resolve_player_projectile_hit(entry: Dictionary, impact_position: Vector3,
 				knockback_position = collider.get_body_center()
 			feedback.play_knockback(knockback_position, shot_direction, knockback, true)
 		return
+	_resolve_player_projectile_blast(entry, impact_position, shot_direction)
+
+func _resolve_player_projectile_blast(entry: Dictionary, impact_position: Vector3, shot_direction: Vector3) -> void:
+	var overcharged := bool(entry.get("overcharged", false))
+	var blast_radius := PLASMA_OVERCHARGE_BLAST_RADIUS if overcharged else PLASMA_BLAST_RADIUS
+	var damaged_target := false
+	var killed_target := false
+	if bot != null and bot.get("is_dead") != true:
+		var target_position: Vector3 = bot.get_body_center()
+		var max_blast_damage := float(entry.get("damage", 0.0)) * PLASMA_BLAST_DAMAGE_FRACTION
+		var blast_damage := ArenaCombatRulesScript.calculate_blast_damage(
+			impact_position,
+			target_position,
+			blast_radius,
+			max_blast_damage,
+			PLASMA_BLAST_MIN_DAMAGE_FRACTION
+		)
+		if blast_damage > 0.0:
+			var falloff := ArenaCombatRulesScript.calculate_blast_falloff(impact_position, target_position, blast_radius)
+			var blast_direction := target_position - impact_position
+			if blast_direction.length_squared() <= 0.0001:
+				blast_direction = shot_direction
+			blast_direction = blast_direction.normalized()
+			bot.take_damage(blast_damage, &"player")
+			if bot.has_method("apply_knockback"):
+				var blast_knockback := float(entry.get("knockback", 0.0)) * PLASMA_BLAST_KNOCKBACK_FRACTION * clampf(falloff, 0.35, 1.0)
+				bot.apply_knockback(blast_direction, blast_knockback, PLASMA_BLAST_KNOCKBACK_LIFT)
+			damaged_target = true
+			killed_target = bot.get("is_dead") == true
+			if feedback != null:
+				feedback.play_knockback(target_position, blast_direction, float(entry.get("knockback", 0.0)) * PLASMA_BLAST_KNOCKBACK_FRACTION, true)
 	if hud != null:
-		hud.show_miss()
+		if damaged_target:
+			hud.show_plasma_blast(overcharged, killed_target)
+		else:
+			hud.show_miss()
 	if feedback != null:
-		feedback.play_plasma_miss(impact_position, overcharged)
+		feedback.play_plasma_blast(impact_position, blast_radius, overcharged, damaged_target)
 
 func _resolve_player_aim_point(origin: Vector3, direction: Vector3) -> Vector3:
 	var aim_end := origin + direction.normalized() * 96.0

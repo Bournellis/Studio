@@ -41,6 +41,7 @@ var miss_count: int = 0
 var player_damage_count: int = 0
 var alt_fire_count: int = 0
 var plasma_hit_count: int = 0
+var plasma_blast_count: int = 0
 var bot_tell_count: int = 0
 var pickup_count: int = 0
 var jump_pad_count: int = 0
@@ -113,6 +114,21 @@ func show_plasma_hit(overcharged: bool, killed: bool) -> void:
 		_set_event_message("OVERCHARGE HIT", 0.58, Color(0.9, 0.62, 1.0, 1.0))
 	else:
 		_set_event_message("PLASMA HIT", 0.42, Color(0.48, 1.0, 1.0, 1.0))
+
+func show_plasma_blast(overcharged: bool, killed: bool) -> void:
+	last_feedback = &"plasma_kill" if killed else (&"overcharge_blast" if overcharged else &"plasma_blast")
+	hit_confirm_count += 1
+	plasma_blast_count += 1
+	last_plasma_hit_overcharged = overcharged
+	hit_feedback_time = 0.16
+	plasma_feedback_time = 0.38 if overcharged else 0.28
+	if killed:
+		kill_feedback_time = 0.9
+		_set_event_message("BOT DOWN", 0.9, Color(1.0, 0.92, 0.28, 1.0))
+	elif overcharged:
+		_set_event_message("OVERCHARGE BLAST", 0.58, Color(0.9, 0.62, 1.0, 1.0))
+	else:
+		_set_event_message("PLASMA BLAST", 0.42, Color(0.48, 1.0, 1.0, 1.0))
 
 func show_hit_confirm(killed: bool) -> void:
 	last_feedback = &"kill" if killed else &"hit"
