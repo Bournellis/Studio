@@ -1,7 +1,7 @@
 # Track 09I - Kick Super Controller V1
 
 - Date: `2026-06-16`
-- Status: `PUBLICADO_RETEST_HUMANO_PENDENTE`
+- Status: `PUBLICADO_RETEST_HUMANO_APROVADO`
 - Branch: `codex/jogodacopa/track09i-kick-super-controller-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track09i-kick-super-controller-v1`
 
@@ -39,6 +39,10 @@ Reduce `FootballRoot` by extracting kick and SUPER orchestration into a dedicate
 - Remote night luma: PASS, `luma_0_255=6.525 < 90`.
 - Publication evidence: `docs/playtest-reports/track-09i-publication.md`, `docs/playtest-reports/track-09i-data/09i-publication-report-7995b06c.json`, `docs/playtest-reports/track-09i-data/09i-remote-menu-7995b06c.json`, `docs/playtest-reports/track-09i-data/09i-remote-first-minute-7995b06c.json`, `docs/playtest-reports/track-09i-data/09i-remote-stability-5min-7995b06c.json`, `docs/playtest-reports/track-09i-data/09i-remote-night-luma-gate-7995b06c.json`.
 
+## Human Retest
+
+Fabio confirmed the public 09I build was working before Track 09J execution.
+
 ## Next Step
 
-Fabio/tester should retest the public 09I build. After approval, open Track 09J to extract the remaining ball-contact/possession surface with the same no-gameplay-change discipline.
+Track 09J was opened to extract the remaining ball-contact/possession surface with the same no-gameplay-change discipline.

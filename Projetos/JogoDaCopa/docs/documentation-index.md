@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09I_PUBLICADO_RETEST_HUMANO_PENDENTE`
+- Status: `JOGO_DA_COPA_TRACK09J_BALL_CONTACT_CONTROLLER_LOCAL_VALIDATED`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -19,6 +19,9 @@
 
 ## Latest Evidence
 
+- Track 09J local closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09j-ball-contact-controller-v1.md`
+- Track 09J local report: `playtest-reports/track-09j-ball-contact-controller-v1.md`
+- Track 09J local Web evidence: `playtest-reports/track-09j-data/`
 - Track 09I publication closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-16_codex_jogodacopa_publish-track09i.md`
 - Track 09I publication report: `playtest-reports/track-09i-publication.md`
 - Track 09I publication evidence: `playtest-reports/track-09i-data/`
@@ -51,6 +54,8 @@
 - `publication-readiness.md`
 - `release-history.md`
 - `playtest-reports/track-09i-publication.md`
+- `playtest-reports/track-09j-ball-contact-controller-v1.md`
+- `playtest-reports/track-09j-data/`
 - `playtest-reports/track-09i-data/`
 - `playtest-reports/track-09h-data/`
 - `playtest-reports/track-09g-data/`

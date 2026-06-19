@@ -1,25 +1,25 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-06-16`
+- Ultima atualizacao: `2026-06-19`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 - Regra de tamanho: maximo ~12 linhas por projeto. Historia de pacotes/validacoes vai para os arquivos de historico do projeto (`implementation/tracks/`, `docs/release-history.md`, Kanban Done), nunca para este snapshot.
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado; aguardando reteste humano) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization validada localmente; aguardando smoke humano)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado e aprovado; Track 09J local validada) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 06 arena variety/bot generalization validada localmente; aguardando smoke humano)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09I_PUBLICADO_RETEST_HUMANO_PENDENTE`
-- Marker: `JOGO_DA_COPA_TRACK09I_PUBLICADO_RETEST_HUMANO_PENDENTE`
-- Baseline publico: `Super Campeao v1.2.1+7995b06c` (`web/v1-copa-arena-futebol-20260616-7995b06c`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09I PASS.
-- Refator atual: Track 09I extraiu kick/SUPER/bot kick routing para `football_kick_super_controller.gd`; `FootballRoot` `995 -> 943`; publicado sem delta intencional de gameplay/UX.
+- Status: `P2_IMPLEMENTACAO - TRACK09J_BALL_CONTACT_CONTROLLER_LOCAL_VALIDATED`
+- Marker: `JOGO_DA_COPA_TRACK09J_BALL_CONTACT_CONTROLLER_LOCAL_VALIDATED`
+- Baseline publico: `Super Campeao v1.2.1+7995b06c` (`web/v1-copa-arena-futebol-20260616-7995b06c`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09I PASS e reteste humano aprovado.
+- Refator atual: Track 09J extraiu contato/posse de bola, audio de contato e contato arcade para `football_ball_contact_controller.gd`; `FootballRoot` `943 -> 832`; sem delta intencional de gameplay/UX.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester fazer reteste humano da build publica 09I; apos aprovacao, abrir Track 09J local de contato/posse de bola.
+- Proximo passo: Fabio fazer push via GitHub Desktop; se quiser levar a 09J ao publico, abrir track curta de publicacao com gates remotos.
 
 ## draxos-roguelike-cardgame
 
