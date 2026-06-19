@@ -1,0 +1,71 @@
+# FpsPlayground Telemetry
+
+- Status: Track 11 planned/active.
+- Storage: local Godot `user://telemetry/`.
+- Scope: Arena Shooter duel instrumentation only.
+
+## Output Files
+
+- `events.jsonl`: append-only event stream, one JSON object per line.
+- `summary.json`: compact session summary for quick playtest review.
+
+## Event Families
+
+- `session_start`, `session_end`.
+- `round_start`, `round_end`, `round_reset`.
+- `shot_fired`, `shot_hit`, `shot_miss`.
+- `damage_applied`, `knockback_applied`.
+- `plasma_spawned`, `plasma_direct_hit`, `plasma_world_impact`, `plasma_blast`, `plasma_expired`.
+- `pickup_spawned`, `pickup_collected`, `pickup_respawned`, `pickup_nearby_ignored`, `pickup_contested`.
+- `bot_state_changed`, `bot_route_changed`, `bot_decision`, `bot_windup_started`, `bot_shot_resolved`.
+- `movement_sample`, `jump_pad_triggered`, `jump_pad_landing`, `route_blocked`.
+
+## Required Fields
+
+Every event should include:
+
+- `session_id`
+- `event`
+- `time_msec`
+- `round_index`
+- `map_id`
+- `map_name`
+
+Combat events should also include:
+
+- `actor`
+- `target`
+- `weapon`
+- `overcharged`
+- `damage`
+- `knockback`
+- `hit`
+- `distance`
+- `position`
+
+Bot events should also include:
+
+- `state`
+- `route_label`
+- `active_route_key`
+- `decision_reason`
+- `has_line_of_sight`
+
+## Summary Metrics
+
+- Rounds played, winner counts and average round duration.
+- Damage by source and actor.
+- Shots, hits, misses and accuracy by weapon.
+- Plasma direct vs blast contribution.
+- Overcharge pickups, consumed shots and useful overcharge damage.
+- Health pickups, effective healing and wasted healing.
+- Bot route usage and route diversity.
+- Jump pad triggers and landing success.
+- Movement samples, average distance between actors and airborne time.
+
+## Non-Goals
+
+- No remote analytics.
+- No player identity tracking.
+- No balance changes.
+- No dashboard-heavy UI in Track 11.
