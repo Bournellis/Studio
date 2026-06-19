@@ -1,7 +1,7 @@
 class_name FootballBallContactController
 extends RefCounted
 
-const FootballMatchRulesScript = preload("res://gameplay/football/football_match_rules.gd")
+const PLAYER_CONTACT_MINIMUM_TOUCH_SPEED: float = 2.0
 
 
 static func update_contact_cooldowns(root: Node, delta: float) -> void:
@@ -15,31 +15,52 @@ static func update_player_ball_control(root: Node, _delta: float) -> void:
 		root.player_ball_control_state = &"free"
 		root.player_ball_control_strength = 0.0
 		return
-	var state: Dictionary = FootballMatchRulesScript.get_player_possession_state(
-		root.player.global_position,
-		root._get_player_kick_direction(),
-		root.player.velocity,
-		root.ball.global_position,
-		root.PLAYER_TOUCH_RADIUS,
-		root.PLAYER_NEAR_BALL_RADIUS
-	)
-	root.player_ball_control_state = state.get("state", &"free")
-	root.player_ball_control_strength = float(state.get("strength", 0.0))
+	var flat_forward := _flatten_normalized(root._get_player_kick_direction())
+	if flat_forward.length_squared() <= 0.0001:
+		flat_forward = Vector3.FORWARD
+	var player_center: Vector3 = root.player.global_position + Vector3.UP * 0.48
+	var ball_position: Vector3 = root.ball.global_position
+	var flat_delta := Vector3(ball_position.x - player_center.x, 0.0, ball_position.z - player_center.z)
+	var distance := flat_delta.length()
+	if distance <= 0.0001:
+		root.player_ball_control_state = &"contact"
+		root.player_ball_control_strength = 1.0
+		return
+	var ball_direction := flat_delta / distance
+	var forward_dot := ball_direction.dot(flat_forward)
+	var reachable: bool = distance <= root.PLAYER_NEAR_BALL_RADIUS and forward_dot >= -0.12
+	var touching: bool = distance <= root.PLAYER_TOUCH_RADIUS
+	if touching:
+		root.player_ball_control_state = &"contact"
+	elif reachable:
+		root.player_ball_control_state = &"reachable"
+	else:
+		root.player_ball_control_state = &"free"
+	var proximity_strength := 1.0 - clampf(distance / maxf(0.01, root.PLAYER_NEAR_BALL_RADIUS), 0.0, 1.0)
+	var facing_strength := clampf((forward_dot + 0.12) / 1.12, 0.0, 1.0)
+	root.player_ball_control_strength = clampf(proximity_strength * 0.62 + facing_strength * 0.38, 0.0, 1.0)
 
 
 static func process_player_ball_contact(root: Node) -> void:
 	if root.player_touch_cooldown_remaining > 0.0:
 		return
-	var contact: Dictionary = FootballMatchRulesScript.get_player_contact_kick(
-		root.player.global_position,
-		root.player.velocity,
-		root.ball.global_position,
-		root.PLAYER_TOUCH_RADIUS,
-		2.0
-	)
-	if not bool(contact.get("connected", false)):
+	var player_center: Vector3 = root.player.global_position + Vector3.UP * 0.5
+	var ball_position: Vector3 = root.ball.global_position
+	var delta := ball_position - player_center
+	var flat_delta := Vector3(delta.x, 0.0, delta.z)
+	var flat_delta_length_squared := flat_delta.length_squared()
+	if flat_delta_length_squared > root.PLAYER_TOUCH_RADIUS * root.PLAYER_TOUCH_RADIUS:
 		return
-	var contact_direction: Vector3 = contact.get("direction", Vector3.ZERO)
+	var player_velocity: Vector3 = root.player.velocity
+	var flat_velocity := Vector3(player_velocity.x, 0.0, player_velocity.z)
+	if flat_velocity.length_squared() < PLAYER_CONTACT_MINIMUM_TOUCH_SPEED * PLAYER_CONTACT_MINIMUM_TOUCH_SPEED:
+		return
+	var contact_direction_source := flat_velocity.normalized() * 0.6
+	if flat_delta_length_squared > 0.0001:
+		contact_direction_source += flat_delta.normalized()
+	var contact_direction := contact_direction_source.normalized()
+	if contact_direction.length_squared() <= 0.0001:
+		return
 	var boost_multiplier := 1.35 if root.player.is_boosting() else 1.0
 	var contact_lift := 0.42 if root.player.is_boosting() else 0.18
 	root._notify_player_touched_ball()
@@ -144,3 +165,8 @@ static func _flat_distance(a: Vector3, b: Vector3) -> float:
 	a.y = 0.0
 	b.y = 0.0
 	return a.distance_to(b)
+
+
+static func _flatten_normalized(value: Vector3) -> Vector3:
+	value.y = 0.0
+	return value.normalized() if value.length_squared() > 0.0001 else Vector3.ZERO
