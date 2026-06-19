@@ -47,6 +47,7 @@ Add complete local duel telemetry so future balance, bot, map and combat-feel de
 - Added validation guardrails for the telemetry script and documentation.
 - Hotfix V1: `plasma_blast` remains in Plasma/damage contribution metrics, but no longer creates invalid fired-weapon accuracy rows.
 - Hotfix V2: `summary.json` is flushed with each recorded event so interrupted or reset sessions remain reviewable.
+- Hotfix V3: active manual restarts emit `round_reset reason=manual_restart` before the next `round_start`.
 
 ## Validation
 
@@ -59,7 +60,7 @@ powershell -ExecutionPolicy Bypass -File D:\Estudio\tools\check_doc_drift.ps1
 Latest local result:
 
 ```text
-PASS, GUT 48/48, 456 asserts
+PASS, GUT 49/49, 464 asserts
 ```
 
 ## Human Smoke

@@ -9,7 +9,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 Latest Track 11 local result:
 
 ```text
-PASS, GUT 48/48, 456 asserts
+PASS, GUT 49/49, 464 asserts
 ```
 
 Profiles:
@@ -153,6 +153,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Open `summary.json` and confirm it reports winner counts, damage by actor/source, weapon accuracy, Plasma contribution, pickup usage, bot route data and movement/jump pad metrics.
 - Confirm `player:plasma_blast` does not appear as a fired weapon accuracy row; blast contribution belongs to Plasma and damage-source metrics.
 - Confirm `summary.json` stays aligned with the latest written events after arena reset, new match or interrupted session.
+- Press `R` during active play and confirm `events.jsonl` shows `round_reset` with `reason=manual_restart` before the next `round_start`.
 - Confirm the data helps answer why a round was won without needing to watch the whole match again.
 - Confirm player movement, sensitivity, jump pads, maps, bot route-control, pickups and Track 10 weapon roles feel unchanged.
 

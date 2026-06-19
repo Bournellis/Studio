@@ -21,7 +21,7 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 - Track 09 adds Plasma Impact Blast V1 without movement, map or bot route-control changes.
 - Track 10 tunes weapon roles without movement, map or bot route-control changes.
 - Track 11 adds local duel telemetry without movement, map, weapon or bot route-control changes.
-- Validation baseline: `tools/validate.gd` PASS `48/48`, `456 asserts`.
+- Validation baseline: `tools/validate.gd` PASS `49/49`, `464 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Track Sequence
@@ -101,6 +101,7 @@ Delivered:
 - Session, arena setup, round, combat, Plasma, pickup, bot, movement and jump pad events.
 - Summary metrics for winners, damage, weapon accuracy, Plasma, overcharge, pickups, bot routes and movement samples.
 - Hotfix V2 keeps the compact summary flushed with the event stream during interrupted or reset sessions.
+- Hotfix V3 labels active manual restarts as `round_reset reason=manual_restart`.
 - Automated schema, file-output, arena integration and Track 10 guardrail tests.
 
 ## Out Of Scope
