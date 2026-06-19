@@ -78,6 +78,14 @@ Bot events should also include:
 - Did the bot rotate routes, keep item priorities and complete jump pad routes?
 - Did movement samples show suspicious airborne time, stuck distance or failed jump pad landings?
 
+## Local Readout
+
+Track 12 adds `res://tools/telemetry_readout.gd` for quick local review. Use it when raw JSON is too slow to inspect:
+
+```powershell
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\FpsPlayground -s res://tools/telemetry_readout.gd -- --latest
+```
+
 ## Non-Goals
 
 - No remote analytics.

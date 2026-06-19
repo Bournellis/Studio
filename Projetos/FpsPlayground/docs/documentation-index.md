@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK11_COMPLETE_TELEMETRY_HUMAN_APPROVED`
+- Status: `FPS_PLAYGROUND_TRACK12_TELEMETRY_READOUT_READY_FOR_SMOKE`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -13,6 +13,8 @@
 5. `mode-contract.md`
 6. `validation.md`
 7. `telemetry.md`
+8. `telemetry-readout.md`
+9. `balance-baseline.md`
 
 ## References
 
@@ -24,6 +26,8 @@
 - `validation-profiles.md`
 - `publication-readiness.md`
 - `telemetry.md`
+- `telemetry-readout.md`
+- `balance-baseline.md`
 - `codebase-audit-track05.md`
 - `reuse-map.md`
 - `../implementation/tracks/track-01-combat-readability-polish-v1/current-status.md`
@@ -38,6 +42,7 @@
 - `../implementation/tracks/track-09-combat-sandbox-expansion-v1/current-status.md`
 - `../implementation/tracks/track-10-combat-balance-weapon-roles-v1/current-status.md`
 - `../implementation/tracks/track-11-complete-telemetry-v1/current-status.md`
+- `../implementation/tracks/track-12-telemetry-readout-balance-baseline-v1/current-status.md`
 
 ## Split Note
 
