@@ -6,7 +6,7 @@ signal alt_fire_requested(origin: Vector3, direction: Vector3, damage: float, kn
 
 const MIN_MOUSE_SENSITIVITY: float = 0.0008
 const MAX_MOUSE_SENSITIVITY: float = 0.0032
-const DEFAULT_MOUSE_SENSITIVITY: float = 0.0018
+const DEFAULT_MOUSE_SENSITIVITY: float = 0.0011
 
 @export var move_speed: float = 7.8
 @export var jump_velocity: float = 5.6

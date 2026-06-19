@@ -91,6 +91,7 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	var player = arena.get_node("RuntimeRoot/Player")
 	var bot = arena.get_node("RuntimeRoot/Bot")
 	assert_true(player.get_script() == PlayerScript)
+	assert_almost_eq(player.mouse_sensitivity, 0.0011, 0.00001)
 	assert_not_null(player.get_node_or_null("Head/Camera3D"))
 	assert_true((player.get_node("Head/Camera3D") as Camera3D).current)
 	assert_almost_eq((player.get_node("Head/Camera3D") as Camera3D).fov, 86.0, 0.01)
@@ -107,7 +108,9 @@ func test_arena_scene_boots_with_player_bot_camera_and_hud() -> void:
 	assert_not_null(hud_root.get_node_or_null("StatusPanel/StatusBox/CombatLoopLabel"))
 	assert_not_null(hud_root.get_node_or_null("Crosshair/HitMarker"))
 	assert_not_null(hud_root.get_node_or_null("CombatEventLabel"))
-	assert_not_null(hud_root.get_node_or_null("PauseMenuPanel/PauseMenuMargin/PauseMenuBox/SensitivitySlider"))
+	var sensitivity_slider := hud_root.get_node_or_null("PauseMenuPanel/PauseMenuMargin/PauseMenuBox/SensitivitySlider") as HSlider
+	assert_not_null(sensitivity_slider)
+	assert_almost_eq(float(sensitivity_slider.value), 0.0011, 0.00001)
 	assert_not_null(hud_root.get_node_or_null("PauseMenuPanel/PauseMenuMargin/PauseMenuBox/NewMatchButton"))
 	assert_no_new_orphans()
 
