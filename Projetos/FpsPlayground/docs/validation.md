@@ -113,6 +113,18 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm `Duel Pit V2` and `Relay Foundry V1` still preserve their accepted movement and bot behavior.
 - Confirm restart with `R`, pause menu and return to menu still work.
 
+## Track 07 Match Flow And Duel UX Smoke
+
+- Launch each arena from the menu and confirm score starts `0 - 0`.
+- Win one round and confirm player score increments once.
+- Lose one round and confirm bot score increments once.
+- Press `R` after a round result and confirm next round starts clean with score preserved.
+- Reach match win/loss target and confirm final result is readable.
+- Press `R` after match over and confirm a fresh match starts with score reset.
+- Pause during active play, resume, then return to menu.
+- Return to menu after a match and select a different arena; confirm score does not leak.
+- Confirm bot movement/combat still feels like Track 06: route-first, item-aware and able to shoot as overlay.
+
 ## Known Noise
 
 GUT UID/text-path warnings can appear after fresh worktree imports. They are accepted when tests pass.

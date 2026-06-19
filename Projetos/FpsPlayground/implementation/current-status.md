@@ -1,12 +1,12 @@
 # FpsPlayground - Current Status
 
-- Last updated: `2026-06-16`
+- Last updated: `2026-06-19`
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 06 - Arena Variety And Bot Generalization V1`
-- Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK06_ARENA_VARIETY_BOT_GENERALIZATION_READY_FOR_SMOKE`
+- Active stage: `Track 07 - Match Flow And Duel UX V1`
+- Active stage status: `PLANNED_READY_FOR_EXECUTION`
+- Status marker: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_PLANNED`
 
 ## Current Truth
 
@@ -28,7 +28,7 @@ Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15
 
 ## Current Gate
 
-Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment. Track 05 route-control bot was approved by Fabio overall. Track 05B was approved by Fabio after smoke: the bot is good and the remaining first-attempt long jump pad failure is resolved. Track 06 is locally validated and ready for human smoke.
+Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment. Track 05 route-control bot was approved by Fabio overall. Track 05B was approved by Fabio after smoke: the bot is good and the remaining first-attempt long jump pad failure is resolved. Track 06 was approved by Fabio on 2026-06-19. Track 07 is planned next to turn the arena lab into a repeatable duel flow.
 
 ## Track 01 Delivered
 
@@ -112,7 +112,7 @@ Delivered:
 - Added automated coverage for route-distance launch and first-attempt long jump completion in `Relay Foundry V1`.
 - Updated validation and smoke documentation for first-trigger long pad checks.
 
-## Active Track
+## Previous Track
 
 `Track 06 - Arena Variety And Bot Generalization V1`
 
@@ -130,9 +130,31 @@ Delivered:
 - Added automated coverage for the menu, layout contract, required bot roles and distinct jump pad route lengths.
 - Kept combat mechanics, weapons, bot aim/damage and export scope unchanged.
 
+Human approval:
+
+- Fabio approved Track 06 on 2026-06-19.
+
+## Active Track
+
+`Track 07 - Match Flow And Duel UX V1`
+
+Goal:
+
+- Turn each Arena Shooter match into a clear repeatable duel.
+- Add score/round state clarity, result state and better restart/new match UX.
+- Preserve the accepted three-arena movement/bot/combat baseline without balance changes.
+
+Planned:
+
+- Introduce an explicit duel/match state contract around the current single-round flow.
+- Add player/bot score tracking and configurable win target in code constants.
+- Improve HUD status/result information so the player knows current arena, round result, score and next action.
+- Add clear restart/new match behavior while keeping `R` as the fast replay action.
+- Polish pause/menu return and arena reselection behavior without adding new modes.
+- Add automated tests for score progression, match result, restart/reset and HUD snapshot contracts.
+
 Next sequence:
 
-- Track 07 - Match Flow And Duel UX V1.
 - Track 08 - Player Movement Feel Polish V1.
 - Track 09 - Combat Sandbox Expansion V1.
 
@@ -182,7 +204,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 # PASS, GUT 32/32, 289 asserts
 ```
 
-Manual smoke lives in `docs/validation.md`; Track 06 should focus on three-arena menu selection, `Crossfire Crucible V1` movement flow and bot generalization.
+Manual smoke lives in `docs/validation.md`; Track 07 should focus on score/result clarity, replay flow, pause/menu flow and no regression in all three arenas.
 
 ## Read Next
 
@@ -200,3 +222,4 @@ Manual smoke lives in `docs/validation.md`; Track 06 should focus on three-arena
 12. `implementation/tracks/track-05-quake-duel-route-control-bot-v1/current-status.md`
 13. `implementation/tracks/track-05b-long-jump-pad-first-try-v1/current-status.md`
 14. `implementation/tracks/track-06-arena-variety-bot-generalization-v1/current-status.md`
+15. `implementation/tracks/track-07-match-flow-duel-ux-v1/current-status.md`

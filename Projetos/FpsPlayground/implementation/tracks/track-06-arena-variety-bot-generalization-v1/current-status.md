@@ -1,8 +1,9 @@
 # Track 06 - Arena Variety And Bot Generalization V1
 
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED_BY_FABIO`
 - Planned: `2026-06-16`
 - Implemented: `2026-06-16`
+- Approved: `2026-06-19`
 - Owner: Codex
 - Execution branch: `codex/fpsplayground/track06-arena-variety-bot-generalization-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track06-arena-variety-bot-generalization-v1`
@@ -33,7 +34,7 @@ Known accepted noise: GUT UID/text-path warnings after fresh worktree import.
 
 ## Human Smoke Handoff
 
-Track 06 is ready for Fabio/tester smoke. Focus the playtest on:
+Fabio approved Track 06 on 2026-06-19. Smoke focus was:
 
 - launching all three arenas from the menu;
 - running a full low-ground loop in `Crossfire Crucible V1`;
@@ -188,9 +189,9 @@ Expected test additions:
 - Risk: jump pads can reintroduce first-use failures. Guardrail: any long or unusual connector needs first-attempt coverage.
 - Risk: the new arena becomes another version of `Relay Foundry V1`. Guardrail: choose a distinct route rhythm: compact crossfire, diagonal high pressure and separated item routes.
 
-## Review Status
+## Closure Status
 
-Track 06 is in Review because:
+Track 06 is approved because:
 
 - the third arena is playable from the menu;
 - full validation passes;
