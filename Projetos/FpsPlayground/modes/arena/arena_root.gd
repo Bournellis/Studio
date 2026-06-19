@@ -30,12 +30,25 @@ const JUMP_PAD_VERTICAL_SPEED: float = 8.4
 const JUMP_PAD_FORWARD_SPEED: float = 5.8
 const JUMP_PAD_MAX_FORWARD_SPEED: float = 12.6
 const JUMP_PAD_ROUTE_SPEED_MARGIN: float = 1.08
+const SCORE_TO_WIN: int = 3
+const ROUND_STATE_PLAYING: StringName = &"playing"
+const ROUND_STATE_PLAYER_WIN: StringName = &"player_round_win"
+const ROUND_STATE_BOT_WIN: StringName = &"bot_round_win"
+const ROUND_STATE_MATCH_OVER: StringName = &"match_over"
+const WINNER_PLAYER: StringName = &"player"
+const WINNER_BOT: StringName = &"bot"
 var player
 var bot
 var hud
 var feedback
 var round_status: String = ""
 var round_ended: bool = false
+var round_state: StringName = ROUND_STATE_PLAYING
+var player_score: int = 0
+var bot_score: int = 0
+var round_index: int = 1
+var last_round_winner: StringName = &""
+var match_winner: StringName = &""
 var menu_open: bool = false
 var projectile_root: Node3D
 var pickup_root: Node3D
@@ -96,8 +109,26 @@ func set_arena_layout(layout_id: StringName) -> void:
 	active_layout_id = ArenaLayoutCatalogScript.normalize_layout_id(layout_id)
 
 func restart_round() -> void:
+	if round_state == ROUND_STATE_MATCH_OVER:
+		start_new_match()
+		return
 	_set_menu_open(false)
-	round_status = map_name
+	if round_ended:
+		round_index += 1
+	_start_round()
+
+func start_new_match() -> void:
+	_set_menu_open(false)
+	player_score = 0
+	bot_score = 0
+	round_index = 1
+	last_round_winner = &""
+	match_winner = &""
+	_start_round()
+
+func _start_round() -> void:
+	round_state = ROUND_STATE_PLAYING
+	round_status = _build_playing_status()
 	round_ended = false
 	player.global_position = player_spawn
 	player.rotation = Vector3.ZERO
@@ -121,6 +152,36 @@ func debug_get_player():
 
 func debug_get_bot():
 	return bot
+
+func debug_get_round_state() -> StringName:
+	return round_state
+
+func debug_get_round_index() -> int:
+	return round_index
+
+func debug_get_score_to_win() -> int:
+	return SCORE_TO_WIN
+
+func debug_get_player_score() -> int:
+	return player_score
+
+func debug_get_bot_score() -> int:
+	return bot_score
+
+func debug_get_last_round_winner() -> StringName:
+	return last_round_winner
+
+func debug_get_match_winner() -> StringName:
+	return match_winner
+
+func debug_get_hud_snapshot() -> Dictionary:
+	return _build_hud_snapshot()
+
+func debug_force_round_result(player_won: bool) -> void:
+	_finish_round(player_won)
+
+func debug_start_new_match() -> void:
+	start_new_match()
 
 func debug_get_player_visual_muzzle_origin(origin: Vector3, direction: Vector3) -> Vector3:
 	return _get_player_visual_muzzle_origin(origin, direction)
@@ -219,7 +280,7 @@ func _prepare_active_layout() -> void:
 	active_layout = ArenaLayoutCatalogScript.build_layout_spec(active_layout_id)
 	active_layout_id = active_layout.get("id", active_layout_id)
 	map_name = String(active_layout.get("map_name", "Arena Shooter"))
-	round_status = map_name
+	round_status = _build_playing_status()
 	floor_size = active_layout.get("floor_size", floor_size)
 	wall_height = float(active_layout.get("wall_height", wall_height))
 	wall_thickness = float(active_layout.get("wall_thickness", wall_thickness))
@@ -325,6 +386,7 @@ func _spawn_runtime() -> void:
 		_set_menu_open(false)
 	)
 	hud.main_menu_requested.connect(_return_to_main_menu)
+	hud.new_match_requested.connect(start_new_match)
 	hud.set_sensitivity_value(player.mouse_sensitivity)
 
 func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockback: float) -> void:
@@ -581,28 +643,47 @@ func _on_bot_shot_resolution_requested(origin: Vector3, direction: Vector3, dama
 		feedback.play_bot_miss(origin, impact_position)
 
 func _on_player_died() -> void:
-	_set_menu_open(false)
-	round_ended = true
-	round_status = "Bot venceu. Aperte R para reiniciar."
-	if hud != null:
-		hud.show_round_end(false)
-	if feedback != null:
-		feedback.play_round_end(false)
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	_finish_round(false)
 
 func _on_bot_died() -> void:
+	_finish_round(true)
+
+func _finish_round(player_won: bool) -> void:
+	if round_ended:
+		return
 	_set_menu_open(false)
 	round_ended = true
-	round_status = "Player venceu. Aperte R para reiniciar."
+	last_round_winner = WINNER_PLAYER if player_won else WINNER_BOT
+	if player_won:
+		player_score += 1
+	else:
+		bot_score += 1
+	var winner_reached_target := player_score >= SCORE_TO_WIN if player_won else bot_score >= SCORE_TO_WIN
+	if winner_reached_target:
+		round_state = ROUND_STATE_MATCH_OVER
+		match_winner = last_round_winner
+	else:
+		round_state = ROUND_STATE_PLAYER_WIN if player_won else ROUND_STATE_BOT_WIN
+		match_winner = &""
+	round_status = _build_result_status()
 	if hud != null:
-		hud.show_round_end(true)
+		hud.show_round_end(player_won)
 	if feedback != null:
-		feedback.play_round_end(true)
+		feedback.play_round_end(player_won)
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 func _build_hud_snapshot() -> Dictionary:
 	return {
 		"status": round_status,
+		"map_name": map_name,
+		"round_state": round_state,
+		"round_index": round_index,
+		"score_to_win": SCORE_TO_WIN,
+		"player_score": player_score,
+		"bot_score": bot_score,
+		"last_round_winner": last_round_winner,
+		"match_winner": match_winner,
+		"result_text": _build_result_text(),
 		"player_health": 0.0 if player == null else player.health,
 		"player_max_health": 1.0 if player == null else player.max_health,
 		"bot_health": 0.0 if bot == null else bot.health,
@@ -619,8 +700,32 @@ func _build_hud_snapshot() -> Dictionary:
 		"bot_route_label": &"none" if bot == null else bot.debug_get_route_label(),
 		"bot_has_line_of_sight": false if bot == null else bot.debug_has_line_of_sight(),
 		"last_jump_pad_id": last_jump_pad_id,
-		"hint": "Click captures mouse | WASD move | LMB rifle | RMB plasma | Pads launch | High pickups | Bot route | R restart | Esc"
+		"hint": _build_hud_hint()
 	}
+
+func _build_playing_status() -> String:
+	return "%s | Round %d | Player %d x %d Bot" % [map_name, round_index, player_score, bot_score]
+
+func _build_result_status() -> String:
+	var winner_name := "Player" if last_round_winner == WINNER_PLAYER else "Bot"
+	if round_state == ROUND_STATE_MATCH_OVER:
+		return "%s venceu o duelo %d x %d. Aperte R para novo duelo." % [winner_name, player_score, bot_score]
+	return "%s venceu o round %d. Aperte R para proximo round." % [winner_name, round_index]
+
+func _build_result_text() -> String:
+	if round_state == ROUND_STATE_PLAYING:
+		return "First to %d" % SCORE_TO_WIN
+	var winner_name := "Player" if last_round_winner == WINNER_PLAYER else "Bot"
+	if round_state == ROUND_STATE_MATCH_OVER:
+		return "%s venceu o duelo" % winner_name
+	return "%s venceu o round" % winner_name
+
+func _build_hud_hint() -> String:
+	if round_state == ROUND_STATE_MATCH_OVER:
+		return "R novo duelo | Esc menu"
+	if round_ended:
+		return "R proximo round | Esc menu"
+	return "Click captures mouse | WASD move | LMB rifle | RMB plasma | Pads launch | R reset round | Esc"
 
 func _build_pickups() -> void:
 	pickups.clear()
