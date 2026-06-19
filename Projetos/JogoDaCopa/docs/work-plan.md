@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09P_LOCAL_VALIDATED_PUBLIC_BASELINE_09N`
+- Status: `JOGO_DA_COPA_TRACK09P_PUBLISHED_REMOTE_GATES_PASS`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -38,18 +38,18 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09M Web Heap Gate Semantics V1 renamed the primary gate to `js_heap_growth` while preserving the legacy `js_wasm_heap_growth` alias; production remained 09I.
 - Track 09N Render Settings Controller V1 extracted render/settings orchestration into `football_render_settings_controller.gd`; `FootballRoot` in the current approved public base fell from `1079` to `1051` lines; local validate/export/gzip/Web probe, pre-publication A/B, remote menu, first-minute, stability, luma and human retest gates passed.
 - Track 09O Documentation Rebaseline V1 cleaned the documentation map after 09N so living docs, historical plans and raw evidence no longer compete as sources of next-step truth.
-- Track 09P Football Session UI Controller V1 extracted intro/pause/menu session flow, ESC target routing, match start, main-menu return and mouse-capture policy into `football_session_ui_controller.gd`; `FootballRoot` in the local candidate fell from `1051` to `974` lines; local import, validate/export/gzip and 90s Chrome Web smoke passed. It is not published yet; 09N remains the approved public baseline.
+- Track 09P Football Session UI Controller V1 extracted intro/pause/menu session flow, ESC target routing, match start, main-menu return and mouse-capture policy into `football_session_ui_controller.gd`; `FootballRoot` fell from `1051` to `974` lines; local import, validate/export/gzip, 90s Chrome Web smoke, remote menu, remote first-minute, remote 5-minute stability and remote luma gates passed. It is published as `Super Campeao v1.2.1+8863c5b9`; human retest is pending and 09N remains the approved fallback.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Track 09N is the approved public baseline at `Super Campeao v1.2.1+5c6520ba`. Track 09P is the current local validated reduction candidate and should be published/tested before another reduction, unless Fabio explicitly chooses to pause for architecture review instead.
+Track 09P is the current public build at `Super Campeao v1.2.1+8863c5b9` with automated remote gates green. Human retest is pending; Track 09N remains the approved fallback baseline until that retest passes.
 
 Focus:
 
-- Promote 09P through the normal publication gate before stacking more local changes.
-- Keep 09N as the public rollback baseline until 09P passes remote stability and human retest.
+- Run human retest on the published 09P build before stacking more local changes.
+- Keep 09N as the public rollback baseline until 09P passes human retest.
 - If another reduction is opened later, prefer orchestration slices that do not alter gameplay, physics, input, bot decisions or assets.
 - Preserve existing GUT coverage and add/retarget focused tests when moving public helper contracts.
 - Keep Web validation in the loop: `tools/validate.gd`, Web export, gzip gate, local Web boot smoke for loading-sensitive changes, remote 5-minute stability before publication and human retest after publication.
@@ -118,7 +118,7 @@ Focus:
 - Measured reduction in the approved public base: `FootballRoot` `1079 -> 1051` lines.
 - Local validation, Web export, gzip, local Web probe and pre-publication A/B passed.
 - Published as `Super Campeao v1.2.1+5c6520ba`; remote menu, first-minute, stability 5min, luma and human retest gates passed.
-- 09N is the current approved public baseline.
+- 09N is the current approved fallback baseline while 09P awaits human retest.
 
 ## Completed Track 09O - Documentation Rebaseline V1
 
@@ -133,7 +133,8 @@ Focus:
 - Preserved gameplay, physics, bot, ball, kick/SUPER, scoring, HUD visual, assets and tuning.
 - Measured reduction in the local candidate: `FootballRoot` `1051 -> 974` lines; new controller `119` lines.
 - Local gates passed: import headless, `tools/validate.gd`, Web export, gzip `30.60 MiB / 50.00 MiB`, Chrome local 90s Web smoke with `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0` and `js_heap_growth -1.26%`.
-- Not published yet; 09N remains the approved public baseline.
+- Published as `Super Campeao v1.2.1+8863c5b9`; remote menu, first-minute, stability 5min and luma gates passed.
+- Human retest is pending; 09N remains the approved fallback baseline until 09P is accepted.
 
 ## Out Of Scope
 

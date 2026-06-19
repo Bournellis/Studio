@@ -4,7 +4,7 @@
 - Branch: `codex/jogodacopa/track09p-session-ui-controller-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track09p-session-ui-controller-v1`
 - Base publica preservada: `Super Campeao v1.2.1+5c6520ba` / Track 09N
-- Status: local validado; nao publicado
+- Status: local validado; publicado depois em `track-09p-publication.md`
 
 ## Escopo
 
@@ -75,4 +75,4 @@ Fora de escopo e preservado:
 
 ## Proxima Decisao
 
-Publicar/testar 09P antes de abrir nova reducao local, mantendo 09N como baseline publica e fallback ate 09P passar gates remotos e reteste humano.
+Track 09P foi publicada depois deste fechamento tecnico. Ver `track-09p-publication.md` e `track-09p-data/` para os gates remotos. O proximo passo e reteste humano antes de abrir nova reducao local; 09N permanece fallback aprovado ate a aprovacao humana da 09P.
