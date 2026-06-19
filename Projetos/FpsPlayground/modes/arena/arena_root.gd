@@ -22,8 +22,8 @@ const BOT_SHOT_KNOCKBACK_LIFT: float = 1.12
 const PLASMA_BOLT_TTL: float = 2.45
 const PLASMA_BLAST_RADIUS: float = 1.65
 const PLASMA_OVERCHARGE_BLAST_RADIUS: float = 2.25
-const PLASMA_BLAST_DAMAGE_FRACTION: float = 0.62
-const PLASMA_BLAST_MIN_DAMAGE_FRACTION: float = 0.28
+const PLASMA_BLAST_DAMAGE_FRACTION: float = 0.46
+const PLASMA_BLAST_MIN_DAMAGE_FRACTION: float = 0.22
 const PLASMA_BLAST_KNOCKBACK_FRACTION: float = 0.36
 const PLASMA_BLAST_KNOCKBACK_LIFT: float = 0.8
 const PICKUP_RADIUS: float = 1.05
@@ -224,6 +224,15 @@ func debug_get_bot_tactical_roles() -> Array[StringName]:
 
 func debug_get_active_projectile_count() -> int:
 	return active_projectiles.size()
+
+func debug_get_plasma_blast_radius(overcharged: bool) -> float:
+	return PLASMA_OVERCHARGE_BLAST_RADIUS if overcharged else PLASMA_BLAST_RADIUS
+
+func debug_get_plasma_blast_damage_fraction() -> float:
+	return PLASMA_BLAST_DAMAGE_FRACTION
+
+func debug_get_plasma_blast_min_damage_fraction() -> float:
+	return PLASMA_BLAST_MIN_DAMAGE_FRACTION
 
 func debug_get_jump_pad_count() -> int:
 	return jump_pads.size()
