@@ -5,221 +5,73 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 07 - Match Flow And Duel UX V1`
-- Active stage status: `PLANNED_READY_FOR_EXECUTION`
-- Status marker: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_PLANNED`
+- Active stage status: `READY_FOR_HUMAN_SMOKE`
+- Status marker: `FPS_PLAYGROUND_TRACK07_MATCH_FLOW_DUEL_UX_READY_FOR_SMOKE`
 
 ## Current Truth
 
-`FpsPlayground` is the first-person project split from the former `Projetos/FpsShooter` workspace. It keeps the accepted Arena Shooter baseline and no longer owns football/TPS gameplay.
+`FpsPlayground` owns the FPS arena work split from the former `FpsShooter`. Football/TPS work belongs to `Projetos/JogoDaCopa`.
 
-The football work moved to `Projetos/JogoDaCopa`.
-
-Fabio reported the post-split human Arena Shooter regression as OK on 2026-06-15. Track 01 polished combat readability and was approved by Fabio after smoke.
+The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes and a repeatable duel flow.
 
 ## Current Scope
 
 - PC Windows editor-first.
 - Main menu with `Arena Shooter`.
-- `Duel Pit V2`, `Relay Foundry V1` and `Crossfire Crucible V1` 1x1 arenas against a bot.
+- Arenas: `Duel Pit V2`, `Relay Foundry V1`, `Crossfire Crucible V1`.
 - Rifle hitscan, RMB Plasma Bolt, pickups, jump pads, high-route flow and knockback.
-- Vertical-aware bot with shot pressure, health/overcharge awareness, simple jump and plasma dodge.
+- Bot with route-control movement, combat overlay shooting, item priorities and jump pad commitment.
+- Duel state: round index, player/bot score, first to 3, round result and match result.
 - Runtime primitive visuals/audio and GUT validation.
-- No football, no TPS minigames, no export, no Web/mobile, no multiplayer/backend.
+- No football, TPS minigames, export, Web/mobile, multiplayer/backend or progression.
 
-## Current Gate
-
-Track 01 is approved. Track 02 is approved after human smoke focused on bot tactical movement. Track 03 is locally validated. Track 04 map/movement changes were approved by Fabio after smoke. Track 04B fixed nearby pickup commitment. Track 05 route-control bot was approved by Fabio overall. Track 05B was approved by Fabio after smoke: the bot is good and the remaining first-attempt long jump pad failure is resolved. Track 06 was approved by Fabio on 2026-06-19. Track 07 is planned next to turn the arena lab into a repeatable duel flow.
-
-## Track 01 Delivered
-
-- HUD event colors and messages for bot tell, player damage, Plasma hit and overcharge hit.
-- Dedicated HUD contract for Plasma hit/kill instead of using only generic hit confirm.
-- Readability beacons/halos for health and overcharge pickups.
-- Launch direction cues on both jump pads.
-- Focused GUT coverage for combat readability HUD events and scene nodes.
-
-## Previous Track
-
-`Track 02 - Bot Tactical Movement V1`
-
-- Introduce a tactical context so arenas publish bot affordances instead of hardcoded one-arena reposition lists.
-- Improve route selection between pressure, flank, cover, high ground, health, overcharge and jump pad routes.
-- Improve bot pressure through movement quality first, then conservative aim/reaction tuning.
-- Preserve current `Duel Pit V2` layout and weapon kit.
-- Avoid new weapons, new map, export, Web/mobile, multiplayer and backend.
-
-## Track 02 Delivered
-
-- Added `BotTacticalContext` so arenas publish tactical points and jump pad routes to the bot.
-- Replaced the one-arena reposition list in bot behavior with scored tactical roles.
-- Added route roles for pressure, flank, cover, retreat, health, overcharge, high ground and jump pad flow.
-- Added recent route memory/anti-repeat scoring and stronger stuck recovery through tactical reselection.
-- Tuned bot reaction/cooldown/aim conservatively while preserving shot windup readability.
-- Added focused tests for tactical context filtering, alternate arena context, health priority and Duel Pit role exposure.
-
-## Human Approval
-
-- Fabio approved the Track 02 bot smoke on 2026-06-15.
-- Fabio approved executing Track 03 on 2026-06-15.
-
-## Previous Track
-
-`Track 03 - Arena Tactical Context Proof V1`
-
-Delivered:
-
-- Extracted arena layout data into `ArenaLayoutCatalog`.
-- Preserved `Duel Pit V2` as the default baseline.
-- Added `Relay Foundry V1`, a second arena with distinct shape, routes, pickups, jump pads and tactical points.
-- Added main-menu selection for both arena layouts.
-- Kept bot improvement focused on movement/context usage, not unfair aim/damage tuning.
-- Added automated coverage for catalog, menu selection and runtime multi-arena bot context.
-
-## Previous Track
-
-`Track 05 - Quake Duel Route Control Bot V1`
-
-Goal:
-
-- Make movement objective, stack and item control govern bot movement.
-- Keep visible-target shooting active as a combat overlay instead of canceling routes.
-- Make jump pad routes committed through approach, flight and landing.
-
-Delivered:
-
-- Added `docs/bot-route-control.md` as the route-control contract.
-- Changed bot windup/shooting into a combat overlay that preserves item/jump routes.
-- Added health/overcharge scoring bias based on stack state.
-- Reduced default strafe/cover dominance in engage/cooldown flow.
-- Added jump pad flight and landing commitment state.
-- Added tests for healthy overcharge priority, shooting without canceling item route and jump pad landing commitment.
-
-## Previous Track
-
-`Track 05B - Long Jump Pad First Try V1`
-
-Goal:
-
-- Make the `Relay Foundry V1` long jump pad reliable on the first attempt.
-- Preserve Track 05 route-first movement and combat overlay shooting.
-- Keep long pad feel controlled for the player.
-
-Delivered:
-
-- Changed jump pad launch to derive horizontal speed from route distance and actor trigger position.
-- Added a bot approach lock near jump pads so local dodge/strafe does not cut the entry angle.
-- Reduced bot air steering during committed jump pad flight.
-- Added automated coverage for route-distance launch and first-attempt long jump completion in `Relay Foundry V1`.
-- Updated validation and smoke documentation for first-trigger long pad checks.
-
-## Previous Track
-
-`Track 06 - Arena Variety And Bot Generalization V1`
-
-Goal:
-
-- Add a third arena with a distinct movement rhythm.
-- Prove the approved bot behavior generalizes without map-specific bot code.
-- Preserve route-first movement, item priorities and reliable vertical connectors.
-
-Delivered:
-
-- Added `Crossfire Crucible V1`, a compact crossfire arena with distinct low-ground loop, diagonal high route, two jump pad rhythms and separated health/overcharge routes.
-- Added menu selection and layout catalog contract for the third arena.
-- Published tactical roles and jump pad routes for the new arena without adding map-specific bot code.
-- Added automated coverage for the menu, layout contract, required bot roles and distinct jump pad route lengths.
-- Kept combat mechanics, weapons, bot aim/damage and export scope unchanged.
-
-Human approval:
-
-- Fabio approved Track 06 on 2026-06-19.
-
-## Active Track
+## Latest Track
 
 `Track 07 - Match Flow And Duel UX V1`
 
-Goal:
-
-- Turn each Arena Shooter match into a clear repeatable duel.
-- Add score/round state clarity, result state and better restart/new match UX.
-- Preserve the accepted three-arena movement/bot/combat baseline without balance changes.
-
-Planned:
-
-- Introduce an explicit duel/match state contract around the current single-round flow.
-- Add player/bot score tracking and configurable win target in code constants.
-- Improve HUD status/result information so the player knows current arena, round result, score and next action.
-- Add clear restart/new match behavior while keeping `R` as the fast replay action.
-- Polish pause/menu return and arena reselection behavior without adding new modes.
-- Add automated tests for score progression, match result, restart/reset and HUD snapshot contracts.
-
-Next sequence:
-
-- Track 08 - Player Movement Feel Polish V1.
-- Track 09 - Combat Sandbox Expansion V1.
-
-## Previous Track
-
-`Track 04B - Bot Pickup Commitment V1`
-
-Goal:
-
-- Make the bot commit to useful nearby HP/boost pickups without becoming a passive distant-item collector.
-- Preserve distant pickup contesting as tactical, not automatic.
-
 Delivered:
 
-- Added local pickup commitment thresholds for nearby health and overcharge.
-- Let nearby useful pickups interrupt engage/strafe/cooldown decisions.
-- Kept windup shots readable and distant item routes conservative.
-- Added route-hold logic so the bot does not abandon a nearby pickup immediately after choosing it.
-- Added tests for damaged nearby health pickup and nearby overcharge pickup even with line of sight.
+- Added explicit duel state: `playing`, round win states and `match_over`.
+- Added player/bot score, round index, first-to-3 target and winner tracking.
+- Made `R` advance to next round after a result and start a fresh match after match over.
+- Added pause-menu `Novo duelo` reset.
+- Added persistent HUD score, round and result labels.
+- Added tests for score progression, duplicate round-end safety, match reset and clean starts across all arenas.
 
-## Previous Track
+Human smoke should focus on score/result readability, `R` flow, pause/menu reset and no regression in the approved bot/map feel.
 
-`Track 04 - Arena Movement Flow And Bot Navigation V1`
+## Track History
 
-Goal:
+- Track 01: combat readability polish - approved.
+- Track 02: bot tactical movement - approved.
+- Track 03: multi-arena tactical context - locally validated.
+- Track 04: arena movement flow and bot navigation - approved.
+- Track 04B: bot pickup commitment - delivered.
+- Track 05: Quake-style route-control bot - approved.
+- Track 05B: long jump pad first-try reliability - approved.
+- Track 06: arena variety and bot generalization - approved on `2026-06-19`.
 
-- Rebuild arena movement flow around continuous 1x1 duel loops.
-- Reposition jump pads and high platforms so player movement feels readable.
-- Make the bot navigate through staged movement routes instead of raw vertical destinations.
-- Add validation coverage for layout clearance and jump pad route contracts.
+## Next Sequence
 
-Delivered:
-
-- Added movement-flow route contracts for jump pad entry, landing and high-ground continuation.
-- Rebuilt `Relay Foundry V1` with wider footprint, clearer ground loop, separated jump pad approaches and less cramped high-platform placement.
-- Normalized vertical route labels so jump pad entries, landings and high objectives share route ids.
-- Updated `BasicDuelBot` so high destinations resolve through staged jump pad navigation while the bot is still on low ground.
-- Added overhead jump clearance and temporary blocked-route penalties for stuck recovery.
-- Added tests for staged vertical route contracts, Relay jump pad spacing and bot jump pad navigation target selection.
+1. Fabio/tester smoke Track 07.
+2. If approved, execute Track 08 - Player Movement Feel Polish V1.
+3. Then execute Track 09 - Combat Sandbox Expansion V1.
 
 ## Validation
 
-Latest result:
-
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 32/32, 289 asserts
+# PASS, GUT 34/34, 340 asserts
 ```
 
-Manual smoke lives in `docs/validation.md`; Track 07 should focus on score/result clarity, replay flow, pause/menu flow and no regression in all three arenas.
+Manual smoke lives in `docs/validation.md`.
 
 ## Read Next
 
 1. `AGENTS.md`
 2. `docs/documentation-index.md`
-3. `docs/architecture-overview.md`
-4. `docs/work-plan.md`
-5. `docs/mode-contract.md`
-6. `docs/validation.md`
-7. `docs/bot-tactical-context.md`
-8. `implementation/tracks/track-02-bot-tactical-movement-v1/current-status.md`
-9. `implementation/tracks/track-03-arena-tactical-context-proof-v1/current-status.md`
-10. `implementation/tracks/track-04-arena-movement-flow-bot-navigation-v1/current-status.md`
-11. `implementation/tracks/track-04b-bot-pickup-commitment-v1/current-status.md`
-12. `implementation/tracks/track-05-quake-duel-route-control-bot-v1/current-status.md`
-13. `implementation/tracks/track-05b-long-jump-pad-first-try-v1/current-status.md`
-14. `implementation/tracks/track-06-arena-variety-bot-generalization-v1/current-status.md`
-15. `implementation/tracks/track-07-match-flow-duel-ux-v1/current-status.md`
+3. `docs/work-plan.md`
+4. `docs/mode-contract.md`
+5. `docs/validation.md`
+6. `docs/bot-route-control.md`
+7. `implementation/tracks/track-07-match-flow-duel-ux-v1/current-status.md`
