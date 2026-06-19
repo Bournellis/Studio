@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09K_PUBLICATION_ROLLBACK_HEAP_GATE`
+- Status: `JOGO_DA_COPA_TRACK09N_PREPUBLISH_AB_READY`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
 
@@ -19,6 +19,18 @@
 
 ## Latest Evidence
 
+- Track 09N prepublish A/B closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-prepublish-ab-v1.md`
+- Track 09N prepublish A/B report: `playtest-reports/track-09n-prepublish-ab.md`
+- Track 09N prepublish A/B evidence: `playtest-reports/track-09n-ab-data/`
+- Track 09N render settings controller closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-render-settings-controller-v1.md`
+- Track 09N render settings controller report: `playtest-reports/track-09n-render-settings-controller.md`
+- Track 09N evidence: `playtest-reports/track-09n-data/`
+- Track 09M heap gate semantics closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09m-web-heap-gate-semantics-v1.md`
+- Track 09M heap gate semantics report: `playtest-reports/track-09m-web-heap-gate-semantics.md`
+- Track 09M evidence: `playtest-reports/track-09m-data/`
+- Track 09L heap instrumentation closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09l-web-heap-instrumentation-v1.md`
+- Track 09L heap instrumentation report: `playtest-reports/track-09l-web-heap-instrumentation.md`
+- Track 09L evidence: `playtest-reports/track-09l-data/`
 - Track 09K heap hotfix closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09k-web-heap-hotfix-v1.md`
 - Track 09K heap hotfix report: `playtest-reports/track-09k-web-heap-hotfix.md`
 - Track 09K evidence: `playtest-reports/track-09k-data/`
@@ -58,6 +70,14 @@
 - `validation-profiles.md`
 - `publication-readiness.md`
 - `release-history.md`
+- `playtest-reports/track-09n-render-settings-controller.md`
+- `playtest-reports/track-09n-data/`
+- `playtest-reports/track-09n-prepublish-ab.md`
+- `playtest-reports/track-09n-ab-data/`
+- `playtest-reports/track-09m-web-heap-gate-semantics.md`
+- `playtest-reports/track-09m-data/`
+- `playtest-reports/track-09l-web-heap-instrumentation.md`
+- `playtest-reports/track-09l-data/`
 - `playtest-reports/track-09i-publication.md`
 - `playtest-reports/track-09k-web-heap-hotfix.md`
 - `playtest-reports/track-09k-data/`

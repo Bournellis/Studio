@@ -7,19 +7,20 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado e aprovado; Tracks 09J/09K bloqueadas no heap remoto e rollback para 09I) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 09 combat sandbox implementada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (`Super Campeao v1.2.1+7995b06c` publicado e aprovado; Track 09N A/B pre-publicacao PASS sem publicacao; producao segue 09I) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 09 combat sandbox implementada localmente; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09K_PUBLICATION_BLOCKED_REMOTE_HEAP_ROLLBACK_09I`
-- Marker: `JOGO_DA_COPA_TRACK09K_PUBLICATION_ROLLBACK_HEAP_GATE`
+- Status: `P2_IMPLEMENTACAO - TRACK09N_PREPUBLISH_AB_READY`
+- Marker: `JOGO_DA_COPA_TRACK09N_PREPUBLISH_AB_READY`
 - Baseline publico: `Super Campeao v1.2.1+7995b06c` (`web/v1-copa-arena-futebol-20260616-7995b06c`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09I PASS, reteste humano aprovado e rollback 09K confirmado.
-- Refator atual: Track 09K tentou hotfixar heap da 09J; `FootballRoot` ficou `899` linhas, remoto menu/first-minute PASS, estabilidade 5min FAIL (`+14.35%`), rollback para 09I.
+- Diagnostico atual: Track 09M renomeou o gate primario para `js_heap_growth`, preservou alias legado `js_wasm_heap_growth` e confirmou 09I remoto PASS (`+9.38%`, `wasmSampleCount=0`).
+- Reducao local atual: Track 09N extraiu render/settings para `football_render_settings_controller.gd`; `FootballRoot` `1079 -> 1051`; validate/export/Web probe local PASS; A/B pre-publicacao PASS contra 09I (`09I -5.32%`, `09N +9.25%` em `js_heap_growth`); sem publicacao.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: abrir Track 09L de instrumentacao heap Web antes de republicar ou continuar nova reducao; Fabio faz push via GitHub Desktop quando quiser sincronizar.
+- Proximo passo: merge/publicacao tentativa da 09N; depois rodar gates remotos completos de menu, primeiro minuto, estabilidade 5min e luma; Fabio faz push via GitHub Desktop quando quiser sincronizar.
 
 ## draxos-roguelike-cardgame
 
