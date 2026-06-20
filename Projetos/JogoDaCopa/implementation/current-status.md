@@ -6,15 +6,17 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
 - Public baseline: `Super Campeao v1.2.1+8863c5b9`
-- Active stage status: `PUBLISHED_APPROVED - Track 09P public baseline approved`
-- Status marker: `JOGO_DA_COPA_TRACK09P_PUBLISHED_APPROVED`
-- Documentation baseline: `Track 09P Session UI Controller V1`
+- Active stage status: `LOCAL_VALIDATED - Track 09Q publication decision pending`
+- Status marker: `JOGO_DA_COPA_TRACK09Q_LOCAL_VALIDATED`
+- Documentation baseline: `Track 09Q Football Presentation FX Controller V1`
 
 ## Current Truth
 
 `JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, published on Cloudflare Pages as `v1.2.1+8863c5b9`.
 
 Track 09P is the current approved public baseline. It extracted session/UI orchestration into `football_session_ui_controller.gd`, reduced `FootballRoot` from `1051` to `974` lines, passed local import, validate/export/gzip, 90s Chrome Web smoke, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest on 2026-06-19.
+
+Track 09Q is locally validated but not published. It extracted presentation-only arcade emote, boost/skid VFX, goal slow-mo/camera shake, appearance cycling and avatar movement-state updates into `football_presentation_fx_controller.gd`; `FootballRoot` fell from `974` to `919` lines. Local import, `tools/validate.gd`, Web export/gzip, `node --check` and 90s Chrome Web smoke passed.
 
 Track 09N remains the historical approved fallback baseline behind 09P. It extracted render/settings orchestration into `football_render_settings_controller.gd`, reduced `FootballRoot` from `1079` to `1051` lines, passed local validation, passed pre-publication A/B, passed remote menu/first-minute/stability/luma gates and passed human retest.
 
@@ -54,6 +56,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - `football_kick_super_controller.gd`: player kick requests, charged/strong kick routing, SUPER spend/gain rules and bot kick routing.
 - `football_render_settings_controller.gd`: main-menu settings bridge, `GameSettings` quality integration, runtime render-profile refresh, scoreboard viewport resize and pause-menu sensitivity sync.
 - `football_session_ui_controller.gd`: intro/pause/menu session flow, ESC target routing, match start, main-menu return and mouse-capture policy.
+- `football_presentation_fx_controller.gd`: presentation-only arcade emote, boost/skid VFX, goal slow-mo/camera shake, appearance cycling and avatar movement-state updates.
 
 ## Current Gate
 
@@ -93,7 +96,7 @@ D:\Estudio\tools\check_doc_drift.ps1
 git diff --check
 ```
 
-Latest code and publication validation is the Track 09P gate listed above. Track 09O was documentation-only and did not change code, scenes, assets, export or publication.
+Latest publication validation is the Track 09P gate listed above. Latest local code validation is Track 09Q: import headless PASS, `tools/validate.gd` PASS (`104/104`, `1826` asserts, `60` sources), Web export/gzip PASS (`30.61 MiB / 50.00 MiB`), `node --check` PASS and Chrome Web smoke 90s PASS (`pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`, `js_heap_growth -10.20%`).
 
 ## Documentation Map
 
@@ -108,4 +111,4 @@ Latest code and publication validation is the Track 09P gate listed above. Track
 
 ## Next Step
 
-Plan the next conservative `FootballRoot` reduction or re-evaluate the architecture before opening another slice. Keep any next slice conservative: no gameplay, physics, input, bot decision, HUD visual, asset or tuning change unless Fabio explicitly opens a tuning/design track.
+Decide whether to publish/test Track 09Q or stop for another architecture re-evaluation. Keep 09P as the approved public baseline until 09Q is published, passes remote gates and receives human retest approval.

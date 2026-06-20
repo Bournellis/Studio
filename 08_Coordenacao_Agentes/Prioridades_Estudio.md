@@ -4,7 +4,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 ## Foco Atual
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09P publicada e aprovada; 09N segue fallback historico aprovado) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 13 documentacao futura completa; Track 12 aprovada; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09Q local validada; 09P baseline publica aprovada; 09N fallback historico aprovado) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 13 documentacao futura completa; Track 12 aprovada; movimento atual preservado)
 - Pausa temporaria por poucos dias: `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -13,7 +13,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 | Prioridade | Projeto | Caminho | Status | Trabalho permitido | Proximo passo |
 |---|---|---|---|---|---|
-| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | Track 09P publicada e aprovada; proximo passo: planejar proxima reducao conservadora ou reavaliar antes da nova slice |
+| P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | Track 09Q local validada; proximo passo: decidir entre publicar/testar 09Q ou parar para nova reavaliacao |
 | Pausa | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
 | Ativo | DraxosMobile | `Projetos/draxos-mobile/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest, documentacao local e infraestrutura | Arena Runtime Config Sync Ready v3 publicado Web/APK/PC `0.0.27-alpha.0` / vc `27`; proximo passo e prova humana do roteiro Arena antes de tuning, PVP, economia, conteudo ou expansao |
 | Ativo | FpsPlayground | `Projetos/FpsPlayground/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | Revisar roadmap futuro e escolher a proxima track entre baseline multi-arena, contratos de arsenal/buffs ou novo gameplay preservando o feel atual |

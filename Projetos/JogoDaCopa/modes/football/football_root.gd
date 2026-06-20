@@ -19,6 +19,7 @@ const FootballCaptureDirectorScript = preload("res://modes/football/football_cap
 const FootballScoreboardControllerScript = preload("res://modes/football/football_scoreboard_controller.gd")
 const FootballRenderSettingsControllerScript = preload("res://modes/football/football_render_settings_controller.gd")
 const FootballSessionUiControllerScript = preload("res://modes/football/football_session_ui_controller.gd")
+const FootballPresentationFxControllerScript = preload("res://modes/football/football_presentation_fx_controller.gd")
 const FootballPerfScenarioScript = preload("res://modes/football/football_perf_scenario.gd")
 const FootballWebLoadingControllerScript = preload("res://modes/football/football_web_loading_controller.gd")
 
@@ -744,23 +745,7 @@ func _finish_match(player_won: bool) -> void:
 	FootballMatchResolutionControllerScript.finish_match(self, player_won)
 
 func _trigger_arcade_emote(player_triggered: bool) -> void:
-	PerfProbeScript.mark(self, "event.arcade_emote", "player=%s" % str(player_triggered))
-	if goal_reset_timer <= 0.0 and not match_over:
-		return
-	var actor_position := Vector3.ZERO
-	var skip_web_avatar_celebration := RenderProfileScript.is_web_platform()
-	if player_triggered:
-		if player_avatar != null and not skip_web_avatar_celebration:
-			player_avatar.play_celebrate()
-		actor_position = player.global_position if player != null else Vector3.ZERO
-	else:
-		if bot_avatar != null and not skip_web_avatar_celebration:
-			bot_avatar.play_celebrate()
-		actor_position = bot.global_position if bot != null else Vector3.ZERO
-	if hud != null:
-		hud.show_announcement("QUE FESTA!" if player_triggered else "O BOT PROVOCA!", 0.75, &"emote")
-	if feedback != null and feedback.has_method("play_arcade_confetti"):
-		feedback.play_arcade_confetti(actor_position, player_triggered)
+	FootballPresentationFxControllerScript.trigger_arcade_emote(self, player_triggered)
 
 func _can_reach_ball(origin: Vector3, direction: Vector3) -> bool:
 	var assist: Dictionary = FootballMatchRulesScript.get_kick_assist(
@@ -851,45 +836,16 @@ func _set_round_input_locked(is_locked: bool) -> void:
 	FootballMatchFlowControllerScript.set_round_input_locked(self, is_locked)
 
 func _update_player_presentation_fx(_delta: float) -> void:
-	var boost_fraction := 0.0
-	var boost_active := false
-	if player != null and player.is_boosting():
-		boost_fraction = 1.0
-		boost_active = true
-	if player != null and player.has_method("is_arcade_dashing") and player.is_arcade_dashing():
-		boost_active = true
-	if chase_camera != null:
-		chase_camera.set_boost_fov_fraction(boost_fraction)
-	var skid_active := false
-	if player != null and player.is_on_floor():
-		var flat_speed := Vector3(player.velocity.x, 0.0, player.velocity.z).length()
-		skid_active = flat_speed > 7.2 and not boost_active
-	_set_player_persistent_vfx(boost_active, skid_active)
+	FootballPresentationFxControllerScript.update_player_presentation_fx(self, _delta)
 
 func _set_player_persistent_vfx(boost_active: bool, skid_active: bool) -> void:
-	if player_avatar != null:
-		player_avatar.set_boost_trail_active(boost_active)
-		player_avatar.set_skid_dust_active(skid_active)
+	FootballPresentationFxControllerScript.set_player_persistent_vfx(self, boost_active, skid_active)
 
 func _trigger_goal_gamefeel() -> void:
-	if RenderProfileScript.is_web_platform():
-		goal_slowmo_remaining = 0.0
-		Engine.time_scale = 1.0
-		PerfProbeScript.mark(self, "event.goal_gamefeel", "web_slowmo_disabled=true")
-		return
-	goal_slowmo_remaining = GOAL_SLOWMO_DURATION
-	if not DisplayServer.get_name().to_lower().contains("headless"):
-		Engine.time_scale = GOAL_SLOWMO_SCALE
-	if chase_camera != null:
-		chase_camera.focus_goal(GOAL_SLOWMO_DURATION)
-		chase_camera.play_shake(0.16, 0.32)
+	FootballPresentationFxControllerScript.trigger_goal_gamefeel(self)
 
 func _update_goal_slowmo(delta: float) -> void:
-	if goal_slowmo_remaining <= 0.0:
-		return
-	goal_slowmo_remaining = maxf(0.0, goal_slowmo_remaining - delta)
-	if goal_slowmo_remaining <= 0.0:
-		Engine.time_scale = 1.0
+	FootballPresentationFxControllerScript.update_goal_slowmo(self, delta)
 
 func _start_match() -> void:
 	FootballSessionUiControllerScript.start_match(self)
@@ -951,24 +907,13 @@ func _on_sensitivity_changed(value: float) -> void:
 	FootballRenderSettingsControllerScript.on_sensitivity_changed(self, value)
 
 func _cycle_skin_tone(step: int) -> void:
-	selected_appearance.skin_tone_id = AvatarCatalogScript.get_next_skin_tone_id(selected_appearance.skin_tone_id, step)
-	_apply_selected_player_appearance()
+	FootballPresentationFxControllerScript.cycle_skin_tone(self, step)
 
 func _cycle_country_kit(step: int) -> void:
-	selected_appearance.country_kit_id = AvatarCatalogScript.get_next_country_kit_id(selected_appearance.country_kit_id, step)
-	_apply_selected_player_appearance()
+	FootballPresentationFxControllerScript.cycle_country_kit(self, step)
 
 func _apply_selected_player_appearance() -> void:
-	if player_avatar != null:
-		player_avatar.apply_appearance(selected_appearance)
-	_request_hud_and_scoreboard_refresh()
+	FootballPresentationFxControllerScript.apply_selected_player_appearance(self)
 
 func _update_avatar_states(delta: float) -> void:
-	if player_avatar != null and player != null:
-		var player_flat_velocity := Vector3(player.velocity.x, 0.0, player.velocity.z)
-		var player_flat_speed := player_flat_velocity.length()
-		player_avatar.update_visual_movement_facing(player_flat_velocity, player.rotation.y, delta)
-		player_avatar.set_move_state(player_flat_speed, player.is_on_floor(), player.velocity.y)
-	if bot_avatar != null and bot != null:
-		var bot_flat_speed := Vector3(bot.velocity.x, 0.0, bot.velocity.z).length()
-		bot_avatar.set_move_state(bot_flat_speed, bot.is_on_floor(), bot.velocity.y)
+	FootballPresentationFxControllerScript.update_avatar_states(self, delta)
