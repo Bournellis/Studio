@@ -29,6 +29,13 @@ PASS tools/validate.gd -- --profile=quick, GUT 53/53, 496 asserts
 PASS tools/validate.gd, GUT 53/53, 496 asserts
 ```
 
+Latest Track 14B validation:
+
+```text
+PASS tools/validate.gd -- --profile=quick, GUT 54/54, 505 asserts
+PASS tools/validate.gd, GUT 54/54, 505 asserts
+```
+
 Latest Track 11 human smoke:
 
 ```text
@@ -196,6 +203,14 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm jump pad tests describe the approved force contract, not a temporary old-force rollback.
 - Confirm validation still passes without gameplay, movement, jump pad, map, weapon, pickup or bot behavior changes.
 - Confirm the next implementation step is `Track 14B - Arena Root Boundary V1`.
+
+## Track 14B Arena Root Boundary Smoke
+
+- Confirm `ArenaHudSnapshotBuilder` owns HUD snapshot/status strings outside `arena_root.gd`.
+- Confirm arena round flow HUD still reports score, round, result and hints correctly.
+- Confirm validation still covers player shots, bot shots, pickups, jump pads, telemetry and HUD snapshots.
+- Confirm no gameplay, movement, jump pad, map, weapon, pickup or bot behavior constants changed.
+- Confirm the next implementation step is `Track 14C - Combat Pipeline Extraction V1`.
 
 ## Known Noise
 

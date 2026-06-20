@@ -1,6 +1,6 @@
 # Refactor Hardening Roadmap
 
-- Status: `Track 14A local validated safety baseline`
+- Status: `Track 14B local validated arena root boundary baseline`
 - Scope: code hardening and reduction sequence for the approved Arena Shooter baseline.
 - Rule: Track 14A does not change gameplay, movement feel, jump pad force, map geometry, weapon values or bot decisions.
 
@@ -24,9 +24,9 @@ The project is approved enough to keep expanding, but the next maps, weapons, bu
    - Next: `Track 14B - Arena Root Boundary V1`.
 
 2. `Track 14B - Arena Root Boundary V1`
-   - Add stable boundaries around arena root responsibilities.
-   - Prefer small helper modules or adapters before moving behavior.
-   - Prove round flow, shots, pickups, jump pads, telemetry and HUD snapshots still pass validation.
+   - Delivered: `ArenaHudSnapshotBuilder` owns HUD snapshot/status assembly outside `arena_root.gd`.
+   - Proved round flow, shots, pickups, jump pads, telemetry and HUD snapshots still pass validation.
+   - No gameplay tuning.
    - Next: `Track 14C - Combat Pipeline Extraction V1`.
 
 3. `Track 14C - Combat Pipeline Extraction V1`

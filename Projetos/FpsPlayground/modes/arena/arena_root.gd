@@ -9,6 +9,7 @@ const ArenaDuelPitLayoutBuilderScript = preload("res://modes/arena/arena_duel_pi
 const ArenaRelayFoundryLayoutBuilderScript = preload("res://modes/arena/arena_relay_foundry_layout_builder.gd")
 const ArenaCrossfireCrucibleLayoutBuilderScript = preload("res://modes/arena/arena_crossfire_crucible_layout_builder.gd")
 const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
+const ArenaHudSnapshotBuilderScript = preload("res://modes/arena/arena_hud_snapshot_builder.gd")
 const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 const ArenaTelemetryRecorderScript = preload("res://gameplay/telemetry/arena_telemetry_recorder.gd")
@@ -1077,7 +1078,7 @@ func _finish_round(player_won: bool) -> void:
 	_record_telemetry_round_end(last_round_winner)
 
 func _build_hud_snapshot() -> Dictionary:
-	return {
+	return ArenaHudSnapshotBuilderScript.build_snapshot({
 		"status": round_status,
 		"map_name": map_name,
 		"round_state": round_state,
@@ -1087,49 +1088,27 @@ func _build_hud_snapshot() -> Dictionary:
 		"bot_score": bot_score,
 		"last_round_winner": last_round_winner,
 		"match_winner": match_winner,
-		"result_text": _build_result_text(),
-		"player_health": 0.0 if player == null else player.health,
-		"player_max_health": 1.0 if player == null else player.max_health,
-		"bot_health": 0.0 if bot == null else bot.health,
-		"bot_max_health": 1.0 if bot == null else bot.max_health,
-		"alt_fire_cooldown_fraction": 0.0 if player == null else player.get_alt_fire_cooldown_fraction(),
-		"alt_fire_ready": true if player == null else player.alt_fire_cooldown_remaining <= 0.0,
-		"player_overcharge": false if player == null else player.has_overcharge_charge(),
-		"bot_overcharge": false if bot == null else bot.has_overcharge_charge(),
+		"player": player,
+		"bot": bot,
 		"health_pickup_available": debug_is_pickup_available(&"health"),
 		"health_pickup_respawn": _get_pickup_respawn_remaining(&"health"),
 		"overcharge_pickup_available": debug_is_pickup_available(&"overcharge"),
 		"overcharge_pickup_respawn": _get_pickup_respawn_remaining(&"overcharge"),
-		"bot_state": &"none" if bot == null else bot.debug_get_state(),
-		"bot_route_label": &"none" if bot == null else bot.debug_get_route_label(),
-		"bot_has_line_of_sight": false if bot == null else bot.debug_has_line_of_sight(),
 		"last_jump_pad_id": last_jump_pad_id,
-		"hint": _build_hud_hint()
-	}
+		"round_ended": round_ended
+	})
 
 func _build_playing_status() -> String:
-	return "%s | Round %d | Player %d x %d Bot" % [map_name, round_index, player_score, bot_score]
+	return ArenaHudSnapshotBuilderScript.build_playing_status(map_name, round_index, player_score, bot_score)
 
 func _build_result_status() -> String:
-	var winner_name := "Player" if last_round_winner == WINNER_PLAYER else "Bot"
-	if round_state == ROUND_STATE_MATCH_OVER:
-		return "%s venceu o duelo %d x %d. Aperte R para novo duelo." % [winner_name, player_score, bot_score]
-	return "%s venceu o round %d. Aperte R para proximo round." % [winner_name, round_index]
-
-func _build_result_text() -> String:
-	if round_state == ROUND_STATE_PLAYING:
-		return "First to %d" % SCORE_TO_WIN
-	var winner_name := "Player" if last_round_winner == WINNER_PLAYER else "Bot"
-	if round_state == ROUND_STATE_MATCH_OVER:
-		return "%s venceu o duelo" % winner_name
-	return "%s venceu o round" % winner_name
-
-func _build_hud_hint() -> String:
-	if round_state == ROUND_STATE_MATCH_OVER:
-		return "R novo duelo | Esc menu"
-	if round_ended:
-		return "R proximo round | Esc menu"
-	return "Click captures mouse | WASD move | LMB rifle | RMB plasma | Pads launch | R reset round | Esc"
+	return ArenaHudSnapshotBuilderScript.build_result_status(
+		round_state,
+		last_round_winner,
+		player_score,
+		bot_score,
+		round_index
+	)
 
 func _build_pickups() -> void:
 	pickups.clear()

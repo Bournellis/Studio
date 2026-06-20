@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK14A_REFACTOR_SAFETY_NET_LOCAL_VALIDATED`
+- Status: `FPS_PLAYGROUND_TRACK14B_ARENA_ROOT_BOUNDARY_LOCAL_VALIDATED`
 - Current surface: FPS arena lab.
-- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; Track 14A safety net active; current player movement feel preserved.
+- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; Track 14B arena root boundary local validated; current player movement feel preserved.
 
 ## North Star
 
@@ -24,10 +24,13 @@ The near-term direction is to harden the approved 1x1 Arena Shooter foundation b
 - Track 12 added local telemetry readout and first balance baseline without gameplay changes; Fabio approved the readout usefulness.
 - Track 13 rebaselined docs and added `arena-shooter-future-roadmap.md`; no gameplay changes.
 - Track 14A starts the refactor/hardening sequence; no gameplay changes.
-- Validation baseline: `tools/validate.gd` PASS `53/53`, `496 asserts`.
+- Track 14B extracted HUD snapshot/status building from `arena_root.gd`; no gameplay changes.
+- Validation baseline: `tools/validate.gd` PASS `54/54`, `505 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Recommended Next Tracks
+
+Next active recommendation: `Track 14C - Combat Pipeline Extraction V1`.
 
 ### 1. Track 14A - Refactor Safety Net And Code Health Baseline V1
 
@@ -49,8 +52,8 @@ Goal:
 
 Expected scope:
 
-- Small helper modules or adapters.
-- Validation for round flow, shots, pickups, jump pads, HUD snapshots and telemetry.
+- Delivered: `ArenaHudSnapshotBuilder` now owns HUD snapshot/status strings.
+- Validation covered round flow, shots, pickups, jump pads, HUD snapshots and telemetry.
 - No tuning.
 - Next: `Track 14C - Combat Pipeline Extraction V1`.
 
@@ -133,7 +136,7 @@ Expected scope:
 
 Goal:
 
-- Apply the smallest evidence-backed weapon or buff tuning from Track 14 and Track 15.
+- Apply the smallest evidence-backed weapon or buff tuning from the multi-arena baseline and arsenal contract.
 
 Expected scope:
 
