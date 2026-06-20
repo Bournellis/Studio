@@ -5,7 +5,7 @@
 - Branch: `codex/fpsplayground/track07-plan-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track07-plan-v1`
 - Base: `main` em `6a023840` (`merge(fpsplayground): track06 arena variety`)
-- Status: `PLAN_READY_FOR_APPROVAL`
+- Status: `DONE`
 
 ## Objetivo
 
@@ -32,4 +32,9 @@ Plano pronto para aprovacao. Se aprovado, executar em branch recomendada:
 
 `codex/fpsplayground/track07-match-flow-duel-ux-v1`
 
-PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.
+Sincronizacao remota: resolvida por baseline posterior; nenhuma acao viva neste card.
+
+## Fechamento
+
+- Fechado em micro-track documental de 2026-06-20.
+- Plano executado pela Track 07 e incorporado ao baseline aprovado posterior.

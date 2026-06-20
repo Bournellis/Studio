@@ -5,7 +5,7 @@
 - Projeto: `Projetos/FpsPlayground/`
 - Branch: `codex/fpsplayground/track04-arena-movement-flow-bot-navigation-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track04-arena-movement-flow-bot-navigation-v1`
-- Status: `REVIEW`
+- Status: `DONE`
 
 ## Objetivo
 
@@ -68,4 +68,9 @@ Track pronta para smoke humano:
 
 - Fabio/tester fazer smoke humano em `Duel Pit V2` e `Relay Foundry V1`.
 - Foco: feeling de movimentacao, approach/landing dos jump pads e bot preso em teto/parede.
-- PUSH PENDENTE: Fabio - GitHub Desktop - Push origin.
+- Sincronizacao remota: resolvida por baseline posterior; nenhuma acao viva neste card.
+
+## Fechamento
+
+- Fechado em micro-track documental de 2026-06-20.
+- Track aprovada/incorporada ao baseline posterior de mapa, bot e movimento de `FpsPlayground`.

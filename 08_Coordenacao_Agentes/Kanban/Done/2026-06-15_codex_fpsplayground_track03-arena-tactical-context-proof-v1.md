@@ -9,9 +9,10 @@
 - Arquivos pretendidos: docs/status, catalogo de arenas, builders de arena, `arena_root.gd`, menu, testes GUT e validacao.
 - Docs lidos: `Prioridades_Estudio.md`, `Estado_Atual.md`, `AGENTS.md`, `implementation/current-status.md`, `docs/work-plan.md`, `docs/bot-tactical-context.md`, `docs/validation.md`.
 - Plano de validacao: `tools/validate.gd`; smoke manual em `Duel Pit V2` e `Relay Foundry V1`; checar bot, pickups, jump pads, restart e retorno ao menu nas duas arenas.
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `DONE`
 - Validacao automatica: `tools/validate.gd` PASS `20/20`, `175 asserts`; warnings GUT UID/text-path conhecidos.
-- Handoff: Fabio/tester executar smoke humano em `Duel Pit V2` e `Relay Foundry V1`; push remoto pendente para Fabio via GitHub Desktop.
+- Handoff original: Fabio/tester executar smoke humano em `Duel Pit V2` e `Relay Foundry V1`.
+- Sincronizacao remota: resolvida por baseline posterior; nenhuma acao viva neste card.
 
 ## Escopo
 
@@ -34,3 +35,8 @@
 - Tuning numerico agressivo de aim/dano.
 - Multiplayer/backend/export/Web/mobile.
 - Mudanca de identidade visual final.
+
+## Fechamento
+
+- Fechado em micro-track documental de 2026-06-20.
+- Track incorporada ao baseline aprovado posterior de `FpsPlayground`.
