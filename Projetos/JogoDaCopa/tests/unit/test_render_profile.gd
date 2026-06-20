@@ -1,6 +1,7 @@
 extends "res://addons/gut/test.gd"
 
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
+const FpsFeedbackControllerScript = preload("res://presentation/feedback/fps_feedback_controller.gd")
 
 func test_render_profile_selects_desktop_and_web_by_platform() -> void:
 	assert_eq(RenderProfileScript.select_profile_for_platform(false), RenderProfileScript.PROFILE_DESKTOP)
@@ -47,3 +48,8 @@ func test_web_render_profile_documents_known_fallbacks() -> void:
 	assert_gt(fallbacks.size(), 0)
 	assert_true(" ".join(fallbacks).contains("SSAO"))
 	assert_true(" ".join(fallbacks).contains("IndexedDB"))
+
+func test_web_default_feedback_includes_lite_goal_feedback() -> void:
+	assert_true(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("goal"))
+	assert_true(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("confetti"))
+	assert_false(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("crowd_goal"))

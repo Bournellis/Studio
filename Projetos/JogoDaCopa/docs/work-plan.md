@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK10A_HUMAN_APPROVED`
+- Status: `JOGO_DA_COPA_TRACK10B_LOCAL_VALIDATED`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -43,16 +43,18 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09R Foot And Camera Hotfix V1 paused reductions to fix two playtest findings: visible avatar feet intersecting the field plane and odd camera pull/tilt during lateral A/D strafe. It lifts only the visible avatar parts by `0.05m` and dampens ball focus during strafe while keeping the camera horizon level; no gameplay collision, physics, scoring, bot, SUPER, HUD, assets or tuning changes. Local red/green tests, validate/export/gzip, `node --check`, 90s Chrome Web smoke, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability and remote luma gates passed. It was public as `Super Campeao v1.2.1+33ba1a2b`, but was superseded by 09S before human approval because of the residual quick `A/D` camera perception issue.
 - Track 09S Camera Strafe Smoothing Hotfix V1 fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by easing the visual ball-focus weight and focus point in `football_chase_camera.gd`; gameplay, physics, movement, bot, ball, scoring, SUPER, HUD, assets and tuning remain unchanged. The focused red/green test, import headless, `tools/validate.gd`, Web export, `node --check`, Chrome local 90s Web smoke, `git diff --check`, doc drift, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma and Fabio/tester human retest gates passed. It is public and approved as `Super Campeao v1.2.1+925f3b9f`.
 - Track 10A HUD Pause Menu Decomposition V1 extracts pause menu construction, tabs, restart confirmation and pause settings synchronization from `football_hud.gd` into `football_hud_pause_menu_controller.gd`; `football_hud.gd` fell from `1512` to `1148` lines while preserving node paths, signals and click behavior. Local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, 3-resolution screenshot coverage, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma and Fabio/tester human retest gates passed. It is public and approved as `Super Campeao v1.2.1+fc3c72bb`.
+- Track 10B Web Goal Feel Reintroduction V1 reintroduces default Web goal feedback with a lightweight visual path and short `goal_jingle` audio after browser activation. It keeps the heavy Web `crowd_goal`, burst and dynamic-light package disabled, and leaves the PC/Windows full goal package unchanged. Local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, 90s Chrome audio-unlock smoke and 5-minute Chrome stability passed. It is local only; public baseline remains 10A until publication.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Track 10A is the current human-approved public Web baseline at `Super Campeao v1.2.1+fc3c72bb`. Track 09S is the latest human-approved fallback at `Super Campeao v1.2.1+925f3b9f`. Track 09R is superseded before human approval. Track 09Q is the approved fallback behind 09S at `Super Campeao v1.2.1+bb604c77`. Track 09P remains the fallback behind 09Q at `Super Campeao v1.2.1+8863c5b9`; Track 09N remains the historical approved fallback baseline behind 09P.
+Track 10B is the current local validated candidate. Track 10A remains the current human-approved public Web baseline at `Super Campeao v1.2.1+fc3c72bb`. Track 09S is the latest human-approved fallback at `Super Campeao v1.2.1+925f3b9f`. Track 09R is superseded before human approval. Track 09Q is the approved fallback behind 09S at `Super Campeao v1.2.1+bb604c77`. Track 09P remains the fallback behind 09Q at `Super Campeao v1.2.1+8863c5b9`; Track 09N remains the historical approved fallback baseline behind 09P.
 
 Focus:
 
-- Plan the next technical step from the approved Track 10A baseline, preferably another conservative reduction only if the next ownership boundary is clear.
+- Publish Track 10B for remote menu, first-minute, 5-minute stability, luma and human retest if the local Web goal feel candidate is accepted.
+- If 10B is not promoted, keep 10A as public baseline and resume conservative reduction only after deciding that goal feel should remain unchanged.
 - Keep 09S as the latest approved fallback behind 10A, with 09Q, 09P and 09N as older approved fallbacks.
 - Prefer orchestration slices that do not alter gameplay, physics, input, bot decisions or assets.
 - Preserve existing GUT coverage and add/retarget focused tests when moving public helper contracts.
@@ -171,6 +173,17 @@ Focus:
 - Published as `Super Campeao v1.2.1+925f3b9f`; remote menu, first-minute, stability 5min and luma gates passed.
 - Evidence: `docs/playtest-reports/track-09s-camera-strafe-smoothing-hotfix.md` and `docs/playtest-reports/track-09s-data/`.
 - Human retest approved by Fabio/tester on 2026-06-20; 09S is the latest approved fallback behind 10A and 09Q remains the fallback behind 09S.
+
+## Completed Track 10B - Web Goal Feel Reintroduction V1
+
+- Reintroduced `goal` in the default Web feedback set with a Web-lite implementation in `presentation/feedback/fps_feedback_controller.gd`.
+- Web goal feedback now uses three pooled sphere markers and the short `goal_jingle`; it does not use Web `crowd_goal`, particle burst or dynamic light.
+- PC/Windows goal feedback remains unchanged with the full burst, light, jingle, crowd and ambience boost package.
+- Changed UI audio lazy loading to load only the requested stream instead of all real audio streams on first Web UI playback.
+- Added a GUT contract test asserting that default Web feedback includes `goal` and does not treat `crowd_goal` as a Web feedback default.
+- Local gates passed: import headless, `tools/validate.gd` (`108/108`, `1838` asserts), Web export, `node --check tools/track04f_chrome_probe.mjs`, 90s Chrome Web smoke, 90s Chrome audio-unlock smoke, 5-minute Chrome stability (`firstMinuteHitches=0`, active-match goal windows `hitchCount=0`, `js_heap_growth -8.36%`, worst 5s FPS `121`).
+- Evidence: `docs/playtest-reports/track-10b-web-goal-feel-reintroduction.md` and `docs/playtest-reports/track-10b-data/`.
+- Local only; publication, remote gates and human retest remain pending.
 
 ## Out Of Scope
 

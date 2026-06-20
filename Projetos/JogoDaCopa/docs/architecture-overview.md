@@ -30,7 +30,7 @@
 - `presentation/hud/`: football HUD, intro/how-to panel and pause-menu UI composition.
   - `football_hud.gd`: broadcast HUD facade, in-match snapshots, intro/result panels, fade/announcement feedback and compatibility wrappers.
   - `football_hud_pause_menu_controller.gd`: pause menu construction, tabs, restart confirmation and pause settings synchronization.
-- `presentation/feedback/`: primitive effects and synthetic audio.
+- `presentation/feedback/`: primitive effects, real/synthetic audio and Web-safe feedback fallbacks such as the lightweight goal package.
 - `tools/`: scene generation and validation.
 - `tests/`: GUT coverage for football, avatar and helper contracts.
 

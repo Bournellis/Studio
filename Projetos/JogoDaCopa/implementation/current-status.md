@@ -6,13 +6,15 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
 - Public baseline: `Super Campeao v1.2.1+fc3c72bb`
-- Active stage status: `HUMAN_APPROVED - Track 10A HUD pause menu decomposition`
-- Status marker: `JOGO_DA_COPA_TRACK10A_HUMAN_APPROVED`
-- Documentation baseline: `Track 10A HUD Pause Menu Decomposition V1`
+- Active stage status: `LOCAL_VALIDATED - Track 10B Web Goal Feel Reintroduction`
+- Status marker: `JOGO_DA_COPA_TRACK10B_LOCAL_VALIDATED`
+- Documentation baseline: `Track 10B Web Goal Feel Reintroduction V1`
 
 ## Current Truth
 
 `JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, currently published on Cloudflare Pages as `v1.2.1+fc3c72bb`.
+
+Track 10B is the latest local validated candidate. It reintroduces default Web goal feedback with a Web-lite path: three pooled visual markers plus the short `goal_jingle` after browser audio activation. The heavy Web `crowd_goal`, particle-burst and dynamic-light goal package remains disabled; the PC/Windows full goal package remains unchanged. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome probes with and without audio unlock, and 5-minute Chrome stability passed on 2026-06-20. It is not published yet; the public baseline remains Track 10A.
 
 Track 10A is the current human-approved public Web baseline. It decomposes the football HUD pause menu by moving pause menu construction, tabs, restart confirmation, fullscreen/quality/sensitivity callbacks and pause settings synchronization into `football_hud_pause_menu_controller.gd`. `football_hud.gd` fell from `1512` to `1148` lines. Node paths, existing signals, restart confirmation behavior and real-click pause menu tests are preserved. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, 3-resolution screenshot evidence, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest passed on 2026-06-20.
 
@@ -40,7 +42,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - Loose arcade `RigidBody3D` ball with football-panel shader, hysteresis trail, squash on kick, higher bounce and extra ground-roll grip.
 - Visible third-person real skinned humanoid avatars, player male and bot female, with UAL animation clips plus authored kick animation.
 - Skin tone and country-inspired shirt selection.
-- Kickoff countdown, input lock, goal slow-mo, camera shake, boost FOV, transient kick/goal bursts, persistent boost/skid particles, real SFX/jingles/crowd ambience and synthetic referee whistle only.
+- Kickoff countdown, input lock, goal slow-mo, camera shake, boost FOV, transient kick/goal feedback, persistent boost/skid particles, real SFX/jingles/crowd ambience and synthetic referee whistle only. Web uses a lightweight default goal path; PC keeps the full goal package.
 - Broadcast-style HUD, offscreen ball indicator, result/rematch panel and polished 3D menu with avatar preview.
 - Football bot with prediction, positioned defense, boost, main-menu selectable `easy`/`normal`/`hard` presets and alternating kickoff.
 - Arcade mechanics adopted locally: dash/slide/stun/flip, charged kick, SUPER shot/fireball, boost pads, jump pads, timer/golden goal/vale-2 and emote.
@@ -80,6 +82,16 @@ Latest publication:
 - Remote night luma: PASS, `6.525 < 90`.
 - Human retest: approved for Track 10A on 2026-06-20. Track 09S remains the latest human-approved fallback baseline.
 
+Track 10B local validation:
+
+- Headless editor import: PASS.
+- `tools/validate.gd`: PASS, `108/108` tests, `1838` asserts, `62` source files checked.
+- Web export/gzip: PASS, `30.62 MiB / 50.00 MiB`.
+- `node --check tools/track04f_chrome_probe.mjs`: PASS.
+- Chrome local 90s Web smoke: PASS, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
+- Chrome local 90s Web smoke with audio unlock: PASS, `goal_jingle` loaded in `0.6ms` and played; `crowd_goal` stayed out of the goal path.
+- Chrome local 5min stability: PASS, `firstMinuteHitches=0`, active-match goal windows `hitchCount=0`, `js_heap_growth -8.36%`, worst 5s FPS `121`.
+
 Track 09S local validation:
 
 - Headless editor import: PASS.
@@ -114,7 +126,7 @@ D:\Estudio\tools\check_doc_drift.ps1
 git diff --check
 ```
 
-Latest publication validation is the Track 10A gate listed above. Latest local validation is Track 10A: import headless PASS, `tools/validate.gd` PASS (`107/107`, `1835` asserts, `62` sources), Web export PASS, `node --check` PASS, Chrome local 90s Web smoke PASS (`pageErrors=0`, `consoleErrorCount=0`, `stabilityPassed=true`, `firstMinuteHitches=0`, `js_heap_growth -7.45%`), 3-resolution screenshot evidence PASS, `git diff --check` PASS and doc drift PASS.
+Latest publication validation is the Track 10A gate listed above. Latest local validation is Track 10B: import headless PASS, `tools/validate.gd` PASS (`108/108`, `1838` asserts, `62` sources, Web gzip `30.62 MiB / 50.00 MiB`), Web export PASS, `node --check` PASS, Chrome local 90s Web smoke PASS, Chrome local 90s audio-unlock smoke PASS, Chrome local 5min stability PASS (`firstMinuteHitches=0`, `js_heap_growth -8.36%`, worst 5s FPS `121`).
 
 ## Documentation Map
 
@@ -129,4 +141,4 @@ Latest publication validation is the Track 10A gate listed above. Latest local v
 
 ## Next Step
 
-Plan the next technical step from the approved Track 10A baseline, or pause for a broader reassessment before opening another reduction.
+Publish Track 10B for remote menu/first-minute/5-minute/luma gates and human retest, or hold the local candidate if the Web goal feel is not desired after manual testing.
