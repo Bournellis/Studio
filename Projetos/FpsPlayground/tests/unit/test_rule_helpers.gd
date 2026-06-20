@@ -3,6 +3,7 @@ extends "res://addons/gut/test.gd"
 const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
 const BotAimModelScript = preload("res://gameplay/bot/bot_aim_model.gd")
 const BotDecisionModelScript = preload("res://gameplay/bot/bot_decision_model.gd")
+const BotMovementExecutorScript = preload("res://gameplay/bot/bot_movement_executor.gd")
 const BotScript = preload("res://gameplay/bot/basic_duel_bot.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_points.gd")
@@ -338,6 +339,55 @@ func test_bot_decision_model_preserves_route_commitment_contracts() -> void:
 		"distance_to_reposition_destination": 0.2
 	})
 	assert_true(BotDecisionModelScript.should_hold_current_route(jump_pad_route))
+
+func test_bot_movement_executor_preserves_distance_and_route_contracts() -> void:
+	var to_target := Vector3(0.0, 0.0, -8.0)
+	var retreat := BotMovementExecutorScript.build_distance_management_move(
+		to_target,
+		0.18,
+		0.5,
+		0.76,
+		false,
+		true,
+		8.8,
+		0.22,
+		0.42
+	)
+	assert_gt(retreat.z, 0.99)
+
+	var pressure := BotMovementExecutorScript.build_distance_management_move(
+		to_target,
+		0.92,
+		0.0,
+		0.76,
+		true,
+		true,
+		8.8,
+		0.22,
+		0.42
+	)
+	assert_lt(pressure.z, -0.99)
+
+	var jump_pad_routes: Array[Dictionary] = [
+		{"id": &"short", "position": Vector3(1.0, 0.1, 0.0), "target": Vector3(2.0, 3.0, 0.0)},
+		{"id": &"long", "position": Vector3(7.0, 0.1, 0.0), "target": Vector3(12.0, 3.0, 0.0)}
+	]
+	var selected := BotMovementExecutorScript.select_jump_pad_route_for_destination(Vector3.ZERO, Vector3(11.0, 3.0, 0.0), jump_pad_routes, {})
+	assert_eq(selected.get("id", &""), &"long")
+
+	var blocked_selected := BotMovementExecutorScript.select_jump_pad_route_for_destination(Vector3.ZERO, Vector3(11.0, 3.0, 0.0), jump_pad_routes, {"long": 1.0})
+	assert_eq(blocked_selected.get("id", &""), &"short")
+
+	var resolved := BotMovementExecutorScript.resolve_navigation_target(
+		Vector3.ZERO,
+		Vector3(11.0, 3.0, 0.0),
+		jump_pad_routes,
+		{},
+		0.42,
+		1.15,
+		3.2
+	)
+	assert_almost_eq(resolved.distance_to(Vector3(7.0, 0.1, 0.0)), 0.0, 0.001)
 
 func test_arena_layout_catalog_exposes_distinct_tactical_contexts() -> void:
 	var layout_ids := ArenaLayoutCatalogScript.get_layout_ids()

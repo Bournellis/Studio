@@ -8,6 +8,7 @@ signal shot_resolution_requested(origin: Vector3, direction: Vector3, damage: fl
 
 const BotAimModelScript = preload("res://gameplay/bot/bot_aim_model.gd")
 const BotDecisionModelScript = preload("res://gameplay/bot/bot_decision_model.gd")
+const BotMovementExecutorScript = preload("res://gameplay/bot/bot_movement_executor.gd")
 const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_points.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 
@@ -738,68 +739,38 @@ func _fallback_reposition_points() -> Array[Vector3]:
 func _movement_toward_reposition() -> Vector3:
 	if _is_jump_pad_commitment_active():
 		last_navigation_target = jump_pad_landing_target
-		var to_landing := jump_pad_landing_target - global_position
-		to_landing.y = 0.0
-		if to_landing.length_squared() <= 0.0001:
-			return Vector3.ZERO
-		return to_landing.normalized()
+		return BotMovementExecutorScript.build_landing_commit_move(global_position, jump_pad_landing_target)
 	last_navigation_target = _resolve_navigation_target(reposition_destination)
-	var to_destination := last_navigation_target - global_position
-	to_destination.y = 0.0
-	if to_destination.length_squared() <= 0.0001:
-		return _distance_management_movement()
-	if _is_jump_pad_approach_lock_active():
-		return to_destination.normalized()
-	var route_weight := 0.16
-	if last_route_label == &"health" or last_route_label == &"overcharge" or last_route_label == &"jump_pad" or last_route_label == &"high":
-		route_weight = 0.0
-	return (to_destination.normalized() + _distance_management_movement() * route_weight).normalized()
+	return BotMovementExecutorScript.build_reposition_move(global_position, last_navigation_target, _distance_management_movement(), last_route_label, _is_jump_pad_approach_lock_active())
 
 func _strafe_movement() -> Vector3:
-	var to_target := _flat_to_target()
-	if to_target.length_squared() <= 0.0001:
-		return Vector3.ZERO
-	var lateral := Vector3(-to_target.z, 0.0, to_target.x).normalized() * strafe_direction
-	var distance_move := _distance_management_movement()
-	var desired := lateral * 0.9 + distance_move * 0.65
-	if desired.length_squared() <= 0.0001:
-		return lateral
-	return desired.normalized()
+	return BotMovementExecutorScript.build_strafe_move(_flat_to_target(), strafe_direction, _distance_management_movement())
 
 func _distance_management_movement() -> Vector3:
-	var to_target := _flat_to_target()
-	var distance := to_target.length()
-	if distance <= 0.05:
-		return Vector3.ZERO
-	var forward := to_target.normalized()
-	if health_fraction() <= critical_health_pickup_threshold and distance < preferred_distance * 1.35:
-		return -forward
-	if health_fraction() <= low_health_pickup_threshold and shoot_cooldown_remaining > shoot_cooldown * 0.5 and distance < preferred_distance:
-		return -forward
-	if has_overcharge_charge() and last_has_line_of_sight and distance > preferred_distance * 0.78:
-		return forward
-	if distance > preferred_distance + 1.25:
-		return forward
-	if distance < preferred_distance * 0.68:
-		return -forward
-	return Vector3.ZERO
+	return BotMovementExecutorScript.build_distance_management_move(
+		_flat_to_target(),
+		health_fraction(),
+		shoot_cooldown_remaining,
+		shoot_cooldown,
+		has_overcharge_charge(),
+		last_has_line_of_sight,
+		preferred_distance,
+		critical_health_pickup_threshold,
+		low_health_pickup_threshold
+	)
 
 func _build_velocity(desired_move: Vector3, delta: float) -> Vector3:
 	var knockback := consume_knockback(delta, is_on_floor())
-	var horizontal := desired_move
-	if horizontal.length_squared() > 1.0:
-		horizontal = horizontal.normalized()
-	var speed_multiplier := 1.0
-	if current_state == STATE_REPOSITION:
-		speed_multiplier = 1.05
-	elif current_state == STATE_WINDUP:
-		speed_multiplier = 0.45
-	if _is_jump_pad_flight_active():
-		speed_multiplier = minf(speed_multiplier, jump_pad_air_steer_speed_multiplier)
-	if is_telegraphing and current_state != STATE_WINDUP:
-		speed_multiplier = minf(speed_multiplier, route_shot_speed_multiplier)
+	var speed_multiplier := BotMovementExecutorScript.build_speed_multiplier(
+		current_state == STATE_REPOSITION,
+		current_state == STATE_WINDUP,
+		_is_jump_pad_flight_active(),
+		is_telegraphing,
+		jump_pad_air_steer_speed_multiplier,
+		route_shot_speed_multiplier
+	)
 	var launch_boost := _consume_launch_boost(delta)
-	return horizontal * move_speed * speed_multiplier + Vector3(knockback.x, vertical_velocity + knockback.y, knockback.z) + launch_boost
+	return BotMovementExecutorScript.build_velocity(desired_move, move_speed, speed_multiplier, vertical_velocity, knockback, launch_boost)
 
 func _consume_launch_boost(delta: float) -> Vector3:
 	var current := launch_boost_velocity
@@ -822,29 +793,18 @@ func _maybe_jump_for_navigation(desired_move: Vector3) -> void:
 		_trigger_jump()
 
 func _resolve_navigation_target(destination: Vector3) -> Vector3:
-	if destination.y <= global_position.y + jump_height_goal_threshold:
-		return destination
-	var best_route := _select_jump_pad_route_for_destination(destination)
-	if best_route.is_empty():
-		return destination
-	var best_pad: Vector3 = best_route.get("position", destination)
-	var best_target: Vector3 = best_route.get("target", destination)
-	if global_position.y < best_target.y - vertical_route_low_height_tolerance:
-		return best_pad
-	if _flat_distance_to(best_target) > jump_pad_route_distance and destination.y > global_position.y + jump_height_goal_threshold:
-		return best_target
-	return destination
+	return BotMovementExecutorScript.resolve_navigation_target(
+		global_position,
+		destination,
+		jump_pad_routes,
+		blocked_route_timers,
+		jump_height_goal_threshold,
+		vertical_route_low_height_tolerance,
+		jump_pad_route_distance
+	)
 
 func _select_jump_pad_landing_target(destination: Vector3, launch_velocity: Vector3) -> Vector3:
-	var route := _select_jump_pad_route_for_destination(destination)
-	if not route.is_empty():
-		return route.get("target", destination)
-	var horizontal_launch := Vector3(launch_velocity.x, 0.0, launch_velocity.z)
-	if horizontal_launch.length_squared() <= 0.0001:
-		horizontal_launch = Vector3.FORWARD
-	var fallback := global_position + horizontal_launch.normalized() * jump_pad_route_distance
-	fallback.y = global_position.y
-	return fallback
+	return BotMovementExecutorScript.select_jump_pad_landing_target(global_position, destination, launch_velocity, jump_pad_routes, blocked_route_timers, jump_pad_route_distance)
 
 func _is_jump_pad_commitment_active() -> bool:
 	return jump_pad_flight_commit_remaining > 0.0 or jump_pad_landing_recovery_remaining > 0.0
@@ -863,45 +823,23 @@ func _update_jump_pad_commitment_after_move() -> void:
 	jump_pad_landing_recovery_remaining = jump_pad_landing_recovery_time
 
 func _select_jump_pad_route_for_destination(destination: Vector3) -> Dictionary:
-	if jump_pad_routes.is_empty():
-		return {}
-	var best_route: Dictionary = {}
-	var best_score := 1000000.0
-	for route: Dictionary in jump_pad_routes:
-		var pad_position: Vector3 = route.get("position", Vector3.ZERO)
-		var target_position: Vector3 = route.get("target", pad_position)
-		var route_id: StringName = route.get("id", &"")
-		var target_score := target_position.distance_to(destination) + global_position.distance_to(pad_position) * 0.22
-		if _is_route_temporarily_blocked(route_id):
-			target_score += 1000.0
-		if target_score < best_score:
-			best_score = target_score
-			best_route = route
-	return best_route
+	return BotMovementExecutorScript.select_jump_pad_route_for_destination(global_position, destination, jump_pad_routes, blocked_route_timers)
 
 func _is_high_route_point(point: Vector3) -> bool:
-	return point.y > 2.0
+	return BotMovementExecutorScript.is_high_route_point(point)
 
 func _classify_route_point(point: Vector3) -> StringName:
-	if _is_high_route_point(point):
-		return &"high"
-	if absf(point.x) > arena_half_extent * 0.78:
-		return &"flank"
-	if absf(point.x) < 4.5 and absf(point.z) < 7.2:
-		return &"center"
-	return &"ground"
+	return BotMovementExecutorScript.classify_route_point(point, arena_half_extent)
 
 func _should_jump_toward_height_goal() -> bool:
-	if current_state != STATE_REPOSITION:
-		return false
-	if _destination_requires_jump_pad_route(reposition_destination):
-		return false
-	var height_delta := reposition_destination.y - global_position.y
-	if height_delta < jump_height_goal_threshold:
-		return false
-	var flat_delta := reposition_destination - global_position
-	flat_delta.y = 0.0
-	return flat_delta.length() <= jump_height_goal_distance
+	return BotMovementExecutorScript.should_jump_toward_height_goal(
+		current_state == STATE_REPOSITION,
+		global_position,
+		reposition_destination,
+		_destination_requires_jump_pad_route(reposition_destination),
+		jump_height_goal_threshold,
+		jump_height_goal_distance
+	)
 
 func _should_jump_over_low_obstacle(flat_direction: Vector3) -> bool:
 	if not _has_jump_overhead_clearance(flat_direction):
@@ -920,13 +858,14 @@ func _should_jump_over_low_obstacle(flat_direction: Vector3) -> bool:
 	return high_result.get("collider", null) == target
 
 func _destination_requires_jump_pad_route(destination: Vector3) -> bool:
-	if destination.y <= global_position.y + jump_height_goal_threshold:
-		return false
-	var route := _select_jump_pad_route_for_destination(destination)
-	if route.is_empty():
-		return false
-	var target_position: Vector3 = route.get("target", destination)
-	return global_position.y < target_position.y - vertical_route_low_height_tolerance
+	return BotMovementExecutorScript.destination_requires_jump_pad_route(
+		global_position,
+		destination,
+		jump_pad_routes,
+		blocked_route_timers,
+		jump_height_goal_threshold,
+		vertical_route_low_height_tolerance
+	)
 
 func _has_jump_overhead_clearance(flat_direction: Vector3) -> bool:
 	var head_origin := global_position + Vector3.UP * 1.05
@@ -1055,9 +994,7 @@ func _flat_distance_to(point: Vector3) -> float:
 	return delta.length()
 
 func _flat_distance_between(first_point: Vector3, second_point: Vector3) -> float:
-	var delta := first_point - second_point
-	delta.y = 0.0
-	return delta.length()
+	return BotMovementExecutorScript.flat_distance_between(first_point, second_point)
 
 func _block_current_route() -> void:
 	var route_key := active_route_key
@@ -1068,9 +1005,7 @@ func _block_current_route() -> void:
 	blocked_route_timers[route_key] = blocked_route_cooldown
 
 func _is_route_temporarily_blocked(route_key: StringName) -> bool:
-	if route_key == &"":
-		return false
-	return blocked_route_timers.has(route_key) and float(blocked_route_timers.get(route_key, 0.0)) > 0.0
+	return BotMovementExecutorScript.is_route_temporarily_blocked(route_key, blocked_route_timers)
 
 func _update_blocked_route_timers(delta: float) -> void:
 	if blocked_route_timers.is_empty():
