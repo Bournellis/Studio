@@ -829,6 +829,32 @@ func test_football_chase_camera_reduces_ball_pull_during_lateral_strafe() -> voi
 	assert_almost_eq(chase_camera.global_transform.basis.x.y, 0.0, 0.01, "Strafe camera horizon should stay level")
 	assert_no_new_orphans()
 
+func test_football_chase_camera_smooths_quick_lateral_tap_focus_shift() -> void:
+	var target := CharacterBody3D.new()
+	var ball := Node3D.new()
+	var chase_camera := FootballChaseCameraScript.new()
+	add_child_autofree(target)
+	add_child_autofree(ball)
+	add_child_autofree(chase_camera)
+
+	target.global_position = Vector3.ZERO
+	target.rotation = Vector3.ZERO
+	ball.global_position = Vector3(10.0, 0.58, 0.0)
+	chase_camera.configure(target, ball)
+	chase_camera.snap_to_target()
+	var starting_focus: Vector3 = chase_camera.debug_get_focus_position()
+	var starting_weight: float = chase_camera.debug_get_ball_focus_weight()
+
+	target.velocity = Vector3.RIGHT * 7.0
+	chase_camera._physics_process(1.0 / 60.0)
+	var actual_focus_jump := starting_focus.distance_to(chase_camera.debug_get_focus_position())
+	var raw_strafe_focus_jump := _get_expected_unsmoothed_strafe_focus_jump(target, ball, starting_focus, chase_camera)
+
+	assert_gt(starting_weight, 0.07)
+	assert_lt(actual_focus_jump, raw_strafe_focus_jump * 0.5, "A quick lateral tap should not instantly yank the chase camera focus")
+	assert_gt(chase_camera.debug_get_ball_focus_weight(), 0.04, "Lateral strafe focus reduction should ease in instead of snapping")
+	assert_no_new_orphans()
+
 func test_football_intro_cycles_avatar_skin_and_country_kit() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()
@@ -1896,6 +1922,19 @@ func _record_track03l_arena_ray(leaks: Dictionary, space_state: PhysicsDirectSpa
 func _format_arena_leak_samples(leak_report: Dictionary) -> String:
 	var samples := leak_report.get("samples", PackedStringArray()) as PackedStringArray
 	return "count=%d; %s" % [int(leak_report.get("count", 0)), " | ".join(samples)]
+
+func _get_expected_unsmoothed_strafe_focus_jump(target: CharacterBody3D, ball: Node3D, starting_focus: Vector3, chase_camera: FootballChaseCamera) -> float:
+	var forward := -target.global_transform.basis.z
+	forward.y = 0.0
+	forward = forward.normalized()
+	var target_focus := target.global_position + Vector3.UP * 1.12 + forward * chase_camera.look_ahead_distance
+	var ball_focus := ball.global_position + Vector3.UP * 0.45
+	var ball_distance := _flat_xz_distance(target.global_position, ball.global_position)
+	var distance_factor := clampf(ball_distance / maxf(0.01, chase_camera.far_ball_focus_distance), 0.0, 1.0)
+	var raw_weight := lerpf(chase_camera.ball_focus_weight, chase_camera.far_ball_focus_weight, distance_factor)
+	raw_weight *= FootballChaseCamera.STRAFE_FOCUS_MIN_MULTIPLIER
+	var raw_focus := target_focus.lerp(ball_focus, clampf(raw_weight, 0.0, 0.75))
+	return starting_focus.distance_to(raw_focus)
 
 func _flat_xz_distance(a: Vector3, b: Vector3) -> float:
 	return Vector2(a.x, a.z).distance_to(Vector2(b.x, b.z))
