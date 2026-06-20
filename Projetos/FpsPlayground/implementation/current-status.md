@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 14C - Combat Pipeline Extraction V1`
+- Active stage: `Track 14D - Pickups And Jump Pads Extraction V1`
 - Active stage status: `MERGED_LOCAL`
-- Status marker: `FPS_PLAYGROUND_TRACK14C_COMBAT_PIPELINE_MERGED_LOCAL`
+- Status marker: `FPS_PLAYGROUND_TRACK14D_PICKUPS_JUMP_PADS_MERGED_LOCAL`
 
 ## Current Truth
 
@@ -14,7 +14,7 @@
 
 The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning, local duel telemetry, telemetry readout tooling and the pre-Track-08 player movement feel preserved.
 
-Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. No gameplay values changed in Track 13, 14A, 14B or 14C.
+Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. Track 14D extracted pickup and jump pad rules into `arena_pickup_jump_pad_rules.gd`. No gameplay values changed in Track 13, 14A, 14B, 14C or 14D.
 
 ## Current Scope
 
@@ -30,15 +30,14 @@ Track 12 telemetry/readout is approved. Track 13 updated the live docs and added
 
 ## Latest Track
 
-`Track 14C - Combat Pipeline Extraction V1`
+`Track 14D - Pickups And Jump Pads Extraction V1`
 
 Delivered:
 
-- Added `modes/arena/arena_combat_pipeline.gd` as a pure combat pipeline boundary.
-- Moved rifle, Plasma, Plasma blast and bot shot telemetry payload construction out of `arena_root.gd`.
-- Moved pure Plasma blast damage/falloff/knockback calculation behind the combat pipeline helper.
-- Added direct unit coverage for payload contracts and blast math.
-- Keeps gameplay, movement, jump pads, maps, weapon values, pickups and bot behavior unchanged.
+- Added `modes/arena/arena_pickup_jump_pad_rules.gd` as a pure pickup/jump pad boundary.
+- Moved pickup state, respawn, collection payload, jump pad cooldown, trigger checks and launch vector math behind helper functions.
+- Added direct unit coverage for pickup respawn and approved jump pad force contracts.
+- Keeps gameplay, movement feel, jump pad force, maps, weapon values, pickups and bot behavior unchanged.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -62,18 +61,19 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 14A: refactor safety net and code health baseline - local validated on `2026-06-20`.
 - Track 14B: arena root boundary - local validated on `2026-06-20`.
 - Track 14C: combat pipeline extraction - merged locally on `2026-06-20`.
+- Track 14D: pickups and jump pads extraction - merged locally on `2026-06-20`.
 
 ## Next Sequence
 
-1. Execute `Track 14D - Pickups And Jump Pads Extraction V1`.
-2. Continue with `Track 14E - Bot Decision Boundary V1` after 14D approval.
-3. Continue the Track 14 hardening sequence through 14F before resuming gameplay expansion unless Fabio explicitly changes priority.
+1. Execute `Track 14E - Bot Decision Boundary V1`.
+2. Continue with `Track 14F - Cleanup And Documentation V1` after 14E approval.
+3. Resume gameplay expansion only after the Track 14 hardening sequence unless Fabio explicitly changes priority.
 
 ## Validation
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 57/57, 525 asserts
+# PASS, GUT 59/59, 552 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.
@@ -91,4 +91,4 @@ Manual smoke lives in `docs/validation.md`.
 9. `docs/telemetry.md`
 10. `docs/telemetry-readout.md`
 11. `docs/balance-baseline.md`
-12. `implementation/tracks/track-14c-combat-pipeline-extraction-v1/current-status.md`
+12. `implementation/tracks/track-14d-pickups-jump-pads-extraction-v1/current-status.md`

@@ -43,6 +43,13 @@ PASS tools/validate.gd -- --profile=quick, GUT 57/57, 525 asserts
 PASS tools/validate.gd, GUT 57/57, 525 asserts
 ```
 
+Latest Track 14D validation:
+
+```text
+PASS tools/validate.gd -- --profile=quick, GUT 59/59, 552 asserts
+PASS tools/validate.gd, GUT 59/59, 552 asserts
+```
+
 Latest Track 11 human smoke:
 
 ```text
@@ -226,6 +233,14 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm rifle, direct Plasma, Plasma blast and bot shot behavior feel unchanged.
 - Confirm no gameplay, movement, jump pad, map, weapon, pickup or bot behavior constants changed.
 - Confirm the next implementation step is `Track 14D - Pickups And Jump Pads Extraction V1`.
+
+## Track 14D Pickups And Jump Pads Smoke
+
+- Confirm `ArenaPickupJumpPadRules` owns pickup state/respawn helpers and jump pad cooldown/launch math.
+- Confirm health and overcharge pickups collect, hide, respawn and feed telemetry as before.
+- Confirm all jump pads preserve approved forward/vertical force and first-use reliability.
+- Confirm player movement feel, map geometry, bot route commitment and weapon values are unchanged.
+- Confirm the next implementation step is `Track 14E - Bot Decision Boundary V1`.
 
 ## Known Noise
 

@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK14C_COMBAT_PIPELINE_LOCAL_VALIDATED`
+- Status: `FPS_PLAYGROUND_TRACK14D_PICKUPS_JUMP_PADS_MERGED_LOCAL`
 - Current surface: FPS arena lab.
-- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; Track 14C combat pipeline local validated; current player movement feel preserved.
+- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; Track 14D pickups/jump pads merged locally; current player movement feel preserved.
 
 ## North Star
 
@@ -26,12 +26,13 @@ The near-term direction is to harden the approved 1x1 Arena Shooter foundation b
 - Track 14A starts the refactor/hardening sequence; no gameplay changes.
 - Track 14B extracted HUD snapshot/status building from `arena_root.gd`; no gameplay changes.
 - Track 14C extracted combat telemetry payloads and pure Plasma blast math from `arena_root.gd`; no gameplay changes.
-- Validation baseline: `tools/validate.gd` PASS `57/57`, `525 asserts`.
+- Track 14D extracted pickup and jump pad rules from `arena_root.gd`; no gameplay changes.
+- Validation baseline: `tools/validate.gd` PASS `59/59`, `552 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Recommended Next Tracks
 
-Next active recommendation: `Track 14D - Pickups And Jump Pads Extraction V1`.
+Next active recommendation: `Track 14E - Bot Decision Boundary V1`.
 
 ### 1. Track 14A - Refactor Safety Net And Code Health Baseline V1
 
@@ -78,8 +79,8 @@ Goal:
 
 Expected scope:
 
-- Health, overcharge and jump pad logic.
-- Guardrail tests for approved jump pad force and pickup behavior.
+- Delivered: health/overcharge pickup state, respawn, collection telemetry payload, jump pad cooldowns and launch vector helper.
+- Guardrail tests cover approved jump pad force and pickup behavior.
 - Next: `Track 14E - Bot Decision Boundary V1`.
 
 ### 5. Track 14E - Bot Decision Boundary V1

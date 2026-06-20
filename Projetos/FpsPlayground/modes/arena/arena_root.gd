@@ -12,6 +12,7 @@ const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog
 const ArenaHudSnapshotBuilderScript = preload("res://modes/arena/arena_hud_snapshot_builder.gd")
 const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
 const ArenaCombatPipelineScript = preload("res://modes/arena/arena_combat_pipeline.gd")
+const ArenaPickupJumpPadRulesScript = preload("res://modes/arena/arena_pickup_jump_pad_rules.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 const ArenaTelemetryRecorderScript = preload("res://gameplay/telemetry/arena_telemetry_recorder.gd")
 
@@ -338,8 +339,7 @@ func debug_force_pickup_available(pickup_kind: StringName, available: bool) -> v
 	if not pickups.has(pickup_kind):
 		return
 	var entry: Dictionary = pickups[pickup_kind]
-	entry["available"] = available
-	entry["respawn_remaining"] = 0.0 if available else 9999.0
+	entry = ArenaPickupJumpPadRulesScript.set_pickup_available(entry, available, 9999.0)
 	var node := entry.get("node", null) as Node3D
 	if node != null:
 		node.visible = available
@@ -404,7 +404,7 @@ func _build_active_layout() -> void:
 		_:
 			layout_result = ArenaDuelPitLayoutBuilderScript.build(self, active_layout)
 	for pad: Dictionary in layout_result.get("jump_pads", []):
-		jump_pads.append(pad)
+		jump_pads.append(ArenaPickupJumpPadRulesScript.normalize_jump_pad_state(pad))
 	flow_marker_count = int(layout_result.get("flow_marker_count", 0))
 	high_platform_cover_count = int(layout_result.get("high_platform_cover_count", 0))
 
@@ -906,12 +906,7 @@ func _create_pickup(pickup_kind: StringName, pickup_position: Vector3, color: Co
 	light.omni_range = 2.6
 	pickup.add_child(light)
 
-	pickups[pickup_kind] = {
-		"node": pickup,
-		"position": pickup_position,
-		"available": true,
-		"respawn_remaining": 0.0
-	}
+	pickups[pickup_kind] = ArenaPickupJumpPadRulesScript.build_pickup_state(pickup, pickup_position)
 
 func _add_pickup_readability_beacon(pickup: Node3D, pickup_kind: StringName, color: Color) -> void:
 	var halo := MeshInstance3D.new()
@@ -943,10 +938,9 @@ func _process_pickups(delta: float) -> void:
 		if pickup_node != null and bool(entry.get("available", false)):
 			pickup_node.rotate_y(delta * 1.8)
 		if not bool(entry.get("available", false)):
-			var remaining := maxf(0.0, float(entry.get("respawn_remaining", 0.0)) - delta)
-			entry["respawn_remaining"] = remaining
-			if remaining <= 0.0:
-				entry["available"] = true
+			var respawn_result := ArenaPickupJumpPadRulesScript.update_pickup_respawn(entry, delta)
+			entry = respawn_result.get("entry", entry)
+			if bool(respawn_result.get("respawned", false)):
 				if pickup_node != null:
 					pickup_node.visible = true
 				_record_telemetry_event(&"pickup_respawned", {
@@ -967,27 +961,20 @@ func _process_pickups(delta: float) -> void:
 func _process_jump_pads(delta: float) -> void:
 	for index in range(jump_pads.size()):
 		var pad: Dictionary = jump_pads[index]
-		pad["player_cooldown"] = maxf(0.0, float(pad.get("player_cooldown", 0.0)) - delta)
-		pad["bot_cooldown"] = maxf(0.0, float(pad.get("bot_cooldown", 0.0)) - delta)
+		pad = ArenaPickupJumpPadRulesScript.update_jump_pad_cooldowns(pad, delta)
 		if _try_trigger_jump_pad(pad, player, &"player"):
-			pad["player_cooldown"] = JUMP_PAD_COOLDOWN
+			pad = ArenaPickupJumpPadRulesScript.mark_jump_pad_triggered(pad, &"player", JUMP_PAD_COOLDOWN)
 		if _try_trigger_jump_pad(pad, bot, &"bot"):
-			pad["bot_cooldown"] = JUMP_PAD_COOLDOWN
+			pad = ArenaPickupJumpPadRulesScript.mark_jump_pad_triggered(pad, &"bot", JUMP_PAD_COOLDOWN)
 		jump_pads[index] = pad
 
 func _try_trigger_jump_pad(pad: Dictionary, combatant, actor_id: StringName) -> bool:
-	if combatant == null or combatant.get("is_dead") == true:
+	if combatant == null:
 		return false
-	var cooldown_key := "player_cooldown" if actor_id == &"player" else "bot_cooldown"
-	if float(pad.get(cooldown_key, 0.0)) > 0.0:
+	var combatant_dead: bool = combatant.get("is_dead") == true
+	if not ArenaPickupJumpPadRulesScript.can_trigger_jump_pad(pad, actor_id, combatant.global_position, combatant_dead, JUMP_PAD_RADIUS):
 		return false
 	var pad_position: Vector3 = pad.get("position", Vector3.ZERO)
-	var flat_delta: Vector3 = combatant.global_position - pad_position
-	flat_delta.y = 0.0
-	if flat_delta.length() > JUMP_PAD_RADIUS:
-		return false
-	if combatant.global_position.y > pad_position.y + 1.1:
-		return false
 	var launch_velocity := _build_jump_pad_launch_velocity(pad)
 	if combatant.has_method("apply_jump_pad_launch"):
 		combatant.apply_jump_pad_launch(launch_velocity)
@@ -999,28 +986,12 @@ func _try_trigger_jump_pad(pad: Dictionary, combatant, actor_id: StringName) -> 
 		hud.show_jump_pad()
 	if feedback != null:
 		feedback.play_jump_pad(pad_position, launch_velocity)
-	_record_telemetry_event(&"jump_pad_triggered", {
-		"actor": actor_id,
-		"pad_id": pad.get("id", &""),
-		"position": pad_position,
-		"target": pad.get("target", Vector3.ZERO),
-		"launch_velocity": launch_velocity
-	})
-	telemetry_jump_pad_flights[String(actor_id)] = {
-		"pad_id": String(pad.get("id", &"")),
-		"target": pad.get("target", Vector3.ZERO),
-		"started_at": Time.get_ticks_msec()
-	}
+	_record_telemetry_event(&"jump_pad_triggered", ArenaPickupJumpPadRulesScript.build_jump_pad_triggered_payload(actor_id, pad, launch_velocity))
+	telemetry_jump_pad_flights[String(actor_id)] = ArenaPickupJumpPadRulesScript.build_jump_pad_flight(pad, Time.get_ticks_msec())
 	return true
 
 func _build_jump_pad_launch_velocity(pad: Dictionary) -> Vector3:
-	var pad_position: Vector3 = pad.get("position", Vector3.ZERO)
-	var target_position: Vector3 = pad.get("target", pad_position + Vector3.FORWARD)
-	var flat := target_position - pad_position
-	flat.y = 0.0
-	if flat.length_squared() <= 0.0001:
-		flat = Vector3.FORWARD
-	return flat.normalized() * JUMP_PAD_FORWARD_SPEED + Vector3.UP * JUMP_PAD_VERTICAL_SPEED
+	return ArenaPickupJumpPadRulesScript.build_jump_pad_launch_velocity(pad, JUMP_PAD_FORWARD_SPEED, JUMP_PAD_VERTICAL_SPEED)
 
 func _try_consume_pickup(pickup_kind: StringName, combatant) -> bool:
 	if not pickups.has(pickup_kind) or combatant == null:
@@ -1028,10 +999,8 @@ func _try_consume_pickup(pickup_kind: StringName, combatant) -> bool:
 	if combatant.get("is_dead") == true:
 		return false
 	var entry: Dictionary = pickups[pickup_kind]
-	if not bool(entry.get("available", false)):
-		return false
 	var pickup_position: Vector3 = entry.get("position", Vector3.ZERO)
-	if combatant.get_body_center().distance_to(pickup_position) > PICKUP_RADIUS:
+	if not ArenaPickupJumpPadRulesScript.can_attempt_pickup(entry, combatant.get_body_center(), PICKUP_RADIUS):
 		return false
 	var actor_id := _get_combatant_id(combatant)
 	var health_before := float(combatant.get("health")) if combatant.get("health") != null else 0.0
@@ -1059,17 +1028,17 @@ func _try_consume_pickup(pickup_kind: StringName, combatant) -> bool:
 		hud.show_pickup(pickup_kind)
 	if feedback != null:
 		feedback.play_pickup(pickup_position, pickup_kind)
-	_record_telemetry_event(&"pickup_collected", {
-		"actor": actor_id,
-		"pickup_kind": pickup_kind,
-		"position": pickup_position,
-		"health_before": health_before,
-		"health_after": float(combatant.get("health")) if combatant.get("health") != null else health_before,
-		"max_health": max_health,
-		"healing_applied": healing_applied,
-		"healing_wasted": healing_wasted,
-		"has_overcharge": combatant.has_method("has_overcharge_charge") and combatant.has_overcharge_charge()
-	})
+	_record_telemetry_event(&"pickup_collected", ArenaPickupJumpPadRulesScript.build_pickup_collected_payload(
+		actor_id,
+		pickup_kind,
+		pickup_position,
+		health_before,
+		float(combatant.get("health")) if combatant.get("health") != null else health_before,
+		max_health,
+		healing_applied,
+		healing_wasted,
+		combatant.has_method("has_overcharge_charge") and combatant.has_overcharge_charge()
+	))
 	_update_bot_awareness()
 	return true
 
@@ -1077,8 +1046,7 @@ func _set_pickup_available(pickup_kind: StringName, available: bool) -> void:
 	if not pickups.has(pickup_kind):
 		return
 	var entry: Dictionary = pickups[pickup_kind]
-	entry["available"] = available
-	entry["respawn_remaining"] = 0.0 if available else _get_pickup_respawn_duration(pickup_kind)
+	entry = ArenaPickupJumpPadRulesScript.set_pickup_available(entry, available, _get_pickup_respawn_duration(pickup_kind))
 	var pickup_node := entry.get("node", null) as Node3D
 	if pickup_node != null:
 		pickup_node.visible = available
@@ -1093,12 +1061,10 @@ func _reset_vertical_hazards() -> void:
 	last_jump_pad_id = &""
 	for index in range(jump_pads.size()):
 		var pad: Dictionary = jump_pads[index]
-		pad["player_cooldown"] = 0.0
-		pad["bot_cooldown"] = 0.0
-		jump_pads[index] = pad
+		jump_pads[index] = ArenaPickupJumpPadRulesScript.reset_jump_pad_cooldowns(pad)
 
 func _get_pickup_respawn_duration(pickup_kind: StringName) -> float:
-	return ArenaCombatRulesScript.get_pickup_respawn_duration(pickup_kind, HEALTH_PICKUP_RESPAWN, OVERCHARGE_PICKUP_RESPAWN)
+	return ArenaPickupJumpPadRulesScript.get_pickup_respawn_duration(pickup_kind, HEALTH_PICKUP_RESPAWN, OVERCHARGE_PICKUP_RESPAWN)
 
 func _get_pickup_respawn_remaining(pickup_kind: StringName) -> float:
 	var entry: Dictionary = pickups.get(pickup_kind, {})
