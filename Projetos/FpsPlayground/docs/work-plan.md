@@ -1,14 +1,14 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK14F_CLEANUP_DOCUMENTATION_LOCAL_VALIDATED`
+- Status: `FPS_PLAYGROUND_TRACK14F_MERGED_LOCAL_BASELINE`
 - Current surface: FPS arena lab.
-- Current baseline: Track 14F cleanup/documentation local validated; current player movement feel preserved.
+- Current baseline: Track 14F merged local baseline; current player movement feel preserved.
 
 ## North Star
 
 Keep `FpsPlayground` as a focused first-person gameplay laboratory for arena movement, shooting, projectiles, bots, maps and combat feel.
 
-The near-term direction is to harden the approved 1x1 Arena Shooter foundation before growing it again. New maps, weapons, buffs and bot improvements should be introduced after the Track 14 safety sequence, through small tracks with telemetry evidence and clear rollback points.
+The Track 14 hardening sequence is complete enough to resume evidence-first gameplay work. New maps, weapons, buffs and bot improvements should be introduced through small tracks with telemetry evidence and clear rollback points.
 
 ## Approved Baseline
 
@@ -34,7 +34,7 @@ The near-term direction is to harden the approved 1x1 Arena Shooter foundation b
 
 ## Recommended Next Tracks
 
-Next active recommendation: review/merge `Track 14F`, then execute `Multi-Arena Balance Baseline V1`.
+Next active recommendation: execute `Multi-Arena Balance Baseline V1`.
 
 ### 1. Track 14A - Refactor Safety Net And Code Health Baseline V1
 

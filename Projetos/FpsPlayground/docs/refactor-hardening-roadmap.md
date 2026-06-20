@@ -1,12 +1,12 @@
 # Refactor Hardening Roadmap
 
-- Status: `Track 14F local validated cleanup/documentation baseline`
+- Status: `Track 14F merged local cleanup/documentation baseline`
 - Scope: code hardening and reduction sequence for the approved Arena Shooter baseline.
 - Rule: Track 14 did not change gameplay, movement feel, jump pad force, map geometry, weapon values or bot decisions.
 
 ## Why Now
 
-The project is approved enough to keep expanding, but the next maps, weapons, buffs and bot upgrades will touch systems that are currently concentrated in a few large files. Hardening first reduces the chance that future gameplay tracks accidentally change the approved feel.
+The project is approved enough to keep expanding again. Track 14 reduced the main risk around large files, but remaining hotspots should be handled only when they directly protect the next gameplay or telemetry track.
 
 ## Current Hotspots
 

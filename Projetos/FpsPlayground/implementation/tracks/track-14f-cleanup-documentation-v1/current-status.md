@@ -1,6 +1,6 @@
 # Track 14F - Cleanup And Documentation V1
 
-- Status: `LOCAL_VALIDATED`
+- Status: `MERGED_LOCAL`
 - Date: `2026-06-20`
 - Branch: `codex/fpsplayground/track14f-cleanup-documentation-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track14f-cleanup-documentation-v1`
@@ -30,4 +30,4 @@ PASS tools/validate.gd, GUT 62/62, 564 asserts
 
 ## Next
 
-Review/merge Track 14F, then execute `Multi-Arena Balance Baseline V1`.
+Execute `Multi-Arena Balance Baseline V1`.

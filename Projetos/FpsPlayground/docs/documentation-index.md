@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK14F_CLEANUP_DOCUMENTATION_LOCAL_VALIDATED`
+- Status: `FPS_PLAYGROUND_TRACK14F_MERGED_LOCAL_BASELINE`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 

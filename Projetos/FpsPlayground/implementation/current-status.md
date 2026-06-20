@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 14F - Cleanup And Documentation V1`
-- Active stage status: `LOCAL_VALIDATED`
-- Status marker: `FPS_PLAYGROUND_TRACK14F_CLEANUP_DOCUMENTATION_LOCAL_VALIDATED`
+- Active stage: `Post-Track14F Baseline`
+- Active stage status: `MERGED_LOCAL`
+- Status marker: `FPS_PLAYGROUND_TRACK14F_MERGED_LOCAL_BASELINE`
 
 ## Current Truth
 
@@ -63,13 +63,13 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 14C: combat pipeline extraction - merged locally on `2026-06-20`.
 - Track 14D: pickups and jump pads extraction - merged locally on `2026-06-20`.
 - Track 14E: bot decision boundary - approved by Fabio/tester on `2026-06-20`.
-- Track 14F: cleanup and documentation - local validated on `2026-06-20`.
+- Track 14F: cleanup and documentation - merged locally on `2026-06-20`.
 
 ## Next Sequence
 
-1. Review/merge `Track 14F - Cleanup And Documentation V1`.
-2. Execute `Multi-Arena Balance Baseline V1`.
-3. Choose arsenal/buff contracts, tuning or bot intelligence only after the multi-arena readout.
+1. Execute `Multi-Arena Balance Baseline V1`.
+2. Choose arsenal/buff contracts, tuning or bot intelligence only after the multi-arena readout.
+3. Keep further hardening/refactor scoped to implementation hotspots only when it protects the next gameplay track.
 
 ## Validation
 
