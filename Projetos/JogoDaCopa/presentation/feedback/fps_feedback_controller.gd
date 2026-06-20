@@ -17,7 +17,7 @@ const MAX_RETIRED_WEB_SPHERES: int = 192
 const MAX_RETIRED_WEB_LIGHTS: int = 96
 const WEB_AUDIO_UNLOCK_POLL_MSEC: int = 500
 const WEB_FEEDBACK_QUERY_KEY: String = "jdc_web_feedback"
-const WEB_DEFAULT_FEEDBACK_EFFECTS: Array = ["whistle", "confetti", "kick", "countdown", "jump_pad", "result"]
+const WEB_DEFAULT_FEEDBACK_EFFECTS: Array = ["whistle", "confetti", "kick", "countdown", "jump_pad", "result", "goal"]
 const AMBIENCE_PLAY_DB: float = -14.0
 const AMBIENCE_MENU_DB: float = -24.0
 const AMBIENCE_GOAL_DB: float = -8.5
@@ -260,12 +260,9 @@ func play_football_goal(goal_position: Vector3, player_scored: bool) -> void:
 	if RenderProfileScript.is_web_platform():
 		if not _is_web_feedback_enabled(&"goal"):
 			return
-		_spawn_sphere(goal_position + Vector3.UP * 0.72, 0.54, color, 0.28, true)
-		_spawn_particle_burst(goal_position + Vector3.UP * 1.0, color, 12, 0.22, 1.4)
-		_spawn_light(goal_position + Vector3.UP * 1.1, color, 2.7, 5.0, 0.24)
-		_play_sfx_ui(&"goal_jingle", -8.5, 1.0, BUS_UI)
-		_play_sfx_ui(&"crowd_goal", -13.5, 1.0, BUS_AMBIENCE)
-		ambience_goal_boost_remaining = 1.4
+		_spawn_web_goal_lite(goal_position, color)
+		_play_sfx_ui(&"goal_jingle", -9.0, 1.0, BUS_UI)
+		ambience_goal_boost_remaining = 1.0
 		return
 	_spawn_sphere(goal_position + Vector3.UP * 0.7, 0.72, color, 0.42, true)
 	_spawn_particle_burst(goal_position + Vector3.UP * 1.0, color, 96, 0.7, 5.8)
@@ -656,6 +653,11 @@ func _spawn_web_burst_markers(effect_position: Vector3, color: Color, amount: in
 		_spawn_sphere(effect_position + offset, radius, color, maxf(0.28, lifetime * 0.45), true)
 	return marker_count
 
+func _spawn_web_goal_lite(goal_position: Vector3, color: Color) -> void:
+	_spawn_sphere(goal_position + Vector3.UP * 0.76, 0.38, color, 0.32, true)
+	_spawn_sphere(goal_position + Vector3(0.28, 1.13, 0.0), 0.14, FOOTBALL_STRONG_COLOR, 0.24, true)
+	_spawn_sphere(goal_position + Vector3(-0.28, 1.05, 0.0), 0.12, color, 0.22, true)
+
 func _spawn_web_sphere(effect_position: Vector3, radius: float, color: Color, lifetime: float, unshaded: bool) -> void:
 	var mesh_instance := _acquire_web_sphere()
 	mesh_instance.visible = true
@@ -750,6 +752,20 @@ func _ensure_real_audio_streams_loaded() -> void:
 	_load_real_audio_streams()
 	PerfProbeScript.end(self, "feedback.audio_load_lazy", stage_begin, "streams=%d" % real_audio_streams.size())
 
+func _ensure_real_audio_stream_loaded(audio_key: StringName) -> void:
+	if real_audio_streams.has(audio_key):
+		return
+	var audio_path := str(REAL_AUDIO_PATHS.get(audio_key, ""))
+	if audio_path.is_empty():
+		return
+	var stage_begin := PerfProbeScript.begin(self, "feedback.audio_load_lazy_one", "key=%s" % str(audio_key))
+	var stream := load(audio_path) as AudioStream
+	if stream == null:
+		push_warning("Missing real audio stream: %s" % audio_path)
+	else:
+		real_audio_streams[audio_key] = stream
+	PerfProbeScript.end(self, "feedback.audio_load_lazy_one", stage_begin, "loaded=%s streams=%d" % [str(stream != null), real_audio_streams.size()])
+
 func _build_audio_pools() -> void:
 	if not RenderProfileScript.is_web_platform():
 		for index in range(SFX_POOL_SIZE):
@@ -776,7 +792,7 @@ func _build_ui_audio_pool() -> void:
 func _start_ambience_loop() -> void:
 	if RenderProfileScript.is_web_platform() and not _can_play_web_audio(true):
 		return
-	_ensure_real_audio_streams_loaded()
+	_ensure_real_audio_stream_loaded(&"stadium_loop")
 	var stream := real_audio_streams.get(&"stadium_loop") as AudioStream
 	if stream == null:
 		return
@@ -840,7 +856,7 @@ func _play_sfx_ui(audio_key: StringName, volume_db: float = -10.0, pitch_scale: 
 	if not _can_play_web_audio(false):
 		PerfProbeScript.end(self, "feedback.play_sfx_ui", profile_begin, "played=false web_audio_locked=true")
 		return false
-	_ensure_real_audio_streams_loaded()
+	_ensure_real_audio_stream_loaded(audio_key)
 	if ui_pool.is_empty():
 		_build_ui_audio_pool()
 	var stream := real_audio_streams.get(audio_key) as AudioStream

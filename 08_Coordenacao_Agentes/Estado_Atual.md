@@ -14,13 +14,14 @@
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK10A_HUMAN_APPROVED`
-- Marker: `JOGO_DA_COPA_TRACK10A_HUMAN_APPROVED`
+- Status: `P2_IMPLEMENTACAO - TRACK10B_LOCAL_VALIDATED`
+- Marker: `JOGO_DA_COPA_TRACK10B_LOCAL_VALIDATED`
+- Candidato local: Track 10B reintroduz feedback de gol Web leve com `goal_jingle`; local import/validate/export/probes 90s/5min PASS (`firstMinuteHitches=0`, `js_heap_growth -8.36%`).
 - Publicacao atual e baseline aprovado: Track 10A `Super Campeao v1.2.1+fc3c72bb` (`web/v1-copa-arena-futebol-20260620-fc3c72bb`) em `https://copa-arena-futebol.pages.dev/`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.34%`) e reteste humano aprovado.
 - Fallback aprovado: Track 09S `Super Campeao v1.2.1+925f3b9f`; gates remotos 09S PASS e reteste humano aprovado.
 - Fallback historico aprovado: Track 09Q `Super Campeao v1.2.1+bb604c77`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.41%`) e aprovada por Fabio/tester.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: planejar a proxima etapa tecnica a partir da 10A aprovada ou pausar para reavaliacao antes de nova reducao.
+- Proximo passo: publicar/testar Track 10B se o candidato local for aceito; se nao, manter 10A e retomar reducao conservadora depois.
 
 ## draxos-roguelike-cardgame
 
