@@ -64,6 +64,13 @@ PASS tools/validate.gd -- --profile=quick, GUT 62/62, 564 asserts
 PASS tools/validate.gd, GUT 62/62, 564 asserts
 ```
 
+Latest Track 14G validation:
+
+```text
+PASS tools/validate.gd -- --profile=quick, GUT 66/66, 593 asserts
+PASS tools/validate.gd, GUT 66/66, 593 asserts
+```
+
 Latest Track 11 human smoke:
 
 ```text
@@ -270,6 +277,14 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm no gameplay, movement, jump pad, map, weapon, pickup, bot behavior or telemetry constants changed.
 - Confirm docs list `Multi-Arena Balance Baseline V1` as the next recommended gameplay step.
 - Confirm validation still passes at `62/62`, `564 asserts`.
+
+## Track 14G Surgical Expansion Hardening Smoke
+
+- Confirm bot movement execution helpers live in `BotMovementExecutor` while decisions remain in `BotDecisionModel`.
+- Confirm player Plasma bolt creation, step and cleanup go through `ArenaProjectileRuntime`.
+- Confirm HUD transient event/timer/crosshair state goes through `ArenaHudFeedbackState`.
+- Confirm arena telemetry context/event emission goes through `ArenaTelemetryEvents`.
+- Confirm validation still passes at `66/66`, `593 asserts`.
 
 ## Known Noise
 

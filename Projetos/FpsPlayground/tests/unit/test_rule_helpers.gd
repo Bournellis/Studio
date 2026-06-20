@@ -3,12 +3,15 @@ extends "res://addons/gut/test.gd"
 const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
 const BotAimModelScript = preload("res://gameplay/bot/bot_aim_model.gd")
 const BotDecisionModelScript = preload("res://gameplay/bot/bot_decision_model.gd")
+const BotMovementExecutorScript = preload("res://gameplay/bot/bot_movement_executor.gd")
 const BotScript = preload("res://gameplay/bot/basic_duel_bot.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_points.gd")
 const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 const ArenaHudSnapshotBuilderScript = preload("res://modes/arena/arena_hud_snapshot_builder.gd")
+const ArenaHudFeedbackStateScript = preload("res://presentation/hud/arena_hud_feedback_state.gd")
 const ArenaCombatPipelineScript = preload("res://modes/arena/arena_combat_pipeline.gd")
+const ArenaProjectileRuntimeScript = preload("res://modes/arena/arena_projectile_runtime.gd")
 const ArenaPickupJumpPadRulesScript = preload("res://modes/arena/arena_pickup_jump_pad_rules.gd")
 
 class MockVisibilityTarget:
@@ -138,6 +141,39 @@ func test_arena_combat_pipeline_calculates_plasma_blast_contract() -> void:
 	assert_almost_eq(float(blast.get("knockback", 0.0)), 2.7, 0.001)
 	assert_almost_eq((blast.get("direction", Vector3.ZERO) as Vector3).distance_to(Vector3.BACK), 0.0, 0.001)
 
+func test_arena_projectile_runtime_builds_and_advances_plasma_contract() -> void:
+	var root := Node3D.new()
+	add_child_autofree(root)
+	var material := StandardMaterial3D.new()
+
+	var entry := ArenaProjectileRuntimeScript.build_player_plasma_bolt(
+		root,
+		Vector3.ZERO,
+		Vector3.FORWARD,
+		24.0,
+		10.0,
+		18.0,
+		0.34,
+		true,
+		2.45,
+		"plasma_test",
+		material
+	)
+
+	assert_false(entry.is_empty())
+	assert_eq(root.get_child_count(), 1)
+	assert_almost_eq(float(entry.get("radius", 0.0)), 0.3808, 0.001)
+	assert_almost_eq(float(entry.get("ttl", 0.0)), 2.45, 0.001)
+	assert_eq(entry.get("projectile_id", ""), "plasma_test")
+
+	var step := ArenaProjectileRuntimeScript.build_projectile_step(entry, 0.5)
+
+	assert_true(bool(step.get("valid", false)))
+	assert_almost_eq(float(step.get("ttl", 0.0)), 1.95, 0.001)
+	assert_almost_eq((step.get("end_position", Vector3.ZERO) as Vector3).distance_to(Vector3(0.0, 0.0, -9.0)), 0.0, 0.001)
+
+	ArenaProjectileRuntimeScript.free_projectile(entry)
+
 func test_arena_pickup_jump_pad_rules_preserve_pickup_respawn_contract() -> void:
 	var pickup_node := Node3D.new()
 	add_child_autofree(pickup_node)
@@ -227,6 +263,35 @@ func test_arena_hud_snapshot_builder_preserves_duel_status_contract() -> void:
 	)
 	assert_eq(ArenaHudSnapshotBuilderScript.build_result_text(&"playing", &"", 3), "First to 3")
 	assert_eq(ArenaHudSnapshotBuilderScript.build_hint(&"match_over", true), "R novo duelo | Esc menu")
+
+func test_arena_hud_feedback_state_preserves_event_and_timer_contracts() -> void:
+	var ticked := ArenaHudFeedbackStateScript.tick_feedback_state({
+		"shot_feedback_time": 0.11,
+		"hit_feedback_time": 0.0,
+		"miss_feedback_time": 0.0,
+		"damage_feedback_time": 0.0,
+		"kill_feedback_time": 0.0,
+		"plasma_feedback_time": 0.0,
+		"bot_tell_feedback_time": 0.0,
+		"event_message_time": 0.42
+	}, 0.05)
+
+	assert_almost_eq(float(ticked.get("shot_feedback_time", 0.0)), 0.06, 0.001)
+	assert_almost_eq(float(ticked.get("event_message_time", 0.0)), 0.37, 0.001)
+
+	var hit_event := ArenaHudFeedbackStateScript.build_plasma_hit_event(true, false)
+	assert_eq(hit_event.get("message", ""), "OVERCHARGE HIT")
+	assert_eq(ArenaHudFeedbackStateScript.get_plasma_blast_feedback(false, false), &"plasma_blast")
+	assert_eq(ArenaHudFeedbackStateScript.build_player_alt_fire_event(false), {})
+	assert_eq(ArenaHudFeedbackStateScript.build_pickup_event(&"health", 28.0).get("message", ""), "HEALTH +28")
+	assert_almost_eq(ArenaHudFeedbackStateScript.get_event_alpha(0.125), 0.5, 0.001)
+
+	var crosshair := ArenaHudFeedbackStateScript.build_crosshair_view({
+		"hit_feedback_time": 0.2,
+		"kill_feedback_time": 0.0
+	})
+	assert_eq(crosshair.get("marker_text", ""), "x")
+	assert_almost_eq(float(crosshair.get("marker_alpha", 0.0)), 1.0, 0.001)
 
 func test_bot_aim_model_uses_deterministic_patterns() -> void:
 	assert_eq(BotAimModelScript.pattern_for_index(0), Vector2(0.12, 0.04))
@@ -338,6 +403,55 @@ func test_bot_decision_model_preserves_route_commitment_contracts() -> void:
 		"distance_to_reposition_destination": 0.2
 	})
 	assert_true(BotDecisionModelScript.should_hold_current_route(jump_pad_route))
+
+func test_bot_movement_executor_preserves_distance_and_route_contracts() -> void:
+	var to_target := Vector3(0.0, 0.0, -8.0)
+	var retreat := BotMovementExecutorScript.build_distance_management_move(
+		to_target,
+		0.18,
+		0.5,
+		0.76,
+		false,
+		true,
+		8.8,
+		0.22,
+		0.42
+	)
+	assert_gt(retreat.z, 0.99)
+
+	var pressure := BotMovementExecutorScript.build_distance_management_move(
+		to_target,
+		0.92,
+		0.0,
+		0.76,
+		true,
+		true,
+		8.8,
+		0.22,
+		0.42
+	)
+	assert_lt(pressure.z, -0.99)
+
+	var jump_pad_routes: Array[Dictionary] = [
+		{"id": &"short", "position": Vector3(1.0, 0.1, 0.0), "target": Vector3(2.0, 3.0, 0.0)},
+		{"id": &"long", "position": Vector3(7.0, 0.1, 0.0), "target": Vector3(12.0, 3.0, 0.0)}
+	]
+	var selected := BotMovementExecutorScript.select_jump_pad_route_for_destination(Vector3.ZERO, Vector3(11.0, 3.0, 0.0), jump_pad_routes, {})
+	assert_eq(selected.get("id", &""), &"long")
+
+	var blocked_selected := BotMovementExecutorScript.select_jump_pad_route_for_destination(Vector3.ZERO, Vector3(11.0, 3.0, 0.0), jump_pad_routes, {"long": 1.0})
+	assert_eq(blocked_selected.get("id", &""), &"short")
+
+	var resolved := BotMovementExecutorScript.resolve_navigation_target(
+		Vector3.ZERO,
+		Vector3(11.0, 3.0, 0.0),
+		jump_pad_routes,
+		{},
+		0.42,
+		1.15,
+		3.2
+	)
+	assert_almost_eq(resolved.distance_to(Vector3(7.0, 0.1, 0.0)), 0.0, 0.001)
 
 func test_arena_layout_catalog_exposes_distinct_tactical_contexts() -> void:
 	var layout_ids := ArenaLayoutCatalogScript.get_layout_ids()

@@ -2,6 +2,7 @@ extends "res://addons/gut/test.gd"
 
 const BootstrapSceneGeneratorScript = preload("res://tools/bootstrap_scene_generator.gd")
 const ArenaTelemetryRecorderScript = preload("res://gameplay/telemetry/arena_telemetry_recorder.gd")
+const ArenaTelemetryEventsScript = preload("res://gameplay/telemetry/arena_telemetry_events.gd")
 
 func before_all() -> void:
 	var result: Dictionary = BootstrapSceneGeneratorScript.new().generate_all()
@@ -67,6 +68,34 @@ func test_telemetry_recorder_builds_schema_and_summary() -> void:
 	assert_eq(summary.get("movement", {}).get("samples", 0), 1)
 	assert_eq(summary.get("movement", {}).get("bot_airborne_samples", 0), 1)
 	assert_eq(summary.get("bot", {}).get("line_of_sight_true_samples", 0), 1)
+	assert_no_new_orphans()
+
+func test_arena_telemetry_events_facade_builds_context_and_records_event() -> void:
+	var recorder = ArenaTelemetryRecorderScript.new()
+	var start_context := ArenaTelemetryEventsScript.build_context(
+		1,
+		&"playing",
+		&"duel_pit_v2",
+		"Duel Pit V2",
+		0,
+		0,
+		3,
+		{"session_id": "facade_session"}
+	)
+	ArenaTelemetryEventsScript.start_session(recorder, start_context, false)
+	var event := ArenaTelemetryEventsScript.record_event(
+		recorder,
+		&"round_start",
+		ArenaTelemetryEventsScript.build_context(2, &"playing", &"relay_foundry_v1", "Relay Foundry V1", 1, 0, 3),
+		{"reason": &"facade"}
+	)
+
+	assert_eq(event.get("session_id", ""), "facade_session")
+	assert_eq(int(event.get("round_index", 0)), 2)
+	assert_eq(event.get("map_id", ""), "relay_foundry_v1")
+	assert_eq(event.get("map_name", ""), "Relay Foundry V1")
+	assert_eq(event.get("reason", ""), "facade")
+	assert_eq(recorder.get_summary().get("event_counts", {}).get("round_start", 0), 1)
 	assert_no_new_orphans()
 
 func test_telemetry_recorder_can_write_local_files() -> void:

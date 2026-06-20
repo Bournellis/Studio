@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK14F_MERGED_LOCAL_BASELINE`
+- Status: `FPS_PLAYGROUND_TRACK14G_MERGED_LOCAL_BASELINE`
 - Current surface: FPS arena lab.
-- Current baseline: Track 14F merged local baseline; current player movement feel preserved.
+- Current baseline: Track 14G surgical hardening merged local baseline; current player movement feel preserved.
 
 ## North Star
 
@@ -29,7 +29,8 @@ The Track 14 hardening sequence is complete enough to resume evidence-first game
 - Track 14D extracted pickup and jump pad rules from `arena_root.gd`; no gameplay changes.
 - Track 14E extracted bot decision scoring from `basic_duel_bot.gd`; no gameplay changes.
 - Track 14F removed dead private bot wrappers and rebaselined code metrics; no gameplay changes.
-- Validation baseline: `tools/validate.gd` PASS `62/62`, `564 asserts`.
+- Track 14G extracted bot movement execution, projectile runtime, HUD feedback state and telemetry event facade; no gameplay changes.
+- Validation baseline: `tools/validate.gd` PASS `66/66`, `593 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Recommended Next Tracks
@@ -109,6 +110,19 @@ Expected scope:
 - Delivered: removed dead private bot wrappers left after Track 14E.
 - Metrics: `arena_root.gd` 1524 lines, `basic_duel_bot.gd` 1142 lines, `bot_decision_model.gd` 295 lines.
 - Validation target stays `62/62`, `564 asserts`.
+- Next: `Multi-Arena Balance Baseline V1`.
+
+### 7. Track 14G - Surgical Expansion Hardening V1
+
+Goal:
+
+- Add small implementation boundaries around the remaining expansion hotspots without changing gameplay.
+
+Expected scope:
+
+- Delivered: `BotMovementExecutor`, `ArenaProjectileRuntime`, `ArenaHudFeedbackState` and `ArenaTelemetryEvents`.
+- Rebaselined hotspot metrics: `arena_root.gd` 1487 lines, `basic_duel_bot.gd` 1077 lines, `arena_hud.gd` 535 lines.
+- Preserved gameplay, movement feel, jump pad force, maps, weapon values, pickups, aim difficulty, bot behavior and telemetry schema.
 - Next: `Multi-Arena Balance Baseline V1`.
 
 ## Gameplay Roadmap After Track 14

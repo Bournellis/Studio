@@ -1,6 +1,6 @@
 # Refactor Hardening Roadmap
 
-- Status: `Track 14F merged local cleanup/documentation baseline`
+- Status: `Track 14G surgical expansion hardening merged locally`
 - Scope: code hardening and reduction sequence for the approved Arena Shooter baseline.
 - Rule: Track 14 did not change gameplay, movement feel, jump pad force, map geometry, weapon values or bot decisions.
 
@@ -15,14 +15,19 @@ The project is approved enough to keep expanding again. Track 14 reduced the mai
 - `tests/unit/test_bootstrap.gd`: broad safety net; useful, but too centralized for future refactors.
 - `presentation/hud/arena_hud.gd`: acceptable now, but should not absorb more match/readout logic.
 
-Post-Track-14F code-size baseline:
+Post-Track-14G code-size baseline:
 
-- `modes/arena/arena_root.gd`: 1524 lines.
-- `gameplay/bot/basic_duel_bot.gd`: 1142 lines.
+- `modes/arena/arena_root.gd`: 1487 lines.
+- `gameplay/bot/basic_duel_bot.gd`: 1077 lines.
+- `presentation/hud/arena_hud.gd`: 535 lines.
 - `gameplay/bot/bot_decision_model.gd`: 295 lines.
+- `gameplay/bot/bot_movement_executor.gd`: 206 lines.
 - `modes/arena/arena_combat_pipeline.gd`: 358 lines.
+- `modes/arena/arena_projectile_runtime.gd`: 90 lines.
 - `modes/arena/arena_pickup_jump_pad_rules.gd`: 155 lines.
 - `modes/arena/arena_hud_snapshot_builder.gd`: 75 lines.
+- `presentation/hud/arena_hud_feedback_state.gd`: 152 lines.
+- `gameplay/telemetry/arena_telemetry_events.gd`: 39 lines.
 
 ## Track 14 Sequence
 
@@ -58,6 +63,11 @@ Post-Track-14F code-size baseline:
 6. `Track 14F - Cleanup And Documentation V1`
    - Delivered: removed dead private bot wrappers left after Track 14E.
    - Rebaselined code-size metrics and docs.
+   - Next: `Track 14G - Surgical Expansion Hardening V1`.
+
+7. `Track 14G - Surgical Expansion Hardening V1`
+   - Delivered: small expansion boundaries for bot movement execution, projectile runtime, HUD feedback state and telemetry event emission.
+   - Preserved gameplay, movement feel, map, weapon, pickup, jump pad, bot decision and telemetry schema.
    - Next: `Multi-Arena Balance Baseline V1`.
 
 ## Safety Gates
