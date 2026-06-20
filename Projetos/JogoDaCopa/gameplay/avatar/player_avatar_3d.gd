@@ -12,6 +12,7 @@ const FEMALE_MODEL_PATH: String = "res://assets/characters/quaternius_ubc/base/S
 const UAL_ANIMATION_LIBRARY_PATH: String = "res://assets/characters/quaternius_ubc/animations/UAL1_Standard.glb"
 const RUNTIME_ANIMATION_LIBRARY_PATH: String = "res://assets/characters/quaternius_ubc/animations/jdc_runtime_animation_library.res"
 const REAL_MODEL_SCALE: Vector3 = Vector3(0.92, 0.92, 0.92)
+const REAL_MODEL_FIELD_CLEARANCE_OFFSET: float = 0.05
 const SPRINT_SPEED_THRESHOLD: float = 9.8
 const DEFAULT_STATE: StringName = &"idle"
 const KICK_ANIMATION_NAME: StringName = &"JogoDaCopa_Kick"
@@ -431,6 +432,7 @@ func _build_avatar() -> void:
 	real_model_fallback_reason = ""
 	part_root = Node3D.new()
 	part_root.name = "AvatarParts"
+	part_root.position.y = REAL_MODEL_FIELD_CLEARANCE_OFFSET
 	add_child(part_root)
 	var stage_begin := PerfProbeScript.begin(self, "avatar.instantiate_model", "node=%s variant=%s" % [name, str(character_variant)])
 	_instantiate_real_model()

@@ -206,6 +206,15 @@ func test_real_avatar_idle_pose_stays_upright_after_one_full_loop() -> void:
 	assert_gt(skeleton_up.dot(Vector3.UP), cos(deg_to_rad(15.0)))
 	assert_no_new_orphans()
 
+func test_real_avatar_visible_feet_clear_field_plane() -> void:
+	var avatar = PlayerAvatarScript.new()
+	add_child_autofree(avatar)
+	await get_tree().process_frame
+
+	var min_y := _get_avatar_visible_mesh_min_y(avatar)
+	assert_gte(min_y, 0.025, "Visible avatar mesh should keep boots above the field plane; min_y=%.3f" % min_y)
+	assert_no_new_orphans()
+
 func test_real_avatar_strips_root_motion_and_does_not_accumulate_drift() -> void:
 	var avatar = PlayerAvatarScript.new()
 	add_child_autofree(avatar)
@@ -434,6 +443,21 @@ func _get_avatar_visual_front_flat(avatar) -> Vector3:
 	if visual_front.length() <= 0.001:
 		return Vector3.FORWARD
 	return visual_front.normalized()
+
+func _get_avatar_visible_mesh_min_y(avatar: Node3D) -> float:
+	var meshes: Array[MeshInstance3D] = []
+	_collect_meshes(avatar.get_node("AvatarParts/RealCharacterModel"), meshes)
+	var min_y := INF
+	for mesh_instance in meshes:
+		if not mesh_instance.visible or mesh_instance.mesh == null:
+			continue
+		var aabb := mesh_instance.get_aabb()
+		for x in [aabb.position.x, aabb.position.x + aabb.size.x]:
+			for y in [aabb.position.y, aabb.position.y + aabb.size.y]:
+				for z in [aabb.position.z, aabb.position.z + aabb.size.z]:
+					var world_point := mesh_instance.global_transform * Vector3(x, y, z)
+					min_y = minf(min_y, avatar.to_local(world_point).y)
+	return min_y
 
 func _animation_has_non_uniform_bone_keys(animation_player: AnimationPlayer, animation_name: StringName, bone_name: StringName) -> bool:
 	var animation := animation_player.get_animation(animation_name)
