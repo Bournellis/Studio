@@ -17,7 +17,7 @@ const MAX_RETIRED_WEB_SPHERES: int = 192
 const MAX_RETIRED_WEB_LIGHTS: int = 96
 const WEB_AUDIO_UNLOCK_POLL_MSEC: int = 500
 const WEB_FEEDBACK_QUERY_KEY: String = "jdc_web_feedback"
-const WEB_DEFAULT_FEEDBACK_EFFECTS: Array = ["whistle", "confetti", "kick", "countdown", "jump_pad", "result", "goal"]
+const WEB_DEFAULT_FEEDBACK_EFFECTS: Array = ["whistle", "confetti", "kick", "countdown", "jump_pad", "result", "goal_visual"]
 const AMBIENCE_PLAY_DB: float = -14.0
 const AMBIENCE_MENU_DB: float = -24.0
 const AMBIENCE_GOAL_DB: float = -8.5
@@ -258,10 +258,15 @@ func play_football_goal(goal_position: Vector3, player_scored: bool) -> void:
 	football_goal_count += 1
 	var color := FOOTBALL_GOAL_COLOR if player_scored else DAMAGE_COLOR
 	if RenderProfileScript.is_web_platform():
-		if not _is_web_feedback_enabled(&"goal"):
+		var visual_enabled := _is_web_feedback_enabled(&"goal") or _is_web_feedback_enabled(&"goal_visual")
+		var audio_enabled := _is_web_feedback_enabled(&"goal") or _is_web_feedback_enabled(&"goal_audio")
+		if not visual_enabled and not audio_enabled:
 			return
-		_spawn_web_goal_lite(goal_position, color)
-		_play_sfx_ui(&"goal_jingle", -9.0, 1.0, BUS_UI)
+		PerfProbeScript.mark(self, "feedback.web_goal_mode", "visual=%s audio=%s" % [str(visual_enabled), str(audio_enabled)])
+		if visual_enabled:
+			_spawn_web_goal_lite(goal_position, color)
+		if audio_enabled:
+			_play_sfx_ui(&"goal_jingle", -9.0, 1.0, BUS_UI)
 		ambience_goal_boost_remaining = 1.0
 		return
 	_spawn_sphere(goal_position + Vector3.UP * 0.7, 0.72, color, 0.42, true)

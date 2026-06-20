@@ -49,7 +49,9 @@ func test_web_render_profile_documents_known_fallbacks() -> void:
 	assert_true(" ".join(fallbacks).contains("SSAO"))
 	assert_true(" ".join(fallbacks).contains("IndexedDB"))
 
-func test_web_default_feedback_includes_lite_goal_feedback() -> void:
-	assert_true(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("goal"))
+func test_web_default_feedback_includes_heap_safe_lite_goal_feedback() -> void:
+	assert_true(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("goal_visual"))
 	assert_true(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("confetti"))
+	assert_false(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("goal_audio"))
+	assert_false(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("goal"))
 	assert_false(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("crowd_goal"))
