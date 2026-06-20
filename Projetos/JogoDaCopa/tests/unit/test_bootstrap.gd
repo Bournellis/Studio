@@ -809,6 +809,26 @@ func test_football_chase_camera_keeps_ball_focus_subtle_when_far() -> void:
 	assert_true(far_weight <= 0.11)
 	assert_no_new_orphans()
 
+func test_football_chase_camera_reduces_ball_pull_during_lateral_strafe() -> void:
+	var football_scene := load("res://modes/football/football.tscn") as PackedScene
+	var football := football_scene.instantiate()
+	add_child_autofree(football)
+	await get_tree().process_frame
+	football.debug_start_match()
+	await get_tree().physics_frame
+
+	var player = football.debug_get_player()
+	var chase_camera = football.debug_get_chase_camera()
+	player.global_position = Vector3.ZERO
+	player.rotation = Vector3.ZERO
+	player.velocity = Vector3.RIGHT * 7.0
+	football.debug_force_ball_position(Vector3.ZERO + Vector3.UP * 0.58)
+	chase_camera.snap_to_target()
+
+	assert_lte(chase_camera.debug_get_ball_focus_weight(), 0.025)
+	assert_almost_eq(chase_camera.global_transform.basis.x.y, 0.0, 0.01, "Strafe camera horizon should stay level")
+	assert_no_new_orphans()
+
 func test_football_intro_cycles_avatar_skin_and_country_kit() -> void:
 	var football_scene := load("res://modes/football/football.tscn") as PackedScene
 	var football := football_scene.instantiate()

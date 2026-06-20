@@ -11,6 +11,10 @@ extends Node3D
 @export var collision_margin: float = 0.34
 @export var collision_mask: int = 0xFFFFFFFF
 
+const STRAFE_FOCUS_MIN_SPEED: float = 1.0
+const STRAFE_FOCUS_FULL_SPEED: float = 5.5
+const STRAFE_FOCUS_MIN_MULTIPLIER: float = 0.25
+
 var target: Node3D
 var ball: Node3D
 var camera: Camera3D
@@ -100,6 +104,7 @@ func _update_camera(delta: float, snap: bool) -> void:
 		var ball_distance := _flat_distance(target.global_position, ball.global_position)
 		var distance_factor := clampf(ball_distance / maxf(0.01, far_ball_focus_distance), 0.0, 1.0)
 		last_ball_focus_weight = lerpf(ball_focus_weight, far_ball_focus_weight, distance_factor)
+		last_ball_focus_weight *= _get_strafe_ball_focus_multiplier(forward)
 		if goal_focus_time > 0.0:
 			var goal_focus_alpha := clampf(goal_focus_time / maxf(0.01, goal_focus_duration), 0.0, 1.0)
 			last_ball_focus_weight = maxf(last_ball_focus_weight, lerpf(0.32, 0.72, goal_focus_alpha))
@@ -118,7 +123,7 @@ func _update_camera(delta: float, snap: bool) -> void:
 		global_position = global_position.lerp(desired, clampf(position_smoothing * delta, 0.0, 1.0))
 
 	if global_position.distance_squared_to(focus) > 0.0001:
-		look_at(focus, Vector3.UP)
+		_look_at_with_level_horizon(focus)
 	_update_camera_fx(delta)
 
 func _update_camera_fx(delta: float) -> void:
@@ -158,6 +163,44 @@ func _get_target_forward() -> Vector3:
 	if forward.length_squared() <= 0.0001:
 		return Vector3.FORWARD
 	return forward.normalized()
+
+func _get_strafe_ball_focus_multiplier(forward: Vector3) -> float:
+	if target == null:
+		return 1.0
+	var flat_velocity := Vector3.ZERO
+	if target is CharacterBody3D:
+		var body := target as CharacterBody3D
+		flat_velocity = Vector3(body.velocity.x, 0.0, body.velocity.z)
+	if flat_velocity.length_squared() <= STRAFE_FOCUS_MIN_SPEED * STRAFE_FOCUS_MIN_SPEED:
+		return 1.0
+	var flat_forward := Vector3(forward.x, 0.0, forward.z)
+	if flat_forward.length_squared() <= 0.0001:
+		return 1.0
+	flat_forward = flat_forward.normalized()
+	var right := flat_forward.cross(Vector3.UP)
+	if right.length_squared() <= 0.0001:
+		return 1.0
+	right = right.normalized()
+	var lateral_speed := absf(flat_velocity.dot(right))
+	var forward_speed := absf(flat_velocity.dot(flat_forward))
+	var lateral_dominance := lateral_speed / maxf(0.001, lateral_speed + forward_speed)
+	var speed_alpha := smoothstep(STRAFE_FOCUS_MIN_SPEED, STRAFE_FOCUS_FULL_SPEED, lateral_speed)
+	return lerpf(1.0, STRAFE_FOCUS_MIN_MULTIPLIER, clampf(speed_alpha * lateral_dominance, 0.0, 1.0))
+
+func _look_at_with_level_horizon(focus: Vector3) -> void:
+	var camera_forward := focus - global_position
+	if camera_forward.length_squared() <= 0.0001:
+		return
+	camera_forward = camera_forward.normalized()
+	var right := camera_forward.cross(Vector3.UP)
+	if right.length_squared() <= 0.0001:
+		right = global_transform.basis.x
+		right.y = 0.0
+	if right.length_squared() <= 0.0001:
+		right = Vector3.RIGHT
+	right = right.normalized()
+	var up := right.cross(camera_forward).normalized()
+	global_transform.basis = Basis(right, up, -camera_forward).orthonormalized()
 
 func _get_collision_clamped_position(focus: Vector3, desired: Vector3) -> Vector3:
 	if not is_inside_tree() or get_world_3d() == null:

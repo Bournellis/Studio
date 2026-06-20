@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09Q_PUBLISHED_REMOTE_GATES_PASS`
+- Status: `JOGO_DA_COPA_TRACK09R_FOOT_CAMERA_HOTFIX_LOCAL_VALIDATED`
 - Documentation baseline: `TRACK09O_DOCUMENTATION_REBASELINE_V1`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
@@ -64,6 +64,9 @@
 
 ## Track 09 Reduction And Heap Evidence
 
+- Track 09R foot and camera hotfix closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09r-foot-camera-hotfix-v1.md`
+- Track 09R foot and camera hotfix report: `playtest-reports/track-09r-foot-camera-hotfix.md`
+- Track 09R evidence: `playtest-reports/track-09r-data/`
 - Track 09P session UI controller closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09p-session-ui-controller-v1.md`
 - Track 09P session UI controller report: `playtest-reports/track-09p-session-ui-controller.md`
 - Track 09P evidence: `playtest-reports/track-09p-data/`
@@ -91,7 +94,7 @@
 
 ## Track Documentation Convention
 
-Tracks 09A-09J have local implementation folders under `../implementation/tracks/`. Tracks 09K-09Q were focused publication, hotfix, diagnostics, gate-semantics, publication-validation and local reduction tracks; their authoritative records are the Kanban Done cards plus `docs/playtest-reports/` reports/evidence listed above. Do not infer missing implementation folders as missing status for 09K-09Q.
+Tracks 09A-09J have local implementation folders under `../implementation/tracks/`. Tracks 09K-09R were focused publication, hotfix, diagnostics, gate-semantics, publication-validation and local reduction tracks; their authoritative records are the Kanban Done cards plus `docs/playtest-reports/` reports/evidence listed above. Do not infer missing implementation folders as missing status for 09K-09R.
 
 ## Historical Plans
 
