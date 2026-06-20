@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09Q local validada; 09P baseline publica aprovada; 09N fallback historico aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14A safety net/refactor local validada; Track 12 aprovada; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09Q local validada; 09P baseline publica aprovada; 09N fallback historico aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14B arena root boundary local validada; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -44,13 +44,13 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK14A_REFACTOR_SAFETY_NET_LOCAL_VALIDATED`
-- Marker: `FPS_PLAYGROUND_TRACK14A_REFACTOR_SAFETY_NET_LOCAL_VALIDATED`
-- Baseline: Track 12 telemetry/readout aprovada; Track 13 rebaselineou docs vivos; Track 14A prepara safety net e sequencia 14A-14F antes de novas expansoes.
+- Status: `P2_IMPLEMENTACAO - TRACK14B_ARENA_ROOT_BOUNDARY_LOCAL_VALIDATED`
+- Marker: `FPS_PLAYGROUND_TRACK14B_ARENA_ROOT_BOUNDARY_LOCAL_VALIDATED`
+- Baseline: Track 14B extraiu a montagem de snapshot/status do HUD para boundary dedicada sem alterar gameplay; testes `54/54`, `505 asserts`.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
-- Validacao: `tools/validate.gd` PASS `53/53`, `496 asserts`; docs `check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
+- Validacao: `tools/validate.gd` PASS `54/54`, `505 asserts`; docs `check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio revisar/autorizar merge da Track 14A; depois executar `Track 14B - Arena Root Boundary V1`.
+- Proximo passo: Fabio revisar/autorizar merge da Track 14B; depois executar `Track 14C - Combat Pipeline Extraction V1`.
 
 ## rpg-isometrico
 

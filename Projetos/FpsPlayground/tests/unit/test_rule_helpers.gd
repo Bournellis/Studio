@@ -6,6 +6,7 @@ const BotScript = preload("res://gameplay/bot/basic_duel_bot.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_points.gd")
 const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
+const ArenaHudSnapshotBuilderScript = preload("res://modes/arena/arena_hud_snapshot_builder.gd")
 
 class MockVisibilityTarget:
 	extends Node3D
@@ -63,6 +64,40 @@ func test_arena_plasma_blast_falloff_and_damage_contract() -> void:
 	assert_almost_eq(ArenaCombatRulesScript.calculate_blast_falloff(impact, edge_target, 2.0), 0.0, 0.001)
 	assert_almost_eq(ArenaCombatRulesScript.calculate_blast_damage(impact, near_target, 2.0, 10.0, 0.35), 8.375, 0.001)
 	assert_almost_eq(ArenaCombatRulesScript.calculate_blast_damage(impact, outside_target, 2.0, 10.0, 0.35), 0.0, 0.001)
+
+func test_arena_hud_snapshot_builder_preserves_duel_status_contract() -> void:
+	var snapshot := ArenaHudSnapshotBuilderScript.build_snapshot({
+		"status": "Relay Foundry V1 | Round 2 | Player 1 x 0 Bot",
+		"map_name": "Relay Foundry V1",
+		"round_state": &"player_round_win",
+		"round_index": 2,
+		"score_to_win": 3,
+		"player_score": 1,
+		"bot_score": 0,
+		"last_round_winner": &"player",
+		"health_pickup_available": true,
+		"health_pickup_respawn": 0.0,
+		"overcharge_pickup_available": false,
+		"overcharge_pickup_respawn": 6.5,
+		"last_jump_pad_id": &"east_forge_pad",
+		"round_ended": true
+	})
+
+	assert_eq(snapshot.get("result_text", ""), "Player venceu o round")
+	assert_eq(snapshot.get("hint", ""), "R proximo round | Esc menu")
+	assert_eq(snapshot.get("score_to_win", 0), 3)
+	assert_eq(snapshot.get("bot_state", &""), &"none")
+	assert_eq(snapshot.get("last_jump_pad_id", &""), &"east_forge_pad")
+	assert_eq(
+		ArenaHudSnapshotBuilderScript.build_playing_status("Duel Pit V2", 1, 0, 0),
+		"Duel Pit V2 | Round 1 | Player 0 x 0 Bot"
+	)
+	assert_eq(
+		ArenaHudSnapshotBuilderScript.build_result_status(&"match_over", &"bot", 2, 3, 5),
+		"Bot venceu o duelo 2 x 3. Aperte R para novo duelo."
+	)
+	assert_eq(ArenaHudSnapshotBuilderScript.build_result_text(&"playing", &"", 3), "First to 3")
+	assert_eq(ArenaHudSnapshotBuilderScript.build_hint(&"match_over", true), "R novo duelo | Esc menu")
 
 func test_bot_aim_model_uses_deterministic_patterns() -> void:
 	assert_eq(BotAimModelScript.pattern_for_index(0), Vector2(0.12, 0.04))

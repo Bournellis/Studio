@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 14A - Refactor Safety Net And Code Health Baseline V1`
+- Active stage: `Track 14B - Arena Root Boundary V1`
 - Active stage status: `LOCAL_VALIDATED`
-- Status marker: `FPS_PLAYGROUND_TRACK14A_REFACTOR_SAFETY_NET_LOCAL_VALIDATED`
+- Status marker: `FPS_PLAYGROUND_TRACK14B_ARENA_ROOT_BOUNDARY_LOCAL_VALIDATED`
 
 ## Current Truth
 
@@ -14,7 +14,7 @@
 
 The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning, local duel telemetry, telemetry readout tooling and the pre-Track-08 player movement feel preserved.
 
-Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A starts the hardening/refactor safety sequence before new gameplay expansion. No gameplay values changed in Track 13 or Track 14A.
+Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. No gameplay values changed in Track 13, 14A or 14B.
 
 ## Current Scope
 
@@ -30,14 +30,14 @@ Track 12 telemetry/readout is approved. Track 13 updated the live docs and added
 
 ## Latest Track
 
-`Track 14A - Refactor Safety Net And Code Health Baseline V1`
+`Track 14B - Arena Root Boundary V1`
 
 Delivered:
 
-- Adds `docs/refactor-hardening-roadmap.md` for Tracks 14A-14F.
-- Updates live docs to prefer code hardening before new gameplay content.
-- Keeps gameplay unchanged.
-- Renames misleading jump pad safety test names to the approved-force contract.
+- Added `modes/arena/arena_hud_snapshot_builder.gd` as the first boundary around `arena_root.gd`.
+- Moved HUD snapshot/status/result/hint string assembly out of `arena_root.gd`.
+- Added direct unit coverage for the HUD snapshot builder.
+- Keeps gameplay, movement, jump pads, maps, weapons, pickups and bot behavior unchanged.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -59,18 +59,19 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 12: telemetry readout and balance baseline - approved on `2026-06-19`.
 - Track 13: documentation rebaseline and future roadmap - complete on `2026-06-19`.
 - Track 14A: refactor safety net and code health baseline - local validated on `2026-06-20`.
+- Track 14B: arena root boundary - local validated on `2026-06-20`.
 
 ## Next Sequence
 
-1. Complete and approve `Track 14A - Refactor Safety Net And Code Health Baseline V1`.
-2. Execute `Track 14B - Arena Root Boundary V1`.
+1. Review/merge `Track 14B - Arena Root Boundary V1`.
+2. Execute `Track 14C - Combat Pipeline Extraction V1`.
 3. Continue the Track 14 hardening sequence through 14F before resuming gameplay expansion unless Fabio explicitly changes priority.
 
 ## Validation
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 53/53, 496 asserts
+# PASS, GUT 54/54, 505 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.
@@ -88,4 +89,4 @@ Manual smoke lives in `docs/validation.md`.
 9. `docs/telemetry.md`
 10. `docs/telemetry-readout.md`
 11. `docs/balance-baseline.md`
-12. `implementation/tracks/track-14a-refactor-safety-net-v1/current-status.md`
+12. `implementation/tracks/track-14b-arena-root-boundary-v1/current-status.md`
