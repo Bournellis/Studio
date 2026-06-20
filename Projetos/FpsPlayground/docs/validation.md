@@ -71,6 +71,13 @@ PASS tools/validate.gd -- --profile=quick, GUT 66/66, 593 asserts
 PASS tools/validate.gd, GUT 66/66, 593 asserts
 ```
 
+Latest Track 14H validation:
+
+```text
+PASS tools/validate.gd -- --profile=quick, GUT 67/67, 599 asserts
+PASS tools/validate.gd, GUT 67/67, 599 asserts
+```
+
 Latest Track 11 human smoke:
 
 ```text
@@ -285,6 +292,14 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm HUD transient event/timer/crosshair state goes through `ArenaHudFeedbackState`.
 - Confirm arena telemetry context/event emission goes through `ArenaTelemetryEvents`.
 - Confirm validation still passes at `66/66`, `593 asserts`.
+
+## Track 14H Bot Long Jump Pad Hotfix Smoke
+
+- Confirm the player still uses the approved fixed jump pad force and does not feel over-launched.
+- In `Relay Foundry V1`, confirm the bot completes the long jump pad landing on the first attempt.
+- Confirm the bot continues committing to the landing target during flight instead of returning to generic strafe.
+- Confirm no player movement feel, map geometry, weapon values, pickups or aim difficulty changed.
+- Confirm validation still passes at `67/67`, `599 asserts`.
 
 ## Known Noise
 

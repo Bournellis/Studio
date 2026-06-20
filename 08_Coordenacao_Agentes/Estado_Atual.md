@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (10A publicada e aprovada; 09S fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14G mergeada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (10A publicada e aprovada; 09S fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14H hotfix de long jump pad do bot mergeada localmente; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -44,13 +44,13 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK14G_MERGED_LOCAL_BASELINE`
-- Marker: `FPS_PLAYGROUND_TRACK14G_MERGED_LOCAL_BASELINE`
-- Baseline: Track 14G mergeada localmente; adicionou boundaries de bot movement executor, projectile runtime, HUD feedback state e telemetry event facade; sem alteracao de gameplay.
+- Status: `P2_IMPLEMENTACAO - TRACK14H_BOT_LONG_JUMP_PAD_HOTFIX_LOCAL`
+- Marker: `FPS_PLAYGROUND_TRACK14H_BOT_LONG_JUMP_PAD_HOTFIX_LOCAL`
+- Baseline: Track 14H mergeada localmente; bot voltou a completar o long jump pad de `Relay Foundry V1` na primeira tentativa com assist route-aware somente para bot; feel do player preservado.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
-- Validacao: `tools/validate.gd` quick/full PASS `66/66`, `593 asserts`; `tools/check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
+- Validacao: `tools/validate.gd` quick/full PASS `67/67`, `599 asserts`; `tools/check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: executar `Multi-Arena Balance Baseline V1` antes de novas armas, buffs, mapas, tuning ou bot intelligence.
+- Proximo passo: Fabio/tester confirmar `Relay Foundry V1` no editor; depois executar `Multi-Arena Balance Baseline V1` antes de novas armas, buffs, mapas, tuning ou bot intelligence.
 
 ## rpg-isometrico
 

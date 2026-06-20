@@ -137,6 +137,64 @@ static func build_jump_pad_launch_velocity(pad: Dictionary, forward_speed: float
 	return flat.normalized() * forward_speed + Vector3.UP * vertical_speed
 
 
+static func build_route_aware_jump_pad_launch_velocity(
+	pad: Dictionary,
+	actor_position: Vector3,
+	forward_speed: float,
+	vertical_speed: float,
+	max_forward_speed: float,
+	route_speed_margin: float,
+	gravity: float
+) -> Vector3:
+	var pad_position: Vector3 = pad.get("position", Vector3.ZERO)
+	var target_position: Vector3 = pad.get("target", pad_position + Vector3.FORWARD)
+	var launch_origin := actor_position
+	launch_origin.y = pad_position.y
+	var flat := target_position - launch_origin
+	flat.y = 0.0
+	if flat.length_squared() <= 0.0001:
+		flat = target_position - pad_position
+		flat.y = 0.0
+	if flat.length_squared() <= 0.0001:
+		flat = Vector3.FORWARD
+	var route_forward_speed := calculate_jump_pad_route_forward_speed(
+		launch_origin,
+		target_position,
+		forward_speed,
+		vertical_speed,
+		max_forward_speed,
+		route_speed_margin,
+		gravity
+	)
+	return flat.normalized() * route_forward_speed + Vector3.UP * vertical_speed
+
+
+static func calculate_jump_pad_route_forward_speed(
+	launch_origin: Vector3,
+	target_position: Vector3,
+	forward_speed: float,
+	vertical_speed: float,
+	max_forward_speed: float,
+	route_speed_margin: float,
+	gravity: float
+) -> float:
+	var flat_delta := target_position - launch_origin
+	flat_delta.y = 0.0
+	var flat_distance := flat_delta.length()
+	var height_delta := target_position.y - launch_origin.y
+	var upper_speed := maxf(forward_speed, max_forward_speed)
+	if gravity <= 0.001:
+		return forward_speed
+	var discriminant := vertical_speed * vertical_speed - 2.0 * gravity * height_delta
+	if discriminant <= 0.001:
+		return forward_speed
+	var descending_time := (vertical_speed + sqrt(discriminant)) / gravity
+	if descending_time <= 0.001:
+		return forward_speed
+	var required_speed := flat_distance / descending_time * maxf(route_speed_margin, 1.0)
+	return clampf(required_speed, forward_speed, upper_speed)
+
+
 static func build_jump_pad_triggered_payload(actor_id: StringName, pad: Dictionary, launch_velocity: Vector3) -> Dictionary:
 	return {
 		"actor": actor_id,
