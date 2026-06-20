@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Post-Track14G Baseline`
+- Active stage: `Track 14H Bot Long Jump Pad Hotfix V1`
 - Active stage status: `MERGED_LOCAL`
-- Status marker: `FPS_PLAYGROUND_TRACK14G_MERGED_LOCAL_BASELINE`
+- Status marker: `FPS_PLAYGROUND_TRACK14H_BOT_LONG_JUMP_PAD_HOTFIX_LOCAL`
 
 ## Current Truth
 
@@ -14,7 +14,7 @@
 
 The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning, local duel telemetry, telemetry readout tooling and the pre-Track-08 player movement feel preserved.
 
-Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. Track 14D extracted pickup and jump pad rules into `arena_pickup_jump_pad_rules.gd`. Track 14E extracted bot decision scoring into `bot_decision_model.gd`. Track 14F closed the hardening sequence with small dead-wrapper cleanup and code-size metrics. Track 14G added surgical expansion boundaries for bot movement execution, projectile runtime, HUD feedback state and telemetry events. No gameplay values changed in Track 13, 14A, 14B, 14C, 14D, 14E, 14F or 14G.
+Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. Track 14D extracted pickup and jump pad rules into `arena_pickup_jump_pad_rules.gd`. Track 14E extracted bot decision scoring into `bot_decision_model.gd`. Track 14F closed the hardening sequence with small dead-wrapper cleanup and code-size metrics. Track 14G added surgical expansion boundaries for bot movement execution, projectile runtime, HUD feedback state and telemetry events. Track 14H restored bot-only route-aware long jump pad launch reliability while preserving the approved player jump pad force.
 
 ## Current Scope
 
@@ -30,16 +30,14 @@ Track 12 telemetry/readout is approved. Track 13 updated the live docs and added
 
 ## Latest Track
 
-`Track 14G - Surgical Expansion Hardening V1`
+`Track 14H - Bot Long Jump Pad Hotfix V1`
 
 Delivered:
 
-- Added `BotMovementExecutor` for pure bot movement execution helpers.
-- Added `ArenaProjectileRuntime` for player Plasma bolt creation, stepping and cleanup.
-- Added `ArenaHudFeedbackState` for transient HUD timers, event messages and crosshair feedback view.
-- Added `ArenaTelemetryEvents` facade for context assembly and event emission.
-- Rebaselined hotspot metrics: `arena_root.gd` 1487 lines, `basic_duel_bot.gd` 1077 lines, `arena_hud.gd` 535 lines.
-- Keeps gameplay, movement feel, jump pad force, maps, weapon values, pickups, aim difficulty, bot behavior and telemetry schema unchanged.
+- Added bot-only route-aware launch velocity for jump pads based on actor trigger position and route distance.
+- Preserved the player-approved fixed jump pad force contract (`5.8` horizontal / `8.4` vertical).
+- Restored GUT coverage proving the `Relay Foundry V1` long jump pad completes on the bot's first attempt.
+- No player movement feel, map geometry, weapon value, pickup or aim difficulty changes.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -67,6 +65,7 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 14E: bot decision boundary - approved by Fabio/tester on `2026-06-20`.
 - Track 14F: cleanup and documentation - merged locally on `2026-06-20`.
 - Track 14G: surgical expansion hardening - merged locally on `2026-06-20`.
+- Track 14H: bot long jump pad hotfix - merged locally on `2026-06-20`.
 
 ## Next Sequence
 
@@ -78,7 +77,7 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . --script res://tools/validate.gd
-# PASS, GUT 66/66, 593 asserts
+# PASS, GUT 67/67, 599 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.
@@ -96,4 +95,4 @@ Manual smoke lives in `docs/validation.md`.
 9. `docs/telemetry.md`
 10. `docs/telemetry-readout.md`
 11. `docs/balance-baseline.md`
-12. `implementation/tracks/track-14g-surgical-expansion-hardening-v1/current-status.md`
+12. `implementation/tracks/track-14h-bot-long-jump-pad-hotfix-v1/current-status.md`

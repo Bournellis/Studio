@@ -40,6 +40,8 @@ const JUMP_PAD_RADIUS: float = 1.25
 const JUMP_PAD_COOLDOWN: float = 0.64
 const JUMP_PAD_VERTICAL_SPEED: float = 8.4
 const JUMP_PAD_FORWARD_SPEED: float = 5.8
+const BOT_JUMP_PAD_MAX_FORWARD_SPEED: float = 12.6
+const BOT_JUMP_PAD_ROUTE_SPEED_MARGIN: float = 1.08
 const TELEMETRY_SAMPLE_INTERVAL: float = 0.2
 const TELEMETRY_PICKUP_NEAR_DISTANCE: float = 2.4
 const TELEMETRY_PICKUP_CONTEST_DISTANCE: float = 4.0
@@ -952,7 +954,7 @@ func _try_trigger_jump_pad(pad: Dictionary, combatant, actor_id: StringName) -> 
 	if not ArenaPickupJumpPadRulesScript.can_trigger_jump_pad(pad, actor_id, combatant.global_position, combatant_dead, JUMP_PAD_RADIUS):
 		return false
 	var pad_position: Vector3 = pad.get("position", Vector3.ZERO)
-	var launch_velocity := _build_jump_pad_launch_velocity(pad)
+	var launch_velocity := _build_jump_pad_launch_velocity_for_actor(pad, combatant.global_position, actor_id)
 	if combatant.has_method("apply_jump_pad_launch"):
 		combatant.apply_jump_pad_launch(launch_velocity)
 	else:
@@ -969,6 +971,23 @@ func _try_trigger_jump_pad(pad: Dictionary, combatant, actor_id: StringName) -> 
 
 func _build_jump_pad_launch_velocity(pad: Dictionary) -> Vector3:
 	return ArenaPickupJumpPadRulesScript.build_jump_pad_launch_velocity(pad, JUMP_PAD_FORWARD_SPEED, JUMP_PAD_VERTICAL_SPEED)
+
+func _build_jump_pad_launch_velocity_for_actor(pad: Dictionary, actor_position: Vector3, actor_id: StringName) -> Vector3:
+	if actor_id != &"bot":
+		return _build_jump_pad_launch_velocity(pad)
+	return _build_bot_jump_pad_launch_velocity(pad, actor_position)
+
+func _build_bot_jump_pad_launch_velocity(pad: Dictionary, actor_position: Vector3) -> Vector3:
+	var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
+	return ArenaPickupJumpPadRulesScript.build_route_aware_jump_pad_launch_velocity(
+		pad,
+		actor_position,
+		JUMP_PAD_FORWARD_SPEED,
+		JUMP_PAD_VERTICAL_SPEED,
+		BOT_JUMP_PAD_MAX_FORWARD_SPEED,
+		BOT_JUMP_PAD_ROUTE_SPEED_MARGIN,
+		gravity
+	)
 
 func _try_consume_pickup(pickup_kind: StringName, combatant) -> bool:
 	if not pickups.has(pickup_kind) or combatant == null:

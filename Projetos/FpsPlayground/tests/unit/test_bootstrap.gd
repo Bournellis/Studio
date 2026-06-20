@@ -431,7 +431,42 @@ func test_relay_foundry_jump_pad_launch_preserves_approved_force_contract() -> v
 	assert_gt(flat_velocity.normalized().dot(pad_to_landing.normalized()), 0.98)
 	assert_no_new_orphans()
 
-func test_bot_triggers_relay_foundry_long_jump_pad_with_approved_force() -> void:
+func test_bot_relay_foundry_long_jump_pad_launch_uses_actor_position_and_route_distance() -> void:
+	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
+	var arena := arena_scene.instantiate()
+	arena.set_arena_layout(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)
+	add_child_autofree(arena)
+	await get_tree().process_frame
+	await get_tree().physics_frame
+
+	var pad_position: Vector3 = arena.debug_get_jump_pad_position(1)
+	var pad_target: Vector3 = arena.debug_get_jump_pad_target(1)
+	var target_direction := pad_target - pad_position
+	target_direction.y = 0.0
+	target_direction = target_direction.normalized()
+	var edge_actor_position := pad_position - target_direction * 1.15
+	var bot_launch_velocity: Vector3 = arena._build_bot_jump_pad_launch_velocity({
+		"position": pad_position,
+		"target": pad_target
+	}, edge_actor_position)
+	var player_launch_velocity: Vector3 = arena._build_jump_pad_launch_velocity({
+		"position": pad_position,
+		"target": pad_target
+	})
+	var bot_flat_velocity := Vector3(bot_launch_velocity.x, 0.0, bot_launch_velocity.z)
+	var player_flat_velocity := Vector3(player_launch_velocity.x, 0.0, player_launch_velocity.z)
+	var actor_to_landing := pad_target - edge_actor_position
+	actor_to_landing.y = 0.0
+	var descending_time := _descending_flight_time(bot_launch_velocity.y, pad_target.y - edge_actor_position.y)
+
+	assert_gt(bot_flat_velocity.length(), player_flat_velocity.length())
+	assert_gt(bot_flat_velocity.length(), 10.0)
+	assert_almost_eq(player_flat_velocity.length(), 5.8, 0.01)
+	assert_gt(bot_flat_velocity.normalized().dot(actor_to_landing.normalized()), 0.98)
+	assert_gt(bot_flat_velocity.length() * descending_time, actor_to_landing.length() * 1.02)
+	assert_no_new_orphans()
+
+func test_bot_completes_relay_foundry_long_jump_pad_first_attempt() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	var arena := arena_scene.instantiate()
 	arena.set_arena_layout(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)
@@ -454,20 +489,26 @@ func test_bot_triggers_relay_foundry_long_jump_pad_with_approved_force() -> void
 	arena.debug_force_pickup_available(&"overcharge", true)
 
 	var launched := false
+	var landed_on_first_attempt := false
+	var closest_after_launch := 9999.0
 	var highest_after_launch := -9999.0
+	var final_position := Vector3.ZERO
 	var frames_after_launch := 0
-	for frame_index in range(160):
+	for frame_index in range(300):
 		await get_tree().physics_frame
 		if bot.debug_get_jump_pad_launch_count() > 0:
 			launched = true
 			frames_after_launch += 1
+			closest_after_launch = minf(closest_after_launch, _flat_distance_between(bot.global_position, pad_target))
 			highest_after_launch = maxf(highest_after_launch, bot.global_position.y)
-		if launched and frames_after_launch >= 24:
+			final_position = bot.global_position
+		if launched and bot.is_on_floor() and bot.global_position.y > 2.35 and _flat_distance_between(bot.global_position, pad_target) <= 3.0:
+			landed_on_first_attempt = true
 			break
 
 	assert_true(launched)
-	assert_gte(bot.debug_get_jump_pad_launch_count(), 1)
-	assert_gt(highest_after_launch, 2.4)
+	assert_eq(bot.debug_get_jump_pad_launch_count(), 1)
+	assert_true(landed_on_first_attempt, "frames_after_launch=%s closest=%s highest=%s final=%s" % [frames_after_launch, closest_after_launch, highest_after_launch, final_position])
 	assert_eq(arena.debug_get_last_jump_pad_id(), &"east_forge_pad")
 	assert_no_new_orphans()
 
