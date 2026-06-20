@@ -12,6 +12,7 @@ const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog
 const ArenaHudSnapshotBuilderScript = preload("res://modes/arena/arena_hud_snapshot_builder.gd")
 const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
 const ArenaCombatPipelineScript = preload("res://modes/arena/arena_combat_pipeline.gd")
+const ArenaProjectileRuntimeScript = preload("res://modes/arena/arena_projectile_runtime.gd")
 const ArenaPickupJumpPadRulesScript = preload("res://modes/arena/arena_pickup_jump_pad_rules.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 const ArenaTelemetryRecorderScript = preload("res://gameplay/telemetry/arena_telemetry_recorder.gd")
@@ -529,56 +530,34 @@ func _on_player_alt_fire(origin: Vector3, direction: Vector3, damage: float, kno
 	_spawn_player_plasma_bolt(visual_origin, projectile_direction, damage, knockback, speed, radius, overcharged, projectile_id)
 
 func _spawn_player_plasma_bolt(origin: Vector3, direction: Vector3, damage: float, knockback: float, speed: float, radius: float, overcharged: bool, projectile_id: String = "") -> void:
-	if projectile_root == null:
+	var entry := ArenaProjectileRuntimeScript.build_player_plasma_bolt(
+		projectile_root,
+		origin,
+		direction,
+		damage,
+		knockback,
+		speed,
+		radius,
+		overcharged,
+		PLASMA_BOLT_TTL,
+		projectile_id,
+		_build_plasma_material(overcharged)
+	)
+	if entry.is_empty():
 		return
-	var bolt := Node3D.new()
-	bolt.name = "PlayerPlasmaBolt"
-	projectile_root.add_child(bolt)
-	bolt.global_position = origin
-
-	var mesh_instance := MeshInstance3D.new()
-	mesh_instance.name = "PlasmaBoltMesh"
-	var mesh := SphereMesh.new()
-	mesh.radius = radius * (1.12 if overcharged else 1.0)
-	mesh.height = mesh.radius * 2.0
-	mesh.radial_segments = 16
-	mesh.rings = 8
-	mesh_instance.mesh = mesh
-	mesh_instance.material_override = _build_plasma_material(overcharged)
-	bolt.add_child(mesh_instance)
-
-	var light := OmniLight3D.new()
-	light.name = "PlasmaBoltLight"
-	light.light_color = Color(0.78, 0.46, 1.0, 1.0) if overcharged else Color(0.38, 0.98, 1.0, 1.0)
-	light.light_energy = 2.5 if overcharged else 1.8
-	light.omni_range = 2.8
-	bolt.add_child(light)
-
-	active_projectiles.append({
-		"node": bolt,
-		"velocity": direction.normalized() * maxf(1.0, speed),
-		"damage": damage,
-		"knockback": knockback,
-		"radius": radius * (1.12 if overcharged else 1.0),
-		"ttl": PLASMA_BOLT_TTL,
-		"source": &"player",
-		"overcharged": overcharged,
-		"projectile_id": projectile_id
-	})
+	active_projectiles.append(entry)
 	_record_telemetry_event(&"plasma_spawned", ArenaCombatPipelineScript.build_player_plasma_spawned(projectile_id, origin, direction, damage, knockback, speed, radius, PLASMA_BOLT_TTL, overcharged))
 	_update_bot_awareness()
 
 func _process_projectiles(delta: float) -> void:
 	for index in range(active_projectiles.size() - 1, -1, -1):
 		var entry := active_projectiles[index]
-		var bolt := entry.get("node", null) as Node3D
-		if bolt == null or not is_instance_valid(bolt):
+		var step := ArenaProjectileRuntimeScript.build_projectile_step(entry, delta)
+		if not bool(step.get("valid", false)):
 			active_projectiles.remove_at(index)
 			continue
-		var ttl := float(entry.get("ttl", 0.0)) - delta
-		var velocity: Vector3 = entry.get("velocity", Vector3.ZERO)
-		var start_position := bolt.global_position
-		var end_position := start_position + velocity * delta
+		var end_position: Vector3 = step.get("end_position", Vector3.ZERO)
+		var start_position: Vector3 = step.get("start_position", Vector3.ZERO)
 		var result := _query_player_projectile_impact(start_position, end_position, float(entry.get("radius", 0.0)))
 		if not result.is_empty():
 			var impact_position: Vector3 = result.get("position", end_position)
@@ -586,7 +565,9 @@ func _process_projectiles(delta: float) -> void:
 			_resolve_player_projectile_hit(entry, impact_position, collider)
 			_remove_projectile(index)
 			continue
+		var bolt := step.get("node", null) as Node3D
 		bolt.global_position = end_position
+		var ttl := float(step.get("ttl", 0.0))
 		if ttl <= 0.0:
 			var projectile_id := String(entry.get("projectile_id", ""))
 			var overcharged := bool(entry.get("overcharged", false))
@@ -723,17 +704,12 @@ func _remove_projectile(index: int) -> void:
 	if index < 0 or index >= active_projectiles.size():
 		return
 	var entry := active_projectiles[index]
-	var bolt := entry.get("node", null) as Node3D
-	if bolt != null and is_instance_valid(bolt):
-		bolt.queue_free()
+	ArenaProjectileRuntimeScript.free_projectile(entry)
 	active_projectiles.remove_at(index)
 	_update_bot_awareness()
 
 func _clear_projectiles() -> void:
-	for entry: Dictionary in active_projectiles:
-		var bolt := entry.get("node", null) as Node3D
-		if bolt != null and is_instance_valid(bolt):
-			bolt.queue_free()
+	ArenaProjectileRuntimeScript.clear_projectiles(active_projectiles)
 	active_projectiles.clear()
 
 func _on_player_damaged(amount: float, remaining_health: float) -> void:

@@ -10,6 +10,7 @@ const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_poi
 const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 const ArenaHudSnapshotBuilderScript = preload("res://modes/arena/arena_hud_snapshot_builder.gd")
 const ArenaCombatPipelineScript = preload("res://modes/arena/arena_combat_pipeline.gd")
+const ArenaProjectileRuntimeScript = preload("res://modes/arena/arena_projectile_runtime.gd")
 const ArenaPickupJumpPadRulesScript = preload("res://modes/arena/arena_pickup_jump_pad_rules.gd")
 
 class MockVisibilityTarget:
@@ -138,6 +139,39 @@ func test_arena_combat_pipeline_calculates_plasma_blast_contract() -> void:
 	assert_almost_eq(float(blast.get("damage", 0.0)), 8.887, 0.001)
 	assert_almost_eq(float(blast.get("knockback", 0.0)), 2.7, 0.001)
 	assert_almost_eq((blast.get("direction", Vector3.ZERO) as Vector3).distance_to(Vector3.BACK), 0.0, 0.001)
+
+func test_arena_projectile_runtime_builds_and_advances_plasma_contract() -> void:
+	var root := Node3D.new()
+	add_child_autofree(root)
+	var material := StandardMaterial3D.new()
+
+	var entry := ArenaProjectileRuntimeScript.build_player_plasma_bolt(
+		root,
+		Vector3.ZERO,
+		Vector3.FORWARD,
+		24.0,
+		10.0,
+		18.0,
+		0.34,
+		true,
+		2.45,
+		"plasma_test",
+		material
+	)
+
+	assert_false(entry.is_empty())
+	assert_eq(root.get_child_count(), 1)
+	assert_almost_eq(float(entry.get("radius", 0.0)), 0.3808, 0.001)
+	assert_almost_eq(float(entry.get("ttl", 0.0)), 2.45, 0.001)
+	assert_eq(entry.get("projectile_id", ""), "plasma_test")
+
+	var step := ArenaProjectileRuntimeScript.build_projectile_step(entry, 0.5)
+
+	assert_true(bool(step.get("valid", false)))
+	assert_almost_eq(float(step.get("ttl", 0.0)), 1.95, 0.001)
+	assert_almost_eq((step.get("end_position", Vector3.ZERO) as Vector3).distance_to(Vector3(0.0, 0.0, -9.0)), 0.0, 0.001)
+
+	ArenaProjectileRuntimeScript.free_projectile(entry)
 
 func test_arena_pickup_jump_pad_rules_preserve_pickup_respawn_contract() -> void:
 	var pickup_node := Node3D.new()
