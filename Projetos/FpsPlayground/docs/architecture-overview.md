@@ -5,14 +5,14 @@
 ## Ownership
 
 - `modes/menu/`: project entry and Arena Shooter launch.
-- `modes/arena/`: arena assembly, round state, combat pipeline helpers, pickup/jump pad rules, player shot resolution, bot shot resolution, pickups and HUD snapshot/status building.
+- `modes/arena/`: arena assembly, round state, combat pipeline helpers, projectile runtime helpers, pickup/jump pad rules, player shot resolution, bot shot resolution, pickups and HUD snapshot/status building.
 - `modes/shared/`: runtime primitive creation.
 - `gameplay/player/`: first-person player controller, camera, rifle and Plasma Bolt requests.
 - `gameplay/combat/`: combatant health, damage and knockback.
-- `gameplay/bot/`: arena duel bot, decision model, deterministic aim and visibility helpers.
+- `gameplay/bot/`: arena duel bot, decision model, movement execution helpers, deterministic aim and visibility helpers.
 - `gameplay/arena/`: pure arena rule helpers.
-- `gameplay/telemetry/`: local arena event recording and readout analysis.
-- `presentation/hud/`: arena HUD.
+- `gameplay/telemetry/`: local arena event recording, event facade and readout analysis.
+- `presentation/hud/`: arena HUD and transient feedback state helpers.
 - `presentation/feedback/`: primitive effects and synthetic audio.
 - `tools/`: scene generation and validation.
 - `tests/`: GUT coverage for arena and helper contracts.
@@ -29,7 +29,8 @@ Football/TPS minigames are not part of this project. They live in `../JogoDaCopa
 - Track 14D moved pickup state/respawn and jump pad cooldown/launch math into `modes/arena/arena_pickup_jump_pad_rules.gd`.
 - Track 14E moved bot item priority, tactical scoring and route-hold checks into `gameplay/bot/bot_decision_model.gd`.
 - Track 14F removed dead private wrappers left after the bot decision extraction and recorded the post-hardening code-size baseline.
-- `gameplay/bot/basic_duel_bot.gd` still owns movement execution, physics, aim execution and combat overlay.
+- Track 14G moved bot movement execution helpers, projectile runtime, HUD feedback state and telemetry event emission into focused helpers.
+- `gameplay/bot/basic_duel_bot.gd` still owns bot state, physics integration, aim execution and combat overlay.
 - `tests/unit/test_bootstrap.gd` is valuable but broad; future refactors should keep the coverage while moving new tests into narrower files when practical.
 - Future weapons, buffs and pickup rules should be planned before adding more combat branches to `arena_root.gd`.
 - Telemetry should stay local and gameplay-neutral unless a future analytics track explicitly changes that.

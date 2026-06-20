@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK14G_SURGICAL_HARDENING_IN_PROGRESS`
+- Status: `FPS_PLAYGROUND_TRACK14G_SURGICAL_HARDENING_READY_FOR_REVIEW`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 

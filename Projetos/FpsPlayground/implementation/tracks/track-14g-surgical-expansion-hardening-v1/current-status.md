@@ -1,6 +1,6 @@
 # Track 14G - Surgical Expansion Hardening V1
 
-- Status: `IN_PROGRESS`
+- Status: `READY_FOR_REVIEW`
 - Date: `2026-06-20`
 - Branch: `codex/fpsplayground/track14g-surgical-expansion-hardening-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track14g-surgical-expansion-hardening-v1`
@@ -20,23 +20,24 @@ Reduce expansion risk in the approved Arena Shooter baseline through small struc
 - No bot decision priority changes.
 - No telemetry schema changes.
 
-## Planned Stages
+## Delivered
 
-1. Extract `BotMovementExecutor` for pure bot movement helpers.
-2. Extract arena projectile runtime helpers.
-3. Isolate HUD transient feedback state.
-4. Add an arena telemetry event facade.
-5. Rebaseline code-size metrics and docs.
+- Extracted `BotMovementExecutor` for pure bot movement execution helpers.
+- Extracted `ArenaProjectileRuntime` for player Plasma bolt creation, stepping and cleanup.
+- Extracted `ArenaHudFeedbackState` for transient HUD timers, event messages and crosshair feedback view.
+- Added `ArenaTelemetryEvents` facade for context assembly and event emission.
+- Added focused unit coverage for each new boundary.
+- Rebaselined hotspot size: `arena_root.gd` 1487 lines, `basic_duel_bot.gd` 1077 lines, `arena_hud.gd` 535 lines.
 
 ## Validation Target
 
 ```text
 PASS git diff --check
 PASS tools/check_doc_drift.ps1
-PASS tools/validate.gd -- --profile=quick
-PASS tools/validate.gd
+PASS tools/validate.gd -- --profile=quick (`66/66`, `593 asserts`)
+PASS tools/validate.gd (`66/66`, `593 asserts`)
 ```
 
 ## Next
 
-After local validation, return to `Multi-Arena Balance Baseline V1`.
+After review/merge, execute `Multi-Arena Balance Baseline V1`.

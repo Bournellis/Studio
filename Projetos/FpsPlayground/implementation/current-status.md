@@ -5,8 +5,8 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 14G - Surgical Expansion Hardening V1`
-- Active stage status: `IN_PROGRESS`
-- Status marker: `FPS_PLAYGROUND_TRACK14G_SURGICAL_HARDENING_IN_PROGRESS`
+- Active stage status: `READY_FOR_REVIEW`
+- Status marker: `FPS_PLAYGROUND_TRACK14G_SURGICAL_HARDENING_READY_FOR_REVIEW`
 
 ## Current Truth
 
@@ -14,7 +14,7 @@
 
 The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning, local duel telemetry, telemetry readout tooling and the pre-Track-08 player movement feel preserved.
 
-Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. Track 14D extracted pickup and jump pad rules into `arena_pickup_jump_pad_rules.gd`. Track 14E extracted bot decision scoring into `bot_decision_model.gd`. Track 14F closed the hardening sequence with small dead-wrapper cleanup and code-size metrics. Track 14G is a surgical follow-up for expansion boundaries. No gameplay values changed in Track 13, 14A, 14B, 14C, 14D, 14E or 14F.
+Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. Track 14D extracted pickup and jump pad rules into `arena_pickup_jump_pad_rules.gd`. Track 14E extracted bot decision scoring into `bot_decision_model.gd`. Track 14F closed the hardening sequence with small dead-wrapper cleanup and code-size metrics. Track 14G added surgical expansion boundaries for bot movement execution, projectile runtime, HUD feedback state and telemetry events. No gameplay values changed in Track 13, 14A, 14B, 14C, 14D, 14E, 14F or 14G.
 
 ## Current Scope
 
@@ -30,14 +30,16 @@ Track 12 telemetry/readout is approved. Track 13 updated the live docs and added
 
 ## Latest Track
 
-`Track 14F - Cleanup And Documentation V1`
+`Track 14G - Surgical Expansion Hardening V1`
 
 Delivered:
 
-- Removed dead private wrapper functions left in `basic_duel_bot.gd` after Track 14E.
-- Rebaselined post-extraction code metrics: `arena_root.gd` 1524 lines, `basic_duel_bot.gd` 1142 lines, `bot_decision_model.gd` 295 lines.
-- Repointed the live docs from hardening execution to the next gameplay evidence step.
-- Keeps gameplay, movement feel, jump pad force, maps, weapon values, pickups, aim difficulty, bot behavior and telemetry semantics unchanged.
+- Added `BotMovementExecutor` for pure bot movement execution helpers.
+- Added `ArenaProjectileRuntime` for player Plasma bolt creation, stepping and cleanup.
+- Added `ArenaHudFeedbackState` for transient HUD timers, event messages and crosshair feedback view.
+- Added `ArenaTelemetryEvents` facade for context assembly and event emission.
+- Rebaselined hotspot metrics: `arena_root.gd` 1487 lines, `basic_duel_bot.gd` 1077 lines, `arena_hud.gd` 535 lines.
+- Keeps gameplay, movement feel, jump pad force, maps, weapon values, pickups, aim difficulty, bot behavior and telemetry schema unchanged.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -64,18 +66,19 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 14D: pickups and jump pads extraction - merged locally on `2026-06-20`.
 - Track 14E: bot decision boundary - approved by Fabio/tester on `2026-06-20`.
 - Track 14F: cleanup and documentation - merged locally on `2026-06-20`.
+- Track 14G: surgical expansion hardening - ready for review on `2026-06-20`.
 
 ## Next Sequence
 
-1. Complete `Track 14G - Surgical Expansion Hardening V1`.
+1. Review and merge `Track 14G - Surgical Expansion Hardening V1`.
 2. Execute `Multi-Arena Balance Baseline V1`.
 3. Choose arsenal/buff contracts, tuning or bot intelligence only after the multi-arena readout.
 
 ## Validation
 
 ```powershell
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 62/62, 564 asserts
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . --script res://tools/validate.gd
+# PASS, GUT 66/66, 593 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.

@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09S publicada e aprovada; 09Q fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14F mergeada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09S publicada e aprovada; 09Q fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14G pronta para review; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -44,13 +44,13 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK14F_MERGED_LOCAL_BASELINE`
-- Marker: `FPS_PLAYGROUND_TRACK14F_MERGED_LOCAL_BASELINE`
-- Baseline: Track 14F foi mergeada localmente e fechou a sequencia de hardening com cleanup de wrappers mortos do bot e metricas pos-extracao; sem alteracao de gameplay.
+- Status: `P2_IMPLEMENTACAO - TRACK14G_READY_FOR_REVIEW`
+- Marker: `FPS_PLAYGROUND_TRACK14G_SURGICAL_HARDENING_READY_FOR_REVIEW`
+- Baseline: Track 14G pronta para review; adicionou boundaries de bot movement executor, projectile runtime, HUD feedback state e telemetry event facade; sem alteracao de gameplay.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
-- Validacao: `tools/validate.gd` quick/full PASS `62/62`, `564 asserts`; `tools/check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
+- Validacao: `tools/validate.gd` quick/full PASS `66/66`, `593 asserts`; `tools/check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: executar `Multi-Arena Balance Baseline V1` antes de novas armas, buffs, mapas, tuning ou bot intelligence.
+- Proximo passo: fazer review/merge da Track 14G; depois executar `Multi-Arena Balance Baseline V1` antes de novas armas, buffs, mapas, tuning ou bot intelligence.
 
 ## rpg-isometrico
 
