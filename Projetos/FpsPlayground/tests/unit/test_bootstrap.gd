@@ -408,7 +408,7 @@ func test_bot_commits_to_jump_pad_landing_after_launch() -> void:
 	assert_gt(movement.dot(expected.normalized()), 0.82)
 	assert_no_new_orphans()
 
-func test_relay_foundry_jump_pad_launch_uses_old_fixed_force_contract() -> void:
+func test_relay_foundry_jump_pad_launch_preserves_approved_force_contract() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	var arena := arena_scene.instantiate()
 	arena.set_arena_layout(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)
@@ -431,7 +431,7 @@ func test_relay_foundry_jump_pad_launch_uses_old_fixed_force_contract() -> void:
 	assert_gt(flat_velocity.normalized().dot(pad_to_landing.normalized()), 0.98)
 	assert_no_new_orphans()
 
-func test_bot_triggers_relay_foundry_long_jump_pad_with_old_fixed_force() -> void:
+func test_bot_triggers_relay_foundry_long_jump_pad_with_approved_force() -> void:
 	var arena_scene := load("res://modes/arena/arena.tscn") as PackedScene
 	var arena := arena_scene.instantiate()
 	arena.set_arena_layout(ArenaLayoutCatalogScript.RELAY_FOUNDRY_ID)

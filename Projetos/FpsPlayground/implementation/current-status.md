@@ -1,12 +1,12 @@
 # FpsPlayground - Current Status
 
-- Last updated: `2026-06-19`
+- Last updated: `2026-06-20`
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 13 - Documentation Rebaseline And Future Roadmap V1`
-- Active stage status: `COMPLETE`
-- Status marker: `FPS_PLAYGROUND_TRACK13_DOCS_REBASELINE_FUTURE_ROADMAP_COMPLETE`
+- Active stage: `Track 14A - Refactor Safety Net And Code Health Baseline V1`
+- Active stage status: `LOCAL_VALIDATED`
+- Status marker: `FPS_PLAYGROUND_TRACK14A_REFACTOR_SAFETY_NET_LOCAL_VALIDATED`
 
 ## Current Truth
 
@@ -14,7 +14,7 @@
 
 The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning, local duel telemetry, telemetry readout tooling and the pre-Track-08 player movement feel preserved.
 
-Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. No gameplay values changed in Track 13.
+Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A starts the hardening/refactor safety sequence before new gameplay expansion. No gameplay values changed in Track 13 or Track 14A.
 
 ## Current Scope
 
@@ -30,15 +30,14 @@ Track 12 telemetry/readout is approved. Track 13 updated the live docs and added
 
 ## Latest Track
 
-`Track 13 - Documentation Rebaseline And Future Roadmap V1`
+`Track 14A - Refactor Safety Net And Code Health Baseline V1`
 
 Delivered:
 
-- Promoted Track 12 telemetry readout from smoke-pending to approved in live docs.
-- Updated the project README, documentation index, work plan, architecture overview, tuning guide, telemetry readout and balance baseline.
-- Added `docs/arena-shooter-future-roadmap.md` as the near-term expansion compass for maps, weapons, buffs, pickups, bot and telemetry.
-- Added a Track 13 record under `implementation/tracks/`.
-- Updated studio snapshots for the observable status change.
+- Adds `docs/refactor-hardening-roadmap.md` for Tracks 14A-14F.
+- Updates live docs to prefer code hardening before new gameplay content.
+- Keeps gameplay unchanged.
+- Renames misleading jump pad safety test names to the approved-force contract.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -59,12 +58,13 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 11: complete local telemetry - approved on `2026-06-19`.
 - Track 12: telemetry readout and balance baseline - approved on `2026-06-19`.
 - Track 13: documentation rebaseline and future roadmap - complete on `2026-06-19`.
+- Track 14A: refactor safety net and code health baseline - local validated on `2026-06-20`.
 
 ## Next Sequence
 
-1. Review `docs/arena-shooter-future-roadmap.md`.
-2. Prefer `Track 14 - Multi-Arena Balance Baseline V1` before gameplay tuning, unless Fabio explicitly chooses an arsenal/buff contract track first.
-3. Preserve current movement, jump pads, maps and bot route-control by default until a track explicitly targets one of them.
+1. Complete and approve `Track 14A - Refactor Safety Net And Code Health Baseline V1`.
+2. Execute `Track 14B - Arena Root Boundary V1`.
+3. Continue the Track 14 hardening sequence through 14F before resuming gameplay expansion unless Fabio explicitly changes priority.
 
 ## Validation
 
@@ -80,11 +80,12 @@ Manual smoke lives in `docs/validation.md`.
 1. `AGENTS.md`
 2. `docs/documentation-index.md`
 3. `docs/work-plan.md`
-4. `docs/arena-shooter-future-roadmap.md`
-5. `docs/mode-contract.md`
-6. `docs/validation.md`
-7. `docs/bot-route-control.md`
-8. `docs/telemetry.md`
-9. `docs/telemetry-readout.md`
-10. `docs/balance-baseline.md`
-11. `implementation/tracks/track-13-documentation-rebaseline-future-roadmap-v1/current-status.md`
+4. `docs/refactor-hardening-roadmap.md`
+5. `docs/arena-shooter-future-roadmap.md`
+6. `docs/mode-contract.md`
+7. `docs/validation.md`
+8. `docs/bot-route-control.md`
+9. `docs/telemetry.md`
+10. `docs/telemetry-readout.md`
+11. `docs/balance-baseline.md`
+12. `implementation/tracks/track-14a-refactor-safety-net-v1/current-status.md`

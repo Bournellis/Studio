@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK13_DOCS_REBASELINE_FUTURE_ROADMAP_COMPLETE`
+- Status: `FPS_PLAYGROUND_TRACK14A_REFACTOR_SAFETY_NET_LOCAL_VALIDATED`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -9,10 +9,11 @@
 1. `../AGENTS.md`
 2. `../implementation/current-status.md`
 3. `work-plan.md`
-4. `arena-shooter-future-roadmap.md`
-5. `architecture-overview.md`
-6. `mode-contract.md`
-7. `validation.md`
+4. `refactor-hardening-roadmap.md`
+5. `arena-shooter-future-roadmap.md`
+6. `architecture-overview.md`
+7. `mode-contract.md`
+8. `validation.md`
 
 ## Live References
 
@@ -24,6 +25,7 @@
 - `telemetry.md`
 - `telemetry-readout.md`
 - `balance-baseline.md`
+- `refactor-hardening-roadmap.md`
 - `validation-profiles.md`
 - `publication-readiness.md`
 - `reuse-map.md`
@@ -45,6 +47,7 @@
 - `../implementation/tracks/track-11-complete-telemetry-v1/current-status.md`
 - `../implementation/tracks/track-12-telemetry-readout-balance-baseline-v1/current-status.md`
 - `../implementation/tracks/track-13-documentation-rebaseline-future-roadmap-v1/current-status.md`
+- `../implementation/tracks/track-14a-refactor-safety-net-v1/current-status.md`
 
 ## Historical Note
 

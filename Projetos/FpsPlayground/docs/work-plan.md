@@ -1,14 +1,14 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK13_DOCS_REBASELINE_FUTURE_ROADMAP_COMPLETE`
+- Status: `FPS_PLAYGROUND_TRACK14A_REFACTOR_SAFETY_NET_LOCAL_VALIDATED`
 - Current surface: FPS arena lab.
-- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; current player movement feel preserved.
+- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; Track 14A safety net active; current player movement feel preserved.
 
 ## North Star
 
 Keep `FpsPlayground` as a focused first-person gameplay laboratory for arena movement, shooting, projectiles, bots, maps and combat feel.
 
-The near-term direction is to grow the 1x1 Arena Shooter foundation without losing the approved feel. New maps, weapons, buffs and bot improvements should be introduced through small tracks with telemetry evidence and clear rollback points.
+The near-term direction is to harden the approved 1x1 Arena Shooter foundation before growing it again. New maps, weapons, buffs and bot improvements should be introduced after the Track 14 safety sequence, through small tracks with telemetry evidence and clear rollback points.
 
 ## Approved Baseline
 
@@ -23,12 +23,87 @@ The near-term direction is to grow the 1x1 Arena Shooter foundation without losi
 - Track 11 added local duel telemetry without movement, map, weapon or bot route-control changes.
 - Track 12 added local telemetry readout and first balance baseline without gameplay changes; Fabio approved the readout usefulness.
 - Track 13 rebaselined docs and added `arena-shooter-future-roadmap.md`; no gameplay changes.
+- Track 14A starts the refactor/hardening sequence; no gameplay changes.
 - Validation baseline: `tools/validate.gd` PASS `53/53`, `496 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Recommended Next Tracks
 
-### 1. Track 14 - Multi-Arena Balance Baseline V1
+### 1. Track 14A - Refactor Safety Net And Code Health Baseline V1
+
+Goal:
+
+- Register the code hardening sequence and align safety tests before moving responsibilities.
+
+Expected scope:
+
+- Documentation and test-name cleanup only.
+- No gameplay, movement, map, weapon, pickup, jump pad or bot behavior changes.
+- Next: `Track 14B - Arena Root Boundary V1`.
+
+### 2. Track 14B - Arena Root Boundary V1
+
+Goal:
+
+- Create stable boundaries around `modes/arena/arena_root.gd` before extracting combat and item systems.
+
+Expected scope:
+
+- Small helper modules or adapters.
+- Validation for round flow, shots, pickups, jump pads, HUD snapshots and telemetry.
+- No tuning.
+- Next: `Track 14C - Combat Pipeline Extraction V1`.
+
+### 3. Track 14C - Combat Pipeline Extraction V1
+
+Goal:
+
+- Extract weapon and damage resolution paths from the arena root without changing weapon roles.
+
+Expected scope:
+
+- Rifle, Plasma, blast and bot-shot pipeline extraction.
+- Preserve Track 10 combat balance and Track 11/12 telemetry.
+- Next: `Track 14D - Pickups And Jump Pads Extraction V1`.
+
+### 4. Track 14D - Pickups And Jump Pads Extraction V1
+
+Goal:
+
+- Extract pickup and jump pad runtime handling while preserving approved movement contracts.
+
+Expected scope:
+
+- Health, overcharge and jump pad logic.
+- Guardrail tests for approved jump pad force and pickup behavior.
+- Next: `Track 14E - Bot Decision Boundary V1`.
+
+### 5. Track 14E - Bot Decision Boundary V1
+
+Goal:
+
+- Separate bot decision scoring from low-level movement execution where practical.
+
+Expected scope:
+
+- No aim difficulty buffs.
+- Preserve route-first, item-aware movement and arena tactical context.
+- Next: `Track 14F - Cleanup And Documentation V1`.
+
+### 6. Track 14F - Cleanup And Documentation V1
+
+Goal:
+
+- Remove transitional duplication and rebaseline code health after the extraction sequence.
+
+Expected scope:
+
+- Final metrics, docs and validation pass.
+- Decide the next gameplay track after hardening.
+
+## Gameplay Roadmap After Track 14
+
+### Multi-Arena Balance Baseline V1
 
 Goal:
 
@@ -41,7 +116,7 @@ Expected scope:
 - Produce a short decision table: `no change`, `observe`, `candidate tuning`.
 - No gameplay changes unless the track is explicitly expanded.
 
-### 2. Track 15 - Arsenal And Buff Contracts V1
+### Arsenal And Buff Contracts V1
 
 Goal:
 
@@ -54,7 +129,7 @@ Expected scope:
 - Per-weapon telemetry requirements.
 - Guardrails for no movement changes and no UI-heavy weapon wheel until explicitly planned.
 
-### 3. Track 16 - Combat Tuning V1
+### Combat Tuning V1
 
 Goal:
 
@@ -66,7 +141,7 @@ Expected scope:
 - Preserve movement, jump pad force, map geometry and bot route-control by default.
 - Add or update guardrail tests for the tuned role.
 
-### 4. Track 17 - Arena Production Rules V1
+### Arena Production Rules V1
 
 Goal:
 
@@ -79,7 +154,7 @@ Expected scope:
 - Required bot tactical context roles.
 - Required manual smoke script for player movement and bot routing.
 
-### 5. Track 18 - Bot Duel Intelligence V2
+### Bot Duel Intelligence V2
 
 Goal:
 
@@ -104,6 +179,7 @@ Expected scope:
 ## Read Next
 
 - `arena-shooter-future-roadmap.md`
+- `refactor-hardening-roadmap.md`
 - `balance-baseline.md`
 - `telemetry-readout.md`
 - `tuning-guide.md`
