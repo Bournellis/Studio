@@ -1,14 +1,14 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK12_TELEMETRY_READOUT_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK13_DOCS_REBASELINE_FUTURE_ROADMAP_COMPLETE`
 - Current surface: FPS arena lab.
-- Current baseline: Track 12 readout ready for human smoke; current player movement feel preserved.
+- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; current player movement feel preserved.
 
 ## North Star
 
 Keep `FpsPlayground` as a focused first-person gameplay laboratory for arena movement, shooting, projectiles, bots, maps and combat feel.
 
-The near-term direction is to prove a solid 1x1 arena foundation before adding more combat toys. Each track should isolate one kind of risk so playtest feedback remains understandable.
+The near-term direction is to grow the 1x1 Arena Shooter foundation without losing the approved feel. New maps, weapons, buffs and bot improvements should be introduced through small tracks with telemetry evidence and clear rollback points.
 
 ## Approved Baseline
 
@@ -16,114 +16,95 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 - Menu launches three `Arena Shooter` layouts.
 - `Duel Pit V2`, `Relay Foundry V1` and `Crossfire Crucible V1` are the current arena set.
 - Bot movement is route-first, item-aware and committed through jump pad routes.
-- Track 07 adds repeatable duel state and HUD clarity without combat or map balance changes.
+- Track 07 added repeatable duel state and HUD clarity.
 - Track 08 movement feel experiment was discarded before merge; keep current movement feel for now.
-- Track 09 adds Plasma Impact Blast V1 without movement, map or bot route-control changes.
-- Track 10 tunes weapon roles without movement, map or bot route-control changes.
-- Track 11 adds local duel telemetry without movement, map, weapon or bot route-control changes.
-- Track 12 adds local telemetry readout and first balance baseline without gameplay changes.
+- Track 09 added Plasma Impact Blast V1 without movement, map or bot route-control changes.
+- Track 10 tuned weapon roles without movement, map or bot route-control changes.
+- Track 11 added local duel telemetry without movement, map, weapon or bot route-control changes.
+- Track 12 added local telemetry readout and first balance baseline without gameplay changes; Fabio approved the readout usefulness.
+- Track 13 rebaselined docs and added `arena-shooter-future-roadmap.md`; no gameplay changes.
 - Validation baseline: `tools/validate.gd` PASS `53/53`, `496 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
-## Track Sequence
+## Recommended Next Tracks
 
-### 1. Track 07 - Match Flow And Duel UX V1
-
-Status: ready for human smoke.
-
-Delivered:
-
-- round/match state;
-- score and first-to-3 result flow;
-- persistent HUD score/round/result labels;
-- `R` next-round/new-match behavior;
-- pause-menu `Novo duelo`;
-- automated state and HUD tests.
-
-### 2. Track 08 - Player Movement Feel Polish V1
-
-Status: discarded before merge on `2026-06-19`.
+### 1. Track 14 - Multi-Arena Balance Baseline V1
 
 Goal:
 
-- Refine player acceleration, air control, landing recovery, jump pad feel, collision comfort and readable speed across all approved arenas.
-
-Decision:
-
-- Do not execute for now. Fabio approved the previous/current player movement feel.
-
-### 3. Track 09 - Combat Sandbox Expansion V1
-
-Status: ready for human smoke.
-
-Goal:
-
-- Add one carefully scoped combat experiment while preserving the current player movement feel.
+- Compare real sessions across `Duel Pit V2`, `Relay Foundry V1` and `Crossfire Crucible V1` before tuning weapons, pickups, buffs, bot or maps.
 
 Expected scope:
 
-- one new weapon, projectile variant or pickup rule;
-- clear readability and counterplay contract;
-- tests for damage, feedback and cooldown/resource behavior.
+- Run/read telemetry per arena.
+- Identify repeated rifle dominance, Plasma contribution, overcharge value, pickup route value, bot route diversity and jump pad reliability.
+- Produce a short decision table: `no change`, `observe`, `candidate tuning`.
+- No gameplay changes unless the track is explicitly expanded.
 
-Delivered:
-
-- Plasma Bolt world impacts create a readable partial blast.
-- Overcharged Plasma Bolt blast reaches farther and reads differently.
-- Direct plasma hits, rifle behavior, player movement, jump pads, maps and bot route-control are preserved.
-
-### 4. Track 10 - Combat Balance And Weapon Roles V1
-
-Status: ready for human smoke.
+### 2. Track 15 - Arsenal And Buff Contracts V1
 
 Goal:
 
-- Consolidate clear weapon roles after Plasma Impact Blast V1.
+- Define how future weapons, buffs and pickup rules can exist without breaking the duel baseline.
 
-Delivered:
+Expected scope:
 
-- Rifle remains the precision and sustained DPS tool.
-- Direct Plasma is now a high-commitment impact shot at `24` damage.
-- Plasma Blast remains pressure/near-miss value at `46%` max damage and `22%` min damage fraction.
-- Bot shot pressure remains readable and below player burst.
-- Player movement, sensitivity, jump pads, maps, bot route-control and pickups are preserved.
+- Weapon role matrix.
+- Buff/pickup taxonomy.
+- Per-weapon telemetry requirements.
+- Guardrails for no movement changes and no UI-heavy weapon wheel until explicitly planned.
 
-### 5. Track 11 - Complete Telemetry V1
-
-Status: human smoke approved on `2026-06-19`.
+### 3. Track 16 - Combat Tuning V1
 
 Goal:
 
-- Add complete local evidence for duel balance, bot movement, map routes, pickups and combat outcomes.
+- Apply the smallest evidence-backed weapon or buff tuning from Track 14 and Track 15.
 
-Delivered:
+Expected scope:
 
-- Local `events.jsonl` plus `summary.json` under Godot `user://telemetry/<session_id>/`.
-- Session, arena setup, round, combat, Plasma, pickup, bot, movement and jump pad events.
-- Summary metrics for winners, damage, weapon accuracy, Plasma, overcharge, pickups, bot routes and movement samples.
-- Hotfix V2 keeps the compact summary flushed with the event stream during interrupted or reset sessions.
-- Hotfix V3 labels active manual restarts as `round_reset reason=manual_restart`.
-- Automated schema, file-output, arena integration and Track 10 guardrail tests.
+- Small value changes only.
+- Preserve movement, jump pad force, map geometry and bot route-control by default.
+- Add or update guardrail tests for the tuned role.
 
-### 6. Track 12 - Telemetry Readout And Balance Baseline V1
-
-Status: ready for human smoke.
+### 4. Track 17 - Arena Production Rules V1
 
 Goal:
 
-- Turn approved telemetry files into a compact local balance/readout report.
+- Turn the existing arena authoring rules into a practical checklist for adding a fourth arena.
 
-Delivered:
+Expected scope:
 
-- `tools/telemetry_readout.gd` headless runner with `--latest`, `--session`, `--root` and `--json`.
-- `TelemetryReadoutAnalyzer` for integrity, lifecycle, combat, Plasma, pickups, bot, movement and alerts.
-- First balance baseline in `docs/balance-baseline.md`.
-- GUT coverage for healthy sessions, mismatched summaries, jump pad alerts and latest-session lookup.
+- Map feeling checklist.
+- Required telemetry/readout targets.
+- Required bot tactical context roles.
+- Required manual smoke script for player movement and bot routing.
 
-## Out Of Scope
+### 5. Track 18 - Bot Duel Intelligence V2
 
-- Football minigames.
-- TPS camera/avatar football work.
-- Multiplayer/backend/export unless explicitly planned.
-- Final art pass.
-- Large combat expansion before Track 09.
+Goal:
+
+- Improve bot decisions after map/combat baselines are clearer.
+
+Expected scope:
+
+- More deliberate use of health, overcharge, Plasma and pressure routes.
+- Arena-aware but not arena-hardcoded decision scoring.
+- Preserve route-first movement and readable shot windup.
+
+## Default Guardrails
+
+- Do not change player movement feel unless Fabio explicitly starts a movement track.
+- Do not change jump pad force unless a jump-pad-specific issue is reproduced.
+- Do not tune all arenas from one arena's telemetry.
+- Do not add new weapons before the arsenal contract exists.
+- Do not add buffs that bypass route decisions.
+- Do not add bot aim difficulty by cheating reaction/readability.
+- Do not add export, multiplayer/backend, Web/mobile, progression or final art unless explicitly planned.
+
+## Read Next
+
+- `arena-shooter-future-roadmap.md`
+- `balance-baseline.md`
+- `telemetry-readout.md`
+- `tuning-guide.md`
+- `arena-tactical-layouts.md`

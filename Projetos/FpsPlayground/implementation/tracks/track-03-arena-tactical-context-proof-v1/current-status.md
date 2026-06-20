@@ -1,6 +1,6 @@
 # Track 03 - Arena Tactical Context Proof V1
 
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `LOCALLY_VALIDATED`
 - Started: `2026-06-15`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track03-arena-tactical-context-proof-v1`

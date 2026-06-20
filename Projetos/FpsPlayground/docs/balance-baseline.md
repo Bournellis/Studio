@@ -1,6 +1,6 @@
 # FpsPlayground Balance Baseline
 
-- Status: Track 12 initial baseline.
+- Status: Track 12 approved baseline; Track 13 future planning rebaseline.
 - Source: Track 11 telemetry plus the approved feel of the current three-arena FPS lab.
 - Rule: this document describes interpretation only; it does not change gameplay.
 
@@ -33,10 +33,14 @@ Observed:
 - Bot routing active: `7` route labels, including `overcharge`, `jump_pad`, `pressure`, `high`, `flank`, `health` and `engage`.
 - Combat watch item: `player_rifle` dealt `88.7%` of total damage in that session.
 
-## Track 13 Candidates From Data
+## Track 14 Candidates From Data
 
 - Review rifle dominance across more sessions before changing damage.
 - Compare `Duel Pit V2`, `Relay Foundry V1` and `Crossfire Crucible V1` separately.
 - If rifle dominance repeats, test small combat-role changes before touching movement or maps.
 - If pickup ignored/contested values repeat, inspect pickup route value before changing pickup strength.
 - If jump pad landings fall below triggers in future sessions, inspect route geometry and bot commitment.
+
+## Track 13 Documentation Decision
+
+Track 13 did not change gameplay. It promoted this baseline into the future roadmap and kept the next gameplay recommendation evidence-first: collect multi-arena readouts before tuning weapons, buffs, pickups, bot decisions or map geometry.

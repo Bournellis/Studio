@@ -4,15 +4,17 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 12 - Telemetry Readout And Balance Baseline V1`
-- Active stage status: `READY_FOR_HUMAN_SMOKE`
-- Status marker: `FPS_PLAYGROUND_TRACK12_TELEMETRY_READOUT_READY_FOR_SMOKE`
+- Active stage: `Track 13 - Documentation Rebaseline And Future Roadmap V1`
+- Active stage status: `COMPLETE`
+- Status marker: `FPS_PLAYGROUND_TRACK13_DOCS_REBASELINE_FUTURE_ROADMAP_COMPLETE`
 
 ## Current Truth
 
 `FpsPlayground` owns the FPS arena work split from the former `FpsShooter`. Football/TPS work belongs to `Projetos/JogoDaCopa`.
 
 The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning, local duel telemetry, telemetry readout tooling and the pre-Track-08 player movement feel preserved.
+
+Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. No gameplay values changed in Track 13.
 
 ## Current Scope
 
@@ -28,17 +30,15 @@ The approved baseline has three selectable 1x1 arenas, route-first bot movement,
 
 ## Latest Track
 
-`Track 12 - Telemetry Readout And Balance Baseline V1`
+`Track 13 - Documentation Rebaseline And Future Roadmap V1`
 
 Delivered:
 
-- Added `TelemetryReadoutAnalyzer` and `tools/telemetry_readout.gd`.
-- Supports latest-session lookup, explicit session paths and JSON output.
-- Reports integrity, lifecycle, rounds, combat, Plasma, overcharge, pickups, bot routes, movement and alerts.
-- Added first balance baseline in `docs/balance-baseline.md`.
-- Validated against the approved Track 11 smoke session.
-
-Track 12 is ready for human smoke: run the readout against real sessions and confirm the output is useful for choosing the next balance/map/bot track. No gameplay values changed.
+- Promoted Track 12 telemetry readout from smoke-pending to approved in live docs.
+- Updated the project README, documentation index, work plan, architecture overview, tuning guide, telemetry readout and balance baseline.
+- Added `docs/arena-shooter-future-roadmap.md` as the near-term expansion compass for maps, weapons, buffs, pickups, bot and telemetry.
+- Added a Track 13 record under `implementation/tracks/`.
+- Updated studio snapshots for the observable status change.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -52,17 +52,19 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 05: Quake-style route-control bot - approved.
 - Track 05B: long jump pad first-try reliability - approved.
 - Track 06: arena variety and bot generalization - approved on `2026-06-19`.
-- Track 07: match flow and duel UX - ready for smoke.
+- Track 07: match flow and duel UX - implemented and folded into the approved baseline.
 - Track 08: player movement feel experiment - discarded before merge on `2026-06-19`; current feel preserved.
-- Track 09: combat sandbox expansion - ready for smoke.
-- Track 10: combat balance and weapon roles - ready for smoke.
+- Track 09: combat sandbox expansion - implemented and folded into the approved baseline.
+- Track 10: combat balance and weapon roles - implemented and folded into the approved baseline.
 - Track 11: complete local telemetry - approved on `2026-06-19`.
-- Track 12: telemetry readout and balance baseline - ready for smoke.
+- Track 12: telemetry readout and balance baseline - approved on `2026-06-19`.
+- Track 13: documentation rebaseline and future roadmap - complete on `2026-06-19`.
 
 ## Next Sequence
 
-1. Smoke Track 12 readout against recent `user://telemetry` sessions.
-2. Use the readout to choose Track 13 without changing movement, jump pads, maps or bot route-control by default.
+1. Review `docs/arena-shooter-future-roadmap.md`.
+2. Prefer `Track 14 - Multi-Arena Balance Baseline V1` before gameplay tuning, unless Fabio explicitly chooses an arsenal/buff contract track first.
+3. Preserve current movement, jump pads, maps and bot route-control by default until a track explicitly targets one of them.
 
 ## Validation
 
@@ -78,10 +80,11 @@ Manual smoke lives in `docs/validation.md`.
 1. `AGENTS.md`
 2. `docs/documentation-index.md`
 3. `docs/work-plan.md`
-4. `docs/mode-contract.md`
-5. `docs/validation.md`
-6. `docs/bot-route-control.md`
-7. `docs/telemetry.md`
-8. `docs/telemetry-readout.md`
-9. `docs/balance-baseline.md`
-10. `implementation/tracks/track-12-telemetry-readout-balance-baseline-v1/current-status.md`
+4. `docs/arena-shooter-future-roadmap.md`
+5. `docs/mode-contract.md`
+6. `docs/validation.md`
+7. `docs/bot-route-control.md`
+8. `docs/telemetry.md`
+9. `docs/telemetry-readout.md`
+10. `docs/balance-baseline.md`
+11. `implementation/tracks/track-13-documentation-rebaseline-future-roadmap-v1/current-status.md`

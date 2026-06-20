@@ -1,6 +1,6 @@
 # Track 10 - Combat Balance And Weapon Roles V1
 
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED_BASELINE`
 - Started: `2026-06-19`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track10-combat-balance-weapon-roles-v1`

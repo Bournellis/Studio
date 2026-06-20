@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK12_TELEMETRY_READOUT_READY_FOR_SMOKE`
+- Status: `FPS_PLAYGROUND_TRACK13_DOCS_REBASELINE_FUTURE_ROADMAP_COMPLETE`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -8,28 +8,29 @@
 
 1. `../AGENTS.md`
 2. `../implementation/current-status.md`
-3. `architecture-overview.md`
-4. `work-plan.md`
-5. `mode-contract.md`
-6. `validation.md`
-7. `telemetry.md`
-8. `telemetry-readout.md`
-9. `balance-baseline.md`
+3. `work-plan.md`
+4. `arena-shooter-future-roadmap.md`
+5. `architecture-overview.md`
+6. `mode-contract.md`
+7. `validation.md`
 
-## References
+## Live References
 
+- `arena-tactical-layouts.md`
 - `bot-contract.md`
 - `bot-tactical-context.md`
 - `bot-route-control.md`
-- `arena-tactical-layouts.md`
 - `tuning-guide.md`
-- `validation-profiles.md`
-- `publication-readiness.md`
 - `telemetry.md`
 - `telemetry-readout.md`
 - `balance-baseline.md`
-- `codebase-audit-track05.md`
+- `validation-profiles.md`
+- `publication-readiness.md`
 - `reuse-map.md`
+- `codebase-audit-track05.md`
+
+## Track Records
+
 - `../implementation/tracks/track-01-combat-readability-polish-v1/current-status.md`
 - `../implementation/tracks/track-02-bot-tactical-movement-v1/current-status.md`
 - `../implementation/tracks/track-03-arena-tactical-context-proof-v1/current-status.md`
@@ -43,6 +44,11 @@
 - `../implementation/tracks/track-10-combat-balance-weapon-roles-v1/current-status.md`
 - `../implementation/tracks/track-11-complete-telemetry-v1/current-status.md`
 - `../implementation/tracks/track-12-telemetry-readout-balance-baseline-v1/current-status.md`
+- `../implementation/tracks/track-13-documentation-rebaseline-future-roadmap-v1/current-status.md`
+
+## Historical Note
+
+Older track records may mention `FpsShooter`, `Duel Pit V1` or football/TPS work because they predate the 2026-06-10 project split. Live authority is the current status plus the live docs above.
 
 ## Split Note
 

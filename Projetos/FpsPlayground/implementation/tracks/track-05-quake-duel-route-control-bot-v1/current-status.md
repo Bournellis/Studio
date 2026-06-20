@@ -1,11 +1,11 @@
 # Track 05 - Quake Duel Route Control Bot V1
 
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED_BY_FABIO`
 - Started: `2026-06-15`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track05-quake-duel-route-control-bot-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track05-quake-duel-route-control-bot-v1`
-- Base: Track 04B pickup commitment ready for smoke.
+- Base: Track 04B pickup commitment delivered.
 
 ## Human Smoke Input
 

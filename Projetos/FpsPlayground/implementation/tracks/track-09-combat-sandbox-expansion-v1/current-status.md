@@ -1,6 +1,6 @@
 # Track 09 - Combat Sandbox Expansion V1
 
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED_BASELINE`
 - Started: `2026-06-19`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track09-combat-sandbox-v1`
