@@ -5,7 +5,7 @@
 - Projeto: `Projetos/FpsPlayground/`
 - Branch: `codex/fpsplayground/track04b-bot-pickup-commitment-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track04b-bot-pickup-commitment-v1`
-- Status: `READY_FOR_REVIEW`
+- Status: `DONE`
 
 ## Objetivo
 
@@ -52,3 +52,8 @@ git status --short
 - `tools/validate.gd`: PASS, GUT `25/25`, `211 asserts`.
 - `git diff --check`: PASS.
 - `tools/check_doc_drift.ps1`: PASS.
+
+## Fechamento
+
+- Fechado em micro-track documental de 2026-06-20.
+- Track incorporada ao baseline aprovado posterior de bot route-control e pickups.

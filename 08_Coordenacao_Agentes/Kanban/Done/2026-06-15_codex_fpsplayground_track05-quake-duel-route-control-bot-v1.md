@@ -6,7 +6,7 @@
 - Branch: `codex/fpsplayground/track05-quake-duel-route-control-bot-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track05-quake-duel-route-control-bot-v1`
 - Base: `codex/fpsplayground/track04b-bot-pickup-commitment-v1`
-- Status: `READY_FOR_REVIEW`
+- Status: `DONE`
 
 ## Objetivo
 
@@ -66,3 +66,8 @@ Fechar em Review com foco de smoke humano em item control, jump pad longo e comb
 - `tools/validate.gd`: PASS, GUT `28/28`, `229 asserts`.
 - `git diff --check`: PASS.
 - `tools/check_doc_drift.ps1`: PASS.
+
+## Fechamento
+
+- Fechado em micro-track documental de 2026-06-20.
+- Track aprovada/incorporada ao baseline posterior de bot route-control.

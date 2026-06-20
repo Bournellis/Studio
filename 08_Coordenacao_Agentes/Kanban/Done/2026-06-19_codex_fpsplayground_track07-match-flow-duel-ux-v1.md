@@ -2,7 +2,7 @@
 
 - Data: `2026-06-19`
 - Agente: Codex
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `DONE`
 - Branch: `codex/fpsplayground/track07-match-flow-duel-ux-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track07-match-flow-duel-ux-v1`
 - Base: `main` em `d6bd2223` (`merge(fpsplayground): plan track07 duel ux`)
@@ -26,4 +26,9 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 Fabio/tester: fazer smoke humano da Track 07 usando `Projetos/FpsPlayground/docs/validation.md`.
 
-`PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`
+Sincronizacao remota: resolvida por baseline posterior; nenhuma acao viva neste card.
+
+## Fechamento
+
+- Fechado em micro-track documental de 2026-06-20.
+- Track implementada e incorporada ao baseline aprovado posterior de duelo e UX.
