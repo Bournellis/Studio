@@ -1,6 +1,6 @@
 # JogoDaCopa Publication Readiness
 
-Current state: `Super Campeao v1.2.1+925f3b9f` is published publicly on Cloudflare Pages and passed automated remote menu, first-minute, 5-minute stability and night luma gates. Human retest is pending; Track 09Q remains the latest human-approved fallback baseline, Track 09P remains the fallback behind 09Q and Track 09N remains the historical approved fallback behind 09P.
+Current state: `Super Campeao v1.2.1+925f3b9f` is published publicly on Cloudflare Pages and approved by Fabio/tester after automated remote menu, first-minute, 5-minute stability and night luma gates passed. Track 09Q remains the latest approved fallback baseline, Track 09P remains the fallback behind 09Q and Track 09N remains the historical approved fallback behind 09P.
 
 ## Product Identity
 
@@ -29,7 +29,7 @@ Current state: `Super Campeao v1.2.1+925f3b9f` is published publicly on Cloudfla
 - Remote first-minute evidence: `docs/playtest-reports/track-09s-data/09s-remote-first-minute-925f3b9f.json` and `docs/playtest-reports/track-09s-data/09s-remote-first-minute-925f3b9f.png`.
 - Remote 5-minute stability evidence: `docs/playtest-reports/track-09s-data/09s-remote-stability-5min-925f3b9f.json` and `docs/playtest-reports/track-09s-data/09s-remote-stability-5min-925f3b9f.png`.
 - Remote night luma evidence: `docs/playtest-reports/track-09s-data/09s-remote-night-luma-gate-925f3b9f.json`.
-- Human retest: pending Fabio/tester approval after automated gates passed.
+- Human retest: approved by Fabio/tester on 2026-06-20.
 - Fallback evidence: Track 09Q evidence remains in `docs/playtest-reports/track-09q-data/` as the latest human-approved fallback; Track 09P remains the fallback behind 09Q and Track 09N remains the historical approved fallback behind 09P.
 - No Cloudflare Access gate was observed; the public URL served the Godot app directly.
 
@@ -56,7 +56,7 @@ Current state: `Super Campeao v1.2.1+925f3b9f` is published publicly on Cloudfla
 
 ## Track 09S Camera Strafe Smoothing Hotfix Publication - 2026-06-20
 
-- Candidate status: public Web candidate with automated remote gates passed; human retest pending.
+- Candidate status: approved public baseline.
 - Change: published the already validated hotfix for residual quick `A/D` chase-camera tremor/pull after 09R.
 - Gameplay impact: presentation/camera only; no gameplay collision, physics, movement, scoring, bot, SUPER, HUD, assets or match tuning changes.
 - `tools/validate.gd`: PASS, `107` tests, `1835` asserts, `60` source files checked.
@@ -67,7 +67,7 @@ Current state: `Super Campeao v1.2.1+925f3b9f` is published publicly on Cloudfla
 - Remote stability 5min: PASS, `js_heap_growth +8.63%`, peak `+13.66%`, `wasmSampleCount=0`.
 - Remote night luma: PASS, `6.525 < 90`.
 - Evidence: `docs/playtest-reports/track-09s-publication.md` and `docs/playtest-reports/track-09s-data/`.
-- Publication follow-up: Fabio/tester human retest on the public URL; 09Q remains the latest human-approved fallback until 09S is approved.
+- Publication follow-up: Fabio/tester human retest approved the public URL on 2026-06-20; 09Q remains the latest approved fallback behind 09S.
 
 ## Track 09R Foot And Camera Hotfix Publication - 2026-06-20
 
@@ -188,9 +188,9 @@ Current state: `Super Campeao v1.2.1+925f3b9f` is published publicly on Cloudfla
 
 ## Known Limitations
 
-- Track 09S is published and pending human retest approval.
+- Track 09S is published and human-approved.
 - Track 09R passed automated gates but was superseded by 09S before human approval because of the residual quick `A/D` camera perception issue.
-- Track 09Q is the latest human-approved fallback baseline.
+- Track 09Q is the latest approved fallback baseline behind 09S.
 - Track 09P remains the latest fallback baseline behind 09Q.
 - Track 09N remains the historical approved fallback baseline behind 09P.
 - Track 09I remains the historical approved fallback baseline behind 09N.

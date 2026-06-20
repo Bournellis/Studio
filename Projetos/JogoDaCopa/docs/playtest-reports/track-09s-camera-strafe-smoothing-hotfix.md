@@ -3,7 +3,7 @@
 - Date: 2026-06-20
 - Branch: `codex/jogodacopa/track09s-camera-strafe-smoothing-hotfix-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track09s-camera-strafe-smoothing-hotfix-v1`
-- Status: local validated, pending merge/publication
+- Status: published and human-approved
 
 ## Scope
 
@@ -69,12 +69,12 @@ Local smoke evidence:
 - `docs/playtest-reports/track-09s-data/09s-local-web-camera-strafe.json`
 - `docs/playtest-reports/track-09s-data/09s-local-web-camera-strafe.png`
 
-## Publication Plan
+## Publication Closure
 
-After merge to `main`, publish 09S to Cloudflare Pages and run:
+After merge to `main`, 09S was published to Cloudflare Pages as `Super Campeao v1.2.1+925f3b9f` / `web/v1-copa-arena-futebol-20260620-925f3b9f`.
 
-- Remote menu gate.
-- Remote first-minute gate.
-- Remote 5-minute stability gate.
-- Remote night luma gate.
-- Fabio/tester human retest focused on quick `A/D` taps and normal `W/S` movement.
+- Remote menu gate: PASS.
+- Remote first-minute gate: PASS.
+- Remote 5-minute stability gate: PASS.
+- Remote night luma gate: PASS.
+- Fabio/tester human retest focused on quick `A/D` taps and normal `W/S` movement: APPROVED on 2026-06-20.

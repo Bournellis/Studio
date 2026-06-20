@@ -6,19 +6,19 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
 - Public baseline: `Super Campeao v1.2.1+925f3b9f`
-- Active stage status: `PUBLISHED_REMOTE_GATES_PASS - Track 09S camera strafe smoothing hotfix pending human retest`
-- Status marker: `JOGO_DA_COPA_TRACK09S_PUBLISHED_REMOTE_GATES_PASS`
+- Active stage status: `APPROVED_PUBLIC_BASELINE - Track 09S camera strafe smoothing hotfix human-approved`
+- Status marker: `JOGO_DA_COPA_TRACK09S_HUMAN_APPROVED`
 - Documentation baseline: `Track 09S Camera Strafe Smoothing Hotfix V1`
 
 ## Current Truth
 
 `JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, currently published on Cloudflare Pages as `v1.2.1+925f3b9f`.
 
-Track 09S is the current public Web candidate. It fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by smoothing the visual ball-focus weight and focus point in `football_chase_camera.gd`. It keeps `snap_to_target()` setup/reset behavior and goal-focus punch, and does not change gameplay collision, physics, scoring, bot, SUPER, HUD, assets or match tuning. The focused red test failed before the fix and passed after it; local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability and remote luma gates passed. Human retest is pending.
+Track 09S is the current human-approved public Web baseline. It fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by smoothing the visual ball-focus weight and focus point in `football_chase_camera.gd`. It keeps `snap_to_target()` setup/reset behavior and goal-focus punch, and does not change gameplay collision, physics, scoring, bot, SUPER, HUD, assets or match tuning. The focused red test failed before the fix and passed after it; local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest passed.
 
 Track 09R is superseded by 09S before human approval. It fixed visible avatar feet entering the field plane and reduced sustained lateral strafe ball pull, but Fabio/tester reported a remaining quick `A/D` tap camera perception issue. Automated local and remote gates passed for 09R.
 
-Track 09Q is the latest human-approved fallback baseline. It extracted presentation-only arcade emote, boost/skid VFX, goal slow-mo/camera shake, appearance cycling and avatar movement-state updates into `football_presentation_fx_controller.gd`; `FootballRoot` fell from `974` to `919` lines. Local import, `tools/validate.gd`, Web export/gzip, `node --check`, 90s Chrome Web smoke, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma and Fabio/tester human retest gates passed.
+Track 09Q is the latest approved fallback baseline behind 09S. It extracted presentation-only arcade emote, boost/skid VFX, goal slow-mo/camera shake, appearance cycling and avatar movement-state updates into `football_presentation_fx_controller.gd`; `FootballRoot` fell from `974` to `919` lines. Local import, `tools/validate.gd`, Web export/gzip, `node --check`, 90s Chrome Web smoke, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma and Fabio/tester human retest gates passed.
 
 Track 09P remains the latest fallback baseline behind 09Q. It extracted session/UI orchestration into `football_session_ui_controller.gd`, reduced `FootballRoot` from `1051` to `974` lines, passed local import, validate/export/gzip, 90s Chrome Web smoke, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest on 2026-06-19.
 
@@ -75,7 +75,7 @@ Latest publication:
 - Remote first minute: PASS, `firstMinuteHitches=0`.
 - Remote stability 5min: PASS, `js_heap_growth +8.63%`, peak `+13.66%`, `wasmSampleCount=0`, worst 5s FPS window `136.6`.
 - Remote night luma: PASS, `6.525 < 90`.
-- Human retest: pending Fabio/tester approval after automated gates.
+- Human retest: approved by Fabio/tester on 2026-06-20.
 
 Track 09S local validation:
 
@@ -88,7 +88,7 @@ Track 09S local validation:
 - `git diff --check`: PASS.
 - `D:\Estudio\tools\check_doc_drift.ps1`: PASS.
 
-Track 09Q remains the latest human-approved fallback baseline. Track 09P remains the fallback behind 09Q. Track 09N remains the historical approved fallback behind 09P.
+Track 09Q remains the latest approved fallback baseline behind 09S. Track 09P remains the fallback behind 09Q. Track 09N remains the historical approved fallback behind 09P.
 
 ## Validation
 
@@ -126,4 +126,4 @@ Latest publication validation is the Track 09S gate listed above. Latest local v
 
 ## Next Step
 
-Fabio/tester should retest public Track 09S with quick `A/D` taps and normal `W/S` movement. If approved, record 09S as the human-approved baseline before reductions resume.
+Define the next conservative `FootballRoot` reduction or re-evaluate the technical scope before opening a new track.

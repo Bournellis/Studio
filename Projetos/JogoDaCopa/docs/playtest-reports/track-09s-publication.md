@@ -5,7 +5,7 @@
 - Deployment URL: `https://7744dc3b.copa-arena-futebol.pages.dev`
 - Release: `Super Campeao v1.2.1+925f3b9f`
 - Release root: `web/v1-copa-arena-futebol-20260620-925f3b9f`
-- Status: automated remote gates PASS, human retest pending
+- Status: automated remote gates PASS, human retest approved
 
 ## Scope
 
@@ -44,4 +44,4 @@ No gameplay collision, physics, movement, bot, ball, scoring, SUPER, HUD, assets
 
 ## Follow-Up
 
-Fabio/tester should retest the public URL focusing on quick `A/D` taps, sustained lateral strafe and normal `W/S` movement. If approved, record Track 09S as the human-approved public baseline before resuming `FootballRoot` reductions.
+Fabio/tester approved the public URL on 2026-06-20 after testing quick `A/D` taps and normal movement. Track 09S is the current human-approved public baseline.

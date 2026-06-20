@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09R_PUBLISHED_REMOTE_GATES_PASS`
+- Status: `JOGO_DA_COPA_TRACK09S_HUMAN_APPROVED`
 - Documentation baseline: `TRACK09O_DOCUMENTATION_REBASELINE_V1`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
@@ -43,6 +43,10 @@
 
 ## Current Public Baseline Evidence
 
+- Track 09S publication report: `playtest-reports/track-09s-publication.md`
+- Track 09S publication evidence: `playtest-reports/track-09s-data/`
+- Track 09S camera hotfix closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_track09s-camera-strafe-smoothing-hotfix-v1.md`
+- Track 09S camera hotfix report: `playtest-reports/track-09s-camera-strafe-smoothing-hotfix.md`
 - Track 09R publication closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_publish-track09r.md`
 - Track 09R publication report: `playtest-reports/track-09r-publication.md`
 - Track 09R publication evidence: `playtest-reports/track-09r-data/`
