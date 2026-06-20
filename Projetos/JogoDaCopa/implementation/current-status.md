@@ -6,15 +6,15 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
 - Public baseline: `Super Campeao v1.2.1+fc3c72bb`
-- Active stage status: `LOCAL_VALIDATED - Track 10B Web Goal Feel Reintroduction`
-- Status marker: `JOGO_DA_COPA_TRACK10B_LOCAL_VALIDATED`
+- Active stage status: `PUBLICATION_BLOCKED_ROLLED_BACK - Track 10B Web Goal Feel Reintroduction`
+- Status marker: `JOGO_DA_COPA_TRACK10B_REMOTE_HEAP_BLOCKED_ROLLED_BACK`
 - Documentation baseline: `Track 10B Web Goal Feel Reintroduction V1`
 
 ## Current Truth
 
 `JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, currently published on Cloudflare Pages as `v1.2.1+fc3c72bb`.
 
-Track 10B is the latest local validated candidate. It reintroduces default Web goal feedback with a Web-lite path: three pooled visual markers plus the short `goal_jingle` after browser audio activation. The heavy Web `crowd_goal`, particle-burst and dynamic-light goal package remains disabled; the PC/Windows full goal package remains unchanged. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome probes with and without audio unlock, and 5-minute Chrome stability passed on 2026-06-20. It is not published yet; the public baseline remains Track 10A.
+Track 10B is a blocked publication attempt. It reintroduced default Web goal feedback with a Web-lite path: three pooled visual markers plus the short `goal_jingle` after browser audio activation. The heavy Web `crowd_goal`, particle-burst and dynamic-light goal package remained disabled; the PC/Windows full goal package remained unchanged. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome probes with and without audio unlock, and 5-minute Chrome stability passed on 2026-06-20. The 2026-06-20 Cloudflare publication attempt passed remote menu and first-minute gates, but failed the remote 5-minute heap gate with `js_heap_growth +13.85%` against the `<10%` limit. Production was rolled back to Track 10A and the public URL confirmed `web/v1-copa-arena-futebol-20260620-fc3c72bb`.
 
 Track 10A is the current human-approved public Web baseline. It decomposes the football HUD pause menu by moving pause menu construction, tabs, restart confirmation, fullscreen/quality/sensitivity callbacks and pause settings synchronization into `football_hud_pause_menu_controller.gd`. `football_hud.gd` fell from `1512` to `1148` lines. Node paths, existing signals, restart confirmation behavior and real-click pause menu tests are preserved. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, 3-resolution screenshot evidence, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest passed on 2026-06-20.
 
@@ -69,7 +69,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-`Super Campeao v1.2.1+fc3c72bb` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260620-fc3c72bb`.
+`Super Campeao v1.2.1+fc3c72bb` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260620-fc3c72bb`. Track 10B was attempted and rolled back on 2026-06-20 after the remote 5-minute heap gate failed.
 
 Latest publication:
 
@@ -82,7 +82,7 @@ Latest publication:
 - Remote night luma: PASS, `6.525 < 90`.
 - Human retest: approved for Track 10A on 2026-06-20. Track 09S remains the latest human-approved fallback baseline.
 
-Track 10B local validation:
+Track 10B validation and blocked publication:
 
 - Headless editor import: PASS.
 - `tools/validate.gd`: PASS, `108/108` tests, `1838` asserts, `62` source files checked.
@@ -91,6 +91,11 @@ Track 10B local validation:
 - Chrome local 90s Web smoke: PASS, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
 - Chrome local 90s Web smoke with audio unlock: PASS, `goal_jingle` loaded in `0.6ms` and played; `crowd_goal` stayed out of the goal path.
 - Chrome local 5min stability: PASS, `firstMinuteHitches=0`, active-match goal windows `hitchCount=0`, `js_heap_growth -8.36%`, worst 5s FPS `121`.
+- Cloudflare publication attempt: `Super Campeao v1.2.1+317999b0`, release root `web/v1-copa-arena-futebol-20260620-317999b0`, preview `https://35b5b340.copa-arena-futebol.pages.dev`.
+- Remote menu: PASS, release root matched, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote first minute: PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote stability 5min: FAIL only on `js_heap_growth +13.85%` against the `<10%` gate; peak `+17.71%`, `wasmSampleCount=0`, counters/caches stable, worst 5s FPS `117.2`.
+- Rollback: Track 10A redeployed as `web/v1-copa-arena-futebol-20260620-fc3c72bb`, preview `https://f375997e.copa-arena-futebol.pages.dev`; stable URL confirmation PASS.
 
 Track 09S local validation:
 
@@ -126,7 +131,7 @@ D:\Estudio\tools\check_doc_drift.ps1
 git diff --check
 ```
 
-Latest publication validation is the Track 10A gate listed above. Latest local validation is Track 10B: import headless PASS, `tools/validate.gd` PASS (`108/108`, `1838` asserts, `62` sources, Web gzip `30.62 MiB / 50.00 MiB`), Web export PASS, `node --check` PASS, Chrome local 90s Web smoke PASS, Chrome local 90s audio-unlock smoke PASS, Chrome local 5min stability PASS (`firstMinuteHitches=0`, `js_heap_growth -8.36%`, worst 5s FPS `121`).
+Latest approved publication validation is the Track 10A gate listed above. Latest attempted publication is Track 10B: local gates passed, remote menu and first-minute passed, remote 5-minute stability failed on `js_heap_growth +13.85%`, and production was rolled back to Track 10A with confirmation.
 
 ## Documentation Map
 
@@ -141,4 +146,4 @@ Latest publication validation is the Track 10A gate listed above. Latest local v
 
 ## Next Step
 
-Publish Track 10B for remote menu/first-minute/5-minute/luma gates and human retest, or hold the local candidate if the Web goal feel is not desired after manual testing.
+Decide whether to investigate/hotfix Track 10B's remote heap signal or discard the Web goal-feel reintroduction and continue from the approved Track 10A baseline. Do not continue structural reduction until that decision is made.
