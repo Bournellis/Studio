@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09R publicada com gates remotos PASS; reteste humano pendente; 09Q fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14E bot decision boundary integrada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09R publicada com gates remotos PASS; reteste humano pendente; 09Q fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14E bot decision boundary aprovada; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -44,9 +44,9 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK14E_BOT_DECISION_BOUNDARY_MERGED_LOCAL`
-- Marker: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_MERGED_LOCAL`
-- Baseline: Track 14E extraiu scoring/intencoes do bot para `bot_decision_model.gd` sem alterar gameplay; testes `62/62`, `564 asserts`.
+- Status: `P2_IMPLEMENTACAO - TRACK14E_BOT_DECISION_BOUNDARY_APPROVED`
+- Marker: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_APPROVED`
+- Baseline: Track 14E extraiu scoring/intencoes do bot para `bot_decision_model.gd` sem alterar gameplay; testes `62/62`, `564 asserts`; aprovada por Fabio/tester.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
 - Validacao: `tools/validate.gd` quick/full PASS `62/62`, `564 asserts`; `tools/check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.

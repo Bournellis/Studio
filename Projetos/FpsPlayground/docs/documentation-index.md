@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_MERGED_LOCAL`
+- Status: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_APPROVED`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 

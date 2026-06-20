@@ -5,8 +5,8 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 14E - Bot Decision Boundary V1`
-- Active stage status: `MERGED_LOCAL`
-- Status marker: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_MERGED_LOCAL`
+- Active stage status: `APPROVED`
+- Status marker: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_APPROVED`
 
 ## Current Truth
 
@@ -62,7 +62,7 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 14B: arena root boundary - local validated on `2026-06-20`.
 - Track 14C: combat pipeline extraction - merged locally on `2026-06-20`.
 - Track 14D: pickups and jump pads extraction - merged locally on `2026-06-20`.
-- Track 14E: bot decision boundary - merged locally on `2026-06-20`.
+- Track 14E: bot decision boundary - approved by Fabio/tester on `2026-06-20`.
 
 ## Next Sequence
 

@@ -1,6 +1,6 @@
 # Track 14E - Bot Decision Boundary V1
 
-- Status: `MERGED_LOCAL`
+- Status: `APPROVED`
 - Date: `2026-06-20`
 - Branch: `codex/fpsplayground/track14e-bot-decision-boundary-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--track14e-bot-decision-boundary-v1`
@@ -22,6 +22,8 @@ Extract a bot decision/scoring boundary from `gameplay/bot/basic_duel_bot.gd` wi
 PASS tools/validate.gd -- --profile=quick, GUT 62/62, 564 asserts
 PASS tools/validate.gd, GUT 62/62, 564 asserts
 ```
+
+Fabio/tester approved the implementation on `2026-06-20`.
 
 ## Next
 

@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_MERGED_LOCAL`
+- Status: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_APPROVED`
 - Current surface: FPS arena lab.
-- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; Track 14E bot decision boundary merged locally; current player movement feel preserved.
+- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; Track 14E bot decision boundary approved; current player movement feel preserved.
 
 ## North Star
 
