@@ -6,7 +6,7 @@
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track09s-camera-strafe-smoothing-hotfix-v1`
 - Base: `main` local apos 09R publicada e FpsPlayground 14E aprovado
 - Objetivo: corrigir a percepcao de tremor/puxao da chase camera em toques rapidos de A/D, sem alterar gameplay, fisica, movimento, bot, bola, scoring, HUD, assets ou tuning de partida.
-- Resultado: publicado como `Super Campeao v1.2.1+925f3b9f` / `web/v1-copa-arena-futebol-20260620-925f3b9f`; gates remotos PASS; reteste humano pendente.
+- Resultado: publicado como `Super Campeao v1.2.1+925f3b9f` / `web/v1-copa-arena-futebol-20260620-925f3b9f`; gates remotos PASS; reteste humano aprovado em 2026-06-20.
 
 ## Escopo Pretendido
 
