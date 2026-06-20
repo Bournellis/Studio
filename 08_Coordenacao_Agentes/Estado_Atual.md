@@ -7,20 +7,20 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09Q local validada; 09P baseline publica aprovada; 09N fallback historico aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14B arena root boundary local validada; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09Q publicada com gates remotos PASS; reteste humano pendente; 09P fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14B arena root boundary local validada; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09Q_LOCAL_VALIDATED`
-- Marker: `JOGO_DA_COPA_TRACK09Q_LOCAL_VALIDATED`
-- Baseline publico: `Super Campeao v1.2.1+8863c5b9` (`web/v1-copa-arena-futebol-20260619-8863c5b9`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09P PASS; reteste humano aprovado; 09N segue fallback historico aprovado.
+- Status: `P2_IMPLEMENTACAO - TRACK09Q_PUBLISHED_REMOTE_GATES_PASS`
+- Marker: `JOGO_DA_COPA_TRACK09Q_PUBLISHED_REMOTE_GATES_PASS`
+- Baseline publico atual: `Super Campeao v1.2.1+bb604c77` (`web/v1-copa-arena-futebol-20260619-bb604c77`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09Q PASS; reteste humano pendente; 09P segue fallback humano aprovado.
 - Diagnostico atual: Track 09M renomeou o gate primario para `js_heap_growth`, preservou alias legado `js_wasm_heap_growth` e confirmou 09I remoto PASS (`+9.38%`, `wasmSampleCount=0`).
-- Implementacao local: Track 09Q extraiu presentation FX para `football_presentation_fx_controller.gd`; `FootballRoot` `974 -> 919`; import/validate/export/gzip/Web smoke 90s PASS (`js_heap_growth -10.20%` local).
+- Publicacao atual: Track 09Q extraiu presentation FX para `football_presentation_fx_controller.gd`; `FootballRoot` `974 -> 919`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.41%`).
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: decidir entre publicar/testar 09Q ou parar para nova reavaliacao; manter 09P como baseline publica aprovada ate publicacao e reteste humano da 09Q.
+- Proximo passo: Fabio/tester retestar a URL publica da 09Q; se aprovado, registrar 09Q como baseline humano aprovado, senao manter/retomar 09P.
 
 ## draxos-roguelike-cardgame
 

@@ -1,6 +1,6 @@
 # JogoDaCopa Publication Readiness
 
-Current state: `Super Campeao v1.2.1+8863c5b9` is published publicly on Cloudflare Pages and approved as the current public baseline. Track 09P passed automated remote menu, first-minute, 5-minute stability, night luma gates and Fabio/tester human retest on 2026-06-19. Track 09N remains the historical approved fallback baseline behind 09P.
+Current state: `Super Campeao v1.2.1+bb604c77` is published publicly on Cloudflare Pages and passed automated remote menu, first-minute, 5-minute stability and night luma gates. Human retest is pending, so Track 09P remains the latest human-approved fallback baseline and Track 09N remains the historical approved fallback baseline behind 09P.
 
 ## Product Identity
 
@@ -13,24 +13,24 @@ Current state: `Super Campeao v1.2.1+8863c5b9` is published publicly on Cloudfla
 - Windows preset: `Windows Desktop` in `export_presets.cfg`.
 - Web preset: `Web` in `export_presets.cfg`, single-threaded.
 
-## Current Web Publication - Track 09P - 2026-06-19
+## Current Web Publication - Track 09Q - 2026-06-19
 
 - Cloudflare Pages project: `copa-arena-futebol`.
 - Public stable URL: `https://copa-arena-futebol.pages.dev/`.
-- Current production deployment URL: `https://5a1325e4.copa-arena-futebol.pages.dev`.
-- Approved fallback deployment URL: `https://97957745.copa-arena-futebol.pages.dev` (Track 09N).
-- Release root: `web/v1-copa-arena-futebol-20260619-8863c5b9`.
-- Visible footer: `Super Campeao v1.2.1+8863c5b9`.
+- Current production deployment URL: `https://38e6cc7d.copa-arena-futebol.pages.dev`.
+- Approved fallback deployment URL: `https://5a1325e4.copa-arena-futebol.pages.dev` (Track 09P).
+- Release root: `web/v1-copa-arena-futebol-20260619-bb604c77`.
+- Visible footer: `Super Campeao v1.2.1+bb604c77`.
 - Publication script: `tools/publish_web.ps1`.
-- Publication command: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260619-8863c5b9 -VisibleVersion v1.2.1 -EvidenceSubdir track-09p-data -EvidencePrefix 09p -DeployMessage "JogoDaCopa Track 09P Super Campeao v1.2.1 web/v1-copa-arena-futebol-20260619-8863c5b9" -ConfirmRemoteMutation -SkipExport`.
-- Publication evidence: `docs/playtest-reports/track-09p-data/09p-publication-report-8863c5b9.json`.
-- Package evidence: `docs/playtest-reports/track-09p-data/09p-package-artifacts-8863c5b9.json`.
-- Remote menu evidence: `docs/playtest-reports/track-09p-data/09p-remote-menu-8863c5b9.json` and `docs/playtest-reports/track-09p-data/09p-remote-menu-8863c5b9.png`.
-- Remote first-minute evidence: `docs/playtest-reports/track-09p-data/09p-remote-first-minute-8863c5b9.json` and `docs/playtest-reports/track-09p-data/09p-remote-first-minute-8863c5b9.png`.
-- Remote 5-minute stability evidence: `docs/playtest-reports/track-09p-data/09p-remote-stability-5min-8863c5b9.json` and `docs/playtest-reports/track-09p-data/09p-remote-stability-5min-8863c5b9.png`.
-- Remote night luma evidence: `docs/playtest-reports/track-09p-data/09p-remote-night-luma-gate-8863c5b9.json`.
-- Human retest: approved by Fabio/tester on 2026-06-19 after automated gates passed.
-- Fallback evidence: Track 09N evidence remains in `docs/playtest-reports/track-09n-data/` as the historical approved fallback.
+- Publication command: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260619-bb604c77 -VisibleVersion v1.2.1 -EvidenceSubdir track-09q-data -EvidencePrefix 09q -DeployMessage "JogoDaCopa Track 09Q Super Campeao v1.2.1 web/v1-copa-arena-futebol-20260619-bb604c77" -ConfirmRemoteMutation -SkipExport`.
+- Publication evidence: `docs/playtest-reports/track-09q-data/09q-publication-report-bb604c77.json`.
+- Package evidence: `docs/playtest-reports/track-09q-data/09q-package-artifacts-bb604c77.json`.
+- Remote menu evidence: `docs/playtest-reports/track-09q-data/09q-remote-menu-bb604c77.json` and `docs/playtest-reports/track-09q-data/09q-remote-menu-bb604c77.png`.
+- Remote first-minute evidence: `docs/playtest-reports/track-09q-data/09q-remote-first-minute-bb604c77.json` and `docs/playtest-reports/track-09q-data/09q-remote-first-minute-bb604c77.png`.
+- Remote 5-minute stability evidence: `docs/playtest-reports/track-09q-data/09q-remote-stability-5min-bb604c77.json` and `docs/playtest-reports/track-09q-data/09q-remote-stability-5min-bb604c77.png`.
+- Remote night luma evidence: `docs/playtest-reports/track-09q-data/09q-remote-night-luma-gate-bb604c77.json`.
+- Human retest: pending after automated gates passed.
+- Fallback evidence: Track 09P evidence remains in `docs/playtest-reports/track-09p-data/` as the latest human-approved fallback; Track 09N remains the historical approved fallback behind 09P.
 - No Cloudflare Access gate was observed; the public URL served the Godot app directly.
 
 ## Packaging
@@ -38,12 +38,12 @@ Current state: `Super Campeao v1.2.1+8863c5b9` is published publicly on Cloudfla
 - Cloudflare Pages direct upload has a `25 MiB` per-file asset limit.
 - Raw `index.pck` and `index.wasm` exceed that limit, so the Pages package stores both files Brotli-compressed while preserving their public file names.
 - `_headers` serves `index.pck` and `index.wasm` with `Content-Encoding: br`.
-- Track 09P artifact sizes:
-  - raw `index.pck`: `27994188` bytes
+- Track 09Q artifact sizes:
+  - raw `index.pck`: `27996928` bytes
   - raw `index.wasm`: `37695054` bytes
-  - packaged `index.pck`: `20825106` bytes
+  - packaged `index.pck`: `20824784` bytes
   - `index.wasm`: `6608968` bytes, SHA256 `6903dbdda02519655d94ef7fc0eb18e31336ac11b0f93a1abe696a654d2cf30f`
-  - Pages zip: `27625582` bytes
+  - Pages zip: `27625235` bytes
 
 ## Validation
 
@@ -51,8 +51,23 @@ Current state: `Super Campeao v1.2.1+8863c5b9` is published publicly on Cloudfla
 - Web export: PASS, single-threaded `GODOT_THREADS_ENABLED=false`.
 - Remote menu: PASS, release root matched, `menu.ready.end` observed, page errors `0`, runtime console errors `0`.
 - Remote first minute: PASS, `firstMinuteHitches=0`, page errors `0`, runtime console errors `0`.
-- Remote stability 5 min: PASS, `js_heap_growth +2.15%` under the `<10%` gate, peak `+7.18%`, `total_js_heap_growth -0.37%`, `wasmSampleCount=0`.
+- Remote stability 5 min: PASS, `js_heap_growth +8.41%` under the `<10%` gate, peak `+12.61%`, `total_js_heap_growth +7.42%`, `wasmSampleCount=0`.
 - Remote night luma: PASS, `luma_0_255=6.525 < 90`.
+
+## Track 09Q Presentation FX Controller Publication - 2026-06-19
+
+- Candidate status: public candidate with automated remote gates passed; human retest pending.
+- Change: published the already validated extraction of presentation FX orchestration to `football_presentation_fx_controller.gd`.
+- `FootballRoot`: `974 -> 919` lines in the local reduction.
+- `tools/validate.gd`: PASS, `104` tests, `1826` asserts, `60` source files checked.
+- Web export/package: PASS, single-threaded `GODOT_THREADS_ENABLED=false`.
+- Web gzip gate: PASS, `30.60 MiB / 50.00 MiB`.
+- Remote menu: PASS, release root matched, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote first minute: PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote stability 5min: PASS, `js_heap_growth +8.41%`, peak `+12.61%`, `total_js_heap_growth +7.42%`, `wasmSampleCount=0`.
+- Remote night luma: PASS, `6.525 < 90`.
+- Evidence: `docs/playtest-reports/track-09q-publication.md` and `docs/playtest-reports/track-09q-data/`.
+- Publication follow-up: Fabio/tester human retest is required before promoting 09Q from public candidate to approved baseline; 09P remains the latest human-approved fallback baseline.
 
 ## Track 09P Session UI Controller Publication - 2026-06-19
 
@@ -143,11 +158,12 @@ Current state: `Super Campeao v1.2.1+8863c5b9` is published publicly on Cloudfla
 
 ## Known Limitations
 
-- Track 09P is published and approved as the current public baseline.
+- Track 09Q is published and automated remote gates passed, but human retest is pending.
+- Track 09P remains the latest human-approved fallback baseline behind 09Q.
 - Track 09N remains the historical approved fallback baseline behind 09P.
 - Track 09I remains the historical approved fallback baseline behind 09N.
 - Track 09J is locally validated and merged locally, but its 2026-06-19 publication attempt failed the remote JS/WASM heap gate twice and was rolled back to 09I.
-- Web heap margin is green on 09P (`+2.15%` against `<10%`) but has been volatile across recent attempts; keep the 5-minute stability gate mandatory for every release and treat near-threshold attempts as audit signals.
+- Web heap margin is green on 09Q (`+8.41%` against `<10%`) but close enough to the gate to deserve caution; keep the 5-minute stability gate mandatory for every release and treat near-threshold attempts as audit signals.
 - Desktop browser is the official Web V1 surface; mobile browser can be observed manually, but is not an official support target in this release.
 - Country kits and branding are generic/inspired; no official FIFA, World Cup, federation or club logos are included.
 - No multiplayer, backend, analytics, custom domain, itch.io page or signed Windows release is included in this track.
