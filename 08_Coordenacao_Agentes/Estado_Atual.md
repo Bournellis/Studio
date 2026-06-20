@@ -7,21 +7,21 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (10B bloqueada no gate remoto de heap e rollback para 10A aprovada; 09S fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14H hotfix de long jump pad do bot mergeada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (10C local validada para publicar feedback visual de gol Web heap-safe; 10A segue baseline aprovada; 09S fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14H hotfix de long jump pad do bot mergeada localmente; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK10B_REMOTE_HEAP_BLOCKED_ROLLED_BACK`
-- Marker: `JOGO_DA_COPA_TRACK10B_REMOTE_HEAP_BLOCKED_ROLLED_BACK`
-- Tentativa 10B: feedback de gol Web leve com `goal_jingle`; local e remoto curto PASS, mas remoto 5min falhou `js_heap_growth +13.85%` (limite `<10%`); rollback confirmado.
+- Status: `P2_IMPLEMENTACAO - TRACK10C_LOCAL_VALIDATED_PUBLICATION_CANDIDATE`
+- Marker: `JOGO_DA_COPA_TRACK10C_LOCAL_VALIDATED_PUBLICATION_CANDIDATE`
+- Track 10C: feedback visual de gol Web reintroduzido por `goal_visual`; `goal_audio`/`goal` ficam opt-in; local 90s e 5min PASS com `js_heap_growth -8.10%`, pico `+1.10%`, pior 5s `137.4 FPS`.
 - Publicacao atual e baseline aprovado: Track 10A `Super Campeao v1.2.1+fc3c72bb` (`web/v1-copa-arena-futebol-20260620-fc3c72bb`) em `https://copa-arena-futebol.pages.dev/`; rollback deploy `https://f375997e.copa-arena-futebol.pages.dev`; reteste humano 10A aprovado.
 - Fallback aprovado: Track 09S `Super Campeao v1.2.1+925f3b9f`; gates remotos 09S PASS e reteste humano aprovado.
 - Fallback historico aprovado: Track 09Q `Super Campeao v1.2.1+bb604c77`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.41%`) e aprovada por Fabio/tester.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: decidir entre investigar/hotfixar heap remoto da 10B ou descartar a reintroducao de feedback de gol Web antes de nova reducao estrutural.
+- Proximo passo: publicar 10C como candidata remota; rodar menu, primeiro minuto e estabilidade 5min; se heap remoto falhar, rollback imediato para 10A.
 
 ## draxos-roguelike-cardgame
 

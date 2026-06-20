@@ -6,13 +6,15 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
 - Public baseline: `Super Campeao v1.2.1+fc3c72bb`
-- Active stage status: `PUBLICATION_BLOCKED_ROLLED_BACK - Track 10B Web Goal Feel Reintroduction`
-- Status marker: `JOGO_DA_COPA_TRACK10B_REMOTE_HEAP_BLOCKED_ROLLED_BACK`
-- Documentation baseline: `Track 10B Web Goal Feel Reintroduction V1`
+- Active stage status: `LOCAL_VALIDATED_PUBLICATION_CANDIDATE - Track 10C Web Goal Feedback Heap-Safe`
+- Status marker: `JOGO_DA_COPA_TRACK10C_LOCAL_VALIDATED_PUBLICATION_CANDIDATE`
+- Documentation baseline: `Track 10C Web Goal Feedback Heap-Safe V1`
 
 ## Current Truth
 
 `JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, currently published on Cloudflare Pages as `v1.2.1+fc3c72bb`.
+
+Track 10C is a local validated publication candidate. It keeps the Web goal visual pulse by using the existing three pooled sphere markers, but removes goal audio from the default Web path. The default Web feedback key is now `goal_visual`; `goal_audio` and the legacy `goal` key remain opt-in query paths only. Local headless import, `tools/validate.gd`, Web export/gzip, `node --check`, 90s Chrome visual-only smoke and 5-minute Chrome stability passed on 2026-06-20. The 5-minute gate showed `js_heap_growth -8.10%`, peak `+1.10%`, worst 5s FPS `137.4`, `firstMinuteHitches=0`, and `feedback.web_goal_mode visual=true audio=false`.
 
 Track 10B is a blocked publication attempt. It reintroduced default Web goal feedback with a Web-lite path: three pooled visual markers plus the short `goal_jingle` after browser audio activation. The heavy Web `crowd_goal`, particle-burst and dynamic-light goal package remained disabled; the PC/Windows full goal package remained unchanged. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome probes with and without audio unlock, and 5-minute Chrome stability passed on 2026-06-20. The 2026-06-20 Cloudflare publication attempt passed remote menu and first-minute gates, but failed the remote 5-minute heap gate with `js_heap_growth +13.85%` against the `<10%` limit. Production was rolled back to Track 10A and the public URL confirmed `web/v1-copa-arena-futebol-20260620-fc3c72bb`.
 
@@ -69,7 +71,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-`Super Campeao v1.2.1+fc3c72bb` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260620-fc3c72bb`. Track 10B was attempted and rolled back on 2026-06-20 after the remote 5-minute heap gate failed.
+`Super Campeao v1.2.1+fc3c72bb` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260620-fc3c72bb`. Track 10C is locally validated and ready for remote publication gates; Track 10B was attempted and rolled back on 2026-06-20 after the remote 5-minute heap gate failed.
 
 Latest publication:
 
@@ -96,6 +98,16 @@ Track 10B validation and blocked publication:
 - Remote first minute: PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
 - Remote stability 5min: FAIL only on `js_heap_growth +13.85%` against the `<10%` gate; peak `+17.71%`, `wasmSampleCount=0`, counters/caches stable, worst 5s FPS `117.2`.
 - Rollback: Track 10A redeployed as `web/v1-copa-arena-futebol-20260620-fc3c72bb`, preview `https://f375997e.copa-arena-futebol.pages.dev`; stable URL confirmation PASS.
+
+Track 10C local validation:
+
+- Headless editor import: PASS.
+- `tools/validate.gd`: PASS, `108/108` tests, `1840` asserts, `62` source files checked.
+- Web export/gzip: PASS, `30.62 MiB / 50.00 MiB`.
+- `node --check tools/track04f_chrome_probe.mjs`: PASS.
+- Chrome local 90s Web visual-only smoke: PASS, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
+- Chrome local 5min stability: PASS, `firstMinuteHitches=0`, `js_heap_growth -8.10%`, peak `+1.10%`, worst 5s FPS `137.4`, Godot counters/caches stable.
+- Web goal feedback mode observed: `visual=true audio=false`.
 
 Track 09S local validation:
 
@@ -131,7 +143,7 @@ D:\Estudio\tools\check_doc_drift.ps1
 git diff --check
 ```
 
-Latest approved publication validation is the Track 10A gate listed above. Latest attempted publication is Track 10B: local gates passed, remote menu and first-minute passed, remote 5-minute stability failed on `js_heap_growth +13.85%`, and production was rolled back to Track 10A with confirmation.
+Latest approved publication validation is the Track 10A gate listed above. Latest local publication candidate is Track 10C: local gates passed with Web visual-only goal feedback and no default Web goal audio. Latest attempted publication is Track 10B: local gates passed, remote menu and first-minute passed, remote 5-minute stability failed on `js_heap_growth +13.85%`, and production was rolled back to Track 10A with confirmation.
 
 ## Documentation Map
 
@@ -146,4 +158,4 @@ Latest approved publication validation is the Track 10A gate listed above. Lates
 
 ## Next Step
 
-Decide whether to investigate/hotfix Track 10B's remote heap signal or discard the Web goal-feel reintroduction and continue from the approved Track 10A baseline. Do not continue structural reduction until that decision is made.
+Publish Track 10C as a remote candidate and run remote menu, first-minute and 5-minute stability gates. If the remote heap gate fails, rollback to Track 10A immediately and keep 10C as a blocked publication attempt.
