@@ -16,6 +16,7 @@ const ArenaProjectileRuntimeScript = preload("res://modes/arena/arena_projectile
 const ArenaPickupJumpPadRulesScript = preload("res://modes/arena/arena_pickup_jump_pad_rules.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 const ArenaTelemetryRecorderScript = preload("res://gameplay/telemetry/arena_telemetry_recorder.gd")
+const ArenaTelemetryEventsScript = preload("res://gameplay/telemetry/arena_telemetry_events.gd")
 
 const MENU_SCENE_PATH: String = "res://modes/menu/main_menu.tscn"
 const PLAYER_VISUAL_MUZZLE_RIGHT_OFFSET: float = 0.34
@@ -1184,31 +1185,17 @@ func _get_active_tactical_points(include_objectives: bool) -> Array:
 func _initialize_telemetry() -> void:
 	telemetry = ArenaTelemetryRecorderScript.new()
 	var enable_file_output := not DisplayServer.get_name().to_lower().contains("headless")
-	telemetry.start_session(_build_telemetry_context({
+	ArenaTelemetryEventsScript.start_session(telemetry, _build_telemetry_context({
 		"score_to_win": SCORE_TO_WIN,
 		"player_spawn": player_spawn,
 		"bot_spawn": bot_spawn
 	}), enable_file_output)
 
 func _record_telemetry_event(event_name: StringName, payload: Dictionary = {}) -> void:
-	if telemetry == null:
-		return
-	telemetry.update_context(_build_telemetry_context())
-	telemetry.record_event(event_name, payload)
+	ArenaTelemetryEventsScript.record_event(telemetry, event_name, _build_telemetry_context(), payload)
 
 func _build_telemetry_context(extra: Dictionary = {}) -> Dictionary:
-	var context := {
-		"round_index": round_index,
-		"round_state": round_state,
-		"map_id": active_layout_id,
-		"map_name": map_name,
-		"player_score": player_score,
-		"bot_score": bot_score,
-		"score_to_win": SCORE_TO_WIN
-	}
-	for key in extra.keys():
-		context[key] = extra[key]
-	return context
+	return ArenaTelemetryEventsScript.build_context(round_index, round_state, active_layout_id, map_name, player_score, bot_score, SCORE_TO_WIN, extra)
 
 func _record_telemetry_arena_setup() -> void:
 	var pickup_specs: Array = []
