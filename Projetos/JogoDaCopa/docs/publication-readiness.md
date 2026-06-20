@@ -1,6 +1,6 @@
 # JogoDaCopa Publication Readiness
 
-Current state: `Super Campeao v1.2.1+8863c5b9` is published publicly on Cloudflare Pages. Track 09P passed automated remote menu, first-minute, 5-minute stability and night luma gates; human retest is pending. Track 09N remains the approved fallback baseline until 09P is human-approved.
+Current state: `Super Campeao v1.2.1+8863c5b9` is published publicly on Cloudflare Pages and approved as the current public baseline. Track 09P passed automated remote menu, first-minute, 5-minute stability, night luma gates and Fabio/tester human retest on 2026-06-19. Track 09N remains the historical approved fallback baseline behind 09P.
 
 ## Product Identity
 
@@ -29,8 +29,8 @@ Current state: `Super Campeao v1.2.1+8863c5b9` is published publicly on Cloudfla
 - Remote first-minute evidence: `docs/playtest-reports/track-09p-data/09p-remote-first-minute-8863c5b9.json` and `docs/playtest-reports/track-09p-data/09p-remote-first-minute-8863c5b9.png`.
 - Remote 5-minute stability evidence: `docs/playtest-reports/track-09p-data/09p-remote-stability-5min-8863c5b9.json` and `docs/playtest-reports/track-09p-data/09p-remote-stability-5min-8863c5b9.png`.
 - Remote night luma evidence: `docs/playtest-reports/track-09p-data/09p-remote-night-luma-gate-8863c5b9.json`.
-- Human retest: pending after automated gates passed.
-- Fallback evidence: Track 09N evidence remains in `docs/playtest-reports/track-09n-data/`.
+- Human retest: approved by Fabio/tester on 2026-06-19 after automated gates passed.
+- Fallback evidence: Track 09N evidence remains in `docs/playtest-reports/track-09n-data/` as the historical approved fallback.
 - No Cloudflare Access gate was observed; the public URL served the Godot app directly.
 
 ## Packaging
@@ -56,7 +56,7 @@ Current state: `Super Campeao v1.2.1+8863c5b9` is published publicly on Cloudfla
 
 ## Track 09P Session UI Controller Publication - 2026-06-19
 
-- Candidate status: public build with automated gates PASS; human retest pending.
+- Candidate status: approved public baseline.
 - Change: published the already validated extraction of intro/pause/menu session flow, ESC target routing, match start, main-menu return and mouse-capture policy to `football_session_ui_controller.gd`.
 - `FootballRoot`: `1051 -> 974` lines in the local reduction.
 - `tools/validate.gd`: PASS, `104` tests, `1826` asserts, `59` source files checked.
@@ -67,11 +67,11 @@ Current state: `Super Campeao v1.2.1+8863c5b9` is published publicly on Cloudfla
 - Remote stability 5min: PASS, `js_heap_growth +2.15%`, peak `+7.18%`, `wasmSampleCount=0`.
 - Remote night luma: PASS, `6.525 < 90`.
 - Evidence: `docs/playtest-reports/track-09p-publication.md` and `docs/playtest-reports/track-09p-data/`.
-- Publication follow-up: Fabio/tester should retest the public URL before 09P is marked product-approved; 09N remains the approved fallback baseline until then.
+- Publication follow-up: Fabio/tester human retest approved the public URL on 2026-06-19; 09N remains the historical approved fallback baseline behind 09P.
 
 ## Track 09N Render Settings Controller Publication - 2026-06-19
 
-- Candidate status: approved fallback baseline while 09P awaits human retest.
+- Candidate status: historical approved fallback baseline behind 09P.
 - Change: published the already validated extraction of render/settings orchestration to `football_render_settings_controller.gd`.
 - `tools/validate.gd`: PASS, `104` tests, `1826` asserts.
 - Web export/package: PASS, single-threaded `GODOT_THREADS_ENABLED=false`.
@@ -143,8 +143,8 @@ Current state: `Super Campeao v1.2.1+8863c5b9` is published publicly on Cloudfla
 
 ## Known Limitations
 
-- Track 09P is published and automated remote gates are green, but human retest is still pending.
-- Track 09N remains the approved fallback baseline until 09P is human-approved.
+- Track 09P is published and approved as the current public baseline.
+- Track 09N remains the historical approved fallback baseline behind 09P.
 - Track 09I remains the historical approved fallback baseline behind 09N.
 - Track 09J is locally validated and merged locally, but its 2026-06-19 publication attempt failed the remote JS/WASM heap gate twice and was rolled back to 09I.
 - Web heap margin is green on 09P (`+2.15%` against `<10%`) but has been volatile across recent attempts; keep the 5-minute stability gate mandatory for every release and treat near-threshold attempts as audit signals.

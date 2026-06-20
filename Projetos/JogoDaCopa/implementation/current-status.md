@@ -6,17 +6,17 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
 - Public baseline: `Super Campeao v1.2.1+8863c5b9`
-- Active stage status: `PUBLISHED_REMOTE_GATES_PASS - Track 09P human retest pending`
-- Status marker: `JOGO_DA_COPA_TRACK09P_PUBLISHED_REMOTE_GATES_PASS`
+- Active stage status: `PUBLISHED_APPROVED - Track 09P public baseline approved`
+- Status marker: `JOGO_DA_COPA_TRACK09P_PUBLISHED_APPROVED`
 - Documentation baseline: `Track 09P Session UI Controller V1`
 
 ## Current Truth
 
 `JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, published on Cloudflare Pages as `v1.2.1+8863c5b9`.
 
-Track 09P is the current public build with automated remote gates green. It extracted session/UI orchestration into `football_session_ui_controller.gd`, reduced `FootballRoot` from `1051` to `974` lines, passed local import, validate/export/gzip, 90s Chrome Web smoke, remote menu, remote first-minute, remote 5-minute stability and remote luma gates. Human retest is pending.
+Track 09P is the current approved public baseline. It extracted session/UI orchestration into `football_session_ui_controller.gd`, reduced `FootballRoot` from `1051` to `974` lines, passed local import, validate/export/gzip, 90s Chrome Web smoke, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest on 2026-06-19.
 
-Track 09N remains the approved fallback baseline until 09P is human-approved. It extracted render/settings orchestration into `football_render_settings_controller.gd`, reduced `FootballRoot` from `1079` to `1051` lines, passed local validation, passed pre-publication A/B, passed remote menu/first-minute/stability/luma gates and passed human retest.
+Track 09N remains the historical approved fallback baseline behind 09P. It extracted render/settings orchestration into `football_render_settings_controller.gd`, reduced `FootballRoot` from `1079` to `1051` lines, passed local validation, passed pre-publication A/B, passed remote menu/first-minute/stability/luma gates and passed human retest.
 
 Tracks 09J and 09K are not approved public baselines because their 2026-06-19 publication attempts failed the remote heap gate; production was restored to 09I before 09L/09M diagnostics. Track 09L/09M clarified that the active Chrome stability metric is exposed JS heap, now named `js_heap_growth`.
 
@@ -68,9 +68,9 @@ Latest publication:
 - Remote first minute: PASS, `firstMinuteHitches=0`.
 - Remote stability 5min: PASS, `js_heap_growth +2.15%`, peak `+7.18%`, `wasmSampleCount=0`.
 - Remote night luma: PASS, `6.525 < 90`.
-- Human retest: pending.
+- Human retest: approved by Fabio/tester on 2026-06-19.
 
-Track 09N remains the approved fallback baseline. Track 09I remains the historical approved fallback behind 09N.
+Track 09N remains the historical approved fallback baseline behind 09P. Track 09I remains the historical approved fallback behind 09N.
 
 ## Validation
 
@@ -108,4 +108,4 @@ Latest code and publication validation is the Track 09P gate listed above. Track
 
 ## Next Step
 
-Run the human retest for Track 09P on the public URL before another `FootballRoot` reduction. If approved, mark 09P as the approved public baseline; if rejected, restore/publish 09N and register the blocker. Keep any next slice conservative: no gameplay, physics, input, bot decision, HUD visual, asset or tuning change unless Fabio explicitly opens a tuning/design track.
+Plan the next conservative `FootballRoot` reduction or re-evaluate the architecture before opening another slice. Keep any next slice conservative: no gameplay, physics, input, bot decision, HUD visual, asset or tuning change unless Fabio explicitly opens a tuning/design track.
