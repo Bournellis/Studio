@@ -1,13 +1,13 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-06-19`
+- Ultima atualizacao: `2026-06-20`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 - Regra de tamanho: maximo ~12 linhas por projeto. Historia de pacotes/validacoes vai para os arquivos de historico do projeto (`implementation/tracks/`, `docs/release-history.md`, Kanban Done), nunca para este snapshot.
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09Q local validada; 09P baseline publica aprovada; 09N fallback historico aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14B arena root boundary local validada; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09Q local validada; 09P baseline publica aprovada; 09N fallback historico aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14C combat pipeline local validada; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -44,13 +44,13 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK14B_ARENA_ROOT_BOUNDARY_LOCAL_VALIDATED`
-- Marker: `FPS_PLAYGROUND_TRACK14B_ARENA_ROOT_BOUNDARY_LOCAL_VALIDATED`
-- Baseline: Track 14B extraiu a montagem de snapshot/status do HUD para boundary dedicada sem alterar gameplay; testes `54/54`, `505 asserts`.
+- Status: `P2_IMPLEMENTACAO - TRACK14C_COMBAT_PIPELINE_LOCAL_VALIDATED`
+- Marker: `FPS_PLAYGROUND_TRACK14C_COMBAT_PIPELINE_LOCAL_VALIDATED`
+- Baseline: Track 14C extraiu payloads/calc puro de rifle, Plasma, blast e bot shot para `arena_combat_pipeline.gd` sem alterar gameplay; testes `57/57`, `525 asserts`.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
-- Validacao: `tools/validate.gd` PASS `54/54`, `505 asserts`; docs `check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
+- Validacao: `tools/validate.gd` quick/full PASS `57/57`, `525 asserts`; docs `check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio revisar/autorizar merge da Track 14B; depois executar `Track 14C - Combat Pipeline Extraction V1`.
+- Proximo passo: Fabio revisar/autorizar merge da Track 14C; depois executar `Track 14D - Pickups And Jump Pads Extraction V1`.
 
 ## rpg-isometrico
 

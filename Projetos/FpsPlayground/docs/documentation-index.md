@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK14B_ARENA_ROOT_BOUNDARY_LOCAL_VALIDATED`
+- Status: `FPS_PLAYGROUND_TRACK14C_COMBAT_PIPELINE_LOCAL_VALIDATED`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -49,6 +49,7 @@
 - `../implementation/tracks/track-13-documentation-rebaseline-future-roadmap-v1/current-status.md`
 - `../implementation/tracks/track-14a-refactor-safety-net-v1/current-status.md`
 - `../implementation/tracks/track-14b-arena-root-boundary-v1/current-status.md`
+- `../implementation/tracks/track-14c-combat-pipeline-extraction-v1/current-status.md`
 
 ## Historical Note
 

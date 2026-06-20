@@ -5,7 +5,7 @@
 ## Ownership
 
 - `modes/menu/`: project entry and Arena Shooter launch.
-- `modes/arena/`: arena assembly, round state, player shot resolution, bot shot resolution, pickups and HUD snapshot/status building.
+- `modes/arena/`: arena assembly, round state, combat pipeline helpers, player shot resolution, bot shot resolution, pickups and HUD snapshot/status building.
 - `modes/shared/`: runtime primitive creation.
 - `gameplay/player/`: first-person player controller, camera, rifle and Plasma Bolt requests.
 - `gameplay/combat/`: combatant health, damage and knockback.
@@ -24,7 +24,8 @@ Football/TPS minigames are not part of this project. They live in `../JogoDaCopa
 ## Current Risk Areas
 
 - `modes/arena/arena_root.gd` remains the largest runtime authority object.
-- Track 14B moved HUD snapshot/status building into `modes/arena/arena_hud_snapshot_builder.gd`; this is the first stable boundary before combat extraction.
+- Track 14B moved HUD snapshot/status building into `modes/arena/arena_hud_snapshot_builder.gd`.
+- Track 14C moved combat telemetry payload construction and pure Plasma blast math into `modes/arena/arena_combat_pipeline.gd`.
 - `gameplay/bot/basic_duel_bot.gd` is the next largest behavior authority and should be split only after arena root boundaries are safer.
 - `tests/unit/test_bootstrap.gd` is valuable but broad; future refactors should keep the coverage while moving new tests into narrower files when practical.
 - Future weapons, buffs and pickup rules should be planned before adding more combat branches to `arena_root.gd`.
