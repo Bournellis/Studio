@@ -97,4 +97,6 @@ The 5min JSON still contains large warmup/first-use hitches before `event.visibl
 
 ## Next Step
 
-Promote Track 10B to publication only if the lightweight Web goal feel is accepted. Publication still needs the usual remote menu, first-minute, 5-minute stability, luma and human retest gates.
+Publication was attempted on 2026-06-20 and blocked by the remote 5-minute heap gate: `js_heap_growth +13.85%` against the `<10%` limit. Track 10A was restored as production and confirmed on the stable URL.
+
+See `docs/playtest-reports/track-10b-publication.md` and `docs/playtest-reports/track-10b-data/` before reopening 10B. The next decision is whether to investigate/hotfix the remote heap signal or discard this Web goal-feel reintroduction before continuing structural reduction.

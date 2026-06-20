@@ -6,6 +6,7 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 
 | Data | Release | Canal | URL | Release root | Evidencia |
 | --- | --- | --- | --- | --- | --- |
+| 2026-06-20 | Web Goal Feel Reintroduction 10B (`v1.2.1+317999b0`) | Tentativa Cloudflare Pages com rollback | `https://copa-arena-futebol.pages.dev/` voltou para `v1.2.1+fc3c72bb` | Tentativa `web/v1-copa-arena-futebol-20260620-317999b0`; rollback `web/v1-copa-arena-futebol-20260620-fc3c72bb` | `docs/playtest-reports/track-10b-data/10b-publication-report-317999b0.json` + `docs/playtest-reports/track-10b-data/10b-remote-menu-317999b0.json` + `docs/playtest-reports/track-10b-data/10b-remote-first-minute-317999b0.json` + `docs/playtest-reports/track-10b-data/10b-remote-stability-5min-317999b0.json` + `docs/playtest-reports/track-10b-data/10b-rollback-to-10a-publication-report-fc3c72bb.json` + `docs/playtest-reports/track-10b-data/10b-rollback-confirm-10a-fc3c72bb.json` |
 | 2026-06-20 | HUD Pause Menu Decomposition 10A (`v1.2.1+fc3c72bb`) | Cloudflare Pages publico aprovado | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260620-fc3c72bb` | `docs/playtest-reports/track-10a-data/10a-publication-report-fc3c72bb.json` + `docs/playtest-reports/track-10a-data/10a-remote-menu-fc3c72bb.json` + `docs/playtest-reports/track-10a-data/10a-remote-first-minute-fc3c72bb.json` + `docs/playtest-reports/track-10a-data/10a-remote-stability-5min-fc3c72bb.json` + `docs/playtest-reports/track-10a-data/10a-remote-night-luma-gate-fc3c72bb.json` |
 | 2026-06-20 | Camera Strafe Smoothing Hotfix 09S (`v1.2.1+925f3b9f`) | Cloudflare Pages publico aprovado | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260620-925f3b9f` | `docs/playtest-reports/track-09s-data/09s-publication-report-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-menu-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-first-minute-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-stability-5min-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-night-luma-gate-925f3b9f.json` |
 | 2026-06-20 | Foot And Camera Hotfix 09R (`v1.2.1+33ba1a2b`) | Cloudflare Pages publico anterior, supersedido antes de aprovacao humana | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260619-33ba1a2b` | `docs/playtest-reports/track-09r-data/09r-publication-report-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-menu-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-first-minute-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-stability-5min-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-night-luma-gate-33ba1a2b.json` |
@@ -30,6 +31,23 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 | 2026-06-12 | First-Minute Smoothness V1 (`v1.0.2+ad82384b`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-ad82384b` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05b-data/05b-remote-first-minute-gate.json` + `docs/playtest-reports/track-05b-data/05b-remote-stability-5min.json` |
 | 2026-06-12 | Web Stability Hotfix V1 (`v1.0.1+a850045a`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-a850045a` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json` |
 | 2026-06-12 | Web Publication V1 | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-31e23ea3` | `docs/playtest-reports/track-05-data/05c-publication-report.json` |
+
+## 2026-06-20 - Web Goal Feel Reintroduction 10B - Tentativa Bloqueada
+
+- Candidato tentado: `v1.2.1+317999b0`, mergeado localmente em `main` como `317999b0`.
+- Release root tentado: `web/v1-copa-arena-futebol-20260620-317999b0`.
+- Preview do deploy tentado: `https://35b5b340.copa-arena-futebol.pages.dev`.
+- Escopo: reintroducao leve de feedback de gol no Web com tres marcadores visuais em pool e `goal_jingle`; o Web continuou sem `crowd_goal`, burst de particulas e dynamic light, e o pacote completo de gol do PC/Windows permaneceu inalterado.
+- Gates locais 10B: import headless PASS; `tools/validate.gd` PASS com `108` testes / `1838` asserts e `62` fontes; Web export/gzip PASS; `node --check tools/track04f_chrome_probe.mjs` PASS; Chrome local 90s Web smoke PASS; Chrome local 90s audio-unlock smoke PASS; Chrome local 5min stability PASS com `js_heap_growth -8.36%`.
+- Publicacao tentada por `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260620-317999b0 -VisibleVersion v1.2.1 -EvidenceSubdir track-10b-data -EvidencePrefix 10b -DeployMessage "Track 10B Web goal feel reintroduction" -ConfirmRemoteMutation`; projeto Cloudflare Pages `copa-arena-futebol`.
+- Sanity menu remoto: PASS, release root conferiu, `menu.ready.end` visto, `pageErrors=0`, `consoleErrorCount=0`.
+- Gate remoto primeiro minuto: PASS, release root conferiu, `event.visible_match_start` visto, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
+- Gate remoto estabilidade 5min: FAIL apenas em heap JS retido `44,241,743 -> 50,367,833` bytes (`+13.85%`, limite `<10%`), pico `52,077,360` bytes (`+17.71%`).
+- Demais checks da estabilidade: PASS em counters/caches Godot, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0` e pior janela 5s `117.2 FPS`.
+- Gate remoto de luminancia: nao rodado porque o gate de estabilidade bloqueou o candidato.
+- Rollback: baseline aprovada 10A foi redeployada como producao em `web/v1-copa-arena-futebol-20260620-fc3c72bb`; preview de rollback `https://f375997e.copa-arena-futebol.pages.dev`.
+- Confirmacao do rollback: `https://copa-arena-futebol.pages.dev/` voltou a servir `web/v1-copa-arena-futebol-20260620-fc3c72bb`, com `menu.ready.end`, `pageErrors=0`, `consoleErrorCount=0`.
+- Resultado: `v1.2.1+317999b0` nao ficou como baseline publica. Proxima etapa deve investigar/hotfixar o heap remoto da 10B ou descartar a reintroducao antes de nova reducao estrutural.
 
 ## 2026-06-20 - HUD Pause Menu Decomposition 10A
 

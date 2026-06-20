@@ -1,6 +1,6 @@
 # JogoDaCopa Publication Readiness
 
-Current state: `Super Campeao v1.2.1+fc3c72bb` is the approved public Cloudflare Pages baseline after automated remote menu, first-minute, 5-minute stability, night luma and Fabio/tester human retest gates passed. Track 09S remains the latest approved fallback baseline behind 10A.
+Current state: `Super Campeao v1.2.1+fc3c72bb` is the approved public Cloudflare Pages baseline after automated remote menu, first-minute, 5-minute stability, night luma and Fabio/tester human retest gates passed. Track 10B was attempted on 2026-06-20, failed the remote 5-minute heap gate and was rolled back to 10A. Track 09S remains the latest approved fallback baseline behind 10A.
 
 ## Product Identity
 
@@ -17,17 +17,19 @@ Current state: `Super Campeao v1.2.1+fc3c72bb` is the approved public Cloudflare
 
 - Cloudflare Pages project: `copa-arena-futebol`.
 - Public stable URL: `https://copa-arena-futebol.pages.dev/`.
-- Current production deployment URL: `https://7a022fe8.copa-arena-futebol.pages.dev`.
+- Current production deployment URL: `https://f375997e.copa-arena-futebol.pages.dev` (10A rollback redeploy after the blocked 10B attempt).
 - Approved fallback deployment URL: `https://7744dc3b.copa-arena-futebol.pages.dev` (Track 09S).
 - Release root: `web/v1-copa-arena-futebol-20260620-fc3c72bb`.
 - Visible footer: `Super Campeao v1.2.1+fc3c72bb`.
 - Publication script: `tools/publish_web.ps1`.
-- Publication command: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260620-fc3c72bb -VisibleVersion v1.2.1 -EvidenceSubdir track-10a-data -EvidencePrefix 10a -DeployMessage "Track 10A HUD pause menu decomposition" -ConfirmRemoteMutation`.
+- Original publication command: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260620-fc3c72bb -VisibleVersion v1.2.1 -EvidenceSubdir track-10a-data -EvidencePrefix 10a -DeployMessage "Track 10A HUD pause menu decomposition" -ConfirmRemoteMutation`.
+- Rollback command after 10B block: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260620-fc3c72bb -VisibleVersion v1.2.1 -EvidenceSubdir track-10b-data -EvidencePrefix 10b-rollback-to-10a -DeployMessage "Rollback to Track 10A after Track 10B remote heap gate failure" -ConfirmRemoteMutation`.
 - Publication evidence: `docs/playtest-reports/track-10a-data/10a-publication-report-fc3c72bb.json`.
 - Remote menu evidence: `docs/playtest-reports/track-10a-data/10a-remote-menu-fc3c72bb.json` and `docs/playtest-reports/track-10a-data/10a-remote-menu-fc3c72bb.png`.
 - Remote first-minute evidence: `docs/playtest-reports/track-10a-data/10a-remote-first-minute-fc3c72bb.json` and `docs/playtest-reports/track-10a-data/10a-remote-first-minute-fc3c72bb.png`.
 - Remote 5-minute stability evidence: `docs/playtest-reports/track-10a-data/10a-remote-stability-5min-fc3c72bb.json` and `docs/playtest-reports/track-10a-data/10a-remote-stability-5min-fc3c72bb.png`.
 - Remote night luma evidence: `docs/playtest-reports/track-10a-data/10a-remote-night-luma-gate-fc3c72bb.json`.
+- Rollback evidence after blocked 10B attempt: `docs/playtest-reports/track-10b-data/10b-rollback-to-10a-publication-report-fc3c72bb.json` and `docs/playtest-reports/track-10b-data/10b-rollback-confirm-10a-fc3c72bb.json`.
 - Human retest: approved by Fabio/tester on 2026-06-20.
 - Fallback evidence: Track 09S evidence remains in `docs/playtest-reports/track-09s-data/` as the latest approved fallback behind 10A.
 - No Cloudflare Access gate was observed; the public URL served the Godot app directly.
@@ -37,12 +39,12 @@ Current state: `Super Campeao v1.2.1+fc3c72bb` is the approved public Cloudflare
 - Cloudflare Pages direct upload has a `25 MiB` per-file asset limit.
 - Raw `index.pck` and `index.wasm` exceed that limit, so the Pages package stores both files Brotli-compressed while preserving their public file names.
 - `_headers` serves `index.pck` and `index.wasm` with `Content-Encoding: br`.
-- Track 10A artifact sizes:
-  - raw `index.pck`: `28011764` bytes
+- Current 10A rollback artifact sizes:
+  - raw `index.pck`: `28011700` bytes
   - raw `index.wasm`: `37695054` bytes
-  - packaged `index.pck`: `20838016` bytes
+  - packaged `index.pck`: `20838404` bytes
   - `index.wasm`: `6608968` bytes, SHA256 `6903dbdda02519655d94ef7fc0eb18e31336ac11b0f93a1abe696a654d2cf30f`
-  - Pages zip: `27638497` bytes
+  - Pages zip: `27638850` bytes
 
 ## Validation
 
@@ -67,6 +69,21 @@ Current state: `Super Campeao v1.2.1+fc3c72bb` is the approved public Cloudflare
 - Remote night luma: PASS, `6.525 < 90`.
 - Evidence: `docs/playtest-reports/track-10a-publication.md` and `docs/playtest-reports/track-10a-data/`.
 - Publication follow-up: Fabio/tester human retest approved the public URL on 2026-06-20; 09S remains the latest approved fallback behind 10A.
+
+## Track 10B Web Goal Feel Reintroduction Publication Attempt - 2026-06-20
+
+- Candidate status: blocked by remote 5-minute heap gate and rolled back.
+- Change: attempted publication of the Web-lite goal feedback reintroduction: three pooled visual markers plus the short `goal_jingle`; heavy Web `crowd_goal`, particle burst and dynamic light remained disabled, and PC/Windows full goal feedback remained unchanged.
+- Local gates before publication: import headless PASS; `tools/validate.gd` PASS with `108` tests / `1838` asserts and `62` sources; Web export/gzip PASS; `node --check` PASS; Chrome local 90s smoke PASS; Chrome local audio-unlock smoke PASS; Chrome local 5min stability PASS with `js_heap_growth -8.36%`.
+- Publication attempt: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260620-317999b0 -VisibleVersion v1.2.1 -EvidenceSubdir track-10b-data -EvidencePrefix 10b -DeployMessage "Track 10B Web goal feel reintroduction" -ConfirmRemoteMutation`; preview `https://35b5b340.copa-arena-futebol.pages.dev`.
+- Web package assets: `index.pck` Brotli `20.84 MiB`, `index.wasm` Brotli `6.61 MiB`, each below the `25.00 MiB` Cloudflare Pages asset limit.
+- Remote menu: PASS, release root matched, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote first minute: PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote stability 5min: FAIL only on `js_heap_growth +13.85%` against the `<10%` gate; peak `+17.71%`, `wasmSampleCount=0`, counters/caches stable and worst 5s FPS `117.2`.
+- Remote night luma: not run because the stability gate blocked the candidate.
+- Rollback: Track 10A redeployed as production with preview `https://f375997e.copa-arena-futebol.pages.dev`; stable URL confirmed `web/v1-copa-arena-futebol-20260620-fc3c72bb`.
+- Evidence: `docs/playtest-reports/track-10b-publication.md` and `docs/playtest-reports/track-10b-data/`.
+- Follow-up: investigate/hotfix the remote heap signal or discard the 10B Web goal-feel reintroduction before any new structural reduction.
 
 ## Track 09S Camera Strafe Smoothing Hotfix Publication - 2026-06-20
 
