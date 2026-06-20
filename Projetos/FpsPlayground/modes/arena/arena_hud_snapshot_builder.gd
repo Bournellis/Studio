@@ -73,4 +73,3 @@ static func build_hint(round_state: StringName, round_ended: bool) -> String:
 
 static func _get_winner_name(last_round_winner: StringName) -> String:
 	return "Player" if last_round_winner == WINNER_PLAYER else "Bot"
-

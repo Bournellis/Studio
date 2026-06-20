@@ -27,4 +27,3 @@ PASS tools/validate.gd, GUT 54/54, 505 asserts
 ## Next Step
 
 After approval and merge, execute `Track 14C - Combat Pipeline Extraction V1`.
-
