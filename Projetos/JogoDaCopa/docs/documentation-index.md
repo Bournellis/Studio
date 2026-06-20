@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09S_HUMAN_APPROVED`
+- Status: `JOGO_DA_COPA_TRACK10A_PUBLISHED_PENDING_HUMAN`
 - Documentation baseline: `TRACK09O_DOCUMENTATION_REBASELINE_V1`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
@@ -43,6 +43,10 @@
 
 ## Current Public Baseline Evidence
 
+- Track 10A publication report: `playtest-reports/track-10a-publication.md`
+- Track 10A publication evidence: `playtest-reports/track-10a-data/`
+- Track 10A local reduction report: `playtest-reports/track-10a-hud-pause-menu-decomposition.md`
+- Track 10A screenshots: `screenshots/track-10a-hud-pause-menu-decomposition-v1/`
 - Track 09S publication report: `playtest-reports/track-09s-publication.md`
 - Track 09S publication evidence: `playtest-reports/track-09s-data/`
 - Track 09S camera hotfix closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_track09s-camera-strafe-smoothing-hotfix-v1.md`
@@ -71,8 +75,6 @@
 
 ## Track 09 Reduction And Heap Evidence
 
-- Track 10A HUD pause menu decomposition report: `playtest-reports/track-10a-hud-pause-menu-decomposition.md`
-- Track 10A screenshots: `screenshots/track-10a-hud-pause-menu-decomposition-v1/`
 - Track 09R foot and camera hotfix closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09r-foot-camera-hotfix-v1.md`
 - Track 09R foot and camera hotfix report: `playtest-reports/track-09r-foot-camera-hotfix.md`
 - Track 09R evidence: `playtest-reports/track-09r-data/`
@@ -103,7 +105,7 @@
 
 ## Track Documentation Convention
 
-Tracks 09A-09J have local implementation folders under `../implementation/tracks/`. Tracks 09K-09R were focused publication, hotfix, diagnostics, gate-semantics, publication-validation and local reduction tracks; their authoritative records are the Kanban Done cards plus `docs/playtest-reports/` reports/evidence listed above. Do not infer missing implementation folders as missing status for 09K-09R.
+Tracks 09A-09J have local implementation folders under `../implementation/tracks/`. Tracks 09K-10A were focused publication, hotfix, diagnostics, gate-semantics, publication-validation and local reduction tracks; their authoritative records are the Kanban Done cards plus `docs/playtest-reports/` reports/evidence listed above. Do not infer missing implementation folders as missing status for 09K-10A.
 
 ## Historical Plans
 

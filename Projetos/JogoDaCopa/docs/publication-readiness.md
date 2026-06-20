@@ -1,6 +1,6 @@
 # JogoDaCopa Publication Readiness
 
-Current state: `Super Campeao v1.2.1+925f3b9f` is published publicly on Cloudflare Pages and approved by Fabio/tester after automated remote menu, first-minute, 5-minute stability and night luma gates passed. Track 09Q remains the latest approved fallback baseline, Track 09P remains the fallback behind 09Q and Track 09N remains the historical approved fallback behind 09P.
+Current state: `Super Campeao v1.2.1+fc3c72bb` is published publicly on Cloudflare Pages after automated remote menu, first-minute, 5-minute stability and night luma gates passed. Fabio/tester human retest is pending. Track 09S remains the latest human-approved fallback baseline.
 
 ## Product Identity
 
@@ -13,24 +13,23 @@ Current state: `Super Campeao v1.2.1+925f3b9f` is published publicly on Cloudfla
 - Windows preset: `Windows Desktop` in `export_presets.cfg`.
 - Web preset: `Web` in `export_presets.cfg`, single-threaded.
 
-## Current Web Publication - Track 09S - 2026-06-20
+## Current Web Publication - Track 10A - 2026-06-20
 
 - Cloudflare Pages project: `copa-arena-futebol`.
 - Public stable URL: `https://copa-arena-futebol.pages.dev/`.
-- Current production deployment URL: `https://7744dc3b.copa-arena-futebol.pages.dev`.
-- Approved fallback deployment URL: `https://38e6cc7d.copa-arena-futebol.pages.dev` (Track 09Q).
-- Release root: `web/v1-copa-arena-futebol-20260620-925f3b9f`.
-- Visible footer: `Super Campeao v1.2.1+925f3b9f`.
+- Current production deployment URL: `https://7a022fe8.copa-arena-futebol.pages.dev`.
+- Approved fallback deployment URL: `https://7744dc3b.copa-arena-futebol.pages.dev` (Track 09S).
+- Release root: `web/v1-copa-arena-futebol-20260620-fc3c72bb`.
+- Visible footer: `Super Campeao v1.2.1+fc3c72bb`.
 - Publication script: `tools/publish_web.ps1`.
-- Publication command: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260620-925f3b9f -VisibleVersion v1.2.1 -EvidenceSubdir track-09s-data -EvidencePrefix 09s -DeployMessage "JogoDaCopa Track 09S Super Campeao v1.2.1 web/v1-copa-arena-futebol-20260620-925f3b9f" -ConfirmRemoteMutation -SkipExport`.
-- Publication evidence: `docs/playtest-reports/track-09s-data/09s-publication-report-925f3b9f.json`.
-- Package evidence: `docs/playtest-reports/track-09s-data/09s-package-artifacts-925f3b9f.json`.
-- Remote menu evidence: `docs/playtest-reports/track-09s-data/09s-remote-menu-925f3b9f.json` and `docs/playtest-reports/track-09s-data/09s-remote-menu-925f3b9f.png`.
-- Remote first-minute evidence: `docs/playtest-reports/track-09s-data/09s-remote-first-minute-925f3b9f.json` and `docs/playtest-reports/track-09s-data/09s-remote-first-minute-925f3b9f.png`.
-- Remote 5-minute stability evidence: `docs/playtest-reports/track-09s-data/09s-remote-stability-5min-925f3b9f.json` and `docs/playtest-reports/track-09s-data/09s-remote-stability-5min-925f3b9f.png`.
-- Remote night luma evidence: `docs/playtest-reports/track-09s-data/09s-remote-night-luma-gate-925f3b9f.json`.
-- Human retest: approved by Fabio/tester on 2026-06-20.
-- Fallback evidence: Track 09Q evidence remains in `docs/playtest-reports/track-09q-data/` as the latest human-approved fallback; Track 09P remains the fallback behind 09Q and Track 09N remains the historical approved fallback behind 09P.
+- Publication command: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260620-fc3c72bb -VisibleVersion v1.2.1 -EvidenceSubdir track-10a-data -EvidencePrefix 10a -DeployMessage "Track 10A HUD pause menu decomposition" -ConfirmRemoteMutation`.
+- Publication evidence: `docs/playtest-reports/track-10a-data/10a-publication-report-fc3c72bb.json`.
+- Remote menu evidence: `docs/playtest-reports/track-10a-data/10a-remote-menu-fc3c72bb.json` and `docs/playtest-reports/track-10a-data/10a-remote-menu-fc3c72bb.png`.
+- Remote first-minute evidence: `docs/playtest-reports/track-10a-data/10a-remote-first-minute-fc3c72bb.json` and `docs/playtest-reports/track-10a-data/10a-remote-first-minute-fc3c72bb.png`.
+- Remote 5-minute stability evidence: `docs/playtest-reports/track-10a-data/10a-remote-stability-5min-fc3c72bb.json` and `docs/playtest-reports/track-10a-data/10a-remote-stability-5min-fc3c72bb.png`.
+- Remote night luma evidence: `docs/playtest-reports/track-10a-data/10a-remote-night-luma-gate-fc3c72bb.json`.
+- Human retest: pending.
+- Fallback evidence: Track 09S evidence remains in `docs/playtest-reports/track-09s-data/` as the latest human-approved fallback.
 - No Cloudflare Access gate was observed; the public URL served the Godot app directly.
 
 ## Packaging
@@ -38,12 +37,12 @@ Current state: `Super Campeao v1.2.1+925f3b9f` is published publicly on Cloudfla
 - Cloudflare Pages direct upload has a `25 MiB` per-file asset limit.
 - Raw `index.pck` and `index.wasm` exceed that limit, so the Pages package stores both files Brotli-compressed while preserving their public file names.
 - `_headers` serves `index.pck` and `index.wasm` with `Content-Encoding: br`.
-- Track 09S artifact sizes:
-  - raw `index.pck`: `27999584` bytes
+- Track 10A artifact sizes:
+  - raw `index.pck`: `28011764` bytes
   - raw `index.wasm`: `37695054` bytes
-  - packaged `index.pck`: `20826188` bytes
+  - packaged `index.pck`: `20838016` bytes
   - `index.wasm`: `6608968` bytes, SHA256 `6903dbdda02519655d94ef7fc0eb18e31336ac11b0f93a1abe696a654d2cf30f`
-  - Pages zip: `27626664` bytes
+  - Pages zip: `27638497` bytes
 
 ## Validation
 
@@ -51,8 +50,23 @@ Current state: `Super Campeao v1.2.1+925f3b9f` is published publicly on Cloudfla
 - Web export: PASS, single-threaded `GODOT_THREADS_ENABLED=false`.
 - Remote menu: PASS, release root matched, `menu.ready.end` observed, page errors `0`, runtime console errors `0`.
 - Remote first minute: PASS, `firstMinuteHitches=0`, page errors `0`, runtime console errors `0`.
-- Remote stability 5 min: PASS, `js_heap_growth +8.63%` under the `<10%` gate, peak `+13.66%`, `wasmSampleCount=0`.
+- Remote stability 5 min: PASS, `js_heap_growth +8.34%` under the `<10%` gate, peak `+13.88%`, `wasmSampleCount=0`.
 - Remote night luma: PASS, `luma_0_255=6.525 < 90`.
+
+## Track 10A HUD Pause Menu Decomposition Publication - 2026-06-20
+
+- Candidate status: public Web candidate with automated remote gates passed; human retest pending.
+- Change: published the validated HUD pause menu decomposition into `football_hud_pause_menu_controller.gd`.
+- Gameplay impact: HUD construction/refactor only; no gameplay, camera, physics, movement, bot, ball, scoring, SUPER, field builder, assets or tuning changes.
+- `tools/validate.gd`: PASS, `107` tests, `1835` asserts, `62` source files checked.
+- Web export/package: PASS, single-threaded `GODOT_THREADS_ENABLED=false`.
+- Web package assets: `index.pck` Brotli `20.84 MiB`, `index.wasm` Brotli `6.61 MiB`, each below the `25.00 MiB` Cloudflare Pages asset limit.
+- Remote menu: PASS, release root matched, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote first minute: PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote stability 5min: PASS, `js_heap_growth +8.34%`, peak `+13.88%`, `wasmSampleCount=0`.
+- Remote night luma: PASS, `6.525 < 90`.
+- Evidence: `docs/playtest-reports/track-10a-publication.md` and `docs/playtest-reports/track-10a-data/`.
+- Publication follow-up: Fabio/tester human retest on the public URL; 09S remains the latest human-approved fallback until 10A is approved.
 
 ## Track 09S Camera Strafe Smoothing Hotfix Publication - 2026-06-20
 

@@ -7,20 +7,20 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09S publicada e aprovada; 09Q fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14F mergeada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (10A publicada, aguardando reteste humano; 09S fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14F mergeada localmente; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK10A_READY_TO_PUBLISH`
-- Marker: `JOGO_DA_COPA_TRACK10A_LOCAL_VALIDATION`
-- Baseline publico aprovado: `Super Campeao v1.2.1+925f3b9f` (`web/v1-copa-arena-futebol-20260620-925f3b9f`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09S PASS e reteste humano aprovado.
+- Status: `P2_IMPLEMENTACAO - TRACK10A_PUBLISHED_PENDING_HUMAN`
+- Marker: `JOGO_DA_COPA_TRACK10A_PUBLISHED_PENDING_HUMAN`
+- Publicacao atual: `Super Campeao v1.2.1+fc3c72bb` (`web/v1-copa-arena-futebol-20260620-fc3c72bb`) em `https://copa-arena-futebol.pages.dev/`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.34%`), reteste humano pendente.
+- Baseline publico aprovado: Track 09S `Super Campeao v1.2.1+925f3b9f`; gates remotos 09S PASS e reteste humano aprovado.
 - Fallback aprovado: Track 09Q `Super Campeao v1.2.1+bb604c77`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.41%`) e aprovada por Fabio/tester.
-- Publicacao atual: Track 09S suaviza o foco visual da chase camera em toques rapidos de A/D; validate/export/Web smoke local PASS; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.63%`); aprovada por Fabio/tester.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: mergear e publicar a Track 10A HUD Pause Menu Decomposition; manter 09S como baseline aprovado se algum gate remoto falhar.
+- Proximo passo: Fabio/tester retestar a 10A publicada; aprovar como baseline ou decidir rollback/fix usando 09S como fallback aprovado.
 
 ## draxos-roguelike-cardgame
 

@@ -59,4 +59,4 @@ Capture luminance gate: PASS. Minimum observed average luma was `0.3108`, above 
 ## Notes
 
 - The capture script printed a Godot `ObjectDB instances leaked at exit` warning after successful screenshot generation. The capture completed with exit code `0`, all PNGs were written, and the validation suite remained green.
-- Publication data will be recorded separately after merge and Cloudflare deploy.
+- Publication data is recorded in `docs/playtest-reports/track-10a-publication.md` and `docs/playtest-reports/track-10a-data/`.
