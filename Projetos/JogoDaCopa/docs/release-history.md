@@ -6,6 +6,7 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 
 | Data | Release | Canal | URL | Release root | Evidencia |
 | --- | --- | --- | --- | --- | --- |
+| 2026-06-20 | Web Goal Feedback Heap-Safe 10C (`v1.2.1+39054f31`) | Cloudflare Pages publico, reteste humano pendente | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260620-39054f31` | `docs/playtest-reports/track-10c-data/10c-publication-report-39054f31.json` + `docs/playtest-reports/track-10c-data/10c-remote-menu-39054f31.json` + `docs/playtest-reports/track-10c-data/10c-remote-first-minute-39054f31.json` + `docs/playtest-reports/track-10c-data/10c-remote-stability-5min-39054f31.json` + `docs/playtest-reports/track-10c-data/10c-remote-night-luma-gate-39054f31.json` + `docs/playtest-reports/track-10c-data/10c-stable-confirm-39054f31.json` |
 | 2026-06-20 | Web Goal Feel Reintroduction 10B (`v1.2.1+317999b0`) | Tentativa Cloudflare Pages com rollback | `https://copa-arena-futebol.pages.dev/` voltou para `v1.2.1+fc3c72bb` | Tentativa `web/v1-copa-arena-futebol-20260620-317999b0`; rollback `web/v1-copa-arena-futebol-20260620-fc3c72bb` | `docs/playtest-reports/track-10b-data/10b-publication-report-317999b0.json` + `docs/playtest-reports/track-10b-data/10b-remote-menu-317999b0.json` + `docs/playtest-reports/track-10b-data/10b-remote-first-minute-317999b0.json` + `docs/playtest-reports/track-10b-data/10b-remote-stability-5min-317999b0.json` + `docs/playtest-reports/track-10b-data/10b-rollback-to-10a-publication-report-fc3c72bb.json` + `docs/playtest-reports/track-10b-data/10b-rollback-confirm-10a-fc3c72bb.json` |
 | 2026-06-20 | HUD Pause Menu Decomposition 10A (`v1.2.1+fc3c72bb`) | Cloudflare Pages publico aprovado | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260620-fc3c72bb` | `docs/playtest-reports/track-10a-data/10a-publication-report-fc3c72bb.json` + `docs/playtest-reports/track-10a-data/10a-remote-menu-fc3c72bb.json` + `docs/playtest-reports/track-10a-data/10a-remote-first-minute-fc3c72bb.json` + `docs/playtest-reports/track-10a-data/10a-remote-stability-5min-fc3c72bb.json` + `docs/playtest-reports/track-10a-data/10a-remote-night-luma-gate-fc3c72bb.json` |
 | 2026-06-20 | Camera Strafe Smoothing Hotfix 09S (`v1.2.1+925f3b9f`) | Cloudflare Pages publico aprovado | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260620-925f3b9f` | `docs/playtest-reports/track-09s-data/09s-publication-report-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-menu-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-first-minute-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-stability-5min-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-night-luma-gate-925f3b9f.json` |
@@ -32,6 +33,22 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 | 2026-06-12 | Web Stability Hotfix V1 (`v1.0.1+a850045a`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-a850045a` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json` |
 | 2026-06-12 | Web Publication V1 | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-31e23ea3` | `docs/playtest-reports/track-05-data/05c-publication-report.json` |
 
+## 2026-06-20 - Web Goal Feedback Heap-Safe 10C
+
+- Release publicado: `v1.2.1+39054f31` em `https://copa-arena-futebol.pages.dev/`.
+- Release root publico: `web/v1-copa-arena-futebol-20260620-39054f31`.
+- Preview do deploy final: `https://c50815e2.copa-arena-futebol.pages.dev`.
+- Escopo: reintroducao heap-safe de feedback visual de gol no Web com `goal_visual`; `goal_audio` e `goal` ficam apenas como opt-in diagnostico; PC/Windows preserva o pacote completo de gol.
+- Gates locais 10C: import headless PASS; `tools/validate.gd` PASS com `108` testes / `1840` asserts e `62` fontes; Web export/gzip PASS; `node --check tools/track04f_chrome_probe.mjs` PASS; Chrome local 90s visual-only PASS; Chrome local 5min stability PASS com `js_heap_growth -8.10%`, pico `+1.10%`, pior janela 5s `137.4 FPS`.
+- Publicacao final: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260620-39054f31 -VisibleVersion v1.2.1 -EvidenceSubdir track-10c-data -EvidencePrefix 10c -DeployMessage "Track 10C Web goal feedback heap-safe" -ConfirmRemoteMutation`; projeto Cloudflare Pages `copa-arena-futebol`.
+- Sanity menu remoto: PASS, release root conferiu, `menu.ready.end` visto, `pageErrors=0`, `consoleErrorCount=0`.
+- Gate remoto primeiro minuto: PASS, release root conferiu, `event.visible_match_start` visto, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
+- Gate remoto estabilidade 5min: PASS em `js_heap_growth -0.59%` contra limite `+10%`, pico `+2.31%`, `wasmSampleCount=0`, counters/caches Godot estaveis e pior janela 5s `142.2 FPS`.
+- Modo de feedback de gol remoto: PASS, `feedback.web_goal_mode visual=true audio=false`.
+- Gate remoto de luminancia: PASS, `luma_0_255=6.525 < 90` na captura `10c-remote-stability-5min-39054f31.png`.
+- Confirmacao do dominio estavel: `https://copa-arena-futebol.pages.dev/` serviu `web/v1-copa-arena-futebol-20260620-39054f31`, com `menu.ready.end`, `pageErrors=0`, `consoleErrorCount=0`.
+- Reteste humano: pendente; 10A permanece o fallback aprovado mais recente ate aprovacao da 10C.
+
 ## 2026-06-20 - Web Goal Feel Reintroduction 10B - Tentativa Bloqueada
 
 - Candidato tentado: `v1.2.1+317999b0`, mergeado localmente em `main` como `317999b0`.
@@ -47,7 +64,7 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 - Gate remoto de luminancia: nao rodado porque o gate de estabilidade bloqueou o candidato.
 - Rollback: baseline aprovada 10A foi redeployada como producao em `web/v1-copa-arena-futebol-20260620-fc3c72bb`; preview de rollback `https://f375997e.copa-arena-futebol.pages.dev`.
 - Confirmacao do rollback: `https://copa-arena-futebol.pages.dev/` voltou a servir `web/v1-copa-arena-futebol-20260620-fc3c72bb`, com `menu.ready.end`, `pageErrors=0`, `consoleErrorCount=0`.
-- Resultado: `v1.2.1+317999b0` nao ficou como baseline publica. Proxima etapa deve investigar/hotfixar o heap remoto da 10B ou descartar a reintroducao antes de nova reducao estrutural.
+- Resultado: `v1.2.1+317999b0` nao ficou como baseline publica. A tentativa foi supersedida pela 10C, que preservou o feedback visual de gol Web e removeu o audio de gol do caminho default.
 
 ## 2026-06-20 - HUD Pause Menu Decomposition 10A
 

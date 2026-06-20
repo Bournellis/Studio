@@ -3,8 +3,9 @@
 - Date: `2026-06-20`
 - Branch: `codex/jogodacopa/track10c-web-goal-feedback-heap-safe-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track10c-web-goal-feedback-heap-safe-v1`
-- Public baseline preserved before publication: Track 10A `Super Campeao v1.2.1+fc3c72bb`
-- Result: local validated publication candidate.
+- Public baseline before publication: Track 10A `Super Campeao v1.2.1+fc3c72bb`
+- Published candidate: Track 10C `Super Campeao v1.2.1+39054f31`
+- Result: local validated and published; remote automated gates passed; human retest pending.
 
 ## Scope
 
@@ -85,4 +86,6 @@ Evidence:
 
 ## Next Step
 
-Publish Track 10C only if the local branch is committed cleanly, then run remote menu, remote first-minute and remote 5-minute stability gates. If the remote heap gate fails, rollback to Track 10A immediately and keep 10C as a blocked publication attempt.
+Track 10C was published on 2026-06-20 and passed remote menu, first-minute, 5-minute stability, night luma and stable URL confirmation gates. Fabio/tester human retest remains required before marking it as the approved public baseline.
+
+See `docs/playtest-reports/track-10c-publication.md` and `docs/playtest-reports/track-10c-data/` for publication evidence.

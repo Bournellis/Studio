@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK10C_LOCAL_VALIDATED_PUBLICATION_CANDIDATE`
+- Status: `JOGO_DA_COPA_TRACK10C_PUBLISHED_REMOTE_GATES_PASSED_HUMAN_RETEST_PENDING`
 - Documentation baseline: `TRACK09O_DOCUMENTATION_REBASELINE_V1`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
@@ -44,7 +44,8 @@
 ## Current Public Baseline Evidence
 
 - Track 10C local Web goal feedback report: `playtest-reports/track-10c-web-goal-feedback-heap-safe.md`
-- Track 10C local evidence: `playtest-reports/track-10c-data/`
+- Track 10C publication report: `playtest-reports/track-10c-publication.md`
+- Track 10C local, remote and stable URL evidence: `playtest-reports/track-10c-data/`
 - Track 10B local Web goal-feel report: `playtest-reports/track-10b-web-goal-feel-reintroduction.md`
 - Track 10B publication attempt report: `playtest-reports/track-10b-publication.md`
 - Track 10B local, remote attempt and rollback evidence: `playtest-reports/track-10b-data/`
