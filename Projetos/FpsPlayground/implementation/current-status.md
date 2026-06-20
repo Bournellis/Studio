@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Track 14D - Pickups And Jump Pads Extraction V1`
-- Active stage status: `MERGED_LOCAL`
-- Status marker: `FPS_PLAYGROUND_TRACK14D_PICKUPS_JUMP_PADS_MERGED_LOCAL`
+- Active stage: `Track 14E - Bot Decision Boundary V1`
+- Active stage status: `LOCAL_VALIDATED`
+- Status marker: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_LOCAL_VALIDATED`
 
 ## Current Truth
 
@@ -14,7 +14,7 @@
 
 The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning, local duel telemetry, telemetry readout tooling and the pre-Track-08 player movement feel preserved.
 
-Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. Track 14D extracted pickup and jump pad rules into `arena_pickup_jump_pad_rules.gd`. No gameplay values changed in Track 13, 14A, 14B, 14C or 14D.
+Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. Track 14D extracted pickup and jump pad rules into `arena_pickup_jump_pad_rules.gd`. Track 14E extracted bot decision scoring into `bot_decision_model.gd`. No gameplay values changed in Track 13, 14A, 14B, 14C, 14D or 14E.
 
 ## Current Scope
 
@@ -30,14 +30,14 @@ Track 12 telemetry/readout is approved. Track 13 updated the live docs and added
 
 ## Latest Track
 
-`Track 14D - Pickups And Jump Pads Extraction V1`
+`Track 14E - Bot Decision Boundary V1`
 
 Delivered:
 
-- Added `modes/arena/arena_pickup_jump_pad_rules.gd` as a pure pickup/jump pad boundary.
-- Moved pickup state, respawn, collection payload, jump pad cooldown, trigger checks and launch vector math behind helper functions.
-- Added direct unit coverage for pickup respawn and approved jump pad force contracts.
-- Keeps gameplay, movement feel, jump pad force, maps, weapon values, pickups and bot behavior unchanged.
+- Added `gameplay/bot/bot_decision_model.gd` as the bot decision/scoring boundary.
+- Moved item priority, map route priority, tactical point scoring, route labels and route-hold checks behind helper functions.
+- Added direct unit coverage for health/overcharge priority, arena-agnostic scoring and route commitment.
+- Keeps gameplay, movement feel, jump pad force, maps, weapon values, pickups, aim difficulty and bot behavior unchanged.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -62,10 +62,11 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 14B: arena root boundary - local validated on `2026-06-20`.
 - Track 14C: combat pipeline extraction - merged locally on `2026-06-20`.
 - Track 14D: pickups and jump pads extraction - merged locally on `2026-06-20`.
+- Track 14E: bot decision boundary - local validated on `2026-06-20`.
 
 ## Next Sequence
 
-1. Execute `Track 14E - Bot Decision Boundary V1`.
+1. Review/merge `Track 14E - Bot Decision Boundary V1`.
 2. Continue with `Track 14F - Cleanup And Documentation V1` after 14E approval.
 3. Resume gameplay expansion only after the Track 14 hardening sequence unless Fabio explicitly changes priority.
 
@@ -73,7 +74,7 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 59/59, 552 asserts
+# PASS, GUT 62/62, 564 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.
@@ -91,4 +92,4 @@ Manual smoke lives in `docs/validation.md`.
 9. `docs/telemetry.md`
 10. `docs/telemetry-readout.md`
 11. `docs/balance-baseline.md`
-12. `implementation/tracks/track-14d-pickups-jump-pads-extraction-v1/current-status.md`
+12. `implementation/tracks/track-14e-bot-decision-boundary-v1/current-status.md`

@@ -1,6 +1,6 @@
 # Refactor Hardening Roadmap
 
-- Status: `Track 14D merged local pickups/jump pads baseline`
+- Status: `Track 14E local validated bot decision boundary baseline`
 - Scope: code hardening and reduction sequence for the approved Arena Shooter baseline.
 - Rule: Track 14A does not change gameplay, movement feel, jump pad force, map geometry, weapon values or bot decisions.
 
@@ -42,8 +42,8 @@ The project is approved enough to keep expanding, but the next maps, weapons, bu
    - Next: `Track 14E - Bot Decision Boundary V1`.
 
 5. `Track 14E - Bot Decision Boundary V1`
-   - Separate bot decision scoring from low-level movement execution where practical.
-   - Keep behavior arena-aware through tactical context, not map-id hardcoding.
+   - Delivered: `BotDecisionModel` owns item priority, map route priority, tactical point scoring and route-hold checks.
+   - Preserved route-first movement, combat overlay, aim difficulty and arena-aware tactical context.
    - Next: `Track 14F - Cleanup And Documentation V1`.
 
 6. `Track 14F - Cleanup And Documentation V1`

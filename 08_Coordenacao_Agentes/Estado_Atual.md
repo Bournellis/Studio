@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09Q publica aprovada; 09R hotfix pe/camera local validada, pendente teste/publicacao) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14D pickups/jump pads integrada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09Q publica aprovada; 09R hotfix pe/camera local validada, pendente teste/publicacao) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14E bot decision boundary local validada; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -44,13 +44,13 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK14D_PICKUPS_JUMP_PADS_MERGED_LOCAL`
-- Marker: `FPS_PLAYGROUND_TRACK14D_PICKUPS_JUMP_PADS_MERGED_LOCAL`
-- Baseline: Track 14D integrou regras/helper de pickups e jump pads em `arena_pickup_jump_pad_rules.gd` sem alterar gameplay; testes `59/59`, `552 asserts`.
+- Status: `P2_IMPLEMENTACAO - TRACK14E_BOT_DECISION_BOUNDARY_LOCAL_VALIDATED`
+- Marker: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_LOCAL_VALIDATED`
+- Baseline: Track 14E extraiu scoring/intencoes do bot para `bot_decision_model.gd` sem alterar gameplay; testes `62/62`, `564 asserts`.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
-- Validacao: `tools/validate.gd` quick/full PASS `59/59`, `552 asserts`; `tools/check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
+- Validacao: `tools/validate.gd` quick/full PASS `62/62`, `564 asserts`; `tools/check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: executar `Track 14E - Bot Decision Boundary V1`.
+- Proximo passo: revisar/mergear Track 14E; depois executar `Track 14F - Cleanup And Documentation V1`.
 
 ## rpg-isometrico
 

@@ -50,6 +50,13 @@ PASS tools/validate.gd -- --profile=quick, GUT 59/59, 552 asserts
 PASS tools/validate.gd, GUT 59/59, 552 asserts
 ```
 
+Latest Track 14E validation:
+
+```text
+PASS tools/validate.gd -- --profile=quick, GUT 62/62, 564 asserts
+PASS tools/validate.gd, GUT 62/62, 564 asserts
+```
+
 Latest Track 11 human smoke:
 
 ```text
@@ -241,6 +248,14 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm all jump pads preserve approved forward/vertical force and first-use reliability.
 - Confirm player movement feel, map geometry, bot route commitment and weapon values are unchanged.
 - Confirm the next implementation step is `Track 14E - Bot Decision Boundary V1`.
+
+## Track 14E Bot Decision Boundary Smoke
+
+- Confirm `BotDecisionModel` owns item priority, tactical scoring and route-hold checks outside `basic_duel_bot.gd`.
+- Confirm bot still prioritizes health when low and overcharge when healthy.
+- Confirm bot still shoots as combat overlay without canceling item or jump pad routes.
+- Confirm player movement feel, jump pad force, map geometry, weapon values, pickups and aim difficulty are unchanged.
+- Confirm the next implementation step is `Track 14F - Cleanup And Documentation V1`.
 
 ## Known Noise
 
