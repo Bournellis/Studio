@@ -32,6 +32,7 @@ const CONTROL_HINTS: Array[Dictionary] = [
 
 const RenderProfileScript = preload("res://autoloads/render_profile.gd")
 const GameSettingsScript = preload("res://autoloads/game_settings.gd")
+const FootballHudPauseMenuControllerScript = preload("res://presentation/hud/football_hud_pause_menu_controller.gd")
 
 var status_label: Label
 var score_label: Label
@@ -763,408 +764,49 @@ func _build_result_panel(root: Control) -> void:
 	buttons.add_child(result_menu_button)
 
 func _build_pause_menu(root: Control) -> void:
-	var pause_center := CenterContainer.new()
-	pause_center.name = "PauseMenuCenter"
-	pause_center.process_mode = Node.PROCESS_MODE_ALWAYS
-	pause_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	pause_center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	root.add_child(pause_center)
-
-	pause_menu_panel = PanelContainer.new()
-	pause_menu_panel.name = "PauseMenuPanel"
-	pause_menu_panel.process_mode = Node.PROCESS_MODE_ALWAYS
-	pause_menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	pause_menu_panel.custom_minimum_size = Vector2(660.0, 540.0)
-	pause_menu_panel.visible = false
-	pause_menu_panel.add_theme_stylebox_override("panel", _build_panel_style(Color(0.012, 0.03, 0.04, 0.94), Color(0.12, 0.88, 1.0, 0.9), 2))
-	pause_center.add_child(pause_menu_panel)
-
-	var margin := MarginContainer.new()
-	margin.name = "PauseMenuMargin"
-	margin.add_theme_constant_override("margin_left", 18)
-	margin.add_theme_constant_override("margin_top", 16)
-	margin.add_theme_constant_override("margin_right", 18)
-	margin.add_theme_constant_override("margin_bottom", 16)
-	pause_menu_panel.add_child(margin)
-
-	var box := VBoxContainer.new()
-	box.name = "PauseMenuBox"
-	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	box.add_theme_constant_override("separation", 10)
-	margin.add_child(box)
-
-	var title := Label.new()
-	title.name = "PauseTitle"
-	title.text = "Partida pausada"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 22)
-	_ignore_mouse(title)
-	box.add_child(title)
-
-	pause_resume_button = Button.new()
-	pause_resume_button.name = "ResumeButton"
-	pause_resume_button.text = "Continuar"
-	pause_resume_button.custom_minimum_size = Vector2(0.0, 42.0)
-	pause_resume_button.mouse_filter = Control.MOUSE_FILTER_STOP
-	pause_resume_button.pressed.connect(func() -> void:
-		resume_requested.emit()
-	)
-	box.add_child(pause_resume_button)
-
-	pause_restart_button = Button.new()
-	pause_restart_button.name = "RestartMatchButton"
-	pause_restart_button.text = "Reiniciar partida..."
-	pause_restart_button.custom_minimum_size = Vector2(0.0, 42.0)
-	pause_restart_button.mouse_filter = Control.MOUSE_FILTER_STOP
-	pause_restart_button.pressed.connect(func() -> void:
-		_set_restart_confirmation_visible(true)
-	)
-	box.add_child(pause_restart_button)
-
-	pause_restart_confirm_box = HBoxContainer.new()
-	pause_restart_confirm_box.name = "RestartConfirmBox"
-	pause_restart_confirm_box.visible = false
-	pause_restart_confirm_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	pause_restart_confirm_box.add_theme_constant_override("separation", 8)
-	box.add_child(pause_restart_confirm_box)
-
-	var restart_confirm_label := Label.new()
-	restart_confirm_label.name = "RestartConfirmLabel"
-	restart_confirm_label.text = "Reiniciar a partida?"
-	restart_confirm_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	restart_confirm_label.add_theme_font_size_override("font_size", 14)
-	restart_confirm_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_ignore_mouse(restart_confirm_label)
-	pause_restart_confirm_box.add_child(restart_confirm_label)
-
-	pause_restart_confirm_button = Button.new()
-	pause_restart_confirm_button.name = "ConfirmRestartButton"
-	pause_restart_confirm_button.text = "Confirmar"
-	pause_restart_confirm_button.custom_minimum_size = Vector2(150.0, 34.0)
-	pause_restart_confirm_button.mouse_filter = Control.MOUSE_FILTER_STOP
-	pause_restart_confirm_button.add_theme_stylebox_override("normal", _build_button_style(Color(0.56, 0.1, 0.08, 1.0), Color(1.0, 0.62, 0.42, 1.0), 2))
-	pause_restart_confirm_button.add_theme_stylebox_override("hover", _build_button_style(Color(0.74, 0.14, 0.1, 1.0), Color(1.0, 0.78, 0.48, 1.0), 2))
-	pause_restart_confirm_button.pressed.connect(func() -> void:
-		_set_restart_confirmation_visible(false)
-		restart_requested.emit()
-	)
-	pause_restart_confirm_box.add_child(pause_restart_confirm_button)
-
-	pause_restart_cancel_button = Button.new()
-	pause_restart_cancel_button.name = "CancelRestartButton"
-	pause_restart_cancel_button.text = "Cancelar"
-	pause_restart_cancel_button.custom_minimum_size = Vector2(120.0, 34.0)
-	pause_restart_cancel_button.mouse_filter = Control.MOUSE_FILTER_STOP
-	pause_restart_cancel_button.pressed.connect(func() -> void:
-		_set_restart_confirmation_visible(false)
-		if pause_restart_button != null:
-			pause_restart_button.grab_focus()
-	)
-	pause_restart_confirm_box.add_child(pause_restart_cancel_button)
-
-	_build_pause_tab_bar(box)
-	pause_controls_section = _build_pause_controls_section(box)
-
-	pause_audio_title = Label.new()
-	pause_audio_title.name = "PauseVolumeTitle"
-	pause_audio_title.text = "Audio"
-	pause_audio_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	pause_audio_title.add_theme_font_size_override("font_size", 16)
-	_ignore_mouse(pause_audio_title)
-	box.add_child(pause_audio_title)
-	pause_volume_slider = _build_pause_volume_row(box, "VolumeRow", "VolumeLabel", "Master", "VolumeSlider", BUS_MASTER)
-	pause_sfx_volume_slider = _build_pause_volume_row(box, "SfxVolumeRow", "SfxVolumeLabel", "SFX", "SfxVolumeSlider", BUS_SFX)
-	pause_ui_volume_slider = _build_pause_volume_row(box, "UiVolumeRow", "UiVolumeLabel", "UI", "UiVolumeSlider", BUS_UI)
-	pause_ambience_volume_slider = _build_pause_volume_row(box, "AmbienceVolumeRow", "AmbienceVolumeLabel", "Ambiente", "AmbienceVolumeSlider", BUS_AMBIENCE)
-	pause_video_section = _build_pause_video_section(box)
-	pause_sensitivity_section = _build_pause_sensitivity_section(box)
-
-	pause_menu_button = Button.new()
-	pause_menu_button.name = "MainMenuButton"
-	pause_menu_button.text = "Sair ao menu"
-	pause_menu_button.custom_minimum_size = Vector2(0.0, 42.0)
-	pause_menu_button.mouse_filter = Control.MOUSE_FILTER_STOP
-	pause_menu_button.pressed.connect(func() -> void:
-		main_menu_requested.emit()
-	)
-	box.add_child(pause_menu_button)
-	_set_pause_section(&"audio")
+	FootballHudPauseMenuControllerScript.build_pause_menu(self, root)
 
 func _set_restart_confirmation_visible(is_visible: bool) -> void:
-	if pause_restart_confirm_box == null:
-		return
-	pause_restart_confirm_box.visible = is_visible
-	if is_visible and pause_restart_confirm_button != null:
-		pause_restart_confirm_button.grab_focus()
+	FootballHudPauseMenuControllerScript.set_restart_confirmation_visible(self, is_visible)
 
 func _build_pause_tab_bar(parent: VBoxContainer) -> void:
-	var tab_bar := HBoxContainer.new()
-	tab_bar.name = "PauseSectionTabs"
-	tab_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	tab_bar.add_theme_constant_override("separation", 8)
-	parent.add_child(tab_bar)
-	pause_section_buttons.clear()
-	tab_bar.add_child(_build_pause_tab_button(&"controls", "Controles"))
-	tab_bar.add_child(_build_pause_tab_button(&"audio", "Audio"))
-	tab_bar.add_child(_build_pause_tab_button(&"video", "Video"))
-	tab_bar.add_child(_build_pause_tab_button(&"sensitivity", "Sensibilidade"))
+	FootballHudPauseMenuControllerScript._build_pause_tab_bar(self, parent)
 
 func _build_pause_tab_button(section_id: StringName, label: String) -> Button:
-	var button := Button.new()
-	button.name = "%sTabButton" % label.replace(" ", "")
-	button.text = label
-	button.toggle_mode = true
-	button.custom_minimum_size = Vector2(0.0, 34.0)
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.mouse_filter = Control.MOUSE_FILTER_STOP
-	button.pressed.connect(func() -> void:
-		_set_pause_section(section_id)
-	)
-	pause_section_buttons[section_id] = button
-	return button
+	return FootballHudPauseMenuControllerScript._build_pause_tab_button(self, section_id, label)
 
 func _build_pause_controls_section(parent: VBoxContainer) -> VBoxContainer:
-	var section := VBoxContainer.new()
-	section.name = "ControlsSection"
-	section.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	section.add_theme_constant_override("separation", 6)
-	parent.add_child(section)
-
-	var table := GridContainer.new()
-	table.name = "ControlsTable"
-	table.columns = 2
-	table.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	table.add_theme_constant_override("h_separation", 18)
-	table.add_theme_constant_override("v_separation", 5)
-	section.add_child(table)
-
-	for hint: Dictionary in CONTROL_HINTS:
-		var action_label := Label.new()
-		action_label.name = "ActionLabel"
-		action_label.text = str(hint.get("action", ""))
-		action_label.add_theme_font_size_override("font_size", 13)
-		action_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		_ignore_mouse(action_label)
-		table.add_child(action_label)
-
-		var input_label := Label.new()
-		input_label.name = "InputLabel"
-		input_label.text = str(hint.get("input", ""))
-		input_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		input_label.add_theme_font_size_override("font_size", 13)
-		input_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		_ignore_mouse(input_label)
-		table.add_child(input_label)
-	return section
+	return FootballHudPauseMenuControllerScript._build_pause_controls_section(self, parent)
 
 func _build_pause_video_section(parent: VBoxContainer) -> VBoxContainer:
-	var section := VBoxContainer.new()
-	section.name = "VideoSection"
-	section.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	section.add_theme_constant_override("separation", 8)
-	parent.add_child(section)
-
-	var title := Label.new()
-	title.name = "VideoTitle"
-	title.text = "Video"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 16)
-	_ignore_mouse(title)
-	section.add_child(title)
-
-	var fullscreen_row := HBoxContainer.new()
-	fullscreen_row.name = "FullscreenRow"
-	fullscreen_row.add_theme_constant_override("separation", 8)
-	section.add_child(fullscreen_row)
-
-	var fullscreen_label := Label.new()
-	fullscreen_label.name = "FullscreenLabel"
-	fullscreen_label.text = "Tela cheia"
-	fullscreen_label.custom_minimum_size.x = 116.0
-	fullscreen_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_ignore_mouse(fullscreen_label)
-	fullscreen_row.add_child(fullscreen_label)
-
-	pause_fullscreen_toggle = CheckButton.new()
-	pause_fullscreen_toggle.name = "FullscreenToggle"
-	pause_fullscreen_toggle.text = "Ativar"
-	pause_fullscreen_toggle.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	pause_fullscreen_toggle.toggled.connect(_on_pause_fullscreen_toggled)
-	fullscreen_row.add_child(pause_fullscreen_toggle)
-
-	var quality_row := HBoxContainer.new()
-	quality_row.name = "QualityRow"
-	quality_row.add_theme_constant_override("separation", 8)
-	section.add_child(quality_row)
-
-	var quality_label := Label.new()
-	quality_label.name = "QualityLabel"
-	quality_label.text = "Qualidade"
-	quality_label.custom_minimum_size.x = 116.0
-	quality_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_ignore_mouse(quality_label)
-	quality_row.add_child(quality_label)
-
-	pause_quality_option = OptionButton.new()
-	pause_quality_option.name = "QualityOption"
-	pause_quality_option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	pause_quality_option.add_item("Alta")
-	pause_quality_option.add_item("Leve")
-	pause_quality_option.item_selected.connect(_on_pause_quality_selected)
-	quality_row.add_child(pause_quality_option)
-
-	pause_quality_notice_label = Label.new()
-	pause_quality_notice_label.name = "QualityNoticeLabel"
-	pause_quality_notice_label.text = "Ambiente e placares atualizam agora; materiais novos entram no proximo carregamento."
-	pause_quality_notice_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	pause_quality_notice_label.add_theme_font_size_override("font_size", 12)
-	_ignore_mouse(pause_quality_notice_label)
-	section.add_child(pause_quality_notice_label)
-	return section
+	return FootballHudPauseMenuControllerScript._build_pause_video_section(self, parent)
 
 func _build_pause_sensitivity_section(parent: VBoxContainer) -> VBoxContainer:
-	var section := VBoxContainer.new()
-	section.name = "SensitivitySection"
-	section.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	section.add_theme_constant_override("separation", 8)
-	parent.add_child(section)
-
-	var title := Label.new()
-	title.name = "SensitivityTitle"
-	title.text = "Sensibilidade"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 16)
-	_ignore_mouse(title)
-	section.add_child(title)
-
-	var row := HBoxContainer.new()
-	row.name = "SensitivityRow"
-	row.add_theme_constant_override("separation", 8)
-	section.add_child(row)
-
-	sensitivity_label = Label.new()
-	sensitivity_label.name = "SensitivityLabel"
-	sensitivity_label.custom_minimum_size.x = 142.0
-	sensitivity_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_ignore_mouse(sensitivity_label)
-	row.add_child(sensitivity_label)
-
-	sensitivity_slider = HSlider.new()
-	sensitivity_slider.name = "SensitivitySlider"
-	sensitivity_slider.min_value = 0.0008
-	sensitivity_slider.max_value = 0.0032
-	sensitivity_slider.step = 0.0001
-	sensitivity_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	sensitivity_slider.mouse_filter = Control.MOUSE_FILTER_STOP
-	sensitivity_slider.value_changed.connect(_on_sensitivity_slider_changed)
-	row.add_child(sensitivity_slider)
-	_update_sensitivity_label(sensitivity_slider.value)
-	return section
+	return FootballHudPauseMenuControllerScript._build_pause_sensitivity_section(self, parent)
 
 func _build_pause_volume_row(parent: VBoxContainer, row_name: String, label_name: String, label: String, slider_name: String, bus_name: StringName) -> HSlider:
-	var row := HBoxContainer.new()
-	row.name = row_name
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_theme_constant_override("separation", 8)
-	parent.add_child(row)
-
-	var row_label := Label.new()
-	row_label.name = label_name
-	row_label.text = label
-	row_label.custom_minimum_size.x = 96.0
-	row_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_ignore_mouse(row_label)
-	row.add_child(row_label)
-
-	var slider := HSlider.new()
-	slider.name = slider_name
-	slider.min_value = 0.0
-	slider.max_value = 1.0
-	slider.step = 0.05
-	slider.value = _get_pause_volume(bus_name)
-	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	slider.mouse_filter = Control.MOUSE_FILTER_STOP
-	slider.value_changed.connect(func(value: float) -> void:
-		_set_pause_volume(bus_name, value)
-	)
-	row.add_child(slider)
-	return slider
+	return FootballHudPauseMenuControllerScript._build_pause_volume_row(self, parent, row_name, label_name, label, slider_name, bus_name)
 
 func _sync_pause_settings_controls(sensitivity_value: float = 0.0) -> void:
-	if pause_volume_slider != null:
-		pause_volume_slider.set_value_no_signal(_get_pause_volume(BUS_MASTER))
-	if pause_sfx_volume_slider != null:
-		pause_sfx_volume_slider.set_value_no_signal(_get_pause_volume(BUS_SFX))
-	if pause_ui_volume_slider != null:
-		pause_ui_volume_slider.set_value_no_signal(_get_pause_volume(BUS_UI))
-	if pause_ambience_volume_slider != null:
-		pause_ambience_volume_slider.set_value_no_signal(_get_pause_volume(BUS_AMBIENCE))
-	var settings = _get_game_settings()
-	if pause_fullscreen_toggle != null:
-		pause_fullscreen_toggle.set_pressed_no_signal(settings.get_fullscreen_enabled() if settings != null else DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN)
-	if pause_quality_option != null:
-		_select_pause_quality_option(settings.get_quality_id() if settings != null else RenderProfileScript.get_quality_id())
-	var next_sensitivity := sensitivity_value
-	if next_sensitivity <= 0.0 and settings != null:
-		next_sensitivity = settings.get_mouse_sensitivity()
-	if next_sensitivity > 0.0:
-		set_sensitivity_value(next_sensitivity)
+	FootballHudPauseMenuControllerScript.sync_pause_settings_controls(self, sensitivity_value)
 
 func _set_pause_section(section_id: StringName) -> void:
-	var normalized := section_id
-	if not [&"controls", &"audio", &"video", &"sensitivity"].has(normalized):
-		normalized = &"audio"
-	pause_section_id = normalized
-	if pause_controls_section != null:
-		pause_controls_section.visible = normalized == &"controls"
-	var audio_visible := normalized == &"audio"
-	if pause_audio_title != null:
-		pause_audio_title.visible = audio_visible
-	for control in [pause_volume_slider, pause_sfx_volume_slider, pause_ui_volume_slider, pause_ambience_volume_slider]:
-		if control != null and control.get_parent() != null:
-			control.get_parent().visible = audio_visible
-	if pause_video_section != null:
-		pause_video_section.visible = normalized == &"video"
-	if pause_sensitivity_section != null:
-		pause_sensitivity_section.visible = normalized == &"sensitivity"
-	for key in pause_section_buttons.keys():
-		var button := pause_section_buttons[key] as Button
-		if button != null:
-			button.set_pressed_no_signal(StringName(key) == normalized)
+	FootballHudPauseMenuControllerScript.set_pause_section(self, section_id)
 
 func _get_pause_volume(bus_name: StringName) -> float:
-	var settings = _get_game_settings()
-	if settings != null:
-		return settings.get_volume(bus_name)
-	return _get_bus_volume_linear(bus_name)
+	return FootballHudPauseMenuControllerScript.get_pause_volume(self, bus_name)
 
 func _set_pause_volume(bus_name: StringName, value: float) -> void:
-	var settings = _get_game_settings()
-	if settings != null:
-		settings.set_volume(bus_name, value, true, true)
-		return
-	_set_bus_volume(bus_name, value, true)
+	FootballHudPauseMenuControllerScript.set_pause_volume(self, bus_name, value)
 
 func _on_pause_fullscreen_toggled(enabled: bool) -> void:
-	var settings = _get_game_settings()
-	if settings != null:
-		settings.set_fullscreen_enabled(enabled, true, true)
-	fullscreen_changed.emit(enabled)
+	FootballHudPauseMenuControllerScript.on_pause_fullscreen_toggled(self, enabled)
 
 func _on_pause_quality_selected(index: int) -> void:
-	var quality_id := RenderProfileScript.QUALITY_LIGHT if index == 1 else RenderProfileScript.QUALITY_HIGH
-	var settings = _get_game_settings()
-	if settings != null:
-		settings.set_quality_id(quality_id)
-	else:
-		RenderProfileScript.set_quality_id(quality_id)
-	_select_pause_quality_option(quality_id)
-	quality_changed.emit(quality_id)
+	FootballHudPauseMenuControllerScript.on_pause_quality_selected(self, index)
 
 func _select_pause_quality_option(quality_id: StringName) -> void:
-	if pause_quality_option == null:
-		return
-	pause_quality_option.select(1 if RenderProfileScript.normalize_quality_id(quality_id) == RenderProfileScript.QUALITY_LIGHT else 0)
+	FootballHudPauseMenuControllerScript.select_pause_quality_option(self, quality_id)
 
 func _get_game_settings():
 	return get_node_or_null("/root/GameSettings")
@@ -1393,16 +1035,10 @@ func _build_button_style(fill_color: Color, border_color: Color, border_width: i
 	return style
 
 func _on_sensitivity_slider_changed(value: float) -> void:
-	_update_sensitivity_label(value)
-	var settings = _get_game_settings()
-	if settings != null:
-		settings.set_mouse_sensitivity(value)
-	sensitivity_changed.emit(value)
+	FootballHudPauseMenuControllerScript.on_sensitivity_slider_changed(self, value)
 
 func _update_sensitivity_label(value: float) -> void:
-	if sensitivity_label == null:
-		return
-	sensitivity_label.text = "Sensibilidade: %.1f" % [value * 1000.0]
+	FootballHudPauseMenuControllerScript.update_sensitivity_label(self, value)
 
 func _refresh_overlay() -> void:
 	if pulse_overlay == null:

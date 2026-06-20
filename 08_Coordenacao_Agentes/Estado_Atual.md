@@ -14,13 +14,13 @@
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09S_HUMAN_APPROVED`
-- Marker: `JOGO_DA_COPA_TRACK09S_HUMAN_APPROVED`
+- Status: `P2_IMPLEMENTACAO - TRACK10A_READY_TO_PUBLISH`
+- Marker: `JOGO_DA_COPA_TRACK10A_LOCAL_VALIDATION`
 - Baseline publico aprovado: `Super Campeao v1.2.1+925f3b9f` (`web/v1-copa-arena-futebol-20260620-925f3b9f`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09S PASS e reteste humano aprovado.
 - Fallback aprovado: Track 09Q `Super Campeao v1.2.1+bb604c77`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.41%`) e aprovada por Fabio/tester.
 - Publicacao atual: Track 09S suaviza o foco visual da chase camera em toques rapidos de A/D; validate/export/Web smoke local PASS; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.63%`); aprovada por Fabio/tester.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: definir a proxima reducao conservadora do `FootballRoot` ou reavaliar escopo tecnico antes de nova track.
+- Proximo passo: mergear e publicar a Track 10A HUD Pause Menu Decomposition; manter 09S como baseline aprovado se algum gate remoto falhar.
 
 ## draxos-roguelike-cardgame
 

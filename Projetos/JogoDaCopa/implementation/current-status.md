@@ -6,15 +6,17 @@
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
 - Public baseline: `Super Campeao v1.2.1+925f3b9f`
-- Active stage status: `APPROVED_PUBLIC_BASELINE - Track 09S camera strafe smoothing hotfix human-approved`
-- Status marker: `JOGO_DA_COPA_TRACK09S_HUMAN_APPROVED`
-- Documentation baseline: `Track 09S Camera Strafe Smoothing Hotfix V1`
+- Active stage status: `LOCAL_VALIDATION - Track 10A HUD pause menu decomposition candidate`
+- Status marker: `JOGO_DA_COPA_TRACK10A_LOCAL_VALIDATION`
+- Documentation baseline: `Track 10A HUD Pause Menu Decomposition V1`
 
 ## Current Truth
 
 `JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, currently published on Cloudflare Pages as `v1.2.1+925f3b9f`.
 
 Track 09S is the current human-approved public Web baseline. It fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by smoothing the visual ball-focus weight and focus point in `football_chase_camera.gd`. It keeps `snap_to_target()` setup/reset behavior and goal-focus punch, and does not change gameplay collision, physics, scoring, bot, SUPER, HUD, assets or match tuning. The focused red test failed before the fix and passed after it; local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest passed.
+
+Track 10A is the current local publication candidate. It decomposes the football HUD pause menu by moving pause menu construction, tabs, restart confirmation, fullscreen/quality/sensitivity callbacks and pause settings synchronization into `football_hud_pause_menu_controller.gd`. `football_hud.gd` fell from `1512` to `1148` lines. Node paths, existing signals, restart confirmation behavior and real-click pause menu tests are preserved. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift and 3-resolution screenshot evidence passed; Cloudflare publication and remote gates are next.
 
 Track 09R is superseded by 09S before human approval. It fixed visible avatar feet entering the field plane and reduced sustained lateral strafe ball pull, but Fabio/tester reported a remaining quick `A/D` tap camera perception issue. Automated local and remote gates passed for 09R.
 
@@ -61,6 +63,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 - `football_render_settings_controller.gd`: main-menu settings bridge, `GameSettings` quality integration, runtime render-profile refresh, scoreboard viewport resize and pause-menu sensitivity sync.
 - `football_session_ui_controller.gd`: intro/pause/menu session flow, ESC target routing, match start, main-menu return and mouse-capture policy.
 - `football_presentation_fx_controller.gd`: presentation-only arcade emote, boost/skid VFX, goal slow-mo/camera shake, appearance cycling and avatar movement-state updates.
+- `presentation/hud/football_hud_pause_menu_controller.gd`: pause menu construction, tabs, restart confirmation and pause settings synchronization behind the `FootballHud` facade.
 
 ## Current Gate
 
@@ -111,7 +114,7 @@ D:\Estudio\tools\check_doc_drift.ps1
 git diff --check
 ```
 
-Latest publication validation is the Track 09S gate listed above. Latest local validation is Track 09S: import headless PASS, focused red/green test PASS, `tools/validate.gd` PASS (`107/107`, `1835` asserts, `60` sources), Web export PASS, `node --check` PASS, Chrome Web smoke 90s PASS (`pageErrors=0`, `consoleErrorCount=0`, `stabilityPassed=true`), `git diff --check` PASS and doc drift PASS.
+Latest publication validation is the Track 09S gate listed above. Latest local validation is Track 10A: import headless PASS, `tools/validate.gd` PASS (`107/107`, `1835` asserts, `62` sources), Web export PASS, `node --check` PASS, Chrome local 90s Web smoke PASS (`pageErrors=0`, `consoleErrorCount=0`, `stabilityPassed=true`, `firstMinuteHitches=0`, `js_heap_growth -7.45%`), 3-resolution screenshot evidence PASS, `git diff --check` PASS and doc drift PASS.
 
 ## Documentation Map
 
@@ -126,4 +129,4 @@ Latest publication validation is the Track 09S gate listed above. Latest local v
 
 ## Next Step
 
-Define the next conservative `FootballRoot` reduction or re-evaluate the technical scope before opening a new track.
+Merge and publish Track 10A, then run remote menu, first-minute, 5-minute stability and luma gates; keep 09S as the approved public baseline if any publication gate fails.

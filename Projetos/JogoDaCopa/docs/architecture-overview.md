@@ -27,7 +27,9 @@
 - `gameplay/player/`: reused movement/input controller for the local player.
 - `gameplay/football/`: ball, football bot and pure football rule helpers.
 - `presentation/camera/`: third-person football chase camera.
-- `presentation/hud/`: football HUD and intro/how-to panel.
+- `presentation/hud/`: football HUD, intro/how-to panel and pause-menu UI composition.
+  - `football_hud.gd`: broadcast HUD facade, in-match snapshots, intro/result panels, fade/announcement feedback and compatibility wrappers.
+  - `football_hud_pause_menu_controller.gd`: pause menu construction, tabs, restart confirmation and pause settings synchronization.
 - `presentation/feedback/`: primitive effects and synthetic audio.
 - `tools/`: scene generation and validation.
 - `tests/`: GUT coverage for football, avatar and helper contracts.

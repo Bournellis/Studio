@@ -71,6 +71,8 @@
 
 ## Track 09 Reduction And Heap Evidence
 
+- Track 10A HUD pause menu decomposition report: `playtest-reports/track-10a-hud-pause-menu-decomposition.md`
+- Track 10A screenshots: `screenshots/track-10a-hud-pause-menu-decomposition-v1/`
 - Track 09R foot and camera hotfix closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09r-foot-camera-hotfix-v1.md`
 - Track 09R foot and camera hotfix report: `playtest-reports/track-09r-foot-camera-hotfix.md`
 - Track 09R evidence: `playtest-reports/track-09r-data/`
