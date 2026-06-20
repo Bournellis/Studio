@@ -5,18 +5,18 @@
 - Product/module name: `Super Campeao`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
-- Public baseline: `Super Campeao v1.2.1+33ba1a2b`
-- Active stage status: `LOCAL_VALIDATED - Track 09S camera strafe smoothing hotfix pending merge/publication`
-- Status marker: `JOGO_DA_COPA_TRACK09S_LOCAL_VALIDATED`
+- Public baseline: `Super Campeao v1.2.1+925f3b9f`
+- Active stage status: `PUBLISHED_REMOTE_GATES_PASS - Track 09S camera strafe smoothing hotfix pending human retest`
+- Status marker: `JOGO_DA_COPA_TRACK09S_PUBLISHED_REMOTE_GATES_PASS`
 - Documentation baseline: `Track 09S Camera Strafe Smoothing Hotfix V1`
 
 ## Current Truth
 
-`JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, currently published on Cloudflare Pages as `v1.2.1+33ba1a2b`.
+`JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, currently published on Cloudflare Pages as `v1.2.1+925f3b9f`.
 
-Track 09S is the current local hotfix candidate. It fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by smoothing the visual ball-focus weight and focus point in `football_chase_camera.gd`. It keeps `snap_to_target()` setup/reset behavior and goal-focus punch, and does not change gameplay collision, physics, scoring, bot, SUPER, HUD, assets or match tuning. The focused red test failed before the fix and passed after it; local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check` and doc drift gates passed. Merge/publication are pending.
+Track 09S is the current public Web candidate. It fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by smoothing the visual ball-focus weight and focus point in `football_chase_camera.gd`. It keeps `snap_to_target()` setup/reset behavior and goal-focus punch, and does not change gameplay collision, physics, scoring, bot, SUPER, HUD, assets or match tuning. The focused red test failed before the fix and passed after it; local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability and remote luma gates passed. Human retest is pending.
 
-Track 09R remains the current public Web package until 09S is published. It fixed visible avatar feet entering the field plane and reduced sustained lateral strafe ball pull, but Fabio/tester reported a remaining quick `A/D` tap camera perception issue before human approval. Automated local and remote gates passed for 09R.
+Track 09R is superseded by 09S before human approval. It fixed visible avatar feet entering the field plane and reduced sustained lateral strafe ball pull, but Fabio/tester reported a remaining quick `A/D` tap camera perception issue. Automated local and remote gates passed for 09R.
 
 Track 09Q is the latest human-approved fallback baseline. It extracted presentation-only arcade emote, boost/skid VFX, goal slow-mo/camera shake, appearance cycling and avatar movement-state updates into `football_presentation_fx_controller.gd`; `FootballRoot` fell from `974` to `919` lines. Local import, `tools/validate.gd`, Web export/gzip, `node --check`, 90s Chrome Web smoke, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma and Fabio/tester human retest gates passed.
 
@@ -64,20 +64,20 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-`Super Campeao v1.2.1+33ba1a2b` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260619-33ba1a2b`.
+`Super Campeao v1.2.1+925f3b9f` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260620-925f3b9f`.
 
 Latest publication:
 
-- Local validation: `tools/validate.gd` PASS, `106/106` tests, `1831` asserts, `60` source files checked.
+- Local validation: `tools/validate.gd` PASS, `107/107` tests, `1835` asserts, `60` source files checked.
 - Web package/export: PASS.
-- Web gzip transfer: `30.61 MiB / 50.00 MiB`.
+- Web package assets: `index.pck` Brotli `20.83 MiB`, `index.wasm` Brotli `6.61 MiB`, each below the `25.00 MiB` Cloudflare Pages asset limit.
 - Remote menu: PASS.
 - Remote first minute: PASS, `firstMinuteHitches=0`.
-- Remote stability 5min: PASS, `js_heap_growth +8.33%`, peak `+13.68%`, `wasmSampleCount=0`.
+- Remote stability 5min: PASS, `js_heap_growth +8.63%`, peak `+13.66%`, `wasmSampleCount=0`, worst 5s FPS window `136.6`.
 - Remote night luma: PASS, `6.525 < 90`.
 - Human retest: pending Fabio/tester approval after automated gates.
 
-Latest local 09S validation:
+Track 09S local validation:
 
 - Headless editor import: PASS.
 - Focused red/green test: PASS after fix.
@@ -111,7 +111,7 @@ D:\Estudio\tools\check_doc_drift.ps1
 git diff --check
 ```
 
-Latest publication validation is the Track 09R gate listed above. Latest local validation is Track 09S: import headless PASS, focused red/green test PASS, `tools/validate.gd` PASS (`107/107`, `1835` asserts, `60` sources), Web export PASS, `node --check` PASS, Chrome Web smoke 90s PASS (`pageErrors=0`, `consoleErrorCount=0`, `stabilityPassed=true`), `git diff --check` PASS and doc drift PASS.
+Latest publication validation is the Track 09S gate listed above. Latest local validation is Track 09S: import headless PASS, focused red/green test PASS, `tools/validate.gd` PASS (`107/107`, `1835` asserts, `60` sources), Web export PASS, `node --check` PASS, Chrome Web smoke 90s PASS (`pageErrors=0`, `consoleErrorCount=0`, `stabilityPassed=true`), `git diff --check` PASS and doc drift PASS.
 
 ## Documentation Map
 
@@ -126,4 +126,4 @@ Latest publication validation is the Track 09R gate listed above. Latest local v
 
 ## Next Step
 
-Merge and publish Track 09S, then run remote menu, first-minute, stability and luma gates. Fabio/tester should retest quick `A/D` taps and normal `W/S` movement before reductions resume.
+Fabio/tester should retest public Track 09S with quick `A/D` taps and normal `W/S` movement. If approved, record 09S as the human-approved baseline before reductions resume.

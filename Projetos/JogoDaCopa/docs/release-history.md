@@ -6,7 +6,8 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 
 | Data | Release | Canal | URL | Release root | Evidencia |
 | --- | --- | --- | --- | --- | --- |
-| 2026-06-20 | Foot And Camera Hotfix 09R (`v1.2.1+33ba1a2b`) | Cloudflare Pages publico, reteste humano pendente | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260619-33ba1a2b` | `docs/playtest-reports/track-09r-data/09r-publication-report-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-menu-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-first-minute-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-stability-5min-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-night-luma-gate-33ba1a2b.json` |
+| 2026-06-20 | Camera Strafe Smoothing Hotfix 09S (`v1.2.1+925f3b9f`) | Cloudflare Pages publico, reteste humano pendente | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260620-925f3b9f` | `docs/playtest-reports/track-09s-data/09s-publication-report-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-menu-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-first-minute-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-stability-5min-925f3b9f.json` + `docs/playtest-reports/track-09s-data/09s-remote-night-luma-gate-925f3b9f.json` |
+| 2026-06-20 | Foot And Camera Hotfix 09R (`v1.2.1+33ba1a2b`) | Cloudflare Pages publico anterior, supersedido antes de aprovacao humana | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260619-33ba1a2b` | `docs/playtest-reports/track-09r-data/09r-publication-report-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-menu-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-first-minute-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-stability-5min-33ba1a2b.json` + `docs/playtest-reports/track-09r-data/09r-remote-night-luma-gate-33ba1a2b.json` |
 | 2026-06-19 | Presentation FX Controller 09Q (`v1.2.1+bb604c77`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260619-bb604c77` | `docs/playtest-reports/track-09q-data/09q-publication-report-bb604c77.json` + `docs/playtest-reports/track-09q-data/09q-remote-menu-bb604c77.json` + `docs/playtest-reports/track-09q-data/09q-remote-first-minute-bb604c77.json` + `docs/playtest-reports/track-09q-data/09q-remote-stability-5min-bb604c77.json` + `docs/playtest-reports/track-09q-data/09q-remote-night-luma-gate-bb604c77.json` |
 | 2026-06-19 | Session UI Controller 09P (`v1.2.1+8863c5b9`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260619-8863c5b9` | `docs/playtest-reports/track-09p-data/09p-publication-report-8863c5b9.json` + `docs/playtest-reports/track-09p-data/09p-remote-menu-8863c5b9.json` + `docs/playtest-reports/track-09p-data/09p-remote-first-minute-8863c5b9.json` + `docs/playtest-reports/track-09p-data/09p-remote-stability-5min-8863c5b9.json` + `docs/playtest-reports/track-09p-data/09p-remote-night-luma-gate-8863c5b9.json` |
 | 2026-06-19 | Render Settings Controller 09N (`v1.2.1+5c6520ba`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260619-5c6520ba` | `docs/playtest-reports/track-09n-data/09n-publication-report-5c6520ba.json` + `docs/playtest-reports/track-09n-data/09n-remote-menu-5c6520ba.json` + `docs/playtest-reports/track-09n-data/09n-remote-first-minute-5c6520ba.json` + `docs/playtest-reports/track-09n-data/09n-remote-stability-5min-5c6520ba.json` + `docs/playtest-reports/track-09n-data/09n-remote-night-luma-gate-5c6520ba.json` |
@@ -29,6 +30,20 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 | 2026-06-12 | Web Stability Hotfix V1 (`v1.0.1+a850045a`) | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-a850045a` | `docs/playtest-reports/track-05-data/05c-publication-report.json` + `docs/playtest-reports/track-05a-data/05a-remote-stability-gate-5min-pass.json` |
 | 2026-06-12 | Web Publication V1 | Cloudflare Pages publico | `https://copa-arena-futebol.pages.dev/` | `web/v1-copa-arena-futebol-20260612-31e23ea3` | `docs/playtest-reports/track-05-data/05c-publication-report.json` |
 
+## 2026-06-20 - Camera Strafe Smoothing Hotfix 09S
+
+- Release publicado: `v1.2.1+925f3b9f` em `https://copa-arena-futebol.pages.dev/`.
+- Release root publico: `web/v1-copa-arena-futebol-20260620-925f3b9f`.
+- Preview do deploy final: `https://7744dc3b.copa-arena-futebol.pages.dev`.
+- Escopo: publicacao da hotfix 09S, que suaviza o peso de foco da bola e o ponto de foco visual da chase camera para remover o tremor/puxao percebido em toques rapidos de A/D; sem mudanca intencional em gameplay collision, fisica, movimento, scoring, bot, SUPER, HUD, assets ou tuning.
+- Gates locais Track 09S: import headless PASS; `tools/validate.gd` PASS com `107` testes / `1835` asserts e `60` fontes; Web package/export PASS; `node --check tools/track04f_chrome_probe.mjs` PASS; Chrome local 90s Web smoke PASS; `git diff --check` PASS; doc drift PASS.
+- Publicacao final: `tools/publish_web.ps1 -Mode FullPublish -ReleaseRoot web/v1-copa-arena-futebol-20260620-925f3b9f -VisibleVersion v1.2.1 -EvidenceSubdir track-09s-data -EvidencePrefix 09s -DeployMessage "JogoDaCopa Track 09S Super Campeao v1.2.1 web/v1-copa-arena-futebol-20260620-925f3b9f" -ConfirmRemoteMutation -SkipExport`; projeto Cloudflare Pages `copa-arena-futebol`.
+- Sanity menu remoto: PASS, release root conferiu, `menu.ready.end` visto, `pageErrors=0`, `consoleErrorCount=0`.
+- Gate remoto primeiro minuto: PASS, release root conferiu, `event.visible_match_start` visto, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
+- Gate remoto estabilidade 5min: PASS em `js_heap_growth +8.63%` contra limite `+10%`, pico `+13.66%`, `wasmSampleCount=0`, counters/caches Godot estaveis e pior janela 5s `136.6 FPS`.
+- Gate remoto de luminancia: PASS, `luma_0_255=6.525 < 90` na captura `09s-remote-stability-5min-925f3b9f.png`.
+- Reteste humano: pendente por Fabio/tester; 09Q permanece o baseline publico aprovado de fallback ate a aprovacao humana da 09S.
+
 ## 2026-06-20 - Foot And Camera Hotfix 09R
 
 - Release publicado: `v1.2.1+33ba1a2b` em `https://copa-arena-futebol.pages.dev/`.
@@ -41,7 +56,7 @@ Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 - Gate remoto primeiro minuto: PASS, release root conferiu, `event.visible_match_start` visto, `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0`.
 - Gate remoto estabilidade 5min: PASS em `js_heap_growth +8.33%` contra limite `+10%`, pico `+13.68%`, `total_js_heap_growth +8.04%`, `wasmSampleCount=0`, counters/caches Godot estaveis e pior janela 5s `136.6 FPS`.
 - Gate remoto de luminancia: PASS, `luma_0_255=6.525 < 90` na captura `09r-remote-stability-5min-33ba1a2b.png`.
-- Reteste humano: pendente por Fabio/tester; 09Q permanece o baseline publico aprovado de fallback ate a aprovacao humana da 09R.
+- Reteste humano: nao aprovado como baseline; Fabio/tester reportou percepcao residual ruim da camera em toques rapidos de A/D e a 09R foi supersedida pela 09S. 09Q permaneceu o fallback humano aprovado.
 
 ## 2026-06-19 - Presentation FX Controller 09Q
 

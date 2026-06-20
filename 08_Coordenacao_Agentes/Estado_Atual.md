@@ -7,20 +7,20 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09R publicada com gates remotos PASS; reteste humano pendente; 09Q fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14E bot decision boundary aprovada; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09S publicada com gates remotos PASS; reteste humano pendente; 09Q fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14E bot decision boundary aprovada; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK09R_PUBLISHED_REMOTE_GATES_PASS`
-- Marker: `JOGO_DA_COPA_TRACK09R_PUBLISHED_REMOTE_GATES_PASS`
-- Baseline publico atual: `Super Campeao v1.2.1+33ba1a2b` (`web/v1-copa-arena-futebol-20260619-33ba1a2b`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09R PASS, reteste humano pendente.
+- Status: `P2_IMPLEMENTACAO - TRACK09S_PUBLISHED_REMOTE_GATES_PASS`
+- Marker: `JOGO_DA_COPA_TRACK09S_PUBLISHED_REMOTE_GATES_PASS`
+- Baseline publico atual: `Super Campeao v1.2.1+925f3b9f` (`web/v1-copa-arena-futebol-20260620-925f3b9f`) em `https://copa-arena-futebol.pages.dev/`; gates remotos 09S PASS, reteste humano pendente.
 - Fallback humano aprovado: Track 09Q `Super Campeao v1.2.1+bb604c77`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.41%`) e aprovada por Fabio/tester.
-- Publicacao atual: Track 09R corrige pe visual entrando no campo e camera estranha em strafe A/D; validate/export/Web smoke local PASS; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.33%`).
+- Publicacao atual: Track 09S suaviza o foco visual da chase camera em toques rapidos de A/D; validate/export/Web smoke local PASS; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.63%`).
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester retestar a URL publica 09R; se aprovada, registrar 09R como baseline humano aprovado antes de retomar reducoes do `FootballRoot`.
+- Proximo passo: Fabio/tester retestar a URL publica 09S focando toques rapidos em A/D e movimento W/S; se aprovada, registrar 09S como baseline humano aprovado antes de retomar reducoes do `FootballRoot`.
 
 ## draxos-roguelike-cardgame
 

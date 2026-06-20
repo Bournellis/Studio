@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09S_LOCAL_VALIDATED`
+- Status: `JOGO_DA_COPA_TRACK09S_PUBLISHED_REMOTE_GATES_PASS`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -41,19 +41,18 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09P Football Session UI Controller V1 extracted intro/pause/menu session flow, ESC target routing, match start, main-menu return and mouse-capture policy into `football_session_ui_controller.gd`; `FootballRoot` fell from `1051` to `974` lines; local import, validate/export/gzip, 90s Chrome Web smoke, remote menu, remote first-minute, remote 5-minute stability, remote luma and human retest gates passed. It is published and approved as `Super Campeao v1.2.1+8863c5b9`; 09N remains the historical approved fallback.
 - Track 09Q Football Presentation FX Controller V1 extracted presentation-only arcade emote, boost/skid VFX, goal slow-mo/camera shake, appearance cycling and avatar movement-state updates into `football_presentation_fx_controller.gd`; `FootballRoot` fell from `974` to `919` lines; local import, validate/export/gzip, 90s Chrome Web smoke, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma and human retest gates passed. It is public and approved as `Super Campeao v1.2.1+bb604c77`; 09P remains the latest fallback behind 09Q.
 - Track 09R Foot And Camera Hotfix V1 paused reductions to fix two playtest findings: visible avatar feet intersecting the field plane and odd camera pull/tilt during lateral A/D strafe. It lifts only the visible avatar parts by `0.05m` and dampens ball focus during strafe while keeping the camera horizon level; no gameplay collision, physics, scoring, bot, SUPER, HUD, assets or tuning changes. Local red/green tests, validate/export/gzip, `node --check`, 90s Chrome Web smoke, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability and remote luma gates passed. It is public as `Super Campeao v1.2.1+33ba1a2b`; human retest is pending and 09Q remains the latest human-approved fallback.
-- Track 09S Camera Strafe Smoothing Hotfix V1 fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by easing the visual ball-focus weight and focus point in `football_chase_camera.gd`; gameplay, physics, movement, bot, ball, scoring, SUPER, HUD, assets and tuning remain unchanged. The focused red/green test, import headless, `tools/validate.gd`, Web export, `node --check`, Chrome local 90s Web smoke, `git diff --check` and doc drift gates passed. Merge/publication are pending.
+- Track 09S Camera Strafe Smoothing Hotfix V1 fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by easing the visual ball-focus weight and focus point in `football_chase_camera.gd`; gameplay, physics, movement, bot, ball, scoring, SUPER, HUD, assets and tuning remain unchanged. The focused red/green test, import headless, `tools/validate.gd`, Web export, `node --check`, Chrome local 90s Web smoke, `git diff --check`, doc drift, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability and remote luma gates passed. It is public as `Super Campeao v1.2.1+925f3b9f`; human retest is pending.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Track 09S is the current local hotfix candidate, validated locally and pending merge/publication. Track 09R remains the current public Web package at `Super Campeao v1.2.1+33ba1a2b`, but the remaining quick `A/D` camera perception issue blocks human approval. Track 09Q is the latest human-approved fallback at `Super Campeao v1.2.1+bb604c77`. Track 09P remains the fallback behind 09Q at `Super Campeao v1.2.1+8863c5b9`; Track 09N remains the historical approved fallback baseline behind 09P.
+Track 09S is the current public Web candidate at `Super Campeao v1.2.1+925f3b9f`, with automated remote gates passed and human retest pending. Track 09R is superseded before human approval. Track 09Q is the latest human-approved fallback at `Super Campeao v1.2.1+bb604c77`. Track 09P remains the fallback behind 09Q at `Super Campeao v1.2.1+8863c5b9`; Track 09N remains the historical approved fallback baseline behind 09P.
 
 Focus:
 
-- Merge and publish Track 09S before any new reduction.
-- After publication, run remote menu, first-minute, 5-minute stability and luma gates.
 - Fabio/tester should retest quick `A/D` taps and normal `W/S` movement on the public URL before any new reduction.
+- If approved, record 09S as the human-approved public baseline.
 - Keep 09Q as the latest human-approved fallback, with 09P and 09N as older approved fallbacks.
 - Prefer orchestration slices that do not alter gameplay, physics, input, bot decisions or assets.
 - Preserve existing GUT coverage and add/retarget focused tests when moving public helper contracts.
@@ -169,8 +168,9 @@ Focus:
 - Preserved gameplay, physics, player movement, bot, ball, scoring, SUPER, HUD, assets and match tuning.
 - Added focused red/green coverage for quick lateral tap focus shift.
 - Local gates passed: import headless, `tools/validate.gd` (`107/107`, `1835` asserts), Web export, `node --check tools/track04f_chrome_probe.mjs`, Chrome local 90s Web smoke with `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0` and `stabilityPassed=true`, `git diff --check` and doc drift.
+- Published as `Super Campeao v1.2.1+925f3b9f`; remote menu, first-minute, stability 5min and luma gates passed.
 - Evidence: `docs/playtest-reports/track-09s-camera-strafe-smoothing-hotfix.md` and `docs/playtest-reports/track-09s-data/`.
-- Merge/publication are pending.
+- Human retest is pending; 09Q remains the latest human-approved fallback baseline.
 
 ## Out Of Scope
 
