@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK14D_PICKUPS_JUMP_PADS_MERGED_LOCAL`
+- Status: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_MERGED_LOCAL`
 - Current surface: FPS arena lab.
-- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; Track 14D pickups/jump pads merged locally; current player movement feel preserved.
+- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; Track 14E bot decision boundary merged locally; current player movement feel preserved.
 
 ## North Star
 
@@ -27,12 +27,13 @@ The near-term direction is to harden the approved 1x1 Arena Shooter foundation b
 - Track 14B extracted HUD snapshot/status building from `arena_root.gd`; no gameplay changes.
 - Track 14C extracted combat telemetry payloads and pure Plasma blast math from `arena_root.gd`; no gameplay changes.
 - Track 14D extracted pickup and jump pad rules from `arena_root.gd`; no gameplay changes.
-- Validation baseline: `tools/validate.gd` PASS `59/59`, `552 asserts`.
+- Track 14E extracted bot decision scoring from `basic_duel_bot.gd`; no gameplay changes.
+- Validation baseline: `tools/validate.gd` PASS `62/62`, `564 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Recommended Next Tracks
 
-Next active recommendation: `Track 14E - Bot Decision Boundary V1`.
+Next active recommendation: execute `Track 14F - Cleanup And Documentation V1`.
 
 ### 1. Track 14A - Refactor Safety Net And Code Health Baseline V1
 
@@ -91,8 +92,9 @@ Goal:
 
 Expected scope:
 
+- Delivered: `BotDecisionModel` owns item priority, route priority, tactical scoring and route-hold checks.
 - No aim difficulty buffs.
-- Preserve route-first, item-aware movement and arena tactical context.
+- Preserved route-first, item-aware movement and arena tactical context.
 - Next: `Track 14F - Cleanup And Documentation V1`.
 
 ### 6. Track 14F - Cleanup And Documentation V1

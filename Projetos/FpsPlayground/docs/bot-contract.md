@@ -12,6 +12,12 @@ The active bot is the `Arena Shooter` duel bot.
 - Must remain valid when an arena changes its tactical points or a future arena supplies a different context.
 - `force_fire()` remains an immediate test hook.
 
+## Decision Boundary
+
+Track 14E keeps movement execution in `basic_duel_bot.gd`, but decision scoring now lives in `bot_decision_model.gd`.
+
+The model owns item priority, map route priority, tactical point scoring and route-hold checks. It must stay arena-aware through tactical context data, not map-id branches.
+
 ## Tactical Movement Contract
 
 The bot may know arena affordances supplied by the active arena, but combat decisions should still respect target state, line of sight, cooldowns, health and projectile threats.

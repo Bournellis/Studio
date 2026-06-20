@@ -2,6 +2,7 @@ extends "res://addons/gut/test.gd"
 
 const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
 const BotAimModelScript = preload("res://gameplay/bot/bot_aim_model.gd")
+const BotDecisionModelScript = preload("res://gameplay/bot/bot_decision_model.gd")
 const BotScript = preload("res://gameplay/bot/basic_duel_bot.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_points.gd")
@@ -266,6 +267,78 @@ func test_bot_tactical_context_filters_unavailable_points_by_role() -> void:
 	assert_eq(BotTacticalContextScript.get_points(context).size(), 2)
 	assert_eq(BotTacticalContextScript.points_for_role(context, BotTacticalContextScript.ROLE_HEALTH).size(), 1)
 
+func test_bot_decision_model_preserves_item_priority_contracts() -> void:
+	var low_health := _decision_context({
+		"health_fraction": 0.18,
+		"health_pickup_available": true,
+		"health_pickup_distance": 10.0,
+		"objective_route_cooldown_remaining": 2.0,
+		"last_has_line_of_sight": true,
+		"target_distance": 8.0
+	})
+	assert_true(BotDecisionModelScript.should_seek_health_pickup(low_health))
+	assert_true(BotDecisionModelScript.should_prioritize_map_route(low_health))
+	assert_true(BotDecisionModelScript.can_take_health_route(low_health))
+
+	var high_health_overcharge := _decision_context({
+		"health_fraction": 0.92,
+		"overcharge_pickup_available": true,
+		"overcharge_pickup_distance": 8.0,
+		"last_has_line_of_sight": true,
+		"target_distance": 8.0
+	})
+	assert_true(BotDecisionModelScript.should_seek_overcharge_pickup(high_health_overcharge))
+	assert_true(BotDecisionModelScript.should_prioritize_map_route(high_health_overcharge))
+
+	high_health_overcharge["has_overcharge"] = true
+	assert_false(BotDecisionModelScript.should_seek_overcharge_pickup(high_health_overcharge))
+
+func test_bot_decision_model_scores_arena_context_without_map_id() -> void:
+	var context := _decision_context({
+		"bot_position": Vector3.ZERO,
+		"target_position": Vector3(0.0, 0.8, -8.0),
+		"target_distance": 8.0,
+		"last_has_line_of_sight": false,
+		"health_fraction": 0.86
+	})
+	var candidates: Array[Dictionary] = [
+		BotTacticalContextScript.make_point(Vector3(0.0, 0.05, -6.0), BotTacticalContextScript.ROLE_PRESSURE, 1.0, &"test_pressure"),
+		BotTacticalContextScript.make_point(Vector3(4.0, 3.05, -4.0), BotTacticalContextScript.ROLE_HIGH_GROUND, 1.45, &"test_high")
+	]
+
+	var decision := BotDecisionModelScript.choose_reposition_decision(candidates, context)
+
+	assert_eq(decision.get("reason", &""), BotTacticalContextScript.ROLE_HIGH_GROUND)
+	assert_eq(decision.get("label", &""), &"high")
+	assert_eq(decision.get("route_key", &""), &"test_high")
+
+func test_bot_decision_model_preserves_route_commitment_contracts() -> void:
+	var health_route := _decision_context({
+		"is_reposition_state": true,
+		"last_route_label": &"health",
+		"health_pickup_available": true,
+		"health_fraction": 0.5,
+		"health_pickup_distance": 2.0
+	})
+	assert_true(BotDecisionModelScript.should_hold_current_route(health_route))
+
+	var overcharge_route := _decision_context({
+		"is_reposition_state": true,
+		"last_route_label": &"overcharge",
+		"overcharge_pickup_available": true,
+		"has_overcharge": true,
+		"overcharge_pickup_distance": 1.0
+	})
+	assert_false(BotDecisionModelScript.should_hold_current_route(overcharge_route))
+
+	var jump_pad_route := _decision_context({
+		"is_reposition_state": true,
+		"last_route_label": &"jump_pad",
+		"jump_pad_commitment_active": true,
+		"distance_to_reposition_destination": 0.2
+	})
+	assert_true(BotDecisionModelScript.should_hold_current_route(jump_pad_route))
+
 func test_arena_layout_catalog_exposes_distinct_tactical_contexts() -> void:
 	var layout_ids := ArenaLayoutCatalogScript.get_layout_ids()
 	assert_eq(layout_ids.size(), 3)
@@ -394,3 +467,54 @@ func _flat_distance_between(first_point: Vector3, second_point: Vector3) -> floa
 	var delta := first_point - second_point
 	delta.y = 0.0
 	return delta.length()
+
+func _decision_context(overrides: Dictionary = {}) -> Dictionary:
+	var context := {
+		"bot_position": Vector3.ZERO,
+		"target_position": Vector3(0.0, 0.8, -8.0),
+		"target_distance": 8.0,
+		"distance_to_reposition_destination": 5.0,
+		"health_fraction": 1.0,
+		"target_health_fraction": 1.0,
+		"has_overcharge": false,
+		"last_has_line_of_sight": false,
+		"is_telegraphing": false,
+		"is_cooldown_state": false,
+		"is_reposition_state": false,
+		"shoot_cooldown_remaining": 0.0,
+		"shoot_cooldown": 0.76,
+		"reaction_remaining": 0.0,
+		"preferred_distance": 8.8,
+		"shoot_range": 18.0,
+		"reposition_cooldown_remaining": 0.0,
+		"objective_route_cooldown_remaining": 0.0,
+		"reposition_cycle_index": 0,
+		"reposition_arrival_distance": 1.05,
+		"vertical_route_cooldown_remaining": 0.0,
+		"jump_pad_commitment_active": false,
+		"health_pickup_available": false,
+		"health_pickup_distance": 1000.0,
+		"overcharge_pickup_available": false,
+		"overcharge_pickup_distance": 1000.0,
+		"low_health_pickup_threshold": 0.42,
+		"critical_health_pickup_threshold": 0.22,
+		"useful_health_pickup_threshold": 0.98,
+		"pickup_interest_distance": 17.0,
+		"nearby_health_commit_distance": 2.4,
+		"nearby_overcharge_commit_distance": 2.6,
+		"healthy_overcharge_priority_threshold": 0.7,
+		"retreat_route_bonus": 3.4,
+		"cover_route_bonus": 1.8,
+		"flank_route_bonus": 1.35,
+		"pressure_route_bonus": 2.2,
+		"high_route_score_bonus": 1.1,
+		"recent_high_route_penalty": 3.2,
+		"route_repeat_penalty": 2.6,
+		"arena_half_extent": 11.2,
+		"last_route_label": &"idle",
+		"recent_route_keys": [],
+		"blocked_route_timers": {}
+	}
+	for key in overrides.keys():
+		context[key] = overrides[key]
+	return context
