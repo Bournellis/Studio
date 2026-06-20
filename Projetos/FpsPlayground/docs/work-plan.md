@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_APPROVED`
+- Status: `FPS_PLAYGROUND_TRACK14F_CLEANUP_DOCUMENTATION_LOCAL_VALIDATED`
 - Current surface: FPS arena lab.
-- Current baseline: Track 12 telemetry/readout approved; Track 13 docs rebaseline complete; Track 14E bot decision boundary approved; current player movement feel preserved.
+- Current baseline: Track 14F cleanup/documentation local validated; current player movement feel preserved.
 
 ## North Star
 
@@ -28,12 +28,13 @@ The near-term direction is to harden the approved 1x1 Arena Shooter foundation b
 - Track 14C extracted combat telemetry payloads and pure Plasma blast math from `arena_root.gd`; no gameplay changes.
 - Track 14D extracted pickup and jump pad rules from `arena_root.gd`; no gameplay changes.
 - Track 14E extracted bot decision scoring from `basic_duel_bot.gd`; no gameplay changes.
+- Track 14F removed dead private bot wrappers and rebaselined code metrics; no gameplay changes.
 - Validation baseline: `tools/validate.gd` PASS `62/62`, `564 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Recommended Next Tracks
 
-Next active recommendation: execute `Track 14F - Cleanup And Documentation V1`.
+Next active recommendation: review/merge `Track 14F`, then execute `Multi-Arena Balance Baseline V1`.
 
 ### 1. Track 14A - Refactor Safety Net And Code Health Baseline V1
 
@@ -105,8 +106,10 @@ Goal:
 
 Expected scope:
 
-- Final metrics, docs and validation pass.
-- Decide the next gameplay track after hardening.
+- Delivered: removed dead private bot wrappers left after Track 14E.
+- Metrics: `arena_root.gd` 1524 lines, `basic_duel_bot.gd` 1142 lines, `bot_decision_model.gd` 295 lines.
+- Validation target stays `62/62`, `564 asserts`.
+- Next: `Multi-Arena Balance Baseline V1`.
 
 ## Gameplay Roadmap After Track 14
 

@@ -28,6 +28,7 @@ Football/TPS minigames are not part of this project. They live in `../JogoDaCopa
 - Track 14C moved combat telemetry payload construction and pure Plasma blast math into `modes/arena/arena_combat_pipeline.gd`.
 - Track 14D moved pickup state/respawn and jump pad cooldown/launch math into `modes/arena/arena_pickup_jump_pad_rules.gd`.
 - Track 14E moved bot item priority, tactical scoring and route-hold checks into `gameplay/bot/bot_decision_model.gd`.
+- Track 14F removed dead private wrappers left after the bot decision extraction and recorded the post-hardening code-size baseline.
 - `gameplay/bot/basic_duel_bot.gd` still owns movement execution, physics, aim execution and combat overlay.
 - `tests/unit/test_bootstrap.gd` is valuable but broad; future refactors should keep the coverage while moving new tests into narrower files when practical.
 - Future weapons, buffs and pickup rules should be planned before adding more combat branches to `arena_root.gd`.

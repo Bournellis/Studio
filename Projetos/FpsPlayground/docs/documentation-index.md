@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK14E_BOT_DECISION_BOUNDARY_APPROVED`
+- Status: `FPS_PLAYGROUND_TRACK14F_CLEANUP_DOCUMENTATION_LOCAL_VALIDATED`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -52,6 +52,7 @@
 - `../implementation/tracks/track-14c-combat-pipeline-extraction-v1/current-status.md`
 - `../implementation/tracks/track-14d-pickups-jump-pads-extraction-v1/current-status.md`
 - `../implementation/tracks/track-14e-bot-decision-boundary-v1/current-status.md`
+- `../implementation/tracks/track-14f-cleanup-documentation-v1/current-status.md`
 
 ## Historical Note
 

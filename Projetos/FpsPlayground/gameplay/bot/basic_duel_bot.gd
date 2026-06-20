@@ -607,9 +607,6 @@ func _get_target_visibility_points() -> Array[Vector3]:
 		target_lower_visibility_height
 	)
 
-func _append_unique_visibility_point(points: Array[Vector3], target_point: Vector3) -> void:
-	BotVisibilityPointsScript.append_unique_point(points, target_point)
-
 func _has_clear_visibility_to_point(target_point: Vector3) -> bool:
 	var origin := _get_shot_origin()
 	var query := PhysicsRayQueryParameters3D.create(origin, target_point)
@@ -630,9 +627,6 @@ func _build_aim_position(base_target_position: Vector3) -> Vector3:
 		aim_error_radius,
 		pattern
 	)
-
-func _aim_pattern(index: int) -> Vector2:
-	return BotAimModelScript.pattern_for_index(index)
 
 func _choose_reposition_destination() -> void:
 	var candidate_entries := _get_reposition_candidate_entries()
@@ -717,18 +711,6 @@ func _build_decision_context() -> Dictionary:
 		"recent_route_keys": recent_route_keys.duplicate(),
 		"blocked_route_timers": blocked_route_timers.duplicate()
 	}
-
-func _score_tactical_point(entry: Dictionary, index: int, total_count: int) -> float:
-	return BotDecisionModelScript.score_tactical_point(entry, index, total_count, _build_decision_context())
-
-func _score_tactical_role(role: StringName, point: Vector3, target_distance: float, travel_distance: float) -> float:
-	return BotDecisionModelScript.score_tactical_role(role, point, target_distance, travel_distance, _build_decision_context())
-
-func _label_for_tactical_role(role: StringName, point: Vector3) -> StringName:
-	return BotDecisionModelScript.label_for_tactical_role(role, point, _build_decision_context())
-
-func _recent_route_penalty(route_key: StringName, point: Vector3) -> float:
-	return BotDecisionModelScript.recent_route_penalty(route_key, point, _build_decision_context())
 
 func _remember_route_key(route_key: StringName) -> void:
 	if route_key == &"":

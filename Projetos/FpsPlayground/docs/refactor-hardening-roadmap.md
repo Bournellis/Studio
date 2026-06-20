@@ -1,8 +1,8 @@
 # Refactor Hardening Roadmap
 
-- Status: `Track 14E merged local bot decision boundary baseline`
+- Status: `Track 14F local validated cleanup/documentation baseline`
 - Scope: code hardening and reduction sequence for the approved Arena Shooter baseline.
-- Rule: Track 14A does not change gameplay, movement feel, jump pad force, map geometry, weapon values or bot decisions.
+- Rule: Track 14 did not change gameplay, movement feel, jump pad force, map geometry, weapon values or bot decisions.
 
 ## Why Now
 
@@ -14,6 +14,15 @@ The project is approved enough to keep expanding, but the next maps, weapons, bu
 - `gameplay/bot/basic_duel_bot.gd`: large behavior authority; owns route choice, local movement, item commitment, combat overlay and jump pad commitment.
 - `tests/unit/test_bootstrap.gd`: broad safety net; useful, but too centralized for future refactors.
 - `presentation/hud/arena_hud.gd`: acceptable now, but should not absorb more match/readout logic.
+
+Post-Track-14F code-size baseline:
+
+- `modes/arena/arena_root.gd`: 1524 lines.
+- `gameplay/bot/basic_duel_bot.gd`: 1142 lines.
+- `gameplay/bot/bot_decision_model.gd`: 295 lines.
+- `modes/arena/arena_combat_pipeline.gd`: 358 lines.
+- `modes/arena/arena_pickup_jump_pad_rules.gd`: 155 lines.
+- `modes/arena/arena_hud_snapshot_builder.gd`: 75 lines.
 
 ## Track 14 Sequence
 
@@ -47,9 +56,9 @@ The project is approved enough to keep expanding, but the next maps, weapons, bu
    - Next: `Track 14F - Cleanup And Documentation V1`.
 
 6. `Track 14F - Cleanup And Documentation V1`
-   - Remove duplicated transitional code.
-   - Rebaseline code-size metrics and docs.
-   - Decide whether to resume gameplay roadmap with multi-arena balance baseline or a smaller follow-up.
+   - Delivered: removed dead private bot wrappers left after Track 14E.
+   - Rebaselined code-size metrics and docs.
+   - Next: `Multi-Arena Balance Baseline V1`.
 
 ## Safety Gates
 

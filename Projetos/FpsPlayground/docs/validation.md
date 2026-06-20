@@ -57,6 +57,13 @@ PASS tools/validate.gd -- --profile=quick, GUT 62/62, 564 asserts
 PASS tools/validate.gd, GUT 62/62, 564 asserts
 ```
 
+Latest Track 14F validation:
+
+```text
+PASS tools/validate.gd -- --profile=quick, GUT 62/62, 564 asserts
+PASS tools/validate.gd, GUT 62/62, 564 asserts
+```
+
 Latest Track 11 human smoke:
 
 ```text
@@ -256,6 +263,13 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm bot still shoots as combat overlay without canceling item or jump pad routes.
 - Confirm player movement feel, jump pad force, map geometry, weapon values, pickups and aim difficulty are unchanged.
 - Confirm the next implementation step is `Track 14F - Cleanup And Documentation V1`.
+
+## Track 14F Cleanup And Documentation Smoke
+
+- Confirm `basic_duel_bot.gd` still delegates decision scoring to `bot_decision_model.gd`.
+- Confirm no gameplay, movement, jump pad, map, weapon, pickup, bot behavior or telemetry constants changed.
+- Confirm docs list `Multi-Arena Balance Baseline V1` as the next recommended gameplay step.
+- Confirm validation still passes at `62/62`, `564 asserts`.
 
 ## Known Noise
 
