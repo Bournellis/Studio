@@ -8,6 +8,7 @@ const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_poi
 const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 const ArenaHudSnapshotBuilderScript = preload("res://modes/arena/arena_hud_snapshot_builder.gd")
 const ArenaCombatPipelineScript = preload("res://modes/arena/arena_combat_pipeline.gd")
+const ArenaPickupJumpPadRulesScript = preload("res://modes/arena/arena_pickup_jump_pad_rules.gd")
 
 class MockVisibilityTarget:
 	extends Node3D
@@ -135,6 +136,62 @@ func test_arena_combat_pipeline_calculates_plasma_blast_contract() -> void:
 	assert_almost_eq(float(blast.get("damage", 0.0)), 8.887, 0.001)
 	assert_almost_eq(float(blast.get("knockback", 0.0)), 2.7, 0.001)
 	assert_almost_eq((blast.get("direction", Vector3.ZERO) as Vector3).distance_to(Vector3.BACK), 0.0, 0.001)
+
+func test_arena_pickup_jump_pad_rules_preserve_pickup_respawn_contract() -> void:
+	var pickup_node := Node3D.new()
+	add_child_autofree(pickup_node)
+	var state := ArenaPickupJumpPadRulesScript.build_pickup_state(pickup_node, Vector3(2.0, 0.5, -3.0))
+
+	assert_true(bool(state.get("available", false)))
+	assert_almost_eq(float(state.get("respawn_remaining", 1.0)), 0.0, 0.001)
+	assert_true(ArenaPickupJumpPadRulesScript.can_attempt_pickup(state, Vector3(2.0, 0.5, -3.5), 1.05))
+	assert_false(ArenaPickupJumpPadRulesScript.can_attempt_pickup(state, Vector3(2.0, 0.5, -4.2), 1.05))
+
+	state = ArenaPickupJumpPadRulesScript.set_pickup_available(state, false, 10.0)
+	assert_false(ArenaPickupJumpPadRulesScript.can_attempt_pickup(state, Vector3(2.0, 0.5, -3.0), 1.05))
+	var ticking: Dictionary = ArenaPickupJumpPadRulesScript.update_pickup_respawn(state, 4.0)
+	state = ticking.get("entry", {})
+	assert_false(bool(ticking.get("respawned", true)))
+	assert_almost_eq(float(state.get("respawn_remaining", 0.0)), 6.0, 0.001)
+
+	ticking = ArenaPickupJumpPadRulesScript.update_pickup_respawn(state, 6.0)
+	state = ticking.get("entry", {})
+	assert_true(bool(ticking.get("respawned", false)))
+	assert_true(bool(state.get("available", false)))
+	assert_almost_eq(float(state.get("respawn_remaining", 1.0)), 0.0, 0.001)
+	assert_almost_eq(ArenaPickupJumpPadRulesScript.get_pickup_respawn_duration(&"health", 10.0, 14.0), 10.0, 0.001)
+	assert_almost_eq(ArenaPickupJumpPadRulesScript.get_pickup_respawn_duration(&"overcharge", 10.0, 14.0), 14.0, 0.001)
+
+func test_arena_pickup_jump_pad_rules_preserve_jump_pad_contract() -> void:
+	var pad := ArenaPickupJumpPadRulesScript.normalize_jump_pad_state({
+		"id": &"test_pad",
+		"position": Vector3.ZERO,
+		"target": Vector3(0.0, 3.05, 8.0)
+	})
+
+	assert_eq(ArenaPickupJumpPadRulesScript.get_jump_pad_cooldown_key(&"player"), "player_cooldown")
+	assert_eq(ArenaPickupJumpPadRulesScript.get_jump_pad_cooldown_key(&"bot"), "bot_cooldown")
+	assert_true(ArenaPickupJumpPadRulesScript.can_trigger_jump_pad(pad, &"player", Vector3(0.6, 0.1, 0.6), false, 1.25))
+	assert_false(ArenaPickupJumpPadRulesScript.can_trigger_jump_pad(pad, &"player", Vector3(2.0, 0.1, 0.0), false, 1.25))
+	assert_false(ArenaPickupJumpPadRulesScript.can_trigger_jump_pad(pad, &"player", Vector3(0.0, 1.2, 0.0), false, 1.25))
+	assert_false(ArenaPickupJumpPadRulesScript.can_trigger_jump_pad(pad, &"player", Vector3.ZERO, true, 1.25))
+
+	var launch_velocity := ArenaPickupJumpPadRulesScript.build_jump_pad_launch_velocity(pad, 5.8, 8.4)
+	assert_almost_eq(launch_velocity.y, 8.4, 0.001)
+	assert_almost_eq(Vector2(launch_velocity.x, launch_velocity.z).length(), 5.8, 0.001)
+
+	pad = ArenaPickupJumpPadRulesScript.mark_jump_pad_triggered(pad, &"player", 0.64)
+	assert_false(ArenaPickupJumpPadRulesScript.can_trigger_jump_pad(pad, &"player", Vector3.ZERO, false, 1.25))
+	pad = ArenaPickupJumpPadRulesScript.update_jump_pad_cooldowns(pad, 0.24)
+	assert_almost_eq(float(pad.get("player_cooldown", 0.0)), 0.4, 0.001)
+	pad = ArenaPickupJumpPadRulesScript.reset_jump_pad_cooldowns(pad)
+	assert_almost_eq(float(pad.get("player_cooldown", 1.0)), 0.0, 0.001)
+	assert_almost_eq(float(pad.get("bot_cooldown", 1.0)), 0.0, 0.001)
+
+	var payload := ArenaPickupJumpPadRulesScript.build_jump_pad_triggered_payload(&"bot", pad, launch_velocity)
+	assert_eq(payload.get("actor", &""), &"bot")
+	assert_eq(payload.get("pad_id", &""), &"test_pad")
+	assert_eq(payload.get("target", Vector3.ZERO), Vector3(0.0, 3.05, 8.0))
 
 func test_arena_hud_snapshot_builder_preserves_duel_status_contract() -> void:
 	var snapshot := ArenaHudSnapshotBuilderScript.build_snapshot({

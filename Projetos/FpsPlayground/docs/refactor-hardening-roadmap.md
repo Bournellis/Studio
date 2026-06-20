@@ -1,6 +1,6 @@
 # Refactor Hardening Roadmap
 
-- Status: `Track 14C local validated combat pipeline baseline`
+- Status: `Track 14D local validated pickups/jump pads baseline`
 - Scope: code hardening and reduction sequence for the approved Arena Shooter baseline.
 - Rule: Track 14A does not change gameplay, movement feel, jump pad force, map geometry, weapon values or bot decisions.
 
@@ -36,8 +36,9 @@ The project is approved enough to keep expanding, but the next maps, weapons, bu
    - Next: `Track 14D - Pickups And Jump Pads Extraction V1`.
 
 4. `Track 14D - Pickups And Jump Pads Extraction V1`
-   - Extract health, overcharge and jump pad runtime handling.
-   - Preserve approved jump pad force, pickup behavior and bot route commitment.
+   - Delivered: `ArenaPickupJumpPadRules` owns pickup state/respawn helpers and jump pad cooldown/launch math.
+   - Preserved approved jump pad force, pickup behavior and bot route commitment.
+   - No gameplay tuning.
    - Next: `Track 14E - Bot Decision Boundary V1`.
 
 5. `Track 14E - Bot Decision Boundary V1`
