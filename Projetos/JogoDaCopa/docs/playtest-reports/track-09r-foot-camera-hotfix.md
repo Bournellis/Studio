@@ -3,7 +3,7 @@
 - Date: 2026-06-19
 - Branch: `codex/jogodacopa/track09r-foot-camera-hotfix-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track09r-foot-camera-hotfix-v1`
-- Status: local hotfix validated; not published.
+- Status: local hotfix validated, then published as `v1.2.1+33ba1a2b`; human retest pending.
 
 ## Scope
 
@@ -65,9 +65,10 @@ After the fix:
 ## Coordination
 
 - 09Q public retest was approved by Fabio/tester before this hotfix.
-- 09R remains local until Fabio/tester approves the hotfix candidate for publication.
-- Reductions should remain paused until the foot/camera hotfix is accepted or rejected.
+- 09R was later published on Cloudflare Pages after local approval and automated remote gates passed.
+- 09Q remains the latest human-approved fallback until Fabio/tester approves the public 09R build.
+- Reductions should remain paused until the public foot/camera hotfix is accepted or rejected.
 
 ## Next Step
 
-Merge locally after green checks, then Fabio tests the 09R candidate. If approved, publish 09R before resuming `FootballRoot` reductions.
+Fabio/tester should retest the public 09R build. If approved, record 09R as the human-approved baseline before resuming `FootballRoot` reductions.
