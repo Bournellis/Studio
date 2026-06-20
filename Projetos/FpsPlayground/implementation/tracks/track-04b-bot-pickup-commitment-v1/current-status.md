@@ -1,6 +1,6 @@
 # Track 04B - Bot Pickup Commitment V1
 
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `DELIVERED`
 - Started: `2026-06-15`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track04b-bot-pickup-commitment-v1`

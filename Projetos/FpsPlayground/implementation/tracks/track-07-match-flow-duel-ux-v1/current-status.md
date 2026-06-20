@@ -1,6 +1,6 @@
 # Track 07 - Match Flow And Duel UX V1
 
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED_BASELINE`
 - Executed: `2026-06-19`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track07-match-flow-duel-ux-v1`

@@ -4,7 +4,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 
 ## Foco Atual
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09P publicada com gates remotos PASS; aguardando reteste humano; 09N segue fallback aprovado) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 12 telemetry readout pronta para smoke; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09P publicada com gates remotos PASS; aguardando reteste humano; 09N segue fallback aprovado) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 13 documentacao futura completa; Track 12 aprovada; movimento atual preservado)
 - Pausa temporaria por poucos dias: `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -16,7 +16,7 @@ Este documento e a fonte de verdade de portfolio para agentes e para coordenacao
 | P0 TEMP | JogoDaCopa | `Projetos/JogoDaCopa/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | Track 09P publicada com gates remotos PASS; proximo passo: reteste humano antes de nova reducao |
 | Pausa | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_TEMPORARIO` | Consulta historica e retomada explicita apenas | Retomar quando o foco temporario encerrar |
 | Ativo | DraxosMobile | `Projetos/draxos-mobile/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest, documentacao local e infraestrutura | Arena Runtime Config Sync Ready v3 publicado Web/APK/PC `0.0.27-alpha.0` / vc `27`; proximo passo e prova humana do roteiro Arena antes de tuning, PVP, economia, conteudo ou expansao |
-| Ativo | FpsPlayground | `Projetos/FpsPlayground/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | Smoke humano da Track 12 telemetry readout; preservar feel atual do player |
+| Ativo | FpsPlayground | `Projetos/FpsPlayground/` | `P2_IMPLEMENTACAO` | Codigo, design, validacao, playtest no editor e documentacao local | Revisar roadmap futuro e escolher a proxima track entre baseline multi-arena, contratos de arsenal/buffs ou novo gameplay preservando o feel atual |
 | Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - |
 | Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado |
 | Pausado | RPG Turnos | `Projetos/rpg-turnos/` | `PAUSADO_INDEFINIDO` | Consulta historica quando solicitado | Nenhum enquanto pausado |

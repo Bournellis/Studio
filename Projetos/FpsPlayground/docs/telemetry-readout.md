@@ -1,6 +1,6 @@
 # FpsPlayground Telemetry Readout
 
-- Status: Track 12 ready for human smoke.
+- Status: Track 12 approved; Track 13 documentation rebaseline complete.
 - Scope: local report tool for Track 11 telemetry sessions.
 - Runner: `res://tools/telemetry_readout.gd`.
 - Analyzer: `res://gameplay/telemetry/telemetry_readout_analyzer.gd`.
@@ -35,4 +35,6 @@ Use `--json` for the full structured readout.
 
 ## Human Use
 
-The readout is evidence, not automatic tuning. Use it to choose the next track, then confirm changes through playtest. Track 12 must not alter movement, maps, jump pads, weapons, pickups or bot behavior.
+The readout is evidence, not automatic tuning. Use it to choose the next track, then confirm changes through playtest. Track 12 did not alter movement, maps, jump pads, weapons, pickups or bot behavior.
+
+The recommended next use is `Track 14 - Multi-Arena Balance Baseline V1`: compare readouts from all current arenas before changing weapon values, pickups, buffs, bot behavior or map geometry.

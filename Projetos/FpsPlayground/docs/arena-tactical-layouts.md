@@ -74,6 +74,22 @@ Automated tests should protect these contracts:
 - jump pads keep minimum flat distance from their target so the pad does not feel glued to the platform;
 - jump pads keep enough flat approach clearance from nearby high platforms.
 
+## Future Arena Checklist
+
+Before implementing a new arena, define:
+
+- intended duel rhythm: compact pressure, wide timing, vertical control or risk/reward route race;
+- one primary ground loop that the player can run without stopping on geometry;
+- at least two meaningful item decisions, usually health and overcharge on different routes;
+- spawn positions that are readable, safe enough to start and fast enough to re-engage;
+- sightline breaks that create choices without turning every fight into corner peeking;
+- jump pad approach lanes with no cover pieces, low ceilings or platform edges in the natural entry path;
+- landing zones with enough horizontal margin to recover movement;
+- route labels shared by jump pad entries, landings and high-ground tactical points;
+- telemetry expectations for pickup contest, route diversity, jump pad trigger/landing parity and combat source mix.
+
+Do not add an arena only to increase count. Each new layout should teach the bot and player a different movement rhythm from the existing three.
+
 ## Track 03 Validation
 
 - Tests must assert that both active layouts publish different context labels.

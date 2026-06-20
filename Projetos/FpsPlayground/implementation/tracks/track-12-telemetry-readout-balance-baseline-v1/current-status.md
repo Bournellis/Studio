@@ -1,6 +1,6 @@
 # Track 12 - Telemetry Readout And Balance Baseline V1
 
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED_BY_FABIO`
 - Started: `2026-06-19`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track12-telemetry-readout-balance-baseline-v1`

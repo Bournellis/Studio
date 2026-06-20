@@ -11,8 +11,9 @@ It was split from the former `Projetos/FpsShooter` project on 2026-06-10. The fo
 Current identity:
 
 - first-person playground tech probe;
-- local `Arena Shooter` 1x1 mode against a bot;
-- `Duel Pit V2` arena baseline with rifle, Plasma Bolt, pickups, jump pads, bot pressure and knockback;
+- local `Arena Shooter` 1x1 duel mode against a route-first bot;
+- three arena baseline: `Duel Pit V2`, `Relay Foundry V1` and `Crossfire Crucible V1`;
+- rifle, Plasma Bolt, Plasma Blast, overcharge, health pickups, jump pads, duel flow, local telemetry and readout tooling;
 - PC Windows editor-first only;
 - no football/TPS minigame scope.
 
@@ -55,6 +56,7 @@ For most work:
 - `gameplay/player/`: FPS movement, camera, aiming, rifle shooting and alt-fire requests.
 - `gameplay/bot/`: arena bot movement and shooting behavior.
 - `gameplay/arena/`: arena rule helpers.
+- `gameplay/telemetry/`: local arena telemetry recorder and readout analysis.
 - `modes/menu/`: FpsPlayground mode entry.
 - `modes/arena/`: arena assembly, round state and hit/projectile resolution.
 - `modes/shared/`: shared runtime primitive creation.

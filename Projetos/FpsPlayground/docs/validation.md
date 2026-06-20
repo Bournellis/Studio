@@ -6,10 +6,18 @@
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
 ```
 
-Latest Track 12 local result:
+Latest gameplay validation baseline:
 
 ```text
 PASS, GUT 53/53, 496 asserts
+```
+
+Latest Track 13 documentation validation:
+
+```text
+git diff --check: PASS
+check_doc_drift.ps1: PASS
+validate.gd: PASS, GUT 53/53, 496 asserts
 ```
 
 Latest Track 11 human smoke:

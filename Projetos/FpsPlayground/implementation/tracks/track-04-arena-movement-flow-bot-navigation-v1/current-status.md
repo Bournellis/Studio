@@ -1,6 +1,6 @@
 # Track 04 - Arena Movement Flow And Bot Navigation V1
 
-- Status: `READY_FOR_HUMAN_SMOKE`
+- Status: `APPROVED_BY_FABIO`
 - Started: `2026-06-15`
 - Owner: Codex
 - Branch: `codex/fpsplayground/track04-arena-movement-flow-bot-navigation-v1`
