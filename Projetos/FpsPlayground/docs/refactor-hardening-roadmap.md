@@ -1,6 +1,6 @@
 # Refactor Hardening Roadmap
 
-- Status: `Track 14F merged local cleanup/documentation baseline`
+- Status: `Track 14G surgical expansion hardening in progress`
 - Scope: code hardening and reduction sequence for the approved Arena Shooter baseline.
 - Rule: Track 14 did not change gameplay, movement feel, jump pad force, map geometry, weapon values or bot decisions.
 
@@ -58,6 +58,11 @@ Post-Track-14F code-size baseline:
 6. `Track 14F - Cleanup And Documentation V1`
    - Delivered: removed dead private bot wrappers left after Track 14E.
    - Rebaselined code-size metrics and docs.
+   - Next: `Track 14G - Surgical Expansion Hardening V1`.
+
+7. `Track 14G - Surgical Expansion Hardening V1`
+   - Scope: small expansion boundaries for bot movement execution, projectile runtime, HUD feedback state and telemetry event emission.
+   - Rule: no gameplay, movement feel, map, weapon, pickup, jump pad, bot decision or telemetry schema change.
    - Next: `Multi-Arena Balance Baseline V1`.
 
 ## Safety Gates

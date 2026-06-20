@@ -4,9 +4,9 @@
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
-- Active stage: `Post-Track14F Baseline`
-- Active stage status: `MERGED_LOCAL`
-- Status marker: `FPS_PLAYGROUND_TRACK14F_MERGED_LOCAL_BASELINE`
+- Active stage: `Track 14G - Surgical Expansion Hardening V1`
+- Active stage status: `IN_PROGRESS`
+- Status marker: `FPS_PLAYGROUND_TRACK14G_SURGICAL_HARDENING_IN_PROGRESS`
 
 ## Current Truth
 
@@ -14,7 +14,7 @@
 
 The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning, local duel telemetry, telemetry readout tooling and the pre-Track-08 player movement feel preserved.
 
-Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. Track 14D extracted pickup and jump pad rules into `arena_pickup_jump_pad_rules.gd`. Track 14E extracted bot decision scoring into `bot_decision_model.gd`. Track 14F closed the hardening sequence with small dead-wrapper cleanup and code-size metrics. No gameplay values changed in Track 13, 14A, 14B, 14C, 14D, 14E or 14F.
+Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. Track 14D extracted pickup and jump pad rules into `arena_pickup_jump_pad_rules.gd`. Track 14E extracted bot decision scoring into `bot_decision_model.gd`. Track 14F closed the hardening sequence with small dead-wrapper cleanup and code-size metrics. Track 14G is a surgical follow-up for expansion boundaries. No gameplay values changed in Track 13, 14A, 14B, 14C, 14D, 14E or 14F.
 
 ## Current Scope
 
@@ -67,9 +67,9 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 
 ## Next Sequence
 
-1. Execute `Multi-Arena Balance Baseline V1`.
-2. Choose arsenal/buff contracts, tuning or bot intelligence only after the multi-arena readout.
-3. Keep further hardening/refactor scoped to implementation hotspots only when it protects the next gameplay track.
+1. Complete `Track 14G - Surgical Expansion Hardening V1`.
+2. Execute `Multi-Arena Balance Baseline V1`.
+3. Choose arsenal/buff contracts, tuning or bot intelligence only after the multi-arena readout.
 
 ## Validation
 
@@ -93,4 +93,4 @@ Manual smoke lives in `docs/validation.md`.
 9. `docs/telemetry.md`
 10. `docs/telemetry-readout.md`
 11. `docs/balance-baseline.md`
-12. `implementation/tracks/track-14f-cleanup-documentation-v1/current-status.md`
+12. `implementation/tracks/track-14g-surgical-expansion-hardening-v1/current-status.md`

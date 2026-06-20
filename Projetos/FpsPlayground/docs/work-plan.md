@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK14F_MERGED_LOCAL_BASELINE`
+- Status: `FPS_PLAYGROUND_TRACK14G_SURGICAL_HARDENING_IN_PROGRESS`
 - Current surface: FPS arena lab.
-- Current baseline: Track 14F merged local baseline; current player movement feel preserved.
+- Current baseline: Track 14F merged local baseline; Track 14G surgical hardening in progress; current player movement feel preserved.
 
 ## North Star
 
@@ -34,7 +34,7 @@ The Track 14 hardening sequence is complete enough to resume evidence-first game
 
 ## Recommended Next Tracks
 
-Next active recommendation: execute `Multi-Arena Balance Baseline V1`.
+Next active recommendation: complete `Track 14G - Surgical Expansion Hardening V1`, then execute `Multi-Arena Balance Baseline V1`.
 
 ### 1. Track 14A - Refactor Safety Net And Code Health Baseline V1
 
@@ -109,6 +109,20 @@ Expected scope:
 - Delivered: removed dead private bot wrappers left after Track 14E.
 - Metrics: `arena_root.gd` 1524 lines, `basic_duel_bot.gd` 1142 lines, `bot_decision_model.gd` 295 lines.
 - Validation target stays `62/62`, `564 asserts`.
+- Next: `Multi-Arena Balance Baseline V1`.
+
+### 7. Track 14G - Surgical Expansion Hardening V1
+
+Goal:
+
+- Add small implementation boundaries around the remaining expansion hotspots without changing gameplay.
+
+Expected scope:
+
+- Bot movement executor boundary.
+- Arena projectile runtime boundary.
+- HUD feedback state boundary.
+- Telemetry event facade.
 - Next: `Multi-Arena Balance Baseline V1`.
 
 ## Gameplay Roadmap After Track 14
