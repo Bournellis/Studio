@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (09Q local validada; 09P baseline publica aprovada; 09N fallback historico aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 13 documentacao futura completa; Track 12 aprovada; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (09Q local validada; 09P baseline publica aprovada; 09N fallback historico aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14A safety net/refactor local validada; Track 12 aprovada; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -44,13 +44,13 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK13_DOCS_REBASELINE_FUTURE_ROADMAP_COMPLETE`
-- Marker: `FPS_PLAYGROUND_TRACK13_DOCS_REBASELINE_FUTURE_ROADMAP_COMPLETE`
-- Baseline: Track 12 telemetry/readout aprovada; Track 13 rebaselineou docs vivos e criou roadmap futuro para mapas, armas, buffs, pickups, bot e telemetria sem alterar gameplay.
+- Status: `P2_IMPLEMENTACAO - TRACK14A_REFACTOR_SAFETY_NET_LOCAL_VALIDATED`
+- Marker: `FPS_PLAYGROUND_TRACK14A_REFACTOR_SAFETY_NET_LOCAL_VALIDATED`
+- Baseline: Track 12 telemetry/readout aprovada; Track 13 rebaselineou docs vivos; Track 14A prepara safety net e sequencia 14A-14F antes de novas expansoes.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
 - Validacao: `tools/validate.gd` PASS `53/53`, `496 asserts`; docs `check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: escolher a proxima track pelo roadmap futuro, preferindo baseline multi-arena antes de tuning de armas/buffs.
+- Proximo passo: Fabio revisar/autorizar merge da Track 14A; depois executar `Track 14B - Arena Root Boundary V1`.
 
 ## rpg-isometrico
 

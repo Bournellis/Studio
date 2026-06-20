@@ -124,11 +124,15 @@ Do not treat one session as balance truth. Use repeated signals across arenas be
 
 ## Recommended Sequence
 
-1. `Track 14 - Multi-Arena Balance Baseline V1`
-2. `Track 15 - Arsenal And Buff Contracts V1`
-3. `Track 16 - Combat Tuning V1`
-4. `Track 17 - Arena Production Rules V1`
-5. `Track 18 - Bot Duel Intelligence V2`
+Track 14 is now reserved for the hardening/refactor sequence in `refactor-hardening-roadmap.md`.
+
+Recommended gameplay sequence after Track 14:
+
+1. `Multi-Arena Balance Baseline V1`
+2. `Arsenal And Buff Contracts V1`
+3. `Combat Tuning V1`
+4. `Arena Production Rules V1`
+5. `Bot Duel Intelligence V2`
 
 ## Explicitly Out Of Scope
 

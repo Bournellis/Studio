@@ -24,6 +24,8 @@ Football/TPS minigames are not part of this project. They live in `../JogoDaCopa
 ## Current Risk Areas
 
 - `modes/arena/arena_root.gd` remains the largest runtime authority object.
+- `gameplay/bot/basic_duel_bot.gd` is the next largest behavior authority and should be split only after arena root boundaries are safer.
+- `tests/unit/test_bootstrap.gd` is valuable but broad; future refactors should keep the coverage while moving new tests into narrower files when practical.
 - Future weapons, buffs and pickup rules should be planned before adding more combat branches to `arena_root.gd`.
 - Telemetry should stay local and gameplay-neutral unless a future analytics track explicitly changes that.
 
@@ -33,3 +35,4 @@ Football/TPS minigames are not part of this project. They live in `../JogoDaCopa
 - Keep bot behavior driven by arena tactical context, not map ids.
 - Keep combat role contracts testable before adding new weapon inputs or UI.
 - Prefer small extraction tracks when `arena_root.gd` receives a new responsibility.
+- Follow `docs/refactor-hardening-roadmap.md` before resuming new gameplay content.

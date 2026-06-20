@@ -20,6 +20,15 @@ check_doc_drift.ps1: PASS
 validate.gd: PASS, GUT 53/53, 496 asserts
 ```
 
+Track 14A validation target:
+
+```text
+PASS git diff --check
+PASS tools/check_doc_drift.ps1
+PASS tools/validate.gd -- --profile=quick, GUT 53/53, 496 asserts
+PASS tools/validate.gd, GUT 53/53, 496 asserts
+```
+
 Latest Track 11 human smoke:
 
 ```text
@@ -180,6 +189,13 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm the report calls out useful balance watch items without requiring raw JSON inspection.
 - Confirm `--json` emits a structured readout for future automation.
 - Confirm no gameplay feel changed.
+
+## Track 14A Refactor Safety Net Smoke
+
+- Confirm `docs/refactor-hardening-roadmap.md` documents Tracks 14A-14F and the next step after each subtrack.
+- Confirm jump pad tests describe the approved force contract, not a temporary old-force rollback.
+- Confirm validation still passes without gameplay, movement, jump pad, map, weapon, pickup or bot behavior changes.
+- Confirm the next implementation step is `Track 14B - Arena Root Boundary V1`.
 
 ## Known Noise
 

@@ -37,4 +37,4 @@ Use `--json` for the full structured readout.
 
 The readout is evidence, not automatic tuning. Use it to choose the next track, then confirm changes through playtest. Track 12 did not alter movement, maps, jump pads, weapons, pickups or bot behavior.
 
-The recommended next use is `Track 14 - Multi-Arena Balance Baseline V1`: compare readouts from all current arenas before changing weapon values, pickups, buffs, bot behavior or map geometry.
+The recommended gameplay use after the Track 14 hardening sequence is `Multi-Arena Balance Baseline V1`: compare readouts from all current arenas before changing weapon values, pickups, buffs, bot behavior or map geometry.
