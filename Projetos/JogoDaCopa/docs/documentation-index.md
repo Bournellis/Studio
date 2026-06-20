@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK09P_PUBLISHED_APPROVED`
+- Status: `JOGO_DA_COPA_TRACK09Q_LOCAL_VALIDATED`
 - Documentation baseline: `TRACK09O_DOCUMENTATION_REBASELINE_V1`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
@@ -59,6 +59,9 @@
 
 ## Track 09 Reduction And Heap Evidence
 
+- Track 09Q presentation FX controller closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09q-football-presentation-fx-controller-v1.md`
+- Track 09Q presentation FX controller report: `playtest-reports/track-09q-football-presentation-fx-controller.md`
+- Track 09Q evidence: `playtest-reports/track-09q-data/`
 - Track 09P session UI controller closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09p-session-ui-controller-v1.md`
 - Track 09P session UI controller report: `playtest-reports/track-09p-session-ui-controller.md`
 - Track 09P evidence: `playtest-reports/track-09p-data/`

@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK09P_PUBLISHED_APPROVED`
+- Status: `JOGO_DA_COPA_TRACK09Q_LOCAL_VALIDATED`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -39,16 +39,17 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09N Render Settings Controller V1 extracted render/settings orchestration into `football_render_settings_controller.gd`; `FootballRoot` in the current approved public base fell from `1079` to `1051` lines; local validate/export/gzip/Web probe, pre-publication A/B, remote menu, first-minute, stability, luma and human retest gates passed.
 - Track 09O Documentation Rebaseline V1 cleaned the documentation map after 09N so living docs, historical plans and raw evidence no longer compete as sources of next-step truth.
 - Track 09P Football Session UI Controller V1 extracted intro/pause/menu session flow, ESC target routing, match start, main-menu return and mouse-capture policy into `football_session_ui_controller.gd`; `FootballRoot` fell from `1051` to `974` lines; local import, validate/export/gzip, 90s Chrome Web smoke, remote menu, remote first-minute, remote 5-minute stability, remote luma and human retest gates passed. It is published and approved as `Super Campeao v1.2.1+8863c5b9`; 09N remains the historical approved fallback.
+- Track 09Q Football Presentation FX Controller V1 extracted presentation-only arcade emote, boost/skid VFX, goal slow-mo/camera shake, appearance cycling and avatar movement-state updates into `football_presentation_fx_controller.gd`; `FootballRoot` fell from `974` to `919` lines; local import, validate/export/gzip, 90s Chrome Web smoke and doc gates passed. It is not published; 09P remains the approved public baseline.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Track 09P is the current approved public baseline at `Super Campeao v1.2.1+8863c5b9`. Automated remote gates and Fabio/tester human retest passed; Track 09N remains the historical approved fallback baseline behind 09P.
+Track 09Q is the current local validated candidate. Track 09P remains the approved public baseline at `Super Campeao v1.2.1+8863c5b9`; Track 09N remains the historical approved fallback baseline behind 09P.
 
 Focus:
 
-- Plan the next conservative `FootballRoot` reduction or re-evaluate the architecture before opening another slice.
+- Decide whether to publish/test Track 09Q or stop for another architecture re-evaluation.
 - Keep 09N as the historical approved fallback baseline behind 09P.
 - Prefer orchestration slices that do not alter gameplay, physics, input, bot decisions or assets.
 - Preserve existing GUT coverage and add/retarget focused tests when moving public helper contracts.
@@ -135,6 +136,14 @@ Focus:
 - Local gates passed: import headless, `tools/validate.gd`, Web export, gzip `30.60 MiB / 50.00 MiB`, Chrome local 90s Web smoke with `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0` and `js_heap_growth -1.26%`.
 - Published as `Super Campeao v1.2.1+8863c5b9`; remote menu, first-minute, stability 5min, luma and human retest gates passed.
 - Human retest was approved by Fabio/tester on 2026-06-19; 09P is the current approved public baseline and 09N remains the historical approved fallback.
+
+## Completed Track 09Q - Football Presentation FX Controller V1
+
+- Extracted presentation-only arcade emote, boost/skid VFX, goal slow-mo/camera shake, appearance cycling and avatar movement-state updates into `modes/football/football_presentation_fx_controller.gd`.
+- Preserved gameplay, physics, bot, ball contact, kick/SUPER, scoring, HUD visual, assets, tuning, Web loading and `_physics_process` ordering.
+- Measured reduction in the local candidate: `FootballRoot` `974 -> 919` lines; new controller `98` lines.
+- Local gates passed: import headless, `tools/validate.gd`, Web export, gzip `30.61 MiB / 50.00 MiB`, `node --check tools/track04f_chrome_probe.mjs`, Chrome local 90s Web smoke with `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0` and `js_heap_growth -10.20%`.
+- Track 09Q is not published; 09P remains the current approved public baseline until 09Q is published, passes remote gates and human retest.
 
 ## Out Of Scope
 
