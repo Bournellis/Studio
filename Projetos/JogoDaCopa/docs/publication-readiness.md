@@ -1,6 +1,6 @@
 # JogoDaCopa Publication Readiness
 
-Current state: `Super Campeao v1.2.1+fc3c72bb` is published publicly on Cloudflare Pages after automated remote menu, first-minute, 5-minute stability and night luma gates passed. Fabio/tester human retest is pending. Track 09S remains the latest human-approved fallback baseline.
+Current state: `Super Campeao v1.2.1+fc3c72bb` is the approved public Cloudflare Pages baseline after automated remote menu, first-minute, 5-minute stability, night luma and Fabio/tester human retest gates passed. Track 09S remains the latest approved fallback baseline behind 10A.
 
 ## Product Identity
 
@@ -28,8 +28,8 @@ Current state: `Super Campeao v1.2.1+fc3c72bb` is published publicly on Cloudfla
 - Remote first-minute evidence: `docs/playtest-reports/track-10a-data/10a-remote-first-minute-fc3c72bb.json` and `docs/playtest-reports/track-10a-data/10a-remote-first-minute-fc3c72bb.png`.
 - Remote 5-minute stability evidence: `docs/playtest-reports/track-10a-data/10a-remote-stability-5min-fc3c72bb.json` and `docs/playtest-reports/track-10a-data/10a-remote-stability-5min-fc3c72bb.png`.
 - Remote night luma evidence: `docs/playtest-reports/track-10a-data/10a-remote-night-luma-gate-fc3c72bb.json`.
-- Human retest: pending.
-- Fallback evidence: Track 09S evidence remains in `docs/playtest-reports/track-09s-data/` as the latest human-approved fallback.
+- Human retest: approved by Fabio/tester on 2026-06-20.
+- Fallback evidence: Track 09S evidence remains in `docs/playtest-reports/track-09s-data/` as the latest approved fallback behind 10A.
 - No Cloudflare Access gate was observed; the public URL served the Godot app directly.
 
 ## Packaging
@@ -55,7 +55,7 @@ Current state: `Super Campeao v1.2.1+fc3c72bb` is published publicly on Cloudfla
 
 ## Track 10A HUD Pause Menu Decomposition Publication - 2026-06-20
 
-- Candidate status: public Web candidate with automated remote gates passed; human retest pending.
+- Candidate status: approved public baseline.
 - Change: published the validated HUD pause menu decomposition into `football_hud_pause_menu_controller.gd`.
 - Gameplay impact: HUD construction/refactor only; no gameplay, camera, physics, movement, bot, ball, scoring, SUPER, field builder, assets or tuning changes.
 - `tools/validate.gd`: PASS, `107` tests, `1835` asserts, `62` source files checked.
@@ -66,7 +66,7 @@ Current state: `Super Campeao v1.2.1+fc3c72bb` is published publicly on Cloudfla
 - Remote stability 5min: PASS, `js_heap_growth +8.34%`, peak `+13.88%`, `wasmSampleCount=0`.
 - Remote night luma: PASS, `6.525 < 90`.
 - Evidence: `docs/playtest-reports/track-10a-publication.md` and `docs/playtest-reports/track-10a-data/`.
-- Publication follow-up: Fabio/tester human retest on the public URL; 09S remains the latest human-approved fallback until 10A is approved.
+- Publication follow-up: Fabio/tester human retest approved the public URL on 2026-06-20; 09S remains the latest approved fallback behind 10A.
 
 ## Track 09S Camera Strafe Smoothing Hotfix Publication - 2026-06-20
 
@@ -85,7 +85,7 @@ Current state: `Super Campeao v1.2.1+fc3c72bb` is published publicly on Cloudfla
 
 ## Track 09R Foot And Camera Hotfix Publication - 2026-06-20
 
-- Candidate status: public Web candidate with automated remote gates passed; human retest pending.
+- Candidate status: superseded before human approval.
 - Change: published the already validated hotfix for visible avatar feet entering the field plane and odd chase-camera pull/tilt during lateral A/D strafe.
 - Gameplay impact: presentation/camera only; no gameplay collision, physics, scoring, bot, SUPER, HUD, assets or match tuning changes.
 - `tools/validate.gd`: PASS, `106` tests, `1831` asserts, `60` source files checked.
@@ -96,7 +96,7 @@ Current state: `Super Campeao v1.2.1+fc3c72bb` is published publicly on Cloudfla
 - Remote stability 5min: PASS, `js_heap_growth +8.33%`, peak `+13.68%`, `total_js_heap_growth +8.04%`, `wasmSampleCount=0`.
 - Remote night luma: PASS, `6.525 < 90`.
 - Evidence: `docs/playtest-reports/track-09r-publication.md` and `docs/playtest-reports/track-09r-data/`.
-- Publication follow-up: Fabio/tester human retest on the public URL; 09Q remains the latest human-approved fallback until 09R is approved.
+- Publication follow-up: Fabio/tester reported the residual quick `A/D` camera perception issue; 09R was superseded by 09S before approval.
 
 ## Track 09Q Presentation FX Controller Publication - 2026-06-19
 
@@ -202,14 +202,15 @@ Current state: `Super Campeao v1.2.1+fc3c72bb` is published publicly on Cloudfla
 
 ## Known Limitations
 
-- Track 09S is published and human-approved.
+- Track 10A is published and human-approved.
+- Track 09S is the latest approved fallback behind 10A.
 - Track 09R passed automated gates but was superseded by 09S before human approval because of the residual quick `A/D` camera perception issue.
-- Track 09Q is the latest approved fallback baseline behind 09S.
+- Track 09Q is the approved fallback baseline behind 09S.
 - Track 09P remains the latest fallback baseline behind 09Q.
 - Track 09N remains the historical approved fallback baseline behind 09P.
 - Track 09I remains the historical approved fallback baseline behind 09N.
 - Track 09J is locally validated and merged locally, but its 2026-06-19 publication attempt failed the remote JS/WASM heap gate twice and was rolled back to 09I.
-- Web heap margin is green on 09S (`+8.63%` against `<10%`) but close enough to the gate to deserve caution; keep the 5-minute stability gate mandatory for every release and treat near-threshold attempts as audit signals.
+- Web heap margin is green on 10A (`+8.34%` against `<10%`) but close enough to the gate to deserve caution; keep the 5-minute stability gate mandatory for every release and treat near-threshold attempts as audit signals.
 - Desktop browser is the official Web V1 surface; mobile browser can be observed manually, but is not an official support target in this release.
 - Country kits and branding are generic/inspired; no official FIFA, World Cup, federation or club logos are included.
 - No multiplayer, backend, analytics, custom domain, itch.io page or signed Windows release is included in this track.

@@ -5,7 +5,7 @@
 - Deployment URL: `https://7a022fe8.copa-arena-futebol.pages.dev`
 - Release: `Super Campeao v1.2.1+fc3c72bb`
 - Release root: `web/v1-copa-arena-futebol-20260620-fc3c72bb`
-- Status: automated remote gates PASS, human retest pending
+- Status: automated remote gates PASS, human retest approved
 
 ## Scope
 
@@ -43,4 +43,4 @@ No gameplay, camera, physics, movement, bot, ball, scoring, SUPER, field builder
 
 ## Follow-Up
 
-Fabio/tester human retest is pending on the public URL. Track 09S remains the latest human-approved fallback baseline until 10A is explicitly approved.
+Fabio/tester human retest approved the public URL on 2026-06-20. Track 10A is the current human-approved public baseline, and Track 09S remains the latest approved fallback behind it.

@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK10A_PUBLISHED_PENDING_HUMAN`
+- Status: `JOGO_DA_COPA_TRACK10A_HUMAN_APPROVED`
 - Documentation baseline: `TRACK09O_DOCUMENTATION_REBASELINE_V1`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
