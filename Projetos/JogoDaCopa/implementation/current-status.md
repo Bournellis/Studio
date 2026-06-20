@@ -5,18 +5,18 @@
 - Product/module name: `Super Campeao`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
-- Public baseline: `Super Campeao v1.2.1+fc3c72bb` (pending human retest)
-- Active stage status: `PUBLISHED_PENDING_HUMAN - Track 10A HUD pause menu decomposition`
-- Status marker: `JOGO_DA_COPA_TRACK10A_PUBLISHED_PENDING_HUMAN`
+- Public baseline: `Super Campeao v1.2.1+fc3c72bb`
+- Active stage status: `HUMAN_APPROVED - Track 10A HUD pause menu decomposition`
+- Status marker: `JOGO_DA_COPA_TRACK10A_HUMAN_APPROVED`
 - Documentation baseline: `Track 10A HUD Pause Menu Decomposition V1`
 
 ## Current Truth
 
 `JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, currently published on Cloudflare Pages as `v1.2.1+fc3c72bb`.
 
-Track 09S is the current human-approved public Web baseline. It fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by smoothing the visual ball-focus weight and focus point in `football_chase_camera.gd`. It keeps `snap_to_target()` setup/reset behavior and goal-focus punch, and does not change gameplay collision, physics, scoring, bot, SUPER, HUD, assets or match tuning. The focused red test failed before the fix and passed after it; local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest passed.
+Track 10A is the current human-approved public Web baseline. It decomposes the football HUD pause menu by moving pause menu construction, tabs, restart confirmation, fullscreen/quality/sensitivity callbacks and pause settings synchronization into `football_hud_pause_menu_controller.gd`. `football_hud.gd` fell from `1512` to `1148` lines. Node paths, existing signals, restart confirmation behavior and real-click pause menu tests are preserved. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, 3-resolution screenshot evidence, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest passed on 2026-06-20.
 
-Track 10A is the current public candidate pending human retest. It decomposes the football HUD pause menu by moving pause menu construction, tabs, restart confirmation, fullscreen/quality/sensitivity callbacks and pause settings synchronization into `football_hud_pause_menu_controller.gd`. `football_hud.gd` fell from `1512` to `1148` lines. Node paths, existing signals, restart confirmation behavior and real-click pause menu tests are preserved. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, 3-resolution screenshot evidence, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability and remote luma gates passed.
+Track 09S is the latest human-approved fallback baseline behind 10A. It fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by smoothing the visual ball-focus weight and focus point in `football_chase_camera.gd`. It keeps `snap_to_target()` setup/reset behavior and goal-focus punch, and does not change gameplay collision, physics, scoring, bot, SUPER, HUD, assets or match tuning. The focused red test failed before the fix and passed after it; local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest passed.
 
 Track 09R is superseded by 09S before human approval. It fixed visible avatar feet entering the field plane and reduced sustained lateral strafe ball pull, but Fabio/tester reported a remaining quick `A/D` tap camera perception issue. Automated local and remote gates passed for 09R.
 
@@ -78,7 +78,7 @@ Latest publication:
 - Remote first minute: PASS, `firstMinuteHitches=0`.
 - Remote stability 5min: PASS, `js_heap_growth +8.34%`, peak `+13.88%`, `wasmSampleCount=0`, worst 5s FPS window `129.8`.
 - Remote night luma: PASS, `6.525 < 90`.
-- Human retest: pending for Track 10A. Track 09S remains the latest human-approved fallback baseline.
+- Human retest: approved for Track 10A on 2026-06-20. Track 09S remains the latest human-approved fallback baseline.
 
 Track 09S local validation:
 
@@ -129,4 +129,4 @@ Latest publication validation is the Track 10A gate listed above. Latest local v
 
 ## Next Step
 
-Fabio/tester human retest Track 10A on the public URL. If approved, mark 10A as the human-approved public baseline; if rejected, decide rollback/fix with 09S as the approved fallback.
+Plan the next technical step from the approved Track 10A baseline, or pause for a broader reassessment before opening another reduction.

@@ -7,20 +7,20 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (10A publicada, aguardando reteste humano; 09S fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14G mergeada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (10A publicada e aprovada; 09S fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14G mergeada localmente; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK10A_PUBLISHED_PENDING_HUMAN`
-- Marker: `JOGO_DA_COPA_TRACK10A_PUBLISHED_PENDING_HUMAN`
-- Publicacao atual: `Super Campeao v1.2.1+fc3c72bb` (`web/v1-copa-arena-futebol-20260620-fc3c72bb`) em `https://copa-arena-futebol.pages.dev/`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.34%`), reteste humano pendente.
-- Baseline publico aprovado: Track 09S `Super Campeao v1.2.1+925f3b9f`; gates remotos 09S PASS e reteste humano aprovado.
-- Fallback aprovado: Track 09Q `Super Campeao v1.2.1+bb604c77`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.41%`) e aprovada por Fabio/tester.
+- Status: `P2_IMPLEMENTACAO - TRACK10A_HUMAN_APPROVED`
+- Marker: `JOGO_DA_COPA_TRACK10A_HUMAN_APPROVED`
+- Publicacao atual e baseline aprovado: Track 10A `Super Campeao v1.2.1+fc3c72bb` (`web/v1-copa-arena-futebol-20260620-fc3c72bb`) em `https://copa-arena-futebol.pages.dev/`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.34%`) e reteste humano aprovado.
+- Fallback aprovado: Track 09S `Super Campeao v1.2.1+925f3b9f`; gates remotos 09S PASS e reteste humano aprovado.
+- Fallback historico aprovado: Track 09Q `Super Campeao v1.2.1+bb604c77`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.41%`) e aprovada por Fabio/tester.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester retestar a 10A publicada; aprovar como baseline ou decidir rollback/fix usando 09S como fallback aprovado.
+- Proximo passo: planejar a proxima etapa tecnica a partir da 10A aprovada ou pausar para reavaliacao antes de nova reducao.
 
 ## draxos-roguelike-cardgame
 

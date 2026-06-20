@@ -83,6 +83,6 @@ Track concluida, mergeada localmente em `main` e publicada no Cloudflare.
 
 ## Proximo Passo
 
-Fabio/tester retestar a URL publica. Se aprovado, marcar 10A como baseline humano aprovado. Se rejeitado, decidir rollback/fix mantendo 09S como fallback aprovado.
+Reteste humano aprovado por Fabio/tester em 2026-06-20. A 10A e o baseline publico aprovado atual; 09S permanece o fallback aprovado mais recente. Proximo passo: planejar a proxima etapa tecnica ou pausar para reavaliacao antes de nova reducao.
 
-`PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.
+`PUSH FEITO`: Fabio - GitHub Desktop - Push origin antes desta aprovacao documental.
