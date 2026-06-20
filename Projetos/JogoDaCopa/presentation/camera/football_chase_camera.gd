@@ -14,10 +14,13 @@ extends Node3D
 const STRAFE_FOCUS_MIN_SPEED: float = 1.0
 const STRAFE_FOCUS_FULL_SPEED: float = 5.5
 const STRAFE_FOCUS_MIN_MULTIPLIER: float = 0.25
+const BALL_FOCUS_WEIGHT_SMOOTHING: float = 6.0
+const FOCUS_POSITION_SMOOTHING: float = 12.0
 
 var target: Node3D
 var ball: Node3D
 var camera: Camera3D
+var has_focus_history: bool = false
 var last_focus_position: Vector3 = Vector3.ZERO
 var last_desired_position: Vector3 = Vector3.ZERO
 var last_ball_focus_weight: float = 0.0
@@ -98,24 +101,35 @@ func _update_camera(delta: float, snap: bool) -> void:
 	_ensure_camera()
 	var forward := _get_target_forward()
 	var target_focus := target.global_position + Vector3.UP * 1.12 + forward * look_ahead_distance
-	var focus := target_focus
+	var raw_focus := target_focus
+	var next_ball_focus_weight := 0.0
 	if ball != null:
 		var ball_focus := ball.global_position + Vector3.UP * 0.45
 		var ball_distance := _flat_distance(target.global_position, ball.global_position)
 		var distance_factor := clampf(ball_distance / maxf(0.01, far_ball_focus_distance), 0.0, 1.0)
-		last_ball_focus_weight = lerpf(ball_focus_weight, far_ball_focus_weight, distance_factor)
-		last_ball_focus_weight *= _get_strafe_ball_focus_multiplier(forward)
+		next_ball_focus_weight = lerpf(ball_focus_weight, far_ball_focus_weight, distance_factor)
+		next_ball_focus_weight *= _get_strafe_ball_focus_multiplier(forward)
 		if goal_focus_time > 0.0:
 			var goal_focus_alpha := clampf(goal_focus_time / maxf(0.01, goal_focus_duration), 0.0, 1.0)
-			last_ball_focus_weight = maxf(last_ball_focus_weight, lerpf(0.32, 0.72, goal_focus_alpha))
-		focus = target_focus.lerp(ball_focus, clampf(last_ball_focus_weight, 0.0, 0.75))
+			next_ball_focus_weight = maxf(next_ball_focus_weight, lerpf(0.32, 0.72, goal_focus_alpha))
+
+	if snap or not has_focus_history or goal_focus_time > 0.0:
+		last_ball_focus_weight = next_ball_focus_weight
 	else:
-		last_ball_focus_weight = 0.0
+		last_ball_focus_weight = lerpf(last_ball_focus_weight, next_ball_focus_weight, clampf(BALL_FOCUS_WEIGHT_SMOOTHING * delta, 0.0, 1.0))
+
+	if ball != null:
+		var ball_focus := ball.global_position + Vector3.UP * 0.45
+		raw_focus = target_focus.lerp(ball_focus, clampf(last_ball_focus_weight, 0.0, 0.75))
+	var focus := raw_focus
+	if not snap and has_focus_history:
+		focus = last_focus_position.lerp(raw_focus, clampf(FOCUS_POSITION_SMOOTHING * delta, 0.0, 1.0))
 
 	var desired := target.global_position - forward * follow_distance + Vector3.UP * follow_height
 	desired = _get_collision_clamped_position(focus, desired)
 	last_focus_position = focus
 	last_desired_position = desired
+	has_focus_history = true
 
 	if snap or global_position == Vector3.ZERO:
 		global_position = desired
