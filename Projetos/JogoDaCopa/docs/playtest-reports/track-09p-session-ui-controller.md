@@ -75,4 +75,4 @@ Fora de escopo e preservado:
 
 ## Proxima Decisao
 
-Track 09P foi publicada depois deste fechamento tecnico. Ver `track-09p-publication.md` e `track-09p-data/` para os gates remotos. O proximo passo e reteste humano antes de abrir nova reducao local; 09N permanece fallback aprovado ate a aprovacao humana da 09P.
+Track 09P foi publicada e aprovada depois deste fechamento tecnico. Ver `track-09p-publication.md` e `track-09p-data/` para os gates remotos e a aprovacao humana. O proximo passo e planejar a proxima reducao conservadora ou reavaliar a arquitetura antes de abrir nova slice; 09N permanece fallback historico aprovado.

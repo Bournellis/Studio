@@ -6,7 +6,7 @@
 - Public URL: `https://copa-arena-futebol.pages.dev/`
 - Preview URL: `https://5a1325e4.copa-arena-futebol.pages.dev`
 - Release root: `web/v1-copa-arena-futebol-20260619-8863c5b9`
-- Status: `AUTOMATED_REMOTE_GATES_PASS - HUMAN_RETEST_PENDING`
+- Status: `AUTOMATED_REMOTE_GATES_PASS - HUMAN_RETEST_APPROVED`
 
 ## Scope
 
@@ -53,12 +53,12 @@ Result: PASS. The stable URL served the expected release root after deployment.
 
 ## Interpretation
 
-Track 09P is now the public build with automated remote gates green. It is not yet the product-approved baseline because human retest is pending. Track 09N remains the approved fallback baseline until Fabio/tester approves 09P.
+Track 09P is now the approved public baseline. Automated remote gates passed and Fabio/tester approved the human retest on 2026-06-19. Track 09N remains the historical approved fallback baseline behind 09P.
 
 ## Human Retest
 
-Pending on 2026-06-19 using the public URL.
+Approved by Fabio/tester on 2026-06-19 using the public URL.
 
 ## Next Gate
 
-Run human retest on `https://copa-arena-futebol.pages.dev/`. If approved, mark 09P as the approved public baseline. If rejected, restore or republish 09N and record the blocker before opening another reduction.
+Plan the next conservative `FootballRoot` reduction or re-evaluate the architecture before opening another slice. Any future publication must still repeat remote gates and human retest before becoming the approved public baseline.
