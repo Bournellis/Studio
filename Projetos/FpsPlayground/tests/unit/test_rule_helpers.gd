@@ -9,6 +9,7 @@ const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_contex
 const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_points.gd")
 const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 const ArenaHudSnapshotBuilderScript = preload("res://modes/arena/arena_hud_snapshot_builder.gd")
+const ArenaHudFeedbackStateScript = preload("res://presentation/hud/arena_hud_feedback_state.gd")
 const ArenaCombatPipelineScript = preload("res://modes/arena/arena_combat_pipeline.gd")
 const ArenaProjectileRuntimeScript = preload("res://modes/arena/arena_projectile_runtime.gd")
 const ArenaPickupJumpPadRulesScript = preload("res://modes/arena/arena_pickup_jump_pad_rules.gd")
@@ -262,6 +263,35 @@ func test_arena_hud_snapshot_builder_preserves_duel_status_contract() -> void:
 	)
 	assert_eq(ArenaHudSnapshotBuilderScript.build_result_text(&"playing", &"", 3), "First to 3")
 	assert_eq(ArenaHudSnapshotBuilderScript.build_hint(&"match_over", true), "R novo duelo | Esc menu")
+
+func test_arena_hud_feedback_state_preserves_event_and_timer_contracts() -> void:
+	var ticked := ArenaHudFeedbackStateScript.tick_feedback_state({
+		"shot_feedback_time": 0.11,
+		"hit_feedback_time": 0.0,
+		"miss_feedback_time": 0.0,
+		"damage_feedback_time": 0.0,
+		"kill_feedback_time": 0.0,
+		"plasma_feedback_time": 0.0,
+		"bot_tell_feedback_time": 0.0,
+		"event_message_time": 0.42
+	}, 0.05)
+
+	assert_almost_eq(float(ticked.get("shot_feedback_time", 0.0)), 0.06, 0.001)
+	assert_almost_eq(float(ticked.get("event_message_time", 0.0)), 0.37, 0.001)
+
+	var hit_event := ArenaHudFeedbackStateScript.build_plasma_hit_event(true, false)
+	assert_eq(hit_event.get("message", ""), "OVERCHARGE HIT")
+	assert_eq(ArenaHudFeedbackStateScript.get_plasma_blast_feedback(false, false), &"plasma_blast")
+	assert_eq(ArenaHudFeedbackStateScript.build_player_alt_fire_event(false), {})
+	assert_eq(ArenaHudFeedbackStateScript.build_pickup_event(&"health", 28.0).get("message", ""), "HEALTH +28")
+	assert_almost_eq(ArenaHudFeedbackStateScript.get_event_alpha(0.125), 0.5, 0.001)
+
+	var crosshair := ArenaHudFeedbackStateScript.build_crosshair_view({
+		"hit_feedback_time": 0.2,
+		"kill_feedback_time": 0.0
+	})
+	assert_eq(crosshair.get("marker_text", ""), "x")
+	assert_almost_eq(float(crosshair.get("marker_alpha", 0.0)), 1.0, 0.001)
 
 func test_bot_aim_model_uses_deterministic_patterns() -> void:
 	assert_eq(BotAimModelScript.pattern_for_index(0), Vector2(0.12, 0.04))

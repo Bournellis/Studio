@@ -1,6 +1,8 @@
 class_name ArenaHud
 extends CanvasLayer
 
+const ArenaHudFeedbackStateScript = preload("res://presentation/hud/arena_hud_feedback_state.gd")
+
 signal resume_requested()
 signal main_menu_requested()
 signal new_match_requested()
@@ -56,14 +58,7 @@ func _ready() -> void:
 	_build_ui()
 
 func _process(delta: float) -> void:
-	shot_feedback_time = maxf(0.0, shot_feedback_time - delta)
-	hit_feedback_time = maxf(0.0, hit_feedback_time - delta)
-	miss_feedback_time = maxf(0.0, miss_feedback_time - delta)
-	damage_feedback_time = maxf(0.0, damage_feedback_time - delta)
-	kill_feedback_time = maxf(0.0, kill_feedback_time - delta)
-	plasma_feedback_time = maxf(0.0, plasma_feedback_time - delta)
-	bot_tell_feedback_time = maxf(0.0, bot_tell_feedback_time - delta)
-	event_message_time = maxf(0.0, event_message_time - delta)
+	_apply_feedback_state(ArenaHudFeedbackStateScript.tick_feedback_state(_build_feedback_state(), delta))
 	_refresh_crosshair()
 	_refresh_damage_overlay()
 	_refresh_event_label()
@@ -97,11 +92,10 @@ func show_player_alt_fire(overcharged: bool) -> void:
 	alt_fire_count += 1
 	plasma_feedback_time = 0.18
 	shot_feedback_time = 0.08
-	if overcharged:
-		_set_event_message("OVERCHARGED PLASMA", 0.42, Color(0.9, 0.62, 1.0, 1.0))
+	_apply_event_message(ArenaHudFeedbackStateScript.build_player_alt_fire_event(overcharged))
 
 func show_plasma_hit(overcharged: bool, killed: bool) -> void:
-	last_feedback = &"plasma_kill" if killed else (&"overcharge_hit" if overcharged else &"plasma_hit")
+	last_feedback = ArenaHudFeedbackStateScript.get_plasma_hit_feedback(overcharged, killed)
 	hit_confirm_count += 1
 	plasma_hit_count += 1
 	last_plasma_hit_overcharged = overcharged
@@ -109,14 +103,10 @@ func show_plasma_hit(overcharged: bool, killed: bool) -> void:
 	plasma_feedback_time = 0.34 if overcharged else 0.24
 	if killed:
 		kill_feedback_time = 0.9
-		_set_event_message("BOT DOWN", 0.9, Color(1.0, 0.92, 0.28, 1.0))
-	elif overcharged:
-		_set_event_message("OVERCHARGE HIT", 0.58, Color(0.9, 0.62, 1.0, 1.0))
-	else:
-		_set_event_message("PLASMA HIT", 0.42, Color(0.48, 1.0, 1.0, 1.0))
+	_apply_event_message(ArenaHudFeedbackStateScript.build_plasma_hit_event(overcharged, killed))
 
 func show_plasma_blast(overcharged: bool, killed: bool) -> void:
-	last_feedback = &"plasma_kill" if killed else (&"overcharge_blast" if overcharged else &"plasma_blast")
+	last_feedback = ArenaHudFeedbackStateScript.get_plasma_blast_feedback(overcharged, killed)
 	hit_confirm_count += 1
 	plasma_blast_count += 1
 	last_plasma_hit_overcharged = overcharged
@@ -124,11 +114,7 @@ func show_plasma_blast(overcharged: bool, killed: bool) -> void:
 	plasma_feedback_time = 0.38 if overcharged else 0.28
 	if killed:
 		kill_feedback_time = 0.9
-		_set_event_message("BOT DOWN", 0.9, Color(1.0, 0.92, 0.28, 1.0))
-	elif overcharged:
-		_set_event_message("OVERCHARGE BLAST", 0.58, Color(0.9, 0.62, 1.0, 1.0))
-	else:
-		_set_event_message("PLASMA BLAST", 0.42, Color(0.48, 1.0, 1.0, 1.0))
+	_apply_event_message(ArenaHudFeedbackStateScript.build_plasma_blast_event(overcharged, killed))
 
 func show_hit_confirm(killed: bool) -> void:
 	last_feedback = &"kill" if killed else &"hit"
@@ -136,7 +122,7 @@ func show_hit_confirm(killed: bool) -> void:
 	hit_feedback_time = 0.2
 	if killed:
 		kill_feedback_time = 0.9
-		_set_event_message("BOT DOWN", 0.9, Color(1.0, 0.92, 0.28, 1.0))
+	_apply_event_message(ArenaHudFeedbackStateScript.build_hit_confirm_event(killed))
 
 func show_miss() -> void:
 	last_feedback = &"miss"
@@ -148,52 +134,39 @@ func show_player_damage(amount: float, remaining_fraction: float) -> void:
 	player_damage_count += 1
 	last_damage_amount = amount
 	damage_feedback_time = clampf(0.18 + (1.0 - remaining_fraction) * 0.18, 0.18, 0.38)
-	_set_event_message("UNDER FIRE -%.0f" % amount, 0.38, Color(1.0, 0.28, 0.18, 1.0))
+	_apply_event_message(ArenaHudFeedbackStateScript.build_player_damage_event(amount))
 
 func show_bot_tell(duration: float) -> void:
 	last_feedback = &"bot_tell"
 	bot_tell_count += 1
 	bot_tell_feedback_time = maxf(0.12, duration)
-	_set_event_message("BOT FIRING", maxf(0.22, duration), Color(1.0, 0.72, 0.22, 1.0))
+	_apply_event_message(ArenaHudFeedbackStateScript.build_bot_tell_event(duration))
 
 func show_pickup(pickup_kind: StringName) -> void:
 	last_feedback = &"pickup"
 	pickup_count += 1
-	var message := "HEALTH +%.0f" % 28.0 if pickup_kind == &"health" else "OVERCHARGE READY"
-	var color := Color(0.46, 1.0, 0.58, 1.0) if pickup_kind == &"health" else Color(0.9, 0.62, 1.0, 1.0)
-	_set_event_message(message, 0.58, color)
+	_apply_event_message(ArenaHudFeedbackStateScript.build_pickup_event(pickup_kind, 28.0))
 
 func show_jump_pad() -> void:
 	last_feedback = &"jump_pad"
 	jump_pad_count += 1
 	plasma_feedback_time = 0.16
-	_set_event_message("JUMP PAD", 0.42, Color(0.35, 0.92, 1.0, 1.0))
+	_apply_event_message(ArenaHudFeedbackStateScript.build_jump_pad_event())
 
 func show_fall_penalty(amount: float, for_player: bool) -> void:
 	last_feedback = &"fall"
 	fall_penalty_count += 1
 	damage_feedback_time = 0.32 if for_player else damage_feedback_time
-	var message := "VOID -%.0f" % amount if for_player else "BOT VOID"
-	_set_event_message(message, 0.68, Color(1.0, 0.22, 0.36, 1.0))
+	_apply_event_message(ArenaHudFeedbackStateScript.build_fall_penalty_event(amount, for_player))
 
 func show_round_end(player_won: bool) -> void:
 	last_feedback = &"round_end"
 	last_round_end_player_won = player_won
 	kill_feedback_time = 1.0
-	var color := Color(0.52, 1.0, 0.58, 1.0) if player_won else Color(1.0, 0.28, 0.18, 1.0)
-	_set_event_message("VITORIA" if player_won else "DERROTA", 1.6, color)
+	_apply_event_message(ArenaHudFeedbackStateScript.build_round_end_event(player_won))
 
 func reset_feedback() -> void:
-	shot_feedback_time = 0.0
-	hit_feedback_time = 0.0
-	miss_feedback_time = 0.0
-	damage_feedback_time = 0.0
-	kill_feedback_time = 0.0
-	plasma_feedback_time = 0.0
-	bot_tell_feedback_time = 0.0
-	event_message_time = 0.0
-	event_message_color = Color.WHITE
-	last_feedback = &""
+	_apply_feedback_state(ArenaHudFeedbackStateScript.build_reset_state())
 	if event_label != null:
 		event_label.text = ""
 		event_label.modulate = Color(1.0, 1.0, 1.0, 0.0)
@@ -506,53 +479,57 @@ func _update_sensitivity_label(value: float) -> void:
 func _refresh_crosshair() -> void:
 	if crosshair_root == null:
 		return
-	var color := Color(0.88, 0.96, 1.0, 0.88)
-	var pulse := 0.0
-	if kill_feedback_time > 0.0:
-		color = Color(1.0, 0.92, 0.28, 1.0)
-		pulse = 0.18
-	elif hit_feedback_time > 0.0:
-		color = Color(0.5, 1.0, 0.58, 1.0)
-		pulse = 0.14
-	elif plasma_feedback_time > 0.0:
-		color = Color(0.78, 0.46, 1.0, 1.0)
-		pulse = 0.12
-	elif bot_tell_feedback_time > 0.0:
-		color = Color(1.0, 0.72, 0.22, 1.0)
-		pulse = 0.1
-	elif shot_feedback_time > 0.0:
-		color = Color(0.28, 0.92, 1.0, 1.0)
-		pulse = 0.08
-	elif miss_feedback_time > 0.0:
-		color = Color(0.62, 0.76, 0.9, 0.72)
-		pulse = 0.05
+	var view := ArenaHudFeedbackStateScript.build_crosshair_view(_build_feedback_state())
+	var color: Color = view.get("color", Color(0.88, 0.96, 1.0, 0.88))
+	var pulse := float(view.get("pulse", 0.0))
 	for line: ColorRect in crosshair_lines:
 		line.color = color
 	crosshair_root.scale = Vector2.ONE * (1.0 + pulse)
-	var marker_alpha := 0.0
-	if kill_feedback_time > 0.0:
-		marker_alpha = 1.0
-		hit_marker_label.text = "X"
-	elif hit_feedback_time > 0.0:
-		marker_alpha = 1.0
-		hit_marker_label.text = "x"
+	var marker_alpha := float(view.get("marker_alpha", 0.0))
+	hit_marker_label.text = str(view.get("marker_text", ""))
 	hit_marker_label.modulate = Color(color.r, color.g, color.b, marker_alpha)
 
 func _refresh_damage_overlay() -> void:
 	if damage_overlay == null:
 		return
-	var alpha := 0.0
-	if damage_feedback_time > 0.0:
-		alpha = clampf(damage_feedback_time / 0.38, 0.0, 1.0) * 0.32
+	var alpha := ArenaHudFeedbackStateScript.get_damage_overlay_alpha(damage_feedback_time)
 	damage_overlay.color = Color(1.0, 0.04, 0.02, alpha)
 
 func _refresh_event_label() -> void:
 	if event_label == null:
 		return
-	var alpha := clampf(event_message_time / 0.25, 0.0, 1.0) if event_message_time > 0.0 else 0.0
+	var alpha := ArenaHudFeedbackStateScript.get_event_alpha(event_message_time)
 	event_label.modulate = Color(event_message_color.r, event_message_color.g, event_message_color.b, alpha)
 
-func _set_event_message(message: String, duration: float, color: Color = Color.WHITE) -> void:
-	event_label.text = message
-	event_message_color = color
-	event_message_time = maxf(0.05, duration)
+func _apply_event_message(event: Dictionary) -> void:
+	if event.is_empty() or event_label == null:
+		return
+	event_label.text = str(event.get("message", ""))
+	event_message_color = event.get("color", Color.WHITE)
+	event_message_time = float(event.get("duration", 0.05))
+
+func _build_feedback_state() -> Dictionary:
+	return {
+		"shot_feedback_time": shot_feedback_time,
+		"hit_feedback_time": hit_feedback_time,
+		"miss_feedback_time": miss_feedback_time,
+		"damage_feedback_time": damage_feedback_time,
+		"kill_feedback_time": kill_feedback_time,
+		"plasma_feedback_time": plasma_feedback_time,
+		"bot_tell_feedback_time": bot_tell_feedback_time,
+		"event_message_time": event_message_time,
+		"event_message_color": event_message_color,
+		"last_feedback": last_feedback
+	}
+
+func _apply_feedback_state(state: Dictionary) -> void:
+	shot_feedback_time = float(state.get("shot_feedback_time", 0.0))
+	hit_feedback_time = float(state.get("hit_feedback_time", 0.0))
+	miss_feedback_time = float(state.get("miss_feedback_time", 0.0))
+	damage_feedback_time = float(state.get("damage_feedback_time", 0.0))
+	kill_feedback_time = float(state.get("kill_feedback_time", 0.0))
+	plasma_feedback_time = float(state.get("plasma_feedback_time", 0.0))
+	bot_tell_feedback_time = float(state.get("bot_tell_feedback_time", 0.0))
+	event_message_time = float(state.get("event_message_time", 0.0))
+	event_message_color = state.get("event_message_color", Color.WHITE)
+	last_feedback = state.get("last_feedback", &"")
