@@ -7,6 +7,7 @@ const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_contex
 const BotVisibilityPointsScript = preload("res://gameplay/bot/bot_visibility_points.gd")
 const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 const ArenaHudSnapshotBuilderScript = preload("res://modes/arena/arena_hud_snapshot_builder.gd")
+const ArenaCombatPipelineScript = preload("res://modes/arena/arena_combat_pipeline.gd")
 
 class MockVisibilityTarget:
 	extends Node3D
@@ -64,6 +65,76 @@ func test_arena_plasma_blast_falloff_and_damage_contract() -> void:
 	assert_almost_eq(ArenaCombatRulesScript.calculate_blast_falloff(impact, edge_target, 2.0), 0.0, 0.001)
 	assert_almost_eq(ArenaCombatRulesScript.calculate_blast_damage(impact, near_target, 2.0, 10.0, 0.35), 8.375, 0.001)
 	assert_almost_eq(ArenaCombatRulesScript.calculate_blast_damage(impact, outside_target, 2.0, 10.0, 0.35), 0.0, 0.001)
+
+func test_arena_combat_pipeline_builds_player_rifle_payload_contract() -> void:
+	var payload := ArenaCombatPipelineScript.build_player_rifle_fired(
+		"player_rifle_1",
+		Vector3.ONE,
+		Vector3.FORWARD,
+		22.0,
+		4.5,
+		ArenaCombatPipelineScript.is_overcharged_damage(22.0, 20.0)
+	)
+
+	assert_true(bool(payload.get("overcharged", false)))
+	assert_eq(payload.get("actor", ""), "player")
+	assert_eq(payload.get("weapon", ""), "rifle")
+	assert_eq(payload.get("source", ""), "player_rifle")
+	assert_eq(payload.get("shot_id", ""), "player_rifle_1")
+	assert_almost_eq(float(payload.get("damage", 0.0)), 22.0, 0.001)
+	assert_false(ArenaCombatPipelineScript.is_overcharged_damage(20.0005, 20.0))
+
+func test_arena_combat_pipeline_builds_plasma_payload_contract() -> void:
+	var fired := ArenaCombatPipelineScript.build_player_plasma_fired(
+		"player_plasma_2",
+		Vector3.ZERO,
+		Vector3(0.0, 1.4, -0.8),
+		Vector3.FORWARD,
+		24.0,
+		8.0,
+		24.0,
+		0.18,
+		true
+	)
+	var summary := ArenaCombatPipelineScript.build_player_plasma_blast_summary(
+		"player_plasma_2",
+		Vector3.ZERO,
+		Vector3(0.0, 0.0, 0.5),
+		2.25,
+		0.75,
+		8.8,
+		true,
+		false,
+		true
+	)
+
+	assert_eq(fired.get("weapon", ""), "plasma_direct")
+	assert_eq(fired.get("source", ""), "player_plasma")
+	assert_eq(fired.get("projectile_id", ""), "player_plasma_2")
+	assert_eq(summary.get("weapon", ""), "plasma_blast")
+	assert_eq(summary.get("source", ""), "player_plasma_blast")
+	assert_eq(summary.get("target", ""), "bot")
+	assert_true(bool(summary.get("damaged_target", false)))
+	assert_false(bool(summary.get("killed_target", true)))
+
+func test_arena_combat_pipeline_calculates_plasma_blast_contract() -> void:
+	var blast := ArenaCombatPipelineScript.calculate_player_plasma_blast(
+		Vector3.ZERO,
+		Vector3(0.0, 0.0, 0.5),
+		Vector3.FORWARD,
+		24.0,
+		10.0,
+		2.0,
+		0.46,
+		0.22,
+		0.36
+	)
+
+	assert_true(bool(blast.get("damaged", false)))
+	assert_almost_eq(float(blast.get("falloff", 0.0)), 0.75, 0.001)
+	assert_almost_eq(float(blast.get("damage", 0.0)), 8.887, 0.001)
+	assert_almost_eq(float(blast.get("knockback", 0.0)), 2.7, 0.001)
+	assert_almost_eq((blast.get("direction", Vector3.ZERO) as Vector3).distance_to(Vector3.BACK), 0.0, 0.001)
 
 func test_arena_hud_snapshot_builder_preserves_duel_status_contract() -> void:
 	var snapshot := ArenaHudSnapshotBuilderScript.build_snapshot({

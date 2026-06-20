@@ -1,6 +1,6 @@
 # Refactor Hardening Roadmap
 
-- Status: `Track 14B local validated arena root boundary baseline`
+- Status: `Track 14C local validated combat pipeline baseline`
 - Scope: code hardening and reduction sequence for the approved Arena Shooter baseline.
 - Rule: Track 14A does not change gameplay, movement feel, jump pad force, map geometry, weapon values or bot decisions.
 
@@ -30,8 +30,9 @@ The project is approved enough to keep expanding, but the next maps, weapons, bu
    - Next: `Track 14C - Combat Pipeline Extraction V1`.
 
 3. `Track 14C - Combat Pipeline Extraction V1`
-   - Extract player rifle, player Plasma, blast resolution and bot shot resolution from `arena_root.gd`.
-   - Preserve Track 10 weapon roles and Track 11/12 telemetry fields.
+   - Delivered: `ArenaCombatPipeline` owns combat telemetry payload construction and pure Plasma blast math.
+   - Preserved Track 10 weapon roles and Track 11/12 telemetry fields.
+   - No gameplay tuning.
    - Next: `Track 14D - Pickups And Jump Pads Extraction V1`.
 
 4. `Track 14D - Pickups And Jump Pads Extraction V1`

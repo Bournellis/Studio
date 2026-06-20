@@ -36,6 +36,13 @@ PASS tools/validate.gd -- --profile=quick, GUT 54/54, 505 asserts
 PASS tools/validate.gd, GUT 54/54, 505 asserts
 ```
 
+Latest Track 14C validation:
+
+```text
+PASS tools/validate.gd -- --profile=quick, GUT 57/57, 525 asserts
+PASS tools/validate.gd, GUT 57/57, 525 asserts
+```
+
 Latest Track 11 human smoke:
 
 ```text
@@ -211,6 +218,14 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm validation still covers player shots, bot shots, pickups, jump pads, telemetry and HUD snapshots.
 - Confirm no gameplay, movement, jump pad, map, weapon, pickup or bot behavior constants changed.
 - Confirm the next implementation step is `Track 14C - Combat Pipeline Extraction V1`.
+
+## Track 14C Combat Pipeline Smoke
+
+- Confirm `ArenaCombatPipeline` owns rifle, Plasma, Plasma blast and bot shot telemetry payload builders.
+- Confirm Plasma blast damage/falloff/knockback math stays covered by helper tests.
+- Confirm rifle, direct Plasma, Plasma blast and bot shot behavior feel unchanged.
+- Confirm no gameplay, movement, jump pad, map, weapon, pickup or bot behavior constants changed.
+- Confirm the next implementation step is `Track 14D - Pickups And Jump Pads Extraction V1`.
 
 ## Known Noise
 

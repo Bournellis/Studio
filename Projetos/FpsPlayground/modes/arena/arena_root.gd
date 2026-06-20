@@ -11,6 +11,7 @@ const ArenaCrossfireCrucibleLayoutBuilderScript = preload("res://modes/arena/are
 const ArenaLayoutCatalogScript = preload("res://modes/arena/arena_layout_catalog.gd")
 const ArenaHudSnapshotBuilderScript = preload("res://modes/arena/arena_hud_snapshot_builder.gd")
 const ArenaCombatRulesScript = preload("res://gameplay/arena/arena_combat_rules.gd")
+const ArenaCombatPipelineScript = preload("res://modes/arena/arena_combat_pipeline.gd")
 const BotTacticalContextScript = preload("res://gameplay/bot/bot_tactical_context.gd")
 const ArenaTelemetryRecorderScript = preload("res://gameplay/telemetry/arena_telemetry_recorder.gd")
 
@@ -466,17 +467,8 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 	var shot_end := origin + shot_direction * 96.0
 	var visual_origin := _get_player_visual_muzzle_origin(origin, shot_direction)
 	var shot_id := _next_telemetry_id("player_rifle")
-	_record_telemetry_event(&"shot_fired", {
-		"shot_id": shot_id,
-		"actor": "player",
-		"weapon": "rifle",
-		"source": "player_rifle",
-		"overcharged": damage > player.shot_damage + 0.001,
-		"origin": origin,
-		"direction": shot_direction,
-		"damage": damage,
-		"knockback": knockback
-	})
+	var overcharged := ArenaCombatPipelineScript.is_overcharged_damage(damage, player.shot_damage)
+	_record_telemetry_event(&"shot_fired", ArenaCombatPipelineScript.build_player_rifle_fired(shot_id, origin, shot_direction, damage, knockback, overcharged))
 	if hud != null:
 		hud.show_player_shot()
 	if feedback != null:
@@ -486,15 +478,7 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 	query.exclude = [player.get_rid()]
 	var result := get_world_3d().direct_space_state.intersect_ray(query)
 	if result.is_empty():
-		_record_telemetry_event(&"shot_miss", {
-			"shot_id": shot_id,
-			"actor": "player",
-			"weapon": "rifle",
-			"source": "player_rifle",
-			"overcharged": damage > player.shot_damage + 0.001,
-			"impact_position": shot_end,
-			"distance": origin.distance_to(shot_end)
-		})
+		_record_telemetry_event(&"shot_miss", ArenaCombatPipelineScript.build_player_rifle_miss(shot_id, shot_end, origin.distance_to(shot_end), overcharged))
 		if hud != null:
 			hud.show_miss()
 		if feedback != null:
@@ -507,34 +491,10 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 		collider.take_damage(damage, &"player")
 		if collider.has_method("apply_knockback"):
 			collider.apply_knockback(shot_direction, knockback, PLAYER_SHOT_KNOCKBACK_LIFT)
-		_record_telemetry_event(&"shot_hit", {
-			"shot_id": shot_id,
-			"actor": "player",
-			"target": target_id,
-			"weapon": "rifle",
-			"source": "player_rifle",
-			"overcharged": damage > player.shot_damage + 0.001,
-			"impact_position": impact_position,
-			"distance": origin.distance_to(impact_position)
-		})
-		_record_telemetry_event(&"damage_applied", {
-			"shot_id": shot_id,
-			"actor": "player",
-			"target": target_id,
-			"weapon": "rifle",
-			"source": "player_rifle",
-			"overcharged": damage > player.shot_damage + 0.001,
-			"damage": damage,
-			"target_health": float(collider.get("health")) if collider.get("health") != null else 0.0
-		})
-		_record_telemetry_event(&"knockback_applied", {
-			"shot_id": shot_id,
-			"actor": "player",
-			"target": target_id,
-			"weapon": "rifle",
-			"knockback": knockback,
-			"lift": PLAYER_SHOT_KNOCKBACK_LIFT
-		})
+		var target_health := float(collider.get("health")) if collider.get("health") != null else 0.0
+		_record_telemetry_event(&"shot_hit", ArenaCombatPipelineScript.build_player_rifle_hit(shot_id, target_id, impact_position, origin.distance_to(impact_position), overcharged))
+		_record_telemetry_event(&"damage_applied", ArenaCombatPipelineScript.build_damage_applied(shot_id, "player", target_id, "rifle", "player_rifle", overcharged, damage, target_health))
+		_record_telemetry_event(&"knockback_applied", ArenaCombatPipelineScript.build_knockback_applied(shot_id, "player", target_id, "rifle", knockback, PLAYER_SHOT_KNOCKBACK_LIFT))
 		if hud != null:
 			var killed: bool = collider.get("is_dead") == true
 			hud.show_hit_confirm(killed)
@@ -545,15 +505,7 @@ func _on_player_shot(origin: Vector3, direction: Vector3, damage: float, knockba
 				knockback_position = collider.get_body_center()
 			feedback.play_knockback(knockback_position, shot_direction, knockback, true)
 		return
-	_record_telemetry_event(&"shot_miss", {
-		"shot_id": shot_id,
-		"actor": "player",
-		"weapon": "rifle",
-		"source": "player_rifle",
-		"overcharged": damage > player.shot_damage + 0.001,
-		"impact_position": impact_position,
-		"distance": origin.distance_to(impact_position)
-	})
+	_record_telemetry_event(&"shot_miss", ArenaCombatPipelineScript.build_player_rifle_miss(shot_id, impact_position, origin.distance_to(impact_position), overcharged))
 	if hud != null:
 		hud.show_miss()
 	if feedback != null:
@@ -569,21 +521,7 @@ func _on_player_alt_fire(origin: Vector3, direction: Vector3, damage: float, kno
 	var aim_point := _resolve_player_aim_point(origin, shot_direction)
 	var projectile_direction := ArenaCombatRulesScript.build_projectile_direction(visual_origin, aim_point, shot_direction)
 	var projectile_id := _next_telemetry_id("player_plasma")
-	_record_telemetry_event(&"shot_fired", {
-		"shot_id": projectile_id,
-		"projectile_id": projectile_id,
-		"actor": "player",
-		"weapon": "plasma_direct",
-		"source": "player_plasma",
-		"overcharged": overcharged,
-		"origin": origin,
-		"visual_origin": visual_origin,
-		"direction": projectile_direction,
-		"damage": damage,
-		"knockback": knockback,
-		"speed": speed,
-		"radius": radius
-	})
+	_record_telemetry_event(&"shot_fired", ArenaCombatPipelineScript.build_player_plasma_fired(projectile_id, origin, visual_origin, projectile_direction, damage, knockback, speed, radius, overcharged))
 	if hud != null:
 		hud.show_player_alt_fire(overcharged)
 	if feedback != null:
@@ -627,21 +565,7 @@ func _spawn_player_plasma_bolt(origin: Vector3, direction: Vector3, damage: floa
 		"overcharged": overcharged,
 		"projectile_id": projectile_id
 	})
-	_record_telemetry_event(&"plasma_spawned", {
-		"shot_id": projectile_id,
-		"projectile_id": projectile_id,
-		"actor": "player",
-		"weapon": "plasma_direct",
-		"source": "player_plasma",
-		"overcharged": overcharged,
-		"origin": origin,
-		"direction": direction,
-		"damage": damage,
-		"knockback": knockback,
-		"speed": speed,
-		"radius": radius,
-		"ttl": PLASMA_BOLT_TTL
-	})
+	_record_telemetry_event(&"plasma_spawned", ArenaCombatPipelineScript.build_player_plasma_spawned(projectile_id, origin, direction, damage, knockback, speed, radius, PLASMA_BOLT_TTL, overcharged))
 	_update_bot_awareness()
 
 func _process_projectiles(delta: float) -> void:
@@ -664,23 +588,10 @@ func _process_projectiles(delta: float) -> void:
 			continue
 		bolt.global_position = end_position
 		if ttl <= 0.0:
-			_record_telemetry_event(&"plasma_expired", {
-				"shot_id": String(entry.get("projectile_id", "")),
-				"projectile_id": String(entry.get("projectile_id", "")),
-				"actor": "player",
-				"weapon": "plasma_direct",
-				"source": "player_plasma",
-				"overcharged": bool(entry.get("overcharged", false)),
-				"impact_position": end_position
-			})
-			_record_telemetry_event(&"shot_miss", {
-				"shot_id": String(entry.get("projectile_id", "")),
-				"actor": "player",
-				"weapon": "plasma_direct",
-				"source": "player_plasma",
-				"overcharged": bool(entry.get("overcharged", false)),
-				"impact_position": end_position
-			})
+			var projectile_id := String(entry.get("projectile_id", ""))
+			var overcharged := bool(entry.get("overcharged", false))
+			_record_telemetry_event(&"plasma_expired", ArenaCombatPipelineScript.build_player_plasma_expired(projectile_id, end_position, overcharged))
+			_record_telemetry_event(&"shot_miss", ArenaCombatPipelineScript.build_player_plasma_miss(projectile_id, end_position, overcharged))
 			if hud != null:
 				hud.show_miss()
 			if feedback != null:
@@ -703,45 +614,11 @@ func _resolve_player_projectile_hit(entry: Dictionary, impact_position: Vector3,
 		collider.take_damage(damage, &"player")
 		if collider.has_method("apply_knockback"):
 			collider.apply_knockback(shot_direction, knockback, PLAYER_PLASMA_KNOCKBACK_LIFT)
-		_record_telemetry_event(&"plasma_direct_hit", {
-			"shot_id": projectile_id,
-			"projectile_id": projectile_id,
-			"actor": "player",
-			"target": target_id,
-			"weapon": "plasma_direct",
-			"source": "player_plasma",
-			"overcharged": overcharged,
-			"impact_position": impact_position,
-			"damage": damage,
-			"knockback": knockback
-		})
-		_record_telemetry_event(&"shot_hit", {
-			"shot_id": projectile_id,
-			"actor": "player",
-			"target": target_id,
-			"weapon": "plasma_direct",
-			"source": "player_plasma",
-			"overcharged": overcharged,
-			"impact_position": impact_position
-		})
-		_record_telemetry_event(&"damage_applied", {
-			"shot_id": projectile_id,
-			"actor": "player",
-			"target": target_id,
-			"weapon": "plasma_direct",
-			"source": "player_plasma",
-			"overcharged": overcharged,
-			"damage": damage,
-			"target_health": float(collider.get("health")) if collider.get("health") != null else 0.0
-		})
-		_record_telemetry_event(&"knockback_applied", {
-			"shot_id": projectile_id,
-			"actor": "player",
-			"target": target_id,
-			"weapon": "plasma_direct",
-			"knockback": knockback,
-			"lift": PLAYER_PLASMA_KNOCKBACK_LIFT
-		})
+		var target_health := float(collider.get("health")) if collider.get("health") != null else 0.0
+		_record_telemetry_event(&"plasma_direct_hit", ArenaCombatPipelineScript.build_player_plasma_direct_hit(projectile_id, target_id, impact_position, damage, knockback, overcharged))
+		_record_telemetry_event(&"shot_hit", ArenaCombatPipelineScript.build_player_plasma_direct_shot_hit(projectile_id, target_id, impact_position, overcharged))
+		_record_telemetry_event(&"damage_applied", ArenaCombatPipelineScript.build_damage_applied(projectile_id, "player", target_id, "plasma_direct", "player_plasma", overcharged, damage, target_health))
+		_record_telemetry_event(&"knockback_applied", ArenaCombatPipelineScript.build_knockback_applied(projectile_id, "player", target_id, "plasma_direct", knockback, PLAYER_PLASMA_KNOCKBACK_LIFT))
 		var killed: bool = collider.get("is_dead") == true
 		if hud != null:
 			hud.show_plasma_hit(overcharged, killed)
@@ -752,15 +629,7 @@ func _resolve_player_projectile_hit(entry: Dictionary, impact_position: Vector3,
 				knockback_position = collider.get_body_center()
 			feedback.play_knockback(knockback_position, shot_direction, knockback, true)
 		return
-	_record_telemetry_event(&"plasma_world_impact", {
-		"shot_id": projectile_id,
-		"projectile_id": projectile_id,
-		"actor": "player",
-		"weapon": "plasma_direct",
-		"source": "player_plasma",
-		"overcharged": overcharged,
-		"impact_position": impact_position
-	})
+	_record_telemetry_event(&"plasma_world_impact", ArenaCombatPipelineScript.build_player_plasma_world_impact(projectile_id, impact_position, overcharged))
 	_resolve_player_projectile_blast(entry, impact_position, shot_direction)
 
 func _resolve_player_projectile_blast(entry: Dictionary, impact_position: Vector3, shot_direction: Vector3) -> void:
@@ -774,85 +643,35 @@ func _resolve_player_projectile_blast(entry: Dictionary, impact_position: Vector
 	var blast_damage := 0.0
 	if bot != null and bot.get("is_dead") != true:
 		target_position = bot.get_body_center()
-		var max_blast_damage := float(entry.get("damage", 0.0)) * PLASMA_BLAST_DAMAGE_FRACTION
-		blast_damage = ArenaCombatRulesScript.calculate_blast_damage(
+		var blast_result := ArenaCombatPipelineScript.calculate_player_plasma_blast(
 			impact_position,
 			target_position,
+			shot_direction,
+			float(entry.get("damage", 0.0)),
+			float(entry.get("knockback", 0.0)),
 			blast_radius,
-			max_blast_damage,
-			PLASMA_BLAST_MIN_DAMAGE_FRACTION
+			PLASMA_BLAST_DAMAGE_FRACTION,
+			PLASMA_BLAST_MIN_DAMAGE_FRACTION,
+			PLASMA_BLAST_KNOCKBACK_FRACTION
 		)
+		blast_damage = float(blast_result.get("damage", 0.0))
 		if blast_damage > 0.0:
-			falloff = ArenaCombatRulesScript.calculate_blast_falloff(impact_position, target_position, blast_radius)
-			var blast_direction := target_position - impact_position
-			if blast_direction.length_squared() <= 0.0001:
-				blast_direction = shot_direction
-			blast_direction = blast_direction.normalized()
+			falloff = float(blast_result.get("falloff", 0.0))
+			var blast_direction: Vector3 = blast_result.get("direction", shot_direction)
 			bot.take_damage(blast_damage, &"player")
 			if bot.has_method("apply_knockback"):
-				var blast_knockback := float(entry.get("knockback", 0.0)) * PLASMA_BLAST_KNOCKBACK_FRACTION * clampf(falloff, 0.35, 1.0)
+				var blast_knockback := float(blast_result.get("knockback", 0.0))
 				bot.apply_knockback(blast_direction, blast_knockback, PLASMA_BLAST_KNOCKBACK_LIFT)
-				_record_telemetry_event(&"knockback_applied", {
-					"shot_id": projectile_id,
-					"actor": "player",
-					"target": "bot",
-					"weapon": "plasma_blast",
-					"knockback": blast_knockback,
-					"lift": PLASMA_BLAST_KNOCKBACK_LIFT,
-					"falloff": falloff
-				})
+				_record_telemetry_event(&"knockback_applied", ArenaCombatPipelineScript.build_knockback_applied(projectile_id, "player", "bot", "plasma_blast", blast_knockback, PLASMA_BLAST_KNOCKBACK_LIFT, falloff, true))
 			damaged_target = true
 			killed_target = bot.get("is_dead") == true
-			_record_telemetry_event(&"shot_hit", {
-				"shot_id": projectile_id,
-				"actor": "player",
-				"target": "bot",
-				"weapon": "plasma_blast",
-				"source": "player_plasma_blast",
-				"overcharged": overcharged,
-				"impact_position": impact_position,
-				"target_position": target_position,
-				"distance": impact_position.distance_to(target_position),
-				"falloff": falloff
-			})
-			_record_telemetry_event(&"damage_applied", {
-				"shot_id": projectile_id,
-				"actor": "player",
-				"target": "bot",
-				"weapon": "plasma_blast",
-				"source": "player_plasma_blast",
-				"overcharged": overcharged,
-				"damage": blast_damage,
-				"target_health": bot.health,
-				"falloff": falloff
-			})
+			_record_telemetry_event(&"shot_hit", ArenaCombatPipelineScript.build_player_plasma_blast_shot_hit(projectile_id, impact_position, target_position, falloff, overcharged))
+			_record_telemetry_event(&"damage_applied", ArenaCombatPipelineScript.build_damage_applied(projectile_id, "player", "bot", "plasma_blast", "player_plasma_blast", overcharged, blast_damage, bot.health, falloff, true))
 			if feedback != null:
 				feedback.play_knockback(target_position, blast_direction, float(entry.get("knockback", 0.0)) * PLASMA_BLAST_KNOCKBACK_FRACTION, true)
-	_record_telemetry_event(&"plasma_blast", {
-		"shot_id": projectile_id,
-		"projectile_id": projectile_id,
-		"actor": "player",
-		"target": "bot" if damaged_target else "",
-		"weapon": "plasma_blast",
-		"source": "player_plasma_blast",
-		"overcharged": overcharged,
-		"impact_position": impact_position,
-		"target_position": target_position,
-		"blast_radius": blast_radius,
-		"falloff": falloff,
-		"damage": blast_damage,
-		"damaged_target": damaged_target,
-		"killed_target": killed_target
-	})
+	_record_telemetry_event(&"plasma_blast", ArenaCombatPipelineScript.build_player_plasma_blast_summary(projectile_id, impact_position, target_position, blast_radius, falloff, blast_damage, damaged_target, killed_target, overcharged))
 	if not damaged_target:
-		_record_telemetry_event(&"shot_miss", {
-			"shot_id": projectile_id,
-			"actor": "player",
-			"weapon": "plasma_blast",
-			"source": "player_plasma_blast",
-			"overcharged": overcharged,
-			"impact_position": impact_position
-		})
+		_record_telemetry_event(&"shot_miss", ArenaCombatPipelineScript.build_player_plasma_blast_miss(projectile_id, impact_position, overcharged))
 	if hud != null:
 		if damaged_target:
 			hud.show_plasma_blast(overcharged, killed_target)
@@ -955,43 +774,16 @@ func _on_bot_shot_resolution_requested(origin: Vector3, direction: Vector3, dama
 	if shot_direction.length_squared() <= 0.0001:
 		return
 	var shot_id := _next_telemetry_id("bot_shot")
-	var overcharged: bool = damage > bot.shoot_damage + 0.001
-	_record_telemetry_event(&"shot_fired", {
-		"shot_id": shot_id,
-		"actor": "bot",
-		"weapon": "bot_shot",
-		"source": "bot_shot",
-		"overcharged": overcharged,
-		"origin": origin,
-		"direction": shot_direction,
-		"damage": damage,
-		"knockback": knockback
-	})
-	_record_telemetry_event(&"bot_shot_resolved", {
-		"shot_id": shot_id,
-		"actor": "bot",
-		"weapon": "bot_shot",
-		"source": "bot_shot",
-		"overcharged": overcharged,
-		"origin": origin,
-		"direction": shot_direction,
-		"damage": damage,
-		"knockback": knockback
-	})
+	var overcharged := ArenaCombatPipelineScript.is_overcharged_damage(damage, bot.shoot_damage)
+	var fired_payload := ArenaCombatPipelineScript.build_bot_shot_fired(shot_id, origin, shot_direction, damage, knockback, overcharged)
+	_record_telemetry_event(&"shot_fired", fired_payload)
+	_record_telemetry_event(&"bot_shot_resolved", fired_payload)
 	var shot_end := origin + shot_direction * maxf(1.0, bot.shoot_range)
 	var query := PhysicsRayQueryParameters3D.create(origin, shot_end)
 	query.exclude = [bot.get_rid()]
 	var result := get_world_3d().direct_space_state.intersect_ray(query)
 	if result.is_empty():
-		_record_telemetry_event(&"shot_miss", {
-			"shot_id": shot_id,
-			"actor": "bot",
-			"weapon": "bot_shot",
-			"source": "bot_shot",
-			"overcharged": overcharged,
-			"impact_position": shot_end,
-			"distance": origin.distance_to(shot_end)
-		})
+		_record_telemetry_event(&"shot_miss", ArenaCombatPipelineScript.build_bot_shot_miss(shot_id, shot_end, origin.distance_to(shot_end), overcharged))
 		if feedback != null:
 			feedback.play_bot_miss(origin, shot_end)
 		return
@@ -1003,46 +795,13 @@ func _on_bot_shot_resolution_requested(origin: Vector3, direction: Vector3, dama
 			feedback.play_bot_shot(origin, impact_position)
 		player.take_damage(damage, &"bot")
 		player.apply_knockback(shot_direction, knockback, BOT_SHOT_KNOCKBACK_LIFT)
-		_record_telemetry_event(&"shot_hit", {
-			"shot_id": shot_id,
-			"actor": "bot",
-			"target": "player",
-			"weapon": "bot_shot",
-			"source": "bot_shot",
-			"overcharged": overcharged,
-			"impact_position": impact_position,
-			"distance": origin.distance_to(impact_position)
-		})
-		_record_telemetry_event(&"damage_applied", {
-			"shot_id": shot_id,
-			"actor": "bot",
-			"target": "player",
-			"weapon": "bot_shot",
-			"source": "bot_shot",
-			"overcharged": overcharged,
-			"damage": damage,
-			"target_health": player.health
-		})
-		_record_telemetry_event(&"knockback_applied", {
-			"shot_id": shot_id,
-			"actor": "bot",
-			"target": "player",
-			"weapon": "bot_shot",
-			"knockback": knockback,
-			"lift": BOT_SHOT_KNOCKBACK_LIFT
-		})
+		_record_telemetry_event(&"shot_hit", ArenaCombatPipelineScript.build_bot_shot_hit(shot_id, impact_position, origin.distance_to(impact_position), overcharged))
+		_record_telemetry_event(&"damage_applied", ArenaCombatPipelineScript.build_damage_applied(shot_id, "bot", "player", "bot_shot", "bot_shot", overcharged, damage, player.health))
+		_record_telemetry_event(&"knockback_applied", ArenaCombatPipelineScript.build_knockback_applied(shot_id, "bot", "player", "bot_shot", knockback, BOT_SHOT_KNOCKBACK_LIFT))
 		if feedback != null:
 			feedback.play_knockback(player.get_body_center(), shot_direction, knockback, false)
 		return
-	_record_telemetry_event(&"shot_miss", {
-		"shot_id": shot_id,
-		"actor": "bot",
-		"weapon": "bot_shot",
-		"source": "bot_shot",
-		"overcharged": overcharged,
-		"impact_position": impact_position,
-		"distance": origin.distance_to(impact_position)
-	})
+	_record_telemetry_event(&"shot_miss", ArenaCombatPipelineScript.build_bot_shot_miss(shot_id, impact_position, origin.distance_to(impact_position), overcharged))
 	if feedback != null:
 		feedback.play_bot_miss(origin, impact_position)
 
