@@ -11,6 +11,6 @@
 - Validacao planejada: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio-worktrees\FpsPlayground--codex--track12-telemetry-readout-balance-baseline-v1\Projetos\FpsPlayground -s res://tools/validate.gd`; `git diff --check`; `powershell -ExecutionPolicy Bypass -File D:\Estudio\tools\check_doc_drift.ps1`.
 - Status: `READY_FOR_HUMAN_SMOKE`
 - Resultado: leitor executavel, testes PASS, docs enxutas e status atualizado para smoke humano da Track 12.
-- Validacao: `tools/validate.gd` PASS `52/52`, `493 asserts`; `git diff --check` PASS; `tools/check_doc_drift.ps1` PASS.
+- Validacao: `tools/validate.gd` PASS `53/53`, `496 asserts`; `git diff --check` PASS; `tools/check_doc_drift.ps1` PASS.
 - Smoke do leitor: `--latest`, `--session` e `--json` testados contra `C:\Users\Fabio\AppData\Roaming\Godot\app_userdata\FpsPlayground\telemetry\arena_20260619_202922_2301377`.
 - Proximo handoff: Fabio revisar o report do readout e aprovar se ele e util para escolher a Track 13.

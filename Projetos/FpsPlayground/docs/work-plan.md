@@ -22,7 +22,7 @@ The near-term direction is to prove a solid 1x1 arena foundation before adding m
 - Track 10 tunes weapon roles without movement, map or bot route-control changes.
 - Track 11 adds local duel telemetry without movement, map, weapon or bot route-control changes.
 - Track 12 adds local telemetry readout and first balance baseline without gameplay changes.
-- Validation baseline: `tools/validate.gd` PASS `52/52`, `493 asserts`.
+- Validation baseline: `tools/validate.gd` PASS `53/53`, `496 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
 ## Track Sequence

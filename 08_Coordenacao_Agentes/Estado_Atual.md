@@ -48,7 +48,7 @@
 - Marker: `FPS_PLAYGROUND_TRACK12_TELEMETRY_READOUT_READY_FOR_SMOKE`
 - Baseline: Track 12 adiciona readout local e baseline interpretativa para telemetria; nenhum gameplay foi alterado.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
-- Validacao: `tools/validate.gd` PASS `52/52`, `493 asserts`; warnings GUT UID/text-path conhecidos.
+- Validacao: `tools/validate.gd` PASS `53/53`, `496 asserts`; warnings GUT UID/text-path conhecidos.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
 - Proximo passo: smoke humano do readout contra sessoes reais de `user://telemetry`; preservar movimento, jump pads, mapas e bot aprovados.
 

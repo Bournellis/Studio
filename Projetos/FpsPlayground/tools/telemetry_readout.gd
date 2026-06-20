@@ -1,9 +1,10 @@
 extends SceneTree
 
 const TelemetryReadoutAnalyzerScript = preload("res://gameplay/telemetry/telemetry_readout_analyzer.gd")
+const DEFAULT_TELEMETRY_ROOT: String = "user://telemetry"
 
 var _session_path: String = ""
-var _root_path: String = TelemetryReadoutAnalyzer.DEFAULT_TELEMETRY_ROOT
+var _root_path: String = DEFAULT_TELEMETRY_ROOT
 var _use_latest: bool = false
 var _json_output: bool = false
 var _help_requested: bool = false

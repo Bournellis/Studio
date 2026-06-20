@@ -68,7 +68,7 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 
 ```powershell
 D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-# PASS, GUT 52/52, 493 asserts
+# PASS, GUT 53/53, 496 asserts
 ```
 
 Manual smoke lives in `docs/validation.md`.

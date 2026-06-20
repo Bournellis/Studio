@@ -76,6 +76,12 @@ func test_readout_finds_latest_session_under_custom_root() -> void:
 	assert_true(bool(readout.get("ok", false)))
 	assert_no_new_orphans()
 
+func test_telemetry_readout_runner_loads_without_editor_global_cache() -> void:
+	var script := load("res://tools/telemetry_readout.gd") as Script
+	assert_not_null(script)
+	assert_true(script.can_instantiate())
+	assert_no_new_orphans()
+
 func _build_healthy_events() -> Array[Dictionary]:
 	return [
 		_event("session_start", 0, {}),

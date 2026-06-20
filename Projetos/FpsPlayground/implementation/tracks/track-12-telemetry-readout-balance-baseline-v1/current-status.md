@@ -50,7 +50,7 @@ powershell -ExecutionPolicy Bypass -File D:\Estudio\tools\check_doc_drift.ps1
 Latest local result:
 
 ```text
-PASS, GUT 52/52, 493 asserts
+PASS, GUT 53/53, 496 asserts
 ```
 
 ## Human Smoke
