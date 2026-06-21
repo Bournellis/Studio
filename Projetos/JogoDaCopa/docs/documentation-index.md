@@ -43,6 +43,8 @@
 
 ## Current Public Baseline Evidence
 
+- Track 10D local Web goal golden-pop hotfix report: `playtest-reports/track-10d-web-goal-golden-pop-hotfix.md`
+- Track 10D local evidence: `playtest-reports/track-10d-data/`
 - Track 10C local Web goal feedback report: `playtest-reports/track-10c-web-goal-feedback-heap-safe.md`
 - Track 10C publication report: `playtest-reports/track-10c-publication.md`
 - Track 10C local, remote and stable URL evidence: `playtest-reports/track-10c-data/`
@@ -111,7 +113,7 @@
 
 ## Track Documentation Convention
 
-Tracks 09A-09J have local implementation folders under `../implementation/tracks/`. Tracks 09K-10C were focused publication, hotfix, diagnostics, gate-semantics, publication-validation and local reduction tracks; their authoritative records are the Kanban Done cards plus `docs/playtest-reports/` reports/evidence listed above. Do not infer missing implementation folders as missing status for 09K-10C.
+Tracks 09A-09J have local implementation folders under `../implementation/tracks/`. Tracks 09K-10D were focused publication, hotfix, diagnostics, gate-semantics, publication-validation and local reduction tracks; their authoritative records are the Kanban Done cards plus `docs/playtest-reports/` reports/evidence listed above. Do not infer missing implementation folders as missing status for 09K-10D.
 
 ## Historical Plans
 
