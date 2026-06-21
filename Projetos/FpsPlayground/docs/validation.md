@@ -78,6 +78,16 @@ PASS tools/validate.gd -- --profile=quick, GUT 67/67, 599 asserts
 PASS tools/validate.gd, GUT 67/67, 599 asserts
 ```
 
+Latest Track 14I debugger cleanup validation:
+
+```text
+PASS editor headless import, no GUT UID/text-path warnings, no ObjectDB leak warning
+PASS runtime main menu headless, no debugger warnings
+PASS runtime arena headless, no debugger warnings
+PASS tools/validate.gd -- --profile=quick, GUT 67/67, 599 asserts
+PASS tools/validate.gd, GUT 67/67, 599 asserts
+```
+
 Latest Track 11 human smoke:
 
 ```text
@@ -301,6 +311,12 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 - Confirm no player movement feel, map geometry, weapon values, pickups or aim difficulty changed.
 - Confirm validation still passes at `67/67`, `599 asserts`.
 
+## Track 14I Godot Debugger Cleanup Smoke
+
+- Launch the editor or headless editor import and confirm no GUT UID/text-path warnings appear.
+- Run the main menu and arena scene and confirm the debugger stays free of runtime warnings.
+- Confirm validation still passes at `67/67`, `599 asserts`.
+
 ## Known Noise
 
-GUT UID/text-path warnings can appear after fresh worktree imports. They are accepted when tests pass.
+No current warning is accepted as baseline noise for `FpsPlayground`. Investigate new debugger warnings before the next gameplay track.

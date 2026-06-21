@@ -1,8 +1,8 @@
 # FpsPlayground Work Plan
 
-- Status: `FPS_PLAYGROUND_TRACK14H_BOT_LONG_JUMP_PAD_HOTFIX_LOCAL`
+- Status: `FPS_PLAYGROUND_TRACK14I_GODOT_DEBUGGER_CLEANUP_LOCAL`
 - Current surface: FPS arena lab.
-- Current baseline: Track 14H bot long jump pad hotfix merged local baseline; current player movement feel preserved.
+- Current baseline: Track 14I Godot debugger cleanup merged local baseline; current player movement feel preserved.
 
 ## North Star
 
@@ -31,6 +31,7 @@ The Track 14 hardening sequence is complete enough to resume evidence-first game
 - Track 14F removed dead private bot wrappers and rebaselined code metrics; no gameplay changes.
 - Track 14G extracted bot movement execution, projectile runtime, HUD feedback state and telemetry event facade; no gameplay changes.
 - Track 14H restored bot-only route-aware long jump pad reliability while preserving player jump pad force.
+- Track 14I cleaned GUT editor/debugger warnings; no gameplay changes.
 - Validation baseline: `tools/validate.gd` PASS `67/67`, `599 asserts`.
 - Football/TPS scope belongs to `../JogoDaCopa`.
 
