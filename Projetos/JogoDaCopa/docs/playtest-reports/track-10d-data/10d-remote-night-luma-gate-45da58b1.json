@@ -1,0 +1,16 @@
+﻿{
+    "schema_version":  "jogodacopa_track10d_luma_gate_v1",
+    "label":  "10d-remote-night-luma-gate-45da58b1",
+    "source_screenshot":  "D:\\Estudio\\Projetos\\JogoDaCopa\\docs\\playtest-reports\\track-10d-data\\10d-remote-stability-5min-45da58b1.png",
+    "sample_region":  {
+                          "x_start_ratio":  0.62,
+                          "x_end_ratio":  0.96,
+                          "y_start_ratio":  0.04,
+                          "y_end_ratio":  0.28,
+                          "step_px":  6,
+                          "sample_count":  4796
+                      },
+    "threshold_luma_0_255":  90,
+    "luma_0_255":  6.525,
+    "passed":  true
+}

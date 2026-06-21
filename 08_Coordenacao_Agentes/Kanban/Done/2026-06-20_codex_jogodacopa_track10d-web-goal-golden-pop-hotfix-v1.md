@@ -62,3 +62,23 @@
 
 - O 5min local passou, mas `js_heap_growth +9.42%` ficou perto do limite de `10%`.
 - A publicacao so deve ser considerada segura se o remote 5min stability tambem passar.
+
+## Resultado De Publicacao
+
+- Merge local em `main`: `45da58b1`.
+- Publicacao Cloudflare: `Super Campeao v1.2.1+45da58b1`.
+- Release root: `web/v1-copa-arena-futebol-20260620-45da58b1`.
+- Preview: `https://6b9febae.copa-arena-futebol.pages.dev`.
+- URL estavel confirmada: `https://copa-arena-futebol.pages.dev/`.
+- Remote menu: PASS, release root conferiu, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote first-minute: PASS, `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`.
+- Remote 5min stability: PASS, `js_heap_growth -5.35%`, peak `+0.04%`, pior janela 5s FPS `139.8`.
+- Remote luma: PASS, `6.525 < 90`.
+- Stable URL: PASS, servindo `web/v1-copa-arena-futebol-20260620-45da58b1`.
+- Reteste humano: pendente.
+
+## Fechamento
+
+- Status final: publicado com gates remotos automatizados PASS; aguardar reteste humano.
+- Fallback aprovado: Track 10A `Super Campeao v1.2.1+fc3c72bb`.
+- `PUSH PENDENTE`: Fabio - GitHub Desktop - Push origin.

@@ -1,6 +1,6 @@
 # JogoDaCopa Work Plan
 
-- Status: `JOGO_DA_COPA_TRACK10C_PUBLISHED_REMOTE_GATES_PASSED_HUMAN_RETEST_PENDING`
+- Status: `JOGO_DA_COPA_TRACK10D_PUBLISHED_REMOTE_GATES_PASSED_HUMAN_RETEST_PENDING`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.
 
@@ -44,18 +44,19 @@ Grow `JogoDaCopa` as a festive football minigame collection. The first playable 
 - Track 09S Camera Strafe Smoothing Hotfix V1 fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by easing the visual ball-focus weight and focus point in `football_chase_camera.gd`; gameplay, physics, movement, bot, ball, scoring, SUPER, HUD, assets and tuning remain unchanged. The focused red/green test, import headless, `tools/validate.gd`, Web export, `node --check`, Chrome local 90s Web smoke, `git diff --check`, doc drift, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma and Fabio/tester human retest gates passed. It is public and approved as `Super Campeao v1.2.1+925f3b9f`.
 - Track 10A HUD Pause Menu Decomposition V1 extracts pause menu construction, tabs, restart confirmation and pause settings synchronization from `football_hud.gd` into `football_hud_pause_menu_controller.gd`; `football_hud.gd` fell from `1512` to `1148` lines while preserving node paths, signals and click behavior. Local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, 3-resolution screenshot coverage, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma and Fabio/tester human retest gates passed. It is public and approved as `Super Campeao v1.2.1+fc3c72bb`.
 - Track 10B Web Goal Feel Reintroduction V1 reintroduced default Web goal feedback with a lightweight visual path and short `goal_jingle` audio after browser activation. It kept the heavy Web `crowd_goal`, burst and dynamic-light package disabled, and left the PC/Windows full goal package unchanged. Local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, 90s Chrome audio-unlock smoke and 5-minute Chrome stability passed. The 2026-06-20 publication attempt passed remote menu and first-minute gates, failed the remote 5-minute heap gate (`js_heap_growth +13.85%`, limit `<10%`) and was rolled back to 10A. Track 10C later superseded this attempt with visual-only default Web goal feedback.
-- Track 10C Web Goal Feedback Heap-Safe V1 keeps default Web goal visual feedback but removes default Web goal audio. The default Web key is `goal_visual`; `goal_audio` and legacy `goal` remain explicit opt-in diagnostics. Local import, `tools/validate.gd`, Web export/gzip, `node --check`, 90s Chrome visual-only smoke and 5-minute Chrome stability passed with `js_heap_growth -8.10%`, peak `+1.10%`, worst 5s FPS `137.4` and `feedback.web_goal_mode visual=true audio=false`. Cloudflare publication passed remote menu, first-minute, 5-minute stability, luma and stable URL confirmation gates with remote `js_heap_growth -0.59%`, peak `+2.31%` and worst 5s FPS `142.2`. It is public as `Super Campeao v1.2.1+39054f31`; human retest is pending and 10A remains the latest human-approved fallback.
+- Track 10C Web Goal Feedback Heap-Safe V1 kept default Web goal visual feedback but removed default Web goal audio. The default Web key became `goal_visual`; `goal_audio` and legacy `goal` remained explicit opt-in diagnostics. Local import, `tools/validate.gd`, Web export/gzip, `node --check`, 90s Chrome visual-only smoke and 5-minute Chrome stability passed with `js_heap_growth -8.10%`, peak `+1.10%`, worst 5s FPS `137.4` and `feedback.web_goal_mode visual=true audio=false`. Cloudflare publication passed remote menu, first-minute, 5-minute stability, luma and stable URL confirmation gates with remote `js_heap_growth -0.59%`, peak `+2.31%` and worst 5s FPS `142.2`. It was public as `Super Campeao v1.2.1+39054f31` and was superseded by 10D before approval because the goal feedback still felt too weak.
+- Track 10D Web Goal Golden Pop Hotfix V1 supersedes 10C before approval after human playtest perception reported that the Web goal feedback was still too weak. It keeps default Web goal audio disabled, lowers stadium ambience, and makes the default Web `goal_visual` path use a larger, higher and longer-lived golden pop. Local import, `tools/validate.gd`, Web export/gzip, `node --check`, 90s Chrome Web smoke and 5-minute Chrome stability passed. Cloudflare publication passed remote menu, first-minute, 5-minute stability, luma and stable URL confirmation gates with remote `js_heap_growth -5.35%`, peak `+0.04%`, worst 5s FPS `139.8` and `feedback.web_goal_mode visual=true audio=false`. It is public as `Super Campeao v1.2.1+45da58b1`; human retest is pending and 10A remains the latest human-approved fallback.
 - Validation targets football resources and tests only.
 - FPS arena/shooter scope moved to `../FpsPlayground`.
 
 ## Recommended Next Step
 
-Track 10C is public with remote automated gates passed and human retest pending. Track 10A remains the latest human-approved fallback at `Super Campeao v1.2.1+fc3c72bb` until 10C is approved. Track 09S is the older human-approved fallback at `Super Campeao v1.2.1+925f3b9f`. Track 09R is superseded before human approval. Track 09Q is the approved fallback behind 09S at `Super Campeao v1.2.1+bb604c77`. Track 09P remains the fallback behind 09Q at `Super Campeao v1.2.1+8863c5b9`; Track 09N remains the historical approved fallback baseline behind 09P.
+Track 10D is public with remote automated gates passed and human retest pending. Track 10A remains the latest human-approved fallback at `Super Campeao v1.2.1+fc3c72bb` until 10D is approved. Track 10C passed automated gates but was superseded before approval because the goal feedback still felt too weak. Track 09S is the older human-approved fallback at `Super Campeao v1.2.1+925f3b9f`. Track 09R is superseded before human approval. Track 09Q is the approved fallback behind 09S at `Super Campeao v1.2.1+bb604c77`. Track 09P remains the fallback behind 09Q at `Super Campeao v1.2.1+8863c5b9`; Track 09N remains the historical approved fallback baseline behind 09P.
 
 Focus:
 
-- Fabio/tester should run human retest on Track 10C at `https://copa-arena-futebol.pages.dev/`.
-- Keep 10A as the latest approved fallback until Track 10C passes human retest.
+- Fabio/tester should run human retest on Track 10D at `https://copa-arena-futebol.pages.dev/`, focusing on goal satisfaction and absence of freezes during the match.
+- Keep 10A as the latest approved fallback until Track 10D passes human retest.
 - Keep 09S as the latest approved fallback behind 10A, with 09Q, 09P and 09N as older approved fallbacks.
 - Prefer orchestration slices that do not alter gameplay, physics, input, bot decisions or assets.
 - Preserve existing GUT coverage and add/retarget focused tests when moving public helper contracts.
@@ -203,6 +204,19 @@ Focus:
 - Published as `Super Campeao v1.2.1+39054f31`; remote menu, first-minute, 5-minute stability, luma and stable URL confirmation gates passed.
 - Remote 5-minute stability: `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`, `js_heap_growth -0.59%`, peak `+2.31%`, worst 5s FPS `142.2`, Godot counters/caches stable.
 - Stable URL `https://copa-arena-futebol.pages.dev/` confirmed `web/v1-copa-arena-futebol-20260620-39054f31`.
+- Result: public with remote automated gates passed; human retest pending; 10A remains the latest human-approved fallback.
+
+## Completed Track 10D - Web Goal Golden Pop Hotfix V1
+
+- Superseded 10C before approval because the Web goal feedback was visible in probes but still too weak to perceive in human play.
+- Kept default Web goal audio disabled: no `goal_jingle`, no `crowd_goal`, no particle burst and no dynamic light in the public Web default path.
+- Enlarged the Web goal visual marker to a golden `0.86m` pop at `1.18m` height with `0.76s` lifetime plus two larger secondary markers.
+- Lowered stadium ambience from `-14.0 dB` to `-18.0 dB` and goal ambience lift from `-8.5 dB` to `-15.0 dB`.
+- Added GUT contract coverage for the visible Web goal pop and quieter ambience thresholds.
+- Local gates passed: import headless, `tools/validate.gd` (`108/108`, `1844` asserts), Web export/gzip, `node --check`, Chrome local 90s Web smoke and Chrome local 5min stability.
+- Published as `Super Campeao v1.2.1+45da58b1`; remote menu, first-minute, 5-minute stability, luma and stable URL confirmation gates passed.
+- Remote 5-minute stability: `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`, `js_heap_growth -5.35%`, peak `+0.04%`, worst 5s FPS `139.8`, goal mode `visual=true audio=false`.
+- Evidence: `docs/playtest-reports/track-10d-web-goal-golden-pop-hotfix.md`, `docs/playtest-reports/track-10d-publication.md` and `docs/playtest-reports/track-10d-data/`.
 - Result: public with remote automated gates passed; human retest pending; 10A remains the latest human-approved fallback.
 
 ## Out Of Scope

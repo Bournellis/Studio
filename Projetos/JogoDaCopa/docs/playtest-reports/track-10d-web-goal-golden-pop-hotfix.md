@@ -4,7 +4,7 @@
 - Branch: `codex/jogodacopa/track10d-web-goal-golden-pop-hotfix-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track10d-web-goal-golden-pop-hotfix-v1`
 - Public baseline before publication: Track 10C `Super Campeao v1.2.1+39054f31`
-- Result: local validated; publication pending at this report stage.
+- Result: local validated and published; remote automated gates passed; human retest pending.
 
 ## Scope
 
@@ -82,8 +82,10 @@ Evidence:
 
 ## Interpretation
 
-Track 10D deliberately spends a small amount of visual presence to make the goal readable without reopening the default Web audio path. The local 5-minute gate passed, but retained JS heap was close to the `10%` limit. Publication must therefore include the full remote 5-minute stability gate before this can be treated as a safe public candidate.
+Track 10D deliberately spends a small amount of visual presence to make the goal readable without reopening the default Web audio path. The local 5-minute gate passed, but retained JS heap was close to the `10%` limit. Publication therefore included the full remote 5-minute stability gate, which passed with `js_heap_growth -5.35%`.
 
 ## Next Step
 
-If merged and published, run remote menu, first-minute, 5-minute stability, night luma and stable URL confirmation gates. Human retest remains required before marking 10D as the approved public baseline.
+Track 10D was published on 2026-06-20 and passed remote menu, first-minute, 5-minute stability, night luma and stable URL confirmation gates. Fabio/tester human retest remains required before marking it as the approved public baseline.
+
+See `docs/playtest-reports/track-10d-publication.md` and `docs/playtest-reports/track-10d-data/` for publication evidence.
