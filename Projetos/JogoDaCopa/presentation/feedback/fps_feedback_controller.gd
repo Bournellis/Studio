@@ -18,10 +18,13 @@ const MAX_RETIRED_WEB_LIGHTS: int = 96
 const WEB_AUDIO_UNLOCK_POLL_MSEC: int = 500
 const WEB_FEEDBACK_QUERY_KEY: String = "jdc_web_feedback"
 const WEB_DEFAULT_FEEDBACK_EFFECTS: Array = ["whistle", "confetti", "kick", "countdown", "jump_pad", "result", "goal_visual"]
-const AMBIENCE_PLAY_DB: float = -14.0
+const AMBIENCE_PLAY_DB: float = -18.0
 const AMBIENCE_MENU_DB: float = -24.0
-const AMBIENCE_GOAL_DB: float = -8.5
+const AMBIENCE_GOAL_DB: float = -15.0
 const AMBIENCE_FADE_SPEED: float = 5.0
+const WEB_GOAL_POP_RADIUS: float = 0.86
+const WEB_GOAL_POP_LIFETIME: float = 0.76
+const WEB_GOAL_POP_HEIGHT: float = 1.18
 const REAL_AUDIO_PATHS: Dictionary = {
 	&"kick": "res://assets/audio/kenney_sfx/impactSoft_medium_000.ogg",
 	&"kick_strong": "res://assets/audio/kenney_sfx/impactBell_heavy_000.ogg",
@@ -659,9 +662,9 @@ func _spawn_web_burst_markers(effect_position: Vector3, color: Color, amount: in
 	return marker_count
 
 func _spawn_web_goal_lite(goal_position: Vector3, color: Color) -> void:
-	_spawn_sphere(goal_position + Vector3.UP * 0.76, 0.38, color, 0.32, true)
-	_spawn_sphere(goal_position + Vector3(0.28, 1.13, 0.0), 0.14, FOOTBALL_STRONG_COLOR, 0.24, true)
-	_spawn_sphere(goal_position + Vector3(-0.28, 1.05, 0.0), 0.12, color, 0.22, true)
+	_spawn_sphere(goal_position + Vector3.UP * WEB_GOAL_POP_HEIGHT, WEB_GOAL_POP_RADIUS, FOOTBALL_GOAL_COLOR, WEB_GOAL_POP_LIFETIME, true)
+	_spawn_sphere(goal_position + Vector3(0.46, 1.55, 0.0), 0.26, Color(1.0, 0.96, 0.58, 1.0), 0.48, true)
+	_spawn_sphere(goal_position + Vector3(-0.46, 1.36, 0.0), 0.22, color, 0.42, true)
 
 func _spawn_web_sphere(effect_position: Vector3, radius: float, color: Color, lifetime: float, unshaded: bool) -> void:
 	var mesh_instance := _acquire_web_sphere()

@@ -55,3 +55,7 @@ func test_web_default_feedback_includes_heap_safe_lite_goal_feedback() -> void:
 	assert_false(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("goal_audio"))
 	assert_false(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("goal"))
 	assert_false(FpsFeedbackControllerScript.WEB_DEFAULT_FEEDBACK_EFFECTS.has("crowd_goal"))
+	assert_true(FpsFeedbackControllerScript.WEB_GOAL_POP_RADIUS >= 0.75)
+	assert_true(FpsFeedbackControllerScript.WEB_GOAL_POP_LIFETIME >= 0.65)
+	assert_true(FpsFeedbackControllerScript.AMBIENCE_PLAY_DB <= -16.0)
+	assert_true(FpsFeedbackControllerScript.AMBIENCE_GOAL_DB <= -14.0)
