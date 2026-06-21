@@ -7,7 +7,7 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (10C publicada com gates remotos PASS; aguardando reteste humano; 10A fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14H hotfix de long jump pad do bot mergeada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (10C publicada com gates remotos PASS; aguardando reteste humano; 10A fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14I limpeza de debugger Godot mergeada localmente; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -46,11 +46,11 @@
 
 ## FpsPlayground
 
-- Status: `P2_IMPLEMENTACAO - TRACK14H_BOT_LONG_JUMP_PAD_HOTFIX_LOCAL`
-- Marker: `FPS_PLAYGROUND_TRACK14H_BOT_LONG_JUMP_PAD_HOTFIX_LOCAL`
-- Baseline: Track 14H mergeada localmente; bot voltou a completar o long jump pad de `Relay Foundry V1` na primeira tentativa com assist route-aware somente para bot; feel do player preservado.
+- Status: `P2_IMPLEMENTACAO - TRACK14I_GODOT_DEBUGGER_CLEANUP_LOCAL`
+- Marker: `FPS_PLAYGROUND_TRACK14I_GODOT_DEBUGGER_CLEANUP_LOCAL`
+- Baseline: Track 14I mergeada localmente; debugger/editor Godot limpos de warnings GUT UID/text-path e leak headless; gameplay Track 14H preservado.
 - Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
-- Validacao: `tools/validate.gd` quick/full PASS `67/67`, `599 asserts`; `tools/check_doc_drift.ps1` PASS; warnings GUT UID/text-path conhecidos.
+- Validacao: editor/menu/arena headless sem warnings; `tools/validate.gd` quick/full PASS `67/67`, `599 asserts`; `tools/check_doc_drift.ps1` PASS.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
 - Proximo passo: Fabio/tester confirmar `Relay Foundry V1` no editor; depois executar `Multi-Arena Balance Baseline V1` antes de novas armas, buffs, mapas, tuning ou bot intelligence.
 

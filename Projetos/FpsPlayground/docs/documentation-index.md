@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK14H_BOT_LONG_JUMP_PAD_HOTFIX_LOCAL`
+- Status: `FPS_PLAYGROUND_TRACK14I_GODOT_DEBUGGER_CLEANUP_LOCAL`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
@@ -55,6 +55,7 @@
 - `../implementation/tracks/track-14f-cleanup-documentation-v1/current-status.md`
 - `../implementation/tracks/track-14g-surgical-expansion-hardening-v1/current-status.md`
 - `../implementation/tracks/track-14h-bot-long-jump-pad-hotfix-v1/current-status.md`
+- `../implementation/tracks/track-14i-godot-debugger-cleanup-v1/current-status.md`
 
 ## Historical Note
 
