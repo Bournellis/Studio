@@ -1,7 +1,7 @@
 # DraxosMobile - Documentation Index
 
 - Status: `VIVO`
-- Last updated: `2026-06-15`
+- Last updated: `2026-06-24`
 - Purpose: classify project documents so agents know what to trust, what to update and what to treat as history.
 
 ## Categories
@@ -127,7 +127,7 @@
 | `docs/track-13-manual-walkthrough-gate.md` | `RUNBOOK` | Required Android/Windows/Web manual gate. |
 | `docs/internal-alpha-release-plan.md` | `HISTORICO` | Closed Internal Alpha v0 release plan; current release flow is `docs/release-ops-checklist.md`. |
 | `docs/internal-alpha-remote-setup.md` | `HISTORICO` | Closed remote setup record for Internal Alpha v0; read only for historical setup context. |
-| `docs/internal-alpha-static-hosting.md` | `RUNBOOK` | Static hosting rules for Portal/Web packages on Cloudflare Pages with large assets outside Pages. |
+| `docs/internal-alpha-static-hosting.md` | `RUNBOOK` | Static hosting rules for Portal/Web packages on Cloudflare Pages with Pages-local `index.pck` and chunked Web WASM. |
 | `docs/internal-alpha-site-protection-tutorial.md` | `RUNBOOK` | Tutorial for protecting alpha Portal/Web and downloads; operational reference, not current package state. |
 | `docs/supabase-remote-tutorial.md` | `RUNBOOK` | Fabio-facing Supabase remote setup tutorial; secrets stay local and ignored. |
 | `docs/internal-alpha-v0.md` | `HISTORICO` | Internal Alpha v0 runbook preserved as closed-package context. |

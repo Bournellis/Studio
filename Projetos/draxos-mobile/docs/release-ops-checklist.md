@@ -1,6 +1,6 @@
 # DraxosMobile - Release Ops Checklist
 
-- Data: `2026-06-15`
+- Data: `2026-06-24`
 - Track: `Track 13 - Foundation Validation And Release Safety` + `Track 17 - Foundation Expansion Readiness` + `Foundation Final Polish` + `Foundation Hardening V2 release-ops-keystore`
 - Status: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED` / `FOUNDATION_FINAL_POLISH_DELIVERED`
 - Escopo: readiness operacional de release para Android, PC e Web, com safety por default e sem publicar build nova.
@@ -45,10 +45,10 @@ Flags antigas (`-SkipUpload`, `-UseManifestSecret`, `-SkipManifestSecret`) sem `
 
 Track 13 itself remains non-publishing by default. After Track 13, user-approved product packages that need human testing on Android, Windows or Web should treat Internal Alpha publication as the default completion step once local validation passes. For packages that exist to prove product clarity, use the Product Preview Human Gate below before promoting the candidate as an official package result.
 
-- If the user asks to execute a visible package, test it in the published app, or review it in Web/APK/PC, plan export, package, Storage upload and Cloudflare Pages deploy unless the user explicitly says local-only.
+- If the user asks to execute a visible package, test it in the published app, or review it in Web/APK/PC, plan export, package, APK/PC Storage upload when binaries changed and Cloudflare Pages deploy unless the user explicitly says local-only.
 - Remote mutation still requires current-task approval plus `-ConfirmRemoteMutation`; never infer approval for schema, Edge Function, migration or secret changes from a client-only publication request.
 - Use a fresh versioned release root for every Web-visible package and generate Cloudflare Pages from the same worktree/session that exported and packaged the release.
-- Run `build_cloudflare_pages_package.ps1` after Storage upload with `-StaticAssetBaseUrl` pointing at the versioned Web asset root so the script can block stale `GODOT_CONFIG.fileSizes` mismatches.
+- Run `build_cloudflare_pages_package.ps1` from the same worktree/session that exported and packaged the release. The default Web path is Pages-local: `index.pck` is copied to Pages and `index.wasm` is split into `index.wasm.part*` chunks below the Pages per-file limit. Use an HTTP `-StaticAssetBaseUrl` only for an explicitly approved external asset host such as R2.
 - The canonical playtest host is the production Pages domain:
   `https://draxos-mobile-internal-alpha.pages.dev`. Do not publish the remote
   manifest with a hash deployment URL as `portal_url` or `artifacts.web.url`.
@@ -56,7 +56,7 @@ Track 13 itself remains non-publishing by default. After Track 13, user-approved
   Web shell path `/web/index.html`. Hash URLs such as
   `https://95f403c5...pages.dev` are evidence/debug links, not the user-facing
   playtest contract.
-- Before reporting publication success, verify the deployed `/web/index.html` references the versioned asset root and that the shell `index.pck` size matches the remote `Content-Length`.
+- Before reporting publication success, verify the deployed `/web/index.html` reports `DRAXOS_WEB_ASSET_ROOT=/web`, contains `DRAXOS_WASM_CHUNKS`, has no stale Supabase Storage `storage/v1` Web runtime reference, and that `/web/index.pck` plus every `/web/index.wasm.part*` chunk responds from Cloudflare Pages.
 - Before reporting Web launch success, run `tools/smoke_web_launch_remote.ps1` against the hash preview returned by Cloudflare Pages. Use `-NoProjectWrites` for read-only validation jobs and `-KeepDiagnostics` when the screenshot/logs must be retained outside the project. If the stable production domain is protected by Cloudflare Access, anonymous Access is expected there and does not replace the preview launch smoke.
 
 ## Product Preview Human Gate
@@ -108,9 +108,9 @@ Rules:
 | Foundation expansion readiness | `tools/check_foundation_expansion_readiness.ps1` | Garante account/save, ruleset, admin/minigame contracts, migrations espelhadas e testes fundacionais | Sim |
 | Foundation admin/RLS live smoke | `server/tests/foundation_admin_rls_live_smoke.ts` | Prova RLS de account/save/ruleset/admin audit e RPCs admin `service_role`-only em Supabase/Edge local | Sim, somente local |
 | Publish script | `tools/publish_internal_alpha.ps1` | Planeja/package local por default; publica somente com modo remoto + confirmacao | `Plan`/`Package` sim; modos remotos sao publicacao |
-| Cloudflare package | `tools/build_cloudflare_pages_package.ps1` | Gera pacote local hibrido para Pages a partir de publish existente | Seguro se rodar sobre artefatos locais existentes; nao faz deploy |
+| Cloudflare package | `tools/build_cloudflare_pages_package.ps1` | Gera pacote local Pages a partir de publish existente, com `index.pck` local e `index.wasm` fatiado em chunks menores que 25 MiB | Seguro se rodar sobre artefatos locais existentes; nao faz deploy |
 | Web launch smoke | `tools/smoke_web_launch_remote.ps1` | Valida hash preview real via Chrome/CDP, screenshot e logs de rede/runtime | Sim, leitura remota; usar preview liberado; `-NoProjectWrites` evita sujar `build/` |
-| Static hosting doc | `docs/internal-alpha-static-hosting.md` | Regras Cloudflare Pages + Supabase Storage | Sim, leitura |
+| Static hosting doc | `docs/internal-alpha-static-hosting.md` | Regras Cloudflare Pages, chunks Web e downloads Supabase | Sim, leitura |
 | Supabase remote doc | `docs/supabase-remote-tutorial.md` | Setup, deploy e smokes remotos | Leitura. Deploy/comandos administrativos ficam fora de validacao segura |
 
 ## Checklist Comum Release-Ready
@@ -190,13 +190,13 @@ Release-ready PC exige:
 Release-ready Web exige:
 
 - Preset `PC Browser Alpha` exporta `build/web/index.html` e assets Godot.
-- APK/ZIP e assets grandes continuam em Supabase Storage; HTML final de Portal/Web fica no Cloudflare Pages.
+- APK/ZIP continuam em Supabase Storage quando publicados; Web runtime assets ficam no Cloudflare Pages (`index.pck` direto e `index.wasm.part*` fatiado).
 - `tools/build_cloudflare_pages_package.ps1` gera `build/internal-alpha/cloudflare-pages/` e `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
 - Gerar o pacote Cloudflare a partir do mesmo worktree/sessao que exportou e empacotou a release. Nao redeployar a partir de `build/` local antigo do workspace principal.
-- Quando `-StaticAssetBaseUrl` apontar para Supabase/HTTP, o script confere `GODOT_CONFIG.fileSizes` do shell Web contra `Content-Length` remoto de `index.pck` e `index.wasm`; mismatch bloqueia o pacote porque indica `publish/web/index.html` stale.
+- Quando `-StaticAssetBaseUrl` apontar para HTTP/R2, o script confere `GODOT_CONFIG.fileSizes` do shell Web contra `Content-Length` remoto de `index.pck` e `index.wasm`; mismatch bloqueia o pacote porque indica `publish/web/index.html` stale. Com o default Pages-local, essa checagem remota nao roda e o pacote e validado pelos arquivos locais e pelo limite por arquivo.
 - Pacote Cloudflare nao contem arquivo individual com `>= 25 MiB`.
-- `web/index.html` publicado no Cloudflare aponta para assets grandes no Supabase Storage.
-- `web/index.html` publicado tem `GODOT_CONFIG.fileSizes.index.pck` igual ao `Content-Length` remoto do `index.pck` versionado.
+- `web/index.html` publicado no Cloudflare aponta para `/web/index`, injeta `DRAXOS_WASM_CHUNKS` e reconstitui `index.wasm` a partir dos chunks locais.
+- `web/index.html` publicado nao contem `storage/v1` para os assets de runtime Web.
 - `web/index.html` publicado embute `DRAXOS_RELEASE_ROOT`, `DRAXOS_WEB_ASSET_ROOT`, cache-bust nos assets pequenos locais e watchdog legivel para splash acima de 20 segundos.
 - `https://draxos-mobile-internal-alpha.pages.dev/` abre o Portal oficial.
 - `https://draxos-mobile-internal-alpha.pages.dev/portal/index.html` redireciona para o Portal oficial.
@@ -218,7 +218,7 @@ npx -y wrangler@latest pages deploy build/internal-alpha/cloudflare-pages --proj
   `wrangler pages deployment list --project-name draxos-mobile-internal-alpha`
   que o ultimo deployment `Production` da branch `main` corresponde ao source
   publicado, e valide o hash URL apenas como espelho tecnico desse deployment.
-- O hash URL deve passar em `tools/smoke_web_launch_remote.ps1 -ExpectedReleaseRoot <release-root> -NoProjectWrites`: o overlay `#status` precisa sumir em ate 60 segundos, `index.pck` e `index.wasm` nao podem falhar e o screenshot final precisa mostrar o jogo, nao a splash.
+- O hash URL deve passar em `tools/smoke_web_launch_remote.ps1 -ExpectedReleaseRoot <release-root> -NoProjectWrites`: o overlay `#status` precisa sumir em ate 60 segundos, `index.pck` e os chunks de `index.wasm` nao podem bloquear o boot, e o screenshot final precisa mostrar o jogo, nao a splash.
 - Smoke somente leitura `release_artifacts_remote_smoke.ts` valida Portal com `DraxosMobile` e Web com `GODOT_CONFIG`.
 
 ## Web CORS Troubleshooting
@@ -327,7 +327,7 @@ if ($errors.Count -gt 0) { throw $errors }
 Opcional, somente se `build/internal-alpha/publish/` ja existir localmente de um export/publication package anterior e voce nao for publicar:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/<release-root>/web"
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "/web" -ReleaseRoot "internal-alpha/<release-root>"
 ```
 
 Remote read-only smoke, somente com URL remota e publishable key local:
@@ -380,9 +380,9 @@ Esta sequencia fica fora da validacao automatica segura e deve ser usada apenas 
 4. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Plan -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` e revisar o plano.
 5. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Package -ReleaseRoot <root-versionado> -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para preparar pacote local.
 6. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode Upload -ReleaseRoot <root-versionado> -ConfirmRemoteMutation -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para Storage.
-7. Gerar pacote Cloudflare no mesmo worktree com `tools/build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl <asset-root-versionado>/web`; este passo deve acontecer depois do upload porque o script compara o shell local com os assets remotos.
+7. Gerar pacote Cloudflare no mesmo worktree com `tools/build_cloudflare_pages_package.ps1 -StaticAssetBaseUrl /web -ReleaseRoot <root-versionado>`; para Web, o pacote Pages-local substitui a dependencia de Supabase Storage por `index.pck` local e `index.wasm.part*`.
 8. Publicar pacote no Cloudflare Pages production com `npx -y wrangler@latest pages deploy build/internal-alpha/cloudflare-pages --project-name draxos-mobile-internal-alpha --branch main`.
-9. Validar o hash retornado pelo Cloudflare como evidencia tecnica e validar o dominio production fixo como alvo oficial. `/web` deve conter o asset root versionado e `GODOT_CONFIG.fileSizes.index.pck` deve bater com o `Content-Length` de `<asset-root-versionado>/web/index.pck`. Se production estiver sob Access, usar sessao autenticada ou registrar que a validacao anonima encontrou Access esperado.
+9. Validar o hash retornado pelo Cloudflare como evidencia tecnica e validar o dominio production fixo como alvo oficial. `/web` deve ter `DRAXOS_WEB_ASSET_ROOT=/web`, conter `DRAXOS_WASM_CHUNKS`, servir `/web/index.pck` e `/web/index.wasm.part*`, e nao conter referencia `storage/v1` para runtime Web. Se production estiver sob Access, usar sessao autenticada ou registrar que a validacao anonima encontrou Access esperado.
 10. Rodar `tools/publish_internal_alpha.ps1 -ProjectDir . -Mode DeployManifest -ReleaseRoot <root-versionado> -ConfirmRemoteMutation -StaticSiteBaseUrl https://draxos-mobile-internal-alpha.pages.dev` para manifest/deploy.
 11. Rodar smokes remotos, incluindo `release_manifest_smoke.ts`, `release_artifacts_remote_smoke.ts` e `internal_alpha_remote_smoke.ts` com flags necessarias.
 12. Registrar relatorio de export/publicacao e atualizar handoff.
@@ -408,7 +408,7 @@ Esta sequencia fica fora da validacao automatica segura e deve ser usada apenas 
 - `minimum_supported_version_code` maior que o app atual sem build nova validada.
 - Portal/Web final hospedado diretamente no Supabase Storage.
 - Cloudflare Pages foi redeployado a partir de `build/` local antigo ou de worktree diferente da exportacao aprovada.
-- `web/index.html` publicado aponta para asset root novo, mas `GODOT_CONFIG.fileSizes.index.pck` nao bate com o `index.pck` remoto.
+- `web/index.html` publicado aponta para asset root externo sem decisao explicita, nao injeta `DRAXOS_WASM_CHUNKS` no fluxo Pages-local ou ainda referencia `storage/v1` para runtime Web.
 - APK debug fallback usado sem estar em `known_issues`.
 - Smoke remoto usa `service_role` ou URL local.
 - Script de publicacao remota foi executado sem `-ConfirmRemoteMutation`.

@@ -1,6 +1,6 @@
 # DraxosMobile - Internal Alpha Static Hosting
 
-- Data: `2026-05-27`
+- Data: `2026-06-24`
 - Status: `REQUIRED_FOR_PORTAL_WEB_SIGNOFF`
 - Escopo: Portal e Web build da Internal Alpha v0.
 
@@ -36,14 +36,15 @@ Alternativas aceitaveis:
 
 Nao publique a pasta `build/internal-alpha/publish/` inteira no Cloudflare Pages.
 
-Motivo: o export Web do Godot gera `web/index.wasm` com cerca de 36 MB nesta alpha, enquanto Cloudflare Pages aceita no maximo 25 MiB por arquivo de asset. A solucao da Internal Alpha v0 e hibrida:
+Motivo: o export Web do Godot gera `web/index.wasm` com cerca de 36-38 MB nesta alpha, enquanto Cloudflare Pages aceita no maximo 25 MiB por arquivo de asset. A solucao atual da Internal Alpha e Pages-local:
 
-- Cloudflare Pages serve apenas o portal e os arquivos HTML pequenos.
-- Supabase Storage continua servindo os assets grandes ja publicados do Web export (`index.wasm`, `index.js`, `index.pck`, imagens/worklets).
-- O HTML publicado no Cloudflare aponta para os assets grandes no Supabase.
+- Cloudflare Pages serve o portal, o Web shell, `index.pck`, `index.js`, imagens/worklets e os chunks do WASM.
+- O script de pacote divide `index.wasm` em `index.wasm.part0`, `index.wasm.part1`, etc., sempre abaixo do limite por arquivo do Pages.
+- O HTML publicado injeta `DRAXOS_WASM_CHUNKS` e intercepta a requisicao do Godot por `index.wasm`, recompondo o binario no navegador.
+- O Web shell usa `DRAXOS_WEB_ASSET_ROOT=/web` e nao deve referenciar `storage/v1` para runtime Web.
 - APK e PC ZIP continuam baixando pelo Supabase Storage.
 
-Essa estrategia mantem o portal abrindo como pagina real e evita bloquear a Web build no limite de tamanho do Cloudflare.
+Essa estrategia mantem o portal abrindo como pagina real, evita bloquear a Web build no limite de tamanho do Cloudflare e remove a dependencia de Supabase Storage publico para `index.pck`/`index.wasm`.
 
 ## Fonte Dos Artefatos
 
@@ -83,7 +84,7 @@ Gerar o pacote especifico para Cloudflare Pages:
 
 ```powershell
 cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/<release-root>/web"
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "/web" -ReleaseRoot "internal-alpha/<release-root>"
 ```
 
 Saidas esperadas:
@@ -96,6 +97,14 @@ build/internal-alpha/draxos-mobile-cloudflare-pages.zip
 Publicar no Cloudflare Pages a pasta `build/internal-alpha/cloudflare-pages/` ou o zip `build/internal-alpha/draxos-mobile-cloudflare-pages.zip`.
 
 O pacote tambem inclui `index.html`, `web.html` e `_redirects` na raiz. Isso deixa o deploy mais tolerante ao upload direto do Cloudflare: mesmo que a interface nao preserve bem as pastas no primeiro envio, `/portal/index.html` redireciona para `/` e `/web/index.html` redireciona para `/web`, onde o Pages serve `web.html` via clean URL.
+
+Validacao obrigatoria do pacote Pages-local:
+
+- `web/index.html` contem `DRAXOS_WEB_ASSET_ROOT = "/web"` e `DRAXOS_WASM_CHUNKS`.
+- `web/index.html` nao contem `storage/v1` para runtime Web.
+- `web/index.pck` existe no pacote.
+- `web/index.wasm` nao existe no pacote final; os chunks `web/index.wasm.part*` existem e cada arquivo tem menos de 25 MiB.
+- O hash preview passa em `tools/smoke_web_launch_remote.ps1` e, para pacotes Arena, em `tools/smoke_web_overlay_menu_actions.ps1 -RequireRemoteRuntimeConfig`.
 
 ## Passo Manual Fabio
 
@@ -164,7 +173,7 @@ Web direto:      https://draxos-mobile-internal-alpha.pages.dev/web/index.html
 - O portal `pages.dev` e unlisted, nao privado de verdade.
 - Para fechar o acesso do Portal/Web, proteger o dominio publicado com Cloudflare Access e allowlist de emails dos testadores.
 - Estado atual do portal: downloads APK/PC usam links diretos do pacote publicado para usuarios que passaram pelo Cloudflare Access. O fluxo protegido por Supabase Auth (`GET /release/download?artifact=android|pc_windows`) permanece implementado e preservado para reativacao futura.
-- Assets grandes do Web export (`index.wasm`, `index.js`, `index.pck`) continuam no bucket publico por causa do limite por arquivo do Cloudflare Pages. Eles nao devem conter secrets; o backend continua exigindo Auth/RLS/Edge Functions para qualquer progresso real.
+- Runtime assets do Web export ficam no Cloudflare Pages: `index.pck` direto e `index.wasm` fatiado em chunks locais. Eles nao devem conter secrets; o backend continua exigindo Auth/RLS/Edge Functions para qualquer progresso real.
 
 ## Cloudflare Access
 
