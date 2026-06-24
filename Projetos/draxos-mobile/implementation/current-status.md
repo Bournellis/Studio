@@ -5,14 +5,14 @@
 - Portfolio status: see `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Active surface: `Internal Alpha`
 - Active stage: `Arena Web Static Assets Hotfix v1`
-- Active stage status: `ARENA_WEB_STATIC_ASSETS_HOTFIX_V1_PUBLISHED_INTERNAL_ALPHA`
+- Active stage status: `ARENA_WEB_STATIC_ASSETS_HOTFIX_V1_HUMAN_APPROVED`
 - Build channel: `internal_alpha` | Version: `0.0.27-alpha.0` | Version code: `27` | Minimum supported: `13`
 - Package history, stable URLs and download endpoints: `../docs/release-history.md`
 
 ## Current Truth
 
 - Latest published remote package: `Arena Runtime Config Sync Ready v3` with the `Arena Web Static Assets Hotfix v1` hosting layer.
-- Latest Web publication hotfix: `Arena Web Static Assets Hotfix v1`.
+- Latest Web publication hotfix: `Arena Web Static Assets Hotfix v1` - approved by Fabio on `2026-06-24`.
 - Underlying app/runtime package remains `Arena Runtime Config Sync Ready v3`; Android APK, PC ZIP, app version and version code are unchanged.
 - Release root: `internal-alpha/v0-arena-runtime-config-sync-ready-v3-20260616-bc04e88a` (from implementation commit `bc04e88a`).
 - Deployment evidence: `https://10efff9c.draxos-mobile-internal-alpha.pages.dev`.
@@ -37,6 +37,7 @@
 - Web Static Assets Hotfix v1 direct asset checks passed on the hash preview: Web shell has no `storage/v1` reference, `index.pck` and both `index.wasm.part*` chunks are served by Cloudflare Pages, and no file in the Pages package is `>= 25 MiB`.
 - Remote preview Web launch smoke loaded the game from `https://10efff9c.draxos-mobile-internal-alpha.pages.dev/web/index.html`, matched release root, reported `assetRoot=/web` and had no runtime errors.
 - `smoke_web_overlay_menu_actions.ps1 -RequireRemoteRuntimeConfig` passed against the hotfix preview and reported `fallback=false`, `allowsGameplayMutation=true`.
+- Human Web hotfix validation: Fabio reported `Funcionou, aprovado!` on `2026-06-24`; this approves the Web loading/hosting fix only, not the Arena PVE core loop.
 - Anonymous canonical Portal/Web returns Cloudflare Access content; the hash preview is the automated Web evidence and the official URL should be tested with an authenticated Access session.
 - Android APK uses `debug_fallback`, accepted for closed Internal Alpha only.
 - Artifact SHA256 - APK: `f759d99f113e004c4ba5e2f15d3597904cfd97c6a3277514b3c0ab1035cf3b04` | PC ZIP: `b37677c972c0c23302dab4658a2a5369f0d182f9abff064191058541f889705a` | Cloudflare Web index: `d9465f5bbae71190d861705a95e23bedfcf5c1a0ba6b0238f15ba1db17eb9dc2`
@@ -68,7 +69,7 @@ explicit user approval after v1/v2 were superseded by required remote smoke
 failures. On `2026-06-24`, Web Static Assets Hotfix v1 republished only the
 Cloudflare Pages hosting layer after Supabase Storage public runtime assets
 returned `544 DatabaseTimeout`; app/runtime package, release root, APK and PC
-ZIP remain unchanged.
+ZIP remain unchanged. Fabio approved this Web loading hotfix on `2026-06-24`.
 The next step is human proof using `docs/arena-pve-product-proof.md`; do not
 open tuning, economy, PVP, content expansion or broad Openworld work until
 Fabio records the verdict.
