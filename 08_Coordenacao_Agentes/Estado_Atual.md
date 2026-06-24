@@ -1,13 +1,13 @@
 # Estado Atual - Estudio
 
-- Ultima atualizacao: `2026-06-20`
+- Ultima atualizacao: `2026-06-24`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
 - Regra de tamanho: maximo ~12 linhas por projeto. Historia de pacotes/validacoes vai para os arquivos de historico do projeto (`implementation/tracks/`, `docs/release-history.md`, Kanban Done), nunca para este snapshot.
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (10D publicada com gates remotos PASS; aguardando reteste humano; 10A fallback aprovado) + `Projetos/draxos-mobile/` (Arena Runtime Config Sync Ready v3 publicado Web/APK/PC; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14I limpeza de debugger Godot mergeada localmente; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (10D publicada com gates remotos PASS; aguardando reteste humano; 10A fallback aprovado) + `Projetos/draxos-mobile/` (Arena Web Static Assets Hotfix v1 publicada sobre v3; aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14I limpeza de debugger Godot mergeada localmente; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -35,10 +35,10 @@
 
 ## DraxosMobile
 
-- Status: `P2_IMPLEMENTACAO` - Arena runtime_config recovery v3 publicado Web/APK/PC em 2026-06-16; aguardando prova humana
-- Marker: `ARENA_RUNTIME_CONFIG_SYNC_READY_V3_PUBLISHED_INTERNAL_ALPHA`
-- Pacote publicado: `Arena Runtime Config Sync Ready v3`, Web/APK/PC `0.0.27-alpha.0` / vc `27`, preview `https://a50d282b.draxos-mobile-internal-alpha.pages.dev`. Historico: `Projetos/draxos-mobile/docs/release-history.md`.
-- Programa de hardening: runtime_config Web repinta rota ao sair de fallback; smoke remoto obrigatorio de runtime_config passou antes do reteste.
+- Status: `P2_IMPLEMENTACAO` - Web Static Assets Hotfix v1 publicada em 2026-06-24 sobre Arena runtime_config recovery v3; aguardando prova humana
+- Marker: `ARENA_WEB_STATIC_ASSETS_HOTFIX_V1_PUBLISHED_INTERNAL_ALPHA`
+- Pacote publicado: app/runtime `Arena Runtime Config Sync Ready v3`, Web/APK/PC `0.0.27-alpha.0` / vc `27`; Web host hotfix preview `https://10efff9c.draxos-mobile-internal-alpha.pages.dev`. Historico: `Projetos/draxos-mobile/docs/release-history.md`.
+- Programa de hardening: Web runtime assets sairam do Supabase Storage publico para Cloudflare Pages (`index.pck` local + `index.wasm.part*`); runtime_config Web repinta rota ao sair de fallback.
 - Resultado de produto Arena PVE: `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN`; decisao em `08_Coordenacao_Agentes/Decisoes/2026-06-14_draxos-mobile_arena-core-ux-fix-not-proven.md`.
 - Guardrails preservados: Track 13 release safety, Track 14 agent ops; fundacao server-authoritative/idempotencia/RLS NAO deve ser refatorada.
 - Restricao operacional: ver `Projetos/draxos-mobile/AGENTS.md` (Hard Stops); secrets nunca no cliente; publicacao remota exige `-ConfirmRemoteMutation`; sem tuning numerico/PVP/economia/visual final sem decisao.

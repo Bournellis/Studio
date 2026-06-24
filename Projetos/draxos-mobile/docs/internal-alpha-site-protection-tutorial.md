@@ -1,6 +1,6 @@
 # DraxosMobile - Tutorial De Protecao Do Site Alpha
 
-- Data: `2026-05-27`
+- Data: `2026-06-24`
 - Escopo: proteger Portal/Web e downloads da Internal Alpha v0.
 - Objetivo: trocar "link unlisted" por camadas reais de acesso.
 
@@ -17,6 +17,7 @@
 - Endpoint `GET /release/download?artifact=android|pc_windows`.
 - Bucket privado `draxos-internal-alpha-private`.
 - Script de publicacao com downloads protegidos por padrao.
+- Pacote Cloudflare Pages com runtime Web Pages-local: `index.pck` direto no Pages e `index.wasm` fatiado em `index.wasm.part*`.
 - Docs/contratos atualizados.
 
 ## O Que Fabio Precisa Fazer
@@ -62,17 +63,19 @@ cd D:\Estudio-worktrees\draxos-mobile--codex--site-protection\Projetos\draxos-mo
 npx -y supabase db push
 npx -y supabase functions deploy release --project-ref armxgipvnbbshzqawklw --no-verify-jwt
 
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 `
-  -ProjectDir . `
-  -EnvFile D:\Estudio\Projetos\draxos-mobile\.env.internal-alpha.local `
-  -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" `
-  -UseManifestSecret
-
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/<release-root>/web"
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "/web" -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>"
 
 npx -y wrangler pages deploy .\build\internal-alpha\cloudflare-pages `
   --project-name draxos-mobile-internal-alpha `
   --branch main
+
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\publish_internal_alpha.ps1 `
+  -ProjectDir . `
+  -EnvFile D:\Estudio\Projetos\draxos-mobile\.env.internal-alpha.local `
+  -Mode DeployManifest `
+  -ReleaseRoot "internal-alpha/v0-<package-slug>-YYYYMMDD-<shortsha>" `
+  -StaticSiteBaseUrl "https://draxos-mobile-internal-alpha.pages.dev" `
+  -ConfirmRemoteMutation
 ```
 
 ### 4. Validar

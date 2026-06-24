@@ -4,7 +4,9 @@ param(
     [string]$OutputDir = "",
     [string]$ZipPath = "",
     [string]$StaticAssetBaseUrl = "",
-    [string]$MainPackUrl = ""
+    [string]$MainPackUrl = "",
+    [string]$ReleaseRoot = "",
+    [int64]$WasmChunkBytes = 20971520
 )
 
 $ErrorActionPreference = "Stop"
@@ -123,6 +125,107 @@ function Assert-WebHtmlContains {
     }
 }
 
+function Split-WasmForPages {
+    param(
+        [string]$SourcePath,
+        [string]$DestinationDir,
+        [int64]$ChunkBytes
+    )
+    if (-not (Test-Path -LiteralPath $SourcePath -PathType Leaf)) {
+        throw "Required Godot Web runtime asset missing: $SourcePath"
+    }
+    if ($ChunkBytes -le 0 -or $ChunkBytes -ge 25MB) {
+        throw "WasmChunkBytes must be greater than 0 and lower than 25 MiB. Got: $ChunkBytes"
+    }
+
+    $buffer = New-Object byte[] $ChunkBytes
+    $chunks = New-Object System.Collections.Generic.List[string]
+    $inputStream = [System.IO.File]::OpenRead($SourcePath)
+    try {
+        $index = 0
+        while ($true) {
+            $read = $inputStream.Read($buffer, 0, $buffer.Length)
+            if ($read -le 0) {
+                break
+            }
+            $chunkName = "index.wasm.part$index"
+            $chunkPath = Join-Path $DestinationDir $chunkName
+            $outputStream = [System.IO.File]::Open($chunkPath, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None)
+            try {
+                $outputStream.Write($buffer, 0, $read)
+            } finally {
+                $outputStream.Dispose()
+            }
+            $chunks.Add($chunkName) | Out-Null
+            $index++
+        }
+    } finally {
+        $inputStream.Dispose()
+    }
+    if ($chunks.Count -eq 0) {
+        throw "WASM split produced no chunks: $SourcePath"
+    }
+    return @($chunks.ToArray())
+}
+
+function Convert-ChunkListToJavascriptArray {
+    param([string[]]$Chunks, [string]$AssetBase, [string]$CacheBust)
+    $values = @()
+    foreach ($chunk in $Chunks) {
+        $values += ConvertTo-JavascriptStringLiteral -Value ($AssetBase.TrimEnd("/") + "/" + $chunk + "?v=" + $CacheBust)
+    }
+    return "[" + ($values -join ",") + "]"
+}
+
+function Get-WasmChunkFetchShim {
+    param([string[]]$Chunks, [string]$AssetBase, [string]$CacheBust)
+    $chunkArray = Convert-ChunkListToJavascriptArray -Chunks $Chunks -AssetBase $AssetBase -CacheBust $CacheBust
+    return @"
+const DRAXOS_WASM_CHUNKS = Object.freeze($chunkArray);
+(function installDraxosWasmChunkFetch() {
+	const originalFetch = window.fetch.bind(window);
+	function isGodotWasmRequest(input) {
+		const rawUrl = typeof input === 'string' ? input : (input && input.url ? input.url : '');
+		if (!rawUrl) {
+			return false;
+		}
+		const url = new URL(rawUrl, window.location.href);
+		return url.pathname.endsWith('/index.wasm') || url.pathname.endsWith('index.wasm');
+	}
+	window.fetch = async function draxosChunkedWasmFetch(input, init) {
+		if (!isGodotWasmRequest(input)) {
+			return originalFetch(input, init);
+		}
+		const chunks = [];
+		let totalBytes = 0;
+		for (const chunkUrl of DRAXOS_WASM_CHUNKS) {
+			const response = await originalFetch(chunkUrl, { cache: 'no-store' });
+			if (!response.ok) {
+				throw new Error('DraxosMobile Web failed loading WASM chunk ' + chunkUrl + ' HTTP ' + response.status);
+			}
+			const bytes = new Uint8Array(await response.arrayBuffer());
+			chunks.push(bytes);
+			totalBytes += bytes.byteLength;
+		}
+		const merged = new Uint8Array(totalBytes);
+		let offset = 0;
+		for (const bytes of chunks) {
+			merged.set(bytes, offset);
+			offset += bytes.byteLength;
+		}
+		return new Response(merged, {
+			status: 200,
+			headers: {
+				'Content-Type': 'application/wasm',
+				'Content-Length': String(totalBytes),
+				'Cache-Control': 'no-store',
+			},
+		});
+	};
+})();
+"@
+}
+
 function Assert-WebShellMatchesRemoteAssets {
     param([string]$Html, [string]$AssetBase, [string]$PackUrl = "")
     if ($AssetBase -notmatch "^https?://") {
@@ -189,10 +292,14 @@ New-Item -ItemType Directory -Force -Path (Join-Path $OutputDir "web") | Out-Nul
 
 Copy-Item -LiteralPath $portalSource -Destination (Join-Path $OutputDir "portal") -Recurse -Force
 Get-ChildItem -LiteralPath $webSource -File |
-    Where-Object { $_.Name -notin @("index.html", "index.pck", "index.wasm") } |
+    Where-Object { $_.Name -notin @("index.html", "index.wasm") } |
     ForEach-Object {
         Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $OutputDir "web/$($_.Name)") -Force
     }
+$wasmChunks = Split-WasmForPages `
+    -SourcePath (Join-Path $webSource "index.wasm") `
+    -DestinationDir (Join-Path $OutputDir "web") `
+    -ChunkBytes $WasmChunkBytes
 
 $portalIndexPath = Join-Path $OutputDir "portal/index.html"
 $portalHtml = Get-Content -Raw -LiteralPath $portalIndexPath
@@ -213,13 +320,24 @@ if ($portalHtml.Contains("WEB_GAME_URL_PENDING_T03_P17") -or
 
 $assetBase = $StaticAssetBaseUrl.TrimEnd("/")
 if ([string]::IsNullOrWhiteSpace($assetBase)) {
-    throw "StaticAssetBaseUrl is required and must point at the versioned Supabase Web asset root, e.g. https://.../draxos-internal-alpha/internal-alpha/<release-root>/web"
+    $assetBase = "/web"
+}
+if (-not ($assetBase.StartsWith("http://") -or $assetBase.StartsWith("https://") -or $assetBase.StartsWith("/"))) {
+    throw "StaticAssetBaseUrl must be an absolute URL or a root-relative path such as /web. Got: $assetBase"
 }
 $mainPack = $MainPackUrl.Trim()
-$releaseRoot = Get-ReleaseRootFromAssetBase -AssetBase $assetBase
+$releaseRoot = $ReleaseRoot.Trim().Trim("/")
+if ([string]::IsNullOrWhiteSpace($releaseRoot)) {
+    $releaseRoot = Get-ReleaseRootFromAssetBase -AssetBase $assetBase
+}
 $cacheBust = Get-CacheBustValue -ReleaseRoot $releaseRoot
 $webIndexPath = Join-Path $OutputDir "web/index.html"
 $webHtml = Get-Content -Raw -LiteralPath $webIndexSource
+$webHtml = [regex]::Replace(
+    $webHtml,
+    "(?s)\s*<script>\s*window\.DRAXOS_WEB_RELEASE\s*=\s*Object\.freeze\(\{.*?\}\);\s*</script>\s*",
+    "`n"
+)
 $webHtml = $webHtml.Replace('href="index.icon.png"', ('href="/web/index.icon.png?v=' + $cacheBust + '"'))
 $webHtml = $webHtml.Replace('href="index.apple-touch-icon.png"', ('href="/web/index.apple-touch-icon.png?v=' + $cacheBust + '"'))
 $webHtml = $webHtml.Replace('src="index.png"', ('src="/web/index.png?v=' + $cacheBust + '"'))
@@ -230,6 +348,7 @@ if (-not [string]::IsNullOrWhiteSpace($mainPack)) {
 }
 $releaseRootLiteral = ConvertTo-JavascriptStringLiteral -Value $releaseRoot
 $assetBaseLiteral = ConvertTo-JavascriptStringLiteral -Value $assetBase
+$wasmChunkFetchShim = Get-WasmChunkFetchShim -Chunks $wasmChunks -AssetBase $assetBase -CacheBust $cacheBust
 $diagnosticsScript = @"
 const DRAXOS_RELEASE_ROOT = $releaseRootLiteral;
 const DRAXOS_WEB_ASSET_ROOT = $assetBaseLiteral;
@@ -237,6 +356,7 @@ window.DRAXOS_WEB_RELEASE = Object.freeze({
 	releaseRoot: DRAXOS_RELEASE_ROOT,
 	assetRoot: DRAXOS_WEB_ASSET_ROOT,
 });
+$wasmChunkFetchShim
 "@
 $webHtml = $webHtml.Replace("const GODOT_THREADS_ENABLED = false;", ($diagnosticsScript + "`nconst GODOT_THREADS_ENABLED = false;"))
 $launchResilienceScript = @'
@@ -316,6 +436,7 @@ Assert-WebHtmlContains -Html $webHtml -Needle "/web/index.js?v=$cacheBust" -Labe
 Assert-WebHtmlContains -Html $webHtml -Needle "/web/index.png?v=$cacheBust" -Label "splash cache bust"
 Assert-WebHtmlContains -Html $webHtml -Needle "const DRAXOS_RELEASE_ROOT" -Label "release root diagnostic"
 Assert-WebHtmlContains -Html $webHtml -Needle "const DRAXOS_WEB_ASSET_ROOT" -Label "asset root diagnostic"
+Assert-WebHtmlContains -Html $webHtml -Needle "DRAXOS_WASM_CHUNKS" -Label "chunked wasm fetch shim"
 Assert-WebHtmlContains -Html $webHtml -Needle "draxos.web.releaseRoot" -Label "release cache marker"
 Assert-WebHtmlContains -Html $webHtml -Needle "startLaunchWatchdog();" -Label "launch watchdog call"
 Assert-WebHtmlContains -Html $webHtml -Needle "Godot start failed" -Label "readable start failure log"

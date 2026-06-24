@@ -15,7 +15,7 @@ Ferramentas de desenvolvimento e validacao.
 - `publish_internal_alpha.ps1` - gera plano/package local por default e so publica/remota com `Mode` explicito + `-ConfirmRemoteMutation`.
 - `validate_mode_definitions.ps1` - valida schema estrito dos descriptors em `data/definitions/modes/*`, templates e registry paths sem tocar runtime.
 - `mode_definitions/scaffold_mode.ts` - gera dry-run de scaffold futuro `planned_disabled` para descriptors/docs; `--write` so deve ser usado apos decisao de pacote.
-- `build_cloudflare_pages_package.ps1` - gera o pacote hibrido para Cloudflare Pages, mantendo HTML no Cloudflare e assets grandes do Web export no Supabase Storage.
+- `build_cloudflare_pages_package.ps1` - gera o pacote Cloudflare Pages do Portal/Web; copia `index.pck`, fatia `index.wasm` em `index.wasm.part*` abaixo de 25 MiB e injeta o fetch shim Pages-local.
 - `smoke_web_launch_remote.ps1` - abre um preview Web remoto em Chrome/Edge via CDP, espera o overlay Godot sumir, valida release root/assets criticos e salva screenshot/logs em `build/diagnostics/`; use `-NoProjectWrites` para diagnostics temporarios fora do projeto em validacao remota read-only.
 - `measure_latency_baseline.ps1` - mede latencia read-only local/remota por endpoint/superficie e gera JSON/Markdown em `build/diagnostics/latency-baseline-*`; use `-CompareWith` para after vs before.
 - `generate_grimoire_catalog.ts` - gera o modulo compartilhado `grimoire_catalog.ts` para `GET /content/grimoire` a partir de `data/definitions/*.json` e a copia estatica do portal em `portal/internal-alpha/assets/grimoire-catalog.json`.
@@ -112,14 +112,14 @@ Nao use `validate_foundation.ps1 -Profile FullPublish`; esse perfil e rejeitado 
 
 O script usa `SUPABASE_PROJECT_REF`, `SUPABASE_URL` e `SUPABASE_PUBLISHABLE_KEY` de `.env.internal-alpha.local` para modos remotos. Supabase Storage/Edge Functions nao servem HTML como pagina.
 
-Para Cloudflare Pages, gere o pacote hibrido primeiro:
+Para Cloudflare Pages, gere o pacote Pages-local primeiro:
 
 ```powershell
 cd D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>\Projetos\draxos-mobile
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "https://armxgipvnbbshzqawklw.supabase.co/storage/v1/object/public/draxos-internal-alpha/internal-alpha/<release-root>/web"
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build_cloudflare_pages_package.ps1 -ProjectDir . -StaticAssetBaseUrl "/web" -ReleaseRoot "internal-alpha/<release-root>"
 ```
 
-Depois do deploy Cloudflare Pages, valide o hash preview liberado como prova tecnica do Web abrindo:
+Antes de publicar, confira que `build/internal-alpha/cloudflare-pages/web/index.html` contem `DRAXOS_WASM_CHUNKS`, `DRAXOS_WEB_ASSET_ROOT = "/web"` e nenhuma referencia `storage/v1` para runtime Web. Depois do deploy Cloudflare Pages, valide o hash preview liberado como prova tecnica do Web abrindo:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\smoke_web_launch_remote.ps1 -WebUrl "https://<preview>.draxos-mobile-internal-alpha.pages.dev/web/index.html" -ExpectedReleaseRoot "internal-alpha/<release-root>"

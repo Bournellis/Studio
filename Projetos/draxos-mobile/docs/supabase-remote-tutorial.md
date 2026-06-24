@@ -1,6 +1,6 @@
 # DraxosMobile - Tutorial Supabase Remoto
 
-- Ultima atualizacao: `2026-05-27`
+- Ultima atualizacao: `2026-06-24`
 - Alvo: preparar o projeto Supabase remoto para `internal_alpha_v0`.
 - Ponto de partida: screenshot enviada em 2026-05-26 com projeto Supabase novo, status `Healthy`.
 - Estado atual: projeto `armxgipvnbbshzqawklw` linkado, migrations/functions publicadas, Auth email/senha configurado sem confirmacao obrigatoria, manifest remoto de updates publicado e smokes remotos verdes.
@@ -292,7 +292,7 @@ O Codex executa a proxima etapa:
 2. `T03-P14`: implementar email/senha no Godot e backend. **Feito**.
 3. `T03-P15`: manifest de updates. **Feito**.
 4. `T03-P16`: exportar APK, PC ZIP e Web. **Feito**.
-5. `T03-P17`: publicar downloads/assets grandes no Supabase, publicar Portal/Web no Cloudflare Pages e rodar QA remoto fechado. **Feito**.
+5. `T03-P17`: publicar downloads APK/PC no Supabase, publicar Portal/Web no Cloudflare Pages e rodar QA remoto fechado. **Feito**. Estado atual do Web runtime: `index.pck` fica no Pages e `index.wasm` e fatiado em `index.wasm.part*`, sem depender do Storage publico para boot Web.
 6. `T03-P18`: handoff final da Internal Alpha v0. **Feito**.
 
 ## Referencias Oficiais Consultadas
