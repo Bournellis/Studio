@@ -4,7 +4,7 @@
 - Branch: `codex/jogodacopa/track10d-web-goal-golden-pop-hotfix-v1`
 - Worktree: `D:\Estudio-worktrees\JogoDaCopa--codex--track10d-web-goal-golden-pop-hotfix-v1`
 - Public baseline before publication: Track 10C `Super Campeao v1.2.1+39054f31`
-- Result: local validated and published; remote automated gates passed; human retest pending.
+- Result: local validated and published; remote automated gates passed; human retest approved.
 
 ## Scope
 
@@ -86,6 +86,6 @@ Track 10D deliberately spends a small amount of visual presence to make the goal
 
 ## Next Step
 
-Track 10D was published on 2026-06-20 and passed remote menu, first-minute, 5-minute stability, night luma and stable URL confirmation gates. Fabio/tester human retest remains required before marking it as the approved public baseline.
+Track 10D was published on 2026-06-20 and passed remote menu, first-minute, 5-minute stability, night luma and stable URL confirmation gates. Fabio/tester human retest approved the public URL on 2026-06-25.
 
 See `docs/playtest-reports/track-10d-publication.md` and `docs/playtest-reports/track-10d-data/` for publication evidence.

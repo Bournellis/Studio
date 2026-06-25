@@ -1,26 +1,26 @@
 # JogoDaCopa - Current Status
 
-- Last updated: `2026-06-20`
+- Last updated: `2026-06-25`
 - Project: `JogoDaCopa`
 - Product/module name: `Super Campeao`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first TPS football minigames + public Cloudflare Pages Web`
 - Public deployment: `Super Campeao v1.2.1+45da58b1`
-- Active stage status: `PUBLISHED_REMOTE_GATES_PASSED_HUMAN_RETEST_PENDING - Track 10D Web Goal Golden Pop Hotfix`
-- Status marker: `JOGO_DA_COPA_TRACK10D_PUBLISHED_REMOTE_GATES_PASSED_HUMAN_RETEST_PENDING`
+- Active stage status: `HUMAN_APPROVED - Track 10D Web Goal Golden Pop Hotfix`
+- Status marker: `JOGO_DA_COPA_TRACK10D_HUMAN_APPROVED`
 - Documentation baseline: `Track 10D Web Goal Golden Pop Hotfix V1`
 
 ## Current Truth
 
 `JogoDaCopa` is the football/TPS project split from the former `Projetos/FpsShooter` workspace. It owns the independent football minigame direction. The first playable public product surface is `Super Campeao`, currently published on Cloudflare Pages as `v1.2.1+45da58b1`.
 
-Track 10D is published with remote automated gates passed and human retest pending. It fixes the subjective weakness of the Track 10C Web goal moment by making the default Web `goal_visual` path use a larger, higher and longer-lived golden pop, while lowering stadium ambience and keeping default Web goal audio disabled. Local import, `tools/validate.gd`, Web export/gzip, `node --check`, 90s Chrome Web smoke and 5-minute Chrome stability passed on 2026-06-20. Cloudflare publication also passed remote menu, first-minute, 5-minute stability, night luma and stable URL confirmation gates. The remote 5-minute gate showed `js_heap_growth -5.35%`, peak `+0.04%`, worst 5s FPS `139.8`, `firstMinuteHitches=0`, and `feedback.web_goal_mode visual=true audio=false`.
+Track 10D is the current human-approved public baseline. It fixes the subjective weakness of the Track 10C Web goal moment by making the default Web `goal_visual` path use a larger, higher and longer-lived golden pop, while lowering stadium ambience and keeping default Web goal audio disabled. Local import, `tools/validate.gd`, Web export/gzip, `node --check`, 90s Chrome Web smoke and 5-minute Chrome stability passed on 2026-06-20. Cloudflare publication also passed remote menu, first-minute, 5-minute stability, night luma and stable URL confirmation gates. The remote 5-minute gate showed `js_heap_growth -5.35%`, peak `+0.04%`, worst 5s FPS `139.8`, `firstMinuteHitches=0`, and `feedback.web_goal_mode visual=true audio=false`. Fabio/tester human retest approved the public URL on 2026-06-25.
 
 Track 10C is superseded by 10D before approval because human playtest perception reported the Web goal feedback was still too subtle. It kept the Web goal visual pulse by using the existing three pooled sphere markers and removed goal audio from the default Web path. Its automated remote gates passed with `js_heap_growth -0.59%`, peak `+2.31%`, worst 5s FPS `142.2` and `feedback.web_goal_mode visual=true audio=false`.
 
 Track 10B is a blocked publication attempt. It reintroduced default Web goal feedback with a Web-lite path: three pooled visual markers plus the short `goal_jingle` after browser audio activation. The heavy Web `crowd_goal`, particle-burst and dynamic-light goal package remained disabled; the PC/Windows full goal package remained unchanged. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome probes with and without audio unlock, and 5-minute Chrome stability passed on 2026-06-20. The 2026-06-20 Cloudflare publication attempt passed remote menu and first-minute gates, but failed the remote 5-minute heap gate with `js_heap_growth +13.85%` against the `<10%` limit. Production was rolled back to Track 10A and the public URL confirmed `web/v1-copa-arena-futebol-20260620-fc3c72bb`.
 
-Track 10A is the latest human-approved fallback baseline behind 10D. It decomposes the football HUD pause menu by moving pause menu construction, tabs, restart confirmation, fullscreen/quality/sensitivity callbacks and pause settings synchronization into `football_hud_pause_menu_controller.gd`. `football_hud.gd` fell from `1512` to `1148` lines. Node paths, existing signals, restart confirmation behavior and real-click pause menu tests are preserved. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, 3-resolution screenshot evidence, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest passed on 2026-06-20.
+Track 10A is the previous human-approved fallback baseline behind 10D. It decomposes the football HUD pause menu by moving pause menu construction, tabs, restart confirmation, fullscreen/quality/sensitivity callbacks and pause settings synchronization into `football_hud_pause_menu_controller.gd`. `football_hud.gd` fell from `1512` to `1148` lines. Node paths, existing signals, restart confirmation behavior and real-click pause menu tests are preserved. Local headless import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, 3-resolution screenshot evidence, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest passed on 2026-06-20.
 
 Track 09S is the latest human-approved fallback baseline behind 10A. It fixes the residual chase-camera tremor/pull reported during quick `A/D` taps by smoothing the visual ball-focus weight and focus point in `football_chase_camera.gd`. It keeps `snap_to_target()` setup/reset behavior and goal-focus punch, and does not change gameplay collision, physics, scoring, bot, SUPER, HUD, assets or match tuning. The focused red test failed before the fix and passed after it; local import, `tools/validate.gd`, Web export, `node --check`, 90s Chrome Web smoke, `git diff --check`, doc drift, Cloudflare publication, remote menu, remote first-minute, remote 5-minute stability, remote luma gates and Fabio/tester human retest passed.
 
@@ -73,7 +73,7 @@ The Arena Shooter work moved to `Projetos/FpsPlayground`.
 
 ## Current Gate
 
-`Super Campeao v1.2.1+45da58b1` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260620-45da58b1`. Track 10D passed remote automated gates and awaits Fabio/tester human retest. Track 10A remains the latest human-approved fallback; Track 10C passed automated gates but was superseded by 10D before approval because its goal feedback was too subtle.
+`Super Campeao v1.2.1+45da58b1` is public at `https://copa-arena-futebol.pages.dev/` with release root `web/v1-copa-arena-futebol-20260620-45da58b1`. Track 10D passed remote automated gates and Fabio/tester human retest, and is now the approved public baseline. Track 10A remains the previous approved fallback; Track 10C passed automated gates but was superseded by 10D before approval because its goal feedback was too subtle.
 
 Latest publication:
 
@@ -85,7 +85,7 @@ Latest publication:
 - Remote stability 5min: PASS, `js_heap_growth -5.35%`, peak `+0.04%`, `wasmSampleCount=0`, worst 5s FPS window `139.8`.
 - Remote night luma: PASS, `6.525 < 90`.
 - Stable URL confirmation: PASS, `https://copa-arena-futebol.pages.dev/` served `web/v1-copa-arena-futebol-20260620-45da58b1`.
-- Human retest: pending for Track 10D. Track 10A remains the latest human-approved fallback baseline.
+- Human retest: approved for Track 10D on 2026-06-25. Track 10A remains the previous approved fallback baseline.
 
 Track 10B validation and blocked publication:
 
@@ -165,7 +165,7 @@ D:\Estudio\tools\check_doc_drift.ps1
 git diff --check
 ```
 
-Latest public deployment is Track 10D: local and remote automated gates passed with a more visible Web golden-pop goal feedback and no default Web goal audio; Fabio/tester human retest is pending. Latest human-approved fallback is Track 10A. Latest blocked publication attempt is Track 10B: local gates passed, remote menu and first-minute passed, remote 5-minute stability failed on `js_heap_growth +13.85%`, and production was rolled back to Track 10A with confirmation.
+Latest public deployment is Track 10D: local and remote automated gates passed with a more visible Web golden-pop goal feedback and no default Web goal audio; Fabio/tester human retest approved it on 2026-06-25. Previous approved fallback is Track 10A. Latest blocked publication attempt is Track 10B: local gates passed, remote menu and first-minute passed, remote 5-minute stability failed on `js_heap_growth +13.85%`, and production was rolled back to Track 10A with confirmation.
 
 ## Documentation Map
 
@@ -180,4 +180,4 @@ Latest public deployment is Track 10D: local and remote automated gates passed w
 
 ## Next Step
 
-Fabio/tester should run the human retest on `https://copa-arena-futebol.pages.dev/` for Track 10D, focusing on whether goals now feel visually satisfying without Web freezes. If approved, mark 10D as the approved public baseline; if rejected, decide between another focused goal-feedback hotfix or rollback to 10A.
+Decide the next `JogoDaCopa` step now that Track 10D is the approved public baseline: either continue conservative local reductions or open a focused feel/polish improvement track.

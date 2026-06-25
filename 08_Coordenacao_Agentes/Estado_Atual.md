@@ -7,22 +7,22 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (10D publicada com gates remotos PASS; aguardando reteste humano; 10A fallback aprovado) + `Projetos/draxos-mobile/` (Arena Web Static Assets Hotfix v1 aprovada; Arena core ainda aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14I limpeza de debugger Godot aprovada em teste humano; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` (10D publicada e aprovada; 10A fallback aprovado) + `Projetos/draxos-mobile/` (Arena Web Static Assets Hotfix v1 aprovada; Arena core ainda aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14I limpeza de debugger Godot aprovada em teste humano; movimento atual preservado)
 - Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/`
 - Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
 
 ## JogoDaCopa
 
-- Status: `P2_IMPLEMENTACAO - TRACK10D_PUBLISHED_REMOTE_GATES_PASSED_HUMAN_RETEST_PENDING`
-- Marker: `JOGO_DA_COPA_TRACK10D_PUBLISHED_REMOTE_GATES_PASSED_HUMAN_RETEST_PENDING`
-- Publicacao atual: Track 10D `Super Campeao v1.2.1+45da58b1` (`web/v1-copa-arena-futebol-20260620-45da58b1`) em `https://copa-arena-futebol.pages.dev/`; gates remotos PASS, reteste humano pendente.
+- Status: `P2_IMPLEMENTACAO - TRACK10D_HUMAN_APPROVED`
+- Marker: `JOGO_DA_COPA_TRACK10D_HUMAN_APPROVED`
+- Publicacao atual aprovada: Track 10D `Super Campeao v1.2.1+45da58b1` (`web/v1-copa-arena-futebol-20260620-45da58b1`) em `https://copa-arena-futebol.pages.dev/`; gates remotos PASS e reteste humano aprovado.
 - Track 10D: gol Web por pop dourado maior, audio default ainda desligado; remoto 5min PASS com `js_heap_growth -5.35%`, pico `+0.04%`, pior 5s `139.8 FPS`.
-- Fallback aprovado: Track 10A `Super Campeao v1.2.1+fc3c72bb` (`web/v1-copa-arena-futebol-20260620-fc3c72bb`); reteste humano 10A aprovado.
+- Fallback aprovado anterior: Track 10A `Super Campeao v1.2.1+fc3c72bb` (`web/v1-copa-arena-futebol-20260620-fc3c72bb`); reteste humano 10A aprovado.
 - Fallback historico aprovado: Track 09S `Super Campeao v1.2.1+925f3b9f`; gates remotos 09S PASS e reteste humano aprovado.
 - Fallback historico aprovado: Track 09Q `Super Campeao v1.2.1+bb604c77`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.41%`) e aprovada por Fabio/tester.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
-- Proximo passo: Fabio/tester retestar a 10D no link publico; se aprovar, registrar 10D como baseline aprovada; se reprovar, decidir novo hotfix focado ou rollback 10A.
+- Proximo passo: decidir a proxima etapa de `JogoDaCopa`: continuar reducoes locais conservadoras ou abrir nova melhoria de feel/polish.
 
 ## draxos-roguelike-cardgame
 

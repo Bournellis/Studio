@@ -1,6 +1,6 @@
 # JogoDaCopa Publication Readiness
 
-Current state: `Super Campeao v1.2.1+45da58b1` is public on Cloudflare Pages after automated remote menu, first-minute, 5-minute stability, night luma and stable URL confirmation gates passed. Fabio/tester human retest is pending. Track 10A remains the latest human-approved fallback baseline behind 10D; Track 10C passed automated gates but was superseded before approval because the Web goal feedback was still too subtle.
+Current state: `Super Campeao v1.2.1+45da58b1` is public on Cloudflare Pages and human-approved after automated remote menu, first-minute, 5-minute stability, night luma and stable URL confirmation gates passed. Track 10A remains the previous human-approved fallback baseline behind 10D; Track 10C passed automated gates but was superseded before approval because the Web goal feedback was still too subtle.
 
 ## Product Identity
 
@@ -31,8 +31,8 @@ Current state: `Super Campeao v1.2.1+45da58b1` is public on Cloudflare Pages aft
 - Remote 5-minute stability evidence: `docs/playtest-reports/track-10d-data/10d-remote-stability-5min-45da58b1.json` and `docs/playtest-reports/track-10d-data/10d-remote-stability-5min-45da58b1.png`.
 - Remote night luma evidence: `docs/playtest-reports/track-10d-data/10d-remote-night-luma-gate-45da58b1.json`.
 - Stable URL confirmation evidence: `docs/playtest-reports/track-10d-data/10d-stable-confirm-45da58b1.json` and `docs/playtest-reports/track-10d-data/10d-stable-confirm-45da58b1.png`.
-- Human retest: pending.
-- Fallback evidence: Track 10A evidence remains in `docs/playtest-reports/track-10a-data/` as the latest human-approved fallback behind 10D.
+- Human retest: approved on 2026-06-25.
+- Fallback evidence: Track 10A evidence remains in `docs/playtest-reports/track-10a-data/` as the previous human-approved fallback behind 10D.
 - No Cloudflare Access gate was observed; the public URL served the Godot app directly.
 
 ## Packaging
@@ -58,7 +58,7 @@ Current state: `Super Campeao v1.2.1+45da58b1` is public on Cloudflare Pages aft
 
 ## Track 10D Web Goal Golden Pop Hotfix Publication - 2026-06-20
 
-- Candidate status: public with remote automated gates passed; human retest pending.
+- Candidate status: approved public baseline.
 - Change: published a focused Web goal-feel hotfix. Default Web goal feedback remains visual-only, but now uses a larger golden pop and quieter stadium ambience.
 - Gameplay impact: presentation feedback only; no gameplay, camera, physics, movement, bot, ball, scoring, SUPER, field builder, assets or tuning changes.
 - `tools/validate.gd`: PASS, `108` tests, `1844` asserts, `62` source files checked.
@@ -71,7 +71,7 @@ Current state: `Super Campeao v1.2.1+45da58b1` is public on Cloudflare Pages aft
 - Remote night luma: PASS, `6.525 < 90`.
 - Stable URL confirmation: PASS, stable URL served `web/v1-copa-arena-futebol-20260620-45da58b1`.
 - Evidence: `docs/playtest-reports/track-10d-publication.md` and `docs/playtest-reports/track-10d-data/`.
-- Publication follow-up: Fabio/tester human retest is pending; 10A remains the latest human-approved fallback behind 10D.
+- Publication follow-up: Fabio/tester human retest approved the public URL on 2026-06-25; 10A remains the previous approved fallback behind 10D.
 
 ## Track 10C Web Goal Feedback Heap-Safe Publication - 2026-06-20
 
@@ -254,9 +254,9 @@ Current state: `Super Campeao v1.2.1+45da58b1` is public on Cloudflare Pages aft
 
 ## Known Limitations
 
-- Track 10D is published and awaits human retest.
+- Track 10D is the approved public baseline.
 - Track 10C passed automated gates but was superseded before approval because the Web goal feedback still felt too weak.
-- Track 10A is the latest human-approved fallback behind 10D.
+- Track 10A is the previous human-approved fallback behind 10D.
 - Track 09S is the older approved fallback behind 10A.
 - Track 09R passed automated gates but was superseded by 09S before human approval because of the residual quick `A/D` camera perception issue.
 - Track 09Q is the approved fallback baseline behind 09S.

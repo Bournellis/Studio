@@ -5,7 +5,7 @@
 - Candidate deployment URL: `https://6b9febae.copa-arena-futebol.pages.dev`
 - Candidate release: `Super Campeao v1.2.1+45da58b1`
 - Candidate release root: `web/v1-copa-arena-futebol-20260620-45da58b1`
-- Status: published; remote automated gates passed; human retest pending.
+- Status: published; remote automated gates passed; human retest approved.
 
 ## Scope
 
@@ -49,4 +49,4 @@ The public Web default now makes the visual goal moment more legible with a larg
 
 Track 10D keeps the safe 10C audio posture and spends the goal-feel improvement on visual contrast instead. The local 5-minute heap result was near the `<10%` retained JS heap limit, so the remote 5-minute stability gate was treated as decisive. The remote run passed with negative retained JS heap growth and no runtime errors.
 
-Human retest is still required before marking 10D as an approved baseline. Until then, Track 10A remains the latest human-approved fallback.
+Fabio/tester human retest approved the public URL on 2026-06-25. Track 10D is now the approved public baseline; Track 10A remains the previous approved fallback.

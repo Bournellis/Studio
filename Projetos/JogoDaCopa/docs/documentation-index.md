@@ -1,6 +1,6 @@
 # JogoDaCopa Documentation Index
 
-- Status: `JOGO_DA_COPA_TRACK10D_PUBLISHED_REMOTE_GATES_PASSED_HUMAN_RETEST_PENDING`
+- Status: `JOGO_DA_COPA_TRACK10D_HUMAN_APPROVED`
 - Documentation baseline: `TRACK09O_DOCUMENTATION_REBASELINE_V1`
 - Project: `Projetos/JogoDaCopa`
 - Engine: Godot `4.6.2-stable`
@@ -45,6 +45,7 @@
 
 - Track 10D local Web goal golden-pop hotfix report: `playtest-reports/track-10d-web-goal-golden-pop-hotfix.md`
 - Track 10D publication report: `playtest-reports/track-10d-publication.md`
+- Track 10D human retest approval closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_jogodacopa_track10d-human-retest-approved-v1.md`
 - Track 10D closure: `../../../08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_track10d-web-goal-golden-pop-hotfix-v1.md`
 - Track 10D local, remote and stable URL evidence: `playtest-reports/track-10d-data/`
 - Track 10C local Web goal feedback report: `playtest-reports/track-10c-web-goal-feedback-heap-safe.md`
