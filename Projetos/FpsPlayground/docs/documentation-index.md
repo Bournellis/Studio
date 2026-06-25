@@ -1,6 +1,6 @@
 # FpsPlayground Documentation Index
 
-- Status: `FPS_PLAYGROUND_TRACK14I_GODOT_DEBUGGER_CLEANUP_LOCAL`
+- Status: `FPS_PLAYGROUND_TRACK14I_HUMAN_APPROVED`
 - Project: `Projetos/FpsPlayground`
 - Engine: Godot `4.6.2-stable`
 
