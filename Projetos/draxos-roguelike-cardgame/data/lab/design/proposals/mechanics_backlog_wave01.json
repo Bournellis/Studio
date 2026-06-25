@@ -1,0 +1,171 @@
+{
+	"pack_id": "mechanics_backlog_wave01",
+	"schema_version": 1,
+	"design_goal": "Capture future card/mechanic ideas without pretending they can receive numeric tuning before engine and lab support exists.",
+	"notes": "This pack is expected to fail Design Lab gate/explore with blocked mechanics. It is a design backlog, not a promotable content wave.",
+	"scoring_profile": "default",
+	"promotion_policy": {
+		"minimum_classification": "viable",
+		"require_signature": true,
+		"require_zero_failures": true,
+		"manual_approval_required": true
+	},
+	"mechanics": [
+		{"mechanic_id": "steal_mana", "usage": "Resource theft/combo denial"},
+		{"mechanic_id": "lane_shift", "usage": "Board-position spells and enemy behavior"},
+		{"mechanic_id": "copy_last_spell", "usage": "Arcano spell echoing"},
+		{"mechanic_id": "summon_from_discard", "usage": "Necromante discard/death reanimation"},
+		{"mechanic_id": "life_payment", "usage": "Necromante risk-reward resource model"}
+	],
+	"cards": [
+		{
+			"id": "backlog_arcano_sifao_de_mana",
+			"new_card_id": "backlog_arcano_sifao_de_mana",
+			"owner": "player",
+			"class_id": "arcano",
+			"element": "ar",
+			"faction": "draxos",
+			"role": "economy",
+			"design_intent": "Steal enemy mana and convert it into player tempo, but only after enemy resources exist as real battle state.",
+			"timing": "mid",
+			"valid_targets": ["enemy_resource"],
+			"suggested_entry": {"map_min": 14, "block": "gelo", "rarity": "rare"},
+			"mechanics": ["steal_mana"],
+			"display_name": "Sifao de Mana Backlog",
+			"type": "magia",
+			"text": "Rouba mana do inimigo.",
+			"effect": {"action": "steal_mana", "amount": 1},
+			"variant_space": {
+				"cost": [1, 2, 3],
+				"effect.amount": [1, 2]
+			},
+			"context_template_ids": ["player_combo_setup", "enemy_ai_choice_context"]
+		},
+		{
+			"id": "backlog_arcano_eco_do_ultimo_raio",
+			"new_card_id": "backlog_arcano_eco_do_ultimo_raio",
+			"owner": "player",
+			"class_id": "arcano",
+			"element": "ar",
+			"faction": "draxos",
+			"role": "damage",
+			"design_intent": "Copy the last spell to create a true Arcano combo payoff after spell history exists.",
+			"timing": "late",
+			"valid_targets": ["last_spell_target"],
+			"suggested_entry": {"map_min": 21, "block": "ar", "rarity": "ultra_rare"},
+			"mechanics": ["copy_last_spell"],
+			"display_name": "Eco do Ultimo Raio Backlog",
+			"type": "magia",
+			"text": "Repete a ultima magia jogada.",
+			"effect": {"action": "copy_last_spell", "copy_count": 1},
+			"variant_space": {
+				"cost": [2, 3, 4],
+				"effect.copy_count": [1, 2]
+			},
+			"context_template_ids": ["player_combo_setup", "player_card_flow_room"]
+		},
+		{
+			"id": "backlog_invocador_ordem_de_reposicao",
+			"new_card_id": "backlog_invocador_ordem_de_reposicao",
+			"owner": "player",
+			"class_id": "invocador",
+			"element": "terra",
+			"faction": "draxos",
+			"role": "buff",
+			"design_intent": "Shift allied units to better lanes, turning Invocador into a formation-management class once lane spell effects are supported.",
+			"timing": "mid",
+			"valid_targets": ["allied_board"],
+			"suggested_entry": {"map_min": 12, "block": "gelo", "rarity": "rare"},
+			"mechanics": ["lane_shift"],
+			"display_name": "Ordem de Reposicao Backlog",
+			"type": "magia",
+			"text": "Move ou troca criaturas aliadas entre lanes.",
+			"effect": {"action": "lane_shift", "count": 1},
+			"variant_space": {
+				"cost": [1, 2],
+				"effect.count": [1, 2]
+			},
+			"context_template_ids": ["player_lane_pressure", "player_full_board"]
+		},
+		{
+			"id": "backlog_necro_chamado_da_cova",
+			"new_card_id": "backlog_necro_chamado_da_cova",
+			"owner": "player",
+			"class_id": "necromante",
+			"element": "sombra",
+			"faction": "draxos",
+			"role": "summon",
+			"design_intent": "Reanimate a recently dead or discarded unit with reduced stats once death/discard selection exists.",
+			"timing": "late",
+			"valid_targets": ["discard_or_death_history"],
+			"suggested_entry": {"map_min": 18, "block": "ar", "rarity": "rare"},
+			"mechanics": ["summon_from_discard"],
+			"display_name": "Chamado da Cova Backlog",
+			"type": "magia",
+			"text": "Invoca uma criatura do descarte ou historico de morte.",
+			"effect": {"action": "summon_from_discard", "attack": 1, "health": 1, "count": 1},
+			"variant_space": {
+				"cost": [2, 3, 4],
+				"effect.attack": [1, 2],
+				"effect.health": [1, 2, 3],
+				"effect.count": [1, 2]
+			},
+			"context_template_ids": ["player_combo_setup", "player_lane_pressure"]
+		},
+		{
+			"id": "backlog_necro_pacto_de_sangue",
+			"new_card_id": "backlog_necro_pacto_de_sangue",
+			"owner": "player",
+			"class_id": "necromante",
+			"element": "sombra",
+			"faction": "draxos",
+			"role": "economy",
+			"design_intent": "Pay commander health to gain Ashes or power, but only after health payment confirmation and signatures exist.",
+			"timing": "mid",
+			"valid_targets": ["self"],
+			"suggested_entry": {"map_min": 15, "block": "gelo", "rarity": "rare"},
+			"mechanics": ["life_payment"],
+			"display_name": "Pacto de Sangue Backlog",
+			"type": "magia",
+			"text": "Paga vida para ganhar poder.",
+			"effect": {"action": "life_for_power", "life_cost": 3, "amount": 2},
+			"variant_space": {
+				"cost": [0, 1, 2],
+				"effect.life_cost": [2, 3, 5],
+				"effect.amount": [1, 2, 3]
+			},
+			"context_template_ids": ["player_low_health", "player_combo_setup"]
+		}
+	],
+	"enemy_cards": [
+		{
+			"id": "backlog_enemy_ar_empurrador_vendaval",
+			"new_card_id": "backlog_enemy_ar_empurrador_vendaval",
+			"owner": "enemy",
+			"class_id": "enemy",
+			"element": "ar",
+			"faction": "ar",
+			"role": "enemy_pressure",
+			"design_intent": "An Air enemy that pushes the player's defender out of lane, requiring enemy AI valuation for lane shifts.",
+			"timing": "mid",
+			"valid_targets": ["player_unit"],
+			"suggested_entry": {"map_min": 19, "block": "ar", "rarity": "rare"},
+			"mechanics": ["lane_shift"],
+			"display_name": "Empurrador Vendaval Backlog",
+			"type": "criatura",
+			"cost": 2,
+			"attack": 2,
+			"health": 2,
+			"text": "Inimigo futuro que empurra unidades entre lanes.",
+			"effect": {"on_enter": {"action": "push_lane", "count": 1}},
+			"variant_space": {
+				"cost": [2, 3],
+				"attack": [2, 3],
+				"health": [2, 3],
+				"effect.count": [1, 2]
+			},
+			"context_template_ids": ["enemy_lane_pressure", "enemy_ai_choice_context"]
+		}
+	],
+	"encounter_contexts": []
+}

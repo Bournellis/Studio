@@ -1,8 +1,8 @@
 # Design Lab
 
 - Last Updated: `2026-06-25`
-- Status: `DESIGN_LAB_PILOT_CONTENT_V1`
-- Scope: proposal packs, context templates, lab-only prototype cards, deterministic numeric variants, official-neighbor comparison, battle/enemy contexts, interpretable scoring, reports and promotion manifest.
+- Status: `DESIGN_LAB_CONTENT_WAVE01`
+- Scope: proposal packs, content-wave authoring, context templates, lab-only prototype cards, deterministic numeric variants, official-neighbor comparison, battle/enemy contexts, interpretable scoring, reports and promotion manifest.
 
 ## Purpose
 
@@ -60,6 +60,11 @@ design_lab_calibration_player_v1.json
 design_lab_calibration_enemy_v1.json
 design_lab_calibration_mechanics_v1.json
 design_lab_pilot_content_v1.json
+arcano_cards_wave01.json
+invocador_cards_wave01.json
+necromante_cards_wave01.json
+enemy_cards_wave01.json
+mechanics_backlog_wave01.json
 ```
 
 Each proposal card must define:
@@ -278,6 +283,27 @@ Pilot content pack:
 - Full explore: FAIL by design with 93 candidates, 11 recommended/viable selected candidates, 1 blocked mechanic (`steal_mana`) and rejected risky/broken variants kept for diagnosis.
 - Promotable subset gate: PASS with 104 candidates, 11 recommended/viable selected candidates and 0 blocked mechanics when excluding the blocked `pilot_arcano_sifao_mana` and the intentionally non-promotable `pilot_enemy_ar_falcao_rapido`.
 - The pilot validated CSV multi-card `--card`/`--cards` subset gates and clarified gate reports by separating hard blockers from rejected variant counts.
+
+Content Wave 01 packs:
+
+- `arcano_cards_wave01`: 8 Arcano player-card ideas using implemented damage, control, economy, card-flow and summon mechanics.
+- `invocador_cards_wave01`: 8 Invocador player-card ideas focused on summon lines, defenders, lane bodies and buffs.
+- `necromante_cards_wave01`: 8 Necromante player-card ideas using summon, poison, economy and buff mechanics.
+- `enemy_cards_wave01`: 12 enemy-card ideas across Terra, Gelo, Ar and Fogo. Explore intentionally keeps rejected enemy ideas in the report instead of hiding them.
+- `mechanics_backlog_wave01`: 6 future ideas blocked honestly by missing engine/lab support (`steal_mana`, `copy_last_spell`, `lane_shift`, `summon_from_discard`, `life_payment`).
+
+Content Wave 01 validation:
+
+- Arcano full explore: PASS with 48 candidates, 8 selected recommendations, 1 rejected broken variant and 0 blocked mechanics.
+- Arcano promotable subset gate: PASS with 83 candidates, 8 selected recommendations and 0 blocked mechanics.
+- Invocador full explore: PASS with 48 candidates, 8 selected recommendations and 0 blocked mechanics.
+- Invocador promotable subset gate: PASS with 96 candidates, 8 selected recommendations and 0 blocked mechanics.
+- Necromante full explore: PASS with 48 candidates, 8 selected recommendations, 6 rejected broken variants and 0 blocked mechanics.
+- Necromante promotable subset gate: PASS with 86 candidates, 8 selected recommendations and 0 blocked mechanics.
+- Enemy full explore: FAIL by design with 72 candidates, 8 selected recommendations, 24 rejected risky/broken variants and 0 blocked mechanics. The rejected ideas are `enemy_w01_ar_faisca_viva`, `enemy_w01_ar_turbilhao_brutal`, `enemy_w01_fogo_brasa_raivosa` and `enemy_w01_fogo_colosso_carvao`.
+- Enemy promotable subset gate: PASS with 78 candidates, 8 selected recommendations and 0 blocked mechanics after excluding the four risky/broken ideas.
+- Mechanics backlog explore: FAIL by design with 6 blocked cards and 5 blocked mechanics. No numeric tuning was faked for unsupported mechanics.
+- No official content file was changed; all cards remain lab-only proposal content.
 
 ## Roadmap
 
