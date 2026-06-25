@@ -5,6 +5,7 @@ const DEFAULT_PROPOSAL_DIR: String = "res://data/lab/design/proposals"
 const DEFAULT_PACK_ID: String = "design_lab_sample_v1"
 const REGISTRY_PATH: String = "res://data/lab/design/mechanic_registry.json"
 const SCORING_PROFILES_PATH: String = "res://data/lab/design/scoring_profiles.json"
+const CONTEXT_TEMPLATES_PATH: String = "res://data/lab/design/context_templates.json"
 const REQUIRED_PACK_FIELDS: PackedStringArray = ["pack_id", "schema_version", "design_goal", "notes", "mechanics", "scoring_profile", "promotion_policy", "encounter_contexts"]
 const REQUIRED_CARD_FIELDS: PackedStringArray = ["owner", "role", "design_intent", "timing", "valid_targets", "mechanics"]
 const VALID_OWNERS: Array[String] = ["player", "enemy"]
@@ -34,6 +35,9 @@ static func load_pack_result(path_or_id: String = "") -> Dictionary:
 	var registry_result: Dictionary = load_registry_result()
 	if not bool(registry_result.get("ok", false)):
 		return registry_result
+	var template_result: Dictionary = load_context_templates_result()
+	if not bool(template_result.get("ok", false)):
+		return template_result
 	var resolved_path: String = resolve_pack_path(path_or_id)
 	if not FileAccess.file_exists(resolved_path):
 		return {"ok": false, "message": "Design proposal pack not found: %s." % resolved_path, "path": resolved_path}
@@ -41,7 +45,7 @@ static func load_pack_result(path_or_id: String = "") -> Dictionary:
 	var parsed: Variant = JSON.parse_string(text)
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return {"ok": false, "message": "Design proposal pack is not a JSON object: %s." % resolved_path, "path": resolved_path}
-	var validation: Dictionary = validate_pack_result(Dictionary(parsed), Dictionary(registry_result.get("registry", {})), resolved_path)
+	var validation: Dictionary = validate_pack_result(Dictionary(parsed), Dictionary(registry_result.get("registry", {})), resolved_path, Dictionary(template_result.get("templates", {})))
 	if not bool(validation.get("ok", false)):
 		return validation
 	return {"ok": true, "path": resolved_path, "pack": Dictionary(parsed), "registry": Dictionary(registry_result.get("registry", {}))}
@@ -62,7 +66,26 @@ static func load_registry_result(path: String = REGISTRY_PATH) -> Dictionary:
 		if mechanic_id != "":
 			by_id[mechanic_id] = entry
 	registry["by_id"] = by_id
+	registry["metadata_warnings"] = _registry_metadata_warnings(registry)
 	return {"ok": true, "path": path, "registry": registry}
+
+static func load_context_templates_result(path: String = CONTEXT_TEMPLATES_PATH) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return {"ok": false, "message": "Design context templates not found: %s." % path, "path": path}
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return {"ok": false, "message": "Design context templates are not a JSON object: %s." % path, "path": path}
+	var payload: Dictionary = Dictionary(parsed)
+	var by_id: Dictionary = {}
+	for entry_value: Variant in Array(payload.get("templates", [])):
+		if typeof(entry_value) != TYPE_DICTIONARY:
+			continue
+		var entry: Dictionary = Dictionary(entry_value)
+		var template_id: String = str(entry.get("id", ""))
+		if template_id != "":
+			by_id[template_id] = entry
+	payload["by_id"] = by_id
+	return {"ok": true, "path": path, "templates": payload}
 
 static func load_profiles_result(path: String = SCORING_PROFILES_PATH) -> Dictionary:
 	if not FileAccess.file_exists(path):
@@ -90,7 +113,7 @@ static func profile_by_id(profiles_payload: Dictionary, profile_id: String) -> D
 		return Dictionary(by_id.get("default", {}))
 	return {}
 
-static func validate_pack_result(pack: Dictionary, registry: Dictionary, path: String = "") -> Dictionary:
+static func validate_pack_result(pack: Dictionary, registry: Dictionary, path: String = "", context_templates: Dictionary = {}) -> Dictionary:
 	var errors: Array[String] = []
 	for field: String in REQUIRED_PACK_FIELDS:
 		if not pack.has(field):
@@ -104,6 +127,7 @@ static func validate_pack_result(pack: Dictionary, registry: Dictionary, path: S
 		if pack.has(array_field) and typeof(pack.get(array_field)) != TYPE_ARRAY:
 			errors.append("pack `%s` must be an array" % array_field)
 	var registry_by_id: Dictionary = Dictionary(registry.get("by_id", {}))
+	var template_by_id: Dictionary = Dictionary(context_templates.get("by_id", {}))
 	errors.append_array(_validate_pack_mechanics(pack, registry_by_id))
 	var contexts: Array = Array(pack.get("encounter_contexts", []))
 	var context_ids: Array[String] = []
@@ -115,7 +139,7 @@ static func validate_pack_result(pack: Dictionary, registry: Dictionary, path: S
 			context_ids.append(context_id)
 	var index: int = 0
 	for card: Dictionary in card_specs(pack):
-		errors.append_array(_validate_card_spec(card, index, registry_by_id, context_ids))
+		errors.append_array(_validate_card_spec(card, index, registry_by_id, context_ids, template_by_id))
 		index += 1
 	if not errors.is_empty():
 		return {"ok": false, "message": "Invalid design proposal pack: %s." % "; ".join(errors), "path": path, "errors": errors}
@@ -190,7 +214,7 @@ static func _validate_pack_mechanics(pack: Dictionary, registry_by_id: Dictionar
 			errors.append("mechanic `%s` is not present in mechanic_registry" % mechanic_id)
 	return errors
 
-static func _validate_card_spec(spec: Dictionary, index: int, registry_by_id: Dictionary, context_ids: Array[String]) -> Array[String]:
+static func _validate_card_spec(spec: Dictionary, index: int, registry_by_id: Dictionary, context_ids: Array[String], template_by_id: Dictionary = {}) -> Array[String]:
 	var errors: Array[String] = []
 	var card_id: String = card_spec_id(spec)
 	if card_id == "":
@@ -216,10 +240,29 @@ static func _validate_card_spec(spec: Dictionary, index: int, registry_by_id: Di
 	if not spec.has("variant_space") or typeof(spec.get("variant_space")) != TYPE_DICTIONARY or Dictionary(spec.get("variant_space", {})).is_empty():
 		errors.append("card `%s` needs non-empty variant_space" % card_id)
 	var card_contexts: Array = Array(spec.get("context_ids", []))
-	if card_contexts.is_empty() and context_ids.is_empty():
+	var template_ids: Array = Array(spec.get("context_template_ids", []))
+	if card_contexts.is_empty() and context_ids.is_empty() and template_ids.is_empty():
 		errors.append("card `%s` needs at least one context" % card_id)
 	for context_value: Variant in card_contexts:
 		var context_id: String = str(context_value)
 		if context_id != "" and not context_ids.has(context_id):
 			errors.append("card `%s` references unknown context `%s`" % [card_id, context_id])
+	for template_value: Variant in template_ids:
+		var template_id: String = str(template_value)
+		if template_id != "" and not template_by_id.is_empty() and not template_by_id.has(template_id):
+			errors.append("card `%s` references unknown context template `%s`" % [card_id, template_id])
 	return errors
+
+static func _registry_metadata_warnings(registry: Dictionary) -> Array[String]:
+	var warnings: Array[String] = []
+	for entry_value: Variant in Array(registry.get("mechanics", [])):
+		if typeof(entry_value) != TYPE_DICTIONARY:
+			continue
+		var entry: Dictionary = Dictionary(entry_value)
+		var mechanic_id: String = str(entry.get("mechanic_id", ""))
+		if str(entry.get("status", "")) == "implemented":
+			if Array(entry.get("expected_signature_fields", [])).is_empty():
+				warnings.append("mechanic `%s` has no expected_signature_fields" % mechanic_id)
+			if Array(entry.get("required_context_templates", [])).is_empty():
+				warnings.append("mechanic `%s` has no required_context_templates" % mechanic_id)
+	return warnings

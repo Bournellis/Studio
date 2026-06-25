@@ -1,0 +1,66 @@
+{
+	"pack_id": "design_lab_calibration_mechanics_v1",
+	"schema_version": 1,
+	"design_goal": "Verify that implemented mechanics receive numeric tuning while unsupported mechanics become blocked instead of false positives.",
+	"notes": "Lab-only mechanics calibration pack. Steal mana is intentionally blocked until engine, AI and signatures exist.",
+	"scoring_profile": "card_flow_conservative",
+	"promotion_policy": {
+		"minimum_classification": "viable",
+		"require_signature": true,
+		"require_zero_failures": true,
+		"manual_approval_required": true
+	},
+	"mechanics": [
+		{"mechanic_id": "card_flow", "usage": "Implemented card-flow proof"},
+		{"mechanic_id": "steal_mana", "usage": "Blocked mechanics proof"}
+	],
+	"cards": [
+		{
+			"id": "calib_arcano_fluxo_seguro",
+			"new_card_id": "calib_arcano_fluxo_seguro",
+			"owner": "player",
+			"class_id": "arcano",
+			"element": "ar",
+			"faction": "draxos",
+			"role": "card_flow",
+			"design_intent": "Probe a conservative card-flow spell that should draw without creating runaway power.",
+			"timing": "early",
+			"valid_targets": ["self"],
+			"suggested_entry": {"map_min": 6, "block": "early", "rarity": "rare"},
+			"mechanics": ["card_flow"],
+			"display_name": "Calib Fluxo Seguro",
+			"type": "magia",
+			"text": "Compra cartas em volume controlado.",
+			"effect": {"draw_cards": 1},
+			"variant_space": {
+				"cost": [1, 2],
+				"effect.draw_cards": [1, 2, 3]
+			},
+			"context_template_ids": ["player_card_flow_room", "player_combo_setup"]
+		},
+		{
+			"id": "calib_arcano_roubar_mana_bloqueado",
+			"new_card_id": "calib_arcano_roubar_mana_bloqueado",
+			"owner": "player",
+			"class_id": "arcano",
+			"element": "ar",
+			"faction": "draxos",
+			"role": "economy",
+			"design_intent": "Describe a future mana-steal mechanic before engine support exists.",
+			"timing": "mid",
+			"valid_targets": ["enemy_resource"],
+			"suggested_entry": {"map_min": 12, "block": "mid", "rarity": "rare"},
+			"mechanics": ["steal_mana"],
+			"display_name": "Calib Roubar Mana Bloqueado",
+			"type": "magia",
+			"text": "Rouba mana do inimigo. Ainda sem suporte real.",
+			"effect": {"action": "steal_mana", "amount": 1},
+			"variant_space": {
+				"cost": [1, 2],
+				"effect.amount": [1, 2]
+			},
+			"context_template_ids": ["player_combo_setup"]
+		}
+	],
+	"encounter_contexts": []
+}

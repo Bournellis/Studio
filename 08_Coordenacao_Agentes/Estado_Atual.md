@@ -26,12 +26,12 @@
 
 ## draxos-roguelike-cardgame
 
-- Status: `PAUSADO_TEMPORARIO - retomada prevista em poucos dias`
+- Status: `PAUSADO_TEMPORARIO - retomada pontual de tooling por pedido explicito`
 - Track ativa preservada: `Track 02 - Complete Run Evolution` (T02-P09_COMPLETE)
-- Baseline: Track 02 completa em Godot 4.6.2 (rota de 29 mapas, save v5, keywords, AI/intent, labs Card Impact V5 e Design Lab V1, `validate.gd` 220/220). Detalhes em `Projetos/draxos-roguelike-cardgame/implementation/current-status.md`.
+- Baseline: Track 02 completa em Godot 4.6.2 (rota de 29 mapas, save v5, keywords, AI/intent, Card Impact V5 e Design Lab Calibration V1, `validate.gd` 225/225). Detalhes em `Projetos/draxos-roguelike-cardgame/implementation/current-status.md`.
 - Meta preservada: expansao de conteudo via Design Lab antes de playtests completos de sensacao.
-- Trabalho permitido: consulta historica; retomada apenas com pedido explicito.
-- Proximo passo: retomar quando o foco temporario do JogoDaCopa encerrar.
+- Trabalho permitido: consulta historica; tooling Design Lab em branch local quando pedido explicitamente.
+- Proximo passo: revisar/merge local da calibracao e depois criar packs reais de cartas/mecanicas.
 
 ## DraxosMobile
 

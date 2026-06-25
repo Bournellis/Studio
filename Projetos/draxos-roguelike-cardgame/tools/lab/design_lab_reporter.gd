@@ -49,7 +49,7 @@ static func write_outputs(out_dir: String, report: Dictionary, options: Dictiona
 	}
 
 static func candidates_csv(candidates: Array) -> String:
-	var lines: Array[String] = ["card_id,variant_id,owner,role,classification,score,risk,power_value,cost,attack,health,effect_amount,contexts_pass,contexts_warn,contexts_fail,reasons"]
+	var lines: Array[String] = ["card_id,variant_id,owner,role,classification,score,risk,power_value,cost,attack,health,effect_amount,contexts_pass,contexts_warn,contexts_fail,official_neighbor,risk_notes,reasons"]
 	for value: Variant in candidates:
 		if typeof(value) != TYPE_DICTIONARY:
 			continue
@@ -72,6 +72,8 @@ static func candidates_csv(candidates: Array) -> String:
 			str(contexts.get("pass", 0)),
 			str(contexts.get("warn", 0)),
 			str(contexts.get("fail", 0)),
+			_csv(_neighbor_label(Array(candidate.get("official_neighbors", [])))),
+			_csv("; ".join(Array(candidate.get("risk_notes", [])))),
 			_csv("; ".join(Array(candidate.get("reasons", []))))
 		]))
 	return "\n".join(lines)
@@ -86,6 +88,11 @@ static func summary_markdown(report: Dictionary, promotion: Dictionary, options:
 	lines.append("- Gate: `%s`" % ("PASS" if bool(summary.get("gate_ok", false)) else "FAIL"))
 	lines.append("- Candidates: `%d` across `%d` card idea(s)" % [int(summary.get("candidate_count", 0)), int(summary.get("card_count", 0))])
 	lines.append("- Recommendations: `%d`" % int(summary.get("recommendation_count", 0)))
+	var baseline_summary: Dictionary = Dictionary(summary.get("official_baseline_summary", {}))
+	if not baseline_summary.is_empty():
+		lines.append("- Official baseline: `%d` cards indexed" % int(baseline_summary.get("card_count", 0)))
+	for warning: Variant in Array(summary.get("component_warnings", [])):
+		lines.append("- Warning: %s" % str(warning))
 	lines.append("")
 	lines.append("## Classification Counts")
 	lines.append("")
@@ -112,6 +119,15 @@ static func summary_markdown(report: Dictionary, promotion: Dictionary, options:
 				str(candidate.get("risk_value", 0.0)),
 				"; ".join(Array(candidate.get("reasons", [])))
 			])
+			var neighbor_label: String = _neighbor_label(Array(candidate.get("official_neighbors", [])))
+			if neighbor_label != "":
+				lines.append("  - Official neighbor: %s" % neighbor_label)
+			var risk_notes: Array = Array(candidate.get("risk_notes", []))
+			if not risk_notes.is_empty():
+				lines.append("  - Risks: %s" % "; ".join(risk_notes))
+			var questions: Array = Array(candidate.get("manual_review_questions", []))
+			if not questions.is_empty():
+				lines.append("  - Review: %s" % "; ".join(questions))
 		lines.append("")
 	var blocked: Array = Array(report.get("blocked_mechanics", []))
 	if not blocked.is_empty():
@@ -176,6 +192,10 @@ static func promotion_manifest(report: Dictionary, options: Dictionary = {}) -> 
 				"classification": str(candidate.get("classification", "")),
 				"score": candidate.get("score", 0.0),
 				"numbers": Dictionary(candidate.get("numbers", {})).duplicate(true),
+				"official_neighbors": Array(candidate.get("official_neighbors", [])).duplicate(true),
+				"risk_notes": Array(candidate.get("risk_notes", [])).duplicate(true),
+				"context_failures": Array(candidate.get("context_failures", [])).duplicate(true),
+				"manual_review_questions": Array(candidate.get("manual_review_questions", [])).duplicate(true),
 				"suggested_diffs": _suggested_diffs(candidate),
 				"required_validations": [
 					"run_design_lab --mode=gate --pack=%s --card=%s" % [str(report.get("pack_id", "")), str(candidate.get("card_id", ""))],
@@ -203,6 +223,16 @@ static func _suggested_diffs(candidate: Dictionary) -> Array[Dictionary]:
 
 static func _csv(value: String) -> String:
 	return "\"%s\"" % value.replace("\"", "\"\"")
+
+static func _neighbor_label(neighbors: Array) -> String:
+	if neighbors.is_empty() or typeof(neighbors[0]) != TYPE_DICTIONARY:
+		return ""
+	var neighbor: Dictionary = Dictionary(neighbors[0])
+	return "`%s` cost %d power %s" % [
+		str(neighbor.get("card_id", "")),
+		int(neighbor.get("cost", 0)),
+		str(neighbor.get("power_value", 0.0))
+	]
 
 static func _sorted_keys(values: Dictionary) -> Array[String]:
 	var keys: Array[String] = []
