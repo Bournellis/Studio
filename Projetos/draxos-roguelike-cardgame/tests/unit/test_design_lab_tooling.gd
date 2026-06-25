@@ -98,6 +98,24 @@ func test_design_lab_variant_generator_produces_stable_ids_and_respects_limit() 
 	assert_eq(second_variants.size(), 2)
 	assert_eq(str(Dictionary(first_variants[0]).get("variant_id", "")), str(Dictionary(second_variants[0]).get("variant_id", "")))
 
+func test_design_lab_variant_generator_honors_csv_card_filter() -> void:
+	var registry_result: Dictionary = ProposalLoaderScript.load_registry_result()
+	var pack: Dictionary = _minimal_pack()
+	var second_card: Dictionary = Dictionary(Array(pack.get("cards", []))[0]).duplicate(true)
+	second_card["id"] = "unit_proto_extra"
+	second_card["new_card_id"] = "unit_proto_extra"
+	second_card["display_name"] = "Unit Extra"
+	pack["cards"] = Array(pack.get("cards", [])) + [second_card]
+	var generated: Dictionary = VariantGeneratorScript.generate_variants(pack, Dictionary(registry_result.get("registry", {})), {
+		"max_variants": 4,
+		"cards": "unit_proto_extra,unit_missing"
+	})
+	var variants: Array = Array(generated.get("variants", []))
+	assert_eq(int(Dictionary(generated.get("summary", {})).get("card_specs", 0)), 1)
+	assert_eq(variants.size(), 4)
+	for value: Variant in variants:
+		assert_eq(str(Dictionary(value).get("card_id", "")), "unit_proto_extra")
+
 func test_design_lab_context_builder_builds_player_and_enemy_cases() -> void:
 	var registry_result: Dictionary = ProposalLoaderScript.load_registry_result()
 	var load_result: Dictionary = ProposalLoaderScript.load_pack_result("design_lab_sample_v1")

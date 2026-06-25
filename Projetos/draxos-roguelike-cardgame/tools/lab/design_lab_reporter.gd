@@ -166,15 +166,25 @@ static func gate_markdown(report: Dictionary, promotion: Dictionary, options: Di
 	lines.append("- Recommended/viable candidates: `%d`" % Array(promotion.get("selected_candidates", [])).size())
 	lines.append("")
 	if not bool(summary.get("gate_ok", false)):
-		lines.append("## Blockers")
+		lines.append("## Hard Blockers")
 		lines.append("")
 		var counts: Dictionary = Dictionary(summary.get("classification_counts", {}))
-		for key: String in ["blocked", "broken", "risky", "weak"]:
+		var hard_blocker_count: int = int(counts.get("blocked", 0))
+		if hard_blocker_count > 0:
+			lines.append("- `blocked`: `%d`" % hard_blocker_count)
+		if Array(promotion.get("selected_candidates", [])).size() < int(summary.get("card_count", 0)):
+			lines.append("- At least one card idea has no viable candidate.")
+		if hard_blocker_count == 0 and Array(promotion.get("selected_candidates", [])).size() >= int(summary.get("card_count", 0)):
+			lines.append("- Gate failed for an unknown condition; inspect `design_lab_results.json`.")
+		lines.append("")
+		lines.append("## Rejected Variant Counts")
+		lines.append("")
+		for key: String in ["broken", "risky", "weak"]:
 			var count: int = int(counts.get(key, 0))
 			if count > 0:
 				lines.append("- `%s`: `%d`" % [key, count])
-		if Array(promotion.get("selected_candidates", [])).size() < int(summary.get("card_count", 0)):
-			lines.append("- At least one card idea has no viable candidate.")
+		if int(counts.get("broken", 0)) == 0 and int(counts.get("risky", 0)) == 0 and int(counts.get("weak", 0)) == 0:
+			lines.append("- No rejected variants in these categories.")
 	else:
 		lines.append("All card ideas have a viable or recommended candidate and no blocked/broken candidate remains in the selected set.")
 	return "\n".join(lines)

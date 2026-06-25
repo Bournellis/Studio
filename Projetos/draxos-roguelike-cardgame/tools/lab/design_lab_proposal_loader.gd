@@ -159,11 +159,26 @@ static func card_specs(pack: Dictionary) -> Array[Dictionary]:
 			specs.append(spec)
 	return specs
 
+static func normalize_card_filter(source: Variant) -> PackedStringArray:
+	var result: PackedStringArray = PackedStringArray()
+	match typeof(source):
+		TYPE_PACKED_STRING_ARRAY:
+			for item: String in source:
+				_append_card_filter_item(result, item)
+		TYPE_ARRAY:
+			for item_value: Variant in Array(source):
+				_append_card_filter_item(result, str(item_value))
+		TYPE_STRING:
+			_append_card_filter_item(result, str(source))
+		_:
+			pass
+	if result.is_empty():
+		result.append("all")
+	return result
+
 static func filtered_card_specs(pack: Dictionary, card_filter: PackedStringArray) -> Array[Dictionary]:
-	var mode: String = "all"
-	if card_filter.size() == 1:
-		mode = str(card_filter[0])
-	if mode == "all" or card_filter.is_empty():
+	card_filter = normalize_card_filter(card_filter)
+	if card_filter.is_empty() or (card_filter.size() == 1 and str(card_filter[0]) == "all"):
 		return card_specs(pack)
 	var wanted: Dictionary = {}
 	for card_id: String in card_filter:
@@ -174,6 +189,12 @@ static func filtered_card_specs(pack: Dictionary, card_filter: PackedStringArray
 		if wanted.has(spec_id) or wanted.has(str(spec.get("new_card_id", ""))) or wanted.has(str(spec.get("extends_card_id", ""))):
 			result.append(spec)
 	return result
+
+static func _append_card_filter_item(result: PackedStringArray, value: String) -> void:
+	for raw_item: String in value.split(",", false):
+		var trimmed: String = raw_item.strip_edges()
+		if trimmed != "":
+			result.append(trimmed)
 
 static func card_spec_id(spec: Dictionary) -> String:
 	var value: String = str(spec.get("id", ""))
