@@ -4,7 +4,7 @@ const ProposalLoaderScript = preload("res://tools/lab/design_lab_proposal_loader
 
 static func generate_variants(pack: Dictionary, registry: Dictionary, options: Dictionary = {}) -> Dictionary:
 	var max_variants_per_card: int = maxi(1, int(options.get("max_variants", 40)))
-	var card_filter: PackedStringArray = PackedStringArray(options.get("cards", PackedStringArray(["all"])))
+	var card_filter: PackedStringArray = ProposalLoaderScript.normalize_card_filter(options.get("cards", PackedStringArray(["all"])))
 	var specs: Array[Dictionary] = ProposalLoaderScript.filtered_card_specs(pack, card_filter)
 	var variants: Array[Dictionary] = []
 	var blocked_specs: Array[Dictionary] = []

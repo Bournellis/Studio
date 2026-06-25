@@ -3,14 +3,14 @@
 - Last Updated: `2026-06-25`
 - Project: `draxos-roguelike-cardgame`
 - Portfolio status: `P0_IMPLEMENTACAO`
-- Active surface: `Design Lab Calibration V1 before player/enemy card and mechanic content expansion`
+- Active surface: `Design Lab Pilot Content V1 before player/enemy card and mechanic content expansion`
 - Preserved long-form history: `implementation/tracks/track-02-complete-run-evolution/status-history-2026-06-06-design-lab-v1.md`
 
 ## Current Truth
 
 Track 02 remains a complete Godot 4.6.2 roguelike cardgame baseline with fixed 29-map route, save/snapshot v5, reward schedule, relics, expanded Souls shop, keyword/status tooltips, complete Track 02 keyword mechanics, enemy galleries, hybrid enemy AI/intent, encounter modes, board formats, field effects, boss hooks, readability polish and modular validation.
 
-Design Lab Calibration V1 is now the recommended bridge from card/mechanic/enemy idea to playable numeric candidates before official content promotion. It uses proposal packs, mechanic registry V2, scoring profiles, context templates, official-neighbor comparison, lab-only overlay catalog variants, deterministic BattleEngine contexts, ranked candidates and promotion manifests without mutating `data/definitions/slice_catalog.json`.
+Design Lab Pilot Content V1 is now the recommended bridge from card/mechanic/enemy idea to playable numeric candidates before official content promotion. It uses proposal packs, mechanic registry V2, scoring profiles, context templates, official-neighbor comparison, lab-only overlay catalog variants, deterministic BattleEngine contexts, ranked candidates and promotion manifests without mutating `data/definitions/slice_catalog.json`.
 
 Card Impact V5 remains the recommended regression harness before broad enemy-card redesigns. Card Impact V4.2 remains the default player-card-flow regression harness. Earlier V1-V4.1 packs remain preserved historical baselines.
 
@@ -20,14 +20,16 @@ Expand player/enemy cards, mechanics and encounter contexts through Design Lab p
 
 ## Current Gate
 
-Author the next player/enemy card and mechanic ideas as Design Lab packs using `context_template_ids`, tune candidates to viable/recommended, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab smoke/quick before full-run feel playtests.
+Use `design_lab_pilot_content_v1` as the first practical authoring model for the next player/enemy card and mechanic packs. Tune candidates to viable/recommended, keep unsupported mechanics blocked until engine/lab support exists, then promote manually and protect promoted content with Card Impact V4.2/V5 plus Run Lab smoke/quick before full-run feel playtests.
 
 ## Validation Snapshot
 
 - Design Lab sample gate `design_lab_sample_v1 --max-variants=3`: PASS with 9 candidates, 3 selected recommendations and 0 blocked mechanics.
 - Design Lab calibration packs: player PASS in explore with rejected high-risk variants; enemy PASS in explore through causal/AI contexts; mechanics FAIL by design when `steal_mana` is blocked.
+- Design Lab pilot content full explore: FAIL by design with 93 candidates, 11 selected recommendations, 1 blocked mechanic and useful rejected risky/broken variants.
+- Design Lab pilot content promotable subset gate: PASS with 104 candidates, 11 selected recommendations and 0 blocked mechanics.
 - Design Lab promotion manifests include official neighbors, risk notes, context failures and manual review questions while preserving manual approval and required validation gates.
-- `validate.gd`: PASS at 225/225 GUT tests and 1969 asserts after Design Lab Calibration V1.
+- `validate.gd`: PASS at 226/226 GUT tests and 1975 asserts after Design Lab Pilot Content V1.
 - Card Impact V5 official before gate: PASS with zero structural errors, zero new failures and zero removed records.
 - Run Lab smoke/quick official gates: PASS.
 - Known optional visual asset, GUT resource and ship alpha warnings remain non-fatal.

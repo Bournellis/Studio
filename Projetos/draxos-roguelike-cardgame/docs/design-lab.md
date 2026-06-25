@@ -1,7 +1,7 @@
 # Design Lab
 
 - Last Updated: `2026-06-25`
-- Status: `DESIGN_LAB_CALIBRATION_V1`
+- Status: `DESIGN_LAB_PILOT_CONTENT_V1`
 - Scope: proposal packs, context templates, lab-only prototype cards, deterministic numeric variants, official-neighbor comparison, battle/enemy contexts, interpretable scoring, reports and promotion manifest.
 
 ## Purpose
@@ -59,6 +59,7 @@ design_lab_sample_v1.json
 design_lab_calibration_player_v1.json
 design_lab_calibration_enemy_v1.json
 design_lab_calibration_mechanics_v1.json
+design_lab_pilot_content_v1.json
 ```
 
 Each proposal card must define:
@@ -270,6 +271,13 @@ Calibration packs:
 - `design_lab_calibration_player_v1`: PASS in explore, includes recommended, viable, risky and broken variants.
 - `design_lab_calibration_enemy_v1`: PASS in explore, proves enemy causal signature plus AI choice contexts.
 - `design_lab_calibration_mechanics_v1`: FAIL by design in explore because `steal_mana` is blocked until engine/lab support exists.
+
+Pilot content pack:
+
+- `design_lab_pilot_content_v1`: first mixed lab-only content pilot with Arcano, Invocador, Necromante, enemy cards and one intentionally blocked future mechanic.
+- Full explore: FAIL by design with 93 candidates, 11 recommended/viable selected candidates, 1 blocked mechanic (`steal_mana`) and rejected risky/broken variants kept for diagnosis.
+- Promotable subset gate: PASS with 104 candidates, 11 recommended/viable selected candidates and 0 blocked mechanics when excluding the blocked `pilot_arcano_sifao_mana` and the intentionally non-promotable `pilot_enemy_ar_falcao_rapido`.
+- The pilot validated CSV multi-card `--card`/`--cards` subset gates and clarified gate reports by separating hard blockers from rejected variant counts.
 
 ## Roadmap
 
