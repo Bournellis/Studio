@@ -1,64 +1,155 @@
 {
-	"schema_version": 1,
+	"schema_version": 2,
 	"profiles": [
 		{
 			"profile_id": "default",
 			"name": "Default playable band",
-			"description": "General early/mid-route card tuning profile.",
+			"description": "General prototype tuning profile. It prefers playable numbers near official neighbors over raw power.",
 			"weights": {
-				"role_fit": 0.3,
-				"power_band": 0.25,
-				"reliability": 0.2,
-				"context_fit": 0.15,
+				"role_fit": 0.18,
+				"power_band": 0.18,
+				"curve_fit": 0.12,
+				"official_neighbor_fit": 0.14,
+				"entry_timing_fit": 0.08,
+				"reliability": 0.12,
+				"context_fit": 0.08,
 				"risk": 0.05,
-				"novelty": 0.03,
-				"complexity": 0.02
+				"replacement_safety": 0.02,
+				"redundancy_safety": 0.01,
+				"role_ceiling_safety": 0.01,
+				"novelty": 0.005,
+				"complexity": 0.005
 			},
 			"bands": {
 				"damage": {"min": 3, "ideal": 5, "max": 8},
 				"summon": {"min": 3, "ideal": 6, "max": 10},
 				"control": {"min": 1, "ideal": 2, "max": 4},
+				"buff": {"min": 1, "ideal": 3, "max": 6},
 				"economy": {"min": 1, "ideal": 2, "max": 4},
 				"card_flow": {"min": 1, "ideal": 2, "max": 4},
 				"enemy_pressure": {"min": 2, "ideal": 5, "max": 9}
 			},
-			"promotion": {"recommended_score": 78, "viable_score": 62, "max_risk": 0.45}
+			"curve": {
+				"default": {"ideal_power_per_cost": 3.5, "tolerance": 1.5},
+				"damage": {"ideal_power_per_cost": 3.2, "tolerance": 1.6},
+				"summon": {"ideal_power_per_cost": 3.5, "tolerance": 1.8},
+				"enemy_pressure": {"ideal_power_per_cost": 3.5, "tolerance": 1.8}
+			},
+			"official_neighbors": {"limit": 3, "power_margin": 1.5},
+			"promotion": {"recommended_score": 78, "viable_score": 62, "max_risk": 0.45, "broken_risk": 0.82}
 		},
 		{
 			"profile_id": "early_player_card",
 			"name": "Early player card",
 			"description": "Conservative profile for cards entering maps 1-8.",
 			"weights": {
-				"role_fit": 0.32,
-				"power_band": 0.28,
-				"reliability": 0.18,
-				"context_fit": 0.12,
-				"risk": 0.06,
-				"novelty": 0.02,
-				"complexity": 0.02
+				"role_fit": 0.18,
+				"power_band": 0.2,
+				"curve_fit": 0.14,
+				"official_neighbor_fit": 0.16,
+				"entry_timing_fit": 0.1,
+				"reliability": 0.1,
+				"context_fit": 0.07,
+				"risk": 0.025,
+				"replacement_safety": 0.015,
+				"redundancy_safety": 0.005,
+				"role_ceiling_safety": 0.005
 			},
 			"bands": {
 				"damage": {"min": 2, "ideal": 4, "max": 6},
 				"summon": {"min": 3, "ideal": 5, "max": 8},
 				"control": {"min": 1, "ideal": 2, "max": 3},
+				"buff": {"min": 1, "ideal": 2, "max": 4},
 				"economy": {"min": 1, "ideal": 2, "max": 3},
 				"card_flow": {"min": 1, "ideal": 1, "max": 2},
 				"enemy_pressure": {"min": 2, "ideal": 4, "max": 7}
 			},
-			"promotion": {"recommended_score": 76, "viable_score": 60, "max_risk": 0.4}
+			"curve": {
+				"default": {"ideal_power_per_cost": 3.0, "tolerance": 1.25},
+				"damage": {"ideal_power_per_cost": 3.0, "tolerance": 1.2},
+				"summon": {"ideal_power_per_cost": 3.2, "tolerance": 1.4}
+			},
+			"official_neighbors": {"limit": 3, "power_margin": 1.0},
+			"promotion": {"recommended_score": 77, "viable_score": 61, "max_risk": 0.38, "broken_risk": 0.78}
+		},
+		{
+			"profile_id": "mid_player_card",
+			"name": "Mid-route player card",
+			"description": "Profile for cards entering after the player already has upgraded tools.",
+			"weights": {
+				"role_fit": 0.17,
+				"power_band": 0.19,
+				"curve_fit": 0.12,
+				"official_neighbor_fit": 0.15,
+				"entry_timing_fit": 0.08,
+				"reliability": 0.12,
+				"context_fit": 0.08,
+				"risk": 0.045,
+				"replacement_safety": 0.02,
+				"redundancy_safety": 0.015,
+				"role_ceiling_safety": 0.01
+			},
+			"bands": {
+				"damage": {"min": 4, "ideal": 7, "max": 10},
+				"summon": {"min": 5, "ideal": 8, "max": 12},
+				"control": {"min": 1, "ideal": 3, "max": 5},
+				"buff": {"min": 2, "ideal": 4, "max": 7},
+				"economy": {"min": 1, "ideal": 3, "max": 5},
+				"card_flow": {"min": 1, "ideal": 2, "max": 4}
+			},
+			"curve": {
+				"default": {"ideal_power_per_cost": 3.6, "tolerance": 1.6},
+				"damage": {"ideal_power_per_cost": 3.4, "tolerance": 1.7},
+				"summon": {"ideal_power_per_cost": 3.8, "tolerance": 1.8}
+			},
+			"official_neighbors": {"limit": 4, "power_margin": 1.75},
+			"promotion": {"recommended_score": 77, "viable_score": 61, "max_risk": 0.45, "broken_risk": 0.82}
+		},
+		{
+			"profile_id": "late_player_card",
+			"name": "Late player card",
+			"description": "Profile for high-impact cards that are allowed to be stronger but still need a clear role.",
+			"weights": {
+				"role_fit": 0.17,
+				"power_band": 0.2,
+				"curve_fit": 0.11,
+				"official_neighbor_fit": 0.13,
+				"entry_timing_fit": 0.08,
+				"reliability": 0.12,
+				"context_fit": 0.08,
+				"risk": 0.06,
+				"replacement_safety": 0.025,
+				"redundancy_safety": 0.01,
+				"role_ceiling_safety": 0.015
+			},
+			"bands": {
+				"damage": {"min": 6, "ideal": 10, "max": 14},
+				"summon": {"min": 7, "ideal": 12, "max": 16},
+				"control": {"min": 2, "ideal": 4, "max": 6},
+				"buff": {"min": 3, "ideal": 6, "max": 9},
+				"economy": {"min": 2, "ideal": 4, "max": 6},
+				"card_flow": {"min": 2, "ideal": 3, "max": 5}
+			},
+			"curve": {"default": {"ideal_power_per_cost": 4.0, "tolerance": 2.0}},
+			"official_neighbors": {"limit": 4, "power_margin": 2.0},
+			"promotion": {"recommended_score": 78, "viable_score": 62, "max_risk": 0.5, "broken_risk": 0.86}
 		},
 		{
 			"profile_id": "enemy_pressure_basic",
 			"name": "Enemy pressure basic",
 			"description": "Profile for enemy cards that should create readable lane pressure without burst spikes.",
 			"weights": {
-				"role_fit": 0.28,
-				"power_band": 0.28,
-				"reliability": 0.2,
-				"context_fit": 0.12,
-				"risk": 0.07,
-				"novelty": 0.03,
-				"complexity": 0.02
+				"role_fit": 0.17,
+				"power_band": 0.19,
+				"curve_fit": 0.13,
+				"official_neighbor_fit": 0.15,
+				"entry_timing_fit": 0.08,
+				"reliability": 0.12,
+				"context_fit": 0.07,
+				"risk": 0.05,
+				"replacement_safety": 0.02,
+				"redundancy_safety": 0.01,
+				"role_ceiling_safety": 0.01
 			},
 			"bands": {
 				"damage": {"min": 2, "ideal": 4, "max": 6},
@@ -66,7 +157,116 @@
 				"control": {"min": 1, "ideal": 1, "max": 3},
 				"enemy_pressure": {"min": 3, "ideal": 6, "max": 10}
 			},
-			"promotion": {"recommended_score": 75, "viable_score": 60, "max_risk": 0.5}
+			"curve": {
+				"default": {"ideal_power_per_cost": 3.5, "tolerance": 1.6},
+				"enemy_pressure": {"ideal_power_per_cost": 3.6, "tolerance": 1.8}
+			},
+			"official_neighbors": {"limit": 4, "power_margin": 1.5},
+			"promotion": {"recommended_score": 75, "viable_score": 60, "max_risk": 0.5, "broken_risk": 0.84}
+		},
+		{
+			"profile_id": "enemy_tutorial_pressure",
+			"name": "Enemy tutorial pressure",
+			"description": "Stricter enemy profile for the first fights, where readability matters more than challenge.",
+			"weights": {
+				"role_fit": 0.17,
+				"power_band": 0.2,
+				"curve_fit": 0.15,
+				"official_neighbor_fit": 0.16,
+				"entry_timing_fit": 0.1,
+				"reliability": 0.1,
+				"context_fit": 0.06,
+				"risk": 0.035,
+				"replacement_safety": 0.015,
+				"redundancy_safety": 0.005,
+				"role_ceiling_safety": 0.005
+			},
+			"bands": {
+				"enemy_pressure": {"min": 3, "ideal": 4, "max": 6},
+				"damage": {"min": 1, "ideal": 2, "max": 4},
+				"control": {"min": 1, "ideal": 1, "max": 2}
+			},
+			"curve": {"enemy_pressure": {"ideal_power_per_cost": 3.0, "tolerance": 1.25}, "default": {"ideal_power_per_cost": 3.0, "tolerance": 1.25}},
+			"official_neighbors": {"limit": 3, "power_margin": 1.0},
+			"promotion": {"recommended_score": 76, "viable_score": 61, "max_risk": 0.4, "broken_risk": 0.78}
+		},
+		{
+			"profile_id": "enemy_mid_pressure",
+			"name": "Enemy mid pressure",
+			"description": "Enemy profile for mid-route lane pressure and mixed AI contexts.",
+			"weights": {
+				"role_fit": 0.17,
+				"power_band": 0.19,
+				"curve_fit": 0.12,
+				"official_neighbor_fit": 0.14,
+				"entry_timing_fit": 0.08,
+				"reliability": 0.12,
+				"context_fit": 0.08,
+				"risk": 0.055,
+				"replacement_safety": 0.025,
+				"redundancy_safety": 0.01,
+				"role_ceiling_safety": 0.01
+			},
+			"bands": {
+				"enemy_pressure": {"min": 5, "ideal": 8, "max": 12},
+				"damage": {"min": 3, "ideal": 5, "max": 8},
+				"control": {"min": 1, "ideal": 2, "max": 4}
+			},
+			"curve": {"enemy_pressure": {"ideal_power_per_cost": 3.8, "tolerance": 1.8}, "default": {"ideal_power_per_cost": 3.6, "tolerance": 1.6}},
+			"official_neighbors": {"limit": 4, "power_margin": 1.75},
+			"promotion": {"recommended_score": 76, "viable_score": 61, "max_risk": 0.48, "broken_risk": 0.84}
+		},
+		{
+			"profile_id": "boss_tool",
+			"name": "Boss tool",
+			"description": "Profile for enemy cards that are intentionally scary but should remain telegraphed.",
+			"weights": {
+				"role_fit": 0.17,
+				"power_band": 0.18,
+				"curve_fit": 0.1,
+				"official_neighbor_fit": 0.12,
+				"entry_timing_fit": 0.08,
+				"reliability": 0.13,
+				"context_fit": 0.09,
+				"risk": 0.07,
+				"replacement_safety": 0.025,
+				"redundancy_safety": 0.01,
+				"role_ceiling_safety": 0.025
+			},
+			"bands": {
+				"enemy_pressure": {"min": 8, "ideal": 13, "max": 18},
+				"damage": {"min": 5, "ideal": 8, "max": 12},
+				"control": {"min": 2, "ideal": 4, "max": 6}
+			},
+			"curve": {"default": {"ideal_power_per_cost": 4.2, "tolerance": 2.0}},
+			"official_neighbors": {"limit": 5, "power_margin": 2.5},
+			"promotion": {"recommended_score": 78, "viable_score": 62, "max_risk": 0.55, "broken_risk": 0.9}
+		},
+		{
+			"profile_id": "card_flow_conservative",
+			"name": "Card flow conservative",
+			"description": "Profile for draw/create/discard ideas where reliability and runaway risk matter more than power.",
+			"weights": {
+				"role_fit": 0.18,
+				"power_band": 0.17,
+				"curve_fit": 0.09,
+				"official_neighbor_fit": 0.12,
+				"entry_timing_fit": 0.08,
+				"reliability": 0.15,
+				"context_fit": 0.09,
+				"risk": 0.07,
+				"replacement_safety": 0.02,
+				"redundancy_safety": 0.015,
+				"role_ceiling_safety": 0.015
+			},
+			"bands": {
+				"card_flow": {"min": 1, "ideal": 2, "max": 3},
+				"economy": {"min": 1, "ideal": 2, "max": 3},
+				"damage": {"min": 2, "ideal": 4, "max": 6}
+			},
+			"curve": {"card_flow": {"ideal_power_per_cost": 1.0, "tolerance": 0.75}, "default": {"ideal_power_per_cost": 2.0, "tolerance": 1.0}},
+			"official_neighbors": {"limit": 4, "power_margin": 1.0},
+			"promotion": {"recommended_score": 78, "viable_score": 63, "max_risk": 0.35, "broken_risk": 0.75}
 		}
 	]
 }

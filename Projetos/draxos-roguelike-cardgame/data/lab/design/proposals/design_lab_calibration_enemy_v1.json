@@ -1,0 +1,75 @@
+{
+	"pack_id": "design_lab_calibration_enemy_v1",
+	"schema_version": 1,
+	"design_goal": "Calibrate enemy card scoring with causal signatures, AI choice context and lane-pressure templates.",
+	"notes": "Lab-only enemy calibration pack. It checks whether new enemy bodies can be compared against official enemies before promotion.",
+	"scoring_profile": "enemy_mid_pressure",
+	"promotion_policy": {
+		"minimum_classification": "viable",
+		"require_signature": true,
+		"require_zero_failures": true,
+		"manual_approval_required": true
+	},
+	"mechanics": [
+		{"mechanic_id": "summon", "usage": "Enemy board body"},
+		{"mechanic_id": "enemy_causal_signature", "usage": "Enemy AI and first combat proof"}
+	],
+	"enemy_cards": [
+		{
+			"id": "calib_enemy_terra_batedor_variavel",
+			"new_card_id": "calib_enemy_terra_batedor_variavel",
+			"owner": "enemy",
+			"class_id": "enemy",
+			"element": "terra",
+			"faction": "terra",
+			"role": "enemy_pressure",
+			"design_intent": "Probe a tutorial enemy body that should teach lane pressure without surprising burst.",
+			"timing": "first_combat",
+			"valid_targets": ["enemy_empty_slot"],
+			"suggested_entry": {"map_min": 1, "block": "tutorial", "rarity": "common"},
+			"mechanics": ["summon", "enemy_causal_signature"],
+			"display_name": "Calib Batedor Variavel",
+			"type": "criatura",
+			"cost": 1,
+			"attack": 2,
+			"health": 2,
+			"text": "Inimigo de calibracao para pressao simples.",
+			"effect": {},
+			"variant_space": {
+				"cost": [1],
+				"attack": [1, 2, 3, 4],
+				"health": [1, 2, 3, 4]
+			},
+			"context_template_ids": ["enemy_first_combat", "enemy_lane_pressure", "enemy_ai_choice_context"]
+		},
+		{
+			"id": "calib_enemy_terra_tanque_variavel",
+			"new_card_id": "calib_enemy_terra_tanque_variavel",
+			"owner": "enemy",
+			"class_id": "enemy",
+			"element": "terra",
+			"faction": "terra",
+			"role": "enemy_pressure",
+			"design_intent": "Probe a low-attack durable enemy that should create board time instead of burst.",
+			"timing": "early",
+			"valid_targets": ["enemy_empty_slot"],
+			"suggested_entry": {"map_min": 5, "block": "early", "rarity": "common"},
+			"mechanics": ["summon", "enemy_causal_signature"],
+			"display_name": "Calib Tanque Variavel",
+			"type": "criatura",
+			"cost": 2,
+			"attack": 1,
+			"health": 4,
+			"text": "Inimigo defensivo de calibracao.",
+			"keywords": ["espinhos"],
+			"effect": {"thorns_amount": 1},
+			"variant_space": {
+				"cost": [1, 2],
+				"attack": [1, 2],
+				"health": [3, 5, 7]
+			},
+			"context_template_ids": ["enemy_first_combat", "enemy_swarm_pressure", "enemy_ai_choice_context"]
+		}
+	],
+	"encounter_contexts": []
+}

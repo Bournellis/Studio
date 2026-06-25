@@ -1,0 +1,178 @@
+{
+	"schema_version": 1,
+	"templates": [
+		{
+			"id": "player_isolated",
+			"owner": "player",
+			"name": "Player isolated play",
+			"required": true,
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 2,
+			"enemy_health": 80,
+			"starting_enemy_slots": [{"slot": 1, "card_id": "enemy_terra_elemental_tita"}]
+		},
+		{
+			"id": "player_empty_board",
+			"owner": "player",
+			"name": "Player empty board",
+			"required": true,
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 2,
+			"enemy_health": 60,
+			"starting_enemy_slots": []
+		},
+		{
+			"id": "player_full_board",
+			"owner": "player",
+			"name": "Player full board",
+			"required": false,
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 2,
+			"starting_player_slots": [
+				{"slot": 0, "card_id": "arcano_fagulha"},
+				{"slot": 1, "card_id": "arcano_barreira"},
+				{"slot": 2, "card_id": "arcano_fagulha"}
+			],
+			"starting_enemy_slots": [{"slot": 1, "card_id": "enemy_terra_elemental_tita"}]
+		},
+		{
+			"id": "player_lane_pressure",
+			"owner": "player",
+			"name": "Player under lane pressure",
+			"required": true,
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 2,
+			"player_health": 18,
+			"enemy_health": 60,
+			"starting_enemy_slots": [
+				{"slot": 0, "card_id": "enemy_terra_elemental_bruto"},
+				{"slot": 1, "card_id": "enemy_terra_guerreiro_terra"},
+				{"slot": 2, "card_id": "enemy_terra_elemental_tita"}
+			]
+		},
+		{
+			"id": "player_low_health",
+			"owner": "player",
+			"name": "Player low health",
+			"required": false,
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 2,
+			"player_health": 8,
+			"enemy_health": 50,
+			"starting_enemy_slots": [{"slot": 1, "card_id": "enemy_terra_elemental_bruto"}]
+		},
+		{
+			"id": "player_big_target",
+			"owner": "player",
+			"name": "Player big target",
+			"required": true,
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 2,
+			"enemy_health": 90,
+			"starting_enemy_slots": [{"slot": 1, "card_id": "enemy_terra_elemental_tita"}]
+		},
+		{
+			"id": "player_small_swarm",
+			"owner": "player",
+			"name": "Player small swarm",
+			"required": true,
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 2,
+			"enemy_health": 70,
+			"starting_enemy_slots": [
+				{"slot": 0, "card_id": "enemy_terra_elemental_areia"},
+				{"slot": 1, "card_id": "enemy_terra_elemental_pedra"},
+				{"slot": 2, "card_id": "enemy_terra_elemental_agil"}
+			]
+		},
+		{
+			"id": "player_combo_setup",
+			"owner": "player",
+			"name": "Player combo setup",
+			"required": false,
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 3,
+			"mana_per_turn": 10,
+			"max_support_cards_before_target": 2,
+			"starting_player_slots": [{"slot": 1, "card_id": "arcano_fagulha"}],
+			"starting_enemy_slots": [{"slot": 1, "card_id": "enemy_terra_elemental_tita"}]
+		},
+		{
+			"id": "player_card_flow_room",
+			"owner": "player",
+			"name": "Player card flow room",
+			"required": true,
+			"policy_id": "card_focus_isolated",
+			"turn_limit": 2,
+			"max_hand_size": 8,
+			"starting_enemy_slots": [{"slot": 1, "card_id": "enemy_terra_elemental_pedra"}]
+		},
+		{
+			"id": "enemy_first_combat",
+			"owner": "enemy",
+			"name": "Enemy first combat",
+			"required": true,
+			"policy_id": "end_turn_only",
+			"turn_limit": 1,
+			"player_health": 40,
+			"enemy_health": 40
+		},
+		{
+			"id": "enemy_lane_pressure",
+			"owner": "enemy",
+			"name": "Enemy lane pressure",
+			"required": true,
+			"policy_id": "end_turn_only",
+			"turn_limit": 1,
+			"player_health": 35,
+			"starting_player_slots": [{"slot": 1, "card_id": "arcano_barreira"}]
+		},
+		{
+			"id": "enemy_swarm_pressure",
+			"owner": "enemy",
+			"name": "Enemy swarm pressure",
+			"required": false,
+			"policy_id": "end_turn_only",
+			"turn_limit": 1,
+			"starting_enemy_slots": [
+				{"slot": 0, "card_id": "enemy_terra_elemental_areia"},
+				{"slot": 2, "card_id": "enemy_terra_elemental_agil"}
+			]
+		},
+		{
+			"id": "enemy_control_pressure",
+			"owner": "enemy",
+			"name": "Enemy control pressure",
+			"required": true,
+			"policy_id": "end_turn_only",
+			"turn_limit": 1,
+			"starting_player_slots": [
+				{"slot": 0, "card_id": "invocador_soldado"},
+				{"slot": 1, "card_id": "invocador_batedor"}
+			]
+		},
+		{
+			"id": "enemy_boss_tool",
+			"owner": "enemy",
+			"name": "Enemy boss tool",
+			"required": false,
+			"policy_id": "end_turn_only",
+			"turn_limit": 2,
+			"player_health": 30,
+			"enemy_health": 90,
+			"enemy_mana_per_turn": 10,
+			"enemy_mana": 10
+		},
+		{
+			"id": "enemy_ai_choice_context",
+			"owner": "enemy",
+			"name": "Enemy AI choice context",
+			"required": true,
+			"policy_id": "end_turn_only",
+			"turn_limit": 1,
+			"player_health": 40,
+			"starting_player_slots": [{"slot": 1, "card_id": "arcano_fagulha"}],
+			"starting_enemy_slots": [{"slot": 2, "card_id": "enemy_terra_elemental_areia"}]
+		}
+	]
+}

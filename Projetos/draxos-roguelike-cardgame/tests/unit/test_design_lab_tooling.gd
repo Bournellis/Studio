@@ -2,6 +2,7 @@ extends "res://tests/unit/draxos_test_base.gd"
 
 const ContextBuilderScript = preload("res://tools/lab/design_lab_context_builder.gd")
 const OverlayCatalogScript = preload("res://tools/lab/design_lab_overlay_catalog.gd")
+const OfficialBaselineIndexScript = preload("res://tools/lab/design_lab_official_baseline_index.gd")
 const ProposalLoaderScript = preload("res://tools/lab/design_lab_proposal_loader.gd")
 const PromotionManifestValidatorScript = preload("res://tools/lab/design_lab_promotion_manifest_validator.gd")
 const ReporterScript = preload("res://tools/lab/design_lab_reporter.gd")
@@ -14,6 +15,15 @@ func test_design_lab_loader_accepts_sample_pack() -> void:
 	var pack: Dictionary = Dictionary(load_result.get("pack", {}))
 	assert_eq(str(pack.get("pack_id", "")), "design_lab_sample_v1")
 	assert_eq(ProposalLoaderScript.card_specs(pack).size(), 3)
+
+func test_design_lab_loader_accepts_context_template_ids_without_pack_contexts() -> void:
+	var registry_result: Dictionary = ProposalLoaderScript.load_registry_result()
+	var template_result: Dictionary = ProposalLoaderScript.load_context_templates_result()
+	assert_true(bool(registry_result.get("ok", false)), str(registry_result.get("message", "")))
+	assert_true(bool(template_result.get("ok", false)), str(template_result.get("message", "")))
+	var pack: Dictionary = _minimal_template_pack()
+	var result: Dictionary = ProposalLoaderScript.validate_pack_result(pack, Dictionary(registry_result.get("registry", {})), "unit", Dictionary(template_result.get("templates", {})))
+	assert_true(bool(result.get("ok", false)), str(result.get("message", "")))
 
 func test_design_lab_loader_rejects_card_without_intent_role_context_or_variant_space() -> void:
 	var load_result: Dictionary = ProposalLoaderScript.load_registry_result()
@@ -105,6 +115,28 @@ func test_design_lab_context_builder_builds_player_and_enemy_cases() -> void:
 	assert_true(has_enemy)
 	assert_true(has_player)
 
+func test_design_lab_context_builder_expands_context_templates() -> void:
+	var registry_result: Dictionary = ProposalLoaderScript.load_registry_result()
+	var pack: Dictionary = _minimal_template_pack()
+	var generated: Dictionary = VariantGeneratorScript.generate_variants(pack, Dictionary(registry_result.get("registry", {})), {"max_variants": 1, "cards": PackedStringArray(["all"])})
+	var context_result: Dictionary = ContextBuilderScript.build_cases(pack, _typed_dictionary_array(Array(generated.get("variants", []))))
+	assert_true(bool(context_result.get("ok", false)))
+	var cases: Array = Array(context_result.get("cases", []))
+	assert_eq(cases.size(), 2)
+	var context_ids: Array[String] = []
+	for case_value: Variant in cases:
+		context_ids.append(str(Dictionary(case_value).get("id", "")))
+	assert_true(str(context_ids[0]).contains("player_isolated") or str(context_ids[1]).contains("player_isolated"))
+	assert_true(str(context_ids[0]).contains("player_big_target") or str(context_ids[1]).contains("player_big_target"))
+
+func test_design_lab_official_baseline_index_finds_neighbors() -> void:
+	var index: Dictionary = OfficialBaselineIndexScript.build(ContentLibrary.get_catalog())
+	var variant: Dictionary = _variant("card_a__good", "card_a", 5)
+	var neighbors: Array[Dictionary] = OfficialBaselineIndexScript.neighbors_for_variant(index, variant, 3)
+	assert_gt(neighbors.size(), 0)
+	assert_eq(str(Dictionary(neighbors[0]).get("owner", "")), "player")
+	assert_eq(str(Dictionary(neighbors[0]).get("class_id", "")), "arcano")
+
 func test_design_lab_scorer_ranks_candidates_deterministically() -> void:
 	var variant_low: Dictionary = _variant("card_a__low", "card_a", 3)
 	var variant_good: Dictionary = _variant("card_a__good", "card_a", 5)
@@ -123,6 +155,19 @@ func test_design_lab_scorer_ranks_candidates_deterministically() -> void:
 	assert_eq(str(Dictionary(candidates[0]).get("variant_id", "")), "card_a__good")
 	assert_true(float(Dictionary(candidates[0]).get("score", 0.0)) >= float(Dictionary(candidates[1]).get("score", 0.0)))
 
+func test_design_lab_scorer_marks_overpowered_official_replacement_as_not_recommended() -> void:
+	var variant_high: Dictionary = _variant("card_a__too_high", "card_a", 10)
+	var records: Array[Dictionary] = [_fake_record("card_a__too_high", 10, "PASS")]
+	var profiles_result: Dictionary = ProposalLoaderScript.load_profiles_result()
+	var profile: Dictionary = ProposalLoaderScript.profile_by_id(Dictionary(profiles_result.get("profiles", {})), "early_player_card")
+	var index: Dictionary = OfficialBaselineIndexScript.build(ContentLibrary.get_catalog())
+	var scored: Dictionary = ScorerScript.score_variants([variant_high], records, [], profile, {"pack_id": "unit"}, index)
+	var candidates: Array = Array(scored.get("candidates", []))
+	var classification: String = str(Dictionary(candidates[0]).get("classification", ""))
+	assert_false(classification in ["recommended", "viable"])
+	assert_gt(Array(Dictionary(candidates[0]).get("official_neighbors", [])).size(), 0)
+	assert_gt(Array(Dictionary(candidates[0]).get("risk_notes", [])).size(), 0)
+
 func test_design_lab_reporter_writes_candidates_blocked_and_promotion_manifest() -> void:
 	var report: Dictionary = {
 		"pack_id": "unit_design_lab",
@@ -138,6 +183,10 @@ func test_design_lab_reporter_writes_candidates_blocked_and_promotion_manifest()
 			"power_value": 5,
 			"numbers": {"cost": 1, "effect.amount": 5},
 			"contexts": {"pass": 1, "warn": 0, "fail": 0},
+			"official_neighbors": [{"card_id": "arcano_choque_lvl2", "cost": 1, "power_value": 5}],
+			"risk_notes": ["unit risk note"],
+			"context_failures": [],
+			"manual_review_questions": ["unit question"],
 			"reasons": ["unit"]
 		}],
 		"by_card": {"card_a": [{
@@ -146,6 +195,9 @@ func test_design_lab_reporter_writes_candidates_blocked_and_promotion_manifest()
 			"classification": "recommended",
 			"score": 88.0,
 			"risk_value": 0.1,
+			"official_neighbors": [{"card_id": "arcano_choque_lvl2", "cost": 1, "power_value": 5}],
+			"risk_notes": ["unit risk note"],
+			"manual_review_questions": ["unit question"],
 			"reasons": ["unit"]
 		}]},
 		"recommendations": [{
@@ -155,7 +207,11 @@ func test_design_lab_reporter_writes_candidates_blocked_and_promotion_manifest()
 			"role": "damage",
 			"classification": "recommended",
 			"score": 88.0,
-			"numbers": {"cost": 1, "effect.amount": 5}
+			"numbers": {"cost": 1, "effect.amount": 5},
+			"official_neighbors": [{"card_id": "arcano_choque_lvl2", "cost": 1, "power_value": 5}],
+			"risk_notes": ["unit risk note"],
+			"context_failures": [],
+			"manual_review_questions": ["unit question"]
 		}],
 		"blocked_mechanics": [{"mechanic_id": "steal_mana", "description": "blocked"}]
 	}
@@ -168,8 +224,12 @@ func test_design_lab_reporter_writes_candidates_blocked_and_promotion_manifest()
 	assert_string_contains(markdown, "Top Candidates By Card")
 	assert_string_contains(markdown, "Blocked Mechanics")
 	assert_string_contains(markdown, "Promotion Manifest")
+	assert_string_contains(markdown, "Official neighbor")
 	var manifest: Variant = JSON.parse_string(FileAccess.get_file_as_string("%s/promotion_manifest.json" % out_dir))
 	assert_eq(Array(Dictionary(manifest).get("selected_candidates", [])).size(), 1)
+	var selected: Dictionary = Dictionary(Array(Dictionary(manifest).get("selected_candidates", []))[0])
+	assert_gt(Array(selected.get("official_neighbors", [])).size(), 0)
+	assert_gt(Array(selected.get("risk_notes", [])).size(), 0)
 	var validation: Dictionary = PromotionManifestValidatorScript.validate_manifest(Dictionary(manifest))
 	assert_true(bool(validation.get("ok", false)), "; ".join(Array(validation.get("errors", []))))
 
@@ -235,6 +295,18 @@ func _minimal_pack() -> Dictionary:
 		}]
 	}
 
+func _minimal_template_pack() -> Dictionary:
+	var pack: Dictionary = _minimal_pack()
+	pack["pack_id"] = "unit_template_design_pack"
+	pack["encounter_contexts"] = []
+	var cards: Array = Array(pack.get("cards", []))
+	var card: Dictionary = Dictionary(cards[0])
+	card.erase("context_ids")
+	card["context_template_ids"] = ["player_isolated", "player_big_target"]
+	cards[0] = card
+	pack["cards"] = cards
+	return pack
+
 func _variant(variant_id: String, card_id: String, amount: int) -> Dictionary:
 	return {
 		"variant_id": variant_id,
@@ -243,9 +315,9 @@ func _variant(variant_id: String, card_id: String, amount: int) -> Dictionary:
 		"role": "damage",
 		"class_id": "arcano",
 		"mechanics": ["damage"],
-		"numbers": {"effect.amount": amount},
+		"numbers": {"cost": 1, "effect.amount": amount},
 		"origin": "variant",
-		"spec": {"effect": {"action": "damage", "amount": amount}}
+		"spec": {"owner": "player", "class_id": "arcano", "role": "damage", "timing": "early", "cost": 1, "type": "magia", "effect": {"action": "damage", "amount": amount}}
 	}
 
 func _fake_record(variant_id: String, damage: int, status: String) -> Dictionary:

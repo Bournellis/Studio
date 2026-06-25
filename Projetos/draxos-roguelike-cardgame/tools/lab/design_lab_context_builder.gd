@@ -11,9 +11,11 @@ const CLASS_SUPPORT: Dictionary = {
 static func build_cases(pack: Dictionary, variants: Array[Dictionary], options: Dictionary = {}) -> Dictionary:
 	var cases: Array[Dictionary] = []
 	var contexts: Array[Dictionary] = _typed_contexts(Array(pack.get("encounter_contexts", [])))
+	var template_result: Dictionary = ProposalLoaderScript.load_context_templates_result()
+	var template_by_id: Dictionary = Dictionary(Dictionary(template_result.get("templates", {})).get("by_id", {})) if bool(template_result.get("ok", false)) else {}
 	for variant: Dictionary in variants:
 		var owner: String = str(variant.get("owner", "player"))
-		var matching_contexts: Array[Dictionary] = _contexts_for_variant(variant, contexts)
+		var matching_contexts: Array[Dictionary] = _contexts_for_variant(variant, contexts, template_by_id)
 		if matching_contexts.is_empty():
 			matching_contexts = [_default_context(owner)]
 		for context: Dictionary in matching_contexts:
@@ -173,18 +175,41 @@ static func _enemy_encounter_override(context: Dictionary, card_id: String) -> D
 		"enemy_deck": [card_id]
 	}
 
-static func _contexts_for_variant(variant: Dictionary, contexts: Array[Dictionary]) -> Array[Dictionary]:
+static func _contexts_for_variant(variant: Dictionary, contexts: Array[Dictionary], template_by_id: Dictionary = {}) -> Array[Dictionary]:
 	var spec: Dictionary = Dictionary(variant.get("spec", {}))
 	var owner: String = str(variant.get("owner", "player"))
 	var ids: Array = Array(spec.get("context_ids", []))
+	var template_ids: Array = Array(spec.get("context_template_ids", []))
+	var context_overrides: Dictionary = Dictionary(spec.get("context_overrides", {}))
 	var result: Array[Dictionary] = []
 	for context: Dictionary in contexts:
 		if str(context.get("owner", owner)) != owner:
 			continue
 		var context_id: String = str(context.get("id", ""))
-		if ids.is_empty() or ids.has(context_id):
+		if (ids.is_empty() and template_ids.is_empty()) or ids.has(context_id):
 			result.append(context)
+	for template_value: Variant in template_ids:
+		var template_id: String = str(template_value)
+		if not template_by_id.has(template_id):
+			continue
+		var template: Dictionary = Dictionary(template_by_id.get(template_id, {}))
+		if str(template.get("owner", owner)) != owner:
+			continue
+		var override: Dictionary = Dictionary(context_overrides.get(template_id, {}))
+		result.append(_context_from_template(template, override))
 	return result
+
+static func _context_from_template(template: Dictionary, override: Dictionary = {}) -> Dictionary:
+	var context: Dictionary = template.duplicate(true)
+	for key: Variant in override.keys():
+		context[key] = override.get(key)
+	if not context.has("id"):
+		context["id"] = str(template.get("id", "template"))
+	if not context.has("name"):
+		context["name"] = str(template.get("id", "template"))
+	context["source"] = "context_template"
+	context["context_template_id"] = str(template.get("id", ""))
+	return context
 
 static func _default_context(owner: String) -> Dictionary:
 	if owner == "enemy":

@@ -3,13 +3,15 @@ extends RefCounted
 const BattleRunnerScript = preload("res://tools/lab/battle_runner.gd")
 const ContextBuilderScript = preload("res://tools/lab/design_lab_context_builder.gd")
 const OverlayCatalogScript = preload("res://tools/lab/design_lab_overlay_catalog.gd")
+const OfficialBaselineIndexScript = preload("res://tools/lab/design_lab_official_baseline_index.gd")
 const ProposalLoaderScript = preload("res://tools/lab/design_lab_proposal_loader.gd")
 const ScorerScript = preload("res://tools/lab/design_lab_scorer.gd")
 const VariantGeneratorScript = preload("res://tools/lab/design_lab_variant_generator.gd")
 
 static func run(catalog, pack: Dictionary, registry: Dictionary, options: Dictionary = {}) -> Dictionary:
 	var profiles_result: Dictionary = ProposalLoaderScript.load_profiles_result()
-	var profile_id: String = str(options.get("profile", pack.get("scoring_profile", "default")))
+	var option_profile_id: String = str(options.get("profile", "")).strip_edges()
+	var profile_id: String = option_profile_id if option_profile_id != "" else str(pack.get("scoring_profile", "default"))
 	var profile: Dictionary = {}
 	if bool(profiles_result.get("ok", false)):
 		profile = ProposalLoaderScript.profile_by_id(Dictionary(profiles_result.get("profiles", {})), profile_id)
@@ -23,7 +25,10 @@ static func run(catalog, pack: Dictionary, registry: Dictionary, options: Dictio
 	var cases: Array[Dictionary] = _typed_dictionary_array(Array(context_result.get("cases", [])))
 	var records: Array[Dictionary] = []
 	var battle_summary: Dictionary = {}
+	var component_warnings: Array[String] = []
 	var components: PackedStringArray = PackedStringArray(options.get("components", PackedStringArray(["battle", "encounter"])))
+	if components.has("macro"):
+		component_warnings.append("component `macro` is reserved for a future run-scale lab and is not executed by Design Lab V1.5")
 	if components.has("battle") or components.has("encounter"):
 		var battle_pack: Dictionary = {
 			"pack_id": str(pack.get("pack_id", "")),
@@ -37,7 +42,8 @@ static func run(catalog, pack: Dictionary, registry: Dictionary, options: Dictio
 		var battle_result: Dictionary = BattleRunnerScript.run_cases(overlay_result.get("catalog"), battle_pack, cases, battle_options)
 		records = _typed_dictionary_array(Array(battle_result.get("records", [])))
 		battle_summary = Dictionary(battle_result.get("summary", {}))
-	var scoring: Dictionary = ScorerScript.score_variants(variants, records, blocked_specs, profile, pack)
+	var official_index: Dictionary = OfficialBaselineIndexScript.build(catalog)
+	var scoring: Dictionary = ScorerScript.score_variants(variants, records, blocked_specs, profile, pack, official_index)
 	var blocked_mechanics: Array[Dictionary] = _blocked_mechanic_entries(blocked_specs)
 	var summary: Dictionary = Dictionary(scoring.get("summary", {}))
 	summary["mode"] = str(options.get("mode", "explore"))
@@ -45,6 +51,8 @@ static func run(catalog, pack: Dictionary, registry: Dictionary, options: Dictio
 	summary["variant_summary"] = Dictionary(variant_result.get("summary", {}))
 	summary["context_summary"] = Dictionary(context_result.get("summary", {}))
 	summary["battle_summary"] = battle_summary
+	summary["component_warnings"] = component_warnings
+	summary["official_baseline_summary"] = Dictionary(official_index.get("summary", {}))
 	summary["official_card_count"] = int(overlay_result.get("official_card_count", 0))
 	summary["overlay_card_count"] = int(overlay_result.get("overlay_card_count", 0))
 	summary["blocked_mechanic_count"] = blocked_mechanics.size()
