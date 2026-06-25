@@ -1,12 +1,12 @@
 # FpsPlayground - Current Status
 
-- Last updated: `2026-06-20`
+- Last updated: `2026-06-25`
 - Project: `FpsPlayground`
 - Portfolio status: `P2_IMPLEMENTACAO`
 - Active surface: `PC Windows editor-first FPS gameplay lab`
 - Active stage: `Track 14I Godot Debugger Cleanup V1`
-- Active stage status: `MERGED_LOCAL`
-- Status marker: `FPS_PLAYGROUND_TRACK14I_GODOT_DEBUGGER_CLEANUP_LOCAL`
+- Active stage status: `HUMAN_APPROVED`
+- Status marker: `FPS_PLAYGROUND_TRACK14I_HUMAN_APPROVED`
 
 ## Current Truth
 
@@ -14,7 +14,7 @@
 
 The approved baseline has three selectable 1x1 arenas, route-first bot movement, item-aware navigation, reliable jump pad routes, repeatable duel flow, Plasma Impact Blast V1, Track 10 weapon-role tuning, local duel telemetry, telemetry readout tooling and the pre-Track-08 player movement feel preserved.
 
-Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. Track 14D extracted pickup and jump pad rules into `arena_pickup_jump_pad_rules.gd`. Track 14E extracted bot decision scoring into `bot_decision_model.gd`. Track 14F closed the hardening sequence with small dead-wrapper cleanup and code-size metrics. Track 14G added surgical expansion boundaries for bot movement execution, projectile runtime, HUD feedback state and telemetry events. Track 14H restored bot-only route-aware long jump pad launch reliability while preserving the approved player jump pad force. Track 14I cleaned GUT editor/debugger resource warnings and headless editor shutdown noise without gameplay changes.
+Track 12 telemetry/readout is approved. Track 13 updated the live docs and added a future roadmap for maps, weapons, buffs, pickups, bot evolution and telemetry-first tuning. Track 14A started the hardening/refactor safety sequence. Track 14B extracted the HUD snapshot/status builder from `arena_root.gd`. Track 14C extracted combat telemetry payload builders and pure Plasma blast calculation into `arena_combat_pipeline.gd`. Track 14D extracted pickup and jump pad rules into `arena_pickup_jump_pad_rules.gd`. Track 14E extracted bot decision scoring into `bot_decision_model.gd`. Track 14F closed the hardening sequence with small dead-wrapper cleanup and code-size metrics. Track 14G added surgical expansion boundaries for bot movement execution, projectile runtime, HUD feedback state and telemetry events. Track 14H restored bot-only route-aware long jump pad launch reliability while preserving the approved player jump pad force. Track 14I cleaned GUT editor/debugger resource warnings and headless editor shutdown noise without gameplay changes, then was approved by Fabio/tester on `2026-06-25`.
 
 ## Current Scope
 
@@ -38,6 +38,8 @@ Delivered:
 - Skipped the GUT editor plugin startup delay only in headless mode to avoid `SceneTreeTimer` leaks on editor shutdown.
 - Confirmed editor import, main menu runtime and arena runtime no longer emit debugger warnings.
 - No gameplay, player movement, map geometry, weapon value, pickup, bot behavior or telemetry schema changes.
+
+Fabio/tester approved Track 14I on `2026-06-25`.
 
 Track 08 movement feel was tested as an isolated branch and discarded before merge. Keep the current player movement feel for now.
 
@@ -66,7 +68,7 @@ Track 08 movement feel was tested as an isolated branch and discarded before mer
 - Track 14F: cleanup and documentation - merged locally on `2026-06-20`.
 - Track 14G: surgical expansion hardening - merged locally on `2026-06-20`.
 - Track 14H: bot long jump pad hotfix - merged locally on `2026-06-20`.
-- Track 14I: Godot debugger cleanup - merged locally on `2026-06-20`.
+- Track 14I: Godot debugger cleanup - approved by Fabio/tester on `2026-06-25`.
 
 ## Next Sequence
 

@@ -1,9 +1,10 @@
 # Track 14I - Godot Debugger Cleanup V1
 
-- Status: `MERGED_LOCAL`
+- Status: `HUMAN_APPROVED`
 - Data: `2026-06-20`
 - Branch: `codex/fpsplayground/godot-debugger-cleanup-v1`
 - Worktree: `D:\Estudio-worktrees\FpsPlayground--codex--godot-debugger-cleanup-v1`
+- Aprovacao humana: Fabio/tester em `2026-06-25`
 
 ## Objetivo
 
@@ -37,7 +38,7 @@ Sem alteracao de gameplay, movimento, mapa, armas, pickups, bot tuning, jump pad
 
 ## Proximo Passo
 
-Fabio/tester confirmar `Relay Foundry V1` no editor; depois seguir para `Multi-Arena Balance Baseline V1`.
+Seguir para `Multi-Arena Balance Baseline V1`.
 
 ## Handoff
 
