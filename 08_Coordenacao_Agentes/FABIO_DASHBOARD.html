@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painel Fabio — Estudio</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #151b23;
+      --panel-2: #101820;
+      --card: #1b2430;
+      --text: #e6edf3;
+      --muted: #9fb0c3;
+      --line: #303b49;
+      --green: #42d392;
+      --blue: #58a6ff;
+      --yellow: #f2cc60;
+      --orange: #ff9b54;
+      --red: #ff6b6b;
+      --purple: #c084fc;
+      --cyan: #38d9d9;
+      --shadow: 0 20px 60px rgba(0,0,0,.28);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, rgba(88,166,255,.15), transparent 28%), var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    a { color: #9bd1ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .page { max-width: 1220px; margin: 0 auto; padding: 32px 22px 56px; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, .8fr);
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+    .hero-main, .hero-side, .section, .project-card, .time-card, .rule-card {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015)), var(--panel);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+    .hero-main { padding: 30px; }
+    .eyebrow { color: var(--green); font-size: 12px; text-transform: uppercase; font-weight: 800; letter-spacing: .12em; }
+    h1 { margin: 8px 0 12px; font-size: clamp(34px, 5vw, 58px); line-height: .95; }
+    h2 { margin: 0 0 16px; font-size: 24px; }
+    h3 { margin: 0 0 8px; font-size: 20px; }
+    p { margin: 0 0 12px; }
+    .subtitle { color: var(--muted); max-width: 760px; font-size: 17px; }
+    .hero-side { padding: 22px; display: grid; gap: 12px; }
+    .metric { display: flex; justify-content: space-between; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+    .metric:last-child { border-bottom: 0; padding-bottom: 0; }
+    .metric strong { font-size: 28px; }
+    .nav { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 28px; }
+    .nav a { padding: 10px 13px; border: 1px solid var(--line); background: rgba(255,255,255,.04); border-radius: 12px; font-size: 14px; }
+    .section { padding: 22px; margin-bottom: 22px; }
+    .grid { display: grid; gap: 16px; }
+    .grid.projects { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.time { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .project-card, .time-card, .rule-card { padding: 18px; box-shadow: none; }
+    .tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; border: 1px solid currentColor; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 10px; }
+    .green { color: var(--green); }
+    .blue { color: var(--blue); }
+    .yellow { color: var(--yellow); }
+    .orange { color: var(--orange); }
+    .purple { color: var(--purple); }
+    .cyan { color: var(--cyan); }
+    .muted { color: var(--muted); }
+    .question { border-left: 3px solid var(--blue); padding-left: 12px; color: #d7e6f7; margin: 12px 0; }
+    .unlock { color: var(--muted); font-size: 14px; }
+    .timeline { display: grid; grid-template-columns: 120px 1fr; gap: 12px; border-top: 1px solid var(--line); padding-top: 12px; margin-top: 12px; }
+    .timeline strong { color: var(--yellow); }
+    ul { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+    .rules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .rule-card.good { border-color: rgba(66,211,146,.45); }
+    .rule-card.stop { border-color: rgba(255,107,107,.45); }
+    .footer { color: var(--muted); font-size: 13px; margin-top: 24px; }
+    @media (max-width: 840px) {
+      .hero, .grid.projects, .grid.time, .rules { grid-template-columns: 1fr; }
+      .page { padding: 22px 14px 42px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-main">
+        <div class="eyebrow">Painel Fabio · Estudio</div>
+        <h1>Decisão rápida sem navegar como agente</h1>
+        <p class="subtitle">Síntese humana do estado do Estudio. Não é fonte técnica de verdade: em conflito, vencem Prioridades, Estado Atual e o current-status local do projeto.</p>
+      </div>
+      <aside class="hero-side" aria-label="Resumo">
+        <div class="metric"><span>Frentes ativas</span><strong>3</strong></div>
+        <div class="metric"><span>Pausa temporária</span><strong>1</strong></div>
+        <div class="metric"><span>Arquivos/pausados</span><strong>3</strong></div>
+      </aside>
+    </section>
+
+    <nav class="nav" aria-label="Documentos principais">
+      <a href="documentation-index.md">Documentation index</a>
+      <a href="Prioridades_Estudio.md">Prioridades</a>
+      <a href="Estado_Atual.md">Estado Atual</a>
+      <a href="../Projetos/README.md">Projetos</a>
+      <a href="FABIO_DASHBOARD.md">Versão Markdown</a>
+    </nav>
+
+    <section class="section">
+      <div class="eyebrow">Leitura de 30 segundos</div>
+      <h2>O que importa agora</h2>
+      <div class="grid projects">
+        <article class="project-card">
+          <span class="tag green">JogoDaCopa</span>
+          <h3>Baseline 10D aprovada</h3>
+          <p class="question">Decidir entre reduções locais conservadoras ou nova melhoria de feel/polish.</p>
+          <p class="unlock">Destrava a próxima track de gameplay/publicação.</p>
+        </article>
+        <article class="project-card">
+          <span class="tag blue">DraxosMobile</span>
+          <h3>Pacote técnico aprovado; core ainda não provado</h3>
+          <p class="question">Executar prova humana da Arena antes de tuning, economia, PVP, conteúdo ou expansão.</p>
+          <p class="unlock">Destrava decisão sobre o core Arena PVE.</p>
+        </article>
+        <article class="project-card">
+          <span class="tag cyan">FpsPlayground</span>
+          <h3>Track 14I aprovada</h3>
+          <p class="question">Rodar Multi-Arena Balance Baseline V1 antes de novas armas/buffs/mapas/tuning.</p>
+          <p class="unlock">Destrava arsenal, buffs e evolução de bot com telemetria.</p>
+        </article>
+        <article class="project-card">
+          <span class="tag purple">Draxos Roguelike</span>
+          <h3>Pausa temporária preservada</h3>
+          <p class="question">Quando retomar: escolher candidatos Wave 01 para promoção manual e suporte de mecânicas bloqueadas.</p>
+          <p class="unlock">Destrava promoção de conteúdo e validação de feel.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow">Por disponibilidade</div>
+      <h2>Melhor ação para Fabio</h2>
+      <div class="grid time">
+        <div class="time-card"><span class="tag yellow">5 min</span><p>Escolher qual pergunta humana quer responder primeiro.</p></div>
+        <div class="time-card"><span class="tag yellow">15 min</span><p>Confirmar foco do dia em Prioridades + Estado Atual.</p></div>
+        <div class="time-card"><span class="tag green">30-45 min PC</span><p>Testar ou decidir próxima etapa do JogoDaCopa pós-10D.</p></div>
+        <div class="time-card"><span class="tag blue">Internal Alpha</span><p>Executar a prova humana da Arena em DraxosMobile.</p></div>
+        <div class="time-card"><span class="tag cyan">Sessão técnica</span><p>Abrir escopo para FpsPlayground Multi-Arena Balance Baseline.</p></div>
+        <div class="time-card"><span class="tag purple">Sem PC</span><p>Decidir qual frente merece energia depois da rodada atual.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow">Guardrails</div>
+      <h2>O que agentes podem fazer — e o que não devem fazer</h2>
+      <div class="rules">
+        <div class="rule-card good">
+          <h3>Permitido sem mudar produto</h3>
+          <ul>
+            <li>Organizar documentação e roteamento.</li>
+            <li>Preparar planos e auditorias read-only.</li>
+            <li>Criar handoffs claros para Codex.</li>
+            <li>Rodar validadores locais/documentais.</li>
+          </ul>
+        </div>
+        <div class="rule-card stop">
+          <h3>Não executar automaticamente</h3>
+          <ul>
+            <li>Push, fetch ou pull remoto.</li>
+            <li>Publicar, subir pacote ou mutar Cloudflare/Supabase.</li>
+            <li>Trocar foco de portfolio.</li>
+            <li>Deletar branches/worktrees antigas.</li>
+            <li>Iniciar tuning, economia, PVP ou conteúdo antes do gate humano.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="eyebrow">Links vivos por projeto</div>
+      <h2>Se precisar aprofundar</h2>
+      <div class="grid projects">
+        <article class="project-card"><h3>JogoDaCopa</h3><p><a href="../Projetos/JogoDaCopa/implementation/current-status.md">current-status</a> · <a href="../Projetos/JogoDaCopa/AGENTS.md">AGENTS</a> · <a href="../Projetos/JogoDaCopa/docs/documentation-index.md">docs index</a></p></article>
+        <article class="project-card"><h3>DraxosMobile</h3><p><a href="../Projetos/draxos-mobile/implementation/current-status.md">current-status</a> · <a href="../Projetos/draxos-mobile/AGENTS.md">AGENTS</a> · <a href="../Projetos/draxos-mobile/docs/documentation-index.md">docs index</a></p></article>
+        <article class="project-card"><h3>FpsPlayground</h3><p><a href="../Projetos/FpsPlayground/implementation/current-status.md">current-status</a> · <a href="../Projetos/FpsPlayground/AGENTS.md">AGENTS</a> · <a href="../Projetos/FpsPlayground/docs/documentation-index.md">docs index</a></p></article>
+        <article class="project-card"><h3>Draxos Roguelike</h3><p><a href="../Projetos/draxos-roguelike-cardgame/implementation/current-status.md">current-status</a> · <a href="../Projetos/draxos-roguelike-cardgame/AGENTS.md">AGENTS</a></p></article>
+      </div>
+    </section>
+
+    <p class="footer">Última atualização: 2026-06-29. Visualização humana derivada dos docs vivos; não substitui Prioridades/Estado/current-status.</p>
+  </main>
+</body>
+</html>
