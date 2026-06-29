@@ -20,6 +20,8 @@
 - `Decisoes/` - decisoes de produto, arquitetura e processo.
 - `Kanban/` - cards de trabalho e historico operacional.
 - `Handoffs/` - transicoes entre agentes/rodadas.
+- `Docs_Status_Slimming_Plan.md` - plano para reduzir snapshots locais longos sem apagar historico.
+- `Lifecycle_Cleanup_Audit_2026-06-29.md` - auditoria read-only de branches/worktrees para limpeza futura.
 
 ## Canon e direcao compartilhada
 
