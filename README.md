@@ -15,7 +15,7 @@ This README intentionally carries no project status, package names, version code
 
 - `canon/`: shared lore, product identity, architecture and platform direction (stable truth only).
 - `Projetos/`: all Godot projects and concept archives; `Projetos/README.md` is the registry.
-- `08_Coordenacao_Agentes/`: coordination hub - Prioridades, Estado_Atual, Kanban, Handoffs, Decisoes, Templates, Painel Visual.
+- `08_Coordenacao_Agentes/`: coordination hub - documentation index, Prioridades, Estado_Atual, Fabio dashboard, Kanban, Handoffs, Decisoes and Templates.
 - `07_Aprendizados/`: operational lessons for agents.
 - `materiais/`: supporting guides and non-canonical material. Prefer `materiais/guides/*-current.md`; older guides are historical.
 - `migration/`: historical cutover archive, parity notes and relocation records.
@@ -25,11 +25,12 @@ This README intentionally carries no project status, package names, version code
 
 ## Standard Read Order
 
-1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
-2. `AGENTS.md`
-3. `Projetos/README.md`
-4. `08_Coordenacao_Agentes/Estado_Atual.md`
-5. the target project's `AGENTS.md` and `implementation/current-status.md`
+1. `08_Coordenacao_Agentes/documentation-index.md`
+2. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
+3. `AGENTS.md`
+4. `Projetos/README.md`
+5. `08_Coordenacao_Agentes/Estado_Atual.md`
+6. the target project's `AGENTS.md` and `implementation/current-status.md`
 
 ## Historical Context
 

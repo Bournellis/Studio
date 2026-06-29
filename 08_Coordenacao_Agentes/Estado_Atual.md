@@ -2,7 +2,8 @@
 
 - Ultima atualizacao: `2026-06-25`
 - Fonte de verdade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
-- Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
+- Painel Fabio local: `08_Coordenacao_Agentes/FABIO_DASHBOARD.html`
+- Indice global de documentacao: `08_Coordenacao_Agentes/documentation-index.md`
 - Regra de tamanho: maximo ~12 linhas por projeto. Historia de pacotes/validacoes vai para os arquivos de historico do projeto (`implementation/tracks/`, `docs/release-history.md`, Kanban Done), nunca para este snapshot.
 
 ## Prioridade Do Estudio

@@ -4,7 +4,8 @@ This directory contains active, conceptual and paused projects for the studio.
 
 - Portfolio source of truth: `../08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Studio snapshot: `../08_Coordenacao_Agentes/Estado_Atual.md`
-- Visual dashboard: `../08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
+- Documentation index: `../08_Coordenacao_Agentes/documentation-index.md`
+- Fabio dashboard: `../08_Coordenacao_Agentes/FABIO_DASHBOARD.html`
 
 This registry describes stable project identity and entry points only. Status, markers, baselines and next steps live in the two files above and in each project's `implementation/current-status.md`.
 

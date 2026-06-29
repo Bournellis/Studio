@@ -15,7 +15,7 @@ When a task changes observable status, update `Estado_Atual.md` (and the `Priori
 
 ## Workspace Roles
 
-- `08_Coordenacao_Agentes/` is the coordination hub: Prioridades, Estado_Atual, Kanban, Handoffs, Decisoes, Templates and Painel Visual (`Painel_Visual_Estudio.html`).
+- `08_Coordenacao_Agentes/` is the coordination hub: documentation index, Prioridades, Estado_Atual, Fabio dashboard, Kanban, Handoffs, Decisoes and Templates.
 - `canon/` is the shared source of truth for established lore, product identity, gameplay contracts, progression, shared architecture, mode standard and platform strategy. It carries no operational state.
 - `Projetos/` holds all Godot projects; `Projetos/README.md` is the stable registry (identity and entry points only).
 - `07_Aprendizados/` preserves operational lessons for agents.
@@ -132,9 +132,10 @@ If historical context is needed, consult in order: `migration/`, then `Projetos/
 
 ## Coordination Structure
 
+- Indice global de documentacao: `08_Coordenacao_Agentes/documentation-index.md`
 - Prioridades e foco: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Estado atual: `08_Coordenacao_Agentes/Estado_Atual.md`
-- Painel visual local: `08_Coordenacao_Agentes/Painel_Visual_Estudio.html`
+- Painel Fabio: `08_Coordenacao_Agentes/FABIO_DASHBOARD.md` e `08_Coordenacao_Agentes/FABIO_DASHBOARD.html`
 - Tarefas: `08_Coordenacao_Agentes/Kanban/` (Backlog, Doing, Review, Done)
 - Handoffs: `08_Coordenacao_Agentes/Handoffs/`
 - Decisoes de produto e arquitetura: `08_Coordenacao_Agentes/Decisoes/` (registre toda decisao de produto/arquitetura/processo em 5-15 linhas usando o template)
