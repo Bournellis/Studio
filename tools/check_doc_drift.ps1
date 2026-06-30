@@ -10,6 +10,12 @@ param()
 $root = Split-Path -Parent $PSScriptRoot
 
 
+Write-Host '== Fabio dashboard generated =='
+& python (Join-Path $PSScriptRoot 'generate_fabio_dashboard.py') --root $root --check
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
+
 Write-Host '== Local doc links =='
 & python (Join-Path $PSScriptRoot 'check_local_doc_links.py') --root $root --workspace estudio
 if ($LASTEXITCODE -ne 0) {
