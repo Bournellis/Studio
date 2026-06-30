@@ -3,12 +3,18 @@
 ## Metadata
 
 - id: `<YYYY-MM-DD_slug>`
-- owner: `Codex | Claude | Usuario | Shared`
+- owner: `Fabio | Hermes | Codex | Shared`
 - status: `Backlog | Doing | Review | Done`
-- projeto: `estudio | draxos-roguelike-cardgame | draxos-mobile | mobile-universe | rpg-isometrico | rpg-turnos`
+- projeto: `estudio | JogoDaCopa | FpsPlayground | draxos-roguelike-cardgame | draxos-mobile | rpg-isometrico | rpg-turnos`
 - prioridade_portfolio: `P0_IMPLEMENTACAO | P2_IMPLEMENTACAO | P1_CONCEITO | PAUSADO_INDEFINIDO | AGUARDANDO_DECISAO | ARQUIVO_DESIGN | ARQUIVO_HISTORICO`
+- coordination_scope: `project_local | cross_project | global_governance | documentation_alignment | portfolio_sync`
 - branch: `<branch>`
 - worktree: `<absolute-path>`
+- base_ref: `main | <ref>`
+- merge_status: `pending | merged | abandoned | n/a`
+- worktree_status: `open | removed | kept - <motivo> | n/a`
+- branch_cleanup: `pending | deleted | kept - <motivo> | n/a`
+- post_merge_validation: `<comando + resultado | pending | n/a>`
 
 ## Goal
 
@@ -43,8 +49,12 @@ Use criterios claros. Para itens tecnicos, preserve technical English.
 
 ## Handoff Needed
 
-`No | Yes - to Codex | Yes - to Claude | Yes - to Usuario`
+`No | Yes - to Codex | Yes - to Hermes | Yes - to Fabio`
 
 ## Notes
 
 Observacoes livres em PT-BR.
+
+## Nota de compatibilidade historica
+
+Claude pode aparecer em handoffs, reviews e decisoes antigas como contexto historico. Novas tarefas devem usar Fabio, Hermes e/ou Codex como atores operacionais atuais, salvo reativacao explicita registrada em decisao viva.

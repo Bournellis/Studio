@@ -52,7 +52,9 @@ Use `../Projetos/README.md` para roteamento inicial. Depois leia o `AGENTS.md` e
 
 ## Validadores e higiene documental
 
-- `../tools/check_doc_drift.ps1` - garante que pointer docs nao carreguem estado e que snapshots fiquem compactos.
+- `../tools/check_doc_drift.ps1` - garante que pointer docs nao carreguem estado, que snapshots fiquem compactos, roda link checker e imprime health warnings.
+- `../tools/check_local_doc_links.py` - checagem oficial de links locais Markdown/HTML em docs vivos.
+- `../tools/check_docs_health.py` - health check documental warning-only para drift leve.
 - Validacoes locais de projeto vivem nos `AGENTS.md` e docs de cada projeto.
 - Para trabalho documental global, use no minimo:
   - `git diff --check`

@@ -9,6 +9,19 @@ param()
 
 $root = Split-Path -Parent $PSScriptRoot
 
+
+Write-Host '== Local doc links =='
+& python (Join-Path $PSScriptRoot 'check_local_doc_links.py') --root $root --workspace estudio
+if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+}
+
+Write-Host '== Docs health warnings =='
+& python (Join-Path $PSScriptRoot 'check_docs_health.py') --root $root --workspace estudio
+if ($LASTEXITCODE -ne 0) {
+    Write-Host '[check_doc_drift] WARN - docs health script returned non-zero, continuing as warning-only.'
+}
+
 # Pointer documents: must never contain package markers, release roots,
 # deploy URLs, build versions or "active stage" lines.
 $pointerFiles = @(

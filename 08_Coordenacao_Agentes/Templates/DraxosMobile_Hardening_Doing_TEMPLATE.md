@@ -3,13 +3,19 @@
 ## Metadata
 
 - data: `<YYYY-MM-DD>`
-- agente: `Codex | Claude | Outro`
+- agente: `Hermes | Codex | Outro`
 - projeto: `draxos-mobile`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - lane: `coord-docs | backend-schema | session-data | client-shell | mode-scaffolds | platform-v1 | validation-release`
 - mode_scope: `none | basebuilder | autobattler | openworld | towerdefense | cardgame | multi-mode`
+- coordination_scope: `project_local | cross_project | documentation_alignment`
 - branch: `<branch>`
 - worktree: `<absolute-path>`
+- base_ref: `main | <ref>`
+- merge_status: `pending | merged | abandoned | n/a`
+- worktree_status: `open | removed | kept - <motivo> | n/a`
+- branch_cleanup: `pending | deleted | kept - <motivo> | n/a`
+- post_merge_validation: `<comando + resultado | pending | n/a>`
 
 ## Objetivo
 
@@ -65,3 +71,7 @@ Descreva o resultado esperado em uma frase.
 ## Handoff Point
 
 Explique quando outro agente/Fabio deve assumir e quais evidencias faltam.
+
+## Nota de compatibilidade historica
+
+Claude pode aparecer em handoffs, reviews e decisoes antigas como contexto historico. Novas tarefas devem usar Fabio, Hermes e/ou Codex como atores operacionais atuais, salvo reativacao explicita registrada em decisao viva.

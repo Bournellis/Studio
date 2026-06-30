@@ -2,15 +2,21 @@
 
 ## Metadata
 
-- from: `Codex | Claude | Usuario`
-- to: `Codex | Claude | Usuario | <lane>`
+- from: `Fabio | Hermes | Codex`
+- to: `Fabio | Hermes | Codex | <lane>`
 - date: `<YYYY-MM-DD>`
 - projeto: `draxos-mobile`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - lane: `coord-docs | backend-schema | session-data | client-shell | mode-scaffolds | platform-v1 | validation-release`
 - mode_scope: `none | basebuilder | autobattler | openworld | towerdefense | cardgame | multi-mode`
+- coordination_scope: `project_local | cross_project | documentation_alignment`
 - branch: `<branch>`
 - worktree: `<absolute-path>`
+- base_ref: `main | <ref>`
+- merge_status: `pending | merged | abandoned | n/a`
+- worktree_status: `open | removed | kept - <motivo> | n/a`
+- branch_cleanup: `pending | deleted | kept - <motivo> | n/a`
+- post_merge_validation: `<comando + resultado | pending | n/a>`
 - commits: `<sha> <subject>`
 
 ## Contexto
@@ -47,3 +53,7 @@ Explique por que o handoff existe e qual pacote/track ele preserva.
 ## Recommended Next Step
 
 Indique o proximo owner seguro e o menor proximo passo.
+
+## Nota de compatibilidade historica
+
+Claude pode aparecer em handoffs, reviews e decisoes antigas como contexto historico. Novas tarefas devem usar Fabio, Hermes e/ou Codex como atores operacionais atuais, salvo reativacao explicita registrada em decisao viva.
