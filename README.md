@@ -25,9 +25,9 @@ This README intentionally carries no project status, package names, version code
 
 ## Standard Read Order
 
-1. `08_Coordenacao_Agentes/documentation-index.md`
-2. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
-3. `AGENTS.md`
+1. `AGENTS.md`
+2. `08_Coordenacao_Agentes/documentation-index.md`
+3. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 4. `Projetos/README.md`
 5. `08_Coordenacao_Agentes/Estado_Atual.md`
 6. the target project's `AGENTS.md` and `implementation/current-status.md`

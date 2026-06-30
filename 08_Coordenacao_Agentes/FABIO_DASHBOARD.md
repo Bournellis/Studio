@@ -32,7 +32,7 @@ O Estudio tem tres frentes ativas ou retomaveis no curto prazo:
 | 5 minutos | Abrir este painel e escolher qual pergunta humana quer responder primeiro. |
 | 15 minutos | Ler `Estado_Atual.md` e confirmar se o foco do dia e JogoDaCopa, DraxosMobile ou FpsPlayground. |
 | 30-45 minutos com PC/editor | Testar ou decidir a proxima etapa do JogoDaCopa pos-10D. |
-| 30-45 minutos com acesso ao Internal Alpha | Executar a prova humana da Arena em DraxosMobile seguindo `docs/arena-pve-product-proof.md`. |
+| 30-45 minutos com acesso ao Internal Alpha | Executar a prova humana da Arena em DraxosMobile seguindo `Projetos/draxos-mobile/docs/arena-pve-product-proof.md`. |
 | Sessao tecnica curta | Abrir escopo para FpsPlayground `Multi-Arena Balance Baseline V1`. |
 | Sem PC | Revisar decisao estrategica: qual frente merece energia depois da rodada atual. |
 

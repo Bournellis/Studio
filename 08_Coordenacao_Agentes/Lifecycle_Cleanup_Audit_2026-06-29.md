@@ -1,12 +1,13 @@
 # Estudio Lifecycle Cleanup Audit
 
 - Data: `2026-06-29`
-- Tipo: auditoria read-only registrada como documento.
-- Escopo: branches/worktrees locais observados; nenhuma limpeza aplicada.
+- Tipo: auditoria read-only registrada como snapshot historico da wave; nao e fonte viva de estado atual.
+- Escopo: branches/worktrees locais observados durante a wave; nenhuma limpeza aplicada.
+- Para estado atual, reexecute os comandos da secao `Proxima acao recomendada`.
 
 ## Resultado resumido
 
-O workspace principal estava limpo no inicio da wave e a branch principal e `main`.
+O workspace principal estava limpo no inicio da wave e a branch principal e `main`. Os numeros abaixo registram a observacao daquele momento, nao a situacao atual garantida.
 
 Auditoria Git observada nesta wave:
 
