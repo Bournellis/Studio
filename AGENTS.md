@@ -23,6 +23,17 @@ When a task changes observable status, update `Estado_Atual.md` (and the `Priori
 - `migration/` is a historical archive for cutover, relocation and legacy comparison context.
 - `tools/` holds studio-level scripts (doc drift check).
 
+## Modelo Multiagentes Codex/Hermes
+
+Codex e Hermes podem atuar em estrategia, planejamento, implementacao, revisao, documentacao, validacao, Godot, tooling e gestao operacional quando Fabio pedir e quando houver ferramenta/contexto suficiente. A diferenca entre eles e preferencia operacional e melhor encaixe por tarefa, nao permissao exclusiva.
+
+- Codex e preferido para leitura profunda de projeto, planejamento de implementacao com Fabio e execucao tecnica substancial em worktree/branch isolada.
+- Hermes e preferido para criacao/estrutura de projetos, gestao do estudio, acompanhamento macro, revisao, documentacao/governanca e pequenas implementacoes claras e validaveis.
+- Ambos podem aproveitar runbooks, validadores, tooling, evidencias e aprendizados criados pelo outro agente.
+- Fabio continua decisor final de produto, prioridade, QA humano, aprovacao de tracks quando houver gate humano, releases e mutacoes remotas.
+
+Referencia: `08_Coordenacao_Agentes/Decisoes/2026-07-06_codex_hermes_plano_multiagentes.md`.
+
 ## Multi-Agent Worktree And Git Rule
 
 `D:\Estudio` is the main coordination/read workspace. By default, agents must not use it as an implementation worktree. Each agent working on implementation, documentation, contracts, backend, client, validation, release or portfolio changes must create or use a dedicated Git worktree outside the main root, unless the user explicitly asks for direct work in `D:\Estudio`.

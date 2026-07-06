@@ -18,6 +18,7 @@
 - `../Projetos/README.md` - registro estavel de projetos, identidades e entrypoints.
 - `Templates/` - templates oficiais de coordenacao.
 - `Decisoes/` - decisoes de produto, arquitetura e processo.
+  - `Decisoes/2026-07-06_codex_hermes_plano_multiagentes.md` - modelo flexivel Codex/Hermes para estrategia, implementacao, docs, validacao e tooling.
 - `Kanban/` - cards de trabalho e historico operacional.
 - `Handoffs/` - transicoes entre agentes/rodadas.
 - `Docs_Status_Slimming_Plan.md` - plano para reduzir snapshots locais longos sem apagar historico.
