@@ -4,7 +4,7 @@
 
 - status: living
 - authority: router
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: a estrutura de coordenação local mudar
 - supersedes: none
 - superseded_by: none

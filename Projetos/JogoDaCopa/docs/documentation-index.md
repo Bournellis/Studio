@@ -4,7 +4,7 @@
 
 - status: living
 - authority: router
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: autoridades ou rotas documentais mudarem
 - supersedes: documentation-index anterior ao cutover de governança v2
 - superseded_by: none
