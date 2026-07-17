@@ -4,7 +4,7 @@
 
 - status: `frozen`
 - authority: `historical_record`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `historical Track 05 interpretation needs correction`
 - supersedes: `none`
 - superseded_by: `../implementation/technical-debt-baseline.md`

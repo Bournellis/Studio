@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `product_contract`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `a planned gameplay sequence is opened, completed or superseded`
 - supersedes: `track-by-track work-plan narrative before Governance v2`
 - superseded_by: `none`
@@ -42,6 +42,16 @@ Keep `FpsPlayground` a focused first-person arena laboratory for movement, shoot
 
 - Improve item, weapon and pressure-route choices without hidden aim, reaction or information advantages.
 - Keep route-first movement and readable shot windup.
+
+## Retained Planning Inputs
+
+These are inputs preserved from the Track 13 roadmap, not approved features or tuning decisions.
+
+- New arenas must introduce a distinct duel rhythm and satisfy the authoring contract in `arena-tactical-layouts.md` before implementation.
+- Candidate arsenal roles may include close pressure, delayed area denial, positioning utility or high-risk burst, but each needs explicit role, counterplay, input/UI and telemetry contracts first.
+- Candidate buffs may affect damage, defense, route access, visibility or cooldowns, but they must create movement decisions, preserve health routing and avoid opaque stacking.
+- Future bot work may consider range-aware weapon pressure, item timing and opponent item control, but must stay arena-context driven and expose readable decision reasons.
+- Telemetry must answer map, weapon contribution, pickup route value, bot route diversity and jump-pad reliability across repeated sessions; one session is an observation, never balance truth.
 
 ## Guardrails
 

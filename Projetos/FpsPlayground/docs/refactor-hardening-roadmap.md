@@ -4,7 +4,7 @@
 
 - status: `frozen`
 - authority: `historical_record`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `historical Track 14 evidence needs correction`
 - supersedes: `live Track 14 roadmap after sequence completion`
 - superseded_by: `../implementation/technical-debt-baseline.md`

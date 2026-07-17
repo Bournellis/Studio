@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `technical_contract`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `module ownership or dependency direction changes`
 - supersedes: `none`
 - superseded_by: `none`
@@ -50,4 +50,4 @@ Football/TPS minigames are not part of this project. They live in `../JogoDaCopa
 - Keep bot behavior driven by arena tactical context, not map ids.
 - Keep combat role contracts testable before adding new weapon inputs or UI.
 - Prefer small extraction tracks when `arena_root.gd` receives a new responsibility.
-- Follow `docs/refactor-hardening-roadmap.md` before resuming new gameplay content.
+- Follow `work-plan.md` for authorized sequencing and `../implementation/technical-debt-baseline.md` when a planned change touches a hotspot.

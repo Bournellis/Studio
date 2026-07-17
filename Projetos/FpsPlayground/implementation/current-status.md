@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `local_state`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `baseline, human gate, validation or next technical step changes`
 - supersedes: `implementation/current-status.md before Governance v2`
 - superseded_by: `none`
@@ -34,7 +34,7 @@
 ## Risk And Integrity
 
 - Prospective debt controls and exact hotspot counts: `technical-debt-baseline.md`.
-- Track lineage, including the discarded Track 08 experiment: `history.md` and `tracks/`.
+- Curated track lineage, including the discarded Track 08 experiment and exact source references: `history.md`.
 - Generated scenes remain deterministic; validators must not alter tracked state.
 
 ## Validation Baseline

@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `router`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `a living contract is added, removed or reclassified`
 - supersedes: `FpsPlayground documentation index before Governance v2`
 - superseded_by: `none`
@@ -22,7 +22,7 @@
 ## Product And Technical Contracts
 
 - Arenas and bot: `arena-tactical-layouts.md`, `bot-contract.md`, `bot-tactical-context.md`, `bot-route-control.md`
-- Combat and tuning: `tuning-guide.md`, `arena-shooter-future-roadmap.md`
+- Combat and tuning: `tuning-guide.md`; future sequence and guardrails: `work-plan.md`
 - Telemetry: `telemetry.md`, `telemetry-readout.md`, `balance-baseline.md`
 - Validation: `validation.md`, `validation-profiles.md`
 - Engineering: `architecture-overview.md`, `../implementation/technical-debt-baseline.md`
@@ -31,8 +31,6 @@
 ## Historical Records
 
 - Project lineage: `../implementation/history.md`
-- Detailed tracks: `../implementation/tracks/`
-- Completed hardening summary: `refactor-hardening-roadmap.md`
-- Early audit and reuse notes: `codebase-audit-track05.md`, `reuse-map.md`
+- Exact track, rejected-experiment, audit, roadmap and hardening-summary source paths are indexed by that lineage.
 
 Historical records may use `FpsShooter`, `Duel Pit V1` or pre-split football/TPS vocabulary. They do not override the current project boundary.

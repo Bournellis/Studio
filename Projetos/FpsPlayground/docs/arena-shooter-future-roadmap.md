@@ -2,12 +2,16 @@
 
 ## Metadata
 
-- status: `active`
-- authority: `product_contract`
-- last_verified: `2026-07-16`
-- review_when: `future feature order or guardrails change`
+- status: `frozen`
+- authority: `historical_record`
+- last_verified: `2026-07-17`
+- review_when: `historical Track 13 roadmap interpretation needs correction`
 - supersedes: `none`
-- superseded_by: `none`
+- superseded_by: `work-plan.md`
+
+This is the preserved Track 13 planning artifact. Current sequence and guardrails live in `work-plan.md`; arena, tuning, bot and telemetry requirements live in their dedicated contracts.
+
+The candidate directions below remain historical inputs and do not authorize features or tuning.
 
 - Status: Track 13 future planning baseline.
 - Scope: near-term growth plan for `FpsPlayground` Arena Shooter.
