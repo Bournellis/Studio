@@ -1,0 +1,1488 @@
+{
+  "schema_version": 2,
+  "receipt_id": "receipt_coord_draxosmobile_202605",
+  "batch_id": "coord_draxosmobile_202605",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "generated_at": "2026-07-17T15:19:55.126964Z",
+  "index_sha256": "d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9",
+  "manifest_sha256": "eca6f0fda69b08f3d0cf670832f6e05334454b566dcbd524f2b5b393392290c1",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-05-31_codex_draxos-mobile_arena-contracts.md",
+      "sha256": "f8b256753fadebac8b7df78f68af740586a013cc026c70148d014e9ac3701d25",
+      "git_blob": "d44d92d17eae2e6968c91acaf076b0e4e3200c9a",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_arena_contract_0db81b7e23",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-05-31_codex_draxos-mobile_rpgsuave-integrated-alpha.md",
+      "sha256": "adf59e8ac0e32b31743e7405ae05d19a3acfd859d93feaed63d03ccff0846185",
+      "git_blob": "1c40c3c2be1b4f85e0dd54b02eb22a35135f59e2",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_rpgsuave_integ_4a2b72bdca",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-18_claude_draxos-mobile_bootstrap.md",
+      "sha256": "03acb09fa5a1375aa8dceaa9c2f6bdd1e31eb1b931d7c1773933cce600905771",
+      "git_blob": "deb7226ba7876c28388297aae5673d93f509f76c",
+      "record_id": "rec_2026_05_18_claude_draxos_mobile_bootstrap_fbbda1e0af",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_internal-alpha-v0-handoff.md",
+      "sha256": "cbb9f456a56890ad84398c11ef6f8488fac0ce37aab1c9908d188ce41ddeec06",
+      "git_blob": "d9885ff1fa02eb58a691e1e3cc52182d3341a085",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_internal_alpha_d45880af71",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_site-protection.md",
+      "sha256": "097e5819ddcab5c31ae6ab0fab7e73a1d249709efc3cd246719b7c041094f814",
+      "git_blob": "8ee5ffdb504b5ff8e95f46f6f68dd05b7f0cbe96",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_site_protectio_09fb062cf6",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_site-upgrade.md",
+      "sha256": "c1da801b11c36d1cf0699339115f94db123343a174ae2c715700a3bec28af9ee",
+      "git_blob": "2c5ea528dc7c60ad1ba11a80e1b9be1aa4b9b470",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_site_upgrade_fb888f44a4",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t04-a-coordenacao.md",
+      "sha256": "3e3c5e5bc40173d0b2e2590f8cd0999523ddeac67151585b065bebab5274bcac",
+      "git_blob": "78af42d6f87f1996a4a0dcf673d21f3adcdcf2b4",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t04_a_coordena_8c05dcbba3",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t04-b-hub-scaffold.md",
+      "sha256": "69a51220087e37c5e6f7fe7b668c898e5aa316fe1c054691cf86d534b31ad3ef",
+      "git_blob": "99413224cc0360229dbdf51faeae09689ac74b9d",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t04_b_hub_scaf_c8252deff3",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t04-c-shell-login-update.md",
+      "sha256": "3c27f7af7e0ac9c9c7d593e35a10463a358d3ba640f24173162a4e6a339b7e5c",
+      "git_blob": "c52615fee8a6f532ea1d554751d861550ca8c816",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t04_c_shell_lo_c6b481ea26",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t04-console-warnings.md",
+      "sha256": "1eecdeaec4f11a2cc7df89e7139db67e69f1bb39cd590fb59b6298dd5d302e3c",
+      "git_blob": "c9d491b8b5fdc08cfb46c64e78769554b0e7b87a",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t04_console_wa_9de22e223d",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t04-d-base-loja.md",
+      "sha256": "9c16ea1e54d8d3f951ef511ad7154dd6ca137b647c03fc82fb3a70d3548c456b",
+      "git_blob": "e3d83af640a076024a4827d89a1672ed8f65ced9",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t04_d_base_loj_9e8ad6ff0b",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t04-e-social-competicao.md",
+      "sha256": "694c9e7306acf49d9207a8b19e6ec317ef0a875eef868928eb193e78b514b5e1",
+      "git_blob": "dd0ec830cf5f401dfe86c97ef0e2e182c46eff89",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t04_e_social_c_e246f91c54",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t04-f-batalha-replay.md",
+      "sha256": "6a80ffdbfa9e95af66a692eb687904032b4b1bde50e83e7016b61daf82fe19d8",
+      "git_blob": "73fe2c7353ada453f19760b0da2cc15e3b8c010d",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t04_f_batalha_e5d8a1ad9b",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t04-g-progression-economia.md",
+      "sha256": "2befc9240d0b616e685593d28cdf05b32924c56093c67356fbc3f1f29f606349",
+      "git_blob": "b9b9c2a7cfa889f11c2cd8866d0da2033a8c8ad6",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t04_g_progress_b4342ff9ee",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t04-h-account-save-gate.md",
+      "sha256": "5aa5930c0910246528b9a042b49d3507faecd9e4cdd7b770d061f4719ae8dc13",
+      "git_blob": "59fc0e82a7ea8fcab9d6404d8976cdf1df902b5f",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t04_h_account_b876cc5bd8",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t04-integration.md",
+      "sha256": "833cc76dce028d7dcacb337a9f2280a36add75bd1c08ac17c4bfe692dea12aab",
+      "git_blob": "b82c56ef2502ed295f0a120412f0c7365e18ecac",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t04_integratio_8b65f0f787",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t04-progression-economia.md",
+      "sha256": "95952e203e5dc212483fc605f27acf0e99f59bcdad7e169cb5bc7fdd13c1de9b",
+      "git_blob": "0107918340e1d4944665df16bda6e46e0e1547da",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t04_progressio_28af938d5b",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t05-asset-pipeline.md",
+      "sha256": "c0b5e86c56850708a19a8fd9d0e4a6bb06a30b86d79155e87c5e28f2798f5b9a",
+      "git_blob": "3bb015730b221de005fe7c5dd67bb185647644a5",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t05_asset_pipe_4a3478b7a3",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t05-b-validation-matrix.md",
+      "sha256": "de8254b5dc59663c6f97759aec38e181a435455a86dd6536bc1a28f5c0bbbb1d",
+      "git_blob": "a25d59fec74fa235739beb37e1dcc83613362902",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t05_b_validati_d8d5b05ad9",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t05-c-hub-foundation.md",
+      "sha256": "10beca34aed5dc871b0373fcc1c9e96bfc4f91c40ca75d913347dbfd6aa6cd48",
+      "git_blob": "1ddfdb8bb0f3dea1a467823ba9d8843b23bccff9",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t05_c_hub_foun_4d0fcdf459",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t05-coordenacao.md",
+      "sha256": "59facfb294e143e441474a2ff4bb7b992ec304bfae4ecc051ec3e0a1198a8aad",
+      "git_blob": "3ae2103c44eb2d553f4b0992007570ffcd90b182",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t05_coordenaca_574215b661",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t05-d-service-contracts.md",
+      "sha256": "3f7dac99ecb5bf2a220a5c7e734c104c979bea644f3647a6139f2f8ec2af3d3c",
+      "git_blob": "e790dec3f6d4d0ba3e4ac3e45d3eb65e67d4a250",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t05_d_service_006a99623c",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t05-g-release-ops.md",
+      "sha256": "f4e31d07b30166ee5536eeb8dc3e95ed7f8a971da30b5f633ff1aeca80df8d1b",
+      "git_blob": "9f926ed9f57dacce41762f370ded2eebdb6452a2",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t05_g_release_da4c71038b",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t05-integration.md",
+      "sha256": "3aed2c3f0f98e33819316b6c0cf1ec92602c1f663b95bd51b37fe623954b9ea5",
+      "git_blob": "01f69740e84e65bc9a47c918108dd541f4ca41b3",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t05_integratio_3c6ed19121",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t05-progression-human-pack.md",
+      "sha256": "c4c06240b74c31951803c57fa91c0e023380bbdd041fa6eed7aeaced9927e828",
+      "git_blob": "8157c98fd9876be9d7ce8694c0d9f3244f681e9d",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t05_progressio_fddbceeed9",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t06-b-feature-rails.md",
+      "sha256": "35844d82fc74d19cfa1e4fb1e0347bc66789a78731e46883e0a6ff6f5bf47b9a",
+      "git_blob": "086339892efea1230d640880e8dbc7c81316503d",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t06_b_feature_7268acdc6a",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t06-coordenacao.md",
+      "sha256": "3195048f30a87f73575813f534c787dc8dc1d578df55789600ecf5257e7bdae7",
+      "git_blob": "f5c81710bf9cf7287e7d63d75b7297f858591062",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t06_coordenaca_a92afb5acc",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t06-d-profile-account.md",
+      "sha256": "2ab767610dc69b1c792bf0554d3f45da65d42d46bd7aeff93740c2f839832758",
+      "git_blob": "3d5bfc6cfabf4533e190c8e1c1c0ebe91cd25152",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t06_d_profile_bb275a38bd",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t06-e-battle-history.md",
+      "sha256": "06f8f573b5ffc2ba50902c8c0833ebeef81a130dd672936889f6c794e4964ff1",
+      "git_blob": "c87a9df822d4f5b42acf1924cad96d4c9ee05547",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t06_e_battle_h_961af661b3",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t06-f-base-routine.md",
+      "sha256": "a6acc3cd4bdbb4106f3322c097b8d377711c99baee0042001892a4aafe083b57",
+      "git_blob": "312a225718fdaf9500d7d395667c8132b5d716d7",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t06_f_base_rou_7cfa012819",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t06-g-social-qol.md",
+      "sha256": "8831cb48a7f3d32fa809e86a0a6e4376e623724ebf8768bd4652a574a4e26580",
+      "git_blob": "0ca1f128a1fc1fe14edf64d0bbaaaeb76998a2f3",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t06_g_social_q_7775d59a1a",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t06-h-asset-pack-01.md",
+      "sha256": "f9c81aaa3627682dd471dc9262c4086a1a8a8987784ecc419fc2f93fe858077a",
+      "git_blob": "2e130e2cd3f984381369f157c89c7e2f1b9a2db2",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t06_h_asset_pa_83d8b7ef2c",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t06-integration.md",
+      "sha256": "2b3875ba0f57f65ffc027ff0976758826bc38478d4151b781280bc1bbc3a092e",
+      "git_blob": "f5b5533d0bf8e98b7094660016dfeea991a57f25",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t06_integratio_dc2a0e8b1c",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t06-runtime-config.md",
+      "sha256": "e7a194e001eee4ec698944a09345874bd2494efc1dd041ab5b3f6fbb2815c759",
+      "git_blob": "40c5efd14aa28d94b971bba81e84b0b67099570d",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t06_runtime_co_d2d80eb4c0",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t07-app-screens.md",
+      "sha256": "6bad2d88b02f962677c71072fb4c19e08f02bdee62a61fccf53592973c83f0d5",
+      "git_blob": "5298bfe92b7a3bcf86854c0e24bc41020ba47165",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t07_app_screen_4347249a1f",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t07-app-shell-foundation.md",
+      "sha256": "5c0ca04ab049988c80aa8427c9246f96505bb12fa9938b61ceae8bb87d447e96",
+      "git_blob": "d34ccc9113c05776bfcbcb586b2337ebec15b316",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t07_app_shell_18ad81a4b7",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t07-coordenacao.md",
+      "sha256": "14364b7399e19781617ac71aedf5f359e2d817867af5f879f2ddebeacd785251",
+      "git_blob": "d1d05a86ace23e48b27b1f5f2721aeadf6c4a3aa",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t07_coordenaca_21762faa04",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t07-e-battle-fullscreen.md",
+      "sha256": "aaefeed06baca239e6a095fb3edc4b5d56438fad535cd7a7256d8e703e4ef357",
+      "git_blob": "7b8aefb10cbd945c191bab16cfc55ac6531a8023",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t07_e_battle_f_cf778bfd40",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t07-integration.md",
+      "sha256": "c5a6ef8a2650391e5be786daba4e9d6a6c5845519e22986a2af3ea7fa1e0abca",
+      "git_blob": "70b209dc4e187fb809cdb03574851dd40cc06f0e",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t07_integratio_eda3211ef1",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t07-refugio-home.md",
+      "sha256": "81dd93288cd151e61996417fa61070ed12d9e3bbde11e84f956c48aa3fd1b99c",
+      "git_blob": "5efbc0a77e96e4ec6d0f667399c6be60e796543b",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t07_refugio_ho_bae5f76ec2",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t08-b-app-shell-lifecycle.md",
+      "sha256": "97a930ab65650a88d6ff3f70ef25a1b56b8b94e0ffbc0b04e81dd0da71d50d08",
+      "git_blob": "bb08deb70a9d1206c4b9b1558a1dda6050ab715a",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t08_b_app_shel_860e837e60",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t08-c-session-save-boundary.md",
+      "sha256": "4add5d43990e6be1c630b84d07095d711be6e3168d24ac33d0f4e2040d1cd9f0",
+      "git_blob": "a784b0e951595314c898ac7b1f9b88d292b15fe1",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t08_c_session_f4fa824178",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t08-coordenacao.md",
+      "sha256": "3367166b09701fe31ed8baf446217206f2205e71ada8ea618c6cb397847a33de",
+      "git_blob": "0ff5e155ea6dd4b9d2a0e637068cae6a62befbe1",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t08_coordenaca_3b9e7bda9e",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t08-d-mobile-ui-contract.md",
+      "sha256": "45aecd24da3bb2424487d0df3321787bdbaa6304629063ad648abc095d7d13e9",
+      "git_blob": "fc394a05aa571ef5d6ef9787309596197489c219",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t08_d_mobile_u_09493ff593",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t08-e-battle-mode-contract.md",
+      "sha256": "10b5836caa817b9aa8d1ac498ee5870c43d882714af8f6a8b40b665e82b5f97b",
+      "git_blob": "c82fa2163c2909f1f120bb1b32ac2865772a43be",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t08_e_battle_m_74809a4f6f",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t08-f-service-asset-contracts.md",
+      "sha256": "2349bb656b888b6fc1be3c5544a54876e8cff805c205c537428b0472e45c4edd",
+      "git_blob": "6e48f627ee737d84e8d1016e8d441da6cde831fe",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t08_f_service_3d30757179",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t08-g-validation-harness.md",
+      "sha256": "38fcf23b898d710c8dc19cd97bb1205782f48df56a14c9275c9a7971e0f33632",
+      "git_blob": "ba762b00d889fb8b0ab8e533a10358bbdd799bba",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t08_g_validati_532c89fc7b",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-mobile_t08-h-integration.md",
+      "sha256": "172a0b18b32e71b23eb191deea536910996849003cd1b5846fb593479dc08521",
+      "git_blob": "4f72143b011918b36627c7598ff51f9504bfaac0",
+      "record_id": "rec_2026_05_27_codex_draxos_mobile_t08_h_integrat_3d95c5b64d",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_agent-ops-foundation.md",
+      "sha256": "77be698840fd180647d9de06142afc406f57859f327593e9dd51eaf2923ea1da",
+      "git_blob": "1d7d1f05c9846d164385f442eefcc45e2a6b5f9a",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_agent_ops_foun_dd0e4f9c59",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_battle-request-splash.md",
+      "sha256": "4c86de4e14b36e239ca91d31f32e95bb4b42546987db7fd90ebe057d39371cfd",
+      "git_blob": "607188e675fc7f15ecb55317053c3f9909d871a0",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_battle_request_65cf913346",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_entry-dev-labs-export-hotfix.md",
+      "sha256": "e1ae1781aba55468e34f20f9de4e2c76afa7ed4ba3c12f0d55ee744bed65811e",
+      "git_blob": "7605aafcc393e54d12385f48f60844e0cbcc4751",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_entry_dev_labs_46dec24a64",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_foundation-app-v0-audit.md",
+      "sha256": "05e62c9adf130eae3527e36db4cc2506fce40e9e4e1def085e04297303152c59",
+      "git_blob": "2d932409bbe3f79cc2b3402f0d5fff2306af3fcc",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_foundation_app_8503fa4224",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_foundation-audit-doc-alignment.md",
+      "sha256": "beb967fe42da2eb22e587ca89ba30266ba5c6a2de92757a6dd2e8194e3a51560",
+      "git_blob": "6a187e380097347649c7e2482c4a5a05006c8cd7",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_foundation_aud_2b76e708f8",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_foundation-loop-audit.md",
+      "sha256": "f371baf1d0f1878fbb179c47e25c64338bd81aec71bd7207e45c2a61f07ce8d1",
+      "git_blob": "6f0bfe09c0350ec5ab474488fb0ffbed3c23c566",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_foundation_loo_ef6086b5f6",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_foundation-loop-ux-pass.md",
+      "sha256": "0b77c2e59d61d4d872b8377c6fd9fdc71bc3eac4525098d75305e714d0bf17fa",
+      "git_blob": "a85abea0ad834778a89e78688c1bf81def2bd176",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_foundation_loo_18e207b544",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_foundation-responsive-guardrails.md",
+      "sha256": "09199d70a932757be4059051739ccbc4248dcfcc3f9828e00f9d06c04f1c3e4a",
+      "git_blob": "ccd7b53f101b012a1f5c5557ede72fae81433ac2",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_foundation_res_9e44888654",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_publish-entry-dev-labs-hotfix.md",
+      "sha256": "95fc603e82007350d0d35a995e3aca1f92e9c39aa88d4f922c52e637d47a4bf5",
+      "git_blob": "4bd0a3e9d874465df7692264b9044fe6b1c2b76e",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_publish_entry_8569b99f2a",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_publish-foundation-loop-build.md",
+      "sha256": "144935a9a92ceb8f2a4948bc4487fc7db2c542fbe4e2abb36042a9f85fd1c433",
+      "git_blob": "0e4a0423d8ca530d7ed75c53d0155302c09f11b3",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_publish_founda_8ce0dd96a5",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_publish-refuge-battle-hotfix.md",
+      "sha256": "7c0681927a9de93879f9e0a09cf6cdeecedd91fafa752109b7dbd879112f6f56",
+      "git_blob": "6a3075acff9495a032aad5863bce6196cf260e58",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_publish_refuge_0377d55471",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_refuge-return-dev-tools-hotfix.md",
+      "sha256": "f7aa8016e102496482c2441fa8066e25ed1c228f3ecd231cd7693a22f4f1b8de",
+      "git_blob": "3c884f76121638f0001e9e23069ff1399034a5be",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_refuge_return_a6ae28fa61",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_release-update-builds.md",
+      "sha256": "67ab8275cc8501ccad55801034fccada80b11b86bea503c6a42c594a6e89e305",
+      "git_blob": "3264aa015b8aab4557ca95b3802e9de5fb5d8961",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_release_update_2db0d4981f",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_site-visual-cleanup.md",
+      "sha256": "074becd862c7cb917b4b5a21a589899f4bca00a9d0d42c4ba79ffa367aeb7ad1",
+      "git_blob": "87e54bb6295dc0d06a8da6f547bb1ced207a1060",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_site_visual_cl_8d27240ae1",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_site-visual-upgrade.md",
+      "sha256": "933fa5a81cf608084d404738cd962439f9a6b5b4efa5e402f9409a0afc9e3fde",
+      "git_blob": "e2b0b81ada19695849d92571d660278e3d577527",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_site_visual_up_0519b5677d",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_t07r-refugio-first-screen.md",
+      "sha256": "9af1988c4c5979f3b1b78d988a609d2d290a41a536c2342cbef333d1e702da86",
+      "git_blob": "465ff4d01536624d68650cb5a27228dbd8d22c4f",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_t07r_refugio_f_416924a3ae",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_t09-integration.md",
+      "sha256": "c9eb3774c0d8649d041c4566c923439d6ff03f2f1c43d18eeb91c4738e245265",
+      "git_blob": "92df5bd213c51fe0c1cc97c84bd1937ea023a8ec",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_t09_integratio_4582358847",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_t10-battle-presentation-rework.md",
+      "sha256": "581948a2ec9a36a3d157e7b563a99360fea70788e7b98c510ad8b0077efdde12",
+      "git_blob": "9d9b1d96741e8c8cbbe673f75e82ba700466fabe",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_t10_battle_pre_0516c1ab22",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_track-11-consolidation.md",
+      "sha256": "4a4d3167b4742fa9dbccee649b864abaabe5213c2933aea27dc95ed37c9d85e3",
+      "git_blob": "b968e2510c9c29f88c1a1912bb0b58c76964bbbf",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_track_11_conso_f1e7cdb9b1",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_track-12-boot-decomposition.md",
+      "sha256": "e1b9d9ce1dff1a65bb22b44426d56dfbd4da0d80a8c85f9b5fdf9b9c34774b47",
+      "git_blob": "b87d10fb1649696a55cbf6db0e4cba3b13cbf1fa",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_track_12_boot_de98df88bf",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_track-13-validation-release-safety.md",
+      "sha256": "409d92a281813b8dcff3e49d60800ba71db9f906e6dfcfee2e4c1a0ff8dc1314",
+      "git_blob": "abd90bd076d1cbd024c50cd278626809e42a11aa",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_track_13_valid_899e8b57af",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_track-15-mobile-ux-overhaul.md",
+      "sha256": "e1f249820c47cbd64bc16c95dfd07cf8bb3587c0c2ed0290a458e02a483aeb3e",
+      "git_blob": "f4139687efd13817709b5d6bcdc43e63f764200d",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_track_15_mobil_435045cb4c",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-mobile_track-16-behavior-crafting.md",
+      "sha256": "53c2b9edb7954c71fb1acc4ce17f7b525ddec1acf8d8a7bbe8af0805bdc1ff13",
+      "git_blob": "61d52021c46ad6042a488b8da90fa7fa6144fdfc",
+      "record_id": "rec_2026_05_28_codex_draxos_mobile_track_16_behav_e1781f404d",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_battle-drama-v1-1.md",
+      "sha256": "03bf83a054a30c9438133b697bae5421242617d7ea981fb35078834c591c54ee",
+      "git_blob": "1d30ecdec7e1716acf9d1bed1f68024168b36cf0",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_battle_drama_v_c2550ff70b",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_battle-preparation-complete.md",
+      "sha256": "dfce1aabf0e51ad1b0ef19261d3060232218ef97a6e68cfc4c01d148eaf44b91",
+      "git_blob": "0d6add69ed2eff9f09bc38934764a90b894f277a",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_battle_prepara_425b600e32",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_battle-preparation-v1.md",
+      "sha256": "5f754119472c5f9e4893fd57e1b0b714d17ebc95c6d4e142b702f6c3db49cc1f",
+      "git_blob": "d231512344de4463f833f778a6851c48eadf5096",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_battle_prepara_3fcc24d64a",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_battle-presentation-v1.md",
+      "sha256": "cbcaff39a04d2715cc2b97b3630cff6e3ffc7ac1d984fe3fc99beff0c694375e",
+      "git_blob": "cb9b2e6eee46f89c4b1f78a561e8e2d2d1c7eeb9",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_battle_present_c618069084",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_foundation-manual-review.md",
+      "sha256": "af77005376f8d93bde145a68c557ac58a9fcab8e5e6ba424724885dcd47d2bc8",
+      "git_blob": "ef0b6c95be3433b75c99724da9925dc7d85c0d53",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_foundation_man_bc39fb9768",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_integer-bones.md",
+      "sha256": "8847cb7da5df0f17ca22306e0463f45b03343de4679c97f7548672559208353d",
+      "git_blob": "5e1e63e23034eb19befe429dfb59467912f48ef8",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_integer_bones_970d460dc8",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_preparation-equip-feedback.md",
+      "sha256": "3304ee117b90aea9eb03e19ee589433d8cdd27d286cdbb2734e6f77ae18c4b14",
+      "git_blob": "b6a1959ab3fba84a6862c186b603301ea1d69d42",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_preparation_eq_0ac59fb620",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_progression-clarity-v1.md",
+      "sha256": "6ab0c3877a0cc8799b2cc981b2df1ac7bf94ae5e86162c15694af74becd2b3fb",
+      "git_blob": "e042771865a89102ffc02c2dd5dd7ae7c753d458",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_progression_cl_cda5197daa",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_publish-battle-presentation-v1.md",
+      "sha256": "1de9e892fdb53da8e9fe4e273b0908b8d0b37bc3e82b87ebbbc74bc951cb6317",
+      "git_blob": "146b97cfb59496590205532e215fba9fb7543196",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_publish_battle_bcb96b840e",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_publish-social-guild-v1.md",
+      "sha256": "d6fc407f7ae45b14af18d35ed2da61ddcb3b44bd4dd4a12cb9a6e8dba24224e4",
+      "git_blob": "e54a6e7da144766721b58e79779350d611580d8a",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_publish_social_59da8b4efa",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_register-potions-behavior-docs.md",
+      "sha256": "b127c6751d944a16815fcb19b26a8eda4bf7cffc71f7e8637d85dc1b78d0febd",
+      "git_blob": "534e749726129b4257c36d183c629a8fcdee729d",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_register_potio_46d7e414f7",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_release-process-hardening.md",
+      "sha256": "7fa523b3e0554a01b471af3ad1e46527956e4baf09758c60cbacb3b078744c38",
+      "git_blob": "7b012dc382b6743163bb4c41550d253df2a07de6",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_release_proces_9681447734",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_social-guild-v1.md",
+      "sha256": "a2f4f37f904d49c3bd469c7d1877d5169e3b342a80681a9d66f133d56189638e",
+      "git_blob": "b3a5d892e601b71992dfb1e31b7030366fb367d7",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_social_guild_v_e30c0310e9",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_visual-direction-v1-publish.md",
+      "sha256": "fdbf56fa640529e1050323c1bd405a8bc20e1d08c727531ab58f4131c394debd",
+      "git_blob": "8621dfb6a6b7db85a1aa124376f794f41de14258",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_visual_directi_d2d1793521",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_visual-direction-v1.md",
+      "sha256": "0c217203817d8e367a5e30f2766da5bacd5b997cf2cbb8683e3980da3ec7fec5",
+      "git_blob": "e6a4bb669be9678acfae7cdd2d4b667db1ae3e70",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_visual_directi_77924edbae",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_web-cache-bust-battle-presentation-v1.md",
+      "sha256": "f440055c0a74568b85bad187117cfb97f3933438f1382f9b7effa270129cf665",
+      "git_blob": "8794498eec9ce1e01885b865dd0a8326a7c8e5f6",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_web_cache_bust_1854b832d5",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-29_codex_draxos-mobile_web-cache-bust-publish.md",
+      "sha256": "b5ea971b9ab841fcabd8495c2a2c5fe5a5e7b63a92177f49e6eca6674aec6d5b",
+      "git_blob": "4e9d2eb1f7b619e562b635469f68d7520160626a",
+      "record_id": "rec_2026_05_29_codex_draxos_mobile_web_cache_bust_63e733c274",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_approve-first-session-clarity-v1.md",
+      "sha256": "981d7c56c9b6fb779f9e2fbfe060901513f7f3b76da62430f4823880784437f8",
+      "git_blob": "bc0848d8e121485c9ff380e1b759bfbd48f0c36f",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_approve_first_6f4d9f42be",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_battle-combatants-domain-slice.md",
+      "sha256": "fba5617dd37a1ef81313249c416f0a67880caab754a9fccbf467a5465774100a",
+      "git_blob": "10c3a3b8cb619cb568a88a5edb9cf26b194c44af",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_battle_combata_18ff15fe73",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_debug-clean-web-config.md",
+      "sha256": "27c2eeefdcfe571e9bfa2932c9c46ba72924746990f84dd91d2a7d31ded69092",
+      "git_blob": "035a1e9b65db1b64ab46def0f33e3a5f50e5e50e",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_debug_clean_we_df1e0ffc31",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_economy-domain-slice.md",
+      "sha256": "d7c81797413eedde2e885a3606ce9530d7a59aefd2cc760501bf1c9f6f35dcd6",
+      "git_blob": "2a424dd4ca7323e8ca9a771f18cb67d62359a685",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_economy_domain_1d3c2b8ea5",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_first-session-clarity-v1.md",
+      "sha256": "ecb91f2715a12ef9fddef8721882782efd1ac8aecf2b9754e74d8dda01da4cde",
+      "git_blob": "b3121380eba50950a0797b9686210ade0160c017",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_first_session_b80c73b4a1",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_foundation-closeout.md",
+      "sha256": "9252b7b433b9bf38bb67137af2fc01e26ec49d8e7b4deb94889f7843500f8ee1",
+      "git_blob": "1a243d77882e49a23068da9a09a6708a5833f1b9",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_foundation_clo_891229d2e9",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_foundation-expansion-readiness.md",
+      "sha256": "29eca492f2fd31e219fb17ae91fd8fb2f92eefcd2de36b00bc37cae3f7311d44",
+      "git_blob": "e6d041851f78403b2d59b9055ede088824a09052",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_foundation_exp_f0d1499548",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_foundation-final-polish.md",
+      "sha256": "0a7e919beff172deb68f666cef07a71ec80dfa98ecf34e2f5758a48838e30b2d",
+      "git_blob": "0a965dd53f2d7108c92b7cf0fe11c14ba380d6e9",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_foundation_fin_682f49d181",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_lab-heuristics-alignment.md",
+      "sha256": "2380d00d42d223c2d2a5ef6a6d66303606a89ec20d839681b1c480adc8cf4a97",
+      "git_blob": "667c8618a26fa95b527b905a0a39916777daea57",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_lab_heuristics_f36b3321fa",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_lab-track16-alignment.md",
+      "sha256": "2c198cd2b35bd63889d09b655529731b98cf16c5514cd0fae5b441fd8fc277f0",
+      "git_blob": "2c619c10f7d870a090e54a64d18a9852fc4b0f63",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_lab_track16_al_342f5e8caf",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_live-rpc-idempotency.md",
+      "sha256": "fb14e7627df1c2cc2d2d1a60d70f06ffa671ddf8935826c74b427d58b8a7dcab",
+      "git_blob": "67eaf5c04589e43a490107c0557cbf9307d5a168",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_live_rpc_idemp_271f8d874e",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_local-edge-rpc-smokes.md",
+      "sha256": "c8063940651958860542369d424b8d15792b484ba39ca6ed27ebe2ed4930d510",
+      "git_blob": "4b593ca67819c5ee474b2372540a84af52a053f4",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_local_edge_rpc_08f3ba0eb6",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_portable-domain-services-slice.md",
+      "sha256": "267a671957c5d4e644520f972f9475ed02da76b8c1612ce126a49b5d27c881ca",
+      "git_blob": "f38c5a799b753a0a84cd864ef75db0adb84e26e3",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_portable_domai_1d614e77c7",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_progression-power-domain-slice.md",
+      "sha256": "bce158da52914cab83fbcf517fc73e56ba12a66b6fa21f62ecfc9da428c901d2",
+      "git_blob": "9e7819d4d375bc280ab48a958214c1c50cd8ab60",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_progression_po_dfafa3732f",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_publicacao-foundation-final-polish.md",
+      "sha256": "3f24b1bc5e489cd0b1778eb3f13789bdf8e801e77e32f77fb3d06431d11a4dc7",
+      "git_blob": "cdc63dba5fd2049af8a06e7a495e19a6f2f6c7cc",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_publicacao_fou_301aa8b51c",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_transactional-domain-enforcement.md",
+      "sha256": "011bd12868df120942245ae2f1b0891b6a4ab7afef1b22f5c7f5a91577e4ee19",
+      "git_blob": "72f457d421b23258ae2b80191768842c7a9cd6b4",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_transactional_109eaa298f",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_transactional-domains-remaining.md",
+      "sha256": "5328d57b152405639e228f1e8d75521c63cabd8eb80f1e8c3bd5d0e248b8e56e",
+      "git_blob": "9ef9227420ada71cdef017dca6fb0e0b1edf5542",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_transactional_c6b2ea4799",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-30_codex_draxos-mobile_web-auth-foundation-context.md",
+      "sha256": "c4a8ff16428359b35151fc91a8dbd567b1538e225f6f569e9e535ef109a28da0",
+      "git_blob": "8cf2eb8d35f1486fb16397fdd8e809041baf36ba",
+      "record_id": "rec_2026_05_30_codex_draxos_mobile_web_auth_found_3e348302f8",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_arena-backend.md",
+      "sha256": "af1a2c2e3972c192f2935c2800f0121a52b39e26787b7d395fc25a24b5897a50",
+      "git_blob": "1f6e5333ec7886e3cf930205a6bc034f733b2de2",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_arena_backend_c52bf3ddc1",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_arena-client-labs.md",
+      "sha256": "835b6f8542793d48647f152a60562037742e7e9fc6f608c7c38faa27870154da",
+      "git_blob": "8820cb1fcfbb01dc5437487b9ec3355de81eddd7",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_arena_client_l_19c9cab6cc",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_arena-contracts.md",
+      "sha256": "f62b4a7450f98c1f107a45ee1a30b850f76c526ad778a66bb21ad4dabfea08eb",
+      "git_blob": "c650133e802db42124691bf4e67dde5443447594",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_arena_contract_288254a972",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_lab-web-export-guard.md",
+      "sha256": "552ce39a355b8ce52b250ef8541f63cf5afde5c29cbab6806c96428129889e58",
+      "git_blob": "edd5398d90dbcb0241dce2b1551e51dd49a855bf",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_lab_web_export_f37ec6a4db",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_pve-arena-direction.md",
+      "sha256": "cd01775ab2d14ac98f7c73fe67c9ffc825f294d8eb3fee25a3a7a3fbe8f47e38",
+      "git_blob": "4674ea23327ade10df2bc853333c8018f91fac26",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_pve_arena_dire_7127a738de",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_pve-arena-published.md",
+      "sha256": "cd3492c765720eb585c09c7c81f1651a67098f0058966b15a81c2f2c33641b91",
+      "git_blob": "6953afb6c080b318edb25a9afa588092f7963d6a",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_pve_arena_publ_b89bf9d780",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_remote-lab-runner.md",
+      "sha256": "f69671aed552d454fdaf7357a2b18277d3197924a2d30deee915890a46aba9cb",
+      "git_blob": "dbf3b9e36b50810e4c3743eada6ac6d97497ba6a",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_remote_lab_run_06992a5073",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_rpgsuave-visual-upgrade-v1.md",
+      "sha256": "f69c51714b8fe0c41e55b7d9c4ede11f4b0710ced2752a4c77471bcbec328c7a",
+      "git_blob": "6f28802e64f3a5c1b80b17e1ee173bf4c74aa4e1",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_rpgsuave_visua_4a893a2d3a",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_s1-arena-calibration.md",
+      "sha256": "d7cdac0089cd51fbdb5cf9876afd483507d2e72339d3c23bde0a3768b264bbbd",
+      "git_blob": "486597f3341dfc09d89809b0cdb9123bbab7d7b4",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_s1_arena_calib_771f720dc3",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_s1-arena-tuning-definitions.md",
+      "sha256": "f97002b19fab709f4ecad8748458319a400b8fcc72678a4703146453bdf39778",
+      "git_blob": "d489465d3bd49cbbc2ea95c7a35cdb6b0d24e8f5",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_s1_arena_tunin_b204010c46",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_track-18-pve-arena-integration.md",
+      "sha256": "75db5b5ff3d9407165e7b996089ac75da11196dc03b15ed27156dd921d1da44e",
+      "git_blob": "28e8051f75aa0b0006dbaf43bef4dfef8506b2b1",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_track_18_pve_a_c01a4291fc",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_track-19-arena-consistency-pass.md",
+      "sha256": "d7d96b525b9d5329a10d804c273ae851fcc61a4482aa79e6db8b309b6890216c",
+      "git_blob": "484485d591ca9bdf68ff2827aa988ebbbec4d0e9",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_track_19_arena_419561bb5c",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_track-19-remote-deploy.md",
+      "sha256": "84288f3cea76ea4ebd0016483b244e643cb9214bbef99942873f6f2e0f73c639",
+      "git_blob": "4e82d5e7588b8eaaaebdee7ca322af9c6707a264",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_track_19_remot_c864b1c4e4",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/docs/release-history.md",
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-31_codex_draxos-mobile_track21-arena-loop-unlock-friction.md",
+      "sha256": "7ba88a9ea4ae6e502bbaaf13f8d8d971049a3cf32ff1e6879e4eff957fbeecc1",
+      "git_blob": "83b06dd52ac75edde78cddf2bca8644c0fe73493",
+      "record_id": "rec_2026_05_31_codex_draxos_mobile_track21_arena_0c5d89b236",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    }
+  ]
+}
