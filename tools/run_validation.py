@@ -189,9 +189,7 @@ def _contract_hash(manifest: dict[str, Any], config: dict[str, Any] | None = Non
         "runners": {
             str(runner.get("id")): {
                 "resources": _runner_resources(runner),
-                "user_data_mode": runner.get(
-                    "user_data_mode", (config or {}).get("qa", {}).get("user_data_mode_default", "isolated")
-                ),
+                "user_data_mode": _runner_user_data_mode(runner, config),
             }
             for runner in runners
         },
@@ -241,6 +239,14 @@ def _runner_resources(runner: dict[str, Any]) -> list[str]:
     if lane == "android":
         resources.add("AndroidQA")
     return sorted(resources)
+
+
+def _runner_user_data_mode(runner: dict[str, Any], config: dict[str, Any] | None = None) -> str:
+    if "user_data_mode" in runner:
+        return str(runner["user_data_mode"])
+    if "GodotQA" in _runner_resources(runner):
+        return str((config or {}).get("qa", {}).get("user_data_mode_default", "isolated"))
+    return "not_applicable"
 
 
 def _isolated_environment(session_root: Path, project_id: str, runner_id: str) -> dict[str, str]:
@@ -296,9 +302,7 @@ def _run_checked(
 ) -> dict[str, Any]:
     before = git_snapshot(root)
     lock_timeout = int((config or {}).get("qa", {}).get("execution_lock_timeout_seconds", 30))
-    user_data_mode = str(
-        runner.get("user_data_mode", (config or {}).get("qa", {}).get("user_data_mode_default", "isolated"))
-    )
+    user_data_mode = _runner_user_data_mode(runner, config)
     resources = _runner_resources(runner)
     try:
         with ExitStack() as stack:

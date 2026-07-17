@@ -12,7 +12,13 @@ if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
 
 from execution_lock import ExecutionLock  # noqa: E402
-from run_validation import _contract_hash, _isolated_environment, _parse_structured_result, _runner_resources  # noqa: E402
+from run_validation import (  # noqa: E402
+    _contract_hash,
+    _isolated_environment,
+    _parse_structured_result,
+    _runner_resources,
+    _runner_user_data_mode,
+)
 
 
 class ExecutionIsolationTests(unittest.TestCase):
@@ -44,6 +50,15 @@ class ExecutionIsolationTests(unittest.TestCase):
         isolated = {"qa": {"user_data_mode_default": "isolated"}}
         shared = {"qa": {"user_data_mode_default": "shared_locked"}}
         self.assertNotEqual(_contract_hash(manifest, isolated), _contract_hash(manifest, shared))
+
+    def test_non_godot_runner_keeps_normal_process_environment(self) -> None:
+        runner = {"runner": "python", "lane": "backend", "entrypoint": "safe.py", "args": []}
+        self.assertEqual(
+            "not_applicable",
+            _runner_user_data_mode(runner, {"qa": {"user_data_mode_default": "isolated"}}),
+        )
+        runner["user_data_mode"] = "isolated"
+        self.assertEqual("isolated", _runner_user_data_mode(runner, {}))
         self.assertEqual(
             ["AndroidQA", "GodotQA"],
             _runner_resources(
