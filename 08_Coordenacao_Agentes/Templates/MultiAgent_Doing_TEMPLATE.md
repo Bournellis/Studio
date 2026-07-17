@@ -2,56 +2,53 @@
 
 ## Metadata
 
+- id: `<YYYY-MM-DD_slug>`
 - data: `<YYYY-MM-DD>`
-- agente: `Hermes | Codex | Outro`
-- projeto: `estudio | JogoDaCopa | FpsPlayground | draxos-roguelike-cardgame | draxos-mobile | canon | portfolio`
-- prioridade_portfolio: `P0_IMPLEMENTACAO | P2_IMPLEMENTACAO | P1_CONCEITO | PAUSADO_INDEFINIDO | AGUARDANDO_DECISAO | ARQUIVO_DESIGN`
+- agente: `Codex | Hermes | Outro`
+- projeto: `<project | estudio | portfolio>`
+- prioridade_portfolio: `<value from Prioridades_Estudio.md>`
 - coordination_scope: `project_local | cross_project | global_governance | documentation_alignment | portfolio_sync`
-- branch: `<branch>`
-- worktree: `<absolute-path>`
-- base_ref: `main | <ref>`
-- merge_status: `pending | merged | abandoned | n/a`
-- worktree_status: `open | removed | kept - <motivo> | n/a`
-- branch_cleanup: `pending | deleted | kept - <motivo> | n/a`
-- post_merge_validation: `<comando + resultado | pending | n/a>`
+- closure_protocol: `agent_local_merge_v3`
+- technical_status: `in_progress`
+- human_gate_required: `yes | no`
+- human_gate_status: `pending | not_required`
+- human_gate_scope: `<scope | none>`
+- human_gate_evidence: `<paths | n/a>`
+- publication_status: `not_requested | not_authorized`
+- blocking_decision: `<exact decision | none>`
+- execution_mode: `multi_agent`
+- delegated_scope: `<agent -> bounded files/system>`
+- branch: `<lead branch>`
+- worktree: `<lead absolute path>`
+- base_ref: `main@<sha>`
+- merge_status: `pending`
+- worktree_status: `open`
+- branch_cleanup: `pending`
+- validation_tier: `Docs | QA | Runtime | Build | FullLocal`
+- validation_result: `pending`
+- global_sync_needed: `yes | no`
 
-## Objetivo
+## Objective
 
-Descreva o resultado esperado em uma frase.
+One concrete integrated outcome.
 
-## Base Lida
+## Base Read
 
+- `AGENTS.md`
 - `08_Coordenacao_Agentes/Prioridades_Estudio.md`
-- `Projetos/README.md`
-- `08_Coordenacao_Agentes/Estado_Atual.md`
-- `<docs locais relevantes>`
+- target local authority and live card
 
-## Escopo
+## Writer Boundaries
 
-- Incluir: `<arquivos/sistemas pretendidos>`
-- Fora do escopo: `<limites claros>`
+- Lead: `<shared files and integration>`
+- Agent A: `<disjoint files>`
+- Agent B: `<disjoint files>`
 
-## Arquivos Pretendidos
+## Commit And Validation Plan
 
-- `path/to/file.md`
+- `<logical commit>`
+- `<proportional validation>`
 
-## Plano De Commit
+## Hard Stops And Handoff
 
-- `docs: ...`
-- `contracts: ...`
-- `backend: ...`
-- `client: ...`
-- `test: ...`
-
-## Validacao
-
-- `git diff --check`
-- `<comandos especificos do projeto>`
-
-## Proximo Handoff
-
-Explique quando outro agente ou Fabio deve assumir.
-
-## Nota de compatibilidade historica
-
-Claude pode aparecer em handoffs, reviews e decisoes antigas como contexto historico. Novas tarefas devem usar Fabio, Hermes e/ou Codex como atores operacionais atuais, salvo reativacao explicita registrada em decisao viva.
+List semantic conflicts, human decisions and the exact next integration point.
