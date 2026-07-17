@@ -30,6 +30,10 @@ func _run_validation() -> int:
 	if not bool(scene_result.get("ok", false)):
 		printerr("[validate] %s" % str(scene_result.get("message", "Scene generation failed.")))
 		return 1
+	var stability_result: Dictionary = _validate_campaign_generation_stability()
+	if not bool(stability_result.get("ok", false)):
+		printerr("[validate] %s" % str(stability_result.get("message", "Scene generation is not stable.")))
+		return 1
 
 	print("[validate] checking canonical loadout contract")
 	var contract_result: Dictionary = _validate_contract()
@@ -52,6 +56,24 @@ func _run_validation() -> int:
 	print("[validate] B0 runtime smoke: res://docs/g4-shared-mode-foundation-smoke.md")
 	print("[validate] success")
 	return 0
+
+func _validate_campaign_generation_stability() -> Dictionary:
+	print("[validate] checking campaign scene generation stability")
+	var scene_paths: PackedStringArray = []
+	for stage_number: int in range(1, 6):
+		scene_paths.append("res://modes/campaign/stages/campaign_mission_%02d.tscn" % stage_number)
+		scene_paths.append("res://modes/campaign/stages/campaign_mission_%02d_normal.tscn" % stage_number)
+	var before: Dictionary = {}
+	for scene_path: String in scene_paths:
+		before[scene_path] = FileAccess.get_file_as_bytes(scene_path)
+	var second_result: Dictionary = SceneGenerator.new().generate_all()
+	if not bool(second_result.get("ok", false)):
+		return second_result
+	for scene_path: String in scene_paths:
+		if before[scene_path] != FileAccess.get_file_as_bytes(scene_path):
+			return {"ok": false, "message": "Campaign scene generation changed on the second pass: %s" % scene_path}
+	print("[validate] campaign scene generation is stable")
+	return {"ok": true, "message": "Campaign scene generation is stable."}
 
 func _validate_contract() -> Dictionary:
 	var library = ContentLibraryScript.new()

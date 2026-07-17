@@ -110,12 +110,45 @@ func _generate_campaign_stage_scenes() -> Dictionary:
 	return {"ok": true, "message": "Campaign stage scenes refreshed."}
 
 func _save_packed_scene(root_node: Node, save_path: String) -> Error:
+	var preserved_unique_id: String = _read_root_unique_id(save_path)
 	var packed_scene: PackedScene = PackedScene.new()
 	var pack_error: Error = packed_scene.pack(root_node)
 	root_node.free()
 	if pack_error != OK:
 		return pack_error
-	return ResourceSaver.save(packed_scene, save_path)
+	var save_error: Error = ResourceSaver.save(packed_scene, save_path)
+	if save_error != OK or preserved_unique_id.is_empty():
+		return save_error
+	return _restore_root_unique_id(save_path, preserved_unique_id)
+
+func _read_root_unique_id(save_path: String) -> String:
+	if not FileAccess.file_exists(save_path):
+		return ""
+	var scene_text: String = FileAccess.get_file_as_string(save_path)
+	var id_regex := RegEx.new()
+	if id_regex.compile("\\[node name=\"[^\"]+\" type=\"[^\"]+\" unique_id=(\\d+)\\]") != OK:
+		return ""
+	var id_match: RegExMatch = id_regex.search(scene_text)
+	return "" if id_match == null else id_match.get_string(1)
+
+func _restore_root_unique_id(save_path: String, preserved_unique_id: String) -> Error:
+	var scene_text: String = FileAccess.get_file_as_string(save_path)
+	var id_regex := RegEx.new()
+	if id_regex.compile("\\[node name=\"[^\"]+\" type=\"[^\"]+\" unique_id=(\\d+)\\]") != OK:
+		return ERR_PARSE_ERROR
+	var id_match: RegExMatch = id_regex.search(scene_text)
+	if id_match == null:
+		return ERR_PARSE_ERROR
+	var updated_text: String = (
+		scene_text.substr(0, id_match.get_start(1))
+		+ preserved_unique_id
+		+ scene_text.substr(id_match.get_end(1))
+	)
+	var output_file := FileAccess.open(save_path, FileAccess.WRITE)
+	if output_file == null:
+		return FileAccess.get_open_error()
+	output_file.store_string(updated_text)
+	return OK
 
 func _build_campaign_stage_specs() -> Array[Dictionary]:
 	var stage_specs: Array[Dictionary] = _build_easy_campaign_stage_specs()
