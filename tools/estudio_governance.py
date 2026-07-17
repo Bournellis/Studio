@@ -383,8 +383,15 @@ def validate_qa_manifest(data: Any, project: dict[str, Any], config: dict[str, A
         if user_data_mode not in {"isolated", "shared_locked"}:
             report.fail("QA_USER_DATA_MODE", f"invalid user data mode for {runner.get('id')}: {user_data_mode}", path)
         surface_for_lock = " ".join([str(runner.get("entrypoint", "")), *map(str, runner.get("args", []))]).casefold()
-        inferred_lock = runner.get("runner") in {"godot_script", "gut_scripts"} or runner.get("lane") == "android" or any(
-            token in surface_for_lock for token in ("validate_foundation.ps1", "run_gut_short.ps1")
+        args_for_lock = [str(item).casefold() for item in runner.get("args", [])]
+        profile_for_lock = ""
+        if "-profile" in args_for_lock and args_for_lock.index("-profile") + 1 < len(args_for_lock):
+            profile_for_lock = args_for_lock[args_for_lock.index("-profile") + 1]
+        inferred_lock = (
+            runner.get("runner") in {"godot_script", "gut_scripts"}
+            or runner.get("lane") == "android"
+            or "run_gut_short.ps1" in surface_for_lock
+            or ("validate_foundation.ps1" in surface_for_lock and profile_for_lock in {"clientquick", "modeplatform"})
         )
         if user_data_mode == "shared_locked" and not resources and not inferred_lock:
             report.fail("QA_SHARED_DATA_UNLOCKED", f"shared user data needs a typed execution resource for {runner.get('id')}", path)

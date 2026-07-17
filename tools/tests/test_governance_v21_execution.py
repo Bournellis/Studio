@@ -64,7 +64,7 @@ class ExecutionIsolationTests(unittest.TestCase):
             _runner_resources(
                 {
                     "runner": "powershell", "lane": "android",
-                    "entrypoint": "tools/validate_foundation.ps1", "args": [],
+                    "entrypoint": "tools/validate_foundation.ps1", "args": ["-Profile", "ClientQuick"],
                 }
             ),
         )
@@ -86,6 +86,14 @@ class ExecutionIsolationTests(unittest.TestCase):
                 }
             ),
         )
+
+    def test_server_only_wrapper_does_not_redirect_deno_cache(self) -> None:
+        runner = {
+            "runner": "powershell", "lane": "backend", "entrypoint": "tools/validate_foundation.ps1",
+            "args": ["-Profile", "ServerQuick"],
+        }
+        self.assertEqual([], _runner_resources(runner))
+        self.assertEqual("not_applicable", _runner_user_data_mode(runner, {}))
 
     def test_isolated_environment_redirects_godot_user_roots(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

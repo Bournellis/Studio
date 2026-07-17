@@ -232,9 +232,14 @@ def _runner_resources(runner: dict[str, Any]) -> list[str]:
     runner_type = str(runner.get("runner", ""))
     lane = str(runner.get("lane", "")).casefold()
     surface = " ".join([str(runner.get("entrypoint", "")), *map(str, runner.get("args", []))]).casefold()
-    if runner_type in {"godot_script", "gut_scripts"} or any(
-        token in surface for token in ("validate_foundation.ps1", "run_gut_short.ps1")
-    ):
+    args = [str(item).casefold() for item in runner.get("args", [])]
+    validation_profile = ""
+    if "-profile" in args and args.index("-profile") + 1 < len(args):
+        validation_profile = args[args.index("-profile") + 1]
+    typed_wrapper_uses_godot = "run_gut_short.ps1" in surface or (
+        "validate_foundation.ps1" in surface and validation_profile in {"clientquick", "modeplatform"}
+    )
+    if runner_type in {"godot_script", "gut_scripts"} or typed_wrapper_uses_godot:
         resources.add("GodotQA")
     if lane == "android":
         resources.add("AndroidQA")
