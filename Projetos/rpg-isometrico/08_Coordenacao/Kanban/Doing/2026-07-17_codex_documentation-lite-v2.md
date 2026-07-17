@@ -11,7 +11,7 @@
 - closure_protocol: `agent_local_merge_v3`
 - closure_contract: `estudio_lifecycle_v1`
 - closure_mode: `in_progress`
-- technical_status: `in_progress`
+- technical_status: `pass`
 - human_gate_required: `no`
 - human_gate_status: `not_required`
 - human_gate_scope: `none`
@@ -30,9 +30,9 @@
 - worktree_status: `open`
 - branch_cleanup: `pending`
 - validation_tier: `Docs`
-- validation_result: `pending`
+- validation_result: `DocsOnly RpgIsometrico AuditOnly PASS; links 27/27; docs health 0 warnings; secret scan 0; overlap 0; git diff --check PASS`
 - post_merge_validation: `pending`
-- closure_summary: `pending`
+- closure_summary: `curadoria local pronta para integração; 73 fontes preservadas; sem gate humano, retomada ou exclusão`
 - global_sync_needed: `no`
 
 ## Objetivo
@@ -46,10 +46,10 @@ Consolidar decisões, supersessões e validações únicas em autoridades locais
 
 ## Aceitação
 
-- [ ] O mapa de proveniência distingue canon atual, implementação histórica e decisões supersedidas.
-- [ ] A linhagem G1–G4 e Tracks 01–02 preserva resultados, gates humanos históricos e limites de validação.
-- [ ] As 29 fontes de tracks, 35 de G1–G4, 4 checkpoints, 1 execution log e 4 smokes permanecem no Git e no worktree.
-- [ ] `DocsOnly RpgIsometrico`, links e `git diff --check` passam sem alterar o estado do produto.
+- [x] O mapa de proveniência distingue canon atual, implementação histórica e decisões supersedidas.
+- [x] A linhagem G1–G4 e Tracks 01–02 preserva resultados, gates humanos históricos e limites de validação.
+- [x] As 29 fontes de tracks, 35 de G1–G4, 4 checkpoints, 1 execution log e 4 smokes permanecem no Git e no worktree.
+- [x] `DocsOnly RpgIsometrico`, links e `git diff --check` passam sem alterar o estado do produto.
 
 ## Hard stops
 

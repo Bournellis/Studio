@@ -23,4 +23,4 @@
 - `Kanban/Done/`
 - `Handoffs/`
 
-História pré-cutover: `../../../08_Coordenacao_Agentes/`, `../implementation/tracks/` e `../implementation/phase-g*/`.
+História local consolidada: `../implementation/history.md`. Fontes pré-cutover detalhadas são abertas apenas quando uma evidência específica for necessária.

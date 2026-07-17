@@ -10,10 +10,12 @@
 - superseded_by: none
 
 - Canon de produto: `canon/README.md`.
+- Proveniência histórica do canon: `canon/historical-provenance.md`.
 - Estado técnico: `../implementation/current-status.md`.
+- História técnica consolidada: `../implementation/history.md`.
 - QA: `../qa/QA_INDEX.md`.
 - Validação: `validation.md`.
 - Guias Godot: `godot-patterns.md` e `platform-art-and-export-guidance.md`.
-- Smokes históricos: `canonical-product-foundation-smoke.md`, `campaign-framework-smoke.md` e `g4-shared-mode-foundation-smoke.md`.
+- Smokes históricos são fontes explícitas; sua função e linhagem estão resumidas em `../implementation/history.md`.
 
 Lore compartilhado vive em `../../../canon/shared-lore/`. Guias e smokes não definem estado, retomada ou próximo gate.

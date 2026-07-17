@@ -17,10 +17,8 @@
 
 ## História
 
-- `tracks/track-02-canonical-product-foundation/history/`: última baseline da Track 02.
-- `tracks/track-02-canonical-product-foundation/gates/`: gates concluídos.
-- `phase-g1/` a `phase-g4/`: ciclo de validação fechado.
-- `checkpoints/`: aceitações históricas.
-- `execution-log.md`: handoffs históricos.
+- `history.md`: rota consolidada para G1–G4, Tracks 01–02, gates, validações e smokes.
+- `../docs/canon/historical-provenance.md`: decisões e supersessões mapeadas para o canon atual.
+- `tracks/`, `phase-g1/` a `phase-g4/`, `checkpoints/` e `execution-log.md`: fontes históricas explícitas, fora da leitura normal.
 
 Nada nesta história abre track ou gate durante `PAUSADO_INDEFINIDO`.

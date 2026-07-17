@@ -31,7 +31,7 @@
 - Lore compartilhado: `../../../canon/shared-lore/`.
 - QA: `../qa/qa_manifest.json` e `../qa/QA_INDEX.md`.
 - Dívida: `engineering-health-baseline.md`; não pode crescer quando tocada.
-- História da Track 02: `tracks/track-02-canonical-product-foundation/history/` e gates concluídos.
+- História consolidada: `history.md`; fontes detalhadas permanecem em `tracks/`, `phase-g*/`, `checkpoints/` e `execution-log.md`.
 
 ## Gates
 
