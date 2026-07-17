@@ -1,4 +1,4 @@
-[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 param(
     [Parameter(Mandatory = $true)][string]$WorktreePath,
     [Parameter(Mandatory = $true)][string]$Branch,
@@ -84,6 +84,7 @@ if (-not $PSCmdlet.ShouldProcess($basePath, "fast-forward merge $Branch, validat
 
 Invoke-Git $basePath @('merge', '--ff-only', $Branch) | Write-Host
 Invoke-Validation $basePath 'Post-merge'
+Set-Location -LiteralPath $basePath
 Invoke-Git $basePath @('worktree', 'remove', $target) | Write-Host
 Invoke-Git $basePath @('branch', '-d', $Branch) | Write-Host
 Invoke-Git $basePath @('worktree', 'prune') | Write-Host
