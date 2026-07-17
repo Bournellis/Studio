@@ -114,6 +114,11 @@ if ($runCore) {
     Invoke-Required 'Governance schema' { Invoke-PythonCheck 'check_governance_contract.py' @() }
     Invoke-Required 'Documentation, closure and Portfolio Sync' { Invoke-PythonCheck 'check_docs_contract.py' @('--project', $Project) }
     Invoke-Required 'Text integrity' { Invoke-PythonCheck 'check_text_integrity.py' @() }
+    Invoke-Required 'Documentation Lite recovery' {
+        $arguments = @('--mode', 'Audit', '--project', $Project)
+        if ($Ci) { $arguments += '--ci' }
+        Invoke-PythonCheck 'documentation_lite.py' $arguments
+    }
     Invoke-Required 'Worktree overlap' { Invoke-PythonCheck 'check_worktree_overlap.py' @('--base-ref', 'main') }
     Invoke-Required 'Worktree lifecycle' {
         $output = & (Join-Path $PSScriptRoot 'check_worktree_lifecycle.ps1') -Root $root -FailOnOrphanDirs -Json 2>&1

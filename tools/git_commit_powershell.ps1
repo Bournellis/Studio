@@ -15,8 +15,17 @@ $worktree = (Resolve-Path -LiteralPath $WorktreePath).Path
 if (-not (Test-Path -LiteralPath $worktree -PathType Container)) { throw "WorktreePath is not a directory: $worktree" }
 
 function Invoke-Git([string[]]$Arguments, [switch]$AllowFailure) {
-    $output = & git -C $worktree @Arguments 2>&1
-    $code = $LASTEXITCODE
+    # Native stderr is expected for probes such as `git ls-files
+    # --error-unmatch`.  Capture it and decide by exit code instead of letting
+    # ErrorActionPreference=Stop turn an allowed miss into an exception.
+    $previousErrorAction = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        $output = & git -C $worktree @Arguments 2>&1
+        $code = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $previousErrorAction
+    }
     if ($code -ne 0 -and -not $AllowFailure) { throw "git $($Arguments -join ' ') failed: $($output -join [Environment]::NewLine)" }
     return [pscustomobject]@{ code = $code; output = @($output) }
 }

@@ -311,16 +311,16 @@ def _worktree_records(root: Path) -> list[dict[str, str]]:
     return records
 
 
-def _worktree_changes(path: Path, branch: str, base_ref: str) -> set[str]:
+def _dirty_worktree_changes(path: Path) -> set[str]:
     changes: set[str] = set()
-    if branch:
-        merge_proc = subprocess.run(["git", "merge-base", branch, base_ref], cwd=path, text=True, capture_output=True, check=False)
-        if merge_proc.returncode == 0:
-            changes.update(git(path, "diff", "--name-only", f"{merge_proc.stdout.strip()}..{branch}", check=False).splitlines())
     changes.update(git(path, "diff", "--cached", "--name-only", check=False).splitlines())
     changes.update(git(path, "diff", "--name-only", check=False).splitlines())
     changes.update(git(path, "ls-files", "--others", "--exclude-standard", check=False).splitlines())
     return {item for item in changes if item}
+
+
+def _branch_changes_since(root: Path, branch: str, base: str) -> set[str]:
+    return set(git(root, "diff", "--name-only", f"{base}..{branch}", check=False).splitlines())
 
 
 def _overlap_allowed(branch_a: str, branch_b: str, path: str, config: dict[str, Any]) -> bool:
@@ -344,15 +344,25 @@ def _overlap_allowed(branch_a: str, branch_b: str, path: str, config: dict[str, 
 def check_worktrees(root: Path, config: dict[str, Any], base_ref: str) -> CheckReport:
     report = CheckReport("worktree_overlap")
     records = [item for item in _worktree_records(root) if "branch" in item and Path(item["worktree"]).exists()]
-    state: list[tuple[str, Path, dict[str, str]]] = []
+    state: list[tuple[str, Path, set[str]]] = []
     for record in records:
         branch = record["branch"].removeprefix("refs/heads/")
         path = Path(record["worktree"])
-        changes = _worktree_changes(path, branch, base_ref)
-        normalized = {item.casefold(): item for item in changes}
-        state.append((branch, path, normalized))
+        state.append((branch, path, _dirty_worktree_changes(path)))
     overlaps = 0
-    for (branch_a, path_a, changes_a), (branch_b, path_b, changes_b) in combinations(state, 2):
+    for (branch_a, path_a, dirty_a), (branch_b, path_b, dirty_b) in combinations(state, 2):
+        merge_proc = subprocess.run(
+            ["git", "merge-base", branch_a, branch_b], cwd=root,
+            text=True, capture_output=True, check=False,
+        )
+        if merge_proc.returncode != 0:
+            report.fail("WORKTREE_MERGE_BASE", f"cannot resolve merge-base for {branch_a} and {branch_b}")
+            continue
+        pair_base = merge_proc.stdout.strip()
+        raw_a = _branch_changes_since(root, branch_a, pair_base) | dirty_a
+        raw_b = _branch_changes_since(root, branch_b, pair_base) | dirty_b
+        changes_a = {item.casefold(): item for item in raw_a}
+        changes_b = {item.casefold(): item for item in raw_b}
         for normalized in sorted(set(changes_a) & set(changes_b)):
             if _overlap_allowed(branch_a, branch_b, normalized, config):
                 continue

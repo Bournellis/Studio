@@ -16,6 +16,7 @@
     "evidence",
     "repository_storage",
     "multiagent",
+    "documentation_lite",
     "fast_suite"
   ],
   "properties": {
@@ -75,6 +76,26 @@
     "evidence": { "type": "object" },
     "repository_storage": { "type": "object" },
     "multiagent": { "type": "object" },
+    "documentation_lite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "enforcement_mode", "manifest_index",
+        "cleanup_batch_schema", "removal_receipt_schema", "recovery_tag_prefix",
+        "batch_max_paths", "batch_max_bytes", "prohibited_historical_globs"
+      ],
+      "properties": {
+        "schema_version": { "const": 2 },
+        "enforcement_mode": { "enum": ["audit", "strict"] },
+        "manifest_index": { "type": "string" },
+        "cleanup_batch_schema": { "type": "string" },
+        "removal_receipt_schema": { "type": "string" },
+        "recovery_tag_prefix": { "type": "string" },
+        "batch_max_paths": { "type": "integer", "minimum": 1 },
+        "batch_max_bytes": { "type": "integer", "minimum": 1 },
+        "prohibited_historical_globs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
     "fast_suite": { "type": "object" }
   }
 }

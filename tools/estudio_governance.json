@@ -241,6 +241,22 @@
     "worktree_root": "D:/Estudio-worktrees",
     "overlap_exceptions": []
   },
+  "documentation_lite": {
+    "schema_version": 2,
+    "enforcement_mode": "audit",
+    "manifest_index": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/index.json",
+    "cleanup_batch_schema": "tools/schemas/documentation_cleanup_batch.schema.json",
+    "removal_receipt_schema": "tools/schemas/documentation_removal_receipt.schema.json",
+    "recovery_tag_prefix": "recovery/estudio-documentation-lite/v2/",
+    "batch_max_paths": 150,
+    "batch_max_bytes": 2097152,
+    "prohibited_historical_globs": [
+      "**/Kanban/Done/**",
+      "**/implementation/tracks/**",
+      "Projetos/rpg-isometrico/implementation/phase-g*/**",
+      "Projetos/rpg-isometrico/implementation/checkpoints/**"
+    ]
+  },
   "fast_suite": {
     "baseline": "tools/estudio_fast_suite_baseline.json",
     "runs": 3,

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "pending",
+  "approved_by": "",
+  "approved_at": "",
+  "index_sha256": "",
+  "evidence": "Fabio must approve the exact index SHA-256 before Execute"
+}

@@ -1,0 +1,6 @@
+{
+  "schema_version": 2,
+  "enforcement_mode": "audit",
+  "authorization_path": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
+  "batches": []
+}

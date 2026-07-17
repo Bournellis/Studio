@@ -91,7 +91,7 @@ def validate_governance(config: Any, root: Path) -> list[Issue]:
     required = {
         "schema_version", "authority_documents", "toolchain", "groups", "projects",
         "documentation", "qa", "engineering_health", "evidence",
-        "repository_storage", "multiagent", "fast_suite",
+        "repository_storage", "multiagent", "documentation_lite", "fast_suite",
     }
     if not isinstance(config, dict):
         return [Issue("fail", "CONFIG_TYPE", "governance root must be an object")]
@@ -153,6 +153,9 @@ def validate_governance(config: Any, root: Path) -> list[Issue]:
         config.get("qa", {}).get("manifest_schema", ""),
         config.get("engineering_health", {}).get("baseline", ""),
         config.get("fast_suite", {}).get("baseline", ""),
+        config.get("documentation_lite", {}).get("cleanup_batch_schema", ""),
+        config.get("documentation_lite", {}).get("removal_receipt_schema", ""),
+        config.get("documentation_lite", {}).get("manifest_index", ""),
     ]:
         if rel and not (root / rel).is_file():
             report.fail("CONFIG_REFERENCE_MISSING", f"referenced file is missing: {rel}", rel)

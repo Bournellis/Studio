@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import Any
 
 from check_agent_closure_protocol import check_closure
+from documentation_lite import check_documentation_lite
 from check_portfolio_sync_queue import check_queue
 from execution_lock import ExecutionLock, ExecutionLockTimeout
 
@@ -480,6 +481,7 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
         check_storage(root, config, args.base_ref),
         check_evidence(root, config, selected, args.base_ref),
         check_worktrees(root, config, args.base_ref),
+        check_documentation_lite(root, config, mode="Audit", project=selector, ci=False),
     ]
     for item in check_reports:
         payload = item.as_dict(audit_only=args.audit_only)
