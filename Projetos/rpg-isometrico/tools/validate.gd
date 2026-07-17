@@ -58,7 +58,9 @@ func _run_validation() -> int:
 	return 0
 
 func _validate_campaign_generation_stability() -> Dictionary:
-	print("[validate] checking campaign scene generation stability")
+	print("[validate] checking campaign generation stability")
+	var campaign_catalog_path := "res://resources/generated/catalogs/campaign_catalog.tres"
+	var campaign_catalog_before := FileAccess.get_file_as_bytes(campaign_catalog_path)
 	var scene_paths: PackedStringArray = []
 	for stage_number: int in range(1, 6):
 		scene_paths.append("res://modes/campaign/stages/campaign_mission_%02d.tscn" % stage_number)
@@ -66,14 +68,19 @@ func _validate_campaign_generation_stability() -> Dictionary:
 	var before: Dictionary = {}
 	for scene_path: String in scene_paths:
 		before[scene_path] = FileAccess.get_file_as_bytes(scene_path)
+	var content_result: Dictionary = ContentGenerator.new().generate_all()
+	if not bool(content_result.get("ok", false)):
+		return content_result
+	if campaign_catalog_before != FileAccess.get_file_as_bytes(campaign_catalog_path):
+		return {"ok": false, "message": "Campaign catalog generation changed on the second pass."}
 	var second_result: Dictionary = SceneGenerator.new().generate_all()
 	if not bool(second_result.get("ok", false)):
 		return second_result
 	for scene_path: String in scene_paths:
 		if before[scene_path] != FileAccess.get_file_as_bytes(scene_path):
 			return {"ok": false, "message": "Campaign scene generation changed on the second pass: %s" % scene_path}
-	print("[validate] campaign scene generation is stable")
-	return {"ok": true, "message": "Campaign scene generation is stable."}
+	print("[validate] campaign generation is stable")
+	return {"ok": true, "message": "Campaign generation is stable."}
 
 func _validate_contract() -> Dictionary:
 	var library = ContentLibraryScript.new()

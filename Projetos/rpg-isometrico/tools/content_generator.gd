@@ -198,6 +198,10 @@ func _build_campaign_route_definition(definition: Dictionary, route_keys: Dictio
 	if route_keys.has(route_key):
 		return {"ok": false, "message": "Duplicate campaign route %s." % route_key}
 	route_keys[route_key] = true
+	route.resource_scene_unique_id = "route_%s_%s" % [
+		String(route.campaign_id).to_snake_case(),
+		String(route.difficulty_id).to_snake_case()
+	]
 
 	route.campaign_display_name = str(definition.get("campaign_display_name", "Campanha"))
 	route.difficulty_label = str(definition.get("difficulty_label", "Dificuldade local"))
@@ -247,6 +251,10 @@ func _build_campaign_stage_reference(definition: Dictionary, route_key: String) 
 				String(stage_reference.stage_id)
 			]
 		}
+	stage_reference.resource_scene_unique_id = "stage_%s_%s" % [
+		route_key.replace(":", "_").to_snake_case(),
+		String(stage_reference.stage_id).to_snake_case()
+	]
 
 	return {"ok": true, "stage_reference": stage_reference}
 
