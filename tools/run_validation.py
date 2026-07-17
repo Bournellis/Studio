@@ -13,6 +13,7 @@ import json
 import os
 import re
 import shutil
+import signal
 import statistics
 import subprocess
 import sys
@@ -51,16 +52,47 @@ def _result(name: str, status: str, duration: float, **extra: Any) -> dict[str, 
 
 def _run_process(command: list[str], cwd: Path, timeout: int) -> tuple[int, float, str, str]:
     started = time.monotonic()
+    creationflags = subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
+    process = subprocess.Popen(
+        command,
+        cwd=cwd,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        creationflags=creationflags,
+        start_new_session=os.name != "nt",
+    )
     try:
-        proc = subprocess.run(
-            command, cwd=cwd, text=True, encoding="utf-8", errors="replace",
-            capture_output=True, timeout=timeout, check=False,
-        )
-        return proc.returncode, time.monotonic() - started, proc.stdout, proc.stderr
+        stdout, stderr = process.communicate(timeout=timeout)
+        return process.returncode, time.monotonic() - started, stdout, stderr
     except subprocess.TimeoutExpired as exc:
-        stdout = exc.stdout if isinstance(exc.stdout, str) else ""
-        stderr = exc.stderr if isinstance(exc.stderr, str) else ""
+        _terminate_process_tree(process)
+        stdout, stderr = process.communicate()
+        if not stdout and isinstance(exc.stdout, str):
+            stdout = exc.stdout
+        if not stderr and isinstance(exc.stderr, str):
+            stderr = exc.stderr
         return 124, time.monotonic() - started, stdout, stderr + f"\ntimeout after {timeout}s"
+
+
+def _terminate_process_tree(process: subprocess.Popen[str]) -> None:
+    """Terminate the exact timed-out runner tree, including Windows wrappers."""
+    if os.name == "nt":
+        subprocess.run(
+            ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if process.poll() is None:
+            process.kill()
+        return
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
 
 
 def _godot_executable(root: Path, config: dict[str, Any], explicit: str | None) -> str | None:

@@ -6,6 +6,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 TOOLS = Path(__file__).resolve().parents[1]
 ROOT = TOOLS.parent
@@ -21,7 +22,7 @@ from estudio_governance import (  # noqa: E402
     validate_qa_manifest,
 )
 from estudio_repository_checks import check_uids, git_snapshot  # noqa: E402
-from run_validation import _runner_command  # noqa: E402
+from run_validation import _runner_command, _terminate_process_tree  # noqa: E402
 
 
 def git(cwd: Path, *args: str) -> None:
@@ -87,6 +88,20 @@ class GovernanceContractTests(unittest.TestCase):
         }
         with self.assertRaises(ValueError):
             _runner_command(ROOT, project, runner, self.config, None)
+
+    def test_windows_timeout_terminates_exact_runner_tree(self) -> None:
+        process = MagicMock()
+        process.pid = 4242
+        process.poll.return_value = 1
+        with patch("run_validation.os.name", "nt"), patch("run_validation.subprocess.run") as run:
+            _terminate_process_tree(process)
+        run.assert_called_once_with(
+            ["taskkill", "/PID", "4242", "/T", "/F"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        process.kill.assert_not_called()
 
 
 class RepositoryFixtureTests(unittest.TestCase):
