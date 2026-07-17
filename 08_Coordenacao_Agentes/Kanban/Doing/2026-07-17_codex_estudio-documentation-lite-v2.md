@@ -10,8 +10,8 @@
 - coordination_scope: `global_governance`
 - closure_protocol: `agent_local_merge_v3`
 - closure_contract: `estudio_lifecycle_v1`
-- closure_mode: `in_progress`
-- technical_status: `in_progress`
+- closure_mode: `merged_pending_human_review`
+- technical_status: `pass`
 - human_gate_required: `yes`
 - human_gate_status: `pending`
 - human_gate_scope: `approve the exact cleanup manifest hash before Execute`
@@ -23,16 +23,16 @@
 - branch: `codex/estudio/documentation-lite-v2`
 - worktree: `D:\Estudio-worktrees\estudio--codex--documentation-lite-v2`
 - base_ref: `main@94559fa90e0b682bfa31c678dfb4b0d72da9907e`
-- commit: `n/a`
-- merged_to: `n/a`
+- commit: `program preparation through 9b1fe891`
+- merged_to: `codex/estudio/documentation-lite-v2@9b1fe891`
 - merge_strategy: `ff-only`
-- merge_status: `pending`
+- merge_status: `merged`
 - worktree_status: `open`
 - branch_cleanup: `pending`
 - validation_tier: `FullLocal`
-- validation_result: `pending`
+- validation_result: `62/62 governance checker tests; per-project DocsOnly pre/post integration; direct DraxosMobile documentation tests`
 - post_merge_validation: `pending`
-- closure_summary: `pending`
+- closure_summary: `six project curations integrated and worktrees cleaned; exact strict cleanup index is the remaining human gate`
 - global_sync_needed: `no`
 
 ## Objective
