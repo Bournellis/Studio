@@ -1,58 +1,49 @@
 # Estudio Agent Workflow - Current
 
-This is the current operational guide for agents working in `D:\Estudio`.
+## Metadata
+
+- status: `active`
+- authority: `runbook`
+- last_verified: `2026-07-17`
+- review_when: `authority order, worktree, closure or portfolio-sync contracts change`
+- supersedes: `estudio-agent-workflow-current.md before Documentation Lite`
+- superseded_by: `none`
+
+This is a compact execution guide. `AGENTS.md` remains the operational contract and portfolio state is never copied here.
 
 ## Authority Order
 
-Read portfolio authority before project-local detail:
+1. `AGENTS.md`.
+2. `08_Coordenacao_Agentes/Prioridades_Estudio.md`.
+3. `Projetos/README.md`.
+4. `08_Coordenacao_Agentes/Estado_Atual.md`.
+5. Target project `AGENTS.md`, only if the portfolio permits the requested scope.
+6. Target project `implementation/current-status.md`.
+7. Target local coordination card, `TRIAGE.md` and `qa/QA_INDEX.md`.
 
-1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
-2. `AGENTS.md`
-3. `Projetos/README.md`
-4. `08_Coordenacao_Agentes/Estado_Atual.md`
-5. `canon/canon-brief.md`
-6. target project `AGENTS.md`, only if the portfolio allows the requested work
-7. target project `implementation/current-status.md`
-
-## Current Portfolio
-
-- P0 implementation: `Projetos/draxos-roguelike-cardgame/`
-- P2 implementation: `Projetos/draxos-mobile/`
-- Read-only design archive: `Projetos/_conceitos/mobile-universe/`
-- Paused indefinitely: `Projetos/rpg-isometrico/`
-- Paused indefinitely: `Projetos/rpg-turnos/`
+Read `canon/canon-brief.md` only for shared lore or project-boundary questions. Never infer current focus from this guide.
 
 ## Worktree Rule
 
 Use an external worktree for implementation, documentation, coordination and validation work:
 
 ```text
-D:\Estudio-worktrees\<projeto>--<agente>--<slug>
+D:\Estudio-worktrees\<project>--<agent>--<slug>
 ```
 
-Use branches like:
+Use `codex/<project>/<slug>` for Codex and `<agent>/<project>/<slug>` for other agents. Register objective, files, base ref and validation in a Doing card. Create a handoff only for a real transfer of responsibility or external state.
 
-- `codex/<projeto>/<slug>` for Codex
-- `<agente>/<projeto>/<slug>` for other agents
+## Local-First And Validation
 
-Register branch, worktree, objective, intended files, base docs and validation plan in Doing or Handoff for substantial work.
-
-## Routing Rules
-
-- Do not import mechanics between projects without a local document adopting the rule.
-- Do not treat historical guides, migration notes or paused project docs as current canon.
-- Use Fast Lane only for local, bounded work with no canon/product/platform impact.
-- Escalate to full read when touching portfolio, canon, shared architecture, product direction, release/publication or multiple projects.
-- DraxosMobile current package and next operational step live in its `implementation/current-status.md`; the portfolio snapshot must summarize it without becoming a long release log.
+- Keep project-local cards and handoffs under the selected project's `08_Coordenacao/`.
+- Queue global projection changes in `08_Coordenacao_Agentes/PortfolioSync_QUEUE.md`; local work does not edit `Estado_Atual.md`.
+- Use `Review` only for a pending human decision. Technical work may be integrated and cleaned first.
+- Use `tools/validate_estudio.ps1` with the smallest proportional profile.
+- Use `tools/close_worktree_powershell.ps1` for a verified local lifecycle. It never pushes.
+- Never import mechanics between projects without explicit adoption in the receiving project.
 
 ## Handoff Rule
 
-A good handoff names:
+A real handoff names changed files, validation, commit, merge target, post-merge validation, worktree/branch cleanup, blockers and the smallest safe next step.
 
-- owner and recipient
-- branch and worktree
-- package/stage preserved
-- changed files
-- validation commands and result
-- explicit blockers
-- smallest safe next step
+If responsibility does not change, close the card and do not create a duplicate handoff.

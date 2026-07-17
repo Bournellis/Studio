@@ -1,5 +1,14 @@
 # Thread Cheat Sheet
 
+## Metadata
+
+- status: `historical_reference`
+- authority: `historical_record`
+- last_verified: `2026-07-17`
+- review_when: `explicit audit of pre-Documentation-Lite prompt routing`
+- supersedes: `none`
+- superseded_by: `thread-cheat-sheet-current.md`
+
 > Historical cheat sheet. For current project priorities and prompt shapes, use `thread-cheat-sheet-current.md`. Paused projects listed here are historical unless `08_Coordenacao_Agentes/Prioridades_Estudio.md` says otherwise.
 
 Versao curta para abrir threads em `D:\Estudio`.

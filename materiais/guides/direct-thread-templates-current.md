@@ -1,73 +1,73 @@
 # Direct Thread Templates - Current
 
-Copy one of these into a new thread when starting focused work.
+## Metadata
 
-## Estudio Portfolio Docs
+- status: `active`
+- authority: `runbook`
+- last_verified: `2026-07-17`
+- review_when: `routing, local-first or validation contracts change`
+- supersedes: `direct-thread-templates-current.md before Documentation Lite`
+- superseded_by: `none`
+
+Copy one of these into a new task when starting focused work.
+
+## Estudio Portfolio Or Governance
 
 ```text
 Projeto: estudio
-Tipo: DocsOnly
-Objetivo: sincronizar docs de portfolio/coordenacao com o estado operacional atual.
+Tipo: portfolio_sync | global_governance | documentation_alignment
+Objetivo: <resultado global delimitado>
 Base obrigatoria:
-- D:\Estudio\08_Coordenacao_Agentes\Prioridades_Estudio.md
 - D:\Estudio\AGENTS.md
+- D:\Estudio\08_Coordenacao_Agentes\Prioridades_Estudio.md
 - D:\Estudio\Projetos\README.md
 - D:\Estudio\08_Coordenacao_Agentes\Estado_Atual.md
-Escopo:
-- D:\Estudio\README.md
-- D:\Estudio\08_Coordenacao_Agentes\
-- D:\Estudio\Projetos\README.md
+Escopo: <shared paths explicitamente nomeados>
 Validacao:
+- .\tools\validate_estudio.ps1 -Profile DocsOnly -Project AllOfficial
 - git diff --check
-- rg drift checks contra status antigo e proximo passo antigo
 ```
 
-## Draxos Roguelike Content Lab
+## Project-Local Work
 
 ```text
-Projeto: draxos-roguelike-cardgame
-Tipo: Implementation
-Objetivo: criar ou validar proposal packs do Design Lab.
-Escopo:
-- Projetos/draxos-roguelike-cardgame/data/lab/design/
-- Projetos/draxos-roguelike-cardgame/docs/design-lab.md
-Validacao:
-- tools/validate.gd
-- focused Design Lab / Card Impact / Run Lab gates conforme risco
+Projeto: <official project>
+Tipo: Implementation | Documentation | Validation | Review
+Objetivo: <resultado delimitado>
+Base obrigatoria:
+- AGENTS.md
+- 08_Coordenacao_Agentes/Prioridades_Estudio.md
+- Projetos/<project>/AGENTS.md
+- Projetos/<project>/implementation/current-status.md
+Escopo: Projetos/<project>/<paths>
+Coordenacao: Projetos/<project>/08_Coordenacao/
+Validacao: <smallest typed profile from qa/QA_INDEX.md>
 ```
 
 ## DraxosMobile Scoped Work
 
 ```text
 Projeto: draxos-mobile
-Tipo: Client | Backend | Docs | Validation | Release
+Tipo: Client | Backend | Docs | Validation | Release preparation
 Objetivo: <resultado delimitado>
 Base obrigatoria:
 - Projetos/draxos-mobile/AGENTS.md
-- Projetos/draxos-mobile/docs/agent-operating-manual.md
-- Projetos/draxos-mobile/docs/documentation-index.md
 - Projetos/draxos-mobile/implementation/current-status.md
-Escopo:
-- <paths>
-Fora do escopo:
-- tuning amplo
-- PVP
-- economia ampla
-- mutacao remota/publicacao sem pedido explicito
-Validacao:
-- git diff --check
-- tools/validate_foundation.ps1 -Profile <profile>
+- Projetos/draxos-mobile/08_Coordenacao/TRIAGE.md
+- Projetos/draxos-mobile/qa/QA_INDEX.md
+Escopo: <paths>
+Fora do escopo: tuning amplo, PVP, economia, remoto e publicacao sem decisao explicita
+Validacao: <typed local profile>
 ```
 
-## Paused Project Historical Query
+## Paused Project Consultation Or Integrity
 
 ```text
-Projeto: rpg-isometrico | rpg-turnos
-Tipo: Historical
-Objetivo: consultar contexto historico especifico.
+Projeto: <paused project>
+Tipo: Historical | Governance | Integrity
+Objetivo: consultar ou reparar integridade explicitamente autorizada
 Regra:
-- leitura apenas
-- nao implementar
-- nao selecionar track/gate
-- nao promover mecanica para projeto ativo sem documento local
+- confirmar permissao em Prioridades_Estudio.md
+- nao retomar produto nem selecionar nova track
+- nao promover mecanica para outro projeto sem adocao local
 ```

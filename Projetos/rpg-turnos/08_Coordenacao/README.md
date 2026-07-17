@@ -43,4 +43,4 @@ Allowed closure protocol: `agent_local_merge_v3`. Human and publication gates st
 
 - Cards and handoffs: `YYYY-MM-DD_agente_slug.md`.
 - One active worktree and branch per implementation card.
-- Queue and handoff placeholders are the tracked `README.md` files in their directories.
+- Empty Kanban lanes use `.gitkeep`; README files never occupy Backlog, Doing, Review or Done as fake cards. The Handoffs router remains outside those lanes.

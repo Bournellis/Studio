@@ -1,5 +1,14 @@
 # Codex Workflow Guide
 
+## Metadata
+
+- status: `historical_reference`
+- authority: `historical_record`
+- last_verified: `2026-07-17`
+- review_when: `explicit audit of pre-Documentation-Lite agent routing`
+- supersedes: `none`
+- superseded_by: `estudio-agent-workflow-current.md`
+
 > Historical guide. For current work, use `estudio-agent-workflow-current.md`, `thread-cheat-sheet-current.md` and `direct-thread-templates-current.md`. The portfolio source of truth remains `08_Coordenacao_Agentes/Prioridades_Estudio.md`.
 
 Este guia explica como abrir e conduzir threads do Codex em `D:\Estudio` sem ler contexto demais. O workspace agora e multi-projeto: escolha o projeto antes de seguir docs profundas.

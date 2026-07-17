@@ -17,3 +17,18 @@ Projetos/**/addons/gut/
 Projetos/rpg-isometrico/implementation/phase-g*/
 Projetos/rpg-isometrico/implementation/checkpoints/
 migration/
+
+# Documentation Lite: history remains in Git and requires an explicit
+# `rg --no-ignore`. Review stays visible because it contains live gates only.
+**/Handoffs/**
+**/Kanban/Done/**
+**/archive/**
+**/Historico/**
+
+# Historical guides, outside normal operational search.
+materiais/guides/art-pipeline.md
+materiais/guides/art-tutorial-heroic.md
+materiais/guides/codex-workflow-guide.md
+materiais/guides/direct-thread-templates.md
+materiais/guides/thread-cheat-sheet.md
+materiais/guides/unity-legacy-surface.md

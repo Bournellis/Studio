@@ -1,5 +1,14 @@
 # Tutorial de Arte — Personagem Heroic + Martelo
 
+## Metadata
+
+- status: `historical_reference`
+- authority: `historical_record`
+- last_verified: `2026-07-17`
+- review_when: `explicit consultation of the RPG Isometrico Unity art experiment`
+- supersedes: `none`
+- superseded_by: `none`
+
 > Historical Unity tutorial. This file records the completed legacy art experiment and should not be used as the active Godot production workflow. For current asset work, follow `materiais/guides/art-pipeline.md`, `Projetos/rpg-isometrico/docs/platform-art-and-export-guidance.md`, and the active track docs.
 
 ## O que este documento é

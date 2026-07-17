@@ -1,5 +1,14 @@
 # Direct Thread Templates
 
+## Metadata
+
+- status: `historical_reference`
+- authority: `historical_record`
+- last_verified: `2026-07-17`
+- review_when: `explicit audit of pre-Documentation-Lite task templates`
+- supersedes: `none`
+- superseded_by: `direct-thread-templates-current.md`
+
 > Historical templates. For current work, use `direct-thread-templates-current.md`. Do not use paused-project templates here as active implementation prompts unless the user explicitly asks to resume that project.
 
 Templates diretos para abrir threads em `D:\Estudio`.

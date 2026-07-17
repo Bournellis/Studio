@@ -1,5 +1,14 @@
 # Unity Legacy Surface
 
+## Metadata
+
+- status: `historical_reference`
+- authority: `historical_record`
+- last_verified: `2026-07-17`
+- review_when: `explicit RPG Isometrico legacy path migration or removal`
+- supersedes: `none`
+- superseded_by: `none`
+
 > Historical compatibility guide. RPG Isometrico is currently paused in the Estudio portfolio; use this file only for explicit historical consultation, not for current implementation routing.
 
 This guide records Unity paths that are still important to RPG Isometrico history but no longer reflect current naming canon.

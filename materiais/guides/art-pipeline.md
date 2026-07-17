@@ -1,5 +1,16 @@
 # Art Pipeline
 
+## Metadata
+
+- status: `historical_reference`
+- authority: `historical_record`
+- last_verified: `2026-07-17`
+- review_when: `RPG Isometrico is explicitly resumed or its visual pipeline is replaced`
+- supersedes: `none`
+- superseded_by: `none`
+
+> RPG Isometrico-specific legacy reference. It is not a studio-wide pipeline and does not authorize work while the project is paused.
+
 ## Purpose of This Document
 
 This document is the visual production reference for the game. It defines the art direction already decided, the production philosophy, the tool chain, and the pipeline for every visual category the game requires.

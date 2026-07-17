@@ -1,49 +1,58 @@
 # Thread Cheat Sheet - Current
 
-Use these prompt shapes for new agent threads in `D:\Estudio`.
+## Metadata
 
-## P0 Roguelike Implementation
+- status: `active`
+- authority: `runbook`
+- last_verified: `2026-07-17`
+- review_when: `scope taxonomy, routing or closure contracts change`
+- supersedes: `thread-cheat-sheet-current.md before Documentation Lite`
+- superseded_by: `none`
 
-```text
-Projeto: draxos-roguelike-cardgame
-Tipo: Implementation | Validation | Review
-Objetivo: <one sentence>
-Rota: Fast Lane if local; no canon changes unless requested
-Escopo: Projetos/draxos-roguelike-cardgame/<paths>
-Validacao: tools/validate.gd and focused lab gates as risk requires
-```
+Use these prompt shapes for new agent tasks in `D:\Estudio`.
 
-## P2 DraxosMobile Work
+## Project-Local Work
 
 ```text
-Projeto: draxos-mobile
-Tipo: Docs | Client | Backend | Validation | Release
+Projeto: <official project from Projetos/README.md>
+Tipo: Implementation | Documentation | Validation | Review
 Objetivo: <one sentence>
-Rota: follow AGENTS.md + docs/agent-operating-manual.md
-Escopo: Projetos/draxos-mobile/<paths>
-Boundaries: no remote mutation/publication unless explicit; no tuning/economy/PVP/content without decision
-Validacao: validate_foundation.ps1 profile or focused docs checks
+Autoridade: read AGENTS.md, Prioridades_Estudio.md and local current-status.md
+Escopo: Projetos/<project>/<paths>
+Fora do escopo: product/priority/remote/publication unless explicitly authorized
+Validacao: smallest profile from qa/QA_INDEX.md and qa_manifest.json
 ```
 
-## Docs-Only Portfolio Cleanup
+## Operations-Local Work
+
+```text
+Projeto: <official project>
+Tipo: QA | Build preparation | Evidence | Release preparation
+Objetivo: <one sentence>
+Rota: local coordination; no portfolio hot-file edits
+Boundaries: no remote, publication, signing or physical-device authority
+Validacao: <typed local runner/profile>
+```
+
+## Portfolio Or Governance Work
 
 ```text
 Projeto: estudio
-Tipo: DocsOnly
-Objetivo: align portfolio/coordinator docs with current project status
-Rota: portfolio authority first
-Escopo: README.md, AGENTS.md, Projetos/README.md, 08_Coordenacao_Agentes/
-Validacao: git diff --check + targeted rg drift checks
+Tipo: portfolio_sync | global_governance | documentation_alignment
+Objetivo: <one sentence>
+Rota: dedicated global writer and current authority documents
+Escopo: <explicit shared paths>
+Validacao: DocsOnly AllOfficial + focused contract checks
 ```
 
-## Historical Consultation
+## Paused Project Consultation Or Integrity
 
 ```text
-Projeto: rpg-isometrico | rpg-turnos | migration
-Tipo: Historical
-Objetivo: answer <question>
-Rota: read-only historical path
-Regra: do not treat historical notes as current canon or implementation permission
+Projeto: <paused project | migration>
+Tipo: Historical | Integrity
+Objetivo: <question or bounded repair>
+Rota: portfolio permission first
+Regra: no product resumption or new track without an explicit decision
 ```
 
 ## Review
@@ -56,14 +65,14 @@ Rota: read status, diff, validation evidence and touched docs
 Saida: findings first, file/line references, residual risk
 ```
 
-## Multiagent Handoff
+## Real Handoff
 
 ```text
 Projeto: <target>
-Tipo: Handoff
 From/To: <agent> -> <agent/user>
 Branch/worktree: <branch> / <absolute path>
-Estado preservado: <package/stage>
+Commit/merged_to: <sha> / main@<sha>
 Validacao: <commands and PASS/FAIL/NOT RUN>
+Cleanup: <worktree removed; branch deleted or exact reason>
 Proximo passo: <smallest safe next action>
 ```
