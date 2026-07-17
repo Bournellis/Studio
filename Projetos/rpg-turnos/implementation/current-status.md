@@ -4,7 +4,7 @@
 
 - status: `paused`
 - authority: `local_state`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `portfolio resumes the project or the runtime baseline changes`
 - supersedes: `current-status.md before Governance v2`
 - superseded_by: `none`
@@ -41,9 +41,10 @@
 ## Read Next
 
 - `../08_Coordenacao/documentation-index.md`
+- `../docs/resume-brief.md`
 - `../qa/QA_INDEX.md`
 - `engineering-health-baseline.md`
+- `history.md`
 - `../AGENTS.md`
-- `tracks/track-02-draxos-lore-progression/linear-execution-plan.md`
 - `../docs/game-design-document.md`
 - `../tools/validate.gd`
