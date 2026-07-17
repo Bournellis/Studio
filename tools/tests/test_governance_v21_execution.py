@@ -12,7 +12,7 @@ if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
 
 from execution_lock import ExecutionLock  # noqa: E402
-from run_validation import _isolated_environment, _parse_structured_result, _runner_resources  # noqa: E402
+from run_validation import _contract_hash, _isolated_environment, _parse_structured_result, _runner_resources  # noqa: E402
 
 
 class ExecutionIsolationTests(unittest.TestCase):
@@ -31,6 +31,19 @@ class ExecutionIsolationTests(unittest.TestCase):
             ["GodotQA"],
             _runner_resources({"runner": "gut_scripts", "lane": "godot", "entrypoint": "res://gut.gd", "args": []}),
         )
+
+    def test_fast_contract_hash_includes_execution_policy(self) -> None:
+        manifest = {
+            "runners": [
+                {
+                    "id": "rules", "category": "fast", "runner": "gut_scripts", "lane": "godot",
+                    "entrypoint": "res://gut.gd", "args": [],
+                }
+            ]
+        }
+        isolated = {"qa": {"user_data_mode_default": "isolated"}}
+        shared = {"qa": {"user_data_mode_default": "shared_locked"}}
+        self.assertNotEqual(_contract_hash(manifest, isolated), _contract_hash(manifest, shared))
         self.assertEqual(
             ["AndroidQA", "GodotQA"],
             _runner_resources(

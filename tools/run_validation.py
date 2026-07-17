@@ -181,20 +181,36 @@ def _runner_command(
     raise ValueError(f"unsupported runner type: {runner_type}")
 
 
-def _contract_hash(manifest: dict[str, Any]) -> str:
+def _contract_hash(manifest: dict[str, Any], config: dict[str, Any] | None = None) -> str:
     runners = [runner for runner in manifest.get("runners", []) if runner.get("category") == "fast"]
-    payload = json.dumps(runners, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    execution_policy = {
+        "version": 1,
+        "user_data_mode_default": (config or {}).get("qa", {}).get("user_data_mode_default", "isolated"),
+        "runners": {
+            str(runner.get("id")): {
+                "resources": _runner_resources(runner),
+                "user_data_mode": runner.get(
+                    "user_data_mode", (config or {}).get("qa", {}).get("user_data_mode_default", "isolated")
+                ),
+            }
+            for runner in runners
+        },
+    }
+    payload = json.dumps(
+        {"runners": runners, "execution_policy": execution_policy},
+        ensure_ascii=False, sort_keys=True, separators=(",", ":"),
+    ).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
 
 
 def _baseline_issue(
     baseline: dict[str, Any], project: dict[str, Any], manifest: dict[str, Any], runner: dict[str, Any],
-    duration: float, godot_version: str | None,
+    duration: float, godot_version: str | None, config: dict[str, Any] | None = None,
 ) -> tuple[str | None, str | None]:
     entry = baseline.get("projects", {}).get(project["id"], {})
     if entry.get("status") != "measured":
         return "FAST_BASELINE_UNMEASURED", f"FastSuite baseline for {project['id']} is not measured"
-    contract = _contract_hash(manifest)
+    contract = _contract_hash(manifest, config)
     if entry.get("contract_hash") != contract:
         return "FAST_BASELINE_STALE", f"FastSuite contract changed for {project['id']}"
     if godot_version and entry.get("godot_version") != godot_version:
@@ -503,7 +519,9 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
                     continue
                 result = _run_checked(root, project, runner, command, args.audit_only, config)
                 if runner.get("category") == "fast" and result["status"] == "pass":
-                    code, message = _baseline_issue(baseline, project, manifest, runner, float(result["duration_seconds"]), godot_version)
+                    code, message = _baseline_issue(
+                        baseline, project, manifest, runner, float(result["duration_seconds"]), godot_version, config
+                    )
                     if code:
                         result["budget_code"] = code
                         result["reason"] = message

@@ -48,7 +48,7 @@ def main() -> int:
     if _needs_godot_import(runners) and not _godot_import_ready(root, project):
         if not godot_exe:
             raise SystemExit("Godot executable is required for import warm-up.")
-        import_result = _warm_godot_import(root, project, godot_exe, False)
+        import_result = _warm_godot_import(root, project, godot_exe, False, config)
         if import_result["status"] != "pass":
             raise SystemExit(f"Godot import warm-up failed: {import_result['reason']}")
     warmups = int(config["fast_suite"]["warmup_runs"])
@@ -56,12 +56,12 @@ def main() -> int:
     measured: dict[str, dict[str, float]] = {}
     for runner in runners:
         for _ in range(warmups):
-            result = _run_checked(root, project, runner, commands[runner["id"]], False)
+            result = _run_checked(root, project, runner, commands[runner["id"]], False, config)
             if result["status"] != "pass":
                 raise SystemExit(f"Warm-up failed for {runner['id']}: {result['reason']}")
         durations: list[float] = []
         for _ in range(runs):
-            result = _run_checked(root, project, runner, commands[runner["id"]], False)
+            result = _run_checked(root, project, runner, commands[runner["id"]], False, config)
             if result["status"] != "pass":
                 raise SystemExit(f"Calibration failed for {runner['id']}: {result['reason']}")
             durations.append(float(result["duration_seconds"]))
@@ -74,7 +74,7 @@ def main() -> int:
     payload = {
         "project": project["id"],
         "godot_version": godot_version,
-        "contract_hash": _contract_hash(manifest),
+        "contract_hash": _contract_hash(manifest, config),
         "source_sha": subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, text=True, capture_output=True, check=True).stdout.strip(),
         "runners": measured,
     }
