@@ -1,0 +1,192 @@
+{
+  "schema_version": 2,
+  "receipt_id": "receipt_local_rpgturnos",
+  "batch_id": "local_rpgturnos",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "generated_at": "2026-07-17T15:22:14.270520Z",
+  "index_sha256": "d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9",
+  "manifest_sha256": "4375520734edca6ac4dfa0271e64a23bb2c65c61a7700b6db0c485c1bf808e10",
+  "entries": [
+    {
+      "path": "Projetos/rpg-turnos/08_Coordenacao/Kanban/Doing/2026-07-17_codex_documentation-lite-curation-v2.md",
+      "sha256": "9d6e801a40e78af55b1362e3b9a5f256fe96f4edc04b40c832eafb0bc00c90a5",
+      "git_blob": "146ed17acd83a18575f758e66ab7aa77c78cf377",
+      "record_id": "rec_2026_07_17_codex_documentation_lite_curation_6acb0acdb5",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/08_Coordenacao/Kanban/Done/2026-07-16_codex_p20-integrity-governance-v2.md",
+      "sha256": "3b2307a130a822a5bcc6769dae80fcc92a7b09297b3a7769a668bdad1eab3242",
+      "git_blob": "4b4b1edb394326f76d52ae3e529f5ca7ca9e289c",
+      "record_id": "rec_2026_07_16_codex_p20_integrity_governance_v2_07d3df0127",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/docs/cardgame-core-experiments.md",
+      "sha256": "a980c22d445dc75134aa5208cc77eebd1f01d2f317d63720e700543dbea41984",
+      "git_blob": "2f05a1755c5708c48b817d0439c5d95a3d8f8e16",
+      "record_id": "rec_cardgame_core_experiments_a95bdcef2c",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/docs/first-playable-slice-smoke.md",
+      "sha256": "5cf7d3335515f99e13fbffed40e6c03405ceed22b553389714ce221d96aed70e",
+      "git_blob": "a13cb60c21c0ba188f673db4bd8d38d9510168f3",
+      "record_id": "rec_first_playable_slice_smoke_ce24f72fca",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/docs/lore-content-migration.md",
+      "sha256": "7881bd9d20d53a25cc71ab2b7945e09f67a6067bf1ef014ce49bfc6268eb2a6f",
+      "git_blob": "cd9e3fe21ef0df8fba4e067fa21ea26948daa67d",
+      "record_id": "rec_lore_content_migration_1fc77a90d3",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/docs/open-gaps.md",
+      "sha256": "625ffc830717c5fba4df9f6e25115c5ce9ec64983f428f1fbab531535a21b41c",
+      "git_blob": "6bba9c3dfd264d3a75b35e232d0679dd1386163b",
+      "record_id": "rec_open_gaps_1ae52436ad",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/docs/project-brief.md",
+      "sha256": "5b870e1fd2fb4c00eae6119ae7329a01f966a666785b0e01158754a884629987",
+      "git_blob": "61b2a5858540aa7cfc29df26c9c8b55b0febfce9",
+      "record_id": "rec_project_brief_e57f205476",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/roadmap.md",
+      "sha256": "e984732f2e392ed718d0b7cf71d3b4b7d5e66afe03f8a60c743fb84141895f19",
+      "git_blob": "9923d961fb98879bf6d76ea9322fcfee7970fca1",
+      "record_id": "rec_roadmap_63b41dca42",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/README.md",
+      "sha256": "d029388933307a90891978aeaf05a269caa6eb91dc239553fc7165c06ee49795",
+      "git_blob": "924fe81dbdfcbd812173311816769cfd6b8746a5",
+      "record_id": "rec_readme_ac91be40cf",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/cardgame-core-implementation-plan.md",
+      "sha256": "f41cc45d1c941ddb12a0b5042014265cb4b526ecce32accfc34d7c1327a79bec",
+      "git_blob": "600a07a20d8b57aa27d8eaa485e3d4295170ef4b",
+      "record_id": "rec_cardgame_core_implementation_plan_1bf6f13171",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/current-status.md",
+      "sha256": "8367aa2c8d1ecf49d6d21dc943199962d9fbfdb5dca2bf7d180725a7db9f8c40",
+      "git_blob": "72588af6f57d80fda237e0fa2dcb242b998bf6ae",
+      "record_id": "rec_current_status_67b6414358",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/foundation-runtime-record.md",
+      "sha256": "01813e498cc24025c355789480be8c50d34844b34dc9ad58984fd10d54b4821f",
+      "git_blob": "b36d1bdb4844e01c695fc8e1232223957515139c",
+      "record_id": "rec_foundation_runtime_record_172056d249",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/current-status.md",
+      "sha256": "9f575c625f7972ce37a649d346f143df3605d9ca7ba39a736459aeec200f7eab",
+      "git_blob": "f8ce62a6212f6dcf8fdd5f8cb9dfb1add887c5e7",
+      "record_id": "rec_current_status_2e9fdc71ac",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/implementation-plan.md",
+      "sha256": "615f89a7f9f326cd1df21f1c8d2f35c704e01bafd365f5fb9183ac50ac55551f",
+      "git_blob": "b8bae5561da6a8762f9333c0978e8de405622c4a",
+      "record_id": "rec_implementation_plan_4f31e8b9c7",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/linear-execution-plan.md",
+      "sha256": "179486e01464451dfd71e87a635604974c0db551cbb28ec658d7ab5a094b845a",
+      "git_blob": "e0c1a3499b74b173a0877d879705aa6c4766c8f5",
+      "record_id": "rec_linear_execution_plan_dd86ed72d0",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    }
+  ]
+}
