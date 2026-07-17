@@ -1,0 +1,696 @@
+{
+  "schema_version": 2,
+  "receipt_id": "receipt_coord_fpsplayground_202606",
+  "batch_id": "coord_fpsplayground_202606",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "generated_at": "2026-07-17T15:20:52.221673Z",
+  "index_sha256": "d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9",
+  "manifest_sha256": "be0c043afb0818feb2ab4538bfe012150c6561b0ac7cf773748746f1c9188aa0",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-19_codex_fpsplayground_track09-combat-sandbox-v1.md",
+      "sha256": "8d163c7bc3671a392bd3331291f78acf7cb9d131e1349133d85e9e2e7c1c79c4",
+      "git_blob": "253db795c0b3acb18f0d9cf0079e4ecf0b23a6f4",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_track09_combat_b735e15270",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-19_codex_fpsplayground_track10-combat-balance-weapon-roles-v1.md",
+      "sha256": "a9c6847fa7f286da2c61e7b8efc0f49152415413c0ad50357f621548733e66ab",
+      "git_blob": "25e56dfbb0684189588f0dae7ccdee26ff2bc55a",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_track10_combat_adc0540313",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-19_codex_fpsplayground_track11-complete-telemetry-v1.md",
+      "sha256": "fbd03b3d5892095cd78719cff47f20ef38701dfcde56dd4599c0b3491ae47a07",
+      "git_blob": "d8802767be8eb71429d0b019bbf27b53250ec1eb",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_track11_comple_182f12058a",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-19_codex_fpsplayground_track11-telemetry-blast-hotfix-v1.md",
+      "sha256": "a38abf293a527ce3a684772144e935a0d6a71998dc41cc40ac4f8efd711e4687",
+      "git_blob": "b4b6a58f39b4de41d7eadd304f3febe3fa5a741c",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_track11_teleme_164b4c8558",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-19_codex_fpsplayground_track11-telemetry-manual-reset-hotfix-v1.md",
+      "sha256": "733d82343d13ab936f7083dbd37340d4b8985a3e6982e94ebfa0bf2bbb7eb03e",
+      "git_blob": "d0595fddb55d3f2c2b6d9fd0014a35d26c6b74ad",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_track11_teleme_1497479170",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-19_codex_fpsplayground_track11-telemetry-summary-flush-hotfix-v2.md",
+      "sha256": "04475bc0ea9fb0868b983ea642218682171da960ade8db44ef57199ef684fb53",
+      "git_blob": "7b5968fc2d884230a50610b5381e04632239ca9a",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_track11_teleme_bb43ceed03",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-19_codex_fpsplayground_track12-telemetry-readout-balance-baseline-v1.md",
+      "sha256": "1111908db3865d8111fa17a71fb7b6b56bde1ee4d7175cf7b7d64abb15f15d91",
+      "git_blob": "1f65932344c423fc2a23d9393bbb7ab9c7c99835",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_track12_teleme_987c301ef9",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-19_codex_fpsplayground_track13-docs-rebaseline-future-roadmap-v1.md",
+      "sha256": "563504ef10b79f3c7371181a5093b8fe6c242054f9c8f9d84a1c70f54cc757e3",
+      "git_blob": "026d66566b65e0c15a0f10fc17b15076f4130452",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_track13_docs_r_40b2b79474",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-20_codex_fpsplayground_micro-doc-coordination-cleanup-v1.md",
+      "sha256": "2504849f87d3fd9f14e701aa5b3a049edb6280553e06f0b8cf6db82a17ac529e",
+      "git_blob": "8507b26ad8923bbcc9f1cd2f56b047d12b39de73",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_micro_doc_coor_b6d558f2c8",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-20_codex_fpsplayground_post-14f-doc-closeout-implementation-audit-v1.md",
+      "sha256": "5d8945f0ef471957035d962b0edf2d911ede22e4754b3dd05f4b4b8e05841ba9",
+      "git_blob": "95f581177ce0243c69ec6028cbe2c52db36e3a7f",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_post_14f_doc_c_d8e207acb1",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-20_codex_fpsplayground_track14a-refactor-safety-net-v1.md",
+      "sha256": "d961a98781f92ca9e332cc2dcce5efd52a3a7bdf6d6a9ccccc447f146a757711",
+      "git_blob": "221463367c0589c3b54ec6daf776ac2c6f61f669",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_track14a_refac_f8b3c89ef1",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-20_codex_fpsplayground_track14b-arena-root-boundary-v1.md",
+      "sha256": "00cfad3cf5d7230a4fbf6485f4debc608c39ce78b4e2347c27cd16fd765ee721",
+      "git_blob": "042b93fb427a35080b652d2a058018867e0dc2aa",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_track14b_arena_8061882a08",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-20_codex_fpsplayground_track14c-combat-pipeline-extraction-v1.md",
+      "sha256": "a6540ca2cbf1f7921ff1ec1756427e46fece3e76d2a007d685bc30e313b3774c",
+      "git_blob": "7ffea0b97fd6a992b150057bcf80a7d9175c4bae",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_track14c_comba_53c0a0510c",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-20_codex_fpsplayground_track14d-pickups-jump-pads-extraction-v1.md",
+      "sha256": "6412ad16be554b76d5934bd0f7ab3eac4e33c263d0b3da9a8d8379040add88b2",
+      "git_blob": "d152ecab41a459bd37fc6facc2179260e21a012e",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_track14d_picku_aef48dd361",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-20_codex_fpsplayground_track14e-bot-decision-boundary-v1.md",
+      "sha256": "606b3e5016a533c44a0623229d74f2c64bbd90c730143a1cf104db7731ba11da",
+      "git_blob": "29390df5746f60eb365aee8b9d7c11e15253bb54",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_track14e_bot_d_a18bf7d5fe",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-20_codex_fpsplayground_track14f-cleanup-documentation-v1.md",
+      "sha256": "dcef1feec6ad2ebf845cacda77a80175a2aec7d93e32eb19c4bc338dd4e76055",
+      "git_blob": "037976b2c452886aaae52e6c35f7a19adb99377a",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_track14f_clean_936f4392c4",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-20_codex_fpsplayground_track14g-surgical-expansion-hardening-v1.md",
+      "sha256": "e0cf9bdbc6e72d51e9d6118c879314658ade153f4f97f1ac5f90e995cade54a6",
+      "git_blob": "7482f5b2df716ff71047e18b45688884dc2728d3",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_track14g_surgi_c1e519270d",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_bootstrap-closeout.md",
+      "sha256": "f01daff2f9ce96b934c422df2dc6940c478debff8c8120f6f10092740257dbc3",
+      "git_blob": "60e902afa90b16d8ced19d6de6ce222e8e362824",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_bootstrap_closeou_88e9f480cf",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_bootstrap.md",
+      "sha256": "d068a76961d823cfa0add0ae75a996e18c0dfff9a337f3c4c59a0c489609542b",
+      "git_blob": "ed0618f6d63726763066c4993438b186ace6a642",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_bootstrap_12257f5188",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_bot-pressure-jump-hotfix-v1.md",
+      "sha256": "cfbfb114268e0226a9aed1db44cf1704a73c7482e992ca9349f2ec46205b1146",
+      "git_blob": "0fac652d80db16bd4589443360c57accbf249764",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_bot_pressure_jump_d64d96d825",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_bot-vertical-awareness.md",
+      "sha256": "921c50e916a82e13f9961f6d0755f8eea67215cb8f1cfa878ccab0e137a25dcc",
+      "git_blob": "fb4bafd87482f864dd7bdd81d3416d44e2e2c3bd",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_bot_vertical_awar_92d0095fbf",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_editor-input-fix.md",
+      "sha256": "01f832f4d2f27fd1328b23e79f43afbf2e233d1889f2ac3a5876cd2a29c3a3e9",
+      "git_blob": "e0d217456beec0e695b20a60ce5e7d84c8213479",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_editor_input_fix_0767695478",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_plasma-damage-hotfix-v1.md",
+      "sha256": "e2e6bce092dfb27d889fff2c45f9a10973210a8fb9aee3abb7bb1b983570138d",
+      "git_blob": "4898375786e1767e564aaa49c4b69cc6b6b3234d",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_plasma_damage_hot_2044caac46",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_shoot-menu-sensitivity.md",
+      "sha256": "c01c05469638534f87a38c8fef5758b7b54d6ceb097e87eca554726c52d88bb9",
+      "git_blob": "f87821b6a1844515fcd07cde733fd2c768073874",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_shoot_menu_sensit_1565105a9d",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_shot-visual-origin-fix.md",
+      "sha256": "4441fca390a8199463e455788c0fa8a6fbd1c561e8f37d7f40319cea449b1c6b",
+      "git_blob": "cbf3b29226d2659f0830551fd2213ad07281efb3",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_shot_visual_origi_61b10cf3e7",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_track01a-feel-feedback.md",
+      "sha256": "083bdd16a2a8be8664dd51e2bd71c0a34ce7222791ec9348cc177008d946ca97",
+      "git_blob": "939e9687747b110b1b0b610e67979b1b420b09e5",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_track01a_feel_fee_3be90d2905",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_track01b-bot-duelist-v1.md",
+      "sha256": "f2ed7ed02efb577030426c0c04352cf8b4fa0472824fa62dbd30818fb32dff8e",
+      "git_blob": "2e49aa5245862ad588fa2bcafdd77fa0c17f4c54",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_track01b_bot_duel_aa802ce0e8",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_track01c-arena-layout-v1.md",
+      "sha256": "cc23eb064fce9d8a968599afdce7798d10c8e24cb735eaa3b1da28c6eef2c8c6",
+      "git_blob": "c9830ea126e2ddf49b466bc8ec61c52cfe1ea2c1",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_track01c_arena_la_acf6db3512",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_track01d-knockback-movement-v1.md",
+      "sha256": "8c4764bd7c8337c6d0e99e96fb5be73e367884671a040fe81227017d8f648aaa",
+      "git_blob": "6f80d0d9a87d1e77d6343999ab7995e8b6dfa4b1",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_track01d_knockbac_3ec4d882ee",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_fpsshooter_track02a-combat-loop-expansion-v1.md",
+      "sha256": "2dacdc0a61477642a0af4bd3aa53e7fccdad7f6cb9317a35484b4e4a1c4846cd",
+      "git_blob": "89ec42ef090ddb164c9f1c58bdd77b612e623f2e",
+      "record_id": "rec_2026_06_09_codex_fpsshooter_track02a_combat_l_883b0552a6",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_fpsshooter_football-menu-goal-fix-v2.md",
+      "sha256": "7d0a770a87d27c5da4026a8fe8edb99f38ec7f9c83c11d6644d20456748f7113",
+      "git_blob": "c2f3f6954f1c8c58a5f33560f31b755992ff2ca4",
+      "record_id": "rec_2026_06_10_codex_fpsshooter_football_menu_goa_48010be466",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_fpsshooter_remove-void-from-duel-pit-v2.md",
+      "sha256": "1f9c6946d842f223b5a1c4f3f6ef585d5b76ced3a27933d42bb4daa7fc1bbe68",
+      "git_blob": "54153065ba7bf079d70c930b1687a62d3d96d0ef",
+      "record_id": "rec_2026_06_10_codex_fpsshooter_remove_void_from_821d985f58",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_fpsshooter_track03a-vertical-arena-fall-pressure-v1.md",
+      "sha256": "8a6f3c5901a39932b68e6f816236911d6e18b9c6e7eacccfca94aaa6b85a158e",
+      "git_blob": "8ee278621095aa50113a81d7108669ca4ed2b01e",
+      "record_id": "rec_2026_06_10_codex_fpsshooter_track03a_vertical_cec15bb944",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_fpsshooter_track03b-arena-flow-route-tuning-v1.md",
+      "sha256": "d64fa2bccf32e40711ba53b0125e71b1801b5e09999657a46883a83af3966170",
+      "git_blob": "4fec5af11481200de3dbb2229498a33ae0868f11",
+      "record_id": "rec_2026_06_10_codex_fpsshooter_track03b_arena_fl_b2676c76b1",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_fpsshooter_track04a-football-first-fixes.md",
+      "sha256": "f79b5eb9087e8ae7c3d4bc9787d8b81257a078f0cf8335f90a522e8a639e1bae",
+      "git_blob": "0aa90cf0842b47793bb9c58b4c2d95ab662c2c17",
+      "record_id": "rec_2026_06_10_codex_fpsshooter_track04a_football_3432e53068",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_fpsshooter_track04a-fps-playground-football-v1.md",
+      "sha256": "56170c640e7c3f0ad23ef48fbd6ca4711113ac38ab24aa8440f29f9dca2a9be8",
+      "git_blob": "b48d3888b0da5b5394b260482ba15286e43e1a1e",
+      "record_id": "rec_2026_06_10_codex_fpsshooter_track04a_fps_play_3cc9fcb7f3",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_fpsshooter_track05-foundation-hardening-refactor-v1.md",
+      "sha256": "f2b97493cd71a571f30d742a698ebccb142ecaf9f051972fdc52f901c849e5fd",
+      "git_blob": "386b7a86712ab2865c8646e39357b304279c94bb",
+      "record_id": "rec_2026_06_10_codex_fpsshooter_track05_foundatio_8a1ccdb0fb",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_fpsshooter_track06a-avatar-visual-foundation-v1.md",
+      "sha256": "0587079dfa4bbbbad29db5f314b599b7f25013fa0f3f87e1d755724ef05eb9c8",
+      "git_blob": "811c69e12f67e7ac04785f6f6b3820d173f12f7b",
+      "record_id": "rec_2026_06_10_codex_fpsshooter_track06a_avatar_v_0b7ac37a2f",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_fpsshooter_track06b-third-person-football-camera-v1.md",
+      "sha256": "d92b646ef48e7c5ad86af3cfc1c376e5fa0e14e84c97d2f3cd76937f3b639d5f",
+      "git_blob": "d9911fd6fc296b2b1954ab400d980a1315f5a57b",
+      "record_id": "rec_2026_06_10_codex_fpsshooter_track06b_third_pe_af11c601f0",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_fpsshooter_track06c-football-feel-possession-v1.md",
+      "sha256": "98f3be5a4f67bdc80de701f50fbe939253d0773429200db9795b552661b6aa0b",
+      "git_blob": "8d6c4ad9a3fb61dc260e1e2236f7c61b22ff3bc2",
+      "record_id": "rec_2026_06_10_codex_fpsshooter_track06c_football_1722325792",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_fpsplayground_track01-combat-readability-polish-v1.md",
+      "sha256": "71571a13b4b9be19e1065418af8544160a0caac79ac752ae4ac1fb0019269474",
+      "git_blob": "400e498d5467fda196f9a61df6aec28ee84fb632",
+      "record_id": "rec_2026_06_15_codex_fpsplayground_track01_combat_6addea422d",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_fpsplayground_track02-bot-tactical-movement-v1.md",
+      "sha256": "dbe791df657bccb9d7cd86d66c7ea13367450d297bc9ba2e8c431368bc47e69b",
+      "git_blob": "30591a65b6ba2acbe9afaec0a4dfb3c2b141cc8c",
+      "record_id": "rec_2026_06_15_codex_fpsplayground_track02_bot_ta_2567bd6f6c",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_fpsplayground_track03-arena-tactical-context-proof-v1.md",
+      "sha256": "c2976de4d40493d999334bc024a3e83ca786c55809662fe3a8061808d94a0ce0",
+      "git_blob": "72b81185fdb976df3a8e65142a0d8b677cfcc749",
+      "record_id": "rec_2026_06_15_codex_fpsplayground_track03_arena_6362c8ef3e",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_fpsplayground_track04-arena-movement-flow-bot-navigation-v1.md",
+      "sha256": "f772d5ec210eed375f1f79a10d779afa7992d3329790bdd92d30662ceeecc35a",
+      "git_blob": "894d65a897d5d680059d1d79d0d5c2ef539ba8b0",
+      "record_id": "rec_2026_06_15_codex_fpsplayground_track04_arena_5ca75e4550",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_fpsplayground_track04b-bot-pickup-commitment-v1.md",
+      "sha256": "ab075fef0be39a981b9f44d43087e24382f2f3d2dcdc06e0ab6b965406cdb102",
+      "git_blob": "383e1f947caca9cd0fda80a3ac6834f38ab5b5dc",
+      "record_id": "rec_2026_06_15_codex_fpsplayground_track04b_bot_p_a6503dc2e0",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_fpsplayground_track05-quake-duel-route-control-bot-v1.md",
+      "sha256": "795efc1bfa2f8dc498d199e9c6838a0fd8626e5403b49f57959d13ead356f69e",
+      "git_blob": "159978b68623654d1408f6a5a9636deede6c6b5c",
+      "record_id": "rec_2026_06_15_codex_fpsplayground_track05_quake_f0d0658f2e",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_fpsplayground_track05b-long-jump-pad-first-try-v1.md",
+      "sha256": "b449095d8615f8f8ebdb24475dfee414a7786c5aa726563a38a84f95bce115b8",
+      "git_blob": "e1cfe77d816ef350237d33b1cce3b293dc948905",
+      "record_id": "rec_2026_06_15_codex_fpsplayground_track05b_long_dfcd8553ec",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-16_codex_fpsplayground_track06-arena-variety-bot-generalization-v1.md",
+      "sha256": "1ea930081ab44b8de42c849a8c8c6bd9fc8fadcc113e3a5db42aad3266038799",
+      "git_blob": "1c2cb4664c86bfb18e77f2bc895ff5807543f7b1",
+      "record_id": "rec_2026_06_16_codex_fpsplayground_track06_arena_0c1c2cba9f",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-16_codex_fpsplayground_track06-plan-sequence-v1.md",
+      "sha256": "6f440f6c0d10bd95582a80cfddd271edd27df72805777919d95d57710a88d62d",
+      "git_blob": "2e3378fed32b5c7dff846bd566001f9f7870ecbd",
+      "record_id": "rec_2026_06_16_codex_fpsplayground_track06_plan_s_26cffac489",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_fpsplayground_default-sensitivity-1-1-v1.md",
+      "sha256": "f750c9be89f683689d846f8d384130d810132c01bb2b2e41dd8d99f821dd5964",
+      "git_blob": "db1cbb707246cf64e626549756937d57ac9cfffc",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_default_sensit_713b4ef64b",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_fpsplayground_track07-match-flow-duel-ux-plan-v1.md",
+      "sha256": "f516a7c340989a457b6509a85e81e1809c09aaf240d85e0e4e15428a836ed320",
+      "git_blob": "63c16755d84827e6c3a4b1d7a4c276a40f3b1279",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_track07_match_016de6f5da",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_fpsplayground_track07-match-flow-duel-ux-v1.md",
+      "sha256": "f2222549f3e937de250f917e988a3951ed71142275519fce19f37aa13e2ac2df",
+      "git_blob": "ea4650da74885358b65ed8622228fde7330264ed",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_track07_match_2007c80f3f",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_fpsplayground_track08-movement-feel-discarded.md",
+      "sha256": "285b8f22efcf70ea6463d3e6618552e6b7180a6bd94b0a2a8d0494ae58dacc92",
+      "git_blob": "7bc455db1b520a38601bd88ce16b6adb51c61922",
+      "record_id": "rec_2026_06_19_codex_fpsplayground_track08_moveme_9504f40c1d",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_fpsplayground_bot-long-jump-pad-hotfix-v1.md",
+      "sha256": "e1b309752ffd915c6330971b61a77ffcdadc9ffee53de2863859a967ecf578c8",
+      "git_blob": "3221bd35674fb277645d33209ea150b66aac0997",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_bot_long_jump_76b017af93",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_fpsplayground_godot-debugger-cleanup-v1.md",
+      "sha256": "81550aa49454750cc5ea12c8b48618d5e3407518faa88f36b293254b25cb3d20",
+      "git_blob": "02968994704522539fc858daed3cf34bfc6511b6",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_godot_debugger_19f2611466",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_fpsplayground_micro-doc-coordination-cleanup-v1.md",
+      "sha256": "45701e20b8396f5b13acbad3777f07ee474d3510d3cca36fc04fe09e818b5640",
+      "git_blob": "8d8c974facc6a237bbf00e0be0727b793d4f5dc6",
+      "record_id": "rec_2026_06_20_codex_fpsplayground_micro_doc_coor_881e4dde55",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_fpsplayground_track14i-human-approved-v1.md",
+      "sha256": "59873123d1dda9efc8548813d8f70a6abc6d8a3e7ae90ccf40bb3bc1fe29c53a",
+      "git_blob": "c094b1925632ea787f16128d84c868ae02664e2c",
+      "record_id": "rec_2026_06_25_codex_fpsplayground_track14i_human_04bcf6d472",
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    }
+  ]
+}
