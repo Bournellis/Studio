@@ -54,8 +54,8 @@ For behavior, potion, crafting or consumable work, also read:
 For release or validation work, also read:
 
 1. `docs/release-ops-checklist.md`
-2. `implementation/tracks/track-13-validation-release-safety/release-safety-contract.md`
-3. `implementation/tracks/track-13-validation-release-safety/validation-matrix.md`
+2. `docs/contracts/release-safety.md`
+3. `qa/validation-matrix.md`
 
 ## Track Reading Rules
 

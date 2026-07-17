@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `router`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `a live authority, contract or historical route changes`
 - supersedes: `history/documentation-index-pre-governance-v2-2026-07-16.md`
 - superseded_by: `none`
@@ -17,6 +17,7 @@
 | local technical state | `../implementation/current-status.md` |
 | local workflow | `../08_Coordenacao/README.md` |
 | QA commands and gates | `../qa/qa_manifest.json`, `../qa/QA_INDEX.md` |
+| validation profile detail | `../qa/validation-matrix.md` |
 | package lineage | `release-history.md` |
 | product canon | `product-vision.md` |
 | Arena PVE direction and contract | `pve-arena-initial-direction.md`, `pve-arena-v1.md` |
@@ -28,11 +29,11 @@ Workspace-relative package lineage: `Projetos/draxos-mobile/docs/release-history
 
 - Agent/runbook: `agent-operating-manual.md`, `multi-agent-workflow.md`, `hardening-program.md`.
 - Product: `product-brief.md`, `game-design-document.md`, `arena-pve-product-proof.md`, `visual-direction-v1.md`.
-- Foundation: `foundation-responsive-layout-contract.md`, `foundation-expansion-readiness.md`, `behavior-potion-crafting-v1.md`.
+- Foundation: `foundation-responsive-layout-contract.md`, `foundation-expansion-readiness.md`, `behavior-potion-crafting-v1.md`, `contracts/feature-registry.md`.
 - Backend: `contracts/`, `architecture.md`, `backend-own-boundary.md`.
 - Modes: `minigames/`, `data/definitions/modes/` and `data/definitions/openworld/`.
 - Labs: `progression-lab/README.md`, `battle-lab/README.md`, `dev-lab-workflow.md`.
-- Release: `release-ops-checklist.md`, `internal-alpha-static-hosting.md`, `track-13-manual-walkthrough-gate.md`.
+- Release: `contracts/release-safety.md`, `release-ops-checklist.md`, `internal-alpha-static-hosting.md`, `track-13-manual-walkthrough-gate.md`.
 
 ## Historical records
 

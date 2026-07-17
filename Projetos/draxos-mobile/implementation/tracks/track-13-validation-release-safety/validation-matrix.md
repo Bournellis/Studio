@@ -1,5 +1,16 @@
 # Track 13 - Validation Matrix
 
+## Metadata
+
+- status: `historical`
+- authority: `historical_record`
+- last_verified: `2026-07-17`
+- review_when: `only for historical correction or canonical-link repair`
+- supersedes: `none`
+- superseded_by: `../../../qa/validation-matrix.md`
+
+The live QA profile authority is now `../../../qa/validation-matrix.md`, with commands governed by `../../../qa/qa_manifest.json`. This Track 13 matrix remains unchanged below as delivery evidence.
+
 ## Perfis
 
 `tools/validate_foundation.ps1` agora separa os gates por intencao operacional. Os perfis antigos (`Quick`, `Client`, `Release`, `Full`) continuam aceitos como aliases de compatibilidade.

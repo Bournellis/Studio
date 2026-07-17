@@ -1,5 +1,16 @@
 # Track 06 - Feature Registry And Installation Rails
 
+## Metadata
+
+- status: `historical`
+- authority: `historical_record`
+- last_verified: `2026-07-17`
+- review_when: `only for historical correction or canonical-link repair`
+- supersedes: `none`
+- superseded_by: `../../../docs/contracts/feature-registry.md`
+
+The live feature installation authority is now `../../../docs/contracts/feature-registry.md`. This Track 06 source remains unchanged below as delivery evidence.
+
 - Last Updated: `2026-05-27`
 - Owner: `Track 06 agents`
 - Status: `T06_INTEGRATED_FEATURE_SLICES_READY`

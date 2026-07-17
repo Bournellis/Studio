@@ -138,7 +138,7 @@ For Foundation Audit, the expected DraxosMobile Doing card must state the branch
 | Crafting/potions/behavior | `docs/behavior-potion-crafting-v1.md`, `docs/contracts/api-endpoints.md`, `docs/contracts/database-schema.md`, `docs/contracts/content-definitions.md`, `docs/contracts/battle-event-log.md` |
 | Godot client | `AGENTS.md`, `modes/boot/surfaces/README.md`, relevant tests, relevant flow/presenter |
 | Entry/Refugio/Battle layout | `docs/foundation-responsive-layout-contract.md`, `tools/smoke_responsive_layout.gd`, relevant UI tests |
-| Release/publication | `docs/release-ops-checklist.md`, Track 13 release safety contract, `tools/README.md`; for Arena proof packages also `docs/arena-ux-proof-release-discipline-plan.md` |
+| Release/publication | `docs/contracts/release-safety.md`, `docs/release-ops-checklist.md`, `tools/README.md`; for Arena proof packages also `docs/arena-ux-proof-release-discipline-plan.md` |
 | Manual QA | `docs/track-13-manual-walkthrough-gate.md`, `docs/internal-alpha-v0-handoff.md`; for Arena proof also `docs/arena-pve-product-proof.md` |
 
 ## Validation By Task

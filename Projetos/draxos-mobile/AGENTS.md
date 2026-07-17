@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `operational_contract`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `authority, validation or release safety changes`
 - supersedes: `global-first DraxosMobile coordination`
 - superseded_by: `none`
@@ -33,8 +33,10 @@ No local file may redefine portfolio priority. DraxosMobile owns its mechanics; 
 
 - Runtime/client: `docs/agent-operating-manual.md`, then the affected contract.
 - Account/save/server authority: `docs/contracts/account-save.md`, `docs/contracts/database-schema.md`, `docs/contracts/api-endpoints.md`.
+- Feature installation: `docs/contracts/feature-registry.md`.
 - Arena: `docs/pve-arena-initial-direction.md`, `docs/pve-arena-v1.md`, `docs/arena-pve-product-proof.md`.
-- Release/build: `docs/release-ops-checklist.md`; stay local unless Fabio explicitly authorizes external mutation.
+- Release/build: `docs/contracts/release-safety.md`, `docs/release-ops-checklist.md`; stay local unless Fabio explicitly authorizes external mutation.
+- QA profile detail: `qa/validation-matrix.md`.
 - Parallel lanes: `docs/multi-agent-workflow.md`.
 
 ## Safe local validation

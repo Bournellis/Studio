@@ -1,5 +1,16 @@
 # Track 13 - Release Safety Contract
 
+## Metadata
+
+- status: `historical`
+- authority: `historical_record`
+- last_verified: `2026-07-17`
+- review_when: `only for historical correction or canonical-link repair`
+- supersedes: `none`
+- superseded_by: `../../../docs/contracts/release-safety.md`
+
+The live release safety authority is now `../../../docs/contracts/release-safety.md`. This Track 13 source remains unchanged below as delivery evidence.
+
 ## Contrato Do Publish Script
 
 `tools/publish_internal_alpha.ps1` aceita:

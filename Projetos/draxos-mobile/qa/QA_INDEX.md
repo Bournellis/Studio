@@ -11,6 +11,8 @@
 
 `qa_manifest.json` is the machine authority for commands. This index governs human reading, journeys, gates and evidence; IDs must match exactly.
 
+Profile contents, local/external boundaries and report rules: `validation-matrix.md`.
+
 ## Runners
 
 - runner_id: `docs_contracts_fast`
