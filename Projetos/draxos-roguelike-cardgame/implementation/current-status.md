@@ -42,5 +42,5 @@ Os cards vivem em `../08_Coordenacao/Kanban/Review/`. Automacao verde nao resolv
 ## Leitura
 
 - QA: `../qa/QA_INDEX.md`
-- historia detalhada: `tracks/track-02-complete-run-evolution/`
-- snapshot pre-cutover: `tracks/track-02-complete-run-evolution/history/2026-06-25_design-lab-content-wave01-status.md`
+- historia consolidada: `history.md`
+- fontes pre-cutover: `tracks/` (consulta explicita ate cleanup aprovado)
