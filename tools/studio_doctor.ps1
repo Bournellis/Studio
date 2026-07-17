@@ -114,6 +114,11 @@ if ($runCore) {
     Invoke-Required 'Documentation, closure and Portfolio Sync' { Invoke-PythonCheck 'check_docs_contract.py' @('--project', $Project) }
     Invoke-Required 'Text integrity' { Invoke-PythonCheck 'check_text_integrity.py' @() }
     Invoke-Required 'Worktree overlap' { Invoke-PythonCheck 'check_worktree_overlap.py' @('--base-ref', 'main') }
+    Invoke-Required 'Worktree lifecycle' {
+        $output = & (Join-Path $PSScriptRoot 'check_worktree_lifecycle.ps1') -Root $root -FailOnOrphanDirs -Json 2>&1
+        if ($LASTEXITCODE -ne 0) { throw (($output | Select-Object -Last 20) -join [Environment]::NewLine) }
+        'registered worktrees and orphan directories checked'
+    }
     Invoke-Required 'Repository storage' { Invoke-PythonCheck 'check_repository_storage.py' @('--base-ref', 'main') }
     Invoke-Required 'Tracked secret scan' {
         $output = & (Join-Path $PSScriptRoot 'check_secret_scan.ps1') -Root $root 2>&1

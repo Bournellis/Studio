@@ -426,11 +426,16 @@ def _existing_script_step(root: Path, name: str, args: list[str], audit_only: bo
     return _result(name, status, duration, exit_code=code, reason="" if code == 0 else f"exit {code}")
 
 
-def _powershell_script_step(root: Path, name: str, script: str, audit_only: bool) -> dict[str, Any]:
+def _powershell_script_step(
+    root: Path, name: str, script: str, audit_only: bool, extra_args: list[str] | None = None
+) -> dict[str, Any]:
     path = root / script
     if not path.is_file():
         return _result(name, "audit_fail" if audit_only else "fail", 0, reason=f"missing {script}")
-    command = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(path), "-Root", str(root)]
+    command = [
+        "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(path), "-Root", str(root),
+        *(extra_args or []),
+    ]
     code, duration, stdout, stderr = _run_process(command, root, 180)
     if stdout:
         print(stdout, end="" if stdout.endswith("\n") else "\n")
@@ -482,6 +487,10 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
     report["steps"].append(_existing_script_step(root, "dashboard_generated", ["tools/generate_fabio_dashboard.py", "--root", str(root), "--check"], args.audit_only))
     report["steps"].append(_existing_script_step(root, "local_doc_links", ["tools/check_local_doc_links.py", "--root", str(root), "--workspace", "estudio"], args.audit_only))
     report["steps"].append(_existing_script_step(root, "docs_health", ["tools/check_docs_health.py", "--root", str(root), "--workspace", "estudio"], args.audit_only))
+    report["steps"].append(_powershell_script_step(
+        root, "worktree_lifecycle", "tools/check_worktree_lifecycle.ps1", args.audit_only,
+        ["-FailOnOrphanDirs", "-Json"],
+    ))
     report["steps"].append(_powershell_script_step(root, "secret_scan", "tools/check_secret_scan.ps1", args.audit_only))
 
     if args.profile != "DocsOnly":
