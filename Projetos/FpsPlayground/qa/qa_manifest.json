@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "project": "FpsPlayground",
+  "runners": [
+    {
+      "id": "fps_fast_structure",
+      "category": "fast",
+      "tier": "QA",
+      "lane": "godot",
+      "runner": "godot_script",
+      "entrypoint": "res://tools/validate.gd",
+      "args": ["--profile=structure"],
+      "profiles": ["FastSuite"],
+      "timeout_seconds": 30,
+      "environments": ["windows", "headless", "godot_4_6_2"],
+      "output_policy": "ignored_cache_only",
+      "local_only": true
+    },
+    {
+      "id": "fps_fast_rules",
+      "category": "fast",
+      "tier": "QA",
+      "lane": "godot",
+      "runner": "gut_scripts",
+      "entrypoint": "res://addons/gut/gut_cmdln.gd",
+      "paths": ["res://tests/unit/test_rule_helpers.gd"],
+      "args": [],
+      "profiles": ["FastSuite"],
+      "timeout_seconds": 30,
+      "environments": ["windows", "headless", "godot_4_6_2"],
+      "output_policy": "temporary_only",
+      "local_only": true
+    },
+    {
+      "id": "fps_fast_telemetry",
+      "category": "fast",
+      "tier": "QA",
+      "lane": "godot",
+      "runner": "gut_scripts",
+      "entrypoint": "res://addons/gut/gut_cmdln.gd",
+      "paths": [
+        "res://tests/unit/test_telemetry.gd",
+        "res://tests/unit/test_telemetry_readout.gd"
+      ],
+      "args": [],
+      "profiles": ["FastSuite"],
+      "timeout_seconds": 30,
+      "environments": ["windows", "headless", "godot_4_6_2"],
+      "output_policy": "temporary_only",
+      "local_only": true
+    },
+    {
+      "id": "fps_runtime_full",
+      "category": "regression",
+      "tier": "Runtime",
+      "lane": "godot",
+      "runner": "godot_script",
+      "entrypoint": "res://tools/validate.gd",
+      "args": ["--profile=full"],
+      "profiles": ["Runtime", "FullLocal"],
+      "timeout_seconds": 90,
+      "environments": ["windows", "headless", "godot_4_6_2"],
+      "output_policy": "ignored_cache_only",
+      "local_only": true
+    }
+  ],
+  "critical_journey": [
+    {
+      "id": "arena_selection_and_duel_flow",
+      "status": "covered",
+      "runner_ids": ["fps_runtime_full"],
+      "evidence": "tests/unit/test_bootstrap.gd covers menu selection, all arena layouts, rounds, scoring and match reset"
+    },
+    {
+      "id": "weapon_contracts",
+      "status": "covered",
+      "runner_ids": ["fps_fast_rules", "fps_runtime_full"],
+      "evidence": "rule helpers and integrated tests cover rifle, Plasma direct/blast, overcharge, damage and knockback contracts"
+    },
+    {
+      "id": "bot_route_control",
+      "status": "covered",
+      "runner_ids": ["fps_fast_rules", "fps_runtime_full"],
+      "evidence": "rule and bootstrap suites cover tactical context, route scoring, pickups, combat overlay and jump-pad commitment"
+    },
+    {
+      "id": "pickup_and_jump_pad_contracts",
+      "status": "covered",
+      "runner_ids": ["fps_fast_rules", "fps_runtime_full"],
+      "evidence": "pure rules and integrated arena tests cover health, overcharge, respawn and approved launch-force behavior"
+    },
+    {
+      "id": "pause_resume_and_return",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "docs/validation.md requires pause, resume, restart and return-to-menu smoke across arena journeys"
+    },
+    {
+      "id": "telemetry_lifecycle_and_readout",
+      "status": "covered",
+      "runner_ids": ["fps_fast_telemetry", "fps_runtime_full"],
+      "evidence": "telemetry suites cover schema, lifecycle, local files, combat, pickups, movement, resets and readout alerts"
+    },
+    {
+      "id": "movement_feel_gate",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "Fabio must judge movement responsiveness and preservation using docs/validation.md"
+    },
+    {
+      "id": "weapon_feel_gate",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "Fabio must judge rifle, Plasma and overcharge readability, commitment and role balance"
+    },
+    {
+      "id": "bot_fairness_gate",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "Fabio must judge reaction, aim readability, route behavior and combat pressure fairness"
+    },
+    {
+      "id": "map_quality_gate",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "Fabio must judge flow, readability, route value and jump-pad feel in each arena"
+    },
+    {
+      "id": "balance_tuning_gate",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "any tuning decision requires multi-arena telemetry plus Fabio's explicit product decision"
+    },
+    {
+      "id": "desktop_build_export",
+      "status": "gap",
+      "runner_ids": [],
+      "evidence": "no export preset or typed local Build runner exists",
+      "exception": {
+        "reason": "FpsPlayground remains a PC Windows editor-first laboratory; this migration does not open a build track",
+        "review_when": "Fabio explicitly authorizes a desktop export/build track"
+      }
+    },
+    {
+      "id": "network_backend_and_device",
+      "status": "not_applicable",
+      "runner_ids": [],
+      "evidence": "network services, backend and physical-device validation are outside the project contract"
+    }
+  ]
+}
