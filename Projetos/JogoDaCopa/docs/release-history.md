@@ -1,5 +1,14 @@
 # JogoDaCopa Release History
 
+## Metadata
+
+- status: living
+- authority: historical_record
+- last_verified: 2026-07-16
+- review_when: ocorrer pacote, tentativa, rollback, promoção ou aprovação de release
+- supersedes: none
+- superseded_by: none
+
 Historico de publicacoes do produto `Copa Arena Futebol` / `Super Campeao`.
 
 ## Releases

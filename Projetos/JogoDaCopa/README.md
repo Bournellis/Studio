@@ -20,7 +20,7 @@ It starts from the accepted football prototype extracted from the former `FpsSho
 
 ## Current State
 
-Operational status, current public baseline and next step live in `implementation/current-status.md`. Publication history and release roots live in `docs/release-history.md`.
+Technical state lives in `implementation/current-status.md`. Publication history, release roots, attempts and rollbacks live only in `docs/release-history.md`. Work enters through `08_Coordenacao/`.
 
 ## Run
 

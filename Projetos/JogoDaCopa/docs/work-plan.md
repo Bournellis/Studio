@@ -1,5 +1,16 @@
 # JogoDaCopa Work Plan
 
+## Metadata
+
+- status: historical
+- authority: historical_record
+- last_verified: 2026-07-16
+- review_when: consulta histórica exigir correção factual
+- supersedes: none
+- superseded_by: ../implementation/current-status.md
+
+> Registro pré-cutover. Não define estado, prioridade ou próximo passo.
+
 - Status: `JOGO_DA_COPA_TRACK10D_HUMAN_APPROVED`
 - Product/module name: `Super Campeao`
 - Current surface: TPS football minigames.

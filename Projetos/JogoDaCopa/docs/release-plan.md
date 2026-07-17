@@ -1,5 +1,14 @@
 # JogoDaCopa - Release Plan: Road to Web (Serie Track 04)
 
+## Metadata
+
+- status: historical
+- authority: historical_record
+- last_verified: 2026-07-16
+- review_when: consulta histórica exigir correção factual
+- supersedes: none
+- superseded_by: publication-readiness.md
+
 > Historical plan. This document records the Track 04 release strategy from 2026-06-11 and is not the current next-step source. For live status use `../implementation/current-status.md`, `work-plan.md`, `publication-readiness.md` and `release-history.md`.
 
 - Date: `2026-06-11`
