@@ -22,6 +22,8 @@
 | Arena PVE direction and contract | `pve-arena-initial-direction.md`, `pve-arena-v1.md` |
 | pending product decisions | `design-pending.md` |
 
+Workspace-relative package lineage: `Projetos/draxos-mobile/docs/release-history.md`.
+
 ## Live contracts
 
 - Agent/runbook: `agent-operating-manual.md`, `multi-agent-workflow.md`, `hardening-program.md`.
@@ -43,4 +45,3 @@
 ## Classification rule
 
 Live product/technical contracts may be updated only with their implementation. Runbooks describe repeatable procedure. Historical records may receive link or metadata repair but cannot become current state. New package facts go only to `release-history.md`; new unresolved choices go only to `design-pending.md`.
-
