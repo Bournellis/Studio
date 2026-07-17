@@ -191,6 +191,9 @@
     "allowed_categories": ["fast", "regression", "visual_human", "platform", "lab", "historical"],
     "allowed_journey_statuses": ["covered", "manual", "gap", "not_applicable"],
     "default_timeout_seconds": 30,
+    "execution_lock_timeout_seconds": 30,
+    "user_data_mode_default": "isolated",
+    "structured_result_marker": "ESTUDIO_JSON:",
     "forbidden_tokens": ["RemoteReadOnly", "FullPublish", "ConfirmRemoteMutation", "publish_internal_alpha", "publish_web", "--allow-net", "-IncludeRemoteReadOnly"]
   },
   "engineering_health": {

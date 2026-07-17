@@ -19,8 +19,11 @@ import subprocess
 import sys
 import tempfile
 import time
+from contextlib import ExitStack
 from pathlib import Path
 from typing import Any
+
+from execution_lock import ExecutionLock, ExecutionLockTimeout
 
 from estudio_governance import (
     CheckReport,
@@ -50,7 +53,9 @@ def _result(name: str, status: str, duration: float, **extra: Any) -> dict[str, 
     return {"name": name, "status": status, "duration_seconds": round(duration, 3), **extra}
 
 
-def _run_process(command: list[str], cwd: Path, timeout: int) -> tuple[int, float, str, str]:
+def _run_process(
+    command: list[str], cwd: Path, timeout: int, env: dict[str, str] | None = None
+) -> tuple[int, float, str, str]:
     started = time.monotonic()
     creationflags = subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
     process = subprocess.Popen(
@@ -63,6 +68,7 @@ def _run_process(command: list[str], cwd: Path, timeout: int) -> tuple[int, floa
         stderr=subprocess.PIPE,
         creationflags=creationflags,
         start_new_session=os.name != "nt",
+        env=env,
     )
     try:
         stdout, stderr = process.communicate(timeout=timeout)
@@ -206,11 +212,97 @@ def _baseline_issue(
     return None, None
 
 
+def _runner_resources(runner: dict[str, Any]) -> list[str]:
+    declared = runner.get("execution_resources")
+    if isinstance(declared, list):
+        return sorted(set(str(item) for item in declared))
+    resources: set[str] = set()
+    runner_type = str(runner.get("runner", ""))
+    lane = str(runner.get("lane", "")).casefold()
+    surface = " ".join([str(runner.get("entrypoint", "")), *map(str, runner.get("args", []))]).casefold()
+    if runner_type in {"godot_script", "gut_scripts"} or any(
+        token in surface for token in ("validate_foundation.ps1", "run_gut_short.ps1")
+    ):
+        resources.add("GodotQA")
+    if lane == "android":
+        resources.add("AndroidQA")
+    return sorted(resources)
+
+
+def _isolated_environment(session_root: Path, project_id: str, runner_id: str) -> dict[str, str]:
+    user_home = session_root / project_id / runner_id / "user"
+    roaming = user_home / "AppData" / "Roaming"
+    local = user_home / "AppData" / "Local"
+    roaming.mkdir(parents=True, exist_ok=True)
+    local.mkdir(parents=True, exist_ok=True)
+    env = os.environ.copy()
+    env.update(
+        {
+            "APPDATA": str(roaming),
+            "LOCALAPPDATA": str(local),
+            "GODOT_USER_HOME": str(user_home),
+            "ESTUDIO_QA_RUN_ID": session_root.name,
+            "ESTUDIO_QA_USER_DATA_MODE": "isolated",
+        }
+    )
+    return env
+
+
+def _parse_structured_result(output: str, runner: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
+    contract = runner.get("result_contract")
+    marker = str(contract.get("marker", "ESTUDIO_JSON:")) if isinstance(contract, dict) else "ESTUDIO_JSON:"
+    payloads = [line[len(marker):].strip() for line in output.splitlines() if line.startswith(marker)]
+    required = bool(contract.get("required", False)) if isinstance(contract, dict) else False
+    if not payloads:
+        return None, "STRUCTURED_RESULT_MISSING" if required else ""
+    try:
+        payload = json.loads(payloads[-1])
+    except json.JSONDecodeError as exc:
+        return None, f"STRUCTURED_RESULT_INVALID_JSON: {exc.msg}"
+    if not isinstance(payload, dict):
+        return None, "STRUCTURED_RESULT_INVALID: payload must be an object"
+    if not isinstance(payload.get("contract"), str) or not isinstance(payload.get("schema_version"), int) or not isinstance(payload.get("ok"), bool):
+        return payload, "STRUCTURED_RESULT_INVALID: contract, schema_version and ok are required"
+    if isinstance(contract, dict):
+        if payload["contract"] != contract["contract"]:
+            return payload, f"STRUCTURED_RESULT_CONTRACT: expected {contract['contract']}, got {payload['contract']}"
+        if payload["schema_version"] != contract["schema_version"]:
+            return payload, (
+                f"STRUCTURED_RESULT_SCHEMA: expected {contract['schema_version']}, "
+                f"got {payload['schema_version']}"
+            )
+    if not payload["ok"]:
+        return payload, "STRUCTURED_RESULT_NOT_OK"
+    return payload, ""
+
+
 def _run_checked(
-    root: Path, project: dict[str, Any], runner: dict[str, Any], command: list[str], audit_only: bool
+    root: Path, project: dict[str, Any], runner: dict[str, Any], command: list[str], audit_only: bool,
+    config: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     before = git_snapshot(root)
-    code, duration, stdout, stderr = _run_process(command, root / project["root"], int(runner["timeout_seconds"]))
+    lock_timeout = int((config or {}).get("qa", {}).get("execution_lock_timeout_seconds", 30))
+    user_data_mode = str(
+        runner.get("user_data_mode", (config or {}).get("qa", {}).get("user_data_mode_default", "isolated"))
+    )
+    resources = _runner_resources(runner)
+    try:
+        with ExitStack() as stack:
+            for resource in resources:
+                stack.enter_context(ExecutionLock(resource, lock_timeout))
+            env = os.environ.copy()
+            if user_data_mode == "isolated":
+                session_root = Path(stack.enter_context(tempfile.TemporaryDirectory(prefix="estudio-qa-")))
+                env = _isolated_environment(session_root, project["id"], runner["id"])
+            code, duration, stdout, stderr = _run_process(
+                command, root / project["root"], int(runner["timeout_seconds"]), env=env
+            )
+    except ExecutionLockTimeout as exc:
+        return _result(
+            f"{project['id']}:{runner['id']}", "audit_fail" if audit_only else "fail", 0,
+            reason=str(exc), exit_code=125, side_effects=[], runner_type=runner["runner"],
+            lane=runner["lane"], execution_resources=resources, user_data_mode=user_data_mode,
+        )
     after = git_snapshot(root)
     side_effects = [key for key in ["head", "status_sha256", "index_diff_sha256", "worktree_diff_sha256", "untracked"] if before.get(key) != after.get(key)]
     status = "pass"
@@ -224,6 +316,10 @@ def _run_checked(
     if side_effects:
         status = "audit_fail" if audit_only else "fail"
         reason = f"VALIDATOR_SIDE_EFFECT changed {', '.join(side_effects)}"
+    structured_result, structured_error = _parse_structured_result(stdout + "\n" + stderr, runner)
+    if structured_error:
+        status = "audit_fail" if audit_only else "fail"
+        reason = structured_error
     if stdout:
         print(stdout, end="" if stdout.endswith("\n") else "\n")
     if stderr:
@@ -231,6 +327,7 @@ def _run_checked(
     return _result(
         f"{project['id']}:{runner['id']}", status, duration, reason=reason,
         exit_code=code, side_effects=side_effects, runner_type=runner["runner"], lane=runner["lane"],
+        execution_resources=resources, user_data_mode=user_data_mode, structured_result=structured_result,
     )
 
 
@@ -251,11 +348,24 @@ def _godot_import_ready(root: Path, project: dict[str, Any]) -> bool:
 
 
 def _warm_godot_import(
-    root: Path, project: dict[str, Any], godot_exe: str, audit_only: bool
+    root: Path, project: dict[str, Any], godot_exe: str, audit_only: bool,
+    config: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     before = git_snapshot(root)
     command = [godot_exe, "--headless", "--path", str(root / project["root"]), "--import"]
-    code, duration, stdout, stderr = _run_process(command, root / project["root"], 300)
+    lock_timeout = int((config or {}).get("qa", {}).get("execution_lock_timeout_seconds", 30))
+    try:
+        with ExitStack() as stack:
+            stack.enter_context(ExecutionLock("GodotQA", lock_timeout))
+            session_root = Path(stack.enter_context(tempfile.TemporaryDirectory(prefix="estudio-qa-import-")))
+            env = _isolated_environment(session_root, project["id"], "godot_import_warmup")
+            code, duration, stdout, stderr = _run_process(command, root / project["root"], 300, env=env)
+    except ExecutionLockTimeout as exc:
+        return _result(
+            f"{project['id']}:godot_import_warmup", "audit_fail" if audit_only else "fail", 0,
+            reason=str(exc), exit_code=125, side_effects=[], runner_type="godot_import", lane="godot",
+            execution_resources=["GodotQA"], user_data_mode="isolated",
+        )
     after = git_snapshot(root)
     side_effects = [
         key for key in ["head", "status_sha256", "index_diff_sha256", "worktree_diff_sha256", "untracked"]
@@ -367,7 +477,7 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
                         f"{project['id']}:godot_import_warmup", status, 0, reason="Godot executable was not found"
                     ))
                     continue
-                warmup = _warm_godot_import(root, project, godot_exe, args.audit_only)
+                warmup = _warm_godot_import(root, project, godot_exe, args.audit_only, config)
                 report["steps"].append(warmup)
                 if warmup["status"] in {"fail", "audit_fail"}:
                     continue
@@ -384,7 +494,7 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
                     # the same thermal/cache state before applying relative
                     # thresholds, otherwise sub-second process startup dominates.
                     for warmup_index in range(int(config["fast_suite"]["warmup_runs"])):
-                        warmup = _run_checked(root, project, runner, command, args.audit_only)
+                        warmup = _run_checked(root, project, runner, command, args.audit_only, config)
                         warmup["name"] = f"{warmup['name']}:warmup{warmup_index + 1}"
                         warmup["performance_role"] = "warmup"
                         report["steps"].append(warmup)
@@ -393,7 +503,7 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
                             break
                 if warmup_failed:
                     continue
-                result = _run_checked(root, project, runner, command, args.audit_only)
+                result = _run_checked(root, project, runner, command, args.audit_only, config)
                 if runner.get("category") == "fast" and result["status"] == "pass":
                     code, message = _baseline_issue(baseline, project, manifest, runner, float(result["duration_seconds"]), godot_version)
                     if code:

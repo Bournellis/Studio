@@ -35,7 +35,24 @@
           "timeout_seconds": { "type": "integer", "minimum": 1, "maximum": 3600 },
           "environments": { "type": "array", "items": { "type": "string" } },
           "output_policy": { "enum": ["ignored_cache_only", "temporary_only", "read_only"] },
-          "local_only": { "const": true }
+          "local_only": { "const": true },
+          "execution_resources": {
+            "type": "array",
+            "items": { "enum": ["GodotQA", "AndroidQA"] },
+            "uniqueItems": true
+          },
+          "user_data_mode": { "enum": ["isolated", "shared_locked"] },
+          "result_contract": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["contract", "schema_version", "required"],
+            "properties": {
+              "marker": { "type": "string", "const": "ESTUDIO_JSON:" },
+              "contract": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" },
+              "schema_version": { "type": "integer", "minimum": 1 },
+              "required": { "type": "boolean" }
+            }
+          }
         }
       }
     },

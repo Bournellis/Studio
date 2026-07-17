@@ -372,6 +372,24 @@ def validate_qa_manifest(data: Any, project: dict[str, Any], config: dict[str, A
         timeout = runner.get("timeout_seconds")
         if not isinstance(timeout, int) or timeout < 1 or timeout > 3600:
             report.fail("QA_TIMEOUT", f"invalid timeout for {runner.get('id')}: {timeout}", path)
+        resources = runner.get("execution_resources", [])
+        if not isinstance(resources, list) or not all(item in {"GodotQA", "AndroidQA"} for item in resources):
+            report.fail("QA_EXECUTION_RESOURCES", f"invalid resources for {runner.get('id')}: {resources}", path)
+        user_data_mode = runner.get("user_data_mode", config["qa"].get("user_data_mode_default", "isolated"))
+        if user_data_mode not in {"isolated", "shared_locked"}:
+            report.fail("QA_USER_DATA_MODE", f"invalid user data mode for {runner.get('id')}: {user_data_mode}", path)
+        result_contract = runner.get("result_contract")
+        if result_contract is not None:
+            valid_contract = (
+                isinstance(result_contract, dict)
+                and re.fullmatch(r"[a-z][a-z0-9_]+", str(result_contract.get("contract", "")))
+                and isinstance(result_contract.get("schema_version"), int)
+                and result_contract.get("schema_version", 0) >= 1
+                and isinstance(result_contract.get("required"), bool)
+                and result_contract.get("marker", "ESTUDIO_JSON:") == "ESTUDIO_JSON:"
+            )
+            if not valid_contract:
+                report.fail("QA_RESULT_CONTRACT", f"invalid result contract for {runner.get('id')}", path)
         command_surface = " ".join([str(runner.get("entrypoint", "")), *map(str, runner.get("args", []))]).casefold()
         for token in forbidden:
             if token in command_surface:
