@@ -1,5 +1,16 @@
 # Track 02 Current Status
 
+## Metadata
+
+- status: historical
+- authority: historical_record
+- last_verified: 2026-07-16
+- review_when: consulta histórica exigir correção factual
+- supersedes: none
+- superseded_by: ../../../current-status.md
+
+> Baseline histórica encerrada pela pausa do portfólio. Não define track, gate ou próximo passo atual.
+
 - Last Updated: `2026-04-26`
 - Track: `Track 02 - Canonical Product Foundation`
 - Status: `OPEN`

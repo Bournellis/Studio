@@ -1,20 +1,19 @@
-# Godot Docs
+# Documentação — RPG Isométrico
 
-This directory contains Godot-local implementation guidance.
+## Metadata
 
-Use shared canon in `../../canon/` for engine-neutral rules.
-Use this directory for:
+- status: living
+- authority: router
+- last_verified: 2026-07-16
+- review_when: canon local ou guias técnicos mudarem
+- supersedes: README anterior à separação do canon
+- superseded_by: none
 
-- Godot-specific patterns
-- implementation notes
-- engine-local decisions that do not redefine shared canon
-- validation and smoke guidance for the active slice
-- platform-specific art, rendering, and export guidance
+- Canon de produto: `canon/README.md`.
+- Estado técnico: `../implementation/current-status.md`.
+- QA: `../qa/QA_INDEX.md`.
+- Validação: `validation.md`.
+- Guias Godot: `godot-patterns.md` e `platform-art-and-export-guidance.md`.
+- Smokes históricos: `canonical-product-foundation-smoke.md`, `campaign-framework-smoke.md` e `g4-shared-mode-foundation-smoke.md`.
 
-Key current references:
-
-- `validation.md` for the project-standard headless validation entrypoint
-- `canonical-product-foundation-smoke.md` for the canonical bootstrap, tutorial, and profile smoke
-- `campaign-framework-smoke.md` for the first campaign framework and Boss unlock smoke
-- `g4-shared-mode-foundation-smoke.md` for the current local multi-mode smoke and playtest gate
-- `platform-art-and-export-guidance.md` for PC-high versus mobile-light rendering posture, Tripo3D export guidance, and initial mesh or texture budgets
+Lore compartilhado vive em `../../../canon/shared-lore/`. Guias e smokes não definem estado, retomada ou próximo gate.

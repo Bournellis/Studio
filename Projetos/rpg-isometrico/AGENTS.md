@@ -1,68 +1,54 @@
-# AGENTS.md
+# AGENTS.md — RPG Isométrico
 
-This file governs agent behavior for the Godot implementation of RPG Isometrico.
+## Metadata
 
-## Project Role
+- status: living
+- authority: operational_contract
+- last_verified: 2026-07-16
+- review_when: pausa, governança, canon local ou arquitetura mudar
+- supersedes: AGENTS.md anterior ao cutover de governança v2
+- superseded_by: none
 
-This workspace is the active implementation home for RPG Isometrico.
+## Estado e autoridade
 
-Product canon lives locally under `docs/canon/`. Shared lore lives under `../../canon/shared-lore/`. Neither location carries operational state.
+O RPG Isométrico permanece `PAUSADO_INDEFINIDO`. O portfólio em `../../08_Coordenacao_Agentes/Prioridades_Estudio.md` decide o trabalho permitido.
 
-## Read Order
+`implementation/current-status.md` é a única autoridade técnica local. Documentos de track são história até retomada explícita.
 
-Before substantial work:
+O canon de produto vive em `docs/canon/`; lore compartilhado vive em `../../canon/shared-lore/`. Nenhuma regra deste produto se aplica automaticamente aos demais projetos.
 
-1. `docs/canon/product/product-vision.md`
-2. `docs/canon/design/game-design-document.md`
-3. `docs/canon/design/progression-design.md`
-4. `docs/canon/architecture/shared-architecture.md`
-5. `docs/canon/architecture/game-mode-standard.md`
-6. `docs/canon/roadmap/evolution-roadmap.md`
-7. `docs/canon/roadmap/release-horizons.md`
-8. `docs/canon/platform/steam-platform.md`
-9. `implementation/current-status.md`
-10. the active track under `implementation/tracks/`
-11. this file
+## Ordem de leitura
 
-For bounded work:
-
-1. `../../canon/canon-brief.md`
+1. `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
 2. `implementation/current-status.md`
-3. the active track `current-status.md` when the task belongs to active work
-4. touched files
+3. `08_Coordenacao/README.md`
+4. `qa/QA_INDEX.md`
+5. `docs/canon/README.md` quando o pedido exigir produto/canon
+6. arquivos tocados
 
-## Current Technical Base
+Durante a pausa, não abra track, gate ou conteúdo de produto. História de Track 02 só é lida para responder pergunta específica ou executar reparo explicitamente autorizado.
 
-- Engine: Godot `4.6.2-stable`
-- Language: GDScript only
-- Tests: GUT `9.6.0`
-- Content source of truth: JSON definitions that generate Godot resources
+## Trabalho local
 
-## Historical Validation Background
+- Use worktree em `D:\Estudio-worktrees\rpg-isometrico--<agente>--<slug>` e branch `codex/rpg-isometrico/<slug>` para Codex.
+- Cards e handoffs novos vivem em `08_Coordenacao/`.
+- Trabalho local enfileira `global_sync_needed`; não edita estado global.
+- Commits separam documentação, QA, runtime e coordenação.
+- Git é local. Push, fetch, pull, deploy e publicação são exclusivos de Fabio.
 
-`implementation/phase-g1/` through `phase-g4/` preserve the closed Godot validation cycle that proved this project can carry the core runtime locally.
+## Base técnica
 
-They are historical context, not the active operational surface.
+- Godot `4.6.2-stable`, GDScript e GUT `9.6.0`.
+- JSON gera recursos; cenas jogáveis são editor-owned, salvo gerador oficial existente.
+- Não edite `.tscn` como texto. Use editor ou ferramenta Godot.
+- Preserve limites Foundation, Gameplay, Presentation, Composition e Online definidos no canon local.
 
-## Scene Rule
+## QA e gates
 
-Default rule:
+`qa/qa_manifest.json` governa comandos; `qa/QA_INDEX.md` governa jornadas. Runtime integral só roda quando o projeto é selecionado explicitamente e deve deixar a árvore rastreada inalterada.
 
-- playable scenes are editor-owned
-- generation is allowed for data, catalogs, and repetitive cases
+Não há gate humano ativo enquanto pausado. Retomada, campanha, lore, progressão, feel, visual, modo ou plataforma exigem nova decisão; automação não aprova essas escolhas.
 
-Agents must not hand-edit `.tscn` files as raw text. If a scene must be created or changed without the editor, use a Godot script/tool to generate it.
+## Hard stops
 
-## Canon Rule
-
-If any historical validation document conflicts with local product canon or shared lore, the applicable current authority wins.
-
-Do not treat old validation behavior as an implicit product decision.
-
-## Validation Rule
-
-Every meaningful active-track change should preserve:
-
-- `tools/validate.gd` headless validation
-- GUT test execution
-- manual smoke expectations for the current playable loop
+Pare diante de retomada implícita, mudança de prioridade/produto/canon, segredo, remoto/publicação, cena/binário ambíguo, conflito histórico único ou decisão humana não existente.
