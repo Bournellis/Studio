@@ -217,6 +217,11 @@ def parse_metadata(text: str) -> dict[str, str]:
     return result
 
 
+def _without_metadata_section(text: str) -> str:
+    """Exclude required governance metadata from pointer-state checks."""
+    return re.sub(r"(?ms)^## Metadata\s*\n.*?(?=^##\s|\Z)", "", text)
+
+
 def _is_none(value: str) -> bool:
     return value.strip().casefold() in {"none", "n/a"}
 
@@ -292,7 +297,7 @@ def check_docs(root: Path, config: dict[str, Any]) -> CheckReport:
         if not path.is_file():
             report.fail("DOC_POINTER_MISSING", "pointer document is missing", rel)
             continue
-        text = path.read_text(encoding="utf-8", errors="replace")
+        text = _without_metadata_section(path.read_text(encoding="utf-8", errors="replace"))
         for pattern in docs["pointer_forbidden_patterns"]:
             if re.search(pattern, text, re.MULTILINE):
                 report.fail("DOC_POINTER_STATE", f"matches forbidden operational-state pattern: {pattern}", rel)

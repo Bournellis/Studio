@@ -13,6 +13,7 @@ if str(TOOLS) not in sys.path:
     sys.path.insert(0, str(TOOLS))
 
 from estudio_governance import (  # noqa: E402
+    _without_metadata_section,
     check_text,
     load_governance,
     parse_metadata,
@@ -48,6 +49,16 @@ class GovernanceContractTests(unittest.TestCase):
         )
         self.assertEqual("router", metadata["authority"])
         self.assertEqual("n/a", metadata["review_when"])
+
+    def test_pointer_check_body_excludes_required_metadata(self) -> None:
+        text = (
+            "# Pointer\n\n## Metadata\n\n- status: living\n- authority: router\n"
+            "- last_verified: 2026-07-16\n- review_when: n/a\n"
+            "- supersedes: none\n- superseded_by: none\n\n## Routes\n\n- Docs: local\n"
+        )
+        body = _without_metadata_section(text)
+        self.assertNotIn("- status:", body)
+        self.assertIn("## Routes", body)
 
     def test_safe_qa_manifest_and_remote_rejection(self) -> None:
         project = next(item for item in self.config["projects"] if item["id"] == "DraxosMobile")
