@@ -18,8 +18,8 @@
 ## Technical baseline
 
 - Latest published remote package: `Arena Runtime Config Sync Ready v3`.
-- Package root: `internal-alpha/v0-arena-runtime-config-sync-ready-v3-20260616-bc04e88a`.
-- Package preview evidence: `https://a50d282b.draxos-mobile-internal-alpha.pages.dev`.
+- Release root: `internal-alpha/v0-arena-runtime-config-sync-ready-v3-20260616-bc04e88a`.
+- Deployment evidence preview: `https://a50d282b.draxos-mobile-internal-alpha.pages.dev`.
 - Build channel: `internal_alpha`; version `0.0.27-alpha.0`; Version code: `27`; Minimum supported: `13`.
 - The approved Web hosting hotfix and its newer preview evidence are recorded in `../docs/release-history.md`.
 - Arena PVE direction and implementation contracts: `../docs/pve-arena-initial-direction.md` and `../docs/pve-arena-v1.md`.
@@ -40,4 +40,3 @@
 - Runtime: local `ClientQuick`, `ServerQuick` and `ModePlatform`.
 - Build: local `ReleaseDryRun`; it never publishes.
 - Each runtime/build runner must execute twice with an unchanged tracked Git snapshot.
-
